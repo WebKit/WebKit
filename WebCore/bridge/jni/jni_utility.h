@@ -74,45 +74,206 @@ jvalue convertValueToJValue(ExecState *exec, JSValue *value, JNIType _JNIType, c
 jvalue getJNIField(jobject obj, JNIType type, const char *name, const char *signature);
 
 jmethodID getMethodID(jobject obj, const char *name, const char *sig);
+JNIEnv* getJNIEnv();
+JavaVM* getJavaVM();
+void setJavaVM(JavaVM*);
+    
+    
+template <typename T> struct JNICaller;
 
-jobject callJNIObjectMethod(jobject obj, const char *name, const char *sig, ... );
-void callJNIVoidMethod(jobject obj, const char *name, const char *sig, ... );
-jboolean callJNIBooleanMethod(jobject obj, const char *name, const char *sig, ... );
-jboolean callJNIStaticBooleanMethod(jclass cls, const char *name, const char *sig, ... );
-jbyte callJNIByteMethod(jobject obj, const char *name, const char *sig, ... );
-jchar callJNICharMethod(jobject obj, const char *name, const char *sig, ... );
-jshort callJNIShortMethod(jobject obj, const char *name, const char *sig, ... );
-jint callJNIIntMethod(jobject obj, const char *name, const char *sig, ... );
-jlong callJNILongMethod(jobject obj, const char *name, const char *sig, ... );
-jfloat callJNIFloatMethod(jobject obj, const char *name, const char *sig, ... );
-jdouble callJNIDoubleMethod(jobject obj, const char *name, const char *sig, ... );
+template<> struct JNICaller<void> {
+    static void callA(jobject obj, jmethodID mid, jvalue* args)
+    {
+        return getJNIEnv()->CallVoidMethodA(obj, mid, args);
+    }
+    static void callV(jobject obj, jmethodID mid, va_list args)
+    {
+        return getJNIEnv()->CallVoidMethodV(obj, mid, args);
+    }
+};
 
-jobject callJNIObjectMethodA(jobject obj, const char *name, const char *sig, jvalue *args);
-void callJNIVoidMethodA(jobject obj, const char *name, const char *sig, jvalue *args);
-jboolean callJNIBooleanMethodA(jobject obj, const char *name, const char *sig, jvalue *args);
-jbyte callJNIByteMethodA(jobject obj, const char *name, const char *sig, jvalue *args);
-jchar callJNICharMethodA(jobject obj, const char *name, const char *sig, jvalue *args);
-jshort callJNIShortMethodA(jobject obj, const char *name, const char *sig, jvalue *args);
-jint callJNIIntMethodA(jobject obj, const char *name, const char *sig, jvalue *args);
-jlong callJNILongMethodA(jobject obj, const char *name, const char *sig, jvalue *args);
-jfloat callJNIFloatMethodA(jobject obj, const char *name, const char *sig, jvalue *args);
-jdouble callJNIDoubleMethodA(jobject obj, const char *name, const char *sig, jvalue *args);
+template<> struct JNICaller<jobject> {
+    static jobject callA(jobject obj, jmethodID mid, jvalue* args)
+    {
+        return getJNIEnv()->CallObjectMethodA(obj, mid, args);
+    }
+    static jobject callV(jobject obj, jmethodID mid, va_list args)
+    {
+        return getJNIEnv()->CallObjectMethodV(obj, mid, args);
+    }    
+};
 
-jobject callJNIObjectMethodIDA(jobject obj, jmethodID methodID, jvalue *args);
-void callJNIVoidMethodIDA(jobject obj, jmethodID methodID, jvalue *args);
-jboolean callJNIBooleanMethodIDA(jobject obj, jmethodID methodID, jvalue *args);
-jbyte callJNIByteMethodIDA(jobject obj, jmethodID methodID, jvalue *args);
-jchar callJNICharMethodIDA(jobject obj, jmethodID methodID, jvalue *args);
-jshort callJNIShortMethodIDA(jobject obj, jmethodID methodID, jvalue *args);
-jint callJNIIntMethodIDA(jobject obj, jmethodID methodID, jvalue *args);
-jlong callJNILongMethodIDA(jobject obj, jmethodID methodID, jvalue *args);
-jfloat callJNIFloatMethodIDA(jobject obj, jmethodID methodID, jvalue *args);
-jdouble callJNIDoubleMethodIDA(jobject obj, jmethodID methodID, jvalue *args);
+template<> struct JNICaller<jboolean> {
+    static jboolean callA(jobject obj, jmethodID mid, jvalue* args)
+    {
+        return getJNIEnv()->CallBooleanMethodA(obj, mid, args);
+    }
+    static jboolean callV(jobject obj, jmethodID mid, va_list args)
+    {
+        return getJNIEnv()->CallBooleanMethodV(obj, mid, args);
+    }
+    static jboolean callStaticV(jclass cls, jmethodID mid, va_list args)
+    {
+        return getJNIEnv()->CallStaticBooleanMethod(cls, mid, args);
+    }
+    
+};
 
-JavaVM *getJavaVM();
-void    setJavaVM(JavaVM *javaVM);
-JNIEnv *getJNIEnv();
+template<> struct JNICaller<jbyte> {
+    static jbyte callA(jobject obj, jmethodID mid, jvalue* args)
+    {
+        return getJNIEnv()->CallByteMethodA(obj, mid, args);
+    }
+    static jbyte callV(jobject obj, jmethodID mid, va_list args)
+    {
+        return getJNIEnv()->CallByteMethodV(obj, mid, args);
+    }
+};
 
+template<> struct JNICaller<jchar> {
+    static jchar callA(jobject obj, jmethodID mid, jvalue* args)
+    {
+        return getJNIEnv()->CallCharMethodA(obj, mid, args);
+    }
+    static jchar callV(jobject obj, jmethodID mid, va_list args)
+    {
+        return getJNIEnv()->CallCharMethodV(obj, mid, args);
+    }    
+};
+
+template<> struct JNICaller<jshort> {
+    static jshort callA(jobject obj, jmethodID mid, jvalue* args)
+    {
+        return getJNIEnv()->CallShortMethodA(obj, mid, args);
+    }
+    static jshort callV(jobject obj, jmethodID mid, va_list args)
+    {
+        return getJNIEnv()->CallShortMethodV(obj, mid, args);
+    }
+};
+
+template<> struct JNICaller<jint> {
+    static jint callA(jobject obj, jmethodID mid, jvalue* args)
+    {
+        return getJNIEnv()->CallIntMethodA(obj, mid, args);
+    }
+    static jint callV(jobject obj, jmethodID mid, va_list args)
+    {
+        return getJNIEnv()->CallIntMethodV(obj, mid, args);
+    }
+};
+
+template<> struct JNICaller<jlong> {
+    static jlong callA(jobject obj, jmethodID mid, jvalue* args)
+    {
+        return getJNIEnv()->CallLongMethodA(obj, mid, args);
+    }
+    static jlong callV(jobject obj, jmethodID mid, va_list args)
+    {
+        return getJNIEnv()->CallLongMethodV(obj, mid, args);
+    }
+};
+
+template<> struct JNICaller<jfloat> {
+    static jfloat callA(jobject obj, jmethodID mid, jvalue* args)
+    {
+        return getJNIEnv()->CallFloatMethodA(obj, mid, args);
+    }
+    static jfloat callV(jobject obj, jmethodID mid, va_list args)
+    {
+        return getJNIEnv()->CallFloatMethodV(obj, mid, args);
+    }
+};
+
+template<> struct JNICaller<jdouble> {
+    static jdouble callA(jobject obj, jmethodID mid, jvalue* args)
+    {
+        return getJNIEnv()->CallDoubleMethodA(obj, mid, args);
+    }
+    static jdouble callV(jobject obj, jmethodID mid, va_list args)
+    {
+        return getJNIEnv()->CallDoubleMethodV(obj, mid, args);
+    }
+};
+
+template<typename T> T callJNIMethodIDA(jobject obj, jmethodID mid, jvalue *args)
+{
+    return JNICaller<T>::callA(obj, mid, args);
+}
+    
+template<typename T>
+static T callJNIMethodV(jobject obj, const char *name, const char *sig, va_list args)
+{
+    JavaVM *jvm = getJavaVM();
+    JNIEnv *env = getJNIEnv();
+    
+    if ( obj != NULL && jvm != NULL && env != NULL) {
+        jclass cls = env->GetObjectClass(obj);
+        if ( cls != NULL ) {
+            jmethodID mid = env->GetMethodID(cls, name, sig);
+            if ( mid != NULL )
+            {
+                return JNICaller<T>::callV(obj, mid, args);
+            }
+            else
+            {
+                fprintf(stderr, "%s: Could not find method: %s for %p\n", __PRETTY_FUNCTION__, name, obj);
+                env->ExceptionDescribe();
+                env->ExceptionClear();
+                fprintf (stderr, "\n");
+            }
+
+            env->DeleteLocalRef(cls);
+        }
+        else {
+            fprintf(stderr, "%s: Could not find class for %p\n", __PRETTY_FUNCTION__, obj);
+        }
+    }
+
+    return 0;
+}
+
+template<typename T>
+T callJNIMethod(jobject obj, const char* methodName, const char* methodSignature, ...)
+{
+    va_list args;
+    va_start(args, methodSignature);
+    
+    T result= callJNIMethodV<T>(obj, methodName, methodSignature, args);
+    
+    va_end(args);
+    
+    return result;
+}
+    
+template<typename T>
+T callJNIStaticMethod(jclass cls, const char* methodName, const char* methodSignature, ...)
+{
+    JavaVM *jvm = getJavaVM();
+    JNIEnv *env = getJNIEnv();
+    va_list args;
+    
+    va_start(args, methodSignature);
+    
+    T result = 0;
+    
+    if (cls != NULL && jvm != NULL && env != NULL) {
+        jmethodID mid = env->GetStaticMethodID(cls, methodName, methodSignature);
+        if (mid != NULL) 
+            result = JNICaller<T>::callStaticV(cls, mid, args);
+        else {
+            fprintf(stderr, "%s: Could not find method: %s for %p\n", __PRETTY_FUNCTION__, methodName, cls);
+            env->ExceptionDescribe();
+            env->ExceptionClear();
+            fprintf (stderr, "\n");
+        }
+    }
+    
+    va_end(args);
+    
+    return result;
+}
+    
 bool dispatchJNICall(const void *targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue *args, jvalue &result, const char *callingURL, JSValue *&exceptionDescription);
 
 } // namespace Bindings

@@ -1,3 +1,30 @@
+2008-03-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon.
+
+        Templatize the JNI call code to reduce the amount of code that has
+        to be duplicated.
+
+        * bridge/jni/jni_class.cpp:
+        (JavaClass::JavaClass):
+        * bridge/jni/jni_instance.cpp:
+        (JavaInstance::stringValue):
+        (JavaInstance::numberValue):
+        (JavaInstance::booleanValue):
+        (JavaInstance::invokeMethod):
+        * bridge/jni/jni_jsobject.cpp:
+        (JavaJSObject::convertJObjectToValue):
+        * bridge/jni/jni_runtime.cpp:
+        (JavaField::JavaField):
+        (JavaMethod::JavaMethod):
+        * bridge/jni/jni_utility.cpp:
+        * bridge/jni/jni_utility.h:
+        (KJS::Bindings::):
+        (KJS::Bindings::callJNIMethodIDA):
+        (KJS::Bindings::callJNIMethodV):
+        (KJS::Bindings::callJNIMethod):
+        (KJS::Bindings::callJNIStaticMethod):
+
 2008-03-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

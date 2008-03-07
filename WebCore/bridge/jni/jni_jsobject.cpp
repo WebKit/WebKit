@@ -572,8 +572,8 @@ JSValue *JavaJSObject::convertJObjectToValue (jobject theObject) const
     // possible to pass primitive types from the Java to JavaScript.
     // See section 22.7 of 'JavaScript:  The Definitive Guide, 4th Edition',
     // figure 22-4.
-    jobject classOfInstance = callJNIObjectMethod(theObject, "getClass", "()Ljava/lang/Class;");
-    jstring className = (jstring)callJNIObjectMethod(classOfInstance, "getName", "()Ljava/lang/String;");
+    jobject classOfInstance = callJNIMethod<jobject>(theObject, "getClass", "()Ljava/lang/Class;");
+    jstring className = (jstring)callJNIMethod<jobject>(classOfInstance, "getName", "()Ljava/lang/String;");
     
     // Only the sun.plugin.javascript.webkit.JSObject has a member called nativeJSObject. This class is
     // created above to wrap internal browser objects. The constructor of this class takes the native

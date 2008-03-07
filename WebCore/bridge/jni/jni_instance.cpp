@@ -78,7 +78,7 @@ JSValue *JavaInstance::stringValue() const
 {
     JSLock lock;
     
-    jstring stringValue = (jstring)callJNIObjectMethod (_instance->_instance, "toString", "()Ljava/lang/String;");
+    jstring stringValue = (jstring)callJNIMethod<jobject>(_instance->_instance, "toString", "()Ljava/lang/String;");
     JNIEnv *env = getJNIEnv();
     const jchar *c = getUCharactersFromJStringInEnv(env, stringValue);
     UString u((const UChar *)c, (int)env->GetStringLength(stringValue));
@@ -88,13 +88,13 @@ JSValue *JavaInstance::stringValue() const
 
 JSValue *JavaInstance::numberValue() const
 {
-    jdouble doubleValue = callJNIDoubleMethod (_instance->_instance, "doubleValue", "()D");
+    jdouble doubleValue = callJNIMethod<jdouble>(_instance->_instance, "doubleValue", "()D");
     return jsNumber(doubleValue);
 }
 
 JSValue *JavaInstance::booleanValue() const
 {
-    jboolean booleanValue = callJNIBooleanMethod (_instance->_instance, "booleanValue", "()Z");
+    jboolean booleanValue = callJNIMethod<jboolean>(_instance->_instance, "booleanValue", "()Z");
     return jsBoolean(booleanValue);
 }
 
@@ -166,60 +166,40 @@ JSValue *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodLi
     if (!handled) {    
         jobject obj = _instance->_instance;
         switch (jMethod->JNIReturnType()){
-            case void_type: {
-                callJNIVoidMethodIDA (obj, jMethod->methodID(obj), jArgs);
-            }
-            break;
+            case void_type:
+                callJNIMethodIDA<void>(obj, jMethod->methodID(obj), jArgs);
+                break;            
+            case object_type:
+                result.l = callJNIMethodIDA<jobject>(obj, jMethod->methodID(obj), jArgs);
+                break;
+            case boolean_type:
+                result.z = callJNIMethodIDA<jboolean>(obj, jMethod->methodID(obj), jArgs);
+                break;
+            case byte_type:
+                result.b = callJNIMethodIDA<jbyte>(obj, jMethod->methodID(obj), jArgs);
+                break;
+            case char_type:
+                result.c = callJNIMethodIDA<jchar>(obj, jMethod->methodID(obj), jArgs);
+                break;            
+            case short_type:
+                result.s = callJNIMethodIDA<jshort>(obj, jMethod->methodID(obj), jArgs);
+                break;
+            case int_type:
+                result.i = callJNIMethodIDA<jint>(obj, jMethod->methodID(obj), jArgs);
+                break;
             
-            case object_type: {
-                result.l = callJNIObjectMethodIDA (obj, jMethod->methodID(obj), jArgs);
-            }
-            break;
-            
-            case boolean_type: {
-                result.z = callJNIBooleanMethodIDA (obj, jMethod->methodID(obj), jArgs);
-            }
-            break;
-            
-            case byte_type: {
-                result.b = callJNIByteMethodIDA (obj, jMethod->methodID(obj), jArgs);
-            }
-            break;
-            
-            case char_type: {
-                result.c = callJNICharMethodIDA (obj, jMethod->methodID(obj), jArgs);
-            }
-            break;
-            
-            case short_type: {
-                result.s = callJNIShortMethodIDA (obj, jMethod->methodID(obj), jArgs);
-            }
-            break;
-            
-            case int_type: {
-                result.i = callJNIIntMethodIDA (obj, jMethod->methodID(obj), jArgs);
-            }
-            break;
-            
-            case long_type: {
-                result.j = callJNILongMethodIDA (obj, jMethod->methodID(obj), jArgs);
-            }
-            break;
-            
-            case float_type: {
-                result.f = callJNIFloatMethodIDA (obj, jMethod->methodID(obj), jArgs);
-            }
-            break;
-            
-            case double_type: {
-                result.d = callJNIDoubleMethodIDA (obj, jMethod->methodID(obj), jArgs);
-            }
-            break;
-
+            case long_type:
+                result.j = callJNIMethodIDA<jlong>(obj, jMethod->methodID(obj), jArgs);
+                break;
+            case float_type:
+                result.f = callJNIMethodIDA<jfloat>(obj, jMethod->methodID(obj), jArgs);
+                break;
+            case double_type:
+                result.d = callJNIMethodIDA<jdouble>(obj, jMethod->methodID(obj), jArgs);
+                break;
             case invalid_type:
-            default: {
-            }
-            break;
+            default:
+                break;
         }
     }
         
