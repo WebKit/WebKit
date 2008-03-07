@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -2772,6 +2772,18 @@
 			</File>
 			<File
 				RelativePath="..\page\InspectorController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\JavaScriptDebugListener.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\JavaScriptDebugServer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\JavaScriptDebugServer.h"
 				>
 			</File>
 			<File

@@ -740,6 +740,7 @@ SOURCES += \
     page/FrameView.cpp \
     page/History.cpp \
     page/InspectorController.cpp \
+    page/JavaScriptDebugServer.cpp \
     page/MouseEventWithHitTestResults.cpp \
     page/Page.cpp \
     page/PageGroup.cpp \

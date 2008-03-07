@@ -1,3 +1,55 @@
+2008-03-06  Adam Roben  <aroben@apple.com>
+
+        Add JavaScriptDebugServer
+
+        This class is a singleton which allows one or more
+        JavaScriptDebugListeners to receive callbacks during JavaScript
+        execution.
+
+        Right now all listeners receive callbacks for all Pages in the
+        process. Eventually we will want to support listeners registering for
+        callbacks for specific Pages (e.g., the Inspector will want to listen
+        for execution in just the Page it's inspecting).
+
+        Pages notify the JavaScriptDebugServer when they are created so that
+        it can install itself as the Page's debugger.
+
+        Reviewed by Darin.
+
+        * GNUMakefile.am: Added new files to project.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+        * page/JavaScriptDebugListener.h: Added.
+        * page/JavaScriptDebugServer.cpp: Added.
+        (WebCore::toFrame):
+        (WebCore::JavaScriptDebugServer::shared):
+        (WebCore::JavaScriptDebugServer::JavaScriptDebugServer):
+        (WebCore::JavaScriptDebugServer::~JavaScriptDebugServer):
+        (WebCore::JavaScriptDebugServer::addListener): Registers as the
+        debugger for all Pages if we're adding our first listener.
+        (WebCore::JavaScriptDebugServer::removeListener): Deregisters as the
+        debugger for all Pages if we're removing our last listner.
+        (WebCore::JavaScriptDebugServer::pageCreated): Registers as the
+        debugger for the newly created Page if we have any listeners.
+        (WebCore::dispatchDidParseSource): Helper function.
+        (WebCore::dispatchFailedToParseSource): Ditto.
+        (WebCore::JavaScriptDebugServer::sourceParsed): Call
+        dispatchDidParseSource or dispatchFailedToParseSource depending on
+        whether there was an error or not.
+        (WebCore::JavaScriptDebugServer::dispatchFunctionToListeners): Calls
+        the passed-in JavaScriptExecutionCallback on each listener, guarding
+        against re-entry.
+        (WebCore::JavaScriptDebugServer::callEvent): Dispatch didEnterCallFrame.
+        (WebCore::JavaScriptDebugServer::atStatement): Dispatch willExecuteStatement.
+        (WebCore::JavaScriptDebugServer::returnEvent): Dispatch willLeaveCallFrame.
+        (WebCore::JavaScriptDebugServer::exception): Dispatch exceptionWasRaised.
+        * page/JavaScriptDebugServer.h: Added.
+        * page/Page.cpp:
+        (WebCore::Page::Page): Tell the shared JavaScriptDebugServer we were
+        created so it can register as our debugger if needed.
+
 2008-03-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady.

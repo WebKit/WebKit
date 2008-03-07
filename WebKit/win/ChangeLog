@@ -1,3 +1,33 @@
+2008-03-06  Adam Roben  <aroben@apple.com>
+
+        Change WebScriptDebugServer to use WebCore::JavaScriptDebugServer
+
+        WebScriptDebugServer is now a JavaScriptDebugListener.
+
+        Reviewed by Darin.
+
+        * WebScriptDebugServer.cpp:
+        (WebScriptDebugServer::WebScriptDebugServer): Removed initialization
+        of m_callingListeners member.
+        (WebScriptDebugServer::addListener): Register as a listener with
+        JavaScriptDebugServer if we've just added our first listener.
+        (WebScriptDebugServer::removeListener): Deregister as a listener with
+        JavaScriptDebugServer if we've just removed our last listener.
+        (WebScriptDebugServer::didParseSource): Added. Code came from the old
+        sourceParsed method. Removed m_callingListeners code because
+        JavaScriptDebugServer guards against re-entry for us.
+        (WebScriptDebugServer::failedToParseSource): Ditto.
+        (WebScriptDebugServer::didEnterCallFrame): Ditto for callEvent.
+        (WebScriptDebugServer::willExecuteStatement): Ditto for atStatement.
+        (WebScriptDebugServer::willLeaveCallFrame): Ditto for
+        willLeaveCallFrame.
+        (WebScriptDebugServer::exceptionWasRaised): Ditto for exception.
+        * WebScriptDebugServer.h: Changed to inherit from
+        WebCore::JavaScriptDebugListener.
+        * WebView.cpp:
+        (WebView::initWithFrame): Removed call to
+        WebScriptDebugServer::pageCreated. This is now handled by WebCore.
+
 2008-03-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

@@ -801,6 +801,7 @@ webcore_sources += \
 	WebCore/page/FrameView.cpp \
 	WebCore/page/History.cpp \
 	WebCore/page/InspectorController.cpp \
+	WebCore/page/JavaScriptDebugServer.cpp \
 	WebCore/page/MouseEventWithHitTestResults.cpp \
 	WebCore/page/Page.cpp \
 	WebCore/page/PageGroup.cpp \

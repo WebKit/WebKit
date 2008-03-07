@@ -47,7 +47,6 @@
 #include "WebMutableURLRequest.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
-#include "WebScriptDebugServer.h"
 #pragma warning( push, 0 )
 #include <CoreGraphics/CGContext.h>
 #include <WebCore/BString.h>
@@ -2058,8 +2057,6 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     WebKitSetWebDatabasesPathIfNecessary();
 
     m_page = new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this));
-
-    WebScriptDebugServer::pageCreated(m_page);
 
     if (m_uiDelegate) {
         COMPtr<IWebUIDelegate2> uiDelegate2;

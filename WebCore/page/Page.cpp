@@ -34,6 +34,7 @@
 #include "FrameView.h"
 #include "HistoryItem.h"
 #include "InspectorController.h"
+#include "JavaScriptDebugServer.h"
 #include "Logging.h"
 #include "PageGroup.h"
 #include "ProgressTracker.h"
@@ -98,6 +99,8 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
 
     ASSERT(!allPages->contains(this));
     allPages->add(this);
+
+    JavaScriptDebugServer::shared().pageCreated(this);
 
 #ifndef NDEBUG
     ++PageCounter::count;
