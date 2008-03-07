@@ -1,3 +1,12 @@
+2008-03-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mitz.
+
+        Test security restrictions for retrieving the content of tainted canvases
+
+        * http/tests/security/canvas-remote-read-remote-image-expected.txt: Added.
+        * http/tests/security/canvas-remote-read-remote-image.html: Added.
+
 2008-03-06  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 1: Call to getImageData failed due to tainted canvas.
+
+CONSOLE MESSAGE: line 1: Call to getImageData failed due to tainted canvas.
+
+CONSOLE MESSAGE: line 1: Call to getImageData failed due to tainted canvas.
+
+CONSOLE MESSAGE: line 1: Call to getImageData failed due to tainted canvas.
+
+PASS: Reading data from an untainted canvas was allowed
+PASS: Reading data from a canvas tainted by a remote image was not allowed
+PASS: Reading data from a canvas tainted by a tainted canvas was not allowed
+PASS: Reading data from a canvas tainted by a remote image tainted pattern was not allowed
+PASS: Reading data from a canvas tainted by a tainted canvas pattern was not allowed
+

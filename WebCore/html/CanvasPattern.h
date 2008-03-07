@@ -48,11 +48,11 @@ namespace WebCore {
         static void parseRepetitionType(const String&, bool& repeatX, bool& repeatY, ExceptionCode&);
 
 #if PLATFORM(CG)
-        CanvasPattern(CGImageRef, bool repeatX, bool repeatY);
+        CanvasPattern(CGImageRef, bool repeatX, bool repeatY, bool originClean);
 #elif PLATFORM(CAIRO)
-        CanvasPattern(cairo_surface_t*, bool repeatX, bool repeatY);
+        CanvasPattern(cairo_surface_t*, bool repeatX, bool repeatY, bool originClean);
 #endif
-        CanvasPattern(CachedImage*, bool repeatX, bool repeatY);
+        CanvasPattern(CachedImage*, bool repeatX, bool repeatY, bool originClean);
         ~CanvasPattern();
 
 #if PLATFORM(CG)
@@ -68,6 +68,8 @@ namespace WebCore {
         cairo_pattern_t* createPattern(const cairo_matrix_t&);
 #endif
 
+        bool originClean() const { return m_originClean; }
+
     private:
 #if PLATFORM(CG)
         const RetainPtr<CGImageRef> m_platformImage;
@@ -77,6 +79,7 @@ namespace WebCore {
         CachedImage* const m_cachedImage;
         const bool m_repeatX;
         const bool m_repeatY;
+        bool m_originClean;
     };
 
 } // namespace WebCore

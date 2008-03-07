@@ -1,0 +1,77 @@
+<div id="log"></div>
+<div id="console"></div>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+var image = new Image();
+image.onload = function() {
+    var canvas = document.createElement("canvas");
+    canvas.width = 100;
+    canvas.height = 100;
+    var context = canvas.getContext("2d");
+    if (context.getImageData(0,0,100,100)) {
+        document.getElementById("console").innerHTML += "PASS: Reading data from an untainted canvas was allowed<br/>";
+    } else {
+        document.getElementById("console").innerHTML = "FAIL: Reading data from an untainted canvas was not allowed<br/>";
+    }
+    context.drawImage(image, 0, 0, 100, 100);
+    if (context.getImageData(0,0,100,100) == null) {
+        document.getElementById("console").innerHTML += "PASS: Reading data from a canvas tainted by a remote image was not allowed<br/>";
+    } else {
+        document.getElementById("console").innerHTML += "FAIL: Reading data from a canvas tainted by a remote image was allowed<br/>";
+    }
+    document.getElementById("log").appendChild(canvas);
+    var dirtyCanvas = canvas;
+    
+    // Now test reading from a canvas after drawing a tainted canvas onto it
+    canvas = document.createElement("canvas");
+    canvas.width = 100;
+    canvas.height = 100;
+    var context = canvas.getContext("2d");
+    context.drawImage(dirtyCanvas, 0, 0, 100, 100);
+    if (context.getImageData(0,0,100,100) == null) {
+        document.getElementById("console").innerHTML += "PASS: Reading data from a canvas tainted by a tainted canvas was not allowed<br/>";
+    } else {
+        document.getElementById("console").innerHTML += "FAIL: Reading data from a canvas tainted by a tainted canvas was allowed<br/>";
+    }
+    
+    document.getElementById("log").appendChild(canvas);
+    
+    // Test reading after using a tainted pattern
+    canvas = document.createElement("canvas");
+    canvas.width = 100;
+    canvas.height = 100;
+    var context = canvas.getContext("2d");
+    var remoteImagePattern = context.createPattern(image, "repeat");
+    context.fillStyle = remoteImagePattern;
+    context.fillRect(0,0,100,100);
+    if (context.getImageData(0,0,100,100) == null) {
+        document.getElementById("console").innerHTML += "PASS: Reading data from a canvas tainted by a remote image tainted pattern was not allowed<br/>";
+    } else {
+        document.getElementById("console").innerHTML += "FAIL: Reading data from a canvas tainted by a remote image tainted pattern was allowed<br/>";
+    }
+    
+    document.getElementById("log").appendChild(canvas);
+    
+    // Test reading after using a tainted pattern
+    canvas = document.createElement("canvas");
+    canvas.width = 100;
+    canvas.height = 100;
+    var context = canvas.getContext("2d");
+    var taintedCanvasPattern = context.createPattern(dirtyCanvas, "repeat");
+    context.fillStyle = taintedCanvasPattern;
+    context.fillRect(0,0,100,100);
+    if (context.getImageData(0,0,100,100) == null) {
+        document.getElementById("console").innerHTML += "PASS: Reading data from a canvas tainted by a tainted canvas pattern was not allowed<br/>";
+    } else {
+        document.getElementById("console").innerHTML += "FAIL: Reading data from a canvas tainted by a tainted canvas pattern was allowed<br/>";
+    }
+    
+    document.getElementById("log").appendChild(canvas);
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+image.src = "http://localhost:8000/security/resources/abe.png";
+</script>

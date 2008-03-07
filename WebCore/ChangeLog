@@ -1,3 +1,36 @@
+2008-03-06  Sam Weinig  <sam@webkit.org> with a little help from Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mitz.
+
+        Implement the HTML5 canvas tainting rules to prevent potential data leakage
+
+        Added originClean to HTMLCanvasElement and CanvasPattern
+        to track whether a canvas (or pattern) is tainted by remote
+        data.
+        Use originClean flag to determine whether getImageData should
+        return, well, image data.
+
+        Test: http/tests/security/canvas-remote-read-remote-image.html
+
+        * html/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::CanvasPattern):
+        * html/CanvasPattern.h:
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2D::setFillStyle):
+        (WebCore::CanvasRenderingContext2D::checkOrigin):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::drawImageFromRect):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        (WebCore::CanvasRenderingContext2D::printSecurityExceptionMessage):
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        * html/CanvasRenderingContext2D.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        * html/HTMLCanvasElement.h:
+        (WebCore::HTMLCanvasElement::setOriginTainted):
+        (WebCore::HTMLCanvasElement::originClean):
+
 2008-03-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Jon.

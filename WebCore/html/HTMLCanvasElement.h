@@ -92,7 +92,12 @@ public:
     IntRect convertLogicalToDevice(const FloatRect&) const;
     IntSize convertLogicalToDevice(const FloatSize&) const;
     IntPoint convertLogicalToDevice(const FloatPoint&) const;
+
+    void setOriginTainted() { m_originClean = false; } 
+    bool originClean() const { return m_originClean; }
+
     static const float MaxCanvasArea;
+
 private:
     void createImageBuffer() const;
     void reset();
@@ -102,8 +107,7 @@ private:
     RefPtr<CanvasRenderingContext2D> m_2DContext;
     IntSize m_size;
 
-    // FIXME: Web Applications 1.0 describes a security feature where we track
-    // if we ever drew any images outside the domain, so we can disable toDataURL.
+    bool m_originClean;
 
     // m_createdImageBuffer means we tried to malloc the buffer.  We didn't necessarily get it.
     mutable bool m_createdImageBuffer;

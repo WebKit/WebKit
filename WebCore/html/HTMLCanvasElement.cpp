@@ -65,6 +65,7 @@ const float HTMLCanvasElement::MaxCanvasArea = 32768 * 8192; // Maximum canvas a
 HTMLCanvasElement::HTMLCanvasElement(Document* doc)
     : HTMLElement(canvasTag, doc)
     , m_size(defaultWidth, defaultHeight)
+    , m_originClean(true)
     , m_createdImageBuffer(false)
 {
 }
