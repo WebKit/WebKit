@@ -466,7 +466,7 @@ sub GenerateInterfaceHeader
     @CPPInterfaceHeader = @licenseTemplate;
     push(@CPPInterfaceHeader, "\n");
 
-    # - Header gaurds -
+    # - Header guards -
     push(@CPPInterfaceHeader, "#ifndef " . $className . "_h\n");
     push(@CPPInterfaceHeader, "#define " . $className . "_h\n\n");
 
@@ -843,7 +843,7 @@ sub GenerateCPPHeader
     @CPPHeaderHeader = @licenseTemplate;
     push(@CPPHeaderHeader, "\n");
 
-    # - Header gaurds -
+    # - Header guards -
     push(@CPPHeaderHeader, "#ifndef " . $className . "_h\n");
     push(@CPPHeaderHeader, "#define " . $className . "_h\n\n");
 
