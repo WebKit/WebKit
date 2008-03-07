@@ -52,8 +52,8 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 
-#include "bindings/runtime.h"
-#include "bindings/runtime_root.h"
+#include "runtime.h"
+#include "runtime_root.h"
 #include "JSDOMWindow.h"
 #include "kjs_proxy.h"
 #include "kjs_binding.h"

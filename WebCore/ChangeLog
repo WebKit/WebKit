@@ -1,3 +1,9 @@
+2008-03-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build.
+
+        * WebCore.pro:
+
 2008-03-06  Sam Weinig  <sam@webkit.org> with a little help from Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mitz.

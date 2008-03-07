@@ -30,7 +30,7 @@ INCLUDEPATH += $$GENERATED_SOURCES_DIR
 
 DEPENDPATH += css dom loader editing history html \
     loader page platform platform/graphics platform/network platform/text plugins rendering xml \
-    bindings/js
+    bindings/js bridge bridge/c bridge/qt
 
 include($$OUTPUT_DIR/config.pri)
 
@@ -127,7 +127,8 @@ INCLUDEPATH += \
                 $$PWD/loader/qt \
                 $$PWD/page/qt \
                 $$PWD/../WebKit/qt/WebCoreSupport \
-                $$PWD/../WebKit/qt/Api
+                $$PWD/../WebKit/qt/Api \
+                $$PWD/bridge/qt
 
 DEPENDPATH += editing/qt history/qt loader/qt page/qt \
     platform/graphics/qt ../WebKit/qt/Api ../WebKit/qt/WebCoreSupport
@@ -210,7 +211,10 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/bindings/js \
                 $$PWD/svg \
                 $$PWD/platform/image-decoders \
-                $$PWD/plugins
+                $$PWD/plugins \
+                $$PWD/bridge \
+                $$PWD/bridge/c \
+                $$PWD/bridge/qt
 
 QT += network
 lessThan(QT_MINOR_VERSION, 4): QT += xml
@@ -442,6 +446,17 @@ SOURCES += \
     bindings/js/kjs_proxy.cpp \
     bindings/js/PausedTimeouts.cpp \
     bindings/js/ScheduledAction.cpp \
+    bridge/NP_jsobject.cpp \
+    bridge/npruntime.cpp \
+    bridge/runtime_array.cpp \
+    bridge/runtime.cpp \
+    bridge/runtime_method.cpp \
+    bridge/runtime_object.cpp \
+    bridge/runtime_root.cpp \
+    bridge/c/c_class.cpp \
+    bridge/c/c_instance.cpp \
+    bridge/c/c_runtime.cpp \
+    bridge/c/c_utility.cpp \
     css/CSSBorderImageValue.cpp \
     css/CSSCharsetRule.cpp \
     css/CSSComputedStyleDeclaration.cpp \
@@ -899,6 +914,9 @@ qt-port {
     $$PWD/platform/network/qt/QNetworkReplyHandler.h
 
     SOURCES += \
+    bridge/qt/qt_class.cpp \
+    bridge/qt/qt_instance.cpp \
+    bridge/qt/qt_runtime.cpp \
     page/qt/DragControllerQt.cpp \
     page/qt/EventHandlerQt.cpp \
     page/qt/FrameQt.cpp \
