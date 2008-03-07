@@ -1,3 +1,33 @@
+2008-03-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed <rdar://problem/5689093> Stricter (ES4) eval semantics
+        
+        The basic rule is:
+        
+        - "eval(s)" is treated as an operator that gives the ES3 eval behavior.
+            ... but only if there is no overriding declaration of "eval" in scope.
+        - All other invocations treat eval as a function that evaluates a
+        script in the context of its "this" object.
+            ... but if its "this" object is not the global object it was
+            originally associated with, eval throws an exception.
+        
+        Because only expressions of the form "eval(s)" have access to local
+        scope, the compiler can now statically determine whether a function
+        needs local scope to be dynamic.
+
+        * kjs/nodes.h: Added FunctionCallEvalNode. It works just like
+        FuncationCallResolveNode, except it statically indicates that the node
+        may execute eval in the ES3 way.
+        * kjs/nodes.cpp:
+        * kjs/nodes2string.cpp:
+
+        * tests/mozilla/expected.html: This patch happens to fix a Mozilla JS
+        test, but it's a bit of a pyrrhic victory. The test intends to test
+        Mozilla's generic API for calling eval on any object, but, in reality,
+        we only support calling eval on the global object.
+
 2008-03-06  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

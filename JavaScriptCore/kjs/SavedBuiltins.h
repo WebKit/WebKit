@@ -55,6 +55,8 @@ struct SavedBuiltinsInternal {
     ProtectedPtr<NativeErrorImp> typeErrorConstructor;
     ProtectedPtr<NativeErrorImp> URIErrorConstructor;
     
+    ProtectedPtr<PrototypeReflexiveFunction> evalFunction;
+
     ProtectedPtr<ObjectPrototype> objectPrototype;
     ProtectedPtr<FunctionPrototype> functionPrototype;
     ProtectedPtr<ArrayPrototype> arrayPrototype;

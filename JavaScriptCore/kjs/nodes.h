@@ -42,6 +42,7 @@
 
 namespace KJS {
 
+    class ArgumentsNode;
     class ConstDeclNode;
     class FuncDeclNode;
     class Node;
@@ -205,6 +206,10 @@ namespace KJS {
 
         // Used to optimize those nodes that do extra work when returning a result, even if the result has no semantic relevance
         virtual void optimizeForUnnecessaryResult() { }
+
+    protected:
+        typedef enum { EvalOperator, FunctionCall } CallerType;
+        template <CallerType> inline JSValue* resolveAndCall(ExecState*, const Identifier&, ArgumentsNode*);
     };
 
     class StatementNode : public Node {
@@ -677,6 +682,22 @@ namespace KJS {
         ALWAYS_INLINE JSValue* inlineEvaluate(ExecState*);
 
         RefPtr<ExpressionNode> m_expr;
+        RefPtr<ArgumentsNode> m_args;
+    };
+
+    class EvalFunctionCallNode : public ExpressionNode {
+    public:
+        EvalFunctionCallNode(ArgumentsNode* args) KJS_FAST_CALL
+            : m_args(args)
+        {
+        }
+
+        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+        virtual Precedence precedence() const { return PrecCall; }
+
+    private:
         RefPtr<ArgumentsNode> m_args;
     };
 

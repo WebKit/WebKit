@@ -426,6 +426,11 @@ void NewExprNode::streamTo(SourceStream& s) const
     s << "new " << PrecMember << m_expr << m_args;
 }
 
+void EvalFunctionCallNode::streamTo(SourceStream& s) const
+{
+    s << "eval" << m_args;
+}
+
 void FunctionCallValueNode::streamTo(SourceStream& s) const
 {
     s << PrecCall << m_expr << m_args;

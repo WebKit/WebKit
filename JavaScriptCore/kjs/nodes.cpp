@@ -948,6 +948,70 @@ uint32_t NewExprNode::evaluateToUInt32(ExecState* exec)
     return v->toUInt32(exec);
 }
 
+template <ExpressionNode::CallerType callerType> 
+inline JSValue* ExpressionNode::resolveAndCall(ExecState* exec, const Identifier& ident, ArgumentsNode* args)
+{
+    const ScopeChain& chain = exec->scopeChain();
+    ScopeChainIterator iter = chain.begin();
+    ScopeChainIterator end = chain.end();
+
+    // we must always have something in the scope chain
+    ASSERT(iter != end);
+
+    PropertySlot slot;
+    JSObject* base;
+    do {
+        base = *iter;
+        if (base->getPropertySlot(exec, ident, slot)) {
+            JSValue* v = slot.getValue(exec, base, ident);
+            KJS_CHECKEXCEPTIONVALUE
+
+            if (!v->isObject())
+                return throwError(exec, TypeError, "Value %s (result of expression %s) is not object.", v, ident);
+
+            JSObject* func = static_cast<JSObject*>(v);
+
+            if (!func->implementsCall())
+                return throwError(exec, TypeError, "Object %s (result of expression %s) does not allow calls.", v, ident);
+
+            List argList;
+            args->evaluateList(exec, argList);
+            KJS_CHECKEXCEPTIONVALUE
+
+            JSObject* thisObj = base;
+            // ECMA 11.2.3 says that in this situation the this value should be null.
+            // However, section 10.2.3 says that in the case where the value provided
+            // by the caller is null, the global object should be used. It also says
+            // that the section does not apply to internal functions, but for simplicity
+            // of implementation we use the global object anyway here. This guarantees
+            // that in host objects you always get a valid object for this.
+            if (thisObj->isActivationObject())
+                thisObj = exec->dynamicGlobalObject();
+
+            if (callerType == EvalOperator) {
+                if (base == exec->lexicalGlobalObject() && func == exec->lexicalGlobalObject()->evalFunction()) {
+                    exec->dynamicGlobalObject()->tearOffActivation(exec);
+                    return eval(exec, exec->scopeChain(), exec->variableObject(), exec->dynamicGlobalObject(), exec->thisValue(), argList);
+                }
+            }
+            return func->call(exec, thisObj, argList);
+        }
+        ++iter;
+    } while (iter != end);
+
+    return throwUndefinedVariableError(exec, ident);
+}
+
+void EvalFunctionCallNode::optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack& nodeStack)
+{
+    nodeStack.append(m_args.get());
+}
+
+JSValue* EvalFunctionCallNode::evaluate(ExecState* exec)
+{
+    return resolveAndCall<EvalOperator>(exec, exec->propertyNames().eval, m_args.get());
+}
+
 void FunctionCallValueNode::optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack& nodeStack)
 {
     nodeStack.append(m_args.get());
@@ -994,49 +1058,7 @@ JSValue* FunctionCallResolveNode::inlineEvaluate(ExecState* exec)
     // Check for missed optimization opportunity.
     ASSERT(!canSkipLookup(exec, m_ident));
 
-    const ScopeChain& chain = exec->scopeChain();
-    ScopeChainIterator iter = chain.begin();
-    ScopeChainIterator end = chain.end();
-
-    // we must always have something in the scope chain
-    ASSERT(iter != end);
-
-    PropertySlot slot;
-    JSObject* base;
-    do {
-        base = *iter;
-        if (base->getPropertySlot(exec, m_ident, slot)) {
-            JSValue* v = slot.getValue(exec, base, m_ident);
-            KJS_CHECKEXCEPTIONVALUE
-
-            if (!v->isObject())
-                return throwError(exec, TypeError, "Value %s (result of expression %s) is not object.", v, m_ident);
-
-            JSObject* func = static_cast<JSObject*>(v);
-
-            if (!func->implementsCall())
-                return throwError(exec, TypeError, "Object %s (result of expression %s) does not allow calls.", v, m_ident);
-
-            List argList;
-            m_args->evaluateList(exec, argList);
-            KJS_CHECKEXCEPTIONVALUE
-
-            JSObject* thisObj = base;
-            // ECMA 11.2.3 says that in this situation the this value should be null.
-            // However, section 10.2.3 says that in the case where the value provided
-            // by the caller is null, the global object should be used. It also says
-            // that the section does not apply to internal functions, but for simplicity
-            // of implementation we use the global object anyway here. This guarantees
-            // that in host objects you always get a valid object for this.
-            if (thisObj->isActivationObject())
-                thisObj = exec->dynamicGlobalObject();
-
-            return func->call(exec, thisObj, argList);
-        }
-        ++iter;
-    } while (iter != end);
-
-    return throwUndefinedVariableError(exec, m_ident);
+    return resolveAndCall<FunctionCall>(exec, m_ident, m_args.get());
 }
 
 JSValue* FunctionCallResolveNode::evaluate(ExecState* exec)

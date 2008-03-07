@@ -227,6 +227,8 @@ void JSGlobalObject::reset(JSValue* prototype)
     d()->typeErrorConstructor = 0;
     d()->URIErrorConstructor = 0;
 
+    d()->evalFunction = 0;
+
     ExecState* exec = &d()->globalExec;
 
     // Prototypes
@@ -315,7 +317,8 @@ void JSGlobalObject::reset(JSValue* prototype)
 
     // Set global functions.
 
-    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "eval", globalFuncEval), DontEnum);
+    d()->evalFunction = new PrototypeReflexiveFunction(exec, d()->functionPrototype, 1, exec->propertyNames().eval, globalFuncEval);
+    putDirectFunction(d()->evalFunction, DontEnum);
     putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 2, "parseInt", globalFuncParseInt), DontEnum);
     putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "parseFloat", globalFuncParseFloat), DontEnum);
     putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "isNaN", globalFuncIsNaN), DontEnum);
@@ -417,6 +420,8 @@ void JSGlobalObject::saveBuiltins(SavedBuiltins& builtins) const
     builtins._internal->typeErrorConstructor = d()->typeErrorConstructor;
     builtins._internal->URIErrorConstructor = d()->URIErrorConstructor;
     
+    builtins._internal->evalFunction = d()->evalFunction;
+    
     builtins._internal->objectPrototype = d()->objectPrototype;
     builtins._internal->functionPrototype = d()->functionPrototype;
     builtins._internal->arrayPrototype = d()->arrayPrototype;
@@ -454,6 +459,8 @@ void JSGlobalObject::restoreBuiltins(const SavedBuiltins& builtins)
     d()->syntaxErrorConstructor = builtins._internal->syntaxErrorConstructor;
     d()->typeErrorConstructor = builtins._internal->typeErrorConstructor;
     d()->URIErrorConstructor = builtins._internal->URIErrorConstructor;
+    
+    d()->evalFunction = builtins._internal->evalFunction;
 
     d()->objectPrototype = builtins._internal->objectPrototype;
     d()->functionPrototype = builtins._internal->functionPrototype;
@@ -493,6 +500,8 @@ void JSGlobalObject::mark()
     markIfNeeded(d()->syntaxErrorConstructor);
     markIfNeeded(d()->typeErrorConstructor);
     markIfNeeded(d()->URIErrorConstructor);
+    
+    markIfNeeded(d()->evalFunction);
     
     markIfNeeded(d()->objectPrototype);
     markIfNeeded(d()->functionPrototype);

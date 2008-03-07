@@ -48,6 +48,7 @@ namespace KJS {
     class NumberPrototype;
     class ObjectObjectImp;
     class ObjectPrototype;
+    class PrototypeReflexiveFunction;
     class RangeError;
     class RangeErrorPrototype;
     class ReferenceError;
@@ -109,6 +110,8 @@ namespace KJS {
             NativeErrorImp* typeErrorConstructor;
             NativeErrorImp* URIErrorConstructor;
 
+            PrototypeReflexiveFunction* evalFunction;
+
             ObjectPrototype* objectPrototype;
             FunctionPrototype* functionPrototype;
             ArrayPrototype* arrayPrototype;
@@ -124,7 +127,7 @@ namespace KJS {
             NativeErrorPrototype* syntaxErrorPrototype;
             NativeErrorPrototype* typeErrorPrototype;
             NativeErrorPrototype* URIErrorPrototype;
-
+            
             SymbolTable inlineSymbolTable;
 
             ActivationStackNode* activations;
@@ -180,6 +183,8 @@ namespace KJS {
         NativeErrorImp* syntaxErrorConstructor() const { return d()->syntaxErrorConstructor; }
         NativeErrorImp* typeErrorConstructor() const { return d()->typeErrorConstructor; }
         NativeErrorImp* URIErrorConstructor() const { return d()->URIErrorConstructor; }
+
+        PrototypeReflexiveFunction* evalFunction() const { return d()->evalFunction; }
 
         ObjectPrototype* objectPrototype() const { return d()->objectPrototype; }
         FunctionPrototype* functionPrototype() const { return d()->functionPrototype; }

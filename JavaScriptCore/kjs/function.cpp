@@ -703,7 +703,7 @@ static double parseFloat(const UString& s)
     return s.toDouble( true /*tolerant*/, false /* NaN for empty string */ );
 }
 
-JSValue* globalFuncEval(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* eval(ExecState* exec, const ScopeChain& scopeChain, JSVariableObject* variableObject, JSGlobalObject* globalObject, JSObject* thisObj, const List& args)
 {
     JSValue* x = args[0];
     if (!x->isString())
@@ -723,24 +723,12 @@ JSValue* globalFuncEval(ExecState* exec, JSObject* thisObj, const List& args)
             return jsUndefined();
     }
 
-    // No program node means a syntax occurred
     if (!evalNode)
         return throwError(exec, SyntaxError, errMsg, errLine, sourceId, NULL);
 
-    bool switchGlobal = thisObj && thisObj != exec->dynamicGlobalObject() && thisObj->isGlobalObject();
+    EvalExecState newExec(globalObject, thisObj, evalNode.get(), exec, scopeChain, variableObject);
 
-    // enter a new execution context
-    exec->dynamicGlobalObject()->tearOffActivation(exec);
-    JSGlobalObject* globalObject = switchGlobal ? static_cast<JSGlobalObject*>(thisObj) : exec->dynamicGlobalObject();
-    EvalExecState newExec(globalObject, evalNode.get(), exec);
-
-    if (switchGlobal) {
-        newExec.pushScope(thisObj);
-        newExec.setVariableObject(static_cast<JSGlobalObject*>(thisObj));
-    }
     JSValue* value = evalNode->execute(&newExec);
-    if (switchGlobal)
-        newExec.popScope();
 
     if (newExec.completionType() == Throw) {
         exec->setException(value);
@@ -748,6 +736,17 @@ JSValue* globalFuncEval(ExecState* exec, JSObject* thisObj, const List& args)
     }
 
     return value ? value : jsUndefined();
+}
+
+JSValue* globalFuncEval(ExecState* exec, PrototypeReflexiveFunction* function, JSObject* thisObj, const List& args)
+{
+    JSGlobalObject* globalObject = thisObj->isGlobalObject() ? static_cast<JSGlobalObject*>(thisObj) : 0;
+
+    if (!globalObject || globalObject->evalFunction() != function)
+        return throwError(exec, EvalError, "The \"this\" value passed to eval must be the global object from which eval originated");
+
+    ScopeChain scopeChain(globalObject);
+    return eval(exec, scopeChain, globalObject, globalObject, globalObject, args);
 }
 
 JSValue* globalFuncParseInt(ExecState* exec, JSObject*, const List& args)
@@ -889,6 +888,21 @@ PrototypeFunction::PrototypeFunction(ExecState* exec, FunctionPrototype* functio
 JSValue* PrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
     return m_function(exec, thisObj, args);
+}
+
+// ------------------------------ PrototypeReflexiveFunction -------------------------------
+
+PrototypeReflexiveFunction::PrototypeReflexiveFunction(ExecState* exec, FunctionPrototype* functionPrototype, int len, const Identifier& name, JSMemberFunction function)
+    : InternalFunctionImp(functionPrototype, name)
+    , m_function(function)
+{
+    ASSERT_ARG(function, function);
+    putDirect(exec->propertyNames().length, jsNumber(len), DontDelete | ReadOnly | DontEnum);
+}
+
+JSValue* PrototypeReflexiveFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+{
+    return m_function(exec, this, thisObj, args);
 }
 
 } // namespace KJS

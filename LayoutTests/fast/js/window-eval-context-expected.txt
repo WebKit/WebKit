@@ -1,6 +1,0 @@
-
-Test that otherWindow.eval() keeps variables of calling context visible: PASS
-Test that otherWindow.eval() is executed with otherWindow in scope: PASS
-Test that otherWindow.eval() has otherWindow as the window object: PASS
-Test that otherWindow.eval() does not change 'this': PASS
-Test that otherWindow.eval() changes variable context: PASS

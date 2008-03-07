@@ -1159,7 +1159,10 @@ static ExpressionNode* makeFunctionCallNode(ExpressionNode* func, ArgumentsNode*
         return new FunctionCallValueNode(func, args);
     if (func->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(func);
-        return new FunctionCallResolveNode(resolve->identifier(), args);
+        const Identifier& identifier = resolve->identifier();
+        if (identifier == CommonIdentifiers::shared()->eval)
+            return new EvalFunctionCallNode(args);
+        return new FunctionCallResolveNode(identifier, args);
     }
     if (func->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(func);

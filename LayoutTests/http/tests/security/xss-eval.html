@@ -1,0 +1,41 @@
+<p>This page verifies that you can't use eval to subvert cross-domain checks.</p>
+<p>If the test passes, you'll see a pass message below.</p>
+<hr>
+<pre id="console"></pre>
+
+<iframe style="width:0; height: 0" src="resources/xss-eval2.html"></iframe>
+
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function log(s)
+{
+    document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
+}
+
+function shouldBe(aDescription, a, b)
+{
+    if (a === b) {
+        log("PASS: " + aDescription + " should be " + b + " and is.");
+    } else {
+        log("FAIL: " + aDescription + " should be " + b + " but instead is " + a + ".");
+    }
+}
+
+addEventListener("message", function()
+{
+    shouldBe("eval.call(frames[0], 'document')", (function() { try { return eval.call(frames[0], 'document'); } catch(e) { return e.name; } })(), "EvalError");
+
+    shouldBe("childEval.call(frames[0], 'document')", (function() { try { return childEval.call(frames[0], 'document'); } catch(e) { return e.name; } })(), "EvalError");
+
+    shouldBe("childEvalCaller('document')", (function() { try { return childEvalCaller('document'); } catch(e) { return e.name; } })(), "TypeError");
+    
+    shouldBe("childLocalEvalCaller('document')", (function() { try { return childLocalEvalCaller('document'); } catch(e) { return e.name; } })(), "EvalError");
+    
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}, false);
+</script>

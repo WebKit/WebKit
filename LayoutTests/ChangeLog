@@ -1,3 +1,31 @@
+2008-03-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Tests for <rdar://problem/5689093> Stricter (ES4) eval semantics
+        
+        * fast/js/eval-cross-window-expected.txt: Added.
+        * fast/js/eval-cross-window.html: Added.
+        * fast/js/eval-keyword-vs-function-expected.txt: Added.
+        * fast/js/eval-keyword-vs-function.html: Added.
+        * fast/js/eval-overriding-expected.txt: Added.
+        * fast/js/eval-overriding.html: Added.
+        
+        Tests to make sure not to regress security:
+
+        * http/tests/security/resources/xss-eval2.html: Added.
+        * http/tests/security/resources/xss-eval3.html: Added.
+        * http/tests/security/xss-eval-expected.txt: Added.
+        * http/tests/security/xss-eval.html: Added.
+
+        I removed these tests because we no longer match the behavior they
+        expected, and the new tests are more comprehensive:
+        
+        * fast/js/window-eval-context-expected.txt: Removed.
+        * fast/js/window-eval-context.html: Removed.
+        * fast/js/window-eval-tearoff-expected.txt: Removed.
+        * fast/js/window-eval-tearoff.html: Removed.
+
 2008-03-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mitz.
