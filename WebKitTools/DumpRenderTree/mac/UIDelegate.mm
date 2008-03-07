@@ -98,9 +98,11 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 - (void)webViewFocus:(WebView *)webView
 {
     layoutTestController->setWindowIsKey(true);
-    NSView *documentView = [[mainFrame frameView] documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _updateFocusedAndActiveState];
+}
+
+- (void)webViewUnfocus:(WebView *)webView
+{
+    layoutTestController->setWindowIsKey(false);
 }
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request

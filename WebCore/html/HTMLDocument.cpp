@@ -60,8 +60,10 @@
 #include "DocumentLoader.h"
 #include "DocumentType.h"
 #include "ExceptionCode.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLBodyElement.h"
 #include "HTMLElement.h"
@@ -138,6 +140,25 @@ void HTMLDocument::setDesignMode(const String& value)
 String HTMLDocument::compatMode() const
 {
     return inCompatMode() ? "BackCompat" : "CSS1Compat";
+}
+
+Element* HTMLDocument::activeElement()
+{
+    if (Node* node = focusedNode())
+        if (node->isElementNode())
+            return static_cast<Element*>(node);
+    return body();
+}
+
+bool HTMLDocument::hasFocus()
+{
+    if (!page()->focusController()->isActive())
+        return false;
+    if (Frame* focusedFrame = page()->focusController()->focusedFrame()) {
+        if (focusedFrame->tree()->isDescendantOf(frame()))
+            return true;
+    }
+    return false;
 }
 
 String HTMLDocument::bgColor()

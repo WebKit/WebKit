@@ -54,6 +54,9 @@ module html {
                  attribute [ConvertNullToNullString] DOMString designMode;
         readonly attribute DOMString compatMode;
 
+        readonly attribute Element activeElement;
+        boolean hasFocus();
+
         // Deprecated attributes
                  attribute [ConvertNullToNullString] DOMString bgColor;
                  attribute [ConvertNullToNullString] DOMString fgColor;

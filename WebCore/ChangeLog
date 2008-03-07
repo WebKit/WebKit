@@ -1,3 +1,19 @@
+2008-03-06  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fixes for for <rdar://problem/5785892> Implement activeElement attribute for HTMLDocument (HTML5)
+        and <rdar://problem/5785895> Implement hasFocus() for HTMLDocument (HTML5)
+
+        Tests: fast/dom/HTMLDocument/activeElement.html
+               fast/dom/HTMLDocument/hasFocus.html
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::activeElement): Added. Returns the focused element, or the body element if nothing's focused.
+        (WebCore::HTMLDocument::hasFocus): Added. Returns whether or not the document has focus (inclusive of sub-frames).
+        * html/HTMLDocument.h: Added methods for activeElement and hasFocus.
+        * html/HTMLDocument.idl: Added definitions for activeElement and hasFocus.
+
 2008-03-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

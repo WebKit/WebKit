@@ -1,3 +1,16 @@
+2008-03-06  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Tests for <rdar://problem/5785892> Implement activeElement attribute for HTMLDocument (HTML5)
+        and <rdar://problem/5785895> Implement hasFocus() for HTMLDocument (HTML5)
+
+        * fast/dom/HTMLDocument/activeElement-expected.txt: Added.
+        * fast/dom/HTMLDocument/activeElement.html: Added.
+        * fast/dom/HTMLDocument/hasFocus-expected.txt: Added.
+        * fast/dom/HTMLDocument/hasFocus.html: Added.
+        * fast/dom/HTMLDocument/resources/hasFocus-iframe.html: Added.
+
 2008-03-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

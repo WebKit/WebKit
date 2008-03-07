@@ -1,3 +1,14 @@
+2008-03-06  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Updated for testing <rdar://problem/5785895> Implement hasFocus() for HTMLDocument (HTML5)
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webViewFocus:]): Remove duplicate code that was also in LayoutTestController::setWindowIsKey
+        (-[UIDelegate webViewUnfocus:]): Added.  In Safari, the default is to focus another window if there is one.
+         To easily test cases where the window is unfocused, I made this just call setWindowIsKey(false).
+
 2008-03-06  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Adam Roben.
