@@ -2,6 +2,12 @@
 
         Build fix.
 
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj:
+
+2008-03-06  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
         * JavaScriptCore.vcproj/WTF/WTF.vcproj:
 
 2008-03-06  Alp Toker  <alp@atoker.com>
