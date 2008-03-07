@@ -1,4 +1,30 @@
-2008-03-06  Adam Roben  <aroben@apple.com>
+2008-03-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - eliminated WebCoreFrameBridge runOpenPanel
+
+        * page/ChromeClient.h: Added runOpenPanel function.
+        * page/mac/ChromeMac.mm:
+        (WebCore::ChromeClient::runOpenPanel): Added.
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::FileChooser): Moved this here. It's no longer platform-specific.
+        Also start the refcount at 1.
+        (WebCore::FileChooser::create): Added adoptRef since the refcount no starts at one.
+        (WebCore::FileChooser::~FileChooser): Moved here. No longer platform-specific.
+        * platform/FileChooser.h: Removed m_controller, which was Macintosh-specific.
+        * platform/gtk/FileChooserGtk.cpp: Removed FileChooser constructor and destructor,
+        since they are no longer platform-specific.
+        * platform/qt/FileChooserQt.cpp: Ditto.
+        * platform/win/FileChooserWin.cpp: Ditto.
+        * platform/wx/TemporaryLinkStubs.cpp: Ditto.
+        * platform/mac/FileChooserMac.mm:
+        (WebCore::FileChooser::openFileChooser): Call the chrome client instead of the
+        bridge to run the open panel. Allows us to get rid of the WebCoreOpenPanelController
+        class and m_controller data member and move the cosntrutor/destructor to platform-
+        independent code.
+
+2008-03-07  Adam Roben  <aroben@apple.com>
 
         Add JavaScriptDebugServer
 

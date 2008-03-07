@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,6 +22,7 @@
 #import "Chrome.h"
 
 #import "BlockExceptions.h"
+#import "ChromeClient.h"
 #import "Frame.h"
 #import "Page.h"
 
@@ -51,5 +52,8 @@ void Chrome::focusNSView(NSView* view)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-} // namespace WebCore
+void ChromeClient::runOpenPanel(PassRefPtr<FileChooser>)
+{
+}
 
+} // namespace WebCore

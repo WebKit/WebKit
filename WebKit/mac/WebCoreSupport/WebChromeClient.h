@@ -106,6 +106,8 @@ public:
 
     virtual void dashboardRegionsChanged();
 
+    virtual void runOpenPanel(PassRefPtr<WebCore::FileChooser>);
+
 private:
     WebView *m_webView;
 };

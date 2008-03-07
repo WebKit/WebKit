@@ -31,18 +31,6 @@
 
 namespace WebCore {
 
-FileChooser::FileChooser(FileChooserClient* client, const String& filename)
-    : RefCounted<FileChooser>(0)
-    , m_client(client)
-    , m_filename(filename)
-    , m_icon(chooseIcon(filename))
-{
-}
-
-FileChooser::~FileChooser()
-{
-}
-
 void FileChooser::openFileChooser(Document* doc)
 {
     Page *page = doc->page();

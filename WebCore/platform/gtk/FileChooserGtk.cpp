@@ -56,18 +56,6 @@ static bool stringByAdoptingFileSystemRepresentation(gchar* systemFilename, Stri
     return true;
 }
 
-FileChooser::FileChooser(FileChooserClient* client, const String& filename)
-    : RefCounted<FileChooser>(0)
-    , m_client(client)
-    , m_filename(filename)
-    , m_icon(chooseIcon(filename))
-{
-}
-
-FileChooser::~FileChooser()
-{
-}
-
 void FileChooser::openFileChooser(Document* document)
 {
     FrameView* view = document->view();

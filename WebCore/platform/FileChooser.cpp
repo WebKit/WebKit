@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,9 +33,20 @@
 
 namespace WebCore {
     
+inline FileChooser::FileChooser(FileChooserClient* client, const String& filename)
+    : m_client(client)
+    , m_filename(filename)
+    , m_icon(chooseIcon(filename))
+{
+}
+
 PassRefPtr<FileChooser> FileChooser::create(FileChooserClient* client, const String& filename)
 {
-    return new FileChooser(client, filename);
+    return adoptRef(new FileChooser(client, filename));
+}
+
+FileChooser::~FileChooser()
+{
 }
 
 void FileChooser::clear()

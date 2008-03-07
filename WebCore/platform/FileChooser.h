@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,16 +31,6 @@
 #define FileChooser_h
 
 #include "PlatformString.h"
-#include <wtf/RefPtr.h>
-
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-#ifdef __OBJC__
-@class OpenPanelController;
-#else
-class OpenPanelController;
-#endif
-#endif
 
 namespace WebCore {
 
@@ -64,8 +54,9 @@ public:
 
     // FIXME: It's a layering violation that we pass a Document in here.
     // The platform directory is underneath the DOM, so it can't use the DOM.
-    // Because of UI delegates, it's not clear that this class belongs in the platform
-    // layer at all. It might need to go alongside the Chrome class instead.
+    // Because of UI delegates, it's not clear that the FileChooser class
+    // belongs in the platform layer at all. It might need to go alongside
+    // the Chrome class instead.
     void openFileChooser(Document*);
 
     const String& filename() const { return m_filename; }
@@ -84,10 +75,6 @@ private:
     FileChooserClient* m_client;
     String m_filename;
     RefPtr<Icon> m_icon;
-
-#if PLATFORM(MAC)
-    RetainPtr<OpenPanelController> m_controller;
-#endif
 };
 
 }

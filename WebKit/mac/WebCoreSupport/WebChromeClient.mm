@@ -33,17 +33,17 @@
 #import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
-#import "WebHTMLView.h"
-#import "WebHTMLViewPrivate.h"
+#import "WebHTMLViewInternal.h"
+#import "WebJavaPlugIn.h"
 #import "WebHistoryInternal.h"
 #import "WebKitSystemInterface.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebSecurityOriginInternal.h"
-#import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <WebCore/BlockExceptions.h>
+#import <WebCore/FileChooser.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
@@ -53,14 +53,30 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/Widget.h>
 #import <WebCore/WindowFeatures.h>
 #import <wtf/PassRefPtr.h>
 
-@interface NSView (AppKitSecretsWebBridgeKnowsAbout)
+@interface NSView (NSViewDetails)
 - (NSView *)_findLastViewInKeyViewLoop;
 @end
 
+@interface NSView (JavaPluginDetails)
+- (jobject)pollForAppletInWindow:(NSWindow *)window;
+@end
+
+// For compatibility with old SPI.
+@interface NSView (OldWebKitPlugInDetails)
+- (void)setIsSelected:(BOOL)isSelected;
+@end
+
 using namespace WebCore;
+
+@interface WebOpenPanelResultListener : NSObject <WebOpenPanelResultListener> {
+    FileChooser* _chooser;
+}
+- (id)initWithChooser:(PassRefPtr<FileChooser>)chooser;
+@end
 
 WebChromeClient::WebChromeClient(WebView *webView) 
     : m_webView(webView)
@@ -439,3 +455,58 @@ void WebChromeClient::dashboardRegionsChanged()
 
     CallUIDelegate(m_webView, @selector(webView:dashboardRegionsChanged:), regions);
 }
+
+void WebChromeClient::runOpenPanel(PassRefPtr<FileChooser> chooser)
+{
+    WebOpenPanelResultListener *listener = [[WebOpenPanelResultListener alloc] initWithChooser:chooser];
+    CallUIDelegate(m_webView, @selector(webView:runOpenPanelForFileButtonWithResultListener:), listener);
+    [listener release];
+}
+
+@implementation WebOpenPanelResultListener
+
+- (id)initWithChooser:(PassRefPtr<FileChooser>)chooser
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _chooser = chooser.releaseRef();
+    return self;
+}
+
+#ifndef NDEBUG
+
+- (void)dealloc
+{
+    ASSERT(!_chooser);
+    [super dealloc];
+}
+
+- (void)finalize
+{
+    ASSERT(!_chooser);
+    [super finalize];
+}
+
+#endif
+
+- (void)cancel
+{
+    ASSERT(_chooser);
+    if (!_chooser)
+        return;
+    _chooser->deref();
+    _chooser = 0;
+}
+
+- (void)chooseFilename:(NSString *)filename
+{
+    ASSERT(_chooser);
+    if (!_chooser)
+        return;
+    _chooser->chooseFile(filename);
+    _chooser->deref();
+    _chooser = 0;
+}
+
+@end
