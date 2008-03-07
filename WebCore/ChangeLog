@@ -1,3 +1,18 @@
+2008-03-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5741981> 154008 WebKit: Some asian language font glyphs are not shown (in Mail and Entourage)
+
+        Test: fast/text/soft-hyphen-3.html
+
+        * rendering/bidi.cpp:
+        (WebCore::checkMidpoints):
+        (WebCore::RenderBlock::findNextLineBreak): Made 'pos' unsigned. Made the
+        midpoint after a hyphen always be a valid iterator, not allowing an
+        offset past the end of a text node. Changed the check for consecutive
+        soft hyphens to account for that.
+
 2008-03-06  Darin Adler  <darin@apple.com>
 
         - try to fix Wx build

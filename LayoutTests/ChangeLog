@@ -1,3 +1,15 @@
+2008-03-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test and updated results for <rdar://problem/5741981> 154008 WebKit: Some asian language font glyphs are not shown (in Mail and Entourage)
+
+        * fast/text/soft-hyphen-3.html: Added.
+        * platform/mac/fast/text/basic/014-expected.txt:
+        * platform/mac/fast/text/soft-hyphen-3-expected.checksum: Added.
+        * platform/mac/fast/text/soft-hyphen-3-expected.png: Added.
+        * platform/mac/fast/text/soft-hyphen-3-expected.txt: Added.
+
 2008-03-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

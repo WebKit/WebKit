@@ -339,7 +339,7 @@ static void checkMidpoints(BidiIterator& lBreak, BidiState& bidi)
     // Check to see if our last midpoint is a start point beyond the line break.  If so,
     // shave it off the list, and shave off a trailing space if the previous end point doesn't
     // preserve whitespace.
-    if (lBreak.obj && sNumMidpoints && sNumMidpoints%2 == 0) {
+    if (lBreak.obj && sNumMidpoints && sNumMidpoints % 2 == 0) {
         BidiIterator* midpoints = smidpoints->data();
         BidiIterator& endpoint = midpoints[sNumMidpoints-2];
         const BidiIterator& startpoint = midpoints[sNumMidpoints-1];
@@ -1333,7 +1333,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
     RenderObject *o = start.obj;
     RenderObject *last = o;
     RenderObject *previous = o;
-    int pos = start.pos;
+    unsigned pos = start.pos;
     bool atStart = true;
 
     bool prevLineBrokeCleanly = previousLineBrokeCleanly;
@@ -1543,28 +1543,30 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 if (c == softHyphen) {
                     if (!ignoringSpaces) {
                         // Ignore soft hyphens
-                        BidiIterator endMid;
-                        if (pos > 0)
-                            endMid = BidiIterator(0, o, pos - 1);
+                        BidiIterator beforeSoftHyphen;
+                        if (pos)
+                            beforeSoftHyphen = BidiIterator(0, o, pos - 1);
                         else
-                            endMid = BidiIterator(0, previous, previous->isText() ? static_cast<RenderText*>(previous)->textLength() - 1 : 0);
+                            beforeSoftHyphen = BidiIterator(0, previous, previous->isText() ? static_cast<RenderText*>(previous)->textLength() - 1 : 0);
                         // Two consecutive soft hyphens. Avoid overlapping midpoints.
-                        if (sNumMidpoints && smidpoints->at(sNumMidpoints - 1).obj == endMid.obj && smidpoints->at(sNumMidpoints - 1).pos > endMid.pos)
+                        if (sNumMidpoints && smidpoints->at(sNumMidpoints - 1).obj == o && smidpoints->at(sNumMidpoints - 1).pos == pos)
                             sNumMidpoints--;
                         else
-                            addMidpoint(endMid);
-                        
+                            addMidpoint(beforeSoftHyphen);
+
                         // Add the width up to but not including the hyphen.
                         tmpW += t->width(lastSpace, pos - lastSpace, f, w + tmpW) + lastSpaceWordSpacing;
-                        
+
                         // For wrapping text only, include the hyphen.  We need to ensure it will fit
                         // on the line if it shows when we break.
                         if (autoWrap)
                             tmpW += t->width(pos, 1, f, w + tmpW);
-                        
-                        addMidpoint(BidiIterator(0, o, pos + 1));
+
+                        BidiIterator afterSoftHyphen(0, o, pos);
+                        afterSoftHyphen.increment(bidi);
+                        addMidpoint(afterSoftHyphen);
                     }
-                    
+
                     pos++;
                     len--;
                     lastSpaceWordSpacing = 0;
