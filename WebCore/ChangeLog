@@ -1,3 +1,19 @@
+2008-03-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix regression test failures from the visited-link change
+
+        * WebCore.base.exp: Export PageGroup::setShouldTrackVisitedLinks.
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addVisitedLink): Do nothing and return early
+        if shouldTrackVisitedLinks is false.
+        (WebCore::PageGroup::removeVisitedLinks): Reset m_visitedLinksPopulated
+        so the next time a link is queried this will be populated from history.
+        (WebCore::PageGroup::setShouldTrackVisitedLinks): Added.
+        * page/PageGroup.h: Added setShouldTrackVisitedLinks. This is global
+        for now, but it would be better if it was per-page-group instead.
+
 2008-03-06  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

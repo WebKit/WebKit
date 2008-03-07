@@ -1,3 +1,14 @@
+2008-03-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix regression test failures from the visited-link change
+
+        * History/WebHistory.mm:
+        (+[WebHistory setOptionalSharedHistory:]): Call PageGroup::setShouldTrackVisitedLinks
+        to turn off visited links if there is no history object. Also call
+        removeAllVisitedLinks so we can start over from scratch with the new history.
+
 2008-03-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

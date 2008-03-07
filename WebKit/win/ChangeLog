@@ -1,3 +1,19 @@
+2008-03-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix regression test failures and crashes from the visited-link change
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::populateVisitedLinks): Check for null before calling
+        addVisitedLinksToPageGroup.
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::updateGlobalHistory): Ditto.
+        * WebHistory.cpp:
+        (WebHistory::setOptionalSharedHistory): Call PageGroup::setShouldTrackVisitedLinks
+        to turn off visited links if there is no history object. Also call
+        removeAllVisitedLinks so we can start over from scratch with the new history.
+
 2008-03-06  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Adam Roben.

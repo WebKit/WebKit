@@ -429,7 +429,10 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
 
 void WebFrameLoaderClient::updateGlobalHistory(const KURL& url)
 {
-    WebHistory::sharedHistory()->addItem(url, core(m_webFrame)->loader()->documentLoader()->title());                 
+    WebHistory* history = WebHistory::sharedHistory();
+    if (!history)
+        return;
+    history->addItem(url, core(m_webFrame)->loader()->documentLoader()->title());                 
 }
 
 bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem*) const

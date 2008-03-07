@@ -34,6 +34,8 @@ namespace WebCore {
 
 // --------
 
+static bool shouldTrackVisitedLinks;
+
 PageGroup::PageGroup(Page* page)
     : m_visitedLinksPopulated(false)
 {
@@ -236,23 +238,37 @@ bool PageGroup::isLinkVisited(Document* document, const AtomicString& attributeU
 
 void PageGroup::addVisitedLink(const KURL& url)
 {
+    if (!shouldTrackVisitedLinks)
+        return;
     ASSERT(!url.isEmpty());
     m_visitedLinkHashes.add(url.string().impl()->hash());
 }
 
 void PageGroup::addVisitedLink(const UChar* characters, size_t length)
 {
+    if (!shouldTrackVisitedLinks)
+        return;
     m_visitedLinkHashes.add(StringImpl::computeHash(characters, length));
 }
 
 void PageGroup::removeVisitedLinks()
 {
     m_visitedLinkHashes.clear();
+    m_visitedLinksPopulated = false;
 }
 
 void PageGroup::removeAllVisitedLinks()
 {
     Page::removeAllVisitedLinks();
+}
+
+void PageGroup::setShouldTrackVisitedLinks(bool shouldTrack)
+{
+    if (shouldTrackVisitedLinks == shouldTrack)
+        return;
+    shouldTrackVisitedLinks = shouldTrack;
+    if (!shouldTrackVisitedLinks)
+        removeAllVisitedLinks();
 }
 
 } // namespace WebCore

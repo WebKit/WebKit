@@ -192,7 +192,11 @@ HRESULT STDMETHODCALLTYPE WebHistory::optionalSharedHistory(
 HRESULT STDMETHODCALLTYPE WebHistory::setOptionalSharedHistory( 
     /* [in] */ IWebHistory* history)
 {
+    if (sharedHistoryStorage() == history)
+        return S_OK;
     sharedHistoryStorage().query(history);
+    PageGroup::setShouldTrackVisitedLinks(sharedHistoryStorage());
+    PageGroup::removeAllVisitedLinks();
     return S_OK;
 }
 

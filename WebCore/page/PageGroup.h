@@ -51,6 +51,8 @@ namespace WebCore {
         void addVisitedLink(const KURL&);
         void addVisitedLink(const UChar*, size_t);
         void removeVisitedLinks();
+
+        static void setShouldTrackVisitedLinks(bool);
         static void removeAllVisitedLinks();
 
     private:

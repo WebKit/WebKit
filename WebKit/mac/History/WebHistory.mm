@@ -643,12 +643,14 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
 + (void)setOptionalSharedHistory:(WebHistory *)history
 {
+    if (_sharedHistory == history)
+        return;
     // FIXME: Need to think about multiple instances of WebHistory per application
     // and correct synchronization of history file between applications.
-    if (_sharedHistory != history) {
-        [_sharedHistory release];
-        _sharedHistory = [history retain];
-    }
+    [_sharedHistory release];
+    _sharedHistory = [history retain];
+    PageGroup::setShouldTrackVisitedLinks(history);
+    PageGroup::removeAllVisitedLinks();
 }
 
 - (id)init
