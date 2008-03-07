@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\bridge&quot;;&quot;$(ProjectDir)..\bridge\c&quot;;&quot;$(ProjectDir)..\css&quot;;&quot;$(ProjectDir)..\editing&quot;;&quot;$(ProjectDir)..\rendering&quot;;&quot;$(ProjectDir)..\bindings\js&quot;;&quot;$(ProjectDir)..\dom&quot;;&quot;$(ProjectDir)..\history&quot;;&quot;$(ProjectDir)..\html&quot;;&quot;$(ProjectDir)..\loader&quot;;&quot;$(ProjectDir)..\loader\icon&quot;;&quot;$(ProjectDir)..\page&quot;;&quot;$(ProjectDir)..\page\win&quot;;&quot;$(ProjectDir)..\platform&quot;;&quot;$(ProjectDir)..\platform\sql&quot;;&quot;$(ProjectDir)..\platform\win&quot;;&quot;$(ProjectDir)..\platform\network&quot;;&quot;$(ProjectDir)..\platform\network\win&quot;;&quot;$(ProjectDir)..\platform\cf&quot;;&quot;$(ProjectDir)..\platform\network\cf&quot;;&quot;$(ProjectDir)..\platform\graphics&quot;;&quot;$(ProjectDir)..\platform\text&quot;;&quot;$(ProjectDir)..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\win&quot;;&quot;$(ProjectDir)..\platform\image-decoders&quot;;&quot;$(ProjectDir)..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)..\xml&quot;;&quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;;&quot;$(ProjectDir)..\plugins&quot;;&quot;$(ProjectDir)..\plugins\win&quot;;&quot;$(ProjectDir)..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)..\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)..\svg\graphics&quot;;&quot;$(ProjectDir)..\svg\graphics\cg&quot;;&quot;$(ProjectDir)..\svg\graphics\filters&quot;;&quot;$(ProjectDir)..\kcanvas&quot;;&quot;$(ProjectDir)..\kcanvas\device&quot;;&quot;$(ProjectDir)..\kcanvas\device\quartz&quot;;&quot;$(ProjectDir)..\svg&quot;;&quot;$(ProjectDir)..\storage&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\iconv&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include\sqlite&quot;;&quot;$(WebKitLibrariesDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(WebKitOutputDir)\include\QtMovieWin&quot;"
-				PreprocessorDefinitions="__WIN32__;ENABLE_CROSS_DOCUMENT_MESSAGING;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_AS_IMAGE;ENABLE_SVG_USE;ENABLE_SVG_FOREIGN_OBJECT;ENABLE_SVG_FONTS;WEBCORE_CONTEXT_MENUS;USE_SAFARI_THEME;ENABLE_VIDEO"
+				PreprocessorDefinitions="__WIN32__;ENABLE_CROSS_DOCUMENT_MESSAGING;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_AS_IMAGE;ENABLE_SVG_USE;ENABLE_SVG_FOREIGN_OBJECT;ENABLE_SVG_FONTS;WEBCORE_CONTEXT_MENUS;ENABLE_VIDEO"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="WebCorePrefix.h"
 				WarnAsError="false"
@@ -103,7 +103,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\bridge&quot;;&quot;$(ProjectDir)..\bridge\c&quot;;&quot;$(ProjectDir)..\css&quot;;&quot;$(ProjectDir)..\editing&quot;;&quot;$(ProjectDir)..\rendering&quot;;&quot;$(ProjectDir)..\bindings\js&quot;;&quot;$(ProjectDir)..\dom&quot;;&quot;$(ProjectDir)..\history&quot;;&quot;$(ProjectDir)..\html&quot;;&quot;$(ProjectDir)..\loader&quot;;&quot;$(ProjectDir)..\loader\icon&quot;;&quot;$(ProjectDir)..\page&quot;;&quot;$(ProjectDir)..\page\win&quot;;&quot;$(ProjectDir)..\platform&quot;;&quot;$(ProjectDir)..\platform\sql&quot;;&quot;$(ProjectDir)..\platform\win&quot;;&quot;$(ProjectDir)..\platform\network&quot;;&quot;$(ProjectDir)..\platform\network\win&quot;;&quot;$(ProjectDir)..\platform\cf&quot;;&quot;$(ProjectDir)..\platform\network\cf&quot;;&quot;$(ProjectDir)..\platform\graphics&quot;;&quot;$(ProjectDir)..\platform\text&quot;;&quot;$(ProjectDir)..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\win&quot;;&quot;$(ProjectDir)..\platform\image-decoders&quot;;&quot;$(ProjectDir)..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)..\xml&quot;;&quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;;&quot;$(ProjectDir)..\plugins&quot;;&quot;$(ProjectDir)..\plugins\win&quot;;&quot;$(ProjectDir)..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)..\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)..\svg\graphics&quot;;&quot;$(ProjectDir)..\svg\graphics\cg&quot;;&quot;$(ProjectDir)..\svg\graphics\filters&quot;;&quot;$(ProjectDir)..\kcanvas&quot;;&quot;$(ProjectDir)..\kcanvas\device&quot;;&quot;$(ProjectDir)..\kcanvas\device\quartz&quot;;&quot;$(ProjectDir)..\svg&quot;;&quot;$(ProjectDir)..\storage&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\iconv&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include\sqlite&quot;;&quot;$(WebKitLibrariesDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(WebKitOutputDir)\include\QtMovieWin&quot;"
-				PreprocessorDefinitions="__WIN32__;ENABLE_CROSS_DOCUMENT_MESSAGING;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_AS_IMAGE;ENABLE_SVG_USE;ENABLE_SVG_FOREIGN_OBJECT;ENABLE_SVG_FONTS;WEBCORE_CONTEXT_MENUS;USE_SAFARI_THEME;ENABLE_VIDEO"
+				PreprocessorDefinitions="__WIN32__;ENABLE_CROSS_DOCUMENT_MESSAGING;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_AS_IMAGE;ENABLE_SVG_USE;ENABLE_SVG_FOREIGN_OBJECT;ENABLE_SVG_FONTS;WEBCORE_CONTEXT_MENUS;ENABLE_VIDEO"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="WebCorePrefix.h"
 				WarnAsError="false"
@@ -164,7 +164,132 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\bridge&quot;;&quot;$(ProjectDir)..\bridge\c&quot;;&quot;$(ProjectDir)..\css&quot;;&quot;$(ProjectDir)..\editing&quot;;&quot;$(ProjectDir)..\rendering&quot;;&quot;$(ProjectDir)..\bindings\js&quot;;&quot;$(ProjectDir)..\dom&quot;;&quot;$(ProjectDir)..\history&quot;;&quot;$(ProjectDir)..\html&quot;;&quot;$(ProjectDir)..\loader&quot;;&quot;$(ProjectDir)..\loader\icon&quot;;&quot;$(ProjectDir)..\page&quot;;&quot;$(ProjectDir)..\page\win&quot;;&quot;$(ProjectDir)..\platform&quot;;&quot;$(ProjectDir)..\platform\sql&quot;;&quot;$(ProjectDir)..\platform\win&quot;;&quot;$(ProjectDir)..\platform\network&quot;;&quot;$(ProjectDir)..\platform\network\win&quot;;&quot;$(ProjectDir)..\platform\cf&quot;;&quot;$(ProjectDir)..\platform\network\cf&quot;;&quot;$(ProjectDir)..\platform\graphics&quot;;&quot;$(ProjectDir)..\platform\text&quot;;&quot;$(ProjectDir)..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\win&quot;;&quot;$(ProjectDir)..\platform\image-decoders&quot;;&quot;$(ProjectDir)..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)..\xml&quot;;&quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;;&quot;$(ProjectDir)..\plugins&quot;;&quot;$(ProjectDir)..\plugins\win&quot;;&quot;$(ProjectDir)..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)..\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)..\svg\graphics&quot;;&quot;$(ProjectDir)..\svg\graphics\cg&quot;;&quot;$(ProjectDir)..\svg\graphics\filters&quot;;&quot;$(ProjectDir)..\kcanvas&quot;;&quot;$(ProjectDir)..\kcanvas\device&quot;;&quot;$(ProjectDir)..\kcanvas\device\quartz&quot;;&quot;$(ProjectDir)..\svg&quot;;&quot;$(ProjectDir)..\storage&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\iconv&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include\sqlite&quot;;&quot;$(WebKitLibrariesDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(WebKitOutputDir)\include\QtMovieWin&quot;"
-				PreprocessorDefinitions="__WIN32__;ENABLE_CROSS_DOCUMENT_MESSAGING;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_AS_IMAGE;ENABLE_SVG_USE;ENABLE_SVG_FOREIGN_OBJECT;ENABLE_SVG_FONTS;WEBCORE_CONTEXT_MENUS;USE_SAFARI_THEME;ENABLE_VIDEO"
+				PreprocessorDefinitions="__WIN32__;ENABLE_CROSS_DOCUMENT_MESSAGING;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_AS_IMAGE;ENABLE_SVG_USE;ENABLE_SVG_FOREIGN_OBJECT;ENABLE_SVG_FONTS;WEBCORE_CONTEXT_MENUS;ENABLE_VIDEO"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="WebCorePrefix.h"
+				WarnAsError="false"
+				ForcedIncludeFiles="WebCorePrefix.h"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\bindings&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\kjs&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\pcre&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\wtf\unicode&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\wtf\unicode\icu&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\config.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\loader\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\loader\icon\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\history\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\html\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\css\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\cf\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\graphics\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\graphics\win\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\text\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\win\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\network\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\network\cf\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\network\win\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\sql\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\cairo\cairo\src\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\bindings\js\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\page\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\page\win\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\bridge\np*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\plugins\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\plugins\win\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\rendering\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\editing\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\dom\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\xml\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\svg\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\storage\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\bindings\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\bindings&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\kjs&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\pcre\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\pcre&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\wtf\unicode&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\wtf\unicode\icu&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\bin\WebKit.resources\inspector&quot;&#x0D;&#x0A;xcopy /y /d /s /exclude:xcopy.excludes &quot;$(ProjectDir)\..\page\inspector\*&quot; &quot;$(WebKitOutputDir)\bin\WebKit.resources\inspector&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\bin\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;xcopy /y /d /s /exclude:xcopy.excludes &quot;$(ProjectDir)\..\English.lproj\InspectorLocalizedStrings.js&quot; &quot;$(WebKitOutputDir)\bin\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug_Cairo|Win32"
+			OutputDirectory="$(WebKitOutputDir)\lib"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="4"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 0 set EnablePREfast=&quot;false&quot; else set EnablePREfast=&quot;true&quot;&#x0D;&#x0A;if ERRORLEVEL 0 set AnalyzeWithLargeStack=&quot;&quot; AnalyzeWithLargeStack=&quot;/analyze:65536&quot;&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\bridge&quot;;&quot;$(ProjectDir)..\bridge\c&quot;;&quot;$(ProjectDir)..\css&quot;;&quot;$(ProjectDir)..\editing&quot;;&quot;$(ProjectDir)..\rendering&quot;;&quot;$(ProjectDir)..\bindings\js&quot;;&quot;$(ProjectDir)..\dom&quot;;&quot;$(ProjectDir)..\history&quot;;&quot;$(ProjectDir)..\html&quot;;&quot;$(ProjectDir)..\loader&quot;;&quot;$(ProjectDir)..\loader\icon&quot;;&quot;$(ProjectDir)..\page&quot;;&quot;$(ProjectDir)..\page\win&quot;;&quot;$(ProjectDir)..\platform&quot;;&quot;$(ProjectDir)..\platform\sql&quot;;&quot;$(ProjectDir)..\platform\win&quot;;&quot;$(ProjectDir)..\platform\network&quot;;&quot;$(ProjectDir)..\platform\network\win&quot;;&quot;$(ProjectDir)..\platform\cf&quot;;&quot;$(ProjectDir)..\platform\network\cf&quot;;&quot;$(ProjectDir)..\platform\graphics&quot;;&quot;$(ProjectDir)..\platform\text&quot;;&quot;$(ProjectDir)..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\win&quot;;&quot;$(ProjectDir)..\platform\image-decoders&quot;;&quot;$(ProjectDir)..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)..\xml&quot;;&quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;;&quot;$(ProjectDir)..\plugins&quot;;&quot;$(ProjectDir)..\plugins\win&quot;;&quot;$(ProjectDir)..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)..\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)..\svg\graphics&quot;;&quot;$(ProjectDir)..\svg\graphics\cg&quot;;&quot;$(ProjectDir)..\svg\graphics\filters&quot;;&quot;$(ProjectDir)..\kcanvas&quot;;&quot;$(ProjectDir)..\kcanvas\device&quot;;&quot;$(ProjectDir)..\kcanvas\device\quartz&quot;;&quot;$(ProjectDir)..\svg&quot;;&quot;$(ProjectDir)..\storage&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\iconv&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include\sqlite&quot;;&quot;$(WebKitLibrariesDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(WebKitOutputDir)\include\QtMovieWin&quot;"
+				PreprocessorDefinitions="__WIN32__;ENABLE_CROSS_DOCUMENT_MESSAGING;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_AS_IMAGE;ENABLE_SVG_USE;ENABLE_SVG_FOREIGN_OBJECT;ENABLE_SVG_FONTS;WEBCORE_CONTEXT_MENUS;ENABLE_VIDEO"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="WebCorePrefix.h"
+				WarnAsError="false"
+				ForcedIncludeFiles="WebCorePrefix.h"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\bindings&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\kjs&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\pcre&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\wtf\unicode&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\wtf\unicode\icu&quot;&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\config.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\loader\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\loader\icon\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\history\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\html\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\css\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\cf\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\graphics\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\graphics\win\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\text\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\win\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\network\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\network\cf\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\network\win\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\sql\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\platform\cairo\cairo\src\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\bindings\js\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\page\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\page\win\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\bridge\np*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\plugins\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\plugins\win\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\rendering\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\editing\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\dom\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\xml\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\svg\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)..\storage\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\bindings\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\bindings&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\kjs\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\kjs&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\pcre\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\pcre&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\wtf&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\unicode\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\wtf\unicode&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(ProjectDir)\..\ForwardingHeaders\wtf\unicode\icu\*.h&quot; &quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders\wtf\unicode\icu&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\bin\WebKit.resources\inspector&quot;&#x0D;&#x0A;xcopy /y /d /s /exclude:xcopy.excludes &quot;$(ProjectDir)\..\page\inspector\*&quot; &quot;$(WebKitOutputDir)\bin\WebKit.resources\inspector&quot;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\bin\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;xcopy /y /d /s /exclude:xcopy.excludes &quot;$(ProjectDir)\..\English.lproj\InspectorLocalizedStrings.js&quot; &quot;$(WebKitOutputDir)\bin\WebKit.resources\en.lproj&quot;&#x0D;&#x0A;"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release_Cairo|Win32"
+			OutputDirectory="$(WebKitOutputDir)\lib"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="4"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 0 set EnablePREfast=&quot;false&quot; else set EnablePREfast=&quot;true&quot;&#x0D;&#x0A;if ERRORLEVEL 0 set AnalyzeWithLargeStack=&quot;&quot; AnalyzeWithLargeStack=&quot;/analyze:65536&quot;&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(ProjectDir)..\bridge&quot;;&quot;$(ProjectDir)..\bridge\c&quot;;&quot;$(ProjectDir)..\css&quot;;&quot;$(ProjectDir)..\editing&quot;;&quot;$(ProjectDir)..\rendering&quot;;&quot;$(ProjectDir)..\bindings\js&quot;;&quot;$(ProjectDir)..\dom&quot;;&quot;$(ProjectDir)..\history&quot;;&quot;$(ProjectDir)..\html&quot;;&quot;$(ProjectDir)..\loader&quot;;&quot;$(ProjectDir)..\loader\icon&quot;;&quot;$(ProjectDir)..\page&quot;;&quot;$(ProjectDir)..\page\win&quot;;&quot;$(ProjectDir)..\platform&quot;;&quot;$(ProjectDir)..\platform\sql&quot;;&quot;$(ProjectDir)..\platform\win&quot;;&quot;$(ProjectDir)..\platform\network&quot;;&quot;$(ProjectDir)..\platform\network\win&quot;;&quot;$(ProjectDir)..\platform\cf&quot;;&quot;$(ProjectDir)..\platform\network\cf&quot;;&quot;$(ProjectDir)..\platform\graphics&quot;;&quot;$(ProjectDir)..\platform\text&quot;;&quot;$(ProjectDir)..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)..\platform\graphics\cg&quot;;&quot;$(ProjectDir)..\platform\graphics\win&quot;;&quot;$(ProjectDir)..\platform\image-decoders&quot;;&quot;$(ProjectDir)..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)..\xml&quot;;&quot;$(WebKitOutputDir)\obj\WebCore\DerivedSources&quot;;&quot;$(ProjectDir)..\plugins&quot;;&quot;$(ProjectDir)..\plugins\win&quot;;&quot;$(ProjectDir)..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)..\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)..\svg\graphics&quot;;&quot;$(ProjectDir)..\svg\graphics\cg&quot;;&quot;$(ProjectDir)..\svg\graphics\filters&quot;;&quot;$(ProjectDir)..\kcanvas&quot;;&quot;$(ProjectDir)..\kcanvas\device&quot;;&quot;$(ProjectDir)..\kcanvas\device\quartz&quot;;&quot;$(ProjectDir)..\svg&quot;;&quot;$(ProjectDir)..\storage&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\iconv&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include\sqlite&quot;;&quot;$(WebKitLibrariesDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(WebKitOutputDir)\include\QtMovieWin&quot;"
+				PreprocessorDefinitions="__WIN32__;ENABLE_CROSS_DOCUMENT_MESSAGING;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;ENABLE_SVG_AS_IMAGE;ENABLE_SVG_USE;ENABLE_SVG_FOREIGN_OBJECT;ENABLE_SVG_FONTS;WEBCORE_CONTEXT_MENUS;ENABLE_VIDEO"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="WebCorePrefix.h"
 				WarnAsError="false"
@@ -233,6 +358,22 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\CSSGrammar.cpp"
@@ -267,6 +408,26 @@
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4065;4702"
+						ForcedIncludeFiles="$(NOINHERIT)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4065;4702"
+						ForcedIncludeFiles="$(NOINHERIT)"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\CSSGrammar.h"
@@ -293,6 +454,22 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_Internal|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -2597,6 +2774,26 @@
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4065"
+						ForcedIncludeFiles="$(NOINHERIT)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4065"
+						ForcedIncludeFiles="$(NOINHERIT)"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\XPathGrammar.h"
@@ -2842,8 +3039,44 @@
 				Name="win"
 				>
 				<File
+					RelativePath="..\page\win\FrameCairoWin.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\page\win\FrameCGWin.cpp"
 					>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\page\win\FrameWin.cpp"
@@ -3446,8 +3679,36 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\win\DragImageCairoWin.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\platform\win\DragImageCGWin.cpp"
 					>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\platform\win\DragImageWin.cpp"
@@ -3508,6 +3769,34 @@
 				<File
 					RelativePath="..\platform\win\PlatformScrollBarSafari.cpp"
 					>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\platform\win\PlatformScrollBarWin.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\platform\win\PopupMenuWin.cpp"
@@ -3568,6 +3857,24 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug_Internal|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							ForcedIncludeFiles="$(NOINHERIT)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							ForcedIncludeFiles="$(NOINHERIT)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3701,6 +4008,22 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug_Internal|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalOptions="$(AnalyzeWithLargeStack)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalOptions="$(AnalyzeWithLargeStack)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3894,14 +4217,66 @@
 					<File
 						RelativePath="..\platform\graphics\win\FontCGWin.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\FontCustomPlatformData.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\FontCustomPlatformData.h"
 						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\FontCustomPlatformDataCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\FontDatabase.cpp"
@@ -3916,8 +4291,44 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\FontPlatformDataCairoWin.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\FontPlatformDataCGWin.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\FontPlatformDataWin.cpp"
@@ -3950,14 +4361,102 @@
 								AdditionalOptions="$(AnalyzeWithLargeStack)"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalOptions="$(AnalyzeWithLargeStack)"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalOptions="$(AnalyzeWithLargeStack)"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\GlyphPageTreeNodeCairoWin.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\GlyphPageTreeNodeCGWin.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\GraphicsContextCairoWin.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\GraphicsContextCGWin.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\GraphicsContextWin.cpp"
@@ -3968,8 +4467,44 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\ImageCairoWin.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\ImageCGWin.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\ImageWin.cpp"
@@ -3996,8 +4531,44 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\SimpleFontDataCairoWin.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\SimpleFontDataCGWin.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\SimpleFontDataWin.cpp"
@@ -4018,66 +4589,506 @@
 					<File
 						RelativePath="..\platform\graphics\cg\AffineTransformCG.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\ColorCG.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\FloatPointCG.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\FloatRectCG.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\FloatSizeCG.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\GraphicsContextCG.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\cg\GraphicsContextPlatformPrivate.h"
+						RelativePath="..\platform\graphics\cg\GraphicsContextPlatformPrivateCG.h"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\ImageBufferCG.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\ImageCG.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\ImageSourceCG.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\IntPointCG.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\IntRectCG.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\IntSizeCG.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\PathCG.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\PDFDocumentImage.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\PDFDocumentImage.h"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+					</File>
+				</Filter>
+				<Filter
+					Name="cairo"
+					>
+					<File
+						RelativePath="..\platform\graphics\cairo\AffineTransformCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\cairo\CairoPath.h"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\cairo\FontCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\cairo\GraphicsContextCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\cairo\GraphicsContextPlatformPrivateCairo.h"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\cairo\ImageBufferCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\cairo\ImageCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\cairo\ImageSourceCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\cairo\PathCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 				</Filter>
 			</Filter>
@@ -4431,6 +5442,22 @@
 							AdditionalOptions="$(AnalyzeWithLargeStack)"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalOptions="$(AnalyzeWithLargeStack)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalOptions="$(AnalyzeWithLargeStack)"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\platform\text\TextCodecICU.h"
@@ -4522,6 +5549,290 @@
 					<File
 						RelativePath="..\platform\text\win\TextBreakIteratorInternalICUWin.cpp"
 						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="image-decoders"
+				>
+				<File
+					RelativePath="..\platform\image-decoders\ImageDecoder.h"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<Filter
+					Name="gif"
+					>
+					<File
+						RelativePath="..\platform\image-decoders\gif\GIFImageDecoder.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\image-decoders\gif\GIFImageDecoder.h"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\image-decoders\gif\GIFImageReader.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\image-decoders\gif\GIFImageReader.h"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+					</File>
+				</Filter>
+				<Filter
+					Name="jpeg"
+					>
+					<File
+						RelativePath="..\platform\image-decoders\jpeg\JPEGImageDecoder.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\image-decoders\jpeg\JPEGImageDecoder.h"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+					</File>
+				</Filter>
+				<Filter
+					Name="png"
+					>
+					<File
+						RelativePath="..\platform\image-decoders\png\PNGImageDecoder.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\image-decoders\png\PNGImageDecoder.h"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+					</File>
+				</Filter>
+				<Filter
+					Name="bmp"
+					>
+					<File
+						RelativePath="..\platform\image-decoders\bmp\BMPImageDecoder.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\image-decoders\bmp\BMPImageDecoder.h"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+					</File>
+				</Filter>
+				<Filter
+					Name="ico"
+					>
+					<File
+						RelativePath="..\platform\image-decoders\ico\ICOImageDecoder.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\image-decoders\ico\ICOImageDecoder.h"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
 					</File>
 				</Filter>
 			</Filter>
@@ -5520,10 +6831,82 @@
 			<File
 				RelativePath="..\rendering\RenderThemeSafari.cpp"
 				>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\rendering\RenderThemeSafari.h"
 				>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderThemeWin.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderThemeWin.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\rendering\RenderTreeAsText.cpp"
@@ -5768,6 +7151,24 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_Internal|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						ForcedIncludeFiles="$(NOINHERIT)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						ForcedIncludeFiles="$(NOINHERIT)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -8699,6 +10100,22 @@
 						AdditionalOptions="$(AnalyzeWithLargeStack)"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalOptions="$(AnalyzeWithLargeStack)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalOptions="$(AnalyzeWithLargeStack)"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\svg\SVGParserUtilities.h"
@@ -9241,42 +10658,202 @@
 					<File
 						RelativePath="..\svg\graphics\cg\CgSupport.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\svg\graphics\cg\CgSupport.h"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\svg\graphics\cg\RenderPathCg.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\svg\graphics\cg\SVGPaintServerCg.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\svg\graphics\cg\SVGPaintServerGradientCg.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\svg\graphics\cg\SVGPaintServerPatternCg.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\svg\graphics\cg\SVGPaintServerSolidCg.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\svg\graphics\cg\SVGResourceClipperCg.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\svg\graphics\cg\SVGResourceFilterCg.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\svg\graphics\cg\SVGResourceMaskerCg.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 				</Filter>
 				<Filter
@@ -9433,6 +11010,170 @@
 					<File
 						RelativePath="..\svg\graphics\filters\SVGSpotLightSource.h"
 						>
+					</File>
+				</Filter>
+				<Filter
+					Name="cairo"
+					>
+					<File
+						RelativePath="..\svg\graphics\cairo\RenderPathCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\svg\graphics\cairo\SVGPaintServerCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\svg\graphics\cairo\SVGPaintServerGradientCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\svg\graphics\cairo\SVGPaintServerPatternCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\svg\graphics\cairo\SVGPaintServerSolidCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\svg\graphics\cairo\SVGResourceClipperCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\svg\graphics\cairo\SVGResourceFilterCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\svg\graphics\cairo\SVGResourceMaskerCairo.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 				</Filter>
 			</Filter>
@@ -9934,6 +11675,22 @@
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Debug_Internal|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Debug_Cairo|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release_Cairo|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"

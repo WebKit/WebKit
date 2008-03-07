@@ -1,3 +1,14 @@
+2008-03-07  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Update solution to understand Cairo build target.  Add
+        library dependencies for Cairo build target.
+        (http://bugs.webkit.org/show_bug.cgi?id=17300)
+
+        * WebKit.vcproj/WebKit.sln:
+        * WebKit.vcproj/WebKit.vcproj:
+
 2008-03-06  Adam Roben  <aroben@apple.com>
 
         Change WebScriptDebugServer to use WebCore::JavaScriptDebugServer

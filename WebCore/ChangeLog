@@ -1,3 +1,15 @@
+2008-03-07  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Add Cairo build requirements to WebCore.vcproj under a new
+        set of targets.  Exclude Cairo elements from normal CG build.
+        Exclude CG elements from Cairo builds.
+        (http://bugs.webkit.org/show_bug.cgi?id=17300)
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/webcore.vsprops: Added.
+
 2008-03-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
