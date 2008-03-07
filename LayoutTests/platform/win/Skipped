@@ -370,3 +370,5 @@ storage/success-callback.html
 # Crashes, probably needs new SQLite
 storage/multiple-transactions.html
 
+# <rdar://problem/5787733>
+fast/dom/HTMLDocument/hasFocus.html
