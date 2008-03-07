@@ -56,7 +56,7 @@
 #pragma warning(pop)
 
 // WebKitClassFactory ---------------------------------------------------------
-
+#if USE(SAFARI_THEME)
 #if !defined(NDEBUG) && defined(USE_DEBUG_SAFARI_THEME)
 SOFT_LINK_DEBUG_LIBRARY(SafariTheme)
 #else
@@ -64,17 +64,20 @@ SOFT_LINK_LIBRARY(SafariTheme)
 #endif
 
 SOFT_LINK(SafariTheme, STInitialize, void, APIENTRY, (), ())
+#endif
 
 WebKitClassFactory::WebKitClassFactory(CLSID targetClass)
 : m_targetClass(targetClass)
 , m_refCount(0)
 {
+#if USE(SAFARI_THEME)
     static bool didInitializeSafariTheme;
     if (!didInitializeSafariTheme) {
         if (SafariThemeLibrary())
             STInitialize();
         didInitializeSafariTheme = true;
     }
+#endif
 
     WebCore::populateFontDatabase();
 

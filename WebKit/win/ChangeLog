@@ -1,5 +1,15 @@
 2008-03-07  Brent Fulgham  <bfulgham@gmail.com>
 
+        Reviewed by Adam Roben.
+
+        Do not link (or attempt to initialize) the SafariTheme.dll
+        when not building with USE(SAFARI_THEME) enabled.
+        (http://bugs.webkit.org/show_bug.cgi?id=17707)
+
+        * WebKit/win/WebKitClassFactory.cpp:  Conditionalize use of SafariTheme.dll
+
+2008-03-07  Brent Fulgham  <bfulgham@gmail.com>
+
         Reviewed by Steve Falkenburg.
 
         Update solution to understand Cairo build target.  Add
