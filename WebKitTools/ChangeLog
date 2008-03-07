@@ -1,3 +1,11 @@
+2008-03-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Get pdevenv working with Visual Studio Express.
+        
+        Reviewed by Adam.
+
+        * Scripts/pdevenv:
+
 2008-03-06  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
