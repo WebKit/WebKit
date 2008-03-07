@@ -1,3 +1,22 @@
+2008-03-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - fix a theoretical problem with the visited-link hash table by avoiding collision
+          with the special "deleted" value
+        - improve efficiency of with the visited-link hash table by not hashing twice
+
+        * page/PageGroup.cpp:
+        (WebCore::avoidDeletedValue): Added. Makes sure we never try to use the "all ones"
+        value, since the hash table uses that for deleted hash table entries.
+        (WebCore::PageGroup::isLinkVisited): Call avoidDeletedValue before using the hash
+        value with the HashSet.
+        (WebCore::PageGroup::addVisitedLink): Ditto.
+
+        * page/PageGroup.h: Added a new hash function, AlreadyHashed, for unsigned integer
+        values. This assumes that the value is already a hash value, and doesn't try to
+        hash it again. Used this for m_visitedLinkHashes.
+
 2008-03-07  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build.

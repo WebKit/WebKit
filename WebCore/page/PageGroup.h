@@ -37,6 +37,10 @@ namespace WebCore {
     class KURL;
     class Page;
 
+    struct AlreadyHashed : IntHash<unsigned> {
+        static unsigned hash(unsigned key) { return key; }
+    };
+
     class PageGroup : Noncopyable {
     public:
         PageGroup(Page*);
@@ -57,7 +61,7 @@ namespace WebCore {
 
     private:
         HashSet<Page*> m_pages;
-        HashSet<unsigned> m_visitedLinkHashes;
+        HashSet<unsigned, AlreadyHashed> m_visitedLinkHashes;
         bool m_visitedLinksPopulated;
     };
 
