@@ -1,5 +1,14 @@
 2008-03-07  Brent Fulgham  <bfulgham@gmail.com>
 
+        Reviewed by Mark Rowe.
+
+        Correct build intermediary output
+        (http://bugs.webkit.org/show_bug.cgi?id=17713)
+
+        * WebKit/win/WebKit.vcproj/WebKit.vcproj:  Correct output and intermediary paths
+
+2008-03-07  Brent Fulgham  <bfulgham@gmail.com>
+
         Reviewed by Adam Roben.
 
         Do not link (or attempt to initialize) the SafariTheme.dll

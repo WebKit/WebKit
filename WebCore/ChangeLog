@@ -1,5 +1,14 @@
 2008-03-07  Brent Fulgham  <bfulgham@gmail.com>
 
+        Reviewed by Mark Rowe.
+
+        Correct build intermediary output
+        (http://bugs.webkit.org/show_bug.cgi?id=17713)
+
+        * WebCore/WebCore.vcproj:  Correct intermediary paths
+
+2008-03-07  Brent Fulgham  <bfulgham@gmail.com>
+
         Reviewed by Steve Falkenburg.
 
         Add Cairo build requirements to WebCore.vcproj under a new
