@@ -1,3 +1,15 @@
+2008-03-06  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Adam Roben.
+
+        Bug 17691: REGRESSION: FindSafari doesn't work
+        http://bugs.webkit.org/show_bug.cgi?id=17691
+
+        Swap my change from r30394 to use the Release libraries instead of Debug
+        since some machines don't have the Debug version.
+
+        * FindSafari/FindSafari.vcproj:
+
 2008-03-06  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam and Tim.
