@@ -354,6 +354,15 @@ void ChromeClient::populateVisitedLinks()
 {
 }
 
+FloatRect ChromeClient::customHighlightRect(Node*, const AtomicString&, const FloatRect&)
+{
+    return FloatRect();
+}
+
+void ChromeClient::paintCustomHighlight(Node*, const AtomicString&, const FloatRect&, const FloatRect&, bool, bool)
+{
+}
+
 // --------
 
 PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)

@@ -561,16 +561,6 @@ void Frame::willPopupMenu(NSMenu * menu)
     [d->m_bridge willPopupMenu:menu];
 }
 
-FloatRect Frame::customHighlightLineRect(const AtomicString& type, const FloatRect& lineRect, Node* node)
-{
-    return [d->m_bridge customHighlightRect:type forLine:lineRect representedNode:node];
-}
-
-void Frame::paintCustomHighlight(const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool text, bool line, Node* node)
-{
-    [d->m_bridge paintCustomHighlight:type forBox:boxRect onLine:lineRect behindText:text entireLine:line representedNode:node];
-}
-
 DragImageRef Frame::dragImageForSelection() 
 {
     if (!selectionController()->isRange())

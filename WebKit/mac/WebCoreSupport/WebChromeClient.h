@@ -108,6 +108,12 @@ public:
 
     virtual void runOpenPanel(PassRefPtr<WebCore::FileChooser>);
 
+    virtual WebCore::FloatRect customHighlightRect(WebCore::Node*, const WebCore::AtomicString& type,
+        const WebCore::FloatRect& lineRect);
+    virtual void paintCustomHighlight(WebCore::Node*, const WebCore::AtomicString& type,
+        const WebCore::FloatRect& boxRect, const WebCore::FloatRect& lineRect,
+        bool behindText, bool entireLine);
+
 private:
     WebView *m_webView;
 };

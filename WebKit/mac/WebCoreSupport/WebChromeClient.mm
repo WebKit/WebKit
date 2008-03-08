@@ -456,6 +456,34 @@ void WebChromeClient::dashboardRegionsChanged()
     CallUIDelegate(m_webView, @selector(webView:dashboardRegionsChanged:), regions);
 }
 
+FloatRect WebChromeClient::customHighlightRect(Node* node, const AtomicString& type, const FloatRect& lineRect)
+{
+    NSView *documentView = [[kit(node->document()->frame()) frameView] documentView];
+    if (![documentView isKindOfClass:[WebHTMLView class]])
+        return NSZeroRect;
+
+    WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
+    id<WebHTMLHighlighter> highlighter = [webHTMLView _highlighterForType:type];
+    if ([(NSObject *)highlighter respondsToSelector:@selector(highlightRectForLine:representedNode:)])
+        return [highlighter highlightRectForLine:lineRect representedNode:kit(node)];
+    return [highlighter highlightRectForLine:lineRect];
+}
+
+void WebChromeClient::paintCustomHighlight(Node* node, const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect,
+    bool behindText, bool entireLine)
+{
+    NSView *documentView = [[kit(node->document()->frame()) frameView] documentView];
+    if (![documentView isKindOfClass:[WebHTMLView class]])
+        return;
+
+    WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
+    id<WebHTMLHighlighter> highlighter = [webHTMLView _highlighterForType:type];
+    if ([(NSObject *)highlighter respondsToSelector:@selector(paintHighlightForBox:onLine:behindText:entireLine:representedNode:)])
+        [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:behindText entireLine:entireLine representedNode:kit(node)];
+    else
+        [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:behindText entireLine:entireLine];
+}
+
 void WebChromeClient::runOpenPanel(PassRefPtr<FileChooser> chooser)
 {
     WebOpenPanelResultListener *listener = [[WebOpenPanelResultListener alloc] initWithChooser:chooser];

@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,11 +23,13 @@
 #include "config.h"
 #include "InlineTextBox.h"
 
+#include "ChromeClient.h"
 #include "Document.h"
 #include "Editor.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
+#include "Page.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
 #include "RenderTheme.h"
@@ -530,14 +532,23 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* p, int tx, int t
 }
 
 #if PLATFORM(MAC)
+
 void InlineTextBox::paintCustomHighlight(int tx, int ty, const AtomicString& type)
 {
+    Frame* frame = object()->document()->frame();
+    if (!frame)
+        return;
+    Page* page = frame->page();
+    if (!page)
+        return;
+
     RootInlineBox* r = root();
     FloatRect rootRect(tx + r->xPos(), ty + selectionTop(), r->width(), selectionHeight());
     FloatRect textRect(tx + xPos(), rootRect.y(), width(), rootRect.height());
 
-    object()->document()->frame()->paintCustomHighlight(type, textRect, rootRect, true, false, object()->node());
+    page->chrome()->client()->paintCustomHighlight(object()->node(), type, textRect, rootRect, true, false);
 }
+
 #endif
 
 void InlineTextBox::paintDecoration(GraphicsContext* context, int tx, int ty, int deco)

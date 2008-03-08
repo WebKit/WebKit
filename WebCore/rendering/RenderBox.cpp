@@ -1,11 +1,9 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2005, 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,12 +26,14 @@
 #include "RenderBox.h"
 
 #include "CachedImage.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "Frame.h"
+#include "Page.h"
 #include "RenderArena.h"
 #include "RenderFlexibleBox.h"
 #include "RenderLayer.h"
@@ -703,19 +703,28 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* context, const Color& c
 }
 
 #if PLATFORM(MAC)
+
 void RenderBox::paintCustomHighlight(int tx, int ty, const AtomicString& type, bool behindText)
 {
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+    Page* page = frame->page();
+    if (!page)
+        return;
+
     InlineBox* boxWrap = inlineBoxWrapper();
     RootInlineBox* r = boxWrap ? boxWrap->root() : 0;
     if (r) {
         FloatRect rootRect(tx + r->xPos(), ty + r->selectionTop(), r->width(), r->selectionHeight());
         FloatRect imageRect(tx + m_x, rootRect.y(), width(), rootRect.height());
-        document()->frame()->paintCustomHighlight(type, imageRect, rootRect, behindText, false, node());
+        page->chrome()->client()->paintCustomHighlight(node(), type, imageRect, rootRect, behindText, false);
     } else {
         FloatRect imageRect(tx + m_x, ty + m_y, width(), height());
-        document()->frame()->paintCustomHighlight(type, imageRect, imageRect, behindText, false, node());
+        page->chrome()->client()->paintCustomHighlight(node(), type, imageRect, imageRect, behindText, false);
     }
 }
+
 #endif
 
 IntRect RenderBox::getOverflowClipRect(int tx, int ty)

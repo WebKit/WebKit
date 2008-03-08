@@ -1,7 +1,5 @@
-/**
- * This file is part of the html renderer for KDE.
- *
- * Copyright (C) 2003, 2006 Apple Computer, Inc.
+/*
+ * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,11 +21,13 @@
 #include "RootInlineBox.h"
 
 #include "BidiResolver.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "EllipsisBox.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
+#include "Page.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
 
@@ -136,11 +136,19 @@ void RootInlineBox::paintEllipsisBox(RenderObject::PaintInfo& paintInfo, int tx,
 }
 
 #if PLATFORM(MAC)
+
 void RootInlineBox::addHighlightOverflow()
 {
+    Frame* frame = object()->document()->frame();
+    if (!frame)
+        return;
+    Page* page = frame->page();
+    if (!page)
+        return;
+
     // Highlight acts as a selection inflation.
     FloatRect rootRect(0, selectionTop(), width(), selectionHeight());
-    IntRect inflatedRect = enclosingIntRect(object()->document()->frame()->customHighlightLineRect(object()->style()->highlight(), rootRect, object()->node()));
+    IntRect inflatedRect = enclosingIntRect(page->chrome()->client()->customHighlightRect(object()->node(), object()->style()->highlight(), rootRect));
     setHorizontalOverflowPositions(min(leftOverflow(), inflatedRect.x()), max(rightOverflow(), inflatedRect.right()));
     setVerticalOverflowPositions(min(topOverflow(), inflatedRect.y()), max(bottomOverflow(), inflatedRect.bottom()));
 }
@@ -150,12 +158,20 @@ void RootInlineBox::paintCustomHighlight(RenderObject::PaintInfo& paintInfo, int
     if (!object()->shouldPaintWithinRoot(paintInfo) || object()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
         return;
 
+    Frame* frame = object()->document()->frame();
+    if (!frame)
+        return;
+    Page* page = frame->page();
+    if (!page)
+        return;
+
     // Get the inflated rect so that we can properly hit test.
     FloatRect rootRect(tx + xPos(), ty + selectionTop(), width(), selectionHeight());
-    FloatRect inflatedRect = object()->document()->frame()->customHighlightLineRect(highlightType, rootRect, object()->node());
+    FloatRect inflatedRect = page->chrome()->client()->customHighlightRect(object()->node(), highlightType, rootRect);
     if (inflatedRect.intersects(paintInfo.rect))
-        object()->document()->frame()->paintCustomHighlight(highlightType, rootRect, rootRect, false, true, object()->node());
+        page->chrome()->client()->paintCustomHighlight(object()->node(), highlightType, rootRect, rootRect, false, true);
 }
+
 #endif
 
 void RootInlineBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
