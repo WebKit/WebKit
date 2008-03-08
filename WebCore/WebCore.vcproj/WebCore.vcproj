@@ -4277,6 +4277,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\FontDatabase.cpp"
@@ -4303,6 +4311,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -4397,6 +4413,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\GlyphPageTreeNodeCGWin.cpp"
@@ -4431,6 +4455,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -4479,6 +4511,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -4543,6 +4583,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -4929,6 +4977,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cairo\CairoPath.h"
@@ -4943,6 +4999,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -4969,6 +5033,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cairo\GraphicsContextCairo.cpp"
@@ -4983,6 +5055,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -5009,6 +5089,14 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cairo\ImageBufferCairo.cpp"
@@ -5023,6 +5111,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -5049,6 +5145,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cairo\ImageSourceCairo.cpp"
@@ -5069,6 +5173,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cairo\PathCairo.cpp"
@@ -5083,6 +5195,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -5574,6 +5694,14 @@
 							Name="VCCustomBuildTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<Filter
 					Name="gif"
@@ -5591,6 +5719,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -5617,6 +5753,14 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\image-decoders\gif\GIFImageReader.cpp"
@@ -5637,6 +5781,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\image-decoders\gif\GIFImageReader.h"
@@ -5651,6 +5803,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -5681,6 +5841,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\image-decoders\jpeg\JPEGImageDecoder.h"
@@ -5695,6 +5863,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -5725,6 +5901,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\image-decoders\png\PNGImageDecoder.h"
@@ -5739,6 +5923,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -5769,6 +5961,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\image-decoders\bmp\BMPImageDecoder.h"
@@ -5783,6 +5983,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -5813,6 +6021,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\image-decoders\ico\ICOImageDecoder.h"
@@ -5827,6 +6043,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -6887,6 +7111,14 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\rendering\RenderThemeWin.h"
@@ -6901,6 +7133,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -11034,6 +11274,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\svg\graphics\cairo\SVGPaintServerCairo.cpp"
@@ -11048,6 +11296,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -11074,6 +11330,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\svg\graphics\cairo\SVGPaintServerPatternCairo.cpp"
@@ -11088,6 +11352,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -11114,6 +11386,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\svg\graphics\cairo\SVGResourceClipperCairo.cpp"
@@ -11128,6 +11408,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -11154,6 +11442,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\svg\graphics\cairo\SVGResourceMaskerCairo.cpp"
@@ -11168,6 +11464,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
