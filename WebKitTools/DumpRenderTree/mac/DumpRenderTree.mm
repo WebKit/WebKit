@@ -776,9 +776,10 @@ void dump()
         } else
             printf("ERROR: nil result from %s", methodNameStringForFailedTest());
 
-        if (printSeparators)
+        if (printSeparators) {
             puts("#EOF");
-            fputs("#EOF\n", stderr);            
+            fputs("#EOF\n", stderr);
+        }            
     }
     
     if (dumpPixels)
