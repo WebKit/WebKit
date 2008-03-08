@@ -238,6 +238,7 @@ String ImageBuffer::toDataURL(const String& mimeType) const
     CGContextSaveGState(bitmapContext.get());
     CGContextTranslateCTM(bitmapContext.get(), 0, height);
     CGContextScaleCTM(bitmapContext.get(), 1.0f, -1.0f);
+    CGContextClearRect(bitmapContext.get(), CGRectMake(0.0f, 0.0f, width, height));
     CGContextDrawImage(bitmapContext.get(), CGRectMake(0.0f, 0.0f, width, height), image.get());
     CGContextRestoreGState(bitmapContext.get());
 

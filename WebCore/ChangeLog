@@ -1,3 +1,13 @@
+2008-03-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix garbage in transparent areas in canvas.toDataURL results
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::toDataURL): Clear the bitmap context before
+        painting the canvas image onto it.
+
 2008-03-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
