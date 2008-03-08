@@ -39,8 +39,8 @@ int screenDepth(Widget* widget)
 {
     ASSERT(widget->containingWindow() && GTK_WIDGET(widget->containingWindow())->window);
 
-    gint dummy, depth;
-    gdk_window_get_geometry(GTK_WIDGET(widget->containingWindow())->window, &dummy, &dummy, &dummy, &dummy, &depth);
+    gint depth;
+    gdk_window_get_geometry(GTK_WIDGET(widget->containingWindow())->window, 0, 0, 0, 0, &depth);
     return depth;
 }
 
@@ -50,16 +50,22 @@ int screenDepthPerComponent(Widget*)
     return 8;
 }
 
-bool screenIsMonochrome(Widget*)
+bool screenIsMonochrome(Widget* widget)
 {
-    notImplemented();
-    return false;
+    return screenDepth(widget) < 2;
 }
 
-FloatRect screenRect(Widget*)
+FloatRect screenRect(Widget* widget)
 {
-    notImplemented();
-    return FloatRect();
+    ASSERT(widget->containingWindow() && GTK_WIDGET(widget->containingWindow())->window);
+
+    GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(widget->containingWindow()));
+    gint monitor = gdk_screen_get_monitor_at_window(screen, GTK_WIDGET(widget->containingWindow())->window);
+    GdkRectangle geometry;
+
+    gdk_screen_get_monitor_geometry(screen, monitor, &geometry);
+    
+    return FloatRect(geometry.x, geometry.y, geometry.width, geometry.height);
 }
 
 FloatRect screenAvailableRect(Widget*)

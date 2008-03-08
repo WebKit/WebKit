@@ -1,3 +1,18 @@
+2008-03-07  Pierre-Luc Beaudoin  <pierre-luc.beaudoin@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17681
+        GtkLauncher fails to render an element with position: fixed
+
+        Implement the required parts of PlatformScreenGtk.
+
+        * ChangeLog:
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+
 2008-03-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.
