@@ -1,3 +1,13 @@
+2008-03-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Stephanie.
+
+        - try to fix leaks seen on Tiger after r30840
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::~CSSStyleSelector): Use the default operator
+        delete, rather than arena delete, to deallocate the root default style.
+
 2008-03-07  Pierre-Luc Beaudoin  <pierre-luc.beaudoin@collabora.co.uk>
 
         Reviewed by Alp Toker.
