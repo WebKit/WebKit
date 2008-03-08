@@ -217,6 +217,7 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
 
 String ImageBuffer::toDataURL(const String& mimeType) const
 {
+#if PLATFORM(MAC)
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
     RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(context()->platformContext()));
@@ -264,6 +265,9 @@ String ImageBuffer::toDataURL(const String& mimeType) const
     out.append('\0');
 
     return String::format("data:%s;base64,%s", mimeType.utf8().data(), out.data());
+#else
+    return String();
+#endif
 }
 
 } // namespace WebCore
