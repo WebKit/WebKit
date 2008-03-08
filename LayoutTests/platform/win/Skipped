@@ -304,6 +304,27 @@ svg/custom/frame-getSVGDocument.html
 # <rdar://5723191>
 http/tests/navigation/javascriptlink-frames.html
 
+# <rdar://problem/5787707> fast/canvas/canvas-getImageData.html fails on windows
+fast/canvas/canvas-getImageData.html
+
+# <rdar://problem/5787717> REGRESSION: editing/pasteboard/5478250.html fails on Windows
+editing/pasteboard/5478250.html
+
+# <rdar://problem/5787733> REGRESSION: fast/dom/HTMLDocument/hasFocus.html fails on Windows
+fast/dom/HTMLDocument/hasFocus.html
+
+#<rdar://problem/5787743> REGRESSION: Crash at WTF::Collator::CreateCollator() running fast/js/kde/StringObject.html on Windows
+fast/js/kde/StringObject.html
+
+# <rdar://problem/5787763> REGRESSION: Hang at storage/open-database-empty-version.html on Windows
+storage/open-database-empty-version.html
+
+# <rdar://problem/5787788> REGRESSION: fast/loader/xmlhttprequest-missing-file-exception.html fails on Windows
+fast/loader/xmlhttprequest-missing-file-exception.html
+
+# <rdar://problem/5787793> REGRESSION: svg/custom/acid3-test-77.html fails on windows 
+svg/custom/acid3-test-77.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

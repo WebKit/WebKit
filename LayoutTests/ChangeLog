@@ -1,3 +1,9 @@
+2008-03-07  Stephanie Lewis <slewis@apple.com>
+
+        update Windows Skipped List
+
+        * platform/win/Skipped:
+
 2008-03-07  Adele Peterson  <adele@apple.com>
 
         Adding fast/dom/HTMLDocument/hasFocus.html to the skipped list, while I investigate the failure.
