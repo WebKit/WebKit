@@ -2424,7 +2424,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         (float)invalidRect->right - invalidRect->left, (float)invalidRect->bottom - invalidRect->top)];
 }
 
--(bool)isOpaque
+-(BOOL)isOpaque
 {
     return YES;
 }

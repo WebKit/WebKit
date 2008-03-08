@@ -31,6 +31,7 @@
 #import "DumpRenderTree.h"
 #import "LayoutTestController.h"
 #import <WebKit/WebKit.h>
+#import <WebKit/WebTypesInternal.h>
 #import <wtf/Assertions.h>
 
 @interface NSURL (DRTExtras)
@@ -143,7 +144,7 @@
     }    
 }
 
--(void)webView: (WebView *)wv resource:identifier didReceiveContentLength: (unsigned)length fromDataSource:(WebDataSource *)dataSource
+-(void)webView: (WebView *)wv resource:identifier didReceiveContentLength: (NSInteger)length fromDataSource:(WebDataSource *)dataSource
 {
 }
 
