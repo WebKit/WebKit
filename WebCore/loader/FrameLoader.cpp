@@ -460,9 +460,11 @@ Frame* FrameLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL
     }
     
     frame->loader()->m_isComplete = false;
-    
-    if (ownerElement->renderer() && frame->view())
-        static_cast<RenderWidget*>(ownerElement->renderer())->setWidget(frame->view());
+   
+    RenderObject* renderer = ownerElement->renderer();
+    FrameView* view = frame->view();
+    if (renderer && renderer->isWidget() && view)
+        static_cast<RenderWidget*>(renderer)->setWidget(view);
     
     checkCallImplicitClose();
     

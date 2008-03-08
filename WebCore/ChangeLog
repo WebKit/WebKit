@@ -1,3 +1,24 @@
+2008-03-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Ada.
+
+        Fix for crash caused by FrameLoader incorrectly assuming it has
+        a RenderWidget
+
+        In some circumstances an application embedding a WebView may 
+        choose to prevent a webview from loading a resource.  If that
+        resource was requested by an <object> element then we may 
+        fallback to different content which may not produce a RenderWidget.
+        Unfortunately FrameLoader::loadSubframe was assuming that if a
+        renderer was produced it would always be a RenderWidget, and arbitrarily
+        performed what could be an incorrect cast.  This could then lead to
+        a crash.
+
+        We currently don't have anyway of making a test for this.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadSubframe):
+
 2008-03-07  Samuel Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
