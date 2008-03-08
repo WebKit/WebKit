@@ -96,7 +96,7 @@ Instance* Instance::createBindingForLanguageInstance(BindingLanguage language, v
             break;
         }
 #endif
-#if !PLATFORM(DARWIN) || !defined(__LP64__)
+#if ENABLE(NETSCAPE_PLUGIN_API)
         case Instance::CLanguage: {
             newInstance = new Bindings::CInstance((NPObject *)nativeInstance, rootObject);
             break;

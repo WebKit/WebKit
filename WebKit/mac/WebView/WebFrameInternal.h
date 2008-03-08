@@ -160,6 +160,11 @@ struct WebCoreHistoryItem;
 // should be used instead.
 - (WebDataSource *)_dataSource;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+- (void)_recursive_resumeNullEventsForAllNetscapePlugins;
+- (void)_recursive_pauseNullEventsForAllNetscapePlugins;
+#endif
+
 @end
 
 @interface NSObject (WebInternalFrameLoadDelegate)

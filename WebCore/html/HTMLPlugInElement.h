@@ -35,7 +35,7 @@ namespace KJS {
 }
 #endif
 
-#if USE(NPOBJECT)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 struct NPObject;
 #endif
 
@@ -69,13 +69,13 @@ public:
 #if USE(JAVASCRIPTCORE_BINDINGS)
     virtual KJS::Bindings::Instance* getInstance() const = 0;
 #endif
-#if USE(NPOBJECT)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     virtual NPObject* getNPObject();
 #endif
 
     virtual void defaultEventHandler(Event*);
 private:
-#if USE(NPOBJECT)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* createNPObject();
 #endif
 
@@ -86,7 +86,7 @@ protected:
 #if USE(JAVASCRIPTCORE_BINDINGS)
     mutable RefPtr<KJS::Bindings::Instance> m_instance;
 #endif
-#if USE(NPOBJECT)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* m_NPObject;
 #endif
 };

@@ -98,7 +98,7 @@ static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPa
         if ([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:key]) {
             if ([plugin isKindOfClass:[WebPluginPackage class]]) 
                 checkCandidate(&webPlugin, &plugin);
-#ifndef __LP64__
+#if ENABLE(NETSCAPE_PLUGIN_API)
             else if([plugin isKindOfClass:[WebNetscapePluginPackage class]]) {
                 WebExecutableType executableType = [(WebNetscapePluginPackage *)plugin executableType];
                 if (executableType == WebCFMExecutableType) {

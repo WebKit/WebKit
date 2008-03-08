@@ -25,7 +25,7 @@
 
 #include "WebNetscapeDeprecatedFunctions.h"
 
-#ifndef __LP64__
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 OSErr WebGetDiskFragment(const FSSpec *fileSpec, UInt32 offset, UInt32 length, ConstStr63Param fragName, CFragLoadOptions options, CFragConnectionID *connID, Ptr *mainAddr, Str255 errMessage)
 {
@@ -47,4 +47,4 @@ extern void WebLMSetCurApRefNum(SInt16 value)
     LMSetCurApRefNum(value);
 }
 
-#endif /* !__LP64__ */
+#endif /* ENABLE(NETSCAPE_PLUGIN_API) */

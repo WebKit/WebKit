@@ -26,7 +26,7 @@
 #ifndef C_UTILITY_H_
 #define C_UTILITY_H_
 
-#if !PLATFORM(DARWIN) || !defined(__LP64__)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "npruntime_internal.h"
 
@@ -71,5 +71,6 @@ struct PrivateIdentifier {
 
 } }
 
-#endif
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
+
 #endif

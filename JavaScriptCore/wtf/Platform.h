@@ -217,6 +217,12 @@
 #define WTF_USE_PTHREADS 1
 #endif
 
+#if PLATFORM(MAC) && defined(__LP64__)
+#define ENABLE_NETSCAPE_PLUGIN_API 0
+#elif PLATFORM(GTK) || PLATFORM(MAC) || PLATFORM(SYMBIAN) || PLATFORM(WIN)
+#define ENABLE_NETSCAPE_PLUGIN_API 1
+#endif
+
 #if PLATFORM(WIN)
 #define WTF_USE_WININET 1
 #endif
@@ -230,6 +236,8 @@
 #define USE_SYSTEM_MALLOC 1
 #endif
 
+/* ENABLE macro defaults */
+
 #if !defined(ENABLE_ICONDATABASE)
 #define ENABLE_ICONDATABASE 1
 #endif
@@ -240,6 +248,10 @@
 
 #if !defined(ENABLE_FTPDIR)
 #define ENABLE_FTPDIR 1
+#endif
+
+#if !defined(ENABLE_NETSCAPE_PLUGIN_API)
+#define ENABLE_NETSCAPE_PLUGIN_API 0
 #endif
 
 #endif /* WTF_Platform_h */

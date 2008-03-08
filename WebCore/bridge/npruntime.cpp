@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if !PLATFORM(DARWIN) || !defined(__LP64__)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "npruntime_internal.h"
 #include "npruntime_impl.h"
@@ -223,4 +223,4 @@ void _NPN_DeallocateObject(NPObject *obj)
     }
 }
 
-#endif
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

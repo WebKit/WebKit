@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if !PLATFORM(DARWIN) || !defined(__LP64__)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "c_instance.h"
 
@@ -209,4 +209,4 @@ void CInstance::getPropertyNames(ExecState*, PropertyNameArray& nameArray)
 }
 }
 
-#endif
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

@@ -1177,7 +1177,7 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const
                 if (WebBasePluginPackage *package = [getWebView(m_webFrame.get()) _pluginForExtension:extension]) {
                     if ([package isKindOfClass:[WebPluginPackage class]]) 
                         return ObjectContentOtherPlugin;
-#ifndef __LP64__
+#if ENABLE(NETSCAPE_PLUGIN_API)
                     else {
                         ASSERT([package isKindOfClass:[WebNetscapePluginPackage class]]);
                         return ObjectContentNetscapePlugin;
@@ -1195,7 +1195,7 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const
         return ObjectContentImage;
 
     if (WebBasePluginPackage *package = [getWebView(m_webFrame.get()) _pluginForMIMEType:type]) {
-#ifndef __LP64__
+#if ENABLE(NETSCAPE_PLUGIN_API)
         if ([package isKindOfClass:[WebNetscapePluginPackage class]])
             return ObjectContentNetscapePlugin;
 #endif
@@ -1336,7 +1336,7 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element
         if ([pluginPackage isKindOfClass:[WebPluginPackage class]])
             view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, kit(paramNames), kit(paramValues), baseURL, kit(element), loadManually);
             
-#ifndef __LP64__
+#if ENABLE(NETSCAPE_PLUGIN_API)
         else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
             WebNetscapePluginEmbeddedView *embeddedView = [[[WebNetscapePluginEmbeddedView alloc]
                 initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
@@ -1385,7 +1385,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 
     NSView *pluginView = pluginWidget->getView();
 
-#ifndef __LP64__
+#if ENABLE(NETSCAPE_PLUGIN_API)
     if ([pluginView isKindOfClass:[WebNetscapePluginEmbeddedView class]])
         [representation _redirectDataToManualLoader:(WebNetscapePluginEmbeddedView *)pluginView forPluginView:pluginView];
     else {
@@ -1428,7 +1428,7 @@ Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, Elemen
             }
             view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, names, values, baseURL, kit(element), NO);
         } 
-#ifndef __LP64__
+#if ENABLE(NETSCAPE_PLUGIN_API)
         else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
             view = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
                 pluginPackage:(WebNetscapePluginPackage *)pluginPackage

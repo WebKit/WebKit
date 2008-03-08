@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __LP64__
+#if ENABLE(NETSCAPE_PLUGIN_API)
 #import "WebBaseNetscapePluginStream.h"
 
 #import "WebBaseNetscapePluginView.h"

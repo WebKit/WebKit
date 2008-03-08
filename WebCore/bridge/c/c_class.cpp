@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if !PLATFORM(DARWIN) || !defined(__LP64__)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "c_class.h"
 
@@ -120,4 +120,4 @@ Field* CClass::fieldNamed(const Identifier& identifier, Instance* instance) cons
 
 } } // namespace KJS::Bindings
 
-#endif
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

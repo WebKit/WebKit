@@ -26,7 +26,7 @@
 #ifndef NP_JSOBJECT_H
 #define NP_JSOBJECT_H
 
-#if !PLATFORM(DARWIN) || !defined(__LP64__)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "npruntime_internal.h"
 #include <wtf/Forward.h>
@@ -50,5 +50,6 @@ struct JavaScriptObject
 NPObject* _NPN_CreateScriptObject(NPP npp, KJS::JSObject*, PassRefPtr<KJS::Bindings::RootObject> rootObject);
 NPObject* _NPN_CreateNoScriptObject(void);
 
-#endif
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
+
 #endif

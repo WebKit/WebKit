@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if !PLATFORM(DARWIN) || !defined(__LP64__)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "NP_jsobject.h"
 
@@ -400,4 +400,4 @@ bool _NPN_Enumerate(NPP, NPObject *o, NPIdentifier **identifier, uint32_t *count
     return false;
 }
 
-#endif
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

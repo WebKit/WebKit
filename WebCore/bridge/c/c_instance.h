@@ -26,7 +26,7 @@
 #ifndef BINDINGS_C_INSTANCE_H_
 #define BINDINGS_C_INSTANCE_H_
 
-#if !PLATFORM(DARWIN) || !defined(__LP64__)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "runtime.h"
 #include <wtf/Noncopyable.h>
@@ -75,5 +75,6 @@ private:
 
 } // namespace KJS
 
-#endif
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
+
 #endif

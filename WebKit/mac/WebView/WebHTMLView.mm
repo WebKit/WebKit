@@ -4534,7 +4534,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
 - (void)_web_makePluginViewsPerformSelector:(SEL)selector withObject:(id)object
 {
-#ifndef __LP64__
+#if ENABLE(NETSCAPE_PLUGIN_API)
     NSEnumerator *enumerator = [self objectEnumerator];
     WebNetscapePluginEmbeddedView *view;
     while ((view = [enumerator nextObject]) != nil)
@@ -4595,7 +4595,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     return _private->mouseDownEvent;
 }
 
-#ifndef __LP64__
+#if ENABLE(NETSCAPE_PLUGIN_API)
 - (void)_pauseNullEventsForAllNetscapePlugins
 {
     NSArray *subviews = [self subviews];
@@ -4610,7 +4610,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 }
 #endif
 
-#ifndef __LP64__
+#if ENABLE(NETSCAPE_PLUGIN_API)
 - (void)_resumeNullEventsForAllNetscapePlugins
 {
     NSArray *subviews = [self subviews];

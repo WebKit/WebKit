@@ -582,6 +582,28 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return dataSource(frameLoader->documentLoader());
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+- (void)_recursive_resumeNullEventsForAllNetscapePlugins
+{
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
+        if ([documentView isKindOfClass:[WebHTMLView class]])
+            [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
+    }
+}
+
+- (void)_recursive_pauseNullEventsForAllNetscapePlugins
+{
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
+        if ([documentView isKindOfClass:[WebHTMLView class]])
+            [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
+    }
+}
+#endif
+
 @end
 
 @implementation WebFrame (WebPrivate)
@@ -629,30 +651,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     return (WebFrameLoadType)[self _frameLoader]->loadType();
 }
-
-#ifndef __LP64__
-- (void)_recursive_resumeNullEventsForAllNetscapePlugins
-{
-    Frame* coreFrame = core(self);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
-        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
-        if ([documentView isKindOfClass:[WebHTMLView class]])
-            [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
-    }
-}
-#endif
-
-#ifndef __LP64__
-- (void)_recursive_pauseNullEventsForAllNetscapePlugins
-{
-    Frame* coreFrame = core(self);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
-        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
-        if ([documentView isKindOfClass:[WebHTMLView class]])
-            [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
-    }
-}
-#endif
 
 - (NSRange)_selectedNSRange
 {

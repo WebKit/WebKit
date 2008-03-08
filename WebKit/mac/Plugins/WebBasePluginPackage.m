@@ -69,10 +69,10 @@
     WebBasePluginPackage *pluginPackage = [[WebPluginPackage alloc] initWithPath:pluginPath];
 
     if (!pluginPackage) {
-#ifdef __LP64__
-        return nil;
-#else
+#if ENABLE(NETSCAPE_PLUGIN_API)
         pluginPackage = [[WebNetscapePluginPackage alloc] initWithPath:pluginPath];
+#else
+        return nil;
 #endif
     }
 

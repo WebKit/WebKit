@@ -26,7 +26,7 @@
 #ifndef BINDINGS_C_RUNTIME_H_
 #define BINDINGS_C_RUNTIME_H_
 
-#if !PLATFORM(DARWIN) || !defined(__LP64__)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "npruntime_internal.h"
 #include "runtime.h"
@@ -62,5 +62,6 @@ private:
 } // namespace Bindings
 } // namespace KJS
 
-#endif
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
+
 #endif

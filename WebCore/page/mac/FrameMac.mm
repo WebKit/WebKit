@@ -594,7 +594,7 @@ KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(WebCore::Widget* w
             return Instance::createBindingForLanguageInstance(Instance::ObjectiveCLanguage, objectForWebScript, rootObject.release());
         return 0;
     } else if ([aView respondsToSelector:@selector(createPluginScriptableObject)]) {
-#if USE(NPOBJECT)
+#if ENABLE(NETSCAPE_PLUGIN_API)
         NPObject* npObject = [aView createPluginScriptableObject];
         if (npObject) {
             Instance* instance = Instance::createBindingForLanguageInstance(Instance::CLanguage, npObject, rootObject.release());

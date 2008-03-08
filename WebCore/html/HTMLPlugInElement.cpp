@@ -41,7 +41,7 @@
 #include "runtime.h"
 #endif
 
-#if USE(NPOBJECT)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 #include "NP_jsobject.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
@@ -58,7 +58,7 @@ using namespace HTMLNames;
 
 HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document* doc)
     : HTMLFrameOwnerElement(tagName, doc)
-#if USE(NPOBJECT)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     , m_NPObject(0)
 #endif
 {
@@ -66,7 +66,7 @@ HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document* doc
 
 HTMLPlugInElement::~HTMLPlugInElement()
 {
-#if USE(NPOBJECT)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     if (m_NPObject) {
         _NPN_ReleaseObject(m_NPObject);
         m_NPObject = 0;
@@ -165,7 +165,7 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
         widget->handleEvent(event);
 }
 
-#if USE(NPOBJECT)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 NPObject* HTMLPlugInElement::createNPObject()
 {
@@ -206,7 +206,7 @@ NPObject* HTMLPlugInElement::getNPObject()
     return m_NPObject;
 }
 
-#endif /* USE(NPOBJECT) */
+#endif /* ENABLE(NETSCAPE_PLUGIN_API) */
 
 void HTMLPlugInElement::updateWidgetCallback(Node* n)
 {

@@ -26,7 +26,7 @@
 #ifndef _NP_RUNTIME_IMPL_H_
 #define _NP_RUNTIME_IMPL_H_
 
-#if !PLATFORM(DARWIN) || !defined(__LP64__)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "npruntime_internal.h"
 
@@ -60,5 +60,6 @@ extern bool _NPN_Enumerate(NPP npp, NPObject *npobj, NPIdentifier **identifier, 
 }  /* end extern "C" */
 #endif
 
-#endif
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
+
 #endif

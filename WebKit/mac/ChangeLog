@@ -1,3 +1,51 @@
+2008-03-07  David D. Kilzer  <ddkilzer@apple.com>
+
+        Unify concept of enabling Netscape Plug-in API (NPAPI).
+
+        Reviewed by Darin.
+
+        * WebKit.exp: Removed unused class export for WebBaseNetscapePluginView.
+
+        * WebKitPrefix.h: Removed WTF_USE_NPOBJECT since we now use
+        ENABLE(NETSCAPE_PLUGIN_API) as defined in Platform.h.
+
+        * Plugins/WebBaseNetscapePluginStream.h: Replaced #ifndef __LP64__ with
+        #if ENABLE(NETSCAPE_PLUGIN_API).
+        * Plugins/WebBaseNetscapePluginStream.mm: Ditto.
+        * Plugins/WebBaseNetscapePluginView.h: Ditto.
+        * Plugins/WebBaseNetscapePluginView.mm: Ditto.
+        * Plugins/WebBaseNetscapePluginViewInternal.h: Ditto.
+        * Plugins/WebBaseNetscapePluginViewPrivate.h: Ditto.
+        * Plugins/WebBasePluginPackage.h: Ditto.
+        * Plugins/WebBasePluginPackage.m: Ditto.
+        (+[WebBasePluginPackage pluginWithPath:]):
+        * Plugins/WebNetscapeDeprecatedFunctions.c: Ditto.
+        * Plugins/WebNetscapeDeprecatedFunctions.h: Ditto.
+        * Plugins/WebNetscapePluginEmbeddedView.h: Ditto.
+        * Plugins/WebNetscapePluginEmbeddedView.mm: Ditto.
+        * Plugins/WebNetscapePluginPackage.h: Ditto.
+        * Plugins/WebNetscapePluginPackage.m: Ditto.
+        * Plugins/WebNetscapePluginStream.h: Ditto.
+        * Plugins/WebNetscapePluginStream.mm: Ditto.
+        * Plugins/WebPluginDatabase.m: Ditto.
+        (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]):
+        * Plugins/npapi.m: Ditto.
+        * WebCoreSupport/WebFrameLoaderClient.mm: Ditto.
+        (WebFrameLoaderClient::objectContentType):
+        (WebFrameLoaderClient::createPlugin):
+        * WebView/WebHTMLView.mm: Ditto.
+        (-[NSArray _web_makePluginViewsPerformSelector:withObject:]):
+        * WebView/WebHTMLViewInternal.h: Ditto.
+
+        * WebView/WebFrame.mm: Replaced #ifndef __LP64__ with
+        #if ENABLE(NETSCAPE_PLUGIN_API). Moved methods below from (WebPrivate)
+        category to (WebInternal) category so we don't expose the ENABLE() macro
+        from the private header.
+        (-[WebFrame _recursive_resumeNullEventsForAllNetscapePlugins]):
+        (-[WebFrame _recursive_pauseNullEventsForAllNetscapePlugins]):
+        * WebView/WebFrameInternal.h: Ditto.
+        * WebView/WebFramePrivate.h: Ditto.
+
 2008-03-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

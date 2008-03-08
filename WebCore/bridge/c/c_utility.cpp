@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if !PLATFORM(DARWIN) || !defined(__LP64__)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "c_utility.h"
 
@@ -151,4 +151,4 @@ Identifier identifierFromNPIdentifier(const NPUTF8* name)
 
 } }
 
-#endif
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

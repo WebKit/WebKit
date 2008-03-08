@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if !PLATFORM(DARWIN) || !defined(__LP64__)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "c_runtime.h"
 
@@ -93,4 +93,4 @@ void CField::setValueToInstance(ExecState *exec, const Instance *inst, JSValue *
 
 } }
 
-#endif
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

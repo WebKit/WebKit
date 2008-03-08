@@ -26,7 +26,7 @@
 #ifndef NP_RUNTIME_PRIV_H_
 #define NP_RUNTIME_PRIV_H_
 
-#if !PLATFORM(DARWIN) || !defined(__LP64__)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "npruntime_internal.h"
 
@@ -36,6 +36,6 @@
 */
 void NPN_InitializeVariantWithStringCopy(NPVariant*, const NPString*);
 
-#endif
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 #endif
 

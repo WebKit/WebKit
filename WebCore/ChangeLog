@@ -1,3 +1,56 @@
+2008-03-07  David D. Kilzer  <ddkilzer@apple.com>
+
+        Unify concept of enabling Netscape Plug-in API (NPAPI).
+
+        Reviewed by Darin.
+
+        No test cases since there is no change in functionality.
+
+        * DerivedSources.make: Added check for ENABLE_NETSCAPE_PLUGIN_API macro.
+        If defined as "1", add WebCore.NPAPI.exp to WEBCORE_EXPORT_DEPENDENCIES.
+        * WebCore.NPAPI.exp: Added.
+        * WebCore.base.exp: Moved exported NPAPI methods to WebCore.NPAPI.exp.
+        * WebCore.xcodeproj/project.pbxproj: Removed changes in r30826 (except
+        comments) since we now handle exported NPAPI methods via DerivedSources.make.
+
+        * config.h: Removed USE(NPOBJECT) since we now use ENABLE(NETSCAPE_PLUGIN_API) as
+        defined in Platform.h.
+
+        * bindings/objc/DOM.mm: Replaced USE(NPOBJECT) with ENABLE(NETSCAPE_PLUGIN_API).
+        (-[DOMElement _NPObject]):
+
+        * bridge/NP_jsobject.cpp: Replaced !PLATFORM(DARWIN) || !defined(__LP64__) with
+        ENABLE(NETSCAPE_PLUGIN_API).
+        * bridge/NP_jsobject.h: Ditto.
+        * bridge/c/c_class.cpp: Ditto.
+        * bridge/c/c_class.h: Ditto.
+        * bridge/c/c_instance.cpp: Ditto.
+        * bridge/c/c_instance.h: Ditto.
+        * bridge/c/c_runtime.cpp: Ditto.
+        * bridge/c/c_runtime.h: Ditto.
+        * bridge/c/c_utility.cpp: Ditto.
+        * bridge/c/c_utility.h: Ditto.
+        * bridge/npruntime.cpp: Ditto.
+        * bridge/npruntime_impl.h: Ditto.
+        * bridge/npruntime_priv.h: Ditto.
+        * bridge/runtime.cpp: Ditto.
+        (KJS::Bindings::Instance::createBindingForLanguageInstance):
+
+        * html/HTMLPlugInElement.cpp: Replaced USE(NPOBJECT) with ENABLE(NETSCAPE_PLUGIN_API).
+        (WebCore::HTMLPlugInElement::HTMLPlugInElement):
+        (WebCore::HTMLPlugInElement::~HTMLPlugInElement):
+        * html/HTMLPlugInElement.h: Ditto.
+
+        * page/Frame.cpp: Replaced USE(NPOBJECT) with ENABLE(NETSCAPE_PLUGIN_API).
+        (WebCore::Frame::clearScriptObjects):
+        (WebCore::FramePrivate::FramePrivate): Also added #if ENABLE(NETSCAPE_PLUGIN_API)
+        guard around m_windowScriptNPObject.
+        * page/Frame.h: Replaced USE(NPOBJECT) with ENABLE(NETSCAPE_PLUGIN_API).
+        * page/FramePrivate.h: Added #if ENABLE(NETSCAPE_PLUGIN_API) guard around
+        m_windowScriptNPObject.
+        * page/mac/FrameMac.mm: Replaced USE(NPOBJECT) with ENABLE(NETSCAPE_PLUGIN_API).
+        (WebCore::Frame::createScriptInstanceForWidget):
+
 2008-03-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

@@ -121,7 +121,9 @@ namespace WebCore {
         // The root object used for objects bound outside the context of a plugin.
         RefPtr<KJS::Bindings::RootObject> m_bindingRootObject; 
         RootObjectMap m_rootObjects;
+#if ENABLE(NETSCAPE_PLUGIN_API)
         NPObject* m_windowScriptNPObject;
+#endif
 #if FRAME_LOADS_USER_STYLESHEET
         UserStyleSheetLoader* m_userStyleSheetLoader;
 #endif

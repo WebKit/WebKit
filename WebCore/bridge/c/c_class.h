@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if !PLATFORM(DARWIN) || !defined(__LP64__)
-
 #ifndef BINDINGS_C_CLASS_H_
 #define BINDINGS_C_CLASS_H_
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "npruntime_internal.h"
 #include "runtime.h"
@@ -56,5 +56,6 @@ private:
 } // namespace Bindings
 } // namespace KJS
 
-#endif
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
+
 #endif
