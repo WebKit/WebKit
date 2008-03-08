@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 Apple Inc.  All rights reserved.
+# Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -325,9 +325,9 @@ fast/loader/xmlhttprequest-missing-file-exception.html
 # <rdar://problem/5787793> REGRESSION: svg/custom/acid3-test-77.html fails on windows 
 svg/custom/acid3-test-77.html
 
-# <rdar://problem/5788451>s toDataURL broke Windows build
+# <rdar://problem/5788451> toDataURL broke Windows build
 fast/canvas/toDataURL-noData.html
-fast/canvas/toDataURL-supportedTypes.htmls
+fast/canvas/toDataURL-supportedTypes.html
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################
@@ -361,10 +361,10 @@ fast/forms/input-truncate-newline.html
 fast/forms/plaintext-mode-2.html
 fast/forms/textarea-paste-newline.html
 
-# Unimplemented part of DRT. (This test is currently disabled).
+# Unimplemented part of DumpRenderTree.
 http/tests/plugins/npapi-response-headers.html
 
-# Timed out Loading Page (check if missing DRT functionality)
+# Timed out loading page (check if this is due to missing DumpRenderTree functionality)
 editing/selection/4975120.html
 editing/selection/designmode-no-caret.html
 fast/encoding/char-encoding.html
