@@ -1,3 +1,14 @@
+2008-03-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5579292> REGRESSION: (safari 2-3): "Default default" encoding for Korean
+        changed from Korean (Windows, DOS) to Korean (ISO 2022-KR), which breaks some sites
+
+        * WebView/WebPreferences.m:
+        (+[WebPreferences _setInitialDefaultTextEncodingToSystemEncoding]): Make encoding name match
+        the one used in Safari.
+
 2008-03-07  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.
