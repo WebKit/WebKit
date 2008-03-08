@@ -1,3 +1,13 @@
+2008-03-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        REGRESSION: Korean decoding doesn't support extended EUC-KR.
+
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/char-decoding.html:
+        Added cases for Korean.
+
 2008-03-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.

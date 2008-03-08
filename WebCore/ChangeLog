@@ -1,3 +1,16 @@
+2008-03-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        REGRESSION: Korean decoding doesn't support extended EUC-KR.
+
+        Test: fast/encoding/char-decoding.html
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::registerExtendedEncodingNames): Untangle the system of duplicate ICU
+        encoding names by manually registering windows-939-2000, and mapping all other related
+        encodings to it.
+
 2008-03-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Stephanie.

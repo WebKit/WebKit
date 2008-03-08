@@ -47,6 +47,25 @@ testDecode('chinese', '%A3%A0', 'U+3000');
 testDecode('gbk', '%A3%A0', 'U+3000');
 testDecode('gb18030', '%A3%A0', 'U+3000');
 
+// Test that all Korean encodings of EUC-KR family are treated as windows-949.
+testDecode('korean', '%A2%E6', 'U+20AC');
+testDecode('korean', '%A1%A4', 'U+00B7');
+testDecode('korean', '%A1%A9', 'U+00AD');
+testDecode('korean', '%A1%AA', 'U+2015');
+testDecode('korean', '%A1%AD', 'U+223C');
+testDecode('korean', '%A2%A6', 'U+FF5E');
+testDecode('korean', '%A2%C1', 'U+2299');
+testDecode('korean', '%1A', 'U+001A');
+testDecode('korean', '%1C', 'U+001C');
+testDecode('korean', '%8F%A1', 'U+B8EA');
+testDecode('korean', '%B4%D3', 'U+B2D2');
+testDecode('korean', '%A2%41', 'U+C910');
+testDecode('euc-kr', '%A2%41', 'U+C910');
+testDecode('korean', '%A2%41', 'U+C910');
+testDecode('windows-949', '%A2%41', 'U+C910');
+testDecode('iso-ir-149', '%A2%41', 'U+C910');
+testDecode('KS_C_5601-1987', '%A2%41', 'U+C910');
+testDecode('KS_C_5601-1989', '%A2%41', 'U+C910');
 debug('');
 
 successfullyParsed = true;
