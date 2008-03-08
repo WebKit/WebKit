@@ -26,6 +26,7 @@
 #ifndef CanvasRenderingContext2D_h
 #define CanvasRenderingContext2D_h
 
+#include "AffineTransform.h"
 #include "FloatSize.h"
 #include "GraphicsTypes.h"
 #include "Path.h"
@@ -179,7 +180,6 @@ namespace WebCore {
 
             RefPtr<CanvasStyle> m_strokeStyle;
             RefPtr<CanvasStyle> m_fillStyle;
-            Path m_path;
             float m_lineWidth;
             LineCap m_lineCap;
             LineJoin m_lineJoin;
@@ -191,11 +191,13 @@ namespace WebCore {
             CompositeOperator m_globalComposite;
             bool m_appliedStrokePattern;
             bool m_appliedFillPattern;
+            AffineTransform m_transform;
 #if PLATFORM(CG)
             CGAffineTransform m_strokeStylePatternTransform;
             CGAffineTransform m_fillStylePatternTransform;
 #endif
         };
+        Path m_path;
 
         State& state() { return m_stateStack.last(); }
         const State& state() const { return m_stateStack.last(); }

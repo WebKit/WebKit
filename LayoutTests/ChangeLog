@@ -1,3 +1,13 @@
+2008-03-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Test case for Bug 16610: <canvas> restore() removes path segments created before it
+
+        * fast/canvas/canvas-save-restore-with-path-expected.txt: Added.
+        * fast/canvas/canvas-save-restore-with-path.html: Added.
+        * fast/canvas/canvas-save-restore-with-path.js: Added.
+
 2008-03-07  Samuel Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

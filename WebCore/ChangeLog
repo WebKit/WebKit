@@ -1,5 +1,42 @@
 2008-03-07  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Bug 16610: <canvas> restore() removes path segments created before it
+
+        The problem here is that WebKit stored the Path as part of the state, so
+        restore would incorrectly lose changes made to the canvas path.  To match
+        Firefox and HTML5 we make two real changes:
+          * Move the context path from the state object directly onto the context.
+            This is responsible for all the changes to the path manipulation functions
+          * Add transform tracking to each state -- this is needed to correctly transform
+            the current path when restore()-ing to a prior state.
+
+        Test: fast/canvas/canvas-save-restore-with-path.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::restore):
+        (WebCore::CanvasRenderingContext2D::scale):
+        (WebCore::CanvasRenderingContext2D::rotate):
+        (WebCore::CanvasRenderingContext2D::translate):
+        (WebCore::CanvasRenderingContext2D::transform):
+        (WebCore::CanvasRenderingContext2D::beginPath):
+        (WebCore::CanvasRenderingContext2D::closePath):
+        (WebCore::CanvasRenderingContext2D::moveTo):
+        (WebCore::CanvasRenderingContext2D::lineTo):
+        (WebCore::CanvasRenderingContext2D::quadraticCurveTo):
+        (WebCore::CanvasRenderingContext2D::arcTo):
+        (WebCore::CanvasRenderingContext2D::arc):
+        (WebCore::CanvasRenderingContext2D::rect):
+        (WebCore::CanvasRenderingContext2D::clearPathForDashboardBackwardCompatibilityMode):
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+        (WebCore::CanvasRenderingContext2D::clip):
+        (WebCore::CanvasRenderingContext2D::isPointInPath):
+        * html/CanvasRenderingContext2D.h:
+
+2008-03-07  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Ada.
 
         Fix for crash caused by FrameLoader incorrectly assuming it has
