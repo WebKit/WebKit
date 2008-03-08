@@ -35,12 +35,14 @@
 #include "Document.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
-#include "ImageBuffer.h"
 #include "HTMLNames.h"
+#include "ImageBuffer.h"
+#include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
 #include "Settings.h"
 #include <math.h>
+#include <kjs/interpreter.h>
 
 #if PLATFORM(QT)
 #include <QPainter>
@@ -122,6 +124,39 @@ void HTMLCanvasElement::setHeight(int value)
 void HTMLCanvasElement::setWidth(int value)
 {
     setAttribute(widthAttr, String::number(value));
+}
+
+void HTMLCanvasElement::printSecurityExceptionMessage() const
+{
+    const char* const message = "Call to toDataURL failed due to tainted canvas.\n";
+
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+    if (frame->settings()->privateBrowsingEnabled())
+        return;
+    if (KJS::Interpreter::shouldPrintExceptions())
+        printf("%s", message);
+    if (Page* page = frame->page())
+        page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, 1, String()); // FIXME: provide a real line number and source URL.
+}
+
+String HTMLCanvasElement::toDataURL(const String& mimeType)
+{
+    if (!m_originClean) {
+        // FIXME: the WHATWG specification says that this should raise a "security exception", but does not currently
+        // define what one is.  For now, we will silently fail with only a log message.
+        printSecurityExceptionMessage();
+        return String();
+    }
+
+    if (m_size.isEmpty())
+        return String("data:,");
+
+    if (mimeType.isNull() || !MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType))
+        return buffer()->toDataURL("image/png");
+
+    return buffer()->toDataURL(mimeType);
 }
 
 CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)

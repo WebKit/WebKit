@@ -67,8 +67,9 @@ public:
     void setWidth(int);
     void setHeight(int);
 
+    String toDataURL(const String& mimeType);
+
     CanvasRenderingContext* getContext(const String&);
-    // FIXME: Web Applications 1.0 describes a toDataURL function.
 
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
@@ -101,6 +102,8 @@ public:
 private:
     void createImageBuffer() const;
     void reset();
+
+    void printSecurityExceptionMessage() const;
 
     bool m_rendererIsCanvas;
 

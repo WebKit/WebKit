@@ -82,4 +82,10 @@ void ImageBuffer::putImageData(ImageData*, const IntRect&, const IntPoint&)
     notImplemented();
 }
 
+String ImageBuffer::toDataURL(const String&) const
+{
+    notImplemented();
+    return String();
+}
+
 }

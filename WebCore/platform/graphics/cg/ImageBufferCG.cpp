@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2008 Apple, Inc
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,17 +21,22 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
 #include "ImageBuffer.h"
 
+#include "Base64.h"
+#include "CString.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
-
+#include "MIMETypeRegistry.h"
+#include "PlatformString.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/Assertions.h>
+#include <wtf/OwnArrayPtr.h>
+#include <wtf/RetainPtr.h>
 
 using namespace std;
 
@@ -40,19 +45,19 @@ namespace WebCore {
 auto_ptr<ImageBuffer> ImageBuffer::create(const IntSize& size, bool grayScale)
 {
     if (size.width() < 0 || size.height() < 0)
-        return auto_ptr<ImageBuffer>();        
+        return auto_ptr<ImageBuffer>();
     unsigned int bytesPerRow = size.width();
     if (!grayScale) {
         // Protect against overflow
         if (bytesPerRow > 0x3FFFFFFF)
-            return auto_ptr<ImageBuffer>();            
+            return auto_ptr<ImageBuffer>();
         bytesPerRow *= 4;
     }
 
     void* imageBuffer = fastCalloc(size.height(), bytesPerRow);
     if (!imageBuffer)
         return auto_ptr<ImageBuffer>();
-    
+
     CGColorSpaceRef colorSpace = grayScale ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
     CGContextRef cgContext = CGBitmapContextCreate(imageBuffer, size.width(), size.height(), 8, bytesPerRow,
         colorSpace, grayScale ? kCGImageAlphaNone : kCGImageAlphaPremultipliedLast);
@@ -64,7 +69,7 @@ auto_ptr<ImageBuffer> ImageBuffer::create(const IntSize& size, bool grayScale)
 
     auto_ptr<GraphicsContext> context(new GraphicsContext(cgContext));
     CGContextRelease(cgContext);
-    
+
     return auto_ptr<ImageBuffer>(new ImageBuffer(imageBuffer, size, context));
 }
 
@@ -105,10 +110,10 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
 {
     if (!m_data)
         return 0;
-    
+
     PassRefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
     unsigned char* data = result->data()->data().data();
-    
+
     if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > m_size.width() || (rect.y() + rect.height()) > m_size.height())
         memset(data, 0, result->data()->length());
 
@@ -122,7 +127,7 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
     if (endx > m_size.width())
         endx = m_size.width();
     int numColumns = endx - originx;
-    
+
     int originy = rect.y();
     int desty = 0;
     if (originy < 0) {
@@ -133,10 +138,10 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
     if (endy > m_size.height())
         endy = m_size.height();
     int numRows = endy - originy;
-    
+
     unsigned srcBytesPerRow = 4 * m_size.width();
     unsigned destBytesPerRow = 4 * rect.width();
-    
+
     // m_size.height() - originy to handle the accursed flipped y axis in CG backing store
     unsigned char* srcRows = reinterpret_cast<unsigned char*>(m_data) + (m_size.height() - originy - 1) * srcBytesPerRow + originx * 4;
     unsigned char* destRows = data + desty * destBytesPerRow + destx * 4;
@@ -174,7 +179,7 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
     ASSERT(endx <= m_size.width());
 
     int numColumns = endx - destx;
-    
+
     int originy = sourceRect.y();
     int desty = destPoint.y() + sourceRect.y();
     ASSERT(desty >= 0);
@@ -188,7 +193,7 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
 
     unsigned srcBytesPerRow = 4 * source->width();
     unsigned destBytesPerRow = 4 * m_size.width();
-    
+
     unsigned char* srcRows = source->data()->data().data() + originy * srcBytesPerRow + originx * 4;
 
     // -desty to handle the accursed flipped y axis
@@ -210,4 +215,55 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
     }
 }
 
+String ImageBuffer::toDataURL(const String& mimeType) const
+{
+    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+
+    RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(context()->platformContext()));
+    if (!image)
+        return String("data:,");
+
+    size_t width = CGImageGetWidth(image.get());
+    size_t height = CGImageGetHeight(image.get());
+
+    OwnArrayPtr<uint32_t> imageData(new uint32_t[width * height]);
+
+    RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(imageData.get(), width, height,
+        CGImageGetBitsPerComponent(image.get()), CGImageGetBytesPerRow(image.get()),
+        CGImageGetColorSpace(image.get()), kCGImageAlphaPremultipliedFirst));
+    if (!bitmapContext)
+        return String("data:,");
+
+    CGContextSaveGState(bitmapContext.get());
+    CGContextTranslateCTM(bitmapContext.get(), 0, height);
+    CGContextScaleCTM(bitmapContext.get(), 1.0f, -1.0f);
+    CGContextDrawImage(bitmapContext.get(), CGRectMake(0.0f, 0.0f, width, height), image.get());
+    CGContextRestoreGState(bitmapContext.get());
+
+    RetainPtr<CGImageRef> transformedImage(AdoptCF, CGBitmapContextCreateImage(bitmapContext.get()));
+    if (!transformedImage)
+        return String("data:,");
+
+    RetainPtr<CFMutableDataRef> transformedImageData(AdoptCF, CFDataCreateMutable(kCFAllocatorDefault, 0));
+    if (!transformedImageData)
+        return String("data:,");
+
+    RetainPtr<CFStringRef> imageUTI(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString(), 0));
+    RetainPtr<CGImageDestinationRef> imageDestination(AdoptCF, CGImageDestinationCreateWithData(transformedImageData.get(), imageUTI.get(), 1, 0));
+    if (!imageDestination)
+        return String("data:,");
+
+    CGImageDestinationAddImage(imageDestination.get(), transformedImage.get(), 0);
+    CGImageDestinationFinalize(imageDestination.get());
+
+    Vector<char> in;
+    in.append(CFDataGetBytePtr(transformedImageData.get()), CFDataGetLength(transformedImageData.get()));
+
+    Vector<char> out;
+    base64Encode(in, out);
+    out.append('\0');
+
+    return String::format("data:%s;base64,%s", mimeType.utf8().data(), out.data());
 }
+
+} // namespace WebCore

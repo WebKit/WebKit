@@ -1,3 +1,65 @@
+2008-03-07  Samuel Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=16673
+        <canvas> lacks toDataURL()
+
+        Tests: fast/canvas/toDataURL-noData.html
+               fast/canvas/toDataURL-supportedTypes.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::printSecurityExceptionMessage): Make message non-global.
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::printSecurityExceptionMessage): Log error message indicating that toDataURL has
+        been called on a tainted canvas. 
+        (WebCore::HTMLCanvasElement::toDataURL): This does the tainted canvas check, ensures that the canvas has pixel
+        data, checks to see if the MIME type is supported.  Unsupported MIME types and the null string (which is made
+        by passing no argument/null/undefined in JavaScript) are treated as being PNG, as per the spec.  The actual 
+        toDataURL logic is actually done in the ImageBuffer class.
+        * html/HTMLCanvasElement.h: Add function declarations.
+        * html/HTMLCanvasElement.idl: Add function declaration.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+        (WebCore::initializeSupportedJavaScriptMIMETypes):
+        (WebCore::initializeSupportedNonImageMimeTypes):
+        (WebCore::initializeSupportedMediaMIMETypes):
+        (WebCore::initializeMIMETypeRegistry):
+        (WebCore::MIMETypeRegistry::getMIMETypeForPath):
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedImageResourceMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMETypeForEncoding):
+        (WebCore::MIMETypeRegistry::isSupportedJavaScriptMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedNonImageMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedMediaMIMEType):
+        (WebCore::MIMETypeRegistry::isJavaAppletMIMEType):
+        (WebCore::MIMETypeRegistry::getSupportedImageMIMETypes):
+        (WebCore::MIMETypeRegistry::getSupportedImageResourceMIMETypes):
+        (WebCore::MIMETypeRegistry::getSupportedImageMIMETypesForEncoding):
+        (WebCore::MIMETypeRegistry::getSupportedNonImageMIMETypes):
+        (WebCore::MIMETypeRegistry::getSupportedMediaMIMETypes):
+        * platform/MIMETypeRegistry.h:
+        Clean up and add new supportedImageMIMETypesForEncoding set which contains the set of
+        MIME types the platform knows how to encode. Currently only implemented for CG and Qt.
+
+        * platform/graphics/ImageBuffer.h: Add toDataURL method.
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::toDataURL): Add stub.
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::create):
+        (WebCore::ImageBuffer::getImageData):
+        (WebCore::ImageBuffer::putImageData):
+        (WebCore::ImageBuffer::toDataURL):
+        Converts the current context to a data: url of the specified MIME type.  This method
+        unfortunately has to flip the context, resulting in less than optimal code.
+
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::toDataURL): Add stub.
+        * platform/graphics/wx/ImageBufferWx.cpp:
+        (WebCore::ImageBuffer::toDataURL): Add stub.
+
 2008-03-07  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

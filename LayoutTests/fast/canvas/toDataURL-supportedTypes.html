@@ -1,0 +1,88 @@
+<html>
+<head>
+    <style>
+        img { border: 1px solid black; }
+        pre { display: inline-block; margin: 5px; }
+    </style>
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        function draw()
+        {
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
+
+            ctx.fillStyle = "rgb(200,0,0)";
+            ctx.fillRect(10, 10, 55, 50);
+            ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+            ctx.fillRect(30, 30, 55, 50);
+
+            testToDataURL();
+        }
+
+        // Default list of supported types by CG.
+        var supportedMIMETypes = [
+            "image/png",
+            "image/jpeg",
+            "image/gif",
+            "image/jp2",
+            "image/tiff",
+            "image/vnd.adobe.photoshop",
+            "application/pdf", 
+            "image/pict",
+            "image/targa",
+            "image/sgi"
+        ];
+
+        function testToDataURL()
+        {
+            // Test supported MIME types
+            for (var i in supportedMIMETypes) {
+                testMIMEType(supportedMIMETypes[i]);
+            }
+
+            // Test no MIME type
+            testMIMEType();
+            testMIMEType(null);
+            testMIMEType(undefined);
+
+            // Test other formats that we don't support
+            testMIMEType("image/x-xbitmap");
+        }
+
+        function testMIMEType(mime)
+        {
+            var canvas = document.getElementById("canvas");
+
+            var hadArgument = arguments.length;
+            var url;
+            if (!hadArgument)
+                url = canvas.toDataURL();
+            else
+                url = canvas.toDataURL(mime);
+
+            var image = document.createElement("img");
+            image.src = url;
+            var usedMIMEType = url.substring(5, url.search(/;/));
+            document.body.appendChild(image);
+            var info = document.createElement("pre");
+            if (window.layoutTestController) {
+                // PDFs vary from build to build, so don't print the url in the test.
+                if (mime != "application/pdf")
+                    info.appendChild(document.createTextNode(url + "\n"));
+            }
+            info.appendChild(document.createTextNode("Given MIMEType: " + (hadArgument ? mime : "")));
+            info.appendChild(document.createTextNode("\n"));
+            info.appendChild(document.createTextNode("Used MIMEType: " + usedMIMEType));
+            info.appendChild(document.createTextNode("\n"));
+            info.appendChild(document.createTextNode((mime == usedMIMEType) ? "MIME types are the SAME." :  "MIME types DIFFER."));
+            document.body.appendChild(info);
+            document.body.appendChild(document.createElement("hr"));
+        }
+    </script>
+</head>
+<body onload="draw();">
+    <canvas id="canvas" width="150" height="150"></canvas> The Actual Canvas <br><hr>
+</body>
+</html>

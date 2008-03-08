@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,40 +30,41 @@
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+
 #if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
+#include <wtf/RetainPtr.h>
 #endif
 #if PLATFORM(QT)
 #include <qimagereader.h>
 #endif
 
-namespace WebCore
-{
-static WTF::HashSet<String>* supportedImageResourceMIMETypes;
-static WTF::HashSet<String>* supportedImageMIMETypes;
-static WTF::HashSet<String>* supportedJavaScriptMIMETypes;
-static WTF::HashSet<String>* supportedNonImageMIMETypes;
-static WTF::HashSet<String>* supportedMediaMIMETypes;
+namespace WebCore {
+
+static HashSet<String>* supportedImageResourceMIMETypes;
+static HashSet<String>* supportedImageMIMETypes;
+static HashSet<String>* supportedImageMIMETypesForEncoding;
+static HashSet<String>* supportedJavaScriptMIMETypes;
+static HashSet<String>* supportedNonImageMIMETypes;
+static HashSet<String>* supportedMediaMIMETypes;
 
 #if PLATFORM(CG)
 extern String getMIMETypeForUTI(const String& uti);
 #endif
 
-static void initialiseSupportedImageMIMETypes()
-{    
+static void initializeSupportedImageMIMETypes()
+{
 #if PLATFORM(CG)
-    CFArrayRef supportedTypes = CGImageSourceCopyTypeIdentifiers();
-    int cnt = CFArrayGetCount(supportedTypes);
-    for(int i = 0; i < cnt; i++) {
-        CFStringRef supportedType = (CFStringRef)CFArrayGetValueAtIndex(supportedTypes, i);
-        String mimeType=getMIMETypeForUTI(supportedType);
+    RetainPtr<CFArrayRef> supportedTypes(AdoptCF, CGImageSourceCopyTypeIdentifiers());
+    CFIndex count = CFArrayGetCount(supportedTypes.get());
+    for (CFIndex i = 0; i < count; i++) {
+        RetainPtr<CFStringRef> supportedType(AdoptCF, reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i)));
+        String mimeType = getMIMETypeForUTI(supportedType.get());
         if (!mimeType.isEmpty()) {
             supportedImageMIMETypes->add(mimeType);
             supportedImageResourceMIMETypes->add(mimeType);
         }
-        CFRelease(supportedType);
     }
-    CFRelease(supportedTypes);
 
     // On Tiger and Leopard, com.microsoft.bmp doesn't have a MIME type in the registry.
     supportedImageMIMETypes->add("image/bmp");
@@ -76,11 +77,11 @@ static void initialiseSupportedImageMIMETypes()
     //  We only get one MIME type per UTI, hence our need to add these manually
     supportedImageMIMETypes->add("image/pjpeg");
     supportedImageResourceMIMETypes->add("image/pjpeg");
-    
+
     //  We don't want to try to treat all binary data as an image
     supportedImageMIMETypes->remove("application/octet-stream");
     supportedImageResourceMIMETypes->remove("application/octet-stream");
-    
+
     //  Don't treat pdf/postscript as images directly
     supportedImageMIMETypes->remove("application/pdf");
     supportedImageMIMETypes->remove("application/postscript");
@@ -88,7 +89,7 @@ static void initialiseSupportedImageMIMETypes()
 #elif PLATFORM(QT)
     QList<QByteArray> formats = QImageReader::supportedImageFormats();
     for (size_t i = 0; i < formats.size(); ++i) {
-#if ENABLE(SVG) 
+#if ENABLE(SVG)
         /*
          * Qt has support for SVG, but we want to use KSVG2
          */
@@ -110,14 +111,36 @@ static void initialiseSupportedImageMIMETypes()
       "image/x-icon",    // ico
       "image/x-xbitmap"  // xbm
     };
-    for (size_t i = 0; i < sizeof(types)/sizeof(types[0]); ++i) {
-      supportedImageMIMETypes->add(types[i]);
-      supportedImageResourceMIMETypes->add(types[i]);
+    for (size_t i = 0; i < sizeof(types) / sizeof(types[0]); ++i) {
+        supportedImageMIMETypes->add(types[i]);
+        supportedImageResourceMIMETypes->add(types[i]);
     }
 #endif
 }
 
-static void initialiseSupportedJavaScriptMIMETypes()
+static void initializeSupportedImageMIMETypesForEncoding()
+{
+    supportedImageMIMETypesForEncoding = new HashSet<String>;
+
+#if PLATFORM(CG)
+    RetainPtr<CFArrayRef> supportedTypes(AdoptCF, CGImageDestinationCopyTypeIdentifiers());
+    CFIndex count = CFArrayGetCount(supportedTypes.get());
+    for (CFIndex i = 0; i < count; i++) {
+        RetainPtr<CFStringRef> supportedType(AdoptCF, reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i)));
+        String mimeType = getMIMETypeForUTI(supportedType.get());
+        if (!mimeType.isEmpty())
+            supportedImageMIMETypesForEncoding->add(mimeType);
+    }
+#elif PLATFORM(QT)
+    QList<QByteArray> formats = QImageWriter::supportedImageFormats();
+    for (size_t i = 0; i < formats.size(); ++i) {
+        String mimeType = MIMETypeRegistry::getMIMETypeForExtension(formats.at(i).constData());
+        supportedImageMIMETypesForEncoding->add(mimeType);
+    }
+#endif
+}
+
+static void initializeSupportedJavaScriptMIMETypes()
 {
     /*
         Mozilla 1.8 and WinIE 7 both accept text/javascript and text/ecmascript.
@@ -139,11 +162,11 @@ static void initialiseSupportedJavaScriptMIMETypes()
         "text/jscript",
         "text/livescript",
     };
-    for (size_t i = 0; i < sizeof(types)/sizeof(types[0]); ++i)
+    for (size_t i = 0; i < sizeof(types) / sizeof(types[0]); ++i)
       supportedJavaScriptMIMETypes->add(types[i]);
 }
 
-static void initialiseSupportedNonImageMimeTypes()
+static void initializeSupportedNonImageMimeTypes()
 {
     static const char* types[] = {
       "text/html",
@@ -170,31 +193,31 @@ static void initialiseSupportedNonImageMimeTypes()
       supportedNonImageMIMETypes->add(types[i]);
 }
 
-static void initialiseSupportedMediaMIMETypes()
+static void initializeSupportedMediaMIMETypes()
 {
-    supportedMediaMIMETypes = new WTF::HashSet<String>();
+    supportedMediaMIMETypes = new HashSet<String>;
 #if ENABLE(VIDEO)
     MediaPlayer::getSupportedTypes(*supportedMediaMIMETypes);
 #endif
 }
 
-static void initialiseMIMETypeRegistry()
+static void initializeMIMETypeRegistry()
 {
-    supportedJavaScriptMIMETypes = new WTF::HashSet<String>();
-    initialiseSupportedJavaScriptMIMETypes();
+    supportedJavaScriptMIMETypes = new HashSet<String>;
+    initializeSupportedJavaScriptMIMETypes();
 
-    supportedImageResourceMIMETypes = new WTF::HashSet<String>();
-    supportedImageMIMETypes = new WTF::HashSet<String>();
-    supportedNonImageMIMETypes = new WTF::HashSet<String>(*supportedJavaScriptMIMETypes);
+    supportedNonImageMIMETypes = new HashSet<String>(*supportedJavaScriptMIMETypes);
+    initializeSupportedNonImageMimeTypes();
 
-    initialiseSupportedNonImageMimeTypes();
-    initialiseSupportedImageMIMETypes();
+    supportedImageResourceMIMETypes = new HashSet<String>;
+    supportedImageMIMETypes = new HashSet<String>;
+    initializeSupportedImageMIMETypes();
 }
 
 String MIMETypeRegistry::getMIMETypeForPath(const String& path)
 {
     int pos = path.reverseFind('.');
-    if(pos >= 0) {
+    if (pos >= 0) {
         String extension = path.substring(pos + 1);
         return getMIMETypeForExtension(extension);
     }
@@ -202,78 +225,103 @@ String MIMETypeRegistry::getMIMETypeForPath(const String& path)
 }
 
 bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
-{ 
+{
+    if (mimeType.isEmpty())
+        return false;
     if (!supportedImageMIMETypes)
-        initialiseMIMETypeRegistry();
-    return !mimeType.isEmpty() && supportedImageMIMETypes->contains(mimeType); 
+        initializeMIMETypeRegistry();
+    return supportedImageMIMETypes->contains(mimeType);
 }
 
 bool MIMETypeRegistry::isSupportedImageResourceMIMEType(const String& mimeType)
-{ 
+{
+    if (mimeType.isEmpty())
+        return false;
     if (!supportedImageResourceMIMETypes)
-        initialiseMIMETypeRegistry();
-    return !mimeType.isEmpty() && supportedImageResourceMIMETypes->contains(mimeType); 
+        initializeMIMETypeRegistry();
+    return supportedImageResourceMIMETypes->contains(mimeType);
+}
+
+bool MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(const String& mimeType)
+{
+    if (mimeType.isEmpty())
+        return false;
+    if (!supportedImageMIMETypesForEncoding)
+        initializeSupportedImageMIMETypesForEncoding();
+    return supportedImageMIMETypesForEncoding->contains(mimeType);
 }
 
 bool MIMETypeRegistry::isSupportedJavaScriptMIMEType(const String& mimeType)
-{ 
+{
+    if (mimeType.isEmpty())
+        return false;
     if (!supportedJavaScriptMIMETypes)
-        initialiseMIMETypeRegistry();
-    return !mimeType.isEmpty() && supportedJavaScriptMIMETypes->contains(mimeType); 
+        initializeMIMETypeRegistry();
+    return supportedJavaScriptMIMETypes->contains(mimeType);
 }
-    
+
 bool MIMETypeRegistry::isSupportedNonImageMIMEType(const String& mimeType)
 {
+    if (mimeType.isEmpty())
+        return false;
     if (!supportedNonImageMIMETypes)
-        initialiseMIMETypeRegistry();
-    return !mimeType.isEmpty() && supportedNonImageMIMETypes->contains(mimeType);
+        initializeMIMETypeRegistry();
+    return supportedNonImageMIMETypes->contains(mimeType);
 }
 
 bool MIMETypeRegistry::isSupportedMediaMIMEType(const String& mimeType)
 {
+    if (mimeType.isEmpty())
+        return false;
     if (!supportedMediaMIMETypes)
-        initialiseSupportedMediaMIMETypes();
-    return !mimeType.isEmpty() && supportedMediaMIMETypes->contains(mimeType);     
+        initializeSupportedMediaMIMETypes();
+    return supportedMediaMIMETypes->contains(mimeType);
 }
-    
-    
+
 bool MIMETypeRegistry::isJavaAppletMIMEType(const String& mimeType)
 {
     // Since this set is very limited and is likely to remain so we won't bother with the overhead
     // of using a hash set.
     // Any of the MIME types below may be followed by any number of specific versions of the JVM,
     // which is why we use startsWith()
-    return mimeType.startsWith("application/x-java-applet", false) 
-        || mimeType.startsWith("application/x-java-bean", false) 
+    return mimeType.startsWith("application/x-java-applet", false)
+        || mimeType.startsWith("application/x-java-bean", false)
         || mimeType.startsWith("application/x-java-vm", false);
 }
 
-HashSet<String> &MIMETypeRegistry::getSupportedImageMIMETypes()
+HashSet<String>& MIMETypeRegistry::getSupportedImageMIMETypes()
 {
     if (!supportedImageMIMETypes)
-        initialiseMIMETypeRegistry();
+        initializeMIMETypeRegistry();
     return *supportedImageMIMETypes;
 }
 
-HashSet<String> &MIMETypeRegistry::getSupportedImageResourceMIMETypes()
+HashSet<String>& MIMETypeRegistry::getSupportedImageResourceMIMETypes()
 {
     if (!supportedImageResourceMIMETypes)
-        initialiseMIMETypeRegistry();
+        initializeMIMETypeRegistry();
     return *supportedImageResourceMIMETypes;
 }
 
-HashSet<String> &MIMETypeRegistry::getSupportedNonImageMIMETypes()
+HashSet<String>& MIMETypeRegistry::getSupportedImageMIMETypesForEncoding()
+{
+    if (!supportedImageMIMETypesForEncoding)
+        initializeSupportedImageMIMETypesForEncoding();
+    return *supportedImageMIMETypesForEncoding;
+}
+
+HashSet<String>& MIMETypeRegistry::getSupportedNonImageMIMETypes()
 {
     if (!supportedNonImageMIMETypes)
-        initialiseMIMETypeRegistry();
+        initializeMIMETypeRegistry();
     return *supportedNonImageMIMETypes;
 }
 
-HashSet<String> &MIMETypeRegistry::getSupportedMediaMIMETypes()
+HashSet<String>& MIMETypeRegistry::getSupportedMediaMIMETypes()
 {
     if (!supportedMediaMIMETypes)
-        initialiseSupportedMediaMIMETypes();
+        initializeSupportedMediaMIMETypes();
     return *supportedMediaMIMETypes;
 }
-    
-}
+
+} // namespace WebCore
