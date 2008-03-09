@@ -1,3 +1,11 @@
+2008-03-08  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Reviewed by Mark Rowe.
+
+        DRT build fix for Tiger.
+
+        * DumpRenderTree/mac/DumpRenderTreeMac.h: Define BUILDING_ON_TIGER.
+
 2008-03-07  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

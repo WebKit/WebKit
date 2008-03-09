@@ -32,6 +32,10 @@
 // FIXME: we should add a config.h file for DumpRenderTree.
 #define WTF_PLATFORM_CF 1
 
+#ifdef MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+#define BUILDING_ON_TIGER 1
+#endif
+
 @class DumpRenderTreeDraggingInfo;
 @class NavigationController;
 @class PolicyDelegate;
