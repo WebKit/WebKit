@@ -52,6 +52,8 @@ private:
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
 
     void onWebViewShowWindow(bool showing);
+    void onWebViewWindowPosChanged(WINDOWPOS*);
+    void onRootWindowPosChanged(WINDOWPOS*);
 
     WebView* m_inspectedWebView;
     HWND m_inspectedWebViewWindow;

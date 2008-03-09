@@ -1,5 +1,22 @@
 2008-03-09  Adam Roben  <aroben@apple.com>
 
+        Make the node highlight not obscure the tab bar when it first appears
+
+        Reviewed by Darin.
+
+        * WebNodeHighlight.cpp:
+        (WebNodeHighlight::onWebViewWindowPosChanged): Added. Listens for
+        changes to the WebView's size and resizes the highlight window to
+        match.
+        (WebNodeHighlight::onRootWindowPosChanged): Added. Listens for changes
+        to the WebView's root window's position and moves the highlight window
+        to match.
+        (WebNodeHighlight::windowReceivedMessage): Call
+        onWebViewWindowPosChanged/onRootWindowPosChanged as appropriate.
+        * WebNodeHighlight.h:
+
+2008-03-09  Adam Roben  <aroben@apple.com>
+
         Fix Bug 14254: Inspector node highlight applied to all tabs
 
         <http://bugs.webkit.org/show_bug.cgi?id=14254>

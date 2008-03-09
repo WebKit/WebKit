@@ -206,12 +206,45 @@ void WebNodeHighlight::onWebViewShowWindow(bool showing)
         hide();
 }
 
-void WebNodeHighlight::windowReceivedMessage(HWND window, UINT msg, WPARAM wParam, LPARAM)
+void WebNodeHighlight::onWebViewWindowPosChanged(WINDOWPOS* windowPos)
+{
+    bool sizing = !(windowPos->flags & SWP_NOSIZE);
+
+    if (!sizing)
+        return;
+
+    if (!visible())
+        return;
+
+    updateWindow();
+}
+
+void WebNodeHighlight::onRootWindowPosChanged(WINDOWPOS* windowPos)
+{
+    bool moving = !(windowPos->flags & SWP_NOMOVE);
+    bool sizing = !(windowPos->flags & SWP_NOSIZE);
+
+    if (!moving)
+        return;
+
+    // Size changes are handled by onWebViewWindowPosChanged.
+    if (sizing)
+        return;
+
+    if (!visible())
+        return;
+
+    updateWindow();
+}
+void WebNodeHighlight::windowReceivedMessage(HWND window, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (window == m_inspectedWebViewWindow) {
         switch (msg) {
             case WM_SHOWWINDOW:
                 onWebViewShowWindow(wParam);
+                break;
+            case WM_WINDOWPOSCHANGED:
+                onWebViewWindowPosChanged(reinterpret_cast<WINDOWPOS*>(lParam));
                 break;
             default:
                 break;
@@ -223,8 +256,7 @@ void WebNodeHighlight::windowReceivedMessage(HWND window, UINT msg, WPARAM wPara
     ASSERT(window == m_observedWindow);
     switch (msg) {
         case WM_WINDOWPOSCHANGED:
-            if (visible())
-                updateWindow();
+            onRootWindowPosChanged(reinterpret_cast<WINDOWPOS*>(lParam));
             break;
         default:
             break;
