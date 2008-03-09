@@ -1,3 +1,27 @@
+2008-03-09  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 14254: Inspector node highlight applied to all tabs
+
+        <http://bugs.webkit.org/show_bug.cgi?id=14254>
+        <rdar://problem/5322306>
+
+        WebNodeHighlight now listens for the WM_SHOWWINDOW message being sent
+        to the inspected WebView so that it can hide/show itself as the
+        WebView is hidden/shown.
+
+        Reviewed by Anders.
+
+        * WebNodeHighlight.cpp:
+        (WebNodeHighlight::~WebNodeHighlight): Remove ourselves as a listener
+        for our inspected WebView's window's messages.
+        (WebNodeHighlight::show): Add ourselves as a listener for our
+        inspected WebView's window's messages.
+        (WebNodeHighlight::onWebViewShowWindow): Added. Hide ourselves when
+        the WebView hides, show ourselves when the WebView is shown.
+        (WebNodeHighlight::windowReceivedMessage): Added a separate switch
+        statement to handle the inspected WebView's window's messages.
+        * WebNodeHighlight.h:
+
 2008-03-07  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Mark Rowe.

@@ -51,6 +51,8 @@ public:
 private:
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
 
+    void onWebViewShowWindow(bool showing);
+
     WebView* m_inspectedWebView;
     HWND m_inspectedWebViewWindow;
     HWND m_overlay;

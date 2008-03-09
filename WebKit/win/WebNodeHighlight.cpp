@@ -58,6 +58,8 @@ WebNodeHighlight::~WebNodeHighlight()
 {
     if (m_observedWindow)
         WindowMessageBroadcaster::removeListener(m_observedWindow, this);
+    if (m_inspectedWebViewWindow)
+        WindowMessageBroadcaster::removeListener(m_inspectedWebViewWindow, this);
 
     if (m_overlay)
         ::DestroyWindow(m_overlay);
@@ -82,6 +84,7 @@ void WebNodeHighlight::show()
 
         m_observedWindow = GetAncestor(m_inspectedWebViewWindow, GA_ROOT);
         WindowMessageBroadcaster::addListener(m_observedWindow, this);
+        WindowMessageBroadcaster::addListener(m_inspectedWebViewWindow, this);
     }
 
     updateWindow();
@@ -192,8 +195,32 @@ LRESULT CALLBACK OverlayWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     return ::DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-void WebNodeHighlight::windowReceivedMessage(HWND, UINT msg, WPARAM, LPARAM)
+void WebNodeHighlight::onWebViewShowWindow(bool showing)
 {
+    if (visible() == showing)
+        return;
+
+    if (showing)
+        show();
+    else
+        hide();
+}
+
+void WebNodeHighlight::windowReceivedMessage(HWND window, UINT msg, WPARAM wParam, LPARAM)
+{
+    if (window == m_inspectedWebViewWindow) {
+        switch (msg) {
+            case WM_SHOWWINDOW:
+                onWebViewShowWindow(wParam);
+                break;
+            default:
+                break;
+        }
+
+        return;
+    }
+
+    ASSERT(window == m_observedWindow);
     switch (msg) {
         case WM_WINDOWPOSCHANGED:
             if (visible())
