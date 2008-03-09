@@ -314,12 +314,12 @@ JSValue* JSCanvasRenderingContext2D::createPattern(ExecState* exec, const List& 
     if (!value->isObject())
         return throwError(exec, TypeError);
     JSObject* o = static_cast<JSObject*>(value);
-    
+
     if (o->inherits(&JSHTMLImageElement::info)) {
         ExceptionCode ec;
         JSValue* pattern = toJS(exec,
             context->createPattern(static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl()),
-                args[1]->toString(exec), ec).get());
+                                   valueToStringWithNullCheck(exec, args[1]), ec).get());
         setDOMException(exec, ec);
         return pattern;
     }
@@ -327,7 +327,7 @@ JSValue* JSCanvasRenderingContext2D::createPattern(ExecState* exec, const List& 
         ExceptionCode ec;
         JSValue* pattern = toJS(exec,
             context->createPattern(static_cast<HTMLCanvasElement*>(static_cast<JSHTMLElement*>(args[0])->impl()),
-                args[1]->toString(exec), ec).get());
+                valueToStringWithNullCheck(exec, args[1]), ec).get());
         setDOMException(exec, ec);
         return pattern;
     }

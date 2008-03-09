@@ -1,3 +1,15 @@
+2008-03-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mitz.
+
+        Bug 17728: Canvas.createPattern with null repeat argument throws an exception
+
+        Test cases for various way of constructing a pattern
+
+        * fast/canvas/canvas-pattern-behaviour-expected.txt: Added.
+        * fast/canvas/canvas-pattern-behaviour.html: Added.
+        * fast/canvas/canvas-pattern-behaviour.js: Added.
+
 2008-03-08  Darin Adler  <darin@apple.com>
 
         * platform/win/Skipped: Fixed some typos (stray "s" characters).
