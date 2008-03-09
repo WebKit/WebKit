@@ -1,5 +1,20 @@
 2008-03-08  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Sam W.
+
+        Bug 16516: canvas image patterns stop working with some transformations
+
+        Simple fix.  We used x/yStep of FLT_MAX to fake a no-repeat-x/y pattern
+        with CG.  However any transforms involving FLT_MAX immediately get
+        consumed by the introduced floating point error.  yStep had already been
+        clamped to a much smaller arbitrary value, and this patch makes us use
+        that clamp value for xStep as well.
+
+        * html/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::createPattern):
+
+2008-03-08  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Mitz.
 
         Bug 17728: Canvas.createPattern with null repeat argument throws an exception

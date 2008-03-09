@@ -18,12 +18,19 @@ function pixelShouldBe(x, y, colour) {
     shouldBe("getPixel(" + [x, y] +")", "["+colour+"]");
 }
 
-var green1x1 = document.createElement("canvas");
-green1x1.width = 1;
-green1x1.height = 1;
-var context = green1x1.getContext("2d");
-context.fillStyle = "green";
-context.fillRect(0,0,1,1);
+function createCanvasImage(width, height, colour) {
+    var c = document.createElement("canvas");
+    c.width = width;
+    c.height = height;
+    var context = c.getContext("2d");
+    context.fillStyle = colour;
+    context.fillRect(0,0,width,height);
+    return c;
+}
+
+
+var green1x1 = createCanvasImage(1, 1, "green");
+var green100x50 = createCanvasImage(100, 50, "green");
 
 var canvas = document.createElement("canvas");
 canvas.width = 100;
@@ -91,6 +98,18 @@ var tests = [
 
         context.fillStyle = pattern;
         context.fillRect(0, 0, 100, 50);
+        pixelShouldBe(1,   1, [0,128,0,255]);
+        pixelShouldBe(98,  1, [0,128,0,255]);
+        pixelShouldBe(1,  48, [0,128,0,255]);
+        pixelShouldBe(98, 48, [0,128,0,255]);
+    },
+    function () {
+        context.fillStyle = "green";
+        context.fillRect(0, 0, 50, 50);
+        var pattern = context.createPattern(green100x50, "no-repeat");
+        context.fillStyle = pattern;
+        context.translate(50, 0);
+        context.fillRect(-50, 0, 100, 50);
         pixelShouldBe(1,   1, [0,128,0,255]);
         pixelShouldBe(98,  1, [0,128,0,255]);
         pixelShouldBe(1,  48, [0,128,0,255]);

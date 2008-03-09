@@ -1,3 +1,11 @@
+2008-03-08 Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam W.
+
+        Test case for Bug 16516: canvas image patterns stop working with some transformations
+
+        * fast/canvas/canvas-pattern-behaviour.js:
+
 2008-03-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mitz.
