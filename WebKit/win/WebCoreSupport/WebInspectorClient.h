@@ -32,13 +32,14 @@
 #include <WebCore/COMPtr.h>
 #include <WebCore/InspectorClient.h>
 #include <WebCore/PlatformString.h>
+#include <WebCore/WindowMessageListener.h>
 #include <wtf/OwnPtr.h>
 #include <windows.h>
 
 class WebNodeHighlight;
 class WebView;
 
-class WebInspectorClient : public WebCore::InspectorClient {
+class WebInspectorClient : public WebCore::InspectorClient, WebCore::WindowMessageListener {
 public:
     WebInspectorClient(WebView*);
 
@@ -70,6 +71,8 @@ private:
     LRESULT onSize(WPARAM, LPARAM);
     LRESULT onClose(WPARAM, LPARAM);
 
+    virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
+
     void onWebViewWindowPosChanging(WPARAM, LPARAM);
 
     WebView* m_inspectedWebView;
@@ -77,7 +80,6 @@ private:
     HWND m_hwnd;
     COMPtr<WebView> m_webView;
     HWND m_webViewHwnd;
-    WNDPROC m_originalWebViewWndProc;
 
     bool m_attached;
 
@@ -86,7 +88,6 @@ private:
     WebCore::String m_inspectedURL;
 
     static friend LRESULT CALLBACK WebInspectorWndProc(HWND, UINT, WPARAM, LPARAM);
-    static friend LRESULT CALLBACK SubclassedWebViewWndProc(HWND, UINT, WPARAM, LPARAM);
 };
 
 #endif // !defined(WebInspectorClient_h)

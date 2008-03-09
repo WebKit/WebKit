@@ -43,6 +43,7 @@
 #include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderObject.h>
+#include <WebCore/WindowMessageBroadcaster.h>
 #pragma warning(pop)
 
 #include <tchar.h>
@@ -71,7 +72,6 @@ WebInspectorClient::WebInspectorClient(WebView* webView)
     : m_inspectedWebView(webView)
     , m_hwnd(0)
     , m_webViewHwnd(0)
-    , m_originalWebViewWndProc(0)
     , m_attached(false)
 {
     ASSERT(m_inspectedWebView);
@@ -231,11 +231,7 @@ void WebInspectorClient::attachWindow()
     ASSERT(!m_attached);
     ASSERT(m_inspectedWebViewHwnd);
 
-    if (!m_originalWebViewWndProc) {
-        ::SetProp(m_inspectedWebViewHwnd, kWebInspectorPointerProp, reinterpret_cast<HANDLE>(this));
-#pragma warning(disable: 4244 4312)
-        m_originalWebViewWndProc = (WNDPROC)::SetWindowLongPtr(m_inspectedWebViewHwnd, GWLP_WNDPROC, (LONG_PTR)SubclassedWebViewWndProc);
-    }
+    WindowMessageBroadcaster::addListener(m_inspectedWebViewHwnd, this);
 
     HWND hostWindow;
     if (FAILED(m_inspectedWebView->hostWindow((OLE_HANDLE*)&hostWindow)))
@@ -254,11 +250,8 @@ void WebInspectorClient::attachWindow()
 void WebInspectorClient::detachWindow()
 {
     ASSERT(m_attached);
-    ASSERT(m_originalWebViewWndProc);
 
-    ::SetWindowLongPtr(m_inspectedWebViewHwnd, GWLP_WNDPROC, (LONG_PTR)m_originalWebViewWndProc);
-    ::RemoveProp(m_inspectedWebViewHwnd, kWebInspectorPointerProp);
-    m_originalWebViewWndProc = 0;
+    WindowMessageBroadcaster::removeListener(m_inspectedWebViewHwnd, this);
 
     m_attached = false;
 
@@ -369,19 +362,15 @@ static LRESULT CALLBACK WebInspectorWndProc(HWND hwnd, UINT msg, WPARAM wParam, 
     return ::DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-static LRESULT CALLBACK SubclassedWebViewWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+void WebInspectorClient::windowReceivedMessage(HWND, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    WebInspectorClient* client = reinterpret_cast<WebInspectorClient*>(::GetProp(hwnd, kWebInspectorPointerProp));
-    ASSERT(client);
-
     switch (msg) {
         case WM_WINDOWPOSCHANGING:
-            client->onWebViewWindowPosChanging(wParam, lParam);
+            onWebViewWindowPosChanging(wParam, lParam);
+            break;
         default:
             break;
     }
-
-    return ::CallWindowProc(client->m_originalWebViewWndProc, hwnd, msg, wParam, lParam);
 }
 
 static ATOM registerWindowClass()

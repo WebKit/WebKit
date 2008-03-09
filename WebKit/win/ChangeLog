@@ -1,5 +1,23 @@
 2008-03-09  Adam Roben  <aroben@apple.com>
 
+        Make WebInspectorClient use WindowMessageBroadcaster instead of manual subclassing
+
+        Reviewed by Darin.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::WebInspectorClient): Removed
+        m_orignalWebViewWndProc member.
+        (WebInspectorClient::attachWindow): Register as a listener with
+        WindowMessageBroadcaster instead of subclassing.
+        (WebInspectorClient::detachWindow): Deregister as a listener with
+        WindowMessageBroadcaster instead of unsubclassing.
+        (WebInspectorClient::windowReceivedMessage): Renamed from
+        SubclassedWebViewWndProc. Also added a missing break statement after
+        the call to onWebViewWindowPosChanging.
+        * WebCoreSupport/WebInspectorClient.h:
+
+2008-03-09  Adam Roben  <aroben@apple.com>
+
         Make the node highlight not obscure the tab bar when it first appears
 
         Reviewed by Darin.
