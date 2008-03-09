@@ -1,3 +1,11 @@
+2008-03-09  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebCore.vcproj/WebCore.vcproj: Make sure all Cairo files are
+        excluded from all three CG-based configurations: Debug, Release, and
+        Debug_Internal.
+
 2008-03-08  Mark Rowe  <mrowe@apple.com>
 
         Attempt to fix the Qt build.
