@@ -37,6 +37,7 @@
 #endif
 #if PLATFORM(QT)
 #include <qimagereader.h>
+#include <qimagewriter.h>
 #endif
 
 namespace WebCore {

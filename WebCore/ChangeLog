@@ -1,3 +1,9 @@
+2008-03-08  Mark Rowe  <mrowe@apple.com>
+
+        Attempt to fix the Qt build.
+
+        * platform/MIMETypeRegistry.cpp:  Add missing include.
+
 2008-03-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam W.
