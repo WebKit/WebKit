@@ -1,3 +1,14 @@
+2008-03-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        * DerivedSources.make: Put the list of DOM classes into its own
+        variable, and generate the JavaScript bindings and Objective-C
+        bindings dependencies from that. Added some separators to make it
+        a little easier to see the sections of the file. Moved all the
+        Mac-specific rules (except for the SVG conditional part) down
+        to the bottom of the file in a separate section.
+
 2008-03-09  Adam Roben  <aroben@apple.com>
 
         Windows build fix
