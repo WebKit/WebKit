@@ -1,3 +1,12 @@
+2008-03-08  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix 64-bit build with GCC 4.2.
+
+        * bindings/objc/WebScriptObject.mm: Use NSUInteger in place of unsigned where required.
+        * platform/mac/SharedBufferMac.mm: Ditto.
+
 2008-03-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

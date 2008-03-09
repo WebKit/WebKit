@@ -42,6 +42,7 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebNSViewExtras.h"
 #import "WebPluginController.h"
+#import "WebTypesInternal.h"
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/CachedPage.h>
 #import <WebCore/HistoryItem.h>
@@ -184,7 +185,7 @@ void WKNotifyHistoryItemChanged()
     return core(_private)->lastVisitedTime();
 }
 
-- (unsigned)hash
+- (NSUInteger)hash
 {
     return [(NSString*)core(_private)->urlString() hash];
 }

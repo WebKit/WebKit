@@ -35,6 +35,7 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebUIDelegatePrivate.h>
 #import <WebKit/DOM.h>
+#import "WebTypesInternal.h"
 
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
@@ -106,7 +107,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     return nil;
 }
 
-- (void)webView: (WebView *)wv mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags
+- (void)webView: (WebView *)wv mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(NSUInteger)modifierFlags
 {
 }
 
@@ -192,7 +193,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     return YES;
 }
 
-- (unsigned)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
+- (NSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
 {
     return WebDragDestinationActionAny;
 }
@@ -201,7 +202,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 {
 }
 
-- (unsigned)webView:(WebView *)webView dragSourceActionMaskForPoint:(NSPoint)point;
+- (NSUInteger)webView:(WebView *)webView dragSourceActionMaskForPoint:(NSPoint)point;
 {
     return WebDragSourceActionAny;
 }

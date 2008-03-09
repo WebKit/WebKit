@@ -1194,7 +1194,8 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const
     if (MIMETypeRegistry::isSupportedImageMIMEType(type))
         return ObjectContentImage;
 
-    if (WebBasePluginPackage *package = [getWebView(m_webFrame.get()) _pluginForMIMEType:type]) {
+    WebBasePluginPackage *package = [getWebView(m_webFrame.get()) _pluginForMIMEType:type];
+    if (package) {
 #if ENABLE(NETSCAPE_PLUGIN_API)
         if ([package isKindOfClass:[WebNetscapePluginPackage class]])
             return ObjectContentNetscapePlugin;

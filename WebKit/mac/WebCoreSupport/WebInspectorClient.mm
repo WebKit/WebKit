@@ -507,7 +507,7 @@ void WebInspectorClient::updateWindowTitle() const
 #pragma mark -
 #pragma mark UI delegate
 
-- (unsigned)webView:(WebView *)sender dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+- (NSUInteger)webView:(WebView *)sender dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     return WebDragDestinationActionNone;
 }

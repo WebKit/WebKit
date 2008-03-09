@@ -1,3 +1,21 @@
+2008-03-08  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix 64-bit build with GCC 4.2.
+
+        * DefaultDelegates/WebDefaultScriptDebugDelegate.m: Use NSUInteger in place of unsigned where required.
+        * DefaultDelegates/WebDefaultUIDelegate.m: Ditto.
+        * History/WebHistoryItem.mm: Ditto.
+        * Misc/WebElementDictionary.mm: Ditto.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::objectContentType): Move variable declaration outside of if to avoid warning about the
+        variable being unused in 64-bit.
+        * WebCoreSupport/WebInspectorClient.mm: Use NSUInteger in place of unsigned where required.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView adjustPageHeightNew:top:bottom:limit:]): Use CGFloat in place of float where required.
+        (-[WebTextCompleteController numberOfRowsInTableView:]): Use NSInteger in place of int where required.
+
 2008-03-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

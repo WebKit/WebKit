@@ -30,6 +30,10 @@
 #include <string.h>
 #include <wtf/PassRefPtr.h>
 
+#ifdef BUILDING_ON_TIGER
+typedef unsigned NSUInteger;
+#endif
+
 using namespace WebCore;
 
 @interface WebCoreSharedBufferData : NSData
@@ -75,7 +79,7 @@ using namespace WebCore;
     return self;
 }
 
-- (unsigned)length
+- (NSUInteger)length
 {
     return sharedBuffer->size();
 }

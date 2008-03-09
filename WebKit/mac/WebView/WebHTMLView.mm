@@ -68,6 +68,7 @@
 #import "WebPreferencesPrivate.h"
 #import "WebResourcePrivate.h"
 #import "WebStringTruncator.h"
+#import "WebTypesInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <AppKit/NSAccessibility.h>
@@ -3338,7 +3339,7 @@ noPromisedData:
 
 // This is needed for the case where the webview is embedded in the view that's being printed.
 // It shouldn't be called when the webview is being printed directly.
-- (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit
+- (void)adjustPageHeightNew:(CGFloat *)newBottom top:(CGFloat)oldTop bottom:(CGFloat)oldBottom limit:(CGFloat)bottomLimit
 {
     // This helps when we print as part of a larger print process.
     // If the WebHTMLView itself is what we're printing, then we will never have to do this.
@@ -3346,8 +3347,10 @@ noPromisedData:
     if (!wasInPrintingMode)
         [self _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
 
-    [[self _bridge] adjustPageHeightNew:newBottom top:oldTop bottom:oldBottom limit:bottomLimit];
-    
+    float newBottomFloat = *newBottom;
+    [[self _bridge] adjustPageHeightNew:&newBottomFloat top:oldTop bottom:oldBottom limit:bottomLimit];
+    *newBottom = newBottomFloat;
+
     if (!wasInPrintingMode) {
         NSPrintOperation *currenPrintOperation = [NSPrintOperation currentOperation];
         if (currenPrintOperation)
@@ -3499,7 +3502,7 @@ noPromisedData:
 }
 
 // Return the drawing rectangle for a particular page number
-- (NSRect)rectForPage:(int)page
+- (NSRect)rectForPage:(NSInteger)page
 {
     return [[_private->pageRects objectAtIndex:page - 1] rectValue];
 }
@@ -5558,12 +5561,12 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     [self endRevertingChange:NO moveLeft:NO];
 }
 
-- (int)numberOfRowsInTableView:(NSTableView *)tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
     return [_completions count];
 }
 
-- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(int)row
+- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
     return [_completions objectAtIndex:row];
 }

@@ -33,6 +33,7 @@
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebKitLogging.h"
+#import "WebTypesInternal.h"
 #import "WebView.h"
 #import "WebViewPrivate.h"
 #import <WebCore/Frame.h>
@@ -120,7 +121,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     _cacheComplete = YES;
 }
 
-- (unsigned)count
+- (NSUInteger)count
 {
     if (!_cacheComplete)
         [self _fillCache];

@@ -39,6 +39,10 @@
 #import "runtime.h"
 #import "runtime_object.h"
 
+#ifdef BUILDING_ON_TIGER
+typedef unsigned NSUInteger;
+#endif
+
 using namespace KJS;
 using namespace KJS::Bindings;
 using namespace WebCore;
@@ -626,7 +630,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 {
 }
 
-- (unsigned)retainCount
+- (NSUInteger)retainCount
 {
     return UINT_MAX;
 }

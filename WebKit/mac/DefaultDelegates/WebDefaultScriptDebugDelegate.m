@@ -29,6 +29,7 @@
 #import <WebKit/WebScriptDebugDelegate.h>
 #import "WebDefaultScriptDebugDelegate.h"
 
+#import "WebTypesInternal.h"
 
 @implementation WebDefaultScriptDebugDelegate
 
@@ -50,7 +51,7 @@ static WebDefaultScriptDebugDelegate *sharedDelegate = nil;
 }
 
 - (void)webView:(WebView *)webView       didParseSource:(NSString *)source
-                                         baseLineNumber:(unsigned)lineNumber
+                                         baseLineNumber:(NSUInteger)lineNumber
                                                 fromURL:(NSURL *)url
                                                sourceId:(int)sid
                                             forWebFrame:(WebFrame *)webFrame
@@ -58,7 +59,7 @@ static WebDefaultScriptDebugDelegate *sharedDelegate = nil;
 }
 
 - (void)webView:(WebView *)webView  failedToParseSource:(NSString *)source
-                                         baseLineNumber:(unsigned)lineNumber
+                                         baseLineNumber:(NSUInteger)lineNumber
                                                 fromURL:(NSURL *)url
                                               withError:(NSError *)error
                                             forWebFrame:(WebFrame *)webFrame
