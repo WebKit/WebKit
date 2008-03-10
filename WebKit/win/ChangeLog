@@ -1,3 +1,15 @@
+2008-03-10  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build break caused by r30920.
+        
+        Serialize remaining dependent builds by adding dependencies.
+        Visual Studio per-vcproj parallelization doesn't add a lot of value
+        since so many of our builds are dependent - this just enforces that.
+        We do our parallelization via pdevenv, which works much better.
+
+        * WebKit.vcproj/WebKit.sln:
+        * WebKit.vcproj/WebKit.submit.sln:
+
 2008-03-09  Steve Falkenburg  <sfalken@apple.com>
 
         Stop Windows build if an error occurs in a prior project.
