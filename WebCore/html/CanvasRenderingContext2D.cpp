@@ -52,6 +52,7 @@
 #include "Settings.h"
 #include <kjs/interpreter.h>
 #include <wtf/MathExtras.h>
+#include <stdio.h>
 
 #if PLATFORM(QT)
 #include <QPainter>
