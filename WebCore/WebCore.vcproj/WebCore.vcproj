@@ -1366,19 +1366,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSMimeType.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMimeType.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSMimeType.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMimeType.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSMimeTypeArray.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMimeTypeArray.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSMimeTypeArray.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMimeTypeArray.h"
 				>
 			</File>
 			<File
@@ -1406,11 +1406,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSNavigator.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSNavigator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSNavigator.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSNavigator.h"
 				>
 			</File>
 			<File
@@ -1462,19 +1462,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSPlugin.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSPlugin.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSPlugin.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSPlugin.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSPluginArray.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSPluginArray.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSPluginArray.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSPluginArray.h"
 				>
 			</File>
 			<File
