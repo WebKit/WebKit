@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-    struct Page;
+    class Page;
     struct PluginInfo;
 
     struct MimeClassInfo {

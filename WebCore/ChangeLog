@@ -1,5 +1,13 @@
 2008-03-10  Simon Hausmann  <hausmann@webkit.org>
 
+        Windows build fix that I forgot to merge earlier ;(
+
+        Forward declare Page as class, not struct.
+
+        * plugins/PluginData.h:
+
+2008-03-10  Simon Hausmann  <hausmann@webkit.org>
+
         Attempt to fix the Wx build.
 
         * WebCoreSources.bkl:
