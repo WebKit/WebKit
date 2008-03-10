@@ -1,5 +1,15 @@
 2008-03-10  Simon Hausmann  <hausmann@webkit.org>
 
+        Reviewed by Holger.
+
+        Replace two printfs() in the Qt port with notImplemented().
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::applyStrokePattern):
+        (WebCore::CanvasRenderingContext2D::applyFillPattern):
+
+2008-03-10  Simon Hausmann  <hausmann@webkit.org>
+
         Reviewed by Alp.
 
         Compilation fix with gcc 4.3: Include stdio.h for printf.

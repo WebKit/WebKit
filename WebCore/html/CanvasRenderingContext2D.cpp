@@ -1146,7 +1146,7 @@ void CanvasRenderingContext2D::applyStrokePattern()
 
     state().m_strokeStylePatternTransform = m;
 #elif PLATFORM(QT)
-    fprintf(stderr, "FIXME: CanvasRenderingContext2D::applyStrokePattern\n");
+    notImplemented();
 #elif PLATFORM(CAIRO)
     CanvasPattern* pattern = state().m_strokeStyle->pattern();
     if (!pattern)
@@ -1197,7 +1197,7 @@ void CanvasRenderingContext2D::applyFillPattern()
 
     state().m_fillStylePatternTransform = m;
 #elif PLATFORM(QT)
-    fprintf(stderr, "FIXME: CanvasRenderingContext2D::applyFillPattern\n");
+    notImplemented();
 #elif PLATFORM(CAIRO)
     CanvasPattern* pattern = state().m_fillStyle->pattern();
     if (!pattern)
