@@ -1,3 +1,14 @@
+2008-03-09  Steve Falkenburg  <sfalken@apple.com>
+
+        Stop Windows build if an error occurs in a prior project.
+
+        Rubber stamped by Darin.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj:
+
 2008-03-09  Jürg Billeter  <j@bitron.ch>
 
         Reviewed by Alp Toker.

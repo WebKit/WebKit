@@ -1,3 +1,14 @@
+2008-03-09  Steve Falkenburg  <sfalken@apple.com>
+
+        Stop Windows build if an error occurs in a prior project.
+
+        Rubber stamped by Darin.
+
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/InterfacesGenerated.vcproj:
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKit.vcproj/WebKitGUID.vcproj:
+
 2008-03-09  Adam Roben  <aroben@apple.com>
 
         Make WebInspectorClient use WindowMessageBroadcaster instead of manual subclassing
