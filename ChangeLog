@@ -1,3 +1,11 @@
+2008-03-09  Alp Toker  <alp@atoker.com>
+
+        GTK+ build fix for r30913.
+
+        Use UNICODE_CFLAGS for C++ sources as well as C sources.
+
+        * GNUmakefile.am:
+
 2008-03-09  Jürg Billeter  <j@bitron.ch>
 
         Reviewed by Alp Toker.

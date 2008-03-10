@@ -115,6 +115,7 @@ libJavaScriptCore_la_CXXFLAGS = \
 	$(global_cxxflags) \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
+	$(UNICODE_CFLAGS) \
 	-fstrict-aliasing
 
 libJavaScriptCore_la_CFLAGS = \
@@ -157,6 +158,7 @@ libWebCore_la_CXXFLAGS = \
 	$(global_cxxflags) \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
+	$(UNICODE_CFLAGS) \
 	$(WEBKITDEPS_CFLAGS) \
 	$(LIBCURL_CFLAGS) \
 	$(SQLITE3_CFLAGS) \
@@ -168,8 +170,8 @@ libWebCore_la_CXXFLAGS = \
 libWebCore_la_CFLAGS = \
 	-fno-strict-aliasing \
 	$(global_cflags) \
-	$(UNICODE_CFLAGS) \
 	$(GLOBALDEPS_CFLAGS) \
+	$(UNICODE_CFLAGS) \
 	$(WEBKITDEPS_CFLAGS) \
 	$(LIBCURL_CFLAGS) \
 	$(SQLITE3_CFLAGS) \
