@@ -38,26 +38,25 @@ static void markDOMObjectWrapper(void* object)
     if (!object)
         return;
     DOMObject* wrapper = ScriptInterpreter::getDOMObject(object);
-    if (!wrapper)
+    if (!wrapper || wrapper->marked())
         return;
-    if (!wrapper->marked())
-        wrapper->mark();
+    wrapper->mark();
 }
 
 void JSDOMWindow::mark()
 {
     JSDOMWindowBase::mark();
-    markDOMObjectWrapper(impl()->optionalScreen());
-    markDOMObjectWrapper(impl()->optionalSelection());
+    markDOMObjectWrapper(impl()->optionalConsole());
     markDOMObjectWrapper(impl()->optionalHistory());
     markDOMObjectWrapper(impl()->optionalLocationbar());
     markDOMObjectWrapper(impl()->optionalMenubar());
+    markDOMObjectWrapper(impl()->optionalNavigator());
     markDOMObjectWrapper(impl()->optionalPersonalbar());
+    markDOMObjectWrapper(impl()->optionalScreen());
     markDOMObjectWrapper(impl()->optionalScrollbars());
+    markDOMObjectWrapper(impl()->optionalSelection());
     markDOMObjectWrapper(impl()->optionalStatusbar());
     markDOMObjectWrapper(impl()->optionalToolbar());
-    markDOMObjectWrapper(impl()->optionalConsole());
-    markDOMObjectWrapper(impl()->optionalNavigator());
 }
 
 bool JSDOMWindow::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

@@ -1,5 +1,13 @@
 2008-03-10  Darin Adler  <darin@apple.com>
 
+        - oops, forgot to save last couple changes from the editor
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::markDOMObjectWrapper): Tweaked a tiny bit.
+        (WebCore::JSDOMWindow::mark): Sorted alphabetically.
+
+2008-03-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - fix failing regression test (window.navigator is getting garbage
