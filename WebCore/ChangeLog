@@ -1,5 +1,34 @@
 2008-03-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - fix failing regression test (window.navigator is getting garbage
+          collected and thus losing its custom properties)
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::markDOMObject): Added helper function.
+        (WebCore::JSDOMWindow::mark): Added. Marks the wrappers for all the objects that hang
+        off the window object.
+
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::optionalScreen): Added so we can get the Screen object without
+        creating it if it's already there.
+        (WebCore::DOMWindow::optionalSelection): Ditto.
+        (WebCore::DOMWindow::optionalHistory): Ditto.
+        (WebCore::DOMWindow::optionalLocationbar): Ditto.
+        (WebCore::DOMWindow::optionalMenubar): Ditto.
+        (WebCore::DOMWindow::optionalPersonalbar): Ditto.
+        (WebCore::DOMWindow::optionalScrollbars): Ditto.
+        (WebCore::DOMWindow::optionalStatusbar): Ditto.
+        (WebCore::DOMWindow::optionalToolbar): Ditto.
+        (WebCore::DOMWindow::optionalConsole): Ditto.
+        (WebCore::DOMWindow::optionalNavigator): Ditto.
+
+        * page/DOMWindow.idl: Added the CustomMarkFunction flag. Sorted the flags in
+        alphabetical order since there are a lot of them.
+
+2008-03-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam.
 
         - eliminate Java applet methods from WebCoreFrameBridge

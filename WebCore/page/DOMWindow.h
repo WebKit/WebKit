@@ -159,6 +159,18 @@ namespace WebCore {
         void resizeBy(float x, float y) const;
         void resizeTo(float width, float height) const;
 
+        Screen* optionalScreen() const { return m_screen.get(); }
+        DOMSelection* optionalSelection() const { return m_selection.get(); }
+        History* optionalHistory() const { return m_history.get(); }
+        BarInfo* optionalLocationbar() const { return m_locationbar.get(); }
+        BarInfo* optionalMenubar() const { return m_menubar.get(); }
+        BarInfo* optionalPersonalbar() const { return m_personalbar.get(); }
+        BarInfo* optionalScrollbars() const { return m_scrollbars.get(); }
+        BarInfo* optionalStatusbar() const { return m_statusbar.get(); }
+        BarInfo* optionalToolbar() const { return m_toolbar.get(); }
+        Console* optionalConsole() const { return m_console.get(); }
+        Navigator* optionalNavigator() const { return m_navigator.get(); }
+
     private:
         DOMWindow(Frame*);
         

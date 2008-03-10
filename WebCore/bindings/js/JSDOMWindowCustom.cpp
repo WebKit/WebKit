@@ -33,6 +33,33 @@ using namespace KJS;
 
 namespace WebCore {
 
+static void markDOMObjectWrapper(void* object)
+{
+    if (!object)
+        return;
+    DOMObject* wrapper = ScriptInterpreter::getDOMObject(object);
+    if (!wrapper)
+        return;
+    if (!wrapper->marked())
+        wrapper->mark();
+}
+
+void JSDOMWindow::mark()
+{
+    JSDOMWindowBase::mark();
+    markDOMObjectWrapper(impl()->optionalScreen());
+    markDOMObjectWrapper(impl()->optionalSelection());
+    markDOMObjectWrapper(impl()->optionalHistory());
+    markDOMObjectWrapper(impl()->optionalLocationbar());
+    markDOMObjectWrapper(impl()->optionalMenubar());
+    markDOMObjectWrapper(impl()->optionalPersonalbar());
+    markDOMObjectWrapper(impl()->optionalScrollbars());
+    markDOMObjectWrapper(impl()->optionalStatusbar());
+    markDOMObjectWrapper(impl()->optionalToolbar());
+    markDOMObjectWrapper(impl()->optionalConsole());
+    markDOMObjectWrapper(impl()->optionalNavigator());
+}
+
 bool JSDOMWindow::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // When accessing a Window cross-domain, functions are always the native built-in ones, and they

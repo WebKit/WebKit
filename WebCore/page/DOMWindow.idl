@@ -26,14 +26,15 @@
 module window {
 
     interface [
-        LegacyParent=JSDOMWindowBase,
-        DoNotCache,
         CheckDomainSecurity,
-        GenerateNativeConverter,
-        CustomGetOwnPropertySlot,
-        CustomPutFunction,
         CustomDeleteProperty,
-        CustomGetPropertyNames
+        CustomGetOwnPropertySlot,
+        CustomGetPropertyNames,
+        CustomMarkFunction,
+        CustomPutFunction,
+        DoNotCache,
+        GenerateNativeConverter,
+        LegacyParent=JSDOMWindowBase
     ] DOMWindow {
         // DOM Level 0
         readonly attribute Screen screen;
