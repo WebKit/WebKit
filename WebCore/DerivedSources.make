@@ -153,15 +153,20 @@ DOM_CLASSES = \
     MediaError \
     MediaList \
     MessageEvent \
+    MimeType \
+    MimeTypeArray \
     MouseEvent \
     MutationEvent \
     NamedNodeMap \
+    Navigator \
     Node \
     NodeFilter \
     NodeIterator \
     NodeList \
     Notation \
     OverflowEvent \
+    Plugin \
+    PluginArray \
     ProcessingInstruction \
     ProgressEvent \
     RGBColor \
@@ -344,11 +349,6 @@ all : \
     JSDOMWindowBase.lut.h \
     JSEventTargetBase.lut.h \
     JSLocation.lut.h \
-    JSPlugin.h \
-    JSPluginArray.h \
-    JSNavigator.h \
-    JSMimeType.h \
-    JSMimeTypeArray.h \
     JSRGBColor.lut.h \
     JSXMLHttpRequest.lut.h \
     JSXSLTProcessor.lut.h \
@@ -584,7 +584,7 @@ JS%.h : %.idl $(GENERATE_BINDINGS_SCRIPTS) bindings/scripts/CodeGeneratorJS.pm
 
 ifeq ($(OS),MACOS)
 
-all : $(filter-out DOMDOMWindow.h,$(DOM_CLASSES:%=DOM%.h))
+all : $(filter-out DOMDOMWindow.h DOMMimeType.h DOMPlugin.h,$(DOM_CLASSES:%=DOM%.h))
 
 all : CharsetData.cpp WebCore.exp
 
