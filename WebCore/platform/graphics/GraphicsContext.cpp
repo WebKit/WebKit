@@ -27,6 +27,7 @@
 #include "GraphicsContext.h"
 
 #include "BidiResolver.h"
+#include "GraphicsContextPrivate.h"
 #include "Font.h"
 
 using namespace std;
@@ -70,44 +71,6 @@ private:
     const TextRun* m_textRun;
     int m_offset;
 };
-
-struct GraphicsContextState {
-    GraphicsContextState() 
-    : strokeStyle(SolidStroke)
-    , strokeThickness(0)
-    , strokeColor(Color::black)
-    , fillColor(Color::black)
-    , textDrawingMode(cTextFill)
-    , paintingDisabled(false)
-    {}
-    
-    Font font;
-    StrokeStyle strokeStyle;
-    float strokeThickness;
-    Color strokeColor;
-    Color fillColor;
-    int textDrawingMode;
-    bool paintingDisabled;
-};
-        
-class GraphicsContextPrivate {
-public:
-    GraphicsContextPrivate();
-    
-    GraphicsContextState state;
-    Vector<GraphicsContextState> stack;
-    Vector<IntRect> m_focusRingRects;
-    int m_focusRingWidth;
-    int m_focusRingOffset;
-    bool m_updatingControlTints;
-};
-
-GraphicsContextPrivate::GraphicsContextPrivate()
-    : m_focusRingWidth(0)
-    , m_focusRingOffset(0)
-    , m_updatingControlTints(false)
-{
-}
 
 GraphicsContextPrivate* GraphicsContext::createGraphicsContextPrivate()
 {

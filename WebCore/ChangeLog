@@ -1,3 +1,19 @@
+2008-03-10  Marc-Antoine Ruel  <maruel@gmail.com>
+
+        Reviewed by Eric, landed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16095
+        Move GraphicsContextPrivate to its own header file.
+
+        Moves GraphicsContextState and GraphicsContextPrivate to its
+        own header
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/GraphicsContextPrivate.h: Added.
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        (WebCore::GraphicsContextPrivate::GraphicsContextPrivate):
+
 2008-03-10  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed and landed by Darin.

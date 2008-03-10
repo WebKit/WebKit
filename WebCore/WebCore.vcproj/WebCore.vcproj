@@ -4188,6 +4188,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\GraphicsContextPrivate.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\GraphicsTypes.cpp"
 					>
 				</File>
