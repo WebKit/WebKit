@@ -1608,7 +1608,7 @@ sub epiloguesAndPrologues($$) {
     my @components = split('/', $directory);
 
     while (@lastComponents) {
-        if ($lastComponents[0] ne $components[0]) {
+        if (!defined($components[0]) || $lastComponents[0] ne $components[0]) {
             last;
         }
         shift @components;

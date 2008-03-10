@@ -1,3 +1,15 @@
+2008-03-10  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Reviewed and landed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17581
+        Bug 17581: Use of uninitialized value in string ne at WebKitTools/Scripts/run-webkit-tests line 1576.
+
+        Remove the previous warning which occurs when the --random option is used.
+
+        * Scripts/run-webkit-tests: verify that $component[0] is defined before checking for
+        its inequality
+
 2008-03-07  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Darin.
