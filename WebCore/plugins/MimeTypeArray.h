@@ -20,6 +20,7 @@
 #ifndef MimeTypeArray_h
 #define MimeTypeArray_h
 
+#include "MimeType.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -33,7 +34,6 @@ namespace WebCore {
 
     class AtomicString;
     class Frame;
-    class MimeType;
     class PluginData;
 
     // FIXME: Generated JSMimeTypeArray.cpp doesn't include JSMimeType.h for toJS
@@ -47,9 +47,9 @@ namespace WebCore {
         void disconnectFrame() { m_frame = 0; }
 
         unsigned length() const;
-        MimeType* item(unsigned index);
+        PassRefPtr<MimeType> item(unsigned index);
         bool canGetItemsForName(const AtomicString& propertyName);
-        MimeType* nameGetter(const AtomicString& propertyName);
+        PassRefPtr<MimeType> nameGetter(const AtomicString& propertyName);
     private:
         MimeTypeArray(Frame*);
         PluginData* getPluginData() const;

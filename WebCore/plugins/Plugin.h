@@ -51,9 +51,9 @@ namespace WebCore {
 
         unsigned length() const;
 
-        MimeType* item(unsigned index);
+        PassRefPtr<MimeType> item(unsigned index);
         bool canGetItemsForName(const AtomicString& propertyName);
-        MimeType* nameGetter(const AtomicString& propertyName);
+        PassRefPtr<MimeType> nameGetter(const AtomicString& propertyName);
 
     private:
         Plugin(PluginData*, unsigned index);

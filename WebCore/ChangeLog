@@ -1,5 +1,19 @@
 2008-03-10  Simon Hausmann  <hausmann@webkit.org>
 
+        Reviewed by Lars.
+
+        Fix reference counting of returned MimeType and Plugin objects
+        created in the array wrappers.
+
+        * plugins/MimeTypeArray.cpp:
+        * plugins/MimeTypeArray.h:
+        * plugins/Plugin.cpp:
+        * plugins/Plugin.h:
+        * plugins/PluginArray.cpp:
+        * plugins/PluginArray.h:
+
+2008-03-10  Simon Hausmann  <hausmann@webkit.org>
+
         Wx linking fix.
 
         Added missing stubs for PluginData.

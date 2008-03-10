@@ -44,7 +44,7 @@ unsigned MimeTypeArray::length() const
     return data->mimes().size();
 }
 
-MimeType* MimeTypeArray::item(unsigned index)
+PassRefPtr<MimeType> MimeTypeArray::item(unsigned index)
 {
     PluginData* data = getPluginData();
     if (!data)
@@ -68,7 +68,7 @@ bool MimeTypeArray::canGetItemsForName(const AtomicString& propertyName)
     return false;
 }
 
-MimeType* MimeTypeArray::nameGetter(const AtomicString& propertyName)
+PassRefPtr<MimeType> MimeTypeArray::nameGetter(const AtomicString& propertyName)
 {
     PluginData *data = getPluginData();
     if (!data)

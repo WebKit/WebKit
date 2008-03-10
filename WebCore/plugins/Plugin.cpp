@@ -55,7 +55,7 @@ unsigned Plugin::length() const
     return m_pluginData->plugins()[m_index]->mimes.size();
 }
 
-MimeType* Plugin::item(unsigned index)
+PassRefPtr<MimeType> Plugin::item(unsigned index)
 {
     const Vector<PluginInfo*>& plugins = m_pluginData->plugins();
     if (index >= plugins[m_index]->mimes.size())
@@ -79,7 +79,7 @@ bool Plugin::canGetItemsForName(const AtomicString& propertyName)
     return false;
 }
 
-MimeType* Plugin::nameGetter(const AtomicString& propertyName)
+PassRefPtr<MimeType> Plugin::nameGetter(const AtomicString& propertyName)
 {
     const Vector<MimeClassInfo*>& mimes = m_pluginData->mimes();
     for (unsigned i = 0; i < mimes.size(); ++i)

@@ -20,6 +20,7 @@
 #ifndef PluginArray_h
 #define PluginArray_h
 
+#include "Plugin.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -33,7 +34,6 @@ namespace WebCore {
 
     class AtomicString;
     class Frame;
-    class Plugin;
     class PluginData;
 
     // FIXME: Generated JSPluginArray.cpp doesn't include JSPlugin.h for toJS
@@ -47,9 +47,9 @@ namespace WebCore {
         void disconnectFrame() { m_frame = 0; }
 
         unsigned length() const;
-        Plugin* item(unsigned index);
+        PassRefPtr<Plugin> item(unsigned index);
         bool canGetItemsForName(const AtomicString& propertyName);
-        Plugin* nameGetter(const AtomicString& propertyName);
+        PassRefPtr<Plugin> nameGetter(const AtomicString& propertyName);
 
         void refresh(bool reload);
     private:
