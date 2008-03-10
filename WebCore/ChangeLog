@@ -1,3 +1,16 @@
+2008-03-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - eliminate Java applet methods from WebCoreFrameBridge
+
+        * loader/FrameLoaderClient.h: Added a javaApplet function.
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::createScriptInstanceForWidget): Streamlined the code.
+        Use the loader client instead of the bridge to get the applet.
+        * page/mac/WebCoreFrameBridge.h: Removed the getAppletInView and
+        pollForAppletInView methods. Also removed other unused things.
+
 2008-03-10  Marc-Antoine Ruel  <maruel@gmail.com>
 
         Reviewed by Eric, landed by Darin.

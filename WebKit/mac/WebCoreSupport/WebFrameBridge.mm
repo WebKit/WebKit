@@ -100,10 +100,6 @@
 - (void)setIsSelected:(BOOL)f;
 @end
 
-@interface NSView (JavaPluginSecrets)
-- (jobject)pollForAppletInWindow:(NSWindow *)window;
-@end
-
 using namespace WebCore;
 
 #define KeyboardUIModeDidChangeNotification @"com.apple.KeyboardUIModeDidChange"
@@ -258,12 +254,6 @@ using namespace WebCore;
     [webView _popPerformingProgrammaticFocus];
 }
 
-- (void)runOpenPanelForFileButtonWithResultListener:(id<WebCoreOpenPanelResultListener>)resultListener
-{
-    WebView *wv = [self webView];
-    [[wv _UIDelegateForwarder] webView:wv runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener];
-}
-
 - (WebDataSource *)dataSource
 {
     ASSERT(_frame != nil);
@@ -279,41 +269,6 @@ using namespace WebCore;
     [super close];
     [_frame release];
     _frame = nil;
-}
-
-- (jobject)getAppletInView:(NSView *)view
-{
-    if ([view respondsToSelector:@selector(webPlugInGetApplet)])
-        return [view webPlugInGetApplet];
-    return [self pollForAppletInView:view];
-}
-
-// NOTE: pollForAppletInView: will block until the block is ready to use, or
-// until a timeout is exceeded.  It will return nil if the timeout is
-// exceeded.
-// Deprecated, use getAppletInView:.
-- (jobject)pollForAppletInView:(NSView *)view
-{
-    if ([view respondsToSelector:@selector(pollForAppletInWindow:)])
-        // The Java VM needs the containing window of the view to
-        // initialize. The view may not yet be in the window's view 
-        // hierarchy, so we have to pass the window when requesting
-        // the applet.
-        return [view pollForAppletInWindow:[[self webView] window]];
-    return 0;
-}
-
-- (void)respondToChangedContents
-{
-    NSView <WebDocumentView> *view = [[_frame frameView] documentView];
-    if ([view isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)view _updateFontPanel];
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:[self webView]];
-}
-
-- (NSUndoManager *)undoManager
-{
-    return [[self webView] undoManager];
 }
 
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <Cocoa/Cocoa.h>
 #import <JavaVM/jni.h>
 #import <WebCore/WebCoreKeyboardUIMode.h>
 #import <WebCore/EditAction.h>
@@ -34,27 +33,16 @@
 
 namespace WebCore {
     class Frame;
-    class HTMLFrameOwnerElement;
-    class Page;
-    class String;
 }
 
 @class DOMCSSStyleDeclaration;
 @class DOMDocument;
 @class DOMDocumentFragment;
 @class DOMElement;
-@class DOMHTMLInputElement;
-@class DOMHTMLTextAreaElement;
 @class DOMNode;
 @class DOMRange;
-@class NSMenu;
 
 @protocol WebCoreRenderTreeCopier;
-
-@protocol WebCoreOpenPanelResultListener <NSObject>
-- (void)chooseFilename:(NSString *)fileName;
-- (void)cancel;
-@end
 
 // WebCoreFrameBridge objects are used by WebCore to abstract away operations that need
 // to be implemented by library clients, for example WebKit. The objects are also
@@ -65,8 +53,7 @@ namespace WebCore {
 
 // The WebCoreFrameBridge interface contains methods for use by the non-WebCore side of the bridge.
 
-@interface WebCoreFrameBridge : NSObject
-{
+@interface WebCoreFrameBridge : NSObject {
 @public
     WebCore::Frame* m_frame;
     BOOL _shouldCreateRenderers;
@@ -186,13 +173,6 @@ namespace WebCore {
 
 - (NSResponder *)firstResponder;
 - (void)makeFirstResponder:(NSResponder *)responder;
-
-- (void)runOpenPanelForFileButtonWithResultListener:(id <WebCoreOpenPanelResultListener>)resultListener;
-
-- (jobject)getAppletInView:(NSView *)view;
-
-// Deprecated, use getAppletInView: instead.
-- (jobject)pollForAppletInView:(NSView *)view;
 
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view;
 

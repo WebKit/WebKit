@@ -34,7 +34,6 @@
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebHTMLViewInternal.h"
-#import "WebJavaPlugIn.h"
 #import "WebHistoryInternal.h"
 #import "WebKitSystemInterface.h"
 #import "WebNSURLRequestExtras.h"
@@ -59,10 +58,6 @@
 
 @interface NSView (NSViewDetails)
 - (NSView *)_findLastViewInKeyViewLoop;
-@end
-
-@interface NSView (JavaPluginDetails)
-- (jobject)pollForAppletInWindow:(NSWindow *)window;
 @end
 
 // For compatibility with old SPI.

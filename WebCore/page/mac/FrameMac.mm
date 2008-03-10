@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Trolltech ASA
  *
@@ -567,51 +567,39 @@ DragImageRef Frame::dragImageForSelection()
     return selectionImage();
 }
 
-
-KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(WebCore::Widget* widget)
+KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(Widget* widget)
 {
-    NSView* aView = widget->getView();
-    if (!aView)
+    NSView* widgetView = widget->getView();
+    if (!widgetView)
         return 0;
 
-    void* nativeHandle = aView;
-    RefPtr<RootObject> rootObject = createRootObject(nativeHandle, scriptProxy()->globalObject());
+    RefPtr<RootObject> rootObject = createRootObject(widgetView, scriptProxy()->globalObject());
 
-    if ([aView respondsToSelector:@selector(objectForWebScript)]) {
-        id objectForWebScript = [aView objectForWebScript];
-        if (objectForWebScript)
-            return Instance::createBindingForLanguageInstance(Instance::ObjectiveCLanguage, objectForWebScript, rootObject.release());
-        return 0;
-    } else if ([aView respondsToSelector:@selector(createPluginScriptableObject)]) {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        NPObject* npObject = [aView createPluginScriptableObject];
-        if (npObject) {
-            Instance* instance = Instance::createBindingForLanguageInstance(Instance::CLanguage, npObject, rootObject.release());
-
-            // -createPluginScriptableObject returns a retained NPObject.  The caller is expected to release it.
-            _NPN_ReleaseObject(npObject);
-            return instance;
-        }
-#endif
-        return 0;
+    if ([widgetView respondsToSelector:@selector(objectForWebScript)]) {
+        id objectForWebScript = [widgetView objectForWebScript];
+        if (!objectForWebScript)
+            return 0;
+        return Instance::createBindingForLanguageInstance(Instance::ObjectiveCLanguage, objectForWebScript, rootObject.release());
     }
 
-    jobject applet;
-    
-    // Get a pointer to the actual Java applet instance.
-    if ([d->m_bridge respondsToSelector:@selector(getAppletInView:)])
-        applet = [d->m_bridge getAppletInView:aView];
-    else
-        applet = [d->m_bridge pollForAppletInView:aView];
-    
-    if (applet) {
-        // Wrap the Java instance in a language neutral binding and hand
-        // off ownership to the APPLET element.
-        Instance* instance = Instance::createBindingForLanguageInstance(Instance::JavaLanguage, applet, rootObject.release());
+    if ([widgetView respondsToSelector:@selector(createPluginScriptableObject)]) {
+#if !ENABLE(NETSCAPE_PLUGIN_API)
+        return 0;
+#else
+        NPObject* npObject = [widgetView createPluginScriptableObject];
+        if (!npObject)
+            return 0;
+        Instance* instance = Instance::createBindingForLanguageInstance(Instance::CLanguage, npObject, rootObject.release());
+        // -createPluginScriptableObject returns a retained NPObject.  The caller is expected to release it.
+        _NPN_ReleaseObject(npObject);
         return instance;
+#endif
     }
-    
-    return 0;
+
+    jobject applet = loader()->client()->javaApplet(widgetView);
+    if (!applet)
+        return 0;
+    return Instance::createBindingForLanguageInstance(Instance::JavaLanguage, applet, rootObject.release());
 }
 
 WebScriptObject* Frame::windowScriptObject()

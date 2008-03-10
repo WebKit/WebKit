@@ -1,3 +1,15 @@
+2008-03-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - eliminate Java applet methods from WebCoreFrameBridge
+
+        * WebCoreSupport/WebChromeClient.mm: Removed unneeded headers and declarations.
+        * WebCoreSupport/WebFrameBridge.mm: Ditto. Also removed unneeded methods, including
+        the ones that load Java applets.
+        * WebCoreSupport/WebFrameLoaderClient.h: Added javaApplet function.
+        * WebCoreSupport/WebFrameLoaderClient.mm: Ditto.
+
 2008-03-07  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Darin.

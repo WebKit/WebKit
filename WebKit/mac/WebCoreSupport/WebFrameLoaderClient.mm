@@ -53,6 +53,7 @@
 #import "WebHistoryItemInternal.h"
 #import "WebHistoryInternal.h"
 #import "WebIconDatabaseInternal.h"
+#import "WebJavaPlugIn.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
@@ -110,7 +111,10 @@
 
 using namespace WebCore;
 
-// SPI for NSURLDownload
+@interface NSView (WebJavaPluginDetails)
+- (jobject)pollForAppletInWindow:(NSWindow *)window;
+@end
+
 // Needed for <rdar://problem/5121850> 
 @interface NSURLDownload (WebNSURLDownloadDetails)
 - (void)_setOriginatingURL:(NSURL *)originatingURL;
@@ -1502,6 +1506,19 @@ void WebFrameLoaderClient::didPerformFirstNavigation() const
     WebPreferences *preferences = [[m_webFrame.get() webView] preferences];
     if ([preferences automaticallyDetectsCacheModel] && [preferences cacheModel] < WebCacheModelDocumentBrowser)
         [preferences setCacheModel:WebCacheModelDocumentBrowser];
+}
+
+jobject WebFrameLoaderClient::javaApplet(NSView* view)
+{
+    if ([view respondsToSelector:@selector(webPlugInGetApplet)])
+        return [view webPlugInGetApplet];
+
+    // Compatibility with older versions of Java.
+    // FIXME: Do we still need this?
+    if ([view respondsToSelector:@selector(pollForAppletInWindow:)])
+        return [view pollForAppletInWindow:[[m_webFrame.get() frameView] window]];
+
+    return 0;
 }
 
 @implementation WebFramePolicyListener

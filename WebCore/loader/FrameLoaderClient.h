@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef FrameLoaderClient_h
 #define FrameLoaderClient_h
 
 #include "FrameLoaderTypes.h"
-#include "StringHash.h"
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
+#include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
-#ifdef __OBJC__
-@class NSCachedURLResponse;
-#else
+typedef class _jobject* jobject;
+
+#if PLATFORM(MAC) && !defined(__OBJC__)
 class NSCachedURLResponse;
-#endif
+class NSView;
 #endif
 
 namespace WebCore {
@@ -70,7 +70,7 @@ namespace WebCore {
 
     class FrameLoaderClient {
     public:
-        virtual ~FrameLoaderClient() {  }
+        virtual ~FrameLoaderClient() { }
         virtual void frameLoaderDestroyed() = 0;
         
         virtual bool hasWebView() const = 0; // mainly for assertions
@@ -210,6 +210,7 @@ namespace WebCore {
         virtual void registerForIconNotification(bool listen = true) = 0;
         
 #if PLATFORM(MAC)
+        virtual jobject javaApplet(NSView*) { return 0; }
         virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long identifier, NSCachedURLResponse*) const = 0;
 #endif
     };
