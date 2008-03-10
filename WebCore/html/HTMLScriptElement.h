@@ -75,6 +75,9 @@ public:
     String type() const;
     void setType(const String&);
 
+    // A charset for loading the script (may be overridden by HTTP headers or a BOM).
+    String scriptCharset() const;
+    
 private:
     CachedScript* m_cachedScript;
     bool m_createdByParser;

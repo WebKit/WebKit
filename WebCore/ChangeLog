@@ -1,3 +1,25 @@
+2008-03-10  Johnny Ding  <johnnyding.webkit@gmail.com>
+
+        Reviewed, tweaked and landed by Alexey.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17732        
+
+        We didn't have a fallback to frame encoding in the case of loading a script via
+        changing its src attribute.
+
+        Test: fast/dom/HTMLScriptElement/script-decoding-error-after-setting-src.html
+
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseMappedAttribute): Use a helper function to get proper
+        charset for correct decoding of script content.
+        (WebCore::HTMLScriptElement::insertedIntoDocument):
+        (WebCore::HTMLScriptElement::scriptCharset): A helper function for getting proper charset
+        for the script (as much as can be determined prior to loading it).
+        * html/HTMLScriptElement.h:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag): Use a helper function to get proper charset for correct
+        decoding of script content.
+
 2008-03-10  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.

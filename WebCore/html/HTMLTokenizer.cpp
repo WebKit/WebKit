@@ -1448,10 +1448,6 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     if (m_doc->frame() && m_doc->frame()->scriptProxy()->isEnabled()) {
                         if ((a = currToken.attrs->getAttributeItem(srcAttr)))
                             scriptSrc = m_doc->completeURL(parseURL(a->value())).string();
-                        if ((a = currToken.attrs->getAttributeItem(charsetAttr)))
-                            scriptSrcCharset = a->value().string().stripWhiteSpace();
-                        if (scriptSrcCharset.isEmpty())
-                            scriptSrcCharset = m_doc->frame()->loader()->encoding();
                     }
                 }
             }
@@ -1465,6 +1461,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 } else if (tagName == scriptTag && n) {
                     ASSERT(!scriptNode);
                     scriptNode = n;
+                    scriptSrcCharset = static_cast<HTMLScriptElement*>(n.get())->scriptCharset();
                     if (beginTag) {
                         searchStopper = scriptEnd;
                         searchStopperLen = 8;

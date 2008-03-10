@@ -1,3 +1,14 @@
+2008-03-10  Johnny Ding  <johnnyding.webkit@gmail.com>
+
+        Reviewed, tweaked and landed by Alexey.
+
+        Bug http://bugs.webkit.org/show_bug.cgi?id=17732
+        Test case for testing script decoding after setting its src attribute
+
+        * fast/dom/HTMLScriptElement/resources/script-decoding-error-after-setting-src.js: Added.
+        * fast/dom/HTMLScriptElement/script-decoding-error-after-setting-src-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/script-decoding-error-after-setting-src.html: Added.
+
 2008-03-07  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Darin.
