@@ -320,7 +320,7 @@ WebInspector.changeFocus = function(event)
     }
 
     if (!nextFocusElement)
-        nextFocusElement = event.target.firstParentWithClass("focusable");
+        nextFocusElement = event.target.firstParentOrSelfWithClass("focusable");
 
     this.currentFocusElement = nextFocusElement;
 }
@@ -1051,6 +1051,67 @@ WebInspector.UIString = function(string)
     }
 
     return String.vsprintf(string, Array.prototype.slice.call(arguments, 1));
+}
+
+WebInspector.isBeingEdited = function(element)
+{
+    return element.__editing;
+}
+
+WebInspector.startEditing = function(element, committedCallback, cancelledCallback, context)
+{
+    if (element.__editing)
+        return;
+    element.__editing = true;
+
+    var oldText = element.textContent;
+    var handleKeyEvent = element.handleKeyEvent;
+    var blurred = element.blurred;
+
+    element.addStyleClass("editing");
+    element.addStyleClass("focusable");
+
+    var previousFocusElement = WebInspector.currentFocusElement;
+
+    function cleanUpAfterEditing() {
+        delete this.__editing;
+
+        this.removeStyleClass("editing");
+        this.removeStyleClass("focusable");
+
+        this.handleKeyEvent = handleKeyEvent;
+        this.blurred = blurred;
+
+        WebInspector.currentFocusElement = previousFocusElement;
+    }
+
+    function editingCancelled() {
+        this.innerText = oldText;
+
+        cleanUpAfterEditing.call(this);
+
+        cancelledCallback(this, context);
+    }
+
+    function editingCommitted() {
+        cleanUpAfterEditing.call(this);
+
+        committedCallback(this, this.textContent, oldText, context);
+    }
+
+    element.handleKeyEvent = function(event) {
+        if (event.keyIdentifier === "Enter") {
+            editingCommitted.call(element);
+            event.preventDefault();
+        } else if (event.keyCode === 27) { // Escape key
+            editingCancelled.call(element);
+            event.preventDefault();
+        }
+    }
+
+    element.blurred = function() { editingCancelled.call(element); }
+
+    WebInspector.currentFocusElement = element;
 }
 
 WebInspector.StatusTreeElement = function(title, iconClass, panel)

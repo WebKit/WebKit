@@ -1,3 +1,37 @@
+2008-03-09  Adam Roben  <aroben@apple.com>
+
+        Refactor CSS editing code so we can share it with DOM editing
+
+        Add WebInspector.startEditing, which takes the element to be edited, a
+        committedCallback, a cancelledCallback, and a context parameter. This
+        function takes care of setting up the element for editing, and calls
+        either the cancelledCallback or committedCallback when editing ends.
+
+        Reviewed by Tim.
+
+        * page/inspector/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.startEditing):
+          - Call WebInspector.isBeingEdited and WebInspector.startEditing
+          - Removed code now handled by WebInspector.startEditing
+        (WebInspector.StylePropertyTreeElement.editingEnded):
+          - Renamed from endEditing
+          - Removed code now handled by WebInspector.startEditing
+        (WebInspector.StylePropertyTreeElement.editingCancelled):
+          - Renamed from cancelEditing
+          - Changed parameters to match WebInspector.startEditing's
+            cancelledCallback
+        (WebInspector.StylePropertyTreeElement.editingCommitted):
+          - Renamed from commitEditing
+          - Changed parameters to match WebInspector.startEditing's
+            committedCallback
+        * page/inspector/inspector.js:
+        (WebInspector.changeFocus): Changed a call to firstParentWithClassName
+        to firstParentOrSelfWithClassName so that if the focusable element
+        itself is the target it will be recognized. I don't know why this
+        change wasn't needed before this.
+        (WebInspector.isBeingEdited): Added.
+        (WebInspector.startEditing): Added.
+
 2008-03-10  Adam Roben  <aroben@apple.com>
 
         Windows build fix

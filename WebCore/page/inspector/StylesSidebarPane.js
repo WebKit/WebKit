@@ -541,15 +541,10 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (this.parent.shorthand)
             return;
 
-        if (this.editing || (this.treeOutline.section && !this.treeOutline.section.editable))
+        if (WebInspector.isBeingEdited(this.listItemElement) || (this.treeOutline.section && !this.treeOutline.section.editable))
             return;
 
-        this.editing = true;
-        this.previousTextContent = this.listItemElement.textContent;
-
-        this.listItemElement.addStyleClass("focusable");
-        this.listItemElement.addStyleClass("editing");
-        this.wasExpanded = this.expanded;
+        var wasExpanded = this.expanded;
         this.collapse();
         // Lie about out children to prevent toggling on click.
         this.hasChildren = false;
@@ -559,56 +554,26 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         window.getSelection().setBaseAndExtent(selectElement, 0, selectElement, 1);
 
-        var treeElement = this;
-        this.listItemElement.blurred = function() { treeElement.commitEditing() };
-        this.listItemElement.handleKeyEvent = function(event) {
-            if (event.keyIdentifier === "Enter") {
-                treeElement.commitEditing();
-                event.preventDefault();
-            } else if (event.keyCode === 27) { // Escape key
-                treeElement.cancelEditing();
-                event.preventDefault();
-            }
-        };
-
-        this.previousFocusElement = WebInspector.currentFocusElement;
-        WebInspector.currentFocusElement = this.listItemElement;
+        WebInspector.startEditing(this.listItemElement, this.editingCommitted.bind(this), this.editingCancelled.bind(this), wasExpanded);
     },
 
-    endEditing: function()
+    editingEnded: function(wasExpanded)
     {
-        // Revert the changes done in startEditing().
-        delete this.listItemElement.blurred;
-        delete this.listItemElement.handleKeyEvent;
-
-        WebInspector.currentFocusElement = this.previousFocusElement;
-        delete this.previousFocusElement;
-
-        delete this.previousTextContent;
-        delete this.editing;
-
-        this.listItemElement.removeStyleClass("focusable");
-        this.listItemElement.removeStyleClass("editing");
         this.hasChildren = (this.children.length ? true : false);
-        if (this.wasExpanded) {
-            delete this.wasExpanded;
+        if (wasExpanded)
             this.expand();
-        }
     },
 
-    cancelEditing: function()
+    editingCancelled: function(e, wasExpanded)
     {
-        this.endEditing();
+        this.editingEnded(wasExpanded);
         this.updateTitle();
     },
 
-    commitEditing: function()
+    editingCommitted: function(e, userInput, previousContent, wasExpanded)
     {
-        var previousContent = this.previousTextContent;
+        this.editingEnded();
 
-        this.endEditing();
-
-        var userInput = this.listItemElement.textContent;
         if (userInput === previousContent)
             return; // nothing changed, so do nothing else
 
