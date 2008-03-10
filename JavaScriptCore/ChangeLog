@@ -1,4 +1,12 @@
 2008-03-10  Eric Seidel  <eric@webkit.org>
+        
+        No review, build fix only.
+        
+        Attempt to fix the windows build?
+
+        * kjs/ustring.h: change unsigned short to UChar
+
+2008-03-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin.
 
