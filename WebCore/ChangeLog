@@ -1,3 +1,20 @@
+2008-03-10  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Reviewed and landed by Darin.
+
+        bug 12182 : XMLHttpRequest should raise SECURITY_ERR for same-origin policy violations
+
+        Removed reference to PERMISSION_DENIED (previous non standard exception) and replaced it
+        by DOM exception SECURITY_ERR. Updated XMLHttpRequest::open to raise SECURITY_ERR.
+
+        * bindings/js/kjs_binding.cpp:
+        (WebCore::setDOMException): Removed PERMISSION_DENIED code.
+        * dom/ExceptionCode.cpp: Added SECURITY_ERR exception.
+        * dom/ExceptionCode.h: Ditto.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open): Returns SECURITY_ERR now.
+        * xml/XMLHttpRequestException.h: Removed PERMISSION_DENIED.
+
 2008-03-09  Adam Roben  <aroben@apple.com>
 
         Refactor CSS editing code so we can share it with DOM editing

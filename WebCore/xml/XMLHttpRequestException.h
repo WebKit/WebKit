@@ -44,7 +44,6 @@ namespace WebCore {
         static const int XMLHttpRequestExceptionMax = 699;
 
         enum XMLHttpRequestExceptionCode {
-            PERMISSION_DENIED = XMLHttpRequestExceptionOffset, // Use SECURITY_ERR when that's in DOM Core, http://bugs.webkit.org/show_bug.cgi?id=12182
             NETWORK_ERR = XMLHttpRequestExceptionOffset + 101
         };
     };

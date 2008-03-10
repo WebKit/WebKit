@@ -332,7 +332,7 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
     ASSERT(m_state == Uninitialized);
 
     if (!urlMatchesDocumentDomain(url)) {
-        ec = XMLHttpRequestException::PERMISSION_DENIED;
+        ec = SECURITY_ERR;
         return;
     }
 
@@ -345,7 +345,7 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
     String methodUpper(method.upper());
     
     if (methodUpper == "TRACE" || methodUpper == "TRACK" || methodUpper == "CONNECT") {
-        ec = XMLHttpRequestException::PERMISSION_DENIED;
+        ec = SECURITY_ERR;
         return;
     }
 

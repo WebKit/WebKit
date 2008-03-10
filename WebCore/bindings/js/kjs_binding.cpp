@@ -302,12 +302,6 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     if (!ec || exec->hadException())
         return;
 
-    // To be removed: See XMLHttpRequest.h.
-    if (ec == XMLHttpRequestException::PERMISSION_DENIED) {
-        throwError(exec, GeneralError, "Permission denied");
-        return;
-    }
-
     ExceptionCodeDescription description;
     getExceptionCodeDescription(ec, description);
 

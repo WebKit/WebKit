@@ -1,3 +1,11 @@
+2008-03-02  Julien Chaffraix  <julien.chaffraix@gmail.com>
+
+        Reviewed and landed by Darin.
+
+        bug 12182 : XMLHttpRequest should raise SECURITY_ERR for same-origin policy violations
+
+        * http/tests/xmlhttprequest/exceptions-expected.txt: Updated results
+
 2008-03-10  Johnny Ding  <johnnyding.webkit@gmail.com>
 
         Reviewed, tweaked and landed by Alexey.
