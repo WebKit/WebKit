@@ -1,3 +1,11 @@
+2008-03-10  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        Fix "missing braces" compiler warning.
+
+        * webkit/webkitwebview.cpp:
+
 2008-03-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

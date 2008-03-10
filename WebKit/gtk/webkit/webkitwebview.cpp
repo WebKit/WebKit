@@ -1195,7 +1195,7 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
     Settings* settings = core(webView)->settings();
 
     const gchar* name = g_intern_string(pspec->name);
-    GValue value = {0, 0};
+    GValue value = { 0, { { 0 } } };
     g_value_init(&value, pspec->value_type);
     g_object_get_property(G_OBJECT(webSettings), name, &value);
 
