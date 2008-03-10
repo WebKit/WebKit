@@ -372,7 +372,7 @@ all : \
 
 .PHONY : remove-stray-JSRGBColor
 remove-stray-JSRGBColor :
-	(rm JSRGBColor.cpp 2> /dev/null && $(CREATE_HASH_TABLE) $(WebCore)/bindings/js/JSRGBColor.cpp > JSRGBColor.lut.h) || echo -n
+	(rm JSRGBColor.cpp JSRGBColor.h 2> /dev/null && $(CREATE_HASH_TABLE) $(WebCore)/bindings/js/JSRGBColor.cpp > JSRGBColor.lut.h) || echo -n
 
 # --------
 

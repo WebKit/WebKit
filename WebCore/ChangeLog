@@ -1,5 +1,10 @@
 2008-03-09  Darin Adler  <darin@apple.com>
 
+        * DerivedSources.make: Third try at fixing the build.
+        * bindings/js/JSRGBColor.cpp: And touching this file.
+
+2008-03-09  Darin Adler  <darin@apple.com>
+
         * DerivedSources.make: One *more* try at fixing the build.
 
 2008-03-09  Darin Adler  <darin@apple.com>
