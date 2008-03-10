@@ -1,3 +1,35 @@
+2008-03-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin.
+
+        Remove KJS::UChar, use ::UChar instead
+        http://bugs.webkit.org/show_bug.cgi?id=17017
+
+        To functional changes, thus no tests.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::hasCSSPropertyNamePrefix):
+        (WebCore::cssPropertyName):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::windowProtoFuncAToB):
+        (WebCore::windowProtoFuncBToA):
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::evaluate):
+        * bridge/objc/objc_utility.mm:
+        (KJS::Bindings::throwError):
+        * dom/Document.cpp:
+        (WebCore::Document::parseQualifiedName):
+        * platform/text/AtomicString.cpp:
+        (WebCore::AtomicString::add):
+        * platform/text/String.cpp:
+        (WebCore::String::String):
+        (WebCore::String::operator Identifier):
+        (WebCore::String::operator UString):
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::decode):
+        * svg/SVGAnimatedTemplate.h:
+
 2008-03-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

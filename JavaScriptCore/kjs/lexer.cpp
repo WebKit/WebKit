@@ -94,7 +94,7 @@ Lexer::Lexer()
     m_identifiers.reserveCapacity(initialStringTableCapacity);
 }
 
-void Lexer::setCode(int startingLineNumber, const KJS::UChar *c, unsigned int len)
+void Lexer::setCode(int startingLineNumber, const UChar* c, unsigned int len)
 {
   yylineno = 1 + startingLineNumber;
   restrKeyword = false;
@@ -111,10 +111,10 @@ void Lexer::setCode(int startingLineNumber, const KJS::UChar *c, unsigned int le
   atLineStart = true;
 
   // read first characters
-  current = (length > 0) ? code[0].uc : -1;
-  next1 = (length > 1) ? code[1].uc : -1;
-  next2 = (length > 2) ? code[2].uc : -1;
-  next3 = (length > 3) ? code[3].uc : -1;
+  current = (length > 0) ? code[0] : -1;
+  next1 = (length > 1) ? code[1] : -1;
+  next2 = (length > 2) ? code[2] : -1;
+  next3 = (length > 3) ? code[3] : -1;
 }
 
 void Lexer::shift(unsigned int p)
@@ -126,7 +126,7 @@ void Lexer::shift(unsigned int p)
     current = next1;
     next1 = next2;
     next2 = next3;
-    next3 = (pos + 3 < length) ? code[pos + 3].uc : -1;
+    next3 = (pos + 3 < length) ? code[pos + 3] : -1;
   }
 }
 
@@ -427,7 +427,7 @@ int Lexer::lex()
         setDone(Bad);
         break;
       }
-      token = convertUnicode(current, next1, next2, next3).uc;
+      token = convertUnicode(current, next1, next2, next3);
       shift(3);
       if (!isIdentStart(token)) {
         setDone(Bad);
@@ -441,7 +441,7 @@ int Lexer::lex()
         setDone(Bad);
         break;
       }
-      token = convertUnicode(current, next1, next2, next3).uc;
+      token = convertUnicode(current, next1, next2, next3);
       shift(3);
       if (!isIdentPart(token)) {
         setDone(Bad);
@@ -792,10 +792,11 @@ unsigned char Lexer::convertHex(int c1, int c2)
   return ((convertHex(c1) << 4) + convertHex(c2));
 }
 
-KJS::UChar Lexer::convertUnicode(int c1, int c2, int c3, int c4)
+UChar Lexer::convertUnicode(int c1, int c2, int c3, int c4)
 {
-  return KJS::UChar((convertHex(c1) << 4) + convertHex(c2),
-               (convertHex(c3) << 4) + convertHex(c4));
+    unsigned char highByte = (convertHex(c1) << 4) + convertHex(c2);
+    unsigned char lowByte = (convertHex(c3) << 4) + convertHex(c4);
+    return (highByte << 8 | lowByte);
 }
 
 void Lexer::record8(int c)
@@ -812,7 +813,7 @@ void Lexer::record16(int c)
     record16(UChar(static_cast<unsigned short>(c)));
 }
 
-void Lexer::record16(KJS::UChar c)
+void Lexer::record16(UChar c)
 {
     m_buffer16.append(c);
 }
@@ -880,14 +881,14 @@ void Lexer::clear()
     m_flags = 0;
 }
 
-Identifier* Lexer::makeIdentifier(const Vector<KJS::UChar>& buffer)
+Identifier* Lexer::makeIdentifier(const Vector<UChar>& buffer)
 {
     KJS::Identifier* identifier = new KJS::Identifier(buffer.data(), buffer.size());
     m_identifiers.append(identifier);
     return identifier;
 }
  
-UString* Lexer::makeUString(const Vector<KJS::UChar>& buffer)
+UString* Lexer::makeUString(const Vector<UChar>& buffer)
 {
     UString* string = new UString(buffer);
     m_strings.append(string);

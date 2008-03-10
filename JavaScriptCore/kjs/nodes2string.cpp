@@ -78,7 +78,7 @@ static UString escapeStringForPrettyPrinting(const UString& s)
     UString escapedString;
 
     for (int i = 0; i < s.size(); i++) {
-        unsigned short c = s.data()[i].unicode();
+        unsigned short c = s.data()[i];
         switch (c) {
             case '\"':
                 escapedString += "\\\"";
@@ -159,7 +159,8 @@ SourceStream& SourceStream::operator<<(char c)
 {
     m_numberNeedsParens = false;
     m_atStartOfStatement = false;
-    UChar ch(c);
+    // use unsigned char to zero-extend instead of sign-extend
+    UChar ch(static_cast<unsigned char>(c));
     m_string.append(ch);
     return *this;
 }

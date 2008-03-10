@@ -55,12 +55,12 @@ const int JSRegExpErrorHitLimit = -2;
 const int JSRegExpErrorNoMemory = -3;
 const int JSRegExpErrorInternal = -4;
 
-JSRegExp* jsRegExpCompile(const ::UChar* pattern, int patternLength,
+JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
     JSRegExpIgnoreCaseOption, JSRegExpMultilineOption,
     unsigned* numSubpatterns, const char** errorMessage);
 
 int jsRegExpExecute(const JSRegExp*,
-    const ::UChar* subject, int subjectLength, int startOffset,
+    const UChar* subject, int subjectLength, int startOffset,
     int* offsetsVector, int offsetsVectorLength);
 
 void jsRegExpFree(JSRegExp*);

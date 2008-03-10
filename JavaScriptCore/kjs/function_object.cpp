@@ -192,10 +192,10 @@ JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args, const 
     while (i < len) {
         while (*c == ' ' && i < len)
             c++, i++;
-        if (Lexer::isIdentStart(c->uc)) {  // else error
+        if (Lexer::isIdentStart(c[0])) {  // else error
             param = UString(c, 1);
             c++, i++;
-            while (i < len && (Lexer::isIdentPart(c->uc))) {
+            while (i < len && (Lexer::isIdentPart(c[0]))) {
                 param += UString(c, 1);
                 c++, i++;
             }

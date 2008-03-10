@@ -23,14 +23,14 @@
 #ifndef KJS_Interpreter_h
 #define KJS_Interpreter_h
 
+#include <wtf/unicode/Unicode.h>
+
 namespace KJS {
 
   class Completion;
   class ExecState;
   class JSValue;
   class UString;
-
-  struct UChar;
   
   class Interpreter {
   public:

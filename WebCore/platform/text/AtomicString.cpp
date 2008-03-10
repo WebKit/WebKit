@@ -192,12 +192,12 @@ void AtomicString::remove(StringImpl* r)
 
 PassRefPtr<StringImpl> AtomicString::add(const KJS::Identifier& str)
 {
-    return add(reinterpret_cast<const UChar*>(str.data()), str.size());
+    return add(str.data(), str.size());
 }
 
 PassRefPtr<StringImpl> AtomicString::add(const KJS::UString& str)
 {
-    return add(reinterpret_cast<const UChar*>(str.data()), str.size());
+    return add(str.data(), str.size());
 }
 
 AtomicString::operator Identifier() const

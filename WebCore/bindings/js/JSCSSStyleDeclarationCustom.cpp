@@ -55,13 +55,13 @@ static bool hasCSSPropertyNamePrefix(const Identifier& propertyName, const char*
     unsigned length = propertyName.size();
     ASSERT(length);
 
-    if (toASCIILower(propertyName.data()[0].unicode()) != prefix[0])
+    if (toASCIILower(propertyName.data()[0]) != prefix[0])
         return false;
 
     for (unsigned i = 1; i < length; ++i) {
         if (!prefix[i])
-            return isASCIIUpper(propertyName.data()[i].unicode());
-        if (propertyName.data()[0].unicode() != prefix[0])
+            return isASCIIUpper(propertyName.data()[i]);
+        if (propertyName.data()[0] != prefix[0])
             return false;
     }
     return false;
@@ -76,7 +76,7 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
     if (!length)
         return String();
 
-    Vector< ::UChar> name;
+    Vector<UChar> name;
     name.reserveCapacity(length);
 
     unsigned i = 0;
@@ -96,10 +96,10 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
             || hasCSSPropertyNamePrefix(propertyName, "apple"))
         name.append('-');
 
-    name.append(toASCIILower(propertyName.data()[i++].unicode()));
+    name.append(toASCIILower(propertyName.data()[i++]));
 
     for (; i < length; ++i) {
-        ::UChar c = propertyName.data()[i].unicode();
+        UChar c = propertyName.data()[i];
         if (!isASCIIUpper(c))
             name.append(c);
         else {

@@ -241,7 +241,7 @@ String TextCodecICU::decode(const char* bytes, size_t length, bool flush)
         err = U_ZERO_ERROR;
         ucnv_toUnicode(m_converterICU, &target, targetLimit, &source, sourceLimit, offsets, flush, &err);
         int count = target - buffer;
-        appendOmittingBOM(result, reinterpret_cast<const UChar*>(buffer), count);
+        appendOmittingBOM(result, buffer, count);
     } while (err == U_BUFFER_OVERFLOW_ERROR);
 
     if (U_FAILURE(err)) {

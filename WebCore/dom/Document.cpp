@@ -2673,7 +2673,7 @@ String Document::lastModified() const
 
 bool Document::isValidName(const String &name)
 {
-    const UChar* s = reinterpret_cast<const UChar*>(name.characters());
+    const UChar* s = name.characters();
     unsigned length = name.length();
 
     if (length == 0)
@@ -2706,7 +2706,7 @@ bool Document::parseQualifiedName(const String &qualifiedName, String &prefix, S
     bool sawColon = false;
     int colonPos = 0;
 
-    const UChar* s = reinterpret_cast<const UChar*>(qualifiedName.characters());
+    const UChar* s = qualifiedName.characters();
     for (unsigned i = 0; i < length;) {
         UChar32 c;
         U16_NEXT(s, i, length, c)

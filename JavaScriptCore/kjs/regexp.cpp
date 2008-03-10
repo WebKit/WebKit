@@ -38,7 +38,7 @@ inline RegExp::RegExp(const UString& pattern)
   , m_constructionError(0)
   , m_numSubpatterns(0)
 {
-    m_regExp = jsRegExpCompile(reinterpret_cast<const ::UChar*>(pattern.data()), pattern.size(),
+    m_regExp = jsRegExpCompile(reinterpret_cast<const UChar*>(pattern.data()), pattern.size(),
         JSRegExpDoNotIgnoreCase, JSRegExpSingleLine, &m_numSubpatterns, &m_constructionError);
 }
 
@@ -72,7 +72,7 @@ inline RegExp::RegExp(const UString& pattern, const UString& flags)
         multilineOption = JSRegExpMultiline;
     }
     
-    m_regExp = jsRegExpCompile(reinterpret_cast<const ::UChar*>(pattern.data()), pattern.size(),
+    m_regExp = jsRegExpCompile(reinterpret_cast<const UChar*>(pattern.data()), pattern.size(),
         ignoreCaseOption, multilineOption, &m_numSubpatterns, &m_constructionError);
 }
 
@@ -113,7 +113,7 @@ int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
     ovector->set(offsetVector);
   }
 
-  int numMatches = jsRegExpExecute(m_regExp, reinterpret_cast<const ::UChar*>(s.data()), s.size(), i, offsetVector, offsetVectorSize);
+  int numMatches = jsRegExpExecute(m_regExp, reinterpret_cast<const UChar*>(s.data()), s.size(), i, offsetVector, offsetVectorSize);
 
   if (numMatches < 0) {
 #ifndef NDEBUG

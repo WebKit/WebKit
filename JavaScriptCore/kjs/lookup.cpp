@@ -31,7 +31,7 @@ static inline bool keysMatch(const UChar* c, unsigned len, const char* s)
   // FIXME: This can run off the end of |s| if |c| has a U+0000 character in it.
   const char* end = s + len;
   for (; s != end; c++, s++)
-    if (c->uc != *s)
+    if (*c != *s)
       return false;
   return *s == 0;
 }

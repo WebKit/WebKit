@@ -515,8 +515,8 @@ static JSValue* decode(ExecState* exec, const List& args, const char* do_not_une
     UChar c = *p;
     if (c == '%') {
       int charLen = 0;
-      if (k <= len - 3 && isASCIIHexDigit(p[1].uc) && isASCIIHexDigit(p[2].uc)) {
-        const char b0 = Lexer::convertHex(p[1].uc, p[2].uc);
+      if (k <= len - 3 && isASCIIHexDigit(p[1]) && isASCIIHexDigit(p[2])) {
+        const char b0 = Lexer::convertHex(p[1], p[2]);
         const int sequenceLen = UTF8SequenceLength(b0);
         if (sequenceLen != 0 && k <= len - sequenceLen * 3) {
           charLen = sequenceLen * 3;
@@ -524,8 +524,8 @@ static JSValue* decode(ExecState* exec, const List& args, const char* do_not_une
           sequence[0] = b0;
           for (int i = 1; i < sequenceLen; ++i) {
             const UChar* q = p + i * 3;
-            if (q[0] == '%' && isASCIIHexDigit(q[1].uc) && isASCIIHexDigit(q[2].uc))
-              sequence[i] = Lexer::convertHex(q[1].uc, q[2].uc);
+            if (q[0] == '%' && isASCIIHexDigit(q[1]) && isASCIIHexDigit(q[2]))
+              sequence[i] = Lexer::convertHex(q[1], q[2]);
             else {
               charLen = 0;
               break;
@@ -552,13 +552,13 @@ static JSValue* decode(ExecState* exec, const List& args, const char* do_not_une
         // The only case where we don't use "strict" mode is the "unescape" function.
         // For that, it's good to support the wonky "%u" syntax for compatibility with WinIE.
         if (k <= len - 6 && p[1] == 'u'
-            && isASCIIHexDigit(p[2].uc) && isASCIIHexDigit(p[3].uc)
-            && isASCIIHexDigit(p[4].uc) && isASCIIHexDigit(p[5].uc)) {
+            && isASCIIHexDigit(p[2]) && isASCIIHexDigit(p[3])
+            && isASCIIHexDigit(p[4]) && isASCIIHexDigit(p[5])) {
           charLen = 6;
-          u = Lexer::convertUnicode(p[2].uc, p[3].uc, p[4].uc, p[5].uc);
+          u = Lexer::convertUnicode(p[2], p[3], p[4], p[5]);
         }
       }
-      if (charLen && (u.uc == 0 || u.uc >= 128 || !strchr(do_not_unescape, u.low()))) {
+      if (charLen && (u == 0 || u >= 128 || !strchr(do_not_unescape, u))) {
         c = u;
         k += charLen - 1;
       }
@@ -631,7 +631,7 @@ static double parseInt(const UString& s, int radix)
     int length = s.size();
     int p = 0;
 
-    while (p < length && isStrWhiteSpace(s[p].uc)) {
+    while (p < length && isStrWhiteSpace(s[p])) {
         ++p;
     }
 
@@ -662,7 +662,7 @@ static double parseInt(const UString& s, int radix)
     bool sawDigit = false;
     double number = 0;
     while (p < length) {
-        int digit = parseDigit(s[p].uc, radix);
+        int digit = parseDigit(s[p], radix);
         if (digit == -1)
             break;
         sawDigit = true;
@@ -690,7 +690,7 @@ static double parseFloat(const UString& s)
     // Need to skip any whitespace and then one + or - sign.
     int length = s.size();
     int p = 0;
-    while (p < length && isStrWhiteSpace(s[p].uc)) {
+    while (p < length && isStrWhiteSpace(s[p])) {
         ++p;
     }
     if (p < length && (s[p] == '+' || s[p] == '-')) {
@@ -816,7 +816,7 @@ JSValue* globalFuncEscape(ExecState* exec, JSObject*, const List& args)
     UString r = "", s, str = args[0]->toString(exec);
     const UChar* c = str.data();
     for (int k = 0; k < str.size(); k++, c++) {
-        int u = c->uc;
+        int u = c[0];
         if (u > 255) {
             char tmp[7];
             sprintf(tmp, "%%u%04X", u);
@@ -841,14 +841,14 @@ JSValue* globalFuncUnescape(ExecState* exec, JSObject*, const List& args)
     while (k < len) {
         const UChar* c = str.data() + k;
         UChar u;
-        if (*c == UChar('%') && k <= len - 6 && *(c + 1) == UChar('u')) {
-            if (Lexer::isHexDigit((c + 2)->uc) && Lexer::isHexDigit((c + 3)->uc) && Lexer::isHexDigit((c + 4)->uc) && Lexer::isHexDigit((c + 5)->uc)) {
-                u = Lexer::convertUnicode((c + 2)->uc, (c + 3)->uc, (c + 4)->uc, (c + 5)->uc);
+        if (c[0] == '%' && k <= len - 6 && c[1] == 'u') {
+            if (Lexer::isHexDigit(c[2]) && Lexer::isHexDigit(c[3]) && Lexer::isHexDigit(c[4]) && Lexer::isHexDigit(c[5])) {
+                u = Lexer::convertUnicode(c[2], c[3], c[4], c[5]);
                 c = &u;
                 k += 5;
             }
-        } else if (*c == UChar('%') && k <= len - 3 && Lexer::isHexDigit((c + 1)->uc) && Lexer::isHexDigit((c + 2)->uc)) {
-            u = UChar(Lexer::convertHex((c+1)->uc, (c+2)->uc));
+        } else if (c[0] == '%' && k <= len - 3 && Lexer::isHexDigit(c[1]) && Lexer::isHexDigit(c[2])) {
+            u = UChar(Lexer::convertHex(c[1], c[2]));
             c = &u;
             k += 2;
         }

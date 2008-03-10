@@ -67,7 +67,7 @@ bool Identifier::equal(const UString::Rep *r, const char *s)
     int length = r->len;
     const UChar *d = r->data();
     for (int i = 0; i != length; ++i)
-        if (d[i].uc != (unsigned char)s[i])
+        if (d[i] != (unsigned char)s[i])
             return false;
     return s[length] == 0;
 }
@@ -78,7 +78,7 @@ bool Identifier::equal(const UString::Rep *r, const UChar *s, int length)
         return false;
     const UChar *d = r->data();
     for (int i = 0; i != length; ++i)
-        if (d[i].uc != s[i].uc)
+        if (d[i] != s[i])
             return false;
     return true;
 }
@@ -91,7 +91,7 @@ bool Identifier::equal(const UString::Rep *r, const UString::Rep *b)
     const UChar *d = r->data();
     const UChar *s = b->data();
     for (int i = 0; i != length; ++i)
-        if (d[i].uc != s[i].uc)
+        if (d[i] != s[i])
             return false;
     return true;
 }
@@ -113,7 +113,7 @@ struct CStringTranslator
         size_t length = strlen(c);
         UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * length));
         for (size_t i = 0; i != length; i++)
-            d[i] = c[i];
+            d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
         
         UString::Rep *r = UString::Rep::create(d, static_cast<int>(length)).releaseRef();
         r->isIdentifier = 1;

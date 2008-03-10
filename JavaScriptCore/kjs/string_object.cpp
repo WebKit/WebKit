@@ -245,7 +245,7 @@ static inline UString substituteBackreferences(const UString &replacement, const
     if (i+1 == substitutedReplacement.size())
         break;
 
-    unsigned short ref = substitutedReplacement[i+1].unicode();
+    unsigned short ref = substitutedReplacement[i+1];
     int backrefStart = 0;
     int backrefLength = 0;
     int advance = 0;
@@ -268,7 +268,7 @@ static inline UString substituteBackreferences(const UString &replacement, const
         if (backrefIndex > reg->numSubpatterns())
             continue;
         if (substitutedReplacement.size() > i + 2) {
-            ref = substitutedReplacement[i+2].unicode();
+            ref = substitutedReplacement[i+2];
             if (ref >= '0' && ref <= '9') {
                 backrefIndex = 10 * backrefIndex + ref - '0';
                 if (backrefIndex > reg->numSubpatterns())
@@ -450,7 +450,7 @@ JSValue* stringProtoFuncCharCodeAt(ExecState* exec, JSObject* thisObj, const Lis
     JSValue* a0 = args[0];
     double dpos = a0->toInteger(exec);
     if (dpos >= 0 && dpos < len)
-      result = jsNumber(s[static_cast<int>(dpos)].unicode());
+      result = jsNumber(s[static_cast<int>(dpos)]);
     else
       result = jsNaN();
     return result;
@@ -763,18 +763,18 @@ JSValue* stringProtoFuncToLowerCase(ExecState* exec, JSObject* thisObj, const Li
     int ssize = s.size();
     if (!ssize)
         return sVal;
-    Vector< ::UChar> buffer(ssize);
+    Vector<UChar> buffer(ssize);
     bool error;
-    int length = Unicode::toLower(buffer.data(), ssize, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+    int length = Unicode::toLower(buffer.data(), ssize, reinterpret_cast<const UChar*>(s.data()), ssize, &error);
     if (error) {
         buffer.resize(length);
-        length = Unicode::toLower(buffer.data(), length, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+        length = Unicode::toLower(buffer.data(), length, reinterpret_cast<const UChar*>(s.data()), ssize, &error);
         if (error)
             return sVal;
     }
     if (length == ssize && memcmp(buffer.data(), s.data(), length * sizeof(UChar)) == 0)
         return sVal;
-    return jsString(UString(reinterpret_cast<UChar*>(buffer.releaseBuffer()), length, false));
+    return jsString(UString(buffer.releaseBuffer(), length, false));
 }
 
 JSValue* stringProtoFuncToUpperCase(ExecState* exec, JSObject* thisObj, const List&)
@@ -788,18 +788,18 @@ JSValue* stringProtoFuncToUpperCase(ExecState* exec, JSObject* thisObj, const Li
     int ssize = s.size();
     if (!ssize)
         return sVal;
-    Vector< ::UChar> buffer(ssize);
+    Vector<UChar> buffer(ssize);
     bool error;
-    int length = Unicode::toUpper(buffer.data(), ssize, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+    int length = Unicode::toUpper(buffer.data(), ssize, reinterpret_cast<const UChar*>(s.data()), ssize, &error);
     if (error) {
         buffer.resize(length);
-        length = Unicode::toUpper(buffer.data(), length, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+        length = Unicode::toUpper(buffer.data(), length, reinterpret_cast<const UChar*>(s.data()), ssize, &error);
         if (error)
             return sVal;
     }
     if (length == ssize && memcmp(buffer.data(), s.data(), length * sizeof(UChar)) == 0)
         return sVal;
-    return jsString(UString(reinterpret_cast<UChar*>(buffer.releaseBuffer()), length, false));
+    return jsString(UString(buffer.releaseBuffer(), length, false));
 }
 
 JSValue* stringProtoFuncToLocaleLowerCase(ExecState* exec, JSObject* thisObj, const List&)
@@ -814,18 +814,18 @@ JSValue* stringProtoFuncToLocaleLowerCase(ExecState* exec, JSObject* thisObj, co
     int ssize = s.size();
     if (!ssize)
         return sVal;
-    Vector< ::UChar> buffer(ssize);
+    Vector<UChar> buffer(ssize);
     bool error;
-    int length = Unicode::toLower(buffer.data(), ssize, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+    int length = Unicode::toLower(buffer.data(), ssize, reinterpret_cast<const UChar*>(s.data()), ssize, &error);
     if (error) {
         buffer.resize(length);
-        length = Unicode::toLower(buffer.data(), length, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+        length = Unicode::toLower(buffer.data(), length, reinterpret_cast<const UChar*>(s.data()), ssize, &error);
         if (error)
             return sVal;
     }
     if (length == ssize && memcmp(buffer.data(), s.data(), length * sizeof(UChar)) == 0)
         return sVal;
-    return jsString(UString(reinterpret_cast<UChar*>(buffer.releaseBuffer()), length, false));
+    return jsString(UString(buffer.releaseBuffer(), length, false));
 }
 
 JSValue* stringProtoFuncToLocaleUpperCase(ExecState* exec, JSObject* thisObj, const List&)
@@ -839,18 +839,18 @@ JSValue* stringProtoFuncToLocaleUpperCase(ExecState* exec, JSObject* thisObj, co
     int ssize = s.size();
     if (!ssize)
         return sVal;
-    Vector< ::UChar> buffer(ssize);
+    Vector<UChar> buffer(ssize);
     bool error;
-    int length = Unicode::toUpper(buffer.data(), ssize, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+    int length = Unicode::toUpper(buffer.data(), ssize, reinterpret_cast<const UChar*>(s.data()), ssize, &error);
     if (error) {
         buffer.resize(length);
-        length = Unicode::toUpper(buffer.data(), length, reinterpret_cast<const ::UChar*>(s.data()), ssize, &error);
+        length = Unicode::toUpper(buffer.data(), length, reinterpret_cast<const UChar*>(s.data()), ssize, &error);
         if (error)
             return sVal;
     }
     if (length == ssize && memcmp(buffer.data(), s.data(), length * sizeof(UChar)) == 0)
         return sVal;
-    return jsString(UString(reinterpret_cast<UChar*>(buffer.releaseBuffer()), length, false));
+    return jsString(UString(buffer.releaseBuffer(), length, false));
 }
 
 JSValue* stringProtoFuncLocaleCompare(ExecState* exec, JSObject* thisObj, const List& args)

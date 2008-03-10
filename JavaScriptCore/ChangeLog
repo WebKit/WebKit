@@ -1,3 +1,66 @@
+2008-03-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin.
+
+        Remove KJS::UChar, use ::UChar instead
+        http://bugs.webkit.org/show_bug.cgi?id=17017
+
+        * API/JSStringRef.cpp:
+        (JSStringCreateWithCharacters):
+        (JSStringCreateWithUTF8CString):
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString):
+        * JavaScriptCore.exp:
+        * kjs/Parser.h:
+        * kjs/function.cpp:
+        (KJS::decode):
+        (KJS::parseInt):
+        (KJS::parseFloat):
+        (KJS::globalFuncEscape):
+        (KJS::globalFuncUnescape):
+        * kjs/function_object.cpp:
+        (KJS::FunctionObjectImp::construct):
+        * kjs/identifier.cpp:
+        (KJS::Identifier::equal):
+        (KJS::CStringTranslator::translate):
+        * kjs/interpreter.h:
+        * kjs/lexer.cpp:
+        (KJS::Lexer::setCode):
+        (KJS::Lexer::shift):
+        (KJS::Lexer::lex):
+        (KJS::Lexer::convertUnicode):
+        (KJS::Lexer::makeIdentifier):
+        * kjs/lookup.cpp:
+        (KJS::keysMatch):
+        * kjs/nodes2string.cpp:
+        (KJS::escapeStringForPrettyPrinting):
+        (KJS::SourceStream::operator<<):
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp):
+        (KJS::RegExp::match):
+        * kjs/string_object.cpp:
+        (KJS::substituteBackreferences):
+        (KJS::stringProtoFuncCharCodeAt):
+        (KJS::stringProtoFuncToLowerCase):
+        (KJS::stringProtoFuncToUpperCase):
+        (KJS::stringProtoFuncToLocaleLowerCase):
+        (KJS::stringProtoFuncToLocaleUpperCase):
+        * kjs/ustring.cpp:
+        (KJS::UString::Rep::computeHash):
+        (KJS::UString::UString):
+        (KJS::UString::append):
+        (KJS::UString::ascii):
+        (KJS::UString::operator=):
+        (KJS::UString::is8Bit):
+        (KJS::UString::toStrictUInt32):
+        (KJS::UString::find):
+        (KJS::operator==):
+        (KJS::operator<):
+        (KJS::compare):
+        (KJS::UString::UTF8String):
+        * kjs/ustring.h:
+        * pcre/pcre.h:
+
 2008-03-09  Steve Falkenburg  <sfalken@apple.com>
 
         Stop Windows build if an error occurs in a prior project.

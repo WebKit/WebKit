@@ -363,7 +363,7 @@ JSObject *throwError(ExecState *exec, ErrorType type, NSString *message)
     size_t length = [message length];
     unichar *buffer = new unichar[length];
     [message getCharacters:buffer];
-    JSObject *error = throwError(exec, type, UString(reinterpret_cast<UChar *>(buffer), length));
+    JSObject *error = throwError(exec, type, UString(buffer, length));
     delete [] buffer;
     return error;
 }

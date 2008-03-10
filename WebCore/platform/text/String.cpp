@@ -592,28 +592,28 @@ String::String(const Identifier& str)
 {
     if (str.isNull())
         return;
-    m_impl = StringImpl::create(reinterpret_cast<const UChar*>(str.data()), str.size());
+    m_impl = StringImpl::create(str.data(), str.size());
 }
 
 String::String(const UString& str)
 {
     if (str.isNull())
         return;
-    m_impl = StringImpl::create(reinterpret_cast<const UChar*>(str.data()), str.size());
+    m_impl = StringImpl::create(str.data(), str.size());
 }
 
 String::operator Identifier() const
 {
     if (!m_impl)
         return Identifier();
-    return Identifier(reinterpret_cast<const KJS::UChar*>(m_impl->characters()), m_impl->length());
+    return Identifier(m_impl->characters(), m_impl->length());
 }
 
 String::operator UString() const
 {
     if (!m_impl)
         return UString();
-    return UString(reinterpret_cast<const KJS::UChar*>(m_impl->characters()), m_impl->length());
+    return UString(m_impl->characters(), m_impl->length());
 }
 
 // String Operations
