@@ -538,10 +538,10 @@ static JSValue* decode(ExecState* exec, const List& args, const char* do_not_une
               charLen = 0;
             } else if (character >= 0x10000) {
               // Convert to surrogate pair.
-              s.append(static_cast<unsigned short>(0xD800 | ((character - 0x10000) >> 10)));
-              u = static_cast<unsigned short>(0xDC00 | ((character - 0x10000) & 0x3FF));
+              s.append(static_cast<UChar>(0xD800 | ((character - 0x10000) >> 10)));
+              u = static_cast<UChar>(0xDC00 | ((character - 0x10000) & 0x3FF));
             } else {
-              u = static_cast<unsigned short>(character);
+              u = static_cast<UChar>(character);
             }
           }
         }

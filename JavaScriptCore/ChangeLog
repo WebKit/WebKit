@@ -1,3 +1,16 @@
+2008-03-10  eseidel  <eric@webkit.org>
+
+        Reviewed by NOBODY.
+
+        Build fix for JSC on windows.
+
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString):
+        * kjs/function.cpp:
+        (KJS::decode):
+        * kjs/nodes2string.cpp:
+        (KJS::escapeStringForPrettyPrinting):
+
 2008-03-10  Eric Seidel  <eric@webkit.org>
         
         No review, build fix only.

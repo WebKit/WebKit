@@ -78,7 +78,7 @@ static UString escapeStringForPrettyPrinting(const UString& s)
     UString escapedString;
 
     for (int i = 0; i < s.size(); i++) {
-        unsigned short c = s.data()[i];
+        UChar c = s.data()[i];
         switch (c) {
             case '\"':
                 escapedString += "\\\"";
