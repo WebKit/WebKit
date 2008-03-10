@@ -57,7 +57,6 @@ public:
         , resourceHandle(0)
         , redirected(false)
         , interface(0)
-        , connector(0)
         , jobStatus(QWebNetworkJob::JobCreated)
         {}
     int ref;
@@ -69,7 +68,6 @@ public:
     bool redirected;
 
     QWebNetworkInterface *interface;
-    QWebObjectPluginConnector *connector;
     QWebNetworkJob::JobStatus jobStatus;
     QString errorString;
 };

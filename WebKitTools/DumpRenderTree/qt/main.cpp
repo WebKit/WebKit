@@ -28,7 +28,6 @@
  */
 
 #include "DumpRenderTree.h"
-#include "testplugin.h"
 
 #include <qstringlist.h>
 #include <qapplication.h>
@@ -47,10 +46,6 @@
 
 #if defined(__GLIBC__)
 #include <execinfo.h>
-#endif
-
-#if QT_VERSION < 0x040400
-Q_IMPORT_PLUGIN(testplugin)
 #endif
 
 void messageHandler(QtMsgType type, const char *message)

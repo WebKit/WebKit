@@ -1366,6 +1366,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSMimeType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSMimeType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSMimeTypeArray.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSMimeTypeArray.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMouseEvent.cpp"
 				>
 			</File>
@@ -1387,6 +1403,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSNamedNodeMap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSNavigator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSNavigator.h"
 				>
 			</File>
 			<File
@@ -1435,6 +1459,22 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSOverflowEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSPlugin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSPlugin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSPluginArray.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSPluginArray.h"
 				>
 			</File>
 			<File
@@ -2992,11 +3032,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\Page.cpp"
+				RelativePath="..\page\Navigator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\Page.h"
+				RelativePath="..\page\Navigator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\Page.cpp"
 				>
 			</File>
 			<File
@@ -9473,6 +9517,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSMimeTypeArrayCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSNamedNodeMapCustom.cpp"
 					>
 				</File>
@@ -9482,6 +9530,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSNamedNodesCollection.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSNavigatorCustom.cpp"
 					>
 				</File>
 				<File
@@ -9514,6 +9566,14 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSRGBColor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSPluginArrayCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSPluginCustom.cpp"
 					>
 				</File>
 				<File
@@ -9617,14 +9677,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\kjs_navigator.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\kjs_navigator.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\kjs_proxy.cpp"
 					>
 				</File>
@@ -9654,11 +9706,51 @@
 			Name="plugins"
 			>
 			<File
+				RelativePath="..\plugins\MimeType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\MimeType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\MimeTypeArray.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\MimeTypeArray.h"
+				>
+			</File>
+			<File
 				RelativePath="..\plugins\npapi.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\plugins\npfunctions.h"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\Plugin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\Plugin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\PluginArray.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\PluginArray.h"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\PluginData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\PluginData.h"
 				>
 			</File>
 			<File
@@ -9710,6 +9802,10 @@
 				>
 				<File
 					RelativePath="..\plugins\win\PluginDatabaseWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\plugins\win\PluginDataWin.cpp"
 					>
 				</File>
 				<File

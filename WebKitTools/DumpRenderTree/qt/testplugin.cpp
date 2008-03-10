@@ -27,10 +27,8 @@
  */
 #include "testplugin.h"
 
-#if QT_VERSION < 0x040400
-
 TestPlugin::TestPlugin(QObject *parent)
-    : QWebObjectPlugin(parent)
+    : QWebPluginFactory(parent)
 {
 }
 
@@ -38,34 +36,32 @@ TestPlugin::~TestPlugin()
 {
 }
 
-QStringList TestPlugin::keys() const
+QList<QWebPluginFactory::Plugin> TestPlugin::plugins() const
 {
-    return QStringList(QLatin1String("testplugin"));
+    QWebPluginFactory::Plugin plugin;
+
+    plugin.name = "testplugin";
+    plugin.description = "testdescription";
+    MimeType mimeType;
+    mimeType.name = "testtype";
+    mimeType.fileExtensions.append("testsuffixes");
+    plugin.mimeTypes.append(mimeType);
+
+    plugin.name = "testplugin2";
+    plugin.description = "testdescription2";
+    mimeType.name = "testtype2";
+    mimeType.fileExtensions.append("testsuffixes2");
+    mimeType.fileExtensions.append("testsuffixes3");
+    plugin.mimeTypes.append(mimeType);
+
+    return QList<QWebPluginFactory::Plugin>() << plugin;
 }
 
-QString TestPlugin::descriptionForKey(const QString &) const
-{
-    return QLatin1String("testdescription");
-}
-
-QStringList TestPlugin::mimetypesForKey(const QString &) const
-{
-    return QStringList(QLatin1String("testtype"));
-}
-
-QStringList TestPlugin::extensionsForMimetype(const QString &) const
-{
-    return QStringList(QLatin1String("testsuffixes"));
-}
-
-QObject *TestPlugin::create(QWebObjectPluginConnector *,
-                            const QUrl &,
-                            const QString &,
-                            const QStringList &,
-                            const QStringList &) const
+QObject *TestPlugin::create(const QString &mimeType,
+                            const QUrl &url,
+                            const QStringList &argumentNames,
+                            const QStringList &argumentValues) const
 {
     return 0;
 }
 
-Q_EXPORT_PLUGIN2(testplugin, TestPlugin)
-#endif

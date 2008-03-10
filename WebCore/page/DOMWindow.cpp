@@ -42,6 +42,7 @@
 #include "FrameView.h"
 #include "History.h"
 #include "MessageEvent.h"
+#include "Navigator.h"
 #include "Page.h"
 #include "PlatformScreen.h"
 #include "PlatformString.h"
@@ -154,6 +155,10 @@ void DOMWindow::clear()
     if (m_console)
         m_console->disconnectFrame();
     m_console = 0;
+
+    if (m_navigator)
+        m_navigator->disconnectFrame();
+    m_navigator = 0;
 }
 
 Screen* DOMWindow::screen() const
@@ -217,6 +222,13 @@ Console* DOMWindow::console() const
     if (!m_console)
         m_console = Console::create(m_frame);
     return m_console.get();
+}
+
+Navigator* DOMWindow::navigator() const
+{
+    if (!m_navigator)
+        m_navigator = Navigator::create(m_frame);
+    return m_navigator.get();
 }
 
 #if ENABLE(CROSS_DOCUMENT_MESSAGING)

@@ -64,7 +64,7 @@
 #import "Page.h"
 #import "PlatformMouseEvent.h"
 #import "PlatformScreen.h"
-#import "PluginInfoStore.h"
+#import "PluginData.h"
 #import "RenderImage.h"
 #import "RenderPart.h"
 #import "RenderTreeAsText.h"
@@ -1152,7 +1152,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     
     if (WebCore::DOMImplementation::isTextMIMEType(mimeType) ||
         Image::supportsType(mimeType) ||
-        PluginInfoStore::supportsMIMEType(mimeType))
+        (m_frame->page() && m_frame->page()->pluginData()->supportsMimeType(mimeType)))
         return NO;
     
     return YES;

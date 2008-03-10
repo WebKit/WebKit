@@ -361,16 +361,6 @@ WebView *getWebView(WebFrame *webFrame)
     return core(self)->loader()->numPendingOrLoadingRequests(recurse);
 }
 
-- (void)_reloadForPluginChanges
-{
-    Frame* coreFrame = core(self);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
-        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
-        if (([documentView isKindOfClass:[WebHTMLView class]] && coreFrame->loader()->containsPlugins()))
-            [kit(frame) reload];
-    }
-}
-
 - (void)_attachScriptDebugger
 {
     if (_private->scriptDebugger)

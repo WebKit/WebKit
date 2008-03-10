@@ -25,6 +25,7 @@
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
 #include "EditorClient.h"
+#include "DOMWindow.h"
 #include "DragController.h"
 #include "FileSystem.h"
 #include "FocusController.h"
@@ -36,7 +37,9 @@
 #include "InspectorController.h"
 #include "JavaScriptDebugServer.h"
 #include "Logging.h"
+#include "Navigator.h"
 #include "PageGroup.h"
+#include "PluginData.h"
 #include "ProgressTracker.h"
 #include "RenderWidget.h"
 #include "SelectionController.h"
@@ -217,6 +220,38 @@ void Page::setNeedsReapplyStyles()
     for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it)
         for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
             frame->setNeedsReapplyStyles();
+}
+
+void Page::refreshPlugins(bool reload)
+{
+    if (!allPages)
+        return;
+
+    PluginData::refresh();
+
+    Vector<RefPtr<Frame> > framesNeedingReload;
+
+    HashSet<Page*>::iterator end = allPages->end();
+    for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it) {
+        (*it)->m_pluginData = 0;
+
+        if (reload) {
+            for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+                if (frame->loader()->containsPlugins())
+                    framesNeedingReload.append(frame);
+            }
+        }
+    }
+
+    for (size_t i = 0; i < framesNeedingReload.size(); ++i)
+        framesNeedingReload[i]->loader()->reload();
+}
+
+PluginData* Page::pluginData() const
+{
+    if (!m_pluginData)
+        m_pluginData = PluginData::create(this);
+    return m_pluginData.get();
 }
 
 static Frame* incrementFrame(Frame* curr, bool forward, bool wrapFlag)

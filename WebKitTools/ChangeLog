@@ -1,3 +1,19 @@
+2008-03-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Darin.
+
+        Done with Lars.
+
+        Ported the netscape test plugin to QWebPluginFactory.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::WebPage::WebPage):
+        * DumpRenderTree/qt/main.cpp:
+        * DumpRenderTree/qt/testplugin.cpp:
+        (TestPlugin::plugins):
+        (TestPlugin::create):
+        * DumpRenderTree/qt/testplugin.h:
+
 2008-03-09  Steve Falkenburg  <sfalken@apple.com>
 
         Stop Windows build if an error occurs in a prior project.

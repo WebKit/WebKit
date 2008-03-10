@@ -48,7 +48,6 @@
 #include "ResourceHandleInternal.h"
 #include "Document.h"
 #include "Settings.h"
-#include "Plugin.h"
 #include "FrameView.h"
 #include "FramePrivate.h"
 #include "GraphicsContext.h"

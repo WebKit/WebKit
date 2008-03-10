@@ -60,7 +60,6 @@
 #include "WindowFeatures.h"
 #include "htmlediting.h"
 #include "kjs_events.h"
-#include "kjs_navigator.h"
 #include "kjs_proxy.h"
 #include <wtf/AlwaysInline.h>
 #include <wtf/MathExtras.h>
@@ -161,8 +160,6 @@ const ClassInfo JSDOMWindowBase::info = { "Window", 0, &JSDOMWindowBaseTable };
   crypto                WebCore::JSDOMWindowBase::Crypto             DontDelete|ReadOnly
   event                 WebCore::JSDOMWindowBase::Event_             DontDelete
   location              WebCore::JSDOMWindowBase::Location_          DontDelete
-  navigator             WebCore::JSDOMWindowBase::Navigator_         DontDelete
-  clientInformation     WebCore::JSDOMWindowBase::ClientInformation  DontDelete
 # -- Event Listeners --
   onabort               WebCore::JSDOMWindowBase::Onabort            DontDelete
   onblur                WebCore::JSDOMWindowBase::Onblur             DontDelete
@@ -453,18 +450,6 @@ JSValue *JSDOMWindowBase::getValueProperty(ExecState *exec, int token) const
       return toJS(exec, d->m_evt);
     case Location_:
       return location();
-    case Navigator_:
-    case ClientInformation: {
-      if (!allowsAccessFrom(exec))
-        return jsUndefined();
-      // Store the navigator in the object so we get the same one each time.
-      Navigator* n = new Navigator(exec->lexicalGlobalObject()->objectPrototype(), impl()->frame());
-      // FIXME: this will make the "navigator" object accessible from windows that fail
-      // the security check the first time, but not subsequent times, seems weird.
-      const_cast<JSDOMWindowBase*>(this)->putDirect("navigator", n, DontDelete);
-      const_cast<JSDOMWindowBase*>(this)->putDirect("clientInformation", n, DontDelete);
-      return n;
-    }
     case Image:
       if (!allowsAccessFrom(exec))
         return jsUndefined();

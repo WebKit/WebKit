@@ -69,7 +69,6 @@
 #import "PlatformKeyboardEvent.h"
 #import "PlatformScrollBar.h"
 #import "PlatformWheelEvent.h"
-#import "Plugin.h"
 #import "RegularExpression.h"
 #import "RenderImage.h"
 #import "RenderListItem.h"

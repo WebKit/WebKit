@@ -71,22 +71,9 @@
     return [[WebPluginDatabase sharedDatabase] plugins];
 }
 
-- (NSString *)pluginNameForMIMEType:(NSString *)MIMEType
-{
-    return [[[WebPluginDatabase sharedDatabase] pluginForMIMEType:MIMEType] name];
-}
-
-- (void)refreshPlugins:(BOOL)reloadPages
+- (void)refreshPlugins
 {
     [[WebPluginDatabase sharedDatabase] refresh];
-    if (reloadPages) {
-        [WebView _makeAllWebViewsPerformSelector:@selector(_reloadForPluginChanges)];
-    }
-}
-
-- (BOOL)pluginSupportsMIMEType:(NSString *)MIMEType
-{
-    return [[WebPluginDatabase sharedDatabase] pluginForMIMEType:MIMEType] != nil;
 }
 
 - (WebCoreFrameBridge *)bridgeForView:(NSView *)v

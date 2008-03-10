@@ -1,3 +1,160 @@
+2008-03-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Darin.
+
+        Done with Lars.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16815
+
+        Ported the manually written JS bindings of window.navigator,
+        window.navigator.plugins and window.navigator.mimeTypes to
+        auto-generated bindings.
+
+        Moved the globally cached plugin and mimetype information to a
+        per WebCore::Page shared PluginData structure.
+
+        Implemented window.navigator.plugins.refresh() in a
+        platform-independent way.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::getValueProperty):
+        * bindings/js/JSMimeTypeArrayCustom.cpp: Added.
+        (WebCore::JSMimeTypeArray::canGetItemsForName):
+        (WebCore::JSMimeTypeArray::nameGetter):
+        * bindings/js/JSNavigatorCustom.cpp: Added.
+        (WebCore::needsYouTubeQuirk):
+        (WebCore::JSNavigator::appVersion):
+        * bindings/js/JSPluginArrayCustom.cpp: Added.
+        (WebCore::JSPluginArray::canGetItemsForName):
+        (WebCore::JSPluginArray::nameGetter):
+        * bindings/js/JSPluginCustom.cpp: Added.
+        (WebCore::JSPlugin::canGetItemsForName):
+        (WebCore::JSPlugin::nameGetter):
+        * bindings/js/kjs_navigator.cpp: Removed.
+        * bindings/js/kjs_navigator.h: Removed.
+        * dom/Clipboard.cpp:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldUsePlugin):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clear):
+        (WebCore::DOMWindow::navigator):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/DragController.cpp:
+        * page/Frame.cpp:
+        * page/Frame.h:
+        * page/Navigator.cpp: Added.
+        (WebCore::Navigator::Navigator):
+        (WebCore::Navigator::~Navigator):
+        (WebCore::Navigator::disconnectFrame):
+        (WebCore::Navigator::appCodeName):
+        (WebCore::Navigator::appName):
+        (WebCore::Navigator::appVersion):
+        (WebCore::Navigator::language):
+        (WebCore::Navigator::userAgent):
+        (WebCore::Navigator::platform):
+        (WebCore::Navigator::plugins):
+        (WebCore::Navigator::mimeTypes):
+        (WebCore::Navigator::product):
+        (WebCore::Navigator::productSub):
+        (WebCore::Navigator::vendor):
+        (WebCore::Navigator::vendorSub):
+        (WebCore::Navigator::cookieEnabled):
+        (WebCore::Navigator::javaEnabled):
+        * page/Navigator.h: Added.
+        (WebCore::Navigator::create):
+        (WebCore::Navigator::frame):
+        * page/Navigator.idl: Added.
+        * page/Page.cpp:
+        (WebCore::Page::refreshPlugins):
+        (WebCore::Page::pluginData):
+        * page/Page.h:
+        * page/Plugin.h: Removed.
+        * page/mac/FrameMac.mm:
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge canProvideDocumentSource]):
+        * page/mac/WebCoreViewFactory.h:
+        * page/qt/FrameQt.cpp:
+        * page/win/FrameWin.cpp:
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        * platform/mac/PlugInInfoStoreMac.mm: Removed.
+        * platform/qt/MIMETypeRegistryQt.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * plugins/MimeType.cpp: Added.
+        (WebCore::MimeType::MimeType):
+        (WebCore::MimeType::~MimeType):
+        (WebCore::MimeType::type):
+        (WebCore::MimeType::suffixes):
+        (WebCore::MimeType::description):
+        (WebCore::MimeType::enabledPlugin):
+        * plugins/MimeType.h: Added.
+        (WebCore::MimeType::create):
+        * plugins/MimeType.idl: Added.
+        * plugins/MimeTypeArray.cpp: Added.
+        (WebCore::MimeTypeArray::MimeTypeArray):
+        (WebCore::MimeTypeArray::~MimeTypeArray):
+        (WebCore::MimeTypeArray::length):
+        (WebCore::MimeTypeArray::item):
+        (WebCore::MimeTypeArray::canGetItemsForName):
+        (WebCore::MimeTypeArray::nameGetter):
+        (WebCore::MimeTypeArray::getPluginData):
+        * plugins/MimeTypeArray.h: Added.
+        (WebCore::MimeTypeArray::create):
+        (WebCore::MimeTypeArray::disconnectFrame):
+        * plugins/MimeTypeArray.idl: Added.
+        * plugins/Plugin.cpp: Added.
+        (WebCore::Plugin::Plugin):
+        (WebCore::Plugin::~Plugin):
+        (WebCore::Plugin::name):
+        (WebCore::Plugin::filename):
+        (WebCore::Plugin::description):
+        (WebCore::Plugin::length):
+        (WebCore::Plugin::item):
+        (WebCore::Plugin::canGetItemsForName):
+        (WebCore::Plugin::nameGetter):
+        * plugins/Plugin.h: Added.
+        (WebCore::Plugin::create):
+        * plugins/Plugin.idl: Added.
+        * plugins/PluginArray.cpp: Added.
+        (WebCore::PluginArray::PluginArray):
+        (WebCore::PluginArray::~PluginArray):
+        (WebCore::PluginArray::length):
+        (WebCore::PluginArray::item):
+        (WebCore::PluginArray::canGetItemsForName):
+        (WebCore::PluginArray::nameGetter):
+        (WebCore::PluginArray::refresh):
+        (WebCore::PluginArray::getPluginData):
+        * plugins/PluginArray.h: Added.
+        (WebCore::PluginArray::create):
+        (WebCore::PluginArray::disconnectFrame):
+        * plugins/PluginArray.idl: Added.
+        * plugins/PluginData.cpp: Added.
+        (WebCore::PluginData::PluginData):
+        (WebCore::PluginData::~PluginData):
+        (WebCore::PluginData::supportsMimeType):
+        (WebCore::PluginData::pluginNameForMimeType):
+        * plugins/PluginData.h: Added.
+        (WebCore::PluginData::create):
+        (WebCore::PluginData::disconnectPage):
+        (WebCore::PluginData::page):
+        (WebCore::PluginData::plugins):
+        (WebCore::PluginData::mimes):
+        * plugins/mac/PluginDataMac.mm: Added.
+        (WebCore::PluginData::initPlugins):
+        (WebCore::PluginData::refresh):
+        * plugins/qt/PluginDataQt.cpp: Added.
+        (WebCore::PluginData::initPlugins):
+        * plugins/win/PluginDataWin.cpp: Added.
+        (WebCore::PluginData::initPlugins):
+        (WebCore::PluginData::refresh):
+
 2008-03-10  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

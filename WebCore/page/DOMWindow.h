@@ -44,6 +44,7 @@ namespace WebCore {
     class FloatRect;
     class Frame;
     class History;
+    class Navigator;
     class Screen;
 
     typedef int ExceptionCode;
@@ -69,6 +70,8 @@ namespace WebCore {
         BarInfo* scrollbars() const;
         BarInfo* statusbar() const;
         BarInfo* toolbar() const;
+        Navigator* navigator() const;
+        Navigator* clientInformation() const { return navigator(); }
 
         DOMSelection* getSelection();
 
@@ -170,6 +173,7 @@ namespace WebCore {
         mutable RefPtr<BarInfo> m_statusbar;
         mutable RefPtr<BarInfo> m_toolbar;
         mutable RefPtr<Console> m_console;
+        mutable RefPtr<Navigator> m_navigator;
     };
 
 } // namespace WebCore

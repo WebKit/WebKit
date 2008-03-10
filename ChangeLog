@@ -1,3 +1,13 @@
+2008-03-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Darin.
+
+        Done with Lars.
+
+        Added plugins subdirectory to the include path.
+
+        * WebKit.pri:
+
 2008-03-09  Alp Toker  <alp@atoker.com>
 
         GTK+ build fix for r30913.

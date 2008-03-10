@@ -1,3 +1,14 @@
+2008-03-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Darin.
+
+        Done with Lars.
+
+        Added a testcase for http://bugs.webkit.org/show_bug.cgi?id=16815
+
+        * fast/js/navigator-plugins-crash-expected.txt: Added.
+        * fast/js/navigator-plugins-crash.html: Added.
+
 2008-03-08 Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam W.

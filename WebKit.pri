@@ -97,7 +97,8 @@ INCLUDEPATH += \
     $$BASE_DIR/WebCore/rendering \
     $$BASE_DIR/WebCore/history \
     $$BASE_DIR/WebCore/xml \
-    $$BASE_DIR/WebCore/html
+    $$BASE_DIR/WebCore/html \
+    $$BASE_DIR/WebCore/plugins
 
 
 macx {

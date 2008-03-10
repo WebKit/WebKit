@@ -1281,11 +1281,6 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     [NSApp setWindowsNeedUpdate:YES];
 }
 
-- (void)_reloadForPluginChanges
-{
-    [[self mainFrame] _reloadForPluginChanges];
-}
-
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];

@@ -67,7 +67,7 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "PageGroup.h"
-#include "PluginInfoStore.h"
+#include "PluginData.h"
 #include "ProgressTracker.h"
 #include "RenderPart.h"
 #include "RenderWidget.h"
@@ -1596,8 +1596,8 @@ bool FrameLoader::shouldUsePlugin(const KURL& url, const String& mimeType, bool 
 {
     // Allow other plug-ins to win over QuickTime because if the user has installed a plug-in that
     // can handle TIFF (which QuickTime can also handle) they probably intended to override QT.
-    if ((mimeType == "image/tiff" || mimeType == "image/tif" || mimeType == "image/x-tiff")) {
-        String pluginName = PluginInfoStore::pluginNameForMIMEType(mimeType);
+    if (m_frame->page() && (mimeType == "image/tiff" || mimeType == "image/tif" || mimeType == "image/x-tiff")) {
+        String pluginName = m_frame->page()->pluginData()->pluginNameForMimeType(mimeType);
         if (!pluginName.isEmpty() && !pluginName.contains("QuickTime", false)) 
             return true;
     }

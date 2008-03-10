@@ -56,6 +56,7 @@ namespace WebCore {
     class InspectorController;
     class Node;
     class PageGroup;
+    class PluginData;
     class ProgressTracker;
     class Selection;
     class SelectionController;
@@ -72,6 +73,9 @@ namespace WebCore {
         Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*, InspectorClient*);
         ~Page();
         
+        static void refreshPlugins(bool reload);
+        PluginData* pluginData() const;
+
         EditorClient* editorClient() const { return m_editorClient; }
 
         void setMainFrame(PassRefPtr<Frame>);
@@ -164,6 +168,8 @@ namespace WebCore {
         RefPtr<BackForwardList> m_backForwardList;
         RefPtr<Frame> m_mainFrame;
         RefPtr<Node> m_focusedNode;
+
+        mutable RefPtr<PluginData> m_pluginData;
 
         EditorClient* m_editorClient;
 

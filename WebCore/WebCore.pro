@@ -253,8 +253,7 @@ LUT_FILES += \
     bindings/js/JSLocation.cpp \
     bindings/js/JSRGBColor.cpp \
     bindings/js/JSXMLHttpRequest.cpp \
-    bindings/js/JSXSLTProcessor.cpp \
-    bindings/js/kjs_navigator.cpp
+    bindings/js/JSXSLTProcessor.cpp
 
 LUT_TABLE_FILES += \
     bindings/js/JSHTMLInputElementBase.cpp
@@ -385,6 +384,11 @@ IDL_BINDINGS += \
     page/DOMWindow.idl \
     page/History.idl \
     page/Screen.idl \
+    page/Navigator.idl \
+    plugins/Plugin.idl \
+    plugins/MimeType.idl \
+    plugins/PluginArray.idl \
+    plugins/MimeTypeArray.idl \
     xml/DOMParser.idl \
     xml/XMLHttpRequestException.idl \
     xml/XMLSerializer.idl
@@ -428,6 +432,7 @@ SOURCES += \
     bindings/js/JSLocation.cpp \
     bindings/js/JSNamedNodeMapCustom.cpp \
     bindings/js/JSNamedNodesCollection.cpp  \
+    bindings/js/JSNavigatorCustom.cpp  \
     bindings/js/JSNodeCustom.cpp \
     bindings/js/JSNodeFilterCondition.cpp \
     bindings/js/JSNodeFilterCustom.cpp \
@@ -439,10 +444,12 @@ SOURCES += \
     bindings/js/JSTreeWalkerCustom.cpp \
     bindings/js/JSXMLHttpRequest.cpp \
     bindings/js/JSXSLTProcessor.cpp \
+    bindings/js/JSPluginCustom.cpp \
+    bindings/js/JSPluginArrayCustom.cpp \
+    bindings/js/JSMimeTypeArrayCustom.cpp \
     bindings/js/kjs_binding.cpp \
     bindings/js/kjs_events.cpp \
     bindings/js/kjs_html.cpp \
-    bindings/js/kjs_navigator.cpp \
     bindings/js/kjs_proxy.cpp \
     bindings/js/PausedTimeouts.cpp \
     bindings/js/ScheduledAction.cpp \
@@ -732,6 +739,7 @@ SOURCES += \
     page/ContextMenuController.cpp \
     page/DOMSelection.cpp \
     page/DOMWindow.cpp \
+    page/Navigator.cpp \
     page/DragController.cpp \
     page/EventHandler.cpp \
     page/FocusController.cpp \
@@ -747,6 +755,11 @@ SOURCES += \
     page/Screen.cpp \
     page/Settings.cpp \
     page/WindowFeatures.cpp \
+    plugins/PluginData.cpp \
+    plugins/PluginArray.cpp \
+    plugins/Plugin.cpp \
+    plugins/MimeType.cpp \
+    plugins/MimeTypeArray.cpp \
     platform/Arena.cpp \
     platform/text/AtomicString.cpp \
     platform/text/Base64.cpp \
@@ -911,6 +924,7 @@ qt-port {
     $$PWD/../WebKit/qt/Api/qwebpage.h \
     $$PWD/../WebKit/qt/Api/qwebview.h \
     $$PWD/../WebKit/qt/Api/qwebhistoryinterface.h \
+    $$PWD/../WebKit/qt/Api/qwebpluginfactory.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
     $$PWD/platform/network/qt/QNetworkReplyHandler.h
 
@@ -976,6 +990,7 @@ qt-port {
     platform/text/qt/TextCodecQt.cpp \
     platform/qt/WheelEventQt.cpp \
     platform/qt/WidgetQt.cpp \
+    plugins/qt/PluginDataQt.cpp \
     ../WebKit/qt/WebCoreSupport/ChromeClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/ContextMenuClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/DragClientQt.cpp \
@@ -989,6 +1004,7 @@ qt-port {
     ../WebKit/qt/Api/qwebhistory.cpp \
     ../WebKit/qt/Api/qwebsettings.cpp \
     ../WebKit/qt/Api/qwebhistoryinterface.cpp \
+    ../WebKit/qt/Api/qwebpluginfactory.cpp
 
     unix: SOURCES += platform/qt/SystemTimeQt.cpp
     else: SOURCES += platform/win/SystemTimeWin.cpp
@@ -998,15 +1014,10 @@ qt-port {
         HEADERS += \
             $$PWD/../WebKit/qt/Api/qwebnetworkinterface.h \
             $$PWD/../WebKit/qt/Api/qwebnetworkinterface_p.h \
-            $$PWD/../WebKit/qt/Api/qwebobjectplugin.h \
-            $$PWD/../WebKit/qt/Api/qwebobjectplugin_p.h \
-            $$PWD/../WebKit/qt/Api/qwebobjectpluginconnector.h \
             $$PWD/../WebKit/qt/Api/qcookiejar.h
 
         SOURCES += \
             ../WebKit/qt/Api/qwebnetworkinterface.cpp \
-            ../WebKit/qt/Api/qwebobjectplugin.cpp \
-            ../WebKit/qt/Api/qwebobjectpluginconnector.cpp \
             ../WebKit/qt/Api/qcookiejar.cpp
 
      }

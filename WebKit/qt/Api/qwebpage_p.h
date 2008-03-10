@@ -154,6 +154,10 @@ public:
     QWebSettings *settings;
 
     QAction *actions[QWebPage::WebActionCount];
+
+#if QT_VERSION >= 0x040400
+    QWebPluginFactory *pluginFactory;
+#endif
 };
 
 #endif

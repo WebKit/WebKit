@@ -128,6 +128,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     networkInterface = 0;
 #else
     networkManager = 0;
+    pluginFactory = 0;
 #endif
     insideOpenCall = false;
 
@@ -1404,6 +1405,16 @@ QNetworkAccessManager *QWebPage::networkAccessManager() const
         that->d->networkManager = new QNetworkAccessManager(that);
     }
     return d->networkManager;
+}
+
+void QWebPage::setPluginFactory(QWebPluginFactory *factory)
+{
+    d->pluginFactory = factory;
+}
+
+QWebPluginFactory *QWebPage::pluginFactory() const
+{
+    return d->pluginFactory;
 }
 
 #endif

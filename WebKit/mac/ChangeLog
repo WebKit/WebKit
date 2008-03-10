@@ -1,3 +1,21 @@
+2008-03-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Darin.
+
+        Done with Lars.
+
+        Simplified WebViewFactory's refreshPlugins method to only refresh the
+        plugins and not reload the frames anymore since that's now done in a
+        platform independent manner by WebCore::Page.
+
+        Also removed the now unused pluginNameForMIMEType and
+        pluginSupportsMIMEType methods.
+
+        * WebCoreSupport/WebViewFactory.mm:
+        * WebView/WebFrame.mm:
+        * WebView/WebFrameInternal.h:
+        * WebView/WebView.mm:
+
 2008-03-08  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

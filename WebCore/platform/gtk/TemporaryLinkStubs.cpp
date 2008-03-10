@@ -35,6 +35,7 @@
 #include "NotImplemented.h"
 #include "PluginDatabase.h"
 #include "PluginPackage.h"
+#include "PluginData.h"
 #include "SharedBuffer.h"
 
 using namespace WebCore;
@@ -77,5 +78,9 @@ float userIdleTime() { notImplemented(); return 0.0; }
 String KURL::fileSystemPath() const { notImplemented(); return String(); }
 
 PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String&) { notImplemented(); return 0; }
+
+void PluginData::initPlugins() { notImplemented(); }
+void PluginData::refresh() { notImplemented(); }
+
 }
 

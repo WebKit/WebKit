@@ -1,5 +1,43 @@
 2008-03-07  Simon Hausmann  <hausmann@webkit.org>
 
+        Reviewed by Darin.
+
+        Done with Lars.
+
+        Replaced the QWebObjectPlugin interfaces with QWebPluginFactory.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::add):
+        (QWebNetworkManager::cancel):
+        (QWebNetworkManager::started):
+        (QWebNetworkManager::data):
+        (QWebNetworkManager::finished):
+        * Api/qwebnetworkinterface_p.h:
+        (QWebNetworkJobPrivate::QWebNetworkJobPrivate):
+        * Api/qwebobjectplugin.cpp: Removed.
+        * Api/qwebobjectplugin.h: Removed.
+        * Api/qwebobjectplugin_p.h: Removed.
+        * Api/qwebobjectpluginconnector.cpp: Removed.
+        * Api/qwebobjectpluginconnector.h: Removed.
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPage::setPluginFactory):
+        (QWebPage::pluginFactory):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebpluginfactory.cpp: Added.
+        (QWebPluginFactory::QWebPluginFactory):
+        (QWebPluginFactory::~QWebPluginFactory):
+        (QWebPluginFactory::refreshPlugins):
+        (QWebPluginFactory::extension):
+        * Api/qwebpluginfactory.h: Added.
+        (MimeType::):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::objectContentType):
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
+2008-03-07  Simon Hausmann  <hausmann@webkit.org>
+
         Fix the Qt build.
 
         * Api/qwebframe.cpp:

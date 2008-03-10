@@ -45,7 +45,6 @@
 #include "NP_jsobject.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "Plugin.h"
 #include "PluginDatabase.h"
 #include "PluginView.h"
 #include "RegularExpression.h"

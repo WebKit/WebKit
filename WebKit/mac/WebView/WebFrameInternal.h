@@ -149,8 +149,6 @@ struct WebCoreHistoryItem;
 
 - (int)_numPendingOrLoadingRequests:(BOOL)recurse;
 
-- (void)_reloadForPluginChanges;
-
 - (void)_attachScriptDebugger;
 - (void)_detachScriptDebugger;
 

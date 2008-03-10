@@ -29,6 +29,7 @@
 
 #include "DumpRenderTree.h"
 #include "jsobjects.h"
+#include "testplugin.h"
 
 #include <QDir>
 #include <QFile>
@@ -87,6 +88,8 @@ WebPage::WebPage(QWidget *parent, DumpRenderTree *drt)
     settings()->setAttribute(QWebSettings::LinksIncludedInFocusChain, false);
     connect(this, SIGNAL(geometryChangeRequest(const QRect &)),
             this, SLOT(setViewGeometry(const QRect & )));
+
+    setPluginFactory(new TestPlugin(this));
 }
 
 QWebPage *WebPage::createWindow()

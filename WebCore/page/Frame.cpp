@@ -55,6 +55,7 @@
 #include "JSDOMWindow.h"
 #include "Logging.h"
 #include "MediaFeatureNames.h"
+#include "Navigator.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "RegularExpression.h"

@@ -33,6 +33,7 @@ VPATH = \
     $(WebCore)/dom \
     $(WebCore)/html \
     $(WebCore)/page \
+    $(WebCore)/plugins \
     $(WebCore)/storage \
     $(WebCore)/xml \
     $(WebCore)/svg \
@@ -343,10 +344,14 @@ all : \
     JSDOMWindowBase.lut.h \
     JSEventTargetBase.lut.h \
     JSLocation.lut.h \
+    JSPlugin.h \
+    JSPluginArray.h \
+    JSNavigator.h \
+    JSMimeType.h \
+    JSMimeTypeArray.h \
     JSRGBColor.lut.h \
     JSXMLHttpRequest.lut.h \
     JSXSLTProcessor.lut.h \
-    kjs_navigator.lut.h \
     \
     JSHTMLInputElementBaseTable.cpp \
     \

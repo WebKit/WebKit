@@ -37,6 +37,7 @@
 #include "MIMETypeRegistry.h"
 #include "ResourceResponse.h"
 #include "Page.h"
+#include "PluginData.h"
 #include "ProgressTracker.h"
 #include "ResourceRequest.h"
 #include "HistoryItem.h"
@@ -50,6 +51,7 @@
 #include "qwebframe.h"
 #include "qwebframe_p.h"
 #include "qwebhistoryinterface.h"
+#include "qwebpluginfactory.h"
 
 #include <qfileinfo.h>
 
@@ -60,7 +62,6 @@
 #include <QNetworkReply>
 #else
 #include "qwebnetworkinterface_p.h"
-#include "qwebobjectplugin_p.h"
 #endif
 
 namespace WebCore
@@ -907,11 +908,8 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
         return ObjectContentImage;
 
-    // ### FIXME Qt 4.4
-#if QT_VERSION < 0x040400
-    if (QWebFactoryLoader::self()->supportsMimeType(mimeType))
-        return ObjectContentNetscapePlugin;
-#endif
+    if (m_frame->page() && m_frame->page()->pluginData()->supportsMimeType(mimeType))
+        return ObjectContentOtherPlugin;
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return ObjectContentFrame;
@@ -972,11 +970,11 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize&, Element* element, cons
         }
     }
 
-    // ### FIXME: qt 4.4
-#if QT_VERSION < 0x040400
-    if (!object)
-        object = QWebFactoryLoader::self()->create(m_webFrame, qurl, mimeType, params, values);
-#endif
+    if (!object) {
+        QWebPluginFactory* factory = m_webFrame->page()->pluginFactory();
+        if (factory)
+            object = factory->create(mimeType, qurl, params, values);
+    }
 
     if (object) {
         QWidget *widget = qobject_cast<QWidget *>(object);
