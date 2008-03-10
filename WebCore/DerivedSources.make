@@ -338,7 +338,7 @@ DOM_CLASSES = \
 all : \
     remove-stray-JSRGBColor \
     \
-    $(DOM_CLASSES:%=JS%.h) \
+    $(filter-out JSRGBColor.h,$(DOM_CLASSES:%=JS%.h)) \
     \
     JSDOMWindowBase.lut.h \
     JSEventTargetBase.lut.h \
