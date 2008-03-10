@@ -1,5 +1,9 @@
 2008-03-09  Darin Adler  <darin@apple.com>
 
+        * DerivedSources.make: One more try at fixing the build.
+
+2008-03-09  Darin Adler  <darin@apple.com>
+
         * DerivedSources.make: Re-land the change, fixed, and with an attempt to fix the
         bots by removing the incorrect file.
 
