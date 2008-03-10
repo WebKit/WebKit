@@ -129,24 +129,41 @@ if test "$PKG_CONFIG" = "no"; then
    AC_MSG_ERROR([Cannot find pkg-config, make sure it is installed in your PATH])
 fi
 
-# check for icu-config
-if test "$os_darwin" = "yes"; then
-ICU_CPPFLAGS="-I\$(srcdir)/JavaScriptCore/icu -I\$(srcdir)/WebCore/icu"
-ICU_LIBS="-licucore"
-else
-AC_PATH_PROG(icu_config, icu-config, no)
-if test "$icu_config" = "no"; then
-   AC_MSG_ERROR([Cannot find icu-config. ICU library is needed.])
+# determine the Unicode backend
+AC_MSG_CHECKING([the Unicode backend to use])
+AC_ARG_WITH(unicode_backend,
+            AC_HELP_STRING([--with-unicode-backend=@<:@icu@:>@],
+                           [Select Unicode backend [default=icu]]),
+            [],[unicode_backend="icu"])
+
+case "$unicode_backend" in
+     icu) ;;
+     *) AC_MSG_ERROR([Invalid Unicode backend: must be icu.]) ;;
+esac
+
+AC_MSG_RESULT([$unicode_backend])
+
+if test "$unicode_backend" = "icu"; then
+	# check for icu-config
+	if test "$os_darwin" = "yes"; then
+		UNICODE_CFLAGS="-I\$(srcdir)/JavaScriptCore/icu -I\$(srcdir)/WebCore/icu"
+		UNICODE_LIBS="-licucore"
+	else
+		AC_PATH_PROG(icu_config, icu-config, no)
+		if test "$icu_config" = "no"; then
+			AC_MSG_ERROR([Cannot find icu-config. The ICU library is needed.])
+		fi
+
+		# We don't use --cflags as this gives us a lot of things that we don't
+		# necessarily want, like debugging and optimization flags
+		# See man (1) icu-config for more info.
+		UNICODE_CFLAGS=`$icu_config --cppflags`
+		UNICODE_LIBS=`$icu_config --ldflags`
+	fi
 fi
 
-# We don't use --cflags as this gives us a lot of things that we don't
-# necessarily want, like debugging and optimization flags
-# See man (1) icu-config for more info.
-ICU_CPPFLAGS=`$icu_config --cppflags`
-ICU_LIBS=`$icu_config --ldflags`
-AC_SUBST([ICU_CPPFLAGS])
-AC_SUBST([ICU_LIBS])
-fi
+AC_SUBST([UNICODE_CFLAGS])
+AC_SUBST([UNICODE_LIBS])
 
 # determine the GDK/GTK+ target
 AC_MSG_CHECKING([the target windowing system])
@@ -485,6 +502,7 @@ WebKit was configured with the following options:
 Build configuration:
  Enable debugging (slow)           : $enable_debug
  Code coverage support             : $enable_coverage
+ Unicode backend                   : $unicode_backend
  HTTP backend                      : $http_backend
  Optimized memory allocator        : $enable_fast_malloc
 Features:

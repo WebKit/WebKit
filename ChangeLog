@@ -1,3 +1,12 @@
+2008-03-09  Jürg Billeter  <j@bitron.ch>
+
+        Reviewed by Alp Toker.
+
+        Conditionalise ICU for Unicode in the GTK+ port.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2008-03-03  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Alp Toker.

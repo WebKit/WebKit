@@ -1,3 +1,11 @@
+2008-03-09  Jürg Billeter  <j@bitron.ch>
+
+        Reviewed by Alp Toker.
+
+        Conditionalise ICU for Unicode in the GTK+ port.
+
+        * wtf/Platform.h:
+
 2008-03-07  David D. Kilzer  <ddkilzer@apple.com>
 
         Unify concept of enabling Netscape Plug-in API (NPAPI).

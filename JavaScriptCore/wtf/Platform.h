@@ -203,11 +203,13 @@
 #define WTF_USE_MULTIPLE_THREADS 1
 #endif
 
-/* for Unicode, KDE uses Qt, everything else uses ICU */
+/* for Unicode, KDE uses Qt */
 #if PLATFORM(KDE) || PLATFORM(QT)
 #define WTF_USE_QT4_UNICODE 1
 #elif PLATFORM(SYMBIAN)
 #define WTF_USE_SYMBIAN_UNICODE 1
+#elif PLATFORM(GTK)
+/* The GTK+ Unicode backend is configurable */
 #else
 #define WTF_USE_ICU_UNICODE 1
 #endif

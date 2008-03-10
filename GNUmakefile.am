@@ -58,6 +58,9 @@ global_cppflags += \
 	-I$(srcdir)/JavaScriptCore/kjs \
 	-I$(top_builddir)/DerivedSources
 
+global_cppflags += \
+	-DWTF_USE_ICU_UNICODE=1
+
 # Default compiler flags
 global_cflags := \
 	-Wall -W -Wcast-align -Wchar-subscripts -Wreturn-type \
@@ -104,7 +107,7 @@ libJavaScriptCore_la_SOURCES = \
 	$(javascriptcore_sources)
 
 libJavaScriptCore_la_LIBADD = \
-	$(ICU_LIBS) \
+	$(UNICODE_LIBS) \
 	$(GLOBALDEPS_LIBS) \
 	-lpthread
 
@@ -117,12 +120,12 @@ libJavaScriptCore_la_CXXFLAGS = \
 libJavaScriptCore_la_CFLAGS = \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
+	$(UNICODE_CFLAGS) \
 	-fstrict-aliasing
 
 libJavaScriptCore_la_CPPFLAGS = \
 	$(global_cppflags) \
-	$(javascriptcore_cppflags) \
-	$(ICU_CPPFLAGS)
+	$(javascriptcore_cppflags)
 
 #
 # WebCore
@@ -165,6 +168,7 @@ libWebCore_la_CXXFLAGS = \
 libWebCore_la_CFLAGS = \
 	-fno-strict-aliasing \
 	$(global_cflags) \
+	$(UNICODE_CFLAGS) \
 	$(GLOBALDEPS_CFLAGS) \
 	$(WEBKITDEPS_CFLAGS) \
 	$(LIBCURL_CFLAGS) \
@@ -175,7 +179,6 @@ libWebCore_la_CFLAGS = \
 	$(HILDON_CFLAGS)
 
 libWebCore_la_CPPFLAGS = \
-	$(ICU_CPPFLAGS) \
 	$(global_cppflags) \
 	$(webcore_cppflags) \
 	$(webkitgtk_cppflags)
@@ -186,7 +189,7 @@ libWebCore_la_LIBADD = \
 	$(GLOBALDEPS_LIBS) \
 	$(WEBKITDEPS_LIBS) \
 	$(LIBCURL_LIBS) \
-	$(ICU_LIBS) \
+	$(UNICODE_LIBS) \
 	$(SQLITE3_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(LIBXSLT_LIBS) \
