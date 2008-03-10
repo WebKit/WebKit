@@ -1,3 +1,15 @@
+2008-03-10  David Kilzer  <ddkilzer@apple.com>
+
+        Fix 64-bit builds.
+
+        Reviewed by Stephanie.
+
+        WebCore.exp only gets generated once for both 32-bit and 64-bit builds,
+        so we must exclude the _NPN symbols when creating WebCore.LP64.exp.
+
+        * WebCore.xcodeproj/project.pbxproj: Reverted build phase shell code to
+        r30826 to remove _NPN symbols from 64-bit builds in WebCore.LP64.exp.
+
 2008-03-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin.
