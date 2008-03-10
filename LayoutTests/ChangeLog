@@ -1,3 +1,13 @@
+2008-03-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Add Tiger specific results for toDataURL-supportedTypes.html as the image
+        encoders have slightly changed between releases.
+
+        * platform/mac-tiger/fast/canvas: Added.
+        * platform/mac-tiger/fast/canvas/toDataURL-supportedTypes-expected.txt: Added.
+
 2008-03-02  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed and landed by Darin.
