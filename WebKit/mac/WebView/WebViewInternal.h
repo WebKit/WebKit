@@ -26,11 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This header contains WebView declarations that can be used anywhere in the Web Kit, but are neither SPI nor API.
+// This header contains WebView declarations that can be used anywhere in WebKit, but are neither SPI nor API.
 
 #import "WebPreferences.h"
 #import "WebViewPrivate.h"
 #import "WebTypesInternal.h"
+
+#ifdef __cplusplus
+#import <WebCore/WebCoreKeyboardUIMode.h>
+#endif
 
 #ifdef __cplusplus
 namespace WebCore {
@@ -63,6 +67,7 @@ typedef WebCore::Page WebCorePage;
 @interface WebView (WebViewInternal)
 #ifdef __cplusplus
 - (WebCore::String)_userAgentForURL:(const WebCore::KURL&)url;
+- (WebCore::KeyboardUIMode)_keyboardUIMode;
 #endif
 @end
 

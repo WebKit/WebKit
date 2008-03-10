@@ -486,6 +486,11 @@ void WebChromeClient::runOpenPanel(PassRefPtr<FileChooser> chooser)
     [listener release];
 }
 
+KeyboardUIMode WebChromeClient::keyboardUIMode()
+{
+    return [m_webView _keyboardUIMode];
+}
+
 @implementation WebOpenPanelResultListener
 
 - (id)initWithChooser:(PassRefPtr<FileChooser>)chooser

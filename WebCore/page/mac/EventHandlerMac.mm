@@ -27,6 +27,7 @@
 #include "EventHandler.h"
 
 #include "BlockExceptions.h"
+#include "ChromeClient.h"
 #include "ClipboardMac.h"
 #include "EventNames.h"
 #include "FocusController.h"
@@ -105,7 +106,11 @@ bool EventHandler::invertSenseOfTabsToLinks(KeyboardEvent* event) const
 
 bool EventHandler::tabsToAllControls(KeyboardEvent* event) const
 {
-    KeyboardUIMode keyboardUIMode = [m_frame->bridge() keyboardUIMode];
+    Page* page = m_frame->page();
+    if (!page)
+        return false;
+
+    KeyboardUIMode keyboardUIMode = page->chrome()->client()->keyboardUIMode();
     bool handlingOptionTab = isKeyboardOptionTab(event);
 
     // If tab-to-links is off, option-tab always highlights all controls

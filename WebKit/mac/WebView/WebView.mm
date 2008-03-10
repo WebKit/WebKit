@@ -260,6 +260,10 @@ macro(yankAndSelect) \
 #define WebKitOriginalTopPrintingMarginKey @"WebKitOriginalTopMargin"
 #define WebKitOriginalBottomPrintingMarginKey @"WebKitOriginalBottomMargin"
 
+#define KeyboardUIModeDidChangeNotification @"com.apple.KeyboardUIModeDidChange"
+#define AppleKeyboardUIMode CFSTR("AppleKeyboardUIMode")
+#define UniversalAccessDomain CFSTR("com.apple.universalaccess")
+
 static BOOL s_didSetCacheModel;
 static WebCacheModel s_cacheModel = WebCacheModelDocumentViewer;
 
@@ -293,8 +297,7 @@ static int pluginDatabaseClientCount = 0;
 - (id)initWithTarget:(id)target defaultTarget:(id)defaultTarget catchExceptions:(BOOL)catchExceptions;
 @end
 
-@interface WebViewPrivate : NSObject
-{
+@interface WebViewPrivate : NSObject {
 @public
     Page* page;
     
@@ -364,6 +367,9 @@ static int pluginDatabaseClientCount = 0;
     WebPluginDatabase *pluginDatabase;
     
     HashMap<unsigned long, RetainPtr<id> >* identifierMap;
+
+    BOOL _keyboardUIModeAccessed;
+    KeyboardUIMode _keyboardUIMode;
 }
 @end
 
@@ -720,6 +726,7 @@ static bool debugWidget = true;
         _private->hasSpellCheckerDocumentTag = NO;
     }
     
+    [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     [WebPreferences _removeReferenceForIdentifier:[self preferencesIdentifier]];
@@ -4182,6 +4189,45 @@ static NSString *createMacOSXVersionString()
     // and we should release the web view.
     if (_private->identifierMap->isEmpty())
         CFRelease(self);
+}
+
+- (void)_retrieveKeyboardUIModeFromPreferences:(NSNotification *)notification
+{
+    CFPreferencesAppSynchronize(UniversalAccessDomain);
+
+    Boolean keyExistsAndHasValidFormat;
+    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, UniversalAccessDomain, &keyExistsAndHasValidFormat);
+    
+    // The keyboard access mode is reported by two bits:
+    // Bit 0 is set if feature is on
+    // Bit 1 is set if full keyboard access works for any control, not just text boxes and lists
+    // We require both bits to be on.
+    // I do not know that we would ever get one bit on and the other off since
+    // checking the checkbox in system preferences which is marked as "Turn on full keyboard access"
+    // turns on both bits.
+    _private->_keyboardUIMode = (mode & 0x2) ? KeyboardAccessFull : KeyboardAccessDefault;
+    
+    // check for tabbing to links
+    if ([_private->preferences tabsToLinks])
+        _private->_keyboardUIMode = (KeyboardUIMode)(_private->_keyboardUIMode | KeyboardAccessTabsToLinks);
+}
+
+- (KeyboardUIMode)_keyboardUIMode
+{
+    if (!_private->_keyboardUIModeAccessed) {
+        _private->_keyboardUIModeAccessed = YES;
+
+        [self _retrieveKeyboardUIModeFromPreferences:nil];
+        
+        [[NSDistributedNotificationCenter defaultCenter] 
+            addObserver:self selector:@selector(_retrieveKeyboardUIModeFromPreferences:) 
+            name:KeyboardUIModeDidChangeNotification object:nil];
+
+        [[NSNotificationCenter defaultCenter] 
+            addObserver:self selector:@selector(_retrieveKeyboardUIModeFromPreferences:) 
+            name:WebPreferencesChangedNotification object:nil];
+    }
+    return _private->_keyboardUIMode;
 }
 
 @end

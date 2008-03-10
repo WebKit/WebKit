@@ -102,10 +102,6 @@
 
 using namespace WebCore;
 
-#define KeyboardUIModeDidChangeNotification @"com.apple.KeyboardUIModeDidChange"
-#define AppleKeyboardUIMode CFSTR("AppleKeyboardUIMode")
-#define UniversalAccessDomain CFSTR("com.apple.universalaccess")
-
 @implementation WebFrameBridge
 
 #ifndef BUILDING_ON_TIGER
@@ -153,86 +149,23 @@ using namespace WebCore;
     return self;
 }
 
-- (void)fini
-{
-    if (_keyboardUIModeAccessed) {
-        [[NSDistributedNotificationCenter defaultCenter] 
-            removeObserver:self name:KeyboardUIModeDidChangeNotification object:nil];
-        [[NSNotificationCenter defaultCenter] 
-            removeObserver:self name:WebPreferencesChangedNotification object:nil];
-    }
-
-    ASSERT(_frame == nil);
-    --WebBridgeCount;
-}
-
 - (void)dealloc
 {
-    [_frame release];
-    
-    [self fini];
+    ASSERT(_frame == nil);
+    --WebBridgeCount;
     [super dealloc];
 }
 
 - (void)finalize
 {
-    ASSERT_MAIN_THREAD();
-    [self fini];
+    ASSERT(_frame == nil);
+    --WebBridgeCount;
     [super finalize];
-}
-
-- (WebPreferences *)_preferences
-{
-    return [[self webView] preferences];
-}
-
-- (void)_retrieveKeyboardUIModeFromPreferences:(NSNotification *)notification
-{
-    CFPreferencesAppSynchronize(UniversalAccessDomain);
-
-    Boolean keyExistsAndHasValidFormat;
-    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, UniversalAccessDomain, &keyExistsAndHasValidFormat);
-    
-    // The keyboard access mode is reported by two bits:
-    // Bit 0 is set if feature is on
-    // Bit 1 is set if full keyboard access works for any control, not just text boxes and lists
-    // We require both bits to be on.
-    // I do not know that we would ever get one bit on and the other off since
-    // checking the checkbox in system preferences which is marked as "Turn on full keyboard access"
-    // turns on both bits.
-    _keyboardUIMode = (mode & 0x2) ? KeyboardAccessFull : KeyboardAccessDefault;
-    
-    // check for tabbing to links
-    if ([[self _preferences] tabsToLinks])
-        _keyboardUIMode = (KeyboardUIMode)(_keyboardUIMode | KeyboardAccessTabsToLinks);
-}
-
-- (KeyboardUIMode)keyboardUIMode
-{
-    if (!_keyboardUIModeAccessed) {
-        _keyboardUIModeAccessed = YES;
-        [self _retrieveKeyboardUIModeFromPreferences:nil];
-        
-        [[NSDistributedNotificationCenter defaultCenter] 
-            addObserver:self selector:@selector(_retrieveKeyboardUIModeFromPreferences:) 
-            name:KeyboardUIModeDidChangeNotification object:nil];
-
-        [[NSNotificationCenter defaultCenter] 
-            addObserver:self selector:@selector(_retrieveKeyboardUIModeFromPreferences:) 
-                   name:WebPreferencesChangedNotification object:nil];
-    }
-    return _keyboardUIMode;
 }
 
 - (WebFrame *)webFrame
 {
     return _frame;
-}
-
-- (WebCoreFrameBridge *)mainFrame
-{
-    ASSERT(_frame != nil);
-    return [[[self webView] mainFrame] _bridge];
 }
 
 - (NSResponder *)firstResponder
@@ -252,16 +185,6 @@ using namespace WebCore;
     [webView _pushPerformingProgrammaticFocus];
     [[webView _UIDelegateForwarder] webView:webView makeFirstResponder:view];
     [webView _popPerformingProgrammaticFocus];
-}
-
-- (WebDataSource *)dataSource
-{
-    ASSERT(_frame != nil);
-    WebDataSource *dataSource = [_frame _dataSource];
-
-    ASSERT(dataSource != nil);
-
-    return dataSource;
 }
 
 - (void)close

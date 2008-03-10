@@ -114,6 +114,8 @@ public:
         const WebCore::FloatRect& boxRect, const WebCore::FloatRect& lineRect,
         bool behindText, bool entireLine);
 
+    virtual WebCore::KeyboardUIMode keyboardUIMode();
+
 private:
     WebView *m_webView;
 };

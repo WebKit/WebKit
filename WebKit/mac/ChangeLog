@@ -2,6 +2,29 @@
 
         Reviewed by Sam.
 
+        - eliminate keyboard UI mode method from WebCoreFrameBridge
+
+        * WebCoreSupport/WebChromeClient.h: Added keyboardUIMode function.
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::keyboardUIMode): Ditto. Calls WebView.
+        * WebCoreSupport/WebFrameBridge.h: Removed unused things, including the
+        fields for keyboard UI mode.
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge dealloc]): Removed unneeded code; eliminated the fini
+        method.
+        (-[WebFrameBridge finalize]): Ditto.
+        * WebView/WebView.mm: Moved the keyboard mode code in here.
+        (-[WebView _close]): Remove observer from the distributed notification
+        center as well as the normal one.
+        (-[WebView _retrieveKeyboardUIModeFromPreferences:]): Added. Code moved
+        here from the bridge.
+        (-[WebView _keyboardUIMode]): Ditto.
+        * WebView/WebViewInternal.h: Added _keyboardUIMode method.
+
+2008-03-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
         - eliminate Java applet methods from WebCoreFrameBridge
 
         * WebCoreSupport/WebChromeClient.mm: Removed unneeded headers and declarations.

@@ -1,5 +1,22 @@
 2008-03-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam.
+
+        - eliminate keyboard UI mode method from WebCoreFrameBridge
+
+        * page/ChromeClient.h: Added keyboardUIMode function.
+        (WebCore::ChromeClient::keyboardUIMode): Ditto.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::tabsToAllControls): Call chrome client function instead
+        of bridge function.
+        * page/mac/WebCoreFrameBridge.h: Removed keyboardUIMode method, and other unused
+        ones.
+
+        * WebCore.xcodeproj/project.pbxproj: Allowed Xcode to change the project.
+        Do not try to fight the Xcode.
+
+2008-03-10  Darin Adler  <darin@apple.com>
+
         - oops, forgot to save last couple changes from the editor
 
         * bindings/js/JSDOMWindowCustom.cpp:
