@@ -1,3 +1,11 @@
+2008-03-09  Oliver Hunt  <oliver@apple.com>
+
+        RS=Mark Rowe
+
+        Roll out r30909 -- it breaks the build and is a non-trivial fix (according to weinig)
+
+        * DerivedSources.make:
+
 2008-03-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
