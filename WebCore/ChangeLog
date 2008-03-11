@@ -1,3 +1,14 @@
+2008-03-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5779984> REGRESSION (r30391): GMail: Safari won't display the Edit Link dialog
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::hasCSSPropertyNamePrefix): Fixed a typo.  The code was only
+        comparing the first character of the prefix to the first character
+        of the property name.
+
 2008-03-10  Andre Boule  <aboule@apple.com>
 
         Reviewed by Beth.
