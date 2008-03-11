@@ -1,3 +1,13 @@
+2008-03-11  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Set a Icon on the QAction if we have one.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPage::action):
+
 2008-03-11  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build.

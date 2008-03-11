@@ -60,6 +60,7 @@
 #include "WindowFeatures.h"
 #include "LocalizedStrings.h"
 
+#include <QApplication>
 #include <QDebug>
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>
@@ -1092,6 +1093,8 @@ QAction *QWebPage::action(WebAction action) const
         return d->actions[action];
 
     QString text;
+    QIcon icon;
+    QStyle *style = view() ? view()->style() : qApp->style();
     bool checkable = false;
 
     switch (action) {
@@ -1124,15 +1127,27 @@ QAction *QWebPage::action(WebAction action) const
 
         case GoBack:
             text = contextMenuItemTagGoBack();
+#if QT_VERSION >= 0x040400
+            icon = style->standardIcon(QStyle::SP_ArrowBack);
+#endif
             break;
         case GoForward:
             text = contextMenuItemTagGoForward();
+#if QT_VERSION >= 0x040400
+            icon = style->standardIcon(QStyle::SP_ArrowForward);
+#endif
             break;
         case Stop:
             text = contextMenuItemTagStop();
+#if QT_VERSION >= 0x040400
+            icon = style->standardIcon(QStyle::SP_BrowserStop);
+#endif
             break;
         case Reload:
             text = contextMenuItemTagReload();
+#if QT_VERSION >= 0x040400
+            icon = style->standardIcon(QStyle::SP_BrowserReload);
+#endif
             break;
 
         case Cut:
@@ -1223,6 +1238,7 @@ QAction *QWebPage::action(WebAction action) const
     a->setText(text);
     a->setData(action);
     a->setCheckable(checkable);
+    a->setIcon(icon);
 
     connect(a, SIGNAL(triggered(bool)),
             this, SLOT(_q_webActionTriggered(bool)));
