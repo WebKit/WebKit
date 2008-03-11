@@ -932,28 +932,25 @@ int indexForVisiblePosition(VisiblePosition& visiblePosition)
     if (visiblePosition.isNull())
         return 0;
     Position p(visiblePosition.deepEquivalent());
-    RefPtr<Range> range = new Range(p.node()->document(), Position(p.node()->document(), 0), rangeCompliantEquivalent(p));
+    RefPtr<Range> range = Range::create(p.node()->document(), Position(p.node()->document(), 0), rangeCompliantEquivalent(p));
     return TextIterator::rangeLength(range.get(), true);
 }
 
 PassRefPtr<Range> avoidIntersectionWithNode(const Range* range, Node* node)
 {
-    if (!range || range->isDetached())
+    if (!range)
         return 0;
 
     Document* document = range->ownerDocument();
 
-    ExceptionCode ec = 0;
-    Node* startContainer = range->startContainer(ec);
-    ASSERT(ec == 0);
-    int startOffset = range->startOffset(ec);
-    ASSERT(ec == 0);
-    Node* endContainer = range->endContainer(ec);
-    ASSERT(ec == 0);
-    int endOffset = range->endOffset(ec);
-    ASSERT(ec == 0);
+    Node* startContainer = range->startContainer();
+    int startOffset = range->startOffset();
+    Node* endContainer = range->endContainer();
+    int endOffset = range->endOffset();
 
-    ASSERT(startContainer);
+    if (!startContainer)
+        return 0;
+
     ASSERT(endContainer);
 
     if (startContainer == node || startContainer->isDescendantOf(node)) {
@@ -967,7 +964,7 @@ PassRefPtr<Range> avoidIntersectionWithNode(const Range* range, Node* node)
         endOffset = node->nodeIndex();
     }
 
-    return new Range(document, startContainer, startOffset, endContainer, endOffset);
+    return Range::create(document, startContainer, startOffset, endContainer, endOffset);
 }
 
 Selection avoidIntersectionWithNode(const Selection& selection, Node* node)

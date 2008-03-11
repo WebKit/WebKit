@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef PositionIterator_h
 #define PositionIterator_h
 
+#include "Node.h"
 #include "Position.h"
 
 namespace WebCore {
@@ -48,6 +49,7 @@ public:
         , m_offset(m_child ? 0 : pos.offset())
     {
     }
+    operator Position() const;
 
     void increment();
     void decrement();
@@ -62,7 +64,6 @@ public:
     bool isCandidate() const;
 
 private:
-    friend class Position;
     Node* m_parent;
     Node* m_child;
     int m_offset;

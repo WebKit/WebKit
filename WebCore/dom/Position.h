@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,33 +26,40 @@
 #ifndef Position_h
 #define Position_h
 
-#include "Node.h"
 #include "TextAffinity.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class CSSComputedStyleDeclaration;
 class Element;
-class PositionIterator;
+class Node;
 class Range;
+class RenderObject;
 
 enum EUsingComposedCharacters { NotUsingComposedCharacters = false, UsingComposedCharacters = true };
 
-class Position
-{
+// FIXME: Reduce the number of operations we have on a Position.
+// This should be more like a humble struct, without so many different
+// member functions. We should find better homes for these functions.
+
+class Position {
 public:
-    Position() : m_node(0), m_offset(0) { }
-    Position(Node*, int offset);
-    Position(const PositionIterator&);
+    RefPtr<Node> container;
+    int posOffset; // to be renamed to offset when we get rid of offset()
 
-    void clear();
+    Position() : posOffset(0) { }
+    Position(PassRefPtr<Node> c, int o) : container(c), posOffset(o) { }
 
-    Node *node() const { return m_node.get(); }
+    void clear() { container.clear(); posOffset = 0; }
+
+    Node* node() const { return container.get(); }
+    int offset() const { return posOffset; }
     Element* documentElement() const;
-    int offset() const { return m_offset; }
 
-    bool isNull() const { return m_node == 0; }
-    bool isNotNull() const { return m_node != 0; }
+    bool isNull() const { return !container; }
+    bool isNotNull() const { return container; }
 
     Element* element() const;
     PassRefPtr<CSSComputedStyleDeclaration> computedStyle() const;
@@ -80,7 +87,7 @@ public:
     bool isCandidate() const;
     bool inRenderedText() const;
     bool isRenderedCharacter() const;
-    bool rendersInDifferentPosition(const Position &pos) const;
+    bool rendersInDifferentPosition(const Position&) const;
     
     static bool hasRenderedNonAnonymousDescendantsWithHeight(RenderObject*);
     static bool nodeIsUserSelectNone(Node*);
@@ -97,16 +104,14 @@ private:
 
     Position previousCharacterPosition(EAffinity) const;
     Position nextCharacterPosition(EAffinity) const;
-    RefPtr<Node> m_node;
-    int m_offset;
 };
 
-inline bool operator==(const Position &a, const Position &b)
+inline bool operator==(const Position& a, const Position& b)
 {
-    return a.node() == b.node() && a.offset() == b.offset();
+    return a.container == b.container && a.posOffset == b.posOffset;
 }
 
-inline bool operator!=(const Position &a, const Position &b)
+inline bool operator!=(const Position& a, const Position& b)
 {
     return !(a == b);
 }

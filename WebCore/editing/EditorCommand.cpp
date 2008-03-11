@@ -231,7 +231,7 @@ static RefPtr<Range> unionDOMRanges(Range* a, Range* b)
     Range* end = a->compareBoundaryPoints(Range::END_TO_END, b, ec) <= 0 ? b : a;
     ASSERT(!ec);
 
-    return new Range(a->startContainer(ec)->ownerDocument(), start->startContainer(ec), start->startOffset(ec), end->endContainer(ec), end->endOffset(ec));
+    return Range::create(a->startContainer(ec)->ownerDocument(), start->startContainer(ec), start->startOffset(ec), end->endContainer(ec), end->endOffset(ec));
 }
 
 // Execute command functions

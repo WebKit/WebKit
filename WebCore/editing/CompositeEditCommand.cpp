@@ -270,7 +270,7 @@ void CompositeEditCommand::inputText(const String &text, bool selectInsertedText
 {
     int offset = 0;
     int length = text.length();
-    RefPtr<Range> startRange = new Range(document(), Position(document()->documentElement(), 0), endingSelection().start());
+    RefPtr<Range> startRange = Range::create(document(), Position(document()->documentElement(), 0), endingSelection().start());
     int startIndex = TextIterator::rangeLength(startRange.get());
     int newline;
     do {
@@ -729,13 +729,13 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
             
             startIndex = 0;
             if (startInParagraph) {
-                RefPtr<Range> startRange = new Range(document(), rangeCompliantEquivalent(startOfParagraphToMove.deepEquivalent()), rangeCompliantEquivalent(visibleStart.deepEquivalent()));
+                RefPtr<Range> startRange = Range::create(document(), rangeCompliantEquivalent(startOfParagraphToMove.deepEquivalent()), rangeCompliantEquivalent(visibleStart.deepEquivalent()));
                 startIndex = TextIterator::rangeLength(startRange.get(), true);
             }
 
             endIndex = 0;
             if (endInParagraph) {
-                RefPtr<Range> endRange = new Range(document(), rangeCompliantEquivalent(startOfParagraphToMove.deepEquivalent()), rangeCompliantEquivalent(visibleEnd.deepEquivalent()));
+                RefPtr<Range> endRange = Range::create(document(), rangeCompliantEquivalent(startOfParagraphToMove.deepEquivalent()), rangeCompliantEquivalent(visibleEnd.deepEquivalent()));
                 endIndex = TextIterator::rangeLength(endRange.get(), true);
             }
         }
@@ -752,7 +752,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // start and end can't be used directly to create a Range; they are "editing positions"
     Position startRangeCompliant = rangeCompliantEquivalent(start);
     Position endRangeCompliant = rangeCompliantEquivalent(end);
-    RefPtr<Range> range = new Range(document(), startRangeCompliant.node(), startRangeCompliant.offset(), endRangeCompliant.node(), endRangeCompliant.offset());
+    RefPtr<Range> range = Range::create(document(), startRangeCompliant.node(), startRangeCompliant.offset(), endRangeCompliant.node(), endRangeCompliant.offset());
 
     // FIXME: This is an inefficient way to preserve style on nodes in the paragraph to move.  It 
     // shouldn't matter though, since moved paragraphs will usually be quite small.
@@ -805,7 +805,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         updateLayout();
     }
         
-    RefPtr<Range> startToDestinationRange(new Range(document(), Position(document(), 0), rangeCompliantEquivalent(destination.deepEquivalent())));
+    RefPtr<Range> startToDestinationRange(Range::create(document(), Position(document(), 0), rangeCompliantEquivalent(destination.deepEquivalent())));
     destinationIndex = TextIterator::rangeLength(startToDestinationRange.get(), true);
     
     setEndingSelection(destination);

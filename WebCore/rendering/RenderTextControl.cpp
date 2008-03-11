@@ -492,7 +492,7 @@ VisiblePosition RenderTextControl::visiblePositionForIndex(int index)
     if (index <= 0)
         return VisiblePosition(m_innerText.get(), 0, DOWNSTREAM);
     ExceptionCode ec = 0;
-    RefPtr<Range> range = new Range(document());
+    RefPtr<Range> range = Range::create(document());
     range->selectNodeContents(m_innerText.get(), ec);
     CharacterIterator it(range.get());
     it.advance(index - 1);
@@ -505,7 +505,7 @@ int RenderTextControl::indexForVisiblePosition(const VisiblePosition& pos)
     if (!indexPosition.node() || indexPosition.node()->rootEditableElement() != m_innerText)
         return 0;
     ExceptionCode ec = 0;
-    RefPtr<Range> range = new Range(document());
+    RefPtr<Range> range = Range::create(document());
     range->setStart(m_innerText.get(), 0, ec);
     range->setEnd(indexPosition.node(), indexPosition.offset(), ec);
     return TextIterator::rangeLength(range.get());

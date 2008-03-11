@@ -1,3 +1,146 @@
+2008-03-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - make some Range improvements (preparation for Range support for DOM mutation)
+
+        Made constructors private, added create functions.
+        Made refcount start at 1 rather than starting at 0 and being incremented.
+        Made Range use two Position objects for the start/end container/offset pairs.
+
+        * WebCore.base.exp: Updated.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createRange): Changed to use Range::create.
+        (WebCore::Document::removeMarkers): Updated for Range::first/pastLastNode name change.
+
+        * dom/Position.cpp:
+        (WebCore::Position::formatForDebugger): Updated for member variable name change.
+        (WebCore::Position::showTreeForThis): Ditto.
+        (WebCore::startPosition): Changed to use Range::startPosition.
+        (WebCore::endPosition): Changed to use Range::endPosition.
+
+        * dom/Position.h: Made the data members public and renamed them to container
+        and offset. But since offset() is already a function, temporarily used posOffset
+        for the data member. Later we'll get rid of offset(). Made more functions inline.
+        Removed the constructor that takes a PositionIterator.
+
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::operator Position): Added. Replaces the constructor
+        that used to be in Position.
+        * dom/PositionIterator.h: Added conversion operator to produce a Position.
+        Removed friend declaration for Position.
+
+        * dom/Range.cpp:
+        (WebCore::Range::Range): Updated constructors for data member changes and made
+        them use a refcount of 1.
+        (WebCore::Range::create): Added.
+        (WebCore::Range::startContainer): Updated to eliminate use of m_detached; detached
+        is now indicated by m_start.container of 0. Also updated to use m_start instead
+        of the old m_startContainer.
+        (WebCore::Range::startOffset): Ditto.
+        (WebCore::Range::endContainer): Ditto.
+        (WebCore::Range::endOffset): Ditto.
+        (WebCore::Range::commonAncestorContainer): Ditto.
+        (WebCore::Range::collapsed): Ditto.
+        (WebCore::Range::setStart): Ditto.
+        (WebCore::Range::setEnd): Ditto.
+        (WebCore::Range::collapse): Ditto.
+        (WebCore::Range::isPointInRange): Ditto.
+        (WebCore::Range::comparePoint): Ditto.
+        (WebCore::Range::compareNode): Ditto.
+        (WebCore::Range::compareBoundaryPoints): Ditto.
+        (WebCore::Range::boundaryPointsValid): Ditto.
+        (WebCore::Range::deleteContents): Ditto.
+        (WebCore::Range::intersectsNode): Ditto.
+        (WebCore::Range::processContents): Ditto.
+        (WebCore::Range::extractContents): Ditto.
+        (WebCore::Range::cloneContents): Ditto.
+        (WebCore::Range::insertNode): Ditto.
+        (WebCore::Range::toString): Ditto.
+        (WebCore::Range::text): Ditto.
+        (WebCore::Range::createContextualFragment): Ditto.
+        (WebCore::Range::detach): Ditto.
+        (WebCore::Range::checkNodeBA): Changed to use switch statements instead of
+        multiple calls to the virtual nodeType() function.
+        (WebCore::Range::cloneRange): Ditto.
+        (WebCore::Range::setStartAfter): Ditto.
+        (WebCore::Range::setEndBefore): Ditto.
+        (WebCore::Range::setEndAfter): Ditto.
+        (WebCore::Range::selectNode): Ditto.
+        (WebCore::Range::selectNodeContents): Ditto.
+        (WebCore::Range::surroundContents): Ditto.
+        (WebCore::Range::setStartBefore): Ditto.
+        (WebCore::Range::checkDeleteExtract): Ditto.
+        (WebCore::Range::containedByReadOnly): Ditto.
+        (WebCore::Range::firstNode): Ditto.
+        (WebCore::Range::editingStartPosition): Ditto.
+        (WebCore::Range::pastLastNode): Ditto.
+        (WebCore::Range::addLineBoxRects): Ditto.
+        (WebCore::Range::formatForDebugger): Ditto.
+        (WebCore::operator==): Ditto.
+        (WebCore::rangeOfContents): Ditto.
+        (WebCore::Range::maxStartOffset): Ditto.
+        (WebCore::Range::maxEndOffset): Ditto.
+
+        * dom/Range.h: Made constructors private. Added create functions.
+        Added getters for startContainer/Offset and endContainer/Offset that
+        return 0 instead of an exception for detached ranges that are inline
+        and don't require an ExceptionCode out parameter. Changed the parameters
+        to setStart and setEnd to PassRefPtr. Removed isDetached function.
+        Made ActionType and processContents private. Made startPosition and
+        endPosition inlines and have then return const&. Renamed startNode and
+        pastEndNode to firstNode and pastLastNode to reduce the chance of
+        confusion with startContainer/endContainer. Used Position for m_start
+        and m_end instead of separate container and offset members. Changed
+        maxStartOffset and maxEndOffset into int to match other offsets.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle): Changed to use Range::create.
+        (WebCore::ApplyStyleCommand::applyInlineStyle): Ditto.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::inputText): Ditto.
+        (WebCore::CompositeEditCommand::moveParagraphs): Ditto.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Ditto.
+        * editing/Editor.cpp:
+        (WebCore::Editor::fontForSelection): Changed for pastLastNode name change.
+        (WebCore::Editor::setComposition): Changed to use Range::create.
+        (WebCore::paragraphAlignedRangeForRange): Ditto.
+        (WebCore::markMisspellingsOrBadGrammar): Changed to get rid of check for
+        isDetached and check for 0 from startContainer instead.
+        (WebCore::Editor::compositionRange): Changed to use Range::create.
+        * editing/EditorCommand.cpp:
+        (WebCore::unionDOMRanges): Ditto.
+        * editing/Selection.cpp:
+        (WebCore::Selection::toRange): Ditto.
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator): Changed for firstNode and pastLastNode
+        name change.
+        (WebCore::TextIterator::range): Changed to use Range::create.
+        (WebCore::SimplifiedBackwardsTextIterator::range): Ditto.
+        (WebCore::TextIterator::subrange): Ditto.
+        * editing/VisiblePosition.cpp:
+        (WebCore::makeRange): Ditto.
+        * editing/VisiblePosition.h: Added now-needed include.
+        * editing/htmlediting.cpp:
+        (WebCore::indexForVisiblePosition): Changed to use Range::create.
+        (WebCore::avoidIntersectionWithNode): Changed to get rid of check for
+        isDetached and check for 0 instead and to use Range::create.
+        * editing/markup.cpp:
+        (WebCore::renderedText): Changed to use Range::create.
+        (WebCore::createMarkup): Changed to no longer use isDetached and also
+        for new firstNode/pastEndNode names.
+        (WebCore::createFragmentFromText): Ditto.
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary): Changed to use Range::create.
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge convertToNSRange:]): Changed to no longer use
+        isDetached().
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::visiblePositionForIndex): Changed to use Range::create.
+        (WebCore::RenderTextControl::indexForVisiblePosition): Ditto.
+
 2008-03-11  Daniel Zucker <zucker@wake3.com>
 
         Reviewed by Adam Roben.

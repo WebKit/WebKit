@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,11 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+PositionIterator::operator Position() const
+{
+    return Position(m_parent, m_child ? m_child->nodeIndex() : (m_parent->hasChildNodes() ? maxDeepOffset(m_parent) : m_offset));
+}
 
 void PositionIterator::increment()
 {

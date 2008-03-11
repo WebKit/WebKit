@@ -169,7 +169,7 @@ PassRefPtr<Range> Selection::toRange() const
     }
 
     ExceptionCode ec = 0;
-    RefPtr<Range> result(new Range(s.node()->document()));
+    RefPtr<Range> result(Range::create(s.node()->document()));
     result->setStart(s.node(), s.offset(), ec);
     if (ec) {
         LOG_ERROR("Exception setting Range start from Selection: %d", ec);

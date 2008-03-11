@@ -1,11 +1,9 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Gunnstein Lye (gunnstein@netcom.no)
  * (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * (C) 2001 Peter Kelly (pmk@post.com)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,9 +25,8 @@
 #ifndef Range_h
 #define Range_h
 
+#include "Position.h"
 #include <wtf/RefCounted.h>
-#include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -43,15 +40,18 @@ class Node;
 class Position;
 class String;
 
-class Range : public RefCounted<Range>
-{
+class Range : public RefCounted<Range> {
 public:
-    Range(Document*);
-    Range(Document*, Node* startContainer, int startOffset, Node* endContainer, int endOffset);
-    Range(Document*, const Position&, const Position&);
+    static PassRefPtr<Range> create(PassRefPtr<Document>);
+    static PassRefPtr<Range> create(PassRefPtr<Document>, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset);
+    static PassRefPtr<Range> create(PassRefPtr<Document>, const Position&, const Position&);
     ~Range();
 
     Document* ownerDocument() const { return m_ownerDocument.get(); }
+    Node* startContainer() const { return m_start.container.get(); }
+    int startOffset() const { return m_start.posOffset; }
+    Node* endContainer() const { return m_end.container.get(); }
+    int endOffset() const { return m_end.posOffset; }
 
     Node* startContainer(ExceptionCode&) const;
     int startOffset(ExceptionCode&) const;
@@ -61,8 +61,8 @@ public:
 
     Node* commonAncestorContainer(ExceptionCode&) const;
     static Node* commonAncestorContainer(Node* containerA, Node* containerB);
-    void setStart(Node* container, int offset, ExceptionCode&);
-    void setEnd(Node* container, int offset, ExceptionCode&);
+    void setStart(PassRefPtr<Node> container, int offset, ExceptionCode&);
+    void setEnd(PassRefPtr<Node> container, int offset, ExceptionCode&);
     void collapse(bool toStart, ExceptionCode&);
     bool isPointInRange(Node* refNode, int offset, ExceptionCode& ec);
     short comparePoint(Node* refNode, int offset, ExceptionCode& ec);
@@ -86,7 +86,6 @@ public:
     PassRefPtr<DocumentFragment> createContextualFragment(const String& html, ExceptionCode&) const;
 
     void detach(ExceptionCode&);
-    bool isDetached() const;
     PassRefPtr<Range> cloneRange(ExceptionCode&) const;
 
     void setStartAfter(Node*, ExceptionCode&);
@@ -97,18 +96,11 @@ public:
     void surroundContents(PassRefPtr<Node>, ExceptionCode&);
     void setStartBefore(Node*, ExceptionCode&);
 
-    enum ActionType {
-        DELETE_CONTENTS,
-        EXTRACT_CONTENTS,
-        CLONE_CONTENTS
-    };
-    PassRefPtr<DocumentFragment> processContents(ActionType, ExceptionCode&);
+    const Position& startPosition() const { return m_start; }
+    const Position& endPosition() const { return m_end; }
 
-    Position startPosition() const;
-    Position endPosition() const;
-
-    Node* startNode() const;
-    Node* pastEndNode() const;
+    Node* firstNode() const;
+    Node* pastLastNode() const;
 
     Position editingStartPosition() const;
 
@@ -120,19 +112,22 @@ public:
 #endif
 
 private:
-    RefPtr<Document> m_ownerDocument;
-    RefPtr<Node> m_startContainer;
-    unsigned m_startOffset;
-    RefPtr<Node> m_endContainer;
-    unsigned m_endOffset;
-    bool m_detached;
+    Range(PassRefPtr<Document>);
+    Range(PassRefPtr<Document>, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset);
 
     void checkNodeWOffset(Node*, int offset, ExceptionCode&) const;
     void checkNodeBA(Node*, ExceptionCode&) const;
     void checkDeleteExtract(ExceptionCode&);
     bool containedByReadOnly() const;
-    unsigned maxStartOffset() const;
-    unsigned maxEndOffset() const;
+    int maxStartOffset() const;
+    int maxEndOffset() const;
+
+    enum ActionType { DELETE_CONTENTS, EXTRACT_CONTENTS, CLONE_CONTENTS };
+    PassRefPtr<DocumentFragment> processContents(ActionType, ExceptionCode&);
+
+    RefPtr<Document> m_ownerDocument;
+    Position m_start;
+    Position m_end;
 };
 
 PassRefPtr<Range> rangeOfContents(Node*);

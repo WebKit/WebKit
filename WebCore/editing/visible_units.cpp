@@ -59,7 +59,7 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
 
     Position start = rangeCompliantEquivalent(Position(boundary, 0));
     Position end = rangeCompliantEquivalent(pos);
-    RefPtr<Range> searchRange = new Range(d);
+    RefPtr<Range> searchRange = Range::create(d);
     
     int exception = 0;
     searchRange->setStart(start.node(), start.offset(), exception);

@@ -275,8 +275,7 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset
 {
-    Range range([startNode _node]->document(), [startNode _node], startOffset, [endNode _node], endOffset);
-    return [NSAttributedString _web_attributedStringFromRange:&range];
+    return [NSAttributedString _web_attributedStringFromRange:Range::create([startNode _node]->document(), [startNode _node], startOffset, [endNode _node], endOffset).get()];
 }
 
 - (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form

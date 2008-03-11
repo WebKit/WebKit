@@ -1008,7 +1008,7 @@ Settings* Document::settings() const
 
 PassRefPtr<Range> Document::createRange()
 {
-    return new Range(this);
+    return Range::create(this);
 }
 
 PassRefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned whatToShow, 
@@ -2934,8 +2934,8 @@ void Document::removeMarkers(Range* range, DocumentMarker::MarkerType markerType
     Node* startContainer = range->startContainer(ec);
     Node* endContainer = range->endContainer(ec);
 
-    Node* pastEndNode = range->pastEndNode();
-    for (Node* node = range->startNode(); node != pastEndNode; node = node->traverseNextNode()) {
+    Node* pastLastNode = range->pastLastNode();
+    for (Node* node = range->firstNode(); node != pastLastNode; node = node->traverseNextNode()) {
         int startOffset = node == startContainer ? range->startOffset(ec) : 0;
         int endOffset = node == endContainer ? range->endOffset(ec) : INT_MAX;
         int length = endOffset - startOffset;

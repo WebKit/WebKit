@@ -765,9 +765,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (NSRange)convertToNSRange:(Range *)range
 {
-    int exception = 0;
-
-    if (!range || range->isDetached())
+    if (!range || !range->startContainer())
         return NSMakeRange(NSNotFound, 0);
 
     Element* selectionRoot = m_frame->selectionController()->rootEditableElement();
@@ -776,17 +774,18 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     // Mouse events may cause TSM to attempt to create an NSRange for a portion of the view
     // that is not inside the current editable region.  These checks ensure we don't produce
     // potentially invalid data when responding to such requests.
-    if (range->startContainer(exception) != scope && !range->startContainer(exception)->isDescendantOf(scope))
+    if (range->startContainer() != scope && !range->startContainer()->isDescendantOf(scope))
         return NSMakeRange(NSNotFound, 0);
-    if(range->endContainer(exception) != scope && !range->endContainer(exception)->isDescendantOf(scope))
+    if(range->endContainer() != scope && !range->endContainer()->isDescendantOf(scope))
         return NSMakeRange(NSNotFound, 0);
     
-    RefPtr<Range> testRange = new Range(scope->document(), scope, 0, range->startContainer(exception), range->startOffset(exception));
-    ASSERT(testRange->startContainer(exception) == scope);
+    RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
+    ASSERT(testRange->startContainer() == scope);
     int startPosition = TextIterator::rangeLength(testRange.get());
 
-    testRange->setEnd(range->endContainer(exception), range->endOffset(exception), exception);
-    ASSERT(testRange->startContainer(exception) == scope);
+    ExceptionCode ec;
+    testRange->setEnd(range->endContainer(), range->endOffset(), ec);
+    ASSERT(testRange->startContainer() == scope);
     int endPosition = TextIterator::rangeLength(testRange.get());
 
     return NSMakeRange(startPosition, endPosition - startPosition);

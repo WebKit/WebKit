@@ -157,10 +157,10 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
     if (!range || !range->boundaryPointsValid())
         return nil;
     
-    Node* firstNode = range->startNode();
+    Node* firstNode = range->firstNode();
     if (!firstNode)
         return nil;
-    Node* pastEndNode = range->pastEndNode();
+    Node* pastLastNode = range->pastLastNode();
     
     int startOffset = range->startOffset(ec);
     int endOffset = range->endOffset(ec);
@@ -190,7 +190,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
         }
     }
     
-    while (currentNode && currentNode != pastEndNode) {
+    while (currentNode && currentNode != pastLastNode) {
         RenderObject *renderer = currentNode->renderer();
         if (renderer) {
             RenderStyle *style = renderer->style();
@@ -412,7 +412,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
         while (!nextNode && currentNode->parentNode()) {
             String text;
             currentNode = currentNode->parentNode();
-            if (currentNode == pastEndNode)
+            if (currentNode == pastLastNode)
                 break;
             nextNode = currentNode->nextSibling();
 
