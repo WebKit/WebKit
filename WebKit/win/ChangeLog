@@ -1,3 +1,23 @@
+2008-03-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin.
+
+        r25512 inlined the urlIcon to improve the startup time of Safari on Mac. Inlining is
+        not suitable for platforms where this icon is themable. E.g. the Qt platform is allowing
+        to theme this icon and the Gtk+ platform will probably end up with themable icons
+        as well.
+        
+        Remove dead code from the windows port and move the urlIcon from the windows
+        directory to the Resource directory to be used by Qt and other ports.
+        
+        Ifdef the usage of the built-in icon in IconDatabase.cpp and for Qt do not use
+        it. Gtk+ currently has no proper implementation of Image::loadPlatformResource but
+        once it does it wants to use this for getting the urlIcon as well.
+
+        * WebKit.vcproj/WebKit.rc:
+        * WebKitDLL.cpp:
+        (loadResourceIntoBuffer):
+
 2008-03-10  Eric Seidel  <eric@webkit.org>
 
         No review, build fix only.
