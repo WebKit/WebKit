@@ -76,7 +76,8 @@ gtk-port:!contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=1
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
 qt-port: !contains(DEFINES, ENABLE_SVG=.): DEFINES += ENABLE_SVG=1
 gtk-port:DEFINES += ENABLE_SVG=0
-DEFINES += ENABLE_VIDEO=0
+qt-port:contains(QT_CONFIG, phonon):DEFINES += ENABLE_VIDEO=1
+else:DEFINES += ENABLE_VIDEO=0
 
 DEFINES += WTF_CHANGES=1
 
@@ -1220,6 +1221,16 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         rendering/RenderVideo.cpp \
         rendering/RenderMedia.cpp \
         bindings/js/JSAudioConstructor.cpp
+
+    qt-port {
+        HEADERS += \
+            platform/graphics/qt/MediaPlayerPrivatePhonon.h
+
+        SOURCES += \
+            platform/graphics/qt/MediaPlayerPrivatePhonon.cpp
+
+        QT += phonon
+    }
 
     gtk-port {
         SOURCES += \

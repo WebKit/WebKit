@@ -1,3 +1,69 @@
+2008-03-11  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Darin.
+
+        Implemented HTML media element support for QtWebKit, using Phonon.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17766
+
+        * WebCore.pro:
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp: Added.
+        (debugMediaObject):
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::getSupportedTypes):
+        (WebCore::MediaPlayerPrivate::hasVideo):
+        (WebCore::MediaPlayerPrivate::load):
+        (WebCore::MediaPlayerPrivate::cancelLoad):
+        (WebCore::MediaPlayerPrivate::play):
+        (WebCore::MediaPlayerPrivate::pause):
+        (WebCore::MediaPlayerPrivate::paused):
+        (WebCore::MediaPlayerPrivate::seek):
+        (WebCore::MediaPlayerPrivate::seeking):
+        (WebCore::MediaPlayerPrivate::duration):
+        (WebCore::MediaPlayerPrivate::currentTime):
+        (WebCore::MediaPlayerPrivate::setEndTime):
+        (WebCore::MediaPlayerPrivate::maxTimeBuffered):
+        (WebCore::MediaPlayerPrivate::maxTimeSeekable):
+        (WebCore::MediaPlayerPrivate::bytesLoaded):
+        (WebCore::MediaPlayerPrivate::totalBytesKnown):
+        (WebCore::MediaPlayerPrivate::totalBytes):
+        (WebCore::MediaPlayerPrivate::setRate):
+        (WebCore::MediaPlayerPrivate::setVolume):
+        (WebCore::MediaPlayerPrivate::setMuted):
+        (WebCore::MediaPlayerPrivate::dataRate):
+        (WebCore::MediaPlayerPrivate::networkState):
+        (WebCore::MediaPlayerPrivate::readyState):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        (WebCore::MediaPlayerPrivate::setVisible):
+        (WebCore::MediaPlayerPrivate::setRect):
+        (WebCore::MediaPlayerPrivate::loadStateChanged):
+        (WebCore::MediaPlayerPrivate::rateChanged):
+        (WebCore::MediaPlayerPrivate::sizeChanged):
+        (WebCore::MediaPlayerPrivate::timeChanged):
+        (WebCore::MediaPlayerPrivate::volumeChanged):
+        (WebCore::MediaPlayerPrivate::didEnd):
+        (WebCore::MediaPlayerPrivate::loadingFailed):
+        (WebCore::MediaPlayerPrivate::naturalSize):
+        (WebCore::MediaPlayerPrivate::eventFilter):
+        (WebCore::MediaPlayerPrivate::repaint):
+        (WebCore::MediaPlayerPrivate::paint):
+        (WebCore::MediaPlayerPrivate::stateChanged):
+        (WebCore::MediaPlayerPrivate::tick):
+        (WebCore::MediaPlayerPrivate::metaDataChanged):
+        (WebCore::MediaPlayerPrivate::seekableChanged):
+        (WebCore::MediaPlayerPrivate::hasVideoChanged):
+        (WebCore::MediaPlayerPrivate::bufferStatus):
+        (WebCore::MediaPlayerPrivate::finished):
+        (WebCore::MediaPlayerPrivate::currentSourceChanged):
+        (WebCore::MediaPlayerPrivate::aboutToFinish):
+        (WebCore::MediaPlayerPrivate::prefinishMarkReached):
+        (WebCore::MediaPlayerPrivate::totalTimeChanged):
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.h: Added.
+        (WebCore::MediaPlayerPrivate::):
+        (WebCore::MediaPlayerPrivate::isAvailable):
+
 2008-03-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.

@@ -37,6 +37,8 @@
 #include "MediaPlayerPrivateQuickTimeWin.h"
 #elif PLATFORM(GTK)
 #include "MediaPlayerPrivateGStreamer.h"
+#elif PLATFORM(QT)
+#include "MediaPlayerPrivatePhonon.h"
 #endif
 
 namespace WebCore {
