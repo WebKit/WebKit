@@ -885,12 +885,7 @@ WebInspector.DOMNodeTreeElement.prototype = {
         this._editing = true;
 
         WebInspector.startEditing(attribute, this._attributeEditingCommitted.bind(this), this._editingCancelled.bind(this), attributeName);
-        if (event.target.hasStyleClass("webkit-html-attribute-value")) {
-            // Select just inside the quotes.
-            var textChild = event.target.firstChild;
-            window.getSelection().setBaseAndExtent(textChild, 1, textChild, textChild.length - 1);
-        } else
-            window.getSelection().setBaseAndExtent(event.target, 0, event.target, 1);
+        window.getSelection().setBaseAndExtent(event.target, 0, event.target, 1);
 
         return true;
     },

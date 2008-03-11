@@ -1,5 +1,29 @@
 2008-03-11  Adam Roben  <aroben@apple.com>
 
+        Make attribute quoting in DOM view more consistent with source view
+
+        Two changes which make the DOM view more consistent with source view:
+         1) We now quote all attribute values, including URLs
+         2) The quotes around the values are now purple, matching the left and
+            right angle brackets that surround the tag
+
+        One bug fixed by these changes:
+         1) The entire URL is selected for editing when you double-click a URL
+            that is an attribute value. Previously, the first and last
+            characters were not included in the selection.
+
+        Reviewed by Darin.
+
+        * page/inspector/DocumentPanel.js:
+        (WebInspector.DOMNodeTreeElement._startEditingAttribute): Don't need
+        to account for the quotes around attribute values anymore because the
+        quotes are now outside the webkit-html-attribute-value span.
+        * page/inspector/utilities.js:
+        (nodeTitleInfo): Quote all attribute values, including URLs, and place
+        the quotes outside the webkit-html-attribute-value span.
+
+2008-03-11  Adam Roben  <aroben@apple.com>
+
         Stop including pthread.h in WebCore on Windows
 
         Reviewed by Darin.
