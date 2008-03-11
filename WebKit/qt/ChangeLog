@@ -1,3 +1,10 @@
+2008-03-11  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Fix the Qt build.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (FrameLoaderClientQt::CreatePlugin):
+
 2008-03-11  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build (silly typo).

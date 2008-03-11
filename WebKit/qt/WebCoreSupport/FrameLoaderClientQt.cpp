@@ -970,11 +970,13 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize&, Element* element, cons
         }
     }
 
+#if QT_VERSION > 0x040400
     if (!object) {
         QWebPluginFactory* factory = m_webFrame->page()->pluginFactory();
         if (factory)
             object = factory->create(mimeType, qurl, params, values);
     }
+#endif
 
     if (object) {
         QWidget *widget = qobject_cast<QWidget *>(object);
