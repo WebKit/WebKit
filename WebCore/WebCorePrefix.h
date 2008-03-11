@@ -57,11 +57,12 @@
 #define min min
 #endif
 
+#else
+#include <pthread.h>
 #endif // defined(WIN32) || defined(_WIN32)
 
 #include <sys/types.h>
 #include <fcntl.h>
-#include <pthread.h>
 #if defined(__APPLE__)
 #include <regex.h>
 #endif

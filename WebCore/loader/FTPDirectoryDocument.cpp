@@ -235,6 +235,8 @@ static struct tm *localTimeQt(const time_t *const timep, struct tm *result)
 }
 
 #define localtime_r(x, y) localTimeQt(x, y)
+#elif PLATFORM(WIN)
+#define localtime_r(x, y) localtime_s((y), (x))
 #endif
 
 static String processFileDateString(const FTPTime& fileTime)

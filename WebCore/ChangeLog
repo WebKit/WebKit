@@ -1,5 +1,23 @@
 2008-03-11  Adam Roben  <aroben@apple.com>
 
+        Stop including pthread.h in WebCore on Windows
+
+        Reviewed by Darin.
+
+        * WebCore.vcproj/WebCore.vcproj:
+          - Changed the include path to not contain pthreads/
+          - Let VS remove a duplicate FileConfiguration element
+          - Let VS have its way with the file ordering
+        * WebCorePrefix.h: Made the #include of pthread.h be compiled out on
+        Windows.
+        * loader/FTPDirectoryDocument.cpp: Added a Windows-specific #define of
+        localtime_r (pthread.h was providing a macro that substituted plain
+        old localtime before, but localtime_s is "more secure", so I went with
+        that).
+        * loader/FTPDirectoryParser.cpp: Ditto for gmtime_r.
+
+2008-03-11  Adam Roben  <aroben@apple.com>
+
         Roll out r30961 since it broke the default site icon on Windows
 
         * loader/icon/IconDatabase.cpp:
