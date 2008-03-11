@@ -20,6 +20,7 @@
 			OutputDirectory="$(WebKitOutputDir)\bin"
 			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
