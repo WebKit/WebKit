@@ -167,7 +167,7 @@ namespace WebCore {
         PassRefPtr<CanvasPattern> createPattern(HTMLCanvasElement*, const String& repetitionType, ExceptionCode&);
         
         PassRefPtr<ImageData> createImageData(float width, float height) const;
-        PassRefPtr<ImageData> getImageData(float sx, float sy, float sw, float sh) const;
+        PassRefPtr<ImageData> getImageData(float sx, float sy, float sw, float sh, ExceptionCode&) const;
         void putImageData(ImageData*, float dx, float dy, ExceptionCode&);
         void putImageData(ImageData*, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
         
@@ -214,8 +214,6 @@ namespace WebCore {
         void clearPathForDashboardBackwardCompatibilityMode();
 
         void checkOrigin(const KURL&);
-
-        void printSecurityExceptionMessage() const;
 
         HTMLCanvasElement* m_canvas;
         Vector<State, 1> m_stateStack;

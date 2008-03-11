@@ -1,3 +1,14 @@
+2008-03-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Update test to catch the SECURITY_ERR thrown by
+        CanvasRenderingContext2D::getImageData() and
+        HTMLCanvasElement::toDataURL() on a tainted canvas
+
+        * http/tests/security/canvas-remote-read-remote-image-expected.txt:
+        * http/tests/security/canvas-remote-read-remote-image.html:
+
 2008-03-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Sam.

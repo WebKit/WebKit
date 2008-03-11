@@ -67,7 +67,7 @@ public:
     void setWidth(int);
     void setHeight(int);
 
-    String toDataURL(const String& mimeType);
+    String toDataURL(const String& mimeType, ExceptionCode&);
 
     CanvasRenderingContext* getContext(const String&);
 
@@ -102,8 +102,6 @@ public:
 private:
     void createImageBuffer() const;
     void reset();
-
-    void printSecurityExceptionMessage() const;
 
     bool m_rendererIsCanvas;
 

@@ -1,3 +1,20 @@
+2008-03-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Throw a SECURITY_ERR when accessing a tainted canvas
+        by CanvasRenderingContext2D::getImageData() and
+        HTMLCanvasElement::toDataURL().
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        * html/CanvasRenderingContext2D.h:
+        * html/CanvasRenderingContext2D.idl:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toDataURL):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.idl:
+
 2008-03-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Sam.

@@ -51,8 +51,8 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include <kjs/interpreter.h>
-#include <wtf/MathExtras.h>
 #include <stdio.h>
+#include <wtf/MathExtras.h>
 
 #if PLATFORM(QT)
 #include <QPainter>
@@ -1240,27 +1240,10 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float 
     return createEmptyImageData(scaledSize);
 }
 
-void CanvasRenderingContext2D::printSecurityExceptionMessage() const
-{
-    const char* const message = "Call to getImageData failed due to tainted canvas.\n";
-
-    Frame* frame = m_canvas->document()->frame();
-    if (!frame)
-        return;
-    if (frame->settings()->privateBrowsingEnabled())
-        return;
-    if (KJS::Interpreter::shouldPrintExceptions())
-        printf("%s", message);
-    if (Page* page = frame->page())
-        page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, 1, String()); // FIXME: provide a real line number and source URL.
-}
-
-PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy, float sw, float sh) const
+PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy, float sw, float sh, ExceptionCode& ec) const
 {
     if (!m_canvas->originClean()) {
-        // FIXME: the WHATWG specification says that this should raise a "security exception", but does not currently
-        // define what one is.  For now, we will silently fail with only a log message.
-        printSecurityExceptionMessage();
+        ec = SECURITY_ERR;
         return 0;
     }
     
