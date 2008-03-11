@@ -1,3 +1,17 @@
+2008-03-11  Daniel Zucker <zucker@wake3.com>
+
+        Reviewed by Adam Roben.
+
+        There are a handful of placed where the use of CFNetwork-specific
+        calls are protected by PLATFORM(CF).  Revise to use the more specific
+        USE(CFNETWORK) macro.  (See http://bugs.webkit.org/show_bug.cgi?id=17783) 
+
+        * platform/network/ProtectionSpace.cpp:  Change PLATFORM(CF) to USE(CFNETWORK)
+        * platform/network/ResourceHandle.cpp: Change PLATFORM(CF) to USE(CFNETWORK)
+        * platform/network/win/CookieJarWin.cpp:  Correct error in
+          InternetGetCookie call.  Conditionalize 'cookiesEnabled' the same
+          as all other implementations in this file.
+
 2008-03-11  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.

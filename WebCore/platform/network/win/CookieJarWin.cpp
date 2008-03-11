@@ -118,7 +118,7 @@ String cookies(const Document* /*document*/, const KURL& url)
         return String();
 
     Vector<UChar> buffer(count);
-    InternetGetCookie(buffer.data(), 0, buffer, &count);
+    InternetGetCookie(str.charactersWithNullTermination(), 0, buffer.data(), &count);
     buffer.shrink(count - 1); // Ignore the null terminator.
     return String::adopt(buffer);
 #endif
@@ -126,10 +126,14 @@ String cookies(const Document* /*document*/, const KURL& url)
 
 bool cookiesEnabled(const Document* /*document*/)
 {
+#if USE(CFNETWORK)
     CFHTTPCookieStorageAcceptPolicy policy = CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain;
     if (CFHTTPCookieStorageRef defaultCookieStorage = wkGetDefaultHTTPCookieStorage())
         policy = CFHTTPCookieStorageGetCookieAcceptPolicy(defaultCookieStorage);
     return policy == CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyAlways;
+#else
+    return true;
+#endif
 }
 
 }
