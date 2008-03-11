@@ -28,18 +28,12 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/unicode/Unicode.h>
+#include "StringHash.h"
 
 namespace WebCore {
 
-    class AtomicString;
-    class Document;
     class KURL;
     class Page;
-
-    struct AlreadyHashed : IntHash<unsigned> {
-        static unsigned hash(unsigned key) { return key; }
-    };
 
     class PageGroup : Noncopyable {
     public:
@@ -50,7 +44,7 @@ namespace WebCore {
         void addPage(Page*);
         void removePage(Page*);
 
-        bool isLinkVisited(Document*, const AtomicString& attributeValue);
+        bool isLinkVisited(unsigned visitedLinkHash);
 
         void addVisitedLink(const KURL&);
         void addVisitedLink(const UChar*, size_t);
@@ -60,6 +54,8 @@ namespace WebCore {
         static void removeAllVisitedLinks();
 
     private:
+        void addVisitedLink(unsigned stringHash);
+
         HashSet<Page*> m_pages;
         HashSet<unsigned, AlreadyHashed> m_visitedLinkHashes;
         bool m_visitedLinksPopulated;

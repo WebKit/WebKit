@@ -1,3 +1,108 @@
+2008-03-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Antti.
+
+        - fix <rdar://problem/3059610> VIP: links opened in new frame, window, or tab
+          should be redrawn as visited immediately
+        - fix <rdar://problem/4382809> Going "back" a page doesn't change the color of
+          the visited URL at directory.umi
+        - fix http://bugs.webkit.org/show_bug.cgi?id=4941
+          Visited links should be marked as visited
+        - fix http://bugs.webkit.org/show_bug.cgi?id=7960
+          REGRESSION: Visited link color doesn't displayed after loading page from cache
+
+        We now mark all links on a page as "changed" at the appropriate times.
+
+        * WebCore.base.exp: Update since I made completeURL be a const member function.
+
+        * css/CSSStyleSelector.cpp: Got rid of some unneeded globals that could be turned
+        into locals. Also changed some static data members to file-scoped globals with
+        internal linkage. Renamed the globals to get rid of the m_ prefix. Changed the
+        prefix on m_styleNotYetAvailable to s_styleNotYetAvailable.
+        (WebCore::CSSStyleSelector::CSSStyleSelector): Updated for name changes.
+        (WebCore::parseUASheet): Tweak the comment.
+        (WebCore::CSSStyleSelector::loadDefaultStyle): Updated for name changes and to
+        use local variables instead of globals where possible.
+        (WebCore::CSSStyleSelector::checkPseudoState): Made this a member function so
+        it can store the link in a hash. Also changed it to have a return value instead
+        of having it modify a global variable. Added code to put the hash into a set so
+        we can tell later if this is one of the links that affects this page.
+        (WebCore::CSSStyleSelector::canShareStyleWithElement): Updated for the change to
+        checkPseudoState.
+        (WebCore::CSSStyleSelector::matchUARules): Updated for name changes.
+        (WebCore::CSSStyleSelector::styleForElement): Ditto.
+        (WebCore::CSSStyleSelector::adjustRenderStyle): Ditto.
+        (WebCore::CSSStyleSelector::pseudoStyleRulesForElement): Changed code to read
+        the SVG style sheet to use a boolean global and put it right here in the function
+        since this is the only code that needs to know about it.
+        (WebCore::CSSStyleSelector::checkOneSelector): Updated for name changes.
+        (WebCore::colorForCSSValue): Moved code inside the function that is not needed
+        anywhere else.
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue): Updaed for the change
+        to checkPseudoState.
+        (WebCore::CSSStyleSelector::allVisitedStateChanged): Added. Calls setChanged on
+        all links if there were any in the set.
+        (WebCore::CSSStyleSelector::visitedStateChanged): Added. Calls setChanged on all
+        links if the one that changed is in the set.
+
+        * css/CSSStyleSelector.h: Removed unused StyleSelector class and State enum. Made
+        CSSStyleSelector derive from Noncopyable. Made lots of member functions private that
+        didn't need to be public, and removed others that could be made into non-member
+        functions. Changed pseudoStyleRulesForElement to take a const String& instead of
+        a StringImpl*. Added new allVisitedStateChanged and visitedStateChanged functions.
+        Got rid of unneeded friend declarations.
+
+        * dom/Document.cpp:
+        (WebCore::Document::completeURL): Made const.
+        (WebCore::findSlashDotDotSlash): Moved here from PageGroup.
+        (WebCore::findSlashSlash): Ditto.
+        (WebCore::findSlashDotSlash): Ditto.
+        (WebCore::containsColonSlashSlash):
+        (WebCore::cleanPath): Ditto.
+        (WebCore::matchLetter): Ditto.
+        (WebCore::needsTrailingSlash): Ditto.
+        (WebCore::Document::visitedLinkHash): Moved this here from PageGroup. This is
+        the poor-man's completeURL function. The idea of putting it here is that this
+        way it can be alongside the real completeURL function. Later we should figure out
+        a way to make this function share more code with the real thing and match behavior.
+
+        * dom/Document.h: Marked completeURL function const. Added visitedLinkHash function.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules): Updated for change to CSSStyleSelector.
+
+        * page/Page.cpp:
+        (WebCore::Page::allVisitedStateChanged): Added. Calls allVisitedStateChanged on all
+        style selectors.
+        (WebCore::Page::visitedStateChanged): Ditto.
+        * page/Page.h: Added the above functions.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::isLinkVisited): Changed to take a visitedLinkHash parameter.
+        The CSSStyleSelector now handles actually computing the hash, and it does so by
+        calling code in Document.
+        (WebCore::PageGroup::addVisitedLink): Refactored so the two overloaded copies share
+        a bit more code. Added code that calls visitedStateChanged if a new link was added.
+        (WebCore::PageGroup::removeVisitedLinks): Added code to call allVisitedStateChanged
+        if any visited links are removed.
+        * page/PageGroup.h: Include StringHash.h instead of having the AlreadyHashed struct
+        definition here.
+
+        * platform/text/StringHash.h:
+        (WebCore::CaseFoldingHash::hash): Tweaked to make this a bit more consistent with
+        the StringImpl::computeHash function, using the same technique for avoiding 0.
+        (WebCore::AlreadyHashed::hash): Added. Was formerly in PageGroup.h.
+        (WebCore::AlreadyHashed::avoidDeletedValue): Added. Was formerly in PageGroup.cpp.
+
+        * rendering/RenderStyle.cpp:
+        (WebCore::RenderStyle::isStyleAvailable): Changed to use an inline function instead
+        of getting directly at a data member so the data member could be made private.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::scrollToAnchor): Added call to updateHistoryForAnchorScroll.
+        (WebCore::FrameLoader::updateHistoryForAnchorScroll): Added.
+        * loader/FrameLoader.h: Added updateHistoryForAnchorScroll.
+
 2008-03-10  Adam Roben  <aroben@apple.com>
 
         Part of Bug 17224: DOM nodes/attributes should be editable

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +27,10 @@
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
+
+    // FIXME: We should really figure out a way to put the computeHash function that's
+    // currently a member function of StringImpl into this file so we can be a little
+    // cloer to having all the nearly-identical hash functions in one place.
 
     struct StringHash {
         static unsigned hash(StringImpl* key) { return key->hash(); }
@@ -78,17 +82,17 @@ namespace WebCore {
     public:
         // Paul Hsieh's SuperFastHash
         // http://www.azillionmonkeys.com/qed/hash.html
-        static unsigned hash(StringImpl* str)
+        static unsigned hash(const UChar* data, unsigned length)
         {
-            unsigned l = str->length();
-            const UChar* s = str->characters();
+            unsigned l = length;
+            const UChar* s = data;
             uint32_t hash = PHI;
             uint32_t tmp;
             
             int rem = l & 1;
             l >>= 1;
             
-            // Main loop
+            // Main loop.
             for (; l > 0; l--) {
                 hash += WTF::Unicode::foldCase(s[0]);
                 tmp = (WTF::Unicode::foldCase(s[1]) << 11) ^ hash;
@@ -97,27 +101,31 @@ namespace WebCore {
                 hash += hash >> 11;
             }
             
-            // Handle end case
+            // Handle end case.
             if (rem) {
                 hash += WTF::Unicode::foldCase(s[0]);
                 hash ^= hash << 11;
                 hash += hash >> 17;
             }
             
-            // Force "avalanching" of final 127 bits
+            // Force "avalanching" of final 127 bits.
             hash ^= hash << 3;
             hash += hash >> 5;
             hash ^= hash << 2;
             hash += hash >> 15;
             hash ^= hash << 10;
             
-            // this avoids ever returning a hash code of 0, since that is used to
+            // This avoids ever returning a hash code of 0, since that is used to
             // signal "hash not computed yet", using a value that is likely to be
-            // effectively the same as 0 when the low bits are masked
-            if (hash == 0)
-                hash = 0x80000000;
+            // effectively the same as 0 when the low bits are masked.
+            hash |= !hash << 31;
             
             return hash;
+        }
+
+        static unsigned hash(StringImpl* str)
+        {
+            return hash(str->characters(), str->length());
         }
         
         static unsigned hash(const char* str, unsigned length)
@@ -160,8 +168,7 @@ namespace WebCore {
             // this avoids ever returning a hash code of 0, since that is used to
             // signal "hash not computed yet", using a value that is likely to be
             // effectively the same as 0 when the low bits are masked
-            if (hash == 0)
-                hash = 0x80000000;
+            hash |= !hash << 31;
             
             return hash;
         }
@@ -198,6 +205,26 @@ namespace WebCore {
         }
 
         static const bool safeToCompareToEmptyOrDeleted = false;
+    };
+
+    // This hash can be used in cases where the key is a hash of a string, but we don't
+    // want to store the string. It's not really specific to string hashing, but all our
+    // current uses of it are for strings.
+    struct AlreadyHashed : IntHash<unsigned> {
+        static unsigned hash(unsigned key) { return key; }
+
+        // To use a hash value as a key for a hash table, we need to eliminate the
+        // "deleted" value, which is negative one. That could be done by changing
+        // the string hash function to never generate negative one, but this works
+        // and is still relatively efficient.
+        static unsigned avoidDeletedValue(unsigned hash)
+        {
+            ASSERT(hash);
+            unsigned newHash = hash | (!(hash + 1) << 31);
+            ASSERT(newHash);
+            ASSERT(newHash != 0xFFFFFFFF);
+            return newHash;
+        }
     };
 
 }

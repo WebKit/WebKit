@@ -382,7 +382,9 @@ public:
     const String& baseTarget() const { return m_baseTarget; }
     void setBaseTarget(const String& baseTarget) { m_baseTarget = baseTarget; }
 
-    KURL completeURL(const String&);
+    KURL completeURL(const String&) const;
+
+    unsigned visitedLinkHash(const AtomicString& attributeURL) const;
 
     // from cachedObjectClient
     virtual void setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet*);

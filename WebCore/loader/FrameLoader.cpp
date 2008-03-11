@@ -1807,13 +1807,13 @@ void FrameLoader::setPolicyBaseURL(const KURL& url)
         child->loader()->setPolicyBaseURL(url);
 }
 
-// This does the same kind of work that FrameLoader::openURL does, except it relies on the fact
+// This does the same kind of work that didOpenURL does, except it relies on the fact
 // that a higher level already checked that the URLs match and the scrolling is the right thing to do.
 void FrameLoader::scrollToAnchor(const KURL& url)
 {
     m_URL = url;
+    updateHistoryForAnchorScroll();
     started();
-
     gotoAnchor();
 
     // It's important to model this as a load that starts and immediately finishes.
@@ -4379,6 +4379,22 @@ void FrameLoader::updateHistoryForCommit()
         m_currentHistoryItem = m_provisionalHistoryItem;
         m_provisionalHistoryItem = 0;
     }
+}
+
+void FrameLoader::updateHistoryForAnchorScroll()
+{
+    if (m_URL.isEmpty())
+        return;
+
+    Settings* settings = m_frame->settings();
+    if (!settings || settings->privateBrowsingEnabled())
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    page->group().addVisitedLink(m_URL);
 }
 
 // Walk the frame tree, telling all frames to save their form state into their current

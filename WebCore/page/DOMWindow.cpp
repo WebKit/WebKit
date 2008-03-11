@@ -616,7 +616,7 @@ PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* elt, const String
         return 0;
 
     if (!pseudoElt.isEmpty())
-        return doc->styleSelector()->pseudoStyleRulesForElement(elt, pseudoElt.impl(), authorOnly);
+        return doc->styleSelector()->pseudoStyleRulesForElement(elt, pseudoElt, authorOnly);
     return doc->styleSelector()->styleRulesForElement(elt, authorOnly);
 }
 

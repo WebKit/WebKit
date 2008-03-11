@@ -24,6 +24,7 @@
 #include "ChromeClient.h"
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
+#include "CSSStyleSelector.h"
 #include "EditorClient.h"
 #include "DOMWindow.h"
 #include "DragController.h"
@@ -419,6 +420,38 @@ void Page::removeAllVisitedLinks()
     HashSet<PageGroup*>::iterator groupsEnd = groups.end();
     for (HashSet<PageGroup*>::iterator it = groups.begin(); it != groupsEnd; ++it)
         (*it)->removeVisitedLinks();
+}
+
+void Page::allVisitedStateChanged(PageGroup* group)
+{
+    ASSERT(group);
+    ASSERT(allPages);
+    HashSet<Page*>::iterator pagesEnd = allPages->end();
+    for (HashSet<Page*>::iterator it = allPages->begin(); it != pagesEnd; ++it) {
+        Page* page = *it;
+        if (page->m_group != group)
+            continue;
+        for (Frame* frame = page->m_mainFrame.get(); frame; frame = frame->tree()->traverseNext()) {
+            if (CSSStyleSelector* styleSelector = frame->document()->styleSelector())
+                styleSelector->allVisitedStateChanged();
+        }
+    }
+}
+
+void Page::visitedStateChanged(PageGroup* group, unsigned visitedLinkHash)
+{
+    ASSERT(group);
+    ASSERT(allPages);
+    HashSet<Page*>::iterator pagesEnd = allPages->end();
+    for (HashSet<Page*>::iterator it = allPages->begin(); it != pagesEnd; ++it) {
+        Page* page = *it;
+        if (page->m_group != group)
+            continue;
+        for (Frame* frame = page->m_mainFrame.get(); frame; frame = frame->tree()->traverseNext()) {
+            if (CSSStyleSelector* styleSelector = frame->document()->styleSelector())
+                styleSelector->visitedStateChanged(visitedLinkHash);
+        }
+    }
 }
 
 void Page::setDebuggerForAllPages(KJS::Debugger* debugger)

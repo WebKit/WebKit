@@ -153,6 +153,9 @@ namespace WebCore {
 
         static void removeAllVisitedLinks();
 
+        static void allVisitedStateChanged(PageGroup*);
+        static void visitedStateChanged(PageGroup*, unsigned visitedHash);
+
     private:
         void initGroup();
 

@@ -25,7 +25,9 @@
 #include "CSSFontSelector.h"
 #include "MediaQueryExp.h"
 #include "RenderStyle.h"
+#include "StringHash.h"
 #include <wtf/HashSet.h>
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/RefPtr.h>
 
@@ -56,64 +58,45 @@ class StyleSheet;
 class StyleSheetList;
 class StyledElement;
 
-class MediaQueryResult
-{
+class MediaQueryResult {
 public:
     MediaQueryResult(const MediaQueryExp& expr, bool result)
-    : m_expression(expr)
-    , m_result(result)
-    {}
+        : m_expression(expr)
+        , m_result(result)
+    {
+    }
 
     MediaQueryExp m_expression;
     bool m_result;
 };
 
-    /**
-     * this class selects a RenderStyle for a given Element based on the
-     * collection of styleshets it contains. This is just a vrtual base class
-     * for specific implementations of the Selector. At the moment only CSSStyleSelector
-     * exists, but someone may wish to implement XSL.
-     */
-    class StyleSelector {
-    public:
-        enum State {
-            None = 0x00,
-            Hover = 0x01,
-            Focus = 0x02,
-            Active = 0x04,
-            Drag = 0x08
-        };
-    };
-
-    /**
-     * the StyleSelector implementation for CSS.
-     */
-    class CSSStyleSelector : public StyleSelector {
+    // This class selects a RenderStyle for a given element based on a collection of stylesheets.
+    class CSSStyleSelector : Noncopyable {
     public:
         CSSStyleSelector(Document*, const String& userStyleSheet, StyleSheetList*, CSSStyleSheet*, bool strictParsing, bool matchAuthorAndUserStyles);
         ~CSSStyleSelector();
 
-        static void loadDefaultStyle();
-
         void initElementAndPseudoState(Element*);
         void initForStyleResolve(Element*, RenderStyle* parentStyle);
         RenderStyle* styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false);
+
         RenderStyle* pseudoStyleForElement(RenderStyle::PseudoId, Element*, RenderStyle* parentStyle = 0);
 
+    private:
         RenderStyle* locateSharedStyle();
         Node* locateCousinList(Element* parent, unsigned depth = 1);
-        bool canShareStyleWithElement(Node* n);
+        bool canShareStyleWithElement(Node*);
 
+    public:
         // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
         RefPtr<CSSRuleList> styleRulesForElement(Element*, bool authorOnly);
-        RefPtr<CSSRuleList> pseudoStyleRulesForElement(Element*, StringImpl* pseudoStyle, bool authorOnly);
-
-        bool strictParsing;
+        RefPtr<CSSRuleList> pseudoStyleRulesForElement(Element*, const String& pseudoStyle, bool authorOnly);
 
         // Given a CSS keyword in the range (xx-small to -webkit-xxx-large), this function will return
         // the correct font size scaled relative to the user's default (medium).
         float fontSizeForKeyword(int keyword, bool quirksMode, bool monospace) const;
 
+    private:
         // When the CSS keyword "larger" is used, this function will attempt to match within the keyword
         // table, and failing that, will simply multiply by 1.2.
         float largerFontSize(float size, bool quirksMode) const;
@@ -121,37 +104,38 @@ public:
         // Like the previous function, but for the keyword "smaller".
         float smallerFontSize(float size, bool quirksMode) const;
 
+    public:
         void setFontSize(FontDescription&, float size);
+
+    private:
         float getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, float specifiedSize);
 
+    public:
         Color getColorFromPrimitiveValue(CSSPrimitiveValue*);
 
         bool hasSelectorForAttribute(const AtomicString&);
  
         CSSFontSelector* fontSelector() { return m_fontSelector.get(); }
 
-        /* checks if a compound selector (which can consist of multiple simple selectors)
-           matches the given Element */
+        // Checks if a compound selector (which can consist of multiple simple selectors) matches the current element.
         bool checkSelector(CSSSelector*);
 
         void addViewportDependentMediaQueryResult(const MediaQueryExp*, bool result);
+
         bool affectedByViewportChange() const;
-        
-    protected:
-        enum SelectorMatch {
-            SelectorMatches = 0,
-            SelectorFailsLocally,
-            SelectorFailsCompletely
-        };
 
-        SelectorMatch checkSelector(CSSSelector*, Element *, bool isAncestor, bool isSubSelector);
+        void allVisitedStateChanged();
+        void visitedStateChanged(unsigned visitedHash);
 
-        /* checks if the selector matches the given Element */
+    private:
+        enum SelectorMatch { SelectorMatches, SelectorFailsLocally, SelectorFailsCompletely };
+        SelectorMatch checkSelector(CSSSelector*, Element*, bool isAncestor, bool isSubSelector);
+
+        // Checks if the selector matches the given Element.
         bool checkOneSelector(CSSSelector*, Element*, bool isAncestor, bool isSubSelector = false);
 
-        /* This function fixes up the default font size if it detects that the
-           current generic font family has changed. -dwh */
-        void checkForGenericFamilyChange(RenderStyle* style, RenderStyle* parentStyle);
+        // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh
+        void checkForGenericFamilyChange(RenderStyle*, RenderStyle* parentStyle);
         void checkForTextSizeAdjust();
 
         void adjustRenderStyle(RenderStyle*, Element*);
@@ -160,22 +144,12 @@ public:
         void addMatchedDeclaration(CSSMutableStyleDeclaration* decl) { m_matchedDecls.append(decl); }
 
         void matchRules(CSSRuleSet*, int& firstRuleIndex, int& lastRuleIndex);
-        void matchRulesForList(CSSRuleDataList* rules, int& firstRuleIndex, int& lastRuleIndex);
+        void matchRulesForList(CSSRuleDataList*, int& firstRuleIndex, int& lastRuleIndex);
         void sortMatchedRules(unsigned start, unsigned end);
 
         void applyDeclarations(bool firstPass, bool important, int startIndex, int endIndex);
 
-        static CSSStyleSheet* m_defaultSheet;
-        static CSSStyleSheet* m_quirksSheet;
-        static CSSStyleSheet* m_viewSourceSheet;
-#if ENABLE(SVG)
-        static CSSStyleSheet* m_svgSheet;
-#endif
-
-        static CSSRuleSet* m_defaultStyle;
-        static CSSRuleSet* m_defaultQuirksStyle;
-        static CSSRuleSet* m_defaultPrintStyle;
-        static CSSRuleSet* m_defaultViewSourceStyle;
+        bool m_strictParsing;
 
         CSSRuleSet* m_authorStyle;
         CSSRuleSet* m_userStyle;
@@ -187,9 +161,11 @@ public:
         Color m_backgroundColor;
 
     public:
-        static RenderStyle* m_styleNotYetAvailable;
+        static RenderStyle* styleNotYetAvailable() { return s_styleNotYetAvailable; }
 
     private:
+        static RenderStyle* s_styleNotYetAvailable;
+
         void init();
 
         void matchUARules(int& firstUARule, int& lastUARule);
@@ -210,6 +186,13 @@ public:
         void mapTransitionRepeatCount(Transition*, CSSValue*);
         void mapTransitionTimingFunction(Transition*, CSSValue*);
         void mapTransitionProperty(Transition*, CSSValue*);
+
+        void applyProperty(int id, CSSValue*);
+#if ENABLE(SVG)
+        void applySVGProperty(int id, CSSValue*);
+#endif
+
+        PseudoState checkPseudoState(Element*, bool checkVisited = true);
 
         // We collect the set of decls that match in |m_matchedDecls|.  We then walk the
         // set of matched decls four times, once for those properties that others depend on (like font-size),
@@ -246,14 +229,7 @@ public:
         Vector<CSSMutableStyleDeclaration*> m_additionalAttributeStyleDecls;
         Vector<MediaQueryResult*> m_viewportDependentMediaQueryResults;
 
-        void applyProperty(int id, CSSValue*);
-
-#if ENABLE(SVG)
-        void applySVGProperty(int id, CSSValue*);
-#endif
-
-        friend class CSSRuleSet;
-        friend class Node;
+        HashSet<unsigned, AlreadyHashed> m_linksCheckedForVisitedState;
     };
 
     class CSSRuleData {

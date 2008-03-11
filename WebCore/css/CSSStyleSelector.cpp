@@ -188,8 +188,7 @@ if (id == propID) { \
     return; \
 }
 
-class CSSRuleSet
-{
+class CSSRuleSet {
 public:
     CSSRuleSet();
     ~CSSRuleSet();
@@ -215,21 +214,16 @@ public:
     unsigned m_ruleCount;
 };
 
-CSSRuleSet* CSSStyleSelector::m_defaultStyle = 0;
-CSSRuleSet* CSSStyleSelector::m_defaultQuirksStyle = 0;
-CSSRuleSet* CSSStyleSelector::m_defaultPrintStyle = 0;
-CSSRuleSet* CSSStyleSelector::m_defaultViewSourceStyle = 0;
+static CSSRuleSet* defaultStyle;
+static CSSRuleSet* defaultQuirksStyle;
+static CSSRuleSet* defaultPrintStyle;
+static CSSRuleSet* defaultViewSourceStyle;
 
-CSSStyleSheet* CSSStyleSelector::m_defaultSheet = 0;
-RenderStyle* CSSStyleSelector::m_styleNotYetAvailable = 0;
-CSSStyleSheet* CSSStyleSelector::m_quirksSheet = 0;
-CSSStyleSheet* CSSStyleSelector::m_viewSourceSheet = 0;
-
-#if ENABLE(SVG)
-CSSStyleSheet *CSSStyleSelector::m_svgSheet = 0;
-#endif
+RenderStyle* CSSStyleSelector::s_styleNotYetAvailable;
 
 static PseudoState pseudoState;
+
+static void loadDefaultStyle();
 
 static const MediaQueryEvaluator& screenEval()
 {
@@ -243,7 +237,8 @@ static const MediaQueryEvaluator& printEval()
     return staticPrintEval;
 }
 
-CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, StyleSheetList *styleSheets, CSSStyleSheet* mappedElementSheet, bool _strictParsing, bool matchAuthorAndUserStyles)
+CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, StyleSheetList* styleSheets, CSSStyleSheet* mappedElementSheet, bool strictParsing, bool matchAuthorAndUserStyles)
+    : m_strictParsing(strictParsing)
 {
     init();
     
@@ -252,8 +247,8 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
 
     m_matchAuthorAndUserStyles = matchAuthorAndUserStyles;
 
-    strictParsing = _strictParsing;
-    if (!m_defaultStyle)
+    m_strictParsing = strictParsing;
+    if (!defaultStyle)
         loadDefaultStyle();
 
     m_userStyle = 0;
@@ -324,7 +319,7 @@ static CSSStyleSheet* parseUASheet(const char* characters, unsigned size)
 {
     CSSStyleSheet* const parent = 0;
     CSSStyleSheet* sheet = new CSSStyleSheet(parent);
-    sheet->ref(); // leak the sheet on purpose since it will be stored in a global variable
+    sheet->ref(); // leak the sheet on purpose
     sheet->parseString(String(characters, size));
     return sheet;
 }
@@ -334,28 +329,25 @@ template<typename T> CSSStyleSheet* parseUASheet(const T& array)
     return parseUASheet(array, sizeof(array));
 }
 
-void CSSStyleSelector::loadDefaultStyle()
+static void loadDefaultStyle()
 {
-    if (m_defaultStyle)
-        return;
+    ASSERT(!defaultStyle);
 
-    m_defaultStyle = new CSSRuleSet;
-    m_defaultPrintStyle = new CSSRuleSet;
-    m_defaultQuirksStyle = new CSSRuleSet;
-    m_defaultViewSourceStyle = new CSSRuleSet;
+    defaultStyle = new CSSRuleSet;
+    defaultPrintStyle = new CSSRuleSet;
+    defaultQuirksStyle = new CSSRuleSet;
+    defaultViewSourceStyle = new CSSRuleSet;
 
     // Strict-mode rules.
-    m_defaultSheet = parseUASheet(html4UserAgentStyleSheet);
-    m_defaultStyle->addRulesFromSheet(m_defaultSheet, screenEval());
-    m_defaultPrintStyle->addRulesFromSheet(m_defaultSheet, printEval());
+    CSSStyleSheet* defaultSheet = parseUASheet(html4UserAgentStyleSheet);
+    defaultStyle->addRulesFromSheet(defaultSheet, screenEval());
+    defaultPrintStyle->addRulesFromSheet(defaultSheet, printEval());
 
     // Quirks-mode rules.
-    m_quirksSheet = parseUASheet(quirksUserAgentStyleSheet);
-    m_defaultQuirksStyle->addRulesFromSheet(m_quirksSheet, screenEval());
+    defaultQuirksStyle->addRulesFromSheet(parseUASheet(quirksUserAgentStyleSheet), screenEval());
     
     // View source rules.
-    m_viewSourceSheet = parseUASheet(sourceUserAgentStyleSheet);
-    m_defaultViewSourceStyle->addRulesFromSheet(m_viewSourceSheet, screenEval());
+    defaultViewSourceStyle->addRulesFromSheet(parseUASheet(sourceUserAgentStyleSheet), screenEval());
 }
 
 void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& lastRuleIndex)
@@ -545,50 +537,45 @@ void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* defaultParen
     m_fontDirty = false;
 }
 
-static void checkPseudoState(Element* e, bool checkVisited = true)
+static inline const AtomicString* linkAttribute(Node* node)
 {
-    if (!e->isLink()) {
-        pseudoState = PseudoNone;
-        return;
-    }
+    if (!node->isLink())
+        return 0;
 
-    const AtomicString* attr;
-    if (e->isHTMLElement())
-        attr = &e->getAttribute(hrefAttr);
+    ASSERT(node->isElementNode());
+    Element* element = static_cast<Element*>(node);
+    if (element->isHTMLElement())
+        return &element->getAttribute(hrefAttr);
 #if ENABLE(SVG)
-    else if (e->isSVGElement())
-        attr = &e->getAttribute(XLinkNames::hrefAttr);
+    if (element->isSVGElement())
+        return &element->getAttribute(XLinkNames::hrefAttr);
 #endif
-    else {
-        pseudoState = PseudoNone;
-        return;
-    }
+    return 0;
+}
 
-    if (attr->isNull()) {
-        pseudoState = PseudoNone;
-        return;
-    }
+PseudoState CSSStyleSelector::checkPseudoState(Element* element, bool checkVisited)
+{
+    const AtomicString* attr = linkAttribute(element);
+    if (!attr || attr->isNull())
+        return PseudoNone;
 
-    if (!checkVisited) {
-        pseudoState = PseudoAnyLink;
-        return;
-    }
+    if (!checkVisited)
+        return PseudoAnyLink;
 
-    Document* document = e->document();
+    unsigned hash = m_document->visitedLinkHash(*attr);
+    if (!hash)
+        return PseudoLink;
 
-    Frame* frame = document->frame();
-    if (!frame) {
-        pseudoState = PseudoLink;
-        return;
-    }
+    Frame* frame = m_document->frame();
+    if (!frame)
+        return PseudoLink;
 
     Page* page = frame->page();
-    if (!page) {
-        pseudoState = PseudoLink;
-        return;
-    }
+    if (!page)
+        return PseudoLink;
 
-    pseudoState = page->group().isLinkVisited(document, *attr) ? PseudoVisited : PseudoLink;
+    m_linksCheckedForVisitedState.add(hash);
+    return page->group().isLinkVisited(hash) ? PseudoVisited : PseudoLink;
 }
 
 // a helper function for parsing nth-arguments
@@ -733,7 +720,7 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
                         if (pseudoState == PseudoUnknown) {
                             const Color& linkColor = m_element->document()->linkColor();
                             const Color& visitedColor = m_element->document()->visitedLinkColor();
-                            checkPseudoState(m_element, style->pseudoState() != PseudoAnyLink || linkColor != visitedColor);
+                            pseudoState = checkPseudoState(m_element, style->pseudoState() != PseudoAnyLink || linkColor != visitedColor);
                         }
                         linksMatch = (pseudoState == style->pseudoState());
                     }
@@ -778,16 +765,16 @@ void CSSStyleSelector::matchUARules(int& firstUARule, int& lastUARule)
 {
     // First we match rules from the user agent sheet.
     CSSRuleSet* userAgentStyleSheet = m_medium->mediaTypeMatchSpecific("print")
-        ? m_defaultPrintStyle : m_defaultStyle;
+        ? defaultPrintStyle : defaultStyle;
     matchRules(userAgentStyleSheet, firstUARule, lastUARule);
 
     // In quirks mode, we match rules from the quirks user agent sheet.
-    if (!strictParsing)
-        matchRules(m_defaultQuirksStyle, firstUARule, lastUARule);
+    if (!m_strictParsing)
+        matchRules(defaultQuirksStyle, firstUARule, lastUARule);
         
     // If we're in view source mode, then we match rules from the view source style sheet.
     if (m_document->frame() && m_document->frame()->inViewSourceMode())
-        matchRules(m_defaultViewSourceStyle, firstUARule, lastUARule);
+        matchRules(defaultViewSourceStyle, firstUARule, lastUARule);
 }
 
 // If resolveForRootDefault is true, style based on user agent style sheet only. This is used in media queries, where
@@ -798,15 +785,15 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
     // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
     // will vanish if a style recalc happens during loading.
     if (allowSharing && !e->document()->haveStylesheetsLoaded() && !e->renderer()) {
-        if (!m_styleNotYetAvailable) {
-            m_styleNotYetAvailable = ::new RenderStyle;
-            m_styleNotYetAvailable->ref();
-            m_styleNotYetAvailable->setDisplay(NONE);
-            m_styleNotYetAvailable->font().update(m_fontSelector);
+        if (!s_styleNotYetAvailable) {
+            s_styleNotYetAvailable = ::new RenderStyle;
+            s_styleNotYetAvailable->ref();
+            s_styleNotYetAvailable->setDisplay(NONE);
+            s_styleNotYetAvailable->font().update(m_fontSelector);
         }
-        m_styleNotYetAvailable->ref();
+        s_styleNotYetAvailable->ref();
         e->document()->setHasNodesWithPlaceholderStyle();
-        return m_styleNotYetAvailable;
+        return s_styleNotYetAvailable;
     }
     
     initElementAndPseudoState(e);
@@ -837,11 +824,13 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
         m_parentStyle = m_style;
 
 #if ENABLE(SVG)
-    if (e->isSVGElement() && !m_svgSheet) {
+    static bool loadedSVGUserAgentSheet;
+    if (e->isSVGElement() && !loadedSVGUserAgentSheet) {
         // SVG rules.
-        m_svgSheet = parseUASheet(svgUserAgentStyleSheet);
-        m_defaultStyle->addRulesFromSheet(m_svgSheet, screenEval());
-        m_defaultPrintStyle->addRulesFromSheet(m_svgSheet, printEval());
+        loadedSVGUserAgentSheet = true;
+        CSSStyleSheet* svgSheet = parseUASheet(svgUserAgentStyleSheet);
+        defaultStyle->addRulesFromSheet(svgSheet, screenEval());
+        defaultPrintStyle->addRulesFromSheet(svgSheet, printEval());
     }
 #endif
 
@@ -1061,7 +1050,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
         // property.
         // Sites also commonly use display:inline/block on <td>s and <table>s.  In quirks mode we force
         // these tags to retain their display types.
-        if (!strictParsing && e) {
+        if (!m_strictParsing && e) {
             if (e->hasTagName(tdTag)) {
                 style->setDisplay(TABLE_CELL);
                 style->setFloating(FNONE);
@@ -1099,7 +1088,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
             else if (style->display() == LIST_ITEM) {
                 // It is a WinIE bug that floated list items lose their bullets, so we'll emulate the quirk,
                 // but only in quirks mode.
-                if (!strictParsing && style->floating() != FNONE)
+                if (!m_strictParsing && style->floating() != FNONE)
                     style->setDisplay(BLOCK);
             }
             else
@@ -1252,7 +1241,7 @@ RefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool auth
     return m_ruleList;
 }
 
-RefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e, StringImpl* pseudoStyle, bool authorOnly)
+RefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element*, const String& pseudoStyle, bool authorOnly)
 {
     // FIXME: Implement this.
     return 0;
@@ -1837,7 +1826,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                 break;
             case CSSSelector::PseudoAnyLink:
                 if (pseudoState == PseudoUnknown)
-                    checkPseudoState(e, false);
+                    pseudoState = checkPseudoState(e, false);
                 if (pseudoState == PseudoAnyLink || pseudoState == PseudoLink || pseudoState == PseudoVisited)
                     return true;
                 break;
@@ -1847,13 +1836,13 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                 break;
             case CSSSelector::PseudoLink:
                 if (pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink)
-                    checkPseudoState(e);
+                    pseudoState = checkPseudoState(e);
                 if (pseudoState == PseudoLink)
                     return true;
                 break;
             case CSSSelector::PseudoVisited:
                 if (pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink)
-                    checkPseudoState(e);
+                    pseudoState = checkPseudoState(e);
                 if (pseudoState == PseudoVisited)
                     return true;
                 break;
@@ -1873,7 +1862,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
             case CSSSelector::PseudoHover: {
                 // If we're in quirks mode, then hover should never match anchors with no
                 // href and *:hover should not match anything.  This is important for sites like wsj.com.
-                if (strictParsing || isSubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
+                if (m_strictParsing || isSubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
                     if (m_element == e && m_style)
                         m_style->setAffectedByHoverRules(true);
                     if (m_element != e && e->renderStyle())
@@ -1886,7 +1875,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
             case CSSSelector::PseudoActive:
                 // If we're in quirks mode, then :active should never match anchors with no
                 // href and *:active should not match anything. 
-                if (strictParsing || isSubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
+                if (m_strictParsing || isSubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
                     if (m_element == e && m_style)
                         m_style->setAffectedByActiveRules(true);
                     else if (e->renderStyle())
@@ -4990,39 +4979,40 @@ float CSSStyleSelector::smallerFontSize(float size, bool quirksMode) const
     return size / 1.2f;
 }
 
-struct ColorValue {
-    int cssValueId;
-    RGBA32 color;
-};
-
-static const ColorValue colorValues[] = {
-    { CSS_VAL_AQUA, 0xFF00FFFF },
-    { CSS_VAL_BLACK, 0xFF000000 },
-    { CSS_VAL_BLUE, 0xFF0000FF },
-    { CSS_VAL_FUCHSIA, 0xFFFF00FF },
-    { CSS_VAL_GRAY, 0xFF808080 },
-    { CSS_VAL_GREEN, 0xFF008000  },
-    { CSS_VAL_LIME, 0xFF00FF00 },
-    { CSS_VAL_MAROON, 0xFF800000 },
-    { CSS_VAL_NAVY, 0xFF000080 },
-    { CSS_VAL_OLIVE, 0xFF808000  },
-    { CSS_VAL_ORANGE, 0xFFFFA500 },
-    { CSS_VAL_PURPLE, 0xFF800080 },
-    { CSS_VAL_RED, 0xFFFF0000 },
-    { CSS_VAL_SILVER, 0xFFC0C0C0 },
-    { CSS_VAL_TEAL, 0xFF008080  },
-    { CSS_VAL_WHITE, 0xFFFFFFFF },
-    { CSS_VAL_YELLOW, 0xFFFFFF00 },
-    { CSS_VAL_TRANSPARENT, 0x00000000 },
-    { CSS_VAL_GREY, 0xFF808080 },
-    { 0, 0 }
-};
-
 static Color colorForCSSValue(int cssValueId)
 {
-    for (const ColorValue* col = colorValues; col->cssValueId; ++col)
+    struct ColorValue {
+        int cssValueId;
+        RGBA32 color;
+    };
+
+    static const ColorValue colorValues[] = {
+        { CSS_VAL_AQUA, 0xFF00FFFF },
+        { CSS_VAL_BLACK, 0xFF000000 },
+        { CSS_VAL_BLUE, 0xFF0000FF },
+        { CSS_VAL_FUCHSIA, 0xFFFF00FF },
+        { CSS_VAL_GRAY, 0xFF808080 },
+        { CSS_VAL_GREEN, 0xFF008000  },
+        { CSS_VAL_GREY, 0xFF808080 },
+        { CSS_VAL_LIME, 0xFF00FF00 },
+        { CSS_VAL_MAROON, 0xFF800000 },
+        { CSS_VAL_NAVY, 0xFF000080 },
+        { CSS_VAL_OLIVE, 0xFF808000  },
+        { CSS_VAL_ORANGE, 0xFFFFA500 },
+        { CSS_VAL_PURPLE, 0xFF800080 },
+        { CSS_VAL_RED, 0xFFFF0000 },
+        { CSS_VAL_SILVER, 0xFFC0C0C0 },
+        { CSS_VAL_TEAL, 0xFF008080  },
+        { CSS_VAL_TRANSPARENT, 0x00000000 },
+        { CSS_VAL_WHITE, 0xFFFFFFFF },
+        { CSS_VAL_YELLOW, 0xFFFFFF00 },
+        { 0, 0 }
+    };
+
+    for (const ColorValue* col = colorValues; col->cssValueId; ++col) {
         if (col->cssValueId == cssValueId)
             return col->color;
+    }
     return theme()->systemColor(cssValueId);
 }
 
@@ -5040,7 +5030,7 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
                 col = linkColor;
             else {
                 if (pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink)
-                    checkPseudoState(m_element);
+                    pseudoState = checkPseudoState(m_element);
                 col = (pseudoState == PseudoLink) ? linkColor : visitedColor;
             }
         } else if (ident == CSS_VAL__WEBKIT_ACTIVELINK)
@@ -5072,6 +5062,27 @@ bool CSSStyleSelector::affectedByViewportChange() const
             return true;
     }
     return false;
+}
+
+void CSSStyleSelector::allVisitedStateChanged()
+{
+    if (m_linksCheckedForVisitedState.isEmpty())
+        return;
+    for (Node* node = m_document; node; node = node->traverseNextNode()) {
+        if (node->isLink())
+            node->setChanged();
+    }
+}
+
+void CSSStyleSelector::visitedStateChanged(unsigned visitedHash)
+{
+    if (!m_linksCheckedForVisitedState.contains(visitedHash))
+        return;
+    for (Node* node = m_document; node; node = node->traverseNextNode()) {
+        const AtomicString* attr = linkAttribute(node);
+        if (attr && m_document->visitedLinkHash(*attr) == visitedHash)
+            node->setChanged();
+    }
 }
 
 } // namespace WebCore
