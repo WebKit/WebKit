@@ -1,3 +1,13 @@
+2008-03-10  Andre Boule  <aboule@apple.com>
+
+        Reviewed by Beth.
+
+        Hold off on initializing the frame to avoid the RenderView getting 
+        a null FrameView. This could potentially cause problems.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2008-03-10  Darin Adler  <darin@apple.com>
 
         - try to fix Qt build
