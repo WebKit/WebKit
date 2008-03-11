@@ -287,9 +287,8 @@ public:
     {
         view = new QWebView(this);
         view->setPage(new WebPage(view));
-        InfoWidget *info = new InfoWidget(view);
-        info->setGeometry(20, 20, info->sizeHint().width(),
-                          info->sizeHint().height());
+        info = new InfoWidget(this);
+
         connect(view, SIGNAL(loadStarted()),
                 info, SLOT(startLoad()));
         connect(view, SIGNAL(loadProgressChanged(int)),
@@ -363,11 +362,16 @@ protected:
         QSize hoverSize = hoverLabel->sizeHint();
         hoverLabel->setGeometry(0, height()-hoverSize.height(),
                                 300, hoverSize.height());
+        QSize infoSize = info->sizeHint();
+        info->setGeometry(width() - infoSize.width(),
+                height() - infoSize.height(),
+                infoSize.width(), infoSize.height());
     }
 private:
     QWebView *view;
     QLineEdit *urlEdit;
     HoverLabel *hoverLabel;
+    InfoWidget *info;
 };
 
 QWebPage *WebPage::createWindow()

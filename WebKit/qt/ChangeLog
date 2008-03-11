@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        Moved obscuring progress bar to the lower right corner.
+
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+        (MainWindow::resizeEvent):
+
+2008-03-11  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
         Added reload action and grouped stop and reload actions together.
 
         * QtLauncher/main.cpp:
