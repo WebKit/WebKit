@@ -1,3 +1,14 @@
+2008-03-11  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16476
+
+        Add support for multiple http backends, and add soup backend (off by default).
+        
+        * GNUmakefile.am:
+        * configure.ac:
+
 2008-03-07  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Darin.

@@ -1042,6 +1042,15 @@ webcore_sources += \
 
 endif # END USE_CURL
 
+if USE_SOUP
+webcore_cppflags += \
+	-DWTF_USE_SOUP=1 \
+	-I$(srcdir)/WebCore/platform/network/soup
+
+webcore_sources += \
+	WebCore/platform/network/soup/ResourceHandleSoup.cpp
+endif
+
 # ----
 # Cross-document messaging support
 # ----

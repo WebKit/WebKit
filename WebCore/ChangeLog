@@ -1,3 +1,39 @@
+2008-03-11  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16476
+
+        Add libsoup HTTP backend.
+        
+        * GNUmakefile.am:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/soup/AuthenticationChallenge.h: Added.
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        * platform/network/soup/ResourceError.h: Added.
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/soup/ResourceHandleSoup.cpp: Added.
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::dataCallback):
+        (WebCore::parseDataUrl):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::bufferedData):
+        (WebCore::ResourceHandle::supportsBufferedData):
+        (WebCore::ResourceHandle::setDefersLoading):
+        (WebCore::ResourceHandle::loadsBlocked):
+        (WebCore::ResourceHandle::willLoadFromCache):
+        * platform/network/soup/ResourceRequest.h: Copied from WebCore/platform/network/curl/ResourceRequest.h.
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        * platform/network/soup/ResourceResponse.h: Added.
+        (WebCore::ResourceResponse::ResourceResponse):
+        (WebCore::ResourceResponse::setResponseFired):
+        (WebCore::ResourceResponse::responseFired):
+        (WebCore::ResourceResponse::doUpdateResourceResponse):
+
 2008-03-11  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Fix Qt build.

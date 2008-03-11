@@ -197,16 +197,16 @@ fi
 # determine the http backend
 AC_MSG_CHECKING([the HTTP backend to use])
 AC_ARG_WITH(http_backend,
-            AC_HELP_STRING([--with-http-backend=@<:@curl@:>@],
+            AC_HELP_STRING([--with-http-backend=@<:@curl/soup@:>@],
                            [Select HTTP backend [default=curl]]),
-            [],[http_backend="curl"])
+            [],[with_http_backend="curl"])
 
-case "$http_backend" in
-     curl) ;;
-     *) AC_MSG_ERROR([Invalid HTTP backend: must be curl.]) ;;
+case "$with_http_backend" in
+     curl|soup) ;;
+     *) AC_MSG_ERROR([Invalid HTTP backend: must be curl, soup.]) ;;
 esac
 
-AC_MSG_RESULT([$http_backend])
+AC_MSG_RESULT([$with_http_backend])
 
 # minimum base dependencies
 CAIRO_REQUIRED_VERSION=1.4
@@ -223,6 +223,7 @@ GTK_REQUIRED_VERSION=2.8
 
 # optional modules
 LIBCURL_REQUIRED_VERSION=7.15
+LIBSOUP_REQUIRED_VERSION=2.4
 LIBXSLT_REQUIRED_VERSION=1.1.7
 SQLITE_REQUIRED_VERSION=3.0
 GSTREAMER_REQUIRED_VERSION=0.10
@@ -400,11 +401,18 @@ if test "$enable_debug" = "yes"; then
 fi
 
 # check if curl is available
-if test "$http_backend" = "curl"; then
+if test "$with_http_backend" = "curl"; then
    PKG_CHECK_MODULES([LIBCURL],
                      [libcurl >= $LIBCURL_REQUIRED_VERSION])
    AC_SUBST([LIBCURL_CFLAGS])
    AC_SUBST([LIBCURL_LIBS])
+fi
+
+if test "$with_http_backend" = "soup"; then
+   PKG_CHECK_MODULES([LIBSOUP],
+                     [libsoup-2.4 >= $LIBSOUP_REQUIRED_VERSION])
+   AC_SUBST([LIBSOUP_CFLAGS])
+   AC_SUBST([LIBSOUP_LIBS])
 fi
 
 # check if sqlite 3 is available
@@ -467,7 +475,8 @@ AM_CONDITIONAL([TARGET_QUARTZ], [test "$with_target" = "quartz"])
 AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_target" = "directfb"])
 
 # HTTP backend conditionals
-AM_CONDITIONAL([USE_CURL], [test "$http_backend" = "curl"])
+AM_CONDITIONAL([USE_CURL], [test "$with_http_backend" = "curl"])
+AM_CONDITIONAL([USE_SOUP], [test "$with_http_backend" = "soup"])
 
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
@@ -503,7 +512,7 @@ Build configuration:
  Enable debugging (slow)           : $enable_debug
  Code coverage support             : $enable_coverage
  Unicode backend                   : $unicode_backend
- HTTP backend                      : $http_backend
+ HTTP backend                      : $with_http_backend
  Optimized memory allocator        : $enable_fast_malloc
 Features:
  HTML5 cross-document messaging    : $enable_cross_document_messaging
