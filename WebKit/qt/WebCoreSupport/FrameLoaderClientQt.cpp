@@ -970,7 +970,7 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize&, Element* element, cons
         }
     }
 
-#if QT_VERSION > 0x040400
+#if QT_VERSION >= 0x040400
     if (!object) {
         QWebPluginFactory* factory = m_webFrame->page()->pluginFactory();
         if (factory)
