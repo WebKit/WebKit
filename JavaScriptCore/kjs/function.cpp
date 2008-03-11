@@ -509,7 +509,7 @@ static JSValue* decode(ExecState* exec, const List& args, const char* do_not_une
   UString s = "", str = args[0]->toString(exec);
   int k = 0, len = str.size();
   const UChar* d = str.data();
-  UChar u;
+  UChar u = 0;
   while (k < len) {
     const UChar* p = d + k;
     UChar c = *p;

@@ -1,3 +1,9 @@
+2008-03-10  Darin Adler  <darin@apple.com>
+
+        - Windows build fix
+
+        * kjs/function.cpp: (KJS::decode): Initialize variable.
+
 2008-03-10  Brent Fulgham  <bfulgham@gmail.com>
 
         Windows build fix
@@ -7,9 +13,7 @@
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
         Set the PATH to include Cygwin before running touch.
 
-2008-03-10  eseidel  <eric@webkit.org>
-
-        Reviewed by NOBODY.
+2008-03-10  Eric Seidel  <eric@webkit.org>
 
         Build fix for JSC on windows.
 
