@@ -1,3 +1,29 @@
+2008-03-10  Adam Roben  <aroben@apple.com>
+
+        Part of Bug 17224: DOM nodes/attributes should be editable
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17224>
+        <rdar://problem/5732825>
+
+        This patch makes text nodes editable via double-click.
+
+        Reviewed by Tim.
+
+        * page/inspector/DocumentPanel.js:
+        (WebInspector.DOMNodeTreeElement._startEditing):
+          - Moved most of this code to _startEditingAttribute
+          - Calls _startEditingTextNode or _startEditingAttribute as
+            appropriate
+        (WebInspector.DOMNodeTreeElement._startEditingAttribute): Added. Code
+        came from _startEditing.
+        (WebInspector.DOMNodeTreeElement._startEditingTextNode): Added.
+        (WebInspector.DOMNodeTreeElement._textNodeEditingCommitted): Added.
+        (WebInspector.DOMNodeTreeElement._editingCancelled): Renamed from
+        _attributeEditingCancelled.
+        * page/inspector/utilities.js:
+        (nodeTitleInfo): Wrap text nodes in a webkit-html-text-node span so
+        that we can easily recognize/edit them.
+
 2008-03-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin.

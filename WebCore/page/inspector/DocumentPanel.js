@@ -840,13 +840,22 @@ WebInspector.DOMNodeTreeElement.prototype = {
 
     _startEditing: function(event)
     {
-        if (this.representedObject.nodeType != Node.ELEMENT_NODE)
+        if (this.representedObject.nodeType != Node.ELEMENT_NODE && this.representedObject.nodeType != Node.TEXT_NODE)
             return false;
+
+        var textNode = event.target.firstParentOrSelfWithClass("webkit-html-text-node");
+        if (textNode)
+            return this._startEditingTextNode(textNode);
 
         var attribute = event.target.firstParentOrSelfWithClass("webkit-html-attribute");
-        if (!attribute)
-            return false;
+        if (attribute)
+            return this._startEditingAttribute(attribute);
 
+        return false;
+    },
+
+    _startEditingAttribute: function(attribute)
+    {
         if (WebInspector.isBeingEdited(attribute))
             return true;
 
@@ -875,13 +884,26 @@ WebInspector.DOMNodeTreeElement.prototype = {
 
         this._editing = true;
 
-        WebInspector.startEditing(attribute, this._attributeEditingCommitted.bind(this), this._attributeEditingCancelled.bind(this), attributeName);
+        WebInspector.startEditing(attribute, this._attributeEditingCommitted.bind(this), this._editingCancelled.bind(this), attributeName);
         if (event.target.hasStyleClass("webkit-html-attribute-value")) {
             // Select just inside the quotes.
             var textChild = event.target.firstChild;
             window.getSelection().setBaseAndExtent(textChild, 1, textChild, textChild.length - 1);
         } else
             window.getSelection().setBaseAndExtent(event.target, 0, event.target, 1);
+
+        return true;
+    },
+
+    _startEditingTextNode: function(textNode)
+    {
+        if (WebInspector.isBeingEdited(textNode))
+            return true;
+
+        this._editing = true;
+
+        WebInspector.startEditing(textNode, this._textNodeEditingCommitted.bind(this), this._editingCancelled.bind(this));
+        window.getSelection().setBaseAndExtent(textNode, 0, textNode, 1);
 
         return true;
     },
@@ -911,7 +933,24 @@ WebInspector.DOMNodeTreeElement.prototype = {
         this._updateTitle();
     },
 
-    _attributeEditingCancelled: function(element, context)
+    _textNodeEditingCommitted: function(element, newText)
+    {
+        delete this._editing;
+
+        var textNode;
+        if (this.representedObject.nodeType == Node.ELEMENT_NODE) {
+            // We only show text nodes inline in elements if the element only
+            // has a single child, and that child is a text node.
+            textNode = this.representedObject.firstChild;
+        } else if (this.representedObject.nodeType == Node.TEXT_NODE)
+            textNode = this.representedObject;
+
+        textNode.nodeValue = newText;
+        this._updateTitle();
+    },
+
+
+    _editingCancelled: function(element, context)
     {
         delete this._editing;
 

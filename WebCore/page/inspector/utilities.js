@@ -622,7 +622,7 @@ function nodeTitleInfo(hasChildren, linkify)
             var showInlineText = textChild && textChild.textContent.length < Preferences.maxInlineTextChildLength;
 
             if (showInlineText) {
-                info.title += textChild.nodeValue.escapeHTML() + "&#8203;<span class=\"webkit-html-tag\">&lt;/" + this.nodeName.toLowerCase().escapeHTML() + "&gt;</span>";
+                info.title += "<span class=\"webkit-html-text-node\">" + textChild.nodeValue.escapeHTML() + "</span>&#8203;<span class=\"webkit-html-tag\">&lt;/" + this.nodeName.toLowerCase().escapeHTML() + "&gt;</span>";
                 info.hasChildren = false;
             }
             break;
@@ -631,7 +631,7 @@ function nodeTitleInfo(hasChildren, linkify)
             if (isNodeWhitespace.call(this))
                 info.title = "(whitespace)";
             else
-                info.title = "\"" + this.nodeValue.escapeHTML() + "\"";
+                info.title = "\"<span class=\"webkit-html-text-node\">" + this.nodeValue.escapeHTML() + "</span>\"";
             break
 
         case Node.COMMENT_NODE:
