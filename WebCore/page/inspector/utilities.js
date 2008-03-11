@@ -603,12 +603,13 @@ function nodeTitleInfo(hasChildren, linkify)
                     var value = attr.value.escapeHTML();
                     value = value.replace(/([\/;:\)\]\}])/g, "$1&#8203;");
 
-                    info.title += " <span class=\"webkit-html-attribute-name\">" + attr.name.escapeHTML() + "</span>=&#8203;";
+                    info.title += " <span class=\"webkit-html-attribute\"><span class=\"webkit-html-attribute-name\">" + attr.name.escapeHTML() + "</span>=&#8203;";
 
                     if (linkify && (attr.name === "src" || attr.name === "href"))
                         info.title += linkify(attr.value, value, "webkit-html-attribute-value", this.nodeName.toLowerCase() == "a");
                     else
                         info.title += "<span class=\"webkit-html-attribute-value\">\"" + value + "\"</span>";
+                    info.title += "</span>";
                 }
             }
             info.title += "&gt;</span>&#8203;";

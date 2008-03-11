@@ -817,20 +817,113 @@ WebInspector.DOMNodeTreeElement.prototype = {
 
     onmousedown: function(event)
     {
+        if (this._editing)
+            return;
+
         // Prevent selecting the nearest word on double click.
         if (event.detail >= 2)
             event.preventDefault();
     },
 
-    ondblclick: function()
+    ondblclick: function(treeElement, event)
     {
+        if (this._startEditing(event))
+            return;
+
         var panel = this.treeOutline.panel;
         panel.rootDOMNode = this.representedObject.parentNode;
         panel.focusedDOMNode = this.representedObject;
 
         if (this.hasChildren && !this.expanded)
             this.expand();
-    }
+    },
+
+    _startEditing: function(event)
+    {
+        if (this.representedObject.nodeType != Node.ELEMENT_NODE)
+            return false;
+
+        var attribute = event.target.firstParentOrSelfWithClass("webkit-html-attribute");
+        if (!attribute)
+            return false;
+
+        if (WebInspector.isBeingEdited(attribute))
+            return true;
+
+        var attributeNameElement = attribute.getElementsByClassName("webkit-html-attribute-name")[0];
+        if (!attributeNameElement)
+            return false;
+
+        var attributeName = attributeNameElement.innerText;
+
+        function removeZeroWidthSpaceRecursive(node)
+        {
+            if (node.nodeType === Node.TEXT_NODE) {
+                node.nodeValue = node.nodeValue.replace(/\u200B/g, "");
+                return;
+            }
+
+            if (node.nodeType !== Node.ELEMENT_NODE)
+                return;
+
+            for (var child = node.firstChild; child; child = child.nextSibling)
+                removeZeroWidthSpaceRecursive(child);
+        }
+
+        // Remove zero-width spaces that were added by nodeTitleInfo.
+        removeZeroWidthSpaceRecursive(attribute);
+
+        this._editing = true;
+
+        WebInspector.startEditing(attribute, this._attributeEditingCommitted.bind(this), this._attributeEditingCancelled.bind(this), attributeName);
+        if (event.target.hasStyleClass("webkit-html-attribute-value")) {
+            // Select just inside the quotes.
+            var textChild = event.target.firstChild;
+            window.getSelection().setBaseAndExtent(textChild, 1, textChild, textChild.length - 1);
+        } else
+            window.getSelection().setBaseAndExtent(event.target, 0, event.target, 1);
+
+        return true;
+    },
+
+    _attributeEditingCommitted: function(element, newText, oldText, attributeName)
+    {
+        delete this._editing;
+
+        var parseContainerElement = document.createElement("span");
+        parseContainerElement.innerHTML = "<span " + newText + "></span>";
+        var parseElement = parseContainerElement.firstChild;
+        if (!parseElement || !parseElement.hasAttributes()) {
+            editingCancelled(element, context);
+            return;
+        }
+
+        var foundOriginalAttribute = false;
+        for (var i = 0; i < parseElement.attributes.length; ++i) {
+            var attr = parseElement.attributes[i];
+            foundOriginalAttribute = foundOriginalAttribute || attr.name === attributeName;
+            Element.prototype.setAttribute.call(this.representedObject, attr.name, attr.value);
+        }
+
+        if (!foundOriginalAttribute)
+            Element.prototype.removeAttribute.call(this.representedObject, attributeName);
+
+        this._updateTitle();
+    },
+
+    _attributeEditingCancelled: function(element, context)
+    {
+        delete this._editing;
+
+        this._updateTitle();
+    },
+
+    _updateTitle: function()
+    {
+        this.title = nodeTitleInfo.call(this.representedObject, this.hasChildren, WebInspector.linkifyURL).title;
+        delete this.selectionElement;
+        this.updateSelection();
+    },
 }
 
 WebInspector.DOMNodeTreeElement.prototype.__proto__ = TreeElement.prototype;

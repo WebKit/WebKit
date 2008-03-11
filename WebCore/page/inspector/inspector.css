@@ -1291,13 +1291,13 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     margin-top: 1px;
 }
 
-.section .properties li.editing {
+.editing {
+    -webkit-user-select: text;
     -webkit-box-shadow: rgba(0, 0, 0, .5) 3px 3px 4px;
-    outline: 1px solid rgb(66%, 66%, 66%);
+    outline: 1px solid rgb(66%, 66%, 66%) !important;
     background-color: white;
     -webkit-user-modify: read-write-plaintext-only;
     text-overflow: clip;
-    margin-left: 8px;
     padding-left: 2px;
     margin-bottom: -1px;
     padding-bottom: 1px;
@@ -1305,12 +1305,16 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     opacity: 1.0 !important;
 }
 
-.section .properties li.editing.parent::before {
-    display: none;
+.editing, .editing * {
+    color: black !important;
 }
 
-.section .properties li.editing * {
-    color: black !important;
+.section .properties li.editing {
+    margin-left: 8px;
+}
+
+.section .properties li.editing.parent::before {
+    display: none;
 }
 
 .section .properties .overloaded {

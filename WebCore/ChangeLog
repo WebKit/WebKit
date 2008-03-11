@@ -1,3 +1,35 @@
+2008-03-10  Adam Roben  <aroben@apple.com>
+
+        Part of Bug 17224: DOM nodes/attributes should be editable
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17224>
+        <rdar://problem/5732825>
+
+        This patch makes DOM attributes editable via double-click.
+
+        Reviewed by Tim.
+
+        * page/inspector/DocumentPanel.js:
+        (WebInspector.DOMNodeTreeElement.onmousedown): Don't do anything if
+        we're being edited, since we want default editing behaviors to work.
+        (WebInspector.DOMNodeTreeElement.ondblclick): Try to start editing
+        before doing anything else.
+        (WebInspector.DOMNodeTreeElement._startEditing): Added. Currently only
+        lets you edit attributes.
+        (WebInspector.DOMNodeTreeElement._attributeEditingCommitted): Added.
+        Uses a scratch element to get the new attribute(s) parsed, then sets
+        the attribute(s) on the node in the inspected document.
+        (WebInspector.DOMNodeTreeElement._attributeEditingCancelled): Added.
+        (WebInspector.DOMNodeTreeElement._updateTitle): Added. Refreshes the
+        representation of the node in the Inspector's DOM tree to reflect
+        the node's current state.
+        * page/inspector/inspector.css: Made the .editing class apply
+        everywhere.
+        * page/inspector/utilities.js:
+        (nodeTitleInfo): Changed to surround attribute name/value pairs in a
+        webkit-html-attribute span so that we can easily edit the pair as a
+        whole.
+
 2008-03-10  David Kilzer  <ddkilzer@apple.com>
 
         Fix 64-bit builds.
