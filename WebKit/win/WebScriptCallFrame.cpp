@@ -220,7 +220,7 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::valueForVariable(
 
     *value = 0;
 
-    Identifier identKey(reinterpret_cast<KJS::UChar*>(key), SysStringLen(key));
+    Identifier identKey(reinterpret_cast<UChar*>(key), SysStringLen(key));
 
     JSValue* jsvalue = 0;
     ScopeChain scopeChain = m_state->scopeChain();
@@ -251,7 +251,7 @@ JSValue* WebScriptCallFrame::valueByEvaluatingJavaScriptFromString(BSTR script)
     JSValue* savedException = state->exception();
     state->clearException();
 
-    UString code(reinterpret_cast<KJS::UChar*>(script), SysStringLen(script));
+    UString code(reinterpret_cast<UChar*>(script), SysStringLen(script));
 
     // evaluate
     JSValue* scriptExecutionResult;

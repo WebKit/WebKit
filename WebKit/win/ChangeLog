@@ -1,3 +1,13 @@
+2008-03-10  Eric Seidel  <eric@webkit.org>
+
+        No review, build fix only.
+        
+        Speculative fix for Windows build, use ::UChar instead of KJS::UChar
+
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::valueForVariable):
+        (WebScriptCallFrame::valueByEvaluatingJavaScriptFromString):
+
 2008-03-10  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build break caused by r30920.
