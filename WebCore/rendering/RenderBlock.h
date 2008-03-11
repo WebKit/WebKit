@@ -126,18 +126,18 @@ public:
     virtual RenderObject* layoutLegend(bool relayoutChildren) { return 0; };
 
     // the implementation of the following functions is in bidi.cpp
-    void bidiReorderLine(const BidiIterator& start, const BidiIterator& end, BidiState&);
-    RootInlineBox* determineStartPosition(bool fullLayout, BidiIterator& start, BidiState&);
+    void bidiReorderLine(BidiState&, const BidiIterator& end);
+    RootInlineBox* determineStartPosition(bool fullLayout, BidiState&);
     RootInlineBox* determineEndPosition(RootInlineBox* startBox, BidiIterator& cleanLineStart,
                                         BidiStatus& cleanLineBidiStatus,
                                         int& yPos);
-    bool matchedEndLine(const BidiIterator& start, const BidiStatus& status,
-                        const BidiIterator& endLineStart, const BidiStatus& endLineStatus,
+    bool matchedEndLine(const BidiState&, const BidiIterator& endLineStart, const BidiStatus& endLineStatus,
                         RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop);
     bool generatesLineBoxesForInlineChild(RenderObject*);
-    int skipWhitespace(BidiIterator&, BidiState&);
+    int skipWhitespace(BidiIterator&);
+    int skipWhitespace(BidiState&);
     void fitBelowFloats(int widthToFit, int& availableWidth);
-    BidiIterator findNextLineBreak(BidiIterator& start, BidiState& info);
+    BidiIterator findNextLineBreak(BidiState&);
     RootInlineBox* constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool lastLine, RenderObject* endObject);
     InlineFlowBox* createLineBoxes(RenderObject*);
     void computeHorizontalPositionsForLine(RootInlineBox*, BidiRun* firstRun, BidiRun* logicallyLastRun, bool reachedEnd);
@@ -185,7 +185,7 @@ public:
     inline int rightBottom();
     IntRect floatRect() const;
 
-    virtual int lineWidth(int y) const;
+    virtual int lineWidth(int) const;
     virtual int lowestPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
     virtual int rightmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
     virtual int leftmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;

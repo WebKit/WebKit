@@ -23,6 +23,7 @@
 #define BidiResolver_h
 
 #include "BidiContext.h"
+#include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -102,11 +103,10 @@ struct BidiCharacterRun {
     BidiCharacterRun* m_next;
 };
 
-template <class Iterator, class Run> class BidiResolver {
+template <class Iterator, class Run> class BidiResolver : public Noncopyable {
 public :
     BidiResolver()
         : m_direction(WTF::Unicode::OtherNeutral)
-        , m_adjustEmbedding(false)
         , reachedEndOfLine(false)
         , emptyRun(true)
         , m_firstRun(0)
@@ -115,6 +115,11 @@ public :
         , m_runCount(0)
     {
     }
+
+    const Iterator& position() const { return current; }
+    void setPosition(const Iterator& position) { current = position; }
+
+    void increment() { current.increment(); }
 
     BidiContext* context() const { return m_status.context.get(); }
     void setContext(PassRefPtr<BidiContext> c) { m_status.context = c; }
@@ -129,11 +134,8 @@ public :
     const BidiStatus& status() const { return m_status; }
     void setStatus(const BidiStatus s) { m_status = s; }
 
-    bool adjustEmbedding() const { return m_adjustEmbedding; }
-    void setAdjustEmbedding(bool adjsutEmbedding) { m_adjustEmbedding = adjsutEmbedding; }
-
     void embed(WTF::Unicode::Direction);
-    void createBidiRunsForLine(const Iterator& start, const Iterator& end, bool visualOrder = false, bool hardLineBreak = false);
+    void createBidiRunsForLine(const Iterator& end, bool visualOrder = false, bool hardLineBreak = false);
 
     Run* firstRun() const { return m_firstRun; }
     Run* lastRun() const { return m_lastRun; }
@@ -153,7 +155,6 @@ protected:
     Iterator last;
     BidiStatus m_status;
     WTF::Unicode::Direction m_direction;
-    bool m_adjustEmbedding;
     Iterator endOfLine;
     bool reachedEndOfLine;
     Iterator lastBeforeET;
@@ -184,7 +185,7 @@ void BidiResolver<Iterator, Run>::appendRun()
 
     addRun(new Run(sor.offset(), eor.offset() + 1, context(), m_direction));
 
-    eor.increment(*this);
+    eor.increment();
     sor = eor;
     m_direction = WTF::Unicode::OtherNeutral;
     m_status.eor = WTF::Unicode::OtherNeutral;
@@ -195,8 +196,6 @@ void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction d)
 {
     using namespace WTF::Unicode;
 
-    bool b = m_adjustEmbedding;
-    m_adjustEmbedding = false;
     if (d == PopDirectionalFormat) {
         BidiContext* c = context()->parent();
         if (c) {
@@ -310,7 +309,6 @@ void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction d)
             eor = Iterator();
         }
     }
-    m_adjustEmbedding = b;
 }
 
 template <class Iterator, class Run>
@@ -383,7 +381,7 @@ void BidiResolver<Iterator, Run>::reverseRuns(unsigned start, unsigned end)
 }
 
 template <class Iterator, class Run>
-void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& start, const Iterator& end, bool visualOrder, bool hardLineBreak)
+void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, bool visualOrder, bool hardLineBreak)
 {
     using namespace WTF::Unicode;
 
@@ -393,7 +391,6 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& start, c
 
     eor = Iterator();
 
-    current = start;
     last = current;
     bool pastEnd = false;
     BidiResolver<Iterator, Run> stateAtEnd;
@@ -694,12 +691,11 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& start, c
                     }
                     appendRun();
                 }
+                current = end;
                 m_status = stateAtEnd.m_status;
-                current = stateAtEnd.current;
                 sor = stateAtEnd.sor; 
                 eor = stateAtEnd.eor;
                 last = stateAtEnd.last;
-                m_adjustEmbedding = stateAtEnd.m_adjustEmbedding;
                 reachedEndOfLine = stateAtEnd.reachedEndOfLine;
                 lastBeforeET = stateAtEnd.lastBeforeET;
                 emptyRun = stateAtEnd.emptyRun;
@@ -757,11 +753,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& start, c
             emptyRun = false;
         }
 
-        // this causes the operator ++ to open and close embedding levels as needed
-        // for the CSS unicode-bidi property
-        m_adjustEmbedding = true;
-        current.increment(*this);
-        m_adjustEmbedding = false;
+        increment();
         if (emptyRun && (dirCurrent == RightToLeftEmbedding
                 || dirCurrent == LeftToRightEmbedding
                 || dirCurrent == RightToLeftOverride
@@ -776,7 +768,13 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& start, c
         if (!pastEnd && (current == end || current.atEnd())) {
             if (emptyRun)
                 break;
-            stateAtEnd = *this;
+            stateAtEnd.m_status = m_status;
+            stateAtEnd.sor = sor; 
+            stateAtEnd.eor = eor;
+            stateAtEnd.last = last;
+            stateAtEnd.reachedEndOfLine = reachedEndOfLine;
+            stateAtEnd.lastBeforeET = lastBeforeET;
+            stateAtEnd.emptyRun = emptyRun;
             endOfLine = last;
             pastEnd = true;
         }

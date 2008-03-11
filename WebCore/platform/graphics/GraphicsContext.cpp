@@ -55,7 +55,7 @@ public:
     }
 
     unsigned offset() const { return m_offset; }
-    void increment(BidiResolver<TextRunIterator, BidiCharacterRun>&) { m_offset++; }
+    void increment() { m_offset++; }
     bool atEnd() const { return !m_textRun || m_offset >= m_textRun->length(); }
     UChar current() const { return (*m_textRun)[m_offset]; }
     WTF::Unicode::Direction direction() const { return atEnd() ? WTF::Unicode::OtherNeutral : WTF::Unicode::direction(current()); }
@@ -221,7 +221,8 @@ void GraphicsContext::drawBidiText(const TextRun& run, const IntPoint& point)
 
     bidiResolver.setStatus(BidiStatus(paragraphDirection, paragraphDirection, paragraphDirection, new BidiContext(run.ltr() ? 0 : 1, paragraphDirection, run.directionalOverride())));
 
-    bidiResolver.createBidiRunsForLine(TextRunIterator(&run, 0), TextRunIterator(&run, run.length()));
+    bidiResolver.setPosition(TextRunIterator(&run, 0));
+    bidiResolver.createBidiRunsForLine(TextRunIterator(&run, run.length()));
 
     if (!bidiResolver.runCount())
         return;

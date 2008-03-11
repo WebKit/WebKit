@@ -28,7 +28,6 @@
 
 namespace WebCore {
 
-class BidiIterator;
 class RenderArena;
 class RenderBlock;
 class RenderObject;

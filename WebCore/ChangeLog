@@ -1,3 +1,65 @@
+2008-03-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - clean up line layout code
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::TextRunIterator::increment): Removed the resolver parameter.
+        (WebCore::GraphicsContext::drawBidiText): Adjusted for changes to
+        createBidiRunsForLine(), which no longer takes a start parameter.
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiResolver::): Made Noncopyable and removed the
+        m_adjustEmbedding member variable.
+        (WebCore::BidiResolver::position): Added. Returns the resolver's current
+        position.
+        (WebCore::BidiResolver::setPosition): Added. Sets the resolver's current
+        position without changing any other state.
+        (WebCore::BidiResolver::increment): Added. Advances the resolver to the
+        next position, allowing the iterator to push and pop embedding.
+        (WebCore::BidiResolver::appendRun): Removed the resolver parameter in
+        the call to increment().
+        (WebCore::BidiResolver::embed): Removed code to save, set and restore
+        m_adjustEmbedding.
+        (WebCore::BidiResolver::createBidiRunsForLine): Changed to not take a
+        'start' iterator. Instead, start at the current position. Removed code
+        to set m_adjustEmbedding. Changed for noncopyability.
+        * rendering/RenderBlock.h:
+        * rendering/bidi.cpp:
+        (WebCore::bidiNext): Made the resolver parameter optional. Changed to
+        null-check the 'end of inline' pointer only twice.
+        (WebCore::bidiFirst): Made the resolver parameter optional.
+        (WebCore::BidiIterator::increment): Ditto.
+        (WebCore::BidiState::increment): Added. Overrides the default
+        BidiResolver::increment() method by passing the resolver to
+        BidiIterator::increment().
+        (WebCore::checkMidpoints): Removed the resolver parameter.
+        (WebCore::BidiState::appendRun): Removed code to save, set and restore
+        m_adjustEmbedding. Adjusted for change to increment().
+        (WebCore::RenderBlock::bidiReorderLine): Removed the 'start' parameter
+        and unreachable code.
+        (WebCore::buildCompactRuns): Adjusted for changes to BidiResolver/
+        (WebCore::RenderBlock::layoutInlineChildren): Moved code to initialize
+        the resolver from this method to determineStartPosition(). Unified the
+        resolver with the 'start' iterator. Removed unreachable code. Moved one
+        statement from the beginning of the while loop to the end.
+        (WebCore::RenderBlock::determineStartPosition): Moved code to initialize
+        the resolver from layoutInlineChildren() into this method.
+        (WebCore::RenderBlock::matchedEndLine): Adjusted for the resolver and
+        the 'start' iterator being one object.
+        (WebCore::skipNonBreakingSpace): Made the parameter const.
+        (WebCore::requiresLineBox): Ditto.
+        (WebCore::RenderBlock::generatesLineBoxesForInlineChild): Adjusted for
+        the change to BidiIterator::increment().
+        (WebCore::RenderBlock::skipWhitespace): Made two versions of this
+        method, one for BidiIterator and one for BidiState.
+        (WebCore::shouldSkipWhitespaceAfterStartObject): Removed the resolver
+        parameter.
+        (WebCore::RenderBlock::findNextLineBreak): Removed the resolver
+        parameter. Removed calls to setAdjustEmbedding(). Removed the 'previous'
+        variable and changed the 'last' variable to do its job.
+        * rendering/bidi.h:
+
 2008-03-10  Adam Roben  <aroben@apple.com>
 
         Part of Bug 17224: DOM nodes/attributes should be editable
