@@ -1,3 +1,10 @@
+2008-03-11  Adam Roben  <aroben@apple.com>
+
+        Roll out r30961 since it broke the default site icon on Windows
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::defaultIcon):
+
 2008-03-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

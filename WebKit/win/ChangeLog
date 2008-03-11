@@ -1,3 +1,12 @@
+2008-03-11  Adam Roben  <aroben@apple.com>
+
+        Roll out r30961 since it broke the default site icon on Windows
+
+        * WebKit.vcproj/WebKit.rc:
+        * WebKit.vcproj/urlIcon.png: Renamed from WebCore/Resources/urlIcon.png.
+        * WebKitDLL.cpp:
+        (loadResourceIntoBuffer):
+
 2008-03-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin.
