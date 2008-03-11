@@ -1,9 +1,17 @@
+2008-03-11  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Added reload action and grouped stop and reload actions together.
+
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+
 2008-03-11  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.
 
         * Set a Icon on the QAction if we have one.
-        
 
         * Api/qwebpage.cpp:
         (QWebPage::action):
