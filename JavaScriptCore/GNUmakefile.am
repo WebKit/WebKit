@@ -154,7 +154,9 @@ Programs_minidom_LDFLAGS = -rpath $(CURDIR)/.libs
 
 # testkjs
 Programs_testkjs_SOURCES = JavaScriptCore/kjs/testkjs.cpp
-Programs_testkjs_CPPFLAGS = $(global_cppflags)
+Programs_testkjs_CPPFLAGS = \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags)
 Programs_testkjs_CXXFLAGS = \
 	$(global_cxxflags) \
 	$(global_cflags) \
