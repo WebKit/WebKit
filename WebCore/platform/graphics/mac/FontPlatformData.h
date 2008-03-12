@@ -34,33 +34,51 @@ class NSFont;
 
 typedef struct CGFont* CGFontRef;
 typedef UInt32 ATSUFontID;
+#ifndef BUILDING_ON_TIGER
+typedef const struct __CTFont* CTFontRef;
+#endif
 
 #include <CoreFoundation/CFBase.h>
 #include <objc/objc-auto.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
+
+#ifndef BUILDING_ON_TIGER
+inline CTFontRef toCTFontRef(NSFont *nsFont) { return reinterpret_cast<CTFontRef>(nsFont); }
+#endif
 
 struct FontPlatformData {
     class Deleted {};
 
     FontPlatformData(Deleted)
-    : m_syntheticBold(false), m_syntheticOblique(false), m_cgFont(0), m_atsuFontID(0), m_size(0), m_font((NSFont*)-1)
-    {}
+        : m_syntheticBold(false)
+        , m_syntheticOblique(false)
+        , m_atsuFontID(0)
+        , m_size(0)
+        , m_font((NSFont*)-1)
+#ifdef BUILDING_ON_TIGER
+        , m_cgFont(0)
+#endif
+    {
+    }
 
     FontPlatformData(float s, bool b, bool o)
         : m_syntheticBold(b)
         , m_syntheticOblique(o)
-        , m_cgFont(0)
         , m_atsuFontID(0)
         , m_size(s)
         , m_font(0)
+#ifdef BUILDING_ON_TIGER
+        , m_cgFont(0)
+#endif
     {
     }
 
     FontPlatformData(NSFont* f = 0, bool b = false, bool o = false);
     
     FontPlatformData(CGFontRef f, ATSUFontID fontID, float s, bool b , bool o)
-    : m_syntheticBold(b), m_syntheticOblique(o), m_cgFont(f), m_atsuFontID(fontID), m_size(s), m_font(0)
+    : m_syntheticBold(b), m_syntheticOblique(o), m_atsuFontID(fontID), m_size(s), m_font(0), m_cgFont(f)
     {
     }
 
@@ -72,8 +90,7 @@ struct FontPlatformData {
 
     bool m_syntheticBold;
     bool m_syntheticOblique;
-    
-    CGFontRef m_cgFont; // It is not necessary to refcount this, since either an NSFont owns it or some CachedFont has it referenced.
+
     ATSUFontID m_atsuFontID;
     float m_size;
 
@@ -93,8 +110,19 @@ struct FontPlatformData {
     NSFont *font() const { return m_font; }
     void setFont(NSFont* font);
 
+#ifndef BUILDING_ON_TIGER
+    CGFontRef cgFont() const { return m_cgFont.get(); }
+#else
+    CGFontRef cgFont() const { return m_cgFont; }
+#endif
+
 private:
     NSFont *m_font;
+#ifndef BUILDING_ON_TIGER
+    RetainPtr<CGFontRef> m_cgFont;
+#else
+    CGFontRef m_cgFont; // It is not necessary to refcount this, since either an NSFont owns it or some CachedFont has it referenced.
+#endif
 };
 
 }

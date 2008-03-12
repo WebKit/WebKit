@@ -110,17 +110,19 @@ void WKCallDrawingNotification(CGrafPtr port, Rect *bounds);
 #endif
 
 BOOL WKGetGlyphTransformedAdvances(CGFontRef, NSFont*, CGAffineTransform *m, ATSGlyphRef *glyph, CGSize *advance);
-CGFontRef WKGetCGFontFromNSFont(NSFont *font);
 NSFont *WKGetFontInLanguageForRange(NSFont *font, NSString *string, NSRange range);
 NSFont *WKGetFontInLanguageForCharacter(NSFont *font, UniChar ch);
 void WKSetCGFontRenderingMode(CGContextRef cgContext, NSFont *font);
-ATSUFontID WKGetNSFontATSUFontId(NSFont *font);
 void WKReleaseStyleGroup(void *group);
 BOOL WKCGContextGetShouldSmoothFonts(CGContextRef cgContext);
 
 #ifdef BUILDING_ON_TIGER
 // CGFontGetAscent, CGFontGetDescent, CGFontGetLeading and CGFontGetUnitsPerEm were not available until Leopard
 void WKGetFontMetrics(CGFontRef font, int *ascent, int *descent, int *lineGap, unsigned *unitsPerEm);
+// CTFontCopyGraphicsFont was not available until Leopard
+CGFontRef WKGetCGFontFromNSFont(NSFont *font);
+// CTFontGetPlatformFont was not available until Leopard
+ATSUFontID WKGetNSFontATSUFontId(NSFont *font);
 #endif
 
 void WKSetPatternBaseCTM(CGContextRef, CGAffineTransform);

@@ -1,3 +1,34 @@
+2008-03-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        - <rdar://problem/4433248> use CoreText API instead of SPI on Leopard
+
+        Use CTFontCopyGraphicsFont and CTFontGetPlatformFont on Leopard instead
+        of wkGetCGFontFromNSFont and wkGetNSFontATSUFontId, relying on NSFont
+        and CTFontRef being toll-free bridged.
+
+        * WebCore.Tiger.exp:
+        * WebCore.base.exp:
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs): Changed to use the cgFont() accessor.
+        * platform/graphics/mac/FontPlatformData.h:
+        Made m_cgFont a RetainPtr on Leopard.
+        (WebCore::toCTFontRef): Added a function that encapsulates the
+        toll-free bridging.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::cgFont): Added this accessor method.
+        * platform/graphics/mac/FontPlatformDataMac.mm:
+        (WebCore::FontPlatformData::FontPlatformData): Changed to use
+        CoreText API on Leopard.
+        (WebCore::FontPlatformData::setFont): Ditto.
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::initFontData):
+        (WebCore::pathFromFont):
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2008-03-12  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

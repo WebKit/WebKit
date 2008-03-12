@@ -38,7 +38,6 @@ void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 void (*wkDrawFocusRing)(CGContextRef, CGColorRef, int radius);
 BOOL (*wkFontSmoothingModeIsLCD)(int mode);
 OSStatus (*wkGetATSStyleGroup)(ATSUStyle, void** styleGroup);
-CGFontRef (*wkGetCGFontFromNSFont)(NSFont*);
 NSFont* (*wkGetFontInLanguageForRange)(NSFont*, NSString*, NSRange);
 NSFont* (*wkGetFontInLanguageForCharacter)(NSFont*, UniChar);
 BOOL (*wkGetGlyphTransformedAdvances)(CGFontRef, NSFont*, CGAffineTransform*, ATSGlyphRef*, CGSize* advance);
@@ -57,7 +56,6 @@ void (*wkDrawMediaUnMuteButton)(CGContextRef context, CGRect rect, BOOL active);
 NSString* (*wkGetPreferredExtensionForMIMEType)(NSString*);
 NSArray* (*wkGetExtensionsForMIMEType)(NSString*);
 NSString* (*wkGetMIMETypeForExtension)(NSString*);
-ATSUFontID (*wkGetNSFontATSUFontId)(NSFont*);
 NSTimeInterval (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);
 NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
 BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
@@ -90,6 +88,8 @@ void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
 id (*wkCreateNSURLConnectionDelegateProxy)(void);
 
 #ifdef BUILDING_ON_TIGER
+CGFontRef (*wkGetCGFontFromNSFont)(NSFont*);
 void (*wkGetFontMetrics)(CGFontRef, int* ascent, int* descent, int* lineGap, unsigned* unitsPerEm);
+ATSUFontID (*wkGetNSFontATSUFontId)(NSFont*);
 BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 #endif

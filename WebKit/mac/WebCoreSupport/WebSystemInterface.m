@@ -60,7 +60,6 @@ void InitWebCoreSystemInterface(void)
     INIT(DrawTextFieldCellFocusRing);
     INIT(FontSmoothingModeIsLCD);
     INIT(GetATSStyleGroup);
-    INIT(GetCGFontFromNSFont);
     INIT(GetExtensionsForMIMEType);
     INIT(GetFontInLanguageForCharacter);
     INIT(GetFontInLanguageForRange);
@@ -69,7 +68,6 @@ void InitWebCoreSystemInterface(void)
     INIT(GetGlyphVectorNumGlyphs);
     INIT(GetGlyphVectorRecordSize);
     INIT(GetMIMETypeForExtension);
-    INIT(GetNSFontATSUFontId);
     INIT(GetNSURLResponseLastModifiedDate);
     INIT(GetPreferredExtensionForMIMEType);
     INIT(GetWheelEventDeltas);
@@ -91,7 +89,9 @@ void InitWebCoreSystemInterface(void)
     INIT(QTMovieViewSetDrawSynchronously);
 
 #ifdef BUILDING_ON_TIGER
+    INIT(GetCGFontFromNSFont);
     INIT(GetFontMetrics);
+    INIT(GetNSFontATSUFontId);
     INIT(SupportsMultipartXMixedReplace);
 #endif
 

@@ -1,3 +1,12 @@
+2008-03-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        - <rdar://problem/4433248> use CoreText API instead of SPI on Leopard
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+
 2008-03-11  Steve Falkenburg  <sfalken@apple.com>
 
         Disable two PGO/LTCG specific warnings.

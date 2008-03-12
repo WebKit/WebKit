@@ -1,3 +1,13 @@
+2008-03-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        - <rdar://problem/4433248> use CoreText API instead of SPI on Leopard
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface): Made WKGetCGFontFromNSFont and
+        WKGetNSFontATSUFontId Tiger-only.
+
 2008-03-12  Darin Adler  <darin@apple.com>
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=17794

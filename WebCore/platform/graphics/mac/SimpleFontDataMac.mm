@@ -56,7 +56,7 @@ static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return x * (c
 
 bool initFontData(SimpleFontData* fontData)
 {
-    if (!fontData->m_font.m_cgFont)
+    if (!fontData->m_font.cgFont())
         return false;
 
     ATSUStyle fontStyle;
@@ -107,7 +107,11 @@ static NSString* pathFromFont(NSFont*)
 #else
 static NSString* pathFromFont(NSFont *font)
 {
+#ifndef BUILDING_ON_TIGER
+    ATSFontRef atsFont = FMGetATSFontRefFromFont(CTFontGetPlatformFont(toCTFontRef(font), 0));
+#else
     ATSFontRef atsFont = FMGetATSFontRefFromFont(wkGetNSFontATSUFontId(font));
+#endif
     FSRef fileRef;
 
 #ifndef BUILDING_ON_TIGER
@@ -205,12 +209,12 @@ void SimpleFontData::platformInit()
     int iDescent;
     int iLineGap;
 #ifdef BUILDING_ON_TIGER
-    wkGetFontMetrics(m_font.m_cgFont, &iAscent, &iDescent, &iLineGap, &m_unitsPerEm);
+    wkGetFontMetrics(m_font.cgFont(), &iAscent, &iDescent, &iLineGap, &m_unitsPerEm);
 #else
-    iAscent = CGFontGetAscent(m_font.m_cgFont);
-    iDescent = CGFontGetDescent(m_font.m_cgFont);
-    iLineGap = CGFontGetLeading(m_font.m_cgFont);
-    m_unitsPerEm = CGFontGetUnitsPerEm(m_font.m_cgFont);
+    iAscent = CGFontGetAscent(m_font.cgFont());
+    iDescent = CGFontGetDescent(m_font.cgFont());
+    iLineGap = CGFontGetLeading(m_font.cgFont());
+    m_unitsPerEm = CGFontGetUnitsPerEm(m_font.cgFont());
 #endif
 
     float pointSize = m_font.m_size;
@@ -337,7 +341,7 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     float pointSize = m_font.m_size;
     CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
     CGSize advance;
-    if (!wkGetGlyphTransformedAdvances(m_font.m_cgFont, font, &m, &glyph, &advance)) {
+    if (!wkGetGlyphTransformedAdvances(m_font.cgFont(), font, &m, &glyph, &advance)) {
         LOG_ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
         advance.width = 0;
     }

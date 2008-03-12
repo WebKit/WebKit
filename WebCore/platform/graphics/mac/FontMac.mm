@@ -628,7 +628,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
                 [[[platformData.font() fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
     }
     
-    CGContextSetFont(cgContext, platformData.m_cgFont);
+    CGContextSetFont(cgContext, platformData.cgFont());
 
     CGAffineTransform matrix = CGAffineTransformIdentity;
     if (drawFont)

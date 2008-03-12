@@ -744,7 +744,6 @@ _wkDrawMediaUnMuteButton
 _wkDrawTextFieldCellFocusRing
 _wkFontSmoothingModeIsLCD
 _wkGetATSStyleGroup
-_wkGetCGFontFromNSFont
 _wkGetExtensionsForMIMEType
 _wkGetFontInLanguageForCharacter
 _wkGetFontInLanguageForRange
@@ -753,7 +752,6 @@ _wkGetGlyphVectorFirstRecord
 _wkGetGlyphVectorNumGlyphs
 _wkGetGlyphVectorRecordSize
 _wkGetMIMETypeForExtension
-_wkGetNSFontATSUFontId
 _wkGetNSURLResponseCalculatedExpiration
 _wkGetNSURLResponseLastModifiedDate
 _wkGetNSURLResponseMustRevalidate
