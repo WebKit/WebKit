@@ -424,6 +424,7 @@ WebView *getWebView(WebFrame *webFrame)
 
     _private = [[WebFramePrivate alloc] init];
     _private->bridge = [bridge retain];
+    [bridge setWebFrame:self];
 
     if (fv) {
         [_private setWebFrameView:fv];

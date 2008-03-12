@@ -1,3 +1,13 @@
+2008-03-12  Darin Adler  <darin@apple.com>
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17794
+          REGRESSION (r30980): 23 tests hanging on the Mac buildbot
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _initWithWebFrameView:webView:bridge:]): Added missing call to set
+        up pointer from the bridge to the frame. (My next check-in removes the bridge
+        entirely, but we need this until then.)
+
 2008-03-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
