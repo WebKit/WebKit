@@ -90,6 +90,9 @@ using namespace HTMLNames;
 {
     [super init];
     m_renderer = renderer;
+#ifndef NDEBUG
+    m_renderer->setHasAXObject(true);
+#endif
     return self;
 }
 
@@ -108,6 +111,10 @@ using namespace HTMLNames;
     [m_data release];
     m_data = 0;
     [self removeAXObjectID];
+#ifndef NDEBUG
+    if (m_renderer)
+        m_renderer->setHasAXObject(false);
+#endif
     m_renderer = 0;
     [self clearChildren];
 }

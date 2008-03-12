@@ -70,8 +70,11 @@ WebCoreAXObject* AXObjectCache::get(RenderObject* renderer)
 void AXObjectCache::remove(RenderObject* renderer)
 {
     WebCoreAXObject* obj = m_objects.take(renderer);
-    if (!obj)
+    if (!obj) {
+        ASSERT(!renderer->hasAXObject());
         return;
+    }
+
     [obj detach];
     HardRelease(obj);
 

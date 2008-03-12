@@ -180,6 +180,11 @@ public:
     virtual bool isEdited() const { return false; }
     virtual void setEdited(bool) { }
 
+#ifndef NDEBUG
+    void setHasAXObject(bool flag) { m_hasAXObject = flag; }
+    bool hasAXObject() const { return m_hasAXObject; }
+#endif
+
     // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
     // children.
     virtual RenderBlock* firstLineBlock() const;
@@ -893,6 +898,9 @@ private:
     RenderObject* m_previous;
     RenderObject* m_next;
 
+#ifndef NDEBUG
+    bool m_hasAXObject;
+#endif
     mutable short m_verticalPosition : 15;
 
     bool m_needsLayout               : 1;

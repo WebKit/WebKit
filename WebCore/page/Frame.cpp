@@ -1686,6 +1686,8 @@ void Frame::pageDestroyed()
 void Frame::disconnectOwnerElement()
 {
     if (d->m_ownerElement) {
+        if (Document* doc = document())
+            doc->clearAXObjectCache();
         d->m_ownerElement->m_contentFrame = 0;
         if (d->m_page)
             d->m_page->decrementFrameCount();

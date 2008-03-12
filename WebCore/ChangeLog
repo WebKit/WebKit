@@ -1,3 +1,55 @@
+2008-03-12  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5607382> CrashTracer: [REGRESSION] 2290 crashes in Safari at com.apple.WebCore: -[WebCoreAXObject isWebArea] + 8
+
+        The problem was that we lost track of the AX cache for a subframe when Frame::disconnectOwnerElement() was
+        called, so we were unable to locate the AXObjects to de-register from AppKit's accessibility registry.
+        Also saw that cache clearing was missing from Document::detach(), and fixed that.
+        
+        Also added a debug-only check that AXObjectCache::remove() not finding the AXObject is expected.
+        
+        Lastly, RenderWidget::destroy() now skips trying to remove the AXObject if accessibility has never been enabled.
+       
+        * dom/Document.cpp:
+        (WebCore::Document::attach):
+        Assert that there is no AX cache (since there is no renderer).
+        
+        (WebCore::Document::detach):
+        Destroy the AX cache installed on this document.
+        
+        (WebCore::Document::clearAXObjectCache):
+        New. Destroy the AX cache associated with this document.
+        
+        (WebCore::Document::axObjectCache):
+        Added some comments.
+        
+        * dom/Document.h:
+        Declare clearAXObjectCache().
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::disconnectOwnerElement):
+        Destroy the AX cache associated with this frame's document.
+        
+        * page/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::remove):        
+        * page/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject initWithRenderer:]):
+        (-[WebCoreAXObject detach]):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::~RenderObject):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::setHasAXObject):
+        (WebCore::RenderObject::hasAXObject):
+        Add debug-only check that AXObjectCache::remove() not finding the AXObject is expected.
+        
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+        Skip call to remove the AXObject if accessibility has never been enabled. A simple speed optimization in the
+        very common case that the accessibility APIs are not being used. Same as in RenderObject::destroy().
+
 2008-03-12  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.

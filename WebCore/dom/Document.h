@@ -355,6 +355,7 @@ public:
 
     RenderArena* renderArena() { return m_renderArena; }
 
+    void clearAXObjectCache();
     AXObjectCache* axObjectCache() const;
     
     // to get visually ordered hebrew and arabic pages right

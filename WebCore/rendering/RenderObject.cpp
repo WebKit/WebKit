@@ -175,6 +175,9 @@ RenderObject::RenderObject(Node* node)
     , m_parent(0)
     , m_previous(0)
     , m_next(0)
+#ifndef NDEBUG
+    , m_hasAXObject(false)
+#endif
     , m_verticalPosition(PositionUndefined)
     , m_needsLayout(false)
     , m_normalChildNeedsLayout(false)
@@ -204,6 +207,7 @@ RenderObject::~RenderObject()
 {
     ASSERT(!node() || documentBeingDestroyed() || !document()->frame()->view() || document()->frame()->view()->layoutRoot() != this);
 #ifndef NDEBUG
+    ASSERT(!m_hasAXObject);
     --RenderObjectCounter::count;
 #endif
 }
