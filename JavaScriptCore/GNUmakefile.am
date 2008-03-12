@@ -160,7 +160,8 @@ Programs_testkjs_CPPFLAGS = \
 Programs_testkjs_CXXFLAGS = \
 	$(global_cxxflags) \
 	$(global_cflags) \
-	$(GLOBALDEPS_CFLAGS)
+	$(GLOBALDEPS_CFLAGS) \
+	$(UNICODE_CFLAGS)
 Programs_testkjs_LDADD = \
 	libJavaScriptCore.la
 Programs_testkjs_LDFLAGS = -rpath $(CURDIR)/.libs

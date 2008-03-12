@@ -1,5 +1,11 @@
 2008-03-12  Alp Toker  <alp@atoker.com>
 
+        Another autotools testkjs build fix attempt.
+
+        * GNUmakefile.am:
+
+2008-03-12  Alp Toker  <alp@atoker.com>
+
         Attempt to fix the autotools testkjs build on systems with
         non-standard include paths.
 
