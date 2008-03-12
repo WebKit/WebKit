@@ -42,7 +42,6 @@
 #include "PlatformWheelEvent.h"
 #include "RenderWidget.h"
 #include "Settings.h"
-#include "WebCoreFrameBridge.h"
 
 namespace WebCore {
 
@@ -243,11 +242,15 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
         return true;
     }
     
-    if ([m_frame->bridge() firstResponder] != view) {
+    Page* page = m_frame->page();
+    if (!page)
+        return true;
+
+    if (page->chrome()->client()->firstResponder() != view) {
         // Normally [NSWindow sendEvent:] handles setting the first responder.
         // But in our case, the event was sent to the view representing the entire web page.
         if ([currentEvent().get() clickCount] <= 1 && [view acceptsFirstResponder] && [view needsPanelToBecomeKey])
-            [m_frame->bridge() makeFirstResponder:view];
+            page->chrome()->client()->makeFirstResponder(view);
     }
 
     // We need to "defer loading" while tracking the mouse, because tearing down the
@@ -257,9 +260,9 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
     // mouse. We should confirm that, and then remove the deferrsLoading
     // hack entirely.
     
-    bool wasDeferringLoading = m_frame->page()->defersLoading();
+    bool wasDeferringLoading = page->defersLoading();
     if (!wasDeferringLoading)
-        m_frame->page()->setDefersLoading(true);
+        page->setDefersLoading(true);
 
     ASSERT(!m_sendingEventToSubview);
     m_sendingEventToSubview = true;
@@ -267,7 +270,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
     m_sendingEventToSubview = false;
     
     if (!wasDeferringLoading)
-        m_frame->page()->setDefersLoading(false);
+        page->setDefersLoading(false);
 
     // Remember which view we sent the event to, so we can direct the release event properly.
     m_mouseDownView = view;

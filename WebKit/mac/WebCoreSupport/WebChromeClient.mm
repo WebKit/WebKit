@@ -37,6 +37,7 @@
 #import "WebHistoryInternal.h"
 #import "WebKitSystemInterface.h"
 #import "WebNSURLRequestExtras.h"
+#import "WebPlugin.h"
 #import "WebSecurityOriginInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
@@ -56,12 +57,12 @@
 #import <WebCore/WindowFeatures.h>
 #import <wtf/PassRefPtr.h>
 
-@interface NSView (NSViewDetails)
+@interface NSView (WebNSViewDetails)
 - (NSView *)_findLastViewInKeyViewLoop;
 @end
 
 // For compatibility with old SPI.
-@interface NSView (OldWebKitPlugInDetails)
+@interface NSView (WebOldWebKitPlugInDetails)
 - (void)setIsSelected:(BOOL)isSelected;
 @end
 
@@ -428,6 +429,8 @@ void WebChromeClient::print(Frame* frame)
 
 void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
     // FIXME: remove this workaround once shipping Safari has the necessary delegate implemented.
     if (WKAppVersionCheckLessThan(@"com.apple.Safari", -1, 3.1)) {
@@ -436,23 +439,33 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     } else
         CallUIDelegate(m_webView, @selector(webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:), kit(frame), webOrigin, (NSString *)databaseName);
     [webOrigin release];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
     
 void WebChromeClient::populateVisitedLinks()
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [[WebHistory optionalSharedHistory] _addVisitedLinksToPageGroup:[m_webView page]->group()];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void WebChromeClient::dashboardRegionsChanged()
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
     NSMutableDictionary *regions = core([m_webView mainFrame])->dashboardRegionsDictionary();
     [m_webView _addScrollerDashboardRegions:regions];
 
     CallUIDelegate(m_webView, @selector(webView:dashboardRegionsChanged:), regions);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 FloatRect WebChromeClient::customHighlightRect(Node* node, const AtomicString& type, const FloatRect& lineRect)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
     NSView *documentView = [[kit(node->document()->frame()) frameView] documentView];
     if (![documentView isKindOfClass:[WebHTMLView class]])
         return NSZeroRect;
@@ -462,11 +475,17 @@ FloatRect WebChromeClient::customHighlightRect(Node* node, const AtomicString& t
     if ([(NSObject *)highlighter respondsToSelector:@selector(highlightRectForLine:representedNode:)])
         return [highlighter highlightRectForLine:lineRect representedNode:kit(node)];
     return [highlighter highlightRectForLine:lineRect];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return NSZeroRect;
 }
 
 void WebChromeClient::paintCustomHighlight(Node* node, const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect,
     bool behindText, bool entireLine)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
     NSView *documentView = [[kit(node->document()->frame()) frameView] documentView];
     if (![documentView isKindOfClass:[WebHTMLView class]])
         return;
@@ -477,18 +496,49 @@ void WebChromeClient::paintCustomHighlight(Node* node, const AtomicString& type,
         [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:behindText entireLine:entireLine representedNode:kit(node)];
     else
         [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:behindText entireLine:entireLine];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void WebChromeClient::runOpenPanel(PassRefPtr<FileChooser> chooser)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     WebOpenPanelResultListener *listener = [[WebOpenPanelResultListener alloc] initWithChooser:chooser];
     CallUIDelegate(m_webView, @selector(webView:runOpenPanelForFileButtonWithResultListener:), listener);
     [listener release];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 KeyboardUIMode WebChromeClient::keyboardUIMode()
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [m_webView _keyboardUIMode];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return KeyboardAccessDefault;
+}
+
+NSResponder *WebChromeClient::firstResponder()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[m_webView _UIDelegateForwarder] webViewFirstResponder:m_webView];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return nil;
+}
+
+void WebChromeClient::makeFirstResponder(NSResponder *responder)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [m_webView _pushPerformingProgrammaticFocus];
+    [[m_webView _UIDelegateForwarder] webView:m_webView makeFirstResponder:responder];
+    [m_webView _popPerformingProgrammaticFocus];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+void WebChromeClient::willPopUpMenu(NSMenu *menu)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    CallUIDelegate(m_webView, @selector(webView:willPopupMenu:), menu);
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 @implementation WebOpenPanelResultListener

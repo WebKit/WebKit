@@ -6,7 +6,7 @@
  *                     2000-2001 Simon Hausmann <hausmann@kde.org>
  *                     2000-2001 Dirk Mueller <mueller@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
@@ -28,21 +28,15 @@
 #ifndef Frame_h
 #define Frame_h
 
-#include "Color.h"
-#include "EditAction.h"
 #include "DragImage.h"
+#include "EditAction.h"
 #include "RenderLayer.h"
 #include "TextGranularity.h"
-#include "VisiblePosition.h"
-#include <wtf/unicode/Unicode.h>
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 struct NPObject;
 
 namespace KJS {
 
-    class Interpreter;
     class JSGlobalObject;
 
     namespace Bindings {
@@ -54,17 +48,11 @@ namespace KJS {
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
-@class NSArray;
-@class NSDictionary;
-@class NSMenu;
-@class NSMutableDictionary;
-@class NSString;
 @class WebCoreFrameBridge;
 @class WebScriptObject;
 #else
 class NSArray;
 class NSDictionary;
-class NSMenu;
 class NSMutableDictionary;
 class NSString;
 class WebCoreFrameBridge;
@@ -75,40 +63,19 @@ typedef int NSWritingDirection;
 
 namespace WebCore {
 
-class AnimationController;
-class CSSComputedStyleDeclaration;
-class CSSMutableStyleDeclaration;
-class CSSStyleDeclaration;
-class DOMWindow;
-class Document;
 class Editor;
-class Element;
 class EventHandler;
-class FloatRect;
 class FrameLoader;
 class FrameLoaderClient;
 class HTMLFrameOwnerElement;
 class HTMLTableCellElement;
-class FramePrivate;
 class FrameTree;
-class FrameView;
-class GraphicsContext;
-class HTMLFormElement;
-class IntRect;
 class KJSProxy;
-class KURL;
-class Node;
-class Page;
-class PluginData;
-class Range;
 class RegularExpression;
 class RenderPart;
 class Selection;
 class SelectionController;
-class Settings;
 class Widget;
-
-struct FrameLoadRequest;
 
 template <typename T> class Timer;
 
@@ -141,6 +108,7 @@ public:
     SelectionController* selectionController() const;
     FrameTree* tree() const;
     AnimationController* animationController() const;
+    KJSProxy* scriptProxy();
 
     // FIXME: Rename to contentRenderer and change type to RenderView.
     RenderObject* renderer() const; // root renderer for the document contained in this frame
@@ -173,22 +141,7 @@ public:
     static void cancelAllKeepAlive();
 #endif
 
-    KJS::Bindings::Instance* createScriptInstanceForWidget(Widget*);
-    KJS::Bindings::RootObject* bindingRootObject();
-    
-    PassRefPtr<KJS::Bindings::RootObject> createRootObject(void* nativeHandle, KJS::JSGlobalObject*);
-
-#if PLATFORM(MAC)
-    WebScriptObject* windowScriptObject();
-#endif
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    NPObject* windowScriptNPObject();
-#endif    
-    
     void setDocument(PassRefPtr<Document>);
-
-    KJSProxy* scriptProxy();
 
     void clearTimers();
     static void clearTimers(FrameView*);
@@ -213,6 +166,22 @@ private:
 
     void lifeSupportTimerFired(Timer<Frame>*);
     
+// === to be moved into ScriptController
+
+public:
+    KJS::Bindings::Instance* createScriptInstanceForWidget(Widget*);
+    KJS::Bindings::RootObject* bindingRootObject();
+
+    PassRefPtr<KJS::Bindings::RootObject> createRootObject(void* nativeHandle, KJS::JSGlobalObject*);
+
+#if PLATFORM(MAC)
+    WebScriptObject* windowScriptObject();
+#endif
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    NPObject* windowScriptNPObject();
+#endif    
+
 // === to be moved into Document
 
 public:
@@ -360,8 +329,6 @@ public:
     NSString* matchLabelsAgainstElement(NSArray* labels, Element*);
 
     NSMutableDictionary* dashboardRegionsDictionary();
-
-    void willPopupMenu(NSMenu*);
 
     NSImage* selectionImage(bool forceBlackText = false) const;
     NSImage* snapshotDragImage(Node*, NSRect* imageRect, NSRect* elementRect) const;

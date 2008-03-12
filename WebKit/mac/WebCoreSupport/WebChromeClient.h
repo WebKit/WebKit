@@ -116,6 +116,11 @@ public:
 
     virtual WebCore::KeyboardUIMode keyboardUIMode();
 
+    virtual NSResponder *firstResponder();
+    virtual void makeFirstResponder(NSResponder *);
+
+    virtual void willPopUpMenu(NSMenu *);
+
 private:
     WebView *m_webView;
 };

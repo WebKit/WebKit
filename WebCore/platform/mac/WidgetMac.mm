@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,16 +34,20 @@
 #import "GraphicsContext.h"
 #import "Page.h"
 #import "PlatformMouseEvent.h"
-#import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
 #import "WidgetClient.h"
 
 #import <wtf/RetainPtr.h>
 
-@interface NSWindow (WindowPrivate)
-- (BOOL) _needsToResetDragMargins;
-- (void) _setNeedsToResetDragMargins:(BOOL)s;
+@interface NSWindow (WebWindowDetails)
+- (BOOL)_needsToResetDragMargins;
+- (void)_setNeedsToResetDragMargins:(BOOL)needs;
+@end
+
+@interface NSView (WebSetSelectedMethods)
+- (void)setIsSelected:(BOOL)isSelected;
+- (void)webPlugInSetIsSelected:(BOOL)isSelected;
 @end
 
 namespace WebCore {
@@ -235,11 +239,15 @@ void Widget::invalidateRect(const IntRect& r)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-// FIXME: Should move this to Chrome; bad layering that this knows about Frame.
 void Widget::setIsSelected(bool isSelected)
 {
-    if (Frame* frame = Frame::frameForWidget(this))
-        [frame->bridge() setIsSelected:isSelected forView:getView()];
+    NSView *view = getView();
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    if ([view respondsToSelector:@selector(webPlugInSetIsSelected:)])
+        [view webPlugInSetIsSelected:isSelected];
+    else if ([view respondsToSelector:@selector(setIsSelected:)])
+        [view setIsSelected:isSelected];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::addToSuperview(NSView *view)

@@ -23,8 +23,7 @@
 
 #import "BlockExceptions.h"
 #import "ChromeClient.h"
-#import "Frame.h"
-#import "Page.h"
+#import "FileChooser.h"
 
 namespace WebCore {
 
@@ -32,22 +31,21 @@ void Chrome::focusNSView(NSView* view)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    WebCoreFrameBridge *bridge = m_page->mainFrame()->bridge();
-    NSResponder *firstResponder = [bridge firstResponder];
+    NSResponder *firstResponder = client()->firstResponder();
     if (firstResponder == view)
         return;
 
     if (![view window] || ![view superview] || ![view acceptsFirstResponder])
         return;
 
-    [bridge makeFirstResponder:view];
+    client()->makeFirstResponder(view);
 
     // Setting focus can actually cause a style change which might
     // remove the view from its superview while it's being made
     // first responder. This confuses AppKit so we must restore
     // the old first responder.
     if (![view superview])
-        [bridge makeFirstResponder:firstResponder];
+        client()->makeFirstResponder(firstResponder);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

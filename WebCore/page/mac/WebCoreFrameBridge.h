@@ -23,17 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <JavaVM/jni.h>
-#import <WebCore/WebCoreKeyboardUIMode.h>
 #import <WebCore/EditAction.h>
-#import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/SelectionController.h>
-#import <WebCore/TextAffinity.h>
 #import <WebCore/TextGranularity.h>
-
-namespace WebCore {
-    class Frame;
-}
 
 @class DOMCSSStyleDeclaration;
 @class DOMDocument;
@@ -42,7 +34,9 @@ namespace WebCore {
 @class DOMNode;
 @class DOMRange;
 
-@protocol WebCoreRenderTreeCopier;
+@protocol WebCoreRenderTreeCopier <NSObject>
+- (NSObject *)nodeWithName:(NSString *)name position:(NSPoint)position rect:(NSRect)rect view:(NSView *)view children:(NSArray *)children;
+@end
 
 // WebCoreFrameBridge objects are used by WebCore to abstract away operations that need
 // to be implemented by library clients, for example WebKit. The objects are also
@@ -165,30 +159,4 @@ namespace WebCore {
 
 - (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
 
-@end
-
-// The WebCoreFrameBridge protocol contains methods for use by the WebCore side of the bridge.
-
-@protocol WebCoreFrameBridge
-
-- (NSResponder *)firstResponder;
-- (void)makeFirstResponder:(NSResponder *)responder;
-
-- (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view;
-
-- (void)willPopupMenu:(NSMenu *)menu;
-
-@end
-
-// This interface definition allows those who hold a WebCoreFrameBridge * to call all the methods
-// in the WebCoreFrameBridge protocol without requiring the base implementation to supply the methods.
-// This idiom is appropriate because WebCoreFrameBridge is an abstract class.
-
-@interface WebCoreFrameBridge (SubclassResponsibility) <WebCoreFrameBridge>
-@end
-
-// Protocols that make up part of the interfaces above.
-
-@protocol WebCoreRenderTreeCopier <NSObject>
-- (NSObject *)nodeWithName:(NSString *)name position:(NSPoint)p rect:(NSRect)rect view:(NSView *)view children:(NSArray *)children;
 @end

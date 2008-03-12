@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,14 +20,16 @@
 #import "config.h"
 #import "PopupMenu.h"
 
+#import "ChromeClient.h"
 #import "EventHandler.h"
-#import "SimpleFontData.h"
 #import "Frame.h"
 #import "FrameView.h"
 #import "HTMLNames.h"
 #import "HTMLOptGroupElement.h"
 #import "HTMLOptionElement.h"
 #import "HTMLSelectElement.h"
+#import "Page.h"
+#import "SimpleFontData.h"
 #import "WebCoreSystemInterface.h"
 
 namespace WebCore {
@@ -151,7 +153,8 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     [view addSubview:dummyView.get()];
     location = [dummyView.get() convertPoint:location fromView:view];
     
-    frame->willPopupMenu(menu);
+    if (Page* page = frame->page())
+        page->chrome()->client()->willPopUpMenu(menu);
     wkPopupMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), index, font);
 
     [m_popup.get() dismissPopUp];

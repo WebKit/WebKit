@@ -1,5 +1,27 @@
 2008-03-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam.
+
+        - eliminate the remaining parts of WebCoreBridge used for calls to WebKit from WebCore
+
+        * WebCoreSupport/WebChromeClient.h: Added new virtual functions that replace
+        bridge methods.
+        * WebCoreSupport/WebChromeClient.mm: Added lots of BEGIN_BLOCK_OBJC_EXCEPTIONS
+        to recently-created functions.
+        (WebChromeClient::firstResponder): Moved code here from the bridge.
+        (WebChromeClient::makeFirstResponder): Ditto.
+        (WebChromeClient::runOpenPanel): Ditto.
+        (WebChromeClient::willPopUpMenu): Ditto.
+
+        * WebCoreSupport/WebFrameBridge.h: Removed almost everything. What's left
+        is related to creating the bridge and connecting it to WebCore, which will
+        go next when I eliminate use of the bridge to get to/from the Frame*.
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge close]): Moved the code to track the bridge count here
+        instead of the dealloc and finalize methods.
+
+2008-03-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Mitz.
 
         - update code affected by Range changes

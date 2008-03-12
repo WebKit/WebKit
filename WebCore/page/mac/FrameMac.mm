@@ -555,11 +555,6 @@ NSMutableDictionary* Frame::dashboardRegionsDictionary()
     return webRegions;
 }
 
-void Frame::willPopupMenu(NSMenu * menu)
-{
-    [d->m_bridge willPopupMenu:menu];
-}
-
 DragImageRef Frame::dragImageForSelection() 
 {
     if (!selectionController()->isRange())
