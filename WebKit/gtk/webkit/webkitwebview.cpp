@@ -876,7 +876,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             NULL,
             webkit_marshal_BOOLEAN__OBJECT_STRING,
             G_TYPE_BOOLEAN, 2,
-            G_TYPE_OBJECT, G_TYPE_STRING);
+            WEBKIT_TYPE_WEB_FRAME, G_TYPE_STRING);
 
     /**
      * WebKitWebView::script-confirm:
@@ -896,7 +896,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             NULL,
             webkit_marshal_BOOLEAN__OBJECT_STRING_BOOLEAN,
             G_TYPE_BOOLEAN, 3,
-            G_TYPE_OBJECT, G_TYPE_STRING, G_TYPE_BOOLEAN);
+            WEBKIT_TYPE_WEB_FRAME, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
     /**
      * WebKitWebView::script-prompt:
@@ -917,7 +917,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             NULL,
             webkit_marshal_BOOLEAN__OBJECT_STRING_STRING_STRING,
             G_TYPE_BOOLEAN, 4,
-            G_TYPE_OBJECT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+            WEBKIT_TYPE_WEB_FRAME, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 
     /**
      * WebKitWebView::select-all:

@@ -1,3 +1,15 @@
+2008-03-12  Tommi Komulainen  <tommi.komulainen@iki.fi>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17799
+        WebView signals should use more specific types
+
+        * webkit/webkitwebview.cpp: Use WEBKIT_TYPE_WEB_FRAME argument
+        type in "script-alert", "script-confirm", "script-script-prompt"
+        signals so that it gets more clearly documented rather than just
+        plain GObject.
+
 2008-03-10  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.
