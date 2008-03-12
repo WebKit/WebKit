@@ -1309,6 +1309,10 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     color: black !important;
 }
 
+.editing .webkit-html-external-link, .editing .webkit-html-resource-link {
+    text-decoration: none;
+}
+
 .section .properties li.editing {
     margin-left: 8px;
 }

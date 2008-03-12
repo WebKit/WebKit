@@ -1,5 +1,13 @@
 2008-03-12  Adam Roben  <aroben@apple.com>
 
+        Make URLs not be underlined while editing them in the DOM view
+
+        Reviewed by Tim.
+
+        * page/inspector/inspector.css:
+
+2008-03-12  Adam Roben  <aroben@apple.com>
+
         Part of Bug 17224: DOM nodes/attributes should be editable
 
         <http://bugs.webkit.org/show_bug.cgi?id=17224>
