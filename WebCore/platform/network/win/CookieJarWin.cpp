@@ -31,85 +31,21 @@
 #include "Document.h"
 #include "ResourceHandle.h"
 #include <windows.h>
-#if USE(CFNETWORK)
-#include <CoreFoundation/CoreFoundation.h>
-#include <CFNetwork/CFHTTPCookiesPriv.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
-#else
 #include <Wininet.h>
-#endif
-
-// FIXME: This should be broken up into CookieJarCFNet.cpp and CookieJarWin.cpp or CookieJarWinINet.cpp.
 
 namespace WebCore {
-
-#if USE(CFNETWORK)
-    static const CFStringRef s_setCookieKeyCF = CFSTR("Set-Cookie");
-    static const CFStringRef s_cookieCF = CFSTR("Cookie");
-#endif
 
 
 void setCookies(Document* /*document*/, const KURL& url, const KURL& policyURL, const String& value)
 {
-#if USE(CFNETWORK)
-    // <rdar://problem/5632883> CFHTTPCookieStorage happily stores an empty cookie, which would be sent as "Cookie: =".
-    if (value.isEmpty())
-        return;
-
-    CFHTTPCookieStorageRef defaultCookieStorage = wkGetDefaultHTTPCookieStorage();
-    if (!defaultCookieStorage)
-        return;
-
-    RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
-    RetainPtr<CFURLRef> policyURLCF(AdoptCF, policyURL.createCFURL());
-
-    // <http://bugzilla.opendarwin.org/show_bug.cgi?id=6531>, <rdar://4409034>
-    // cookiesWithResponseHeaderFields doesn't parse cookies without a value
-    String cookieString = value.contains('=') ? value : value + "=";
-
-    RetainPtr<CFStringRef> cookieStringCF(AdoptCF, cookieString.createCFString());
-    RetainPtr<CFDictionaryRef> headerFieldsCF(AdoptCF, CFDictionaryCreate(kCFAllocatorDefault, (const void**)&s_setCookieKeyCF, 
-        (const void**)&cookieStringCF, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieCreateWithResponseHeaderFields(kCFAllocatorDefault,
-        headerFieldsCF.get(), urlCF.get()));
-
-    CFHTTPCookieStorageSetCookies(defaultCookieStorage, cookiesCF.get(), urlCF.get(), policyURLCF.get());
-#else
     // FIXME: Deal with the policy URL.
     String str = url.string();
     String val = value;
     InternetSetCookie(str.charactersWithNullTermination(), 0, val.charactersWithNullTermination());
-#endif
 }
 
 String cookies(const Document* /*document*/, const KURL& url)
 {
-#if USE(CFNETWORK)
-    CFHTTPCookieStorageRef defaultCookieStorage = wkGetDefaultHTTPCookieStorage();
-    if (!defaultCookieStorage)
-        return String();
-
-    String cookieString;
-    RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
-
-    bool secure = equalIgnoringCase(url.protocol(), "https");
-
-    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(defaultCookieStorage, urlCF.get(), secure));
-
-    // <rdar://problem/5632883> CFHTTPCookieStorage happily stores an empty cookie, which would be sent as "Cookie: =".
-    // We have a workaround in setCookies() to prevent that, but we also need to avoid sending cookies that were previously stored.
-    CFIndex count = CFArrayGetCount(cookiesCF.get());
-    RetainPtr<CFMutableArrayRef> cookiesForURLFilteredCopy(AdoptCF, CFArrayCreateMutable(0, count, &kCFTypeArrayCallBacks));
-    for (CFIndex i = 0; i < count; ++i) {
-        CFHTTPCookieRef cookie = (CFHTTPCookieRef)CFArrayGetValueAtIndex(cookiesCF.get(), i);
-        if (CFStringGetLength(CFHTTPCookieGetName(cookie)) != 0)
-            CFArrayAppendValue(cookiesForURLFilteredCopy.get(), cookie);
-    }
-    RetainPtr<CFDictionaryRef> headerCF(AdoptCF, CFHTTPCookieCopyRequestHeaderFields(kCFAllocatorDefault, cookiesForURLFilteredCopy.get()));
-
-    return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
-#else
     String str = url.string();
 
     DWORD count = str.length() + 1;
@@ -121,19 +57,11 @@ String cookies(const Document* /*document*/, const KURL& url)
     InternetGetCookie(str.charactersWithNullTermination(), 0, buffer.data(), &count);
     buffer.shrink(count - 1); // Ignore the null terminator.
     return String::adopt(buffer);
-#endif
 }
 
 bool cookiesEnabled(const Document* /*document*/)
 {
-#if USE(CFNETWORK)
-    CFHTTPCookieStorageAcceptPolicy policy = CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain;
-    if (CFHTTPCookieStorageRef defaultCookieStorage = wkGetDefaultHTTPCookieStorage())
-        policy = CFHTTPCookieStorageGetCookieAcceptPolicy(defaultCookieStorage);
-    return policy == CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyAlways;
-#else
     return true;
-#endif
 }
 
 }

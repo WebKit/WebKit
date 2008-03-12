@@ -1,3 +1,21 @@
+2008-03-11  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Split CookieJarWin.cpp into CFNet and non-CFNet versions to
+        reduce the massive amount of conditionalization in the file.
+        (see http://bugs.webkit.org/show_bug.cgi?id=17788)
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/network/win/CookieJarCFNetWin.cpp: Copied from WebCore/platform/network/win/CookieJarWin.cpp.
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookiesEnabled):
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookiesEnabled):
+
 2008-03-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
