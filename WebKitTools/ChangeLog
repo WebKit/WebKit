@@ -1,3 +1,9 @@
+2008-03-12  Steve Falkenburg  <sfalken@apple.com>
+
+        VSExpress build fix
+
+        * WinLauncher/WinLauncher.vcproj:
+
 2008-03-12  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Alp Toker.
