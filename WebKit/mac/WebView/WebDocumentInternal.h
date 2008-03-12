@@ -36,29 +36,20 @@
 #endif
 
 /*!
-@protocol _WebDocumentTextSizing
-@discussion Optional protocol for making text larger and smaller.
+@protocol _WebDocumentZooming
+@discussion Optional protocol for a view that wants to handle its own zoom.
 */
-@protocol _WebDocumentTextSizing <NSObject>
+@protocol _WebDocumentZooming <NSObject>
 
 // Methods to perform the actual commands
-- (IBAction)_makeTextSmaller:(id)sender;
-- (IBAction)_makeTextLarger:(id)sender;
-- (IBAction)_makeTextStandardSize:(id)sender;
+- (IBAction)_zoomOut:(id)sender;
+- (IBAction)_zoomIn:(id)sender;
+- (IBAction)_resetZoom:(id)sender;
 
-// Views that do text sizing come in two flavors.  Some will track the common textSizeMultiplier factor stored
-// in the WebView.  Others (see PDFView) keep their own scaling factor, but still want to play along loosely
-// with the smaller/larger commands, which in the user model operate across all frames of the WebView.
-- (BOOL)_tracksCommonSizeFactor;
-
-// Views that track the common size factor need to be told when the WebView itself changed the value.
-- (void)_textSizeMultiplierChanged;
-
-// Views that do not track the common size factor must answer for themselves if they are able to zoom in
-// or out.  Views that do track it are not sent these messages.
-- (BOOL)_canMakeTextSmaller;
-- (BOOL)_canMakeTextLarger;
-- (BOOL)_canMakeTextStandardSize;
+// Whether or not the commands can be executed.
+- (BOOL)_canZoomOut;
+- (BOOL)_canZoomIn;
+- (BOOL)_canResetZoom;
 
 @end
 

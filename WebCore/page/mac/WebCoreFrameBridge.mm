@@ -600,15 +600,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return result;
 }
 
-- (void)setTextSizeMultiplier:(float)multiplier
-{
-    int newZoomFactor = (int)rint(multiplier * 100);
-    if (m_frame->zoomFactor() == newZoomFactor) {
-        return;
-    }
-    m_frame->setZoomFactor(newZoomFactor, true);
-}
-
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string
 {
     return [self stringByEvaluatingJavaScriptFromString:string forceUserGesture:true];

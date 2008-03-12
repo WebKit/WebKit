@@ -280,9 +280,6 @@ static CachedResourceClient* promisedDataClient()
     return staticCachedResourceClient;
 }
 
-@interface WebHTMLView (WebTextSizing) <_WebDocumentTextSizing>
-@end
-
 @interface WebHTMLView (WebHTMLViewFileInternal)
 - (BOOL)_imageExistsAtPaths:(NSArray *)paths;
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard inContext:(DOMRange *)context allowPlainText:(BOOL)allowPlainText;
@@ -293,7 +290,6 @@ static CachedResourceClient* promisedDataClient()
 - (BOOL)_shouldInsertText:(NSString *)text replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
 - (BOOL)_shouldReplaceSelectionWithText:(NSString *)text givenAction:(WebViewInsertAction)action;
 - (float)_calculatePrintHeight;
-- (void)_updateTextSizeMultiplier;
 - (DOMRange *)_selectedRange;
 - (BOOL)_shouldDeleteRange:(DOMRange *)range;
 - (NSView *)_hitViewForEvent:(NSEvent *)event;
@@ -770,11 +766,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     // Calculate the page height in points
     NSSize paperSize = [pi paperSize];
     return paperSize.height - [pi topMargin] - [pi bottomMargin];
-}
-
-- (void)_updateTextSizeMultiplier
-{
-    [[self _bridge] setTextSizeMultiplier:[[self _webView] textSizeMultiplier]];    
 }
 
 - (DOMRange *)_selectedRange
@@ -2585,12 +2576,8 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (void)viewDidMoveToSuperview
 {
-    // Do this here in case the text size multiplier changed when a non-HTML
-    // view was installed.
-    if ([self superview] != nil) {
-        [self _updateTextSizeMultiplier];
+    if ([self superview] != nil)
         [self addSuperviewObservers];
-    }
 }
 
 static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
@@ -4481,54 +4468,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
         [self mouseUp:event];
     else
         [super otherMouseUp:event];
-}
-
-@end
-
-@implementation WebHTMLView (WebTextSizing)
-
-- (IBAction)_makeTextSmaller:(id)sender
-{
-    [self _updateTextSizeMultiplier];
-}
-
-- (IBAction)_makeTextLarger:(id)sender
-{
-    [self _updateTextSizeMultiplier];
-}
-
-- (IBAction)_makeTextStandardSize:(id)sender
-{
-    [self _updateTextSizeMultiplier];
-}
-
-- (BOOL)_tracksCommonSizeFactor
-{
-    return YES;
-}
-
-- (void)_textSizeMultiplierChanged
-{
-    [self _updateTextSizeMultiplier];
-}
-
-// never sent because we track the common size factor
-- (BOOL)_canMakeTextSmaller
-{
-    ASSERT_NOT_REACHED();
-    return NO;
-}
-
-- (BOOL)_canMakeTextLarger
-{
-    ASSERT_NOT_REACHED();
-    return NO;
-}
-
-- (BOOL)_canMakeTextStandardSize
-{
-    ASSERT_NOT_REACHED();
-    return NO;
 }
 
 @end

@@ -32,7 +32,7 @@
 @class PDFView;
 @class WebDataSource;
 
-@interface WebPDFView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentIncrementalSearching, WebMultipleTextMatches, WebDocumentSelection, WebDocumentElement, _WebDocumentViewState, _WebDocumentTextSizing>
+@interface WebPDFView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentIncrementalSearching, WebMultipleTextMatches, WebDocumentSelection, WebDocumentElement, _WebDocumentViewState, _WebDocumentZooming>
 {
     NSView *previewView;
     PDFView *PDFSubview;

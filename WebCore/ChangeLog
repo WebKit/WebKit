@@ -1,3 +1,13 @@
+2008-03-12  David Hyatt  <hyatt@apple.com>
+
+        Eliminate setTextMultiplier from the bridge.  Make Webkit just call setZoomFactor on the frame directly.
+
+        Reviewed by Tim H.
+
+        * WebCore.base.exp:
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm:
+
 2008-03-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler and Sam Weinig.

@@ -781,43 +781,32 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 #pragma mark _WebDocumentTextSizing PROTOCOL IMPLEMENTATION
 
-- (IBAction)_makeTextSmaller:(id)sender
+- (IBAction)_zoomOut:(id)sender
 {
     [PDFSubviewProxy zoomOut:sender];
 }
 
-- (IBAction)_makeTextLarger:(id)sender
+- (IBAction)_zoomIn:(id)sender
 {
     [PDFSubviewProxy zoomIn:sender];
 }
 
-- (IBAction)_makeTextStandardSize:(id)sender
+- (IBAction)_resetZoom:(id)sender
 {
     [PDFSubviewProxy setScaleFactor:1.0f];
 }
 
-// never sent because we do not track the common size factor
-- (void)_textSizeMultiplierChanged      { ASSERT_NOT_REACHED(); }
-
-- (BOOL)_tracksCommonSizeFactor
-{
-    // We keep our own scale factor instead of tracking the common one in the WebView for a couple reasons.
-    // First, PDFs tend to have visually smaller text because they are laid out for a printed page instead of
-    // the screen.  Second, the PDFView feature of AutoScaling means our scaling factor can be quiet variable.
-    return NO;
-}
-
-- (BOOL)_canMakeTextSmaller
+- (BOOL)_canZoomOut
 {
     return [PDFSubview canZoomOut];
 }
 
-- (BOOL)_canMakeTextLarger
+- (BOOL)_canZoomIn
 {
     return [PDFSubview canZoomIn];
 }
 
-- (BOOL)_canMakeTextStandardSize
+- (BOOL)_canResetZoom
 {
     return [PDFSubview scaleFactor] != 1.0;
 }

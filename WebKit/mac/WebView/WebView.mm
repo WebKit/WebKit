@@ -315,7 +315,8 @@ static int pluginDatabaseClientCount = 0;
 
     BOOL allowsUndo;
         
-    float textSizeMultiplier;
+    float zoomMultiplier;
+    BOOL zoomMultiplierIsTextOnly;
 
     NSString *applicationNameForUserAgent;
     String* userAgent;
@@ -378,8 +379,6 @@ static int pluginDatabaseClientCount = 0;
 + (void)_preflightSpellChecker;
 - (BOOL)_continuousCheckingAllowed;
 - (NSResponder *)_responderForResponderOperations;
-- (BOOL)_performTextSizingSelector:(SEL)sel withObject:(id)arg onTrackingDocs:(BOOL)doTrackingViews selForNonTrackingDocs:(SEL)testSel newScaleFactor:(float)newScaleFactor;
-- (void)_notifyTextSizeMultiplierChanged;
 @end
 
 @interface WebView (WebCallDelegateFunctions)
@@ -457,7 +456,8 @@ static BOOL grammarCheckingEnabled;
     if (!self)
         return nil;
     allowsUndo = YES;
-    textSizeMultiplier = 1;
+    zoomMultiplier = 1;
+    zoomMultiplierIsTextOnly = YES;
     dashboardBehaviorAllowWheelScrolling = YES;
     shouldCloseWithWindow = objc_collecting_enabled();
     continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
@@ -2217,17 +2217,109 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 
 - (void)setTextSizeMultiplier:(float)m
 {
-    // NOTE: This has no visible effect when viewing a PDF (see <rdar://problem/4737380>)
-    if (_private->textSizeMultiplier == m)
-        return;
-
-    _private->textSizeMultiplier = m;
-    [self _notifyTextSizeMultiplierChanged];
+    [self _setZoomMultiplier:m isTextOnly:YES];
 }
 
 - (float)textSizeMultiplier
 {
-    return _private->textSizeMultiplier;
+    return _private->zoomMultiplierIsTextOnly ? _private->zoomMultiplier : 1.0f;
+}
+
+- (void)_setZoomMultiplier:(float)m isTextOnly:(BOOL)isTextOnly
+{
+    // NOTE: This has no visible effect when viewing a PDF (see <rdar://problem/4737380>)
+    _private->zoomMultiplier = m;
+    _private->zoomMultiplierIsTextOnly = isTextOnly;
+    Frame* coreFrame = core([self mainFrame]);
+    if (coreFrame)
+        coreFrame->setZoomFactor((int)rint(m * 100), isTextOnly);
+}
+
+- (float)_zoomMultiplier:(BOOL)isTextOnly
+{
+    if (isTextOnly != _private->zoomMultiplierIsTextOnly)
+        return 1.0f;
+    return _private->zoomMultiplier;
+}
+
+- (float)_realZoomMultiplier
+{
+    return _private->zoomMultiplier;
+}
+
+- (BOOL)_realZoomMultiplierIsTextOnly
+{
+    return _private->zoomMultiplierIsTextOnly;
+}
+
+#define MinimumZoomMultiplier       0.5f
+#define MaximumZoomMultiplier       3.0f
+#define ZoomMultiplierRatio         1.2f
+
+- (BOOL)_canZoomOut:(BOOL)isTextOnly
+{
+    id docView = [[[self mainFrame] frameView] documentView];
+    if ([docView conformsToProtocol:@protocol(_WebDocumentZooming)]) {
+        id <_WebDocumentZooming> zoomingDocView = (id <_WebDocumentZooming>)docView;
+        return [zoomingDocView _canZoomOut];
+    }
+    return [self _zoomMultiplier:isTextOnly] / ZoomMultiplierRatio > MinimumZoomMultiplier;
+}
+
+
+- (BOOL)_canZoomIn:(BOOL)isTextOnly
+{
+    id docView = [[[self mainFrame] frameView] documentView];
+    if ([docView conformsToProtocol:@protocol(_WebDocumentZooming)]) {
+        id <_WebDocumentZooming> zoomingDocView = (id <_WebDocumentZooming>)docView;
+        return [zoomingDocView _canZoomIn];
+    }
+    return [self _zoomMultiplier:isTextOnly] * ZoomMultiplierRatio < MaximumZoomMultiplier;
+}
+
+- (IBAction)_zoomOut:(id)sender isTextOnly:(BOOL)isTextOnly
+{
+    id docView = [[[self mainFrame] frameView] documentView];
+    if ([docView conformsToProtocol:@protocol(_WebDocumentZooming)]) {
+        id <_WebDocumentZooming> zoomingDocView = (id <_WebDocumentZooming>)docView;
+        return [zoomingDocView _zoomOut:sender];
+    }
+    float newScale = [self _zoomMultiplier:isTextOnly] / ZoomMultiplierRatio;
+    if (newScale > MinimumZoomMultiplier)
+        [self _setZoomMultiplier:newScale isTextOnly:isTextOnly];
+}
+
+- (IBAction)_zoomIn:(id)sender isTextOnly:(BOOL)isTextOnly
+{
+    id docView = [[[self mainFrame] frameView] documentView];
+    if ([docView conformsToProtocol:@protocol(_WebDocumentZooming)]) {
+        id <_WebDocumentZooming> zoomingDocView = (id <_WebDocumentZooming>)docView;
+        return [zoomingDocView _zoomIn:sender];
+    }
+    float newScale = [self _zoomMultiplier:isTextOnly] * ZoomMultiplierRatio;
+    if (newScale < MaximumZoomMultiplier)
+        [self _setZoomMultiplier:newScale isTextOnly:isTextOnly];
+}
+
+- (BOOL)_canResetZoom:(BOOL)isTextOnly
+{
+    id docView = [[[self mainFrame] frameView] documentView];
+    if ([docView conformsToProtocol:@protocol(_WebDocumentZooming)]) {
+        id <_WebDocumentZooming> zoomingDocView = (id <_WebDocumentZooming>)docView;
+        return [zoomingDocView _canResetZoom];
+    }
+    return [self _zoomMultiplier:isTextOnly] != 1.0f;
+}
+
+- (IBAction)_resetZoom:(id)sender isTextOnly:(BOOL)isTextOnly
+{
+    id docView = [[[self mainFrame] frameView] documentView];
+    if ([docView conformsToProtocol:@protocol(_WebDocumentZooming)]) {
+        id <_WebDocumentZooming> zoomingDocView = (id <_WebDocumentZooming>)docView;
+        return [zoomingDocView _resetZoom:sender];
+    }
+    if ([self _zoomMultiplier:isTextOnly] != 1.0f)
+        [self _setZoomMultiplier:1.0f isTextOnly:isTextOnly];
 }
 
 - (void)setApplicationNameForUserAgent:(NSString *)applicationName
@@ -2718,34 +2810,36 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [[self mainFrame] reload];
 }
 
-#define MinimumTextSizeMultiplier       0.5f
-#define MaximumTextSizeMultiplier       3.0f
-#define TextSizeMultiplierRatio         1.2f
-
+// FIXME: This code should move into WebCore so that it is not duplicated in each WebKit.
+// (This includes canMakeTextSmaller/Larger, makeTextSmaller/Larger, and canMakeTextStandardSize/makeTextStandardSize)
 - (BOOL)canMakeTextSmaller
 {
-    BOOL canShrinkMore = _private->textSizeMultiplier/TextSizeMultiplierRatio > MinimumTextSizeMultiplier;
-    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:canShrinkMore selForNonTrackingDocs:@selector(_canMakeTextSmaller) newScaleFactor:0];
-}
-
-- (BOOL)canMakeTextLarger
-{
-    BOOL canGrowMore = _private->textSizeMultiplier*TextSizeMultiplierRatio < MaximumTextSizeMultiplier;
-    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:canGrowMore selForNonTrackingDocs:@selector(_canMakeTextLarger) newScaleFactor:0];
+    return [self _canZoomOut:YES];
 }
 
 - (IBAction)makeTextSmaller:(id)sender
 {
-    float newScale = _private->textSizeMultiplier / TextSizeMultiplierRatio;
-    BOOL canShrinkMore = newScale > MinimumTextSizeMultiplier;
-    [self _performTextSizingSelector:@selector(_makeTextSmaller:) withObject:sender onTrackingDocs:canShrinkMore selForNonTrackingDocs:@selector(_canMakeTextSmaller) newScaleFactor:newScale];
+    return [self _zoomOut:sender isTextOnly:YES];
+}
+
+- (BOOL)canMakeTextLarger
+{
+    return [self _canZoomIn:YES];
 }
 
 - (IBAction)makeTextLarger:(id)sender
 {
-    float newScale = _private->textSizeMultiplier*TextSizeMultiplierRatio;
-    BOOL canGrowMore = newScale < MaximumTextSizeMultiplier;
-    [self _performTextSizingSelector:@selector(_makeTextLarger:) withObject:sender onTrackingDocs:canGrowMore selForNonTrackingDocs:@selector(_canMakeTextLarger) newScaleFactor:newScale];
+    return [self _zoomIn:sender isTextOnly:YES];
+}
+
+- (BOOL)canMakeTextStandardSize
+{
+    return [self _canResetZoom:YES];
+}
+
+- (IBAction)makeTextStandardSize:(id)sender
+{
+   return [self _resetZoom:sender isTextOnly:YES];
 }
 
 - (IBAction)toggleSmartInsertDelete:(id)sender
@@ -2769,18 +2863,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         return YES;
     }
     return NO;
-}
-
-- (BOOL)canMakeTextStandardSize
-{
-    BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0f;
-    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize) newScaleFactor:0.0f];
-}
-
-- (IBAction)makeTextStandardSize:(id)sender
-{
-    BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0f;
-    [self _performTextSizingSelector:@selector(_makeTextStandardSize:) withObject:sender onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize) newScaleFactor:1.0f];
 }
 
 #define VALIDATE(name) \
@@ -3106,6 +3188,46 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)setAllowsUndo:(BOOL)flag
 {
     _private->allowsUndo = flag;
+}
+
+- (void)setPageSizeMultiplier:(float)m
+{
+    [self _setZoomMultiplier:m isTextOnly:NO];
+}
+
+- (float)pageSizeMultiplier
+{
+    return !_private->zoomMultiplierIsTextOnly ? _private->zoomMultiplier : 1.0f;
+}
+
+- (BOOL)canZoomPageIn
+{
+    return [self _canZoomIn:NO];
+}
+
+- (IBAction)zoomPageIn:(id)sender
+{
+    return [self _zoomIn:sender isTextOnly:NO];
+}
+
+- (BOOL)canZoomPageOut
+{
+    return [self _canZoomOut:NO];
+}
+
+- (IBAction)zoomPageOut:(id)sender
+{
+    return [self _zoomOut:sender isTextOnly:NO];
+}
+
+- (BOOL)canResetPageZoom
+{
+    return [self _canResetZoom:NO];
+}
+
+- (IBAction)resetPageZoom:(id)sender
+{
+    return [self _resetZoom:sender isTextOnly:NO];
 }
 
 @end
@@ -3973,68 +4095,6 @@ static WebFrameView *containingFrameView(NSView *view)
 
     (void)HISearchWindowShow((CFStringRef)selectedString, kNilOptions);
 }
-
-// Slightly funky method that lets us have one copy of the logic for finding docViews that can do
-// text sizing.  It returns whether it found any "suitable" doc views.  It sends sel to any suitable
-// doc views, or if sel==0 we do nothing to them.  For doc views that track our size factor, they are
-// suitable if doTrackingViews==YES (which in practice means that our size factor isn't at its max or
-// min).  For doc views that don't track it, we send them testSel to determine suitablility.  If we
-// do find any suitable tracking doc views and newScaleFactor!=0, we will set the common scale factor
-// to that new factor before we send sel to any of them. 
-- (BOOL)_performTextSizingSelector:(SEL)sel withObject:(id)arg onTrackingDocs:(BOOL)doTrackingViews selForNonTrackingDocs:(SEL)testSel newScaleFactor:(float)newScaleFactor
-{
-    if ([[self mainFrame] _dataSource] == nil)
-        return NO;
-    
-    BOOL foundSome = NO;
-    NSArray *docViews = [[self mainFrame] _documentViews];
-    for (int i = [docViews count]-1; i >= 0; i--) {
-        id docView = [docViews objectAtIndex:i];
-        if ([docView conformsToProtocol:@protocol(_WebDocumentTextSizing)]) {
-            id <_WebDocumentTextSizing> sizingDocView = (id <_WebDocumentTextSizing>)docView;
-            BOOL isSuitable;
-            if ([sizingDocView _tracksCommonSizeFactor]) {
-                isSuitable = doTrackingViews;
-                if (isSuitable && newScaleFactor != 0)
-                    _private->textSizeMultiplier = newScaleFactor;
-            } else {
-                // Incantation to perform a selector returning a BOOL.
-                isSuitable = ((BOOL(*)(id, SEL))objc_msgSend)(sizingDocView, testSel);
-            }
-            
-            if (isSuitable) {
-                if (sel != 0) {
-                    foundSome = YES;
-                    [sizingDocView performSelector:sel withObject:arg];
-                } else {
-                    // if we're just called for the benefit of the return value, we can return at first match
-                    return YES;
-                }
-            }
-        }
-    }
-    
-    return foundSome;
-}
-
-- (void)_notifyTextSizeMultiplierChanged
-{
-    if ([[self mainFrame] _dataSource] == nil)
-        return;
-
-    NSArray *docViews = [[self mainFrame] _documentViews];
-    for (int i = [docViews count]-1; i >= 0; i--) {
-        id docView = [docViews objectAtIndex:i];
-        if ([docView conformsToProtocol:@protocol(_WebDocumentTextSizing)] == NO)
-            continue;
-
-        id <_WebDocumentTextSizing> sizingDocView = (id <_WebDocumentTextSizing>)docView;
-        if ([sizingDocView _tracksCommonSizeFactor])
-            [sizingDocView _textSizeMultiplierChanged];
-    }
-
-}
-
 @end
 
 @implementation WebView (WebViewInternal)

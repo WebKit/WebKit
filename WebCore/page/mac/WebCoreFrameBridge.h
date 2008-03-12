@@ -91,8 +91,6 @@
 - (void)unmarkAllTextMatches;
 - (NSArray *)rectsForTextMatches;
 
-- (void)setTextSizeMultiplier:(float)multiplier;
-
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string;
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture;
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)string;

@@ -121,6 +121,17 @@ typedef WebCore::Page WebCorePage;
 - (void)_registerForIconNotification:(BOOL)listen;
 - (void)_dispatchDidReceiveIconFromWebFrame:(WebFrame *)webFrame;
 
+- (void)_setZoomMultiplier:(float)m isTextOnly:(BOOL)isTextOnly;
+- (float)_zoomMultiplier:(BOOL)isTextOnly;
+- (float)_realZoomMultiplier;
+- (BOOL)_realZoomMultiplierIsTextOnly;
+- (BOOL)_canZoomOut:(BOOL)isTextOnly;
+- (BOOL)_canZoomIn:(BOOL)isTextOnly;
+- (IBAction)_zoomOut:(id)sender isTextOnly:(BOOL)isTextOnly;
+- (IBAction)_zoomIn:(id)sender isTextOnly:(BOOL)isTextOnly;
+- (BOOL)_canResetZoom:(BOOL)isTextOnly;
+- (IBAction)_resetZoom:(id)sender isTextOnly:(BOOL)isTextOnly;
+
 @end
 
 typedef struct _WebResourceDelegateImplementationCache {

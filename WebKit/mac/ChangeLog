@@ -1,3 +1,60 @@
+2008-03-11  David Hyatt  <hyatt@apple.com>
+
+        This patch prepares Mac WebKit to handle two different zooming modes (full page zoom and text only zoom).
+        New API is added that is parallel to the text zoom public API.  You can get/set a pageSizeMultiplier and you
+        can zoom the page in, out or reset it to the standard size.
+
+        In the implementation only one zoom factor is stored, and setting one multiplier will shift you into that mode
+        and set the common zoom factor.  In other words you can't combine text zoom and page zoom.  One will always
+        win.
+
+        Reviewed by Tim H.
+
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge finishInitializingWithPage:frameName:WebCore::frameView:ownerElement:]):
+        * WebView/WebDocumentInternal.h:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView viewDidMoveToSuperview]):
+        * WebView/WebPDFView.h:
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView _zoomOut:]):
+        (-[WebPDFView _zoomIn:]):
+        (-[WebPDFView _resetZoom:]):
+        (-[WebPDFView _canZoomOut]):
+        (-[WebPDFView _canZoomIn]):
+        (-[WebPDFView _canResetZoom]):
+        * WebView/WebView.mm:
+        (-[WebViewPrivate init]):
+        (-[WebView setTextSizeMultiplier:]):
+        (-[WebView textSizeMultiplier]):
+        (-[WebView _setZoomMultiplier:isTextOnly:]):
+        (-[WebView _zoomMultiplier:]):
+        (-[WebView _realZoomMultiplier]):
+        (-[WebView _realZoomMultiplierIsTextOnly]):
+        (-[WebView _canZoomOut:]):
+        (-[WebView _canZoomIn:]):
+        (-[WebView _zoomOut:isTextOnly:]):
+        (-[WebView _zoomIn:isTextOnly:]):
+        (-[WebView _canResetZoom:]):
+        (-[WebView _resetZoom:isTextOnly:]):
+        (-[WebView canMakeTextSmaller]):
+        (-[WebView makeTextSmaller:]):
+        (-[WebView canMakeTextLarger]):
+        (-[WebView makeTextLarger:]):
+        (-[WebView canMakeTextStandardSize]):
+        (-[WebView makeTextStandardSize:]):
+        (-[WebView setPageSizeMultiplier:]):
+        (-[WebView pageSizeMultiplier]):
+        (-[WebView canZoomPageIn]):
+        (-[WebView zoomPageIn:]):
+        (-[WebView canZoomPageOut]):
+        (-[WebView zoomPageOut:]):
+        (-[WebView canResetPageZoom]):
+        (-[WebView resetPageZoom:]):
+        (-[WebView _searchWithSpotlightFromMenu:]):
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+
 2008-03-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler and Sam Weinig.
