@@ -1,5 +1,16 @@
 2008-03-11  Darin Adler  <darin@apple.com>
 
+        - restored some code I removed in the Range change; this code can't go
+          until the rest of the Range fix is in
+
+        * dom/Range.cpp:
+        (WebCore::Range::commonAncestorContainer): Added back the check for 0
+        that I removed erroneously in the Range patch.
+        (WebCore::Range::processContents): Left in assertions I used to debug
+        this.
+
+2008-03-11  Darin Adler  <darin@apple.com>
+
         - fix Release build
 
         * platform/mac/ScrollViewMac.mm:

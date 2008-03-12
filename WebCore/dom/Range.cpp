@@ -158,7 +158,10 @@ Node* Range::commonAncestorContainer(ExceptionCode& ec) const
         return 0;
     }
 
-    return commonAncestorContainer(m_start.container.get(), m_end.container.get());
+    Node* commonAncestor = commonAncestorContainer(m_start.container.get(), m_end.container.get());
+    if (!commonAncestor) // should never happen 
+        ec = WRONG_DOCUMENT_ERR; 
+    return commonAncestor;
 }
 
 Node* Range::commonAncestorContainer(Node* containerA, Node* containerB)
@@ -625,6 +628,7 @@ PassRefPtr<DocumentFragment> Range::processContents ( ActionType action, Excepti
     Node* commonRoot = commonAncestorContainer(ec);
     if (ec)
         return 0;
+    ASSERT(commonRoot);
 
     // what is the highest node that partially selects the start of the range?
     Node* partialStart = 0;
