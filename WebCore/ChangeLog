@@ -1,5 +1,12 @@
 2008-03-11  Darin Adler  <darin@apple.com>
 
+        - fix Release build
+
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::setContentsPos): Don't use NSMakePoint.
+
+2008-03-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
 
         - simplify Mac code for ScrollView, since it's used only for FrameView

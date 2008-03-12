@@ -150,7 +150,8 @@ void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
 void ScrollView::setContentsPos(int x, int y)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [documentView() scrollPoint:NSMakePoint(max(0, x), max(0, y))];
+    NSPoint tempPoint = { max(0, x), max(0, y) }; // Don't use NSMakePoint to work around 4213314.
+    [documentView() scrollPoint:tempPoint];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -266,7 +267,7 @@ IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if (NSView* documentView = this->documentView()) {
-        NSPoint tempPoint = { contentsPoint.x(), contentsPoint.y() }; // workaround for 4213314
+        NSPoint tempPoint = { contentsPoint.x(), contentsPoint.y() }; // Don't use NSMakePoint to work around 4213314.
         return IntPoint([documentView convertPoint:tempPoint toView:nil]);
     }
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -277,7 +278,7 @@ IntPoint ScrollView::windowToContents(const IntPoint& point) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if (NSView* documentView = this->documentView()) {
-        NSPoint tempPoint = { point.x(), point.y() }; // workaround for 4213314
+        NSPoint tempPoint = { point.x(), point.y() }; // Don't use NSMakePoint to work around 4213314.
         return IntPoint([documentView convertPoint:tempPoint fromView:nil]);
     }
     END_BLOCK_OBJC_EXCEPTIONS;
