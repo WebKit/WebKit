@@ -328,7 +328,15 @@ WebInspector.changeFocus = function(event)
 WebInspector.documentClick = function(event)
 {
     var anchor = event.target.firstParentOrSelfWithNodeName("a");
-    if (!anchor || !anchor.hasStyleClass("webkit-html-resource-link"))
+    if (!anchor)
+        return;
+
+    if (anchor.followOnAltClick && !event.altKey) {
+        event.preventDefault();
+        return;
+    }
+
+    if (!anchor.hasStyleClass("webkit-html-resource-link"))
         return;
 
     if (WebInspector.showResourceForURL(anchor.getAttribute("href"))) {

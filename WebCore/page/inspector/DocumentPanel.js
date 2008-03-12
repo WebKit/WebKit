@@ -769,6 +769,37 @@ WebInspector.DOMNodeTreeElement.prototype = {
     onattach: function()
     {
         this.listItemElement.addEventListener("mousedown", this.onmousedown.bind(this), false);
+
+        this._makeURLsActivateOnModifiedClick();
+    },
+
+    _makeURLsActivateOnModifiedClick: function()
+    {
+        var links = this.listItemElement.querySelectorAll("li > .webkit-html-tag > .webkit-html-attribute > .webkit-html-external-link, li > .webkit-html-tag > .webkit-html-attribute > .webkit-html-resource-link");
+        if (!links)
+            return;
+
+        var isMac = InspectorController.platform().indexOf("mac") == 0;
+
+        for (var i = 0; i < links.length; ++i) {
+            var link = links[i];
+            var isExternal = link.hasStyleClass("webkit-html-external-link");
+            var href = link.getAttribute("href");
+            var title;
+            if (isMac) {
+                if (isExternal)
+                    title = WebInspector.UIString("Option-click to visit %s.", href);
+                else
+                    title = WebInspector.UIString("Option-click to show %s.", href);
+            } else {
+                if (isExternal)
+                    title = WebInspector.UIString("Alt-click to visit %s.", href);
+                else
+                    title = WebInspector.UIString("Alt-click to show %s.", href);
+            }
+            link.setAttribute("title", title);
+            link.followOnAltClick = true;
+        }
     },
 
     onpopulate: function()
@@ -811,6 +842,7 @@ WebInspector.DOMNodeTreeElement.prototype = {
 
     onselect: function()
     {
+        this._selectedByCurrentMouseDown = true;
         this.treeOutline.panel.focusedDOMNode = this.representedObject;
         this.updateSelection();
     },
@@ -820,6 +852,13 @@ WebInspector.DOMNodeTreeElement.prototype = {
         if (this._editing)
             return;
 
+        if (this._selectedByCurrentMouseDown)
+            delete this._selectedByCurrentMouseDown;
+        else if (this._startEditing(event)) {
+            event.preventDefault();
+            return;
+        }
+
         // Prevent selecting the nearest word on double click.
         if (event.detail >= 2)
             event.preventDefault();
@@ -827,7 +866,7 @@ WebInspector.DOMNodeTreeElement.prototype = {
 
     ondblclick: function(treeElement, event)
     {
-        if (this._startEditing(event))
+        if (this._editing)
             return;
 
         var panel = this.treeOutline.panel;
@@ -840,6 +879,9 @@ WebInspector.DOMNodeTreeElement.prototype = {
 
     _startEditing: function(event)
     {
+        if (this.treeOutline.panel.focusedDOMNode != this.representedObject)
+            return;
+
         if (this.representedObject.nodeType != Node.ELEMENT_NODE && this.representedObject.nodeType != Node.TEXT_NODE)
             return false;
 
@@ -849,18 +891,22 @@ WebInspector.DOMNodeTreeElement.prototype = {
 
         var attribute = event.target.firstParentOrSelfWithClass("webkit-html-attribute");
         if (attribute)
-            return this._startEditingAttribute(attribute);
+            return this._startEditingAttribute(attribute, event);
 
         return false;
     },
 
-    _startEditingAttribute: function(attribute)
+    _startEditingAttribute: function(attribute, event)
     {
         if (WebInspector.isBeingEdited(attribute))
             return true;
 
         var attributeNameElement = attribute.getElementsByClassName("webkit-html-attribute-name")[0];
         if (!attributeNameElement)
+            return false;
+
+        var isURL = event.target.firstParentOrSelfWithClass("webkit-html-external-link") || event.target.firstParentOrSelfWithClass("webkit-html-resource-link");
+        if (isURL && event.altKey)
             return false;
 
         var attributeName = attributeNameElement.innerText;
@@ -957,6 +1003,7 @@ WebInspector.DOMNodeTreeElement.prototype = {
         this.title = nodeTitleInfo.call(this.representedObject, this.hasChildren, WebInspector.linkifyURL).title;
         delete this.selectionElement;
         this.updateSelection();
+        this._makeURLsActivateOnModifiedClick();
     },
 }
 

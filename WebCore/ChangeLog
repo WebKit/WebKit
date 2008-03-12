@@ -1,3 +1,49 @@
+2008-03-12  Adam Roben  <aroben@apple.com>
+
+        Part of Bug 17224: DOM nodes/attributes should be editable
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17224>
+        <rdar://problem/5732825>
+
+        We now start editing if the user single-clicks on an attribute,
+        attribute value, or text node while the parent element is selected.
+        Previously, we started editing on double-click regardless of the
+        selection state of the element.
+
+        URLs in the DOM tree are now followed on Alt/Option-click, rather than
+        on just click.
+
+        Reviewed by Tim.
+
+        * English.lproj/InspectorLocalizedStrings.js: Added four new localized
+        strings.
+        * page/inspector/DocumentPanel.js:
+        (WebInspector.DOMNodeTreeElement.onattach): Call new
+        _makeURLSActivateOnModifiedClick.
+        (WebInspector.DOMNodeTreeElement._makeURLsActivateOnModifiedClick):
+        Added. Changes the tooltip of each link in this element to indicate
+        that Alt/Option-click will follow the URL, and sets the
+        followOnAltClick property on each link.
+        (WebInspector.DOMNodeTreeElement.onselect): Mark that we're being
+        selected.
+        (WebInspector.DOMNodeTreeElement.onmousedown): If we're not currently
+        being selected, start editing.
+        (WebInspector.DOMNodeTreeElement.ondblclick): We no longer start
+        editing here. We block re-rooting of the tree if we're currently
+        editing.
+        (WebInspector.DOMNodeTreeElement._startEditing):
+          - Don't do anything if we're not focused
+          - Pass the event down to _startEditingAttribute.
+        (WebInspector.DOMNodeTreeElement._startEditingAttribute): Don't do
+        anything if the event target is a URL and the Alt/Option key is
+        pressed -- in this case we want to follow the link.
+        (WebInspector.DOMNodeTreeElement._updateTitle): Call
+        _makeURLsActivateOnClick again since the anchor elements have all been
+        recreated.
+        * page/inspector/inspector.js:
+        (WebInspector.documentClick): If the anchor as a followOnAltClick
+        property and the Alt/Option key is not pressed, do nothing.
+
 2008-03-12  Ada Chan  <adachan@apple.com>
 
         Fixed the initial value of zoom factor.
