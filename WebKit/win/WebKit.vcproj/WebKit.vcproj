@@ -115,6 +115,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include\WebKit&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\icu&quot;;&quot;$(WebKitLibrariesDir)\Include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitOutputDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)\..\WebCoreSupport&quot;;&quot;$(IntDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;"
 				PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;ENABLE_CROSS_DOCUMENT_MESSAGING;ENABLE_XSLT;ENABLE_XPATH;ENABLE_SVG;FRAMEWORK_NAME=WebKit"
 				UsePrecompiledHeader="2"
@@ -139,6 +140,8 @@
 				AdditionalLibraryDirectories=""
 				ModuleDefinitionFile="WebKit$(WebKitDLLConfigSuffix).def"
 				DelayLoadDLLs="comdlg32.dll;usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;QTMovieWin$(WebKitConfigSuffix).dll"
+				LinkTimeCodeGeneration="4"
+				ProfileGuidedDatabase="$(TargetName).pgd"
 			/>
 			<Tool
 				Name="VCALinkTool"

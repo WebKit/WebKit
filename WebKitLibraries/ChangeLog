@@ -1,3 +1,11 @@
+2008-03-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Disable two PGO/LTCG specific warnings.
+        
+        Reviewed by Oliver.
+
+        * win/tools/vsprops/common.vsprops:
+
 2008-02-29  Mark Rowe  <mrowe@apple.com>
 
         Update Tiger version of WebKitSystemInterface to match r30690.

@@ -441,6 +441,14 @@
 			<File
 				RelativePath="..\..\kjs\nodes.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="false"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\kjs\nodes.h"
@@ -604,6 +612,14 @@
 				<File
 					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\grammar.cpp"
 					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							WholeProgramOptimization="false"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\grammar.h"

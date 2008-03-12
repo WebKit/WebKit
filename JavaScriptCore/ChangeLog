@@ -1,3 +1,15 @@
+2008-03-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Disable LTCG/PGO for grammar.cpp and nodes.cpp.
+        PGO on these files causes us to hang.
+        
+        Copy newer vsprops files from relative WebKitLibraries path to environment variable based path.
+        
+        Reviewed by Oliver.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+
 2008-03-10  Darin Adler  <darin@apple.com>
 
         - Windows build fix
