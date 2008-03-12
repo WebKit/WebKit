@@ -972,11 +972,16 @@ void FrameLoader::write(const char* str, int len, bool flush)
     if (!m_decoder) {
         Settings* settings = m_frame->settings();
         m_decoder = new TextResourceDecoder(m_responseMIMEType, settings ? settings->defaultTextEncodingName() : String());
-        if (!m_encoding.isNull())
+        if (m_encoding.isNull()) {
+            Frame* parentFrame = m_frame->tree()->parent();
+            SecurityOrigin::Reason reason;
+            if (parentFrame && parentFrame->document()->securityOrigin()->canAccess(m_frame->document()->securityOrigin(), reason))
+                m_decoder->setEncoding(parentFrame->document()->inputEncoding(), TextResourceDecoder::DefaultEncoding);
+        } else {
             m_decoder->setEncoding(m_encoding,
                 m_encodingWasChosenByUser ? TextResourceDecoder::UserChosenEncoding : TextResourceDecoder::EncodingFromHTTPHeader);
-        if (m_frame->document())
-            m_frame->document()->setDecoder(m_decoder.get());
+        }
+        m_frame->document()->setDecoder(m_decoder.get());
     }
 
     String decoded = m_decoder->decode(str, len);

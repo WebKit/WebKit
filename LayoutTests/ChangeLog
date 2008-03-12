@@ -1,3 +1,20 @@
+2008-03-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5640615> REGRESSION (Safari 2-3): Changing subframe encoding rules broke
+        some sites.
+
+        * fast/encoding/frame-default-enc-expected.txt:
+        * fast/encoding/frame-default-enc.html:
+        Reversed success and failure.
+
+        * http/tests/misc/frame-default-enc-different-domain-expected.txt: Added.
+        * http/tests/misc/frame-default-enc-different-domain.html: Copied from LayoutTests/fast/encoding/frame-default-enc.html.
+        * http/tests/misc/frame-default-enc-same-domain-expected.txt: Added.
+        * http/tests/misc/frame-default-enc-same-domain.html: Copied from LayoutTests/fast/encoding/frame-default-enc.html.
+        * http/tests/misc/resources/frame-default-enc-frame.html: Copied from LayoutTests/fast/encoding/resources/frame-default-enc-frame.html.
+
 2008-03-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.

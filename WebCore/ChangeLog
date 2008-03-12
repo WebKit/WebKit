@@ -1,3 +1,24 @@
+2008-03-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5640615> REGRESSION (Safari 2-3): Changing subframe encoding rules broke
+        some sites.
+
+        Other browsers' behavior keeps changing; let's implement what Firefox and Opera do now:
+        if the frame and subframe belong to the same site, then the encoding is inherited from parent
+        frame to subframe. Otherwise, it is not.
+
+        Always inheriting the encoding would cause a security problem.
+
+        Tests: http/tests/misc/frame-default-enc-different-domain.html
+               http/tests/misc/frame-default-enc-same-domain.html
+               fast/encoding/frame-default-enc.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::write): Also removed a check for m_frame->document() being non-null -
+        this function also has code that uses it without checking, so it must be safe.
+
 2008-03-12  Mark Rowe  <mrowe@apple.com>
 
         Gtk build fix.

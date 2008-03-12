@@ -10,8 +10,7 @@ if (window.layoutTestController) {
 
 window.done = function(charset) {
     document.open();
-    document.write("<body><p>The following line should be your browser's default encoding, and not x-mac-cyrillic.</p>");
-    document.write("<p>" + charset + "</p>");
+    document.write("<p>" + ((charset == "x-mac-cyrillic") ? "PASS" : "FAIL") + "</p>");
     <!-- It's unlikely that anyone has x-mac-cyrillic as default -->
 
     document.close();
