@@ -1,3 +1,19 @@
+2008-03-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver.
+        
+        <rdar://problem/5770834> Crash at InsertTextCommand::prepareForTextInsertion() doing RemoveFormat in a certain list
+        
+        Fixes some (but not all) of the instances of:
+        <rdar://problem/5659795> CrashTracer: [REGRESSION] 187 crashes in Safari at com.apple.WebCore: WebCore::InsertTextCommand::prepareForTextInsertion + 241
+        <rdar://problem/5779631> CrashTracer: [USER] 25 crashes in Mail at WebCore::InsertTextCommand::prepareForTextInsertion
+
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply): applyStyle may have destroyed content that held
+        the old endingSelection(), so we must recompute it.  Added a FIXME.  Added a few comments.
+        * editing/RemoveFormatCommand.cpp:
+        (WebCore::RemoveFormatCommand::doApply): Added a FIXME.
+
 2008-03-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

@@ -1,3 +1,12 @@
+2008-03-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver.
+        
+        <rdar://problem/5770834> Crash at InsertTextCommand::prepareForTextInsertion() doing RemoveFormat in a certain list
+
+        * editing/execCommand/5770834-1-expected.txt: Added.
+        * editing/execCommand/5770834-1.html: Added.
+
 2008-03-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

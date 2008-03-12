@@ -70,6 +70,7 @@ void RemoveFormatCommand::doApply()
     // the removed anchor, but we don't want that behavior here. 
     frame->editor()->setRemovedAnchor(0);
     // Insert the content with the default style.
+    // See <rdar://problem/5794382> RemoveFormat doesn't always reset text alignment
     frame->setTypingStyle(defaultStyle.get());
     
     inputText(string, true);

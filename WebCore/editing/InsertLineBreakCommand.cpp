@@ -170,10 +170,19 @@ void InsertLineBreakCommand::doApply()
     CSSMutableStyleDeclaration* typingStyle = document()->frame()->typingStyle();
     
     if (typingStyle && typingStyle->length() > 0) {
-        Selection selectionBeforeStyle = endingSelection();
+        // Apply the typing style to the inserted line break, so that if the selection
+        // leaves and then comes back, new input will have the right style.
+        // FIXME: We shouldn't always apply the typing style to the line break here,
+        // see <rdar://problem/5794462>.
         applyStyle(typingStyle, Position(nodeToInsert.get(), 0),
-            Position(nodeToInsert.get(), maxDeepOffset(nodeToInsert.get())));
-        setEndingSelection(selectionBeforeStyle);
+                                Position(nodeToInsert.get(), maxDeepOffset(nodeToInsert.get())));
+        // Even though this applyStyle operates on a Range, it still sets an endingSelection().
+        // It tries to set a Selection around the content it operated on. So, that Selection
+        // will either (a) select the line break we inserted, or it will (b) be a caret just 
+        // before the line break (if the line break is at the end of a block it isn't selectable).
+        // So, this next call sets the endingSelection() to a caret just after the line break 
+        // that we inserted, or just before it if it's at the end of a block.
+        setEndingSelection(endingSelection().visibleEnd());
     }
 
     rebalanceWhitespace();
