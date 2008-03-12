@@ -5,6 +5,7 @@
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2007 Pioneer Research Center USA, Inc.
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -30,8 +31,14 @@
 #include "GlyphBuffer.h"
 #include "FontDescription.h"
 #include <cairo.h>
+#if defined(USE_FREETYPE)
 #include <cairo-ft.h>
 #include <fontconfig/fcfreetype.h>
+#elif defined(USE_PANGO)
+#include <pango/pangocairo.h>
+#else
+#error "Must defined a font backend"
+#endif
 
 namespace WebCore {
 
@@ -39,12 +46,26 @@ class FontPlatformData {
 public:
     class Deleted {};
     FontPlatformData(Deleted)
+#if defined(USE_FREETYPE)
         : m_pattern(reinterpret_cast<FcPattern*>(-1))
+#elif defined(USE_PANGO)
+        : m_context(0)
+        , m_font(reinterpret_cast<PangoFont*>(-1))
+#else
+#error "Must defined a font backend"
+#endif
         , m_scaledFont(0)
         { }
 
     FontPlatformData()
+#if defined(USE_FREETYPE)
         : m_pattern(0)
+#elif defined(USE_PANGO)
+        : m_context(0)
+        , m_font(0)
+#else
+#error "Must defined a font backend"
+#endif
         , m_scaledFont(0)
         { }
 
@@ -65,12 +86,22 @@ public:
     unsigned hash() const
     {
         uintptr_t hashCodes[1] = { reinterpret_cast<uintptr_t>(m_scaledFont) };
-        return StringImpl::computeHash( reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
+        return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
     }
 
     bool operator==(const FontPlatformData&) const;
 
+#if defined(USE_FREETYPE)
     FcPattern* m_pattern;
+#elif defined(USE_PANGO)
+    static PangoFontMap* m_fontMap;
+    static GHashTable* m_hashTable;
+
+    PangoContext* m_context;
+    PangoFont* m_font;
+#else
+#error "Must defined a font backend"
+#endif
     FontDescription m_fontDescription;
     cairo_scaled_font_t* m_scaledFont;
 };

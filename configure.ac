@@ -394,6 +394,19 @@ AC_ARG_ENABLE(fast_malloc,
               [],[if test "$enable_debug" = "yes"; then enable_fast_malloc="no"; else enable_fast_malloc="yes"; fi])
 AC_MSG_RESULT([$enable_fast_malloc])
 
+# determine the font backend
+AC_MSG_CHECKING([the font backend to use])
+AC_ARG_WITH(font_backend,
+            AC_HELP_STRING([--with-font-backend=@<:@freetype/pango@:>@],
+                           [Select font backend [default=freetype]]),
+            [],[with_font_backend="freetype"])
+
+case "$with_font_backend" in
+     freetype|pango) ;;
+     *) AC_MSG_ERROR([Invalid font backend: must be freetype or pango.]) ;;
+esac
+AC_MSG_RESULT([$with_font_backend])
+
 # Add '-g' flag to gcc if it's debug build
 if test "$enable_debug" = "yes"; then
    CXXFLAGS="$CXXFLAGS -g"
@@ -478,6 +491,10 @@ AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_target" = "directfb"])
 AM_CONDITIONAL([USE_CURL], [test "$with_http_backend" = "curl"])
 AM_CONDITIONAL([USE_SOUP], [test "$with_http_backend" = "soup"])
 
+# Font backend conditionals
+AM_CONDITIONAL([USE_FREETYPE], [test "$with_font_backend" = "freetype"])
+AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
+
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
 AM_CONDITIONAL([ENABLE_CROSS_DOCUMENT_MESSAGING],[test "$enable_cross_document_messaging" = "yes"])
@@ -513,6 +530,7 @@ Build configuration:
  Code coverage support             : $enable_coverage
  Unicode backend                   : $unicode_backend
  HTTP backend                      : $with_http_backend
+ Font backend                      : $with_font_backend
  Optimized memory allocator        : $enable_fast_malloc
 Features:
  HTML5 cross-document messaging    : $enable_cross_document_messaging

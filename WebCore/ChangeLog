@@ -1,3 +1,41 @@
+2008-03-12  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15229
+
+        Add Pango font backend.
+
+        * GNUmakefile.am:
+        * platform/graphics/gtk/FontCacheGtk.cpp:
+        (WebCore::FontCache::fontExists):
+        * platform/graphics/gtk/FontCustomPlatformDataPango.cpp: Added.
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        (WebCore::releaseData):
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/gtk/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/gtk/FontPlatformDataPango.cpp: Added.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::init):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        (WebCore::FontPlatformData::isFixedPitch):
+        (WebCore::FontPlatformData::setFont):
+        (WebCore::FontPlatformData::operator==):
+        * platform/graphics/gtk/GlyphPageTreeNodePango.cpp: Added.
+        (WebCore::pango_font_get_glyph):
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/gtk/SimpleFontDataPango.cpp: Added.
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::smallCapsFontData):
+        (WebCore::SimpleFontData::containsCharacters):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        (WebCore::SimpleFontData::setFont):
+
 2008-03-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver.

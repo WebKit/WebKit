@@ -980,11 +980,7 @@ webkitgtk_sources += \
 	WebCore/platform/gtk/FileChooserGtk.cpp \
 	WebCore/platform/gtk/FileSystemGtk.cpp \
 	WebCore/platform/graphics/gtk/FontCacheGtk.cpp \
-	WebCore/platform/graphics/gtk/FontCustomPlatformData.cpp \
 	WebCore/platform/graphics/gtk/FontGtk.cpp \
-	WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp \
-	WebCore/platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp \
-	WebCore/platform/graphics/gtk/SimpleFontDataGtk.cpp \
 	WebCore/platform/gtk/KeyEventGtk.cpp \
 	WebCore/platform/gtk/Language.cpp \
 	WebCore/platform/gtk/LocalizedStringsGtk.cpp \
@@ -1050,6 +1046,34 @@ webcore_cppflags += \
 webcore_sources += \
 	WebCore/platform/network/soup/ResourceHandleSoup.cpp
 endif
+
+# ---
+# Freetype font backend
+# ---
+if USE_FREETYPE
+webkitgtk_cppflags += \
+	-DUSE_FREETYPE=1
+
+webkitgtk_sources += \
+	WebCore/platform/graphics/gtk/FontCustomPlatformData.cpp \
+	WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp \
+	WebCore/platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp \
+	WebCore/platform/graphics/gtk/SimpleFontDataGtk.cpp
+endif # END USE_FREETYPE
+
+# ---
+# Pango font backend
+# ---
+if USE_PANGO
+webkitgtk_cppflags += \
+	-DUSE_PANGO=1
+
+webkitgtk_sources += \
+	WebCore/platform/graphics/gtk/FontCustomPlatformDataPango.cpp \
+	WebCore/platform/graphics/gtk/FontPlatformDataPango.cpp \
+	WebCore/platform/graphics/gtk/GlyphPageTreeNodePango.cpp \
+	WebCore/platform/graphics/gtk/SimpleFontDataPango.cpp
+endif # END USE_PANGO
 
 # ----
 # Cross-document messaging support
