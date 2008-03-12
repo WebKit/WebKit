@@ -1,3 +1,9 @@
+2008-03-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+
 2008-03-12  Alp Toker  <alp@atoker.com>
 
         Another autotools testkjs build fix attempt.
