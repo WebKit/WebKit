@@ -7,6 +7,8 @@
         Add optional font backend support with freetype and pango
         backends. Default is freetype for now.
 
+        Original patch by Sven Herzberg <sven@imendio.com>
+
         * configure.ac:
 
 2008-03-11  Xan Lopez  <xan@gnome.org>

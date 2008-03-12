@@ -6,6 +6,8 @@
 
         Add Pango font backend.
 
+        Original patch by Sven Herzberg <sven@imendio.com>
+
         * GNUmakefile.am:
         * platform/graphics/gtk/FontCacheGtk.cpp:
         (WebCore::FontCache::fontExists):
