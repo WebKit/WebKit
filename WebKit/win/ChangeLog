@@ -1,5 +1,12 @@
 2008-03-12  Steve Falkenburg  <sfalken@apple.com>
 
+        Build fix.
+
+        * WebKit.vcproj/WebKit.pgd:
+        * WebKit.vcproj/WebKit.vcproj:
+
+2008-03-12  Steve Falkenburg  <sfalken@apple.com>
+
         Re-enabled PGO.
         
         Rubber stamped by Mark Rowe.
