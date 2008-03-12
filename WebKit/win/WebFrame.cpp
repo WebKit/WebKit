@@ -850,14 +850,9 @@ void WebFrame::invalidate()
 
 void WebFrame::setTextSizeMultiplier(float multiplier)
 {
-    int newZoomFactor = (int)round(multiplier * 100);
     Frame* coreFrame = core(this);
     ASSERT(coreFrame);
-
-    if (coreFrame->zoomFactor() == newZoomFactor)
-        return;
-
-    coreFrame->setZoomFactor(newZoomFactor, true);
+    coreFrame->setZoomFactor(multiplier, true);
 }
 
 HRESULT WebFrame::inViewSourceMode(BOOL* flag)

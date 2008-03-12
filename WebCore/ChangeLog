@@ -1,5 +1,24 @@
 2008-03-12  David Hyatt  <hyatt@apple.com>
 
+        Make the zoom factor a float and not a percent.
+
+        Reviewed by antti
+
+        * WebCore.base.exp:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::getComputedSizeFromSpecifiedSize):
+        * page/Frame.cpp:
+        (WebCore::Frame::zoomFactor):
+        (WebCore::Frame::setZoomFactor):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::currentScale):
+        (WebCore::SVGSVGElement::setCurrentScale):
+
+2008-03-12  David Hyatt  <hyatt@apple.com>
+
         Eliminate setTextMultiplier from the bridge.  Make Webkit just call setZoomFactor on the frame directly.
 
         Reviewed by Tim H.

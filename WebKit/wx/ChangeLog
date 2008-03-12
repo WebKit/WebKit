@@ -1,3 +1,13 @@
+2008-03-12  David Hyatt  <hyatt@apple.com>
+
+        Make the zoom factor a float and not a percent.
+
+        Reviewed by antti
+
+        * WebView.cpp:
+        (wxWebView::IncreaseTextSize):
+        (wxWebView::DecreaseTextSize):
+
 2008-03-03  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix after Frame::setZoomFactor API change.

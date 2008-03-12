@@ -639,7 +639,7 @@ void Frame::paintDragCaret(GraphicsContext* p, const IntRect& rect) const
         dragCaretController->paintCaret(p, rect);
 }
 
-int Frame::zoomFactor() const
+float Frame::zoomFactor() const
 {
     return d->m_zoomFactor;
 }
@@ -649,7 +649,7 @@ bool Frame::isZoomFactorTextOnly() const
     return d->m_zoomFactorIsTextOnly;
 }
 
-void Frame::setZoomFactor(int percent, bool isTextOnly)
+void Frame::setZoomFactor(float percent, bool isTextOnly)
 {  
     if (d->m_zoomFactor == percent && d->m_zoomFactorIsTextOnly == isTextOnly)
         return;

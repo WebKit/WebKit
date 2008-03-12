@@ -2232,7 +2232,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     _private->zoomMultiplierIsTextOnly = isTextOnly;
     Frame* coreFrame = core([self mainFrame]);
     if (coreFrame)
-        coreFrame->setZoomFactor((int)rint(m * 100), isTextOnly);
+        coreFrame->setZoomFactor(m, isTextOnly);
 }
 
 - (float)_zoomMultiplier:(BOOL)isTextOnly
