@@ -1,3 +1,9 @@
+2008-03-12  Mark Rowe  <mrowe@apple.com>
+
+        Gtk build fix.
+
+        * page/Frame.h: Forward-declare FramePrivate.
+
 2008-03-11  Steve Falkenburg  <sfalken@apple.com>
 
         Disable LTCG/PGO for all of WebCore for now.
