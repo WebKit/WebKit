@@ -28,61 +28,18 @@
 
 #import "WebFrameBridge.h"
 
-#import "WebFrameInternal.h"
-#import "WebFrameLoaderClient.h"
-#import "WebKitStatisticsPrivate.h"
-#import "WebView.h"
-#import <WebCore/Frame.h>
-#import <WebCore/FrameTree.h>
-#import <WebCore/HTMLFrameOwnerElement.h>
-
-using namespace WebCore;
+#import "WebFrame.h"
 
 @implementation WebFrameBridge
 
-- (void)finishInitializingWithPage:(Page*)page frameName:(const String&)name frameView:(WebFrameView *)frameView ownerElement:(HTMLFrameOwnerElement*)ownerElement
+- (void)setWebFrame:(WebFrame *)webFrame;
 {
-    ++WebBridgeCount;
-
-    WebView *webView = kit(page);
-
-    _frame = [[WebFrame alloc] _initWithWebFrameView:frameView webView:webView bridge:self];
-
-    m_frame = new Frame(page, ownerElement, new WebFrameLoaderClient(_frame));
-    m_frame->setBridge(self);
-    m_frame->tree()->setName(name);
-    m_frame->init();
-
-    [self setTextSizeMultiplier:[webView textSizeMultiplier]];
-}
-
-- (id)initMainFrameWithPage:(Page*)page frameName:(const String&)name frameView:(WebFrameView *)frameView
-{
-    self = [super init];
-    [self finishInitializingWithPage:page frameName:name frameView:frameView ownerElement:0];
-    return self;
-}
-
-- (id)initSubframeWithOwnerElement:(HTMLFrameOwnerElement*)ownerElement frameName:(const String&)name frameView:(WebFrameView *)frameView
-{
-    self = [super init];
-    [self finishInitializingWithPage:ownerElement->document()->frame()->page() frameName:name frameView:frameView ownerElement:ownerElement];
-    return self;
+    _webFrame = webFrame;
 }
 
 - (WebFrame *)webFrame
 {
-    return _frame;
-}
-
-- (void)close
-{
-    [super close];
-    if (!_frame)
-        return;
-    --WebBridgeCount;
-    [_frame release];
-    _frame = nil;
+    return _webFrame;
 }
 
 @end

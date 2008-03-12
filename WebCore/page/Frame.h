@@ -48,14 +48,12 @@ namespace KJS {
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
-@class WebCoreFrameBridge;
 @class WebScriptObject;
 #else
 class NSArray;
 class NSDictionary;
 class NSMutableDictionary;
 class NSString;
-class WebCoreFrameBridge;
 class WebScriptObject;
 typedef int NSWritingDirection;
 #endif
@@ -86,11 +84,6 @@ public:
     virtual ~Frame();
     
     void init();
-
-#if PLATFORM(MAC)    
-    void setBridge(WebCoreFrameBridge*);
-    WebCoreFrameBridge* bridge() const;
-#endif
 
     Page* page() const;
     HTMLFrameOwnerElement* ownerElement() const;

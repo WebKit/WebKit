@@ -215,24 +215,12 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
 
 @implementation WebCoreFrameBridge
 
-static inline WebCoreFrameBridge *bridge(Frame *frame)
-{
-    if (!frame)
-        return nil;
-    return frame->bridge();
-}
-
 - (NSString *)domain
 {
     Document *doc = m_frame->document();
     if (doc)
         return doc->domain();
     return nil;
-}
-
-+ (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document
-{
-    return bridge([document _document]->frame());
 }
 
 - (id)init
@@ -267,7 +255,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)close
 {
-    [self clearFrame];
+    m_frame = 0;
     _closed = YES;
 }
 
@@ -283,11 +271,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         doc->setShouldCreateRenderers(_shouldCreateRenderers);
         m_frame->loader()->addData((const char *)[data bytes], [data length]);
     }
-}
-
-- (void)clearFrame
-{
-    m_frame = 0;
 }
 
 - (NSString *)_stringWithDocumentTypeStringAndMarkupString:(NSString *)markupString
@@ -1178,6 +1161,11 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 }
 
 // -------------------
+
+- (void)setWebCoreFrame:(Frame*)webCoreFrame
+{
+    m_frame = webCoreFrame;
+}
 
 - (Frame*)_frame
 {

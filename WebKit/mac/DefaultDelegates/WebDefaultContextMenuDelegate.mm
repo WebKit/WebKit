@@ -49,7 +49,6 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/KURL.h>
-#import <WebCore/WebCoreFrameBridge.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMPrivate.h>
 

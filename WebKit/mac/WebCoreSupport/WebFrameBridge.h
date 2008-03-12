@@ -28,20 +28,12 @@
 
 #import <WebCore/WebCoreFrameBridge.h>
 
-namespace WebCore {
-    class HTMLFrameOwnerElement;
-    class Page;
-}
-
 @class WebFrame;
-@class WebFrameView;
 
 @interface WebFrameBridge : WebCoreFrameBridge {
 @public
-    WebFrame *_frame;
+    WebFrame *_webFrame;
 }
-- (id)initMainFrameWithPage:(WebCore::Page*)page frameName:(const WebCore::String&)name frameView:(WebFrameView *)frameView;
-- (id)initSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement*)ownerElement frameName:(const WebCore::String&)name frameView:(WebFrameView *)frameView;
-- (void)close;
+- (void)setWebFrame:(WebFrame *)webFrame;
 - (WebFrame *)webFrame;
 @end

@@ -54,14 +54,11 @@
     BOOL _closed;
 }
 
+- (void)setWebCoreFrame:(WebCore::Frame*)webCoreFrame;
 - (WebCore::Frame*)_frame; // underscore to prevent conflict with -[NSView frame]
-
-+ (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document;
 
 - (id)init;
 - (void)close;
-
-- (void)clearFrame;
 
 - (NSURL *)baseURL;
 

@@ -45,10 +45,8 @@ namespace KJS {
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
-@class WebCoreFrameBridge;
 @class WebScriptObject;
 #else
-class WebCoreFrameBridge;
 class WebScriptObject;
 #endif
 #endif
@@ -129,7 +127,6 @@ namespace WebCore {
 #endif
 #if PLATFORM(MAC)
         RetainPtr<WebScriptObject> m_windowScriptObject;
-        WebCoreFrameBridge* m_bridge;
 #endif
     };
 }

@@ -57,6 +57,7 @@ namespace WebCore {
     class FrameLoader;
     class HistoryItem;
     class HTMLElement;
+    class HTMLFrameOwnerElement;
     class Node;
     class Page;
     class Range;
@@ -94,6 +95,7 @@ WebView *getWebView(WebFrame *webFrame);
 
 @interface WebFramePrivate : NSObject {
 @public
+    WebCore::Frame* coreFrame;
     WebFrameView *webFrameView;
     WebFrameBridge *bridge;
     WebScriptDebugger* scriptDebugger;
@@ -106,6 +108,9 @@ struct WebCoreHistoryItem;
 #endif
 
 @interface WebFrame (WebInternal)
+
++ (void)_createMainFrameWithPage:(WebCore::Page*)page frameName:(const WebCore::String&)name frameView:(WebFrameView *)frameView;
++ (PassRefPtr<WebCore::Frame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement*)ownerElement frameName:(const WebCore::String&)name frameView:(WebFrameView *)frameView;
 
 - (void)_updateBackground;
 - (void)_setInternalLoadDelegate:(id)internalLoadDelegate;

@@ -1,5 +1,58 @@
 2008-03-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam.
+
+        - remove all bridge-related things from WebCore except the bridge itself
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMNode _bridge]): Reimplemented to not use the bridgeForDOMDocument: method.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm: Removed unneeded include.
+
+        * Plugins/WebPluginController.mm: Ditto.
+
+        * WebCoreSupport/WebFrameBridge.h: Removed unneeded things, including the
+        init and close methods. Added a setWebFrame: method.
+
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge setWebFrame:]): Added.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::frameLoaderDestroyed): Added an assertion.
+        (WebFrameLoaderClient::detachedFromParent4): Moved the call to close on the
+        bridge here. Soon we will be able to remove this entirely!
+        (WebFrameLoaderClient::createFrame): Rewrote this to use the method moved
+        into WebFrame from the bridge.
+
+        * WebView/WebFrame.mm:
+        (-[WebFramePrivate dealloc]): Added code to release the bridge, because it's
+        now owned by the frame.
+        (-[WebFramePrivate finalize]): Added this missing method. We'd leak the script
+        debugger under GC without this!
+        (kit): Rewrote the function that maps from a WebCore::Frame to a WebFrame to
+        use WebFrameLoaderClient instead of the bridge.
+        (+[WebFrame _createFrameWithPage:frameName:frameView:ownerElement:]): Added.
+        This is code that used to live in the bridge's init function.
+        (+[WebFrame _createMainFrameWithPage:frameName:frameView:]): Ditto.
+        (+[WebFrame WebCore::_createSubframeWithOwnerElement:frameName:frameView:]): Ditto.
+        (-[WebFrame _initWithWebFrameView:webView:bridge:]): Retain the bridge, since
+        the WebView is now the bridge's owner.
+        (-[WebFrame _updateBackground]): Changed this one call site that was calling the
+        WebCore::Frame::bridge function directly to use the kit function instead.
+        (-[WebFrame dealloc]): Added code to clear the WebFrame pointer in the bridge.
+        This code won't last long -- we're eliminating the bridge soon.
+        (-[WebFrame finalize]): Ditto.
+
+        * WebView/WebFrameInternal.h: Added a coreFrame backpointer and two new methods
+        for creating frames.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]): Rewrote this to use
+        the method moved into WebFrame from the bridge. Gets rid of the unpleasant idiom
+        where we have to allocate a WebFrameBridge and then immediately release it.
+
+2008-03-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
 
         - remove code depending on the bridge to get from an NSView to a WebCore::Frame

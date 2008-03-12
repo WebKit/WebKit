@@ -3200,9 +3200,6 @@ void FrameLoader::detachFromParent()
         m_frame->setView(0);
         m_frame->pageDestroyed();
     }
-#if PLATFORM(MAC)
-    [m_frame->bridge() close];
-#endif
     m_client->detachedFromParent4();
 }
 

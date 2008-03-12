@@ -136,11 +136,19 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 - (void)dealloc
 {
+    [bridge release];
     [webFrameView release];
-    
+
     delete scriptDebugger;
 
     [super dealloc];
+}
+
+- (void)finalize
+{
+    delete scriptDebugger;
+
+    [super finalize];
 }
 
 - (void)setWebFrameView:(WebFrameView *)v 
@@ -237,11 +245,6 @@ EditableLinkBehavior core(WebKitEditableLinkBehavior editableLinkBehavior)
 
 @implementation WebFrame (WebInternal)
 
-static inline WebFrame *frame(WebCoreFrameBridge *bridge)
-{
-    return ((WebFrameBridge *)bridge)->_frame;
-}
-
 Frame* core(WebFrame *frame)
 {
     if (!frame)
@@ -255,7 +258,7 @@ Frame* core(WebFrame *frame)
 
 WebFrame *kit(Frame* frame)
 {
-    return frame ? ((WebFrameBridge *)frame->bridge())->_frame : nil;
+    return frame ? static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame() : nil;
 }
 
 Page* core(WebView *webView)
@@ -274,6 +277,37 @@ WebView *getWebView(WebFrame *webFrame)
     if (!coreFrame)
         return nil;
     return kit(coreFrame->page());
+}
+
++ (PassRefPtr<Frame>)_createFrameWithPage:(Page*)page frameName:(const String&)name frameView:(WebFrameView *)frameView ownerElement:(HTMLFrameOwnerElement*)ownerElement
+{
+    ++WebBridgeCount;
+
+    WebView *webView = kit(page);
+
+    WebFrameBridge *bridge = [[WebFrameBridge alloc] init];
+    WebFrame *frame = [[self alloc] _initWithWebFrameView:frameView webView:webView bridge:bridge];
+    RefPtr<Frame> coreFrame = new Frame(page, ownerElement, new WebFrameLoaderClient(frame));
+    [frame release];
+    [bridge setWebCoreFrame:coreFrame.get()];
+    [bridge release];
+
+    coreFrame->tree()->setName(name);
+    coreFrame->init();
+
+    [bridge setTextSizeMultiplier:[webView textSizeMultiplier]];
+
+    return coreFrame.release();
+}
+
++ (void)_createMainFrameWithPage:(Page*)page frameName:(const String&)name frameView:(WebFrameView *)frameView
+{
+    [self _createFrameWithPage:page frameName:name frameView:frameView ownerElement:0];
+}
+
++ (PassRefPtr<WebCore::Frame>)_createSubframeWithOwnerElement:(HTMLFrameOwnerElement*)ownerElement frameName:(const String&)name frameView:(WebFrameView *)frameView
+{
+    return [self _createFrameWithPage:ownerElement->document()->frame()->page() frameName:name frameView:frameView ownerElement:ownerElement];
 }
 
 /*
@@ -389,7 +423,7 @@ WebView *getWebView(WebFrame *webFrame)
         return nil;
 
     _private = [[WebFramePrivate alloc] init];
-    _private->bridge = bridge;
+    _private->bridge = [bridge retain];
 
     if (fv) {
         [_private setWebFrameView:fv];
@@ -420,8 +454,8 @@ WebView *getWebView(WebFrame *webFrame)
 
     Frame* coreFrame = core(self);
     for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
-        WebFrameBridge *bridge = (WebFrameBridge *)frame->bridge();
-        WebFrame *webFrame = [bridge webFrame];
+        WebFrame *webFrame = kit(frame);
+        WebFrameBridge *bridge = [webFrame _bridge];
         // Never call setDrawsBackground:YES here on the scroll view or the background color will
         // flash between pages loads. setDrawsBackground:YES will be called in _frameLoadCompleted.
         if (!drawsBackground)
@@ -675,7 +709,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (void)dealloc
 {
-    ASSERT(_private->bridge == nil);
+    [_private->bridge setWebFrame:nil];
     [_private release];
     --WebFrameCount;
     [super dealloc];
@@ -683,7 +717,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (void)finalize
 {
-    ASSERT(_private->bridge == nil);
+    [_private->bridge setWebFrame:nil];
     --WebFrameCount;
     [super finalize];
 }

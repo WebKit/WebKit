@@ -82,7 +82,6 @@
 #import "SystemTime.h"
 #import "TextResourceDecoder.h"
 #import "UserStyleSheetLoader.h"
-#import "WebCoreFrameBridge.h"
 #import "WebCoreViewFactory.h"
 #import "WebDashboardRegion.h"
 #import "WebScriptObjectPrivate.h"
@@ -113,27 +112,6 @@ namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
-
-void Frame::setBridge(WebCoreFrameBridge* bridge)
-{ 
-    if (d->m_bridge == bridge)
-        return;
-
-    if (!bridge) {
-        [d->m_bridge clearFrame];
-        HardRelease(d->m_bridge);
-        d->m_bridge = nil;
-        return;
-    }
-    HardRetain(bridge);
-    HardRelease(d->m_bridge);
-    d->m_bridge = bridge;
-}
-
-WebCoreFrameBridge* Frame::bridge() const
-{
-    return d->m_bridge;
-}
 
 // Either get cached regexp or build one that matches any of the labels.
 // The regexp we build is of the form:  (STR1|STR2|STRN)

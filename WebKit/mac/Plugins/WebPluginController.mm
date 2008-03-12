@@ -34,7 +34,6 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/PlatformString.h>
-#import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFrameBridge.h>

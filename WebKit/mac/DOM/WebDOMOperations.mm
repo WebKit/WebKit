@@ -26,26 +26,36 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDOMOperationsPrivate.h>
+#import "WebDOMOperationsPrivate.h"
 
+#import "WebArchiver.h"
+#import "WebDataSourcePrivate.h"
+#import "WebFrameBridge.h"
+#import "WebFrameInternal.h"
+#import "WebFramePrivate.h"
+#import "WebKitNSStringExtras.h"
+#import <JavaScriptCore/Assertions.h>
+#import <WebCore/Document.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMHTML.h>
-#import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebArchiver.h>
 
 #if ENABLE(SVG)
 #import <WebKit/DOMSVG.h>
 #endif
 
+using namespace WebCore;
+
 @implementation DOMNode (WebDOMNodeOperations)
 
 - (WebFrameBridge *)_bridge
 {
-    return (WebFrameBridge *)[WebFrameBridge bridgeForDOMDocument:[self ownerDocument]];
+    Document* document = core(self)->document();
+    if (!document)
+        return nil;
+    Frame* frame = document->frame();
+    if (!frame)
+        return nil;
+    return [kit(frame) _bridge];
 }
 
 - (WebArchive *)webArchive

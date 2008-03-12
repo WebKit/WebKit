@@ -102,7 +102,6 @@
 #import <WebCore/ResourceLoader.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SharedBuffer.h>
-#import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/Widget.h>
 #import <WebKit/DOMElement.h>
@@ -146,6 +145,7 @@ WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
 
 void WebFrameLoaderClient::frameLoaderDestroyed()
 {
+    ASSERT(!m_webFrame->_private->bridge);
     delete this;
 }
 
@@ -212,6 +212,7 @@ void WebFrameLoaderClient::detachedFromParent3()
 
 void WebFrameLoaderClient::detachedFromParent4()
 {
+    [m_webFrame->_private->bridge close];
     m_webFrame->_private->bridge = nil;
 }
 
@@ -1133,24 +1134,23 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
     [childView _setMarginWidth:marginWidth];
     [childView _setMarginHeight:marginHeight];
 
-    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initSubframeWithOwnerElement:ownerElement frameName:name frameView:childView];
+    RefPtr<Frame> newCoreFrame = [WebFrame _createSubframeWithOwnerElement:ownerElement frameName:name frameView:childView];
+
     [childView release];
 
-    if (!newBridge)
+    if (!newCoreFrame)
         return 0;
 
-    [m_webFrame.get() _addChild:[newBridge webFrame]];
-    [newBridge release];
+    WebFrame *newFrame = kit(newCoreFrame.get());
 
-    RefPtr<Frame> newFrame = [newBridge _frame];
-    
-    [m_webFrame.get() _loadURL:url referrer:referrer intoChild:kit(newFrame.get())];
+    [m_webFrame.get() _addChild:newFrame];    
+    [m_webFrame.get() _loadURL:url referrer:referrer intoChild:newFrame];
 
     // The frame's onload handler may have removed it from the document.
-    if (!newFrame->tree()->parent())
+    if (!newCoreFrame->tree()->parent())
         return 0;
 
-    return newFrame.get();
+    return newCoreFrame.release();
 
     END_BLOCK_OBJC_EXCEPTIONS;
 

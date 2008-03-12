@@ -1,5 +1,30 @@
 2008-03-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam.
+
+        - remove all bridge-related things from WebCore except the bridge itself
+
+        * WebCore.base.exp: Removed the bridge and setBridge functions.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::detachFromParent): Removed call to the bridge's
+        close method.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame): Removed call to setBridge(0).
+        (WebCore::FramePrivate::FramePrivate): Removed initialization of m_bridge.
+        * page/Frame.h: Removed setBridge and bridge functions.
+        * page/FramePrivate.h: Removed m_bridge pointer.
+        * page/mac/FrameMac.mm: Removed setBridge and bridge functions.
+
+        * page/mac/WebCoreFrameBridge.h: Added setWebCoreFrame: method.
+        Removed bridgeForDOMDocument: and clearFrame methods.
+        * page/mac/WebCoreFrameBridge.mm: Ditto.
+        (-[WebCoreFrameBridge close]): Changed to set m_frame to 0 directly.
+        (-[WebCoreFrameBridge setWebCoreFrame:]): Added.
+
+2008-03-11  Darin Adler  <darin@apple.com>
+
         - restored some code I removed in the Range change; this code can't go
           until the rest of the Range fix is in
 
