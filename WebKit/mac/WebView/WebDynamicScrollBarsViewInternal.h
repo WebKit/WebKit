@@ -26,20 +26,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This is a Private header (containing SPI), despite the fact that its name
-// does not contain the word Private.
+#import "WebDynamicScrollBarsView.h"
+#import <WebCore/WebCoreFrameView.h>
 
-// FIXME: Does Safari really need to use this any more? AppKit added autohidesScrollers
-//in Panther, and that was the original reason we needed this view in Safari.
+@interface WebDynamicScrollBarsView (WebInternal) <WebCoreFrameScrollView>
 
-@interface WebDynamicScrollBarsView : NSScrollView {
-    int hScroll; // FIXME: Should be WebCore::ScrollbarMode if this was an ObjC++ header.
-    int vScroll; // Ditto.
-    BOOL hScrollModeLocked;
-    BOOL vScrollModeLocked;
-    BOOL suppressLayout;
-    BOOL suppressScrollers;
-    BOOL inUpdateScrollers;
-}
-- (void)setAllowsHorizontalScrolling:(BOOL)flag;
+- (BOOL)allowsHorizontalScrolling;
+- (void)setAllowsVerticalScrolling:(BOOL)flag;
+- (BOOL)allowsVerticalScrolling;
+
+- (void)setHorizontalScrollingMode:(WebCore::ScrollbarMode)mode andLock:(BOOL)lock;
+- (void)setVerticalScrollingMode:(WebCore::ScrollbarMode)mode andLock:(BOOL)lock;
+- (void)setScrollingMode:(WebCore::ScrollbarMode)mode andLock:(BOOL)lock;
+
+- (void)setHorizontalScrollingModeLocked:(BOOL)locked;
+- (void)setVerticalScrollingModeLocked:(BOOL)locked;
+- (void)setScrollingModesLocked:(BOOL)mode;
+
+- (BOOL)horizontalScrollingModeLocked;
+- (BOOL)verticalScrollingModeLocked;
+
+// Convenience method to affect both scrolling directions at once.
+- (void)setAllowsScrolling:(BOOL)flag;
+
+// Returns YES if either horizontal or vertical scrolling is allowed.
+- (BOOL)allowsScrolling;
+
+- (void)updateScrollers;
+- (void)setSuppressLayout:(BOOL)flag;
+
 @end

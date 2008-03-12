@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-@class WebCoreFrameBridge;
+#include "ScrollTypes.h"
 
-// This protocol is a way for an NSScrollView to detect
-// that the view it's embedded in is one that should be resized when the
-// scroll view is resized.
+namespace WebCore {
+    class Frame;
+}
 
-typedef enum {
-    WebCoreScrollbarAuto,
-    WebCoreScrollbarAlwaysOff,
-    WebCoreScrollbarAlwaysOn
-} WebCoreScrollbarMode;
-
-@protocol WebCoreFrameView
-- (void)setHorizontalScrollingMode:(WebCoreScrollbarMode)mode;
-- (void)setVerticalScrollingMode:(WebCoreScrollbarMode)mode;
-- (void)setScrollingMode:(WebCoreScrollbarMode)mode;
-
-- (WebCoreScrollbarMode)horizontalScrollingMode;
-- (WebCoreScrollbarMode)verticalScrollingMode;
-
+@protocol WebCoreFrameScrollView
+- (void)setHorizontalScrollingMode:(WebCore::ScrollbarMode)mode;
+- (void)setVerticalScrollingMode:(WebCore::ScrollbarMode)mode;
+- (void)setScrollingMode:(WebCore::ScrollbarMode)mode;
+- (WebCore::ScrollbarMode)horizontalScrollingMode;
+- (WebCore::ScrollbarMode)verticalScrollingMode;
 - (void)setScrollBarsSuppressed:(BOOL)suppressed repaintOnUnsuppress:(BOOL)repaint;
-
 @end
 
-// This protocol is a way for WebCore to gain access to its information
-// about WebKit subclasses of NSView
-@protocol WebCoreBridgeHolder
-- (WebCoreFrameBridge *) webCoreBridge;
+@protocol WebCoreFrameView
+- (WebCore::Frame*)_web_frame;
 @end

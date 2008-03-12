@@ -115,7 +115,7 @@
     if (![self _HTMLInputElement]->document()->view())
         return result;
 
-    NSView* view = [self _HTMLInputElement]->document()->view()->getDocumentView();
+    NSView* view = [self _HTMLInputElement]->document()->view()->documentView();
     result = [view convertRect:result toView:nil];
     result.origin = [[view window] convertBaseToScreen:result.origin];
     return result;

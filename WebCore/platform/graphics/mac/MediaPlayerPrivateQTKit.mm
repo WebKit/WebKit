@@ -32,7 +32,7 @@
 #import "BlockExceptions.h"
 #import "GraphicsContext.h"
 #import "KURL.h"
-#import "ScrollView.h"
+#import "FrameView.h"
 #import "SoftLinking.h"
 #import "WebCoreSystemInterface.h"
 #import <QTKit/QTKit.h>
@@ -225,7 +225,7 @@ void MediaPlayerPrivate::createQTMovieView()
 {
     detachQTMovieView();
 
-    if (!m_player->m_parentWidget || !m_qtMovie)
+    if (!m_player->m_frameView || !m_qtMovie)
         return;
 
     static bool addedCustomMethods = false;
@@ -242,7 +242,7 @@ void MediaPlayerPrivate::createQTMovieView()
 
     m_qtMovieView.adoptNS([[QTMovieView alloc] init]);
     setRect(m_player->rect());
-    NSView* parentView = static_cast<ScrollView*>(m_player->m_parentWidget)->getDocumentView();
+    NSView* parentView = m_player->m_frameView->documentView();
     [parentView addSubview:m_qtMovieView.get()];
 #ifdef BUILDING_ON_TIGER
     // setDelegate: isn't a public call in Tiger, so use performSelector to keep the compiler happy

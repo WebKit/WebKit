@@ -30,14 +30,12 @@
 #import "WebViewInternal.h"
 
 #import "DOMRangeInternal.h"
-#import "WebBackForwardList.h"
 #import "WebBackForwardListInternal.h"
 #import "WebBaseNetscapePluginView.h"
 #import "WebChromeClient.h"
 #import "WebContextMenuClient.h"
 #import "WebDOMOperationsPrivate.h"
 #import "WebDatabaseManagerInternal.h"
-#import "WebDatabaseManagerPrivate.h"
 #import "WebDataSourceInternal.h"
 #import "WebDefaultEditingDelegate.h"
 #import "WebDefaultPolicyDelegate.h"
@@ -48,7 +46,7 @@
 #import "WebDownload.h"
 #import "WebDownloadInternal.h"
 #import "WebDragClient.h"
-#import "WebDynamicScrollBarsView.h"
+#import "WebDynamicScrollBarsViewInternal.h"
 #import "WebEditingDelegate.h"
 #import "WebEditorClient.h"
 #import "WebFormDelegatePrivate.h"
@@ -58,7 +56,6 @@
 #import "WebHTMLRepresentation.h"
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryItemInternal.h"
-#import "WebIconDatabase.h"
 #import "WebIconDatabaseInternal.h"
 #import "WebInspector.h"
 #import "WebInspectorClient.h"
@@ -1465,27 +1462,27 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 {
     WebDynamicScrollBarsView *scrollview = [[[self mainFrame] frameView] _scrollView];
     if (flag) {
-        [scrollview setVerticalScrollingMode:WebCoreScrollbarAlwaysOn andLock:YES];
+        [scrollview setVerticalScrollingMode:ScrollbarAlwaysOn andLock:YES];
     } else {
         [scrollview setVerticalScrollingModeLocked:NO];
-        [scrollview setVerticalScrollingMode:WebCoreScrollbarAuto];
+        [scrollview setVerticalScrollingMode:ScrollbarAuto];
     }
 }
 
 - (BOOL)alwaysShowVerticalScroller
 {
     WebDynamicScrollBarsView *scrollview = [[[self mainFrame] frameView] _scrollView];
-    return [scrollview verticalScrollingModeLocked] && [scrollview verticalScrollingMode] == WebCoreScrollbarAlwaysOn;
+    return [scrollview verticalScrollingModeLocked] && [scrollview verticalScrollingMode] == ScrollbarAlwaysOn;
 }
 
 - (void)setAlwaysShowHorizontalScroller:(BOOL)flag
 {
     WebDynamicScrollBarsView *scrollview = [[[self mainFrame] frameView] _scrollView];
     if (flag) {
-        [scrollview setHorizontalScrollingMode:WebCoreScrollbarAlwaysOn andLock:YES];
+        [scrollview setHorizontalScrollingMode:ScrollbarAlwaysOn andLock:YES];
     } else {
         [scrollview setHorizontalScrollingModeLocked:NO];
-        [scrollview setHorizontalScrollingMode:WebCoreScrollbarAuto];
+        [scrollview setHorizontalScrollingMode:ScrollbarAuto];
     }
 }
 
@@ -1499,7 +1496,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 - (BOOL)alwaysShowHorizontalScroller
 {
     WebDynamicScrollBarsView *scrollview = [[[self mainFrame] frameView] _scrollView];
-    return [scrollview horizontalScrollingModeLocked] && [scrollview horizontalScrollingMode] == WebCoreScrollbarAlwaysOn;
+    return [scrollview horizontalScrollingModeLocked] && [scrollview horizontalScrollingMode] == ScrollbarAlwaysOn;
 }
 
 - (void)_setInViewSourceMode:(BOOL)flag

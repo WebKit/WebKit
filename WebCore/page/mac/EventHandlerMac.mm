@@ -178,10 +178,11 @@ void EventHandler::focusDocumentView()
     if (!page)
         return;
 
-    if (FrameView* frameView = m_frame->view())
-        if (NSView *documentView = frameView->getDocumentView())
+    if (FrameView* frameView = m_frame->view()) {
+        if (NSView *documentView = frameView->documentView())
             page->chrome()->focusNSView(documentView);
-    
+    }
+
     page->focusController()->setFocusedFrame(m_frame);
 }
 

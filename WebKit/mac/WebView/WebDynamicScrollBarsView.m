@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +26,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDynamicScrollBarsView.h>
+#import "WebDynamicScrollBarsViewInternal.h"
 
-#import <WebKit/WebDocument.h>
+#import "WebDocument.h"
 #import <WebKitSystemInterface.h>
+
+using namespace WebCore;
 
 @implementation WebDynamicScrollBarsView
 
-- (void)setSuppressLayout: (BOOL)flag;
+- (void)setAllowsHorizontalScrolling:(BOOL)flag
+{
+    if (hScrollModeLocked)
+        return;
+    if (flag && hScroll == ScrollbarAlwaysOff)
+        hScroll = ScrollbarAuto;
+    else if (!flag && hScroll != ScrollbarAlwaysOff)
+        hScroll = ScrollbarAlwaysOff;
+    [self updateScrollers];
+}
+
+@end
+
+@implementation WebDynamicScrollBarsView (WebInternal)
+
+- (void)setSuppressLayout:(BOOL)flag;
 {
     suppressLayout = flag;
 }
@@ -82,7 +99,7 @@
         BOOL scrollsVertically;
         BOOL scrollsHorizontally;
 
-        if (!suppressLayout && !suppressScrollers && (hScroll == WebCoreScrollbarAuto || vScroll == WebCoreScrollbarAuto)) {
+        if (!suppressLayout && !suppressScrollers && (hScroll == ScrollbarAuto || vScroll == ScrollbarAuto)) {
             // Do a layout if pending, before checking if scrollbars are needed.
             // This fixes 2969367, although may introduce a slowdown in live resize performance.
             NSView *documentView = [self documentView];
@@ -99,22 +116,22 @@
                 NSSize documentSize = [documentView frame].size;
                 NSSize frameSize = [self frame].size;
 
-                scrollsVertically = (vScroll == WebCoreScrollbarAlwaysOn) ||
-                    (vScroll == WebCoreScrollbarAuto && documentSize.height > frameSize.height);
+                scrollsVertically = (vScroll == ScrollbarAlwaysOn) ||
+                    (vScroll == ScrollbarAuto && documentSize.height > frameSize.height);
                 if (scrollsVertically)
-                    scrollsHorizontally = (hScroll == WebCoreScrollbarAlwaysOn) ||
-                        (hScroll == WebCoreScrollbarAuto && documentSize.width + [NSScroller scrollerWidth] > frameSize.width);
+                    scrollsHorizontally = (hScroll == ScrollbarAlwaysOn) ||
+                        (hScroll == ScrollbarAuto && documentSize.width + [NSScroller scrollerWidth] > frameSize.width);
                 else {
-                    scrollsHorizontally = (hScroll == WebCoreScrollbarAlwaysOn) ||
-                        (hScroll == WebCoreScrollbarAuto && documentSize.width > frameSize.width);
+                    scrollsHorizontally = (hScroll == ScrollbarAlwaysOn) ||
+                        (hScroll == ScrollbarAuto && documentSize.width > frameSize.width);
                     if (scrollsHorizontally)
-                        scrollsVertically = (vScroll == WebCoreScrollbarAlwaysOn) ||
-                            (vScroll == WebCoreScrollbarAuto && documentSize.height + [NSScroller scrollerWidth] > frameSize.height);
+                        scrollsVertically = (vScroll == ScrollbarAlwaysOn) ||
+                            (vScroll == ScrollbarAuto && documentSize.height + [NSScroller scrollerWidth] > frameSize.height);
                 }
             }
         } else {
-            scrollsHorizontally = (hScroll == WebCoreScrollbarAuto) ? hasHorizontalScroller : (hScroll == WebCoreScrollbarAlwaysOn);
-            scrollsVertically = (vScroll == WebCoreScrollbarAuto) ? hasVerticalScroller : (vScroll == WebCoreScrollbarAlwaysOn);
+            scrollsHorizontally = (hScroll == ScrollbarAuto) ? hasHorizontalScroller : (hScroll == ScrollbarAlwaysOn);
+            scrollsVertically = (vScroll == ScrollbarAuto) ? hasVerticalScroller : (vScroll == ScrollbarAlwaysOn);
         }
 
         if (hasVerticalScroller != scrollsVertically) {
@@ -172,15 +189,15 @@
     if (hScrollModeLocked && vScrollModeLocked)
         return;
 
-    if (flag && vScroll == WebCoreScrollbarAlwaysOff)
-        vScroll = WebCoreScrollbarAuto;
-    else if (!flag && vScroll != WebCoreScrollbarAlwaysOff)
-        vScroll = WebCoreScrollbarAlwaysOff;
+    if (flag && vScroll == ScrollbarAlwaysOff)
+        vScroll = ScrollbarAuto;
+    else if (!flag && vScroll != ScrollbarAlwaysOff)
+        vScroll = ScrollbarAlwaysOff;
 
-    if (flag && hScroll == WebCoreScrollbarAlwaysOff)
-        hScroll = WebCoreScrollbarAuto;
-    else if (!flag && hScroll != WebCoreScrollbarAlwaysOff)
-        hScroll = WebCoreScrollbarAlwaysOff;
+    if (flag && hScroll == ScrollbarAlwaysOff)
+        hScroll = ScrollbarAuto;
+    else if (!flag && hScroll != ScrollbarAlwaysOff)
+        hScroll = ScrollbarAlwaysOff;
 
     [self updateScrollers];
 }
@@ -188,57 +205,46 @@
 - (BOOL)allowsScrolling
 {
     // Returns YES if either horizontal or vertical scrolling is allowed.
-    return hScroll != WebCoreScrollbarAlwaysOff || vScroll != WebCoreScrollbarAlwaysOff;
-}
-
-- (void)setAllowsHorizontalScrolling:(BOOL)flag
-{
-    if (hScrollModeLocked)
-        return;
-    if (flag && hScroll == WebCoreScrollbarAlwaysOff)
-        hScroll = WebCoreScrollbarAuto;
-    else if (!flag && hScroll != WebCoreScrollbarAlwaysOff)
-        hScroll = WebCoreScrollbarAlwaysOff;
-    [self updateScrollers];
+    return hScroll != ScrollbarAlwaysOff || vScroll != ScrollbarAlwaysOff;
 }
 
 - (void)setAllowsVerticalScrolling:(BOOL)flag
 {
     if (vScrollModeLocked)
         return;
-    if (flag && vScroll == WebCoreScrollbarAlwaysOff)
-        vScroll = WebCoreScrollbarAuto;
-    else if (!flag && vScroll != WebCoreScrollbarAlwaysOff)
-        vScroll = WebCoreScrollbarAlwaysOff;
+    if (flag && vScroll == ScrollbarAlwaysOff)
+        vScroll = ScrollbarAuto;
+    else if (!flag && vScroll != ScrollbarAlwaysOff)
+        vScroll = ScrollbarAlwaysOff;
     [self updateScrollers];
 }
 
 - (BOOL)allowsHorizontalScrolling
 {
-    return hScroll != WebCoreScrollbarAlwaysOff;
+    return hScroll != ScrollbarAlwaysOff;
 }
 
 - (BOOL)allowsVerticalScrolling
 {
-    return vScroll != WebCoreScrollbarAlwaysOff;
+    return vScroll != ScrollbarAlwaysOff;
 }
 
--(WebCoreScrollbarMode)horizontalScrollingMode
+- (ScrollbarMode)horizontalScrollingMode
 {
-    return hScroll;
+    return static_cast<ScrollbarMode>(hScroll);
 }
 
--(WebCoreScrollbarMode)verticalScrollingMode
+- (ScrollbarMode)verticalScrollingMode
 {
-    return vScroll;
+    return static_cast<ScrollbarMode>(vScroll);
 }
 
-- (void)setHorizontalScrollingMode:(WebCoreScrollbarMode)mode
+- (void)setHorizontalScrollingMode:(ScrollbarMode)mode
 {
     [self setHorizontalScrollingMode:mode andLock:NO];
 }
 
-- (void)setHorizontalScrollingMode:(WebCoreScrollbarMode)mode andLock:(BOOL)lock
+- (void)setHorizontalScrollingMode:(ScrollbarMode)mode andLock:(BOOL)lock
 {
     if (mode == hScroll || hScrollModeLocked)
         return;
@@ -251,12 +257,12 @@
     [self updateScrollers];
 }
 
-- (void)setVerticalScrollingMode:(WebCoreScrollbarMode)mode
+- (void)setVerticalScrollingMode:(ScrollbarMode)mode
 {
     [self setVerticalScrollingMode:mode andLock:NO];
 }
 
-- (void)setVerticalScrollingMode:(WebCoreScrollbarMode)mode andLock:(BOOL)lock
+- (void)setVerticalScrollingMode:(ScrollbarMode)mode andLock:(BOOL)lock
 {
     if (mode == vScroll || vScrollModeLocked)
         return;
@@ -269,12 +275,12 @@
     [self updateScrollers];
 }
 
-- (void)setScrollingMode:(WebCoreScrollbarMode)mode
+- (void)setScrollingMode:(ScrollbarMode)mode
 {
     [self setScrollingMode:mode andLock:NO];
 }
 
-- (void)setScrollingMode:(WebCoreScrollbarMode)mode andLock:(BOOL)lock
+- (void)setScrollingMode:(ScrollbarMode)mode andLock:(BOOL)lock
 {
     if ((mode == vScroll && mode == hScroll) || (vScrollModeLocked && hScrollModeLocked))
         return;

@@ -204,10 +204,11 @@ void Widget::setView(NSView* view)
 
 NSView* Widget::getOuterView() const
 {
-    // If this widget's view is a WebCoreFrameView the we resize its containing view, a WebFrameView.
-
     NSView* view = data->view.get();
-    if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
+
+    // If this widget's view is a WebCoreFrameScrollView then we
+    // resize its containing view, a WebFrameView.
+    if ([view conformsToProtocol:@protocol(WebCoreFrameScrollView)]) {
         view = [view superview];
         ASSERT(view);
     }

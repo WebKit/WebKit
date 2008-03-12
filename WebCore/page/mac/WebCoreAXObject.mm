@@ -59,7 +59,6 @@
 #import "SelectionController.h"
 #import "SimpleFontData.h"
 #import "TextIterator.h"
-#import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreObjCExtras.h"
 #import "WebCoreViewFactory.h"
@@ -745,7 +744,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     // The Cocoa accessibility API wants the lower-left corner.
     NSPoint point = NSMakePoint(rect.x(), rect.bottom());
     if (m_renderer && m_renderer->view() && m_renderer->view()->frameView()) {
-        NSView* view = m_renderer->view()->frameView()->getDocumentView();
+        NSView* view = m_renderer->view()->frameView()->documentView();
         point = [[view window] convertBaseToScreen: [view convertPoint: point toView:nil]];
     }
 
@@ -1396,11 +1395,11 @@ static NSString *nsStringForReplacedNode(Node* replacedNode)
     return [resultString length] > 0 ? resultString : nil;
 }
 
-- (id)doAXTextMarkerForPosition: (NSPoint) point
+- (id)doAXTextMarkerForPosition:(NSPoint)point
 {
     // convert absolute point to view coordinates
     FrameView* frameView = [self topFrameView];
-    NSView* view = frameView->getDocumentView();
+    NSView* view = frameView->documentView();
     RenderObject* renderer = [self topRenderer];
     Node* innerNode = 0;
     
@@ -1437,7 +1436,7 @@ static NSString *nsStringForReplacedNode(Node* replacedNode)
             break;
         renderer = document->renderer();
         frameView = static_cast<FrameView*>(widget);
-        view = frameView->getDocumentView();
+        view = frameView->documentView();
     }
     
     // get position within the node
@@ -2557,24 +2556,17 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
 
 - (RenderObject*)rendererForView:(NSView*)view
 {
-    // check for WebKit NSView that lets us find its bridge
-    WebCoreFrameBridge* bridge = nil;
-    if ([view conformsToProtocol:@protocol(WebCoreBridgeHolder)]) {
-        NSView<WebCoreBridgeHolder>* bridgeHolder = (NSView<WebCoreBridgeHolder>*)view;
-        bridge = [bridgeHolder webCoreBridge];
-    }
+    if (![view conformsToProtocol:@protocol(WebCoreFrameView)])
+        return 0;
 
-    Frame* frame = [bridge _frame];
+    NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
+    Frame* frame = [frameView _web_frame];
     if (!frame)
-        return nil;
+        return 0;
         
-    Document* document = frame->document();
-    if (!document)
-        return nil;
-        
-    Node* node = document->ownerElement();
+    Node* node = frame->document()->ownerElement();
     if (!node)
-        return nil;
+        return 0;
 
     return node->renderer();
 }

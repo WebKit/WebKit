@@ -114,7 +114,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     if (index == -1 && numItems == 2 && !client()->shouldPopOver() && ![[m_popup.get() itemAtIndex:1] isEnabled])
         index = 0;
 
-    NSView* view = v->getDocumentView();
+    NSView* view = v->documentView();
 
     [m_popup.get() attachPopUpWithFrame:r inView:view];
     [m_popup.get() selectItemAtIndex:index];

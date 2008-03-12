@@ -31,7 +31,7 @@
 #import "WebClipView.h"
 #import "WebDataSourcePrivate.h"
 #import "WebDocument.h"
-#import "WebDynamicScrollBarsView.h"
+#import "WebDynamicScrollBarsViewInternal.h"
 #import "WebFrame.h"
 #import "WebFrameInternal.h"
 #import "WebFrameBridge.h"
@@ -83,9 +83,8 @@ enum {
     SpaceKey = 0x0020
 };
 
-@interface WebFrameView (WebFrameViewFileInternal) <WebCoreBridgeHolder>
+@interface WebFrameView (WebFrameViewFileInternal) <WebCoreFrameView>
 - (float)_verticalKeyboardScrollDistance;
-- (WebCoreFrameBridge *) webCoreBridge;
 @end
 
 @interface WebFrameViewPrivate : NSObject {
@@ -128,9 +127,9 @@ enum {
     return [[self _scrollView] verticalLineScroll];
 }
 
-- (WebCoreFrameBridge *) webCoreBridge
+- (Frame*)_web_frame
 {
-    return [_private->webFrame _bridge];
+    return core(_private->webFrame);
 }
 
 @end

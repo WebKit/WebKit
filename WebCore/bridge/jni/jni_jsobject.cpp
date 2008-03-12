@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,18 +22,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #include "config.h"
 #include "jni_jsobject.h"
 
 #include "Frame.h"
-#include "kjs_proxy.h"
-#include "WebCoreFrameBridge.h"
-#include "WebCoreViewFactory.h"
+#include "WebCoreFrameView.h"
 #include "jni_runtime.h"
 #include "jni_utility.h"
+#include "kjs_proxy.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
-#include <CoreFoundation/CoreFoundation.h>
 #include <kjs/ExecState.h>
 #include <kjs/JSGlobalObject.h>
 #include <kjs/interpreter.h>
@@ -439,12 +438,16 @@ void JavaJSObject::finalize() const
 
 static PassRefPtr<RootObject> createRootObject(void* nativeHandle)
 {
-    NSView *view = (NSView *)nativeHandle;
-    WebCoreFrameBridge *bridge = [[WebCoreViewFactory sharedFactory] bridgeForView:view];
-    if (!bridge)
+    Frame* frame = 0;
+    for (NSView *view = (NSView *)nativeHandle; view; view = [view superview]) {
+        if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
+            NSView<WebCoreFrameView> *webCoreFrameView = static_cast<NSView<WebCoreFrameView>*>(view);
+            frame = [webCoreFrameView _web_frame];
+            break;
+        }
+    }
+    if (!frame)
         return 0;
-    
-    Frame* frame = [bridge _frame];
     return frame->createRootObject(nativeHandle, frame->scriptProxy()->globalObject());
 }
 

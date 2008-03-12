@@ -86,6 +86,7 @@
 		9304B3000B02341500F7850D /* WebIconDatabaseInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 9304B2FF0B02341500F7850D /* WebIconDatabaseInternal.h */; };
 		931633EB0AEDFF930062B92D /* WebFrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 931633EA0AEDFF930062B92D /* WebFrameLoaderClient.h */; };
 		931633EF0AEDFFAE0062B92D /* WebFrameLoaderClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 931633EE0AEDFFAE0062B92D /* WebFrameLoaderClient.mm */; };
+		934C11670D8710BB00C32ABD /* WebDynamicScrollBarsViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 934C11660D8710BB00C32ABD /* WebDynamicScrollBarsViewInternal.h */; };
 		939810110824BF01008DF038 /* WebBackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3944607D020F50ED0ECA1767 /* WebBackForwardList.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810120824BF01008DF038 /* WebHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = F520FB190221DEFD01C1A525 /* WebHistory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810130824BF01008DF038 /* WebHistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3944607F020F50ED0ECA1767 /* WebHistoryItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -359,7 +360,7 @@
 		35081D9602B6D4D80ACA2ACA /* WebHTMLViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHTMLViewPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		35081DAE02B6D4F50ACA2ACA /* WebDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDocument.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		3944606B020F50ED0ECA1767 /* WebDynamicScrollBarsView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDynamicScrollBarsView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		3944606C020F50ED0ECA1767 /* WebDynamicScrollBarsView.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDynamicScrollBarsView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		3944606C020F50ED0ECA1767 /* WebDynamicScrollBarsView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebDynamicScrollBarsView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		3944606E020F50ED0ECA1767 /* WebPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferences.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		39446070020F50ED0ECA1767 /* WebDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDataSource.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		39446071020F50ED0ECA1767 /* WebDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDataSource.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -502,6 +503,7 @@
 		9345DDAF0365FB27008635CE /* WebNSWindowExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSWindowExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345DDB20365FFD0008635CE /* WebNSControlExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSControlExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345DDB30365FFD0008635CE /* WebNSControlExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSControlExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		934C11660D8710BB00C32ABD /* WebDynamicScrollBarsViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDynamicScrollBarsViewInternal.h; sourceTree = "<group>"; };
 		939811320824BF01008DF038 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mac/Info.plist; sourceTree = SOURCE_ROOT; tabWidth = 8; usesTabs = 1; };
 		939811330824BF01008DF038 /* WebKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93AEB17D032C1735008635CE /* WebKitLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKitLogging.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -950,6 +952,7 @@
 				65FFB7FA0AD0B7D30048CD05 /* WebDocumentLoaderMac.h */,
 				833987810543012D00EE146E /* WebDocumentPrivate.h */,
 				3944606B020F50ED0ECA1767 /* WebDynamicScrollBarsView.h */,
+				934C11660D8710BB00C32ABD /* WebDynamicScrollBarsViewInternal.h */,
 				BE4FBECB0653DF47005EDE15 /* WebEditingDelegate.h */,
 				1C8CB0790AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h */,
 				2D81DAB203EB0B2D00A80166 /* WebFormDelegate.h */,
@@ -1324,6 +1327,7 @@
 				939810970824BF01008DF038 /* npfunctions.h in Headers */,
 				93FDE9330D79CAF30074F029 /* WebHistoryInternal.h in Headers */,
 				C0167BF80D7F5DD00028696E /* WebScriptDebugger.h in Headers */,
+				934C11670D8710BB00C32ABD /* WebDynamicScrollBarsViewInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

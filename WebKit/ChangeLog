@@ -1,3 +1,10 @@
+2008-03-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        * WebKit.xcodeproj/project.pbxproj: Change WebDynamicScrollBarsView.m to be Obj-C++.
+        We can rename the file later.
+
 2008-03-07  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

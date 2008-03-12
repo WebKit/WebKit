@@ -598,7 +598,7 @@ bool RenderThemeMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInf
     // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
     NSButtonCell* checkbox = this->checkbox();
     IntRect inflatedRect = inflateRect(r, checkboxSizes()[[checkbox controlSize]], checkboxMargins());
-    [checkbox drawWithFrame:NSRect(inflatedRect) inView:o->view()->frameView()->getDocumentView()];
+    [checkbox drawWithFrame:NSRect(inflatedRect) inView:o->view()->frameView()->documentView()];
     [checkbox setControlView:nil];
 
     return false;
@@ -654,7 +654,7 @@ bool RenderThemeMac::paintRadio(RenderObject* o, const RenderObject::PaintInfo&,
     // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
     NSButtonCell* radio = this->radio();
     IntRect inflatedRect = inflateRect(r, radioSizes()[[radio controlSize]], radioMargins());
-    [radio drawWithFrame:NSRect(inflatedRect) inView:o->view()->frameView()->getDocumentView()];
+    [radio drawWithFrame:NSRect(inflatedRect) inView:o->view()->frameView()->documentView()];
     [radio setControlView:nil];
 
     return false;
@@ -835,7 +835,7 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
         inflatedRect = inflateRect(inflatedRect, size, buttonMargins());
     }
 
-    [button drawWithFrame:NSRect(inflatedRect) inView:o->view()->frameView()->getDocumentView()];
+    [button drawWithFrame:NSRect(inflatedRect) inView:o->view()->frameView()->documentView()];
     [button setControlView:nil];
 
     return false;
@@ -922,7 +922,7 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInf
     paintInfo.context->clip(inflatedRect);
 #endif
 
-    [popupButton drawWithFrame:inflatedRect inView:o->view()->frameView()->getDocumentView()];
+    [popupButton drawWithFrame:inflatedRect inView:o->view()->frameView()->documentView()];
     [popupButton setControlView:nil];
 
 #ifndef BUILDING_ON_TIGER
@@ -1307,7 +1307,7 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::Paint
     if (o->style()->appearance() == SliderThumbVerticalAppearance)
         bounds.setHeight(bounds.height() + verticalSliderHeightPadding);
 
-    [sliderThumbCell drawWithFrame:NSRect(bounds) inView:o->view()->frameView()->getDocumentView()];
+    [sliderThumbCell drawWithFrame:NSRect(bounds) inView:o->view()->frameView()->documentView()];
     [sliderThumbCell setControlView:nil];
 
     return false;
@@ -1339,7 +1339,7 @@ bool RenderThemeMac::paintSearchField(RenderObject* o, const RenderObject::Paint
     // Set the search button to nil before drawing.  Then reset it so we can draw it later.
     [search setSearchButtonCell:nil];
 
-    [search drawWithFrame:NSRect(r) inView:o->view()->frameView()->getDocumentView()];
+    [search drawWithFrame:NSRect(r) inView:o->view()->frameView()->documentView()];
 #ifdef BUILDING_ON_TIGER
     if ([search showsFirstResponder])
         wkDrawTextFieldCellFocusRing(search, NSRect(r));
@@ -1419,7 +1419,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const RenderO
     updatePressedState([search cancelButtonCell], o);
 
     NSRect bounds = [search cancelButtonRectForBounds:NSRect(input->renderer()->absoluteBoundingBoxRect())];
-    [[search cancelButtonCell] drawWithFrame:bounds inView:o->view()->frameView()->getDocumentView()];
+    [[search cancelButtonCell] drawWithFrame:bounds inView:o->view()->frameView()->documentView()];
     [[search cancelButtonCell] setControlView:nil];
 
     return false;
@@ -1478,7 +1478,7 @@ bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const Re
         [search setSearchMenuTemplate:nil];
 
     NSRect bounds = [search searchButtonRectForBounds:NSRect(input->renderer()->absoluteBoundingBoxRect())];
-    [[search searchButtonCell] drawWithFrame:bounds inView:o->view()->frameView()->getDocumentView()];
+    [[search searchButtonCell] drawWithFrame:bounds inView:o->view()->frameView()->documentView()];
     [[search searchButtonCell] setControlView:nil];
     return false;
 }
@@ -1503,7 +1503,7 @@ bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const Render
         [search setSearchMenuTemplate:searchMenuTemplate()];
 
     NSRect bounds = [search searchButtonRectForBounds:NSRect(input->renderer()->absoluteBoundingBoxRect())];
-    [[search searchButtonCell] drawWithFrame:bounds inView:o->view()->frameView()->getDocumentView()];
+    [[search searchButtonCell] drawWithFrame:bounds inView:o->view()->frameView()->documentView()];
     [[search searchButtonCell] setControlView:nil];
     return false;
 }

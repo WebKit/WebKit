@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,10 @@
 #include "Widget.h"
 #include <wtf/HashSet.h>
 
+#if PLATFORM(MAC) && defined __OBJC__
+@protocol WebCoreFrameScrollView;
+#endif
+
 #if PLATFORM(GTK)
 typedef struct _GtkAdjustment GtkAdjustment;
 #endif
@@ -52,6 +56,9 @@ namespace WebCore {
 
     class ScrollView : public Widget {
     public:
+        ScrollView();
+        ~ScrollView();
+
         int visibleWidth() const;
         int visibleHeight() const;
         FloatRect visibleContentRect() const;
@@ -87,20 +94,12 @@ namespace WebCore {
         void update();
 
         // Event coordinates are assumed to be in the coordinate space of a window that contains
-        // the entire widget hierarchy.  It is up to the platform to decide what the precise definition
-        // of containing window is.  (For example on Mac it is the containing NSWindow.)
+        // the entire widget hierarchy. It is up to the platform to decide what the precise definition
+        // of containing window is. (For example on Mac it is the containing NSWindow.)
         IntPoint windowToContents(const IntPoint&) const;
         IntPoint contentsToWindow(const IntPoint&) const;
-        
-#if PLATFORM(MAC)
-        // On Mac only because of flipped NSWindow y-coordinates, we have to have a special implementation.
         IntRect windowToContents(const IntRect&) const;
         IntRect contentsToWindow(const IntRect&) const;
-#else
-        // Other platforms can just implement these helper methods using the corresponding point conversion methods.
-        IntRect contentsToWindow(const IntRect& rect) const { return IntRect(contentsToWindow(rect.location()), rect.size()); }
-        IntRect windowToContents(const IntRect& rect) const { return IntRect(windowToContents(rect.location()), rect.size()); }
-#endif
 
         void setStaticBackground(bool);
 
@@ -116,14 +115,16 @@ namespace WebCore {
 
         bool scroll(ScrollDirection, ScrollGranularity);
 
-#if PLATFORM(MAC)
-        NSView* getDocumentView() const;
+#if PLATFORM(MAC) && defined __OBJC__
+    public:
+        NSView* documentView() const;
+
+    private:
+        NSScrollView<WebCoreFrameScrollView>* scrollView() const;
 #endif
 
 #if PLATFORM(WIN)
-        ScrollView();
-        ~ScrollView();
-
+    public:
         virtual void paint(GraphicsContext*, const IntRect&);
         virtual void themeChanged();
         
@@ -163,9 +164,7 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(GTK)
-        ScrollView();
-        ~ScrollView();
-
+    public:
         virtual void setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj);
         virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
         virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
@@ -190,9 +189,7 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(QT)
-        ScrollView();
-        ~ScrollView();
-
+    public:
         virtual void paint(GraphicsContext*, const IntRect&);
 
         virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
@@ -222,9 +219,9 @@ namespace WebCore {
         class ScrollViewPrivate;
         ScrollViewPrivate* m_data;
 #endif
+
 #if PLATFORM(WX)
-        ScrollView();
-        ~ScrollView();
+    public:
         HashSet<Widget*>* children();
         virtual void setNativeWindow(wxWindow* window);
 
@@ -236,6 +233,23 @@ namespace WebCore {
         ScrollViewPrivate* m_data;
 #endif
     };
+
+#if !PLATFORM(MAC)
+
+// On Mac only because of flipped NSWindow y-coordinates, we have to have a special implementation.
+// Other platforms can just implement these helper methods using the corresponding point conversion methods.
+
+inline IntRect ScrollView::contentsToWindow(const IntRect& rect) const
+{
+    return IntRect(contentsToWindow(rect.location()), rect.size());
+}
+
+inline IntRect ScrollView::windowToContents(const IntRect& rect) const
+{
+    return IntRect(windowToContents(rect.location()), rect.size());
+}
+
+#endif
 
 } // namespace WebCore
 

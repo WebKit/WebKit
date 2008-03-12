@@ -1,3 +1,107 @@
+2008-03-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - simplify Mac code for ScrollView, since it's used only for FrameView
+          and not in two different modes like it was historically
+        - remove code depending on the bridge to get from an NSView to a WebCore::Frame
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _rectOnScreen]): getDocumentView -> documentView.
+
+        * bridge/jni/jni_jsobject.cpp:
+        (createRootObject): Instead of using WebCoreViewFactory to find the frame given
+        and NSView, use the WebCoreFrameView interface to do it.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::paste): getDocumentView -> documentView.
+        * editing/mac/SelectionControllerMac.mm:
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange): Ditto.
+
+        * page/FrameView.h: Fixed comment.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::drawNodeHighlight): Removed uneeded typecasts
+        to ScrollView* since FrameView is derived from ScrollView.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::focusDocumentView): getDocumentView -> documentView.
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::imageFromRect): Ditto.
+        * page/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject position]): Ditto.
+        (-[WebCoreAXObject doAXTextMarkerForPosition:]): Ditto.
+        (-[WebCoreAXObject rendererForView:]): Updated code that used to use
+        WebCoreBridgeHolder to use WebCoreFrameView instead.
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge computePageRectsWithPrintWidthScaleFactor:printHeight:]):
+        getDocumentView -> documentView.
+
+        * page/mac/WebCoreFrameView.h: Removed the WebCoreScrollbarMode type; we just
+        use WebCore::ScrollbarMode directly. Renamed the WebCoreFrameView protocol to
+        WebCoreFrameScrollView, since it's a protocol for the scroll view, not the
+        frame view itself. Replaced WebCoreBridgeHolder protocol with WebCoreFrameView
+        protocol, which returns a WebCore::Frame directly rather than a bridge.
+
+        * page/mac/WebCoreViewFactory.h: Eliminated the bridgeForView method.
+
+        * platform/ScrollView.h: Moved the constructor and destructor out of the
+        class-specific #if blocks. Renamed Mac-specific function that gets the
+        NSView for from getDocumentView to documentView and a scrollView function
+        that returns an appropriately classed NSScrollView.
+
+        * platform/graphics/MediaPlayer.h: Changed type of parentWidget to FrameView
+        instead of Widget.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovieView): Removed unnecessary cast.
+
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::show): getDocumentView -> documentView.
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::ScrollView): Added.
+        (WebCore::ScrollView::~ScrollView): Added.
+        (WebCore::ScrollView::scrollView): Added.
+        (WebCore::ScrollView::visibleWidth): Removed unused non-NSScrollView case.
+        (WebCore::ScrollView::visibleHeight): Ditto.
+        (WebCore::ScrollView::visibleContentRect): Ditto.
+        (WebCore::ScrollView::visibleContentRectConsideringExternalScrollers): Ditto.
+        (WebCore::ScrollView::contentsWidth): Ditto.
+        (WebCore::ScrollView::contentsHeight): Ditto.
+        (WebCore::ScrollView::contentsX): Ditto.
+        (WebCore::ScrollView::contentsY): Ditto.
+        (WebCore::ScrollView::scrollOffset): Ditto.
+        (WebCore::ScrollView::scrollRectIntoViewRecursively): Ditto.
+        (WebCore::ScrollView::setContentsPos): Ditto.
+        (WebCore::ScrollView::setVScrollbarMode): Ditto.
+        (WebCore::ScrollView::setHScrollbarMode): Ditto.
+        (WebCore::ScrollView::setScrollbarsMode): Ditto.
+        (WebCore::ScrollView::vScrollbarMode): Ditto.
+        (WebCore::ScrollView::hScrollbarMode): Ditto.
+        (WebCore::ScrollView::suppressScrollbars): Ditto.
+        (WebCore::ScrollView::addChild): Ditto.
+        (WebCore::ScrollView::resizeContents): Ditto.
+        (WebCore::ScrollView::updateContents): Ditto.
+        (WebCore::ScrollView::contentsToWindow): Ditto.
+        (WebCore::ScrollView::windowToContents): Ditto.
+        (WebCore::ScrollView::setStaticBackground): Ditto.
+        (WebCore::ScrollView::documentView): Renamed and removed unused case.
+        (WebCore::ScrollView::scrollbarUnderMouse): Removed incorrect comment.
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::getOuterView): Update for protocol name change.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintCheckbox): getDocumentView -> documentView.
+        (WebCore::RenderThemeMac::paintRadio): Ditto.
+        (WebCore::RenderThemeMac::paintButton): Ditto.
+        (WebCore::RenderThemeMac::paintMenuList): Ditto.
+        (WebCore::RenderThemeMac::paintSliderThumb): Ditto.
+        (WebCore::RenderThemeMac::paintSearchField): Ditto.
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton): Ditto.
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecoration): Ditto.
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton): Ditto.
+
 2008-03-11  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Adam Roben.

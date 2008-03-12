@@ -46,7 +46,7 @@ namespace WebCore {
     MediaPlayer::MediaPlayer(MediaPlayerClient* client)
     : m_mediaPlayerClient(client)
     , m_private(new MediaPlayerPrivate(this))
-    , m_parentWidget(0)
+    , m_frameView(0)
     , m_visible(false)
     , m_rate(1.0f)
     , m_volume(0.5f)

@@ -1,5 +1,47 @@
 2008-03-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by Anders.
+
+        - remove code depending on the bridge to get from an NSView to a WebCore::Frame
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage): Remove incorrect call
+        to setView. A couple lines later, there is a call to _install, which sets the
+        view to the scroll view.
+
+        * WebCoreSupport/WebViewFactory.mm: Removed bridgeForView method.
+
+        * WebView/WebDynamicScrollBarsView.h: Moved most of the declarations out of
+        this file, since it's used by Safari.
+        * WebView/WebDynamicScrollBarsViewInternal.h: Added.
+        * WebView/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView updateScrollers]): Ditto.
+        (-[WebDynamicScrollBarsView setAllowsScrolling:]): Ditto.
+        (-[WebDynamicScrollBarsView allowsScrolling]): Ditto.
+        (-[WebDynamicScrollBarsView setAllowsHorizontalScrolling:]): Ditto.
+        (-[WebDynamicScrollBarsView setAllowsVerticalScrolling:]): Ditto.
+        (-[WebDynamicScrollBarsView allowsHorizontalScrolling]): Ditto.
+        (-[WebDynamicScrollBarsView allowsVerticalScrolling]): Ditto.
+        (-[WebDynamicScrollBarsView horizontalScrollingMode]): Ditto.
+        (-[WebDynamicScrollBarsView verticalScrollingMode]): Ditto.
+        (-[WebDynamicScrollBarsView setHorizontalScrollingMode:]): Ditto.
+        (-[WebDynamicScrollBarsView setHorizontalScrollingMode:andLock:]): Ditto.
+        (-[WebDynamicScrollBarsView setVerticalScrollingMode:]): Ditto.
+        (-[WebDynamicScrollBarsView setVerticalScrollingMode:andLock:]): Ditto.
+        (-[WebDynamicScrollBarsView setScrollingMode:]): Ditto.
+        (-[WebDynamicScrollBarsView setScrollingMode:andLock:]): Ditto.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _web_frame]): Added. Replaces the webCoreBridge method.
+
+        * WebView/WebView.mm:
+        (-[WebView setAlwaysShowVerticalScroller:]): Updated for changes to WebCoreFrameView.h.
+        (-[WebView alwaysShowVerticalScroller]): Ditto.
+        (-[WebView setAlwaysShowHorizontalScroller:]): Ditto.
+        (-[WebView alwaysShowHorizontalScroller]): Ditto.
+
+2008-03-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam.
 
         - eliminate the remaining parts of WebCoreBridge used for calls to WebKit from WebCore

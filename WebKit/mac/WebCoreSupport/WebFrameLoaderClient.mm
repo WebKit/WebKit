@@ -41,7 +41,7 @@
 #import "WebDocumentInternal.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebDownloadInternal.h"
-#import "WebDynamicScrollBarsView.h"
+#import "WebDynamicScrollBarsViewInternal.h"
 #import "WebElementDictionary.h"
 #import "WebFormDelegate.h"
 #import "WebFrameBridge.h"
@@ -1023,7 +1023,6 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     FrameView* coreView = new FrameView(coreFrame);
     coreFrame->setView(coreView);
     coreView->deref(); // FIXME: Eliminate this crazy refcounting!
-    coreView->setView(documentView);
     int marginWidth = [v _marginWidth];
     if (marginWidth >= 0)
         coreView->setMarginWidth(marginWidth);

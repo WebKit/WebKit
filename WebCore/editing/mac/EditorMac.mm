@@ -117,7 +117,7 @@ void Editor::paste()
         return;
     DocLoader* loader = m_frame->document()->docLoader();
     loader->setAllowStaleResources(true);
-    [view->getDocumentView() tryToPerform:@selector(paste:) with:nil];
+    [view->documentView() tryToPerform:@selector(paste:) with:nil];
     loader->setAllowStaleResources(false);
 }
 

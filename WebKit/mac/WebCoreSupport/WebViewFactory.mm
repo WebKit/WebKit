@@ -76,19 +76,6 @@
     [[WebPluginDatabase sharedDatabase] refresh];
 }
 
-- (WebCoreFrameBridge *)bridgeForView:(NSView *)v
-{
-    NSView *aView = [v superview];
-    
-    while (aView) {
-        if ([aView isKindOfClass:[WebHTMLView class]]) {
-            return [[[(WebHTMLView *)aView _frame] _dataSource] _bridge];
-        }
-        aView = [aView superview];
-    }
-    return nil;
-}
-
 - (NSString *)inputElementAltText
 {
     return UI_STRING_KEY("Submit", "Submit (input element)", "alt text for <input> elements with no alt, title, or value");

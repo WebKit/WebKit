@@ -49,7 +49,7 @@ void SelectionController::notifyAccessibilityForSelectionChange()
             IntRect selectionRect = caretRect();
             IntRect viewRect = renderView->viewRect();
             FrameView* frameView = renderView->view()->frameView(); 
-            NSView *view = frameView->getDocumentView();
+            NSView *view = frameView->documentView();
             if (view) {
                 selectionRect.setLocation(frameView->convertToScreenCoordinate(view, selectionRect.location()));
                 viewRect.setLocation(frameView->convertToScreenCoordinate(view, viewRect.location()));

@@ -1620,7 +1620,7 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
         rects.append(nodeRect);
 
     FrameView* view = m_inspectedPage->mainFrame()->view();
-    FloatRect overlayRect = static_cast<ScrollView*>(view)->visibleContentRect();
+    FloatRect overlayRect = view->visibleContentRect();
 
     if (!overlayRect.contains(nodeRect) && !nodeRect.contains(enclosingIntRect(overlayRect))) {
         Element* element;
@@ -1629,7 +1629,7 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
         else
             element = static_cast<Element*>(m_highlightedNode->parent());
         element->scrollIntoViewIfNeeded();
-        overlayRect = static_cast<ScrollView*>(view)->visibleContentRect();
+        overlayRect = view->visibleContentRect();
     }
 
     context.translate(-overlayRect.x(), -overlayRect.y());

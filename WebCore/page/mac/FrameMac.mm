@@ -328,7 +328,7 @@ NSString* Frame::matchLabelsAgainstElement(NSArray* labels, Element* element)
 
 NSImage* Frame::imageFromRect(NSRect rect) const
 {
-    NSView* view = d->m_view->getDocumentView();
+    NSView* view = d->m_view->documentView();
     if (!view)
         return nil;
     if (![view respondsToSelector:@selector(drawSingleRect:)])
