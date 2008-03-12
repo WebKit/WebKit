@@ -1875,7 +1875,7 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_treeNode(thisFrame, parent)
     , m_ownerElement(ownerElement)
     , m_jscript(0)
-    , m_zoomFactor(parent ? parent->d->m_zoomFactor : 100)
+    , m_zoomFactor(parent ? parent->d->m_zoomFactor : 1.0f)
     , m_zoomFactorIsTextOnly(parent ? parent->d->m_zoomFactorIsTextOnly : true)
     , m_selectionGranularity(CharacterGranularity)
     , m_selectionController(thisFrame)
