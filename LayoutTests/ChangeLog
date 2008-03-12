@@ -1,3 +1,10 @@
+2008-03-11  Darin Adler  <darin@apple.com>
+
+        - update expected result changed by recent Range patch
+
+        * platform/mac/editing/execCommand/4920488-expected.txt: Removed incorrect exception log.
+        * platform/qt/editing/execCommand/4920488-expected.txt: Ditto.
+
 2008-03-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.
