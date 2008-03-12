@@ -1,3 +1,12 @@
+2008-03-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5787743> REGRESSION: Crash at WTF::Collator::CreateCollator() running fast/js/kde/StringObject.html on Windows
+
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::Collator::createCollator): Check for null (== user default) m_locale before calling strcmp.
+
 2008-03-11  Steve Falkenburg  <sfalken@apple.com>
 
         Disable LTCG/PGO for grammar.cpp and nodes.cpp.

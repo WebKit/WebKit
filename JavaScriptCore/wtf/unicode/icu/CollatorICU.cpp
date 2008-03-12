@@ -101,18 +101,21 @@ void Collator::createCollator() const
         if (cachedCollator) {
             const char* cachedCollatorLocale = ucol_getLocaleByType(cachedCollator, ULOC_REQUESTED_LOCALE, &status);
             ASSERT(U_SUCCESS(status));
-            
+            ASSERT(cachedCollatorLocale);
+
             UColAttributeValue cachedCollatorLowerFirst = ucol_getAttribute(cachedCollator, UCOL_CASE_FIRST, &status);
             ASSERT(U_SUCCESS(status));
 
-            if (0 == strcmp(cachedCollatorLocale, m_locale) && ((UCOL_LOWER_FIRST == cachedCollatorLowerFirst && m_lowerFirst) || (UCOL_UPPER_FIRST == cachedCollatorLowerFirst && !m_lowerFirst))) {
+            // FIXME: default locale is never matched, because ucol_getLocaleByType returns the actual one used, not 0.
+            if (m_locale && 0 == strcmp(cachedCollatorLocale, m_locale)
+                && ((UCOL_LOWER_FIRST == cachedCollatorLowerFirst && m_lowerFirst) || (UCOL_UPPER_FIRST == cachedCollatorLowerFirst && !m_lowerFirst))) {
                 m_collator = cachedCollator;
                 cachedCollator = 0;
                 return;
             }
         }
     }
-        
+
     m_collator = ucol_open(m_locale, &status);
     if (U_FAILURE(status)) {
         status = U_ZERO_ERROR;
