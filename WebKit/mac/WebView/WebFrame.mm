@@ -295,7 +295,7 @@ WebView *getWebView(WebFrame *webFrame)
     coreFrame->tree()->setName(name);
     coreFrame->init();
 
-    [bridge setTextSizeMultiplier:[webView textSizeMultiplier]];
+    [webView _setZoomMultiplier:[webView _realZoomMultiplier] isTextOnly:[webView _realZoomMultiplierIsTextOnly]];
 
     return coreFrame.release();
 }
