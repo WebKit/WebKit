@@ -206,8 +206,8 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
         // from updateScrollInfoAfterLayout().
         ASSERT(!view->layoutState());
 
-        IntRect newRect = m_object->absoluteClippedOverflowRect();
-        IntRect newOutlineBox = m_object->absoluteOutlineBox();
+        IntRect newRect = m_object->absoluteClippedOverflowRect(); // FIXME: This does not work correctly with transforms.
+        IntRect newOutlineBox = m_object->absoluteOutlineBox(); // FIXME: This does not work correctly with transforms.
         if (checkForRepaint) {
             if (view && !view->printing()) {
                 if (m_needsFullRepaint) {
@@ -259,8 +259,8 @@ void RenderLayer::setHasVisibleContent(bool b)
     m_visibleContentStatusDirty = false; 
     m_hasVisibleContent = b;
     if (m_hasVisibleContent) {
-        m_repaintRect = renderer()->absoluteClippedOverflowRect();
-        m_outlineBox = renderer()->absoluteOutlineBox();
+        m_repaintRect = renderer()->absoluteClippedOverflowRect(); // FIXME: This does not work correctly with transforms.
+        m_outlineBox = renderer()->absoluteOutlineBox(); // FIXME: This does not work correctly with transforms.
         if (!isOverflowOnly()) {
             if (RenderLayer* sc = stackingContext())
                 sc->dirtyZOrderLists();
@@ -1462,7 +1462,7 @@ static void restoreClip(GraphicsContext* p, const IntRect& paintDirtyRect, const
 void
 RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
                         const IntRect& paintDirtyRect, bool haveTransparency, PaintRestriction paintRestriction,
-                        RenderObject *paintingRoot)
+                        RenderObject* paintingRoot, bool appliedTransform)
 {
     // Avoid painting layers when stylesheets haven't loaded.  This eliminates FOUC.
     // It's ok not to draw, because later on, when all the stylesheets do load, updateStyleSelector on the Document
@@ -1478,7 +1478,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         haveTransparency = true;
 
     // Apply a transform if we have one.
-    if (m_transform && rootLayer != this) {
+    if (m_transform && !appliedTransform) {
         // If the transform can't be inverted, then don't paint anything.
         if (!m_transform->isInvertible())
             return;
@@ -1489,10 +1489,13 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
             parent()->beginTransparencyLayers(p, rootLayer);
   
         // Make sure the parent's clip rects have been calculated.
-        parent()->calculateClipRects(rootLayer);
-        IntRect clipRect = parent()->clipRects()->overflowClipRect();
-        clipRect.intersect(paintDirtyRect);
-
+        IntRect clipRect = paintDirtyRect;
+        if (parent()) {
+            parent()->calculateClipRects(rootLayer);
+            clipRect = parent()->clipRects()->overflowClipRect();
+            clipRect.intersect(paintDirtyRect);
+        }
+        
         // Push the parent coordinate space's clip.
         setClip(p, paintDirtyRect, clipRect);
 
@@ -1510,7 +1513,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         p->concatCTM(transform);
 
         // Now do a paint with the root layer shifted to be us.
-        paintLayer(this, p, transform.inverse().mapRect(paintDirtyRect), haveTransparency, paintRestriction, paintingRoot);
+        paintLayer(this, p, transform.inverse().mapRect(paintDirtyRect), haveTransparency, paintRestriction, paintingRoot, true);
         
         p->restore();
         
@@ -1669,21 +1672,24 @@ Node* RenderLayer::enclosingElement() const
     return 0;
 }
 
-RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result, const IntRect& hitTestRect, const IntPoint& hitTestPoint)
+RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
+                                       const IntRect& hitTestRect, const IntPoint& hitTestPoint, bool appliedTransform)
 {
     // Apply a transform if we have one.
-    if (m_transform && rootLayer != this) {
+    if (m_transform && !appliedTransform) {
         // If the transform can't be inverted, then don't hit test this layer at all.
         if (!m_transform->isInvertible())
             return 0;
   
         // Make sure the parent's clip rects have been calculated.
-        parent()->calculateClipRects(rootLayer);
+        if (parent()) {
+            parent()->calculateClipRects(rootLayer);
         
-        // Go ahead and test the enclosing clip now.
-        IntRect clipRect = parent()->clipRects()->overflowClipRect();
-        if (!clipRect.contains(hitTestPoint))
-            return 0;
+            // Go ahead and test the enclosing clip now.
+            IntRect clipRect = parent()->clipRects()->overflowClipRect();
+            if (!clipRect.contains(hitTestPoint))
+                return 0;
+        }
 
         // Adjust the transform such that the renderer's upper left corner is at (0,0) in user space.
         // This involves subtracting out the position of the layer in our current coordinate space.
@@ -1695,7 +1701,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
         transform = *m_transform * transform;
         
         // Map the hit test point into the transformed space and then do a hit test with the root layer shifted to be us.
-        return hitTestLayer(this, request, result, transform.inverse().mapRect(hitTestRect), transform.inverse().mapPoint(hitTestPoint));
+        return hitTestLayer(this, request, result, transform.inverse().mapRect(hitTestRect), transform.inverse().mapPoint(hitTestPoint), true);
     }
 
     // Calculate the clip rects we should use.

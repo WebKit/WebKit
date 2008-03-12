@@ -3265,7 +3265,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             double multiplier = 1.0;
             // Scale for the font zoom factor only for types other than "em" and "ex", since those are
             // already based on the font size.
-            if (type != CSSPrimitiveValue::CSS_EMS && type != CSSPrimitiveValue::CSS_EXS && m_style->textSizeAdjust() && m_document->frame()) {
+            if (type != CSSPrimitiveValue::CSS_EMS && type != CSSPrimitiveValue::CSS_EXS && m_style->textSizeAdjust() && 
+                m_document->frame() && m_document->frame()->shouldApplyTextZoom()) {
                 multiplier = m_document->frame()->zoomFactor();
             }
             lineHeight = Length(primitiveValue->computeLengthIntForLength(m_style, multiplier), Fixed);
@@ -4885,7 +4886,7 @@ float CSSStyleSelector::getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, fl
     int minSize = settings->minimumFontSize();
     int minLogicalSize = settings->minimumLogicalFontSize();
 
-    float zoomPercent = m_document->frame() ? m_document->frame()->zoomFactor() : 1.0f;
+    float zoomPercent = m_document->frame() && m_document->frame()->shouldApplyTextZoom() ? m_document->frame()->zoomFactor() : 1.0f;
     float zoomedSize = specifiedSize * zoomPercent;
 
     // Apply the hard minimum first.  We only apply the hard minimum if after zooming we're still too small.

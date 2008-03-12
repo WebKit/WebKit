@@ -204,6 +204,8 @@ public:
     void setZoomFactor(float scale, bool isTextOnly);
     float zoomFactor() const;
     bool isZoomFactorTextOnly() const;
+    bool shouldApplyTextZoom() const;
+    bool shouldApplyPageZoom() const;
 
     bool prohibitsScrolling() const;
     void setProhibitsScrolling(const bool);

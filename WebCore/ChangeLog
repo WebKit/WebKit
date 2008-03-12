@@ -1,5 +1,29 @@
 2008-03-12  David Hyatt  <hyatt@apple.com>
 
+        Make full page zoom vaguely work.  This patch uses the CSS transform system to turn on full page zoom at the
+        document level.  There are many many bugs that I'm going to file to track all the issues (most of the issues
+        are just bugs with transforms themselves).
+
+        Reviewed by Adam Roben
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::getComputedSizeFromSpecifiedSize):
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * page/Frame.cpp:
+        (WebCore::Frame::shouldApplyTextZoom):
+        (WebCore::Frame::shouldApplyPageZoom):
+        * page/Frame.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::setHasVisibleContent):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        * rendering/RenderLayer.h:
+
+2008-03-12  David Hyatt  <hyatt@apple.com>
+
         Make the zoom factor a float and not a percent.
 
         Reviewed by antti

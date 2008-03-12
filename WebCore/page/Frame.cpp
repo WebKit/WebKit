@@ -649,6 +649,24 @@ bool Frame::isZoomFactorTextOnly() const
     return d->m_zoomFactorIsTextOnly;
 }
 
+bool Frame::shouldApplyTextZoom() const
+{
+    if (d->m_zoomFactor == 1.0f || !d->m_zoomFactorIsTextOnly)
+        return false;
+    if (d->m_doc && d->m_doc->isSVGDocument())
+        return false;
+    return true;
+}
+
+bool Frame::shouldApplyPageZoom() const
+{
+    if (d->m_zoomFactor == 1.0f || d->m_zoomFactorIsTextOnly)
+        return false;
+    if (d->m_doc && d->m_doc->isSVGDocument())
+        return false;
+    return true;
+}
+
 void Frame::setZoomFactor(float percent, bool isTextOnly)
 {  
     if (d->m_zoomFactor == percent && d->m_zoomFactorIsTextOnly == isTextOnly)

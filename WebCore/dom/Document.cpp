@@ -1078,6 +1078,24 @@ void Document::recalcStyle(StyleChange change)
         _style->ref();
         _style->setDisplay(BLOCK);
         _style->setVisuallyOrdered(visuallyOrdered);
+        
+        if (frame() && frame()->shouldApplyPageZoom()) {
+            // Set up our zoom transform on the document.
+            _style->setTransformOriginX(Length(0, Fixed));
+            _style->setTransformOriginY(Length(0, Fixed));
+            TransformOperations ops;
+            RefPtr<TransformOperation> transformOp = new ScaleTransformOperation(frame()->zoomFactor(), frame()->zoomFactor());
+            ops.append(transformOp);
+            _style->setTransform(ops);
+            setChanged(); // Necessary to force the view to relayout.
+        }
+        
+        // FIXME: This code is necessary because RenderLayer is buggy regarding transform repainting (because it uses
+        // absoluteClippedOverflowRect).
+        // We can remove it when those bugs are resolved.
+        if (oldStyle && oldStyle->transform() != _style->transform())
+            renderer()->repaint();
+                
         // ### make the font stuff _really_ work!!!!
 
         FontDescription fontDescription;
