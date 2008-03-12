@@ -1,3 +1,11 @@
+2008-03-12  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix compilation against Qt 4.3
+
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+
 2008-03-11  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Fix the Qt build.
