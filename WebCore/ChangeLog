@@ -1,3 +1,18 @@
+2008-03-12  Dan Bernstein  <mitz@apple.com>
+
+        Suggested by Darin Adler. Reviewed by Dave Hyatt.
+
+        - speed up BidiIterator::direction()
+
+        * rendering/bidi.cpp:
+        (WebCore::BidiIterator::current): Made inline and corrected the
+        out-of-bounds condition to work with 0-length text and offsets beyond
+        the end of the text.
+        (WebCore::BidiIterator::direction): Changed to call current() and not
+        call the virtual method isListMarker() most of the time.
+        (WebCore::addMidpoint): Removed unnecessary null-check of smidpoints.
+        (WebCore::appendRunsForObject): Ditto.
+
 2008-03-12  Adam Roben  <aroben@apple.com>
 
         Make URLs not be underlined while editing them in the DOM view

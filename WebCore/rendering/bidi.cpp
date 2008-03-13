@@ -298,30 +298,27 @@ inline bool BidiIterator::atEnd() const
     return !obj;
 }
 
-UChar BidiIterator::current() const
+inline UChar BidiIterator::current() const
 {
     if (!obj || !obj->isText())
         return 0;
-    
+
     RenderText* text = static_cast<RenderText*>(obj);
-    if (!text->characters())
+    if (pos >= text->textLength())
         return 0;
-    
+
     return text->characters()[pos];
 }
 
 ALWAYS_INLINE Direction BidiIterator::direction() const
 {
-    if (!obj)
-        return OtherNeutral;
-    if (obj->isListMarker())
+    if (UChar c = current())
+        return Unicode::direction(c);
+
+    if (obj && obj->isListMarker())
         return obj->style()->direction() == LTR ? LeftToRight : RightToLeft;
-    if (!obj->isText())
-        return OtherNeutral;
-    RenderText* renderTxt = static_cast<RenderText*>(obj);
-    if (pos >= renderTxt->textLength())
-        return OtherNeutral;
-    return Unicode::direction(renderTxt->characters()[pos]);
+
+    return OtherNeutral;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -376,9 +373,6 @@ static void checkMidpoints(BidiIterator& lBreak)
 
 static void addMidpoint(const BidiIterator& midpoint)
 {
-    if (!smidpoints)
-        return;
-
     if (smidpoints->size() <= sNumMidpoints)
         smidpoints->grow(sNumMidpoints + 10);
 
@@ -392,7 +386,7 @@ static void appendRunsForObject(int start, int end, RenderObject* obj, BidiState
         (obj->isPositioned() && !obj->hasStaticX() && !obj->hasStaticY() && !obj->container()->isInlineFlow()))
         return;
 
-    bool haveNextMidpoint = (smidpoints && sCurrMidpoint < sNumMidpoints);
+    bool haveNextMidpoint = (sCurrMidpoint < sNumMidpoints);
     BidiIterator nextMidpoint;
     if (haveNextMidpoint)
         nextMidpoint = smidpoints->at(sCurrMidpoint);
@@ -408,7 +402,7 @@ static void appendRunsForObject(int start, int end, RenderObject* obj, BidiState
             return appendRunsForObject(start, end, obj, bidi);
     }
     else {
-        if (!smidpoints || !haveNextMidpoint || (obj != nextMidpoint.obj)) {
+        if (!haveNextMidpoint || (obj != nextMidpoint.obj)) {
             bidi.addRun(new (obj->renderArena()) BidiRun(start, end, obj, bidi.context(), bidi.dir()));
             return;
         }
