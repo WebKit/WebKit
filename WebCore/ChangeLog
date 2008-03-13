@@ -1,3 +1,13 @@
+2008-03-13  Adam Roben  <aroben@apple.com>
+
+        wx build fix and Windows leak fix after r31034
+
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::Image::loadPlatformResource): Use SharedBuffer::create.
+        * platform/win/SharedBufferWin.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile): Ditto (we were
+        leaking the SharedBuffer here before).
+
 2008-03-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Eric.

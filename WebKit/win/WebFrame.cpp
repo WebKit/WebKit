@@ -436,7 +436,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::loadData(
     /* [in] */ BSTR textEncodingName,
     /* [in] */ BSTR url)
 {
-    RefPtr<SharedBuffer> sharedBuffer = new SharedBuffer();
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create();
 
     STATSTG stat;
     if (SUCCEEDED(data->Stat(&stat, STATFLAG_NONAME))) {
@@ -456,7 +456,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::loadData(
 
 void WebFrame::loadHTMLString(BSTR string, BSTR baseURL, BSTR unreachableURL)
 {
-    RefPtr<SharedBuffer> sharedBuffer = new SharedBuffer(reinterpret_cast<char*>(string), sizeof(UChar) * SysStringLen(string));
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<char*>(string), sizeof(UChar) * SysStringLen(string));
     BString utf16Encoding(TEXT("utf-16"), 6);
     loadData(sharedBuffer.release(), 0, utf16Encoding, baseURL, unreachableURL);
 }
