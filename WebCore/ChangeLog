@@ -1,5 +1,11 @@
 2008-03-13  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+
+        * WebCore.base.exp:
+
+2008-03-13  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam.
 
         Get rid of actualRequest, it is not used anymore. Also, get rid of 
