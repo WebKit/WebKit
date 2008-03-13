@@ -1,3 +1,12 @@
+2008-03-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Attempt at fixing the Qt/Windows build bot. Quote using double-quotes
+        instead of single quotes.
+
+        * pcre/dftables:
+
 2008-03-12  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

@@ -255,7 +255,7 @@ sub readHeaderValues()
 
     close($fh);
 
-    open(CPP, "cpp '$tempFile' |") or die "$!";
+    open(CPP, "cpp \"$tempFile\" |") or die "$!";
     my $content = <CPP>;
     close(CPP);
 
