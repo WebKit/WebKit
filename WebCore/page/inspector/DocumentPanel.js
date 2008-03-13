@@ -139,20 +139,25 @@ WebInspector.DocumentPanel.prototype = {
 
         this._focusedDOMNode = x;
 
-        this.updateBreadcrumb();
-
-        for (var pane in this.views.dom.sidebarPanes)
-            this.views.dom.sidebarPanes[pane].needsUpdate = true;
-
-        this.updateStyles();
-        this.updateMetrics();
-        this.updateProperties();
+        this._focusedNodeChanged();
 
         InspectorController.highlightDOMNode(x);
 
         var nodeItem = this.revealNode(x);
         if (nodeItem)
             nodeItem.select();
+    },
+
+    _focusedNodeChanged: function(forceUpdate)
+    {
+        this.updateBreadcrumb(forceUpdate);
+
+        for (var pane in this.views.dom.sidebarPanes)
+            this.views.dom.sidebarPanes[pane].needsUpdate = true;
+
+        this.updateStyles(forceUpdate);
+        this.updateMetrics();
+        this.updateProperties();
     },
 
     revealNode: function(node)
@@ -182,7 +187,7 @@ WebInspector.DocumentPanel.prototype = {
         this.updateTreeSelection();
     },
 
-    updateBreadcrumb: function()
+    updateBreadcrumb: function(forceUpdate)
     {
         if (!this.visible)
             return;
@@ -211,7 +216,7 @@ WebInspector.DocumentPanel.prototype = {
             crumb = crumb.nextSibling;
         }
 
-        if (handled) {
+        if (handled && !forceUpdate) {
             // We don't need to rebuild the crumbs, but we need to adjust sizes
             // to reflect the new focused or root node.
             this.updateBreadcrumbSizes();
@@ -630,13 +635,13 @@ WebInspector.DocumentPanel.prototype = {
         collapse(selectedCrumb, true);
     },
 
-    updateStyles: function()
+    updateStyles: function(forceUpdate)
     {
         var stylesSidebarPane = this.views.dom.sidebarPanes.styles;
         if (!stylesSidebarPane.expanded || !stylesSidebarPane.needsUpdate)
             return;
 
-        stylesSidebarPane.update(this.focusedDOMNode);
+        stylesSidebarPane.update(this.focusedDOMNode, undefined, forceUpdate);
         stylesSidebarPane.needsUpdate = false;
     },
 
@@ -972,6 +977,7 @@ WebInspector.DOMNodeTreeElement.prototype = {
             Element.prototype.removeAttribute.call(this.representedObject, attributeName);
 
         this._updateTitle();
+        this.treeOutline.panel._focusedNodeChanged(true);
     },
 
     _textNodeEditingCommitted: function(element, newText)

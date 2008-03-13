@@ -32,11 +32,11 @@ WebInspector.StylesSidebarPane = function()
 }
 
 WebInspector.StylesSidebarPane.prototype = {
-    update: function(node, editedSection)
+    update: function(node, editedSection, forceUpdate)
     {
         var refresh = false;
 
-        if (!node || node === this.node)
+        if (!forceUpdate && (!node || node === this.node))
             refresh = true;
 
         if (node && node.nodeType === Node.TEXT_NODE && node.parentNode)

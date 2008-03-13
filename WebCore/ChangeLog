@@ -1,3 +1,29 @@
+2008-03-12  Adam Roben  <aroben@apple.com>
+
+        Update the styles/metrics panes and breadcrumb after editing DOM
+        attributes
+
+        Reviewed by Tim.
+
+        * page/inspector/DocumentPanel.js:
+        (WebInspector.DocumentPanel.set focusedDOMNode): Moved code to update
+        the parts of the DocumentPanel other than the DOM tree into a new
+        function, _focusedNodeChanged.
+        (WebInspector.DocumentPanel._focusedNodeChanged): Added. The
+        forceUpdate parameter specifies whether the update should occur even
+        if the focused node hasn't changed since the last update.
+        (WebInspector.DocumentPanel.updateBreadcrumb): Added a forceUpdate
+        parameter. If forceUpdate is true, we always rebuild the breadcrumbs.
+        (WebInspector.DocumentPanel.updateStyles): Added a forceUpdate
+        parameter. If forceUpdate is true, we always rebuild the styles pane.
+        (WebInspector.DOMNodeTreeElement._attributeEditingCommitted): Added a
+        call to DocumentPanel._focusedNodeChanged. We have to force the update
+        because we haven't changed the focused node (the attributes of the
+        node have changed).
+        * page/inspector/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.update): Added a forceUpdate
+        parameter. If forceUpdate is true we always rebuild the styles.
+
 2008-03-12  Mark Rowe  <mrowe@apple.com>
 
         Further Gtk and Qt build fixes.
