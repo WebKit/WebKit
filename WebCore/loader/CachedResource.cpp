@@ -39,6 +39,9 @@ CachedResource::CachedResource(const String& url, Type type, bool forCache, bool
     : m_url(url)
     , m_lastDecodedAccessTime(0)
     , m_sendResourceLoadCallbacks(sendResourceLoadCallbacks)
+    , m_preloadCount(0)
+    , m_preloadResult(PreloadNotReferenced)
+    , m_requestedFromNetworkingLayer(false)
     , m_inCache(forCache)
     , m_docLoader(0)
 {
@@ -101,6 +104,14 @@ void CachedResource::setRequest(Request* request)
 
 void CachedResource::ref(CachedResourceClient *c)
 {
+    if (m_preloadResult == PreloadNotReferenced) {
+        if (isLoaded())
+            m_preloadResult = PreloadReferencedWhileComplete;
+        else if (m_requestedFromNetworkingLayer)
+            m_preloadResult = PreloadReferencedWhileLoading;
+        else
+            m_preloadResult = PreloadReferenced;
+    }
     if (!referenced() && inCache())
         cache()->addToLiveResourcesSize(this);
     m_clients.add(c);

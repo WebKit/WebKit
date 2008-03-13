@@ -32,10 +32,13 @@
 #include "CachedImage.h"
 #include "CachedScript.h"
 #include "CachedXSLStyleSheet.h"
+#include "CString.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "loader.h"
+
+#define PRELOAD_DEBUG 0
 
 namespace WebCore {
 
@@ -54,6 +57,7 @@ DocLoader::DocLoader(Frame *frame, Document* doc)
 
 DocLoader::~DocLoader()
 {
+    clearPreloads();
     HashMap<String, CachedResource*>::iterator end = m_docResources.end();
     for (HashMap<String, CachedResource*>::iterator it = m_docResources.begin(); it != end; ++it)
         it->second->setDocLoader(0);
@@ -71,17 +75,18 @@ void DocLoader::checkForReload(const KURL& fullURL)
     if (m_cachePolicy == CachePolicyVerify) {
        if (!m_reloadedURLs.contains(fullURL.string())) {
           CachedResource* existing = cache()->resourceForURL(fullURL.string());
-          if (existing && existing->isExpired()) {
+          if (existing && existing->isExpired() && !existing->isPreloaded()) {
              cache()->remove(existing);
              m_reloadedURLs.add(fullURL.string());
           }
        }
     } else if ((m_cachePolicy == CachePolicyReload) || (m_cachePolicy == CachePolicyRefresh)) {
        if (!m_reloadedURLs.contains(fullURL.string())) {
-          CachedResource* existing = cache()->resourceForURL(fullURL.string());
-          if (existing)
-             cache()->remove(existing);
-          m_reloadedURLs.add(fullURL.string());
+           CachedResource* existing = cache()->resourceForURL(fullURL.string());
+           if (existing && !existing->isPreloaded()) {
+               cache()->remove(existing);
+               m_reloadedURLs.add(fullURL.string());
+           }
        }
     }
 }
@@ -243,5 +248,80 @@ int DocLoader::requestCount()
          return m_requestCount + 1;
     return m_requestCount;
 }
+    
+void DocLoader::registerPreload(CachedResource* resource)
+{
+    if (!resource || resource->isLoaded() || m_preloads.contains(resource))
+        return;
+    resource->increasePreloadCount();
+    m_preloads.add(resource);
+#if PRELOAD_DEBUG
+    printf("PRELOADING %s\n",  resource->url().latin1().data());
+#endif
+}
 
+void DocLoader::clearPreloads()
+{
+#if PRELOAD_DEBUG
+    printPreloadStats();
+#endif
+    ListHashSet<CachedResource*>::iterator end = m_preloads.end();
+    for (ListHashSet<CachedResource*>::iterator it = m_preloads.begin(); it != end; ++it) {
+        CachedResource* res = *it;
+        if (res->preloadResult() == CachedResource::PreloadNotReferenced)
+            cache()->remove(res);
+        res->decreasePreloadCount();
+    }
+    m_preloads.clear();
+}
+
+#if PRELOAD_DEBUG
+void DocLoader::printPreloadStats()
+{
+    unsigned scripts = 0;
+    unsigned scriptMisses = 0;
+    unsigned stylesheets = 0;
+    unsigned stylesheetMisses = 0;
+    unsigned images = 0;
+    unsigned imageMisses = 0;
+    ListHashSet<CachedResource*>::iterator end = m_preloads.end();
+    for (ListHashSet<CachedResource*>::iterator it = m_preloads.begin(); it != end; ++it) {
+        CachedResource* res = *it;
+        if (res->preloadResult() == CachedResource::PreloadNotReferenced)
+            printf("!! UNREFERENCED PRELOAD %s\n", res->url().latin1().data());
+        else if (res->preloadResult() == CachedResource::PreloadReferencedWhileComplete)
+            printf("HIT COMPLETE PRELOAD %s\n", res->url().latin1().data());
+        else if (res->preloadResult() == CachedResource::PreloadReferencedWhileLoading
+            printf("HIT LOADING PRELOAD %s\n", res->url().latin1().data());
+        
+        if (res->type() == CachedResource::Script) {
+            scripts++;
+            if (res->preloadResult() < CachedResource::PreloadReferencedWhileLoading)
+                scriptMisses++;
+        } else if (res->type() == CachedResource::CSSStyleSheet) {
+            stylesheets++;
+            if (res->preloadResult() < CachedResource::PreloadReferencedWhileLoading)
+                stylesheetMisses++;
+        } else {
+            images++;
+            if (res->preloadResult() < CachedResource::PreloadReferencedWhileLoading)
+                imageMisses++;
+        }
+        
+        if (res->errorOccurred())
+            cache()->remove(res);
+        
+        res->decreasePreloadCount();
+    }
+    m_preloads.clear();
+    
+    if (scripts)
+        printf("SCRIPTS: %d (%d hits, hit rate %d%%)\n", scripts, scripts - scriptMisses, (scripts - scriptMisses) * 100 / scripts);
+    if (stylesheets)
+        printf("STYLESHEETS: %d (%d hits, hit rate %d%%)\n", stylesheets, stylesheets - stylesheetMisses, (stylesheets - stylesheetMisses) * 100 / stylesheets);
+    if (images)
+        printf("IMAGES:  %d (%d hits, hit rate %d%%)\n", images, images - imageMisses, (images - imageMisses) * 100 / images);
+}
+#endif
+    
 }

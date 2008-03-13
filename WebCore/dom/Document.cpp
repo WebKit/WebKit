@@ -1503,6 +1503,9 @@ void Document::implicitClose()
     delete m_tokenizer;
     m_tokenizer = 0;
 
+    // Parser should have picked up all preloads by now
+    m_docLoader->clearPreloads();
+
     // Create a body element if we don't already have one. See Radar 3758785.
     if (!this->body() && isHTMLDocument()) {
         if (Node* documentElement = this->documentElement()) {

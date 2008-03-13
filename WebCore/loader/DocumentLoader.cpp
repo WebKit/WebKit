@@ -30,6 +30,7 @@
 #include "DocumentLoader.h"
 
 #include "CachedPage.h"
+#include "DocLoader.h"
 #include "Document.h"
 #include "Event.h"
 #include "Frame.h"
@@ -426,10 +427,13 @@ bool DocumentLoader::isLoadingInAPISense() const
             return true;
         if (!m_subresourceLoaders.isEmpty())
             return true;
-        if (Document* doc = m_frame->document())
+        if (Document* doc = m_frame->document()) {
+            if (doc->docLoader()->requestCount())
+                return true;
             if (Tokenizer* tok = doc->tokenizer())
                 if (tok->processingData())
                     return true;
+        }
     }
     return frameLoader()->subframeIsLoading();
 }

@@ -1,3 +1,9 @@
+2008-03-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        * ForwardingHeaders/wtf/Deque.h: Added.
+
 2008-03-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

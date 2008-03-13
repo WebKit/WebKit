@@ -41,6 +41,7 @@
 #include "HTMLParser.h"
 #include "HTMLScriptElement.h"
 #include "HTMLViewSourceDocument.h"
+#include "PreloadScanner.h"
 #include "Settings.h"
 #include "SystemTime.h"
 #include "kjs_proxy.h"
@@ -499,8 +500,18 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
             write(prependingSrc, false);
             state = m_state;
         }
+    } 
+    
+#if PRELOAD_SCANNER_ENABLED
+    if (!pendingScripts.isEmpty() && !m_executingScript) {
+        if (!m_preloadScanner)
+            m_preloadScanner.set(new PreloadScanner(m_doc));
+        if (!m_preloadScanner->inProgress()) {
+            m_preloadScanner->begin();
+            m_preloadScanner->write(pendingSrc);
+        }
     }
-
+#endif
     currentPrependingSrc = savedPrependingSrc;
 
     return state;
@@ -552,6 +563,15 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const String& str, State sta
                 currentPrependingSrc->append(prependingSrc);
             else
                 pendingSrc.prepend(prependingSrc);
+            
+#if PRELOAD_SCANNER_ENABLED
+            // We are stuck waiting for another script. Lets check the source that
+            // was just document.write()n for anything to load.
+            PreloadScanner documentWritePreloadScanner(m_doc);
+            documentWritePreloadScanner.begin();
+            documentWritePreloadScanner.write(prependingSrc);
+            documentWritePreloadScanner.end();
+#endif
         } else {
             m_state = state;
             write(prependingSrc, false);
@@ -1582,10 +1602,20 @@ bool HTMLTokenizer::write(const SegmentedString& str, bool appendData)
         // don't parse; we will do this later
         if (currentPrependingSrc)
             currentPrependingSrc->append(source);
-        else
+        else {
             pendingSrc.append(source);
+#if PRELOAD_SCANNER_ENABLED
+            if (m_preloadScanner && m_preloadScanner->inProgress() && appendData)
+                m_preloadScanner->write(source);
+#endif
+        }
         return false;
     }
+    
+#if PRELOAD_SCANNER_ENABLED
+    if (m_preloadScanner && m_preloadScanner->inProgress() && appendData)
+        m_preloadScanner->end();
+#endif
 
     if (!src.isEmpty())
         src.append(source);

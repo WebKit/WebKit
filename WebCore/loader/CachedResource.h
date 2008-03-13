@@ -79,6 +79,16 @@ public:
     virtual void ref(CachedResourceClient*);
     void deref(CachedResourceClient*);
     bool referenced() const { return !m_clients.isEmpty(); }
+
+    enum PreloadResult {
+        PreloadNotReferenced,
+        PreloadReferenced,
+        PreloadReferencedWhileLoading,
+        PreloadReferencedWhileComplete
+    };
+    PreloadResult preloadResult() const { return m_preloadResult; }
+    void setRequestedFromNetworkingLayer() { m_requestedFromNetworkingLayer = true; }
+        
     virtual void allReferencesRemoved() {};
 
     unsigned count() const { return m_clients.size(); }
@@ -117,7 +127,7 @@ public:
     void setResponse(const ResourceResponse& response) { m_response = response; }
     const ResourceResponse& response() const { return m_response; }
     
-    bool canDelete() const { return !referenced() && !m_request; }
+    bool canDelete() const { return !referenced() && !m_request && !m_preloadCount; }
 
     bool isExpired() const;
 
@@ -135,6 +145,10 @@ public:
     virtual void destroyDecodedData() {};
 
     void setDocLoader(DocLoader* docLoader) { m_docLoader = docLoader; }
+    
+    bool isPreloaded() const { return m_preloadCount; }
+    void increasePreloadCount() { ++m_preloadCount; }
+    void decreasePreloadCount() { ASSERT(m_preloadCount); --m_preloadCount; }
     
 protected:
     void setEncodedSize(unsigned);
@@ -163,6 +177,11 @@ private:
     double m_lastDecodedAccessTime; // Used as a "thrash guard" in the cache
     
     bool m_sendResourceLoadCallbacks;
+    
+    unsigned m_preloadCount;
+    PreloadResult m_preloadResult;
+    bool m_requestedFromNetworkingLayer;
+
 protected:
     bool m_inCache;
     bool m_loading;

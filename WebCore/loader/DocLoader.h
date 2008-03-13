@@ -30,6 +30,7 @@
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 
 namespace WebCore {
 
@@ -92,6 +93,11 @@ public:
     void incrementRequestCount();
     void decrementRequestCount();
     int requestCount();
+    
+    void clearPreloads();
+    void registerPreload(CachedResource*);
+    void printPreloadStats();
+    
 private:
     CachedResource* requestResource(CachedResource::Type, const String& url, const String* charset = 0, bool skipCanLoadCheck = false, bool sendResourceLoadCallbacks = true);
 
@@ -106,6 +112,8 @@ private:
     Document *m_doc;
     
     int m_requestCount;
+    
+    ListHashSet<CachedResource*> m_preloads;
     
     //29 bits left
     bool m_autoLoadImages : 1;

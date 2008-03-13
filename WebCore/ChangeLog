@@ -1,3 +1,121 @@
+2008-03-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Make page loads go fast.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=17480
+
+        - Implement speculative preloading. When a script load blocks the main parser, use a side 
+          parser to pick up more resources.
+        - Implement per-host load queues, prioritize scripts and stylesheets over images.
+        
+        Depending on content and network latency this may speed things up quite a bit.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        Clear the preloads after laoding completes.
+        
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseMappedAttribute):
+        (WebCore::HTMLLinkElement::tokenizeRelAttribute):
+        * html/HTMLLinkElement.h:
+        Make tokenizeRelAttribute() public static so it can be used from elsewhere.
+        Eliminate a pointless bitfield so I can get references.
+        
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::scriptExecution):
+        (WebCore::HTMLTokenizer::write):
+        * html/HTMLTokenizer.h:
+        Spin up the preload scanner whenever a script load blocks the parser. One scanner tracks the end of 
+        the document while temporary ones are created as needed to scan document.write() output.
+        
+        * html/PreloadScanner.cpp: Added.
+        (WebCore::PreloadScanner::PreloadScanner):
+        (WebCore::PreloadScanner::~PreloadScanner):
+        (WebCore::PreloadScanner::begin):
+        (WebCore::PreloadScanner::end):
+        (WebCore::PreloadScanner::reset):
+        (WebCore::PreloadScanner::write):
+        (WebCore::isWhitespace):
+        (WebCore::PreloadScanner::clearLastCharacters):
+        (WebCore::PreloadScanner::rememberCharacter):
+        (WebCore::PreloadScanner::lastCharactersMatch):
+        (WebCore::legalEntityFor):
+        (WebCore::PreloadScanner::consumeEntity):
+        (WebCore::PreloadScanner::tokenize):
+        (WebCore::PreloadScanner::processAttribute):
+        (WebCore::PreloadScanner::emitCharacter):
+        (WebCore::PreloadScanner::tokenizeCSS):
+        (WebCore::PreloadScanner::emitTag):
+        (WebCore::PreloadScanner::emitCSSRule):
+        * html/PreloadScanner.h: Added.
+        (WebCore::PreloadScanner::inProgress):
+        (WebCore::PreloadScanner::):
+        HTML5 tokenization plus some glue code. Fake CSS parsing thrown in just for fun.
+        
+        * loader/Cache.cpp:
+        (WebCore::Cache::pruneDeadResources):
+        Preloads have zero refcount, avoid kicking them out too early.
+        
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::ref):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::):
+        (WebCore::CachedResource::preloadResult):
+        (WebCore::CachedResource::setRequestedFromNetworkingLayer):
+        (WebCore::CachedResource::canDelete):
+        (WebCore::CachedResource::isPreloaded):
+        (WebCore::CachedResource::increasePreloadCount):
+        (WebCore::CachedResource::decreasePreloadCount):
+        Keep track which resources are preloads. Avoid deleting them. Track
+        at which point of the loading preloads get utilized to enable some interesting 
+        statistics.
+        
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::~DocLoader):
+        (WebCore::DocLoader::checkForReload):
+        (WebCore::DocLoader::registerPreload):
+        (WebCore::DocLoader::clearPreloads):
+        (WebCore::DocLoader::printPreloadStats):
+        * loader/DocLoader.h:
+        Ensure we utilize preloaded resources during reloads.
+        Keep a list of all preloads in the document. Clear the preloads after
+        parsing is complete. Some debug statistics.
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+        Avoid signaling that loading is complete too early. 
+        
+        * loader/loader.cpp:
+        (WebCore::Loader::Loader):
+        (WebCore::Loader::~Loader):
+        (WebCore::Loader::determinePriority):
+        (WebCore::Loader::load):
+        (WebCore::Loader::scheduleServePendingRequests):
+        (WebCore::Loader::requestTimerFired):
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::cancelRequests):
+        (WebCore::Loader::Host::Host):
+        (WebCore::Loader::Host::~Host):
+        (WebCore::Loader::Host::addRequest):
+        (WebCore::Loader::Host::hasRequests):
+        (WebCore::Loader::Host::servePendingRequests):
+        (WebCore::Loader::Host::didFinishLoading):
+        (WebCore::Loader::Host::didFail):
+        (WebCore::Loader::Host::didReceiveResponse):
+        (WebCore::Loader::Host::didReceiveData):
+        (WebCore::Loader::Host::cancelPendingRequests):
+        (WebCore::Loader::Host::cancelRequests):
+        * loader/loader.h:
+        (WebCore::Loader::):
+        Distribute load requests to per-host priority queues. Limit the number of loads issued to the 
+        networking layer so we have better changes of getting important requests through first.
+        Prioritize scripts > stylesheets > images.
+
 2008-03-13  David Hyatt  <hyatt@apple.com>
 
         This patch makes full page zoom work pretty well. It fixes repainting so that it works when transforms

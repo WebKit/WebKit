@@ -91,7 +91,7 @@ public:
 
     virtual bool isURLAttribute(Attribute*) const;
     
-    void tokenizeRelAttribute(const AtomicString& rel);
+    static void tokenizeRelAttribute(const AtomicString& value, bool& stylesheet, bool& alternate, bool& icon);
 
 protected:
     CachedCSSStyleSheet* m_cachedSheet;
@@ -100,10 +100,10 @@ protected:
     String m_type;
     String m_media;
     int m_disabledState; // 0=unset(default), 1=enabled via script, 2=disabled
-    bool m_loading : 1;
-    bool m_alternate : 1;
-    bool m_isStyleSheet : 1;
-    bool m_isIcon : 1;
+    bool m_loading;
+    bool m_alternate;
+    bool m_isStyleSheet;
+    bool m_isIcon;
 };
 
 } //namespace

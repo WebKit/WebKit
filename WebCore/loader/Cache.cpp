@@ -229,7 +229,7 @@ void Cache::pruneDeadResources()
         // First flush all the decoded data in this queue.
         while (current) {
             CachedResource* prev = current->m_prevInAllResourcesList;
-            if (!current->referenced() && current->isLoaded() && current->decodedSize()) {
+            if (!current->referenced() && !current->isPreloaded() && current->isLoaded() && current->decodedSize()) {
                 // Destroy our decoded data. This will remove us from 
                 // m_liveDecodedResources, and possibly move us to a differnt 
                 // LRU list in m_allResources.
@@ -245,7 +245,7 @@ void Cache::pruneDeadResources()
         current = m_allResources[i].m_tail;
         while (current) {
             CachedResource* prev = current->m_prevInAllResourcesList;
-            if (!current->referenced()) {
+            if (!current->referenced() && !current->isPreloaded()) {
                 remove(current);
 
                 if (m_deadSize <= targetSize)

@@ -33,6 +33,13 @@
 #include <wtf/Vector.h>
 #include <wtf/OwnPtr.h>
 
+// FIXME: temporary, add PreloadScanner to all build files
+#if PLATFORM(MAC)
+#define PRELOAD_SCANNER_ENABLED 1
+#else
+#define PRELOAD_SCANNER_ENABLED 0
+#endif
+
 namespace WebCore {
 
 class CachedScript;
@@ -43,6 +50,7 @@ class HTMLViewSourceDocument;
 class FrameView;
 class HTMLParser;
 class Node;
+class PreloadScanner;
 
 /**
  * @internal
@@ -402,6 +410,10 @@ private:
     HTMLParser* parser;
     bool inWrite;
     bool m_fragment;
+
+#if PRELOAD_SCANNER_ENABLED
+    OwnPtr<PreloadScanner> m_preloadScanner;
+#endif
 };
 
 void parseHTMLDocumentFragment(const String&, DocumentFragment*);

@@ -104,7 +104,7 @@ StyleSheet* HTMLLinkElement::sheet() const
 void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == relAttr) {
-        tokenizeRelAttribute(attr->value());
+        tokenizeRelAttribute(attr->value(), m_isStyleSheet, m_alternate, m_isIcon);
         process();
     } else if (attr->name() == hrefAttr) {
         m_url = document()->completeURL(parseURL(attr->value())).string();
@@ -124,17 +124,20 @@ void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
     }
 }
 
-void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& relStr)
+void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& relStr, bool& styleSheet, bool& alternate, bool& icon)
 {
-    m_isStyleSheet = m_isIcon = m_alternate = false;
+    styleSheet = false;
+    icon = false; 
+    alternate = false;
     String rel = relStr.string().lower();
     if (rel == "stylesheet")
-        m_isStyleSheet = true;
+        styleSheet = true;
     else if (rel == "icon" || rel == "shortcut icon")
-        m_isIcon = true;
-    else if (rel == "alternate stylesheet" || rel == "stylesheet alternate")
-        m_isStyleSheet = m_alternate = true;
-    else {
+        icon = true;
+    else if (rel == "alternate stylesheet" || rel == "stylesheet alternate") {
+        styleSheet = true;
+        alternate = true;
+    } else {
         // Tokenize the rel attribute and set bits based on specific keywords that we find.
         rel.replace('\n', ' ');
         Vector<String> list;
@@ -142,11 +145,11 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& relStr)
         Vector<String>::const_iterator end = list.end();
         for (Vector<String>::const_iterator it = list.begin(); it != end; ++it) {
             if (*it == "stylesheet")
-                m_isStyleSheet = true;
+                styleSheet = true;
             else if (*it == "alternate")
-                m_alternate = true;
+                alternate = true;
             else if (*it == "icon")
-                m_isIcon = true;
+                icon = true;
         }
     }
 }
