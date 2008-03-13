@@ -317,5 +317,5 @@ PassRefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
         return 0;
     int size = SizeofResource(gInstance, resInfo);
 
-    return new WebCore::SharedBuffer(reinterpret_cast<const char*>(resource), size);
+    return WebCore::SharedBuffer::create(reinterpret_cast<const char*>(resource), size);
 }
