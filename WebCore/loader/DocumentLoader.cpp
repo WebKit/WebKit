@@ -323,26 +323,6 @@ void DocumentLoader::finishedLoading()
     }
 }
 
-void DocumentLoader::setCommitted(bool f)
-{
-    m_committed = f;
-}
-
-bool DocumentLoader::isCommitted() const
-{
-    return m_committed;
-}
-
-void DocumentLoader::setLoading(bool f)
-{
-    m_loading = f;
-}
-
-bool DocumentLoader::isLoading() const
-{
-    return m_loading;
-}
-
 void DocumentLoader::commitLoad(const char* data, int length)
 {
     // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
@@ -435,16 +415,6 @@ void DocumentLoader::prepareForLoadStart()
     frameLoader()->prepareForLoadStart();
 }
 
-void DocumentLoader::setIsClientRedirect(bool flag)
-{
-    m_isClientRedirect = flag;
-}
-
-bool DocumentLoader::isClientRedirect() const
-{
-    return m_isClientRedirect;
-}
-
 void DocumentLoader::setPrimaryLoadComplete(bool flag)
 {
     m_primaryLoadComplete = flag;
@@ -485,46 +455,6 @@ void DocumentLoader::stopRecordingResponses()
     m_stopRecordingResponses = true;
 }
 
-String DocumentLoader::title() const
-{
-    return m_pageTitle;
-}
-
-void DocumentLoader::setLastCheckedRequest(const ResourceRequest& req)
-{
-    m_lastCheckedRequest = req;
-}
-
-const ResourceRequest& DocumentLoader::lastCheckedRequest() const
-{
-    return m_lastCheckedRequest;
-}
-
-const NavigationAction& DocumentLoader::triggeringAction() const
-{
-    return m_triggeringAction;
-}
-
-void DocumentLoader::setTriggeringAction(const NavigationAction& action)
-{
-    m_triggeringAction = action;
-}
-
-const ResponseVector& DocumentLoader::responses() const
-{
-    return m_responses;
-}
-
-void DocumentLoader::setOverrideEncoding(const String& enc)
-{
-    m_overrideEncoding = enc;
-}
-
-String DocumentLoader::overrideEncoding() const
-{
-    return m_overrideEncoding;
-}
-
 void DocumentLoader::setTitle(const String& title)
 {
     if (title.isEmpty())
@@ -557,36 +487,6 @@ void DocumentLoader::loadFromCachedPage(PassRefPtr<CachedPage> cachedPage)
     setLoadingFromCachedPage(true);
     setCommitted(true);
     frameLoader()->commitProvisionalLoad(cachedPage);
-}
-
-const ResourceResponse& DocumentLoader::response() const
-{
-    return m_response;
-}
-
-void DocumentLoader::setLoadingFromCachedPage(bool loading)
-{
-    m_loadingFromCachedPage = loading;
-}
-
-bool DocumentLoader::isLoadingFromCachedPage() const
-{
-    return m_loadingFromCachedPage;
-}
-
-void DocumentLoader::setResponse(const ResourceResponse& response) 
-{ 
-    m_response = response; 
-}
-
-bool DocumentLoader::isStopping() const 
-{ 
-    return m_isStopping;
-}
-
-const ResourceError& DocumentLoader::mainDocumentError() const 
-{ 
-    return m_mainDocumentError; 
 }
 
 KURL DocumentLoader::originalURL() const

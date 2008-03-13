@@ -93,27 +93,27 @@ namespace WebCore {
         String responseMIMEType() const;
         
         void replaceRequestURLForAnchorScroll(const KURL&);
-        bool isStopping() const;
+        bool isStopping() const { return m_isStopping; }
         void stopLoading();
-        void setCommitted(bool);
-        bool isCommitted() const;
-        bool isLoading() const;
-        void setLoading(bool);
+        void setCommitted(bool committed) { m_committed = committed; }
+        bool isCommitted() const { return m_committed; }
+        bool isLoading() const { return m_loading; }
+        void setLoading(bool loading) { m_loading = loading; }
         void updateLoading();
         void receivedData(const char*, int);
         void setupForReplaceByMIMEType(const String& newMIMEType);
         void finishedLoading();
-        const ResourceResponse& response() const;
-        const ResourceError& mainDocumentError() const;
+        const ResourceResponse& response() const { return m_response; }
+        const ResourceError& mainDocumentError() const { return m_mainDocumentError; }
         void mainReceivedError(const ResourceError&, bool isComplete);
-        void setResponse(const ResourceResponse& response);
+        void setResponse(const ResourceResponse& response) { m_response = response; }
         void prepareForLoadStart();
-        bool isClientRedirect() const;
-        void setIsClientRedirect(bool);
+        bool isClientRedirect() const { return m_isClientRedirect; }
+        void setIsClientRedirect(bool isClientRedirect) { m_isClientRedirect = isClientRedirect; }
         bool isLoadingInAPISense() const;
         void setPrimaryLoadComplete(bool);
         void setTitle(const String&);
-        String overrideEncoding() const;
+        const String& overrideEncoding() const { return m_overrideEncoding; }
 
 #if PLATFORM(MAC)
         void schedule(SchedulePair*);
@@ -121,21 +121,21 @@ namespace WebCore {
 #endif
 
         void addResponse(const ResourceResponse&);
-        const ResponseVector& responses() const;
+        const ResponseVector& responses() const { return m_responses; }
 
-        const NavigationAction& triggeringAction() const;
-        void setTriggeringAction(const NavigationAction&);
-        void setOverrideEncoding(const String&);
-        void setLastCheckedRequest(const ResourceRequest& request);
-        const ResourceRequest& lastCheckedRequest() const;
+        const NavigationAction& triggeringAction() const { return m_triggeringAction; }
+        void setTriggeringAction(const NavigationAction& action) { m_triggeringAction = action; }
+        void setOverrideEncoding(const String& encoding) { m_overrideEncoding = encoding; }
+        void setLastCheckedRequest(const ResourceRequest& request) { m_lastCheckedRequest = request; }
+        const ResourceRequest& lastCheckedRequest()  { return m_lastCheckedRequest; }
 
         void stopRecordingResponses();
-        String title() const;
+        const String& title() const { return m_pageTitle; }
         KURL urlForHistory() const;
         
         void loadFromCachedPage(PassRefPtr<CachedPage>);
-        void setLoadingFromCachedPage(bool);
-        bool isLoadingFromCachedPage() const;
+        void setLoadingFromCachedPage(bool loading) { m_loadingFromCachedPage = loading; }
+        bool isLoadingFromCachedPage() const { return m_loadingFromCachedPage; }
         
         void setDefersLoading(bool);
 
