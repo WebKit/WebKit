@@ -47,10 +47,16 @@
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/HTMLGenericFormElement.h>
+#import <WebCore/HTMLInputElement.h>
+#import <WebCore/HTMLNames.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/Range.h>
+#import <WebCore/TextResourceDecoder.h>
+#import <WebKit/DOMHTMLInputElement.h>
 
 using namespace WebCore;
+using namespace HTMLNames;
 
 @interface WebHTMLRepresentationPrivate : NSObject {
 @public
@@ -247,7 +253,19 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
     if ([self _isDisplayingWebArchive])
         return [[[NSString alloc] initWithData:_private->parsedArchiveData encoding:NSUTF8StringEncoding] autorelease]; 
 
-    return [[_private->dataSource webFrame] _stringWithData:[_private->dataSource data]];
+    Frame* coreFrame = core([_private->dataSource webFrame]);
+    if (!coreFrame)
+        return nil;
+    Document* document = coreFrame->document();
+    if (!document)
+        return nil;
+    TextResourceDecoder* decoder = document->decoder();
+    if (!decoder)
+        return nil;
+    NSData *data = [_private->dataSource data];
+    if (!data)
+        return nil;
+    return decoder->encoding().decode(reinterpret_cast<const char*>([data bytes]), [data length]);
 }
 
 - (NSString *)title
@@ -271,44 +289,86 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
     return [NSAttributedString _web_attributedStringFromRange:Range::create([startNode _node]->document(), [startNode _node], startOffset, [endNode _node], endOffset).get()];
 }
 
+static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
+{
+    Node* node = [element _node];
+    return node && node->hasTagName(formTag) ? static_cast<HTMLFormElement *>(node) : 0;
+}
+
 - (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form
 {
-    return [[_private->dataSource webFrame] _elementWithName:name inForm:form];
+    HTMLFormElement* formElement = formElementFromDOMElement(form);
+    if (!formElement)
+        return nil;
+    Vector<HTMLGenericFormElement*>& elements = formElement->formElements;
+    AtomicString targetName = name;
+    for (unsigned i = 0; i < elements.size(); i++) {
+        HTMLGenericFormElement* elt = elements[i];
+        if (elt->name() == targetName)
+            return kit(elt);
+    }
+    return nil;
+}
+
+static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
+{
+    Node* node = [element _node];
+    return node && node->hasTagName(inputTag) ? static_cast<HTMLInputElement*>(node) : 0;
 }
 
 - (BOOL)elementDoesAutoComplete:(DOMElement *)element
 {
-    return [[_private->dataSource webFrame] _elementDoesAutoComplete:element];
+    HTMLInputElement* inputElement = inputElementFromDOMElement(element);
+    return inputElement
+        && inputElement->inputType() == HTMLInputElement::TEXT
+        && inputElement->autoComplete();
 }
 
 - (BOOL)elementIsPassword:(DOMElement *)element
 {
-    return [[_private->dataSource webFrame] _elementIsPassword:element];
+    HTMLInputElement* inputElement = inputElementFromDOMElement(element);
+    return inputElement
+        && inputElement->inputType() == HTMLInputElement::PASSWORD;
 }
 
 - (DOMElement *)formForElement:(DOMElement *)element
 {
-    return [[_private->dataSource webFrame] _formForElement:element];
+    HTMLInputElement* inputElement = inputElementFromDOMElement(element);
+    return inputElement ? kit(inputElement->form()) : 0;
 }
 
 - (DOMElement *)currentForm
 {
-    return [[_private->dataSource webFrame] _currentForm];
+    return kit(core([_private->dataSource webFrame])->currentForm());
 }
 
 - (NSArray *)controlsInForm:(DOMElement *)form
 {
-    return [[_private->dataSource webFrame] _controlsInForm:form];
+    HTMLFormElement* formElement = formElementFromDOMElement(form);
+    if (!formElement)
+        return nil;
+    NSMutableArray *results = nil;
+    Vector<HTMLGenericFormElement*>& elements = formElement->formElements;
+    for (unsigned i = 0; i < elements.size(); i++) {
+        if (elements[i]->isEnumeratable()) { // Skip option elements, other duds
+            DOMElement* de = kit(elements[i]);
+            if (!results)
+                results = [NSMutableArray arrayWithObject:de];
+            else
+                [results addObject:de];
+        }
+    }
+    return results;
 }
 
 - (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element
 {
-    return [[_private->dataSource webFrame] _searchForLabels:labels beforeElement:element];
+    return core([_private->dataSource webFrame])->searchForLabelsBeforeElement(labels, core(element));
 }
 
 - (NSString *)matchLabels:(NSArray *)labels againstElement:(DOMElement *)element
 {
-    return [[_private->dataSource webFrame] _matchLabels:labels againstElement:element];
+    return core([_private->dataSource webFrame])->matchLabelsAgainstElement(labels, core(element));
 }
 
 @end

@@ -79,6 +79,7 @@
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Document.h>
+#import <WebCore/DocumentFragment.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EditorDeleteAction.h>
 #import <WebCore/Element.h>
@@ -102,9 +103,11 @@
 #import <WebCore/Range.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/SimpleFontData.h>
 #import <WebCore/Text.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreTextRenderer.h>
+#import <WebCore/markup.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
@@ -1028,7 +1031,8 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 
     NSPoint origin = [[self superview] bounds].origin;
     if (!NSEqualPoints(_private->lastScrollPosition, origin)) {
-        [[self _frame] _sendScrollEvent];
+        if (Frame* coreFrame = core([self _frame]))
+            coreFrame->sendScrollEvent();
         [_private->compController endRevertingChange:NO moveLeft:NO];
         
         WebView *webView = [self _webView];
@@ -1945,9 +1949,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         return fragment;
     }
     if (pboardType == NSStringPboardType)
-        return [[self _frame] _documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]
-                                              inContext:context];
-                                              
+        return kit(createFragmentFromText(core(context), [pasteboard stringForType:NSStringPboardType]).get());
     return nil;
 }
 
@@ -2699,10 +2701,13 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 
     LOG(View, "%@ doing layout", self);
 
-    if (minPageWidth > 0.0) {
-        [[self _frame] _forceLayoutWithMinimumPageWidth:minPageWidth maximumPageWidth:maxPageWidth adjustingViewSize:adjustViewSize];
-    } else {
-        [[self _frame] _forceLayoutAdjustingViewSize:adjustViewSize];
+    Frame* coreFrame = core([self _frame]);
+    if (minPageWidth > 0.0)
+        coreFrame->forceLayoutWithPageWidthRange(minPageWidth, maxPageWidth, adjustViewSize);
+    else {
+        coreFrame->forceLayout(!adjustViewSize);
+        if (adjustViewSize)
+            coreFrame->view()->adjustViewSize();
     }
     _private->needsLayout = NO;
     
@@ -3328,7 +3333,7 @@ noPromisedData:
         [self _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
 
     float newBottomFloat = *newBottom;
-    [[self _frame] _adjustPageHeightNew:&newBottomFloat top:oldTop bottom:oldBottom limit:bottomLimit];
+    core([self _frame])->adjustPageHeight(&newBottomFloat, oldTop, oldBottom, bottomLimit);
     *newBottom = newBottomFloat;
 
     if (!wasInPrintingMode) {
@@ -4503,8 +4508,13 @@ static BOOL writingDirectionKeyBindingsEnabled()
     if ([NSApp keyWindow] != window || [window firstResponder] != self)
         return;
     
-    BOOL multiple = NO;
-    NSFont *font = [[self _frame] _fontForSelection:&multiple];
+    bool multipleFonts = false;
+    NSFont *font = nil;
+    if (Frame* coreFrame = core([self _frame])) {
+        if (const SimpleFontData* fd = coreFrame->editor()->fontForSelection(multipleFonts))
+            font = fd->getNSFont();
+    }
+    
 
     // FIXME: for now, return a bogus font that distinguishes the empty selection from the non-empty
     // selection. We should be able to remove this once the rest of this code works properly.
@@ -4512,8 +4522,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
         font = [self _hasSelection] ? [NSFont menuFontOfSize:23] : [NSFont toolTipsFontOfSize:17];
     ASSERT(font != nil);
 
-    NSFontManager *fm = [NSFontManager sharedFontManager];
-    [fm setSelectedFont:font isMultiple:multiple];
+    [[NSFontManager sharedFontManager] setSelectedFont:font isMultiple:multipleFonts];
 
     // FIXME: we don't keep track of selected attributes, or set them on the font panel. This
     // appears to have no effect on the UI. E.g., underlined text in Mail or TextEdit is
@@ -4522,43 +4531,16 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
 - (BOOL)_canSmartCopyOrDelete
 {
-    return [[self _webView] smartInsertDeleteEnabled] && [[self _frame] _selectionGranularity] == WordGranularity;
+    if (![[self _webView] smartInsertDeleteEnabled])
+        return NO;
+    Frame* coreFrame = core([self _frame]);
+    return coreFrame && coreFrame->selectionGranularity() == WordGranularity;
 }
 
 - (NSEvent *)_mouseDownEvent
 {
     return _private->mouseDownEvent;
 }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-- (void)_pauseNullEventsForAllNetscapePlugins
-{
-    NSArray *subviews = [self subviews];
-    unsigned int subviewCount = [subviews count];
-    unsigned int subviewIndex;
-    
-    for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) {
-        NSView *subview = [subviews objectAtIndex:subviewIndex];
-        if ([subview isKindOfClass:[WebBaseNetscapePluginView class]])
-            [(WebBaseNetscapePluginView *)subview stopNullEvents];
-    }
-}
-#endif
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-- (void)_resumeNullEventsForAllNetscapePlugins
-{
-    NSArray *subviews = [self subviews];
-    unsigned int subviewCount = [subviews count];
-    unsigned int subviewIndex;
-    
-    for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) {
-        NSView *subview = [subviews objectAtIndex:subviewIndex];
-        if ([subview isKindOfClass:[WebBaseNetscapePluginView class]])
-            [(WebBaseNetscapePluginView *)subview restartNullEvents];
-    }
-}
-#endif
 
 - (id<WebHTMLHighlighter>)_highlighterForType:(NSString*)type
 {
@@ -4949,18 +4931,19 @@ static BOOL isTextInput(Frame* coreFrame)
 
 - (NSRange)markedRange
 {
-    NSRange result = [[self _frame] _markedTextNSRange];
+    WebFrame *webFrame = [self _frame];
+    NSRange result = [webFrame _convertToNSRange:core(webFrame)->editor()->compositionRange().get()];
     LOG(TextInput, "markedRange -> (%u, %u)", result.location, result.length);
     return result;
 }
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)nsRange
 {
-    if (!isTextInput(core([self _frame]))) {
+    WebFrame *frame = [self _frame];
+    if (!isTextInput(core(frame))) {
         LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> nil", nsRange.location, nsRange.length);
         return nil;
     }
-    WebFrame *frame = [self _frame];
     DOMRange *domRange = [frame _convertNSRangeToDOMRange:nsRange];
     if (!domRange) {
         LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> nil", nsRange.location, nsRange.length);
@@ -5643,8 +5626,8 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 {
     if (![string length])
         return NO;
-    
-    return [[self _frame] _searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag startInSelection:startInSelection];
+    Frame* coreFrame = core([self _frame]);
+    return coreFrame && coreFrame->findString(string, forward, caseFlag, wrapFlag, startInSelection);
 }
 
 @end
@@ -5658,35 +5641,60 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
 {
-    Frame* coreframe = core([self _frame]);
-    if (coreframe) 
-        return [[[WebElementDictionary alloc] initWithHitTestResult:coreframe->eventHandler()->hitTestResultAtPoint(IntPoint(point), allow)] autorelease];
-    return nil;
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return nil;
+    return [[[WebElementDictionary alloc] initWithHitTestResult:coreFrame->eventHandler()->hitTestResultAtPoint(IntPoint(point), allow)] autorelease];
 }
 
 - (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(NSUInteger)limit
 {
-    return [[self _frame] _markAllMatchesForText:string caseSensitive:caseFlag limit:limit];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return 0;
+    return coreFrame->markAllMatchesForText(string, caseFlag, limit);
 }
 
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue
 {
-    [[self _frame] _setMarkedTextMatchesAreHighlighted:newValue];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+    coreFrame->setMarkedTextMatchesAreHighlighted(newValue);
 }
 
 - (BOOL)markedTextMatchesAreHighlighted
 {
-    return [[self _frame] _markedTextMatchesAreHighlighted];
+    Frame* coreFrame = core([self _frame]);
+    return coreFrame && coreFrame->markedTextMatchesAreHighlighted();
 }
 
 - (void)unmarkAllTextMatches
 {
-    return [[self _frame] _unmarkAllTextMatches];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+    Document* document = coreFrame->document();
+    if (!document)
+        return;
+    document->removeMarkers(DocumentMarker::TextMatch);
 }
 
 - (NSArray *)rectsForTextMatches
 {
-    return [[self _frame] _rectsForTextMatches];
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return [NSArray array];
+    Document* document = coreFrame->document();
+    if (!document)
+        return [NSArray array];
+
+    Vector<IntRect> rects = document->renderedRectsForMarkers(DocumentMarker::TextMatch);
+    unsigned count = rects.size();
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];
+    for (unsigned index = 0; index < count; ++index)
+        [result addObject:[NSValue valueWithRect:rects[index]]];    
+    return result;
 }
 
 @end

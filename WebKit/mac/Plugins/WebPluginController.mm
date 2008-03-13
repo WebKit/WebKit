@@ -330,7 +330,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
             LOG_ERROR("could not load URL %@", [request URL]);
             return;
         }
-        [frame _frameLoader]->load(request, target);
+        core(frame)->loader()->load(request, target);
     }
 }
 

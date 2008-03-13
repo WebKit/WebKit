@@ -1,5 +1,130 @@
 2008-03-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by John Sullivan.
+
+        - cleanup after removing the bridge
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMDocument URLWithAttributeString:]): Call computeURL directly.
+
+        * Misc/WebCoreStatistics.mm:
+        (-[WebFrame renderTreeAsExternalRepresentation]): Call externalRepresentation directly.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView loadPluginRequest:]): Use core function instead of
+        _frameLoader method.
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+        Ditto.
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController webPlugInContainerLoadRequest:inFrame:]): Ditto.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::frameLoaderDestroyed): Added a call to the new _clearCoreFrame
+        method. Without this we could leave a stale frame pointer around.
+        (WebFrameLoaderClient::dispatchDidReceiveIcon): Rewrote assertion so it's not the single
+        caller of the _isMainFrame method.
+        (WebFrameLoaderClient::transitionToCommittedForNewPage): Use core function instead of
+        _frameLoader method.
+        (WebFrameLoaderClient::createFrame): Moved code here from _addChild.
+
+        * WebView/WebFrame.mm: Removed lots of methods. Some were moved elsewhere, others
+        turned out to be unused.
+        (core): Added overload for DocumentFragment.
+        (kit): Ditto.
+        (-[WebFrame _loadURL:referrer:intoChild:]): Get to Frame using _private->coreFrame and
+        to FrameLoader with _private->coreFrame->loader().
+        (-[WebFrame _attachScriptDebugger]): Ditto.
+        (-[WebFrame _clearCoreFrame]): Added.
+        (-[WebFrame _updateBackground]): More of the same.
+        (-[WebFrame _unmarkAllBadGrammar]): Ditto.
+        (-[WebFrame _unmarkAllMisspellings]): Ditto.
+        (-[WebFrame _hasSelection]): Ditto.
+        (-[WebFrame _atMostOneFrameHasSelection]): Ditto.
+        (-[WebFrame _findFrameWithSelection]): Ditto.
+        (-[WebFrame _dataSource]): Ditto.
+        (-[WebFrame _addData:]): Streamlined code a bit.
+        (-[WebFrame _replaceSelectionWithText:selectReplacement:smartReplace:]): Ditto.
+        (-[WebFrame _receivedData:textEncodingName:]): Ditto.
+        (-[WebFrame _isDescendantOfFrame:]): Ditto.
+        (-[WebFrame _bodyBackgroundColor]): Ditto.
+        (-[WebFrame _isFrameSet]): Ditto.
+        (-[WebFrame _firstLayoutDone]): Ditto.
+        (-[WebFrame _loadType]): Ditto.
+        (-[WebFrame _isDisplayingStandaloneImage]): Ditto.
+        (-[WebFrame name]): Ditto.
+        (-[WebFrame DOMDocument]): Ditto.
+        (-[WebFrame frameElement]): Ditto.
+        (-[WebFrame provisionalDataSource]): Ditto.
+        (-[WebFrame dataSource]): Ditto.
+        (-[WebFrame loadRequest:]): Ditto.
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]): Ditto.
+        (-[WebFrame loadArchive:]): Ditto.
+        (-[WebFrame stopLoading]): Ditto.
+        (-[WebFrame reload]): Ditto.
+        (-[WebFrame findFrameNamed:]): Ditto.
+        (-[WebFrame parentFrame]): Ditto.
+        (-[WebFrame childFrames]): Ditto.
+        (-[WebFrame windowObject]): Ditto.
+        (-[WebFrame globalContext]): Ditto.
+
+        * WebView/WebFrameInternal.h: Added overloads of core and kit.
+        Removed method declarations.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation documentSource]): Moved code here from WebFrame.
+        (formElementFromDOMElement): Ditto.
+        (-[WebHTMLRepresentation elementWithName:inForm:]): Ditto.
+        (inputElementFromDOMElement): Ditto.
+        (-[WebHTMLRepresentation elementDoesAutoComplete:]): Ditto.
+        (-[WebHTMLRepresentation elementIsPassword:]): Ditto.
+        (-[WebHTMLRepresentation formForElement:]): Ditto.
+        (-[WebHTMLRepresentation currentForm]): Ditto.
+        (-[WebHTMLRepresentation controlsInForm:]): Ditto.
+        (-[WebHTMLRepresentation searchForLabels:beforeElement:]): Ditto.
+        (-[WebHTMLRepresentation matchLabels:againstElement:]): Ditto.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _frameOrBoundsChanged]): Moved sendScrollEvent code here from WebFrame.
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]):
+        Call createFragmentFromText directly instead of via WebFrame.
+        (-[WebHTMLView layoutToMinimumPageWidth:maximumPageWidth:adjustingViewSize:]):
+        Moved layout calls here from WebFrame.
+        (-[WebHTMLView adjustPageHeightNew:top:bottom:limit:]): Ditto.
+        (-[WebHTMLView _updateFontPanel]): Ditto, but with fontForSelection.
+        (-[WebHTMLView _canSmartCopyOrDelete]): Ditto, but with selectionGranularity.
+        (-[WebHTMLView markedRange]): Moved code here from _markedTextNSRange.
+        (-[WebHTMLView attributedSubstringFromRange:]): Tweaked code a bit.
+        (-[WebHTMLView searchFor:direction:caseSensitive:wrap:startInSelection:]):
+        Moved code here from WebFrame.
+        (-[WebHTMLView elementAtPoint:allowShadowContent:]): Ditto.
+        (-[WebHTMLView markAllMatchesForText:caseSensitive:limit:]): Ditto.
+        (-[WebHTMLView setMarkedTextMatchesAreHighlighted:]): Ditto.
+        (-[WebHTMLView markedTextMatchesAreHighlighted]): Ditto.
+        (-[WebHTMLView unmarkAllTextMatches]): Ditto.
+        (-[WebHTMLView rectsForTextMatches]): Ditto.
+
+        * WebView/WebHTMLViewInternal.h: Removed unused method declarations.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]): Use core function instead of
+        _frameLoader method.
+
+        * WebView/WebRenderNode.mm:
+        (copyRenderNode): Moved code here from WebFrame.
+        (-[WebRenderNode initWithWebFrameView:]): Ditto.
+
+        * WebView/WebResource.mm:
+        (-[WebResource _stringValue]): Moved code here from WebFrame.
+
+        * WebView/WebView.mm:
+        (-[WebView _close]): Use core function intsead of _frameLoader method.
+        (-[WebView setCustomTextEncodingName:]): Ditto.
+        (-[WebView setHostWindow:]): Moved code here from WebFrame.
+        (aeDescFromJSValue): Moved this here from WebFrame.
+        (-[WebView aeDescByEvaluatingJavaScriptFromString:]): Moved code here from WebFrame.
+
+2008-03-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
 
         - http://bugs.webkit.org/show_bug.cgi?id=17640

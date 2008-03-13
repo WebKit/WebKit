@@ -35,8 +35,8 @@
 #import "WebChromeClient.h"
 #import "WebContextMenuClient.h"
 #import "WebDOMOperationsPrivate.h"
-#import "WebDatabaseManagerInternal.h"
 #import "WebDataSourceInternal.h"
+#import "WebDatabaseManagerInternal.h"
 #import "WebDefaultEditingDelegate.h"
 #import "WebDefaultPolicyDelegate.h"
 #import "WebDefaultScriptDebugDelegate.h"
@@ -76,9 +76,9 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebNSUserDefaultsExtras.h"
 #import "WebNSViewExtras.h"
+#import "WebPDFView.h"
 #import "WebPanelAuthenticationHandler.h"
 #import "WebPasteboardHelper.h"
-#import "WebPDFView.h"
 #import "WebPluginDatabase.h"
 #import "WebPolicyDelegate.h"
 #import "WebPreferenceKeysPrivate.h"
@@ -89,6 +89,10 @@
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
 #import <JavaScriptCore/Assertions.h>
+#import <JavaScriptCore/HashTraits.h>
+#import <JavaScriptCore/RefPtr.h>
+#import <JavaScriptCore/array_object.h>
+#import <JavaScriptCore/date_object.h>
 #import <WebCore/Cache.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/Document.h>
@@ -114,6 +118,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebCoreView.h>
+#import <WebCore/kjs_proxy.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
@@ -122,10 +127,9 @@
 #import <mach-o/dyld.h>
 #import <objc/objc-auto.h>
 #import <objc/objc-runtime.h>
-#import <wtf/RefPtr.h>
-#import <wtf/HashTraits.h>
 
 using namespace WebCore;
+using namespace KJS;
 
 #if defined(__ppc__) || defined(__ppc64__)
 #define PROCESSOR "PPC"
@@ -685,9 +689,8 @@ static bool debugWidget = true;
     if (!_private || _private->closed)
         return;
 
-    FrameLoader* mainFrameLoader = [[self mainFrame] _frameLoader];
-    if (mainFrameLoader)
-        mainFrameLoader->detachFromParent();
+    if (Frame* mainFrame = core([self mainFrame]))
+        mainFrame->loader()->detachFromParent();
 
     [self _removeFromAllWebViewsSet];
     [self setGroupName:nil];
@@ -2372,9 +2375,8 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     NSString *oldEncoding = [self customTextEncodingName];
     if (encoding == oldEncoding || [encoding isEqualToString:oldEncoding])
         return;
-    FrameLoader* mainFrameLoader = [[self mainFrame] _frameLoader];
-    if (mainFrameLoader)
-        mainFrameLoader->reloadAllowingStaleData(encoding);
+    if (Frame* mainFrame = core([self mainFrame]))
+        mainFrame->loader()->reloadAllowingStaleData(encoding);
 }
 
 - (NSString *)_mainFrameOverrideEncoding
@@ -2429,14 +2431,17 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 - (void)setHostWindow:(NSWindow *)hostWindow
 {
     if (!_private->closed && hostWindow != _private->hostWindow) {
-        [[self mainFrame] _viewWillMoveToHostWindow:hostWindow];
+        Frame* coreFrame = core([self mainFrame]);
+        for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+            [[[kit(frame) frameView] documentView] viewWillMoveToHostWindow:hostWindow];
         if (_private->hostWindow)
             [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:_private->hostWindow];
         if (hostWindow)
             [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:hostWindow];
         [_private->hostWindow release];
         _private->hostWindow = [hostWindow retain];
-        [[self mainFrame] _viewDidMoveToHostWindow];
+        for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+            [[[kit(frame) frameView] documentView] viewDidMoveToHostWindow];
     }
 }
 
@@ -3082,9 +3087,90 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return coreFrame->shouldClose();
 }
 
+static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsValue)
+{
+    NSAppleEventDescriptor* aeDesc = 0;
+    switch (jsValue->type()) {
+        case BooleanType:
+            aeDesc = [NSAppleEventDescriptor descriptorWithBoolean:jsValue->getBoolean()];
+            break;
+        case StringType:
+            aeDesc = [NSAppleEventDescriptor descriptorWithString:String(jsValue->getString())];
+            break;
+        case NumberType: {
+            double value = jsValue->getNumber();
+            int intValue = (int)value;
+            if (value == intValue)
+                aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeSInt32 bytes:&intValue length:sizeof(intValue)];
+            else
+                aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeIEEE64BitFloatingPoint bytes:&value length:sizeof(value)];
+            break;
+        }
+        case ObjectType: {
+            JSObject* object = jsValue->getObject();
+            if (object->inherits(&DateInstance::info)) {
+                DateInstance* date = static_cast<DateInstance*>(object);
+                double ms = 0;
+                int tzOffset = 0;
+                if (date->getTime(ms, tzOffset)) {
+                    CFAbsoluteTime utcSeconds = ms / 1000 - kCFAbsoluteTimeIntervalSince1970;
+                    LongDateTime ldt;
+                    if (noErr == UCConvertCFAbsoluteTimeToLongDateTime(utcSeconds, &ldt))
+                        aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeLongDateTime bytes:&ldt length:sizeof(ldt)];
+                }
+            }
+            else if (object->inherits(&ArrayInstance::info)) {
+                static HashSet<JSObject*> visitedElems;
+                if (!visitedElems.contains(object)) {
+                    visitedElems.add(object);
+                    
+                    ArrayInstance* array = static_cast<ArrayInstance*>(object);
+                    aeDesc = [NSAppleEventDescriptor listDescriptor];
+                    unsigned numItems = array->getLength();
+                    for (unsigned i = 0; i < numItems; ++i)
+                        [aeDesc insertDescriptor:aeDescFromJSValue(exec, array->getItem(i)) atIndex:0];
+                    
+                    visitedElems.remove(object);
+                }
+            }
+            if (!aeDesc) {
+                JSValue* primitive = object->toPrimitive(exec);
+                if (exec->hadException()) {
+                    exec->clearException();
+                    return [NSAppleEventDescriptor nullDescriptor];
+                }
+                return aeDescFromJSValue(exec, primitive);
+            }
+            break;
+        }
+        case UndefinedType:
+            aeDesc = [NSAppleEventDescriptor descriptorWithTypeCode:cMissingValue];
+            break;
+        default:
+            LOG_ERROR("Unknown JavaScript type: %d", jsValue->type());
+            // no break;
+        case UnspecifiedType:
+        case NullType:
+        case GetterSetterType:
+            aeDesc = [NSAppleEventDescriptor nullDescriptor];
+            break;
+    }
+    
+    return aeDesc;
+}
+
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)script
 {
-    return [[self mainFrame] _aeDescByEvaluatingJavaScriptFromString:script];
+    Frame* coreFrame = core([self mainFrame]);
+    if (!coreFrame)
+        return nil;
+    if (!coreFrame->document())
+        return nil;
+    JSValue* result = coreFrame->loader()->executeScript(script, true);
+    if (!result) // FIXME: pass errors
+        return 0;
+    JSLock lock;
+    return aeDescFromJSValue(coreFrame->scriptProxy()->globalObject()->globalExec(), result);
 }
 
 - (BOOL)canMarkAllTextMatches

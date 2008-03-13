@@ -53,7 +53,6 @@ namespace WebCore {
     class Element;
     class Frame;
     class Frame;
-    class FrameLoader;
     class HistoryItem;
     class HTMLElement;
     class HTMLFrameOwnerElement;
@@ -78,6 +77,9 @@ DOMNode *kit(WebCore::Node*);
 
 WebCore::Document* core(DOMDocument *);
 DOMDocument *kit(WebCore::Document*);
+
+WebCore::DocumentFragment* core(DOMDocumentFragment *);
+DOMDocumentFragment *kit(WebCore::DocumentFragment*);
 
 WebCore::HTMLElement* core(DOMHTMLElement *);
 DOMHTMLElement *kit(WebCore::HTMLElement*);
@@ -110,6 +112,9 @@ WebView *getWebView(WebFrame *webFrame);
 
 + (void)_createMainFrameWithPage:(WebCore::Page*)page frameName:(const WebCore::String&)name frameView:(WebFrameView *)frameView;
 + (PassRefPtr<WebCore::Frame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement*)ownerElement frameName:(const WebCore::String&)name frameView:(WebFrameView *)frameView;
+- (id)_initWithWebFrameView:(WebFrameView *)webFrameView webView:(WebView *)webView;
+
+- (void)_clearCoreFrame;
 
 - (void)_updateBackground;
 - (void)_setInternalLoadDelegate:(id)internalLoadDelegate;
@@ -118,32 +123,13 @@ WebView *getWebView(WebFrame *webFrame);
 - (void)_unmarkAllBadGrammar;
 #endif
 - (void)_unmarkAllMisspellings;
-// Note that callers should not perform any ops on these views that could change the set of frames
-- (NSArray *)_documentViews;
 
 - (BOOL)_hasSelection;
 - (void)_clearSelection;
 - (WebFrame *)_findFrameWithSelection;
 - (void)_clearSelectionInOtherFrames;
-- (id)_initWithWebFrameView:(WebFrameView *)webFrameView webView:(WebView *)webView;
-
-- (BOOL)_isMainFrame;
-
-- (WebCore::FrameLoader*)_frameLoader;
-- (WebDataSource *)_dataSourceForDocumentLoader:(WebCore::DocumentLoader*)loader;
-
-- (void)_addDocumentLoader:(WebCore::DocumentLoader*)loader toUnarchiveState:(WebArchive *)archive;
 
 - (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer intoChild:(WebFrame *)childFrame;
-
-- (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow;
-- (void)_viewDidMoveToHostWindow;
-
-- (void)_addChild:(WebFrame *)child;
-
-+ (CFAbsoluteTime)_timeOfLastCompletedLoad;
-
-- (int)_numPendingOrLoadingRequests:(BOOL)recurse;
 
 - (void)_attachScriptDebugger;
 - (void)_detachScriptDebugger;
@@ -154,48 +140,14 @@ WebView *getWebView(WebFrame *webFrame);
 // should be used instead.
 - (WebDataSource *)_dataSource;
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-- (void)_recursive_resumeNullEventsForAllNetscapePlugins;
-- (void)_recursive_pauseNullEventsForAllNetscapePlugins;
-#endif
-
-- (NSURL *)_baseURL;
-
-- (void)_forceLayoutAdjustingViewSize:(BOOL)adjustSizeFlag;
-- (void)_forceLayoutWithMinimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)adjustSizeFlag;
-- (void)_sendScrollEvent;
 - (BOOL)_needsLayout;
 - (void)_drawRect:(NSRect)rect;
-- (void)_adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit;
 - (NSArray*)_computePageRectsWithPrintWidthScaleFactor:(float)printWidthScaleFactor printHeight:(float)printHeight;
-
-- (NSObject *)_copyRenderTree:(id <WebCoreRenderTreeCopier>)copier;
-- (NSString *)_renderTreeAsExternalRepresentation;
-
-- (NSURL *)_URLWithAttributeString:(NSString *)string;
-
-- (DOMElement *)_elementWithName:(NSString *)name inForm:(DOMElement *)form;
-- (BOOL)_elementDoesAutoComplete:(DOMElement *)element;
-- (BOOL)_elementIsPassword:(DOMElement *)element;
-- (DOMElement *)_formForElement:(DOMElement *)element;
-- (DOMElement *)_currentForm;
-- (NSArray *)_controlsInForm:(DOMElement *)form;
-- (NSString *)_searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element;
-- (NSString *)_matchLabels:(NSArray *)labels againstElement:(DOMElement *)element;
-
-- (BOOL)_searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection;
-- (unsigned)_markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(unsigned)limit;
-- (BOOL)_markedTextMatchesAreHighlighted;
-- (void)_setMarkedTextMatchesAreHighlighted:(BOOL)doHighlight;
-- (void)_unmarkAllTextMatches;
-- (NSArray *)_rectsForTextMatches;
 
 - (NSString *)_stringByEvaluatingJavaScriptFromString:(NSString *)string;
 - (NSString *)_stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture;
-- (NSAppleEventDescriptor *)_aeDescByEvaluatingJavaScriptFromString:(NSString *)string;
 
 - (NSString *)_selectedString;
-
 - (NSString *)_stringForRange:(DOMRange *)range;
 
 - (NSString *)_markupStringFromNode:(DOMNode *)node nodes:(NSArray **)nodes;
@@ -205,25 +157,15 @@ WebView *getWebView(WebFrame *webFrame);
 - (NSRect)_firstRectForDOMRange:(DOMRange *)range;
 - (void)_scrollDOMRangeToVisible:(DOMRange *)range;
 
-- (NSFont *)_fontForSelection:(BOOL *)hasMultipleFonts;
-
-- (NSString *)_stringWithData:(NSData *)data; // using the encoding of the frame's main resource
-+ (NSString *)_stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName; // nil for textEncodingName means Latin-1
-
-- (void)_setBaseBackgroundColor:(NSColor *)backgroundColor;
-- (void)_setDrawsBackground:(BOOL)drawsBackround;
-
 - (id)_accessibilityTree;
 
 - (DOMRange *)_rangeByAlteringCurrentSelection:(WebCore::SelectionController::EAlteration)alteration direction:(WebCore::SelectionController::EDirection)direction granularity:(WebCore::TextGranularity)granularity;
-- (WebCore::TextGranularity)_selectionGranularity;
 - (void)_smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)charRangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString;
-- (NSRange)_markedTextNSRange;
+- (NSRange)_convertToNSRange:(WebCore::Range*)range;
 - (DOMRange *)_convertNSRangeToDOMRange:(NSRange)range;
 - (NSRange)_convertDOMRangeToNSRange:(DOMRange *)range;
 
 - (DOMDocumentFragment *)_documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;
-- (DOMDocumentFragment *)_documentFragmentWithText:(NSString *)text inContext:(DOMRange *)context;
 - (DOMDocumentFragment *)_documentFragmentWithNodesAsParagraphs:(NSArray *)nodes;
 
 - (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle;

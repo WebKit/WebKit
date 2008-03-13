@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,18 +28,18 @@
 
 #import "WebRenderNode.h"
 
-#import <WebKit/WebFrameView.h>
-#import <WebKit/WebHTMLView.h>
-#import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/WebNSViewExtras.h>
 #import "WebFrameInternal.h"
+#import "WebFrameView.h"
+#import "WebHTMLView.h"
+#import <WebCore/Frame.h>
+#import <WebCore/RenderWidget.h>
+#import <WebCore/Widget.h>
 
-@interface WebKitRenderTreeCopier : NSObject <WebCoreRenderTreeCopier>
-@end
+using namespace WebCore;
 
 @implementation WebRenderNode
 
-- initWithName:(NSString *)n position: (NSPoint)p rect:(NSRect)r view:(NSView *)view children:(NSArray *)c
+- (id)initWithName:(NSString *)n position:(NSPoint)p rect:(NSRect)r view:(NSView *)view children:(NSArray *)c
 {
     NSMutableArray *collectChildren;
     
@@ -70,21 +70,45 @@
     return self;
 }
 
-- initWithWebFrameView:(WebFrameView *)view
+static WebRenderNode *copyRenderNode(RenderObject* node)
 {
-    WebKitRenderTreeCopier *copier;
+    NSMutableArray *children = [[NSMutableArray alloc] init];
+    for (RenderObject* child = node->firstChild(); child; child = child->nextSibling()) {
+        WebRenderNode *childCopy = copyRenderNode(child);
+        [children addObject:childCopy];
+        [childCopy release];
+    }
+
+    NSString *name = [[NSString alloc] initWithUTF8String:node->renderName()];
     
+    RenderWidget* renderWidget = node->isWidget() ? static_cast<RenderWidget*>(node) : 0;
+    Widget* widget = renderWidget ? renderWidget->widget() : 0;
+    NSView *view = widget ? widget->getView() : nil;
+
+    int nx, ny;
+    node->absolutePosition(nx, ny);
+    WebRenderNode *result = [[WebRenderNode alloc] initWithName:name
+        position:NSMakePoint(nx, ny) rect:NSMakeRect(node->xPos(), node->yPos(), node->width(), node->height())
+        view:view children:children];
+
+    [name release];
+    [children release];
+
+    return result;
+}
+
+- (id)initWithWebFrameView:(WebFrameView *)view
+{
     [self release];
 
-    if (![[view documentView] isMemberOfClass:[WebHTMLView class]]) {
+    if (![[view documentView] isMemberOfClass:[WebHTMLView class]])
         return nil;
-    }
-    
-    copier = [[WebKitRenderTreeCopier alloc] init];
-    self = [[[view webFrame] _copyRenderTree:copier] retain];
-    [copier release];
-    
-    return self;
+
+    RenderObject* renderer = core([view webFrame])->renderer();
+    if (!renderer)
+        return nil;
+
+    return copyRenderNode(renderer);
 }
 
 - (void)dealloc
@@ -122,15 +146,6 @@
 - (NSString *)heightString
 {
     return [NSString stringWithFormat:@"%.0f", rect.size.height];
-}
-
-@end
-
-@implementation WebKitRenderTreeCopier
-
-- (NSObject *)nodeWithName:(NSString *)name position: (NSPoint)p rect:(NSRect)rect view:(NSView *)view children:(NSArray *)children
-{
-    return [[[WebRenderNode alloc] initWithName:name position: p rect:rect view:view children:children] autorelease];
 }
 
 @end

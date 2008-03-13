@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,12 +29,12 @@
 #import "WebCoreStatistics.h"
 
 #import "WebCache.h"
-#import <JavaScriptCore/collector.h>
+#import "WebFrameInternal.h"
 #import <JavaScriptCore/interpreter.h>
+#import <WebCore/Frame.h>
 #import <WebCore/GCController.h>
 #import <WebCore/IconDatabase.h>
-#import <WebCore/Node.h>
-#import <WebKit/WebFrameInternal.h>
+#import <WebCore/RenderTreeAsText.h>
 
 using namespace KJS;
 using namespace WebCore;
@@ -180,7 +180,7 @@ using namespace WebCore;
 
 - (NSString *)renderTreeAsExternalRepresentation
 {
-    return [self _renderTreeAsExternalRepresentation];
+    return externalRepresentation(_private->coreFrame->renderer());
 }
 
 @end

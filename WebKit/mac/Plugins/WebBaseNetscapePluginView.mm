@@ -2129,7 +2129,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (frameName) {
         // FIXME - need to get rid of this window creation which
         // bypasses normal targeted link handling
-        frame = kit([[self webFrame] _frameLoader]->findFrameForNavigation(frameName));
+        frame = kit(core([self webFrame])->loader()->findFrameForNavigation(frameName));
         if (frame == nil) {
             WebView *currentWebView = [self webView];
             NSDictionary *features = [[NSDictionary alloc] init];
@@ -2191,7 +2191,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
     // don't let a plugin start any loads if it is no longer part of a document that is being 
     // displayed unless the loads are in the same frame as the plugin.
-    if ([[self dataSource] _documentLoader] != [[self webFrame] _frameLoader]->activeDocumentLoader() &&
+    if ([[self dataSource] _documentLoader] != core([self webFrame])->loader()->activeDocumentLoader() &&
         (!cTarget || [frame findFrameNamed:target] != frame)) {
         if (target)
             CFRelease(target);

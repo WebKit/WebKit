@@ -144,6 +144,7 @@ WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
 
 void WebFrameLoaderClient::frameLoaderDestroyed()
 {
+    [m_webFrame.get() _clearCoreFrame];
     delete this;
 }
 
@@ -461,9 +462,8 @@ void WebFrameLoaderClient::dispatchWillClose()
 
 void WebFrameLoaderClient::dispatchDidReceiveIcon()
 {
-    ASSERT([m_webFrame.get() _isMainFrame]);
     WebView *webView = getWebView(m_webFrame.get());   
-
+    ASSERT(m_webFrame == [webView mainFrame]);
     [webView _dispatchDidReceiveIconFromWebFrame:m_webFrame.get()];
 }
 
@@ -998,7 +998,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     WebDataSource *ds = [m_webFrame.get() _dataSource];
 
     bool willProduceHTMLView = [[WebFrameView class] _viewClassForMIMEType:[ds _responseMIMEType]] == [WebHTMLView class];
-    bool canSkipCreation = [m_webFrame.get() _frameLoader]->committingFirstRealLoad() && willProduceHTMLView;
+    bool canSkipCreation = core(m_webFrame.get())->loader()->committingFirstRealLoad() && willProduceHTMLView;
     if (canSkipCreation) {
         [[v documentView] setDataSource:ds];
         return;
@@ -1139,7 +1139,10 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
 
     WebFrame *newFrame = kit(newCoreFrame.get());
 
-    [m_webFrame.get() _addChild:newFrame];    
+    core(m_webFrame.get())->tree()->appendChild(adoptRef(newCoreFrame.get()));
+    if ([newFrame _dataSource])
+        [[newFrame _dataSource] _documentLoader]->setOverrideEncoding([[m_webFrame.get() _dataSource] _documentLoader]->overrideEncoding());  
+
     [m_webFrame.get() _loadURL:url referrer:referrer intoChild:newFrame];
 
     // The frame's onload handler may have removed it from the document.

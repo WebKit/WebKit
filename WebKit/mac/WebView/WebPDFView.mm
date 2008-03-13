@@ -48,6 +48,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <PDFKit/PDFKit.h>
 #import <WebCore/EventNames.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/KURL.h>
 #import <WebCore/KeyboardEvent.h>
@@ -945,7 +946,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
             button, 0, 0, true);
 
     // Call to the frame loader because this is where our security checks are made.
-    [[dataSource webFrame] _frameLoader]->load(URL, event.get());
+    core([dataSource webFrame])->loader()->load(URL, event.get());
 }
 
 - (void)PDFViewOpenPDFInNativeApplication:(PDFView *)sender

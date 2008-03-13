@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,10 @@
 #import "WebFrameInternal.h"
 #import "WebNSDictionaryExtras.h"
 #import "WebNSURLExtras.h"
+#import <WebCore/TextEncoding.h>
 #import <WebCore/WebCoreURLResponse.h>
+
+using namespace WebCore;
 
 static NSString * const WebResourceDataKey =              @"WebResourceData";
 static NSString * const WebResourceFrameNameKey =         @"WebResourceFrameName";
@@ -342,8 +345,10 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (NSString *)_stringValue
 {
-    NSString *textEncodingName = [self textEncodingName];
-    return [WebFrame _stringWithData:_private->data textEncodingName:textEncodingName];
+    WebCore::TextEncoding encoding(_private->textEncodingName);
+    if (!encoding.isValid())
+        encoding = WindowsLatin1Encoding();
+    return encoding.decode(reinterpret_cast<const char*>([_private->data bytes]), [_private->data length]);
 }
 
 @end

@@ -34,6 +34,7 @@
 #import "WebFramePrivate.h"
 #import "WebKitNSStringExtras.h"
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/CSSHelper.h>
 #import <WebCore/Document.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMHTML.h>
@@ -108,7 +109,8 @@ using namespace WebCore;
 
 - (NSURL *)URLWithAttributeString:(NSString *)string
 {
-    return [[self webFrame] _URLWithAttributeString:string];
+    // FIXME: Is parseURL appropriate here?
+    return core(self)->completeURL(parseURL(string));
 }
 
 @end
