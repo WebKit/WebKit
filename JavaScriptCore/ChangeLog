@@ -1,3 +1,21 @@
+2008-03-13  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Adding new functionality to Vector. Currently all of the shrink and 
+        resize functions on Vector only shrink the size of the Vector, not 
+        the capacity. For the Vector to take up as little memory as 
+        possible, though, it is necessary to be able to shrink the capacity 
+        as well. So this patch adds that functionality. 
+
+        I need this for a speed up I am working on, and Geoff wants to use 
+        it in a speed up he is working on also, so he asked me to commit it 
+        now. 
+
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::::shrinkCapacity):
+
 2008-03-13  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Adam Roben.
