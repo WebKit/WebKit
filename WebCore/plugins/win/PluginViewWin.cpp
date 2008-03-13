@@ -1435,7 +1435,7 @@ PassRefPtr<KJS::Bindings::Instance> PluginView::bindingInstance()
         return 0;
 
     RefPtr<KJS::Bindings::RootObject> root = m_parentFrame->createRootObject(this, m_parentFrame->scriptProxy()->globalObject());
-    RefPtr<KJS::Bindings::Instance> instance = KJS::Bindings::CInstance::create(obj, object, root.release();
+    RefPtr<KJS::Bindings::Instance> instance = KJS::Bindings::CInstance::create(object, root.release());
 
     _NPN_ReleaseObject(object);
 
