@@ -1,5 +1,13 @@
 2008-03-12  Mark Rowe  <mrowe@apple.com>
 
+        Further Gtk and Qt build fixes.
+
+        * bridge/runtime.cpp:
+        (KJS::Bindings::Instance::createRuntimeObject): Adapt Qt-only code for change to PassRefPtr.
+        * page/gtk/FrameGtk.cpp: Add missing include.
+
+2008-03-12  Mark Rowe  <mrowe@apple.com>
+
         Fix Gtk and Qt builds.
 
         * page/gtk/FrameGtk.cpp:

@@ -28,7 +28,9 @@
 
 #include "config.h"
 #include "Frame.h"
+
 #include "NotImplemented.h"
+#include "runtime.h"
 
 
 namespace WebCore {
