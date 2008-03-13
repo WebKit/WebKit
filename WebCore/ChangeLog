@@ -1,3 +1,55 @@
+2008-03-13  David Hyatt  <hyatt@apple.com>
+
+        This patch makes full page zoom work pretty well. It fixes repainting so that it works when transforms
+        are set on the RenderView. It also implements the "smart layout" behavior that other browsers support when
+        zooming. The page will still try to constrain to the viewport size even when zoomed.
+
+        Reviewed by john
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        Make sure to test for transform changes even when there is no zoom.  This fixes repainting issues
+        caused by jumping from a zoomed state back to the standard size.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustViewSize):
+        Adjust for the zoom factor (the render tree is in unzoomed coordinates, but the scrollbars of the view
+        need to handle zoomed coordinates).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcHeight):
+        Fix the body-sizing-to-the-view-height quirk so that it takes the zoom factor into account when
+        stretching to fill the viewport.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::setHasVisibleContent):
+        Remove the FIXMEs now that absoluteClippedOverflowRect works with transforms on the RenderView.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::calcHeight):
+        (WebCore::RenderView::calcWidth):
+        Make sure the calculated width/height take the zoom factor into account in order to get the "smart layout"
+        behavior.
+
+        (WebCore::RenderView::layout):
+        When deciding whether children have to get a relayout, we need to check the zoomed width/height and not just
+        the viewport size.
+
+        (WebCore::RenderView::computeAbsoluteRepaintRect):
+        Patched to take into account transforms set on the RenderView.
+
+        (WebCore::RenderView::docHeight):
+        (WebCore::RenderView::docWidth):
+        Patched to just always use m_width and m_height initially, since those have already been adjusted for
+        the zoom factor.
+
+        (WebCore::RenderView::zoomedHeight):
+        (WebCore::RenderView::zoomedWidth):
+        * rendering/RenderView.h:
+        New helper methods for obtaining the adjusted width/height of the viewport taking into account the
+        zoom factor.
+
 2008-03-13  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

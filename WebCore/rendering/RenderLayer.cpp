@@ -206,8 +206,8 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
         // from updateScrollInfoAfterLayout().
         ASSERT(!view->layoutState());
 
-        IntRect newRect = m_object->absoluteClippedOverflowRect(); // FIXME: This does not work correctly with transforms.
-        IntRect newOutlineBox = m_object->absoluteOutlineBox(); // FIXME: This does not work correctly with transforms.
+        IntRect newRect = m_object->absoluteClippedOverflowRect();
+        IntRect newOutlineBox = m_object->absoluteOutlineBox();
         if (checkForRepaint) {
             if (view && !view->printing()) {
                 if (m_needsFullRepaint) {
@@ -259,8 +259,8 @@ void RenderLayer::setHasVisibleContent(bool b)
     m_visibleContentStatusDirty = false; 
     m_hasVisibleContent = b;
     if (m_hasVisibleContent) {
-        m_repaintRect = renderer()->absoluteClippedOverflowRect(); // FIXME: This does not work correctly with transforms.
-        m_outlineBox = renderer()->absoluteOutlineBox(); // FIXME: This does not work correctly with transforms.
+        m_repaintRect = renderer()->absoluteClippedOverflowRect();
+        m_outlineBox = renderer()->absoluteOutlineBox();
         if (!isOverflowOnly()) {
             if (RenderLayer* sc = stackingContext())
                 sc->dirtyZOrderLists();
