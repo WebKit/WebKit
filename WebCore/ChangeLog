@@ -1,3 +1,17 @@
+2008-03-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix <rdar://problem/5784773>
+        Crash loading QT movies @ apple.com/ipodtouch/features.html with a PAC file (WebKitThreadingException)
+
+        Make bridged RuntimeObjects get collected on the main thread only. This is necessary
+        because clients of the bridged objects are unlikely to prepared for a collection on 
+        non-main thread, which can happen with a PAC file.
+
+        * bridge/runtime_object.cpp:
+        (RuntimeObjectImp::RuntimeObjectImp):
+
 2008-03-12  Adam Roben  <aroben@apple.com>
 
         Fix Bug 17815: Inspector's DOM tree should descend into subframes
