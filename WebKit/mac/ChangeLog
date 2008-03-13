@@ -1,3 +1,275 @@
+2008-03-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=17640
+          eliminate WebCoreFrameBridge
+
+        Moved all the code from the bridge into WebFrame. This need not be the final
+        home of these methods -- they can be moved closer to their callers and improved
+        further -- but it eliminates the bridge without requiring a rewrite of the code.
+        It's a fairly mechanical process (just adding underscores to method names really).
+
+        There's even a chance that some of the methods are unused. Those we can remove
+        after checking if that's so.
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMNode markupString]): Use WebFrame rather than bridge.
+        (-[DOMDocument webFrame]): Changed to use the core and kit functions
+        instead of using the bridge.
+        (-[DOMDocument URLWithAttributeString:]): Use WebFrame rather than bridge.
+        (-[DOMRange markupString]): Ditto.
+        * DOM/WebDOMOperationsPrivate.h: Removed _bridge methods.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm: Removed unneeded import.
+        * History/WebHistoryItem.mm: Ditto.
+
+        * MigrateHeaders.make: Added DOMDocumentFragmentInternal.h.
+        * Misc/WebCoreStatistics.mm:
+        (-[WebFrame renderTreeAsExternalRepresentation]): Use WebFrame rather than bridge.
+
+        * Misc/WebElementDictionary.mm: Removed unneeded import.
+
+        * Misc/WebKitStatistics.m:
+        (+[WebKitStatistics bridgeCount]): Removed WebBridgeCount and just return 0.
+        * Misc/WebKitStatisticsPrivate.h: Ditto.
+
+        * Misc/WebNSAttributedStringExtras.mm: Removed unneeded import.
+        * Misc/WebNSPasteboardExtras.mm: Ditto.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]): Use WebFrame
+        rather than bridge.
+
+        * Plugins/WebNetscapePluginEmbeddedView.mm: Removed unneeded import.
+        * Plugins/WebNetscapePluginStream.mm: Ditto.
+
+        * Plugins/WebPluginContainerCheck.mm:
+        (-[WebPluginContainerCheck _isForbiddenFileLoad]): Use WebFrame rather than
+        bridge to get to the WebCore::Frame.
+
+        * Plugins/WebPluginController.h: Declare webFrame method and remove bridge method.
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController webPlugInContainerLoadRequest:inFrame:]): Use WebFrame
+        rather than bridge.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (selectorForKeyEvent): Tweaked comment.
+
+        * WebCoreSupport/WebFrameBridge.h: Removed.
+        * WebCoreSupport/WebFrameBridge.mm: Removed.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::frameLoaderDestroyed): Removed bridge assertion.
+        (WebFrameLoaderClient::detachedFromParent4): Removed bridge teardown code.
+        I could remove this function entirely, but it looks like the Qt port is using it.
+
+        * WebCoreSupport/WebViewFactory.mm: Removed unneeded import.
+
+        * WebView/WebArchiver.mm:
+        (+[WebArchiver archiveRange:]): Use WebFrame rather than bridge.
+        (+[WebArchiver archiveNode:]): Ditto.
+        (+[WebArchiver archiveSelectionInFrame:]): Ditto.
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _replaceSelectionWithArchive:selectReplacement:]): Ditto.
+        (-[WebDataSource _documentFragmentWithArchive:]): Ditto.
+        (-[WebDataSource subresources]): Ditto.
+        (-[WebDataSource subresourceForURL:]): Ditto.
+
+        * WebView/WebDataSourceInternal.h: Removed _bridge method.
+
+        * WebView/WebFrame.mm:
+        (-[WebFramePrivate dealloc]): Removed code to release the bridge.
+        (core): Go directly to the core frame, not via the bridge.
+        (+[WebFrame _createFrameWithPage:frameName:frameView:ownerElement:]):
+        Remove the code to deal with the bridge.
+        (-[WebFrame _initWithWebFrameView:webView:]): Ditto. Also added code to set the
+        shouldCreateRenderers flag, formerly on the bridge.
+        (-[WebFrame _updateBackground]): Change to call mehods on self, not bridge.
+        (aeDescFromJSValue): Moved here from bridge.
+        (-[WebFrame _domain]): Ditto.
+        (-[WebFrame _addData:]): Ditto.
+        (-[WebFrame _stringWithDocumentTypeStringAndMarkupString:]): Ditto.
+        (-[WebFrame _nodesFromList:]): Ditto.
+        (-[WebFrame _markupStringFromNode:nodes:]): Ditto.
+        (-[WebFrame _markupStringFromRange:nodes:]): Ditto.
+        (-[WebFrame _selectedString]): Ditto.
+        (-[WebFrame _stringForRange:]): Ditto.
+        (-[WebFrame _forceLayoutAdjustingViewSize:]): Ditto.
+        (-[WebFrame _forceLayoutWithMinimumPageWidth:maximumPageWidth:adjustingViewSize:]): Ditto.
+        (-[WebFrame _sendScrollEvent]): Ditto.
+        (-[WebFrame _drawRect:]): Ditto.
+        (-[WebFrame _computePageRectsWithPrintWidthScaleFactor:printHeight:]): Ditto.
+        (-[WebFrame _adjustPageHeightNew:top:bottom:limit:]): Ditto.
+        (-[WebFrame _copyRenderNode:copier:]): Ditto.
+        (-[WebFrame _copyRenderTree:]): Ditto.
+        (inputElementFromDOMElement): Ditto.
+        (formElementFromDOMElement): Ditto.
+        (-[WebFrame _elementWithName:inForm:]): Ditto.
+        (-[WebFrame _elementDoesAutoComplete:]): Ditto.
+        (-[WebFrame _elementIsPassword:]): Ditto.
+        (-[WebFrame _formForElement:]): Ditto.
+        (-[WebFrame _currentForm]): Ditto.
+        (-[WebFrame _controlsInForm:]): Ditto.
+        (-[WebFrame _searchForLabels:beforeElement:]): Ditto.
+        (-[WebFrame _matchLabels:againstElement:]): Ditto.
+        (-[WebFrame _URLWithAttributeString:]): Ditto.
+        (-[WebFrame _searchFor:direction:caseSensitive:wrap:startInSelection:]): Ditto.
+        (-[WebFrame _markAllMatchesForText:caseSensitive:limit:]): Ditto.
+        (-[WebFrame _markedTextMatchesAreHighlighted]): Ditto.
+        (-[WebFrame _setMarkedTextMatchesAreHighlighted:]): Ditto.
+        (-[WebFrame _unmarkAllTextMatches]): Ditto.
+        (-[WebFrame _rectsForTextMatches]): Ditto.
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:]): Ditto.
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]): Ditto.
+        (-[WebFrame _aeDescByEvaluatingJavaScriptFromString:]): Ditto.
+        (-[WebFrame _caretRectAtNode:offset:affinity:]): Ditto.
+        (-[WebFrame _firstRectForDOMRange:]): Ditto.
+        (-[WebFrame _scrollDOMRangeToVisible:]): Ditto.
+        (-[WebFrame _baseURL]): Ditto.
+        (-[WebFrame _stringWithData:]): Ditto.
+        (+[WebFrame _stringWithData:textEncodingName:]): Ditto.
+        (-[WebFrame _needsLayout]): Ditto.
+        (-[WebFrame _renderTreeAsExternalRepresentation]): Ditto.
+        (-[WebFrame _accessibilityTree]): Ditto.
+        (-[WebFrame _setBaseBackgroundColor:]): Ditto.
+        (-[WebFrame _setDrawsBackground:]): Ditto.
+        (-[WebFrame _rangeByAlteringCurrentSelection:SelectionController::direction:SelectionController::granularity:]):
+        Ditto.
+        (-[WebFrame _selectionGranularity]): Ditto.
+        (-[WebFrame _convertToNSRange:]): Ditto.
+        (-[WebFrame _convertToDOMRange:]): Ditto.
+        (-[WebFrame _convertNSRangeToDOMRange:]): Ditto.
+        (-[WebFrame _convertDOMRangeToNSRange:]): Ditto.
+        (-[WebFrame _markDOMRange]): Ditto.
+        (-[WebFrame _markedTextNSRange]): Ditto.
+        (-[WebFrame _smartDeleteRangeForProposedRange:]): Ditto.
+        (-[WebFrame _smartInsertForString:replacingRange:beforeString:afterString:]): Ditto.
+        (-[WebFrame _documentFragmentWithMarkupString:baseURLString:]): Ditto.
+        (-[WebFrame _documentFragmentWithText:inContext:]): Ditto.
+        (-[WebFrame _documentFragmentWithNodesAsParagraphs:]): Ditto.
+        (-[WebFrame _replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]): Ditto.
+        (-[WebFrame _replaceSelectionWithNode:selectReplacement:smartReplace:matchStyle:]): Ditto.
+        (-[WebFrame _replaceSelectionWithMarkupString:baseURLString:selectReplacement:smartReplace:]): Ditto.
+        (-[WebFrame _replaceSelectionWithText:selectReplacement:smartReplace:]): Ditto.
+        (-[WebFrame _insertParagraphSeparatorInQuotedContent]): Ditto.
+        (-[WebFrame _visiblePositionForPoint:]): Ditto.
+        (-[WebFrame _characterRangeAtPoint:]): Ditto.
+        (-[WebFrame _typingStyle]): Ditto.
+        (-[WebFrame _setTypingStyle:withUndoAction:]): Ditto.
+        (-[WebFrame _fontForSelection:]): Ditto.
+        (-[WebFrame _dragSourceMovedTo:]): Ditto.
+        (-[WebFrame _dragSourceEndedAt:operation:]): Ditto.
+        (-[WebFrame _getData:andResponse:forURL:]): Ditto.
+        (-[WebFrame _getAllResourceDatas:andResponses:]): Ditto.
+        (-[WebFrame _canProvideDocumentSource]): Ditto.
+        (-[WebFrame _canSaveAsWebArchive]): Ditto.
+        (-[WebFrame _receivedData:textEncodingName:]): Ditto.
+        (-[WebFrame _setShouldCreateRenderers:]): Put the code from the bridge in this preexisting
+        function. Couldn't just keep the bridge method because this was already here with the same name.
+        (-[WebFrame _selectedNSRange]): Ditto.
+        (-[WebFrame _selectNSRange:]): Ditto.
+        (-[WebFrame dealloc]): Remove bridge-related code.
+        (-[WebFrame finalize]): Ditto.
+
+        * WebView/WebFrameInternal.h: Added all the method declarations from the bridge.
+        Removed the bridge parameter from the init method. Removed the #if blocks that
+        tried to make this header work in non-C++ ObjC files -- they were broken and unused.
+        Removed the _bridge method.
+
+        * WebView/WebFrameView.mm: Removed the _bridge method.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation setDataSource:]): Removed the code to set up the bridge
+        field.
+        (-[WebHTMLRepresentation receivedData:withDataSource:]): Use WebFrame instead of bridge.
+        (-[WebHTMLRepresentation finishedLoadingWithDataSource:]): Ditto.
+        (-[WebHTMLRepresentation canProvideDocumentSource]): Ditto.
+        (-[WebHTMLRepresentation canSaveAsWebArchive]): Ditto.
+        (-[WebHTMLRepresentation documentSource]): Ditto.
+        (-[WebHTMLRepresentation DOMDocument]): Ditto.
+        (-[WebHTMLRepresentation elementWithName:inForm:]): Ditto.
+        (-[WebHTMLRepresentation elementDoesAutoComplete:]): Ditto.
+        (-[WebHTMLRepresentation elementIsPassword:]): Ditto.
+        (-[WebHTMLRepresentation formForElement:]): Ditto.
+        (-[WebHTMLRepresentation currentForm]): Ditto.
+        (-[WebHTMLRepresentation controlsInForm:]): Ditto.
+        (-[WebHTMLRepresentation searchForLabels:beforeElement:]): Ditto.
+        (-[WebHTMLRepresentation matchLabels:againstElement:]): Ditto.
+
+        * WebView/WebHTMLRepresentationPrivate.h: Removed the _bridge method.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentWithPaths:]): Use WebFrame instead of bridge.
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]): Ditto.
+        (-[WebHTMLView _pasteAsPlainTextWithPasteboard:]): Ditto.
+        (-[WebHTMLView _updateTextSizeMultiplier]): Ditto.
+        (-[WebHTMLView _frameOrBoundsChanged]): Ditto.
+        (-[WebHTMLView _smartInsertForString:replacingRange:beforeString:afterString:]): Ditto.
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]): Ditto.
+        (-[WebHTMLView layoutToMinimumPageWidth:maximumPageWidth:adjustingViewSize:]): Ditto.
+        (-[WebHTMLView drawSingleRect:]): Ditto.
+        (-[WebHTMLView draggedImage:movedTo:]): Ditto.
+        (-[WebHTMLView draggedImage:endedAt:operation:]): Ditto.
+        (-[WebHTMLView adjustPageHeightNew:top:bottom:limit:]): Ditto.
+        (-[WebHTMLView knowsPageRange:]): Ditto.
+        (-[WebHTMLView accessibilityAttributeValue:]): Ditto.
+        (-[WebHTMLView accessibilityFocusedUIElement]): Ditto.
+        (-[WebHTMLView accessibilityHitTest:]): Ditto.
+        (-[WebHTMLView _accessibilityParentForSubview:]): Ditto.
+        (-[WebHTMLView changeDocumentBackgroundColor:]): Ditto.
+        (-[WebHTMLView _changeWordCaseWithSelector:]): Ditto.
+        (-[WebHTMLView _changeSpellingToWord:]): Ditto.
+        (-[WebHTMLView startSpeaking:]): Ditto.
+        (-[WebHTMLView _updateFontPanel]): Ditto.
+        (-[WebHTMLView _canSmartCopyOrDelete]): Ditto.
+        (-[WebHTMLView _layoutIfNeeded]): Ditto.
+        (-[WebHTMLView characterIndexForPoint:]): Ditto.
+        (-[WebHTMLView firstRectForCharacterRange:]): Ditto.
+        (-[WebHTMLView selectedRange]): Ditto.
+        (-[WebHTMLView markedRange]): Ditto.
+        (-[WebHTMLView attributedSubstringFromRange:]): Ditto.
+        (-[WebHTMLView setMarkedText:selectedRange:]): Ditto.
+        (-[WebHTMLView insertText:]): Ditto.
+        (-[WebTextCompleteController _insertMatch:]): Ditto.
+        (-[WebTextCompleteController doCompletion]): Ditto.
+        (-[WebTextCompleteController endRevertingChange:moveLeft:]): Ditto.
+        (-[WebHTMLView string]): Ditto.
+        (-[WebHTMLView selectedString]): Ditto.
+        (-[WebHTMLView searchFor:direction:caseSensitive:wrap:startInSelection:]): Ditto.
+        (-[WebHTMLView markAllMatchesForText:caseSensitive:limit:]): Ditto.
+        (-[WebHTMLView setMarkedTextMatchesAreHighlighted:]): Ditto.
+        (-[WebHTMLView markedTextMatchesAreHighlighted]): Ditto.
+        (-[WebHTMLView unmarkAllTextMatches]): Ditto.
+        (-[WebHTMLView rectsForTextMatches]): Ditto.
+        * WebView/WebRenderNode.mm:
+        (-[WebRenderNode initWithWebFrameView:]): Ditto.
+        * WebView/WebResource.mm:
+        (-[WebResource _stringValue]): Ditto.
+
+        * WebView/WebScriptDebugDelegate.mm: Removed unneeded include.
+
+        * WebView/WebView.mm:
+        (-[WebView _dashboardRegions]): Use WebFrame instead of bridge.
+        (-[WebView setProhibitsMainFrameScrolling:]): Ditto.
+        (-[WebView _setInViewSourceMode:]): Ditto.
+        (-[WebView _inViewSourceMode]): Ditto.
+        (-[WebView _executeCoreCommandByName:value:]): Ditto.
+        (-[WebView stringByEvaluatingJavaScriptFromString:]): Ditto.
+        (-[WebView aeDescByEvaluatingJavaScriptFromString:]): Ditto.
+        (-[WebView scrollDOMRangeToVisible:]): Ditto.
+        (-[WebView setSelectedDOMRange:affinity:]): Ditto.
+        (-[WebView setEditable:]): Ditto.
+        (-[WebView setTypingStyle:]): Ditto.
+        (-[WebView typingStyle]): Ditto.
+        (-[WebView replaceSelectionWithNode:]): Ditto.
+        (-[WebView replaceSelectionWithText:]): Ditto.
+        (-[WebView replaceSelectionWithMarkupString:]): Ditto.
+        (-[WebView replaceSelectionWithArchive:]): Ditto.
+        (-[WebView _insertNewlineInQuotedContent]): Ditto.
+        (-[WebView _replaceSelectionWithNode:matchStyle:]): Ditto.
+
 2008-03-12  David Hyatt  <hyatt@apple.com>
 
         Make the zoom factor a float and not a percent.

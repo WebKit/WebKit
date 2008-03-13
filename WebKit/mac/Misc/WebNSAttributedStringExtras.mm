@@ -31,7 +31,6 @@
 #import "DOMRangeInternal.h"
 #import "WebDataSourcePrivate.h"
 #import "WebFrame.h"
-#import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/ColorMac.h>

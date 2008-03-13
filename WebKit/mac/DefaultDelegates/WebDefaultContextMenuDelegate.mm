@@ -31,7 +31,6 @@
 #import "WebDOMOperations.h"
 #import "WebDataSourcePrivate.h"
 #import "WebDefaultUIDelegate.h"
-#import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebHTMLViewPrivate.h"

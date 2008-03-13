@@ -124,7 +124,6 @@
 		939810380824BF01008DF038 /* WebPluginDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F717200288493C018635CA /* WebPluginDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810390824BF01008DF038 /* WebPluginPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E4AF4B036659440000E506 /* WebPluginPackage.h */; };
 		9398103A0824BF01008DF038 /* WebPluginViewFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 848DFF860365FE6A00CA2ACA /* WebPluginViewFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9398103C0824BF01008DF038 /* WebFrameBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AFB45E02B94DC8018635CA /* WebFrameBridge.h */; };
 		939810420824BF01008DF038 /* WebJavaScriptTextInputPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 9345D4EA0365C5B2008635CE /* WebJavaScriptTextInputPanel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810460824BF01008DF038 /* WebViewFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F7174C02885C5B018635CA /* WebViewFactory.h */; settings = {ATTRIBUTES = (); }; };
 		939810470824BF01008DF038 /* WebKitPrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C283730284676D018635CA /* WebKitPrefix.h */; };
@@ -227,7 +226,6 @@
 		939810DB0824BF01008DF038 /* WebPluginDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F717210288493C018635CA /* WebPluginDatabase.m */; };
 		939810DC0824BF01008DF038 /* WebPluginPackage.m in Sources */ = {isa = PBXBuildFile; fileRef = 83E4AF4C036659440000E506 /* WebPluginPackage.m */; };
 		939810DD0824BF01008DF038 /* npapi.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F717230288493C018635CA /* npapi.m */; };
-		939810DE0824BF01008DF038 /* WebFrameBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5AFB45F02B94DC8018635CA /* WebFrameBridge.mm */; };
 		939810E30824BF01008DF038 /* WebImageRendererFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */; };
 		939810E40824BF01008DF038 /* WebJavaScriptTextInputPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */; };
 		939810E80824BF01008DF038 /* WebViewFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5F7174D02885C5B018635CA /* WebViewFactory.mm */; };
@@ -578,8 +576,6 @@
 		F5A672B90263866E01000102 /* WebBaseNetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebBaseNetscapePluginStream.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebBaseNetscapePluginStream.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5AEBB3D024A527601C1A526 /* WebPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPreferences.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5AFB45E02B94DC8018635CA /* WebFrameBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameBridge.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5AFB45F02B94DC8018635CA /* WebFrameBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFrameBridge.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5B67130023EDF8901C1A525 /* url_icon.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = url_icon.tiff; sourceTree = "<group>"; };
 		F5B92B820223191D01C1A525 /* WebHistoryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5C283730284676D018635CA /* WebKitPrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = WebKitPrefix.h; path = mac/WebKitPrefix.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
@@ -1045,8 +1041,6 @@
 				A70936AE0B5608DC00CDB48E /* WebDragClient.mm */,
 				4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */,
 				4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */,
-				F5AFB45E02B94DC8018635CA /* WebFrameBridge.h */,
-				F5AFB45F02B94DC8018635CA /* WebFrameBridge.mm */,
 				931633EA0AEDFF930062B92D /* WebFrameLoaderClient.h */,
 				931633EE0AEDFFAE0062B92D /* WebFrameLoaderClient.mm */,
 				51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */,
@@ -1214,7 +1208,6 @@
 				939810520824BF01008DF038 /* WebFormDelegate.h in Headers */,
 				939810640824BF01008DF038 /* WebFormDelegatePrivate.h in Headers */,
 				939810530824BF01008DF038 /* WebFrame.h in Headers */,
-				9398103C0824BF01008DF038 /* WebFrameBridge.h in Headers */,
 				9398109C0824BF01008DF038 /* WebFrameInternal.h in Headers */,
 				9398105B0824BF01008DF038 /* WebFrameLoadDelegate.h in Headers */,
 				931633EB0AEDFF930062B92D /* WebFrameLoaderClient.h in Headers */,
@@ -1543,7 +1536,6 @@
 				DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */,
 				939810FC0824BF01008DF038 /* WebFormDelegate.m in Sources */,
 				939810F20824BF01008DF038 /* WebFrame.mm in Sources */,
-				939810DE0824BF01008DF038 /* WebFrameBridge.mm in Sources */,
 				931633EF0AEDFFAE0062B92D /* WebFrameLoaderClient.mm in Sources */,
 				939811060824BF01008DF038 /* WebFrameView.mm in Sources */,
 				1CA57D630AED6A470009BDD0 /* WebGraphicsExtras.c in Sources */,

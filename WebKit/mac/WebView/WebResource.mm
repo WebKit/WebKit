@@ -28,7 +28,7 @@
 
 #import "WebResourcePrivate.h"
 
-#import "WebFrameBridge.h"
+#import "WebFrameInternal.h"
 #import "WebNSDictionaryExtras.h"
 #import "WebNSURLExtras.h"
 #import <WebCore/WebCoreURLResponse.h>
@@ -343,7 +343,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 - (NSString *)_stringValue
 {
     NSString *textEncodingName = [self textEncodingName];
-    return [WebFrameBridge stringWithData:_private->data textEncodingName:textEncodingName];
+    return [WebFrame _stringWithData:_private->data textEncodingName:textEncodingName];
 }
 
 @end

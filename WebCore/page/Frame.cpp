@@ -55,6 +55,7 @@
 #include "JSDOMWindow.h"
 #include "Logging.h"
 #include "MediaFeatureNames.h"
+#include "NP_jsobject.h"
 #include "Navigator.h"
 #include "NodeList.h"
 #include "Page.h"
@@ -69,10 +70,9 @@
 #include "TextIterator.h"
 #include "TextResourceDecoder.h"
 #include "XMLNames.h"
-#include "NP_jsobject.h"
+#include "kjs_proxy.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
-#include "kjs_proxy.h"
 #include "visible_units.h"
 
 #if FRAME_LOADS_USER_STYLESHEET
@@ -135,6 +135,14 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
 #endif
 
     XMLNames::init();
+
+#if PLATFORM(MAC)
+    static bool initializedJavaJSBindings;
+    if (!initializedJavaJSBindings) {
+        initializedJavaJSBindings = true;
+        initJavaJSBindings();
+    }
+#endif
 
     if (!ownerElement)
         page->setMainFrame(this);

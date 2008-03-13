@@ -33,7 +33,6 @@
 #import "WebDataSourceInternal.h"
 #import "WebDocument.h"
 #import "WebDocumentLoaderMac.h"
-#import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
 #import "WebFrameLoaderClient.h"
@@ -248,7 +247,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 {
     DOMDocumentFragment *fragment = [self _documentFragmentWithArchive:archive];
     if (fragment)
-        [[self _bridge] replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:NO matchStyle:NO];
+        [[self webFrame] _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:NO matchStyle:NO];
 }
 
 - (DOMDocumentFragment *)_documentFragmentWithArchive:(WebArchive *)archive
@@ -261,7 +260,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
             NSString *markupString = [[NSString alloc] initWithData:[mainResource data] encoding:NSUTF8StringEncoding];
             // FIXME: seems poor form to do this as a side effect of getting a document fragment
             [self _addToUnarchiveState:archive];
-            DOMDocumentFragment *fragment = [[self _bridge] documentFragmentWithMarkupString:markupString baseURLString:[[mainResource URL] _web_originalDataAsString]];
+            DOMDocumentFragment *fragment = [[self webFrame] _documentFragmentWithMarkupString:markupString baseURLString:[[mainResource URL] _web_originalDataAsString]];
             [markupString release];
             return fragment;
         } else if (MIMETypeRegistry::isSupportedImageMIMEType(MIMEType)) {
@@ -310,12 +309,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName
 {
     return [_private->unarchivingState popSubframeArchiveWithFrameName:frameName];
-}
-
-- (WebFrameBridge *)_bridge
-{
-    ASSERT(_private->loader->isCommitted());
-    return [[self webFrame] _bridge];
 }
 
 - (WebView *)_webView
@@ -491,7 +484,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
     NSArray *datas;
     NSArray *responses;
-    [[self _bridge] getAllResourceDatas:&datas andResponses:&responses];
+    [[self webFrame] _getAllResourceDatas:&datas andResponses:&responses];
     ASSERT([datas count] == [responses count]);
 
     NSMutableArray *subresources = [[NSMutableArray alloc] initWithCapacity:[datas count]];
@@ -510,7 +503,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
     NSData *data;
     NSURLResponse *response;
-    if (![[self _bridge] getData:&data andResponse:&response forURL:[URL _web_originalDataAsString]])
+    if (![[self webFrame] _getData:&data andResponse:&response forURL:[URL _web_originalDataAsString]])
         return [self _archivedSubresourceForURL:URL];
 
     return [[[WebResource alloc] _initWithData:data URL:URL response:response] autorelease];

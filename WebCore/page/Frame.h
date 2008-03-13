@@ -169,6 +169,7 @@ public:
     PassRefPtr<KJS::Bindings::RootObject> createRootObject(void* nativeHandle, KJS::JSGlobalObject*);
 
 #if PLATFORM(MAC)
+    static void initJavaJSBindings();
     WebScriptObject* windowScriptObject();
 #endif
 

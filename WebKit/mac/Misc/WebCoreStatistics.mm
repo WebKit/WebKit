@@ -34,7 +34,6 @@
 #import <WebCore/GCController.h>
 #import <WebCore/IconDatabase.h>
 #import <WebCore/Node.h>
-#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrameInternal.h>
 
 using namespace KJS;
@@ -181,7 +180,7 @@ using namespace WebCore;
 
 - (NSString *)renderTreeAsExternalRepresentation
 {
-    return [[self _bridge] renderTreeAsExternalRepresentation];
+    return [self _renderTreeAsExternalRepresentation];
 }
 
 @end

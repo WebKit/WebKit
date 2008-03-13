@@ -32,7 +32,6 @@
 #import "WebBaseNetscapePluginViewPrivate.h"
 #import "WebDataSource.h"
 #import "WebFrame.h"
-#import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebNSURLExtras.h"

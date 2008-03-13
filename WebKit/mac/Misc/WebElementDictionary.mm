@@ -30,7 +30,6 @@
 
 #import "WebDOMOperations.h"
 #import "WebFrame.h"
-#import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebKitLogging.h"
 #import "WebTypesInternal.h"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit/WebBasePluginPackage.h>
 
+@class WebFrame;
 @class WebHTMLView;
 @class WebPluginPackage;
-@class WebFrameBridge;
 @class WebView;
 @class WebDataSource;
 
@@ -58,7 +57,7 @@
 - (void)stopAllPlugins;
 - (void)destroyAllPlugins;
 
-- (WebFrameBridge *)bridge;
+- (WebFrame *)webFrame;
 - (WebView *)webView;
 
 - (NSString *)URLPolicyCheckReferrer;

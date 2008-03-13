@@ -33,7 +33,6 @@
 #import "WebDataSource.h"
 #import "WebDocument.h"
 #import "WebFrame.h"
-#import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebResource.h"
 #import <JavaScriptCore/Assertions.h>
@@ -137,19 +136,17 @@ using namespace WebCore;
 
 + (WebArchive *)archiveRange:(DOMRange *)range
 {
-    WebFrameBridge *bridge = [range _bridge];
-    WebFrame *frame = [bridge webFrame];
+    WebFrame *frame = [[[range startContainer] ownerDocument] webFrame];
     NSArray *nodes;
-    NSString *markupString = [bridge markupStringFromRange:range nodes:&nodes];
+    NSString *markupString = [frame _markupStringFromRange:range nodes:&nodes];
     return [self _archiveWithMarkupString:markupString fromFrame:frame nodes:nodes];
 }
 
 + (WebArchive *)archiveNode:(DOMNode *)node
 {
     WebFrame *frame = [[node ownerDocument] webFrame];
-    WebFrameBridge *bridge = [frame _bridge];
     NSArray *nodes;
-    NSString *markupString = [bridge markupStringFromNode:node nodes:&nodes];
+    NSString *markupString = [frame _markupStringFromNode:node nodes:&nodes];
     return [self _archiveWithMarkupString:markupString fromFrame:frame nodes:nodes];
 }
 
@@ -159,9 +156,8 @@ using namespace WebCore;
     if (!coreFrame)
         return nil;
 
-    WebFrameBridge *bridge = [frame _bridge];
     NSArray *nodes;
-    NSString *markupString = [bridge markupStringFromRange:kit(coreFrame->selectionController()->toRange().get()) nodes:&nodes];
+    NSString *markupString = [frame _markupStringFromRange:kit(coreFrame->selectionController()->toRange().get()) nodes:&nodes];
     WebArchive *archive = [self _archiveWithMarkupString:markupString fromFrame:frame nodes:nodes];
 
     if (coreFrame->isFrameSet()) {

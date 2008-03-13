@@ -34,7 +34,6 @@
 #import "WebDynamicScrollBarsViewInternal.h"
 #import "WebFrame.h"
 #import "WebFrameInternal.h"
-#import "WebFrameBridge.h"
 #import "WebFrameViewInternal.h"
 #import "WebFrameViewPrivate.h"
 #import "WebHistoryItemInternal.h"
@@ -501,11 +500,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         [[self _scrollView] setDrawsBackground:YES];
     }
     [super setFrameSize:size];
-}
-
-- (WebFrameBridge *)_bridge
-{
-    return [[self webFrame] _bridge];
 }
 
 - (BOOL)_scrollOverflowInDirection:(ScrollDirection)direction granularity:(ScrollGranularity)granularity

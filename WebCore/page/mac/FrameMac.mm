@@ -39,6 +39,7 @@
 #import "ColorMac.h"
 #import "Cursor.h"
 #import "DOMInternal.h"
+#import "DOMWindow.h"
 #import "DocumentLoader.h"
 #import "EditCommand.h"
 #import "EditorClient.h"
@@ -89,6 +90,7 @@
 #import "visible_units.h"
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/APICast.h>
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #import "c_instance.h"
 #import "NP_jsobject.h"
@@ -617,6 +619,38 @@ void Frame::setUserStyleSheet(const String& styleSheet)
     d->m_userStyleSheetLoader = 0;
     if (d->m_doc)
         d->m_doc->setUserStyleSheet(styleSheet);
+}
+
+static pthread_t mainThread;
+
+static void updateRenderingForBindings(KJS::ExecState* exec, KJS::JSObject* rootObject)
+{
+    if (pthread_self() != mainThread)
+        return;
+        
+    if (!rootObject)
+        return;
+        
+    JSDOMWindow* window = static_cast<JSDOMWindow*>(rootObject);
+    if (!window)
+        return;
+
+    Frame* frame = window->impl()->frame();
+    if (!frame)
+        return;
+
+    Document* document = frame->document();
+    if (!document)
+        return;
+
+    document->updateRendering();
+}
+
+void Frame::initJavaJSBindings()
+{
+    mainThread = pthread_self();
+    KJS::Bindings::JavaJSObject::initializeJNIThreading();
+    KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
 }
 
 } // namespace WebCore

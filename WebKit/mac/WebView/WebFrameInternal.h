@@ -31,21 +31,20 @@
 #import "WebFramePrivate.h"
 #import "WebPreferencesPrivate.h"
 
-#ifdef __cplusplus
+#import <WebCore/EditAction.h>
 #import <WebCore/FrameLoaderTypes.h>
+#import <WebCore/SelectionController.h>
 #import <WebCore/Settings.h>
-#endif
 
 @class DOMCSSStyleDeclaration;
+@class DOMDocumentFragment;
 @class DOMElement;
 @class DOMNode;
 @class DOMRange;
 @class WebFrameView;
-@class WebFrameBridge;
 @class WebHistoryItem;
-class WebScriptDebugger;
 
-#ifdef __cplusplus
+class WebScriptDebugger;
 
 namespace WebCore {
     class CSSStyleDeclaration;
@@ -97,15 +96,15 @@ WebView *getWebView(WebFrame *webFrame);
 @public
     WebCore::Frame* coreFrame;
     WebFrameView *webFrameView;
-    WebFrameBridge *bridge;
     WebScriptDebugger* scriptDebugger;
     id internalLoadDelegate;
+    BOOL shouldCreateRenderers;
 }
 @end
 
-#else
-struct WebCoreHistoryItem;
-#endif
+@protocol WebCoreRenderTreeCopier <NSObject>
+- (NSObject *)nodeWithName:(NSString *)name position:(NSPoint)position rect:(NSRect)rect view:(NSView *)view children:(NSArray *)children;
+@end
 
 @interface WebFrame (WebInternal)
 
@@ -126,22 +125,14 @@ struct WebCoreHistoryItem;
 - (void)_clearSelection;
 - (WebFrame *)_findFrameWithSelection;
 - (void)_clearSelectionInOtherFrames;
-#ifdef __cplusplus
-- (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebFrameBridge *)bridge;
-#endif
+- (id)_initWithWebFrameView:(WebFrameView *)webFrameView webView:(WebView *)webView;
 
 - (BOOL)_isMainFrame;
-
-#ifdef __cplusplus
 
 - (WebCore::FrameLoader*)_frameLoader;
 - (WebDataSource *)_dataSourceForDocumentLoader:(WebCore::DocumentLoader*)loader;
 
 - (void)_addDocumentLoader:(WebCore::DocumentLoader*)loader toUnarchiveState:(WebArchive *)archive;
-
-#endif
-
-- (WebFrameBridge *)_bridge;
 
 - (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer intoChild:(WebFrame *)childFrame;
 
@@ -167,6 +158,96 @@ struct WebCoreHistoryItem;
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins;
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins;
 #endif
+
+- (NSURL *)_baseURL;
+
+- (void)_forceLayoutAdjustingViewSize:(BOOL)adjustSizeFlag;
+- (void)_forceLayoutWithMinimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)adjustSizeFlag;
+- (void)_sendScrollEvent;
+- (BOOL)_needsLayout;
+- (void)_drawRect:(NSRect)rect;
+- (void)_adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit;
+- (NSArray*)_computePageRectsWithPrintWidthScaleFactor:(float)printWidthScaleFactor printHeight:(float)printHeight;
+
+- (NSObject *)_copyRenderTree:(id <WebCoreRenderTreeCopier>)copier;
+- (NSString *)_renderTreeAsExternalRepresentation;
+
+- (NSURL *)_URLWithAttributeString:(NSString *)string;
+
+- (DOMElement *)_elementWithName:(NSString *)name inForm:(DOMElement *)form;
+- (BOOL)_elementDoesAutoComplete:(DOMElement *)element;
+- (BOOL)_elementIsPassword:(DOMElement *)element;
+- (DOMElement *)_formForElement:(DOMElement *)element;
+- (DOMElement *)_currentForm;
+- (NSArray *)_controlsInForm:(DOMElement *)form;
+- (NSString *)_searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element;
+- (NSString *)_matchLabels:(NSArray *)labels againstElement:(DOMElement *)element;
+
+- (BOOL)_searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection;
+- (unsigned)_markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(unsigned)limit;
+- (BOOL)_markedTextMatchesAreHighlighted;
+- (void)_setMarkedTextMatchesAreHighlighted:(BOOL)doHighlight;
+- (void)_unmarkAllTextMatches;
+- (NSArray *)_rectsForTextMatches;
+
+- (NSString *)_stringByEvaluatingJavaScriptFromString:(NSString *)string;
+- (NSString *)_stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture;
+- (NSAppleEventDescriptor *)_aeDescByEvaluatingJavaScriptFromString:(NSString *)string;
+
+- (NSString *)_selectedString;
+
+- (NSString *)_stringForRange:(DOMRange *)range;
+
+- (NSString *)_markupStringFromNode:(DOMNode *)node nodes:(NSArray **)nodes;
+- (NSString *)_markupStringFromRange:(DOMRange *)range nodes:(NSArray **)nodes;
+
+- (NSRect)_caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity;
+- (NSRect)_firstRectForDOMRange:(DOMRange *)range;
+- (void)_scrollDOMRangeToVisible:(DOMRange *)range;
+
+- (NSFont *)_fontForSelection:(BOOL *)hasMultipleFonts;
+
+- (NSString *)_stringWithData:(NSData *)data; // using the encoding of the frame's main resource
++ (NSString *)_stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName; // nil for textEncodingName means Latin-1
+
+- (void)_setBaseBackgroundColor:(NSColor *)backgroundColor;
+- (void)_setDrawsBackground:(BOOL)drawsBackround;
+
+- (id)_accessibilityTree;
+
+- (DOMRange *)_rangeByAlteringCurrentSelection:(WebCore::SelectionController::EAlteration)alteration direction:(WebCore::SelectionController::EDirection)direction granularity:(WebCore::TextGranularity)granularity;
+- (WebCore::TextGranularity)_selectionGranularity;
+- (void)_smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)charRangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString;
+- (NSRange)_markedTextNSRange;
+- (DOMRange *)_convertNSRangeToDOMRange:(NSRange)range;
+- (NSRange)_convertDOMRangeToNSRange:(DOMRange *)range;
+
+- (DOMDocumentFragment *)_documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;
+- (DOMDocumentFragment *)_documentFragmentWithText:(NSString *)text inContext:(DOMRange *)context;
+- (DOMDocumentFragment *)_documentFragmentWithNodesAsParagraphs:(NSArray *)nodes;
+
+- (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle;
+- (void)_replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle;
+- (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
+- (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
+
+- (void)_insertParagraphSeparatorInQuotedContent;
+
+- (DOMRange *)_characterRangeAtPoint:(NSPoint)point;
+
+- (DOMCSSStyleDeclaration *)_typingStyle;
+- (void)_setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebCore::EditAction)undoAction;
+
+- (void)_dragSourceMovedTo:(NSPoint)windowLoc;
+- (void)_dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation;
+
+- (BOOL)_getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSString *)URL;
+- (void)_getAllResourceDatas:(NSArray **)datas andResponses:(NSArray **)responses;
+
+- (BOOL)_canProvideDocumentSource;
+- (BOOL)_canSaveAsWebArchive;
+
+- (void)_receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
 
 @end
 

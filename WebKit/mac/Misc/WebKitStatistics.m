@@ -30,7 +30,6 @@
 
 #import "WebKitStatisticsPrivate.h"
 
-int WebBridgeCount;
 int WebViewCount;
 int WebDataSourceCount;
 int WebFrameCount;
@@ -61,7 +60,8 @@ int WebFrameViewCount;
 
 + (int)bridgeCount
 {
-    return WebBridgeCount;
+    // No such thing as a bridge any more. Just return 0.
+    return 0;
 }
 
 + (int)HTMLRepresentationCount

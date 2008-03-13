@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,18 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WebFrameBridge;
-
 #import <WebKit/WebDOMOperations.h>
 
 @interface DOMNode (WebDOMNodeOperationsPrivate)
-- (WebFrameBridge *)_bridge;
 - (NSArray *)_URLsFromSelectors:(SEL)firstSel, ...;
 - (NSArray *)_subresourceURLs;
-@end
-
-@interface DOMRange (WebDOMRangeOperationsPrivate)
-- (WebFrameBridge *)_bridge;
 @end
 
 @interface DOMDocument (WebDOMDocumentOperationsPrivate)

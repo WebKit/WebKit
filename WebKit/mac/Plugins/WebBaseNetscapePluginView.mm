@@ -32,7 +32,6 @@
 
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
-#import "WebFrameBridge.h"
 #import "WebFrameInternal.h" 
 #import "WebFrameView.h"
 #import "WebGraphicsExtras.h"
@@ -2053,7 +2052,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
     ASSERT(JSString);
     
-    NSString *result = [[[self webFrame] _bridge] stringByEvaluatingJavaScriptFromString:JSString forceUserGesture:[JSPluginRequest isCurrentEventUserGesture]];
+    NSString *result = [[self webFrame] _stringByEvaluatingJavaScriptFromString:JSString forceUserGesture:[JSPluginRequest isCurrentEventUserGesture]];
     
     // Don't continue if stringByEvaluatingJavaScriptFromString caused the plug-in to stop.
     if (!isStarted) {

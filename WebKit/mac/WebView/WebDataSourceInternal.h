@@ -41,10 +41,7 @@ class WebDocumentLoaderMac;
 
 @class DOMDocumentFragment;
 @class DOMElement;
-@class NSError;
-@class NSURL;
 @class WebArchive;
-@class WebFrameBridge;
 @class WebResource;
 @class WebView;
 
@@ -55,7 +52,6 @@ class WebDocumentLoaderMac;
 - (void)_makeRepresentation;
 - (BOOL)_isDocumentHTML;
 - (WebView *)_webView;
-- (WebFrameBridge *)_bridge;
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName;
 - (NSURL *)_URL;
 - (DOMElement *)_imageElementWithImageResource:(WebResource *)resource;

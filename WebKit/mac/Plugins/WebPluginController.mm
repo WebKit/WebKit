@@ -36,7 +36,6 @@
 #import <WebCore/PlatformString.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
@@ -325,7 +324,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
             LOG_ERROR("JavaScript requests can only be made on the frame that contains the plug-in");
             return;
         }
-        [[frame _bridge] stringByEvaluatingJavaScriptFromString:JSString];
+        [frame _stringByEvaluatingJavaScriptFromString:JSString];
     } else {
         if (!request) {
             LOG_ERROR("could not load URL %@", [request URL]);
@@ -377,11 +376,6 @@ static void cancelOutstandingCheck(const void *item, void *context)
 - (WebFrame *)webFrame
 {
     return [_dataSource webFrame];
-}
-
-- (WebFrameBridge *)bridge
-{
-    return [[self webFrame] _bridge];
 }
 
 - (WebView *)webView

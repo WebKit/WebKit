@@ -29,7 +29,6 @@
 #import "WebScriptDebugger.h"
 #import "WebDataSource.h"
 #import "WebDataSourceInternal.h"
-#import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebScriptDebugServerPrivate.h"
 #import "WebViewInternal.h"

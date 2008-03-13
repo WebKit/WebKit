@@ -28,7 +28,6 @@
 
 #import "WebRenderNode.h"
 
-#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebDataSourceInternal.h>
@@ -82,7 +81,7 @@
     }
     
     copier = [[WebKitRenderTreeCopier alloc] init];
-    self = [[[[[view webFrame] _dataSource] _bridge] copyRenderTree:copier] retain];
+    self = [[[view webFrame] _copyRenderTree:copier] retain];
     [copier release];
     
     return self;

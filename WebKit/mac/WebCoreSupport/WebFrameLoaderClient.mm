@@ -44,7 +44,6 @@
 #import "WebDynamicScrollBarsViewInternal.h"
 #import "WebElementDictionary.h"
 #import "WebFormDelegate.h"
-#import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
 #import "WebFrameViewInternal.h"
@@ -145,7 +144,6 @@ WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
 
 void WebFrameLoaderClient::frameLoaderDestroyed()
 {
-    ASSERT(!m_webFrame->_private->bridge);
     delete this;
 }
 
@@ -212,8 +210,6 @@ void WebFrameLoaderClient::detachedFromParent3()
 
 void WebFrameLoaderClient::detachedFromParent4()
 {
-    [m_webFrame->_private->bridge close];
-    m_webFrame->_private->bridge = nil;
 }
 
 void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceRequest& initialRequest, const ResourceResponse& response)
@@ -908,8 +904,8 @@ void WebFrameLoaderClient::prepareForDataSourceReplacement()
     
     // Make sure that any work that is triggered by resigning first reponder can get done.
     // The main example where this came up is the textDidEndEditing that is sent to the
-    // FormsDelegate (3223413).  We need to do this before _detachChildren, since that will
-    // remove the views as a side-effect of freeing the bridge, at which point we can't
+    // FormsDelegate (3223413). We need to do this before _detachChildren, since that will
+    // remove the views as a side-effect of freeing the frame, at which point we can't
     // post the FormDelegate messages.
     //
     // Note that this can also take FirstResponder away from a child of our frameView that

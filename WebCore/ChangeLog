@@ -1,3 +1,27 @@
+2008-03-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=17640
+          eliminate WebCoreFrameBridge
+
+        * WebCore.base.exp: Added more exports, needed by code moved from WebCoreFrameBridge
+        to WebFrame in WebKit.
+        * WebCore.xcodeproj/project.pbxproj: Added more headers, same reason. Also deleted
+        WebCoreFrameBridge.h and WebCoreFrameBridge.mm.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame): Added call to initJavaJSBindings(), formerly handled by
+        the WebCoreFrameBridge.
+        * page/Frame.h: Added initJavaJSBindings function.
+
+        * page/mac/FrameMac.mm:
+        (WebCore::updateRenderingForBindings): Moved here from WebCoreFrameBridge.
+        (WebCore::Frame::initJavaJSBindings): Ditto; code was in the init function.
+
+        * page/mac/WebCoreFrameBridge.h: Removed.
+        * page/mac/WebCoreFrameBridge.mm: Removed.
+
 2008-03-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

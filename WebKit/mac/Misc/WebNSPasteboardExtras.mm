@@ -29,7 +29,6 @@
 #import "WebNSPasteboardExtras.h"
 
 #import "WebArchive.h"
-#import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebHTMLViewInternal.h"
 #import "WebNSURLExtras.h"

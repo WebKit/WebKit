@@ -29,7 +29,6 @@
 #import "WebHistoryItemInternal.h"
 #import "WebHistoryItemPrivate.h"
 
-#import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebHTMLViewInternal.h"

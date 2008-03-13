@@ -50,7 +50,6 @@
 #import "WebEditingDelegate.h"
 #import "WebEditorClient.h"
 #import "WebFormDelegatePrivate.h"
-#import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentation.h"
@@ -372,7 +371,6 @@ static int pluginDatabaseClientCount = 0;
 
 @interface WebView (WebFileInternal)
 - (WebFrame *)_selectedOrMainFrame;
-- (WebFrameBridge *)_bridgeForSelectedOrMainFrame;
 - (BOOL)_isLoading;
 - (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point;
 - (WebFrame *)_focusedFrame;
@@ -1369,7 +1367,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 - (NSDictionary *)_dashboardRegions
 {
     // Only return regions from main frame.
-    Frame* mainFrame = [[[self mainFrame] _bridge] _frame];
+    Frame* mainFrame = core([self mainFrame]);
     if (!mainFrame)
         return nil;
     NSMutableDictionary *regions = mainFrame->dashboardRegionsDictionary();
@@ -1487,7 +1485,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 
 - (void)setProhibitsMainFrameScrolling:(BOOL)prohibits
 {
-    Frame* mainFrame = [[[self mainFrame] _bridge] _frame];
+    Frame* mainFrame = core([self mainFrame]);
     if (mainFrame)
         mainFrame->setProhibitsScrolling(prohibits);
 }
@@ -1500,14 +1498,14 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 
 - (void)_setInViewSourceMode:(BOOL)flag
 {
-    Frame* mainFrame = [[[self mainFrame] _bridge] _frame];
+    Frame* mainFrame = core([self mainFrame]);
     if (mainFrame)
         mainFrame->setInViewSourceMode(flag);
 }
 
 - (BOOL)_inViewSourceMode
 {
-    Frame* mainFrame = [[[self mainFrame] _bridge] _frame];
+    Frame* mainFrame = core([self mainFrame]);
     return mainFrame && mainFrame->inViewSourceMode();
 }
 
@@ -1619,7 +1617,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 
 - (void)_executeCoreCommandByName:(NSString *)name value:(NSString *)value
 {
-    Frame* coreFrame = [[[self mainFrame] _bridge] _frame];
+    Frame* coreFrame = core([self mainFrame]);
     if (!coreFrame)
         return;
     coreFrame->editor()->command(name).execute(value);
@@ -2406,7 +2404,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
             script = [script substringFromIndex:returnStringRange.location + returnStringRange.length];
     }
 
-    NSString *result = [[[self mainFrame] _bridge] stringByEvaluatingJavaScriptFromString:script];
+    NSString *result = [[self mainFrame] _stringByEvaluatingJavaScriptFromString:script];
     // The only way stringByEvaluatingJavaScriptFromString can return nil is if the frame was removed by the script
     // Since there's no way to get rid of the main frame, result will never ever be nil here.
     ASSERT(result);
@@ -3086,7 +3084,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)script
 {
-    return [[[self mainFrame] _bridge] aeDescByEvaluatingJavaScriptFromString:script];
+    return [[self mainFrame] _aeDescByEvaluatingJavaScriptFromString:script];
 }
 
 - (BOOL)canMarkAllTextMatches
@@ -3177,7 +3175,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)scrollDOMRangeToVisible:(DOMRange *)range
 {
-    [[[range startContainer] _bridge] scrollDOMRangeToVisible:range];
+    [[[[range startContainer] ownerDocument] webFrame] _scrollDOMRangeToVisible:range];
 }
 
 - (BOOL)allowsUndo
@@ -3406,7 +3404,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         coreFrame->selectionController()->clear();
     else {
         // Derive the frame to use from the range passed in.
-        // Using _bridgeForSelectedOrMainFrame could give us a different document than
+        // Using _selectedOrMainFrame could give us a different document than
         // the one the range uses.
         coreFrame = core([range startContainer])->document()->frame();
         if (!coreFrame)
@@ -3438,7 +3436,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         _private->editable = flag;
         if (!_private->tabKeyCyclesThroughElementsChanged && _private->page)
             _private->page->setTabKeyCyclesThroughElements(!flag);
-        Frame* mainFrame = [[[self mainFrame] _bridge] _frame];
+        Frame* mainFrame = core([self mainFrame]);
         if (mainFrame) {
             if (flag) {
                 mainFrame->applyEditingStyleToBodyElement();
@@ -3460,12 +3458,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     // We don't know enough at thls level to pass in a relevant WebUndoAction; we'd have to
     // change the API to allow this.
-    [[self _bridgeForSelectedOrMainFrame] setTypingStyle:style withUndoAction:EditActionUnspecified];
+    [[self _selectedOrMainFrame] _setTypingStyle:style withUndoAction:EditActionUnspecified];
 }
 
 - (DOMCSSStyleDeclaration *)typingStyle
 {
-    return [[self _bridgeForSelectedOrMainFrame] typingStyle];
+    return [[self _selectedOrMainFrame] _typingStyle];
 }
 
 - (void)setSmartInsertDeleteEnabled:(BOOL)flag
@@ -3613,22 +3611,22 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)replaceSelectionWithNode:(DOMNode *)node
 {
-    [[self _bridgeForSelectedOrMainFrame] replaceSelectionWithNode:node selectReplacement:YES smartReplace:NO matchStyle:NO];
+    [[self _selectedOrMainFrame] _replaceSelectionWithNode:node selectReplacement:YES smartReplace:NO matchStyle:NO];
 }    
 
 - (void)replaceSelectionWithText:(NSString *)text
 {
-    [[self _bridgeForSelectedOrMainFrame] replaceSelectionWithText:text selectReplacement:YES smartReplace:NO];
+    [[self _selectedOrMainFrame] _replaceSelectionWithText:text selectReplacement:YES smartReplace:NO];
 }
 
 - (void)replaceSelectionWithMarkupString:(NSString *)markupString
 {
-    [[self _bridgeForSelectedOrMainFrame] replaceSelectionWithMarkupString:markupString baseURLString:nil selectReplacement:YES smartReplace:NO];
+    [[self _selectedOrMainFrame] _replaceSelectionWithMarkupString:markupString baseURLString:nil selectReplacement:YES smartReplace:NO];
 }
 
 - (void)replaceSelectionWithArchive:(WebArchive *)archive
 {
-    [[[[self _bridgeForSelectedOrMainFrame] webFrame] _dataSource] _replaceSelectionWithArchive:archive selectReplacement:YES];
+    [[[self _selectedOrMainFrame] _dataSource] _replaceSelectionWithArchive:archive selectReplacement:YES];
 }
 
 - (void)deleteSelection
@@ -3695,12 +3693,12 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
 
 - (void)_insertNewlineInQuotedContent;
 {
-    [[self _bridgeForSelectedOrMainFrame] insertParagraphSeparatorInQuotedContent];
+    [[self _selectedOrMainFrame] _insertParagraphSeparatorInQuotedContent];
 }
 
 - (void)_replaceSelectionWithNode:(DOMNode *)node matchStyle:(BOOL)matchStyle
 {
-    [[self _bridgeForSelectedOrMainFrame] replaceSelectionWithNode:node selectReplacement:YES smartReplace:NO matchStyle:matchStyle];
+    [[self _selectedOrMainFrame] _replaceSelectionWithNode:node selectReplacement:YES smartReplace:NO matchStyle:matchStyle];
 }
 
 @end
@@ -3973,11 +3971,6 @@ static WebFrameView *containingFrameView(NSView *view)
     if (result == nil)
         result = [self mainFrame];
     return result;
-}
-
-- (WebFrameBridge *)_bridgeForSelectedOrMainFrame
-{
-    return [[self _selectedOrMainFrame] _bridge];
 }
 
 - (BOOL)_isLoading

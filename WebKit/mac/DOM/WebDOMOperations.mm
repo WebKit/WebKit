@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 
 #import "WebArchiver.h"
 #import "WebDataSourcePrivate.h"
-#import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebFramePrivate.h"
 #import "WebKitNSStringExtras.h"
@@ -47,17 +46,6 @@ using namespace WebCore;
 
 @implementation DOMNode (WebDOMNodeOperations)
 
-- (WebFrameBridge *)_bridge
-{
-    Document* document = core(self)->document();
-    if (!document)
-        return nil;
-    Frame* frame = document->frame();
-    if (!frame)
-        return nil;
-    return [kit(frame) _bridge];
-}
-
 - (WebArchive *)webArchive
 {
     return [WebArchiver archiveNode:self];
@@ -65,8 +53,12 @@ using namespace WebCore;
 
 - (NSString *)markupString
 {
-    return [[self _bridge] markupStringFromNode:self nodes:nil];
+    return [[[self ownerDocument] webFrame] _markupStringFromNode:self nodes:nil];
 }
+
+@end
+
+@implementation DOMNode (WebDOMNodeOperationsPrivate)
 
 - (NSArray *)_URLsFromSelectors:(SEL)firstSel, ...
 {
@@ -107,12 +99,16 @@ using namespace WebCore;
 
 - (WebFrame *)webFrame
 {
-    return [[self _bridge] webFrame];
+    Document* document = core(self);
+    Frame* frame = document->frame();
+    if (!frame)
+        return nil;
+    return kit(frame);
 }
 
 - (NSURL *)URLWithAttributeString:(NSString *)string
 {
-    return [[self _bridge] URLWithAttributeString:string];
+    return [[self webFrame] _URLWithAttributeString:string];
 }
 
 @end
@@ -135,11 +131,6 @@ using namespace WebCore;
 
 @implementation DOMRange (WebDOMRangeOperations)
 
-- (WebFrameBridge *)_bridge
-{
-    return [[self startContainer] _bridge];
-}
-
 - (WebArchive *)webArchive
 {
     return [WebArchiver archiveRange:self];
@@ -147,7 +138,7 @@ using namespace WebCore;
 
 - (NSString *)markupString
 {
-    return [[self _bridge] markupStringFromRange:self nodes:nil];
+    return [[[[self startContainer] ownerDocument] webFrame] _markupStringFromRange:self nodes:nil];
 }
 
 @end

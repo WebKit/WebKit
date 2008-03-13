@@ -26,7 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-extern int WebBridgeCount;
 extern int WebViewCount;
 extern int WebDataSourceCount;
 extern int WebFrameCount;
