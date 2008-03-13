@@ -165,7 +165,7 @@ void Loader::cancelRequests(DocLoader* docLoader)
     HostMap::iterator end = m_hosts.end();
     for (HostMap::iterator it = m_hosts.begin(); it != end; ++it) {
         Host* host = it->second;
-        if (host->hasRequests());
+        if (host->hasRequests())
             host->cancelRequests(docLoader);
     }
 

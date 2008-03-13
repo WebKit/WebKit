@@ -1,3 +1,14 @@
+2008-03-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Eric.
+
+        Correct a few issues spotted by Mike Belshe. 
+
+        * html/PreloadScanner.cpp:
+        (WebCore::PreloadScanner::tokenize):
+        * loader/loader.cpp:
+        (WebCore::Loader::cancelRequests):
+
 2008-03-13  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Fix GTK+ build for SharedBuffer changes.
