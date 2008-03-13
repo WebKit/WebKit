@@ -1,3 +1,17 @@
+2008-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Get rid of actualRequest, it is not used anymore. Also, get rid of 
+        initialRequest and replace all uses with originalRequest because those are
+        the same thing.
+        
+        * loader/DocumentLoader.cpp:
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::initialRequest):
+        (WebCore::FrameLoader::originalRequestURL):
+
 2008-03-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

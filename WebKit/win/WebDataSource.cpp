@@ -197,7 +197,7 @@ HRESULT STDMETHODCALLTYPE WebDataSource::webFrame(
 HRESULT STDMETHODCALLTYPE WebDataSource::initialRequest( 
     /* [retval][out] */ IWebURLRequest** request)
 {
-    *request = WebMutableURLRequest::createInstance(m_loader->initialRequest());
+    *request = WebMutableURLRequest::createInstance(m_loader->originalRequest());
     return S_OK;
 }
 

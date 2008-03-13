@@ -182,16 +182,6 @@ ResourceRequest& DocumentLoader::request()
     return m_request;
 }
 
-const ResourceRequest& DocumentLoader::initialRequest() const
-{
-    return m_originalRequest;
-}
-
-ResourceRequest& DocumentLoader::actualRequest()
-{
-    return m_request;
-}
-
 const KURL& DocumentLoader::url() const
 {
     return request().url();

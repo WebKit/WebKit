@@ -414,7 +414,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSURLRequest *)initialRequest
 {
-    return _private->loader->initialRequest().nsURLRequest();
+    return _private->loader->originalRequest().nsURLRequest();
 }
 
 - (NSMutableURLRequest *)request
