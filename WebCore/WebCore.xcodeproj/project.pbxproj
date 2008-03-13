@@ -1349,7 +1349,7 @@
 		85E711910AC5D5350053270F /* DOMCounterInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711420AC5D5340053270F /* DOMCounterInternal.h */; };
 		85E711920AC5D5350053270F /* DOMCSSRuleListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711430AC5D5340053270F /* DOMCSSRuleListInternal.h */; };
 		85E711930AC5D5350053270F /* DOMCSSStyleDeclarationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711440AC5D5340053270F /* DOMCSSStyleDeclarationInternal.h */; };
-		85E711940AC5D5350053270F /* DOMDocumentFragmentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711450AC5D5340053270F /* DOMDocumentFragmentInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		85E711940AC5D5350053270F /* DOMDocumentFragmentInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711450AC5D5340053270F /* DOMDocumentFragmentInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		85E711950AC5D5350053270F /* DOMDocumentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711460AC5D5340053270F /* DOMDocumentInternal.h */; };
 		85E711960AC5D5350053270F /* DOMDocumentTypeInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711470AC5D5340053270F /* DOMDocumentTypeInternal.h */; };
 		85E711970AC5D5350053270F /* DOMDOMImplementationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711480AC5D5340053270F /* DOMDOMImplementationInternal.h */; };
@@ -3890,6 +3890,7 @@
 			dstPath = Versions/A/PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
+				85E711940AC5D5350053270F /* DOMDocumentFragmentInternal.h in Copy Generated Headers */,
 				BCC5734D0D695C06006EF517 /* DOMProgressEvent.h in Copy Generated Headers */,
 				BCC5734E0D695C06006EF517 /* DOMProgressEventInternal.h in Copy Generated Headers */,
 				BCC5734F0D695C06006EF517 /* DOMTextPrivate.h in Copy Generated Headers */,
@@ -12798,7 +12799,6 @@
 				85E711970AC5D5350053270F /* DOMDOMImplementationInternal.h in Headers */,
 				85ACABB00A9CAF8000671E90 /* DOMDocument.h in Headers */,
 				85089CDB0A98C42800A275AA /* DOMDocumentFragment.h in Headers */,
-				85E711940AC5D5350053270F /* DOMDocumentFragmentInternal.h in Headers */,
 				85E711950AC5D5350053270F /* DOMDocumentInternal.h in Headers */,
 				85CA975C0A962E5400690CCF /* DOMDocumentType.h in Headers */,
 				85E711960AC5D5350053270F /* DOMDocumentTypeInternal.h in Headers */,
