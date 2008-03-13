@@ -165,7 +165,7 @@ void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
         return;
 
     if (allAtOnce) {
-        m_resourceData = new SharedBuffer(data, length);
+        m_resourceData = SharedBuffer::create(data, length);
         return;
     }
         
@@ -175,7 +175,7 @@ void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
             m_resourceData->append(data, length);
     } else {
         if (!m_resourceData)
-            m_resourceData = new SharedBuffer(data, length);
+            m_resourceData = SharedBuffer::create(data, length);
         else
             m_resourceData->append(data, length);
     }
@@ -247,7 +247,7 @@ void ResourceLoader::willStopBufferingData(const char* data, int length)
         return;
 
     ASSERT(!m_resourceData);
-    m_resourceData = new SharedBuffer(data, length);
+    m_resourceData = SharedBuffer::create(data, length);
 }
 
 void ResourceLoader::didFinishLoading()

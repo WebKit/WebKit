@@ -371,7 +371,7 @@ Image* IconDatabase::defaultIcon(const IntSize& size)
         0x00, 0x00, 0x01, 0x52, 0x00, 0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x08, 0x00, 0x08, 0x00, 0x08, 0x00, 0x0A, 
         0xFC, 0x80, 0x00, 0x00, 0x27, 0x10, 0x00, 0x0A, 0xFC, 0x80, 0x00, 0x00, 0x27, 0x10 };
         
-    static RefPtr<SharedBuffer> defaultIconBuffer(new SharedBuffer(defaultIconData, sizeof(defaultIconData)));
+    static RefPtr<SharedBuffer> defaultIconBuffer(SharedBuffer::create(defaultIconData, sizeof(defaultIconData)));
     
     if (!m_defaultIconRecord) {
         m_defaultIconRecord = new IconRecord("urlIcon");
@@ -1899,8 +1899,7 @@ PassRefPtr<SharedBuffer> IconDatabase::getImageDataForIconURLFromSQLDatabase(con
     if (result == SQLResultRow) {
         Vector<char> data;
         m_getImageDataForIconURLStatement->getColumnBlobAsVector(0, data);
-        imageData = new SharedBuffer;
-        imageData->append(data.data(), data.size());
+        imageData = SharedBuffer::create(data.data(), data.size());
     } else if (result != SQLResultDone)
         LOG_ERROR("getImageDataForIconURLFromSQLDatabase failed for url %s", urlForLogging(iconURL).ascii().data());
 

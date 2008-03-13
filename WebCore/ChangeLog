@@ -1,3 +1,32 @@
+2008-03-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Convert SharedBuffer to start with a refCount of 1
+
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageTokenizer::finish):
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::addData):
+        (WebCore::ResourceLoader::willStopBufferingData):
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::defaultIcon):
+        (WebCore::IconDatabase::getImageDataForIconURLFromSQLDatabase):
+
+        * loader/loader.cpp:
+        (WebCore::Loader::didReceiveData):
+
+        * platform/SharedBuffer.h:
+        (WebCore::SharedBuffer::create): Make all constructors private, add ::create() calls
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::SharedBuffer): Revert to default RefCounted constructor to start with a ref count of 1
+        (WebCore::SharedBuffer::copy):
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::wrapNSData):
+        (WebCore::SharedBuffer::SharedBuffer): Revert to default RefCounted constructor to start with a ref count of 1
+
 2008-03-13  Steve Falkenburg  <sfalken@apple.com>
 
         PGO build fixes.

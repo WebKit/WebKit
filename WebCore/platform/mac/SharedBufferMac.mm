@@ -95,12 +95,11 @@ namespace WebCore {
 
 PassRefPtr<SharedBuffer> SharedBuffer::wrapNSData(NSData *nsData)
 {
-    return new SharedBuffer(nsData);
+    return adoptRef(new SharedBuffer(nsData));
 }
 
 SharedBuffer::SharedBuffer(NSData *nsData)
-    : RefCounted<SharedBuffer>(0)
-    , m_nsData(nsData)
+    : m_nsData(nsData)
 {
 }
 

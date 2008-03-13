@@ -111,7 +111,7 @@ void ImageTokenizer::finish()
         // If this is a multipart image, make a copy of the current part, since the resource data
         // will be overwritten by the next part.
         if (m_doc->frame()->loader()->documentLoader()->isLoadingMultipartContent())
-            data = new SharedBuffer(data->data(), data->size());
+            data = data->copy();
 
         cachedImage->data(data.release(), true);
         cachedImage->finish();
