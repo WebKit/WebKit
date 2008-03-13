@@ -681,7 +681,7 @@ JSValue* convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, co
 
     if (type == QMetaType::QObjectStar || type == QMetaType::QWidgetStar) {
         QObject* obj = variant.value<QObject*>();
-        return Instance::createRuntimeObject(Instance::QtLanguage, obj, root);
+        return Instance::createRuntimeObject(QtInstance::create(obj, root));
     }
 
     if (type == QMetaType::QVariantMap) {
@@ -1514,7 +1514,7 @@ void QtConnectionObject::execute(void **argv)
                     if (m_funcObject->inherits(&FunctionImp::info)) {
                         FunctionImp* fimp = static_cast<FunctionImp*>(m_funcObject.get());
 
-                        JSObject* qt_sender = Instance::createRuntimeObject(Instance::QtLanguage, sender(), ro);
+                        JSObject* qt_sender = Instance::createRuntimeObject(QtInstance::create(sender(), ro));
                         JSObject* wrapper = new JSObject();
                         wrapper->put(exec, "__qt_sender__", qt_sender);
                         ScopeChain oldsc = fimp->scope();

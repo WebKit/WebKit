@@ -38,6 +38,11 @@ class QtRuntimeMetaMethod;
 class QtInstance : public Instance
 {
 public:
+    static PassRefPtr<QtInstance> create(QObject *instance, PassRefPtr<RootObject> rootObject) 
+    {
+        return adoptRef(new QtInstance(instance, rootObject));
+    }
+
     ~QtInstance ();
 
     virtual Class* getClass() const;

@@ -1,3 +1,10 @@
+2008-03-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJSWindowObject):
+
 2008-03-12  Simon Hausmann  <hausmann@webkit.org>
 
         Fix compilation against Qt 4.3

@@ -62,6 +62,7 @@
 #include "kjs_proxy.h"
 #include "TypingCommand.h"
 #include "JSLock.h"
+#include "qt_instance.h"
 #include "runtime_root.h"
 #include "runtime.h"
 #include "JSDOMWindow.h"
@@ -101,9 +102,7 @@ PassRefPtr<KJS::Bindings::Instance> Frame::createScriptInstanceForWidget(WebCore
     QWidget* nativeWidget = widget->nativeWidget();
     if (!nativeWidget)
         return 0;
-    return KJS::Bindings::Instance::createBindingForLanguageInstance(KJS::Bindings::Instance::QtLanguage,
-                                                                     nativeWidget,
-                                                                     bindingRootObject());
+    return KJS::Bindings::QtInstance::create(nativeWidget, bindingRootObject());
 }
 
 void Frame::clearPlatformScriptObjects()
