@@ -1,3 +1,12 @@
+2008-03-13  Steve Falkenburg  <sfalken@apple.com>
+
+        PGO build fixes.
+        
+        Disable PGO for normal release builds.
+        Added work-in-progress Release_PGOInstrument/Release_PGOOptimize targets.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-03-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
