@@ -1,3 +1,21 @@
+2008-03-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17819
+          Border-collapse: collapse later cell wins on PC, earlier cell on Mac
+
+        Test: fast/table/border-collapsing/equal-precedence-resolution.html
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::collapsedLeftBorder): When calling
+        compareBorders() with borders that may have the same precedence, made
+        sure to pass the border belonging to the earlier (in document order)
+        element first, since compareBorders() prefers the first argument when
+        there is a tie.
+        (WebCore::RenderTableCell::collapsedRightBorder): Ditto.
+        (WebCore::RenderTableCell::collapsedTopBorder): Ditto.
+
 2008-03-13  Adam Roben  <aroben@apple.com>
 
         wx build fix and Windows leak fix after r31034

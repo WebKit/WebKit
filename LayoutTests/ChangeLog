@@ -1,3 +1,15 @@
+2008-03-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=17819
+          Border-collapse: collapse later cell wins on PC, earlier cell on Mac
+
+        * fast/table/border-collapsing/equal-precedence-resolution.html: Added.
+        * platform/mac/fast/table/border-collapsing/equal-precedence-resolution-expected.checksum: Added.
+        * platform/mac/fast/table/border-collapsing/equal-precedence-resolution-expected.png: Added.
+        * platform/mac/fast/table/border-collapsing/equal-precedence-resolution-expected.txt: Added.
+
 2008-03-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver.
