@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HTMLFrameOwnerElement.h"
 #include "History.h"
 #include "MessageEvent.h"
 #include "Navigator.h"
@@ -251,13 +252,7 @@ Element* DOMWindow::frameElement() const
     if (!m_frame)
         return 0;
 
-    Document* doc = m_frame->document();
-    ASSERT(doc);
-    if (!doc)
-        return 0;
-
-    // FIXME: could this use m_frame->ownerElement() instead of going through the Document.
-    return doc->ownerElement();
+    return m_frame->ownerElement();
 }
 
 void DOMWindow::focus()
