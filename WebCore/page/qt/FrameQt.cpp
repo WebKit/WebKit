@@ -96,7 +96,7 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
 }
 #endif
 
-KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(WebCore::Widget* widget)
+PassRefPtr<KJS::Bindings::Instance> Frame::createScriptInstanceForWidget(WebCore::Widget* widget)
 {
     QWidget* nativeWidget = widget->nativeWidget();
     if (!nativeWidget)

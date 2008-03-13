@@ -1,5 +1,12 @@
 2008-03-12  Mark Rowe  <mrowe@apple.com>
 
+        Fix Gtk and Qt builds.
+
+        * page/gtk/FrameGtk.cpp:
+        * page/qt/FrameQt.cpp:
+
+2008-03-12  Mark Rowe  <mrowe@apple.com>
+
         Mac build fix.
 
         * WebCore.base.exp:  Remove symbol.
