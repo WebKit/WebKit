@@ -37,7 +37,10 @@ class ObjcClass;
 
 class ObjcInstance : public Instance {
 public:
-    ObjcInstance(ObjectStructPtr instance, PassRefPtr<RootObject>);
+    static PassRefPtr<ObjcInstance> create(ObjectStructPtr instance, PassRefPtr<RootObject> rootObject)
+    {
+        return adoptRef(new ObjcInstance(instance, rootObject));
+    }
         
     ~ObjcInstance();
     
@@ -68,6 +71,8 @@ public:
     virtual BindingLanguage getBindingLanguage() const { return ObjectiveCLanguage; }
 
 private:
+    ObjcInstance(ObjectStructPtr instance, PassRefPtr<RootObject>);
+    
     RetainPtr<ObjectStructPtr> _instance;
     mutable ObjcClass *_class;
     ObjectStructPtr _pool;

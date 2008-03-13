@@ -118,7 +118,7 @@ JSValue *JavaField::valueFromInstance(ExecState *exec, const Instance *i) const
                 jsresult = JavaArray::convertJObjectToArray(exec, anObject, arrayType, instance->rootObject());
             }
             else if (anObject != 0){
-                jsresult = Instance::createRuntimeObject(Instance::JavaLanguage, anObject, instance->rootObject());
+                jsresult = Instance::createRuntimeObject(JavaInstance::create(anObject, instance->rootObject()));
             }
         }
         break;
@@ -469,7 +469,7 @@ JSValue *JavaArray::valueAt(ExecState *exec, unsigned int index) const
                 return JavaArray::convertJObjectToArray(exec, anObject, _type+1, rootObject());
             }
             // or array of other object type?
-            return Instance::createRuntimeObject(Instance::JavaLanguage, anObject, rootObject());
+            return Instance::createRuntimeObject(JavaInstance::create(anObject, rootObject()));
         }
             
         case boolean_type: {

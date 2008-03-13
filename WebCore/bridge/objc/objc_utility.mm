@@ -252,7 +252,7 @@ JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType ty
                 return jsNull();
             if (obj == 0)
                 return jsUndefined();
-            return Instance::createRuntimeObject(Instance::ObjectiveCLanguage, obj, rootObject);
+            return Instance::createRuntimeObject(ObjcInstance::create(obj, rootObject));
         }
         case ObjcCharType:
             return jsNumber(*(char *)buffer);

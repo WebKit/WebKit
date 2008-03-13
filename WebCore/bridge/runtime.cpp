@@ -55,7 +55,6 @@ Array::~Array()
 
 Instance::Instance(PassRefPtr<RootObject> rootObject)
     : _rootObject(rootObject)
-    , _refCount(0)
 {
     ASSERT(_rootObject);
 }
@@ -79,50 +78,7 @@ void Instance::setValueOfField(ExecState *exec, const Field *aField, JSValue *aV
     aField->setValueToInstance(exec, this, aValue);
 }
 
-Instance* Instance::createBindingForLanguageInstance(BindingLanguage language, void* nativeInstance, PassRefPtr<RootObject> rootObject)
-{
-    Instance *newInstance = 0;
-
-    switch (language) {
-#if HAVE(JNI)
-        case Instance::JavaLanguage: {
-            newInstance = new Bindings::JavaInstance((jobject)nativeInstance, rootObject);
-            break;
-        }
-#endif
-#if PLATFORM(MAC)
-        case Instance::ObjectiveCLanguage: {
-            newInstance = new Bindings::ObjcInstance((ObjectStructPtr)nativeInstance, rootObject);
-            break;
-        }
-#endif
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        case Instance::CLanguage: {
-            newInstance = new Bindings::CInstance((NPObject *)nativeInstance, rootObject);
-            break;
-        }
-#endif
-#if PLATFORM(QT)
-        case Instance::QtLanguage: {
-            newInstance = Bindings::QtInstance::getQtInstance((QObject *)nativeInstance, rootObject);
-            break;
-        }
-#endif
-        default:
-            break;
-    }
-
-    return newInstance;
-}
-
-JSObject* Instance::createRuntimeObject(BindingLanguage language, void* nativeInstance, PassRefPtr<RootObject> rootObject)
-{
-    Instance* instance = Instance::createBindingForLanguageInstance(language, nativeInstance, rootObject);
-
-    return createRuntimeObject(instance);
-}
-
-JSObject* Instance::createRuntimeObject(Instance* instance)
+JSObject* Instance::createRuntimeObject(PassRefPtr<Instance> instance)
 {
 #if PLATFORM(QT)
     if (instance->getBindingLanguage() == QtLanguage)

@@ -28,8 +28,8 @@
 
 #include <kjs/value.h>
 
-#include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace KJS  {
@@ -83,7 +83,7 @@ public:
 
 typedef void (*KJSDidExecuteFunctionPtr)(ExecState*, JSObject* rootObject);
 
-class Instance : Noncopyable {
+class Instance : public RefCounted<Instance> {
 public:
     typedef enum {
         JavaLanguage,
@@ -99,18 +99,8 @@ public:
     static void setDidExecuteFunction(KJSDidExecuteFunctionPtr func);
     static KJSDidExecuteFunctionPtr didExecuteFunction();
     
-    static Instance* createBindingForLanguageInstance(BindingLanguage, void* nativeInstance, PassRefPtr<RootObject>);
-    static JSObject* createRuntimeObject(BindingLanguage, void* nativeInstance, PassRefPtr<RootObject>);
-    static JSObject* createRuntimeObject(Instance*);
-
+    static JSObject* createRuntimeObject(PassRefPtr<Instance>);
     static Instance* getInstance(JSObject*, BindingLanguage);
-
-    void ref() { _refCount++; }
-    void deref() 
-    { 
-        if (--_refCount == 0) 
-            delete this; 
-    }
 
     // These functions are called before and after the main entry points into
     // the native implementations.  They can be used to establish and cleanup
@@ -145,7 +135,6 @@ public:
 
 protected:
     RefPtr<RootObject> _rootObject;
-    unsigned _refCount;
 };
 
 class Array : Noncopyable

@@ -47,7 +47,7 @@ static InstanceJSObjectMap cachedObjects;
 // Derived RuntimeObject
 class QtRuntimeObjectImp : public RuntimeObjectImp {
     public:
-        QtRuntimeObjectImp(Instance*);
+        QtRuntimeObjectImp(PassRefPtr<Instance>);
         ~QtRuntimeObjectImp();
         virtual void invalidate();
 
@@ -58,7 +58,7 @@ class QtRuntimeObjectImp : public RuntimeObjectImp {
         void removeFromCache();
 };
 
-QtRuntimeObjectImp::QtRuntimeObjectImp(Instance* instance)
+QtRuntimeObjectImp::QtRuntimeObjectImp(PassRefPtr<Instance> instance)
     : RuntimeObjectImp(instance)
 {
 }
@@ -126,28 +126,28 @@ QtInstance::~QtInstance()
         gcUnprotect(m_defaultMethod);
 }
 
-QtInstance* QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObject> rootObject)
+PassRefPtr<QtInstance> QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObject> rootObject)
 {
     JSLock lock;
 
     foreach(QtInstance* instance, cachedInstances.values(o)) {
         if (instance->rootObject() == rootObject)
-            return instance;
+            return instance.get();
     }
 
-    QtInstance* ret = new QtInstance(o, rootObject);
-    cachedInstances.insert(o, ret);
+    RefPtr<QtInstance> ret = adoptRef(new QtInstance(o, rootObject));
+    cachedInstances.insert(o, ret.get());
 
-    return ret;
+    return ret.release();
 }
 
-JSObject* QtInstance::getRuntimeObject(QtInstance* instance)
+JSObject* QtInstance::getRuntimeObject(PassRefPtr<QtInstance> instance)
 {
     JSLock lock;
-    JSObject* ret = cachedObjects.value(instance);
+    JSObject* ret = cachedObjects.value(instance.get());
     if (!ret) {
         ret = new QtRuntimeObjectImp(instance);
-        cachedObjects.insert(instance, ret);
+        cachedObjects.insert(ret->getInternalInstance(), ret);
     }
     return ret;
 }

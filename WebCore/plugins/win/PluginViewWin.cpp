@@ -54,6 +54,7 @@
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include "PluginPackage.h"
+#include "c_instance.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include "Settings.h"
@@ -1415,7 +1416,7 @@ bool PluginView::arePopupsAllowed() const
     return false;
 }
 
-KJS::Bindings::Instance* PluginView::bindingInstance()
+PassRefPtr<KJS::Bindings::Instance> PluginView::bindingInstance()
 {
     NPObject* object = 0;
 
@@ -1434,11 +1435,11 @@ KJS::Bindings::Instance* PluginView::bindingInstance()
         return 0;
 
     RefPtr<KJS::Bindings::RootObject> root = m_parentFrame->createRootObject(this, m_parentFrame->scriptProxy()->globalObject());
-    KJS::Bindings::Instance *instance = KJS::Bindings::Instance::createBindingForLanguageInstance(KJS::Bindings::Instance::CLanguage, object, root.release());
+    RefPtr<KJS::Bindings::Instance> instance = KJS::Bindings::CInstance::create(obj, object, root.release();
 
     _NPN_ReleaseObject(object);
 
-    return instance;
+    return instance.release();
 }
 
 PluginView::~PluginView()

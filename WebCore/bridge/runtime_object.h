@@ -57,7 +57,7 @@ public:
 
 protected:
     friend class Bindings::Instance;
-    RuntimeObjectImp(Bindings::Instance*); // Only allow Instances and derived classes to create us
+    RuntimeObjectImp(PassRefPtr<Bindings::Instance>); // Only allow Instances and derived classes to create us
 
 private:
     RuntimeObjectImp(); // prevent default construction

@@ -598,8 +598,8 @@ JSValue *JavaJSObject::convertJObjectToValue (jobject theObject) const
     }
 
     JSLock lock;
-    JavaInstance* javaInstance = new JavaInstance(theObject, _rootObject);
-    return KJS::Bindings::Instance::createRuntimeObject(javaInstance);
+
+    return KJS::Bindings::Instance::createRuntimeObject(JavaInstance::create(theObject, _rootObject));
 }
 
 void JavaJSObject::getListFromJArray(jobjectArray jArray, List& list) const

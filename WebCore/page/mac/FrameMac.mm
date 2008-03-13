@@ -89,10 +89,15 @@
 #import "visible_units.h"
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/APICast.h>
+#if ENABLE(NETSCAPE_PLUGIN_API)
+#import "c_instance.h"
 #import "NP_jsobject.h"
 #import "npruntime_impl.h"
+#endif
+#import "objc_instance.h"
 #import "runtime_root.h"
 #import "runtime.h"
+#import "jni_instance.h"
 
 @interface NSObject (WebPlugin)
 - (id)objectForWebScript;
@@ -540,7 +545,7 @@ DragImageRef Frame::dragImageForSelection()
     return selectionImage();
 }
 
-KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(Widget* widget)
+PassRefPtr<KJS::Bindings::Instance> Frame::createScriptInstanceForWidget(Widget* widget)
 {
     NSView* widgetView = widget->getView();
     if (!widgetView)
@@ -552,7 +557,7 @@ KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(Widget* widget)
         id objectForWebScript = [widgetView objectForWebScript];
         if (!objectForWebScript)
             return 0;
-        return Instance::createBindingForLanguageInstance(Instance::ObjectiveCLanguage, objectForWebScript, rootObject.release());
+        return KJS::Bindings::ObjcInstance::create(objectForWebScript, rootObject.release());
     }
 
     if ([widgetView respondsToSelector:@selector(createPluginScriptableObject)]) {
@@ -562,17 +567,17 @@ KJS::Bindings::Instance* Frame::createScriptInstanceForWidget(Widget* widget)
         NPObject* npObject = [widgetView createPluginScriptableObject];
         if (!npObject)
             return 0;
-        Instance* instance = Instance::createBindingForLanguageInstance(Instance::CLanguage, npObject, rootObject.release());
+        RefPtr<Instance> instance = KJS::Bindings::CInstance::create(npObject, rootObject.release());
         // -createPluginScriptableObject returns a retained NPObject.  The caller is expected to release it.
         _NPN_ReleaseObject(npObject);
-        return instance;
+        return instance.release();
 #endif
     }
 
     jobject applet = loader()->client()->javaApplet(widgetView);
     if (!applet)
         return 0;
-    return Instance::createBindingForLanguageInstance(Instance::JavaLanguage, applet, rootObject.release());
+    return KJS::Bindings::JavaInstance::create(applet, rootObject.release());
 }
 
 WebScriptObject* Frame::windowScriptObject()

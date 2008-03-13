@@ -29,7 +29,8 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "runtime.h"
-#include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
+#include "runtime_root.h"
 
 typedef struct NPObject NPObject;
 
@@ -41,7 +42,10 @@ class CClass;
 
 class CInstance : public Instance {
 public:
-    CInstance (NPObject*, PassRefPtr<RootObject>);
+    static PassRefPtr<CInstance> create(NPObject* object, PassRefPtr<RootObject> rootObject)
+    {
+        return adoptRef(new CInstance(object, rootObject));
+    }
     ~CInstance ();
     
     virtual Class *getClass() const;
@@ -67,6 +71,8 @@ public:
     virtual BindingLanguage getBindingLanguage() const { return CLanguage; }
 
 private:
+    CInstance(NPObject*, PassRefPtr<RootObject>);
+    
     mutable CClass *_class;
     NPObject *_object;
 };

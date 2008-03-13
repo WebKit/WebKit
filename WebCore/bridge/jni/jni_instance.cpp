@@ -216,7 +216,7 @@ JSValue *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodLi
                     resultValue = JavaArray::convertJObjectToArray(exec, result.l, arrayType, rootObject);
                 }
                 else {
-                    resultValue = Instance::createRuntimeObject(Instance::JavaLanguage, result.l, rootObject);
+                    resultValue = Instance::createRuntimeObject(JavaInstance::create(result.l, rootObject));
                 }
             }
             else {

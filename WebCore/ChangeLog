@@ -1,3 +1,55 @@
+2008-03-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff and Sam.
+
+        More Instance cleanup:
+        
+        * Make Instance inherit from RefCounted instead of doing its own refcounting.        
+        * Make all Instance subclasses private, add static create methods.         
+        * Have Instance start out with a refcount of 1.
+        * Get rid of Instance::createBindingForLanguageInstance and call the individual 
+          instance constructor methods instead.
+        * Fix many methods to take and return PassRefPtr<Instance> to ensure that the
+          refcounting is done correctly.
+         
+        * bridge/c/c_instance.h:
+        (KJS::Bindings::CInstance::create):
+        * bridge/c/c_utility.cpp:
+        (KJS::Bindings::convertNPVariantToValue):
+        * bridge/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bridge/jni/jni_instance.h:
+        (KJS::Bindings::JavaInstance::create):
+        * bridge/jni/jni_jsobject.cpp:
+        (JavaJSObject::convertJObjectToValue):
+        * bridge/jni/jni_runtime.cpp:
+        (JavaField::valueFromInstance):
+        (JavaArray::valueAt):
+        * bridge/objc/objc_instance.h:
+        (KJS::Bindings::ObjcInstance::create):
+        * bridge/objc/objc_utility.mm:
+        (KJS::Bindings::convertObjcValueToValue):
+        * bridge/qt/qt_instance.cpp:
+        (KJS::Bindings::QtRuntimeObjectImp::QtRuntimeObjectImp):
+        (KJS::Bindings::QtInstance::getQtInstance):
+        (KJS::Bindings::QtInstance::getRuntimeObject):
+        * bridge/qt/qt_instance.h:
+        * bridge/runtime.cpp:
+        (KJS::Bindings::Instance::Instance):
+        (KJS::Bindings::Instance::createRuntimeObject):
+        * bridge/runtime.h:
+        * bridge/runtime_object.cpp:
+        (RuntimeObjectImp::RuntimeObjectImp):
+        * bridge/runtime_object.h:
+        * page/Frame.h:
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::createScriptInstanceForWidget):
+        * page/win/FrameWin.cpp:
+        (WebCore::Frame::createScriptInstanceForWidget):
+        * plugins/PluginView.h:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::bindingInstance):
+
 2008-03-12  Dan Bernstein  <mitz@apple.com>
 
         Suggested by Darin Adler. Reviewed by Dave Hyatt.
