@@ -325,8 +325,10 @@ HRESULT STDMETHODCALLTYPE WebDownload::cancelForResume()
 
     HRESULT hr = S_OK;
     RetainPtr<CFDataRef> resumeData;
-    if (m_destination.isEmpty())
+    if (m_destination.isEmpty()) {
+        CFURLDownloadCancel(m_download.get());
         goto exit;
+    }
 
     CFURLDownloadSetDeletesUponFailure(m_download.get(), false);
     CFURLDownloadCancel(m_download.get());

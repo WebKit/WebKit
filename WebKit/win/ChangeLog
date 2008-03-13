@@ -1,3 +1,14 @@
+2008-03-12  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5795843> 
+        CFURLDownload needs to be cancelled if we don't have a destination path
+        to save resume information.
+
+        Reviewed by Brady.
+
+        * WebDownload.cpp:
+        (WebDownload::cancelForResume):
+
 2008-03-12  David Hyatt  <hyatt@apple.com>
 
         Make the zoom factor a float and not a percent.
