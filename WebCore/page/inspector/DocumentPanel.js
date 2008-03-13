@@ -162,7 +162,7 @@ WebInspector.DocumentPanel.prototype = {
 
     revealNode: function(node)
     {
-        var nodeItem = this.views.dom.treeOutline.findTreeElement(node, function(a, b) { return isAncestorNode.call(a, b); }, function(a) { return a.parentNode; });
+        var nodeItem = this.views.dom.treeOutline.findTreeElement(node, this._isAncestorIncludingParentFramesWithinPanel.bind(this), this._parentNodeOrFrameElementWithinPanel.bind(this));
         if (!nodeItem)
             return;
 
@@ -282,10 +282,12 @@ WebInspector.DocumentPanel.prototype = {
         };
 
         foundRoot = false;
-        var current = this.focusedDOMNode;
-        while (current) {
-            if (current.nodeType === Node.DOCUMENT_NODE)
+        for (var current = this.focusedDOMNode; current; current = this._parentNodeOrFrameElementWithinPanel(current)) {
+            if (current === this.resource.documentNode)
                 break;
+
+            if (current.nodeType === Node.DOCUMENT_NODE)
+                continue;
 
             if (current === this.rootDOMNode)
                 foundRoot = true;
@@ -372,12 +374,12 @@ WebInspector.DocumentPanel.prototype = {
                 crumb.addStyleClass("selected");
             if (!crumbs.childNodes.length)
                 crumb.addStyleClass("end");
-            if (current.parentNode.nodeType === Node.DOCUMENT_NODE)
-                crumb.addStyleClass("start");
 
             crumbs.appendChild(crumb);
-            current = current.parentNode;
         }
+
+        if (crumbs.hasChildNodes())
+            crumbs.lastChild.addStyleClass("start");
 
         this.updateBreadcrumbSizes();
     },
@@ -733,14 +735,49 @@ WebInspector.DocumentPanel.prototype = {
         this.updateBreadcrumbSizes();
 
         event.preventDefault();
-    }
+    },
+
+    _getDocumentForNode: function(node)
+    {
+        return node.nodeType == Node.DOCUMENT_NODE ? node : node.ownerDocument;
+    },
+
+    _parentNodeOrFrameElementWithinPanel: function(node)
+    {
+        var parent = node.parentNode;
+        if (parent)
+            return parent;
+
+        var document = this._getDocumentForNode(node);
+
+        if (document === this.resource.documentNode)
+            return undefined;
+
+        return document.defaultView.frameElement;
+    },
+
+    _isAncestorIncludingParentFramesWithinPanel: function(a, b)
+    {
+        for (var node = b; node; node = this._getDocumentForNode(node).defaultView.frameElement) {
+            if (isAncestorNode.call(a, node))
+                return true;
+
+            if (this._getDocumentForNode(node) === this.resource.documentNode) {
+                // We've gone as high in the frame hierarchy as we can without
+                // moving out of this DocumentPanel.
+                return false;
+            }
+        }
+
+        return false;
+    },
 }
 
 WebInspector.DocumentPanel.prototype.__proto__ = WebInspector.SourcePanel.prototype;
 
 WebInspector.DOMNodeTreeElement = function(node)
 {
-    var hasChildren = (Preferences.ignoreWhitespace ? (firstChildSkippingWhitespace.call(node) ? true : false) : node.hasChildNodes());
+    var hasChildren = node.contentDocument || (Preferences.ignoreWhitespace ? (firstChildSkippingWhitespace.call(node) ? true : false) : node.hasChildNodes());
     var titleInfo = nodeTitleInfo.call(node, hasChildren, WebInspector.linkifyURL);
 
     if (titleInfo.hasChildren) 
@@ -815,11 +852,20 @@ WebInspector.DOMNodeTreeElement.prototype = {
         this.removeChildren();
         this.whitespaceIgnored = Preferences.ignoreWhitespace;
 
-        var node = (Preferences.ignoreWhitespace ? firstChildSkippingWhitespace.call(this.representedObject) : this.representedObject.firstChild);
-        while (node) {
-            this.appendChild(new WebInspector.DOMNodeTreeElement(node));
-            node = Preferences.ignoreWhitespace ? nextSiblingSkippingWhitespace.call(node) : node.nextSibling;
+        var treeElement = this;
+        function appendChildrenOfNode(node)
+        {
+            var child = (Preferences.ignoreWhitespace ? firstChildSkippingWhitespace.call(node) : node.firstChild);
+            while (child) {
+                treeElement.appendChild(new WebInspector.DOMNodeTreeElement(child));
+                child = Preferences.ignoreWhitespace ? nextSiblingSkippingWhitespace.call(child) : child.nextSibling;
+            }
         }
+
+        if (this.representedObject.contentDocument)
+            appendChildrenOfNode(this.representedObject.contentDocument);
+
+        appendChildrenOfNode(this.representedObject);
 
         if (this.representedObject.nodeType == Node.ELEMENT_NODE) {
             var title = "<span class=\"webkit-html-tag close\">&lt;/" + this.representedObject.nodeName.toLowerCase().escapeHTML() + "&gt;</span>";
@@ -875,7 +921,7 @@ WebInspector.DOMNodeTreeElement.prototype = {
             return;
 
         var panel = this.treeOutline.panel;
-        panel.rootDOMNode = this.representedObject.parentNode;
+        panel.rootDOMNode = this.parent.representedObject;
         panel.focusedDOMNode = this.representedObject;
 
         if (this.hasChildren && !this.expanded)

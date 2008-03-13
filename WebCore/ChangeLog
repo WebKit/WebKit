@@ -1,5 +1,44 @@
 2008-03-12  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 17815: Inspector's DOM tree should descend into subframes
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17815>
+
+        Reviewed by Tim.
+
+        * page/inspector/DocumentPanel.js:
+        (WebInspector.DocumentPanel.revealNode): Changed to provide
+        _isAncestorIncludingParentFramesWithinPanel and
+        _parentNodeOrFrameElementWithinPanel for the isAncestor and getParent
+        parameters to findTreeElement so that parent frames will be searched.
+        (WebInspector.DocumentPanel.updateBreadcrumb):
+          - Changed while loop to for loop
+          - Use _parentNodeOrFrameElementWithinPanel instead of
+            Node.parentNode to move to the next node
+          - The loop now ends when we reach the DocumentPanel's document node
+          - Traversal past other Document nodes is now allowed
+          - We add the "start" class to the final crumb after the loop exits
+        (WebInspector.DocumentPanel._getDocumentForNode): Added. Simple helper
+        that returns the node itself if the node is a Document node, or the
+        node's ownerDocument otherwise.
+        (WebInspector.DocumentPanel._parentNodeOrFrameElementWithinPanel):
+        Added. Returns the node's parent node or, in the case of a Document
+        node, the node's window's owning frame element, but will not return a
+        node that is in a parent frame of the DocumentPanel's Document.
+        (WebInspector.DocumentPanel._isAncestorIncludingParentFramesWithinPanel):
+        Added. Returns true if a is an ancestor of b if a is an ancestor of a
+        frame element whose subframe(s) contain b.
+        (WebInspector.DOMNodeTreeElement): We now consider ourselves to have
+        children if we have a contentDocument.
+        (WebInspector.DOMNodeTreeElement.onpopulate): Moved the appendChild
+        loop into a function so that we can add both children of our
+        contentDocument and children of our node to the tree.
+        (WebInspector.DOMNodeTreeElement.ondblclick): Changed so that we get
+        the rootDOMNode by traversing the tree outline hierarchy instead of
+        the DOM hierarchy so that we can easily jump up to a parent frame.
+
+2008-03-12  Adam Roben  <aroben@apple.com>
+
         Update the styles/metrics panes and breadcrumb after editing DOM
         attributes
 
