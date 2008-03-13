@@ -1,3 +1,9 @@
+2008-03-13  Steve Falkenburg  <sfalken@apple.com>
+
+        More PGO build fixes.
+
+        * WebCorePrefix.cpp:
+
 2008-03-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

@@ -448,8 +448,7 @@
 				AdditionalLibraryDirectories=""
 				ModuleDefinitionFile="WebKit$(WebKitDLLConfigSuffix).def"
 				DelayLoadDLLs="comdlg32.dll;usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;QTMovieWin$(WebKitConfigSuffix).dll"
-				LinkTimeCodeGeneration="4"
-				ProfileGuidedDatabase="$(TargetName).pgd"
+				LinkTimeCodeGeneration="2"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -529,7 +528,6 @@
 				ModuleDefinitionFile="WebKit$(WebKitDLLConfigSuffix).def"
 				DelayLoadDLLs="comdlg32.dll;usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;msimg32.dll;QTMovieWin$(WebKitConfigSuffix).dll"
 				LinkTimeCodeGeneration="4"
-				ProfileGuidedDatabase="$(TargetName).pgd"
 			/>
 			<Tool
 				Name="VCALinkTool"

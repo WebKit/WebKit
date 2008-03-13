@@ -1,3 +1,11 @@
+2008-03-13  Steve Falkenburg  <sfalken@apple.com>
+
+        More PGO build fixes.
+
+        * WebKit.vcproj/WebKit.pgd: Removed.
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKitPrefix.cpp:
+
 2008-03-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
