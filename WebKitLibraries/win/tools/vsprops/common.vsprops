@@ -39,14 +39,6 @@
 		HeaderFileName="$(OutDir)\$(InputName).h"
 	/>
 	<Tool
-		Name="VCPostBuildEventTool"
-		CommandLine=""
-	/>
-	<Tool
-		Name="VCPreBuildEventTool"
-		CommandLine=""
-	/>
-	<Tool
 		Name="VCResourceCompilerTool"
 		Culture="1033"
 		AdditionalIncludeDirectories="&quot;$(IntDir)\include&quot;"

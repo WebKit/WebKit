@@ -1,3 +1,11 @@
+2008-03-12  Steve Falkenburg  <sfalken@apple.com>
+
+        New version of WebKitSystemInterface.lib with
+        more compiler warnings suppressed.
+
+        * win/lib/WebKitSystemInterface.lib:
+        * win/tools/vsprops/common.vsprops:
+
 2008-03-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler and Sam Weinig.
