@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "runtime.h"
 #include "FrameWin.h"
 
 #include <winsock2.h>

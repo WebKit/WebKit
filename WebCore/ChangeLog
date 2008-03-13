@@ -2,6 +2,12 @@
 
         Build fix.
 
+        * page/win/FrameWin.cpp:
+
+2008-03-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
         * plugins/win/PluginViewWin.cpp:
         (WebCore::PluginView::bindingInstance):
 
