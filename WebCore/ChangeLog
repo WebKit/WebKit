@@ -6,7 +6,7 @@
 
         * platform/graphics/cg/GraphicsContextCG.cpp:
         (WebCore::GraphicsContext::setShadow): Made the workaround for
-        <rdar://problem/5643663> unconditional.
+        <rdar://problem/5539388> unconditional.
 
 2008-03-14  Adam Roben  <aroben@apple.com>
 
