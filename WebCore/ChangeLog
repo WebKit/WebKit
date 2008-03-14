@@ -1,3 +1,8 @@
+2008-03-13  Darin Adler  <darin@apple.com>
+
+        * html/PreloadScanner.h: Corrected license.
+        * html/PreloadScanner.cpp: Corrected license.
+
 2008-03-13  Mark Mentovai  <mark@moxienet.com>
 
         Reviewed by darin.  Landed by eseidel.
