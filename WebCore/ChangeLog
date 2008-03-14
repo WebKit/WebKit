@@ -1,3 +1,9 @@
+2008-03-14  Sam Weinig  <sam@webkit.org>
+
+        Fix Mac build
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2008-03-13  Adam Roben  <aroben@apple.com>
 
         Make most of callOnMainThread's implementation be cross-platform
