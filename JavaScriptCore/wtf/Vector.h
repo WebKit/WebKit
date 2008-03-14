@@ -676,7 +676,8 @@ namespace WTF {
         if (newCapacity > 0) {
             T* oldEnd = end();
             m_buffer.allocateBuffer(newCapacity);
-            TypeOperations::moveOverlapping(oldBuffer, oldEnd, begin());
+            if (begin() != oldBuffer)
+                TypeOperations::move(oldBuffer, oldEnd, begin());
         }
 
         m_buffer.deallocateBuffer(oldBuffer);
