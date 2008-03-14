@@ -1,6 +1,13 @@
 2008-03-13  Mark Mentovai  <mark@moxienet.com>
 
-        Reviewed by eseidel.  Landed by eseidel
+        Reviewed by eseidel.  Landed by eseidel.
+
+        * wtf/FastMalloc.cpp: #include <wtf/HashSet.h> outside of any
+        namespaces.
+
+2008-03-13  Mark Mentovai  <mark@moxienet.com>
+
+        Reviewed by eseidel.  Landed by eseidel.
 
         * pcre/pcre_exec.cpp: Fix misnamed variable, allowing -DDEBUG build
         to succeed.

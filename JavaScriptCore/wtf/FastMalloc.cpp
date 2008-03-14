@@ -236,6 +236,7 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 
 #if PLATFORM(DARWIN)
 #include "MallocZoneSupport.h"
+#include <wtf/HashSet.h>
 #endif
 
 #ifndef PRIuS
@@ -3412,7 +3413,6 @@ void *(*__memalign_hook)(size_t, size_t, const void *) = MemalignOverride;
 #endif
 
 #if defined(WTF_CHANGES) && PLATFORM(DARWIN)
-#include <wtf/HashSet.h>
 
 class FreeObjectFinder {
     const RemoteMemoryReader& m_reader;
