@@ -1,3 +1,15 @@
+2008-03-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=17834
+          REGRESSION: floated first-letter does not work when included in table
+
+        * fast/css/first-letter-float.html: Added.
+        * platform/mac-leopard/fast/css/first-letter-float-expected.checksum: Added.
+        * platform/mac-leopard/fast/css/first-letter-float-expected.png: Added.
+        * platform/mac/fast/css/first-letter-float-expected.txt: Added.
+
 2008-03-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz.

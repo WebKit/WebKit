@@ -1,3 +1,17 @@
+2008-03-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17834
+          REGRESSION: floated first-letter does not work when included in table
+
+        Test: fast/css/first-letter-float.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter): Changed the search for the
+        first text node to stop at a float if that float is an existing first-
+        letter.
+
 2008-03-14  Sam Weinig  <sam@webkit.org>
 
         Fix Mac build
