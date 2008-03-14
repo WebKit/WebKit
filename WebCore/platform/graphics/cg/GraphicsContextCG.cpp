@@ -517,7 +517,6 @@ void GraphicsContext::setShadow(const IntSize& size, int blur, const Color& colo
     CGFloat width = size.width();
     CGFloat height = size.height();
 
-#ifdef BUILDING_ON_TIGER
     // Work around <rdar://problem/5539388> by ensuring that the offsets will get truncated
     // to the desired integer.
     static const CGFloat extraShadowOffset = narrowPrecisionToCGFloat(1.0 / 128);
@@ -530,7 +529,6 @@ void GraphicsContext::setShadow(const IntSize& size, int blur, const Color& colo
         height += extraShadowOffset;
     else if (height < 0)
         height -= extraShadowOffset;
-#endif
 
     // Check for an invalid color, as this means that the color was not set for the shadow
     // and we should therefore just use the default shadow color.

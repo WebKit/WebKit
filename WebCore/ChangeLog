@@ -1,3 +1,13 @@
+2008-03-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix <rdar://problem/5797836> shadow offsets are smaller than specified
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setShadow): Made the workaround for
+        <rdar://problem/5643663> unconditional.
+
 2008-03-14  Adam Roben  <aroben@apple.com>
 
         Fix it right this time
