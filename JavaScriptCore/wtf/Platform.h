@@ -217,6 +217,7 @@
 #if PLATFORM(MAC)
 #define WTF_PLATFORM_CF 1
 #define WTF_USE_PTHREADS 1
+#define ENABLE_MAC_JAVA_BRIDGE 1
 #endif
 
 #if PLATFORM(MAC) && defined(__LP64__)
@@ -250,6 +251,10 @@
 
 #if !defined(ENABLE_FTPDIR)
 #define ENABLE_FTPDIR 1
+#endif
+
+#if !defined(ENABLE_MAC_JAVA_BRIDGE)
+#define ENABLE_MAC_JAVA_BRIDGE 0
 #endif
 
 #if !defined(ENABLE_NETSCAPE_PLUGIN_API)

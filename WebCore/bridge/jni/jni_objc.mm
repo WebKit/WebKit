@@ -22,7 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #include "config.h"
+
+#if ENABLE(MAC_JAVA_BRIDGE)
+
 #import <Foundation/Foundation.h>
 #import "jni_utility.h"
 #import "objc_utility.h"
@@ -74,3 +78,5 @@ bool KJS::Bindings::dispatchJNICall (const void *targetAppletView, jobject obj, 
     bzero (&result, sizeof(jvalue));
     return false;
 }
+
+#endif // ENABLE(MAC_JAVA_BRIDGE)

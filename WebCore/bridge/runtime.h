@@ -86,8 +86,12 @@ typedef void (*KJSDidExecuteFunctionPtr)(ExecState*, JSObject* rootObject);
 class Instance : public RefCounted<Instance> {
 public:
     typedef enum {
+#if ENABLE(MAC_JAVA_BRIDGE)
         JavaLanguage,
+#endif
+#if PLATFORM(MAC)
         ObjectiveCLanguage,
+#endif
         CLanguage
 #if PLATFORM(QT)
         , QtLanguage

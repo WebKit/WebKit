@@ -22,8 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #ifndef _JNI_UTILITY_H_
 #define _JNI_UTILITY_H_
+
+#if ENABLE(MAC_JAVA_BRIDGE)
 
 #include <JavaVM/jni.h>
 
@@ -279,5 +282,7 @@ bool dispatchJNICall(const void *targetAppletView, jobject obj, bool isStatic, J
 } // namespace Bindings
 
 } // namespace KJS
+
+#endif // ENABLE(MAC_JAVA_BRIDGE)
 
 #endif // _JNI_UTILITY_H_

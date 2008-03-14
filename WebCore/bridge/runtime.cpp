@@ -26,17 +26,9 @@
 #include "config.h"
 #include "runtime.h"
 
-#include "NP_jsobject.h"
-#include "c_instance.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
 
-#if HAVE(JNI)
-#include "jni_instance.h"
-#endif
-#if PLATFORM(MAC)
-#include "objc_instance.h"
-#endif
 #if PLATFORM(QT)
 #include "qt_instance.h"
 #endif

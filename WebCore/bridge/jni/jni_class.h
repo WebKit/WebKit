@@ -26,6 +26,8 @@
 #ifndef JNI_CLASS_H_
 #define JNI_CLASS_H_
 
+#if ENABLE(MAC_JAVA_BRIDGE)
+
 #include <jni_runtime.h>
 #include <wtf/HashMap.h>
 
@@ -58,5 +60,7 @@ private:
 } // namespace Bindings
 
 } // namespace KJS
+
+#endif // ENABLE(MAC_JAVA_BRIDGE)
 
 #endif // JNI_CLASS_H_

@@ -22,8 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #ifndef _JNI_INSTANCE_H_
 #define _JNI_INSTANCE_H_
+
+#if ENABLE(MAC_JAVA_BRIDGE)
 
 #include "runtime.h"
 #include "runtime_root.h"
@@ -101,4 +104,6 @@ private:
 
 } // namespace KJS
 
-#endif
+#endif // ENABLE(MAC_JAVA_BRIDGE)
+
+#endif // _JNI_INSTANCE_H_

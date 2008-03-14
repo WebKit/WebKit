@@ -22,10 +22,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #include "config.h"
+#include "jni_instance.h"
+
+#if ENABLE(MAC_JAVA_BRIDGE)
 
 #include "jni_class.h"
-#include "jni_instance.h"
 #include "jni_runtime.h"
 #include "jni_utility.h"
 #include "runtime_object.h"
@@ -331,3 +334,5 @@ JObjectWrapper::~JObjectWrapper() {
     JS_LOG ("deleting global ref %p\n", _instance);
     _env->DeleteGlobalRef (_instance);
 }
+
+#endif // ENABLE(MAC_JAVA_BRIDGE)

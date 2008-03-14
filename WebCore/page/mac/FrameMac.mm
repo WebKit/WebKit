@@ -99,7 +99,9 @@
 #import "objc_instance.h"
 #import "runtime_root.h"
 #import "runtime.h"
+#if ENABLE(MAC_JAVA_BRIDGE)
 #import "jni_instance.h"
+#endif
 
 @interface NSObject (WebPlugin)
 - (id)objectForWebScript;
@@ -576,10 +578,14 @@ PassRefPtr<KJS::Bindings::Instance> Frame::createScriptInstanceForWidget(Widget*
 #endif
     }
 
+#if ENABLE(MAC_JAVA_BRIDGE)
     jobject applet = loader()->client()->javaApplet(widgetView);
     if (!applet)
         return 0;
     return KJS::Bindings::JavaInstance::create(applet, rootObject.release());
+#else
+    return 0;
+#endif
 }
 
 WebScriptObject* Frame::windowScriptObject()
@@ -646,11 +652,13 @@ static void updateRenderingForBindings(KJS::ExecState* exec, KJS::JSObject* root
     document->updateRendering();
 }
 
+#if ENABLE(MAC_JAVA_BRIDGE)
 void Frame::initJavaJSBindings()
 {
     mainThread = pthread_self();
     KJS::Bindings::JavaJSObject::initializeJNIThreading();
     KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
 }
+#endif
 
 } // namespace WebCore

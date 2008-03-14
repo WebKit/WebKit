@@ -1,3 +1,11 @@
+2008-03-14  David D. Kilzer  <ddkilzer@apple.com>
+
+        Unify concept of enabling the Mac Java bridge.
+
+        Reviewed by Darin and Anders.
+
+        * wtf/Platform.h: Define ENABLE_MAC_JAVA_BRIDGE here.
+
 2008-03-13  Mark Mentovai  <mark@moxienet.com>
 
         Reviewed by eseidel.  Landed by eseidel.

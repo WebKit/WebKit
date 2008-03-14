@@ -22,10 +22,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #include "config.h"
+#include <jni_runtime.h>
+
+#if ENABLE(MAC_JAVA_BRIDGE)
 
 #include <jni_utility.h>
-#include <jni_runtime.h>
 
 #include "runtime_array.h"
 #include "runtime_object.h"
@@ -539,4 +542,4 @@ unsigned int JavaArray::getLength() const
     return _length;
 }
 
-
+#endif // ENABLE(MAC_JAVA_BRIDGE)

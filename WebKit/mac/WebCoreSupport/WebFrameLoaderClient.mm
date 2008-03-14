@@ -52,7 +52,9 @@
 #import "WebHistoryItemInternal.h"
 #import "WebHistoryInternal.h"
 #import "WebIconDatabaseInternal.h"
+#if ENABLE(MAC_JAVA_BRIDGE)
 #import "WebJavaPlugIn.h"
+#endif
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
@@ -109,9 +111,11 @@
 
 using namespace WebCore;
 
+#if ENABLE(MAC_JAVA_BRIDGE)
 @interface NSView (WebJavaPluginDetails)
 - (jobject)pollForAppletInWindow:(NSWindow *)window;
 @end
+#endif
 
 // Needed for <rdar://problem/5121850> 
 @interface NSURLDownload (WebNSURLDownloadDetails)
@@ -1506,6 +1510,7 @@ void WebFrameLoaderClient::didPerformFirstNavigation() const
         [preferences setCacheModel:WebCacheModelDocumentBrowser];
 }
 
+#if ENABLE(MAC_JAVA_BRIDGE)
 jobject WebFrameLoaderClient::javaApplet(NSView* view)
 {
     if ([view respondsToSelector:@selector(webPlugInGetApplet)])
@@ -1518,6 +1523,7 @@ jobject WebFrameLoaderClient::javaApplet(NSView* view)
 
     return 0;
 }
+#endif
 
 @implementation WebFramePolicyListener
 

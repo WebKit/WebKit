@@ -26,6 +26,8 @@
 #include "config.h"
 #include "jni_jsobject.h"
 
+#if ENABLE(MAC_JAVA_BRIDGE)
+
 #include "Frame.h"
 #include "WebCoreFrameView.h"
 #include "jni_runtime.h"
@@ -713,3 +715,5 @@ jstring KJS_JSObject_JSObjectToString (JNIEnv*, jclass, jlong nativeHandle)
 }
 
 }
+
+#endif // ENABLE(MAC_JAVA_BRIDGE)

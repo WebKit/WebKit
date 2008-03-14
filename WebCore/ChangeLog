@@ -1,3 +1,46 @@
+2008-03-14  David D. Kilzer  <ddkilzer@apple.com>
+
+        Unify concept of enabling the Mac Java bridge.
+
+        Reviewed by Darin and Anders.
+
+        No test cases added since there is no change in functionality.
+
+        * DerivedSources.make: Added check for ENABLE_MAC_JAVA_BRIDGE macro.
+        If defined as "1", add WebCore.JNI.exp to WEBCORE_EXPORT_DEPENDENCIES.
+        * WebCore.JNI.exp: Added.
+        * WebCore.base.exp: Moved exported JNI methods to WebCore.JNI.exp.
+
+        * bridge/jni/jni_class.cpp: Added #if ENABLE(MAC_JAVA_BRIDGE) guard.
+        * bridge/jni/jni_class.h: Ditto.
+        * bridge/jni/jni_instance.cpp: Ditto.
+        * bridge/jni/jni_instance.h: Ditto.
+        * bridge/jni/jni_jsobject.cpp: Ditto.
+        * bridge/jni/jni_jsobject.h: Ditto.
+        * bridge/jni/jni_objc.mm: Ditto.
+        * bridge/jni/jni_runtime.cpp: Ditto.
+        * bridge/jni/jni_runtime.h: Ditto.
+        * bridge/jni/jni_utility.cpp: Ditto.
+        * bridge/jni/jni_utility.h: Ditto.
+
+        * bridge/runtime.cpp: Removed unused #include statements.
+        * bridge/runtime.h:
+        (KJS::Bindings::Instance::BindingLanguage): Added #if ENABLE(MAC_JAVA_BRIDGE)
+        guard for JavaLanguage enum.  Also added #if PLATFORM(MAC) guard for
+        ObjectiveCLanguage enum to match corresponding code in runtime.cpp.
+
+        * config.h: Removed definition of HAVE_JNI.
+
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::javaApplet): Added #if ENABLE(MAC_JAVA_BRIDGE) guard.
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame): Ditto.
+        * page/Frame.h:
+        (WebCore::Frame::initJavaJSBindings): Ditto.
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::createScriptInstanceForWidget): Ditto.
+        (WebCore::Frame::initJavaJSBindings): Ditto.
+
 2008-03-13  Darin Adler  <darin@apple.com>
 
         * html/PreloadScanner.h: Corrected license.

@@ -1,3 +1,15 @@
+2008-03-14  David D. Kilzer  <ddkilzer@apple.com>
+
+        Unify concept of enabling the Mac Java bridge.
+
+        Reviewed by Darin and Anders.
+
+        * Plugins/WebPluginJava.h: Removed unused file.
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient::javaApplet): Added #if ENABLE(MAC_JAVA_BRIDGE) guard.
+        * WebCoreSupport/WebFrameLoaderClient.mm: Ditto for #import and NSView SPI method.
+        (WebFrameLoaderClient::javaApplet): Ditto.
+
 2008-03-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

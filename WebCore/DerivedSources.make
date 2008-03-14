@@ -601,6 +601,11 @@ CharsetData.cpp : platform/text/mac/make-charset-table.pl platform/text/mac/char
 
 FRAMEWORK_FLAGS = $(shell echo $(FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
 
+ifeq ($(shell gcc -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_MAC_JAVA_BRIDGE | cut -d' ' -f3), 1)
+    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.JNI.exp
+endif
+
+# See also "Generate 64-bit Export File" build phase script in WebCore.xcodeproj/project.pbxproj
 ifeq ($(shell gcc -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_NETSCAPE_PLUGIN_API | cut -d' ' -f3), 1)
     WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.NPAPI.exp
 endif
