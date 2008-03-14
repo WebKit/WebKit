@@ -1,3 +1,19 @@
+2008-03-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Get rid of a localime() call on platforms that have better alternatives.
+
+        * kjs/DateMath.h: Added getLocalTime();
+
+        * kjs/DateMath.cpp:
+        (KJS::getLocalTime):
+        (KJS::getDSTOffsetSimple):
+        Implementation moved from getDSTOffsetSimple().
+
+        * kjs/date_object.cpp:
+        (KJS::DateObjectImp::callAsFunction): Switched to getLocalTime().
+
 2008-03-14  David D. Kilzer  <ddkilzer@apple.com>
 
         Unify concept of enabling the Mac Java bridge.

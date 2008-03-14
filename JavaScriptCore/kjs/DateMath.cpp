@@ -292,6 +292,24 @@ double getCurrentUTCTime()
     return utc;
 }
 
+void getLocalTime(const time_t* localTime, struct tm* localTM)
+{
+#if PLATFORM(QT)
+#if USE(MULTIPLE_THREADS)
+#error Mulitple threads are currently not supported in the Qt/mingw build
+#endif
+    *localTM = *localtime(localTime);
+#elif PLATFORM(WIN_OS)
+    #if COMPILER(MSVC7)
+    *localTM = *localtime(localTime);
+    #else
+    localtime_s(localTM, localTime);
+    #endif
+#else
+    localtime_r(localTime, localTM);
+#endif
+}
+
 // There is a hard limit at 2038 that we currently do not have a workaround
 // for (rdar://problem/5052975).
 static inline int maximumYearForDST()
@@ -415,22 +433,7 @@ static double getDSTOffsetSimple(double localTimeSeconds, double utcOffset)
     time_t localTime = static_cast<time_t>(localTimeSeconds);
 
     tm localTM;
-#if PLATFORM(QT)
-    // ### this is not threadsafe but we don't use multiple threads anyway
-    // in the Qt build
-#if USE(MULTIPLE_THREADS)
-#error Mulitple threads are currently not supported in the Qt/mingw build
-#endif
-    localTM = *localtime(&localTime);
-#elif PLATFORM(WIN_OS)
-    #if COMPILER(MSVC7)
-    localTM = *localtime(&localTime);
-    #else
-    localtime_s(&localTM, &localTime);
-    #endif
-#else
-    localtime_r(&localTime, &localTM);
-#endif
+    getLocalTime(&localTime, &localTM);
 
     double diff = ((localTM.tm_hour - offsetHour) * secondsPerHour) + ((localTM.tm_min - offsetMinute) * 60);
 
