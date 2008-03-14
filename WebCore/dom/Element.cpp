@@ -531,7 +531,7 @@ void Element::setAttributeMap(NamedAttrMap* list)
         namedAttrMap->element = this;
         unsigned len = namedAttrMap->length();
         for (unsigned i = 0; i < len; i++)
-            attributeChanged(namedAttrMap->attrs[i]);
+            attributeChanged(namedAttrMap->m_attributes[i].get());
         // FIXME: What about attributes that were in the old map that are not in the new map?
     }
 }

@@ -1,3 +1,41 @@
+2008-03-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix for <rdar://problem/5728171> Potential PLT speedup: don't 
+        realloc every time inside NamedAttrMap::addAttribute
+
+        The speed-up for this turned out to be so small that it is mostly 
+        imperceptible. It is likely that it is a tiny boost, though, and 
+        the new code is much cleaner.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeMap): attrs is now called 
+        m_attributes
+        * dom/NamedAttrMap.cpp: The array attrs is now the Vector of 
+        RefPtrs called m_attributes, and there is no longer any need for 
+        the len member variable. 
+        (WebCore::NamedAttrMap::NamedAttrMap): 
+        (WebCore::NamedAttrMap::item):
+        (WebCore::NamedAttrMap::getAttributeItem):
+        (WebCore::NamedAttrMap::clearAttributes):
+        (WebCore::NamedAttrMap::operator=):
+        (WebCore::NamedAttrMap::addAttribute):
+        (WebCore::NamedAttrMap::removeAttribute):
+        (WebCore::NamedAttrMap::mapsEquivalent):
+        * dom/NamedAttrMap.h: Same.
+        (WebCore::NamedAttrMap::length):
+        (WebCore::NamedAttrMap::attributeItem):
+        (WebCore::NamedAttrMap::shrinkToLength):
+        (WebCore::NamedAttrMap::reserveCapacity):
+        * html/HTMLTokenizer.cpp: One of the benefits of the old array was 
+        that it never took up more memory than it needed to. So the 
+        tokenizer utilizes new member functions on NamedAttrMap 
+        (shrinkToLength and reserveCapacity) to try to keep memory usage at 
+        a minimum. 
+        (WebCore::Token::addAttribute):
+        (WebCore::HTMLTokenizer::processToken):
+
 2008-03-14  David D. Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX when ENABLE(MAC_JAVA_BRIDGE) set to 0.

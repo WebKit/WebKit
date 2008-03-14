@@ -137,8 +137,10 @@ inline void Token::addAttribute(Document* doc, AtomicString& attrName, const Ato
     if (!attrName.isEmpty()) {
         ASSERT(!attrName.contains('/'));
         RefPtr<MappedAttribute> a = new MappedAttribute(attrName, v);
-        if (!attrs)
+        if (!attrs) {
             attrs = new NamedMappedAttrMap(0);
+            attrs->reserveCapacity(10);
+        }
         attrs->insertAttribute(a.release(), viewSourceMode);
     }
     
@@ -1885,6 +1887,8 @@ PassRefPtr<Node> HTMLTokenizer::processToken()
     RefPtr<Node> n;
     
     if (!m_parserStopped) {
+        if (NamedMappedAttrMap* map = currToken.attrs.get())
+            map->shrinkToLength();
         if (inViewSourceMode())
             static_cast<HTMLViewSourceDocument*>(m_doc)->addViewSourceToken(&currToken);
         else

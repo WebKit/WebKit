@@ -29,6 +29,8 @@
 
 #include "Attribute.h"
 #include "NamedNodeMap.h"
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 #ifdef __OBJC__
 #define id id_AVOID_KEYWORD
@@ -58,13 +60,16 @@ public:
     virtual PassRefPtr<Node> setNamedItem(Node* arg, ExceptionCode&);
 
     virtual PassRefPtr<Node> item(unsigned index) const;
-    unsigned length() const { return len; }
+    unsigned length() const { return m_attributes.size(); }
 
     // Other methods (not part of DOM)
-    Attribute* attributeItem(unsigned index) const { return attrs[index]; }
+    Attribute* attributeItem(unsigned index) const { return m_attributes[index].get(); }
     Attribute* getAttributeItem(const QualifiedName& name) const;
     Attribute* getAttributeItem(const String& name) const;
     virtual bool isReadOnlyNode();
+    
+    void shrinkToLength() { m_attributes.shrinkCapacity(length()); }
+    void reserveCapacity(unsigned capacity) { m_attributes.reserveCapacity(capacity); }
 
     // used during parsing: only inserts if not already there
     // no error checking!
@@ -91,8 +96,7 @@ protected:
     void detachFromElement();
 
     Element *element;
-    Attribute **attrs;
-    unsigned len;
+    Vector<RefPtr<Attribute> > m_attributes;
     AtomicString m_id;
 };
 

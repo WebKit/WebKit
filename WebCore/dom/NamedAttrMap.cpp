@@ -41,8 +41,6 @@ static inline bool shouldIgnoreAttributeCase(const Element* e)
 
 NamedAttrMap::NamedAttrMap(Element *e)
     : element(e)
-    , attrs(0)
-    , len(0)
 {
 }
 
@@ -176,48 +174,46 @@ PassRefPtr<Node> NamedAttrMap::removeNamedItem(const QualifiedName& name, Except
     return r.release();
 }
 
-PassRefPtr<Node> NamedAttrMap::item ( unsigned index ) const
+PassRefPtr<Node> NamedAttrMap::item (unsigned index) const
 {
-    if (index >= len)
+    if (index >= length())
         return 0;
 
-    return attrs[index]->createAttrIfNeeded(element);
+    return m_attributes[index]->createAttrIfNeeded(element);
 }
 
 Attribute* NamedAttrMap::getAttributeItem(const String& name) const
 {
+    unsigned len = length();
     for (unsigned i = 0; i < len; ++i) {
-        if (!attrs[i]->name().hasPrefix() && 
-            attrs[i]->name().localName() == name)
-                return attrs[i];
+        if (!m_attributes[i]->name().hasPrefix() && 
+            m_attributes[i]->name().localName() == name)
+                return m_attributes[i].get();
         
-        if (attrs[i]->name().toString() == name)
-            return attrs[i];
+        if (m_attributes[i]->name().toString() == name)
+            return m_attributes[i].get();
     }
     return 0;
 }
 
 Attribute* NamedAttrMap::getAttributeItem(const QualifiedName& name) const
 {
+    unsigned len = length();
     for (unsigned i = 0; i < len; ++i) {
-        if (attrs[i]->name().matches(name))
-            return attrs[i];
+        if (m_attributes[i]->name().matches(name))
+            return m_attributes[i].get();
     }
     return 0;
 }
 
 void NamedAttrMap::clearAttributes()
 {
-    if (attrs) {
-        for (unsigned i = 0; i < len; i++) {
-            if (attrs[i]->attr())
-                attrs[i]->attr()->m_element = 0;
-            attrs[i]->deref();
-        }
-        fastFree(attrs);
-        attrs = 0;
-    }
-    len = 0;
+    unsigned len = length();
+    for (unsigned i = 0; i < len; i++)
+        if (Attr* attr = m_attributes[i]->attr())
+            attr->m_element = 0;
+
+    m_attributes.clear();
 }
 
 void NamedAttrMap::detachFromElement()
@@ -236,7 +232,6 @@ NamedAttrMap& NamedAttrMap::operator=(const NamedAttrMap& other)
 
     // If assigning the map changes the id attribute, we need to call
     // updateId.
-
     Attribute *oldId = getAttributeItem(idAttr);
     Attribute *newId = other.getAttributeItem(idAttr);
 
@@ -244,33 +239,27 @@ NamedAttrMap& NamedAttrMap::operator=(const NamedAttrMap& other)
         element->updateId(oldId ? oldId->value() : nullAtom, newId ? newId->value() : nullAtom);
 
     clearAttributes();
-    len = other.len;
-    attrs = static_cast<Attribute **>(fastMalloc(len * sizeof(Attribute *)));
-
-    // first initialize attrs vector, then call attributeChanged on it
-    // this allows attributeChanged to use getAttribute
-    for (unsigned i = 0; i < len; i++) {
-        attrs[i] = other.attrs[i]->clone();
-        attrs[i]->ref();
-    }
+    unsigned newLength = other.length();
+    m_attributes.resize(newLength);
+    for (unsigned i = 0; i < newLength; i++)
+        m_attributes[i] = other.m_attributes[i]->clone();
 
     // FIXME: This is wasteful.  The class list could be preserved on a copy, and we
     // wouldn't have to waste time reparsing the attribute.
     // The derived class, HTMLNamedAttrMap, which manages a parsed class list for the CLASS attribute,
     // will update its member variable when parse attribute is called.
-    for(unsigned i = 0; i < len; i++)
-        element->attributeChanged(attrs[i], true);
+    for(unsigned i = 0; i < newLength; i++)
+        element->attributeChanged(m_attributes[i].get(), true);
 
     return *this;
 }
 
 void NamedAttrMap::addAttribute(PassRefPtr<Attribute> prpAttribute)
 {
-    Attribute* attribute = prpAttribute.releaseRef(); // The attrs array will own this pointer.
-
+    RefPtr<Attribute> attribute = prpAttribute;
+    
     // Add the attribute to the list
-    attrs = static_cast<Attribute**>(fastRealloc(attrs, (len + 1) * sizeof(Attribute*)));
-    attrs[len++] = attribute;
+    m_attributes.append(attribute);
 
     if (Attr* attr = attribute->attr())
         attr->m_element = element;
@@ -278,10 +267,10 @@ void NamedAttrMap::addAttribute(PassRefPtr<Attribute> prpAttribute)
     // Notify the element that the attribute has been added, and dispatch appropriate mutation events
     // Note that element may be null here if we are called from insertAttr() during parsing
     if (element) {
-        element->attributeChanged(attribute);
+        element->attributeChanged(attribute.get());
         // Because of our updateStyleAttributeIfNeeded() style modification events are never sent at the right time, so don't bother sending them.
         if (attribute->name() != styleAttr) {
-            element->dispatchAttrAdditionEvent(attribute);
+            element->dispatchAttrAdditionEvent(attribute.get());
             element->dispatchSubtreeModifiedEvent();
         }
     }
@@ -289,34 +278,23 @@ void NamedAttrMap::addAttribute(PassRefPtr<Attribute> prpAttribute)
 
 void NamedAttrMap::removeAttribute(const QualifiedName& name)
 {
-    unsigned index = len+1;
+    unsigned len = length();
+    unsigned index = len + 1;
     for (unsigned i = 0; i < len; ++i)
-        if (attrs[i]->name().matches(name)) {
+        if (m_attributes[i]->name().matches(name)) {
             index = i;
             break;
         }
 
-    if (index >= len) return;
+    if (index >= len)
+        return;
 
     // Remove the attribute from the list
-    Attribute* attr = attrs[index];
-    if (attrs[index]->attr())
-        attrs[index]->attr()->m_element = 0;
-    if (len == 1) {
-        fastFree(attrs);
-        attrs = 0;
-        len = 0;
-    } else {
-        Attribute **newAttrs = static_cast<Attribute **>(fastMalloc((len - 1) * sizeof(Attribute *)));
-        unsigned i;
-        for (i = 0; i < unsigned(index); i++)
-            newAttrs[i] = attrs[i];
-        len--;
-        for (; i < len; i++)
-            newAttrs[i] = attrs[i+1];
-        fastFree(attrs);
-        attrs = newAttrs;
-    }
+    Attribute* attr = m_attributes[index].get();
+    if (Attr* a = m_attributes[index]->attr())
+        a->m_element = 0;
+
+    m_attributes.remove(index);
 
     // Notify the element that the attribute has been removed
     // dispatch appropriate mutation events
@@ -330,7 +308,6 @@ void NamedAttrMap::removeAttribute(const QualifiedName& name)
         element->dispatchAttrRemovalEvent(attr);
         element->dispatchSubtreeModifiedEvent();
     }
-    attr->deref();
 }
 
 bool NamedAttrMap::mapsEquivalent(const NamedAttrMap* otherMap) const
@@ -338,10 +315,11 @@ bool NamedAttrMap::mapsEquivalent(const NamedAttrMap* otherMap) const
     if (!otherMap)
         return false;
     
-    if (length() != otherMap->length())
+    unsigned len = length();
+    if (len != otherMap->length())
         return false;
     
-    for (unsigned i = 0; i < length(); i++) {
+    for (unsigned i = 0; i < len; i++) {
         Attribute *attr = attributeItem(i);
         Attribute *otherAttr = otherMap->getAttributeItem(attr->name());
             
