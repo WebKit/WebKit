@@ -1,3 +1,12 @@
+2008-03-13  Mark Mentovai  <mark@moxienet.com>
+
+        Reviewed by eseidel.  Landed by eseidel
+
+        * pcre/pcre_exec.cpp: Fix misnamed variable, allowing -DDEBUG build
+        to succeed.
+        * wtf/ThreadingPthreads.cpp: #include <sys/time.h> for gettimeofday
+        in non-pch build.
+
 2008-03-13  Steve Falkenburg  <sfalken@apple.com>
 
         PGO build fixes.

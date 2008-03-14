@@ -32,7 +32,7 @@
 #include <wtf/HashMap.h>
 
 #include <errno.h>
-#include <time.h>
+#include <sys/time.h>
 
 namespace WTF {
 

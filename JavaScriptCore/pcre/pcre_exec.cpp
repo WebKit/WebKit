@@ -2024,7 +2024,7 @@ int jsRegExpExecute(const JSRegExp* re,
 
         if (returnCode != 1) {
             ASSERT(returnCode == JSRegExpErrorHitLimit || returnCode == JSRegExpErrorNoMemory);
-            DPRINTF((">>>> error: returning %d\n", rc));
+            DPRINTF((">>>> error: returning %d\n", returnCode));
             return returnCode;
         }
         
@@ -2052,7 +2052,7 @@ int jsRegExpExecute(const JSRegExp* re,
             offsets[1] = matchBlock.endMatchPtr - matchBlock.startSubject;
         }
         
-        DPRINTF((">>>> returning %d\n", rc));
+        DPRINTF((">>>> returning %d\n", returnCode));
         return returnCode;
     } while (startMatch <= endSubject);
     
