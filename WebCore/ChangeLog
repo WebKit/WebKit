@@ -1,5 +1,12 @@
 2008-03-13  Mark Mentovai  <mark@moxienet.com>
 
+        Reviewed by darin.  Landed by eseidel.
+
+        * platform/FloatConversion.h: Include a header to get CoreGraphics
+        types when using CoreGraphics types.
+
+2008-03-13  Mark Mentovai  <mark@moxienet.com>
+
         Reviewed by eseidel.  Landed by eseidel.
 
         * WebCore.xcodeproj/project.pbxproj:

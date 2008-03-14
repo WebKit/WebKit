@@ -30,6 +30,9 @@
 #define FloatConversion_h
 
 #include <wtf/Platform.h>
+#if PLATFORM(CG)
+#include <CoreGraphics/CGBase.h>
+#endif
 
 namespace WebCore {
 
