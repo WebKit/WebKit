@@ -194,6 +194,21 @@ bool ResourceHandle::start(Frame* frame)
             soup_message_headers_append(msg->request_headers, it->first.utf8().data(), it->second.utf8().data());
     }
 
+    FormData* httpBody = d->m_request.httpBody();
+    if (httpBody && !httpBody->isEmpty()) {
+        // Making a copy of the request body isn't the most efficient way to
+        // serialize it, but by far the most simple. Dealing with individual
+        // FormData elements and shared buffers should be more memory
+        // efficient.
+        //
+        // This possibly isn't handling file uploads/attachments, for which
+        // shared buffers or streaming should definitely be used.
+        Vector<char> body;
+        httpBody->flatten(body);
+        soup_message_set_request(msg, d->m_request.httpContentType().utf8().data(),
+                                 SOUP_MEMORY_COPY, body.data(), body.size());
+    }
+
     d->m_msg = (SoupMessage*)g_object_ref(msg);
     d->session = session;
     soup_session_queue_message(session, d->m_msg, dataCallback, this);

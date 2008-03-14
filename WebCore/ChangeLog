@@ -1,3 +1,15 @@
+2008-03-13  Tommi Komulainen  <tommi.komulainen@iki.fi>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17821
+        [SOUP] POST requests are empty
+
+        Send the HTTP request body as well.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::start):
+
 2008-03-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
