@@ -381,7 +381,7 @@ void QWebFrame::setHtml(const QString &html, const QUrl &baseUrl)
 {
     KURL kurl(baseUrl);
     WebCore::ResourceRequest request(kurl);
-    WTF::RefPtr<WebCore::SharedBuffer> data = new WebCore::SharedBuffer(reinterpret_cast<const uchar *>(html.unicode()), html.length() * 2);
+    WTF::RefPtr<WebCore::SharedBuffer> data = WebCore::SharedBuffer::create(reinterpret_cast<const uchar *>(html.unicode()), html.length() * 2);
     WebCore::SubstituteData substituteData(data, WebCore::String("text/html"), WebCore::String("utf-16"), kurl);
     d->frame->loader()->load(request, substituteData);
 }
@@ -403,7 +403,7 @@ void QWebFrame::setContent(const QByteArray &data, const QString &mimeType, cons
 {
     KURL kurl(baseUrl);
     WebCore::ResourceRequest request(kurl);
-    WTF::RefPtr<WebCore::SharedBuffer> buffer = new WebCore::SharedBuffer(data.constData(), data.length());
+    WTF::RefPtr<WebCore::SharedBuffer> buffer = WebCore::SharedBuffer::create(data.constData(), data.length());
     QString actualMimeType = mimeType;
     if (actualMimeType.isEmpty())
         actualMimeType = QLatin1String("text/html");
