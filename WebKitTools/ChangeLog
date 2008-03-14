@@ -1,3 +1,13 @@
+2008-03-13  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Darin.
+
+        Correct paths to vsprops files so they use the environment
+        variable, rather than hard-coded path.
+        http://bugs.webkit.org/show_bug.cgi?id=17797.
+
+        * WinLauncher/WinLauncher.vcproj:  Correct paths to vsprops.
+
 2008-03-12  Steve Falkenburg  <sfalken@apple.com>
 
         VSExpress build fix
