@@ -3660,6 +3660,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\MainThread.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\MainThread.h"
 				>
 			</File>

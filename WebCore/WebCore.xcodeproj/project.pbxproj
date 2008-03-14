@@ -332,6 +332,7 @@
 		1CB4214C0AF2B2CA0085AD91 /* DOMHTMLElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711580AC5D5340053270F /* DOMHTMLElementInternal.h */; };
 		1CB4214D0AF2B2CA0085AD91 /* DOMRangeInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8538F05A0AD722F1006A81D1 /* DOMRangeInternal.h */; };
 		1CE24F970D7CAF0E007E04C2 /* SchedulePairMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */; };
+		1CE3F8B40D89CFDC00FB035F /* MainThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CE3F8B30D89CFDC00FB035F /* MainThread.cpp */; };
 		1CE83AC30ADAFFD7009354F6 /* DeleteButtonController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4C8EFF0AD85D87009475CE /* DeleteButtonController.cpp */; };
 		1CE83AC40ADAFFD8009354F6 /* DeleteButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4C8F630AD8655D009475CE /* DeleteButton.cpp */; };
 		1CEFC9B90D78DC8C007D2579 /* SchedulePair.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEFC9B70D78DC8C007D2579 /* SchedulePair.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4674,6 +4675,7 @@
 		1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebCore.xcconfig; sourceTree = "<group>"; };
 		1CDD45E60BA9C84600F90147 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SchedulePairMac.mm; sourceTree = "<group>"; };
+		1CE3F8B30D89CFDC00FB035F /* MainThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MainThread.cpp; path = mac/MainThread.cpp; sourceTree = "<group>"; };
 		1CEFC9B70D78DC8C007D2579 /* SchedulePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchedulePair.h; sourceTree = "<group>"; };
 		1CEFC9B80D78DC8C007D2579 /* SchedulePair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SchedulePair.cpp; sourceTree = "<group>"; };
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
@@ -12008,6 +12010,7 @@
 				935207BD09BD410A00F2038D /* LocalizedStrings.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
+				1CE3F8B30D89CFDC00FB035F /* MainThread.cpp */,
 				E1EE79360D6C97DE00FEA3BA /* MainThread.h */,
 				BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */,
 				BC772C4D0C4EB3040083285F /* MIMETypeRegistry.h */,
@@ -16178,6 +16181,7 @@
 				A9D248000D757E6900FDF959 /* JSPluginArray.cpp in Sources */,
 				A9D248060D757E7D00FDF959 /* JSMimeType.cpp in Sources */,
 				A9D248080D757E7D00FDF959 /* JSMimeTypeArray.cpp in Sources */,
+				1CE3F8B40D89CFDC00FB035F /* MainThread.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

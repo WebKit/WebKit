@@ -792,6 +792,7 @@ SOURCES += \
     platform/KURL.cpp \
     platform/Logging.cpp \
     platform/MIMETypeRegistry.cpp \
+    platform/MainThread.cpp \
     platform/network/AuthenticationChallengeBase.cpp \
     platform/network/Credential.cpp \
     platform/network/FormData.cpp \

@@ -27,12 +27,13 @@
  */
 
 #include "config.h"
-#include "NotImplemented.h"
 #include "MainThread.h"
+
+#include "NotImplemented.h"
 
 namespace WebCore {
 
-void callOnMainThread(MainThreadFunction*, void*)
+void scheduleDispatchFunctionsOnMainThread()
 {
     notImplemented();
 }

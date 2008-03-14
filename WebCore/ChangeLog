@@ -1,3 +1,52 @@
+2008-03-13  Adam Roben  <aroben@apple.com>
+
+        Make most of callOnMainThread's implementation be cross-platform
+
+        I took the non-platform-specific parts of MainThreadWin.cpp and moved
+        them to a new MainThread.cpp. Each platform is now responsible for
+        implementing one function, scheduleDispatchFunctionsOnMainThread,
+        which is supposed to set things up so that
+        dispatchFunctionsFromMainThread gets called from the main thread in
+        the near future.
+
+        Reviewed by Alexey.
+
+        * GNUmakefile.am: Added MainThread.cpp to the project.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+        * platform/MainThread.cpp:
+          - Copied from WebCore/platform/win/MainThreadWin.cpp.
+          - Removed the Windows-specific parts.
+        (WebCore::callOnMainThread): Changed to call
+        scheduleDispatchFunctionsOnMainThread instead of PostMessage.
+        * platform/gtk/MainThreadGtk.cpp:
+        (WebCore::timeoutFired): Renamed from callFunctionOnMainThread. Now
+        just calls dispatchFunctionsFromMainThread.
+        (WebCore::scheduleDispatchFunctionsOnMainThread): Added. Calls through
+        to g_timeout_add.
+        * platform/mac/MainThreadMac.mm: Renamed WebCoreFunctionWrapper to
+        WebCoreMainThreadCaller.
+        (-[WebCoreMainThreadCaller call]): Calls through to
+        dispatchFunctionsFromMainThread.
+        (WebCore::scheduleDispatchFunctionsOnMainThread): Makes a new
+        WebCoreMainThreadCaller and calls performSelectorOnMainThread on it.
+        * platform/qt/MainThreadQt.cpp: Removed PerformFunctionEvent.
+        (WebCore::MainThreadInvoker::event): Chagned to call through to
+        dispatchFunctionsFromMainThread.
+        (WebCore::scheduleDispatchFunctionsOnMainThread): Sends an empty event
+        to the MainThreadInvoker.
+        * platform/win/MainThreadWin.cpp:
+          - Removed the non-Windows-specific parts.
+          - Removed some unnecessary initialization of static variables to 0.
+        (WebCore::ThreadingWindowWndProc): Changed to call
+        dispatchFunctionsFromMainThread.
+        (WebCore::scheduleDispatchFunctionsOnMainThread): Calls through to
+        PostMessage.
+        * platform/wx/MainThreadWx.cpp:
+        (WebCore::scheduleDispatchFunctionsOnMainThread): Added.
+
 2008-03-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.

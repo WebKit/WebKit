@@ -29,38 +29,27 @@
 #import "config.h"
 #import "MainThread.h"
 
-@interface WebCoreFunctionWrapper : NSObject {
-    WebCore::MainThreadFunction* m_function;
-    void* m_context;
+@interface WebCoreMainThreadCaller : NSObject {
 }
-- (id)initWithFunction:(WebCore::MainThreadFunction*)function context:(void*)context;
-- (void)invoke;
+- (void)call;
 @end
 
-@implementation WebCoreFunctionWrapper
+@implementation WebCoreMainThreadCaller
 
-- (id)initWithFunction:(WebCore::MainThreadFunction*)function context:(void*)context;
+- (void)call
 {
-    [super init];
-    m_function = function;
-    m_context = context;
-    return self;
+    dispatchFunctionsFromMainThread();
 }
 
-- (void)invoke
-{
-    m_function(m_context);
-}
-
-@end // implementation WebCoreFunctionWrapper
+@end // implementation WebCoreMainThreadCaller
 
 namespace WebCore {
 
-void callOnMainThread(MainThreadFunction* function, void* context)
+void scheduleDispatchFunctionsOnMainThread()
 {
-    WebCoreFunctionWrapper *wrapper = [[WebCoreFunctionWrapper alloc] initWithFunction:function context:context];
-    [wrapper performSelectorOnMainThread:@selector(invoke) withObject:nil waitUntilDone:NO];
-    [wrapper release];
+    WebCoreMainThreadCaller *caller = [[WebCoreMainThreadCaller alloc] init];
+    [caller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO];
+    [caller release];
 }
 
 } // namespace WebCore

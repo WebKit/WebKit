@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,7 +10,7 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+ * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -30,20 +29,54 @@
 #include "config.h"
 #include "MainThread.h"
 
-#include <glib.h>
+#include "Logging.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-static gboolean timeoutFired(gpointer)
+struct FunctionWithContext {
+    MainThreadFunction* function;
+    void* context;
+    FunctionWithContext(MainThreadFunction* f = 0, void* c = 0) : function(f), context(c) { }
+};
+
+typedef Vector<FunctionWithContext> FunctionQueue;
+
+static Mutex& functionQueueMutex()
 {
-    dispatchFunctionsFromMainThread();
-    return FALSE;
+    static Mutex staticFunctionQueueMutex;
+    return staticFunctionQueueMutex;
 }
 
-void scheduleDispatchFunctionsOnMainThread()
+static FunctionQueue& functionQueue()
 {
-    g_timeout_add(0, timeoutFired, 0);
+    static FunctionQueue staticFunctionQueue;
+    return staticFunctionQueue;
 }
 
+void dispatchFunctionsFromMainThread()
+{
+    FunctionQueue queueCopy;
+    {
+        MutexLocker locker(functionQueueMutex());
+        queueCopy.swap(functionQueue());
+    }
 
+    LOG(Threading, "Calling %u functions on the main thread", queueCopy.size());
+    for (unsigned i = 0; i < queueCopy.size(); ++i)
+        queueCopy[i].function(queueCopy[i].context);
 }
+
+void callOnMainThread(MainThreadFunction* function, void* context)
+{
+    ASSERT(function);
+
+    {
+        MutexLocker locker(functionQueueMutex());
+        functionQueue().append(FunctionWithContext(function, context));
+    }
+
+    scheduleDispatchFunctionsOnMainThread();
+}
+
+} // namespace WebCore

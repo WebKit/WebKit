@@ -47,6 +47,9 @@ inline void initializeThreadingAndMainThread()
 }
 #endif
 
+// These functions are internal to the callOnMainThread implementation.
+void dispatchFunctionsFromMainThread();
+void scheduleDispatchFunctionsOnMainThread();
 
 } // namespace WebCore
 
