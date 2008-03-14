@@ -71,7 +71,7 @@ extern int cssyyparse(void* parser);
 using namespace std;
 using namespace WTF;
 
-#include "CSSPropertyNames.c"
+#include "CSSPropertyNames.cpp"
 #include "CSSValueKeywords.c"
 
 namespace WebCore {
