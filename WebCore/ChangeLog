@@ -1,3 +1,9 @@
+2008-03-14  Adam Roben  <aroben@apple.com>
+
+        Mac build fix
+
+        * platform/mac/MainThreadMac.mm: Corrected a typo.
+
 2008-03-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
