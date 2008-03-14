@@ -253,6 +253,8 @@ namespace WTF {
 
         void deallocateBuffer(T* bufferToDeallocate)
         {
+            if (m_buffer == bufferToDeallocate)
+                m_buffer = 0;
             fastFree(bufferToDeallocate);
         }
 
@@ -343,8 +345,7 @@ namespace WTF {
         VectorBuffer(size_t capacity)
             : Base(inlineBuffer(), inlineCapacity)
         {
-            if (capacity > inlineCapacity)
-                allocateBuffer(capacity);
+            allocateBuffer(capacity);
         }
 
         ~VectorBuffer()
@@ -352,7 +353,11 @@ namespace WTF {
             deallocateBuffer(buffer());
         }
 
-        using Base::allocateBuffer;
+        void allocateBuffer(size_t newCapacity)
+        {
+            if (newCapacity > inlineCapacity)
+                Base::allocateBuffer(newCapacity);
+        }
 
         void deallocateBuffer(T* bufferToDeallocate)
         {
@@ -665,13 +670,15 @@ namespace WTF {
         if (newCapacity >= capacity())
             return;
 
+        resize(min(m_size, newCapacity));
+
         T* oldBuffer = begin();
         if (newCapacity > 0) {
             T* oldEnd = end();
             m_buffer.allocateBuffer(newCapacity);
-            TypeOperations::move(oldBuffer, oldEnd, begin());
+            TypeOperations::moveOverlapping(oldBuffer, oldEnd, begin());
         }
-        m_size = min(m_size, newCapacity);
+
         m_buffer.deallocateBuffer(oldBuffer);
     }
 

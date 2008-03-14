@@ -1,3 +1,26 @@
+2008-03-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Fixed a few problems with Vector::shrinkCapacity that I noticed in testing.
+
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::deallocateBuffer): Clear our m_buffer pointer
+        when we deallocate m_buffer, in case we're not asked to reallocate a new
+        buffer. (Otherwise, we would use a stale m_buffer if we were asked to
+        perform any operations after shrinkCapacity was called.)
+        
+        (WTF::VectorBuffer::allocateBuffer): Made VectorBuffer with inline
+        capacity aware that calls to allocateBuffer might be shrinks, rather
+        than grows, so we shouldn't allocate a new buffer on the heap unless
+        our inline buffer is too small.
+        
+        (WTF::::shrinkCapacity): Call resize() instead of just setting m_size,
+        so destructors run. Call resize before reallocating the buffer to make
+        sure that we still have access to the objects we need to destroy. Call
+        moveOverlapping instead of move, since a call to allocateBuffer on an
+        inline buffer may produce identical storage.
+
 2008-03-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
@@ -222,7 +245,7 @@
         * JavaScriptCore.vcproj/WTF/WTF.vcproj:
         * JavaScriptCore.vcproj/testkjs/testkjs.vcproj:
 
-2008-03-09  Jürg Billeter  <j@bitron.ch>
+2008-03-09  JÂ¸rg Billeter  <j@bitron.ch>
 
         Reviewed by Alp Toker.
 
