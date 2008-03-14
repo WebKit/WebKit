@@ -1,5 +1,12 @@
 2008-03-14  David D. Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX when ENABLE(MAC_JAVA_BINDINGS) set to 0.
+
+        * page/mac/FrameMac.mm: Move up #if ENABLE(MAC_JAVA_BINDINGS) guard
+        to comment out unused code.
+
+2008-03-14  David D. Kilzer  <ddkilzer@apple.com>
+
         Unify concept of enabling the Mac Java bridge.
 
         Reviewed by Darin and Anders.

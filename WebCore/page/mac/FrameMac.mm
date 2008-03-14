@@ -627,6 +627,7 @@ void Frame::setUserStyleSheet(const String& styleSheet)
         d->m_doc->setUserStyleSheet(styleSheet);
 }
 
+#if ENABLE(MAC_JAVA_BRIDGE)
 static pthread_t mainThread;
 
 static void updateRenderingForBindings(KJS::ExecState* exec, KJS::JSObject* rootObject)
@@ -652,7 +653,6 @@ static void updateRenderingForBindings(KJS::ExecState* exec, KJS::JSObject* root
     document->updateRendering();
 }
 
-#if ENABLE(MAC_JAVA_BRIDGE)
 void Frame::initJavaJSBindings()
 {
     mainThread = pthread_self();
