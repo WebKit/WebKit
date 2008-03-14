@@ -1,3 +1,10 @@
+2008-03-13  Mark Mentovai  <mark@moxienet.com>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        * platform/Arena.h: Use statement1;statement2 instead of
+        (statement1,statement2) in CLEAR_UNUSED.
+
 2008-03-13  Tommi Komulainen  <tommi.komulainen@iki.fi>
 
         Reviewed by Alp Toker.

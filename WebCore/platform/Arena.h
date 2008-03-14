@@ -98,9 +98,9 @@ void* ArenaAllocate(ArenaPool *pool, unsigned int nb);
 
 #ifdef DEBUG
 #define FREE_PATTERN 0xDA
-#define CLEAR_UNUSED(a) (ASSERT((a)->avail <= (a)->limit), \
-                           memset((void*)(a)->avail, FREE_PATTERN, \
-                            (a)->limit - (a)->avail))
+#define CLEAR_UNUSED(a) ASSERT((a)->avail <= (a)->limit); \
+                        memset((void*)(a)->avail, FREE_PATTERN, \
+                            (a)->limit - (a)->avail)
 #define CLEAR_ARENA(a)  memset((void*)(a), FREE_PATTERN, \
                             (a)->limit - (uword)(a))
 #else
