@@ -1,5 +1,13 @@
 2008-03-14  Adam Roben  <aroben@apple.com>
 
+        Fix it right this time
+
+        * platform/MainThread.cpp: Cast to unsigned so we can use %u in the
+        format string.
+        * platform/mac/MainThreadMac.mm:
+
+2008-03-14  Adam Roben  <aroben@apple.com>
+
         Mac build fix
 
         * platform/mac/MainThreadMac.mm: Corrected a typo.

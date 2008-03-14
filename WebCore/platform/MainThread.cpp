@@ -62,7 +62,7 @@ void dispatchFunctionsFromMainThread()
         queueCopy.swap(functionQueue());
     }
 
-    LOG(Threading, "Calling %u functions on the main thread", queueCopy.size());
+    LOG(Threading, "Calling %u functions on the main thread", static_cast<unsigned>(queueCopy.size()));
     for (unsigned i = 0; i < queueCopy.size(); ++i)
         queueCopy[i].function(queueCopy[i].context);
 }

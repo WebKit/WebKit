@@ -38,7 +38,7 @@
 
 - (void)call
 {
-    dispatchFunctionsOnMainThread();
+    WebCore::dispatchFunctionsFromMainThread();
 }
 
 @end // implementation WebCoreMainThreadCaller
