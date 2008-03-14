@@ -1,3 +1,11 @@
+2008-03-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Brian Dash's rubberstamp
+
+        Remove a class declaration for a class that has never existed
+
+        * WebView/WebResource.h:
+
 2008-03-14  David D. Kilzer  <ddkilzer@apple.com>
 
         Unify concept of enabling the Mac Java bridge.

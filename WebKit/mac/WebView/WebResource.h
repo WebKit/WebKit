@@ -28,7 +28,6 @@
 
 #import <Foundation/Foundation.h>
 
-@class WebMainResourcePrivate;
 @class WebResourcePrivate;
 
 
