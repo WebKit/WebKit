@@ -96,8 +96,8 @@ for my $changeLog (@changeLogs) {
     while (<CHANGELOG>) {
         if (/^\S/) {
             last if $contents;
-            next;
-        } elsif (/\S/) {
+        }
+        if (/\S/) {
             $contents .= $blankLines if $contents;
             $blankLines = "";
             $contents .= $_;

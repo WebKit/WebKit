@@ -1,3 +1,14 @@
+2008-03-15  Darin Adler  <darin@apple.com>
+
+        * Scripts/commit-log-editor: Include the name line of the change log entry.
+        A long time ago I designed this script to not include the name because I
+        thought it was redundant (same as the name of the person checking in), but
+        nowadays it's more common for someone to check something in done by someone
+        else.
+
+        * Scripts/do-webcore-rename: Added some more planned renames and removed
+        some that were already done "by hand".
+
 2008-03-13  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Darin.
