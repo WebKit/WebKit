@@ -304,12 +304,13 @@ void FrameLoader::setDefersLoading(bool defers)
     m_client->setDefersLoading(defers);
 }
 
-Frame* FrameLoader::createWindow(const FrameLoadRequest& request, const WindowFeatures& features, bool& created)
+Frame* FrameLoader::createWindow(FrameLoader* frameLoaderForFrameLookup, const FrameLoadRequest& request, const WindowFeatures& features, bool& created)
 { 
     ASSERT(!features.dialog || request.frameName().isEmpty());
 
-    if (!request.frameName().isEmpty() && request.frameName() != "_blank")
-        if (Frame* frame = findFrameForNavigation(request.frameName())) {
+    if (!request.frameName().isEmpty() && request.frameName() != "_blank") {
+        Frame* frame = frameLoaderForFrameLookup->frame()->tree()->find(request.frameName());
+        if (frame && shouldAllowNavigation(frame)) {
             if (!request.resourceRequest().url().isEmpty())
                 frame->loader()->load(request, false, true, 0, 0, HashMap<String, String>());
             if (Page* page = frame->page())
@@ -317,7 +318,8 @@ Frame* FrameLoader::createWindow(const FrameLoadRequest& request, const WindowFe
             created = false;
             return frame;
         }
-
+    }
+    
     // FIXME: Setting the referrer should be the caller's responsibility.
     FrameLoadRequest requestWithReferrer = request;
     requestWithReferrer.resourceRequest().setHTTPReferrer(m_outgoingReferrer);

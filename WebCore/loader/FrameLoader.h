@@ -165,7 +165,7 @@ namespace WebCore {
 
         static bool shouldHideReferrer(const KURL& url, const String& referrer);
 
-        Frame* createWindow(const FrameLoadRequest&, const WindowFeatures&, bool& created);
+        Frame* createWindow(FrameLoader* frameLoaderForFrameLookup, const FrameLoadRequest&, const WindowFeatures&, bool& created);
 
         void loadResourceSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);
 

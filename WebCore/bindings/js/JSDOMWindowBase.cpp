@@ -293,23 +293,12 @@ static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& ur
     const String& frameName, const WindowFeatures& windowFeatures, JSValue* dialogArgs)
 {
     Frame* activeFrame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    ASSERT(activeFrame);
 
     ResourceRequest request;
-    if (activeFrame)
-        request.setHTTPReferrer(activeFrame->loader()->outgoingReferrer());
-    FrameLoadRequest frameRequest(request, frameName);
 
-    FrameLoader* loader;
-    if (activeFrame)
-        // We need to use the active frame's loader to let FrameLoader know
-        // which principal is requesting the navigation.  Unfortunately, there
-        // might not be an activeFrame, in which case we resort to using the
-        // opener's loader.
-        //
-        // See http://bugs.webkit.org/show_bug.cgi?id=16522
-        loader = activeFrame->loader();
-    else
-        loader = openerFrame->loader();
+    request.setHTTPReferrer(activeFrame->loader()->outgoingReferrer());
+    FrameLoadRequest frameRequest(request, frameName);
 
     // FIXME: It's much better for client API if a new window starts with a URL, here where we
     // know what URL we are going to open. Unfortunately, this code passes the empty string
@@ -319,7 +308,10 @@ static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& ur
     // We'd have to resolve all those issues to pass the URL instead of "".
 
     bool created;
-    Frame* newFrame = loader->createWindow(frameRequest, windowFeatures, created);
+    // We pass in the opener frame here so it can be used for looking up the frame name, in case the active frame
+    // is different from the opener frame, and the name references a frame relative to the opener frame, for example
+    // "_self" or "_parent".
+    Frame* newFrame = activeFrame->loader()->createWindow(openerFrame->loader(), frameRequest, windowFeatures, created);
     if (!newFrame)
         return 0;
 

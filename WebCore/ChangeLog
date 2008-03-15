@@ -1,3 +1,20 @@
+2008-03-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5794989>
+        https://bugs.webkit.org/show_bug.cgi?id=17792
+        REGRESSION (Safari 3.0.4-3.1): Ordering tickets from Sweden's biggest train operator doesn't work
+
+        Pass the frame loader that should be used for looking up the frame name to FrameLoader::createWindow
+        so that somewindow.open calls where the active window and 'somewindow' differ return the correct frame.
+        
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::createWindow):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow):
+        * loader/FrameLoader.h:
+
 2008-03-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.
