@@ -150,7 +150,7 @@ void NodeIterator::detach()
     m_referenceNode.node.clear();
 }
 
-void NodeIterator::notifyBeforeNodeRemoval(Node* removedNode)
+void NodeIterator::nodeWillBeRemoved(Node* removedNode)
 {
     updateForNodeRemoval(removedNode, m_referenceNode);
 }

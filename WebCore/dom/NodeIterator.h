@@ -45,7 +45,7 @@ namespace WebCore {
         bool pointerBeforeReferenceNode() const { return m_referenceNode.isPointerBeforeNode; }
 
         // This function is called before any node is removed from the document tree.
-        void notifyBeforeNodeRemoval(Node* nodeToBeRemoved);
+        void nodeWillBeRemoved(Node*);
 
         // For non-JS bindings. Silently ignores the JavaScript exception if any.
         Node* nextNode(ExceptionCode& ec) { KJS::JSValue* exception; return nextNode(ec, exception); }

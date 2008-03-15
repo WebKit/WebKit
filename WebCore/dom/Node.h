@@ -317,7 +317,7 @@ public:
      */
     Node* traverseNextNode(const Node* stayWithin = 0) const;
     
-    /* Like traverseNextNode, but skips children and starts with the next sibling. */
+    // Like traverseNextNode, but skips children and starts with the next sibling.
     Node* traverseNextSibling(const Node* stayWithin = 0) const;
 
     /**
@@ -327,7 +327,10 @@ public:
      */
     Node* traversePreviousNode(const Node * stayWithin = 0) const;
 
-    /* Like traversePreviousNode, but visits nodes before their children. */
+    // Like traverseNextNode, but visits parents after their children.
+    Node* traverseNextNodePostOrder() const;
+
+    // Like traversePreviousNode, but visits parents before their children.
     Node* traversePreviousNodePostOrder(const Node *stayWithin = 0) const;
     Node* traversePreviousSiblingPostOrder(const Node *stayWithin = 0) const;
 

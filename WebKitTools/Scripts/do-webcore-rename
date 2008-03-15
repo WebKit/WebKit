@@ -68,6 +68,9 @@ sub wanted
 }
 
 my %renames = (
+    "DELETE_CONTENTS" => "Delete",
+    "EXTRACT_CONTENTS" => "Extract",
+    "CLONE_CONTENTS" => "Clone",
     "XSLTProcessorPrototypeTable" => "JSXSLTProcessorPrototypeTable",
     "ActivationImp" => "Activation",
     "ActivationImpData" => "ActivationData",

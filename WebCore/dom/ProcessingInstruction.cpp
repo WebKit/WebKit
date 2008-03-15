@@ -69,7 +69,10 @@ void ProcessingInstruction::setData(const String& data, ExceptionCode& ec)
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
+
+    int oldLength = m_data.length();
     m_data = data;
+    document()->textRemoved(this, 0, oldLength);
 }
 
 String ProcessingInstruction::nodeName() const

@@ -1,3 +1,23 @@
+2008-03-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - test changes for http://bugs.webkit.org/show_bug.cgi?id=11997
+          Ranges are not fixed after mutation (affects Acid3 test 13)
+
+        * fast/dom/Range/mutation-expected.txt: Added.
+        * fast/dom/Range/mutation.html: Added.
+        * fast/dom/Range/resources/mutation.js: Added.
+
+        * editing/execCommand/4920742-2-expected.txt: Updated.
+        * editing/execCommand/4920742-2.html: Updated this test. It was testing for a crash in a
+        case that's no longer possible -- you can't make a range where one endpoint is in the
+        document and the other is not.
+
+        * platform/mac/editing/execCommand/4920488-expected.txt: Removed WRONG_DOCUMENT_ERR.
+        The fact that a test was getting this exception was a bug, similar to the case above.
+        * platform/qt/editing/execCommand/4920488-expected.txt: Ditto.
+
 2008-03-15  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed by Holger.

@@ -1,4 +1,6 @@
-This tests for a crash when performing Range::extractContents on a range that has had the start or end removed from the document. When extractContents is called on this kind of invalid range, an exception should be thrown.
+This tested for a crash when performing Range::extractContents on a range that has had the start or end removed from the document.
+
+It's now impossible to create a range like this, but at one point with an earlier version of WebKit, it was possible.
 
 link
-
+No crash means success!

@@ -1,3 +1,126 @@
+2008-03-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11997
+          Ranges are not fixed after mutation (affects Acid3 test 13)
+
+        Test: fast/dom/Range/mutation.html
+
+        * WebCore.xcodeproj/project.pbxproj: Added NodeWithIndex.h, NodeWithIndexAfter.h,
+        and NodeWithIndexBefore.h.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setData): Replaced call to Document::removeMarkers
+        with call to Document::textRemoved.
+        (WebCore::CharacterData::insertData): Replaced call to Document::shiftMarkers
+        with call to Document::textInserted.
+        (WebCore::CharacterData::deleteData): Replaced call to Document::removeMarkers
+        and Document::shiftMarkers with call to Document::textRemoved.
+        (WebCore::CharacterData::replaceData): Replaced call to Document::removeMarkers
+        and Document::shiftMarkers with call to Document::textRemoved and
+        Document::textInserted.
+        (WebCore::CharacterData::containsOnlyWhitespace): Tweaked a bit.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::childrenChanged): Added a call to
+        Document::nodeChildrenChanged when the nmber of children was changed (and not
+        by the parser).
+        (WebCore::dispatchChildRemovalEvents): Updated for name change.
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document): Assert that all ranges are gone.
+        (WebCore::Document::nodeChildrenChanged): Added. Calls nodeChildrenChanged on
+        all ranges.
+        (WebCore::Document::nodeWillBeRemoved): Renamed from notifyBeforeNodeRemoval.
+        Added code to call nodeWillBeRemoved on all ranges.
+        (WebCore::Document::textInserted): Added. Calls textInserted on all ranges and
+        also calls shiftMarkers.
+        (WebCore::Document::textRemoved): Added. Calls textRemoved on all ranges and also
+        calls removeMarkers and shiftMarkers.
+        (WebCore::Document::textNodesMerged): Added. Calls textNodesMerged on all ranges.
+        (WebCore::Document::textNodeSplit): Added. Calls textNodeSplit on all ranges.
+        (WebCore::Document::attachRange): Added. Adds range to the HashSet of all ranges
+        for this document.
+        (WebCore::Document::detachRange): Added. Removes range from the HashSet.
+        * dom/Document.h: Added the new functions and the data member.
+
+        * dom/Element.cpp:
+        (WebCore::Element::normalizeAttributes): Added. Contains the part of the
+        normalize function that's specific to Element. Better encapsulation to have it
+        here rather than in Node::normalize.
+        * dom/Element.h: Added the new function.
+
+        * dom/Node.cpp:
+        (WebCore::Node::normalize): Rewrote so it's no longer recursive. Also added
+        a call to textNodesMerged after each pair of nodes is merged but before the
+        second node is removed.
+        (WebCore::Node::traverseNextNodePostOrder): Added. Helper function used by
+        normalize, but also useful elsewhere.
+        * dom/Node.h: Added the new function.
+
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::nodeWillBeRemoved): Renamed from notifyBeforeNodeRemoval.
+        * dom/NodeIterator.h: Ditto.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::setData): Call textRemoved.
+
+        * dom/Range.cpp:
+        (WebCore::NodeWithIndex::index): Added. Computes and stores index.
+        (WebCore::NodeWithIndexBefore::indexBefore): Added. Computes and stores index.
+        (WebCore::NodeWithIndexAfter::indexAfter): Added. Computes and stores index.
+        (WebCore::Range::Range): Call attachRange.
+        (WebCore::Range::~Range): Call detachRange unless the range is already detached.
+        (WebCore::Range::commonAncestorContainer): Removed check for WRONG_DOCUMENT_ERR.
+        It's no longer possible to create a range where the two containers are non-zero
+        and have no common ancestor.
+        (WebCore::Range::isPointInRange): Rewrote expression to be more readable.
+        (WebCore::Range::compareNode): Changed local variable to use int for consistency.
+        (WebCore::Range::compareBoundaryPoints): Replaced ASSERT with ASSERT_NOT_REACHED.
+        (WebCore::Range::deleteContents): Removed check for INVALID_STATE_ERR and
+        initialization of ec to 0; both are now inside checkDeleteExtract.
+        (WebCore::Range::intersectsNode): Changed local variable to use int for consistency.
+        Also changed comparison to use < 0 and >= 0 rather than checking explicitly for 1
+        and -1.
+        (WebCore::Range::processContents): Changed code to not get the nodeType multiple
+        times on the same node, and tweaked formatting. Removed code to update the range
+        on deletion, because the normal delete logic will take care of that now.
+        (WebCore::Range::extractContents): Removed check for INVALID_STATE_ERR and
+        initialization of ec to 0; both are now inside checkDeleteExtract.
+        (WebCore::Range::insertNode): Changed local variable to use int for consistency.
+        (WebCore::Range::toString): Changed variable name to pastLast.
+        (WebCore::Range::detach): Call detachRange.
+        (WebCore::Range::checkDeleteExtract): Added check for detached range and code to
+        set ec to 0; moved here from the two callers. Also changed variable name to pastLast.
+        (WebCore::endpointNodeChildrenChanged): Added.
+        (WebCore::Range::nodeChildrenChanged): Added.
+        (WebCore::endpointNodeWillBeRemoved): Added.
+        (WebCore::Range::nodeWillBeRemoved): Added.
+        (WebCore::endpointTextInserted): Added.
+        (WebCore::Range::textInserted): Added.
+        (WebCore::endpointTextRemoved): Added.
+        (WebCore::Range::textRemoved): Added.
+        (WebCore::endpointTextNodesMerged): Added.
+        (WebCore::Range::textNodesMerged): Added.
+        (WebCore::endpointTextNodesSplit): Added.
+        (WebCore::Range::textNodeSplit): Added.
+
+        * dom/Range.h: Added new member functions.
+
+        * dom/NodeWithIndex.h: Added. Makes it so we won't find the index for the same
+        node more than once.
+        * dom/NodeWithIndexAfter.h: Added. Similar to NodeWithIndex but gives the index after a
+        node and treats a node pointer of 0 as meaning "before first node in parent container".
+        * dom/NodeWithIndexBefore.h: Added.  Similar to NodeWithIndex but treats a node pointer of 0
+        as meaning "after last node in parent container".
+
+        * dom/Text.cpp:
+        (WebCore::Text::splitText): Call textNodeSplit.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyle): Changed variable name to pastLast.
+
 2008-03-15  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed by Holger.

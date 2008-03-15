@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -698,6 +698,8 @@ void ContainerNode::removedFromTree(bool deep)
 void ContainerNode::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     Node::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    if (!changedByParser && childCountDelta)
+        document()->nodeChildrenChanged(this, beforeChange, afterChange, childCountDelta);
     if (document()->hasNodeLists())
         notifyNodeListsChildrenChanged();
 }
@@ -973,7 +975,7 @@ static void dispatchChildRemovalEvents(Node* child, ExceptionCode& ec)
     DocPtr<Document> doc = child->document();
 
     // update auxiliary doc info (e.g. iterators) to note that node is being removed
-    doc->notifyBeforeNodeRemoval(child); // ### use events instead
+    doc->nodeWillBeRemoved(child);
 
     // dispatch pre-removal mutation events
     if (c->parentNode() && 

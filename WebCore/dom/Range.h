@@ -35,10 +35,12 @@ typedef int ExceptionCode;
 
 class DocumentFragment;
 class Document;
+class NodeWithIndex;
+class NodeWithIndexAfter;
+class NodeWithIndexBefore;
 class IntRect;
-class Node;
-class Position;
 class String;
+class Text;
 
 class Range : public RefCounted<Range> {
 public:
@@ -106,6 +108,14 @@ public:
 
     IntRect boundingBox();
     void addLineBoxRects(Vector<IntRect>&, bool useSelectionHeight = false);
+
+    void nodeChildrenChanged(NodeWithIndexAfter& beforeChange, NodeWithIndexBefore& afterChange, int childCountDelta);
+    void nodeWillBeRemoved(NodeWithIndex&);
+
+    void textInserted(Node*, unsigned offset, unsigned length);
+    void textRemoved(Node*, unsigned offset, unsigned length);
+    void textNodesMerged(NodeWithIndex& oldNode, unsigned offset);
+    void textNodeSplit(Text* oldNode);
 
 #ifndef NDEBUG
     void formatForDebugger(char* buffer, unsigned length) const;

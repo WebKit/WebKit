@@ -54,6 +54,7 @@ namespace WebCore {
     class Attribute;
     class CDATASection;
     class CachedCSSStyleSheet;
+    class CharacterData;
     class CSSStyleDeclaration;
     class CSSStyleSelector;
     class CSSStyleSheet;
@@ -475,7 +476,18 @@ public:
 
     void attachNodeIterator(NodeIterator*);
     void detachNodeIterator(NodeIterator*);
-    void notifyBeforeNodeRemoval(Node*);
+
+    void attachRange(Range*);
+    void detachRange(Range*);
+
+    void nodeChildrenChanged(ContainerNode* container, Node* beforeChange, Node* afterChange, int childCountDelta);
+    void nodeWillBeRemoved(Node*);
+
+    void textInserted(Node*, unsigned offset, unsigned length);
+    void textRemoved(Node*, unsigned offset, unsigned length);
+    void textNodesMerged(Text* oldNode, unsigned offset);
+    void textNodeSplit(Text* oldNode);
+
     DOMWindow* defaultView() const;
     PassRefPtr<Event> createEvent(const String& eventType, ExceptionCode&);
 
@@ -751,6 +763,7 @@ private:
     unsigned m_domtree_version;
     
     HashSet<NodeIterator*> m_nodeIterators;
+    HashSet<Range*> m_ranges;
 
     unsigned short m_listenerTypes;
     RefPtr<StyleSheetList> m_styleSheets;
@@ -953,6 +966,7 @@ private:
     typedef HashSet<Database*> DatabaseSet;
     OwnPtr<DatabaseSet> m_openDatabaseSet;
 #endif
+
 #if USE(LOW_BANDWIDTH_DISPLAY)
     bool m_inLowBandwidthDisplay;
 #endif
