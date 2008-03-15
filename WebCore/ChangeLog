@@ -1,3 +1,23 @@
+2008-03-15  Mark Mentovai  <mark@moxienet.com>
+
+        Reviewed and landed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=17833
+          use file extensions instead of explicit file types in WebCore's Xcode project
+
+        * WebCore.xcodeproj/project.pbxproj: Remove unnecessary
+          uses of explicitFileType, preferring lastKnownFileType ("File Type:
+          Default for File" in Xcode's File Info's General tab).  Files below
+          that relied on an explicit file type setting other than what would
+          be implied by their extensions have been renamed to have correct
+          extensions.
+        * bridge/jni/jni_jsobject.cpp: Removed.
+        * bridge/jni/jni_jsobject.mm: Copied from bridge/jni/jni_jsobject.cpp.
+        * loader/mac/LoaderNSURLExtras.m: Removed.
+        * loader/mac/LoaderNSURLExtras.mm: Copied from loader/mac/LoaderNSURLExtras.m.
+        * platform/mac/SharedTimerMac.cpp: Removed.
+        * platform/mac/SharedTimerMac.mm: Copied from platform/mac/SharedTimerMac.cpp.
+
 2008-03-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
