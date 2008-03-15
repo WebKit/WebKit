@@ -52,7 +52,7 @@ namespace KJS {
         int sourceId() const { return m_sourceId; }
 
         void didFinishParsing(SourceElements*, ParserRefCountedData<DeclarationStacks::VarStack>*, 
-                              ParserRefCountedData<DeclarationStacks::FunctionStack>*, int lastLine);
+                              ParserRefCountedData<DeclarationStacks::FunctionStack>*, bool usesEval, bool needsClosure, int lastLine);
 
     private:
         friend Parser& parser();
@@ -66,6 +66,8 @@ namespace KJS {
         RefPtr<SourceElements> m_sourceElements;
         RefPtr<ParserRefCountedData<DeclarationStacks::VarStack> > m_varDeclarations;
         RefPtr<ParserRefCountedData<DeclarationStacks::FunctionStack> > m_funcDeclarations;
+        bool m_usesEval;
+        bool m_needsClosure;
         int m_lastLine;
     };
     
@@ -84,7 +86,9 @@ namespace KJS {
         }
         RefPtr<ParsedNode> node = ParsedNode::create(m_sourceElements.release().get(),
                                                      m_varDeclarations ? &m_varDeclarations->data : 0, 
-                                                     m_funcDeclarations ? &m_funcDeclarations->data : 0);
+                                                     m_funcDeclarations ? &m_funcDeclarations->data : 0,
+                                                     m_usesEval,
+                                                     m_needsClosure);
         m_varDeclarations = 0;
         m_funcDeclarations = 0;
         m_sourceURL = UString();

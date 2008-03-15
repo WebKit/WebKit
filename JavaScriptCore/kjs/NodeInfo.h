@@ -25,19 +25,40 @@
 
 namespace KJS {
 
-template <typename T> struct NodeInfo {
-    T m_node;
-    ParserRefCountedData<DeclarationStacks::VarStack>* m_varDeclarations;
-    ParserRefCountedData<DeclarationStacks::FunctionStack>* m_funcDeclarations;
-};
+    typedef unsigned int FeatureInfo;
 
-typedef NodeInfo<StatementNode*> StatementNodeInfo;
-typedef NodeInfo<CaseBlockNode*> CaseBlockNodeInfo;
-typedef NodeInfo<CaseClauseNode*> CaseClauseNodeInfo;
-typedef NodeInfo<SourceElements*> SourceElementsInfo;
-typedef NodeInfo<ClauseList> ClauseListInfo;
-typedef NodeInfo<ExpressionNode*> VarDeclListInfo;
-typedef NodeInfo<ConstDeclList> ConstDeclListInfo;
+    const FeatureInfo NoFeatures = 0;
+    const FeatureInfo EvalFeature = 1 << 0;
+    const FeatureInfo ClosureFeature = 1 << 1;
+
+    template <typename T> struct NodeFeatureInfo {
+        T m_node;
+        FeatureInfo m_featureInfo;
+    };
+    
+    typedef NodeFeatureInfo<FuncExprNode*> FuncExprNodeInfo;
+    typedef NodeFeatureInfo<ExpressionNode*> ExpressionNodeInfo;
+    typedef NodeFeatureInfo<ArgumentsNode*> ArgumentsNodeInfo;
+    typedef NodeFeatureInfo<ConstDeclNode*> ConstDeclNodeInfo;
+    typedef NodeFeatureInfo<PropertyNode*> PropertyNodeInfo;
+    typedef NodeFeatureInfo<PropertyList> PropertyListInfo;
+    typedef NodeFeatureInfo<ElementList> ElementListInfo;
+    typedef NodeFeatureInfo<ArgumentList> ArgumentListInfo;
+    
+    template <typename T> struct NodeDeclarationInfo {
+        T m_node;
+        ParserRefCountedData<DeclarationStacks::VarStack>* m_varDeclarations;
+        ParserRefCountedData<DeclarationStacks::FunctionStack>* m_funcDeclarations;
+        FeatureInfo m_featureInfo;
+    };
+    
+    typedef NodeDeclarationInfo<StatementNode*> StatementNodeInfo;
+    typedef NodeDeclarationInfo<CaseBlockNode*> CaseBlockNodeInfo;
+    typedef NodeDeclarationInfo<CaseClauseNode*> CaseClauseNodeInfo;
+    typedef NodeDeclarationInfo<SourceElements*> SourceElementsInfo;
+    typedef NodeDeclarationInfo<ClauseList> ClauseListInfo;
+    typedef NodeDeclarationInfo<ExpressionNode*> VarDeclListInfo;
+    typedef NodeDeclarationInfo<ConstDeclList> ConstDeclListInfo;
 
 } // namespace KJS
 

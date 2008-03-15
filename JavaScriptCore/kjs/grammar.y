@@ -66,7 +66,7 @@ static ExpressionNode* makeAssignNode(ExpressionNode* loc, Operator, ExpressionN
 static ExpressionNode* makePrefixNode(ExpressionNode* expr, Operator);
 static ExpressionNode* makePostfixNode(ExpressionNode* expr, Operator);
 static PropertyNode* makeGetterOrSetterPropertyNode(const Identifier &getOrSet, const Identifier& name, ParameterNode*, FunctionBodyNode*);
-static ExpressionNode* makeFunctionCallNode(ExpressionNode* func, ArgumentsNode*);
+static ExpressionNodeInfo makeFunctionCallNode(ExpressionNodeInfo func, ArgumentsNodeInfo);
 static ExpressionNode* makeTypeOfNode(ExpressionNode*);
 static ExpressionNode* makeDeleteNode(ExpressionNode*);
 static ExpressionNode* makeNegateNode(ExpressionNode*);
@@ -89,10 +89,19 @@ static ExpressionNode* combineVarInitializers(ExpressionNode* list, AssignResolv
 
 #endif
 
-template <typename T> NodeInfo<T> createNodeInfo(T node, ParserRefCountedData<DeclarationStacks::VarStack>* varDecls, 
-                                                 ParserRefCountedData<DeclarationStacks::FunctionStack>* funcDecls) 
+template <typename T> NodeDeclarationInfo<T> createNodeDeclarationInfo(T node, ParserRefCountedData<DeclarationStacks::VarStack>* varDecls, 
+                                                                       ParserRefCountedData<DeclarationStacks::FunctionStack>* funcDecls,
+                                                                       FeatureInfo info) 
 {
-    NodeInfo<T> result = {node, varDecls, funcDecls};
+    ASSERT((info & ~(EvalFeature | ClosureFeature)) == 0);
+    NodeDeclarationInfo<T> result = {node, varDecls, funcDecls, info};
+    return result;
+}
+
+template <typename T> NodeFeatureInfo<T> createNodeFeatureInfo(T node, FeatureInfo info) 
+{
+    ASSERT((info & ~(EvalFeature | ClosureFeature)) == 0);
+    NodeFeatureInfo<T> result = {node, info};
     return result;
 }
 
@@ -141,14 +150,14 @@ static inline void appendToVarDeclarationList(ParserRefCountedData<DeclarationSt
     Identifier*         ident;
 
     // expression subtrees
-    ExpressionNode*     expressionNode;
+    ExpressionNodeInfo  expressionNode;
     FuncDeclNode*       funcDeclNode;
-    PropertyNode*       propertyNode;
-    ArgumentsNode*      argumentsNode;
-    ConstDeclNode*      constDeclNode;
+    PropertyNodeInfo    propertyNode;
+    ArgumentsNodeInfo   argumentsNode;
+    ConstDeclNodeInfo   constDeclNode;
     CaseBlockNodeInfo   caseBlockNode;
     CaseClauseNodeInfo  caseClauseNode;
-    FuncExprNode*       funcExprNode;
+    FuncExprNodeInfo    funcExprNode;
 
     // statement nodes
     StatementNodeInfo   statementNode;
@@ -156,12 +165,12 @@ static inline void appendToVarDeclarationList(ParserRefCountedData<DeclarationSt
     ProgramNode*        programNode;
 
     SourceElementsInfo  sourceElements;
-    PropertyList        propertyList;
-    ArgumentList        argumentList;
+    PropertyListInfo    propertyList;
+    ArgumentListInfo    argumentList;
     VarDeclListInfo     varDeclList;
     ConstDeclListInfo   constDeclList;
     ClauseListInfo      clauseList;
-    ElementList         elementList;
+    ElementListInfo     elementList;
     ParameterList       parameterList;
 
     Operator            op;
@@ -264,69 +273,73 @@ static inline void appendToVarDeclarationList(ParserRefCountedData<DeclarationSt
 %%
 
 Literal:
-    NULLTOKEN                           { $$ = new NullNode; }
-  | TRUETOKEN                           { $$ = new TrueNode; }
-  | FALSETOKEN                          { $$ = new FalseNode; }
-  | NUMBER                              { $$ = makeNumberNode($1); }
-  | STRING                              { $$ = new StringNode($1); }
+    NULLTOKEN                           { $$ = createNodeFeatureInfo<ExpressionNode*>(new NullNode, 0); }
+  | TRUETOKEN                           { $$ = createNodeFeatureInfo<ExpressionNode*>(new TrueNode, 0); }
+  | FALSETOKEN                          { $$ = createNodeFeatureInfo<ExpressionNode*>(new FalseNode, 0); }
+  | NUMBER                              { $$ = createNodeFeatureInfo<ExpressionNode*>(makeNumberNode($1), 0); }
+  | STRING                              { $$ = createNodeFeatureInfo<ExpressionNode*>(new StringNode($1), 0); }
   | '/' /* regexp */                    {
                                             Lexer& l = lexer();
                                             if (!l.scanRegExp())
                                                 YYABORT;
-                                            $$ = new RegExpNode(l.pattern(), l.flags());
+                                            $$ = createNodeFeatureInfo<ExpressionNode*>(new RegExpNode(l.pattern(), l.flags()), 0);
                                         }
   | DIVEQUAL /* regexp with /= */       {
                                             Lexer& l = lexer();
                                             if (!l.scanRegExp())
                                                 YYABORT;
-                                            $$ = new RegExpNode("=" + l.pattern(), l.flags());
+                                            $$ = createNodeFeatureInfo<ExpressionNode*>(new RegExpNode("=" + l.pattern(), l.flags()), 0);
                                         }
 ;
 
 Property:
-    IDENT ':' AssignmentExpr            { $$ = new PropertyNode(*$1, $3, PropertyNode::Constant); }
-  | STRING ':' AssignmentExpr           { $$ = new PropertyNode(Identifier(*$1), $3, PropertyNode::Constant); }
-  | NUMBER ':' AssignmentExpr           { $$ = new PropertyNode(Identifier(UString::from($1)), $3, PropertyNode::Constant); }
-  | IDENT IDENT '(' ')' '{' FunctionBody '}'    { $$ = makeGetterOrSetterPropertyNode(*$1, *$2, 0, $6); DBG($6, @5, @7); if (!$$) YYABORT; }
+    IDENT ':' AssignmentExpr            { $$ = createNodeFeatureInfo<PropertyNode*>(new PropertyNode(*$1, $3.m_node, PropertyNode::Constant), $3.m_featureInfo); }
+  | STRING ':' AssignmentExpr           { $$ = createNodeFeatureInfo<PropertyNode*>(new PropertyNode(Identifier(*$1), $3.m_node, PropertyNode::Constant), $3.m_featureInfo); }
+  | NUMBER ':' AssignmentExpr           { $$ = createNodeFeatureInfo<PropertyNode*>(new PropertyNode(Identifier(UString::from($1)), $3.m_node, PropertyNode::Constant), $3.m_featureInfo); }
+  | IDENT IDENT '(' ')' '{' FunctionBody '}'    { $$ = createNodeFeatureInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(*$1, *$2, 0, $6), ClosureFeature); DBG($6, @5, @7); if (!$$.m_node) YYABORT; }
   | IDENT IDENT '(' FormalParameterList ')' '{' FunctionBody '}'
-                                        { $$ = makeGetterOrSetterPropertyNode(*$1, *$2, $4.head, $7); DBG($7, @6, @8); if (!$$) YYABORT; }
+                                        { $$ = createNodeFeatureInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(*$1, *$2, $4.head, $7), ClosureFeature); DBG($7, @6, @8); if (!$$.m_node) YYABORT; }
 ;
 
 PropertyList:
-    Property                            { $$.head = new PropertyListNode($1); 
-                                          $$.tail = $$.head; }
-  | PropertyList ',' Property           { $$.head = $1.head;
-                                          $$.tail = new PropertyListNode($3, $1.tail); }
+    Property                            { $$.m_node.head = new PropertyListNode($1.m_node); 
+                                          $$.m_node.tail = $$.m_node.head;
+                                          $$.m_featureInfo = $1.m_featureInfo; }
+  | PropertyList ',' Property           { $$.m_node.head = $1.m_node.head;
+                                          $$.m_node.tail = new PropertyListNode($3.m_node, $1.m_node.tail);
+                                          $$.m_featureInfo = $1.m_featureInfo | $3.m_featureInfo;  }
 ;
 
 PrimaryExpr:
     PrimaryExprNoBrace
-  | '{' '}'                             { $$ = new ObjectLiteralNode(); }
-  | '{' PropertyList '}'                { $$ = new ObjectLiteralNode($2.head); }
+  | '{' '}'                             { $$ = createNodeFeatureInfo<ExpressionNode*>(new ObjectLiteralNode(), 0); }
+  | '{' PropertyList '}'                { $$ = createNodeFeatureInfo<ExpressionNode*>(new ObjectLiteralNode($2.m_node.head), $2.m_featureInfo); }
   /* allow extra comma, see http://bugs.webkit.org/show_bug.cgi?id=5939 */
-  | '{' PropertyList ',' '}'            { $$ = new ObjectLiteralNode($2.head); }
+  | '{' PropertyList ',' '}'            { $$ = createNodeFeatureInfo<ExpressionNode*>(new ObjectLiteralNode($2.m_node.head), $2.m_featureInfo); }
 ;
 
 PrimaryExprNoBrace:
-    THISTOKEN                           { $$ = new ThisNode(); }
+    THISTOKEN                           { $$ = createNodeFeatureInfo<ExpressionNode*>(new ThisNode(), 0); }
   | Literal
   | ArrayLiteral
-  | IDENT                               { $$ = new ResolveNode(*$1); }
+  | IDENT                               { $$ = createNodeFeatureInfo<ExpressionNode*>(new ResolveNode(*$1), 0); }
   | '(' Expr ')'                        { $$ = $2; }
 ;
 
 ArrayLiteral:
-    '[' ElisionOpt ']'                  { $$ = new ArrayNode($2); }
-  | '[' ElementList ']'                 { $$ = new ArrayNode($2.head); }
-  | '[' ElementList ',' ElisionOpt ']'  { $$ = new ArrayNode($4, $2.head); }
+    '[' ElisionOpt ']'                  { $$ = createNodeFeatureInfo<ExpressionNode*>(new ArrayNode($2), 0); }
+  | '[' ElementList ']'                 { $$ = createNodeFeatureInfo<ExpressionNode*>(new ArrayNode($2.m_node.head), $2.m_featureInfo); }
+  | '[' ElementList ',' ElisionOpt ']'  { $$ = createNodeFeatureInfo<ExpressionNode*>(new ArrayNode($4, $2.m_node.head), $2.m_featureInfo); }
 ;
 
 ElementList:
-    ElisionOpt AssignmentExpr           { $$.head = new ElementNode($1, $2);
-                                          $$.tail = $$.head; }
+    ElisionOpt AssignmentExpr           { $$.m_node.head = new ElementNode($1, $2.m_node);
+                                          $$.m_node.tail = $$.m_node.head;
+                                          $$.m_featureInfo = $2.m_featureInfo; }
   | ElementList ',' ElisionOpt AssignmentExpr
-                                        { $$.head = $1.head;
-                                          $$.tail = new ElementNode($1.tail, $3, $4); }
+                                        { $$.m_node.head = $1.m_node.head;
+                                          $$.m_node.tail = new ElementNode($1.m_node.tail, $3, $4.m_node);
+                                          $$.m_featureInfo = $1.m_featureInfo | $4.m_featureInfo; }
 ;
 
 ElisionOpt:
@@ -341,53 +354,55 @@ Elision:
 
 MemberExpr:
     PrimaryExpr
-  | FunctionExpr                        { $$ = $1; }
-  | MemberExpr '[' Expr ']'             { $$ = new BracketAccessorNode($1, $3); }
-  | MemberExpr '.' IDENT                { $$ = new DotAccessorNode($1, *$3); }
-  | NEW MemberExpr Arguments            { $$ = new NewExprNode($2, $3); }
+  | FunctionExpr                        { $$ = createNodeFeatureInfo<ExpressionNode*>($1.m_node, $1.m_featureInfo); }
+  | MemberExpr '[' Expr ']'             { $$ = createNodeFeatureInfo<ExpressionNode*>(new BracketAccessorNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | MemberExpr '.' IDENT                { $$ = createNodeFeatureInfo<ExpressionNode*>(new DotAccessorNode($1.m_node, *$3), $1.m_featureInfo); }
+  | NEW MemberExpr Arguments            { $$ = createNodeFeatureInfo<ExpressionNode*>(new NewExprNode($2.m_node, $3.m_node), $2.m_featureInfo | $3.m_featureInfo); }
 ;
 
 MemberExprNoBF:
     PrimaryExprNoBrace
-  | MemberExprNoBF '[' Expr ']'         { $$ = new BracketAccessorNode($1, $3); }
-  | MemberExprNoBF '.' IDENT            { $$ = new DotAccessorNode($1, *$3); }
-  | NEW MemberExpr Arguments            { $$ = new NewExprNode($2, $3); }
+  | MemberExprNoBF '[' Expr ']'         { $$ = createNodeFeatureInfo<ExpressionNode*>(new BracketAccessorNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | MemberExprNoBF '.' IDENT            { $$ = createNodeFeatureInfo<ExpressionNode*>(new DotAccessorNode($1.m_node, *$3), $1.m_featureInfo); }
+  | NEW MemberExpr Arguments            { $$ = createNodeFeatureInfo<ExpressionNode*>(new NewExprNode($2.m_node, $3.m_node), $2.m_featureInfo | $3.m_featureInfo); }
 ;
 
 NewExpr:
     MemberExpr
-  | NEW NewExpr                         { $$ = new NewExprNode($2); }
+  | NEW NewExpr                         { $$ = createNodeFeatureInfo<ExpressionNode*>(new NewExprNode($2.m_node), $2.m_featureInfo); }
 ;
 
 NewExprNoBF:
     MemberExprNoBF
-  | NEW NewExpr                         { $$ = new NewExprNode($2); }
+  | NEW NewExpr                         { $$ = createNodeFeatureInfo<ExpressionNode*>(new NewExprNode($2.m_node), $2.m_featureInfo); }
 ;
 
 CallExpr:
     MemberExpr Arguments                { $$ = makeFunctionCallNode($1, $2); }
   | CallExpr Arguments                  { $$ = makeFunctionCallNode($1, $2); }
-  | CallExpr '[' Expr ']'               { $$ = new BracketAccessorNode($1, $3); }
-  | CallExpr '.' IDENT                  { $$ = new DotAccessorNode($1, *$3); }
+  | CallExpr '[' Expr ']'               { $$ = createNodeFeatureInfo<ExpressionNode*>(new BracketAccessorNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | CallExpr '.' IDENT                  { $$ = createNodeFeatureInfo<ExpressionNode*>(new DotAccessorNode($1.m_node, *$3), $1.m_featureInfo); }
 ;
 
 CallExprNoBF:
     MemberExprNoBF Arguments            { $$ = makeFunctionCallNode($1, $2); }
   | CallExprNoBF Arguments              { $$ = makeFunctionCallNode($1, $2); }
-  | CallExprNoBF '[' Expr ']'           { $$ = new BracketAccessorNode($1, $3); }
-  | CallExprNoBF '.' IDENT              { $$ = new DotAccessorNode($1, *$3); }
+  | CallExprNoBF '[' Expr ']'           { $$ = createNodeFeatureInfo<ExpressionNode*>(new BracketAccessorNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | CallExprNoBF '.' IDENT              { $$ = createNodeFeatureInfo<ExpressionNode*>(new DotAccessorNode($1.m_node, *$3), $1.m_featureInfo); }
 ;
 
 Arguments:
-    '(' ')'                             { $$ = new ArgumentsNode(); }
-  | '(' ArgumentList ')'                { $$ = new ArgumentsNode($2.head); }
+    '(' ')'                             { $$ = createNodeFeatureInfo<ArgumentsNode*>(new ArgumentsNode(), 0); }
+  | '(' ArgumentList ')'                { $$ = createNodeFeatureInfo<ArgumentsNode*>(new ArgumentsNode($2.m_node.head), $2.m_featureInfo); }
 ;
 
 ArgumentList:
-    AssignmentExpr                      { $$.head = new ArgumentListNode($1);
-                                          $$.tail = $$.head; }
-  | ArgumentList ',' AssignmentExpr     { $$.head = $1.head;
-                                          $$.tail = new ArgumentListNode($1.tail, $3); }
+    AssignmentExpr                      { $$.m_node.head = new ArgumentListNode($1.m_node);
+                                          $$.m_node.tail = $$.m_node.head;
+                                          $$.m_featureInfo = $1.m_featureInfo; }
+  | ArgumentList ',' AssignmentExpr     { $$.m_node.head = $1.m_node.head;
+                                          $$.m_node.tail = new ArgumentListNode($1.m_node.tail, $3.m_node);
+                                          $$.m_featureInfo = $1.m_featureInfo | $3.m_featureInfo; }
 ;
 
 LeftHandSideExpr:
@@ -402,28 +417,28 @@ LeftHandSideExprNoBF:
 
 PostfixExpr:
     LeftHandSideExpr
-  | LeftHandSideExpr PLUSPLUS           { $$ = makePostfixNode($1, OpPlusPlus); }
-  | LeftHandSideExpr MINUSMINUS         { $$ = makePostfixNode($1, OpMinusMinus); }
+  | LeftHandSideExpr PLUSPLUS           { $$ = createNodeFeatureInfo<ExpressionNode*>(makePostfixNode($1.m_node, OpPlusPlus), $1.m_featureInfo); }
+  | LeftHandSideExpr MINUSMINUS         { $$ = createNodeFeatureInfo<ExpressionNode*>(makePostfixNode($1.m_node, OpMinusMinus), $1.m_featureInfo); }
 ;
 
 PostfixExprNoBF:
     LeftHandSideExprNoBF
-  | LeftHandSideExprNoBF PLUSPLUS       { $$ = makePostfixNode($1, OpPlusPlus); }
-  | LeftHandSideExprNoBF MINUSMINUS     { $$ = makePostfixNode($1, OpMinusMinus); }
+  | LeftHandSideExprNoBF PLUSPLUS       { $$ = createNodeFeatureInfo<ExpressionNode*>(makePostfixNode($1.m_node, OpPlusPlus), $1.m_featureInfo); }
+  | LeftHandSideExprNoBF MINUSMINUS     { $$ = createNodeFeatureInfo<ExpressionNode*>(makePostfixNode($1.m_node, OpMinusMinus), $1.m_featureInfo); }
 ;
 
 UnaryExprCommon:
-    DELETETOKEN UnaryExpr               { $$ = makeDeleteNode($2); }
-  | VOIDTOKEN UnaryExpr                 { $$ = new VoidNode($2); }
-  | TYPEOF UnaryExpr                    { $$ = makeTypeOfNode($2); }
-  | PLUSPLUS UnaryExpr                  { $$ = makePrefixNode($2, OpPlusPlus); }
-  | AUTOPLUSPLUS UnaryExpr              { $$ = makePrefixNode($2, OpPlusPlus); }
-  | MINUSMINUS UnaryExpr                { $$ = makePrefixNode($2, OpMinusMinus); }
-  | AUTOMINUSMINUS UnaryExpr            { $$ = makePrefixNode($2, OpMinusMinus); }
-  | '+' UnaryExpr                       { $$ = new UnaryPlusNode($2); }
-  | '-' UnaryExpr                       { $$ = makeNegateNode($2); }
-  | '~' UnaryExpr                       { $$ = new BitwiseNotNode($2); }
-  | '!' UnaryExpr                       { $$ = new LogicalNotNode($2); }
+    DELETETOKEN UnaryExpr               { $$ = createNodeFeatureInfo<ExpressionNode*>(makeDeleteNode($2.m_node), $2.m_featureInfo); }
+  | VOIDTOKEN UnaryExpr                 { $$ = createNodeFeatureInfo<ExpressionNode*>(new VoidNode($2.m_node), $2.m_featureInfo); }
+  | TYPEOF UnaryExpr                    { $$ = createNodeFeatureInfo<ExpressionNode*>(makeTypeOfNode($2.m_node), $2.m_featureInfo); }
+  | PLUSPLUS UnaryExpr                  { $$ = createNodeFeatureInfo<ExpressionNode*>(makePrefixNode($2.m_node, OpPlusPlus), $2.m_featureInfo); }
+  | AUTOPLUSPLUS UnaryExpr              { $$ = createNodeFeatureInfo<ExpressionNode*>(makePrefixNode($2.m_node, OpPlusPlus), $2.m_featureInfo); }
+  | MINUSMINUS UnaryExpr                { $$ = createNodeFeatureInfo<ExpressionNode*>(makePrefixNode($2.m_node, OpMinusMinus), $2.m_featureInfo); }
+  | AUTOMINUSMINUS UnaryExpr            { $$ = createNodeFeatureInfo<ExpressionNode*>(makePrefixNode($2.m_node, OpMinusMinus), $2.m_featureInfo); }
+  | '+' UnaryExpr                       { $$ = createNodeFeatureInfo<ExpressionNode*>(new UnaryPlusNode($2.m_node), $2.m_featureInfo); }
+  | '-' UnaryExpr                       { $$ = createNodeFeatureInfo<ExpressionNode*>(makeNegateNode($2.m_node), $2.m_featureInfo); }
+  | '~' UnaryExpr                       { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitwiseNotNode($2.m_node), $2.m_featureInfo); }
+  | '!' UnaryExpr                       { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalNotNode($2.m_node), $2.m_featureInfo); }
 
 UnaryExpr:
     PostfixExpr
@@ -437,228 +452,228 @@ UnaryExprNoBF:
 
 MultiplicativeExpr:
     UnaryExpr
-  | MultiplicativeExpr '*' UnaryExpr    { $$ = new MultNode($1, $3); }
-  | MultiplicativeExpr '/' UnaryExpr    { $$ = new DivNode($1, $3); }
-  | MultiplicativeExpr '%' UnaryExpr    { $$ = new ModNode($1, $3); }
+  | MultiplicativeExpr '*' UnaryExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new MultNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | MultiplicativeExpr '/' UnaryExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new DivNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | MultiplicativeExpr '%' UnaryExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new ModNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 MultiplicativeExprNoBF:
     UnaryExprNoBF
   | MultiplicativeExprNoBF '*' UnaryExpr
-                                        { $$ = new MultNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new MultNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | MultiplicativeExprNoBF '/' UnaryExpr
-                                        { $$ = new DivNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new DivNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | MultiplicativeExprNoBF '%' UnaryExpr
-                                        { $$ = new ModNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new ModNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 AdditiveExpr:
     MultiplicativeExpr
-  | AdditiveExpr '+' MultiplicativeExpr { $$ = makeAddNode($1, $3); }
-  | AdditiveExpr '-' MultiplicativeExpr { $$ = new SubNode($1, $3); }
+  | AdditiveExpr '+' MultiplicativeExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(makeAddNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | AdditiveExpr '-' MultiplicativeExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new SubNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 AdditiveExprNoBF:
     MultiplicativeExprNoBF
   | AdditiveExprNoBF '+' MultiplicativeExpr
-                                        { $$ = makeAddNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(makeAddNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | AdditiveExprNoBF '-' MultiplicativeExpr
-                                        { $$ = new SubNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new SubNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 ShiftExpr:
     AdditiveExpr
-  | ShiftExpr LSHIFT AdditiveExpr       { $$ = new LeftShiftNode($1, $3); }
-  | ShiftExpr RSHIFT AdditiveExpr       { $$ = new RightShiftNode($1, $3); }
-  | ShiftExpr URSHIFT AdditiveExpr      { $$ = new UnsignedRightShiftNode($1, $3); }
+  | ShiftExpr LSHIFT AdditiveExpr       { $$ = createNodeFeatureInfo<ExpressionNode*>(new LeftShiftNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | ShiftExpr RSHIFT AdditiveExpr       { $$ = createNodeFeatureInfo<ExpressionNode*>(new RightShiftNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | ShiftExpr URSHIFT AdditiveExpr      { $$ = createNodeFeatureInfo<ExpressionNode*>(new UnsignedRightShiftNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 ShiftExprNoBF:
     AdditiveExprNoBF
-  | ShiftExprNoBF LSHIFT AdditiveExpr   { $$ = new LeftShiftNode($1, $3); }
-  | ShiftExprNoBF RSHIFT AdditiveExpr   { $$ = new RightShiftNode($1, $3); }
-  | ShiftExprNoBF URSHIFT AdditiveExpr  { $$ = new UnsignedRightShiftNode($1, $3); }
+  | ShiftExprNoBF LSHIFT AdditiveExpr   { $$ = createNodeFeatureInfo<ExpressionNode*>(new LeftShiftNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | ShiftExprNoBF RSHIFT AdditiveExpr   { $$ = createNodeFeatureInfo<ExpressionNode*>(new RightShiftNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | ShiftExprNoBF URSHIFT AdditiveExpr  { $$ = createNodeFeatureInfo<ExpressionNode*>(new UnsignedRightShiftNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 RelationalExpr:
     ShiftExpr
-  | RelationalExpr '<' ShiftExpr        { $$ = makeLessNode($1, $3); }
-  | RelationalExpr '>' ShiftExpr        { $$ = new GreaterNode($1, $3); }
-  | RelationalExpr LE ShiftExpr         { $$ = new LessEqNode($1, $3); }
-  | RelationalExpr GE ShiftExpr         { $$ = new GreaterEqNode($1, $3); }
-  | RelationalExpr INSTANCEOF ShiftExpr { $$ = new InstanceOfNode($1, $3); }
-  | RelationalExpr INTOKEN ShiftExpr    { $$ = new InNode($1, $3); }
+  | RelationalExpr '<' ShiftExpr        { $$ = createNodeFeatureInfo<ExpressionNode*>(makeLessNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExpr '>' ShiftExpr        { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExpr LE ShiftExpr         { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExpr GE ShiftExpr         { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExpr INSTANCEOF ShiftExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new InstanceOfNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExpr INTOKEN ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new InNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 RelationalExprNoIn:
     ShiftExpr
-  | RelationalExprNoIn '<' ShiftExpr    { $$ = makeLessNode($1, $3); }
-  | RelationalExprNoIn '>' ShiftExpr    { $$ = new GreaterNode($1, $3); }
-  | RelationalExprNoIn LE ShiftExpr     { $$ = new LessEqNode($1, $3); }
-  | RelationalExprNoIn GE ShiftExpr     { $$ = new GreaterEqNode($1, $3); }
+  | RelationalExprNoIn '<' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(makeLessNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoIn '>' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoIn LE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoIn GE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | RelationalExprNoIn INSTANCEOF ShiftExpr
-                                        { $$ = new InstanceOfNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new InstanceOfNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 RelationalExprNoBF:
     ShiftExprNoBF
-  | RelationalExprNoBF '<' ShiftExpr    { $$ = makeLessNode($1, $3); }
-  | RelationalExprNoBF '>' ShiftExpr    { $$ = new GreaterNode($1, $3); }
-  | RelationalExprNoBF LE ShiftExpr     { $$ = new LessEqNode($1, $3); }
-  | RelationalExprNoBF GE ShiftExpr     { $$ = new GreaterEqNode($1, $3); }
+  | RelationalExprNoBF '<' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(makeLessNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoBF '>' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoBF LE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoBF GE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | RelationalExprNoBF INSTANCEOF ShiftExpr
-                                        { $$ = new InstanceOfNode($1, $3); }
-  | RelationalExprNoBF INTOKEN ShiftExpr     { $$ = new InNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new InstanceOfNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoBF INTOKEN ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new InNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 EqualityExpr:
     RelationalExpr
-  | EqualityExpr EQEQ RelationalExpr    { $$ = new EqualNode($1, $3); }
-  | EqualityExpr NE RelationalExpr      { $$ = new NotEqualNode($1, $3); }
-  | EqualityExpr STREQ RelationalExpr   { $$ = new StrictEqualNode($1, $3); }
-  | EqualityExpr STRNEQ RelationalExpr  { $$ = new NotStrictEqualNode($1, $3); }
+  | EqualityExpr EQEQ RelationalExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new EqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | EqualityExpr NE RelationalExpr      { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | EqualityExpr STREQ RelationalExpr   { $$ = createNodeFeatureInfo<ExpressionNode*>(new StrictEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | EqualityExpr STRNEQ RelationalExpr  { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotStrictEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 EqualityExprNoIn:
     RelationalExprNoIn
   | EqualityExprNoIn EQEQ RelationalExprNoIn
-                                        { $$ = new EqualNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new EqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | EqualityExprNoIn NE RelationalExprNoIn
-                                        { $$ = new NotEqualNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | EqualityExprNoIn STREQ RelationalExprNoIn
-                                        { $$ = new StrictEqualNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new StrictEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | EqualityExprNoIn STRNEQ RelationalExprNoIn
-                                        { $$ = new NotStrictEqualNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotStrictEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 EqualityExprNoBF:
     RelationalExprNoBF
   | EqualityExprNoBF EQEQ RelationalExpr
-                                        { $$ = new EqualNode($1, $3); }
-  | EqualityExprNoBF NE RelationalExpr  { $$ = new NotEqualNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new EqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | EqualityExprNoBF NE RelationalExpr  { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | EqualityExprNoBF STREQ RelationalExpr
-                                        { $$ = new StrictEqualNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new StrictEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | EqualityExprNoBF STRNEQ RelationalExpr
-                                        { $$ = new NotStrictEqualNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotStrictEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseANDExpr:
     EqualityExpr
-  | BitwiseANDExpr '&' EqualityExpr     { $$ = new BitAndNode($1, $3); }
+  | BitwiseANDExpr '&' EqualityExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitAndNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseANDExprNoIn:
     EqualityExprNoIn
   | BitwiseANDExprNoIn '&' EqualityExprNoIn
-                                        { $$ = new BitAndNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitAndNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseANDExprNoBF:
     EqualityExprNoBF
-  | BitwiseANDExprNoBF '&' EqualityExpr { $$ = new BitAndNode($1, $3); }
+  | BitwiseANDExprNoBF '&' EqualityExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitAndNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseXORExpr:
     BitwiseANDExpr
-  | BitwiseXORExpr '^' BitwiseANDExpr   { $$ = new BitXOrNode($1, $3); }
+  | BitwiseXORExpr '^' BitwiseANDExpr   { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitXOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseXORExprNoIn:
     BitwiseANDExprNoIn
   | BitwiseXORExprNoIn '^' BitwiseANDExprNoIn
-                                        { $$ = new BitXOrNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitXOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseXORExprNoBF:
     BitwiseANDExprNoBF
   | BitwiseXORExprNoBF '^' BitwiseANDExpr
-                                        { $$ = new BitXOrNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitXOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseORExpr:
     BitwiseXORExpr
-  | BitwiseORExpr '|' BitwiseXORExpr    { $$ = new BitOrNode($1, $3); }
+  | BitwiseORExpr '|' BitwiseXORExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseORExprNoIn:
     BitwiseXORExprNoIn
   | BitwiseORExprNoIn '|' BitwiseXORExprNoIn
-                                        { $$ = new BitOrNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseORExprNoBF:
     BitwiseXORExprNoBF
   | BitwiseORExprNoBF '|' BitwiseXORExpr
-                                        { $$ = new BitOrNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 LogicalANDExpr:
     BitwiseORExpr
-  | LogicalANDExpr AND BitwiseORExpr    { $$ = new LogicalAndNode($1, $3); }
+  | LogicalANDExpr AND BitwiseORExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalAndNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 LogicalANDExprNoIn:
     BitwiseORExprNoIn
   | LogicalANDExprNoIn AND BitwiseORExprNoIn
-                                        { $$ = new LogicalAndNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalAndNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 LogicalANDExprNoBF:
     BitwiseORExprNoBF
   | LogicalANDExprNoBF AND BitwiseORExpr
-                                        { $$ = new LogicalAndNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalAndNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 LogicalORExpr:
     LogicalANDExpr
-  | LogicalORExpr OR LogicalANDExpr     { $$ = new LogicalOrNode($1, $3); }
+  | LogicalORExpr OR LogicalANDExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 LogicalORExprNoIn:
     LogicalANDExprNoIn
   | LogicalORExprNoIn OR LogicalANDExprNoIn
-                                        { $$ = new LogicalOrNode($1, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 LogicalORExprNoBF:
     LogicalANDExprNoBF
-  | LogicalORExprNoBF OR LogicalANDExpr { $$ = new LogicalOrNode($1, $3); }
+  | LogicalORExprNoBF OR LogicalANDExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 ConditionalExpr:
     LogicalORExpr
   | LogicalORExpr '?' AssignmentExpr ':' AssignmentExpr
-                                        { $$ = new ConditionalNode($1, $3, $5); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new ConditionalNode($1.m_node, $3.m_node, $5.m_node), $1.m_featureInfo | $3.m_featureInfo | $5.m_featureInfo); }
 ;
 
 ConditionalExprNoIn:
     LogicalORExprNoIn
   | LogicalORExprNoIn '?' AssignmentExprNoIn ':' AssignmentExprNoIn
-                                        { $$ = new ConditionalNode($1, $3, $5); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new ConditionalNode($1.m_node, $3.m_node, $5.m_node), $1.m_featureInfo | $3.m_featureInfo | $5.m_featureInfo); }
 ;
 
 ConditionalExprNoBF:
     LogicalORExprNoBF
   | LogicalORExprNoBF '?' AssignmentExpr ':' AssignmentExpr
-                                        { $$ = new ConditionalNode($1, $3, $5); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new ConditionalNode($1.m_node, $3.m_node, $5.m_node), $1.m_featureInfo | $3.m_featureInfo | $5.m_featureInfo); }
 ;
 
 AssignmentExpr:
     ConditionalExpr
   | LeftHandSideExpr AssignmentOperator AssignmentExpr
-                                        { $$ = makeAssignNode($1, $2, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(makeAssignNode($1.m_node, $2, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 AssignmentExprNoIn:
     ConditionalExprNoIn
   | LeftHandSideExpr AssignmentOperator AssignmentExprNoIn
-                                        { $$ = makeAssignNode($1, $2, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(makeAssignNode($1.m_node, $2, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 AssignmentExprNoBF:
     ConditionalExprNoBF
   | LeftHandSideExprNoBF AssignmentOperator AssignmentExpr
-                                        { $$ = makeAssignNode($1, $2, $3); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(makeAssignNode($1.m_node, $2, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 AssignmentOperator:
@@ -678,17 +693,17 @@ AssignmentOperator:
 
 Expr:
     AssignmentExpr
-  | Expr ',' AssignmentExpr             { $$ = new CommaNode($1, $3); }
+  | Expr ',' AssignmentExpr             { $$ = createNodeFeatureInfo<ExpressionNode*>(new CommaNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 ExprNoIn:
     AssignmentExprNoIn
-  | ExprNoIn ',' AssignmentExprNoIn     { $$ = new CommaNode($1, $3); }
+  | ExprNoIn ',' AssignmentExprNoIn     { $$ = createNodeFeatureInfo<ExpressionNode*>(new CommaNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 ExprNoBF:
     AssignmentExprNoBF
-  | ExprNoBF ',' AssignmentExpr         { $$ = new CommaNode($1, $3); }
+  | ExprNoBF ',' AssignmentExpr         { $$ = createNodeFeatureInfo<ExpressionNode*>(new CommaNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 Statement:
@@ -711,16 +726,16 @@ Statement:
 ;
 
 Block:
-    '{' '}'                             { $$ = createNodeInfo<StatementNode*>(new BlockNode(0), 0, 0);
+    '{' '}'                             { $$ = createNodeDeclarationInfo<StatementNode*>(new BlockNode(0), 0, 0, 0);
                                           DBG($$.m_node, @1, @2); }
-  | '{' SourceElements '}'              { $$ = createNodeInfo<StatementNode*>(new BlockNode($2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations);
+  | '{' SourceElements '}'              { $$ = createNodeDeclarationInfo<StatementNode*>(new BlockNode($2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_featureInfo);
                                           DBG($$.m_node, @1, @3); }
 ;
 
 VariableStatement:
-    VAR VariableDeclarationList ';'     { $$ = createNodeInfo<StatementNode*>(makeVarStatementNode($2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations);
+    VAR VariableDeclarationList ';'     { $$ = createNodeDeclarationInfo<StatementNode*>(makeVarStatementNode($2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_featureInfo);
                                           DBG($$.m_node, @1, @3); }
-  | VAR VariableDeclarationList error   { $$ = createNodeInfo<StatementNode*>(makeVarStatementNode($2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations);
+  | VAR VariableDeclarationList error   { $$ = createNodeDeclarationInfo<StatementNode*>(makeVarStatementNode($2.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_featureInfo);
                                           DBG($$.m_node, @1, @2);
                                           AUTO_SEMICOLON; }
 ;
@@ -730,23 +745,27 @@ VariableDeclarationList:
                                           $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>;
                                           appendToVarDeclarationList($$.m_varDeclarations, *$1, 0);
                                           $$.m_funcDeclarations = 0;
+                                          $$.m_featureInfo = 0;
                                         }
-  | IDENT Initializer                   { $$.m_node = new AssignResolveNode(*$1, $2);
+  | IDENT Initializer                   { $$.m_node = new AssignResolveNode(*$1, $2.m_node);
                                           $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>;
                                           appendToVarDeclarationList($$.m_varDeclarations, *$1, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
+                                          $$.m_featureInfo = $2.m_featureInfo;
                                         }
   | VariableDeclarationList ',' IDENT
                                         { $$.m_node = $1.m_node;
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           appendToVarDeclarationList($$.m_varDeclarations, *$3, 0);
                                           $$.m_funcDeclarations = 0;
+                                          $$.m_featureInfo = $1.m_featureInfo;
                                         }
   | VariableDeclarationList ',' IDENT Initializer
-                                        { $$.m_node = combineVarInitializers($1.m_node, new AssignResolveNode(*$3, $4));
+                                        { $$.m_node = combineVarInitializers($1.m_node, new AssignResolveNode(*$3, $4.m_node));
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           appendToVarDeclarationList($$.m_varDeclarations, *$3, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
+                                          $$.m_featureInfo = $1.m_featureInfo | $4.m_featureInfo;
                                         }
 ;
 
@@ -755,52 +774,59 @@ VariableDeclarationListNoIn:
                                           $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>;
                                           appendToVarDeclarationList($$.m_varDeclarations, *$1, 0);
                                           $$.m_funcDeclarations = 0;
+                                          $$.m_featureInfo = 0;
                                         }
-  | IDENT InitializerNoIn               { $$.m_node = new AssignResolveNode(*$1, $2);
+  | IDENT InitializerNoIn               { $$.m_node = new AssignResolveNode(*$1, $2.m_node);
                                           $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>;
                                           appendToVarDeclarationList($$.m_varDeclarations, *$1, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
+                                          $$.m_featureInfo = $2.m_featureInfo;
                                         }
   | VariableDeclarationListNoIn ',' IDENT
                                         { $$.m_node = $1.m_node;
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           appendToVarDeclarationList($$.m_varDeclarations, *$3, 0);
                                           $$.m_funcDeclarations = 0;
+                                          $$.m_featureInfo = $1.m_featureInfo;
                                         }
   | VariableDeclarationListNoIn ',' IDENT InitializerNoIn
-                                        { $$.m_node = combineVarInitializers($1.m_node, new AssignResolveNode(*$3, $4));
+                                        { $$.m_node = combineVarInitializers($1.m_node, new AssignResolveNode(*$3, $4.m_node));
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           appendToVarDeclarationList($$.m_varDeclarations, *$3, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
+                                          $$.m_featureInfo = $1.m_featureInfo | $4.m_featureInfo;
                                         }
 ;
 
 ConstStatement:
-    CONSTTOKEN ConstDeclarationList ';' { $$ = createNodeInfo<StatementNode*>(new ConstStatementNode($2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations);
+    CONSTTOKEN ConstDeclarationList ';' { $$ = createNodeDeclarationInfo<StatementNode*>(new ConstStatementNode($2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_featureInfo);
                                           DBG($$.m_node, @1, @3); }
   | CONSTTOKEN ConstDeclarationList error
-                                        { $$ = createNodeInfo<StatementNode*>(new ConstStatementNode($2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations);
+                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new ConstStatementNode($2.m_node.head), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_featureInfo);
                                           DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 ConstDeclarationList:
-    ConstDeclaration                    { $$.m_node.head = $1;
+    ConstDeclaration                    { $$.m_node.head = $1.m_node;
                                           $$.m_node.tail = $$.m_node.head;
                                           $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>;
-                                          appendToVarDeclarationList($$.m_varDeclarations, $1);
-                                          $$.m_funcDeclarations = 0; }
+                                          appendToVarDeclarationList($$.m_varDeclarations, $1.m_node);
+                                          $$.m_funcDeclarations = 0; 
+                                          $$.m_featureInfo = $1.m_featureInfo;
+    }
   | ConstDeclarationList ',' ConstDeclaration
                                         {  $$.m_node.head = $1.m_node.head;
-                                          $1.m_node.tail->m_next = $3;
-                                          $$.m_node.tail = $3;
+                                          $1.m_node.tail->m_next = $3.m_node;
+                                          $$.m_node.tail = $3.m_node;
                                           $$.m_varDeclarations = $1.m_varDeclarations;
-                                          appendToVarDeclarationList($$.m_varDeclarations, $3);
-                                          $$.m_funcDeclarations = 0; }
+                                          appendToVarDeclarationList($$.m_varDeclarations, $3.m_node);
+                                          $$.m_funcDeclarations = 0;
+                                          $$.m_featureInfo = $1.m_featureInfo | $3.m_featureInfo;}
 ;
 
 ConstDeclaration:
-    IDENT                               { $$ = new ConstDeclNode(*$1, 0); }
-  | IDENT Initializer                   { $$ = new ConstDeclNode(*$1, $2); }
+    IDENT                               { $$ = createNodeFeatureInfo<ConstDeclNode*>(new ConstDeclNode(*$1, 0), 0); }
+  | IDENT Initializer                   { $$ = createNodeFeatureInfo<ConstDeclNode*>(new ConstDeclNode(*$1, $2.m_node), $2.m_featureInfo); }
 ;
 
 Initializer:
@@ -812,116 +838,125 @@ InitializerNoIn:
 ;
 
 EmptyStatement:
-    ';'                                 { $$ = createNodeInfo<StatementNode*>(new EmptyStatementNode(), 0, 0); }
+    ';'                                 { $$ = createNodeDeclarationInfo<StatementNode*>(new EmptyStatementNode(), 0, 0, 0); }
 ;
 
 ExprStatement:
-    ExprNoBF ';'                        { $$ = createNodeInfo<StatementNode*>(new ExprStatementNode($1), 0, 0);
+    ExprNoBF ';'                        { $$ = createNodeDeclarationInfo<StatementNode*>(new ExprStatementNode($1.m_node), 0, 0, $1.m_featureInfo);
                                           DBG($$.m_node, @1, @2); }
-  | ExprNoBF error                      { $$ = createNodeInfo<StatementNode*>(new ExprStatementNode($1), 0, 0);
+  | ExprNoBF error                      { $$ = createNodeDeclarationInfo<StatementNode*>(new ExprStatementNode($1.m_node), 0, 0, $1.m_featureInfo);
                                           DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
 ;
 
 IfStatement:
     IF '(' Expr ')' Statement %prec IF_WITHOUT_ELSE
-                                        { $$ = createNodeInfo<StatementNode*>(new IfNode($3, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations);
+                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new IfNode($3.m_node, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations, $3.m_featureInfo | $5.m_featureInfo);
                                           DBG($$.m_node, @1, @4); }
   | IF '(' Expr ')' Statement ELSE Statement
-                                        { $$ = createNodeInfo<StatementNode*>(new IfElseNode($3, $5.m_node, $7.m_node), mergeDeclarationLists($5.m_varDeclarations, $7.m_varDeclarations), mergeDeclarationLists($5.m_funcDeclarations, $7.m_funcDeclarations)); 
+                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new IfElseNode($3.m_node, $5.m_node, $7.m_node), 
+                                                                                         mergeDeclarationLists($5.m_varDeclarations, $7.m_varDeclarations), mergeDeclarationLists($5.m_funcDeclarations, $7.m_funcDeclarations),
+                                                                                         $3.m_featureInfo | $5.m_featureInfo | $7.m_featureInfo); 
                                           DBG($$.m_node, @1, @4); }
 ;
 
 IterationStatement:
-    DO Statement WHILE '(' Expr ')' ';'    { $$ = createNodeInfo<StatementNode*>(new DoWhileNode($2.m_node, $5), $2.m_varDeclarations, $2.m_funcDeclarations);
+    DO Statement WHILE '(' Expr ')' ';'    { $$ = createNodeDeclarationInfo<StatementNode*>(new DoWhileNode($2.m_node, $5.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_featureInfo | $5.m_featureInfo);
                                              DBG($$.m_node, @1, @3); }
-  | DO Statement WHILE '(' Expr ')' error  { $$ = createNodeInfo<StatementNode*>(new DoWhileNode($2.m_node, $5), $2.m_varDeclarations, $2.m_funcDeclarations);
+  | DO Statement WHILE '(' Expr ')' error  { $$ = createNodeDeclarationInfo<StatementNode*>(new DoWhileNode($2.m_node, $5.m_node), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_featureInfo | $5.m_featureInfo);
                                              DBG($$.m_node, @1, @3); } // Always performs automatic semicolon insertion.
-  | WHILE '(' Expr ')' Statement        { $$ = createNodeInfo<StatementNode*>(new WhileNode($3, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations);
+  | WHILE '(' Expr ')' Statement        { $$ = createNodeDeclarationInfo<StatementNode*>(new WhileNode($3.m_node, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations, $3.m_featureInfo | $5.m_featureInfo);
                                           DBG($$.m_node, @1, @4); }
   | FOR '(' ExprNoInOpt ';' ExprOpt ';' ExprOpt ')' Statement
-                                        { $$ = createNodeInfo<StatementNode*>(new ForNode($3, $5, $7, $9.m_node, false), $9.m_varDeclarations, $9.m_funcDeclarations);
+                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new ForNode($3.m_node, $5.m_node, $7.m_node, $9.m_node, false), $9.m_varDeclarations, $9.m_funcDeclarations, 
+                                                                                         $3.m_featureInfo | $5.m_featureInfo | $7.m_featureInfo | $9.m_featureInfo);
                                           DBG($$.m_node, @1, @8); 
                                         }
   | FOR '(' VAR VariableDeclarationListNoIn ';' ExprOpt ';' ExprOpt ')' Statement
-                                                                            { $$ = createNodeInfo<StatementNode*>(new ForNode($4.m_node, $6, $8, $10.m_node, true),
-                                                                              mergeDeclarationLists($4.m_varDeclarations, $10.m_varDeclarations),
-                                                                              mergeDeclarationLists($4.m_funcDeclarations, $10.m_funcDeclarations));
+                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new ForNode($4.m_node, $6.m_node, $8.m_node, $10.m_node, true),
+                                                                                         mergeDeclarationLists($4.m_varDeclarations, $10.m_varDeclarations),
+                                                                                         mergeDeclarationLists($4.m_funcDeclarations, $10.m_funcDeclarations),
+                                                                                         $4.m_featureInfo | $6.m_featureInfo | $8.m_featureInfo | $10.m_featureInfo);
                                           DBG($$.m_node, @1, @9); }
   | FOR '(' LeftHandSideExpr INTOKEN Expr ')' Statement
                                         {
-                                            ExpressionNode* n = $3;
+                                            ExpressionNode* n = $3.m_node;
                                             if (!n->isLocation())
                                                 YYABORT;
-                                            $$ = createNodeInfo<StatementNode*>(new ForInNode(n, $5, $7.m_node), $7.m_varDeclarations, $7.m_funcDeclarations);
+                                            $$ = createNodeDeclarationInfo<StatementNode*>(new ForInNode($3.m_node, $5.m_node, $7.m_node), $7.m_varDeclarations, $7.m_funcDeclarations,
+                                                                                           $3.m_featureInfo | $5.m_featureInfo | $7.m_featureInfo);
                                             DBG($$.m_node, @1, @6);
                                         }
   | FOR '(' VAR IDENT INTOKEN Expr ')' Statement
-                                        { ForInNode *forIn = new ForInNode(*$4, 0, $6, $8.m_node);
+                                        { ForInNode *forIn = new ForInNode(*$4, 0, $6.m_node, $8.m_node);
                                           appendToVarDeclarationList($8.m_varDeclarations, *$4, DeclarationStacks::HasInitializer);
-                                          $$ = createNodeInfo<StatementNode*>(forIn, $8.m_varDeclarations, $8.m_funcDeclarations);
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(forIn, $8.m_varDeclarations, $8.m_funcDeclarations, $6.m_featureInfo | $8.m_featureInfo);
                                           DBG($$.m_node, @1, @7); }
   | FOR '(' VAR IDENT InitializerNoIn INTOKEN Expr ')' Statement
-                                        { ForInNode *forIn = new ForInNode(*$4, $5, $7, $9.m_node);
+                                        { ForInNode *forIn = new ForInNode(*$4, $5.m_node, $7.m_node, $9.m_node);
                                           appendToVarDeclarationList($9.m_varDeclarations, *$4, DeclarationStacks::HasInitializer);
-                                          $$ = createNodeInfo<StatementNode*>(forIn, $9.m_varDeclarations, $9.m_funcDeclarations);
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(forIn, $9.m_varDeclarations, $9.m_funcDeclarations,
+                                                                                         $5.m_featureInfo | $7.m_featureInfo | $9.m_featureInfo);
                                           DBG($$.m_node, @1, @8); }
 ;
 
 ExprOpt:
-    /* nothing */                       { $$ = 0; }
+    /* nothing */                       { $$ = createNodeFeatureInfo<ExpressionNode*>(0, 0); }
   | Expr
 ;
 
 ExprNoInOpt:
-    /* nothing */                       { $$ = 0; }
+    /* nothing */                       { $$ = createNodeFeatureInfo<ExpressionNode*>(0, 0); }
   | ExprNoIn
 ;
 
 ContinueStatement:
-    CONTINUE ';'                        { $$ = createNodeInfo<StatementNode*>(new ContinueNode(), 0, 0);
+    CONTINUE ';'                        { $$ = createNodeDeclarationInfo<StatementNode*>(new ContinueNode(), 0, 0, 0);
                                           DBG($$.m_node, @1, @2); }
-  | CONTINUE error                      { $$ = createNodeInfo<StatementNode*>(new ContinueNode(), 0, 0);
+  | CONTINUE error                      { $$ = createNodeDeclarationInfo<StatementNode*>(new ContinueNode(), 0, 0, 0);
                                           DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
-  | CONTINUE IDENT ';'                  { $$ = createNodeInfo<StatementNode*>(new ContinueNode(*$2), 0, 0);
+  | CONTINUE IDENT ';'                  { $$ = createNodeDeclarationInfo<StatementNode*>(new ContinueNode(*$2), 0, 0, 0);
                                           DBG($$.m_node, @1, @3); }
-  | CONTINUE IDENT error                { $$ = createNodeInfo<StatementNode*>(new ContinueNode(*$2), 0, 0);
+  | CONTINUE IDENT error                { $$ = createNodeDeclarationInfo<StatementNode*>(new ContinueNode(*$2), 0, 0, 0);
                                           DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 BreakStatement:
-    BREAK ';'                           { $$ = createNodeInfo<StatementNode*>(new BreakNode(), 0, 0); DBG($$.m_node, @1, @2); }
-  | BREAK error                         { $$ = createNodeInfo<StatementNode*>(new BreakNode(), 0, 0); DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
-  | BREAK IDENT ';'                     { $$ = createNodeInfo<StatementNode*>(new BreakNode(*$2), 0, 0); DBG($$.m_node, @1, @3); }
-  | BREAK IDENT error                   { $$ = createNodeInfo<StatementNode*>(new BreakNode(*$2), 0, 0); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
+    BREAK ';'                           { $$ = createNodeDeclarationInfo<StatementNode*>(new BreakNode(), 0, 0, 0); DBG($$.m_node, @1, @2); }
+  | BREAK error                         { $$ = createNodeDeclarationInfo<StatementNode*>(new BreakNode(), 0, 0, 0); DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
+  | BREAK IDENT ';'                     { $$ = createNodeDeclarationInfo<StatementNode*>(new BreakNode(*$2), 0, 0, 0); DBG($$.m_node, @1, @3); }
+  | BREAK IDENT error                   { $$ = createNodeDeclarationInfo<StatementNode*>(new BreakNode(*$2), 0, 0, 0); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 ReturnStatement:
-    RETURN ';'                          { $$ = createNodeInfo<StatementNode*>(new ReturnNode(0), 0, 0); DBG($$.m_node, @1, @2); }
-  | RETURN error                        { $$ = createNodeInfo<StatementNode*>(new ReturnNode(0), 0, 0); DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
-  | RETURN Expr ';'                     { $$ = createNodeInfo<StatementNode*>(new ReturnNode($2), 0, 0); DBG($$.m_node, @1, @3); }
-  | RETURN Expr error                   { $$ = createNodeInfo<StatementNode*>(new ReturnNode($2), 0, 0); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
+    RETURN ';'                          { $$ = createNodeDeclarationInfo<StatementNode*>(new ReturnNode(0), 0, 0, 0); DBG($$.m_node, @1, @2); }
+  | RETURN error                        { $$ = createNodeDeclarationInfo<StatementNode*>(new ReturnNode(0), 0, 0, 0); DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
+  | RETURN Expr ';'                     { $$ = createNodeDeclarationInfo<StatementNode*>(new ReturnNode($2.m_node), 0, 0, $2.m_featureInfo); DBG($$.m_node, @1, @3); }
+  | RETURN Expr error                   { $$ = createNodeDeclarationInfo<StatementNode*>(new ReturnNode($2.m_node), 0, 0, $2.m_featureInfo); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 WithStatement:
-    WITH '(' Expr ')' Statement         { $$ = createNodeInfo<StatementNode*>(new WithNode($3, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations);
+    WITH '(' Expr ')' Statement         { $$ = createNodeDeclarationInfo<StatementNode*>(new WithNode($3.m_node, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations,
+                                                                                         $3.m_featureInfo | $5.m_featureInfo);
                                           DBG($$.m_node, @1, @4); }
 ;
 
 SwitchStatement:
-    SWITCH '(' Expr ')' CaseBlock       { $$ = createNodeInfo<StatementNode*>(new SwitchNode($3, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations);
+    SWITCH '(' Expr ')' CaseBlock       { $$ = createNodeDeclarationInfo<StatementNode*>(new SwitchNode($3.m_node, $5.m_node), $5.m_varDeclarations, $5.m_funcDeclarations,
+                                                                                         $3.m_featureInfo | $5.m_featureInfo);
                                           DBG($$.m_node, @1, @4); }
 ;
 
 CaseBlock:
-    '{' CaseClausesOpt '}'              { $$ = createNodeInfo<CaseBlockNode*>(new CaseBlockNode($2.m_node.head, 0, 0), $2.m_varDeclarations, $2.m_funcDeclarations); }
+    '{' CaseClausesOpt '}'              { $$ = createNodeDeclarationInfo<CaseBlockNode*>(new CaseBlockNode($2.m_node.head, 0, 0), $2.m_varDeclarations, $2.m_funcDeclarations, $2.m_featureInfo); }
   | '{' CaseClausesOpt DefaultClause CaseClausesOpt '}'
-                                        { $$ = createNodeInfo<CaseBlockNode*>(new CaseBlockNode($2.m_node.head, $3.m_node, $4.m_node.head),
-                                                                              mergeDeclarationLists(mergeDeclarationLists($2.m_varDeclarations, $3.m_varDeclarations), $4.m_varDeclarations),
-                                                                              mergeDeclarationLists(mergeDeclarationLists($2.m_funcDeclarations, $3.m_funcDeclarations), $4.m_funcDeclarations)); }
+                                        { $$ = createNodeDeclarationInfo<CaseBlockNode*>(new CaseBlockNode($2.m_node.head, $3.m_node, $4.m_node.head),
+                                                                                         mergeDeclarationLists(mergeDeclarationLists($2.m_varDeclarations, $3.m_varDeclarations), $4.m_varDeclarations),
+                                                                                         mergeDeclarationLists(mergeDeclarationLists($2.m_funcDeclarations, $3.m_funcDeclarations), $4.m_funcDeclarations),
+                                                                                         $2.m_featureInfo | $3.m_featureInfo | $4.m_featureInfo); }
 ;
 
 CaseClausesOpt:
-    /* nothing */                       { $$.m_node.head = 0; $$.m_node.tail = 0; $$.m_varDeclarations = 0; $$.m_funcDeclarations = 0; }
+/* nothing */                       { $$.m_node.head = 0; $$.m_node.tail = 0; $$.m_varDeclarations = 0; $$.m_funcDeclarations = 0; $$.m_featureInfo = 0; }
   | CaseClauses
 ;
 
@@ -929,54 +964,59 @@ CaseClauses:
     CaseClause                          { $$.m_node.head = new ClauseListNode($1.m_node);
                                           $$.m_node.tail = $$.m_node.head;
                                           $$.m_varDeclarations = $1.m_varDeclarations;
-                                          $$.m_funcDeclarations = $1.m_funcDeclarations; }
+                                          $$.m_funcDeclarations = $1.m_funcDeclarations; 
+                                          $$.m_featureInfo = $1.m_featureInfo; } 
   | CaseClauses CaseClause              { $$.m_node.head = $1.m_node.head;
                                           $$.m_node.tail = new ClauseListNode($1.m_node.tail, $2.m_node);
                                           $$.m_varDeclarations = mergeDeclarationLists($1.m_varDeclarations, $2.m_varDeclarations);
                                           $$.m_funcDeclarations = mergeDeclarationLists($1.m_funcDeclarations, $2.m_funcDeclarations);
+                                          $$.m_featureInfo = $1.m_featureInfo | $2.m_featureInfo;
                                         }
 ;
 
 CaseClause:
-    CASE Expr ':'                       { $$ = createNodeInfo<CaseClauseNode*>(new CaseClauseNode($2), 0, 0); }
-  | CASE Expr ':' SourceElements        { $$ = createNodeInfo<CaseClauseNode*>(new CaseClauseNode($2, $4.m_node), $4.m_varDeclarations, $4.m_funcDeclarations); }
+    CASE Expr ':'                       { $$ = createNodeDeclarationInfo<CaseClauseNode*>(new CaseClauseNode($2.m_node), 0, 0, $2.m_featureInfo); }
+  | CASE Expr ':' SourceElements        { $$ = createNodeDeclarationInfo<CaseClauseNode*>(new CaseClauseNode($2.m_node, $4.m_node), $4.m_varDeclarations, $4.m_funcDeclarations, $2.m_featureInfo | $4.m_featureInfo); }
 ;
 
 DefaultClause:
-    DEFAULT ':'                         { $$ = createNodeInfo<CaseClauseNode*>(new CaseClauseNode(0), 0, 0); }
-  | DEFAULT ':' SourceElements          { $$ = createNodeInfo<CaseClauseNode*>(new CaseClauseNode(0, $3.m_node), $3.m_varDeclarations, $3.m_funcDeclarations); }
+    DEFAULT ':'                         { $$ = createNodeDeclarationInfo<CaseClauseNode*>(new CaseClauseNode(0), 0, 0, 0); }
+  | DEFAULT ':' SourceElements          { $$ = createNodeDeclarationInfo<CaseClauseNode*>(new CaseClauseNode(0, $3.m_node), $3.m_varDeclarations, $3.m_funcDeclarations, $3.m_featureInfo); }
 ;
 
 LabelledStatement:
     IDENT ':' Statement                 { $3.m_node->pushLabel(*$1);
-                                          $$ = createNodeInfo<StatementNode*>(new LabelNode(*$1, $3.m_node), $3.m_varDeclarations, $3.m_funcDeclarations); }
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(new LabelNode(*$1, $3.m_node), $3.m_varDeclarations, $3.m_funcDeclarations, $3.m_featureInfo); }
 ;
 
 ThrowStatement:
-    THROW Expr ';'                      { $$ = createNodeInfo<StatementNode*>(new ThrowNode($2), 0, 0); DBG($$.m_node, @1, @3); }
-  | THROW Expr error                    { $$ = createNodeInfo<StatementNode*>(new ThrowNode($2), 0, 0); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
+    THROW Expr ';'                      { $$ = createNodeDeclarationInfo<StatementNode*>(new ThrowNode($2.m_node), 0, 0, $2.m_featureInfo); DBG($$.m_node, @1, @3); }
+  | THROW Expr error                    { $$ = createNodeDeclarationInfo<StatementNode*>(new ThrowNode($2.m_node), 0, 0, $2.m_featureInfo); DBG($$.m_node, @1, @2); AUTO_SEMICOLON; }
 ;
 
 TryStatement:
-    TRY Block FINALLY Block             { $$ = createNodeInfo<StatementNode*>(new TryNode($2.m_node, CommonIdentifiers::shared()->nullIdentifier, 0, $4.m_node),
-                                                                              mergeDeclarationLists($2.m_varDeclarations, $4.m_varDeclarations),
-                                                                              mergeDeclarationLists($2.m_funcDeclarations, $4.m_funcDeclarations));
+    TRY Block FINALLY Block             { $$ = createNodeDeclarationInfo<StatementNode*>(new TryNode($2.m_node, CommonIdentifiers::shared()->nullIdentifier, 0, $4.m_node),
+                                                                                         mergeDeclarationLists($2.m_varDeclarations, $4.m_varDeclarations),
+                                                                                         mergeDeclarationLists($2.m_funcDeclarations, $4.m_funcDeclarations),
+                                                                                         $2.m_featureInfo | $4.m_featureInfo);
                                           DBG($$.m_node, @1, @2); }
-  | TRY Block CATCH '(' IDENT ')' Block { $$ = createNodeInfo<StatementNode*>(new TryNode($2.m_node, *$5, $7.m_node, 0),
-                                                                              mergeDeclarationLists($2.m_varDeclarations, $7.m_varDeclarations),
-                                                                              mergeDeclarationLists($2.m_funcDeclarations, $7.m_funcDeclarations));
+  | TRY Block CATCH '(' IDENT ')' Block { $$ = createNodeDeclarationInfo<StatementNode*>(new TryNode($2.m_node, *$5, $7.m_node, 0),
+                                                                                         mergeDeclarationLists($2.m_varDeclarations, $7.m_varDeclarations),
+                                                                                         mergeDeclarationLists($2.m_funcDeclarations, $7.m_funcDeclarations),
+                                                                                         $2.m_featureInfo | $7.m_featureInfo);
                                           DBG($$.m_node, @1, @2); }
   | TRY Block CATCH '(' IDENT ')' Block FINALLY Block
-                                        { $$ = createNodeInfo<StatementNode*>(new TryNode($2.m_node, *$5, $7.m_node, $9.m_node),
-                                                                              mergeDeclarationLists(mergeDeclarationLists($2.m_varDeclarations, $7.m_varDeclarations), $9.m_varDeclarations),
-                                                                              mergeDeclarationLists(mergeDeclarationLists($2.m_funcDeclarations, $7.m_funcDeclarations), $9.m_funcDeclarations));
+                                        { $$ = createNodeDeclarationInfo<StatementNode*>(new TryNode($2.m_node, *$5, $7.m_node, $9.m_node),
+                                                                                         mergeDeclarationLists(mergeDeclarationLists($2.m_varDeclarations, $7.m_varDeclarations), $9.m_varDeclarations),
+                                                                                         mergeDeclarationLists(mergeDeclarationLists($2.m_funcDeclarations, $7.m_funcDeclarations), $9.m_funcDeclarations),
+                                                                                         $2.m_featureInfo | $7.m_featureInfo | $9.m_featureInfo);
                                           DBG($$.m_node, @1, @2); }
 ;
 
 DebuggerStatement:
-    DEBUGGER ';'                        { $$ = createNodeInfo<StatementNode*>(new EmptyStatementNode(), 0, 0);
+    DEBUGGER ';'                        { $$ = createNodeDeclarationInfo<StatementNode*>(new EmptyStatementNode(), 0, 0, 0);
                                           DBG($$.m_node, @1, @2); }
-  | DEBUGGER error                      { $$ = createNodeInfo<StatementNode*>(new EmptyStatementNode(), 0, 0);
+  | DEBUGGER error                      { $$ = createNodeDeclarationInfo<StatementNode*>(new EmptyStatementNode(), 0, 0, 0);
                                           DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
 ;
 
@@ -987,10 +1027,10 @@ FunctionDeclaration:
 ;
 
 FunctionExpr:
-    FUNCTION '(' ')' '{' FunctionBody '}' { $$ = new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, $5); DBG($5, @4, @6); }
-  | FUNCTION '(' FormalParameterList ')' '{' FunctionBody '}' { $$ = new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, $6, $3.head); DBG($6, @5, @7); }
-  | FUNCTION IDENT '(' ')' '{' FunctionBody '}' { $$ = new FuncExprNode(*$2, $6); DBG($6, @5, @7); }
-  | FUNCTION IDENT '(' FormalParameterList ')' '{' FunctionBody '}' { $$ = new FuncExprNode(*$2, $7, $4.head); DBG($7, @6, @8); }
+    FUNCTION '(' ')' '{' FunctionBody '}' { $$ = createNodeFeatureInfo(new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, $5), ClosureFeature); DBG($5, @4, @6); }
+  | FUNCTION '(' FormalParameterList ')' '{' FunctionBody '}' { $$ = createNodeFeatureInfo(new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, $6, $3.head), ClosureFeature); DBG($6, @5, @7); }
+  | FUNCTION IDENT '(' ')' '{' FunctionBody '}' { $$ = createNodeFeatureInfo(new FuncExprNode(*$2, $6), ClosureFeature); DBG($6, @5, @7); }
+  | FUNCTION IDENT '(' FormalParameterList ')' '{' FunctionBody '}' { $$ = createNodeFeatureInfo(new FuncExprNode(*$2, $7, $4.head), ClosureFeature); DBG($7, @6, @8); }
 ;
 
 FormalParameterList:
@@ -1001,9 +1041,10 @@ FormalParameterList:
 ;
 
 FunctionBody:
-    /* not in spec */           { $$ = FunctionBodyNode::create(0, 0, 0); }
+    /* not in spec */           { $$ = FunctionBodyNode::create(0, 0, 0, false, false); }
   | SourceElements              { $$ = FunctionBodyNode::create($1.m_node, $1.m_varDeclarations ? &$1.m_varDeclarations->data : 0, 
-                                                                $1.m_funcDeclarations ? &$1.m_funcDeclarations->data : 0);
+                                                                $1.m_funcDeclarations ? &$1.m_funcDeclarations->data : 0,
+                                                                ($1.m_featureInfo & EvalFeature) != 0, ($1.m_featureInfo & ClosureFeature) != 0);
                                   // As in mergeDeclarationLists() we have to ref/deref to safely get rid of
                                   // the declaration lists.
                                   if ($1.m_varDeclarations) {
@@ -1018,8 +1059,10 @@ FunctionBody:
 ;
 
 Program:
-    /* not in spec */                   { parser().didFinishParsing(0, 0, 0, @0.last_line); }
-    | SourceElements                    { parser().didFinishParsing($1.m_node, $1.m_varDeclarations, $1.m_funcDeclarations, @1.last_line); }
+    /* not in spec */                   { parser().didFinishParsing(0, 0, 0, false, false, @0.last_line); }
+    | SourceElements                    { parser().didFinishParsing($1.m_node, $1.m_varDeclarations, $1.m_funcDeclarations, 
+                                                                    ($1.m_featureInfo & EvalFeature) != 0, ($1.m_featureInfo & ClosureFeature) != 0,
+                                                                    @1.last_line); }
 ;
 
 SourceElements:
@@ -1027,15 +1070,17 @@ SourceElements:
                                           $$.m_node->append($1.m_node);
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           $$.m_funcDeclarations = $1.m_funcDeclarations;
+                                          $$.m_featureInfo = $1.m_featureInfo;
                                         }
   | SourceElements SourceElement        { $$.m_node->append($2.m_node);
                                           $$.m_varDeclarations = mergeDeclarationLists($1.m_varDeclarations, $2.m_varDeclarations);
                                           $$.m_funcDeclarations = mergeDeclarationLists($1.m_funcDeclarations, $2.m_funcDeclarations);
+                                          $$.m_featureInfo = $1.m_featureInfo | $2.m_featureInfo;
                                         }
 ;
 
 SourceElement:
-    FunctionDeclaration                 { $$ = createNodeInfo<StatementNode*>($1, 0, new ParserRefCountedData<DeclarationStacks::FunctionStack>); $$.m_funcDeclarations->data.append($1); }
+    FunctionDeclaration                 { $$ = createNodeDeclarationInfo<StatementNode*>($1, 0, new ParserRefCountedData<DeclarationStacks::FunctionStack>, ClosureFeature); $$.m_funcDeclarations->data.append($1); }
   | Statement                           { $$ = $1; }
 ;
  
@@ -1153,24 +1198,25 @@ static ExpressionNode* makePostfixNode(ExpressionNode* expr, Operator op)
     return new PostDecDotNode(dot->base(), dot->identifier());
 }
 
-static ExpressionNode* makeFunctionCallNode(ExpressionNode* func, ArgumentsNode* args)
+static ExpressionNodeInfo makeFunctionCallNode(ExpressionNodeInfo func, ArgumentsNodeInfo args)
 {
-    if (!func->isLocation())
-        return new FunctionCallValueNode(func, args);
-    if (func->isResolveNode()) {
-        ResolveNode* resolve = static_cast<ResolveNode*>(func);
+    FeatureInfo features = func.m_featureInfo | args.m_featureInfo;
+    if (!func.m_node->isLocation())
+        return createNodeFeatureInfo<ExpressionNode*>(new FunctionCallValueNode(func.m_node, args.m_node), features);
+    if (func.m_node->isResolveNode()) {
+        ResolveNode* resolve = static_cast<ResolveNode*>(func.m_node);
         const Identifier& identifier = resolve->identifier();
         if (identifier == CommonIdentifiers::shared()->eval)
-            return new EvalFunctionCallNode(args);
-        return new FunctionCallResolveNode(identifier, args);
+            return createNodeFeatureInfo<ExpressionNode*>(new EvalFunctionCallNode(args.m_node), EvalFeature | features);
+        return createNodeFeatureInfo<ExpressionNode*>(new FunctionCallResolveNode(identifier, args.m_node), features);
     }
-    if (func->isBracketAccessorNode()) {
-        BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(func);
-        return new FunctionCallBracketNode(bracket->base(), bracket->subscript(), args);
+    if (func.m_node->isBracketAccessorNode()) {
+        BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(func.m_node);
+        return createNodeFeatureInfo<ExpressionNode*>(new FunctionCallBracketNode(bracket->base(), bracket->subscript(), args.m_node), features);
     }
-    ASSERT(func->isDotAccessorNode());
-    DotAccessorNode* dot = static_cast<DotAccessorNode*>(func);
-    return new FunctionCallDotNode(dot->base(), dot->identifier(), args);
+    ASSERT(func.m_node->isDotAccessorNode());
+    DotAccessorNode* dot = static_cast<DotAccessorNode*>(func.m_node);
+    return createNodeFeatureInfo<ExpressionNode*>(new FunctionCallDotNode(dot->base(), dot->identifier(), args.m_node), features);
 }
 
 static ExpressionNode* makeTypeOfNode(ExpressionNode* expr)
