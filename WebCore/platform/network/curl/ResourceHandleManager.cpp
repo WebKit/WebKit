@@ -216,7 +216,10 @@ size_t readCallback(void* ptr, size_t size, size_t nmemb, void* data)
     if (!toSend)
         return 0;
 
-    Vector<FormDataElement> elements = job->request().httpBody()->elements();
+    Vector<FormDataElement> elements;
+    if (job->request().httpBody())
+        elements = job->request().httpBody()->elements();
+
     if (d->m_formDataElementIndex >= elements.size())
         return 0;
 
@@ -376,7 +379,10 @@ void ResourceHandleManager::setupPUT(ResourceHandle*, struct curl_slist**)
 void ResourceHandleManager::setupPOST(ResourceHandle* job, struct curl_slist** headers)
 {
     ResourceHandleInternal* d = job->getInternal();
-    Vector<FormDataElement> elements = job->request().httpBody()->elements();
+    Vector<FormDataElement> elements;
+    // Fix crash when httpBody is null (see bug #16906).
+    if (job->request().httpBody())
+        elements = job->request().httpBody()->elements();
     size_t numElements = elements.size();
 
     if (!numElements)
