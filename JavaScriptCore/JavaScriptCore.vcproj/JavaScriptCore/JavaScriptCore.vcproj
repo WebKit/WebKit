@@ -202,7 +202,6 @@
 		<Configuration
 			Name="Release_PGO|Win32"
 			OutputDirectory="$(WebKitOutputDir)\lib"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\Release"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
 			CharacterSet="1"

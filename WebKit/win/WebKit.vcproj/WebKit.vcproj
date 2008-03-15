@@ -399,7 +399,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release_PGOInstrument|Win32"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\Release"
+			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\Release_PGO"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
 			CharacterSet="1"
@@ -478,7 +478,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release_PGOOptimize|Win32"
-			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\Release"
+			IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\Release_PGO"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
 			CharacterSet="1"

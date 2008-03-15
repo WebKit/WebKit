@@ -1,3 +1,9 @@
+2008-03-14  Steve Falkenburg  <sfalken@apple.com>
+
+        PGO build fixes.
+
+        * WebKit.vcproj/WebKit.vcproj:
+
 2008-03-13  Adam Roben  <aroben@apple.com>
 
         Another Windows build fix after r31034

@@ -1,3 +1,9 @@
+2008-03-14  Steve Falkenburg  <sfalken@apple.com>
+
+        PGO build fixes.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-03-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
