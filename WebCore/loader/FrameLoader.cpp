@@ -1508,7 +1508,7 @@ bool FrameLoader::gotoAnchor(const String& name)
     m_frame->document()->setGotoAnchorNeededAfterStylesheetsLoad(false);
 
     Node* anchorNode = m_frame->document()->getElementById(AtomicString(name));
-    if (!anchorNode)
+    if (!anchorNode && !name.isEmpty())
         anchorNode = m_frame->document()->anchors()->namedItem(name, !m_frame->document()->inCompatMode());
 
 #if ENABLE(SVG)

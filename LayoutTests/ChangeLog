@@ -1,3 +1,13 @@
+2008-03-16  Yuzhu Shen  <yuzhu.shen@gmail.com>
+
+        Reviewed by Darin.
+
+        Bug: http://bugs.webkit.org/show_bug.cgi?id=17714
+        Test whether clicking <img href="#"> goes to top of the page.
+
+        * fast/html/empty-fragment-id-goto-top-expected.txt: Added.
+        * fast/html/empty-fragment-id-goto-top.html: Added.
+
 2008-03-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

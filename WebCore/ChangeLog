@@ -1,3 +1,15 @@
+2008-03-16  Yuzhu Shen  <yuzhu.shen@gmail.com>
+
+        Reviewed by Darin.
+
+        Fix bug http://bugs.webkit.org/show_bug.cgi?id=17714
+        <img href="#"> should go to top of the page.
+
+        Test: fast/html/empty-fragment-id-goto-top.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::gotoAnchor):
+
 2008-03-16  Thiago Macieira  <thiago.macieira@trolltech.com>
 
         Reviewed by Darin.
