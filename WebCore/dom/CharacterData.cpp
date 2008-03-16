@@ -35,6 +35,7 @@ using namespace EventNames;
 
 CharacterData::CharacterData(Document *doc)
     : EventTargetNode(doc)
+    , m_data(StringImpl::empty())
 {
 }
 
@@ -56,12 +57,13 @@ void CharacterData::setData(const String& data, ExceptionCode& ec)
         return;
     }
 
-    if (equal(m_data.get(), data.impl()))
+    StringImpl* dataImpl = data.impl() ? data.impl() : StringImpl::empty();
+    if (equal(m_data.get(), dataImpl))
         return;
 
     int oldLength = length();
     RefPtr<StringImpl> oldStr = m_data;
-    m_data = data.impl();
+    m_data = dataImpl;
     
     if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
         detach();

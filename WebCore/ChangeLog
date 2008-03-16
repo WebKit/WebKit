@@ -1,3 +1,21 @@
+2008-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17876
+          Attempting to visit Ofcom page causes crash
+
+        This is causing intermittent crashes on some existing test cases on the buildbot
+        too; I don't have a 100% test case right now, but it should be easy to add one later
+        and this does fix a crash in a test we already have.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::CharacterData): Initialize m_data to the empty string,
+        not the null string. The class assumes the string can never being null.
+        (WebCore::CharacterData::setData): If asked to set the data to the null string,
+        set it to the empty string instead. This matches what the (non-empty) constructor
+        has always done.
+
 2008-03-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adam Roben.
