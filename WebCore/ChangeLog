@@ -1,3 +1,51 @@
+2008-03-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Bug 17870: Web Inspector console should feel more like a terminal
+        http://bugs.webkit.org/show_bug.cgi?id=17870
+
+        Bug 14390: Console input area should be more noticeable
+        http://bugs.webkit.org/show_bug.cgi?id=14390
+
+        Adds tab completion, auto completion and a blended input prompt.
+        The prompt is also focused when the console is shown.
+           Implements a new look, that will be part of the UI refresh.
+
+        * page/inspector/ConsolePanel.js: 
+        (WebInspector.ConsolePanel): Renamed a few properties.
+        (WebInspector.ConsolePanel.get/set promptText): Property to set
+        and get the current prompt text. Does not affect command history.
+        (WebInspector.ConsolePanel.show): Make the prompt focus on show.
+        (WebInspector.ConsolePanel.acceptAutoComplete): Accepts any
+        pending auto complete text.
+        (WebInspector.ConsolePanel.clearAutoComplete): Cancels any pending
+        auto complete text.
+        (WebInspector.ConsolePanel.autoCompleteSoon): Sets a timeout to auto
+        complete in 250 ms, only if there isn't a pending auto complete.
+        (WebInspector.ConsolePanel.complete): 
+        (WebInspector.ConsolePanel.completions): Generate a list of possible
+        completions based on the prefix and the previous expression ranges.
+        (WebInspector.ConsolePanel._backwardsRange): Helper to scan backwards
+        from a node and offset to find a start node and offset of the first
+        character found in the characters string.
+        (WebInspector.ConsolePanel._evalInInspectedWindow): Helper to eval in the
+        inspected window.
+        (WebInspector.ConsolePanel._caretInsidePrompt): Returns true if the selection
+        is collapsed and is inside the prompt element.
+        (WebInspector.ConsolePanel._moveCaretToEndOfPrompt): Moves the selection
+        to the end of the prompt.
+        (WebInspector.ConsolePanel._onTabPressed): Calls complete on
+        tab press.
+        (WebInspector.ConsolePanel._onEnterPressed): Call clearAutoComplete so the
+        autocompletion text is not evaluated.
+
+        * page/inspector/Images/errorIcon.png: New image.
+        * page/inspector/Images/userInputIcon.png: Added.
+        * page/inspector/Images/userInputPreviousIcon.png: Added.
+        * page/inspector/Images/warningIcon.png: New image.
+        * page/inspector/inspector.css: New refreshed UI.
+
 2008-03-15  Mark Mentovai  <mark@moxienet.com>
 
         Reviewed and landed by Darin.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,41 +35,67 @@ WebInspector.ConsolePanel = function()
     this.commandHistory = [];
     this.commandOffset = 0;
 
-    this.messageList = document.createElement("ol");
-    this.messageList.className = "console-message-list";
-    this.element.appendChild(this.messageList);
+    this.messagesElement = document.createElement("div");
+    this.messagesElement.id = "console-messages";
+    this.messagesElement.addEventListener("selectstart", this.messagesSelectStart.bind(this), true);
+    this.messagesElement.addEventListener("click", this.messagesClicked.bind(this), true);
+    this.element.appendChild(this.messagesElement);
 
-    this.messageList.addEventListener("click", this.messageListClicked.bind(this), true);
+    this.promptElement = document.createElement("div");
+    this.promptElement.id = "console-prompt";
+    this.promptElement.addEventListener("keydown", this.promptKeyDown.bind(this), false);
+    this.promptElement.appendChild(document.createElement("br"));
+    this.messagesElement.appendChild(this.promptElement);
 
-    this.consolePrompt = document.createElement("textarea");
-    this.consolePrompt.className = "console-prompt";
-    this.element.appendChild(this.consolePrompt);
-
-    this.consolePrompt.addEventListener("keydown", this.promptKeyDown.bind(this), false);
-
-    var clearButtonText = WebInspector.UIString("Clear");
-    this.clearMessagesElement = document.createElement("button");
-    this.clearMessagesElement.appendChild(document.createTextNode(clearButtonText));
-    this.clearMessagesElement.title = clearButtonText;
-    this.clearMessagesElement.addEventListener("click", this.clearButtonClicked.bind(this), false);
+    this.clearButton = document.createElement("button");
+    this.clearButton.title = WebInspector.UIString("Clear");
+    this.clearButton.textContent = WebInspector.UIString("Clear");
+    this.clearButton.addEventListener("click", this.clearButtonClicked.bind(this), false);
 }
 
 WebInspector.ConsolePanel.prototype = {
+    get promptText()
+    {
+        return this.promptElement.textContent;
+    },
+
+    set promptText(x)
+    {
+        if (!x) {
+            // Append a break element instead of setting textContent to make sure the selection is inside the prompt.
+            this.promptElement.removeChildren();
+            this.promptElement.appendChild(document.createElement("br"));
+        } else
+            this.promptElement.textContent = x;
+
+        this._moveCaretToEndOfPrompt();
+    },
+
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
         WebInspector.consoleListItem.select();
 
-        this.clearMessagesElement.removeStyleClass("hidden");
-        if (!this.clearMessagesElement.parentNode)
-            document.getElementById("toolbarButtons").appendChild(this.clearMessagesElement);
+        this.clearButton.removeStyleClass("hidden");
+        if (!this.clearButton.parentNode)
+            document.getElementById("toolbarButtons").appendChild(this.clearButton);
+
+        WebInspector.currentFocusElement = document.getElementById("main");
+
+        function focusPrompt()
+        {
+            if (!this._caretInsidePrompt())
+                this._moveCaretToEndOfPrompt();
+        }
+
+        setTimeout(focusPrompt.bind(this), 0);
     },
 
     hide: function()
     {
         WebInspector.Panel.prototype.hide.call(this);
         WebInspector.consoleListItem.deselect();
-        this.clearMessagesElement.addStyleClass("hidden");
+        this.clearButton.addStyleClass("hidden");
     },
 
     addMessage: function(msg)
@@ -87,12 +113,12 @@ WebInspector.ConsolePanel.prototype = {
                     break;
             }
         }
+
         this.messages.push(msg);
 
-        var item = msg.toListItem();
-        item.message = msg;
-        this.messageList.appendChild(item);
-        item.scrollIntoView(false);
+        var element = msg.toMessageElement();
+        this.messagesElement.insertBefore(element, this.promptElement);
+        this.promptElement.scrollIntoView(false);
     },
 
     clearMessages: function()
@@ -101,13 +127,187 @@ WebInspector.ConsolePanel.prototype = {
             var resource = this.messages[i].resource;
             if (!resource)
                 continue;
-
             resource.errors = 0;
             resource.warnings = 0;
         }
 
         this.messages = [];
-        this.messageList.removeChildren();
+
+        while (this.messagesElement.firstChild != this.promptElement)
+            this.messagesElement.removeChild(this.messagesElement.firstChild);
+    },
+
+    acceptAutoComplete: function()
+    {
+        if (!this.autoCompleteElement || !this.autoCompleteElement.parentNode)
+            return false;
+
+        var text = this.autoCompleteElement.textContent;
+        var textNode = document.createTextNode(text);
+        this.autoCompleteElement.parentNode.replaceChild(textNode, this.autoCompleteElement);
+        delete this.autoCompleteElement;
+
+        var finalSelectionRange = document.createRange();
+        finalSelectionRange.setStart(textNode, text.length);
+        finalSelectionRange.setEnd(textNode, text.length);
+
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(finalSelectionRange);
+
+        return true;
+    },
+
+    clearAutoComplete: function(includeTimeout)
+    {
+        if (includeTimeout && "completeTimeout" in this) {
+            clearTimeout(this.completeTimeout);
+            delete this.completeTimeout;
+        }
+
+        if (!this.autoCompleteElement)
+            return;
+
+        if (this.autoCompleteElement.parentNode)
+            this.autoCompleteElement.parentNode.removeChild(this.autoCompleteElement);
+        delete this.autoCompleteElement;
+    },
+
+    autoCompleteSoon: function()
+    {
+        if (!("completeTimeout" in this))
+            this.completeTimeout = setTimeout(this.complete.bind(this, true), 250);
+    },
+
+    complete: function(auto)
+    {
+        this.clearAutoComplete(true);
+
+        var selection = window.getSelection();
+        if (!selection.rangeCount)
+            return;
+
+        var selectionRange = selection.getRangeAt(0);
+        if (!selectionRange.commonAncestorContainer.isDescendant(this.promptElement))
+            return;
+
+        if (auto) {
+            if (!selection.isCollapsed)
+                return;
+
+            var node = selectionRange.startContainer;
+            if (node.nodeType === Node.TEXT_NODE && selectionRange.startOffset < node.nodeValue.length)
+                return;
+
+            var foundNextText = false;
+            while (node) {
+                if (node.nodeType === Node.TEXT_NODE && node.nodeValue.length) {
+                    if (foundNextText)
+                        return;
+                    foundNextText = true;
+                }
+
+                node = node.traverseNextNode(false, this.promptElement);
+            }
+        }
+
+        var wordPrefixRange = this._backwardsRange(" .=:[({;", selectionRange.startContainer, selectionRange.startOffset, this.promptElement);
+
+        var completions = this.completions(wordPrefixRange, auto);
+
+        if (!completions || !completions.length)
+            return;
+
+        var fullWordRange = document.createRange();
+        fullWordRange.setStart(wordPrefixRange.startContainer, wordPrefixRange.startOffset);
+        fullWordRange.setEnd(selectionRange.endContainer, selectionRange.endOffset);
+
+        if (completions.length === 1 || selection.isCollapsed || auto) {
+            var completionText = completions[0];
+        } else {
+            var currentText = fullWordRange.toString().trimTrailingWhitespace();
+
+            var foundIndex = null;
+            for (var i = 0; i < completions.length; ++i) {
+                if (completions[i] === currentText)
+                    foundIndex = i;
+            }
+
+            if (foundIndex === null || (foundIndex + 1) >= completions.length)
+                var completionText = completions[0];
+            else
+                var completionText = completions[foundIndex + 1];
+        }
+
+        var wordPrefixLength = wordPrefixRange.toString().length;
+
+        fullWordRange.deleteContents();
+
+        var finalSelectionRange = document.createRange();
+
+        if (auto) {
+            var prefixText = completionText.substring(0, wordPrefixLength);
+            var suffixText = completionText.substring(wordPrefixLength);
+
+            var prefixTextNode = document.createTextNode(prefixText);
+            fullWordRange.insertNode(prefixTextNode);           
+
+            this.autoCompleteElement = document.createElement("span");
+            this.autoCompleteElement.className = "auto-complete-text";
+            this.autoCompleteElement.textContent = suffixText;
+
+            prefixTextNode.parentNode.insertBefore(this.autoCompleteElement, prefixTextNode.nextSibling);
+
+            finalSelectionRange.setStart(prefixTextNode, wordPrefixLength);
+            finalSelectionRange.setEnd(prefixTextNode, wordPrefixLength);
+        } else {
+            var completionTextNode = document.createTextNode(completionText);
+            fullWordRange.insertNode(completionTextNode);           
+
+            if (completions.length > 1)
+                finalSelectionRange.setStart(completionTextNode, wordPrefixLength);
+            else
+                finalSelectionRange.setStart(completionTextNode, completionText.length);
+
+            finalSelectionRange.setEnd(completionTextNode, completionText.length);
+        }
+
+        selection.removeAllRanges();
+        selection.addRange(finalSelectionRange);
+    },
+
+    completions: function(wordRange, bestMatchOnly)
+    {
+        var prefix = wordRange.toString();
+        var expression = this._backwardsRange(" =:({;", wordRange.startContainer, wordRange.startOffset, this.promptElement);
+        var expressionString = expression.toString().replace(/\.+$/, "");
+
+        if (!expressionString && !prefix)
+            return;
+
+        var result = window;
+        if (expressionString) {
+            try {
+                result = this._evalInInspectedWindow(expressionString);
+            } catch(e) {
+                return;
+            }
+        }
+
+        var results = [];
+        var properties = Object.sortedProperties(result);
+        for (var i = 0; i < properties.length; ++i) {
+            var property = properties[i];
+            if (property.length < prefix.length)
+                continue;
+            if (property.indexOf(prefix) !== 0)
+                continue;
+            results.push(property);
+            if (bestMatchOnly)
+                break;
+        }
+
+        return results;
     },
 
     clearButtonClicked: function()
@@ -115,7 +315,23 @@ WebInspector.ConsolePanel.prototype = {
         this.clearMessages();
     },
 
-    messageListClicked: function(event)
+    messagesSelectStart: function(event)
+    {
+        if (this._selectionTimeout)
+            clearTimeout(this._selectionTimeout);
+
+        function moveBackIfOutside()
+        {
+            delete this._selectionTimeout;
+            if (this._caretInsidePrompt() || !window.getSelection().isCollapsed)
+                return;
+            this._moveCaretToEndOfPrompt();
+        }
+
+        this._selectionTimeout = setTimeout(moveBackIfOutside.bind(this), 100);
+    },
+
+    messagesClicked: function(event)
     {
         var link = event.target.firstParentOrSelfWithNodeName("a");
         if (link && link.representedNode) {
@@ -123,11 +339,14 @@ WebInspector.ConsolePanel.prototype = {
             return;
         }
 
-        var item = event.target.firstParentOrSelfWithNodeName("li");
-        if (!item)
+        var messageElement = event.target.firstParentOrSelfWithClass("console-message");
+        if (!messageElement)
             return;
 
-        var resource = item.message.resource;
+        if (!messageElement.message)
+            return;
+
+        var resource = messageElement.message.resource;
         if (!resource)
             return;
 
@@ -152,7 +371,93 @@ WebInspector.ConsolePanel.prototype = {
             case "Down":
                 this._onDownPressed(event);
                 break;
+            case "U+0009": // Tab
+                this._onTabPressed(event);
+                break;
+            case "Right":
+                if (!this.acceptAutoComplete())
+                    this.autoCompleteSoon();
+                break;
+            default:
+                this.clearAutoComplete();
+                this.autoCompleteSoon();
+                break;
         }
+    },
+
+    _backwardsRange: function(stopCharacters, endNode, endOffset, stayWithinElement)
+    {
+        var startNode;
+        var startOffset = 0;
+        var node = endNode;
+
+        while (node) {
+            if (node === stayWithinElement) {
+                if (!startNode)
+                    startNode = stayWithinElement;
+                break;
+            }
+
+            if (node.nodeType === Node.TEXT_NODE) {
+                var start = (node === endNode ? endOffset : node.nodeValue.length);
+                for (var i = (start - 1); i >= 0; --i) {
+                    var character = node.nodeValue[i];
+                    if (stopCharacters.indexOf(character) !== -1) {
+                        startNode = node;
+                        startOffset = i + 1;
+                        break;
+                    }
+                }
+            }
+
+            if (startNode)
+                break;
+
+            node = node.traversePreviousNode();
+        }
+
+        var result = document.createRange();
+        result.setStart(startNode, startOffset);
+        result.setEnd(endNode, endOffset);
+
+        return result;
+    },
+
+    _evalInInspectedWindow: function(expression)
+    {
+        // This with block is needed to work around http://bugs.webkit.org/show_bug.cgi?id=11399
+        with (InspectorController.inspectedWindow()) {
+            return eval(expression);
+        }
+    },
+
+    _caretInsidePrompt: function()
+    {
+        var selection = window.getSelection();
+        if (!selection.rangeCount || !selection.isCollapsed)
+            return false;
+        var selectionRange = selection.getRangeAt(0);
+        return selectionRange.startContainer === this.promptElement && selectionRange.startContainer.isDescendant(this.promptElement);
+    },
+
+    _moveCaretToEndOfPrompt: function()
+    {
+        var selection = window.getSelection();
+        var selectionRange = document.createRange();
+
+        var offset = this.promptElement.firstChild ? 1 : 0;
+        selectionRange.setStart(this.promptElement, offset);
+        selectionRange.setEnd(this.promptElement, offset);
+
+        selection.removeAllRanges();
+        selection.addRange(selectionRange);
+    },
+
+    _onTabPressed: function(event)
+    {
+        event.preventDefault();
+        event.stopPropagation();
+        this.complete();
     },
 
     _onEnterPressed: function(event)
@@ -160,30 +465,28 @@ WebInspector.ConsolePanel.prototype = {
         event.preventDefault();
         event.stopPropagation();
 
-        var str = this.consolePrompt.value;
+        this.clearAutoComplete(true);
+
+        var str = this.promptText;
         if (!str.length)
             return;
 
         this.commandHistory.push(str);
         this.commandOffset = 0;
 
-        this.consolePrompt.value = "";
+        this.promptText = "";
 
         var result;
         var exception = false;
         try {
-            // This with block is needed to work around http://bugs.webkit.org/show_bug.cgi?id=11399
-            with (InspectorController.inspectedWindow()) {
-                result = eval(str);
-            }
+            result = this._evalInInspectedWindow(str);
         } catch(e) {
             result = e;
             exception = true;
         }
 
         var level = exception ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log;
-
-        this.addMessage(new WebInspector.ConsoleCommand(str, this._format(result)));
+        this.addMessage(new WebInspector.ConsoleCommand(str, result, this._format(result), level));
     },
 
     _onUpPressed: function(event)
@@ -195,11 +498,10 @@ WebInspector.ConsolePanel.prototype = {
             return;
 
         if (this.commandOffset == 0)
-            this.tempSavedCommand = this.consolePrompt.value;
+            this.tempSavedCommand = this.promptText;
 
         ++this.commandOffset;
-        this.consolePrompt.value = this.commandHistory[this.commandHistory.length - this.commandOffset];
-        this.consolePrompt.moveCursorToEnd();
+        this.promptText = this.commandHistory[this.commandHistory.length - this.commandOffset];
     },
 
     _onDownPressed: function(event)
@@ -213,14 +515,12 @@ WebInspector.ConsolePanel.prototype = {
         --this.commandOffset;
 
         if (this.commandOffset == 0) {
-            this.consolePrompt.value = this.tempSavedCommand;
-            this.consolePrompt.moveCursorToEnd();
+            this.promptText = this.tempSavedCommand;
             delete this.tempSavedCommand;
             return;
         }
 
-        this.consolePrompt.value = this.commandHistory[this.commandHistory.length - this.commandOffset];
-        this.consolePrompt.moveCursorToEnd();
+        this.promptText = this.commandHistory[this.commandHistory.length - this.commandOffset];
     },
 
     _format: function(output)
@@ -319,46 +619,50 @@ WebInspector.ConsoleMessage.prototype = {
         return this.url;
     },
 
-    toListItem: function()
+    toMessageElement: function()
     {
-        var item = document.createElement("li");
-        item.className = "console-message";
+        var element = document.createElement("div");
+        element.message = this;
+        element.className = "console-message";
+
         switch (this.source) {
             case WebInspector.ConsoleMessage.MessageSource.HTML:
-                item.className += " console-html-source";
+                element.addStyleClass("console-html-source");
                 break;
             case WebInspector.ConsoleMessage.MessageSource.XML:
-                item.className += " console-xml-source";
+                element.addStyleClass("console-xml-source");
                 break;
             case WebInspector.ConsoleMessage.MessageSource.JS:
-                item.className += " console-js-source";
+                element.addStyleClass("console-js-source");
                 break;
             case WebInspector.ConsoleMessage.MessageSource.CSS:
-                item.className += " console-css-source";
+                element.addStyleClass("console-css-source");
                 break;
             case WebInspector.ConsoleMessage.MessageSource.Other:
-                item.className += " console-other-source";
+                element.addStyleClass("console-other-source");
                 break;
         }
 
         switch (this.level) {
             case WebInspector.ConsoleMessage.MessageLevel.Tip:
-                item.className += " console-tip-level";
+                element.addStyleClass("console-tip-level");
                 break;
             case WebInspector.ConsoleMessage.MessageLevel.Log:
-                item.className += " console-log-level";
+                element.addStyleClass("console-log-level");
                 break;
             case WebInspector.ConsoleMessage.MessageLevel.Warning:
-                item.className += " console-warning-level";
+                element.addStyleClass("console-warning-level");
                 break;
             case WebInspector.ConsoleMessage.MessageLevel.Error:
-                item.className += " console-error-level";
+                element.addStyleClass("console-error-level");
         }
 
-        var messageDiv = document.createElement("div");
-        messageDiv.className = "console-message-message";
-        messageDiv.textContent = this.message;
-        item.appendChild(messageDiv);
+        var messageTextElement = document.createElement("span");
+        messageTextElement.className = "console-message-text";
+        messageTextElement.textContent = this.message;
+        element.appendChild(messageTextElement);
+
+        element.appendChild(document.createTextNode(" "));
 
         if (this.url && this.url !== "undefined") {
             var urlElement = document.createElement("a");
@@ -369,10 +673,10 @@ WebInspector.ConsoleMessage.prototype = {
             else
                 urlElement.textContent = this.url;
 
-            item.appendChild(urlElement);
+            element.appendChild(urlElement);
         }
 
-        return item;
+        return element;
     },
 
     toString: function()
@@ -423,37 +727,54 @@ WebInspector.ConsoleMessage.MessageSource = {
     JS: 2,
     CSS: 3,
     Other: 4,
-};
+}
 
 WebInspector.ConsoleMessage.MessageLevel = {
     Tip: 0,
     Log: 1,
     Warning: 2,
-    Error: 3,
-};
+    Error: 3
+}
 
-WebInspector.ConsoleCommand = function(input, output)
+WebInspector.ConsoleCommand = function(command, result, formattedResultElement, level)
 {
-    this.input = input;
-    this.output = output;
+    this.command = command;
+    this.formattedResultElement = formattedResultElement;
+    this.level = level;
 }
 
 WebInspector.ConsoleCommand.prototype = {
-    toListItem: function()
+    toMessageElement: function()
     {
-        var item = document.createElement("li");
-        item.className = "console-command";
+        var element = document.createElement("div");
+        element.command = this;
+        element.className = "console-user-command";
 
-        var inputDiv = document.createElement("div");
-        inputDiv.className = "console-command-input";
-        inputDiv.textContent = this.input;
-        item.appendChild(inputDiv);
+        var commandTextElement = document.createElement("span");
+        commandTextElement.className = "console-message-text";
+        commandTextElement.textContent = this.command;
+        element.appendChild(commandTextElement);
 
-        var outputDiv = document.createElement("div");
-        outputDiv.className = "console-command-output";
-        outputDiv.appendChild(this.output);
-        item.appendChild(outputDiv);
+        var resultElement = document.createElement("div");
+        resultElement.className = "console-message";
+        element.appendChild(resultElement);
 
-        return item;
+        switch (this.level) {
+            case WebInspector.ConsoleMessage.MessageLevel.Log:
+                resultElement.addStyleClass("console-log-level");
+                break;
+            case WebInspector.ConsoleMessage.MessageLevel.Warning:
+                resultElement.addStyleClass("console-warning-level");
+                break;
+            case WebInspector.ConsoleMessage.MessageLevel.Error:
+                resultElement.addStyleClass("console-error-level");
+        }
+
+        var resultTextElement = document.createElement("span");
+        resultTextElement.className = "console-message-text";
+        resultTextElement.appendChild(this.formattedResultElement);
+        resultElement.appendChild(resultTextElement);
+
+        return element;
     }
 }
