@@ -791,18 +791,19 @@ void PreloadScanner::emitTag()
     else
         m_contentModel = PCDATA;
     
-    if (!m_urlToLoad.isEmpty()) {
-        CachedResource* resource = 0;
-        if (tag == scriptTag)
-            resource = m_document->docLoader()->requestScript(m_urlToLoad, m_document->frame()->loader()->encoding()); 
-        else if (tag == imgTag) 
-            resource = m_document->docLoader()->requestImage(m_urlToLoad);
-        else if (tag == linkTag && m_linkIsStyleSheet) 
-            resource = m_document->docLoader()->requestCSSStyleSheet(m_urlToLoad, m_document->frame()->loader()->encoding());
-        m_document->docLoader()->registerPreload(resource);
+    if (m_urlToLoad.isEmpty()) {
+        m_linkIsStyleSheet = false;
+        return;
     }
-        
-    m_urlToLoad = "";
+    
+    if (tag == scriptTag)
+        m_document->docLoader()->preload(CachedResource::Script, m_urlToLoad);
+    else if (tag == imgTag) 
+        m_document->docLoader()->preload(CachedResource::ImageResource, m_urlToLoad);
+    else if (tag == linkTag && m_linkIsStyleSheet) 
+        m_document->docLoader()->preload(CachedResource::CSSStyleSheet, m_urlToLoad);
+
+    m_urlToLoad = String();
     m_linkIsStyleSheet = false;
 }
     
@@ -813,7 +814,7 @@ void PreloadScanner::emitCSSRule()
         String value(m_cssRuleValue.data(), m_cssRuleValue.size());
         String url = parseURL(value);
         if (!url.isEmpty())
-            m_document->docLoader()->registerPreload(m_document->docLoader()->requestCSSStyleSheet(url, m_document->frame()->loader()->encoding()));
+            m_document->docLoader()->preload(CachedResource::CSSStyleSheet, url);
     }
     m_cssRule.clear();
     m_cssRuleValue.clear();

@@ -1,5 +1,27 @@
 2008-03-16  Antti Koivisto  <antti@apple.com>
 
+        Reviewed by Mitz.
+
+        Fix http/tests/security/frame-loading-via-document-write.html
+        which was broken by the preload patch.
+        
+        Don't print error message when preload fails local file security check.
+        Some minor refactoring.
+
+        * html/PreloadScanner.cpp:
+        (WebCore::PreloadScanner::emitTag):
+        (WebCore::PreloadScanner::emitCSSRule):
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource):
+        * loader/Cache.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestResource):
+        (WebCore::DocLoader::preload):
+        (WebCore::DocLoader::printPreloadStats):
+        * loader/DocLoader.h:
+
+2008-03-16  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Darin.
         
         Fix http://bugs.webkit.org/show_bug.cgi?id=17862

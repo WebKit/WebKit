@@ -89,7 +89,7 @@ static CachedResource* createResource(CachedResource::Type type, DocLoader* docL
     return 0;
 }
 
-CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Type type, const KURL& url, const String* charset, bool skipCanLoadCheck, bool sendResourceLoadCallbacks)
+CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Type type, const KURL& url, const String* charset, bool skipCanLoadCheck, bool sendResourceLoadCallbacks, bool isPreload)
 {
     // FIXME: Do we really need to special-case an empty URL?
     // Would it be better to just go on with the cache code and let it fail later?
@@ -100,19 +100,19 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
     CachedResource* resource = m_resources.get(url.string());
 
     if (resource) {
+        if (isPreload && !resource->isPreloaded())
+            return 0;
         if (!skipCanLoadCheck && FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(*resource, docLoader->doc())) {
             Document* doc = docLoader->doc();
-            if(doc)
+            if(doc && !isPreload)
                 FrameLoader::reportLocalLoadFailed(doc->page(), resource->url());
-
             return 0;
         }
     } else {
         if (!skipCanLoadCheck && FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(url, docLoader->doc())) {
             Document* doc = docLoader->doc();
-            if(doc)
+            if(doc && !isPreload)
                 FrameLoader::reportLocalLoadFailed(doc->page(), url.string());
-
             return 0;
         }
 
