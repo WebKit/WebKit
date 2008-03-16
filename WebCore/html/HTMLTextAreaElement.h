@@ -32,8 +32,6 @@ class Selection;
 
 class HTMLTextAreaElement : public HTMLFormControlElementWithState {
 public:
-    enum WrapMethod { ta_NoWrap, ta_Virtual, ta_Physical };
-
     HTMLTextAreaElement(Document*, HTMLFormElement* = 0);
 
     virtual bool checkDTD(const Node* newChild) { return newChild->isTextNode(); }
@@ -41,7 +39,7 @@ public:
     int cols() const { return m_cols; }
     int rows() const { return m_rows; }
 
-    WrapMethod wrap() const { return m_wrap; }
+    bool shouldWrapText() const { return m_wrap != NoWrap; }
 
     virtual bool isEnumeratable() const { return true; }
 
@@ -80,25 +78,28 @@ public:
     
     virtual void accessKeyAction(bool sendToAnyElement);
     
-    String accessKey() const;
+    const AtomicString& accessKey() const;
     void setAccessKey(const String&);
 
     void setCols(int);
     void setRows(int);
     
-    void cacheSelection(int s, int e) { cachedSelStart = s; cachedSelEnd = e; };
+    void cacheSelection(int s, int e) { m_cachedSelectionStart = s; m_cachedSelectionEnd = e; };
     Selection selection() const;
 
     virtual bool shouldUseInputMethod() const;
+
 private:
+    enum WrapMethod { NoWrap, SoftWrap, HardWrap };
+
     void updateValue() const;
 
     int m_rows;
     int m_cols;
     WrapMethod m_wrap;
     mutable String m_value;
-    int cachedSelStart;
-    int cachedSelEnd;
+    int m_cachedSelectionStart;
+    int m_cachedSelectionEnd;
 };
 
 } //namespace

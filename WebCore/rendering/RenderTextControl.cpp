@@ -175,8 +175,8 @@ RenderStyle* RenderTextControl::createInnerTextStyle(RenderStyle* startStyle)
         textBlockStyle->setOverflowX(startStyle->overflowX() == OVISIBLE ? OAUTO : startStyle->overflowX());
         textBlockStyle->setOverflowY(startStyle->overflowY() == OVISIBLE ? OAUTO : startStyle->overflowY());
 
-        // Set word wrap property based on wrap attribute
-        if (static_cast<HTMLTextAreaElement*>(element)->wrap() == HTMLTextAreaElement::ta_NoWrap) {
+        // Set word wrap property based on wrap attribute.
+        if (!static_cast<HTMLTextAreaElement*>(element)->shouldWrapText()) {
             textBlockStyle->setWhiteSpace(PRE);
             textBlockStyle->setWordWrap(NormalWordWrap);
         } else {

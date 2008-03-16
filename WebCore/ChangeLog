@@ -1,3 +1,55 @@
+2008-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=17881
+          a little cleanup for HTMLTextAreaElement
+
+        Tests: fast/forms/textarea-default-value-leading-newline.html
+               fast/forms/textarea-linewrap-dynamic.html
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::HTMLTextAreaElement): Tweaked names/
+        (WebCore::HTMLTextAreaElement::selectionStart): Ditto, also use early return
+        and check for < 0 rather than -1 specifically.
+        (WebCore::HTMLTextAreaElement::selectionEnd): Ditto.
+        (WebCore::HTMLTextAreaElement::setSelectionStart): Early return.
+        (WebCore::HTMLTextAreaElement::setSelectionEnd): Ditto.
+        (WebCore::HTMLTextAreaElement::select): Ditto.
+        (WebCore::HTMLTextAreaElement::setSelectionRange): Ditto.
+        (WebCore::HTMLTextAreaElement::parseMappedAttribute): Changed value parsing
+        to treat unknown values as meaning "default" rather than "leave value as-is".
+        Only call setNeedsLayoutAndPrefWidthsRecalc when mode changed.
+        (WebCore::HTMLTextAreaElement::createRenderer): Removed name of unused argument.
+        (WebCore::HTMLTextAreaElement::appendFormData): Updated for name changes.
+        (WebCore::HTMLTextAreaElement::isKeyboardFocusable): Got rid of unnneeded explicit
+        class name in isFocusable call.
+        (WebCore::HTMLTextAreaElement::isMouseFocusable): Ditto.
+        (WebCore::HTMLTextAreaElement::updateFocusAppearance): Tweaked formatting.
+        (WebCore::HTMLTextAreaElement::defaultEventHandler): Ditto.
+        (WebCore::HTMLTextAreaElement::updateValue): Early return.
+        (WebCore::HTMLTextAreaElement::setValue): Got rid of intermediate value to
+        eliminate on small refcount churn.
+        (WebCore::HTMLTextAreaElement::defaultValue): Got rid of unneeded redundant
+        string length checks, since String already checks all indexing and returns 0.
+        (WebCore::HTMLTextAreaElement::setDefaultValue): Added code to normalize
+        line endings and add a leading line ending to fix cases where the first
+        character is a newline.
+        (WebCore::HTMLTextAreaElement::accessKeyAction): Removed name of unused arg.
+        (WebCore::HTMLTextAreaElement::accessKey): Changed return value to avoid
+        refcount churn.
+        (WebCore::HTMLTextAreaElement::selection): Updated names and use < 0 instead
+        of -1 specifically.
+
+        * html/HTMLTextAreaElement.h: Replaced wrap function with more-specific
+        shouldWrapText one. Changed return value of accessKey. Made WrapMethod enum
+        provate and renamed the values. Renamed cachedSelStart and cachedSelEnd to
+        m_cachedSelectionStart and m_cachedSelectionEnd.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::createInnerTextStyle): Updated for change to
+        HTMLTextAreaElement wrap function.
+
 2008-03-16  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz.

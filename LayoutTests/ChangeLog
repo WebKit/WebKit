@@ -1,3 +1,19 @@
+2008-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - test for bug fixes in http://bugs.webkit.org/show_bug.cgi?id=17881
+          a little cleanup for HTMLTextAreaElement
+
+        * fast/forms/textarea-default-value-leading-newline-expected.txt: Added.
+        * fast/forms/textarea-default-value-leading-newline.html: Copied from fast/forms/textarea-crlf.html.
+
+        * fast/forms/textarea-hard-linewrap-expected.txt: Updated.
+        * fast/forms/textarea-hard-linewrap.html: Cleaned up a bit.
+
+        * fast/forms/textarea-linewrap-dynamic-expected.txt: Added.
+        * fast/forms/textarea-linewrap-dynamic.html: Copied from fast/forms/textarea-hard-linewrap.html.
+
 2008-03-16  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
