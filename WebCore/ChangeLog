@@ -1,3 +1,21 @@
+2008-03-16  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Fix http://bugs.webkit.org/show_bug.cgi?id=17862
+        REGRESSION (r31038): Reproducible crash under DocLoader::checkForReload() at marware.com
+        
+        This was a memory smasher introduced by the preloading patch. 
+        If a script resource was marked uncacheable, early deletion of the 
+        Request object would cause deletion of the CachedResource too if
+        it was referred more than once in a single document.
+
+        Test: http/tests/misc/uncacheable-script-repeated.html
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::servePendingRequests):
+        (WebCore::Loader::Host::didFinishLoading):
+
 2008-03-16  Yuzhu Shen  <yuzhu.shen@gmail.com>
 
         Reviewed by Darin.

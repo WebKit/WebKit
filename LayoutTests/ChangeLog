@@ -1,3 +1,14 @@
+2008-03-16  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Test for http://bugs.webkit.org/show_bug.cgi?id=17862
+        REGRESSION (r31038): Reproducible crash under DocLoader::checkForReload() at marware.com
+
+        * http/tests/misc/resources/uncacheable-script.cgi: Added.
+        * http/tests/misc/uncacheable-script-repeated-expected.txt: Added.
+        * http/tests/misc/uncacheable-script-repeated.html: Added.
+
 2008-03-16  Yuzhu Shen  <yuzhu.shen@gmail.com>
 
         Reviewed by Darin.

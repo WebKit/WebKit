@@ -235,7 +235,7 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending)
             m_requestsLoading.add(loader.release(), request);
             request->cachedResource()->setRequestedFromNetworkingLayer();
 #if REQUEST_DEBUG
-            printf("HOST %s COUNT %d LOADING %s\n", resourceRequest.url().host().latin1().data(), m_requestsLoading.size(), req->cachedResource()->url().latin1().data());
+            printf("HOST %s COUNT %d LOADING %s\n", resourceRequest.url().host().latin1().data(), m_requestsLoading.size(), request->cachedResource()->url().latin1().data());
 #endif
         } else {            
             docLoader->decrementRequestCount();
@@ -260,7 +260,6 @@ void Loader::Host::didFinishLoading(SubresourceLoader* loader)
         docLoader->decrementRequestCount();
 
     CachedResource* resource = request->cachedResource();
-    delete request;
 
     // If we got a 4xx response, we're pretending to have received a network
     // error, so we can't send the successful data() and finish() callbacks.
@@ -269,6 +268,8 @@ void Loader::Host::didFinishLoading(SubresourceLoader* loader)
         resource->data(loader->resourceData(), true);
         resource->finish();
     }
+
+    delete request;
 
     docLoader->setLoadInProgress(false);
 
