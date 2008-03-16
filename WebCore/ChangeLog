@@ -2,6 +2,21 @@
 
         Reviewed by Mitz.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=14941
+          <rdar://problem/5404093> textarea value from JavaScript includes extra newline
+
+        Test: fast/forms/textarea-trailing-newline.html
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::finishText): Added code to strip the trailing
+        newline. It's possible there are some obscure cases where this is not wanted,
+        but I couldn't find any. If someone finds a case where this is bad, we can
+        make the code conditional.
+
+2008-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=17876
           Attempting to visit Ofcom page causes crash
 

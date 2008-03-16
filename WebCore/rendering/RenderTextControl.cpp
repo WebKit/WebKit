@@ -555,12 +555,18 @@ void RenderTextControl::subtreeHasChanged()
 
 String RenderTextControl::finishText(Vector<UChar>& result) const
 {
+    // Remove one trailing newline; there's always one that's collapsed out by rendering.
+    size_t size = result.size();
+    if (size && result[size - 1] == '\n')
+        result.shrink(--size);
+
+    // Convert backslash to currency symbol.
     UChar symbol = backslashAsCurrencySymbol();
     if (symbol != '\\') {
-        size_t size = result.size();
-        for (size_t i = 0; i < size; ++i)
+        for (size_t i = 0; i < size; ++i) {
             if (result[i] == '\\')
                 result[i] = symbol;
+        }
     }
 
     return String::adopt(result);

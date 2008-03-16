@@ -1,3 +1,16 @@
+2008-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=14941
+          <rdar://problem/5404093> textarea value from JavaScript includes extra newline
+
+        * fast/forms/textarea-paste-newline.html: Updated test to expect correct behavior instead
+        of expecting the bug.
+
+        * fast/forms/textarea-trailing-newline-expected.txt: Added.
+        * fast/forms/textarea-trailing-newline.html: Added.
+
 2008-03-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
