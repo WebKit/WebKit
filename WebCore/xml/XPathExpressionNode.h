@@ -30,12 +30,11 @@
 #if ENABLE(XPATH)
 
 #include "StringHash.h"
+#include "Node.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-    class Node;
 
     namespace XPath {
 

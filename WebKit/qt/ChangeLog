@@ -1,3 +1,17 @@
+2008-03-16  Thiago Macieira  <thiago.macieira@trolltech.com>
+
+        Reviewed by Simon.
+
+        Don't use RefPtr in classes you haven't seen the implementation of.
+        
+        Forward-declaration and declaration of RefPtr<Foo> is ok. But you
+        cannot *use* said objects until Foo is defined. This is true even for
+        initialisation with a 0.
+        
+        Seems the HP aCC compiler is more strict here than gcc.
+
+        * Api/qwebframe_p.h:
+
 2008-03-14  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build.

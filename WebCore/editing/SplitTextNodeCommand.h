@@ -27,10 +27,9 @@
 #define SplitTextNodeCommand_h
 
 #include "EditCommand.h"
+#include "Text.h"
 
 namespace WebCore {
-
-class Text;
 
 class SplitTextNodeCommand : public EditCommand {
 public:
