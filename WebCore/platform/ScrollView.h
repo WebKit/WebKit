@@ -50,9 +50,8 @@ class wxScrollWinEvent;
 namespace WebCore {
 
     class FloatRect;
-    class IntRect;
-    class PlatformWheelEvent;
     class PlatformScrollbar;
+    class PlatformWheelEvent;
 
     class ScrollView : public Widget {
     public:
@@ -82,7 +81,7 @@ namespace WebCore {
 
         // This gives us a means of blocking painting on our scrollbars until the first layout has occurred.
         void suppressScrollbars(bool suppressed, bool repaintOnUnsuppress = false);
-        
+
         ScrollbarMode vScrollbarMode() const;
         ScrollbarMode hScrollbarMode() const;
 
@@ -123,22 +122,46 @@ namespace WebCore {
         NSScrollView<WebCoreFrameScrollView>* scrollView() const;
 #endif
 
-#if PLATFORM(WIN)
+#if !PLATFORM(MAC)
+    public:
+        HashSet<Widget*>* children();
+
+    private:
+        IntSize maximumScroll() const;
+        class ScrollViewPrivate;
+        ScrollViewPrivate* m_data;
+#endif
+
+#if !PLATFORM(MAC) && !PLATFORM(WX)
     public:
         virtual void paint(GraphicsContext*, const IntRect&);
-        virtual void themeChanged();
-        
+
         virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
         virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
-        
+
         virtual void geometryChanged() const;
         virtual void setFrameGeometry(const IntRect&);
-        
+
+        void addToDirtyRegion(const IntRect&);
+        void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
+        void updateBackingStore();
+
+    private:
+        void updateScrollbars(const IntSize& desiredOffset);
+#endif
+
+#if PLATFORM(WIN) || PLATFORM(QT)
+    private:
         IntRect windowResizerRect();
         bool resizerOverlapsContent() const;
         void adjustOverlappingScrollbarCount(int overlapDelta);
-        
+
         virtual void setParent(ScrollView*);
+#endif
+
+#if PLATFORM(WIN)
+    private:
+        virtual void themeChanged();
 
         virtual void attachToWindow();
         virtual void detachFromWindow();
@@ -147,96 +170,34 @@ namespace WebCore {
         virtual void show();
         virtual void hide();
 
-        void addToDirtyRegion(const IntRect&);
-        void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
-        void updateBackingStore();
-
         void setAllowsScrolling(bool);
         bool allowsScrolling() const;
-
-        HashSet<Widget*>* children();
-
-    private:
-        void updateScrollbars(const IntSize& desiredOffset);
-        IntSize maximumScroll() const;
-        class ScrollViewPrivate;
-        ScrollViewPrivate* m_data;
-#endif
-
-#if PLATFORM(GTK)
-    public:
-        virtual void setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj);
-        virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
-        virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
-        virtual void geometryChanged() const;
-
-        virtual void paint(GraphicsContext*, const IntRect&);
-        virtual void setFrameGeometry(const IntRect&);
-
-        void addToDirtyRegion(const IntRect&);
-        void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
-        void updateBackingStore();
-
-    protected:
-        HashSet<Widget*>* children() const;
-
-    private:
-        IntSize maximumScroll() const;
-        void updateScrollbars(const IntSize& desiredOffset);
-
-        class ScrollViewPrivate;
-        ScrollViewPrivate* m_data;
 #endif
 
 #if PLATFORM(QT)
-    public:
-        virtual void paint(GraphicsContext*, const IntRect&);
-
-        virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
-        virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
-
-        virtual void geometryChanged() const;
-        virtual void setFrameGeometry(const IntRect&);
-
-        IntRect windowResizerRect();
-        bool resizerOverlapsContent() const;
-        void adjustOverlappingScrollbarCount(int overlapDelta);
-
-        virtual void setParent(ScrollView*);
-
-        void addToDirtyRegion(const IntRect&);
-        void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
-        void updateBackingStore();
-
+    private:
         PlatformScrollbar *horizontalScrollBar() const;
         PlatformScrollbar *verticalScrollBar() const;
+#endif
 
-        HashSet<Widget*>* children();
-
+#if PLATFORM(GTK)
     private:
-        void updateScrollbars(const IntSize& desiredOffset);
-        IntSize maximumScroll() const;
-        class ScrollViewPrivate;
-        ScrollViewPrivate* m_data;
+        virtual void setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj);
 #endif
 
 #if PLATFORM(WX)
     public:
-        HashSet<Widget*>* children();
-        virtual void setNativeWindow(wxWindow* window);
+        virtual void setNativeWindow(wxWindow*);
 
     private:
         void adjustScrollbars(int x = -1, int y = -1, bool refresh = true);
-        IntSize maximumScroll() const;
-
-        class ScrollViewPrivate;
-        ScrollViewPrivate* m_data;
 #endif
-    };
+
+    }; // class ScrollView
 
 #if !PLATFORM(MAC)
 
-// On Mac only because of flipped NSWindow y-coordinates, we have to have a special implementation.
+// On Mac only, because of flipped NSWindow y-coordinates, we have to have a special implementation.
 // Other platforms can just implement these helper methods using the corresponding point conversion methods.
 
 inline IntRect ScrollView::contentsToWindow(const IntRect& rect) const

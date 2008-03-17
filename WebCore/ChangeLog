@@ -1,3 +1,12 @@
+2008-03-17  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed and tweaked by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17172
+        Refactor platform checks in ScrollView.h
+
+        * platform/ScrollView.h: Change #ifs around.
+
 2008-03-17  Yuzhu Shen  <yuzhu.shen@gmail.com>
 
         Reviewed by Darin.
