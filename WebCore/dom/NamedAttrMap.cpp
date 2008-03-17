@@ -290,7 +290,7 @@ void NamedAttrMap::removeAttribute(const QualifiedName& name)
         return;
 
     // Remove the attribute from the list
-    Attribute* attr = m_attributes[index].get();
+    RefPtr<Attribute> attr = m_attributes[index].get();
     if (Attr* a = m_attributes[index]->attr())
         a->m_element = 0;
 
@@ -301,11 +301,11 @@ void NamedAttrMap::removeAttribute(const QualifiedName& name)
     if (element && !attr->m_value.isNull()) {
         AtomicString value = attr->m_value;
         attr->m_value = nullAtom;
-        element->attributeChanged(attr);
+        element->attributeChanged(attr.get());
         attr->m_value = value;
     }
     if (element) {
-        element->dispatchAttrRemovalEvent(attr);
+        element->dispatchAttrRemovalEvent(attr.get());
         element->dispatchSubtreeModifiedEvent();
     }
 }

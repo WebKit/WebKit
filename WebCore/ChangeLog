@@ -1,3 +1,18 @@
+2008-03-17  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 17876: REGRESSION (r31060): Attempting to visit Ofcom page causes crash
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17876>
+
+        Reviewed by John.
+
+        Test: fast/dom/remove-named-attribute-crash.html
+
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedAttrMap::removeAttribute): Store the Attribute we're
+        going to remove from the m_attributes Vector in a RefPtr so it doesn't
+        get deleted when it is removed from the Vector.
+
 2008-03-17  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Adam Roben.

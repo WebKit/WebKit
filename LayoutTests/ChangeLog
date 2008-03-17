@@ -1,3 +1,14 @@
+2008-03-17  Adam Roben  <aroben@apple.com>
+
+        Test for Bug 17876: REGRESSION (r31060): Attempting to visit Ofcom page causes crash
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17876>
+
+        Reviewed by John.
+
+        * fast/dom/remove-named-attribute-crash-expected.txt: Added.
+        * fast/dom/remove-named-attribute-crash.html: Added.
+
 2008-03-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
