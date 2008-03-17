@@ -1,3 +1,14 @@
+2008-03-17  Yuzhu Shen  <yuzhu.shen@gmail.com>
+
+        Reviewed by Darin.
+
+        Bug: http://bugs.webkit.org/show_bug.cgi?id=17760
+        Test whether <img> tries to load image with empty src attribute.
+
+        * fast/images/load-img-with-empty-src-expected.txt: Added.
+        * fast/images/load-img-with-empty-src.html: Added.
+        * fast/images/resources/test-load.jpg: Added.
+
 2008-03-17  Adam Roben  <aroben@apple.com>
 
         Test for Bug 17876: REGRESSION (r31060): Attempting to visit Ofcom page causes crash

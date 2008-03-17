@@ -93,7 +93,7 @@ void HTMLImageLoader::updateFromElement()
     
     // Treat a lack of src or empty string for src as no image at all.
     CachedImage *newImage = 0;
-    if (!attr.isEmpty()) {
+    if (!attr.isNull()) {
         if (m_loadManually) {
             doc->docLoader()->setAutoLoadImages(false);
             newImage = new CachedImage(doc->docLoader(), parseURL(attr), false /* not for cache */);

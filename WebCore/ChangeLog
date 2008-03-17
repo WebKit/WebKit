@@ -1,3 +1,15 @@
+2008-03-17  Yuzhu Shen  <yuzhu.shen@gmail.com>
+
+        Reviewed by Darin.
+
+        Fix the bug: http://bugs.webkit.org/show_bug.cgi?id=17760
+        It is necessary to load the image even when src="".
+
+        Test: fast/images/load-img-with-empty-src.html
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::updateFromElement): isNull rather than isEmpty.
+
 2008-03-17  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Fix GTK+ build from r31094.
