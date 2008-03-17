@@ -1,3 +1,15 @@
+2008-03-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Fix _NPN_IntFromIdentifier (and export the symbol for use!)
+
+        Test: plugins/netscape-identifier-conversion.html
+
+        * WebCore.NPAPI.exp:
+        * bridge/npruntime.cpp:
+        (_NPN_IntFromIdentifier):
+
 2008-03-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

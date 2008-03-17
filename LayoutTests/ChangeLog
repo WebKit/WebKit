@@ -1,3 +1,14 @@
+2008-03-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Add test case to test NPN_IntFromIdentifier
+
+        * plugins/netscape-identifier-conversion-expected.txt: Added.
+        * plugins/netscape-identifier-conversion.html: Copied from LayoutTests/traversal/resources/TEMPLATE.html.
+        * plugins/resources/TEMPLATE.html: Copied from LayoutTests/traversal/resources/TEMPLATE.html.
+        * plugins/resources/netscape-identifier-conversion.js: Added.
+
 2008-03-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

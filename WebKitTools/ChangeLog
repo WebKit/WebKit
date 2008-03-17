@@ -1,3 +1,40 @@
+2008-03-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Cleanup PluginObject.cpp and add support for testing
+        converting from int -> identifier -> string
+        and from string -> identifier -> int
+        as well as round-tripping ints and stings through identifiers
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (pluginGetProperty):
+        (pluginSetProperty):
+        (testDOMAccess):
+        (stringVariantToIdentifier):
+        (int32VariantToIdentifier):
+        (doubleVariantToIdentifier):
+        (variantToIdentifier):
+        (testIdentifierToString):
+        (testIdentifierToInt):
+        (testCallback):
+        (getURL):
+        (removeDefaultMethod):
+        (getURLNotify):
+        (testInvokeDefault):
+        (destroyStream):
+        (testEnumerate):
+        (testGetIntIdentifier):
+        (testGetProperty):
+        (testEvaluate):
+        (testGetPropertyReturnValue):
+        (pluginInvoke):
+        (pluginInvokeDefault):
+        (pluginInvalidate):
+        (pluginAllocate):
+        (pluginDeallocate):
+        (handleCallback):
+
 2008-03-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         Rubber stamped by Darin.

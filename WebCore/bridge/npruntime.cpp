@@ -141,7 +141,7 @@ NPUTF8 *_NPN_UTF8FromIdentifier(NPIdentifier identifier)
 int32_t _NPN_IntFromIdentifier(NPIdentifier identifier)
 {
     PrivateIdentifier* i = (PrivateIdentifier*)identifier;
-    if (!i->isString)
+    if (i->isString)
         return 0;
     return i->value.number;
 }

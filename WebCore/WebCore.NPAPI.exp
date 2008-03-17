@@ -6,6 +6,7 @@ __NPN_GetProperty
 __NPN_GetStringIdentifier
 __NPN_GetStringIdentifiers
 __NPN_IdentifierIsString
+__NPN_IntFromIdentifier
 __NPN_Invoke
 __NPN_InvokeDefault
 __NPN_ReleaseObject
