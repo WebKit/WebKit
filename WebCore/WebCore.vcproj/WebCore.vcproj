@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -10211,6 +10211,14 @@
 				</File>
 				<File
 					RelativePath="..\plugins\win\PluginDataWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\plugins\win\PluginMessageThrottlerWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\plugins\win\PluginMessageThrottlerWin.h"
 					>
 				</File>
 				<File

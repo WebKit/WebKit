@@ -1,3 +1,20 @@
+2008-03-17  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Fix Bug 17898: Split PluginMessageThrottlerWin into its own files
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17898>
+
+        Move the PluginMessageThrottlerWin class into its own files, in
+        preparation for refactoring PluginView code to be shared.
+
+        Reviewed and tweaked by Adam Roben.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * plugins/PluginView.h:
+        * plugins/win/PluginMessageThrottlerWin.cpp: Added.
+        * plugins/win/PluginMessageThrottlerWin.h: Added.
+        * plugins/win/PluginViewWin.cpp:
+
 2008-03-17  Adam Roben  <aroben@apple.com>
 
         More Windows build fixes after r31098

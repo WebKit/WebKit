@@ -48,6 +48,7 @@
 #include "Page.h"
 #include "FocusController.h"
 #include "PlatformMouseEvent.h"
+#include "PluginMessageThrottlerWin.h"
 #include "PluginPackage.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
@@ -97,115 +98,7 @@ private:
     bool m_shouldAllowPopups;
 };
 
-static const double MessageThrottleTimeInterval = 0.001;
 static int s_callingPlugin;
-
-class PluginMessageThrottlerWin {
-public:
-    PluginMessageThrottlerWin(PluginView* pluginView)
-        : m_back(0), m_front(0)
-        , m_pluginView(pluginView)
-        , m_messageThrottleTimer(this, &PluginMessageThrottlerWin::messageThrottleTimerFired)
-    {
-        // Initialize the free list with our inline messages
-        for (unsigned i = 0; i < NumInlineMessages - 1; i++)
-            m_inlineMessages[i].next = &m_inlineMessages[i + 1];
-        m_inlineMessages[NumInlineMessages - 1].next = 0;
-        m_freeInlineMessages = &m_inlineMessages[0];
-    }
-
-    ~PluginMessageThrottlerWin()
-    {
-        PluginMessage* next;
-    
-        for (PluginMessage* message = m_front; message; message = next) {
-            next = message->next;
-            freeMessage(message);
-        }        
-    }
-    
-    void appendMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
-    {
-        PluginMessage* message = allocateMessage();
-
-        message->hWnd = hWnd;
-        message->msg = msg;
-        message->wParam = wParam;
-        message->lParam = lParam;
-        message->next = 0;
-
-        if (m_back)
-            m_back->next = message;
-        m_back = message;
-        if (!m_front)
-            m_front = message;
-
-        if (!m_messageThrottleTimer.isActive())
-            m_messageThrottleTimer.startOneShot(MessageThrottleTimeInterval);
-    }
-
-private:
-    struct PluginMessage {
-        HWND hWnd;
-        UINT msg;
-        WPARAM wParam;
-        LPARAM lParam;
-
-        struct PluginMessage* next;
-    };
-    
-    void messageThrottleTimerFired(Timer<PluginMessageThrottlerWin>*)
-    {
-        PluginMessage* message = m_front;
-        m_front = m_front->next;
-        if (message == m_back)
-            m_back = 0;
-
-        ::CallWindowProc(m_pluginView->pluginWndProc(), message->hWnd, message->msg, message->wParam, message->lParam);
-
-        freeMessage(message);
-
-        if (m_front)
-            m_messageThrottleTimer.startOneShot(MessageThrottleTimeInterval);
-    }
-
-    PluginMessage* allocateMessage()
-    {
-        PluginMessage *message;
-
-        if (m_freeInlineMessages) {
-            message = m_freeInlineMessages;
-            m_freeInlineMessages = message->next;
-        } else
-            message = new PluginMessage;
-
-        return message;
-    }
-
-    bool isInlineMessage(PluginMessage* message) 
-    {
-        return message >= &m_inlineMessages[0] && message <= &m_inlineMessages[NumInlineMessages - 1];
-    }
-
-    void freeMessage(PluginMessage* message) 
-    {
-        if (isInlineMessage(message)) {
-            message->next = m_freeInlineMessages;
-            m_freeInlineMessages = message;
-        } else
-            delete message;
-    }
-
-    PluginView* m_pluginView;
-    PluginMessage* m_back;
-    PluginMessage* m_front;
-
-    static const int NumInlineMessages = 4;
-    PluginMessage m_inlineMessages[NumInlineMessages];
-    PluginMessage* m_freeInlineMessages;
-
-    Timer<PluginMessageThrottlerWin> m_messageThrottleTimer;
-};
 
 static String scriptStringIfJavaScriptURL(const KURL& url)
 {
