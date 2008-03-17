@@ -1,3 +1,22 @@
+2008-03-16  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 17883: Console completion should support bracket notation
+        http://bugs.webkit.org/show_bug.cgi?id=17883
+
+        Also fixes a bug where the Inspector's window object was used instead of the
+        inspected window object.
+
+        * page/inspector/ConsolePanel.js:
+        (WebInspector.ConsolePanel.complete): Add a comment about the _backwardsRange call.
+        (WebInspector.ConsolePanel.completions): Add a comment about the _backwardsRange call.
+        Check the last character of the expression for a dot or bracket. Fallback
+        to the InspectorController.inspectedWindow() instead of window, this was a bad bug.
+        If the expression caused an exception, just consider the prefix a window property.
+        When bracket notation is used remember what quote was used and compared property names
+        with that quote surrounding it. Also escape the property name for the quote and backslash.
+
 2008-03-17  Robert Blaut  <webkit@blaut.biz>
 
         Reviewed by Darin.

@@ -211,6 +211,7 @@ WebInspector.ConsolePanel.prototype = {
             }
         }
 
+        // Pass more characters to _backwardsRange so the range will be as short as possible.
         var wordPrefixRange = this._backwardsRange(" .=:[({;", selectionRange.startContainer, selectionRange.startOffset, this.promptElement);
 
         var completions = this.completions(wordPrefixRange, auto);
@@ -278,26 +279,43 @@ WebInspector.ConsolePanel.prototype = {
 
     completions: function(wordRange, bestMatchOnly)
     {
-        var prefix = wordRange.toString();
-        var expression = this._backwardsRange(" =:({;", wordRange.startContainer, wordRange.startOffset, this.promptElement);
-        var expressionString = expression.toString().replace(/\.+$/, "");
+        // Pass less characters to _backwardsRange so the range will be a more complete expression.
+        var expression = this._backwardsRange(" =:{;", wordRange.startContainer, wordRange.startOffset, this.promptElement);
+        var expressionString = expression.toString();
+        var lastIndex = expressionString.length - 1;
 
+        var dotNotation = (expressionString[lastIndex] === ".");
+        var bracketNotation = (expressionString[lastIndex] === "[");
+
+        if (dotNotation || bracketNotation)
+            expressionString = expressionString.substr(0, lastIndex);
+
+        var prefix = wordRange.toString();
         if (!expressionString && !prefix)
             return;
 
-        var result = window;
+        var result = InspectorController.inspectedWindow();
         if (expressionString) {
             try {
                 result = this._evalInInspectedWindow(expressionString);
             } catch(e) {
-                return;
+                // Do nothing, the prefix will be considered a window property.
             }
+        }
+
+        if (bracketNotation) {
+            if (prefix.length && prefix[0] === "'")
+                var quoteUsed = "'";
+            else
+                var quoteUsed = "\"";
         }
 
         var results = [];
         var properties = Object.sortedProperties(result);
         for (var i = 0; i < properties.length; ++i) {
             var property = properties[i];
+            if (bracketNotation)
+                property = quoteUsed + property.escapeCharacters(quoteUsed + "\\") + quoteUsed + "]";
             if (property.length < prefix.length)
                 continue;
             if (property.indexOf(prefix) !== 0)
