@@ -1,3 +1,25 @@
+2008-03-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - fixed "Acid3 expects different exceptions for surroundContents calls involving comment nodes (affects Acid3 test 11)"
+        http://bugs.webkit.org/show_bug.cgi?id=17509
+        
+        This gets us to 92/100
+
+        * dom/Range.cpp:
+        (WebCore::Range::surroundContents): Check for
+        HIERARCHY_REQUEST_ERR before BAD_BOUNDARYPOINTS_ERR, since Acid3
+        expects exceptional conditions to be tested in the order that the
+        spec lists them. Also, adjust the HIERARCHY_REQUEST_ERR check. If
+        the start point of the range is in a comment node, the node that
+        would be the parent of a partial replacement is actually the
+        comment node's parent (since comment nodes have character
+        indices), so we should do the HIERARCHY_REQUEST_ERR check based on
+        the parent of the comment node, as for text nodes, even though it
+        will fail later with a different exception because it is not
+        allowed to surround a partially selected non-text node.
+
 2008-03-16  Marvin Decker  <marv.decker@gmail.com>
 
         Reviewed by Darin.

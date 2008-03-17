@@ -1405,25 +1405,12 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
         return;
     }
 
-    // BAD_BOUNDARYPOINTS_ERR: Raised if the Range partially selects a non-Text node.
-    if (m_start.container->nodeType() != Node::TEXT_NODE) {
-        if (m_start.offset > 0 && m_start.offset < maxStartOffset()) {
-            ec = RangeException::BAD_BOUNDARYPOINTS_ERR;
-            return;
-        }
-    }
-    if (m_end.container->nodeType() != Node::TEXT_NODE) {
-        if (m_end.offset > 0 && m_end.offset < maxEndOffset()) {
-            ec = RangeException::BAD_BOUNDARYPOINTS_ERR;
-            return;
-        }
-    }    
-
     // Raise a HIERARCHY_REQUEST_ERR if m_start.container doesn't accept children like newParent.
     Node* parentOfNewParent = m_start.container.get();
-    // If m_start.container is a textNode, it will be split and it will be its parent that will 
-    // need to accept newParent.
-    if (parentOfNewParent->isTextNode())
+
+    // If m_start.container is a character data node, it will be split and it will be its parent that will 
+    // need to accept newParent (or in the case of a comment, it logically "would"
+    if (parentOfNewParent->isCharacterDataNode())
         parentOfNewParent = parentOfNewParent->parentNode();
     if (!parentOfNewParent->childTypeAllowed(newParent->nodeType())) {
         ec = HIERARCHY_REQUEST_ERR;
@@ -1437,6 +1424,20 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
 
     // FIXME: Do we need a check if the node would end up with a child node of a type not
     // allowed by the type of node?
+
+    // BAD_BOUNDARYPOINTS_ERR: Raised if the Range partially selects a non-Text node.
+    if (m_start.container->nodeType() != Node::TEXT_NODE) {
+        if (m_start.offset > 0 && m_start.offset < maxStartOffset()) {
+            ec = RangeException::BAD_BOUNDARYPOINTS_ERR;
+            return;
+        }
+    }
+    if (m_end.container->nodeType() != Node::TEXT_NODE) {
+        if (m_end.offset > 0 && m_end.offset < maxEndOffset()) {
+            ec = RangeException::BAD_BOUNDARYPOINTS_ERR;
+            return;
+        }
+    }    
 
     ec = 0;
     while (Node* n = newParent->firstChild()) {
