@@ -231,6 +231,8 @@ namespace KJS {
         void popActivation();
         void tearOffActivation(ExecState*, bool markAsRelic = false);
 
+        virtual bool isDynamicScope() const;
+
     private:
         void init();
         

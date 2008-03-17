@@ -146,7 +146,7 @@ namespace KJS {
         virtual bool needsParensIfLeftmost() const { return false; }
 
         // Used for iterative, depth-first traversal of the node tree. Does not cross function call boundaries.
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL { }
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL { }
 
     protected:
         Node(JSType) KJS_FAST_CALL; // used by ExpressionNode
@@ -376,7 +376,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
 
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
@@ -393,7 +393,8 @@ namespace KJS {
     protected:
         ALWAYS_INLINE JSValue* inlineEvaluate(ExecState*);
         Identifier m_ident;
-        size_t m_index; // Used by LocalVarAccessNode.
+        size_t m_index; // Used by LocalVarAccessNode and ScopedVarAccessNode.
+        size_t m_scopeDepth; // Used by ScopedVarAccessNode
     };
 
     class LocalVarAccessNode : public ResolveNode {
@@ -415,6 +416,47 @@ namespace KJS {
     private:
         ALWAYS_INLINE JSValue* inlineEvaluate(ExecState*);
     };
+    
+    class ScopedVarAccessNode : public ResolveNode {
+    public:
+        // Overwrites a ResolveNode in place.
+        ScopedVarAccessNode(size_t i, size_t scopeDepth) KJS_FAST_CALL
+        : ResolveNode(PlacementNewAdopt)
+        {
+            ASSERT(i != missingSymbolMarker());
+            m_index = i;
+            m_scopeDepth = scopeDepth;
+        }
+        
+        virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+        virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
+        virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
+        virtual int32_t evaluateToInt32(ExecState*) KJS_FAST_CALL;
+        virtual uint32_t evaluateToUInt32(ExecState*) KJS_FAST_CALL;
+        
+    private:
+        ALWAYS_INLINE JSValue* inlineEvaluate(ExecState*);
+    };
+    
+    class NonLocalVarAccessNode : public ResolveNode {
+    public:
+        // Overwrites a ResolveNode in place.
+        NonLocalVarAccessNode(size_t scopeDepth) KJS_FAST_CALL
+        : ResolveNode(PlacementNewAdopt)
+        {
+            ASSERT(scopeDepth != 0);
+            m_scopeDepth = scopeDepth;
+        }
+        
+        virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+        virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
+        virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
+        virtual int32_t evaluateToInt32(ExecState*) KJS_FAST_CALL;
+        virtual uint32_t evaluateToUInt32(ExecState*) KJS_FAST_CALL;
+        
+    private:
+        ALWAYS_INLINE JSValue* inlineEvaluate(ExecState*);
+    };
 
     class ElementNode : public Node {
     public:
@@ -433,7 +475,7 @@ namespace KJS {
 
         virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
 
         PassRefPtr<ElementNode> releaseNext() KJS_FAST_CALL { return m_next.release(); }
 
@@ -468,7 +510,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecPrimary; }
@@ -490,7 +532,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
 
@@ -517,7 +559,7 @@ namespace KJS {
             list->m_next = this;
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
 
@@ -541,7 +583,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecPrimary; }
@@ -559,7 +601,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
@@ -588,7 +630,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
@@ -622,7 +664,7 @@ namespace KJS {
             listNode->m_next = this;
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
 
@@ -646,7 +688,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
 
@@ -669,7 +711,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual int32_t evaluateToInt32(ExecState*) KJS_FAST_CALL;
@@ -692,7 +734,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecCall; }
@@ -709,7 +751,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecCall; }
@@ -734,7 +776,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
@@ -779,7 +821,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecCall; }
@@ -799,7 +841,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
@@ -847,7 +889,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecPostfix; }
@@ -891,7 +933,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecPostfix; }
@@ -938,7 +980,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecPostfix; }
 
     protected:
@@ -976,7 +1018,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecPostfix; }
 
     protected:
@@ -1036,7 +1078,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecUnary; }
@@ -1063,7 +1105,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecUnary; }
@@ -1081,7 +1123,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecUnary; }
@@ -1098,7 +1140,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecUnary; }
@@ -1114,7 +1156,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecUnary; }
@@ -1138,7 +1180,7 @@ namespace KJS {
             m_expectedReturnType = StringType;
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
 
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1172,7 +1214,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecUnary; }
@@ -1193,7 +1235,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
 
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1236,7 +1278,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
 
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1275,7 +1317,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecUnary; }
 
     protected:
@@ -1313,7 +1355,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecPostfix; }
 
     protected:
@@ -1368,7 +1410,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
@@ -1389,7 +1431,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1407,7 +1449,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
@@ -1430,7 +1472,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1449,7 +1491,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
@@ -1474,7 +1516,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual int32_t evaluateToInt32(ExecState*) KJS_FAST_CALL;
@@ -1498,7 +1540,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
@@ -1522,7 +1564,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual int32_t evaluateToInt32(ExecState*) KJS_FAST_CALL;
@@ -1600,7 +1642,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual int32_t evaluateToInt32(ExecState*) KJS_FAST_CALL;
@@ -1624,7 +1666,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual int32_t evaluateToInt32(ExecState*) KJS_FAST_CALL;
@@ -1648,7 +1690,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual int32_t evaluateToInt32(ExecState*) KJS_FAST_CALL;
@@ -1672,7 +1714,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual int32_t evaluateToInt32(ExecState*) KJS_FAST_CALL;
@@ -1695,7 +1737,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1745,7 +1787,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1766,7 +1808,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1787,7 +1829,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1809,7 +1851,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1828,7 +1870,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1848,7 +1890,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1870,7 +1912,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1892,7 +1934,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1914,7 +1956,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1936,7 +1978,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
@@ -1961,7 +2003,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
@@ -1986,7 +2028,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
@@ -2014,7 +2056,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -2036,7 +2078,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -2061,7 +2103,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
@@ -2092,7 +2134,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecAssignment; }
@@ -2143,7 +2185,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecAssignment; }
@@ -2186,7 +2228,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecAssignment; }
@@ -2207,7 +2249,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecAssignment; }
@@ -2227,7 +2269,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecAssignment; }
@@ -2248,7 +2290,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecAssignment; }
@@ -2288,7 +2330,7 @@ namespace KJS {
             m_expr1->optimizeForUnnecessaryResult();
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecExpression; }
@@ -2311,7 +2353,7 @@ namespace KJS {
     public:
         ConstDeclNode(const Identifier& ident, ExpressionNode* in) KJS_FAST_CALL;
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual KJS::JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         void evaluateSingle(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -2333,7 +2375,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2360,7 +2402,7 @@ namespace KJS {
     public:
         BlockNode(SourceElements* children) KJS_FAST_CALL;
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2386,7 +2428,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2401,7 +2443,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2417,7 +2459,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2434,7 +2476,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2450,7 +2492,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2467,7 +2509,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2494,7 +2536,7 @@ namespace KJS {
             m_expr3->optimizeForUnnecessaryResult();
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2511,7 +2553,7 @@ namespace KJS {
         ForInNode(ExpressionNode*, ExpressionNode*, StatementNode*) KJS_FAST_CALL;
         ForInNode(const Identifier&, ExpressionNode*, ExpressionNode*, StatementNode*) KJS_FAST_CALL;
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2567,7 +2609,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2583,7 +2625,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2600,7 +2642,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual void pushLabel(const Identifier& ident) KJS_FAST_CALL { m_statement->pushLabel(ident); }
@@ -2617,7 +2659,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2635,7 +2677,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2815,7 +2857,7 @@ namespace KJS {
                 children->releaseContentsIntoVector(m_children);
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
 
@@ -2840,7 +2882,7 @@ namespace KJS {
             clauseList->m_next = this;
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         CaseClauseNode* getClause() const KJS_FAST_CALL { return m_clause.get(); }
         ClauseListNode* getNext() const KJS_FAST_CALL { return m_next.get(); }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -2857,7 +2899,7 @@ namespace KJS {
     public:
         CaseBlockNode(ClauseListNode* list1, CaseClauseNode* defaultClause, ClauseListNode* list2) KJS_FAST_CALL;
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         JSValue* executeBlock(ExecState*, JSValue *input) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
@@ -2876,7 +2918,7 @@ namespace KJS {
         {
         }
 
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
@@ -2891,7 +2933,7 @@ namespace KJS {
 
         virtual JSValue* execute(ExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-        virtual void optimizeVariableAccess(const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
+        virtual void optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack&) KJS_FAST_CALL;
 
     private:
         RefPtr<StatementNode> m_statement;

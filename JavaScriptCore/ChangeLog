@@ -1,3 +1,45 @@
+2008-03-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff, Darin and Weinig.
+
+        Add fast multi-level scope lookup
+        
+        Add logic and AST nodes to provide rapid variable resolution across
+        static scope boundaries.  This also adds logic that allows us to skip
+        any static scopes that do not contain the variable to be resolved.
+        
+        This results in a ~2.5% speedup in SunSpider, and gives a 25-30% speedup
+        in some simple and ad hoc closure and global variable access tests.
+
+        * JavaScriptCore.exp:
+        * kjs/Activation.h:
+        * kjs/JSGlobalObject.cpp:
+        * kjs/JSGlobalObject.h:
+        * kjs/JSVariableObject.cpp:
+        * kjs/JSVariableObject.h:
+        * kjs/function.cpp:
+        (KJS::ActivationImp::isDynamicScope):
+        * kjs/nodes.cpp:
+        (KJS::ResolveNode::optimizeVariableAccess):
+        (KJS::ScopedVarAccessNode::inlineEvaluate):
+        (KJS::ScopedVarAccessNode::evaluate):
+        (KJS::ScopedVarAccessNode::evaluateToNumber):
+        (KJS::ScopedVarAccessNode::evaluateToBoolean):
+        (KJS::ScopedVarAccessNode::evaluateToInt32):
+        (KJS::ScopedVarAccessNode::evaluateToUInt32):
+        (KJS::NonLocalVarAccessNode::inlineEvaluate):
+        (KJS::NonLocalVarAccessNode::evaluate):
+        (KJS::NonLocalVarAccessNode::evaluateToNumber):
+        (KJS::NonLocalVarAccessNode::evaluateToBoolean):
+        (KJS::NonLocalVarAccessNode::evaluateToInt32):
+        (KJS::NonLocalVarAccessNode::evaluateToUInt32):
+        (KJS::IfElseNode::optimizeVariableAccess):
+        (KJS::ScopeNode::optimizeVariableAccess):
+        * kjs/nodes.h:
+        (KJS::ScopedVarAccessNode::):
+        (KJS::NonLocalVarAccessNode::):
+        * kjs/object.h:
+
  2008-03-16  weihongzeng  <weihong.zeng@hotmail.com>
  
          Reviewed by Darin Adler.

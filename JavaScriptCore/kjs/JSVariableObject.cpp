@@ -103,4 +103,9 @@ void JSVariableObject::mark()
     }
 }
 
+bool JSVariableObject::isVariableObject() const
+{
+    return true;
+}
+
 } // namespace KJS

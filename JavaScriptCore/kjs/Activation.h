@@ -73,6 +73,7 @@ namespace KJS {
         bool isOnStack() const { return d()->isOnStack; }
         bool needsPop() const { return d()->isOnStack || d()->leftRelic; }
 
+        virtual bool isDynamicScope() const;
     private:
         static PropertySlot::GetValueFunc getArgumentsGetter();
         static JSValue* argumentsGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);

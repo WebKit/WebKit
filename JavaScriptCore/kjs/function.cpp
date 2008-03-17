@@ -482,6 +482,11 @@ ActivationImp::ActivationData::ActivationData(const ActivationData& old)
 {
 }
 
+bool ActivationImp::isDynamicScope() const
+{
+    return d()->function->body->usesEval();
+}
+
 // ------------------------------ Global Functions -----------------------------------
 
 static JSValue* encode(ExecState* exec, const List& args, const char* do_not_escape)
