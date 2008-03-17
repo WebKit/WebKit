@@ -153,26 +153,23 @@ namespace WebCore {
 #if PLATFORM(WIN) || PLATFORM(QT)
     public:
         IntRect windowResizerRect();
+        bool resizerOverlapsContent() const;
         void adjustOverlappingScrollbarCount(int overlapDelta);
 
     private:
-        bool resizerOverlapsContent() const;
-
         virtual void setParent(ScrollView*);
 #endif
 
 #if PLATFORM(WIN)
     public:
-        bool isAttachedToWindow() const;
-
-        virtual void show();
-        virtual void hide();
-
-    private:
         virtual void themeChanged();
 
         virtual void attachToWindow();
         virtual void detachFromWindow();
+        bool isAttachedToWindow() const;
+
+        virtual void show();
+        virtual void hide();
 
         void setAllowsScrolling(bool);
         bool allowsScrolling() const;
