@@ -44,7 +44,7 @@ PluginSet PluginDatabase::getPluginsInPaths() const
         if (!dir)
             continue;
 
-        while ((const char* name = g_dir_read_name(dir))) {
+        while (const char* name = g_dir_read_name(dir)) {
             if (!g_str_has_suffix(name, "." G_MODULE_SUFFIX))
                 continue;
 

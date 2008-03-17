@@ -1,3 +1,10 @@
+2008-03-17  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Fix GTK+ build from r31094.
+
+        * plugins/gtk/PluginDatabaseGtk.cpp:
+        (PluginDatabase::getPluginsInPaths):
+
 2008-03-17  Adam Roben  <aroben@apple.com>
 
         Fix Bug 17876: REGRESSION (r31060): Attempting to visit Ofcom page causes crash
