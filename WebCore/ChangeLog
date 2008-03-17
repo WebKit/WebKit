@@ -1,3 +1,15 @@
+2008-03-17  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Adam Roben.
+
+        Implement PluginDatabase for GTK+ with PluginDatabaseGtk.cpp.
+        Remove implemented methods from TemporaryLinkStubs.
+
+        * GNUmakefile.am:
+        * plugins/gtk:
+        * plugins/gtk/PluginDatabaseGtk.cpp:
+        * platform/gtk/TemporaryLinkStubs.cpp:
+
 2008-03-17  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build.
