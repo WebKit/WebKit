@@ -179,6 +179,8 @@
 
 #if PLATFORM(BIG_ENDIAN)
 #define IEEE_MC68k
+#elif PLATFORM(MIDDLE_ENDIAN)
+#define IEEE_ARM
 #else
 #define IEEE_8087
 #endif
@@ -225,6 +227,9 @@ static double private_mem[PRIVATE_mem], *pmem_next = private_mem;
 #define IEEE_Arith
 #endif
 #ifdef IEEE_8087
+#define IEEE_Arith
+#endif
+#ifdef IEEE_ARM
 #define IEEE_Arith
 #endif
 
@@ -283,8 +288,8 @@ extern "C" {
 #endif
 #endif
 
-#if defined(IEEE_8087) + defined(IEEE_MC68k) + defined(VAX) + defined(IBM) != 1
-Exactly one of IEEE_8087, IEEE_MC68k, VAX, or IBM should be defined.
+#if defined(IEEE_8087) + defined(IEEE_MC68k) + defined(IEEE_ARM) + defined(VAX) + defined(IBM) != 1
+Exactly one of IEEE_8087, IEEE_ARM, IEEE_MC68k, VAX, or IBM should be defined.
 #endif
 
 typedef union { double d; ULong L[2]; } U;
@@ -313,7 +318,7 @@ typedef union { double d; ULong L[2]; } U;
  * An alternative that might be better on some machines is
  * #define Storeinc(a,b,c) (*a++ = b << 16 | c & 0xffff)
  */
-#if defined(IEEE_8087) + defined(VAX)
+#if defined(IEEE_8087) + defined(IEEE_ARM) + defined(VAX)
 #define Storeinc(a,b,c) (((unsigned short *)a)[1] = (unsigned short)b, \
 ((unsigned short *)a)[0] = (unsigned short)c, a++)
 #else

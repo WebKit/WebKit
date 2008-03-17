@@ -1,3 +1,12 @@
+ 2008-03-16  weihongzeng  <weihong.zeng@hotmail.com>
+ 
+         Reviewed by Darin Adler.
+ 
+         http://bugs.webkit.org/show_bug.cgi?id=15416
+         Add support for mixed-endian processors
+ 
+         * kjs/dtoa.cpp: Add IEEE_ARM, triggered by PLATFORM(MIDDLE_ENDIAN).
+ 
 2008-03-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         Rubber stamped by Darin.
