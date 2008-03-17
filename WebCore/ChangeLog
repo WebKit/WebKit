@@ -1,3 +1,11 @@
+2008-03-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add HTMLCollection constructor to the Window object. (Omission noticed by Harri Porten)
+
+        * page/DOMWindow.idl: 
+
 2008-03-17  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Unreviewed Gtk+ build fix.
