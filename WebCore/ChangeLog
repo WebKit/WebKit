@@ -1,3 +1,17 @@
+2008-03-17  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Darin.
+
+        Fix for bug http://bugs.webkit.org/show_bug.cgi?id=17696
+        Set default margin-bottom for form element in quirk mode
+        and be compatible with Gecko.
+
+        Tests: fast/css/margin-bottom-form-element-quirk.html
+               fast/css/margin-bottom-form-element-strict.html
+
+        * css/html4.css:
+        * css/quirks.css:
+
 2008-03-17  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

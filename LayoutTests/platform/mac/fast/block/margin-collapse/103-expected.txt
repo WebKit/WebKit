@@ -1,11 +1,11 @@
-layer at (0,0) size 785x1701
+layer at (0,0) size 785x1698
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1701
-  RenderBlock {HTML} at (0,0) size 785x1701
-    RenderBody {BODY} at (8,20) size 769x1661 [bgcolor=#A6A972]
-      RenderBlock {DIV} at (83,0) size 602x1661 [bgcolor=#FDFDE9] [border: (1px solid #000000)]
+layer at (0,0) size 785x1698
+  RenderBlock {HTML} at (0,0) size 785x1698
+    RenderBody {BODY} at (8,20) size 769x1658 [bgcolor=#A6A972]
+      RenderBlock {DIV} at (83,0) size 602x1658 [bgcolor=#FDFDE9] [border: (1px solid #000000)]
         RenderBlock {DIV} at (1,31) size 600x70
-        RenderBlock {DIV} at (1,114) size 600x1475
+        RenderBlock {DIV} at (1,114) size 600x1472
           RenderBlock {P} at (20,0) size 560x80 [color=#333333]
             RenderText {#text} at (0,2) size 520x35
               text run at (0,2) width 520: "We are trying to understand how UVic students perform Shakespeare related research for"
@@ -159,10 +159,10 @@ layer at (0,0) size 785x1701
               RenderText {#text} at (0,2) size 220x15
                 text run at (0,2) width 220: "Please enter any other thoughts here."
             RenderTextControl {TEXTAREA} at (0,1199) size 502x102 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock {P} at (20,1455) size 560x20 [color=#333333]
+          RenderBlock {P} at (20,1452) size 560x20 [color=#333333]
             RenderText {#text} at (0,2) size 233x15
               text run at (0,2) width 233: "Thank you for your time filling this out."
-        RenderBlock {DIV} at (1,1609) size 600x51 [border: (1px dashed #A6A972) none]
+        RenderBlock {DIV} at (1,1606) size 600x51 [border: (1px dashed #A6A972) none]
           RenderBlock {SPAN} at (0,16) size 600x20 [color=#333333]
             RenderText {#text} at (247,2) size 106x15
               text run at (247,2) width 106: "\x{A9}2003 Kevin Davis"

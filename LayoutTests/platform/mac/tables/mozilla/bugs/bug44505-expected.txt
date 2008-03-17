@@ -1,8 +1,8 @@
-layer at (0,0) size 785x642
+layer at (0,0) size 785x610
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x642
-  RenderBlock {HTML} at (0,0) size 785x642
-    RenderBody {BODY} at (8,8) size 769x626 [bgcolor=#FFFFFF]
+layer at (0,0) size 785x610
+  RenderBlock {HTML} at (0,0) size 785x610
+    RenderBody {BODY} at (8,8) size 769x594 [bgcolor=#FFFFFF]
       RenderTable {TABLE} at (0,0) size 308x52 [border: (1px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -25,19 +25,19 @@ layer at (0,0) size 785x642
         RenderTableSection {TBODY} at (1,1) size 298x50
           RenderTableRow {TR} at (0,2) size 298x22
           RenderTableRow {TR} at (0,26) size 298x22
-      RenderTable {TABLE} at (0,208) size 300x72 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 298x70
-          RenderTableRow {TR} at (0,2) size 298x42
-          RenderTableRow {TR} at (0,46) size 298x22
-      RenderTable {TABLE} at (0,280) size 300x72 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 298x70
-          RenderTableRow {TR} at (0,2) size 298x42
-          RenderTableRow {TR} at (0,46) size 298x22
-      RenderTable {TABLE} at (0,352) size 300x94 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,208) size 300x56 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 298x54
+          RenderTableRow {TR} at (0,2) size 298x26
+          RenderTableRow {TR} at (0,30) size 298x22
+      RenderTable {TABLE} at (0,264) size 300x56 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 298x54
+          RenderTableRow {TR} at (0,2) size 298x26
+          RenderTableRow {TR} at (0,30) size 298x22
+      RenderTable {TABLE} at (0,320) size 300x94 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 298x92
           RenderTableRow {TR} at (0,2) size 298x46
           RenderTableRow {TR} at (0,50) size 298x40
-      RenderTable {TABLE} at (0,536) size 300x90 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,504) size 300x90 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 298x88
           RenderTableRow {TR} at (0,2) size 298x60
           RenderTableRow {TR} at (0,64) size 298x22
@@ -105,97 +105,97 @@ layer at (163,191) size 142x22 clip at (164,192) size 140x20
   RenderTableCell {TD} at (154,26) size 142x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (11,219) size 150x42 clip at (12,220) size 148x40 scrollWidth 201
-  RenderTableCell {TD} at (2,2) size 150x42 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+layer at (11,219) size 150x26 clip at (12,220) size 148x24 scrollWidth 201
+  RenderTableCell {TD} at (2,2) size 150x26 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {FORM} at (2,2) size 146x22
       RenderButton {BUTTON} at (0,2) size 200x18 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0) none (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,2) size 184x13
           RenderText {#text} at (74,0) size 36x13
             text run at (74,0) width 36: "button"
-layer at (163,219) size 142x42 clip at (164,220) size 140x40
-  RenderTableCell {TD} at (154,12) size 142x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+layer at (163,219) size 142x26 clip at (164,220) size 140x24
+  RenderTableCell {TD} at (154,4) size 142x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (11,263) size 150x22 clip at (12,264) size 148x20
-  RenderTableCell {TD} at (2,46) size 150x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+layer at (11,247) size 150x22 clip at (12,248) size 148x20
+  RenderTableCell {TD} at (2,30) size 150x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (163,263) size 142x22 clip at (164,264) size 140x20
-  RenderTableCell {TD} at (154,46) size 142x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+layer at (163,247) size 142x22 clip at (164,248) size 140x20
+  RenderTableCell {TD} at (154,30) size 142x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (11,291) size 280x42 clip at (12,292) size 278x40
-  RenderTableCell {TD} at (2,2) size 280x42 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+layer at (11,275) size 280x26 clip at (12,276) size 278x24
+  RenderTableCell {TD} at (2,2) size 280x26 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {FORM} at (2,2) size 276x22
       RenderButton {BUTTON} at (0,2) size 200x18 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0) none (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,2) size 184x13
           RenderText {#text} at (74,0) size 36x13
             text run at (74,0) width 36: "button"
-layer at (293,291) size 12x42 clip at (294,292) size 10x40
-  RenderTableCell {TD} at (284,12) size 12x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+layer at (293,275) size 12x26 clip at (294,276) size 10x24
+  RenderTableCell {TD} at (284,4) size 12x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (11,335) size 280x22 clip at (12,336) size 278x20
-  RenderTableCell {TD} at (2,46) size 280x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+layer at (11,303) size 280x22 clip at (12,304) size 278x20
+  RenderTableCell {TD} at (2,30) size 280x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (293,335) size 12x22 clip at (294,336) size 10x20
-  RenderTableCell {TD} at (284,46) size 12x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+layer at (293,303) size 12x22 clip at (294,304) size 10x20
+  RenderTableCell {TD} at (284,30) size 12x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (11,363) size 150x46 clip at (12,364) size 148x44 scrollWidth 216
+layer at (11,331) size 150x46 clip at (12,332) size 148x44 scrollWidth 216
   RenderTableCell {TD} at (2,2) size 150x46 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (11,11) size 206x24 [border: (3px solid #000000)]
       RenderText {#text} at (3,3) size 20x18
         text run at (3,3) width 20: "div"
-layer at (163,363) size 142x46 clip at (164,364) size 140x44
+layer at (163,331) size 142x46 clip at (164,332) size 140x44
   RenderTableCell {TD} at (154,5) size 142x40 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (11,11) size 4x18
       text run at (11,11) width 4: " "
-layer at (11,411) size 150x40 clip at (12,412) size 148x38
+layer at (11,379) size 150x40 clip at (12,380) size 148x38
   RenderTableCell {TD} at (2,50) size 150x40 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
     RenderText {#text} at (11,11) size 4x18
       text run at (11,11) width 4: " "
-layer at (163,411) size 142x40 clip at (164,412) size 140x38
+layer at (163,379) size 142x40 clip at (164,380) size 140x38
   RenderTableCell {TD} at (154,50) size 142x40 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
     RenderText {#text} at (11,11) size 4x18
       text run at (11,11) width 4: " "
-layer at (8,454) size 300x90 clip at (9,455) size 298x88
-  RenderTable {TABLE} at (0,446) size 300x90 [border: (1px outset #808080)]
+layer at (8,422) size 300x90 clip at (9,423) size 298x88
+  RenderTable {TABLE} at (0,414) size 300x90 [border: (1px outset #808080)]
     RenderTableSection {TBODY} at (1,1) size 298x88
       RenderTableRow {TR} at (0,2) size 298x60
       RenderTableRow {TR} at (0,64) size 298x22
-layer at (11,457) size 150x60 clip at (12,458) size 148x58 scrollWidth 207
+layer at (11,425) size 150x60 clip at (12,426) size 148x58 scrollWidth 207
   RenderTableCell {TD} at (2,2) size 150x60 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {P} at (2,18) size 206x24 [border: (3px solid #000000)]
       RenderText {#text} at (3,3) size 27x18
         text run at (3,3) width 27: "para"
-layer at (163,457) size 142x60 clip at (164,458) size 140x58
+layer at (163,425) size 142x60 clip at (164,426) size 140x58
   RenderTableCell {TD} at (154,21) size 142x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (11,519) size 150x22 clip at (12,520) size 148x20
+layer at (11,487) size 150x22 clip at (12,488) size 148x20
   RenderTableCell {TD} at (2,64) size 150x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (163,519) size 142x22 clip at (164,520) size 140x20
+layer at (163,487) size 142x22 clip at (164,488) size 140x20
   RenderTableCell {TD} at (154,64) size 142x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (11,547) size 254x60 clip at (12,548) size 252x58
+layer at (11,515) size 254x60 clip at (12,516) size 252x58
   RenderTableCell {TD} at (2,2) size 254x60 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {P} at (2,18) size 206x24 [border: (3px solid #000000)]
       RenderText {#text} at (3,3) size 27x18
         text run at (3,3) width 27: "para"
-layer at (267,547) size 38x60 clip at (268,548) size 36x58
+layer at (267,515) size 38x60 clip at (268,516) size 36x58
   RenderTableCell {TD} at (258,21) size 38x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (11,609) size 254x22 clip at (12,610) size 252x20
+layer at (11,577) size 254x22 clip at (12,578) size 252x20
   RenderTableCell {TD} at (2,64) size 254x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (267,609) size 38x22 clip at (268,610) size 36x20
+layer at (267,577) size 38x22 clip at (268,578) size 36x20
   RenderTableCell {TD} at (258,64) size 38x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "

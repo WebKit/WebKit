@@ -1,3 +1,49 @@
+2008-03-17  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Darin.
+
+        Fix for bug http://bugs.webkit.org/show_bug.cgi?id=17696
+        Set default margin-bottom for form element in quirk mode
+        and be compatible with Gecko.
+
+        * fast/css/margin-bottom-form-element-quirk.html: Added.
+        * fast/css/margin-bottom-form-element-strict.html: Added.
+        * fast/frames/viewsource-empty-attribute-value-expected.txt:
+        * platform/mac/fast/block/margin-collapse/103-expected.checksum:
+        * platform/mac/fast/block/margin-collapse/103-expected.png:
+        * platform/mac/fast/block/margin-collapse/103-expected.txt:
+        * platform/mac/fast/css/margin-bottom-form-element-quirk-expected.checksum: Added.
+        * platform/mac/fast/css/margin-bottom-form-element-quirk-expected.png: Added.
+        * platform/mac/fast/css/margin-bottom-form-element-quirk-expected.txt: Added.
+        * platform/mac/fast/css/margin-bottom-form-element-strict-expected.checksum: Added.
+        * platform/mac/fast/css/margin-bottom-form-element-strict-expected.png: Added.
+        * platform/mac/fast/css/margin-bottom-form-element-strict-expected.txt: Added.
+        * platform/mac/tables/mozilla/bugs/bug44505-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug44505-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug44505-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug51727-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug51727-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug51727-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug52505-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug52505-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug52505-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug52506-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug52506-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug52506-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-2-expected.checksum:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-2-expected.png:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-2-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug56024-expected.checksum:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug56024-expected.png:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug56024-expected.txt:
+        * platform/qt/fast/block/margin-collapse/103-expected.txt: Removed.
+        * platform/qt/tables/mozilla/bugs/bug44505-expected.txt: Removed.
+        * platform/qt/tables/mozilla/bugs/bug51727-expected.txt: Removed.
+        * platform/qt/tables/mozilla/bugs/bug52505-expected.txt: Removed.
+        * platform/qt/tables/mozilla/bugs/bug52506-expected.txt: Removed.
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug2479-2-expected.txt: Removed.
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug56024-expected.txt: Removed.
+
 2008-03-17  Yuzhu Shen  <yuzhu.shen@gmail.com>
 
         Reviewed by Darin.
