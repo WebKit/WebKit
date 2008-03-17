@@ -1,3 +1,17 @@
+2008-03-17  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        Speculative fix for http://bugs.webkit.org/show_bug.cgi?id=17878
+        Bug 17878: REGRESSION: Acid3 sometimes crashes Webkit under WebCore::Loader::Host::cancelRequests
+        
+        I can't reproduce the crash or make a test case for this one but I'm pretty sure this
+        is the problem. Essentially the same bug as http://bugs.webkit.org/show_bug.cgi?id=17862
+        except in didFail() instead of didFinishLoading().
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::didFail):
+
 2008-03-17  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed and tweaked by Darin.
