@@ -1,3 +1,11 @@
+2008-03-17  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build.
+
+        * platform/text/qt/TextCodecQt.cpp:
+        (WebCore::TextCodecQt::encode):
+        * platform/text/qt/TextCodecQt.h:
+
 2008-03-16  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, just fixing an incomplete comment from the last commit.

@@ -43,7 +43,7 @@ namespace WebCore {
         virtual ~TextCodecQt();
 
         virtual String decode(const char*, size_t length, bool flush = false);
-        virtual CString encode(const UChar*, size_t length, bool allowEntities = false);
+        virtual CString encode(const UChar*, size_t length, UnencodableHandling);
 
     private:
         TextEncoding m_encoding;

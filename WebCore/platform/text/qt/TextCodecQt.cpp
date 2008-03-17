@@ -104,12 +104,12 @@ String TextCodecQt::decode(const char* bytes, size_t length, bool flush)
     return unicode;
 }
 
-CString TextCodecQt::encode(const UChar* characters, size_t length, bool allowEntities)
+CString TextCodecQt::encode(const UChar* characters, size_t length, UnencodableHandling)
 {
     if (!length)
         return "";
 
-    // FIXME: do something sensible with allowEntities
+    // FIXME: do something sensible with UnencodableHandling
 
     QByteArray ba = m_codec->fromUnicode(reinterpret_cast<const QChar*>(characters), length, 0);
     return CString(ba.constData(), ba.length());
