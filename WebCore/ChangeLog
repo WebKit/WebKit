@@ -1,3 +1,10 @@
+2008-03-17  Darin Adler  <darin@apple.com>
+
+        - try to fix GTK build
+
+        * platform/ScrollView.h: Make setGtkAdjustments adjustment.
+        And non-virtual (why was it virtual?).
+
 2008-03-17  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Fix Bug 17898: Split PluginMessageThrottlerWin into its own files

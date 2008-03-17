@@ -177,13 +177,13 @@ namespace WebCore {
 
 #if PLATFORM(QT)
     public:
-        PlatformScrollbar *horizontalScrollBar() const;
-        PlatformScrollbar *verticalScrollBar() const;
+        PlatformScrollbar* horizontalScrollBar() const;
+        PlatformScrollbar* verticalScrollBar() const;
 #endif
 
 #if PLATFORM(GTK)
-    private:
-        virtual void setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj);
+    public:
+        void setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj);
 #endif
 
 #if PLATFORM(WX)
