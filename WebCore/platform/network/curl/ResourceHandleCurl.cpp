@@ -35,6 +35,49 @@
 
 namespace WebCore {
 
+class WebCoreSynchronousLoader : public ResourceHandleClient {
+public:
+    WebCoreSynchronousLoader();
+
+    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
+    virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived);
+    virtual void didFinishLoading(ResourceHandle*);
+    virtual void didFail(ResourceHandle*, const ResourceError&);
+
+    ResourceResponse resourceResponse() const { return m_response; }
+    ResourceError resourceError() const { return m_error; }
+    Vector<char> data() const { return m_data; }
+
+private:
+    ResourceResponse m_response;
+    ResourceError m_error;
+    Vector<char> m_data;
+};
+
+WebCoreSynchronousLoader::WebCoreSynchronousLoader()
+{
+}
+
+void WebCoreSynchronousLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
+{
+    m_response = response;
+}
+
+void WebCoreSynchronousLoader::didReceiveData(ResourceHandle*, const char* data, int length, int)
+{
+    m_data.append(data, length);
+}
+
+void WebCoreSynchronousLoader::didFinishLoading(ResourceHandle*)
+{
+}
+
+void WebCoreSynchronousLoader::didFail(ResourceHandle*, const ResourceError& error)
+{
+    m_error = error;
+}
+
+
 ResourceHandleInternal::~ResourceHandleInternal()
 {
     free(m_url);
@@ -90,9 +133,18 @@ bool ResourceHandle::loadsBlocked()
     return false;
 }
 
-void ResourceHandle::loadResourceSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>&, Frame*)
+void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data, Frame*)
 {
-    notImplemented();
+    WebCoreSynchronousLoader syncLoader;
+    ResourceHandle handle(request, &syncLoader, true, false, true);
+
+    ResourceHandleManager* manager = ResourceHandleManager::sharedInstance();
+
+    manager->dispatchSynchronousJob(&handle);
+
+    error = syncLoader.resourceError();
+    data = syncLoader.data();
+    response = syncLoader.resourceResponse();
 }
 
 } // namespace WebCore

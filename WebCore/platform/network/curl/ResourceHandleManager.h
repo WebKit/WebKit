@@ -44,6 +44,8 @@ public:
     void cancel(ResourceHandle*);
     void setCookieJarFileName(const char* cookieJarFileName);
 
+    void dispatchSynchronousJob(ResourceHandle*);
+
     void setupPOST(ResourceHandle*, struct curl_slist**);
     void setupPUT(ResourceHandle*, struct curl_slist**);
 
@@ -55,6 +57,8 @@ private:
     bool removeScheduledJob(ResourceHandle*);
     void startJob(ResourceHandle*);
     bool startScheduledJobs();
+
+    void initializeHandle(ResourceHandle*);
 
     Timer<ResourceHandleManager> m_downloadTimer;
     CURLM* m_curlMultiHandle;

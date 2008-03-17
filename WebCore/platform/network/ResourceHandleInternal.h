@@ -160,7 +160,7 @@ namespace WebCore {
 #if USE(CURL)
         CURL* m_handle;
         char* m_url;
-        struct curl_slist* m_customHeaders;        
+        struct curl_slist* m_customHeaders;
         ResourceResponse m_response;
         bool m_cancelled;
 

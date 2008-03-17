@@ -34,6 +34,7 @@
 #include "FileSystem.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
+#include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
 #include "HTTPParsers.h"
@@ -538,6 +539,30 @@ static void parseDataUrl(ResourceHandle* handle)
     client->didFinishLoading(handle);
 }
 
+void ResourceHandleManager::dispatchSynchronousJob(ResourceHandle* job)
+{
+    KURL kurl = job->request().url();
+
+    if (kurl.protocolIs("data")) {
+        parseDataUrl(job);
+        return;
+    }
+
+    initializeHandle(job);
+
+    ResourceHandleInternal* handle = job->getInternal();
+
+    // curl_easy_perform blocks until the transfert is finished.
+    CURLcode ret =  curl_easy_perform(handle->m_handle);
+
+    if (ret != 0) {
+        ResourceError error(String(handle->m_url), ret, String(handle->m_url), String(curl_easy_strerror(ret)));
+        handle->client()->didFail(job, error);
+    }
+
+    curl_easy_cleanup(handle->m_handle);
+}
+
 void ResourceHandleManager::startJob(ResourceHandle* job)
 {
     KURL kurl = job->request().url();
@@ -546,6 +571,25 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
         parseDataUrl(job);
         return;
     }
+
+    initializeHandle(job);
+
+    m_runningJobs++;
+    CURLMcode ret = curl_multi_add_handle(m_curlMultiHandle, job->getInternal()->m_handle);
+    // don't call perform, because events must be async
+    // timeout will occur and do curl_multi_perform
+    if (ret && ret != CURLM_CALL_MULTI_PERFORM) {
+#ifndef NDEBUG
+        printf("Error %d starting job %s\n", ret, encodeWithURLEscapeSequences(job->request().url().string()).latin1().data());
+#endif
+        job->cancel();
+        return;
+    }
+}
+
+void ResourceHandleManager::initializeHandle(ResourceHandle* job)
+{
+    KURL kurl = job->request().url();
 
     // Remove any fragment part, otherwise curl will send it as part of the request.
     kurl.setRef("");
@@ -588,6 +632,8 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
 
     // url must remain valid through the request
     ASSERT(!d->m_url);
+
+    // url is in ASCII so latin1() will only convert it to char* without character translation.
     d->m_url = strdup(url.latin1().data());
     curl_easy_setopt(d->m_handle, CURLOPT_URL, d->m_url);
 
@@ -623,18 +669,6 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
     if (headers) {
         curl_easy_setopt(d->m_handle, CURLOPT_HTTPHEADER, headers);
         d->m_customHeaders = headers;
-    }
-
-    m_runningJobs++;
-    CURLMcode ret = curl_multi_add_handle(m_curlMultiHandle, d->m_handle);
-    // don't call perform, because events must be async
-    // timeout will occur and do curl_multi_perform
-    if (ret && ret != CURLM_CALL_MULTI_PERFORM) {
-#ifndef NDEBUG
-        printf("Error %d starting job %s\n", ret, job->request().url().string().latin1().data());
-#endif
-        job->cancel();
-        return;
     }
 }
 
