@@ -82,6 +82,14 @@ JavaScriptCore Bakefile project file.
         </if>
     </template>
     <template id="wxwk" template="wxwk_build_settings,wx">
+        <!-- 
+        since wx 2.8's libpng and libjpeg symbols get exported when using gcc/gnu make
+        we need to make sure our versions appear first, so that it will get the symbols
+        from the right place
+        -->
+        <if cond="FORMAT=='gnu'">
+            <ldflags>-ljpeg -lpng</ldflags>
+        </if>
         <wx-lib>core</wx-lib>
         <wx-lib>base</wx-lib>
         <if cond="PLATFORM_WIN32=='1'">

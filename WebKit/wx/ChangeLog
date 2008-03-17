@@ -1,5 +1,13 @@
 2008-03-16  Kevin Ollivier  <kevino@theolliviers.com>
 
+        wx build fix. Make sure we link png/jpeg libraries before
+        wx libraries to get the right symbols.
+
+        * wxwebkit.bkl:
+        * wxwk-settings.bkl:
+
+2008-03-16  Kevin Ollivier  <kevino@theolliviers.com>
+
         Rubber stamped by Darin.
 
         Add set-webkit-configuration support for wx port, and centralize

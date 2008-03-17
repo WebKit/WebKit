@@ -59,10 +59,6 @@ This file builds the wxWebKit library.
         <sys-lib>webcore-wx</sys-lib>
         <sys-lib>jscore</sys-lib>
         
-        <if cond="FORMAT=='gnu'">
-            <sys-lib>png</sys-lib>
-            <sys-lib>jpeg</sys-lib>
-        </if>
         <if cond="FORMAT in ['msvc','msvs2005prj']">
             <sys-lib>winmm</sys-lib> <!-- for timeGetTime -->
             <sys-lib>gdiplus</sys-lib>
