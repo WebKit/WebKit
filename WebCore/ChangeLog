@@ -1,3 +1,9 @@
+2008-03-17  Adam Roben  <aroben@apple.com>
+
+        Windows and Qt build fixes after r31098
+
+        * platform/ScrollView.h: Mark methods public that still need to be so.
+
 2008-03-16  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin Adler.
