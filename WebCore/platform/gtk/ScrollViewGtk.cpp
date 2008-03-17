@@ -824,7 +824,7 @@ void ScrollView::updateBackingStore()
     page->chrome()->updateBackingStore();
 }
 
-HashSet<Widget*>* ScrollView::children() const
+HashSet<Widget*>* ScrollView::children()
 {
     return &m_data->children;
 }

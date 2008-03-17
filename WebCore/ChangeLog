@@ -1,3 +1,9 @@
+2008-03-17  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed Gtk+ build fix.
+
+        * platform/gtk/ScrollViewGtk.cpp: remove const
+
 2008-03-17  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed by Holger.
