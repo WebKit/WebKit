@@ -295,7 +295,7 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
                         // things if the filename includes characters you can't encode
                         // in the website's character set.
                         appendString(header, "; filename=\"");
-                        appendString(header, encoding.encode(filename.characters(), filename.length(), true));
+                        appendString(header, encoding.encode(filename.characters(), filename.length(), QuestionMarksForUnencodables));
                         header.append('"');
 
                         if (!path.isEmpty()) {

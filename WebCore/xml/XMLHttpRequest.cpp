@@ -421,7 +421,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         TextEncoding m_encoding(charset);
         if (!m_encoding.isValid()) // FIXME: report an error?
             m_encoding = UTF8Encoding();
-        request.setHTTPBody(FormData::create(m_encoding.encode(body.characters(), body.length())));
+        request.setHTTPBody(FormData::create(m_encoding.encode(body.characters(), body.length(), EntitiesForUnencodables)));
     }
 
     if (m_requestHeaders.size() > 0)

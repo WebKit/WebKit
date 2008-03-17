@@ -118,7 +118,7 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool)
     return String::adopt(buffer);
 }
 
-CString TextCodecUTF16::encode(const UChar* characters, size_t length, bool)
+CString TextCodecUTF16::encode(const UChar* characters, size_t length, UnencodableHandling)
 {
     char* bytes;
     CString string = CString::newUninitialized(length * 2, bytes);

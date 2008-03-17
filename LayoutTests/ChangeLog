@@ -1,3 +1,12 @@
+2008-03-16  Marvin Decker  <marv.decker@gmail.com>
+
+        Reviewed by Darin.
+
+        Fix bug 15119, unencodable characters in URLs should be entity-escaped.
+
+        * http/tests/uri/escaped-entity-expected.txt: Added.
+        * http/tests/uri/escaped-entity.html: Added.
+
 2008-03-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

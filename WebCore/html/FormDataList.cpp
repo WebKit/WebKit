@@ -90,7 +90,7 @@ static CString fixLineBreaks(const CString &s)
 
 void FormDataList::appendString(const String& s)
 {
-    CString cstr = fixLineBreaks(m_encoding.encode(s.characters(), s.length(), true));
+    CString cstr = fixLineBreaks(m_encoding.encode(s.characters(), s.length(), EntitiesForUnencodables));
     m_list.append(cstr);
 }
 

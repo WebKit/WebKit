@@ -1,3 +1,52 @@
+2008-03-16  Marvin Decker  <marv.decker@gmail.com>
+
+        Reviewed by Darin.
+
+        Fix bug 15119: URL query characters that are unencodable in the
+        request's character set should be converted to XML entities with
+        non-alphanumeric characters escaped.
+
+        Test: http/tests/uri/escaped-entity.html
+
+        * html/FormDataList.cpp:
+        (WebCore::FormDataList::appendString):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData):
+        * platform/KURL.cpp:
+        (WebCore::encodeRelativeString):
+        * platform/text/String.cpp:
+        (WebCore::String::latin1):
+        (WebCore::String::utf8):
+        * platform/text/TextCodec.cpp:
+        (WebCore::TextCodec::unencodableCharReplacement):
+        * platform/text/TextCodec.h:
+        (WebCore::):
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::urlEscapedEntityCallback):
+        (WebCore::gbkUrlEscapedEntityCallack):
+        (WebCore::TextCodecICU::encode):
+        * platform/text/TextCodecICU.h:
+        (WebCore::TextCodecICU::setNeedsGBKFallbacks):
+        * platform/text/TextCodecLatin1.cpp:
+        (WebCore::encodeComplexWindowsLatin1):
+        (WebCore::TextCodecLatin1::encode):
+        * platform/text/TextCodecLatin1.h:
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::TextCodecUTF16::encode):
+        * platform/text/TextCodecUTF16.h:
+        * platform/text/TextCodecUserDefined.cpp:
+        (WebCore::encodeComplexUserDefined):
+        (WebCore::TextCodecUserDefined::encode):
+        * platform/text/TextCodecUserDefined.h:
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::encode):
+        * platform/text/TextEncoding.h:
+        * platform/text/mac/TextCodecMac.cpp:
+        (WebCore::TextCodecMac::encode):
+        * platform/text/mac/TextCodecMac.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2008-03-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         Rubber stamped by Darin.

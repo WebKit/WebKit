@@ -1446,12 +1446,14 @@ static void encodeRelativeString(const String& rel, const TextEncoding& encoding
     }
 
     if (pathEnd == -1) {
-        CString decoded = pathEncoding.encode(s.data(), s.size());
+        CString decoded = pathEncoding.encode(s.data(), s.size(), URLEncodedEntitiesForUnencodables);
         output.resize(decoded.length());
         memcpy(output.data(), decoded.data(), decoded.length());
     } else {
-        CString pathDecoded = pathEncoding.encode(s.data(), pathEnd);
-        CString otherDecoded = otherEncoding.encode(s.data() + pathEnd, s.size() - pathEnd);
+        CString pathDecoded = pathEncoding.encode(s.data(), pathEnd, URLEncodedEntitiesForUnencodables);
+        // Unencodable characters in URLs are represented by converting
+        // them to XML entities and escaping non-alphanumeric characters.
+        CString otherDecoded = otherEncoding.encode(s.data() + pathEnd, s.size() - pathEnd, URLEncodedEntitiesForUnencodables);
 
         output.resize(pathDecoded.length() + otherDecoded.length());
         memcpy(output.data(), pathDecoded.data(), pathDecoded.length());

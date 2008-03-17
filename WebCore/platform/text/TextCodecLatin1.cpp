@@ -142,7 +142,7 @@ String TextCodecLatin1::decode(const char* bytes, size_t length, bool)
     return String::adopt(characters);
 }
 
-static CString encodeComplexWindowsLatin1(const UChar* characters, size_t length, bool allowEntities)
+static CString encodeComplexWindowsLatin1(const UChar* characters, size_t length, UnencodableHandling handling)
 {
     Vector<char> result(length);
     char* bytes = result.data();
@@ -159,17 +159,13 @@ static CString encodeComplexWindowsLatin1(const UChar* characters, size_t length
                 if (table[b] == c)
                     goto gotByte;
             // No way to encode this character with Windows Latin-1.
-            if (allowEntities) {
-                char entityBuffer[16];
-                sprintf(entityBuffer, "&#%u;", c);
-                size_t entityLength = strlen(entityBuffer);
-                result.grow(resultLength + entityLength + length - i);
-                bytes = result.data();
-                memcpy(bytes + resultLength, entityBuffer, entityLength);
-                resultLength += entityLength;
-                continue;
-            }
-            b = '?';
+            UnencodableReplacementArray replacement;
+            int replacementLength = TextCodec::getUnencodableReplacement(c, handling, replacement);
+            result.grow(resultLength + replacementLength + length - i);
+            bytes = result.data();
+            memcpy(bytes + resultLength, replacement, replacementLength);
+            resultLength += replacementLength;
+            continue;
         }
     gotByte:
         bytes[resultLength++] = b;
@@ -178,7 +174,7 @@ static CString encodeComplexWindowsLatin1(const UChar* characters, size_t length
     return CString(bytes, resultLength);
 }
 
-CString TextCodecLatin1::encode(const UChar* characters, size_t length, bool allowEntities)
+CString TextCodecLatin1::encode(const UChar* characters, size_t length, UnencodableHandling handling)
 {
     {
         char* bytes;
@@ -197,7 +193,7 @@ CString TextCodecLatin1::encode(const UChar* characters, size_t length, bool all
     }
 
     // If it wasn't all ASCII, call the function that handles more-complex cases.
-    return encodeComplexWindowsLatin1(characters, length, allowEntities);
+    return encodeComplexWindowsLatin1(characters, length, handling);
 }
 
 } // namespace WebCore

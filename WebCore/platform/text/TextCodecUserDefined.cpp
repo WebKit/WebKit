@@ -62,7 +62,7 @@ String TextCodecUserDefined::decode(const char* bytes, size_t length, bool)
     return String::adopt(buffer);
 }
 
-static CString encodeComplexUserDefined(const UChar* characters, size_t length, bool allowEntities)
+static CString encodeComplexUserDefined(const UChar* characters, size_t length, UnencodableHandling handling)
 {
     Vector<char> result(length);
     char* bytes = result.data();
@@ -72,27 +72,23 @@ static CString encodeComplexUserDefined(const UChar* characters, size_t length, 
         UChar32 c;
         U16_NEXT(characters, i, length, c);
         signed char signedByte = c;
-        if ((signedByte & 0xf7ff) == c)
+        if ((signedByte & 0xF7FF) == c)
             bytes[resultLength++] = signedByte;
         else {
             // No way to encode this character with x-user-defined.
-            if (allowEntities) {
-                char entityBuffer[16];
-                sprintf(entityBuffer, "&#%u;", c);
-                size_t entityLength = strlen(entityBuffer);
-                result.grow(resultLength + entityLength + length - i);
-                bytes = result.data();
-                memcpy(bytes + resultLength, entityBuffer, entityLength);
-                resultLength += entityLength;
-            } else
-                bytes[resultLength++] = '?';
+            UnencodableReplacementArray replacement;
+            int replacementLength = TextCodec::getUnencodableReplacement(c, handling, replacement);
+            result.grow(resultLength + replacementLength + length - i);
+            bytes = result.data();
+            memcpy(bytes + resultLength, replacement, replacementLength);
+            resultLength += replacementLength;
         }
     }
 
     return CString(bytes, resultLength);
 }
 
-CString TextCodecUserDefined::encode(const UChar* characters, size_t length, bool allowEntities)
+CString TextCodecUserDefined::encode(const UChar* characters, size_t length, UnencodableHandling handling)
 {
     char* bytes;
     CString string = CString::newUninitialized(length, bytes);
@@ -109,7 +105,7 @@ CString TextCodecUserDefined::encode(const UChar* characters, size_t length, boo
         return string;
 
     // If it wasn't all ASCII, call the function that handles more-complex cases.
-    return encodeComplexUserDefined(characters, length, allowEntities);
+    return encodeComplexUserDefined(characters, length, handling);
 }
 
 } // namespace WebCore

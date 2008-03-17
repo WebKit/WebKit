@@ -36,7 +36,7 @@ namespace WebCore {
         static void registerCodecs(TextCodecRegistrar);
 
         virtual String decode(const char*, size_t length, bool flush = false);
-        virtual CString encode(const UChar*, size_t length, bool allowEntities = false);
+        virtual CString encode(const UChar*, size_t length, UnencodableHandling);
     };
 
 } // namespace WebCore

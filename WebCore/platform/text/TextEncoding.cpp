@@ -67,7 +67,7 @@ String TextEncoding::decode(const char* data, size_t length) const
     return TextDecoder(*this).decode(data, length, true);
 }
 
-CString TextEncoding::encode(const UChar* characters, size_t length, bool allowEntities) const
+CString TextEncoding::encode(const UChar* characters, size_t length, UnencodableHandling handling) const
 {
     if (!m_name)
         return CString();
@@ -100,11 +100,11 @@ CString TextEncoding::encode(const UChar* characters, size_t length, bool allowE
         source = normalizedCharacters.data();
         sourceLength = normalizedLength;
     }
-    return newTextCodec(*this)->encode(source, sourceLength, allowEntities);
+    return newTextCodec(*this)->encode(source, sourceLength, handling);
 #elif USE(QT4_UNICODE)
     QString str(reinterpret_cast<const QChar*>(characters), length);
     str = str.normalized(QString::NormalizationForm_C);
-    return newTextCodec(*this)->encode(reinterpret_cast<const UChar *>(str.utf16()), str.length(), allowEntities);
+    return newTextCodec(*this)->encode(reinterpret_cast<const UChar *>(str.utf16()), str.length(), handling);
 #endif
 }
 

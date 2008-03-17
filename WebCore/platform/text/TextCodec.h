@@ -38,12 +38,35 @@ namespace WebCore {
     class String;
     class TextEncoding;
 
+    // Specifies what will happen when a character is encountered that is
+    // not encodable in the character set.
+    enum UnencodableHandling {
+        // Substitutes the replacement character "?".
+        QuestionMarksForUnencodables,
+
+        // Encodes the character as an XML entity. For example, U+06DE
+        // would be "&#1758;" (0x6DE = 1758 in octal).
+        EntitiesForUnencodables,
+
+        // Encodes the character as en entity as above, but escaped
+        // non-alphanumeric characters. This is used in URLs.
+        // For example, U+6DE would be "%26%231758%3B".
+        URLEncodedEntitiesForUnencodables,
+    };
+
+    typedef char UnencodableReplacementArray[32];
+
     class TextCodec : Noncopyable {
     public:
         virtual ~TextCodec();
 
         virtual String decode(const char*, size_t length, bool flush = false) = 0;
-        virtual CString encode(const UChar*, size_t length, bool allowEntities = false) = 0;
+        virtual CString encode(const UChar*, size_t length, UnencodableHandling) = 0;
+
+        // Fills a null-terminated string representation of the given
+        // unencodable character into the given replacement buffer. 
+        // The length of the string (not including the null) will be returned.
+        static int getUnencodableReplacement(unsigned codePoint, UnencodableHandling, UnencodableReplacementArray);
 
     protected:
         static void appendOmittingBOM(Vector<UChar>&, const UChar*, size_t length);
