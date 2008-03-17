@@ -1,5 +1,12 @@
 2008-03-16  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed, just fixing an incomplete comment from the last commit.
+
+        * dom/Range.cpp:
+        (WebCore::Range::surroundContents):
+
+2008-03-16  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
         - fixed "Acid3 expects different exceptions for surroundContents calls involving comment nodes (affects Acid3 test 11)"
