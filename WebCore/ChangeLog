@@ -1,3 +1,14 @@
+2008-03-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Rubber stamped by Darin.
+
+        Add set-webkit-configuration support for wx port, and centralize
+        build dir location setting.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17790
+
+        * webcore-base.bkl:
+
 2008-03-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

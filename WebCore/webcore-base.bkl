@@ -59,8 +59,6 @@ wxWebCore port Bakefile project file.
         $(WEBCORE_SOURCES_JPEG)
     </set>
 
-    <set var="BUILDDIR">obj-$(FORMAT)</set>
-
     <template id="webcore_base" template="xml2,iconv,xslt,icu,jscore,curl,sqlite3">
         <include>$(SRCDIR)</include>
         <include>$(SRCDIR)/bindings/js</include>

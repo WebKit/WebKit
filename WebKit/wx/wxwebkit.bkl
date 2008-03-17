@@ -34,8 +34,6 @@ This file builds the wxWebKit library.
 <makefile>
     <include file="wxwk-settings.bkl"/>
     
-    <set var="BUILDDIR">obj-$(FORMAT)</set>
-    
     <dll id="wxwebkit-dynamic" template="wxwk,jscore,webcore,xml2,iconv,xslt,icu,curl,sqlite3,gtk,pthreads">
         <!-- make sure we relink wxwebkit if either webcore or jscore change -->
         <if cond="FORMAT=='gnu'">
@@ -49,8 +47,6 @@ This file builds the wxWebKit library.
         <runtime-libs>dynamic</runtime-libs>
         <dllname>wxwebkit</dllname>
         <libname>wxwebkit</libname>
-
-        <set var="BUILDDIR">obj-$(FORMAT)</set>
         
         <include>$(WK_ROOT)/WebCore/platform/graphics/wx</include>
         <include>$(WK_ROOT)/WebCore/platform/wx</include>

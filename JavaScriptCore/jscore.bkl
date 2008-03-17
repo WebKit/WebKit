@@ -34,8 +34,6 @@ JavaScriptCore Bakefile project file.
 
     <include file="../WebKit/wx/wxwk-settings.bkl"/>
     <include file="JavaScriptCoreSources.bkl"/>
-    
-    <set var="BUILDDIR">obj-$(FORMAT)</set>
 
     <template id="jscore_base" template="icu,pthreads,wxwk_build_settings">
         <sources>

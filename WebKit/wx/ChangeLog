@@ -1,3 +1,17 @@
+2008-03-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Rubber stamped by Darin.
+
+        Add set-webkit-configuration support for wx port, and centralize
+        build dir location setting.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17790
+
+        * bindings/python/wxwebkit-py.bkl:
+        * presets/wxwebkit.bkl:
+        * wxwebkit.bkl:
+        * wxwk-settings.bkl:
+
 2008-03-12  David Hyatt  <hyatt@apple.com>
 
         Make the zoom factor a float and not a percent.

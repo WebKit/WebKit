@@ -71,6 +71,16 @@ and WebCore. Include this file to use these settings.
         </option>
     </if>
     
+    <if cond="not isdefined('DEBUG')">
+        <option name="DEBUG">
+            <values>0,1</values>
+            <default-value>0</default-value>
+            <description>
+                Whether or not to build debug
+            </description>
+        </option>
+    </if>
+    
     <template id="jscore">
         <if cond="FORMAT in ['msvc', 'msvs2005prj']">
             <!-- MSVC chokes on #import, so don't use ForwardingHeaders... -->

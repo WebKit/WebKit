@@ -33,7 +33,7 @@ set -o errexit
 
 scriptDir="$(cd $(dirname $0);pwd)"
 WK_ROOT=$scriptDir/../..
-WK_ROOTDIR=$WK_ROOT
+WK_ROOTDIR="$WK_ROOT"
 
 cd $scriptDir
 
@@ -112,6 +112,7 @@ fi
 
 #----------------------------------------------------------------------
 # process command line args
+build_type_set=0
 
 do_bake=0
 do_prep=0
@@ -120,6 +121,7 @@ do_build=0
 do_clean=0
 do_install=0
 use_wxgc=0
+debug=1
 wxdebug=0
 wxpython=0
 make_args=''
@@ -146,6 +148,19 @@ done
 # if no arguments were passed, do a full build.
 if [ $do_bake == 0 -a $do_prep == 0 -a $do_build == 0 -a $do_clean == 0 ]; then
     do_bake=1; do_prep=1; do_build=1
+fi
+
+if [ -f $WK_ROOT/WebKitBuild/Configuration ]; then
+    BUILD_TYPE=`cat $WK_ROOT/WebKitBuild/Configuration`
+    echo "Configuration is: $BUILD_TYPE"
+    
+    if [ $BUILD_TYPE == "Release" ]; then
+        debug=0
+    fi
+    if [ $BUILD_TYPE == "Debug" ]; then
+        debug=1
+    fi
+    
 fi
 
 function do_make {
@@ -260,6 +275,7 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
         PLATFORM_OS="mac"
     else
         PLATFORM_OS="linux"
+        use_wxgc=1 # Linux requires us to use wxgc to get proper drawing.
     fi
 
     WINDEPS="$WINDEPS $WXWIN/lib/vc_dll/wxmsw28u${WX_EXT}_core_vc.dll $WXWIN/lib/vc_dll/wxbase28u${WX_EXT}_vc.dll"
@@ -268,10 +284,10 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
     # first generated, we will get errors about missing files. 
     # FIXME: Make the check more robust.
     if [ -f $WK_ROOT/JavaScriptCore/GNUmakefile ]; then
-        do_make $WK_ROOT/JavaScriptCore      "-DBUILDING_WX__=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
-        do_make $WK_ROOT/WebCore "-DBUILDING_WX__=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args
-        do_make $WK_ROOT/WebKit/wx "-DBUILDING_WX__=1 -DWXMAKINGDLL_WEBKIT=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
-        do_make $WK_ROOT/WebKitTools/wx/browser  "-DBUILDING_WX__=1 -DWXUSINGDLL_WEBKIT=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
+        do_make $WK_ROOT/JavaScriptCore      "-DBUILDING_WX__=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
+        do_make $WK_ROOT/WebCore "-DBUILDING_WX__=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug WEBKIT_ROOT=$WK_ROOTDIR DEBUG=$debug PLATFORM_OS=$PLATFORM_OS $other_args
+        do_make $WK_ROOT/WebKit/wx "-DBUILDING_WX__=1 -DWXMAKINGDLL_WEBKIT=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
+        do_make $WK_ROOT/WebKitTools/wx/browser  "-DBUILDING_WX__=1 -DWXUSINGDLL_WEBKIT=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
     fi
     
     if [ $do_build == 1 ]; then 
@@ -320,6 +336,7 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
             
             # Run SWIG
             $SWIG $SWIG_FLAGS -I$WXPY_INCLUDE $WEBKIT_INCLUDE -o webview.cpp webview.i
+            cp webview.py $WEBKITOUTPUTDIR/webview.py
                                    
             PY_INCLUDE=`python -c "import sys,distutils.sysconfig; sys.stdout.write(distutils.sysconfig.get_python_inc())"`
             PY_VERSION=`python -c "import sys;  sys.stdout.write(str(sys.version_info[0]) + str(sys.version_info[1]))"`
@@ -332,7 +349,7 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
             fi
             
             do_make $WK_ROOT/WebKit/wx/bindings/python "-DBUILDING_WX__=1 -DWXUSINGDLL=1 -DWXUSINGDLL_WEBKIT=1 -I$PY_INCLUDE -I$WX_PREFIX/wxPython/include -I$WX_PREFIX/../wxPython/include $WXGC_DEFINE" \
-                WX_DEBUG=$wxdebug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS PYTHON_VERSION=$PY_VERSION PYTHON_LIBDIR=$PY_LIBDIR $other_args
+                WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS PYTHON_VERSION=$PY_VERSION PYTHON_LIBDIR=$PY_LIBDIR $other_args
             if [ "${OSTYPE:0:6}" == "cygwin" ]; then
                 if [ -f $WEBKITOUTPUTDIR/_webview.pyd -a -f $WEBKITOUTPUTDIR/_webview.dll ]; then
                     rm $WEBKITOUTPUTDIR/_webview.pyd

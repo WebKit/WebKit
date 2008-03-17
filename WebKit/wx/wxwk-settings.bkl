@@ -37,6 +37,7 @@ JavaScriptCore Bakefile project file.
     <include file="presets/wxwebkit.bkl"/>
     <include file="dependencies.bkl"/>
 
+    <set var="BUILDDIR">obj-$(FORMAT)</set>
     <!-- the WX_PYTHON option was added to presets/wx.bkl in 2.8.5, so define
          it in case the presets/wx.bkl doesn't define it for us. -->
     
@@ -50,7 +51,16 @@ JavaScriptCore Bakefile project file.
         <cxx-rtti>on</cxx-rtti>
         <cxx-exceptions>on</cxx-exceptions>
         <define>BUILDING_WX__=1</define>
-        <debug-info>on</debug-info>
+        <define>
+            $(substituteFromDict(DEBUG,{'1':'','0':'NDEBUG'}))
+        </define>
+        <define>USE_SYSTEM_MALLOC</define>
+        <optimize>
+            $(substituteFromDict(DEBUG,{'1':'off','0':'speed'}))
+        </optimize>
+        <debug-info>
+            $(substituteFromDict(DEBUG,{'1':'on','0':'off'}))
+        </debug-info>
         <if cond="FORMAT in ['msvc', 'msvs2005prj']">
             <set var="DEBUG_RUNTIME">
                 <if cond="WX_PYTHON=='1' and WX_DEBUG=='0'">off</if>

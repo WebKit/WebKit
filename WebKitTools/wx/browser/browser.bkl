@@ -47,7 +47,6 @@ wxWebKit sample application build file
     <exe id="wxBrowser" template="wxwk,xml2,iconv,xslt,icu,jscore,webcore,wxwebkit,curl,pthreads">
         <app-type>gui</app-type>
         <runtime-libs>dynamic</runtime-libs>
-        <set var="BUILDDIR">$(WKOUTPUTDIR)/build/wxbrowser-$(FORMAT)</set>
         
         <include>$(WK_ROOT)/WebCore/platform/wx</include>
         <include>$(WK_ROOT)/WebCore/bridge/wx</include>
