@@ -2161,9 +2161,11 @@ void RenderObject::setStyle(RenderStyle* style)
         // to dirty the render tree using the old position value now.
         if (d == RenderStyle::Layout && m_parent && m_style->position() != style->position()) {
             markContainingBlocksForLayout();
-            if (m_style->position() == StaticPosition)
+            if (m_style->position() == StaticPosition) {
                 repaint();
-            if (isRenderBlock()) {
+                if (isFloating())
+                    removeFromObjectLists();
+            } if (isRenderBlock()) {
                 if (style->position() == StaticPosition)
                     // Clear our positioned objects list. Our absolutely positioned descendants will be
                     // inserted into our containing block's positioned objects list during layout.

@@ -1,3 +1,14 @@
+2008-03-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - test for <rdar://problem/5805127> REGRESSION (r31116): Assertion failure (floatIndex < floats.size()) in RenderBlock::determineStartPosition() at digg.com
+
+        * fast/dynamic/floating-to-positioned.html: Added.
+        * platform/mac/fast/dynamic/floating-to-positioned-expected.checksum: Added.
+        * platform/mac/fast/dynamic/floating-to-positioned-expected.png: Added.
+        * platform/mac/fast/dynamic/floating-to-positioned-expected.txt: Added.
+
 2008-03-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
