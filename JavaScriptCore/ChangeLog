@@ -1,3 +1,13 @@
+2008-03-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - inline ActivationImp::init for 0.8% SunSpider speedup
+
+        * kjs/Activation.h:
+        (KJS::ActivationImp::init): Moved here from function.cpp
+        * kjs/function.cpp:
+
 2008-03-18  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build.

@@ -354,14 +354,6 @@ ActivationImp::~ActivationImp()
         delete d();
 }
 
-void ActivationImp::init(ExecState* exec)
-{
-    d()->symbolTable = &exec->function()->body->symbolTable();
-    d()->exec = exec;
-    d()->function = exec->function();
-    d()->argumentsObject = 0;
-}
-
 JSValue* ActivationImp::argumentsGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
 {
   ActivationImp* thisObj = static_cast<ActivationImp*>(slot.slotBase());
