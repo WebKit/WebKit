@@ -70,6 +70,8 @@ void SVGImage::setContainerSize(const IntSize& containerSize)
     if (containerSize.width() <= 0 || containerSize.height() <= 0)
         return;
 
+    if (!m_frame || !m_frame->document())
+        return;
     SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_frame->document())->rootElement();
     if (!rootElement)
         return;
@@ -79,6 +81,8 @@ void SVGImage::setContainerSize(const IntSize& containerSize)
 
 bool SVGImage::usesContainerSize() const
 {
+    if (!m_frame || !m_frame->document())
+        return false;
     SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_frame->document())->rootElement();
     if (!rootElement)
         return false;
@@ -114,6 +118,8 @@ IntSize SVGImage::size() const
 
 bool SVGImage::hasRelativeWidth() const
 {
+    if (!m_frame || !m_frame->document())
+        return false;
     SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_frame->document())->rootElement();
     if (!rootElement)
         return false;
@@ -123,6 +129,8 @@ bool SVGImage::hasRelativeWidth() const
 
 bool SVGImage::hasRelativeHeight() const
 {
+    if (!m_frame || !m_frame->document())
+        return false;
     SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_frame->document())->rootElement();
     if (!rootElement)
         return false;
