@@ -38,8 +38,7 @@ namespace WebCore {
 
 static HashSet<StringImpl*>* stringTable;
 
-struct CStringTranslator 
-{
+struct CStringTranslator {
     static unsigned hash(const char* c)
     {
         return StringImpl::computeHash(c);
@@ -90,6 +89,37 @@ struct UCharBuffer {
     unsigned length;
 };
 
+static inline bool equal(StringImpl* string, const UChar* characters, unsigned length)
+{
+    if (string->length() != length)
+        return false;
+
+#if PLATFORM(ARM)
+    const UChar* stringCharacters = string->characters();
+    for (unsigned i = 0; i != strLength; ++i) {
+        if (*stringCharacters++ != *characters++)
+            return false;
+    }
+    return true;
+#else
+    /* Do it 4-bytes-at-a-time on architectures where it's safe */
+
+    const uint32_t* stringCharacters = reinterpret_cast<const uint32_t*>(string->characters());
+    const uint32_t* bufferCharacters = reinterpret_cast<const uint32_t*>(characters);
+
+    unsigned halfLength = length >> 1;
+    for (unsigned i = 0; i != halfLength; ++i) {
+        if (*stringCharacters++ != *bufferCharacters++)
+            return false;
+    }
+
+    if (length & 1 &&  *reinterpret_cast<const uint16_t*>(stringCharacters) != *reinterpret_cast<const uint16_t*>(bufferCharacters))
+        return false;
+
+    return true;
+#endif
+}
+
 struct UCharBufferTranslator {
     static unsigned hash(const UCharBuffer& buf)
     {
@@ -98,42 +128,36 @@ struct UCharBufferTranslator {
 
     static bool equal(StringImpl* const& str, const UCharBuffer& buf)
     {
-        unsigned strLength = str->length();
-        unsigned bufLength = buf.length;
-        if (strLength != bufLength)
-            return false;
-
-#if PLATFORM(ARM)
-        const UChar* strChars = str->characters();
-        const UChar* bufChars = buf.s;
-
-        for (unsigned i = 0; i != strLength; ++i) {
-            if (*strChars++ != *bufChars++)
-                return false;
-        }
-        return true;
-#else
-        /* Do it 4-bytes-at-a-time on architectures where it's safe */
-        const uint32_t* strChars = reinterpret_cast<const uint32_t*>(str->characters());
-        const uint32_t* bufChars = reinterpret_cast<const uint32_t*>(buf.s);
-        
-        unsigned halfLength = strLength >> 1;
-        for (unsigned i = 0; i != halfLength; ++i) {
-            if (*strChars++ != *bufChars++)
-                return false;
-        }
-        
-        if (strLength & 1 && 
-            *reinterpret_cast<const uint16_t *>(strChars) != *reinterpret_cast<const uint16_t *>(bufChars))
-            return false;
-        
-        return true;
-#endif
+        return WebCore::equal(str, buf.s, buf.length);
     }
 
     static void translate(StringImpl*& location, const UCharBuffer& buf, unsigned hash)
     {
         location = new StringImpl(buf.s, buf.length, hash); 
+    }
+};
+
+struct HashAndCharacters {
+    unsigned hash;
+    const UChar* characters;
+    unsigned length;
+};
+
+struct HashAndCharactersTranslator {
+    static unsigned hash(const HashAndCharacters& buffer)
+    {
+        ASSERT(buffer.hash == StringImpl::computeHash(buffer.characters, buffer.length));
+        return buffer.hash;
+    }
+
+    static bool equal(StringImpl* const& string, const HashAndCharacters& buffer)
+    {
+        return WebCore::equal(string, buffer.characters, buffer.length);
+    }
+
+    static void translate(StringImpl*& location, const HashAndCharacters& buffer, unsigned hash)
+    {
+        location = new StringImpl(buffer.characters, buffer.length, hash); 
     }
 };
 
@@ -190,14 +214,55 @@ void AtomicString::remove(StringImpl* r)
     stringTable->remove(r);
 }
 
-PassRefPtr<StringImpl> AtomicString::add(const KJS::Identifier& str)
+PassRefPtr<StringImpl> AtomicString::add(const KJS::Identifier& identifier)
 {
-    return add(str.data(), str.size());
+    if (identifier.isNull())
+        return 0;
+
+    UString::Rep* string = identifier.ustring().rep();
+    unsigned length = string->size();
+    if (!length)
+        return StringImpl::empty();
+
+    HashAndCharacters buffer = { string->computedHash(), string->data(), length }; 
+    pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable->add<HashAndCharacters, HashAndCharactersTranslator>(buffer);
+    if (!addResult.second)
+        return *addResult.first;
+    return adoptRef(*addResult.first);
 }
 
-PassRefPtr<StringImpl> AtomicString::add(const KJS::UString& str)
+PassRefPtr<StringImpl> AtomicString::add(const KJS::UString& ustring)
 {
-    return add(str.data(), str.size());
+    if (ustring.isNull())
+        return 0;
+
+    UString::Rep* string = ustring.rep();
+    unsigned length = string->size();
+    if (!length)
+        return StringImpl::empty();
+
+    HashAndCharacters buffer = { string->hash(), string->data(), length }; 
+    pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable->add<HashAndCharacters, HashAndCharactersTranslator>(buffer);
+    if (!addResult.second)
+        return *addResult.first;
+    return adoptRef(*addResult.first);
+}
+
+AtomicStringImpl* AtomicString::find(const KJS::Identifier& identifier)
+{
+    if (identifier.isNull())
+        return 0;
+
+    UString::Rep* string = identifier.ustring().rep();
+    unsigned length = string->size();
+    if (!length)
+        return static_cast<AtomicStringImpl*>(StringImpl::empty());
+
+    HashAndCharacters buffer = { string->computedHash(), string->data(), length }; 
+    HashSet<StringImpl*>::iterator iterator = stringTable->find<HashAndCharacters, HashAndCharactersTranslator>(buffer);
+    if (iterator == stringTable->end())
+        return 0;
+    return static_cast<AtomicStringImpl*>(*iterator);
 }
 
 AtomicString::operator Identifier() const

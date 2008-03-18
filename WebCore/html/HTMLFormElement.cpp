@@ -98,20 +98,16 @@ void HTMLFormElement::attach()
 
 void HTMLFormElement::insertedIntoDocument()
 {
-    if (document()->isHTMLDocument()) {
-        HTMLDocument* doc = static_cast<HTMLDocument*>(document());
-        doc->addNamedItem(oldNameAttr);
-    }
+    if (document()->isHTMLDocument())
+        static_cast<HTMLDocument*>(document())->addNamedItem(m_name);
 
     HTMLElement::insertedIntoDocument();
 }
 
 void HTMLFormElement::removedFromDocument()
 {
-    if (document()->isHTMLDocument()) {
-        HTMLDocument* doc = static_cast<HTMLDocument*>(document());
-        doc->removeNamedItem(oldNameAttr);
-    }
+    if (document()->isHTMLDocument())
+        static_cast<HTMLDocument*>(document())->removeNamedItem(m_name);
    
     HTMLElement::removedFromDocument();
 }
@@ -554,13 +550,13 @@ void HTMLFormElement::parseMappedAttribute(MappedAttribute* attr)
     else if (attr->name() == onresetAttr)
         setHTMLEventListener(resetEvent, attr);
     else if (attr->name() == nameAttr) {
-        String newNameAttr = attr->value();
+        const AtomicString& newName = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {
-            HTMLDocument* doc = static_cast<HTMLDocument*>(document());
-            doc->removeNamedItem(oldNameAttr);
-            doc->addNamedItem(newNameAttr);
+            HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+            document->removeNamedItem(m_name);
+            document->addNamedItem(newName);
         }
-        oldNameAttr = newNameAttr;
+        m_name = newName;
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

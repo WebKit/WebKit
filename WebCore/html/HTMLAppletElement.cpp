@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. ALl rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
@@ -62,21 +62,21 @@ void HTMLAppletElement::parseMappedAttribute(MappedAttribute* attr)
         attr->name() == objectAttr) {
         // Do nothing.
     } else if (attr->name() == nameAttr) {
-        String newNameAttr = attr->value();
+        const AtomicString& newName = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {
-            HTMLDocument* doc = static_cast<HTMLDocument*>(document());
-            doc->removeNamedItem(oldNameAttr);
-            doc->addNamedItem(newNameAttr);
+            HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+            document->removeNamedItem(m_name);
+            document->addNamedItem(newName);
         }
-        oldNameAttr = newNameAttr;
+        m_name = newName;
     } else if (attr->name() == idAttr) {
-        String newIdAttr = attr->value();
+        const AtomicString& newId = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {
-            HTMLDocument* doc = static_cast<HTMLDocument*>(document());
-            doc->removeDocExtraNamedItem(oldIdAttr);
-            doc->addDocExtraNamedItem(newIdAttr);
+            HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+            document->removeExtraNamedItem(m_id);
+            document->addExtraNamedItem(newId);
         }
-        oldIdAttr = newIdAttr;
+        m_id = newId;
         // also call superclass
         HTMLPlugInElement::parseMappedAttribute(attr);
     } else
@@ -86,9 +86,9 @@ void HTMLAppletElement::parseMappedAttribute(MappedAttribute* attr)
 void HTMLAppletElement::insertedIntoDocument()
 {
     if (document()->isHTMLDocument()) {
-        HTMLDocument* doc = static_cast<HTMLDocument*>(document());
-        doc->addNamedItem(oldNameAttr);
-        doc->addDocExtraNamedItem(oldIdAttr);
+        HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+        document->addNamedItem(m_name);
+        document->addExtraNamedItem(m_id);
     }
 
     HTMLPlugInElement::insertedIntoDocument();
@@ -97,9 +97,9 @@ void HTMLAppletElement::insertedIntoDocument()
 void HTMLAppletElement::removedFromDocument()
 {
     if (document()->isHTMLDocument()) {
-        HTMLDocument* doc = static_cast<HTMLDocument*>(document());
-        doc->removeNamedItem(oldNameAttr);
-        doc->removeDocExtraNamedItem(oldIdAttr);
+        HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+        document->removeNamedItem(m_name);
+        document->removeExtraNamedItem(m_id);
     }
 
     HTMLPlugInElement::removedFromDocument();

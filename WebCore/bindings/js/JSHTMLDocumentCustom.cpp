@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,18 +43,19 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* doc, const Identifier& propertyName)
+bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* document, const Identifier& propertyName)
 {
-    return doc->hasNamedItem(propertyName) || doc->hasDocExtraNamedItem(propertyName);
+    AtomicStringImpl* atomicPropertyName = AtomicString::find(propertyName);
+    return atomicPropertyName && (document->hasNamedItem(atomicPropertyName) || document->hasExtraNamedItem(atomicPropertyName));
 }
 
 JSValue* JSHTMLDocument::nameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSHTMLDocument* thisObj = static_cast<JSHTMLDocument*>(slot.slotBase());
-    HTMLDocument* doc = static_cast<HTMLDocument*>(thisObj->impl());
+    HTMLDocument* document = static_cast<HTMLDocument*>(thisObj->impl());
 
     String name = propertyName;
-    RefPtr<HTMLCollection> collection = doc->documentNamedItems(name);
+    RefPtr<HTMLCollection> collection = document->documentNamedItems(name);
 
     unsigned length = collection->length();
     if (!length)
@@ -118,10 +119,15 @@ static String writeHelper(ExecState* exec, const List& args)
 {
     // DOM only specifies single string argument, but NS & IE allow multiple
     // or no arguments.
-    String str = "";
-    for (unsigned int i = 0; i < args.size(); ++i)
-        str += args[i]->toString(exec);
-    return str;
+
+    unsigned size = args.size();
+    if (size == 1)
+        return args[0]->toString(exec);
+
+    Vector<UChar> result;
+    for (unsigned i = 0; i < size; ++i)
+        append(result, args[i]->toString(exec));
+    return String::adopt(result);
 }
 
 JSValue* JSHTMLDocument::write(ExecState* exec, const List& args)
@@ -133,13 +139,6 @@ JSValue* JSHTMLDocument::write(ExecState* exec, const List& args)
 JSValue* JSHTMLDocument::writeln(ExecState* exec, const List& args)
 {
     static_cast<HTMLDocument*>(impl())->write(writeHelper(exec, args) + "\n");
-    return jsUndefined();
-}
-
-JSValue* JSHTMLDocument::clear(ExecState*, const List&)
-{
-    // even IE doesn't support this one...
-    // static_cast<HTMLDocument*>(impl())->clear();
     return jsUndefined();
 }
 

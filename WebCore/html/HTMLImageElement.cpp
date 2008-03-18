@@ -128,21 +128,21 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute* attr)
         if (!parseCompositeOperator(attr->value(), m_compositeOperator))
             m_compositeOperator = CompositeSourceOver;
     } else if (attrName == nameAttr) {
-        String newNameAttr = attr->value();
+        const AtomicString& newName = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {
-            HTMLDocument* doc = static_cast<HTMLDocument*>(document());
-            doc->removeNamedItem(oldNameAttr);
-            doc->addNamedItem(newNameAttr);
+            HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+            document->removeNamedItem(m_name);
+            document->addNamedItem(newName);
         }
-        oldNameAttr = newNameAttr;
+        m_name = newName;
     } else if (attr->name() == idAttr) {
-        String newIdAttr = attr->value();
+        const AtomicString& newId = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {
-            HTMLDocument *doc = static_cast<HTMLDocument *>(document());
-            doc->removeDocExtraNamedItem(oldIdAttr);
-            doc->addDocExtraNamedItem(newIdAttr);
+            HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+            document->removeExtraNamedItem(m_id);
+            document->addExtraNamedItem(newId);
         }
-        oldIdAttr = newIdAttr;
+        m_id = newId;
         // also call superclass
         HTMLElement::parseMappedAttribute(attr);
     } else
@@ -187,10 +187,9 @@ void HTMLImageElement::attach()
 void HTMLImageElement::insertedIntoDocument()
 {
     if (document()->isHTMLDocument()) {
-        HTMLDocument* doc = static_cast<HTMLDocument*>(document());
-
-        doc->addNamedItem(oldNameAttr);
-        doc->addDocExtraNamedItem(oldIdAttr);
+        HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+        document->addNamedItem(m_name);
+        document->addExtraNamedItem(m_id);
     }
 
     HTMLElement::insertedIntoDocument();
@@ -199,10 +198,9 @@ void HTMLImageElement::insertedIntoDocument()
 void HTMLImageElement::removedFromDocument()
 {
     if (document()->isHTMLDocument()) {
-        HTMLDocument* doc = static_cast<HTMLDocument*>(document());
-
-        doc->removeNamedItem(oldNameAttr);
-        doc->removeDocExtraNamedItem(oldIdAttr);
+        HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+        document->removeNamedItem(m_name);
+        document->removeExtraNamedItem(m_id);
     }
 
     HTMLElement::removedFromDocument();

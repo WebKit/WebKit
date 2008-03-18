@@ -1,3 +1,115 @@
+2008-03-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - speed up document property fetching (eliminate the AtomicString
+          objects made during document property lookup)
+
+        3% speedup for Acid3 test 26
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::getOwnPropertySlot): Use AtomicString::find to
+        locate the AtomicString, only if already present. Also call the new faster
+        versions of the hasNamedItem and hasElementWithId functions that don't
+        ref/deref the AtomicStringImpl, get inlined, etc.
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::canGetItemsForName): Ditto.
+        (WebCore::writeHelper): Use a Vector instead of a String to build up
+        the string to avoid the bad performance of string append.
+
+        * dom/Document.cpp: Tweaked code and comments a bit. Nothing substantive.
+        * dom/Document.h: Added new hasElementWithId function that's faster than
+        getElementById because it doesn't ref/deref the AtomicStringImpl*, gets
+        inlined, doesn't have to handle the 0 case, and doesn't try to return the
+        element pointer (just a boolean).
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::parseMappedAttribute): Use AtomicString
+        consistently. Also renamed the data member for clarity.
+        (WebCore::HTMLAppletElement::insertedIntoDocument): Ditto.
+        (WebCore::HTMLAppletElement::removedFromDocument): Ditto.
+        * html/HTMLAppletElement.h: Ditto.
+
+        * html/HTMLDocument.cpp:
+        (WebCore::addItemToMap): Use AtomicString instead of String.
+        (WebCore::removeItemFromMap): Ditto.
+        (WebCore::HTMLDocument::addNamedItem): Updated for member name change.
+        (WebCore::HTMLDocument::removeNamedItem): Ditto.
+        (WebCore::HTMLDocument::addExtraNamedItem): Ditto.
+        (WebCore::HTMLDocument::removeExtraNamedItem): Ditto.
+        (WebCore::HTMLDocument::clear): Added. Moved code here from the JavaScript
+        bindings. If we're going to have an empty placeholder function, there's no
+        reason to have it in the bindings instead of here.
+        * html/HTMLDocument.h: Added clear. Changed the named item function
+        arguments to AtomicString insted of String. Changed the NameCountMap to
+        use AtomicStringImpl* instead of StringImpl*. Renamed the data members
+        to add a m_ prefix and remove the needless doc prefix. Added hasNamedItem
+        and hasExtraNamedItem functions that are inlined and faster than the old
+        idiom because they doesn't ref/deref the AtomicStringImpl*, get inlined,
+        and don't have to handle the 0 case.
+        * html/HTMLDocument.idl: Removed the [Custom] attribute on clear and took
+        it out of the JavaScript-specific section.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseMappedAttribute): Use AtomicString
+        consistently. Also renamed the data member for clarity.
+        (WebCore::HTMLEmbedElement::insertedIntoDocument): Ditto.
+        (WebCore::HTMLEmbedElement::removedFromDocument): Ditto.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::insertedIntoDocument): Ditto.
+        (WebCore::HTMLFormElement::removedFromDocument): Ditto.
+        (WebCore::HTMLFormElement::parseMappedAttribute): Ditto.
+        * html/HTMLFormElement.h: Ditto.
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::openURL): Renamed m_name to m_frameName for
+        clarity, since the frame name is not the same as the name attribute.
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute): Ditto.
+        (WebCore::HTMLFrameElementBase::setNameAndOpenURL): Ditto.
+        * html/HTMLFrameElementBase.h: Ditto.
+
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::parseMappedAttribute): Use AtomicString
+        consistently. Also renamed the data member for clarity.
+        (WebCore::HTMLIFrameElement::insertedIntoDocument): Ditto.
+        (WebCore::HTMLIFrameElement::removedFromDocument): Ditto.
+        * html/HTMLIFrameElement.h: Ditto.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute): Ditto.
+        (WebCore::HTMLImageElement::insertedIntoDocument): Ditto.
+        (WebCore::HTMLImageElement::removedFromDocument): Ditto.
+        * html/HTMLImageElement.h: Ditto.
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute): Ditto.
+        (WebCore::HTMLObjectElement::insertedIntoDocument): Ditto.
+        (WebCore::HTMLObjectElement::removedFromDocument): Ditto.
+        (WebCore::HTMLObjectElement::updateDocNamedItem): Ditto.
+        * html/HTMLObjectElement.h: Ditto.
+
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::isURLAttribute): Use equalIgnoringCase instead
+        of callling lower().
+
+        * html/HTMLPlugInElement.h: Changed the type of m_name. The code that
+        uses this is in HTMLAppletElement, HTMLEmbedElement, and HTMLObjectElement.
+
+        * platform/text/AtomicString.cpp:
+        (WebCore::equal): Moved to an inline so we can share this code between a
+        few different functions. It could move to a header too if we want to use
+        it elsewhere.
+        (WebCore::UCharBufferTranslator::equal): Change to use inline.
+        (WebCore::HashAndCharactersTranslator::hash): Added.
+        (WebCore::HashAndCharactersTranslator::equal): Added.
+        (WebCore::HashAndCharactersTranslator::translate): Added.
+        (WebCore::AtomicString::add): Improved the Identifier and UString overloads
+        to use the already-computed hash code instead of rehashing the string.
+        (WebCore::AtomicString::find): Added.
+        * platform/text/AtomicString.h: Added a find function so we can avoid
+        allocating memory just to look up a string in an atomic string set or map.
+
+        * platform/text/StringImpl.h: Added declarations needed for the
+        AtomicString changes.
+
 2008-03-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.

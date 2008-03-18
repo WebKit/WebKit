@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -63,6 +63,8 @@ public:
     String vlinkColor();
     void setVlinkColor(const String&);
 
+    void clear();
+
     void captureEvents();
     void releaseEvents();
 
@@ -72,23 +74,35 @@ public:
 
     virtual PassRefPtr<Element> createElement(const String& tagName, ExceptionCode&);
 
-    void addNamedItem(const String& name);
-    void removeNamedItem(const String& name);
-    bool hasNamedItem(const String& name);
+    void addNamedItem(const AtomicString& name);
+    void removeNamedItem(const AtomicString& name);
+    bool hasNamedItem(AtomicStringImpl* name);
 
-    void addDocExtraNamedItem(const String& name);
-    void removeDocExtraNamedItem(const String& name);
-    bool hasDocExtraNamedItem(const String& name);
+    void addExtraNamedItem(const AtomicString& name);
+    void removeExtraNamedItem(const AtomicString& name);
+    bool hasExtraNamedItem(AtomicStringImpl* name);
 
-    typedef HashMap<StringImpl*, int> NameCountMap;
+    typedef HashMap<AtomicStringImpl*, int> NameCountMap;
 
 private:
     virtual void determineParseMode();
 
 private:
-    NameCountMap namedItemCounts;
-    NameCountMap docExtraNamedItemCounts;
+    NameCountMap m_namedItemCounts;
+    NameCountMap m_extraNamedItemCounts;
 };
+
+inline bool HTMLDocument::hasNamedItem(AtomicStringImpl* name)
+{
+    ASSERT(name);
+    return m_namedItemCounts.contains(name);
+}
+
+inline bool HTMLDocument::hasExtraNamedItem(AtomicStringImpl* name)
+{
+    ASSERT(name);
+    return m_extraNamedItemCounts.contains(name);
+}
 
 } // namespace
 

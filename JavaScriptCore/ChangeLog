@@ -1,3 +1,13 @@
+2008-03-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        JavaScriptCore changes to support a WebCore speedup.
+
+        * JavaScriptCore.exp: Export the UString::Rep::computeHash function.
+        * wtf/HashSet.h: Added a find and contains function that take a translator,
+        like the add function.
+
 2008-03-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

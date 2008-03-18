@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -71,13 +71,22 @@ namespace WTF {
         const_iterator find(const ValueType&) const;
         bool contains(const ValueType&) const;
 
-        // the return value is a pair of an interator to the new value's location, 
-        // and a bool that is true if an new entry was added
+        // An alternate version of find() that finds the object by hashing and comparing
+        // with some other type, to avoid the cost of type conversion. HashTranslator
+        // must have the following function members:
+        //   static unsigned hash(const T&);
+        //   static bool equal(const ValueType&, const T&);
+        template<typename T, typename HashTranslator> iterator find(const T&);
+        template<typename T, typename HashTranslator> const_iterator find(const T&) const;
+        template<typename T, typename HashTranslator> bool contains(const T&) const;
+
+        // The return value is a pair of an interator to the new value's location, 
+        // and a bool that is true if an new entry was added.
         pair<iterator, bool> add(const ValueType&);
 
-        // a special version of add() that finds the object by hashing and comparing
+        // An alternate version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
-        // in the table. HashTranslator should have the following methods:
+        // in the table. HashTranslator must have the following methods:
         //   static unsigned hash(const T&);
         //   static bool equal(const ValueType&, const T&);
         //   static translate(ValueType&, const T&, unsigned hashCode);
@@ -256,6 +265,35 @@ namespace WTF {
     inline bool HashSet<T, U, V>::contains(const ValueType& value) const
     {
         return m_impl.contains(*(const StorageType*)&value); 
+    }
+
+    template<typename Value, typename HashFunctions, typename Traits>
+    template<typename T, typename Translator> 
+    typename HashSet<Value, HashFunctions, Traits>::iterator
+    inline HashSet<Value, HashFunctions, Traits>::find(const T& value)
+    {
+        const bool canReplaceDeletedValue = !ValueTraits::needsDestruction || StorageTraits::needsDestruction;
+        typedef HashSetTranslatorAdapter<canReplaceDeletedValue, ValueType, StorageTraits, T, Translator> Adapter;
+        return m_impl.find<T, Adapter>(value);
+    }
+
+    template<typename Value, typename HashFunctions, typename Traits>
+    template<typename T, typename Translator> 
+    typename HashSet<Value, HashFunctions, Traits>::const_iterator
+    inline HashSet<Value, HashFunctions, Traits>::find(const T& value) const
+    {
+        const bool canReplaceDeletedValue = !ValueTraits::needsDestruction || StorageTraits::needsDestruction;
+        typedef HashSetTranslatorAdapter<canReplaceDeletedValue, ValueType, StorageTraits, T, Translator> Adapter;
+        return m_impl.find<T, Adapter>(value);
+    }
+
+    template<typename Value, typename HashFunctions, typename Traits>
+    template<typename T, typename Translator> 
+    inline bool HashSet<Value, HashFunctions, Traits>::contains(const T& value) const
+    {
+        const bool canReplaceDeletedValue = !ValueTraits::needsDestruction || StorageTraits::needsDestruction;
+        typedef HashSetTranslatorAdapter<canReplaceDeletedValue, ValueType, StorageTraits, T, Translator> Adapter;
+        return m_impl.contains<T, Adapter>(value);
     }
 
     template<typename T, typename U, typename V>

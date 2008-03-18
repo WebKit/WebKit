@@ -101,31 +101,31 @@ bool HTMLEmbedElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
 
 void HTMLEmbedElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    String val = attr->value();
+    const AtomicString& value = attr->value();
   
     if (attr->name() == typeAttr) {
-        m_serviceType = val.lower();
+        m_serviceType = value.string().lower();
         int pos = m_serviceType.find(";");
         if (pos != -1)
             m_serviceType = m_serviceType.left(pos);
     } else if (attr->name() == codeAttr || attr->name() == srcAttr)
-        m_url = parseURL(val);
+        m_url = parseURL(value.string());
     else if (attr->name() == pluginpageAttr || attr->name() == pluginspageAttr)
-        m_pluginPage = val;
+        m_pluginPage = value;
     else if (attr->name() == hiddenAttr) {
-        if (val.lower() == "yes" || val.lower() == "true") {
-            // FIXME: Not dynamic, but it's not really important that such a rarely-used
-            // feature work dynamically.
+        if (equalIgnoringCase(value.string(), "yes") || equalIgnoringCase(value.string(), "true")) {
+            // FIXME: Not dynamic, since we add this but don't remove it, but it may be OK for now
+            // that this rarely-used attribute won't work properly if you remove it.
             addCSSLength(attr, CSS_PROP_WIDTH, "0");
             addCSSLength(attr, CSS_PROP_HEIGHT, "0");
         }
     } else if (attr->name() == nameAttr) {
         if (inDocument() && document()->isHTMLDocument()) {
-            HTMLDocument* doc = static_cast<HTMLDocument*>(document());
-            doc->removeNamedItem(oldNameAttr);
-            doc->addNamedItem(val);
+            HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+            document->removeNamedItem(m_name);
+            document->addNamedItem(value);
         }
-        oldNameAttr = val;
+        m_name = value;
     } else
         HTMLPlugInElement::parseMappedAttribute(attr);
 }
@@ -173,10 +173,8 @@ void HTMLEmbedElement::updateWidget()
 
 void HTMLEmbedElement::insertedIntoDocument()
 {
-    if (document()->isHTMLDocument()) {
-        HTMLDocument* doc = static_cast<HTMLDocument*>(document());
-        doc->addNamedItem(oldNameAttr);
-    }
+    if (document()->isHTMLDocument())
+        static_cast<HTMLDocument*>(document())->addNamedItem(m_name);
 
     String width = getAttribute(widthAttr);
     String height = getAttribute(heightAttr);
@@ -197,10 +195,8 @@ void HTMLEmbedElement::insertedIntoDocument()
 
 void HTMLEmbedElement::removedFromDocument()
 {
-    if (document()->isHTMLDocument()) {
-        HTMLDocument* doc = static_cast<HTMLDocument*>(document());
-        doc->removeNamedItem(oldNameAttr);
-    }
+    if (document()->isHTMLDocument())
+        static_cast<HTMLDocument*>(document())->removeNamedItem(m_name);
 
     HTMLPlugInElement::removedFromDocument();
 }

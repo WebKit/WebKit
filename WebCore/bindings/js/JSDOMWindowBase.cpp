@@ -615,10 +615,10 @@ bool JSDOMWindowBase::getOwnPropertySlot(ExecState* exec, const Identifier& prop
     }
 
     // Allow shortcuts like 'Image1' instead of document.images.Image1
-    Document* doc = impl()->frame()->document();
-    if (doc && doc->isHTMLDocument()) {
-        AtomicString atomicPropertyName = propertyName;
-        if (static_cast<HTMLDocument*>(doc)->hasNamedItem(atomicPropertyName) || doc->getElementById(atomicPropertyName)) {
+    Document* document = impl()->frame()->document();
+    if (document && document->isHTMLDocument()) {
+        AtomicStringImpl* atomicPropertyName = AtomicString::find(propertyName);
+        if (atomicPropertyName && (static_cast<HTMLDocument*>(document)->hasNamedItem(atomicPropertyName) || document->hasElementWithId(atomicPropertyName))) {
             slot.setCustom(this, namedItemGetter);
             return true;
         }

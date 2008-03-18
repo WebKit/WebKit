@@ -44,14 +44,16 @@ class AtomicString;
 class StringBuffer;
 
 struct CStringTranslator;
+struct HashAndCharactersTranslator;
 struct Length;
 struct StringHash;
 struct UCharBufferTranslator;
 
 class StringImpl : public RefCounted<StringImpl> {
     friend class AtomicString;
-    friend struct UCharBufferTranslator;
     friend struct CStringTranslator;
+    friend struct HashAndCharactersTranslator;
+    friend struct UCharBufferTranslator;
 private:
     StringImpl();
     StringImpl(const UChar*, unsigned length);
