@@ -1,3 +1,20 @@
+2008-03-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 17908: Various bugs in the Console completion code
+        http://bugs.webkit.org/show_bug.cgi?id=17908
+
+        * page/inspector/ConsolePanel.js:
+        (WebInspector.ConsolePanel.complete): Moved the code that checked for the caret being at the end
+        of the prompt into the _caretAtEndOfPrompt helper function.
+        (WebInspector.ConsolePanel.messagesSelectStart): Clear and redo the auto complete when the selection changes.
+        (WebInspector.ConsolePanel._caretInsidePrompt): Fixed a logic error that always caused a false result.
+        (WebInspector.ConsolePanel._caretAtEndOfPrompt): Added. Tests if the selection is a caret at the
+        end of the prompt.
+        (WebInspector.ConsolePanel._moveCaretToEndOfPrompt): Changed the offset to use the childNodes length.
+        This makes sure the caret is at the end when there are multiple text nodes in the prompt.
+
 2008-03-17  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Dave Hyatt.

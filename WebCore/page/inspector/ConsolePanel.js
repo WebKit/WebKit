@@ -190,26 +190,8 @@ WebInspector.ConsolePanel.prototype = {
         var selectionRange = selection.getRangeAt(0);
         if (!selectionRange.commonAncestorContainer.isDescendant(this.promptElement))
             return;
-
-        if (auto) {
-            if (!selection.isCollapsed)
-                return;
-
-            var node = selectionRange.startContainer;
-            if (node.nodeType === Node.TEXT_NODE && selectionRange.startOffset < node.nodeValue.length)
-                return;
-
-            var foundNextText = false;
-            while (node) {
-                if (node.nodeType === Node.TEXT_NODE && node.nodeValue.length) {
-                    if (foundNextText)
-                        return;
-                    foundNextText = true;
-                }
-
-                node = node.traverseNextNode(false, this.promptElement);
-            }
-        }
+        if (auto && !this._caretAtEndOfPrompt())
+            return;
 
         // Pass more characters to _backwardsRange so the range will be as short as possible.
         var wordPrefixRange = this._backwardsRange(" .=:[({;", selectionRange.startContainer, selectionRange.startOffset, this.promptElement);
@@ -338,12 +320,14 @@ WebInspector.ConsolePanel.prototype = {
         if (this._selectionTimeout)
             clearTimeout(this._selectionTimeout);
 
+        this.clearAutoComplete();
+
         function moveBackIfOutside()
         {
             delete this._selectionTimeout;
-            if (this._caretInsidePrompt() || !window.getSelection().isCollapsed)
-                return;
-            this._moveCaretToEndOfPrompt();
+            if (!this._caretInsidePrompt() && window.getSelection().isCollapsed)
+                this._moveCaretToEndOfPrompt();
+            this.autoCompleteSoon();
         }
 
         this._selectionTimeout = setTimeout(moveBackIfOutside.bind(this), 100);
@@ -455,7 +439,35 @@ WebInspector.ConsolePanel.prototype = {
         if (!selection.rangeCount || !selection.isCollapsed)
             return false;
         var selectionRange = selection.getRangeAt(0);
-        return selectionRange.startContainer === this.promptElement && selectionRange.startContainer.isDescendant(this.promptElement);
+        return selectionRange.startContainer === this.promptElement || selectionRange.startContainer.isDescendant(this.promptElement);
+    },
+
+    _caretAtEndOfPrompt: function()
+    {
+        var selection = window.getSelection();
+        if (!selection.rangeCount || !selection.isCollapsed)
+            return false;
+
+        var selectionRange = selection.getRangeAt(0);
+        var node = selectionRange.startContainer;
+        if (node !== this.promptElement && !node.isDescendant(this.promptElement))
+            return false;
+
+        if (node.nodeType === Node.TEXT_NODE && selectionRange.startOffset < node.nodeValue.length)
+            return false;
+
+        var foundNextText = false;
+        while (node) {
+            if (node.nodeType === Node.TEXT_NODE && node.nodeValue.length) {
+                if (foundNextText)
+                    return false;
+                foundNextText = true;
+            }
+
+            node = node.traverseNextNode(false, this.promptElement);
+        }
+
+        return true;
     },
 
     _moveCaretToEndOfPrompt: function()
@@ -463,7 +475,7 @@ WebInspector.ConsolePanel.prototype = {
         var selection = window.getSelection();
         var selectionRange = document.createRange();
 
-        var offset = this.promptElement.firstChild ? 1 : 0;
+        var offset = this.promptElement.childNodes.length;
         selectionRange.setStart(this.promptElement, offset);
         selectionRange.setEnd(this.promptElement, offset);
 
