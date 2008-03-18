@@ -1,3 +1,31 @@
+2008-03-18  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 14276: Element highlight also covers Web inspector
+
+        <http://bugs.webkit.org/show_bug.cgi?id=14276>
+        <rdar://5712796>
+
+        Also fixes <rdar://5622837> Browser window comes to front when node
+        highlight appears, potentially blocking Inspector
+
+        Reviewed by Mitz.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::highlight): After showing the highlight,
+        reposition it just behind the Inspector's window.
+        * WebNodeHighlight.cpp:
+        (WebNodeHighlight::show):
+          - Changed flags passed to CreateWindowEx to not specify WS_VISIBLE.
+            This is not needed because we'll show the window later in this
+            function.
+          - Removed call to SetWindowPos that tried to position the overlay
+            just in front of the WebView. This is now handled by
+            WebInspectorClient.
+          - Changed call to ShowWindow to use SetWindowPos so that we can pass
+            SWP_NOACTIVATE. This prevents the highlight from jumping in front
+            of the Inspector every time it's shown.
+        * WebNodeHighlight.h: Added a method to get the highlight's HWND.
+
 2008-03-14  Steve Falkenburg  <sfalken@apple.com>
 
         PGO build fixes.

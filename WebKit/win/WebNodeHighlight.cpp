@@ -73,14 +73,13 @@ void WebNodeHighlight::show()
 
         registerOverlayClass();
 
-        m_overlay = ::CreateWindowEx(WS_EX_LAYERED | WS_EX_TOOLWINDOW, kOverlayWindowClassName, 0, WS_POPUP | WS_VISIBLE,
+        m_overlay = ::CreateWindowEx(WS_EX_LAYERED | WS_EX_TOOLWINDOW, kOverlayWindowClassName, 0, WS_POPUP,
                                      0, 0, 0, 0,
                                      m_inspectedWebViewWindow, 0, 0, 0);
         if (!m_overlay)
             return;
 
         ::SetProp(m_overlay, kWebNodeHighlightPointerProp, reinterpret_cast<HANDLE>(this));
-        ::SetWindowPos(m_overlay, m_inspectedWebViewWindow, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
         m_observedWindow = GetAncestor(m_inspectedWebViewWindow, GA_ROOT);
         WindowMessageBroadcaster::addListener(m_observedWindow, this);
@@ -88,7 +87,7 @@ void WebNodeHighlight::show()
     }
 
     updateWindow();
-    ::ShowWindow(m_overlay, SW_SHOW);
+    SetWindowPos(m_overlay, 0, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
 void WebNodeHighlight::hide()

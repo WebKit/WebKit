@@ -273,6 +273,11 @@ void WebInspectorClient::highlight(Node*)
         m_highlight.set(new WebNodeHighlight(m_inspectedWebView));
 
     m_highlight->show();
+
+    if (IsWindowVisible(m_hwnd)) {
+        // Make sure the highlight is behind us.
+        SetWindowPos(m_highlight->window(), m_hwnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    }
 }
 
 void WebInspectorClient::hideHighlight()
