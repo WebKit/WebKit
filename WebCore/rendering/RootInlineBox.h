@@ -1,7 +1,7 @@
 /*
  * This file is part of the line box implementation for KDE.
  *
- * Copyright (C) 2003, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -119,6 +119,16 @@ public:
 
     InlineBox* closestLeafChildForXPos(int x, bool onlyEditableLeaves = false);
 
+    Vector<RenderObject*>& floats()
+    {
+        ASSERT(!isDirty());
+        if (!m_overflow)
+            m_overflow = new (m_object->renderArena()) Overflow(this);
+        return m_overflow->floats;
+    }
+
+    Vector<RenderObject*>* floatsPtr() { ASSERT(!isDirty()); return m_overflow ? &m_overflow->floats : 0; }
+
 protected:
     // Normally we are only as tall as the style on our block dictates, but we might have content
     // that spills out above the height of our font (e.g, a tall image), or something that extends further
@@ -133,8 +143,9 @@ protected:
             , m_rightOverflow(box->m_x + box->m_width)
             , m_selectionTop(box->m_y)
             , m_selectionBottom(box->m_y + box->m_height)
-            {
-            }
+        {
+        }
+
         void destroy(RenderArena*);
         void* operator new(size_t, RenderArena*) throw();
         void operator delete(void*, size_t);
@@ -145,6 +156,9 @@ protected:
         int m_rightOverflow;
         int m_selectionTop;
         int m_selectionBottom;
+        // Floats hanging off the line are pushed into this vector during layout. It is only
+        // good for as long as the line has not been marked dirty.
+        Vector<RenderObject*> floats;
     private:
         void* operator new(size_t) throw();
     };

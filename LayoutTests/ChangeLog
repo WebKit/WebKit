@@ -1,3 +1,48 @@
+2008-03-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test incremental relayout of blocks that contain floats
+
+        * fast/repaint/line-flow-with-floats-1.html: Added.
+        * fast/repaint/line-flow-with-floats-2.html: Added.
+        * fast/repaint/line-flow-with-floats-3.html: Added.
+        * fast/repaint/line-flow-with-floats-4.html: Added.
+        * fast/repaint/line-flow-with-floats-5.html: Added.
+        * fast/repaint/line-flow-with-floats-6.html: Added.
+        * fast/repaint/line-flow-with-floats-7.html: Added.
+        * fast/repaint/line-flow-with-floats-8.html: Added.
+        * fast/repaint/line-flow-with-floats-9.html: Added.
+        * fast/repaint/resources/line-flow-with-floats.html: Added.
+        * fast/repaint/resources/line-flow-with-floats.js: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-1-expected.checksum: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-1-expected.png: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-1-expected.txt: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-2-expected.checksum: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-2-expected.png: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-2-expected.txt: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-3-expected.checksum: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-3-expected.png: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-3-expected.txt: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-4-expected.checksum: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-4-expected.png: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-4-expected.txt: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-5-expected.checksum: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-5-expected.png: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-5-expected.txt: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-6-expected.checksum: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-6-expected.png: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-6-expected.txt: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-7-expected.checksum: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-7-expected.png: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-7-expected.txt: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-8-expected.checksum: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-8-expected.png: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-8-expected.txt: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-9-expected.checksum: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-9-expected.png: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-9-expected.txt: Added.
+
 2008-03-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

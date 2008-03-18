@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -978,52 +978,53 @@ void RenderBlock::collapseMargins(RenderObject* child, MarginInfo& marginInfo, i
 void RenderBlock::clearFloatsIfNeeded(RenderObject* child, MarginInfo& marginInfo, int oldTopPosMargin, int oldTopNegMargin)
 {
     int heightIncrease = getClearDelta(child);
-    if (heightIncrease) {
-        // The child needs to be lowered.  Move the child so that it just clears the float.
-        view()->addLayoutDelta(IntSize(0, -heightIncrease));
-        child->setPos(child->xPos(), child->yPos() + heightIncrease);
+    if (!heightIncrease)
+        return;
 
-        if (child->isSelfCollapsingBlock()) {
-            // For self-collapsing blocks that clear, they can still collapse their
-            // margins with following siblings.  Reset the current margins to represent
-            // the self-collapsing block's margins only.
-            marginInfo.setPosMargin(max(child->maxTopMargin(true), child->maxBottomMargin(true)));
-            marginInfo.setNegMargin(max(child->maxTopMargin(false), child->maxBottomMargin(false)));
-            
-            // Adjust our height such that we are ready to be collapsed with subsequent siblings.
-            m_height = child->yPos() - max(0, marginInfo.margin());
-            
-            // Set a flag that we cleared a float so that we know both to increase the height of the block
-            // to compensate for the clear and to avoid collapsing our margins with the parent block's
-            // bottom margin.
-            marginInfo.setSelfCollapsingBlockClearedFloat(true);
-        } else
-            // Increase our height by the amount we had to clear.
-            m_height += heightIncrease;
+    // The child needs to be lowered.  Move the child so that it just clears the float.
+    view()->addLayoutDelta(IntSize(0, -heightIncrease));
+    child->setPos(child->xPos(), child->yPos() + heightIncrease);
+
+    if (child->isSelfCollapsingBlock()) {
+        // For self-collapsing blocks that clear, they can still collapse their
+        // margins with following siblings.  Reset the current margins to represent
+        // the self-collapsing block's margins only.
+        marginInfo.setPosMargin(max(child->maxTopMargin(true), child->maxBottomMargin(true)));
+        marginInfo.setNegMargin(max(child->maxTopMargin(false), child->maxBottomMargin(false)));
         
-        if (marginInfo.canCollapseWithTop()) {
-            // We can no longer collapse with the top of the block since a clear
-            // occurred.  The empty blocks collapse into the cleared block.
-            // FIXME: This isn't quite correct.  Need clarification for what to do
-            // if the height the cleared block is offset by is smaller than the
-            // margins involved.
-            setMaxTopMargins(oldTopPosMargin, oldTopNegMargin);
-            marginInfo.setAtTopOfBlock(false);
-        }
-
-        // If our value of clear caused us to be repositioned vertically to be
-        // underneath a float, we might have to do another layout to take into account
-        // the extra space we now have available.
-        if (child->shrinkToAvoidFloats())
-            // The child's width depends on the line width.
-            // When the child shifts to clear an item, its width can
-            // change (because it has more available line width).
-            // So go ahead and mark the item as dirty.
-            child->setChildNeedsLayout(true, false);
-        if (!child->avoidsFloats() && child->containsFloats())
-            child->markAllDescendantsWithFloatsForLayout();
-        child->layoutIfNeeded();
+        // Adjust our height such that we are ready to be collapsed with subsequent siblings.
+        m_height = child->yPos() - max(0, marginInfo.margin());
+        
+        // Set a flag that we cleared a float so that we know both to increase the height of the block
+        // to compensate for the clear and to avoid collapsing our margins with the parent block's
+        // bottom margin.
+        marginInfo.setSelfCollapsingBlockClearedFloat(true);
+    } else
+        // Increase our height by the amount we had to clear.
+        m_height += heightIncrease;
+    
+    if (marginInfo.canCollapseWithTop()) {
+        // We can no longer collapse with the top of the block since a clear
+        // occurred.  The empty blocks collapse into the cleared block.
+        // FIXME: This isn't quite correct.  Need clarification for what to do
+        // if the height the cleared block is offset by is smaller than the
+        // margins involved.
+        setMaxTopMargins(oldTopPosMargin, oldTopNegMargin);
+        marginInfo.setAtTopOfBlock(false);
     }
+
+    // If our value of clear caused us to be repositioned vertically to be
+    // underneath a float, we might have to do another layout to take into account
+    // the extra space we now have available.
+    if (child->shrinkToAvoidFloats())
+        // The child's width depends on the line width.
+        // When the child shifts to clear an item, its width can
+        // change (because it has more available line width).
+        // So go ahead and mark the item as dirty.
+        child->setChildNeedsLayout(true, false);
+    if (!child->avoidsFloats() && child->containsFloats())
+        child->markAllDescendantsWithFloatsForLayout();
+    child->layoutIfNeeded();
 }
 
 int RenderBlock::estimateVerticalPosition(RenderObject* child, const MarginInfo& marginInfo)
@@ -2113,12 +2114,13 @@ void RenderBlock::removePositionedObjects(RenderBlock* o)
 
 void RenderBlock::insertFloatingObject(RenderObject *o)
 {
+    ASSERT(o->isFloating());
+
     // Create the list of special objects if we don't aleady have one
     if (!m_floatingObjects) {
         m_floatingObjects = new DeprecatedPtrList<FloatingObject>;
         m_floatingObjects->setAutoDelete(true);
-    }
-    else {
+    } else {
         // Don't insert the object again if it's already in the list
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         FloatingObject* f;
@@ -2130,28 +2132,15 @@ void RenderBlock::insertFloatingObject(RenderObject *o)
 
     // Create the special object entry & append it to the list
 
-    FloatingObject *newObj;
-    if (o->isFloating()) {
-        // floating object
-        o->layoutIfNeeded();
+    o->layoutIfNeeded();
 
-        if(o->style()->floating() == FLEFT)
-            newObj = new FloatingObject(FloatingObject::FloatLeft);
-        else
-            newObj = new FloatingObject(FloatingObject::FloatRight);
+    FloatingObject* newObj = new FloatingObject(o->style()->floating() == FLEFT ? FloatingObject::FloatLeft : FloatingObject::FloatRight);
 
-        newObj->startY = -1;
-        newObj->endY = -1;
-        newObj->width = o->width() + o->marginLeft() + o->marginRight();
-        newObj->noPaint = o->hasLayer(); // If a layer exists, the float will paint itself.  Otherwise someone else will.
-    }
-    else {
-        // We should never get here, as insertFloatingObject() should only ever be called with floating
-        // objects.
-        ASSERT(false);
-        newObj = 0; // keep gcc's uninitialized variable warnings happy
-    }
-
+    newObj->startY = -1;
+    newObj->endY = -1;
+    newObj->width = o->width() + o->marginLeft() + o->marginRight();
+    newObj->noPaint = o->hasLayer(); // If a layer exists, the float will paint itself.  Otherwise someone else will.
+    newObj->m_isDescendant = true;
     newObj->node = o;
 
     m_floatingObjects->append(newObj);
@@ -2162,23 +2151,26 @@ void RenderBlock::removeFloatingObject(RenderObject *o)
     if (m_floatingObjects) {
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         while (it.current()) {
-            if (it.current()->node == o)
+            if (it.current()->node == o) {
+                if (childrenInline())
+                    markLinesDirtyInVerticalRange(0, it.current()->endY);
                 m_floatingObjects->removeRef(it.current());
+            }
             ++it;
         }
     }
 }
 
-void RenderBlock::positionNewFloats()
+bool RenderBlock::positionNewFloats()
 {
     if (!m_floatingObjects)
-        return;
+        return false;
     
     FloatingObject* f = m_floatingObjects->last();
 
     // If all floats have already been positioned, then we have no work to do.
     if (!f || f->startY != -1)
-        return;
+        return false;
 
     // Move backwards through our floating object list until we find a float that has
     // already been positioned.  Then we'll be able to move forward, positioning all of
@@ -2253,6 +2245,7 @@ void RenderBlock::positionNewFloats()
 
         f = m_floatingObjects->next();
     }
+    return true;
 }
 
 void RenderBlock::newLine()
@@ -2607,16 +2600,45 @@ RenderBlock::rightBottom()
     return bottom;
 }
 
-void
-RenderBlock::clearFloats()
+void RenderBlock::markLinesDirtyInVerticalRange(int top, int bottom)
 {
-    if (m_floatingObjects)
-        m_floatingObjects->clear();
-
-    // Inline blocks are covered by the isReplaced() check in the avoidFloats method.
-    if (avoidsFloats() || isRoot() || isRenderView() || isFloatingOrPositioned() || isTableCell())
+    if (top >= bottom)
         return;
-    
+
+    RootInlineBox* lowestDirtyLine = lastRootBox();
+    RootInlineBox* afterLowest = lowestDirtyLine;
+    while (lowestDirtyLine && lowestDirtyLine->blockHeight() >= bottom) {
+        afterLowest = lowestDirtyLine;
+        lowestDirtyLine = lowestDirtyLine->prevRootBox();
+    }
+
+    while (afterLowest && afterLowest->blockHeight() > top) {
+        afterLowest->markDirty();
+        afterLowest = afterLowest->prevRootBox();
+    }
+}
+
+void RenderBlock::clearFloats()
+{
+    // Inline blocks are covered by the isReplaced() check in the avoidFloats method.
+    if (avoidsFloats() || isRoot() || isRenderView() || isFloatingOrPositioned() || isTableCell()) {
+        if (m_floatingObjects)
+            m_floatingObjects->clear();
+        return;
+    }
+
+    typedef HashMap<RenderObject*, FloatingObject*> RendererToFloatInfoMap;
+    RendererToFloatInfoMap floatMap;
+
+    if (m_floatingObjects) {
+        if (childrenInline()) {
+            m_floatingObjects->first();
+            while (FloatingObject* f = m_floatingObjects->take())
+                floatMap.add(f->node, f);
+        } else
+            m_floatingObjects->clear();
+    }
+
     // Attempt to locate a previous sibling with overhanging floats.  We skip any elements that are
     // out of flow (like floating/positioned elements), and we also skip over any objects that may have shifted
     // to avoid floats.
@@ -2641,14 +2663,50 @@ RenderBlock::clearFloats()
         prev = parent();
         xoffset += prev->borderLeft() + prev->paddingLeft();
     }
-    //kdDebug() << "RenderBlock::clearFloats found previous "<< (void *)this << " prev=" << (void *)prev<< endl;
 
     // Add overhanging floats from the previous RenderBlock, but only if it has a float that intrudes into our space.
     if (!prev->isRenderBlock()) return;
     RenderBlock* block = static_cast<RenderBlock *>(prev);
-    if (!block->m_floatingObjects) return;
-    if (block->floatBottom() > offset)
+
+    if (block->m_floatingObjects && block->floatBottom() > offset)
         addIntrudingFloats(block, xoffset, offset);
+
+    if (childrenInline()) {
+        int changeTop = INT_MAX;
+        int changeBottom = INT_MIN;
+        if (m_floatingObjects) {
+            for (FloatingObject* f = m_floatingObjects->first(); f; f = m_floatingObjects->next()) {
+                FloatingObject* oldFloatingObject = floatMap.get(f->node);
+                if (oldFloatingObject) {
+                    if (f->width != oldFloatingObject->width || f->left != oldFloatingObject->left) {
+                        changeTop = 0;
+                        changeBottom = max(changeBottom, max(f->endY, oldFloatingObject->endY));
+                    } else if (f->endY != oldFloatingObject->endY) {
+                        changeTop = min(changeTop, min(f->endY, oldFloatingObject->endY));
+                        changeBottom = max(changeBottom, max(f->endY, oldFloatingObject->endY));
+                    }
+
+                    floatMap.remove(f->node);
+                    delete oldFloatingObject;
+                } else {
+                    changeTop = 0;
+                    changeBottom = max(changeBottom, f->endY);
+                }
+            }
+        }
+
+        RendererToFloatInfoMap::iterator end = floatMap.end();
+        for (RendererToFloatInfoMap::iterator it = floatMap.begin(); it != end; ++it) {
+            FloatingObject* floatingObject = (*it).second;
+            if (!floatingObject->m_isDescendant) {
+                changeTop = 0;
+                changeBottom = max(changeBottom, floatingObject->endY);
+            }
+        }
+        deleteAllValues(floatMap);
+
+        markLinesDirtyInVerticalRange(changeTop, changeBottom);
+    }
 }
 
 int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff, bool makeChildPaintOtherFloats)

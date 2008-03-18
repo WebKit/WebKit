@@ -1,3 +1,59 @@
+2008-03-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - allow incremental relayout of blocks that contain floats
+
+        Tests: fast/repaint/line-flow-with-floats-[1-9].html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clearFloatsIfNeeded): Cleaned up by moving most
+        of the function body out of an if statement which was replaced with an
+        early return.
+        (WebCore::RenderBlock::insertFloatingObject): Cleaned up by moving most
+        of the function body out of an if statement and moving the ASSERT, which
+        is a crash in release builds, to the beginning. Made this function set
+        the m_isDescendant flag of floating objects it creates.
+        (WebCore::RenderBlock::removeFloatingObject): Added a call to
+        markLinesDirtyInVerticalRange() when removing a float from a block with
+        inline children.
+        (WebCore::RenderBlock::markLinesDirtyInVerticalRange): Added. Marks the
+        lines in the given range as dirty.
+        (WebCore::RenderBlock::clearFloats): Added code to detect changes to
+        the geometry of floats intruding into this block from other blocks and
+        mark any lines whose available width has changed as a result as dirty.
+
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatWithRect::FloatWithRect): Added a structure
+        to cache a float with its position and size.
+        (WebCore::RenderBlock::FloatingObject::FloatingObject): Added an
+        m_isDescendant flag, used by clearFloats() to distinguish between floats
+        entering the block from outside and floats internal to the block.
+
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::floats): Added.
+        (WebCore::RootInlineBox::floatsPtr): Added.
+        (WebCore::RootInlineBox::Overflow::Overflow): Added a data member to
+        hold the floats originating on the line.
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Made the existence of
+        floats not force a full layout. Changed to cache the geometry of floats
+        in the block and detect changes to it. If a float's size or position
+        changes, all lines from that point on are treated as dirty. An exception
+        is a change in the dimensions of a float on an otherwise-clean line,
+        which only dirties lines potentially affected by the change (see
+        determineStartPosition()). Added code to update each RootInlineBox's
+        set of floats as lines are laid out. Added code to shift floats
+        belonging to clean lines in the end along with the lines.
+        (WebCore::RenderBlock::determineStartPosition): Made this function look
+        for changes to floats' dimensions and mark lines as dirty accordingly.
+        Also look for new floats and if found, cause a full layout. Added code
+        to re-add floats belonging to clean lines.
+        (WebCore::RenderBlock::matchedEndLine): Added checking that the clean
+        lines in the end can be shifted vertically as needed, i.e. that the
+        available width along the way is uniform.
+
 2008-03-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

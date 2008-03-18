@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -126,8 +126,19 @@ public:
     virtual RenderObject* layoutLegend(bool relayoutChildren) { return 0; };
 
     // the implementation of the following functions is in bidi.cpp
+    struct FloatWithRect {
+        FloatWithRect(RenderObject* f)
+            : object(f)
+            , rect(IntRect(f->xPos() - f->marginLeft(), f->yPos() - f->marginTop(), f->width() + f->marginLeft() + f->marginRight(), f->height() + f->marginTop() + f->marginBottom()))
+        {
+        }
+
+        RenderObject* object;
+        IntRect rect;
+    };
+
     void bidiReorderLine(BidiState&, const BidiIterator& end);
-    RootInlineBox* determineStartPosition(bool fullLayout, BidiState&);
+    RootInlineBox* determineStartPosition(bool& fullLayout, BidiState&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats);
     RootInlineBox* determineEndPosition(RootInlineBox* startBox, BidiIterator& cleanLineStart,
                                         BidiStatus& cleanLineBidiStatus,
                                         int& yPos);
@@ -161,7 +172,7 @@ public:
     void removeFloatingObject(RenderObject*);
 
     // called from lineWidth, to position the floats added in the last line.
-    void positionNewFloats();
+    bool positionNewFloats();
     void clearFloats();
     int getClearDelta(RenderObject* child);
     virtual void markAllDescendantsWithFloatsForLayout(RenderObject* floatToRemove = 0);
@@ -298,6 +309,8 @@ private:
     void adjustPointToColumnContents(IntPoint&) const;
     void adjustForBorderFit(int x, int& left, int& right) const; // Helper function for borderFitAdjust
 
+    void markLinesDirtyInVerticalRange(int top, int bottom);
+
 protected:
     void newLine();
     virtual bool hasLineIfEmpty() const;
@@ -326,6 +339,7 @@ protected:
             , width(0)
             , m_type(type)
             , noPaint(false)
+            , m_isDescendant(false)
         {
         }
 
@@ -338,6 +352,7 @@ protected:
         int width;
         unsigned m_type : 1; // Type (left or right aligned)
         bool noPaint : 1;
+        bool m_isDescendant : 1;
     };
 
     // The following helper functions and structs are used by layoutBlockChildren.
@@ -446,24 +461,25 @@ private:
     DeprecatedPtrList<FloatingObject>* m_floatingObjects;
     ListHashSet<RenderObject*>* m_positionedObjects;
          
-     // Allocated only when some of these fields have non-default values
-     struct MaxMargin {
-         MaxMargin(const RenderBlock* o) 
-             : m_topPos(topPosDefault(o))
-             , m_topNeg(topNegDefault(o))
-             , m_bottomPos(bottomPosDefault(o))
-             , m_bottomNeg(bottomNegDefault(o))
-             { 
-             }
-         static int topPosDefault(const RenderBlock* o) { return o->marginTop() > 0 ? o->marginTop() : 0; }
-         static int topNegDefault(const RenderBlock* o) { return o->marginTop() < 0 ? -o->marginTop() : 0; }
-         static int bottomPosDefault(const RenderBlock* o) { return o->marginBottom() > 0 ? o->marginBottom() : 0; }
-         static int bottomNegDefault(const RenderBlock* o) { return o->marginBottom() < 0 ? -o->marginBottom() : 0; }
-         
-         int m_topPos;
-         int m_topNeg;
-         int m_bottomPos;
-         int m_bottomNeg;
+    // Allocated only when some of these fields have non-default values
+    struct MaxMargin {
+        MaxMargin(const RenderBlock* o) 
+            : m_topPos(topPosDefault(o))
+            , m_topNeg(topNegDefault(o))
+            , m_bottomPos(bottomPosDefault(o))
+            , m_bottomNeg(bottomNegDefault(o))
+        { 
+        }
+
+        static int topPosDefault(const RenderBlock* o) { return o->marginTop() > 0 ? o->marginTop() : 0; }
+        static int topNegDefault(const RenderBlock* o) { return o->marginTop() < 0 ? -o->marginTop() : 0; }
+        static int bottomPosDefault(const RenderBlock* o) { return o->marginBottom() > 0 ? o->marginBottom() : 0; }
+        static int bottomNegDefault(const RenderBlock* o) { return o->marginBottom() < 0 ? -o->marginBottom() : 0; }
+
+        int m_topPos;
+        int m_topNeg;
+        int m_bottomPos;
+        int m_bottomNeg;
      };
 
     MaxMargin* m_maxMargin;
