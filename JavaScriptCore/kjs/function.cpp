@@ -74,12 +74,12 @@ JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
 {
     FunctionExecState newExec(exec->dynamicGlobalObject(), thisObj, body.get(), exec, this, args);
     JSValue* result = body->execute(&newExec);
+    if (newExec.completionType() == ReturnValue)
+        return result;
     if (newExec.completionType() == Throw) {
         exec->setException(result);
         return result;
     }
-    if (newExec.completionType() == ReturnValue)
-        return result;
     return jsUndefined();
 }
 

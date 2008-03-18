@@ -1,3 +1,18 @@
+2008-03-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - a few micro-optimizations for 1.2% SunSpider speedup
+
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction): check for Return completion before Throw,
+        it is more likely.
+        * kjs/object.cpp:
+        (KJS::JSObject::put): When walking prototype chain, instead of
+        checking isObject (a virtual call), compare to jsNull (compare to
+        a constant) since null is the only non-object that can be in a
+        prototype chain.
+
 2008-03-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff.
