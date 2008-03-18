@@ -148,7 +148,7 @@ public:
     int skipWhitespace(BidiIterator&);
     int skipWhitespace(BidiState&);
     void fitBelowFloats(int widthToFit, int& availableWidth);
-    BidiIterator findNextLineBreak(BidiState&);
+    BidiIterator findNextLineBreak(BidiState&, EClear* clear = 0);
     RootInlineBox* constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool lastLine, RenderObject* endObject);
     InlineFlowBox* createLineBoxes(RenderObject*);
     void computeHorizontalPositionsForLine(RootInlineBox*, BidiRun* firstRun, BidiRun* logicallyLastRun, bool reachedEnd);
@@ -310,7 +310,7 @@ private:
     void markLinesDirtyInVerticalRange(int top, int bottom);
 
 protected:
-    void newLine();
+    void newLine(EClear);
     virtual bool hasLineIfEmpty() const;
     bool layoutOnlyPositionedObjects();
 

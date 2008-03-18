@@ -1,3 +1,22 @@
+2008-03-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - eliminate RenderFlow::m_clear
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): Removed code to set m_clear.
+        (WebCore::RenderBlock::newLine): Added a 'clear' parameter.
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlow.h:
+        (WebCore::RenderFlow::RenderFlow): Removed initialization of m_clear.
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Added a local 'clear'
+        variable, passing a pointer to it to findNextLineBreak() and its value
+        to newLine(). 
+        (WebCore::RenderBlock::findNextLineBreak): Added a 'clear' parameter,
+        which this method adjusts when it encounters a <br>.
+
 2008-03-18  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
