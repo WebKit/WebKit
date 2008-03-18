@@ -1,3 +1,11 @@
+2008-03-18  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Fix Qt build after r31123.
+
+        Add PluginView methods to TemporaryLinkStubs.
+
+        * platform/qt/TemporaryLinkStubs.cpp:
+
 2008-03-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
