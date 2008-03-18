@@ -1,3 +1,13 @@
+2008-03-18  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Update setContainingWindow() calls to pass a GtkWidget.
+
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_new):
+        (webkit_web_frame_init_with_web_view):
+
 2008-03-13  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Fix GTK+ build for SharedBuffer changes.

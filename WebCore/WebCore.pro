@@ -825,6 +825,8 @@ SOURCES += \
     plugins/PluginInfoStore.cpp \
     plugins/PluginPackage.cpp \
     plugins/PluginStream.cpp \
+    plugins/PluginView.cpp \
+    plugins/npapi.cpp \
     rendering/AutoTableLayout.cpp \
     rendering/bidi.cpp \
     rendering/break_lines.cpp \

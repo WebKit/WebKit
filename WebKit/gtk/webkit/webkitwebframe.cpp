@@ -3,6 +3,7 @@
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2007 Apple Inc.
  * Copyright (C) 2008 Christian Dywan <christian@imendio.com>
+ * Copyright (C) 2008 Collabora Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -220,7 +221,7 @@ WebKitWebFrame* webkit_web_frame_new(WebKitWebView* webView)
     priv->coreFrame = new Frame(viewPriv->corePage, 0, priv->client);
 
     FrameView* frameView = new FrameView(priv->coreFrame.get());
-    frameView->setContainingWindow(GTK_CONTAINER(webView));
+    frameView->setContainingWindow(GTK_WIDGET(webView));
     frameView->setGtkAdjustments(GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)),
                                  GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)));
     priv->coreFrame->setView(frameView);
@@ -241,7 +242,7 @@ WebKitWebFrame* webkit_web_frame_init_with_web_view(WebKitWebView* webView, HTML
     priv->coreFrame = new Frame(viewPriv->corePage, element, priv->client);
 
     FrameView* frameView = new FrameView(priv->coreFrame.get());
-    frameView->setContainingWindow(GTK_CONTAINER(webView));
+    frameView->setContainingWindow(GTK_WIDGET(webView));
     priv->coreFrame->setView(frameView);
     frameView->deref();
     priv->coreFrame->init();

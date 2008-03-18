@@ -35,6 +35,7 @@
 #include "NotImplemented.h"
 #include "PluginPackage.h"
 #include "PluginData.h"
+#include "PluginView.h"
 #include "SharedBuffer.h"
 
 using namespace WebCore;
@@ -62,6 +63,23 @@ bool PluginPackage::fetchInfo() { notImplemented(); return false; }
 unsigned PluginPackage::hash() const { notImplemented(); return 0; }
 bool PluginPackage::equal(const PluginPackage&, const PluginPackage&) { notImplemented(); return false; }
 bool PluginPackage::load() { notImplemented(); return false; }
+void PluginView::setNPWindowRect(const IntRect&) { notImplemented(); }
+const char* PluginView::userAgent() { notImplemented(); return 0; }
+void PluginView::invalidateRect(NPRect*) { notImplemented(); }
+void PluginView::invalidateRegion(NPRegion) { notImplemented(); }
+void PluginView::forceRedraw() { notImplemented(); }
+void PluginView::setFocus() { Widget::setFocus(); }
+void PluginView::show() { Widget::show(); }
+void PluginView::hide() { Widget::hide(); }
+void PluginView::paint(GraphicsContext*, const IntRect&) { notImplemented(); }
+void PluginView::setParent(ScrollView* view) { Widget::setParent(view); }
+void PluginView::attachToWindow() { notImplemented(); }
+void PluginView::detachFromWindow() { notImplemented(); }
+NPError PluginView::handlePost(const char*, const char*, uint32, const char*, bool, void*, bool, bool) { notImplemented(); return NPERR_GENERIC_ERROR; }
+void PluginView::updateWindow() const { notImplemented(); }
+void PluginView::handleKeyboardEvent(KeyboardEvent*) { notImplemented(); }
+void PluginView::handleMouseEvent(MouseEvent*) { notImplemented(); }
+PluginView::~PluginView() {}
 
 Color WebCore::focusRingColor() { return 0xFF0000FF; }
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { }

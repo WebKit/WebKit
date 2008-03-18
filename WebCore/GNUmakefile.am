@@ -892,6 +892,8 @@ webcore_sources += \
 	WebCore/plugins/PluginInfoStore.cpp \
 	WebCore/plugins/PluginPackage.cpp \
 	WebCore/plugins/PluginStream.cpp \
+	WebCore/plugins/PluginView.cpp \
+	WebCore/plugins/npapi.cpp \
 	WebCore/plugins/gtk/PluginDatabaseGtk.cpp \
 	WebCore/rendering/AutoTableLayout.cpp \
 	WebCore/rendering/bidi.cpp \

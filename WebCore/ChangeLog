@@ -1,3 +1,28 @@
+2008-03-18  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Add PluginView.cpp and npapi.cpp to build files.
+        Copy win/PluginViewWin.cpp to PluginView.cpp for shared code.
+        Split Windows specific code out of PluginView.cpp.
+        Add #if USE(NPOBJECT) around dependant code.
+        Use npruntime_internal.h instead of npapi.h.
+        Add PlatformWidget typedef to Widget.h.
+        Update WidgetGtk.cpp for the PlatformWidget usage.
+        Add needed methods to TemporaryLinkStubs for GTK+ port.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCoreSources.bkl:
+        * WebCore.vcproj/WebCore.vcproj:
+        * plugins/win/PluginViewWin.cpp:
+        * plugins/PluginView.cpp:
+        * plugins/PluginView.h:
+        * plugins/npapi.cpp:
+        * platform/Widget.h:
+        * platform/gtk/WidgetGtk.cpp:
+        * platform/gtk/TemporaryLinkStubs.cpp:
+
 2008-03-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -27,9 +27,6 @@
 #ifndef PluginView_H
 #define PluginView_H
 
-#include <winsock2.h>
-#include <windows.h>
-
 #include "CString.h"
 #include "IntRect.h"
 #include "KURL.h"
@@ -38,7 +35,7 @@
 #include "ResourceRequest.h"
 #include "Timer.h"
 #include "Widget.h"
-#include "npapi.h"
+#include "npruntime_internal.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -59,7 +56,9 @@ namespace WebCore {
     class KeyboardEvent;
     class MouseEvent;
     class KURL;
+#if PLATFORM(WIN)
     class PluginMessageThrottlerWin;
+#endif
     class PluginPackage;
     class PluginRequest;
     class PluginStream;
@@ -73,7 +72,9 @@ namespace WebCore {
     };
 
     class PluginView : public Widget, private PluginStreamClient {
+#if PLATFORM(WIN)
     friend static LRESULT CALLBACK PluginViewWndProc(HWND, UINT, WPARAM, LPARAM);
+#endif
 
     public:
         static PluginView* create(Frame* parentFrame, const IntSize&, Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
@@ -126,8 +127,10 @@ namespace WebCore {
         virtual void attachToWindow();
         virtual void detachFromWindow();
 
+#if PLATFORM(WIN)
         LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
         WNDPROC pluginWndProc() const { return m_pluginWndProc; }
+#endif
 
         // Used for manual loading
         void didReceiveResponse(const ResourceResponse&);
@@ -168,8 +171,6 @@ namespace WebCore {
         Timer<PluginView> m_popPopupsStateTimer;
 
         bool dispatchNPEvent(NPEvent&);
-        OwnPtr<PluginMessageThrottlerWin> m_messageThrottler;
-
         void updateWindow() const;
         void paintMissingPluginIcon(GraphicsContext*, const IntRect&);
 
@@ -199,13 +200,16 @@ namespace WebCore {
         bool m_attachedToWindow;
         bool m_haveInitialized;
 
+#if PLATFORM(WIN)
+        OwnPtr<PluginMessageThrottlerWin> m_messageThrottler;
         WNDPROC m_pluginWndProc;
-        HWND m_window; // for windowed plug-ins
-        mutable IntRect m_clipRect; // The clip rect to apply to a windowed plug-in
-        mutable IntRect m_windowRect; // Our window rect.
-
         unsigned m_lastMessage;
         bool m_isCallingPluginWndProc;
+#endif
+
+        PlatformWidget m_window; // for windowed plug-ins
+        mutable IntRect m_clipRect; // The clip rect to apply to a windowed plug-in
+        mutable IntRect m_windowRect; // Our window rect.
 
         bool m_loadManually;
         RefPtr<PluginStream> m_manualStream;
