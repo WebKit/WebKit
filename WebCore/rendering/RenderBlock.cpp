@@ -1368,11 +1368,11 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
         view()->disableLayoutState();
         for ( ; (r = it.current()); ++it) {
             // Only repaint the object if it is overhanging, is not in its own layer, and
-            // is our responsibility to paint (noPaint isn't set). When paintAllDescendants is true, the latter
+            // is our responsibility to paint (m_shouldPaint is set). When paintAllDescendants is true, the latter
             // condition is replaced with being a descendant of us.
-            if (r->endY > m_height && (paintAllDescendants && r->node->isDescendantOf(this) || !r->noPaint) && !r->node->hasLayer()) {                
-                r->node->repaint();
-                r->node->repaintOverhangingFloats();
+            if (r->m_bottom > m_height && (paintAllDescendants && r->m_renderer->isDescendantOf(this) || r->m_shouldPaint) && !r->m_renderer->hasLayer()) {                
+                r->m_renderer->repaint();
+                r->m_renderer->repaintOverhangingFloats();
             }
         }
         view()->enableLayoutState();
@@ -1636,22 +1636,22 @@ void RenderBlock::paintFloats(PaintInfo& paintInfo, int tx, int ty, bool paintSe
     FloatingObject* r;
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for (; (r = it.current()); ++it) {
-        // Only paint the object if our noPaint flag isn't set.
-        if (!r->noPaint && !r->node->hasLayer()) {
+        // Only paint the object if our m_shouldPaint flag is set.
+        if (r->m_shouldPaint && !r->m_renderer->hasLayer()) {
             PaintInfo currentPaintInfo(paintInfo);
             currentPaintInfo.phase = paintSelection ? PaintPhaseSelection : PaintPhaseBlockBackground;
-            int currentTX = tx + r->left - r->node->xPos() + r->node->marginLeft();
-            int currentTY = ty + r->startY - r->node->yPos() + r->node->marginTop();
-            r->node->paint(currentPaintInfo, currentTX, currentTY);
+            int currentTX = tx + r->m_left - r->m_renderer->xPos() + r->m_renderer->marginLeft();
+            int currentTY = ty + r->m_top - r->m_renderer->yPos() + r->m_renderer->marginTop();
+            r->m_renderer->paint(currentPaintInfo, currentTX, currentTY);
             if (!paintSelection) {
                 currentPaintInfo.phase = PaintPhaseChildBlockBackgrounds;
-                r->node->paint(currentPaintInfo, currentTX, currentTY);
+                r->m_renderer->paint(currentPaintInfo, currentTX, currentTY);
                 currentPaintInfo.phase = PaintPhaseFloat;
-                r->node->paint(currentPaintInfo, currentTX, currentTY);
+                r->m_renderer->paint(currentPaintInfo, currentTX, currentTY);
                 currentPaintInfo.phase = PaintPhaseForeground;
-                r->node->paint(currentPaintInfo, currentTX, currentTY);
+                r->m_renderer->paint(currentPaintInfo, currentTX, currentTY);
                 currentPaintInfo.phase = PaintPhaseOutline;
-                r->node->paint(currentPaintInfo, currentTX, currentTY);
+                r->m_renderer->paint(currentPaintInfo, currentTX, currentTY);
             }
         }
     }
@@ -2125,7 +2125,7 @@ void RenderBlock::insertFloatingObject(RenderObject *o)
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         FloatingObject* f;
         while ( (f = it.current()) ) {
-            if (f->node == o) return;
+            if (f->m_renderer == o) return;
             ++it;
         }
     }
@@ -2136,12 +2136,12 @@ void RenderBlock::insertFloatingObject(RenderObject *o)
 
     FloatingObject* newObj = new FloatingObject(o->style()->floating() == FLEFT ? FloatingObject::FloatLeft : FloatingObject::FloatRight);
 
-    newObj->startY = -1;
-    newObj->endY = -1;
-    newObj->width = o->width() + o->marginLeft() + o->marginRight();
-    newObj->noPaint = o->hasLayer(); // If a layer exists, the float will paint itself.  Otherwise someone else will.
+    newObj->m_top = -1;
+    newObj->m_bottom = -1;
+    newObj->m_width = o->width() + o->marginLeft() + o->marginRight();
+    newObj->m_shouldPaint = !o->hasLayer(); // If a layer exists, the float will paint itself.  Otherwise someone else will.
     newObj->m_isDescendant = true;
-    newObj->node = o;
+    newObj->m_renderer = o;
 
     m_floatingObjects->append(newObj);
 }
@@ -2151,9 +2151,9 @@ void RenderBlock::removeFloatingObject(RenderObject *o)
     if (m_floatingObjects) {
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         while (it.current()) {
-            if (it.current()->node == o) {
+            if (it.current()->m_renderer == o) {
                 if (childrenInline())
-                    markLinesDirtyInVerticalRange(0, it.current()->endY);
+                    markLinesDirtyInVerticalRange(0, it.current()->m_bottom);
                 m_floatingObjects->removeRef(it.current());
             }
             ++it;
@@ -2169,14 +2169,14 @@ bool RenderBlock::positionNewFloats()
     FloatingObject* f = m_floatingObjects->last();
 
     // If all floats have already been positioned, then we have no work to do.
-    if (!f || f->startY != -1)
+    if (!f || f->m_top != -1)
         return false;
 
     // Move backwards through our floating object list until we find a float that has
     // already been positioned.  Then we'll be able to move forward, positioning all of
     // the new floats that need it.
     FloatingObject* lastFloat = m_floatingObjects->getPrev();
-    while (lastFloat && lastFloat->startY == -1) {
+    while (lastFloat && lastFloat->m_top == -1) {
         f = m_floatingObjects->prev();
         lastFloat = m_floatingObjects->getPrev();
     }
@@ -2185,23 +2185,23 @@ bool RenderBlock::positionNewFloats()
     
     // The float cannot start above the y position of the last positioned float.
     if (lastFloat)
-        y = max(lastFloat->startY, y);
+        y = max(lastFloat->m_top, y);
 
     // Now walk through the set of unpositioned floats and place them.
     while (f) {
         // The containing block is responsible for positioning floats, so if we have floats in our
         // list that come from somewhere else, do not attempt to position them.
-        if (f->node->containingBlock() != this) {
+        if (f->m_renderer->containingBlock() != this) {
             f = m_floatingObjects->next();
             continue;
         }
 
-        RenderObject* o = f->node;
+        RenderObject* o = f->m_renderer;
         int _height = o->height() + o->marginTop() + o->marginBottom();
 
         int ro = rightOffset(); // Constant part of right offset.
         int lo = leftOffset(); // Constat part of left offset.
-        int fwidth = f->width; // The width we look for.
+        int fwidth = f->m_width; // The width we look for.
         if (ro - lo < fwidth)
             fwidth = ro - lo; // Never look for more than what will be available.
         
@@ -2221,7 +2221,7 @@ bool RenderBlock::positionNewFloats()
                 fx = leftRelOffset(y,lo, false, &heightRemainingLeft);
             }
             fx = max(0, fx);
-            f->left = fx;
+            f->m_left = fx;
             o->setPos(fx + o->marginLeft(), y + o->marginTop());
         } else {
             int heightRemainingLeft = 1;
@@ -2231,13 +2231,13 @@ bool RenderBlock::positionNewFloats()
                 y += min(heightRemainingLeft, heightRemainingRight);
                 fx = rightRelOffset(y, ro, false, &heightRemainingRight);
             }
-            fx = max(f->width, fx);
-            f->left = fx - f->width;
+            fx = max(f->m_width, fx);
+            f->m_left = fx - f->m_width;
             o->setPos(fx - o->marginRight() - o->width(), y + o->marginTop());
         }
 
-        f->startY = y;
-        f->endY = f->startY + _height;
+        f->m_top = y;
+        f->m_bottom = f->m_top + _height;
 
         // If the child moved, we have to repaint it.
         if (o->checkForRepaintDuringLayout())
@@ -2288,12 +2288,11 @@ RenderBlock::leftRelOffset(int y, int fixedOffset, bool applyTextIndent,
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it )
         {
-            //kdDebug( 6040 ) <<(void *)this << " left: sy, ey, x, w " << r->startY << "," << r->endY << "," << r->left << "," << r->width << " " << endl;
-            if (r->startY <= y && r->endY > y &&
+            if (r->m_top <= y && r->m_bottom > y &&
                 r->type() == FloatingObject::FloatLeft &&
-                r->left + r->width > left) {
-                left = r->left + r->width;
-                if ( heightRemaining ) *heightRemaining = r->endY - y;
+                r->m_left + r->m_width > left) {
+                left = r->m_left + r->m_width;
+                if ( heightRemaining ) *heightRemaining = r->m_bottom - y;
             }
         }
     }
@@ -2327,12 +2326,11 @@ RenderBlock::rightRelOffset(int y, int fixedOffset, bool applyTextIndent,
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it )
         {
-            //kdDebug( 6040 ) << "right: sy, ey, x, w " << r->startY << "," << r->endY << "," << r->left << "," << r->width << " " << endl;
-            if (r->startY <= y && r->endY > y &&
+            if (r->m_top <= y && r->m_bottom > y &&
                 r->type() == FloatingObject::FloatRight &&
-                r->left < right) {
-                right = r->left;
-                if ( heightRemaining ) *heightRemaining = r->endY - y;
+                r->m_left < right) {
+                right = r->m_left;
+                if ( heightRemaining ) *heightRemaining = r->m_bottom - y;
             }
         }
     }
@@ -2365,8 +2363,8 @@ int RenderBlock::nextFloatBottomBelow(int height) const
     FloatingObject* r;
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it) {
-        if (r->endY > height)
-            bottom = min(r->endY, bottom);
+        if (r->m_bottom > height)
+            bottom = min(r->m_bottom, bottom);
     }
 
     return bottom == INT_MAX ? 0 : bottom;
@@ -2380,8 +2378,8 @@ RenderBlock::floatBottom() const
     FloatingObject* r;
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it )
-        if (r->endY>bottom)
-            bottom=r->endY;
+        if (r->m_bottom>bottom)
+            bottom=r->m_bottom;
     return bottom;
 }
 
@@ -2393,9 +2391,9 @@ IntRect RenderBlock::floatRect() const
     FloatingObject* r;
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for (; (r = it.current()); ++it) {
-        if (!r->noPaint && !r->node->hasLayer()) {
-            IntRect childRect = r->node->overflowRect(false);
-            childRect.move(r->left + r->node->marginLeft(), r->startY + r->node->marginTop());
+        if (r->m_shouldPaint && !r->m_renderer->hasLayer()) {
+            IntRect childRect = r->m_renderer->overflowRect(false);
+            childRect.move(r->m_left + r->m_renderer->marginLeft(), r->m_top + r->m_renderer->marginTop());
             result.unite(childRect);
         }
     }
@@ -2442,8 +2440,8 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
-            if (!r->noPaint || r->node->hasLayer()) {
-                int lp = r->startY + r->node->marginTop() + r->node->lowestPosition(false);
+            if (r->m_shouldPaint || r->m_renderer->hasLayer()) {
+                int lp = r->m_top + r->m_renderer->marginTop() + r->m_renderer->lowestPosition(false);
                 bottom = max(bottom, lp);
             }
         }
@@ -2497,8 +2495,8 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
-            if (!r->noPaint || r->node->hasLayer()) {
-                int rp = r->left + r->node->marginLeft() + r->node->rightmostPosition(false);
+            if (r->m_shouldPaint || r->m_renderer->hasLayer()) {
+                int rp = r->m_left + r->m_renderer->marginLeft() + r->m_renderer->rightmostPosition(false);
                 right = max(right, rp);
             }
         }
@@ -2557,8 +2555,8 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
-            if (!r->noPaint || r->node->hasLayer()) {
-                int lp = r->left + r->node->marginLeft() + r->node->leftmostPosition(false);
+            if (r->m_shouldPaint || r->m_renderer->hasLayer()) {
+                int lp = r->m_left + r->m_renderer->marginLeft() + r->m_renderer->leftmostPosition(false);
                 left = min(left, lp);
             }
         }
@@ -2580,8 +2578,8 @@ RenderBlock::leftBottom()
     FloatingObject* r;
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it )
-        if (r->endY > bottom && r->type() == FloatingObject::FloatLeft)
-            bottom=r->endY;
+        if (r->m_bottom > bottom && r->type() == FloatingObject::FloatLeft)
+            bottom=r->m_bottom;
 
     return bottom;
 }
@@ -2594,8 +2592,8 @@ RenderBlock::rightBottom()
     FloatingObject* r;
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it )
-        if (r->endY>bottom && r->type() == FloatingObject::FloatRight)
-            bottom=r->endY;
+        if (r->m_bottom>bottom && r->type() == FloatingObject::FloatRight)
+            bottom=r->m_bottom;
 
     return bottom;
 }
@@ -2634,7 +2632,7 @@ void RenderBlock::clearFloats()
         if (childrenInline()) {
             m_floatingObjects->first();
             while (FloatingObject* f = m_floatingObjects->take())
-                floatMap.add(f->node, f);
+                floatMap.add(f->m_renderer, f);
         } else
             m_floatingObjects->clear();
     }
@@ -2676,21 +2674,21 @@ void RenderBlock::clearFloats()
         int changeBottom = INT_MIN;
         if (m_floatingObjects) {
             for (FloatingObject* f = m_floatingObjects->first(); f; f = m_floatingObjects->next()) {
-                FloatingObject* oldFloatingObject = floatMap.get(f->node);
+                FloatingObject* oldFloatingObject = floatMap.get(f->m_renderer);
                 if (oldFloatingObject) {
-                    if (f->width != oldFloatingObject->width || f->left != oldFloatingObject->left) {
+                    if (f->m_width != oldFloatingObject->m_width || f->m_left != oldFloatingObject->m_left) {
                         changeTop = 0;
-                        changeBottom = max(changeBottom, max(f->endY, oldFloatingObject->endY));
-                    } else if (f->endY != oldFloatingObject->endY) {
-                        changeTop = min(changeTop, min(f->endY, oldFloatingObject->endY));
-                        changeBottom = max(changeBottom, max(f->endY, oldFloatingObject->endY));
+                        changeBottom = max(changeBottom, max(f->m_bottom, oldFloatingObject->m_bottom));
+                    } else if (f->m_bottom != oldFloatingObject->m_bottom) {
+                        changeTop = min(changeTop, min(f->m_bottom, oldFloatingObject->m_bottom));
+                        changeBottom = max(changeBottom, max(f->m_bottom, oldFloatingObject->m_bottom));
                     }
 
-                    floatMap.remove(f->node);
+                    floatMap.remove(f->m_renderer);
                     delete oldFloatingObject;
                 } else {
                     changeTop = 0;
-                    changeBottom = max(changeBottom, f->endY);
+                    changeBottom = max(changeBottom, f->m_bottom);
                 }
             }
         }
@@ -2700,7 +2698,7 @@ void RenderBlock::clearFloats()
             FloatingObject* floatingObject = (*it).second;
             if (!floatingObject->m_isDescendant) {
                 changeTop = 0;
-                changeBottom = max(changeBottom, floatingObject->endY);
+                changeBottom = max(changeBottom, floatingObject->m_bottom);
             }
         }
         deleteAllValues(floatMap);
@@ -2722,27 +2720,27 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff, bo
     IntRect floatsOverflowRect;
     DeprecatedPtrListIterator<FloatingObject> it(*child->m_floatingObjects);
     for (FloatingObject* r; (r = it.current()); ++it) {
-        int bottom = child->yPos() + r->endY;
+        int bottom = child->yPos() + r->m_bottom;
         lowestFloatBottom = max(lowestFloatBottom, bottom);
 
         if (bottom > height()) {
             // If the object is not in the list, we add it now.
-            if (!containsFloat(r->node)) {
+            if (!containsFloat(r->m_renderer)) {
                 FloatingObject *floatingObj = new FloatingObject(r->type());
-                floatingObj->startY = r->startY - yoff;
-                floatingObj->endY = r->endY - yoff;
-                floatingObj->left = r->left - xoff;
-                floatingObj->width = r->width;
-                floatingObj->node = r->node;
+                floatingObj->m_top = r->m_top - yoff;
+                floatingObj->m_bottom = r->m_bottom - yoff;
+                floatingObj->m_left = r->m_left - xoff;
+                floatingObj->m_width = r->m_width;
+                floatingObj->m_renderer = r->m_renderer;
 
                 // The nearest enclosing layer always paints the float (so that zindex and stacking
                 // behaves properly).  We always want to propagate the desire to paint the float as
                 // far out as we can, to the outermost block that overlaps the float, stopping only
                 // if we hit a layer boundary.
-                if (r->node->enclosingLayer() == enclosingLayer())
-                    r->noPaint = true;
+                if (r->m_renderer->enclosingLayer() == enclosingLayer())
+                    r->m_shouldPaint = false;
                 else
-                    floatingObj->noPaint = true;
+                    floatingObj->m_shouldPaint = false;
                 
                 // We create the floating object list lazily.
                 if (!m_floatingObjects) {
@@ -2751,17 +2749,17 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff, bo
                 }
                 m_floatingObjects->append(floatingObj);
             }
-        } else if (makeChildPaintOtherFloats && r->noPaint && !r->node->hasLayer() && r->node->isDescendantOf(child) && r->node->enclosingLayer() == child->enclosingLayer())
+        } else if (makeChildPaintOtherFloats && !r->m_shouldPaint && !r->m_renderer->hasLayer() && r->m_renderer->isDescendantOf(child) && r->m_renderer->enclosingLayer() == child->enclosingLayer())
             // The float is not overhanging from this block, so if it is a descendant of the child, the child should
             // paint it (the other case is that it is intruding into the child), unless it has its own layer or enclosing
             // layer.
             // If makeChildPaintOtherFloats is false, it means that the child must already know about all the floats
             // it should paint.
-            r->noPaint = false;
+            r->m_shouldPaint = true;
 
-        if (!r->noPaint && !r->node->hasLayer()) {
-            IntRect floatOverflowRect = r->node->overflowRect(false);
-            floatOverflowRect.move(r->left + r->node->marginLeft(), r->startY + r->node->marginTop());
+        if (r->m_shouldPaint && !r->m_renderer->hasLayer()) {
+            IntRect floatOverflowRect = r->m_renderer->overflowRect(false);
+            floatOverflowRect.move(r->m_left + r->m_renderer->marginLeft(), r->m_top + r->m_renderer->marginTop());
             floatsOverflowRect.unite(floatOverflowRect);
         }
     }
@@ -2777,33 +2775,33 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, int xoff, int yoff)
 
     DeprecatedPtrListIterator<FloatingObject> it(*prev->m_floatingObjects);
     for (FloatingObject *r; (r = it.current()); ++it) {
-        if (r->endY > yoff) {
+        if (r->m_bottom > yoff) {
             // The object may already be in our list. Check for it up front to avoid
             // creating duplicate entries.
             FloatingObject* f = 0;
             if (m_floatingObjects) {
                 DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
                 while ((f = it.current())) {
-                    if (f->node == r->node) break;
+                    if (f->m_renderer == r->m_renderer) break;
                     ++it;
                 }
             }
             if (!f) {
                 FloatingObject *floatingObj = new FloatingObject(r->type());
-                floatingObj->startY = r->startY - yoff;
-                floatingObj->endY = r->endY - yoff;
-                floatingObj->left = r->left - xoff;
+                floatingObj->m_top = r->m_top - yoff;
+                floatingObj->m_bottom = r->m_bottom - yoff;
+                floatingObj->m_left = r->m_left - xoff;
                 // Applying the child's margin makes no sense in the case where the child was passed in.
                 // since his own margin was added already through the subtraction of the |xoff| variable
                 // above.  |xoff| will equal -flow->marginLeft() in this case, so it's already been taken
                 // into account.  Only apply this code if |child| is false, since otherwise the left margin
                 // will get applied twice.
                 if (prev != parent())
-                    floatingObj->left += prev->marginLeft();
-                floatingObj->left -= marginLeft();
-                floatingObj->noPaint = true;  // We are not in the direct inheritance chain for this float. We will never paint it.
-                floatingObj->width = r->width;
-                floatingObj->node = r->node;
+                    floatingObj->m_left += prev->marginLeft();
+                floatingObj->m_left -= marginLeft();
+                floatingObj->m_shouldPaint = false;  // We are not in the direct inheritance chain for this float. We will never paint it.
+                floatingObj->m_width = r->m_width;
+                floatingObj->m_renderer = r->m_renderer;
                 
                 // We create the floating object list lazily.
                 if (!m_floatingObjects) {
@@ -2827,7 +2825,7 @@ bool RenderBlock::containsFloat(RenderObject* o)
     if (m_floatingObjects) {
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         while (it.current()) {
-            if (it.current()->node == o)
+            if (it.current()->m_renderer == o)
                 return true;
             ++it;
         }
@@ -2955,10 +2953,10 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
             FloatingObject* o;
             DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
             for (it.toLast(); (o = it.current()); --it) {
-                if (!o->noPaint && !o->node->hasLayer()) {
-                    int xoffset = scrolledX + o->left + o->node->marginLeft() - o->node->xPos();
-                    int yoffset =  scrolledY + o->startY + o->node->marginTop() - o->node->yPos();
-                    if (o->node->hitTest(request, result, IntPoint(_x, _y), xoffset, yoffset)) {
+                if (o->m_shouldPaint && !o->m_renderer->hasLayer()) {
+                    int xoffset = scrolledX + o->m_left + o->m_renderer->marginLeft() - o->m_renderer->xPos();
+                    int yoffset =  scrolledY + o->m_top + o->m_renderer->marginTop() - o->m_renderer->yPos();
+                    if (o->m_renderer->hitTest(request, result, IntPoint(_x, _y), xoffset, yoffset)) {
                         updateHitTestResult(result, IntPoint(_x - xoffset, _y - yoffset));
                         return true;
                     }
@@ -4365,10 +4363,10 @@ void RenderBlock::adjustForBorderFit(int x, int& left, int& right) const
             FloatingObject* r;
             DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
             for (; (r = it.current()); ++it) {
-                // Only examine the object if our noPaint flag isn't set.
-                if (!r->noPaint) {
-                    int floatLeft = r->left - r->node->xPos() + r->node->marginLeft();
-                    int floatRight = floatLeft + r->node->width();
+                // Only examine the object if our m_shouldPaint flag is set.
+                if (r->m_shouldPaint) {
+                    int floatLeft = r->m_left - r->m_renderer->xPos() + r->m_renderer->marginLeft();
+                    int floatRight = floatLeft + r->m_renderer->width();
                     left = min(left, floatLeft);
                     right = max(right, floatRight);
                 }

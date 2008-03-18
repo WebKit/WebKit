@@ -945,10 +945,10 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 } else
                     m_floatingObjects->first();
                 for (FloatingObject* f = m_floatingObjects->current(); f; f = m_floatingObjects->next()) {
-                    lastRootBox()->floats().append(f->node);
-                    ASSERT(f->node == floats[floatIndex].object);
+                    lastRootBox()->floats().append(f->m_renderer);
+                    ASSERT(f->m_renderer == floats[floatIndex].object);
                     // If a float's geometry has changed, give up on syncing with clean lines.
-                    if (floats[floatIndex].rect != IntRect(f->left, f->startY, f->width, f->endY - f->startY))
+                    if (floats[floatIndex].rect != IntRect(f->m_left, f->m_top, f->m_width, f->m_bottom - f->m_top))
                         endLine = 0;
                     floatIndex++;
                 }
@@ -1007,7 +1007,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 } else
                     m_floatingObjects->first();
                 for (FloatingObject* f = m_floatingObjects->current(); f; f = m_floatingObjects->next())
-                    lastRootBox()->floats().append(f->node);
+                    lastRootBox()->floats().append(f->m_renderer);
                 lastFloat = m_floatingObjects->last();
             }
         }
@@ -1209,7 +1209,7 @@ bool RenderBlock::matchedEndLine(const BidiState& start, const BidiIterator& end
         int bottom = lastLine->blockHeight() + abs(delta);
 
         for (FloatingObject* f = m_floatingObjects->first(); f; f = m_floatingObjects->next()) {
-            if (f->endY >= top && f->endY < bottom)
+            if (f->m_bottom >= top && f->m_bottom < bottom)
                 return false;
         }
 
@@ -1243,7 +1243,7 @@ bool RenderBlock::matchedEndLine(const BidiState& start, const BidiIterator& end
                 int bottom = lastLine->blockHeight() + abs(delta);
 
                 for (FloatingObject* f = m_floatingObjects->first(); f; f = m_floatingObjects->next()) {
-                    if (f->endY >= top && f->endY < bottom)
+                    if (f->m_bottom >= top && f->m_bottom < bottom)
                         return false;
                 }
             }

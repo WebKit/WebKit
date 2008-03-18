@@ -1,5 +1,48 @@
 2008-03-17  Dan Bernstein  <mitz@apple.com>
 
+        Rubber-stamped by Dave Hyatt.
+
+        - FloatingObject cleanup
+
+        Renamed FloatingObject's data members as follows: node -> m_renderer,
+        startY -> m_top, endY -> m_bottom, left -> m_left, width -> m_width,
+        and noPaint -> !m_shouldPaint, reversing the meaning of the flag.
+
+        Also addressed the FIXME in RenderBlock::containsFloat().
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::repaintOverhangingFloats):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObject):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::leftRelOffset):
+        (WebCore::RenderBlock::rightRelOffset):
+        (WebCore::RenderBlock::nextFloatBottomBelow):
+        (WebCore::RenderBlock::floatBottom):
+        (WebCore::RenderBlock::floatRect):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        (WebCore::RenderBlock::leftBottom):
+        (WebCore::RenderBlock::rightBottom):
+        (WebCore::RenderBlock::clearFloats):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        (WebCore::RenderBlock::containsFloat): Changed to return false if the
+        floats lists exists but is empty, since line layout code no longer
+        relies on the buggy behavior.
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::containsFloats):
+        (WebCore::RenderBlock::FloatingObject::FloatingObject):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::matchedEndLine):
+
+2008-03-17  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Dave Hyatt.
 
         - allow incremental relayout of blocks that contain floats

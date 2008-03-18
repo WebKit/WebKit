@@ -171,17 +171,15 @@ public:
     void insertFloatingObject(RenderObject*);
     void removeFloatingObject(RenderObject*);
 
-    // called from lineWidth, to position the floats added in the last line.
+    // Called from lineWidth, to position the floats added in the last line.
+    // Returns ture if and only if it has positioned any floats.
     bool positionNewFloats();
     void clearFloats();
     int getClearDelta(RenderObject* child);
     virtual void markAllDescendantsWithFloatsForLayout(RenderObject* floatToRemove = 0);
     void markPositionedObjectsForLayout();
 
-    // FIXME: containsFloats() should not return true if the floating objects list
-    // is empty. However, layoutInlineChildren() relies on the current behavior.
-    // http://bugs.webkit.org/show_bug.cgi?id=7395#c3
-    virtual bool containsFloats() { return m_floatingObjects; }
+    virtual bool containsFloats() { return m_floatingObjects && !m_floatingObjects->isEmpty(); }
     virtual bool containsFloat(RenderObject*);
 
     virtual bool avoidsFloats() const;
@@ -332,26 +330,26 @@ protected:
         };
 
         FloatingObject(Type type)
-            : node(0)
-            , startY(0)
-            , endY(0)
-            , left(0)
-            , width(0)
+            : m_renderer(0)
+            , m_top(0)
+            , m_bottom(0)
+            , m_left(0)
+            , m_width(0)
             , m_type(type)
-            , noPaint(false)
+            , m_shouldPaint(true)
             , m_isDescendant(false)
         {
         }
 
         Type type() { return static_cast<Type>(m_type); }
 
-        RenderObject* node;
-        int startY;
-        int endY;
-        int left;
-        int width;
+        RenderObject* m_renderer;
+        int m_top;
+        int m_bottom;
+        int m_left;
+        int m_width;
         unsigned m_type : 1; // Type (left or right aligned)
-        bool noPaint : 1;
+        bool m_shouldPaint : 1;
         bool m_isDescendant : 1;
     };
 
