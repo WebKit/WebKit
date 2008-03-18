@@ -70,6 +70,7 @@ private:
     LRESULT onGetMinMaxInfo(WPARAM, LPARAM);
     LRESULT onSize(WPARAM, LPARAM);
     LRESULT onClose(WPARAM, LPARAM);
+    LRESULT onSetFocus();
 
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
 

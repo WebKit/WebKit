@@ -1,5 +1,16 @@
 2008-03-18  Adam Roben  <aroben@apple.com>
 
+        Focus the Inspector's WebView whenever the Inspector window is focused
+
+        Reviewed by Mitz.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::onSetFocus): Send focus to the WebView.
+        (WebInspectorWndProc): Added a handler for WM_SETFOCUS.
+        * WebCoreSupport/WebInspectorClient.h:
+
+2008-03-18  Adam Roben  <aroben@apple.com>
+
         Fix Bug 14276: Element highlight also covers Web inspector
 
         <http://bugs.webkit.org/show_bug.cgi?id=14276>

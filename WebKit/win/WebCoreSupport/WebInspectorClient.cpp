@@ -332,6 +332,12 @@ LRESULT WebInspectorClient::onClose(WPARAM, LPARAM)
     return 0;
 }
 
+LRESULT WebInspectorClient::onSetFocus()
+{
+    SetFocus(m_webViewHwnd);
+    return 0;
+}
+
 void WebInspectorClient::onWebViewWindowPosChanging(WPARAM, LPARAM lParam)
 {
     ASSERT(m_attached);
@@ -360,6 +366,8 @@ static LRESULT CALLBACK WebInspectorWndProc(HWND hwnd, UINT msg, WPARAM wParam, 
             return client->onSize(wParam, lParam);
         case WM_CLOSE:
             return client->onClose(wParam, lParam);
+        case WM_SETFOCUS:
+            return client->onSetFocus();
         default:
             break;
     }
