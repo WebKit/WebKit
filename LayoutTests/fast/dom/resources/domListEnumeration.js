@@ -61,9 +61,15 @@ function iterateList(list)
 {
     debug("");
     debug(Object.prototype.toString.call(list));
-    var a = new Array();
+    var temp = new Array();
     for (var i in list) {
-        a.push({"i" : i, "item" : list[i]});
+        temp.push(i);
+    }
+    temp.sort();
+
+    var a = new Array();
+    for (var i = 0; i < temp.length; ++i) {
+        a.push({"i" : temp[i], "item" : list[temp[i]]});
     }
     return a;
 }
@@ -90,6 +96,7 @@ var resultArray = new Array();
 // NodeList
 var nodeList = document.getElementsByTagName('ol');
 resultArray = iterateList(nodeList);
+
 shouldBe("resultArray.length", "5");
 shouldBe("resultArray[0].i", "'0'");
 shouldBe("resultArray[0].item", "nodeList.item(0)");
@@ -97,10 +104,6 @@ shouldBe("resultArray[1].i", "'1'");
 shouldBe("resultArray[1].item", "nodeList.item(1)");
 shouldBe("resultArray[2].i", "'2'");
 shouldBe("resultArray[2].item", "nodeList.item(2)");
-shouldBe("resultArray[3].i", "'length'");
-shouldBe("resultArray[3].item", "nodeList.length");
-shouldBe("resultArray[4].i", "'item'");
-shouldBe("resultArray[4].item", "nodeList.item");
 
 // HTMLCollection
 var htmlCollection = document.forms;
@@ -112,14 +115,6 @@ shouldBe("resultArray[1].i", "'1'");
 shouldBe("resultArray[1].item", "htmlCollection.item(1)");
 shouldBe("resultArray[2].i", "'2'");
 shouldBe("resultArray[2].item", "htmlCollection.item(2)");
-shouldBe("resultArray[3].i", "'length'");
-shouldBe("resultArray[3].item", "htmlCollection.length");
-shouldBe("resultArray[4].i", "'namedItem'");
-shouldBe("resultArray[4].item", "htmlCollection.namedItem");
-shouldBe("resultArray[5].i", "'tags'");
-shouldBe("resultArray[5].item", "htmlCollection.tags");
-shouldBe("resultArray[6].i", "'item'");
-shouldBe("resultArray[6].item", "htmlCollection.item");
 
 // NamedNodeMap
 var namedNodeMap = document.getElementsByTagName('ol')[0].attributes;
@@ -131,22 +126,6 @@ shouldBe("resultArray[1].i", "'1'");
 shouldBe("resultArray[1].item", "namedNodeMap.item(1)");
 shouldBe("resultArray[2].i", "'2'");
 shouldBe("resultArray[2].item", "namedNodeMap.item(2)");
-shouldBe("resultArray[3].i", "'length'");
-shouldBe("resultArray[3].item", "namedNodeMap.length");
-shouldBe("resultArray[4].i", "'removeNamedItemNS'");
-shouldBe("resultArray[4].item", "namedNodeMap.removeNamedItemNS");
-shouldBe("resultArray[5].i", "'getNamedItem'");
-shouldBe("resultArray[5].item", "namedNodeMap.getNamedItem");
-shouldBe("resultArray[6].i", "'removeNamedItem'");
-shouldBe("resultArray[6].item", "namedNodeMap.removeNamedItem");
-shouldBe("resultArray[7].i", "'getNamedItemNS'");
-shouldBe("resultArray[7].item", "namedNodeMap.getNamedItemNS");
-shouldBe("resultArray[8].i", "'setNamedItemNS'");
-shouldBe("resultArray[8].item", "namedNodeMap.setNamedItemNS");
-shouldBe("resultArray[9].i", "'setNamedItem'");
-shouldBe("resultArray[9].item", "namedNodeMap.setNamedItem");
-shouldBe("resultArray[10].i", "'item'");
-shouldBe("resultArray[10].item", "namedNodeMap.item");
 
 // HTMLFormElement
 var htmlFormElement = document.getElementsByTagName('form')[0];
@@ -158,9 +137,6 @@ shouldBe("resultArray[1].i", "'1'");
 shouldBe("resultArray[1].item", "document.getElementsByTagName('select')[1]");
 shouldBe("resultArray[2].i", "'2'");
 shouldBe("resultArray[2].item", "document.getElementsByTagName('select')[2]");
-shouldBe("resultArray[3].i", "'method'");
-shouldBe("resultArray[3].item", "htmlFormElement.method");
-debug("...ellided the remaining 109");
 
 // HTMLSelectElement
 var htmlSelectElement = document.getElementsByTagName('select')[0];
@@ -172,9 +148,6 @@ shouldBe("resultArray[1].i", "'1'");
 shouldBe("resultArray[1].item", "document.getElementsByTagName('option')[1]");
 shouldBe("resultArray[2].i", "'2'");
 shouldBe("resultArray[2].item", "document.getElementsByTagName('option')[2]");
-shouldBe("resultArray[3].i", "'disabled'");
-shouldBe("resultArray[3].item", "htmlSelectElement.disabled");
-debug("...ellided the remaining 113");
 
 // StyleSheetList
 var styleSheetList = document.styleSheets;
@@ -186,10 +159,6 @@ shouldBe("resultArray[1].i", "'1'");
 shouldBe("resultArray[1].item", "styleSheetList.item(1)");
 shouldBe("resultArray[2].i", "'2'");
 shouldBe("resultArray[2].item", "styleSheetList.item(2)");
-shouldBe("resultArray[3].i", "'length'");
-shouldBe("resultArray[3].item", "styleSheetList.length");
-shouldBe("resultArray[4].i", "'item'");
-shouldBe("resultArray[4].item", "styleSheetList.item");
 
 // CSSRuleList
 var cssRuleList = document.styleSheets[1].cssRules;
@@ -201,10 +170,6 @@ shouldBe("resultArray[1].i", "'1'");
 shouldBe("resultArray[1].item", "cssRuleList.item(1)");
 shouldBe("resultArray[2].i", "'2'");
 shouldBe("resultArray[2].item", "cssRuleList.item(2)");
-shouldBe("resultArray[3].i", "'length'");
-shouldBe("resultArray[3].item", "cssRuleList.length");
-shouldBe("resultArray[4].i", "'item'");
-shouldBe("resultArray[4].item", "cssRuleList.item");
 
 // CSSStyleDeclaration
 //debug(escapeHTML(document.getElementsByTagName('style')));
@@ -217,28 +182,6 @@ shouldBe("resultArray[1].i", "'1'");
 shouldBe("resultArray[1].item", "cssStyleDeclaration.item(1)");
 shouldBe("resultArray[2].i", "'2'");
 shouldBe("resultArray[2].item", "cssStyleDeclaration.item(2)");
-shouldBe("resultArray[3].i", "'length'");
-shouldBe("resultArray[3].item", "cssStyleDeclaration.length");
-shouldBe("resultArray[4].i", "'cssText'");
-shouldBe("resultArray[4].item", "cssStyleDeclaration.cssText");
-shouldBe("resultArray[5].i", "'parentRule'");
-shouldBe("resultArray[5].item", "cssStyleDeclaration.parentRule");
-shouldBe("resultArray[6].i", "'removeProperty'");
-shouldBe("resultArray[6].item", "cssStyleDeclaration.removeProperty");
-shouldBe("resultArray[7].i", "'getPropertyPriority'");
-shouldBe("resultArray[7].item", "cssStyleDeclaration.getPropertyPriority");
-shouldBe("resultArray[8].i", "'getPropertyValue'");
-shouldBe("resultArray[8].item", "cssStyleDeclaration.getPropertyValue");
-shouldBe("resultArray[9].i", "'getPropertyShorthand'");
-shouldBe("resultArray[9].item", "cssStyleDeclaration.getPropertyShorthand");
-shouldBe("resultArray[10].i", "'getPropertyCSSValue'");
-shouldBe("resultArray[10].item", "cssStyleDeclaration.getPropertyCSSValue");
-shouldBe("resultArray[11].i", "'isPropertyImplicit'");
-shouldBe("resultArray[11].item", "cssStyleDeclaration.isPropertyImplicit");
-shouldBe("resultArray[12].i", "'item'");
-shouldBe("resultArray[12].item", "cssStyleDeclaration.item");
-shouldBe("resultArray[13].i", "'setProperty'");
-shouldBe("resultArray[13].item", "cssStyleDeclaration.setProperty");
 
 // CSSValueList
 var cssValueList = window.getComputedStyle(document.getElementsByTagName('ol')[0]).getPropertyCSSValue('border-spacing');
@@ -248,22 +191,6 @@ shouldBe("resultArray[0].i", "'0'");
 shouldBe("resultArray[0].item", "cssValueList.item(0)");
 shouldBe("resultArray[1].i", "'1'");
 shouldBe("resultArray[1].item", "cssValueList.item(1)");
-shouldBe("resultArray[2].i", "'length'");
-shouldBe("resultArray[2].item", "cssValueList.length");
-shouldBe("resultArray[3].i", "'cssText'");
-shouldBe("resultArray[3].item", "cssValueList.cssText");
-shouldBe("resultArray[4].i", "'cssValueType'");
-shouldBe("resultArray[4].item", "cssValueList.cssValueType");
-shouldBe("resultArray[5].i", "'item'");
-shouldBe("resultArray[5].item", "cssValueList.item");
-shouldBe("resultArray[6].i", "'CSS_CUSTOM'");
-shouldBe("resultArray[6].item", "cssValueList.CSS_CUSTOM");
-shouldBe("resultArray[7].i", "'CSS_PRIMITIVE_VALUE'");
-shouldBe("resultArray[7].item", "cssValueList.CSS_PRIMITIVE_VALUE");
-shouldBe("resultArray[8].i", "'CSS_INHERIT'");
-shouldBe("resultArray[8].item", "cssValueList.CSS_INHERIT");
-shouldBe("resultArray[9].i", "'CSS_VALUE_LIST'");
-shouldBe("resultArray[9].item", "cssValueList.CSS_VALUE_LIST");
 
 // MediaList
 var mediaList = document.styleSheets[2].cssRules[0].media;
@@ -275,16 +202,6 @@ shouldBe("resultArray[1].i", "'1'");
 shouldBe("resultArray[1].item", "mediaList.item(1)");
 shouldBe("resultArray[2].i", "'2'");
 shouldBe("resultArray[2].item", "mediaList.item(2)");
-shouldBe("resultArray[3].i", "'length'");
-shouldBe("resultArray[3].item", "mediaList.length");
-shouldBe("resultArray[4].i", "'mediaText'");
-shouldBe("resultArray[4].item", "mediaList.mediaText");
-shouldBe("resultArray[5].i", "'appendMedium'");
-shouldBe("resultArray[5].item", "mediaList.appendMedium");
-shouldBe("resultArray[6].i", "'deleteMedium'");
-shouldBe("resultArray[6].item", "mediaList.deleteMedium");
-shouldBe("resultArray[7].i", "'item'");
-shouldBe("resultArray[7].item", "mediaList.item");
 
 debug("");
 

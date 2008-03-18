@@ -1,3 +1,13 @@
+2008-03-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Make domListEnumeration.html test not depend on the order of property enumeration
+        by sorting the result array.
+
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/resources/domListEnumeration.js:
+
 2008-03-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.
