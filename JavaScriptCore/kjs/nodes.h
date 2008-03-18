@@ -209,7 +209,7 @@ namespace KJS {
 
     protected:
         typedef enum { EvalOperator, FunctionCall } CallerType;
-        template <CallerType> inline JSValue* resolveAndCall(ExecState*, const Identifier&, ArgumentsNode*);
+        template <CallerType, bool> inline JSValue* resolveAndCall(ExecState*, const Identifier&, ArgumentsNode*, size_t = 0);
     };
 
     class StatementNode : public Node {
@@ -791,8 +791,9 @@ namespace KJS {
         Identifier m_ident;
         RefPtr<ArgumentsNode> m_args;
         size_t m_index; // Used by LocalVarFunctionCallNode.
+        size_t m_scopeDepth; // Used by ScopedVarFunctionCallNode and NonLocalVarFunctionCallNode
     };
-
+    
     class LocalVarFunctionCallNode : public FunctionCallResolveNode {
     public:
         LocalVarFunctionCallNode(size_t i) KJS_FAST_CALL
@@ -801,13 +802,51 @@ namespace KJS {
             ASSERT(i != missingSymbolMarker());
             m_index = i;
         }
-
+        
         virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
         virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
         virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
         virtual int32_t evaluateToInt32(ExecState*) KJS_FAST_CALL;
         virtual uint32_t evaluateToUInt32(ExecState*) KJS_FAST_CALL;
-
+        
+    private:
+        ALWAYS_INLINE JSValue* inlineEvaluate(ExecState*);
+    };
+    
+    class ScopedVarFunctionCallNode : public FunctionCallResolveNode {
+    public:
+        ScopedVarFunctionCallNode(size_t i, size_t depth) KJS_FAST_CALL
+            : FunctionCallResolveNode(PlacementNewAdopt)
+        {
+            ASSERT(i != missingSymbolMarker());
+            m_index = i;
+            m_scopeDepth = depth;
+        }
+        
+        virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+        virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
+        virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
+        virtual int32_t evaluateToInt32(ExecState*) KJS_FAST_CALL;
+        virtual uint32_t evaluateToUInt32(ExecState*) KJS_FAST_CALL;
+        
+    private:
+        ALWAYS_INLINE JSValue* inlineEvaluate(ExecState*);
+    };
+    
+    class NonLocalVarFunctionCallNode : public FunctionCallResolveNode {
+    public:
+        NonLocalVarFunctionCallNode(size_t depth) KJS_FAST_CALL
+            : FunctionCallResolveNode(PlacementNewAdopt)
+        {
+            m_scopeDepth = depth;
+        }
+        
+        virtual JSValue* evaluate(ExecState*) KJS_FAST_CALL;
+        virtual bool evaluateToBoolean(ExecState*) KJS_FAST_CALL;
+        virtual double evaluateToNumber(ExecState*) KJS_FAST_CALL;
+        virtual int32_t evaluateToInt32(ExecState*) KJS_FAST_CALL;
+        virtual uint32_t evaluateToUInt32(ExecState*) KJS_FAST_CALL;
+        
     private:
         ALWAYS_INLINE JSValue* inlineEvaluate(ExecState*);
     };

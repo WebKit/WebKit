@@ -593,16 +593,19 @@ uint32_t ResolveNode::evaluateToUInt32(ExecState* exec)
     return v->toUInt32(exec);
 }
 
-void ResolveNode::optimizeVariableAccess(ExecState* exec, const SymbolTable& symbolTable, const LocalStorage&, NodeStack&)
+static size_t getSymbolTableEntry(ExecState* exec, const Identifier& ident, const SymbolTable& symbolTable, size_t& stackDepth) 
 {
-    size_t index = symbolTable.get(m_ident.ustring().rep());
+    size_t index = symbolTable.get(ident.ustring().rep());
     if (index != missingSymbolMarker()) {
-        new (this) LocalVarAccessNode(index);
-        return;
+        stackDepth = 0;
+        return index;
     }
     
-    if (m_ident == exec->propertyNames().arguments)
-        return;
+    if (ident == exec->propertyNames().arguments) {
+        stackDepth = 0;
+        return missingSymbolMarker();
+    }
+    
     const ScopeChain& chain = exec->scopeChain();
     ScopeChainIterator iter = chain.begin();
     ScopeChainIterator end = chain.end();
@@ -612,16 +615,34 @@ void ResolveNode::optimizeVariableAccess(ExecState* exec, const SymbolTable& sym
         if (!currentScope->isVariableObject()) 
             break;
         JSVariableObject* currentVariableObject = static_cast<JSVariableObject*>(currentScope);
-        index = currentVariableObject->symbolTable().get(m_ident.ustring().rep());
+        index = currentVariableObject->symbolTable().get(ident.ustring().rep());
         if (index != missingSymbolMarker()) {
-            new (this) ScopedVarAccessNode(index, depth);
-            return;
+            stackDepth = depth;
+            return index;
         }
         if (currentVariableObject->isDynamicScope())
             break;
     }
-    if (depth > 0)
-        new (this) NonLocalVarAccessNode(depth);
+    stackDepth = depth;
+    return missingSymbolMarker();
+}
+
+void ResolveNode::optimizeVariableAccess(ExecState* exec, const SymbolTable& symbolTable, const LocalStorage&, NodeStack&)
+{
+    size_t depth = 0;
+    size_t index = getSymbolTableEntry(exec, m_ident, symbolTable, depth);
+    if (index != missingSymbolMarker()) {
+        if (!depth)
+            new (this) LocalVarAccessNode(index);
+        else
+            new (this) ScopedVarAccessNode(index, depth);
+        return;
+    }
+
+    if (!depth)
+        return;
+
+    new (this) NonLocalVarAccessNode(depth);
 }
 
 JSValue* LocalVarAccessNode::inlineEvaluate(ExecState* exec)
@@ -655,16 +676,21 @@ uint32_t LocalVarAccessNode::evaluateToUInt32(ExecState* exec)
     return inlineEvaluate(exec)->toUInt32(exec);
 }
 
-JSValue* ScopedVarAccessNode::inlineEvaluate(ExecState* exec)
+static inline JSValue* getNonLocalSymbol(ExecState* exec, size_t index, size_t scopeDepth)
 {
     const ScopeChain& chain = exec->scopeChain();
     ScopeChainIterator iter = chain.begin();
-    for (size_t i = 0; i < m_scopeDepth; ++iter, ++i)
+    for (size_t i = 0; i < scopeDepth; ++iter, ++i)
         ASSERT(iter != chain.end());
     JSObject* scope = *iter;
-    ASSERT(scope->isActivationObject() || scope->isGlobalObject());
+    ASSERT(scope->isVariableObject());
     JSVariableObject* variableObject = static_cast<JSVariableObject*>(scope);
-    return variableObject->localStorage()[m_index].value;
+    return variableObject->localStorage()[index].value;
+}
+
+JSValue* ScopedVarAccessNode::inlineEvaluate(ExecState* exec)
+{
+    return getNonLocalSymbol(exec, m_index, m_scopeDepth);
 }
 
 JSValue* ScopedVarAccessNode::evaluate(ExecState* exec)
@@ -1061,13 +1087,18 @@ uint32_t NewExprNode::evaluateToUInt32(ExecState* exec)
     return v->toUInt32(exec);
 }
 
-template <ExpressionNode::CallerType callerType> 
-inline JSValue* ExpressionNode::resolveAndCall(ExecState* exec, const Identifier& ident, ArgumentsNode* args)
+template <ExpressionNode::CallerType callerType, bool scopeDepthIsZero> 
+inline JSValue* ExpressionNode::resolveAndCall(ExecState* exec, const Identifier& ident, ArgumentsNode* args, size_t scopeDepth)
 {
     const ScopeChain& chain = exec->scopeChain();
     ScopeChainIterator iter = chain.begin();
     ScopeChainIterator end = chain.end();
 
+    if (!scopeDepthIsZero) {
+        for (size_t i = 0; i < scopeDepth; ++iter, ++i)
+            ASSERT(iter != chain.end());
+    }
+    
     // we must always have something in the scope chain
     ASSERT(iter != end);
 
@@ -1122,7 +1153,7 @@ void EvalFunctionCallNode::optimizeVariableAccess(ExecState*, const SymbolTable&
 
 JSValue* EvalFunctionCallNode::evaluate(ExecState* exec)
 {
-    return resolveAndCall<EvalOperator>(exec, exec->propertyNames().eval, m_args.get());
+    return resolveAndCall<EvalOperator, true>(exec, exec->propertyNames().eval, m_args.get());
 }
 
 void FunctionCallValueNode::optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack& nodeStack)
@@ -1156,13 +1187,24 @@ JSValue* FunctionCallValueNode::evaluate(ExecState* exec)
     return func->call(exec, thisObj, argList);
 }
 
-void FunctionCallResolveNode::optimizeVariableAccess(ExecState*, const SymbolTable& symbolTable, const LocalStorage&, NodeStack& nodeStack)
+void FunctionCallResolveNode::optimizeVariableAccess(ExecState* exec, const SymbolTable& symbolTable, const LocalStorage&, NodeStack& nodeStack)
 {
     nodeStack.append(m_args.get());
 
-    size_t index = symbolTable.get(m_ident.ustring().rep());
-    if (index != missingSymbolMarker())
-        new (this) LocalVarFunctionCallNode(index);
+    size_t depth = 0;
+    size_t index = getSymbolTableEntry(exec, m_ident, symbolTable, depth);
+    if (index != missingSymbolMarker()) {
+        if (!depth)
+            new (this) LocalVarFunctionCallNode(index);
+        else
+            new (this) ScopedVarFunctionCallNode(index, depth);
+        return;
+    }
+    
+    if (!depth)
+        return;
+    
+    new (this) NonLocalVarFunctionCallNode(depth);
 }
 
 // ECMA 11.2.3
@@ -1171,7 +1213,7 @@ JSValue* FunctionCallResolveNode::inlineEvaluate(ExecState* exec)
     // Check for missed optimization opportunity.
     ASSERT(!canSkipLookup(exec, m_ident));
 
-    return resolveAndCall<FunctionCall>(exec, m_ident, m_args.get());
+    return resolveAndCall<FunctionCall, true>(exec, m_ident, m_args.get());
 }
 
 JSValue* FunctionCallResolveNode::evaluate(ExecState* exec)
@@ -1254,6 +1296,100 @@ int32_t LocalVarFunctionCallNode::evaluateToInt32(ExecState* exec)
 }
 
 uint32_t LocalVarFunctionCallNode::evaluateToUInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toUInt32(exec);
+}
+
+JSValue* ScopedVarFunctionCallNode::inlineEvaluate(ExecState* exec)
+{
+    ASSERT(exec->variableObject() == exec->scopeChain().top());
+    
+    JSValue* v = getNonLocalSymbol(exec, m_index, m_scopeDepth);
+    
+    if (!v->isObject())
+        return throwError(exec, TypeError, "Value %s (result of expression %s) is not object.", v, m_ident);
+    
+    JSObject* func = static_cast<JSObject*>(v);
+    if (!func->implementsCall())
+        return throwError(exec, TypeError, "Object %s (result of expression %s) does not allow calls.", v, m_ident);
+    
+    List argList;
+    m_args->evaluateList(exec, argList);
+    KJS_CHECKEXCEPTIONVALUE
+    
+    return func->call(exec, exec->dynamicGlobalObject(), argList);
+}
+
+JSValue* ScopedVarFunctionCallNode::evaluate(ExecState* exec)
+{
+    return inlineEvaluate(exec);
+}
+
+double ScopedVarFunctionCallNode::evaluateToNumber(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toNumber(exec);
+}
+
+bool ScopedVarFunctionCallNode::evaluateToBoolean(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONBOOLEAN
+    return v->toBoolean(exec);
+}
+
+int32_t ScopedVarFunctionCallNode::evaluateToInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toInt32(exec);
+}
+
+uint32_t ScopedVarFunctionCallNode::evaluateToUInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toUInt32(exec);
+}
+
+JSValue* NonLocalVarFunctionCallNode::inlineEvaluate(ExecState* exec)
+{
+    // Check for missed optimization opportunity.
+    ASSERT(!canSkipLookup(exec, m_ident));
+    
+    return resolveAndCall<FunctionCall, false>(exec, m_ident, m_args.get(), m_scopeDepth);
+}
+
+JSValue* NonLocalVarFunctionCallNode::evaluate(ExecState* exec)
+{
+    return inlineEvaluate(exec);
+}
+
+double NonLocalVarFunctionCallNode::evaluateToNumber(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toNumber(exec);
+}
+
+bool NonLocalVarFunctionCallNode::evaluateToBoolean(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONBOOLEAN
+    return v->toBoolean(exec);
+}
+
+int32_t NonLocalVarFunctionCallNode::evaluateToInt32(ExecState* exec)
+{
+    JSValue* v = inlineEvaluate(exec);
+    KJS_CHECKEXCEPTIONNUMBER
+    return v->toInt32(exec);
+}
+
+uint32_t NonLocalVarFunctionCallNode::evaluateToUInt32(ExecState* exec)
 {
     JSValue* v = inlineEvaluate(exec);
     KJS_CHECKEXCEPTIONNUMBER

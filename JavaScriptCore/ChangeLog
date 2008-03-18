@@ -1,3 +1,37 @@
+2008-03-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        Optimise multi-scope function call resolution
+
+        Refactor multiscope variable resolution and use to add
+        optimised FunctionCallResolveNode subclasses.  
+
+        2.6% gain in sunspider performance, *25%* gain in controlflow-recursive
+
+        * kjs/nodes.cpp:
+        (KJS::getSymbolTableEntry):
+        (KJS::ResolveNode::optimizeVariableAccess):
+        (KJS::getNonLocalSymbol):
+        (KJS::ExpressionNode::resolveAndCall):
+        (KJS::FunctionCallResolveNode::optimizeVariableAccess):
+        (KJS::FunctionCallResolveNode::inlineEvaluate):
+        (KJS::ScopedVarFunctionCallNode::inlineEvaluate):
+        (KJS::ScopedVarFunctionCallNode::evaluate):
+        (KJS::ScopedVarFunctionCallNode::evaluateToNumber):
+        (KJS::ScopedVarFunctionCallNode::evaluateToBoolean):
+        (KJS::ScopedVarFunctionCallNode::evaluateToInt32):
+        (KJS::ScopedVarFunctionCallNode::evaluateToUInt32):
+        (KJS::NonLocalVarFunctionCallNode::inlineEvaluate):
+        (KJS::NonLocalVarFunctionCallNode::evaluate):
+        (KJS::NonLocalVarFunctionCallNode::evaluateToNumber):
+        (KJS::NonLocalVarFunctionCallNode::evaluateToBoolean):
+        (KJS::NonLocalVarFunctionCallNode::evaluateToInt32):
+        (KJS::NonLocalVarFunctionCallNode::evaluateToUInt32):
+        * kjs/nodes.h:
+        (KJS::ScopedVarFunctionCallNode::):
+        (KJS::NonLocalVarFunctionCallNode::):
+
 2008-03-17  David Kilzer  <ddkilzer@apple.com>
 
         Don't define PLATFORM(MIDDLE_ENDIAN) on little endian ARM.
