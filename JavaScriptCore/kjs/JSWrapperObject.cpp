@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "JSWrapperObject.h"
 
 namespace KJS {
