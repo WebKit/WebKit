@@ -1,3 +1,15 @@
+2008-03-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        - Speed up JavaScript prototype and constructor object creation
+          using a static Identifier in the self() methods to avoid the
+          cost of creating one from a c-string each time.
+
+        5% speedup for Acid3 test 26
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2008-03-18  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mark Rowe.

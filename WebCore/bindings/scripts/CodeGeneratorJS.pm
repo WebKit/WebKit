@@ -736,7 +736,8 @@ sub GenerateImplementation
     } else {
         push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return KJS::cacheGlobalObject<${className}Prototype>(exec, \"[[${className}.prototype]]\");\n");
+        push(@implContent, "    static const Identifier* prototypeIdentifier = new Identifier(\"[[${className}.prototype]]\");\n");
+        push(@implContent, "    return KJS::cacheGlobalObject<${className}Prototype>(exec, *prototypeIdentifier);\n");
         push(@implContent, "}\n\n");
     }
     if ($numConstants > 0 || $numFunctions > 0) {
@@ -1115,7 +1116,8 @@ sub GenerateImplementation
 
     if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
         push(@implContent, "JSValue* ${className}::getConstructor(ExecState* exec)\n{\n");
-        push(@implContent, "    return KJS::cacheGlobalObject<${className}Constructor>(exec, \"[[${interfaceName}.constructor]]\");\n");
+        push(@implContent, "    static const Identifier* constructorIdentifier = new Identifier(\"[[${interfaceName}.constructor]]\");\n");
+        push(@implContent, "    return KJS::cacheGlobalObject<${className}Constructor>(exec, *constructorIdentifier);\n");
         push(@implContent, "}\n\n");
     }
 
