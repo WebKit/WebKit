@@ -1,5 +1,13 @@
 2008-03-17  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Dan Bernstein.
+
+        Fix bogus argCount check breaking plugin test.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+
+2008-03-17  Eric Seidel  <eric@webkit.org>
+
         Reviewed by darin.
 
         Cleanup PluginObject.cpp and add support for testing
