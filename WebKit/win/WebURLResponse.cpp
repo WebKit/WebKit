@@ -397,6 +397,8 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::sslPeerCertificate(
     if (!result)
         return E_POINTER;
     *result = 0;
+
+#if USE(CFNETWORK)
     CFDictionaryRef dict = certificateDictionary();
     if (!dict)
         return E_FAIL;
@@ -404,6 +406,8 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::sslPeerCertificate(
     if (!data)
         return E_FAIL;
     *result = (OLE_HANDLE)(ULONG64)data;
+#endif
+
     return *result ? S_OK : E_FAIL;
 }
 
@@ -463,6 +467,7 @@ const ResourceResponse& WebURLResponse::resourceResponse() const
     return m_response;
 }
 
+#if USE(CFNETWORK)
 CFDictionaryRef WebURLResponse::certificateDictionary() const
 {
     if (m_SSLCertificateInfo)
@@ -474,3 +479,4 @@ CFDictionaryRef WebURLResponse::certificateDictionary() const
     m_SSLCertificateInfo = wkGetSSLCertificateInfo(cfResponse);
     return m_SSLCertificateInfo.get();
 }
+#endif

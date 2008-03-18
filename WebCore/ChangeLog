@@ -1,3 +1,16 @@
+2008-03-18  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Provide some stub implementations for things that WebKit
+        uses for performing authentication/challenge activities.  This
+        is in support of http://bugs.webkit.org/show_bug.cgi?id=17837
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/curl/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        (WebCore::AuthenticationChallenge::sourceHandle):
+
 2008-03-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.

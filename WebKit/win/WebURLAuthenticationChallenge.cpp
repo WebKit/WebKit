@@ -168,9 +168,14 @@ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallenge::initWithAuthenticationC
     if (!webSender)
         return E_NOINTERFACE;
 
+#if USE(CFNETWORK)
     m_authenticationChallenge = AuthenticationChallenge(webChallenge->authenticationChallenge().cfURLAuthChallengeRef(), webSender->resourceHandle());
 
     return S_OK;
+#else
+
+    return E_FAIL;
+#endif
 }
 
 HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallenge::error(

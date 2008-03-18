@@ -1,3 +1,21 @@
+2008-03-18  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Provide some stub implementations for things that WebKit
+        uses for performing authentication/challenge activities.  This
+        is in support of http://bugs.webkit.org/show_bug.cgi?id=17837
+
+        * WebDataSource.cpp:
+        * WebError.cpp:  Conditionalize CFNetwork-specific logic
+        * WebURLAuthenticationChallenge.cpp:  Conditionalize constructor
+          for authentication/challenge member.
+        (WebURLAuthenticationChallenge::initWithAuthenticationChallenge):
+        * WebURLResponse.cpp:  Remove CFNetwork-specific logic.
+        * WebURLResponse.h: Conditionalize CFNetwork-specific member.
+        * WebView.cpp:  Conditionalize CFNetwork-specific network protocol test.
+        (WebView::canHandleRequest):
+
 2008-03-18  Adam Roben  <aroben@apple.com>
 
         Focus the Inspector's WebView whenever the Inspector window is focused

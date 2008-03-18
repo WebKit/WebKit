@@ -962,11 +962,15 @@ bool WebView::canHandleRequest(const WebCore::ResourceRequest& request)
     if (equalIgnoringCase(String(request.url().protocol()), "about"))
         return true;
 
+#if USE(CFNETWORK)
     if (CFURLProtocolCanHandleRequest(request.cfURLRequest()))
         return true;
 
     // FIXME: Mac WebKit calls _representationExistsForURLScheme here
     return false;
+#else
+    return true;
+#endif
 }
 
 Page* WebView::page()
