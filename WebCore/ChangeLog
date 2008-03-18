@@ -1,3 +1,17 @@
+2008-03-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
+        Fix SVGImage crash seen once, and obvious via code inspection.
+        
+        I was not able to find a test case for this.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::setContainerSize):
+        (WebCore::SVGImage::usesContainerSize):
+        (WebCore::SVGImage::hasRelativeWidth):
+        (WebCore::SVGImage::hasRelativeHeight):
+
 2008-03-18  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Fix Qt build after r31123.
