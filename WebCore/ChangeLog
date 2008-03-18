@@ -1,5 +1,14 @@
 2008-03-18  Rodney Dawes  <dobey@wayofthemonkey.com>
 
+        Fix Mac build from commit of r31123.
+
+        Add a typedef for NSView* to PlatformWidget, remove duplicate PluginMessageThrottlerWin definition.
+
+        * platform/Widget.h:
+        * WebCore.vcproj/WebCore.vcproj:
+
+2008-03-18  Rodney Dawes  <dobey@wayofthemonkey.com>
+
         Reviewed by Jon Honeycutt.
 
         Add PluginView.cpp and npapi.cpp to build files.

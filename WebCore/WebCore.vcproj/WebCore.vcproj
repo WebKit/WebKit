@@ -10233,14 +10233,6 @@
 					RelativePath="..\plugins\win\PluginViewWin.cpp"
 					>
 				</File>
-				<File
-					RelativePath="..\plugins\win\PluginMessageThrottlerWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\plugins\win\PluginMessageThrottlerWin.h"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter

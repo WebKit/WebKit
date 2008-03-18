@@ -35,6 +35,7 @@
 #else
 class NSView;
 #endif
+typedef NSView* PlatformWidget;
 #endif
 
 #if PLATFORM(WIN)
