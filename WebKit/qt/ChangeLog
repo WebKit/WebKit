@@ -1,3 +1,12 @@
+2008-03-18  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Fix the Qt build. Don't return void in non-void functions.
+
+        * Api/qwebpluginfactory.cpp:
+        (QWebPluginFactory::extension):
+
 2008-03-16  Thiago Macieira  <thiago.macieira@trolltech.com>
 
         Reviewed by Simon.

@@ -1,3 +1,13 @@
+2008-03-18  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Fix the Qt build and clean up the invoke mechanism for dispatching
+        functions in the main thread by using QMetaObject::invokeMethod
+        instead of posting a null event.
+
+        * platform/qt/MainThreadQt.cpp:
+
 2008-03-18  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Fix Mac build from commit of r31123.
