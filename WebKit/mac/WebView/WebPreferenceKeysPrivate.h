@@ -83,3 +83,4 @@
 // For debugging only. Don't use these.
 #define WebKitPageCacheSizePreferenceKey @"WebKitPageCacheSizePreferenceKey"
 #define WebKitObjectCacheSizePreferenceKey @"WebKitObjectCacheSizePreferenceKey"
+#define WebKitDebugFullPageZoomPreferenceKey @"WebKitDebugFullPageZoomPreferenceKey"

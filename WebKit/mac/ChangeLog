@@ -1,3 +1,20 @@
+2008-03-18  David Hyatt  <hyatt@apple.com>
+
+        Add support for a preference in WebKit that can be used in nightly builds to test full page
+        zoom.
+
+        Reviewed by Antti
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView setTextSizeMultiplier:]):
+        (-[WebView canMakeTextSmaller]):
+        (-[WebView makeTextSmaller:]):
+        (-[WebView canMakeTextLarger]):
+        (-[WebView makeTextLarger:]):
+        (-[WebView canMakeTextStandardSize]):
+        (-[WebView makeTextStandardSize:]):
+
 2008-03-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

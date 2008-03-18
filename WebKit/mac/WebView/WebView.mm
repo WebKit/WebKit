@@ -2218,7 +2218,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 
 - (void)setTextSizeMultiplier:(float)m
 {
-    [self _setZoomMultiplier:m isTextOnly:YES];
+    [self _setZoomMultiplier:m isTextOnly:![[NSUserDefaults standardUserDefaults] boolForKey:WebKitDebugFullPageZoomPreferenceKey]];
 }
 
 - (float)textSizeMultiplier
@@ -2817,32 +2817,32 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 // (This includes canMakeTextSmaller/Larger, makeTextSmaller/Larger, and canMakeTextStandardSize/makeTextStandardSize)
 - (BOOL)canMakeTextSmaller
 {
-    return [self _canZoomOut:YES];
+    return [self _canZoomOut:![[NSUserDefaults standardUserDefaults] boolForKey:WebKitDebugFullPageZoomPreferenceKey]];
 }
 
 - (IBAction)makeTextSmaller:(id)sender
 {
-    return [self _zoomOut:sender isTextOnly:YES];
+    return [self _zoomOut:sender isTextOnly:![[NSUserDefaults standardUserDefaults] boolForKey:WebKitDebugFullPageZoomPreferenceKey]];
 }
 
 - (BOOL)canMakeTextLarger
 {
-    return [self _canZoomIn:YES];
+    return [self _canZoomIn:![[NSUserDefaults standardUserDefaults] boolForKey:WebKitDebugFullPageZoomPreferenceKey]];
 }
 
 - (IBAction)makeTextLarger:(id)sender
 {
-    return [self _zoomIn:sender isTextOnly:YES];
+    return [self _zoomIn:sender isTextOnly:![[NSUserDefaults standardUserDefaults] boolForKey:WebKitDebugFullPageZoomPreferenceKey]];
 }
 
 - (BOOL)canMakeTextStandardSize
 {
-    return [self _canResetZoom:YES];
+    return [self _canResetZoom:![[NSUserDefaults standardUserDefaults] boolForKey:WebKitDebugFullPageZoomPreferenceKey]];
 }
 
 - (IBAction)makeTextStandardSize:(id)sender
 {
-   return [self _resetZoom:sender isTextOnly:YES];
+   return [self _resetZoom:sender isTextOnly:![[NSUserDefaults standardUserDefaults] boolForKey:WebKitDebugFullPageZoomPreferenceKey]];
 }
 
 - (IBAction)toggleSmartInsertDelete:(id)sender
