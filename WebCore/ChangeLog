@@ -1,3 +1,18 @@
+2008-03-18  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Enable preloading for other platforms besides Mac.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCoreSources.bkl:
+        * html/HTMLTokenizer.cpp:
+        * html/HTMLTokenizer.h:
+        * html/PreloadScanner.cpp:
+        (WebCore::PreloadScanner::tokenize):
+
 2008-03-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.

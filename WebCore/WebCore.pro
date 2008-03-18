@@ -706,6 +706,7 @@ SOURCES += \
     html/HTMLUListElement.cpp \
     html/HTMLViewSourceDocument.cpp \
     html/ImageData.cpp \
+    html/PreloadScanner.cpp \
     loader/Cache.cpp \
     loader/CachedCSSStyleSheet.cpp \
     loader/CachedFont.cpp \

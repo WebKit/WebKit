@@ -49,6 +49,7 @@
 
 #include "HTMLEntityNames.c"
 
+#define PRELOAD_SCANNER_ENABLED 1
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
 #if MOBILE

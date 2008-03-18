@@ -9667,6 +9667,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\PreloadScanner.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\PreloadScanner.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\TimeRanges.cpp"
 				>
 			</File>

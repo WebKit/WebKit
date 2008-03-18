@@ -43,8 +43,17 @@
 #include "HTMLNames.h"
 #include "SystemTime.h"
 
+#ifdef __GNUC__
 // The main tokenizer includes this too so we are getting two copies of the data. However, this way the code gets inlined.
 #include "HTMLEntityNames.c"
+#else
+// Not inlined for non-GCC compilers
+struct Entity {
+    const char* name;
+    int code;
+};
+const struct Entity* findEntity(register const char* str, register unsigned int len);
+#endif
 
 #define PRELOAD_DEBUG 0
 
@@ -359,7 +368,7 @@ void PreloadScanner::tokenize(const SegmentedString& source)
                 if (m_source.length() < m_lastStartTag.length() + 1)
                     return;
                 Vector<UChar> tmpString;
-                UChar tmpChar;
+                UChar tmpChar = 0;
                 bool match = true;
                 for (unsigned n = 0; n < m_lastStartTag.length() + 1; n++) {
                     tmpChar = u_tolower(*m_source);

@@ -776,6 +776,7 @@ webcore_sources += \
 	WebCore/html/HTMLUListElement.cpp \
 	WebCore/html/HTMLViewSourceDocument.cpp \
 	WebCore/html/ImageData.cpp \
+	WebCore/html/PreloadScanner.cpp \
 	WebCore/loader/Cache.cpp \
 	WebCore/loader/CachedCSSStyleSheet.cpp \
 	WebCore/loader/CachedFont.cpp \
