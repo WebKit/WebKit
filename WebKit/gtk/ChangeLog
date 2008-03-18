@@ -1,5 +1,14 @@
 2008-03-18  Rodney Dawes  <dobey@wayofthemonkey.com>
 
+        Reviewed and landed by jhoneycutt.
+
+        Update to check if the MIME type is supported by a plugin.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (FrameLoaderClient::objectContentType):
+
+2008-03-18  Rodney Dawes  <dobey@wayofthemonkey.com>
+
         Reviewed by Jon Honeycutt.
 
         Update setContainingWindow() calls to pass a GtkWidget.

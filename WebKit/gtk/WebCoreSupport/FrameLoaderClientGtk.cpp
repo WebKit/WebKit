@@ -34,6 +34,7 @@
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+#include "PluginDatabase.h"
 #include "ResourceRequest.h"
 #include "CString.h"
 #include "ProgressTracker.h"
@@ -324,6 +325,9 @@ ObjectContentType FrameLoaderClient::objectContentType(const KURL& url, const St
 
     if (MIMETypeRegistry::isSupportedImageMIMEType(type))
         return WebCore::ObjectContentImage;
+
+    if (PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType))
+        return WebCore::ObjectContentNetscapePlugin;
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(type))
         return WebCore::ObjectContentFrame;
