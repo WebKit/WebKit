@@ -142,12 +142,13 @@
 #define WTF_PLATFORM_BIG_ENDIAN 1
 #endif
 
+/* PLATFORM(ARM) */
 #if   defined(arm) \
    || defined(__arm__)
 #define WTF_PLATFORM_ARM 1
 #if defined(__ARMEB__)
 #define WTF_PLATFORM_BIG_ENDIAN 1
-#elif !defined(__ARM_EABI__) && !defined(__ARMEB__)
+#elif !defined(__ARM_EABI__) && !defined(__ARMEB__) && !defined(__ARMEL__)
 #define WTF_PLATFORM_MIDDLE_ENDIAN 1
 #endif
 #if !defined(__ARM_EABI__)

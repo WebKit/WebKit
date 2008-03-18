@@ -1,3 +1,14 @@
+2008-03-17  David Kilzer  <ddkilzer@apple.com>
+
+        Don't define PLATFORM(MIDDLE_ENDIAN) on little endian ARM.
+
+        Reviewed by Darin.
+
+        See <http://bugs.webkit.org/show_bug.cgi?id=15416#c13>.
+
+        * wtf/Platform.h: Added check for !defined(__ARMEL__) when defining
+        PLATFORM(MIDDLE_ENDIAN).
+
 2008-03-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff, Darin and Weinig.
