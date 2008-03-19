@@ -1,3 +1,14 @@
+2008-03-19  Jasper Bryant-Greene  <jasper@unix.geek.nz>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=17941
+        Bug 17941: C++-style comments in JavaScriptCore API
+
+        * API/JSBase.h:
+        Remove C++-style comments from public JavaScriptCore API, replacing
+        with standard C90 block comments.
+
 2008-03-19  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.
