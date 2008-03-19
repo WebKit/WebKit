@@ -4588,6 +4588,40 @@ HRESULT STDMETHODCALLTYPE WebView::windowAncestryDidChange()
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebView::paintDocumentRectToContext(
+    /* [in] */ RECT rect,
+    /* [in] */ OLE_HANDLE deviceContext)
+{
+    if (!deviceContext)
+        return E_POINTER;
+
+    Frame* frame = m_page->mainFrame();
+    if (!frame)
+        return E_FAIL;
+
+    FrameView* view = frame->view();
+    if (!view)
+        return E_FAIL;
+
+    // We can't paint with a layout still pending.
+    view->layoutIfNeededRecursive();
+
+    HDC dc = (HDC)(ULONG64)deviceContext;
+    GraphicsContext gc(dc);
+    gc.save();
+    LONG width = rect.right - rect.left;
+    LONG height = rect.bottom - rect.top;
+    RECT dirtyRect = {0};
+    dirtyRect.right = width;
+    dirtyRect.bottom = height;
+    gc.clip(dirtyRect);
+    gc.translate(-rect.left, -rect.top);
+    frame->paint(&gc, rect);
+    gc.restore();
+
+    return S_OK;
+}
+
 class EnumTextMatches : public IEnumTextMatches
 {
     long m_ref;

@@ -124,4 +124,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT executeCoreCommandByName([in] BSTR name, [in] BSTR value);
 
     HRESULT windowAncestryDidChange();
+
+    HRESULT paintDocumentRectToContext([in] RECT rect, [in] OLE_HANDLE dc);
 }
