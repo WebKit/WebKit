@@ -1,3 +1,13 @@
+2008-03-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Antti.
+
+        Test case for Canvas.arc with zero-length radius needed to 
+        be updated for current html5 spec.
+
+        * fast/canvas/canvas-with-incorrect-args-expected.txt:
+        * fast/canvas/canvas-with-incorrect-args.html:
+
 2008-03-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver.

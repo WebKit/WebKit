@@ -468,7 +468,7 @@ void CanvasRenderingContext2D::arcTo(float x0, float y0, float x1, float y1, flo
 void CanvasRenderingContext2D::arc(float x, float y, float r, float sa, float ea, bool anticlockwise, ExceptionCode& ec)
 {
     ec = 0;
-    if (!(r > 0)) {
+    if (!(r >= 0)) {
         ec = INDEX_SIZE_ERR;
         return;
     }

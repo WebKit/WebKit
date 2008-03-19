@@ -1,3 +1,15 @@
+2008-03-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Antti.
+
+        Bug 17954: Canvas arc() with radius of 0 throws exception
+        http://bugs.webkit.org/show_bug.cgi?id=17954
+
+        Simple fix -- use >= instead of > when validating the radius.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::arc):
+
 2008-03-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver.

@@ -14,7 +14,7 @@ PASS called rect 0*0 rect without throwing an exception.
 UNDEFINED called rect with inf*inf rect without throwing an exception.
 UNDEFINED threw exception code 1 on nan*nan rect.
 PASS called fill with an empty path without throwing an exception.
-PASS threw exception code 1 on arc with zero-length radius
+PASS did not throw exception on arc with zero-length radius
 PASS threw exception code 1 on arc with negative-length radius
 UNDEFINED did not throw exception on arc with infinite radius
 UNDEFINED threw exception code 1 on arc with nan-length radius

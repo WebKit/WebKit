@@ -94,9 +94,9 @@ function runTest() {
     }
     try {
         context.arc(2, 2, 0, 0, 90, true);
-        fail("did not throw exception on arc with zero-length radius");
+        pass("did not throw exception on arc with zero-length radius");
     } catch (e) {
-        pass("threw exception code " + e.code + " on arc with zero-length radius");    
+        fail("threw exception code " + e.code + " on arc with zero-length radius");    
     }
     try {
         context.arc(2, 2, -10, 0, 90, true);
