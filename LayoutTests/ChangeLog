@@ -1,3 +1,14 @@
+2008-03-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - test for <rdar://problem/5805070> CrashTracer: [USER] 33 crashes in Safari at com.apple.WebCore: WebCore::FrameView::layout + 431
+
+        * fast/dynamic/subtree-parent-static-y.html: Added.
+        * platform/mac/fast/dynamic/subtree-parent-static-y-expected.checksum: Added.
+        * platform/mac/fast/dynamic/subtree-parent-static-y-expected.png: Added.
+        * platform/mac/fast/dynamic/subtree-parent-static-y-expected.txt: Added.
+
 2008-03-19  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

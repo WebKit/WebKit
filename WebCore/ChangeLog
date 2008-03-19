@@ -1,3 +1,17 @@
+2008-03-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/5805070> CrashTracer: [USER] 33 crashes in Safari at com.apple.WebCore: WebCore::FrameView::layout + 431
+
+        Test: fast/dynamic/subtree-parent-static-y.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::markContainingBlocksForLayout): Avoid calling
+        this method on the parent if the parent is the new layout subtree root,
+        which would result in marking all the way to the top, when it should
+        actually do nothing.
+
 2008-03-19  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.
