@@ -42,8 +42,7 @@ public:
     WebNodeHighlight(WebView*);
     ~WebNodeHighlight();
 
-    void show();
-    void hide();
+    void setShowsWhileWebViewIsVisible(bool);
 
     bool isShowing() const;
 
@@ -52,6 +51,11 @@ public:
     void placeBehindWindow(HWND);
 
 private:
+    void show();
+    void hide();
+
+    bool isWebViewVisible() const;
+
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
 
     void onWebViewShowWindow(bool showing);
@@ -62,6 +66,7 @@ private:
     HWND m_inspectedWebViewWindow;
     HWND m_overlay;
     HWND m_observedWindow;
+    bool m_showsWhileWebViewIsVisible;
 
     friend static LRESULT CALLBACK OverlayWndProc(HWND, UINT, WPARAM, LPARAM);
 };

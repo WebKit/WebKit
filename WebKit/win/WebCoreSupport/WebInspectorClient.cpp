@@ -272,7 +272,10 @@ void WebInspectorClient::highlight(Node*)
     if (!m_highlight)
         m_highlight.set(new WebNodeHighlight(m_inspectedWebView));
 
-    m_highlight->show();
+    if (m_highlight->isShowing())
+        m_highlight->update();
+    else
+        m_highlight->setShowsWhileWebViewIsVisible(true);
 
     if (IsWindowVisible(m_hwnd))
         m_highlight->placeBehindWindow(m_hwnd);
@@ -281,7 +284,7 @@ void WebInspectorClient::highlight(Node*)
 void WebInspectorClient::hideHighlight()
 {
     if (m_highlight)
-        m_highlight->hide();
+        m_highlight->setShowsWhileWebViewIsVisible(false);
 }
 
 void WebInspectorClient::inspectedURLChanged(const String& newURL)

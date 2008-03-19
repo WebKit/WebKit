@@ -48,10 +48,11 @@ static LPCTSTR kWebNodeHighlightPointerProp = TEXT("WebNodeHighlightPointer");
 
 WebNodeHighlight::WebNodeHighlight(WebView* webView)
     : m_inspectedWebView(webView)
-    , m_inspectedWebViewWindow(0)
     , m_overlay(0)
     , m_observedWindow(0)
+    , m_showsWhileWebViewIsVisible(false)
 {
+    m_inspectedWebView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&m_inspectedWebViewWindow));
 }
 
 WebNodeHighlight::~WebNodeHighlight()
@@ -65,12 +66,39 @@ WebNodeHighlight::~WebNodeHighlight()
         ::DestroyWindow(m_overlay);
 }
 
+void WebNodeHighlight::setShowsWhileWebViewIsVisible(bool shows)
+{
+    if (m_showsWhileWebViewIsVisible == shows)
+        return;
+    m_showsWhileWebViewIsVisible = shows;
+
+    if (!m_showsWhileWebViewIsVisible) {
+        hide();
+        return;
+    }
+
+    bool webViewVisible = isWebViewVisible();
+
+    if (isShowing() == webViewVisible)
+        return;
+
+    if (webViewVisible)
+        show();
+    else
+        hide();
+}
+
+bool WebNodeHighlight::isWebViewVisible() const
+{
+    if (!m_inspectedWebViewWindow)
+        return false;
+
+    return IsWindowVisible(m_inspectedWebViewWindow);
+}
+
 void WebNodeHighlight::show()
 {
     if (!m_overlay) {
-        if (FAILED(m_inspectedWebView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&m_inspectedWebViewWindow))) || !IsWindow(m_inspectedWebViewWindow))
-            return;
-
         registerOverlayClass();
 
         m_overlay = ::CreateWindowEx(WS_EX_LAYERED | WS_EX_TOOLWINDOW, kOverlayWindowClassName, 0, WS_POPUP,
@@ -85,6 +113,8 @@ void WebNodeHighlight::show()
         WindowMessageBroadcaster::addListener(m_observedWindow, this);
         WindowMessageBroadcaster::addListener(m_inspectedWebViewWindow, this);
     }
+
+    ASSERT(m_showsWhileWebViewIsVisible);
 
     update();
     SetWindowPos(m_overlay, 0, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
@@ -202,6 +232,9 @@ LRESULT CALLBACK OverlayWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 
 void WebNodeHighlight::onWebViewShowWindow(bool showing)
 {
+    if (!m_showsWhileWebViewIsVisible)
+        return;
+
     if (isShowing() == showing)
         return;
 

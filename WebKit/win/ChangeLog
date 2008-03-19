@@ -1,5 +1,52 @@
 2008-03-19  Adam Roben  <aroben@apple.com>
 
+        Fix a couple of bugs where the node highlight would appear when it shouldn't
+
+        There were at least two ways you could get the highlight to appear
+        when it shouldn't:
+          1) Selecting a node in the Inspector while the inspected WebView was
+             in a background tab.
+          2) Selecting a node in the Inspector, switching to another tab,
+             closing the Inspector, then switching back to the inspected
+             WebView's tab.
+
+        This patch fixes the above two issues, and possibly others.
+
+        show() and hide() are now private methods of WebNodeHighlight. They
+        are replaced by a single public method,
+        setShowsWhileWebViewIsVisible(bool). WebInspectorClient uses this to
+        tell the highlight whether it should be showing when the inspected
+        WebView is visible.
+
+        Reviewed by John Sullivan.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::highlight): If the highlight is already showing,
+        it just needs to update since the highlighted node has changed. If the
+        highlight is not showing, call setShowsWhileWebViewIsVisible(true) so
+        that the highlight will show when the WebView is shown.
+        (WebInspectorClient::hideHighlight): Changed to call
+        setShowsWhileWebViewIsVisible(false) instead of hide().
+        * WebNodeHighlight.cpp:
+        (WebNodeHighlight::WebNodeHighlight): Initialize new member, and
+        initialize m_inspectedWebViewWindow to its final value here instead of
+        in show().
+        (WebNodeHighlight::setShowsWhileWebViewIsVisible): Added. If we're not
+        supposed to show ourselves when the WebView is visible, we hide
+        ourselves and return. Otherwise, we make our visibility match the
+        WebView's.
+        (WebNodeHighlight::isWebViewVisible): Added.
+        (WebNodeHighlight::show): Removed initialization of
+        m_inspectedWebViewWindow (this is now done by our constructor). Added
+        an assertion that we're supposed to show ourselves when the WebView is
+        visible.
+        (WebNodeHighlight::onWebViewShowWindow): If we shouldn't show
+        ourselves when the WebView is visible, then we don't need to do
+        anything at all when the WebView's visibility changes.
+        * WebNodeHighlight.h:
+
+2008-03-19  Adam Roben  <aroben@apple.com>
+
         Small WebNodeHighlight cleanup
 
         Renamed the following methods:
