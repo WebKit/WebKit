@@ -770,7 +770,7 @@ void ConstDeclNode::streamTo(SourceStream& s) const
         s << " = " << PrecAssignment << m_init;
     for (ConstDeclNode* n = m_next.get(); n; n = n->m_next.get()) {
         s << ", " << n->m_ident;
-        if (m_init)
+        if (n->m_init)
             s << " = " << PrecAssignment << n->m_init;
     }
 }

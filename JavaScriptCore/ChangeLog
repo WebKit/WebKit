@@ -1,3 +1,13 @@
+2008-03-19  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=17939
+        Bug 17939: Crash decompiling "const a = 1, b;"
+
+        * kjs/nodes2string.cpp:
+        (KJS::ConstDeclNode::streamTo): Null-check the correct variable.
+
 2008-03-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.

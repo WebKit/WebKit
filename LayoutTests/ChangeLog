@@ -1,3 +1,13 @@
+2008-03-19  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=17939
+        Bug 17939: Crash decompiling "const a = 1, b;"
+
+        * fast/js/function-toString-parentheses-expected.txt:
+        * fast/js/resources/function-toString-parentheses.js:
+
 2008-03-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.
