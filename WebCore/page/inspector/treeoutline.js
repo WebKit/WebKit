@@ -285,6 +285,13 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
     return item;
 }
 
+TreeOutline.prototype.treeElementFromPoint = function(x, y)
+{
+    var node = this._childrenListNode.ownerDocument.elementFromPoint(x, y);
+    var listNode = node.enclosingNodeOrSelfWithNodeNameInArray(["ol", "li"]);
+    return listNode.parentTreeElement || listNode.treeElement;
+}
+
 TreeOutline.prototype.handleKeyEvent = function(event)
 {
     if (!this.selectedTreeElement || event.shiftKey || event.metaKey || event.ctrlKey)
@@ -511,8 +518,10 @@ TreeElement.treeElementSelected = function(event)
     if (!element || !element.treeElement || !element.treeElement.selectable)
         return;
 
-    if (event.offsetX > element.treeElement.arrowToggleWidth || !element.treeElement.hasChildren)
-        element.treeElement.select();
+    if (element.treeElement.isEventWithinDisclosureTriangle(event))
+        return;
+
+    element.treeElement.select();
 }
 
 TreeElement.treeElementToggled = function(event)
@@ -521,18 +530,19 @@ TreeElement.treeElementToggled = function(event)
     if (!element || !element.treeElement)
         return;
 
-    if (event.offsetX <= element.treeElement.arrowToggleWidth && element.treeElement.hasChildren) {
-        if (element.treeElement.expanded) {
-            if (event.altKey)
-                element.treeElement.collapseRecursively();
-            else
-                element.treeElement.collapse();
-        } else {
-            if (event.altKey)
-                element.treeElement.expandRecursively();
-            else
-                element.treeElement.expand();
-        }
+    if (!element.treeElement.isEventWithinDisclosureTriangle(event))
+        return;
+
+    if (element.treeElement.expanded) {
+        if (event.altKey)
+            element.treeElement.collapseRecursively();
+        else
+            element.treeElement.collapse();
+    } else {
+        if (event.altKey)
+            element.treeElement.expandRecursively();
+        else
+            element.treeElement.expand();
     }
 }
 
@@ -725,4 +735,10 @@ TreeElement.prototype.traversePreviousTreeElement = function(skipHidden, dontPop
         return null;
 
     return this.parent;
+}
+
+TreeElement.prototype.isEventWithinDisclosureTriangle = function(event)
+{
+    var left = this._listItemNode.totalOffsetLeft;
+    return event.pageX >= left && event.pageX <= left + this.arrowToggleWidth && this.hasChildren;
 }

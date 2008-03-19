@@ -123,12 +123,18 @@ Element.prototype.hasStyleClass = function(className)
     return regex.test(this.className);
 }
 
-Node.prototype.enclosingNodeOrSelfWithNodeName = function(nodeName)
+Node.prototype.enclosingNodeOrSelfWithNodeNameInArray = function(nameArray)
 {
     for (var node = this; node && (node !== document); node = node.parentNode)
-        if (node.nodeName.toLowerCase() === nodeName.toLowerCase())
-            return node;
+        for (var i = 0; i < nameArray.length; ++i)
+            if (node.nodeName.toLowerCase() === nameArray[i].toLowerCase())
+                return node;
     return null;
+}
+
+Node.prototype.enclosingNodeOrSelfWithNodeName = function(nodeName)
+{
+    return this.enclosingNodeOrSelfWithNodeNameInArray([nodeName]);
 }
 
 Node.prototype.enclosingNodeOrSelfWithClass = function(className)
@@ -156,6 +162,20 @@ Element.prototype.removeChildren = function()
     while (this.firstChild) 
         this.removeChild(this.firstChild);        
 }
+
+Element.prototype.__defineGetter__("totalOffsetLeft", function() {
+    var total = 0;
+    for (var element = this; element; element = element.offsetParent)
+        total += element.offsetLeft;
+    return total;
+});
+
+Element.prototype.__defineGetter__("totalOffsetTop", function() {
+    var total = 0;
+    for (var element = this; element; element = element.offsetParent)
+        total += element.offsetTop;
+    return total;
+});
 
 Element.prototype.firstChildSkippingWhitespace = firstChildSkippingWhitespace;
 Element.prototype.lastChildSkippingWhitespace = lastChildSkippingWhitespace;

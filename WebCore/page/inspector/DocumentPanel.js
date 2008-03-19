@@ -50,6 +50,8 @@ WebInspector.DocumentPanel = function(resource, views)
     domView.treeContentElement.className = "content tree outline-disclosure";
 
     domView.treeListElement = document.createElement("ol");
+    domView.treeListElement.addEventListener("mousedown", this._onmousedown.bind(this), false);
+    domView.treeListElement.addEventListener("dblclick", this._ondblclick.bind(this), false);
     domView.treeOutline = new TreeOutline(domView.treeListElement);
     domView.treeOutline.panel = this;
 
@@ -770,6 +772,52 @@ WebInspector.DocumentPanel.prototype = {
         }
 
         return false;
+    },
+
+    _treeElementFromEvent: function(event)
+    {
+        var outline = this.views.dom.treeOutline;
+
+        var root = this.views.dom.treeListElement;
+
+        // We choose this X coordinate based on the knowledge that our list
+        // items extend nearly to the right edge of the outer <ol>.
+        var x = root.totalOffsetLeft + root.offsetWidth - 20;
+
+        var y = event.pageY;
+
+        // Our list items have 1-pixel cracks between them vertically. We avoid
+        // the cracks by checking slightly above and slightly below the mouse
+        // and seeing if we hit the same element each time.
+        var elementUnderMouse = outline.treeElementFromPoint(x, y);
+        var elementAboveMouse = outline.treeElementFromPoint(x, y - 2);
+        var element;
+        if (elementUnderMouse === elementAboveMouse)
+            element = elementUnderMouse;
+        else
+            element = outline.treeElementFromPoint(x, y + 2);
+
+        return element;
+    },
+
+    _ondblclick: function(event)
+    {
+        var element = this._treeElementFromEvent(event);
+
+        if (!element)
+            return;
+
+        element.ondblclick();
+    },
+
+    _onmousedown: function(event)
+    {
+        var element = this._treeElementFromEvent(event);
+
+        if (!element || element.isEventWithinDisclosureTriangle(event))
+            return;
+
+        element.select();
     },
 }
 

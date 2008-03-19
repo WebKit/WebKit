@@ -1,3 +1,34 @@
+2008-03-19  Adam Roben  <aroben@apple.com>
+
+        Make clicking anywhere in a row in the DOM tree select that row's node
+
+        We now have mousedown and dblclick event listeners on the root of the
+        tree that forward the event to the node on the row the mouse is over.
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/DocumentPanel.js:
+        (WebInspector.DocumentPanel): Added a dblclick and mousedown event
+        listeners to the root of the tree.
+        (WebInspector.DocumentPanel._treeElementFromEvent): Added. Finds the
+        tree element for the row underneath the mouse.
+        (WebInspector.DocumentPanel._ondblclick): Added. Sends the dblclick
+        event on to the tree element in the current row.
+        (WebInspector.DocumentPanel._onmousedown): Added. Selects the tree
+        element in the current row.
+        * page/inspector/treeoutline.js:
+        (TreeOutline.treeElementFromPoint): Added.
+        (TreeElement.treeElementSelected): Changed to call
+        TreeElement.isEventWithinDisclosureTriangle, and added an early return.
+        (TreeElement.treeElementToggled): Ditto.
+        (TreeElement.isEventWithinDisclosureTriangle): Added.
+        * page/inspector/utilities.js:
+        (Node.enclosingNodeOrSelfWithNodeNameInArray): Added.
+        (Node.enclosingNodeOrSelfWithNodeName): Now just calls
+        enclosingNodeOrSelfWithNodeNameInArray.
+        (Elemnt.get totalOffsetLeft): Added.
+        (Elemnt.get totalOffsetTop): Added.
+
 2008-03-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
