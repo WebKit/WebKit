@@ -335,13 +335,13 @@ WebInspector.ConsolePanel.prototype = {
 
     messagesClicked: function(event)
     {
-        var link = event.target.firstParentOrSelfWithNodeName("a");
+        var link = event.target.enclosingNodeOrSelfWithNodeName("a");
         if (link && link.representedNode) {
             WebInspector.updateFocusedNode(link.representedNode);
             return;
         }
 
-        var messageElement = event.target.firstParentOrSelfWithClass("console-message");
+        var messageElement = event.target.enclosingNodeOrSelfWithClass("console-message");
         if (!messageElement)
             return;
 

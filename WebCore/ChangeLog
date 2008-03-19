@@ -1,3 +1,15 @@
+2008-03-19  Adam Roben  <aroben@apple.com>
+
+        Rename firstParent* methods to enclosingNode*
+
+        Rubberstamped by John Sullivan.
+
+        * page/inspector/ConsolePanel.js:
+        * page/inspector/DocumentPanel.js:
+        * page/inspector/NetworkPanel.js:
+        * page/inspector/inspector.js:
+        * page/inspector/utilities.js:
+
 2008-03-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

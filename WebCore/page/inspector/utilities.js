@@ -123,7 +123,7 @@ Element.prototype.hasStyleClass = function(className)
     return regex.test(this.className);
 }
 
-Node.prototype.firstParentOrSelfWithNodeName = function(nodeName)
+Node.prototype.enclosingNodeOrSelfWithNodeName = function(nodeName)
 {
     for (var node = this; node && (node !== document); node = node.parentNode)
         if (node.nodeName.toLowerCase() === nodeName.toLowerCase())
@@ -131,7 +131,7 @@ Node.prototype.firstParentOrSelfWithNodeName = function(nodeName)
     return null;
 }
 
-Node.prototype.firstParentOrSelfWithClass = function(className) 
+Node.prototype.enclosingNodeOrSelfWithClass = function(className)
 {
     for (var node = this; node && (node !== document); node = node.parentNode)
         if (node.nodeType === Node.ELEMENT_NODE && node.hasStyleClass(className))
@@ -139,11 +139,11 @@ Node.prototype.firstParentOrSelfWithClass = function(className)
     return null;
 }
 
-Node.prototype.firstParentWithClass = function(className)
+Node.prototype.enclosingNodeWithClass = function(className)
 {
     if (!this.parentNode)
         return null;
-    return this.parentNode.firstParentOrSelfWithClass(className);
+    return this.parentNode.enclosingNodeOrSelfWithClass(className);
 }
 
 Element.prototype.query = function(query) 

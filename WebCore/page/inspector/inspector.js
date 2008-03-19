@@ -320,14 +320,14 @@ WebInspector.changeFocus = function(event)
     }
 
     if (!nextFocusElement)
-        nextFocusElement = event.target.firstParentOrSelfWithClass("focusable");
+        nextFocusElement = event.target.enclosingNodeOrSelfWithClass("focusable");
 
     this.currentFocusElement = nextFocusElement;
 }
 
 WebInspector.documentClick = function(event)
 {
-    var anchor = event.target.firstParentOrSelfWithNodeName("a");
+    var anchor = event.target.enclosingNodeOrSelfWithNodeName("a");
     if (!anchor)
         return;
 

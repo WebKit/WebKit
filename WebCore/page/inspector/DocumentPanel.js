@@ -936,11 +936,11 @@ WebInspector.DOMNodeTreeElement.prototype = {
         if (this.representedObject.nodeType != Node.ELEMENT_NODE && this.representedObject.nodeType != Node.TEXT_NODE)
             return false;
 
-        var textNode = event.target.firstParentOrSelfWithClass("webkit-html-text-node");
+        var textNode = event.target.enclosingNodeOrSelfWithClass("webkit-html-text-node");
         if (textNode)
             return this._startEditingTextNode(textNode);
 
-        var attribute = event.target.firstParentOrSelfWithClass("webkit-html-attribute");
+        var attribute = event.target.enclosingNodeOrSelfWithClass("webkit-html-attribute");
         if (attribute)
             return this._startEditingAttribute(attribute, event);
 
@@ -956,7 +956,7 @@ WebInspector.DOMNodeTreeElement.prototype = {
         if (!attributeNameElement)
             return false;
 
-        var isURL = event.target.firstParentOrSelfWithClass("webkit-html-external-link") || event.target.firstParentOrSelfWithClass("webkit-html-resource-link");
+        var isURL = event.target.enclosingNodeOrSelfWithClass("webkit-html-external-link") || event.target.enclosingNodeOrSelfWithClass("webkit-html-resource-link");
         if (isURL && event.altKey)
             return false;
 
