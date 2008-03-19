@@ -1,5 +1,16 @@
 2008-03-19  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        - test for assertion failure in RenderBlock::determineStartPosition() at http://www.wired.com/techbiz/it/magazine/16-04/bz_apple
+
+        * fast/repaint/line-flow-with-floats-10.html: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-10-expected.checksum: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-10-expected.png: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-10-expected.txt: Added.
+
+2008-03-19  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by John Sullivan.
 
         - test for <rdar://problem/5805070> CrashTracer: [USER] 33 crashes in Safari at com.apple.WebCore: WebCore::FrameView::layout + 431

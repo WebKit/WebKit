@@ -1,3 +1,16 @@
+2008-03-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix assertion failure in RenderBlock::determineStartPosition() at http://www.wired.com/techbiz/it/magazine/16-04/bz_apple
+
+        Test: fast/repaint/line-flow-with-floats-10.html
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::determineStartPosition): Removed bogus assertion.
+        If the float's top margin has changed and it has not been repositioned
+        yet, we do not have its new y position.
+
 2008-03-19  David Hyatt  <hyatt@apple.com>
 
         New implementation of full page zoom.  Because of how much doesn't transform when zooming, and because
