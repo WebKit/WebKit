@@ -1,3 +1,12 @@
+2008-03-19  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=17816.
+        Bug 17816: libWebCoreSQLite3.a is 2-architecture universal binary (not 4-architecture)
+
+        * libWebCoreSQLite3.a:  Land a 4-way fat binary.
+
 2008-03-12  Steve Falkenburg  <sfalken@apple.com>
 
         New version of WebKitSystemInterface.lib with
