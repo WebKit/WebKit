@@ -1,3 +1,16 @@
+2008-03-18  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=17925 and http://bugs.webkit.org/show_bug.cgi?id=17927.
+        - Bug 17925: Crash in KJS::JSObject::put after setting this.__proto__
+        - Bug 17927: Hang after attempting to create circular __proto__
+
+        * kjs/object.cpp:
+        (KJS::JSObject::put): Silently ignore attempts to set __proto__ to a non-object, non-null value.
+        Return after setting the exception when an attempt to set a cyclic __proto__ is detected so that
+        the cyclic value is not set.
+
 2008-03-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

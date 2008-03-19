@@ -1,3 +1,18 @@
+2008-03-18  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=17925 and http://bugs.webkit.org/show_bug.cgi?id=17927.
+        - Bug 17925: Crash in KJS::JSObject::put after setting this.__proto__
+        - Bug 17927: Hang after attempting to create circular __proto__
+
+        * fast/js/cyclic-proto-expected.txt: Added.
+        * fast/js/cyclic-proto.html: Copied from LayoutTests/fast/js/assign.html.
+        * fast/js/non-object-proto-expected.txt: Added.
+        * fast/js/non-object-proto.html: Copied from LayoutTests/fast/js/rehash-assign.html.
+        * fast/js/resources/cyclic-proto.js: Added.
+        * fast/js/resources/non-object-proto.js: Added.
+
 2008-03-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
