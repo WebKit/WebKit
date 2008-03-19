@@ -1,5 +1,14 @@
 2008-03-19  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Use WTF::Unicode abstraction rather than using ICU functions directly.
+
+        * html/PreloadScanner.cpp:
+        (WebCore::PreloadScanner::tokenize):
+
+2008-03-19  Mark Rowe  <mrowe@apple.com>
+
         Attempt to fix the Gtk build.
 
         * platform/network/curl/ResourceHandleCurl.cpp:

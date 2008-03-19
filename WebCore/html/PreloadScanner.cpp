@@ -42,6 +42,7 @@
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "SystemTime.h"
+#include <wtf/unicode/Unicode.h>
 
 #ifdef __GNUC__
 // The main tokenizer includes this too so we are getting two copies of the data. However, this way the code gets inlined.
@@ -56,6 +57,8 @@ const struct Entity* findEntity(register const char* str, register unsigned int 
 #endif
 
 #define PRELOAD_DEBUG 0
+
+using namespace WTF;
 
 namespace WebCore {
     
@@ -371,7 +374,7 @@ void PreloadScanner::tokenize(const SegmentedString& source)
                 UChar tmpChar = 0;
                 bool match = true;
                 for (unsigned n = 0; n < m_lastStartTag.length() + 1; n++) {
-                    tmpChar = u_tolower(*m_source);
+                    tmpChar = Unicode::toLower(*m_source);
                     if (n < m_lastStartTag.length() && tmpChar != m_lastStartTag[n])
                         match = false;
                     tmpString.append(tmpChar);
