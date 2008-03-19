@@ -45,10 +45,11 @@ public:
     void show();
     void hide();
 
-    void updateWindow();
-    bool visible() const;
+    bool isShowing() const;
 
-    HWND window() const { return m_overlay; }
+    void update();
+
+    void placeBehindWindow(HWND);
 
 private:
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);

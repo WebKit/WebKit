@@ -243,8 +243,8 @@ void WebInspectorClient::attachWindow()
 
     ::SendMessage(hostWindow, WM_SIZE, 0, 0);
 
-    if (m_highlight && m_highlight->visible())
-        m_highlight->updateWindow();
+    if (m_highlight && m_highlight->isShowing())
+        m_highlight->update();
 }
 
 void WebInspectorClient::detachWindow()
@@ -263,8 +263,8 @@ void WebInspectorClient::detachWindow()
     if (SUCCEEDED(m_inspectedWebView->hostWindow((OLE_HANDLE*)&hostWindow)))
         ::SendMessage(hostWindow, WM_SIZE, 0, 0);
 
-    if (m_highlight && m_highlight->visible())
-        m_highlight->updateWindow();
+    if (m_highlight && m_highlight->isShowing())
+        m_highlight->update();
 }
 
 void WebInspectorClient::highlight(Node*)
@@ -274,10 +274,8 @@ void WebInspectorClient::highlight(Node*)
 
     m_highlight->show();
 
-    if (IsWindowVisible(m_hwnd)) {
-        // Make sure the highlight is behind us.
-        SetWindowPos(m_highlight->window(), m_hwnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-    }
+    if (IsWindowVisible(m_hwnd))
+        m_highlight->placeBehindWindow(m_hwnd);
 }
 
 void WebInspectorClient::hideHighlight()

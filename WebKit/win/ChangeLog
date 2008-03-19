@@ -1,3 +1,34 @@
+2008-03-19  Adam Roben  <aroben@apple.com>
+
+        Small WebNodeHighlight cleanup
+
+        Renamed the following methods:
+          visible() -> isShowing()
+          updateWindow() -> update()
+
+        Removed the window() method.
+
+        Added a new method, placeBehindWindow(HWND), that moves the highlight
+        overlay in the window z-order to be just behind the passed-in window.
+        WebInspectorClient calls this instead of doing the move directly using
+        the old window() method.
+
+        Reviewed by John Sullivan.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::attachWindow):
+        (WebInspectorClient::detachWindow):
+        (WebInspectorClient::highlight): Call placeBehindWindow instead of
+        calling SetWindowPos directly.
+        * WebNodeHighlight.cpp:
+        (WebNodeHighlight::show):
+        (WebNodeHighlight::isShowing):
+        (WebNodeHighlight::placeBehindWindow): Added. Code came from
+        WebInspectorClient::highlight.
+        (WebNodeHighlight::onWebViewWindowPosChanged):
+        (WebNodeHighlight::onRootWindowPosChanged):
+        * WebNodeHighlight.h:
+
 2008-03-19  Ada Chan  <adachan@apple.com>
 
         Added a method to paint WebView content specified by 
