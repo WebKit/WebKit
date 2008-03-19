@@ -94,8 +94,10 @@ bool RenderImage::setImageSizeForAltText(CachedImage* newImage /* = 0 */)
     }
   
     if (newImage) {
-        imageWidth += newImage->image()->width();
-        imageHeight += newImage->image()->height();
+        // imageSize() returns 0 for the error image.  We need the true size of the
+        // error image, so we have to get it by grabbing image() directly.
+        imageWidth += newImage->image()->width() * style()->effectiveZoom();
+        imageHeight += newImage->image()->height() * style()->effectiveZoom();
     }
   
     // we have an alt and the user meant it (its not a text we invented)
@@ -121,7 +123,7 @@ void RenderImage::imageChanged(CachedImage* newImage)
     if (hasBoxDecorations())
         RenderReplaced::imageChanged(newImage);
     
-    if (newImage != m_cachedImage)
+    if (newImage != m_cachedImage || !newImage)
         return;
 
     bool imageSizeChanged = false;
@@ -133,9 +135,9 @@ void RenderImage::imageChanged(CachedImage* newImage)
     bool shouldRepaint = true;
 
     // Image dimensions have been changed, see what needs to be done
-    if (newImage->imageSize() != intrinsicSize() || imageSizeChanged) {
+    if (newImage->imageSize(style()->effectiveZoom()) != intrinsicSize() || imageSizeChanged) {
         if (!newImage->errorOccurred())
-            setIntrinsicSize(newImage->imageSize());
+            setIntrinsicSize(newImage->imageSize(style()->effectiveZoom()));
 
         // In the case of generated image content using :before/:after, we might not be in the
         // render tree yet.  In that case, we don't need to worry about check for layout, since we'll get a
@@ -342,7 +344,7 @@ int RenderImage::calcReplacedWidth() const
     if (isWidthSpecified())
         width = calcReplacedWidthUsing(style()->width());
     else if (m_cachedImage && m_cachedImage->usesImageContainerSize())
-        width = m_cachedImage->imageSize().width();
+        width = m_cachedImage->imageSize(style()->effectiveZoom()).width();
     else if (m_cachedImage && m_cachedImage->imageHasRelativeWidth())
         width = 0; // If the image is relatively-sized, set the width to 0 until there is a set container size.
     else
@@ -360,7 +362,7 @@ int RenderImage::calcReplacedHeight() const
     if (isHeightSpecified())
         height = calcReplacedHeightUsing(style()->height());
     else if (m_cachedImage && m_cachedImage->usesImageContainerSize())
-        height = m_cachedImage->imageSize().height();
+        height = m_cachedImage->imageSize(style()->effectiveZoom()).height();
     else if (m_cachedImage && m_cachedImage->imageHasRelativeHeight())
         height = 0; // If the image is relatively-sized, set the height to 0 until there is a set container size.
     else

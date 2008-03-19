@@ -118,7 +118,7 @@ void ImageTokenizer::finish()
 
         cachedImage->setResponse(m_doc->frame()->loader()->documentLoader()->response());
 
-        IntSize size = cachedImage->imageSize();
+        IntSize size = cachedImage->imageSize(m_doc->frame()->pageZoomFactor());
         if (size.width())
             m_doc->setTitle(imageTitle(cachedImage->response().suggestedFilename(), size));
 
@@ -186,7 +186,7 @@ float ImageDocument::scale() const
     if (!m_imageElement)
         return 1.0f;
 
-    IntSize imageSize = m_imageElement->cachedImage()->imageSize();
+    IntSize imageSize = m_imageElement->cachedImage()->imageSize(frame()->pageZoomFactor());
     IntSize windowSize = IntSize(frame()->view()->width(), frame()->view()->height());
     
     float widthScale = (float)windowSize.width() / imageSize.width();
@@ -200,7 +200,7 @@ void ImageDocument::resizeImageToFit()
     if (!m_imageElement)
         return;
 
-    IntSize imageSize = m_imageElement->cachedImage()->imageSize();
+    IntSize imageSize = m_imageElement->cachedImage()->imageSize(frame()->pageZoomFactor());
 
     float scale = this->scale();
     m_imageElement->setWidth(static_cast<int>(imageSize.width() * scale));
@@ -240,7 +240,7 @@ void ImageDocument::imageChanged()
     if (m_imageSizeIsKnown)
         return;
 
-    if (m_imageElement->cachedImage()->imageSize().isEmpty())
+    if (m_imageElement->cachedImage()->imageSize(frame()->pageZoomFactor()).isEmpty())
         return;
     
     m_imageSizeIsKnown = true;
@@ -256,8 +256,8 @@ void ImageDocument::restoreImageSize()
     if (!m_imageElement || !m_imageSizeIsKnown)
         return;
     
-    m_imageElement->setWidth(m_imageElement->cachedImage()->imageSize().width());
-    m_imageElement->setHeight(m_imageElement->cachedImage()->imageSize().height());
+    m_imageElement->setWidth(m_imageElement->cachedImage()->imageSize(frame()->pageZoomFactor()).width());
+    m_imageElement->setHeight(m_imageElement->cachedImage()->imageSize(frame()->pageZoomFactor()).height());
     
     ExceptionCode ec;
     if (imageFitsInWindow())
@@ -273,7 +273,7 @@ bool ImageDocument::imageFitsInWindow() const
     if (!m_imageElement)
         return true;
 
-    IntSize imageSize = m_imageElement->cachedImage()->imageSize();
+    IntSize imageSize = m_imageElement->cachedImage()->imageSize(frame()->pageZoomFactor());
     IntSize windowSize = IntSize(frame()->view()->width(), frame()->view()->height());
     
     return imageSize.width() <= windowSize.width() && imageSize.height() <= windowSize.height();    

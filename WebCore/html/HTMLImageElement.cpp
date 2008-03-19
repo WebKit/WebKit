@@ -26,6 +26,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "EventNames.h"
+#include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
@@ -216,8 +217,10 @@ int HTMLImageElement::width(bool ignorePendingStylesheets) const
             return width;
         
         // if the image is available, use its width
-        if (m_imageLoader.image())
-            return m_imageLoader.image()->imageSize().width();
+        if (m_imageLoader.image()) {
+            float zoomFactor = document()->frame() ? document()->frame()->pageZoomFactor() : 1.0f;
+            return m_imageLoader.image()->imageSize(zoomFactor).width();
+        }
     }
 
     if (ignorePendingStylesheets)
@@ -238,8 +241,10 @@ int HTMLImageElement::height(bool ignorePendingStylesheets) const
             return height;
         
         // if the image is available, use its height
-        if (m_imageLoader.image())
-            return m_imageLoader.image()->imageSize().height();        
+        if (m_imageLoader.image()) {
+            float zoomFactor = document()->frame() ? document()->frame()->pageZoomFactor() : 1.0f;
+            return m_imageLoader.image()->imageSize(zoomFactor).height();
+        }
     }
 
     if (ignorePendingStylesheets)
@@ -255,7 +260,7 @@ int HTMLImageElement::naturalWidth() const
     if (!m_imageLoader.image())
         return 0;
 
-    return m_imageLoader.image()->imageSize().width();
+    return m_imageLoader.image()->imageSize(1.0f).width();
 }
 
 int HTMLImageElement::naturalHeight() const
@@ -263,7 +268,7 @@ int HTMLImageElement::naturalHeight() const
     if (!m_imageLoader.image())
         return 0;
     
-    return m_imageLoader.image()->imageSize().height();
+    return m_imageLoader.image()->imageSize(1.0f).height();
 }
     
 bool HTMLImageElement::isURLAttribute(Attribute* attr) const

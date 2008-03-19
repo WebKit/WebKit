@@ -423,6 +423,7 @@ void ImplicitAnimation::animate(CompositeImplicitAnimation* animation, RenderObj
     BLEND(CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS, borderBottomLeftRadius, setBorderBottomLeftRadius);
     BLEND(CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS, borderBottomRightRadius, setBorderBottomRightRadius);
     BLEND(CSS_PROP_VISIBILITY, visibility, setVisibility);
+    BLEND(CSS_PROP_ZOOM, zoom, setZoom);
 }
 
 RenderStyle* CompositeImplicitAnimation::animate(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)

@@ -459,8 +459,8 @@ void RenderFrameSet::layout()
         oldBounds = absoluteClippedOverflowRect();
 
     if (!parent()->isFrameSet()) {
-        m_width = view()->zoomedWidth();
-        m_height = view()->zoomedHeight();
+        m_width = view()->viewWidth();
+        m_height = view()->viewHeight();
     }
 
     size_t cols = frameSet()->totalCols();

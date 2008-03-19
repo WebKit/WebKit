@@ -888,7 +888,7 @@ void CanvasRenderingContext2D::applyShadow()
 static IntSize size(HTMLImageElement* image)
 {
     if (CachedImage* cachedImage = image->cachedImage())
-        return cachedImage->imageSize();
+        return cachedImage->imageSize(1.0f); // FIXME: Not sure about this.
     return IntSize();
 }
 

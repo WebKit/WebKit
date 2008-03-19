@@ -1,3 +1,181 @@
+2008-03-19  David Hyatt  <hyatt@apple.com>
+
+        New implementation of full page zoom.  Because of how much doesn't transform when zooming, and because
+        of the need to obey viewport constraints, I decided to take a completely different approach.  Now CSS
+        lengths and intrinsic sizes are simply adjusted by the zoom factor.  This approach works much better and
+        avoids pixel cracks more than the old approach.   In addition widgets "just work", namely plugins zoom
+        and scrollbars do not.
+
+        This patch also implements the IE zoom CSS property.  This property allows fine-grained control over
+        zooming at the element level.  It takes values of normal | <number> | <percentage> to match WinIE.  In
+        addition, in the vein of text-size-adjust for text zooming, I have extended the zoom property with an
+        extra value, reset.  The reset keyword can be used to prevent a section of the page from scaling at all
+        when a zoom is applied.
+
+        Reviewed by olliej
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Support the new 'zoom' property for getComputedStyle.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        Code that parses the 'zoom' property.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthInt):
+        (WebCore::CSSPrimitiveValue::computeLengthIntForLength):
+        (WebCore::CSSPrimitiveValue::computeLengthShort):
+        (WebCore::CSSPrimitiveValue::computeLengthFloat):
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        * css/CSSPrimitiveValue.h:
+        Extend all of the computeLength methods to take a multiplier so that lengths can be adjusted by the
+        zoom factor.
+
+        * css/CSSPropertyNames.in:
+        Add the new zoom property to the list of properties we understand.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapBackgroundSize):
+        (WebCore::CSSStyleSelector::mapBackgroundXPosition):
+        (WebCore::CSSStyleSelector::mapBackgroundYPosition):
+        (WebCore::CSSStyleSelector::getComputedSizeFromSpecifiedSize):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::setStyle):
+        Pass in the zoom factor when computing all lengths in CSS.
+
+        * css/CSSValueKeywords.in:
+        Add support for the 'reset' keyword of the zoom property.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        Set the 'zoom' CSS property on the RenderView.  This is how we implement full page zoom.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::size):
+        Make sure the back end canvas size ignores zooming when rendering images.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::width):
+        (WebCore::HTMLImageElement::height):
+        (WebCore::HTMLImageElement::naturalWidth):
+        (WebCore::HTMLImageElement::naturalHeight):
+        Use the unzoomed width/height if we have no style information in HTMLImageElement.cpp.
+
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::ref):
+        (WebCore::CachedImage::imageSize):
+        (WebCore::CachedImage::imageRect):
+        * loader/CachedImage.h:
+        (WebCore::CachedImage::canRender):
+        Force access to the CachedImage metrics to take a multiplier so that people have to think about
+        the zoom factor.  The "intrinsic size" of the image then takes that into account.
+
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageTokenizer::finish):
+        (WebCore::ImageDocument::scale):
+        (WebCore::ImageDocument::resizeImageToFit):
+        (WebCore::ImageDocument::imageChanged):
+        (WebCore::ImageDocument::restoreImageSize):
+        (WebCore::ImageDocument::imageFitsInWindow):
+        Make sure image documents respect the zoom.
+
+        * page/AnimationController.cpp:
+        (WebCore::ImplicitAnimation::animate):
+        Make the 'zoom' CSS property work with CSS transitions.
+
+        * page/Frame.h:
+        (WebCore::Frame::pageZoomFactor):
+        (WebCore::Frame::textZoomFactor):
+        Add accessors for obtaining the pageZoom vs. textZoom.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustViewSize):
+        Remove the old zoom implementation that used transforms.
+
+        * page/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityIsIgnored]):
+        Pass in the zoom factor.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBackground):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        Pass in the zoom factor when testing for size.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calculateBackgroundSize):
+        (WebCore::RenderBox::imageChanged):
+        (WebCore::RenderBox::paintBackgroundExtended):
+        (WebCore::RenderBox::calcHeight):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layout):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::canvasSizeChanged):
+        * rendering/RenderHTMLCanvas.h:
+        (WebCore::RenderHTMLCanvas::renderName):
+        (WebCore::RenderHTMLCanvas::intrinsicSizeChanged):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::setImageSizeForAltText):
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::calcReplacedWidth):
+        (WebCore::RenderImage::calcReplacedHeight):
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::intrinsicSizeChanged):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::layout):
+        (WebCore::RenderListMarker::imageChanged):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mustRepaintBackgroundOrBorder):
+        (WebCore::RenderObject::paintBorder):
+        Pass in the zoom factor when testing for size.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::RenderReplaced):
+        (WebCore::RenderReplaced::setStyle):
+        (WebCore::RenderReplaced::intrinsicSizeChanged):
+        * rendering/RenderReplaced.h:
+        Added a new call when the zoom factor changes, intrinsicSizeChanged().  Replaced element subclasses
+        respond to this via overrides.
+
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleVisualData::StyleVisualData):
+        (WebCore::StyleInheritedData::StyleInheritedData):
+        (WebCore::StyleInheritedData::operator==):
+        (WebCore::RenderStyle::diff):
+        * rendering/RenderStyle.h:
+        (WebCore::StyleVisualData::operator==):
+        (WebCore::RenderStyle::zoom):
+        (WebCore::RenderStyle::zoomInEffect):
+        (WebCore::RenderStyle::setZoom):
+        (WebCore::RenderStyle::setZoomInEffect):
+        (WebCore::RenderStyle::initialZoom):
+        Support for 'zoom' in the RenderStyle.  "zoomInEffect" represents the computed zoom taking into account
+        all the zooms specified on ancestors.
+
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::imageChanged):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::imageChanged):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::imageChanged):
+        * rendering/RenderVideo.h:
+        (WebCore::RenderVideo::intrinsicSizeChanged):
+        Pass in the zoom factor.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::calcHeight):
+        (WebCore::RenderView::calcWidth):
+        (WebCore::RenderView::layout):
+        (WebCore::RenderView::viewHeight):
+        (WebCore::RenderView::viewWidth):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::zoomFactor):
+        Back out the old implementation.
+
 2008-03-19  Adam Roben  <aroben@apple.com>
 
         Rename firstParent* methods to enclosingNode*

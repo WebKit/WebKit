@@ -1090,6 +1090,13 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         break;
 
+    case CSS_PROP_ZOOM:          // normal | reset | <number> | <percentage> | inherit
+        if (id == CSS_VAL_NORMAL || id == CSS_VAL_RESET)
+            valid_primitive = true;
+        else
+            valid_primitive = (!id && validUnit(value, FNumber | FPercent, true));
+        break;
+        
     case CSS_PROP_TABLE_LAYOUT:         // auto | fixed | inherit
         if (id == CSS_VAL_AUTO || id == CSS_VAL_FIXED)
             valid_primitive = true;

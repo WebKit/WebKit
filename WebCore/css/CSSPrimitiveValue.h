@@ -104,8 +104,9 @@ public:
     int computeLengthIntForLength(RenderStyle*, double multiplier);
     short computeLengthShort(RenderStyle*);
     short computeLengthShort(RenderStyle*, double multiplier);
-    float computeLengthFloat(RenderStyle*, bool applyZoomFactor = true);
-    double computeLengthDouble(RenderStyle*, bool applyZoomFactor = true);
+    float computeLengthFloat(RenderStyle*, bool computingFontSize = false);
+    float computeLengthFloat(RenderStyle*, double multiplier, bool computingFontSize = false);
+    double computeLengthDouble(RenderStyle*, double multiplier = 1.0, bool computingFontSize = false);
 
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_type = type; }

@@ -34,9 +34,12 @@ namespace WebCore {
 typedef WTF::HashMap<const RenderReplaced*, IntRect> OverflowRectMap;
 static OverflowRectMap* gOverflowRectMap = 0;
 
+const int cDefaultWidth = 300;
+const int cDefaultHeight = 150;
+
 RenderReplaced::RenderReplaced(Node* node)
     : RenderBox(node)
-    , m_intrinsicSize(300, 150)
+    , m_intrinsicSize(cDefaultWidth, cDefaultHeight)
     , m_selectionState(SelectionNone)
     , m_hasOverflow(false)
 {
@@ -57,7 +60,15 @@ RenderReplaced::~RenderReplaced()
     if (m_hasOverflow)
         gOverflowRectMap->remove(this);
 }
-    
+
+void RenderReplaced::setStyle(RenderStyle* newStyle)
+{
+    float oldZoom = style() ? style()->effectiveZoom() : RenderStyle::initialZoom();
+    RenderBox::setStyle(newStyle);
+    if (newStyle && newStyle->effectiveZoom() != oldZoom)
+        intrinsicSizeChanged();
+}
+
 void RenderReplaced::layout()
 {
     ASSERT(needsLayout());
@@ -81,7 +92,13 @@ void RenderReplaced::layout()
     
     setNeedsLayout(false);
 }
-    
+ 
+void RenderReplaced::intrinsicSizeChanged()
+{
+    m_intrinsicSize = IntSize(cDefaultWidth * style()->effectiveZoom(), cDefaultHeight * style()->effectiveZoom());
+    setNeedsLayoutAndPrefWidthsRecalc();
+}
+
 void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     if (!shouldPaint(paintInfo, tx, ty))

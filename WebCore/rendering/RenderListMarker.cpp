@@ -633,8 +633,8 @@ void RenderListMarker::layout()
     ASSERT(!prefWidthsDirty());
 
     if (isImage()) {
-        m_width = m_image->image()->width();
-        m_height = m_image->image()->height();
+        m_width = m_image->imageSize(style()->effectiveZoom()).width();
+        m_height = m_image->imageSize(style()->effectiveZoom()).height();
     } else {
         m_width = minPrefWidth();
         m_height = style()->font().height();
@@ -658,7 +658,7 @@ void RenderListMarker::imageChanged(CachedImage* o)
     if (o != m_image)
         return;
 
-    if (m_width != m_image->imageSize().width() || m_height != m_image->imageSize().height() || m_image->errorOccurred())
+    if (m_width != m_image->imageSize(style()->effectiveZoom()).width() || m_height != m_image->imageSize(style()->effectiveZoom()).height() || m_image->errorOccurred())
         setNeedsLayoutAndPrefWidthsRecalc();
     else
         repaint();
@@ -822,7 +822,7 @@ bool RenderListMarker::isInside() const
 IntRect RenderListMarker::getRelativeMarkerRect()
 {
     if (isImage())
-        return IntRect(m_x, m_y, m_image->imageSize().width(), m_image->imageSize().height());
+        return IntRect(m_x, m_y, m_image->imageSize(style()->effectiveZoom()).width(), m_image->imageSize(style()->effectiveZoom()).height());
 
     switch (style()->listStyleType()) {
         case DISC:

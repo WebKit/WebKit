@@ -42,6 +42,8 @@ public:
     virtual void layout();
     virtual int minimumReplacedHeight() const { return 0; }
 
+    virtual void setStyle(RenderStyle*);
+
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintReplaced(PaintInfo&, int tx, int ty) { }
 
@@ -67,6 +69,7 @@ public:
 
 protected:
     void setIntrinsicSize(const IntSize&);
+    virtual void intrinsicSizeChanged();
 
     bool shouldPaint(PaintInfo&, int& tx, int& ty);
     void adjustOverflowForBoxShadow();

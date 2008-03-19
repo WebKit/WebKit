@@ -1085,24 +1085,9 @@ void Document::recalcStyle(StyleChange change)
         _style->ref();
         _style->setDisplay(BLOCK);
         _style->setVisuallyOrdered(visuallyOrdered);
-        
-        if (frame() && frame()->shouldApplyPageZoom() && !ownerElement()) {
-            // Set up our zoom transform on the document.
-            _style->setTransformOriginX(Length(0, Fixed));
-            _style->setTransformOriginY(Length(0, Fixed));
-            TransformOperations ops;
-            RefPtr<TransformOperation> transformOp = new ScaleTransformOperation(frame()->zoomFactor(), frame()->zoomFactor());
-            ops.append(transformOp);
-            _style->setTransform(ops);
-        }
-        
-        // FIXME: This code is necessary because RenderLayer is buggy regarding transform repainting on the root (not sure why).
-        // We can remove it when those bugs are resolved.
-        if (oldStyle && oldStyle->transform() != _style->transform()) {
-            setChanged(); // Necessary to force the view to relayout.
-            renderer()->repaint();
-        }
-
+        _style->setZoom(frame()->pageZoomFactor());
+        m_styleSelector->setStyle(_style);
+    
         FontDescription fontDescription;
         fontDescription.setUsePrinterFont(printing());
         if (Settings* settings = this->settings()) {

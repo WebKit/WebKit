@@ -565,3 +565,8 @@ linear
 ease-in
 ease-out
 ease-in-out
+
+#
+# CSS_PROP_ZOOM
+#
+reset

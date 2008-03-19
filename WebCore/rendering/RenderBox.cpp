@@ -431,9 +431,9 @@ IntSize RenderBox::calculateBackgroundSize(const BackgroundLayer* bgLayer, int s
             // scale to maintain our aspect ratio.
             if (bgHeight.isPercent()) {
                 int scaledH = bgHeight.calcValue(scaledHeight);
-                w = bg->imageSize().width() * scaledH / bg->imageSize().height();
+                w = bg->imageSize(style()->effectiveZoom()).width() * scaledH / bg->imageSize(style()->effectiveZoom()).height();
             } else if (bgHeight.isFixed())
-                w = bg->imageSize().width() * bgHeight.value() / bg->imageSize().height();
+                w = bg->imageSize(style()->effectiveZoom()).width() * bgHeight.value() / bg->imageSize(style()->effectiveZoom()).height();
         }
 
         if (bgHeight.isPercent())
@@ -444,24 +444,24 @@ IntSize RenderBox::calculateBackgroundSize(const BackgroundLayer* bgLayer, int s
             // If the height is auto and the width is not, we have to use the appropriate
             // scale to maintain our aspect ratio.
             if (bgWidth.isPercent())
-                h = bg->imageSize().height() * scaledWidth / bg->imageSize().width();
+                h = bg->imageSize(style()->effectiveZoom()).height() * scaledWidth / bg->imageSize(style()->effectiveZoom()).width();
             else if (bgWidth.isFixed())
-                h = bg->imageSize().height() * bgWidth.value() / bg->imageSize().width();
+                h = bg->imageSize(style()->effectiveZoom()).height() * bgWidth.value() / bg->imageSize(style()->effectiveZoom()).width();
             else if (bgWidth.isAuto()) {
                 // If both width and height are auto, we just want to use the image's
                 // intrinsic size.
-                w = bg->imageSize().width();
-                h = bg->imageSize().height();
+                w = bg->imageSize(style()->effectiveZoom()).width();
+                h = bg->imageSize(style()->effectiveZoom()).height();
             }
         }
         return IntSize(max(1, w), max(1, h));
     } else
-        return bg->imageSize();
+        return bg->imageSize(style()->effectiveZoom());
 }
 
 void RenderBox::imageChanged(CachedImage* image)
 {
-    if (!image || !image->canRender() || !parent() || !view())
+    if (!image || !image->canRender(style()->effectiveZoom()) || !parent() || !view())
         return;
 
     if (isInlineFlow() || style()->borderImage().image() == image) {
@@ -624,7 +624,7 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* context, const Color& c
     }
 
     CachedImage* bg = bgLayer->backgroundImage();
-    bool shouldPaintBackgroundImage = bg && bg->canRender();
+    bool shouldPaintBackgroundImage = bg && bg->canRender(style()->effectiveZoom());
     Color bgColor = c;
 
     // When this style flag is set, change existing background colors and images to a solid white background.
@@ -1317,7 +1317,7 @@ void RenderBox::calcHeight()
     // is specified.
     if (stretchesToViewHeight() && !document()->printing()) {
         int margins = collapsedMarginTop() + collapsedMarginBottom();
-        int visHeight = view()->zoomedHeight();
+        int visHeight = view()->viewHeight();
         if (isRoot())
             m_height = max(m_height, visHeight - margins);
         else {

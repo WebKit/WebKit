@@ -970,7 +970,7 @@ void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderTableSection::imageChanged(CachedImage* image)
 {
-    if (!image || !image->canRender() || !parent())
+    if (!image || !image->canRender(style()->effectiveZoom()) || !parent())
         return;
     
     // FIXME: Examine cells and repaint only the rect the image paints in.

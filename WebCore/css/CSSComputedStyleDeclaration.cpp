@@ -121,6 +121,7 @@ static const int computedProperties[] = {
     CSS_PROP_WORD_SPACING,
     CSS_PROP_WORD_WRAP,
     CSS_PROP_Z_INDEX,
+    CSS_PROP_ZOOM,
 
     CSS_PROP__WEBKIT_APPEARANCE,
     CSS_PROP__WEBKIT_BACKGROUND_CLIP,
@@ -787,6 +788,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->hasAutoZIndex())
                 return new CSSPrimitiveValue(CSS_VAL_AUTO);
             return new CSSPrimitiveValue(style->zIndex(), CSSPrimitiveValue::CSS_NUMBER);
+        case CSS_PROP_ZOOM:
+            return new CSSPrimitiveValue(style->zoom(), CSSPrimitiveValue::CSS_NUMBER);
         case CSS_PROP__WEBKIT_BOX_SIZING:
             if (style->boxSizing() == CONTENT_BOX)
                 return new CSSPrimitiveValue(CSS_VAL_CONTENT_BOX);

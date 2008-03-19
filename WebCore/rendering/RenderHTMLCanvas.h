@@ -30,18 +30,22 @@
 
 namespace WebCore {
 
-    class HTMLCanvasElement;
+class HTMLCanvasElement;
 
-    class RenderHTMLCanvas : public RenderReplaced {
-    public:
-        RenderHTMLCanvas(HTMLCanvasElement*);
+class RenderHTMLCanvas : public RenderReplaced {
+public:
+    RenderHTMLCanvas(HTMLCanvasElement*);
 
-        virtual const char* renderName() const { return "RenderHTMLCanvas"; }
+    virtual const char* renderName() const { return "RenderHTMLCanvas"; }
 
-        virtual void paintReplaced(PaintInfo& paintInfo, int tx, int ty);
+    virtual void paintReplaced(PaintInfo& paintInfo, int tx, int ty);
 
-        void canvasSizeChanged();
-    };
+    void canvasSizeChanged();
+    
+protected:
+    virtual void intrinsicSizeChanged() { canvasSizeChanged(); }
+
+};
 
 } // namespace WebCore
 

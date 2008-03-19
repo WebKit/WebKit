@@ -875,7 +875,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         // check whether rendered image was stretched from one-dimensional file image
         RenderImage* image = static_cast<RenderImage*>(m_renderer);
         if (image->cachedImage()) {
-            IntSize imageSize = image->cachedImage()->imageSize();
+            IntSize imageSize = image->cachedImage()->imageSize(image->view()->zoomFactor());
             return (imageSize.height() <= 1 || imageSize.width() <= 1);
         }
         

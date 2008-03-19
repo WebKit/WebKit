@@ -73,13 +73,13 @@ RenderView::~RenderView()
 void RenderView::calcHeight()
 {
     if (!printing() && m_frameView)
-        m_height = zoomedHeight();
+        m_height = viewHeight();
 }
 
 void RenderView::calcWidth()
 {
     if (!printing() && m_frameView)
-        m_width = zoomedWidth();
+        m_width = viewWidth();
     m_marginLeft = 0;
     m_marginRight = 0;
 }
@@ -99,7 +99,7 @@ void RenderView::layout()
         m_minPrefWidth = m_maxPrefWidth = m_width;
 
     // Use calcWidth/Height to get the new width/height, since this will take the full page zoom factor into account.
-    bool relayoutChildren = !printing() && (!m_frameView || m_width != zoomedWidth() || m_height != zoomedHeight());
+    bool relayoutChildren = !printing() && (!m_frameView || m_width != viewWidth() || m_height != viewHeight());
     if (relayoutChildren)
         setChildNeedsLayout(true, false);
     
@@ -508,25 +508,19 @@ int RenderView::docWidth() const
     return w;
 }
 
-int RenderView::zoomedHeight() const
+int RenderView::viewHeight() const
 {
     int height = 0;
-    if (!printing() && m_frameView) {
+    if (!printing() && m_frameView)
         height = m_frameView->visibleHeight();
-        if (m_frameView->frame()->shouldApplyPageZoom())
-            height /= m_frameView->frame()->zoomFactor(); // FIXME: Will have rounding errors.
-    }
     return height;
 }
 
-int RenderView::zoomedWidth() const
+int RenderView::viewWidth() const
 {
     int width = 0;
-    if (!printing() && m_frameView) {
+    if (!printing() && m_frameView)
         width = m_frameView->visibleWidth();
-        if (m_frameView->frame()->shouldApplyPageZoom())
-            width /= m_frameView->frame()->zoomFactor(); // FIXME: Will have rounding errors.
-    }
     return width;
 }
 

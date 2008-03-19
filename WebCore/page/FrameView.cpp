@@ -254,15 +254,7 @@ void FrameView::adjustViewSize()
     RenderView* root = static_cast<RenderView*>(m_frame->renderer());
     if (!root)
         return;
-        
-    // Adjust for the zoom factor.  The RenderView is scaled by the zoom, but our viewport is not.
-    int width = root->overflowWidth();
-    int height = root->overflowHeight();
-    if (m_frame->shouldApplyPageZoom()) {
-        width *= m_frame->zoomFactor(); // FIXME: Will have rounding errors.
-        height *= m_frame->zoomFactor(); // FIXME: Will have rounding errors.
-    }
-    resizeContents(width, height);
+    resizeContents(root->overflowWidth(), root->overflowHeight());
 }
 
 void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, ScrollbarMode& vMode)

@@ -105,6 +105,7 @@ public:
         float smallerFontSize(float size, bool quirksMode) const;
 
     public:
+        void setStyle(RenderStyle* s) { m_style = s; } // Used by the document when setting up its root style.
         void setFontSize(FontDescription&, float size);
 
     private:

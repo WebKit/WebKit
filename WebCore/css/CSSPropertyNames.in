@@ -141,6 +141,7 @@ word-break
 word-spacing
 word-wrap
 z-index
+zoom
 -webkit-transition
 -webkit-transition-duration
 -webkit-transition-property

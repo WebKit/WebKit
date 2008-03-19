@@ -25,6 +25,7 @@
 #define RenderView_h
 
 #include "FrameView.h"
+#include "Frame.h"
 #include "LayoutState.h"
 #include "RenderBlock.h"
 
@@ -48,10 +49,12 @@ public:
     int docHeight() const;
     int docWidth() const;
 
-    // The same as the FrameView's visibleHeight/visibleWidth with the zoom factor applied.
-    int zoomedHeight() const;
-    int zoomedWidth() const;
+    // The same as the FrameView's visibleHeight/visibleWidth but with null check guards.
+    int viewHeight() const;
+    int viewWidth() const;
     
+    float zoomFactor() const { return m_frameView->frame() && m_frameView->frame()->shouldApplyPageZoom() ? m_frameView->frame()->zoomFactor() : 1.0f; }
+
     FrameView* frameView() const { return m_frameView; }
 
     virtual bool hasOverhangingFloats() { return false; }
