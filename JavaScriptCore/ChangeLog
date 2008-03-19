@@ -1,3 +1,30 @@
+2008-03-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - Speed up JavaScript built-in properties by changing the
+          hash table to take advantage of the identifier objects
+
+        5% speedup for Acid3 test 26
+
+        * JavaScriptCore.exp: Updated.
+        * kjs/create_hash_table: Compute size of hash table large enough so that there
+        are no collisions, but don't generate the hash table.
+        * kjs/identifier.h: Made the add function that returns a PassRefPtr public.
+        * kjs/lexer.cpp:
+        (KJS::Lexer::lex): Updated for change to HashTable interface.
+        * kjs/lookup.cpp:
+        (KJS::HashTable::changeKeysToIdentifiers): Added. Finds the identifier for
+        each property so the equality comparision can be done with pointer comparision.
+        * kjs/lookup.h: Made the key be a union of char* with UString::Rep* so it can
+        hold identifiers. Added a keysAreIdentifiers flag to the HashTable. Changed
+        the Lookup functions to be member functions of HashTable instead.
+        * kjs/object.cpp:
+        (KJS::JSObject::deleteProperty): Update for change to HashTable.
+        (KJS::JSObject::findPropertyHashEntry): Ditto.
+        (KJS::JSObject::getPropertyAttributes): Ditto.
+        (KJS::JSObject::getPropertyNames): Ditto.
+
 2008-03-18  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

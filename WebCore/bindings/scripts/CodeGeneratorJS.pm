@@ -605,7 +605,6 @@ sub GenerateImplementation
     $numAttributes++ if $dataNode->extendedAttributes->{"GenerateConstructor"};
 
     if ($numAttributes > 0) {
-        my $hashSize = $numAttributes;
         my $hashName = $className . "Table";
 
         my @hashKeys = ();      # ie. 'insertBefore'
@@ -640,7 +639,7 @@ sub GenerateImplementation
             push(@hashParameters, "0");
         }
 
-        $object->GenerateHashTable($hashName, $hashSize,
+        $object->GenerateHashTable($hashName,
                                    \@hashKeys, \@hashValues,
                                    \@hashSpecials, \@hashParameters);
     }
@@ -650,7 +649,6 @@ sub GenerateImplementation
 
     # - Add all constants
     if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
-        $hashSize = $numConstants;
         $hashName = $className . "ConstructorTable";
 
         @hashKeys = ();
@@ -672,7 +670,7 @@ sub GenerateImplementation
             push(@hashParameters, $numParameters);
         }
 
-        $object->GenerateHashTable($hashName, $hashSize,
+        $object->GenerateHashTable($hashName,
                                    \@hashKeys, \@hashValues,
                                    \@hashSpecials, \@hashParameters);
 
@@ -683,7 +681,6 @@ sub GenerateImplementation
     }
 
     # - Add functions and constants to a hashtable definition
-    $hashSize = $numFunctions + $numConstants;
     $hashName = $className . "PrototypeTable";
 
     @hashKeys = ();
@@ -723,7 +720,7 @@ sub GenerateImplementation
         push(@hashParameters, $numParameters);
     }
 
-    $object->GenerateHashTable($hashName, $hashSize,
+    $object->GenerateHashTable($hashName,
                                \@hashKeys, \@hashValues,
                                \@hashSpecials, \@hashParameters);
 
@@ -861,7 +858,7 @@ sub GenerateImplementation
 
         my $requiresManualLookup = $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"};
         if ($requiresManualLookup) {
-            push(@implContent, "    const HashEntry* entry = Lookup::findEntry(&${className}Table, propertyName);\n");
+            push(@implContent, "    const HashEntry* entry = ${className}Table.entry(propertyName);\n");
             push(@implContent, "    if (entry) {\n");
             push(@implContent, "        slot.setStaticEntry(this, entry, staticValueGetter<$className>);\n");
             push(@implContent, "        return true;\n");
@@ -1588,53 +1585,32 @@ sub GenerateHashTable
     my $object = shift;
 
     my $name = shift;
-    my $size = shift;
     my $keys = shift;
     my $values = shift;
     my $specials = shift;
     my $parameters = shift;
 
-    # Helpers
-    my @table = ();
-    my @links = ();
-
-    $size = ceilingToPowerOf2($size * 2);
-
-    my $maxDepth = 0;
-    my $collisions = 0;
-    my $numEntries = $size;
-
-    # Collect hashtable information
-    my $i = 0;
-    foreach (@{$keys}) {
-        my $depth = 0;
-        my $h = $object->GenerateHashValue($_) % $numEntries;
-
-        while (defined($table[$h])) {
-            if (defined($links[$h])) {
-                $h = $links[$h];
-                $depth++;
-            } else {
-                $collisions++;
-                $links[$h] = $size;
-                $h = $size;
-                $size++;
-            }
-        }
-
-        $table[$h] = $i;
-
-        $i++;
-        $maxDepth = $depth if ($depth > $maxDepth);
+    my @hashes = ();
+    foreach my $key (@{$keys}) {
+        push @hashes, $object->GenerateHashValue($key);
     }
 
-    # Ensure table is big enough (in case of undef entries at the end)
-    if ($#table + 1 < $size) {
-        $#table = $size - 1;
+    # Collect hashtable information
+    my $size;
+tableSizeLoop:
+    for ($size = ceilingToPowerOf2(scalar @{$keys}); ; $size += $size) {
+        my @table = ();
+        my $i = 0;
+        foreach my $hash (@hashes) {
+            my $h = $hash % $size;
+            next tableSizeLoop if defined $table[$h];
+            $table[$h] = $i++;
+        }
+        last;
     }
 
     # Start outputing the hashtables
-    my $nameEntries = "${name}Entries";
+    my $nameEntries = "${name}Values";
     $nameEntries =~ s/:/_/g;
 
     if (($name =~ /Prototype/) or ($name =~ /Constructor/)) {
@@ -1655,39 +1631,17 @@ sub GenerateHashTable
     }
 
     # Dump the hash table
-    push(@implContent, "\nstatic const HashEntry $nameEntries\[\] =\n\{\n");
-
-    $i = 0;
-    foreach $entry (@table) {
-        if (defined($entry)) {
-            my $key = @$keys[$entry];
-
-            push(@implContent, "    \{ \"" . $key . "\"");
-            push(@implContent, ", \{ (intptr_t)" . @$values[$entry] . " \}");
-            push(@implContent, ", " . @$specials[$entry]);
-            push(@implContent, ", " . @$parameters[$entry]);
-            push(@implContent, ", ");
-
-            if (defined($links[$i])) {
-                push(@implContent, "&" . $nameEntries . "[$links[$i]]" . " \}");
-            } else {
-                push(@implContent, "0 \}");
-            }
-        } else {
-            push(@implContent, "    { 0, { 0 }, 0, 0, 0 }");
-        }
-
-        push(@implContent, ",") unless($i eq $size - 1);
-        push(@implContent, "\n");
-
-        $i++;
+    my $count = scalar @{$keys} + 1;
+    push(@implContent, "\nstatic const HashTableValue $nameEntries\[$count\] =\n\{\n");
+    my $i = 0;
+    foreach my $key (@{$keys}) {
+        push(@implContent, "    { \"$key\", (intptr_t)@$values[$i], @$specials[$i], @$parameters[$i] },\n");
+        ++$i;
     }
-
-    my $sizeMask = $numEntries - 1;
-
+    push(@implContent, "    { 0, 0, 0, 0 }\n");
     push(@implContent, "};\n\n");
-    push(@implContent, "static const HashTable $name = \n");
-    push(@implContent, "{\n    3, $size, $nameEntries, $sizeMask\n};\n\n");
+    my $sizeMask = $size - 1;
+    push(@implContent, "static const HashTable $name = { $sizeMask, $nameEntries, 0 };\n\n");
 }
 
 # Internal helper

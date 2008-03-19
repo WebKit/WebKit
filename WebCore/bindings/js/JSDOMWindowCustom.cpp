@@ -71,13 +71,13 @@ bool JSDOMWindow::customGetOwnPropertySlot(ExecState* exec, const Identifier& pr
     if (!impl()->frame()) {
         // The following code is safe for cross-domain and same domain use.
         // It ignores any custom properties that might be set on the DOMWindow (including a custom prototype).
-        entry = Lookup::findEntry(info.propHashTable, propertyName);
-        if (entry && !(entry->attr & Function) && entry->value.intValue == ClosedAttrNum) {
+        entry = info.propHashTable->entry(propertyName);
+        if (entry && !(entry->attributes & Function) && entry->integerValue == ClosedAttrNum) {
             slot.setStaticEntry(this, entry, staticValueGetter<JSDOMWindow>);
             return true;
         }
-        entry = Lookup::findEntry(JSDOMWindowPrototype::info.propHashTable, propertyName);
-        if (entry && (entry->attr & Function) && entry->value.functionValue == jsDOMWindowPrototypeFunctionClose) {
+        entry = JSDOMWindowPrototype::info.propHashTable->entry(propertyName);
+        if (entry && (entry->attributes & Function) && entry->functionValue == jsDOMWindowPrototypeFunctionClose) {
             slot.setStaticEntry(this, entry, nonCachingStaticFunctionGetter);
             return true;
         }
@@ -104,14 +104,14 @@ bool JSDOMWindow::customGetOwnPropertySlot(ExecState* exec, const Identifier& pr
     // prototype due to the blanket same origin (allowsAccessFrom) check at the end of getOwnPropertySlot.
     // Also, it's important to get the implementation straight out of the DOMWindow prototype regardless of
     // what prototype is actually set on this object.
-    entry = Lookup::findEntry(JSDOMWindowPrototype::info.propHashTable, propertyName);
+    entry = JSDOMWindowPrototype::info.propHashTable->entry(propertyName);
     if (entry) {
-        if ((entry->attr & Function)
-                && (entry->value.functionValue == jsDOMWindowPrototypeFunctionBlur
-                    || entry->value.functionValue == jsDOMWindowPrototypeFunctionClose
-                    || entry->value.functionValue == jsDOMWindowPrototypeFunctionFocus
+        if ((entry->attributes & Function)
+                && (entry->functionValue == jsDOMWindowPrototypeFunctionBlur
+                    || entry->functionValue == jsDOMWindowPrototypeFunctionClose
+                    || entry->functionValue == jsDOMWindowPrototypeFunctionFocus
 #if ENABLE(CROSS_DOCUMENT_MESSAGING)
-                    || entry->value.functionValue == jsDOMWindowPrototypeFunctionPostMessage
+                    || entry->functionValue == jsDOMWindowPrototypeFunctionPostMessage
 #endif
                     )) {
             if (!allowsAccess) {

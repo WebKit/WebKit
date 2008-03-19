@@ -1,3 +1,30 @@
+2008-03-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - Speed up JavaScript built-in properties by changing the
+          hash table to take advantage of the identifier objects
+
+        5% speedup for Acid3 test 26
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::getOwnPropertySlot): Update for change to HashTable.
+        (WebCore::JSDOMWindowBase::put): Ditto.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot): Ditto.
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        (WebCore::JSHTMLInputElementBase::getOwnPropertySlot): Ditto.
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::customGetOwnPropertySlot): Ditto.
+        * bindings/js/JSLocation.cpp:
+        (WebCore::JSLocation::customGetOwnPropertySlot): Ditto.
+        (WebCore::JSLocation::put): Ditto.
+        * bindings/js/kjs_binding.cpp:
+        (WebCore::nonCachingStaticFunctionGetter): Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Same changes as in the
+        create_hash_table script.
+
 2008-03-18  Matt Lilek  <webkit@mattlilek.com>
 
         Fix the Gtk build for real this time.

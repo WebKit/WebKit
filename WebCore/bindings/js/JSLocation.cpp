@@ -114,11 +114,11 @@ bool JSLocation::customGetOwnPropertySlot(ExecState* exec, const Identifier& pro
         return false;
 
     // Check for the few functions that we allow, even when called cross-domain.
-    const HashEntry* entry = Lookup::findEntry(&JSLocationTable, propertyName);
-    if (entry && (entry->attr & Function)
-            && (entry->value.functionValue == jsLocationProtoFuncReplace
-                || entry->value.functionValue == jsLocationProtoFuncReload
-                || entry->value.functionValue == jsLocationProtoFuncAssign)) {
+    const HashEntry* entry = JSLocationTable.entry(propertyName);
+    if (entry && (entry->attributes & Function)
+            && (entry->functionValue == jsLocationProtoFuncReplace
+                || entry->functionValue == jsLocationProtoFuncReload
+                || entry->functionValue == jsLocationProtoFuncAssign)) {
         slot.setStaticEntry(this, entry, nonCachingStaticFunctionGetter);
         return true;
     }
@@ -140,16 +140,18 @@ void JSLocation::put(ExecState* exec, const Identifier& propertyName, JSValue* v
   KURL url = m_frame->loader()->url();
   bool sameDomainAccess = allowsAccessFromFrame(exec, m_frame);
 
-  const HashEntry* entry = Lookup::findEntry(&JSLocationTable, propertyName);
+  const HashEntry* entry = JSLocationTable.entry(propertyName);
 
   if (entry) {
+      // FIXME: This isn't checking the function attribute. Is that OK?
+
       // cross-domain access to the location is allowed when assigning the whole location,
       // but not when assigning the individual pieces, since that might inadvertently
       // disclose other parts of the original location.
-      if (entry->value.intValue != Href && !sameDomainAccess)
+      if (entry->integerValue != Href && !sameDomainAccess)
           return;
 
-      switch (entry->value.intValue) {
+      switch (entry->integerValue) {
       case Href: {
           // FIXME: Why isn't this security check needed for the other properties, like Host, below?
           Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();

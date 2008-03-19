@@ -523,7 +523,7 @@ int Lexer::lex()
   }
 #endif
 
-  if (state != Identifier && eatNextIdentifier)
+  if (state != Identifier)
     eatNextIdentifier = false;
 
   restrKeyword = false;
@@ -536,32 +536,29 @@ int Lexer::lex()
     token = 0;
     break;
   case Other:
-    if(token == '}' || token == ';') {
+    if (token == '}' || token == ';')
       delimited = true;
+    break;
+  case Identifier:
+    // Apply anonymous-function hack below (eat the identifier).
+    if (eatNextIdentifier) {
+      eatNextIdentifier = false;
+      token = lex();
+      break;
     }
+    kjsyylval.ident = makeIdentifier(m_buffer16);
+    token = IDENT;
     break;
   case IdentifierOrKeyword:
-    if ((token = Lookup::find(&mainTable, m_buffer16.data(), m_buffer16.size())) < 0) {
-  case Identifier:
-      // Lookup for keyword failed, means this is an identifier
-      // Apply anonymous-function hack below (eat the identifier)
-      if (eatNextIdentifier) {
-        eatNextIdentifier = false;
-        token = lex();
-        break;
-      }
-      kjsyylval.ident = makeIdentifier(m_buffer16);
+    kjsyylval.ident = makeIdentifier(m_buffer16);
+    if ((token = mainTable.value(*kjsyylval.ident)) < 0) {
+      // Lookup for keyword failed, means this is an identifier.
       token = IDENT;
       break;
     }
-
-    eatNextIdentifier = false;
-    // Hack for "f = function somename() { ... }", too hard to get into the grammar
-    if (token == FUNCTION && lastToken == '=' )
-      eatNextIdentifier = true;
-
-    if (token == CONTINUE || token == BREAK ||
-        token == RETURN || token == THROW)
+    // Hack for "f = function somename() { ... }"; too hard to get into the grammar.
+    eatNextIdentifier = token == FUNCTION && lastToken == '=';
+    if (token == CONTINUE || token == BREAK || token == RETURN || token == THROW)
       restrKeyword = true;
     break;
   case String:

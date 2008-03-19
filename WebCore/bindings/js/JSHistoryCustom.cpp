@@ -48,13 +48,13 @@ bool JSHistory::customGetOwnPropertySlot(ExecState* exec, const Identifier& prop
         return false;
 
     // Check for the few functions that we allow, even when called cross-domain.
-    const HashEntry* entry = Lookup::findEntry(JSHistoryPrototype::info.propHashTable, propertyName);
+    const HashEntry* entry = JSHistoryPrototype::info.propHashTable->entry(propertyName);
     if (entry) {
         // Allow access to back(), forward() and go() from any frame.
-        if ((entry->attr & Function)
-                && (entry->value.functionValue == jsHistoryPrototypeFunctionBack
-                    || entry->value.functionValue == jsHistoryPrototypeFunctionForward
-                    || entry->value.functionValue == jsHistoryPrototypeFunctionGo)) {
+        if ((entry->attributes & Function)
+                && (entry->functionValue == jsHistoryPrototypeFunctionBack
+                    || entry->functionValue == jsHistoryPrototypeFunctionForward
+                    || entry->functionValue == jsHistoryPrototypeFunctionGo)) {
             slot.setStaticEntry(this, entry, nonCachingStaticFunctionGetter);
             return true;
         }

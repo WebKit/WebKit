@@ -239,7 +239,7 @@ static inline bool isValidNamePart(UChar32 c)
 }
 
 static Widget* widgetForNode(Node* focusedNode)
-  {
+{
     if (!focusedNode)
         return 0;
     RenderObject* renderer = focusedNode->renderer();

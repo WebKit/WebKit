@@ -44,57 +44,50 @@ my @values = ();
 my @attrs = ();
 my @params = ();
 my @hashes = ();
-my @table = ();
-my @links = ();
 
 my $inside = 0;
 my $name;
 my $size;
-my $hashSizeMask;
 my $banner = 0;
-sub calcTable();
+sub calcSize();
 sub output();
 sub hashValue($);
 
 while (<IN>) {
-  chop;
-  s/^\s*//g;
-  if (/^\#|^$/) {
-      # comment. do nothing
-    } elsif (/^\@begin/ && !$inside) {
-      if (/^\@begin\s*([:_\w]+)\s*\d*\s*$/) {
-        $inside = 1;
-        $name = $1;
-      } else {
-         printf STDERR "WARNING: \@begin without table name and hashsize, skipping $_\n";
-      }
+    chomp;
+    s/^\s+//;
+    next if /^\#|^$/; # Comment or blank line. Do nothing.
+    if (/^\@begin/ && !$inside) {
+        if (/^\@begin\s*([:_\w]+)\s*\d*\s*$/) {
+            $inside = 1;
+            $name = $1;
+        } else {
+            print STDERR "WARNING: \@begin without table name, skipping $_\n";
+        }
     } elsif (/^\@end\s*$/ && $inside) {
+        calcSize();
+        output();
 
-      calcTable();
+        @keys = ();
+        @values = ();
+        @attrs = ();
+        @params = ();
+        @hashes = ();
 
-      output();
-      @keys = ();
-      @values = ();
-      @attrs = ();
-      @params = ();
-      @table = ();
-      @links = ();
-      @hashes = ();
-      $inside = 0;
+        $inside = 0;
     } elsif (/^(\S+)\s*(\S+)\s*([\w\|]*)\s*(\w*)\s*$/ && $inside) {
-      my $key = $1;
-      my $val = $2;
-      my $att = $3;
-      my $param = $4;
-      push(@keys, $key);
-      push(@values, $val);
-      push(@hashes, hashValue($key));
-      printf STDERR "WARNING: Number of arguments missing for $key/$val\n"
-        if ( $att =~ m/Function/ && length($param) == 0);
-      push(@attrs, length($att) > 0 ? $att : "0");
-      push(@params, length($param) > 0 ? $param : "0");
+        my $key = $1;
+        my $val = $2;
+        my $att = $3;
+        my $param = $4;
+        push(@keys, $key);
+        push(@values, $val);
+        push(@hashes, hashValue($key));
+        printf STDERR "WARNING: Number of arguments missing for $key/$val\n" if ($att =~ m/Function/ && length($param) == 0);
+        push(@attrs, length($att) > 0 ? $att : "0");
+        push(@params, length($param) > 0 ? $param : "0");
     } elsif ($inside) {
-      die "invalid data {" . $_ . "}";
+        die "invalid data {" . $_ . "}";
     }
 }
 
@@ -112,36 +105,18 @@ sub ceilingToPowerOf2
     return $powerOf2;
 }
 
-sub calcTable() {
-  my $hashsize = ceilingToPowerOf2(2 * @keys);
-  $hashSizeMask = $hashsize - 1;
-  $size = $hashsize;
-  my $collisions = 0;
-  my $maxdepth = 0;
-  my $i = 0;
-  foreach my $key (@keys) {
-    my $depth = 0;
-    my $h = hashValue($key) % $hashsize;
-    while (defined($table[$h])) {
-      if (defined($links[$h])) {
-	$h = $links[$h];
-	$depth++;
-      } else {
-	$collisions++;
-	$links[$h] = $size;
-	$h = $size;
-	$size++;
-      }
+sub calcSize()
+{
+tableSizeLoop:
+    for ($size = ceilingToPowerOf2(scalar @keys); ; $size += $size) {
+        my @table = ();
+        foreach my $key (@keys) {
+            my $h = hashValue($key) % $size;
+            next tableSizeLoop if $table[$h];
+            $table[$h] = 1;
+        }
+        last;
     }
-    $table[$h] = $i;
-    $i++;
-    $maxdepth = $depth if ( $depth > $maxdepth);
-  }
-
-  # Ensure table is big enough (in case of undef entries at the end)
-  if ( $#table+1 < $size ) {
-    $#table = $size-1;
-  }
 }
 
 sub leftShift($$) {
@@ -203,48 +178,31 @@ sub hashValue($) {
 }
 
 sub output() {
-  if (!$banner) {
-    $banner = 1;
-    print "/* Automatically generated from $file using $0. DO NOT EDIT ! */\n";
-  }
-
-  my $nameEntries = "${name}Entries";
-  $nameEntries =~ s/:/_/g;
-
-  print "\n#include \"lookup.h\"\n" if ($includelookup);
-  if ($useNameSpace) {
-    print "\nnamespace ${useNameSpace}\n{\n";
-    print "\nusing namespace KJS;";
-  } else {
-    print "\nnamespace KJS {\n";
-  }
-  print "\nstatic const struct HashEntry ".$nameEntries."[] = {\n";
-  my $i = 0;
-  
-    foreach my $entry (@table) {
-      if (defined($entry)) {
-        my $key = $keys[$entry];
-        print "   \{ \"" . $key . "\"";
-        print ", { (intptr_t)" . $values[$entry] . " }";
-        print ", " . $attrs[$entry];
-        print ", " . $params[$entry];
-        print ", ";
-        if (defined($links[$i])) {
-          print "&" . $nameEntries . "[" . $links[$i] . "]" . " \}";
-        } else {
-          print "0 \}"
-        }
-        print "/* " . $hashes[$entry] . " */ ";
-      } else {
-        print "   { 0, { 0 }, 0, 0, 0 }";
-      }    
-      print "," unless ($i == $size - 1);
-      print "\n";
-      $i++;
+    if (!$banner) {
+        $banner = 1;
+        print "// Automatically generated from $file using $0. DO NOT EDIT!\n";
     }
 
-  print "};\n\n";
-  print "const struct HashTable $name = ";
-  print "\{ 3, $size, $nameEntries, $hashSizeMask \};\n\n";
-  print "} // namespace\n";
+    my $nameEntries = "${name}Values";
+    $nameEntries =~ s/:/_/g;
+
+    print "\n#include \"lookup.h\"\n" if ($includelookup);
+    if ($useNameSpace) {
+        print "\nnamespace ${useNameSpace}\n{\n";
+        print "\nusing namespace KJS;";
+    } else {
+        print "\nnamespace KJS {\n";
+    }
+    my $count = scalar @keys + 1;
+    print "\nstatic const struct HashTableValue ${nameEntries}[$count] = {\n";
+    my $i = 0;
+    foreach my $key (@keys) {
+        print "   { \"$key\", (intptr_t)$values[$i], $attrs[$i], $params[$i] },\n";
+        $i++;
+    }
+    print "   { 0, 0, 0, 0 }\n";
+    print "};\n\n";
+    print "const struct HashTable $name = ";
+    print "\{ ", $size - 1, ", $nameEntries, 0 \};\n\n";
+    print "} // namespace\n";
 }
