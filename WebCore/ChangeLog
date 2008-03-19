@@ -1,3 +1,9 @@
+2008-03-18  Matt Lilek  <webkit@mattlilek.com>
+
+        Fix the Gtk build for real this time.
+
+        * platform/network/curl/AuthenticationChallenge.h:
+
 2008-03-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

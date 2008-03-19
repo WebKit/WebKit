@@ -26,9 +26,12 @@
 #define AuthenticationChallenge_h
 
 #include "AuthenticationChallengeBase.h"
+#include "ResourceHandle.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+class ResourceHandle;
 
 class AuthenticationChallenge : public AuthenticationChallengeBase {
 public:
