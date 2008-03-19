@@ -1,3 +1,26 @@
+2008-03-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5794920> Acid3: Assertion failure in VisiblePosition::previous when clicking on results (17004)
+        
+        The position inside an empty inline-block was a candidate, but upstream and downstream
+        would move across it without stopping.  This confused canonicalPosition, since no more
+        than two candidates should have the same upstream/downstream (be visually equivalent).
+        
+        Code was added intentionally in isCandidate to make VisiblePositions inside empty 
+        inline-blocks, so we need to make upstream/downstream understand that.
+
+        * dom/Position.cpp:
+        (WebCore::endsOfNodeAreVisuallyDistinctPositions): upstream and downstream used to only
+        stop when entering or leaving a non-inline element (referred to as a "block").  We must also 
+        avoid entering or leaving an empty inline-block.  This will allow a VisiblePosition there, to 
+        match up with what the code in isCandidate intended.
+        (WebCore::enclosingVisualBoundary): Removed enclosingBlock and replaced it with this.
+        (WebCore::Position::upstream): Added better comments, called the new functions.
+        (WebCore::Position::downstream): Ditto.
+        * dom/Position.h:
+
 2008-03-19  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by John Sullivan.

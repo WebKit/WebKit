@@ -79,8 +79,8 @@ public:
     // These aren't really basic "position" operations. More high level editing helper functions.
     Position leadingWhitespacePosition(EAffinity, bool considerNonCollapsibleWhitespace = false) const;
     Position trailingWhitespacePosition(EAffinity, bool considerNonCollapsibleWhitespace = false) const;
-
-    // p.upstream() through p.downstream() is the range of positions that map to the same VisiblePosition as p.
+    
+    // These return useful visually equivalent positions.
     Position upstream() const;
     Position downstream() const;
     

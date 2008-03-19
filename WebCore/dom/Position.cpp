@@ -34,7 +34,6 @@
 #include "HTMLNames.h"
 #include "Logging.h"
 #include "PositionIterator.h"
-#include "RenderBlock.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
@@ -265,6 +264,34 @@ Position Position::nextCharacterPosition(EAffinity affinity) const
     return *this;
 }
 
+// Whether or not [node, 0] and [node, maxDeepOffset(node)] are their own VisiblePositions.
+// If true, adjacent candidates are visually distinct.
+// FIXME: Disregard nodes with renderers that have no height, as we do in isCandidate.
+// FIXME: Share code with isCandidate, if possible.
+static bool endsOfNodeAreVisuallyDistinctPositions(Node* node)
+{
+    if (!node || !node->renderer())
+        return false;
+        
+    if (!node->renderer()->isInline())
+        return true;
+        
+    // Don't include inline tables.
+    if (node->hasTagName(tableTag))
+        return false;
+    
+    // There is a VisiblePosition inside an empty inline-block container.
+    return node->renderer()->isReplaced() && canHaveChildrenForEditing(node) && node->renderer()->height() != 0 && !node->firstChild();
+}
+
+static Node* enclosingVisualBoundary(Node* node)
+{
+    while (node && !endsOfNodeAreVisuallyDistinctPositions(node))
+        node = node->parentNode();
+        
+    return node;
+}
+
 // upstream() and downstream() want to return positions that are either in a
 // text node or at just before a non-text node.  This method checks for that.
 static bool isStreamer(const PositionIterator& pos)
@@ -278,17 +305,12 @@ static bool isStreamer(const PositionIterator& pos)
     return pos.atStartOfNode();
 }
 
-// enclosingBlock does some expensive editability checks, upstream and downstream
-// can avoid those because they do their own editability checking.
-static Node* enclosingBlockIgnoringEditability(Node* node)
-{
-    while (node && !isBlock(node))
-        node = node->parentNode();
-        
-    return node;
-}
-
-// p.upstream() returns the start of the range of positions that map to the same VisiblePosition as P.
+// This function and downstream() are used for moving back and forth between visually equivalent candidates.
+// For example, for the text node "foo     bar" where whitespace is collapsible, there are two candidates 
+// that map to the VisiblePosition between 'b' and the space.  This function will return the left candidate 
+// and downstream() will return the right one.
+// Also, upstream() will return [boundary, 0] for any of the positions from [boundary, 0] to the first candidate
+// in boundary, where endsOfNodeAreVisuallyDistinctPositions(boundary) is true.
 Position Position::upstream() const
 {
     Node* startNode = node();
@@ -296,7 +318,7 @@ Position Position::upstream() const
         return Position();
     
     // iterate backward from there, looking for a qualified position
-    Node* originalBlock = enclosingBlockIgnoringEditability(startNode);
+    Node* boundary = enclosingVisualBoundary(startNode);
     PositionIterator lastVisible = *this;
     PositionIterator currentPos = lastVisible;
     bool startEditable = startNode->isContentEditable();
@@ -314,9 +336,9 @@ Position Position::upstream() const
             lastNode = currentNode;
         }
 
-        // Don't enter a new enclosing block flow or table element.  There is code below that
-        // terminates early if we're about to leave a block.
-        if (isBlock(currentNode) && currentNode != originalBlock)
+        // If we've moved to a position that is visually disinct, return the last saved position. There 
+        // is code below that terminates early if we're *about* to move to a visually distinct position.
+        if (endsOfNodeAreVisuallyDistinctPositions(currentNode) && currentNode != boundary)
             return lastVisible;
 
         // skip position in unrendered or invisible node
@@ -328,9 +350,9 @@ Position Position::upstream() const
         if (isStreamer(currentPos))
             lastVisible = currentPos;
         
-        // Don't leave a block flow or table element.  We could rely on code above to terminate and 
+        // Don't move past a position that is visually distinct.  We could rely on code above to terminate and 
         // return lastVisible on the next iteration, but we terminate early to avoid doing a nodeIndex() call.
-        if (isBlock(currentNode) && currentPos.atStartOfNode())
+        if (endsOfNodeAreVisuallyDistinctPositions(currentNode) && currentPos.atStartOfNode())
             return lastVisible;
 
         // Return position after tables and nodes which have content that can be ignored.
@@ -368,7 +390,12 @@ Position Position::upstream() const
     return lastVisible;
 }
 
-// P.downstream() returns the end of the range of positions that map to the same VisiblePosition as P.
+// This function and upstream() are used for moving back and forth between visually equivalent candidates.
+// For example, for the text node "foo     bar" where whitespace is collapsible, there are two candidates 
+// that map to the VisiblePosition between 'b' and the space.  This function will return the right candidate 
+// and upstream() will return the left one.
+// Also, downstream() will return the last position in the last atomic node in boundary for all of the positions
+// in boundary after the last candidate, where endsOfNodeAreVisuallyDistinctPositions(boundary).
 Position Position::downstream() const
 {
     Node* startNode = node();
@@ -376,7 +403,7 @@ Position Position::downstream() const
         return Position();
 
     // iterate forward from there, looking for a qualified position
-    Node* originalBlock = enclosingBlockIgnoringEditability(startNode);
+    Node* boundary = enclosingVisualBoundary(startNode);
     PositionIterator lastVisible = *this;
     PositionIterator currentPos = lastVisible;
     bool startEditable = startNode->isContentEditable();
@@ -399,13 +426,13 @@ Position Position::downstream() const
         if (currentNode->hasTagName(bodyTag) && currentPos.atEndOfNode())
             break;
             
-        // Do not enter a new enclosing block.
-        if (isBlock(currentNode) && currentNode != originalBlock)
+        // Do not move to a visually distinct position.
+        if (endsOfNodeAreVisuallyDistinctPositions(currentNode) && currentNode != boundary)
             return lastVisible;
-        // Do not leave the original enclosing block.
-        // Note: The first position after the last one in the original block 
-        // will be [originalBlock->parentNode(), originalBlock->nodeIndex() + 1].
-        if (originalBlock && originalBlock->parentNode() == currentNode)
+        // Do not move past a visually disinct position.
+        // Note: The first position after the last in a node whose ends are visually distinct
+        // positions will be [boundary->parentNode(), originalBlock->nodeIndex() + 1].
+        if (boundary && boundary->parentNode() == currentNode)
             return lastVisible;
 
         // skip position in unrendered or invisible node
