@@ -26,6 +26,7 @@
 #define AuthenticationChallenge_h
 
 #include "AuthenticationChallengeBase.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
