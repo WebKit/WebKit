@@ -205,4 +205,11 @@ shouldBe("compileAndSerializeLeftmostTest('var a = 1, b = 2')", "'var a = 1, b =
 shouldBe("compileAndSerializeLeftmostTest('var a, b, c')", "'var a, b, c'");
 shouldBe("compileAndSerializeLeftmostTest('var a = 1, b = 2, c = 3')", "'var a = 1, b = 2, c = 3'");
 
+shouldBe("compileAndSerializeLeftmostTest('const a = 1')", "'const a = 1'");
+shouldBe("compileAndSerializeLeftmostTest('const a = (1, 2)')", "'const a = (1, 2)'");
+shouldBe("compileAndSerializeLeftmostTest('const a = 1, b = 1')", "'const a = 1, b = 1'");
+shouldBe("compileAndSerializeLeftmostTest('const a = (1, 2), b = 1')", "'const a = (1, 2), b = 1'");
+shouldBe("compileAndSerializeLeftmostTest('const a = 1, b = (1, 2)')", "'const a = 1, b = (1, 2)'");
+shouldBe("compileAndSerializeLeftmostTest('const a = (1, 2), b = (1, 2)')", "'const a = (1, 2), b = (1, 2)'");
+
 var successfullyParsed = true;

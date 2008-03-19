@@ -1,3 +1,14 @@
+2008-03-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 17929: Incorrect decompilation with |const|, comma
+        http://bugs.webkit.org/show_bug.cgi?id=17929
+
+        Test cases for converting const nodes to string.
+
+        * fast/js/resources/function-toString-parentheses.js:
+
 2008-03-18  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.
