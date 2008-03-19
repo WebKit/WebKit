@@ -36,7 +36,7 @@ CSSImageValue::CSSImageValue(const String& url, StyleBase* style)
 }
 
 CSSImageValue::CSSImageValue()
-    : CSSPrimitiveValue(CSS_VAL_NONE)
+    : CSSPrimitiveValue(CSSValueNone)
     , m_image(0)
     , m_accessedImage(true)
 {

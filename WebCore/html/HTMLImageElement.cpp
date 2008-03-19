@@ -93,26 +93,26 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute* attr)
     } else if (attrName == srcAttr)
         m_imageLoader.updateFromElement();
     else if (attrName == widthAttr)
-        addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
+        addCSSLength(attr, CSSPropertyWidth, attr->value());
     else if (attrName == heightAttr)
-        addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
+        addCSSLength(attr, CSSPropertyHeight, attr->value());
     else if (attrName == borderAttr) {
         // border="noborder" -> border="0"
-        addCSSLength(attr, CSS_PROP_BORDER_WIDTH, attr->value().toInt() ? attr->value() : "0");
-        addCSSProperty(attr, CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
-        addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
-        addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
-        addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
+        addCSSLength(attr, CSSPropertyBorderWidth, attr->value().toInt() ? attr->value() : "0");
+        addCSSProperty(attr, CSSPropertyBorderTopStyle, CSSValueSolid);
+        addCSSProperty(attr, CSSPropertyBorderRightStyle, CSSValueSolid);
+        addCSSProperty(attr, CSSPropertyBorderBottomStyle, CSSValueSolid);
+        addCSSProperty(attr, CSSPropertyBorderLeftStyle, CSSValueSolid);
     } else if (attrName == vspaceAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
+        addCSSLength(attr, CSSPropertyMarginTop, attr->value());
+        addCSSLength(attr, CSSPropertyMarginBottom, attr->value());
     } else if (attrName == hspaceAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
+        addCSSLength(attr, CSSPropertyMarginLeft, attr->value());
+        addCSSLength(attr, CSSPropertyMarginRight, attr->value());
     } else if (attrName == alignAttr)
         addHTMLAlignment(attr);
     else if (attrName == valignAttr)
-        addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
+        addCSSProperty(attr, CSSPropertyVerticalAlign, attr->value());
     else if (attrName == usemapAttr) {
         if (attr->value().string()[0] == '#')
             usemap = attr->value();

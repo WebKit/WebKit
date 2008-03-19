@@ -48,7 +48,7 @@ bool HTMLUListElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
 void HTMLUListElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == typeAttr)
-        addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, attr->value());
+        addCSSProperty(attr, CSSPropertyListStyleType, attr->value());
     else
         HTMLElement::parseMappedAttribute(attr);
 }

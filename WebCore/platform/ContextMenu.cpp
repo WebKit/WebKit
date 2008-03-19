@@ -569,7 +569,7 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
             ExceptionCode ec = 0;
             RefPtr<CSSStyleDeclaration> style = frame->document()->createCSSStyleDeclaration();
             String direction = item.action() == ContextMenuItemTagLeftToRight ? "ltr" : "rtl";
-            style->setProperty(CSS_PROP_DIRECTION, direction, false, ec);
+            style->setProperty(CSSPropertyDirection, direction, false, ec);
             shouldCheck = frame->editor()->selectionHasStyle(style.get()) != FalseTriState;
             shouldEnable = true;
             break;
@@ -600,7 +600,7 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagUnderline: {
             ExceptionCode ec = 0;
             RefPtr<CSSStyleDeclaration> style = frame->document()->createCSSStyleDeclaration();
-            style->setProperty(CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT, "underline", false, ec);
+            style->setProperty(CSSPropertyWebkitTextDecorationsInEffect, "underline", false, ec);
             shouldCheck = frame->editor()->selectionHasStyle(style.get()) != FalseTriState;
             shouldEnable = frame->editor()->canEditRichly();
             break;
@@ -618,7 +618,7 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagItalic: {
             ExceptionCode ec = 0;
             RefPtr<CSSStyleDeclaration> style = frame->document()->createCSSStyleDeclaration();
-            style->setProperty(CSS_PROP_FONT_STYLE, "italic", false, ec);
+            style->setProperty(CSSPropertyFontStyle, "italic", false, ec);
             shouldCheck = frame->editor()->selectionHasStyle(style.get()) != FalseTriState;
             shouldEnable = frame->editor()->canEditRichly();
             break;
@@ -626,7 +626,7 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagBold: {
             ExceptionCode ec = 0;
             RefPtr<CSSStyleDeclaration> style = frame->document()->createCSSStyleDeclaration();
-            style->setProperty(CSS_PROP_FONT_WEIGHT, "bold", false, ec);
+            style->setProperty(CSSPropertyFontWeight, "bold", false, ec);
             shouldCheck = frame->editor()->selectionHasStyle(style.get()) != FalseTriState;
             shouldEnable = frame->editor()->canEditRichly();
             break;

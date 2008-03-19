@@ -1099,8 +1099,8 @@ void Document::recalcStyle(StyleChange change)
                 fontDescription.firstFamily().setFamily(stdfont);
                 fontDescription.firstFamily().appendFamily(0);
             }
-            fontDescription.setKeywordSize(CSS_VAL_MEDIUM - CSS_VAL_XX_SMALL + 1);
-            m_styleSelector->setFontSize(fontDescription, m_styleSelector->fontSizeForKeyword(CSS_VAL_MEDIUM, inCompatMode(), false));
+            fontDescription.setKeywordSize(CSSValueMedium - CSSValueXxSmall + 1);
+            m_styleSelector->setFontSize(fontDescription, m_styleSelector->fontSizeForKeyword(CSSValueMedium, inCompatMode(), false));
         }
 
         _style->setFontDescription(fontDescription);

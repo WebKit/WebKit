@@ -282,7 +282,7 @@ int SVGFontFaceElement::descent() const
 
 String SVGFontFaceElement::fontFamily() const
 {
-    return m_styleDeclaration->getPropertyValue(CSS_PROP_FONT_FAMILY);
+    return m_styleDeclaration->getPropertyValue(CSSPropertyFontFamily);
 }
 
 SVGFontElement* SVGFontFaceElement::associatedFontElement() const
@@ -310,7 +310,7 @@ void SVGFontFaceElement::rebuildFontFace()
 #if 0
     // @font-face (CSSFontFace) does not yet support definition-src, as soon as it does this code should do the trick!
     if (definitionSrc)
-        m_styleDeclaration->setProperty(CSS_PROP_DEFINITION_SRC, definitionSrc->getAttribute(XLinkNames::hrefAttr), false);
+        m_styleDeclaration->setProperty(CSSPropertyDefinitionSrc, definitionSrc->getAttribute(XLinkNames::hrefAttr), false);
 #endif
 
     bool describesParentFont = parentNode()->hasTagName(fontTag);
@@ -328,13 +328,13 @@ void SVGFontFaceElement::rebuildFontFace()
         return;
 
     // Parse in-memory CSS rules
-    CSSProperty srcProperty(CSS_PROP_SRC, list);
+    CSSProperty srcProperty(CSSPropertySrc, list);
     const CSSProperty* srcPropertyRef = &srcProperty;
     m_styleDeclaration->addParsedProperties(&srcPropertyRef, 1);
 
     if (describesParentFont) {    
         // Traverse parsed CSS values and associate CSSFontFaceSrcValue elements with ourselves.
-        RefPtr<CSSValue> src = m_styleDeclaration->getPropertyCSSValue(CSS_PROP_SRC);
+        RefPtr<CSSValue> src = m_styleDeclaration->getPropertyCSSValue(CSSPropertySrc);
         CSSValueList* srcList = static_cast<CSSValueList*>(src.get());
 
         unsigned srcLength = srcList ? srcList->length() : 0;

@@ -339,24 +339,24 @@ void RenderThemeWin::systemFont(int propId, FontDescription& fontDescription) co
     FontDescription* cachedDesc;
     float fontSize = 0;
     switch (propId) {
-        case CSS_VAL_SMALL_CAPTION:
+        case CSSValueSmallCaption:
             cachedDesc = &smallSystemFont;
             break;
-        case CSS_VAL_MENU:
+        case CSSValueMenu:
             cachedDesc = &menuFont;
             break;
-        case CSS_VAL_STATUS_BAR:
+        case CSSValueStatusBar:
             cachedDesc = &labelFont;
             if (!labelFont.isAbsoluteSize())
                 fontSize = 10.0f;
             break;
-        case CSS_VAL__WEBKIT_MINI_CONTROL:
+        case CSSValueWebkitMiniControl:
             cachedDesc = &miniControlFont;
             break;
-        case CSS_VAL__WEBKIT_SMALL_CONTROL:
+        case CSSValueWebkitSmallControl:
             cachedDesc = &smallControlFont;
             break;
-        case CSS_VAL__WEBKIT_CONTROL:
+        case CSSValueWebkitControl:
             cachedDesc = &controlFont;
             break;
         default:

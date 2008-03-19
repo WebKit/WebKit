@@ -62,37 +62,37 @@ bool HTMLTablePartElement::mapToEntry(const QualifiedName& attrName, MappedAttri
 void HTMLTablePartElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == bgcolorAttr)
-        addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
+        addCSSColor(attr, CSSPropertyBackgroundColor, attr->value());
     else if (attr->name() == backgroundAttr) {
         String url = parseURL(attr->value());
         if (!url.isEmpty())
-            addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, document()->completeURL(url).string());
+            addCSSImageProperty(attr, CSSPropertyBackgroundImage, document()->completeURL(url).string());
     } else if (attr->name() == bordercolorAttr) {
         if (!attr->value().isEmpty()) {
-            addCSSColor(attr, CSS_PROP_BORDER_COLOR, attr->value());
-            addCSSProperty(attr, CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
-            addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
+            addCSSColor(attr, CSSPropertyBorderColor, attr->value());
+            addCSSProperty(attr, CSSPropertyBorderTopStyle, CSSValueSolid);
+            addCSSProperty(attr, CSSPropertyBorderBottomStyle, CSSValueSolid);
+            addCSSProperty(attr, CSSPropertyBorderLeftStyle, CSSValueSolid);
+            addCSSProperty(attr, CSSPropertyBorderRightStyle, CSSValueSolid);
         }
     } else if (attr->name() == valignAttr) {
         if (!attr->value().isEmpty())
-            addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
+            addCSSProperty(attr, CSSPropertyVerticalAlign, attr->value());
     } else if (attr->name() == alignAttr) {
         const AtomicString& v = attr->value();
         if (equalIgnoringCase(v, "middle") || equalIgnoringCase(v, "center"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_CENTER);
+            addCSSProperty(attr, CSSPropertyTextAlign, CSSValueWebkitCenter);
         else if (equalIgnoringCase(v, "absmiddle"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL_CENTER);
+            addCSSProperty(attr, CSSPropertyTextAlign, CSSValueCenter);
         else if (equalIgnoringCase(v, "left"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_LEFT);
+            addCSSProperty(attr, CSSPropertyTextAlign, CSSValueWebkitLeft);
         else if (equalIgnoringCase(v, "right"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_RIGHT);
+            addCSSProperty(attr, CSSPropertyTextAlign, CSSValueWebkitRight);
         else
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, v);
+            addCSSProperty(attr, CSSPropertyTextAlign, v);
     } else if (attr->name() == heightAttr) {
         if (!attr->value().isEmpty())
-            addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
+            addCSSLength(attr, CSSPropertyHeight, attr->value());
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

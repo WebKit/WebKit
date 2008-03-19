@@ -57,13 +57,13 @@ void HTMLParagraphElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == alignAttr) {
         String v = attr->value();
         if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_CENTER);
+            addCSSProperty(attr, CSSPropertyTextAlign, CSSValueWebkitCenter);
         else if (equalIgnoringCase(attr->value(), "left"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_LEFT);
+            addCSSProperty(attr, CSSPropertyTextAlign, CSSValueWebkitLeft);
         else if (equalIgnoringCase(attr->value(), "right"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_RIGHT);
+            addCSSProperty(attr, CSSPropertyTextAlign, CSSValueWebkitRight);
         else
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, v);
+            addCSSProperty(attr, CSSPropertyTextAlign, v);
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

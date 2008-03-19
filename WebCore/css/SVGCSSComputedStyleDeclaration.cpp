@@ -64,114 +64,114 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getSVGPropertyCSSValue(int pro
         return 0;
     
     switch (static_cast<CSSPropertyID>(propertyID)) {
-        case CSS_PROP_CLIP_RULE:
+        case CSSPropertyClipRule:
             return new CSSPrimitiveValue(svgStyle->clipRule());
-        case CSS_PROP_FLOOD_OPACITY:
+        case CSSPropertyFloodOpacity:
             return new CSSPrimitiveValue(svgStyle->floodOpacity(), CSSPrimitiveValue::CSS_NUMBER);
-        case CSS_PROP_STOP_OPACITY:
+        case CSSPropertyStopOpacity:
             return new CSSPrimitiveValue(svgStyle->stopOpacity(), CSSPrimitiveValue::CSS_NUMBER);
-        case CSS_PROP_POINTER_EVENTS:
+        case CSSPropertyPointerEvents:
             return new CSSPrimitiveValue(svgStyle->pointerEvents());
-        case CSS_PROP_COLOR_INTERPOLATION:
+        case CSSPropertyColorInterpolation:
             return new CSSPrimitiveValue(svgStyle->colorInterpolation());
-        case CSS_PROP_COLOR_INTERPOLATION_FILTERS:
+        case CSSPropertyColorInterpolationFilters:
             return new CSSPrimitiveValue(svgStyle->colorInterpolationFilters());
-        case CSS_PROP_FILL_OPACITY:
+        case CSSPropertyFillOpacity:
             return new CSSPrimitiveValue(svgStyle->fillOpacity(), CSSPrimitiveValue::CSS_NUMBER);
-        case CSS_PROP_FILL_RULE:
+        case CSSPropertyFillRule:
             return new CSSPrimitiveValue(svgStyle->fillRule());
-        case CSS_PROP_COLOR_RENDERING:
+        case CSSPropertyColorRendering:
             return new CSSPrimitiveValue(svgStyle->colorRendering());
-        case CSS_PROP_IMAGE_RENDERING:
+        case CSSPropertyImageRendering:
             return new CSSPrimitiveValue(svgStyle->imageRendering());
-        case CSS_PROP_SHAPE_RENDERING:
+        case CSSPropertyShapeRendering:
             return new CSSPrimitiveValue(svgStyle->shapeRendering());
-        case CSS_PROP_STROKE_LINECAP:
+        case CSSPropertyStrokeLinecap:
             return new CSSPrimitiveValue(svgStyle->capStyle());
-        case CSS_PROP_STROKE_LINEJOIN:
+        case CSSPropertyStrokeLinejoin:
             return new CSSPrimitiveValue(svgStyle->joinStyle());
-        case CSS_PROP_STROKE_MITERLIMIT:
+        case CSSPropertyStrokeMiterlimit:
             return new CSSPrimitiveValue(svgStyle->strokeMiterLimit(), CSSPrimitiveValue::CSS_NUMBER);
-        case CSS_PROP_STROKE_OPACITY:
+        case CSSPropertyStrokeOpacity:
             return new CSSPrimitiveValue(svgStyle->strokeOpacity(), CSSPrimitiveValue::CSS_NUMBER);
-        case CSS_PROP_TEXT_RENDERING:
+        case CSSPropertyTextRendering:
             return new CSSPrimitiveValue(svgStyle->textRendering());
-        case CSS_PROP_ALIGNMENT_BASELINE:
+        case CSSPropertyAlignmentBaseline:
             return new CSSPrimitiveValue(svgStyle->alignmentBaseline());
-        case CSS_PROP_DOMINANT_BASELINE:
+        case CSSPropertyDominantBaseline:
             return new CSSPrimitiveValue(svgStyle->dominantBaseline());
-        case CSS_PROP_TEXT_ANCHOR:
+        case CSSPropertyTextAnchor:
             return new CSSPrimitiveValue(svgStyle->textAnchor());
-        case CSS_PROP_WRITING_MODE:
+        case CSSPropertyWritingMode:
             return new CSSPrimitiveValue(svgStyle->writingMode());
-        case CSS_PROP_CLIP_PATH:
+        case CSSPropertyClipPath:
             if (!svgStyle->clipPath().isEmpty())
                 return new CSSPrimitiveValue(svgStyle->clipPath(), CSSPrimitiveValue::CSS_URI);
-            return new CSSPrimitiveValue(CSS_VAL_NONE);
-        case CSS_PROP_MASK:
+            return new CSSPrimitiveValue(CSSValueNone);
+        case CSSPropertyMask:
             if (!svgStyle->maskElement().isEmpty())
                 return new CSSPrimitiveValue(svgStyle->maskElement(), CSSPrimitiveValue::CSS_URI);
-            return new CSSPrimitiveValue(CSS_VAL_NONE);
-        case CSS_PROP_FILTER:
+            return new CSSPrimitiveValue(CSSValueNone);
+        case CSSPropertyFilter:
             if (!svgStyle->filter().isEmpty())
                 return new CSSPrimitiveValue(svgStyle->filter(), CSSPrimitiveValue::CSS_URI);
-            return new CSSPrimitiveValue(CSS_VAL_NONE);
-        case CSS_PROP_FLOOD_COLOR:
+            return new CSSPrimitiveValue(CSSValueNone);
+        case CSSPropertyFloodColor:
             return new CSSPrimitiveValue(svgStyle->floodColor().rgb());
-        case CSS_PROP_LIGHTING_COLOR:
+        case CSSPropertyLightingColor:
             return new CSSPrimitiveValue(svgStyle->lightingColor().rgb());
-        case CSS_PROP_STOP_COLOR:
+        case CSSPropertyStopColor:
             return new CSSPrimitiveValue(svgStyle->stopColor().rgb());
-        case CSS_PROP_FILL:
+        case CSSPropertyFill:
             return svgStyle->fillPaint();
-        case CSS_PROP_KERNING:
+        case CSSPropertyKerning:
             return svgStyle->kerning();
-        case CSS_PROP_MARKER_END:
+        case CSSPropertyMarkerEnd:
             if (!svgStyle->endMarker().isEmpty())
                 return new CSSPrimitiveValue(svgStyle->endMarker(), CSSPrimitiveValue::CSS_URI);
-            return new CSSPrimitiveValue(CSS_VAL_NONE);
-        case CSS_PROP_MARKER_MID:
+            return new CSSPrimitiveValue(CSSValueNone);
+        case CSSPropertyMarkerMid:
             if (!svgStyle->midMarker().isEmpty())
                 return new CSSPrimitiveValue(svgStyle->midMarker(), CSSPrimitiveValue::CSS_URI);
-            return new CSSPrimitiveValue(CSS_VAL_NONE);
-        case CSS_PROP_MARKER_START:
+            return new CSSPrimitiveValue(CSSValueNone);
+        case CSSPropertyMarkerStart:
             if (!svgStyle->startMarker().isEmpty())
                 return new CSSPrimitiveValue(svgStyle->startMarker(), CSSPrimitiveValue::CSS_URI);
-            return new CSSPrimitiveValue(CSS_VAL_NONE);
-        case CSS_PROP_STROKE:
+            return new CSSPrimitiveValue(CSSValueNone);
+        case CSSPropertyStroke:
             return svgStyle->strokePaint();
-        case CSS_PROP_STROKE_DASHARRAY:
+        case CSSPropertyStrokeDasharray:
             return svgStyle->strokeDashArray();
-        case CSS_PROP_STROKE_DASHOFFSET:
+        case CSSPropertyStrokeDashoffset:
             return svgStyle->strokeDashOffset();
-        case CSS_PROP_STROKE_WIDTH:
+        case CSSPropertyStrokeWidth:
             return svgStyle->strokeWidth();
-        case CSS_PROP_BASELINE_SHIFT: {
+        case CSSPropertyBaselineShift: {
             switch (svgStyle->baselineShift()) {
                 case BS_BASELINE:
-                    return new CSSPrimitiveValue(CSS_VAL_BASELINE);
+                    return new CSSPrimitiveValue(CSSValueBaseline);
                 case BS_SUPER:
-                    return new CSSPrimitiveValue(CSS_VAL_SUPER);
+                    return new CSSPrimitiveValue(CSSValueSuper);
                 case BS_SUB:
-                    return new CSSPrimitiveValue(CSS_VAL_SUB);
+                    return new CSSPrimitiveValue(CSSValueSub);
                 case BS_LENGTH:
                     return svgStyle->baselineShiftValue();
             }
         }
-        case CSS_PROP_GLYPH_ORIENTATION_HORIZONTAL:
+        case CSSPropertyGlyphOrientationHorizontal:
             return glyphOrientationToCSSPrimitiveValue(svgStyle->glyphOrientationHorizontal());
-        case CSS_PROP_GLYPH_ORIENTATION_VERTICAL: {
+        case CSSPropertyGlyphOrientationVertical: {
             if (CSSPrimitiveValue* value = glyphOrientationToCSSPrimitiveValue(svgStyle->glyphOrientationVertical()))
                 return value;
 
             if (svgStyle->glyphOrientationVertical() == GO_AUTO)
-                return new CSSPrimitiveValue(CSS_VAL_AUTO);
+                return new CSSPrimitiveValue(CSSValueAuto);
 
             return 0;
         }
-        case CSS_PROP_MARKER:
-        case CSS_PROP_ENABLE_BACKGROUND:
-        case CSS_PROP_COLOR_PROFILE:
+        case CSSPropertyMarker:
+        case CSSPropertyEnableBackground:
+        case CSSPropertyColorProfile:
             // the above properties are not yet implemented in the engine
             break;
     default:

@@ -151,32 +151,32 @@ void RenderThemeMac::systemFont(int cssValueId, FontDescription& fontDescription
     FontDescription* cachedDesc;
     NSFont* font = nil;
     switch (cssValueId) {
-        case CSS_VAL_SMALL_CAPTION:
+        case CSSValueSmallCaption:
             cachedDesc = &smallSystemFont;
             if (!smallSystemFont.isAbsoluteSize())
                 font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
             break;
-        case CSS_VAL_MENU:
+        case CSSValueMenu:
             cachedDesc = &menuFont;
             if (!menuFont.isAbsoluteSize())
                 font = [NSFont menuFontOfSize:[NSFont systemFontSize]];
             break;
-        case CSS_VAL_STATUS_BAR:
+        case CSSValueStatusBar:
             cachedDesc = &labelFont;
             if (!labelFont.isAbsoluteSize())
                 font = [NSFont labelFontOfSize:[NSFont labelFontSize]];
             break;
-        case CSS_VAL__WEBKIT_MINI_CONTROL:
+        case CSSValueWebkitMiniControl:
             cachedDesc = &miniControlFont;
             if (!miniControlFont.isAbsoluteSize())
                 font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSMiniControlSize]];
             break;
-        case CSS_VAL__WEBKIT_SMALL_CONTROL:
+        case CSSValueWebkitSmallControl:
             cachedDesc = &smallControlFont;
             if (!smallControlFont.isAbsoluteSize())
                 font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]];
             break;
-        case CSS_VAL__WEBKIT_CONTROL:
+        case CSSValueWebkitControl:
             cachedDesc = &controlFont;
             if (!controlFont.isAbsoluteSize())
                 font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSRegularControlSize]];
@@ -280,96 +280,96 @@ Color RenderThemeMac::systemColor(int cssValueId) const
     
     Color color;
     switch (cssValueId) {
-        case CSS_VAL_ACTIVEBORDER:
+        case CSSValueActiveborder:
             color = convertNSColorToColor([NSColor keyboardFocusIndicatorColor]);
             break;
-        case CSS_VAL_ACTIVECAPTION:
+        case CSSValueActivecaption:
             color = convertNSColorToColor([NSColor windowFrameTextColor]);
             break;
-        case CSS_VAL_APPWORKSPACE:
+        case CSSValueAppworkspace:
             color = convertNSColorToColor([NSColor headerColor]);
             break;
-        case CSS_VAL_BACKGROUND:
+        case CSSValueBackground:
             // Use theme independent default
             break;
-        case CSS_VAL_BUTTONFACE:
+        case CSSValueButtonface:
             // We use this value instead of NSColor's controlColor to avoid website incompatibilities.
             // We may want to change this to use the NSColor in future.
             color = 0xFFC0C0C0;
             break;
-        case CSS_VAL_BUTTONHIGHLIGHT:
+        case CSSValueButtonhighlight:
             color = convertNSColorToColor([NSColor controlHighlightColor]);
             break;
-        case CSS_VAL_BUTTONSHADOW:
+        case CSSValueButtonshadow:
             color = convertNSColorToColor([NSColor controlShadowColor]);
             break;
-        case CSS_VAL_BUTTONTEXT:
+        case CSSValueButtontext:
             color = convertNSColorToColor([NSColor controlTextColor]);
             break;
-        case CSS_VAL_CAPTIONTEXT:
+        case CSSValueCaptiontext:
             color = convertNSColorToColor([NSColor textColor]);
             break;
-        case CSS_VAL_GRAYTEXT:
+        case CSSValueGraytext:
             color = convertNSColorToColor([NSColor disabledControlTextColor]);
             break;
-        case CSS_VAL_HIGHLIGHT:
+        case CSSValueHighlight:
             color = convertNSColorToColor([NSColor selectedTextBackgroundColor]);
             break;
-        case CSS_VAL_HIGHLIGHTTEXT:
+        case CSSValueHighlighttext:
             color = convertNSColorToColor([NSColor selectedTextColor]);
             break;
-        case CSS_VAL_INACTIVEBORDER:
+        case CSSValueInactiveborder:
             color = convertNSColorToColor([NSColor controlBackgroundColor]);
             break;
-        case CSS_VAL_INACTIVECAPTION:
+        case CSSValueInactivecaption:
             color = convertNSColorToColor([NSColor controlBackgroundColor]);
             break;
-        case CSS_VAL_INACTIVECAPTIONTEXT:
+        case CSSValueInactivecaptiontext:
             color = convertNSColorToColor([NSColor textColor]);
             break;
-        case CSS_VAL_INFOBACKGROUND:
+        case CSSValueInfobackground:
             // There is no corresponding NSColor for this so we use a hard coded value.
             color = 0xFFFBFCC5;
             break;
-        case CSS_VAL_INFOTEXT:
+        case CSSValueInfotext:
             color = convertNSColorToColor([NSColor textColor]);
             break;
-        case CSS_VAL_MENU:
+        case CSSValueMenu:
             color = menuBackgroundColor();
             break;
-        case CSS_VAL_MENUTEXT:
+        case CSSValueMenutext:
             color = convertNSColorToColor([NSColor selectedMenuItemTextColor]);
             break;
-        case CSS_VAL_SCROLLBAR:
+        case CSSValueScrollbar:
             color = convertNSColorToColor([NSColor scrollBarColor]);
             break;
-        case CSS_VAL_TEXT:
+        case CSSValueText:
             color = convertNSColorToColor([NSColor textColor]);
             break;
-        case CSS_VAL_THREEDDARKSHADOW:
+        case CSSValueThreeddarkshadow:
             color = convertNSColorToColor([NSColor controlDarkShadowColor]);
             break;
-        case CSS_VAL_THREEDSHADOW:
+        case CSSValueThreedshadow:
             color = convertNSColorToColor([NSColor shadowColor]);
             break;
-        case CSS_VAL_THREEDFACE:
+        case CSSValueThreedface:
             // We use this value instead of NSColor's controlColor to avoid website incompatibilities.
             // We may want to change this to use the NSColor in future.
             color = 0xFFC0C0C0;
             break;
-        case CSS_VAL_THREEDHIGHLIGHT:
+        case CSSValueThreedhighlight:
             color = convertNSColorToColor([NSColor highlightColor]);
             break;
-        case CSS_VAL_THREEDLIGHTSHADOW:
+        case CSSValueThreedlightshadow:
             color = convertNSColorToColor([NSColor controlLightHighlightColor]);
             break;
-        case CSS_VAL_WINDOW:
+        case CSSValueWindow:
             color = convertNSColorToColor([NSColor windowBackgroundColor]);
             break;
-        case CSS_VAL_WINDOWFRAME:
+        case CSSValueWindowframe:
             color = convertNSColorToColor([NSColor windowFrameColor]);
             break;
-        case CSS_VAL_WINDOWTEXT:
+        case CSSValueWindowtext:
             color = convertNSColorToColor([NSColor windowFrameTextColor]);
             break;
     }

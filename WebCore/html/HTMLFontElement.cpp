@@ -110,26 +110,26 @@ bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, int& size)
         
     switch (num) {
         case 2: 
-            size = CSS_VAL_SMALL; 
+            size = CSSValueSmall; 
             break;
         case 0: // treat 0 the same as 3, because people expect it to be between -1 and +1
         case 3: 
-            size = CSS_VAL_MEDIUM; 
+            size = CSSValueMedium; 
             break;
         case 4: 
-            size = CSS_VAL_LARGE; 
+            size = CSSValueLarge; 
             break;
         case 5: 
-            size = CSS_VAL_X_LARGE; 
+            size = CSSValueXLarge; 
             break;
         case 6: 
-            size = CSS_VAL_XX_LARGE; 
+            size = CSSValueXxLarge; 
             break;
         default:
             if (num > 6)
-                size = CSS_VAL__WEBKIT_XXX_LARGE;
+                size = CSSValueWebkitXxxLarge;
             else
-                size = CSS_VAL_X_SMALL;
+                size = CSSValueXSmall;
     }
     return true;
 }
@@ -139,11 +139,11 @@ void HTMLFontElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == sizeAttr) {
         int size;
         if (cssValueFromFontSizeNumber(attr->value(), size))
-            addCSSProperty(attr, CSS_PROP_FONT_SIZE, size);
+            addCSSProperty(attr, CSSPropertyFontSize, size);
     } else if (attr->name() == colorAttr) {
-        addCSSColor(attr, CSS_PROP_COLOR, attr->value());
+        addCSSColor(attr, CSSPropertyColor, attr->value());
     } else if (attr->name() == faceAttr) {
-        addCSSProperty(attr, CSS_PROP_FONT_FAMILY, attr->value());
+        addCSSProperty(attr, CSSPropertyFontFamily, attr->value());
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

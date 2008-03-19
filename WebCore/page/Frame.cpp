@@ -1013,11 +1013,11 @@ void Frame::applyEditingStyleToElement(Element* element) const
     ASSERT(style);
 
     ExceptionCode ec = 0;
-    style->setProperty(CSS_PROP_WORD_WRAP, "break-word", false, ec);
+    style->setProperty(CSSPropertyWordWrap, "break-word", false, ec);
     ASSERT(ec == 0);
-    style->setProperty(CSS_PROP__WEBKIT_NBSP_MODE, "space", false, ec);
+    style->setProperty(CSSPropertyWebkitNbspMode, "space", false, ec);
     ASSERT(ec == 0);
-    style->setProperty(CSS_PROP__WEBKIT_LINE_BREAK, "after-white-space", false, ec);
+    style->setProperty(CSSPropertyWebkitLineBreak, "after-white-space", false, ec);
     ASSERT(ec == 0);
 }
 

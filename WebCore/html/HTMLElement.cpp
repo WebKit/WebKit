@@ -136,9 +136,9 @@ void HTMLElement::parseMappedAttribute(MappedAttribute *attr)
     String indexstring;
     if (attr->name() == alignAttr) {
         if (equalIgnoringCase(attr->value(), "middle"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, "center");
+            addCSSProperty(attr, CSSPropertyTextAlign, "center");
         else
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, attr->value());
+            addCSSProperty(attr, CSSPropertyTextAlign, attr->value());
     } else if (attr->name() == contenteditableAttr) {
         setContentEditable(attr);
     } else if (attr->name() == tabindexAttr) {
@@ -149,8 +149,8 @@ void HTMLElement::parseMappedAttribute(MappedAttribute *attr)
     } else if (attr->name() == langAttr) {
         // FIXME: Implement
     } else if (attr->name() == dirAttr) {
-        addCSSProperty(attr, CSS_PROP_DIRECTION, attr->value());
-        addCSSProperty(attr, CSS_PROP_UNICODE_BIDI, hasLocalName(bdoTag) ? CSS_VAL_BIDI_OVERRIDE : CSS_VAL_EMBED);
+        addCSSProperty(attr, CSSPropertyDirection, attr->value());
+        addCSSProperty(attr, CSSPropertyUnicodeBidi, hasLocalName(bdoTag) ? CSSValueBidiOverride : CSSValueEmbed);
     }
 // standard events
     else if (attr->name() == onclickAttr) {
@@ -496,31 +496,31 @@ void HTMLElement::addHTMLAlignment(MappedAttribute* attr)
     int propvalign = -1;
     const AtomicString& alignment = attr->value();
     if (equalIgnoringCase(alignment, "absmiddle")) {
-        propvalign = CSS_VAL_MIDDLE;
+        propvalign = CSSValueMiddle;
     } else if (equalIgnoringCase(alignment, "absbottom")) {
-        propvalign = CSS_VAL_BOTTOM;
+        propvalign = CSSValueBottom;
     } else if (equalIgnoringCase(alignment, "left")) {
-        propfloat = CSS_VAL_LEFT;
-        propvalign = CSS_VAL_TOP;
+        propfloat = CSSValueLeft;
+        propvalign = CSSValueTop;
     } else if (equalIgnoringCase(alignment, "right")) {
-        propfloat = CSS_VAL_RIGHT;
-        propvalign = CSS_VAL_TOP;
+        propfloat = CSSValueRight;
+        propvalign = CSSValueTop;
     } else if (equalIgnoringCase(alignment, "top")) {
-        propvalign = CSS_VAL_TOP;
+        propvalign = CSSValueTop;
     } else if (equalIgnoringCase(alignment, "middle")) {
-        propvalign = CSS_VAL__WEBKIT_BASELINE_MIDDLE;
+        propvalign = CSSValueWebkitBaselineMiddle;
     } else if (equalIgnoringCase(alignment, "center")) {
-        propvalign = CSS_VAL_MIDDLE;
+        propvalign = CSSValueMiddle;
     } else if (equalIgnoringCase(alignment, "bottom")) {
-        propvalign = CSS_VAL_BASELINE;
+        propvalign = CSSValueBaseline;
     } else if (equalIgnoringCase(alignment, "texttop")) {
-        propvalign = CSS_VAL_TEXT_TOP;
+        propvalign = CSSValueTextTop;
     }
     
     if ( propfloat != -1 )
-        addCSSProperty( attr, CSS_PROP_FLOAT, propfloat );
+        addCSSProperty( attr, CSSPropertyFloat, propfloat );
     if ( propvalign != -1 )
-        addCSSProperty( attr, CSS_PROP_VERTICAL_ALIGN, propvalign );
+        addCSSProperty( attr, CSSPropertyVerticalAlign, propvalign );
 }
 
 bool HTMLElement::isFocusable() const
@@ -585,25 +585,25 @@ void HTMLElement::setContentEditable(MappedAttribute* attr)
 {
     const AtomicString& enabled = attr->value();
     if (enabled.isEmpty() || equalIgnoringCase(enabled, "true")) {
-        addCSSProperty(attr, CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_READ_WRITE);
-        addCSSProperty(attr, CSS_PROP_WORD_WRAP, CSS_VAL_BREAK_WORD);
-        addCSSProperty(attr, CSS_PROP__WEBKIT_NBSP_MODE, CSS_VAL_SPACE);
-        addCSSProperty(attr, CSS_PROP__WEBKIT_LINE_BREAK, CSS_VAL_AFTER_WHITE_SPACE);
+        addCSSProperty(attr, CSSPropertyWebkitUserModify, CSSValueReadWrite);
+        addCSSProperty(attr, CSSPropertyWordWrap, CSSValueBreakWord);
+        addCSSProperty(attr, CSSPropertyWebkitNbspMode, CSSValueSpace);
+        addCSSProperty(attr, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
     } else if (equalIgnoringCase(enabled, "false")) {
-        addCSSProperty(attr, CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_READ_ONLY);
-        attr->decl()->removeProperty(CSS_PROP_WORD_WRAP, false);
-        attr->decl()->removeProperty(CSS_PROP__WEBKIT_NBSP_MODE, false);
-        attr->decl()->removeProperty(CSS_PROP__WEBKIT_LINE_BREAK, false);
+        addCSSProperty(attr, CSSPropertyWebkitUserModify, CSSValueReadOnly);
+        attr->decl()->removeProperty(CSSPropertyWordWrap, false);
+        attr->decl()->removeProperty(CSSPropertyWebkitNbspMode, false);
+        attr->decl()->removeProperty(CSSPropertyWebkitLineBreak, false);
     } else if (equalIgnoringCase(enabled, "inherit")) {
-        addCSSProperty(attr, CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_INHERIT);
-        attr->decl()->removeProperty(CSS_PROP_WORD_WRAP, false);
-        attr->decl()->removeProperty(CSS_PROP__WEBKIT_NBSP_MODE, false);
-        attr->decl()->removeProperty(CSS_PROP__WEBKIT_LINE_BREAK, false);
+        addCSSProperty(attr, CSSPropertyWebkitUserModify, CSSValueInherit);
+        attr->decl()->removeProperty(CSSPropertyWordWrap, false);
+        attr->decl()->removeProperty(CSSPropertyWebkitNbspMode, false);
+        attr->decl()->removeProperty(CSSPropertyWebkitLineBreak, false);
     } else if (equalIgnoringCase(enabled, "plaintext-only")) {
-        addCSSProperty(attr, CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_READ_WRITE_PLAINTEXT_ONLY);
-        addCSSProperty(attr, CSS_PROP_WORD_WRAP, CSS_VAL_BREAK_WORD);
-        addCSSProperty(attr, CSS_PROP__WEBKIT_NBSP_MODE, CSS_VAL_SPACE);
-        addCSSProperty(attr, CSS_PROP__WEBKIT_LINE_BREAK, CSS_VAL_AFTER_WHITE_SPACE);
+        addCSSProperty(attr, CSSPropertyWebkitUserModify, CSSValueReadWritePlaintextOnly);
+        addCSSProperty(attr, CSSPropertyWordWrap, CSSValueBreakWord);
+        addCSSProperty(attr, CSSPropertyWebkitNbspMode, CSSValueSpace);
+        addCSSProperty(attr, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
     }
 }
 

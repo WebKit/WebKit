@@ -943,23 +943,23 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset
     if (difference.width()) {
         if (element && element->isControl()) {
             // Make implicit margins from the theme explicit (see <http://bugs.webkit.org/show_bug.cgi?id=9547>).
-            style->setProperty(CSS_PROP_MARGIN_LEFT, String::number(renderer->marginLeft()) + "px", false, ec);
-            style->setProperty(CSS_PROP_MARGIN_RIGHT, String::number(renderer->marginRight()) + "px", false, ec);
+            style->setProperty(CSSPropertyMarginLeft, String::number(renderer->marginLeft()) + "px", false, ec);
+            style->setProperty(CSSPropertyMarginRight, String::number(renderer->marginRight()) + "px", false, ec);
         }
         int baseWidth = renderer->width() - (isBoxSizingBorder ? 0
             : renderer->borderLeft() + renderer->paddingLeft() + renderer->borderRight() + renderer->paddingRight());
-        style->setProperty(CSS_PROP_WIDTH, String::number(baseWidth + difference.width()) + "px", false, ec);
+        style->setProperty(CSSPropertyWidth, String::number(baseWidth + difference.width()) + "px", false, ec);
     }
 
     if (difference.height()) {
         if (element && element->isControl()) {
             // Make implicit margins from the theme explicit (see <http://bugs.webkit.org/show_bug.cgi?id=9547>).
-            style->setProperty(CSS_PROP_MARGIN_TOP, String::number(renderer->marginTop()) + "px", false, ec);
-            style->setProperty(CSS_PROP_MARGIN_BOTTOM, String::number(renderer->marginBottom()) + "px", false, ec);
+            style->setProperty(CSSPropertyMarginTop, String::number(renderer->marginTop()) + "px", false, ec);
+            style->setProperty(CSSPropertyMarginBottom, String::number(renderer->marginBottom()) + "px", false, ec);
         }
         int baseHeight = renderer->height() - (isBoxSizingBorder ? 0
             : renderer->borderTop() + renderer->paddingTop() + renderer->borderBottom() + renderer->paddingBottom());
-        style->setProperty(CSS_PROP_HEIGHT, String::number(baseHeight + difference.height()) + "px", false, ec);
+        style->setProperty(CSSPropertyHeight, String::number(baseHeight + difference.height()) + "px", false, ec);
     }
 
     document->updateLayout();

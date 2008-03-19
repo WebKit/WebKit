@@ -1103,7 +1103,7 @@ void Editor::setBaseWritingDirection(const String& direction)
     ExceptionCode ec = 0;
 
     RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration;
-    style->setProperty(CSS_PROP_DIRECTION, direction, false, ec);
+    style->setProperty(CSSPropertyDirection, direction, false, ec);
     applyParagraphStyleToSelection(style.get(), EditActionSetWritingDirection);
 }
 

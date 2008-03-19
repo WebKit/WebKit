@@ -62,9 +62,9 @@ bool HTMLIFrameElement::mapToEntry(const QualifiedName& attrName, MappedAttribut
 void HTMLIFrameElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == widthAttr)
-        addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
+        addCSSLength(attr, CSSPropertyWidth, attr->value());
     else if (attr->name() == heightAttr)
-        addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
+        addCSSLength(attr, CSSPropertyHeight, attr->value());
     else if (attr->name() == alignAttr)
         addHTMLAlignment(attr);
     else if (attr->name() == nameAttr) {
@@ -80,7 +80,7 @@ void HTMLIFrameElement::parseMappedAttribute(MappedAttribute* attr)
         // a presentational hint that the border should be off if set to zero.
         if (!attr->isNull() && !attr->value().toInt())
             // Add a rule that nulls out our border width.
-            addCSSLength(attr, CSS_PROP_BORDER_WIDTH, "0");
+            addCSSLength(attr, CSSPropertyBorderWidth, "0");
     } else
         HTMLFrameElementBase::parseMappedAttribute(attr);
 }

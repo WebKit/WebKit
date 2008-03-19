@@ -60,17 +60,17 @@ void HTMLLIElement::parseMappedAttribute(MappedAttribute* attr)
         }
     } else if (attr->name() == typeAttr) {
         if (attr->value() == "a")
-            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ALPHA);
+            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueLowerAlpha);
         else if (attr->value() == "A")
-            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ALPHA);
+            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueUpperAlpha);
         else if (attr->value() == "i")
-            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ROMAN);
+            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueLowerRoman);
         else if (attr->value() == "I")
-            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ROMAN);
+            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueUpperRoman);
         else if (attr->value() == "1")
-            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_DECIMAL);
+            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueDecimal);
         else
-            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, attr->value());
+            addCSSProperty(attr, CSSPropertyListStyleType, attr->value());
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

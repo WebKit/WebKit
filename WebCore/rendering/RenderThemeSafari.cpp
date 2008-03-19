@@ -151,32 +151,32 @@ void RenderThemeSafari::systemFont(int propId, FontDescription& fontDescription)
     FontDescription* cachedDesc;
     float fontSize = 0;
     switch (propId) {
-        case CSS_VAL_SMALL_CAPTION:
+        case CSSValueSmallCaption:
             cachedDesc = &smallSystemFont;
             if (!smallSystemFont.isAbsoluteSize())
                 fontSize = systemFontSizeForControlSize(NSSmallControlSize);
             break;
-        case CSS_VAL_MENU:
+        case CSSValueMenu:
             cachedDesc = &menuFont;
             if (!menuFont.isAbsoluteSize())
                 fontSize = systemFontSizeForControlSize(NSRegularControlSize);
             break;
-        case CSS_VAL_STATUS_BAR:
+        case CSSValueStatusBar:
             cachedDesc = &labelFont;
             if (!labelFont.isAbsoluteSize())
                 fontSize = 10.0f;
             break;
-        case CSS_VAL__WEBKIT_MINI_CONTROL:
+        case CSSValueWebkitMiniControl:
             cachedDesc = &miniControlFont;
             if (!miniControlFont.isAbsoluteSize())
                 fontSize = systemFontSizeForControlSize(NSMiniControlSize);
             break;
-        case CSS_VAL__WEBKIT_SMALL_CONTROL:
+        case CSSValueWebkitSmallControl:
             cachedDesc = &smallControlFont;
             if (!smallControlFont.isAbsoluteSize())
                 fontSize = systemFontSizeForControlSize(NSSmallControlSize);
             break;
-        case CSS_VAL__WEBKIT_CONTROL:
+        case CSSValueWebkitControl:
             cachedDesc = &controlFont;
             if (!controlFont.isAbsoluteSize())
                 fontSize = systemFontSizeForControlSize(NSRegularControlSize);

@@ -49,8 +49,8 @@ EOF
 
 foreach my $name (@names) {
   my $id = $name;
-  $id =~ s/-/_/g;
-  print GPERF $name . ", CSS_VAL_" . uc($id) . "\n";
+  $id =~ s/(^[^-])|-(.)/uc($1||$2)/ge;
+  print GPERF $name . ", CSSValue" . $id . "\n";
 }
 print GPERF "%%\n";
 close GPERF;
@@ -62,15 +62,15 @@ print HEADER << "EOF";
 #ifndef CSSValues_h
 #define CSSValues_h
 
-const int CSS_VAL_INVALID = 0;
+const int CSSValueInvalid = 0;
 EOF
 
 my $i = 1;
 my $maxLen = 0;
 foreach my $name (@names) {
   my $id = $name;
-  $id =~ s/-/_/g;
-  print HEADER "const int CSS_VAL_" . uc($id) . " = " . $i . ";\n";
+  $id =~ s/(^[^-])|-(.)/uc($1||$2)/ge;
+  print HEADER "const int CSSValue" . $id . " = " . $i . ";\n";
   $i = $i + 1;
   if (length($name) > $maxLen) {
     $maxLen = length($name);

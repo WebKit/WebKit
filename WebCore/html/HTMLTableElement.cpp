@@ -320,13 +320,13 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
     unsigned short oldPadding = m_padding;
 
     if (attr->name() == widthAttr)
-        addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
+        addCSSLength(attr, CSSPropertyWidth, attr->value());
     else if (attr->name() == heightAttr)
-        addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
+        addCSSLength(attr, CSSPropertyHeight, attr->value());
     else if (attr->name() == borderAttr)  {
         m_borderAttr = true;
         if (attr->decl()) {
-            RefPtr<CSSValue> val = attr->decl()->getPropertyCSSValue(CSS_PROP_BORDER_LEFT_WIDTH);
+            RefPtr<CSSValue> val = attr->decl()->getPropertyCSSValue(CSSPropertyBorderLeftWidth);
             if (val && val->isPrimitiveValue()) {
                 CSSPrimitiveValue* primVal = static_cast<CSSPrimitiveValue*>(val.get());
                 m_borderAttr = primVal->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER);
@@ -338,20 +338,20 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
             else
                 border = attr->value().toInt();
             m_borderAttr = border;
-            addCSSLength(attr, CSS_PROP_BORDER_WIDTH, String::number(border));
+            addCSSLength(attr, CSSPropertyBorderWidth, String::number(border));
         }
     } else if (attr->name() == bgcolorAttr)
-        addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
+        addCSSColor(attr, CSSPropertyBackgroundColor, attr->value());
     else if (attr->name() == bordercolorAttr) {
         m_borderColorAttr = attr->decl();
         if (!attr->decl() && !attr->isEmpty()) {
-            addCSSColor(attr, CSS_PROP_BORDER_COLOR, attr->value());
+            addCSSColor(attr, CSSPropertyBorderColor, attr->value());
             m_borderColorAttr = true;
         }
     } else if (attr->name() == backgroundAttr) {
         String url = parseURL(attr->value());
         if (!url.isEmpty())
-            addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, document()->completeURL(url).string());
+            addCSSImageProperty(attr, CSSPropertyBackgroundImage, document()->completeURL(url).string());
     } else if (attr->name() == frameAttr) {
         // Cache the value of "frame" so that the table can examine it later.
         m_frameAttr = false;
@@ -392,14 +392,14 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
         
         // Now map in the border styles of solid and hidden respectively.
         if (m_frameAttr) {
-            addCSSProperty(attr, CSS_PROP_BORDER_TOP_WIDTH, CSS_VAL_THIN);
-            addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_WIDTH, CSS_VAL_THIN);
-            addCSSProperty(attr, CSS_PROP_BORDER_LEFT_WIDTH, CSS_VAL_THIN);
-            addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_WIDTH, CSS_VAL_THIN);
-            addCSSProperty(attr, CSS_PROP_BORDER_TOP_STYLE, borders[cTop] ? CSS_VAL_SOLID : CSS_VAL_HIDDEN);
-            addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_STYLE, borders[cBottom] ? CSS_VAL_SOLID : CSS_VAL_HIDDEN);
-            addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, borders[cLeft] ? CSS_VAL_SOLID : CSS_VAL_HIDDEN);
-            addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, borders[cRight] ? CSS_VAL_SOLID : CSS_VAL_HIDDEN);
+            addCSSProperty(attr, CSSPropertyBorderTopWidth, CSSValueThin);
+            addCSSProperty(attr, CSSPropertyBorderBottomWidth, CSSValueThin);
+            addCSSProperty(attr, CSSPropertyBorderLeftWidth, CSSValueThin);
+            addCSSProperty(attr, CSSPropertyBorderRightWidth, CSSValueThin);
+            addCSSProperty(attr, CSSPropertyBorderTopStyle, borders[cTop] ? CSSValueSolid : CSSValueHidden);
+            addCSSProperty(attr, CSSPropertyBorderBottomStyle, borders[cBottom] ? CSSValueSolid : CSSValueHidden);
+            addCSSProperty(attr, CSSPropertyBorderLeftStyle, borders[cLeft] ? CSSValueSolid : CSSValueHidden);
+            addCSSProperty(attr, CSSPropertyBorderRightStyle, borders[cRight] ? CSSValueSolid : CSSValueHidden);
         }
     } else if (attr->name() == rulesAttr) {
         m_rulesAttr = UnsetRules;
@@ -416,10 +416,10 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
         
         // The presence of a valid rules attribute causes border collapsing to be enabled.
         if (m_rulesAttr != UnsetRules)
-            addCSSProperty(attr, CSS_PROP_BORDER_COLLAPSE, CSS_VAL_COLLAPSE);
+            addCSSProperty(attr, CSSPropertyBorderCollapse, CSSValueCollapse);
     } else if (attr->name() == cellspacingAttr) {
         if (!attr->value().isEmpty())
-            addCSSLength(attr, CSS_PROP_BORDER_SPACING, attr->value());
+            addCSSLength(attr, CSSPropertyBorderSpacing, attr->value());
     } else if (attr->name() == cellpaddingAttr) {
         if (!attr->value().isEmpty())
             m_padding = max(0, attr->value().toInt());
@@ -428,22 +428,22 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute* attr)
     } else if (attr->name() == colsAttr) {
         // ###
     } else if (attr->name() == vspaceAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
+        addCSSLength(attr, CSSPropertyMarginTop, attr->value());
+        addCSSLength(attr, CSSPropertyMarginBottom, attr->value());
     } else if (attr->name() == hspaceAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
+        addCSSLength(attr, CSSPropertyMarginLeft, attr->value());
+        addCSSLength(attr, CSSPropertyMarginRight, attr->value());
     } else if (attr->name() == alignAttr) {
         if (!attr->value().isEmpty()) {
             if (equalIgnoringCase(attr->value(), "center")) {
-                addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
-                addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
+                addCSSProperty(attr, CSSPropertyMarginLeft, CSSValueAuto);
+                addCSSProperty(attr, CSSPropertyMarginRight, CSSValueAuto);
             } else
-                addCSSProperty(attr, CSS_PROP_FLOAT, attr->value());
+                addCSSProperty(attr, CSSPropertyFloat, attr->value());
         }
     } else if (attr->name() == valignAttr) {
         if (!attr->value().isEmpty())
-            addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
+            addCSSProperty(attr, CSSPropertyVerticalAlign, attr->value());
     } else
         HTMLElement::parseMappedAttribute(attr);
 
@@ -473,11 +473,11 @@ void HTMLTableElement::additionalAttributeStyleDecls(Vector<CSSMutableStyleDecla
         
         decl->ref(); // This single ref pins us in the table until the document dies.
 
-        int v = m_borderColorAttr ? CSS_VAL_SOLID : CSS_VAL_OUTSET;
-        decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, v, false);
-        decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, v, false);
-        decl->setProperty(CSS_PROP_BORDER_LEFT_STYLE, v, false);
-        decl->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, v, false);
+        int v = m_borderColorAttr ? CSSValueSolid : CSSValueOutset;
+        decl->setProperty(CSSPropertyBorderTopStyle, v, false);
+        decl->setProperty(CSSPropertyBorderBottomStyle, v, false);
+        decl->setProperty(CSSPropertyBorderLeftStyle, v, false);
+        decl->setProperty(CSSPropertyBorderRightStyle, v, false);
 
         setMappedAttributeDecl(ePersistent, &attr, decl);
         decl->setParent(0);
@@ -536,37 +536,37 @@ void HTMLTableElement::addSharedCellBordersDecl(Vector<CSSMutableStyleDeclaratio
         
         switch (borders) {
             case SolidBordersColsOnly:
-                decl->setProperty(CSS_PROP_BORDER_LEFT_WIDTH, CSS_VAL_THIN, false);
-                decl->setProperty(CSS_PROP_BORDER_RIGHT_WIDTH, CSS_VAL_THIN, false);
-                decl->setProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID, false);
-                decl->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID, false);
-                decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
+                decl->setProperty(CSSPropertyBorderLeftWidth, CSSValueThin, false);
+                decl->setProperty(CSSPropertyBorderRightWidth, CSSValueThin, false);
+                decl->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid, false);
+                decl->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid, false);
+                decl->setProperty(CSSPropertyBorderColor, "inherit", false);
                 break;
             case SolidBordersRowsOnly:
-                decl->setProperty(CSS_PROP_BORDER_TOP_WIDTH, CSS_VAL_THIN, false);
-                decl->setProperty(CSS_PROP_BORDER_BOTTOM_WIDTH, CSS_VAL_THIN, false);
-                decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID, false);
-                decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID, false);
-                decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
+                decl->setProperty(CSSPropertyBorderTopWidth, CSSValueThin, false);
+                decl->setProperty(CSSPropertyBorderBottomWidth, CSSValueThin, false);
+                decl->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid, false);
+                decl->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid, false);
+                decl->setProperty(CSSPropertyBorderColor, "inherit", false);
                 break;
             case SolidBorders:
-                decl->setProperty(CSS_PROP_BORDER_WIDTH, "1px", false);
-                decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID, false);
-                decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID, false);
-                decl->setProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID, false);
-                decl->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID, false);
-                decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
+                decl->setProperty(CSSPropertyBorderWidth, "1px", false);
+                decl->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid, false);
+                decl->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid, false);
+                decl->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid, false);
+                decl->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid, false);
+                decl->setProperty(CSSPropertyBorderColor, "inherit", false);
                 break;
             case InsetBorders:
-                decl->setProperty(CSS_PROP_BORDER_WIDTH, "1px", false);
-                decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_INSET, false);
-                decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_INSET, false);
-                decl->setProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_INSET, false);
-                decl->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_INSET, false);
-                decl->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
+                decl->setProperty(CSSPropertyBorderWidth, "1px", false);
+                decl->setProperty(CSSPropertyBorderTopStyle, CSSValueInset, false);
+                decl->setProperty(CSSPropertyBorderBottomStyle, CSSValueInset, false);
+                decl->setProperty(CSSPropertyBorderLeftStyle, CSSValueInset, false);
+                decl->setProperty(CSSPropertyBorderRightStyle, CSSValueInset, false);
+                decl->setProperty(CSSPropertyBorderColor, "inherit", false);
                 break;
             case NoBorders:
-                decl->setProperty(CSS_PROP_BORDER_WIDTH, "0", false);
+                decl->setProperty(CSSPropertyBorderWidth, "0", false);
                 break;
         }
 
@@ -594,10 +594,10 @@ void HTMLTableElement::addSharedCellPaddingDecl(Vector<CSSMutableStyleDeclaratio
             m_paddingDecl->setNode(this);
             m_paddingDecl->setStrictParsing(false); // Mapped attributes are just always quirky.
             
-            m_paddingDecl->setProperty(CSS_PROP_PADDING_TOP, numericStr, false);
-            m_paddingDecl->setProperty(CSS_PROP_PADDING_RIGHT, numericStr, false);
-            m_paddingDecl->setProperty(CSS_PROP_PADDING_BOTTOM, numericStr, false);
-            m_paddingDecl->setProperty(CSS_PROP_PADDING_LEFT, numericStr, false);
+            m_paddingDecl->setProperty(CSSPropertyPaddingTop, numericStr, false);
+            m_paddingDecl->setProperty(CSSPropertyPaddingRight, numericStr, false);
+            m_paddingDecl->setProperty(CSSPropertyPaddingBottom, numericStr, false);
+            m_paddingDecl->setProperty(CSSPropertyPaddingLeft, numericStr, false);
         }
         setMappedAttributeDecl(eUniversal, &attr, m_paddingDecl.get());
         m_paddingDecl->setParent(0);
@@ -625,15 +625,15 @@ void HTMLTableElement::addSharedGroupDecls(bool rows, Vector<CSSMutableStyleDecl
         decl->ref(); // This single ref pins us in the table until the document dies.
         
         if (rows) {
-            decl->setProperty(CSS_PROP_BORDER_TOP_WIDTH, CSS_VAL_THIN, false);
-            decl->setProperty(CSS_PROP_BORDER_BOTTOM_WIDTH, CSS_VAL_THIN, false);
-            decl->setProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID, false);
-            decl->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID, false);
+            decl->setProperty(CSSPropertyBorderTopWidth, CSSValueThin, false);
+            decl->setProperty(CSSPropertyBorderBottomWidth, CSSValueThin, false);
+            decl->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid, false);
+            decl->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid, false);
         } else {
-            decl->setProperty(CSS_PROP_BORDER_LEFT_WIDTH, CSS_VAL_THIN, false);
-            decl->setProperty(CSS_PROP_BORDER_RIGHT_WIDTH, CSS_VAL_THIN, false);
-            decl->setProperty(CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID, false);
-            decl->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID, false);
+            decl->setProperty(CSSPropertyBorderLeftWidth, CSSValueThin, false);
+            decl->setProperty(CSSPropertyBorderRightWidth, CSSValueThin, false);
+            decl->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid, false);
+            decl->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid, false);
         }
 
         setMappedAttributeDecl(ePersistent, &attr, decl);

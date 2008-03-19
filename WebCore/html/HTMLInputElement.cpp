@@ -618,20 +618,20 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
                attr->name() == accesskeyAttr) {
         // FIXME: ignore for the moment
     } else if (attr->name() == vspaceAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
+        addCSSLength(attr, CSSPropertyMarginTop, attr->value());
+        addCSSLength(attr, CSSPropertyMarginBottom, attr->value());
     } else if (attr->name() == hspaceAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
+        addCSSLength(attr, CSSPropertyMarginLeft, attr->value());
+        addCSSLength(attr, CSSPropertyMarginRight, attr->value());
     } else if (attr->name() == alignAttr) {
         if (inputType() == IMAGE)
             addHTMLAlignment(attr);
     } else if (attr->name() == widthAttr) {
         if (respectHeightAndWidthAttrs())
-            addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
+            addCSSLength(attr, CSSPropertyWidth, attr->value());
     } else if (attr->name() == heightAttr) {
         if (respectHeightAndWidthAttrs())
-            addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
+            addCSSLength(attr, CSSPropertyHeight, attr->value());
     } else if (attr->name() == onfocusAttr) {
         setHTMLEventListener(focusEvent, attr);
     } else if (attr->name() == onblurAttr) {

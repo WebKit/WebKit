@@ -238,7 +238,7 @@ static RefPtr<Range> unionDOMRanges(Range* a, Range* b)
 
 static bool executeBackColor(Frame* frame, Event*, EditorCommandSource source, const String& value)
 {
-    return executeApplyStyle(frame, source, EditActionSetBackgroundColor, CSS_PROP_BACKGROUND_COLOR, value);
+    return executeApplyStyle(frame, source, EditActionSetBackgroundColor, CSSPropertyBackgroundColor, value);
 }
 
 static bool executeCopy(Frame* frame, Event*, EditorCommandSource, const String&)
@@ -361,7 +361,7 @@ static bool executeFindString(Frame* frame, Event*, EditorCommandSource, const S
 
 static bool executeFontName(Frame* frame, Event*, EditorCommandSource source, const String& value)
 {
-    return executeApplyStyle(frame, source, EditActionSetFont, CSS_PROP_FONT_FAMILY, value);
+    return executeApplyStyle(frame, source, EditActionSetFont, CSSPropertyFontFamily, value);
 }
 
 static bool executeFontSize(Frame* frame, Event*, EditorCommandSource source, const String& value)
@@ -369,17 +369,17 @@ static bool executeFontSize(Frame* frame, Event*, EditorCommandSource source, co
     int size;
     if (!HTMLFontElement::cssValueFromFontSizeNumber(value, size))
         return false;
-    return executeApplyStyle(frame, source, EditActionChangeAttributes, CSS_PROP_FONT_SIZE, size);
+    return executeApplyStyle(frame, source, EditActionChangeAttributes, CSSPropertyFontSize, size);
 }
 
 static bool executeFontSizeDelta(Frame* frame, Event*, EditorCommandSource source, const String& value)
 {
-    return executeApplyStyle(frame, source, EditActionChangeAttributes, CSS_PROP__WEBKIT_FONT_SIZE_DELTA, value);
+    return executeApplyStyle(frame, source, EditActionChangeAttributes, CSSPropertyWebkitFontSizeDelta, value);
 }
 
 static bool executeForeColor(Frame* frame, Event*, EditorCommandSource source, const String& value)
 {
-    return executeApplyStyle(frame, source, EditActionSetColor, CSS_PROP_COLOR, value);
+    return executeApplyStyle(frame, source, EditActionSetColor, CSSPropertyColor, value);
 }
 
 static bool executeFormatBlock(Frame* frame, Event*, EditorCommandSource, const String& value)
@@ -503,22 +503,22 @@ static bool executeInsertUnorderedList(Frame* frame, Event*, EditorCommandSource
 
 static bool executeJustifyCenter(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    return executeApplyParagraphStyle(frame, source, EditActionCenter, CSS_PROP_TEXT_ALIGN, "center");
+    return executeApplyParagraphStyle(frame, source, EditActionCenter, CSSPropertyTextAlign, "center");
 }
 
 static bool executeJustifyFull(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    return executeApplyParagraphStyle(frame, source, EditActionJustify, CSS_PROP_TEXT_ALIGN, "justify");
+    return executeApplyParagraphStyle(frame, source, EditActionJustify, CSSPropertyTextAlign, "justify");
 }
 
 static bool executeJustifyLeft(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    return executeApplyParagraphStyle(frame, source, EditActionAlignLeft, CSS_PROP_TEXT_ALIGN, "left");
+    return executeApplyParagraphStyle(frame, source, EditActionAlignLeft, CSSPropertyTextAlign, "left");
 }
 
 static bool executeJustifyRight(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    return executeApplyParagraphStyle(frame, source, EditActionAlignRight, CSS_PROP_TEXT_ALIGN, "right");
+    return executeApplyParagraphStyle(frame, source, EditActionAlignRight, CSSPropertyTextAlign, "right");
 }
 
 static bool executeMoveBackward(Frame* frame, Event*, EditorCommandSource, const String&)
@@ -866,17 +866,17 @@ static bool executeSetMark(Frame* frame, Event*, EditorCommandSource, const Stri
 
 static bool executeStrikethrough(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    return executeToggleStyle(frame, source, EditActionChangeAttributes, CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT, "none", "line-through");
+    return executeToggleStyle(frame, source, EditActionChangeAttributes, CSSPropertyWebkitTextDecorationsInEffect, "none", "line-through");
 }
 
 static bool executeSubscript(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    return executeApplyStyle(frame, source, EditActionSubscript, CSS_PROP_VERTICAL_ALIGN, "sub");
+    return executeApplyStyle(frame, source, EditActionSubscript, CSSPropertyVerticalAlign, "sub");
 }
 
 static bool executeSuperscript(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    return executeApplyStyle(frame, source, EditActionSuperscript, CSS_PROP_VERTICAL_ALIGN, "super");
+    return executeApplyStyle(frame, source, EditActionSuperscript, CSSPropertyVerticalAlign, "super");
 }
 
 static bool executeSwapWithMark(Frame* frame, Event*, EditorCommandSource, const String&)
@@ -894,12 +894,12 @@ static bool executeSwapWithMark(Frame* frame, Event*, EditorCommandSource, const
 
 static bool executeToggleBold(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    return executeToggleStyle(frame, source, EditActionChangeAttributes, CSS_PROP_FONT_WEIGHT, "normal", "bold");
+    return executeToggleStyle(frame, source, EditActionChangeAttributes, CSSPropertyFontWeight, "normal", "bold");
 }
 
 static bool executeToggleItalic(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    return executeToggleStyle(frame, source, EditActionChangeAttributes, CSS_PROP_FONT_STYLE, "normal", "italic");
+    return executeToggleStyle(frame, source, EditActionChangeAttributes, CSSPropertyFontStyle, "normal", "italic");
 }
 
 static bool executeTranspose(Frame* frame, Event*, EditorCommandSource, const String&)
@@ -911,7 +911,7 @@ static bool executeTranspose(Frame* frame, Event*, EditorCommandSource, const St
 static bool executeUnderline(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
     // FIXME: This currently clears overline, line-through, and blink as an unwanted side effect.
-    return executeToggleStyle(frame, source, EditActionUnderline, CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT, "none", "underline");
+    return executeToggleStyle(frame, source, EditActionUnderline, CSSPropertyWebkitTextDecorationsInEffect, "none", "underline");
 }
 
 static bool executeUndo(Frame* frame, Event*, EditorCommandSource, const String&)
@@ -928,7 +928,7 @@ static bool executeUnlink(Frame* frame, Event*, EditorCommandSource, const Strin
 
 static bool executeUnscript(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    return executeApplyStyle(frame, source, EditActionUnscript, CSS_PROP_VERTICAL_ALIGN, "baseline");
+    return executeApplyStyle(frame, source, EditActionUnscript, CSSPropertyVerticalAlign, "baseline");
 }
 
 static bool executeUnselect(Frame* frame, Event*, EditorCommandSource, const String&)
@@ -1071,12 +1071,12 @@ static TriState stateNone(Frame*, Event*)
 
 static TriState stateBold(Frame* frame, Event*)
 {
-    return stateStyle(frame, CSS_PROP_FONT_WEIGHT, "bold");
+    return stateStyle(frame, CSSPropertyFontWeight, "bold");
 }
 
 static TriState stateItalic(Frame* frame, Event*)
 {
-    return stateStyle(frame, CSS_PROP_FONT_STYLE, "italic");
+    return stateStyle(frame, CSSPropertyFontStyle, "italic");
 }
 
 static TriState stateOrderedList(Frame* frame, Event*)
@@ -1086,22 +1086,22 @@ static TriState stateOrderedList(Frame* frame, Event*)
 
 static TriState stateStrikethrough(Frame* frame, Event*)
 {
-    return stateStyle(frame, CSS_PROP_TEXT_DECORATION, "line-through");
+    return stateStyle(frame, CSSPropertyTextDecoration, "line-through");
 }
 
 static TriState stateSubscript(Frame* frame, Event*)
 {
-    return stateStyle(frame, CSS_PROP_VERTICAL_ALIGN, "sub");
+    return stateStyle(frame, CSSPropertyVerticalAlign, "sub");
 }
 
 static TriState stateSuperscript(Frame* frame, Event*)
 {
-    return stateStyle(frame, CSS_PROP_VERTICAL_ALIGN, "super");
+    return stateStyle(frame, CSSPropertyVerticalAlign, "super");
 }
 
 static TriState stateUnderline(Frame* frame, Event*)
 {
-    return stateStyle(frame, CSS_PROP_TEXT_DECORATION, "underline");
+    return stateStyle(frame, CSSPropertyTextDecoration, "underline");
 }
 
 static TriState stateUnorderedList(Frame* frame, Event*)
@@ -1118,27 +1118,27 @@ static String valueNull(Frame*, Event*)
 
 String valueBackColor(Frame* frame, Event*)
 {
-    return valueStyle(frame, CSS_PROP_BACKGROUND_COLOR);
+    return valueStyle(frame, CSSPropertyBackgroundColor);
 }
 
 String valueFontName(Frame* frame, Event*)
 {
-    return valueStyle(frame, CSS_PROP_FONT_FAMILY);
+    return valueStyle(frame, CSSPropertyFontFamily);
 }
 
 String valueFontSize(Frame* frame, Event*)
 {
-    return valueStyle(frame, CSS_PROP_FONT_SIZE);
+    return valueStyle(frame, CSSPropertyFontSize);
 }
 
 String valueFontSizeDelta(Frame* frame, Event*)
 {
-    return valueStyle(frame, CSS_PROP__WEBKIT_FONT_SIZE_DELTA);
+    return valueStyle(frame, CSSPropertyWebkitFontSizeDelta);
 }
 
 String valueForeColor(Frame* frame, Event*)
 {
-    return valueStyle(frame, CSS_PROP_COLOR);
+    return valueStyle(frame, CSSPropertyColor);
 }
 
 // Map of functions

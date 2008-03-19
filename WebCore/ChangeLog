@@ -1,3 +1,14 @@
+2008-03-19  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by John Sullivan.
+
+        - change CSS property and value keyword constants from all-caps with
+          underscores to intra-caps.
+
+        * css/makeprop.pl:
+        * css/makevalues.pl:
+        * All files using the constants
+
 2008-03-19  Adam Roben  <aroben@apple.com>
 
         Make clicking anywhere in a row in the DOM tree select that row's node

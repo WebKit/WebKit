@@ -80,7 +80,7 @@ void HTMLTableColElement::parseMappedAttribute(MappedAttribute *attr)
             static_cast<RenderTableCol*>(renderer())->updateFromElement();
     } else if (attr->name() == widthAttr) {
         if (!attr->value().isEmpty())
-            addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
+            addCSSLength(attr, CSSPropertyWidth, attr->value());
     } else
         HTMLTablePartElement::parseMappedAttribute(attr);
 }

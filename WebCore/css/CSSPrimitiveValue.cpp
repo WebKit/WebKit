@@ -142,7 +142,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
     switch (length.type()) {
         case Auto:
             m_type = CSS_IDENT;
-            m_value.ident = CSS_VAL_AUTO;
+            m_value.ident = CSSValueAuto;
             break;
         case WebCore::Fixed:
             m_type = CSS_PX;
@@ -150,11 +150,11 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
             break;
         case Intrinsic:
             m_type = CSS_IDENT;
-            m_value.ident = CSS_VAL_INTRINSIC;
+            m_value.ident = CSSValueIntrinsic;
             break;
         case MinIntrinsic:
             m_type = CSS_IDENT;
-            m_value.ident = CSS_VAL_MIN_INTRINSIC;
+            m_value.ident = CSSValueMinIntrinsic;
             break;
         case Percent:
             m_type = CSS_PERCENTAGE;
@@ -692,13 +692,13 @@ String CSSPrimitiveValue::cssText() const
                     text += " rectangle";
                 else
                     break;
-                if (region->top()->m_type == CSS_IDENT && region->top()->getIdent() == CSS_VAL_INVALID) {
+                if (region->top()->m_type == CSS_IDENT && region->top()->getIdent() == CSSValueInvalid) {
                     ASSERT(region->right()->m_type == CSS_IDENT);
                     ASSERT(region->bottom()->m_type == CSS_IDENT);
                     ASSERT(region->left()->m_type == CSS_IDENT);
-                    ASSERT(region->right()->getIdent() == CSS_VAL_INVALID);
-                    ASSERT(region->bottom()->getIdent() == CSS_VAL_INVALID);
-                    ASSERT(region->left()->getIdent() == CSS_VAL_INVALID);
+                    ASSERT(region->right()->getIdent() == CSSValueInvalid);
+                    ASSERT(region->bottom()->getIdent() == CSSValueInvalid);
+                    ASSERT(region->left()->getIdent() == CSSValueInvalid);
                 } else {
                     text.append(' ');
                     text += region->top()->cssText() + " ";

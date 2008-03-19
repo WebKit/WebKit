@@ -52,15 +52,15 @@ void HTMLOListElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == typeAttr) {
         if (attr->value() == "a")
-            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ALPHA);
+            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueLowerAlpha);
         else if (attr->value() == "A")
-            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ALPHA);
+            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueUpperAlpha);
         else if (attr->value() == "i")
-            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ROMAN);
+            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueLowerRoman);
         else if (attr->value() == "I")
-            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ROMAN);
+            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueUpperRoman);
         else if (attr->value() == "1")
-            addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_DECIMAL);
+            addCSSProperty(attr, CSSPropertyListStyleType, CSSValueDecimal);
     } else if (attr->name() == startAttr) {
         int s = !attr->isNull() ? attr->value().toInt() : 1;
         if (s != m_start) {

@@ -116,8 +116,8 @@ void HTMLEmbedElement::parseMappedAttribute(MappedAttribute* attr)
         if (equalIgnoringCase(value.string(), "yes") || equalIgnoringCase(value.string(), "true")) {
             // FIXME: Not dynamic, since we add this but don't remove it, but it may be OK for now
             // that this rarely-used attribute won't work properly if you remove it.
-            addCSSLength(attr, CSS_PROP_WIDTH, "0");
-            addCSSLength(attr, CSS_PROP_HEIGHT, "0");
+            addCSSLength(attr, CSSPropertyWidth, "0");
+            addCSSLength(attr, CSSPropertyHeight, "0");
         }
     } else if (attr->name() == nameAttr) {
         if (inDocument() && document()->isHTMLDocument()) {

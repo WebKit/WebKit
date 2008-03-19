@@ -328,7 +328,7 @@ bool CSSParser::parseColor(CSSMutableStyleDeclaration *declaration, const String
     rule = 0;
 
     bool ok = false;
-    if (numParsedProperties && parsedProperties[0]->m_id == CSS_PROP_COLOR)
+    if (numParsedProperties && parsedProperties[0]->m_id == CSSPropertyColor)
         ok = true;
 
     return ok;
@@ -553,13 +553,13 @@ bool CSSParser::parseValue(int propId, bool important)
 
     int num = inShorthand() ? 1 : valueList->size();
 
-    if (id == CSS_VAL_INHERIT) {
+    if (id == CSSValueInherit) {
         if (num != 1)
             return false;
         addProperty(propId, new CSSInheritedValue(), important);
         return true;
     }
-    else if (id == CSS_VAL_INITIAL) {
+    else if (id == CSSValueInitial) {
         if (num != 1)
             return false;
         addProperty(propId, new CSSInitialValue(false), important);
@@ -583,66 +583,66 @@ bool CSSParser::parseValue(int propId, bool important)
          * (see parseAuralValues). As we don't support them at all this seems reasonable.
          */
 
-    case CSS_PROP_SIZE:                 // <length>{1,2} | auto | portrait | landscape | inherit
-    case CSS_PROP_QUOTES:               // [<string> <string>]+ | none | inherit
+    case CSSPropertySize:                 // <length>{1,2} | auto | portrait | landscape | inherit
+    case CSSPropertyQuotes:               // [<string> <string>]+ | none | inherit
         if (id)
             valid_primitive = true;
         break;
-    case CSS_PROP_UNICODE_BIDI:         // normal | embed | bidi-override | inherit
-        if (id == CSS_VAL_NORMAL ||
-             id == CSS_VAL_EMBED ||
-             id == CSS_VAL_BIDI_OVERRIDE)
+    case CSSPropertyUnicodeBidi:         // normal | embed | bidi-override | inherit
+        if (id == CSSValueNormal ||
+             id == CSSValueEmbed ||
+             id == CSSValueBidiOverride)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_POSITION:             // static | relative | absolute | fixed | inherit
-        if (id == CSS_VAL_STATIC ||
-             id == CSS_VAL_RELATIVE ||
-             id == CSS_VAL_ABSOLUTE ||
-             id == CSS_VAL_FIXED)
+    case CSSPropertyPosition:             // static | relative | absolute | fixed | inherit
+        if (id == CSSValueStatic ||
+             id == CSSValueRelative ||
+             id == CSSValueAbsolute ||
+             id == CSSValueFixed)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_PAGE_BREAK_AFTER:     // auto | always | avoid | left | right | inherit
-    case CSS_PROP_PAGE_BREAK_BEFORE:
-    case CSS_PROP__WEBKIT_COLUMN_BREAK_AFTER:
-    case CSS_PROP__WEBKIT_COLUMN_BREAK_BEFORE:
-        if (id == CSS_VAL_AUTO ||
-             id == CSS_VAL_ALWAYS ||
-             id == CSS_VAL_AVOID ||
-             id == CSS_VAL_LEFT ||
-             id == CSS_VAL_RIGHT)
+    case CSSPropertyPageBreakAfter:     // auto | always | avoid | left | right | inherit
+    case CSSPropertyPageBreakBefore:
+    case CSSPropertyWebkitColumnBreakAfter:
+    case CSSPropertyWebkitColumnBreakBefore:
+        if (id == CSSValueAuto ||
+             id == CSSValueAlways ||
+             id == CSSValueAvoid ||
+             id == CSSValueLeft ||
+             id == CSSValueRight)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_PAGE_BREAK_INSIDE:    // avoid | auto | inherit
-    case CSS_PROP__WEBKIT_COLUMN_BREAK_INSIDE:
-        if (id == CSS_VAL_AUTO || id == CSS_VAL_AVOID)
+    case CSSPropertyPageBreakInside:    // avoid | auto | inherit
+    case CSSPropertyWebkitColumnBreakInside:
+        if (id == CSSValueAuto || id == CSSValueAvoid)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_EMPTY_CELLS:          // show | hide | inherit
-        if (id == CSS_VAL_SHOW ||
-             id == CSS_VAL_HIDE)
+    case CSSPropertyEmptyCells:          // show | hide | inherit
+        if (id == CSSValueShow ||
+             id == CSSValueHide)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_CONTENT:              // [ <string> | <uri> | <counter> | attr(X) | open-quote |
+    case CSSPropertyContent:              // [ <string> | <uri> | <counter> | attr(X) | open-quote |
         // close-quote | no-open-quote | no-close-quote ]+ | inherit
         return parseContent(propId, important);
         break;
 
-    case CSS_PROP_WHITE_SPACE:          // normal | pre | nowrap | inherit
-        if (id == CSS_VAL_NORMAL ||
-            id == CSS_VAL_PRE ||
-            id == CSS_VAL_PRE_WRAP ||
-            id == CSS_VAL_PRE_LINE ||
-            id == CSS_VAL_NOWRAP)
+    case CSSPropertyWhiteSpace:          // normal | pre | nowrap | inherit
+        if (id == CSSValueNormal ||
+            id == CSSValuePre ||
+            id == CSSValuePreWrap ||
+            id == CSSValuePreLine ||
+            id == CSSValueNowrap)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_CLIP:                 // <shape> | auto | inherit
-        if (id == CSS_VAL_AUTO)
+    case CSSPropertyClip:                 // <shape> | auto | inherit
+        if (id == CSSValueAuto)
             valid_primitive = true;
         else if (value->unit == Value::Function)
             return parseShape(propId, important);
@@ -651,105 +651,105 @@ bool CSSParser::parseValue(int propId, bool important)
     /* Start of supported CSS properties with validation. This is needed for parseShorthand to work
      * correctly and allows optimization in WebCore::applyRule(..)
      */
-    case CSS_PROP_CAPTION_SIDE:         // top | bottom | left | right | inherit
-        if (id == CSS_VAL_LEFT || id == CSS_VAL_RIGHT ||
-            id == CSS_VAL_TOP || id == CSS_VAL_BOTTOM)
+    case CSSPropertyCaptionSide:         // top | bottom | left | right | inherit
+        if (id == CSSValueLeft || id == CSSValueRight ||
+            id == CSSValueTop || id == CSSValueBottom)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_BORDER_COLLAPSE:      // collapse | separate | inherit
-        if (id == CSS_VAL_COLLAPSE || id == CSS_VAL_SEPARATE)
+    case CSSPropertyBorderCollapse:      // collapse | separate | inherit
+        if (id == CSSValueCollapse || id == CSSValueSeparate)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_VISIBILITY:           // visible | hidden | collapse | inherit
-        if (id == CSS_VAL_VISIBLE || id == CSS_VAL_HIDDEN || id == CSS_VAL_COLLAPSE)
+    case CSSPropertyVisibility:           // visible | hidden | collapse | inherit
+        if (id == CSSValueVisible || id == CSSValueHidden || id == CSSValueCollapse)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_OVERFLOW: {
+    case CSSPropertyOverflow: {
         ShorthandScope scope(this, propId);
-        if (num != 1 || !parseValue(CSS_PROP_OVERFLOW_X, important))
+        if (num != 1 || !parseValue(CSSPropertyOverflowX, important))
             return false;
         CSSValue* value = parsedProperties[numParsedProperties - 1]->value();
-        addProperty(CSS_PROP_OVERFLOW_Y, value, important);
+        addProperty(CSSPropertyOverflowY, value, important);
         return true;
     }
-    case CSS_PROP_OVERFLOW_X:
-    case CSS_PROP_OVERFLOW_Y:           // visible | hidden | scroll | auto | marquee | overlay | inherit
-        if (id == CSS_VAL_VISIBLE || id == CSS_VAL_HIDDEN || id == CSS_VAL_SCROLL || id == CSS_VAL_AUTO ||
-            id == CSS_VAL_OVERLAY || id == CSS_VAL__WEBKIT_MARQUEE)
+    case CSSPropertyOverflowX:
+    case CSSPropertyOverflowY:           // visible | hidden | scroll | auto | marquee | overlay | inherit
+        if (id == CSSValueVisible || id == CSSValueHidden || id == CSSValueScroll || id == CSSValueAuto ||
+            id == CSSValueOverlay || id == CSSValueWebkitMarquee)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_LIST_STYLE_POSITION:  // inside | outside | inherit
-        if (id == CSS_VAL_INSIDE || id == CSS_VAL_OUTSIDE)
+    case CSSPropertyListStylePosition:  // inside | outside | inherit
+        if (id == CSSValueInside || id == CSSValueOutside)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_LIST_STYLE_TYPE:
+    case CSSPropertyListStyleType:
         // disc | circle | square | decimal | decimal-leading-zero | lower-roman |
         // upper-roman | lower-greek | lower-alpha | lower-latin | upper-alpha |
         // upper-latin | hebrew | armenian | georgian | cjk-ideographic | hiragana |
         // katakana | hiragana-iroha | katakana-iroha | none | inherit
-        if ((id >= CSS_VAL_DISC && id <= CSS_VAL_KATAKANA_IROHA) || id == CSS_VAL_NONE)
+        if ((id >= CSSValueDisc && id <= CSSValueKatakanaIroha) || id == CSSValueNone)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_DISPLAY:
+    case CSSPropertyDisplay:
         // inline | block | list-item | run-in | inline-block | table |
         // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
         // table-column-group | table-column | table-cell | table-caption | box | inline-box | none | inherit
-        if ((id >= CSS_VAL_INLINE && id <= CSS_VAL__WEBKIT_INLINE_BOX) || id == CSS_VAL_NONE)
+        if ((id >= CSSValueInline && id <= CSSValueWebkitInlineBox) || id == CSSValueNone)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_DIRECTION:            // ltr | rtl | inherit
-        if (id == CSS_VAL_LTR || id == CSS_VAL_RTL)
+    case CSSPropertyDirection:            // ltr | rtl | inherit
+        if (id == CSSValueLtr || id == CSSValueRtl)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_TEXT_TRANSFORM:       // capitalize | uppercase | lowercase | none | inherit
-        if ((id >= CSS_VAL_CAPITALIZE && id <= CSS_VAL_LOWERCASE) || id == CSS_VAL_NONE)
+    case CSSPropertyTextTransform:       // capitalize | uppercase | lowercase | none | inherit
+        if ((id >= CSSValueCapitalize && id <= CSSValueLowercase) || id == CSSValueNone)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_FLOAT:                // left | right | none | inherit + center for buggy CSS
-        if (id == CSS_VAL_LEFT || id == CSS_VAL_RIGHT ||
-             id == CSS_VAL_NONE || id == CSS_VAL_CENTER)
+    case CSSPropertyFloat:                // left | right | none | inherit + center for buggy CSS
+        if (id == CSSValueLeft || id == CSSValueRight ||
+             id == CSSValueNone || id == CSSValueCenter)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_CLEAR:                // none | left | right | both | inherit
-        if (id == CSS_VAL_NONE || id == CSS_VAL_LEFT ||
-             id == CSS_VAL_RIGHT|| id == CSS_VAL_BOTH)
+    case CSSPropertyClear:                // none | left | right | both | inherit
+        if (id == CSSValueNone || id == CSSValueLeft ||
+             id == CSSValueRight|| id == CSSValueBoth)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_TEXT_ALIGN:
+    case CSSPropertyTextAlign:
         // left | right | center | justify | webkit_left | webkit_right | webkit_center | start | end | <string> | inherit
-        if ((id >= CSS_VAL__WEBKIT_AUTO && id <= CSS_VAL__WEBKIT_CENTER) || id == CSS_VAL_START || id == CSS_VAL_END ||
+        if ((id >= CSSValueWebkitAuto && id <= CSSValueWebkitCenter) || id == CSSValueStart || id == CSSValueEnd ||
              value->unit == CSSPrimitiveValue::CSS_STRING)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_OUTLINE_STYLE:        // <border-style> | auto | inherit
-        if (id == CSS_VAL_AUTO) {
+    case CSSPropertyOutlineStyle:        // <border-style> | auto | inherit
+        if (id == CSSValueAuto) {
             valid_primitive = true;
             break;
         } // Fall through!
-    case CSS_PROP_BORDER_TOP_STYLE:     //// <border-style> | inherit
-    case CSS_PROP_BORDER_RIGHT_STYLE:   //   Defined as:    none | hidden | dotted | dashed |
-    case CSS_PROP_BORDER_BOTTOM_STYLE:  //   solid | double | groove | ridge | inset | outset
-    case CSS_PROP_BORDER_LEFT_STYLE:
-    case CSS_PROP__WEBKIT_COLUMN_RULE_STYLE:
-        if (id >= CSS_VAL_NONE && id <= CSS_VAL_DOUBLE)
+    case CSSPropertyBorderTopStyle:     //// <border-style> | inherit
+    case CSSPropertyBorderRightStyle:   //   Defined as:    none | hidden | dotted | dashed |
+    case CSSPropertyBorderBottomStyle:  //   solid | double | groove | ridge | inset | outset
+    case CSSPropertyBorderLeftStyle:
+    case CSSPropertyWebkitColumnRuleStyle:
+        if (id >= CSSValueNone && id <= CSSValueDouble)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_FONT_WEIGHT:  // normal | bold | bolder | lighter | 100 | 200 | 300 | 400 |
+    case CSSPropertyFontWeight:  // normal | bold | bolder | lighter | 100 | 200 | 300 | 400 |
         // 500 | 600 | 700 | 800 | 900 | inherit
-        if (id >= CSS_VAL_NORMAL && id <= CSS_VAL_900) {
+        if (id >= CSSValueNormal && id <= CSSValue900) {
             // Allready correct id
             valid_primitive = true;
         } else if (validUnit(value, FInteger|FNonNeg, false)) {
@@ -758,17 +758,17 @@ bool CSSParser::parseValue(int propId, bool important)
                 break;
             weight /= 100;
             if (weight >= 1 && weight <= 9) {
-                id = CSS_VAL_100 + weight - 1;
+                id = CSSValue100 + weight - 1;
                 valid_primitive = true;
             }
         }
         break;
 
-    case CSS_PROP_BORDER_SPACING: {
-        const int properties[2] = { CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING,
-                                    CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING };
+    case CSSPropertyBorderSpacing: {
+        const int properties[2] = { CSSPropertyWebkitBorderHorizontalSpacing,
+                                    CSSPropertyWebkitBorderVerticalSpacing };
         if (num == 1) {
-            ShorthandScope scope(this, CSS_PROP_BORDER_SPACING);
+            ShorthandScope scope(this, CSSPropertyBorderSpacing);
             if (!parseValue(properties[0], important))
                 return false;
             CSSValue* value = parsedProperties[numParsedProperties-1]->value();
@@ -776,52 +776,52 @@ bool CSSParser::parseValue(int propId, bool important)
             return true;
         }
         else if (num == 2) {
-            ShorthandScope scope(this, CSS_PROP_BORDER_SPACING);
+            ShorthandScope scope(this, CSSPropertyBorderSpacing);
             if (!parseValue(properties[0], important) || !parseValue(properties[1], important))
                 return false;
             return true;
         }
         return false;
     }
-    case CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING:
-    case CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING:
+    case CSSPropertyWebkitBorderHorizontalSpacing:
+    case CSSPropertyWebkitBorderVerticalSpacing:
         valid_primitive = validUnit(value, FLength|FNonNeg, strict);
         break;
-    case CSS_PROP_SCROLLBAR_FACE_COLOR:         // IE5.5
-    case CSS_PROP_SCROLLBAR_SHADOW_COLOR:       // IE5.5
-    case CSS_PROP_SCROLLBAR_HIGHLIGHT_COLOR:    // IE5.5
-    case CSS_PROP_SCROLLBAR_3DLIGHT_COLOR:      // IE5.5
-    case CSS_PROP_SCROLLBAR_DARKSHADOW_COLOR:   // IE5.5
-    case CSS_PROP_SCROLLBAR_TRACK_COLOR:        // IE5.5
-    case CSS_PROP_SCROLLBAR_ARROW_COLOR:        // IE5.5
+    case CSSPropertyScrollbarFaceColor:         // IE5.5
+    case CSSPropertyScrollbarShadowColor:       // IE5.5
+    case CSSPropertyScrollbarHighlightColor:    // IE5.5
+    case CSSPropertyScrollbar3dlightColor:      // IE5.5
+    case CSSPropertyScrollbarDarkshadowColor:   // IE5.5
+    case CSSPropertyScrollbarTrackColor:        // IE5.5
+    case CSSPropertyScrollbarArrowColor:        // IE5.5
         if (strict)
             break;
         /* nobreak */
-    case CSS_PROP_OUTLINE_COLOR:        // <color> | invert | inherit
+    case CSSPropertyOutlineColor:        // <color> | invert | inherit
         // Outline color has "invert" as additional keyword.
         // Also, we want to allow the special focus color even in strict parsing mode.
-        if (propId == CSS_PROP_OUTLINE_COLOR && (id == CSS_VAL_INVERT || id == CSS_VAL__WEBKIT_FOCUS_RING_COLOR)) {
+        if (propId == CSSPropertyOutlineColor && (id == CSSValueInvert || id == CSSValueWebkitFocusRingColor)) {
             valid_primitive = true;
             break;
         }
         /* nobreak */
-    case CSS_PROP_BACKGROUND_COLOR:     // <color> | inherit
-    case CSS_PROP_BORDER_TOP_COLOR:     // <color> | inherit
-    case CSS_PROP_BORDER_RIGHT_COLOR:   // <color> | inherit
-    case CSS_PROP_BORDER_BOTTOM_COLOR:  // <color> | inherit
-    case CSS_PROP_BORDER_LEFT_COLOR:    // <color> | inherit
-    case CSS_PROP_COLOR:                // <color> | inherit
-    case CSS_PROP_TEXT_LINE_THROUGH_COLOR: // CSS3 text decoration colors
-    case CSS_PROP_TEXT_UNDERLINE_COLOR:
-    case CSS_PROP_TEXT_OVERLINE_COLOR:
-    case CSS_PROP__WEBKIT_COLUMN_RULE_COLOR:
-    case CSS_PROP__WEBKIT_TEXT_FILL_COLOR:
-    case CSS_PROP__WEBKIT_TEXT_STROKE_COLOR:
-        if (id == CSS_VAL__WEBKIT_TEXT)
+    case CSSPropertyBackgroundColor:     // <color> | inherit
+    case CSSPropertyBorderTopColor:     // <color> | inherit
+    case CSSPropertyBorderRightColor:   // <color> | inherit
+    case CSSPropertyBorderBottomColor:  // <color> | inherit
+    case CSSPropertyBorderLeftColor:    // <color> | inherit
+    case CSSPropertyColor:                // <color> | inherit
+    case CSSPropertyTextLineThroughColor: // CSS3 text decoration colors
+    case CSSPropertyTextUnderlineColor:
+    case CSSPropertyTextOverlineColor:
+    case CSSPropertyWebkitColumnRuleColor:
+    case CSSPropertyWebkitTextFillColor:
+    case CSSPropertyWebkitTextStrokeColor:
+        if (id == CSSValueWebkitText)
             valid_primitive = true; // Always allow this, even when strict parsing is on,
                                     // since we use this in our UA sheets.
-        else if (id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT || id == CSS_VAL_MENU ||
-             (id >= CSS_VAL__WEBKIT_FOCUS_RING_COLOR && id < CSS_VAL__WEBKIT_TEXT && !strict)) {
+        else if (id >= CSSValueAqua && id <= CSSValueWindowtext || id == CSSValueMenu ||
+             (id >= CSSValueWebkitFocusRingColor && id < CSSValueWebkitText && !strict)) {
             valid_primitive = true;
         } else {
             parsedValue = parseColor();
@@ -830,7 +830,7 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         break;
 
-    case CSS_PROP_CURSOR: {
+    case CSSPropertyCursor: {
         // [<uri>,]*  [ auto | crosshair | default | pointer | progress | move | e-resize | ne-resize |
         // nw-resize | n-resize | se-resize | sw-resize | s-resize | w-resize | ew-resize | 
         // ns-resize | nesw-resize | nwse-resize | col-resize | row-resize | text | wait | help ] ] | inherit
@@ -866,33 +866,33 @@ bool CSSParser::parseValue(int propId, bool important)
             if (!value) { // no value after url list (MSIE 5 compatibility)
                 if (list->length() != 1)
                     return false;
-            } else if (!strict && value->id == CSS_VAL_HAND) // MSIE 5 compatibility :/
-                list->append(new CSSPrimitiveValue(CSS_VAL_POINTER));
-            else if (value && ((value->id >= CSS_VAL_AUTO && value->id <= CSS_VAL_ALL_SCROLL) || value->id == CSS_VAL_COPY || value->id == CSS_VAL_NONE))
+            } else if (!strict && value->id == CSSValueHand) // MSIE 5 compatibility :/
+                list->append(new CSSPrimitiveValue(CSSValuePointer));
+            else if (value && ((value->id >= CSSValueAuto && value->id <= CSSValueAllScroll) || value->id == CSSValueCopy || value->id == CSSValueNone))
                 list->append(new CSSPrimitiveValue(value->id));
             valueList->next();
             parsedValue = list.release();
             break;
         }
         id = value->id;
-        if (!strict && value->id == CSS_VAL_HAND) { // MSIE 5 compatibility :/
-            id = CSS_VAL_POINTER;
+        if (!strict && value->id == CSSValueHand) { // MSIE 5 compatibility :/
+            id = CSSValuePointer;
             valid_primitive = true;
-        } else if ((value->id >= CSS_VAL_AUTO && value->id <= CSS_VAL_ALL_SCROLL) || value->id == CSS_VAL_COPY || value->id == CSS_VAL_NONE)
+        } else if ((value->id >= CSSValueAuto && value->id <= CSSValueAllScroll) || value->id == CSSValueCopy || value->id == CSSValueNone)
             valid_primitive = true;
         break;
     }
 
-    case CSS_PROP_BACKGROUND_ATTACHMENT:
-    case CSS_PROP__WEBKIT_BACKGROUND_CLIP:
-    case CSS_PROP__WEBKIT_BACKGROUND_COMPOSITE:
-    case CSS_PROP_BACKGROUND_IMAGE:
-    case CSS_PROP__WEBKIT_BACKGROUND_ORIGIN:
-    case CSS_PROP_BACKGROUND_POSITION:
-    case CSS_PROP_BACKGROUND_POSITION_X:
-    case CSS_PROP_BACKGROUND_POSITION_Y:
-    case CSS_PROP__WEBKIT_BACKGROUND_SIZE:
-    case CSS_PROP_BACKGROUND_REPEAT: {
+    case CSSPropertyBackgroundAttachment:
+    case CSSPropertyWebkitBackgroundClip:
+    case CSSPropertyWebkitBackgroundComposite:
+    case CSSPropertyBackgroundImage:
+    case CSSPropertyWebkitBackgroundOrigin:
+    case CSSPropertyBackgroundPosition:
+    case CSSPropertyBackgroundPositionX:
+    case CSSPropertyBackgroundPositionY:
+    case CSSPropertyWebkitBackgroundSize:
+    case CSSPropertyBackgroundRepeat: {
         RefPtr<CSSValue> val1;
         RefPtr<CSSValue> val2;
         int propId1, propId2;
@@ -904,8 +904,8 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         return false;
     }
-    case CSS_PROP_LIST_STYLE_IMAGE:     // <uri> | none | inherit
-        if (id == CSS_VAL_NONE) {
+    case CSSPropertyListStyleImage:     // <uri> | none | inherit
+        if (id == CSSValueNone) {
             parsedValue = new CSSImageValue();
             valueList->next();
         }
@@ -919,163 +919,163 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         break;
 
-    case CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH:
-    case CSS_PROP_OUTLINE_WIDTH:        // <border-width> | inherit
-    case CSS_PROP_BORDER_TOP_WIDTH:     //// <border-width> | inherit
-    case CSS_PROP_BORDER_RIGHT_WIDTH:   //   Which is defined as
-    case CSS_PROP_BORDER_BOTTOM_WIDTH:  //   thin | medium | thick | <length>
-    case CSS_PROP_BORDER_LEFT_WIDTH:
-    case CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH:
-        if (id == CSS_VAL_THIN || id == CSS_VAL_MEDIUM || id == CSS_VAL_THICK)
+    case CSSPropertyWebkitTextStrokeWidth:
+    case CSSPropertyOutlineWidth:        // <border-width> | inherit
+    case CSSPropertyBorderTopWidth:     //// <border-width> | inherit
+    case CSSPropertyBorderRightWidth:   //   Which is defined as
+    case CSSPropertyBorderBottomWidth:  //   thin | medium | thick | <length>
+    case CSSPropertyBorderLeftWidth:
+    case CSSPropertyWebkitColumnRuleWidth:
+        if (id == CSSValueThin || id == CSSValueMedium || id == CSSValueThick)
             valid_primitive = true;
         else
             valid_primitive = validUnit(value, FLength, strict);
         break;
 
-    case CSS_PROP_LETTER_SPACING:       // normal | <length> | inherit
-    case CSS_PROP_WORD_SPACING:         // normal | <length> | inherit
-        if (id == CSS_VAL_NORMAL)
+    case CSSPropertyLetterSpacing:       // normal | <length> | inherit
+    case CSSPropertyWordSpacing:         // normal | <length> | inherit
+        if (id == CSSValueNormal)
             valid_primitive = true;
         else
             valid_primitive = validUnit(value, FLength, strict);
         break;
 
-    case CSS_PROP_WORD_BREAK:          // normal | break-all | break-word (this is a custom extension)
-        if (id == CSS_VAL_NORMAL || id == CSS_VAL_BREAK_ALL || id == CSS_VAL_BREAK_WORD)
+    case CSSPropertyWordBreak:          // normal | break-all | break-word (this is a custom extension)
+        if (id == CSSValueNormal || id == CSSValueBreakAll || id == CSSValueBreakWord)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_WORD_WRAP:           // normal | break-word
-        if (id == CSS_VAL_NORMAL || id == CSS_VAL_BREAK_WORD)
+    case CSSPropertyWordWrap:           // normal | break-word
+        if (id == CSSValueNormal || id == CSSValueBreakWord)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_TEXT_INDENT:          // <length> | <percentage> | inherit
-    case CSS_PROP_PADDING_TOP:          //// <padding-width> | inherit
-    case CSS_PROP_PADDING_RIGHT:        //   Which is defined as
-    case CSS_PROP_PADDING_BOTTOM:       //   <length> | <percentage>
-    case CSS_PROP_PADDING_LEFT:         ////
-    case CSS_PROP__WEBKIT_PADDING_START:
+    case CSSPropertyTextIndent:          // <length> | <percentage> | inherit
+    case CSSPropertyPaddingTop:          //// <padding-width> | inherit
+    case CSSPropertyPaddingRight:        //   Which is defined as
+    case CSSPropertyPaddingBottom:       //   <length> | <percentage>
+    case CSSPropertyPaddingLeft:         ////
+    case CSSPropertyWebkitPaddingStart:
         valid_primitive = (!id && validUnit(value, FLength|FPercent, strict));
         break;
 
-    case CSS_PROP_MAX_HEIGHT:           // <length> | <percentage> | none | inherit
-    case CSS_PROP_MAX_WIDTH:            // <length> | <percentage> | none | inherit
-        if (id == CSS_VAL_NONE || id == CSS_VAL_INTRINSIC || id == CSS_VAL_MIN_INTRINSIC) {
+    case CSSPropertyMaxHeight:           // <length> | <percentage> | none | inherit
+    case CSSPropertyMaxWidth:            // <length> | <percentage> | none | inherit
+        if (id == CSSValueNone || id == CSSValueIntrinsic || id == CSSValueMinIntrinsic) {
             valid_primitive = true;
             break;
         }
         /* nobreak */
-    case CSS_PROP_MIN_HEIGHT:           // <length> | <percentage> | inherit
-    case CSS_PROP_MIN_WIDTH:            // <length> | <percentage> | inherit
-        if (id == CSS_VAL_INTRINSIC || id == CSS_VAL_MIN_INTRINSIC)
+    case CSSPropertyMinHeight:           // <length> | <percentage> | inherit
+    case CSSPropertyMinWidth:            // <length> | <percentage> | inherit
+        if (id == CSSValueIntrinsic || id == CSSValueMinIntrinsic)
             valid_primitive = true;
         else
             valid_primitive = (!id && validUnit(value, FLength|FPercent|FNonNeg, strict));
         break;
 
-    case CSS_PROP_FONT_SIZE:
+    case CSSPropertyFontSize:
         // <absolute-size> | <relative-size> | <length> | <percentage> | inherit
-        if (id >= CSS_VAL_XX_SMALL && id <= CSS_VAL_LARGER)
+        if (id >= CSSValueXxSmall && id <= CSSValueLarger)
             valid_primitive = true;
         else
             valid_primitive = (validUnit(value, FLength|FPercent, strict));
         break;
 
-    case CSS_PROP_FONT_STYLE:           // normal | italic | oblique | inherit
-        if (id == CSS_VAL_NORMAL || id == CSS_VAL_ITALIC || id == CSS_VAL_OBLIQUE)
+    case CSSPropertyFontStyle:           // normal | italic | oblique | inherit
+        if (id == CSSValueNormal || id == CSSValueItalic || id == CSSValueOblique)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_FONT_VARIANT:         // normal | small-caps | inherit
-        if (id == CSS_VAL_NORMAL || id == CSS_VAL_SMALL_CAPS)
+    case CSSPropertyFontVariant:         // normal | small-caps | inherit
+        if (id == CSSValueNormal || id == CSSValueSmallCaps)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_VERTICAL_ALIGN:
+    case CSSPropertyVerticalAlign:
         // baseline | sub | super | top | text-top | middle | bottom | text-bottom |
         // <percentage> | <length> | inherit
 
-        if (id >= CSS_VAL_BASELINE && id <= CSS_VAL__WEBKIT_BASELINE_MIDDLE)
+        if (id >= CSSValueBaseline && id <= CSSValueWebkitBaselineMiddle)
             valid_primitive = true;
         else
             valid_primitive = (!id && validUnit(value, FLength|FPercent, strict));
         break;
 
-    case CSS_PROP_HEIGHT:               // <length> | <percentage> | auto | inherit
-    case CSS_PROP_WIDTH:                // <length> | <percentage> | auto | inherit
-        if (id == CSS_VAL_AUTO || id == CSS_VAL_INTRINSIC || id == CSS_VAL_MIN_INTRINSIC)
+    case CSSPropertyHeight:               // <length> | <percentage> | auto | inherit
+    case CSSPropertyWidth:                // <length> | <percentage> | auto | inherit
+        if (id == CSSValueAuto || id == CSSValueIntrinsic || id == CSSValueMinIntrinsic)
             valid_primitive = true;
         else
             // ### handle multilength case where we allow relative units
             valid_primitive = (!id && validUnit(value, FLength|FPercent|FNonNeg, strict));
         break;
 
-    case CSS_PROP_BOTTOM:               // <length> | <percentage> | auto | inherit
-    case CSS_PROP_LEFT:                 // <length> | <percentage> | auto | inherit
-    case CSS_PROP_RIGHT:                // <length> | <percentage> | auto | inherit
-    case CSS_PROP_TOP:                  // <length> | <percentage> | auto | inherit
-    case CSS_PROP_MARGIN_TOP:           //// <margin-width> | inherit
-    case CSS_PROP_MARGIN_RIGHT:         //   Which is defined as
-    case CSS_PROP_MARGIN_BOTTOM:        //   <length> | <percentage> | auto | inherit
-    case CSS_PROP_MARGIN_LEFT:          ////
-    case CSS_PROP__WEBKIT_MARGIN_START:
-        if (id == CSS_VAL_AUTO)
+    case CSSPropertyBottom:               // <length> | <percentage> | auto | inherit
+    case CSSPropertyLeft:                 // <length> | <percentage> | auto | inherit
+    case CSSPropertyRight:                // <length> | <percentage> | auto | inherit
+    case CSSPropertyTop:                  // <length> | <percentage> | auto | inherit
+    case CSSPropertyMarginTop:           //// <margin-width> | inherit
+    case CSSPropertyMarginRight:         //   Which is defined as
+    case CSSPropertyMarginBottom:        //   <length> | <percentage> | auto | inherit
+    case CSSPropertyMarginLeft:          ////
+    case CSSPropertyWebkitMarginStart:
+        if (id == CSSValueAuto)
             valid_primitive = true;
         else
             valid_primitive = (!id && validUnit(value, FLength|FPercent, strict));
         break;
 
-    case CSS_PROP_Z_INDEX:              // auto | <integer> | inherit
-        if (id == CSS_VAL_AUTO) {
+    case CSSPropertyZIndex:              // auto | <integer> | inherit
+        if (id == CSSValueAuto) {
             valid_primitive = true;
             break;
         }
         /* nobreak */
-    case CSS_PROP_ORPHANS:              // <integer> | inherit
-    case CSS_PROP_WIDOWS:               // <integer> | inherit
+    case CSSPropertyOrphans:              // <integer> | inherit
+    case CSSPropertyWidows:               // <integer> | inherit
         // ### not supported later on
         valid_primitive = (!id && validUnit(value, FInteger, false));
         break;
 
-    case CSS_PROP_LINE_HEIGHT:          // normal | <number> | <length> | <percentage> | inherit
-        if (id == CSS_VAL_NORMAL)
+    case CSSPropertyLineHeight:          // normal | <number> | <length> | <percentage> | inherit
+        if (id == CSSValueNormal)
             valid_primitive = true;
         else
             valid_primitive = (!id && validUnit(value, FNumber|FLength|FPercent, strict));
         break;
-    case CSS_PROP_COUNTER_INCREMENT:    // [ <identifier> <integer>? ]+ | none | inherit
-        if (id != CSS_VAL_NONE)
+    case CSSPropertyCounterIncrement:    // [ <identifier> <integer>? ]+ | none | inherit
+        if (id != CSSValueNone)
             return parseCounter(propId, 1, important);
         valid_primitive = true;
         break;
-     case CSS_PROP_COUNTER_RESET:        // [ <identifier> <integer>? ]+ | none | inherit
-        if (id != CSS_VAL_NONE)
+     case CSSPropertyCounterReset:        // [ <identifier> <integer>? ]+ | none | inherit
+        if (id != CSSValueNone)
             return parseCounter(propId, 0, important);
         valid_primitive = true;
         break;
-    case CSS_PROP_FONT_FAMILY:
+    case CSSPropertyFontFamily:
         // [[ <family-name> | <generic-family> ],]* [<family-name> | <generic-family>] | inherit
     {
         parsedValue = parseFontFamily();
         break;
     }
 
-    case CSS_PROP_TEXT_DECORATION:
-    case CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT:
+    case CSSPropertyTextDecoration:
+    case CSSPropertyWebkitTextDecorationsInEffect:
         // none | [ underline || overline || line-through || blink ] | inherit
-        if (id == CSS_VAL_NONE) {
+        if (id == CSSValueNone) {
             valid_primitive = true;
         } else {
             RefPtr<CSSValueList> list(new CSSValueList);
             bool is_valid = true;
             while(is_valid && value) {
                 switch (value->id) {
-                case CSS_VAL_BLINK:
+                case CSSValueBlink:
                     break;
-                case CSS_VAL_UNDERLINE:
-                case CSS_VAL_OVERLINE:
-                case CSS_VAL_LINE_THROUGH:
+                case CSSValueUnderline:
+                case CSSValueOverline:
+                case CSSValueLineThrough:
                     list->append(new CSSPrimitiveValue(value->id));
                     break;
                 default:
@@ -1090,33 +1090,33 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         break;
 
-    case CSS_PROP_ZOOM:          // normal | reset | <number> | <percentage> | inherit
-        if (id == CSS_VAL_NORMAL || id == CSS_VAL_RESET)
+    case CSSPropertyZoom:          // normal | reset | <number> | <percentage> | inherit
+        if (id == CSSValueNormal || id == CSSValueReset)
             valid_primitive = true;
         else
             valid_primitive = (!id && validUnit(value, FNumber | FPercent, true));
         break;
         
-    case CSS_PROP_TABLE_LAYOUT:         // auto | fixed | inherit
-        if (id == CSS_VAL_AUTO || id == CSS_VAL_FIXED)
+    case CSSPropertyTableLayout:         // auto | fixed | inherit
+        if (id == CSSValueAuto || id == CSSValueFixed)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_SRC:  // Only used within @font-face, so cannot use inherit | initial or be !important.  This is a list of urls or local references.
+    case CSSPropertySrc:  // Only used within @font-face, so cannot use inherit | initial or be !important.  This is a list of urls or local references.
         return parseFontFaceSrc();
 
-    case CSS_PROP_UNICODE_RANGE:
+    case CSSPropertyUnicodeRange:
         return parseFontFaceUnicodeRange();
 
     /* CSS3 properties */
-    case CSS_PROP__WEBKIT_APPEARANCE:
-        if ((id >= CSS_VAL_CHECKBOX && id <= CSS_VAL_TEXTAREA) || id == CSS_VAL_NONE)
+    case CSSPropertyWebkitAppearance:
+        if ((id >= CSSValueCheckbox && id <= CSSValueTextarea) || id == CSSValueNone)
             valid_primitive = true;
         break;
 
-    case CSS_PROP__WEBKIT_BINDING:
+    case CSSPropertyWebkitBinding:
 #if ENABLE(XBL)
-        if (id == CSS_VAL_NONE)
+        if (id == CSSValueNone)
             valid_primitive = true;
         else {
             RefPtr<CSSValueList> values(new CSSValueList());
@@ -1148,17 +1148,17 @@ bool CSSParser::parseValue(int propId, bool important)
         }
 #endif
         break;
-    case CSS_PROP__WEBKIT_BORDER_IMAGE:
-        if (id == CSS_VAL_NONE)
+    case CSSPropertyWebkitBorderImage:
+        if (id == CSSValueNone)
             valid_primitive = true;
         else
             return parseBorderImage(propId, important);
         break;
-    case CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS:
-    case CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS:
-    case CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS:
-    case CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS:
-    case CSS_PROP__WEBKIT_BORDER_RADIUS: {
+    case CSSPropertyWebkitBorderTopRightRadius:
+    case CSSPropertyWebkitBorderTopLeftRadius:
+    case CSSPropertyWebkitBorderBottomLeftRadius:
+    case CSSPropertyWebkitBorderBottomRightRadius:
+    case CSSPropertyWebkitBorderRadius: {
         if (num != 1 && num != 2)
             return false;
         valid_primitive = validUnit(value, FLength, strict);
@@ -1177,115 +1177,115 @@ bool CSSParser::parseValue(int propId, bool important)
         
         RefPtr<Pair> pair = new Pair(parsedValue1.release(), parsedValue2.release());
         RefPtr<CSSPrimitiveValue> val = new CSSPrimitiveValue(pair.release());
-        if (propId == CSS_PROP__WEBKIT_BORDER_RADIUS) {
-            const int properties[4] = { CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS,
-                                        CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS,
-                                        CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS,
-                                        CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS };
+        if (propId == CSSPropertyWebkitBorderRadius) {
+            const int properties[4] = { CSSPropertyWebkitBorderTopRightRadius,
+                                        CSSPropertyWebkitBorderTopLeftRadius,
+                                        CSSPropertyWebkitBorderBottomLeftRadius,
+                                        CSSPropertyWebkitBorderBottomRightRadius };
             for (int i = 0; i < 4; i++)
                 addProperty(properties[i], val.get(), important);
         } else
             addProperty(propId, val.release(), important);
         return true;
     }
-    case CSS_PROP_OUTLINE_OFFSET:
+    case CSSPropertyOutlineOffset:
         valid_primitive = validUnit(value, FLength, strict);
         break;
-    case CSS_PROP_TEXT_SHADOW: // CSS2 property, dropped in CSS2.1, back in CSS3, so treat as CSS3
-    case CSS_PROP__WEBKIT_BOX_SHADOW:
-        if (id == CSS_VAL_NONE)
+    case CSSPropertyTextShadow: // CSS2 property, dropped in CSS2.1, back in CSS3, so treat as CSS3
+    case CSSPropertyWebkitBoxShadow:
+        if (id == CSSValueNone)
             valid_primitive = true;
         else
             return parseShadow(propId, important);
         break;
-    case CSS_PROP_OPACITY:
+    case CSSPropertyOpacity:
         valid_primitive = validUnit(value, FNumber, strict);
         break;
-    case CSS_PROP__WEBKIT_BOX_ALIGN:
-        if (id == CSS_VAL_STRETCH || id == CSS_VAL_START || id == CSS_VAL_END ||
-            id == CSS_VAL_CENTER || id == CSS_VAL_BASELINE)
+    case CSSPropertyWebkitBoxAlign:
+        if (id == CSSValueStretch || id == CSSValueStart || id == CSSValueEnd ||
+            id == CSSValueCenter || id == CSSValueBaseline)
             valid_primitive = true;
         break;
-    case CSS_PROP__WEBKIT_BOX_DIRECTION:
-        if (id == CSS_VAL_NORMAL || id == CSS_VAL_REVERSE)
+    case CSSPropertyWebkitBoxDirection:
+        if (id == CSSValueNormal || id == CSSValueReverse)
             valid_primitive = true;
         break;
-    case CSS_PROP__WEBKIT_BOX_LINES:
-        if (id == CSS_VAL_SINGLE || id == CSS_VAL_MULTIPLE)
+    case CSSPropertyWebkitBoxLines:
+        if (id == CSSValueSingle || id == CSSValueMultiple)
             valid_primitive = true;
         break;
-    case CSS_PROP__WEBKIT_BOX_ORIENT:
-        if (id == CSS_VAL_HORIZONTAL || id == CSS_VAL_VERTICAL ||
-            id == CSS_VAL_INLINE_AXIS || id == CSS_VAL_BLOCK_AXIS)
+    case CSSPropertyWebkitBoxOrient:
+        if (id == CSSValueHorizontal || id == CSSValueVertical ||
+            id == CSSValueInlineAxis || id == CSSValueBlockAxis)
             valid_primitive = true;
         break;
-    case CSS_PROP__WEBKIT_BOX_PACK:
-        if (id == CSS_VAL_START || id == CSS_VAL_END ||
-            id == CSS_VAL_CENTER || id == CSS_VAL_JUSTIFY)
+    case CSSPropertyWebkitBoxPack:
+        if (id == CSSValueStart || id == CSSValueEnd ||
+            id == CSSValueCenter || id == CSSValueJustify)
             valid_primitive = true;
         break;
-    case CSS_PROP__WEBKIT_BOX_FLEX:
+    case CSSPropertyWebkitBoxFlex:
         valid_primitive = validUnit(value, FNumber, strict);
         break;
-    case CSS_PROP__WEBKIT_BOX_FLEX_GROUP:
-    case CSS_PROP__WEBKIT_BOX_ORDINAL_GROUP:
+    case CSSPropertyWebkitBoxFlexGroup:
+    case CSSPropertyWebkitBoxOrdinalGroup:
         valid_primitive = validUnit(value, FInteger|FNonNeg, true);
         break;
-    case CSS_PROP__WEBKIT_BOX_SIZING:
-        valid_primitive = id == CSS_VAL_BORDER_BOX || id == CSS_VAL_CONTENT_BOX;
+    case CSSPropertyWebkitBoxSizing:
+        valid_primitive = id == CSSValueBorderBox || id == CSSValueContentBox;
         break;
-    case CSS_PROP__WEBKIT_MARQUEE: {
-        const int properties[5] = { CSS_PROP__WEBKIT_MARQUEE_DIRECTION, CSS_PROP__WEBKIT_MARQUEE_INCREMENT,
-                                    CSS_PROP__WEBKIT_MARQUEE_REPETITION,
-                                    CSS_PROP__WEBKIT_MARQUEE_STYLE, CSS_PROP__WEBKIT_MARQUEE_SPEED };
+    case CSSPropertyWebkitMarquee: {
+        const int properties[5] = { CSSPropertyWebkitMarqueeDirection, CSSPropertyWebkitMarqueeIncrement,
+                                    CSSPropertyWebkitMarqueeRepetition,
+                                    CSSPropertyWebkitMarqueeStyle, CSSPropertyWebkitMarqueeSpeed };
         return parseShorthand(propId, properties, 5, important);
     }
-    case CSS_PROP__WEBKIT_MARQUEE_DIRECTION:
-        if (id == CSS_VAL_FORWARDS || id == CSS_VAL_BACKWARDS || id == CSS_VAL_AHEAD ||
-            id == CSS_VAL_REVERSE || id == CSS_VAL_LEFT || id == CSS_VAL_RIGHT || id == CSS_VAL_DOWN ||
-            id == CSS_VAL_UP || id == CSS_VAL_AUTO)
+    case CSSPropertyWebkitMarqueeDirection:
+        if (id == CSSValueForwards || id == CSSValueBackwards || id == CSSValueAhead ||
+            id == CSSValueReverse || id == CSSValueLeft || id == CSSValueRight || id == CSSValueDown ||
+            id == CSSValueUp || id == CSSValueAuto)
             valid_primitive = true;
         break;
-    case CSS_PROP__WEBKIT_MARQUEE_INCREMENT:
-        if (id == CSS_VAL_SMALL || id == CSS_VAL_LARGE || id == CSS_VAL_MEDIUM)
+    case CSSPropertyWebkitMarqueeIncrement:
+        if (id == CSSValueSmall || id == CSSValueLarge || id == CSSValueMedium)
             valid_primitive = true;
         else
             valid_primitive = validUnit(value, FLength|FPercent, strict);
         break;
-    case CSS_PROP__WEBKIT_MARQUEE_STYLE:
-        if (id == CSS_VAL_NONE || id == CSS_VAL_SLIDE || id == CSS_VAL_SCROLL || id == CSS_VAL_ALTERNATE)
+    case CSSPropertyWebkitMarqueeStyle:
+        if (id == CSSValueNone || id == CSSValueSlide || id == CSSValueScroll || id == CSSValueAlternate)
             valid_primitive = true;
         break;
-    case CSS_PROP__WEBKIT_MARQUEE_REPETITION:
-        if (id == CSS_VAL_INFINITE)
+    case CSSPropertyWebkitMarqueeRepetition:
+        if (id == CSSValueInfinite)
             valid_primitive = true;
         else
             valid_primitive = validUnit(value, FInteger|FNonNeg, strict);
         break;
-    case CSS_PROP__WEBKIT_MARQUEE_SPEED:
-        if (id == CSS_VAL_NORMAL || id == CSS_VAL_SLOW || id == CSS_VAL_FAST)
+    case CSSPropertyWebkitMarqueeSpeed:
+        if (id == CSSValueNormal || id == CSSValueSlow || id == CSSValueFast)
             valid_primitive = true;
         else
             valid_primitive = validUnit(value, FTime|FInteger|FNonNeg, strict);
         break;
-    case CSS_PROP__WEBKIT_USER_DRAG: // auto | none | element
-        if (id == CSS_VAL_AUTO || id == CSS_VAL_NONE || id == CSS_VAL_ELEMENT)
+    case CSSPropertyWebkitUserDrag: // auto | none | element
+        if (id == CSSValueAuto || id == CSSValueNone || id == CSSValueElement)
             valid_primitive = true;
         break;
-    case CSS_PROP__WEBKIT_USER_MODIFY: // read-only | read-write
-        if (id == CSS_VAL_READ_ONLY || id == CSS_VAL_READ_WRITE || id == CSS_VAL_READ_WRITE_PLAINTEXT_ONLY)
+    case CSSPropertyWebkitUserModify: // read-only | read-write
+        if (id == CSSValueReadOnly || id == CSSValueReadWrite || id == CSSValueReadWritePlaintextOnly)
             valid_primitive = true;
         break;
-    case CSS_PROP__WEBKIT_USER_SELECT: // auto | none | text
-        if (id == CSS_VAL_AUTO || id == CSS_VAL_NONE || id == CSS_VAL_TEXT)
+    case CSSPropertyWebkitUserSelect: // auto | none | text
+        if (id == CSSValueAuto || id == CSSValueNone || id == CSSValueText)
             valid_primitive = true;
         break;
-    case CSS_PROP_TEXT_OVERFLOW: // clip | ellipsis
-        if (id == CSS_VAL_CLIP || id == CSS_VAL_ELLIPSIS)
+    case CSSPropertyTextOverflow: // clip | ellipsis
+        if (id == CSSValueClip || id == CSSValueEllipsis)
             valid_primitive = true;
         break;
-    case CSS_PROP__WEBKIT_TRANSFORM:
-        if (id == CSS_VAL_NONE)
+    case CSSPropertyWebkitTransform:
+        if (id == CSSValueNone)
             valid_primitive = true;
         else {
             PassRefPtr<CSSValue> val = parseTransform();
@@ -1296,9 +1296,9 @@ bool CSSParser::parseValue(int propId, bool important)
             return false;
         }
         break;
-    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN:
-    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_X:
-    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_Y: {
+    case CSSPropertyWebkitTransformOrigin:
+    case CSSPropertyWebkitTransformOriginX:
+    case CSSPropertyWebkitTransformOriginY: {
         RefPtr<CSSValue> val1;
         RefPtr<CSSValue> val2;
         int propId1, propId2;
@@ -1310,10 +1310,10 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         return false;
     }
-    case CSS_PROP__WEBKIT_TRANSITION_DURATION:
-    case CSS_PROP__WEBKIT_TRANSITION_REPEAT_COUNT:
-    case CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION:
-    case CSS_PROP__WEBKIT_TRANSITION_PROPERTY: {
+    case CSSPropertyWebkitTransitionDuration:
+    case CSSPropertyWebkitTransitionRepeatCount:
+    case CSSPropertyWebkitTransitionTimingFunction:
+    case CSSPropertyWebkitTransitionProperty: {
         RefPtr<CSSValue> val;
         if (parseTransitionProperty(propId, val)) {
             addProperty(propId, val.release(), important);
@@ -1321,11 +1321,11 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         return false;
     }
-    case CSS_PROP__WEBKIT_MARGIN_COLLAPSE: {
-        const int properties[2] = { CSS_PROP__WEBKIT_MARGIN_TOP_COLLAPSE,
-            CSS_PROP__WEBKIT_MARGIN_BOTTOM_COLLAPSE };
+    case CSSPropertyWebkitMarginCollapse: {
+        const int properties[2] = { CSSPropertyWebkitMarginTopCollapse,
+            CSSPropertyWebkitMarginBottomCollapse };
         if (num == 1) {
-            ShorthandScope scope(this, CSS_PROP__WEBKIT_MARGIN_COLLAPSE);
+            ShorthandScope scope(this, CSSPropertyWebkitMarginCollapse);
             if (!parseValue(properties[0], important))
                 return false;
             CSSValue* value = parsedProperties[numParsedProperties-1]->value();
@@ -1333,59 +1333,59 @@ bool CSSParser::parseValue(int propId, bool important)
             return true;
         }
         else if (num == 2) {
-            ShorthandScope scope(this, CSS_PROP__WEBKIT_MARGIN_COLLAPSE);
+            ShorthandScope scope(this, CSSPropertyWebkitMarginCollapse);
             if (!parseValue(properties[0], important) || !parseValue(properties[1], important))
                 return false;
             return true;
         }
         return false;
     }
-    case CSS_PROP__WEBKIT_MARGIN_TOP_COLLAPSE:
-    case CSS_PROP__WEBKIT_MARGIN_BOTTOM_COLLAPSE:
-        if (id == CSS_VAL_COLLAPSE || id == CSS_VAL_SEPARATE || id == CSS_VAL_DISCARD)
+    case CSSPropertyWebkitMarginTopCollapse:
+    case CSSPropertyWebkitMarginBottomCollapse:
+        if (id == CSSValueCollapse || id == CSSValueSeparate || id == CSSValueDiscard)
             valid_primitive = true;
         break;
-    case CSS_PROP_TEXT_LINE_THROUGH_MODE:
-    case CSS_PROP_TEXT_OVERLINE_MODE:
-    case CSS_PROP_TEXT_UNDERLINE_MODE:
-        if (id == CSS_VAL_CONTINUOUS || id == CSS_VAL_SKIP_WHITE_SPACE)
+    case CSSPropertyTextLineThroughMode:
+    case CSSPropertyTextOverlineMode:
+    case CSSPropertyTextUnderlineMode:
+        if (id == CSSValueContinuous || id == CSSValueSkipWhiteSpace)
             valid_primitive = true;
         break;
-    case CSS_PROP_TEXT_LINE_THROUGH_STYLE:
-    case CSS_PROP_TEXT_OVERLINE_STYLE:
-    case CSS_PROP_TEXT_UNDERLINE_STYLE:
-        if (id == CSS_VAL_NONE || id == CSS_VAL_SOLID || id == CSS_VAL_DOUBLE ||
-            id == CSS_VAL_DASHED || id == CSS_VAL_DOT_DASH || id == CSS_VAL_DOT_DOT_DASH ||
-            id == CSS_VAL_WAVE)
+    case CSSPropertyTextLineThroughStyle:
+    case CSSPropertyTextOverlineStyle:
+    case CSSPropertyTextUnderlineStyle:
+        if (id == CSSValueNone || id == CSSValueSolid || id == CSSValueDouble ||
+            id == CSSValueDashed || id == CSSValueDotDash || id == CSSValueDotDotDash ||
+            id == CSSValueWave)
             valid_primitive = true;
         break;
-    case CSS_PROP_TEXT_LINE_THROUGH_WIDTH:
-    case CSS_PROP_TEXT_OVERLINE_WIDTH:
-    case CSS_PROP_TEXT_UNDERLINE_WIDTH:
-        if (id == CSS_VAL_AUTO || id == CSS_VAL_NORMAL || id == CSS_VAL_THIN ||
-            id == CSS_VAL_MEDIUM || id == CSS_VAL_THICK)
+    case CSSPropertyTextLineThroughWidth:
+    case CSSPropertyTextOverlineWidth:
+    case CSSPropertyTextUnderlineWidth:
+        if (id == CSSValueAuto || id == CSSValueNormal || id == CSSValueThin ||
+            id == CSSValueMedium || id == CSSValueThick)
             valid_primitive = true;
         else
             valid_primitive = !id && validUnit(value, FNumber|FLength|FPercent, strict);
         break;
-    case CSS_PROP_RESIZE: // none | both | horizontal | vertical | auto
-        if (id == CSS_VAL_NONE || id == CSS_VAL_BOTH || id == CSS_VAL_HORIZONTAL || id == CSS_VAL_VERTICAL || id == CSS_VAL_AUTO)
+    case CSSPropertyResize: // none | both | horizontal | vertical | auto
+        if (id == CSSValueNone || id == CSSValueBoth || id == CSSValueHorizontal || id == CSSValueVertical || id == CSSValueAuto)
             valid_primitive = true;
         break;
-    case CSS_PROP__WEBKIT_COLUMN_COUNT:
-        if (id == CSS_VAL_AUTO)
+    case CSSPropertyWebkitColumnCount:
+        if (id == CSSValueAuto)
             valid_primitive = true;
         else
             valid_primitive = !id && validUnit(value, FInteger | FNonNeg, false);
         break;
-    case CSS_PROP__WEBKIT_COLUMN_GAP:         // normal | <length>
-        if (id == CSS_VAL_NORMAL)
+    case CSSPropertyWebkitColumnGap:         // normal | <length>
+        if (id == CSSValueNormal)
             valid_primitive = true;
         else
             valid_primitive = validUnit(value, FLength, strict);
         break;
-    case CSS_PROP__WEBKIT_COLUMN_WIDTH:         // auto | <length>
-        if (id == CSS_VAL_AUTO)
+    case CSSPropertyWebkitColumnWidth:         // auto | <length>
+        if (id == CSSValueAuto)
             valid_primitive = true;
         else // Always parse this property in strict mode, since it would be ambiguous otherwise when used in the 'columns' shorthand property.
             valid_primitive = validUnit(value, FLength, true);
@@ -1394,177 +1394,177 @@ bool CSSParser::parseValue(int propId, bool important)
 
     // Apple specific properties.  These will never be standardized and are purely to
     // support custom WebKit-based Apple applications.
-    case CSS_PROP__WEBKIT_LINE_CLAMP:
+    case CSSPropertyWebkitLineClamp:
         valid_primitive = (!id && validUnit(value, FPercent, false));
         break;
-    case CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST:
-        if (id == CSS_VAL_AUTO || id == CSS_VAL_NONE)
+    case CSSPropertyWebkitTextSizeAdjust:
+        if (id == CSSValueAuto || id == CSSValueNone)
             valid_primitive = true;
         break;
-    case CSS_PROP__WEBKIT_RTL_ORDERING:
-        if (id == CSS_VAL_LOGICAL || id == CSS_VAL_VISUAL)
+    case CSSPropertyWebkitRtlOrdering:
+        if (id == CSSValueLogical || id == CSSValueVisual)
             valid_primitive = true;
         break;
     
-    case CSS_PROP__WEBKIT_FONT_SIZE_DELTA:           // <length>
+    case CSSPropertyWebkitFontSizeDelta:           // <length>
         valid_primitive = validUnit(value, FLength, strict);
         break;
 
-    case CSS_PROP__WEBKIT_NBSP_MODE:     // normal | space
-        if (id == CSS_VAL_NORMAL || id == CSS_VAL_SPACE)
+    case CSSPropertyWebkitNbspMode:     // normal | space
+        if (id == CSSValueNormal || id == CSSValueSpace)
             valid_primitive = true;
         break;
 
-    case CSS_PROP__WEBKIT_LINE_BREAK:   // normal | after-white-space
-        if (id == CSS_VAL_NORMAL || id == CSS_VAL_AFTER_WHITE_SPACE)
+    case CSSPropertyWebkitLineBreak:   // normal | after-white-space
+        if (id == CSSValueNormal || id == CSSValueAfterWhiteSpace)
             valid_primitive = true;
         break;
 
-    case CSS_PROP__WEBKIT_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR:   // normal | match
-        if (id == CSS_VAL_NORMAL || id == CSS_VAL_MATCH)
+    case CSSPropertyWebkitMatchNearestMailBlockquoteColor:   // normal | match
+        if (id == CSSValueNormal || id == CSSValueMatch)
             valid_primitive = true;
         break;
 
-    case CSS_PROP__WEBKIT_HIGHLIGHT:
-        if (id == CSS_VAL_NONE || value->unit == CSSPrimitiveValue::CSS_STRING)
+    case CSSPropertyWebkitHighlight:
+        if (id == CSSValueNone || value->unit == CSSPrimitiveValue::CSS_STRING)
             valid_primitive = true;
         break;
     
-    case CSS_PROP__WEBKIT_BORDER_FIT:
-        if (id == CSS_VAL_BORDER || id == CSS_VAL_LINES)
+    case CSSPropertyWebkitBorderFit:
+        if (id == CSSValueBorder || id == CSSValueLines)
             valid_primitive = true;
         break;
         
-    case CSS_PROP__WEBKIT_TEXT_SECURITY:
+    case CSSPropertyWebkitTextSecurity:
         // disc | circle | square | none | inherit
-        if (id == CSS_VAL_DISC || id == CSS_VAL_CIRCLE || id == CSS_VAL_SQUARE|| id == CSS_VAL_NONE)
+        if (id == CSSValueDisc || id == CSSValueCircle || id == CSSValueSquare|| id == CSSValueNone)
             valid_primitive = true;
         break;
 
-    case CSS_PROP__WEBKIT_DASHBOARD_REGION:                 // <dashboard-region> | <dashboard-region> 
-        if (value->unit == Value::Function || id == CSS_VAL_NONE)
+    case CSSPropertyWebkitDashboardRegion:                 // <dashboard-region> | <dashboard-region> 
+        if (value->unit == Value::Function || id == CSSValueNone)
             return parseDashboardRegions(propId, important);
         break;
     // End Apple-specific properties
 
         /* shorthand properties */
-    case CSS_PROP_BACKGROUND:
+    case CSSPropertyBackground:
         // ['background-color' || 'background-image' || 'background-size' || 'background-repeat' ||
         // 'background-attachment' || 'background-position'] | inherit
         return parseBackgroundShorthand(important);
-    case CSS_PROP_BORDER:
+    case CSSPropertyBorder:
         // [ 'border-width' || 'border-style' || <color> ] | inherit
     {
-        const int properties[3] = { CSS_PROP_BORDER_WIDTH, CSS_PROP_BORDER_STYLE,
-                                    CSS_PROP_BORDER_COLOR };
+        const int properties[3] = { CSSPropertyBorderWidth, CSSPropertyBorderStyle,
+                                    CSSPropertyBorderColor };
         return parseShorthand(propId, properties, 3, important);
     }
-    case CSS_PROP_BORDER_TOP:
+    case CSSPropertyBorderTop:
         // [ 'border-top-width' || 'border-style' || <color> ] | inherit
     {
-        const int properties[3] = { CSS_PROP_BORDER_TOP_WIDTH, CSS_PROP_BORDER_TOP_STYLE,
-                                    CSS_PROP_BORDER_TOP_COLOR};
+        const int properties[3] = { CSSPropertyBorderTopWidth, CSSPropertyBorderTopStyle,
+                                    CSSPropertyBorderTopColor};
         return parseShorthand(propId, properties, 3, important);
     }
-    case CSS_PROP_BORDER_RIGHT:
+    case CSSPropertyBorderRight:
         // [ 'border-right-width' || 'border-style' || <color> ] | inherit
     {
-        const int properties[3] = { CSS_PROP_BORDER_RIGHT_WIDTH, CSS_PROP_BORDER_RIGHT_STYLE,
-                                    CSS_PROP_BORDER_RIGHT_COLOR };
+        const int properties[3] = { CSSPropertyBorderRightWidth, CSSPropertyBorderRightStyle,
+                                    CSSPropertyBorderRightColor };
         return parseShorthand(propId, properties, 3, important);
     }
-    case CSS_PROP_BORDER_BOTTOM:
+    case CSSPropertyBorderBottom:
         // [ 'border-bottom-width' || 'border-style' || <color> ] | inherit
     {
-        const int properties[3] = { CSS_PROP_BORDER_BOTTOM_WIDTH, CSS_PROP_BORDER_BOTTOM_STYLE,
-                                    CSS_PROP_BORDER_BOTTOM_COLOR };
+        const int properties[3] = { CSSPropertyBorderBottomWidth, CSSPropertyBorderBottomStyle,
+                                    CSSPropertyBorderBottomColor };
         return parseShorthand(propId, properties, 3, important);
     }
-    case CSS_PROP_BORDER_LEFT:
+    case CSSPropertyBorderLeft:
         // [ 'border-left-width' || 'border-style' || <color> ] | inherit
     {
-        const int properties[3] = { CSS_PROP_BORDER_LEFT_WIDTH, CSS_PROP_BORDER_LEFT_STYLE,
-                                    CSS_PROP_BORDER_LEFT_COLOR };
+        const int properties[3] = { CSSPropertyBorderLeftWidth, CSSPropertyBorderLeftStyle,
+                                    CSSPropertyBorderLeftColor };
         return parseShorthand(propId, properties, 3, important);
     }
-    case CSS_PROP_OUTLINE:
+    case CSSPropertyOutline:
         // [ 'outline-color' || 'outline-style' || 'outline-width' ] | inherit
     {
-        const int properties[3] = { CSS_PROP_OUTLINE_WIDTH, CSS_PROP_OUTLINE_STYLE,
-                                    CSS_PROP_OUTLINE_COLOR };
+        const int properties[3] = { CSSPropertyOutlineWidth, CSSPropertyOutlineStyle,
+                                    CSSPropertyOutlineColor };
         return parseShorthand(propId, properties, 3, important);
     }
-    case CSS_PROP_BORDER_COLOR:
+    case CSSPropertyBorderColor:
         // <color>{1,4} | inherit
     {
-        const int properties[4] = { CSS_PROP_BORDER_TOP_COLOR, CSS_PROP_BORDER_RIGHT_COLOR,
-                                    CSS_PROP_BORDER_BOTTOM_COLOR, CSS_PROP_BORDER_LEFT_COLOR };
+        const int properties[4] = { CSSPropertyBorderTopColor, CSSPropertyBorderRightColor,
+                                    CSSPropertyBorderBottomColor, CSSPropertyBorderLeftColor };
         return parse4Values(propId, properties, important);
     }
-    case CSS_PROP_BORDER_WIDTH:
+    case CSSPropertyBorderWidth:
         // <border-width>{1,4} | inherit
     {
-        const int properties[4] = { CSS_PROP_BORDER_TOP_WIDTH, CSS_PROP_BORDER_RIGHT_WIDTH,
-                                    CSS_PROP_BORDER_BOTTOM_WIDTH, CSS_PROP_BORDER_LEFT_WIDTH };
+        const int properties[4] = { CSSPropertyBorderTopWidth, CSSPropertyBorderRightWidth,
+                                    CSSPropertyBorderBottomWidth, CSSPropertyBorderLeftWidth };
         return parse4Values(propId, properties, important);
     }
-    case CSS_PROP_BORDER_STYLE:
+    case CSSPropertyBorderStyle:
         // <border-style>{1,4} | inherit
     {
-        const int properties[4] = { CSS_PROP_BORDER_TOP_STYLE, CSS_PROP_BORDER_RIGHT_STYLE,
-                                    CSS_PROP_BORDER_BOTTOM_STYLE, CSS_PROP_BORDER_LEFT_STYLE };
+        const int properties[4] = { CSSPropertyBorderTopStyle, CSSPropertyBorderRightStyle,
+                                    CSSPropertyBorderBottomStyle, CSSPropertyBorderLeftStyle };
         return parse4Values(propId, properties, important);
     }
-    case CSS_PROP_MARGIN:
+    case CSSPropertyMargin:
         // <margin-width>{1,4} | inherit
     {
-        const int properties[4] = { CSS_PROP_MARGIN_TOP, CSS_PROP_MARGIN_RIGHT,
-                                    CSS_PROP_MARGIN_BOTTOM, CSS_PROP_MARGIN_LEFT };
+        const int properties[4] = { CSSPropertyMarginTop, CSSPropertyMarginRight,
+                                    CSSPropertyMarginBottom, CSSPropertyMarginLeft };
         return parse4Values(propId, properties, important);
     }
-    case CSS_PROP_PADDING:
+    case CSSPropertyPadding:
         // <padding-width>{1,4} | inherit
     {
-        const int properties[4] = { CSS_PROP_PADDING_TOP, CSS_PROP_PADDING_RIGHT,
-                                    CSS_PROP_PADDING_BOTTOM, CSS_PROP_PADDING_LEFT };
+        const int properties[4] = { CSSPropertyPaddingTop, CSSPropertyPaddingRight,
+                                    CSSPropertyPaddingBottom, CSSPropertyPaddingLeft };
         return parse4Values(propId, properties, important);
     }
-    case CSS_PROP_FONT:
+    case CSSPropertyFont:
         // [ [ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]?
         // 'font-family' ] | caption | icon | menu | message-box | small-caption | status-bar | inherit
-        if (id >= CSS_VAL_CAPTION && id <= CSS_VAL_STATUS_BAR)
+        if (id >= CSSValueCaption && id <= CSSValueStatusBar)
             valid_primitive = true;
         else
             return parseFont(important);
         break;
-    case CSS_PROP_LIST_STYLE:
+    case CSSPropertyListStyle:
     {
-        const int properties[3] = { CSS_PROP_LIST_STYLE_TYPE, CSS_PROP_LIST_STYLE_POSITION,
-                                    CSS_PROP_LIST_STYLE_IMAGE };
+        const int properties[3] = { CSSPropertyListStyleType, CSSPropertyListStylePosition,
+                                    CSSPropertyListStyleImage };
         return parseShorthand(propId, properties, 3, important);
     }
-    case CSS_PROP__WEBKIT_COLUMNS: {
-        const int properties[2] = { CSS_PROP__WEBKIT_COLUMN_WIDTH, CSS_PROP__WEBKIT_COLUMN_COUNT };
+    case CSSPropertyWebkitColumns: {
+        const int properties[2] = { CSSPropertyWebkitColumnWidth, CSSPropertyWebkitColumnCount };
         return parseShorthand(propId, properties, 2, important);
     }
-    case CSS_PROP__WEBKIT_COLUMN_RULE: {
-        const int properties[3] = { CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH, CSS_PROP__WEBKIT_COLUMN_RULE_STYLE,
-                                    CSS_PROP__WEBKIT_COLUMN_RULE_COLOR };
+    case CSSPropertyWebkitColumnRule: {
+        const int properties[3] = { CSSPropertyWebkitColumnRuleWidth, CSSPropertyWebkitColumnRuleStyle,
+                                    CSSPropertyWebkitColumnRuleColor };
         return parseShorthand(propId, properties, 3, important);
     }
-    case CSS_PROP__WEBKIT_TEXT_STROKE: {
-        const int properties[2] = { CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH, CSS_PROP__WEBKIT_TEXT_STROKE_COLOR };
+    case CSSPropertyWebkitTextStroke: {
+        const int properties[2] = { CSSPropertyWebkitTextStrokeWidth, CSSPropertyWebkitTextStrokeColor };
         return parseShorthand(propId, properties, 2, important);
     }
-    case CSS_PROP__WEBKIT_TRANSITION:
+    case CSSPropertyWebkitTransition:
         return parseTransitionShorthand(important);
-    case CSS_PROP_INVALID:
+    case CSSPropertyInvalid:
         return false;
-    case CSS_PROP_FONT_STRETCH:
-    case CSS_PROP_PAGE:
-    case CSS_PROP_TEXT_LINE_THROUGH:
-    case CSS_PROP_TEXT_OVERLINE:
-    case CSS_PROP_TEXT_UNDERLINE:
+    case CSSPropertyFontStretch:
+    case CSSPropertyPage:
+    case CSSPropertyTextLineThrough:
+    case CSSPropertyTextOverline:
+    case CSSPropertyTextUnderline:
         return false;
 #if ENABLE(SVG)
     default:
@@ -1613,13 +1613,13 @@ bool CSSParser::parseBackgroundShorthand(bool important)
 {
     // Position must come before color in this array because a plain old "0" is a legal color
     // in quirks mode but it's usually the X coordinate of a position.
-    // FIXME: Add CSS_PROP__KHTML_BACKGROUND_SIZE to the shorthand.
-    const int properties[] = { CSS_PROP_BACKGROUND_IMAGE, CSS_PROP_BACKGROUND_REPEAT, 
-        CSS_PROP_BACKGROUND_ATTACHMENT, CSS_PROP_BACKGROUND_POSITION, CSS_PROP__WEBKIT_BACKGROUND_CLIP,
-        CSS_PROP__WEBKIT_BACKGROUND_ORIGIN, CSS_PROP_BACKGROUND_COLOR };
+    // FIXME: Add CSSPropertyKhtmlBackgroundSize to the shorthand.
+    const int properties[] = { CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeat, 
+        CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPosition, CSSPropertyWebkitBackgroundClip,
+        CSSPropertyWebkitBackgroundOrigin, CSSPropertyBackgroundColor };
     const int numProperties = sizeof(properties) / sizeof(properties[0]);
     
-    ShorthandScope scope(this, CSS_PROP_BACKGROUND);
+    ShorthandScope scope(this, CSSPropertyBackground);
 
     bool parsedProperty[numProperties] = { false }; // compiler will repeat false as necessary
     RefPtr<CSSValue> values[numProperties];
@@ -1632,14 +1632,14 @@ bool CSSParser::parseBackgroundShorthand(bool important)
             // We hit the end.  Fill in all remaining values with the initial value.
             valueList->next();
             for (i = 0; i < numProperties; ++i) {
-                if (properties[i] == CSS_PROP_BACKGROUND_COLOR && parsedProperty[i])
+                if (properties[i] == CSSPropertyBackgroundColor && parsedProperty[i])
                     // Color is not allowed except as the last item in a list.  Reject the entire
                     // property.
                     return false;
 
-                if (!parsedProperty[i] && properties[i] != CSS_PROP_BACKGROUND_COLOR) {
+                if (!parsedProperty[i] && properties[i] != CSSPropertyBackgroundColor) {
                     addBackgroundValue(values[i], new CSSInitialValue(true));
-                    if (properties[i] == CSS_PROP_BACKGROUND_POSITION)
+                    if (properties[i] == CSSPropertyBackgroundPosition)
                         addBackgroundValue(positionYValue, new CSSInitialValue(true));
                 }
                 parsedProperty[i] = false;
@@ -1657,7 +1657,7 @@ bool CSSParser::parseBackgroundShorthand(bool important)
                 if (parseBackgroundProperty(properties[i], propId1, propId2, val1, val2)) {
                     parsedProperty[i] = found = true;
                     addBackgroundValue(values[i], val1.release());
-                    if (properties[i] == CSS_PROP_BACKGROUND_POSITION)
+                    if (properties[i] == CSSPropertyBackgroundPosition)
                         addBackgroundValue(positionYValue, val2.release());
                 }
             }
@@ -1673,17 +1673,17 @@ bool CSSParser::parseBackgroundShorthand(bool important)
     for (i = 0; i < numProperties; ++i) {
         if (!parsedProperty[i]) {
             addBackgroundValue(values[i], new CSSInitialValue(true));
-            if (properties[i] == CSS_PROP_BACKGROUND_POSITION)
+            if (properties[i] == CSSPropertyBackgroundPosition)
                 addBackgroundValue(positionYValue, new CSSInitialValue(true));
         }
     }
     
     // Now add all of the properties we found.
     for (i = 0; i < numProperties; i++) {
-        if (properties[i] == CSS_PROP_BACKGROUND_POSITION) {
-            addProperty(CSS_PROP_BACKGROUND_POSITION_X, values[i].release(), important);
-            // it's OK to call positionYValue.release() since we only see CSS_PROP_BACKGROUND_POSITION once
-            addProperty(CSS_PROP_BACKGROUND_POSITION_Y, positionYValue.release(), important);
+        if (properties[i] == CSSPropertyBackgroundPosition) {
+            addProperty(CSSPropertyBackgroundPositionX, values[i].release(), important);
+            // it's OK to call positionYValue.release() since we only see CSSPropertyBackgroundPosition once
+            addProperty(CSSPropertyBackgroundPositionY, positionYValue.release(), important);
         } else
             addProperty(properties[i], values[i].release(), important);
     }
@@ -1710,11 +1710,11 @@ void CSSParser::addTransitionValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> 
 
 bool CSSParser::parseTransitionShorthand(bool important)
 {
-    const int properties[] = { CSS_PROP__WEBKIT_TRANSITION_PROPERTY, CSS_PROP__WEBKIT_TRANSITION_DURATION, 
-                               CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION, CSS_PROP__WEBKIT_TRANSITION_REPEAT_COUNT };
+    const int properties[] = { CSSPropertyWebkitTransitionProperty, CSSPropertyWebkitTransitionDuration, 
+                               CSSPropertyWebkitTransitionTimingFunction, CSSPropertyWebkitTransitionRepeatCount };
     const int numProperties = sizeof(properties) / sizeof(properties[0]);
     
-    ShorthandScope scope(this, CSS_PROP__WEBKIT_TRANSITION);
+    ShorthandScope scope(this, CSSPropertyWebkitTransition);
 
     bool parsedProperty[numProperties] = { false }; // compiler will repeat false as necessary
     RefPtr<CSSValue> values[numProperties];
@@ -1925,15 +1925,15 @@ bool CSSParser::parseContent(int propId, bool important)
 PassRefPtr<CSSValue> CSSParser::parseBackgroundColor()
 {
     int id = valueList->current()->id;
-    if (id == CSS_VAL__WEBKIT_TEXT || (id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT) || id == CSS_VAL_MENU ||
-        (id >= CSS_VAL_GREY && id < CSS_VAL__WEBKIT_TEXT && !strict))
+    if (id == CSSValueWebkitText || (id >= CSSValueAqua && id <= CSSValueWindowtext) || id == CSSValueMenu ||
+        (id >= CSSValueGrey && id < CSSValueWebkitText && !strict))
        return new CSSPrimitiveValue(id);
     return parseColor();
 }
 
 bool CSSParser::parseBackgroundImage(RefPtr<CSSValue>& value)
 {
-    if (valueList->current()->id == CSS_VAL_NONE) {
+    if (valueList->current()->id == CSSValueNone) {
         value = new CSSImageValue();
         return true;
     }
@@ -1949,23 +1949,23 @@ bool CSSParser::parseBackgroundImage(RefPtr<CSSValue>& value)
 PassRefPtr<CSSValue> CSSParser::parseBackgroundPositionXY(bool& xFound, bool& yFound)
 {
     int id = valueList->current()->id;
-    if (id == CSS_VAL_LEFT || id == CSS_VAL_TOP || id == CSS_VAL_RIGHT || id == CSS_VAL_BOTTOM || id == CSS_VAL_CENTER) {
+    if (id == CSSValueLeft || id == CSSValueTop || id == CSSValueRight || id == CSSValueBottom || id == CSSValueCenter) {
         int percent = 0;
-        if (id == CSS_VAL_LEFT || id == CSS_VAL_RIGHT) {
+        if (id == CSSValueLeft || id == CSSValueRight) {
             if (xFound)
                 return 0;
             xFound = true;
-            if (id == CSS_VAL_RIGHT)
+            if (id == CSSValueRight)
                 percent = 100;
         }
-        else if (id == CSS_VAL_TOP || id == CSS_VAL_BOTTOM) {
+        else if (id == CSSValueTop || id == CSSValueBottom) {
             if (yFound)
                 return 0;
             yFound = true;
-            if (id == CSS_VAL_BOTTOM)
+            if (id == CSSValueBottom)
                 percent = 100;
         }
-        else if (id == CSS_VAL_CENTER)
+        else if (id == CSSValueCenter)
             // Center is ambiguous, so we're not sure which position we've found yet, an x or a y.
             percent = 50;
         return new CSSPrimitiveValue(percent, CSSPrimitiveValue::CSS_PERCENTAGE);
@@ -2025,7 +2025,7 @@ PassRefPtr<CSSValue> CSSParser::parseBackgroundSize()
     Value* value = valueList->current();
     CSSPrimitiveValue* parsedValue1;
     
-    if (value->id == CSS_VAL_AUTO)
+    if (value->id == CSSValueAuto)
         parsedValue1 = new CSSPrimitiveValue(0, CSSPrimitiveValue::CSS_UNKNOWN);
     else {
         if (!validUnit(value, FLength|FPercent, strict))
@@ -2035,7 +2035,7 @@ PassRefPtr<CSSValue> CSSParser::parseBackgroundSize()
     
     CSSPrimitiveValue* parsedValue2 = parsedValue1;
     if ((value = valueList->next())) {
-        if (value->id == CSS_VAL_AUTO)
+        if (value->id == CSSValueAuto)
             parsedValue2 = new CSSPrimitiveValue(0, CSSPrimitiveValue::CSS_UNKNOWN);
         else {
             if (!validUnit(value, FLength|FPercent, strict)) {
@@ -2064,9 +2064,9 @@ bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2,
     retValue1 = retValue2 = 0;
     propId1 = propId;
     propId2 = propId;
-    if (propId == CSS_PROP_BACKGROUND_POSITION) {
-        propId1 = CSS_PROP_BACKGROUND_POSITION_X;
-        propId2 = CSS_PROP_BACKGROUND_POSITION_Y;
+    if (propId == CSSPropertyBackgroundPosition) {
+        propId1 = CSSPropertyBackgroundPositionX;
+        propId2 = CSSPropertyBackgroundPositionY;
     }
 
     while ((val = valueList->current())) {
@@ -2080,59 +2080,59 @@ bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2,
             allowComma = false;
         } else {
             switch (propId) {
-                case CSS_PROP_BACKGROUND_ATTACHMENT:
-                    if (val->id == CSS_VAL_SCROLL || val->id == CSS_VAL_FIXED) {
+                case CSSPropertyBackgroundAttachment:
+                    if (val->id == CSSValueScroll || val->id == CSSValueFixed) {
                         currValue = new CSSPrimitiveValue(val->id);
                         valueList->next();
                     }
                     break;
-                case CSS_PROP_BACKGROUND_COLOR:
+                case CSSPropertyBackgroundColor:
                     currValue = parseBackgroundColor();
                     if (currValue)
                         valueList->next();
                     break;
-                case CSS_PROP_BACKGROUND_IMAGE:
+                case CSSPropertyBackgroundImage:
                     if (parseBackgroundImage(currValue))
                         valueList->next();
                     break;
-                case CSS_PROP__WEBKIT_BACKGROUND_CLIP:
-                case CSS_PROP__WEBKIT_BACKGROUND_ORIGIN:
-                    if (val->id == CSS_VAL_BORDER || val->id == CSS_VAL_PADDING || val->id == CSS_VAL_CONTENT) {
+                case CSSPropertyWebkitBackgroundClip:
+                case CSSPropertyWebkitBackgroundOrigin:
+                    if (val->id == CSSValueBorder || val->id == CSSValuePadding || val->id == CSSValueContent) {
                         currValue = new CSSPrimitiveValue(val->id);
                         valueList->next();
                     }
                     break;
-                case CSS_PROP_BACKGROUND_POSITION:
+                case CSSPropertyBackgroundPosition:
                     parseBackgroundPosition(currValue, currValue2);
                     // unlike the other functions, parseBackgroundPosition advances the valueList pointer
                     break;
-                case CSS_PROP_BACKGROUND_POSITION_X: {
+                case CSSPropertyBackgroundPositionX: {
                     bool xFound = false, yFound = true;
                     currValue = parseBackgroundPositionXY(xFound, yFound);
                     if (currValue)
                         valueList->next();
                     break;
                 }
-                case CSS_PROP_BACKGROUND_POSITION_Y: {
+                case CSSPropertyBackgroundPositionY: {
                     bool xFound = true, yFound = false;
                     currValue = parseBackgroundPositionXY(xFound, yFound);
                     if (currValue)
                         valueList->next();
                     break;
                 }
-                case CSS_PROP__WEBKIT_BACKGROUND_COMPOSITE:
-                    if ((val->id >= CSS_VAL_CLEAR && val->id <= CSS_VAL_PLUS_LIGHTER) || val->id == CSS_VAL_HIGHLIGHT) {
+                case CSSPropertyWebkitBackgroundComposite:
+                    if ((val->id >= CSSValueClear && val->id <= CSSValuePlusLighter) || val->id == CSSValueHighlight) {
                         currValue = new CSSPrimitiveValue(val->id);
                         valueList->next();
                     }
                     break;
-                case CSS_PROP_BACKGROUND_REPEAT:
-                    if (val->id >= CSS_VAL_REPEAT && val->id <= CSS_VAL_NO_REPEAT) {
+                case CSSPropertyBackgroundRepeat:
+                    if (val->id >= CSSValueRepeat && val->id <= CSSValueNoRepeat) {
                         currValue = new CSSPrimitiveValue(val->id);
                         valueList->next();
                     }
                     break;
-                case CSS_PROP__WEBKIT_BACKGROUND_SIZE:
+                case CSSPropertyWebkitBackgroundSize:
                     currValue = parseBackgroundSize();
                     if (currValue)
                         valueList->next();
@@ -2195,7 +2195,7 @@ PassRefPtr<CSSValue> CSSParser::parseTransitionDuration()
 PassRefPtr<CSSValue> CSSParser::parseTransitionRepeatCount()
 {
     Value* value = valueList->current();
-    if (value->id == CSS_VAL_INFINITE)
+    if (value->id == CSSValueInfinite)
         return new CSSPrimitiveValue(value->id);
     if (validUnit(value, FInteger|FNonNeg, strict))
         return new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes)value->unit);
@@ -2223,7 +2223,7 @@ bool CSSParser::parseTimingFunctionValue(ValueList*& args, double& result)
 PassRefPtr<CSSValue> CSSParser::parseTransitionTimingFunction()
 {
     Value* value = valueList->current();
-    if (value->id == CSS_VAL_AUTO || value->id == CSS_VAL_LINEAR || value->id == CSS_VAL_EASE_IN || value->id == CSS_VAL_EASE_OUT || value->id == CSS_VAL_EASE_IN_OUT)
+    if (value->id == CSSValueAuto || value->id == CSSValueLinear || value->id == CSSValueEaseIn || value->id == CSSValueEaseOut || value->id == CSSValueEaseInOut)
         return new CSSPrimitiveValue(value->id);
     
     // We must be a function.
@@ -2284,22 +2284,22 @@ bool CSSParser::parseTransitionProperty(int propId, RefPtr<CSSValue>& result)
         }
         else {
             switch (propId) {
-                case CSS_PROP__WEBKIT_TRANSITION_DURATION:
+                case CSSPropertyWebkitTransitionDuration:
                     currValue = parseTransitionDuration();
                     if (currValue)
                         valueList->next();
                     break;
-                case CSS_PROP__WEBKIT_TRANSITION_REPEAT_COUNT:
+                case CSSPropertyWebkitTransitionRepeatCount:
                     currValue = parseTransitionRepeatCount();
                     if (currValue)
                         valueList->next();
                     break;
-                case CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION:
+                case CSSPropertyWebkitTransitionTimingFunction:
                     currValue = parseTransitionTimingFunction();
                     if (currValue)
                         valueList->next();
                     break;
-                case CSS_PROP__WEBKIT_TRANSITION_PROPERTY:
+                case CSSPropertyWebkitTransitionProperty:
                     currValue = parseTransitionProperty();
                     if (currValue)
                         valueList->next();
@@ -2359,7 +2359,7 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
     
     Value *value = valueList->current();
 
-    if (value->id == CSS_VAL_NONE) {
+    if (value->id == CSSValueNone) {
         if (valueList->next())
             return false;
         addProperty(propId, new CSSPrimitiveValue(value->id), important);
@@ -2431,8 +2431,8 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
         region->m_geometryType = arg->string;
 
         if (numArgs == DASHBOARD_REGION_SHORT_NUM_PARAMETERS || numArgs == (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1)) {
-            // This originally used CSS_VAL_INVALID by accident. It might be more logical to use something else.
-            CSSPrimitiveValue *amount = new CSSPrimitiveValue(CSS_VAL_INVALID);
+            // This originally used CSSValueInvalid by accident. It might be more logical to use something else.
+            CSSPrimitiveValue *amount = new CSSPrimitiveValue(CSSValueInvalid);
                 
             region->setTop(amount);
             region->setRight(amount);
@@ -2446,12 +2446,12 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
                 arg = args->next();
                 arg = skipCommaInDashboardRegion (args);
 
-                valid = arg->id == CSS_VAL_AUTO || validUnit(arg, FLength, strict);
+                valid = arg->id == CSSValueAuto || validUnit(arg, FLength, strict);
                 if (!valid)
                     break;
                     
-                CSSPrimitiveValue *amount = arg->id == CSS_VAL_AUTO ?
-                    new CSSPrimitiveValue(CSS_VAL_AUTO) :
+                CSSPrimitiveValue *amount = arg->id == CSSValueAuto ?
+                    new CSSPrimitiveValue(CSSValueAuto) :
                     new CSSPrimitiveValue(arg->fValue, (CSSPrimitiveValue::UnitTypes) arg->unit);
                     
                 if (i == 0)
@@ -2506,7 +2506,7 @@ PassRefPtr<CSSValue> CSSParser::parseCounterContent(ValueList* args, bool counte
     RefPtr<CSSPrimitiveValue> listStyle;
     i = args->next();
     if (!i) // Make the list style default decimal
-        listStyle = new CSSPrimitiveValue(CSS_VAL_DECIMAL - CSS_VAL_DISC, CSSPrimitiveValue::CSS_NUMBER);
+        listStyle = new CSSPrimitiveValue(CSSValueDecimal - CSSValueDisc, CSSPrimitiveValue::CSS_NUMBER);
     else {
         if (i->unit != Value::Operator || i->iValue != ',')
             return 0;
@@ -2516,10 +2516,10 @@ PassRefPtr<CSSValue> CSSParser::parseCounterContent(ValueList* args, bool counte
             return 0;
         
         short ls = 0;
-        if (i->id == CSS_VAL_NONE)
-            ls = CSS_VAL_KATAKANA_IROHA - CSS_VAL_DISC + 1;
-        else if (i->id >= CSS_VAL_DISC && i->id <= CSS_VAL_KATAKANA_IROHA)
-            ls = i->id - CSS_VAL_DISC;
+        if (i->id == CSSValueNone)
+            ls = CSSValueKatakanaIroha - CSSValueDisc + 1;
+        else if (i->id >= CSSValueDisc && i->id <= CSSValueKatakanaIroha)
+            ls = i->id - CSSValueDisc;
         else
             return 0;
 
@@ -2544,11 +2544,11 @@ bool CSSParser::parseShape(int propId, bool important)
     int i = 0;
     Value *a = args->current();
     while (a) {
-        valid = a->id == CSS_VAL_AUTO || validUnit(a, FLength, strict);
+        valid = a->id == CSSValueAuto || validUnit(a, FLength, strict);
         if (!valid)
             break;
-        CSSPrimitiveValue *length = a->id == CSS_VAL_AUTO ?
-            new CSSPrimitiveValue(CSS_VAL_AUTO) :
+        CSSPrimitiveValue *length = a->id == CSSValueAuto ?
+            new CSSPrimitiveValue(CSSValueAuto) :
             new CSSPrimitiveValue(a->fValue, (CSSPrimitiveValue::UnitTypes) a->unit);
         if (i == 0)
             rect->setTop(length);
@@ -2588,17 +2588,17 @@ bool CSSParser::parseFont(bool important)
     while (value) {
         int id = value->id;
         if (id) {
-            if (id == CSS_VAL_NORMAL) {
+            if (id == CSSValueNormal) {
                 // do nothing, it's the inital value for all three
-            } else if (id == CSS_VAL_ITALIC || id == CSS_VAL_OBLIQUE) {
+            } else if (id == CSSValueItalic || id == CSSValueOblique) {
                 if (font->style)
                     return false;
                 font->style = new CSSPrimitiveValue(id);
-            } else if (id == CSS_VAL_SMALL_CAPS) {
+            } else if (id == CSSValueSmallCaps) {
                 if (font->variant)
                     return false;
                 font->variant = new CSSPrimitiveValue(id);
-            } else if (id >= CSS_VAL_BOLD && id <= CSS_VAL_LIGHTER) {
+            } else if (id >= CSSValueBold && id <= CSSValueLighter) {
                 if (font->weight)
                     return false;
                 font->weight = new CSSPrimitiveValue(id);
@@ -2609,23 +2609,23 @@ bool CSSParser::parseFont(bool important)
             int weight = (int)value->fValue;
             int val = 0;
             if (weight == 100)
-                val = CSS_VAL_100;
+                val = CSSValue100;
             else if (weight == 200)
-                val = CSS_VAL_200;
+                val = CSSValue200;
             else if (weight == 300)
-                val = CSS_VAL_300;
+                val = CSSValue300;
             else if (weight == 400)
-                val = CSS_VAL_400;
+                val = CSSValue400;
             else if (weight == 500)
-                val = CSS_VAL_500;
+                val = CSSValue500;
             else if (weight == 600)
-                val = CSS_VAL_600;
+                val = CSSValue600;
             else if (weight == 700)
-                val = CSS_VAL_700;
+                val = CSSValue700;
             else if (weight == 800)
-                val = CSS_VAL_800;
+                val = CSSValue800;
             else if (weight == 900)
-                val = CSS_VAL_900;
+                val = CSSValue900;
 
             if (val)
                 font->weight = new CSSPrimitiveValue(val);
@@ -2643,15 +2643,15 @@ bool CSSParser::parseFont(bool important)
 
     // set undefined values to default
     if (!font->style)
-        font->style = new CSSPrimitiveValue(CSS_VAL_NORMAL);
+        font->style = new CSSPrimitiveValue(CSSValueNormal);
     if (!font->variant)
-        font->variant = new CSSPrimitiveValue(CSS_VAL_NORMAL);
+        font->variant = new CSSPrimitiveValue(CSSValueNormal);
     if (!font->weight)
-        font->weight = new CSSPrimitiveValue(CSS_VAL_NORMAL);
+        font->weight = new CSSPrimitiveValue(CSSValueNormal);
 
     // now a font size _must_ come
     // <absolute-size> | <relative-size> | <length> | <percentage> | inherit
-    if (value->id >= CSS_VAL_XX_SMALL && value->id <= CSS_VAL_LARGER)
+    if (value->id >= CSSValueXxSmall && value->id <= CSSValueLarger)
         font->size = new CSSPrimitiveValue(value->id);
     else if (validUnit(value, FLength|FPercent, strict))
         font->size = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
@@ -2664,7 +2664,7 @@ bool CSSParser::parseFont(bool important)
         value = valueList->next();
         if (!value)
             return false;
-        if (value->id == CSS_VAL_NORMAL) {
+        if (value->id == CSSValueNormal) {
             // default value, nothing to do
         } else if (validUnit(value, FNumber|FLength|FPercent, strict))
             font->lineHeight = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
@@ -2676,7 +2676,7 @@ bool CSSParser::parseFont(bool important)
     }
     
     if (!font->lineHeight)
-        font->lineHeight = new CSSPrimitiveValue(CSS_VAL_NORMAL);
+        font->lineHeight = new CSSPrimitiveValue(CSSValueNormal);
 
     // font family must come now
     font->family = parseFontFamily();
@@ -2684,7 +2684,7 @@ bool CSSParser::parseFont(bool important)
     if (valueList->current() || !font->family)
         return false;
 
-    addProperty(CSS_PROP_FONT, font.release(), important);
+    addProperty(CSSPropertyFont, font.release(), important);
     return true;
 }
 
@@ -2698,10 +2698,10 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFamily()
         bool nextValBreaksFont = !nextValue ||
                                  (nextValue->unit == Value::Operator && nextValue->iValue == ',');
         bool nextValIsFontName = nextValue &&
-            ((nextValue->id >= CSS_VAL_SERIF && nextValue->id <= CSS_VAL__WEBKIT_BODY) ||
+            ((nextValue->id >= CSSValueSerif && nextValue->id <= CSSValueWebkitBody) ||
             (nextValue->unit == CSSPrimitiveValue::CSS_STRING || nextValue->unit == CSSPrimitiveValue::CSS_IDENT));
 
-        if (value->id >= CSS_VAL_SERIF && value->id <= CSS_VAL__WEBKIT_BODY) {
+        if (value->id >= CSSValueSerif && value->id <= CSSValueWebkitBody) {
             if (currFamily)
                 currFamily->appendSpaceSeparated(value->string.characters, value->string.length);
             else if (nextValBreaksFont || !nextValIsFontName)
@@ -2798,7 +2798,7 @@ bool CSSParser::parseFontFaceSrc()
     }
     
     if (values->length() && !failed) {
-        addProperty(CSS_PROP_SRC, values.release(), important);
+        addProperty(CSSPropertySrc, values.release(), important);
         valueList->next();
         return true;
     }
@@ -2891,7 +2891,7 @@ bool CSSParser::parseFontFaceUnicodeRange()
         delete values;
         return false;
     }
-    addProperty(CSS_PROP_UNICODE_RANGE, values, important);
+    addProperty(CSSPropertyUnicodeRange, values, important);
     return true;
 }
 
@@ -3131,8 +3131,8 @@ bool CSSParser::parseShadow(int propId, bool important)
         else {
             // The only other type of value that's ok is a color value.
             RefPtr<CSSPrimitiveValue> parsedColor;
-            bool isColor = (val->id >= CSS_VAL_AQUA && val->id <= CSS_VAL_WINDOWTEXT || val->id == CSS_VAL_MENU ||
-                            (val->id >= CSS_VAL__WEBKIT_FOCUS_RING_COLOR && val->id <= CSS_VAL__WEBKIT_TEXT && !strict));
+            bool isColor = (val->id >= CSSValueAqua && val->id <= CSSValueWindowtext || val->id == CSSValueMenu ||
+                            (val->id >= CSSValueWebkitFocusRingColor && val->id <= CSSValueWebkitText && !strict));
             if (isColor) {
                 if (!context.allowColor)
                     return false;
@@ -3250,7 +3250,7 @@ struct BorderImageParseContext
 
         // Fill in STRETCH as the default if it wasn't specified.
         if (!m_horizontalRule)
-            m_horizontalRule = CSS_VAL_STRETCH;
+            m_horizontalRule = CSSValueStretch;
             
         // The vertical rule should match the horizontal rule if unspecified.
         if (!m_verticalRule)
@@ -3272,7 +3272,7 @@ struct BorderImageParseContext
             if (m_borderLeft)
                 newList.addValue(*m_borderLeft);
             p->valueList = &newList;
-            p->parseValue(CSS_PROP_BORDER_WIDTH, important);
+            p->parseValue(CSSPropertyBorderWidth, important);
             p->valueList = 0;
         }
     }
@@ -3318,10 +3318,10 @@ bool CSSParser::parseBorderImage(int propId, bool important)
         } else if (context.allowSlash() && val->unit == Value::Operator && val->iValue == '/') {
             context.commitSlash();
         } else if (context.allowWidth() &&
-            (val->id == CSS_VAL_THIN || val->id == CSS_VAL_MEDIUM || val->id == CSS_VAL_THICK || validUnit(val, FLength, strict))) {
+            (val->id == CSSValueThin || val->id == CSSValueMedium || val->id == CSSValueThick || validUnit(val, FLength, strict))) {
             context.commitWidth(val);
         } else if (context.allowRule() &&
-            (val->id == CSS_VAL_STRETCH || val->id == CSS_VAL_ROUND || val->id == CSS_VAL_REPEAT)) {
+            (val->id == CSSValueStretch || val->id == CSSValueRound || val->id == CSSValueRepeat)) {
             context.commitRule(val->id);
         } else {
             // Something invalid was encountered.
@@ -3500,24 +3500,24 @@ bool CSSParser::parseTransformOrigin(int propId, int& propId1, int& propId2, Ref
 {
     propId1 = propId;
     propId2 = propId;
-    if (propId == CSS_PROP__WEBKIT_TRANSFORM_ORIGIN) {
-        propId1 = CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_X;
-        propId2 = CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_Y;
+    if (propId == CSSPropertyWebkitTransformOrigin) {
+        propId1 = CSSPropertyWebkitTransformOriginX;
+        propId2 = CSSPropertyWebkitTransformOriginY;
     }
 
     switch (propId) {
-        case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN:
+        case CSSPropertyWebkitTransformOrigin:
             parseBackgroundPosition(value, value2);
             // Unlike the other functions, parseBackgroundPosition advances the valueList pointer
             break;
-        case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_X: {
+        case CSSPropertyWebkitTransformOriginX: {
             bool xFound = false, yFound = true;
             value = parseBackgroundPositionXY(xFound, yFound);
             if (value)
                 valueList->next();
             break;
         }
-        case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_Y: {
+        case CSSPropertyWebkitTransformOriginY: {
             bool xFound = true, yFound = false;
             value = parseBackgroundPositionXY(xFound, yFound);
             if (value)

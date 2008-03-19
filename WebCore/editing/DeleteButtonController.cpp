@@ -146,9 +146,9 @@ void DeleteButtonController::createDeletionUI()
     container->setId(containerElementIdentifier);
 
     CSSMutableStyleDeclaration* style = container->getInlineStyleDecl();
-    style->setProperty(CSS_PROP__WEBKIT_USER_DRAG, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_NONE);
+    style->setProperty(CSSPropertyWebkitUserDrag, CSSValueNone);
+    style->setProperty(CSSPropertyWebkitUserSelect, CSSValueNone);
+    style->setProperty(CSSPropertyWebkitUserModify, CSSValueNone);
 
     RefPtr<HTMLDivElement> outline = new HTMLDivElement(m_target->document());
     outline->setId(outlineElementIdentifier);
@@ -157,18 +157,18 @@ void DeleteButtonController::createDeletionUI()
     const int borderRadius = 6;
 
     style = outline->getInlineStyleDecl();
-    style->setProperty(CSS_PROP_POSITION, CSS_VAL_ABSOLUTE);
-    style->setProperty(CSS_PROP_CURSOR, CSS_VAL_DEFAULT);
-    style->setProperty(CSS_PROP__WEBKIT_USER_DRAG, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP_Z_INDEX, String::number(-1000000));
-    style->setProperty(CSS_PROP_TOP, String::number(-borderWidth - m_target->renderer()->borderTop()) + "px");
-    style->setProperty(CSS_PROP_RIGHT, String::number(-borderWidth - m_target->renderer()->borderRight()) + "px");
-    style->setProperty(CSS_PROP_BOTTOM, String::number(-borderWidth - m_target->renderer()->borderBottom()) + "px");
-    style->setProperty(CSS_PROP_LEFT, String::number(-borderWidth - m_target->renderer()->borderLeft()) + "px");
-    style->setProperty(CSS_PROP_BORDER, String::number(borderWidth) + "px solid rgba(0, 0, 0, 0.6)");
-    style->setProperty(CSS_PROP__WEBKIT_BORDER_RADIUS, String::number(borderRadius) + "px");
+    style->setProperty(CSSPropertyPosition, CSSValueAbsolute);
+    style->setProperty(CSSPropertyCursor, CSSValueDefault);
+    style->setProperty(CSSPropertyWebkitUserDrag, CSSValueNone);
+    style->setProperty(CSSPropertyWebkitUserSelect, CSSValueNone);
+    style->setProperty(CSSPropertyWebkitUserModify, CSSValueNone);
+    style->setProperty(CSSPropertyZIndex, String::number(-1000000));
+    style->setProperty(CSSPropertyTop, String::number(-borderWidth - m_target->renderer()->borderTop()) + "px");
+    style->setProperty(CSSPropertyRight, String::number(-borderWidth - m_target->renderer()->borderRight()) + "px");
+    style->setProperty(CSSPropertyBottom, String::number(-borderWidth - m_target->renderer()->borderBottom()) + "px");
+    style->setProperty(CSSPropertyLeft, String::number(-borderWidth - m_target->renderer()->borderLeft()) + "px");
+    style->setProperty(CSSPropertyBorder, String::number(borderWidth) + "px solid rgba(0, 0, 0, 0.6)");
+    style->setProperty(CSSPropertyWebkitBorderRadius, String::number(borderRadius) + "px");
 
     ExceptionCode ec = 0;
     container->appendChild(outline.get(), ec);
@@ -184,16 +184,16 @@ void DeleteButtonController::createDeletionUI()
     const int buttonBottomShadowOffset = 2;
 
     style = button->getInlineStyleDecl();
-    style->setProperty(CSS_PROP_POSITION, CSS_VAL_ABSOLUTE);
-    style->setProperty(CSS_PROP_CURSOR, CSS_VAL_DEFAULT);
-    style->setProperty(CSS_PROP__WEBKIT_USER_DRAG, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_NONE);
-    style->setProperty(CSS_PROP_Z_INDEX, String::number(1000000));
-    style->setProperty(CSS_PROP_TOP, String::number((-buttonHeight / 2) - m_target->renderer()->borderTop() - (borderWidth / 2) + buttonBottomShadowOffset) + "px");
-    style->setProperty(CSS_PROP_LEFT, String::number((-buttonWidth / 2) - m_target->renderer()->borderLeft() - (borderWidth / 2)) + "px");
-    style->setProperty(CSS_PROP_WIDTH, String::number(buttonWidth) + "px");
-    style->setProperty(CSS_PROP_HEIGHT, String::number(buttonHeight) + "px");
+    style->setProperty(CSSPropertyPosition, CSSValueAbsolute);
+    style->setProperty(CSSPropertyCursor, CSSValueDefault);
+    style->setProperty(CSSPropertyWebkitUserDrag, CSSValueNone);
+    style->setProperty(CSSPropertyWebkitUserSelect, CSSValueNone);
+    style->setProperty(CSSPropertyWebkitUserModify, CSSValueNone);
+    style->setProperty(CSSPropertyZIndex, String::number(1000000));
+    style->setProperty(CSSPropertyTop, String::number((-buttonHeight / 2) - m_target->renderer()->borderTop() - (borderWidth / 2) + buttonBottomShadowOffset) + "px");
+    style->setProperty(CSSPropertyLeft, String::number((-buttonWidth / 2) - m_target->renderer()->borderLeft() - (borderWidth / 2)) + "px");
+    style->setProperty(CSSPropertyWidth, String::number(buttonWidth) + "px");
+    style->setProperty(CSSPropertyHeight, String::number(buttonHeight) + "px");
 
     Image* buttonImage = Image::loadPlatformResource("deleteButton");
     if (buttonImage->isNull())
@@ -243,12 +243,12 @@ void DeleteButtonController::show(HTMLElement* element)
     }
 
     if (m_target->renderer()->style()->position() == StaticPosition) {
-        m_target->getInlineStyleDecl()->setProperty(CSS_PROP_POSITION, CSS_VAL_RELATIVE);
+        m_target->getInlineStyleDecl()->setProperty(CSSPropertyPosition, CSSValueRelative);
         m_wasStaticPositioned = true;
     }
 
     if (m_target->renderer()->style()->hasAutoZIndex()) {
-        m_target->getInlineStyleDecl()->setProperty(CSS_PROP_Z_INDEX, "0");
+        m_target->getInlineStyleDecl()->setProperty(CSSPropertyZIndex, "0");
         m_wasAutoZIndex = true;
     }
 }
@@ -264,9 +264,9 @@ void DeleteButtonController::hide()
 
     if (m_target) {
         if (m_wasStaticPositioned)
-            m_target->getInlineStyleDecl()->setProperty(CSS_PROP_POSITION, CSS_VAL_STATIC);
+            m_target->getInlineStyleDecl()->setProperty(CSSPropertyPosition, CSSValueStatic);
         if (m_wasAutoZIndex)
-            m_target->getInlineStyleDecl()->setProperty(CSS_PROP_Z_INDEX, CSS_VAL_AUTO);
+            m_target->getInlineStyleDecl()->setProperty(CSSPropertyZIndex, CSSValueAuto);
     }
 
     m_wasStaticPositioned = false;

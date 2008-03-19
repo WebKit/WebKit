@@ -913,7 +913,7 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
 
     // Line-height is set when we are sure we decided on the font-size
     if (m_lineHeightValue)
-        applyProperty(CSS_PROP_LINE_HEIGHT, m_lineHeightValue);
+        applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
 
     // Now do the normal priority UA properties.
     applyDeclarations(false, false, firstUARule, lastUARule);
@@ -994,7 +994,7 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
 
     // Line-height is set when we are sure we decided on the font-size
     if (m_lineHeightValue)
-        applyProperty(CSS_PROP_LINE_HEIGHT, m_lineHeightValue);
+        applyProperty(CSSPropertyLineHeight, m_lineHeightValue);
     
     // Now do the normal priority properties.
     applyDeclarations(false, false, firstUARule, lastUARule);
@@ -2174,21 +2174,21 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
             if (isImportant == current.isImportant()) {
                 bool first;
                 switch (current.id()) {
-                    case CSS_PROP_LINE_HEIGHT:
+                    case CSSPropertyLineHeight:
                         m_lineHeightValue = current.value();
                         first = !applyFirst; // we apply line-height later
                         break;
-                    case CSS_PROP_COLOR:
-                    case CSS_PROP_DIRECTION:
-                    case CSS_PROP_DISPLAY:
-                    case CSS_PROP_FONT:
-                    case CSS_PROP_FONT_SIZE:
-                    case CSS_PROP_FONT_STYLE:
-                    case CSS_PROP_FONT_FAMILY:
-                    case CSS_PROP_FONT_WEIGHT:
-                    case CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST:
-                    case CSS_PROP_FONT_VARIANT:
-                    case CSS_PROP_ZOOM:
+                    case CSSPropertyColor:
+                    case CSSPropertyDirection:
+                    case CSSPropertyDisplay:
+                    case CSSPropertyFont:
+                    case CSSPropertyFontSize:
+                    case CSSPropertyFontStyle:
+                    case CSSPropertyFontFamily:
+                    case CSSPropertyFontWeight:
+                    case CSSPropertyWebkitTextSizeAdjust:
+                    case CSSPropertyFontVariant:
+                    case CSSPropertyZoom:
                         // these have to be applied first, because other properties use the computed
                         // values of these porperties.
                         first = true;
@@ -2254,43 +2254,43 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     bool isInitial = valueType == CSSValue::CSS_INITIAL || (!m_parentNode && valueType == CSSValue::CSS_INHERIT);
     
     // These properties are used to set the correct margins/padding on RTL lists.
-    if (id == CSS_PROP__WEBKIT_MARGIN_START)
-        id = m_style->direction() == LTR ? CSS_PROP_MARGIN_LEFT : CSS_PROP_MARGIN_RIGHT;
-    else if (id == CSS_PROP__WEBKIT_PADDING_START)
-        id = m_style->direction() == LTR ? CSS_PROP_PADDING_LEFT : CSS_PROP_PADDING_RIGHT;
+    if (id == CSSPropertyWebkitMarginStart)
+        id = m_style->direction() == LTR ? CSSPropertyMarginLeft : CSSPropertyMarginRight;
+    else if (id == CSSPropertyWebkitPaddingStart)
+        id = m_style->direction() == LTR ? CSSPropertyPaddingLeft : CSSPropertyPaddingRight;
 
     // What follows is a list that maps the CSS properties into their corresponding front-end
     // RenderStyle values.  Shorthands (e.g. border, background) occur in this list as well and
     // are only hit when mapping "inherit" or "initial" into front-end values.
     switch (static_cast<CSSPropertyID>(id)) {
 // ident only properties
-    case CSS_PROP_BACKGROUND_ATTACHMENT:
+    case CSSPropertyBackgroundAttachment:
         HANDLE_BACKGROUND_VALUE(backgroundAttachment, BackgroundAttachment, value)
         return;
-    case CSS_PROP__WEBKIT_BACKGROUND_CLIP:
+    case CSSPropertyWebkitBackgroundClip:
         HANDLE_BACKGROUND_VALUE(backgroundClip, BackgroundClip, value)
         return;
-    case CSS_PROP__WEBKIT_BACKGROUND_COMPOSITE:
+    case CSSPropertyWebkitBackgroundComposite:
         HANDLE_BACKGROUND_VALUE(backgroundComposite, BackgroundComposite, value)
         return;
-    case CSS_PROP__WEBKIT_BACKGROUND_ORIGIN:
+    case CSSPropertyWebkitBackgroundOrigin:
         HANDLE_BACKGROUND_VALUE(backgroundOrigin, BackgroundOrigin, value)
         return;
-    case CSS_PROP_BACKGROUND_REPEAT:
+    case CSSPropertyBackgroundRepeat:
         HANDLE_BACKGROUND_VALUE(backgroundRepeat, BackgroundRepeat, value)
         return;
-    case CSS_PROP__WEBKIT_BACKGROUND_SIZE:
+    case CSSPropertyWebkitBackgroundSize:
         HANDLE_BACKGROUND_VALUE(backgroundSize, BackgroundSize, value)
         return;
-    case CSS_PROP_BORDER_COLLAPSE:
+    case CSSPropertyBorderCollapse:
         HANDLE_INHERIT_AND_INITIAL(borderCollapse, BorderCollapse)
         if (!primitiveValue)
             return;
         switch (primitiveValue->getIdent()) {
-            case CSS_VAL_COLLAPSE:
+            case CSSValueCollapse:
                 m_style->setBorderCollapse(true);
                 break;
-            case CSS_VAL_SEPARATE:
+            case CSSValueSeparate:
                 m_style->setBorderCollapse(false);
                 break;
             default:
@@ -2298,57 +2298,57 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
         
-    case CSS_PROP_BORDER_TOP_STYLE:
+    case CSSPropertyBorderTopStyle:
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(borderTopStyle, BorderTopStyle, BorderStyle)
         if (primitiveValue)
             m_style->setBorderTopStyle(*primitiveValue);
         return;
-    case CSS_PROP_BORDER_RIGHT_STYLE:
+    case CSSPropertyBorderRightStyle:
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(borderRightStyle, BorderRightStyle, BorderStyle)
         if (primitiveValue)
             m_style->setBorderRightStyle(*primitiveValue);
         return;
-    case CSS_PROP_BORDER_BOTTOM_STYLE:
+    case CSSPropertyBorderBottomStyle:
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(borderBottomStyle, BorderBottomStyle, BorderStyle)
         if (primitiveValue)
             m_style->setBorderBottomStyle(*primitiveValue);
         return;
-    case CSS_PROP_BORDER_LEFT_STYLE:
+    case CSSPropertyBorderLeftStyle:
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(borderLeftStyle, BorderLeftStyle, BorderStyle)
         if (primitiveValue)
             m_style->setBorderLeftStyle(*primitiveValue);
         return;
-    case CSS_PROP_OUTLINE_STYLE:
+    case CSSPropertyOutlineStyle:
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(outlineStyle, OutlineStyle, BorderStyle)
         if (primitiveValue) {
-            if (primitiveValue->getIdent() == CSS_VAL_AUTO)
+            if (primitiveValue->getIdent() == CSSValueAuto)
                 m_style->setOutlineStyle(DOTTED, true);
             else
                 m_style->setOutlineStyle(*primitiveValue);
         }
         return;
-    case CSS_PROP_CAPTION_SIDE:
+    case CSSPropertyCaptionSide:
     {
         HANDLE_INHERIT_AND_INITIAL(captionSide, CaptionSide)
         if (primitiveValue)
             m_style->setCaptionSide(*primitiveValue);
         return;
     }
-    case CSS_PROP_CLEAR:
+    case CSSPropertyClear:
     {
         HANDLE_INHERIT_AND_INITIAL(clear, Clear)
         if (primitiveValue)
             m_style->setClear(*primitiveValue);
         return;
     }
-    case CSS_PROP_DIRECTION:
+    case CSSPropertyDirection:
     {
         HANDLE_INHERIT_AND_INITIAL(direction, Direction)
         if (primitiveValue)
             m_style->setDirection(*primitiveValue);
         return;
     }
-    case CSS_PROP_DISPLAY:
+    case CSSPropertyDisplay:
     {
         HANDLE_INHERIT_AND_INITIAL(display, Display)
         if (primitiveValue)
@@ -2356,14 +2356,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_EMPTY_CELLS:
+    case CSSPropertyEmptyCells:
     {
         HANDLE_INHERIT_AND_INITIAL(emptyCells, EmptyCells)
         if (primitiveValue)
             m_style->setEmptyCells(*primitiveValue);
         return;
     }
-    case CSS_PROP_FLOAT:
+    case CSSPropertyFloat:
     {
         HANDLE_INHERIT_AND_INITIAL(floating, Floating)
         if (primitiveValue)
@@ -2371,7 +2371,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_FONT_STYLE:
+    case CSSPropertyFontStyle:
     {
         FontDescription fontDescription = m_style->fontDescription();
         if (isInherit)
@@ -2382,12 +2382,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (!primitiveValue)
                 return;
             switch (primitiveValue->getIdent()) {
-                case CSS_VAL_OBLIQUE:
+                case CSSValueOblique:
                 // FIXME: oblique is the same as italic for the moment...
-                case CSS_VAL_ITALIC:
+                case CSSValueItalic:
                     fontDescription.setItalic(true);
                     break;
-                case CSS_VAL_NORMAL:
+                case CSSValueNormal:
                     fontDescription.setItalic(false);
                     break;
                 default:
@@ -2399,7 +2399,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_FONT_VARIANT:
+    case CSSPropertyFontVariant:
     {
         FontDescription fontDescription = m_style->fontDescription();
         if (isInherit) 
@@ -2410,9 +2410,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (!primitiveValue)
                 return;
             int id = primitiveValue->getIdent();
-            if (id == CSS_VAL_NORMAL)
+            if (id == CSSValueNormal)
                 fontDescription.setSmallCaps(false);
-            else if (id == CSS_VAL_SMALL_CAPS)
+            else if (id == CSSValueSmallCaps)
                 fontDescription.setSmallCaps(true);
             else
                 return;
@@ -2422,7 +2422,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;        
     }
 
-    case CSS_PROP_FONT_WEIGHT:
+    case CSSPropertyFontWeight:
     {
         FontDescription fontDescription = m_style->fontDescription();
         if (isInherit)
@@ -2435,21 +2435,21 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (primitiveValue->getIdent()) {
                 switch (primitiveValue->getIdent()) {
                     // FIXME: We aren't genuinely supporting specific weight values.
-                    case CSS_VAL_BOLD:
-                    case CSS_VAL_BOLDER:
-                    case CSS_VAL_600:
-                    case CSS_VAL_700:
-                    case CSS_VAL_800:
-                    case CSS_VAL_900:
+                    case CSSValueBold:
+                    case CSSValueBolder:
+                    case CSSValue600:
+                    case CSSValue700:
+                    case CSSValue800:
+                    case CSSValue900:
                         fontDescription.setWeight(cBoldWeight);
                         break;
-                    case CSS_VAL_NORMAL:
-                    case CSS_VAL_LIGHTER:
-                    case CSS_VAL_100:
-                    case CSS_VAL_200:
-                    case CSS_VAL_300:
-                    case CSS_VAL_400:
-                    case CSS_VAL_500:
+                    case CSSValueNormal:
+                    case CSSValueLighter:
+                    case CSSValue100:
+                    case CSSValue200:
+                    case CSSValue300:
+                    case CSSValue400:
+                    case CSSValue500:
                         fontDescription.setWeight(cNormalWeight);
                         break;
                     default:
@@ -2466,7 +2466,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
         
-    case CSS_PROP_LIST_STYLE_POSITION:
+    case CSSPropertyListStylePosition:
     {
         HANDLE_INHERIT_AND_INITIAL(listStylePosition, ListStylePosition)
         if (primitiveValue)
@@ -2474,7 +2474,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_LIST_STYLE_TYPE:
+    case CSSPropertyListStyleType:
     {
         HANDLE_INHERIT_AND_INITIAL(listStyleType, ListStyleType)
         if (primitiveValue)
@@ -2482,7 +2482,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_OVERFLOW:
+    case CSSPropertyOverflow:
     {
         if (isInherit) {
             m_style->setOverflowX(m_parentStyle->overflowX());
@@ -2503,21 +2503,21 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_OVERFLOW_X:
+    case CSSPropertyOverflowX:
     {
         HANDLE_INHERIT_AND_INITIAL(overflowX, OverflowX)
         m_style->setOverflowX(*primitiveValue);
         return;
     }
 
-    case CSS_PROP_OVERFLOW_Y:
+    case CSSPropertyOverflowY:
     {
         HANDLE_INHERIT_AND_INITIAL(overflowY, OverflowY)
         m_style->setOverflowY(*primitiveValue);
         return;
     }
 
-    case CSS_PROP_PAGE_BREAK_BEFORE:
+    case CSSPropertyPageBreakBefore:
     {
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(pageBreakBefore, PageBreakBefore, PageBreak)
         if (primitiveValue)
@@ -2525,7 +2525,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_PAGE_BREAK_AFTER:
+    case CSSPropertyPageBreakAfter:
     {
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(pageBreakAfter, PageBreakAfter, PageBreak)
         if (primitiveValue)
@@ -2533,7 +2533,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_PAGE_BREAK_INSIDE: {
+    case CSSPropertyPageBreakInside: {
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(pageBreakInside, PageBreakInside, PageBreak)
         if (!primitiveValue)
             return;
@@ -2543,7 +2543,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
         
-    case CSS_PROP_POSITION:
+    case CSSPropertyPosition:
     {
         HANDLE_INHERIT_AND_INITIAL(position, Position)
         if (primitiveValue)
@@ -2551,7 +2551,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_TABLE_LAYOUT: {
+    case CSSPropertyTableLayout: {
         HANDLE_INHERIT_AND_INITIAL(tableLayout, TableLayout)
 
         ETableLayout l = *primitiveValue;
@@ -2562,41 +2562,41 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
         
-    case CSS_PROP_UNICODE_BIDI: {
+    case CSSPropertyUnicodeBidi: {
         HANDLE_INHERIT_AND_INITIAL(unicodeBidi, UnicodeBidi)
         m_style->setUnicodeBidi(*primitiveValue);
         return;
     }
-    case CSS_PROP_TEXT_TRANSFORM: {
+    case CSSPropertyTextTransform: {
         HANDLE_INHERIT_AND_INITIAL(textTransform, TextTransform)
         m_style->setTextTransform(*primitiveValue);
         return;
     }
 
-    case CSS_PROP_VISIBILITY:
+    case CSSPropertyVisibility:
     {
         HANDLE_INHERIT_AND_INITIAL(visibility, Visibility)
         m_style->setVisibility(*primitiveValue);
         return;
     }
-    case CSS_PROP_WHITE_SPACE:
+    case CSSPropertyWhiteSpace:
         HANDLE_INHERIT_AND_INITIAL(whiteSpace, WhiteSpace)
         m_style->setWhiteSpace(*primitiveValue);
         return;
 
-    case CSS_PROP_BACKGROUND_POSITION:
+    case CSSPropertyBackgroundPosition:
         HANDLE_BACKGROUND_INHERIT_AND_INITIAL(backgroundXPosition, BackgroundXPosition);
         HANDLE_BACKGROUND_INHERIT_AND_INITIAL(backgroundYPosition, BackgroundYPosition);
         return;
-    case CSS_PROP_BACKGROUND_POSITION_X: {
+    case CSSPropertyBackgroundPositionX: {
         HANDLE_BACKGROUND_VALUE(backgroundXPosition, BackgroundXPosition, value)
         return;
     }
-    case CSS_PROP_BACKGROUND_POSITION_Y: {
+    case CSSPropertyBackgroundPositionY: {
         HANDLE_BACKGROUND_VALUE(backgroundYPosition, BackgroundYPosition, value)
         return;
     }
-    case CSS_PROP_BORDER_SPACING: {
+    case CSSPropertyBorderSpacing: {
         if (isInherit) {
             m_style->setHorizontalBorderSpacing(m_parentStyle->horizontalBorderSpacing());
             m_style->setVerticalBorderSpacing(m_parentStyle->verticalBorderSpacing());
@@ -2607,7 +2607,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
     }
-    case CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING: {
+    case CSSPropertyWebkitBorderHorizontalSpacing: {
         HANDLE_INHERIT_AND_INITIAL(horizontalBorderSpacing, HorizontalBorderSpacing)
         if (!primitiveValue)
             return;
@@ -2615,7 +2615,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setHorizontalBorderSpacing(spacing);
         return;
     }
-    case CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING: {
+    case CSSPropertyWebkitBorderVerticalSpacing: {
         HANDLE_INHERIT_AND_INITIAL(verticalBorderSpacing, VerticalBorderSpacing)
         if (!primitiveValue)
             return;
@@ -2623,7 +2623,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setVerticalBorderSpacing(spacing);
         return;
     }
-    case CSS_PROP_CURSOR:
+    case CSSPropertyCursor:
         if (isInherit) {
             m_style->setCursor(m_parentStyle->cursor());
             m_style->setCursorList(m_parentStyle->cursors());
@@ -2659,35 +2659,35 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
 // colors || inherit
-    case CSS_PROP_BACKGROUND_COLOR:
-    case CSS_PROP_BORDER_TOP_COLOR:
-    case CSS_PROP_BORDER_RIGHT_COLOR:
-    case CSS_PROP_BORDER_BOTTOM_COLOR:
-    case CSS_PROP_BORDER_LEFT_COLOR:
-    case CSS_PROP_COLOR:
-    case CSS_PROP_OUTLINE_COLOR:
-    case CSS_PROP__WEBKIT_COLUMN_RULE_COLOR:
-    case CSS_PROP__WEBKIT_TEXT_STROKE_COLOR:
-    case CSS_PROP__WEBKIT_TEXT_FILL_COLOR: {
+    case CSSPropertyBackgroundColor:
+    case CSSPropertyBorderTopColor:
+    case CSSPropertyBorderRightColor:
+    case CSSPropertyBorderBottomColor:
+    case CSSPropertyBorderLeftColor:
+    case CSSPropertyColor:
+    case CSSPropertyOutlineColor:
+    case CSSPropertyWebkitColumnRuleColor:
+    case CSSPropertyWebkitTextStrokeColor:
+    case CSSPropertyWebkitTextFillColor: {
         Color col;
         if (isInherit) {
-            HANDLE_INHERIT_COND(CSS_PROP_BACKGROUND_COLOR, backgroundColor, BackgroundColor)
-            HANDLE_INHERIT_COND(CSS_PROP_BORDER_TOP_COLOR, borderTopColor, BorderTopColor)
-            HANDLE_INHERIT_COND(CSS_PROP_BORDER_BOTTOM_COLOR, borderBottomColor, BorderBottomColor)
-            HANDLE_INHERIT_COND(CSS_PROP_BORDER_RIGHT_COLOR, borderRightColor, BorderRightColor)
-            HANDLE_INHERIT_COND(CSS_PROP_BORDER_LEFT_COLOR, borderLeftColor, BorderLeftColor)
-            HANDLE_INHERIT_COND(CSS_PROP_COLOR, color, Color)
-            HANDLE_INHERIT_COND(CSS_PROP_OUTLINE_COLOR, outlineColor, OutlineColor)
-            HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_COLUMN_RULE_COLOR, columnRuleColor, ColumnRuleColor)
-            HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_TEXT_STROKE_COLOR, textStrokeColor, TextStrokeColor)
-            HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_TEXT_FILL_COLOR, textFillColor, TextFillColor)
+            HANDLE_INHERIT_COND(CSSPropertyBackgroundColor, backgroundColor, BackgroundColor)
+            HANDLE_INHERIT_COND(CSSPropertyBorderTopColor, borderTopColor, BorderTopColor)
+            HANDLE_INHERIT_COND(CSSPropertyBorderBottomColor, borderBottomColor, BorderBottomColor)
+            HANDLE_INHERIT_COND(CSSPropertyBorderRightColor, borderRightColor, BorderRightColor)
+            HANDLE_INHERIT_COND(CSSPropertyBorderLeftColor, borderLeftColor, BorderLeftColor)
+            HANDLE_INHERIT_COND(CSSPropertyColor, color, Color)
+            HANDLE_INHERIT_COND(CSSPropertyOutlineColor, outlineColor, OutlineColor)
+            HANDLE_INHERIT_COND(CSSPropertyWebkitColumnRuleColor, columnRuleColor, ColumnRuleColor)
+            HANDLE_INHERIT_COND(CSSPropertyWebkitTextStrokeColor, textStrokeColor, TextStrokeColor)
+            HANDLE_INHERIT_COND(CSSPropertyWebkitTextFillColor, textFillColor, TextFillColor)
             return;
         }
         if (isInitial) {
             // The border/outline colors will just map to the invalid color |col| above.  This will have the
             // effect of forcing the use of the currentColor when it comes time to draw the borders (and of
             // not painting the background since the color won't be valid).
-            if (id == CSS_PROP_COLOR)
+            if (id == CSSPropertyColor)
                 col = RenderStyle::initialColor();
         } else {
             if (!primitiveValue)
@@ -2696,34 +2696,34 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
 
         switch (id) {
-        case CSS_PROP_BACKGROUND_COLOR:
+        case CSSPropertyBackgroundColor:
             m_style->setBackgroundColor(col);
             break;
-        case CSS_PROP_BORDER_TOP_COLOR:
+        case CSSPropertyBorderTopColor:
             m_style->setBorderTopColor(col);
             break;
-        case CSS_PROP_BORDER_RIGHT_COLOR:
+        case CSSPropertyBorderRightColor:
             m_style->setBorderRightColor(col);
             break;
-        case CSS_PROP_BORDER_BOTTOM_COLOR:
+        case CSSPropertyBorderBottomColor:
             m_style->setBorderBottomColor(col);
             break;
-        case CSS_PROP_BORDER_LEFT_COLOR:
+        case CSSPropertyBorderLeftColor:
             m_style->setBorderLeftColor(col);
             break;
-        case CSS_PROP_COLOR:
+        case CSSPropertyColor:
             m_style->setColor(col);
             break;
-        case CSS_PROP_OUTLINE_COLOR:
+        case CSSPropertyOutlineColor:
             m_style->setOutlineColor(col);
             break;
-        case CSS_PROP__WEBKIT_COLUMN_RULE_COLOR:
+        case CSSPropertyWebkitColumnRuleColor:
             m_style->setColumnRuleColor(col);
             break;
-        case CSS_PROP__WEBKIT_TEXT_STROKE_COLOR:
+        case CSSPropertyWebkitTextStrokeColor:
             m_style->setTextStrokeColor(col);
             break;
-        case CSS_PROP__WEBKIT_TEXT_FILL_COLOR:
+        case CSSPropertyWebkitTextFillColor:
             m_style->setTextFillColor(col);
             break;
         }
@@ -2732,10 +2732,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
     
 // uri || inherit
-    case CSS_PROP_BACKGROUND_IMAGE:
+    case CSSPropertyBackgroundImage:
         HANDLE_BACKGROUND_VALUE(backgroundImage, BackgroundImage, value)
         return;
-    case CSS_PROP_LIST_STYLE_IMAGE:
+    case CSSPropertyListStyleImage:
     {
         HANDLE_INHERIT_AND_INITIAL(listStyleImage, ListStyleImage)
         if (!primitiveValue)
@@ -2745,29 +2745,29 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
 
 // length
-    case CSS_PROP_BORDER_TOP_WIDTH:
-    case CSS_PROP_BORDER_RIGHT_WIDTH:
-    case CSS_PROP_BORDER_BOTTOM_WIDTH:
-    case CSS_PROP_BORDER_LEFT_WIDTH:
-    case CSS_PROP_OUTLINE_WIDTH:
-    case CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH:
+    case CSSPropertyBorderTopWidth:
+    case CSSPropertyBorderRightWidth:
+    case CSSPropertyBorderBottomWidth:
+    case CSSPropertyBorderLeftWidth:
+    case CSSPropertyOutlineWidth:
+    case CSSPropertyWebkitColumnRuleWidth:
     {
         if (isInherit) {
-            HANDLE_INHERIT_COND(CSS_PROP_BORDER_TOP_WIDTH, borderTopWidth, BorderTopWidth)
-            HANDLE_INHERIT_COND(CSS_PROP_BORDER_RIGHT_WIDTH, borderRightWidth, BorderRightWidth)
-            HANDLE_INHERIT_COND(CSS_PROP_BORDER_BOTTOM_WIDTH, borderBottomWidth, BorderBottomWidth)
-            HANDLE_INHERIT_COND(CSS_PROP_BORDER_LEFT_WIDTH, borderLeftWidth, BorderLeftWidth)
-            HANDLE_INHERIT_COND(CSS_PROP_OUTLINE_WIDTH, outlineWidth, OutlineWidth)
-            HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH, columnRuleWidth, ColumnRuleWidth)
+            HANDLE_INHERIT_COND(CSSPropertyBorderTopWidth, borderTopWidth, BorderTopWidth)
+            HANDLE_INHERIT_COND(CSSPropertyBorderRightWidth, borderRightWidth, BorderRightWidth)
+            HANDLE_INHERIT_COND(CSSPropertyBorderBottomWidth, borderBottomWidth, BorderBottomWidth)
+            HANDLE_INHERIT_COND(CSSPropertyBorderLeftWidth, borderLeftWidth, BorderLeftWidth)
+            HANDLE_INHERIT_COND(CSSPropertyOutlineWidth, outlineWidth, OutlineWidth)
+            HANDLE_INHERIT_COND(CSSPropertyWebkitColumnRuleWidth, columnRuleWidth, ColumnRuleWidth)
             return;
         }
         else if (isInitial) {
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BORDER_TOP_WIDTH, BorderTopWidth, BorderWidth)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BORDER_RIGHT_WIDTH, BorderRightWidth, BorderWidth)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BORDER_BOTTOM_WIDTH, BorderBottomWidth, BorderWidth)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BORDER_LEFT_WIDTH, BorderLeftWidth, BorderWidth)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_OUTLINE_WIDTH, OutlineWidth, BorderWidth)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH, ColumnRuleWidth, BorderWidth)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBorderTopWidth, BorderTopWidth, BorderWidth)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBorderRightWidth, BorderRightWidth, BorderWidth)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBorderBottomWidth, BorderBottomWidth, BorderWidth)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBorderLeftWidth, BorderLeftWidth, BorderWidth)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyOutlineWidth, OutlineWidth, BorderWidth)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWebkitColumnRuleWidth, ColumnRuleWidth, BorderWidth)
             return;
         }
 
@@ -2775,16 +2775,16 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             return;
         short width = 3;
         switch (primitiveValue->getIdent()) {
-        case CSS_VAL_THIN:
+        case CSSValueThin:
             width = 1;
             break;
-        case CSS_VAL_MEDIUM:
+        case CSSValueMedium:
             width = 3;
             break;
-        case CSS_VAL_THICK:
+        case CSSValueThick:
             width = 5;
             break;
-        case CSS_VAL_INVALID:
+        case CSSValueInvalid:
             width = primitiveValue->computeLengthShort(m_style, zoomFactor);
             break;
         default:
@@ -2793,22 +2793,22 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
         if (width < 0) return;
         switch (id) {
-        case CSS_PROP_BORDER_TOP_WIDTH:
+        case CSSPropertyBorderTopWidth:
             m_style->setBorderTopWidth(width);
             break;
-        case CSS_PROP_BORDER_RIGHT_WIDTH:
+        case CSSPropertyBorderRightWidth:
             m_style->setBorderRightWidth(width);
             break;
-        case CSS_PROP_BORDER_BOTTOM_WIDTH:
+        case CSSPropertyBorderBottomWidth:
             m_style->setBorderBottomWidth(width);
             break;
-        case CSS_PROP_BORDER_LEFT_WIDTH:
+        case CSSPropertyBorderLeftWidth:
             m_style->setBorderLeftWidth(width);
             break;
-        case CSS_PROP_OUTLINE_WIDTH:
+        case CSSPropertyOutlineWidth:
             m_style->setOutlineWidth(width);
             break;
-        case CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH:
+        case CSSPropertyWebkitColumnRuleWidth:
             m_style->setColumnRuleWidth(width);
             break;
         default:
@@ -2817,23 +2817,23 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_LETTER_SPACING:
-    case CSS_PROP_WORD_SPACING:
+    case CSSPropertyLetterSpacing:
+    case CSSPropertyWordSpacing:
     {
         
         if (isInherit) {
-            HANDLE_INHERIT_COND(CSS_PROP_LETTER_SPACING, letterSpacing, LetterSpacing)
-            HANDLE_INHERIT_COND(CSS_PROP_WORD_SPACING, wordSpacing, WordSpacing)
+            HANDLE_INHERIT_COND(CSSPropertyLetterSpacing, letterSpacing, LetterSpacing)
+            HANDLE_INHERIT_COND(CSSPropertyWordSpacing, wordSpacing, WordSpacing)
             return;
         }
         else if (isInitial) {
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_LETTER_SPACING, LetterSpacing, LetterWordSpacing)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_WORD_SPACING, WordSpacing, LetterWordSpacing)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyLetterSpacing, LetterSpacing, LetterWordSpacing)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWordSpacing, WordSpacing, LetterWordSpacing)
             return;
         }
         
         int width = 0;
-        if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_NORMAL){
+        if (primitiveValue && primitiveValue->getIdent() == CSSValueNormal){
             width = 0;
         } else {
             if (!primitiveValue)
@@ -2841,10 +2841,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             width = primitiveValue->computeLengthInt(m_style, zoomFactor);
         }
         switch (id) {
-        case CSS_PROP_LETTER_SPACING:
+        case CSSPropertyLetterSpacing:
             m_style->setLetterSpacing(width);
             break;
-        case CSS_PROP_WORD_SPACING:
+        case CSSPropertyWordSpacing:
             m_style->setWordSpacing(width);
             break;
             // ### needs the definitions in renderstyle
@@ -2853,40 +2853,40 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_WORD_BREAK: {
+    case CSSPropertyWordBreak: {
         HANDLE_INHERIT_AND_INITIAL(wordBreak, WordBreak)
         m_style->setWordBreak(*primitiveValue);
         return;
     }
 
-    case CSS_PROP_WORD_WRAP: {
+    case CSSPropertyWordWrap: {
         HANDLE_INHERIT_AND_INITIAL(wordWrap, WordWrap)
         m_style->setWordWrap(*primitiveValue);
         return;
     }
 
-    case CSS_PROP__WEBKIT_NBSP_MODE:
+    case CSSPropertyWebkitNbspMode:
     {
         HANDLE_INHERIT_AND_INITIAL(nbspMode, NBSPMode)
         m_style->setNBSPMode(*primitiveValue);
         return;
     }
 
-    case CSS_PROP__WEBKIT_LINE_BREAK:
+    case CSSPropertyWebkitLineBreak:
     {
         HANDLE_INHERIT_AND_INITIAL(khtmlLineBreak, KHTMLLineBreak)
         m_style->setKHTMLLineBreak(*primitiveValue);
         return;
     }
 
-    case CSS_PROP__WEBKIT_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR:
+    case CSSPropertyWebkitMatchNearestMailBlockquoteColor:
     {
         HANDLE_INHERIT_AND_INITIAL(matchNearestMailBlockquoteColor, MatchNearestMailBlockquoteColor)
         m_style->setMatchNearestMailBlockquoteColor(*primitiveValue);
         return;
     }
 
-    case CSS_PROP_RESIZE:
+    case CSSPropertyResize:
     {
         HANDLE_INHERIT_AND_INITIAL(resize, Resize)
 
@@ -2894,7 +2894,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             return;
 
         EResize r = RESIZE_NONE;
-        if (primitiveValue->getIdent() == CSS_VAL_AUTO) {
+        if (primitiveValue->getIdent() == CSSValueAuto) {
             if (Settings* settings = m_document->settings())
                 r = settings->textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
         } else
@@ -2905,76 +2905,76 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
     
     // length, percent
-    case CSS_PROP_MAX_WIDTH:
+    case CSSPropertyMaxWidth:
         // +none +inherit
-        if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_NONE)
+        if (primitiveValue && primitiveValue->getIdent() == CSSValueNone)
             apply = true;
-    case CSS_PROP_TOP:
-    case CSS_PROP_LEFT:
-    case CSS_PROP_RIGHT:
-    case CSS_PROP_BOTTOM:
-    case CSS_PROP_WIDTH:
-    case CSS_PROP_MIN_WIDTH:
-    case CSS_PROP_MARGIN_TOP:
-    case CSS_PROP_MARGIN_RIGHT:
-    case CSS_PROP_MARGIN_BOTTOM:
-    case CSS_PROP_MARGIN_LEFT:
+    case CSSPropertyTop:
+    case CSSPropertyLeft:
+    case CSSPropertyRight:
+    case CSSPropertyBottom:
+    case CSSPropertyWidth:
+    case CSSPropertyMinWidth:
+    case CSSPropertyMarginTop:
+    case CSSPropertyMarginRight:
+    case CSSPropertyMarginBottom:
+    case CSSPropertyMarginLeft:
         // +inherit +auto
-        if (id == CSS_PROP_WIDTH || id == CSS_PROP_MIN_WIDTH || id == CSS_PROP_MAX_WIDTH) {
-            if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_INTRINSIC) {
+        if (id == CSSPropertyWidth || id == CSSPropertyMinWidth || id == CSSPropertyMaxWidth) {
+            if (primitiveValue && primitiveValue->getIdent() == CSSValueIntrinsic) {
                 l = Length(Intrinsic);
                 apply = true;
             }
-            else if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_MIN_INTRINSIC) {
+            else if (primitiveValue && primitiveValue->getIdent() == CSSValueMinIntrinsic) {
                 l = Length(MinIntrinsic);
                 apply = true;
             }
         }
-        if (id != CSS_PROP_MAX_WIDTH && primitiveValue && primitiveValue->getIdent() == CSS_VAL_AUTO)
+        if (id != CSSPropertyMaxWidth && primitiveValue && primitiveValue->getIdent() == CSSValueAuto)
             apply = true;
-    case CSS_PROP_PADDING_TOP:
-    case CSS_PROP_PADDING_RIGHT:
-    case CSS_PROP_PADDING_BOTTOM:
-    case CSS_PROP_PADDING_LEFT:
-    case CSS_PROP_TEXT_INDENT:
+    case CSSPropertyPaddingTop:
+    case CSSPropertyPaddingRight:
+    case CSSPropertyPaddingBottom:
+    case CSSPropertyPaddingLeft:
+    case CSSPropertyTextIndent:
         // +inherit
     {
         if (isInherit) {
-            HANDLE_INHERIT_COND(CSS_PROP_MAX_WIDTH, maxWidth, MaxWidth)
-            HANDLE_INHERIT_COND(CSS_PROP_BOTTOM, bottom, Bottom)
-            HANDLE_INHERIT_COND(CSS_PROP_TOP, top, Top)
-            HANDLE_INHERIT_COND(CSS_PROP_LEFT, left, Left)
-            HANDLE_INHERIT_COND(CSS_PROP_RIGHT, right, Right)
-            HANDLE_INHERIT_COND(CSS_PROP_WIDTH, width, Width)
-            HANDLE_INHERIT_COND(CSS_PROP_MIN_WIDTH, minWidth, MinWidth)
-            HANDLE_INHERIT_COND(CSS_PROP_PADDING_TOP, paddingTop, PaddingTop)
-            HANDLE_INHERIT_COND(CSS_PROP_PADDING_RIGHT, paddingRight, PaddingRight)
-            HANDLE_INHERIT_COND(CSS_PROP_PADDING_BOTTOM, paddingBottom, PaddingBottom)
-            HANDLE_INHERIT_COND(CSS_PROP_PADDING_LEFT, paddingLeft, PaddingLeft)
-            HANDLE_INHERIT_COND(CSS_PROP_MARGIN_TOP, marginTop, MarginTop)
-            HANDLE_INHERIT_COND(CSS_PROP_MARGIN_RIGHT, marginRight, MarginRight)
-            HANDLE_INHERIT_COND(CSS_PROP_MARGIN_BOTTOM, marginBottom, MarginBottom)
-            HANDLE_INHERIT_COND(CSS_PROP_MARGIN_LEFT, marginLeft, MarginLeft)
-            HANDLE_INHERIT_COND(CSS_PROP_TEXT_INDENT, textIndent, TextIndent)
+            HANDLE_INHERIT_COND(CSSPropertyMaxWidth, maxWidth, MaxWidth)
+            HANDLE_INHERIT_COND(CSSPropertyBottom, bottom, Bottom)
+            HANDLE_INHERIT_COND(CSSPropertyTop, top, Top)
+            HANDLE_INHERIT_COND(CSSPropertyLeft, left, Left)
+            HANDLE_INHERIT_COND(CSSPropertyRight, right, Right)
+            HANDLE_INHERIT_COND(CSSPropertyWidth, width, Width)
+            HANDLE_INHERIT_COND(CSSPropertyMinWidth, minWidth, MinWidth)
+            HANDLE_INHERIT_COND(CSSPropertyPaddingTop, paddingTop, PaddingTop)
+            HANDLE_INHERIT_COND(CSSPropertyPaddingRight, paddingRight, PaddingRight)
+            HANDLE_INHERIT_COND(CSSPropertyPaddingBottom, paddingBottom, PaddingBottom)
+            HANDLE_INHERIT_COND(CSSPropertyPaddingLeft, paddingLeft, PaddingLeft)
+            HANDLE_INHERIT_COND(CSSPropertyMarginTop, marginTop, MarginTop)
+            HANDLE_INHERIT_COND(CSSPropertyMarginRight, marginRight, MarginRight)
+            HANDLE_INHERIT_COND(CSSPropertyMarginBottom, marginBottom, MarginBottom)
+            HANDLE_INHERIT_COND(CSSPropertyMarginLeft, marginLeft, MarginLeft)
+            HANDLE_INHERIT_COND(CSSPropertyTextIndent, textIndent, TextIndent)
             return;
         }
         else if (isInitial) {
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_MAX_WIDTH, MaxWidth, MaxSize)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BOTTOM, Bottom, Offset)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_TOP, Top, Offset)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_LEFT, Left, Offset)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_RIGHT, Right, Offset)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_WIDTH, Width, Size)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_MIN_WIDTH, MinWidth, MinSize)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_PADDING_TOP, PaddingTop, Padding)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_PADDING_RIGHT, PaddingRight, Padding)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_PADDING_BOTTOM, PaddingBottom, Padding)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_PADDING_LEFT, PaddingLeft, Padding)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_MARGIN_TOP, MarginTop, Margin)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_MARGIN_RIGHT, MarginRight, Margin)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_MARGIN_BOTTOM, MarginBottom, Margin)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_MARGIN_LEFT, MarginLeft, Margin)
-            HANDLE_INITIAL_COND(CSS_PROP_TEXT_INDENT, TextIndent)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMaxWidth, MaxWidth, MaxSize)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBottom, Bottom, Offset)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyTop, Top, Offset)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyLeft, Left, Offset)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyRight, Right, Offset)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWidth, Width, Size)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMinWidth, MinWidth, MinSize)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyPaddingTop, PaddingTop, Padding)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyPaddingRight, PaddingRight, Padding)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyPaddingBottom, PaddingBottom, Padding)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyPaddingLeft, PaddingLeft, Padding)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMarginTop, MarginTop, Margin)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMarginRight, MarginRight, Margin)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMarginBottom, MarginBottom, Margin)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMarginLeft, MarginLeft, Margin)
+            HANDLE_INITIAL_COND(CSSPropertyTextIndent, TextIndent)
             return;
         } 
 
@@ -2988,8 +2988,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 l = Length(primitiveValue->getDoubleValue(), Percent);
             else
                 return;
-            if (id == CSS_PROP_PADDING_LEFT || id == CSS_PROP_PADDING_RIGHT ||
-                id == CSS_PROP_PADDING_TOP || id == CSS_PROP_PADDING_BOTTOM)
+            if (id == CSSPropertyPaddingLeft || id == CSSPropertyPaddingRight ||
+                id == CSSPropertyPaddingTop || id == CSSPropertyPaddingBottom)
                 // Padding can't be negative
                 apply = !((l.isFixed() || l.isPercent()) && l.calcValue(100) < 0);
             else
@@ -2997,52 +2997,52 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         if (!apply) return;
         switch (id) {
-            case CSS_PROP_MAX_WIDTH:
+            case CSSPropertyMaxWidth:
                 m_style->setMaxWidth(l);
                 break;
-            case CSS_PROP_BOTTOM:
+            case CSSPropertyBottom:
                 m_style->setBottom(l);
                 break;
-            case CSS_PROP_TOP:
+            case CSSPropertyTop:
                 m_style->setTop(l);
                 break;
-            case CSS_PROP_LEFT:
+            case CSSPropertyLeft:
                 m_style->setLeft(l);
                 break;
-            case CSS_PROP_RIGHT:
+            case CSSPropertyRight:
                 m_style->setRight(l);
                 break;
-            case CSS_PROP_WIDTH:
+            case CSSPropertyWidth:
                 m_style->setWidth(l);
                 break;
-            case CSS_PROP_MIN_WIDTH:
+            case CSSPropertyMinWidth:
                 m_style->setMinWidth(l);
                 break;
-            case CSS_PROP_PADDING_TOP:
+            case CSSPropertyPaddingTop:
                 m_style->setPaddingTop(l);
                 break;
-            case CSS_PROP_PADDING_RIGHT:
+            case CSSPropertyPaddingRight:
                 m_style->setPaddingRight(l);
                 break;
-            case CSS_PROP_PADDING_BOTTOM:
+            case CSSPropertyPaddingBottom:
                 m_style->setPaddingBottom(l);
                 break;
-            case CSS_PROP_PADDING_LEFT:
+            case CSSPropertyPaddingLeft:
                 m_style->setPaddingLeft(l);
                 break;
-            case CSS_PROP_MARGIN_TOP:
+            case CSSPropertyMarginTop:
                 m_style->setMarginTop(l);
                 break;
-            case CSS_PROP_MARGIN_RIGHT:
+            case CSSPropertyMarginRight:
                 m_style->setMarginRight(l);
                 break;
-            case CSS_PROP_MARGIN_BOTTOM:
+            case CSSPropertyMarginBottom:
                 m_style->setMarginBottom(l);
                 break;
-            case CSS_PROP_MARGIN_LEFT:
+            case CSSPropertyMarginLeft:
                 m_style->setMarginLeft(l);
                 break;
-            case CSS_PROP_TEXT_INDENT:
+            case CSSPropertyTextIndent:
                 m_style->setTextIndent(l);
                 break;
             default:
@@ -3051,31 +3051,31 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_MAX_HEIGHT:
-        if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_NONE) {
+    case CSSPropertyMaxHeight:
+        if (primitiveValue && primitiveValue->getIdent() == CSSValueNone) {
             l = Length(undefinedLength, Fixed);
             apply = true;
         }
-    case CSS_PROP_HEIGHT:
-    case CSS_PROP_MIN_HEIGHT:
-        if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_INTRINSIC) {
+    case CSSPropertyHeight:
+    case CSSPropertyMinHeight:
+        if (primitiveValue && primitiveValue->getIdent() == CSSValueIntrinsic) {
             l = Length(Intrinsic);
             apply = true;
-        } else if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_MIN_INTRINSIC) {
+        } else if (primitiveValue && primitiveValue->getIdent() == CSSValueMinIntrinsic) {
             l = Length(MinIntrinsic);
             apply = true;
-        } else if (id != CSS_PROP_MAX_HEIGHT && primitiveValue && primitiveValue->getIdent() == CSS_VAL_AUTO)
+        } else if (id != CSSPropertyMaxHeight && primitiveValue && primitiveValue->getIdent() == CSSValueAuto)
             apply = true;
         if (isInherit) {
-            HANDLE_INHERIT_COND(CSS_PROP_MAX_HEIGHT, maxHeight, MaxHeight)
-            HANDLE_INHERIT_COND(CSS_PROP_HEIGHT, height, Height)
-            HANDLE_INHERIT_COND(CSS_PROP_MIN_HEIGHT, minHeight, MinHeight)
+            HANDLE_INHERIT_COND(CSSPropertyMaxHeight, maxHeight, MaxHeight)
+            HANDLE_INHERIT_COND(CSSPropertyHeight, height, Height)
+            HANDLE_INHERIT_COND(CSSPropertyMinHeight, minHeight, MinHeight)
             return;
         }
         if (isInitial) {
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_MAX_HEIGHT, MaxHeight, MaxSize)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_HEIGHT, Height, Size)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_MIN_HEIGHT, MinHeight, MinSize)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMaxHeight, MaxHeight, MaxSize)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyHeight, Height, Size)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyMinHeight, MinHeight, MinSize)
             return;
         }
 
@@ -3091,19 +3091,19 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         if (apply)
             switch (id) {
-                case CSS_PROP_MAX_HEIGHT:
+                case CSSPropertyMaxHeight:
                     m_style->setMaxHeight(l);
                     break;
-                case CSS_PROP_HEIGHT:
+                case CSSPropertyHeight:
                     m_style->setHeight(l);
                     break;
-                case CSS_PROP_MIN_HEIGHT:
+                case CSSPropertyMinHeight:
                     m_style->setMinHeight(l);
                     break;
             }
         return;
 
-    case CSS_PROP_VERTICAL_ALIGN:
+    case CSSPropertyVerticalAlign:
         HANDLE_INHERIT_AND_INITIAL(verticalAlign, VerticalAlign)
         if (!primitiveValue)
             return;
@@ -3111,23 +3111,23 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
           EVerticalAlign align;
 
           switch (primitiveValue->getIdent()) {
-                case CSS_VAL_TOP:
+                case CSSValueTop:
                     align = TOP; break;
-                case CSS_VAL_BOTTOM:
+                case CSSValueBottom:
                     align = BOTTOM; break;
-                case CSS_VAL_MIDDLE:
+                case CSSValueMiddle:
                     align = MIDDLE; break;
-                case CSS_VAL_BASELINE:
+                case CSSValueBaseline:
                     align = BASELINE; break;
-                case CSS_VAL_TEXT_BOTTOM:
+                case CSSValueTextBottom:
                     align = TEXT_BOTTOM; break;
-                case CSS_VAL_TEXT_TOP:
+                case CSSValueTextTop:
                     align = TEXT_TOP; break;
-                case CSS_VAL_SUB:
+                case CSSValueSub:
                     align = SUB; break;
-                case CSS_VAL_SUPER:
+                case CSSValueSuper:
                     align = SUPER; break;
-                case CSS_VAL__WEBKIT_BASELINE_MIDDLE:
+                case CSSValueWebkitBaselineMiddle:
                     align = BASELINE_MIDDLE; break;
                 default:
                     return;
@@ -3147,7 +3147,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
 
-    case CSS_PROP_FONT_SIZE:
+    case CSSPropertyFontSize:
     {
         FontDescription fontDescription = m_style->fontDescription();
         fontDescription.setKeywordSize(0);
@@ -3166,26 +3166,26 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (m_parentNode)
                 fontDescription.setKeywordSize(m_parentStyle->fontDescription().keywordSize());
         } else if (isInitial) {
-            size = fontSizeForKeyword(CSS_VAL_MEDIUM, m_style->htmlHacks(), familyIsFixed);
-            fontDescription.setKeywordSize(CSS_VAL_MEDIUM - CSS_VAL_XX_SMALL + 1);
+            size = fontSizeForKeyword(CSSValueMedium, m_style->htmlHacks(), familyIsFixed);
+            fontDescription.setKeywordSize(CSSValueMedium - CSSValueXxSmall + 1);
         } else if (primitiveValue->getIdent()) {
             // Keywords are being used.
             switch (primitiveValue->getIdent()) {
-                case CSS_VAL_XX_SMALL:
-                case CSS_VAL_X_SMALL:
-                case CSS_VAL_SMALL:
-                case CSS_VAL_MEDIUM:
-                case CSS_VAL_LARGE:
-                case CSS_VAL_X_LARGE:
-                case CSS_VAL_XX_LARGE:
-                case CSS_VAL__WEBKIT_XXX_LARGE:
+                case CSSValueXxSmall:
+                case CSSValueXSmall:
+                case CSSValueSmall:
+                case CSSValueMedium:
+                case CSSValueLarge:
+                case CSSValueXLarge:
+                case CSSValueXxLarge:
+                case CSSValueWebkitXxxLarge:
                     size = fontSizeForKeyword(primitiveValue->getIdent(), m_style->htmlHacks(), familyIsFixed);
-                    fontDescription.setKeywordSize(primitiveValue->getIdent() - CSS_VAL_XX_SMALL + 1);
+                    fontDescription.setKeywordSize(primitiveValue->getIdent() - CSSValueXxSmall + 1);
                     break;
-                case CSS_VAL_LARGER:
+                case CSSValueLarger:
                     size = largerFontSize(oldSize, m_style->htmlHacks());
                     break;
-                case CSS_VAL_SMALLER:
+                case CSSValueSmaller:
                     size = smallerFontSize(oldSize, m_style->htmlHacks());
                     break;
                 default:
@@ -3193,8 +3193,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             }
 
             fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize && 
-                                              (primitiveValue->getIdent() == CSS_VAL_LARGER ||
-                                               primitiveValue->getIdent() == CSS_VAL_SMALLER));
+                                              (primitiveValue->getIdent() == CSSValueLarger ||
+                                               primitiveValue->getIdent() == CSSValueSmaller));
         } else {
             int type = primitiveValue->primitiveType();
             fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize ||
@@ -3218,14 +3218,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_Z_INDEX: {
+    case CSSPropertyZIndex: {
         if (isInherit) {
             if (m_parentStyle->hasAutoZIndex())
                 m_style->setHasAutoZIndex();
             else
                 m_style->setZIndex(m_parentStyle->zIndex());
             return;
-        } else if (isInitial || primitiveValue->getIdent() == CSS_VAL_AUTO) {
+        } else if (isInitial || primitiveValue->getIdent() == CSSValueAuto) {
             m_style->setHasAutoZIndex();
             return;
         }
@@ -3236,7 +3236,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setZIndex(static_cast<int>(max(minIntAsDouble, min(primitiveValue->getDoubleValue(), maxIntAsDouble))));
         return;
     }
-    case CSS_PROP_WIDOWS:
+    case CSSPropertyWidows:
     {
         HANDLE_INHERIT_AND_INITIAL(widows, Widows)
         if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
@@ -3245,7 +3245,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
         
-    case CSS_PROP_ORPHANS:
+    case CSSPropertyOrphans:
     {
         HANDLE_INHERIT_AND_INITIAL(orphans, Orphans)
         if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
@@ -3255,14 +3255,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }        
 
 // length, percent, number
-    case CSS_PROP_LINE_HEIGHT:
+    case CSSPropertyLineHeight:
     {
         HANDLE_INHERIT_AND_INITIAL(lineHeight, LineHeight)
         if (!primitiveValue)
             return;
         Length lineHeight;
         int type = primitiveValue->primitiveType();
-        if (primitiveValue->getIdent() == CSS_VAL_NORMAL)
+        if (primitiveValue->getIdent() == CSSValueNormal)
             lineHeight = Length(-100.0, Percent);
         else if (type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG) {
             double multiplier = m_style->effectiveZoom();
@@ -3280,15 +3280,15 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
 
 // string
-    case CSS_PROP_TEXT_ALIGN:
+    case CSSPropertyTextAlign:
     {
         HANDLE_INHERIT_AND_INITIAL(textAlign, TextAlign)
         if (!primitiveValue)
             return;
         int id = primitiveValue->getIdent();
-        if (id == CSS_VAL_START)
+        if (id == CSSValueStart)
             m_style->setTextAlign(m_style->direction() == LTR ? LEFT : RIGHT);
-        else if (id == CSS_VAL_END)
+        else if (id == CSSValueEnd)
             m_style->setTextAlign(m_style->direction() == LTR ? RIGHT : LEFT);
         else
             m_style->setTextAlign(*primitiveValue);
@@ -3296,7 +3296,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
 
 // rect
-    case CSS_PROP_CLIP:
+    case CSSPropertyClip:
     {
         Length top;
         Length right;
@@ -3328,7 +3328,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             bottom = convertToLength(rect->bottom(), m_style);
             left = convertToLength(rect->left(), m_style);
 
-        } else if (primitiveValue->getIdent() != CSS_VAL_AUTO) {
+        } else if (primitiveValue->getIdent() != CSSValueAuto) {
             return;
         }
         m_style->setClip(top, right, bottom, left);
@@ -3339,7 +3339,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
 
 // lists
-    case CSS_PROP_CONTENT:
+    case CSSPropertyContent:
         // list of string, uri, counter, attr, i
     {
         // FIXME: In CSS3, it will be possible to inherit content.  In CSS2 it is not.  This
@@ -3401,14 +3401,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_COUNTER_INCREMENT:
+    case CSSPropertyCounterIncrement:
         applyCounterList(m_style, value->isValueList() ? static_cast<CSSValueList*>(value) : 0, false);
         return;
-    case CSS_PROP_COUNTER_RESET:
+    case CSSPropertyCounterReset:
         applyCounterList(m_style, value->isValueList() ? static_cast<CSSValueList*>(value) : 0, true);
         return;
 
-    case CSS_PROP_FONT_FAMILY: {
+    case CSSPropertyFontFamily: {
         // list of strings and ids
         if (isInherit) {
             FontDescription parentFontDescription = m_parentStyle->fontDescription();
@@ -3425,7 +3425,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             // We need to adjust the size to account for the generic family change from monospace
             // to non-monospace.
             if (fontDescription.keywordSize() && fontDescription.genericFamily() == FontDescription::MonospaceFamily)
-                setFontSize(fontDescription, fontSizeForKeyword(CSS_VAL_XX_SMALL + fontDescription.keywordSize() - 1, m_style->htmlHacks(), false));
+                setFontSize(fontDescription, fontSizeForKeyword(CSSValueXxSmall + fontDescription.keywordSize() - 1, m_style->htmlHacks(), false));
             fontDescription.setGenericFamily(initialDesc.genericFamily());
             fontDescription.setFamily(initialDesc.firstFamily());
             if (m_style->setFontDescription(fontDescription))
@@ -3454,26 +3454,26 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 face = static_cast<FontFamilyValue*>(val)->familyName();
             else if (val->primitiveType() == CSSPrimitiveValue::CSS_IDENT && settings) {
                 switch (val->getIdent()) {
-                    case CSS_VAL__WEBKIT_BODY:
+                    case CSSValueWebkitBody:
                         face = settings->standardFontFamily();
                         break;
-                    case CSS_VAL_SERIF:
+                    case CSSValueSerif:
                         face = "-webkit-serif";
                         fontDescription.setGenericFamily(FontDescription::SerifFamily);
                         break;
-                    case CSS_VAL_SANS_SERIF:
+                    case CSSValueSansSerif:
                         face = "-webkit-sans-serif";
                         fontDescription.setGenericFamily(FontDescription::SansSerifFamily);
                         break;
-                    case CSS_VAL_CURSIVE:
+                    case CSSValueCursive:
                         face = "-webkit-cursive";
                         fontDescription.setGenericFamily(FontDescription::CursiveFamily);
                         break;
-                    case CSS_VAL_FANTASY:
+                    case CSSValueFantasy:
                         face = "-webkit-fantasy";
                         fontDescription.setGenericFamily(FontDescription::FantasyFamily);
                         break;
-                    case CSS_VAL_MONOSPACE:
+                    case CSSValueMonospace:
                         face = "-webkit-monospace";
                         fontDescription.setGenericFamily(FontDescription::MonospaceFamily);
                         break;
@@ -3494,7 +3494,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 }
     
                 if (fontDescription.keywordSize() && (fontDescription.genericFamily() == FontDescription::MonospaceFamily) != oldFamilyIsMonospace)
-                    setFontSize(fontDescription, fontSizeForKeyword(CSS_VAL_XX_SMALL + fontDescription.keywordSize() - 1, m_style->htmlHacks(), !oldFamilyIsMonospace));
+                    setFontSize(fontDescription, fontSizeForKeyword(CSSValueXxSmall + fontDescription.keywordSize() - 1, m_style->htmlHacks(), !oldFamilyIsMonospace));
             
                 if (m_style->setFontDescription(fontDescription))
                     m_fontDirty = true;
@@ -3502,11 +3502,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
       return;
     }
-    case CSS_PROP_TEXT_DECORATION: {
+    case CSSPropertyTextDecoration: {
         // list of ident
         HANDLE_INHERIT_AND_INITIAL(textDecoration, TextDecoration)
         int t = RenderStyle::initialTextDecoration();
-        if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_NONE) {
+        if (primitiveValue && primitiveValue->getIdent() == CSSValueNone) {
             // do nothing
         } else {
             if (!value->isValueList()) return;
@@ -3518,15 +3518,15 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 if (!item->isPrimitiveValue()) continue;
                 primitiveValue = static_cast<CSSPrimitiveValue*>(item);
                 switch (primitiveValue->getIdent()) {
-                    case CSS_VAL_NONE:
+                    case CSSValueNone:
                         t = TDNONE; break;
-                    case CSS_VAL_UNDERLINE:
+                    case CSSValueUnderline:
                         t |= UNDERLINE; break;
-                    case CSS_VAL_OVERLINE:
+                    case CSSValueOverline:
                         t |= OVERLINE; break;
-                    case CSS_VAL_LINE_THROUGH:
+                    case CSSValueLineThrough:
                         t |= LINE_THROUGH; break;
-                    case CSS_VAL_BLINK:
+                    case CSSValueBlink:
                         t |= BLINK; break;
                     default:
                         return;
@@ -3538,7 +3538,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_ZOOM:
+    case CSSPropertyZoom:
     {
         // Reset the zoom in effect before we do anything.  This allows the setZoom method to accurately compute a new
         // zoom in effect.
@@ -3549,9 +3549,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         
         // Handle normal/reset, numbers and percentages.
         int type = primitiveValue->primitiveType();
-        if (primitiveValue->getIdent() == CSS_VAL_NORMAL)
+        if (primitiveValue->getIdent() == CSSValueNormal)
             m_style->setZoom(RenderStyle::initialZoom());
-        else if (primitiveValue->getIdent() == CSS_VAL_RESET) {
+        else if (primitiveValue->getIdent() == CSSValueReset) {
             m_style->setEffectiveZoom(RenderStyle::initialZoom());
             m_style->setZoom(RenderStyle::initialZoom());
         } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
@@ -3561,7 +3561,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 // shorthand properties
-    case CSS_PROP_BACKGROUND:
+    case CSSPropertyBackground:
         if (isInitial) {
             m_style->clearBackgroundLayers();
             m_style->setBackgroundColor(Color());
@@ -3572,11 +3572,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setBackgroundColor(m_parentStyle->backgroundColor());
         }
         return;
-    case CSS_PROP_BORDER:
-    case CSS_PROP_BORDER_STYLE:
-    case CSS_PROP_BORDER_WIDTH:
-    case CSS_PROP_BORDER_COLOR:
-        if (id == CSS_PROP_BORDER || id == CSS_PROP_BORDER_COLOR)
+    case CSSPropertyBorder:
+    case CSSPropertyBorderStyle:
+    case CSSPropertyBorderWidth:
+    case CSSPropertyBorderColor:
+        if (id == CSSPropertyBorder || id == CSSPropertyBorderColor)
         {
             if (isInherit) {
                 m_style->setBorderTopColor(m_parentStyle->borderTopColor());
@@ -3591,7 +3591,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 m_style->setBorderRightColor(Color());
             }
         }
-        if (id == CSS_PROP_BORDER || id == CSS_PROP_BORDER_STYLE)
+        if (id == CSSPropertyBorder || id == CSSPropertyBorderStyle)
         {
             if (isInherit) {
                 m_style->setBorderTopStyle(m_parentStyle->borderTopStyle());
@@ -3606,7 +3606,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 m_style->setBorderRightStyle(RenderStyle::initialBorderStyle());
             }
         }
-        if (id == CSS_PROP_BORDER || id == CSS_PROP_BORDER_WIDTH)
+        if (id == CSSPropertyBorder || id == CSSPropertyBorderWidth)
         {
             if (isInherit) {
                 m_style->setBorderTopWidth(m_parentStyle->borderTopWidth());
@@ -3622,7 +3622,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             }
         }
         return;
-    case CSS_PROP_BORDER_TOP:
+    case CSSPropertyBorderTop:
         if (isInherit) {
             m_style->setBorderTopColor(m_parentStyle->borderTopColor());
             m_style->setBorderTopStyle(m_parentStyle->borderTopStyle());
@@ -3631,7 +3631,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInitial)
             m_style->resetBorderTop();
         return;
-    case CSS_PROP_BORDER_RIGHT:
+    case CSSPropertyBorderRight:
         if (isInherit) {
             m_style->setBorderRightColor(m_parentStyle->borderRightColor());
             m_style->setBorderRightStyle(m_parentStyle->borderRightStyle());
@@ -3640,7 +3640,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInitial)
             m_style->resetBorderRight();
         return;
-    case CSS_PROP_BORDER_BOTTOM:
+    case CSSPropertyBorderBottom:
         if (isInherit) {
             m_style->setBorderBottomColor(m_parentStyle->borderBottomColor());
             m_style->setBorderBottomStyle(m_parentStyle->borderBottomStyle());
@@ -3649,7 +3649,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInitial)
             m_style->resetBorderBottom();
         return;
-    case CSS_PROP_BORDER_LEFT:
+    case CSSPropertyBorderLeft:
         if (isInherit) {
             m_style->setBorderLeftColor(m_parentStyle->borderLeftColor());
             m_style->setBorderLeftStyle(m_parentStyle->borderLeftStyle());
@@ -3658,7 +3658,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInitial)
             m_style->resetBorderLeft();
         return;
-    case CSS_PROP_MARGIN:
+    case CSSPropertyMargin:
         if (isInherit) {
             m_style->setMarginTop(m_parentStyle->marginTop());
             m_style->setMarginBottom(m_parentStyle->marginBottom());
@@ -3668,7 +3668,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInitial)
             m_style->resetMargin();
         return;
-    case CSS_PROP_PADDING:
+    case CSSPropertyPadding:
         if (isInherit) {
             m_style->setPaddingTop(m_parentStyle->paddingTop());
             m_style->setPaddingBottom(m_parentStyle->paddingBottom());
@@ -3678,7 +3678,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInitial)
             m_style->resetPadding();
         return;
-    case CSS_PROP_FONT:
+    case CSSPropertyFont:
         if (isInherit) {
             FontDescription fontDescription = m_parentStyle->fontDescription();
             m_style->setLineHeight(m_parentStyle->lineHeight());
@@ -3696,8 +3696,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 fontDescription.firstFamily().setFamily(standardFontFamily);
                 fontDescription.firstFamily().appendFamily(0);
             }
-            fontDescription.setKeywordSize(CSS_VAL_MEDIUM - CSS_VAL_XX_SMALL + 1);
-            setFontSize(fontDescription, fontSizeForKeyword(CSS_VAL_MEDIUM, m_style->htmlHacks(), false));
+            fontDescription.setKeywordSize(CSSValueMedium - CSSValueXxSmall + 1);
+            setFontSize(fontDescription, fontSizeForKeyword(CSSValueMedium, m_style->htmlHacks(), false));
             m_style->setLineHeight(RenderStyle::initialLineHeight());
             m_lineHeightValue = 0;
             if (m_style->setFontDescription(fontDescription))
@@ -3719,18 +3719,18 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (!font->style || !font->variant || !font->weight ||
                  !font->size || !font->lineHeight || !font->family)
                 return;
-            applyProperty(CSS_PROP_FONT_STYLE, font->style.get());
-            applyProperty(CSS_PROP_FONT_VARIANT, font->variant.get());
-            applyProperty(CSS_PROP_FONT_WEIGHT, font->weight.get());
-            applyProperty(CSS_PROP_FONT_SIZE, font->size.get());
+            applyProperty(CSSPropertyFontStyle, font->style.get());
+            applyProperty(CSSPropertyFontVariant, font->variant.get());
+            applyProperty(CSSPropertyFontWeight, font->weight.get());
+            applyProperty(CSSPropertyFontSize, font->size.get());
 
             m_lineHeightValue = font->lineHeight.get();
 
-            applyProperty(CSS_PROP_FONT_FAMILY, font->family.get());
+            applyProperty(CSSPropertyFontFamily, font->family.get());
         }
         return;
         
-    case CSS_PROP_LIST_STYLE:
+    case CSSPropertyListStyle:
         if (isInherit) {
             m_style->setListStyleType(m_parentStyle->listStyleType());
             m_style->setListStyleImage(m_parentStyle->listStyleImage());
@@ -3742,7 +3742,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setListStylePosition(RenderStyle::initialListStylePosition());
         }
         return;
-    case CSS_PROP_OUTLINE:
+    case CSSPropertyOutline:
         if (isInherit) {
             m_style->setOutlineWidth(m_parentStyle->outlineWidth());
             m_style->setOutlineColor(m_parentStyle->outlineColor());
@@ -3753,16 +3753,16 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
 
     // CSS3 Properties
-    case CSS_PROP__WEBKIT_APPEARANCE: {
+    case CSSPropertyWebkitAppearance: {
         HANDLE_INHERIT_AND_INITIAL(appearance, Appearance)
         if (!primitiveValue)
             return;
         m_style->setAppearance(*primitiveValue);
         return;
     }
-    case CSS_PROP__WEBKIT_BINDING: {
+    case CSSPropertyWebkitBinding: {
 #if ENABLE(XBL)
-        if (isInitial || (primitiveValue && primitiveValue->getIdent() == CSS_VAL_NONE)) {
+        if (isInitial || (primitiveValue && primitiveValue->getIdent() == CSSValueNone)) {
             m_style->deleteBindingURIs();
             return;
         }
@@ -3792,11 +3792,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP__WEBKIT_BORDER_IMAGE: {
+    case CSSPropertyWebkitBorderImage: {
         HANDLE_INHERIT_AND_INITIAL(borderImage, BorderImage)
         BorderImage image;
         if (primitiveValue) {
-            if (primitiveValue->getIdent() == CSS_VAL_NONE)
+            if (primitiveValue->getIdent() == CSSValueNone)
                 m_style->setBorderImage(image);
         } else {
             // Retrieve the border image value.
@@ -3827,25 +3827,25 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             
             // Set the appropriate rules for stretch/round/repeat of the slices
             switch (borderImage->m_horizontalSizeRule) {
-                case CSS_VAL_STRETCH:
+                case CSSValueStretch:
                     image.m_horizontalRule = BI_STRETCH;
                     break;
-                case CSS_VAL_ROUND:
+                case CSSValueRound:
                     image.m_horizontalRule = BI_ROUND;
                     break;
-                default: // CSS_VAL_REPEAT
+                default: // CSSValueRepeat
                     image.m_horizontalRule = BI_REPEAT;
                     break;
             }
 
             switch (borderImage->m_verticalSizeRule) {
-                case CSS_VAL_STRETCH:
+                case CSSValueStretch:
                     image.m_verticalRule = BI_STRETCH;
                     break;
-                case CSS_VAL_ROUND:
+                case CSSValueRound:
                     image.m_verticalRule = BI_ROUND;
                     break;
-                default: // CSS_VAL_REPEAT
+                default: // CSSValueRepeat
                     image.m_verticalRule = BI_REPEAT;
                     break;
             }
@@ -3855,7 +3855,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP__WEBKIT_BORDER_RADIUS:
+    case CSSPropertyWebkitBorderRadius:
         if (isInherit) {
             m_style->setBorderTopLeftRadius(m_parentStyle->borderTopLeftRadius());
             m_style->setBorderTopRightRadius(m_parentStyle->borderTopRightRadius());
@@ -3868,23 +3868,23 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             return;
         }
         // Fall through
-    case CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS:
-    case CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS:
-    case CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS:
-    case CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS: {
+    case CSSPropertyWebkitBorderTopLeftRadius:
+    case CSSPropertyWebkitBorderTopRightRadius:
+    case CSSPropertyWebkitBorderBottomLeftRadius:
+    case CSSPropertyWebkitBorderBottomRightRadius: {
         if (isInherit) {
-            HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS, borderTopLeftRadius, BorderTopLeftRadius)
-            HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS, borderTopRightRadius, BorderTopRightRadius)
-            HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS, borderBottomLeftRadius, BorderBottomLeftRadius)
-            HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS, borderBottomRightRadius, BorderBottomRightRadius)
+            HANDLE_INHERIT_COND(CSSPropertyWebkitBorderTopLeftRadius, borderTopLeftRadius, BorderTopLeftRadius)
+            HANDLE_INHERIT_COND(CSSPropertyWebkitBorderTopRightRadius, borderTopRightRadius, BorderTopRightRadius)
+            HANDLE_INHERIT_COND(CSSPropertyWebkitBorderBottomLeftRadius, borderBottomLeftRadius, BorderBottomLeftRadius)
+            HANDLE_INHERIT_COND(CSSPropertyWebkitBorderBottomRightRadius, borderBottomRightRadius, BorderBottomRightRadius)
             return;
         }
         
         if (isInitial) {
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS, BorderTopLeftRadius, BorderRadius)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS, BorderTopRightRadius, BorderRadius)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS, BorderBottomLeftRadius, BorderRadius)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS, BorderBottomRightRadius, BorderRadius)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWebkitBorderTopLeftRadius, BorderTopLeftRadius, BorderRadius)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWebkitBorderTopRightRadius, BorderTopRightRadius, BorderRadius)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWebkitBorderBottomLeftRadius, BorderBottomLeftRadius, BorderRadius)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWebkitBorderBottomRightRadius, BorderBottomRightRadius, BorderRadius)
             return;
         }
 
@@ -3907,16 +3907,16 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
         IntSize size(width, height);
         switch (id) {
-            case CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS:
+            case CSSPropertyWebkitBorderTopLeftRadius:
                 m_style->setBorderTopLeftRadius(size);
                 break;
-            case CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS:
+            case CSSPropertyWebkitBorderTopRightRadius:
                 m_style->setBorderTopRightRadius(size);
                 break;
-            case CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS:
+            case CSSPropertyWebkitBorderBottomLeftRadius:
                 m_style->setBorderBottomLeftRadius(size);
                 break;
-            case CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS:
+            case CSSPropertyWebkitBorderBottomRightRadius:
                 m_style->setBorderBottomRightRadius(size);
                 break;
             default:
@@ -3926,20 +3926,20 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSS_PROP_OUTLINE_OFFSET:
+    case CSSPropertyOutlineOffset:
         HANDLE_INHERIT_AND_INITIAL(outlineOffset, OutlineOffset)
         m_style->setOutlineOffset(primitiveValue->computeLengthInt(m_style, zoomFactor));
         return;
 
-    case CSS_PROP_TEXT_SHADOW:
-    case CSS_PROP__WEBKIT_BOX_SHADOW: {
+    case CSSPropertyTextShadow:
+    case CSSPropertyWebkitBoxShadow: {
         if (isInherit) {
-            if (id == CSS_PROP_TEXT_SHADOW)
+            if (id == CSSPropertyTextShadow)
                 return m_style->setTextShadow(m_parentStyle->textShadow() ? new ShadowData(*m_parentStyle->textShadow()) : 0);
             return m_style->setBoxShadow(m_parentStyle->boxShadow() ? new ShadowData(*m_parentStyle->boxShadow()) : 0);
         }
         if (isInitial || primitiveValue) // initial | none
-            return id == CSS_PROP_TEXT_SHADOW ? m_style->setTextShadow(0) : m_style->setBoxShadow(0);
+            return id == CSSPropertyTextShadow ? m_style->setTextShadow(0) : m_style->setBoxShadow(0);
 
         if (!value->isValueList())
             return;
@@ -3955,21 +3955,21 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (item->color)
                 color = getColorFromPrimitiveValue(item->color.get());
             ShadowData* shadowData = new ShadowData(x, y, blur, color.isValid() ? color : Color::transparent);
-            if (id == CSS_PROP_TEXT_SHADOW)
+            if (id == CSSPropertyTextShadow)
                 m_style->setTextShadow(shadowData, i != 0);
             else
                 m_style->setBoxShadow(shadowData, i != 0);
         }
         return;
     }
-    case CSS_PROP_OPACITY:
+    case CSSPropertyOpacity:
         HANDLE_INHERIT_AND_INITIAL(opacity, Opacity)
         if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
             return; // Error case.
         // Clamp opacity to the range 0-1
         m_style->setOpacity(min(1.0f, max(0.0f, primitiveValue->getFloatValue())));
         return;
-    case CSS_PROP__WEBKIT_BOX_ALIGN:
+    case CSSPropertyWebkitBoxAlign:
     {
         HANDLE_INHERIT_AND_INITIAL(boxAlign, BoxAlign)
         if (!primitiveValue)
@@ -3979,26 +3979,26 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setBoxAlign(boxAlignment);
         return;
     }
-    case CSS_PROP_SRC: // Only used in @font-face rules.
+    case CSSPropertySrc: // Only used in @font-face rules.
         return;
-    case CSS_PROP_UNICODE_RANGE: // Only used in @font-face rules.
+    case CSSPropertyUnicodeRange: // Only used in @font-face rules.
         return;
-    case CSS_PROP__WEBKIT_BOX_DIRECTION:
+    case CSSPropertyWebkitBoxDirection:
         HANDLE_INHERIT_AND_INITIAL(boxDirection, BoxDirection)
         if (primitiveValue)
             m_style->setBoxDirection(*primitiveValue);
         return;        
-    case CSS_PROP__WEBKIT_BOX_LINES:
+    case CSSPropertyWebkitBoxLines:
         HANDLE_INHERIT_AND_INITIAL(boxLines, BoxLines)
         if (primitiveValue)
             m_style->setBoxLines(*primitiveValue);
         return;     
-    case CSS_PROP__WEBKIT_BOX_ORIENT:
+    case CSSPropertyWebkitBoxOrient:
         HANDLE_INHERIT_AND_INITIAL(boxOrient, BoxOrient)
         if (primitiveValue)
             m_style->setBoxOrient(*primitiveValue);
         return;     
-    case CSS_PROP__WEBKIT_BOX_PACK:
+    case CSSPropertyWebkitBoxPack:
     {
         HANDLE_INHERIT_AND_INITIAL(boxPack, BoxPack)
         if (!primitiveValue)
@@ -4008,97 +4008,97 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setBoxPack(boxPack);
         return;
     }
-    case CSS_PROP__WEBKIT_BOX_FLEX:
+    case CSSPropertyWebkitBoxFlex:
         HANDLE_INHERIT_AND_INITIAL(boxFlex, BoxFlex)
         if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
             return; // Error case.
         m_style->setBoxFlex(primitiveValue->getFloatValue());
         return;
-    case CSS_PROP__WEBKIT_BOX_FLEX_GROUP:
+    case CSSPropertyWebkitBoxFlexGroup:
         HANDLE_INHERIT_AND_INITIAL(boxFlexGroup, BoxFlexGroup)
         if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
             return; // Error case.
         m_style->setBoxFlexGroup((unsigned int)(primitiveValue->getDoubleValue()));
         return;        
-    case CSS_PROP__WEBKIT_BOX_ORDINAL_GROUP:
+    case CSSPropertyWebkitBoxOrdinalGroup:
         HANDLE_INHERIT_AND_INITIAL(boxOrdinalGroup, BoxOrdinalGroup)
         if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
             return; // Error case.
         m_style->setBoxOrdinalGroup((unsigned int)(primitiveValue->getDoubleValue()));
         return;
-    case CSS_PROP__WEBKIT_BOX_SIZING:
+    case CSSPropertyWebkitBoxSizing:
         HANDLE_INHERIT_AND_INITIAL(boxSizing, BoxSizing)
         if (!primitiveValue)
             return;
-        if (primitiveValue->getIdent() == CSS_VAL_CONTENT_BOX)
+        if (primitiveValue->getIdent() == CSSValueContentBox)
             m_style->setBoxSizing(CONTENT_BOX);
         else
             m_style->setBoxSizing(BORDER_BOX);
         return;
-    case CSS_PROP__WEBKIT_COLUMN_COUNT: {
+    case CSSPropertyWebkitColumnCount: {
         if (isInherit) {
             if (m_parentStyle->hasAutoColumnCount())
                 m_style->setHasAutoColumnCount();
             else
                 m_style->setColumnCount(m_parentStyle->columnCount());
             return;
-        } else if (isInitial || primitiveValue->getIdent() == CSS_VAL_AUTO) {
+        } else if (isInitial || primitiveValue->getIdent() == CSSValueAuto) {
             m_style->setHasAutoColumnCount();
             return;
         }
         m_style->setColumnCount(static_cast<unsigned short>(primitiveValue->getDoubleValue()));
         return;
     }
-    case CSS_PROP__WEBKIT_COLUMN_GAP: {
+    case CSSPropertyWebkitColumnGap: {
         if (isInherit) {
             if (m_parentStyle->hasNormalColumnGap())
                 m_style->setHasNormalColumnGap();
             else
                 m_style->setColumnGap(m_parentStyle->columnGap());
             return;
-        } else if (isInitial || primitiveValue->getIdent() == CSS_VAL_NORMAL) {
+        } else if (isInitial || primitiveValue->getIdent() == CSSValueNormal) {
             m_style->setHasNormalColumnGap();
             return;
         }
         m_style->setColumnGap(primitiveValue->computeLengthFloat(m_style, zoomFactor));
         return;
     }
-    case CSS_PROP__WEBKIT_COLUMN_WIDTH: {
+    case CSSPropertyWebkitColumnWidth: {
         if (isInherit) {
             if (m_parentStyle->hasAutoColumnWidth())
                 m_style->setHasAutoColumnWidth();
             else
                 m_style->setColumnWidth(m_parentStyle->columnWidth());
             return;
-        } else if (isInitial || primitiveValue->getIdent() == CSS_VAL_AUTO) {
+        } else if (isInitial || primitiveValue->getIdent() == CSSValueAuto) {
             m_style->setHasAutoColumnWidth();
             return;
         }
         m_style->setColumnWidth(primitiveValue->computeLengthFloat(m_style, zoomFactor));
         return;
     }
-    case CSS_PROP__WEBKIT_COLUMN_RULE_STYLE:
+    case CSSPropertyWebkitColumnRuleStyle:
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(columnRuleStyle, ColumnRuleStyle, BorderStyle)
         m_style->setColumnRuleStyle(*primitiveValue);
         return;
-    case CSS_PROP__WEBKIT_COLUMN_BREAK_BEFORE: {
+    case CSSPropertyWebkitColumnBreakBefore: {
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(columnBreakBefore, ColumnBreakBefore, PageBreak)
         m_style->setColumnBreakBefore(*primitiveValue);
         return;
     }
-    case CSS_PROP__WEBKIT_COLUMN_BREAK_AFTER: {
+    case CSSPropertyWebkitColumnBreakAfter: {
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(columnBreakAfter, ColumnBreakAfter, PageBreak)
         m_style->setColumnBreakAfter(*primitiveValue);
         return;
     }
-    case CSS_PROP__WEBKIT_COLUMN_BREAK_INSIDE: {
+    case CSSPropertyWebkitColumnBreakInside: {
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(columnBreakInside, ColumnBreakInside, PageBreak)
         EPageBreak pb = *primitiveValue;
         if (pb != PBALWAYS)
             m_style->setColumnBreakInside(pb);
         return;
     }
-     case CSS_PROP__WEBKIT_COLUMN_RULE:
+     case CSSPropertyWebkitColumnRule:
         if (isInherit) {
             m_style->setColumnRuleColor(m_parentStyle->columnRuleColor());
             m_style->setColumnRuleStyle(m_parentStyle->columnRuleStyle());
@@ -4107,7 +4107,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInitial)
             m_style->resetColumnRule();
         return;
-    case CSS_PROP__WEBKIT_COLUMNS:
+    case CSSPropertyWebkitColumns:
         if (isInherit) {
             if (m_parentStyle->hasAutoColumnWidth())
                 m_style->setHasAutoColumnWidth();
@@ -4119,7 +4119,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setColumnCount(RenderStyle::initialColumnCount());
         }
         return;
-    case CSS_PROP__WEBKIT_MARQUEE:
+    case CSSPropertyWebkitMarquee:
         if (valueType != CSSValue::CSS_INHERIT || !m_parentNode) return;
         m_style->setMarqueeDirection(m_parentStyle->marqueeDirection());
         m_style->setMarqueeIncrement(m_parentStyle->marqueeIncrement());
@@ -4127,29 +4127,29 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setMarqueeLoopCount(m_parentStyle->marqueeLoopCount());
         m_style->setMarqueeBehavior(m_parentStyle->marqueeBehavior());
         return;
-    case CSS_PROP__WEBKIT_MARQUEE_REPETITION: {
+    case CSSPropertyWebkitMarqueeRepetition: {
         HANDLE_INHERIT_AND_INITIAL(marqueeLoopCount, MarqueeLoopCount)
         if (!primitiveValue)
             return;
-        if (primitiveValue->getIdent() == CSS_VAL_INFINITE)
+        if (primitiveValue->getIdent() == CSSValueInfinite)
             m_style->setMarqueeLoopCount(-1); // -1 means repeat forever.
         else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
             m_style->setMarqueeLoopCount(primitiveValue->getIntValue());
         return;
     }
-    case CSS_PROP__WEBKIT_MARQUEE_SPEED: {
+    case CSSPropertyWebkitMarqueeSpeed: {
         HANDLE_INHERIT_AND_INITIAL(marqueeSpeed, MarqueeSpeed)      
         if (!primitiveValue)
             return;
         if (primitiveValue->getIdent()) {
             switch (primitiveValue->getIdent()) {
-                case CSS_VAL_SLOW:
+                case CSSValueSlow:
                     m_style->setMarqueeSpeed(500); // 500 msec.
                     break;
-                case CSS_VAL_NORMAL:
+                case CSSValueNormal:
                     m_style->setMarqueeSpeed(85); // 85msec. The WinIE default.
                     break;
-                case CSS_VAL_FAST:
+                case CSSValueFast:
                     m_style->setMarqueeSpeed(10); // 10msec. Super fast.
                     break;
             }
@@ -4162,19 +4162,19 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setMarqueeSpeed(primitiveValue->getIntValue());
         return;
     }
-    case CSS_PROP__WEBKIT_MARQUEE_INCREMENT: {
+    case CSSPropertyWebkitMarqueeIncrement: {
         HANDLE_INHERIT_AND_INITIAL(marqueeIncrement, MarqueeIncrement)
         if (!primitiveValue)
             return;
         if (primitiveValue->getIdent()) {
             switch (primitiveValue->getIdent()) {
-                case CSS_VAL_SMALL:
+                case CSSValueSmall:
                     m_style->setMarqueeIncrement(Length(1, Fixed)); // 1px.
                     break;
-                case CSS_VAL_NORMAL:
+                case CSSValueNormal:
                     m_style->setMarqueeIncrement(Length(6, Fixed)); // 6px. The WinIE default.
                     break;
-                case CSS_VAL_LARGE:
+                case CSSValueLarge:
                     m_style->setMarqueeIncrement(Length(36, Fixed)); // 36px.
                     break;
             }
@@ -4187,46 +4187,46 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
     }
-    case CSS_PROP__WEBKIT_MARQUEE_STYLE: {
+    case CSSPropertyWebkitMarqueeStyle: {
         HANDLE_INHERIT_AND_INITIAL(marqueeBehavior, MarqueeBehavior)      
         if (primitiveValue)
             m_style->setMarqueeBehavior(*primitiveValue);
         return;
     }
-    case CSS_PROP__WEBKIT_MARQUEE_DIRECTION: {
+    case CSSPropertyWebkitMarqueeDirection: {
         HANDLE_INHERIT_AND_INITIAL(marqueeDirection, MarqueeDirection)
         if (primitiveValue)
             m_style->setMarqueeDirection(*primitiveValue);
         return;
     }
-    case CSS_PROP__WEBKIT_USER_DRAG: {
+    case CSSPropertyWebkitUserDrag: {
         HANDLE_INHERIT_AND_INITIAL(userDrag, UserDrag)      
         if (primitiveValue)
             m_style->setUserDrag(*primitiveValue);
         return;
     }
-    case CSS_PROP__WEBKIT_USER_MODIFY: {
+    case CSSPropertyWebkitUserModify: {
         HANDLE_INHERIT_AND_INITIAL(userModify, UserModify)      
         if (primitiveValue)
             m_style->setUserModify(*primitiveValue);
         return;
     }
-    case CSS_PROP__WEBKIT_USER_SELECT: {
+    case CSSPropertyWebkitUserSelect: {
         HANDLE_INHERIT_AND_INITIAL(userSelect, UserSelect)      
         if (primitiveValue)
             m_style->setUserSelect(*primitiveValue);
         return;
     }
-    case CSS_PROP_TEXT_OVERFLOW: {
+    case CSSPropertyTextOverflow: {
         // This property is supported by WinIE, and so we leave off the "-webkit-" in order to
         // work with WinIE-specific pages that use the property.
         HANDLE_INHERIT_AND_INITIAL(textOverflow, TextOverflow)
         if (!primitiveValue || !primitiveValue->getIdent())
             return;
-        m_style->setTextOverflow(primitiveValue->getIdent() == CSS_VAL_ELLIPSIS);
+        m_style->setTextOverflow(primitiveValue->getIdent() == CSSValueEllipsis);
         return;
     }
-    case CSS_PROP__WEBKIT_MARGIN_COLLAPSE: {
+    case CSSPropertyWebkitMarginCollapse: {
         if (isInherit) {
             m_style->setMarginTopCollapse(m_parentStyle->marginTopCollapse());
             m_style->setMarginBottomCollapse(m_parentStyle->marginBottomCollapse());
@@ -4237,13 +4237,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
     }
-    case CSS_PROP__WEBKIT_MARGIN_TOP_COLLAPSE: {
+    case CSSPropertyWebkitMarginTopCollapse: {
         HANDLE_INHERIT_AND_INITIAL(marginTopCollapse, MarginTopCollapse)
         if (primitiveValue)
             m_style->setMarginTopCollapse(*primitiveValue);
         return;
     }
-    case CSS_PROP__WEBKIT_MARGIN_BOTTOM_COLLAPSE: {
+    case CSSPropertyWebkitMarginBottomCollapse: {
         HANDLE_INHERIT_AND_INITIAL(marginBottomCollapse, MarginBottomCollapse)
         if (primitiveValue)
             m_style->setMarginBottomCollapse(*primitiveValue);
@@ -4251,48 +4251,48 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
 
     // Apple-specific changes.  Do not merge these properties into KHTML.
-    case CSS_PROP__WEBKIT_LINE_CLAMP: {
+    case CSSPropertyWebkitLineClamp: {
         HANDLE_INHERIT_AND_INITIAL(lineClamp, LineClamp)
         if (!primitiveValue)
             return;
         m_style->setLineClamp(primitiveValue->getIntValue(CSSPrimitiveValue::CSS_PERCENTAGE));
         return;
     }
-    case CSS_PROP__WEBKIT_HIGHLIGHT: {
+    case CSSPropertyWebkitHighlight: {
         HANDLE_INHERIT_AND_INITIAL(highlight, Highlight);
-        if (primitiveValue->getIdent() == CSS_VAL_NONE)
+        if (primitiveValue->getIdent() == CSSValueNone)
             m_style->setHighlight(nullAtom);
         else
             m_style->setHighlight(primitiveValue->getStringValue());
         return;
     }
-    case CSS_PROP__WEBKIT_BORDER_FIT: {
+    case CSSPropertyWebkitBorderFit: {
         HANDLE_INHERIT_AND_INITIAL(borderFit, BorderFit);
-        if (primitiveValue->getIdent() == CSS_VAL_BORDER)
+        if (primitiveValue->getIdent() == CSSValueBorder)
             m_style->setBorderFit(BorderFitBorder);
         else
             m_style->setBorderFit(BorderFitLines);
         return;
     }
-    case CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST: {
+    case CSSPropertyWebkitTextSizeAdjust: {
         HANDLE_INHERIT_AND_INITIAL(textSizeAdjust, TextSizeAdjust)
         if (!primitiveValue || !primitiveValue->getIdent()) return;
-        m_style->setTextSizeAdjust(primitiveValue->getIdent() == CSS_VAL_AUTO);
+        m_style->setTextSizeAdjust(primitiveValue->getIdent() == CSSValueAuto);
         m_fontDirty = true;
         return;
     }
-    case CSS_PROP__WEBKIT_TEXT_SECURITY: {
+    case CSSPropertyWebkitTextSecurity: {
         HANDLE_INHERIT_AND_INITIAL(textSecurity, TextSecurity)
         if (primitiveValue)
             m_style->setTextSecurity(*primitiveValue);
         return;
     }
-    case CSS_PROP__WEBKIT_DASHBOARD_REGION: {
+    case CSSPropertyWebkitDashboardRegion: {
         HANDLE_INHERIT_AND_INITIAL(dashboardRegions, DashboardRegions)
         if (!primitiveValue)
             return;
 
-        if (primitiveValue->getIdent() == CSS_VAL_NONE) {
+        if (primitiveValue->getIdent() == CSSValueNone) {
             m_style->setDashboardRegions(RenderStyle::noneDashboardRegions());
             return;
         }
@@ -4318,23 +4318,23 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         
         return;
     }
-    case CSS_PROP__WEBKIT_RTL_ORDERING:
+    case CSSPropertyWebkitRtlOrdering:
         HANDLE_INHERIT_AND_INITIAL(visuallyOrdered, VisuallyOrdered)
         if (!primitiveValue || !primitiveValue->getIdent())
             return;
-        m_style->setVisuallyOrdered(primitiveValue->getIdent() == CSS_VAL_VISUAL);
+        m_style->setVisuallyOrdered(primitiveValue->getIdent() == CSSValueVisual);
         return;
-    case CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH: {
+    case CSSPropertyWebkitTextStrokeWidth: {
         HANDLE_INHERIT_AND_INITIAL(textStrokeWidth, TextStrokeWidth)
         float width = 0;
         switch (primitiveValue->getIdent()) {
-            case CSS_VAL_THIN:
-            case CSS_VAL_MEDIUM:
-            case CSS_VAL_THICK: {
+            case CSSValueThin:
+            case CSSValueMedium:
+            case CSSValueThick: {
                 double result = 1.0 / 48;
-                if (primitiveValue->getIdent() == CSS_VAL_MEDIUM)
+                if (primitiveValue->getIdent() == CSSValueMedium)
                     result *= 3;
-                else if (primitiveValue->getIdent() == CSS_VAL_THICK)
+                else if (primitiveValue->getIdent() == CSSValueThick)
                     result *= 5;
                 CSSPrimitiveValue val(result, CSSPrimitiveValue::CSS_EMS);
                 width = val.computeLengthFloat(m_style, zoomFactor);
@@ -4347,7 +4347,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setTextStrokeWidth(width);
         return;
     }
-    case CSS_PROP__WEBKIT_TRANSFORM: {
+    case CSSPropertyWebkitTransform: {
         HANDLE_INHERIT_AND_INITIAL(transform, Transform);
         TransformOperations operations;
         if (!value->isPrimitiveValue()) {
@@ -4470,11 +4470,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setTransform(operations);
         return;
     }
-    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN:
+    case CSSPropertyWebkitTransformOrigin:
         HANDLE_INHERIT_AND_INITIAL(transformOriginX, TransformOriginX)
         HANDLE_INHERIT_AND_INITIAL(transformOriginY, TransformOriginY)
         return;
-    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_X: {
+    case CSSPropertyWebkitTransformOriginX: {
         HANDLE_INHERIT_AND_INITIAL(transformOriginX, TransformOriginX)
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         Length l;
@@ -4488,7 +4488,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setTransformOriginX(l);
         break;
     }
-    case CSS_PROP__WEBKIT_TRANSFORM_ORIGIN_Y: {
+    case CSSPropertyWebkitTransformOriginY: {
         HANDLE_INHERIT_AND_INITIAL(transformOriginY, TransformOriginY)
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         Length l;
@@ -4502,57 +4502,57 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setTransformOriginY(l);
         break;
     }
-    case CSS_PROP__WEBKIT_TRANSITION:
+    case CSSPropertyWebkitTransition:
         if (isInitial)
             m_style->clearTransitions();
         else if (isInherit)
             m_style->inheritTransitions(m_parentStyle->transitions());
         return;
-    case CSS_PROP__WEBKIT_TRANSITION_DURATION:
+    case CSSPropertyWebkitTransitionDuration:
         HANDLE_TRANSITION_VALUE(transitionDuration, TransitionDuration, value)
         return;
-    case CSS_PROP__WEBKIT_TRANSITION_REPEAT_COUNT:
+    case CSSPropertyWebkitTransitionRepeatCount:
         HANDLE_TRANSITION_VALUE(transitionRepeatCount, TransitionRepeatCount, value)
         return;
-    case CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION:
+    case CSSPropertyWebkitTransitionTimingFunction:
         HANDLE_TRANSITION_VALUE(transitionTimingFunction, TransitionTimingFunction, value)
         return;
-    case CSS_PROP__WEBKIT_TRANSITION_PROPERTY:
+    case CSSPropertyWebkitTransitionProperty:
         HANDLE_TRANSITION_VALUE(transitionProperty, TransitionProperty, value)
         return;
-    case CSS_PROP_INVALID:
+    case CSSPropertyInvalid:
         return;
-    case CSS_PROP_FONT_STRETCH:
-    case CSS_PROP_PAGE:
-    case CSS_PROP_QUOTES:
-    case CSS_PROP_SCROLLBAR_3DLIGHT_COLOR:
-    case CSS_PROP_SCROLLBAR_ARROW_COLOR:
-    case CSS_PROP_SCROLLBAR_DARKSHADOW_COLOR:
-    case CSS_PROP_SCROLLBAR_FACE_COLOR:
-    case CSS_PROP_SCROLLBAR_HIGHLIGHT_COLOR:
-    case CSS_PROP_SCROLLBAR_SHADOW_COLOR:
-    case CSS_PROP_SCROLLBAR_TRACK_COLOR:
-    case CSS_PROP_SIZE:
-    case CSS_PROP_TEXT_LINE_THROUGH:
-    case CSS_PROP_TEXT_LINE_THROUGH_COLOR:
-    case CSS_PROP_TEXT_LINE_THROUGH_MODE:
-    case CSS_PROP_TEXT_LINE_THROUGH_STYLE:
-    case CSS_PROP_TEXT_LINE_THROUGH_WIDTH:
-    case CSS_PROP_TEXT_OVERLINE:
-    case CSS_PROP_TEXT_OVERLINE_COLOR:
-    case CSS_PROP_TEXT_OVERLINE_MODE:
-    case CSS_PROP_TEXT_OVERLINE_STYLE:
-    case CSS_PROP_TEXT_OVERLINE_WIDTH:
-    case CSS_PROP_TEXT_UNDERLINE:
-    case CSS_PROP_TEXT_UNDERLINE_COLOR:
-    case CSS_PROP_TEXT_UNDERLINE_MODE:
-    case CSS_PROP_TEXT_UNDERLINE_STYLE:
-    case CSS_PROP_TEXT_UNDERLINE_WIDTH:
-    case CSS_PROP__WEBKIT_FONT_SIZE_DELTA:
-    case CSS_PROP__WEBKIT_MARGIN_START:
-    case CSS_PROP__WEBKIT_PADDING_START:
-    case CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT:
-    case CSS_PROP__WEBKIT_TEXT_STROKE:
+    case CSSPropertyFontStretch:
+    case CSSPropertyPage:
+    case CSSPropertyQuotes:
+    case CSSPropertyScrollbar3dlightColor:
+    case CSSPropertyScrollbarArrowColor:
+    case CSSPropertyScrollbarDarkshadowColor:
+    case CSSPropertyScrollbarFaceColor:
+    case CSSPropertyScrollbarHighlightColor:
+    case CSSPropertyScrollbarShadowColor:
+    case CSSPropertyScrollbarTrackColor:
+    case CSSPropertySize:
+    case CSSPropertyTextLineThrough:
+    case CSSPropertyTextLineThroughColor:
+    case CSSPropertyTextLineThroughMode:
+    case CSSPropertyTextLineThroughStyle:
+    case CSSPropertyTextLineThroughWidth:
+    case CSSPropertyTextOverline:
+    case CSSPropertyTextOverlineColor:
+    case CSSPropertyTextOverlineMode:
+    case CSSPropertyTextOverlineStyle:
+    case CSSPropertyTextOverlineWidth:
+    case CSSPropertyTextUnderline:
+    case CSSPropertyTextUnderlineColor:
+    case CSSPropertyTextUnderlineMode:
+    case CSSPropertyTextUnderlineStyle:
+    case CSSPropertyTextUnderlineWidth:
+    case CSSPropertyWebkitFontSizeDelta:
+    case CSSPropertyWebkitMarginStart:
+    case CSSPropertyWebkitPaddingStart:
+    case CSSPropertyWebkitTextDecorationsInEffect:
+    case CSSPropertyWebkitTextStroke:
         return;
 #if ENABLE(SVG)
     default:
@@ -4574,10 +4574,10 @@ void CSSStyleSelector::mapBackgroundAttachment(BackgroundLayer* layer, CSSValue*
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     switch (primitiveValue->getIdent()) {
-        case CSS_VAL_FIXED:
+        case CSSValueFixed:
             layer->setBackgroundAttachment(false);
             break;
-        case CSS_VAL_SCROLL:
+        case CSSValueScroll:
             layer->setBackgroundAttachment(true);
             break;
         default:
@@ -4783,7 +4783,7 @@ void CSSStyleSelector::mapTransitionRepeatCount(Transition* transition, CSSValue
         return;
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-    if (primitiveValue->getIdent() == CSS_VAL_INFINITE)
+    if (primitiveValue->getIdent() == CSSValueInfinite)
         transition->setTransitionRepeatCount(-1);
     else
         transition->setTransitionRepeatCount(int(primitiveValue->getFloatValue()));
@@ -4799,19 +4799,19 @@ void CSSStyleSelector::mapTransitionTimingFunction(Transition* transition, CSSVa
     if (value->isPrimitiveValue()) {
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         switch (primitiveValue->getIdent()) {
-            case CSS_VAL_LINEAR:
+            case CSSValueLinear:
                 transition->setTransitionTimingFunction(TimingFunction(LinearTimingFunction));
                 break;
-            case CSS_VAL_AUTO:
+            case CSSValueAuto:
                 transition->setTransitionTimingFunction(TimingFunction());
                 break;
-            case CSS_VAL_EASE_IN:
+            case CSSValueEaseIn:
                 transition->setTransitionTimingFunction(TimingFunction(CubicBezierTimingFunction, .42, .0, 1.0, 1.0));
                 break;
-            case CSS_VAL_EASE_OUT:
+            case CSSValueEaseOut:
                 transition->setTransitionTimingFunction(TimingFunction(CubicBezierTimingFunction, .0, .0, .58, 1.0));
                 break;
-            case CSS_VAL_EASE_IN_OUT:
+            case CSSValueEaseInOut:
                 transition->setTransitionTimingFunction(TimingFunction(CubicBezierTimingFunction, .42, .0, .58, 1.0));
                 break;
         }
@@ -4871,7 +4871,7 @@ void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* style, RenderSty
     // multiplying by our scale factor.
     float size;
     if (childFont.keywordSize()) {
-        size = fontSizeForKeyword(CSS_VAL_XX_SMALL + childFont.keywordSize() - 1, style->htmlHacks(),
+        size = fontSizeForKeyword(CSSValueXxSmall + childFont.keywordSize() - 1, style->htmlHacks(),
                                   childFont.genericFamily() == FontDescription::MonospaceFamily);
     } else {
         Settings* settings = m_document->settings();
@@ -4987,13 +4987,13 @@ float CSSStyleSelector::fontSizeForKeyword(int keyword, bool quirksMode, bool fi
     if (mediumSize >= fontSizeTableMin && mediumSize <= fontSizeTableMax) {
         // Look up the entry in the table.
         int row = mediumSize - fontSizeTableMin;
-        int col = (keyword - CSS_VAL_XX_SMALL);
+        int col = (keyword - CSSValueXxSmall);
         return quirksMode ? quirksFontSizeTable[row][col] : strictFontSizeTable[row][col];
     }
     
     // Value is outside the range of the table. Apply the scale factor instead.
     float minLogicalSize = max(settings->minimumLogicalFontSize(), 1);
-    return max(fontSizeFactors[keyword - CSS_VAL_XX_SMALL]*mediumSize, minLogicalSize);
+    return max(fontSizeFactors[keyword - CSSValueXxSmall]*mediumSize, minLogicalSize);
 }
 
 float CSSStyleSelector::largerFontSize(float size, bool quirksMode) const
@@ -5018,25 +5018,25 @@ static Color colorForCSSValue(int cssValueId)
     };
 
     static const ColorValue colorValues[] = {
-        { CSS_VAL_AQUA, 0xFF00FFFF },
-        { CSS_VAL_BLACK, 0xFF000000 },
-        { CSS_VAL_BLUE, 0xFF0000FF },
-        { CSS_VAL_FUCHSIA, 0xFFFF00FF },
-        { CSS_VAL_GRAY, 0xFF808080 },
-        { CSS_VAL_GREEN, 0xFF008000  },
-        { CSS_VAL_GREY, 0xFF808080 },
-        { CSS_VAL_LIME, 0xFF00FF00 },
-        { CSS_VAL_MAROON, 0xFF800000 },
-        { CSS_VAL_NAVY, 0xFF000080 },
-        { CSS_VAL_OLIVE, 0xFF808000  },
-        { CSS_VAL_ORANGE, 0xFFFFA500 },
-        { CSS_VAL_PURPLE, 0xFF800080 },
-        { CSS_VAL_RED, 0xFFFF0000 },
-        { CSS_VAL_SILVER, 0xFFC0C0C0 },
-        { CSS_VAL_TEAL, 0xFF008080  },
-        { CSS_VAL_TRANSPARENT, 0x00000000 },
-        { CSS_VAL_WHITE, 0xFFFFFFFF },
-        { CSS_VAL_YELLOW, 0xFFFFFF00 },
+        { CSSValueAqua, 0xFF00FFFF },
+        { CSSValueBlack, 0xFF000000 },
+        { CSSValueBlue, 0xFF0000FF },
+        { CSSValueFuchsia, 0xFFFF00FF },
+        { CSSValueGray, 0xFF808080 },
+        { CSSValueGreen, 0xFF008000  },
+        { CSSValueGrey, 0xFF808080 },
+        { CSSValueLime, 0xFF00FF00 },
+        { CSSValueMaroon, 0xFF800000 },
+        { CSSValueNavy, 0xFF000080 },
+        { CSSValueOlive, 0xFF808000  },
+        { CSSValueOrange, 0xFFFFA500 },
+        { CSSValuePurple, 0xFF800080 },
+        { CSSValueRed, 0xFFFF0000 },
+        { CSSValueSilver, 0xFFC0C0C0 },
+        { CSSValueTeal, 0xFF008080  },
+        { CSSValueTransparent, 0x00000000 },
+        { CSSValueWhite, 0xFFFFFFFF },
+        { CSSValueYellow, 0xFFFFFF00 },
         { 0, 0 }
     };
 
@@ -5052,9 +5052,9 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
     Color col;
     int ident = primitiveValue->getIdent();
     if (ident) {
-        if (ident == CSS_VAL__WEBKIT_TEXT)
+        if (ident == CSSValueWebkitText)
             col = m_element->document()->textColor();
-        else if (ident == CSS_VAL__WEBKIT_LINK) {
+        else if (ident == CSSValueWebkitLink) {
             const Color& linkColor = m_element->document()->linkColor();
             const Color& visitedColor = m_element->document()->visitedLinkColor();
             if (linkColor == visitedColor)
@@ -5064,9 +5064,9 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
                     pseudoState = checkPseudoState(m_element);
                 col = (pseudoState == PseudoLink) ? linkColor : visitedColor;
             }
-        } else if (ident == CSS_VAL__WEBKIT_ACTIVELINK)
+        } else if (ident == CSSValueWebkitActivelink)
             col = m_element->document()->activeLinkColor();
-        else if (ident == CSS_VAL__WEBKIT_FOCUS_RING_COLOR)
+        else if (ident == CSSValueWebkitFocusRingColor)
             col = focusRingColor();
         else
             col = colorForCSSValue(ident);

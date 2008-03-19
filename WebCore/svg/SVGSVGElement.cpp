@@ -249,12 +249,12 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
         setYBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::widthAttr) {
         setWidthBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
-        addCSSProperty(attr, CSS_PROP_WIDTH, attr->value());
+        addCSSProperty(attr, CSSPropertyWidth, attr->value());
         if (width().value() < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for svg attribute <width> is not allowed");
     } else if (attr->name() == SVGNames::heightAttr) {
         setHeightBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
-        addCSSProperty(attr, CSS_PROP_HEIGHT, attr->value());
+        addCSSProperty(attr, CSSPropertyHeight, attr->value());
         if (height().value() < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for svg attribute <height> is not allowed");
     } else {

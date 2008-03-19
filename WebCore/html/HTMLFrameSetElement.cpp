@@ -122,7 +122,7 @@ void HTMLFrameSetElement::parseMappedAttribute(MappedAttribute *attr)
     } else if (attr->name() == bordercolorAttr) {
         m_borderColorSet = attr->decl();
         if (!attr->decl() && !attr->isEmpty()) {
-            addCSSColor(attr, CSS_PROP_BORDER_COLOR, attr->value());
+            addCSSColor(attr, CSSPropertyBorderColor, attr->value());
             m_borderColorSet = true;
         }
     } else if (attr->name() == onloadAttr) {

@@ -48,8 +48,8 @@ EOF
 
 foreach my $name (@names) {
   my $id = $name;
-  $id =~ s/-/_/g;
-  print GPERF $name . ", CSS_PROP_" . uc($id) . "\n";
+  $id =~ s/(^[^-])|-(.)/uc($1||$2)/ge;
+  print GPERF $name . ", CSSProperty" . $id . "\n";
 }
 print GPERF "%%\n";
 close GPERF;
@@ -62,15 +62,15 @@ print HEADER << "EOF";
 #define CSSPropertyNames_h
 
 enum CSSPropertyID {
-    CSS_PROP_INVALID = 0,
+    CSSPropertyInvalid = 0,
 EOF
 
 my $i = 1;
 my $maxLen = 0;
 foreach my $name (@names) {
   my $id = $name;
-  $id =~ s/-/_/g;
-  print HEADER "    CSS_PROP_" . uc($id) . " = " . $i . ",\n";
+  $id =~ s/(^[^-])|-(.)/uc($1||$2)/ge;
+  print HEADER "    CSSProperty" . $id . " = " . $i . ",\n";
   $i = $i + 1;
   if (length($name) > $maxLen) {
     $maxLen = length($name);

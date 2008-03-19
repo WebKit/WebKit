@@ -52,7 +52,7 @@ void HTMLTableCaptionElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == alignAttr) {
         if (!attr->value().isEmpty())
-            addCSSProperty(attr, CSS_PROP_CAPTION_SIDE, attr->value());
+            addCSSProperty(attr, CSSPropertyCaptionSide, attr->value());
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

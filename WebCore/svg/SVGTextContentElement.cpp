@@ -491,9 +491,9 @@ void SVGTextContentElement::parseMappedAttribute(MappedAttribute* attr)
                 static const AtomicString preserveString("preserve");
 
                 if (attr->value() == preserveString)
-                    addCSSProperty(attr, CSS_PROP_WHITE_SPACE, CSS_VAL_PRE);
+                    addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValuePre);
                 else
-                    addCSSProperty(attr, CSS_PROP_WHITE_SPACE, CSS_VAL_NOWRAP);
+                    addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValueNowrap);
             }
             return;
         }

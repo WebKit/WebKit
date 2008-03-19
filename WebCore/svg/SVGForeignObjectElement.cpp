@@ -136,10 +136,10 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
     if (attrName == SVGNames::widthAttr) {
-        addCSSPropertyAndNotifyAttributeMap(this, attrName, CSS_PROP_WIDTH, width().valueAsString());
+        addCSSPropertyAndNotifyAttributeMap(this, attrName, CSSPropertyWidth, width().valueAsString());
         return;
     } else if (attrName == SVGNames::heightAttr) {
-        addCSSPropertyAndNotifyAttributeMap(this, attrName, CSS_PROP_HEIGHT, height().valueAsString());
+        addCSSPropertyAndNotifyAttributeMap(this, attrName, CSSPropertyHeight, height().valueAsString());
         return;
     }
 

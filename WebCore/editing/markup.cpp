@@ -436,7 +436,7 @@ static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Ran
                     style = styleFromMatchedRules;
                 }
                 if (convert)
-                    style->setProperty(CSS_PROP_DISPLAY, CSS_VAL_INLINE, true);
+                    style->setProperty(CSSPropertyDisplay, CSSValueInline, true);
                 if (style->length() > 0) {
                     static const String stylePrefix(" style=\"");
                     append(result, stylePrefix);
@@ -595,7 +595,7 @@ static bool propertyMissingOrEqualToNone(CSSMutableStyleDeclaration* style, int 
         return true;
     if (!value->isPrimitiveValue())
         return false;
-    return static_cast<CSSPrimitiveValue*>(value.get())->getIdent() == CSS_VAL_NONE;
+    return static_cast<CSSPrimitiveValue*>(value.get())->getIdent() == CSSValueNone;
 }
 
 static bool elementHasTextDecorationProperty(const Node* node)
@@ -603,7 +603,7 @@ static bool elementHasTextDecorationProperty(const Node* node)
     RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesAndInlineDecl(node);
     if (!style)
         return false;
-    return !propertyMissingOrEqualToNone(style.get(), CSS_PROP_TEXT_DECORATION);
+    return !propertyMissingOrEqualToNone(style.get(), CSSPropertyTextDecoration);
 }
 
 String joinMarkups(const Vector<String> preMarkups, const Vector<String>& postMarkups)
@@ -790,7 +790,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     Node* checkAncestor = specialCommonAncestor ? specialCommonAncestor : commonAncestor;
     if (checkAncestor->renderer()) {
         RefPtr<CSSMutableStyleDeclaration> checkAncestorStyle = computedStyle(checkAncestor)->copyInheritableProperties();
-        if (!propertyMissingOrEqualToNone(checkAncestorStyle.get(), CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT))
+        if (!propertyMissingOrEqualToNone(checkAncestorStyle.get(), CSSPropertyWebkitTextDecorationsInEffect))
             specialCommonAncestor = enclosingNodeOfType(Position(checkAncestor, 0), &elementHasTextDecorationProperty);
     }
     
@@ -813,8 +813,8 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
                 
                 // Bring the background attribute over, but not as an attribute because a background attribute on a div
                 // appears to have no effect.
-                if (!style->getPropertyCSSValue(CSS_PROP_BACKGROUND_IMAGE) && static_cast<Element*>(fullySelectedRoot)->hasAttribute(backgroundAttr))
-                    style->setProperty(CSS_PROP_BACKGROUND_IMAGE, "url('" + static_cast<Element*>(fullySelectedRoot)->getAttribute(backgroundAttr) + "')");
+                if (!style->getPropertyCSSValue(CSSPropertyBackgroundImage) && static_cast<Element*>(fullySelectedRoot)->hasAttribute(backgroundAttr))
+                    style->setProperty(CSSPropertyBackgroundImage, "url('" + static_cast<Element*>(fullySelectedRoot)->getAttribute(backgroundAttr) + "')");
                 
                 if (style->length()) {
                     Vector<UChar> openTag;

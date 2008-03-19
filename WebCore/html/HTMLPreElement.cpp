@@ -55,7 +55,7 @@ void HTMLPreElement::parseMappedAttribute(MappedAttribute *attr)
         // property.
     } else if (attr->name() == wrapAttr) {
         if (!attr->value().isNull())
-            addCSSProperty(attr, CSS_PROP_WHITE_SPACE, CSS_VAL_PRE_WRAP);
+            addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValuePreWrap);
     } else
         return HTMLElement::parseMappedAttribute(attr);
 }

@@ -88,20 +88,20 @@ void HTMLBodyElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == backgroundAttr) {
         String url = parseURL(attr->value());
         if (!url.isEmpty())
-            addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, document()->completeURL(url).string());
+            addCSSImageProperty(attr, CSSPropertyBackgroundImage, document()->completeURL(url).string());
     } else if (attr->name() == marginwidthAttr || attr->name() == leftmarginAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
+        addCSSLength(attr, CSSPropertyMarginRight, attr->value());
+        addCSSLength(attr, CSSPropertyMarginLeft, attr->value());
     } else if (attr->name() == marginheightAttr || attr->name() == topmarginAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
+        addCSSLength(attr, CSSPropertyMarginBottom, attr->value());
+        addCSSLength(attr, CSSPropertyMarginTop, attr->value());
     } else if (attr->name() == bgcolorAttr) {
-        addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
+        addCSSColor(attr, CSSPropertyBackgroundColor, attr->value());
     } else if (attr->name() == textAttr) {
-        addCSSColor(attr, CSS_PROP_COLOR, attr->value());
+        addCSSColor(attr, CSSPropertyColor, attr->value());
     } else if (attr->name() == bgpropertiesAttr) {
         if (equalIgnoringCase(attr->value(), "fixed"))
-            addCSSProperty(attr, CSS_PROP_BACKGROUND_ATTACHMENT, CSS_VAL_FIXED);
+            addCSSProperty(attr, CSSPropertyBackgroundAttachment, CSSValueFixed);
     } else if (attr->name() == vlinkAttr ||
                attr->name() == alinkAttr ||
                attr->name() == linkAttr) {
@@ -115,8 +115,8 @@ void HTMLBodyElement::parseMappedAttribute(MappedAttribute *attr)
         } else {
             if (!m_linkDecl)
                 createLinkDecl();
-            m_linkDecl->setProperty(CSS_PROP_COLOR, attr->value(), false, false);
-            RefPtr<CSSValue> val = m_linkDecl->getPropertyCSSValue(CSS_PROP_COLOR);
+            m_linkDecl->setProperty(CSSPropertyColor, attr->value(), false, false);
+            RefPtr<CSSValue> val = m_linkDecl->getPropertyCSSValue(CSSPropertyColor);
             if (val && val->isPrimitiveValue()) {
                 Color col = document()->styleSelector()->getColorFromPrimitiveValue(static_cast<CSSPrimitiveValue*>(val.get()));
                 if (attr->name() == linkAttr)

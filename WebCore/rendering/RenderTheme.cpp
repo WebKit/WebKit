@@ -521,63 +521,63 @@ void RenderTheme::platformColorsDidChange()
 Color RenderTheme::systemColor(int cssValueId) const
 {
     switch (cssValueId) {
-        case CSS_VAL_ACTIVEBORDER:
+        case CSSValueActiveborder:
             return 0xFFFFFFFF;
-        case CSS_VAL_ACTIVECAPTION:
+        case CSSValueActivecaption:
             return 0xFFCCCCCC;
-        case CSS_VAL_APPWORKSPACE:
+        case CSSValueAppworkspace:
             return 0xFFFFFFFF;
-        case CSS_VAL_BACKGROUND:
+        case CSSValueBackground:
             return 0xFF6363CE;
-        case CSS_VAL_BUTTONFACE:
+        case CSSValueButtonface:
             return 0xFFC0C0C0;
-        case CSS_VAL_BUTTONHIGHLIGHT:
+        case CSSValueButtonhighlight:
             return 0xFFDDDDDD;
-        case CSS_VAL_BUTTONSHADOW:
+        case CSSValueButtonshadow:
             return 0xFF888888;
-        case CSS_VAL_BUTTONTEXT:
+        case CSSValueButtontext:
             return 0xFF000000;
-        case CSS_VAL_CAPTIONTEXT:
+        case CSSValueCaptiontext:
             return 0xFF000000;
-        case CSS_VAL_GRAYTEXT:
+        case CSSValueGraytext:
             return 0xFF808080;
-        case CSS_VAL_HIGHLIGHT:
+        case CSSValueHighlight:
             return 0xFFB5D5FF;
-        case CSS_VAL_HIGHLIGHTTEXT:
+        case CSSValueHighlighttext:
             return 0xFF000000;
-        case CSS_VAL_INACTIVEBORDER:
+        case CSSValueInactiveborder:
             return 0xFFFFFFFF;
-        case CSS_VAL_INACTIVECAPTION:
+        case CSSValueInactivecaption:
             return 0xFFFFFFFF;
-        case CSS_VAL_INACTIVECAPTIONTEXT:
+        case CSSValueInactivecaptiontext:
             return 0xFF7F7F7F;
-        case CSS_VAL_INFOBACKGROUND:
+        case CSSValueInfobackground:
             return 0xFFFBFCC5;
-        case CSS_VAL_INFOTEXT:
+        case CSSValueInfotext:
             return 0xFF000000;
-        case CSS_VAL_MENU:
+        case CSSValueMenu:
             return 0xFFC0C0C0;
-        case CSS_VAL_MENUTEXT:
+        case CSSValueMenutext:
             return 0xFF000000;
-        case CSS_VAL_SCROLLBAR:
+        case CSSValueScrollbar:
             return 0xFFFFFFFF;
-        case CSS_VAL_TEXT:
+        case CSSValueText:
             return 0xFF000000;
-        case CSS_VAL_THREEDDARKSHADOW:
+        case CSSValueThreeddarkshadow:
             return 0xFF666666;
-        case CSS_VAL_THREEDFACE:
+        case CSSValueThreedface:
             return 0xFFC0C0C0;
-        case CSS_VAL_THREEDHIGHLIGHT:
+        case CSSValueThreedhighlight:
             return 0xFFDDDDDD;
-        case CSS_VAL_THREEDLIGHTSHADOW:
+        case CSSValueThreedlightshadow:
             return 0xFFC0C0C0;
-        case CSS_VAL_THREEDSHADOW:
+        case CSSValueThreedshadow:
             return 0xFF888888;
-        case CSS_VAL_WINDOW:
+        case CSSValueWindow:
             return 0xFFFFFFFF;
-        case CSS_VAL_WINDOWFRAME:
+        case CSSValueWindowframe:
             return 0xFFCCCCCC;
-        case CSS_VAL_WINDOWTEXT:
+        case CSSValueWindowtext:
             return 0xFF000000;
     }
     return Color();

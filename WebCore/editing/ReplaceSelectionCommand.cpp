@@ -198,9 +198,9 @@ PassRefPtr<Node> ReplacementFragment::insertFragmentForTestRendering(Node* conte
     if (n) {
         RefPtr<CSSComputedStyleDeclaration> conFontStyle = new CSSComputedStyleDeclaration(static_cast<Element*>(n));
         CSSStyleDeclaration* style = holder->style();
-        style->setProperty(CSS_PROP_WHITE_SPACE, conFontStyle->getPropertyValue(CSS_PROP_WHITE_SPACE), false, ec);
+        style->setProperty(CSSPropertyWhiteSpace, conFontStyle->getPropertyValue(CSSPropertyWhiteSpace), false, ec);
         ASSERT(ec == 0);
-        style->setProperty(CSS_PROP__WEBKIT_USER_SELECT, conFontStyle->getPropertyValue(CSS_PROP__WEBKIT_USER_SELECT), false, ec);
+        style->setProperty(CSSPropertyWebkitUserSelect, conFontStyle->getPropertyValue(CSSPropertyWebkitUserSelect), false, ec);
         ASSERT(ec == 0);
     }
     
@@ -383,9 +383,9 @@ void ReplaceSelectionCommand::negateStyleRulesThatAffectAppearance()
             // results. We already know one issue because td elements ignore their display property
             // in quirks mode (which Mail.app is always in). We should look for an alternative.
             if (isBlock(e))
-                e->getInlineStyleDecl()->setProperty(CSS_PROP_DISPLAY, CSS_VAL_INLINE);
+                e->getInlineStyleDecl()->setProperty(CSSPropertyDisplay, CSSValueInline);
             if (e->renderer() && e->renderer()->style()->floating() != FNONE)
-                e->getInlineStyleDecl()->setProperty(CSS_PROP_FLOAT, CSS_VAL_NONE);
+                e->getInlineStyleDecl()->setProperty(CSSPropertyFloat, CSSValueNone);
         }
         if (node == m_lastLeafInserted)
             break;

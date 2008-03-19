@@ -58,9 +58,9 @@ void HTMLBRElement::parseMappedAttribute(MappedAttribute *attr)
         const AtomicString& str = attr->value();
         if (!str.isEmpty()) {
             if (equalIgnoringCase(str, "all"))
-                addCSSProperty(attr, CSS_PROP_CLEAR, "both");
+                addCSSProperty(attr, CSSPropertyClear, "both");
             else
-                addCSSProperty(attr, CSS_PROP_CLEAR, str);
+                addCSSProperty(attr, CSSPropertyClear, str);
         }
     } else
         HTMLElement::parseMappedAttribute(attr);
