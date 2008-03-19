@@ -122,10 +122,12 @@ bool ResourceHandle::supportsBufferedData()
     return false;
 }
 
+#if PLATFORM(WIN) && PLATFORM(CF)
 void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
 {
     allowsAnyHTTPSCertificateHosts().add(host.lower());
 }
+#endif
 
 #if PLATFORM(WIN) && PLATFORM(CF)
 // FIXME:  The CFDataRef will need to be something else when
