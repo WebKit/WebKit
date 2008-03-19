@@ -57,21 +57,28 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-typedef HashSet<DynamicNodeList*> NodeListSet;
 struct NodeListsNodeData {
-    NodeListSet m_listsToNotify;
+    typedef HashSet<DynamicNodeList*> NodeListSet;
+    NodeListSet m_listsWithCaches;
+
     DynamicNodeList::Caches m_childNodeListCaches;
-    
+
     typedef HashMap<String, DynamicNodeList::Caches*> CacheMap;
     CacheMap m_classNodeListCaches;
     CacheMap m_nameNodeListCaches;
-    
+
     ~NodeListsNodeData()
     {
         deleteAllValues(m_classNodeListCaches);
         deleteAllValues(m_nameNodeListCaches);
     }
+
+    void invalidateCaches();
+    void invalidateCachesThatDependOnAttributes();
+    bool isEmpty() const;
 };
+
+// --------
 
 bool Node::isSupported(const String& feature, const String& version)
 {
@@ -166,6 +173,10 @@ Node::~Node()
     else
         --NodeCounter::count;
 #endif
+
+    if (m_nodeLists && m_document)
+        document()->removeNodeListCache();
+
     if (renderer())
         detach();
 
@@ -193,8 +204,10 @@ void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
 
 PassRefPtr<NodeList> Node::childNodes()
 {
-    if (!m_nodeLists)
+    if (!m_nodeLists) {
         m_nodeLists.set(new NodeListsNodeData);
+        document()->addNodeListCache();
+    }
 
     return new ChildNodeList(this, &m_nodeLists->m_childNodeListCaches);
 }
@@ -406,23 +419,28 @@ unsigned Node::nodeIndex() const
 
 void Node::registerDynamicNodeList(DynamicNodeList* list)
 {
-    if (!m_nodeLists)
+    if (!m_nodeLists) {
         m_nodeLists.set(new NodeListsNodeData);
-    else if (!m_document->hasNodeLists())
+        document()->addNodeListCache();
+    } else if (!m_document->hasNodeListCaches()) {
         // We haven't been receiving notifications while there were no registered lists, so the cache is invalid now.
-        m_nodeLists->m_childNodeListCaches.reset();
+        m_nodeLists->invalidateCaches();
+    }
 
-    if (list->needsNotifications())
-        m_nodeLists->m_listsToNotify.add(list);
-    m_document->addNodeList();
+    if (list->hasOwnCaches())
+        m_nodeLists->m_listsWithCaches.add(list);
 }
 
 void Node::unregisterDynamicNodeList(DynamicNodeList* list)
 {
     ASSERT(m_nodeLists);
-    m_document->removeNodeList();
-    if (list->needsNotifications())
-        m_nodeLists->m_listsToNotify.remove(list);
+    if (list->hasOwnCaches()) {
+        m_nodeLists->m_listsWithCaches.remove(list);
+        if (m_nodeLists->isEmpty()) {
+            m_nodeLists.clear();
+            document()->removeNodeListCache();
+        }
+    }
 }
 
 void Node::notifyLocalNodeListsAttributeChanged()
@@ -430,9 +448,12 @@ void Node::notifyLocalNodeListsAttributeChanged()
     if (!m_nodeLists)
         return;
 
-    NodeListSet::iterator end = m_nodeLists->m_listsToNotify.end();
-    for (NodeListSet::iterator i = m_nodeLists->m_listsToNotify.begin(); i != end; ++i)
-        (*i)->rootNodeAttributeChanged();
+    m_nodeLists->invalidateCachesThatDependOnAttributes();
+
+    if (m_nodeLists->isEmpty()) {
+        m_nodeLists.clear();
+        document()->removeNodeListCache();
+    }
 }
 
 void Node::notifyNodeListsAttributeChanged()
@@ -446,16 +467,21 @@ void Node::notifyLocalNodeListsChildrenChanged()
     if (!m_nodeLists)
         return;
 
-    m_nodeLists->m_childNodeListCaches.reset();
+    m_nodeLists->invalidateCaches();
 
-    NodeListSet::iterator end = m_nodeLists->m_listsToNotify.end();
-    for (NodeListSet::iterator i = m_nodeLists->m_listsToNotify.begin(); i != end; ++i)
-        (*i)->rootNodeChildrenChanged();
+    NodeListsNodeData::NodeListSet::iterator end = m_nodeLists->m_listsWithCaches.end();
+    for (NodeListsNodeData::NodeListSet::iterator i = m_nodeLists->m_listsWithCaches.begin(); i != end; ++i)
+        (*i)->invalidateCache();
+
+    if (m_nodeLists->isEmpty()) {
+        m_nodeLists.clear();
+        document()->removeNodeListCache();
+    }
 }
 
 void Node::notifyNodeListsChildrenChanged()
 {
-    for (Node *n = this; n; n = n->parentNode())
+    for (Node* n = this; n; n = n->parentNode())
         n->notifyLocalNodeListsChildrenChanged();
 }
 
@@ -1175,8 +1201,10 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const String& namespaceURI, co
 
 PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
 {
-    if (!m_nodeLists)
+    if (!m_nodeLists) {
         m_nodeLists.set(new NodeListsNodeData);
+        document()->addNodeListCache();
+    }
 
     pair<NodeListsNodeData::CacheMap::iterator, bool> result = m_nodeLists->m_nameNodeListCaches.add(elementName, 0);
     if (result.second)
@@ -1187,8 +1215,10 @@ PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
 
 PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
 {
-    if (!m_nodeLists)
+    if (!m_nodeLists) {
         m_nodeLists.set(new NodeListsNodeData);
+        document()->addNodeListCache();
+    }
 
     pair<NodeListsNodeData::CacheMap::iterator, bool> result = m_nodeLists->m_classNodeListCaches.add(classNames, 0);
     if (result.second)
@@ -1641,7 +1671,51 @@ void Node::formatForDebugger(char* buffer, unsigned length) const
 
 #endif
 
+// --------
+
+void NodeListsNodeData::invalidateCaches()
+{
+    m_childNodeListCaches.reset();
+    invalidateCachesThatDependOnAttributes();
 }
+
+void NodeListsNodeData::invalidateCachesThatDependOnAttributes()
+{
+    CacheMap::iterator classCachesEnd = m_classNodeListCaches.end();
+    for (CacheMap::iterator it = m_classNodeListCaches.begin(); it != classCachesEnd; ++it)
+        it->second->reset();
+
+    CacheMap::iterator nameCachesEnd = m_nameNodeListCaches.end();
+    for (CacheMap::iterator it = m_nameNodeListCaches.begin(); it != nameCachesEnd; ++it)
+        it->second->reset();
+}
+
+bool NodeListsNodeData::isEmpty() const
+{
+    if (!m_listsWithCaches.isEmpty())
+        return false;
+
+    if (m_childNodeListCaches.refCount)
+        return false;
+
+    CacheMap::const_iterator classCachesEnd = m_classNodeListCaches.end();
+    for (CacheMap::const_iterator it = m_classNodeListCaches.begin(); it != classCachesEnd; ++it) {
+        if (it->second->refCount)
+            return false;
+    }
+
+    CacheMap::const_iterator nameCachesEnd = m_nameNodeListCaches.end();
+    for (CacheMap::const_iterator it = m_nameNodeListCaches.begin(); it != nameCachesEnd; ++it) {
+        if (it->second->refCount)
+            return false;
+    }
+
+    return true;
+}
+
+// --------
+
+} // namespace WebCore
 
 #ifndef NDEBUG
 

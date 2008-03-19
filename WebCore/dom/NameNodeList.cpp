@@ -32,14 +32,9 @@ namespace WebCore {
 using namespace HTMLNames;
 
 NameNodeList::NameNodeList(PassRefPtr<Node> rootNode, const String& name, DynamicNodeList::Caches* caches)
-    : DynamicNodeList(rootNode, caches, true)
+    : DynamicNodeList(rootNode, caches)
     , m_nodeName(name)
 {
-}
-
-void NameNodeList::rootNodeAttributeChanged()
-{
-    DynamicNodeList::rootNodeChildrenChanged();
 }
 
 bool NameNodeList::nodeMatches(Node* testNode) const

@@ -37,7 +37,7 @@
 namespace WebCore {
 
 ClassNodeList::ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames, DynamicNodeList::Caches* caches)
-    : DynamicNodeList(rootNode, caches, true)
+    : DynamicNodeList(rootNode, caches)
 {
     m_classNames.parseClassAttribute(classNames, m_rootNode->document()->inCompatMode());
 }

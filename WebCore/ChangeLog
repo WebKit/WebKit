@@ -1,3 +1,87 @@
+2008-03-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=17057
+        REGRESSION: Frequent random crashes in WebCore::JSNodeList::indexGetter
+        <rdar://problem/5725058>
+
+        Tests: fast/dom/NodeList/5725058-crash-scenario-1.html
+               fast/dom/NodeList/5725058-crash-scenario-2.html
+               fast/dom/NodeList/5725058-crash-scenario-3.html
+
+        * dom/ChildNodeList.cpp: 
+        (WebCore::ChildNodeList::ChildNodeList):
+        * dom/ChildNodeList.h:
+        Remove rootNodeChildrenChanged() method and fix the constructor to not 
+        pass in a needsNotifications argument to DynamicNodeList, as it no longer
+        takes one.
+
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::ClassNodeList):
+        Don't pass the needsNotifications argument to DynamicNodeList.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::childrenChanged):
+        Rename call to hasNodeLists() to hasNodeListCaches().
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document): Zero out the m_document variable to signify
+        to destructors down the destruction chain that this is a Document type node
+        being destructed, and thus, accessing document() is prohibited.
+        * dom/Document.h:
+        (WebCore::Document::addNodeListCache): Renamed from addNodeList.
+        (WebCore::Document::removeNodeListCache): Renamed from removeNodeList, adds assertion.
+        (WebCore::Document::hasNodeListCaches): Renamed from hasNodeListCaches.
+        Rename m_numNodeLists to m_numNodeListCaches.
+
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeList::DynamicNodeList):
+        (WebCore::DynamicNodeList::~DynamicNodeList):
+        (WebCore::DynamicNodeList::invalidateCache):
+        (WebCore::DynamicNodeList::Caches::Caches):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeList::hasOwnCaches):
+        Remove the needsNotifications concept from DynamicNodeList, instead, manually
+        invalidate the cache for lists that own their own cache.
+
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList):
+        * dom/NameNodeList.h:
+        Remove rootNodeAttributeChanged() method and fix the constructor to not 
+        pass in a needsNotifications argument to DynamicNodeList, as it no longer
+        takes one.
+
+        * dom/Node.cpp:
+        (WebCore::Node::~Node): Decrement the document's nodeListCache count
+        if we had a NodeListsNodeData cache and this is not the Document being
+        destructor, as tagged by a null m_document.
+        (WebCore::Node::childNodes): Increment the document's nodeListCache count 
+        if we need create the NodeListsNodeData.
+        (WebCore::Node::registerDynamicNodeList): Increment the document's nodeListCache count 
+        if we need create the NodeListsNodeData.  Change to invalidate all the caches, instead 
+        of just the ChildNodeList, if document has had no NodeListCaches.
+        (WebCore::Node::unregisterDynamicNodeList): Change to remove the cache from the m_listsWithCaches
+        set if it is owned by the NodeList and clear the m_nodeLists if it is empty.
+        (WebCore::Node::notifyLocalNodeListsAttributeChanged): Move logic to 
+        NodeListsNodeData::invalidateAttributeCaches and clear the cache pointer if it is empty.
+        (WebCore::Node::notifyLocalNodeListsChildrenChanged): Move logic to 
+        NodeListsNodeData::invalidateCaches and clear the cache pointer if it is empty.
+        (WebCore::Node::notifyNodeListsChildrenChanged): Cleanup.
+        (WebCore::Node::getElementsByName): Increment the document's nodeListCache count 
+        if we need create the NodeListsNodeData.
+        (WebCore::Node::getElementsByClassName): Increment the document's nodeListCache count 
+        if we need create the NodeListsNodeData.
+
+        (WebCore::NodeListsNodeData::invalidateCaches): Added.
+        (WebCore::NodeListsNodeData::invalidateAttributeCaches): Added.
+        (WebCore::NodeListsNodeData::isEmpty): Added.
+
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::TagNodeList):
+        Don't pass the needsNotifications argument to DynamicNodeList.
+
 2008-03-18  Matt Lilek  <webkit@mattlilek.com>
 
         Not reviewed, build fix.

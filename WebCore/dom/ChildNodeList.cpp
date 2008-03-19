@@ -28,7 +28,7 @@
 namespace WebCore {
 
 ChildNodeList::ChildNodeList(PassRefPtr<Node> rootNode, DynamicNodeList::Caches* info)
-    : DynamicNodeList(rootNode, info, false)
+    : DynamicNodeList(rootNode, info)
 {
 }
 
@@ -101,12 +101,6 @@ Node* ChildNodeList::item(unsigned index) const
 bool ChildNodeList::nodeMatches(Node* testNode) const
 {
     return testNode->parentNode() == m_rootNode;
-}
-
-void ChildNodeList::rootNodeChildrenChanged()
-{
-    // For child node lists, the common cache is reset in Node::notifyLocalNodeListsChildrenChanged()
-    ASSERT(!m_ownsCaches);
 }
 
 } // namespace WebCore

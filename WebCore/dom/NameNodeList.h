@@ -36,8 +36,6 @@ namespace WebCore {
     public:
         NameNodeList(PassRefPtr<Node> rootNode, const String& name, DynamicNodeList::Caches*);
 
-        virtual void rootNodeAttributeChanged();
-
     private:
         virtual bool nodeMatches(Node*) const;
 

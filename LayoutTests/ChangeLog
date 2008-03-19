@@ -1,5 +1,20 @@
 2008-03-18  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=17057
+        REGRESSION: Frequent random crashes in WebCore::JSNodeList::indexGetter
+        <rdar://problem/5725058>
+
+        * fast/dom/NodeList/5725058-crash-scenario-1-expected.txt: Added.
+        * fast/dom/NodeList/5725058-crash-scenario-1.html: Added.
+        * fast/dom/NodeList/5725058-crash-scenario-2-expected.txt: Added.
+        * fast/dom/NodeList/5725058-crash-scenario-2.html: Added.
+        * fast/dom/NodeList/5725058-crash-scenario-3-expected.txt: Added.
+        * fast/dom/NodeList/5725058-crash-scenario-3.html: Added.
+
+2008-03-18  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler.
 
         Make domListEnumeration.html test not depend on the order of property enumeration
