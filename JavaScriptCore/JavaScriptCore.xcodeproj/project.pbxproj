@@ -87,6 +87,7 @@
 		5DA479660CFBCF56009328A0 /* TCPackedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA479650CFBCF56009328A0 /* TCPackedCache.h */; };
 		5DBD18AC0C54018700C15EAE /* CollectorHeapIntrospector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DBD18AA0C54018700C15EAE /* CollectorHeapIntrospector.h */; };
 		5DBD18B00C5401A700C15EAE /* MallocZoneSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */; };
+		65049F910D92715D00D04E3D /* Activation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E2C6C950D31C6AB002D44E2 /* Activation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		652246A50C8D7A0E007BDAF7 /* HashIterators.h in Headers */ = {isa = PBXBuildFile; fileRef = 652246A40C8D7A0E007BDAF7 /* HashIterators.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65400C120A69BAF200509887 /* PropertyNameArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 65400C100A69BAF200509887 /* PropertyNameArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6541BD7208E80A17002CBEE7 /* TCPageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6E08E80A17002CBEE7 /* TCPageMap.h */; };
@@ -968,6 +969,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65049F910D92715D00D04E3D /* Activation.h in Headers */,
 				1482B78B0A4305AB00517CFC /* APICast.h in Headers */,
 				938C4F6A0CA06BC700D9310A /* ASCIICType.h in Headers */,
 				93AA4F780957251F0084B3A7 /* AlwaysInline.h in Headers */,

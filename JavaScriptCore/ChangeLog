@@ -1,5 +1,11 @@
 2008-03-20  Maciej Stachowiak  <mjs@apple.com>
 
+        - fix build
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: install Activation.h as private
+
+2008-03-20  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Oliver.
         
         - reduce function call overhead for 1.014x speedup on SunSpider
