@@ -1,3 +1,32 @@
+2008-03-20  Adam Roben  <aroben@apple.com>
+
+        Make WebNodeHighlightView use InspectorController to do its painting
+
+        Reviewed by Tim Hatcher.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController highlightNode:]): Pass the
+        InspectorController to the WebNodeHighlight, and don't call
+        setHighlightedNode: (which has been removed).
+        (-[WebInspectorWindowController hideHighlight]): Removed call to
+        setHighlightedNode:.
+        * WebInspector/WebNodeHighlight.h:
+          - Replaced _highlightNode with _inspectorController
+          - Removed _highlightedNode accessors
+          - Added -inspectorController method
+        * WebInspector/WebNodeHighlight.m:
+        (-[WebNodeHighlight initWithTargetView:inspectorController:]): Now
+        takes an InspectorController* and stores it in _inspectorController.
+        (-[WebNodeHighlight dealloc]): Removed code dealing with
+        _highlightedNode.
+        (-[WebNodeHighlight inspectorController]): Added.
+        * WebInspector/WebNodeHighlightView.m: Removed FileInternal category.
+        (-[WebNodeHighlightView isFlipped]): Added. WebCore expects all
+        GraphicsContexts to be based on a flipped CGContext, so we have to
+        specify that this view is flipped.
+        (-[WebNodeHighlightView drawRect:]): Changed to create a
+        GraphicsContext and pass it to InspectorController::drawNodeHighlight.
+
 2008-03-18  David Hyatt  <hyatt@apple.com>
 
         Add support for a preference in WebKit that can be used in nightly builds to test full page

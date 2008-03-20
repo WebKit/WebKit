@@ -468,14 +468,12 @@ void WebInspectorClient::updateWindowTitle() const
         return; // skip the highlight if we have no window (e.g. hidden tab)
 
     if (!_currentHighlight) {
-        _currentHighlight = [[WebNodeHighlight alloc] initWithTargetView:view];
+        _currentHighlight = [[WebNodeHighlight alloc] initWithTargetView:view inspectorController:[_inspectedWebView page]->inspectorController()];
         [_currentHighlight setDelegate:self];
         [_currentHighlight attachHighlight];
     }
 
     [_currentHighlight show];
-
-    [_currentHighlight setHighlightedNode:node];
 
     // FIXME: this is a hack until we hook up a didDraw and didScroll call in WebHTMLView
     [[_currentHighlight highlightView] setNeedsDisplay:YES];
@@ -486,7 +484,6 @@ void WebInspectorClient::updateWindowTitle() const
     if (!_currentHighlight)
         return;
     [_currentHighlight hide];
-    [_currentHighlight setHighlightedNode:nil];
 }
 
 #pragma mark -

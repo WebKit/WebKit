@@ -1,3 +1,11 @@
+2008-03-20  Adam Roben  <aroben@apple.com>
+
+        Mark WebNodeHighlight.m and WebNodeHighlightView.m Obj-C++
+
+        Reviewed by Tim Hatcher.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-03-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

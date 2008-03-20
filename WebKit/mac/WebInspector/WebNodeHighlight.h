@@ -27,17 +27,20 @@
  */
 
 @class WebNodeHighlightView;
-@class DOMNode;
+
+namespace WebCore {
+    class InspectorController;
+}
 
 @interface WebNodeHighlight : NSObject {
     NSView *_targetView;
     NSWindow *_highlightWindow;
     WebNodeHighlightView *_highlightView;
     NSAnimation *_fadeInAnimation;
-    DOMNode *_highlightNode;
+    WebCore::InspectorController* _inspectorController;
     id _delegate;
 }
-- (id)initWithTargetView:(NSView *)targetView;
+- (id)initWithTargetView:(NSView *)targetView inspectorController:(WebCore::InspectorController*)inspectorController;
 
 - (void)setDelegate:(id)delegate;
 - (id)delegate;
@@ -51,8 +54,7 @@
 - (NSView *)targetView;
 - (WebNodeHighlightView *)highlightView;
 
-- (void)setHighlightedNode:(DOMNode *)node;
-- (DOMNode *)highlightedNode;
+- (WebCore::InspectorController*)inspectorController;
 
 // Controls whether mouse events are ignored (passed to underlying view). By default mouse events are ignored.
 - (BOOL)ignoresMouseEvents;

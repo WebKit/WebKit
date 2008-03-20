@@ -1,3 +1,11 @@
+2008-03-20  Adam Roben  <aroben@apple.com>
+
+        Export InspectorController::drawNodeHighlight
+
+        Reviewed by Tim Hatcher.
+
+        * WebCore.base.exp: Also sorted this file.
+
 2008-03-19  Stephanie Lewis  <slewis@apple.com>
 
         Rubber-stamped by Anders.

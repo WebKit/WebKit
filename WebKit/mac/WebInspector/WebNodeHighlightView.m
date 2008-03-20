@@ -34,15 +34,15 @@
 #import <WebKit/DOMExtensions.h>
 
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/GraphicsContext.h>
+#import <WebCore/InspectorController.h>
+
+using namespace WebCore;
 
 #define OVERLAY_MAX_ALPHA 0.7
 #define OVERLAY_WHITE_VALUE 0.1
 
 #define WHITE_FRAME_THICKNESS 1.0
-
-@interface WebNodeHighlightView (FileInternal)
-- (NSArray *)_holes;
-@end
 
 @implementation WebNodeHighlightView
 
@@ -69,35 +69,19 @@
     _webNodeHighlight = nil;
 }
 
+- (BOOL)isFlipped
+{
+    return YES;
+}
+
 - (void)drawRect:(NSRect)rect 
 {
     [NSGraphicsContext saveGraphicsState];
 
-    // draw translucent gray fill, out of which we will cut holes
-    [[NSColor colorWithCalibratedWhite:OVERLAY_WHITE_VALUE alpha:(_fractionFadedIn * OVERLAY_MAX_ALPHA)] set];
-    NSRectFill(rect);
+    ASSERT([[NSGraphicsContext currentContext] isFlipped]);
 
-    // determine set of holes
-    NSArray *holes = [self _holes];
-    int holeCount = [holes count];
-    int holeIndex;
-
-    // Draw white frames around holes in first pass, so they will be erased in
-    // places where holes overlap or abut.
-    [[NSColor colorWithCalibratedWhite:1.0 alpha:_fractionFadedIn] set];
-
-    // white frame is just outside of the hole that the delegate returned
-    for (holeIndex = 0; holeIndex < holeCount; ++holeIndex) {
-        NSRect hole = [[holes objectAtIndex:holeIndex] rectValue];
-        hole = NSInsetRect(hole, -WHITE_FRAME_THICKNESS, -WHITE_FRAME_THICKNESS);
-        NSRectFill(hole);
-    }
-
-    [[NSColor clearColor] set];
-
-    // Erase holes in second pass.
-    for (holeIndex = 0; holeIndex < holeCount; ++holeIndex)
-        NSRectFill([[holes objectAtIndex:holeIndex] rectValue]);
+    GraphicsContext context((PlatformGraphicsContext*)[[NSGraphicsContext currentContext] graphicsPort]);
+    [_webNodeHighlight inspectorController]->drawNodeHighlight(context);
 
     [NSGraphicsContext restoreGraphicsState];
 }
@@ -134,42 +118,3 @@
 
 @end
 
-@implementation WebNodeHighlightView (FileInternal)
-
-- (NSArray *)_holes
-{
-    DOMNode *node = [_webNodeHighlight highlightedNode];
-
-    // FIXME: node view needs to be the correct frame document view, it isn't always the main frame
-    NSView *nodeView = [_webNodeHighlight targetView];
-
-    NSArray *lineBoxRects = nil;
-    if ([node isKindOfClass:[DOMElement class]]) {
-        DOMCSSStyleDeclaration *style = [[node ownerDocument] getComputedStyle:(DOMElement *)node pseudoElement:@""];
-        if ([[style getPropertyValue:@"display"] isEqualToString:@"inline"])
-            lineBoxRects = [node lineBoxRects];
-    } else if ([node isKindOfClass:[DOMText class]]) {
-#if ENABLE(SVG)
-        if (![[node parentNode] isKindOfClass:NSClassFromString(@"DOMSVGElement")])
-#endif
-            lineBoxRects = [node lineBoxRects];
-    }
-
-    if (![lineBoxRects count]) {
-        NSRect boundingBox = [nodeView _web_convertRect:[node boundingBox] toView:self];
-        return [NSArray arrayWithObject:[NSValue valueWithRect:boundingBox]];
-    }
-
-    NSMutableArray *rects = [[NSMutableArray alloc] initWithCapacity:[lineBoxRects count]];
-
-    unsigned lineBoxRectCount = [lineBoxRects count];
-    for (unsigned lineBoxRectIndex = 0; lineBoxRectIndex < lineBoxRectCount; ++lineBoxRectIndex) {
-        NSRect r = [[lineBoxRects objectAtIndex:lineBoxRectIndex] rectValue];
-        NSRect overlayViewRect = [nodeView _web_convertRect:r toView:self];
-        [rects addObject:[NSValue valueWithRect:overlayViewRect]];
-    }
-
-    return [rects autorelease];
-}
-
-@end

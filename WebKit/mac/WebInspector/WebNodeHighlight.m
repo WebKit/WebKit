@@ -31,6 +31,9 @@
 #import "WebNSViewExtras.h"
 
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/InspectorController.h>
+
+using namespace WebCore;
 
 #define FADE_ANIMATION_DURATION 0.2
 
@@ -55,13 +58,14 @@
 
 @implementation WebNodeHighlight
 
-- (id)initWithTargetView:(NSView *)targetView
+- (id)initWithTargetView:(NSView *)targetView inspectorController:(InspectorController*)inspectorController
 {
     self = [super init];
     if (!self)
         return nil;
 
     _targetView = [targetView retain];
+    _inspectorController = inspectorController;
 
     int styleMask = NSBorderlessWindowMask;
     NSRect contentRect = [NSWindow contentRectForFrameRect:[self _computeHighlightWindowFrame] styleMask:styleMask];
@@ -79,18 +83,6 @@
     return self;
 }
 
-- (void)setHighlightedNode:(DOMNode *)node
-{
-    id old = _highlightNode;
-    _highlightNode = [node retain];
-    [old release];
-}
-
-- (DOMNode *)highlightedNode
-{
-    return _highlightNode;
-}
-
 - (void)dealloc
 {
     // FIXME: Bad to do all this work in dealloc. What about under GC?
@@ -103,8 +95,6 @@
     [_fadeInAnimation setDelegate:nil];
     [_fadeInAnimation stopAnimation];
     [_fadeInAnimation release];
-
-    [_highlightNode release];
 
     [super dealloc];
 }
@@ -231,6 +221,11 @@
 - (NSView *)targetView
 {
     return _targetView;
+}
+
+- (InspectorController*)inspectorController
+{
+    return _inspectorController;
 }
 
 @end
