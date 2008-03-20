@@ -1,3 +1,18 @@
+2008-03-20  Adam Roben  <aroben@apple.com>
+
+        Fix RenderContainer's override of addLineBoxRects to match RenderObject's
+
+        RenderContainer::addLineBoxRects was never getting called because its
+        parameters didn't match those of RenderObject::addLineBoxRects.
+
+        Reviewed by Mitz Pettel.
+
+        No test possible.
+
+        * rendering/RenderContainer.cpp: Added an optional bool
+        useSelectionHeight parameter to match RenderObject's method.
+        * rendering/RenderContainer.h: Ditto.
+
 2008-03-20  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Alp Toker.

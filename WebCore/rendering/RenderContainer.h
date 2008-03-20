@@ -61,7 +61,7 @@ public:
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
-    virtual void addLineBoxRects(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX);
+    virtual void addLineBoxRects(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);
 
 private:
     RenderObject* m_firstChild;

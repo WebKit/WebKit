@@ -628,7 +628,7 @@ VisiblePosition RenderContainer::positionForCoordinates(int x, int y)
     return VisiblePosition(element(), 0, DOWNSTREAM);
 }
 
-void RenderContainer::addLineBoxRects(Vector<IntRect>& rects, unsigned start, unsigned end)
+void RenderContainer::addLineBoxRects(Vector<IntRect>& rects, unsigned start, unsigned end, bool)
 {
     if (!m_firstChild && (isInline() || isAnonymousBlock())) {
         int x, y;
