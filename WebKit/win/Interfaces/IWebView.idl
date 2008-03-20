@@ -815,6 +815,51 @@ interface IWebIBActions : IUnknown
         - (void)toggleGrammarChecking:(id)sender
     */
     HRESULT toggleGrammarChecking([in] IUnknown* sender);
+
+       /*!
+        @method setPageSizeMultiplier:
+        @abstract Set a zoom factor for all views managed by this webView.
+        @param multiplier A fractional percentage value, 1.0 is 100%.
+        - (void)setPageSizeMultiplier:(float)multiplier;
+    */
+    HRESULT setPageSizeMultiplier([in] float multiplier);
+
+    /*!
+        @method pageSizeMultiplier
+        @result The page size multipler.
+        - (float)pageSizeMultiplier;
+    */    
+    HRESULT pageSizeMultiplier([out, retval] float* multiplier);
+
+    /*
+        - (BOOL)canZoomPageIn;
+    */
+    HRESULT canZoomPageIn([in] IUnknown* sender, [out, retval] BOOL* result);
+
+    /*
+        - (IBAction)zoomPageIn:(id)sender;
+    */
+    HRESULT zoomPageIn([in] IUnknown* sender);
+
+    /*
+        - (BOOL)canZoomPageOut;
+    */
+    HRESULT canZoomPageOut([in] IUnknown* sender, [out, retval] BOOL* result);
+
+    /*
+        - (IBAction)zoomPageOut:(id)sender;
+    */
+    HRESULT zoomPageOut([in] IUnknown* sender);
+
+    /*
+        - (BOOL)canResetPageZoom;
+    */
+    HRESULT canResetPageZoom([in] IUnknown* sender, [out, retval] BOOL* result);
+
+    /*
+        - (IBAction)resetPageZoom:(id)sender;
+    */
+    HRESULT resetPageZoom([in] IUnknown* sender);
 }
 
 /*

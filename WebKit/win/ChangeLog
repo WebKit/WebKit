@@ -1,3 +1,38 @@
+2008-03-20  Dave Hyatt  <hyatt@apple.com>
+
+        Add full page zoom API for Windows WebKit.
+
+        Reviewed by aroben
+
+        * Interfaces/IWebView.idl:
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::setTextSizeMultiplier):
+        (WebView::setPageSizeMultiplier):
+        (WebView::setZoomMultiplier):
+        (WebView::textSizeMultiplier):
+        (WebView::pageSizeMultiplier):
+        (WebView::zoomMultiplier):
+        (WebView::canMakeTextLarger):
+        (WebView::canZoomPageIn):
+        (WebView::canZoomIn):
+        (WebView::makeTextLarger):
+        (WebView::zoomPageIn):
+        (WebView::zoomIn):
+        (WebView::canMakeTextSmaller):
+        (WebView::canZoomPageOut):
+        (WebView::canZoomOut):
+        (WebView::makeTextSmaller):
+        (WebView::zoomPageOut):
+        (WebView::zoomOut):
+        (WebView::canMakeTextStandardSize):
+        (WebView::canResetPageZoom):
+        (WebView::canResetZoom):
+        (WebView::makeTextStandardSize):
+        (WebView::resetPageZoom):
+        (WebView::resetZoom):
+        * WebView.h:
+
 2008-03-20  John Sullivan  <sullivan@apple.com>
 
         * English.lproj/Localizable.strings:

@@ -251,7 +251,8 @@ WebView::WebView()
 , m_hasCustomDropTarget(false)
 , m_useBackForwardList(true)
 , m_userAgentOverridden(false)
-, m_textSizeMultiplier(1)
+, m_zoomMultiplier(1.0f)
+, m_zoomMultiplierIsTextOnly(true)
 , m_mouseActivated(false)
 , m_dragData(0)
 , m_currentCharacterCode(0)
@@ -2383,21 +2384,48 @@ HRESULT STDMETHODCALLTYPE WebView::goToBackForwardItem(
 HRESULT STDMETHODCALLTYPE WebView::setTextSizeMultiplier( 
     /* [in] */ float multiplier)
 {
-    if (m_textSizeMultiplier != multiplier)
-        m_textSizeMultiplier = multiplier;
-    
     if (!m_mainFrame)
         return E_FAIL;
-
-    m_mainFrame->setTextSizeMultiplier(multiplier);
+    setZoomMultiplier(multiplier, true);
     return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::setPageSizeMultiplier( 
+    /* [in] */ float multiplier)
+{
+    if (!m_mainFrame)
+        return E_FAIL;
+    setZoomMultiplier(multiplier, false);
+    return S_OK;
+}
+
+void WebView::setZoomMultiplier(float multiplier, bool isTextOnly)
+{
+    m_zoomMultiplier = multiplier;
+    m_zoomMultiplierIsTextOnly = isTextOnly;
+    if (Frame* coreFrame = core(m_mainFrame))
+        coreFrame->setZoomFactor(multiplier, isTextOnly);
 }
 
 HRESULT STDMETHODCALLTYPE WebView::textSizeMultiplier( 
     /* [retval][out] */ float* multiplier)
 {
-    *multiplier = m_textSizeMultiplier;
+    *multiplier = zoomMultiplier(true);
     return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::pageSizeMultiplier( 
+    /* [retval][out] */ float* multiplier)
+{
+    *multiplier = zoomMultiplier(false);
+    return S_OK;
+}
+
+float WebView::zoomMultiplier(bool isTextOnly)
+{
+    if (isTextOnly != m_zoomMultiplierIsTextOnly)
+        return 1.0f;
+    return m_zoomMultiplier;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::setApplicationNameForUserAgent( 
@@ -3070,64 +3098,137 @@ HRESULT STDMETHODCALLTYPE WebView::goForward(
     return E_NOTIMPL;
 }
 
-#define MinimumTextSizeMultiplier   0.5f
-#define MaximumTextSizeMultiplier   3.0f
-#define TextSizeMultiplierRatio     1.2f
+// FIXME: This code should move into WebCore so it can be shared by all the WebKits.
+#define MinimumZoomMultiplier   0.5f
+#define MaximumZoomMultiplier   3.0f
+#define ZoomMultiplierRatio     1.2f
 
 HRESULT STDMETHODCALLTYPE WebView::canMakeTextLarger( 
         /* [in] */ IUnknown* /*sender*/,
         /* [retval][out] */ BOOL* result)
 {
-    bool canGrowMore = m_textSizeMultiplier*TextSizeMultiplierRatio < MaximumTextSizeMultiplier;
+    bool canGrowMore = canZoomIn(true);
     *result = canGrowMore ? TRUE : FALSE;
     return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::canZoomPageIn( 
+        /* [in] */ IUnknown* /*sender*/,
+        /* [retval][out] */ BOOL* result)
+{
+    bool canGrowMore = canZoomIn(false);
+    *result = canGrowMore ? TRUE : FALSE;
+    return S_OK;
+}
+
+bool WebView::canZoomIn(bool isTextOnly)
+{
+    return zoomMultiplier(isTextOnly) * ZoomMultiplierRatio < MaximumZoomMultiplier;
 }
     
 HRESULT STDMETHODCALLTYPE WebView::makeTextLarger( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    float newScale = m_textSizeMultiplier*TextSizeMultiplierRatio;
-    bool canGrowMore = newScale < MaximumTextSizeMultiplier;
-    if (!canGrowMore)
-        return E_FAIL;
-    return setTextSizeMultiplier(newScale);
-
+    return canZoomIn(true);
 }
-    
+
+HRESULT STDMETHODCALLTYPE WebView::zoomPageIn( 
+        /* [in] */ IUnknown* /*sender*/)
+{
+    return canZoomIn(false);
+}
+
+HRESULT WebView::zoomIn(bool isTextOnly)
+{
+    if (!canZoomIn(isTextOnly))
+        return E_FAIL;
+    setZoomMultiplier(zoomMultiplier(isTextOnly) * ZoomMultiplierRatio, isTextOnly);
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE WebView::canMakeTextSmaller( 
         /* [in] */ IUnknown* /*sender*/,
         /* [retval][out] */ BOOL* result)
 {
-    bool canShrinkMore = m_textSizeMultiplier/TextSizeMultiplierRatio > MinimumTextSizeMultiplier;
+    bool canShrinkMore = canZoomOut(true);
     *result = canShrinkMore ? TRUE : FALSE;
     return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::canZoomPageOut( 
+        /* [in] */ IUnknown* /*sender*/,
+        /* [retval][out] */ BOOL* result)
+{
+    bool canShrinkMore = canZoomOut(false);
+    *result = canShrinkMore ? TRUE : FALSE;
+    return S_OK;
+}
+
+bool WebView::canZoomOut(bool isTextOnly)
+{
+    return zoomMultiplier(isTextOnly) / ZoomMultiplierRatio > MinimumZoomMultiplier;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::makeTextSmaller( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    float newScale = m_textSizeMultiplier/TextSizeMultiplierRatio;
-    bool canShrinkMore = newScale > MinimumTextSizeMultiplier;
-    if (!canShrinkMore)
+    return zoomOut(true);
+}
+
+HRESULT STDMETHODCALLTYPE WebView::zoomPageOut( 
+        /* [in] */ IUnknown* /*sender*/)
+{
+    return zoomOut(false);
+}
+
+HRESULT WebView::zoomOut(bool isTextOnly)
+{
+    if (!canZoomOut(isTextOnly))
         return E_FAIL;
-    return setTextSizeMultiplier(newScale);
+    setZoomMultiplier(zoomMultiplier(isTextOnly) / ZoomMultiplierRatio, isTextOnly);
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::canMakeTextStandardSize( 
     /* [in] */ IUnknown* /*sender*/,
     /* [retval][out] */ BOOL* result)
 {
-    bool notAlreadyStandard = m_textSizeMultiplier != 1.0f;
+    bool notAlreadyStandard = canResetZoom(true);
     *result = notAlreadyStandard ? TRUE : FALSE;
     return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::canResetPageZoom( 
+    /* [in] */ IUnknown* /*sender*/,
+    /* [retval][out] */ BOOL* result)
+{
+    bool notAlreadyStandard = canResetZoom(false);
+    *result = notAlreadyStandard ? TRUE : FALSE;
+    return S_OK;
+}
+
+bool WebView::canResetZoom(bool isTextOnly)
+{
+    return zoomMultiplier(isTextOnly) != 1.0f;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::makeTextStandardSize( 
     /* [in] */ IUnknown* /*sender*/)
 {
-    bool notAlreadyStandard = m_textSizeMultiplier != 1.0f;
-    if (notAlreadyStandard)
-        return setTextSizeMultiplier(1.0f);
+    return resetZoom(true);
+}
+
+HRESULT STDMETHODCALLTYPE WebView::resetPageZoom( 
+    /* [in] */ IUnknown* /*sender*/)
+{
+    return resetZoom(false);
+}
+
+HRESULT WebView::resetZoom(bool isTextOnly)
+{
+    if (!canResetZoom(isTextOnly))
+        return E_FAIL;
+    setZoomMultiplier(1.0f, isTextOnly);
     return S_OK;
 }
 
