@@ -1,3 +1,14 @@
+2008-03-20  Jasper Bryant-Greene  <jasper@unix.geek.nz>
+
+        Reviewed by Anders.
+
+        Resolves http://bugs.webkit.org/show_bug.cgi?id=16092
+        "[GTK] Middle-mouse click should allow opening a URL in a new tab"
+
+        Added WebKitNavigationAction object to GTK API
+
+        * GNUmakefile.am:
+
 2008-03-12  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.

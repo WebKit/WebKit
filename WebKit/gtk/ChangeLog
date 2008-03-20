@@ -1,3 +1,38 @@
+2008-03-20  Jasper Bryant-Greene  <jasper@unix.geek.nz>
+
+        Reviewed and tweaked by Anders.
+
+        Resolves http://bugs.webkit.org/show_bug.cgi?id=16092
+        "[GTK] Middle-mouse click should allow opening a URL in a new tab"
+
+        Created WebKitNavigationAction object exported through the API. The
+        navigation-requested signal provides this object as context for the
+        requested navigation, allowing the application to decide what to do
+        with the navigation based on which mouse button was used, which
+        modifier keys were held down, etc. This allows, for example, the
+        application to open links in a new tab when either middle-click or
+        control-click are used to initiate the navigation.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * webkit/headers.pri:
+        * webkit/webkit-marshal.list:
+        * webkit/webkitdefines.h:
+        * webkit/webkitnavigationaction.cpp: Added.
+        (webkit_navigation_action_finalize):
+        (webkit_navigation_action_class_init):
+        (webkit_navigation_action_init):
+        (webkit_navigation_action_get_button):
+        (webkit_navigation_action_get_modifier_flags):
+        (webkit_navigation_action_get_navigation_type):
+        (webkit_navigation_action_get_original_url):
+        * webkit/webkitnavigationaction.h: Added.
+        * webkit/webkitprivate.cpp:
+        (WebKit::kit):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
 2008-03-18  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed and landed by jhoneycutt.

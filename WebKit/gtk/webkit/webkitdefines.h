@@ -40,6 +40,9 @@
 
 G_BEGIN_DECLS
 
+typedef struct _WebKitNavigationAction WebKitNavigationAction;
+typedef struct _WebKitNavigationActionClass WebKitNavigationActionClass;
+
 typedef struct _WebKitNetworkRequest WebKitNetworkRequest;
 typedef struct _WebKitNetworkRequestClass WebKitNetworkRequestClass;
 
