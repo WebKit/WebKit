@@ -38,7 +38,6 @@ WebInspector.DocumentPanel = function(resource, views)
     var domView = this.views.dom;
     domView.hide = function() { InspectorController.hideDOMNodeHighlight() };
     domView.show = function() {
-        InspectorController.highlightDOMNode(panel.focusedDOMNode);
         panel.updateBreadcrumb();
         panel.updateTreeSelection();
     };
@@ -49,9 +48,17 @@ WebInspector.DocumentPanel = function(resource, views)
     domView.treeContentElement = document.createElement("div");
     domView.treeContentElement.className = "content tree outline-disclosure";
 
+    function clearNodeHighlight(event)
+    {
+        if (event.target === this)
+            InspectorController.hideDOMNodeHighlight();
+    }
+
     domView.treeListElement = document.createElement("ol");
     domView.treeListElement.addEventListener("mousedown", this._onmousedown.bind(this), false);
     domView.treeListElement.addEventListener("dblclick", this._ondblclick.bind(this), false);
+    domView.treeListElement.addEventListener("mousemove", this._onmousemove.bind(this), false);
+    domView.treeListElement.addEventListener("mouseout", clearNodeHighlight.bind(domView.treeListElement), false);
     domView.treeOutline = new TreeOutline(domView.treeListElement);
     domView.treeOutline.panel = this;
 
@@ -142,8 +149,6 @@ WebInspector.DocumentPanel.prototype = {
         this._focusedDOMNode = x;
 
         this._focusedNodeChanged();
-
-        InspectorController.highlightDOMNode(x);
 
         var nodeItem = this.revealNode(x);
         if (nodeItem)
@@ -818,6 +823,15 @@ WebInspector.DocumentPanel.prototype = {
             return;
 
         element.select();
+    },
+
+    _onmousemove: function(event)
+    {
+        var element = this._treeElementFromEvent(event);
+        if (!element)
+            return;
+
+        InspectorController.highlightDOMNode(element.representedObject);
     },
 }
 
