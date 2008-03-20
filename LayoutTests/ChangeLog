@@ -1,3 +1,12 @@
+2008-03-20  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Tweak NodeList tests to ensure that they force a GC outside of DRT.
+
+        * fast/dom/NodeList/5725058-crash-scenario-1.html:
+        * fast/dom/NodeList/5725058-crash-scenario-2.html:
+
 2008-03-20  Aaron Golden  <aegolden@gmail.com>
 
         Reviewed by Darin and David Kilzer.
