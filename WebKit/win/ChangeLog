@@ -1,3 +1,13 @@
+2008-03-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - make makeTextLarger() and zoomPageIn() do what they are supposed to do
+
+        * WebView.cpp:
+        (WebView::makeTextLarger): Changed call to canZoomIn() to zoomIn().
+        (WebView::zoomPageIn): Ditto.
+
 2008-03-20  Dave Hyatt  <hyatt@apple.com>
 
         Add full page zoom API for Windows WebKit.

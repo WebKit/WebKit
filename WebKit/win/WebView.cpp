@@ -3129,13 +3129,13 @@ bool WebView::canZoomIn(bool isTextOnly)
 HRESULT STDMETHODCALLTYPE WebView::makeTextLarger( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    return canZoomIn(true);
+    return zoomIn(true);
 }
 
 HRESULT STDMETHODCALLTYPE WebView::zoomPageIn( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    return canZoomIn(false);
+    return zoomIn(false);
 }
 
 HRESULT WebView::zoomIn(bool isTextOnly)
