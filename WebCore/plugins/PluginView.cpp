@@ -413,7 +413,7 @@ void PluginView::status(const char* message)
 NPError PluginView::getValue(NPNVariable variable, void* value)
 {
     switch (variable) {
-#if USE(NPOBJECT)
+#if ENABLE(NETSCAPE_PLUGIN_API)
         case NPNVWindowNPObject: {
             NPObject* windowScriptObject = m_parentFrame->windowScriptNPObject();
 
@@ -501,7 +501,7 @@ bool PluginView::arePopupsAllowed() const
 
 PassRefPtr<KJS::Bindings::Instance> PluginView::bindingInstance()
 {
-#if USE(NPOBJECT)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* object = 0;
 
     if (!m_plugin || !m_plugin->pluginFuncs()->getvalue)

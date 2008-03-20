@@ -1,3 +1,18 @@
+2008-03-20  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5809600> REGRESSION:
+        http/tests/plugins/cross-frame-object-access.html hangs Windows Layout
+        Tests
+
+        r30897 changed the way we conditionalize this feature.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::getValue): Test ENABLE(NETSCAPE_PLUGIN_API)
+        instead of USE(NPOBJECT).
+        (WebCore::PluginView::bindingInstance): Same.
+
 2008-03-20  Adam Roben  <aroben@apple.com>
 
         Highlight nodes when you hover over them in the Console
