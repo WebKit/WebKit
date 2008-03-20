@@ -45,7 +45,7 @@ CFDataRef SharedBuffer::createCFData()
         return m_cfData.get();
     }
 
-    return CFDataCreate(0, m_buffer.data(), m_buffer.size());
+    return CFDataCreate(0, reinterpret_cast<const UInt8*>(m_buffer.data()), m_buffer.size());
 }
 #endif
 
