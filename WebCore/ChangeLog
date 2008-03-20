@@ -1,5 +1,21 @@
 2008-03-20  Adam Roben  <aroben@apple.com>
 
+        Highlight nodes when you hover over them in the Console
+
+        Part of Bug 16532: Inspector should highlight nodes in page when
+        hovering over nodes in Inspector's interface
+
+        <http://bugs.webkit.org/show_bug.cgi?id=16532>
+        <rdar://problem/5712896>
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/ConsolePanel.js:
+        (WebInspector.ConsolePanel._formatnode): Add mouseover/mouseout event
+        listeners to highlight the node and clear the highlight.
+
+2008-03-20  Adam Roben  <aroben@apple.com>
+
         Highlight nodes in the page when you hover over their DOM breadcrumbs
 
         Part of Bug 16532: Inspector should highlight nodes in page when
