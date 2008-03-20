@@ -1,3 +1,11 @@
+2008-03-19  Stephanie Lewis <slewis@apple.com>
+
+        Rubber-stamped by Anders.
+
+        Fix Windows Build
+
+        * platform/SharedBuffer.h:
+
 2008-03-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver.

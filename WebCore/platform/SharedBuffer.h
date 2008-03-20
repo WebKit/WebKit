@@ -30,9 +30,11 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(CF)
 #include <wtf/RetainPtr.h>
+#endif
 
+#if PLATFORM(MAC)
 #ifdef __OBJC__
 @class NSData;
 #else
