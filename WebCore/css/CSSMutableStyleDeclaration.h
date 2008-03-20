@@ -91,6 +91,8 @@ public:
     // Besides adding the properties, this also removes any existing properties with these IDs.
     // It does no notification since it's called by the parser.
     void addParsedProperties(const CSSProperty* const *, int numProperties);
+    // This does no change notifications since it's only called by createMarkup.
+    void addParsedProperty(const CSSProperty&);
  
     PassRefPtr<CSSMutableStyleDeclaration> copyBlockProperties() const;
     void removeBlockProperties();

@@ -28,11 +28,14 @@
 
 #include "CDATASection.h"
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSelector.h"
+#include "CSSValue.h"
 #include "CSSValueKeywords.h"
 #include "Comment.h"
 #include "DeleteButtonController.h"
@@ -434,6 +437,24 @@ static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Ran
                     // over those from matched rules.
                     styleFromMatchedRules->merge(style.get());
                     style = styleFromMatchedRules;
+                    
+                    RefPtr<CSSComputedStyleDeclaration> computedStyleForElement = computedStyle(element);
+                    RefPtr<CSSMutableStyleDeclaration> fromComputedStyle = new CSSMutableStyleDeclaration();
+                    
+                    DeprecatedValueListConstIterator<CSSProperty> end;
+                    for (DeprecatedValueListConstIterator<CSSProperty> it = style->valuesIterator(); it != end; ++it) {
+                        const CSSProperty& property = *it;
+                        CSSValue* value = property.value();
+                        // The property value, if it's a percentage, may not reflect the actual computed value.  
+                        // For example: style="height: 1%; overflow: visible;" in quirksmode
+                        // FIXME: There are others like this, see <rdar://problem/5195123> Slashdot copy/paste fidelity problem
+                        if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
+                            if (static_cast<CSSPrimitiveValue*>(value)->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+                                if (RefPtr<CSSValue> computedPropertyValue = computedStyleForElement->getPropertyCSSValue(property.id()))
+                                    fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue));
+                    }
+                    
+                    style->merge(fromComputedStyle.get());
                 }
                 if (convert)
                     style->setProperty(CSSPropertyDisplay, CSSValueInline, true);

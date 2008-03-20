@@ -1,3 +1,24 @@
+2008-03-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver.
+        
+        <rdar://problem/5780697> Copying content with CSS property values that are percentages can cause fidelity issues
+         
+        Elements with height: x%; overflow: visible; overlap what's below them when they are copied from
+        a document in quirksmode and pasted into to one in standards mode.  This fix uses the computed 
+        the value for a property if its value is a percentage.
+        
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::addParsedProperty): Added so that we don't have to use
+        setProperty from appendStartMarkup.  We already have a parsed property value, so we shouldn't
+        use setProperty, since it takes in a String.  If we did, we would have to call CSSValue::cssText()
+        for a String only to re-parse it in setProperty.  This wasn't extremely important now, but it will 
+        be as we compute more properties to fix the rest of the copy/paste fidelity bugs.
+        * css/CSSMutableStyleDeclaration.h:
+        * editing/markup.cpp:
+        (WebCore::appendStartMarkup): Compute values for properties that have percentage values.  We could
+        perhaps narrow this special case to only include properties that are effected by quirksmode.
+
 2008-03-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
