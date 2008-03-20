@@ -24,6 +24,7 @@
 #define KJS_GlobalObject_h
 
 #include "JSVariableObject.h"
+#include "Activation.h"
 
 namespace KJS {
 
@@ -261,6 +262,37 @@ namespace KJS {
             return false;
 
         return checkTimeout();
+    }
+
+    inline ActivationImp* JSGlobalObject::pushActivation(ExecState* exec)
+    {
+        if (d()->activationCount == activationStackNodeSize) {
+            ActivationStackNode* newNode = new ActivationStackNode;
+            newNode->prev = d()->activations;
+            d()->activations = newNode;
+            d()->activationCount = 0;
+        }
+        
+        StackActivation* stackEntry = &d()->activations->data[d()->activationCount++];
+        stackEntry->activationStorage.init(exec);
+        return &stackEntry->activationStorage;
+    }
+
+    inline void JSGlobalObject::checkActivationCount()
+    {
+        if (!d()->activationCount) {
+            ActivationStackNode* prev = d()->activations->prev;
+            ASSERT(prev);
+            delete d()->activations;
+            d()->activations = prev;
+            d()->activationCount = activationStackNodeSize;
+        }
+    }
+
+    inline void JSGlobalObject::popActivation()
+    {
+        checkActivationCount();
+        d()->activations->data[--d()->activationCount].activationDataStorage.localStorage.shrink(0);    
     }
 
 } // namespace KJS

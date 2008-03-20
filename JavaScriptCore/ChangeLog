@@ -1,3 +1,27 @@
+2008-03-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - reduce function call overhead for 1.014x speedup on SunSpider
+
+        I moved some functions from ExecState.cpp to ExecStateInline.h and
+        from JSGlobalObject.cpp to JSGlobalObject.h, and declared them
+        inline; machine function call overhead for these was hurting JS
+        funcion call overhead.
+        
+        * kjs/ExecState.cpp:
+        * kjs/ExecStateInlines.h: Added.
+        (KJS::ExecState::ExecState):
+        (KJS::ExecState::~ExecState):
+        (KJS::FunctionExecState::FunctionExecState):
+        (KJS::FunctionExecState::~FunctionExecState):
+        * kjs/JSGlobalObject.cpp:
+        * kjs/JSGlobalObject.h:
+        (KJS::JSGlobalObject::pushActivation):
+        (KJS::JSGlobalObject::checkActivationCount):
+        (KJS::JSGlobalObject::popActivation):
+        * kjs/function.cpp:
+
 2008-03-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

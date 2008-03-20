@@ -530,37 +530,6 @@ ExecState* JSGlobalObject::globalExec()
     return &d()->globalExec;
 }
 
-ActivationImp* JSGlobalObject::pushActivation(ExecState* exec)
-{
-    if (d()->activationCount == activationStackNodeSize) {
-        ActivationStackNode* newNode = new ActivationStackNode;
-        newNode->prev = d()->activations;
-        d()->activations = newNode;
-        d()->activationCount = 0;
-    }
-    
-    StackActivation* stackEntry = &d()->activations->data[d()->activationCount++];
-    stackEntry->activationStorage.init(exec);
-    return &stackEntry->activationStorage;
-}
-
-inline void JSGlobalObject::checkActivationCount()
-{
-    if (!d()->activationCount) {
-        ActivationStackNode* prev = d()->activations->prev;
-        ASSERT(prev);
-        delete d()->activations;
-        d()->activations = prev;
-        d()->activationCount = activationStackNodeSize;
-    }
-}
-
-void JSGlobalObject::popActivation()
-{
-    checkActivationCount();
-    d()->activations->data[--d()->activationCount].activationDataStorage.localStorage.shrink(0);    
-}
-
 void JSGlobalObject::tearOffActivation(ExecState* exec, bool leaveRelic)
 {
     ActivationImp* oldActivation = exec->activationObject();

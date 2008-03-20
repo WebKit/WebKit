@@ -29,6 +29,7 @@
 #include "function.h"
 #include "internal.h"
 #include "scope_chain_mark.h"
+#include "ExecStateInlines.h"
 
 namespace KJS {
 
@@ -109,44 +110,6 @@ inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject, 
     ASSERT(m_scopeNode);
 }
 
-inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject, 
-         FunctionBodyNode* functionBodyNode, ExecState* callingExec,
-         FunctionImp* func, const List& args)
-    : m_globalObject(globalObject)
-    , m_exception(0)
-    , m_propertyNames(callingExec->m_propertyNames)
-    , m_emptyList(callingExec->m_emptyList)
-    , m_callingExec(callingExec)
-    , m_scopeNode(functionBodyNode)
-    , m_function(func)
-    , m_arguments(&args)
-    , m_scopeChain(func->scope())
-    , m_inlineScopeChainNode(0, 0)
-    , m_thisValue(thisObject)
-    , m_iterationDepth(0)
-    , m_switchDepth(0) 
-    , m_codeType(FunctionCode)
-{
-    ASSERT(m_scopeNode);
-
-    ActivationImp* activation = globalObject->pushActivation(this);
-    m_activation = activation;
-    m_localStorage = &activation->localStorage();
-    m_variableObject = activation;
-    if (functionBodyNode->usesEval() || functionBodyNode->needsClosure())
-        m_scopeChain.push(activation);
-    else {
-        m_inlineScopeChainNode.object = activation;
-        // The ScopeChain will ref this node itself, so we don't need to worry about
-        // anything trying to delete our scopenode
-        m_scopeChain.push(&m_inlineScopeChainNode);
-    }
-}
-
-inline ExecState::~ExecState()
-{
-}
-
 JSGlobalObject* ExecState::lexicalGlobalObject() const
 {
     JSObject* object = m_scopeChain.bottom();
@@ -187,22 +150,5 @@ EvalExecState::~EvalExecState()
     ASSERT(m_globalObject->activeExecStates().last() == this);
     m_globalObject->activeExecStates().removeLast();
 }
-
-FunctionExecState::FunctionExecState(JSGlobalObject* globalObject, JSObject* thisObject, 
-         FunctionBodyNode* functionBodyNode, ExecState* callingExec,
-         FunctionImp* func, const List& args)
-    : ExecState(globalObject, thisObject, functionBodyNode, callingExec, func, args)
-{
-    m_globalObject->activeExecStates().append(this);
-}
-
-FunctionExecState::~FunctionExecState()
-{
-    ASSERT(m_globalObject->activeExecStates().last() == this);
-    m_globalObject->activeExecStates().removeLast();
-
-    if (m_activation->needsPop())
-        m_globalObject->popActivation();
-}
-
+    
 } // namespace KJS
