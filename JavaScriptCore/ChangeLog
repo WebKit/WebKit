@@ -1,3 +1,14 @@
+2008-03-20  David Krause  <david.krause@gmail.com>
+
+        Reviewed by David Kilzer.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=17923
+        Bug 17923: ARM platform endian defines inaccurate
+
+        * wtf/Platform.h: 
+        Replaced !defined(__ARMEL__) check with !defined(__VFP_FP__)
+        for PLATFORM(MIDDLE_ENDIAN)
+
 2008-03-20  Maciej Stachowiak  <mjs@apple.com>
 
         - fix build
