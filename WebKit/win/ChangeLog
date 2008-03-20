@@ -1,3 +1,8 @@
+2008-03-20  John Sullivan  <sullivan@apple.com>
+
+        * English.lproj/Localizable.strings:
+        Brought this file up to date
+
 2008-03-19  Dan Bernstein  <mitz@apple.com>
 
         - build fix
