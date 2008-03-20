@@ -1,5 +1,30 @@
 2008-03-20  Adam Roben  <aroben@apple.com>
 
+        Show nodes' content/padding/border/margin boxes in the node highlight
+
+        Part of Bug 17221: Node highlight should show node metrics
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17221>
+        <rdar://problem/5732822>
+
+        Outstanding issues:
+          1) We don't show padding/border/margins for inlines
+          2) We don't show any numeric metrics, we just draw the boxes
+          3) We'll probably want to tweak the look of the highlight some, at
+             least to make the boxes better distinguishable
+
+        Reviewed by Tim Hatcher.
+
+        * page/InspectorController.cpp:
+        (WebCore::drawOutlinedRect): Added. Just draws a single rect.
+        (WebCore::drawHighlightForBoxes): Added. Takes the rects we calculated
+        for the node and draws the highlight.
+        (WebCore::InspectorController::drawNodeHighlight): Calculates the
+        content/padding/border/margin boxes for blocks and passes them off to
+        drawHighlightForBoxes. The behavior for inlines is for now unchanged.
+
+2008-03-20  Adam Roben  <aroben@apple.com>
+
         Fix RenderContainer's override of addLineBoxRects to match RenderObject's
 
         RenderContainer::addLineBoxRects was never getting called because its

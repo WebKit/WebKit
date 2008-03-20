@@ -1600,29 +1600,80 @@ void InspectorController::moveWindowBy(float x, float y) const
     m_page->chrome()->setWindowRect(frameRect);
 }
 
+static void drawOutlinedRect(GraphicsContext& context, const IntRect& rect, const Color& fillColor)
+{
+    static const int outlineThickness = 1;
+    static const Color outlineColor(62, 86, 180, 228);
+
+    IntRect outline = rect;
+    outline.inflate(outlineThickness);
+
+    context.clearRect(outline);
+
+    context.save();
+    context.clipOut(rect);
+    context.fillRect(outline, outlineColor);
+    context.restore();
+
+    context.fillRect(rect, fillColor);
+}
+
+static void drawHighlightForBoxes(GraphicsContext& context, const Vector<IntRect>& lineBoxRects, const IntRect& contentBox, const IntRect& paddingBox, const IntRect& borderBox, const IntRect& marginBox)
+{
+    static const Color contentBoxColor(125, 173, 217, 128);
+    static const Color paddingBoxColor(125, 173, 217, 160);
+    static const Color borderBoxColor(125, 173, 217, 192);
+    static const Color marginBoxColor(125, 173, 217, 228);
+
+    if (!lineBoxRects.isEmpty()) {
+        for (size_t i = 0; i < lineBoxRects.size(); ++i)
+            drawOutlinedRect(context, lineBoxRects[i], contentBoxColor);
+        return;
+    }
+
+    if (marginBox != borderBox)
+        drawOutlinedRect(context, marginBox, marginBoxColor);
+    if (borderBox != paddingBox)
+        drawOutlinedRect(context, borderBox, borderBoxColor);
+    if (paddingBox != contentBox)
+        drawOutlinedRect(context, paddingBox, paddingBoxColor);
+    drawOutlinedRect(context, contentBox, contentBoxColor);
+}
+
 void InspectorController::drawNodeHighlight(GraphicsContext& context) const
 {
-    static const Color overlayFillColor(0, 0, 0, 128);
-    static const int outlineThickness = 1;
-
     if (!m_highlightedNode)
         return;
 
     RenderObject* renderer = m_highlightedNode->renderer();
     if (!renderer)
         return;
-    IntRect nodeRect(renderer->absoluteBoundingBoxRect());
 
-    Vector<IntRect> rects;
-    if (renderer->isInline() || (renderer->isText() && !m_highlightedNode->isSVGElement()))
-        renderer->addLineBoxRects(rects);
-    if (rects.isEmpty())
-        rects.append(nodeRect);
+    IntRect contentBox = renderer->absoluteContentBox();
+    // FIXME: Should we add methods to RenderObject to obtain these rects?
+    IntRect paddingBox(contentBox.x() - renderer->paddingLeft(), contentBox.y() - renderer->paddingTop(), contentBox.width() + renderer->paddingLeft() + renderer->paddingRight(), contentBox.height() + renderer->paddingTop() + renderer->paddingBottom());
+    IntRect borderBox(paddingBox.x() - renderer->borderLeft(), paddingBox.y() - renderer->borderTop(), paddingBox.width() + renderer->borderLeft() + renderer->borderRight(), paddingBox.height() + renderer->borderTop() + renderer->borderBottom());
+    IntRect marginBox(borderBox.x() - renderer->marginLeft(), borderBox.y() - renderer->marginTop(), borderBox.width() + renderer->marginLeft() + renderer->marginRight(), borderBox.height() + renderer->marginTop() + renderer->marginBottom());
+
+    IntRect boundingBox = renderer->absoluteBoundingBoxRect();
+
+    Vector<IntRect> lineBoxRects;
+    if (renderer->isInline() || (renderer->isText() && !m_highlightedNode->isSVGElement())) {
+        // FIXME: We should show margins/padding/border for inlines.
+        renderer->addLineBoxRects(lineBoxRects);
+    }
+    if (lineBoxRects.isEmpty() && contentBox.isEmpty()) {
+        // If we have no line boxes and our content box is empty, we'll just draw our bounding box.
+        // This can happen, e.g., with an <a> enclosing an <img style="float:right">.
+        // FIXME: Can we make this better/more accurate? The <a> in the above case has no
+        // width/height but the highlight makes it appear to be the size of the <img>.
+        lineBoxRects.append(boundingBox);
+    }
 
     FrameView* view = m_inspectedPage->mainFrame()->view();
     FloatRect overlayRect = view->visibleContentRect();
 
-    if (!overlayRect.contains(nodeRect) && !nodeRect.contains(enclosingIntRect(overlayRect))) {
+    if (!overlayRect.contains(boundingBox) && !boundingBox.contains(enclosingIntRect(overlayRect))) {
         Element* element;
         if (m_highlightedNode->isElementNode())
             element = static_cast<Element*>(m_highlightedNode.get());
@@ -1634,20 +1685,7 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
 
     context.translate(-overlayRect.x(), -overlayRect.y());
 
-    // Draw translucent gray fill, out of which we will cut holes.
-    context.fillRect(overlayRect, overlayFillColor);
-
-    // Draw white frames around holes in first pass, so they will be erased in
-    // places where holes overlap or abut.
-    for (size_t i = 0; i < rects.size(); ++i) {
-        IntRect rect = rects[i];
-        rect.inflate(outlineThickness);
-        context.fillRect(rect, Color::white);
-    }
-
-    // Erase holes in second pass.
-    for (size_t i = 0; i < rects.size(); ++i)
-        context.clearRect(rects[i]);
+    drawHighlightForBoxes(context, lineBoxRects, contentBox, paddingBox, borderBox, marginBox);
 }
 
 } // namespace WebCore
