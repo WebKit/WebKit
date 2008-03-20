@@ -52,6 +52,7 @@ inline ExecState::ExecState(JSGlobalObject* globalObject)
     , m_arguments(0)
     , m_activation(0)
     , m_localStorage(&globalObject->localStorage())
+    , m_inlineScopeChainNode(0, 0)
     , m_variableObject(globalObject)
     , m_thisValue(globalObject)
     , m_iterationDepth(0)
@@ -72,6 +73,7 @@ inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* /*thisObject
     , m_arguments(0)
     , m_activation(0)
     , m_localStorage(&globalObject->localStorage())
+    , m_inlineScopeChainNode(0, 0)
     , m_variableObject(globalObject)
     , m_thisValue(globalObject)
     , m_iterationDepth(0)
@@ -97,6 +99,7 @@ inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject, 
     , m_activation(0)
     , m_localStorage(callingExec->m_localStorage)
     , m_scopeChain(scopeChain)
+    , m_inlineScopeChainNode(0, 0)
     , m_variableObject(variableObject)
     , m_thisValue(thisObject)
     , m_iterationDepth(0)
@@ -118,6 +121,7 @@ inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject,
     , m_function(func)
     , m_arguments(&args)
     , m_scopeChain(func->scope())
+    , m_inlineScopeChainNode(0, 0)
     , m_thisValue(thisObject)
     , m_iterationDepth(0)
     , m_switchDepth(0) 
@@ -129,7 +133,14 @@ inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject,
     m_activation = activation;
     m_localStorage = &activation->localStorage();
     m_variableObject = activation;
-    m_scopeChain.push(activation);
+    if (functionBodyNode->usesEval() || functionBodyNode->needsClosure())
+        m_scopeChain.push(activation);
+    else {
+        m_inlineScopeChainNode.object = activation;
+        // The ScopeChain will ref this node itself, so we don't need to worry about
+        // anything trying to delete our scopenode
+        m_scopeChain.push(&m_inlineScopeChainNode);
+    }
 }
 
 inline ExecState::~ExecState()

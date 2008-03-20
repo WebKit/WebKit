@@ -1,3 +1,20 @@
+2008-03-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Avoid heap allocating the root scope chain node for eval and closure free functions
+
+        Maciej suggested using an inline ScopeChainNode for functions that don't use eval
+        or closures as they are unable to ever capture the scope chain.  This gives us a 2.4%
+        win in sunspider, a 15% win in controlflow-recursive, and big (>5%) wins in a number 
+        of other tests.
+
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::ExecState):
+        * kjs/ExecState.h:
+        * kjs/scope_chain.h:
+        (KJS::ScopeChain::push):
+
 2008-03-19  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

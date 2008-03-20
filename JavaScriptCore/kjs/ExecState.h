@@ -188,6 +188,7 @@ namespace KJS  {
         LocalStorage* m_localStorage;
 
         ScopeChain m_scopeChain;
+        ScopeChainNode m_inlineScopeChainNode;
         JSVariableObject* m_variableObject;
         JSObject* m_thisValue;
         
