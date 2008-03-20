@@ -1,3 +1,17 @@
+2008-03-20  David Hyatt  <hyatt@apple.com>
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=9279
+
+        Make :hover work with the adjacent sibling selector.  This fix makes all forms of dynamic changes
+        (class name changes, :hover, :focus, etc.) work properly when used with the + selector.
+
+        Reviewed by weinig
+
+        Added fast/css/dynamic-sibling-selector.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+
 2008-03-20  Aaron Golden  <aegolden@gmail.com>
 
         Reviewed by Darin and David Kilzer.

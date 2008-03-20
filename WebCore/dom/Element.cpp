@@ -707,6 +707,7 @@ void Element::recalcStyle(StyleChange change)
     RenderStyle* currentStyle = renderStyle();
     bool hasParentStyle = parentNode() ? parentNode()->renderStyle() : false;
     bool hasPositionalRules = changed() && currentStyle && currentStyle->childrenAffectedByPositionalRules();
+    bool hasDirectAdjacentRules = currentStyle && currentStyle->childrenAffectedByDirectAdjacentRules();
 
 #if ENABLE(SVG)
     if (!hasParentStyle && isShadowNode() && isSVGElement())
@@ -776,9 +777,18 @@ void Element::recalcStyle(StyleChange change)
         }
     }
 
+    // FIXME: This check is good enough for :hover + foo, but it is not good enough for :hover + foo + bar.
+    // For now we will just worry about the common case, since it's a lot trickier to get the second case right
+    // without doing way too much re-resolution.
+    bool forceCheckOfNextElementSibling = false;
     for (Node *n = firstChild(); n; n = n->nextSibling()) {
+        bool childRulesChanged = n->changed() && n->styleChangeType() == FullStyleChange;
+        if (forceCheckOfNextElementSibling && n->isElementNode())
+            n->setChanged();
         if (change >= Inherit || n->isTextNode() || n->hasChangedChild() || n->changed())
             n->recalcStyle(change);
+        if (n->isElementNode())
+            forceCheckOfNextElementSibling = childRulesChanged && hasDirectAdjacentRules;
     }
 
     setChanged(NoStyleChange);
