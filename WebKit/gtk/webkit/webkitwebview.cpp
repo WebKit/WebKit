@@ -4,7 +4,6 @@
  *  Copyright (C) 2007 Xan Lopez <xan@gnome.org>
  *  Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *  Copyright (C) 2008 Jan Alonzo <jmalonzo@unpluggable.com>
- *  Copyright (C) 2008 Jasper Bryant-Greene <jasper@unix.geek.nz>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -481,6 +480,12 @@ static WebKitWebView* webkit_web_view_real_create_web_view(WebKitWebView*)
     return 0;
 }
 
+static WebKitNavigationResponse webkit_web_view_real_navigation_requested(WebKitWebView*, WebKitWebFrame* frame, WebKitNetworkRequest*)
+{
+    notImplemented();
+    return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
+}
+
 static void webkit_web_view_real_window_object_cleared(WebKitWebView*, WebKitWebFrame*, JSGlobalContextRef context, JSObjectRef window_object)
 {
     notImplemented();
@@ -659,33 +664,14 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * Signals
      */
 
-    /**
-     * WebKitWebView::navigation-requested:
-     * @web_view: the object on which the signal is emitted
-     * @action: a WebKitNavigationAction that provides the context for this
-     * navigation request, such as mouse button and keyboard state (Shift,
-     * Control, Alt).
-     * @frame: the #WebKitWebFrame to do the navigation action
-     * @networkRequest: the WebKitNetworkRequest
-     * @return: a WebKitNavigationResponse, such as
-     * WEBKIT_NAVIGATION_RESPONSE_ACCEPT.
-     *
-     * Emitted when a #WebKitWebFrame of this #WebKitWebView is moving to a new
-     * location, such as when a HTML anchor is clicked. The WebKitNavigationAction
-     * provides context (such as which mouse button the anchor was clicked on by),
-     * and the application can return WEBKIT_NAVIGATION_RESPONSE_IGNORE (to instruct
-     * this #WebKitWebView to not open the URL itself) if the application would
-     * rather open the URL in a new tab, for example.
-     */
     webkit_web_view_signals[NAVIGATION_REQUESTED] = g_signal_new("navigation-requested",
             G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-            0,
+            G_STRUCT_OFFSET (WebKitWebViewClass, navigation_requested),
             webkit_navigation_request_handled,
             NULL,
-            webkit_marshal_INT__OBJECT_OBJECT_OBJECT,
-            G_TYPE_INT, 3,
-            G_TYPE_OBJECT,
+            webkit_marshal_INT__OBJECT_OBJECT,
+            G_TYPE_INT, 2,
             G_TYPE_OBJECT,
             G_TYPE_OBJECT);
 
@@ -1005,6 +991,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * implementations of virtual methods
      */
     webViewClass->create_web_view = webkit_web_view_real_create_web_view;
+    webViewClass->navigation_requested = webkit_web_view_real_navigation_requested;
     webViewClass->window_object_cleared = webkit_web_view_real_window_object_cleared;
     webViewClass->choose_file = webkit_web_view_real_choose_file;
     webViewClass->script_alert = webkit_web_view_real_script_alert;

@@ -40,7 +40,6 @@
 #include "ProgressTracker.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
-#include "webkitnavigationaction.h"
 #include "webkitwebview.h"
 #include "webkitwebframe.h"
 #include "webkitprivate.h"
@@ -246,9 +245,9 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
     WebKitNetworkRequest* request = webkit_network_request_new(resourceRequest.url().string().utf8().data());
-    WebKitNavigationResponse response = WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
+    WebKitNavigationResponse response;
 
-    g_signal_emit_by_name(webView, "navigation-requested", kit(action), m_frame, request, &response);
+    g_signal_emit_by_name(webView, "navigation-requested", m_frame, request, &response);
 
     g_object_unref(request);
 

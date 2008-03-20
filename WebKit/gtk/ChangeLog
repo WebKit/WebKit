@@ -1,3 +1,20 @@
+2008-03-20  Alp Toker  <alp@atoker.com>
+
+        GTK+ build fix. Back out r31183. This patch also introduced API style
+        issues.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * webkit/headers.pri:
+        * webkit/webkit-marshal.list:
+        * webkit/webkitdefines.h:
+        * webkit/webkitnavigationaction.cpp: Removed.
+        * webkit/webkitnavigationaction.h: Removed.
+        * webkit/webkitprivate.cpp:
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
 2008-03-20  Jasper Bryant-Greene  <jasper@unix.geek.nz>
 
         Reviewed and tweaked by Anders.

@@ -31,7 +31,6 @@
 #include <webkit/webkitwebframe.h>
 #include <webkit/webkitwebsettings.h>
 #include <webkit/webkitnetworkrequest.h>
-#include <webkit/webkitnavigationaction.h>
 #include <webkit/webkitwebbackforwardlist.h>
 
 #include "BackForwardList.h"
@@ -40,7 +39,6 @@
 #include "Page.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
-#include "NavigationAction.h"
 
 #include <glib.h>
 
@@ -55,8 +53,6 @@ namespace WebKit {
 
     WebCore::HistoryItem* core(WebKitWebHistoryItem*);
     WebKitWebHistoryItem* kit(WebCore::HistoryItem*);
-
-    WebKitNavigationAction* kit(const WebCore::NavigationAction&);
 
     WebCore::BackForwardList* core(WebKitWebBackForwardList*);
 }
@@ -108,15 +104,6 @@ extern "C" {
     typedef struct _WebKitNetworkRequestPrivate WebKitNetworkRequestPrivate;
     struct _WebKitNetworkRequestPrivate {
         gchar* uri;
-    };
-
-    #define WEBKIT_NAVIGATION_ACTION_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_NAVIGATION_ACTION, WebKitNavigationActionPrivate))
-    typedef struct _WebKitNavigationActionPrivate WebKitNavigationActionPrivate;
-    struct _WebKitNavigationActionPrivate {
-        gint button;
-        gint modifierFlags;
-        gint navigationType;
-        gchar* originalURL;
     };
 
     WebKitWebFrame*

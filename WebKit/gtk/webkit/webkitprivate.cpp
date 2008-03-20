@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2007 Holger Hans Peter Freyther
- * Copyright (C) 2008 Jasper Bryant-Greene <jasper@unix.geek.nz>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,8 +28,6 @@
 #include "NotImplemented.h"
 #include "Pasteboard.h"
 #include "PasteboardHelperGtk.h"
-#include "MouseEvent.h"
-#include "CString.h"
 
 #if ENABLE(DATABASE)
 #include "DatabaseTracker.h"
@@ -82,39 +79,6 @@ WebKitWebView* kit(WebCore::Page* corePage)
     ASSERT(corePage->chrome());
     WebKit::ChromeClient* client = static_cast<WebKit::ChromeClient*>(corePage->chrome()->client());
     return client ? client->webView() : 0;
-}
-
-WebKitNavigationAction* kit(const WebCore::NavigationAction& action)
-{
-    WebKitNavigationAction* webKitAction = WEBKIT_NAVIGATION_ACTION(g_object_new(WEBKIT_TYPE_NAVIGATION_ACTION, NULL));
-    WebKitNavigationActionPrivate* priv = webKitAction->priv;
-
-    const Event* event = action.event();
-    if (event && event->isMouseEvent()) {
-        const MouseEvent* mouseEvent = static_cast<const MouseEvent*>(event);
-        priv->button = mouseEvent->button();
-    }
-
-    const UIEventWithKeyState* keyStateEvent = findEventWithKeyState(const_cast<Event*>(event));
-    if (keyStateEvent) {
-        int modifierFlags = 0;
-
-        if (keyStateEvent->shiftKey())
-            modifierFlags |= GDK_SHIFT_MASK;
-        if (keyStateEvent->ctrlKey())
-            modifierFlags |= GDK_CONTROL_MASK;
-        if (keyStateEvent->altKey())
-            modifierFlags |= GDK_MOD1_MASK;
-        if (keyStateEvent->metaKey())
-            modifierFlags |= GDK_MOD2_MASK;
-
-        priv->modifierFlags = modifierFlags;
-    }
-
-    priv->navigationType = action.type();
-    priv->originalURL = g_strdup(action.url().string().utf8().data());
-
-    return webKitAction;
 }
 
 } /** end namespace WebCore */
