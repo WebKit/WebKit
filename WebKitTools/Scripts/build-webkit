@@ -155,14 +155,14 @@ push @overrideFeatureDefinesOption, "ENABLE_DATABASE" if $databaseSupport;
 push @overrideFeatureDefinesOption, "ENABLE_ICONDATABASE" if $iconDatabaseSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG" if $svgSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_ANIMATION" if $svgAnimationSupport;
-push @overrideFeatureDefinesOption, "ENABLE_SVG_FILTERS" if $svgFiltersSupport;
-push @overrideFeatureDefinesOption, "ENABLE_SVG_FOREIGN_OBJECT" if $svgForeignObjectSupport;
-push @overrideFeatureDefinesOption, "ENABLE_SVG_FONTS" if $svgFontsSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_AS_IMAGE" if $svgAsImageSupport;
+push @overrideFeatureDefinesOption, "ENABLE_SVG_FILTERS" if $svgFiltersSupport;
+push @overrideFeatureDefinesOption, "ENABLE_SVG_FONTS" if $svgFontsSupport;
+push @overrideFeatureDefinesOption, "ENABLE_SVG_FOREIGN_OBJECT" if $svgForeignObjectSupport;
 push @overrideFeatureDefinesOption, "ENABLE_SVG_USE" if $svgUseSupport;
+push @overrideFeatureDefinesOption, "ENABLE_VIDEO" if $videoSupport;
 push @overrideFeatureDefinesOption, "ENABLE_XPATH" if $xpathSupport;
 push @overrideFeatureDefinesOption, "ENABLE_XSLT" if $xsltSupport;
-push @overrideFeatureDefinesOption, "ENABLE_VIDEO" if $videoSupport;
 my $overrideFeatureDefinesString = "FEATURE_DEFINES=" . join(" ", @overrideFeatureDefinesOption);
 
 my @coverageSupportOption = ();

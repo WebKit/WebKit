@@ -1,3 +1,13 @@
+2008-03-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Ensure that the defines generated for FEATURE_DEFINES are sorted so that they will match the default settings of each project.
+        This will prevent the world from being rebuilt if you happen to switch between building in Xcode and with build-webkit on the
+        command-line.
+
+        * Scripts/build-webkit:
+
 2008-03-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dan Bernstein.
