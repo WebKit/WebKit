@@ -1,3 +1,29 @@
+2008-03-19  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Change SharedBuffer so the wrapping platform data aspect can be shared with all CoreFoundation platforms
+        (Mac and Windows instead of just Mac)
+
+        * WebCore.vcproj/WebCore.vcproj: Add SharedBufferCF.cpp
+        * WebCore.xcodeproj/project.pbxproj: Ditto
+
+        * platform/SharedBuffer.cpp:
+        * platform/SharedBuffer.h: Change the private c'tor from NSData to CFDataRef, other PLATFORM tweaks
+
+        * platform/cf/SharedBufferCF.cpp: Added.
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::createCFData): Non-Mac version of createCFData
+        (WebCore::SharedBuffer::hasPlatformData):
+        (WebCore::SharedBuffer::platformData):
+        (WebCore::SharedBuffer::platformDataSize):
+        (WebCore::SharedBuffer::maybeTransferPlatformData):
+        (WebCore::SharedBuffer::clearPlatformData):
+
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::wrapNSData): Use the CFDataRef constructor via toll-free bridging
+        (WebCore::SharedBuffer::createCFData): Mac-specific version of createCFData
+
 2008-03-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Antti.

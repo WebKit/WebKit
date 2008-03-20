@@ -78,7 +78,7 @@ PassRefPtr<SharedBuffer> SharedBuffer::copy() const
 }
 
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(CF)
 
 inline void SharedBuffer::clearPlatformData()
 {

@@ -53,10 +53,12 @@ public:
     
 #if PLATFORM(MAC)
     NSData *createNSData();
-    CFDataRef createCFData();
     static PassRefPtr<SharedBuffer> wrapNSData(NSData *data);
 #endif
-        
+#if PLATFORM(CF)
+    CFDataRef createCFData();
+#endif
+
     const char* data() const;
     unsigned size() const;
     const Vector<char> &buffer() { return m_buffer; }
@@ -80,9 +82,9 @@ private:
     bool hasPlatformData() const;
     
     Vector<char> m_buffer;
-#if PLATFORM(MAC)
-    SharedBuffer(NSData *nsdata);
-    RetainPtr<NSData> m_nsData;
+#if PLATFORM(CF)
+    SharedBuffer(CFDataRef);
+    RetainPtr<CFDataRef> m_cfData;
 #endif
 };
     

@@ -95,12 +95,7 @@ namespace WebCore {
 
 PassRefPtr<SharedBuffer> SharedBuffer::wrapNSData(NSData *nsData)
 {
-    return adoptRef(new SharedBuffer(nsData));
-}
-
-SharedBuffer::SharedBuffer(NSData *nsData)
-    : m_nsData(nsData)
-{
+    return adoptRef(new SharedBuffer((CFDataRef)nsData));
 }
 
 NSData *SharedBuffer::createNSData()
@@ -109,40 +104,13 @@ NSData *SharedBuffer::createNSData()
 }
 
 CFDataRef SharedBuffer::createCFData()
-{    
-    return (CFDataRef)HardRetainWithNSRelease([[WebCoreSharedBufferData alloc] initWithSharedBuffer:this]);
-}
-
-bool SharedBuffer::hasPlatformData() const
 {
-    return m_nsData;
-}
-
-const char* SharedBuffer::platformData() const
-{
-    return (const char*)[m_nsData.get() bytes];
-}
-
-unsigned SharedBuffer::platformDataSize() const
-{
-    return [m_nsData.get() length];
-}
-
-void SharedBuffer::maybeTransferPlatformData()
-{
-    if (!m_nsData)
-        return;
+    if (m_cfData) {
+        CFRetain(m_cfData.get());
+        return m_cfData.get();
+    }
     
-    ASSERT(m_buffer.size() == 0);
-        
-    m_buffer.append(reinterpret_cast<const char*>([m_nsData.get() bytes]), [m_nsData.get() length]);
-        
-    m_nsData = nil;
-}
-
-void SharedBuffer::clearPlatformData()
-{
-    m_nsData = 0;
+    return (CFDataRef)HardRetainWithNSRelease([[WebCoreSharedBufferData alloc] initWithSharedBuffer:this]);
 }
 
 PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)

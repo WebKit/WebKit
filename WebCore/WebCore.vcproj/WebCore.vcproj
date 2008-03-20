@@ -4147,6 +4147,10 @@
 					RelativePath="..\platform\cf\RetainPtr.h"
 					>
 				</File>
+				<File
+					RelativePath="..\platform\cf\SharedBufferCF.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="graphics"
