@@ -1526,6 +1526,11 @@
 
         Bug 14390: Console input area should be more noticeable
         http://bugs.webkit.org/show_bug.cgi?id=14390
+        <rdar://5712831>
+
+        Bug 17237: Inspector should tab-complete object properties in the Console
+        http://bugs.webkit.org/show_bug.cgi?id=17237
+        <rdar://5732842>
 
         Adds tab completion, auto completion and a blended input prompt.
         The prompt is also focused when the console is shown.
