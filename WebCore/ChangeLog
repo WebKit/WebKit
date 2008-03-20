@@ -1,3 +1,14 @@
+2008-03-20  Aaron Golden  <aegolden@gmail.com>
+
+        Reviewed by Darin and David Kilzer.
+
+        Addresses <http://bugs.webkit.org/show_bug.cgi?id=15263>, which caused certain marquees to not display.
+
+        Test: fast/html/marquee-scroll.html
+
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::parseMappedAttribute):
+
 2008-03-20  Adam Roben  <aroben@apple.com>
 
         Export InspectorController::drawNodeHighlight

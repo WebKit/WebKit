@@ -1,3 +1,14 @@
+2008-03-20  Aaron Golden  <aegolden@gmail.com>
+
+        Reviewed by Darin and David Kilzer.
+
+        - test for <http://bugs.webkit.org/show_bug.cgi?id=15263>, which caused certain marquees to not display.
+
+        * fast/html/marquee-scroll.html: Added.
+        * platform/mac/fast/html/marquee-scroll-expected.checksum: Added.
+        * platform/mac/fast/html/marquee-scroll-expected.png: Added.
+        * platform/mac/fast/html/marquee-scroll-expected.txt: Added.
+
 2008-03-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver.

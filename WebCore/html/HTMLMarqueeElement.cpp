@@ -102,7 +102,7 @@ void HTMLMarqueeElement::parseMappedAttribute(MappedAttribute *attr)
         if (!attr->value().isEmpty())
             addCSSProperty(attr, CSSPropertyWebkitMarqueeDirection, attr->value());
     } else if (attr->name() == truespeedAttr)
-        m_minimumDelay = !attr->isNull() ? 0 : defaultMinimumDelay;
+        m_minimumDelay = !attr->isEmpty() ? 0 : defaultMinimumDelay;
     else
         HTMLElement::parseMappedAttribute(attr);
 }
