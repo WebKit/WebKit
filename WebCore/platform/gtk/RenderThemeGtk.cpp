@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Apple Inc.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2008 Collabora Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -155,8 +156,21 @@ static bool paintMozWidget(RenderTheme* theme, GtkThemeWidgetType type, RenderOb
     GdkRectangle gdkRect = IntRect(pos.x(), pos.y(), rect.width(), rect.height());
     GtkTextDirection direction = gtkTextDirection(o->style()->direction());
 
-    // FIXME: Pass the real clip region.
-    return moz_gtk_widget_paint(type, i.context->gdkDrawable(), &gdkRect, &gdkRect, &mozState, flags, direction) != MOZ_GTK_SUCCESS;
+    // Find the clip rectangle
+    cairo_t *cr = i.context->platformContext();
+    double clipX1, clipX2, clipY1, clipY2;
+    cairo_clip_extents(cr, &clipX1, &clipY1, &clipX2, &clipY2);
+
+    GdkRectangle gdkClipRect;
+    gdkClipRect.width = clipX2 - clipX1;
+    gdkClipRect.height = clipY2 - clipY1;
+    IntPoint clipPos = i.context->translatePoint(IntPoint(clipX1, clipY1));
+    gdkClipRect.x = clipPos.x();
+    gdkClipRect.y = clipPos.y();
+
+    gdk_rectangle_intersect(&gdkRect, &gdkClipRect, &gdkClipRect);
+
+    return moz_gtk_widget_paint(type, i.context->gdkDrawable(), &gdkRect, &gdkClipRect, &mozState, flags, direction) != MOZ_GTK_SUCCESS;
 }
 
 static void setButtonPadding(RenderStyle* style)

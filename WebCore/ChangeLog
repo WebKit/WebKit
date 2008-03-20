@@ -1,3 +1,14 @@
+2008-03-20  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17946
+        [GTK] Widgets are not clipped
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::paintMozWidget): pass the clipping rectangle to
+        moz_gtk_widget_paint() instead of just the widget rectangle.
+
 2008-03-20  David Hyatt  <hyatt@apple.com>
 
         Fix for http://bugs.webkit.org/show_bug.cgi?id=9279
