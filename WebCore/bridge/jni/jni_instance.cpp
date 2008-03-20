@@ -60,12 +60,12 @@ JavaInstance::~JavaInstance ()
 
 #define NUM_LOCAL_REFS 64
 
-void JavaInstance::begin()
+void JavaInstance::virtualBegin()
 {
     getJNIEnv()->PushLocalFrame (NUM_LOCAL_REFS);
 }
 
-void JavaInstance::end()
+void JavaInstance::virtualEnd()
 {
     getJNIEnv()->PopLocalFrame (NULL);
 }

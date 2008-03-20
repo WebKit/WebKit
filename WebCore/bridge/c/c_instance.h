@@ -49,10 +49,7 @@ public:
     ~CInstance ();
     
     virtual Class *getClass() const;
-    
-    virtual void begin();
-    virtual void end();
-    
+
     virtual JSValue *valueOf() const;
     virtual JSValue *defaultValue (JSType hint) const;
 

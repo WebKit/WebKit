@@ -62,16 +62,6 @@ Class *CInstance::getClass() const
     return _class;
 }
 
-void CInstance::begin()
-{
-    // Do nothing.
-}
-
-void CInstance::end()
-{
-    // Do nothing.
-}
-
 bool CInstance::implementsCall() const
 {
     return (_object->_class->invokeDefault != 0);

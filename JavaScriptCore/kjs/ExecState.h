@@ -45,12 +45,11 @@ namespace KJS  {
     class ScopeNode;
     
     enum CodeType { GlobalCode, EvalCode, FunctionCode };
-    
-    typedef Vector<ExecState*, 16> ExecStateStack;
 
     // Represents the current state of script execution.
     // Passed as the first argument to most functions.
     class ExecState : Noncopyable {
+        friend class JSGlobalObject;
     public:
         // Global object that was in scope when the current script started executing.
         JSGlobalObject* dynamicGlobalObject() const { return m_globalObject; }
@@ -163,9 +162,6 @@ namespace KJS  {
             m_completionType = Interrupted;
             return 0;
         }
-
-        static void markActiveExecStates();
-        static ExecStateStack& activeExecStates();
 
     protected:
         ExecState(JSGlobalObject*);

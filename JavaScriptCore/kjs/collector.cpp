@@ -935,7 +935,6 @@ bool Collector::collect()
 
   markStackObjectsConservatively();
   markProtectedObjects();
-  ExecState::markActiveExecStates();
   List::markProtectedLists();
 #if USE(MULTIPLE_THREADS)
   if (!currentThreadIsMainThread)
@@ -1045,10 +1044,16 @@ bool Collector::isBusy()
 
 void Collector::reportOutOfMemoryToAllExecStates()
 {
-    ExecStateStack::const_iterator end = ExecState::activeExecStates().end();
-    for (ExecStateStack::const_iterator it = ExecState::activeExecStates().begin(); it != end; ++it) {
-        (*it)->setException(Error::create(*it, GeneralError, "Out of memory"));
-    }
+    if (!JSGlobalObject::head())
+        return;
+
+    JSGlobalObject* globalObject = JSGlobalObject::head();
+    do {
+        ExecStateStack::const_iterator end = globalObject->activeExecStates().end();
+        for (ExecStateStack::const_iterator it = globalObject->activeExecStates().begin(); it != end; ++it)
+            (*it)->setException(Error::create(*it, GeneralError, "Out of memory"));
+        globalObject = globalObject->next();
+    } while (globalObject != JSGlobalObject::head());
 }
 
 } // namespace KJS

@@ -250,17 +250,16 @@ static void _didExecute(WebScriptObject *obj)
 + (BOOL)throwException:(NSString *)exceptionMessage
 {
     JSLock lock;
-    
-    // This code assumes that we only ever have one running interpreter.  A
-    // good assumption for now, as we depend on that elsewhere.  However,
-    // in the future we may have the ability to run multiple interpreters,
-    // in which case this will have to change.
-    
-    if (ExecState::activeExecStates().size()) {
-        throwError(ExecState::activeExecStates().last(), GeneralError, exceptionMessage);
+
+    JSGlobalObject* globalObject = Instance::currentGlobalObject();
+    if (!globalObject)
+        return NO;
+
+    if (globalObject->activeExecStates().size()) {
+        throwError(globalObject->activeExecStates().last(), GeneralError, exceptionMessage);
         return YES;
     }
-    
+
     return NO;
 }
 
@@ -498,12 +497,13 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSLock lock;
 
     ExecState* exec = 0;
-    JSObject* globalObject = [self _rootObject]->globalObject();
-    ExecStateStack::const_iterator end = ExecState::activeExecStates().end();
-    for (ExecStateStack::const_iterator it = ExecState::activeExecStates().begin(); it != end; ++it)
+    JSGlobalObject* globalObject = [self _rootObject]->globalObject();
+    ExecStateStack::const_iterator end = globalObject->activeExecStates().end();
+    for (ExecStateStack::const_iterator it = globalObject->activeExecStates().begin(); it != end; ++it) {
         if ((*it)->dynamicGlobalObject() == globalObject)
             exec = *it;
-            
+    }
+
     if (exec)
         throwError(exec, GeneralError, description);
 }

@@ -483,6 +483,10 @@ void JSGlobalObject::mark()
 {
     JSVariableObject::mark();
 
+    ExecStateStack::const_iterator end = d()->activeExecStates.end();
+    for (ExecStateStack::const_iterator it = d()->activeExecStates.begin(); it != end; ++it)
+        (*it)->m_scopeChain.mark();
+
     markIfNeeded(d()->globalExec.exception());
 
     markIfNeeded(d()->objectConstructor);

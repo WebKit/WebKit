@@ -1,3 +1,32 @@
+2008-03-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for <rdar://problem/5785694>
+        Crash occurs at KJS::Collector::collect() when loading web clip widgets with a PAC file
+
+        Make the activeExecStates stack per JSGlobalObject instead of static to ensure
+        thread safety.
+
+        * JavaScriptCore.exp:
+        * kjs/ExecState.cpp:
+        (KJS::InterpreterExecState::InterpreterExecState):
+        (KJS::InterpreterExecState::~InterpreterExecState):
+        (KJS::EvalExecState::EvalExecState):
+        (KJS::EvalExecState::~EvalExecState):
+        (KJS::FunctionExecState::FunctionExecState):
+        (KJS::FunctionExecState::~FunctionExecState):
+        * kjs/ExecState.h:
+        (KJS::):
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::mark):
+        * kjs/JSGlobalObject.h:
+        (KJS::JSGlobalObject::activeExecStates):
+        * kjs/collector.cpp:
+        (KJS::Collector::collect):
+        (KJS::Collector::reportOutOfMemoryToAllExecStates): Iterate all JSGlobalObjects and report
+        the OutOfMemory condition to all the ExecStates in each.
+
 2008-03-19  Jasper Bryant-Greene  <jasper@unix.geek.nz>
 
         Reviewed by Maciej Stachowiak.

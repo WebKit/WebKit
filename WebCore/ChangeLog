@@ -1,3 +1,45 @@
+2008-03-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for <rdar://problem/5785694>
+        Crash occurs at KJS::Collector::collect() when loading web clip widgets with a PAC file
+
+        Make the activeExecStates stack per JSGlobalObject instead of static to ensure
+        thread safety.
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject throwException:]): Change to throw an exception on the current
+        GlobalObject instead of the top of the static activeExecStates stack.
+        (-[WebScriptObject setException:]): Change to use the top of the rootObjects GlobalObject
+        instead of the top of the static activeExecStates stack.
+
+        * bridge/c/c_instance.cpp:
+        * bridge/c/c_instance.h:
+        * bridge/jni/jni_instance.cpp:
+        (JavaInstance::virtualBegin):
+        (JavaInstance::virtualEnd):
+        * bridge/jni/jni_instance.h:
+        * bridge/objc/objc_instance.h:
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::~ObjcInstance):
+        (ObjcInstance::virtualBegin):
+        (ObjcInstance::virtualEnd):
+        * bridge/runtime.cpp:
+        (KJS::Bindings::Instance::setDidExecuteFunction):
+        (KJS::Bindings::Instance::didExecuteFunction):
+        (KJS::Bindings::Instance::setCurrentGlobalObject): Added.
+        (KJS::Bindings::Instance::currentGlobalObject): Added.
+        (KJS::Bindings::Instance::begin):
+        (KJS::Bindings::Instance::end):
+        * bridge/runtime.h:
+        (KJS::Bindings::Instance::virtualBegin): Renamed from begin().
+        (KJS::Bindings::Instance::virtualEnd): Renamed from end().
+        We now store the currently active globalObject everytime we cross the runtime
+        object boundary.  To do this, we take advantage of the existing begin/end
+        methods that are called when crossing this boundary, making begin set the current
+        globalObject and then call the old begin, now called virtualBegin.
+
 2008-03-19  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

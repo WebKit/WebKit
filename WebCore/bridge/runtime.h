@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 namespace KJS  {
 
 class Identifier;
+class JSGlobalObject;
 class List;
 class PropertyNameArray;
 
@@ -102,15 +103,18 @@ public:
 
     static void setDidExecuteFunction(KJSDidExecuteFunctionPtr func);
     static KJSDidExecuteFunctionPtr didExecuteFunction();
-    
+
+    static void setCurrentGlobalObject(JSGlobalObject*);
+    static JSGlobalObject* currentGlobalObject();
+
     static JSObject* createRuntimeObject(PassRefPtr<Instance>);
     static Instance* getInstance(JSObject*, BindingLanguage);
 
     // These functions are called before and after the main entry points into
     // the native implementations.  They can be used to establish and cleanup
     // any needed state.
-    virtual void begin() {}
-    virtual void end() {}
+    void begin();
+    void end();
     
     virtual Class *getClass() const = 0;
     
@@ -138,6 +142,9 @@ public:
     virtual BindingLanguage getBindingLanguage() const = 0;
 
 protected:
+    virtual void virtualBegin() { }
+    virtual void virtualEnd() { }
+
     RefPtr<RootObject> _rootObject;
 };
 

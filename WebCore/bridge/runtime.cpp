@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,10 +55,40 @@ Instance::~Instance()
 {
 }
 
-static KJSDidExecuteFunctionPtr _DidExecuteFunction;
+static KJSDidExecuteFunctionPtr s_didExecuteFunction;
 
-void Instance::setDidExecuteFunction(KJSDidExecuteFunctionPtr func) { _DidExecuteFunction = func; }
-KJSDidExecuteFunctionPtr Instance::didExecuteFunction() { return _DidExecuteFunction; }
+void Instance::setDidExecuteFunction(KJSDidExecuteFunctionPtr func)
+{
+    s_didExecuteFunction = func;
+}
+
+KJSDidExecuteFunctionPtr Instance::didExecuteFunction()
+{
+    return s_didExecuteFunction;
+}
+
+static JSGlobalObject* s_currentGlobalObject;
+
+void Instance::setCurrentGlobalObject(JSGlobalObject* globalObject)
+{
+    s_currentGlobalObject = globalObject;
+}
+
+JSGlobalObject* Instance::currentGlobalObject()
+{
+    return s_currentGlobalObject;
+}
+
+void Instance::begin()
+{
+    setCurrentGlobalObject(_rootObject && _rootObject->isValid() ? _rootObject->globalObject() : 0);
+    virtualBegin();
+}
+
+void Instance::end()
+{
+    virtualEnd();
+}
 
 JSValue *Instance::getValueOfField(ExecState *exec, const Field *aField) const
 {

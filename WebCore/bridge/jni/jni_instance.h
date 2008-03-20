@@ -77,9 +77,6 @@ public:
     
     virtual Class *getClass() const;
     
-    virtual void begin();
-    virtual void end();
-    
     virtual JSValue *valueOf() const;
     virtual JSValue *defaultValue (JSType hint) const;
 
@@ -93,9 +90,13 @@ public:
 
     virtual BindingLanguage getBindingLanguage() const { return JavaLanguage; }
 
+protected:
+    virtual void virtualBegin();
+    virtual void virtualEnd();
+
 private:
     JavaInstance(jobject instance, PassRefPtr<RootObject>);
-    
+
     RefPtr<JObjectWrapper> _instance;
     mutable JavaClass *_class;
 };

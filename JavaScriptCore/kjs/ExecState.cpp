@@ -144,24 +144,6 @@ JSGlobalObject* ExecState::lexicalGlobalObject() const
     return m_globalObject;
 }
 
-void ExecState::markActiveExecStates() 
-{
-    ExecStateStack::const_iterator end = activeExecStates().end();
-    for (ExecStateStack::const_iterator it = activeExecStates().begin(); it != end; ++it)
-        (*it)->m_scopeChain.mark();
-}
-
-static inline ExecStateStack& inlineActiveExecStates()
-{
-    static ExecStateStack staticActiveExecStates;
-    return staticActiveExecStates;
-}
-
-ExecStateStack& ExecState::activeExecStates()
-{
-    return inlineActiveExecStates();
-}
-
 GlobalExecState::GlobalExecState(JSGlobalObject* globalObject)
     : ExecState(globalObject)
 {
@@ -174,25 +156,25 @@ GlobalExecState::~GlobalExecState()
 InterpreterExecState::InterpreterExecState(JSGlobalObject* globalObject, JSObject* thisObject, ProgramNode* programNode)
     : ExecState(globalObject, thisObject, programNode)
 {
-    inlineActiveExecStates().append(this);
+    m_globalObject->activeExecStates().append(this);
 }
 
 InterpreterExecState::~InterpreterExecState()
 {
-    ASSERT(inlineActiveExecStates().last() == this);
-    inlineActiveExecStates().removeLast();
+    ASSERT(m_globalObject->activeExecStates().last() == this);
+    m_globalObject->activeExecStates().removeLast();
 }
 
 EvalExecState::EvalExecState(JSGlobalObject* globalObject, JSObject* thisObj, EvalNode* evalNode, ExecState* callingExec, const ScopeChain& scopeChain, JSVariableObject* variableObject)
     : ExecState(globalObject, thisObj, evalNode, callingExec, scopeChain, variableObject)
 {
-    inlineActiveExecStates().append(this);
+    m_globalObject->activeExecStates().append(this);
 }
 
 EvalExecState::~EvalExecState()
 {
-    ASSERT(inlineActiveExecStates().last() == this);
-    inlineActiveExecStates().removeLast();
+    ASSERT(m_globalObject->activeExecStates().last() == this);
+    m_globalObject->activeExecStates().removeLast();
 }
 
 FunctionExecState::FunctionExecState(JSGlobalObject* globalObject, JSObject* thisObject, 
@@ -200,13 +182,13 @@ FunctionExecState::FunctionExecState(JSGlobalObject* globalObject, JSObject* thi
          FunctionImp* func, const List& args)
     : ExecState(globalObject, thisObject, functionBodyNode, callingExec, func, args)
 {
-    inlineActiveExecStates().append(this);
+    m_globalObject->activeExecStates().append(this);
 }
 
 FunctionExecState::~FunctionExecState()
 {
-    ASSERT(inlineActiveExecStates().last() == this);
-    inlineActiveExecStates().removeLast();
+    ASSERT(m_globalObject->activeExecStates().last() == this);
+    m_globalObject->activeExecStates().removeLast();
 
     if (m_activation->needsPop())
         m_globalObject->popActivation();

@@ -52,21 +52,22 @@ ObjcInstance::ObjcInstance(ObjectStructPtr instance, PassRefPtr<RootObject> root
 
 ObjcInstance::~ObjcInstance() 
 {
-    begin(); // -finalizeForWebScript and -dealloc/-finalize may require autorelease pools.
+    // -finalizeForWebScript and -dealloc/-finalize may require autorelease pools.
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     if ([_instance.get() respondsToSelector:@selector(finalizeForWebScript)])
         [_instance.get() performSelector:@selector(finalizeForWebScript)];
     _instance = 0;
-    end();
+    [pool drain];
 }
 
-void ObjcInstance::begin()
+void ObjcInstance::virtualBegin()
 {
     if (!_pool)
         _pool = [[NSAutoreleasePool alloc] init];
     _beginCount++;
 }
 
-void ObjcInstance::end()
+void ObjcInstance::virtualEnd()
 {
     _beginCount--;
     ASSERT(_beginCount >= 0);
