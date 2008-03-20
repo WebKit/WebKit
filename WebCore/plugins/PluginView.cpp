@@ -32,7 +32,6 @@
 #include "Element.h"
 #include "EventNames.h"
 #include "FrameLoader.h"
-#include "FrameLoadRequest.h"
 #include "FrameTree.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -80,25 +79,6 @@ namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
-
-class PluginRequest {
-public:
-    PluginRequest(const FrameLoadRequest& frameLoadRequest, bool sendNotification, void* notifyData, bool shouldAllowPopups)
-        : m_frameLoadRequest(frameLoadRequest)
-        , m_notifyData(notifyData)
-        , m_sendNotification(sendNotification)
-        , m_shouldAllowPopups(shouldAllowPopups) { }
-public:
-    const FrameLoadRequest& frameLoadRequest() const { return m_frameLoadRequest; }
-    void* notifyData() const { return m_notifyData; }
-    bool sendNotification() const { return m_sendNotification; }
-    bool shouldAllowPopups() const { return m_shouldAllowPopups; }
-private:
-    FrameLoadRequest m_frameLoadRequest;
-    void* m_notifyData;
-    bool m_sendNotification;
-    bool m_shouldAllowPopups;
-};
 
 static int s_callingPlugin;
 

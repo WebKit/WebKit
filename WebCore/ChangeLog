@@ -1,3 +1,20 @@
+2008-03-20  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Anders.
+
+        Fix Windows warning / leak: warning C4150: deletion of pointer to
+        incomplete type 'WebCore::PluginRequest'; no destructor called
+
+        * plugins/PluginView.cpp: Move PluginRequest class to PluginView.h so
+        Windows PluginView destructor can use WTF::deleteAllValues to clean up
+        m_requests.
+        * plugins/PluginView.h:
+        (WebCore::PluginRequest::PluginRequest):
+        (WebCore::PluginRequest::frameLoadRequest):
+        (WebCore::PluginRequest::notifyData):
+        (WebCore::PluginRequest::sendNotification):
+        (WebCore::PluginRequest::shouldAllowPopups):
+
 2008-03-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

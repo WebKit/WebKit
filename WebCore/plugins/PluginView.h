@@ -28,6 +28,7 @@
 #define PluginView_H
 
 #include "CString.h"
+#include "FrameLoadRequest.h"
 #include "IntRect.h"
 #include "KURL.h"
 #include "PlatformString.h"
@@ -52,7 +53,6 @@ namespace KJS {
 namespace WebCore {
     class Element;
     class Frame;
-    struct FrameLoadRequest;
     class KeyboardEvent;
     class MouseEvent;
     class KURL;
@@ -69,6 +69,25 @@ namespace WebCore {
         PluginStatusCanNotFindPlugin,
         PluginStatusCanNotLoadPlugin,
         PluginStatusLoadedSuccessfully
+    };
+
+    class PluginRequest {
+    public:
+        PluginRequest(const FrameLoadRequest& frameLoadRequest, bool sendNotification, void* notifyData, bool shouldAllowPopups)
+            : m_frameLoadRequest(frameLoadRequest)
+            , m_notifyData(notifyData)
+            , m_sendNotification(sendNotification)
+            , m_shouldAllowPopups(shouldAllowPopups) { }
+    public:
+        const FrameLoadRequest& frameLoadRequest() const { return m_frameLoadRequest; }
+        void* notifyData() const { return m_notifyData; }
+        bool sendNotification() const { return m_sendNotification; }
+        bool shouldAllowPopups() const { return m_shouldAllowPopups; }
+    private:
+        FrameLoadRequest m_frameLoadRequest;
+        void* m_notifyData;
+        bool m_sendNotification;
+        bool m_shouldAllowPopups;
     };
 
     class PluginView : public Widget, private PluginStreamClient {
