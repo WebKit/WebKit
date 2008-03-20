@@ -64,6 +64,7 @@ WebInspector.DocumentPanel = function(resource, views)
 
     domView.crumbsElement = document.createElement("div");
     domView.crumbsElement.className = "crumbs";
+    domView.crumbsElement.addEventListener("mouseout", clearNodeHighlight.bind(domView.crumbsElement), false);
 
     domView.innerCrumbsElement = document.createElement("div");
     domView.crumbsElement.appendChild(domView.innerCrumbsElement);
@@ -265,6 +266,7 @@ WebInspector.DocumentPanel.prototype = {
 
         var mouseOverCrumbFunction = function(event) {
             panel.mouseOverCrumb = true;
+            InspectorController.highlightDOMNode(this.representedObject);
 
             if ("mouseOutTimeout" in panel) {
                 clearTimeout(panel.mouseOutTimeout);
@@ -303,7 +305,7 @@ WebInspector.DocumentPanel.prototype = {
             crumb.className = "crumb";
             crumb.representedObject = current;
             crumb.addEventListener("mousedown", selectCrumbFunction, false);
-            crumb.addEventListener("mouseover", mouseOverCrumbFunction, false);
+            crumb.addEventListener("mouseover", mouseOverCrumbFunction.bind(crumb), false);
             crumb.addEventListener("mouseout", mouseOutCrumbFunction, false);
 
             var crumbTitle;
