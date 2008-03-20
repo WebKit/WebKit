@@ -31,6 +31,7 @@
 #include "JSGlobalObject.h"
 
 #include "Activation.h"
+#include "SavedBuiltins.h"
 #include "array_object.h"
 #include "bool_object.h"
 #include "date_object.h"
@@ -41,7 +42,7 @@
 #include "number_object.h"
 #include "object_object.h"
 #include "regexp_object.h"
-#include "SavedBuiltins.h"
+#include "scope_chain_mark.h"
 #include "string_object.h"
 
 #if HAVE(SYS_TIME_H)

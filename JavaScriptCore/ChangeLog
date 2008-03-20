@@ -1,3 +1,11 @@
+2008-03-19  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix release build.
+
+        * kjs/JSGlobalObject.cpp:  Add missing #include.
+
 2008-03-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
