@@ -80,6 +80,7 @@ width: 784px;
 word-spacing: 0px;
 word-wrap: normal;
 z-index: auto;
+zoom: 1;
 -webkit-appearance: none;
 -webkit-background-clip: border;
 -webkit-background-composite: source-over;

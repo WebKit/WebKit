@@ -1,3 +1,12 @@
+2008-03-21  Dan Bernstein  <mitz@apple.com>
+
+        - update results for the 'zoom' property added in
+          <http://trac.webkit.org/projects/webkit/changeset/31155>
+
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2008-03-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -158,6 +158,8 @@ rect: style.getPropertyValue(word-wrap) : normal
 rect: style.getPropertyCSSValue(word-wrap) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(z-index) : auto
 rect: style.getPropertyCSSValue(z-index) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(zoom) : 1
+rect: style.getPropertyCSSValue(zoom) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-appearance) : none
 rect: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-background-clip) : border
@@ -496,6 +498,8 @@ g: style.getPropertyValue(word-wrap) : normal
 g: style.getPropertyCSSValue(word-wrap) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(z-index) : auto
 g: style.getPropertyCSSValue(z-index) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(zoom) : 1
+g: style.getPropertyCSSValue(zoom) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-appearance) : none
 g: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-background-clip) : border

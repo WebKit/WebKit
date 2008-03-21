@@ -79,6 +79,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     word-spacing: 0px
     word-wrap: normal
     z-index: auto
+    zoom: 1
     -webkit-appearance: none
     -webkit-background-clip: border
     -webkit-background-composite: source-over
