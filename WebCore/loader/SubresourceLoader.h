@@ -33,12 +33,6 @@
 #include "ResourceLoader.h"
 #include <wtf/PassRefPtr.h>
  
-#ifndef __OBJC__
-class NSArray;
-class NSDictionary;
-class NSMutableURLRequest;
-#endif
- 
 namespace WebCore {
 
     class FormData;
