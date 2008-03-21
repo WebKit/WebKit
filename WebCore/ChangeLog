@@ -1,5 +1,19 @@
 2008-03-20  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Maciej.
+
+        Small loader cleanups.
+        
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest):
+        No need to call setRequest here, ResourceLoader::willSendRequest takes care of that. 
+        Also, there is no need to check that newRequest is null here, because we assert earlier that it is not.
+        
+        * loader/ResourceLoader.h:
+        Get rid of setRequest, it is no longer needed.
+
+2008-03-20  Anders Carlsson  <andersca@apple.com>
+
         Get rid of a couple of unnecessary class declarations.
         
         * loader/SubresourceLoader.h:

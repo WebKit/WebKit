@@ -113,7 +113,6 @@ namespace WebCore {
         void didFinishLoadingOnePart();
 
         const ResourceRequest& request() const { return m_request; }
-        void setRequest(const ResourceRequest& request) { m_request = request; }
         bool reachedTerminalState() const { return m_reachedTerminalState; }
         bool cancelled() const { return m_cancelled; }
         bool defersLoading() const { return m_defersLoading; }
