@@ -1,3 +1,13 @@
+2008-03-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - test for an assertion failure due to a line being marked dirty during
+          computeVerticalPositionsForLine() due to temporary box destruction
+
+        * fast/inline/clean-after-removing-temp-boxes-expected.txt: Added.
+        * fast/inline/clean-after-removing-temp-boxes.html: Added.
+
 2008-03-20  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Sam Weinig.

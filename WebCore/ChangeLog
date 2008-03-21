@@ -1,3 +1,20 @@
+2008-03-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - fix an assertion failure due to a line being marked dirty during
+          computeVerticalPositionsForLine() due to temporary box destruction
+
+        Test: fast/inline/clean-after-removing-temp-boxes.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setTextWithOffset): Added code to dirty lines
+        when this method is called on an empty text node, which has no line
+        boxes.
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::computeVerticalPositionsForLine): Mark the line
+        clean in the end.
+
 2008-03-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej.

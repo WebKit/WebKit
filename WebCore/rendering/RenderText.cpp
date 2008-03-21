@@ -856,6 +856,12 @@ void RenderText::setTextWithOffset(PassRefPtr<StringImpl> text, unsigned offset,
             curr->setLineBreakPos(curr->lineBreakPos() + delta);
     }
 
+    // If the text node is empty, dirty the line where new text will be inserted.
+    if (!firstTextBox() && parent()) {
+        parent()->dirtyLinesFromChangedChild(this);
+        dirtiedLines = true;
+    }
+
     m_linesDirty = dirtiedLines;
     setText(text, force);
 }

@@ -711,6 +711,9 @@ void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox, BidiRu
         // to update the static normal flow x/y of positioned elements.
         r->m_object->position(r->m_box);
     }
+    // Positioned objects and zero-length text nodes destroy their boxes in
+    // position(), which unnecessarily dirties the line.
+    lineBox->markDirty(false);
 }
 
 // collects one line of the paragraph and transforms it to visual order
