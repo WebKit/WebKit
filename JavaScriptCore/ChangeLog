@@ -1,3 +1,35 @@
+2008-03-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Consolidate static identifier initializers within CommonIdentifiers.
+
+        No reliably measurable change on SunSpider; maybe a tiny improvement (within 0.2%).
+
+        * kjs/CommonIdentifiers.h: Added static identifiers that were lazily initialized
+        throughout the code.
+
+        * kjs/date_object.cpp:
+        (KJS::DateObjectImp::DateObjectImp):
+        * kjs/function_object.cpp:
+        (KJS::FunctionPrototype::FunctionPrototype):
+        * kjs/object_object.cpp:
+        (KJS::ObjectPrototype::ObjectPrototype):
+        * kjs/regexp_object.cpp:
+        (KJS::RegExpPrototype::RegExpPrototype):
+        Use the values from CommonIdentifiers. 
+
+        * kjs/lookup.h: Caching the identifier in a static wasn't a win on SunSpider, removed it.
+
+        * kjs/value.h:
+        (KJS::jsNaN): We already have a shared NaN value, no need for a duplicate here.
+
+        * wtf/MathExtras.h:
+        (wtf_atan2): Having local variables for numeric_limits constants is good for readability,
+        but there is no reason to keep them static.
+
+        * JavaScriptCore.exp: Don't needlessly export JSGlobalObject::s_head.
+
 2008-03-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

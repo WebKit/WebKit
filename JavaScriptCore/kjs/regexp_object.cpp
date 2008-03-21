@@ -51,13 +51,9 @@ const ClassInfo RegExpPrototype::info = { "RegExpPrototype", 0, 0 };
 RegExpPrototype::RegExpPrototype(ExecState* exec, ObjectPrototype* objectPrototype, FunctionPrototype* functionPrototype)
     : JSObject(objectPrototype)
 {
-    static const Identifier* compilePropertyName = new Identifier("compile");
-    static const Identifier* execPropertyName = new Identifier("exec");
-    static const Identifier* testPropertyName = new Identifier("test");
-
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, *compilePropertyName, regExpProtoFuncCompile), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, *execPropertyName, regExpProtoFuncExec), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, *testPropertyName, regExpProtoFuncTest), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, CommonIdentifiers::shared()->compile, regExpProtoFuncCompile), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, CommonIdentifiers::shared()->exec, regExpProtoFuncExec), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, CommonIdentifiers::shared()->test, regExpProtoFuncTest), DontEnum);
     putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, regExpProtoFuncToString), DontEnum);
 }
 

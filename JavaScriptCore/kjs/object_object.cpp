@@ -43,26 +43,18 @@ static JSValue* objectProtoFuncToLocaleString(ExecState*, JSObject*, const List&
 ObjectPrototype::ObjectPrototype(ExecState* exec, FunctionPrototype* functionPrototype)
     : JSObject() // [[Prototype]] is null
 {
-    static const Identifier* hasOwnPropertyPropertyName = new Identifier("hasOwnProperty");
-    static const Identifier* propertyIsEnumerablePropertyName = new Identifier("propertyIsEnumerable");
-    static const Identifier* isPrototypeOfPropertyName = new Identifier("isPrototypeOf");
-    static const Identifier* defineGetterPropertyName = new Identifier("__defineGetter__");
-    static const Identifier* defineSetterPropertyName = new Identifier("__defineSetter__");
-    static const Identifier* lookupGetterPropertyName = new Identifier("__lookupGetter__");
-    static const Identifier* lookupSetterPropertyName = new Identifier("__lookupSetter__");
-
     putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, objectProtoFuncToString), DontEnum);
     putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toLocaleString, objectProtoFuncToLocaleString), DontEnum);
     putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().valueOf, objectProtoFuncValueOf), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, *hasOwnPropertyPropertyName, objectProtoFuncHasOwnProperty), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, *propertyIsEnumerablePropertyName, objectProtoFuncPropertyIsEnumerable), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, *isPrototypeOfPropertyName, objectProtoFuncIsPrototypeOf), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, CommonIdentifiers::shared()->hasOwnProperty, objectProtoFuncHasOwnProperty), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, CommonIdentifiers::shared()->propertyIsEnumerable, objectProtoFuncPropertyIsEnumerable), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, CommonIdentifiers::shared()->isPrototypeOf, objectProtoFuncIsPrototypeOf), DontEnum);
 
     // Mozilla extensions
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 2, *defineGetterPropertyName, objectProtoFuncDefineGetter), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 2, *defineSetterPropertyName, objectProtoFuncDefineSetter), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, *lookupGetterPropertyName, objectProtoFuncLookupGetter), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, *lookupSetterPropertyName, objectProtoFuncLookupSetter), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 2, CommonIdentifiers::shared()->__defineGetter__, objectProtoFuncDefineGetter), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 2, CommonIdentifiers::shared()->__defineSetter__, objectProtoFuncDefineSetter), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, CommonIdentifiers::shared()->__lookupGetter__, objectProtoFuncLookupGetter), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, CommonIdentifiers::shared()->__lookupSetter__, objectProtoFuncLookupSetter), DontEnum);
 }
 
 

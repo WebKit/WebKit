@@ -193,11 +193,7 @@ inline JSValue *jsNull()
 
 inline JSValue *jsNaN()
 {
-    static const union {
-        uint64_t bits;
-        double d;
-    } nan = { 0x7ff80000ULL << 32 };
-    return jsNumberCell(nan.d);
+    return jsNumberCell(NaN);
 }
 
 inline JSValue *jsBoolean(bool b)

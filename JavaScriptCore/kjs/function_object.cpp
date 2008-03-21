@@ -44,14 +44,11 @@ static JSValue* functionProtoFuncCall(ExecState*, JSObject*, const List&);
 
 FunctionPrototype::FunctionPrototype(ExecState* exec)
 {
-    static const Identifier* applyPropertyName = new Identifier("apply");
-    static const Identifier* callPropertyName = new Identifier("call");
-
     putDirect(exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
 
     putDirectFunction(new PrototypeFunction(exec, this, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, this, 2, *applyPropertyName, functionProtoFuncApply), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, this, 1, *callPropertyName, functionProtoFuncCall), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, this, 2, CommonIdentifiers::shared()->apply, functionProtoFuncApply), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, this, 1, CommonIdentifiers::shared()->call, functionProtoFuncCall), DontEnum);
 }
 
 // ECMA 15.3.4

@@ -95,9 +95,9 @@ inline int isfinite(double x) { return _finite(x); }
 // Work around a bug in Win, where atan2(+-infinity, +-infinity) yields NaN instead of specific values.
 inline double wtf_atan2(double x, double y)
 {
-    static double posInf = std::numeric_limits<double>::infinity();
-    static double negInf = -std::numeric_limits<double>::infinity();
-    static double nan = std::numeric_limits<double>::quiet_NaN();
+    double posInf = std::numeric_limits<double>::infinity();
+    double negInf = -std::numeric_limits<double>::infinity();
+    double nan = std::numeric_limits<double>::quiet_NaN();
 
     double result = nan;
 
