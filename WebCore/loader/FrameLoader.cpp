@@ -756,7 +756,9 @@ JSValue* FrameLoader::executeScript(const String& script, bool forceUserGesture)
 
 JSValue* FrameLoader::executeScript(const String& url, int baseLine, const String& script)
 {
-    if (!m_frame->scriptProxy()->isEnabled())
+    KJSProxy* scriptProxy = m_frame->scriptProxy();
+
+    if (!scriptProxy->isEnabled() || scriptProxy->isPaused())
         return 0;
 
     bool wasRunningScript = m_isRunningScript;

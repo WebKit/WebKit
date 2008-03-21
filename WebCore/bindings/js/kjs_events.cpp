@@ -48,11 +48,6 @@ JSAbstractEventListener::JSAbstractEventListener(bool html)
 
 void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
 {
-#ifdef KJS_DEBUGGER
-    if (KJSDebugWin::instance() && KJSDebugWin::instance()->inSession())
-        return;
-#endif
-
     Event* event = ele;
 
     JSObject* listener = listenerObj();
@@ -67,12 +62,13 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
     Frame* frame = window->impl()->frame();
     if (!frame)
         return;
-    if (!frame->scriptProxy()->isEnabled())
+    KJSProxy* scriptProxy = frame->scriptProxy();
+    if (!scriptProxy->isEnabled() || scriptProxy->isPaused())
         return;
 
     JSLock lock;
 
-    JSGlobalObject* globalObject = frame->scriptProxy()->globalObject();
+    JSGlobalObject* globalObject = scriptProxy->globalObject();
     ExecState* exec = globalObject->globalExec();
 
     JSValue* handleEventFuncValue = listener->get(exec, "handleEvent");

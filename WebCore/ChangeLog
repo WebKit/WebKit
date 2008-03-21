@@ -1,3 +1,30 @@
+2008-03-20  Adam Roben  <aroben@apple.com>
+
+        Allow blocking of JS event handlers/javascript: URIs per-Frame
+
+        Part of Bug 17133: Should support pausing JavaScript execution without
+        hanging the process
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17133>
+        <rdar://problem/5719551>
+
+        Two new methods are added to KJSProxy: setPaused and isPaused. When
+        setPaused(true) is called, JS event handlers are blocked and
+        javascript: URIs will not be evaluated.
+
+        Reviewed by Tim Hatcher.
+
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+          - Removed some old KJS_DEBUGGER code
+          - Don't run the handler if the KJSProxy is paused.
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::KJSProxy): Initialize new member.
+        * bindings/js/kjs_proxy.h: Added new methods.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::executeScript): Don't execute the script if the
+        KJSProxy is paused.
+
 2008-03-20  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Anders.

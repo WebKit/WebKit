@@ -70,6 +70,9 @@ public:
 
     void attachDebugger(KJS::Debugger*);
 
+    void setPaused(bool b) { m_paused = b; }
+    bool isPaused() const { return m_paused; }
+
 private:
     void initScriptIfNeeded()
     {
@@ -84,6 +87,7 @@ private:
     
     bool m_processingTimerCallback;
     bool m_processingInlineCode;
+    bool m_paused;
 };
 
 }
