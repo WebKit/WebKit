@@ -869,8 +869,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
 
         BidiIterator end = start.position();
 
-        if (!fullLayout && end.atEnd() && lastRootBox() && lastRootBox()->firstChild()->object()->isBR() && lastRootBox()->object()->firstChild()->style()->clear() != CNONE)
-            newLine(lastRootBox()->object()->firstChild()->style()->clear());
+        if (!fullLayout && end.atEnd() && lastRootBox() && lastRootBox()->lastChild()->object()->isBR() && lastRootBox()->object()->lastChild()->style()->clear() != CNONE)
+            newLine(lastRootBox()->object()->lastChild()->style()->clear());
 
         bool endLineMatched = false;
 

@@ -1,5 +1,17 @@
 2008-03-21  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Adele Peterson.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=17966
+          REGRESSION (r31114-r31132): Clearing via br behaves unpredictably
+
+        * fast/block/float/br-with-clear.html: Added.
+        * platform/mac/fast/block/float/br-with-clear-expected.checksum: Added.
+        * platform/mac/fast/block/float/br-with-clear-expected.png: Added.
+        * platform/mac/fast/block/float/br-with-clear-expected.txt: Added.
+
+2008-03-21  Dan Bernstein  <mitz@apple.com>
+
         - update results for the 'zoom' property added in
           <http://trac.webkit.org/projects/webkit/changeset/31155>
 

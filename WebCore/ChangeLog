@@ -1,3 +1,18 @@
+2008-03-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17966
+          REGRESSION (r31114-r31132): Clearing via br behaves unpredictably
+
+        Test: fast/block/float/br-with-clear.html
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Fixed the logic for the
+        very special case of an all-lines-clean block that ends with a float-
+        clearing <br> by looking for the <br> at the end of the line rather
+        than at its beginning.
+
 2008-03-21  Adam Roben  <aroben@apple.com>
 
         Don't allow any newly-scheduled plugin requests to be serviced when JS is paused
