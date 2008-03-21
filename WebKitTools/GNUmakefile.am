@@ -5,7 +5,8 @@ noinst_PROGRAMS += \
 # GtkLauncher
 Programs_GtkLauncher_CPPFLAGS = \
 	-I$(srcdir)/WebKit/gtk \
-	$(global_cppflags)
+	$(global_cppflags) \
+	$(javascriptcore_cppflags)
 
 Programs_GtkLauncher_SOURCES = \
 	WebKitTools/GtkLauncher/main.c
@@ -25,7 +26,8 @@ Programs_DumpRenderTree_CPPFLAGS = \
 	-I$(srcdir)/WebKitTools/DumpRenderTree \
 	-I$(srcdir)/WebKitTools/DumpRenderTree/gtk \
 	-I$(srcdir)/WebKit/gtk \
-	$(global_cppflags)
+	$(global_cppflags) \
+	$(javascriptcore_cppflags)
 
 Programs_DumpRenderTree_SOURCES = \
 	WebKitTools/DumpRenderTree/gtk/DumpRenderTree.cpp \

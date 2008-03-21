@@ -1,3 +1,13 @@
+2008-03-21  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Holger.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17981
+
+        Add webcore and javascriptcore cppflags to programs' _CPPFLAGS.
+
+        * GNUmakefile.am:
+
 2008-03-21  Adam Roben  <aroben@apple.com>
 
         Remove a non-working mirror from cygwin-downloader and add the ruby package

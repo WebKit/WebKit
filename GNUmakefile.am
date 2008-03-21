@@ -52,13 +52,6 @@ EXTRA_DIST :=
 global_cppflags :=
 
 global_cppflags += \
-	-I$(srcdir)/JavaScriptCore \
-	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
-	-I$(srcdir)/JavaScriptCore/wtf \
-	-I$(srcdir)/JavaScriptCore/kjs \
-	-I$(top_builddir)/DerivedSources
-
-global_cppflags += \
 	-DWTF_USE_ICU_UNICODE=1
 
 # Default compiler flags
@@ -96,6 +89,13 @@ javascriptcore_cppflags:=
 javascriptcore_sources :=
 javascriptcore_built_sources :=
 javascriptcore_built_nosources :=
+
+javascriptcore_cppflags += \
+	-I$(srcdir)/JavaScriptCore \
+	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
+	-I$(srcdir)/JavaScriptCore/wtf \
+	-I$(srcdir)/JavaScriptCore/kjs \
+	-I$(top_builddir)/DerivedSources
 
 # The variables above are already included below so no need to touch
 # these variables unless you really have to
@@ -185,6 +185,7 @@ libWebCore_la_CFLAGS = \
 libWebCore_la_CPPFLAGS = \
 	$(global_cppflags) \
 	$(webcore_cppflags) \
+	$(javascriptcore_cppflags) \
 	$(webkitgtk_cppflags)
 
 libWebCore_la_LIBADD = \

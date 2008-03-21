@@ -139,7 +139,7 @@ Programs_minidom_SOURCES = \
 	JavaScriptCore/API/Node.c \
 	JavaScriptCore/API/NodeList.c \
 	JavaScriptCore/API/minidom.c
-Programs_minidom_CPPFLAGS = $(global_cppflags)
+Programs_minidom_CPPFLAGS = $(global_cppflags) $(javascriptcore_cppflags)
 Programs_minidom_CFLAGS = \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS)

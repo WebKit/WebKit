@@ -1,3 +1,14 @@
+2008-03-21  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Holger.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17981
+
+        Remove WebCore/ForwardingHeaders from cppflags as it is not needed,
+        and causes build problems with GTK+.
+
+        * GNUmakefile.am:
+
 2008-03-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.

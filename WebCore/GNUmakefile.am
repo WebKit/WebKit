@@ -6,7 +6,6 @@ SVG_FEATURES :=
 
 webcore_cppflags += \
 	-I$(srcdir)/WebCore \
-	-I$(srcdir)/WebCore/ForwardingHeaders \
 	-I$(srcdir)/WebCore/platform \
 	-I$(srcdir)/WebCore/platform/network \
 	-I$(srcdir)/WebCore/platform/graphics \
