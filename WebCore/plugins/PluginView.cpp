@@ -265,6 +265,7 @@ void PluginView::requestTimerFired(Timer<PluginView>* timer)
 {
     ASSERT(timer == &m_requestTimer);
     ASSERT(m_requests.size() > 0);
+    ASSERT(!m_isJavaScriptPaused);
 
     PluginRequest* request = m_requests[0];
     m_requests.remove(0);
@@ -281,7 +282,9 @@ void PluginView::requestTimerFired(Timer<PluginView>* timer)
 void PluginView::scheduleRequest(PluginRequest* request)
 {
     m_requests.append(request);
-    m_requestTimer.startOneShot(0);
+
+    if (!m_isJavaScriptPaused)
+        m_requestTimer.startOneShot(0);
 }
 
 NPError PluginView::load(const FrameLoadRequest& frameLoadRequest, bool sendNotification, void* notifyData)
@@ -488,10 +491,9 @@ void PluginView::setJavaScriptPaused(bool paused)
         return;
     m_isJavaScriptPaused = paused;
 
-    if (m_isJavaScriptPaused) {
-        m_requestTimerWasActive = m_requestTimer.isActive();
+    if (m_isJavaScriptPaused)
         m_requestTimer.stop();
-    } else if (m_requestTimerWasActive)
+    else if (!m_requests.isEmpty())
         m_requestTimer.startOneShot(0);
 }
 
@@ -582,7 +584,6 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_loadManually(loadManually)
     , m_manualStream(0)
     , m_isJavaScriptPaused(false)
-    , m_requestTimerWasActive(false)
 {
     if (!m_plugin) {
         m_status = PluginStatusCanNotFindPlugin;

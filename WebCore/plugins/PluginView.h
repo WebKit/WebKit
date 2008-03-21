@@ -236,7 +236,6 @@ namespace WebCore {
         RefPtr<PluginStream> m_manualStream;
 
         bool m_isJavaScriptPaused;
-        bool m_requestTimerWasActive;
 
         static PluginView* s_currentPluginView;
     };
