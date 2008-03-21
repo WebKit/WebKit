@@ -160,7 +160,7 @@ public:
 
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintObject(PaintInfo&, int tx, int ty);
-    void paintFloats(PaintInfo&, int tx, int ty, bool paintSelection = false);
+    void paintFloats(PaintInfo&, int tx, int ty, bool preservePhase = false);
     void paintContents(PaintInfo&, int tx, int ty);
     void paintColumns(PaintInfo&, int tx, int ty, bool paintFloats = false);
     void paintChildren(PaintInfo&, int tx, int ty);

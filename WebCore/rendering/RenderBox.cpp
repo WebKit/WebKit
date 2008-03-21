@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "ImageBuffer.h"
 #include "Frame.h"
 #include "Page.h"
 #include "RenderArena.h"
@@ -43,8 +44,7 @@
 #include <algorithm>
 #include <math.h>
 
-using std::min;
-using std::max;
+using namespace std;
 
 namespace WebCore {
 
@@ -342,7 +342,7 @@ void RenderBox::paintRootBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     // I just love these little inconsistencies .. :-( (Dirk)
     int my = max(by, paintInfo.rect.y());
 
-    paintBackgrounds(paintInfo.context, bgColor, bgLayer, my, paintInfo.rect.height(), bx, by, bw, bh);
+    paintBackgrounds(paintInfo, bgColor, bgLayer, my, paintInfo.rect.height(), bx, by, bw, bh);
 
     if (style()->hasBorder() && style()->display() != INLINE)
         paintBorder(paintInfo.context, tx, ty, w, h, style());
@@ -385,7 +385,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         // independent of the body.  Go through the DOM to get to the root element's render object,
         // since the root could be inline and wrapped in an anonymous block.
         if (!isBody() || !document()->isHTMLDocument() || document()->documentElement()->renderer()->style()->hasBackground())
-            paintBackgrounds(paintInfo.context, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
+            paintBackgrounds(paintInfo, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
         if (style()->hasAppearance())
             theme()->paintDecorations(this, paintInfo, IntRect(tx, ty, w, h));
     }
@@ -395,20 +395,20 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         paintBorder(paintInfo.context, tx, ty, w, h, style());
 }
 
-void RenderBox::paintBackgrounds(GraphicsContext* context, const Color& c, const BackgroundLayer* bgLayer,
+void RenderBox::paintBackgrounds(const PaintInfo& paintInfo, const Color& c, const BackgroundLayer* bgLayer,
                                  int clipY, int clipH, int tx, int ty, int width, int height)
 {
     if (!bgLayer)
         return;
 
-    paintBackgrounds(context, c, bgLayer->next(), clipY, clipH, tx, ty, width, height);
-    paintBackground(context, c, bgLayer, clipY, clipH, tx, ty, width, height);
+    paintBackgrounds(paintInfo, c, bgLayer->next(), clipY, clipH, tx, ty, width, height);
+    paintBackground(paintInfo, c, bgLayer, clipY, clipH, tx, ty, width, height);
 }
 
-void RenderBox::paintBackground(GraphicsContext* context, const Color& c, const BackgroundLayer* bgLayer,
+void RenderBox::paintBackground(const PaintInfo& paintInfo, const Color& c, const BackgroundLayer* bgLayer,
                                 int clipY, int clipH, int tx, int ty, int width, int height)
 {
-    paintBackgroundExtended(context, c, bgLayer, clipY, clipH, tx, ty, width, height);
+    paintBackgroundExtended(paintInfo, c, bgLayer, clipY, clipH, tx, ty, width, height);
 }
 
 IntSize RenderBox::calculateBackgroundSize(const BackgroundLayer* bgLayer, int scaledWidth, int scaledHeight) const
@@ -593,9 +593,12 @@ void RenderBox::calculateBackgroundImageGeometry(const BackgroundLayer* bgLayer,
     tileSize = IntSize(scaledImageWidth, scaledImageHeight);
 }
 
-void RenderBox::paintBackgroundExtended(GraphicsContext* context, const Color& c, const BackgroundLayer* bgLayer, int clipY, int clipH,
-                                        int tx, int ty, int w, int h, bool includeLeftEdge, bool includeRightEdge)
+void RenderBox::paintBackgroundExtended(const PaintInfo& paintInfo, const Color& c, const BackgroundLayer* bgLayer, int clipY, int clipH,
+                                        int tx, int ty, int w, int h, InlineFlowBox* box)
 {
+    GraphicsContext* context = paintInfo.context;
+    bool includeLeftEdge = box ? box->includeLeftEdge() : true;
+    bool includeRightEdge = box ? box->includeRightEdge() : true;
     int bLeft = includeLeftEdge ? borderLeft() : 0;
     int bRight = includeRightEdge ? borderRight() : 0;
     int pLeft = includeLeftEdge ? paddingLeft() : 0;
@@ -612,7 +615,7 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* context, const Color& c
         clippedToBorderRadius = true;
     }
 
-    if (bgLayer->backgroundClip() != BGBORDER) {
+    if (bgLayer->backgroundClip() == BGPADDING || bgLayer->backgroundClip() == BGCONTENT) {
         // Clip to the padding or content boxes as necessary.
         bool includePadding = bgLayer->backgroundClip() == BGCONTENT;
         int x = tx + bLeft + (includePadding ? pLeft : 0);
@@ -621,8 +624,35 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* context, const Color& c
         int height = h - borderTop() - borderBottom() - (includePadding ? paddingTop() + paddingBottom() : 0);
         context->save();
         context->clip(IntRect(x, y, width, height));
+    } else if (bgLayer->backgroundClip() == BGTEXT) {
+        // We have to draw our text into a mask that can then be used to clip background drawing.
+        // First figure out how big the mask has to be.  It should be no bigger than what we need
+        // to actually render, so we should intersect the dirty rect with the border box of the background.
+        IntRect maskRect(tx, ty, w, h);
+        maskRect.intersect(paintInfo.rect);
+        
+        // Now create the mask.
+        auto_ptr<ImageBuffer> maskImage = ImageBuffer::create(maskRect.size(), false);
+        if (!maskImage.get())
+            return;
+        
+        GraphicsContext* maskImageContext = maskImage->context();
+        maskImageContext->save();
+        maskImageContext->translate(-maskRect.x(), -maskRect.y());
+        
+        // Now add the text to the clip.  We do this by painting using a special paint phase that signals to
+        // InlineTextBoxes that they should just add their contents to the clip.
+        PaintInfo info(maskImageContext, maskRect, PaintPhaseTextClip, true, 0, 0);
+        if (box)
+            box->paint(info, tx - box->xPos(), ty - box->yPos());
+        else
+            paint(info, tx, ty);
+            
+        // The mask has been created.  Now we just need to clip to it.
+        context->save();
+        context->clipToImageBuffer(maskRect, maskImage.get());
     }
-
+    
     CachedImage* bg = bgLayer->backgroundImage();
     bool shouldPaintBackgroundImage = bg && bg->canRender(style()->effectiveZoom());
     Color bgColor = c;

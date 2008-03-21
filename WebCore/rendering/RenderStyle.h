@@ -450,7 +450,7 @@ private:
 
 //------------------------------------------------
 enum EBackgroundBox {
-    BGBORDER, BGPADDING, BGCONTENT
+    BGBORDER, BGPADDING, BGCONTENT, BGTEXT
 };
 
 enum EBackgroundRepeat {

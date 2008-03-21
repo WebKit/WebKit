@@ -235,7 +235,7 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 {
     if (isLineBreak() || !object()->shouldPaintWithinRoot(paintInfo) || object()->style()->visibility() != VISIBLE ||
-            m_truncation == cFullTruncation || paintInfo.phase == PaintPhaseOutline)
+        m_truncation == cFullTruncation || paintInfo.phase == PaintPhaseOutline)
         return;
     
     ASSERT(paintInfo.phase != PaintPhaseSelfOutline && paintInfo.phase != PaintPhaseChildOutlines);
@@ -248,7 +248,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
     bool isPrinting = textObject()->document()->printing();
     
     // Determine whether or not we're selected.
-    bool haveSelection = !isPrinting && selectionState() != RenderObject::SelectionNone;
+    bool haveSelection = !isPrinting && paintInfo.phase != PaintPhaseTextClip && selectionState() != RenderObject::SelectionNone;
     if (!haveSelection && paintInfo.phase == PaintPhaseSelection)
         // When only painting the selection, don't bother to paint if there is none.
         return;
@@ -266,7 +266,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 
     // 1. Paint backgrounds behind text if needed. Examples of such backgrounds include selection
     // and composition underlines.
-    if (paintInfo.phase != PaintPhaseSelection && !isPrinting) {
+    if (paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseTextClip && !isPrinting) {
 #if PLATFORM(MAC)
         // Custom highlighters go behind everything else.
         if (styleToUse->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
@@ -290,11 +290,13 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 
     Color textFillColor;
     Color textStrokeColor;
+    Color shadowColor;
     float textStrokeWidth = styleToUse->textStrokeWidth();
 
     if (paintInfo.forceBlackText) {
         textFillColor = Color::black;
         textStrokeColor = Color::black;
+        shadowColor = Color::black;
     } else {
         textFillColor = styleToUse->textFillColor();
         if (!textFillColor.isValid())
@@ -311,6 +313,8 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
         // Make the text stroke color legible against a white background
         if (styleToUse->forceBackgroundsToWhite())
             textStrokeColor = correctedTextColor(textStrokeColor, Color::white);
+            
+        shadowColor = styleToUse->textShadow() ? styleToUse->textShadow()->color : Color::black;
     }
 
     // For stroked painting, we have to change the text drawing mode.  It's probably dangerous to leave that mutated as a side
@@ -319,14 +323,14 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
         paintInfo.context->save();
 
     updateGraphicsContext(paintInfo.context, textFillColor, textStrokeColor, textStrokeWidth);
-    
+
     // Set a text shadow if we have one.
     // FIXME: Support multiple shadow effects.  Need more from the CG API before
     // we can do this.
     bool setShadow = false;
     if (styleToUse->textShadow()) {
         paintInfo.context->setShadow(IntSize(styleToUse->textShadow()->x, styleToUse->textShadow()->y),
-                                     styleToUse->textShadow()->blur, styleToUse->textShadow()->color);
+                                     styleToUse->textShadow()->blur, shadowColor);
         setShadow = true;
     }
 
@@ -427,7 +431,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
         paintDecoration(paintInfo.context, tx, ty, d);
     }
 
-    if (paintInfo.phase != PaintPhaseSelection) {
+    if (paintInfo.phase == PaintPhaseForeground) {
         paintDocumentMarkers(paintInfo.context, tx, ty, styleToUse, font, false);
 
         if (useCustomUnderlines) {

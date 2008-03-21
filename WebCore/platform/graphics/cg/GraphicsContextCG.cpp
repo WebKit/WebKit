@@ -482,6 +482,14 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     CGContextEOClip(context);
 }
 
+void GraphicsContext::clipToImageBuffer(const IntRect& rect, const ImageBuffer* imageBuffer)
+{
+    if (paintingDisabled())
+        return;
+    
+    CGContextClipToMask(platformContext(), rect, imageBuffer->cgImage());
+}
+
 void GraphicsContext::beginTransparencyLayer(float opacity)
 {
     if (paintingDisabled())

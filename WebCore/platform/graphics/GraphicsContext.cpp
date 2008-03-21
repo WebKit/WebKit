@@ -29,6 +29,7 @@
 #include "BidiResolver.h"
 #include "GraphicsContextPrivate.h"
 #include "Font.h"
+#include "NotImplemented.h"
 
 using namespace std;
 
@@ -392,6 +393,12 @@ void GraphicsContext::setTextDrawingMode(int mode)
 // immediately.
 void GraphicsContext::setPlatformTextDrawingMode(int mode)
 {
+}
+
+// Other platforms need to implement this.
+void GraphicsContext::clipToImageBuffer(const IntRect&, const ImageBuffer*)
+{
+    notImplemented();
 }
 #endif
 

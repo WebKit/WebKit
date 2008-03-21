@@ -646,22 +646,22 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
         paintTextDecorations(paintInfo, tx, ty, true);
 }
 
-void InlineFlowBox::paintBackgrounds(GraphicsContext* p, const Color& c, const BackgroundLayer* bgLayer,
+void InlineFlowBox::paintBackgrounds(const RenderObject::PaintInfo& paintInfo, const Color& c, const BackgroundLayer* bgLayer,
                                      int my, int mh, int _tx, int _ty, int w, int h)
 {
     if (!bgLayer)
         return;
-    paintBackgrounds(p, c, bgLayer->next(), my, mh, _tx, _ty, w, h);
-    paintBackground(p, c, bgLayer, my, mh, _tx, _ty, w, h);
+    paintBackgrounds(paintInfo, c, bgLayer->next(), my, mh, _tx, _ty, w, h);
+    paintBackground(paintInfo, c, bgLayer, my, mh, _tx, _ty, w, h);
 }
 
-void InlineFlowBox::paintBackground(GraphicsContext* context, const Color& c, const BackgroundLayer* bgLayer,
+void InlineFlowBox::paintBackground(const RenderObject::PaintInfo& paintInfo, const Color& c, const BackgroundLayer* bgLayer,
                                     int my, int mh, int tx, int ty, int w, int h)
 {
     CachedImage* bg = bgLayer->backgroundImage();
     bool hasBackgroundImage = bg && bg->canRender(object()->style()->effectiveZoom());
     if ((!hasBackgroundImage && !object()->style()->hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent())
-        object()->paintBackgroundExtended(context, c, bgLayer, my, mh, tx, ty, w, h);
+        object()->paintBackgroundExtended(paintInfo, c, bgLayer, my, mh, tx, ty, w, h, this);
     else {
         // We have a background image that spans multiple lines.
         // We need to adjust _tx and _ty by the width of all previous lines.
@@ -678,11 +678,11 @@ void InlineFlowBox::paintBackground(GraphicsContext* context, const Color& c, co
         int totalWidth = xOffsetOnLine;
         for (InlineRunBox* curr = this; curr; curr = curr->nextLineBox())
             totalWidth += curr->width();
-        context->save();
-        context->clip(IntRect(tx, ty, width(), height()));
-        object()->paintBackgroundExtended(context, c, bgLayer, my, mh, startX, ty,
-                                          totalWidth, h, includeLeftEdge(), includeRightEdge());
-        context->restore();
+        paintInfo.context->save();
+        paintInfo.context->clip(IntRect(tx, ty, width(), height()));
+        object()->paintBackgroundExtended(paintInfo, c, bgLayer, my, mh, startX, ty,
+                                          totalWidth, h, this);
+        paintInfo.context->restore();
     }
 }
 
@@ -727,7 +727,7 @@ void InlineFlowBox::paintBoxDecorations(RenderObject::PaintInfo& paintInfo, int 
             paintBoxShadow(context, styleToUse, tx, ty, w, h);
 
         Color c = styleToUse->backgroundColor();
-        paintBackgrounds(context, c, styleToUse->backgroundLayers(), my, mh, tx, ty, w, h);
+        paintBackgrounds(paintInfo, c, styleToUse->backgroundLayers(), my, mh, tx, ty, w, h);
 
         // :first-line cannot be used to put borders on a line. Always paint borders with our
         // non-first-line style.

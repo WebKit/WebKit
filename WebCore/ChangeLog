@@ -1,3 +1,55 @@
+2008-03-20  David Hyatt  <hyatt@apple.com>
+
+        Add a new value to background-clip, "text", that allows backgrounds to be clipped to foreground text (and
+        associated text decorations like shadows and underlines).
+
+        Reviewed by Beth
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBackgroundProperty):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EBackgroundBox):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::paint):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBackgrounds):
+        (WebCore::InlineFlowBox::paintBackground):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumns):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::paintFloats):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintRootBoxDecorations):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::paintBackgrounds):
+        (WebCore::RenderBox::paintBackground):
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/RenderBox.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::paintLines):
+        * rendering/RenderObject.h:
+        (WebCore::):
+        (WebCore::RenderObject::paintBackgroundExtended):
+        * rendering/RenderStyle.h:
+        (WebCore::):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+
 2008-03-20  Adam Roben  <aroben@apple.com>
 
         Allow pausing/blocking of JS execution by plugins

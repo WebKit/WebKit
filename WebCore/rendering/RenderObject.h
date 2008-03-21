@@ -79,7 +79,8 @@ enum PaintPhase {
     PaintPhaseChildOutlines,
     PaintPhaseSelfOutline,
     PaintPhaseSelection,
-    PaintPhaseCollapsedTableBorders
+    PaintPhaseCollapsedTableBorders,
+    PaintPhaseTextClip
 };
 
 enum PaintRestriction {
@@ -468,9 +469,9 @@ public:
     // RenderBox implements this.
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty) { }
 
-    virtual void paintBackgroundExtended(GraphicsContext*, const Color&, const BackgroundLayer*,
+    virtual void paintBackgroundExtended(const PaintInfo&, const Color&, const BackgroundLayer*,
                                          int clipy, int cliph, int tx, int ty, int width, int height,
-                                         bool includeLeftEdge = true, bool includeRightEdge = true) { }
+                                         InlineFlowBox* box = 0) { }
 
     
     /*

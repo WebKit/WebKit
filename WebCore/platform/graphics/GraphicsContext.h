@@ -167,6 +167,7 @@ namespace WebCore {
         void clipOut(const IntRect&);
         void clipOutEllipseInRect(const IntRect&);
         void clipOutRoundedRect(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
+        void clipToImageBuffer(const IntRect&, const ImageBuffer*);
 
         int textDrawingMode();
         void setTextDrawingMode(int);

@@ -141,8 +141,8 @@ public:
 
     virtual IntRect caretRect(int offset, EAffinity = UPSTREAM, int* extraWidthToEndOfLine = 0);
 
-    virtual void paintBackgroundExtended(GraphicsContext*, const Color&, const BackgroundLayer*, int clipY, int clipHeight,
-                                         int tx, int ty, int width, int height, bool includeLeftEdge = true, bool includeRightEdge = true);
+    virtual void paintBackgroundExtended(const PaintInfo&, const Color&, const BackgroundLayer*, int clipY, int clipHeight,
+                                         int tx, int ty, int width, int height, InlineFlowBox* = 0);
     IntSize calculateBackgroundSize(const BackgroundLayer*, int scaledWidth, int scaledHeight) const;
 
     virtual int staticX() const;
@@ -157,8 +157,8 @@ public:
     virtual void imageChanged(CachedImage*);
 
 protected:
-    void paintBackground(GraphicsContext*, const Color&, const BackgroundLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);
-    void paintBackgrounds(GraphicsContext*, const Color&, const BackgroundLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);
+    void paintBackground(const PaintInfo&, const Color&, const BackgroundLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);
+    void paintBackgrounds(const PaintInfo&, const Color&, const BackgroundLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);
 
 #if PLATFORM(MAC)
     void paintCustomHighlight(int tx, int ty, const AtomicString& type, bool behindText);
