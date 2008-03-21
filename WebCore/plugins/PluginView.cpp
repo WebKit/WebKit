@@ -392,6 +392,9 @@ void PluginView::status(const char* message)
 
 NPError PluginView::getValue(NPNVariable variable, void* value)
 {
+    if (m_isJavaScriptPaused)
+        return NPERR_GENERIC_ERROR;
+
     switch (variable) {
 #if ENABLE(NETSCAPE_PLUGIN_API)
         case NPNVWindowNPObject: {
@@ -477,6 +480,19 @@ bool PluginView::arePopupsAllowed() const
         return m_popupStateStack.last();
 
     return false;
+}
+
+void PluginView::setJavaScriptPaused(bool paused)
+{
+    if (m_isJavaScriptPaused == paused)
+        return;
+    m_isJavaScriptPaused = paused;
+
+    if (m_isJavaScriptPaused) {
+        m_requestTimerWasActive = m_requestTimer.isActive();
+        m_requestTimer.stop();
+    } else if (m_requestTimerWasActive)
+        m_requestTimer.startOneShot(0);
 }
 
 PassRefPtr<KJS::Bindings::Instance> PluginView::bindingInstance()
@@ -565,6 +581,8 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
 #endif
     , m_loadManually(loadManually)
     , m_manualStream(0)
+    , m_isJavaScriptPaused(false)
+    , m_requestTimerWasActive(false)
 {
     if (!m_plugin) {
         m_status = PluginStatusCanNotFindPlugin;

@@ -1,5 +1,33 @@
 2008-03-20  Adam Roben  <aroben@apple.com>
 
+        Allow pausing/blocking of JS execution by plugins
+
+        Part of Bug 17133: Should support pausing JavaScript execution without
+        hanging the process
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17133>
+        <rdar://problem/5719551>
+
+        This patch doesn't affect Mac, which doesn't use the shared PluginView
+        code.
+
+        Note that this patch doesn't prevent plugins from executing JS via an
+        NPObject they've already gotten hold of. It just blocks obtaining new
+        NPObjects and pauses any requests to evaluate javascript: URIs. This
+        is probably good enough for now because most plugins seem to always
+        obtain the Window object each time they want to execute JS.
+
+        Reviewed by Tim Hatcher.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::getValue): Return an error if JS is paused.
+        (WebCore::PluginView::setJavaScriptPaused): Stop the request timer if
+        we're pausing, and resume it if we're unpausing.
+        (WebCore::PluginView::PluginView): Initialize new members.
+        * plugins/PluginView.h:
+
+2008-03-20  Adam Roben  <aroben@apple.com>
+
         Allow pausing of callOnMainThread callbacks
 
         Part of Bug 17133: Should support pausing JavaScript execution without
