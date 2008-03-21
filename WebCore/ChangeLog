@@ -1,3 +1,27 @@
+2008-03-21  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        -<rdar://problem/5712804> XMLHttpRequests do not show response contents, preview images (14313)
+        -<rdar://problem/5712931> XMLHttpRequests should be shown separately and grouped (14315)
+        -<rdar://problem/5732836> XMLHttpRequest: Inspector should show network activity/XHR in Console (17233)
+        - Instrument the InspectorController to cache XHR resrouces since they are not cached by WebCore.
+        The resources will be kept in the same map as all other resources so they will have the exact
+        same lifecycle. 
+
+        * ChangeLog:
+        * page/InspectorController.cpp:
+        (WebCore::InspectorCachedXMLHttpRequestResource::type):
+        (WebCore::InspectorCachedXMLHttpRequestResource::setType):
+        (WebCore::InspectorCachedXMLHttpRequestResource::data):
+        (WebCore::InspectorCachedXMLHttpRequestResource::setData):
+        (WebCore::InspectorCachedXMLHttpRequestResource::encoding):
+        (WebCore::InspectorCachedXMLHttpRequestResource::setEncoding):
+        (WebCore::InspectorCachedXMLHttpRequestResource::create):
+        (WebCore::InspectorCachedXMLHttpRequestResource::InspectorCachedXMLHttpRequestResource):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2008-03-21  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Holger.

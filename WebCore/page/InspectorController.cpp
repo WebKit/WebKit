@@ -120,12 +120,12 @@ struct InspectorResource : public RefCounted<InspectorResource> {
         return adoptRef(new InspectorResource(identifier, documentLoader, frame));
     }
     
-    ~InspectorResource()
+    virtual ~InspectorResource()
     {
         setScriptObject(0, 0);
     }
 
-    Type type() const
+    virtual Type type() const
     {
         if (requestURL == loader->requestURL())
             return Doc;
@@ -186,8 +186,8 @@ struct InspectorResource : public RefCounted<InspectorResource> {
     double startTime;
     double responseReceivedTime;
     double endTime;
-    
-private:
+
+protected:
     InspectorResource(long long identifier, DocumentLoader* documentLoader, Frame* frame)
         : identifier(identifier)
         , loader(documentLoader)
@@ -206,6 +206,37 @@ private:
     {
     }
 };
+
+#pragma mark -
+#pragma mark InspectorCachedXMLHttpRequestResource Class
+
+struct InspectorCachedXMLHttpRequestResource : public InspectorResource {
+
+    static PassRefPtr<InspectorResource> create(long long identifier, DocumentLoader* documentLoader, Frame* frame)
+    {
+        return adoptRef(new InspectorCachedXMLHttpRequestResource(identifier, documentLoader, frame));
+    }
+
+    virtual Type type() const { return m_type; }
+    void setType(Type type) { m_type = type; }
+
+    SharedBuffer* data() const { return m_data.get(); }
+    void setData(SharedBuffer* data) { m_data = data; }
+
+    String encoding() const { return m_encoding; }
+    void setEncoding(String encoding) { m_encoding = encoding; }
+    
+private:
+    InspectorCachedXMLHttpRequestResource(long long identifier, DocumentLoader* documentLoader, Frame* frame)
+        : InspectorResource(identifier, documentLoader, frame)
+    {
+    }
+
+    Type m_type;
+    String m_encoding;
+    RefPtr<SharedBuffer> m_data;
+};
+
 
 #pragma mark -
 #pragma mark InspectorDatabaseResource Struct
