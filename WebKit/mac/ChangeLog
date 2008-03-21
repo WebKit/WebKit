@@ -1,3 +1,31 @@
+2008-03-21  Timothy Hatcher  <timothy@apple.com>
+
+        Bug 17980: Regression: Inspector highlighting of webpage not cleared when going to new URL
+        http://bugs.webkit.org/show_bug.cgi?id=17980
+
+        Reviewed by Adam.
+
+        The new highlight drawing was not honoring the fade value, so it was
+        always drawing at full opacity. The animation code didn't match Windows
+        and the new highlight anyway, so it has been removed. The highlight
+        how just detaches when it is hidden.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController windowShouldClose:]): Call hideHighlight.
+        (-[WebInspectorWindowController close]): Ditto.
+        (-[WebInspectorWindowController highlightNode:]): Call attach.
+        (-[WebInspectorWindowController hideHighlight]): Call detach and release _currentHighlight.
+        * WebInspector/WebNodeHighlight.h:
+        * WebInspector/WebNodeHighlight.m:
+        (-[WebNodeHighlight initWithTargetView:inspectorController:]):
+        (-[WebNodeHighlight dealloc]): Assert we have no _highlightView.
+        (-[WebNodeHighlight attach]): Renamed from attachHighlight.
+        (-[WebNodeHighlight detach]): Renamed from detachHighlight.
+        (-[WebNodeHighlight setNeedsUpdateInTargetViewRect:]): Renamed from setHolesNeedUpdateInTargetViewRect:.
+        * WebInspector/WebNodeHighlightView.h:
+        * WebInspector/WebNodeHighlightView.m:
+        (-[WebNodeHighlightView setNeedsDisplayInRect:]): Renamed from setHolesNeedUpdateInRect:.
+
 2008-03-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

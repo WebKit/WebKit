@@ -35,25 +35,9 @@
 
 using namespace WebCore;
 
-#define FADE_ANIMATION_DURATION 0.2
-
-@interface WebNodeHighlightFadeInAnimation : NSAnimation
-@end
-
 @interface WebNodeHighlight (FileInternal)
 - (NSRect)_computeHighlightWindowFrame;
 - (void)_repositionHighlightWindow;
-- (void)_animateFadeIn:(WebNodeHighlightFadeInAnimation *)animation;
-@end
-
-@implementation WebNodeHighlightFadeInAnimation
-
-- (void)setCurrentProgress:(NSAnimationProgress)progress
-{
-    [super setCurrentProgress:progress];
-    [(WebNodeHighlight *)[self delegate] _animateFadeIn:self];
-}
-
 @end
 
 @implementation WebNodeHighlight
@@ -76,7 +60,6 @@ using namespace WebCore;
     [_highlightWindow setReleasedWhenClosed:NO];
 
     _highlightView = [[WebNodeHighlightView alloc] initWithWebNodeHighlight:self];
-    [_highlightView setFractionFadedIn:0.0];
     [_highlightWindow setContentView:_highlightView];
     [_highlightView release];
 
@@ -85,25 +68,21 @@ using namespace WebCore;
 
 - (void)dealloc
 {
-    // FIXME: Bad to do all this work in dealloc. What about under GC?
-
-    [self detachHighlight];
-
     ASSERT(!_highlightWindow);
     ASSERT(!_targetView);
-
-    [_fadeInAnimation setDelegate:nil];
-    [_fadeInAnimation stopAnimation];
-    [_fadeInAnimation release];
+    ASSERT(!_highlightView);
 
     [super dealloc];
 }
 
-- (void)attachHighlight
+- (void)attach
 {
     ASSERT(_targetView);
     ASSERT([_targetView window]);
     ASSERT(_highlightWindow);
+
+    if (!_highlightWindow || !_targetView || ![_targetView window])
+        return;
 
     // Disable screen updates so the highlight moves in sync with the view.
     [[_targetView window] disableScreenUpdatesUntilFlush];
@@ -128,7 +107,7 @@ using namespace WebCore;
     return _delegate;
 }
 
-- (void)detachHighlight
+- (void)detach
 {
     if (!_highlightWindow) {
         ASSERT(!_targetView);
@@ -159,36 +138,6 @@ using namespace WebCore;
     _highlightView = nil;
 }
 
-- (void)show
-{
-    ASSERT(!_fadeInAnimation);
-    if (_fadeInAnimation || [_highlightView fractionFadedIn] == 1.0)
-        return;
-
-    _fadeInAnimation = [[WebNodeHighlightFadeInAnimation alloc] initWithDuration:FADE_ANIMATION_DURATION animationCurve:NSAnimationEaseInOut];
-    [_fadeInAnimation setAnimationBlockingMode:NSAnimationNonblocking];
-    [_fadeInAnimation setDelegate:self];
-    [_fadeInAnimation startAnimation];
-}
-
-- (void)hide
-{
-    [_highlightView setFractionFadedIn:0.0];
-}
-
-- (void)animationDidEnd:(NSAnimation *)animation
-{
-    ASSERT(animation == _fadeInAnimation);
-    [_fadeInAnimation release];
-    _fadeInAnimation = nil;
-}
-
-- (BOOL)ignoresMouseEvents
-{
-    ASSERT(_highlightWindow);
-    return [_highlightWindow ignoresMouseEvents];
-}
-
 - (WebNodeHighlightView *)highlightView
 {
     return _highlightView;
@@ -200,22 +149,16 @@ using namespace WebCore;
     _delegate = delegate;
 }
 
-- (void)setHolesNeedUpdateInTargetViewRect:(NSRect)rect
+- (void)setNeedsUpdateInTargetViewRect:(NSRect)rect
 {
     ASSERT(_targetView);
 
-    [_highlightView setHolesNeedUpdateInRect:[_targetView _web_convertRect:rect toView:_highlightView]];
+    [_highlightView setNeedsDisplayInRect:[_targetView _web_convertRect:rect toView:_highlightView]];
 
     // Redraw highlight view immediately so it updates in sync with the target view
     // if we called disableScreenUpdatesUntilFlush on the target view earlier. This
     // is especially visible when resizing the window.
     [_highlightView displayIfNeeded];
-}
-
-- (void)setIgnoresMouseEvents:(BOOL)newValue
-{
-    ASSERT(_highlightWindow);
-    [_highlightWindow setIgnoresMouseEvents:newValue];
 }
 
 - (NSView *)targetView
@@ -251,11 +194,6 @@ using namespace WebCore;
     [[_targetView window] disableScreenUpdatesUntilFlush];
 
     [_highlightWindow setFrame:[self _computeHighlightWindowFrame] display:YES];
-}
-
-- (void)_animateFadeIn:(WebNodeHighlightFadeInAnimation *)animation
-{
-    [_highlightView setFractionFadedIn:[animation currentValue]];
 }
 
 @end

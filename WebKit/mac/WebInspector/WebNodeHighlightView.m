@@ -42,7 +42,7 @@ using namespace WebCore;
 #define OVERLAY_MAX_ALPHA 0.7
 #define OVERLAY_WHITE_VALUE 0.1
 
-#define WHITE_FRAME_THICKNESS 1.0
+#define BORDER_THICKNESS 1.0
 
 @implementation WebNodeHighlightView
 
@@ -91,29 +91,11 @@ using namespace WebCore;
     return _webNodeHighlight;
 }
 
-- (float)fractionFadedIn
+- (void)setNeedsDisplayInRect:(NSRect)rect
 {
-    return _fractionFadedIn;
-}
-
-- (void)setFractionFadedIn:(float)fraction
-{
-    ASSERT_ARG(fraction, fraction >= 0.0 && fraction <= 1.0);
-
-    if (_fractionFadedIn == fraction)
-        return;
-    
-    _fractionFadedIn = fraction;
-    [self setNeedsDisplay:YES];
-}
-
-- (void)setHolesNeedUpdateInRect:(NSRect)rect
-{
-    // Redisplay a slightly larger rect to account for white border around holes
-    rect = NSInsetRect(rect, -1 * WHITE_FRAME_THICKNESS, 
-                             -1 * WHITE_FRAME_THICKNESS);
-
-    [self setNeedsDisplayInRect:rect];
+    // Redisplay a slightly larger rect to account for the border
+    rect = NSInsetRect(rect, -1 * BORDER_THICKNESS, -1 * BORDER_THICKNESS);
+    [super setNeedsDisplayInRect:rect];
 }
 
 @end

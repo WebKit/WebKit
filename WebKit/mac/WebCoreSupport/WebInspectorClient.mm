@@ -200,6 +200,7 @@ void WebInspectorClient::updateWindowTitle() const
 
 - (void)dealloc
 {
+    ASSERT(!_currentHighlight);
     [_shadowView release];
     [_webView release];
     [super dealloc];
@@ -254,10 +255,7 @@ void WebInspectorClient::updateWindowTitle() const
 
     [_inspectedWebView page]->inspectorController()->setWindowVisible(false);
 
-    [_currentHighlight detachHighlight];
-    [_currentHighlight setDelegate:nil];
-    [_currentHighlight release];
-    _currentHighlight = nil;
+    [self hideHighlight];
 
     return YES;
 }
@@ -271,12 +269,8 @@ void WebInspectorClient::updateWindowTitle() const
 
     [_inspectedWebView page]->inspectorController()->setWindowVisible(false);
 
-    if (!_movingWindows) {
-        [_currentHighlight detachHighlight];
-        [_currentHighlight setDelegate:nil];
-        [_currentHighlight release];
-        _currentHighlight = nil;
-    }
+    if (!_movingWindows)
+        [self hideHighlight];
 
     if (_attachedToInspectedWebView) {
         if ([_inspectedWebView _isClosed])
@@ -470,10 +464,8 @@ void WebInspectorClient::updateWindowTitle() const
     if (!_currentHighlight) {
         _currentHighlight = [[WebNodeHighlight alloc] initWithTargetView:view inspectorController:[_inspectedWebView page]->inspectorController()];
         [_currentHighlight setDelegate:self];
-        [_currentHighlight attachHighlight];
+        [_currentHighlight attach];
     }
-
-    [_currentHighlight show];
 
     // FIXME: this is a hack until we hook up a didDraw and didScroll call in WebHTMLView
     [[_currentHighlight highlightView] setNeedsDisplay:YES];
@@ -481,9 +473,10 @@ void WebInspectorClient::updateWindowTitle() const
 
 - (void)hideHighlight
 {
-    if (!_currentHighlight)
-        return;
-    [_currentHighlight hide];
+    [_currentHighlight detach];
+    [_currentHighlight setDelegate:nil];
+    [_currentHighlight release];
+    _currentHighlight = nil;
 }
 
 #pragma mark -
