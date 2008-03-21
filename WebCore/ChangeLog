@@ -1,5 +1,25 @@
 2008-03-20  Adam Roben  <aroben@apple.com>
 
+        Allow pausing of callOnMainThread callbacks
+
+        Part of Bug 17133: Should support pausing JavaScript execution without
+        hanging the process
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17133>
+        <rdar://problem/5719551>
+
+        Reviewed by Tim Hatcher.
+
+        * platform/MainThread.cpp:
+        (WebCore::dispatchFunctionsFromMainThread): If callbacks are paused,
+        don't dispatch the functions.
+        (WebCore::setMainThreadCallbacksPaused): Added. If we're being
+        unpaused, call scheduleDispatchFunctionsOnMainThread so that any
+        queued callbacks will get dispatched in the near future.
+        * platform/MainThread.h:
+
+2008-03-20  Adam Roben  <aroben@apple.com>
+
         Allow blocking of JS event handlers/javascript: URIs per-Frame
 
         Part of Bug 17133: Should support pausing JavaScript execution without

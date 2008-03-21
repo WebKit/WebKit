@@ -37,6 +37,7 @@ namespace WebCore {
 typedef void MainThreadFunction(void*);
 
 void callOnMainThread(MainThreadFunction*, void* context);
+void setMainThreadCallbacksPaused(bool paused);
 
 void initializeThreadingAndMainThread();
 
