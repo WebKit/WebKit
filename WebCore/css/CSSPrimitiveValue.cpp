@@ -363,7 +363,16 @@ double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, double multipl
             return -1.0;
     }
 
-    return getDoubleValue() * factor * (applyZoomMultiplier ? multiplier : 1.0f);
+    double result = getDoubleValue() * factor;
+    if (!applyZoomMultiplier || multiplier == 1.0)
+        return result;
+     
+    // Any original result that was >= 1 should not be allowed to fall below 1.  This keeps border lines from
+    // vanishing.
+    double zoomedResult = result * multiplier;
+    if (result >= 1.0)
+        zoomedResult = max(1.0, zoomedResult);
+    return zoomedResult;
 }
 
 void CSSPrimitiveValue::setFloatValue(unsigned short unitType, double floatValue, ExceptionCode& ec)

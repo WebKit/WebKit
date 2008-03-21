@@ -1,3 +1,17 @@
+2008-03-21  David Hyatt  <hyatt@apple.com>
+
+        <rdar://problem/5808863> Zooming should not let non-zero border width become zero
+
+        Make sure zoomed values that begin >= 1 are not allowed to fall below 1.
+
+        Reviewed by adele
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::imageSize):
+        (WebCore::CachedImage::imageRect):
+
 2008-03-21  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.
