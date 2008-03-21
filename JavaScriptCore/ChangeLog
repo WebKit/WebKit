@@ -1,3 +1,23 @@
+2008-03-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for leak introduced by inline ScopeChainNode use
+
+        To avoid any extra branches when managing an inline ScopeChainNode
+        in the ScopeChain the inline node gets inserted with a refcount of
+        2.  This meant than when the ScopeChain was destroyed the ScopeChainNodes
+        above the inline node would be leaked.
+
+        We resolve this by manually popping the inline node in the
+        FunctionExecState destructor.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/ExecStateInlines.h:
+        (KJS::FunctionExecState::~FunctionExecState):
+        * kjs/scope_chain.h:
+        (KJS::ScopeChain::popInlineScopeNode):
+
 2008-03-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

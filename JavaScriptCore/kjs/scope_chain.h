@@ -93,7 +93,8 @@ namespace KJS {
         void push(ScopeChainNode*);
         void replaceTop(JSObject*);
         void pop();
-        
+        void popInlineScopeNode();
+
         void mark();
 
 #ifndef NDEBUG        
@@ -169,6 +170,11 @@ inline void ScopeChain::pop()
     } else {
         delete oldNode;
     }
+}
+
+inline void ScopeChain::popInlineScopeNode()
+{
+    _node = _node->next;
 }
 
 } // namespace KJS
