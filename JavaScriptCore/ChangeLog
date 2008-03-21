@@ -1,3 +1,14 @@
+2008-03-21  Arkadiusz Miskiewicz  <arekm@maven.pl>
+
+        Webkit does not build on linux powerpc
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17019>
+
+        Reviewed by David Kilzer.
+
+        * wtf/TCSpinLock.h:
+        (TCMalloc_SpinLock::Unlock):
+
 2008-03-21  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Holger.
