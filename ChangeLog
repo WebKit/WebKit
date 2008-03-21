@@ -1,3 +1,13 @@
+2008-03-21  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Holger.
+
+        Remove the JSCore include path options from global_cppflags.
+        Place JSCore include path options in javascriptcore_cppflags.
+        Add javascriptcore_cppflags to libWebCore_la_CPPFLAGS.
+
+        * GNUmakefile.am:
+
 2008-03-20  Jasper Bryant-Greene  <jasper@unix.geek.nz>
 
         Reviewed by Anders.
