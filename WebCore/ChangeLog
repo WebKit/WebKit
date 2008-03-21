@@ -1,5 +1,12 @@
 2008-03-21  Adam Roben  <aroben@apple.com>
 
+        Attempt to fix the Mac build
+
+        * bindings/objc/DOMUtility.mm:
+        (KJS::createDOMWrapper):
+
+2008-03-21  Adam Roben  <aroben@apple.com>
+
         Rename static info members to s_info
 
         This avoids conflicts with custom "info" methods, such as the one that

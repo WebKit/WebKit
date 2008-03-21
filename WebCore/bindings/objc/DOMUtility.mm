@@ -71,7 +71,7 @@ namespace KJS {
 static inline id createDOMWrapper(KJS::JSObject* object)
 {
     #define WRAP(className) \
-        if (object->inherits(&WebCore::JS##className::info)) \
+        if (object->inherits(&WebCore::JS##className::s_info)) \
             return [DOM##className _wrap##className:static_cast<WebCore::JS##className*>(object)->impl()];
 
     WRAP(CSSRule)
@@ -99,13 +99,13 @@ static inline id createDOMWrapper(KJS::JSObject* object)
 
     #undef WRAP
 
-    if (object->inherits(&WebCore::JSDOMWindow::info))
+    if (object->inherits(&WebCore::JSDOMWindow::s_info))
         return [DOMAbstractView _wrapAbstractView:static_cast<WebCore::JSDOMWindow*>(object)->impl()];
-    if (object->inherits(&WebCore::JSDOMImplementation::info))
+    if (object->inherits(&WebCore::JSDOMImplementation::s_info))
         return [DOMImplementation _wrapDOMImplementation:implementationFront(static_cast<WebCore::JSDOMImplementation*>(object))];
-    if (object->inherits(&WebCore::JSNodeIterator::info))
+    if (object->inherits(&WebCore::JSNodeIterator::s_info))
         return [DOMNodeIterator _wrapNodeIterator:static_cast<WebCore::JSNodeIterator*>(object)->impl() filter:nil];
-    if (object->inherits(&WebCore::JSTreeWalker::info))
+    if (object->inherits(&WebCore::JSTreeWalker::s_info))
         return [DOMTreeWalker _wrapTreeWalker:static_cast<WebCore::JSTreeWalker*>(object)->impl() filter:nil];
 
     return nil;
