@@ -2,6 +2,21 @@
 
         Reviewed by Maciej.
 
+        Get rid of m_originalURL in ResourceLoader.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::load):
+        Don't store m_originalURL.
+        
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequest):
+        Use the url of the current request instead of the original URL.
+
+2008-03-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+
         Small loader cleanups.
         
         * loader/MainResourceLoader.cpp:
