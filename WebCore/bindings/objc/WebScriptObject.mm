@@ -523,13 +523,13 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock;
         
-        if (object->classInfo() != &RuntimeObjectImp::info) {
+        if (object->classInfo() != &RuntimeObjectImp::s_info) {
             JSValue* runtimeObject = object->get(exec, "__apple_runtime_object");
             if (runtimeObject && runtimeObject->isObject())
                 object = static_cast<RuntimeObjectImp*>(runtimeObject);
         }
 
-        if (object->classInfo() == &RuntimeObjectImp::info) {
+        if (object->classInfo() == &RuntimeObjectImp::s_info) {
             RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(object);
             ObjcInstance *instance = static_cast<ObjcInstance*>(imp->getInternalInstance());
             if (instance)

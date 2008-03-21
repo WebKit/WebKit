@@ -484,13 +484,13 @@ jvalue convertValueToJValue (ExecState *exec, JSValue *value, JNIType _JNIType, 
             // First see if we have a Java instance.
             if (value->isObject()){
                 JSObject *objectImp = static_cast<JSObject*>(value);
-                if (objectImp->classInfo() == &RuntimeObjectImp::info) {
+                if (objectImp->classInfo() == &RuntimeObjectImp::s_info) {
                     RuntimeObjectImp *imp = static_cast<RuntimeObjectImp *>(value);
                     JavaInstance *instance = static_cast<JavaInstance*>(imp->getInternalInstance());
                     if (instance)
                         result.l = instance->javaInstance();
                 }
-                else if (objectImp->classInfo() == &RuntimeArray::info) {
+                else if (objectImp->classInfo() == &RuntimeArray::s_info) {
                 // Input is a JavaScript Array that was originally created from a Java Array
                     RuntimeArray *imp = static_cast<RuntimeArray *>(value);
                     JavaArray *array = static_cast<JavaArray*>(imp->getConcreteArray());

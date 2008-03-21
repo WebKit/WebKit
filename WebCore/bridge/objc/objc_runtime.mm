@@ -237,7 +237,7 @@ bool ObjcFallbackObjectImp::implementsCall() const
 
 JSValue* ObjcFallbackObjectImp::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
-    if (thisObj->classInfo() != &KJS::RuntimeObjectImp::info)
+    if (thisObj->classInfo() != &KJS::RuntimeObjectImp::s_info)
         return throwError(exec, TypeError);
 
     JSValue* result = jsUndefined();

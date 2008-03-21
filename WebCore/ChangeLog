@@ -1,3 +1,14 @@
+2008-03-21  Matt Lilek  <webkit@mattlilek.com>
+
+        Not reviewed, Mac build fix.
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:originRootObject:rootObject:]):
+        * bridge/jni/jni_utility.cpp:
+        (KJS::Bindings::convertValueToJValue):
+        * bridge/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::callAsFunction):
+
 2008-03-21  Adam Roben  <aroben@apple.com>
 
         Attempt to fix the Mac build
