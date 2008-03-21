@@ -38,8 +38,8 @@ namespace WebCore {
         KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
         virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, JSValue*);
         void putValueProperty(KJS::ExecState*, int token, KJS::JSValue*);
-        virtual const KJS::ClassInfo* classInfo() const { return &info; }
-        static const KJS::ClassInfo info;
+        virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
+        static const KJS::ClassInfo s_info;
         enum { SelectionStart, SelectionEnd };
     };
 

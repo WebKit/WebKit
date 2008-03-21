@@ -45,13 +45,13 @@ public:
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual bool deleteProperty(ExecState *exec, unsigned propertyName);
     
-    virtual const ClassInfo *classInfo() const { return &info; }
+    virtual const ClassInfo *classInfo() const { return &s_info; }
     
     unsigned getLength() const { return getConcreteArray()->getLength(); }
     
     Bindings::Array *getConcreteArray() const { return _array.get(); }
 
-    static const ClassInfo info;
+    static const ClassInfo s_info;
 
 private:
     static JSValue *lengthGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);

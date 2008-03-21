@@ -34,8 +34,8 @@ public:
     virtual bool implementsConstruct() const;
     virtual KJS::JSObject* construct(KJS::ExecState*, const KJS::List&);
 
-    virtual const KJS::ClassInfo* classInfo() const { return &info; }
-    static const KJS::ClassInfo info;
+    virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
+    static const KJS::ClassInfo s_info;
 
 private:
     RefPtr<Document> m_document;
@@ -46,8 +46,8 @@ public:
     JSXMLHttpRequest(KJS::JSObject* prototype, Document*);
     ~JSXMLHttpRequest();
 
-    virtual const KJS::ClassInfo* classInfo() const { return &info; }
-    static const KJS::ClassInfo info;
+    virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
+    static const KJS::ClassInfo s_info;
     enum { Onload, Onreadystatechange, ReadyState, ResponseText, ResponseXML, Status,
         StatusText, Abort, GetAllResponseHeaders, GetResponseHeader, Open, Send, SetRequestHeader, OverrideMIMEType,
         AddEventListener, RemoveEventListener, DispatchEvent };

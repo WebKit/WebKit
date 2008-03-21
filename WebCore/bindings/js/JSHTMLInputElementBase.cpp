@@ -49,7 +49,7 @@ JSValue* jsHTMLInputElementBaseFunctionSetSelectionRange(ExecState* exec, JSObje
     return jsUndefined();
 }
 
-const ClassInfo JSHTMLInputElementBase::info = { "HTMLInputElementBase", &JSHTMLElement::info, &JSHTMLInputElementBaseTable };
+const ClassInfo JSHTMLInputElementBase::s_info = { "HTMLInputElementBase", &JSHTMLElement::s_info, &JSHTMLInputElementBaseTable };
 
 JSHTMLInputElementBase::JSHTMLInputElementBase(KJS::JSObject* prototype, PassRefPtr<HTMLInputElement> e)
     : JSHTMLElement(prototype, e.get())

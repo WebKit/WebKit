@@ -68,13 +68,13 @@ JSValue *RuntimeMethod::callAsFunction(ExecState *exec, JSObject *thisObj, const
     
     RuntimeObjectImp *imp = 0;
 
-    if (thisObj->classInfo() == &KJS::RuntimeObjectImp::info) {
+    if (thisObj->classInfo() == &KJS::RuntimeObjectImp::s_info) {
         imp = static_cast<RuntimeObjectImp*>(thisObj);
     } else {
         // If thisObj is the DOM object for a plugin, get the corresponding
         // runtime object from the DOM object.
         JSValue* value = thisObj->get(exec, "__apple_runtime_object");
-        if (value->isObject(&KJS::RuntimeObjectImp::info))    
+        if (value->isObject(&KJS::RuntimeObjectImp::s_info))    
             imp = static_cast<RuntimeObjectImp*>(value);
     }
 

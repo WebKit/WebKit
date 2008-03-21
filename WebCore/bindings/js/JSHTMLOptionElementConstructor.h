@@ -32,8 +32,8 @@ namespace WebCore {
         virtual bool implementsConstruct() const;
         virtual KJS::JSObject* construct(KJS::ExecState*, const KJS::List&);
 
-        virtual const KJS::ClassInfo* classInfo() const { return &info; }
-        static const KJS::ClassInfo info;
+        virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
+        static const KJS::ClassInfo s_info;
 
     private:
         RefPtr<Document> m_document;

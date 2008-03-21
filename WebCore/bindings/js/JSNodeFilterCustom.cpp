@@ -55,7 +55,7 @@ NodeFilter* toNodeFilter(KJS::JSValue* val)
     if (!val || !val->isObject())
         return 0;
 
-    if (val->isObject(&JSNodeFilter::info))
+    if (val->isObject(&JSNodeFilter::s_info))
         return static_cast<JSNodeFilter*>(val)->impl();
 
     KJS::JSObject* o = static_cast<KJS::JSObject*>(val);

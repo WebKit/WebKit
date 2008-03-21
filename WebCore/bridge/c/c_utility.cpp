@@ -87,7 +87,7 @@ void convertValueToNPVariant(ExecState* exec, JSValue* value, NPVariant* result)
         NULL_TO_NPVARIANT(*result);
     } else if (type == ObjectType) {
         JSObject* object = static_cast<JSObject*>(value);
-        if (object->classInfo() == &RuntimeObjectImp::info) {
+        if (object->classInfo() == &RuntimeObjectImp::s_info) {
             RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(value);
             CInstance* instance = static_cast<CInstance*>(imp->getInternalInstance());
             if (instance) {

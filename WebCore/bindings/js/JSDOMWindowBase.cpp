@@ -137,7 +137,7 @@ private:
 
 ////////////////////// JSDOMWindowBase Object ////////////////////////
 
-const ClassInfo JSDOMWindowBase::info = { "Window", 0, &JSDOMWindowBaseTable };
+const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, &JSDOMWindowBaseTable };
 
 /*
 @begin JSDOMWindowBaseTable 118
@@ -1020,7 +1020,7 @@ Event* JSDOMWindowBase::currentEvent()
 
 JSValue* windowProtoFuncAToB(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    if (!thisObj->inherits(&JSDOMWindowBase::info))
+    if (!thisObj->inherits(&JSDOMWindowBase::s_info))
         return throwError(exec, TypeError);
     if (!static_cast<JSDOMWindowBase*>(thisObj)->allowsAccessFrom(exec)) 
         return jsUndefined();
@@ -1051,7 +1051,7 @@ JSValue* windowProtoFuncAToB(ExecState* exec, JSObject* thisObj, const List& arg
 
 JSValue* windowProtoFuncBToA(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    if (!thisObj->inherits(&JSDOMWindowBase::info))
+    if (!thisObj->inherits(&JSDOMWindowBase::s_info))
         return throwError(exec, TypeError);
     if (!static_cast<JSDOMWindowBase*>(thisObj)->allowsAccessFrom(exec)) 
         return jsUndefined();
@@ -1081,7 +1081,7 @@ JSValue* windowProtoFuncBToA(ExecState* exec, JSObject* thisObj, const List& arg
 
 JSValue* windowProtoFuncOpen(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    if (!thisObj->inherits(&JSDOMWindowBase::info))
+    if (!thisObj->inherits(&JSDOMWindowBase::s_info))
         return throwError(exec, TypeError);
     JSDOMWindowBase* window = static_cast<JSDOMWindowBase*>(thisObj);
     if (!window->allowsAccessFrom(exec)) 
@@ -1151,7 +1151,7 @@ JSValue* windowProtoFuncOpen(ExecState* exec, JSObject* thisObj, const List& arg
 
 JSValue* windowProtoFuncSetTimeout(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    if (!thisObj->inherits(&JSDOMWindowBase::info))
+    if (!thisObj->inherits(&JSDOMWindowBase::s_info))
         return throwError(exec, TypeError);
     JSDOMWindowBase* window = static_cast<JSDOMWindowBase*>(thisObj);
     if (!window->allowsAccessFrom(exec)) 
@@ -1172,7 +1172,7 @@ JSValue* windowProtoFuncSetTimeout(ExecState* exec, JSObject* thisObj, const Lis
 JSValue* windowProtoFuncClearTimeout(ExecState* exec, JSObject* thisObj, const List& args)
 {
     // Also the implementation for window.clearInterval()
-    if (!thisObj->inherits(&JSDOMWindowBase::info))
+    if (!thisObj->inherits(&JSDOMWindowBase::s_info))
         return throwError(exec, TypeError);
     JSDOMWindowBase* window = static_cast<JSDOMWindowBase*>(thisObj);
     if (!window->allowsAccessFrom(exec)) 
@@ -1184,7 +1184,7 @@ JSValue* windowProtoFuncClearTimeout(ExecState* exec, JSObject* thisObj, const L
 
 JSValue* windowProtoFuncSetInterval(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    if (!thisObj->inherits(&JSDOMWindowBase::info))
+    if (!thisObj->inherits(&JSDOMWindowBase::s_info))
         return throwError(exec, TypeError);
     JSDOMWindowBase* window = static_cast<JSDOMWindowBase*>(thisObj);
     if (!window->allowsAccessFrom(exec)) 
@@ -1208,7 +1208,7 @@ JSValue* windowProtoFuncSetInterval(ExecState* exec, JSObject* thisObj, const Li
 
 JSValue* windowProtoFuncAddEventListener(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    if (!thisObj->inherits(&JSDOMWindowBase::info))
+    if (!thisObj->inherits(&JSDOMWindowBase::s_info))
         return throwError(exec, TypeError);
     JSDOMWindowBase* window = static_cast<JSDOMWindowBase*>(thisObj);
     if (!window->allowsAccessFrom(exec)) 
@@ -1228,7 +1228,7 @@ JSValue* windowProtoFuncAddEventListener(ExecState* exec, JSObject* thisObj, con
 
 JSValue* windowProtoFuncRemoveEventListener(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    if (!thisObj->inherits(&JSDOMWindowBase::info))
+    if (!thisObj->inherits(&JSDOMWindowBase::s_info))
         return throwError(exec, TypeError);
     JSDOMWindowBase* window = static_cast<JSDOMWindowBase*>(thisObj);
     if (!window->allowsAccessFrom(exec)) 
@@ -1248,7 +1248,7 @@ JSValue* windowProtoFuncRemoveEventListener(ExecState* exec, JSObject* thisObj, 
 
 JSValue* windowProtoFuncShowModalDialog(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    if (!thisObj->inherits(&JSDOMWindowBase::info))
+    if (!thisObj->inherits(&JSDOMWindowBase::s_info))
         return throwError(exec, TypeError);
     JSDOMWindowBase* window = static_cast<JSDOMWindowBase*>(thisObj);
     if (!window->allowsAccessFrom(exec)) 
@@ -1263,7 +1263,7 @@ JSValue* windowProtoFuncShowModalDialog(ExecState* exec, JSObject* thisObj, cons
 
 JSValue* windowProtoFuncNotImplemented(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    if (!thisObj->inherits(&JSDOMWindowBase::info))
+    if (!thisObj->inherits(&JSDOMWindowBase::s_info))
         return throwError(exec, TypeError);
 
     return jsUndefined();

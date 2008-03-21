@@ -81,7 +81,7 @@ void JSEventTargetNode::pushEventHandlerScope(ExecState*, ScopeChain&) const
 
 EventTargetNode* toEventTargetNode(JSValue* val)
 {
-    if (!val || !val->isObject(&JSEventTargetNode::info))
+    if (!val || !val->isObject(&JSEventTargetNode::s_info))
         return 0;
 
     return static_cast<EventTargetNode*>(static_cast<JSEventTargetNode*>(val)->impl());

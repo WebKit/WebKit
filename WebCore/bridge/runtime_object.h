@@ -38,7 +38,7 @@ class RuntimeObjectImp : public JSObject {
 public:
     virtual ~RuntimeObjectImp();
     
-    const ClassInfo *classInfo() const { return &info; }
+    const ClassInfo *classInfo() const { return &s_info; }
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value);
@@ -53,7 +53,7 @@ public:
     
     static JSObject* throwInvalidAccessError(ExecState*);
     
-    static const ClassInfo info;
+    static const ClassInfo s_info;
 
 protected:
     friend class Bindings::Instance;

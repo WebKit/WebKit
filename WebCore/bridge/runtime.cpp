@@ -115,7 +115,7 @@ Instance* Instance::getInstance(JSObject* object, BindingLanguage language)
 {
     if (!object)
         return 0;
-    if (!object->inherits(&RuntimeObjectImp::info))
+    if (!object->inherits(&RuntimeObjectImp::s_info))
         return 0;
     Instance* instance = (static_cast<RuntimeObjectImp*>(object))->getInternalInstance();
     if (!instance)

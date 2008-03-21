@@ -354,8 +354,8 @@ sub GenerateHeader
     }
 
     # Class info
-    push(@headerContent, "    virtual const KJS::ClassInfo* classInfo() const { return &info; }\n");
-    push(@headerContent, "    static const KJS::ClassInfo info;\n\n");
+    push(@headerContent, "    virtual const KJS::ClassInfo* classInfo() const { return &s_info; }\n");
+    push(@headerContent, "    static const KJS::ClassInfo s_info;\n\n");
 
     # Custom mark function
     push(@headerContent, "    virtual void mark();\n\n") if $dataNode->extendedAttributes->{"CustomMarkFunction"};
@@ -518,8 +518,8 @@ sub GenerateHeader
     } else {
         push(@headerContent, "    static KJS::JSObject* self(KJS::ExecState* exec);\n");
     }
-    push(@headerContent, "    virtual const KJS::ClassInfo* classInfo() const { return &info; }\n");
-    push(@headerContent, "    static const KJS::ClassInfo info;\n");
+    push(@headerContent, "    virtual const KJS::ClassInfo* classInfo() const { return &s_info; }\n");
+    push(@headerContent, "    static const KJS::ClassInfo s_info;\n");
     if ($numFunctions > 0 || $numConstants > 0) {
         push(@headerContent, "    bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);\n");
     }
@@ -724,7 +724,7 @@ sub GenerateImplementation
                                \@hashKeys, \@hashValues,
                                \@hashSpecials, \@hashParameters);
 
-    push(@implContent, "const ClassInfo ${className}Prototype::info = { \"${visibleClassName}Prototype\", 0, &${className}PrototypeTable };\n\n");
+    push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", 0, &${className}PrototypeTable };\n\n");
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
         push(@implContent, "JSObject* ${className}Prototype::self()\n");
         push(@implContent, "{\n");
@@ -756,9 +756,9 @@ sub GenerateImplementation
     }
 
     # - Initialize static ClassInfo object
-    push(@implContent, "const ClassInfo $className" . "::info = { \"${visibleClassName}\", ");
+    push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleClassName}\", ");
     if ($hasParent) {
-        push(@implContent, "&" . $parentClassName . "::info, ");
+        push(@implContent, "&" . $parentClassName . "::s_info, ");
     } else {
         push(@implContent, "0, ");
     }
@@ -1124,7 +1124,7 @@ sub GenerateImplementation
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
             push(@implContent, "JSValue* ${functionName}(ExecState* exec, JSObject* thisObj, const List& args)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    if (!thisObj->inherits(&${className}::info))\n");
+            push(@implContent, "    if (!thisObj->inherits(&${className}::s_info))\n");
             push(@implContent, "        return throwError(exec, TypeError);\n");
 
             AddIncludesForType($function->signature->type);
@@ -1274,7 +1274,7 @@ sub GenerateImplementation
 
         push(@implContent, "{\n");
 
-        push(@implContent, "    return val->isObject(&${className}::info) ? " . ($podType ? "($podType) *" : "") . "static_cast<$className*>(val)->impl() : ");
+        push(@implContent, "    return val->isObject(&${className}::s_info) ? " . ($podType ? "($podType) *" : "") . "static_cast<$className*>(val)->impl() : ");
         if ($podType and $podType ne "float") {
             push(@implContent, "$podType();\n}\n");
         } else {
@@ -1749,8 +1749,8 @@ public:
     }
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     JSValue* getValueProperty(ExecState*, int token) const;
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
+    virtual const ClassInfo* classInfo() const { return &s_info; }
+    static const ClassInfo s_info;
 
     virtual bool implementsHasInstance() const { return true; }
 EOF
@@ -1765,7 +1765,7 @@ EOF
 $implContent .= << "EOF";
 };
 
-const ClassInfo ${className}Constructor::info = { "${visibleClassName}Constructor", 0, &${className}ConstructorTable };
+const ClassInfo ${className}Constructor::s_info = { "${visibleClassName}Constructor", 0, &${className}ConstructorTable };
 
 bool ${className}Constructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
