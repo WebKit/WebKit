@@ -37,8 +37,8 @@ namespace KJS {
 
     class JSVariableObject : public JSObject {
     public:
-        SymbolTable& symbolTable() { return *d->symbolTable; }
-        LocalStorage& localStorage() { return d->localStorage; }
+        SymbolTable& symbolTable() const { return *d->symbolTable; }
+        LocalStorage& localStorage() const { return d->localStorage; }
         
         void saveLocalStorage(SavedProperties&) const;
         void restoreLocalStorage(const SavedProperties&);
@@ -52,6 +52,8 @@ namespace KJS {
 
         virtual bool isVariableObject() const;
         virtual bool isDynamicScope() const = 0;
+
+        virtual bool getPropertyAttributes(const Identifier& propertyName, unsigned& attributes) const;
 
     protected:
         // Subclasses of JSVariableObject can subclass this struct to add data

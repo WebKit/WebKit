@@ -1,3 +1,21 @@
+2008-03-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Global properties that use LocalStorage are not correctly listed as enumerable.
+
+        The problem was caused by JSObject::getPropertyAttributes not being aware
+        of the JSVariableObject SymbolTable.  The fix is to make getPropertyAttributes
+        virtual and override in JSVariableObject.  This does not produce any performance
+        regression.
+
+        * JavaScriptCore.exp:
+        * kjs/JSVariableObject.cpp:
+        (KJS::JSVariableObject::getPropertyNames):
+        (KJS::JSVariableObject::getPropertyAttributes):
+        * kjs/JSVariableObject.h:
+        * kjs/object.h:
+
 2008-03-21  Arkadiusz Miskiewicz  <arekm@maven.pl>
 
         Webkit does not build on linux powerpc

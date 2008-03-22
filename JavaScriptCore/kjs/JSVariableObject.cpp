@@ -84,11 +84,22 @@ bool JSVariableObject::deleteProperty(ExecState* exec, const Identifier& propert
 
 void JSVariableObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
-    SymbolTable::const_iterator::Keys end = symbolTable().end().keys();
-    for (SymbolTable::const_iterator::Keys it = symbolTable().begin().keys(); it != end; ++it)
-        propertyNames.add(Identifier(it->get()));
-
+    SymbolTable::const_iterator end = symbolTable().end();
+    for (SymbolTable::const_iterator it = symbolTable().begin(); it != end; ++it)
+        if ((localStorage()[it->second].attributes & DontEnum) == 0)
+            propertyNames.add(Identifier(it->first.get()));
+    
     JSObject::getPropertyNames(exec, propertyNames);
+}
+
+bool JSVariableObject::getPropertyAttributes(const Identifier& propertyName, unsigned& attributes) const
+{
+    size_t index = symbolTable().get(propertyName.ustring().rep());
+    if (index != missingSymbolMarker()) {
+        attributes = localStorage()[index].attributes;
+        return true;
+    }
+    return JSObject::getPropertyAttributes(propertyName, attributes);
 }
 
 void JSVariableObject::mark()

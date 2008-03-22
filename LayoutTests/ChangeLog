@@ -1,3 +1,13 @@
+2008-03-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Ensure we correctly report optimised variables as being
+        enumerable.
+
+        * fast/js/propertyIsEnumerable-expected.txt:
+        * fast/js/resources/propertyIsEnumerable.js:
+
 2008-03-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

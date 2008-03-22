@@ -403,7 +403,7 @@ namespace KJS {
     virtual UString toString(ExecState *exec) const;
     virtual JSObject *toObject(ExecState *exec) const;
     
-    bool getPropertyAttributes(const Identifier& propertyName, unsigned& attributes) const;
+    virtual bool getPropertyAttributes(const Identifier& propertyName, unsigned& attributes) const;
     
     // WebCore uses this to make document.all and style.filter undetectable
     virtual bool masqueradeAsUndefined() const { return false; }
