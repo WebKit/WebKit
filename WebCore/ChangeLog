@@ -1,3 +1,21 @@
+2008-03-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+
+        Fix createElementNS to throw exceptions for invalid qualified names
+        Fixes Acid3 sub-test 23
+        http://bugs.webkit.org/show_bug.cgi?id=16833
+
+        Tests: fast/dom/Document/createAttributeNS-namespace-err.html
+               fast/dom/Document/createElementNS-namespace-err.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::createElement):
+        (WebCore::hasNamespaceError):
+        (WebCore::Document::createElementNS):
+        (WebCore::Document::createAttributeNS):
+        * dom/Document.idl:
+
 2008-03-21  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.

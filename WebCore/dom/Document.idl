@@ -33,7 +33,7 @@ module core {
         readonly attribute DOMImplementation implementation;
         readonly attribute Element documentElement;
 
-        Element            createElement(in DOMString tagName)
+        Element            createElement(in [ConvertNullToNullString] DOMString tagName)
             raises (DOMException);
         DocumentFragment   createDocumentFragment();
         Text               createTextNode(in DOMString data);
@@ -55,10 +55,10 @@ module core {
                                        in boolean deep)
             raises (DOMException);
         [OldStyleObjC] Element createElementNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                               in DOMString qualifiedName)
+                                               in [ConvertNullToNullString] DOMString qualifiedName)
             raises (DOMException);
         [OldStyleObjC] Attr createAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                              in DOMString qualifiedName)
+                                              in [ConvertNullToNullString] DOMString qualifiedName)
             raises (DOMException);
         [OldStyleObjC] NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                                        in DOMString localName);
