@@ -150,6 +150,7 @@ GlobalObject::GlobalObject(Vector<UString>& arguments)
 JSValue* functionPrint(ExecState* exec, JSObject*, const List& args)
 {
     printf("%s\n", args[0]->toString(exec).UTF8String().c_str());
+    fflush(stdout);
     return jsUndefined();
 }
 

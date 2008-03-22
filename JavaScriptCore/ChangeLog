@@ -1,3 +1,13 @@
+2008-03-22  Jesse Ruderman  <jruderman@gmail.com>
+
+        Reviewed by Sam Weinig.  Landed by eseidel.
+        
+        Make testkjs flush stdout after printing.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/testkjs.cpp:
+        (functionPrint):
+
 2008-03-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
