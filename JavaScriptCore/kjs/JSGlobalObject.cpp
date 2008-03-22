@@ -309,12 +309,21 @@ void JSGlobalObject::reset(JSValue* prototype)
     putDirect("URIError", d()->URIErrorConstructor);
 
     // Set global values.
-
-    putDirect("Math", new MathObjectImp(exec, d()->objectPrototype), DontEnum);
-
-    putDirect("NaN", jsNaN(), DontEnum | DontDelete);
-    putDirect("Infinity", jsNumber(Inf), DontEnum | DontDelete);
-    putDirect("undefined", jsUndefined(), DontEnum | DontDelete);
+    Identifier mathIdent = "Math";
+    JSValue* mathObject = new MathObjectImp(exec, d()->objectPrototype);
+    symbolTableInsert(mathIdent, mathObject, DontEnum | DontDelete);
+    
+    Identifier nanIdent = "NaN";
+    JSValue* nanValue = jsNaN();
+    symbolTableInsert(nanIdent, nanValue, DontEnum | DontDelete);
+    
+    Identifier infinityIdent = "Infinity";
+    JSValue* infinityValue = jsNumber(Inf);
+    symbolTableInsert(infinityIdent, infinityValue, DontEnum | DontDelete);
+    
+    Identifier undefinedIdent = "undefined";
+    JSValue* undefinedValue = jsUndefined();
+    symbolTableInsert(undefinedIdent, undefinedValue, DontEnum | DontDelete);
 
     // Set global functions.
 

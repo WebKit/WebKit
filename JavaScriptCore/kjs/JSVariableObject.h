@@ -86,6 +86,7 @@ namespace KJS {
         bool symbolTableGet(const Identifier&, PropertySlot&);
         bool symbolTablePut(const Identifier&, JSValue*);
         bool symbolTableInitializeVariable(const Identifier&, JSValue*, unsigned attributes);
+        bool symbolTableInsert(const Identifier&, JSValue*, unsigned attributes);
 
         JSVariableObjectData* d;
     };
@@ -134,7 +135,18 @@ namespace KJS {
         entry.attributes = attributes;
         return true;
     }
+    
+    inline bool JSVariableObject::symbolTableInsert(const Identifier& propertyName, JSValue* value, unsigned attributes)
+    {
+        if (symbolTable().get(propertyName.ustring().rep()) != missingSymbolMarker())
+            return false;
 
+        ASSERT((attributes & DontDelete) != 0);
+        size_t localStorageIndex = d->localStorage.size();
+        d->localStorage.append(LocalStorageEntry(value, attributes));
+        symbolTable().add(propertyName.ustring().rep(), localStorageIndex);
+        return true;
+    }
 } // namespace KJS
 
 #endif // JSVariableObject_h

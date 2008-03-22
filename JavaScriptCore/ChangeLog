@@ -1,5 +1,20 @@
 2008-03-21  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Maciej.
+
+        Optimise lookup of Math, undefined, NaN and Infinity
+
+        Added a method to JSVariableObject to allow us to inject DontDelete properties
+        into the symbol table and localStorage.  This results in a 0.4% progression in
+        SunSpider, with a 8% gain in math-partial-sums.
+
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::reset):
+        * kjs/JSVariableObject.h:
+        (KJS::JSVariableObject::symbolTableInsert):
+
+2008-03-21  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoff Garen.
 
         Global properties that use LocalStorage are not correctly listed as enumerable.
