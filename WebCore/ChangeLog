@@ -1,3 +1,16 @@
+2008-03-21  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 13693: REGRESSION (r13615): Acid2 Test Eyes render improperly after a page refresh
+        <http://bugs.webkit.org/show_bug.cgi?id=13693>
+
+        Do not create bogus history items for unloaded <object> elements, because they
+        cause fallback content to be ignored on reload.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createHistoryItemTree):
+
 2008-03-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

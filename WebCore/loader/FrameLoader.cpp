@@ -3886,8 +3886,17 @@ PassRefPtr<HistoryItem> FrameLoader::createHistoryItemTree(Frame* targetFrame, b
     if (!(clipAtTarget && m_frame == targetFrame)) {
         // save frame state for items that aren't loading (khtml doesn't save those)
         saveDocumentState();
-        for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-            bfItem->addChildItem(child->loader()->createHistoryItemTree(targetFrame, clipAtTarget));
+        for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+            FrameLoader* childLoader = child->loader();
+            bool hasChildLoaded = childLoader->frameHasLoaded();
+            
+            // If the child is a frame corresponding to an <object> element that never loaded,
+            // we don't want to create a history item, because that causes fallback content
+            // to be ignored on reload.
+            
+            if (!(!hasChildLoaded && childLoader->isHostedByObjectElement()))
+                bfItem->addChildItem(childLoader->createHistoryItemTree(targetFrame, clipAtTarget));
+        }
     }
     if (m_frame == targetFrame)
         bfItem->setIsTargetItem(true);
