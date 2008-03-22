@@ -2,6 +2,7 @@
  * Copyright (C) 2006, 2007 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2008 Collabora Ltd.
  *
  * All rights reserved.
  *
@@ -54,7 +55,7 @@ public:
     ScrollViewScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
 
 protected:
-    void geometryChanged();
+    void geometryChanged() const;
 };
 
 class ScrollView::ScrollViewPrivate : public ScrollbarClient
@@ -119,7 +120,7 @@ ScrollViewScrollbar::ScrollViewScrollbar(ScrollbarClient* client, ScrollbarOrien
 {
 }
 
-void ScrollViewScrollbar::geometryChanged()
+void ScrollViewScrollbar::geometryChanged() const
 {
     if (!parent())
         return;

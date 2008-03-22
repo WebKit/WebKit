@@ -1,3 +1,17 @@
+2008-03-22  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Darin Adler.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16339
+        Frame scrollbar positions are not updated on page scroll
+
+        Widget::geometryChanged() was called instead of
+        ScrollViewScrollbar::geometryChanged() because of a missing const.
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollViewScrollbar::geometryChanged): add the missing
+        const.
+
 2008-03-22  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Mark Rowe.
