@@ -1,3 +1,18 @@
+2008-03-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17988
+          REGRESSION (r31114-31132): Crash in InlineBox::isDirty() opening chowhound.com
+
+        Test: fast/css-generated-content/empty-content-with-float-crash.html
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Added a null check for
+        the case where the block contains no in-flow elements but still lays
+        out as a line flow, which can happen as a result of empty generated
+        content.
+
 2008-03-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

@@ -939,7 +939,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 newLine(clear);
             }
 
-            if (m_floatingObjects) {
+            if (m_floatingObjects && lastRootBox()) {
                 if (lastFloat) {
                     for (FloatingObject* f = m_floatingObjects->last(); f != lastFloat; f = m_floatingObjects->prev()) {
                     }

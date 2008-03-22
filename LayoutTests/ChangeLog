@@ -1,3 +1,13 @@
+2008-03-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=17988
+          REGRESSION (r31114-31132): Crash in InlineBox::isDirty() opening chowhound.com
+
+        * fast/css-generated-content/empty-content-with-float-crash-expected.txt: Added.
+        * fast/css-generated-content/empty-content-with-float-crash.html: Added.
+
 2008-03-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
