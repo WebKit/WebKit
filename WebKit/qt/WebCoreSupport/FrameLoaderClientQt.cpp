@@ -921,11 +921,11 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
 }
 
 static const CSSPropertyID qstyleSheetProperties[] = {
-    CSS_PROP_COLOR,
-    CSS_PROP_FONT_FAMILY,
-    CSS_PROP_FONT_SIZE,
-    CSS_PROP_FONT_STYLE,
-    CSS_PROP_FONT_WEIGHT
+    CSSPropertyColor,
+    CSSPropertyFontFamily,
+    CSSPropertyFontSize,
+    CSSPropertyFontStyle,
+    CSSPropertyFontWeight
 };
 
 const unsigned numqStyleSheetProperties = sizeof(qstyleSheetProperties) / sizeof(qstyleSheetProperties[0]);
