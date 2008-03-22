@@ -29,10 +29,10 @@ PASS createElementNS(null, "div:"); threw NAMESPACE_ERR
 PASS createElementNS("http://example.com/", ":div"); threw NAMESPACE_ERR
 PASS createElementNS("http://example.com/", "div:"); threw NAMESPACE_ERR
 PASS createElementNS(null, "d:iv"); threw NAMESPACE_ERR
-FAIL createElementNS(null, "a:b:c"); valid XML name, invalid QName; expected NAMESPACE_ERR, threw INVALID_CHARACTER_ERR
-FAIL createElementNS("http://example.com/", "a:b:c"); valid XML name, invalid QName; expected NAMESPACE_ERR, threw INVALID_CHARACTER_ERR
-FAIL createElementNS(null, "a::c"); valid XML name, invalid QName; expected NAMESPACE_ERR, threw INVALID_CHARACTER_ERR
-FAIL createElementNS("http://example.com/", "a::c"); valid XML name, invalid QName; expected NAMESPACE_ERR, threw INVALID_CHARACTER_ERR
+PASS createElementNS(null, "a:b:c"); valid XML name, invalid QName; threw NAMESPACE_ERR
+PASS createElementNS("http://example.com/", "a:b:c"); valid XML name, invalid QName; threw NAMESPACE_ERR
+PASS createElementNS(null, "a::c"); valid XML name, invalid QName; threw NAMESPACE_ERR
+PASS createElementNS("http://example.com/", "a::c"); valid XML name, invalid QName; threw NAMESPACE_ERR
 PASS createElementNS("http://example.com/", "a:0"); valid XML name, not a valid QName; threw INVALID_CHARACTER_ERR
 PASS createElementNS("http://example.com/", "0:a"); 0 at start makes it not a valid XML name; threw INVALID_CHARACTER_ERR
 PASS createElementNS("http://example.com/", "a:_")

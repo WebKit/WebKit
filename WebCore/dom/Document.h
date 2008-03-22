@@ -592,9 +592,12 @@ public:
     static bool isValidName(const String&);
 
     // The following breaks a qualified name into a prefix and a local name.
-    // It also does a validity check, and returns false if the qualified name is invalid
-    // (empty string or invalid characters).
-    static bool parseQualifiedName(const String& qualifiedName, String& prefix, String& localName);
+    // It also does a validity check, and returns false if the qualified name
+    // is invalid.  It also sets ExceptionCode when name is invalid.
+    static bool parseQualifiedName(const String& qualifiedName, String& prefix, String& localName, ExceptionCode&);
+    
+    // Checks to make sure prefix and namespace do not conflict (per DOM Core 3)
+    static bool hasPrefixNamespaceMismatch(const QualifiedName&);
     
     void addElementById(const AtomicString& elementId, Element *element);
     void removeElementById(const AtomicString& elementId, Element *element);

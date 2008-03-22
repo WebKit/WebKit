@@ -52,16 +52,6 @@
 
 namespace WebCore {
 
-// FIXME: An implementation of this is still waiting for me to understand the distinction between
-// a "malformed" qualified name and one with bad characters in it. For example, is a second colon
-// an illegal character or a malformed qualified name? This will determine both what parameters
-// this function needs to take and exactly what it will do. Should also be exported so that
-// Element can use it too.
-static bool qualifiedNameIsMalformed(const String&)
-{
-    return false;
-}
-
 #if ENABLE(SVG)
 
 static void addString(HashSet<String, CaseFoldingHash>& set, const char* string)
@@ -206,26 +196,10 @@ bool DOMImplementation::hasFeature (const String& feature, const String& version
 PassRefPtr<DocumentType> DOMImplementation::createDocumentType(const String& qualifiedName,
     const String& publicId, const String& systemId, ExceptionCode& ec)
 {
-    // Not mentioned in spec: throw NAMESPACE_ERR if no qualifiedName supplied
-    if (qualifiedName.isNull()) {
-        ec = NAMESPACE_ERR;
-        return 0;
-    }
-
-    // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
     String prefix, localName;
-    if (!Document::parseQualifiedName(qualifiedName, prefix, localName)) {
-        ec = INVALID_CHARACTER_ERR;
+    if (!Document::parseQualifiedName(qualifiedName, prefix, localName, ec))
         return 0;
-    }
 
-    // NAMESPACE_ERR: Raised if the qualifiedName is malformed.
-    if (qualifiedNameIsMalformed(qualifiedName)) {
-        ec = NAMESPACE_ERR;
-        return 0;
-    }
-
-    ec = 0;
     return new DocumentType(this, 0, qualifiedName, publicId, systemId);
 }
 
@@ -238,39 +212,11 @@ DOMImplementation* DOMImplementation::getInterface(const String& /*feature*/) co
 PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceURI,
     const String& qualifiedName, DocumentType* doctype, ExceptionCode& ec)
 {
-    if (!qualifiedName.isEmpty()) {
-        // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-        String prefix, localName;
-        if (!Document::parseQualifiedName(qualifiedName, prefix, localName)) {
-            ec = INVALID_CHARACTER_ERR;
-            return 0;
-        }
-
-        // NAMESPACE_ERR:
-        // - Raised if the qualifiedName is malformed,
-        // - if the qualifiedName has a prefix and the namespaceURI is null, or
-        // - if the qualifiedName has a prefix that is "xml" and the namespaceURI is different
-        //   from "http://www.w3.org/XML/1998/namespace" [Namespaces].
-        int colonpos = qualifiedName.find(':');    
-        if (qualifiedNameIsMalformed(qualifiedName) ||
-            (colonpos >= 0 && namespaceURI.isNull()) ||
-            (colonpos == 3 && qualifiedName[0] == 'x' && qualifiedName[1] == 'm' && qualifiedName[2] == 'l' &&
-#if ENABLE(SVG)
-             namespaceURI != SVGNames::svgNamespaceURI &&
-#endif
-             namespaceURI != XMLNames::xmlNamespaceURI)) {
-
-            ec = NAMESPACE_ERR;
-            return 0;
-        }
-    }
-    
     // WRONG_DOCUMENT_ERR: Raised if doctype has already been used with a different document or was
     // created from a different implementation.
-    if (doctype && (doctype->document() || doctype->implementation() != this)) {
-        ec = WRONG_DOCUMENT_ERR;
-        return 0;
-    }
+    bool shouldThrowWrongDocErr = false;
+    if (doctype && (doctype->document() || doctype->implementation() != this))
+        shouldThrowWrongDocErr = true;
 
     RefPtr<Document> doc;
 #if ENABLE(SVG)
@@ -287,10 +233,19 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
     if (doctype)
         doc->addChild(doctype);
 
-    if (!qualifiedName.isEmpty())
+    if (!qualifiedName.isEmpty()) {
         doc->addChild(doc->createElementNS(namespaceURI, qualifiedName, ec));
-    
-    ec = 0;
+        if (ec != 0)
+            return 0;
+    }
+
+    // Hixie's interpretation of the DOM Core spec suggests we should prefer
+    // other exceptions to WRONG_DOCUMENT_ERR (based on order mentioned in spec)
+    if (shouldThrowWrongDocErr) {
+        ec = WRONG_DOCUMENT_ERR;
+        return 0;
+    }
+
     return doc.release();
 }
 

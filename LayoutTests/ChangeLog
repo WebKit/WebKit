@@ -2,6 +2,20 @@
 
         Reviewed by mjs.
 
+        Unify handling of NAMESPACE_ERR and fix Acid3 test 25
+        http://bugs.webkit.org/show_bug.cgi?id=16693
+
+        * fast/dom/DOMImplementation/createDocumentType-err-expected.txt: Added.
+        * fast/dom/DOMImplementation/createDocumentType-err.html: Copied from LayoutTests/fast/dom/DOMException/EventException.html.
+        * fast/dom/DOMImplementation/resources/TEMPLATE.html: Copied from LayoutTests/fast/dom/Document/resources/TEMPLATE.html.
+        * fast/dom/DOMImplementation/resources/createDocumentType-err.js: Added.
+        * fast/dom/Document/createAttributeNS-namespace-err-expected.txt:
+        * fast/dom/Document/createElementNS-namespace-err-expected.txt:
+
+2008-03-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+
         Fix createElementNS to throw exceptions for invalid qualified names
         Fixes Acid3 sub-test 23
         http://bugs.webkit.org/show_bug.cgi?id=16833

@@ -717,18 +717,14 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
     return source;
 }
 
-static bool hasNamespaceError(const QualifiedName& qName)
+bool Document::hasPrefixNamespaceMismatch(const QualifiedName& qName)
 {
-    static const AtomicString xmlnsNamespaceURI = "http://www.w3.org/2000/xmlns/";
-    static const AtomicString xmlns = "xmlns";
-    static const AtomicString xml = "xml";
+    static const AtomicString xmlnsNamespaceURI("http://www.w3.org/2000/xmlns/");
+    static const AtomicString xmlns("xmlns");
+    static const AtomicString xml("xml");
 
     // These checks are from DOM Core Level 2, createElementNS
     // http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-DocCrElNS
-    if (qName.prefix() == emptyAtom) // createElementNS(null, ":div")
-        return true;
-    if (qName.localName().isEmpty()) // createElementNS(null, ""), createElementNS(null, null), createElementNS()
-        return true;
     if (!qName.prefix().isEmpty() && qName.namespaceURI().isNull()) // createElementNS(null, "html:div")
         return true;
     if (qName.prefix() == xml && qName.namespaceURI() != XMLNames::xmlNamespaceURI) // createElementNS("http://www.example.com", "xml:lang")
@@ -777,13 +773,11 @@ PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool cre
 PassRefPtr<Element> Document::createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode& ec)
 {
     String prefix, localName;
-    if (!parseQualifiedName(qualifiedName, prefix, localName)) {
-        ec = INVALID_CHARACTER_ERR;
+    if (!parseQualifiedName(qualifiedName, prefix, localName, ec))
         return 0;
-    }
 
     QualifiedName qName(prefix, localName, namespaceURI);
-    if (hasNamespaceError(qName)) {
+    if (hasPrefixNamespaceMismatch(qName)) {
         ec = NAMESPACE_ERR;
         return 0;
     }
@@ -2819,12 +2813,14 @@ bool Document::isValidName(const String &name)
     return true;
 }
 
-bool Document::parseQualifiedName(const String& qualifiedName, String& prefix, String& localName)
+bool Document::parseQualifiedName(const String& qualifiedName, String& prefix, String& localName, ExceptionCode& ec)
 {
     unsigned length = qualifiedName.length();
 
-    if (length == 0)
+    if (length == 0) {
+        ec = INVALID_CHARACTER_ERR;
         return false;
+    }
 
     bool nameStart = true;
     bool sawColon = false;
@@ -2835,18 +2831,24 @@ bool Document::parseQualifiedName(const String& qualifiedName, String& prefix, S
         UChar32 c;
         U16_NEXT(s, i, length, c)
         if (c == ':') {
-            if (sawColon)
+            if (sawColon) {
+                ec = NAMESPACE_ERR;
                 return false; // multiple colons: not allowed
+            }
             nameStart = true;
             sawColon = true;
             colonPos = i - 1;
         } else if (nameStart) {
-            if (!isValidNameStart(c))
+            if (!isValidNameStart(c)) {
+                ec = INVALID_CHARACTER_ERR;
                 return false;
+            }
             nameStart = false;
         } else {
-            if (!isValidNamePart(c))
+            if (!isValidNamePart(c)) {
+                ec = INVALID_CHARACTER_ERR;
                 return false;
+            }
         }
     }
 
@@ -2855,7 +2857,16 @@ bool Document::parseQualifiedName(const String& qualifiedName, String& prefix, S
         localName = qualifiedName;
     } else {
         prefix = qualifiedName.substring(0, colonPos);
+        if (prefix.isEmpty()) {
+            ec = NAMESPACE_ERR;
+            return false;
+        }
         localName = qualifiedName.substring(colonPos + 1);
+    }
+
+    if (localName.isEmpty()) {
+        ec = NAMESPACE_ERR;
+        return false;
     }
 
     return true;
@@ -3527,13 +3538,11 @@ Document *Document::topDocument() const
 PassRefPtr<Attr> Document::createAttributeNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode& ec)
 {
     String prefix, localName;
-    if (!parseQualifiedName(qualifiedName, prefix, localName)) {
-        ec = INVALID_CHARACTER_ERR;
+    if (!parseQualifiedName(qualifiedName, prefix, localName, ec))
         return 0;
-    }
 
     QualifiedName qName(prefix, localName, namespaceURI);
-    if (hasNamespaceError(qName)) {
+    if (hasPrefixNamespaceMismatch(qName)) {
         ec = NAMESPACE_ERR;
         return 0;
     }

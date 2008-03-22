@@ -1,0 +1,31 @@
+createDocument tests modeled after mozilla's testing
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.implementation.createDocumentType('foo').toString() is "[object DocumentType]"
+PASS document.implementation.createDocumentType('foo', null).toString() is "[object DocumentType]"
+PASS createDocumentType(, ); threw INVALID_CHARACTER_ERR
+PASS createDocumentType(null, ); threw INVALID_CHARACTER_ERR
+PASS createDocumentType(, null); threw INVALID_CHARACTER_ERR
+PASS createDocumentType(, , null); threw INVALID_CHARACTER_ERR
+PASS createDocumentType(null, null); threw INVALID_CHARACTER_ERR
+PASS createDocumentType(null, null, null); threw INVALID_CHARACTER_ERR
+PASS createDocumentType(null, ""); threw INVALID_CHARACTER_ERR
+PASS createDocumentType("", null); threw INVALID_CHARACTER_ERR
+PASS createDocumentType("", ""); threw INVALID_CHARACTER_ERR
+PASS createDocumentType("a:", null, null); threw NAMESPACE_ERR
+PASS createDocumentType(":foo", null, null); threw NAMESPACE_ERR
+PASS createDocumentType(":", null, null); threw NAMESPACE_ERR
+PASS createDocumentType("foo", null, null)
+PASS createDocumentType("foo:bar", null, null)
+PASS createDocumentType("foo::bar", null, null); threw NAMESPACE_ERR
+PASS createDocumentType("	:bar", null, null); threw INVALID_CHARACTER_ERR
+PASS createDocumentType("foo:	", null, null); threw INVALID_CHARACTER_ERR
+PASS createDocumentType("foo :bar", null, null); threw INVALID_CHARACTER_ERR
+PASS createDocumentType("foo: bar", null, null); threw INVALID_CHARACTER_ERR
+PASS createDocumentType("a:b:c", null, null); valid XML name, invalid QName; threw NAMESPACE_ERR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -33,9 +33,9 @@ module core {
 
         // DOM Level 2
 
-        [OldStyleObjC] DocumentType createDocumentType(in DOMString qualifiedName,
-                                                       in DOMString publicId,
-                                                       in DOMString systemId)
+        [OldStyleObjC] DocumentType createDocumentType(in [ConvertUndefinedOrNullToNullString] DOMString qualifiedName,
+                                                       in [ConvertUndefinedOrNullToNullString] DOMString publicId,
+                                                       in [ConvertUndefinedOrNullToNullString] DOMString systemId)
             raises(DOMException);
         [OldStyleObjC] Document createDocument(in [ConvertNullToNullString] DOMString namespaceURI, 
                                                in [ConvertNullToNullString] DOMString qualifiedName, 

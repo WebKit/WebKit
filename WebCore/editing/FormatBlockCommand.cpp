@@ -91,12 +91,13 @@ void FormatBlockCommand::doApply()
 
     if (endingSelection().isRange() && modifyRange())
         return;
-    
+
+    ExceptionCode ec;
     String localName, prefix;
-    if (!Document::parseQualifiedName(m_tagName, prefix, localName))
+    if (!Document::parseQualifiedName(m_tagName, prefix, localName, ec))
         return;
-    QualifiedName qTypeOfBlock = QualifiedName(AtomicString(prefix), AtomicString(localName), xhtmlNamespaceURI);
-    
+    QualifiedName qTypeOfBlock(prefix, localName, xhtmlNamespaceURI);
+
     Node* refNode = enclosingBlockFlowElement(endingSelection().visibleStart());
     if (refNode->hasTagName(qTypeOfBlock))
         // We're already in a block with the format we want, so we don't have to do anything

@@ -2,6 +2,30 @@
 
         Reviewed by mjs.
 
+        Unify handling of NAMESPACE_ERR and fix Acid3 test 25
+        http://bugs.webkit.org/show_bug.cgi?id=16693
+
+        Test: fast/dom/DOMImplementation/createDocumentType-err.html
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocumentType):
+        (WebCore::DOMImplementation::createDocument):
+        * dom/DOMImplementation.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::hasPrefixNamespaceMismatch):
+        (WebCore::Document::createElementNS):
+        (WebCore::Document::parseQualifiedName):
+        (WebCore::Document::createAttributeNS):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeNS):
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::doApply):
+
+2008-03-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+
         Fix createElementNS to throw exceptions for invalid qualified names
         Fixes Acid3 sub-test 23
         http://bugs.webkit.org/show_bug.cgi?id=16833
