@@ -32,7 +32,7 @@
 #include "PluginQuirkSet.h"
 #include "StringHash.h"
 #include "Timer.h"
-#include "npfunctions.h"
+#include "npruntime_internal.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 

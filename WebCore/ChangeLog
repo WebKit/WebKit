@@ -1,3 +1,21 @@
+2008-03-22  Rodney Dawes  <dobey@wayofthemonkey.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 17974: REGRESSION: npfunctions.h should not import npruntime_internal.h
+        <http://bugs.webkit.org/show_bug.cgi?id=17974>
+        <rdar://problem/5782310>
+
+        Include npapi.h and npruntime.h directly in npfunctions.h.
+        Add npfunctions.h and npapi.h to npruntime_internal.h.
+        Replace includes of npfunctions.h with npruntime_internal.h.
+
+        * bridge/npruntime_internal.h:
+        * plugins/PluginPackage.h:
+        * plugins/PluginStream.h:
+        * plugins/npapi.cpp:
+        * plugins/npfunctions.h:
+
 2008-03-22  Mark Rowe  <mrowe@apple.com>
 
         Qt build fix.

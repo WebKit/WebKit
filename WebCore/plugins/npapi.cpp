@@ -27,7 +27,7 @@
 
 #include "PluginInfoStore.h"
 #include "PluginView.h"
-#include "npapi.h" // #includes <windows.h>
+#include "npruntime_internal.h"
 
 using namespace WebCore;
 

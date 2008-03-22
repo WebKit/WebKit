@@ -26,7 +26,8 @@
 #ifndef _NPFUNCTIONS_H_
 #define _NPFUNCTIONS_H_
 
-#include "npruntime_internal.h"
+#include "npruntime.h"
+#include "npapi.h"
 
 #ifdef __cplusplus
 extern "C" {

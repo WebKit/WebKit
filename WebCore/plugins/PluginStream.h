@@ -30,7 +30,7 @@
 #include "CString.h"
 #include "FileSystem.h"
 #include "KURL.h"
-#include "npfunctions.h"
+#include "npruntime_internal.h"
 #include "NetscapePlugInStreamLoader.h"
 #include "PlatformString.h"
 #include "PluginQuirkSet.h"
