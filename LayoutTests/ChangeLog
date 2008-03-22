@@ -1,3 +1,14 @@
+2008-03-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Enable tests for <rdar://problem/5788451>
+        toDataURL not implemented for Windows (need mapping of MIME type to UTI)
+
+        * platform/win/Skipped:
+        * platform/win/fast/canvas: Added.
+        * platform/win/fast/canvas/toDataURL-supportedTypes-expected.txt: Added.
+
 2008-03-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.

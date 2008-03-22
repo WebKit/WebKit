@@ -1,3 +1,18 @@
+2008-03-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix <rdar://problem/5788451>
+        toDataURL not implemented for Windows (need mapping of MIME type to UTI)
+
+        Hard code support for just PNG's on windows, the minimum the spec requires.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::utiFromMIMEType):
+        (WebCore::ImageBuffer::toDataURL):
+
 2008-03-21  Matt Lilek  <webkit@mattlilek.com>
 
         Not reviewed, Mac build fix.

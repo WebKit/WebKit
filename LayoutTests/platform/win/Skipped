@@ -325,10 +325,6 @@ fast/loader/xmlhttprequest-missing-file-exception.html
 # <rdar://problem/5787793> REGRESSION: svg/custom/acid3-test-77.html fails on windows 
 svg/custom/acid3-test-77.html
 
-# <rdar://problem/5788451> toDataURL broke Windows build
-fast/canvas/toDataURL-noData.html
-fast/canvas/toDataURL-supportedTypes.html
-
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

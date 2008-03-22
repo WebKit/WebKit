@@ -215,9 +215,21 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
     }
 }
 
-String ImageBuffer::toDataURL(const String& mimeType) const
+static CFStringRef utiFromMIMEType(const String& mimeType)
 {
 #if PLATFORM(MAC)
+    return UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString(), 0);
+#else
+    // FIXME: Add Windows support for all the supported UTI's when a way to convert from MIMEType to UTI reliably is found.
+    // For now, only support PNG, the minimum that the spec requires.
+    ASSERT(equalIgnoringCase(mimeType, "image/png"));
+    static const CFStringRef kUTTypePNG = CFSTR("public.png");
+    return kUTTypePNG;
+#endif
+}
+
+String ImageBuffer::toDataURL(const String& mimeType) const
+{
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
     RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(context()->platformContext()));
@@ -250,7 +262,7 @@ String ImageBuffer::toDataURL(const String& mimeType) const
     if (!transformedImageData)
         return String("data:,");
 
-    RetainPtr<CFStringRef> imageUTI(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString(), 0));
+    RetainPtr<CFStringRef> imageUTI(AdoptCF, utiFromMIMEType(mimeType));
     RetainPtr<CGImageDestinationRef> imageDestination(AdoptCF, CGImageDestinationCreateWithData(transformedImageData.get(), imageUTI.get(), 1, 0));
     if (!imageDestination)
         return String("data:,");
@@ -266,9 +278,6 @@ String ImageBuffer::toDataURL(const String& mimeType) const
     out.append('\0');
 
     return String::format("data:%s;base64,%s", mimeType.utf8().data(), out.data());
-#else
-    return String();
-#endif
 }
 
 } // namespace WebCore

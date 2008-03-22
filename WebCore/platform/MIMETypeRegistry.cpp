@@ -124,6 +124,7 @@ static void initializeSupportedImageMIMETypesForEncoding()
     supportedImageMIMETypesForEncoding = new HashSet<String>;
 
 #if PLATFORM(CG)
+#if PLATFORM(MAC)
     RetainPtr<CFArrayRef> supportedTypes(AdoptCF, CGImageDestinationCopyTypeIdentifiers());
     CFIndex count = CFArrayGetCount(supportedTypes.get());
     for (CFIndex i = 0; i < count; i++) {
@@ -132,6 +133,11 @@ static void initializeSupportedImageMIMETypesForEncoding()
         if (!mimeType.isEmpty())
             supportedImageMIMETypesForEncoding->add(mimeType);
     }
+#else
+    // FIXME: Add Windows support for all the supported UTI's when a way to convert from MIMEType to UTI reliably is found.
+    // For now, only support PNG, the minimum that the spec requires.
+    supportedImageMIMETypesForEncoding->add("image/png");
+#endif
 #elif PLATFORM(QT)
     QList<QByteArray> formats = QImageWriter::supportedImageFormats();
     for (size_t i = 0; i < formats.size(); ++i) {
