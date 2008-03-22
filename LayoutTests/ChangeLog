@@ -1,5 +1,11 @@
 2008-03-22  Eric Seidel  <eric@webkit.org>
 
+        Update a (passing) result I missed in my last checkin.  No review.
+
+        * dom/xhtml/level3/core/documentgetdoctype01-expected.txt:
+
+2008-03-22  Eric Seidel  <eric@webkit.org>
+
         Reviewed by mjs.
 
         Unify handling of NAMESPACE_ERR and fix Acid3 test 25
