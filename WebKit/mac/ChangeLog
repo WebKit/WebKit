@@ -1,3 +1,21 @@
+2008-03-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Bug 17670: Key events may improperly propagate from iframe to parent frame
+        <http://bugs.webkit.org/show_bug.cgi?id=17670>
+        Bug 16381: REGRESSION: Shift, command, option, ctrl keys in Gmail Rich Text changes focus
+        <http://bugs.webkit.org/show_bug.cgi?id=16381>
+
+        Prevent the Cocoa event system from propagating key events to the parent WebHTMLView,
+        as that results in us dispatching the key events for each frame going up the frame
+        tree.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView keyDown:]):
+        (-[WebHTMLView keyUp:]):
+        (-[WebHTMLView flagsChanged:]):
+
 2008-03-21  Timothy Hatcher  <timothy@apple.com>
 
         Bug 17980: Regression: Inspector highlighting of webpage not cleared when going to new URL

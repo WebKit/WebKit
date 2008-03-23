@@ -3533,7 +3533,8 @@ noPromisedData:
 
     BOOL completionPopupWasOpen = _private->compController && [_private->compController popupWindowIsOpen];
     Frame* coreFrame = core([self _frame]);
-    if (!eventWasSentToWebCore && coreFrame && coreFrame->eventHandler()->keyEvent(event)) {
+    if (!eventWasSentToWebCore && coreFrame) {
+        coreFrame->eventHandler()->keyEvent(event);
         // WebCore processed a key event, bail on any preexisting complete: UI
         if (completionPopupWasOpen)
             [_private->compController endRevertingChange:YES moveLeft:NO];
@@ -3552,11 +3553,12 @@ noPromisedData:
 {
     BOOL eventWasSentToWebCore = (_private->keyDownEvent == event);
 
-    [self retain];
+    RetainPtr<WebHTMLView> selfProtector = self;
     Frame* coreFrame = core([self _frame]);
-    if (eventWasSentToWebCore || !coreFrame || !coreFrame->eventHandler()->keyEvent(event))
-        [super keyUp:event];    
-    [self release];
+    if (coreFrame && !eventWasSentToWebCore)
+        coreFrame->eventHandler()->keyEvent(event);
+    else
+        [super keyUp:event];
 }
 
 - (void)flagsChanged:(NSEvent *)event
@@ -3568,9 +3570,12 @@ noPromisedData:
     RetainPtr<WebHTMLView> selfProtector = self;
 
     unsigned short keyCode = [event keyCode];
+
     //Don't make an event from the num lock and function keys
-    if (coreFrame && keyCode != 0 && keyCode != 10 && keyCode != 63)
+    if (coreFrame && keyCode != 0 && keyCode != 10 && keyCode != 63) {
         coreFrame->eventHandler()->keyEvent(PlatformKeyboardEvent(event));
+        return;
+    }
         
     [super flagsChanged:event];
 }
