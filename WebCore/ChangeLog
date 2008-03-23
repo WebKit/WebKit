@@ -1,3 +1,15 @@
+2008-03-23  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Bug 17685: [~=] attribute selector failing to match empty string
+        <http://bugs.webkit.org/show_bug.cgi?id=17685>
+
+        Test: fast/css/attribute-selector-empty-value.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector):
+
 2008-03-22  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Darin Adler.
