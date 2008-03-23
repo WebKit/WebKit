@@ -3,13 +3,13 @@
 <status>
     <description>
     <p>
-    This page describes the current status of the SVG implementation in WebKit.
+    This is a seldom-updated summary document showing the current implementation status of SVG in WebKit.
     </p>
     <p>
-    Last update: Apr 28th, 2006.
+    Last update: March 23rd, 2008.
     </p>
     <p>
-    For a list of general WebKit+SVG issues not covered in this document , please see the <a href="http://tinyurl.com/athb7">full SVG bug list</a>.
+    Note: this is not a full list of all SVG bugs, please see the <a href="http://tinyurl.com/athb7">SVG bug list</a>.
     </p>
     <p class="legend">
     <span class="implemented">green</span>: complete implementation,
@@ -170,9 +170,6 @@
                 <name>textPath</name>
                 <url>http://www.w3.org/TR/SVG11/text.html#TextPathElement</url>
                 <status>Implemented</status>
-                <issues>
-                    <issue>&lt;textPath&gt; element not implemented <bug>6425</bug></issue>
-                </issues>
             </element>
             <element>
                 <name>altGlyph</name>
