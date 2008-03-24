@@ -191,6 +191,7 @@ static void createElementClassMap()
 
 #if ENABLE(SVG)
     addElementClass(SVGNames::aTag, [DOMSVGAElement class]);
+    addElementClass(SVGNames::altGlyphTag, [DOMSVGAltGlyphElement class]);
 #if ENABLE(SVG_ANIMATION)
     addElementClass(SVGNames::animateTag, [DOMSVGAnimateElement class]);
     addElementClass(SVGNames::animateColorTag, [DOMSVGAnimateColorElement class]);

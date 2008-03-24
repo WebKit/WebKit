@@ -1675,6 +1675,22 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGAltGlyphElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGAltGlyphElement.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGAltGlyphElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGAltGlyphElement.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGAngle.cpp"
 				>
 			</File>
@@ -10264,6 +10280,14 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGAElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGAltGlyphElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGAltGlyphElement.h"
 				>
 			</File>
 			<File

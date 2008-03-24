@@ -178,6 +178,7 @@ DOM_CLASSES = \
     SQLResultSetRowList \
     SQLTransaction \
     SVGAElement \
+    SVGAltGlyphElement \
     SVGAngle \
     SVGAnimateColorElement \
     SVGAnimateElement \

@@ -1,3 +1,16 @@
+2008-03-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - updated test results for "SVGTextElement.getNumberOfChars is broken for altGlyph (affects Acid3 test 79)"
+        http://bugs.webkit.org/show_bug.cgi?id=17062
+
+        * platform/mac/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * platform/mac/svg/text/text-altglyph-01-b-expected.txt:
+        * svg/dom/altGlyph-dom-expected.txt: Added.
+        * svg/dom/altGlyph-dom.xhtml: Added.
+        * svg/dom/resources/altGlyph-dom.js: Added.
+
 2008-03-23  Robert Blaut  <webkit@blaut.biz>
 
         Reviewed by eseidel.  Landed by eseidel.

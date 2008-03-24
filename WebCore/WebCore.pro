@@ -1299,6 +1299,7 @@ contains(DEFINES, ENABLE_SVG=1) {
 
     IDL_BINDINGS += svg/SVGZoomEvent.idl \
         svg/SVGAElement.idl \
+        svg/SVGAltGlyphElement.idl \
         svg/SVGAngle.idl \
         svg/SVGAnimateColorElement.idl \
         svg/SVGAnimatedAngle.idl \
@@ -1451,6 +1452,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/TimeScheduler.cpp \
         svg/ColorDistance.cpp \
         svg/SVGAElement.cpp \
+        svg/SVGAltGlyphElement.cpp \
         svg/SVGAngle.cpp \
         svg/SVGAnimateColorElement.cpp \
         svg/SVGAnimatedPathData.cpp \

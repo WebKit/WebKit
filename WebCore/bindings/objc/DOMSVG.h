@@ -25,6 +25,7 @@
  */
 
 #import <WebCore/DOMSVGAElement.h>
+#import <WebCore/DOMSVGAltGlyphElement.h>
 #import <WebCore/DOMSVGAngle.h>
 #import <WebCore/DOMSVGAnimateColorElement.h>
 #import <WebCore/DOMSVGAnimateElement.h>

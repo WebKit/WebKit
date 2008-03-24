@@ -1325,6 +1325,7 @@ webcore_built_sources += \
 	DerivedSources/SVGElementFactory.cpp \
 	DerivedSources/SVGNames.cpp \
 	DerivedSources/JSSVGAElement.h \
+	DerivedSources/JSSVGAltGlyphElement.h \
 	DerivedSources/JSSVGAngle.h \
 	DerivedSources/JSSVGAnimatedAngle.h \
 	DerivedSources/JSSVGAnimateColorElement.h \
@@ -1456,6 +1457,7 @@ webcore_built_sources += \
 	DerivedSources/JSSVGMissingGlyphElement.h \
 	DerivedSources/JSSVGZoomEvent.h \
 	DerivedSources/JSSVGAElement.cpp \
+	DerivedSources/JSSVGAltGlyphElement.cpp \
 	DerivedSources/JSSVGAngle.cpp \
 	DerivedSources/JSSVGAnimatedAngle.cpp \
 	DerivedSources/JSSVGAnimateColorElement.cpp \
@@ -1590,6 +1592,7 @@ webcore_built_sources += \
 IDL_BINDINGS += \
 	WebCore/svg/SVGZoomEvent.idl \
 	WebCore/svg/SVGAElement.idl \
+	WebCore/svg/SVGAltGlyphElement.idl \
 	WebCore/svg/SVGAngle.idl \
 	WebCore/svg/SVGAnimateColorElement.idl \
 	WebCore/svg/SVGAnimatedAngle.idl \
@@ -1749,6 +1752,7 @@ webcore_sources += \
 	WebCore/svg/TimeScheduler.cpp \
 	WebCore/svg/ColorDistance.cpp \
 	WebCore/svg/SVGAElement.cpp \
+	WebCore/svg/SVGAltGlyphElement.cpp \
 	WebCore/svg/SVGAngle.cpp \
 	WebCore/svg/SVGAnimateColorElement.cpp \
 	WebCore/svg/SVGAnimatedPathData.cpp \

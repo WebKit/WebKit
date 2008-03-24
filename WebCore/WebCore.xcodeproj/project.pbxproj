@@ -509,6 +509,8 @@
 		5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA378BB0D15F64200B793D6 /* ScheduledAction.h */; };
 		650F53DC09D15DDA00C9B0C8 /* CSSGrammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */; };
 		650F53DD09D15DDF00C9B0C8 /* CSSGrammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6565814409D13043000E61D7 /* CSSGrammar.cpp */; };
+		6515EC910D9723FF0063D49A /* JSSVGAltGlyphElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6515EC8F0D9723FF0063D49A /* JSSVGAltGlyphElement.cpp */; };
+		6515EC920D9723FF0063D49A /* JSSVGAltGlyphElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 6515EC900D9723FF0063D49A /* JSSVGAltGlyphElement.h */; };
 		6550B69D099DF0270090D781 /* CDATASection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6550B693099DF0270090D781 /* CDATASection.cpp */; };
 		6550B69E099DF0270090D781 /* CDATASection.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B694099DF0270090D781 /* CDATASection.h */; };
 		6550B69F099DF0270090D781 /* CharacterData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6550B695099DF0270090D781 /* CharacterData.cpp */; };
@@ -519,6 +521,9 @@
 		6550B6A4099DF0270090D781 /* EditingText.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B69A099DF0270090D781 /* EditingText.h */; };
 		6550B6A5099DF0270090D781 /* Text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6550B69B099DF0270090D781 /* Text.cpp */; };
 		6550B6A6099DF0270090D781 /* Text.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B69C099DF0270090D781 /* Text.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65653F2D0D9727D200CA9723 /* SVGAltGlyphElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65653F2A0D9727D200CA9723 /* SVGAltGlyphElement.cpp */; };
+		65653F2E0D9727D200CA9723 /* SVGAltGlyphElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 65653F2B0D9727D200CA9723 /* SVGAltGlyphElement.h */; };
+		65653F2F0D9727D200CA9723 /* SVGAltGlyphElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = 65653F2C0D9727D200CA9723 /* SVGAltGlyphElement.idl */; };
 		656580F409D12B20000E61D7 /* CSSPropertyNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 656580EF09D12B20000E61D7 /* CSSPropertyNames.h */; };
 		6565815109D13043000E61D7 /* CSSValueKeywords.h in Headers */ = {isa = PBXBuildFile; fileRef = 6565814809D13043000E61D7 /* CSSValueKeywords.h */; };
 		656581B209D14EE6000E61D7 /* UserAgentStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581AE09D14EE6000E61D7 /* UserAgentStyleSheets.h */; };
@@ -552,6 +557,9 @@
 		65A21468097A329100B9050A /* Page.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A21467097A329100B9050A /* Page.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65A21484097A3F5300B9050A /* FrameTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A21482097A3F5300B9050A /* FrameTree.cpp */; };
 		65A21485097A3F5300B9050A /* FrameTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A21483097A3F5300B9050A /* FrameTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65AA6BAF0D974A00000541AE /* DOMSVGAltGlyphElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAC0D974A00000541AE /* DOMSVGAltGlyphElement.h */; };
+		65AA6BB00D974A00000541AE /* DOMSVGAltGlyphElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65AA6BAD0D974A00000541AE /* DOMSVGAltGlyphElement.mm */; };
+		65AA6BB10D974A00000541AE /* DOMSVGAltGlyphElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAE0D974A00000541AE /* DOMSVGAltGlyphElementInternal.h */; };
 		65BF022E0974816300C43196 /* Frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65BF02290974816300C43196 /* Frame.cpp */; };
 		65BF022F0974816300C43196 /* Frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF022A0974816300C43196 /* Frame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65BF02300974816300C43196 /* FramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF022B0974816300C43196 /* FramePrivate.h */; };
@@ -4861,6 +4869,8 @@
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5DCF836C0D59159800953BC6 /* PluginInfoStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInfoStore.h; sourceTree = "<group>"; };
 		650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSGrammar.h; sourceTree = "<group>"; };
+		6515EC8F0D9723FF0063D49A /* JSSVGAltGlyphElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGAltGlyphElement.cpp; path = ../../../../symroots/Debug/DerivedSources/WebCore/JSSVGAltGlyphElement.cpp; sourceTree = SOURCE_ROOT; };
+		6515EC900D9723FF0063D49A /* JSSVGAltGlyphElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSSVGAltGlyphElement.h; path = ../../../../symroots/Debug/DerivedSources/WebCore/JSSVGAltGlyphElement.h; sourceTree = SOURCE_ROOT; };
 		6548E24809E1E04D00AF8020 /* Document.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Document.idl; sourceTree = "<group>"; };
 		6550B693099DF0270090D781 /* CDATASection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CDATASection.cpp; sourceTree = "<group>"; };
 		6550B694099DF0270090D781 /* CDATASection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CDATASection.h; sourceTree = "<group>"; };
@@ -4872,6 +4882,9 @@
 		6550B69A099DF0270090D781 /* EditingText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EditingText.h; sourceTree = "<group>"; };
 		6550B69B099DF0270090D781 /* Text.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Text.cpp; sourceTree = "<group>"; };
 		6550B69C099DF0270090D781 /* Text.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Text.h; sourceTree = "<group>"; };
+		65653F2A0D9727D200CA9723 /* SVGAltGlyphElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAltGlyphElement.cpp; sourceTree = "<group>"; };
+		65653F2B0D9727D200CA9723 /* SVGAltGlyphElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAltGlyphElement.h; sourceTree = "<group>"; };
+		65653F2C0D9727D200CA9723 /* SVGAltGlyphElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGAltGlyphElement.idl; sourceTree = "<group>"; };
 		656580ED09D12B20000E61D7 /* CSSPropertyNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyNames.cpp; sourceTree = "<group>"; };
 		656580EE09D12B20000E61D7 /* CSSPropertyNames.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSPropertyNames.gperf; sourceTree = "<group>"; };
 		656580EF09D12B20000E61D7 /* CSSPropertyNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSPropertyNames.h; sourceTree = "<group>"; };
@@ -4918,6 +4931,9 @@
 		65A21482097A3F5300B9050A /* FrameTree.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FrameTree.cpp; sourceTree = "<group>"; };
 		65A21483097A3F5300B9050A /* FrameTree.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameTree.h; sourceTree = "<group>"; };
 		65A640F00533BB1F0085E777 /* BlockExceptions.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = BlockExceptions.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		65AA6BAC0D974A00000541AE /* DOMSVGAltGlyphElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMSVGAltGlyphElement.h; path = ../../../../symroots/Debug/DerivedSources/WebCore/DOMSVGAltGlyphElement.h; sourceTree = SOURCE_ROOT; };
+		65AA6BAD0D974A00000541AE /* DOMSVGAltGlyphElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DOMSVGAltGlyphElement.mm; path = ../../../../symroots/Debug/DerivedSources/WebCore/DOMSVGAltGlyphElement.mm; sourceTree = SOURCE_ROOT; };
+		65AA6BAE0D974A00000541AE /* DOMSVGAltGlyphElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMSVGAltGlyphElementInternal.h; path = ../../../../symroots/Debug/DerivedSources/WebCore/DOMSVGAltGlyphElementInternal.h; sourceTree = SOURCE_ROOT; };
 		65BF02290974816300C43196 /* Frame.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Frame.cpp; sourceTree = "<group>"; };
 		65BF022A0974816300C43196 /* Frame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Frame.h; sourceTree = "<group>"; };
 		65BF022B0974816300C43196 /* FramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FramePrivate.h; sourceTree = "<group>"; };
@@ -8901,6 +8917,9 @@
 				85ACEF750ACDCFCE001214FF /* DOMSVGAElement.mm */,
 				A8E544150CA9D1C10097D09B /* DOMSVGAElementInternal.h */,
 				854163690AC7180B0001E01B /* DOMSVGAngle.h */,
+				65AA6BAC0D974A00000541AE /* DOMSVGAltGlyphElement.h */,
+				65AA6BAD0D974A00000541AE /* DOMSVGAltGlyphElement.mm */,
+				65AA6BAE0D974A00000541AE /* DOMSVGAltGlyphElementInternal.h */,
 				854163680AC7180B0001E01B /* DOMSVGAngle.mm */,
 				A8E544130CA9D1C10097D09B /* DOMSVGAngleInternal.h */,
 				850361280ACE007B001F3D9E /* DOMSVGAnimateColorElement.h */,
@@ -10432,6 +10451,8 @@
 		A83B790A0CCAFF47000B0825 /* SVG */ = {
 			isa = PBXGroup;
 			children = (
+				6515EC8F0D9723FF0063D49A /* JSSVGAltGlyphElement.cpp */,
+				6515EC900D9723FF0063D49A /* JSSVGAltGlyphElement.h */,
 				B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */,
 				B20111060AB7740500DB0E68 /* JSSVGAElement.h */,
 				B222F6960AB771950022EFAD /* JSSVGAngle.cpp */,
@@ -10897,6 +10918,9 @@
 				B22277E00D00BF1F0071B782 /* SVGAngle.cpp */,
 				B22277E10D00BF1F0071B782 /* SVGAngle.h */,
 				B22277E20D00BF1F0071B782 /* SVGAngle.idl */,
+				65653F2A0D9727D200CA9723 /* SVGAltGlyphElement.cpp */,
+				65653F2B0D9727D200CA9723 /* SVGAltGlyphElement.h */,
+				65653F2C0D9727D200CA9723 /* SVGAltGlyphElement.idl */,
 				B22277E30D00BF1F0071B782 /* SVGAnimateColorElement.cpp */,
 				B22277E40D00BF1F0071B782 /* SVGAnimateColorElement.h */,
 				B22277E50D00BF1F0071B782 /* SVGAnimateColorElement.idl */,
@@ -14560,6 +14584,10 @@
 				9382AAB40D8C386100F357A6 /* NodeWithIndex.h in Headers */,
 				9382AAB50D8C386100F357A6 /* NodeWithIndexBefore.h in Headers */,
 				9382AAB60D8C386100F357A6 /* NodeWithIndexAfter.h in Headers */,
+				6515EC920D9723FF0063D49A /* JSSVGAltGlyphElement.h in Headers */,
+				65653F2E0D9727D200CA9723 /* SVGAltGlyphElement.h in Headers */,
+				65AA6BAF0D974A00000541AE /* DOMSVGAltGlyphElement.h in Headers */,
+				65AA6BB10D974A00000541AE /* DOMSVGAltGlyphElementInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14675,6 +14703,7 @@
 				A77979180D6B9D0C003851B9 /* CanvasPixelArray.idl in Resources */,
 				A779791B0D6B9D0C003851B9 /* ImageData.idl in Resources */,
 				BCA83E370D7CDC4E003421A8 /* Clipboard.idl in Resources */,
+				65653F2F0D9727D200CA9723 /* SVGAltGlyphElement.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16198,6 +16227,9 @@
 				A9D248080D757E7D00FDF959 /* JSMimeTypeArray.cpp in Sources */,
 				1CE3F8B40D89CFDC00FB035F /* MainThread.cpp in Sources */,
 				512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */,
+				6515EC910D9723FF0063D49A /* JSSVGAltGlyphElement.cpp in Sources */,
+				65653F2D0D9727D200CA9723 /* SVGAltGlyphElement.cpp in Sources */,
+				65AA6BB00D974A00000541AE /* DOMSVGAltGlyphElement.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

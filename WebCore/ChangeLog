@@ -1,3 +1,42 @@
+2008-03-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - fixed "SVGTextElement.getNumberOfChars is broken for altGlyph (affects Acid3 test 79)"
+        http://bugs.webkit.org/show_bug.cgi?id=17062
+
+        * svg/SVGAltGlyphElement.cpp: Added. Implementation for new element.
+        (WebCore::SVGAltGlyphElement::SVGAltGlyphElement):
+        (WebCore::SVGAltGlyphElement::~SVGAltGlyphElement):
+        (WebCore::SVGAltGlyphElement::setGlyphRef):
+        (WebCore::SVGAltGlyphElement::glyphRef):
+        (WebCore::SVGAltGlyphElement::setFormat):
+        (WebCore::SVGAltGlyphElement::format):
+        (WebCore::SVGAltGlyphElement::childShouldCreateRenderer):
+        (WebCore::SVGAltGlyphElement::createRenderer): For now, this just renders as a tspan,
+        which is right for everything besides the alternate glyph substitution itself.
+        * svg/SVGAltGlyphElement.h: Added. Header for new element.
+        (WebCore::SVGAltGlyphElement::contextElement):
+        * svg/SVGAltGlyphElement.idl: Added. Interface for new element.
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::childShouldCreateRenderer): Allow altGlyph to render here.
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::childShouldCreateRenderer): ditto
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::childShouldCreateRenderer): ditto
+        * svg/svgtags.in: Add altGlyph
+        * DerivedSources.make: Add new files
+        * GNUmakefile.am: ditto
+        * WebCore.SVG.exp: Add new ObjC DOM class
+        * WebCore.pro: Add new files
+        * WebCore.vcproj/WebCore.vcproj: ditto
+        * WebCore.xcodeproj/project.pbxproj: ditto
+        * bindings/js/JSSVGElementWrapperFactory.cpp: Handle altGlyph
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap): ditto
+        * bindings/objc/DOMInternal.h: Include altGlyph header
+        * bindings/objc/DOMSVG.h: Include altGlyph header
+
 2008-03-23  Robert Blaut  <webkit@blaut.biz>
 
         Reviewed by eseidel.  Landed by eseidel.

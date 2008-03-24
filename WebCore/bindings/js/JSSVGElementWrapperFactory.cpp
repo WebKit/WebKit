@@ -23,6 +23,7 @@
 #include "JSSVGElementWrapperFactory.h"
 
 #include "JSSVGAElement.h"
+#include "JSSVGAltGlyphElement.h"
 #include "JSSVGAnimateColorElement.h"
 #include "JSSVGAnimateElement.h"
 #include "JSSVGAnimateTransformElement.h"
@@ -96,6 +97,7 @@
 #include "SVGNames.h"
 
 #include "SVGAElement.h"
+#include "SVGAltGlyphElement.h"
 #include "SVGAnimateColorElement.h"
 #include "SVGAnimateElement.h"
 #include "SVGAnimateTransformElement.h"
@@ -245,6 +247,7 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
 
 #define FOR_EACH_TAG(macro) \
     macro(a, A) \
+    macro(altGlyph, AltGlyph) \
     macro(circle, Circle) \
     macro(clipPath, ClipPath) \
     macro(cursor, Cursor) \

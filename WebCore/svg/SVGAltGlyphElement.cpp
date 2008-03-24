@@ -1,8 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
-
-    This file is part of the KDE project
+    Copyright (C) 2008 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -23,33 +22,53 @@
 #include "config.h"
 
 #if ENABLE(SVG)
-#include "SVGTSpanElement.h"
+#include "SVGAltGlyphElement.h"
 
+#include "ExceptionCode.h"
 #include "RenderInline.h"
 #include "RenderSVGTSpan.h"
 #include "SVGNames.h"
 
 namespace WebCore {
 
-SVGTSpanElement::SVGTSpanElement(const QualifiedName& tagName, Document* doc)
+SVGAltGlyphElement::SVGAltGlyphElement(const QualifiedName& tagName, Document* doc)
     : SVGTextPositioningElement(tagName, doc)
 {
 }
 
-SVGTSpanElement::~SVGTSpanElement()
+SVGAltGlyphElement::~SVGAltGlyphElement()
 {
 }
 
-bool SVGTSpanElement::childShouldCreateRenderer(Node* child) const
+void SVGAltGlyphElement::setGlyphRef(const AtomicString& type, ExceptionCode& ec)
 {
-    if (child->isTextNode() || child->hasTagName(SVGNames::altGlyphTag) || child->hasTagName(SVGNames::tspanTag) ||
-        child->hasTagName(SVGNames::trefTag) || child->hasTagName(SVGNames::textPathTag))
+    ec = NO_MODIFICATION_ALLOWED_ERR;
+}
+
+const AtomicString& SVGAltGlyphElement::glyphRef() const
+{
+    return getAttribute(SVGNames::glyphRefAttr);
+}
+
+void SVGAltGlyphElement::setFormat(const AtomicString& type, ExceptionCode& ec)
+{
+    ec = NO_MODIFICATION_ALLOWED_ERR;
+}
+
+const AtomicString& SVGAltGlyphElement::format() const
+{
+    return getAttribute(SVGNames::formatAttr);
+}
+
+bool SVGAltGlyphElement::childShouldCreateRenderer(Node* child) const
+{
+    if (child->isTextNode())
         return true;
 
     return false;
 }
 
-RenderObject* SVGTSpanElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* SVGAltGlyphElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGTSpan(this);
 }

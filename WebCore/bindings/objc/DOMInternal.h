@@ -148,6 +148,7 @@
 
 #if ENABLE(SVG)
 #import "DOMSVGAElementInternal.h"
+#import "DOMSVGAltGlyphElementInternal.h"
 #import "DOMSVGAngleInternal.h"
 #import "DOMSVGAnimateColorElementInternal.h"
 #import "DOMSVGAnimateElementInternal.h"
