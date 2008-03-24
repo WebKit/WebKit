@@ -191,6 +191,7 @@ namespace WebCore {
         void endTransparencyLayer();
 
         void setShadow(const IntSize&, int blur, const Color&);
+        void getShadow(IntSize&, int&, Color&);
         void clearShadow();
 
         void initFocusRing(int width, int offset);
@@ -228,8 +229,32 @@ namespace WebCore {
 #if PLATFORM(WIN)
         GraphicsContext(HDC); // FIXME: To be removed.
         bool inTransparencyLayer() const;
-        HDC getWindowsContext(const IntRect&, bool supportAlphaBlend = true); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
-        void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend = true);    // The passed in HDC should be the one handed back by getWindowsContext.
+        HDC getWindowsContext(const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
+        void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true);    // The passed in HDC should be the one handed back by getWindowsContext.
+
+        class WindowsBitmap : public Noncopyable {
+        public:
+            WindowsBitmap(HDC, IntSize);
+            ~WindowsBitmap();
+
+            HDC hdc() const { return m_hdc; }
+            UInt8* buffer() const { return m_bitmapBuffer; }
+            unsigned bufferLength() const { return m_bitmapBufferLength; }
+            IntSize size() const { return m_size; }
+            unsigned bytesPerRow() const { return m_bytesPerRow; }
+
+        private:
+            HDC m_hdc;
+            HBITMAP m_bitmap;
+            UInt8* m_bitmapBuffer;
+            unsigned m_bitmapBufferLength;
+            IntSize m_size;
+            unsigned m_bytesPerRow;
+        };
+
+        WindowsBitmap* createWindowsBitmap(IntSize);
+        // The bitmap should be non-premultiplied.
+        void drawWindowsBitmap(WindowsBitmap*, const IntPoint&);
 #endif
 
 #if PLATFORM(QT)
@@ -253,6 +278,8 @@ namespace WebCore {
         void setPlatformStrokeThickness(float);
         void setPlatformFillColor(const Color&);
         void setPlatformFont(const Font& font);
+        void setPlatformShadow(const IntSize&, int blur, const Color&);
+        void clearPlatformShadow();
 
         int focusRingWidth() const;
         int focusRingOffset() const;

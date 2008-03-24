@@ -599,7 +599,7 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
     return FloatRect(QRectF(result));
 }
 
-void GraphicsContext::setShadow(const IntSize& pos, int blur, const Color &color)
+void GraphicsContext::setPlatformShadow(const IntSize& pos, int blur, const Color &color)
 {
     if (paintingDisabled())
         return;
@@ -610,7 +610,7 @@ void GraphicsContext::setShadow(const IntSize& pos, int blur, const Color &color
     m_data->shadow.color = color;
 }
 
-void GraphicsContext::clearShadow()
+void GraphicsContext::clearPlatformShadow()
 {
     if (paintingDisabled())
         return;

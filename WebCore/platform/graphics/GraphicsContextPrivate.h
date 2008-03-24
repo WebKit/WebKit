@@ -38,6 +38,7 @@ namespace WebCore {
             , fillColor(Color::black)
             , textDrawingMode(cTextFill)
             , paintingDisabled(false)
+            , shadowBlur(0)
         {
         }
 
@@ -48,6 +49,9 @@ namespace WebCore {
         Color fillColor;
         int textDrawingMode;
         bool paintingDisabled;
+        IntSize shadowSize;
+        unsigned shadowBlur;
+        Color shadowColor;
     };
 
     class GraphicsContextPrivate {

@@ -1,3 +1,76 @@
+2008-03-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/5792582> CSS opacity does not work with GDI text
+        - fix <rdar://problem/5792619> non-opaque CSS colors do not work with GDI text (RGBA, HSLA)
+        - fix <rdar://problem/5792624> GDI text can't be stroked/filled independently
+        - make text-shadow work with GDI text
+        - make -webkit-background-clip: text work with GDI text
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setShadow): Made this a shared method that
+        updates the state and calls the platform-specific method.
+        (WebCore::GraphicsContext::clearShadow): Ditto.
+        (WebCore::GraphicsContext::getShadow): Added.
+
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::WindowsBitmap): Added this class that
+        represents a bitmap with a Windows device context that GDI can draw into.
+
+        * platform/graphics/GraphicsContextPrivate.h:
+        (WebCore::GraphicsContextState::GraphicsContextState): Added the shadow
+        parameters to the graphics state.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow): Renamed the platform-
+        specific implementation to this.
+        (WebCore::GraphicsContext::clearPlatformShadow): Renamed the platform-
+        specific implementation to this.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow): Renamed the platform-
+        specific implementation to this.
+        (WebCore::GraphicsContext::clearPlatformShadow): Renamed the platform-
+        specific implementation to this.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow): Renamed the platform-
+        specific implementation to this.
+        (WebCore::GraphicsContext::clearPlatformShadow): Renamed the platform-
+        specific implementation to this.
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::toCGFloat): Added. Converts a Windows FIXED.
+        (WebCore::createPathForGlyph): Added. Retrieves a glyph's hinted
+        outline from GDI and creates a CGPath containing it.
+        (WebCore::Font::drawGlyphs): Added two code paths in the GDI case.
+        The existing code path, which uses GDI to draw text directly to the
+        graphics context, is used for opaque-colored, non-transformed,
+        non-stroked, non-shadowed text in a GDI-backed graphics context that is
+        not in a transparency layer.
+        An additional code path is used for non-stroked text in all other cases.
+        It uses GDI to draw black text into an all-white Windows bitmap, then
+        uses the green channel as a mask to create a bitmap with the desired
+        fill color and alpha. The bitmap is then drawn into the graphics
+        context, at which time transparency layers, transforms and shadows are
+        handled properly.
+        A third code path is used for stroked text. It constructs a path from
+        hinted glyph outlines retrieved from GDI and strokes (and optionally
+        fills) it.
+
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::getWindowsContext): Added a mayCreateBitmap
+        parameter. When false, prevents this method from creating a Windows
+        device context if the graphics context does not already have one.
+        (WebCore::GraphicsContext::releaseWindowsContext): Added a
+        mayCreateBitmap parameter to match getWindowsContext().
+        (WebCore::GraphicsContext::WindowsBitmap::WindowsBitmap):
+        (WebCore::GraphicsContext::WindowsBitmap::~WindowsBitmap):
+        (WebCore::GraphicsContext::createWindowsBitmap): Added.
+        (WebCore::GraphicsContext::drawWindowsBitmap): Added. Draws the bitmap
+        as a non-alpha-premultiplied image.
+
 2008-03-24  Kevin McCullough <kmccullough@apple.com>
 
           - Fixed Changelog

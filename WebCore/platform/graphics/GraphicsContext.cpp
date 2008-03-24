@@ -137,6 +137,29 @@ void GraphicsContext::setStrokeColor(const Color& color)
     setPlatformStrokeColor(color);
 }
 
+void GraphicsContext::setShadow(const IntSize& size, int blur, const Color& color)
+{
+    m_common->state.shadowSize = size;
+    m_common->state.shadowBlur = blur;
+    m_common->state.shadowColor = color;
+    setPlatformShadow(size, blur, color);
+}
+
+void GraphicsContext::clearShadow()
+{
+    m_common->state.shadowSize = IntSize();
+    m_common->state.shadowBlur = 0;
+    m_common->state.shadowColor = Color();
+    clearPlatformShadow();
+}
+
+void GraphicsContext::getShadow(IntSize& size, int& blur, Color& color)
+{
+    size = m_common->state.shadowSize;
+    blur = m_common->state.shadowBlur;
+    color = m_common->state.shadowColor;
+}
+
 float GraphicsContext::strokeThickness() const
 {
     return m_common->state.strokeThickness;

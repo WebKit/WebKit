@@ -513,7 +513,7 @@ void GraphicsContext::endTransparencyLayer()
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::setShadow(const IntSize& size, int blur, const Color& color)
+void GraphicsContext::setPlatformShadow(const IntSize& size, int blur, const Color& color)
 {
     // Extreme "blur" values can make text drawing crash or take crazy long times, so clamp
     blur = min(blur, 1000);
@@ -552,7 +552,7 @@ void GraphicsContext::setShadow(const IntSize& size, int blur, const Color& colo
     }
 }
 
-void GraphicsContext::clearShadow()
+void GraphicsContext::clearPlatformShadow()
 {
     if (paintingDisabled())
         return;
