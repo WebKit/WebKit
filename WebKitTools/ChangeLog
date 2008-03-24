@@ -1,3 +1,12 @@
+2008-03-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - update bisect-builds for Safari 3.1
+
+        * Scripts/bisect-builds: Added Safari 3.1 and the corresponding minimal
+        revision, r29711.
+
 2008-03-21  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Holger.
