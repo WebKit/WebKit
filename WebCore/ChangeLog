@@ -1,3 +1,11 @@
+2008-03-24  Eric Seidel  <eric@webkit.org>
+
+        Build fix, no review.
+
+        Fix project paths to be group relative instead of project relative
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2008-03-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

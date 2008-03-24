@@ -4869,8 +4869,8 @@
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5DCF836C0D59159800953BC6 /* PluginInfoStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInfoStore.h; sourceTree = "<group>"; };
 		650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSGrammar.h; sourceTree = "<group>"; };
-		6515EC8F0D9723FF0063D49A /* JSSVGAltGlyphElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGAltGlyphElement.cpp; path = ../../../../symroots/Debug/DerivedSources/WebCore/JSSVGAltGlyphElement.cpp; sourceTree = SOURCE_ROOT; };
-		6515EC900D9723FF0063D49A /* JSSVGAltGlyphElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSSVGAltGlyphElement.h; path = ../../../../symroots/Debug/DerivedSources/WebCore/JSSVGAltGlyphElement.h; sourceTree = SOURCE_ROOT; };
+		6515EC8F0D9723FF0063D49A /* JSSVGAltGlyphElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAltGlyphElement.cpp; sourceTree = "<group>"; };
+		6515EC900D9723FF0063D49A /* JSSVGAltGlyphElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGAltGlyphElement.h; sourceTree = "<group>"; };
 		6548E24809E1E04D00AF8020 /* Document.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Document.idl; sourceTree = "<group>"; };
 		6550B693099DF0270090D781 /* CDATASection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CDATASection.cpp; sourceTree = "<group>"; };
 		6550B694099DF0270090D781 /* CDATASection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CDATASection.h; sourceTree = "<group>"; };
@@ -4931,9 +4931,9 @@
 		65A21482097A3F5300B9050A /* FrameTree.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FrameTree.cpp; sourceTree = "<group>"; };
 		65A21483097A3F5300B9050A /* FrameTree.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameTree.h; sourceTree = "<group>"; };
 		65A640F00533BB1F0085E777 /* BlockExceptions.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = BlockExceptions.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		65AA6BAC0D974A00000541AE /* DOMSVGAltGlyphElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMSVGAltGlyphElement.h; path = ../../../../symroots/Debug/DerivedSources/WebCore/DOMSVGAltGlyphElement.h; sourceTree = SOURCE_ROOT; };
-		65AA6BAD0D974A00000541AE /* DOMSVGAltGlyphElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DOMSVGAltGlyphElement.mm; path = ../../../../symroots/Debug/DerivedSources/WebCore/DOMSVGAltGlyphElement.mm; sourceTree = SOURCE_ROOT; };
-		65AA6BAE0D974A00000541AE /* DOMSVGAltGlyphElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMSVGAltGlyphElementInternal.h; path = ../../../../symroots/Debug/DerivedSources/WebCore/DOMSVGAltGlyphElementInternal.h; sourceTree = SOURCE_ROOT; };
+		65AA6BAC0D974A00000541AE /* DOMSVGAltGlyphElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGAltGlyphElement.h; sourceTree = "<group>"; };
+		65AA6BAD0D974A00000541AE /* DOMSVGAltGlyphElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGAltGlyphElement.mm; sourceTree = "<group>"; };
+		65AA6BAE0D974A00000541AE /* DOMSVGAltGlyphElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGAltGlyphElementInternal.h; sourceTree = "<group>"; };
 		65BF02290974816300C43196 /* Frame.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Frame.cpp; sourceTree = "<group>"; };
 		65BF022A0974816300C43196 /* Frame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Frame.h; sourceTree = "<group>"; };
 		65BF022B0974816300C43196 /* FramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FramePrivate.h; sourceTree = "<group>"; };
