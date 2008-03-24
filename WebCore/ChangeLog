@@ -1,3 +1,27 @@
+2008-03-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin's rubberstamp
+
+        Land a load of empty files for upcoming work to make sure I'm not breaking any platform's build
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * loader/archive: Added.
+        * loader/archive/Archive.h: Added.
+        * loader/archive/ArchiveFactory.cpp: Added.
+        * loader/archive/ArchiveFactory.h: Added.
+        * loader/archive/ArchiveResource.cpp: Added.
+        * loader/archive/ArchiveResource.h: Added.
+        * loader/archive/ArchiveResourceCollection.cpp: Added.
+        * loader/archive/ArchiveResourceCollection.h: Added.
+        * loader/archive/cf: Added.
+        * loader/archive/cf/LegacyWebArchive.cpp: Added.
+        * loader/archive/cf/LegacyWebArchive.h: Added.
+        * loader/archive/cf/LegacyWebArchiveMac.mm: Added.
+
 2008-03-24  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 18009. Make sure the IE offset/client/scroll*** extensions respect full page zoom.

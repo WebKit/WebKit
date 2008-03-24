@@ -1,3 +1,12 @@
+2008-03-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin's rubberstamp
+
+        Rename this file for upcoming work.
+
+        * WebView/WebArchive.m: Removed.
+        * WebView/WebArchive.mm: Copied from WebKit/mac/WebView/WebArchive.m.
+
 2008-03-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Build fix.

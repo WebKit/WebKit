@@ -199,7 +199,9 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/platform/sql \
                 $$PWD/platform/text \
                 $$PWD/storage \
-                $$PWD/loader $$PWD/loader/icon \
+                $$PWD/loader \
+                $$PWD/loader/archive \
+                $$PWD/loader/icon \
                 $$PWD/css \
                 $$PWD/dom \
                 $$PWD/page \
@@ -707,6 +709,9 @@ SOURCES += \
     html/HTMLViewSourceDocument.cpp \
     html/ImageData.cpp \
     html/PreloadScanner.cpp \
+    loader/archive/ArchiveFactory.cpp \
+    loader/archive/ArchiveResource.cpp \
+    loader/archive/ArchiveResourceCollection.cpp \
     loader/Cache.cpp \
     loader/CachedCSSStyleSheet.cpp \
     loader/CachedFont.cpp \

@@ -1,3 +1,11 @@
+2008-03-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin's rubberstamp
+
+        Rename a .m to .mm
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-03-20  John Sullivan  <sullivan@apple.com>
 
         * StringsNotToBeLocalized.txt:

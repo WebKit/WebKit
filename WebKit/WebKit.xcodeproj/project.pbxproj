@@ -263,7 +263,7 @@
 		9398111A0824BF01008DF038 /* WebResource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84311A1305EAAAF00088EDA4 /* WebResource.mm */; };
 		9398111B0824BF01008DF038 /* WebDefaultEditingDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BE95BEE505FD0805006E1513 /* WebDefaultEditingDelegate.m */; };
 		9398111C0824BF01008DF038 /* WebDOMOperations.mm in Sources */ = {isa = PBXBuildFile; fileRef = 846171FA0624AE5B0071A4A3 /* WebDOMOperations.mm */; };
-		9398111D0824BF01008DF038 /* WebArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 8373435B0624EE0D00F3B289 /* WebArchive.m */; };
+		9398111D0824BF01008DF038 /* WebArchive.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8373435B0624EE0D00F3B289 /* WebArchive.mm */; };
 		9398111E0824BF01008DF038 /* WebPDFView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E94C3506C0321200A9B09E /* WebPDFView.mm */; };
 		9398111F0824BF01008DF038 /* WebPDFRepresentation.m in Sources */ = {isa = PBXBuildFile; fileRef = 51E94C6906C0347500A9B09E /* WebPDFRepresentation.m */; };
 		939811260824BF01008DF038 /* WebPluginContainerCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65E1150407EFFEBF009B8BF7 /* WebPluginContainerCheck.mm */; };
@@ -458,7 +458,7 @@
 		83402EFB035A58D100BE770A /* WebNetscapePluginStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapePluginStream.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		83730F9803FB1E660004736E /* WebKitErrors.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebKitErrors.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		8373435A0624EE0D00F3B289 /* WebArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebArchive.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		8373435B0624EE0D00F3B289 /* WebArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebArchive.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		8373435B0624EE0D00F3B289 /* WebArchive.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchive.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		8398847A03426FB000BC5F5E /* WebNSImageExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSImageExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		8398847B03426FB000BC5F5E /* WebNSImageExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSImageExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		83E4AF46036652150000E506 /* WebBasePluginPackage.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebBasePluginPackage.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -980,7 +980,7 @@
 				51A8B579042834F700CA2D3A /* WebView.h */,
 				930D02BB06275F640076701E /* WebViewInternal.h */,
 				51A8B57D0428353A00CA2D3A /* WebViewPrivate.h */,
-				8373435B0624EE0D00F3B289 /* WebArchive.m */,
+				8373435B0624EE0D00F3B289 /* WebArchive.mm */,
 				6550B7C6099EFAE90090D781 /* WebArchiver.mm */,
 				933D659A03413FF2008635CE /* WebClipView.m */,
 				39446071020F50ED0ECA1767 /* WebDataSource.mm */,
@@ -1507,7 +1507,7 @@
 				939811000824BF01008DF038 /* HIViewAdapter.m in Sources */,
 				939811020824BF01008DF038 /* HIWebView.m in Sources */,
 				1CCFFD130B1F81F2002EE926 /* OldWebAssertions.c in Sources */,
-				9398111D0824BF01008DF038 /* WebArchive.m in Sources */,
+				9398111D0824BF01008DF038 /* WebArchive.mm in Sources */,
 				6550B7C8099EFAE90090D781 /* WebArchiver.mm in Sources */,
 				939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */,
 				939810BC0824BF01008DF038 /* WebBackForwardList.mm in Sources */,

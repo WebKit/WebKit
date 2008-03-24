@@ -527,6 +527,9 @@ This file contains the list of files needed to build WebCore.
     </set>
     
     <set append="1" var="WEBCORE_SOURCES_LOADER">
+        loader/archive/ArchiveFactory.cpp
+        loader/archive/ArchiveResource.cpp
+        loader/archive/ArchiveResourceCollection.cpp
         loader/Cache.cpp
         loader/CachedCSSStyleSheet.cpp
         loader/CachedFont.cpp

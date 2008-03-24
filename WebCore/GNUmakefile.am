@@ -11,6 +11,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/platform/graphics \
 	-I$(srcdir)/WebCore/platform/text \
 	-I$(srcdir)/WebCore/loader \
+	-I$(srcdir)/WebCore/loader/archive \
 	-I$(srcdir)/WebCore/loader/icon \
 	-I$(srcdir)/WebCore/css \
 	-I$(srcdir)/WebCore/dom \
@@ -776,6 +777,9 @@ webcore_sources += \
 	WebCore/html/HTMLViewSourceDocument.cpp \
 	WebCore/html/ImageData.cpp \
 	WebCore/html/PreloadScanner.cpp \
+	WebCore/loader/archive/ArchiveFactory.cpp \
+	WebCore/loader/archive/ArchiveResource.cpp \
+	WebCore/loader/archive/ArchiveResourceCollection.cpp \
 	WebCore/loader/Cache.cpp \
 	WebCore/loader/CachedCSSStyleSheet.cpp \
 	WebCore/loader/CachedFont.cpp \

@@ -414,6 +414,15 @@
 		5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */; };
 		5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BA0A2E3B12005C29FA /* IconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */; };
+		512DD8F40D91E6AF000F89EE /* LegacyWebArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512DD8EA0D91E6AF000F89EE /* LegacyWebArchive.cpp */; };
+		512DD8F50D91E6AF000F89EE /* LegacyWebArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DD8EB0D91E6AF000F89EE /* LegacyWebArchive.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		512DD8F60D91E6AF000F89EE /* Archive.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DD8EC0D91E6AF000F89EE /* Archive.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		512DD8F70D91E6AF000F89EE /* ArchiveResourceCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512DD8ED0D91E6AF000F89EE /* ArchiveResourceCollection.cpp */; };
+		512DD8F80D91E6AF000F89EE /* ArchiveResourceCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DD8EE0D91E6AF000F89EE /* ArchiveResourceCollection.h */; };
+		512DD8FA0D91E6AF000F89EE /* ArchiveFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512DD8F00D91E6AF000F89EE /* ArchiveFactory.cpp */; };
+		512DD8FB0D91E6AF000F89EE /* ArchiveResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512DD8F10D91E6AF000F89EE /* ArchiveResource.cpp */; };
+		512DD8FC0D91E6AF000F89EE /* ArchiveResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DD8F20D91E6AF000F89EE /* ArchiveResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		512DD8FD0D91E6AF000F89EE /* ArchiveFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DD8F30D91E6AF000F89EE /* ArchiveFactory.h */; };
 		513F14530AB634C400094DDF /* IconLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 513F14510AB634C400094DDF /* IconLoader.cpp */; };
 		513F14540AB634C400094DDF /* IconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 513F14520AB634C400094DDF /* IconLoader.h */; };
 		514075C60D53ECFE00BC2D85 /* SecurityOriginHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 514075C50D53ECFE00BC2D85 /* SecurityOriginHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -476,6 +485,7 @@
 		51A9267E0D53F0570063ECC2 /* OriginUsageRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A9267A0D53F0570063ECC2 /* OriginUsageRecord.cpp */; };
 		51A9267F0D53F0570063ECC2 /* OriginUsageRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A9267B0D53F0570063ECC2 /* OriginUsageRecord.h */; };
 		51AA3F6F0BD5AA9E00892971 /* ResourceLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51AA3F6E0BD5AA9E00892971 /* ResourceLoaderMac.mm */; };
+		51B2417B0D931F3F00E83F5C /* LegacyWebArchiveMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */; };
 		51C81B890C4422F70019ECE3 /* FTPDirectoryParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */; };
 		51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */; };
 		51CBFC990D10E483002DBF51 /* CachedPagePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFC980D10E483002DBF51 /* CachedPagePlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4775,6 +4785,15 @@
 		5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabase.cpp; sourceTree = "<group>"; };
 		5126E6BA0A2E3B12005C29FA /* IconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDatabase.h; sourceTree = "<group>"; };
 		512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferCF.cpp; sourceTree = "<group>"; };
+		512DD8EA0D91E6AF000F89EE /* LegacyWebArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyWebArchive.cpp; sourceTree = "<group>"; };
+		512DD8EB0D91E6AF000F89EE /* LegacyWebArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyWebArchive.h; sourceTree = "<group>"; };
+		512DD8EC0D91E6AF000F89EE /* Archive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Archive.h; sourceTree = "<group>"; };
+		512DD8ED0D91E6AF000F89EE /* ArchiveResourceCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArchiveResourceCollection.cpp; sourceTree = "<group>"; };
+		512DD8EE0D91E6AF000F89EE /* ArchiveResourceCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveResourceCollection.h; sourceTree = "<group>"; };
+		512DD8F00D91E6AF000F89EE /* ArchiveFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArchiveFactory.cpp; sourceTree = "<group>"; };
+		512DD8F10D91E6AF000F89EE /* ArchiveResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArchiveResource.cpp; sourceTree = "<group>"; };
+		512DD8F20D91E6AF000F89EE /* ArchiveResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveResource.h; sourceTree = "<group>"; };
+		512DD8F30D91E6AF000F89EE /* ArchiveFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveFactory.h; sourceTree = "<group>"; };
 		513F14510AB634C400094DDF /* IconLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconLoader.cpp; sourceTree = "<group>"; };
 		513F14520AB634C400094DDF /* IconLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconLoader.h; sourceTree = "<group>"; };
 		514075C50D53ECFE00BC2D85 /* SecurityOriginHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOriginHash.h; sourceTree = "<group>"; };
@@ -4841,6 +4860,7 @@
 		51A9267A0D53F0570063ECC2 /* OriginUsageRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginUsageRecord.cpp; sourceTree = "<group>"; };
 		51A9267B0D53F0570063ECC2 /* OriginUsageRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginUsageRecord.h; sourceTree = "<group>"; };
 		51AA3F6E0BD5AA9E00892971 /* ResourceLoaderMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceLoaderMac.mm; sourceTree = "<group>"; };
+		51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyWebArchiveMac.mm; sourceTree = "<group>"; };
 		51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryParser.cpp; sourceTree = "<group>"; };
 		51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryParser.h; sourceTree = "<group>"; };
 		51CBFC980D10E483002DBF51 /* CachedPagePlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedPagePlatformData.h; sourceTree = "<group>"; };
@@ -8448,6 +8468,31 @@
 			path = icon;
 			sourceTree = "<group>";
 		};
+		512DD8E80D91E691000F89EE /* archive */ = {
+			isa = PBXGroup;
+			children = (
+				512DD8E90D91E6AF000F89EE /* cf */,
+				512DD8EC0D91E6AF000F89EE /* Archive.h */,
+				512DD8F00D91E6AF000F89EE /* ArchiveFactory.cpp */,
+				512DD8F30D91E6AF000F89EE /* ArchiveFactory.h */,
+				512DD8F10D91E6AF000F89EE /* ArchiveResource.cpp */,
+				512DD8F20D91E6AF000F89EE /* ArchiveResource.h */,
+				512DD8ED0D91E6AF000F89EE /* ArchiveResourceCollection.cpp */,
+				512DD8EE0D91E6AF000F89EE /* ArchiveResourceCollection.h */,
+			);
+			path = archive;
+			sourceTree = "<group>";
+		};
+		512DD8E90D91E6AF000F89EE /* cf */ = {
+			isa = PBXGroup;
+			children = (
+				512DD8EA0D91E6AF000F89EE /* LegacyWebArchive.cpp */,
+				512DD8EB0D91E6AF000F89EE /* LegacyWebArchive.h */,
+				51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */,
+			);
+			path = cf;
+			sourceTree = "<group>";
+		};
 		516030090CC4245400C8AC25 /* posix */ = {
 			isa = PBXGroup;
 			children = (
@@ -11939,6 +11984,7 @@
 		BCB16BFB0979C38700467741 /* loader */ = {
 			isa = PBXGroup;
 			children = (
+				512DD8E80D91E691000F89EE /* archive */,
 				93A1EAA20A5634D8006960A0 /* mac */,
 				5126E6B60A2E3AEF005C29FA /* icon */,
 				BCB16BFE0979C3BD00467741 /* Cache.cpp */,
@@ -14588,6 +14634,11 @@
 				9382AAB40D8C386100F357A6 /* NodeWithIndex.h in Headers */,
 				9382AAB50D8C386100F357A6 /* NodeWithIndexBefore.h in Headers */,
 				9382AAB60D8C386100F357A6 /* NodeWithIndexAfter.h in Headers */,
+				512DD8F50D91E6AF000F89EE /* LegacyWebArchive.h in Headers */,
+				512DD8F60D91E6AF000F89EE /* Archive.h in Headers */,
+				512DD8F80D91E6AF000F89EE /* ArchiveResourceCollection.h in Headers */,
+				512DD8FC0D91E6AF000F89EE /* ArchiveResource.h in Headers */,
+				512DD8FD0D91E6AF000F89EE /* ArchiveFactory.h in Headers */,
 				6515EC920D9723FF0063D49A /* JSSVGAltGlyphElement.h in Headers */,
 				65653F2E0D9727D200CA9723 /* SVGAltGlyphElement.h in Headers */,
 				65AA6BAF0D974A00000541AE /* DOMSVGAltGlyphElement.h in Headers */,
@@ -16231,6 +16282,11 @@
 				A9D248080D757E7D00FDF959 /* JSMimeTypeArray.cpp in Sources */,
 				1CE3F8B40D89CFDC00FB035F /* MainThread.cpp in Sources */,
 				512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */,
+				512DD8F40D91E6AF000F89EE /* LegacyWebArchive.cpp in Sources */,
+				512DD8F70D91E6AF000F89EE /* ArchiveResourceCollection.cpp in Sources */,
+				512DD8FA0D91E6AF000F89EE /* ArchiveFactory.cpp in Sources */,
+				512DD8FB0D91E6AF000F89EE /* ArchiveResource.cpp in Sources */,
+				51B2417B0D931F3F00E83F5C /* LegacyWebArchiveMac.mm in Sources */,
 				6515EC910D9723FF0063D49A /* JSSVGAltGlyphElement.cpp in Sources */,
 				65653F2D0D9727D200CA9723 /* SVGAltGlyphElement.cpp in Sources */,
 				65AA6BB00D974A00000541AE /* DOMSVGAltGlyphElement.mm in Sources */,
