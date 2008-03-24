@@ -37,7 +37,6 @@
 #import <JavaScriptCore/HashMap.h>
 #import <JavaScriptCore/RetainPtr.h>
 #import <JavaScriptCore/Vector.h>
-#import <WebCore/KURL.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageGroup.h>
 

@@ -3156,7 +3156,7 @@ noPromisedData:
         if (!page) 
             return nil; 
         
-        KURL imageURL = page->dragController()->draggingImageURL();
+        const KURL& imageURL = page->dragController()->draggingImageURL();
         ASSERT(!imageURL.isEmpty());
         draggingImageURL = imageURL;
 

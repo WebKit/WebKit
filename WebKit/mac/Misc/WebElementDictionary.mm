@@ -38,7 +38,6 @@
 #import <WebCore/Frame.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
-#import <WebCore/KURL.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/DOMCore.h>
 #import <WebKit/DOMExtensions.h>

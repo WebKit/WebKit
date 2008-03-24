@@ -1,3 +1,23 @@
+2008-03-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        - fix <rdar://problem/5817067> -[WebDataSource unreachableURL] invokes KURL's copy constructor
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem URL]): Use a reference to avoid making a copy.
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _URL]): Ditto.
+        (-[WebDataSource unreachableURL]): Ditto.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): Ditto.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        * History/WebHistory.mm:
+        * Misc/WebElementDictionary.mm:
+        * Misc/WebNSAttributedStringExtras.mm:
+        Remove unneeded imports of KURL.h.
+
 2008-03-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin's rubberstamp

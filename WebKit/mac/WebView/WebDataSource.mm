@@ -300,7 +300,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 // May return nil if not initialized with a URL.
 - (NSURL *)_URL
 {
-    KURL url = _private->loader->url();
+    const KURL& url = _private->loader->url();
     if (url.isEmpty())
         return nil;
     return url;
@@ -453,7 +453,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSURL *)unreachableURL
 {
-    KURL unreachableURL = _private->loader->unreachableURL();
+    const KURL& unreachableURL = _private->loader->unreachableURL();
     if (unreachableURL.isEmpty())
         return nil;
     return unreachableURL;

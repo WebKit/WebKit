@@ -462,7 +462,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 - (NSURL *)URL
 {
     ASSERT_MAIN_THREAD();
-    KURL url = core(_private)->url();
+    const KURL& url = core(_private)->url();
     if (url.isEmpty())
         return nil;
     return url;

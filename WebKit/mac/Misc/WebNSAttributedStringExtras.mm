@@ -42,7 +42,6 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/Image.h>
 #import <WebCore/InlineTextBox.h>
-#import <WebCore/KURL.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderListItem.h>
