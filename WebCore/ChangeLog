@@ -1,3 +1,10 @@
+2008-03-24  Alp Toker  <alp@atoker.com>
+
+        GTK+/soup http backend build fix for breakage introduced in r31141.
+        Fix suggested by Xan.
+
+        * platform/network/ResourceHandle.h:
+
 2008-03-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
