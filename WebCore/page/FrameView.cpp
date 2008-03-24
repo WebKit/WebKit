@@ -90,7 +90,6 @@ public:
         nestedLayoutCount = 0;
         postLayoutTasksTimer.stop();
         firstLayout = true;
-        repaintRects.clear();
         m_wasScrolledByUser = false;
         lastLayoutSize = IntSize();
     }
@@ -120,10 +119,6 @@ public:
     Color baseBackgroundColor;
     IntSize lastLayoutSize;
 
-    // Used by objects during layout to communicate repaints that need to take place only
-    // after all layout has been completed.
-    Vector<RenderObject::RepaintInfo> repaintRects;
-    
     String m_mediaType;
     
     unsigned m_enqueueEvents;
@@ -306,11 +301,6 @@ bool FrameView::needsFullRepaint() const
     return d->doFullRepaint;
 }
 
-void FrameView::addRepaintInfo(RenderObject* o, const IntRect& r)
-{
-    d->repaintRects.append(RenderObject::RepaintInfo(o, r));
-}
-
 RenderObject* FrameView::layoutRoot(bool onlyDuringLayout) const
 {
     return onlyDuringLayout && layoutPending() ? 0 : d->layoutRoot;
@@ -427,7 +417,6 @@ void FrameView::layout(bool allowSubtree)
     }
 
     d->doFullRepaint = !subtree && (d->firstLayout || static_cast<RenderView*>(root)->printing());
-    ASSERT(d->nestedLayoutCount > 1 || d->repaintRects.isEmpty());
 
     bool didFirstLayout = false;
     if (!subtree) {
@@ -491,13 +480,6 @@ void FrameView::layout(bool allowSubtree)
     // Now update the positions of all layers.
     layer->updateLayerPositions(d->doFullRepaint);
 
-    // FIXME: Could optimize this and have objects removed from this list
-    // if they ever do full repaints.
-    Vector<RenderObject::RepaintInfo>::iterator end = d->repaintRects.end();
-    for (Vector<RenderObject::RepaintInfo>::iterator it = d->repaintRects.begin(); it != end; ++it)
-        it->m_object->repaintRectangle(it->m_repaintRect);
-    d->repaintRects.clear();
-    
     d->layoutCount++;
 
 #if PLATFORM(MAC)

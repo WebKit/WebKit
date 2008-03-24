@@ -677,11 +677,10 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
             // Don't allow this rect to spill out of our overflow box.
             repaintRect.intersect(IntRect(0, 0, m_width, m_height));
         }
-    
-        RenderView* v = view();
+
         // Make sure the rect is still non-empty after intersecting for overflow above
-        if (!repaintRect.isEmpty() && v && v->frameView())
-            v->frameView()->addRepaintInfo(this, repaintRect); // We need to do a partial repaint of our content.
+        if (!repaintRect.isEmpty())
+            repaintRectangle(repaintRect); // We need to do a partial repaint of our content.
     }
     setNeedsLayout(false);
 }

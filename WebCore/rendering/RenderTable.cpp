@@ -424,11 +424,8 @@ void RenderTable::layout()
     // Repaint with our new bounds if they are different from our old bounds.
     if (checkForRepaint)
         didFullRepaint = repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
-    if (!didFullRepaint && sectionMoved) {
-        IntRect repaintRect(m_overflowLeft, movedSectionTop, m_overflowWidth - m_overflowLeft, m_overflowHeight - movedSectionTop);
-        if (FrameView* frameView = view()->frameView())
-            frameView->addRepaintInfo(this, repaintRect);
-    }
+    if (!didFullRepaint && sectionMoved)
+        repaintRectangle(IntRect(m_overflowLeft, movedSectionTop, m_overflowWidth - m_overflowLeft, m_overflowHeight - movedSectionTop));
     
     setNeedsLayout(false);
 }

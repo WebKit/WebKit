@@ -1,3 +1,24 @@
+2008-03-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/5812292> CrashTracer: [REGRESSION] 60 crashes in Safari at com.apple.WebCore: WebCore::RenderObject::repaintRectangle + 47
+
+        Test: fast/repaint/renderer-destruction-by-invalidateSelection-crash.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::reset): Removed repaintRects code.
+        (WebCore::FrameView::layout): Ditto.
+        (WebCore::FrameView::addRepaintInfo): Removed.
+
+        * page/FrameView.h: Removed addRepaintInfo().
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): Changed to call repaintRectangle
+        instead of FrameView::addRepaintInfo().
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout): Ditto.
+
 2008-03-24  Alp Toker  <alp@atoker.com>
 
         GTK+/soup http backend build fix for breakage introduced in r31141.

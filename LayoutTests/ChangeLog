@@ -1,3 +1,14 @@
+2008-03-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - test for <rdar://problem/5812292> CrashTracer: [REGRESSION] 60 crashes in Safari at com.apple.WebCore: WebCore::RenderObject::repaintRectangle + 47
+
+        * fast/repaint/renderer-destruction-by-invalidateSelection-crash.html: Added.
+        * platform/mac/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.checksum: Added.
+        * platform/mac/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png: Added.
+        * platform/mac/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.txt: Added.
+
 2008-03-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
