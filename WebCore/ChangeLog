@@ -1,3 +1,17 @@
+2008-03-24  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17845
+        [GTK] combo box menu displayed in the wrong position
+
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::show): Change the popup menu vertical position so
+        that the active item is over the combo box.
+        (WebCore::PopupMenu::menuPositionFunction): use the "push in" style
+        like native GTK+ combo boxes to handle menus that don't fit in the
+        screen.
+
 2008-03-24  Adam Roben  <aroben@apple.com>
 
         * WebCore.vcproj/WebCore.vcproj: Add files from WebCore/page/inspector

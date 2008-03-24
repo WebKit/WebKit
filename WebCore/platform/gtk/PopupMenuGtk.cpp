@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2006, 2007 Apple Inc.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
+ * Copyright (C) 2008 Collabora Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -92,6 +93,24 @@ void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
     gtk_widget_set_size_request(GTK_WIDGET(m_popup), -1, -1);
     gtk_widget_size_request(GTK_WIDGET(m_popup), &requisition);
     gtk_widget_set_size_request(GTK_WIDGET(m_popup), MAX(rect.width(), requisition.width), -1);
+
+    GList* children = GTK_MENU_SHELL(m_popup)->children;
+    if (size)
+        for (int i = 0; i < size; i++) {
+            if (i > index)
+              break;
+
+            GtkWidget* item = reinterpret_cast<GtkWidget*>(children->data);
+            GtkRequisition itemRequisition;
+            gtk_widget_get_child_requisition(item, &itemRequisition);
+            m_menuPosition.setY(m_menuPosition.y() - itemRequisition.height);
+
+            children = g_list_next(children);
+        }
+    else
+        // Center vertically the empty popup in the combo box area
+        m_menuPosition.setY(m_menuPosition.y() - rect.height() / 2);
+
     gtk_menu_popup(m_popup, NULL, NULL, reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this, 0, gtk_get_current_event_time());
 }
 
@@ -128,7 +147,7 @@ void PopupMenu::menuPositionFunction(GtkMenu*, gint* x, gint* y, gboolean* pushI
 {
     *x = that->m_menuPosition.x();
     *y = that->m_menuPosition.y();
-    pushIn = false;
+    *pushIn = true;
 }
 
 void PopupMenu::menuRemoveItem(GtkWidget* widget, PopupMenu* that)
