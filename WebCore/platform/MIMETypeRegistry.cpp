@@ -105,12 +105,12 @@ static void initializeSupportedImageMIMETypes()
     // assume that all implementations at least support the following standard
     // image types:
     static const char* types[] = {
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "image/bmp",
-      "image/x-icon",    // ico
-      "image/x-xbitmap"  // xbm
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/bmp",
+        "image/x-icon",    // ico
+        "image/x-xbitmap"  // xbm
     };
     for (size_t i = 0; i < sizeof(types) / sizeof(types[0]); ++i) {
         supportedImageMIMETypes->add(types[i]);
@@ -176,28 +176,28 @@ static void initializeSupportedJavaScriptMIMETypes()
 static void initializeSupportedNonImageMimeTypes()
 {
     static const char* types[] = {
-      "text/html",
-      "text/xml",
-      "text/xsl",
-      "text/plain",
-      "text/",
-      "application/xml",
-      "application/xhtml+xml",
-      "application/rss+xml",
-      "application/atom+xml",
+        "text/html",
+        "text/xml",
+        "text/xsl",
+        "text/plain",
+        "text/",
+        "application/xml",
+        "application/xhtml+xml",
+        "application/rss+xml",
+        "application/atom+xml",
 #if PLATFORM(MAC)
-      "application/x-webarchive",
+        "application/x-webarchive",
 #endif
-      "multipart/x-mixed-replace"
 #if ENABLE(SVG)
-      , "image/svg+xml"
+      "image/svg+xml",
 #endif
 #if ENABLE(FTPDIR)
-      , "application/x-ftp-directory"
+      "application/x-ftp-directory",
 #endif
+        "multipart/x-mixed-replace"
     };
     for (size_t i = 0; i < sizeof(types)/sizeof(types[0]); ++i)
-      supportedNonImageMIMETypes->add(types[i]);
+        supportedNonImageMIMETypes->add(types[i]);
 }
 
 static void initializeSupportedMediaMIMETypes()

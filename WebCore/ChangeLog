@@ -1,3 +1,16 @@
+2008-03-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Some style cleanup and add a logging channel for upcoming work
+
+        * platform/Logging.cpp:
+        * platform/Logging.h:
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        (WebCore::initializeSupportedNonImageMimeTypes):
+
 2008-03-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
