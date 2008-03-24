@@ -280,11 +280,50 @@ void Element::scrollByPages(int pages)
     scrollByUnits(pages, ScrollByPage);
 }
 
+static float localZoomForRenderer(RenderObject* renderer)
+{
+    // FIXME: This does the wrong thing if two opposing zooms are in effect and canceled each
+    // other out, but the alternative is that we'd have to crawl up the whole render tree every
+    // time (or store an additional bit in the RenderStyle to indicate that a zoom was specified).
+    float zoomFactor = 1.0f;
+    if (renderer->style()->effectiveZoom() != 1.0f) {
+        // Need to find the nearest enclosing RenderObject that set up
+        // a differing zoom, and then we divide our result by it to eliminate the zoom.
+        RenderObject* prev = renderer;
+        for (RenderObject* curr = prev->parent(); curr; curr = curr->parent()) {
+            if (curr->style()->effectiveZoom() != prev->style()->effectiveZoom()) {
+                zoomFactor = prev->style()->zoom();
+                break;
+            }
+            prev = curr;
+        }
+        if (prev->isRenderView())
+            zoomFactor = prev->style()->zoom();
+    }
+    return zoomFactor;
+}
+
+static int adjustForLocalZoom(int value, RenderObject* renderer)
+{
+    float zoomFactor = localZoomForRenderer(renderer);
+    if (zoomFactor == 1.0f)
+        return value;
+    return value / zoomFactor;
+}
+
+static int adjustForAbsoluteZoom(int value, RenderObject* renderer)
+{
+    float zoomFactor = renderer->style()->effectiveZoom();
+    if (zoomFactor == 1.0f)
+        return value;
+    return value / zoomFactor;
+}
+
 int Element::offsetLeft()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderObject* rend = renderer())
-        return rend->offsetLeft();
+        return adjustForLocalZoom(rend->offsetLeft(), rend);
     return 0;
 }
 
@@ -292,7 +331,7 @@ int Element::offsetTop()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderObject* rend = renderer())
-        return rend->offsetTop();
+        return adjustForLocalZoom(rend->offsetTop(), rend);
     return 0;
 }
 
@@ -300,7 +339,7 @@ int Element::offsetWidth()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderObject* rend = renderer())
-        return rend->offsetWidth();
+        return adjustForAbsoluteZoom(rend->offsetWidth(), rend);
     return 0;
 }
 
@@ -308,7 +347,7 @@ int Element::offsetHeight()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderObject* rend = renderer())
-        return rend->offsetHeight();
+        return adjustForAbsoluteZoom(rend->offsetHeight(), rend);
     return 0;
 }
 
@@ -326,7 +365,7 @@ int Element::clientLeft()
     document()->updateLayoutIgnorePendingStylesheets();
 
     if (RenderObject* rend = renderer())
-        return rend->clientLeft();
+        return adjustForAbsoluteZoom(rend->clientLeft(), rend);
     return 0;
 }
 
@@ -335,7 +374,7 @@ int Element::clientTop()
     document()->updateLayoutIgnorePendingStylesheets();
 
     if (RenderObject* rend = renderer())
-        return rend->clientTop();
+        return adjustForAbsoluteZoom(rend->clientTop(), rend);
     return 0;
 }
 
@@ -354,7 +393,7 @@ int Element::clientWidth()
     
 
     if (RenderObject* rend = renderer())
-        return rend->clientWidth();
+        return adjustForAbsoluteZoom(rend->clientWidth(), rend);
     return 0;
 }
 
@@ -373,7 +412,7 @@ int Element::clientHeight()
     }
     
     if (RenderObject* rend = renderer())
-        return rend->clientHeight();
+        return adjustForAbsoluteZoom(rend->clientHeight(), rend);
     return 0;
 }
 
@@ -381,7 +420,7 @@ int Element::scrollLeft()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderObject* rend = renderer())
-        return rend->scrollLeft();
+        return adjustForAbsoluteZoom(rend->scrollLeft(), rend);
     return 0;
 }
 
@@ -389,7 +428,7 @@ int Element::scrollTop()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderObject* rend = renderer())
-        return rend->scrollTop();
+        return adjustForAbsoluteZoom(rend->scrollTop(), rend);
     return 0;
 }
 
@@ -397,21 +436,21 @@ void Element::setScrollLeft(int newLeft)
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderObject *rend = renderer())
-        rend->setScrollLeft(newLeft);
+        rend->setScrollLeft(newLeft * rend->style()->effectiveZoom());
 }
 
 void Element::setScrollTop(int newTop)
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderObject *rend = renderer())
-        rend->setScrollTop(newTop);
+        rend->setScrollTop(newTop * rend->style()->effectiveZoom());
 }
 
 int Element::scrollWidth()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderObject* rend = renderer())
-        return rend->scrollWidth();
+        return adjustForAbsoluteZoom(rend->scrollWidth(), rend);
     return 0;
 }
 
@@ -419,7 +458,7 @@ int Element::scrollHeight()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderObject* rend = renderer())
-        return rend->scrollHeight();
+        return adjustForAbsoluteZoom(rend->scrollHeight(), rend);
     return 0;
 }
 

@@ -602,7 +602,7 @@ public:
     virtual IntRect overflowRect(bool /*includeInterior*/ = true) const { return borderBox(); }
 
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow)
-    // to return the remaining width on a given line (and the height of a single line). -dwh
+    // to return the remaining width on a given line (and the height of a single line).
     virtual int offsetWidth() const { return width(); }
     virtual int offsetHeight() const { return height() + borderTopExtra() + borderBottomExtra(); }
 

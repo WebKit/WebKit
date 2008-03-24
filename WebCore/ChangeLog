@@ -1,3 +1,33 @@
+2008-03-24  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 18009. Make sure the IE offset/client/scroll*** extensions respect full page zoom.
+
+        Reviewed by Beth
+
+        * dom/Element.cpp:
+        (WebCore::localZoomForRenderer):
+        (WebCore::adjustForLocalZoom):
+        (WebCore::adjustForAbsoluteZoom):
+        (WebCore::Element::offsetLeft):
+        (WebCore::Element::offsetTop):
+        (WebCore::Element::offsetWidth):
+        (WebCore::Element::offsetHeight):
+        (WebCore::Element::clientLeft):
+        (WebCore::Element::clientTop):
+        (WebCore::Element::clientWidth):
+        (WebCore::Element::clientHeight):
+        (WebCore::Element::scrollLeft):
+        (WebCore::Element::scrollTop):
+        (WebCore::Element::setScrollLeft):
+        (WebCore::Element::setScrollTop):
+        (WebCore::Element::scrollWidth):
+        (WebCore::Element::scrollHeight):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetParent):
+        * rendering/RenderObject.h:
+
 2008-03-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin
