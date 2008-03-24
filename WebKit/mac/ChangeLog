@@ -1,3 +1,9 @@
+2008-03-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Build fix.
+
+        * MigrateHeaders.make: Added DOMSVGAltGlyphElement.h and DOMSVGAltGlyphElementInternal.h.
+
 2008-03-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

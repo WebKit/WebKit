@@ -218,6 +218,8 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMSVG.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGAElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGAElementInternal.h \
+    $(PRIVATE_HEADERS_DIR)/DOMSVGAltGlyphElement.h \
+    $(INTERNAL_HEADERS_DIR)/DOMSVGAltGlyphElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGAngle.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGAngleInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGAnimateColorElement.h \
