@@ -1,3 +1,7 @@
+2008-03-24  Kevin McCullough <kmccullough@apple.com>
+
+          - Fixed Changelog
+
 2008-03-24  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Alp Toker.
@@ -269,8 +273,6 @@
         (WebCore::InspectorCachedXMLHttpRequestResource::setEncoding):
         (WebCore::InspectorCachedXMLHttpRequestResource::create):
         (WebCore::InspectorCachedXMLHttpRequestResource::InspectorCachedXMLHttpRequestResource):
-        * xml/XMLHttpRequest.cpp:
-        (WebCore::XMLHttpRequest::send):
 
 2008-03-21  Rodney Dawes  <dobey@wayofthemonkey.com>
 
