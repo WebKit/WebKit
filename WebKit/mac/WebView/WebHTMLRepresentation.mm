@@ -61,7 +61,6 @@ using namespace HTMLNames;
 @interface WebHTMLRepresentationPrivate : NSObject {
 @public
     WebDataSource *dataSource;
-    NSData *parsedArchiveData;
     
     BOOL hasSentResponseToPlugin;
     id <WebPluginManualLoader> manualLoader;
@@ -70,13 +69,6 @@ using namespace HTMLNames;
 @end
 
 @implementation WebHTMLRepresentationPrivate
-
-- (void)dealloc
-{
-    [parsedArchiveData release];
-    [super dealloc];
-}
-
 @end
 
 @implementation WebHTMLRepresentation
@@ -223,8 +215,13 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 
 - (NSString *)documentSource
 {
-    if ([self _isDisplayingWebArchive])
-        return [[[NSString alloc] initWithData:_private->parsedArchiveData encoding:NSUTF8StringEncoding] autorelease]; 
+    if ([self _isDisplayingWebArchive]) {            
+        SharedBuffer *parsedArchiveData = [_private->dataSource _documentLoader]->parsedArchiveData();
+        NSData *nsData = parsedArchiveData ? parsedArchiveData->createNSData() : nil;
+        NSString *result = [[NSString alloc] initWithData:nsData encoding:NSUTF8StringEncoding];
+        [nsData release];
+        return [result autorelease];
+    }
 
     Frame* coreFrame = core([_private->dataSource webFrame]);
     if (!coreFrame)

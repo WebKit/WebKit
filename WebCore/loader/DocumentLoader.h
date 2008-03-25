@@ -125,6 +125,8 @@ namespace WebCore {
         ArchiveResource* archiveResourceForURL(const KURL&);
         PassRefPtr<Archive> popArchiveForSubframe(const String& frameName);
         void clearArchiveResources();
+        void setParsedArchiveData(PassRefPtr<SharedBuffer>);
+        SharedBuffer* parsedArchiveData() const;
         
         void addResponse(const ResourceResponse&);
         const ResponseVector& responses() const { return m_responses; }
@@ -236,6 +238,7 @@ namespace WebCore {
         bool m_stopRecordingResponses;
         
         OwnPtr<ArchiveResourceCollection> m_archiveResourceCollection;
+        RefPtr<SharedBuffer> m_parsedArchiveData;
     };
 
 }
