@@ -1,3 +1,13 @@
+2008-03-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Disable this test until we can fix 
+        Bug 18057: keyDown incorrectly propagates up the frame tree
+
+        * fast/events/key-events-in-frame.html: Removed.
+        * fast/events/key-events-in-frame.html-disabled: Added.
+
 2008-03-24  Brady Eidson  <beidson@apple.com>
 
         Made new layout test files executable, as needed for the tests to not fail!        

@@ -3533,8 +3533,7 @@ noPromisedData:
 
     BOOL completionPopupWasOpen = _private->compController && [_private->compController popupWindowIsOpen];
     Frame* coreFrame = core([self _frame]);
-    if (!eventWasSentToWebCore && coreFrame) {
-        coreFrame->eventHandler()->keyEvent(event);
+    if (!eventWasSentToWebCore && coreFrame && coreFrame->eventHandler()->keyEvent(event)) {
         // WebCore processed a key event, bail on any preexisting complete: UI
         if (completionPopupWasOpen)
             [_private->compController endRevertingChange:YES moveLeft:NO];

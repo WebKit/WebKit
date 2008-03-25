@@ -1,3 +1,17 @@
+2008-03-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 18030: REGRESSION(r31236): Space bar fails to scroll down page
+        <http://bugs.webkit.org/show_bug.cgi?id=18030>
+
+        Rollout keyDown changes from r31236 -- fix for keyDown behaviour is
+        tracked by Bug 18057: keyDown incorrectly propagates up the frame tree
+        <http://bugs.webkit.org/show_bug.cgi?id=18057>
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView keyDown:]):
+
 2008-03-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej, landed by Brady
