@@ -1,5 +1,11 @@
 2008-03-25  Alexey Proskuryakov  <ap@webkit.org>
 
+        Windows build fix.
+
+        * kjs/dtoa.cpp: Include stdint.h.
+
+2008-03-25  Alexey Proskuryakov  <ap@webkit.org>
+
         Rubber-stamped by Darin.
 
         Cleanup dtoa.cpp style.
