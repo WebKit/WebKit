@@ -101,4 +101,10 @@ void ResourceRequest::doUpdatePlatformRequest()
     m_nsRequest.adoptNS(nsRequest);
 }
 
+void ResourceRequest::applyWebArchiveHackForMail()
+{
+    // Hack because Mail checks for this property to detect data / archive loads
+    [NSURLProtocol setProperty:@"" forKey:@"WebDataRequest" inRequest:(NSMutableURLRequest *)nsURLRequest()];
+}
+
 }

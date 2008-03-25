@@ -31,8 +31,14 @@
 #import "WebFrameInternal.h"
 #import "WebNSDictionaryExtras.h"
 #import "WebNSURLExtras.h"
+
+#import <WebCore/ArchiveResource.h>
+#import <WebCore/LegacyWebArchive.h>
 #import <WebCore/TextEncoding.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
+
+#import <wtf/PassRefPtr.h>
 
 using namespace WebCore;
 
@@ -48,27 +54,50 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 @interface WebResourcePrivate : NSObject
 {
 @public
-    NSData *data;
-    NSURL *URL;
-    NSString *frameName;
-    NSString *MIMEType;
-    NSString *textEncodingName;
-    NSURLResponse *response;
-    BOOL shouldIgnoreWhenUnarchiving;
+    ArchiveResource* coreResource;
 }
+
+- (id)initWithCoreResource:(PassRefPtr<ArchiveResource>)coreResource;
 @end
 
 @implementation WebResourcePrivate
 
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
+
+- (id)init
+{
+    return [super init];
+}
+
+- (id)initWithCoreResource:(PassRefPtr<ArchiveResource>)passedResource
+{
+    self = [super init];
+    if (!self)
+        return self;
+    
+    // Acquire the PassRefPtr<>'s ref as our own manual ref
+    coreResource = passedResource.releaseRef();
+
+    return self;
+}
+
 - (void)dealloc
 {
-    [data release];
-    [URL release];
-    [frameName release];
-    [MIMEType release];
-    [textEncodingName release];
-    [response release];
+    if (coreResource)
+        coreResource->deref();
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (coreResource)
+        coreResource->deref();
+    [super finalize];
 }
 
 @end
@@ -91,45 +120,68 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
-    self = [self init];
+    self = [super init];
     if (!self)
         return nil;
 
+    NSData *data = nil;
+    NSURL *url = nil;
+    NSString *mimeType = nil, *textEncoding = nil, *frameName = nil;
+    NSURLResponse *response = nil;
+    
     @try {
         id object = [decoder decodeObjectForKey:WebResourceDataKey];
         if ([object isKindOfClass:[NSData class]])
-            _private->data = [object retain];
+            data = object;
         object = [decoder decodeObjectForKey:WebResourceURLKey];
         if ([object isKindOfClass:[NSURL class]])
-            _private->URL = [object retain];
+            url = object;
         object = [decoder decodeObjectForKey:WebResourceMIMETypeKey];
         if ([object isKindOfClass:[NSString class]])
-            _private->MIMEType = [object retain];
+            mimeType = object;
         object = [decoder decodeObjectForKey:WebResourceTextEncodingNameKey];
         if ([object isKindOfClass:[NSString class]])
-            _private->textEncodingName = [object retain];
+            textEncoding = object;
         object = [decoder decodeObjectForKey:WebResourceFrameNameKey];
         if ([object isKindOfClass:[NSString class]])
-            _private->frameName = [object retain];
+            frameName = object;
         object = [decoder decodeObjectForKey:WebResourceResponseKey];
         if ([object isKindOfClass:[NSURLResponse class]])
-            _private->response = [object retain];
+            response = object;
     } @catch(id) {
         [self release];
         return nil;
     }
+
+    _private = [[WebResourcePrivate alloc] initWithCoreResource:ArchiveResource::create(SharedBuffer::wrapNSData(data), url, mimeType, textEncoding, frameName, response)];
 
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
-    [encoder encodeObject:_private->data forKey:WebResourceDataKey];
-    [encoder encodeObject:_private->URL forKey:WebResourceURLKey];
-    [encoder encodeObject:_private->MIMEType forKey:WebResourceMIMETypeKey];
-    [encoder encodeObject:_private->textEncodingName forKey:WebResourceTextEncodingNameKey];
-    [encoder encodeObject:_private->frameName forKey:WebResourceFrameNameKey];
-    [encoder encodeObject:_private->response forKey:WebResourceResponseKey];
+    ArchiveResource *resource = _private->coreResource;
+    
+    NSData *data = nil;
+    NSURL *url = nil;
+    NSString *mimeType = nil, *textEncoding = nil, *frameName = nil;
+    NSURLResponse *response = nil;
+    
+    if (resource) {
+        if (resource->data())
+            data = [resource->data()->createNSData() autorelease];
+        url = resource->url();
+        mimeType = resource->mimeType();
+        textEncoding = resource->textEncoding();
+        frameName = resource->frameName();
+        response = resource->response().nsURLResponse();
+    }
+    [encoder encodeObject:data forKey:WebResourceDataKey];
+    [encoder encodeObject:url forKey:WebResourceURLKey];
+    [encoder encodeObject:mimeType forKey:WebResourceMIMETypeKey];
+    [encoder encodeObject:textEncoding forKey:WebResourceTextEncodingNameKey];
+    [encoder encodeObject:frameName forKey:WebResourceFrameNameKey];
+    [encoder encodeObject:response forKey:WebResourceResponseKey];
 }
 
 - (void)dealloc
@@ -145,27 +197,27 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (NSData *)data
 {
-    return _private->data;
+    return _private->coreResource ? [_private->coreResource->data()->createNSData() autorelease] : 0;
 }
 
 - (NSURL *)URL
 {
-    return _private->URL;
+    return _private->coreResource ? (NSURL *)_private->coreResource->url() : 0;
 }
 
 - (NSString *)MIMEType
 {
-    return _private->MIMEType;
+    return _private->coreResource ? (NSString *)_private->coreResource->mimeType() : 0;
 }
 
 - (NSString *)textEncodingName
 {
-    return _private->textEncodingName;
+    return _private->coreResource ? (NSString *)_private->coreResource->textEncoding() : 0;
 }
 
 - (NSString *)frameName
 {
-    return _private->frameName;
+    return _private->coreResource ? (NSString *)_private->coreResource->frameName() : 0;
 }
 
 - (id)description
@@ -175,46 +227,34 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 @end
 
+@implementation WebResource (WebResourceInternal)
+
+- (id)_initWithCoreResource:(WebCore::ArchiveResource *)coreResource
+{
+    self = [super init];
+    if (!self)
+        return nil;
+            
+    _private = [[WebResourcePrivate alloc] initWithCoreResource:coreResource];
+            
+    return self;
+}
+
+- (WebCore::ArchiveResource *)_coreResource
+{
+    return _private->coreResource;
+}
+
+@end
+
 @implementation WebResource (WebResourcePrivate)
 
 // SPI for Mail (5066325)
+// FIXME: This "ignoreWhenUnarchiving" concept is an ugly one - can we find a cleaner solution for those who need this SPI?
 - (void)_ignoreWhenUnarchiving
 {
-    _private->shouldIgnoreWhenUnarchiving = YES;
-}
-
-- (BOOL)_shouldIgnoreWhenUnarchiving
-{
-    return _private->shouldIgnoreWhenUnarchiving;
-}
-
-+ (NSArray *)_resourcesFromPropertyLists:(NSArray *)propertyLists
-{
-    if (![propertyLists isKindOfClass:[NSArray class]]) {
-        return nil;
-    }
-    NSEnumerator *enumerator = [propertyLists objectEnumerator];
-    NSMutableArray *resources = [NSMutableArray array];
-    NSDictionary *propertyList;
-    while ((propertyList = [enumerator nextObject]) != nil) {
-        WebResource *resource = [[WebResource alloc] _initWithPropertyList:propertyList];
-        if (resource) {
-            [resources addObject:resource];
-            [resource release];
-        }
-    }
-    return resources;
-}
-
-+ (NSArray *)_propertyListsFromResources:(NSArray *)resources
-{
-    NSEnumerator *enumerator = [resources objectEnumerator];
-    NSMutableArray *propertyLists = [NSMutableArray array];
-    WebResource *resource;
-    while ((resource = [enumerator nextObject]) != nil) {
-        [propertyLists addObject:[resource _propertyListRepresentation]];
-    }
-    return propertyLists;
+    if (_private->coreResource)
+        _private->coreResource->ignoreWhenUnarchiving();
 }
 
 - (id)_initWithData:(NSData *)data 
@@ -225,30 +265,17 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
            response:(NSURLResponse *)response
            copyData:(BOOL)copyData
 {
-    [self init];    
+    self = [super init];
+    if (!self)
+        return nil;
     
-    if (!data) {
+    if (!data || !URL || !MIMEType) {
         [self release];
         return nil;
     }
-    _private->data = copyData ? [data copy] : [data retain];
-    
-    if (!URL) {
-        [self release];
-        return nil;
-    }
-    _private->URL = [URL copy];
-    
-    if (!MIMEType) {
-        [self release];
-        return nil;
-    }
-    _private->MIMEType = [MIMEType copy];
-    
-    _private->textEncodingName = [textEncodingName copy];
-    _private->frameName = [frameName copy];
-    _private->response = [response retain];
-        
+            
+    _private = [[WebResourcePrivate alloc] initWithCoreResource:ArchiveResource::create(SharedBuffer::wrapNSData(copyData ? [[data copy] autorelease] : data), URL, MIMEType, textEncodingName, frameName, response)];
+            
     return self;
 }
 
@@ -265,90 +292,41 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
                       copyData:NO];    
 }
 
-- (id)_initWithPropertyList:(id)propertyList
-{
-    if (![propertyList isKindOfClass:[NSDictionary class]]) {
-        [self release];
-        return nil;
-    }
-    
-    NSURLResponse *response = nil;
-    NSData *responseData = [propertyList objectForKey:WebResourceResponseKey];
-    if ([responseData isKindOfClass:[NSData class]]) {
-        NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:responseData];
-        @try {
-            id responseObject = [unarchiver decodeObjectForKey:WebResourceResponseKey];
-            if ([responseObject isKindOfClass:[NSURLResponse class]])
-                response = responseObject;
-            [unarchiver finishDecoding];
-        } @catch(id) {
-            response = nil;
-        }
-        [unarchiver release];
-    }
-
-    NSData *data = [propertyList objectForKey:WebResourceDataKey];
-    NSString *URLString = [propertyList _webkit_stringForKey:WebResourceURLKey];
-    return [self _initWithData:[data isKindOfClass:[NSData class]] ? data : nil
-                           URL:URLString ? [NSURL _web_URLWithDataAsString:URLString] : nil
-                      MIMEType:[propertyList _webkit_stringForKey:WebResourceMIMETypeKey]
-              textEncodingName:[propertyList _webkit_stringForKey:WebResourceTextEncodingNameKey]
-                     frameName:[propertyList _webkit_stringForKey:WebResourceFrameNameKey]
-                      response:response
-                      copyData:NO];
-}
-
 - (NSFileWrapper *)_fileWrapperRepresentation
 {
-    NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:_private->data] autorelease];
-    NSString *preferredFilename = [_private->response suggestedFilename];
-    if (!preferredFilename || ![preferredFilename length])
-        preferredFilename = [_private->URL _webkit_suggestedFilenameWithMIMEType:_private->MIMEType];
+    SharedBuffer* coreData = _private->coreResource ? _private->coreResource->data() : 0;
+    NSData *data = coreData ? [coreData->createNSData() autorelease] : nil;
+    
+    NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:data] autorelease];
+    NSString *preferredFilename = _private->coreResource ? (NSString *)_private->coreResource->response().suggestedFilename() : nil;
+    if (!preferredFilename || ![preferredFilename length]) {
+        NSURL *url = _private->coreResource ? (NSURL *)_private->coreResource->url() : nil;
+        NSString *mimeType = _private->coreResource ? (NSString *)_private->coreResource->mimeType() : nil;
+        preferredFilename = [url _webkit_suggestedFilenameWithMIMEType:mimeType];
+    }
+    
     [wrapper setPreferredFilename:preferredFilename];
     return wrapper;
 }
 
-- (id)_propertyListRepresentation
-{
-    NSMutableDictionary *propertyList = [NSMutableDictionary dictionary];
-    [propertyList setObject:_private->data forKey:WebResourceDataKey];
-    [propertyList setObject:[_private->URL _web_originalDataAsString] forKey:WebResourceURLKey];
-    [propertyList setObject:_private->MIMEType forKey:WebResourceMIMETypeKey];
-    if (_private->textEncodingName != nil) {
-        [propertyList setObject:_private->textEncodingName forKey:WebResourceTextEncodingNameKey];
-    }
-    if (_private->frameName != nil) {
-        [propertyList setObject:_private->frameName forKey:WebResourceFrameNameKey];
-    }    
-    if (_private->response != nil) {
-        NSMutableData *responseData = [[NSMutableData alloc] init];
-        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:responseData];
-        [archiver encodeObject:_private->response forKey:WebResourceResponseKey];
-        [archiver finishEncoding];
-        [archiver release];
-        [propertyList setObject:responseData forKey:WebResourceResponseKey];
-        [responseData release];
-    }        
-    return propertyList;
-}
-
 - (NSURLResponse *)_response
 {
-    if (_private->response != nil) {
-        return _private->response;
-    }
-    return [[[NSURLResponse alloc] initWithURL:_private->URL
-                                      MIMEType:_private->MIMEType 
-                         expectedContentLength:[_private->data length]
-                              textEncodingName:_private->textEncodingName] autorelease];
+    NSURLResponse *response = nil;
+    if (_private->coreResource)
+        response = _private->coreResource->response().nsURLResponse();
+    
+    return response ? response : [[[NSURLResponse alloc] init] autorelease];        
 }
 
 - (NSString *)_stringValue
 {
-    WebCore::TextEncoding encoding(_private->textEncodingName);
+    WebCore::TextEncoding encoding(_private->coreResource ? (NSString *)_private->coreResource->textEncoding() : nil);
     if (!encoding.isValid())
         encoding = WindowsLatin1Encoding();
-    return encoding.decode(reinterpret_cast<const char*>([_private->data bytes]), [_private->data length]);
+    
+    SharedBuffer* coreData = _private->coreResource ? _private->coreResource->data() : 0;
+    
+    return encoding.decode(reinterpret_cast<const char*>(coreData ? coreData->data() : 0), coreData ? coreData->size() : 0);
 }
 
 @end

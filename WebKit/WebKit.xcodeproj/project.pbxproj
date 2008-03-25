@@ -63,8 +63,6 @@
 		5DE92FEF0BD7017E0059A5FD /* WebAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DE92FEE0BD7017E0059A5FD /* WebAssertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DF7B1D10D161FD00062CD32 /* WebNetscapePlugInStreamLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DF7B1CF0D161FCF0062CD32 /* WebNetscapePlugInStreamLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DF7B1D20D161FD00062CD32 /* WebNetscapePlugInStreamLoaderClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF7B1D00D161FD00062CD32 /* WebNetscapePlugInStreamLoaderClient.mm */; };
-		650F74E409E488F70020118A /* WebUnarchivingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F74E209E488F70020118A /* WebUnarchivingState.h */; };
-		650F74E509E488F70020118A /* WebUnarchivingState.m in Sources */ = {isa = PBXBuildFile; fileRef = 650F74E309E488F70020118A /* WebUnarchivingState.m */; };
 		65488DA1084FBCCB00831AD0 /* WebNSDictionaryExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */; };
 		65488DA2084FBCCB00831AD0 /* WebNSDictionaryExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65488DA0084FBCCB00831AD0 /* WebNSDictionaryExtras.m */; };
 		6550B7C7099EFAE90090D781 /* WebArchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B7C5099EFAE90090D781 /* WebArchiver.h */; };
@@ -423,8 +421,6 @@
 		5DE92FEE0BD7017E0059A5FD /* WebAssertions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebAssertions.h; sourceTree = "<group>"; };
 		5DF7B1CF0D161FCF0062CD32 /* WebNetscapePlugInStreamLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePlugInStreamLoaderClient.h; sourceTree = "<group>"; };
 		5DF7B1D00D161FD00062CD32 /* WebNetscapePlugInStreamLoaderClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapePlugInStreamLoaderClient.mm; sourceTree = "<group>"; };
-		650F74E209E488F70020118A /* WebUnarchivingState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebUnarchivingState.h; sourceTree = "<group>"; };
-		650F74E309E488F70020118A /* WebUnarchivingState.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebUnarchivingState.m; sourceTree = "<group>"; };
 		65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSDictionaryExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65488DA0084FBCCB00831AD0 /* WebNSDictionaryExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSDictionaryExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		6550B7C5099EFAE90090D781 /* WebArchiver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebArchiver.h; sourceTree = "<group>"; };
@@ -976,7 +972,6 @@
 				C0167BF70D7F5DD00028696E /* WebScriptDebugger.mm */,
 				515E27CC0458C86500CA2D3A /* WebUIDelegate.h */,
 				65A7D44A0568AB2600E70EF6 /* WebUIDelegatePrivate.h */,
-				650F74E209E488F70020118A /* WebUnarchivingState.h */,
 				51A8B579042834F700CA2D3A /* WebView.h */,
 				930D02BB06275F640076701E /* WebViewInternal.h */,
 				51A8B57D0428353A00CA2D3A /* WebViewPrivate.h */,
@@ -993,7 +988,6 @@
 				F5AEBB3D024A527601C1A526 /* WebPreferences.m */,
 				84311A1305EAAAF00088EDA4 /* WebResource.mm */,
 				7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.mm */,
-				650F74E309E488F70020118A /* WebUnarchivingState.m */,
 				51A8B57A042834F700CA2D3A /* WebView.mm */,
 			);
 			name = WebView;
@@ -1312,7 +1306,6 @@
 				939810750824BF01008DF038 /* WebUIDelegate.h in Headers */,
 				939810830824BF01008DF038 /* WebUIDelegatePrivate.h in Headers */,
 				939810150824BF01008DF038 /* WebURLsWithTitles.h in Headers */,
-				650F74E409E488F70020118A /* WebUnarchivingState.h in Headers */,
 				939810700824BF01008DF038 /* WebView.h in Headers */,
 				939810460824BF01008DF038 /* WebViewFactory.h in Headers */,
 				9398109B0824BF01008DF038 /* WebViewInternal.h in Headers */,
@@ -1602,7 +1595,6 @@
 				939810CC0824BF01008DF038 /* WebStringTruncator.m in Sources */,
 				93EB178D09F88D460091F8FF /* WebSystemInterface.m in Sources */,
 				939810BE0824BF01008DF038 /* WebURLsWithTitles.m in Sources */,
-				650F74E509E488F70020118A /* WebUnarchivingState.m in Sources */,
 				939811070824BF01008DF038 /* WebView.mm in Sources */,
 				939810E80824BF01008DF038 /* WebViewFactory.mm in Sources */,
 				939810DD0824BF01008DF038 /* npapi.m in Sources */,

@@ -53,6 +53,8 @@ namespace KJS {
 
 namespace WebCore {
 
+    class Archive;
+    class ArchiveResource;
     class AuthenticationChallenge;
     class CachedPage;
     class Document;
@@ -140,7 +142,6 @@ namespace WebCore {
         void prepareForLoadStart();
         void setupForReplace();
         void setupForReplaceByMIMEType(const String& newMIMEType);
-        void finalSetupForReplace(DocumentLoader*);
         void load(const KURL&, Event*);
         void load(const FrameLoadRequest&, bool lockHistory, bool userGesture,
             Event*, HTMLFormElement*, const HashMap<String, String>& formValues);
@@ -157,6 +158,9 @@ namespace WebCore {
         
         void load(DocumentLoader*);
         void load(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>);
+        
+        void loadURLIntoChildFrame(const KURL&, const String& referer, Frame*);
+        void loadArchive(PassRefPtr<Archive> archive);
 
         static bool canLoad(const KURL&, const String& referrer);
         static bool canLoad(const KURL&, const Document*);
@@ -214,8 +218,10 @@ namespace WebCore {
         ResourceError cancelledError(const ResourceRequest&) const;
         ResourceError fileDoesNotExistError(const ResourceResponse&) const;
         ResourceError blockedError(const ResourceRequest&) const;
-        bool willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL&) const;
+        bool scheduleArchiveLoad(ResourceLoader*, const ResourceRequest&, const KURL&);
+#ifndef NDEBUG
         bool isArchiveLoadPending(ResourceLoader*) const;
+#endif
         void cannotShowMIMEType(const ResourceResponse&);
         ResourceError interruptionForPolicyChangeError(const ResourceRequest&);
 
@@ -460,6 +466,9 @@ namespace WebCore {
         void redirectionTimerFired(Timer<FrameLoader>*);
         void checkCompletedTimerFired(Timer<FrameLoader>*);
         void checkLoadCompleteTimerFired(Timer<FrameLoader>*);
+        
+        void deliverArchivedResourcesAfterDelay();
+        void archiveResourceDeliveryTimerFired(Timer<FrameLoader>*);
 
         void cancelRedirection(bool newLoadInProgress = false);
 
@@ -639,6 +648,10 @@ namespace WebCore {
         RefPtr<HistoryItem> m_provisionalHistoryItem;
         
         bool m_didPerformFirstNavigation;
+        
+        typedef HashMap<RefPtr<ResourceLoader>, RefPtr<ArchiveResource> > ArchiveResourceMap;
+        ArchiveResourceMap m_pendingArchiveResources;
+        Timer<FrameLoader> m_archiveResourceDeliveryTimer;
 
 #ifndef NDEBUG
         bool m_didDispatchDidCommitLoad;

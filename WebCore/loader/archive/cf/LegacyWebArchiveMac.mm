@@ -29,4 +29,46 @@
 #include "config.h"
 #include "LegacyWebArchive.h"
 
-// FIXME:  Code will go here!
+namespace WebCore {
+
+static const NSString *LegacyWebArchiveResourceResponseKey = @"WebResourceResponse";
+
+// FIXME: Is it possible to parse in a Cocoa-style resource response manually, 
+// without NSKeyed(Un)Archiver, manipulating plists directly?
+ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef responseData)
+{    
+    ASSERT(responseData);
+    if (!responseData)
+        return ResourceResponse();
+    
+    NSURLResponse *response;
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)responseData];
+    @try {
+        id responseObject = [unarchiver decodeObjectForKey:LegacyWebArchiveResourceResponseKey];
+        if ([responseObject isKindOfClass:[NSURLResponse class]])
+            response = responseObject;
+        [unarchiver finishDecoding];
+    } @catch(id) {
+        response = nil;
+    }
+    [unarchiver release];
+    
+    return ResourceResponse(response);
+}
+
+RetainPtr<CFDataRef> propertyListDataFromResourceResponse(const ResourceResponse& response)
+{    
+    NSURLResponse *nsResponse = response.nsURLResponse();
+    if (!nsResponse)
+        return 0;
+        
+    NSMutableData *responseData = (NSMutableData *)CFDataCreateMutable(0, 0);
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:responseData];
+    [archiver encodeObject:nsResponse forKey:LegacyWebArchiveResourceResponseKey];
+    [archiver finishEncoding];
+    [archiver release];
+    
+    return RetainPtr<CFDataRef>(AdoptCF, (CFDataRef)responseData);
+}
+
+}

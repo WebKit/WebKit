@@ -48,23 +48,19 @@ class WebDocumentLoaderMac;
 @protocol WebDocumentRepresentation;
 
 @interface WebDataSource (WebInternal)
-- (void)_addToUnarchiveState:(WebArchive *)archive;
 - (void)_makeRepresentation;
 - (BOOL)_isDocumentHTML;
 - (WebView *)_webView;
-- (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName;
 - (NSURL *)_URL;
 - (DOMElement *)_imageElementWithImageResource:(WebResource *)resource;
 - (DOMDocumentFragment *)_documentFragmentWithImageResource:(WebResource *)resource;
 - (DOMDocumentFragment *)_documentFragmentWithArchive:(WebArchive *)archive;
 + (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission;
 - (void)_replaceSelectionWithArchive:(WebArchive *)archive selectReplacement:(BOOL)selectReplacement;
-- (WebResource *)_archivedSubresourceForURL:(NSURL *)URL;
 - (id)_initWithDocumentLoader:(WebDocumentLoaderMac*)loader;
 - (void)_finishedLoading;
 - (void)_receivedData:(NSData *)data;
 - (void)_revertToProvisionalState;
 - (void)_setMainDocumentError:(NSError *)error;
-- (void)_clearUnarchivingState;
 - (WebCoreDocumentLoader*)_documentLoader;
 @end

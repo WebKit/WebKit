@@ -29,4 +29,59 @@
 #include "config.h"
 #include "ArchiveFactory.h"
 
-// FIXME:  Code will go here!
+#include "LegacyWebArchive.h"
+#include "MIMETypeRegistry.h"
+#include "PlatformString.h"
+
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+
+namespace WebCore {
+
+typedef PassRefPtr<Archive> RawDataCreationFunction(SharedBuffer*);
+
+// The create functions in the archive classes return PassRefPtr to concrete subclasses
+// of Archive. This adaptor makes the functions have a uniform return type.
+template <typename ArchiveClass> static PassRefPtr<Archive> archiveFactoryCreate(SharedBuffer* buffer)
+{
+    return ArchiveClass::create(buffer);
+}
+
+static HashMap<String, RawDataCreationFunction*, CaseFoldingHash>& archiveMIMETypes()
+{
+    static HashMap<String, RawDataCreationFunction*, CaseFoldingHash> mimeTypes;
+    static bool initialized = false;
+    
+    if (initialized)
+        return mimeTypes;
+    
+#if PLATFORM(CF)
+    mimeTypes.set("application/x-webarchive", archiveFactoryCreate<LegacyWebArchive>);
+#endif
+        
+    initialized = true;
+    return mimeTypes;
+}
+
+bool ArchiveFactory::isArchiveMimeType(const String& mimeType)
+{
+    return archiveMIMETypes().contains(mimeType);
+}
+
+PassRefPtr<Archive> ArchiveFactory::create(SharedBuffer* data, const String& mimeType)
+{
+    RawDataCreationFunction* function = archiveMIMETypes().get(mimeType);
+    return function ? function(data) : 0;
+}
+
+void ArchiveFactory::registerKnownArchiveMIMETypes()
+{
+    HashSet<String>& mimeTypes = MIMETypeRegistry::getSupportedNonImageMIMETypes();
+    HashMap<String, RawDataCreationFunction*, CaseFoldingHash>::iterator i = archiveMIMETypes().begin();
+    HashMap<String, RawDataCreationFunction*, CaseFoldingHash>::iterator end = archiveMIMETypes().end();
+    
+    for (; i != end; ++i)
+        mimeTypes.add(i->first);
+}
+
+}

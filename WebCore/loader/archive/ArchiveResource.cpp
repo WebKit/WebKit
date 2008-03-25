@@ -29,4 +29,48 @@
 #include "config.h"
 #include "ArchiveResource.h"
 
-// FIXME:  Code will go here!
+#include "SharedBuffer.h"
+
+namespace WebCore {
+
+PassRefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> data, const KURL& url, const String& mimeType, const String& textEncoding, const String& frameName)
+{
+    return adoptRef(new ArchiveResource(data, url, mimeType, textEncoding, frameName));
+}
+
+PassRefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> data, const KURL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& resourceResponse)
+{
+    return adoptRef(new ArchiveResource(data, url, mimeType, textEncoding, frameName, resourceResponse));
+}
+
+ArchiveResource::ArchiveResource(PassRefPtr<SharedBuffer> data, const KURL& url, const String& mimeType, const String& textEncoding, const String& frameName)
+    : m_data(data)
+    , m_url(url)
+    , m_mimeType(mimeType)
+    , m_textEncoding(textEncoding)
+    , m_frameName(frameName)
+    , m_shouldIgnoreWhenUnarchiving(false)
+{
+}
+
+ArchiveResource::ArchiveResource(PassRefPtr<SharedBuffer> data, const KURL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response)
+    : m_data(data)
+    , m_url(url)
+    , m_mimeType(mimeType)
+    , m_textEncoding(textEncoding)
+    , m_frameName(frameName)
+    , m_response(response)
+    , m_shouldIgnoreWhenUnarchiving(false)
+{
+}
+
+const ResourceResponse& ArchiveResource::response()
+{
+    if (!m_response.isNull())
+        return m_response;
+        
+    m_response = ResourceResponse(m_url, m_mimeType, m_data->size(), m_textEncoding, String());
+    return m_response;
+}
+
+}

@@ -43,6 +43,9 @@
 
 namespace WebCore {
 
+    class Archive;
+    class ArchiveResource;
+    class ArchiveResourceCollection;
     class CachedPage;
     class Frame;
     class FrameLoader;
@@ -117,6 +120,12 @@ namespace WebCore {
         void unschedule(SchedulePair*);
 #endif
 
+        void addAllArchiveResources(Archive*);
+        void addArchiveResource(PassRefPtr<ArchiveResource>);
+        ArchiveResource* archiveResourceForURL(const KURL&);
+        PassRefPtr<Archive> popArchiveForSubframe(const String& frameName);
+        void clearArchiveResources();
+        
         void addResponse(const ResourceResponse&);
         const ResponseVector& responses() const { return m_responses; }
 
@@ -225,6 +234,8 @@ namespace WebCore {
         // page cache.
         ResponseVector m_responses;
         bool m_stopRecordingResponses;
+        
+        OwnPtr<ArchiveResourceCollection> m_archiveResourceCollection;
     };
 
 }

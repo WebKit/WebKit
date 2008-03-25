@@ -654,7 +654,6 @@ void WebFrameLoaderClient::setMainDocumentError(DocumentLoader* loader, const Re
 
 void WebFrameLoaderClient::clearUnarchivingState(DocumentLoader* loader)
 {
-    [dataSource(loader) _clearUnarchivingState];
 }
 
 void WebFrameLoaderClient::willChangeEstimatedProgress()
@@ -721,7 +720,6 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
 
 void WebFrameLoaderClient::finalSetupForReplace(DocumentLoader* loader)
 {
-    [dataSource(loader) _clearUnarchivingState];
 }
 
 void WebFrameLoaderClient::updateGlobalHistory(const KURL& url)
@@ -779,44 +777,24 @@ bool WebFrameLoaderClient::shouldFallBack(const ResourceError& error)
 
 void WebFrameLoaderClient::setDefersLoading(bool defers)
 {
-    if (!defers)
-        deliverArchivedResourcesAfterDelay();
 }
 
 bool WebFrameLoaderClient::willUseArchive(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL) const
 {
-    if (request.url() != originalURL)
-        return false;
-
-    WebResource *resource = [dataSource(core(m_webFrame.get())->loader()->activeDocumentLoader()) _archivedSubresourceForURL:originalURL];
-    if (!resource)
-        return false;
-
-    m_pendingArchivedResources.set(loader, resource);
-    // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
-    deliverArchivedResourcesAfterDelay();
-
-    return true;
+    return false;
 }
 
 bool WebFrameLoaderClient::isArchiveLoadPending(ResourceLoader* loader) const
 {
-    return m_pendingArchivedResources.contains(loader);
+    return false;
 }
 
 void WebFrameLoaderClient::cancelPendingArchiveLoad(ResourceLoader* loader)
 {
-    if (m_pendingArchivedResources.isEmpty())
-        return;
-    m_pendingArchivedResources.remove(loader);
-    if (m_pendingArchivedResources.isEmpty())
-        m_archivedResourcesDeliveryTimer.stop();
 }
 
 void WebFrameLoaderClient::clearArchivedResources()
 {
-    m_pendingArchivedResources.clear();
-    m_archivedResourcesDeliveryTimer.stop();
 }
 
 bool WebFrameLoaderClient::canHandleRequest(const ResourceRequest& request) const
@@ -1147,7 +1125,7 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
     if ([newFrame _dataSource])
         [[newFrame _dataSource] _documentLoader]->setOverrideEncoding([[m_webFrame.get() _dataSource] _documentLoader]->overrideEncoding());  
 
-    [m_webFrame.get() _loadURL:url referrer:referrer intoChild:newFrame];
+    core(m_webFrame.get())->loader()->loadURLIntoChildFrame(url, referrer, newCoreFrame.get());
 
     // The frame's onload handler may have removed it from the document.
     if (!newCoreFrame->tree()->parent())

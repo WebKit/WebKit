@@ -29,6 +29,7 @@
 #include "config.h"
 #include "DocumentLoader.h"
 
+#include "ArchiveResourceCollection.h"
 #include "CachedPage.h"
 #include "DocLoader.h"
 #include "Document.h"
@@ -42,6 +43,7 @@
 #include "SharedBuffer.h"
 #include "StringBuffer.h"
 #include "XMLTokenizer.h"
+
 #include <wtf/Assertions.h>
 #include <wtf/unicode/Unicode.h>
 
@@ -364,8 +366,7 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
     
     stopLoadingSubresources();
     stopLoadingPlugIns();
-
-    frameLoader()->finalSetupForReplace(this);
+    clearArchiveResources();
 }
 
 void DocumentLoader::updateLoading()
@@ -436,6 +437,52 @@ bool DocumentLoader::isLoadingInAPISense() const
         }
     }
     return frameLoader()->subframeIsLoading();
+}
+
+void DocumentLoader::addAllArchiveResources(Archive* archive)
+{
+    if (!m_archiveResourceCollection)
+        m_archiveResourceCollection.set(new ArchiveResourceCollection);
+        
+    ASSERT(archive);
+    if (!archive)
+        return;
+        
+    m_archiveResourceCollection->addAllResources(archive);
+}
+
+// FIXME: Adding a resource directly to a DocumentLoader/ArchiveResourceCollection seems like bad design, but is API some apps rely on.
+// Can we change the design in a manner that will let us deprecate that API without reducing functionality of those apps?
+void DocumentLoader::addArchiveResource(PassRefPtr<ArchiveResource> resource)
+{
+    if (!m_archiveResourceCollection)
+        m_archiveResourceCollection.set(new ArchiveResourceCollection);
+        
+    ASSERT(resource);
+    if (!resource)
+        return;
+        
+    m_archiveResourceCollection->addResource(resource);
+}
+
+ArchiveResource* DocumentLoader::archiveResourceForURL(const KURL& url)
+{
+    if (!m_archiveResourceCollection)
+        return 0;
+        
+    ArchiveResource* resource = m_archiveResourceCollection->archiveResourceForURL(url);
+
+    return resource && !resource->shouldIgnoreWhenUnarchiving() ? resource : 0;
+}
+
+PassRefPtr<Archive> DocumentLoader::popArchiveForSubframe(const String& frameName)
+{
+    return m_archiveResourceCollection ? m_archiveResourceCollection->popSubframeArchive(frameName) : 0;
+}
+
+void DocumentLoader::clearArchiveResources()
+{
+    m_archiveResourceCollection.clear();
 }
 
 void DocumentLoader::addResponse(const ResourceResponse& r)

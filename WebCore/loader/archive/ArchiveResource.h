@@ -29,6 +29,46 @@
 #ifndef ArchiveResource_h
 #define ArchiveResource_h
 
-// FIXME:  Code will go here!
+#include "KURL.h"
+#include "PlatformString.h"
+#include "ResourceResponse.h"
+#include "SharedBuffer.h"
 
-#endif // ArchiveResource
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+
+class ArchiveResource : public RefCounted<ArchiveResource> {
+public:
+    static PassRefPtr<ArchiveResource> create(PassRefPtr<SharedBuffer>, const KURL&, const String& mimeType, const String& textEncoding, const String& frameName);
+    static PassRefPtr<ArchiveResource> create(PassRefPtr<SharedBuffer>, const KURL&, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse&);
+    
+    SharedBuffer* data() { return m_data.get(); }
+    
+    const KURL& url() const { return m_url; }
+    const String& mimeType() const { return m_mimeType; }
+    const String& textEncoding() const { return m_textEncoding; }
+    const String& frameName() const { return m_frameName; }
+    const ResourceResponse& response();
+    
+    void ignoreWhenUnarchiving() { m_shouldIgnoreWhenUnarchiving = true; }
+    bool shouldIgnoreWhenUnarchiving() const { return m_shouldIgnoreWhenUnarchiving; }
+
+private:
+    ArchiveResource(PassRefPtr<SharedBuffer>, const KURL&, const String& mimeType, const String& textEncoding, const String& frameName);
+    ArchiveResource(PassRefPtr<SharedBuffer>, const KURL&, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse&);
+    
+    RefPtr<SharedBuffer> m_data;
+    KURL m_url;
+    String m_mimeType;
+    String m_textEncoding;
+    String m_frameName;
+    
+    ResourceResponse m_response;
+    
+    bool m_shouldIgnoreWhenUnarchiving;
+};
+
+}
+
+#endif // ArchiveResource_h

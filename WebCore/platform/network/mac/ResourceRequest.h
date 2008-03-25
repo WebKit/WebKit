@@ -66,6 +66,7 @@ namespace WebCore {
             : ResourceRequestBase()
             , m_nsRequest(nsRequest) { }
         
+        void applyWebArchiveHackForMail();
         NSURLRequest* nsURLRequest() const;
 
     private:

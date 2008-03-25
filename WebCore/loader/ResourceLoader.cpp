@@ -115,7 +115,7 @@ bool ResourceLoader::load(const ResourceRequest& r)
         return false;
     }
     
-    if (frameLoader()->willUseArchive(this, clientRequest, r.url()))
+    if (frameLoader()->scheduleArchiveLoad(this, clientRequest, r.url()))
         return true;
     
     if (m_defersLoading) {

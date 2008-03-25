@@ -35,6 +35,7 @@
 #import "DOMHTMLElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "WebArchiveInternal.h"
 #import "WebChromeClient.h"
 #import "WebDataSourceInternal.h"
 #import "WebDocumentLoaderMac.h"
@@ -59,6 +60,7 @@
 #import <WebCore/HTMLFrameOwnerElement.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/LegacyWebArchive.h>
 #import <WebCore/Page.h>
 #import <WebCore/PluginData.h>
 #import <WebCore/RenderView.h>
@@ -291,53 +293,6 @@ WebView *getWebView(WebFrame *webFrame)
 + (PassRefPtr<WebCore::Frame>)_createSubframeWithOwnerElement:(HTMLFrameOwnerElement*)ownerElement frameName:(const String&)name frameView:(WebFrameView *)frameView
 {
     return [self _createFrameWithPage:ownerElement->document()->frame()->page() frameName:name frameView:frameView ownerElement:ownerElement];
-}
-
-/*
-    In the case of saving state about a page with frames, we store a tree of items that mirrors the frame tree.  
-    The item that was the target of the user's navigation is designated as the "targetItem".  
-    When this method is called with doClip=YES we're able to create the whole tree except for the target's children, 
-    which will be loaded in the future.  That part of the tree will be filled out as the child loads are committed.
-*/
-
-- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer intoChild:(WebFrame *)childFrame
-{
-    ASSERT(childFrame);
-    HistoryItem* parentItem = _private->coreFrame->loader()->currentHistoryItem();
-    FrameLoadType loadType = _private->coreFrame->loader()->loadType();
-    FrameLoadType childLoadType = FrameLoadTypeRedirectWithLockedHistory;
-
-    // If we're moving in the backforward list, we might want to replace the content
-    // of this child frame with whatever was there at that point.
-    // Reload will maintain the frame contents, LoadSame will not.
-    if (parentItem && parentItem->children().size() &&
-        (isBackForwardLoadType(loadType)
-         || loadType == FrameLoadTypeReloadAllowingStaleData))
-    {
-        HistoryItem* childItem = parentItem->childItemWithName([childFrame name]);
-        if (childItem) {
-            // Use the original URL to ensure we get all the side-effects, such as
-            // onLoad handlers, of any redirects that happened. An example of where
-            // this is needed is Radar 3213556.
-            URL = [NSURL _web_URLWithDataAsString:childItem->originalURLString()];
-            // These behaviors implied by these loadTypes should apply to the child frames
-            childLoadType = loadType;
-
-            if (isBackForwardLoadType(loadType)) {
-                // For back/forward, remember this item so we can traverse any child items as child frames load
-                childFrame->_private->coreFrame->loader()->setProvisionalHistoryItem(childItem);
-            } else {
-                // For reload, just reinstall the current item, since a new child frame was created but we won't be creating a new BF item
-                childFrame->_private->coreFrame->loader()->setCurrentHistoryItem(childItem);
-            }
-        }
-    }
-
-    WebArchive *archive = [[self _dataSource] _popSubframeArchiveWithName:[childFrame name]];
-    if (archive)
-        [childFrame loadArchive:archive];
-    else
-        childFrame->_private->coreFrame->loader()->load([URL absoluteURL], referrer, childLoadType, String(), 0, 0);
 }
 
 - (void)_attachScriptDebugger
@@ -1311,20 +1266,8 @@ static NSURL *createUniqueWebDataURL()
 
 - (void)loadArchive:(WebArchive *)archive
 {
-    WebResource *mainResource = [archive mainResource];
-    if (mainResource) {
-        SubstituteData substituteData(WebCore::SharedBuffer::wrapNSData([mainResource data]), [mainResource MIMEType], [mainResource textEncodingName], KURL());
-        ResourceRequest request([mainResource URL]);
-
-        // hack because Mail checks for this property to detect data / archive loads
-        [NSURLProtocol setProperty:@"" forKey:@"WebDataRequest" inRequest:(NSMutableURLRequest *)request.nsURLRequest()];
-
-        RefPtr<DocumentLoader> documentLoader = _private->coreFrame->loader()->client()->createDocumentLoader(request, substituteData);
-
-        [dataSource(documentLoader.get()) _addToUnarchiveState:archive];
-
-        _private->coreFrame->loader()->load(documentLoader.get());
-    }
+    if (LegacyWebArchive* coreArchive = [archive _coreLegacyWebArchive])
+        _private->coreFrame->loader()->loadArchive(coreArchive);
 }
 
 - (void)stopLoading

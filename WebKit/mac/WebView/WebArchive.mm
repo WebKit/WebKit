@@ -27,10 +27,18 @@
  */
 
 #import "WebArchive.h"
+#import "WebArchiveInternal.h"
 
 #import "WebKitLogging.h"
+#import "WebResourceInternal.h"
 #import "WebResourcePrivate.h"
 #import "WebTypesInternal.h"
+
+#import <WebCore/ArchiveResource.h>
+#import <WebCore/LegacyWebArchive.h>
+#import <WebCore/WebCoreObjCExtras.h>
+
+using namespace WebCore;
 
 NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
 
@@ -40,24 +48,95 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
 
 @interface WebArchivePrivate : NSObject
 {
-    @public
-    WebResource *mainResource;
-    NSArray *subresources;
-    NSArray *subframeArchives;
+@public
+    WebResource *cachedMainResource;
+    NSArray *cachedSubresources;
+    NSArray *cachedSubframeArchives;
+@private
+    LegacyWebArchive* coreArchive;
 }
+
+- (id)initWithCoreArchive:(PassRefPtr<LegacyWebArchive>)coreArchive;
+- (LegacyWebArchive*)coreArchive;
+- (void)setCoreArchive:(PassRefPtr<LegacyWebArchive>)newCoreArchive;
 @end
 
 @implementation WebArchivePrivate
 
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
+
+- (id)init
+{
+    self = [super init];
+    if (self)
+        coreArchive = LegacyWebArchive::create().releaseRef();
+    return self;
+}
+
+- (id)initWithCoreArchive:(PassRefPtr<LegacyWebArchive>)_coreArchive
+{
+    self = [super init];
+    if (!self || !_coreArchive) {
+        [self release];
+        return nil;
+    }
+    
+    coreArchive = _coreArchive.releaseRef();
+    
+    return self;
+}
+
+- (LegacyWebArchive*)coreArchive
+{
+    return coreArchive;
+}
+
+- (void)setCoreArchive:(PassRefPtr<LegacyWebArchive>)newCoreArchive
+{
+    ASSERT(coreArchive);
+    ASSERT(newCoreArchive);
+    coreArchive = newCoreArchive.releaseRef();
+}
+
 - (void)dealloc
 {
-    [mainResource release];
-    [subresources release];
-    [subframeArchives release];
+    ASSERT(coreArchive);
+    coreArchive->deref();
+    coreArchive = 0;
+    
+    [cachedMainResource release];
+    [cachedSubresources release];
+    [cachedSubframeArchives release];
+    
     [super dealloc];
 }
 
+- (void)finalize
+{
+    ASSERT(coreArchive);
+    coreArchive->deref();
+    coreArchive = 0;
+    
+    [super finalize];
+}
+
 @end
+
+@implementation WebArchive
+
+- (id)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _private = [[WebArchivePrivate alloc] init];
+    return self;
+}
 
 static BOOL isArrayOfClass(id object, Class elementClass)
 {
@@ -71,121 +150,108 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     return YES;
 }
 
-@implementation WebArchive
-
-- (id)init
+- (id)initWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources subframeArchives:(NSArray *)subframeArchives
 {
     self = [super init];
     if (!self)
         return nil;
+
     _private = [[WebArchivePrivate alloc] init];
-    return self;
-}
 
-- (id)initWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources subframeArchives:(NSArray *)subframeArchives
-{
-    self = [self init];
-    if (!self)
-        return nil;
-    
-    _private->mainResource = [mainResource retain];
-    _private->subresources = [subresources retain];
-    _private->subframeArchives = [subframeArchives retain];
-    
-    if (!_private->mainResource) {
+    _private->cachedMainResource = [mainResource retain];
+    if (!_private->cachedMainResource) {
         [self release];
         return nil;
     }
     
-    return self;
-}
+    if (!subresources || isArrayOfClass(subresources, [WebResource class]))
+        _private->cachedSubresources = [subresources retain];
+    else {
+        [self release];
+        return nil;
+    }
 
-- (id)_initWithPropertyList:(id)propertyList
-{
-    self = [self init];
-    if (!self)
-        return nil;
-    
-    if (![propertyList isKindOfClass:[NSDictionary class]]) {
+    if (!subframeArchives || isArrayOfClass(subframeArchives, [WebArchive class]))
+        _private->cachedSubframeArchives = [subframeArchives retain];
+    else {
         [self release];
         return nil;
     }
     
-    _private->mainResource = [[WebResource alloc] _initWithPropertyList:[propertyList objectForKey:WebMainResourceKey]];    
-    if (!_private->mainResource) {
+    RefPtr<ArchiveResource> coreMainResource = mainResource ? [mainResource _coreResource] : 0;
+
+    Vector<PassRefPtr<ArchiveResource> > coreResources;
+    NSEnumerator *enumerator = [subresources objectEnumerator];
+    WebResource *subresource;
+    while ((subresource = [enumerator nextObject]) != nil)
+        coreResources.append([subresource _coreResource]);
+
+    Vector<PassRefPtr<LegacyWebArchive> > coreArchives;
+    enumerator = [subframeArchives objectEnumerator];
+    WebArchive *subframeArchive;
+    while ((subframeArchive = [enumerator nextObject]) != nil)
+        coreArchives.append([subframeArchive->_private coreArchive]);
+
+    [_private setCoreArchive:LegacyWebArchive::create(coreMainResource.release(), coreResources, coreArchives)];
+    if (![_private coreArchive]) {
         [self release];
         return nil;
     }
-    
-    _private->subresources = [[WebResource _resourcesFromPropertyLists:[propertyList objectForKey:WebSubresourcesKey]] retain];
-    
-    NSEnumerator *enumerator = [[propertyList objectForKey:WebSubframeArchivesKey] objectEnumerator];
-    NSMutableArray *subframeArchives = [[NSMutableArray alloc] init];
-    NSDictionary *archivePropertyList;
-    while ((archivePropertyList = [enumerator nextObject]) != nil) {
-        WebArchive *archive = [[WebArchive alloc] _initWithPropertyList:archivePropertyList];
-        if (archive) {
-            [subframeArchives addObject:archive];
-            [archive release];
-        }
-    }
-    _private->subframeArchives = subframeArchives;
 
     return self;
 }
 
 - (id)initWithData:(NSData *)data
 {
+    self = [super init];
+    if (!self)
+        return nil;
+        
 #if !LOG_DISABLED
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
 #endif
-    NSDictionary *propertyList = [NSPropertyListSerialization propertyListFromData:data 
-                                                                  mutabilityOption:NSPropertyListImmutable 
-                                                                            format:nil
-                                                                  errorDescription:nil];
+
+    _private = [[WebArchivePrivate alloc] init];
+    [_private setCoreArchive:LegacyWebArchive::create(SharedBuffer::wrapNSData(data).get())];
+        
 #if !LOG_DISABLED
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
     CFAbsoluteTime duration = end - start;
 #endif
     LOG(Timing, "Parsing web archive with [NSPropertyListSerialization propertyListFromData::::] took %f seconds", duration);
     
-    return [self _initWithPropertyList:propertyList];
+    return self;
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
 {    
-    self = [self init];
-    if (!self)
-        return nil;
-
+    WebResource *mainResource = nil;
+    NSArray *subresources = nil;
+    NSArray *subframeArchives = nil;
+    
     @try {
         id object = [decoder decodeObjectForKey:WebMainResourceKey];
         if ([object isKindOfClass:[WebResource class]])
-            _private->mainResource = [object retain];
+            mainResource = [object retain];
         object = [decoder decodeObjectForKey:WebSubresourcesKey];
         if (isArrayOfClass(object, [WebResource class]))
-            _private->subresources = [object retain];
+            subresources = [object retain];
         object = [decoder decodeObjectForKey:WebSubframeArchivesKey];
         if (isArrayOfClass(object, [WebArchive class]))
-            _private->subframeArchives = [object retain];
+            subframeArchives = [object retain];
     } @catch(id) {
         [self release];
         return nil;
     }
 
-    if (!_private->mainResource) {
-        [self release];
-        return nil;
-    }
-
-    return self;
+    return [self initWithMainResource:mainResource subresources:subresources subframeArchives:subframeArchives];
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
-    [encoder encodeObject:_private->mainResource forKey:WebMainResourceKey];
-    [encoder encodeObject:_private->subresources forKey:WebSubresourcesKey];
-    [encoder encodeObject:_private->subframeArchives forKey:WebSubframeArchivesKey];    
+    [encoder encodeObject:[self mainResource] forKey:WebMainResourceKey];
+    [encoder encodeObject:[self subresources] forKey:WebSubresourcesKey];
+    [encoder encodeObject:[self subframeArchives] forKey:WebSubframeArchivesKey];    
 }
 
 - (void)dealloc
@@ -201,55 +267,100 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (WebResource *)mainResource
 {
-    return [[_private->mainResource retain] autorelease];
+    // Currently from WebKit API perspective, WebArchives are entirely immutable once created
+    // If they ever become mutable, we'll need to rethink this. 
+    if (!_private->cachedMainResource) {
+        LegacyWebArchive* coreArchive = [_private coreArchive];
+        if (coreArchive)
+            _private->cachedMainResource = [[WebResource alloc] _initWithCoreResource:coreArchive->mainResource()];
+    }
+    
+    return [[_private->cachedMainResource retain] autorelease];
 }
 
 - (NSArray *)subresources
 {
-    return [[_private->subresources retain] autorelease];
+    // Currently from WebKit API perspective, WebArchives are entirely immutable once created
+    // If they ever become mutable, we'll need to rethink this.     
+    if (!_private->cachedSubresources) {
+        LegacyWebArchive* coreArchive = [_private coreArchive];
+        if (!coreArchive)
+            _private->cachedSubresources = [[NSArray alloc] init];
+        else {
+            const Vector<RefPtr<ArchiveResource> >& subresources(coreArchive->subresources());
+            NSMutableArray *mutableArray = _private->cachedSubresources = [[NSMutableArray alloc] initWithCapacity:subresources.size()];
+            for (unsigned i = 0; i < subresources.size(); ++i) {
+                WebResource *resource = [[WebResource alloc] _initWithCoreResource:subresources[i].get()];
+                [mutableArray addObject:resource];
+                [resource release];
+            }
+        }
+    }
+    
+    return [[_private->cachedSubresources retain] autorelease];
 }
 
 - (NSArray *)subframeArchives
 {
-    return [[_private->subframeArchives retain] autorelease];
-}
-
-- (NSDictionary *)_propertyListRepresentation
-{
-    NSMutableDictionary *propertyList = [NSMutableDictionary dictionary];
-    if (_private->mainResource) {
-        [propertyList setObject:[_private->mainResource _propertyListRepresentation] forKey:WebMainResourceKey];
+    // Currently from WebKit API perspective, WebArchives are entirely immutable once created
+    // If they ever become mutable, we'll need to rethink this.  
+    if (!_private->cachedSubframeArchives) {
+        LegacyWebArchive* coreArchive = [_private coreArchive];
+        if (!coreArchive)
+            _private->cachedSubframeArchives = [[NSArray alloc] init];
+        else {
+            const Vector<RefPtr<Archive> >& subframeArchives(coreArchive->subframeArchives());
+            NSMutableArray *mutableArray = _private->cachedSubframeArchives = [[NSMutableArray alloc] initWithCapacity:subframeArchives.size()];
+            for (unsigned i = 0; i < subframeArchives.size(); ++i) {
+                WebArchive *archive = [[WebArchive alloc] _initWithCoreLegacyWebArchive:(LegacyWebArchive *)subframeArchives[i].get()];
+                [mutableArray addObject:archive];
+                [archive release];
+            }
+        }
     }
-    NSArray *propertyLists = [WebResource _propertyListsFromResources:_private->subresources];
-    if ([propertyLists count] > 0) {
-        [propertyList setObject:propertyLists forKey:WebSubresourcesKey];
-    }
-    NSEnumerator *enumerator = [_private->subframeArchives objectEnumerator];
-    NSMutableArray *subarchivePropertyLists = [[NSMutableArray alloc] init];
-    WebArchive *archive;
-    while ((archive = [enumerator nextObject]) != nil) {
-        [subarchivePropertyLists addObject:[archive _propertyListRepresentation]];
-    }
-    if ([subarchivePropertyLists count] > 0) {
-        [propertyList setObject:subarchivePropertyLists forKey:WebSubframeArchivesKey];
-    }
-    [subarchivePropertyLists release];
-    return propertyList;
+    
+    return [[_private->cachedSubframeArchives retain] autorelease];
 }
 
 - (NSData *)data
 {
-    NSDictionary *propertyList = [self _propertyListRepresentation];
 #if !LOG_DISABLED
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
 #endif
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList:propertyList format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
+
+    RetainPtr<CFDataRef> data = [_private coreArchive]->rawDataRepresentation();
+    
 #if !LOG_DISABLED
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
     CFAbsoluteTime duration = end - start;
 #endif
-    LOG(Timing, "Serializing web archive with [NSPropertyListSerialization dataFromPropertyList:::] took %f seconds", duration);
-    return data;
+    LOG(Timing, "Serializing web archive to raw CFPropertyList data took %f seconds", duration);
+        
+    return [[(NSData *)data.get() retain] autorelease];
+}
+
+@end
+
+@implementation WebArchive (WebInternal)
+
+- (id)_initWithCoreLegacyWebArchive:(PassRefPtr<WebCore::LegacyWebArchive>)coreLegacyWebArchive
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    
+    _private = [[WebArchivePrivate alloc] initWithCoreArchive:coreLegacyWebArchive];
+    if (!_private) {
+        [self release];
+        return nil;
+    }
+
+    return self;
+}
+
+- (WebCore::LegacyWebArchive *)_coreLegacyWebArchive
+{
+    return [_private coreArchive];
 }
 
 @end

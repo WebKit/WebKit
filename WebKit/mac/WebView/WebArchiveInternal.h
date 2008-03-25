@@ -1,18 +1,18 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,20 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "WebArchive.h"
+#import <JavaScriptCore/Forward.h>
 
-@class WebArchive;
-@class WebResource;
-
-@interface WebUnarchivingState : NSObject
-{
-    NSMutableDictionary *archivedSubframes;
-    NSMutableDictionary *archivedResources;
+namespace WebCore {
+    class LegacyWebArchive;
 }
 
-- (void)addArchive:(WebArchive *)archive;
-- (void)addResource:(WebResource *)resource;
-- (WebResource *)archivedResourceForURL:(NSURL *)URL;
-- (WebArchive *)popSubframeArchiveWithFrameName:(NSString *)frameName;
+@interface WebArchive (WebInternal)
+
+- (id)_initWithCoreLegacyWebArchive:(WTF::PassRefPtr<WebCore::LegacyWebArchive>)coreLegacyWebArchive;
+- (WebCore::LegacyWebArchive *)_coreLegacyWebArchive;
 
 @end

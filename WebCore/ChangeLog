@@ -1,3 +1,113 @@
+2008-03-25  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        <rdar://problem/4516169> - Support WebArchives on Windows
+        And pave the way for many future WebArchive bug fixes and enhancements
+
+        This patch accomplishes two main goals:
+        1 - Consolidates much of the spread out WebKitMac archive code into one place in WebCore.  This allows for cleaner refactoring 
+            in the future as well as adding more archive formats with ease.
+        2 - Hooks up WebArchive support on Windows.  Safari-style .webarchive files are nothing more than property lists readable by
+            CoreFoundation.  While there are still some outstanding issues, including an NSKeyedArchiver chunk of data for the 
+            ResourceResponse for each resource, this patch manually parses through the property list on CoreFoundation platforms and
+            gets many archives loading on Windows
+
+        My goal for this first cut was zero behavior change.  As such, I went for a direct port of the WebKitMac code.  There will be
+        opportunities for redesign and refactoring as followups.
+
+        * WebCore.base.exp:
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType): Ported from WebKitMac, WebDataSource
+        (WebCore::DocumentLoader::addAllArchiveResources):
+        (WebCore::DocumentLoader::addArchiveResource):
+        (WebCore::DocumentLoader::archiveResourceForURL):
+        (WebCore::DocumentLoader::popArchiveForSubframe):
+        (WebCore::DocumentLoader::clearArchiveResources):
+        * loader/DocumentLoader.h:
+
+        * loader/FrameLoader.cpp: Moved WebFrameLoaderClient and WebFrame code down into their more appropriate FrameLoader home
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::setDefersLoading):
+        (WebCore::FrameLoader::deliverArchivedResourcesAfterDelay):
+        (WebCore::FrameLoader::archiveResourceDeliveryTimerFired):
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::loadArchive):
+        (WebCore::FrameLoader::scheduleArchiveLoad):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::cancelPendingArchiveLoad):
+        (WebCore::FrameLoader::isArchiveLoadPending):
+        (WebCore::FrameLoader::finishedLoadingDocument):
+        * loader/FrameLoader.h:
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::load):
+
+        * loader/archive/Archive.h: Generic "Archive of web resources" class that is only useful when subclassed.  
+            Contains a MainResource, subresources, and Archives for subframes
+        (WebCore::Archive::mainResource):
+        (WebCore::Archive::subresources):
+        (WebCore::Archive::subframeArchives):
+        (WebCore::Archive::setMainResource):
+        (WebCore::Archive::addSubresource):
+        (WebCore::Archive::addSubframeArchive):
+
+        * loader/archive/ArchiveFactory.cpp: A class that will take raw archive data and the MIMEtype, and create the
+            appropriate Archive class for it.  Additionally it handles registering the known MIMEtypes for all known archive formats
+        (WebCore::archiveFactoryCreate):
+        (WebCore::archiveMIMETypes):
+        (WebCore::ArchiveFactory::isArchiveMimeType):
+        (WebCore::ArchiveFactory::create):
+        (WebCore::ArchiveFactory::registerKnownArchiveMIMETypes):
+        * loader/archive/ArchiveFactory.h:
+
+        * loader/archive/ArchiveResource.cpp: Analog to "WebResource" in WebKitMac.  Contains the data and other important
+            attributes of an archived resource
+        (WebCore::ArchiveResource::create):
+        (WebCore::ArchiveResource::ArchiveResource):
+        (WebCore::ArchiveResource::response):
+        * loader/archive/ArchiveResource.h:
+        (WebCore::ArchiveResource::data):
+        (WebCore::ArchiveResource::url):
+        (WebCore::ArchiveResource::mimeType):
+        (WebCore::ArchiveResource::textEncoding):
+        (WebCore::ArchiveResource::frameName):
+        (WebCore::ArchiveResource::ignoreWhenUnarchiving):
+        (WebCore::ArchiveResource::shouldIgnoreWhenUnarchiving):
+
+        * loader/archive/ArchiveResourceCollection.cpp: Analog of "WebUnarchivingState" in WebKitMac.  Contains a hash of
+            all the resources for every frame in an archive, and contains the archives for each subframe needed to load a multi-frame archive
+        (WebCore::ArchiveResourceCollection::ArchiveResourceCollection):
+        (WebCore::ArchiveResourceCollection::addAllResources):
+        (WebCore::ArchiveResourceCollection::addResource):
+        (WebCore::ArchiveResourceCollection::archiveResourceForURL):
+        (WebCore::ArchiveResourceCollection::popSubframeArchive):
+        * loader/archive/ArchiveResourceCollection.h:
+
+        * loader/archive/cf/LegacyWebArchive.cpp: Subclass of Archive specifically for Webkit's Objective-C based ".webarchive" format.
+            Mostly a collection of static methods involved in parsing and serializing a WebKit-style .webarchive.  Is mostly supported
+            for any CF platform.
+        (WebCore::createPropertyListRepresentationFromResource):
+        (WebCore::createPropertyListRep):
+        (WebCore::createResourceResponseFromPropertyListData):
+        (WebCore::createResource):
+        (WebCore::LegacyWebArchive::create):
+        (WebCore::LegacyWebArchive::LegacyWebArchive):
+        (WebCore::LegacyWebArchive::init):
+        (WebCore::LegacyWebArchive::extract):
+        (WebCore::LegacyWebArchive::rawDataRepresentation):
+        (WebCore::createResourceResponseFromMacArchivedData):
+        (WebCore::propertyListDataFromResourceResponse):
+        * loader/archive/cf/LegacyWebArchive.h:
+        * loader/archive/cf/LegacyWebArchiveMac.mm:
+        (WebCore::createResourceResponseFromMacArchivedData):
+        (WebCore::propertyListDataFromResourceResponse):
+
+        * platform/network/mac/ResourceRequest.h:
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::applyWebArchiveHackForMail): Tweak the resource request for Mac clients when loading WebArchives
+
 2008-03-25  David Hyatt  <hyatt@apple.com>
 
         Cut and paste error in the zoom code.  A width() should have been a height().  Regression tests caught this.

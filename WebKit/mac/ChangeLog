@@ -1,3 +1,91 @@
+2008-03-25  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        <rdar://problem/4516169> - Support WebArchives on Windows
+        And paves the way for many future WebArchive bug fixes and enhancements
+
+        This change moves most of the real workhorse code about WebArchives into WebCore.  It maintains 
+        1-to-1 relationships between a few objects in WebCore and WebKit.  Such as:
+         * WebArchive <-> LegacyWebArchive
+         * WebResource <-> ArchiveResource
+         * WebUnarchivingState <-> ArchiveResourceCollection
+ 
+        The other biggest changes involve many FrameLoaderClient methods that existed soley for WebArchives 
+        and now exist in WebCore
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::clearUnarchivingState): Emptied - to be removed in a followup patch
+        (WebFrameLoaderClient::finalSetupForReplace):
+        (WebFrameLoaderClient::setDefersLoading):
+        (WebFrameLoaderClient::willUseArchive):
+        (WebFrameLoaderClient::isArchiveLoadPending):
+        (WebFrameLoaderClient::cancelPendingArchiveLoad):
+        (WebFrameLoaderClient::clearArchivedResources):
+        (WebFrameLoaderClient::createFrame):
+
+        * WebView/WebArchive.mm:
+        (+[WebArchivePrivate initialize]):
+        (-[WebArchivePrivate init]):
+        (-[WebArchivePrivate initWithCoreArchive:]):
+        (-[WebArchivePrivate coreArchive]):
+        (-[WebArchivePrivate setCoreArchive:]):
+        (-[WebArchivePrivate dealloc]):
+        (-[WebArchivePrivate finalize]):
+        (-[WebArchive init]):
+        (-[WebArchive initWithMainResource:subresources:subframeArchives:]):
+        (-[WebArchive initWithData:]):
+        (-[WebArchive initWithCoder:]):
+        (-[WebArchive encodeWithCoder:]):
+        (-[WebArchive mainResource]):
+        (-[WebArchive subresources]):
+        (-[WebArchive subframeArchives]):
+        (-[WebArchive data]):
+        (-[WebArchive _initWithCoreLegacyWebArchive:WebCore::]):
+        (-[WebArchive WebCore::]):
+        * WebView/WebArchiveInternal.h: Added.
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _addSubframeArchives:]):
+        (-[WebDataSource _documentFragmentWithArchive:]):
+        (-[WebDataSource subresourceForURL:]):
+        (-[WebDataSource addSubresource:]):
+        * WebView/WebDataSourceInternal.h:
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame loadArchive:]):
+        * WebView/WebFrameInternal.h:
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation finishedLoadingWithDataSource:]):
+
+        * WebView/WebResource.mm:
+        (+[WebResourcePrivate initialize]):
+        (-[WebResourcePrivate init]):
+        (-[WebResourcePrivate initWithCoreResource:]):
+        (-[WebResourcePrivate dealloc]):
+        (-[WebResourcePrivate finalize]):
+        (-[WebResource initWithCoder:]):
+        (-[WebResource encodeWithCoder:]):
+        (-[WebResource data]):
+        (-[WebResource URL]):
+        (-[WebResource MIMEType]):
+        (-[WebResource textEncodingName]):
+        (-[WebResource frameName]):
+        (-[WebResource _initWithCoreResource:WebCore::]):
+        (-[WebResource WebCore::]):
+        (-[WebResource _ignoreWhenUnarchiving]):
+        (-[WebResource _initWithData:URL:MIMEType:textEncodingName:frameName:response:copyData:]):
+        (-[WebResource _fileWrapperRepresentation]):
+        (-[WebResource _response]):
+        (-[WebResource _stringValue]):
+        * WebView/WebResourceInternal.h: Added.
+        * WebView/WebResourcePrivate.h:
+
+        * WebView/WebUnarchivingState.h: Removed.
+        * WebView/WebUnarchivingState.m: Removed.
+
 2008-03-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.

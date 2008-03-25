@@ -30,6 +30,8 @@
 #include "config.h"
 #include "FrameLoader.h"
 
+#include "Archive.h"
+#include "ArchiveFactory.h"
 #include "CString.h"
 #include "Cache.h"
 #include "CachedPage.h"
@@ -254,6 +256,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_isDisplayingInitialEmptyDocument(false)
     , m_committedFirstRealDocumentLoad(false)
     , m_didPerformFirstNavigation(false)
+    , m_archiveResourceDeliveryTimer(this, &FrameLoader::archiveResourceDeliveryTimerFired)
 #ifndef NDEBUG
     , m_didDispatchDidCommitLoad(false)
 #endif
@@ -301,7 +304,8 @@ void FrameLoader::setDefersLoading(bool defers)
         m_provisionalDocumentLoader->setDefersLoading(defers);
     if (m_policyDocumentLoader)
         m_policyDocumentLoader->setDefersLoading(defers);
-    m_client->setDefersLoading(defers);
+    if (!defers)
+        deliverArchivedResourcesAfterDelay();
 }
 
 Frame* FrameLoader::createWindow(FrameLoader* frameLoaderForFrameLookup, const FrameLoadRequest& request, const WindowFeatures& features, bool& created)
@@ -1488,6 +1492,108 @@ void FrameLoader::redirectionTimerFired(Timer<FrameLoader>*)
     ASSERT_NOT_REACHED();
 }
 
+void FrameLoader::deliverArchivedResourcesAfterDelay()
+{
+    if (m_pendingArchiveResources.isEmpty())
+        return;
+    if (m_frame->page()->defersLoading())
+        return;
+    if (!m_archiveResourceDeliveryTimer.isActive())
+        m_archiveResourceDeliveryTimer.startOneShot(0);
+}
+
+void FrameLoader::archiveResourceDeliveryTimerFired(Timer<FrameLoader>*)
+{
+    if (m_pendingArchiveResources.isEmpty())
+        return;
+    if (m_frame->page()->defersLoading())
+        return;
+
+    ArchiveResourceMap copy;
+    copy.swap(m_pendingArchiveResources);
+
+    ArchiveResourceMap::const_iterator end = copy.end();
+    for (ArchiveResourceMap::const_iterator it = copy.begin(); it != end; ++it) {
+        RefPtr<ResourceLoader> loader = it->first;
+        ArchiveResource* resource = it->second.get();
+        
+        SharedBuffer* data = resource->data();
+        
+        loader->didReceiveResponse(resource->response());
+        loader->didReceiveData(data->data(), data->size(), data->size(), true);
+        loader->didFinishLoading();
+    }
+}
+
+/*
+    In the case of saving state about a page with frames, we store a tree of items that mirrors the frame tree.  
+    The item that was the target of the user's navigation is designated as the "targetItem".  
+    When this method is called with doClip=YES we're able to create the whole tree except for the target's children, 
+    which will be loaded in the future.  That part of the tree will be filled out as the child loads are committed.
+*/
+void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, Frame* childFrame)
+{
+    ASSERT(childFrame);
+    HistoryItem* parentItem = currentHistoryItem();
+    FrameLoadType loadType = this->loadType();
+    FrameLoadType childLoadType = FrameLoadTypeRedirectWithLockedHistory;
+
+    KURL workingURL = url;
+    
+    // If we're moving in the backforward list, we might want to replace the content
+    // of this child frame with whatever was there at that point.
+    // Reload will maintain the frame contents, LoadSame will not.
+    if (parentItem && parentItem->children().size() &&
+        (isBackForwardLoadType(loadType) || loadType == FrameLoadTypeReloadAllowingStaleData))
+    {
+        HistoryItem* childItem = parentItem->childItemWithName(childFrame->tree()->name());
+        if (childItem) {
+            // Use the original URL to ensure we get all the side-effects, such as
+            // onLoad handlers, of any redirects that happened. An example of where
+            // this is needed is Radar 3213556.
+            workingURL = KURL(childItem->originalURLString());
+            // These behaviors implied by these loadTypes should apply to the child frames
+            childLoadType = loadType;
+
+            if (isBackForwardLoadType(loadType)) {
+                // For back/forward, remember this item so we can traverse any child items as child frames load
+                childFrame->loader()->setProvisionalHistoryItem(childItem);
+            } else {
+                // For reload, just reinstall the current item, since a new child frame was created but we won't be creating a new BF item
+                childFrame->loader()->setCurrentHistoryItem(childItem);
+            }
+        }
+    }
+
+    RefPtr<Archive> subframeArchive = activeDocumentLoader()->popArchiveForSubframe(childFrame->tree()->name());
+    
+    if (subframeArchive)
+        childFrame->loader()->loadArchive(subframeArchive.release());
+    else
+        childFrame->loader()->load(workingURL, referer, childLoadType, String(), 0, 0);
+}
+
+void FrameLoader::loadArchive(PassRefPtr<Archive> prpArchive)
+{
+    RefPtr<Archive> archive = prpArchive;
+    
+    ArchiveResource* mainResource = archive->mainResource();
+    ASSERT(mainResource);
+    if (!mainResource)
+        return;
+        
+    SubstituteData substituteData(mainResource->data(), mainResource->mimeType(), mainResource->textEncoding(), KURL());
+    
+    ResourceRequest request(mainResource->url());
+#if PLATFORM(MAC)
+    request.applyWebArchiveHackForMail();
+#endif
+
+    RefPtr<DocumentLoader> documentLoader = m_client->createDocumentLoader(request, substituteData);
+    documentLoader->addAllArchiveResources(archive.get());
+    load(documentLoader.get());
+}
+
 String FrameLoader::encoding() const
 {
     if (m_encodingWasChosenByUser && !m_encoding.isEmpty())
@@ -1933,11 +2039,6 @@ void FrameLoader::setupForReplaceByMIMEType(const String& newMIMEType)
     activeDocumentLoader()->setupForReplaceByMIMEType(newMIMEType);
 }
 
-void FrameLoader::finalSetupForReplace(DocumentLoader* loader)
-{
-    m_client->clearUnarchivingState(loader);
-}
-
 void FrameLoader::load(const KURL& url, Event* event)
 {
     load(ResourceRequest(url), false, true, event, 0, HashMap<String, String>());
@@ -2206,9 +2307,24 @@ void FrameLoader::receivedData(const char* data, int length)
     activeDocumentLoader()->receivedData(data, length);
 }
 
-bool FrameLoader::willUseArchive(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL) const
+bool FrameLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL)
 {
-    return m_client->willUseArchive(loader, request, originalURL);
+    if (request.url() != originalURL)
+        return false;
+        
+    DocumentLoader* activeLoader = activeDocumentLoader();
+    ASSERT(activeLoader);
+    if (!activeLoader)
+        return false;
+        
+    ArchiveResource* resource = activeLoader->archiveResourceForURL(originalURL);
+    if (!resource)
+        return false;
+
+    m_pendingArchiveResources.set(loader, resource);
+    deliverArchivedResourcesAfterDelay();
+    
+    return true;
 }
 
 void FrameLoader::handleUnimplementablePolicy(const ResourceError& error)
@@ -2401,10 +2517,12 @@ void FrameLoader::stopAllLoaders()
     stopLoadingSubframes();
     if (m_provisionalDocumentLoader)
         m_provisionalDocumentLoader->stopLoading();
-    if (m_documentLoader)
+    if (m_documentLoader) {
         m_documentLoader->stopLoading();
+        m_documentLoader->clearArchiveResources();
+        m_archiveResourceDeliveryTimer.stop();
+    }
     setProvisionalDocumentLoader(0);
-    m_client->clearArchivedResources();
 
     m_inStopAllLoaders = false;    
 }
@@ -2421,7 +2539,11 @@ void FrameLoader::stopForUserCancel(bool deferCheckLoadComplete)
 
 void FrameLoader::cancelPendingArchiveLoad(ResourceLoader* loader)
 {
-    m_client->cancelPendingArchiveLoad(loader);
+    if (m_pendingArchiveResources.isEmpty())
+        return;
+    m_pendingArchiveResources.remove(loader);
+    if (m_pendingArchiveResources.isEmpty())
+        m_archiveResourceDeliveryTimer.stop();
 }
 
 DocumentLoader* FrameLoader::activeDocumentLoader() const
@@ -2811,10 +2933,12 @@ void FrameLoader::finishedLoading()
     checkLoadComplete();
 }
 
+#ifndef NDEBUG
 bool FrameLoader::isArchiveLoadPending(ResourceLoader* loader) const
 {
-    return m_client->isArchiveLoadPending(loader);
+    return m_pendingArchiveResources.contains(loader);
 }
+#endif
 
 bool FrameLoader::isHostedByObjectElement() const
 {
@@ -2857,9 +2981,24 @@ void FrameLoader::didReceiveServerRedirectForProvisionalLoadForFrame()
 void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
 {
 #if PLATFORM(WIN)
-    if (!m_creatingInitialEmptyDocument)
+    if (m_creatingInitialEmptyDocument)
+        return;
 #endif
-        m_client->finishedLoading(loader);
+    m_client->finishedLoading(loader);
+    
+    // If loading a webarchive, run through webarchive machinery
+    const String& responseMIMEType = loader->responseMIMEType();
+    if (!ArchiveFactory::isArchiveMimeType(responseMIMEType))
+        return;
+        
+    RefPtr<Archive> archive(ArchiveFactory::create(loader->mainResourceData().get(), responseMIMEType));
+    if (!archive)
+        return;
+
+    loader->addAllArchiveResources(archive.get());
+    
+    ArchiveResource* mainResource = archive->mainResource();
+    continueLoadWithData(mainResource->data(), mainResource->mimeType(), mainResource->textEncoding(), mainResource->url());
 }
 
 bool FrameLoader::isReplacing() const
