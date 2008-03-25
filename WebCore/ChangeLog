@@ -1,3 +1,19 @@
+2008-03-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - add fast path to isValidName that does not use advanced Unicode functions
+
+        2% speedup on Acid3 test 26
+
+        * dom/Document.cpp:
+        (WebCore::isValidNameNonASCII): Added. Contains the old isValidName function.
+        (WebCore::isValidNameASCII): Added. Contains a simpler function that returns
+        true for most valid names that are also all ASCII.
+        (WebCore::Document::isValidName): Changed to call both of the above functions.
+        The common case is that isValidNameASCII returns true so isValidNameNonASCII
+        is never called.
+
 2008-03-24  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 18052, window properties need to respect zoom factor.

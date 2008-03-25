@@ -2789,28 +2789,47 @@ String Document::lastModified() const
     return loader->response().httpHeaderField("Last-Modified");
 }
 
-bool Document::isValidName(const String &name)
+static bool isValidNameNonASCII(const UChar* characters, unsigned length)
 {
-    const UChar* s = name.characters();
-    unsigned length = name.length();
-
-    if (length == 0)
-        return false;
-
     unsigned i = 0;
 
     UChar32 c;
-    U16_NEXT(s, i, length, c)
+    U16_NEXT(characters, i, length, c)
     if (!isValidNameStart(c))
         return false;
 
     while (i < length) {
-        U16_NEXT(s, i, length, c)
+        U16_NEXT(characters, i, length, c)
         if (!isValidNamePart(c))
             return false;
     }
 
     return true;
+}
+
+static inline bool isValidNameASCII(const UChar* characters, unsigned length)
+{
+    UChar c = characters[0];
+    if (!(isASCIIAlpha(c) || c == ':' || c == '_'))
+        return false;
+
+    for (unsigned i = 1; i < length; ++i) {
+        c = characters[i];
+        if (!(isASCIIAlphanumeric(c) || c == ':' || c == '_' || c == '-' || c == '.'))
+            return false;
+    }
+
+    return true;
+}
+
+bool Document::isValidName(const String& name)
+{
+    unsigned length = name.length();
+    if (!length)
+        return false;
+
+    const UChar* characters = name.characters();
+    return isValidNameASCII(characters, length) || isValidNameNonASCII(characters, length);
 }
 
 bool Document::parseQualifiedName(const String& qualifiedName, String& prefix, String& localName, ExceptionCode& ec)
