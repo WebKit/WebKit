@@ -127,8 +127,8 @@ bool PluginPackage::load() { notImplemented(); return false; }
 
 void Widget::setIsSelected(bool) { notImplemented(); }
 
-void GraphicsContext::setShadow(IntSize const&,int,Color const&) { notImplemented(); }
-void GraphicsContext::clearShadow() { notImplemented(); }
+void GraphicsContext::setPlatformShadow(IntSize const&,int,Color const&) { notImplemented(); }
+void GraphicsContext::clearPlatformShadow() { notImplemented(); }
 void GraphicsContext::beginTransparencyLayer(float) { notImplemented(); }
 void GraphicsContext::endTransparencyLayer() { notImplemented(); }
 void GraphicsContext::clearRect(const FloatRect&) { notImplemented(); }

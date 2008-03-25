@@ -1,5 +1,13 @@
 2008-03-24  Darin Adler  <darin@apple.com>
 
+        - try to fix broken Wx build
+
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (GraphicsContext::setPlatformShadow):
+        (GraphicsContext::clearPlatformShadow):
+
+2008-03-24  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam.
 
         - use AtomicString more consistently for attribute values
