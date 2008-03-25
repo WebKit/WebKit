@@ -2,6 +2,17 @@
 
         Reviewed by Adam.
 
+        - Cleaned up the needless use of RefPtrs, which we may someday no longer use for
+        InspectorResources.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::didFinishLoading):
+        (WebCore::InspectorController::didFailLoading):
+
+2008-03-25  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
         - Added a null check
 
         * xml/XMLHttpRequest.cpp: Null check
