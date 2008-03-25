@@ -100,6 +100,7 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
 {
     ASSERT(coreArchive);
     ASSERT(newCoreArchive);
+    coreArchive->deref();
     coreArchive = newCoreArchive.releaseRef();
 }
 

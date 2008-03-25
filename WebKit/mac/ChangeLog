@@ -1,5 +1,14 @@
 2008-03-25  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Jon Honeycutt's rubberstamp
+
+        Fix a leak with the new WebArchive setup
+
+        * WebView/WebArchive.mm:
+        (-[WebArchivePrivate setCoreArchive:]): Deref() the old WebArchive
+
+2008-03-25  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin
 
         Removed the concept of "pending archive resources" and the "archive resources delivery timer"
