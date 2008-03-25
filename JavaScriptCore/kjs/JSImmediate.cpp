@@ -1,6 +1,5 @@
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2003-2006 Apple Computer, Inc
+ *  Copyright (C) 2003-2006, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -48,25 +47,19 @@ JSObject *JSImmediate::toObject(const JSValue *v, ExecState *exec)
     }
 }
 
-UString JSImmediate::toString(const JSValue *v)
+UString JSImmediate::toString(const JSValue* v)
 {
     ASSERT(isImmediate(v));
-    
     if (v == jsNull())
         return "null";
-    else if (v == jsUndefined())
+    if (v == jsUndefined())
         return "undefined";
-    else if (v == jsBoolean(true))
+    if (v == jsBoolean(true))
         return "true";
-    else if (v == jsBoolean(false))
+    if (v == jsBoolean(false))
         return "false";
-    else {
-        ASSERT(isNumber(v));
-        double d = toDouble(v);
-        if (d == 0.0) // +0.0 or -0.0
-            return "0";
-        return UString::from(d);
-    }
+    ASSERT(isNumber(v));
+    return UString::from(getTruncatedInt32(v));
 }
 
 JSType JSImmediate::type(const JSValue *v)

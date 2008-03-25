@@ -1,3 +1,17 @@
+2008-03-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - convert a JavaScript immediate number to a string more efficiently
+
+        2% speedup of Acid3 test 26
+
+        * kjs/JSImmediate.cpp:
+        (KJS::JSImmediate::toString): Take advantage of the fact that all immediate
+        numbers are integers, and use the faster UString function for formatting integers
+        instead of the slower one that works for floating point. I think this is a leftover
+        from when immediate numbers were floating point.
+
 2008-03-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
