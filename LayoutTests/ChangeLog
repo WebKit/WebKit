@@ -1,3 +1,10 @@
+2008-03-24  Brady Eidson  <beidson@apple.com>
+
+        Made new layout test files executable, as needed for the tests to not fail!        
+
+        * http/tests/navigation/resources/reload-subframe-content.pl: Added.
+        * http/tests/navigation/resources/reload-subframe.pl: Added.
+
 2008-03-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej, landed by Brady
