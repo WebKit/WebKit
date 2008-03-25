@@ -1,3 +1,20 @@
+2008-03-24  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 18052, window properties need to respect zoom factor.
+
+        Reviewed by Beth
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::innerHeight):
+        (WebCore::DOMWindow::innerWidth):
+        (WebCore::DOMWindow::scrollX):
+        (WebCore::DOMWindow::scrollY):
+        (WebCore::DOMWindow::scrollTo):
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::reset):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::performPostLayoutTasks):
+
 2008-03-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
