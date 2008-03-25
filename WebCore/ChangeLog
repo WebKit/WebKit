@@ -1,3 +1,9 @@
+2008-03-25  Brady Eidson  <beidson@apple.com>
+
+        Attempt to fix .bkl build systems after recent archive additions
+
+        * webcore-base.bkl:
+
 2008-03-25  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.
