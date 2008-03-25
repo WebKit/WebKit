@@ -1,3 +1,22 @@
+2008-03-25  Adam Roben  <aroben@apple.com>
+
+        Stop using JavaScriptCore's custom stdbool.h and stdint.h on Windows
+
+        We can't remove the os-win32 directory yet because other ports (at
+        least wx) are still relying on it.
+
+        Reviewed by Steve Falkenburg.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+          - Made all the include paths match the one for the Debug
+            configuration (these got out of sync in r30797)
+          - Removed os-win32 from the include path
+          - Removed os-win32 from the directories we copy to $WebKitOutputDir.
+          - Removed stdint.h from the project
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+        Delete the files that we may have previously copied from the os-win32
+        directory.
+
 2008-03-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Windows build fix.
