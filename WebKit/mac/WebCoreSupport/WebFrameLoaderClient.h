@@ -121,7 +121,6 @@ private:
     virtual void dispatchDidLoadMainResource(WebCore::DocumentLoader*);
     virtual void revertToProvisionalState(WebCore::DocumentLoader*);
     virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&);
-    virtual void clearUnarchivingState(WebCore::DocumentLoader*);
     virtual bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int length);
 
     virtual void willChangeEstimatedProgress();
@@ -139,7 +138,6 @@ private:
 
     virtual void committedLoad(WebCore::DocumentLoader*, const char*, int);
     virtual void finishedLoading(WebCore::DocumentLoader*);
-    virtual void finalSetupForReplace(WebCore::DocumentLoader*);
     virtual void updateGlobalHistory(const WebCore::KURL&);
     virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const;
 
@@ -153,18 +151,11 @@ private:
 
     virtual bool shouldFallBack(const WebCore::ResourceError&);
 
-    virtual void setDefersLoading(bool);
-
     virtual WebCore::String userAgent(const WebCore::KURL&);
     
     virtual void savePlatformDataToCachedPage(WebCore::CachedPage*);
     virtual void transitionToCommittedFromCachedPage(WebCore::CachedPage*);
     virtual void transitionToCommittedForNewPage();
-
-    virtual bool willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL& originalURL) const;
-    virtual bool isArchiveLoadPending(WebCore::ResourceLoader*) const;
-    virtual void cancelPendingArchiveLoad(WebCore::ResourceLoader*);
-    virtual void clearArchivedResources();
 
     virtual bool canHandleRequest(const WebCore::ResourceRequest&) const;
     virtual bool canShowMIMEType(const WebCore::String& MIMEType) const;

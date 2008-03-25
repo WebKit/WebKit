@@ -2,6 +2,17 @@
 
         Reviewed by Darin
 
+        Remove newly obsolete FrameLoaderClient methods
+
+        * loader/FrameLoaderClient.h:
+        * svg/graphics/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::setMainDocumentError):
+        (WebCore::SVGEmptyFrameLoaderClient::finishedLoading):
+
+2008-03-25  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
         <rdar://problem/4516169> - Support WebArchives on Windows
         And pave the way for many future WebArchive bug fixes and enhancements
 

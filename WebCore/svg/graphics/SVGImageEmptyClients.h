@@ -189,7 +189,6 @@ public:
     virtual void dispatchDidLoadMainResource(DocumentLoader*) { }
     virtual void revertToProvisionalState(DocumentLoader*) { }
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) { }
-    virtual void clearUnarchivingState(DocumentLoader*) { }
     
     virtual void willChangeEstimatedProgress() { }
     virtual void didChangeEstimatedProgress() { }
@@ -206,7 +205,6 @@ public:
     
     virtual void committedLoad(DocumentLoader*, const char*, int) { }
     virtual void finishedLoading(DocumentLoader*) { }
-    virtual void finalSetupForReplace(DocumentLoader*) { }
     
     virtual ResourceError cancelledError(const ResourceRequest&) { return ResourceError(); }
     virtual ResourceError blockedError(const ResourceRequest&) { return ResourceError(); }
@@ -217,14 +215,7 @@ public:
     virtual ResourceError fileDoesNotExistError(const ResourceResponse&) { return ResourceError(); }
     
     virtual bool shouldFallBack(const ResourceError&) { return false; }
-    
-    virtual void setDefersLoading(bool) { }
-    
-    virtual bool willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL& originalURL) const { return false; }
-    virtual bool isArchiveLoadPending(ResourceLoader*) const { return false; }
-    virtual void cancelPendingArchiveLoad(ResourceLoader*) { }
-    virtual void clearArchivedResources() { }
-    
+        
     virtual bool canHandleRequest(const ResourceRequest&) const { return false; }
     virtual bool canShowMIMEType(const String& MIMEType) const { return false; }
     virtual bool representationExistsForURLScheme(const String& URLScheme) const { return false; }

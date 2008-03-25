@@ -563,11 +563,6 @@ void FrameLoaderClient::revertToProvisionalState(DocumentLoader*)
     notImplemented();
 }
 
-void FrameLoaderClient::clearUnarchivingState(DocumentLoader*)
-{
-    notImplemented();
-}
-
 void FrameLoaderClient::willChangeTitle(DocumentLoader*)
 {
     notImplemented();
@@ -576,32 +571,6 @@ void FrameLoaderClient::willChangeTitle(DocumentLoader*)
 void FrameLoaderClient::didChangeTitle(DocumentLoader *l)
 {
     setTitle(l->title(), l->url());
-}
-
-void FrameLoaderClient::finalSetupForReplace(DocumentLoader*)
-{
-    notImplemented();
-}
-
-void FrameLoaderClient::setDefersLoading(bool)
-{
-    notImplemented();
-}
-
-bool FrameLoaderClient::isArchiveLoadPending(ResourceLoader*) const
-{
-    notImplemented();
-    return false;
-}
-
-void FrameLoaderClient::cancelPendingArchiveLoad(ResourceLoader*)
-{
-    notImplemented();
-}
-
-void FrameLoaderClient::clearArchivedResources()
-{
-    notImplemented();
 }
 
 bool FrameLoaderClient::canHandleRequest(const ResourceRequest&) const
@@ -732,12 +701,6 @@ ResourceError FrameLoaderClient::fileDoesNotExistError(const ResourceResponse&)
 }
 
 bool FrameLoaderClient::shouldFallBack(const ResourceError&)
-{
-    notImplemented();
-    return false;
-}
-
-bool FrameLoaderClient::willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL& originalURL) const
 {
     notImplemented();
     return false;

@@ -102,7 +102,6 @@ namespace WebKit {
         virtual void dispatchDidLoadMainResource(WebCore::DocumentLoader*);
         virtual void revertToProvisionalState(WebCore::DocumentLoader*);
         virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&);
-        virtual void clearUnarchivingState(WebCore::DocumentLoader*);
 
         virtual void postProgressStartedNotification();
         virtual void postProgressEstimateChangedNotification();
@@ -130,7 +129,6 @@ namespace WebKit {
 
         virtual void committedLoad(WebCore::DocumentLoader*, const char*, int);
         virtual void finishedLoading(WebCore::DocumentLoader*);
-        virtual void finalSetupForReplace(WebCore::DocumentLoader*);
 
         virtual void updateGlobalHistory(const WebCore::KURL&);
         virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const;
@@ -144,13 +142,6 @@ namespace WebKit {
         virtual WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);
 
         virtual bool shouldFallBack(const WebCore::ResourceError&);
-
-        virtual void setDefersLoading(bool);
-
-        virtual bool willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL& originalURL) const;
-        virtual bool isArchiveLoadPending(WebCore::ResourceLoader*) const;
-        virtual void cancelPendingArchiveLoad(WebCore::ResourceLoader*);
-        virtual void clearArchivedResources();
 
         virtual bool canHandleRequest(const WebCore::ResourceRequest&) const;
         virtual bool canShowMIMEType(const WebCore::String&) const;

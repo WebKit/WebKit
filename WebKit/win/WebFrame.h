@@ -223,15 +223,9 @@ public:
     virtual void cancelPolicyCheck();
     virtual void dispatchWillSubmitForm(WebCore::FramePolicyFunction, PassRefPtr<WebCore::FormState>);
     virtual void revertToProvisionalState(WebCore::DocumentLoader*);
-    virtual void clearUnarchivingState(WebCore::DocumentLoader*);
     virtual void setMainFrameDocumentReady(bool);
     virtual void willChangeTitle(WebCore::DocumentLoader*);
     virtual void didChangeTitle(WebCore::DocumentLoader*);
-    virtual void finalSetupForReplace(WebCore::DocumentLoader*);
-    virtual void setDefersLoading(bool);
-    virtual bool isArchiveLoadPending(WebCore::ResourceLoader*) const;
-    virtual void cancelPendingArchiveLoad(WebCore::ResourceLoader*);
-    virtual void clearArchivedResources();
     virtual bool canHandleRequest(const WebCore::ResourceRequest&) const;
     virtual bool canShowMIMEType(const WebCore::String& MIMEType) const;
     virtual bool representationExistsForURLScheme(const WebCore::String& URLScheme) const;
@@ -257,7 +251,6 @@ public:
     virtual void dispatchDecidePolicyForNewWindowAction(WebCore::FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::String& frameName);
     virtual void dispatchDecidePolicyForNavigationAction(WebCore::FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&);
     virtual void dispatchUnableToImplementPolicy(const WebCore::ResourceError&);
-    virtual bool willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL& originalURL) const;
     virtual void download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     virtual bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int length);

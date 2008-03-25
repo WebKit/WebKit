@@ -652,10 +652,6 @@ void WebFrameLoaderClient::setMainDocumentError(DocumentLoader* loader, const Re
     [dataSource(loader) _setMainDocumentError:error];
 }
 
-void WebFrameLoaderClient::clearUnarchivingState(DocumentLoader* loader)
-{
-}
-
 void WebFrameLoaderClient::willChangeEstimatedProgress()
 {
     [getWebView(m_webFrame.get()) _willChangeValueForKey:_WebEstimatedProgressKey];
@@ -718,10 +714,6 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
     [dataSource(loader) _finishedLoading];
 }
 
-void WebFrameLoaderClient::finalSetupForReplace(DocumentLoader* loader)
-{
-}
-
 void WebFrameLoaderClient::updateGlobalHistory(const KURL& url)
 {
     NSURL *cocoaURL = url;
@@ -773,28 +765,6 @@ bool WebFrameLoaderClient::shouldFallBack(const ResourceError& error)
     // FIXME: WebKitErrorPlugInWillHandleLoad is a workaround for the cancel we do to prevent
     // loading plugin content twice.  See <rdar://problem/4258008>
     return error.errorCode() != NSURLErrorCancelled && error.errorCode() != WebKitErrorPlugInWillHandleLoad;
-}
-
-void WebFrameLoaderClient::setDefersLoading(bool defers)
-{
-}
-
-bool WebFrameLoaderClient::willUseArchive(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL) const
-{
-    return false;
-}
-
-bool WebFrameLoaderClient::isArchiveLoadPending(ResourceLoader* loader) const
-{
-    return false;
-}
-
-void WebFrameLoaderClient::cancelPendingArchiveLoad(ResourceLoader* loader)
-{
-}
-
-void WebFrameLoaderClient::clearArchivedResources()
-{
 }
 
 bool WebFrameLoaderClient::canHandleRequest(const ResourceRequest& request) const

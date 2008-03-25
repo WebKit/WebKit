@@ -1,5 +1,14 @@
 2008-03-25  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Darin
+
+        Remove newly obsolete FrameLoaderClient methods
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
+2008-03-25  Brady Eidson  <beidson@apple.com>
+
         Release build fix
 
         * WebView/WebArchive.mm:

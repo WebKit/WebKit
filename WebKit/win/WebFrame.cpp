@@ -1139,11 +1139,6 @@ void WebFrame::revertToProvisionalState(DocumentLoader*)
     notImplemented();
 }
 
-void WebFrame::clearUnarchivingState(DocumentLoader*)
-{
-    notImplemented();
-}
-
 void WebFrame::setMainFrameDocumentReady(bool)
 {
     notImplemented();
@@ -1155,32 +1150,6 @@ void WebFrame::willChangeTitle(DocumentLoader*)
 }
 
 void WebFrame::didChangeTitle(DocumentLoader*)
-{
-    notImplemented();
-}
-
-void WebFrame::finalSetupForReplace(DocumentLoader*)
-{
-    notImplemented();
-}
-
-void WebFrame::setDefersLoading(bool)
-{
-    notImplemented();
-}
-
-bool WebFrame::isArchiveLoadPending(ResourceLoader*) const
-{
-    notImplemented();
-    return false;
-}
-
-void WebFrame::cancelPendingArchiveLoad(ResourceLoader*)
-{
-    notImplemented();
-}
-
-void WebFrame::clearArchivedResources()
 {
     notImplemented();
 }
@@ -1412,12 +1381,6 @@ void WebFrame::download(ResourceHandle* handle, const ResourceRequest& request, 
     // when this method returns
     COMPtr<WebDownload> download;
     download.adoptRef(WebDownload::createInstance(handle, request, response, downloadDelegate.get()));
-}
-
-bool WebFrame::willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL&) const
-{
-    notImplemented();
-    return false;
 }
 
 bool WebFrame::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int /*length*/)
