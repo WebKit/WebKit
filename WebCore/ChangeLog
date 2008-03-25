@@ -1,3 +1,13 @@
+2008-03-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
+        Speculative crash fix for Acid3 crasher.
+        I couldn't figure out how to make a test case for this?
+        Suggestions welcome.
+
+        * css/CSSFontSelector.cpp: null check document->renderer()
+
 2008-03-25  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Geoff Garen.
