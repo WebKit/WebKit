@@ -53,7 +53,8 @@ WebInspector.Resource.Type = {
     Image:      2,
     Font:       3,
     Script:     4,
-    Other:      5,
+    XHR:        5,
+    Other:      6,
 
     isTextType: function(type)
     {
@@ -73,6 +74,7 @@ WebInspector.Resource.Type = {
                 return WebInspector.UIString("font");
             case this.Script:
                 return WebInspector.UIString("script");
+            case this.XHR:
             case this.Other:
             default:
                 return WebInspector.UIString("other");
@@ -325,6 +327,7 @@ WebInspector.Resource.prototype = {
             case WebInspector.Resource.Type.Font:
                 this.category = WebInspector.resourceCategories.fonts;
                 break;
+            case WebInspector.Resource.Type.XHR:
             case WebInspector.Resource.Type.Other:
             default:
                 this.category = WebInspector.resourceCategories.other;

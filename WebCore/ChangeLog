@@ -1,3 +1,33 @@
+2008-03-25  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        -<rdar://problem/5712804> XMLHttpRequests do not show response contents, preview images (14313)
+        -<rdar://problem/5712931> XMLHttpRequests should be shown separately and grouped (14315)
+        -<rdar://problem/5732836> XMLHttpRequest: Inspector should show network activity/XHR in Console (17233)
+        - XMLHttpRequestResources now identify themselves to the inspector which caches the data related to
+        the request since no one else caches it.  However this is just the plumbing and the Inspector's UI
+        has not been changed to show XHR resources yet. 
+
+        * page/InspectorController.cpp: Add ability to set XHR data on an InspectorResource.
+        (WebCore::XMLHttpRequestResource::XMLHttpRequestResource):
+        (WebCore::XMLHttpRequestResource::data):
+        (WebCore::XMLHttpRequestResource::encoding):
+        (WebCore::InspectorResource::): Add new type.
+        (WebCore::InspectorResource::~InspectorResource): No longer virtual since we are not using inheritance.
+        (WebCore::InspectorResource::type): Ditto.
+        (WebCore::InspectorResource::setXMLHttpRequestResource):
+        (WebCore::InspectorResource::isXHR):
+        (WebCore::InspectorResource::xmlHttpRequestData):
+        (WebCore::InspectorResource::xmlHttpRequestEncoding):
+        (WebCore::InspectorResource::InspectorResource):
+        (WebCore::addSourceToFrame):
+        (WebCore::InspectorController::resourceRetrievedByXMLHttpRequest):
+        * page/InspectorController.h: Add accessor for setting the XHR data.
+        * page/inspector/Resource.js: Keep the XHR resource types in sync with the Inspector Controller.
+        * xml/XMLHttpRequest.cpp: Give the InspectorController the XHR information to cache.
+        (WebCore::XMLHttpRequest::send):
+
 2008-03-25  Adam Roben  <aroben@apple.com>
 
         Add an UnusedParam.h forwarding header for use by testapi

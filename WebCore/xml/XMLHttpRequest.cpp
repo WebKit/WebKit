@@ -30,6 +30,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTTPParsers.h"
+#include "InspectorController.h"
 #include "Page.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"
@@ -458,6 +459,9 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
     // We need to keep content sniffing enabled for local files due to CFNetwork not providing a MIME type
     // for local files otherwise, <rdar://problem/5671813>.
     m_loader = SubresourceLoader::create(m_doc->frame(), this, request, false, true, request.url().isLocalFile());
+
+   if (Page* page = m_doc->frame()->page())
+        page->inspectorController()->resourceRetrievedByXMLHttpRequest(m_loader->identifier(), m_loader->resourceData(), m_encoding);
 
     if (m_loader) {
         // Neither this object nor the JavaScript wrapper should be deleted while
