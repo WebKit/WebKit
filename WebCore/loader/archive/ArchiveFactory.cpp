@@ -29,7 +29,9 @@
 #include "config.h"
 #include "ArchiveFactory.h"
 
+#if PLATFORM(CF)
 #include "LegacyWebArchive.h"
+#endif
 #include "MIMETypeRegistry.h"
 #include "PlatformString.h"
 

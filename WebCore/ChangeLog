@@ -1,5 +1,11 @@
 2008-03-25  Brady Eidson  <beidson@apple.com>
 
+        Build fix for non-CoreFoundation platforms
+
+        * loader/archive/ArchiveFactory.cpp:
+
+2008-03-25  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin
 
         Remove newly obsolete FrameLoaderClient methods
