@@ -2702,6 +2702,11 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
     LOG(View, "%@ doing layout", self);
 
     Frame* coreFrame = core([self _frame]);
+    if (!coreFrame) {
+        _private->needsLayout = NO;
+        return;
+    }
+
     if (minPageWidth > 0.0)
         coreFrame->forceLayoutWithPageWidthRange(minPageWidth, maxPageWidth, adjustViewSize);
     else {

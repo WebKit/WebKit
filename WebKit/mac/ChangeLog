@@ -1,3 +1,14 @@
+2008-03-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17933
+          Reopen All Windows From Last Session causes crash
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView layoutToMinimumPageWidth:maximumPageWidth:adjustingViewSize:]): Added null
+        check.
+
 2008-03-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Jon Honeycutt's rubberstamp
