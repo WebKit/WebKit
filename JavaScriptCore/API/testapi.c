@@ -869,12 +869,34 @@ int main(int argc, char* argv[])
     ASSERT(JSValueIsEqual(context, v, globalObject, NULL));
     v = JSObjectCallAsFunction(context, function, o, 0, NULL, NULL);
     ASSERT(JSValueIsEqual(context, v, o, NULL));
-    
+
+    functionBody = JSStringCreateWithUTF8CString("return eval(\"this\");");
+    function = JSObjectMakeFunction(context, NULL, 0, NULL, functionBody, NULL, 1, NULL);
+    JSStringRelease(functionBody);
+    v = JSObjectCallAsFunction(context, function, NULL, 0, NULL, NULL);
+    ASSERT(JSValueIsEqual(context, v, globalObject, NULL));
+    v = JSObjectCallAsFunction(context, function, o, 0, NULL, NULL);
+    ASSERT(JSValueIsEqual(context, v, o, NULL));
+
+    JSStringRef script = JSStringCreateWithUTF8CString("this;");
+    v = JSEvaluateScript(context, script, NULL, NULL, 0, NULL);
+    ASSERT(JSValueIsEqual(context, v, globalObject, NULL));
+    v = JSEvaluateScript(context, script, o, NULL, 0, NULL);
+    ASSERT(JSValueIsEqual(context, v, o, NULL));
+    JSStringRelease(script);
+
+    script = JSStringCreateWithUTF8CString("eval(this);");
+    v = JSEvaluateScript(context, script, NULL, NULL, 0, NULL);
+    ASSERT(JSValueIsEqual(context, v, globalObject, NULL));
+    v = JSEvaluateScript(context, script, o, NULL, 0, NULL);
+    ASSERT(JSValueIsEqual(context, v, o, NULL));
+    JSStringRelease(script);
+
     char* scriptUTF8 = createStringWithContentsOfFile(scriptPath);
     if (!scriptUTF8)
         printf("FAIL: Test script could not be loaded.\n");
     else {
-        JSStringRef script = JSStringCreateWithUTF8CString(scriptUTF8);
+        script = JSStringCreateWithUTF8CString(scriptUTF8);
         result = JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
         if (JSValueIsUndefined(context, result))
             printf("PASS: Test script executed successfully.\n");

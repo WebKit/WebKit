@@ -1,3 +1,19 @@
+2008-03-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=18048
+        The "thisObject" parameter to JSEvaluateScript is not used properly
+
+        Making passing a thisObject to JSEvaluateScript actually set the thisObject of the created
+        ExecState.
+
+        * API/testapi.c:
+        (main): Add tests for setting the thisObject when calling JSEvaluateScript.
+
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::ExecState): Assign the thisObject to m_thisValue and remove the comment. 
+
 2008-03-22  Jesse Ruderman  <jruderman@gmail.com>
 
         Reviewed by Sam Weinig.  Landed by eseidel.

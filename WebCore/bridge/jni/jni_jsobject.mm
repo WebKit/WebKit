@@ -310,9 +310,8 @@ jobject JavaJSObject::eval(jstring script) const
 {
     JS_LOG ("script = %s\n", JavaString(script).UTF8String());
     
-    JSObject *thisObj = const_cast<JSObject*>(_imp);
-    JSValue *result;
-    
+    JSValue* result;
+
     JSLock lock;
     
     RootObject* rootObject = this->rootObject();
@@ -320,7 +319,7 @@ jobject JavaJSObject::eval(jstring script) const
         return 0;
 
     rootObject->globalObject()->startTimeoutCheck();
-    Completion completion = Interpreter::evaluate(rootObject->globalObject()->globalExec(), UString(), 0, JavaString(script).ustring(),thisObj);
+    Completion completion = Interpreter::evaluate(rootObject->globalObject()->globalExec(), UString(), 0, JavaString(script).ustring());
     rootObject->globalObject()->stopTimeoutCheck();
     ComplType type = completion.complType();
     

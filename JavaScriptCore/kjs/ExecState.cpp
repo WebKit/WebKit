@@ -63,7 +63,7 @@ inline ExecState::ExecState(JSGlobalObject* globalObject)
     m_scopeChain.push(globalObject);
 }
 
-inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* /*thisObject*/, ProgramNode* programNode)
+inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject, ProgramNode* programNode)
     : m_globalObject(globalObject)
     , m_exception(0)
     , m_propertyNames(CommonIdentifiers::shared())
@@ -76,14 +76,11 @@ inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* /*thisObject
     , m_localStorage(&globalObject->localStorage())
     , m_inlineScopeChainNode(0, 0)
     , m_variableObject(globalObject)
-    , m_thisValue(globalObject)
+    , m_thisValue(thisObject)
     , m_iterationDepth(0)
     , m_switchDepth(0) 
     , m_codeType(GlobalCode)
 {
-    // FIXME: This function ignores the "thisObject" parameter, which means that the API for evaluating
-    // a script with a this object that's not the same as the global object is broken, and probably
-    // has been for some time.
     ASSERT(m_scopeNode);
     m_scopeChain.push(globalObject);
 }

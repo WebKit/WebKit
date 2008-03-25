@@ -82,11 +82,8 @@ JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& 
     // so we start the keep alive timer here.
     m_frame->keepAlive();
 
-    // FIXME: Can this call to toJSDOMWindow be replaced by using m_globalObject.
-    JSValue* thisNode = toJSDOMWindow(m_frame);
-
     m_globalObject->startTimeoutCheck();
-    Completion comp = Interpreter::evaluate(exec, filename, baseLine, str.characters(), str.length(), thisNode);
+    Completion comp = Interpreter::evaluate(exec, filename, baseLine, str.characters(), str.length());
     m_globalObject->stopTimeoutCheck();
   
     if (comp.complType() == Normal || comp.complType() == ReturnValue) {

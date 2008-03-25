@@ -1,3 +1,16 @@
+2008-03-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=18048
+        The "thisObject" parameter to JSEvaluateScript is not used properly
+
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::evaluate): No need to pass a thisObject since we want the global object to be used.
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::eval): To avoid any change to this function, don't pass a thisObject to keep the same
+        behavior.
+
 2008-03-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin's rubberstamp
