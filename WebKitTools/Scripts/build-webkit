@@ -339,8 +339,7 @@ if ($svgSupport) {
     print " $launcherName will have SVG viewing capabilities.\n";
 }
 if ($svgAnimationSupport or $svgFiltersSupport or $svgForeignObjectSupport or $svgFontsSupport or $svgAsImageSupport or $svgUseSupport) {
-    print "\n NOTE: WebKit has been built with experimental SVG features enabled.\n";
-    print " Your build supports: \n";
+    print " Your build supports the following (optional) SVG features: \n";
     print "  * Basic SVG animation.\n" if $svgAnimationSupport;
     print "  * SVG filters.\n" if $svgFiltersSupport;
     print "  * SVG foreign object.\n" if $svgForeignObjectSupport;

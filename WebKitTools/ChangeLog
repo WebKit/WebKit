@@ -1,3 +1,11 @@
+2008-03-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark.
+
+        Clean up SVG features message to be less confusing.
+
+        * Scripts/build-webkit:
+
 2008-03-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dave Hyatt.
