@@ -288,7 +288,8 @@ static BOOL isArrayOfClass(id object, Class elementClass)
             _private->cachedSubresources = [[NSArray alloc] init];
         else {
             const Vector<RefPtr<ArchiveResource> >& subresources(coreArchive->subresources());
-            NSMutableArray *mutableArray = _private->cachedSubresources = [[NSMutableArray alloc] initWithCapacity:subresources.size()];
+            NSMutableArray *mutableArray = [[NSMutableArray alloc] initWithCapacity:subresources.size()];
+            _private->cachedSubresources = mutableArray;
             for (unsigned i = 0; i < subresources.size(); ++i) {
                 WebResource *resource = [[WebResource alloc] _initWithCoreResource:subresources[i].get()];
                 [mutableArray addObject:resource];
@@ -310,7 +311,8 @@ static BOOL isArrayOfClass(id object, Class elementClass)
             _private->cachedSubframeArchives = [[NSArray alloc] init];
         else {
             const Vector<RefPtr<Archive> >& subframeArchives(coreArchive->subframeArchives());
-            NSMutableArray *mutableArray = _private->cachedSubframeArchives = [[NSMutableArray alloc] initWithCapacity:subframeArchives.size()];
+            NSMutableArray *mutableArray = [[NSMutableArray alloc] initWithCapacity:subframeArchives.size()];
+            _private->cachedSubframeArchives = mutableArray;
             for (unsigned i = 0; i < subframeArchives.size(); ++i) {
                 WebArchive *archive = [[WebArchive alloc] _initWithCoreLegacyWebArchive:(LegacyWebArchive *)subframeArchives[i].get()];
                 [mutableArray addObject:archive];

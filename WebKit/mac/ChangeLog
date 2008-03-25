@@ -1,5 +1,13 @@
 2008-03-25  Brady Eidson  <beidson@apple.com>
 
+        Release build fix
+
+        * WebView/WebArchive.mm:
+        (-[WebArchive subresources]):
+        (-[WebArchive subframeArchives]):
+
+2008-03-25  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin
 
         <rdar://problem/4516169> - Support WebArchives on Windows
