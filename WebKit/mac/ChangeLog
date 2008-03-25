@@ -1,5 +1,14 @@
 2008-03-25  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Beth Dakin
+
+        Remove entirely unused internal method
+
+        * WebView/WebArchiver.h:
+        * WebView/WebArchiver.mm:
+
+2008-03-25  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Adam Roben
 
         <rdar://problem/5819308> - View Source is empty when view webarchives

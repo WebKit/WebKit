@@ -65,13 +65,6 @@ using namespace WebCore;
                                     subframeArchives:[self _subframeArchivesForFrame:frame]] autorelease];
 }
 
-+ (WebArchive *)archiveMainResourceForFrame:(WebFrame *)frame;
-{
-    return [[[WebArchive alloc] initWithMainResource:[[frame _dataSource] mainResource]
-                                        subresources:nil
-                                    subframeArchives:nil] autorelease];
-}
-
 + (WebArchive *)_archiveCurrentStateForFrame:(WebFrame *)frame
 {
     if ([frame DOMDocument])
