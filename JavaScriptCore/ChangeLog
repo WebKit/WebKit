@@ -1,3 +1,37 @@
+2008-03-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Darin.
+
+        Cleanup dtoa.cpp style.
+
+        * kjs/dtoa.cpp:
+        (Bigint::Balloc):
+        (Bigint::Bfree):
+        (Bigint::multadd):
+        (Bigint::s2b):
+        (Bigint::hi0bits):
+        (Bigint::lo0bits):
+        (Bigint::i2b):
+        (Bigint::mult):
+        (Bigint::pow5mult):
+        (Bigint::lshift):
+        (Bigint::cmp):
+        (Bigint::diff):
+        (Bigint::ulp):
+        (Bigint::b2d):
+        (Bigint::d2b):
+        (Bigint::ratio):
+        (Bigint::):
+        (Bigint::match):
+        (Bigint::hexnan):
+        (Bigint::kjs_strtod):
+        (Bigint::quorem):
+        (Bigint::rv_alloc):
+        (Bigint::nrv_alloc):
+        (Bigint::kjs_freedtoa):
+        (Bigint::kjs_dtoa):
+        * kjs/dtoa.h:
+
 2008-03-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
