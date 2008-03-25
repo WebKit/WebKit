@@ -1,3 +1,9 @@
+2008-03-25  Darin Adler  <darin@apple.com>
+
+        Suggested by Adam.
+
+        * Interfaces/WebKit.idl: Touch this file to make the Interface project rebuild.
+
 2008-03-21  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5810324> visitCount not updated in History.plist
