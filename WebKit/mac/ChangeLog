@@ -2,6 +2,17 @@
 
         Reviewed by Darin
 
+        Removed the concept of "pending archive resources" and the "archive resources delivery timer"
+        from WebFrameLoaderClient, as those concepts have been pushed into WebCore
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::WebFrameLoaderClient):
+
+2008-03-25  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
         Remove newly obsolete FrameLoaderClient methods
 
         * WebCoreSupport/WebFrameLoaderClient.h:

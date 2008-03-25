@@ -193,9 +193,6 @@ private:
     virtual jobject javaApplet(NSView*);
 #endif
 
-    void deliverArchivedResourcesAfterDelay() const;
-    void deliverArchivedResources(WebCore::Timer<WebFrameLoaderClient>*);
-
     void setOriginalURLForDownload(WebDownload *, const WebCore::ResourceRequest&) const;
 
     RetainPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction);
@@ -208,7 +205,4 @@ private:
 
     RetainPtr<WebFramePolicyListener> m_policyListener;
     WebCore::FramePolicyFunction m_policyFunction;
-
-    mutable ResourceMap m_pendingArchivedResources;
-    mutable WebCore::Timer<WebFrameLoaderClient> m_archivedResourcesDeliveryTimer;
 };

@@ -142,7 +142,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
     : m_webFrame(webFrame)
     , m_policyFunction(0)
-    , m_archivedResourcesDeliveryTimer(this, &WebFrameLoaderClient::deliverArchivedResources)
 {
 }
 
@@ -894,38 +893,6 @@ void WebFrameLoaderClient::setTitle(const String& title, const KURL& URL)
         return;
     NSString *titleNSString = title;
     [[[WebHistory optionalSharedHistory] itemForURL:nsURL] setTitle:titleNSString];
-}
-
-void WebFrameLoaderClient::deliverArchivedResourcesAfterDelay() const
-{
-    if (m_pendingArchivedResources.isEmpty())
-        return;
-    if (core(m_webFrame.get())->page()->defersLoading())
-        return;
-    if (!m_archivedResourcesDeliveryTimer.isActive())
-        m_archivedResourcesDeliveryTimer.startOneShot(0);
-}
-
-void WebFrameLoaderClient::deliverArchivedResources(Timer<WebFrameLoaderClient>*)
-{
-    if (m_pendingArchivedResources.isEmpty())
-        return;
-    if (core(m_webFrame.get())->page()->defersLoading())
-        return;
-
-    const ResourceMap copy = m_pendingArchivedResources;
-    m_pendingArchivedResources.clear();
-
-    ResourceMap::const_iterator end = copy.end();
-    for (ResourceMap::const_iterator it = copy.begin(); it != end; ++it) {
-        RefPtr<ResourceLoader> loader = it->first;
-        WebResource *resource = it->second.get();
-        NSData *data = [[resource data] retain];
-        loader->didReceiveResponse([resource _response]);
-        loader->didReceiveData((const char*)[data bytes], [data length], [data length], true);
-        [data release];
-        loader->didFinishLoading();
-    }
 }
 
 void WebFrameLoaderClient::savePlatformDataToCachedPage(CachedPage* cachedPage)
