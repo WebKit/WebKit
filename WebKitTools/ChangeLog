@@ -1,3 +1,23 @@
+2008-03-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Add EventSender.zoomPageIn/zoomPageOut support to DRT.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (-[EventSendingController zoomPageIn]):
+        (-[EventSendingController zoomPageOut]):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/win/EventSender.cpp:
+        (textZoomInCallback):
+        (textZoomOutCallback):
+        (zoomPageInCallback):
+        (zoomPageOutCallback):
+
 2008-03-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

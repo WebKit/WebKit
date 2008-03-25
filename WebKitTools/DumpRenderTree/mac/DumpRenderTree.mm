@@ -811,7 +811,8 @@ static void resetWebViewToConsistentStateBeforeTesting()
     WebView *webView = [mainFrame webView];
     [(EditingDelegate *)[webView editingDelegate] setAcceptsEditing:YES];
     [webView makeTextStandardSize:nil];
-    [webView setTabKeyCyclesThroughElements: YES];
+    [webView resetPageZoom:nil];
+    [webView setTabKeyCyclesThroughElements:YES];
     [webView setPolicyDelegate:nil];
     [webView _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:NO];
 

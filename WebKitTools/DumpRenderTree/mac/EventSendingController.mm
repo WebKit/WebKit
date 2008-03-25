@@ -35,8 +35,9 @@
 #import "DumpRenderTreeDraggingInfo.h"
 
 #import <Carbon/Carbon.h>                           // for GetCurrentEventTime()
-#import <WebKit/WebKit.h>
 #import <WebKit/DOMPrivate.h>
+#import <WebKit/WebKit.h>
+#import <WebKit/WebViewPrivate.h>
 
 extern "C" void _NSNewKillRingSequence();
 
@@ -112,7 +113,9 @@ BOOL replayingSavedEvents;
             || aSelector == @selector(fireKeyboardEventsToElement:)
             || aSelector == @selector(clearKillRing)
             || aSelector == @selector(textZoomIn)
-            || aSelector == @selector(textZoomOut))
+            || aSelector == @selector(textZoomOut)
+            || aSelector == @selector(zoomPageIn)
+            || aSelector == @selector(zoomPageOut))
         return NO;
     return YES;
 }
@@ -213,6 +216,16 @@ BOOL replayingSavedEvents;
 - (void)textZoomOut
 {
     [[mainFrame webView] makeTextSmaller:self];
+}
+
+- (void)zoomPageIn
+{
+    [[mainFrame webView] zoomPageIn:self];
+}
+
+- (void)zoomPageOut
+{
+    [[mainFrame webView] zoomPageOut:self];
 }
 
 - (void)mouseUp

@@ -630,8 +630,10 @@ static void resetWebViewToConsistentStateBeforeTesting()
     webView->setPolicyDelegate(0);
 
     COMPtr<IWebIBActions> webIBActions(Query, webView);
-    if (webIBActions)
+    if (webIBActions) {
         webIBActions->makeTextStandardSize(0);
+        webIBActions->resetPageZoom(0);
+    }
 
     COMPtr<IWebPreferences> preferences;
     if (SUCCEEDED(webView->preferences(&preferences))) {
