@@ -1349,9 +1349,8 @@ sub GetNativeTypeFromSignature
 }
 
 my %nativeType = (
-    "AtomicString" => "AtomicString",
     "CompareHow" => "Range::CompareHow",
-    "DOMString" => "String",
+    "DOMString" => "const UString&",
     "EventTarget" => "EventTargetNode*",
     "SVGLength" => "SVGLength",
     "SVGMatrix" => "AffineTransform",
@@ -1379,7 +1378,6 @@ sub GetNativeType
 }
 
 my %typeCanFailConversion = (
-    "AtomicString" => 0,
     "Attr" => 1,
     "CompareHow" => 0,
     "DOMString" => 0,
@@ -1443,7 +1441,6 @@ sub JSValueToNative
     return "static_cast<Range::CompareHow>($value->toInt32(exec))" if $type eq "CompareHow";
     return "static_cast<SVGPaint::SVGPaintType>($value->toInt32(exec))" if $type eq "SVGPaintType";
 
-    return "$value->toString(exec)" if $type eq "AtomicString";
     if ($type eq "DOMString") {
         return "valueToStringWithNullCheck(exec, $value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};
         return "valueToStringWithUndefinedOrNullCheck(exec, $value)" if $signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"};

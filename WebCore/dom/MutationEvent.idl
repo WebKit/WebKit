@@ -35,7 +35,7 @@ module events {
         readonly attribute DOMString      attrName;
         readonly attribute unsigned short attrChange;
 
-        [OldStyleObjC] void initMutationEvent(in AtomicString type, 
+        [OldStyleObjC] void initMutationEvent(in DOMString type, 
                                               in boolean canBubble, 
                                               in boolean cancelable, 
                                               in Node relatedNode, 

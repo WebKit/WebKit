@@ -46,7 +46,7 @@ module events {
 #endif
 
         // FIXME: this does not match the version in the DOM spec.
-        void initKeyboardEvent(in AtomicString type, 
+        void initKeyboardEvent(in DOMString type, 
                                in boolean canBubble, 
                                in boolean cancelable, 
                                in DOMWindow view, 
@@ -63,7 +63,7 @@ module events {
         readonly attribute long             keyCode;
         readonly attribute long             charCode;
         
-        void initKeyboardEvent(in AtomicString type, 
+        void initKeyboardEvent(in DOMString type, 
                                in boolean canBubble, 
                                in boolean cancelable, 
                                in DOMWindow view, 

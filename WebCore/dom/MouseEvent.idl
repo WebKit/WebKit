@@ -34,7 +34,7 @@ module events {
         readonly attribute unsigned short   button;
         readonly attribute EventTarget      relatedTarget;
         
-        [OldStyleObjC] void initMouseEvent(in AtomicString type, 
+        [OldStyleObjC] void initMouseEvent(in DOMString type, 
                                            in boolean canBubble, 
                                            in boolean cancelable, 
                                            in DOMWindow view, 

@@ -1,3 +1,26 @@
+2008-03-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - avoid converting UString to String and then later to AtomicString
+
+        1% speedup on Acid3 test 26
+
+        This is inefficient for the case where there's already an AtomicString.
+        By first creating and destroying a String we waste time.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Use const UString& for string
+        arguments rather than using String; this uses the object as it's produced
+        from toString rather than creating a new temporary object that might not
+        be of the right type. The type conversion happens at the callsite instead.
+        Also eliminate the ability to use the type AtomicString from IDL.
+
+        * dom/KeyboardEvent.idl: AtomicString -> DOMString.
+        * dom/MouseEvent.idl: Ditto.
+        * dom/MutationEvent.idl: Ditto.
+        * dom/UIEvent.idl: Ditto.
+        * svg/SVGStyleElement.idl: Ditto.
+
 2008-03-25  Brady Eidson  <beidson@apple.com>
 
         Build fix for non-CoreFoundation platforms
