@@ -1,3 +1,27 @@
+2008-03-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej, landed by Brady
+
+        Tests for the following bugs:
+
+        Bug 3580: iFrames Appear to be Cached
+        <http://bugs.webkit.org/show_bug.cgi?id=3580>
+
+        Bug 15486: REGRESSION: Reload causes WebKit to *forget* fragment URLs
+        <http://bugs.webkit.org/show_bug.cgi?id=15486>
+
+        Bug 15554: Reload causes <object> to use old data
+        <http://bugs.webkit.org/show_bug.cgi?id=15554>
+
+        * http/tests/navigation/reload-subframe-frame-expected.txt: Added.
+        * http/tests/navigation/reload-subframe-frame.html: Added.
+        * http/tests/navigation/reload-subframe-iframe-expected.txt: Added.
+        * http/tests/navigation/reload-subframe-iframe.html: Added.
+        * http/tests/navigation/reload-subframe-object-expected.txt: Added.
+        * http/tests/navigation/reload-subframe-object.html: Added.
+        * http/tests/navigation/resources/reload-subframe-content.pl: Added.
+        * http/tests/navigation/resources/reload-subframe.pl: Added.
+
 2008-03-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

@@ -1,3 +1,21 @@
+2008-03-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej, landed by Brady
+
+        Bug 3580: iFrames Appear to be Cached
+        <http://bugs.webkit.org/show_bug.cgi?id=3580>
+
+        Bug 15486: REGRESSION: Reload causes WebKit to *forget* fragment URLs
+        <http://bugs.webkit.org/show_bug.cgi?id=15486>
+
+        Bug 15554: Reload causes <object> to use old data
+        <http://bugs.webkit.org/show_bug.cgi?id=15554>
+
+        If a page is reloaded, a child frame's URL can not be taken from a history item.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+
 2008-03-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth.

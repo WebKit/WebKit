@@ -312,7 +312,6 @@ WebView *getWebView(WebFrame *webFrame)
     // Reload will maintain the frame contents, LoadSame will not.
     if (parentItem && parentItem->children().size() &&
         (isBackForwardLoadType(loadType)
-         || loadType == FrameLoadTypeReload
          || loadType == FrameLoadTypeReloadAllowingStaleData))
     {
         HistoryItem* childItem = parentItem->childItemWithName([childFrame name]);
