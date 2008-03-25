@@ -2,6 +2,25 @@
 
         Reviewed by Sam.
 
+        - use AtomicString more consistently for attribute values
+
+        1% speedup on Acid3 test 26
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute): Changed value argument to AtomicString.
+        Also fixed call to lower() to only be done if the name isn't already lowercase.
+        Also took out one unneeded condition in a cascade of if statements.
+        (WebCore::Element::createAttribute): Ditto.
+        (WebCore::Element::setAttributeNS): Ditto.
+        * dom/Element.h: Ditto.
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::createAttribute): Ditto.
+        * dom/StyledElement.h: Ditto.
+
+2008-03-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
         - get rid of extra level of function call in toJS functions for Node
 
         0.6% speedup on Acid3 test 26

@@ -168,10 +168,10 @@ void Element::removeAttribute(const QualifiedName& name, ExceptionCode& ec)
     }
 }
 
-void Element::setAttribute(const QualifiedName& name, const String &value)
+void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    ExceptionCode ec = 0;
-    setAttribute(name, value.impl(), ec);
+    ExceptionCode ec;
+    setAttribute(name, value, ec);
 }
 
 void Element::setBooleanAttribute(const QualifiedName& name, bool b)
@@ -485,14 +485,14 @@ const AtomicString& Element::getAttributeNS(const String& namespaceURI, const St
     return getAttribute(QualifiedName(nullAtom, localName, namespaceURI));
 }
 
-void Element::setAttribute(const String& name, const String& value, ExceptionCode& ec)
+void Element::setAttribute(const String& name, const AtomicString& value, ExceptionCode& ec)
 {
     if (!Document::isValidName(name)) {
         ec = INVALID_CHARACTER_ERR;
         return;
     }
 
-    String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
+    const String& localName = (shouldIgnoreAttributeCase(this) && !name.impl()->isLower()) ? name.lower() : name;
 
     // allocate attributemap if necessary
     Attribute* old = attributes(false)->getAttributeItem(localName);
@@ -511,14 +511,14 @@ void Element::setAttribute(const String& name, const String& value, ExceptionCod
     if (old && value.isNull())
         namedAttrMap->removeAttribute(old->name());
     else if (!old && !value.isNull())
-        namedAttrMap->addAttribute(createAttribute(QualifiedName(nullAtom, localName, nullAtom), value.impl()));
+        namedAttrMap->addAttribute(createAttribute(QualifiedName(nullAtom, localName, nullAtom), value));
     else if (old && !value.isNull()) {
         old->setValue(value);
         attributeChanged(old);
     }
 }
 
-void Element::setAttribute(const QualifiedName& name, StringImpl* value, ExceptionCode& ec)
+void Element::setAttribute(const QualifiedName& name, const AtomicString& value, ExceptionCode& ec)
 {
     document()->incDOMTreeVersion();
 
@@ -534,17 +534,17 @@ void Element::setAttribute(const QualifiedName& name, StringImpl* value, Excepti
     if (name == idAttr)
         updateId(old ? old->value() : nullAtom, value);
     
-    if (old && !value)
+    if (old && value.isNull())
         namedAttrMap->removeAttribute(name);
-    else if (!old && value)
+    else if (!old && !value.isNull())
         namedAttrMap->addAttribute(createAttribute(name, value));
-    else if (old && value) {
+    else if (old) {
         old->setValue(value);
         attributeChanged(old);
     }
 }
 
-Attribute* Element::createAttribute(const QualifiedName& name, StringImpl* value)
+Attribute* Element::createAttribute(const QualifiedName& name, const AtomicString& value)
 {
     return new Attribute(name, value);
 }
@@ -1090,14 +1090,14 @@ PassRefPtr<Attr> Element::removeAttributeNode(Attr *attr, ExceptionCode& ec)
     return static_pointer_cast<Attr>(attrs->removeNamedItem(attr->qualifiedName(), ec));
 }
 
-void Element::setAttributeNS(const String& namespaceURI, const String& qualifiedName, const String& value, ExceptionCode& ec)
+void Element::setAttributeNS(const String& namespaceURI, const String& qualifiedName, const AtomicString& value, ExceptionCode& ec)
 {
     String prefix, localName;
     if (!Document::parseQualifiedName(qualifiedName, prefix, localName, ec))
         return;
 
     QualifiedName qName(prefix, localName, namespaceURI);
-    setAttribute(qName, value.impl(), ec);
+    setAttribute(qName, value, ec);
 }
 
 void Element::removeAttribute(const String& name, ExceptionCode& ec)

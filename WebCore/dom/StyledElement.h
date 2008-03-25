@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -72,7 +72,7 @@ public:
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void createAttributeMap() const;
-    virtual Attribute* createAttribute(const QualifiedName& name, StringImpl* value);
+    virtual Attribute* createAttribute(const QualifiedName& name, const AtomicString& value);
 
     virtual void copyNonAttributeProperties(const Element*);
 
