@@ -1,3 +1,13 @@
+2008-03-25  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 18077: Integrate testapi.c into the Windows build
+
+        <http://bugs.webkit.org/show_bug.cgi?id=18077>
+
+        Reviewed by Steve Falkenburg.
+
+        * WebKit.vcproj/WebKit.sln: Added testapi.vcproj to the solution.
+
 2008-03-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

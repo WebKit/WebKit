@@ -1,5 +1,15 @@
 2008-03-25  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 18077: Integrate testapi.c into the Windows build
+
+        <http://bugs.webkit.org/show_bug.cgi?id=18077>
+
+        Reviewed by Steve Falkenburg.
+
+        * JavaScriptCore.vcproj/testapi/testapi.vcproj: Added.
+
+2008-03-25  Adam Roben  <aroben@apple.com>
+
         Make testapi.c compile under MSVC
 
         Currently you must compile testapi.c as C++ code since MSVC does not

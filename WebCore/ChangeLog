@@ -1,3 +1,11 @@
+2008-03-25  Adam Roben  <aroben@apple.com>
+
+        Add an UnusedParam.h forwarding header for use by testapi
+
+        Reviewed by Steve Falkenburg.
+
+        * ForwardingHeaders/wtf/UnusedParam.h: Added.
+
 2008-03-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam Roben
