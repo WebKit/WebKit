@@ -1,5 +1,22 @@
 2008-03-25  Adam Roben  <aroben@apple.com>
 
+        Make testapi.c compile under MSVC
+
+        Currently you must compile testapi.c as C++ code since MSVC does not
+        support many C features that GCC does.
+
+        Reviewed by Steve Falkenburg.
+
+        * API/testapi.c:
+        (nan): Added an implementation of this for MSVC.
+        (assertEqualsAsUTF8String): Use malloc instead of dynamically-sized
+        stack arrays.
+        (assertEqualsAsCharactersPtr): Ditto.
+        (print_callAsFunction): Ditto.
+        (main): Ditto, and explicitly cast from UniChar* to JSChar*.
+
+2008-03-25  Adam Roben  <aroben@apple.com>
+
         Stop using JavaScriptCore's custom stdbool.h and stdint.h on Windows
 
         We can't remove the os-win32 directory yet because other ports (at
