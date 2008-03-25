@@ -1,5 +1,20 @@
 2008-03-24  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam.
+
+        - get rid of extra level of function call in toJS functions for Node
+
+        0.6% speedup on Acid3 test 26
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::toJS): Take a raw pointer, not a PassRefPtr, like other toJS functions.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Add an inlined toJS for EventTargetNode*
+        to avoid ambiguity that otherwise exists between the toJS for EventTarget* and
+        for Node*.
+
+2008-03-24  Darin Adler  <darin@apple.com>
+
         Reviewed by Hyatt.
 
         - add fast path to isValidName that does not use advanced Unicode functions

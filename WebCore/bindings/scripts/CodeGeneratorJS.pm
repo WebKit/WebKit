@@ -269,8 +269,8 @@ sub GenerateHeader
     @headerContent = split("\r", $headerTemplate);
 
     # - Add header protection
-    push(@headerContent, "\n#ifndef $className" . "_H");
-    push(@headerContent, "\n#define $className" . "_H\n\n");
+    push(@headerContent, "\n#ifndef $className" . "_h");
+    push(@headerContent, "\n#define $className" . "_h\n\n");
 
     my $conditionalString;
     if ($conditional) {
@@ -284,6 +284,9 @@ sub GenerateHeader
         push(@headerContent, "#include \"kjs_binding.h\"\n");
         push(@headerContent, "#include <kjs/JSGlobalObject.h>\n");
         push(@headerContent, "#include <kjs/object_object.h>\n");
+    }
+    if ($interfaceName eq "Node") {
+        push(@headerContent, "#include \"EventTargetNode.h\"\n");
     }
 
     # Get correct pass/store types respecting PODType flag
@@ -495,10 +498,12 @@ sub GenerateHeader
             push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, JSSVGPODTypeWrapper<$podType>*, SVGElement* context);\n");
         } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
             push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, $passType, SVGElement* context);\n");
-        } elsif ($interfaceName eq "Node") {
-            push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, PassRefPtr<Node>);\n");
         } else {
             push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, $passType);\n");
+        }
+        if ($interfaceName eq "Node") {
+            # Resolve ambiguity with EventTarget that otherwise exists.
+            push(@headerContent, "inline KJS::JSValue* toJS(KJS::ExecState* exec, EventTargetNode* node) { return toJS(exec, static_cast<Node*>(node)); }\n");
         }
     }
     if (!$hasParent || $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
