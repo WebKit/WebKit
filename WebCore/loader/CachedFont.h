@@ -44,8 +44,10 @@ class SVGFontElement;
 
 class CachedFont : public CachedResource {
 public:
-    CachedFont(DocLoader*, const String& url);
+    CachedFont(const String& url);
     virtual ~CachedFont();
+    
+    virtual void load(DocLoader* docLoader);
 
     virtual void ref(CachedResourceClient*);
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);

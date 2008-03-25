@@ -55,7 +55,7 @@ public:
     ~DocLoader();
 
     CachedImage* requestImage(const String& url);
-    CachedCSSStyleSheet* requestCSSStyleSheet(const String& url, const String& charset, bool isUserStyleSheet = false);
+    CachedCSSStyleSheet* requestCSSStyleSheet(const String& url, const String& charset);
     CachedCSSStyleSheet* requestUserCSSStyleSheet(const String& url, const String& charset);
     CachedScript* requestScript(const String& url, const String& charset);
     CachedFont* requestFont(const String& url);
@@ -99,7 +99,7 @@ public:
     void printPreloadStats();
     
 private:
-    CachedResource* requestResource(CachedResource::Type, const String& url, const String* charset = 0, bool skipCanLoadCheck = false, bool sendResourceLoadCallbacks = true, bool isPreload = false);
+    CachedResource* requestResource(CachedResource::Type, const String& url, const String& charset, bool isPreload = false);
 
     void checkForReload(const KURL&);
     void checkCacheObjectStatus(CachedResource*);

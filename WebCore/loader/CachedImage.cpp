@@ -46,20 +46,15 @@ using std::max;
 
 namespace WebCore {
 
-CachedImage::CachedImage(DocLoader* docLoader, const String& url, bool forCache)
-    : CachedResource(url, ImageResource, forCache)
+CachedImage::CachedImage(const String& url)
+    : CachedResource(url, ImageResource)
 {
     m_image = 0;
     m_status = Unknown;
-    if (!docLoader || docLoader->autoLoadImages())  {
-        m_loading = true;
-        cache()->loader()->load(docLoader, this, true);
-    } else
-        m_loading = false;
 }
 
 CachedImage::CachedImage(Image* image)
-    : CachedResource(String(), ImageResource, false /* not for cache */)
+    : CachedResource(String(), ImageResource)
 {
     m_image = image;
     m_status = Cached;
@@ -69,6 +64,14 @@ CachedImage::CachedImage(Image* image)
 CachedImage::~CachedImage()
 {
     delete m_image;
+}
+    
+void CachedImage::load(DocLoader* docLoader)
+{
+    if (!docLoader || docLoader->autoLoadImages())
+        CachedResource::load(docLoader, true, false, true);
+    else
+        m_loading = false;
 }
 
 void CachedImage::ref(CachedResourceClient* c)

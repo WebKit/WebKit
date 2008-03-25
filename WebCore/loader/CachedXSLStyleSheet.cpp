@@ -40,17 +40,13 @@ namespace WebCore {
 
 #if ENABLE(XSLT)
 
-CachedXSLStyleSheet::CachedXSLStyleSheet(DocLoader* dl, const String &url)
+CachedXSLStyleSheet::CachedXSLStyleSheet(const String &url)
     : CachedResource(url, XSLStyleSheet)
     , m_decoder(new TextResourceDecoder("text/xsl"))
 {
     // It's XML we want.
     // FIXME: This should accept more general xml formats */*+xml, image/svg+xml for example.
     setAccept("text/xml, application/xml, application/xhtml+xml, text/xsl, application/rss+xml, application/atom+xml");
-    
-    // load the file
-    cache()->loader()->load(dl, this, false);
-    m_loading = true;
 }
 
 void CachedXSLStyleSheet::ref(CachedResourceClient *c)

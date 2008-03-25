@@ -38,9 +38,11 @@ class CachedImage : public CachedResource, public ImageObserver {
     friend class Cache;
 
 public:
-    CachedImage(DocLoader*, const String& url, bool forCache);
+    CachedImage(const String& url);
     CachedImage(Image*);
     virtual ~CachedImage();
+    
+    virtual void load(DocLoader* docLoader);
 
     Image* image() const;
 

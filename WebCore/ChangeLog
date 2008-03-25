@@ -1,3 +1,64 @@
+2008-03-25  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Some memory cache cleanups:
+        - Separate CachedResource loading from construction, initiate load using a separate load() method.
+        - Add special case function to Cache for loading user stylesheets. This allows removal
+          of a bunch of parameters from several methods and CachedResource constructors.
+        - Construct CachedResources with m_inCache set to false which is quite a bit more logical as they
+          are not yet in the cache at that point.
+        - Pass encoding around as const String& instead of const String*.
+
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::image):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::updateFromElement):
+        * loader/Cache.cpp:
+        (WebCore::createResource):
+        (WebCore::Cache::requestResource):
+        (WebCore::Cache::requestUserCSSStyleSheet):
+        (WebCore::Cache::remove):
+        * loader/Cache.h:
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::CachedFont):
+        (WebCore::CachedFont::load):
+        (WebCore::CachedFont::ref):
+        * loader/CachedFont.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        (WebCore::CachedImage::load):
+        * loader/CachedImage.h:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::~CachedResource):
+        (WebCore::CachedResource::load):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::load):
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        * loader/CachedScript.h:
+        * loader/CachedXBLDocument.cpp:
+        (WebCore::CachedXBLDocument::CachedXBLDocument):
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::CachedXSLStyleSheet):
+        * loader/CachedXSLStyleSheet.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestImage):
+        (WebCore::DocLoader::requestFont):
+        (WebCore::DocLoader::requestCSSStyleSheet):
+        (WebCore::DocLoader::requestUserCSSStyleSheet):
+        (WebCore::DocLoader::requestScript):
+        (WebCore::DocLoader::requestXSLStyleSheet):
+        (WebCore::DocLoader::requestXBLDocument):
+        (WebCore::DocLoader::requestResource):
+        (WebCore::DocLoader::preload):
+        * loader/DocLoader.h:
+
 2008-03-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

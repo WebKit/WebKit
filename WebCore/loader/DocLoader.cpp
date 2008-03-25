@@ -93,7 +93,7 @@ void DocLoader::checkForReload(const KURL& fullURL)
 
 CachedImage* DocLoader::requestImage(const String& url)
 {
-    CachedImage* resource = static_cast<CachedImage*>(requestResource(CachedResource::ImageResource, url));
+    CachedImage* resource = static_cast<CachedImage*>(requestResource(CachedResource::ImageResource, url, String()));
     if (autoLoadImages() && resource && resource->stillNeedsLoad()) {
         resource->setLoading(true);
         cache()->loader()->load(this, resource, true);
@@ -103,50 +103,39 @@ CachedImage* DocLoader::requestImage(const String& url)
 
 CachedFont* DocLoader::requestFont(const String& url)
 {
-    return static_cast<CachedFont*>(requestResource(CachedResource::FontResource, url));
+    return static_cast<CachedFont*>(requestResource(CachedResource::FontResource, url, String()));
 }
 
-CachedCSSStyleSheet* DocLoader::requestCSSStyleSheet(const String& url, const String& charset, bool isUserStyleSheet)
+CachedCSSStyleSheet* DocLoader::requestCSSStyleSheet(const String& url, const String& charset)
 {
-    // FIXME: Passing true for "skipCanLoadCheck" here in the isUserStyleSheet case  won't have any effect
-    // if this resource is already in the cache. It's theoretically possible that what's in the cache already
-    // is a load that failed because of the canLoad check. Probably not an issue in practice.
-    CachedCSSStyleSheet *sheet = static_cast<CachedCSSStyleSheet*>(requestResource(CachedResource::CSSStyleSheet, url, &charset, isUserStyleSheet, !isUserStyleSheet));
-
-    // A user style sheet can outlive its DocLoader so don't store any pointers to it
-    if (sheet && isUserStyleSheet) {
-        sheet->setDocLoader(0);
-        m_docResources.remove(sheet->url());
-    }
-    
-    return sheet;
+    return static_cast<CachedCSSStyleSheet*>(requestResource(CachedResource::CSSStyleSheet, url, charset));
 }
 
 CachedCSSStyleSheet* DocLoader::requestUserCSSStyleSheet(const String& url, const String& charset)
 {
-    return requestCSSStyleSheet(url, charset, true);
+    return cache()->requestUserCSSStyleSheet(this, url, charset);
 }
 
 CachedScript* DocLoader::requestScript(const String& url, const String& charset)
 {
-    return static_cast<CachedScript*>(requestResource(CachedResource::Script, url, &charset));
+    return static_cast<CachedScript*>(requestResource(CachedResource::Script, url, charset));
 }
 
 #if ENABLE(XSLT)
 CachedXSLStyleSheet* DocLoader::requestXSLStyleSheet(const String& url)
 {
-    return static_cast<CachedXSLStyleSheet*>(requestResource(CachedResource::XSLStyleSheet, url));
+    return static_cast<CachedXSLStyleSheet*>(requestResource(CachedResource::XSLStyleSheet, url, String()));
 }
 #endif
 
 #if ENABLE(XBL)
 CachedXBLDocument* DocLoader::requestXBLDocument(const String& url)
 {
-    return static_cast<CachedXSLStyleSheet*>(requestResource(CachedResource::XBL, url));
+    return static_cast<CachedXSLStyleSheet*>(requestResource(CachedResource::XBL, url, String()));
 }
 #endif
 
-CachedResource* DocLoader::requestResource(CachedResource::Type type, const String& url, const String* charset, bool skipCanLoadCheck, bool sendResourceLoadCallbacks, bool isPreload)
+CachedResource* DocLoader::requestResource(CachedResource::Type type, const String& url, const String& charset, bool isPreload)
 {
     KURL fullURL = m_doc->completeURL(url);
     
@@ -164,7 +153,7 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
 
     checkForReload(fullURL);
 
-    CachedResource* resource = cache()->requestResource(this, type, fullURL, charset, skipCanLoadCheck, sendResourceLoadCallbacks, isPreload);
+    CachedResource* resource = cache()->requestResource(this, type, fullURL, charset, isPreload);
     if (resource) {
         m_docResources.set(resource->url(), resource);
         checkCacheObjectStatus(resource);
@@ -251,8 +240,8 @@ int DocLoader::requestCount()
     
 void DocLoader::preload(CachedResource::Type type, const String& url)
 {
-    String encoding = m_doc->frame()->loader()->encoding();
-    CachedResource* resource = requestResource(type, url, (type == CachedResource::Script || type == CachedResource::CSSStyleSheet) ? &encoding : 0, false, true, true);
+    String encoding = (type == CachedResource::Script || type == CachedResource::CSSStyleSheet) ? m_doc->frame()->loader()->encoding() : String();
+    CachedResource* resource = requestResource(type, url, encoding, true);
     if (!resource || m_preloads.contains(resource))
         return;
     resource->increasePreloadCount();

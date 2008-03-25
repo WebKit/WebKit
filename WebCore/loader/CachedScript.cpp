@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-CachedScript::CachedScript(DocLoader* dl, const String& url, const String& charset)
+CachedScript::CachedScript(const String& url, const String& charset)
     : CachedResource(url, Script)
     , m_encoding(charset)
 {
@@ -45,9 +45,6 @@ CachedScript::CachedScript(DocLoader* dl, const String& url, const String& chars
     // But some websites think their scripts are <some wrong mimetype here>
     // and refuse to serve them if we only accept application/x-javascript.
     setAccept("*/*");
-    // load the file
-    cache()->loader()->load(dl, this, false);
-    m_loading = true;
     if (!m_encoding.isValid())
         m_encoding = Latin1Encoding();
 }

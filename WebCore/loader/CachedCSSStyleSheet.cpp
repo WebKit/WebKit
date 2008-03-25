@@ -36,15 +36,13 @@
 
 namespace WebCore {
 
-CachedCSSStyleSheet::CachedCSSStyleSheet(DocLoader* dl, const String& url, const String& charset, bool skipCanLoadCheck, bool sendResourceLoadCallbacks)
-    : CachedResource(url, CSSStyleSheet, true, sendResourceLoadCallbacks)
+CachedCSSStyleSheet::CachedCSSStyleSheet(const String& url, const String& charset)
+    : CachedResource(url, CSSStyleSheet)
     , m_decoder(new TextResourceDecoder("text/css", charset))
 {
     // Prefer text/css but accept any type (dell.com serves a stylesheet
     // as text/html; see <http://bugs.webkit.org/show_bug.cgi?id=11451>).
     setAccept("text/css,*/*;q=0.1");
-    cache()->loader()->load(dl, this, false, skipCanLoadCheck, sendResourceLoadCallbacks);
-    m_loading = true;
 }
 
 CachedCSSStyleSheet::~CachedCSSStyleSheet()
