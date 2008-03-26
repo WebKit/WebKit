@@ -1,3 +1,15 @@
+2008-03-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Make the Ahem font antialias correctly on Acid3 on Tiger.
+
+        * WebCore.Tiger.exp:
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2008-03-26  Simon Hausmann  <hausmann@webkit.org>
 
         Attempt to fix the Qt build.

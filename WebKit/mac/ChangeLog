@@ -1,5 +1,14 @@
 2008-03-26  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by David Hyatt.
+
+        Make the Ahem font antialias correctly on Acid3 on Tiger.
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+
+2008-03-26  Mark Rowe  <mrowe@apple.com>
+
         Fix the Mac build.
 
         * MigrateHeaders.make: Copy the newly generated header into the right place.

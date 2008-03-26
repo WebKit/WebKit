@@ -138,6 +138,7 @@ extern void (*wkSignalCFReadStreamHasBytes)(CFReadStreamRef stream);
 
 #ifdef BUILDING_ON_TIGER
 extern void (*wkGetFontMetrics)(CGFontRef, int* ascent, int* descent, int* lineGap, unsigned* unitsPerEm);
+extern CFStringRef (*wkCopyFullFontName)(CGFontRef font);
 extern BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 #endif
 

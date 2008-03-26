@@ -92,6 +92,7 @@ void InitWebCoreSystemInterface(void)
     INIT(GetCGFontFromNSFont);
     INIT(GetFontMetrics);
     INIT(GetNSFontATSUFontId);
+    INIT(CopyFullFontName);
     INIT(SupportsMultipartXMixedReplace);
 #endif
 

@@ -91,5 +91,6 @@ id (*wkCreateNSURLConnectionDelegateProxy)(void);
 CGFontRef (*wkGetCGFontFromNSFont)(NSFont*);
 void (*wkGetFontMetrics)(CGFontRef, int* ascent, int* descent, int* lineGap, unsigned* unitsPerEm);
 ATSUFontID (*wkGetNSFontATSUFontId)(NSFont*);
+CFStringRef (*wkCopyFullFontName)(CGFontRef font);
 BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 #endif

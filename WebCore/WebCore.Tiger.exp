@@ -2,3 +2,4 @@ _wkGetCGFontFromNSFont
 _wkGetFontMetrics
 _wkGetNSFontATSUFontId
 _wkSupportsMultipartXMixedReplace
+_wkCopyFullFontName
