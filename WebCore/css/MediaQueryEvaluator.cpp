@@ -165,9 +165,9 @@ static bool parseAspectRatio(CSSValue* value, int& h, int& v)
     if (value->isValueList()){
         CSSValueList* valueList = static_cast<CSSValueList*>(value);
         if (valueList->length() == 3) {
-            CSSValue* i0 = valueList->item(0);
-            CSSValue* i1 = valueList->item(1);
-            CSSValue* i2 = valueList->item(2);
+            CSSValue* i0 = valueList->itemWithoutBoundsCheck(0);
+            CSSValue* i1 = valueList->itemWithoutBoundsCheck(1);
+            CSSValue* i2 = valueList->itemWithoutBoundsCheck(2);
             if (i0->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i0)->primitiveType() == CSSPrimitiveValue::CSS_NUMBER
                 && i1->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i1)->primitiveType() == CSSPrimitiveValue::CSS_STRING
                 && i2->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i2)->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {

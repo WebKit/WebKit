@@ -1,3 +1,16 @@
+2008-03-25  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver.
+
+        Test for <rdar://problem/5811826> CSSValueList::item() does not 
+        range-check index
+
+        * fast/css/resources/bikes.bmp: Added.
+        * fast/css/value-list-out-of-bounds-crash.html: Added.
+        * platform/mac/fast/css/value-list-out-of-bounds-crash-expected.checksum: Added.
+        * platform/mac/fast/css/value-list-out-of-bounds-crash-expected.png: Added.
+        * platform/mac/fast/css/value-list-out-of-bounds-crash-expected.txt: Added.
+
 2008-03-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

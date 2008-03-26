@@ -204,7 +204,7 @@ String CSSMutableStyleDeclaration::getLayeredShorthandValue(const int* propertie
             RefPtr<CSSValue> value;
             if (values[j]) {
                 if (values[j]->isValueList())
-                    value = static_cast<CSSValueList*>(values[j].get())->item(i);
+                    value = static_cast<CSSValueList*>(values[j].get())->itemWithoutBoundsCheck(i);
                 else {
                     value = values[j];
                     

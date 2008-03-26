@@ -153,7 +153,7 @@ DashArray dashArrayFromRenderingStyle(const RenderStyle* style)
         CSSPrimitiveValue* dash = 0;
         unsigned long len = dashes->length();
         for (unsigned long i = 0; i < len; i++) {
-            dash = static_cast<CSSPrimitiveValue*>(dashes->item(i));
+            dash = static_cast<CSSPrimitiveValue*>(dashes->itemWithoutBoundsCheck(i));
             if (!dash)
                 continue;
 

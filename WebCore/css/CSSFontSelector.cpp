@@ -145,7 +145,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 
     for (i = 0; i < srcLength; i++) {
         // An item in the list either specifies a string (local font name) or a URL (remote font to download).
-        CSSFontFaceSrcValue* item = static_cast<CSSFontFaceSrcValue*>(srcList->item(i));
+        CSSFontFaceSrcValue* item = static_cast<CSSFontFaceSrcValue*>(srcList->itemWithoutBoundsCheck(i));
         CSSFontFaceSource* source = 0;
 
 #if ENABLE(SVG_FONTS)
@@ -203,7 +203,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
     // Hash under every single family name.
     int familyLength = familyList->length();
     for (i = 0; i < familyLength; i++) {
-        CSSPrimitiveValue* item = static_cast<CSSPrimitiveValue*>(familyList->item(i));
+        CSSPrimitiveValue* item = static_cast<CSSPrimitiveValue*>(familyList->itemWithoutBoundsCheck(i));
         String familyName;
         if (item->primitiveType() == CSSPrimitiveValue::CSS_STRING)
             familyName = static_cast<FontFamilyValue*>(item)->familyName();
@@ -260,7 +260,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 
             unsigned numRanges = rangeList->length();
             for (unsigned i = 0; i < numRanges; i++) {
-                CSSUnicodeRangeValue* range = static_cast<CSSUnicodeRangeValue*>(rangeList->item(i));
+                CSSUnicodeRangeValue* range = static_cast<CSSUnicodeRangeValue*>(rangeList->itemWithoutBoundsCheck(i));
                 segmentedFontFace->overlayRange(range->from(), range->to(), fontFace);
             }
         } else
