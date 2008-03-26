@@ -2,6 +2,15 @@
 
         Reviewed by darin.
 
+        Forgot to add braces darin asked for during review.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::write):
+
+2008-03-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
         Fix, makes us pass Test 70
         XML documents should be strict about encoding checks
         http://bugs.webkit.org/show_bug.cgi?id=17079

@@ -669,9 +669,10 @@ bool XMLTokenizer::write(const SegmentedString& s, bool /*appendData*/)
     }
 #endif
     
-    if (m_doc->decoder() && m_doc->decoder()->sawError())
+    if (m_doc->decoder() && m_doc->decoder()->sawError()) {
         // If the decoder saw an error, report it as fatal (stops parsing)
         handleError(fatal, "Encoding error", lineNumber(), columnNumber());
+    }
 
     return false;
 }
