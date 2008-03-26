@@ -54,9 +54,12 @@ Object.type = function(obj)
 
 Object.describe = function(obj, abbreviated)
 {
-    switch (Object.type(obj)) {
+    var type1 = Object.type(obj);
+    var type2 = Object.prototype.toString.call(obj).replace(/^\[object (.*)\]$/i, "$1");
+
+    switch (type1) {
     case "object":
-        return Object.prototype.toString.call(obj).replace(/^\[object (.*)\]$/i, "$1");
+        return type2;
     case "array":
         return "[" + obj.toString() + "]";
     case "string":

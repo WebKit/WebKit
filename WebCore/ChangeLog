@@ -1,3 +1,19 @@
+2008-03-26  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 17768: REGRESSION (r30146): Inspector no longer shows elements
+        properties
+
+        <http://bugs.webkit.org/show_bug.cgi?id=17768>
+
+        We were throwing an exception from Object.describe because of some
+        undefined variables.
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/utilities.js:
+        (Object.describe): Reinstate the type1 and type2 variables that were
+        removed in r30146. They're still used when formatting a function.
+
 2008-03-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.
