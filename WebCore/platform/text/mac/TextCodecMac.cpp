@@ -78,7 +78,6 @@ void TextCodecMac::registerCodecs(TextCodecRegistrar registrar)
 
 TextCodecMac::TextCodecMac(TECTextEncodingID encoding)
     : m_encoding(encoding)
-    , m_error(false)
     , m_numBufferedBytes(0)
     , m_converterTEC(0)
 {
@@ -179,16 +178,15 @@ OSStatus TextCodecMac::decode(const unsigned char* inputBuffer, int inputBufferL
     }
 
     // Work around bug 3351093, where sometimes we get kTECBufferBelowMinimumSizeErr instead of kTECOutputBufferFullStatus.
-    if (status == kTECBufferBelowMinimumSizeErr && bytesWritten != 0) {
+    if (status == kTECBufferBelowMinimumSizeErr && bytesWritten != 0)
         status = kTECOutputBufferFullStatus;
-    }
 
     inputLength = bytesRead;
     outputLength = bytesWritten;
     return status;
 }
 
-String TextCodecMac::decode(const char* bytes, size_t length, bool flush)
+String TextCodecMac::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
 {
     // Get a converter for the passed-in encoding.
     if (!m_converterTEC && createTECConverter() != noErr)
@@ -201,7 +199,7 @@ String TextCodecMac::decode(const char* bytes, size_t length, bool flush)
     bool bufferWasFull = false;
     UniChar buffer[ConversionBufferSize];
 
-    while (sourceLength || bufferWasFull) {
+    while ((sourceLength || bufferWasFull) && !sawError) {
         int bytesRead = 0;
         int bytesWritten = 0;
         OSStatus status = decode(sourcePointer, sourceLength, bytesRead, buffer, sizeof(buffer), bytesWritten);
@@ -217,6 +215,10 @@ String TextCodecMac::decode(const char* bytes, size_t length, bool flush)
             case kTextUndefinedElementErr:
                 // FIXME: Put FFFD character into the output string in this case?
                 TECClearConverterContextInfo(m_converterTEC);
+                if (stopOnError) {
+                    sawError = true;
+                    break;
+                }
                 if (sourceLength) {
                     sourcePointer += 1;
                     sourceLength -= 1;
@@ -237,7 +239,7 @@ String TextCodecMac::decode(const char* bytes, size_t length, bool flush)
             }
             default:
                 LOG_ERROR("text decoding failed with error %ld", static_cast<long>(status));
-                m_error = true;
+                sawError = true;
                 return String();
         }
 

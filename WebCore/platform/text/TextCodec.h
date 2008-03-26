@@ -32,10 +32,9 @@
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
 
-namespace WebCore {
+#include "PlatformString.h"
 
-    class CString;
-    class String;
+namespace WebCore {
     class TextEncoding;
 
     // Specifies what will happen when a character is encountered that is
@@ -60,7 +59,13 @@ namespace WebCore {
     public:
         virtual ~TextCodec();
 
-        virtual String decode(const char*, size_t length, bool flush = false) = 0;
+        String decode(const char* str, size_t length, bool flush = false)
+        {
+            bool ignored;
+            return decode(str, length, flush, false, ignored);
+        }
+        
+        virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) = 0;
         virtual CString encode(const UChar*, size_t length, UnencodableHandling) = 0;
 
         // Fills a null-terminated string representation of the given

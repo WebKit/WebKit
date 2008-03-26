@@ -1,3 +1,48 @@
+2008-03-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Fix, makes us pass Test 70
+        XML documents should be strict about encoding checks
+        http://bugs.webkit.org/show_bug.cgi?id=17079
+
+        Test: fast/encoding/invalid-xml.html
+
+        * WebCore.base.exp:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::write):
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::ensureSVGFontData):
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::TextResourceDecoder):
+        (WebCore::TextResourceDecoder::decode):
+        * loader/TextResourceDecoder.h:
+        * platform/text/TextCodec.h:
+        (WebCore::TextCodec::decode):
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::decodeToBuffer):
+        (WebCore::ErrorCallbackSetter::ErrorCallbackSetter):
+        (WebCore::ErrorCallbackSetter::~ErrorCallbackSetter):
+        (WebCore::TextCodecICU::decode):
+        * platform/text/TextCodecICU.h:
+        * platform/text/TextCodecLatin1.cpp:
+        * platform/text/TextCodecLatin1.h:
+        * platform/text/TextCodecUTF16.cpp:
+        * platform/text/TextCodecUTF16.h:
+        * platform/text/TextCodecUserDefined.cpp:
+        * platform/text/TextCodecUserDefined.h:
+        * platform/text/TextDecoder.cpp:
+        (WebCore::TextDecoder::checkForBOM):
+        * platform/text/TextDecoder.h:
+        (WebCore::TextDecoder::decode):
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::decode):
+        * platform/text/TextEncoding.h:
+        (WebCore::TextEncoding::decode):
+        * platform/text/mac/TextCodecMac.cpp:
+        (WebCore::TextCodecMac::decode):
+        * platform/text/mac/TextCodecMac.h:
+
 2008-03-26  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adam.

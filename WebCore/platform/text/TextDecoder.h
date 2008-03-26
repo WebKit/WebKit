@@ -41,15 +41,15 @@ namespace WebCore {
         void reset(const TextEncoding&);
         const TextEncoding& encoding() const { return m_encoding; };
 
-        String decode(const char* data, size_t length, bool flush = false)
+        String decode(const char* data, size_t length, bool flush, bool stopOnError, bool& sawError)
         {
             if (!m_checkedForBOM)
-                return checkForBOM(data, length, flush);
-            return m_codec->decode(data, length, flush);
+                return checkForBOM(data, length, flush, stopOnError, sawError);
+            return m_codec->decode(data, length, flush, stopOnError, sawError);
         }
 
     private:
-        String checkForBOM(const char*, size_t length, bool flush);
+        String checkForBOM(const char*, size_t length, bool flush, bool stopOnError, bool& sawError);
 
         TextEncoding m_encoding;
         OwnPtr<TextCodec> m_codec;

@@ -118,7 +118,7 @@ void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)
     registrar("US-ASCII", newStreamingTextDecoderWindowsLatin1, 0);
 }
 
-String TextCodecLatin1::decode(const char* bytes, size_t length, bool)
+String TextCodecLatin1::decode(const char* bytes, size_t length, bool, bool, bool&)
 {
     StringBuffer characters(length);
 

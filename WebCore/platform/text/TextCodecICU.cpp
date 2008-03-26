@@ -215,7 +215,50 @@ void TextCodecICU::createICUConverter() const
         ucnv_setFallback(m_converterICU, TRUE);
 }
 
-String TextCodecICU::decode(const char* bytes, size_t length, bool flush)
+int TextCodecICU::decodeToBuffer(UChar* target, UChar* targetLimit, const char*& source, const char* sourceLimit, int32_t* offsets, bool flush, UErrorCode& err)
+{
+    UChar* targetStart = target;
+    err = U_ZERO_ERROR;
+    ucnv_toUnicode(m_converterICU, &target, targetLimit, &source, sourceLimit, offsets, flush, &err);
+    return target - targetStart;
+}
+
+class ErrorCallbackSetter {
+public:
+    ErrorCallbackSetter(UConverter* converter, bool stopOnError)
+        : m_converter(converter)
+        , m_shouldStopOnEncodingErrors(stopOnError)
+    {
+        if (m_shouldStopOnEncodingErrors) {
+            UErrorCode err = U_ZERO_ERROR;
+            ucnv_setToUCallBack(m_converter, UCNV_TO_U_CALLBACK_SUBSTITUTE,
+                           UCNV_SUB_STOP_ON_ILLEGAL, &m_savedAction,
+                           &m_savedContext, &err);
+            ASSERT(err == U_ZERO_ERROR);
+        }
+    }
+    ~ErrorCallbackSetter()
+    {
+        if (m_shouldStopOnEncodingErrors) {
+            UErrorCode err = U_ZERO_ERROR;
+            const void* oldContext;
+            UConverterToUCallback oldAction;
+            ucnv_setToUCallBack(m_converter, m_savedAction,
+                   m_savedContext, &oldAction,
+                   &oldContext, &err);
+            ASSERT(oldAction == UCNV_TO_U_CALLBACK_SUBSTITUTE);
+            ASSERT(oldContext == UCNV_SUB_STOP_ON_ILLEGAL);
+            ASSERT(err == U_ZERO_ERROR);
+        }
+    }
+private:
+    UConverter* m_converter;
+    bool m_shouldStopOnEncodingErrors;
+    const void* m_savedContext;
+    UConverterToUCallback m_savedAction;
+};
+
+String TextCodecICU::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
 {
     // Get a converter for the passed-in encoding.
     if (!m_converterICU) {
@@ -226,34 +269,30 @@ String TextCodecICU::decode(const char* bytes, size_t length, bool flush)
             return String();
         }
     }
+    
+    ErrorCallbackSetter callbackSetter(m_converterICU, stopOnError);
 
     Vector<UChar> result;
 
     UChar buffer[ConversionBufferSize];
+    UChar* bufferLimit = buffer + ConversionBufferSize;
     const char* source = reinterpret_cast<const char*>(bytes);
     const char* sourceLimit = source + length;
     int32_t* offsets = NULL;
-    UErrorCode err;
+    UErrorCode err = U_ZERO_ERROR;
 
     do {
-        UChar* target = buffer;
-        const UChar* targetLimit = target + ConversionBufferSize;
-        err = U_ZERO_ERROR;
-        ucnv_toUnicode(m_converterICU, &target, targetLimit, &source, sourceLimit, offsets, flush, &err);
-        int count = target - buffer;
-        appendOmittingBOM(result, buffer, count);
+        int ucharsDecoded = decodeToBuffer(buffer, bufferLimit, source, sourceLimit, offsets, flush, err);
+        appendOmittingBOM(result, buffer, ucharsDecoded);
     } while (err == U_BUFFER_OVERFLOW_ERROR);
 
     if (U_FAILURE(err)) {
         // flush the converter so it can be reused, and not be bothered by this error.
         do {
-            UChar *target = buffer;
-            const UChar *targetLimit = target + ConversionBufferSize;
-            err = U_ZERO_ERROR;
-            ucnv_toUnicode(m_converterICU, &target, targetLimit, &source, sourceLimit, offsets, true, &err);
+            decodeToBuffer(buffer, bufferLimit, source, sourceLimit, offsets, true, err);
         } while (source < sourceLimit);
+        sawError = true;
         LOG_ERROR("ICU conversion error");
-        return String();
     }
 
     String resultString = String::adopt(result);

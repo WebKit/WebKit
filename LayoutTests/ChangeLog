@@ -1,3 +1,19 @@
+2008-03-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Fix, makes us pass Test 70
+        XML documents should be strict about encoding checks
+        http://bugs.webkit.org/show_bug.cgi?id=17079
+
+        * fast/encoding/invalid-xml-expected.txt: Added.
+        * fast/encoding/invalid-xml.html: Copied from LayoutTests/fast/dom/resources/TEMPLATE.html.
+        * fast/encoding/resources/invalid-xml-shift-jis.xml: Added.
+        * fast/encoding/resources/invalid-xml-utf16.xml: Added.
+        * fast/encoding/resources/invalid-xml-utf8.xml: Added.
+        * fast/encoding/resources/invalid-xml-x-mac-thai.xml: Added.
+        * fast/encoding/resources/invalid-xml.js: Added.
+
 2008-03-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

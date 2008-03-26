@@ -52,6 +52,8 @@ public:
 
     String decode(const char* data, size_t length);
     String flush();
+    
+    bool sawError() const { return m_sawError; }
 
 private:
     enum ContentType { PlainText, HTML, XML, CSS }; // PlainText is equivalent to directly using TextDecoder.
@@ -70,6 +72,7 @@ private:
     bool m_checkedForBOM;
     bool m_checkedForCSSCharset;
     bool m_checkedForHeadCharset;
+    bool m_sawError;
 };
 
 }

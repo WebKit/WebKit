@@ -137,6 +137,10 @@ bool CachedFont::ensureSVGFontData()
 
         TextResourceDecoder decoder("application/xml");
         m_externalSVGDocument->write(decoder.decode(m_data->data(), m_data->size()));
+        if (decoder.sawError()) {
+            m_externalSVGDocument.clear();
+            return 0;
+        }
 
         m_externalSVGDocument->finishParsing();
         m_externalSVGDocument->close();

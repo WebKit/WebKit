@@ -43,7 +43,7 @@ namespace WebCore {
         explicit TextCodecMac(TECTextEncodingID);
         virtual ~TextCodecMac();
 
-        virtual String decode(const char*, size_t length, bool flush = false);
+        virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError);
         virtual CString encode(const UChar*, size_t length, UnencodableHandling);
 
     private:
@@ -55,7 +55,6 @@ namespace WebCore {
 
         TECTextEncodingID m_encoding;
         UChar m_backslashAsCurrencySymbol;
-        bool m_error;
         unsigned m_numBufferedBytes;
         unsigned char m_bufferedBytes[16]; // bigger than any single multi-byte character
         mutable TECObjectRef m_converterTEC;

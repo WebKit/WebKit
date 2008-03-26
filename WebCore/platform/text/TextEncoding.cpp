@@ -59,12 +59,12 @@ TextEncoding::TextEncoding(const String& name)
 {
 }
 
-String TextEncoding::decode(const char* data, size_t length) const
+String TextEncoding::decode(const char* data, size_t length, bool stopOnError, bool& sawError) const
 {
     if (!m_name)
         return String();
 
-    return TextDecoder(*this).decode(data, length, true);
+    return TextDecoder(*this).decode(data, length, true, stopOnError, sawError);
 }
 
 CString TextEncoding::encode(const UChar* characters, size_t length, UnencodableHandling handling) const

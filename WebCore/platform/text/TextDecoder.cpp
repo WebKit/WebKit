@@ -47,7 +47,7 @@ void TextDecoder::reset(const TextEncoding& encoding)
     m_numBufferedBytes = 0;
 }
 
-String TextDecoder::checkForBOM(const char* data, size_t length, bool flush)
+String TextDecoder::checkForBOM(const char* data, size_t length, bool flush, bool stopOnError, bool& sawError)
 {
     // Check to see if we found a BOM.
     size_t numBufferedBytes = m_numBufferedBytes;
@@ -96,11 +96,14 @@ String TextDecoder::checkForBOM(const char* data, size_t length, bool flush)
         char bufferedBytes[sizeof(m_bufferedBytes)];
         memcpy(bufferedBytes, m_bufferedBytes, numBufferedBytes);
         m_numBufferedBytes = 0;
-        return m_codec->decode(bufferedBytes, numBufferedBytes, false)
-            + m_codec->decode(data, length, flush);
+
+        String bufferedResult = m_codec->decode(bufferedBytes, numBufferedBytes, false, stopOnError, sawError);
+        if (stopOnError && sawError)
+            return bufferedResult;
+        return bufferedResult + m_codec->decode(data, length, flush, stopOnError, sawError);
     }
 
-    return m_codec->decode(data, length, flush);
+    return m_codec->decode(data, length, flush, stopOnError, sawError);
 }
 
 } // namespace WebCore
