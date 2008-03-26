@@ -37,8 +37,8 @@ namespace WebCore {
         NodeIterator(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
         virtual ~NodeIterator();
 
-        Node* nextNode(ExceptionCode&, KJS::JSValue*& exception);
-        Node* previousNode(ExceptionCode&, KJS::JSValue*& exception);
+        PassRefPtr<Node> nextNode(ExceptionCode&, KJS::JSValue*& exception);
+        PassRefPtr<Node> previousNode(ExceptionCode&, KJS::JSValue*& exception);
         void detach();
 
         Node* referenceNode() const { return m_referenceNode.node.get(); }
@@ -48,8 +48,8 @@ namespace WebCore {
         void nodeWillBeRemoved(Node*);
 
         // For non-JS bindings. Silently ignores the JavaScript exception if any.
-        Node* nextNode(ExceptionCode& ec) { KJS::JSValue* exception; return nextNode(ec, exception); }
-        Node* previousNode(ExceptionCode& ec) { KJS::JSValue* exception; return previousNode(ec, exception); }
+        PassRefPtr<Node> nextNode(ExceptionCode& ec) { KJS::JSValue* exception; return nextNode(ec, exception); }
+        PassRefPtr<Node> previousNode(ExceptionCode& ec) { KJS::JSValue* exception; return previousNode(ec, exception); }
 
     private:
         struct NodePointer {

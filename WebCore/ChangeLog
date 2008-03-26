@@ -1,3 +1,25 @@
+2008-03-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17252
+          Acid3 test removing Nodes during NodeIterator walk fails (affects Acid3 test 2)
+
+        Test: traversal/acid3-test-2.html
+
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        (WebCore::JSNodeIterator::nextNode): Update since result is PassRefPtr.
+        (WebCore::JSNodeIterator::previousNode): Ditto.
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::nextNode): Changed result to PassRefPtr. Added code to
+        track both the current candidate (which needs to move along to the next node
+        if current node is deleted) and the current provisional result (passed to acceptNode,
+        and needs to be returned even if it's deleted).
+        (WebCore::NodeIterator::previousNode): Ditto.
+        (WebCore::NodeIterator::nodeWillBeRemoved): Call updateForNodeRemoval for
+        m_candidateNode as well as m_referenceNode.
+        * dom/NodeIterator.h: Use PassRefPtr for return values.
+
 2008-03-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

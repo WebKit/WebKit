@@ -41,7 +41,7 @@ JSValue* JSNodeIterator::nextNode(ExecState* exec, const List& args)
 {
     ExceptionCode ec = 0;
     JSValue* exception = 0;
-    Node* node = impl()->nextNode(ec, exception);
+    RefPtr<Node> node = impl()->nextNode(ec, exception);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -50,14 +50,14 @@ JSValue* JSNodeIterator::nextNode(ExecState* exec, const List& args)
         exec->setException(exception);
         return jsUndefined();
     }
-    return toJS(exec, node);
+    return toJS(exec, node.get());
 }
 
 JSValue* JSNodeIterator::previousNode(ExecState* exec, const List& args)
 {
     ExceptionCode ec = 0;
     JSValue* exception = 0;
-    Node* node = impl()->previousNode(ec, exception);
+    RefPtr<Node> node = impl()->previousNode(ec, exception);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -66,7 +66,7 @@ JSValue* JSNodeIterator::previousNode(ExecState* exec, const List& args)
         exec->setException(exception);
         return jsUndefined();
     }
-    return toJS(exec, node);
+    return toJS(exec, node.get());
 }
 
 }

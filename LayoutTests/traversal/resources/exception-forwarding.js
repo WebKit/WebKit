@@ -27,6 +27,4 @@ shouldBe("w.nextSibling()", "document.body"); // 10
 shouldBe("w.previousSibling()", "document.body.previousSibling"); // 11
 shouldBe("iteration", "11");
 
-var succesfullyParsed = true;
-
 var successfullyParsed = true;

@@ -1,3 +1,15 @@
+2008-03-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=17252
+          Acid3 test removing Nodes during NodeIterator walk fails (affects Acid3 test 2)
+
+        * traversal/acid3-test-2-expected.txt: Added.
+        * traversal/acid3-test-2.html: Added.
+        * traversal/resources/acid3-test-2.js: Added.
+        * traversal/resources/exception-forwarding.js: Removed bogus extra line of code.
+
 2008-03-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.
