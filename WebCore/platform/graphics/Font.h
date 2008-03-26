@@ -170,6 +170,7 @@ public:
 
     int width(const TextRun&) const;
     float floatWidth(const TextRun&) const;
+    float floatWidth(const TextRun& run, int extraCharsAvailable, int& charsConsumed) const;
 
     int offsetForPosition(const TextRun&, int position, bool includePartialGlyphs) const;
     FloatRect selectionRectForText(const TextRun&, const IntPoint&, int h, int from = 0, int to = -1) const;
@@ -234,6 +235,7 @@ private:
 #if ENABLE(SVG_FONTS)
     void drawTextUsingSVGFont(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     float floatWidthUsingSVGFont(const TextRun&) const;
+    float floatWidthUsingSVGFont(const TextRun&, int extraCharsAvailable, int& charsConsumed) const;
     FloatRect selectionRectForTextUsingSVGFont(const TextRun&, const IntPoint&, int h, int from, int to) const;
     int offsetForPositionForTextUsingSVGFont(const TextRun&, int position, bool includePartialGlyphs) const;
 #endif

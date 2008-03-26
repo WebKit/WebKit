@@ -1,3 +1,22 @@
+2008-03-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Maciej.
+
+        - test case and new results for "SVGTextElement.getStartPositionOfChar does not correctly account for multichar glyphs"
+        http://bugs.webkit.org/show_bug.cgi?id=18046
+
+        * svg/text/multichar-glyph.svg: Added. New test case for both rendering and getStartPositionOfChar
+        access of multichar glyphs.
+        * platform/mac/svg/text/multichar-glyph-expected.txt: Added.
+
+        The following test results changed, all appear to be improvements.
+        
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-06-t-expected.txt:
+        * platform/mac/svg/text/text-altglyph-01-b-expected.txt:
+        * platform/mac/svg/text/text-text-06-t-expected.txt:
+
 2008-03-25  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver.

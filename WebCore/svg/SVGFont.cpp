@@ -249,13 +249,16 @@ struct SVGTextRunWalker {
         SVGGlyphIdentifier identifier;
         bool foundGlyph = false;
         int characterLookupRange;
+        int endOfScanRange = to + m_walkerData.extraCharsAvailable;
 
         for (int i = from; i < to; ++i) {
             // If characterLookupRange is > 0, then the font defined ligatures (length of unicode property value > 1).
             // We have to check wheter the current character & the next character define a ligature. This needs to be
             // extended to the n-th next character (where n is 'characterLookupRange'), to check for any possible ligature.
-            characterLookupRange = maximumHashKeyLength + i >= to ? to - i : maximumHashKeyLength;
+            characterLookupRange = maximumHashKeyLength + i >= endOfScanRange ? endOfScanRange - i : maximumHashKeyLength;
 
+            // FIXME: instead of checking from longest string to shortest, this should really scan in order
+            // of the glyphs and pick the first match
             while (characterLookupRange > 0 && !foundGlyph) {
                 String lookupString(run.data(run.rtl() ? run.length() - (i + characterLookupRange) : i), characterLookupRange);
 
@@ -272,6 +275,7 @@ struct SVGTextRunWalker {
                     if (identifier.isValid && isCompatibleGlyph(identifier, isVerticalText, language, chars, startPosition, endPosition)) {
                         ASSERT(characterLookupRange > 0);
                         i += characterLookupRange - 1;
+                        m_walkerData.charsConsumed += characterLookupRange;
 
                         foundGlyph = true;
                         SVGGlyphElement::inheritUnspecifiedAttributes(identifier, m_fontData);
@@ -283,6 +287,7 @@ struct SVGTextRunWalker {
             }
 
             if (!foundGlyph) {
+                ++m_walkerData.charsConsumed;
                 if (SVGMissingGlyphElement* element = m_fontElement->firstMissingGlyphElement()) {
                     // <missing-glyph> element support
                     identifier = SVGGlyphElement::buildGenericGlyphIdentifier(element);
@@ -317,6 +322,8 @@ struct SVGTextRunWalkerMeasuredLengthData {
     int at;
     int from;
     int to;
+    int extraCharsAvailable;
+    int charsConsumed;
 
     float scale;
     float length;
@@ -343,7 +350,7 @@ void floatWidthMissingGlyphCallback(const TextRun& run, SVGTextRunWalkerMeasured
     data.length += font.floatWidth(run);
 }
 
-static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& run, int from, int to)
+static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& run, int extraCharsAvailable, int from, int to, int& charsConsumed)
 {
     int newFrom = to > from ? from : to;
     int newTo = to > from ? to : from;
@@ -364,6 +371,8 @@ static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& 
         data.at = from;
         data.from = from;
         data.to = to;
+        data.extraCharsAvailable = extraCharsAvailable;
+        data.charsConsumed = 0;
         data.scale = convertEmUnitToPixel(font->size(), fontFaceElement->unitsPerEm(), 1.0f);
         data.length = 0.0f;
 
@@ -380,6 +389,7 @@ static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& 
 
         SVGTextRunWalker<SVGTextRunWalkerMeasuredLengthData> runWalker(fontData, fontElement, data, floatWidthUsingSVGFontCallback, floatWidthMissingGlyphCallback);
         runWalker.walk(run, isVerticalText, language, 0, run.length());
+        charsConsumed = data.charsConsumed;
         return data.length;
     }
 
@@ -388,13 +398,21 @@ static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& 
 
 float Font::floatWidthUsingSVGFont(const TextRun& run) const
 {
-    return floatWidthOfSubStringUsingSVGFont(this, run, 0, run.length());
+    int charsConsumed;
+    return floatWidthOfSubStringUsingSVGFont(this, run, 0, 0, run.length(), charsConsumed);
+}
+
+float Font::floatWidthUsingSVGFont(const TextRun& run, int extraCharsAvailable, int& charsConsumed) const
+{
+    return floatWidthOfSubStringUsingSVGFont(this, run, extraCharsAvailable, 0, run.length(), charsConsumed);
 }
 
 // Callback & data structures to draw text using SVG Fonts
 struct SVGTextRunWalkerDrawTextData {
     float scale;
     bool isVerticalText;
+    int extraCharsAvailable;
+    int charsConsumed;
 
     float xStartOffset;
     FloatPoint currentPoint;
@@ -493,8 +511,9 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
 
         ASSERT(data.activePaintServer);
 
+        int charsConsumed;
         data.isVerticalText = false;
-        data.xStartOffset = floatWidthOfSubStringUsingSVGFont(this, run, run.rtl() ? to : 0, run.rtl() ? run.length() : from);
+        data.xStartOffset = floatWidthOfSubStringUsingSVGFont(this, run, 0, run.rtl() ? to : 0, run.rtl() ? run.length() : from, charsConsumed);
         data.glyphOrigin = FloatPoint();
         data.context = context;
 
@@ -513,6 +532,8 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
             data.glyphOrigin.setY(fontData->horizontalOriginY() * data.scale);
         }
 
+        data.extraCharsAvailable = 0;
+
         SVGTextRunWalker<SVGTextRunWalkerDrawTextData> runWalker(fontData, fontElement, data, drawTextUsingSVGFontCallback, drawTextMissingGlyphCallback);
         runWalker.walk(run, data.isVerticalText, language, from, to);
     }
@@ -520,8 +541,9 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
 
 FloatRect Font::selectionRectForTextUsingSVGFont(const TextRun& run, const IntPoint& point, int height, int from, int to) const
 {
-    return FloatRect(point.x() + floatWidthOfSubStringUsingSVGFont(this, run, run.rtl() ? to : 0, run.rtl() ? run.length() : from),
-                     point.y(), floatWidthOfSubStringUsingSVGFont(this, run, from, to), height);
+    int charsConsumed;
+    return FloatRect(point.x() + floatWidthOfSubStringUsingSVGFont(this, run, 0, run.rtl() ? to : 0, run.rtl() ? run.length() : from, charsConsumed),
+                     point.y(), floatWidthOfSubStringUsingSVGFont(this, run, 0, from, to, charsConsumed), height);
 }
 
 int Font::offsetForPositionForTextUsingSVGFont(const TextRun&, int position, bool includePartialGlyphs) const

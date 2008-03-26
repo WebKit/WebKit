@@ -1,3 +1,39 @@
+2008-03-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed "SVGTextElement.getStartPositionOfChar does not correctly account for multichar glyphs"
+        http://bugs.webkit.org/show_bug.cgi?id=18046
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::floatWidth): Allow expressing a run that has extra "context" characters beyond the end,
+        and reporting of how many characters were actually consumed, to support multichar glyphs in SVG fonts.
+        * platform/graphics/Font.h:
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::calculateGlyphWidth): Pass along extra chars in argument and chars consumed out
+        argument.
+        (WebCore::SVGInlineTextBox::calculateGlyphHeight): Pass along extra chars in argument.
+        (WebCore::SVGInlineTextBox::calculateGlyphBoundaries): Add boilerplate; may not handle multichar glyphs
+        right but I don't know what effects this would have.
+        * rendering/SVGInlineTextBox.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::cummulatedWidthOrHeightOfTextChunk): Add boilerplate; may not handle multichar glyphs right
+        but again I am not sure what effect this would have.
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox): Account for multichar glyphs - let glyph
+        selection consider extra chars, and account for the fact that a glyph may have consumed multiple chars.
+        * rendering/SVGRootInlineBox.h:
+        * svg/SVGFont.cpp:
+        (WebCore::SVGTextRunWalker::walk): This is the place where glyph selection happens, so this is where
+        we accout for multichar glyphs (both looking at extra chars past the end of the run, and reporting how
+        many chars were consumed).
+        (WebCore::floatWidthOfSubStringUsingSVGFont): Pass aforementioned info through the layers.
+        (WebCore::Font::floatWidthUsingSVGFont): ditto
+        (WebCore::Font::drawTextUsingSVGFont): ditto
+        (WebCore::Font::selectionRectForTextUsingSVGFont): ditto
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::cummulatedCharacterRangeLength): ditto
+        (WebCore::SVGInlineTextBoxQueryWalker::chunkPortionCallback): ditto
+
 2008-03-25  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver.
