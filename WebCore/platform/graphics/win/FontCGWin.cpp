@@ -266,7 +266,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
 
     CGContextRef cgContext = graphicsContext->platformContext();
 
-    uint32_t oldFontSmoothingStyle = wkSetFontSmoothingStyle(cgContext);
+    uint32_t oldFontSmoothingStyle = wkSetFontSmoothingStyle(cgContext, font->m_allowFontSmoothing);
 
     const FontPlatformData& platformData = font->platformData();
 

@@ -608,7 +608,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     CGContextRef cgContext = context->platformContext();
 
     bool originalShouldUseFontSmoothing = wkCGContextGetShouldSmoothFonts(cgContext);
-    bool newShouldUseFontSmoothing = WebCoreShouldUseFontSmoothing();
+    bool newShouldUseFontSmoothing = WebCoreShouldUseFontSmoothing() && font->m_allowFontSmoothing;
     
     if (originalShouldUseFontSmoothing != newShouldUseFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, newShouldUseFontSmoothing);
