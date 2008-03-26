@@ -1,3 +1,10 @@
+2008-03-26  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build.
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::floatWidth):
+
 2008-03-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
