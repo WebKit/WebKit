@@ -1,3 +1,25 @@
+2008-03-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - tests for http://bugs.webkit.org/show_bug.cgi?id=17994
+          REGRESSION (523-525+) View not updated when changing CSS size via JavaScript
+        - and http://bugs.webkit.org/show_bug.cgi?id=18063
+          REGRESSION (r31250): Small bug that just cropped up in WebKit r31275
+
+        * fast/repaint/subtree-root-clip-2.html: Added.
+        * fast/repaint/subtree-root-clip-3.html: Added.
+        * fast/repaint/subtree-root-clip.html: Added.
+        * platform/mac/fast/repaint/subtree-root-clip-2-expected.checksum: Added.
+        * platform/mac/fast/repaint/subtree-root-clip-2-expected.png: Added.
+        * platform/mac/fast/repaint/subtree-root-clip-2-expected.txt: Added.
+        * platform/mac/fast/repaint/subtree-root-clip-3-expected.checksum: Added.
+        * platform/mac/fast/repaint/subtree-root-clip-3-expected.png: Added.
+        * platform/mac/fast/repaint/subtree-root-clip-3-expected.txt: Added.
+        * platform/mac/fast/repaint/subtree-root-clip-expected.checksum: Added.
+        * platform/mac/fast/repaint/subtree-root-clip-expected.png: Added.
+        * platform/mac/fast/repaint/subtree-root-clip-expected.txt: Added.
+
 2008-03-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

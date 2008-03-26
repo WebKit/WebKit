@@ -199,6 +199,7 @@ void RenderTableCell::computeAbsoluteRepaintRect(IntRect& r, bool fixed)
 bool RenderTableCell::absolutePosition(int& xPos, int& yPos, bool fixed) const
 {
     bool result = RenderBlock::absolutePosition(xPos, yPos, fixed);
+    yPos += m_topExtra;
     RenderView* v = view();
     if (!v || !v->layoutState()) {
         xPos -= parent()->xPos(); // Rows are in the same coordinate space, so don't add their offset in.

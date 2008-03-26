@@ -1,3 +1,29 @@
+2008-03-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=17994
+          REGRESSION (523-525+) View not updated when changing CSS size via JavaScript
+        - fix http://bugs.webkit.org/show_bug.cgi?id=18063
+          REGRESSION (r31250): Small bug that just cropped up in WebKit r31275
+
+        Tests: fast/repaint/subtree-root-clip.html
+               fast/repaint/subtree-root-clip-2.html
+               fast/repaint/subtree-root-clip-3.html
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState): Changed to not set an initial clip.
+        Since the root is clipping, there is no need to set a clip, and setting
+        the clip based on the container was wrong because often the root was
+        not included in the container's overflow rect because it had its own
+        layer.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absolutePosition): Removed code that added table
+        cell's extra top offset only in the slow (recursive) code path.
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::absolutePosition): Added code to add the
+        extra top offset in both code paths.
+
 2008-03-26  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build.
