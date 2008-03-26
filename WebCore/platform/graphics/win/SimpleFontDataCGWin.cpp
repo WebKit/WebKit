@@ -34,7 +34,9 @@
 #include "FontCache.h"
 #include "FloatRect.h"
 #include "FontDescription.h"
+#include "PlatformString.h"
 #include <wtf/MathExtras.h>
+#include <wtf/RetainPtr.h>
 #include <unicode/uchar.h>
 #include <unicode/unorm.h>
 #include <ApplicationServices/ApplicationServices.h>
