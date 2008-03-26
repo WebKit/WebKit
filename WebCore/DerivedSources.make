@@ -77,6 +77,7 @@ DOM_CLASSES = \
     DocumentFragment \
     DocumentType \
     Element \
+    ElementTimeControl \
     Entity \
     EntityReference \
     Event \

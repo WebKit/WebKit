@@ -1302,7 +1302,8 @@ contains(DEFINES, ENABLE_SVG=1) {
 
     XLINK_NAMES = $$PWD/svg/xlinkattrs.in
 
-    IDL_BINDINGS += svg/SVGZoomEvent.idl \
+    IDL_BINDINGS += svg/ElementTimeControl.idl \
+        svg/SVGZoomEvent.idl \
         svg/SVGAElement.idl \
         svg/SVGAltGlyphElement.idl \
         svg/SVGAngle.idl \

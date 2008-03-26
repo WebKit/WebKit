@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,18 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+#ifndef ElementTimeControl_h
+#define ElementTimeControl_h
 
-    interface [Conditional=SVG] SVGAnimationElement : SVGElement,
-                                                      SVGTests,
-                                                      SVGExternalResourcesRequired,
-                                                      ElementTimeControl {
-        readonly attribute SVGElement targetElement;
+#if ENABLE(SVG)
 
-        float getStartTime();
-        float getCurrentTime();
-        float getSimpleDuration()
-            raises(DOMException);
+#include "ExceptionCode.h"
+
+namespace WebCore {
+
+    class ElementTimeControl {
+    public:
+        virtual ~ElementTimeControl() {}
+        virtual bool beginElement(ExceptionCode&) = 0;
+        virtual bool beginElementAt(float offset, ExceptionCode&) = 0;
+        virtual bool endElement(ExceptionCode&) = 0;
+        virtual bool endElementAt(float offset, ExceptionCode&) = 0;
     };
-
+        
 }
+
+#endif
+
+#endif

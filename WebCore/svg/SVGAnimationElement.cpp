@@ -739,6 +739,26 @@ bool SVGAnimationElement::updateAnimatedValueForElapsedSeconds(double elapsedSec
     
     return true; // value was updated, need to apply
 }
+    
+bool SVGAnimationElement::beginElement(ExceptionCode& ec)
+{
+    return false;
+}
+
+bool SVGAnimationElement::beginElementAt(float offset, ExceptionCode& ec)
+{
+    return false;
+}
+
+bool SVGAnimationElement::endElement(ExceptionCode& ec)
+{
+    return false;
+}
+
+bool SVGAnimationElement::endElementAt(float offset, ExceptionCode& ec)
+{
+    return false;
+}
 
 }
 

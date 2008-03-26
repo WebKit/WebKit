@@ -1,3 +1,26 @@
+2008-03-26  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adam.
+
+        Add ElementTimeControl interface to SVGAnimationElement.
+        Passes Acid3 test 75.
+
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * svg/ElementTimeControl.h: Added.
+        (WebCore::ElementTimeControl::~ElementTimeControl):
+        * svg/ElementTimeControl.idl: Added.
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::beginElement):
+        (WebCore::SVGAnimationElement::beginElementAt):
+        (WebCore::SVGAnimationElement::endElement):
+        (WebCore::SVGAnimationElement::endElementAt):
+        * svg/SVGAnimationElement.h:
+        * svg/SVGAnimationElement.idl:
+
 2008-03-26  Kevin McCullough  <kmccullough@apple.com>
 
         - LayoutTest fix.  Null check.

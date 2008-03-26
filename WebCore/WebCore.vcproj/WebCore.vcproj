@@ -10411,6 +10411,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\ElementTimeControl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGAElement.cpp"
 				>
 			</File>

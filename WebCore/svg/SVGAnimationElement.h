@@ -25,6 +25,7 @@
 #define SVGAnimationElement_h
 #if ENABLE(SVG)
 
+#include "ElementTimeControl.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGStringList.h"
 #include "SVGTests.h"
@@ -77,7 +78,8 @@ namespace WebCore {
 
     class SVGAnimationElement : public SVGElement,
                                 public SVGTests,
-                                public SVGExternalResourcesRequired
+                                public SVGExternalResourcesRequired,
+                                public ElementTimeControl
     {
     public:
         SVGAnimationElement(const QualifiedName&, Document*);
@@ -114,6 +116,13 @@ namespace WebCore {
 
         double repeations() const;
         static bool isIndefinite(double value);
+        
+        // ElementTimeControl
+        virtual bool beginElement(ExceptionCode&);
+        virtual bool beginElementAt(float offset, ExceptionCode&);
+        virtual bool endElement(ExceptionCode&);
+        virtual bool endElementAt(float offset, ExceptionCode&);
+        
 
     protected:
         mutable SVGElement* m_targetElement;
