@@ -99,4 +99,17 @@ bool operator==(const CString& a, const CString& b)
     return !strncmp(a.data(), b.data(), min(a.length(), b.length()));
 }
 
+PassRefPtr<SharedBuffer> CString::releaseBuffer()
+{
+    if (!m_buffer)
+        return 0;
+
+    copyBufferIfNeeded();
+        
+    RefPtr<SharedBuffer> result = m_buffer->releaseBuffer();
+    m_buffer = 0;
+    return result.release();
+}
+
+
 }

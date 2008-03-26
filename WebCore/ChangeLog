@@ -1,5 +1,21 @@
 2008-03-25  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Anders
+
+        Add the ability to transform a CString into a SharedBuffer to avoid copying data
+        This is valuable to avoid copying a block of data for an upcoming patch
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::adoptVector):
+        * platform/SharedBuffer.h:
+
+        * platform/text/CString.cpp:
+        (WebCore::CString::releaseBuffer):
+        * platform/text/CString.h:
+        (WebCore::CStringBuffer::releaseBuffer):
+
+2008-03-25  Brady Eidson  <beidson@apple.com>
+
         Attempt to fix .bkl build systems after recent archive additions
 
         * webcore-base.bkl:

@@ -52,6 +52,8 @@ public:
     static PassRefPtr<SharedBuffer> create(const unsigned char* c, int i) { return adoptRef(new SharedBuffer(c, i)); }
 
     static PassRefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
+
+    static PassRefPtr<SharedBuffer> adoptVector(Vector<char>& vector);
     
 #if PLATFORM(MAC)
     NSData *createNSData();
