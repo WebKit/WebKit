@@ -1,3 +1,9 @@
+2008-03-26  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Mac build.
+
+        * WebCore.xcodeproj/project.pbxproj:  Copy the newly generated header into the right place.
+
 2008-03-26  Adam Roben  <aroben@apple.com>
 
         Fix Bug 17768: REGRESSION (r30146): Inspector no longer shows elements

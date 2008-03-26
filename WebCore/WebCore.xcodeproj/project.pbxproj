@@ -515,6 +515,7 @@
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */; };
 		5DCF836D0D59159800953BC6 /* PluginInfoStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DCF836C0D59159800953BC6 /* PluginInfoStore.h */; };
+		5DD0A3810D9AC6070056C122 /* DOMElementTimeControl.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = E415F1680D9A165D0033CE97 /* DOMElementTimeControl.h */; };
 		5DFE8F560D16477B0076E937 /* ScheduledAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA378BA0D15F64200B793D6 /* ScheduledAction.cpp */; };
 		5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA378BB0D15F64200B793D6 /* ScheduledAction.h */; };
 		650F53DC09D15DDA00C9B0C8 /* CSSGrammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */; };
@@ -3917,6 +3918,7 @@
 			dstPath = Versions/A/PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
+				5DD0A3810D9AC6070056C122 /* DOMElementTimeControl.h in Copy Generated Headers */,
 				85E711940AC5D5350053270F /* DOMDocumentFragmentInternal.h in Copy Generated Headers */,
 				BCC5734D0D695C06006EF517 /* DOMProgressEvent.h in Copy Generated Headers */,
 				BCC5734E0D695C06006EF517 /* DOMProgressEventInternal.h in Copy Generated Headers */,
@@ -12745,6 +12747,7 @@
 				B2C3DA1F0D006C1D00EF6F26 /* AtomicString.h in Headers */,
 				B2C3DA200D006C1D00EF6F26 /* AtomicStringImpl.h in Headers */,
 				A8C4A80D09D563270003AC8D /* Attr.h in Headers */,
+				E415F1690D9A165D0033CE97 /* DOMElementTimeControl.h in Headers */,
 				A8C4A80B09D563270003AC8D /* Attribute.h in Headers */,
 				514C764C0CE9234E007EF3CD /* AuthenticationMac.h in Headers */,
 				A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */,
@@ -14651,7 +14654,6 @@
 				65653F2E0D9727D200CA9723 /* SVGAltGlyphElement.h in Headers */,
 				65AA6BAF0D974A00000541AE /* DOMSVGAltGlyphElement.h in Headers */,
 				65AA6BB10D974A00000541AE /* DOMSVGAltGlyphElementInternal.h in Headers */,
-				E415F1690D9A165D0033CE97 /* DOMElementTimeControl.h in Headers */,
 				E415F1840D9A1A830033CE97 /* ElementTimeControl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

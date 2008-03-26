@@ -68,6 +68,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMElementPrivate.h \
+    $(PRIVATE_HEADERS_DIR)/DOMElementTimeControl.h \
     $(PUBLIC_HEADERS_DIR)/DOMEntity.h \
     $(PUBLIC_HEADERS_DIR)/DOMEntityReference.h \
     $(PUBLIC_HEADERS_DIR)/DOMEvent.h \
