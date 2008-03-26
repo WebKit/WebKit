@@ -36,7 +36,7 @@ using namespace SVGNames;
 
 SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
-    , m_maximumHashKeyLength(0)
+    , m_isGlyphCacheValid(false)
 {
 }
 
@@ -46,78 +46,16 @@ SVGFontElement::~SVGFontElement()
 
 void SVGFontElement::addGlyphToCache(SVGGlyphElement* glyphElement)
 {
-    ASSERT(glyphElement);
-
-    String glyphString = glyphElement->getAttribute(unicodeAttr);
-    if (glyphString.isEmpty()) // No unicode property, means that glyph will be used in <altGlyph> situations!
-        return;
-
-    SVGGlyphIdentifier identifier = glyphElement->buildGlyphIdentifier();
-    identifier.isValid = true;
-
-    if (glyphString.length() > m_maximumHashKeyLength)
-        m_maximumHashKeyLength = glyphString.length();
-
-    GlyphHashMap::iterator glyphsIt = m_glyphMap.find(glyphString);
-    if (glyphsIt == m_glyphMap.end()) {
-        Vector<SVGGlyphIdentifier> glyphs;
-        glyphs.append(identifier);
-
-        m_glyphMap.add(glyphString, glyphs);
-    } else {
-        Vector<SVGGlyphIdentifier>& glyphs = (*glyphsIt).second;
-        glyphs.append(identifier);
-    }
+    if (m_isGlyphCacheValid)
+        m_glyphMap.clear();
+    m_isGlyphCacheValid = false;
 }
 
 void SVGFontElement::removeGlyphFromCache(SVGGlyphElement* glyphElement)
 {
-    ASSERT(glyphElement);
-
-    String glyphString = glyphElement->getAttribute(unicodeAttr);
-    if (glyphString.isEmpty()) // No unicode property, means that glyph will be used in <altGlyph> situations!
-        return;
-
-    GlyphHashMap::iterator glyphsIt = m_glyphMap.find(glyphString);
-    ASSERT(glyphsIt != m_glyphMap.end());
-
-    Vector<SVGGlyphIdentifier>& glyphs = (*glyphsIt).second;
-
-    if (glyphs.size() == 1)
-        m_glyphMap.remove(glyphString);
-    else {
-        SVGGlyphIdentifier identifier = glyphElement->buildGlyphIdentifier();
-        identifier.isValid = true;
-
-        Vector<SVGGlyphIdentifier>::iterator it = glyphs.begin();
-        Vector<SVGGlyphIdentifier>::iterator end = glyphs.end();
-
-        unsigned int position = 0;
-        for (; it != end; ++it) {
-            if ((*it) == identifier)
-                break;
-
-            position++;
-        }
-
-        ASSERT(position < glyphs.size());
-        glyphs.remove(position);
-    }
-
-    // If we remove a glyph from cache, whose unicode property length is equal to
-    // m_maximumHashKeyLength then we need to recalculate the hash key length, because there
-    // is either no more glyph with that length, or there are still more glyphs with the maximum length.
-    if (glyphString.length() == m_maximumHashKeyLength) {
-        m_maximumHashKeyLength = 0;
-
-        GlyphHashMap::iterator it = m_glyphMap.begin();
-        GlyphHashMap::iterator end = m_glyphMap.end();
-
-        for (; it != end; ++it) {
-            if ((*it).first.length() > m_maximumHashKeyLength)
-                m_maximumHashKeyLength = (*it).first.length();
-        }
-    }
+    if (m_isGlyphCacheValid)
+        m_glyphMap.clear();
+    m_isGlyphCacheValid = false;
 }
 
 SVGMissingGlyphElement* SVGFontElement::firstMissingGlyphElement() const
@@ -130,15 +68,27 @@ SVGMissingGlyphElement* SVGFontElement::firstMissingGlyphElement() const
     return 0;
 }
 
-const Vector<SVGGlyphIdentifier>& SVGFontElement::glyphIdentifiersForString(const String& string) const
+void SVGFontElement::ensureGlyphCache() const
 {
-    GlyphHashMap::const_iterator it = m_glyphMap.find(string);
-    if (it == m_glyphMap.end()) {
-        static Vector<SVGGlyphIdentifier> s_emptyGlyphList;
-        return s_emptyGlyphList;
-    }
+    if (m_isGlyphCacheValid)
+        return;
 
-    return (*it).second;
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->hasTagName(glyphTag)) {
+            SVGGlyphElement* glyph = static_cast<SVGGlyphElement*>(child);
+            String unicode = glyph->getAttribute(unicodeAttr);
+            if (unicode.length())
+                m_glyphMap.add(unicode, glyph->buildGlyphIdentifier());
+        }
+    }
+        
+    m_isGlyphCacheValid = true;
+}
+
+void SVGFontElement::getGlyphIdentifiersForString(const String& string, Vector<SVGGlyphIdentifier>& glyphs) const
+{
+    ensureGlyphCache();
+    m_glyphMap.get(string, glyphs);
 }
 
 }

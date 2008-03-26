@@ -1,4 +1,17 @@
-2008-03-26  Eric Seidel  <eric@webkit.org>
+2008-03-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - test updates for "SVG multichar glyph matching matches longest instead of first (affects Acid3 test 79)"
+        http://bugs.webkit.org/show_bug.cgi?id=18118
+
+        These test cases were already checking for this exact bug and now
+        render correctly.
+        
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.txt:
+
+o2008-03-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.
 

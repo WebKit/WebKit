@@ -1,3 +1,29 @@
+2008-03-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - fixed "SVG multichar glyph matching matches longest instead of first (affects Acid3 test 79)"
+        http://bugs.webkit.org/show_bug.cgi?id=18118
+
+        * svg/SVGFont.cpp:
+        (WebCore::SVGTextRunWalker::walk):
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::SVGFontElement):
+        (WebCore::SVGFontElement::addGlyphToCache):
+        (WebCore::SVGFontElement::removeGlyphFromCache):
+        (WebCore::SVGFontElement::ensureGlyphCache):
+        (WebCore::SVGFontElement::getGlyphIdentifiersForString):
+        * svg/SVGFontElement.h:
+        * svg/SVGGlyphElement.h:
+        (WebCore::SVGGlyphIdentifier::SVGGlyphIdentifier):
+        * svg/SVGGlyphMap.h: Added. New radix tree based glyph map.
+        (WebCore::GlyphMapNode::GlyphMapNode):
+        (WebCore::SVGGlyphMap::SVGGlyphMap):
+        (WebCore::SVGGlyphMap::add):
+        (WebCore::SVGGlyphMap::compareGlyphPriority):
+        (WebCore::SVGGlyphMap::get):
+        (WebCore::SVGGlyphMap::clear):
+
 2008-03-26  David Hyatt  <hyatt@apple.com>
 
         Fix build bustage on Tiger.  Tiger will not have the bug fix.
