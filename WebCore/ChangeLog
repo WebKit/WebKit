@@ -2,7 +2,7 @@
 
         Rubber stamped by Adam
 
-        Roll out r30300 since it causes assertion failures on page load.
+        Roll out r31300 since it causes assertion failures on page load.
         See http://bugs.webkit.org/show_bug.cgi?id=18093
 
         * page/InspectorController.cpp:
