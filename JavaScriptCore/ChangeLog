@@ -1,3 +1,15 @@
+2008-03-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - JSC part of fix for "SVG multichar glyph matching matches longest instead of first (affects Acid3 test 79)"
+        http://bugs.webkit.org/show_bug.cgi?id=18118
+
+        * wtf/HashFunctions.h:
+        (WTF::):
+        * wtf/HashTraits.h:
+        (WTF::):
+
 2008-03-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
