@@ -148,7 +148,8 @@ void SimpleFontData::platformInit()
     m_shapesArabic = false;
 
     m_syntheticBoldOffset = m_font.m_syntheticBold ? 1.0f : 0.f;
-    
+    m_allowFontSmoothing = true;
+
     bool failedSetup = false;
     if (!initFontData(this)) {
         // Ack! Something very bad happened, like a corrupt font.
@@ -256,13 +257,18 @@ void SimpleFontData::platformInit()
         m_xHeight = MAX(NSMaxX(xBox), NSMaxY(xBox));
     } else
         m_xHeight = [m_font.font() xHeight];
-        
+    
+    // FIXME: Cannot
+#ifdef BUILDING_ON_TIGER
+    m_allowFontSmoothing = true;
+#else
     // Workaround for strange CG antialiasing of the Ahem font. Limit to the Web font version.
     if (isCustomFont()) {
         RetainPtr<CFStringRef> fullName(AdoptCF, CGFontCopyFullName(m_font.cgFont()));
         String nameStr(fullName.get());
         m_allowFontSmoothing = (nameStr != "Ahem");
     }
+#endif
 }
 
 void SimpleFontData::platformDestroy()

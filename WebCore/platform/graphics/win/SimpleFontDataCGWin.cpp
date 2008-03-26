@@ -51,6 +51,7 @@ static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return unitsP
 void SimpleFontData::platformInit()
 {
     m_syntheticBoldOffset = m_font.syntheticBold() ? 1.0f : 0.f;
+    m_allowFontSmoothing = true;
     m_scriptCache = 0;
     m_scriptFontProperties = 0;
     m_isSystemFont = false;

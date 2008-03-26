@@ -1,5 +1,14 @@
 2008-03-26  David Hyatt  <hyatt@apple.com>
 
+        Fix build bustage on Tiger.  Tiger will not have the bug fix.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+
+2008-03-26  David Hyatt  <hyatt@apple.com>
+
         Make the Ahem font antialias correctly on Acid3.
 
         Reviewed by Dan
