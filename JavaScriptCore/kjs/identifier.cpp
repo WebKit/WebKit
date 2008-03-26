@@ -1,6 +1,5 @@
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2003 Apple Computer, Inc
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -49,8 +48,10 @@ namespace WTF {
 
 namespace KJS {
 
-typedef HashSet<UString::Rep *> IdentifierTable;
-static IdentifierTable *table;
+typedef HashSet<UString::Rep*> IdentifierTable;
+typedef HashMap<const char*, UString::Rep*, PtrHash<const char*> > LiteralIdentifierTable;
+static IdentifierTable* table;
+static LiteralIdentifierTable* literalTable;
 
 static inline IdentifierTable& identifierTable()
 {
@@ -59,6 +60,15 @@ static inline IdentifierTable& identifierTable()
     if (!table)
         table = new IdentifierTable;
     return *table;
+}
+
+static inline LiteralIdentifierTable& literalIdentifierTable()
+{
+    ASSERT(JSLock::lockCount() > 0);
+
+    if (!literalTable)
+        literalTable = new LiteralIdentifierTable;
+    return *literalTable;
 }
 
 
@@ -124,7 +134,7 @@ struct CStringTranslator
     }
 };
 
-PassRefPtr<UString::Rep> Identifier::add(const char *c)
+PassRefPtr<UString::Rep> Identifier::add(const char* c)
 {
     if (!c) {
         UString::Rep::null.hash();
@@ -135,8 +145,18 @@ PassRefPtr<UString::Rep> Identifier::add(const char *c)
         UString::Rep::empty.hash();
         return &UString::Rep::empty;
     }
-    
-    return *identifierTable().add<const char *, CStringTranslator>(c).first;
+
+    LiteralIdentifierTable& literalTableLocalRef = literalIdentifierTable();
+
+    const LiteralIdentifierTable::iterator& iter = literalTableLocalRef.find(c);
+    if (iter != literalTableLocalRef.end())
+        return iter->second;
+
+    UString::Rep* addedString = *identifierTable().add<const char*, CStringTranslator>(c).first;
+    literalTableLocalRef.add(c, addedString);
+    addedString->ref();
+
+    return addedString;
 }
 
 struct UCharBuffer {

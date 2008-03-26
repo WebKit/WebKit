@@ -1,5 +1,23 @@
 2008-03-26  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Darin.
+
+        Cache C string identifiers by address, not value, assuming that C strings can only
+        be literals.
+
+        1% speedup on Acid3 test 26.
+
+        * kjs/identifier.cpp:
+        (KJS::literalIdentifierTable):
+        (KJS::Identifier::add):
+        Added a new table to cache UString::Reps created from C strings by address. Elements are
+        never removed from this cache, as only predefined identifiers can get there.
+
+        * kjs/identifier.h:
+        (KJS::Identifier::Identifier): Added a warning.
+
+2008-03-26  Alexey Proskuryakov  <ap@webkit.org>
+
         Rubber-stamped by Maciej.
 
         An assertion was failing in function-toString-object-literals.html when parsing 1e-500.

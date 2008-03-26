@@ -29,7 +29,7 @@ namespace KJS {
         friend class PropertyMap;
     public:
         Identifier() { }
-        Identifier(const char* s) : _ustring(add(s)) { }
+        Identifier(const char* s) : _ustring(add(s)) { } // Only to be used with string literals.
         Identifier(const UChar* s, int length) : _ustring(add(s, length)) { }
         explicit Identifier(UString::Rep* rep) : _ustring(add(rep)) { } 
         explicit Identifier(const UString& s) : _ustring(add(s.rep())) { }
