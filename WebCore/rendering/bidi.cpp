@@ -873,10 +873,11 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
             newLine(lastRootBox()->object()->lastChild()->style()->clear());
 
         bool endLineMatched = false;
+        bool checkForEndLineMatch = endLine;
 
         while (!end.atEnd()) {
             // FIXME: Is this check necessary before the first iteration or can it be moved to the end?
-            if (endLine && (endLineMatched = matchedEndLine(start, cleanLineStart, cleanLineBidiStatus, endLine, endLineYPos, repaintBottom, repaintTop)))
+            if (checkForEndLineMatch && (endLineMatched = matchedEndLine(start, cleanLineStart, cleanLineBidiStatus, endLine, endLineYPos, repaintBottom, repaintTop)))
                 break;
 
             betweenMidpoints = false;
@@ -951,7 +952,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                     ASSERT(f->m_renderer == floats[floatIndex].object);
                     // If a float's geometry has changed, give up on syncing with clean lines.
                     if (floats[floatIndex].rect != IntRect(f->m_left, f->m_top, f->m_width, f->m_bottom - f->m_top))
-                        endLine = 0;
+                        checkForEndLineMatch = false;
                     floatIndex++;
                 }
                 lastFloat = m_floatingObjects->last();
