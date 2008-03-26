@@ -1,6 +1,6 @@
 2008-03-24  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by Maciej.
+        Reviewed by Eric.
 
         - fixed "SVGTextElement.getStartPositionOfChar does not correctly account for multichar glyphs"
         http://bugs.webkit.org/show_bug.cgi?id=18046
