@@ -91,9 +91,10 @@ TextCodecQt::~TextCodecQt()
 }
 
 
-String TextCodecQt::decode(const char* bytes, size_t length, bool flush)
+String TextCodecQt::decode(const char* bytes, size_t length, bool flush, bool /*stopOnError*/, bool& sawError)
 {
     QString unicode = m_codec->toUnicode(bytes, length, &m_state);
+    sawError = false;
 
     if (flush) {
         m_state.flags = QTextCodec::DefaultConversion;
