@@ -1,3 +1,11 @@
+2008-03-26  Stephanie Lewis  <slewis@apple.com>
+
+        Not Reviewed.
+
+        Move storage tests to Skipped list since they hang 80% of the time.  See <rdar://problem/5787763>.
+
+        * platform/win/Skipped:
+
 2008-03-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
