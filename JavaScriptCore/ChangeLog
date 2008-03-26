@@ -1,3 +1,17 @@
+2008-03-26  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Maciej.
+
+        An assertion was failing in function-toString-object-literals.html when parsing 1e-500.
+        The condition existed before, and got uncovered by turning compiled-out dtoa checks into
+        ASSERTs.
+
+        The assertion was verifying that the caller wasn't constructing a Bigint from 0.
+        This might have had some reason behind it originally, but I couldn't find any,
+        and this doesn't look like a reasonable requirement.
+
+        * kjs/dtoa.cpp: (d2b): Removed the assertion (two copies in different code paths).
+
 2008-03-25  Adam Roben  <aroben@apple.com>
 
         Fix Bug 18077: Integrate testapi.c into the Windows build

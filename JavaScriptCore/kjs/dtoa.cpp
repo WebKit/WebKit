@@ -1088,7 +1088,6 @@ static Bigint* d2b(double d, int* e, int* bits)
 #endif
             b->wds = (x[1] = z) ? 2 : 1;
     } else {
-        ASSERT(z);
         k = lo0bits(&z);
         x[0] = z;
 #ifndef Sudden_Underflow
@@ -1120,7 +1119,6 @@ static Bigint* d2b(double d, int* e, int* bits)
             i = 3;
         }
     } else {
-        ASSERT(z);
         k = lo0bits(&z);
         if (k >= 16) {
             x[0] = z;
