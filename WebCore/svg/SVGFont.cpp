@@ -290,7 +290,8 @@ struct SVGTextRunWalker {
                     ASSERT(characterLookupRange > 0);
                     i += identifier.nameLength - 1;
                     m_walkerData.charsConsumed += identifier.nameLength;
-                    
+                    m_walkerData.glyphName = identifier.glyphName;
+
                     foundGlyph = true;
                     SVGGlyphElement::inheritUnspecifiedAttributes(identifier, m_fontData);
                     break;
@@ -336,6 +337,7 @@ struct SVGTextRunWalkerMeasuredLengthData {
     int to;
     int extraCharsAvailable;
     int charsConsumed;
+    String glyphName;
 
     float scale;
     float length;
@@ -362,7 +364,21 @@ void floatWidthMissingGlyphCallback(const TextRun& run, SVGTextRunWalkerMeasured
     data.length += font.floatWidth(run);
 }
 
-static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& run, int extraCharsAvailable, int from, int to, int& charsConsumed)
+
+SVGFontElement* Font::svgFont() const
+{ 
+    if (!isSVGFont())
+        return 0;
+
+    SVGFontElement* fontElement = 0;
+    SVGFontFaceElement* fontFaceElement = 0;
+    if (svgFontAndFontFaceElementForFontData(primaryFont(), fontFaceElement, fontElement))
+        return fontElement;
+    
+    return 0;
+}
+
+static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& run, int extraCharsAvailable, int from, int to, int& charsConsumed, String& glyphName)
 {
     int newFrom = to > from ? from : to;
     int newTo = to > from ? to : from;
@@ -402,6 +418,7 @@ static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& 
         SVGTextRunWalker<SVGTextRunWalkerMeasuredLengthData> runWalker(fontData, fontElement, data, floatWidthUsingSVGFontCallback, floatWidthMissingGlyphCallback);
         runWalker.walk(run, isVerticalText, language, 0, run.length());
         charsConsumed = data.charsConsumed;
+        glyphName = data.glyphName;
         return data.length;
     }
 
@@ -411,12 +428,13 @@ static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& 
 float Font::floatWidthUsingSVGFont(const TextRun& run) const
 {
     int charsConsumed;
-    return floatWidthOfSubStringUsingSVGFont(this, run, 0, 0, run.length(), charsConsumed);
+    String glyphName;
+    return floatWidthOfSubStringUsingSVGFont(this, run, 0, 0, run.length(), charsConsumed, glyphName);
 }
 
-float Font::floatWidthUsingSVGFont(const TextRun& run, int extraCharsAvailable, int& charsConsumed) const
+float Font::floatWidthUsingSVGFont(const TextRun& run, int extraCharsAvailable, int& charsConsumed, String& glyphName) const
 {
-    return floatWidthOfSubStringUsingSVGFont(this, run, extraCharsAvailable, 0, run.length(), charsConsumed);
+    return floatWidthOfSubStringUsingSVGFont(this, run, extraCharsAvailable, 0, run.length(), charsConsumed, glyphName);
 }
 
 // Callback & data structures to draw text using SVG Fonts
@@ -425,6 +443,7 @@ struct SVGTextRunWalkerDrawTextData {
     bool isVerticalText;
     int extraCharsAvailable;
     int charsConsumed;
+    String glyphName;
 
     float xStartOffset;
     FloatPoint currentPoint;
@@ -524,8 +543,9 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
         ASSERT(data.activePaintServer);
 
         int charsConsumed;
+        String glyphName;
         data.isVerticalText = false;
-        data.xStartOffset = floatWidthOfSubStringUsingSVGFont(this, run, 0, run.rtl() ? to : 0, run.rtl() ? run.length() : from, charsConsumed);
+        data.xStartOffset = floatWidthOfSubStringUsingSVGFont(this, run, 0, run.rtl() ? to : 0, run.rtl() ? run.length() : from, charsConsumed, glyphName);
         data.glyphOrigin = FloatPoint();
         data.context = context;
 
@@ -554,8 +574,10 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
 FloatRect Font::selectionRectForTextUsingSVGFont(const TextRun& run, const IntPoint& point, int height, int from, int to) const
 {
     int charsConsumed;
-    return FloatRect(point.x() + floatWidthOfSubStringUsingSVGFont(this, run, 0, run.rtl() ? to : 0, run.rtl() ? run.length() : from, charsConsumed),
-                     point.y(), floatWidthOfSubStringUsingSVGFont(this, run, 0, from, to, charsConsumed), height);
+    String glyphName;
+
+    return FloatRect(point.x() + floatWidthOfSubStringUsingSVGFont(this, run, 0, run.rtl() ? to : 0, run.rtl() ? run.length() : from, charsConsumed, glyphName),
+                     point.y(), floatWidthOfSubStringUsingSVGFont(this, run, 0, from, to, charsConsumed, glyphName), height);
 }
 
 int Font::offsetForPositionForTextUsingSVGFont(const TextRun&, int position, bool includePartialGlyphs) const

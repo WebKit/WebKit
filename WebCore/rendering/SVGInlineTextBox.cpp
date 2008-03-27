@@ -74,10 +74,10 @@ SVGRootInlineBox* SVGInlineTextBox::svgRootInlineBox() const
     return static_cast<SVGRootInlineBox*>(parentBox);
 }
 
-float SVGInlineTextBox::calculateGlyphWidth(RenderStyle* style, int offset, int extraCharsAvailable, int& charsConsumed) const
+float SVGInlineTextBox::calculateGlyphWidth(RenderStyle* style, int offset, int extraCharsAvailable, int& charsConsumed, String& glyphName) const
 {
     ASSERT(style);
-    return style->font().floatWidth(svgTextRunForInlineTextBox(textObject()->text()->characters() + offset, 1, style, this, 0), extraCharsAvailable, charsConsumed);
+    return style->font().floatWidth(svgTextRunForInlineTextBox(textObject()->text()->characters() + offset, 1, style, this, 0), extraCharsAvailable, charsConsumed, glyphName);
 }
 
 float SVGInlineTextBox::calculateGlyphHeight(RenderStyle* style, int offset, int extraCharsAvailable) const
@@ -98,10 +98,11 @@ FloatRect SVGInlineTextBox::calculateGlyphBoundaries(RenderStyle* style, int off
 
     // FIXME: account for multi-character glyphs
     int charsConsumed;
+    String glyphName;
     if (!m_reversed)
-        glyphWidth = calculateGlyphWidth(style, offset, 0, charsConsumed);
+        glyphWidth = calculateGlyphWidth(style, offset, 0, charsConsumed, glyphName);
     else
-        glyphWidth = calculateGlyphWidth(style, start() + end() - offset, 0, charsConsumed);
+        glyphWidth = calculateGlyphWidth(style, start() + end() - offset, 0, charsConsumed, glyphName);
 
     float x1 = svgChar.x;
     float x2 = svgChar.x + glyphWidth;

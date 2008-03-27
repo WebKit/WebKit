@@ -1,3 +1,18 @@
+2008-03-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt and Adam.
+        
+        - new test case and test fixes for SVG text kerning
+
+        * svg/text/kerning.svg: Added.
+        * platform/mac/svg/text/kerning-expected.txt: Added.
+
+        * platform/mac/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+
 2008-03-26  Stephanie Lewis  <slewis@apple.com>
 
         Not Reviewed.

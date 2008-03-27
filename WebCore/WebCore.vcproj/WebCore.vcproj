@@ -11822,6 +11822,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGHKernElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGHKernElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGAngle.cpp"
 				>
 			</File>

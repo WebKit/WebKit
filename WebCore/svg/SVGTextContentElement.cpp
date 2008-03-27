@@ -81,10 +81,11 @@ static inline float cummulatedCharacterRangeLength(const Vector<SVGChar>::iterat
 
             // FIXME: does this handle multichar glyphs ok? not sure
             int charsConsumed = 0;
+            String glyphName;
             if (isVerticalText)
                 textLength += textBox->calculateGlyphHeight(style, newOffset, 0);
             else
-                textLength += textBox->calculateGlyphWidth(style, newOffset, 0, charsConsumed);
+                textLength += textBox->calculateGlyphWidth(style, newOffset, 0, charsConsumed, glyphName);
         }
 
         if (!usesFullRange) {
@@ -196,10 +197,11 @@ struct SVGInlineTextBoxQueryWalker {
                         newOffset = textBox->start() + textBox->end() - newOffset;
 
                     int charsConsumed;
+                    String glyphName;
                     if (isVerticalText)
                         m_queryPointResult.move(it->x, it->y + textBox->calculateGlyphHeight(style, newOffset, end - it));
                     else
-                        m_queryPointResult.move(it->x + textBox->calculateGlyphWidth(style, newOffset, end - it, charsConsumed), it->y);
+                        m_queryPointResult.move(it->x + textBox->calculateGlyphWidth(style, newOffset, end - it, charsConsumed, glyphName), it->y);
 
                     m_stopProcessing = true;
                     return;

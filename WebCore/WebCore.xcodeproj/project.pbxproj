@@ -520,6 +520,9 @@
 		5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA378BB0D15F64200B793D6 /* ScheduledAction.h */; };
 		650F53DC09D15DDA00C9B0C8 /* CSSGrammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */; };
 		650F53DD09D15DDF00C9B0C8 /* CSSGrammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6565814409D13043000E61D7 /* CSSGrammar.cpp */; };
+		650FBF2A0D9AF047008FC292 /* SVGHKernElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 650FBF270D9AF046008FC292 /* SVGHKernElement.cpp */; };
+		650FBF2B0D9AF047008FC292 /* SVGHKernElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 650FBF280D9AF047008FC292 /* SVGHKernElement.h */; };
+		650FBF2C0D9AF047008FC292 /* SVGHKernElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = 650FBF290D9AF047008FC292 /* SVGHKernElement.idl */; };
 		6515EC910D9723FF0063D49A /* JSSVGAltGlyphElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6515EC8F0D9723FF0063D49A /* JSSVGAltGlyphElement.cpp */; };
 		6515EC920D9723FF0063D49A /* JSSVGAltGlyphElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 6515EC900D9723FF0063D49A /* JSSVGAltGlyphElement.h */; };
 		6550B69D099DF0270090D781 /* CDATASection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6550B693099DF0270090D781 /* CDATASection.cpp */; };
@@ -4900,6 +4903,9 @@
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5DCF836C0D59159800953BC6 /* PluginInfoStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInfoStore.h; sourceTree = "<group>"; };
 		650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSGrammar.h; sourceTree = "<group>"; };
+		650FBF270D9AF046008FC292 /* SVGHKernElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGHKernElement.cpp; sourceTree = "<group>"; };
+		650FBF280D9AF047008FC292 /* SVGHKernElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGHKernElement.h; sourceTree = "<group>"; };
+		650FBF290D9AF047008FC292 /* SVGHKernElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGHKernElement.idl; sourceTree = "<group>"; };
 		6515EC8F0D9723FF0063D49A /* JSSVGAltGlyphElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAltGlyphElement.cpp; sourceTree = "<group>"; };
 		6515EC900D9723FF0063D49A /* JSSVGAltGlyphElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGAltGlyphElement.h; sourceTree = "<group>"; };
 		6548E24809E1E04D00AF8020 /* Document.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Document.idl; sourceTree = "<group>"; };
@@ -11019,6 +11025,9 @@
 				B22277FE0D00BF1F0071B782 /* SVGAnimateTransformElement.cpp */,
 				B22277FF0D00BF1F0071B782 /* SVGAnimateTransformElement.h */,
 				B22278000D00BF1F0071B782 /* SVGAnimateTransformElement.idl */,
+				650FBF270D9AF046008FC292 /* SVGHKernElement.cpp */,
+				650FBF280D9AF047008FC292 /* SVGHKernElement.h */,
+				650FBF290D9AF047008FC292 /* SVGHKernElement.idl */,
 				B22278010D00BF1F0071B782 /* SVGAnimationElement.cpp */,
 				B22278020D00BF1F0071B782 /* SVGAnimationElement.h */,
 				B22278030D00BF1F0071B782 /* SVGAnimationElement.idl */,
@@ -14664,6 +14673,7 @@
 				BCE1C41B0D982980003B02F2 /* Location.h in Headers */,
 				BCE1C43C0D9830D3003B02F2 /* JSLocation.h in Headers */,
 				E415F1840D9A1A830033CE97 /* ElementTimeControl.h in Headers */,
+				650FBF2B0D9AF047008FC292 /* SVGHKernElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14780,6 +14790,7 @@
 				A779791B0D6B9D0C003851B9 /* ImageData.idl in Resources */,
 				BCA83E370D7CDC4E003421A8 /* Clipboard.idl in Resources */,
 				65653F2F0D9727D200CA9723 /* SVGAltGlyphElement.idl in Resources */,
+				650FBF2C0D9AF047008FC292 /* SVGHKernElement.idl in Resources */,
 				BCE1C4230D9829F2003B02F2 /* Location.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -16311,6 +16322,7 @@
 				6515EC910D9723FF0063D49A /* JSSVGAltGlyphElement.cpp in Sources */,
 				65653F2D0D9727D200CA9723 /* SVGAltGlyphElement.cpp in Sources */,
 				65AA6BB00D974A00000541AE /* DOMSVGAltGlyphElement.mm in Sources */,
+				650FBF2A0D9AF047008FC292 /* SVGHKernElement.cpp in Sources */,
 				BCE1C41C0D982981003B02F2 /* Location.cpp in Sources */,
 				BCE1C43B0D9830D3003B02F2 /* JSLocation.cpp in Sources */,
 				BCE1C4400D9830F4003B02F2 /* JSLocationCustom.cpp in Sources */,

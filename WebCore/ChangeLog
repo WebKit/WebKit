@@ -1,3 +1,64 @@
+2008-03-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt and Adam.
+
+        Coded by me and Darin.
+        
+        - SVG kerning support (horizontal kerning only for now since we don't do vertical text layout right yet) 
+        
+        Acid3 100/100
+
+        * DerivedSources.make:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::isSVGFont):
+        * platform/graphics/Font.h:
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::calculateGlyphWidth):
+        (WebCore::SVGInlineTextBox::calculateGlyphBoundaries):
+        * rendering/SVGInlineTextBox.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::cummulatedWidthOrHeightOfTextChunk):
+        (WebCore::SVGRootInlineBox::buildLayoutInformation):
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+        * rendering/SVGRootInlineBox.h:
+        (WebCore::LastGlyphInfo::LastGlyphInfo):
+        * svg/SVGFont.cpp:
+        (WebCore::SVGTextRunWalker::walk):
+        (WebCore::Font::svgFont):
+        (WebCore::floatWidthOfSubStringUsingSVGFont):
+        (WebCore::Font::floatWidthUsingSVGFont):
+        (WebCore::Font::drawTextUsingSVGFont):
+        (WebCore::Font::selectionRectForTextUsingSVGFont):
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::invalidateGlyphCache):
+        (WebCore::SVGFontElement::ensureGlyphCache):
+        (WebCore::parseUnicodeRange):
+        (WebCore::parseUnicodeRangeList):
+        (WebCore::stringMatchesUnicodeRange):
+        (WebCore::matches):
+        (WebCore::SVGFontElement::getHorizontalKerningPairForStringsAndGlyphs):
+        * svg/SVGFontElement.h:
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::insertedIntoDocument):
+        (WebCore::SVGGlyphElement::removedFromDocument):
+        * svg/SVGHKernElement.cpp: Added.
+        (WebCore::SVGHKernElement::SVGHKernElement):
+        (WebCore::SVGHKernElement::~SVGHKernElement):
+        (WebCore::SVGHKernElement::insertedIntoDocument):
+        (WebCore::SVGHKernElement::removedFromDocument):
+        (WebCore::SVGHKernElement::buildHorizontalKerningPair):
+        * svg/SVGHKernElement.h: Added.
+        (WebCore::SVGHorizontalKerningPair::SVGHorizontalKerningPair):
+        (WebCore::SVGHKernElement::rendererIsNeeded):
+        * svg/SVGHKernElement.idl: Added.
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::cummulatedCharacterRangeLength):
+        (WebCore::SVGInlineTextBoxQueryWalker::chunkPortionCallback):
+        * svg/svgtags.in:
+
 2008-03-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

@@ -35,6 +35,14 @@ class InlineTextBox;
 class RenderSVGRoot;
 class SVGInlineTextBox;
 
+struct LastGlyphInfo {
+    LastGlyphInfo() : isValid(false) { }
+
+    String unicode;
+    String glyphName;
+    bool isValid;
+};
+
 class SVGRootInlineBox : public RootInlineBox {
 public:
     SVGRootInlineBox(RenderObject* obj)
@@ -63,7 +71,7 @@ private:
     void layoutInlineBoxes(InlineFlowBox* start, Vector<SVGChar>::iterator& it, int& minX, int& maxX, int& minY, int& maxY);
 
     void buildLayoutInformation(InlineFlowBox* start, SVGCharacterLayoutInfo&);
-    void buildLayoutInformationForTextBox(SVGCharacterLayoutInfo&, InlineTextBox*);
+    void buildLayoutInformationForTextBox(SVGCharacterLayoutInfo&, InlineTextBox*, LastGlyphInfo&);
 
     void buildTextChunks(Vector<SVGChar>&, Vector<SVGTextChunk>&, InlineFlowBox* start);
     void buildTextChunks(Vector<SVGChar>&, InlineFlowBox* start, SVGTextChunkLayoutInfo&);

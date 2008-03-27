@@ -48,6 +48,7 @@ class GraphicsContext;
 class IntPoint;
 class RenderObject;
 class SimpleFontData;
+class SVGFontElement;
 class SVGPaintServer;
 
 struct GlyphData;
@@ -170,7 +171,7 @@ public:
 
     int width(const TextRun&) const;
     float floatWidth(const TextRun&) const;
-    float floatWidth(const TextRun& run, int extraCharsAvailable, int& charsConsumed) const;
+    float floatWidth(const TextRun& run, int extraCharsAvailable, int& charsConsumed, String& glyphName) const;
 
     int offsetForPosition(const TextRun&, int position, bool includePartialGlyphs) const;
     FloatRect selectionRectForText(const TextRun&, const IntPoint&, int h, int from = 0, int to = -1) const;
@@ -235,7 +236,7 @@ private:
 #if ENABLE(SVG_FONTS)
     void drawTextUsingSVGFont(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     float floatWidthUsingSVGFont(const TextRun&) const;
-    float floatWidthUsingSVGFont(const TextRun&, int extraCharsAvailable, int& charsConsumed) const;
+    float floatWidthUsingSVGFont(const TextRun&, int extraCharsAvailable, int& charsConsumed, String& glyphName) const;
     FloatRect selectionRectForTextUsingSVGFont(const TextRun&, const IntPoint&, int h, int from, int to) const;
     int offsetForPositionForTextUsingSVGFont(const TextRun&, int position, bool includePartialGlyphs) const;
 #endif
@@ -269,6 +270,12 @@ public:
 #endif
     static bool treatAsSpace(UChar c) { return c == ' ' || c == '\t' || c == '\n' || c == 0x00A0; }
     static bool treatAsZeroWidthSpace(UChar c) { return c < 0x20 || (c >= 0x7F && c < 0xA0) || c == 0x200e || c == 0x200f || c >= 0x202a && c <= 0x202e; }
+
+#if ENABLE(SVG_FONTS)
+    bool isSVGFont() const;
+    SVGFontElement* svgFont() const;
+#endif
+
 private:
     FontDescription m_fontDescription;
 #if !PLATFORM(QT)

@@ -70,8 +70,8 @@ glyph
 #endif
 #if 0
 glyphRef
-hkern
 #endif
+hkern
 image
 line
 linearGradient

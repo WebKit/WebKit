@@ -708,14 +708,15 @@ float Font::floatWidth(const TextRun& run) const
     return floatWidthForComplexText(run);
 }
 
-float Font::floatWidth(const TextRun& run, int extraCharsAvailable, int& charsConsumed) const
+float Font::floatWidth(const TextRun& run, int extraCharsAvailable, int& charsConsumed, String& glyphName) const
 {
 #if ENABLE(SVG_FONTS)
     if (primaryFont()->isSVGFont())
-        return floatWidthUsingSVGFont(run, extraCharsAvailable, charsConsumed);
+        return floatWidthUsingSVGFont(run, extraCharsAvailable, charsConsumed, glyphName);
 #endif
 
     charsConsumed = run.length();
+    glyphName = "";
     if (canUseGlyphCache(run))
         return floatWidthForSimpleText(run, 0);
     return floatWidthForComplexText(run);
@@ -813,6 +814,13 @@ int Font::offsetForPositionForSimpleText(const TextRun& run, int x, bool include
 
     return offset;
 }
+
+#if ENABLE(SVG_FONTS)
+bool Font::isSVGFont() const
+{ 
+    return primaryFont()->isSVGFont(); 
+}
+#endif
 
 FontSelector* Font::fontSelector() const
 {

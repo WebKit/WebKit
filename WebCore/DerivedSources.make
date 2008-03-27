@@ -250,6 +250,7 @@ DOM_CLASSES = \
     SVGGElement \
     SVGGlyphElement \
     SVGGradientElement \
+    SVGHKernElement \
     SVGImageElement \
     SVGLangSpace \
     SVGLength \
