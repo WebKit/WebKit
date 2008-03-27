@@ -154,6 +154,10 @@ private:
     void removeDatabaseScriptResource(InspectorDatabaseResource*);
 #endif
 
+    JSValueRef callSimpleFunction(JSContextRef, JSObjectRef thisObject, const char* functionName) const;
+
+    bool handleException(JSValueRef exception, unsigned lineNumber) const;
+
     Page* m_inspectedPage;
     InspectorClient* m_client;
     Page* m_page;

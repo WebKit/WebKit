@@ -1,3 +1,54 @@
+2008-03-26  Adam Roben  <aroben@apple.com>
+
+        Record JS exceptions triggered by the Inspector's use of JSC
+
+        We now dump all exceptions returned from JavaScriptCore into the
+        Inspector's console.
+
+        The HANDLE_EXCEPTION macro records the line on which the exception was
+        returned. It calls a new private handleException method on
+        InspectorController.
+
+        Reviewed by Kevin McCullough.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::callSimpleFunction): Made this be a
+        member of InspectorController so that it can call handleException.
+        (WebCore::addSourceToFrame): Pass the exception pointer on to inner
+        JSC calls, and check it after those calls return.
+        (WebCore::getResourceDocumentNode): Ditto.
+        (WebCore::search): Ditto. Also changed the name/type of an existing
+        exception variable to ExceptionCode ec.
+        (WebCore::databaseTableNames): Ditto.
+        (WebCore::moveByUnrestricted): Ditto.
+        (WebCore::InspectorController::~InspectorController): Check for and
+        record exceptions as we call JSC.
+        (WebCore::InspectorController::focusNode): Ditto.
+        (WebCore::InspectorController::scriptObjectReady): Ditto.
+        (WebCore::addHeaders): Added an exception parameter.
+        (WebCore::scriptObjectForRequest): Ditto.
+        (WebCore::scriptObjectForResponse): Ditto.
+        (WebCore::InspectorController::addScriptResource): Check for and
+        record exceptions as we call JSC.
+        (WebCore::InspectorController::addAndUpdateScriptResource): Ditto.
+        (WebCore::InspectorController::removeScriptResource): Ditto. Also
+        moved the call to setScriptObject to before the JSC calls so that it
+        will always be called even if we return early if JSC throws an
+        exception.
+        (WebCore::InspectorController::updateScriptResourceRequest): Check for
+        and record exceptions as we call JSC.
+        (WebCore::InspectorController::updateScriptResourceResponse): Ditto.
+        (WebCore::InspectorController::updateScriptResource): Ditto.
+        (WebCore::InspectorController::addDatabaseScriptResource): Ditto.
+        (WebCore::InspectorController::removeDatabaseScriptResource): Ditto.
+        Also moved the call to setScriptObject to before the JSC calls so that
+        it will always be called even if we return early if JSC throws an
+        exception.
+        (WebCore::InspectorController::addScriptConsoleMessage): Check for and
+        record exceptions as we call JSC.
+        (WebCore::InspectorController::handleException): Added.
+        * page/InspectorController.h:
+
 2008-03-26  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Maciej.
