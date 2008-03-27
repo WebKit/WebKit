@@ -238,7 +238,6 @@ String TextCodecMac::decode(const char* bytes, size_t length, bool flush, bool s
                 break;
             }
             default:
-                LOG_ERROR("text decoding failed with error %ld", static_cast<long>(status));
                 sawError = true;
                 return String();
         }

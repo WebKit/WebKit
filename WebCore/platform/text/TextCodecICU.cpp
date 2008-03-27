@@ -292,7 +292,6 @@ String TextCodecICU::decode(const char* bytes, size_t length, bool flush, bool s
             decodeToBuffer(buffer, bufferLimit, source, sourceLimit, offsets, true, err);
         } while (source < sourceLimit);
         sawError = true;
-        LOG_ERROR("ICU conversion error");
     }
 
     String resultString = String::adopt(result);
