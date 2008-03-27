@@ -1,3 +1,13 @@
+2008-03-26  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Add necessary files and build commands to vcproj files to
+        build a Curl-based Windows WebKit.  For details, see
+        http://bugs.webkit.org/show_bug.cgi?id=17985
+
+        * WebKit.vcproj/WebKit.vcproj:
+
 2008-03-25  Adam Roben  <aroben@apple.com>
 
         Attempted build fix
