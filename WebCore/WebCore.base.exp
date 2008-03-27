@@ -831,7 +831,7 @@ _wkDrawTextFieldCellFocusRing
 _wkFontSmoothingModeIsLCD
 _wkGetATSStyleGroup
 _wkGetExtensionsForMIMEType
-_wkGetFontInLanguageForCharacter  
+_wkGetFontInLanguageForCharacter
 _wkGetFontInLanguageForRange
 _wkGetGlyphTransformedAdvances
 _wkGetGlyphVectorFirstRecord
