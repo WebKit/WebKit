@@ -23,7 +23,9 @@
 #include "JSSVGElementWrapperFactory.h"
 
 #include "JSSVGAElement.h"
+#if ENABLE(SVG_FONTS)
 #include "JSSVGAltGlyphElement.h"
+#endif
 #include "JSSVGAnimateColorElement.h"
 #include "JSSVGAnimateElement.h"
 #include "JSSVGAnimateTransformElement.h"

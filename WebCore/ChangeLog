@@ -1,5 +1,14 @@
 2008-03-27  Simon Hausmann  <hausmann@webkit.org>
 
+        Fix compilation against Qt 4.4 and one missing SVG_FONTS #ifdef.
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::floatWidth): Forgot to adjust this signture for Qt 4.4.
+        * bindings/js/JSSVGElementWrapperFactory.cpp: Added a missing #ifdef
+        for SVG_FONTS
+
+2008-03-27  Simon Hausmann  <hausmann@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Fix the Qt build and the build without ENABLE(SVG_FONTS)
