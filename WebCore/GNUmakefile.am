@@ -168,6 +168,7 @@ webcore_built_sources += \
 	DerivedSources/JSHistory.h \
 	DerivedSources/JSImageData.h \
 	DerivedSources/JSKeyboardEvent.h \
+	DerivedSources/JSLocation.h \
 	DerivedSources/JSMediaList.h \
 	DerivedSources/JSMimeType.h \
 	DerivedSources/JSMimeTypeArray.h \
