@@ -1,3 +1,15 @@
+2008-03-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/5820749> REGRESSION (Safari 3.1): Mail's plain text reply omits blank line following the attribution
+
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromText): When asked to create a fragment from "Attribution:\n"
+        with a context from [html, 0] to [html, 0], we'd return "<html>Attribution</html><br>".
+        Don't enclose paragraphs in clones of the context's enclosing block if that block is the
+        html or body element.  Currently no way to test [DOMHTMLElement createFragmentFromText:].
+
 2008-03-26  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Anders.

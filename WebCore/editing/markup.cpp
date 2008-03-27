@@ -1056,7 +1056,7 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
 
     // Break string into paragraphs. Extra line breaks turn into empty paragraphs.
     Node* block = enclosingBlock(context->firstNode());
-    bool useClonesOfEnclosingBlock = !block->hasTagName(bodyTag);
+    bool useClonesOfEnclosingBlock = block && !block->hasTagName(bodyTag) && !block->hasTagName(htmlTag);
     
     Vector<String> list;
     string.split('\n', true, list); // true gets us empty strings in the list
