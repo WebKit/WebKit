@@ -1,3 +1,15 @@
+2008-03-26  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r31324
+
+        Written with Darin.
+
+        Added HashTable plumbing to support using wchar_t as a key type.
+
+        * wtf/HashFunctions.h:
+        * wtf/HashTraits.h:
+        (WTF::):
+
 2008-03-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -47,6 +47,10 @@ namespace WTF {
     template<> struct IsInteger<long long>          { static const bool value = true; };
     template<> struct IsInteger<unsigned long long> { static const bool value = true; };
 
+#if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
+    template<> struct IsInteger<wchar_t>            { static const bool value = true; };
+#endif
+
     COMPILE_ASSERT(IsInteger<bool>::value, WTF_IsInteger_bool_true);
     COMPILE_ASSERT(IsInteger<char>::value, WTF_IsInteger_char_true);
     COMPILE_ASSERT(IsInteger<signed char>::value, WTF_IsInteger_signed_char_true);
@@ -59,6 +63,10 @@ namespace WTF {
     COMPILE_ASSERT(IsInteger<unsigned long>::value, WTF_IsInteger_unsigned_long_true);
     COMPILE_ASSERT(IsInteger<long long>::value, WTF_IsInteger_long_long_true);
     COMPILE_ASSERT(IsInteger<unsigned long long>::value, WTF_IsInteger_unsigned_long_long_true);
+
+#if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
+    COMPILE_ASSERT(IsInteger<wchar_t>::value, WTF_IsInteger_wchar_t_true);
+#endif
 
     COMPILE_ASSERT(!IsInteger<char*>::value, WTF_IsInteger_char_pointer_false);
     COMPILE_ASSERT(!IsInteger<const char* >::value, WTF_IsInteger_const_char_pointer_false);
@@ -118,6 +126,12 @@ namespace WTF {
         static unsigned long long deletedValue() { return static_cast<unsigned long long>(-1); }
     };
     
+#if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
+    template<> struct HashTraits<wchar_t> : GenericHashTraits<wchar_t> {
+        static wchar_t deletedValue() { return static_cast<wchar_t>(-1); }
+    };
+#endif
+
     template<typename T> struct FloatHashTraits {
         typedef T TraitType;
         typedef HashTraits<T> StorageTraits;

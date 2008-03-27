@@ -112,6 +112,10 @@ namespace WTF {
     template<> struct DefaultHash<long long> { typedef IntHash<unsigned long long> Hash; };
     template<> struct DefaultHash<unsigned long long> { typedef IntHash<unsigned long long> Hash; };
 
+#if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
+    template<> struct DefaultHash<wchar_t> { typedef IntHash<wchar_t> Hash; };
+#endif
+
     template<> struct DefaultHash<float> { typedef FloatHash<float> Hash; };
     template<> struct DefaultHash<double> { typedef FloatHash<double> Hash; };
 
