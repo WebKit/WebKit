@@ -859,4 +859,3 @@ _wkSetUpFontCache
 _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError
 _wkSignalCFReadStreamHasBytes
-__ZN7WebCore16LegacyWebArchive6createEPNS_4NodeE

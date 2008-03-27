@@ -1,3 +1,9 @@
+2008-03-26  Mark Rowe  <mrowe@apple.com>
+
+        Mac build fix.
+
+        * WebCore.base.exp:  Remove nonexistent symbol from the export file.
+
 2008-03-26  Sam Weinig  <sam@webkit.org>
 
         Try and fix Gtk+ again.
