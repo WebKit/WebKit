@@ -64,5 +64,5 @@ Numeric 13: undefined
 
 Conflicting image: single OTHER
 Conflicting image (custom property): single OTHER
-Conflicting iframe: single WINDOW
+Conflicting iframe: single OTHER
 

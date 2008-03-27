@@ -1,3 +1,11 @@
+2008-03-26  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        Update test result.
+
+        * fast/dom/Window/window-special-properties-expected.txt:
+
 2008-03-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Hyatt and Adam.
