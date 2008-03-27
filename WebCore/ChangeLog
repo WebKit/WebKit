@@ -1,3 +1,11 @@
+2008-03-26  Steve Falkenburg  <sfalken@apple.com>
+
+        Enable LTCG on css, dom files in WebCore
+
+        Reviewed by Stephanie.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-03-26  Stephanie Lewis  <slewis@apple.com>
 
         Fix Windows Build

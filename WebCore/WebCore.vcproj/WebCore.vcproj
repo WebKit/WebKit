@@ -7242,6 +7242,14 @@
 			<File
 				RelativePath="..\css\CSSBorderImageValue.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSBorderImageValue.h"
@@ -7250,6 +7258,14 @@
 			<File
 				RelativePath="..\css\CSSCharsetRule.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSCharsetRule.h"
@@ -7258,6 +7274,14 @@
 			<File
 				RelativePath="..\css\CSSComputedStyleDeclaration.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSComputedStyleDeclaration.h"
@@ -7266,6 +7290,14 @@
 			<File
 				RelativePath="..\css\CSSCursorImageValue.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSCursorImageValue.h"
@@ -7274,6 +7306,14 @@
 			<File
 				RelativePath="..\css\CSSFontFace.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSFontFace.h"
@@ -7282,6 +7322,14 @@
 			<File
 				RelativePath="..\css\CSSFontFaceRule.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSFontFaceRule.h"
@@ -7290,6 +7338,14 @@
 			<File
 				RelativePath="..\css\CSSFontFaceSource.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSFontFaceSource.h"
@@ -7298,6 +7354,14 @@
 			<File
 				RelativePath="..\css\CSSFontFaceSrcValue.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSFontFaceSrcValue.h"
@@ -7306,6 +7370,14 @@
 			<File
 				RelativePath="..\css\CSSFontSelector.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSFontSelector.h"
@@ -7318,6 +7390,14 @@
 			<File
 				RelativePath="..\css\CSSHelper.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSHelper.h"
@@ -7326,6 +7406,14 @@
 			<File
 				RelativePath="..\css\CSSImageValue.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSImageValue.h"
@@ -7334,6 +7422,14 @@
 			<File
 				RelativePath="..\css\CSSImportRule.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSImportRule.h"
@@ -7342,6 +7438,14 @@
 			<File
 				RelativePath="..\css\CSSInheritedValue.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSInheritedValue.h"
@@ -7350,6 +7454,14 @@
 			<File
 				RelativePath="..\css\CSSInitialValue.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSInitialValue.h"
@@ -7358,6 +7470,14 @@
 			<File
 				RelativePath="..\css\CSSMediaRule.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSMediaRule.h"
@@ -7366,6 +7486,14 @@
 			<File
 				RelativePath="..\css\CSSMutableStyleDeclaration.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSMutableStyleDeclaration.h"
@@ -7378,6 +7506,14 @@
 			<File
 				RelativePath="..\css\CSSPageRule.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSPageRule.h"
@@ -7386,6 +7522,14 @@
 			<File
 				RelativePath="..\css\CSSParser.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSParser.h"
@@ -7394,6 +7538,14 @@
 			<File
 				RelativePath="..\css\CSSPrimitiveValue.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSPrimitiveValue.h"
@@ -7402,6 +7554,14 @@
 			<File
 				RelativePath="..\css\CSSProperty.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSProperty.h"
@@ -7418,6 +7578,14 @@
 			<File
 				RelativePath="..\css\CSSRule.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSRule.h"
@@ -7426,6 +7594,14 @@
 			<File
 				RelativePath="..\css\CSSRuleList.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSRuleList.h"
@@ -7434,6 +7610,14 @@
 			<File
 				RelativePath="..\css\CSSSegmentedFontFace.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSSegmentedFontFace.h"
@@ -7442,6 +7626,14 @@
 			<File
 				RelativePath="..\css\CSSSelector.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSSelector.h"
@@ -7450,6 +7642,14 @@
 			<File
 				RelativePath="..\css\CSSStyleDeclaration.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSStyleDeclaration.h"
@@ -7458,6 +7658,14 @@
 			<File
 				RelativePath="..\css\CSSStyleRule.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSStyleRule.h"
@@ -7470,6 +7678,14 @@
 			<File
 				RelativePath="..\css\CSSStyleSelector.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSStyleSelector.h"
@@ -7478,6 +7694,14 @@
 			<File
 				RelativePath="..\css\CSSStyleSheet.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSStyleSheet.h"
@@ -7486,6 +7710,14 @@
 			<File
 				RelativePath="..\css\CSSTimingFunctionValue.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSTimingFunctionValue.h"
@@ -7494,6 +7726,14 @@
 			<File
 				RelativePath="..\css\CSSTransformValue.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSTransformValue.h"
@@ -7502,6 +7742,14 @@
 			<File
 				RelativePath="..\css\CSSUnicodeRangeValue.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSUnicodeRangeValue.h"
@@ -7522,6 +7770,14 @@
 			<File
 				RelativePath="..\css\CSSValueList.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\CSSValueList.h"
@@ -7534,6 +7790,14 @@
 			<File
 				RelativePath="..\css\FontFamilyValue.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\FontFamilyValue.h"
@@ -7542,6 +7806,14 @@
 			<File
 				RelativePath="..\css\FontValue.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\FontValue.h"
@@ -7554,6 +7826,14 @@
 			<File
 				RelativePath="..\css\MediaFeatureNames.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\MediaFeatureNames.h"
@@ -7562,6 +7842,14 @@
 			<File
 				RelativePath="..\css\MediaList.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\MediaList.h"
@@ -7570,6 +7858,14 @@
 			<File
 				RelativePath="..\css\MediaQuery.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\MediaQuery.h"
@@ -7578,6 +7874,14 @@
 			<File
 				RelativePath="..\css\MediaQueryEvaluator.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\MediaQueryEvaluator.h"
@@ -7586,6 +7890,14 @@
 			<File
 				RelativePath="..\css\MediaQueryExp.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\MediaQueryExp.h"
@@ -7606,6 +7918,14 @@
 			<File
 				RelativePath="..\css\ShadowValue.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\ShadowValue.h"
@@ -7614,6 +7934,14 @@
 			<File
 				RelativePath="..\css\StyleBase.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\StyleBase.h"
@@ -7622,6 +7950,14 @@
 			<File
 				RelativePath="..\css\StyleList.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\StyleList.h"
@@ -7630,6 +7966,14 @@
 			<File
 				RelativePath="..\css\StyleSheet.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\StyleSheet.h"
@@ -7638,6 +7982,14 @@
 			<File
 				RelativePath="..\css\StyleSheetList.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\StyleSheetList.h"
@@ -7646,14 +7998,38 @@
 			<File
 				RelativePath="..\css\SVGCSSComputedStyleDeclaration.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\SVGCSSParser.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\SVGCSSStyleSelector.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\css\tokenizer.flex"
@@ -9396,6 +9772,14 @@
 			<File
 				RelativePath="..\dom\Attr.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\Attr.h"
@@ -9404,6 +9788,14 @@
 			<File
 				RelativePath="..\dom\Attribute.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\Attribute.h"
@@ -9412,6 +9804,14 @@
 			<File
 				RelativePath="..\dom\BeforeTextInsertedEvent.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\BeforeTextInsertedEvent.h"
@@ -9420,6 +9820,14 @@
 			<File
 				RelativePath="..\dom\BeforeUnloadEvent.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\BeforeUnloadEvent.h"
@@ -9428,6 +9836,14 @@
 			<File
 				RelativePath="..\dom\CDATASection.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\CDATASection.h"
@@ -9436,6 +9852,14 @@
 			<File
 				RelativePath="..\dom\CharacterData.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\CharacterData.h"
@@ -9444,6 +9868,14 @@
 			<File
 				RelativePath="..\dom\ChildNodeList.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\ChildNodeList.h"
@@ -9452,6 +9884,14 @@
 			<File
 				RelativePath="..\dom\ClassNames.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\ClassNames.h"
@@ -9460,6 +9900,14 @@
 			<File
 				RelativePath="..\dom\ClassNodeList.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\ClassNodeList.h"
@@ -9468,6 +9916,14 @@
 			<File
 				RelativePath="..\dom\Clipboard.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\Clipboard.h"
@@ -9480,6 +9936,14 @@
 			<File
 				RelativePath="..\dom\ClipboardEvent.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\ClipboardEvent.h"
@@ -9488,6 +9952,14 @@
 			<File
 				RelativePath="..\dom\Comment.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\Comment.h"
@@ -9496,6 +9968,14 @@
 			<File
 				RelativePath="..\dom\ContainerNode.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\ContainerNode.h"
@@ -9504,6 +9984,14 @@
 			<File
 				RelativePath="..\dom\CSSMappedAttributeDeclaration.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\CSSMappedAttributeDeclaration.h"
@@ -9516,6 +10004,14 @@
 			<File
 				RelativePath="..\dom\Document.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\Document.h"
@@ -9524,6 +10020,14 @@
 			<File
 				RelativePath="..\dom\DocumentFragment.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\DocumentFragment.h"
@@ -9536,6 +10040,14 @@
 			<File
 				RelativePath="..\dom\DocumentType.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\DocumentType.h"
@@ -9548,6 +10060,14 @@
 			<File
 				RelativePath="..\dom\DOMImplementation.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\DOMImplementation.h"
@@ -9556,6 +10076,14 @@
 			<File
 				RelativePath="..\dom\DynamicNodeList.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\DynamicNodeList.h"
@@ -9564,6 +10092,14 @@
 			<File
 				RelativePath="..\dom\EditingText.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\EditingText.h"
@@ -9572,6 +10108,14 @@
 			<File
 				RelativePath="..\dom\Element.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\Element.h"
@@ -9580,6 +10124,14 @@
 			<File
 				RelativePath="..\dom\Entity.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\Entity.h"
@@ -9588,6 +10140,14 @@
 			<File
 				RelativePath="..\dom\EntityReference.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\EntityReference.h"
@@ -9596,6 +10156,14 @@
 			<File
 				RelativePath="..\dom\Event.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\Event.h"
@@ -9612,6 +10180,14 @@
 			<File
 				RelativePath="..\dom\EventNames.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\EventNames.h"
@@ -9620,6 +10196,14 @@
 			<File
 				RelativePath="..\dom\EventTarget.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\EventTarget.h"
@@ -9628,6 +10212,14 @@
 			<File
 				RelativePath="..\dom\EventTargetNode.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\EventTargetNode.h"
@@ -9636,6 +10228,14 @@
 			<File
 				RelativePath="..\dom\ExceptionBase.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\ExceptionBase.h"
@@ -9644,6 +10244,14 @@
 			<File
 				RelativePath="..\dom\ExceptionCode.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\ExceptionCode.h"
@@ -9652,6 +10260,14 @@
 			<File
 				RelativePath="..\dom\KeyboardEvent.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\KeyboardEvent.h"
@@ -9660,6 +10276,14 @@
 			<File
 				RelativePath="..\dom\MappedAttribute.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\MappedAttribute.h"
@@ -9672,6 +10296,14 @@
 			<File
 				RelativePath="..\dom\MessageEvent.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\MessageEvent.h"
@@ -9680,6 +10312,14 @@
 			<File
 				RelativePath="..\dom\MouseEvent.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\MouseEvent.h"
@@ -9688,6 +10328,14 @@
 			<File
 				RelativePath="..\dom\MouseRelatedEvent.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\MouseRelatedEvent.h"
@@ -9696,6 +10344,14 @@
 			<File
 				RelativePath="..\dom\MutationEvent.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\MutationEvent.h"
@@ -9704,6 +10360,14 @@
 			<File
 				RelativePath="..\dom\NamedAttrMap.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\NamedAttrMap.h"
@@ -9712,6 +10376,14 @@
 			<File
 				RelativePath="..\dom\NamedMappedAttrMap.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\NamedMappedAttrMap.h"
@@ -9724,6 +10396,14 @@
 			<File
 				RelativePath="..\dom\NameNodeList.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\NameNodeList.h"
@@ -9732,6 +10412,14 @@
 			<File
 				RelativePath="..\dom\Node.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\Node.h"
@@ -9740,6 +10428,14 @@
 			<File
 				RelativePath="..\dom\NodeFilter.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\NodeFilter.h"
@@ -9748,6 +10444,14 @@
 			<File
 				RelativePath="..\dom\NodeFilterCondition.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\NodeFilterCondition.h"
@@ -9756,6 +10460,14 @@
 			<File
 				RelativePath="..\dom\NodeIterator.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\NodeIterator.h"
@@ -9764,6 +10476,14 @@
 			<File
 				RelativePath="..\dom\Notation.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\Notation.h"
@@ -9772,6 +10492,14 @@
 			<File
 				RelativePath="..\dom\OverflowEvent.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\OverflowEvent.h"
@@ -9780,6 +10508,14 @@
 			<File
 				RelativePath="..\dom\Position.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\Position.h"
@@ -9788,6 +10524,14 @@
 			<File
 				RelativePath="..\dom\PositionIterator.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\PositionIterator.h"
@@ -9796,6 +10540,14 @@
 			<File
 				RelativePath="..\dom\ProcessingInstruction.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\ProcessingInstruction.h"
@@ -9804,6 +10556,14 @@
 			<File
 				RelativePath="..\dom\ProgressEvent.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\ProgressEvent.h"
@@ -9812,6 +10572,14 @@
 			<File
 				RelativePath="..\dom\QualifiedName.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\QualifiedName.h"
@@ -9820,6 +10588,14 @@
 			<File
 				RelativePath="..\dom\Range.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\Range.h"
@@ -9832,6 +10608,14 @@
 			<File
 				RelativePath="..\dom\RegisteredEventListener.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\RegisteredEventListener.h"
@@ -9840,6 +10624,14 @@
 			<File
 				RelativePath="..\dom\SelectorNodeList.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\SelectorNodeList.h"
@@ -9848,6 +10640,14 @@
 			<File
 				RelativePath="..\dom\StaticNodeList.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\StaticNodeList.h"
@@ -9856,6 +10656,14 @@
 			<File
 				RelativePath="..\dom\StyledElement.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\StyledElement.h"
@@ -9864,6 +10672,14 @@
 			<File
 				RelativePath="..\dom\StyleElement.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\StyleElement.h"
@@ -9872,6 +10688,14 @@
 			<File
 				RelativePath="..\dom\TagNodeList.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\TagNodeList.h"
@@ -9880,6 +10704,14 @@
 			<File
 				RelativePath="..\dom\Text.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\Text.h"
@@ -9888,6 +10720,14 @@
 			<File
 				RelativePath="..\dom\TextEvent.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\TextEvent.h"
@@ -9900,6 +10740,14 @@
 			<File
 				RelativePath="..\dom\Traversal.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\Traversal.h"
@@ -9908,6 +10756,14 @@
 			<File
 				RelativePath="..\dom\TreeWalker.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\TreeWalker.h"
@@ -9916,6 +10772,14 @@
 			<File
 				RelativePath="..\dom\UIEvent.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\UIEvent.h"
@@ -9924,6 +10788,14 @@
 			<File
 				RelativePath="..\dom\UIEventWithKeyState.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\UIEventWithKeyState.h"
@@ -9932,6 +10804,14 @@
 			<File
 				RelativePath="..\dom\WheelEvent.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\WheelEvent.h"
@@ -9940,6 +10820,14 @@
 			<File
 				RelativePath="..\dom\XMLTokenizer.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\XMLTokenizer.h"
