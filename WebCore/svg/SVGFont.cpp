@@ -27,6 +27,7 @@
 #include "GraphicsContext.h"
 #include "RenderObject.h"
 #include "SimpleFontData.h"
+#include "SVGAltGlyphElement.h"
 #include "SVGFontData.h"
 #include "SVGGlyphElement.h"
 #include "SVGGlyphMap.h"
@@ -249,6 +250,20 @@ struct SVGTextRunWalker {
         int characterLookupRange;
         int endOfScanRange = to + m_walkerData.extraCharsAvailable;
 
+        bool haveAltGlyph = false;
+        SVGGlyphIdentifier altGlyphIdentifier;
+        if (RenderObject* renderObject = run.referencingRenderObject()) {
+            if (renderObject->element() && renderObject->element()->hasTagName(SVGNames::altGlyphTag)) {
+                SVGGlyphElement* glyphElement = static_cast<SVGAltGlyphElement*>(renderObject->element())->glyphElement();
+                if (glyphElement) {
+                    haveAltGlyph = true;
+                    altGlyphIdentifier = glyphElement->buildGlyphIdentifier();
+                    altGlyphIdentifier.isValid = true;
+                    altGlyphIdentifier.nameLength = to - from;
+                }
+            }
+        }
+        
         for (int i = from; i < to; ++i) {
             // If characterLookupRange is > 0, then the font defined ligatures (length of unicode property value > 1).
             // We have to check wheter the current character & the next character define a ligature. This needs to be
@@ -256,9 +271,12 @@ struct SVGTextRunWalker {
             characterLookupRange = endOfScanRange - i;
 
             String lookupString(run.data(run.rtl() ? run.length() - (i + characterLookupRange) : i), characterLookupRange);
-
             Vector<SVGGlyphIdentifier> glyphs;
-            m_fontElement->getGlyphIdentifiersForString(lookupString, glyphs);
+            if (haveAltGlyph)
+                glyphs.append(altGlyphIdentifier);
+            else
+                m_fontElement->getGlyphIdentifiersForString(lookupString, glyphs);
+
             Vector<SVGGlyphIdentifier>::iterator it = glyphs.begin();
             Vector<SVGGlyphIdentifier>::iterator end = glyphs.end();
             

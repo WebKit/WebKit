@@ -1,3 +1,24 @@
+2008-03-26  David Hyatt  <hyatt@apple.com>
+
+        Add support for the rendering and measurement of the <altGlyph> element in SVG.  This patch brings
+        is half of what's needed to reach 100/100 on Acid3 and pass the test.  Maciej has coded up the other half. :)
+
+        Reviewed by mjs
+
+        Added svg/custom/altGlyph.svg
+
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::childShouldCreateRenderer):
+        (WebCore::SVGAltGlyphElement::glyphElement):
+        * svg/SVGAltGlyphElement.h:
+        * svg/SVGFont.cpp:
+        (WebCore::SVGTextRunWalker::walk):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::insertedIntoDocument):
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::insertedIntoDocument):
+        (WebCore::SVGGlyphElement::removedFromDocument):
+
 2008-03-26  Adam Roben  <aroben@apple.com>
 
         Turn on SVG animation on Windows

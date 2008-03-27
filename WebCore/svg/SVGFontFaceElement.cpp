@@ -350,6 +350,7 @@ void SVGFontFaceElement::rebuildFontFace()
 void SVGFontFaceElement::insertedIntoDocument()
 {
     rebuildFontFace();
+    SVGElement::insertedIntoDocument();
 }
 
 void SVGFontFaceElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
