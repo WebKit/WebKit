@@ -3281,7 +3281,7 @@
 				Name="inspector"
 				>
 				<File
-					RelativePath="..\page\inspector\ConsolePanel.js"
+					RelativePath="..\page\inspector\Console.js"
 					>
 				</File>
 				<File
@@ -3293,15 +3293,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\DocumentPanel.js"
+					RelativePath="..\page\inspector\ElementsPanel.js"
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\FontPanel.js"
+					RelativePath="..\page\inspector\FontView.js"
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\ImagePanel.js"
+					RelativePath="..\page\inspector\ImageView.js"
 					>
 				</File>
 				<File
@@ -3321,7 +3321,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\NetworkPanel.js"
+					RelativePath="..\page\inspector\ResourcesPanel.js"
 					>
 				</File>
 				<File
@@ -3345,7 +3345,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\ResourcePanel.js"
+					RelativePath="..\page\inspector\ResourceView.js"
 					>
 				</File>
 				<File
@@ -3353,7 +3353,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\SourcePanel.js"
+					RelativePath="..\page\inspector\SourceView.js"
 					>
 				</File>
 				<File

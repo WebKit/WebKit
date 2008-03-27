@@ -1,10 +1,22 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/webkit/inspector">
-    <file>ConsolePanel.js</file>
-    <file>NetworkPanel.js</file>
+    <file>Console.js</file>
+    <file>Database.js</file>
+    <file>DatabasePanel.js</file>
+    <file>ElementsPanel.js</file>
+    <file>FontView.js</file>
+    <file>ImageView.js</file>
+    <file>MetricsSidebarPane.js</file>
+    <file>Panel.js</file>
+    <file>PropertiesSection.js</file>
+    <file>PropertiesSidebarPane.js</file>
     <file>Resource.js</file>
     <file>ResourceCategory.js</file>
-    <file>ResourcePanel.js</file>
+    <file>ResourceView.js</file>
+    <file>ResourcesPanel.js</file>
+    <file>SidebarPane.js</file>
+    <file>SourceView.js</file>
+    <file>StylesSidebarPane.js</file>
     <file>inspector.css</file>
     <file>inspector.html</file>
     <file>inspector.js</file>

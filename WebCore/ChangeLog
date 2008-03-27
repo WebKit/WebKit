@@ -1,3 +1,29 @@
+2008-03-26  Timothy Hatcher  <timothy@apple.com>
+
+        Rename some Inspector files to facilitate the up-coming UI refresh changes.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17773
+
+        Rubber-stamped by Adam Roben.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * page/inspector/Console.js: Copied from page/inspector/ConsolePanel.js.
+        * page/inspector/ConsolePanel.js: Removed.
+        * page/inspector/DocumentPanel.js: Removed.
+        * page/inspector/ElementsPanel.js: Copied from page/inspector/DocumentPanel.js.
+        * page/inspector/FontPanel.js: Removed.
+        * page/inspector/FontView.js: Copied from page/inspector/FontPanel.js.
+        * page/inspector/ImagePanel.js: Removed.
+        * page/inspector/ImageView.js: Copied from page/inspector/ImagePanel.js.
+        * page/inspector/NetworkPanel.js: Removed.
+        * page/inspector/ResourcePanel.js: Removed.
+        * page/inspector/ResourceView.js: Copied from page/inspector/ResourcePanel.js.
+        * page/inspector/ResourcesPanel.js: Copied from page/inspector/NetworkPanel.js.
+        * page/inspector/SourcePanel.js: Removed.
+        * page/inspector/SourceView.js: Copied from page/inspector/SourcePanel.js.
+        * page/inspector/WebKit.qrc:
+        * page/inspector/inspector.html:
+
 2008-03-26  Steve Falkenburg  <sfalken@apple.com>
 
         Enable LTCG on css, dom files in WebCore
