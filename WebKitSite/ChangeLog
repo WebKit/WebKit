@@ -1,5 +1,12 @@
 2008-03-26  Maciej Stachowiak  <mjs@apple.com>
 
+        More screenshots for teh blog.
+
+        * blog-files/acid3-full-rendering-pass.png: Added.
+        * blog-files/acid3-rendering-reference.png: Added.
+
+2008-03-26  Maciej Stachowiak  <mjs@apple.com>
+
         Screenshot for blog post.
 
         * blog-files/acid3-100.png: Added.
