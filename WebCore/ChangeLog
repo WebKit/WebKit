@@ -1,3 +1,17 @@
+2008-03-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - maintain subpixel-antialiasing when drawing text with a simple shadow
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawComplexText): If the shadow has a zero blur radius,
+        draw the shadow by drawing the text at an offset instead of relying on
+        Core Graphics shadows.
+        (WebCore::Font::drawGlyphs): Ditto.
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs): Ditto.
+
 2008-03-26  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mark Rowe

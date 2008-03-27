@@ -289,12 +289,37 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     CGContextSetTextMatrix(cgContext, matrix);
 
     CGContextSetFontSize(cgContext, platformData.size());
+
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+    graphicsContext->getShadow(shadowSize, shadowBlur, shadowColor);
+
+    bool hasSimpleShadow = graphicsContext->textDrawingMode() == cTextFill && shadowColor.isValid() && !shadowBlur && !shadowSize.isEmpty();
+    if (hasSimpleShadow) {
+        // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
+        graphicsContext->clearShadow();
+        Color fillColor = graphicsContext->fillColor();
+        Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
+        graphicsContext->setFillColor(shadowFillColor);
+        CGContextSetTextPosition(cgContext, point.x() + shadowSize.width(), point.y() + shadowSize.height());
+        CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+        if (font->m_syntheticBoldOffset) {
+            CGContextSetTextPosition(cgContext, point.x() + shadowSize.width() + font->m_syntheticBoldOffset, point.y() + shadowSize.height());
+            CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+        }
+        graphicsContext->setFillColor(fillColor);
+    }
+
     CGContextSetTextPosition(cgContext, point.x(), point.y());
     CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
     if (font->m_syntheticBoldOffset) {
         CGContextSetTextPosition(cgContext, point.x() + font->m_syntheticBoldOffset, point.y());
         CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
     }
+
+    if (hasSimpleShadow)
+        graphicsContext->setShadow(shadowSize, shadowBlur, shadowColor);
 
     wkRestoreFontSmoothingStyle(cgContext, oldFontSmoothingStyle);
 }

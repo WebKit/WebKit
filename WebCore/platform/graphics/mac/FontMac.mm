@@ -527,8 +527,35 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
     
     // ATSUI can't draw beyond -32768 to +32767 so we translate the CTM and tell ATSUI to draw at (0, 0).
     CGContextRef context = graphicsContext->platformContext();
-
     CGContextTranslateCTM(context, point.x(), point.y());
+
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+    graphicsContext->getShadow(shadowSize, shadowBlur, shadowColor);
+
+    bool hasSimpleShadow = graphicsContext->textDrawingMode() == cTextFill && shadowColor.isValid() && !shadowBlur && !shadowSize.isEmpty();
+    if (hasSimpleShadow) {
+        // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
+        graphicsContext->clearShadow();
+        Color fillColor = graphicsContext->fillColor();
+        Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
+        graphicsContext->setFillColor(shadowFillColor);
+        CGContextTranslateCTM(context, shadowSize.width(), shadowSize.height());
+        status = ATSUDrawText(params.m_layout, from, drawPortionLength, 0, 0);
+        if (status == noErr && params.m_hasSyntheticBold) {
+            // Force relayout for the bold pass
+            ATSUClearLayoutCache(params.m_layout, 0);
+            params.m_syntheticBoldPass = true;
+            status = ATSUDrawText(params.m_layout, from, drawPortionLength, 0, 0);
+            // Force relayout for the next pass
+            ATSUClearLayoutCache(params.m_layout, 0);
+            params.m_syntheticBoldPass = false;
+        }
+        CGContextTranslateCTM(context, -shadowSize.width(), -shadowSize.height());
+        graphicsContext->setFillColor(fillColor);
+    }
+
     status = ATSUDrawText(params.m_layout, from, drawPortionLength, 0, 0);
     if (status == noErr && params.m_hasSyntheticBold) {
         // Force relayout for the bold pass
@@ -541,6 +568,9 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
     if (status != noErr)
         // Nothing to do but report the error (dev build only).
         LOG_ERROR("ATSUDrawText() failed(%d)", status);
+
+    if (hasSimpleShadow)
+        graphicsContext->setShadow(shadowSize, shadowBlur, shadowColor);
 
     disposeATSULayoutParameters(&params);
     
@@ -644,13 +674,37 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         CGContextSetFontSize(cgContext, 1.0f);
     } else
         CGContextSetFontSize(cgContext, platformData.m_size);
-    
+
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+    context->getShadow(shadowSize, shadowBlur, shadowColor);
+
+    bool hasSimpleShadow = context->textDrawingMode() == cTextFill && shadowColor.isValid() && !shadowBlur && !shadowSize.isEmpty();
+    if (hasSimpleShadow) {
+        // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
+        context->clearShadow();
+        Color fillColor = context->fillColor();
+        Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
+        context->setFillColor(shadowFillColor);
+        CGContextSetTextPosition(cgContext, point.x() + shadowSize.width(), point.y() + shadowSize.height());
+        CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+        if (font->m_syntheticBoldOffset) {
+            CGContextSetTextPosition(cgContext, point.x() + shadowSize.width() + font->m_syntheticBoldOffset, point.y() + shadowSize.height());
+            CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+        }
+        context->setFillColor(fillColor);
+    }
+
     CGContextSetTextPosition(cgContext, point.x(), point.y());
     CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
     if (font->m_syntheticBoldOffset) {
         CGContextSetTextPosition(cgContext, point.x() + font->m_syntheticBoldOffset, point.y());
         CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
     }
+
+    if (hasSimpleShadow)
+        context->setShadow(shadowSize, shadowBlur, shadowColor);
 
     if (originalShouldUseFontSmoothing != newShouldUseFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
