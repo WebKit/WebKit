@@ -1,5 +1,12 @@
 2008-03-26  Adam Roben  <aroben@apple.com>
 
+        Force JSC headers to be copied by touching a file
+
+        * kjs/array_instance.cpp:
+        (KJS::ArrayInstance::getPropertyNames):
+
+2008-03-26  Adam Roben  <aroben@apple.com>
+
         Windows build fix after r31324
 
         Written with Darin.

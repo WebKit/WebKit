@@ -353,7 +353,7 @@ void ArrayInstance::getPropertyNames(ExecState* exec, PropertyNameArray& propert
         for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it)
             propertyNames.add(Identifier::from(it->first));
     }
- 
+
     JSObject::getPropertyNames(exec, propertyNames);
 }
 

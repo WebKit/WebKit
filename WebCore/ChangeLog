@@ -1,3 +1,15 @@
+2008-03-26  Adam Roben  <aroben@apple.com>
+
+        Turn on SVG animation on Windows
+
+        Also touched some files to force things to rebuild/regenerate.
+
+        * WebCore.vcproj/WebCore.vcproj: Added ENABLE_SVG_ANIMATION.
+        * WebCore.vcproj/build-generated-files.sh: Ditto.
+        * bindings/scripts/CodeGenerator.pm: Touched.
+        * config.h: Touched.
+        * svg/svgtags.in: Touched.
+
 2008-03-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.
