@@ -482,18 +482,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (WebResource *)subresourceForURL:(NSURL *)URL
 {
-    if (!_private->loader->isCommitted())
-        return nil;
-
-    NSData *data;
-    NSURLResponse *response;
-    if (![[self webFrame] _getData:&data andResponse:&response forURL:[URL _web_originalDataAsString]]) {
-        DocumentLoader* loader = [self _documentLoader];
-        ArchiveResource* coreResource = loader->archiveResourceForURL(URL);
-        return coreResource ? [[[WebResource alloc] _initWithCoreResource:coreResource] autorelease] : nil;
-    }
-
-    return [[[WebResource alloc] _initWithData:data URL:URL response:response] autorelease];
+    RefPtr<ArchiveResource> subresource = _private->loader->subresource(URL);
+    
+    return subresource ? [[[WebResource alloc] _initWithCoreResource:subresource.get()] autorelease] : nil;
 }
 
 - (void)addSubresource:(WebResource *)subresource

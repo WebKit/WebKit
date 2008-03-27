@@ -1,3 +1,21 @@
+2008-03-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Part of the continued push to move WebArchive-related code down to WebCore, this
+        moves [WebDataSource subresourceForURL:] down to DocumentLoader->subresource()
+
+        * WebCore.base.exp:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::subresource): Create an ArchiveResource from a CachedResource if it exists
+          Otherwise, fallback to an ArchiveResource from the current Archive if any.  Otherwise, return null
+        * loader/DocumentLoader.h:
+
+        * loader/archive/ArchiveResource.cpp:
+        (WebCore::ArchiveResource::create):
+        (WebCore::ArchiveResource::ArchiveResource):
+        * loader/archive/ArchiveResource.h:
+
 2008-03-26  Sam Weinig  <sam@webkit.org>
 
         Fix Gtk+ build.

@@ -33,6 +33,11 @@
 
 namespace WebCore {
 
+PassRefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> data, const KURL& url, const ResourceResponse& response)
+{
+    return adoptRef(new ArchiveResource(data, url, response));
+}
+
 PassRefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> data, const KURL& url, const String& mimeType, const String& textEncoding, const String& frameName)
 {
     return adoptRef(new ArchiveResource(data, url, mimeType, textEncoding, frameName));
@@ -41,6 +46,15 @@ PassRefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> dat
 PassRefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> data, const KURL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& resourceResponse)
 {
     return adoptRef(new ArchiveResource(data, url, mimeType, textEncoding, frameName, resourceResponse));
+}
+
+ArchiveResource::ArchiveResource(PassRefPtr<SharedBuffer> data, const KURL& url, const ResourceResponse& response)
+    : m_data(data)
+    , m_url(url)
+    , m_mimeType(response.mimeType())
+    , m_textEncoding(response.textEncodingName())
+    , m_response(response)
+{
 }
 
 ArchiveResource::ArchiveResource(PassRefPtr<SharedBuffer> data, const KURL& url, const String& mimeType, const String& textEncoding, const String& frameName)

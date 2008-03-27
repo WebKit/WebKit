@@ -40,6 +40,7 @@ namespace WebCore {
 
 class ArchiveResource : public RefCounted<ArchiveResource> {
 public:
+    static PassRefPtr<ArchiveResource> create(PassRefPtr<SharedBuffer>, const KURL&, const ResourceResponse&);
     static PassRefPtr<ArchiveResource> create(PassRefPtr<SharedBuffer>, const KURL&, const String& mimeType, const String& textEncoding, const String& frameName);
     static PassRefPtr<ArchiveResource> create(PassRefPtr<SharedBuffer>, const KURL&, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse&);
     
@@ -55,6 +56,7 @@ public:
     bool shouldIgnoreWhenUnarchiving() const { return m_shouldIgnoreWhenUnarchiving; }
 
 private:
+    ArchiveResource(PassRefPtr<SharedBuffer>, const KURL&, const ResourceResponse&);
     ArchiveResource(PassRefPtr<SharedBuffer>, const KURL&, const String& mimeType, const String& textEncoding, const String& frameName);
     ArchiveResource(PassRefPtr<SharedBuffer>, const KURL&, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse&);
     

@@ -465,6 +465,22 @@ void DocumentLoader::addArchiveResource(PassRefPtr<ArchiveResource> resource)
     m_archiveResourceCollection->addResource(resource);
 }
 
+PassRefPtr<ArchiveResource> DocumentLoader::subresource(const KURL& url)
+{
+    if (!isCommitted())
+        return 0;
+    
+    Document* doc = m_frame->document();
+    if (!doc)
+        return archiveResourceForURL(url);
+        
+    CachedResource* resource = doc->docLoader()->cachedResource(url);
+    if (!resource)
+        return archiveResourceForURL(url);
+        
+    return ArchiveResource::create(resource->data(), url, resource->response());
+}
+
 ArchiveResource* DocumentLoader::archiveResourceForURL(const KURL& url)
 {
     if (!m_archiveResourceCollection)

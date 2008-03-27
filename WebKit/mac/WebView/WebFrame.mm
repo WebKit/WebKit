@@ -970,26 +970,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     _private->coreFrame->eventHandler()->dragSourceEndedAt(event, (DragOperation)operation);
 }
 
-- (BOOL)_getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSString *)url
-{
-    Document* doc = _private->coreFrame->document();
-    if (!doc)
-        return NO;
-
-    CachedResource* resource = doc->docLoader()->cachedResource(url);
-    if (!resource)
-        return NO;
-
-    SharedBuffer* buffer = resource->data();
-    if (buffer)
-        *data = [buffer->createNSData() autorelease];
-    else
-        *data = nil;
-
-    *response = resource->response().nsURLResponse();
-    return YES;
-}
-
 - (void)_getAllResourceDatas:(NSArray **)datas andResponses:(NSArray **)responses
 {
     Document* doc = _private->coreFrame->document();

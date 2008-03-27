@@ -1,3 +1,17 @@
+2008-03-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Part of the continued push to move WebArchive-related code down to WebCore, this
+        moves [WebDataSource subresourceForURL:] down to DocumentLoader->subresource()
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource subresourceForURL:]): Call through to the DocumentLoader 
+
+        * WebView/WebFrame.mm: Remove [WebFrame _getData:andResponse:forURL:], as its only use
+          has now been ported down to WebCore
+        * WebView/WebFrameInternal.h:
+
 2008-03-26  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Brady Eidson.
