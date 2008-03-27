@@ -29,7 +29,6 @@
 #import <WebKit/WebDOMOperations.h>
 
 @interface DOMNode (WebDOMNodeOperationsPrivate)
-- (NSArray *)_URLsFromSelectors:(SEL)firstSel, ...;
 - (NSArray *)_subresourceURLs;
 @end
 

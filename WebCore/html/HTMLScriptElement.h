@@ -78,6 +78,8 @@ public:
     // A charset for loading the script (may be overridden by HTTP headers or a BOM).
     String scriptCharset() const;
     
+    virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+
 private:
     CachedScript* m_cachedScript;
     bool m_createdByParser;

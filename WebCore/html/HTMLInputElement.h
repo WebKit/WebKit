@@ -187,6 +187,8 @@ public:
     String constrainValue(const String& proposedValue) const;
 
     virtual void didRestoreFromCache();
+
+    virtual void getSubresourceAttributeStrings(Vector<String>&) const;
     
 protected:
     virtual void willMoveToNewOwnerDocument();

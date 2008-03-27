@@ -1,3 +1,66 @@
+2008-03-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        When we create a WebArchive, we walk every node from some starting point, asking each node
+        along the way "What are your subresource URLs?"
+
+        That logic is currently in DOMNode in WebKitMac - this patch moves that ability down into
+        WebCore::Node
+
+        * WebCore.base.exp:
+        
+        * dom/Node.cpp:
+        (WebCore::Node::getSubresourceURLs):
+        (WebCore::Node::getSubresourceAttributeStrings):  Virtual and empty.  Subclasses of Node that have 
+          subresources will override it.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::getSubresourceAttributeStrings):
+        * dom/ProcessingInstruction.h:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::getSubresourceAttributeStrings):
+        * html/HTMLBodyElement.h:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::getSubresourceAttributeStrings):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::getSubresourceAttributeStrings):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::getSubresourceAttributeStrings):
+        * html/HTMLInputElement.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::getSubresourceAttributeStrings):
+        * html/HTMLLinkElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::getSubresourceAttributeStrings):
+        * html/HTMLObjectElement.h:
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::getSubresourceAttributeStrings):
+        * html/HTMLParamElement.h:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::getSubresourceAttributeStrings):
+        * html/HTMLScriptElement.h:
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::getSubresourceAttributeStrings):
+        * html/HTMLTableCellElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::getSubresourceAttributeStrings):
+        * html/HTMLTableElement.h:
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::getSubresourceAttributeStrings):
+        * svg/SVGCursorElement.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::getSubresourceAttributeStrings):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::getSubresourceAttributeStrings):
+        * svg/SVGImageElement.h:
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::getSubresourceAttributeStrings):
+        * svg/SVGScriptElement.h:
+
 2008-03-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

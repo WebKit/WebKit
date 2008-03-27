@@ -55,6 +55,8 @@ public:
     String valueType() const;
     void setValueType(const String&);
 
+    virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+
  protected:
     AtomicString m_name;
     AtomicString m_value;

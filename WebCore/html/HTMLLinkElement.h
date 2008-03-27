@@ -93,6 +93,8 @@ public:
     
     static void tokenizeRelAttribute(const AtomicString& value, bool& stylesheet, bool& alternate, bool& icon);
 
+    virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+
 protected:
     CachedCSSStyleSheet* m_cachedSheet;
     RefPtr<CSSStyleSheet> m_sheet;

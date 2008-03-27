@@ -92,6 +92,11 @@ void SVGCursorElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 }
 
+void SVGCursorElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+{
+    urls.append(href());
+}
+
 }
 
 #endif // ENABLE(SVG)

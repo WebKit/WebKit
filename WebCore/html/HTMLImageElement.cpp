@@ -426,4 +426,10 @@ bool HTMLImageElement::complete() const
     return m_imageLoader.imageComplete();
 }
 
+void HTMLImageElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+{
+    urls.append(src().string());
+    urls.append(useMap());
+}
+
 }

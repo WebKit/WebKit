@@ -291,4 +291,9 @@ int HTMLBodyElement::scrollWidth() const
     return view ? view->contentsWidth() : 0;    
 }
 
+void HTMLBodyElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+{
+    urls.append(background());
+}
+
 }

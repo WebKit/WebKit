@@ -495,4 +495,11 @@ bool HTMLObjectElement::containsJavaApplet() const
     return false;
 }
 
+void HTMLObjectElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+{
+    urls.append(data().string());
+    if (useMap().startsWith("#"))
+        urls.append(useMap());
+}
+
 }

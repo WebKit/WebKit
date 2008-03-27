@@ -255,4 +255,12 @@ int ProcessingInstruction::maxCharacterOffset() const
     return static_cast<int>(m_data.length());
 }
 
+void ProcessingInstruction::getSubresourceAttributeStrings(Vector<String>& urls) const
+{
+    if (!sheet())
+        return;
+        
+    urls.append(sheet()->href());
+}
+
 } // namespace

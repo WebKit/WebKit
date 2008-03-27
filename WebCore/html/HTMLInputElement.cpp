@@ -1546,4 +1546,9 @@ void HTMLInputElement::didMoveToNewOwnerDocument()
     HTMLFormControlElementWithState::didMoveToNewOwnerDocument();
 }
     
+void HTMLInputElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+{
+    urls.append(src().string());  
+}
+
 } // namespace

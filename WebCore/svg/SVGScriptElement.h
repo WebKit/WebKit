@@ -45,6 +45,8 @@ namespace WebCore
         // Internal
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
+        virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 

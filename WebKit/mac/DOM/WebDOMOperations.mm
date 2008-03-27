@@ -28,6 +28,8 @@
 
 #import "WebDOMOperationsPrivate.h"
 
+#import "DOMNodeInternal.h"
+#import "WebArchiveInternal.h"
 #import "WebArchiver.h"
 #import "WebDataSourcePrivate.h"
 #import "WebFrameInternal.h"
@@ -36,6 +38,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/CSSHelper.h>
 #import <WebCore/Document.h>
+#import <WebCore/LegacyWebArchive.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMHTML.h>
 
@@ -49,7 +52,8 @@ using namespace WebCore;
 
 - (WebArchive *)webArchive
 {
-    return [WebArchiver archiveNode:self];
+    WebArchive *archive = [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create([self _node])] autorelease];
+    return archive;
 }
 
 - (NSString *)markupString
@@ -61,37 +65,18 @@ using namespace WebCore;
 
 @implementation DOMNode (WebDOMNodeOperationsPrivate)
 
-- (NSArray *)_URLsFromSelectors:(SEL)firstSel, ...
-{
-    NSMutableArray *URLs = [NSMutableArray array];
-    
-    va_list args;
-    va_start(args, firstSel);
-    
-    SEL selector = firstSel;
-    do {
-#if ENABLE(SVG)
-        NSString *string;
-        id attributeValue = [self performSelector:selector];
-        if ([attributeValue isKindOfClass:[DOMSVGAnimatedString class]])
-            string = [(DOMSVGAnimatedString*)attributeValue animVal];
-        else
-            string = attributeValue;
-#else
-        NSString *string = [self performSelector:selector];
-#endif
-        if ([string length] > 0)
-            [URLs addObject:[[self ownerDocument] URLWithAttributeString:string]];
-    } while ((selector = va_arg(args, SEL)) != nil);
-    
-    va_end(args);
-    
-    return URLs;
-}
-
 - (NSArray *)_subresourceURLs
 {
-    return nil;
+    Vector<KURL> urls;
+    [self _node]->getSubresourceURLs(urls);
+    if (!urls.size())
+        return nil;
+
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:urls.size()];
+    for (unsigned i = 0; i < urls.size(); ++i)
+        [array addObject:(NSURL *)urls[i]];
+        
+    return array;
 }
 
 @end
@@ -141,177 +126,6 @@ using namespace WebCore;
 - (NSString *)markupString
 {
     return [[[[self startContainer] ownerDocument] webFrame] _markupStringFromRange:self nodes:nil];
-}
-
-@end
-
-@implementation DOMHTMLBodyElement (WebDOMHTMLBodyElementOperationsPrivate)
-
-- (NSArray *)_subresourceURLs
-{
-    return [self _URLsFromSelectors:@selector(background), nil];
-}
-
-@end
-
-@implementation DOMHTMLInputElement (WebDOMHTMLInputElementOperationsPrivate)
-
-- (NSArray *)_subresourceURLs
-{
-    return [self _URLsFromSelectors:@selector(src), nil];
-}
-
-@end
-
-@implementation DOMHTMLLinkElement (WebDOMHTMLLinkElementOperationsPrivate)
-
-- (NSArray *)_subresourceURLs
-{
-    NSString *relName = [self rel];
-    if ([relName _webkit_isCaseInsensitiveEqualToString:@"stylesheet"] || [relName _webkit_isCaseInsensitiveEqualToString:@"icon"]) {
-        return [self _URLsFromSelectors:@selector(href), nil];
-    }
-    return nil;
-}
-
-@end
-
-@implementation DOMHTMLScriptElement (WebDOMHTMLScriptElementOperationsPrivate)
-
-- (NSArray *)_subresourceURLs
-{
-    return [self _URLsFromSelectors:@selector(src), nil];
-}
-
-@end
-
-@implementation DOMHTMLImageElement (WebDOMHTMLImageElementOperationsPrivate)
-
-- (NSArray *)_subresourceURLs
-{
-    SEL useMapSelector = [[self useMap] hasPrefix:@"#"] ? nil : @selector(useMap);
-    return [self _URLsFromSelectors:@selector(src), useMapSelector, nil];
-}
-
-@end
-
-#if ENABLE(SVG)
-
-@implementation DOMSVGImageElement (WebDOMSVGImageElementOperationsPrivate)
-
-- (NSArray *)_subresourceURLs
-{
-    return [self _URLsFromSelectors:@selector(href), nil];
-}
-
-@end
-
-@implementation DOMSVGScriptElement (WebDOMSVGScriptElementOperationsPrivate)
-
-- (NSArray *)_subresourceURLs
-{
-    return [self _URLsFromSelectors:@selector(href), nil];
-}
-
-@end
-
-@implementation DOMSVGCursorElement (WebDOMSVGCursorElementOperationsPrivate)
-
-- (NSArray *)_subresourceURLs
-{
-    return [self _URLsFromSelectors:@selector(href), nil];
-}
-
-@end
-
-#if ENABLE(SVG_FILTERS)
-@implementation DOMSVGFEImageElement (WebDOMSVGFEImageElementOperationsPrivate)
-
-- (NSArray *)_subresourceURLs
-{
-    return [self _URLsFromSelectors:@selector(href), nil];
-}
-
-@end
-#endif
-
-#endif
-
-@implementation DOMProcessingInstruction (WebDOMProcessingInstructionOperationsPrivate)
-
-- (NSString *)_stylesheetURL
-{
-    DOMStyleSheet *styleSheet = [self sheet];
-    if (styleSheet)
-        return [styleSheet href];
-    return nil;
-}
-
-- (NSArray *)_subresourceURLs
-{
-    return [self _URLsFromSelectors:@selector(_stylesheetURL), nil];
-}
-
-@end
-
-@implementation DOMHTMLEmbedElement (WebDOMHTMLEmbedElementOperationsPrivate)
-
-- (NSArray *)_subresourceURLs
-{
-    return [self _URLsFromSelectors:@selector(src), nil];
-}
-
-@end
-
-@implementation DOMHTMLObjectElement (WebDOMHTMLObjectElementOperationsPrivate)
-
-- (NSArray *)_subresourceURLs
-{
-    SEL useMapSelector = [[self useMap] hasPrefix:@"#"] ? nil : @selector(useMap);
-    return [self _URLsFromSelectors:@selector(data), useMapSelector, nil];
-}
-
-@end
-
-@implementation DOMHTMLParamElement (WebDOMHTMLParamElementOperationsPrivate)
-
-- (NSArray *)_subresourceURLs
-{
-    NSString *paramName = [self name];
-    if ([paramName _webkit_isCaseInsensitiveEqualToString:@"data"] ||
-        [paramName _webkit_isCaseInsensitiveEqualToString:@"movie"] ||
-        [paramName _webkit_isCaseInsensitiveEqualToString:@"src"]) {
-        return [self _URLsFromSelectors:@selector(value), nil];
-    }
-    return nil;
-}
-
-@end
-
-@implementation DOMHTMLTableElement (WebDOMHTMLTableElementOperationsPrivate)
-
-- (NSString *)_web_background
-{
-    return [self getAttribute:@"background"];
-}
-
-- (NSArray *)_subresourceURLs
-{
-    return [self _URLsFromSelectors:@selector(_web_background), nil];
-}
-
-@end
-
-@implementation DOMHTMLTableCellElement (WebDOMHTMLTableCellElementOperationsPrivate)
-
-- (NSString *)_web_background
-{
-    return [self getAttribute:@"background"];
-}
-
-- (NSArray *)_subresourceURLs
-{
-    return [self _URLsFromSelectors:@selector(_web_background), nil];
 }
 
 @end

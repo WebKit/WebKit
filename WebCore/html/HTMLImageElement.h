@@ -114,6 +114,8 @@ public:
 
     bool haveFiredLoadEvent() const { return m_imageLoader.haveFiredLoadEvent(); }
 
+    virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+
 private:
     HTMLImageLoader m_imageLoader;
     String usemap;

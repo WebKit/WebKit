@@ -1,5 +1,20 @@
 2008-03-26  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Darin
+
+        When we create a WebArchive, we walk every node from some starting point, asking each node
+        along the way "What are your subresource URLs?"
+
+        That logic is currently in DOMNode in WebKitMac - this patch moves that ability down into
+        WebCore::Node
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMNode _subresourceURLs]): One generic DOMNode method can now handle all DOMNodes by
+          calling into individual WebCore::Node implementations
+        * DOM/WebDOMOperationsPrivate.h:
+
+2008-03-26  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Mark Rowe
 
         Part of the continued push to move WebArchive-related code down to WebCore, this

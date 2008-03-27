@@ -46,6 +46,8 @@ namespace WebCore {
         virtual void parseMappedAttribute(MappedAttribute*);
         virtual void notifyFinished(CachedResource*);
 
+        virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+
     protected:
         virtual SVGFEImage* filterEffect(SVGResourceFilter*) const;
 

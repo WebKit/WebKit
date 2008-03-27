@@ -70,6 +70,8 @@ public:
     int scrollHeight() const;
     int scrollWidth() const;
     
+    virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+    
 protected:
     RefPtr<CSSMutableStyleDeclaration> m_linkDecl;
 };

@@ -142,6 +142,11 @@ void SVGImageElement::attach()
         imageObj->setCachedImage(m_imageLoader.image());
 }
 
+void SVGImageElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+{
+    urls.append(href());
+}
+
 }
 
 #endif // ENABLE(SVG)

@@ -261,4 +261,9 @@ void HTMLTableCellElement::setWidth(const String &value)
     setAttribute(widthAttr, value);
 }
 
+void HTMLTableCellElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+{
+    urls.append(getAttribute(HTMLNames::backgroundAttr).string());
+}
+
 }
