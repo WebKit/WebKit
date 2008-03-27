@@ -1426,7 +1426,11 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSLocation.lut.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSLocation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSLocation.h"
 				>
 			</File>
 			<File
@@ -3135,6 +3139,14 @@
 			</File>
 			<File
 				RelativePath="..\page\JavaScriptDebugServer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\Location.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\Location.h"
 				>
 			</File>
 			<File
@@ -11461,11 +11473,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSLocation.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSLocation.h"
+					RelativePath="..\bindings\js\JSLocationCustom.cpp"
 					>
 				</File>
 				<File

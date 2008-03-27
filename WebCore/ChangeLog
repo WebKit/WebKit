@@ -1,3 +1,92 @@
+2008-03-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Autogenerate JSLocation.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        Add files.
+
+        * DerivedSources.make: Add Location, remove JSLocation.lut.h
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBasePrivate::JSDOMWindowBasePrivate):
+        (WebCore::JSDOMWindowBase::getValueProperty):
+        (WebCore::JSDOMWindowBase::put):
+        (WebCore::JSDOMWindowBase::clearHelperObjectProperties):
+        (WebCore::JSDOMWindowBase::disconnectFrame):
+        * bindings/js/JSDOMWindowBase.h:
+        Remove manuel management of the Location object.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::mark): Add marking of JSLocation.
+        (WebCore::JSDOMWindow::setLocation): Add custom setLocation as we only want to do this when
+        safe and we need to keep Dashboard quirks.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        Fetch the location object using the normal toJS route.
+
+        * bindings/js/JSLocation.cpp: Removed.
+        * bindings/js/JSLocation.h: Removed.
+        * bindings/js/JSLocationCustom.cpp: Added.
+        (WebCore::JSLocation::customGetOwnPropertySlot):
+        (WebCore::JSLocation::customPut):
+        (WebCore::JSLocation::deleteProperty):
+        (WebCore::JSLocation::customGetPropertyNames):
+        (WebCore::navigateIfAllowed):
+        (WebCore::JSLocation::setHref):
+        (WebCore::JSLocation::setProtocol):
+        (WebCore::JSLocation::setHost):
+        (WebCore::JSLocation::setHostname):
+        (WebCore::JSLocation::setPort):
+        (WebCore::JSLocation::setPathname):
+        (WebCore::JSLocation::setSearch):
+        (WebCore::JSLocation::setHash):
+        (WebCore::JSLocation::replace):
+        (WebCore::JSLocation::reload):
+        (WebCore::JSLocation::assign):
+        (WebCore::JSLocation::toString):
+        Setter and Functions need custom implementations as they rely on the dynamic
+        global object for determining the behavior of the navigation.
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        (WebCore::CachedPage::clear):
+        * history/CachedPage.h:
+        Removed all the special casing for location as it should be treated like all
+        the other objects hanging off the window.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clear):
+        (WebCore::DOMWindow::location):
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::optionalLocation):
+        * page/DOMWindow.idl:
+        Add Location accessor and pointer getter for marking.
+
+        * page/Location.cpp: Added.
+        (WebCore::Location::Location):
+        (WebCore::Location::disconnectFrame):
+        (WebCore::Location::url):
+        (WebCore::Location::href):
+        (WebCore::Location::protocol):
+        (WebCore::Location::host):
+        (WebCore::Location::hostname):
+        (WebCore::Location::port):
+        (WebCore::Location::pathname):
+        (WebCore::Location::search):
+        (WebCore::Location::hash):
+        (WebCore::Location::toString):
+        * page/Location.h: Added.
+        (WebCore::Location::create):
+        (WebCore::Location::frame):
+        * page/Location.idl: Added.
+
 2008-03-26  David Hyatt  <hyatt@apple.com>
 
         Add support for the rendering and measurement of the <altGlyph> element in SVG.  This patch brings

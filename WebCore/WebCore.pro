@@ -253,7 +253,6 @@ STYLESHEETS_EMBED = $$PWD/css/html4.css
 LUT_FILES += \
     bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSEventTargetBase.cpp \
-    bindings/js/JSLocation.cpp \
     bindings/js/JSRGBColor.cpp \
     bindings/js/JSXMLHttpRequest.cpp \
     bindings/js/JSXSLTProcessor.cpp
@@ -386,6 +385,7 @@ IDL_BINDINGS += \
     page/DOMSelection.idl \
     page/DOMWindow.idl \
     page/History.idl \
+    page/Location.idl \
     page/Screen.idl \
     page/Navigator.idl \
     plugins/Plugin.idl \
@@ -432,7 +432,7 @@ SOURCES += \
     bindings/js/JSHTMLOptionsCollectionCustom.cpp \
     bindings/js/JSHTMLSelectElementCustom.cpp \
     bindings/js/JSImageConstructor.cpp \
-    bindings/js/JSLocation.cpp \
+    bindings/js/JSLocationCustom.cpp \
     bindings/js/JSNamedNodeMapCustom.cpp \
     bindings/js/JSNamedNodesCollection.cpp  \
     bindings/js/JSNavigatorCustom.cpp  \
@@ -756,6 +756,7 @@ SOURCES += \
     page/History.cpp \
     page/InspectorController.cpp \
     page/JavaScriptDebugServer.cpp \
+    page/Location.cpp \
     page/MouseEventWithHitTestResults.cpp \
     page/Page.cpp \
     page/PageGroup.cpp \

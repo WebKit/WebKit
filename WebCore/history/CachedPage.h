@@ -75,7 +75,6 @@ private:
     RefPtr<Node> m_mousePressNode;
     KURL m_URL;
     OwnPtr<KJS::SavedProperties> m_windowProperties;
-    OwnPtr<KJS::SavedProperties> m_locationProperties;
     OwnPtr<KJS::SavedProperties> m_windowLocalStorage;
     OwnPtr<KJS::SavedBuiltins> m_windowBuiltins;
     OwnPtr<PausedTimeouts> m_pausedTimeouts;

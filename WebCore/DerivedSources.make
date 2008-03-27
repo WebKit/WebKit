@@ -151,6 +151,7 @@ DOM_CLASSES = \
     History \
     ImageData \
     KeyboardEvent \
+    Location \
     MediaError \
     MediaList \
     MessageEvent \
@@ -350,7 +351,6 @@ all : \
     \
     JSDOMWindowBase.lut.h \
     JSEventTargetBase.lut.h \
-    JSLocation.lut.h \
     JSRGBColor.lut.h \
     JSXMLHttpRequest.lut.h \
     JSXSLTProcessor.lut.h \

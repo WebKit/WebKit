@@ -50,7 +50,6 @@ webcore_built_nosources += \
 	DerivedSources/ColorData.c \
 	WebCore/bindings/js/JSDOMWindowBase.lut.h \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
-	WebCore/bindings/js/JSLocation.lut.h \
 	WebCore/bindings/js/JSRGBColor.lut.h \
 	WebCore/bindings/js/JSXMLHttpRequest.lut.h \
 	WebCore/bindings/js/JSXSLTProcessor.lut.h \
@@ -452,6 +451,7 @@ IDL_BINDINGS +=  \
 	WebCore/page/DOMSelection.idl \
 	WebCore/page/DOMWindow.idl \
 	WebCore/page/History.idl \
+	WebCore/page/Location.idl \
 	WebCore/page/Navigator.idl \
 	WebCore/page/Screen.idl \
 	WebCore/plugins/MimeType.idl \
@@ -484,7 +484,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSEventTargetBase.cpp \
 	WebCore/bindings/js/JSHistoryCustom.cpp \
 	WebCore/bindings/js/JSImageConstructor.cpp \
-	WebCore/bindings/js/JSLocation.cpp \
+	WebCore/bindings/js/JSLocationCustom.cpp \
 	WebCore/bindings/js/JSEventTargetNode.cpp \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLCollectionCustom.cpp \
@@ -823,6 +823,7 @@ webcore_sources += \
 	WebCore/page/History.cpp \
 	WebCore/page/InspectorController.cpp \
 	WebCore/page/JavaScriptDebugServer.cpp \
+	WebCore/page/Location.cpp \
 	WebCore/page/MouseEventWithHitTestResults.cpp \
 	WebCore/page/Navigator.cpp \
 	WebCore/page/Page.cpp \
@@ -2135,7 +2136,6 @@ DerivedSources/JS%.cpp: %.idl $(SCRIPTS_JS_BINDINGS)
 CLEANFILES += \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
 	WebCore/bindings/js/JSHTMLInputElementBaseTable.cpp \
-	WebCore/bindings/js/JSLocation.lut.h \
 	JSDOMWindowBase.lut.h \
 	JSRGBColor.lut.h \
 	JSXMLHttpRequest.lut.h \

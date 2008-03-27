@@ -27,6 +27,7 @@
 #include "JSDOMWindow.h"
 #include "JSHTMLDocument.h"
 #include "JSLocation.h"
+#include "Location.h"
 #include "kjs_proxy.h"
 
 #if ENABLE(SVG)
@@ -50,9 +51,7 @@ JSValue* JSDocument::location(ExecState* exec) const
     if (!frame)
         return jsNull();
 
-    JSDOMWindow* window = toJSDOMWindow(frame);
-    ASSERT(window);
-    return window->location();
+    return toJS(exec, frame->domWindow()->location());
 }
 
 void JSDocument::setLocation(ExecState* exec, JSValue* value)

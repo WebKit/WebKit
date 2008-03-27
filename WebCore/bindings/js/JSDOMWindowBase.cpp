@@ -44,7 +44,6 @@
 #include "JSHTMLCollection.h"
 #include "JSHTMLOptionElementConstructor.h"
 #include "JSImageConstructor.h"
-#include "JSLocation.h"
 #include "JSNode.h"
 #include "JSXMLHttpRequest.h"
 #include "Logging.h"
@@ -84,8 +83,7 @@ const double cMinimumTimerInterval = 0.010;
 
 struct JSDOMWindowBasePrivate {
     JSDOMWindowBasePrivate()
-        : loc(0)
-        , m_evt(0)
+        : m_evt(0)
         , m_returnValueSlot(0)
     {
     }
@@ -94,7 +92,6 @@ struct JSDOMWindowBasePrivate {
     JSDOMWindowBase::ListenersMap jsHTMLEventListeners;
     JSDOMWindowBase::UnprotectedListenersMap jsUnprotectedEventListeners;
     JSDOMWindowBase::UnprotectedListenersMap jsUnprotectedHTMLEventListeners;
-    mutable JSLocation* loc;
     Event* m_evt;
     JSValue** m_returnValueSlot;
 
@@ -159,7 +156,6 @@ const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, &JSDOMWindowBaseTable }
 # -- Attributes --
   crypto                WebCore::JSDOMWindowBase::Crypto             DontDelete|ReadOnly
   event                 WebCore::JSDOMWindowBase::Event_             DontDelete
-  location              WebCore::JSDOMWindowBase::Location_          DontDelete
 # -- Event Listeners --
   onabort               WebCore::JSDOMWindowBase::Onabort            DontDelete
   onblur                WebCore::JSDOMWindowBase::Onblur             DontDelete
@@ -231,20 +227,6 @@ JSDOMWindowBase::~JSDOMWindowBase()
     e1 = d->jsUnprotectedHTMLEventListeners.end();
     for (; i1 != e1; ++i1)
         i1->second->clearWindowObj();
-}
-
-JSLocation* JSDOMWindowBase::location() const
-{
-    if (!d->loc)
-        d->loc = new JSLocation(0, impl()->frame()); // FIXME: we need to pass a prototype.
-    return d->loc;
-}
-
-void JSDOMWindowBase::mark()
-{
-    Base::mark();
-    if (d->loc && !d->loc->marked())
-        d->loc->mark();
 }
 
 static bool allowPopUp(ExecState* exec)
@@ -440,8 +422,6 @@ JSValue *JSDOMWindowBase::getValueProperty(ExecState *exec, int token) const
       if (!d->m_evt)
         return jsUndefined();
       return toJS(exec, d->m_evt);
-    case Location_:
-      return location();
     case Image:
       if (!allowsAccessFrom(exec))
         return jsUndefined();
@@ -640,29 +620,6 @@ void JSDOMWindowBase::put(ExecState* exec, const Identifier& propertyName, JSVal
       return;
 
     switch (entry->integerValue) {
-    case Location_: {
-      if (Frame* p = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame()) {
-        // To avoid breaking old widgets, make "var location =" in a top-level frame create
-        // a property named "location" instead of performing a navigation (<rdar://problem/5688039>).
-        if (Settings* settings = p->settings()) {
-          if (settings->usesDashboardBackwardCompatibilityMode() && !p->tree()->parent()) {
-            if (allowsAccessFrom(exec))
-              putDirect(propertyName, value);
-            return;
-          }
-        }
-
-        if (!p->loader()->shouldAllowNavigation(impl()->frame()))
-          return;
-        String dstUrl = p->loader()->completeURL(value->toString(exec)).string();
-        if (!protocolIs(dstUrl, "javascript") || allowsAccessFrom(exec)) {
-          bool userGesture = p->scriptProxy()->processingUserGesture();
-          // We want a new history item if this JS was called via a user gesture
-          impl()->frame()->loader()->scheduleLocationChange(dstUrl, p->loader()->outgoingReferrer(), false, userGesture);
-        }
-      }
-      return;
-    }
     case Onabort:
       if (allowsAccessFrom(exec))
         setListener(exec, abortEvent,value);
@@ -985,7 +942,6 @@ JSUnprotectedEventListener* JSDOMWindowBase::findOrCreateJSUnprotectedEventListe
 
 void JSDOMWindowBase::clearHelperObjectProperties()
 {
-    d->loc = 0;
     d->m_evt = 0;
 }
 
@@ -1404,8 +1360,6 @@ void JSDOMWindowBase::timerFired(DOMWindowTimer* timer)
 void JSDOMWindowBase::disconnectFrame()
 {
     clearAllTimeouts();
-    if (d->loc)
-        d->loc->m_frame = 0;
 }
 
 JSDOMWindowBase::ListenersMap& JSDOMWindowBase::jsEventListeners()

@@ -57,8 +57,6 @@ namespace WebCore {
 
         void disconnectFrame();
 
-        virtual void mark();
-
         virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
         KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
         virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*);
@@ -70,8 +68,6 @@ namespace WebCore {
         void resumeTimeouts(PausedTimeouts*);
 
         void timerFired(DOMWindowTimer*);
-
-        JSLocation* location() const;
 
         // Finds a wrapper of a JS EventListener, returns 0 if no existing one.
         JSEventListener* findJSEventListener(KJS::JSValue*, bool html = false);

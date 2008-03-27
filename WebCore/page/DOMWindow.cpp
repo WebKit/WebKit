@@ -42,7 +42,7 @@
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
 #include "History.h"
-#include "MessageEvent.h"
+#include "Location.h"
 #include "Navigator.h"
 #include "Page.h"
 #include "PlatformScreen.h"
@@ -50,6 +50,10 @@
 #include "Screen.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
+
+#if ENABLE(CROSS_DOCUMENT_MESSAGING)
+#include "MessageEvent.h"
+#endif
 
 #if ENABLE(DATABASE)
 #include "Database.h"
@@ -160,6 +164,10 @@ void DOMWindow::clear()
     if (m_navigator)
         m_navigator->disconnectFrame();
     m_navigator = 0;
+
+    if (m_location)
+        m_location->disconnectFrame();
+    m_location = 0;
 }
 
 Screen* DOMWindow::screen() const
@@ -230,6 +238,13 @@ Navigator* DOMWindow::navigator() const
     if (!m_navigator)
         m_navigator = Navigator::create(m_frame);
     return m_navigator.get();
+}
+
+Location* DOMWindow::location() const
+{
+    if (!m_location)
+        m_location = Location::create(m_frame);
+    return m_location.get();
 }
 
 #if ENABLE(CROSS_DOCUMENT_MESSAGING)
