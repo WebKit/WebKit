@@ -45,7 +45,7 @@ typedef const struct _CFURLRequest* CFURLRequestRef;
 
 void wkSetFontSmoothingLevel(int type);
 int wkGetFontSmoothingLevel();
-uint32_t wkSetFontSmoothingStyle(CGContextRef cg);
+uint32_t wkSetFontSmoothingStyle(CGContextRef cg, bool fontAllowsSmoothing);
 void wkRestoreFontSmoothingStyle(CGContextRef cg, uint32_t oldStyle);
 void wkGetGlyphAdvances(CGFontRef, const CGAffineTransform&, bool isSystemFont, bool isPrinterFont, CGGlyph, CGSize& advance);
 void wkGetGlyphs(CGFontRef, const UChar[], CGGlyph[], size_t count);

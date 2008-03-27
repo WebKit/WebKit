@@ -1,3 +1,11 @@
+2008-03-26  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r31322
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h: Updated.
+        * win/lib/WebKitSystemInterface.lib: Updated.
+        * win/lib/WebKitSystemInterface_debug.lib: Updated.
+
 2008-03-26  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by David Hyatt.
