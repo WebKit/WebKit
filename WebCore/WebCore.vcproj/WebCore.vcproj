@@ -6152,7 +6152,15 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
-						<FileConfiguration
+            <FileConfiguration
+             Name="Release_PGO|Win32"
+             ExcludedFromBuild="true"
+							>
+              <Tool
+                Name="VCCLCompilerTool"
+							/>
+            </FileConfiguration>
+            <FileConfiguration
 							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
@@ -6184,6 +6192,14 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
+             <FileConfiguration
+             Name="Release_PGO|Win32"
+             ExcludedFromBuild="true"
+							>
+              <Tool
+                Name="VCCLCompilerTool"
+							/>
+            </FileConfiguration>
 						<FileConfiguration
 							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
@@ -6212,7 +6228,15 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
-						<FileConfiguration
+             <FileConfiguration
+             Name="Release_PGO|Win32"
+             ExcludedFromBuild="true"
+							>
+              <Tool
+                Name="VCCLCompilerTool"
+							/>
+            </FileConfiguration>
+            <FileConfiguration
 							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
@@ -6240,7 +6264,15 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
-						<FileConfiguration
+            <FileConfiguration
+             Name="Release_PGO|Win32"
+             ExcludedFromBuild="true"
+							>
+              <Tool
+                Name="VCCLCompilerTool"
+							/>
+            </FileConfiguration>
+            <FileConfiguration
 							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
@@ -6260,12 +6292,20 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
-						<FileConfiguration
+            <FileConfiguration
 							Name="Release|Win32"
 							ExcludedFromBuild="true"
 							>
-							<Tool
+              <Tool
 								Name="VCCLCompilerTool"
+							/>
+            </FileConfiguration>
+               <FileConfiguration
+               Name="Release_PGO|Win32"
+               ExcludedFromBuild="true"
+							>
+                 <Tool
+                   Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -6296,6 +6336,14 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
+            <FileConfiguration
+             Name="Release_PGO|Win32"
+             ExcludedFromBuild="true"
+							>
+              <Tool
+                Name="VCCLCompilerTool"
+							/>
+            </FileConfiguration>
 						<FileConfiguration
 							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
@@ -6324,6 +6372,14 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
+             <FileConfiguration
+             Name="Release_PGO|Win32"
+             ExcludedFromBuild="true"
+							>
+              <Tool
+                Name="VCCLCompilerTool"
+							/>
+            </FileConfiguration>
 						<FileConfiguration
 							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
@@ -6352,7 +6408,15 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
-						<FileConfiguration
+            <FileConfiguration
+             Name="Release_PGO|Win32"
+             ExcludedFromBuild="true"
+							>
+              <Tool
+                Name="VCCLCompilerTool"
+							/>
+            </FileConfiguration>
+            <FileConfiguration
 							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>

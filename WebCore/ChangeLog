@@ -1,3 +1,9 @@
+2008-03-26  Stephanie Lewis  <slewis@apple.com>
+
+        Fix Windows Build
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-03-26  Mark Rowe  <mrowe@apple.com>
 
         Speculative GTK build fix.
