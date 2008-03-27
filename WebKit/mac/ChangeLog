@@ -1,5 +1,13 @@
 2008-03-26  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Brady Eidson.
+
+        Update FEATURE_DEFINES to be consistent with the other locations in which it is defined.
+
+        * Configurations/WebKit.xcconfig:
+
+2008-03-26  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by David Hyatt.
 
         Make the Ahem font antialias correctly on Acid3 on Tiger.

@@ -1,3 +1,11 @@
+2008-03-26  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Brady Eidson.
+
+        Update FEATURE_DEFINES to be consistent with the other locations in which it is defined.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2008-03-26  Adam Roben  <aroben@apple.com>
 
         Fix Bug 18060: Assertion failure (JSLock not held) beneath
