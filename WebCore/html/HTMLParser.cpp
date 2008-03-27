@@ -329,6 +329,7 @@ bool HTMLParser::insertNode(Node* n, bool flat)
             // optimized version of setCurrent that takes advantage of that fact and also
             // assumes that newNode is neither 0 nor a pointer to the document.
             pushBlock(localName, tagPriority);
+            newNode->beginParsingChildren();
             ASSERT(!didRefCurrent);
             newNode->ref(); 
             current = newNode;
@@ -417,6 +418,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                     reportError(MisplacedHeadContentError, &localName, &current->localName());
                 
                 pushBlock(localName, tagPriority);
+                newNode->beginParsingChildren();
                 setCurrent(newNode);
                 if (!n->attached() && !m_isParsingFragment)
                     n->attach();
@@ -560,6 +562,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                             !flat && static_cast<HTMLElement*>(n)->endTagRequirement() != TagStatusForbidden)
                         {
                             pushBlock(localName, tagPriority);
+                            n->beginParsingChildren();
                             setCurrent(n);
                             inStrayTableContent++;
                             blockStack->strayTableContent = true;
@@ -1203,6 +1206,7 @@ void HTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, Node* malformedTab
 
         // Now push a new stack element for this node we just created.
         pushBlock(elem->tagName, elem->level);
+        newNode->beginParsingChildren();
 
         // Set our strayTableContent boolean if needed, so that the reopened tag also knows
         // that it is inside a malformed table.
@@ -1226,7 +1230,6 @@ void HTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, Node* malformedTab
 
 void HTMLParser::pushBlock(const AtomicString& tagName, int level)
 {
-    current->beginParsingChildren();
     blockStack = new HTMLStackElem(tagName, level, current, didRefCurrent, blockStack);
     didRefCurrent = false;
 }
