@@ -21,7 +21,7 @@
 
 #ifndef SVGAltGlyphElement_h
 #define SVGAltGlyphElement_h
-#if ENABLE(SVG)
+#if ENABLE(SVG_FONTS)
 
 #include "AtomicString.h"
 #include "SVGTextPositioningElement.h"

@@ -1,5 +1,7 @@
 a
+#if ENABLE_SVG_FONTS
 altGlyph
+#endif
 #if 0
 altGlyphDef
 altGlyphItem
@@ -71,7 +73,9 @@ glyph
 #if 0
 glyphRef
 #endif
+#ifdef ENABLE_SVG_FONTS
 hkern
+#endif
 image
 line
 linearGradient

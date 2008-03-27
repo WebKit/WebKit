@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG)
+#if ENABLE(SVG_FONTS)
 #include "SVGAltGlyphElement.h"
 
 #include "ExceptionCode.h"

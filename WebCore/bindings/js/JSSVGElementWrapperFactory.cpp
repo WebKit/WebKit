@@ -192,6 +192,7 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
 
 #if ENABLE(SVG_FONTS)
 #define FOR_EACH_FONT_TAG(macro) \
+    macro(altGlyph, AltGlyph) \
     macro(definition_src, DefinitionSrc) \
     macro(font, Font) \
     macro(font_face, FontFace) \
@@ -247,7 +248,6 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
 
 #define FOR_EACH_TAG(macro) \
     macro(a, A) \
-    macro(altGlyph, AltGlyph) \
     macro(circle, Circle) \
     macro(clipPath, ClipPath) \
     macro(cursor, Cursor) \

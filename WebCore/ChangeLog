@@ -1,3 +1,29 @@
+2008-03-27  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix the Qt build and the build without ENABLE(SVG_FONTS)
+
+        * WebCore.pro: Removed ElementTimeControl.idl as it's ObjC only and
+        removed some SVG_FONTS specific idl files from IDL_BINDINGS for now
+        * bindings/js/JSSVGElementWrapperFactory.cpp: altGlyph is
+        ENABLE(SVG_FONTS) only
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::floatWidth): Adjust the function signature to Font.h
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox): Fix
+        compilation without SVG_FONTS
+        * svg/SVGAltGlyphElement.cpp: Compile only if ENABLE(SVG_FONTS)
+        * svg/SVGAltGlyphElement.h: Ditto
+        * svg/svgtags.in: hkern and altGlyph are SVG_FONTS only.
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::childShouldCreateRenderer): Compile without
+        SVG_FONTS
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::childShouldCreateRenderer): Ditto
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::childShouldCreateRenderer):
+
 2008-03-26  Timothy Hatcher  <timothy@apple.com>
 
         Rename some Inspector files to facilitate the up-coming UI refresh changes.

@@ -104,8 +104,11 @@ RenderObject* SVGTextElement::createRenderer(RenderArena* arena, RenderStyle* st
 
 bool SVGTextElement::childShouldCreateRenderer(Node* child) const
 {
-    if (child->isTextNode() || child->hasTagName(SVGNames::altGlyphTag) || child->hasTagName(SVGNames::tspanTag) ||
-        child->hasTagName(SVGNames::trefTag) || child->hasTagName(SVGNames::aTag) || child->hasTagName(SVGNames::textPathTag))
+    if (child->isTextNode()
+#if ENABLE(SVG_FONTS)
+        || child->hasTagName(SVGNames::altGlyphTag)
+#endif
+        || child->hasTagName(SVGNames::tspanTag) || child->hasTagName(SVGNames::trefTag) || child->hasTagName(SVGNames::aTag) || child->hasTagName(SVGNames::textPathTag))
         return true;
     return false;
 }

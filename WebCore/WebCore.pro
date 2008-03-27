@@ -1303,10 +1303,9 @@ contains(DEFINES, ENABLE_SVG=1) {
 
     XLINK_NAMES = $$PWD/svg/xlinkattrs.in
 
-    IDL_BINDINGS += svg/ElementTimeControl.idl \
+    IDL_BINDINGS += \
         svg/SVGZoomEvent.idl \
         svg/SVGAElement.idl \
-        svg/SVGAltGlyphElement.idl \
         svg/SVGAngle.idl \
         svg/SVGAnimateColorElement.idl \
         svg/SVGAnimatedAngle.idl \
@@ -1436,6 +1435,10 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGUnitTypes.idl \
         svg/SVGUseElement.idl \
         svg/SVGViewElement.idl 
+
+    # ### SVG_FONTS
+    # IDL_BINDINGS += \
+    #  svg/SVGAltGlyphElement.idl \
 
     SOURCES += \
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
