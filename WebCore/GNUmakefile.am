@@ -300,6 +300,7 @@ webcore_built_sources += \
 	DerivedSources/JSHistory.cpp \
 	DerivedSources/JSImageData.cpp \
 	DerivedSources/JSKeyboardEvent.cpp \
+	DerivedSources/JSLocation.cpp \
 	DerivedSources/JSMediaList.cpp \
 	DerivedSources/JSMimeType.cpp \
 	DerivedSources/JSMimeTypeArray.cpp \
