@@ -37,6 +37,32 @@ namespace WTF {
     // integer hash function
 
     // Thomas Wang's 32 Bit Mix Function: http://www.cris.com/~Ttwang/tech/inthash.htm
+    inline unsigned intHash(uint8_t key8)
+    {
+        unsigned key = key8;
+        key += ~(key << 15);
+        key ^= (key >> 10);
+        key += (key << 3);
+        key ^= (key >> 6);
+        key += ~(key << 11);
+        key ^= (key >> 16);
+        return key;
+    }
+
+    // Thomas Wang's 32 Bit Mix Function: http://www.cris.com/~Ttwang/tech/inthash.htm
+    inline unsigned intHash(uint16_t key16)
+    {
+        unsigned key = key16;
+        key += ~(key << 15);
+        key ^= (key >> 10);
+        key += (key << 3);
+        key ^= (key >> 6);
+        key += ~(key << 11);
+        key ^= (key >> 16);
+        return key;
+    }
+
+    // Thomas Wang's 32 Bit Mix Function: http://www.cris.com/~Ttwang/tech/inthash.htm
     inline unsigned intHash(uint32_t key) 
     {
         key += ~(key << 15);

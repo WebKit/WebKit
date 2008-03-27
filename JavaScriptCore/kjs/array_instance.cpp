@@ -402,7 +402,7 @@ void ArrayInstance::setLength(unsigned newLength)
             }
         }
     }
-  
+
     m_length = newLength;
 }
 

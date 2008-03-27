@@ -1,5 +1,13 @@
 2008-03-26  Adam Roben  <aroben@apple.com>
 
+        Windows build fix
+
+        * kjs/array_instance.cpp: Touched this.
+        * wtf/HashFunctions.h:
+        (WTF::intHash): Added 8- and 16-bit versions of intHash.
+
+2008-03-26  Adam Roben  <aroben@apple.com>
+
         Force JSC headers to be copied by touching a file
 
         * kjs/array_instance.cpp:
