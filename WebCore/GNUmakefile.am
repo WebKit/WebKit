@@ -1820,6 +1820,7 @@ webcore_sources += \
 	WebCore/svg/SVGGElement.cpp \
 	WebCore/svg/SVGGlyphElement.cpp \
 	WebCore/svg/SVGGradientElement.cpp \
+	WebCore/svg/SVGHKernElement.cpp \
 	WebCore/svg/SVGImageElement.cpp \
 	WebCore/svg/SVGLangSpace.cpp \
 	WebCore/svg/SVGLength.cpp \
