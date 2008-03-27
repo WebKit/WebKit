@@ -1,3 +1,11 @@
+2008-03-26  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Anders.
+        
+        Enable SVG animation support by default.
+
+        * Scripts/build-webkit:
+
 2008-03-25  Adam Roben  <aroben@apple.com>
 
         Windows build fix

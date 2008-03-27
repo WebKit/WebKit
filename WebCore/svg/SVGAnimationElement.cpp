@@ -28,6 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "FloatConversion.h"
+#include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
@@ -41,6 +42,8 @@
 using namespace std;
 
 namespace WebCore {
+    
+using namespace SVGNames;
 
 SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
@@ -62,6 +65,8 @@ SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document*
     , m_begin(0.0)
     , m_repetitions(0)
     , m_repeatCount(0)
+    , m_animationBegin(DBL_MAX)
+    , m_animationEnd(DBL_MAX)
 {
 
 }
@@ -729,35 +734,69 @@ bool SVGAnimationElement::updateAnimatedValueForElapsedSeconds(double elapsedSec
     // Validate animation timing settings:
     // #1 (duration > 0) -> fine
     // #2 (duration <= 0.0 && end > 0) -> fine
-    if ((m_simpleDuration <= 0.0 && m_end <= 0.0) || (isIndefinite(m_simpleDuration) && m_end <= 0.0))
+    // FIXME: This allows indefinite duration for the <set> element, not sure if it should be allowed for others too. 
+    // FIXME: Value won't naturally animate in this case so keeping the timer repeating is sort of pointless.
+    if ((m_simpleDuration <= 0.0 && m_end <= 0.0) || (isIndefinite(m_simpleDuration) && m_end <= 0.0 && !hasTagName(setTag)))
         return false; // Ignore dur="0" or dur="-neg"
     
-    double percentage = calculateTimePercentage(elapsedSeconds, m_begin, m_end, m_simpleDuration, m_repetitions);
+    if (isIndefinite(m_animationBegin))
+        m_animationBegin = m_begin;
+    
+    double percentage = calculateTimePercentage(elapsedSeconds, m_animationBegin, m_end, m_simpleDuration, m_repetitions);
     
     if (percentage <= 1.0 || connectedToTimer())
         handleTimerEvent(elapsedSeconds, percentage);
+    
+    if (elapsedSeconds > m_animationEnd) {
+        if (connectedToTimer())
+            disconnectTimer();
+        m_animationEnd = DBL_MAX;
+    }
     
     return true; // value was updated, need to apply
 }
     
 bool SVGAnimationElement::beginElement(ExceptionCode& ec)
 {
-    return false;
+    // FIXME: Should this be synchronous?
+    return beginElementAt(0, ec);
 }
 
 bool SVGAnimationElement::beginElementAt(float offset, ExceptionCode& ec)
 {
+    // FIXME: Handle negative offsets correctly.
+    // In general we need to make SMIL concepts like "active duration" explicit in the code 
+    if (offset < 0)
+        offset = 0;
+    
+    if (connectedToTimer())
+        return false;
+    
+    m_animationBegin = offset;
+    if (ownerSVGElement()) {
+        ownerSVGElement()->timeScheduler()->addTimer(this, offset);
+        ownerSVGElement()->timeScheduler()->startAnimations();
+        connectTimer();
+    } else
+        return false;
+
     return false;
 }
 
 bool SVGAnimationElement::endElement(ExceptionCode& ec)
 {
-    return false;
+    // FIXME: Should this be synchronous?
+    return endElementAt(0, ec);
 }
 
 bool SVGAnimationElement::endElementAt(float offset, ExceptionCode& ec)
 {
-    return false;
+    if (offset < 0)
+        return false;
+    if (!connectedToTimer())
+        return false;
+    m_animationEnd = ownerSVGElement()->timeScheduler()->elapsed() + offset;
+    return true;
 }
 
 }

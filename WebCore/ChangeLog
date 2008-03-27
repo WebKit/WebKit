@@ -1,3 +1,25 @@
+2008-03-26  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Anders.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17077
+        Bug 17077: SVG SMIL animation is currently broken (and turned off) (affects Acid3 tests 75 and 76)
+
+        - enable SVG animation support.
+        - basic implementation of beginElement()/endElement().
+        
+        Animation definitely will need more work than this, but it is a start!
+
+        * Configurations/WebCore.xcconfig:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::SVGAnimationElement):
+        (WebCore::SVGAnimationElement::updateAnimatedValueForElapsedSeconds):
+        (WebCore::SVGAnimationElement::beginElement):
+        (WebCore::SVGAnimationElement::beginElementAt):
+        (WebCore::SVGAnimationElement::endElement):
+        (WebCore::SVGAnimationElement::endElementAt):
+        * svg/SVGAnimationElement.h:
+
 2008-03-26  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by David Hyatt.
