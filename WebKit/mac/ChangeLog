@@ -1,5 +1,11 @@
 2008-03-26  Brady Eidson  <beidson@apple.com>
 
+        Build fix - accidentally checked in this change which was work in progress
+
+        * DOM/WebDOMOperations.mm:
+
+2008-03-26  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin
 
         When we create a WebArchive, we walk every node from some starting point, asking each node
