@@ -1305,7 +1305,7 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
             }
         }
 
-        SVGFontElement* svgFont;
+        SVGFontElement* svgFont = 0;
         if (style->font().isSVGFont())
             svgFont = style->font().svgFont();
 
