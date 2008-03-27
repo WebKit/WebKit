@@ -50,7 +50,7 @@ module window {
                  attribute [CustomSetter] DOMString hash;
 
 #if defined(LANGUAGE_JAVASCRIPT)
-        [Custom] DOMString toString();
+        [DontEnum, Custom] DOMString toString();
 #endif
     };
 

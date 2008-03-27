@@ -1,3 +1,9 @@
+2008-03-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        * page/Location.idl: Don't enumerate toString.
+
 2008-03-26  Mark Rowe  <mrowe@apple.com>
 
         Release build fix.
