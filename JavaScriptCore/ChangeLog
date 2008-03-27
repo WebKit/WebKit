@@ -1,5 +1,26 @@
 2008-03-26  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 18060: Assertion failure (JSLock not held) beneath
+        JSCallbackObject<Base>::toString
+
+        <http://bugs.webkit.org/show_bug.cgi?id=18060>
+
+        Reviewed by Geoff Garen.
+
+        Bug fix:
+
+        * API/JSCallbackObjectFunctions.h:
+        (KJS::JSCallbackObject<Base>::toString): Make the DropAllLocks
+        instance only be in scope while calling convertToType.
+
+        Test:
+
+        * API/testapi.c:
+        (MyObject_convertToType): Implement type conversion to string.
+        * API/testapi.js: Add a test for type conversion to string.
+
+2008-03-26  Adam Roben  <aroben@apple.com>
+
         Windows build fix
 
         * kjs/array_instance.cpp: Touched this.

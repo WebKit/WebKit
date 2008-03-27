@@ -388,8 +388,12 @@ UString JSCallbackObject<Base>::toString(ExecState* exec) const
     
     for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parentClass)
         if (JSObjectConvertToTypeCallback convertToType = jsClass->convertToType) {
-            JSLock::DropAllLocks dropAllLocks;
-            if (JSValueRef value = convertToType(ctx, thisRef, kJSTypeString, toRef(exec->exceptionSlot())))
+            JSValueRef value;
+            {
+                JSLock::DropAllLocks dropAllLocks;
+                value = convertToType(ctx, thisRef, kJSTypeString, toRef(exec->exceptionSlot()));
+            }
+            if (value)
                 return toJS(value)->getString();
         }
             

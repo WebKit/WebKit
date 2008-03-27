@@ -238,6 +238,13 @@ static JSValueRef MyObject_convertToType(JSContextRef context, JSObjectRef objec
     switch (type) {
     case kJSTypeNumber:
         return JSValueMakeNumber(context, 1);
+    case kJSTypeString:
+        {
+            JSStringRef string = JSStringCreateWithUTF8CString("MyObjectAsString");
+            JSValueRef result = JSValueMakeString(context, string);
+            JSStringRelease(string);
+            return result;
+        }
     default:
         break;
     }
