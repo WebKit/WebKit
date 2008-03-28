@@ -1,3 +1,11 @@
+2008-03-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        * fast/encoding/invalid-xml-expected.txt: Update to reflect a true success.
+        * fast/encoding/resources/invalid-xml.js: Eliminate race condition by not ending
+        the test until the js-test-post.js script has loaded.
+
 2008-03-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Brady.

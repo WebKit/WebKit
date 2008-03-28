@@ -23,10 +23,10 @@ function runNextTest()
     if (currentTest >= encodingTests.length) {
         var script = document.createElement("script");
         script.src = "../js/resources/js-test-post.js";
+        if (window.layoutTestController)
+            script.setAttribute("onload", "layoutTestController.notifyDone()");
         document.body.appendChild(script);
         iframe.parentNode.removeChild(iframe);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
         return;
     }
     iframe.src = "resources/" + encodingTests[currentTest++];

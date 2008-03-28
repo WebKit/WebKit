@@ -10,4 +10,7 @@ PASS iframe.contentDocument.documentElement.getElementsByTagName('test').length 
 Testing: invalid-xml-x-mac-thai.xml
 FAIL iframe.contentDocument.documentElement.tagName should be root. Was html.
 PASS iframe.contentDocument.documentElement.getElementsByTagName('test').length < 1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
