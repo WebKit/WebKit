@@ -1,3 +1,14 @@
+2008-03-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+
+        Change the "init from WebCore resource" version of WebResource to take PassRefPtr
+        (more efficient)
+
+        * WebView/WebResource.mm:
+        (-[WebResource _initWithCoreResource:]):
+        * WebView/WebResourceInternal.h:
+
 2008-03-26  Brady Eidson  <beidson@apple.com>
 
         Build fix - accidentally checked in this change which was work in progress

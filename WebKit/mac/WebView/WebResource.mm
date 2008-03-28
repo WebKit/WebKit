@@ -229,7 +229,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 @implementation WebResource (WebResourceInternal)
 
-- (id)_initWithCoreResource:(WebCore::ArchiveResource *)coreResource
+- (id)_initWithCoreResource:(PassRefPtr<ArchiveResource>)coreResource
 {
     self = [super init];
     if (!self)

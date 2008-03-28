@@ -28,13 +28,15 @@
 
 #import "WebResource.h"
 
+#import <wtf/PassRefPtr.h>
+
 namespace WebCore {
     class ArchiveResource;
 }
 
 @interface WebResource (WebResourceInternal)
 
-- (id)_initWithCoreResource:(WebCore::ArchiveResource *)coreResource;
+- (id)_initWithCoreResource:(WTF::PassRefPtr<WebCore::ArchiveResource>)coreResource;
 - (WebCore::ArchiveResource *)_coreResource;
 
 @end
