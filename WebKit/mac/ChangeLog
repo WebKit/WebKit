@@ -1,5 +1,14 @@
 2008-03-28  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Sam Weinig
+
+        Remove unused [WebArchiver archiveNode:], made obsolete in r31400
+
+        * WebView/WebArchiver.h:
+        * WebView/WebArchiver.mm:
+
+2008-03-28  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin
 
         "Yet another transitional step" to empty out WebKit-based code for archiving.

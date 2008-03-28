@@ -72,14 +72,6 @@ using namespace WebCore;
     return [self _archiveWithMarkupString:markupString fromFrame:frame nodes:nodes];
 }
 
-+ (WebArchive *)archiveNode:(DOMNode *)node
-{
-    WebFrame *frame = [[node ownerDocument] webFrame];
-    NSArray *nodes;
-    NSString *markupString = [frame _markupStringFromNode:node nodes:&nodes];
-    return [self _archiveWithMarkupString:markupString fromFrame:frame nodes:nodes];
-}
-
 + (WebArchive *)archiveSelectionInFrame:(WebFrame *)frame
 {
     Frame* coreFrame = core(frame);
