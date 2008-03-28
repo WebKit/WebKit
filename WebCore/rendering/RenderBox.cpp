@@ -577,7 +577,7 @@ void RenderBox::calculateBackgroundImageGeometry(const BackgroundLayer* bgLayer,
 
     EBackgroundRepeat backgroundRepeat = bgLayer->backgroundRepeat();
     
-    int xPosition = bgLayer->backgroundXPosition().calcMinValue(pw - scaledImageWidth);
+    int xPosition = bgLayer->backgroundXPosition().calcMinValue(pw - scaledImageWidth, true);
     if (backgroundRepeat == REPEAT || backgroundRepeat == REPEAT_X) {
         cw = pw + left + right;
         sx = scaledImageWidth ? scaledImageWidth - (xPosition + left) % scaledImageWidth : 0;
@@ -587,7 +587,7 @@ void RenderBox::calculateBackgroundImageGeometry(const BackgroundLayer* bgLayer,
         cw = scaledImageWidth + min(xPosition + left, 0);
     }
 
-    int yPosition = bgLayer->backgroundYPosition().calcMinValue(ph - scaledImageHeight);
+    int yPosition = bgLayer->backgroundYPosition().calcMinValue(ph - scaledImageHeight, true);
     if (backgroundRepeat == REPEAT || backgroundRepeat == REPEAT_Y) {
         ch = ph + top + bottom;
         sy = scaledImageHeight ? scaledImageHeight - (yPosition + top) % scaledImageHeight : 0;

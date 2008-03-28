@@ -103,12 +103,14 @@ namespace WebCore {
         }
 
         // note: works only for certain types, returns undefinedLength otherwise
-        int calcValue(int maxValue) const
+        int calcValue(int maxValue, bool roundPercentages = false) const
         {
             switch (type()) {
                 case Fixed:
                     return value();
                 case Percent:
+                    if (roundPercentages)
+                        return static_cast<int>(round(maxValue * percent()));
                     return maxValue * rawValue() / (100 * percentScaleFactor);
                 case Auto:
                     return maxValue;
@@ -117,12 +119,14 @@ namespace WebCore {
             }
         }
 
-        int calcMinValue(int maxValue) const
+        int calcMinValue(int maxValue, bool roundPercentages = false) const
         {
             switch (type()) {
                 case Fixed:
                     return value();
                 case Percent:
+                    if (roundPercentages)
+                        return static_cast<int>(round(maxValue * percent()));
                     return maxValue * rawValue() / (100 * percentScaleFactor);
                 case Auto:
                 default:

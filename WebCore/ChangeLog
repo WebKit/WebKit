@@ -1,3 +1,18 @@
+2008-03-28  David Hyatt  <hyatt@apple.com>
+
+        Fix a bug where background-position truncates instead of rounding when it evaluates to fractional
+        pixel values.  This matches other browsers.
+
+        Reviewed by maciej
+
+        Added fast/backgrounds/background-position-rounding.html
+
+        * rendering/Length.h:
+        (WebCore::Length::calcValue):
+        (WebCore::Length::calcMinValue):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calculateBackgroundImageGeometry):
+
 2008-03-27  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Return a default value for operator == 
