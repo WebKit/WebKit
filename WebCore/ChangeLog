@@ -1,5 +1,13 @@
 2008-03-28  Kevin McCullough  <kmccullough@apple.com>
 
+        - Missed some changes in previous checkin.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send): Get identifier from synchronous loader.
+        (WebCore::XMLHttpRequest::didFinishLoading):
+
+2008-03-28  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Adam.
 
         -<rdar://problem/5712804> XMLHttpRequests do not show response contents, preview images (14313)
