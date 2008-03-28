@@ -334,6 +334,21 @@ fast/loader/xmlhttprequest-missing-file-exception.html
 # <rdar://problem/5787793> REGRESSION: svg/custom/acid3-test-77.html fails on windows 
 svg/custom/acid3-test-77.html
 
+#<rdar://problem/5829342> REGRESSION: fast/canvas/toDataURL-supportedTypes.html fails on Windows
+fast/canvas/toDataURL-supportedTypes.html
+
+#<rdar://problem/5829202> new subframe reload tests fail on Windows
+http/tests/navigation/reload-subframe-frame.html 
+http/tests/navigation/reload-subframe-iframe.html 
+http/tests/navigation/reload-subframe-object.html
+
+#<rdar://problem/5829260> REGRESSION: frame-default-enc tests fail on Windows intermittently
+fast/encoding/frame-default-enc.html
+http/tests/misc/frame-default-enc-same-domain.html 
+
+#<rdar://problem/5829328> REGRESSION: fast/frames/viewsource-empty-attribute-value.html fails on Windows intermittently
+fast/frames/viewsource-empty-attribute-value.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

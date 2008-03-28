@@ -1,3 +1,9 @@
+2008-03-28  Stephanie Lewis  <slewis@apple.com>
+
+        Update Windows Skipped list.  Bugs filed.
+
+        * platform/win/Skipped:
+
 2008-03-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.
