@@ -1,3 +1,33 @@
+2008-03-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+
+        Add Acid3 test as an http test
+        http://bugs.webkit.org/show_bug.cgi?id=18176
+
+        * http/tests/misc/acid3-expected.checksum: Added.
+        * http/tests/misc/acid3-expected.png: Added.
+        * http/tests/misc/acid3-expected.txt: Added.
+        * http/tests/misc/acid3.html: Added.
+        * http/tests/misc/resources/acid3/.htaccess: Added.
+        * http/tests/misc/resources/acid3/empty.css: Added.
+        * http/tests/misc/resources/acid3/empty.html: Added.
+        * http/tests/misc/resources/acid3/empty.png: Added.
+        * http/tests/misc/resources/acid3/empty.txt: Added.
+        * http/tests/misc/resources/acid3/empty.xml: Added.
+        * http/tests/misc/resources/acid3/font.svg: Added.
+        * http/tests/misc/resources/acid3/font.ttf: Added.
+        * http/tests/misc/resources/acid3/instructions.inc: Added.
+        * http/tests/misc/resources/acid3/reference.html: Added.
+        * http/tests/misc/resources/acid3/reference.png: Added.
+        * http/tests/misc/resources/acid3/support-a.png.404: Added.
+        * http/tests/misc/resources/acid3/support-b.png: Added.
+        * http/tests/misc/resources/acid3/support-c.png: Added.
+        * http/tests/misc/resources/acid3/svg.xml: Added.
+        * http/tests/misc/resources/acid3/xhtml.1: Added.
+        * http/tests/misc/resources/acid3/xhtml.2: Added.
+        * http/tests/misc/resources/acid3/xhtml.3: Added.
+
 2008-03-27  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adam Roben.
