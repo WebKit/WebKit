@@ -1306,7 +1306,6 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
         }
 
         double kerning = 0.0;
-        lastGlyph.isValid = false;
 #if ENABLE(SVG_FONTS)
         SVGFontElement* svgFont = 0;
         if (style->font().isSVGFont())
@@ -1322,7 +1321,8 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
             lastGlyph.unicode = unicodeStr;
             lastGlyph.glyphName = glyphName;
             lastGlyph.isValid = true;
-        }
+        } else
+            lastGlyph.isValid = false;
 #endif
 
         svgChar.x -= (float)kerning;
