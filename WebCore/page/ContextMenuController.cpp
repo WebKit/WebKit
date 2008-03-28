@@ -153,10 +153,11 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             frame->editor()->copyImage(result);
             break;
         case ContextMenuItemTagOpenFrameInNewWindow: {
-            KURL url = frame->loader()->documentLoader()->unreachableURL();
-            if (frame && url.isEmpty())
-                url = frame->loader()->documentLoader()->url();
-            openNewWindow(url, frame);
+            DocumentLoader* loader = frame->loader()->documentLoader();
+            if (!loader->unreachableURL().isEmpty())
+                openNewWindow(loader->unreachableURL(), frame);
+            else
+                openNewWindow(loader->url(), frame);
             break;
         }
         case ContextMenuItemTagCopy:

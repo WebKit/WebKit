@@ -611,7 +611,7 @@ KURL Element::baseURI() const
     if (!parent)
         return base;
 
-    KURL parentBase = parent->baseURI();
+    const KURL& parentBase = parent->baseURI();
     if (parentBase.isNull())
         return base;
 

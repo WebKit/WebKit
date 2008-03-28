@@ -428,7 +428,7 @@ String HTMLAnchorElement::host() const
 
 String HTMLAnchorElement::hostname() const
 {
-    KURL url(href());
+    const KURL& url = href();
     if (url.port() == 0)
         return url.host();
     return url.host() + ":" + String::number(url.port());

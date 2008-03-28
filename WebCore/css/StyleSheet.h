@@ -48,9 +48,9 @@ public:
 
     Node* ownerNode() const { return m_parentNode; }
     StyleSheet *parentStyleSheet() const;
-    String href() const { return m_strHref; }
+    const String& href() const { return m_strHref; }
     void setHref(const String& href) { m_strHref = href; }
-    String title() const { return m_strTitle; }
+    const String& title() const { return m_strTitle; }
     void setTitle(const String& s) { m_strTitle = s; }
     MediaList* media() const { return m_media.get(); }
     void setMedia(MediaList*);

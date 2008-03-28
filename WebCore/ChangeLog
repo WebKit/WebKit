@@ -1,3 +1,31 @@
+2008-03-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - cut down on copying and refcount churn a little by using references a bit more for
+          KURL and String
+
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (WebCore::jsXMLHttpRequestPrototypeFunctionOpen): Use const KURL& instead of KURL.
+        * css/StyleSheet.h:
+        (WebCore::StyleSheet::href): Return const String& instead of String.
+        (WebCore::StyleSheet::title): Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::completeURL): Use const KURL* for a local variable instead of
+        KURL to avoid copying the KURL.
+        * dom/Element.cpp:
+        (WebCore::Element::baseURI): Use const KURL& instead of KURL.
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::hostname): Ditto.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::isURLAllowed): Ditto.
+        * html/HTMLKeygenElement.cpp: Removed unneeded include of KURL.
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Get rid of temporary
+        KURL.
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::createForFrame): Use const KURL& instead of KURL.
+
 2008-03-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.

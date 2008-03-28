@@ -101,7 +101,7 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createForFrame(Frame* frame)
         return create("", "", 0, 0);
 
     FrameLoader* loader = frame->loader();
-    KURL url = loader->url();
+    const KURL& url = loader->url();
 
     Frame* ownerFrame = frame->tree()->parent();
     if (!ownerFrame)

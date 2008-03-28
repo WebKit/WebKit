@@ -2945,12 +2945,12 @@ KURL Document::completeURL(const String& url) const
     // FIXME: Should we change the KURL constructor to have this behavior?
     if (url.isNull())
         return KURL();
-    KURL base = m_baseURL;
-    if (base.isEmpty())
-        base = m_url;
+    const KURL* base = &m_baseURL;
+    if (base->isEmpty())
+        base = &m_url;
     if (!m_decoder)
-        return KURL(base, url);
-    return KURL(base, url, m_decoder->encoding());
+        return KURL(*base, url);
+    return KURL(*base, url, m_decoder->encoding());
 }
 
 bool Document::inPageCache()
