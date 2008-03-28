@@ -1124,4 +1124,25 @@ String createFullMarkup(const Node* node)
     return frame->documentTypeString() + createMarkup(node, IncludeNode, 0);
 }
 
+String createFullMarkup(const Range* range)
+{
+    if (!range)
+        return String();
+
+    Node* node = range->startContainer();
+    if (!node)
+        return String();
+        
+    Document* document = node->document();
+    if (!document)
+        return String();
+        
+    Frame* frame = document->frame();
+    if (!frame)
+        return String();
+
+    // FIXME: This is always "for interchange". Is that right? See the previous method.
+    return frame->documentTypeString() + createMarkup(range, 0, AnnotateForInterchange);        
+}
+
 }

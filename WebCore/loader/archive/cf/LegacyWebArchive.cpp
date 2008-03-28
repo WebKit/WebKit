@@ -41,6 +41,7 @@
 #include "Logging.h"
 #include "markup.h"
 #include "Node.h"
+#include "Range.h"
 #include "SharedBuffer.h"
 
 #include <wtf/RetainPtr.h>
@@ -440,6 +441,31 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame* frame)
     documentLoader->getSubresources(subresources);
 
     return LegacyWebArchive::create(documentLoader->mainResource(), subresources, subframeArchives);
+}
+
+PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
+{
+    if (!range)
+        return 0;
+    
+    Node* startContainer = range->startContainer();
+    if (!startContainer)
+        return 0;
+        
+    Document* document = startContainer->document();
+    if (!document)
+        return 0;
+        
+    Frame* frame = document->frame();
+    if (!frame)
+        return 0;
+    
+    Vector<Node*> nodeList;
+    
+    // FIXME: This is always "for interchange". Is that right? See the previous method.
+    String markupString = frame->documentTypeString() + createMarkup(range, &nodeList, AnnotateForInterchange);
+
+    return create(markupString, frame, nodeList);
 }
 
 PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame* frame, Vector<Node*>& nodes)

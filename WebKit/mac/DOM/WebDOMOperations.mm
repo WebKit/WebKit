@@ -29,6 +29,7 @@
 #import "WebDOMOperationsPrivate.h"
 
 #import "DOMNodeInternal.h"
+#import "DOMRangeInternal.h"
 #import "WebArchiveInternal.h"
 #import "WebArchiver.h"
 #import "WebDataSourcePrivate.h"
@@ -120,12 +121,12 @@ using namespace WebCore;
 
 - (WebArchive *)webArchive
 {
-    return [WebArchiver archiveRange:self];
+    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create([self _range])] autorelease];
 }
 
 - (NSString *)markupString
 {
-    return [[[[self startContainer] ownerDocument] webFrame] _markupStringFromRange:self nodes:nil];
+    return createFullMarkup([self _range]);
 }
 
 @end

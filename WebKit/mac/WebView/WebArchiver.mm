@@ -59,14 +59,6 @@ using namespace WebCore;
     return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(markupString, core(frame), coreNodes)] autorelease];
 }
 
-+ (WebArchive *)archiveRange:(DOMRange *)range
-{
-    WebFrame *frame = [[[range startContainer] ownerDocument] webFrame];
-    NSArray *nodes;
-    NSString *markupString = [frame _markupStringFromRange:range nodes:&nodes];
-    return [self _archiveWithMarkupString:markupString fromFrame:frame nodes:nodes];
-}
-
 + (WebArchive *)archiveSelectionInFrame:(WebFrame *)frame
 {
     Frame* coreFrame = core(frame);

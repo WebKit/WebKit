@@ -2,6 +2,19 @@
 
         Reviewed by Sam Weinig
 
+        WebArchive saga continues - Can now make archives from ranges in WebCore
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMRange webArchive]):
+        (-[DOMRange markupString]):
+
+        * WebView/WebArchiver.h: Remove newly obsolete [WebArchiver archiveRange:]
+        * WebView/WebArchiver.mm:
+
+2008-03-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
         More Kit->Core webarchive code movement
 
         * DOM/WebDOMOperations.mm:

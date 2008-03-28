@@ -37,7 +37,6 @@
 {
 }
 
-+ (WebArchive *)archiveRange:(DOMRange *)range;
 + (WebArchive *)archiveSelectionInFrame:(WebFrame *)frame;
 
 @end
