@@ -52,7 +52,7 @@ void initializeThreadingAndMainThread()
     if (threadingWindowHandle)
         return;
 
-    WTF::initializeThreading();
+    KJS::initializeThreading();
 
     WNDCLASSEX wcex;
     memset(&wcex, 0, sizeof(WNDCLASSEX));

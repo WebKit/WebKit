@@ -1,3 +1,10 @@
+2008-03-28  Stephanie Lewis  <slewis@apple.com>
+
+        windows build fix.
+
+        * platform/win/MainThreadWin.cpp:
+        (WebCore::initializeThreadingAndMainThread):
+
 2008-03-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
