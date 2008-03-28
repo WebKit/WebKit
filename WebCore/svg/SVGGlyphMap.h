@@ -31,7 +31,10 @@ namespace WebCore {
     typedef HashMap<UChar, RefPtr<GlyphMapNode> > GlyphMapLayer;
 
     struct GlyphMapNode : public RefCounted<GlyphMapNode> {
+    private:
         GlyphMapNode() { }
+    public:
+        PassRefPtr<GlyphMapNode> create() { return adoptRef(new GlyphMapNode); }
 
         Vector<SVGGlyphIdentifier> glyphs;
 
@@ -39,6 +42,7 @@ namespace WebCore {
     };
 
     class SVGGlyphMap {
+
     public:
         SVGGlyphMap() : m_currentPriority(0) { }
 
@@ -52,7 +56,7 @@ namespace WebCore {
                 UChar curChar = string[i];
                 node = currentLayer->get(curChar);
                 if (!node) {
-                    node = new GlyphMapNode;
+                    node = GlyphMapNode::create();
                     currentLayer->set(curChar, node);
                 }
                 currentLayer = &node->children;

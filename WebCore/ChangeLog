@@ -1,5 +1,16 @@
 2008-03-27  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+
+        - fixed many buildbot leaks in glyph map code
+
+        * svg/SVGGlyphMap.h:
+        (WebCore::GlyphMapNode::create): Use explicit create pattern, to avoid overreffing and therefore leaking
+        these objects.
+        (WebCore::SVGGlyphMap::add): Call create instead of using new.
+
+2008-03-27  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Oliver.
 
         - re-fix Acid3, some code was incorrectly moved when fixing the Qt build
