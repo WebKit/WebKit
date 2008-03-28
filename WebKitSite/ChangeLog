@@ -1,6 +1,11 @@
+2008-03-28  Darin Adler  <darin@apple.com>
+
+        * building/build.html: Add another mention of using the Cygwin shell.
+        * building/tools.html: Fix a typo on the name Cygwin.
+
 2008-03-26  Maciej Stachowiak  <mjs@apple.com>
 
-        More screenshots for teh blog.
+        More screenshots for the blog.
 
         * blog-files/acid3-full-rendering-pass.png: Added.
         * blog-files/acid3-rendering-reference.png: Added.
