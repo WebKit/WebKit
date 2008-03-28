@@ -47,11 +47,6 @@ using namespace WebCore;
 
 @implementation WebArchiver
 
-+ (WebArchive *)archiveFrame:(WebFrame *)frame;
-{
-    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(core(frame))] autorelease];
-}
-
 + (WebArchive *)_archiveWithMarkupString:(NSString *)markupString fromFrame:(WebFrame *)frame nodes:(NSArray *)nodes
 { 
     Vector<Node*> coreNodes;

@@ -2,6 +2,17 @@
 
         Reviewed by Sam Weinig
 
+        Fold [WebArchiver archiveFrame:] into WebDataSource - the last remaining caller
+
+        * WebView/WebArchiver.h:
+        * WebView/WebArchiver.mm:
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource webArchive]):
+
+2008-03-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
         Remove unused [WebArchiver archiveNode:], made obsolete in r31400
 
         * WebView/WebArchiver.h:

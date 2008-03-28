@@ -448,7 +448,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     // it makes no sense to grab a WebArchive from an uncommitted document.
     if (!_private->loader->isCommitted())
         return nil;
-    return [WebArchiver archiveFrame:[self webFrame]];
+        
+    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(core([self webFrame]))] autorelease];
 }
 
 - (WebResource *)mainResource
