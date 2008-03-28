@@ -1,5 +1,12 @@
 2008-03-27  Brady Eidson  <beidson@apple.com>
 
+        Forgot a small requested change before committing
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::mainResource):
+
+2008-03-27  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Adam Roben
 
         Move [WebDataSource mainResource] and [WebDataSource subresources] down into WebCore

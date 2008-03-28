@@ -498,7 +498,7 @@ SharedBuffer* DocumentLoader::parsedArchiveData() const
 
 PassRefPtr<ArchiveResource> DocumentLoader::mainResource() const
 {
-    const ResourceResponse& r(response());
+    const ResourceResponse& r = response();
     return ArchiveResource::create(mainResourceData(), r.url(), r.mimeType(), r.textEncodingName(), frame()->tree()->name());
 }
 
