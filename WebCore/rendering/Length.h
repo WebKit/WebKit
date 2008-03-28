@@ -24,6 +24,7 @@
 #define Length_h
 
 #include <wtf/Assertions.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

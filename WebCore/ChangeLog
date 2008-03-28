@@ -1,3 +1,9 @@
+2008-03-28  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build.
+
+        * rendering/Length.h: Include wtf/MathExtras.h for round().
+
 2008-03-28  David Hyatt  <hyatt@apple.com>
 
         Fix a bug where background-position truncates instead of rounding when it evaluates to fractional
