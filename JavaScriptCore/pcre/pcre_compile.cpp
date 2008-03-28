@@ -1985,13 +1985,27 @@ static int bracketFindFirstAssertedCharacter(const unsigned char* code, bool ina
     return c;
 }
 
+static inline int multiplyWithOverflowCheck(int a, int b)
+{
+    if (!a || !b)
+        return 0;
+    if (a > MAX_PATTERN_SIZE / b)
+        return -1;
+    return a * b;
+}
+
 static int calculateCompiledPatternLength(const UChar* pattern, int patternLength, JSRegExpIgnoreCaseOption ignoreCase,
     CompileData& cd, ErrorCode& errorcode)
 {
     /* Make a pass over the pattern to compute the
      amount of store required to hold the compiled code. This does not have to be
      perfect as long as errors are overestimates. */
-    
+
+    if (patternLength > MAX_PATTERN_SIZE) {
+        errorcode = ERR16;
+        return -1;
+    }
+
     int length = 1 + LINK_SIZE;      /* For initial BRA plus length */
     int branch_extra = 0;
     int lastitemlength = 0;
@@ -2413,9 +2427,21 @@ static int calculateCompiledPatternLength(const UChar* pattern, int patternLengt
                  maxval-1 times; each replication acquires an OP_BRAZERO plus a nesting
                  bracket set. */
                 
+                int repeatsLength;
                 if (minRepeats == 0) {
                     length++;
-                    if (maxRepeats > 0) length += (maxRepeats - 1) * (duplength + 3 + 2 * LINK_SIZE);
+                    if (maxRepeats > 0) {
+                        repeatsLength = multiplyWithOverflowCheck(maxRepeats - 1, duplength + 3 + 2 * LINK_SIZE);
+                        if (repeatsLength < 0) {
+                            errorcode = ERR16;
+                            return -1;
+                        }
+                        length += repeatsLength;
+                        if (length > MAX_PATTERN_SIZE) {
+                            errorcode = ERR16;
+                            return -1;
+                        }
+                    }
                 }
                 
                 /* When the minimum is greater than zero, we have to replicate up to
@@ -2425,10 +2451,24 @@ static int calculateCompiledPatternLength(const UChar* pattern, int patternLengt
                  but one of the optional copies. */
                 
                 else {
-                    length += (minRepeats - 1) * duplength;
-                    if (maxRepeats > minRepeats)   /* Need this test as maxRepeats=-1 means no limit */
-                        length += (maxRepeats - minRepeats) * (duplength + 3 + 2 * LINK_SIZE)
-                        - (2 + 2 * LINK_SIZE);
+                    repeatsLength = multiplyWithOverflowCheck(minRepeats - 1, duplength);
+                    if (repeatsLength < 0) {
+                        errorcode = ERR16;
+                        return -1;
+                    }
+                    length += repeatsLength;
+                    if (maxRepeats > minRepeats) { /* Need this test as maxRepeats=-1 means no limit */
+                        repeatsLength = multiplyWithOverflowCheck(maxRepeats - minRepeats, duplength + 3 + 2 * LINK_SIZE);
+                        if (repeatsLength < 0) {
+                            errorcode = ERR16;
+                            return -1;
+                        }
+                        length += repeatsLength - (2 + 2 * LINK_SIZE);
+                    }
+                    if (length > MAX_PATTERN_SIZE) {
+                        errorcode = ERR16;
+                        return -1;
+                    }
                 }
                 
                 /* Allow space for once brackets for "possessive quantifier" */

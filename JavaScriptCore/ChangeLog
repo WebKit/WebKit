@@ -1,3 +1,15 @@
+2008-03-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/5826236> Regular expressions with large nested repetition counts can have their
+        compiled length calculated incorrectly.
+
+        * pcre/pcre_compile.cpp:
+        (multiplyWithOverflowCheck):
+        (calculateCompiledPatternLength): Check for overflow when dealing with nested repetition counts
+        and bail with an error rather than returning incorrect results.
+
 2008-03-26  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Brady Eidson.
