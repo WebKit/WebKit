@@ -1,0 +1,3 @@
+<Files acid3.html>
+  AddOutputFilter INCLUDES .html
+</Files>
