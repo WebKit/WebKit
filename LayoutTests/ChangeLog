@@ -1,5 +1,14 @@
 2008-03-28  Alexey Proskuryakov  <ap@webkit.org>
 
+        Rubber-stamped by Brady.
+
+        Enable server-side includes via AddHandler, hopefully making Apache 1.3 happy.
+
+        * http/tests/misc/.htaccess:
+        * http/tests/misc/resources/acid3/.htaccess:
+
+2008-03-28  Alexey Proskuryakov  <ap@webkit.org>
+
         Not reviewed.
 
         Enable mod_include for acid3.html - the previous check-in only had it in resources

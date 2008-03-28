@@ -36,7 +36,7 @@
 
 <IfModule mod_include.c>
   AddType text/html .html
-  AddOutputFilter INCLUDES .html
+  AddHandler server-parsed .html
 </IfModule>
 
 ErrorDocument 404 /misc/resources/acid3/support-a.png.404
