@@ -1,5 +1,25 @@
 2008-03-27  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Adam Roben
+
+        Move [WebDataSource mainResource] and [WebDataSource subresources] down into WebCore
+        as the push to core-ify WebArchives continues.
+
+        This patch also introduces a behavior change.  WebCore allows ArchiveResources with null or empty data.  
+        WebKit has had the inexplicable distinction of allowing empty Data in a WebResource, but not null.  
+        Since WebResource is API, I decided to leave it be to avoid a behavior change.  But internally created resources 
+        (as in "while archiving a page") are accepting of null or empty data.
+
+        This actually fixes a bug where not all subframes are archived, and resulted in a layout test change. 
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource mainResource]): Call DocumentLoader implementation
+        (-[WebDataSource subresources]): Ditto
+        * WebView/WebFrame.mm: Remove [WebFrame _getAllResourceDatas:andResponses:] as its only caller is obsolete
+        * WebView/WebFrameInternal.h:
+
+2008-03-27  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Adam
 
         Change the "init from WebCore resource" version of WebResource to take PassRefPtr

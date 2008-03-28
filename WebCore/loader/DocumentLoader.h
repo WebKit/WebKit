@@ -125,14 +125,17 @@ namespace WebCore {
         
         // Return an ArchiveResource for the URL, either creating from live data or
         // pulling from the ArchiveResourceCollection
-        PassRefPtr<ArchiveResource> subresource(const KURL&);
+        PassRefPtr<ArchiveResource> subresource(const KURL&) const;
         // Return the ArchiveResource for the URL only when loading an Archive
-        ArchiveResource* archiveResourceForURL(const KURL&);
+        ArchiveResource* archiveResourceForURL(const KURL&) const;
         
         PassRefPtr<Archive> popArchiveForSubframe(const String& frameName);
         void clearArchiveResources();
         void setParsedArchiveData(PassRefPtr<SharedBuffer>);
         SharedBuffer* parsedArchiveData() const;
+        
+        PassRefPtr<ArchiveResource> mainResource() const;
+        void getSubresources(Vector<PassRefPtr<ArchiveResource> >&) const;
         
         void addResponse(const ResourceResponse&);
         const ResponseVector& responses() const { return m_responses; }

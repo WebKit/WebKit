@@ -36,6 +36,7 @@
 #include "Event.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameTree.h"
 #include "HistoryItem.h"
 #include "Logging.h"
 #include "MainResourceLoader.h"
@@ -465,23 +466,7 @@ void DocumentLoader::addArchiveResource(PassRefPtr<ArchiveResource> resource)
     m_archiveResourceCollection->addResource(resource);
 }
 
-PassRefPtr<ArchiveResource> DocumentLoader::subresource(const KURL& url)
-{
-    if (!isCommitted())
-        return 0;
-    
-    Document* doc = m_frame->document();
-    if (!doc)
-        return archiveResourceForURL(url);
-        
-    CachedResource* resource = doc->docLoader()->cachedResource(url);
-    if (!resource)
-        return archiveResourceForURL(url);
-        
-    return ArchiveResource::create(resource->data(), url, resource->response());
-}
-
-ArchiveResource* DocumentLoader::archiveResourceForURL(const KURL& url)
+ArchiveResource* DocumentLoader::archiveResourceForURL(const KURL& url) const
 {
     if (!m_archiveResourceCollection)
         return 0;
@@ -511,6 +496,48 @@ SharedBuffer* DocumentLoader::parsedArchiveData() const
     return m_parsedArchiveData.get();
 }
 
+PassRefPtr<ArchiveResource> DocumentLoader::mainResource() const
+{
+    const ResourceResponse& r(response());
+    return ArchiveResource::create(mainResourceData(), r.url(), r.mimeType(), r.textEncodingName(), frame()->tree()->name());
+}
+
+PassRefPtr<ArchiveResource> DocumentLoader::subresource(const KURL& url) const
+{
+    if (!isCommitted())
+        return 0;
+    
+    Document* doc = m_frame->document();
+    if (!doc)
+        return archiveResourceForURL(url);
+        
+    CachedResource* resource = doc->docLoader()->cachedResource(url);
+    if (!resource)
+        return archiveResourceForURL(url);
+        
+    return ArchiveResource::create(resource->data(), url, resource->response());
+}
+
+void DocumentLoader::getSubresources(Vector<PassRefPtr<ArchiveResource> >& subresources) const
+{
+    if (!isCommitted())
+        return;
+
+    Document* document = m_frame->document();
+    if (!document)
+        return;
+
+    const HashMap<String, CachedResource*>& allResources = document->docLoader()->allCachedResources();
+    HashMap<String, CachedResource*>::const_iterator end = allResources.end();
+    for (HashMap<String, CachedResource*>::const_iterator it = allResources.begin(); it != end; ++it) {
+        RefPtr<ArchiveResource> subresource = this->subresource(KURL(it->second->url()));
+        if (subresource)
+            subresources.append(subresource.release());
+    }
+
+    return;
+}
+        
 void DocumentLoader::addResponse(const ResourceResponse& r)
 {
     if (!m_stopRecordingResponses)

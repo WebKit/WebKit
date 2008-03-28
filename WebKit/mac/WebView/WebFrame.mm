@@ -970,38 +970,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     _private->coreFrame->eventHandler()->dragSourceEndedAt(event, (DragOperation)operation);
 }
 
-- (void)_getAllResourceDatas:(NSArray **)datas andResponses:(NSArray **)responses
-{
-    Document* doc = _private->coreFrame->document();
-    if (!doc) {
-        NSArray* emptyArray = [NSArray array];
-        *datas = emptyArray;
-        *responses = emptyArray;
-        return;
-    }
-
-    const HashMap<String, CachedResource*>& allResources = doc->docLoader()->allCachedResources();
-
-    NSMutableArray *d = [[NSMutableArray alloc] initWithCapacity:allResources.size()];
-    NSMutableArray *r = [[NSMutableArray alloc] initWithCapacity:allResources.size()];
-
-    HashMap<String, CachedResource*>::const_iterator end = allResources.end();
-    for (HashMap<String, CachedResource*>::const_iterator it = allResources.begin(); it != end; ++it) {
-        SharedBuffer* buffer = it->second->data();
-        NSData *data;
-        if (buffer)
-            data = buffer->createNSData();
-        else
-            data = [[NSData alloc] init];
-        [d addObject:data];
-        [data release];
-        [r addObject:it->second->response().nsURLResponse()];
-    }
-
-    *datas = [d autorelease];
-    *responses = [r autorelease];
-}
-
 - (BOOL)_canProvideDocumentSource
 {
     String mimeType = _private->coreFrame->loader()->responseMIMEType();

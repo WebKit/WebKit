@@ -1,3 +1,11 @@
+2008-03-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben
+
+        Updated results, as we now more consistently archive empty frames/empty resources
+
+        * webarchive/archive-empty-frame-source-expected.txt:
+
 2008-03-26  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Adam Roben.

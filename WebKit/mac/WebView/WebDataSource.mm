@@ -453,30 +453,19 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (WebResource *)mainResource
 {
-    NSURLResponse *response = [self response];
-    return [[[WebResource alloc] initWithData:[self data]
-                                          URL:[response URL] 
-                                     MIMEType:[self _responseMIMEType]
-                             textEncodingName:[response textEncodingName]
-                                    frameName:[[self webFrame] name]] autorelease];
+    RefPtr<ArchiveResource> coreResource = _private->loader->mainResource();
+    return [[[WebResource alloc] _initWithCoreResource:coreResource.release()] autorelease];
 }
 
 - (NSArray *)subresources
 {
-    if (!_private->loader->isCommitted())
-        return [NSMutableArray array];
+    Vector<PassRefPtr<ArchiveResource> > coreSubresources;
+    _private->loader->getSubresources(coreSubresources);
 
-    NSArray *datas;
-    NSArray *responses;
-    [[self webFrame] _getAllResourceDatas:&datas andResponses:&responses];
-    ASSERT([datas count] == [responses count]);
-
-    NSMutableArray *subresources = [[NSMutableArray alloc] initWithCapacity:[datas count]];
-    for (unsigned i = 0; i < [datas count]; ++i) {
-        NSURLResponse *response = [responses objectAtIndex:i];
-        [subresources addObject:[[[WebResource alloc] _initWithData:[datas objectAtIndex:i] URL:[response URL] response:response] autorelease]];
-    }
-
+    NSMutableArray *subresources = [[NSMutableArray alloc] initWithCapacity:coreSubresources.size()];
+    for (unsigned i = 0; i < coreSubresources.size(); ++i)
+        [subresources addObject:[[[WebResource alloc] _initWithCoreResource:coreSubresources[i]] autorelease]];
+    
     return [subresources autorelease];
 }
 

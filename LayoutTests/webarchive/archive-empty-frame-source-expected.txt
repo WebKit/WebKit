@@ -34,5 +34,21 @@ Here lies an `iframe` with no content/src:
 		<key>WebResourceURL</key>
 		<string>file:///LayoutTests/webarchive/archive-empty-frame-source.html</string>
 	</dict>
+	<key>WebSubframeArchives</key>
+	<array>
+		<dict>
+			<key>WebMainResource</key>
+			<dict>
+				<key>WebResourceData</key>
+				<string></string>
+				<key>WebResourceFrameName</key>
+				<string>emptyFrame</string>
+				<key>WebResourceMIMEType</key>
+				<string>text/html</string>
+				<key>WebResourceURL</key>
+				<string>about:blank</string>
+			</dict>
+		</dict>
+	</array>
 </dict>
 </plist>
