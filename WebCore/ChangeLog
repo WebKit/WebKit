@@ -1,3 +1,15 @@
+2008-03-28  Jasper Bryant-Greene  <jasper@unix.geek.nz>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18061
+        PlatformScrollBarGtk attempts to allocate negative width and/or height for widgets
+
+        Missing clampNegativeToZero() call meant that we tried to allocate widgets with negative width and/or height.
+
+        * platform/gtk/PlatformScrollBarGtk.cpp:
+        (PlatformScrollbar::geometryChanged):
+
 2008-03-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin
