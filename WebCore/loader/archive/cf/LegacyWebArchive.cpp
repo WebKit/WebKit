@@ -29,8 +29,18 @@
 #include "config.h"
 #include "LegacyWebArchive.h"
 
+#include "CString.h"
+#include "Document.h"
+#include "DocumentLoader.h"
+#include "Frame.h"
+#include "FrameLoader.h"
+#include "FrameTree.h"
+#include "HTMLFrameOwnerElement.h"
+#include "HTMLNames.h"
 #include "KURL.h"
 #include "Logging.h"
+#include "markup.h"
+#include "Node.h"
 #include "SharedBuffer.h"
 
 #include <wtf/RetainPtr.h>
@@ -390,5 +400,103 @@ RetainPtr<CFDataRef> propertyListDataFromResourceResponse(const ResourceResponse
     return 0;
 }
 #endif
+
+PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node)
+{
+    ASSERT(node);
+    if (!node)
+        return create();
+        
+    Document* document = node->document();
+    Frame* frame = document ? document->frame() : 0;
+    if (!frame)
+        return create();
+        
+    Vector<Node*> nodeList;
+    String markupString = frame->documentTypeString() + createMarkup(node, IncludeNode, &nodeList);
+
+    return create(markupString, frame, nodeList);
+}
+
+PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame* frame)
+{
+    ASSERT(frame);
+    
+    DocumentLoader* documentLoader = frame->loader()->documentLoader();
+
+    if (!documentLoader)
+        return 0;
+        
+    Vector<PassRefPtr<LegacyWebArchive> > subframeArchives;
+    
+    unsigned children = frame->tree()->childCount();
+    for (unsigned i = 0; i < children; ++i) {
+        RefPtr<LegacyWebArchive> childFrameArchive = create(frame->tree()->child(i));
+        if (childFrameArchive)
+            subframeArchives.append(childFrameArchive.release());
+    }
+
+    Vector<PassRefPtr<ArchiveResource> > subresources;
+    documentLoader->getSubresources(subresources);
+
+    return LegacyWebArchive::create(documentLoader->mainResource(), subresources, subframeArchives);
+}
+
+PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame* frame, Vector<Node*>& nodes)
+{
+    ASSERT(frame);
+    
+    const ResourceResponse& response = frame->loader()->documentLoader()->response();
+    KURL responseURL = response.url();
+    
+    // it's possible to have a response without a URL here
+    // <rdar://problem/5454935>
+    if (responseURL.isNull())
+        responseURL = KURL("");
+        
+    PassRefPtr<ArchiveResource> mainResource = ArchiveResource::create(utf8Buffer(markupString), responseURL, response.mimeType(), "UTF-8", frame->tree()->name());
+
+    Vector<PassRefPtr<LegacyWebArchive> > subframeArchives;
+    Vector<PassRefPtr<ArchiveResource> > subresources;
+    HashSet<String> uniqueSubresources;
+    
+    Vector<Node*>::iterator it = nodes.begin();
+    Vector<Node*>::iterator end = nodes.end();
+    
+    for (; it != end; ++it) {
+        Frame* childFrame;
+        if (((*it)->hasTagName(HTMLNames::frameTag) || (*it)->hasTagName(HTMLNames::iframeTag) || (*it)->hasTagName(HTMLNames::objectTag)) &&
+             (childFrame = static_cast<HTMLFrameOwnerElement*>(*it)->contentFrame())) {
+            RefPtr<LegacyWebArchive> subframeArchive;
+            if (Document* document = childFrame->document())
+                subframeArchive = LegacyWebArchive::create(document);
+            else
+                subframeArchive = create(childFrame);
+            
+            if (subframeArchive)
+                subframeArchives.append(subframeArchive);
+            else
+                LOG_ERROR("Unabled to archive subframe %s", childFrame->tree()->name().string().utf8().data());
+        } else {
+            Vector<KURL> subresourceURLs;
+            (*it)->getSubresourceURLs(subresourceURLs);
+            
+            DocumentLoader* documentLoader = frame->loader()->documentLoader();
+            for (unsigned i = 0; i < subresourceURLs.size(); ++i) {
+                if (uniqueSubresources.contains(subresourceURLs[i].string()))
+                    continue;
+                uniqueSubresources.add(subresourceURLs[i].string());
+                RefPtr<ArchiveResource> resource = documentLoader->subresource(subresourceURLs[i]);
+                if (resource)
+                    subresources.append(resource.release());
+                else
+                    // FIXME: should do something better than spew to console here
+                    LOG_ERROR("Failed to archive subresource for %s", subresourceURLs[i].string().utf8().data());
+            }
+        }
+    }
+    
+    return create(mainResource, subresources, subframeArchives);
+}
 
 }

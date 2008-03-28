@@ -52,7 +52,7 @@ using namespace WebCore;
 
 - (WebArchive *)webArchive
 {
-    return [WebArchiver archiveNode:self];
+    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create([self _node])] autorelease];
 }
 
 - (NSString *)markupString

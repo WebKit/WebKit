@@ -28,7 +28,9 @@
 
 #import "WebArchiver.h"
 
+#import "DOMNodeInternal.h"
 #import "WebArchive.h"
+#import "WebArchiveInternal.h"
 #import "WebDOMOperationsPrivate.h"
 #import "WebDataSource.h"
 #import "WebDocument.h"
@@ -37,6 +39,7 @@
 #import "WebResource.h"
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/Frame.h>
+#import <WebCore/LegacyWebArchive.h>
 #import <WebCore/SelectionController.h>
 #import <WebKit/DOM.h>
 
@@ -44,87 +47,21 @@ using namespace WebCore;
 
 @implementation WebArchiver
 
-+ (NSArray *)_subframeArchivesForFrame:(WebFrame *)frame
-{
-    NSEnumerator *enumerator = [[frame childFrames] objectEnumerator];
-    NSMutableArray *subframeArchives = [NSMutableArray array];
-    WebFrame *childFrame;
-    while ((childFrame = [enumerator nextObject])) {
-        WebArchive *childFrameArchive = [self archiveFrame:childFrame];
-        if (childFrameArchive)
-            [subframeArchives addObject:childFrameArchive];
-    }
-
-    return subframeArchives;
-}
-
 + (WebArchive *)archiveFrame:(WebFrame *)frame;
 {
-    return [[[WebArchive alloc] initWithMainResource:[[frame _dataSource] mainResource]
-                                        subresources:[[frame _dataSource] subresources]
-                                    subframeArchives:[self _subframeArchivesForFrame:frame]] autorelease];
-}
-
-+ (WebArchive *)_archiveCurrentStateForFrame:(WebFrame *)frame
-{
-    if ([frame DOMDocument])
-        return [self archiveNode:[frame DOMDocument]];
-
-    return [self archiveFrame:frame];
+    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(core(frame))] autorelease];
 }
 
 + (WebArchive *)_archiveWithMarkupString:(NSString *)markupString fromFrame:(WebFrame *)frame nodes:(NSArray *)nodes
 { 
-    NSURLResponse *response = [[frame _dataSource] response];
-    NSURL *responseURL = [response URL];
+    Vector<Node*> coreNodes;
+    unsigned count = [nodes count];
+    coreNodes.reserveCapacity(count);
     
-    // it's possible to have a response without a URL here
-    // <rdar://problem/5454935>
-    if (!responseURL)
-        responseURL = [NSURL URLWithString:@""];
-    
-    WebResource *mainResource = [[WebResource alloc] initWithData:[markupString dataUsingEncoding:NSUTF8StringEncoding]
-                                                              URL:responseURL
-                                                         MIMEType:[response MIMEType]
-                                                 textEncodingName:@"UTF-8"
-                                                        frameName:[frame name]];
-    
-    NSMutableArray *subframeArchives = [[NSMutableArray alloc] init];
-    NSMutableArray *subresources = [[NSMutableArray alloc] init];
-    NSMutableSet *uniqueSubresources = [[NSMutableSet alloc] init];
-    NSEnumerator *enumerator = [nodes objectEnumerator];
-    DOMNode *node;
-    while ((node = [enumerator nextObject]) != nil) {
-        WebFrame *childFrame;
-        if (([node isKindOfClass:[DOMHTMLFrameElement class]] || 
-             [node isKindOfClass:[DOMHTMLIFrameElement class]] || 
-             [node isKindOfClass:[DOMHTMLObjectElement class]]) &&
-            ((childFrame = [(DOMHTMLFrameElement *)node contentFrame]) != nil)) {
-            [subframeArchives addObject:[self _archiveCurrentStateForFrame:childFrame]];
-        } else {
-            NSEnumerator *enumerator = [[node _subresourceURLs] objectEnumerator];
-            NSURL *URL;
-            while ((URL = [enumerator nextObject]) != nil) {
-                if ([uniqueSubresources containsObject:URL])
-                    continue;
-                [uniqueSubresources addObject:URL];
-                WebResource *subresource = [[frame _dataSource] subresourceForURL:URL];
-                if (subresource)
-                    [subresources addObject:subresource];
-                else
-                    // FIXME: should do something better than spew to console here
-                    LOG_ERROR("Failed to archive subresource for %@", URL);
-            }
-        }
-    }
-    
-    WebArchive *archive = [[[WebArchive alloc] initWithMainResource:mainResource subresources:subresources subframeArchives:subframeArchives] autorelease];
-    [mainResource release];
-    [uniqueSubresources release];
-    [subresources release];
-    [subframeArchives release];
-    
-    return archive;
+    for (unsigned i = 0; i < count; ++i)
+        coreNodes.append([[nodes objectAtIndex:i] _node]);
+        
+    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(markupString, core(frame), coreNodes)] autorelease];
 }
 
 + (WebArchive *)archiveRange:(DOMRange *)range
