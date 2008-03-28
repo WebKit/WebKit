@@ -1,3 +1,15 @@
+2008-03-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        More Kit->Core webarchive code movement
+
+        * WebCore.base.exp:
+        * editing/markup.cpp:
+        (WebCore::createFullMarkup): Replacement for [DOMNode markupString], creating full markup at this node including 
+          the document type string, which the WebKit implementation did indirectly
+        * editing/markup.h:
+
 2008-03-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

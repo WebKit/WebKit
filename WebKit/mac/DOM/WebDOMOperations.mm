@@ -39,6 +39,7 @@
 #import <WebCore/CSSHelper.h>
 #import <WebCore/Document.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/markup.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMHTML.h>
 
@@ -57,7 +58,7 @@ using namespace WebCore;
 
 - (NSString *)markupString
 {
-    return [[[self ownerDocument] webFrame] _markupStringFromNode:self nodes:nil];
+    return createFullMarkup([self _node]);
 }
 
 @end

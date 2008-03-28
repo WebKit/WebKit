@@ -2,6 +2,18 @@
 
         Reviewed by Sam Weinig
 
+        More Kit->Core webarchive code movement
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMNode markupString]): Call createFullMarkup() instead
+
+        * WebView/WebFrame.mm: Remove obsolete _markupStringFromNode
+        * WebView/WebFrameInternal.h: Ditto
+
+2008-03-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
         Fold [WebArchiver archiveFrame:] into WebDataSource - the last remaining caller
 
         * WebView/WebArchiver.h:

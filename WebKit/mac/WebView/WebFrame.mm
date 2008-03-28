@@ -498,17 +498,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return nodes;
 }
 
-- (NSString *)_markupStringFromNode:(DOMNode *)node nodes:(NSArray **)nodes
-{
-    // FIXME: This is never "for interchange". Is that right? See the next method.
-    Vector<Node*> nodeList;
-    NSString *markupString = createMarkup([node _node], IncludeNode, nodes ? &nodeList : 0);
-    if (nodes)
-        *nodes = [self _nodesFromList:&nodeList];
-
-    return [self _stringWithDocumentTypeStringAndMarkupString:markupString];
-}
-
 - (NSString *)_markupStringFromRange:(DOMRange *)range nodes:(NSArray **)nodes
 {
     // FIXME: This is always "for interchange". Is that right? See the previous method.
