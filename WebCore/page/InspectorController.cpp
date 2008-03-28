@@ -61,6 +61,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
+#include <kjs/ustring.h>
 #include <wtf/RefCounted.h>
 
 #if ENABLE(DATABASE)
@@ -119,14 +120,19 @@ struct ConsoleMessage {
 #pragma mark XMLHttpRequestResource Class
 
 struct XMLHttpRequestResource {
-    XMLHttpRequestResource(PassRefPtr<SharedBuffer> data, const String& encoding)
-        : data(data)
-        , encoding(encoding)
+    XMLHttpRequestResource(KJS::UString& sourceString)
     {
+        KJS::JSLock lock;
+        this->sourceString = sourceString.rep();
     }
 
-    RefPtr<SharedBuffer> data;
-    String encoding;
+    ~XMLHttpRequestResource()
+    {
+        KJS::JSLock lock;
+        sourceString.clear();
+    }
+
+    RefPtr<KJS::UString::Rep> sourceString;
 };
 
 #pragma mark -
@@ -199,24 +205,39 @@ struct InspectorResource : public RefCounted<InspectorResource> {
             JSValueProtect(context, newScriptObject);
     }
 
-    void setXMLHttpRequestProperties(PassRefPtr<SharedBuffer> data, const String& encoding)
+    void setXMLHttpRequestProperties(KJS::UString& data)
     {
-        xmlHttpRequestResource.set(new XMLHttpRequestResource(data, encoding));
+        xmlHttpRequestResource.set(new XMLHttpRequestResource(data));
     }
     
-    PassRefPtr<SharedBuffer> data()
-    {
-        if (xmlHttpRequestResource)
-            return xmlHttpRequestResource->data;
-        return loader->mainResourceData();
-    }
+    String sourceString() const
+     {
+         if (xmlHttpRequestResource)
+            return KJS::UString(xmlHttpRequestResource->sourceString);
 
-    String encoding()
-    {
-        if (xmlHttpRequestResource)
-            return xmlHttpRequestResource->encoding;
-        return frame->document()->inputEncoding();
-    }
+        RefPtr<SharedBuffer> buffer;
+        String textEncodingName;
+
+        if (requestURL == loader->requestURL()) {
+            buffer = loader->mainResourceData();
+            textEncodingName = frame->document()->inputEncoding();
+        } else {
+            CachedResource* cachedResource = frame->document()->docLoader()->cachedResource(requestURL.string());
+            if (!cachedResource)
+                return String();
+
+            buffer = cachedResource->data();
+            textEncodingName = cachedResource->encoding();
+        }
+
+        if (!buffer)
+            return String();
+
+        TextEncoding encoding(textEncodingName);
+        if (!encoding.isValid())
+            encoding = WindowsLatin1Encoding();
+        return encoding.decode(buffer->data(), buffer->size());
+     }
 
     long long identifier;
     RefPtr<DocumentLoader> loader;
@@ -327,27 +348,9 @@ static JSValueRef addSourceToFrame(JSContextRef ctx, JSObjectRef /*function*/, J
     if (!resource)
         return undefined;
 
-    RefPtr<SharedBuffer> buffer;
-    String textEncodingName;
-    if (resource->requestURL == resource->loader->requestURL()) {
-        buffer = resource->data();
-        textEncodingName = resource->encoding();
-    } else {
-        CachedResource* cachedResource = resource->frame->document()->docLoader()->cachedResource(resource->requestURL.string());
-        if (!cachedResource)
-            return undefined;
-
-        buffer = cachedResource->data();
-        textEncodingName = cachedResource->encoding();
-    }
-
-    if (!buffer)
+    String sourceString = resource->sourceString();
+    if (sourceString.isEmpty())
         return undefined;
-
-    TextEncoding encoding(textEncodingName);
-    if (!encoding.isValid())
-        encoding = WindowsLatin1Encoding();
-    String sourceString = encoding.decode(buffer->data(), buffer->size());
 
     Node* node = toNode(toJS(arguments[1]));
     ASSERT(node);
@@ -1836,7 +1839,7 @@ void InspectorController::didFailLoading(DocumentLoader* loader, unsigned long i
     }
 }
 
-void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identifier, PassRefPtr<SharedBuffer> data, const String& encoding)
+void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identifier, KJS::UString& sourceString)
 {
     if (!enabled())
         return;
@@ -1845,7 +1848,7 @@ void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identi
     if (!resource)
         return;
 
-    resource->setXMLHttpRequestProperties(data, encoding);
+    resource->setXMLHttpRequestProperties(sourceString);
 }
 
 

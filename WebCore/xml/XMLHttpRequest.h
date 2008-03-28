@@ -128,6 +128,7 @@ private:
     String m_encoding;
 
     RefPtr<TextResourceDecoder> m_decoder;
+    unsigned long m_identifier;
 
     // Unlike most strings in the DOM, we keep this as a KJS::UString, not a WebCore::String.
     // That's because these strings can easily get huge (they are filled from the network with

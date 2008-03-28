@@ -246,6 +246,7 @@ XMLHttpRequest::XMLHttpRequest(Document* d)
     : m_doc(d)
     , m_async(true)
     , m_state(Uninitialized)
+    , m_identifier(-1)
     , m_responseText("")
     , m_createdDocument(false)
     , m_aborted(false)
@@ -459,14 +460,6 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
     // We need to keep content sniffing enabled for local files due to CFNetwork not providing a MIME type
     // for local files otherwise, <rdar://problem/5671813>.
     m_loader = SubresourceLoader::create(m_doc->frame(), this, request, false, true, request.url().isLocalFile());
-
-    if (m_loader) {
-        if (Frame* frame = m_doc->frame()) {
-            if (Page* page = frame->page()) {
-                page->inspectorController()->resourceRetrievedByXMLHttpRequest(m_loader->identifier(), m_loader->resourceData(), m_encoding);
-            }
-        }
-    }
 
     if (m_loader) {
         // Neither this object nor the JavaScript wrapper should be deleted while
@@ -701,6 +694,11 @@ void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
         KJS::JSLock lock;
         if (m_decoder)
             m_responseText += m_decoder->flush();
+    }
+
+    if (Frame* frame = m_doc->frame()) {
+        if (Page* page = frame->page())
+            page->inspectorController()->resourceRetrievedByXMLHttpRequest(m_loader ? m_loader->identifier() : m_identifier, m_responseText);
     }
 
     bool hadLoader = m_loader;

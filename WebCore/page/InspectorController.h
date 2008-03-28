@@ -35,6 +35,10 @@
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
+namespace KJS {
+    class UString;
+}
+
 namespace WebCore {
 
 class Database;
@@ -112,7 +116,7 @@ public:
     void didReceiveContentLength(DocumentLoader*, unsigned long identifier, int lengthReceived);
     void didFinishLoading(DocumentLoader*, unsigned long identifier);
     void didFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&);
-    void resourceRetrievedByXMLHttpRequest(unsigned long identifier, PassRefPtr<SharedBuffer> data, const String& encoding);
+    void resourceRetrievedByXMLHttpRequest(unsigned long identifier, KJS::UString& sourceString);
 
 #if ENABLE(DATABASE)
     void didOpenDatabase(Database*, const String& domain, const String& name, const String& version);

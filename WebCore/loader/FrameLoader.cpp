@@ -3422,7 +3422,7 @@ void FrameLoader::loadEmptyDocumentSynchronously()
     load(request);
 }
 
-void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     // Since this is a subresource, we can load any URL (we ignore the return value).
     // But we still want to know whether we should hide the referrer or not, so we call the canLoad method.
@@ -3456,6 +3456,7 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Reso
     }
     
     sendRemainingDelegateMessages(identifier, response, data.size(), error);
+    return identifier;
 }
 
 void FrameLoader::assignIdentifierToInitialRequest(unsigned long identifier, const ResourceRequest& clientRequest)

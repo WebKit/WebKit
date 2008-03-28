@@ -1,3 +1,33 @@
+2008-03-28  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        -<rdar://problem/5712804> XMLHttpRequests do not show response contents, preview images (14313)
+        -<rdar://problem/5712931> XMLHttpRequests should be shown separately and grouped (14315)
+        -<rdar://problem/5732836> XMLHttpRequest: Inspector should show network activity/XHR in Console (17233)
+        - Send the XMLHttpRequest data to the Inspector Controller.
+
+        * loader/FrameLoader.cpp: Return the identifier for this resource since we need it in the XHR case.
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/FrameLoader.h: Ditto.
+        * page/InspectorController.cpp:
+        (WebCore::XMLHttpRequestResource::XMLHttpRequestResource): We only need the data since the type will
+        be XHR and the encoding is not used (we decoded earlier).
+        (WebCore::XMLHttpRequestResource::~XMLHttpRequestResource): Locking is necessary when setting and clearing
+        the KJS::UString::Rep.
+        (WebCore::InspectorResource::setXMLHttpRequestProperties):
+        (WebCore::InspectorResource::sourceString): Return the decoded source.
+        (WebCore::addSourceToFrame): No longer do the decoding here, it has been encapsulated in the InspectorResource.
+        (WebCore::InspectorController::resourceRetrievedByXMLHttpRequest):
+        * page/InspectorController.h: Pass a UString instead of copying to a WebCore::String.  In case we
+        never ask for the string's contents this will save us an extra copy.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send): In the synchronous load case we normally do not keep the identifier
+        but we need it to find the InspectorResource in order to tell it that it was loaded via XHR.
+        (WebCore::XMLHttpRequest::didFinishLoading): Tell the InspectorController that its resource was loaded
+        via XHR.
+        * xml/XMLHttpRequest.h: Ditto.
+
 2008-03-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
