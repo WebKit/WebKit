@@ -1,3 +1,15 @@
+2008-03-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - eliminate a tiny bit of unnecessary refcount churn
+
+        * bindings/js/JSEventTargetBase.cpp:
+        (WebCore::eventNameForPropertyToken): Return const AtomicString&.
+        * bindings/js/JSEventTargetBase.h:
+        (WebCore::JSEventTargetBase::getValueProperty): Update for above change.
+        (WebCore::JSEventTargetBase::putValueProperty): Ditto.
+
 2008-03-28  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build.

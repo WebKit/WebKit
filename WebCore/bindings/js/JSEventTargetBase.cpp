@@ -158,7 +158,7 @@ bool retrieveEventTargetAndCorrespondingNode(KJS::ExecState*, KJS::JSObject* thi
     return true;
 }
 
-AtomicString eventNameForPropertyToken(int token)
+const AtomicString& eventNameForPropertyToken(int token)
 {    
     switch (token) {
     case JSEventTargetProperties::OnAbort:
@@ -243,7 +243,7 @@ AtomicString eventNameForPropertyToken(int token)
         return unloadEvent;
     }
 
-    return AtomicString();
+    return nullAtom;
 }
 
 JSValue* toJS(ExecState* exec, EventTarget* target)

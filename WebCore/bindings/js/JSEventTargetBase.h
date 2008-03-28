@@ -69,7 +69,7 @@ namespace WebCore {
     KJS::JSValue* jsEventTargetDispatchEvent(KJS::ExecState*, KJS::JSObject*, const KJS::List&);
 
     // Helper function for getValueProperty/putValueProperty
-    AtomicString eventNameForPropertyToken(int token);
+    const AtomicString& eventNameForPropertyToken(int token);
 
     template<class JSEventTarget>
     class JSEventTargetBase {
@@ -78,7 +78,7 @@ namespace WebCore {
 
         KJS::JSValue* getValueProperty(const JSEventTarget* owner, KJS::ExecState* exec, int token) const
         {
-            AtomicString eventName = eventNameForPropertyToken(token);
+            const AtomicString& eventName = eventNameForPropertyToken(token);
             if (!eventName.isEmpty())
                 return owner->getListener(eventName);
 
@@ -87,7 +87,7 @@ namespace WebCore {
 
         void putValueProperty(const JSEventTarget* owner, KJS::ExecState* exec, int token, KJS::JSValue* value)
         {
-            AtomicString eventName = eventNameForPropertyToken(token);
+            const AtomicString& eventName = eventNameForPropertyToken(token);
             if (!eventName.isEmpty())
                 owner->setListener(exec, eventName, value);
         }
