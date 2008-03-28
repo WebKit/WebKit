@@ -97,17 +97,6 @@
  * #define Bad_float_h if your system lacks a float.h or if it does not
  *    define some or all of DBL_DIG, DBL_MAX_10_EXP, DBL_MAX_EXP,
  *    FLT_RADIX, FLT_ROUNDS, and DBL_MAX.
- * #define Omit_Private_Memory to omit logic (added Jan. 1998) for making
- *    memory allocations from a private pool of memory when possible.
- *    When used, the private pool is PRIVATE_MEM bytes long:  2304 bytes,
- *    unless #defined to be a different length.  This default length
- *    suffices to get rid of MALLOC calls except for unusual cases,
- *    such as decimal-to-binary conversion of a very long string of
- *    digits.  The longest string dtoa can return is about 751 bytes
- *    long.  For conversions by strtod of strings of 800 digits and
- *    all dtoa conversions in single-threaded executions with 8-byte
- *    pointers, PRIVATE_MEM >= 7400 appears to suffice; with 4-byte
- *    pointers, PRIVATE_MEM >= 7112 appears adequate.
  * #define INFNAN_CHECK on IEEE systems to cause strtod to check for
  *    Infinity and NaN (case insensitively).  On some systems (e.g.,
  *    some HP systems), it may be necessary to #define NAN_WORD0
@@ -123,15 +112,6 @@
  *    white space ignored; but if this results in none of the 52
  *    fraction bits being on (an IEEE Infinity symbol), then NAN_WORD0
  *    and NAN_WORD1 are used instead.
- * #define MULTIPLE_THREADS if the system offers preemptively scheduled
- *    multiple threads.  In this case, you must provide (or suitably
- *    #define) two locks, acquired by ACQUIRE_DTOA_LOCK(n) and freed
- *    by FREE_DTOA_LOCK(n) for n = 0 or 1.  (The second lock, accessed
- *    in pow5mult, ensures lazy evaluation of only one copy of high
- *    powers of 5; omitting this lock would introduce a small
- *    probability of wasting memory, but would otherwise be harmless.)
- *    You must also invoke freedtoa(s) to free the value s returned by
- *    dtoa.  You may do so whether or not MULTIPLE_THREADS is #defined.
  * #define NO_IEEE_Scale to disable new (Feb. 1997) logic in strtod that
  *    avoids underflows on inputs whose result does not underflow.
  *    If you #define NO_IEEE_Scale on a machine that uses IEEE-format
@@ -186,15 +166,7 @@
 #include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
-
-#ifndef Omit_Private_Memory
-#ifndef PRIVATE_MEM
-#define PRIVATE_MEM 2304
-#endif
-#define PRIVATE_mem ((PRIVATE_MEM + sizeof(double) - 1) / sizeof(double))
-static double private_mem[PRIVATE_mem];
-static double* pmem_next = private_mem;
-#endif
+#include <wtf/Threading.h>
 
 #undef IEEE_Arith
 #undef Avoid_Underflow
@@ -245,6 +217,12 @@ static double* pmem_next = private_mem;
 
 #ifndef __MATH_H__
 #include <math.h>
+#endif
+
+using namespace KJS;
+
+#if USE(MULTIPLE_THREADS)
+Mutex* KJS::s_dtoaP5Mutex;
 #endif
 
 #ifdef __cplusplus
@@ -429,11 +407,6 @@ extern double rnd_prod(double, double), rnd_quot(double, double);
 #endif
 #endif
 
-#ifndef MULTIPLE_THREADS
-#define ACQUIRE_DTOA_LOCK(n)    /*nothing*/
-#define FREE_DTOA_LOCK(n)    /*nothing*/
-#endif
-
 #define Kmax 15
 
 struct Bigint {
@@ -442,43 +415,21 @@ struct Bigint {
     uint32_t x[1];
 };
 
-static Bigint* freelist[Kmax + 1];
-
 static Bigint* Balloc(int k)
 {
-    Bigint* rv;
-
-    ACQUIRE_DTOA_LOCK(0);
-    if ((rv = freelist[k])) {
-        freelist[k] = rv->next;
-    } else {
-        int x = 1 << k;
-#ifdef Omit_Private_Memory
-        rv = (Bigint*)fastMalloc(sizeof(Bigint) + (x - 1)*sizeof(uint32_t));
-#else
-        unsigned int len = (sizeof(Bigint) + (x - 1) * sizeof(uint32_t) + sizeof(double) - 1) / sizeof(double);
-        if (pmem_next - private_mem + len <= (unsigned)PRIVATE_mem) {
-            rv = (Bigint*)pmem_next;
-            pmem_next += len;
-        } else
-            rv = (Bigint*)fastMalloc(len * sizeof(double));
-#endif
-        rv->k = k;
-        rv->maxwds = x;
-    }
-    FREE_DTOA_LOCK(0);
+    int x = 1 << k;
+    Bigint* rv = (Bigint*)fastMalloc(sizeof(Bigint) + (x - 1)*sizeof(uint32_t));
+    rv->k = k;
+    rv->maxwds = x;
+    rv->next = 0;
     rv->sign = rv->wds = 0;
+
     return rv;
 }
 
 static void Bfree(Bigint* v)
 {
-    if (v) {
-        ACQUIRE_DTOA_LOCK(0);
-        v->next = freelist[v->k];
-        freelist[v->k] = v;
-        FREE_DTOA_LOCK(0);
-    }
+    fastFree(v);
 }
 
 #define Bcopy(x, y) memcpy((char*)&x->sign, (char*)&y->sign, y->wds * sizeof(int32_t) + 2 * sizeof(int))
@@ -737,108 +688,121 @@ static Bigint* mult(Bigint* a, Bigint* b)
 }
 
 static Bigint* p5s;
+static int p5s_count;
 
 static Bigint* pow5mult(Bigint* b, int k)
 {
-    Bigint *b1, *p5, *p51;
-    int i;
     static int p05[3] = { 5, 25, 125 };
 
-    if ((i = k & 3))
+    if (int i = k & 3)
         b = multadd(b, p05[i - 1], 0);
 
     if (!(k >>= 2))
         return b;
-    if (!(p5 = p5s)) {
-        /* first time */
-#ifdef MULTIPLE_THREADS
-        ACQUIRE_DTOA_LOCK(1);
-        if (!(p5 = p5s)) {
-            p5 = p5s = i2b(625);
-            p5->next = 0;
-        }
-        FREE_DTOA_LOCK(1);
-#else
-        p5 = p5s = i2b(625);
-        p5->next = 0;
+
+#if USE(MULTIPLE_THREADS)
+    s_dtoaP5Mutex->lock();
 #endif
+    Bigint* p5 = p5s;
+    if (!p5) {
+        /* first time */
+        p5 = p5s = i2b(625);
+        p5s_count = 1;
     }
+    int p5s_count_local = p5s_count;
+#if USE(MULTIPLE_THREADS)
+    s_dtoaP5Mutex->unlock();
+#endif
+    int p5s_used = 0;
+
     for (;;) {
         if (k & 1) {
-            b1 = mult(b, p5);
+            Bigint* b1 = mult(b, p5);
             Bfree(b);
             b = b1;
         }
         if (!(k >>= 1))
             break;
-        if (!(p51 = p5->next)) {
-#ifdef MULTIPLE_THREADS
-            ACQUIRE_DTOA_LOCK(1);
-            if (!(p51 = p5->next)) {
-                p51 = p5->next = mult(p5,p5);
-                p51->next = 0;
+
+        if (++p5s_used == p5s_count_local) {
+#if USE(MULTIPLE_THREADS)
+            s_dtoaP5Mutex->lock();
+#endif
+            if (p5s_used == p5s_count) {
+                ASSERT(!p5->next);
+                p5->next = mult(p5, p5);
+                ++p5s_count;
             }
-            FREE_DTOA_LOCK(1);
-#else
-            p51 = p5->next = mult(p5,p5);
-            p51->next = 0;
+            
+            p5s_count_local = p5s_count;
+#if USE(MULTIPLE_THREADS)
+            s_dtoaP5Mutex->unlock();
 #endif
         }
-        p5 = p51;
+        p5 = p5->next;
     }
+
     return b;
 }
 
 static Bigint* lshift(Bigint* b, int k)
 {
-    int i, k1, n, n1;
-    Bigint* b1;
-    uint32_t *x, *x1, *xe, z;
+    Bigint* result = b;
 
 #ifdef Pack_32
-    n = k >> 5;
+    int n = k >> 5;
 #else
-    n = k >> 4;
+    int n = k >> 4;
 #endif
-    k1 = b->k;
-    n1 = n + b->wds + 1;
-    for (i = b->maxwds; n1 > i; i <<= 1)
+
+    int k1 = b->k;
+    int n1 = n + b->wds + 1;
+    for (int i = b->maxwds; n1 > i; i <<= 1)
         k1++;
-    b1 = Balloc(k1);
-    x1 = b1->x;
-    for (i = 0; i < n; i++)
-        *x1++ = 0;
-    x = b->x;
-    xe = x + b->wds;
+    if (b->k < k1)
+        result = Balloc(k1);
+
+    const uint32_t* srcStart = b->x;
+    uint32_t* dstStart = result->x;
+    const uint32_t* src = srcStart + b->wds - 1;
+    uint32_t* dst = dstStart + n1 - 1;
 #ifdef Pack_32
     if (k &= 0x1f) {
-        k1 = 32 - k;
-        z = 0;
-        do {
-            *x1++ = *x << k | z;
-            z = *x++ >> k1;
-        } while (x < xe);
-        if ((*x1 = z))
-            ++n1;
+        uint32_t hiSubword = 0;
+        int s = 32 - k;
+        for (; src >= srcStart; --src) {
+            *dst-- = hiSubword | *src >> s;
+            hiSubword = *src << k;
+        }
+        *dst = hiSubword;
+        ASSERT(dst == dstStart + n);
+        result->wds = b->wds + n + (result->x[n1 - 1] != 0);
     }
 #else
     if (k &= 0xf) {
-        k1 = 16 - k;
-        z = 0;
+        uint32_t hiSubword = 0;
+        int s = 16 - k;
+        for (; src >= srcStart; --src) {
+            *dst-- = hiSubword | *src >> s;
+            hiSubword = (*src << k) & 0xffff;
+        }
+        *dst = hiSubword;
+        ASSERT(dst == dstStart + n);
+        result->wds = b->wds + n + (result->x[n1 - 1] != 0);
+     }
+ #endif
+    else {
         do {
-            *x1++ = *x << k  & 0xffff | z;
-            z = *x++ >> k1;
-        } while (x < xe);
-        if ((*x1 = z))
-            ++n1;
+            *--dst = *src--;
+        } while (src >= srcStart);
+        result->wds = b->wds + n;
     }
-#endif
-    else do {
-        *x1++ = *x++;
-    } while (x < xe);
-    b1->wds = n1 - 1;
-    Bfree(b);
-    return b1;
+    for (dst = dstStart + n; dst != dstStart; )
+        *--dst = 0;
+
+    if (result != b)
+        Bfree(b);
+    return result;
 }
 
 static int cmp(Bigint* a, Bigint* b)
@@ -2247,7 +2211,7 @@ static int quorem(Bigint* b, Bigint* S)
     return q;
 }
 
-#ifndef MULTIPLE_THREADS
+#if !USE(MULTIPLE_THREADS)
 static char* dtoa_result;
 #endif
 
@@ -2263,7 +2227,7 @@ static char* rv_alloc(int i)
     int* r = (int*)Balloc(k);
     *r = k;
     return
-#ifndef MULTIPLE_THREADS
+#if !USE(MULTIPLE_THREADS)
     dtoa_result =
 #endif
         (char*)(r + 1);
@@ -2292,7 +2256,7 @@ void kjs_freedtoa(char* s)
     Bigint* b = (Bigint*)((int*)s - 1);
     b->maxwds = 1 << (b->k = *(int*)b);
     Bfree(b);
-#ifndef MULTIPLE_THREADS
+#if !USE(MULTIPLE_THREADS)
     if (s == dtoa_result)
         dtoa_result = 0;
 #endif
@@ -2386,7 +2350,7 @@ char* kjs_dtoa(double d, int mode, int ndigits, int* decpt, int* sign, char** rv
     int inexact, oldinexact;
 #endif
 
-#ifndef MULTIPLE_THREADS
+#if !USE(MULTIPLE_THREADS)
     if (dtoa_result) {
         kjs_freedtoa(dtoa_result);
         dtoa_result = 0;

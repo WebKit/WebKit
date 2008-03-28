@@ -397,6 +397,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\InitializeThreading.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\InitializeThreading.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\internal.cpp"
 				>
 			</File>

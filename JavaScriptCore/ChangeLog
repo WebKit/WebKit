@@ -1,3 +1,51 @@
+2008-03-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Fix a dtoa thread safety issue.
+
+        WebCore can call kjs_strtod without holding JS lock, but we didn't have thread safety
+        compiled in for dtoa.
+
+        This is a 0.5% regression on SunSpider, which Sam Weinig has volunteered to cover with
+        his recent improvement.
+
+        * kjs/dtoa.cpp:
+        (Bigint::Balloc):
+        (Bigint::Bfree):
+        Changed to use fastMalloc/fastDelete - they are much faster than the dtoa custom version was
+        in the presence of locking (but somewhat slower in single-threaded case).
+        (Bigint::pow5mult): Got rid of the dreaded double-checked locking anti-pattern (had to
+        restructure the code to avoid significant performance implications).
+        (Bigint::lshift): Rewrote to avoid an allocation, if possible.
+
+        (Bigint::rv_alloc):
+        (Bigint::kjs_freedtoa):
+        (Bigint::kjs_dtoa):
+        Check for USE(MULTIPLE_THREADS), not dtoa legacy MULTIPLE_THREADS.
+
+        * kjs/InitializeThreading.cpp: Added.
+        (KJS::initializeThreading):
+        * kjs/InitializeThreading.h: Added.
+        Initialize threading at KJS level, if enabled.
+
+        * kjs/dtoa.h: Expose dtoa mutex for KJS::initializeThreading.
+
+        * kjs/testkjs.cpp: (kjsmain): Call initializeThreading.
+
+        * JavaScriptCore.exp: Export KJS::initializeThreading.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCoreSources.bkl:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Added InitializeThreading.{h,cpp}.
+
+        * wtf/Threading.h: Removed a using directive for WTF::initializeThreading - it is only
+        to be called from KJS::initializeThreading, and having it in the global namespace is useless.
+
 2008-03-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

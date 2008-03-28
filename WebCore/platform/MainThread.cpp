@@ -30,6 +30,7 @@
 #include "MainThread.h"
 
 #include "Logging.h"
+#include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

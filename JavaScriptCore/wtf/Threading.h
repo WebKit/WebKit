@@ -261,7 +261,6 @@ using WTF::ThreadSafeShared;
 using WTF::createThread;
 using WTF::currentThread;
 using WTF::detachThread;
-using WTF::initializeThreading;
 using WTF::waitForThreadCompletion;
 
 #endif // Threading_h

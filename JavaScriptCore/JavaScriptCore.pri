@@ -47,6 +47,7 @@ SOURCES += \
     API/JSObjectRef.cpp \
     API/JSStringRef.cpp \
     API/JSValueRef.cpp \
+    kjs/InitializeThreading.cpp \
     kjs/JSGlobalObject.cpp \
     kjs/JSVariableObject.cpp
 

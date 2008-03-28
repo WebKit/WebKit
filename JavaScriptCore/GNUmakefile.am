@@ -39,6 +39,7 @@ javascriptcore_sources += \
 	JavaScriptCore/API/JSObjectRef.cpp \
 	JavaScriptCore/API/JSStringRef.cpp \
 	JavaScriptCore/API/JSValueRef.cpp \
+	JavaScriptCore/kjs/InitializeThreading.cpp \
 	JavaScriptCore/kjs/JSGlobalObject.cpp \
 	JavaScriptCore/kjs/JSVariableObject.cpp \
 	JavaScriptCore/pcre/pcre_compile.cpp \

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,32 +25,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+#ifndef KJS_InitializeThreading_h
+#define KJS_InitializeThreading_h
 
-#ifndef MainThread_h
-#define MainThread_h
+namespace KJS {
 
-#include <kjs/InitializeThreading.h>
+    void initializeThreading();
 
-namespace WebCore {
-
-typedef void MainThreadFunction(void*);
-
-void callOnMainThread(MainThreadFunction*, void* context);
-void setMainThreadCallbacksPaused(bool paused);
-
-void initializeThreadingAndMainThread();
-
-#if !PLATFORM(WIN)
-inline void initializeThreadingAndMainThread()
-{
-    KJS::initializeThreading();
 }
+
 #endif
-
-// These functions are internal to the callOnMainThread implementation.
-void dispatchFunctionsFromMainThread();
-void scheduleDispatchFunctionsOnMainThread();
-
-} // namespace WebCore
-
-#endif // MainThread_h

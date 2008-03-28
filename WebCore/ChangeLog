@@ -1,3 +1,15 @@
+2008-03-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Fix a dtoa thread safety issue.
+
+        * ForwardingHeaders/kjs/InitializeThreading.h: Added.
+        * platform/MainThread.cpp:
+        * platform/MainThread.h:
+        (WebCore::initializeThreadingAndMainThread): Call KJS::initializeThreading instead of its
+        WTF counterpart.
+
 2008-03-28  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Maciej, landed by Brady
