@@ -1,3 +1,11 @@
+2008-03-27  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Return a default value for operator == 
+        when !USE(WXGC) (not implemented in that case).
+
+        * platform/graphics/wx/AffineTransformWx.cpp:
+        (WebCore::AffineTransform::operator== ):
+
 2008-03-27  Maciej Stachowiak  <mjs@apple.com>
 
         - fix build
