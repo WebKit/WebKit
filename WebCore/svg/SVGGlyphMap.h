@@ -34,7 +34,7 @@ namespace WebCore {
     private:
         GlyphMapNode() { }
     public:
-        PassRefPtr<GlyphMapNode> create() { return adoptRef(new GlyphMapNode); }
+        static PassRefPtr<GlyphMapNode> create() { return adoptRef(new GlyphMapNode); }
 
         Vector<SVGGlyphIdentifier> glyphs;
 

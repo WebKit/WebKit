@@ -1,3 +1,10 @@
+2008-03-27  Maciej Stachowiak  <mjs@apple.com>
+
+        - fix build
+
+        * svg/SVGGlyphMap.h:
+        (WebCore::GlyphMapNode::create):
+
 2008-03-27  Brady Eidson  <beidson@apple.com>
 
         Forgot a small requested change before committing
