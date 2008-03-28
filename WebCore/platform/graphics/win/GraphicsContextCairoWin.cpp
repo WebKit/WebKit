@@ -58,8 +58,13 @@ GraphicsContext::GraphicsContext(HDC dc)
     }
 }
 
-HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend)
+HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
+    // FIXME:  We aren't really doing anything with the 'mayCreateBitmap' flag.  This needs
+    // to be addressed.
+    if (dstRect.isEmpty())
+       return 0;
+
     // This is probably wrong, and definitely out of date.  Pulled from old SVN
     cairo_surface_t* surface = cairo_get_target(platformContext());
     HDC hdc = cairo_win32_surface_get_dc(surface);   
@@ -77,15 +82,20 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
     xform.eM22 = mat.yy;
     xform.eDx = mat.x0;
     xform.eDy = mat.y0;
-    SetWorldTransform(hdc, &xform);
+    ::SetWorldTransform(hdc, &xform);
 
     return hdc;
 }
 
 bool GraphicsContext::inTransparencyLayer() const { return m_data->m_transparencyCount; }
 
-void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend)
+void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
+    // FIXME:  We aren't really doing anything with the 'mayCreateBitmap' flag.  This needs
+    // to be addressed.
+    if (dstRect.isEmpty())
+       return;
+
     cairo_surface_t* surface = cairo_get_target(platformContext());
     HDC hdc2 = cairo_win32_surface_get_dc(surface);
     RestoreDC(hdc2, -1);
