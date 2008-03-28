@@ -1,3 +1,15 @@
+2008-03-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Using convertUTF16ToUTF8() from WTF, add a helper function that gives you a UTF8 SharedBuffer
+        created from a String.
+
+        * ForwardingHeaders/wtf/unicode/UTF8.h: Added.
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+        (WebCore::utf8Buffer):
+
 2008-03-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.

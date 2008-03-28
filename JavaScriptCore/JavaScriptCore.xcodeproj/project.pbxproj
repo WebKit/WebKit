@@ -199,7 +199,7 @@
 		E1EE793D0D6C9B9200FEA3BA /* ThreadingPthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */; };
 		E1EE798C0D6CA53D00FEA3BA /* MessageQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE798B0D6CA53D00FEA3BA /* MessageQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EF79A80CE97BA60088D500 /* UTF8.cpp */; };
-		E1EF79AB0CE97BA60088D500 /* UTF8.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EF79A90CE97BA60088D500 /* UTF8.h */; };
+		E1EF79AB0CE97BA60088D500 /* UTF8.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EF79A90CE97BA60088D500 /* UTF8.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */

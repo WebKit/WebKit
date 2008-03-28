@@ -217,6 +217,7 @@ __ZN3WTF5Mutex6unlockEv
 __ZN3WTF5Mutex7tryLockEv
 __ZN3WTF5MutexC1Ev
 __ZN3WTF5MutexD1Ev
+__ZN3WTF7Unicode18convertUTF16ToUTF8EPPKtS2_PPcS4_b
 __ZN3WTF8Collator18setOrderLowerFirstEb
 __ZN3WTF8CollatorC1EPKc
 __ZN3WTF8CollatorD1Ev

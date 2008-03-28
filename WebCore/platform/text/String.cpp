@@ -33,11 +33,13 @@
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
+#include <wtf/unicode/UTF8.h>
 
 using KJS::Identifier;
 using KJS::UString;
 
 using namespace WTF;
+using namespace WTF::Unicode;
 
 namespace WebCore {
 
@@ -786,6 +788,23 @@ float charactersToFloat(const UChar* data, size_t length, bool* ok)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
     return narrowPrecisionToFloat(charactersToDouble(data, length, ok));
+}
+
+PassRefPtr<SharedBuffer> utf8Buffer(const String& string)
+{
+    // Allocate a buffer big enough to hold all the characters.
+    const int length = string.length();
+    Vector<char> buffer(length * 3);
+
+    // Convert to runs of 8-bit characters.
+    char* p = buffer.data();
+    const UChar* d = string.characters();
+    ConversionResult result = convertUTF16ToUTF8(&d, d + length, &p, p + buffer.size(), true);
+    if (result != conversionOK)
+        return 0;
+
+    buffer.shrink(p - buffer.data());
+    return SharedBuffer::adoptVector(buffer);
 }
 
 } // namespace WebCore
