@@ -1,3 +1,13 @@
+2008-03-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        Test for crash when canceling a resource load while port blocked failure
+        timer is going
+
+        * fast/loader/cancel-load-during-port-block-timer-expected.txt: Added.
+        * fast/loader/cancel-load-during-port-block-timer.html: Added.
+
 2008-03-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff.

@@ -29,6 +29,7 @@
 
 #include "ResourceRequest.h"
 #include "AuthenticationChallenge.h"
+#include "Timer.h"
 
 #if USE(CFNETWORK)
 #include <CFNetwork/CFURLConnectionPriv.h>
@@ -37,7 +38,6 @@
 #if USE(WININET)
 #include <winsock2.h>
 #include <windows.h>
-#include "Timer.h"
 #endif
 
 #if USE(CURL)
@@ -119,6 +119,7 @@ namespace WebCore {
 #elif USE(CFNETWORK)
             , m_currentCFChallenge(0)
 #endif
+            , m_failureTimer(loader, &ResourceHandle::fireBlockedFailure)
         {
         }
         
@@ -189,6 +190,8 @@ namespace WebCore {
         CFURLAuthChallengeRef m_currentCFChallenge;
 #endif
         AuthenticationChallenge m_currentWebChallenge;
+
+        Timer<ResourceHandle> m_failureTimer;
     };
 
 } // namespace WebCore

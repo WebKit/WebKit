@@ -58,15 +58,13 @@ PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request
 
 void ResourceHandle::scheduleBlockedFailure()
 {
-    Timer<ResourceHandle>* blockedTimer = new Timer<ResourceHandle>(this, &ResourceHandle::fireBlockedFailure);
-    blockedTimer->startOneShot(0);
+    d->m_failureTimer.startOneShot(0);
 }
 
 void ResourceHandle::fireBlockedFailure(Timer<ResourceHandle>* timer)
 {
     if (client())
         client()->wasBlocked(this);
-    delete timer;
 }
 
 ResourceHandleClient* ResourceHandle::client() const
