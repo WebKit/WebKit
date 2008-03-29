@@ -50,6 +50,7 @@
 #import <WebCore/EditAction.h>
 #import <WebCore/EditCommand.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/LegacyWebArchive.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -299,8 +300,10 @@ void WebEditorClient::didSetSelectionTypesForPasteboard()
 
 NSData* WebEditorClient::dataForArchivedSelection(Frame* frame)
 {
-    WebArchive *archive = [WebArchiver archiveSelectionInFrame:kit(frame)];
-    return [archive data];
+    RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::createFromSelection(frame);
+    RetainPtr<CFDataRef> data = coreArchive ? coreArchive->rawDataRepresentation() : 0;
+
+    return [[(NSData *)data.get() retain] autorelease];
 }
 
 NSString* WebEditorClient::userVisibleString(NSURL *URL)

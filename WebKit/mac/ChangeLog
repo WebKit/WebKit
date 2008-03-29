@@ -2,6 +2,21 @@
 
         Reviewed by Darin Adler
 
+        Now that WebCore can create archives from a frame selection directly, we don't need it in WebArchiver anymore
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::dataForArchivedSelection):
+
+        * WebView/WebArchiver.h: Nuke archiveSelectionInFrame, as there are no remaining users
+        * WebView/WebArchiver.mm: Ditto
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _writeSelectionWithPasteboardTypes:toPasteboard:cachedAttributedString:]):
+
+2008-03-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
         More Kit->Core WebArchive changes.
 
         Create an archive from the current selection in a frame

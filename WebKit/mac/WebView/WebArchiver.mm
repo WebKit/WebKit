@@ -47,10 +47,5 @@ using namespace WebCore;
 
 @implementation WebArchiver
 
-+ (WebArchive *)archiveSelectionInFrame:(WebFrame *)frame
-{
-    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::createFromSelection(core(frame))] autorelease];
-}
-
 @end
  

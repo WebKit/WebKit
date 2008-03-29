@@ -96,6 +96,7 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/Image.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/LegacyWebArchive.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
@@ -790,8 +791,10 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 {
     // Put HTML on the pasteboard.
     if ([types containsObject:WebArchivePboardType]) {
-        WebArchive *archive = [WebArchiver archiveSelectionInFrame:[self _frame]];
-        [pasteboard setData:[archive data] forType:WebArchivePboardType];
+        if (RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::createFromSelection(core([self _frame]))) {
+            if (RetainPtr<CFDataRef> data = coreArchive ? coreArchive->rawDataRepresentation() : 0)
+                [pasteboard setData:(NSData *)data.get() forType:WebArchivePboardType];
+        }
     }
     
     // Put the attributed string on the pasteboard (RTF/RTFD format).
