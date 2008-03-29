@@ -30,7 +30,6 @@
 
 #import "WebArchive.h"
 #import "WebArchiveInternal.h"
-#import "WebArchiver.h"
 #import "WebDataSourceInternal.h"
 #import "WebDocument.h"
 #import "WebDocumentLoaderMac.h"

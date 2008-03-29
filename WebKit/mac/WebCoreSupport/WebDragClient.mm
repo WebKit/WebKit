@@ -26,7 +26,6 @@
 #import "WebDragClient.h"
 
 #import "WebArchive.h"
-#import "WebArchiver.h"
 #import "WebDOMOperations.h"
 #import "WebFrame.h"
 #import "WebFrameInternal.h"

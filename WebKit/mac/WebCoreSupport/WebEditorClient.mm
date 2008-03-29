@@ -33,7 +33,6 @@
 #import "DOMHTMLTextAreaElementInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebArchive.h"
-#import "WebArchiver.h"
 #import "WebDataSourceInternal.h"
 #import "WebDocument.h"
 #import "WebEditingDelegatePrivate.h"

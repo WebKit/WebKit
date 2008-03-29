@@ -1,5 +1,20 @@
 2008-03-28  Brady Eidson  <beidson@apple.com>
 
+        Rubberstamped by Darin Adler
+
+        Remove WebArchiver.h/mm
+
+        * WebView/WebArchiver.h: Removed.
+        * WebView/WebArchiver.mm: Removed.
+
+        * DOM/WebDOMOperations.mm:
+        * WebCoreSupport/WebDragClient.mm:
+        * WebCoreSupport/WebEditorClient.mm:
+        * WebView/WebDataSource.mm:
+        * WebView/WebHTMLView.mm:
+
+2008-03-28  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin Adler
 
         Now that WebCore can create archives from a frame selection directly, we don't need it in WebArchiver anymore

@@ -32,7 +32,6 @@
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebArchive.h"
-#import "WebArchiver.h"
 #import "WebBaseNetscapePluginViewInternal.h"
 #import "WebClipView.h"
 #import "WebDOMOperationsPrivate.h"

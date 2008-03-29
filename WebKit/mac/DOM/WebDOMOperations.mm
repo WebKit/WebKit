@@ -31,7 +31,6 @@
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebArchiveInternal.h"
-#import "WebArchiver.h"
 #import "WebDataSourcePrivate.h"
 #import "WebFrameInternal.h"
 #import "WebFramePrivate.h"
