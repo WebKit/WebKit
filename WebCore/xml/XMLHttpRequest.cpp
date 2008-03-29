@@ -701,11 +701,6 @@ void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
             page->inspectorController()->resourceRetrievedByXMLHttpRequest(m_loader ? m_loader->identifier() : m_identifier, m_responseText);
     }
 
-    if (Frame* frame = m_doc->frame()) {
-        if (Page* page = frame->page())
-            page->inspectorController()->resourceRetrievedByXMLHttpRequest(m_loader ? m_loader->identifier() : m_identifier, m_responseText);
-    }
-
     bool hadLoader = m_loader;
     m_loader = 0;
 

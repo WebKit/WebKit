@@ -1,5 +1,12 @@
 2008-03-28  Kevin McCullough  <kmccullough@apple.com>
 
+        - Somehow managed to duplicate code :(
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):
+
+2008-03-28  Kevin McCullough  <kmccullough@apple.com>
+
         - Missed some changes in previous checkin.
 
         * xml/XMLHttpRequest.cpp:
