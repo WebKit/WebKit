@@ -2229,7 +2229,6 @@ bool RenderBlock::positionNewFloats()
                 y += min(heightRemainingLeft, heightRemainingRight);
                 fx = rightRelOffset(y, ro, false, &heightRemainingRight);
             }
-            fx = max(f->m_width, fx);
             f->m_left = fx - f->m_width;
             o->setPos(fx - o->marginRight() - o->width(), y + o->marginTop());
         }

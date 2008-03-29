@@ -1,3 +1,20 @@
+2008-03-28  David Hyatt  <hyatt@apple.com>
+
+        Back out the Ahem font antialiasing hack, since it is now no longer required for LCD antialiased text
+        to match the reference rendering on Acid 3.
+
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionNewFloats):
+
 2008-03-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler

@@ -161,7 +161,6 @@ public:
 
 #if PLATFORM(CG)
     float m_syntheticBoldOffset;
-    bool m_allowFontSmoothing;
 #endif
 
 #if PLATFORM(MAC)

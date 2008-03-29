@@ -53,7 +53,6 @@ static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return unitsP
 void SimpleFontData::platformInit()
 {
     m_syntheticBoldOffset = m_font.syntheticBold() ? 1.0f : 0.f;
-    m_allowFontSmoothing = true;
     m_scriptCache = 0;
     m_scriptFontProperties = 0;
     m_isSystemFont = false;
@@ -114,13 +113,6 @@ void SimpleFontData::platformInit()
     } else {
         int iXHeight = CGFontGetXHeight(font);
         m_xHeight = scaleEmToUnits(iXHeight, m_unitsPerEm) * pointSize;
-    }
-    
-    // Workaround for strange CG antialiasing of the Ahem font. Limit to the Web font version.
-    if (isCustomFont()) {
-        RetainPtr<CFStringRef> fullName(AdoptCF, CGFontCopyFullName(m_font.cgFont()));
-        String nameStr(fullName.get());
-        m_allowFontSmoothing = (nameStr != "Ahem");
     }
 }
 
