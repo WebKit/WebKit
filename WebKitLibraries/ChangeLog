@@ -1,3 +1,9 @@
+2008-03-28  Steve Falkenburg  <sfalken@apple.com>
+
+        Versioning.
+
+        * win/tools/scripts/PRODUCTVERSION:
+
 2008-03-26  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r31322
