@@ -1,3 +1,18 @@
+2008-03-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        Bug 17924: Crash in KJS::ConstDeclNode::evaluate with |with| and |const|
+        <http://bugs.webkit.org/show_bug.cgi?id=17924>
+        <rdar://problem/5806933>
+
+        It turns out this is trivially avoidable if we just match firefox's
+        semantics and ensure that an assignment in a const declaration always
+        writes to the variable object.
+
+        * kjs/nodes.cpp:
+        (KJS::ConstDeclNode::handleSlowCase):
+
 2008-03-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.

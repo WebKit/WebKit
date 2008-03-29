@@ -94,4 +94,13 @@ shouldBe("one", "1");
 shouldBe("one = 2", "2");
 shouldBe("one", "1");
 
+var object = { inWith1: "RIGHT", inWith2: ""}
+with (object) {
+    const inWith1 = "WRONG";
+    const inWith2 = "RIGHT";
+    inWith2 = "WRONG";
+}
+shouldBe("object.inWith1", "'RIGHT'");
+shouldBe("inWith2", "'RIGHT'");
+
 var successfullyParsed = true;

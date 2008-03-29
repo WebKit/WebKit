@@ -3836,17 +3836,16 @@ void ConstDeclNode::handleSlowCase(ExecState* exec, const ScopeChain& chain, JSV
     // We must always have something in the scope chain
     ASSERT(iter != end);
 
-    PropertySlot slot;
     JSObject* base;
 
     do {
         base = *iter;
-        if (base->getPropertySlot(exec, m_ident, slot))
+        if (base->isVariableObject())
             break;
         ++iter;
     } while (iter != end);
 
-    ASSERT(base->isActivationObject() || base->isGlobalObject());
+    ASSERT(base && base->isVariableObject());
 
     static_cast<JSVariableObject*>(base)->initializeVariable(exec, m_ident, val, ReadOnly);
 }

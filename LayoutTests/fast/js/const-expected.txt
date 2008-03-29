@@ -43,6 +43,8 @@ PASS one += 1 is 2
 PASS one is 1
 PASS one = 2 is 2
 PASS one is 1
+PASS object.inWith1 is 'RIGHT'
+PASS inWith2 is 'RIGHT'
 PASS successfullyParsed is true
 
 TEST COMPLETE

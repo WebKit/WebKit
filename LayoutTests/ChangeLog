@@ -1,3 +1,15 @@
+2008-03-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        Bug 17924: Crash in KJS::ConstDeclNode::evaluate with |with| and |const|
+        <http://bugs.webkit.org/show_bug.cgi?id=17924>
+
+        Add test cases for const inside with
+
+        * fast/js/const-expected.txt:
+        * fast/js/resources/const.js:
+
 2008-03-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
