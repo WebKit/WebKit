@@ -1,3 +1,11 @@
+2008-03-28  Steve Falkenburg  <sfalken@apple.com>
+
+        Enabled LTCG on files within "page".
+
+        Rubber stamped by Oliver.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-03-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

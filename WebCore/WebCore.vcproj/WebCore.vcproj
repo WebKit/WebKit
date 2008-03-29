@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="WebCore"
 	ProjectGUID="{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}"
 	RootNamespace="WebCore"
@@ -2964,6 +2964,14 @@
 			<File
 				RelativePath="..\page\AnimationController.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\AnimationController.h"
@@ -2976,6 +2984,14 @@
 			<File
 				RelativePath="..\page\BarInfo.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\BarInfo.h"
@@ -2984,6 +3000,14 @@
 			<File
 				RelativePath="..\page\Chrome.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\Chrome.h"
@@ -2996,6 +3020,14 @@
 			<File
 				RelativePath="..\page\Console.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\Console.h"
@@ -3008,6 +3040,14 @@
 			<File
 				RelativePath="..\page\ContextMenuController.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\ContextMenuController.h"
@@ -3016,6 +3056,14 @@
 			<File
 				RelativePath="..\page\DOMSelection.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\DOMSelection.h"
@@ -3024,6 +3072,14 @@
 			<File
 				RelativePath="..\page\DOMWindow.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\DOMWindow.h"
@@ -3040,6 +3096,14 @@
 			<File
 				RelativePath="..\page\DragController.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\DragController.h"
@@ -3048,6 +3112,14 @@
 			<File
 				RelativePath="..\page\win\DragControllerWin.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\bridge\EditorClient.h"
@@ -3056,6 +3128,14 @@
 			<File
 				RelativePath="..\page\EventHandler.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\EventHandler.h"
@@ -3064,10 +3144,26 @@
 			<File
 				RelativePath="..\page\win\EventHandlerWin.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\FocusController.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\FocusController.h"
@@ -3080,6 +3176,14 @@
 			<File
 				RelativePath="..\page\Frame.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\Frame.h"
@@ -3096,6 +3200,14 @@
 			<File
 				RelativePath="..\page\FrameTree.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\FrameTree.h"
@@ -3104,6 +3216,14 @@
 			<File
 				RelativePath="..\page\FrameView.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\FrameView.h"
@@ -3112,6 +3232,14 @@
 			<File
 				RelativePath="..\page\History.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\History.h"
@@ -3124,6 +3252,14 @@
 			<File
 				RelativePath="..\page\InspectorController.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\InspectorController.h"
@@ -3136,6 +3272,14 @@
 			<File
 				RelativePath="..\page\JavaScriptDebugServer.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\JavaScriptDebugServer.h"
@@ -3144,6 +3288,14 @@
 			<File
 				RelativePath="..\page\Location.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\Location.h"
@@ -3152,6 +3304,14 @@
 			<File
 				RelativePath="..\page\MouseEventWithHitTestResults.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\MouseEventWithHitTestResults.h"
@@ -3160,6 +3320,14 @@
 			<File
 				RelativePath="..\page\Navigator.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\Navigator.h"
@@ -3168,10 +3336,26 @@
 			<File
 				RelativePath="..\page\Page.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\PageGroup.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\PageGroup.h"
@@ -3184,6 +3368,14 @@
 			<File
 				RelativePath="..\page\Screen.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\Screen.h"
@@ -3192,6 +3384,14 @@
 			<File
 				RelativePath="..\page\Settings.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\Settings.h"
@@ -3200,6 +3400,14 @@
 			<File
 				RelativePath="..\page\WindowFeatures.cpp"
 				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\page\WindowFeatures.h"
@@ -3321,10 +3529,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\ResourcesPanel.js"
-					>
-				</File>
-				<File
 					RelativePath="..\page\inspector\Panel.js"
 					>
 				</File>
@@ -3342,6 +3546,10 @@
 				</File>
 				<File
 					RelativePath="..\page\inspector\ResourceCategory.js"
+					>
+				</File>
+				<File
+					RelativePath="..\page\inspector\ResourcesPanel.js"
 					>
 				</File>
 				<File
@@ -6152,15 +6360,7 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
-            <FileConfiguration
-             Name="Release_PGO|Win32"
-             ExcludedFromBuild="true"
-							>
-              <Tool
-                Name="VCCLCompilerTool"
-							/>
-            </FileConfiguration>
-            <FileConfiguration
+						<FileConfiguration
 							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
@@ -6168,7 +6368,15 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
-					</File>					
+						<FileConfiguration
+							Name="Release_PGO|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
 				</Filter>
 				<Filter
 					Name="curl"
@@ -6192,20 +6400,20 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
-             <FileConfiguration
-             Name="Release_PGO|Win32"
-             ExcludedFromBuild="true"
-							>
-              <Tool
-                Name="VCCLCompilerTool"
-							/>
-            </FileConfiguration>
 						<FileConfiguration
 							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
 								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_PGO|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
 					</File>
@@ -6228,20 +6436,20 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
-             <FileConfiguration
-             Name="Release_PGO|Win32"
-             ExcludedFromBuild="true"
-							>
-              <Tool
-                Name="VCCLCompilerTool"
-							/>
-            </FileConfiguration>
-            <FileConfiguration
+						<FileConfiguration
 							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
 								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_PGO|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
 					</File>
@@ -6264,16 +6472,16 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
-            <FileConfiguration
-             Name="Release_PGO|Win32"
-             ExcludedFromBuild="true"
-							>
-              <Tool
-                Name="VCCLCompilerTool"
-							/>
-            </FileConfiguration>
-            <FileConfiguration
+						<FileConfiguration
 							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_PGO|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -6292,24 +6500,24 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
-            <FileConfiguration
+						<FileConfiguration
 							Name="Release|Win32"
 							ExcludedFromBuild="true"
 							>
-              <Tool
+							<Tool
 								Name="VCCLCompilerTool"
-							/>
-            </FileConfiguration>
-               <FileConfiguration
-               Name="Release_PGO|Win32"
-               ExcludedFromBuild="true"
-							>
-                 <Tool
-                   Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_PGO|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -6336,20 +6544,20 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
-            <FileConfiguration
-             Name="Release_PGO|Win32"
-             ExcludedFromBuild="true"
-							>
-              <Tool
-                Name="VCCLCompilerTool"
-							/>
-            </FileConfiguration>
 						<FileConfiguration
 							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
 								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_PGO|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
 					</File>
@@ -6372,20 +6580,20 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
-             <FileConfiguration
-             Name="Release_PGO|Win32"
-             ExcludedFromBuild="true"
-							>
-              <Tool
-                Name="VCCLCompilerTool"
-							/>
-            </FileConfiguration>
 						<FileConfiguration
 							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
 								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_PGO|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
 					</File>
@@ -6408,15 +6616,7 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
-            <FileConfiguration
-             Name="Release_PGO|Win32"
-             ExcludedFromBuild="true"
-							>
-              <Tool
-                Name="VCCLCompilerTool"
-							/>
-            </FileConfiguration>
-            <FileConfiguration
+						<FileConfiguration
 							Name="Debug_Internal|Win32"
 							ExcludedFromBuild="true"
 							>
@@ -6424,8 +6624,16 @@
 								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_PGO|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
-				</Filter>								
+				</Filter>
 			</Filter>
 			<Filter
 				Name="sql"
@@ -13242,14 +13450,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGHKernElement.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGHKernElement.h"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGAngle.cpp"
 				>
 			</File>
@@ -13739,6 +13939,14 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGGradientElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGHKernElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGHKernElement.h"
 				>
 			</File>
 			<File
