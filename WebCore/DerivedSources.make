@@ -346,8 +346,6 @@ DOM_CLASSES = \
 .PHONY : all
 
 all : \
-    remove-stray-JSRGBColor \
-    \
     $(filter-out JSRGBColor.h,$(DOM_CLASSES:%=JS%.h)) \
     \
     JSDOMWindowBase.lut.h \
@@ -373,14 +371,6 @@ all : \
     XPathGrammar.cpp \
     tokenizer.cpp \
 #
-
-# --------
-
-# Temporary build rule. Take out once some time has passed.
-
-.PHONY : remove-stray-JSRGBColor
-remove-stray-JSRGBColor :
-	(rm JSRGBColor.cpp JSRGBColor.h 2> /dev/null && $(CREATE_HASH_TABLE) $(WebCore)/bindings/js/JSRGBColor.cpp > JSRGBColor.lut.h) || echo -n
 
 # --------
 

@@ -2,6 +2,12 @@
 
         Reviewed by Sam.
 
+        * DerivedSources.make: Removed temporary remove-stray-JSRGBColor build rule.
+
+2008-03-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
         - tweak handling of the class attribute to speed up code that
           sets it but never needs to parse it
 
