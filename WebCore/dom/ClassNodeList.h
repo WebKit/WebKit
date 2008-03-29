@@ -35,8 +35,6 @@
 
 namespace WebCore {
 
-    class String;
-
     class ClassNodeList : public DynamicNodeList {
     public:
         ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames, DynamicNodeList::Caches*);

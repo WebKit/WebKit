@@ -1,3 +1,115 @@
+2008-03-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - tweak handling of the class attribute to speed up code that
+          sets it but never needs to parse it
+
+        6% speedup of Acid3 test 26
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchRules): Change to use non-virtual
+        classNames function since the hasClass bit can only be set for a
+        StyledElement.
+        (WebCore::CSSStyleSelector::checkOneSelector): Ditto. Also
+        streamlined the code a bit for the tag matching as well.
+
+        * dom/ClassNames.cpp:
+        (WebCore::hasNonASCIIOrUpper): Added. This function does what other
+        callers seem to want isLower() to do. We should merge this with
+        isLower() in a subsequent cleanup pass.
+        (WebCore::ClassNamesData::createVector): Renamed from parseClassAttribute.
+        Turns the string into a vector.
+        (WebCore::ClassNamesData::containsAll): Added. Used by getElementsByClassName.
+
+        * dom/ClassNames.h: Added a separate ClassNameData class so we could hold
+        the string and case folding flag as well as the vector. Changed ClassNames
+        to have a set function rather than a parseClassAttribute function. Removed
+        the "static" from isClassWhitespace. There's no reason to ask for internal linkage.
+
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::ClassNodeList): Use constructor instead of the
+        parseClassAttribute function.
+        (WebCore::ClassNodeList::nodeMatches): Get rid of unnneeded isElementNode
+        check, since hasClass will only be true for StyledElement nodes. Use the new
+        containsAll function in ClassNames instead of having a loop here.
+
+        * dom/ClassNodeList.h: Removed unneeded forward declaration.
+
+        * dom/Document.cpp: Removed unneeded include.
+
+        * dom/Element.cpp:
+        (WebCore::Element::cloneNode): Changed code to copy attributes to use a
+        function call instead of the assignment operator. This paves the way to
+        making the function more efficient, using a virtual function.
+        (WebCore::Element::setAttributeMap): Updated for PassRefPtr and for name change
+        (element -> m_element).
+        (WebCore::Element::createAttributeMap): Changed to use create function instead of
+        calling the constructor directly.
+        * dom/Element.h: Removed unneeded virtual getClassNames function.
+        Changed the argument to setAttributeMap to be a PassRefPtr.
+
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedAttrMap::NamedAttrMap): Updated for name change (element -> m_element).
+        (WebCore::NamedAttrMap::getNamedItem): Ditto.
+        (WebCore::NamedAttrMap::removeNamedItem): Ditto.
+        (WebCore::NamedAttrMap::setNamedItem): Ditto.
+        (WebCore::NamedAttrMap::item): Ditto.
+        (WebCore::NamedAttrMap::detachFromElement): Ditto.
+        (WebCore::NamedAttrMap::setAttributes): Renamed this from the assignment operator.
+        (WebCore::NamedAttrMap::addAttribute): Ditto.
+        (WebCore::NamedAttrMap::removeAttribute): Ditto.
+        (WebCore::NamedAttrMap::isReadOnlyNode): Ditto.
+        * dom/NamedAttrMap.h: Removed the copy constructor and assignment operator and added
+        a new function, setAttributes, possibly to be made virtual in the future. Made
+        isReadOnlyNode non-virtual. Renamed element -> m_element. Made constructor protected
+        and added a create function.
+
+        * dom/NamedMappedAttrMap.cpp:
+        (WebCore::NamedMappedAttrMap::NamedMappedAttrMap): Changed constructor parameter to
+        take a StyledElement.
+        (WebCore::NamedMappedAttrMap::setClass): Changed to use the new set function.
+
+        * dom/NamedMappedAttrMap.h: Made constructor private and added a create function.
+        Replaced theparseClassAttribute function with clearClass and setClass functions.
+        Replaced the getClassNames function with a classNames function returning a reference
+        instead of a pointer.
+
+        * dom/NamedNodeMap.h: Changed to start refcount at 1 instead of 0. Removed unneeded
+        virtual function isReadOnlyNode.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::parseMappedAttribute): Rewrote class attribute handling to
+        use new function names and took out uneeded special case for null attribute.
+        (WebCore::StyledElement::createAttributeMap): Changed to use create function instead
+        of a direct call to new.
+
+        * dom/StyledElement.h: Replaced the virtual getClassNames function with a non-virtual
+        inline classNames function.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::cloneNode): Changed code to copy attributes to use a
+        function call instead of the assignment operator.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::Token::addAttribute): Use create function instead of a a direct call
+        to new.
+
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable): Use RefPtr and the new
+        create function.
+        (WebCore::HTMLViewSourceDocument::addViewSourceToken): Ditto.
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName): Ditto.
+        (WebCore::HTMLViewSourceDocument::addLine): Ditto.
+        (WebCore::HTMLViewSourceDocument::addText): Ditto.
+        (WebCore::HTMLViewSourceDocument::addLink): Ditto.
+        * html/HTMLViewSourceDocument.h: Ditto.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::expandSymbolElementsInShadowTree): Changed code to copy
+        attributes to use a function call instead of the assignment operator.
+        (WebCore::SVGUseElement::transferUseAttributesToReplacedElement): Ditto.
+
 2008-03-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.

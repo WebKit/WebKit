@@ -27,7 +27,6 @@
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
-#include "ClassNames.h"
 #include "Document.h"
 #include "HTMLNames.h"
 
@@ -208,20 +207,21 @@ void StyledElement::parseMappedAttribute(MappedAttribute *attr)
         setChanged();
     } else if (attr->name() == classAttr) {
         // class
-        bool hasClass = false;
-        if (!attr->isEmpty()) {
-            const AtomicString& value = attr->value();
-            unsigned len = value.length();
-            for (unsigned i = 0; i < len; ++i) {
-                if (!isClassWhitespace(value[i])) {
-                    hasClass = true;
-                    break;
-                }
-            }
+        const AtomicString& value = attr->value();
+        const UChar* characters = value.characters();
+        unsigned length = value.length();
+        unsigned i;
+        for (i = 0; i < length; ++i) {
+            if (!isClassWhitespace(characters[i]))
+                break;
         }
-        setHasClass(hasClass);
-        if (namedAttrMap)
-            mappedAttributes()->parseClassAttribute(attr->value());
+        setHasClass(i < length);
+        if (namedAttrMap) {
+            if (i < length)
+                mappedAttributes()->setClass(value);
+            else
+                mappedAttributes()->clearClass();
+        }
         setChanged();
     } else if (attr->name() == styleAttr) {
         if (attr->isNull())
@@ -235,7 +235,7 @@ void StyledElement::parseMappedAttribute(MappedAttribute *attr)
 
 void StyledElement::createAttributeMap() const
 {
-    namedAttrMap = new NamedMappedAttrMap(const_cast<StyledElement*>(this));
+    namedAttrMap = NamedMappedAttrMap::create(const_cast<StyledElement*>(this));
 }
 
 CSSMutableStyleDeclaration* StyledElement::getInlineStyleDecl()
@@ -248,11 +248,6 @@ CSSMutableStyleDeclaration* StyledElement::getInlineStyleDecl()
 CSSStyleDeclaration* StyledElement::style()
 {
     return getInlineStyleDecl();
-}
-
-const ClassNames* StyledElement::getClassNames() const
-{
-    return namedAttrMap ? mappedAttributes()->getClassNames() : 0;
 }
 
 static inline int toHex(UChar c) {

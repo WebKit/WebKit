@@ -30,12 +30,6 @@
 
 namespace WebCore {
 
-NamedMappedAttrMap::NamedMappedAttrMap(Element *e)
-    : NamedAttrMap(e)
-    , m_mappedAttributeCount(0)
-{
-}
-
 void NamedMappedAttrMap::clearAttributes()
 {
     m_classNames.clear();
@@ -77,15 +71,14 @@ bool NamedMappedAttrMap::mapsEquivalent(const NamedMappedAttrMap* otherMap) cons
     return true;
 }
 
-void NamedMappedAttrMap::parseClassAttribute(const String& classStr) 
+void NamedMappedAttrMap::setClass(const String& classStr) 
 { 
-    if (!element->hasClass()) { 
+    if (!m_element->hasClass()) { 
         m_classNames.clear(); 
         return;
     }
 
-    m_classNames.parseClassAttribute(classStr, element->document()->inCompatMode()); 
+    m_classNames.set(classStr, m_element->document()->inCompatMode()); 
 }
-
 
 }

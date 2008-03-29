@@ -1,12 +1,10 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,24 +32,24 @@
 
 namespace WebCore {
 
-class NamedMappedAttrMap : public NamedAttrMap
-{
+class NamedMappedAttrMap : public NamedAttrMap {
+private:
+    NamedMappedAttrMap(Element* element) : NamedAttrMap(element), m_mappedAttributeCount(0) { }
 public:
-    NamedMappedAttrMap(Element *e);
+    static PassRefPtr<NamedMappedAttrMap> create(Element* element = 0) { return adoptRef(new NamedMappedAttrMap(element)); }
 
     virtual void clearAttributes();
-    
     virtual bool isMappedAttributeMap() const;
-    
-    void parseClassAttribute(const String&);
 
-    const ClassNames* getClassNames() const { return &m_classNames; }
-    
+    void clearClass() { m_classNames.clear(); }
+    void setClass(const String&);
+    const ClassNames& classNames() const { return m_classNames; }
+
     virtual bool hasMappedAttributes() const { return m_mappedAttributeCount > 0; }
     void declRemoved() { m_mappedAttributeCount--; }
     void declAdded() { m_mappedAttributeCount++; }
     
-    bool mapsEquivalent(const NamedMappedAttrMap* otherMap) const;
+    bool mapsEquivalent(const NamedMappedAttrMap*) const;
     int declCount() const;
 
     MappedAttribute* attributeItem(unsigned index) const
@@ -60,7 +58,7 @@ public:
         { return static_cast<MappedAttribute*>(NamedAttrMap::getAttributeItem(name)); }
     MappedAttribute* getAttributeItem(const String& name) const
         { return static_cast<MappedAttribute*>(NamedAttrMap::getAttributeItem(name)); }
-    
+
 private:
     ClassNames m_classNames;
     int m_mappedAttributeCount;

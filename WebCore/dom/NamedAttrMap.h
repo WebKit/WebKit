@@ -41,11 +41,14 @@ namespace WebCore {
 // the map of attributes of an element
 class NamedAttrMap : public NamedNodeMap {
     friend class Element;
+protected:
+    NamedAttrMap(Element* element) : m_element(element) { }
 public:
-    NamedAttrMap(Element*);
+    static PassRefPtr<NamedAttrMap> create(Element* element) { return adoptRef(new NamedAttrMap(element)); }
+
     virtual ~NamedAttrMap();
-    NamedAttrMap(const NamedAttrMap&);
-    NamedAttrMap &operator =(const NamedAttrMap &other);
+
+    void setAttributes(const NamedAttrMap&);
 
     // DOM methods & attributes for NamedNodeMap
 
@@ -66,7 +69,7 @@ public:
     Attribute* attributeItem(unsigned index) const { return m_attributes[index].get(); }
     Attribute* getAttributeItem(const QualifiedName& name) const;
     Attribute* getAttributeItem(const String& name) const;
-    virtual bool isReadOnlyNode();
+    bool isReadOnlyNode() const;
     
     void shrinkToLength() { m_attributes.shrinkCapacity(length()); }
     void reserveCapacity(unsigned capacity) { m_attributes.reserveCapacity(capacity); }
@@ -75,7 +78,7 @@ public:
     // no error checking!
     void insertAttribute(PassRefPtr<Attribute> newAttribute, bool allowDuplicates)
     {
-        ASSERT(!element);
+        ASSERT(!m_element);
         if (allowDuplicates || !getAttributeItem(newAttribute->name()))
             addAttribute(newAttribute);
     }
@@ -88,14 +91,15 @@ public:
     bool mapsEquivalent(const NamedAttrMap* otherMap) const;
 
 protected:
-    // this method is internal, does no error checking at all
+    // These functions are internal, and do no error checking.
     void addAttribute(PassRefPtr<Attribute>);
-    // this method is internal, does no error checking at all
     void removeAttribute(const QualifiedName& name);
+
     virtual void clearAttributes();
+
     void detachFromElement();
 
-    Element *element;
+    Element* m_element;
     Vector<RefPtr<Attribute> > m_attributes;
     AtomicString m_id;
 };

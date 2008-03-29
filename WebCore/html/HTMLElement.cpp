@@ -103,7 +103,7 @@ PassRefPtr<Node> HTMLElement::cloneNode(bool deep)
         return 0;
 
     if (namedAttrMap)
-        *clone->attributes() = *namedAttrMap;
+        clone->attributes()->setAttributes(*namedAttrMap);
 
     clone->copyNonAttributeProperties(this);
 

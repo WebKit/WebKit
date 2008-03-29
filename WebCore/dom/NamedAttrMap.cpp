@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2007 Eric Seidel (eric@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -39,14 +39,9 @@ static inline bool shouldIgnoreAttributeCase(const Element* e)
     return e && e->document()->isHTMLDocument() && e->isHTMLElement();
 }
 
-NamedAttrMap::NamedAttrMap(Element *e)
-    : element(e)
-{
-}
-
 NamedAttrMap::~NamedAttrMap()
 {
-    NamedAttrMap::clearAttributes(); // virtual method, so qualify just to be explicit
+    NamedAttrMap::clearAttributes(); // virtual function, qualify to be explicit and slightly faster
 }
 
 bool NamedAttrMap::isMappedAttributeMap() const
@@ -56,12 +51,12 @@ bool NamedAttrMap::isMappedAttributeMap() const
 
 PassRefPtr<Node> NamedAttrMap::getNamedItem(const String& name) const
 {
-    String localName = shouldIgnoreAttributeCase(element) ? name.lower() : name;
+    String localName = shouldIgnoreAttributeCase(m_element) ? name.lower() : name;
     Attribute* a = getAttributeItem(localName);
     if (!a)
         return 0;
     
-    return a->createAttrIfNeeded(element);
+    return a->createAttrIfNeeded(m_element);
 }
 
 PassRefPtr<Node> NamedAttrMap::getNamedItemNS(const String& namespaceURI, const String& localName) const
@@ -71,7 +66,7 @@ PassRefPtr<Node> NamedAttrMap::getNamedItemNS(const String& namespaceURI, const 
 
 PassRefPtr<Node> NamedAttrMap::removeNamedItem(const String& name, ExceptionCode& ec)
 {
-    String localName = shouldIgnoreAttributeCase(element) ? name.lower() : name;
+    String localName = shouldIgnoreAttributeCase(m_element) ? name.lower() : name;
     Attribute* a = getAttributeItem(localName);
     if (!a) {
         ec = NOT_FOUND_ERR;
@@ -92,12 +87,12 @@ PassRefPtr<Node> NamedAttrMap::getNamedItem(const QualifiedName& name) const
     if (!a)
         return 0;
 
-    return a->createAttrIfNeeded(element);
+    return a->createAttrIfNeeded(m_element);
 }
 
 PassRefPtr<Node> NamedAttrMap::setNamedItem(Node* arg, ExceptionCode& ec)
 {
-    if (!element) {
+    if (!m_element) {
         ec = NOT_FOUND_ERR;
         return 0;
     }
@@ -109,7 +104,7 @@ PassRefPtr<Node> NamedAttrMap::setNamedItem(Node* arg, ExceptionCode& ec)
     }
 
     // WRONG_DOCUMENT_ERR: Raised if arg was created from a different document than the one that created this map.
-    if (arg->document() != element->document()) {
+    if (arg->document() != m_element->document()) {
         ec = WRONG_DOCUMENT_ERR;
         return 0;
     }
@@ -134,12 +129,12 @@ PassRefPtr<Node> NamedAttrMap::setNamedItem(Node* arg, ExceptionCode& ec)
     }
 
     if (a->name() == idAttr)
-        element->updateId(old ? old->value() : nullAtom, a->value());
+        m_element->updateId(old ? old->value() : nullAtom, a->value());
 
     // ### slightly inefficient - resizes attribute array twice.
     RefPtr<Node> r;
     if (old) {
-        r = old->createAttrIfNeeded(element);
+        r = old->createAttrIfNeeded(m_element);
         removeAttribute(a->name());
     }
 
@@ -165,10 +160,10 @@ PassRefPtr<Node> NamedAttrMap::removeNamedItem(const QualifiedName& name, Except
         return 0;
     }
 
-    RefPtr<Node> r = a->createAttrIfNeeded(element);
+    RefPtr<Node> r = a->createAttrIfNeeded(m_element);
 
     if (name == idAttr)
-        element->updateId(a->value(), nullAtom);
+        m_element->updateId(a->value(), nullAtom);
 
     removeAttribute(name);
     return r.release();
@@ -179,7 +174,7 @@ PassRefPtr<Node> NamedAttrMap::item (unsigned index) const
     if (index >= length())
         return 0;
 
-    return m_attributes[index]->createAttrIfNeeded(element);
+    return m_attributes[index]->createAttrIfNeeded(m_element);
 }
 
 Attribute* NamedAttrMap::getAttributeItem(const String& name) const
@@ -220,15 +215,15 @@ void NamedAttrMap::detachFromElement()
 {
     // we allow a NamedAttrMap w/o an element in case someone still has a reference
     // to if after the element gets deleted - but the map is now invalid
-    element = 0;
+    m_element = 0;
     clearAttributes();
 }
 
-NamedAttrMap& NamedAttrMap::operator=(const NamedAttrMap& other)
+void NamedAttrMap::setAttributes(const NamedAttrMap& other)
 {
     // clone all attributes in the other map, but attach to our element
-    if (!element)
-        return *this;
+    if (!m_element)
+        return;
 
     // If assigning the map changes the id attribute, we need to call
     // updateId.
@@ -236,7 +231,7 @@ NamedAttrMap& NamedAttrMap::operator=(const NamedAttrMap& other)
     Attribute *newId = other.getAttributeItem(idAttr);
 
     if (oldId || newId)
-        element->updateId(oldId ? oldId->value() : nullAtom, newId ? newId->value() : nullAtom);
+        m_element->updateId(oldId ? oldId->value() : nullAtom, newId ? newId->value() : nullAtom);
 
     clearAttributes();
     unsigned newLength = other.length();
@@ -248,10 +243,8 @@ NamedAttrMap& NamedAttrMap::operator=(const NamedAttrMap& other)
     // wouldn't have to waste time reparsing the attribute.
     // The derived class, HTMLNamedAttrMap, which manages a parsed class list for the CLASS attribute,
     // will update its member variable when parse attribute is called.
-    for(unsigned i = 0; i < newLength; i++)
-        element->attributeChanged(m_attributes[i].get(), true);
-
-    return *this;
+    for (unsigned i = 0; i < newLength; i++)
+        m_element->attributeChanged(m_attributes[i].get(), true);
 }
 
 void NamedAttrMap::addAttribute(PassRefPtr<Attribute> prpAttribute)
@@ -262,16 +255,16 @@ void NamedAttrMap::addAttribute(PassRefPtr<Attribute> prpAttribute)
     m_attributes.append(attribute);
 
     if (Attr* attr = attribute->attr())
-        attr->m_element = element;
+        attr->m_element = m_element;
 
     // Notify the element that the attribute has been added, and dispatch appropriate mutation events
     // Note that element may be null here if we are called from insertAttr() during parsing
-    if (element) {
-        element->attributeChanged(attribute.get());
+    if (m_element) {
+        m_element->attributeChanged(attribute.get());
         // Because of our updateStyleAttributeIfNeeded() style modification events are never sent at the right time, so don't bother sending them.
         if (attribute->name() != styleAttr) {
-            element->dispatchAttrAdditionEvent(attribute.get());
-            element->dispatchSubtreeModifiedEvent();
+            m_element->dispatchAttrAdditionEvent(attribute.get());
+            m_element->dispatchSubtreeModifiedEvent();
         }
     }
 }
@@ -298,15 +291,15 @@ void NamedAttrMap::removeAttribute(const QualifiedName& name)
 
     // Notify the element that the attribute has been removed
     // dispatch appropriate mutation events
-    if (element && !attr->m_value.isNull()) {
+    if (m_element && !attr->m_value.isNull()) {
         AtomicString value = attr->m_value;
         attr->m_value = nullAtom;
-        element->attributeChanged(attr.get());
+        m_element->attributeChanged(attr.get());
         attr->m_value = value;
     }
-    if (element) {
-        element->dispatchAttrRemovalEvent(attr.get());
-        element->dispatchSubtreeModifiedEvent();
+    if (m_element) {
+        m_element->dispatchAttrRemovalEvent(attr.get());
+        m_element->dispatchSubtreeModifiedEvent();
     }
 }
 
@@ -330,9 +323,9 @@ bool NamedAttrMap::mapsEquivalent(const NamedAttrMap* otherMap) const
     return true;
 }
 
-bool NamedAttrMap::isReadOnlyNode()
+bool NamedAttrMap::isReadOnlyNode() const
 {
-    return element && element->isReadOnlyNode();
+    return m_element && m_element->isReadOnlyNode();
 }
 
 }

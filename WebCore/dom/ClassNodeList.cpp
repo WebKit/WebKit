@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 David Smith (catfish.man@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,35 +31,24 @@
 #include "ClassNodeList.h"
 
 #include "Document.h"
-#include "Element.h"
-#include "Node.h"
+#include "StyledElement.h"
 
 namespace WebCore {
 
 ClassNodeList::ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames, DynamicNodeList::Caches* caches)
     : DynamicNodeList(rootNode, caches)
+    , m_classNames(classNames, m_rootNode->document()->inCompatMode())
 {
-    m_classNames.parseClassAttribute(classNames, m_rootNode->document()->inCompatMode());
 }
 
 bool ClassNodeList::nodeMatches(Node* testNode) const
 {
-    if (!testNode->isElementNode())
-        return false;
-
     if (!testNode->hasClass())
         return false;
-
     if (!m_classNames.size())
         return false;
-
-    const ClassNames& classes = *static_cast<Element*>(testNode)->getClassNames();
-    for (size_t i = 0; i < m_classNames.size(); ++i) {
-        if (!classes.contains(m_classNames[i]))
-            return false;
-    }
-
-    return true;
+    ASSERT(testNode->isStyledElement());
+    return static_cast<StyledElement*>(testNode)->classNames().containsAll(m_classNames);
 }
 
 } // namespace WebCore

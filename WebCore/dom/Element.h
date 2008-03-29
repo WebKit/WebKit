@@ -34,7 +34,6 @@ namespace WebCore {
 class Attr;
 class Attribute;
 class CSSStyleDeclaration;
-class ClassNames;
 class ElementRareData;
 class IntSize;
 
@@ -43,8 +42,6 @@ public:
     Element(const QualifiedName&, Document*);
     ~Element();
 
-    // Used to quickly determine whether or not an element has a given CSS class.
-    virtual const ClassNames* getClassNames() const;
     const AtomicString& getIDAttribute() const;
     bool hasAttribute(const QualifiedName&) const;
     const AtomicString& getAttribute(const QualifiedName&) const;
@@ -137,7 +134,7 @@ public:
     virtual void attributeChanged(Attribute*, bool preserveDecls = false) {}
 
     // not part of the DOM
-    void setAttributeMap(NamedAttrMap*);
+    void setAttributeMap(PassRefPtr<NamedAttrMap>);
 
     virtual void copyNonAttributeProperties(const Element* source) {}
 

@@ -32,7 +32,6 @@
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "CString.h"
-#include "ClassNodeList.h"
 #include "Comment.h"
 #include "CookieJar.h"
 #include "DOMImplementation.h"

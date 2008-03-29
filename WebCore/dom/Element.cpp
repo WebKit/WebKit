@@ -28,8 +28,6 @@
 
 #include "CSSStyleSelector.h"
 #include "CString.h"
-#include "ClassNames.h"
-#include "ClassNodeList.h"
 #include "Document.h"
 #include "Editor.h"
 #include "ExceptionCode.h"
@@ -149,7 +147,7 @@ PassRefPtr<Node> Element::cloneNode(bool deep)
     
     // clone attributes
     if (namedAttrMap)
-        *clone->attributes() = *namedAttrMap;
+        clone->attributes()->setAttributes(*namedAttrMap);
 
     clone->copyNonAttributeProperties(this);
     
@@ -185,7 +183,7 @@ void Element::setBooleanAttribute(const QualifiedName& name, bool b)
 }
 
 // Virtual function, defined in base class.
-NamedAttrMap *Element::attributes() const
+NamedAttrMap* Element::attributes() const
 {
     return attributes(false);
 }
@@ -201,11 +199,6 @@ NamedAttrMap* Element::attributes(bool readonly) const
 Node::NodeType Element::nodeType() const
 {
     return ELEMENT_NODE;
-}
-
-const ClassNames* Element::getClassNames() const
-{
-    return 0;
 }
 
 const AtomicString& Element::getIDAttribute() const
@@ -549,25 +542,25 @@ Attribute* Element::createAttribute(const QualifiedName& name, const AtomicStrin
     return new Attribute(name, value);
 }
 
-void Element::setAttributeMap(NamedAttrMap* list)
+void Element::setAttributeMap(PassRefPtr<NamedAttrMap> list)
 {
     document()->incDOMTreeVersion();
 
     // If setting the whole map changes the id attribute, we need to call updateId.
 
-    Attribute *oldId = namedAttrMap ? namedAttrMap->getAttributeItem(idAttr) : 0;
-    Attribute *newId = list ? list->getAttributeItem(idAttr) : 0;
+    Attribute* oldId = namedAttrMap ? namedAttrMap->getAttributeItem(idAttr) : 0;
+    Attribute* newId = list ? list->getAttributeItem(idAttr) : 0;
 
     if (oldId || newId)
         updateId(oldId ? oldId->value() : nullAtom, newId ? newId->value() : nullAtom);
 
     if (namedAttrMap)
-        namedAttrMap->element = 0;
+        namedAttrMap->m_element = 0;
 
     namedAttrMap = list;
 
     if (namedAttrMap) {
-        namedAttrMap->element = this;
+        namedAttrMap->m_element = this;
         unsigned len = namedAttrMap->length();
         for (unsigned i = 0; i < len; i++)
             attributeChanged(namedAttrMap->m_attributes[i].get());
@@ -659,7 +652,7 @@ bool Element::contains(const Node* node) const
 
 void Element::createAttributeMap() const
 {
-    namedAttrMap = new NamedAttrMap(const_cast<Element*>(this));
+    namedAttrMap = NamedAttrMap::create(const_cast<Element*>(this));
 }
 
 bool Element::isURLAttribute(Attribute *attr) const

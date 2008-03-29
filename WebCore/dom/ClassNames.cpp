@@ -21,36 +21,72 @@
 #include "config.h"
 #include "ClassNames.h"
 
+#include <wtf/ASCIICType.h>
+
+using namespace WTF;
+
 namespace WebCore {
 
-void ClassNames::parseClassAttribute(const String& classStr, const bool inCompatMode)
+static bool hasNonASCIIOrUpper(const String& string)
 {
-    if (!m_nameVector)
-        m_nameVector.set(new ClassNameVector);
-    else
-        m_nameVector->clear();
+    const UChar* characters = string.characters();
+    unsigned length = string.length();
+    bool hasUpper = false;
+    UChar ored = 0;
+    for (unsigned i = 0; i < length; i++) {
+        UChar c = characters[i];
+        hasUpper |= isASCIIUpper(c);
+        ored |= c;
+    }
+    return hasUpper || (ored & ~0x7F);
+}
 
-    if (classStr.isEmpty())
-        return;
+void ClassNamesData::createVector()
+{
+    ASSERT(!m_createdVector);
+    ASSERT(m_vector.isEmpty());
 
-    String classAttr = inCompatMode ? classStr.foldCase() : classStr;
+    if (m_shouldFoldCase && hasNonASCIIOrUpper(m_string))
+        m_string = m_string.foldCase();
 
-    const UChar* str = classAttr.characters();
-    const int length = classAttr.length();
-    int start = 0;
+    const UChar* characters = m_string.characters();
+    unsigned length = m_string.length();
+    unsigned start = 0;
     while (true) {
-        while (start < length && isClassWhitespace(str[start]))
+        while (start < length && isClassWhitespace(characters[start]))
             ++start;
         if (start >= length)
             break;
-        int end = start + 1;
-        while (end < length && !isClassWhitespace(str[end]))
+        unsigned end = start + 1;
+        while (end < length && !isClassWhitespace(characters[end]))
             ++end;
 
-        m_nameVector->append(AtomicString(str + start, end - start));
+        m_vector.append(AtomicString(characters + start, end - start));
 
         start = end + 1;
     }
+
+    m_string = String();
+    m_createdVector = true;
+}
+
+bool ClassNamesData::containsAll(ClassNamesData& other)
+{
+    ensureVector();
+    other.ensureVector();
+    size_t thisSize = m_vector.size();
+    size_t otherSize = other.m_vector.size();
+    for (size_t i = 0; i < otherSize; ++i) {
+        const AtomicString& name = other.m_vector[i];
+        size_t j;
+        for (j = 0; j < thisSize; ++j) {
+            if (m_vector[j] == name)
+                break;
+        }
+        if (j == thisSize)
+            return false;
+    }
+    return true;
 }
 
 } // namespace WebCore
