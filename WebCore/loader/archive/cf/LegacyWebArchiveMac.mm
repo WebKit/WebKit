@@ -41,7 +41,7 @@ ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef responseDat
     if (!responseData)
         return ResourceResponse();
     
-    NSURLResponse *response;
+    NSURLResponse *response = nil;
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)responseData];
     @try {
         id responseObject = [unarchiver decodeObjectForKey:LegacyWebArchiveResourceResponseKey];

@@ -1,3 +1,11 @@
+2008-03-28  Stephanie  <slewis@apple.com>
+
+        Fix 64bit build
+
+        * WebCore.LP64.exp:
+        * loader/archive/cf/LegacyWebArchiveMac.mm:
+        (WebCore::createResourceResponseFromMacArchivedData):
+
 2008-03-28  Steve Falkenburg  <sfalken@apple.com>
 
         Enabled LTCG on files within "page".
