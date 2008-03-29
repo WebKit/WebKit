@@ -1,3 +1,14 @@
+2008-03-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - pixel test for a percentage background position regression from r31389
+
+        * fast/backgrounds/background-position-1.html: Added.
+        * platform/mac/fast/backgrounds/background-position-1-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/background-position-1-expected.png: Added.
+        * platform/mac/fast/backgrounds/background-position-1-expected.txt: Added.
+
 2008-03-28  Stephanie Lewis  <slewis@apple.com>
 
         Update Windows Skipped list.  Bugs filed.

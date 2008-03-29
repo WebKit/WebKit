@@ -111,7 +111,7 @@ namespace WebCore {
                     return value();
                 case Percent:
                     if (roundPercentages)
-                        return static_cast<int>(round(maxValue * percent()));
+                        return static_cast<int>(round(maxValue * percent() / 100.0));
                     return maxValue * rawValue() / (100 * percentScaleFactor);
                 case Auto:
                     return maxValue;
@@ -127,7 +127,7 @@ namespace WebCore {
                     return value();
                 case Percent:
                     if (roundPercentages)
-                        return static_cast<int>(round(maxValue * percent()));
+                        return static_cast<int>(round(maxValue * percent() / 100.0));
                     return maxValue * rawValue() / (100 * percentScaleFactor);
                 case Auto:
                 default:

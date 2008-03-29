@@ -1,3 +1,15 @@
+2008-03-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix a percentage background position regression from r31389
+
+        Test: fast/backgrounds/background-position-1.html
+
+        * rendering/Length.h:
+        (WebCore::Length::calcValue): Divide by 100.
+        (WebCore::Length::calcMinValue): Ditto.
+
 2008-03-28  David Hyatt  <hyatt@apple.com>
 
         Back out the Ahem font antialiasing hack, since it is now no longer required for LCD antialiased text
