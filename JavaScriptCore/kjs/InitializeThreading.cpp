@@ -38,7 +38,8 @@ void initializeThreading()
 {
     WTF::initializeThreading();
 #if USE(MULTIPLE_THREADS)
-    s_dtoaP5Mutex = new Mutex;
+    if (!s_dtoaP5Mutex)
+        s_dtoaP5Mutex = new Mutex;
 #endif
 }
 
