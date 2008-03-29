@@ -47,47 +47,9 @@ using namespace WebCore;
 
 @implementation WebArchiver
 
-+ (WebArchive *)_archiveWithMarkupString:(NSString *)markupString fromFrame:(WebFrame *)frame nodes:(NSArray *)nodes
-{ 
-    Vector<Node*> coreNodes;
-    unsigned count = [nodes count];
-    coreNodes.reserveCapacity(count);
-    
-    for (unsigned i = 0; i < count; ++i)
-        coreNodes.append([[nodes objectAtIndex:i] _node]);
-        
-    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(markupString, core(frame), coreNodes)] autorelease];
-}
-
 + (WebArchive *)archiveSelectionInFrame:(WebFrame *)frame
 {
-    Frame* coreFrame = core(frame);
-    if (!coreFrame)
-        return nil;
-
-    NSArray *nodes;
-    NSString *markupString = [frame _markupStringFromRange:kit(coreFrame->selectionController()->toRange().get()) nodes:&nodes];
-    WebArchive *archive = [self _archiveWithMarkupString:markupString fromFrame:frame nodes:nodes];
-
-    if (coreFrame->isFrameSet()) {
-        // Wrap the frameset document in an iframe so it can be pasted into
-        // another document (which will have a body or frameset of its own). 
-
-        NSString *iframeMarkup = [[NSString alloc] initWithFormat:@"<iframe frameborder=\"no\" marginwidth=\"0\" marginheight=\"0\" width=\"98%%\" height=\"98%%\" src=\"%@\"></iframe>", [[[frame _dataSource] response] URL]];
-        WebResource *iframeResource = [[WebResource alloc] initWithData:[iframeMarkup dataUsingEncoding:NSUTF8StringEncoding]
-                                                                  URL:blankURL()
-                                                             MIMEType:@"text/html"
-                                                     textEncodingName:@"UTF-8"
-                                                            frameName:nil];
-        
-        NSArray *subframeArchives = [NSArray arrayWithObject:archive];
-        archive = [[[WebArchive alloc] initWithMainResource:iframeResource subresources:nil subframeArchives:subframeArchives] autorelease];
-        
-        [iframeResource release];
-        [iframeMarkup release];
-    }
-
-    return archive;
+    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::createFromSelection(core(frame))] autorelease];
 }
 
 @end

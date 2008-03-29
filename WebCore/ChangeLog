@@ -1,3 +1,17 @@
+2008-03-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        More Kit->Core WebArchive changes.
+
+        Create an archive from the current selection in a frame
+
+        * WebCore.base.exp:
+
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::createFromSelection):
+        * loader/archive/cf/LegacyWebArchive.h:
+
 2008-03-28  Kevin McCullough  <kmccullough@apple.com>
 
         - Somehow managed to duplicate code :(

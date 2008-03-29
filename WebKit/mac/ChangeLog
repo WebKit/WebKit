@@ -1,5 +1,16 @@
 2008-03-28  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Darin Adler
+
+        More Kit->Core WebArchive changes.
+
+        Create an archive from the current selection in a frame
+
+        * WebView/WebArchiver.mm: Remove one more *undeclared* method, the last method will drop off
+          easily in a followup
+
+2008-03-28  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Sam Weinig
 
         WebArchive saga continues - Can now make archives from ranges in WebCore

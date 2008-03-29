@@ -42,6 +42,7 @@
 #include "markup.h"
 #include "Node.h"
 #include "Range.h"
+#include "SelectionController.h"
 #include "SharedBuffer.h"
 
 #include <wtf/RetainPtr.h>
@@ -523,6 +524,36 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
     }
     
     return create(mainResource, subresources, subframeArchives);
+}
+
+PassRefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
+{
+    if (!frame)
+        return 0;
+    
+    RefPtr<Range> selectionRange = frame->selectionController()->toRange();
+    Vector<Node*> nodeList;
+    String markupString = frame->documentTypeString() + createMarkup(selectionRange.get(), &nodeList, AnnotateForInterchange);
+    
+    RefPtr<LegacyWebArchive> archive = create(markupString, frame, nodeList);
+    
+    if (!frame->isFrameSet()) 
+        return archive.release();
+        
+    // Wrap the frameset document in an iframe so it can be pasted into
+    // another document (which will have a body or frameset of its own). 
+    String iframeMarkup = String::format("<iframe frameborder=\"no\" marginwidth=\"0\" marginheight=\"0\" width=\"98%%\" height=\"98%%\" src=\"%s\"></iframe>", 
+                                         frame->loader()->documentLoader()->response().url().string().utf8().data());
+    RefPtr<ArchiveResource> iframeResource = ArchiveResource::create(utf8Buffer(iframeMarkup), blankURL(), "text/html", "UTF-8", String());
+
+    Vector<PassRefPtr<ArchiveResource> > subresources;
+
+    Vector<PassRefPtr<LegacyWebArchive> > subframeArchives;
+    subframeArchives.append(archive);
+    
+    archive = LegacyWebArchive::create(iframeResource.release(), subresources, subframeArchives);
+    
+    return archive.release();
 }
 
 }
