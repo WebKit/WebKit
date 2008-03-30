@@ -1,3 +1,10 @@
+2008-03-30  Mark Rowe  <mrowe@apple.com>
+
+        ARM build fix.
+
+        * platform/text/AtomicString.cpp:
+        (WebCore::equal): Use correct variable name.
+
 2008-03-30  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
         Reviewed by Alp Toker.
