@@ -1,3 +1,14 @@
+2008-03-30  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18036
+        Rendering invalid japanese characters with pango backend.
+
+        * platform/graphics/gtk/FontPlatformDataPango.cpp:
+        (FontPlatformData::FontPlatformData): Set PangoFontDescription for
+        PangoContext explicitly to use proper font.
+
 2008-03-30  Rob Buis  <buis@kde.org>
 
         Reviewed by Oliver.

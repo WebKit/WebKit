@@ -87,6 +87,7 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     m_context = pango_cairo_font_map_create_context(PANGO_CAIRO_FONT_MAP(m_fontMap));
     for (unsigned int i = 0; !m_font && i < G_N_ELEMENTS(families); i++) {
         pango_font_description_set_family(description, families[i]);
+        pango_context_set_font_description(m_context, description);
         m_font = pango_font_map_load_font(m_fontMap, m_context, description);
     }
 
