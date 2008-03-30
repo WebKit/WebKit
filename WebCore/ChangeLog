@@ -1,5 +1,20 @@
 2008-03-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Mitz.
+
+        - more bindings speedup
+
+        When I changed the temporary variables to be UString that means that the
+        valueToString functions also need to return UString to avoid converting
+        from UString to String twice.
+
+        * bindings/js/kjs_binding.cpp:
+        (WebCore::valueToStringWithNullCheck): Changed return value to UString.
+        (WebCore::valueToStringWithUndefinedOrNullCheck): Ditto.
+        * bindings/js/kjs_binding.h: Ditto.
+
+2008-03-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam.
 
         * DerivedSources.make: Removed temporary remove-stray-JSRGBColor build rule.

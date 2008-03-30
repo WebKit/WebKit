@@ -283,18 +283,18 @@ JSValue* jsStringOrFalse(const KURL& url)
     return jsString(url.string());
 }
 
-String valueToStringWithNullCheck(ExecState* exec, JSValue* val)
+UString valueToStringWithNullCheck(ExecState* exec, JSValue* value)
 {
-    if (val->isNull())
-        return String();
-    return val->toString(exec);
+    if (value->isNull())
+        return UString();
+    return value->toString(exec);
 }
 
-String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue* val)
+UString valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue* value)
 {
-    if (val->isUndefinedOrNull())
-        return String();
-    return val->toString(exec);
+    if (value->isUndefinedOrNull())
+        return UString();
+    return value->toString(exec);
 }
 
 void setDOMException(ExecState* exec, ExceptionCode ec)
