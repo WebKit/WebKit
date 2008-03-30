@@ -10,7 +10,7 @@
      	}
     </script>
     <defs>
-       <text id="tref-internal-reference-fail">Failure</text>
+       <text id="tref-internal-reference-failure">Failure</text>
        <text id="tref-internal-reference-success">Success</text>
     </defs>
     <text x="20" y="20" >

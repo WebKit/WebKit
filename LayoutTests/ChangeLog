@@ -1,3 +1,11 @@
+2008-03-30  Rob Buis  <buis@kde.org>
+
+        Reviewed by Adam Roben.
+
+        Fix wrong id.
+
+        * svg/custom/tref-update.svg:
+
 2008-03-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.
