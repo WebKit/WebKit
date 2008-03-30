@@ -1,3 +1,35 @@
+2008-03-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/5828873>
+
+        Since NSURL is allowing invalid urls to be loaded, we need to
+        check the URL validity at the ResourceHandle level and fire off
+        a cannotShowURL error.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::cannotShowURLError):
+        * loader/FrameLoader.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::cannotShowURLError):
+        (WebCore::ResourceLoader::wasBlocked):
+        (WebCore::ResourceLoader::cannotShowURL):
+        * loader/ResourceLoader.h:
+        * platform/KURL.h:
+        (WebCore::KURL::isValid):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::create):
+        (WebCore::ResourceHandle::scheduleFailure):
+        (WebCore::ResourceHandle::fireFailure):
+        (WebCore::portAllowed):
+        * platform/network/ResourceHandle.h:
+        (WebCore::ResourceHandle::):
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::cannotShowURL):
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+
 2008-03-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

@@ -119,7 +119,7 @@ namespace WebCore {
 #elif USE(CFNETWORK)
             , m_currentCFChallenge(0)
 #endif
-            , m_failureTimer(loader, &ResourceHandle::fireBlockedFailure)
+            , m_failureTimer(loader, &ResourceHandle::fireFailure)
         {
         }
         
@@ -191,6 +191,7 @@ namespace WebCore {
 #endif
         AuthenticationChallenge m_currentWebChallenge;
 
+        ResourceHandle::FailureType m_failureType;
         Timer<ResourceHandle> m_failureTimer;
     };
 

@@ -89,6 +89,11 @@ class ResourceHandle : public RefCounted<ResourceHandle> {
 private:
     ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, bool mightDownloadFromHandle);
 
+    enum FailureType {
+        BlockedFailure,
+        InvalidURLFailure
+    };
+
 public:
     // FIXME: should not need the Frame
     static PassRefPtr<ResourceHandle> create(const ResourceRequest&, ResourceHandleClient*, Frame*, bool defersLoading, bool shouldContentSniff, bool mightDownloadFromHandle = false);
@@ -161,15 +166,14 @@ public:
       
     const ResourceRequest& request() const;
 
-    void fireBlockedFailure(Timer<ResourceHandle>*);
+    void fireFailure(Timer<ResourceHandle>*);
 
 private:
-    static bool portAllowed(const ResourceRequest&);
-    
-    void scheduleBlockedFailure();
+    void scheduleFailure(FailureType);
 
     bool start(Frame*);
-        
+
+    friend class ResourceHandleInternal;
     OwnPtr<ResourceHandleInternal> d;
 };
 

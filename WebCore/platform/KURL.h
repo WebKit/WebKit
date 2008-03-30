@@ -91,6 +91,8 @@ public:
     bool isNull() const { return m_string.isNull(); }
     bool isEmpty() const { return m_string.isEmpty(); }
 
+    bool isValid() const { return m_isValid; }
+
     // Returns true if this URL has a path. Note that "http://foo.com/" has a
     // path of "/", so this function will return true. Only invalid or
     // non-hierarchical (like "javascript:") URLs will have no path.
