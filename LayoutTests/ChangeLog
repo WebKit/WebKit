@@ -1,5 +1,17 @@
 2008-03-30  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=18115
+          REGRESSION (r31250): Incomplete repaint of GoogleReader sidebar while reading unread posts
+
+        * fast/repaint/lines-with-layout-delta.html: Added.
+        * platform/mac/fast/repaint/lines-with-layout-delta-expected.checksum: Added.
+        * platform/mac/fast/repaint/lines-with-layout-delta-expected.png: Added.
+        * platform/mac/fast/repaint/lines-with-layout-delta-expected.txt: Added.
+
+2008-03-30  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         - test for an assertion failure in CSSParser.cpp's

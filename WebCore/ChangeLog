@@ -1,5 +1,18 @@
 2008-03-30  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=18115
+          REGRESSION (r31250): Incomplete repaint of GoogleReader sidebar while reading unread posts
+
+        Test: fast/repaint/lines-with-layout-delta.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintRectangle): Made this method take layout
+        delta into account.
+
+2008-03-30  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         - fix assertion failure in CSSParser.cpp's equalIgnoringCase() when
