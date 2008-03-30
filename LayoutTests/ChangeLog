@@ -1,5 +1,16 @@
 2008-03-30  Rob Buis  <buis@kde.org>
 
+        Reviewed by Oliver.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=17633
+        SVG: modifying x & y attribute of text element from JS fails
+
+        * platform/mac/svg/custom/text-xy-updates-expected.txt: Added.
+        * svg/custom/text-xy-updates.svg: Added.
+
+2008-03-30  Rob Buis  <buis@kde.org>
+
         Reviewed by Adam Roben.
 
         Fix wrong id.

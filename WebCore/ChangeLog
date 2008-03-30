@@ -1,3 +1,22 @@
+2008-03-30  Rob Buis  <buis@kde.org>
+
+        Reviewed by Oliver.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17633
+        SVG: modifying x & y attribute of text element from JS fails
+
+        Make SVG text relayout when x, y attribute is changed from js.
+
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::isKnownAttribute):
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::svgAttributeChanged):
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::isKnownAttribute):
+        * svg/SVGTextPositioningElement.h:
+
 2008-03-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

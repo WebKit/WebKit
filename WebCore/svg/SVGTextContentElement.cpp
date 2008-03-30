@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -507,6 +507,16 @@ void SVGTextContentElement::parseMappedAttribute(MappedAttribute* attr)
 
         SVGStyledElement::parseMappedAttribute(attr);
     }
+}
+
+bool SVGTextContentElement::isKnownAttribute(const QualifiedName& attrName)
+{
+    return (attrName.matches(SVGNames::lengthAdjustAttr) ||
+            attrName.matches(SVGNames::textLengthAttr) ||
+            SVGTests::isKnownAttribute(attrName) ||
+            SVGLangSpace::isKnownAttribute(attrName) ||
+            SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
+            SVGStyledElement::isKnownAttribute(attrName));
 }
 
 }
