@@ -56,8 +56,8 @@ public:
     const AtomicString& getAttribute(const String& name) const;
     const AtomicString& getAttributeNS(const String& namespaceURI, const String& localName) const;
 
-    void setAttribute(const String& name, const AtomicString& value, ExceptionCode&);
-    void setAttributeNS(const String& namespaceURI, const String& qualifiedName, const AtomicString& value, ExceptionCode&);
+    void setAttribute(const AtomicString& name, const AtomicString& value, ExceptionCode&);
+    void setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value, ExceptionCode&);
 
     void scrollIntoView (bool alignToTop = true);
     void scrollIntoViewIfNeeded(bool centerIfNeeded = true);

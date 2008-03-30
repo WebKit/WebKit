@@ -298,14 +298,14 @@ bool HTMLDocument::childAllowed(Node *newChild)
     return newChild->hasTagName(htmlTag) || newChild->isCommentNode() || (newChild->nodeType() == DOCUMENT_TYPE_NODE && !doctype());
 }
 
-PassRefPtr<Element> HTMLDocument::createElement(const String &name, ExceptionCode& ec)
+PassRefPtr<Element> HTMLDocument::createElement(const AtomicString& name, ExceptionCode& ec)
 {
-    String lowerName(name.lower());
+    AtomicString lowerName = name.string().impl()->isLower() ? name : AtomicString(name.string().lower());
     if (!isValidName(lowerName)) {
         ec = INVALID_CHARACTER_ERR;
         return 0;
     }
-    return HTMLElementFactory::createHTMLElement(AtomicString(lowerName), this, 0, false);
+    return HTMLElementFactory::createHTMLElement(lowerName, this, 0, false);
 }
 
 static void addItemToMap(HTMLDocument::NameCountMap& map, const AtomicString& name)

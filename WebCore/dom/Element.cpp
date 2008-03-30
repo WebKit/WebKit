@@ -478,14 +478,14 @@ const AtomicString& Element::getAttributeNS(const String& namespaceURI, const St
     return getAttribute(QualifiedName(nullAtom, localName, namespaceURI));
 }
 
-void Element::setAttribute(const String& name, const AtomicString& value, ExceptionCode& ec)
+void Element::setAttribute(const AtomicString& name, const AtomicString& value, ExceptionCode& ec)
 {
     if (!Document::isValidName(name)) {
         ec = INVALID_CHARACTER_ERR;
         return;
     }
 
-    const String& localName = (shouldIgnoreAttributeCase(this) && !name.impl()->isLower()) ? name.lower() : name;
+    const AtomicString& localName = (shouldIgnoreAttributeCase(this) && !name.string().impl()->isLower()) ? AtomicString(name.string().lower()) : name;
 
     // allocate attributemap if necessary
     Attribute* old = attributes(false)->getAttributeItem(localName);
@@ -1083,7 +1083,7 @@ PassRefPtr<Attr> Element::removeAttributeNode(Attr *attr, ExceptionCode& ec)
     return static_pointer_cast<Attr>(attrs->removeNamedItem(attr->qualifiedName(), ec));
 }
 
-void Element::setAttributeNS(const String& namespaceURI, const String& qualifiedName, const AtomicString& value, ExceptionCode& ec)
+void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value, ExceptionCode& ec)
 {
     String prefix, localName;
     if (!Document::parseQualifiedName(qualifiedName, prefix, localName, ec))

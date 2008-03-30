@@ -72,7 +72,7 @@ public:
 
     virtual bool childAllowed(Node*);
 
-    virtual PassRefPtr<Element> createElement(const String& tagName, ExceptionCode&);
+    virtual PassRefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&);
 
     void addNamedItem(const AtomicString& name);
     void removeNamedItem(const AtomicString& name);

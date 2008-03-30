@@ -1,3 +1,21 @@
+2008-03-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - yet still more bindings speedup
+        
+        Make AtomicString straight from UString in handcoded bindings
+
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::JSElement::setAttribute):
+        (WebCore::JSElement::setAttributeNS):
+        * dom/Document.cpp:
+        (WebCore::Document::createElement):
+        * dom/Document.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createElement):
+        * html/HTMLDocument.h:
+
 2008-03-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
