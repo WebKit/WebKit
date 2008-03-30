@@ -1,3 +1,13 @@
+2008-03-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - test for an assertion failure in CSSParser.cpp's
+          equalIgnoringCase() when parsing certain transforms.
+
+        * fast/css/transform-function-lowercase-assert-expected.txt: Added.
+        * fast/css/transform-function-lowercase-assert.html: Added.
+
 2008-03-30  Rob Buis  <buis@kde.org>
 
         Reviewed by Oliver.

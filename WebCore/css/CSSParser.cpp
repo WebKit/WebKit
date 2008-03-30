@@ -3388,30 +3388,30 @@ public:
     , m_allowSingleArgument(false)
     , m_unit(CSSParser::FUnknown)
     {
-        if (equalIgnoringCase(name, "scale(") || equalIgnoringCase(name, "scaleX(") || equalIgnoringCase(name, "scaleY(")) {
+        if (equalIgnoringCase(name, "scale(") || equalIgnoringCase(name, "scalex(") || equalIgnoringCase(name, "scaley(")) {
             m_unit = CSSParser::FNumber;
             if (equalIgnoringCase(name, "scale("))
                 m_type = CSSTransformValue::ScaleTransformOperation;
-            else if (equalIgnoringCase(name, "scaleX("))
+            else if (equalIgnoringCase(name, "scalex("))
                 m_type = CSSTransformValue::ScaleXTransformOperation;
             else
                 m_type = CSSTransformValue::ScaleYTransformOperation;
         } else if (equalIgnoringCase(name, "rotate(")) {
             m_type = CSSTransformValue::RotateTransformOperation;
             m_unit = CSSParser::FAngle;
-        } else if (equalIgnoringCase(name, "skew(") || equalIgnoringCase(name, "skewX(") || equalIgnoringCase(name, "skewY(")) {
+        } else if (equalIgnoringCase(name, "skew(") || equalIgnoringCase(name, "skewx(") || equalIgnoringCase(name, "skewy(")) {
             m_unit = CSSParser::FAngle;
             if (equalIgnoringCase(name, "skew("))
                 m_type = CSSTransformValue::SkewTransformOperation;
-            else if (equalIgnoringCase(name, "skewX("))
+            else if (equalIgnoringCase(name, "skewx("))
                 m_type = CSSTransformValue::SkewXTransformOperation;
             else
                 m_type = CSSTransformValue::SkewYTransformOperation;
-        } else if (equalIgnoringCase(name, "translate(") || equalIgnoringCase(name, "translateX(") || equalIgnoringCase(name, "translateY(")) {
+        } else if (equalIgnoringCase(name, "translate(") || equalIgnoringCase(name, "translatex(") || equalIgnoringCase(name, "translatey(")) {
             m_unit = CSSParser::FLength | CSSParser::FPercent;
             if (equalIgnoringCase(name, "translate("))
                 m_type = CSSTransformValue::TranslateTransformOperation;
-            else if (equalIgnoringCase(name, "translateX("))
+            else if (equalIgnoringCase(name, "translatex("))
                 m_type = CSSTransformValue::TranslateXTransformOperation;
             else
                 m_type = CSSTransformValue::TranslateYTransformOperation;
