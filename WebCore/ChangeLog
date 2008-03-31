@@ -1,3 +1,15 @@
+2008-03-31  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz Pettel
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=18183
+
+        Despite the bug reporter's instructions, I have still not been able to actually reproduce this crash and 
+        therefore don't know how to make a layout test for it.
+
+        * loader/archive/ArchiveResource.cpp:
+        (WebCore::ArchiveResource::response): Fix potential null dereference
+
 2008-03-29  Adam Roben  <aroben@apple.com>
 
         Fix Bug 18208: Acid3 test 65 takes >33ms due to plugin refreshing on

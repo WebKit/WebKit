@@ -82,8 +82,8 @@ const ResourceResponse& ArchiveResource::response()
 {
     if (!m_response.isNull())
         return m_response;
-        
-    m_response = ResourceResponse(m_url, m_mimeType, m_data->size(), m_textEncoding, String());
+    
+    m_response = ResourceResponse(m_url, m_mimeType, m_data ? m_data->size() : 0, m_textEncoding, String());
     return m_response;
 }
 
