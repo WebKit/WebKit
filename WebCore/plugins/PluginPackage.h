@@ -45,10 +45,10 @@ namespace WebCore {
         ~PluginPackage();
         static PassRefPtr<PluginPackage> createPackage(const String& path, const time_t& lastModified);
         
-        String name() const { return m_name; }
-        String description() const { return m_description; }
-        String fileName() const { return m_fileName; }
-        String parentDirectory() const { return m_parentDirectory; }
+        const String& name() const { return m_name; }
+        const String& description() const { return m_description; }
+        const String& fileName() const { return m_fileName; }
+        const String& parentDirectory() const { return m_parentDirectory; }
 
         const MIMEToDescriptionsMap& mimeToDescriptions() const { return m_mimeToDescriptions; }
         const MIMEToExtensionsMap& mimeToExtensions() const { return m_mimeToExtensions; }

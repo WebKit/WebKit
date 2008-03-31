@@ -1,5 +1,13 @@
 2008-03-29  Adam Roben  <aroben@apple.com>
 
+        Make some PluginPackage methods return const String&
+
+        Reviewed by Mitz Pettel.
+
+        * plugins/PluginPackage.h:
+
+2008-03-29  Adam Roben  <aroben@apple.com>
+
         Rename PluginDatabase's "PluginPaths" to "PluginDirectories"
 
         The code expects these paths to all be directories, so it seems good
