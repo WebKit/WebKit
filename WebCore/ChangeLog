@@ -1,3 +1,25 @@
+2008-03-29  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 18214: WebKit will sometimes load duplicate plugins
+
+        <http://bugs.webkit.org/show_bug.cgi?id=18214>
+
+        We now compare 3 things to determine if two PluginPackages are equal:
+          1) Name
+          2) Description
+          3) Supported MIME types
+
+        This matches Gecko's equality logic for plugins (implemented in
+        nsPluginTag::Equals).
+
+        Reviewed by Darin Adler.
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::hash): Use the above-mentioned 3 criteria to
+        calculate the hash.
+        (WebCore::PluginPackage::equal): Use the above-mentioned 3 criteria to
+        determine equality.
+
 2008-03-31  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build.
