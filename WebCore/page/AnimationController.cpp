@@ -333,17 +333,19 @@ static inline EVisibility blendFunc(EVisibility from, EVisibility to, double pro
     if ((m_property == cAnimateAll && !animation->hasAnimationForProperty(prop)) || m_property == prop) { \
         Color fromColor = m_fromStyle->getter(); \
         Color toColor = m_toStyle->getter(); \
-        if (!fromColor.isValid()) \
-            fromColor = m_fromStyle->color(); \
-        if (!toColor.isValid()) \
-            toColor = m_toStyle->color(); \
-        if (fromColor != toColor) {\
-            m_finished = false; \
-            if (!animatedStyle) \
-                animatedStyle = new (renderer->renderArena()) RenderStyle(*targetStyle); \
-            animatedStyle->setter(blendFunc(fromColor, toColor, progress()));\
-            if (m_property == prop) \
-                return; \
+        if (fromColor.isValid() || toColor.isValid()) { \
+            if (!fromColor.isValid()) \
+                fromColor = m_fromStyle->color(); \
+            if (!toColor.isValid()) \
+                toColor = m_toStyle->color(); \
+            if (fromColor != toColor) {\
+                m_finished = false; \
+                if (!animatedStyle) \
+                    animatedStyle = new (renderer->renderArena()) RenderStyle(*targetStyle); \
+                animatedStyle->setter(blendFunc(fromColor, toColor, progress()));\
+                if (m_property == prop) \
+                    return; \
+            }\
         }\
     }\
 

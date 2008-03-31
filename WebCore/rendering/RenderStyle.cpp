@@ -329,6 +329,7 @@ StyleBackgroundData::StyleBackgroundData()
 StyleBackgroundData::StyleBackgroundData(const StyleBackgroundData& o)
     : RefCounted<StyleBackgroundData>()
     , m_background(o.m_background)
+    , m_color(o.m_color)
     , m_outline(o.m_outline)
 {
 }

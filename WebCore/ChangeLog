@@ -1,3 +1,16 @@
+2008-03-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=18076
+          Box disappears after CSS Transition completes
+
+        * page/AnimationController.cpp: Changed the BLEND_MAYBE_INVALID_COLOR
+        macro to not blend two invalid colors.
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleBackgroundData::StyleBackgroundData): Added missing
+        copying of the m_color data member.
+
 2008-03-31  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin.
