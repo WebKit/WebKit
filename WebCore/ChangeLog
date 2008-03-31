@@ -1,3 +1,35 @@
+2008-03-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
+        Make AMatthews life easier -- fix the SVG_FILTERS build
+
+        Build fix only, no tests.
+
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement):
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::SVGFEImageElement):
+        * svg/SVGFESpecularLightingElement.cpp:
+        * svg/SVGFETurbulenceElement.cpp:
+        * svg/SVGFilterElement.cpp:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        * svg/graphics/filters/SVGFEBlend.cpp:
+        * svg/graphics/filters/SVGFEComponentTransfer.cpp:
+        * svg/graphics/filters/SVGFEComposite.cpp:
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp:
+        * svg/graphics/filters/SVGFEGaussianBlur.cpp:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        * svg/graphics/filters/SVGFEMorphology.cpp:
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        * svg/graphics/filters/SVGFESpecularLighting.cpp:
+        * svg/graphics/filters/SVGFETurbulence.cpp:
+
 2008-03-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

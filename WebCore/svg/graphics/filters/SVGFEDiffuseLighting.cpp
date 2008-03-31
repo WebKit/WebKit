@@ -24,6 +24,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGLightSource.h"
 #include "SVGFEDiffuseLighting.h"
+#include "TextStream.h"
 
 namespace WebCore {
 

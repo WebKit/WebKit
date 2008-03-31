@@ -41,7 +41,7 @@ SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document* doc
     , SVGURIReference()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_preserveAspectRatio(new SVGPreserveAspectRatio())
+    , m_preserveAspectRatio(SVGPreserveAspectRatio::create())
     , m_cachedImage(0)
     , m_filterEffect(0)
 {
@@ -103,7 +103,7 @@ SVGFEImage* SVGFEImageElement::filterEffect(SVGResourceFilter* filter) const
     return m_filterEffect;
 }
 
-bool SVGFEImageElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+void SVGFEImageElement::getSubresourceAttributeStrings(Vector<String>& urls) const
 {
     urls.append(href());
 }

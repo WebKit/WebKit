@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEComponentTransfer.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
