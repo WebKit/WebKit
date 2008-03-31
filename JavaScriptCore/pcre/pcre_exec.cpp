@@ -652,18 +652,34 @@ RECURSE:
                 }
                 RRETURN;
                 
-            /* Start of subject, or after internal newline if multiline. */
-                
+            /* Start of subject. */
+
             BEGIN_OPCODE(CIRC):
-                if (stack.currentFrame->args.subjectPtr != md.startSubject && (!md.multiline || !isNewline(stack.currentFrame->args.subjectPtr[-1])))
+                if (stack.currentFrame->args.subjectPtr != md.startSubject)
                     RRETURN_NO_MATCH;
                 stack.currentFrame->args.instructionPtr++;
                 NEXT_OPCODE;
-                
-            /* End of subject, or before internal newline if multiline. */
-                
+
+            /* After internal newline if multiline. */
+
+            BEGIN_OPCODE(BOL):
+                if (stack.currentFrame->args.subjectPtr != md.startSubject && !isNewline(stack.currentFrame->args.subjectPtr[-1]))
+                    RRETURN_NO_MATCH;
+                stack.currentFrame->args.instructionPtr++;
+                NEXT_OPCODE;
+
+            /* End of subject. */
+
             BEGIN_OPCODE(DOLL):
-                if (stack.currentFrame->args.subjectPtr < md.endSubject && (!md.multiline || !isNewline(*stack.currentFrame->args.subjectPtr)))
+                if (stack.currentFrame->args.subjectPtr < md.endSubject)
+                    RRETURN_NO_MATCH;
+                stack.currentFrame->args.instructionPtr++;
+                NEXT_OPCODE;
+
+            /* Before internal newline if multiline. */
+
+            BEGIN_OPCODE(EOL):
+                if (stack.currentFrame->args.subjectPtr < md.endSubject && !isNewline(*stack.currentFrame->args.subjectPtr))
                     RRETURN_NO_MATCH;
                 stack.currentFrame->args.instructionPtr++;
                 NEXT_OPCODE;
@@ -2054,7 +2070,7 @@ int jsRegExpExecute(const JSRegExp* re,
         
         DPRINTF((">>>> returning %d\n", returnCode));
         return returnCode;
-    } while (startMatch <= endSubject);
+    } while (!(re->options & IsAnchoredOption) && startMatch <= endSubject);
     
     if (using_temporary_offsets) {
         DPRINTF(("Freeing temporary memory\n"));

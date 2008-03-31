@@ -231,6 +231,8 @@ must also be updated to match. */
     \
     macro(CIRC) \
     macro(DOLL) \
+    macro(BOL) \
+    macro(EOL) \
     macro(CHAR) \
     macro(CHAR_IGNORING_CASE) \
     macro(ASCII_CHAR) \

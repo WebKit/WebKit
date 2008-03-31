@@ -1,3 +1,14 @@
+2008-03-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+        
+        Add test for /^bar/ optimization.
+        http://bugs.webkit.org/show_bug.cgi?id=18086
+
+        * fast/js/ascii-regexp-subject-expected.txt: Copied from LayoutTests/fast/xpath/4XPath/Borrowed/kd_20010423-expected.txt.
+        * fast/js/ascii-regexp-subject.html: Copied from LayoutTests/fast/js/typeof-syntax.html.
+        * fast/js/resources/ascii-regexp-subject.js: Added.
+
 2008-03-31  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

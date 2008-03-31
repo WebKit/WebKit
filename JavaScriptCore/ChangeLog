@@ -1,3 +1,18 @@
+2008-03-31  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Make matching of regexps using ^ much faster
+        http://bugs.webkit.org/show_bug.cgi?id=18086
+
+        * pcre/pcre_compile.cpp:
+        (compileBranch):
+        (branchNeedsLineStart):
+        * pcre/pcre_exec.cpp:
+        (match):
+        (jsRegExpExecute):
+        * pcre/pcre_internal.h:
+
 2008-03-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver Hunt.
