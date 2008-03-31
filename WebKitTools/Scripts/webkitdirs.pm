@@ -65,7 +65,8 @@ sub determineSourceDir
 {
     return if $sourceDir;
     $sourceDir = $FindBin::Bin;
-    
+    $sourceDir =~ s|/+$||; # Remove trailing '/' as we would die later
+
     # walks up path checking each directory to see if it is the main WebKit project dir, 
     # defined by containing JavaScriptCore, WebCore, and WebKit
     until ((-d "$sourceDir/JavaScriptCore" && -d "$sourceDir/WebCore" && -d "$sourceDir/WebKit") || (-d "$sourceDir/Internal" && -d "$sourceDir/OpenSource"))
