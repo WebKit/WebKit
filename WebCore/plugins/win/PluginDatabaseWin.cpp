@@ -62,11 +62,13 @@ static inline void addPluginsFromRegistry(HKEY rootKey, PluginSet& plugins)
         if (result != ERROR_SUCCESS || type != REG_SZ)
             continue;
 
-        WIN32_FILE_ATTRIBUTE_DATA attributes;
-        if (GetFileAttributesEx(pathStr, GetFileExInfoStandard, &attributes) == 0)
+        String path(pathStr, pathStrSize / sizeof(WCHAR) - 1);
+
+        time_t modifiedTime;
+        if (!getFileModificationTime(path, modifiedTime))
             continue;
 
-        RefPtr<PluginPackage> package = PluginPackage::createPackage(String(pathStr, pathStrSize / sizeof(WCHAR) - 1), attributes.ftLastWriteTime);
+        RefPtr<PluginPackage> package = PluginPackage::createPackage(path, modifiedTime);
 
         if (package)
             plugins.add(package);
@@ -108,8 +110,12 @@ PluginSet PluginDatabase::getPluginsInPaths() const
             String fullPath = *it + "\\" + filename;
             if (!uniqueFilenames.add(fullPath).second)
                 continue;
+
+            time_t modifiedTime;
+            if (!getFileModificationTime(fullPath, modifiedTime))
+                continue;
         
-            RefPtr<PluginPackage> pluginPackage = PluginPackage::createPackage(fullPath, findFileData.ftLastWriteTime);
+            RefPtr<PluginPackage> pluginPackage = PluginPackage::createPackage(fullPath, modifiedTime);
 
             if (pluginPackage) {
                 plugins.add(pluginPackage);

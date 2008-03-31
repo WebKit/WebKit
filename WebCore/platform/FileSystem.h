@@ -47,7 +47,7 @@ class String;
 
 #if PLATFORM(WIN)
 typedef HANDLE PlatformFileHandle;
-typedef FILETIME PlatformFileTime;
+typedef time_t PlatformFileTime;
 typedef HMODULE PlatformModule;
 const PlatformFileHandle invalidPlatformFileHandle = INVALID_HANDLE_VALUE;
 

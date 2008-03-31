@@ -1,5 +1,25 @@
 2008-03-29  Adam Roben  <aroben@apple.com>
 
+        Change PlatformFileTime on Windows to be time_t
+
+        This matches other platforms and our existing functions in
+        FileSystem.h. It will also let us get rid of PlatformFileTime
+        altogether.
+
+        Reviewed by Mitz Pettel.
+
+        * platform/FileSystem.h: Change PlatformFileTime to time_t on Windows.
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::addPluginsFromRegistry): Use getFileModificationTime to get
+        the modification time to pass to PluginPackage::create.
+        (WebCore::PluginDatabase::getPluginsInPaths): Ditto.
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::hash): Updated to use m_lastModified as a
+        time_t.
+        (WebCore::PluginPackage::equal): Ditto.
+
+2008-03-29  Adam Roben  <aroben@apple.com>
+
         Make PluginPackage work like our other RefCounted classes
 
         PluginPackage now starts with a ref count of 1, and its createPackage
