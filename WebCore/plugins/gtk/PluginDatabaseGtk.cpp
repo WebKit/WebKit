@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-void PluginDatabase::getPluginsInDirectories(PluginSet& plugins) const
+void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
 {
     // FIXME: This should be a case insensitive set.
     HashSet<String> uniqueFilenames;
@@ -48,9 +48,7 @@ void PluginDatabase::getPluginsInDirectories(PluginSet& plugins) const
                 continue;
 
             gchar* filename = g_build_filename((it->utf8()).data(), name, 0);
-            RefPtr<PluginPackage> pluginPackage = PluginPackage::createPackage(filename, time(0));
-            if (pluginPackage)
-                plugins.add(pluginPackage);
+            paths.add(filename);
             g_free(filename);
         }
         g_dir_close(dir);

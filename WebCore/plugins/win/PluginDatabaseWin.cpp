@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static inline void addPluginsFromRegistry(HKEY rootKey, PluginSet& plugins)
+static inline void addPluginPathsFromRegistry(HKEY rootKey, HashSet<String>& paths)
 {
     HKEY key;
     HRESULT result = RegOpenKeyExW(rootKey, L"Software\\MozillaPlugins", 0, KEY_ENUMERATE_SUB_KEYS, &key);
@@ -62,22 +62,13 @@ static inline void addPluginsFromRegistry(HKEY rootKey, PluginSet& plugins)
         if (result != ERROR_SUCCESS || type != REG_SZ)
             continue;
 
-        String path(pathStr, pathStrSize / sizeof(WCHAR) - 1);
-
-        time_t modifiedTime;
-        if (!getFileModificationTime(path, modifiedTime))
-            continue;
-
-        RefPtr<PluginPackage> package = PluginPackage::createPackage(path, modifiedTime);
-
-        if (package)
-            plugins.add(package);
+        paths.add(String(pathStr, pathStrSize / sizeof(WCHAR) - 1));
     }
 
     RegCloseKey(key);
 }
 
-void PluginDatabase::getPluginsInDirectories(PluginSet& plugins) const
+void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
 {
     // FIXME: This should be a case insensitive set.
     HashSet<String> uniqueFilenames;
@@ -85,8 +76,8 @@ void PluginDatabase::getPluginsInDirectories(PluginSet& plugins) const
     HANDLE hFind = INVALID_HANDLE_VALUE;
     WIN32_FIND_DATAW findFileData;
 
-    RefPtr<PluginPackage> oldWMPPlugin;
-    RefPtr<PluginPackage> newWMPPlugin;
+    String oldWMPPluginPath;
+    String newWMPPluginPath;
 
     Vector<String>::const_iterator end = m_pluginDirectories.end();
     for (Vector<String>::const_iterator it = m_pluginDirectories.begin(); it != end; ++it) {
@@ -110,33 +101,25 @@ void PluginDatabase::getPluginsInDirectories(PluginSet& plugins) const
             if (!uniqueFilenames.add(fullPath).second)
                 continue;
 
-            time_t modifiedTime;
-            if (!getFileModificationTime(fullPath, modifiedTime))
-                continue;
-        
-            RefPtr<PluginPackage> pluginPackage = PluginPackage::createPackage(fullPath, modifiedTime);
+            paths.add(fullPath);
 
-            if (pluginPackage) {
-                plugins.add(pluginPackage);
-
-                if (equalIgnoringCase(filename, "npdsplay.dll"))
-                    oldWMPPlugin = pluginPackage;
-                else if (equalIgnoringCase(filename, "np-mswmp.dll"))
-                    newWMPPlugin = pluginPackage;
-            }
+            if (equalIgnoringCase(filename, "npdsplay.dll"))
+                oldWMPPluginPath = fullPath;
+            else if (equalIgnoringCase(filename, "np-mswmp.dll"))
+                newWMPPluginPath = fullPath;
 
         } while (FindNextFileW(hFind, &findFileData) != 0);
 
         FindClose(hFind);
     }
 
-    addPluginsFromRegistry(HKEY_LOCAL_MACHINE, plugins);
-    addPluginsFromRegistry(HKEY_CURRENT_USER, plugins);
+    addPluginPathsFromRegistry(HKEY_LOCAL_MACHINE, paths);
+    addPluginPathsFromRegistry(HKEY_CURRENT_USER, paths);
 
     // If both the old and new WMP plugin are present in the plugins set, 
     // we remove the old one so we don't end up choosing the old one.
-    if (oldWMPPlugin && newWMPPlugin)
-        plugins.remove(oldWMPPlugin);
+    if (!oldWMPPluginPath.isEmpty() && !newWMPPluginPath.isEmpty())
+        paths.remove(oldWMPPluginPath);
 }
 
 static inline Vector<int> parseVersionString(const String& versionString)

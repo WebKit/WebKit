@@ -1,5 +1,52 @@
 2008-03-29  Adam Roben  <aroben@apple.com>
 
+        Separate filesystem crawling from PluginPackage instantiation
+
+        Part of Bug 18208: Acid3 test 65 takes >33ms due to plugin refreshing
+        on Windows
+        <http://bugs.webkit.org/show_bug.cgi?id=18208>
+
+        refresh() is now the only place where PluginPackages are instantiated.
+        refresh() now asks for a set of plugins that no longer exist on disk,
+        and the set of all plugin files in our plugin directories. Using these
+        two sets we can update our instantiated plugins without copying any
+        HashSets. The code in refresh() and in the platform-specific methods
+        to crawl the filesystem is now quite a bit simpler.
+
+        PluginDatabase now stores both a PluginSet and a HashMap that maps
+        plugin paths to PluginPackages. This allows us to quickly determine
+        whether we already have a PluginPackage instantiated for a particular
+        path. The new add/remove methods handle the modification of these two
+        collections.
+
+        A nice side effect of all this is that refresh() no longer copies any
+        HashSets.
+
+        Reviewed by Mitz Pettel.
+
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::refresh): Unload any plugins that have been
+        deleted from disk, and add any plugins that either weren't installed
+        last time, or have changed since last time.
+        (WebCore::PluginDatabase::getDeletedPlugins): Added.
+        (WebCore::PluginDatabase::add): Added. Returns whether or not the
+        PluginPackage was actually added to the database (duplicates won't be
+        added).
+        (WebCore::PluginDatabase::remove): Added.
+        * plugins/PluginDatabase.h:
+        * plugins/PluginPackage.h:
+        (WebCore::PluginPackage::path): Added.
+        (WebCore::PluginPackage::lastModified): Added.
+        * plugins/gtk/PluginDatabaseGtk.cpp:
+        (WebCore::PluginDatabase::getPluginPathsInDirectories): Renamed from
+        getPluginsInDirectories. Now fills a HashSet of Strings instead of
+        instantiated PluginPackages.
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::addPluginPathsFromRegistry): Ditto.
+        (WebCore::PluginDatabase::getPluginPathsInDirectories): Ditto.
+
+2008-03-29  Adam Roben  <aroben@apple.com>
+
         Change getPluginsInDirectories to use an out parameter
 
         This avoids copying a HashSet.

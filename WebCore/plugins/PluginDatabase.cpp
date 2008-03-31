@@ -65,44 +65,39 @@ void PluginDatabase::addExtraPluginDirectory(const String& directory)
 
 bool PluginDatabase::refresh()
 {   
-    PluginSet newPlugins;
-
     bool pluginSetChanged = false;
-
-    // Create a new set of plugins
-    getPluginsInDirectories(newPlugins);
 
     if (!m_plugins.isEmpty()) {
         m_registeredMIMETypes.clear();
 
-        PluginSet pluginsToUnload = m_plugins;
-
-        PluginSet::const_iterator end = newPlugins.end();
-        for (PluginSet::const_iterator it = newPlugins.begin(); it != end; ++it)
-            pluginsToUnload.remove(*it);
-
-        end = m_plugins.end();
-        for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it)
-            newPlugins.remove(*it);
+        PluginSet pluginsToUnload;
+        getDeletedPlugins(pluginsToUnload);
 
         // Unload plugins
-        end = pluginsToUnload.end();
+        PluginSet::const_iterator end = pluginsToUnload.end();
         for (PluginSet::const_iterator it = pluginsToUnload.begin(); it != end; ++it)
-            m_plugins.remove(*it);
+            remove(it->get());
 
-        // Add new plugins
-        end = newPlugins.end();
-        for (PluginSet::const_iterator it = newPlugins.begin(); it != end; ++it)
-            m_plugins.add(*it);
+        pluginSetChanged = !pluginsToUnload.isEmpty();
+    }
 
-        pluginSetChanged = !pluginsToUnload.isEmpty() || !newPlugins.isEmpty();
-    } else {
-        m_plugins = newPlugins;
-        PluginSet::const_iterator end = newPlugins.end();
-        for (PluginSet::const_iterator it = newPlugins.begin(); it != end; ++it)
-            m_plugins.add(*it);
+    HashSet<String> paths;
+    getPluginPathsInDirectories(paths);
 
-        pluginSetChanged = !newPlugins.isEmpty();
+    HashSet<String>::const_iterator pathsEnd = paths.end();
+    for (HashSet<String>::const_iterator it = paths.begin(); it != pathsEnd; ++it) {
+        time_t lastModified;
+        if (!getFileModificationTime(*it, lastModified))
+            continue;
+
+        if (RefPtr<PluginPackage> oldPackage = m_pluginsByPath.get(*it)) {
+            if (oldPackage->lastModified() == lastModified)
+                continue;
+            remove(oldPackage.get());
+        }
+
+        if (add(PluginPackage::createPackage(*it, lastModified)))
+            pluginSetChanged = true;
     }
 
     // Register plug-in MIME types
@@ -220,6 +215,32 @@ PluginPackage* PluginDatabase::findPlugin(const KURL& url, String& mimeType)
     // corresponding to the extension.
 
     return plugin;
+}
+
+void PluginDatabase::getDeletedPlugins(PluginSet& plugins) const
+{
+    PluginSet::const_iterator end = m_plugins.end();
+    for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
+        if (!fileExists((*it)->path()))
+            plugins.add(*it);
+    }
+}
+
+bool PluginDatabase::add(PassRefPtr<PluginPackage> prpPackage)
+{
+    RefPtr<PluginPackage> package = prpPackage;
+
+    if (!m_plugins.add(package).second)
+        return false;
+
+    m_pluginsByPath.add(package->path(), package);
+    return true;
+}
+
+void PluginDatabase::remove(PluginPackage* package)
+{
+    m_plugins.remove(package);
+    m_pluginsByPath.remove(package->path());
 }
 
 }

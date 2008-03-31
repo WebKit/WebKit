@@ -59,7 +59,13 @@ namespace WebCore {
 
     private:
         void setPluginDirectories(const Vector<String>& directories) { m_pluginDirectories = directories; }
-        void getPluginsInDirectories(PluginSet&) const;
+
+        void getPluginPathsInDirectories(HashSet<String>&) const;
+        void getDeletedPlugins(PluginSet&) const;
+
+        // Returns whether the plugin was actually added or not (it won't be added if it's a duplicate of an existing plugin).
+        bool add(PassRefPtr<PluginPackage>);
+        void remove(PluginPackage*);
 
         PluginPackage* pluginForMIMEType(const String& mimeType);
         String MIMETypeForExtension(const String& extension) const;
@@ -69,6 +75,7 @@ namespace WebCore {
         Vector<String> m_pluginDirectories;
         HashSet<String> m_registeredMIMETypes;
         PluginSet m_plugins;
+        HashMap<String, RefPtr<PluginPackage> > m_pluginsByPath;
     };
 
 } // namespace WebCore
