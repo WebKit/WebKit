@@ -1,18 +1,29 @@
 <?php
+
 require_once('admin.php');
+
+require_once(ABSPATH . 'wp-admin/includes/dashboard.php');
+
+wp_dashboard_setup();
 
 function index_js() {
 ?>
 <script type="text/javascript">
 	jQuery(function() {
-		jQuery('#incominglinks').load('index-extra.php?jax=incominglinks');
-		jQuery('#devnews').load('index-extra.php?jax=devnews');
-		jQuery('#planetnews').load('index-extra.php?jax=planetnews');
+		jQuery('#dashboard_incoming_links div.dashboard-widget-content').not( '.dashboard-widget-control' ).find( '.widget-loading' ).parent().load('index-extra.php?jax=incominglinks');
+		jQuery('#dashboard_primary div.dashboard-widget-content').not( '.dashboard-widget-control' ).find( '.widget-loading' ).parent().load('index-extra.php?jax=devnews');
+		jQuery('#dashboard_secondary div.dashboard-widget-content').not( '.dashboard-widget-control' ).find( '.widget-loading' ).parent().load('index-extra.php?jax=planetnews');
+		jQuery('#dashboard_plugins div.dashboard-widget-content').not( '.dashboard-widget-control' ).find( '.widget-loading' ).parent().load('index-extra.php?jax=plugins');
 	});
 </script>
 <?php
 }
 add_action( 'admin_head', 'index_js' );
+
+function index_css() {
+	wp_admin_css( 'css/dashboard' );
+}
+add_action( 'admin_head', 'index_css' );
 
 wp_enqueue_script( 'jquery' );
 
@@ -25,121 +36,94 @@ $today = current_time('mysql', 1);
 
 <div class="wrap">
 
-<h2><?php _e('Welcome to WordPress'); ?></h2>
+<h2><?php _e('Dashboard'); ?></h2>
 
-<div id="zeitgeist">
-<h2><?php _e('Latest Activity'); ?></h2>
+<div id="rightnow">
+<h3 class="reallynow">
+	<span><?php _e('Right Now'); ?></span>
 
-<div id="incominglinks"></div>
-
-<?php
-$comments = $wpdb->get_results("SELECT comment_author, comment_author_url, comment_ID, comment_post_ID FROM $wpdb->comments WHERE comment_approved = '1' ORDER BY comment_date_gmt DESC LIMIT 5");
-$numcomments = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->comments WHERE comment_approved = '0'");
-
-if ( $comments || $numcomments ) :
-?>
-<div>
-<h3><?php printf( __( 'Comments <a href="%s" title="More comments&#8230;">&raquo;</a>' ), 'edit-comments.php' ); ?></h3>
-
-<?php if ( $numcomments ) : ?>
-<p><strong><a href="moderation.php"><?php echo sprintf(__('Comments in moderation (%s) &raquo;'), number_format_i18n($numcomments) ); ?></a></strong></p>
+<?php if ( $can_edit_posts = current_user_can( 'edit_posts' ) ) : ?>
+	<a href="post-new.php" class="rbutton"><strong><?php _e('Write a New Post'); ?></strong></a>
+<?php endif; if ( $can_edit_pages = current_user_can( 'edit_pages' ) ) : ?>
+	<a href="page-new.php" class="rbutton"><?php _e('Write a New Page'); ?></a>
 <?php endif; ?>
+	<br class="clear" />
+</h3>
 
-<ul>
 <?php
-if ( $comments ) {
-foreach ($comments as $comment) {
-	echo '<li>' . sprintf(__('%1$s on %2$s'), get_comment_author_link(), '<a href="'. get_permalink($comment->comment_post_ID) . '#comment-' . $comment->comment_ID . '">' . get_the_title($comment->comment_post_ID) . '</a>');
-	edit_comment_link(__("Edit"), ' <small>(', ')</small>');
-	echo '</li>';
+$num_posts = wp_count_posts( 'post' );
+$num_pages = wp_count_posts( 'page' );
+
+$num_cats  = wp_count_terms('category');
+
+$num_tags = wp_count_terms('post_tag');
+
+$post_type_texts = array();
+
+if ( !empty($num_posts->publish) ) { // with feeds, anyone can tell how many posts there are.  Just unlink if !current_user_can
+	$post_text = sprintf( __ngettext( '%s post', '%s posts', $num_posts->publish ), number_format_i18n( $num_posts->publish ) );
+	$post_type_texts[] = $can_edit_posts ? "<a href='edit.php'>$post_text</a>" : $post_text;
 }
+if ( $can_edit_pages && !empty($num_pages->publish) ) { // how many pages is not exposed in feeds.  Don't show if !current_user_can
+	$post_type_texts[] = '<a href="edit-pages.php">'.sprintf( __ngettext( '%s page', '%s pages', $num_pages->publish ), number_format_i18n( $num_pages->publish ) ).'</a>';
 }
-?>
-</ul>
-</div>
-<?php endif; ?>
-
-<?php
-if ( $recentposts = $wpdb->get_results("SELECT ID, post_title FROM $wpdb->posts WHERE post_type = 'post' AND " . get_private_posts_cap_sql('post') . " AND post_date_gmt < '$today' ORDER BY post_date DESC LIMIT 5") ) :
-?>
-<div>
-<h3><?php printf( __( 'Posts <a href="%s" title="More posts&#8230;">&raquo;</a>' ), 'edit.php' ); ?></h3>
-<ul>
-<?php
-foreach ($recentposts as $post) {
-	if ($post->post_title == '')
-		$post->post_title = sprintf(__('Post #%s'), $post->ID);
-	echo "<li><a href='post.php?action=edit&amp;post=$post->ID'>";
-	the_title();
-	echo '</a></li>';
+if ( $can_edit_posts && !empty($num_posts->draft) ) {
+	$post_type_texts[] = '<a href="edit.php?post_status=draft">'.sprintf( __ngettext( '%s draft', '%s drafts', $num_posts->draft ), number_format_i18n( $num_posts->draft ) ).'</a>';
 }
-?>
-</ul>
-</div>
-<?php endif; ?>
-
-<?php
-if ( $scheduled = $wpdb->get_results("SELECT ID, post_title, post_date_gmt FROM $wpdb->posts WHERE post_type = 'post' AND post_status = 'future' ORDER BY post_date ASC") ) :
-?>
-<div>
-<h3><?php _e('Scheduled Entries:') ?></h3>
-<ul>
-<?php
-foreach ($scheduled as $post) {
-	if ($post->post_title == '')
-		$post->post_title = sprintf(__('Post #%s'), $post->ID);
-	echo "<li>" . sprintf(__('%1$s in %2$s'), "<a href='post.php?action=edit&amp;post=$post->ID' title='" . __('Edit this post') . "'>$post->post_title</a>", human_time_diff( current_time('timestamp', 1), strtotime($post->post_date_gmt. ' GMT') ))  . "</li>";
+if ( $can_edit_posts && !empty($num_posts->future) ) {
+	$post_type_texts[] = '<a href="edit.php?post_status=future">'.sprintf( __ngettext( '%s scheduled post', '%s scheduled posts', $num_posts->future ), number_format_i18n( $num_posts->future ) ).'</a>';
 }
-?>
-</ul>
-</div>
-<?php endif; ?>
 
-<div>
-<h3><?php _e('Blog Stats'); ?></h3>
+if ( current_user_can('publish_posts') && !empty($num_posts->pending) ) {
+	$pending_text = sprintf( __ngettext( 'There is <a href="%1$s">%2$s post</a> pending your review.', 'There are <a href="%1$s">%2$s posts</a> pending your review.', $num_posts->pending ), 'edit.php?post_status=pending', number_format_i18n( $num_posts->pending ) );
+} else {
+	$pending_text = '';
+}
+
+$cats_text = sprintf( __ngettext( '%s category', '%s categories', $num_cats ), number_format_i18n( $num_cats ) );
+$tags_text = sprintf( __ngettext( '%s tag', '%s tags', $num_tags ), number_format_i18n( $num_tags ) );
+if ( current_user_can( 'manage_categories' ) ) {
+	$cats_text = "<a href='categories.php'>$cats_text</a>";
+	$tags_text = "<a href='edit-tags.php'>$tags_text</a>";
+}
+
+$post_type_text = implode(', ', $post_type_texts);
+
+// There is always a category
+$sentence = sprintf( __( 'You have %1$s, contained within %2$s and %3$s. %4$s' ), $post_type_text, $cats_text, $tags_text, $pending_text );
+$sentence = apply_filters( 'dashboard_count_sentence', $sentence, $post_type_text, $cats_text, $tags_text, $pending_text );
+
+?>
+<p class="youhave"><?php echo $sentence; ?></p>
 <?php
-$numposts = (int) $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = 'post' AND post_status = 'publish'");
-$numcomms = (int) $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->comments WHERE comment_approved = '1'");
-$numcats  = wp_count_terms('category');
-$numtags = wp_count_terms('post_tag');
-
-$post_str = sprintf(__ngettext('%1$s <a href="%2$s" title="Posts">post</a>', '%1$s <a href="%2$s" title="Posts">posts</a>', $numposts), number_format_i18n($numposts), 'edit.php');
-$comm_str = sprintf(__ngettext('%1$s <a href="%2$s" title="Comments">comment</a>', '%1$s <a href="%2$s" title="Comments">comments</a>', $numcomms), number_format_i18n($numcomms), 'edit-comments.php');
-$cat_str  = sprintf(__ngettext('%1$s <a href="%2$s" title="Categories">category</a>', '%1$s <a href="%2$s" title="Categories">categories</a>', $numcats), number_format_i18n($numcats), 'categories.php');
-$tag_str  = sprintf(__ngettext('%1$s tag', '%1$s tags', $numtags), number_format_i18n($numtags));
+$ct = current_theme_info();
+$sidebars_widgets = wp_get_sidebars_widgets();
+$num_widgets = array_reduce( $sidebars_widgets, create_function( '$prev, $curr', 'return $prev+count($curr);' ) );
+$widgets_text = sprintf( __ngettext( '%d widget', '%d widgets', $num_widgets ), $num_widgets );
+if ( $can_switch_themes = current_user_can( 'switch_themes' ) )
+	$widgets_text = "<a href='widgets.php'>$widgets_text</a>";
 ?>
+<p class="youare">
+	<?php printf( __( 'You are using %1$s theme with %2$s.' ), $ct->title, $widgets_text ); ?>
+	<?php if ( $can_switch_themes ) : ?>
+		<a href="themes.php" class="rbutton"><?php _e('Change Theme'); ?></a>
+	<?php endif; ?>
+	<?php update_right_now_message(); ?>
+</p>
 
-<p><?php printf(__('There are currently %1$s and %2$s, contained within %3$s and %4$s.'), $post_str, $comm_str, $cat_str, $tag_str); ?></p>
-</div>
+<?php do_action( 'rightnow_end' ); ?>
+<?php do_action( 'activity_box_end' ); ?>
+</div><!-- rightnow -->
 
-<?php do_action('activity_box_end'); ?>
-</div>
+<br class="clear" />
 
-<p><?php _e('Use these links to get started:'); ?></p>
+<div id="dashboard-widgets-wrap">
 
-<ul>
-<?php if ( current_user_can('edit_posts') ) : ?>
-	<li><a href="post-new.php"><?php _e('Write a post'); ?></a></li>
-<?php endif; ?>
-	<li><a href="profile.php"><?php _e('Update your profile or change your password'); ?></a></li>
-<?php if ( current_user_can('manage_links') ) : ?>
-	<li><a href="link-add.php"><?php _e('Add a link to your blogroll'); ?></a></li>
-<?php endif; ?>
-<?php if ( current_user_can('switch_themes') ) : ?>
-	<li><a href="themes.php"><?php _e('Change your site&#8217;s look or theme'); ?></a></li>
-<?php endif; ?>
-</ul>
-<p><?php _e("Need help with WordPress? Please see our <a href='http://codex.wordpress.org/'>documentation</a> or visit the <a href='http://wordpress.org/support/'>support forums</a>."); ?></p>
+<?php wp_dashboard(); ?>
 
-<div id="devnews"></div>
 
-<div id="planetnews"></div>
+</div><!-- dashboard-widgets-wrap -->
 
-<div style="clear: both">&nbsp;
-<br clear="all" />
-</div>
-</div>
+</div><!-- wrap -->
 
-<?php
-require('./admin-footer.php');
-?>
+<?php require('./admin-footer.php'); ?>

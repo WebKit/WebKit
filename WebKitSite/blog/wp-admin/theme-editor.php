@@ -6,6 +6,11 @@ $parent_file = 'themes.php';
 
 wp_reset_vars(array('action', 'redirect', 'profile', 'error', 'warning', 'a', 'file', 'theme'));
 
+add_action( 'admin_head', 'theme_editor_css' );
+function theme_editor_css(){
+	wp_admin_css( 'css/theme-editor' );
+}
+
 $themes = get_themes();
 
 if (empty($theme)) {
@@ -78,42 +83,63 @@ default:
 	?>
 <?php if (isset($_GET['a'])) : ?>
  <div id="message" class="updated fade"><p><?php _e('File edited successfully.') ?></p></div>
-<?php endif; ?>
- <div class="wrap">
-	<form name="theme" action="theme-editor.php" method="post">
-		<?php _e('Select theme to edit:') ?>
-		<select name="theme" id="theme">
-	<?php
-		foreach ($themes as $a_theme) {
-		$theme_name = $a_theme['Name'];
-		if ($theme_name == $theme) $selected = " selected='selected'";
-		else $selected = '';
-		$theme_name = attribute_escape($theme_name);
-		echo "\n\t<option value=\"$theme_name\" $selected>$theme_name</option>";
-	}
-?>
- </select>
- <input type="submit" name="Submit" value="<?php _e('Select &raquo;') ?>" class="button" />
- </form>
- </div>
+<?php endif;
 
- <div class="wrap">
-  <?php
-	if ( is_writeable($real_file) ) {
-		echo '<h2>' . sprintf(__('Editing <code>%s</code>'), $file_show) . '</h2>';
-	} else {
-		echo '<h2>' . sprintf(__('Browsing <code>%s</code>'), $file_show) . '</h2>';
-	}
-	?>
+$description = get_file_description($file);
+$desc_header = ( $description != $file_show ) ? "$description</strong> (%s)" : "%s";
+?>
+<div class="wrap">
+<div class="bordertitle">
+	<h2><?php _e('Theme Editor'); ?></h2>
+	<form id="themeselector" name="theme" action="theme-editor.php" method="post">
+		<strong><?php _e('Select theme to edit:'); ?> </strong>
+		<select name="theme" id="theme">
+<?php
+	foreach ($themes as $a_theme) {
+	$theme_name = $a_theme['Name'];
+	if ($theme_name == $theme) $selected = " selected='selected'";
+	else $selected = '';
+	$theme_name = attribute_escape($theme_name);
+	echo "\n\t<option value=\"$theme_name\" $selected>$theme_name</option>";
+}
+?>
+		</select>
+		<input type="submit" name="Submit" value="<?php _e('Select') ?>" class="button" />
+	</form>
+</div>
+<div class="tablenav">
+<div class="alignleft">
+<big><strong><?php echo sprintf($desc_header, $file_show); ?></big>
+</div>
+<br class="clear" />
+</div>
+<br class="clear" />
 	<div id="templateside">
-	<h3><?php printf(__("<strong>'%s'</strong> theme files"), $theme) ?></h3>
+	<h3 id="bordertitle"><?php _e("Theme Files"); ?></h3>
 
 <?php
 if ($allowed_files) :
 ?>
+	<h4><?php _e('Templates'); ?></h4>
 	<ul>
-<?php foreach($allowed_files as $allowed_file) : ?>
-		 <li><a href="theme-editor.php?file=<?php echo "$allowed_file"; ?>&amp;theme=<?php echo urlencode($theme) ?>"><?php echo get_file_description($allowed_file); ?></a></li>
+<?php foreach($themes[$theme]['Template Files'] as $template_file) :
+		$description = get_file_description($template_file);
+		$template_show = basename($template_file);
+		$filedesc = ( $description != $template_file ) ? "$description <span class='nonessential'>($template_show)</span>" : "$description";
+		$filedesc = ( $template_file == $file ) ? "<span class='highlight'>$description <span class='nonessential'>($template_show)</span></span>" : $filedesc;
+		?>
+		<li><a href="theme-editor.php?file=<?php echo "$template_file"; ?>&amp;theme=<?php echo urlencode($theme) ?>"><?php echo $filedesc ?></a></li>
+<?php endforeach; ?>
+	</ul>
+	<h4><?php echo _c('Styles|Theme stylesheets in theme editor'); ?></h4>
+	<ul>
+<?php foreach($themes[$theme]['Stylesheet Files'] as $style_file) :
+		$description = get_file_description($style_file);
+		$style_show = basename($style_file);
+		$filedesc = ( $description != $style_file ) ? "$description <span class='nonessential'>($style_show)</span>" : "$description";
+		$filedesc = ( $style_file == $file ) ? "<span class='highlight'>$description <span class='nonessential'>($style_show)</span></span>" : $filedesc;
+		?>
+		<li><a href="theme-editor.php?file=<?php echo "$style_file"; ?>&amp;theme=<?php echo urlencode($theme) ?>"><?php echo $filedesc ?></a></li>
 <?php endforeach; ?>
 	</ul>
 <?php endif; ?>
@@ -128,15 +154,18 @@ if ($allowed_files) :
 		 <input type="hidden" name="file" value="<?php echo $file ?>" />
 		 <input type="hidden" name="theme" value="<?php echo $theme ?>" />
 		 </div>
+
+		<div>
 <?php if ( is_writeable($real_file) ) : ?>
-	<p class="submit">
+			<p class="submit">
 <?php
-	echo "<input type='submit' name='submit' value='	" . __('Update File &raquo;') . "' tabindex='2' />";
+	echo "<input type='submit' name='submit' value='" . __('Update File') . "' tabindex='2' />";
 ?>
 </p>
 <?php else : ?>
-<p><em><?php _e('If this file were writable you could edit it.'); ?></em></p>
+<p><em><?php _e('You need to make this file writable before you can save your changes. See <a href="http://codex.wordpress.org/Changing_File_Permissions">the Codex</a> for more information.'); ?></em></p>
 <?php endif; ?>
+		</div>
 	</form>
 	<?php
 	} else {

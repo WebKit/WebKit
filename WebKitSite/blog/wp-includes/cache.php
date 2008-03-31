@@ -1,84 +1,219 @@
 <?php
+/**
+ * Object Cache API
+ *
+ * @package WordPress
+ * @subpackage Cache
+ */
+
+/**
+ * wp_cache_add() - Adds data to the cache, if the cache key doesn't aleady exist
+ *
+ * @since 2.0
+ * @uses $wp_object_cache Object Cache Class
+ * @see WP_Object_Cache::add()
+ *
+ * @param int|string $key The cache ID to use for retrieval later
+ * @param mixed $data The data to add to the cache store
+ * @param string $flag The group to add the cache to
+ * @param int $expire When the cache data should be expired
+ * @return unknown
+ */
 function wp_cache_add($key, $data, $flag = '', $expire = 0) {
 	global $wp_object_cache;
-	$data = unserialize(serialize($data));
 
 	return $wp_object_cache->add($key, $data, $flag, $expire);
 }
 
+/**
+ * wp_cache_close() - Closes the cache
+ *
+ * This function has ceased to do anything since WordPress 2.5.
+ * The functionality was removed along with the rest of the
+ * persistant cache.
+ *
+ * @since 2.0
+ *
+ * @return bool Always returns True
+ */
 function wp_cache_close() {
-	global $wp_object_cache;
-
-	if ( ! isset($wp_object_cache) )
-		return;
-	return $wp_object_cache->save();
+	return true;
 }
 
+/**
+ * wp_cache_delete() - Removes the cache contents matching ID and flag
+ *
+ * @since 2.0
+ * @uses $wp_object_cache Object Cache Class
+ * @see WP_Object_Cache::delete()
+ *
+ * @param int|string $id What the contents in the cache are called
+ * @param string $flag Where the cache contents are grouped
+ * @return bool True on successful removal, false on failure
+ */
 function wp_cache_delete($id, $flag = '') {
 	global $wp_object_cache;
 
 	return $wp_object_cache->delete($id, $flag);
 }
 
+/**
+ * wp_cache_flush() - Removes all cache items
+ *
+ * @since 2.0
+ * @uses $wp_object_cache Object Cache Class
+ * @see WP_Object_Cache::flush()
+ *
+ * @return bool Always returns true
+ */
 function wp_cache_flush() {
 	global $wp_object_cache;
 
 	return $wp_object_cache->flush();
 }
 
+/**
+ * wp_cache_get() - Retrieves the cache contents from the cache by ID and flag
+ *
+ * @since 2.0
+ * @uses $wp_object_cache Object Cache Class
+ * @see WP_Object_Cache::get()
+ *
+ * @param int|string $id What the contents in the cache are called
+ * @param string $flag Where the cache contents are grouped
+ * @return bool|mixed False on failure to retrieve contents or the cache contents on success
+ */
 function wp_cache_get($id, $flag = '') {
 	global $wp_object_cache;
 
 	return $wp_object_cache->get($id, $flag);
 }
 
+/**
+ * wp_cache_init() - Sets up Object Cache Global and assigns it
+ *
+ * @since 2.0
+ * @global WP_Object_Cache $wp_object_cache WordPress Object Cache
+ */
 function wp_cache_init() {
 	$GLOBALS['wp_object_cache'] =& new WP_Object_Cache();
 }
 
+/**
+ * wp_cache_replace() - Replaces the contents of the cache with new data
+ *
+ * @since 2.0
+ * @uses $wp_object_cache Object Cache Class
+ * @see WP_Object_Cache::replace()
+ *
+ * @param int|string $id What to call the contents in the cache
+ * @param mixed $data The contents to store in the cache
+ * @param string $flag Where to group the cache contents
+ * @param int $expire When to expire the cache contents
+ * @return bool False if cache ID and group already exists, true on success
+ */
 function wp_cache_replace($key, $data, $flag = '', $expire = 0) {
 	global $wp_object_cache;
-	$data = unserialize(serialize($data));
 
 	return $wp_object_cache->replace($key, $data, $flag, $expire);
 }
 
+/**
+ * wp_cache_set() - Saves the data to the cache
+ *
+ * @since 2.0
+ * @uses $wp_object_cache Object Cache Class
+ * @see WP_Object_Cache::set()
+ *
+ * @param int|string $id What to call the contents in the cache
+ * @param mixed $data The contents to store in the cache
+ * @param string $flag Where to group the cache contents
+ * @param int $expire When to expire the cache contents
+ * @return bool False if cache ID and group already exists, true on success
+ */
 function wp_cache_set($key, $data, $flag = '', $expire = 0) {
 	global $wp_object_cache;
-	$data = unserialize(serialize($data));
 
 	return $wp_object_cache->set($key, $data, $flag, $expire);
 }
 
-define('CACHE_SERIAL_HEADER', "<?php\n/*");
-define('CACHE_SERIAL_FOOTER', "*/\n?".">");
-
+/**
+ * WordPress Object Cache
+ *
+ * The WordPress Object Cache is used to save on trips to the database.
+ * The Object Cache stores all of the cache data to memory and makes the
+ * cache contents available by using a key, which is used to name and
+ * later retrieve the cache contents.
+ *
+ * The Object Cache can be replaced by other caching mechanisms by placing
+ * files in the wp-content folder which is looked at in wp-settings. If
+ * that file exists, then this file will not be included.
+ *
+ * @package WordPress
+ * @subpackage Cache
+ * @since 2.0
+ */
 class WP_Object_Cache {
-	var $cache_dir;
-	var $cache_enabled = false;
-	var $expiration_time = 900;
-	var $flock_filename = 'wp_object_cache.lock';
-	var $mutex;
+
+	/**
+	 * Holds the cached objects
+	 *
+	 * @var array
+	 * @access private
+	 * @since 2.0
+	 */
 	var $cache = array ();
-	var $dirty_objects = array ();
+
+	/**
+	 * Cache objects that do not exist in the cache
+	 *
+	 * @var array
+	 * @access private
+	 * @since 2.0
+	 */
 	var $non_existant_objects = array ();
+
+	/**
+	 * Object caches that are global
+	 *
+	 * @var array
+	 * @access private
+	 * @since 2.0
+	 */
 	var $global_groups = array ('users', 'userlogins', 'usermeta');
-	var $non_persistent_groups = array('comment');
-	var $blog_id;
-	var $cold_cache_hits = 0;
-	var $warm_cache_hits = 0;
+
+	/**
+	 * The amount of times the cache data was already stored in the cache.
+	 *
+	 * @since 2.5
+	 * @access private
+	 * @var int
+	 */
+	var $cache_hits = 0;
+
+	/**
+	 * Amount of times the cache did not have the request in cache
+	 *
+	 * @var int
+	 * @access public
+	 * @since 2.0
+	 */
 	var $cache_misses = 0;
-	var $secret = '';
 
-	function acquire_lock() {
-		// Acquire a write lock.
-		$this->mutex = @fopen($this->cache_dir.$this->flock_filename, 'w');
-		if ( false == $this->mutex)
-			return false;
-		flock($this->mutex, LOCK_EX);
-		return true;
-	}
-
+	/**
+	 * Adds data to the cache if it doesn't already exist.
+	 *
+	 * @uses WP_Object_Cache::get Checks to see if the cache already has data.
+	 * @uses WP_Object_Cache::set Sets the data after the checking the cache contents existance.
+	 *
+	 * @since 2.0
+	 *
+	 * @param int|string $id What to call the contents in the cache
+	 * @param mixed $data The contents to store in the cache
+	 * @param string $group Where to group the cache contents
+	 * @param int $expire When to expire the cache contents
+	 * @return bool False if cache ID and group already exists, true on success
+	 */
 	function add($id, $data, $group = 'default', $expire = '') {
 		if (empty ($group))
 			$group = 'default';
@@ -89,6 +224,23 @@ class WP_Object_Cache {
 		return $this->set($id, $data, $group, $expire);
 	}
 
+	/**
+	 * Remove the contents of the cache ID in the group
+	 *
+	 * If the cache ID does not exist in the group and $force parameter
+	 * is set to false, then nothing will happen. The $force parameter
+	 * is set to false by default.
+	 *
+	 * On success the group and the id will be added to the
+	 * $non_existant_objects property in the class.
+	 *
+	 * @since 2.0
+	 *
+	 * @param int|string $id What the contents in the cache are called
+	 * @param string $group Where the cache contents are grouped
+	 * @param bool $force Optional. Whether to force the unsetting of the cache ID in the group
+	 * @return bool False if the contents weren't deleted and true on success
+	 */
 	function delete($id, $group = 'default', $force = false) {
 		if (empty ($group))
 			$group = 'default';
@@ -98,161 +250,70 @@ class WP_Object_Cache {
 
 		unset ($this->cache[$group][$id]);
 		$this->non_existant_objects[$group][$id] = true;
-		$this->dirty_objects[$group][] = $id;
 		return true;
 	}
 
+	/**
+	 * Clears the object cache of all data
+	 *
+	 * @since 2.0
+	 *
+	 * @return bool Always returns true
+	 */
 	function flush() {
-		if ( !$this->cache_enabled )
-			return true;
-
-		if ( ! $this->acquire_lock() )
-			return false;
-
-		$this->rm_cache_dir();
 		$this->cache = array ();
-		$this->dirty_objects = array ();
-		$this->non_existant_objects = array ();
-
-		$this->release_lock();
 
 		return true;
 	}
 
-	function get($id, $group = 'default', $count_hits = true) {
+	/**
+	 * Retrieves the cache contents, if it exists
+	 *
+	 * The contents will be first attempted to be retrieved by searching
+	 * by the ID in the cache group. If the cache is hit (success) then
+	 * the contents are returned.
+	 *
+	 * On failure, the $non_existant_objects property is checked and if
+	 * the cache group and ID exist in there the cache misses will not be
+	 * incremented. If not in the nonexistant objects property, then the
+	 * cache misses will be incremented and the cache group and ID will
+	 * be added to the nonexistant objects.
+	 *
+	 * @since 2.0
+	 *
+	 * @param int|string $id What the contents in the cache are called
+	 * @param string $group Where the cache contents are grouped
+	 * @return bool|mixed False on failure to retrieve contents or the cache contents on success
+	 */
+	function get($id, $group = 'default') {
 		if (empty ($group))
 			$group = 'default';
 
 		if (isset ($this->cache[$group][$id])) {
-			if ($count_hits)
-				$this->warm_cache_hits += 1;
+			$this->cache_hits += 1;
 			return $this->cache[$group][$id];
 		}
 
-		if (isset ($this->non_existant_objects[$group][$id]))
+		if ( isset ($this->non_existant_objects[$group][$id]) )
 			return false;
 
-		//  If caching is not enabled, we have to fall back to pulling from the DB.
-		if (!$this->cache_enabled) {
-			if (!isset ($this->cache[$group]))
-				$this->load_group_from_db($group);
-
-			if (isset ($this->cache[$group][$id])) {
-				$this->cold_cache_hits += 1;
-				return $this->cache[$group][$id];
-			}
-
-			$this->non_existant_objects[$group][$id] = true;
-			$this->cache_misses += 1;
-			return false;
-		}
-
-		$cache_file = $this->cache_dir.$this->get_group_dir($group)."/".$this->hash($id).'.php';
-		if (!file_exists($cache_file)) {
-			$this->non_existant_objects[$group][$id] = true;
-			$this->cache_misses += 1;
-			return false;
-		}
-
-		// If the object has expired, remove it from the cache and return false to force
-		// a refresh.
-		$now = time();
-		if ((filemtime($cache_file) + $this->expiration_time) <= $now) {
-			$this->cache_misses += 1;
-			$this->delete($id, $group, true);
-			return false;
-		}
-
-		$this->cache[$group][$id] = unserialize(base64_decode(substr(@ file_get_contents($cache_file), strlen(CACHE_SERIAL_HEADER), -strlen(CACHE_SERIAL_FOOTER))));
-		if (false === $this->cache[$group][$id])
-			$this->cache[$group][$id] = '';
-
-		$this->cold_cache_hits += 1;
-		return $this->cache[$group][$id];
+		$this->non_existant_objects[$group][$id] = true;
+		$this->cache_misses += 1;
+		return false;
 	}
 
-	function get_group_dir($group) {
-		if (false !== array_search($group, $this->global_groups))
-			return $group;
-
-		return "{$this->blog_id}/$group";
-	}
-
-	function hash($data) {
-		if ( function_exists('hash_hmac') ) {
-			return hash_hmac('md5', $data, $this->secret);
-		} else {
-			return md5($data . $this->secret);
-		}
-	}
-
-	function load_group_from_db($group) {
-		return;
-	}
-
-	function make_group_dir($group, $perms) {
-		$group_dir = $this->get_group_dir($group);
-		$make_dir = '';
-		foreach (split('/', $group_dir) as $subdir) {
-			$make_dir .= "$subdir/";
-			if (!file_exists($this->cache_dir.$make_dir)) {
-				if (! @ mkdir($this->cache_dir.$make_dir))
-					break;
-				@ chmod($this->cache_dir.$make_dir, $perms);
-			}
-
-			if (!file_exists($this->cache_dir.$make_dir."index.php")) {
-				$file_perms = $perms & 0000666;
-				@ touch($this->cache_dir.$make_dir."index.php");
-				@ chmod($this->cache_dir.$make_dir."index.php", $file_perms);
-			}
-		}
-
-		return $this->cache_dir."$group_dir/";
-	}
-
-	function rm_cache_dir() {
-		$dir = $this->cache_dir;
-		$dir = rtrim($dir, DIRECTORY_SEPARATOR);
-		$top_dir = $dir;
-		$stack = array($dir);
-		$index = 0;
-
-		while ($index < count($stack)) {
-			# Get indexed directory from stack
-			$dir = $stack[$index];
-
-			$dh = @ opendir($dir);
-			if (!$dh)
-				return false;
-
-			while (($file = @ readdir($dh)) !== false) {
-				if ($file == '.' or $file == '..')
-					continue;
-
-				if (@ is_dir($dir . DIRECTORY_SEPARATOR . $file))
-					$stack[] = $dir . DIRECTORY_SEPARATOR . $file;
-				else if (@ is_file($dir . DIRECTORY_SEPARATOR . $file))
-					@ unlink($dir . DIRECTORY_SEPARATOR . $file);
-			}
-
-			$index++;
-		}
-
-		$stack = array_reverse($stack);  // Last added dirs are deepest
-		foreach($stack as $dir) {
-			if ( $dir != $top_dir)
-				@ rmdir($dir);
-		}
-
-	}
-
-	function release_lock() {
-		// Release write lock.
-		flock($this->mutex, LOCK_UN);
-		fclose($this->mutex);
-	}
-
+	/**
+	 * Replace the contents in the cache, if contents already exist
+	 *
+	 * @since 2.0
+	 * @see WP_Object_Cache::set()
+	 *
+	 * @param int|string $id What to call the contents in the cache
+	 * @param mixed $data The contents to store in the cache
+	 * @param string $group Where to group the cache contents
+	 * @param int $expire When to expire the cache contents
+	 * @return bool False if not exists, true if contents were replaced
+	 */
 	function replace($id, $data, $group = 'default', $expire = '') {
 		if (empty ($group))
 			$group = 'default';
@@ -263,100 +324,53 @@ class WP_Object_Cache {
 		return $this->set($id, $data, $group, $expire);
 	}
 
+	/**
+	 * Sets the data contents into the cache
+	 *
+	 * The cache contents is grouped by the $group parameter followed
+	 * by the $id. This allows for duplicate ids in unique groups.
+	 * Therefore, naming of the group should be used with care and
+	 * should follow normal function naming guidelines outside of
+	 * core WordPress usage.
+	 *
+	 * The $expire parameter is not used, because the cache will
+	 * automatically expire for each time a page is accessed and PHP
+	 * finishes. The method is more for cache plugins which use files.
+	 *
+	 * @since 2.0
+	 *
+	 * @param int|string $id What to call the contents in the cache
+	 * @param mixed $data The contents to store in the cache
+	 * @param string $group Where to group the cache contents
+	 * @param int $expire Not Used
+	 * @return bool Always returns true
+	 */
 	function set($id, $data, $group = 'default', $expire = '') {
 		if (empty ($group))
 			$group = 'default';
 
-		if (NULL == $data)
+		if (NULL === $data)
 			$data = '';
 
 		$this->cache[$group][$id] = $data;
-		unset ($this->non_existant_objects[$group][$id]);
-		$this->dirty_objects[$group][] = $id;
+
+		if(isset($this->non_existant_objects[$group][$id]))
+			unset ($this->non_existant_objects[$group][$id]);
 
 		return true;
 	}
 
-	function save() {
-		//$this->stats();
-
-		if (!$this->cache_enabled)
-			return true;
-
-		if (empty ($this->dirty_objects))
-			return true;
-
-		// Give the new dirs the same perms as wp-content.
-		$stat = stat(ABSPATH.'wp-content');
-		$dir_perms = $stat['mode'] & 0007777; // Get the permission bits.
-		$file_perms = $dir_perms & 0000666; // Remove execute bits for files.
-
-		// Make the base cache dir.
-		if (!file_exists($this->cache_dir)) {
-			if (! @ mkdir($this->cache_dir))
-				return false;
-			@ chmod($this->cache_dir, $dir_perms);
-		}
-
-		if (!file_exists($this->cache_dir."index.php")) {
-			@ touch($this->cache_dir."index.php");
-			@ chmod($this->cache_dir."index.php", $file_perms);
-		}
-
-		if ( ! $this->acquire_lock() )
-			return false;
-
-		// Loop over dirty objects and save them.
-		$errors = 0;
-		foreach ($this->dirty_objects as $group => $ids) {
-			if ( in_array($group, $this->non_persistent_groups) )
-				continue;
-
-			$group_dir = $this->make_group_dir($group, $dir_perms);
-
-			$ids = array_unique($ids);
-			foreach ($ids as $id) {
-				$cache_file = $group_dir.$this->hash($id).'.php';
-
-				// Remove the cache file if the key is not set.
-				if (!isset ($this->cache[$group][$id])) {
-					if (file_exists($cache_file))
-						@ unlink($cache_file);
-					continue;
-				}
-
-				$temp_file = tempnam($group_dir, 'tmp');
-				$serial = CACHE_SERIAL_HEADER.base64_encode(serialize($this->cache[$group][$id])).CACHE_SERIAL_FOOTER;
-				$fd = @fopen($temp_file, 'w');
-				if ( false === $fd ) {
-					$errors++;
-					continue;
-				}
-				fputs($fd, $serial);
-				fclose($fd);
-				if (!@ rename($temp_file, $cache_file)) {
-					if (!@ copy($temp_file, $cache_file))
-						$errors++;
-					@ unlink($temp_file);
-				}
-				@ chmod($cache_file, $file_perms);
-			}
-		}
-
-		$this->dirty_objects = array();
-
-		$this->release_lock();
-
-		if ( $errors )
-			return false;
-
-		return true;
-	}
-
+	/**
+	 * Echos the stats of the caching.
+	 *
+	 * Gives the cache hits, and cache misses. Also prints every cached
+	 * group, key and the data.
+	 *
+	 * @since 2.0
+	 */
 	function stats() {
 		echo "<p>";
-		echo "<strong>Cold Cache Hits:</strong> {$this->cold_cache_hits}<br />";
-		echo "<strong>Warm Cache Hits:</strong> {$this->warm_cache_hits}<br />";
+		echo "<strong>Cache Hits:</strong> {$this->cache_hits}<br />";
 		echo "<strong>Cache Misses:</strong> {$this->cache_misses}<br />";
 		echo "</p>";
 
@@ -367,62 +381,40 @@ class WP_Object_Cache {
 			echo "<pre>";
 			print_r($cache);
 			echo "</pre>";
-			if (isset ($this->dirty_objects[$group])) {
-				echo "<strong>Dirty Objects:</strong>";
-				echo "<pre>";
-				print_r(array_unique($this->dirty_objects[$group]));
-				echo "</pre>";
-				echo "</p>";
-			}
 		}
 	}
 
+	/**
+	 * PHP4 constructor; Calls PHP 5 style constructor
+	 *
+	 * @since 2.0
+	 *
+	 * @return WP_Object_Cache
+	 */
 	function WP_Object_Cache() {
 		return $this->__construct();
 	}
 
+	/**
+	 * Sets up object properties; PHP 5 style constructor
+	 *
+	 * @since 2.0.8
+	 * @return null|WP_Object_Cache If cache is disabled, returns null.
+	 */
 	function __construct() {
-		global $blog_id;
-
-		register_shutdown_function(array(&$this, "__destruct"));
-
-		if (defined('DISABLE_CACHE'))
-			return;
-
-		if ( ! defined('ENABLE_CACHE') )
-			return;
-
-		// Disable the persistent cache if safe_mode is on.
-		if ( ini_get('safe_mode') && ! defined('ENABLE_CACHE') )
-			return;
-
-		if (defined('CACHE_PATH'))
-			$this->cache_dir = CACHE_PATH;
-		else
-			// Using the correct separator eliminates some cache flush errors on Windows
-			$this->cache_dir = ABSPATH.'wp-content'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR;
-
-		if (is_writable($this->cache_dir) && is_dir($this->cache_dir)) {
-				$this->cache_enabled = true;
-		} else {
-			if (is_writable(ABSPATH.'wp-content')) {
-				$this->cache_enabled = true;
-			}
-		}
-
-		if (defined('CACHE_EXPIRATION_TIME'))
-			$this->expiration_time = CACHE_EXPIRATION_TIME;
-
-		if ( defined('WP_SECRET') )
-			$this->secret = WP_SECRET;
-		else
-			$this->secret = DB_PASSWORD . DB_USER . DB_NAME . DB_HOST . ABSPATH;
-
-		$this->blog_id = $this->hash($blog_id);
+		register_shutdown_function(array(&$this, "__destruct")); /** @todo This should be moved to the PHP4 style constructor, PHP5 already calls __destruct() */
 	}
 
+	/**
+	 * Will save the object cache before object is completely destroyed.
+	 *
+	 * Called upon object destruction, which should be when PHP ends.
+	 *
+	 * @since  2.0.8
+	 *
+	 * @return bool True value. Won't be used by PHP
+	 */
 	function __destruct() {
-		$this->save();
 		return true;
 	}
 }

@@ -6,6 +6,9 @@ $parent_file = 'edit.php';
 
 wp_reset_vars(array('action', 'cat'));
 
+if ( isset($_GET['deleteit']) && isset($_GET['delete']) )
+	$action = 'bulk-delete';
+
 switch($action) {
 
 case 'addcat':
@@ -43,6 +46,29 @@ case 'delete':
 
 break;
 
+case 'bulk-delete':
+	check_admin_referer('bulk-categories');
+
+	if ( !current_user_can('manage_categories') )
+		wp_die( __('You are not allowed to delete categories.') );
+
+	foreach ( (array) $_GET['delete'] as $cat_ID ) {
+		$cat_name = get_catname($cat_ID);
+
+		// Don't delete the default cats.
+		if ( $cat_ID == get_option('default_category') )
+			wp_die(sprintf(__("Can&#8217;t delete the <strong>%s</strong> category: this is the default one"), $cat_name));
+
+		wp_delete_category($cat_ID);
+	}
+
+	$sendback = wp_get_referer();
+	$sendback = preg_replace('|[^a-z0-9-~+_.?#=&;,/:]|i', '', $sendback);
+
+	wp_redirect($sendback);
+	exit();
+
+break;
 case 'edit':
 
 	require_once ('admin-header.php');
@@ -69,7 +95,14 @@ break;
 
 default:
 
+if ( !empty($_GET['_wp_http_referer']) ) {
+	 wp_redirect(remove_query_arg(array('_wp_http_referer', '_wpnonce'), stripslashes($_SERVER['REQUEST_URI'])));
+	 exit;
+}
+
 wp_enqueue_script( 'admin-categories' );
+wp_enqueue_script('admin-forms');
+
 require_once ('admin-header.php');
 
 $messages[1] = __('Category added.');
@@ -81,30 +114,57 @@ $messages[5] = __('Category not updated.');
 
 <?php if (isset($_GET['message'])) : ?>
 <div id="message" class="updated fade"><p><?php echo $messages[$_GET['message']]; ?></p></div>
-<?php endif; ?>
+<?php $_SERVER['REQUEST_URI'] = remove_query_arg(array('message'), $_SERVER['REQUEST_URI']);
+endif; ?>
 
 <div class="wrap">
+<form id="posts-filter" action="" method="get">
 <?php if ( current_user_can('manage_categories') ) : ?>
-	<h2><?php printf(__('Categories (<a href="%s">add new</a>)'), '#addcat') ?> </h2>
+	<h2><?php printf(__('Manage Categories (<a href="%s">add new</a>)'), '#addcat') ?> </h2>
 <?php else : ?>
-	<h2><?php _e('Categories') ?> </h2>
+	<h2><?php _e('Manage Categories') ?> </h2>
 <?php endif; ?>
+
+<p id="post-search">
+	<input type="text" id="post-search-input" name="s" value="<?php echo attribute_escape(stripslashes($_GET['s'])); ?>" />
+	<input type="submit" value="<?php _e( 'Search Categories' ); ?>" class="button" />
+</p>
+
+<br class="clear" />
+
+<div class="tablenav">
+
+<div class="alignleft">
+<input type="submit" value="<?php _e('Delete'); ?>" name="deleteit" class="button-secondary delete" />
+<?php wp_nonce_field('bulk-categories'); ?>
+</div>
+
+<br class="clear" />
+</div>
+
+<br class="clear" />
+
 <table class="widefat">
 	<thead>
 	<tr>
-		<th scope="col" style="text-align: center"><?php _e('ID') ?></th>
+		<th scope="col" class="check-column"><input type="checkbox" onclick="checkAll(document.getElementById('posts-filter'));" /></th>
         <th scope="col"><?php _e('Name') ?></th>
         <th scope="col"><?php _e('Description') ?></th>
-        <th scope="col" width="90" style="text-align: center"><?php _e('Posts') ?></th>
-        <th colspan="2" style="text-align: center"><?php _e('Action') ?></th>
+        <th scope="col" class="num"><?php _e('Posts') ?></th>
 	</tr>
 	</thead>
-	<tbody id="the-list">
+	<tbody id="the-list" class="list:cat">
 <?php
 cat_rows();
 ?>
 	</tbody>
 </table>
+</form>
+
+<div class="tablenav">
+<br class="clear" />
+</div>
+<br class="clear" />
 
 </div>
 

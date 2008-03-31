@@ -2,7 +2,8 @@
 
 function get_importers() {
 	global $wp_importers;
-	uasort($wp_importers, create_function('$a, $b', 'return strcmp($a[0], $b[0]);'));
+	if ( is_array($wp_importers) )
+		uasort($wp_importers, create_function('$a, $b', 'return strcmp($a[0], $b[0]);'));
 	return $wp_importers;
 }
 
@@ -19,6 +20,7 @@ function wp_import_cleanup( $id ) {
 
 function wp_import_handle_upload() {
 	$overrides = array( 'test_form' => false, 'test_type' => false );
+	$_FILES['import']['name'] .= '.import';
 	$file = wp_handle_upload( $_FILES['import'], $overrides );
 
 	if ( isset( $file['error'] ) )

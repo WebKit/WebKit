@@ -1,21 +1,51 @@
-addLoadEvent( function() {
+jQuery(document).ready( function() {
 	theFileList = {
 		currentImage: {ID: 0},
 		nonce: '',
 		tab: '',
 		postID: 0,
 
-		toQueryParams: function(qryStrOrig) {
-			var params = new Object();
-			var qryStr = qryStrOrig;
-			var i = 0;
-			do {
-				params[qryStr.split("=")[0].replace(/&/, "")] = ( qryStr.split("=")[1] ) ? qryStr.split("=")[1].split(/&|$/)[0] : '';
-				qryStr = ( qryStr.split("=")[1] ) ? qryStr.split(qryStr.split("=")[1].split(/&|$/)[0])[1] : '';
-				i++;
-			} 
-			while(i < (qryStrOrig.split("=").length - 1));
-			return params;
+		// cookie create and read functions adapted from http://www.quirksmode.org/js/cookies.html
+		createCookie: function(name,value,days) {
+			if (days) {
+				var date = new Date();
+				date.setTime(date.getTime()+(days*24*60*60*1000));
+				var expires = "; expires="+date.toGMTString();
+			}
+			else var expires = "";
+			document.cookie = name+"="+value+expires+"; path=/";
+		},
+
+		readCookie: function(name) {
+			var nameEQ = name + "=";
+			var ca = document.cookie.split(';');
+			for(var i=0;i < ca.length;i++) {
+				var c = ca[i];
+				while (c.charAt(0)==' ') c = c.substring(1,c.length);
+				if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+			}
+			return null;
+		},
+
+		assignCookieOnChange: function() {
+			jQuery(this).bind("change", function(){
+				theFileList.createCookie(jQuery(this).attr('name'),jQuery(this).attr('id'),365);
+			});
+		},
+
+		checkCookieSetting: function(name, defaultSetting) {
+			return this.readCookie(name) ? this.readCookie(name) : defaultSetting;
+		},
+
+		toQueryParams: function( s ) {
+			var r = {}; if ( !s ) { return r; }
+			var q = s.split('?'); if ( q[1] ) { s = q[1]; }
+			var pp = s.split('&');
+			for ( var i in pp ) {
+				var p = pp[i].split('=');
+				r[p[0]] = p[1];
+			}
+			return r;
 		},
 
 		toQueryString: function(params) {
@@ -116,12 +146,12 @@ addLoadEvent( function() {
 			h += "<form name='uploadoptions' id='uploadoptions' class='alignleft'>";
 			h += "<table>";
 			var display = [];
-			var checked = 'display-title';
+			var checkedDisplay = 'display-title';
 			if ( 1 == this.currentImage.isImage ) {
-				checked = 'display-full';
+				checkedDisplay = 'display-full';
 				if ( this.currentImage.thumb ) {
 					display.push("<label for='display-thumb'><input type='radio' name='display' id='display-thumb' value='thumb' /> " + this.thumb + "</label><br />");
-					checked = 'display-thumb';
+					checkedDisplay = 'display-thumb';
 				}
 				display.push("<label for='display-full'><input type='radio' name='display' id='display-full' value='full' /> " + this.full + "</label>");
 			} else if ( this.currentImage.thumb ) {
@@ -134,9 +164,9 @@ addLoadEvent( function() {
 				h += "</td></tr>";
 			}
 
-			h += "<tr><th>" + this.link + "</th><td>";
-			h += "<label for='link-file'><input type='radio' name='link' id='link-file' value='file' checked='checked'/> " + this.file + "</label><br />";
-			h += "<label for='link-page'><input type='radio' name='link' id='link-page' value='page' /> " + this.page + "</label><br />";
+			var checkedLink = 'link-file';
+ 			h += "<tr><th>" + this.link + "</th><td>";
+			h += "<label for='link-file'><input type='radio' name='link' id='link-file' value='file' /> " + this.file + "</label><br />";			h += "<label for='link-page'><input type='radio' name='link' id='link-page' value='page' /> " + this.page + "</label><br />";
 			h += "<label for='link-none'><input type='radio' name='link' id='link-none' value='none' /> " + this.none + "</label>";
 			h += "</td></tr>";
 
@@ -148,7 +178,12 @@ addLoadEvent( function() {
 			h += "</div>";
 
 			jQuery(h).prependTo('#upload-content');
-			jQuery('#' + checked).attr('checked','checked');
+			jQuery("input[@name='display']").each(theFileList.assignCookieOnChange);
+			jQuery("input[@name='link']").each(theFileList.assignCookieOnChange);
+			checkedDisplay = this.checkCookieSetting('display', checkedDisplay);
+			checkedLink = this.checkCookieSetting('link', checkedLink);
+			jQuery('#' + checkedDisplay).attr('checked','checked');
+			jQuery('#' + checkedLink).attr('checked','checked');
 			if (e) return e.stopPropagation();
 			return false;
 		},
@@ -288,7 +323,7 @@ addLoadEvent( function() {
 
 	};
 
-	for ( var property in uploadL10n ) 
+	for ( var property in uploadL10n )
 		theFileList[property] = uploadL10n[property];
 	theFileList.initializeVars();
 	theFileList.initializeLinks();

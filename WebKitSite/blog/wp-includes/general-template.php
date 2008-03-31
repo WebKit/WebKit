@@ -20,9 +20,11 @@ function get_footer() {
 }
 
 
-function get_sidebar() {
+function get_sidebar( $name = null ) {
 	do_action( 'get_sidebar' );
-	if ( file_exists( TEMPLATEPATH . '/sidebar.php') )
+	if ( isset($name) && file_exists( TEMPLATEPATH . "/sidebar-{$name}.php") )
+		load_template( TEMPLATEPATH . "/sidebar-{$name}.php");
+	elseif ( file_exists( TEMPLATEPATH . '/sidebar.php') )
 		load_template( TEMPLATEPATH . '/sidebar.php');
 	else
 		load_template( ABSPATH . 'wp-content/themes/default/sidebar.php');
@@ -31,9 +33,9 @@ function get_sidebar() {
 
 function wp_loginout() {
 	if ( ! is_user_logged_in() )
-		$link = '<a href="' . get_option('siteurl') . '/wp-login.php">' . __('Login') . '</a>';
+		$link = '<a href="' . get_option('siteurl') . '/wp-login.php">' . __('Log in') . '</a>';
 	else
-		$link = '<a href="' . get_option('siteurl') . '/wp-login.php?action=logout">' . __('Logout') . '</a>';
+		$link = '<a href="' . get_option('siteurl') . '/wp-login.php?action=logout">' . __('Log out') . '</a>';
 
 	echo apply_filters('loginout', $link);
 }
@@ -159,13 +161,11 @@ function get_bloginfo($show = '', $filter = 'raw') {
 }
 
 
-function wp_title($sep = '&raquo;', $display = true) {
+function wp_title($sep = '&raquo;', $display = true, $seplocation = '') {
 	global $wpdb, $wp_locale, $wp_query;
 
 	$cat = get_query_var('cat');
 	$tag = get_query_var('tag_id');
-	$p = get_query_var('p');
-	$name = get_query_var('name');
 	$category_name = get_query_var('category_name');
 	$author = get_query_var('author');
 	$author_name = get_query_var('author_name');
@@ -195,7 +195,7 @@ function wp_title($sep = '&raquo;', $display = true) {
 
 	if ( !empty($tag) ) {
 		$tag = get_term($tag, 'post_tag', OBJECT, 'display');
-		if ( is_wp_error( $tag ) ) 
+		if ( is_wp_error( $tag ) )
 			return $tag;
 		if ( ! empty($tag->name) )
 			$title = apply_filters('single_tag_title', $tag->name);
@@ -208,7 +208,7 @@ function wp_title($sep = '&raquo;', $display = true) {
 	}
 	if ( !empty($author_name) ) {
 		// We do a direct query here because we don't cache by nicename.
-		$title = $wpdb->get_var("SELECT display_name FROM $wpdb->users WHERE user_nicename = '$author_name'");
+		$title = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM $wpdb->users WHERE user_nicename = %s", $author_name));
 	}
 
 	// If there's a month
@@ -237,7 +237,12 @@ function wp_title($sep = '&raquo;', $display = true) {
 	if ( !empty($title) )
 		$prefix = " $sep ";
 
-	$title = $prefix . $title;
+ 	// Determines position of the separator
+	if ( 'right' == $seplocation )
+		$title = $title . $prefix;
+	else
+		$title = $prefix . $title;
+
 	$title = apply_filters('wp_title', $title, $sep);
 
 	// Send it out
@@ -245,6 +250,7 @@ function wp_title($sep = '&raquo;', $display = true) {
 		echo $title;
 	else
 		return $title;
+
 }
 
 
@@ -255,7 +261,7 @@ function single_post_title($prefix = '', $display = true) {
 
 	if ( intval($p) || '' != $name ) {
 		if ( !$p )
-			$p = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name = '$name'");
+			$p = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name = %s", $name));
 		$post = & get_post($p);
 		$title = $post->post_title;
 		$title = apply_filters('single_post_title', $title);
@@ -291,7 +297,7 @@ function single_tag_title($prefix = '', $display = true ) {
 
 	if ( !empty($tag_id) ) {
 		$my_tag = &get_term($tag_id, 'post_tag', OBJECT, 'display');
-		if ( is_wp_error( $my_tag ) ) 
+		if ( is_wp_error( $my_tag ) )
 			return false;
 		$my_tag_name = apply_filters('single_tag_title', $my_tag->name);
 		if ( !empty($my_tag_name) ) {
@@ -363,7 +369,7 @@ function wp_get_archives($args = '') {
 		$type = 'monthly';
 
 	if ( '' != $limit ) {
-		$limit = (int) $limit;
+		$limit = absint($limit);
 		$limit = ' LIMIT '.$limit;
 	}
 
@@ -386,15 +392,21 @@ function wp_get_archives($args = '') {
 		$archive_week_end_date_format = get_option('date_format');
 	}
 
-	$add_hours = intval(get_option('gmt_offset'));
-	$add_minutes = intval(60 * (get_option('gmt_offset') - $add_hours));
-
 	//filters
 	$where = apply_filters('getarchives_where', "WHERE post_type = 'post' AND post_status = 'publish'", $r );
 	$join = apply_filters('getarchives_join', "", $r);
 
 	if ( 'monthly' == $type ) {
-		$arcresults = $wpdb->get_results("SELECT DISTINCT YEAR(post_date) AS `year`, MONTH(post_date) AS `month`, count(ID) as posts FROM $wpdb->posts $join $where GROUP BY YEAR(post_date), MONTH(post_date) ORDER BY post_date DESC" . $limit);
+		$query = "SELECT DISTINCT YEAR(post_date) AS `year`, MONTH(post_date) AS `month`, count(ID) as posts FROM $wpdb->posts $join $where GROUP BY YEAR(post_date), MONTH(post_date) ORDER BY post_date DESC $limit";
+		$key = md5($query);
+		$cache = wp_cache_get( 'wp_get_archives' , 'general');
+		if ( !isset( $cache[ $key ] ) ) {
+			$arcresults = $wpdb->get_results($query);
+			$cache[ $key ] = $arcresults;
+			wp_cache_add( 'wp_get_archives', $cache, 'general' );
+		} else {
+			$arcresults = $cache[ $key ];
+		}
 		if ( $arcresults ) {
 			$afterafter = $after;
 			foreach ( $arcresults as $arcresult ) {
@@ -406,7 +418,16 @@ function wp_get_archives($args = '') {
 			}
 		}
 	} elseif ('yearly' == $type) {
-         $arcresults = $wpdb->get_results("SELECT DISTINCT YEAR(post_date) AS `year`, count(ID) as posts FROM $wpdb->posts $join $where GROUP BY YEAR(post_date) ORDER BY post_date DESC" . $limit);
+		$query = "SELECT DISTINCT YEAR(post_date) AS `year`, count(ID) as posts FROM $wpdb->posts $join $where GROUP BY YEAR(post_date) ORDER BY post_date DESC $limit";
+		$key = md5($query);
+		$cache = wp_cache_get( 'wp_get_archives' , 'general');
+		if ( !isset( $cache[ $key ] ) ) {
+			$arcresults = $wpdb->get_results($query);
+			$cache[ $key ] = $arcresults;
+			wp_cache_add( 'wp_get_archives', $cache, 'general' );
+		} else {
+			$arcresults = $cache[ $key ];
+		}
 		if ($arcresults) {
 			$afterafter = $after;
 			foreach ($arcresults as $arcresult) {
@@ -418,7 +439,16 @@ function wp_get_archives($args = '') {
 			}
 		}
 	} elseif ( 'daily' == $type ) {
-		$arcresults = $wpdb->get_results("SELECT DISTINCT YEAR(post_date) AS `year`, MONTH(post_date) AS `month`, DAYOFMONTH(post_date) AS `dayofmonth`, count(ID) as posts FROM $wpdb->posts $join $where GROUP BY YEAR(post_date), MONTH(post_date), DAYOFMONTH(post_date) ORDER BY post_date DESC" . $limit);
+		$query = "SELECT DISTINCT YEAR(post_date) AS `year`, MONTH(post_date) AS `month`, DAYOFMONTH(post_date) AS `dayofmonth`, count(ID) as posts FROM $wpdb->posts $join $where GROUP BY YEAR(post_date), MONTH(post_date), DAYOFMONTH(post_date) ORDER BY post_date DESC $limit";
+		$key = md5($query);
+		$cache = wp_cache_get( 'wp_get_archives' , 'general');
+		if ( !isset( $cache[ $key ] ) ) {
+			$arcresults = $wpdb->get_results($query);
+			$cache[ $key ] = $arcresults;
+			wp_cache_add( 'wp_get_archives', $cache, 'general' );
+		} else {
+			$arcresults = $cache[ $key ];
+		}
 		if ( $arcresults ) {
 			$afterafter = $after;
 			foreach ( $arcresults as $arcresult ) {
@@ -432,7 +462,16 @@ function wp_get_archives($args = '') {
 		}
 	} elseif ( 'weekly' == $type ) {
 		$start_of_week = get_option('start_of_week');
-		$arcresults = $wpdb->get_results("SELECT DISTINCT WEEK(post_date, $start_of_week) AS `week`, YEAR(post_date) AS yr, DATE_FORMAT(post_date, '%Y-%m-%d') AS yyyymmdd, count(ID) as posts FROM $wpdb->posts $join $where GROUP BY WEEK(post_date, $start_of_week), YEAR(post_date) ORDER BY post_date DESC" . $limit);
+		$query = "SELECT DISTINCT WEEK(post_date, $start_of_week) AS `week`, YEAR(post_date) AS yr, DATE_FORMAT(post_date, '%Y-%m-%d') AS yyyymmdd, count(ID) as posts FROM $wpdb->posts $join $where GROUP BY WEEK(post_date, $start_of_week), YEAR(post_date) ORDER BY post_date DESC $limit";
+		$key = md5($query);
+		$cache = wp_cache_get( 'wp_get_archives' , 'general');
+		if ( !isset( $cache[ $key ] ) ) {
+			$arcresults = $wpdb->get_results($query);
+			$cache[ $key ] = $arcresults;
+			wp_cache_add( 'wp_get_archives', $cache, 'general' );
+		} else {
+			$arcresults = $cache[ $key ];
+		}
 		$arc_w_last = '';
 		$afterafter = $after;
 		if ( $arcresults ) {
@@ -453,7 +492,16 @@ function wp_get_archives($args = '') {
 		}
 	} elseif ( ( 'postbypost' == $type ) || ('alpha' == $type) ) {
 		('alpha' == $type) ? $orderby = "post_title ASC " : $orderby = "post_date DESC ";
-		$arcresults = $wpdb->get_results("SELECT * FROM $wpdb->posts $join $where ORDER BY $orderby $limit");
+		$query = "SELECT * FROM $wpdb->posts $join $where ORDER BY $orderby $limit";
+		$key = md5($query);
+		$cache = wp_cache_get( 'wp_get_archives' , 'general');
+		if ( !isset( $cache[ $key ] ) ) {
+			$arcresults = $wpdb->get_results($query);
+			$cache[ $key ] = $arcresults;
+			wp_cache_add( 'wp_get_archives', $cache, 'general' );
+		} else {
+			$arcresults = $cache[ $key ];
+		}
 		if ( $arcresults ) {
 			foreach ( $arcresults as $arcresult ) {
 				if ( $arcresult->post_date != '0000-00-00 00:00:00' ) {
@@ -479,7 +527,7 @@ function calendar_week_mod($num) {
 
 
 function get_calendar($initial = true) {
-	global $wpdb, $m, $monthnum, $year, $timedifference, $wp_locale, $posts;
+	global $wpdb, $m, $monthnum, $year, $wp_locale, $posts;
 
 	$key = md5( $m . $monthnum . $year );
 	if ( $cache = wp_cache_get( 'get_calendar', 'calendar' ) ) {
@@ -502,8 +550,6 @@ function get_calendar($initial = true) {
 
 	// week_begins = 0 stands for Sunday
 	$week_begins = intval(get_option('start_of_week'));
-	$add_hours = intval(get_option('gmt_offset'));
-	$add_minutes = intval(60 * (get_option('gmt_offset') - $add_hours));
 
 	// Let's figure out when we are
 	if ( !empty($monthnum) && !empty($year) ) {
@@ -515,7 +561,6 @@ function get_calendar($initial = true) {
 		$d = (($w - 1) * 7) + 6; //it seems MySQL's weeks disagree with PHP's
 		$thismonth = $wpdb->get_var("SELECT DATE_FORMAT((DATE_ADD('${thisyear}0101', INTERVAL $d DAY) ), '%m')");
 	} elseif ( !empty($m) ) {
-		$calendar = substr($m, 0, 6);
 		$thisyear = ''.intval(substr($m, 0, 4));
 		if ( strlen($m) < 6 )
 				$thismonth = '01';
@@ -544,7 +589,7 @@ function get_calendar($initial = true) {
 			LIMIT 1");
 
 	echo '<table id="wp-calendar" summary="' . __('Calendar') . '">
-	<caption>' . $wp_locale->get_month($thismonth) . ' ' . date('Y', $unixmonth) . '</caption>
+	<caption>' . sprintf(_c('%1$s %2$s|Used as a calendar caption'), $wp_locale->get_month($thismonth), date('Y', $unixmonth)) . '</caption>
 	<thead>
 	<tr>';
 
@@ -710,7 +755,7 @@ function the_date_xml() {
 
 
 function the_date($d='', $before='', $after='', $echo = true) {
-	global $id, $post, $day, $previousday;
+	global $post, $day, $previousday;
 	$the_date = '';
 	if ( $day != $previousday ) {
 		$the_date .= $before;
@@ -797,7 +842,7 @@ function get_post_modified_time( $d = 'U', $gmt = false ) { // returns timestamp
 
 
 function the_weekday() {
-	global $wp_locale, $id, $post;
+	global $wp_locale, $post;
 	$the_weekday = $wp_locale->get_weekday(mysql2date('w', $post->post_date));
 	$the_weekday = apply_filters('the_weekday', $the_weekday);
 	echo $the_weekday;
@@ -805,7 +850,7 @@ function the_weekday() {
 
 
 function the_weekday_date($before='',$after='') {
-	global $wp_locale, $id, $post, $day, $previousweekday;
+	global $wp_locale, $post, $day, $previousweekday;
 	$the_weekday_date = '';
 	if ( $day != $previousweekday ) {
 		$the_weekday_date .= $before;
@@ -826,12 +871,12 @@ function wp_footer() {
 }
 
 function rsd_link() {
-	echo '	<link rel="EditURI" type="application/rsd+xml" title="RSD" href="' . get_bloginfo('wpurl') . "/xmlrpc.php?rsd\" />\n";
+	echo '<link rel="EditURI" type="application/rsd+xml" title="RSD" href="' . get_bloginfo('wpurl') . "/xmlrpc.php?rsd\" />\n";
 }
 
 function wlwmanifest_link() {
-	echo ' <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="'
-		. get_bloginfo('wpurl') . '/wp-includes/wlwmanifest.xml" /> ';
+	echo '<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="'
+		. get_bloginfo('wpurl') . '/wp-includes/wlwmanifest.xml" /> ' . "\n";
 }
 
 function noindex() {
@@ -864,95 +909,88 @@ function user_can_richedit() {
 	return apply_filters('user_can_richedit', $wp_rich_edit);
 }
 
-function the_editor($content, $id = 'content', $prev_id = 'title') {
+function wp_default_editor() {
+	$r = user_can_richedit() ? 'tinymce' : 'html'; // defaults
+	if ( $user = wp_get_current_user() ) { // look for cookie
+		if ( isset($_COOKIE['wordpress_editor_' . $user->ID]) && in_array($_COOKIE['wordpress_editor_' . $user->ID], array('tinymce', 'html', 'test') ) )
+			$r = $_COOKIE['wordpress_editor_' . $user->ID];
+	}
+	return apply_filters( 'wp_default_editor', $r ); // filter
+}
+
+function the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2) {
 	$rows = get_option('default_post_edit_rows');
 	if (($rows < 3) || ($rows > 100))
 		$rows = 12;
 
-	$rows = "rows='$rows'";
+	$rows = "rows='$rows'";	?>
+	<div id="editor-toolbar">
+	<?php if ( user_can_richedit() ) {
+		$wp_default_editor = wp_default_editor(); ?>
+		<div class="zerosize"><input accesskey="e" type="button" onclick="switchEditors.go('<?php echo $id; ?>')" /></div>
+		<?php if ( 'tinymce' == $wp_default_editor ) {
+			add_filter('the_editor_content', 'wp_richedit_pre'); ?>
+			<a id="edButtonHTML" onclick="switchEditors.go('<?php echo $id; ?>');"><?php _e('HTML'); ?></a>
+			<a id="edButtonPreview" class="active"><?php _e('Visual'); ?></a>
+		<?php } elseif ( 'html' == $wp_default_editor ) {
+			add_filter('the_editor_content', 'wp_htmledit_pre'); ?>
+			<a id="edButtonHTML" class="active"><?php _e('HTML'); ?></a>
+			<a id="edButtonPreview" onclick="switchEditors.go('<?php echo $id; ?>');"><?php _e('Visual'); ?></a>
+		<?php }
+	}
 
-	if ( user_can_richedit() ) :
-		add_filter('the_editor_content', 'wp_richedit_pre');
-
-		//	The following line moves the border so that the active button "attaches" to the toolbar. Only IE needs it.
-	?>
-	<style type="text/css">
-		#postdivrich table, #postdivrich #quicktags {border-top: none;}
-		#quicktags {border-bottom: none; padding-bottom: 2px; margin-bottom: -1px;}
-		#edButtons {border-bottom: 1px solid #ccc;}
-	</style>
-	<div id='edButtons' style='display:none;'>
-		<div class='zerosize'><input accesskey='e' type='button' onclick='switchEditors("<?php echo $id; ?>")' /></div>
-		<input id='edButtonPreview' class='edButtonFore' type='button' value='<?php _e('Visual'); ?>' />
-		<input id='edButtonHTML' class='edButtonBack' type='button' value='<?php _e('Code'); ?>' onclick='switchEditors("<?php echo $id; ?>")' />
+	if ( $media_buttons ) { ?>
+		<div id="media-buttons" class="hide-if-no-js">
+		<?php do_action( 'media_buttons' ); ?>
+		</div>
+	<?php } ?>
 	</div>
-	<script type="text/javascript">
-	// <![CDATA[
-		if ( typeof tinyMCE != "undefined" && tinyMCE.configs.length > 0 )
-			document.getElementById('edButtons').style.display = 'block';
-	// ]]>
-	</script>
 
-	<?php endif; ?>
 	<div id="quicktags">
 	<?php wp_print_scripts( 'quicktags' ); ?>
 	<script type="text/javascript">edToolbar()</script>
 	</div>
-	<script type="text/javascript">
-	// <![CDATA[
-		if ( typeof tinyMCE != "undefined" && tinyMCE.configs.length > 0 )
-			document.getElementById("quicktags").style.display="none";
-	// ]]>
-	</script>
-	<?php
 
-	$the_editor = apply_filters('the_editor', "<div><textarea class='mceEditor' $rows cols='40' name='$id' tabindex='2' id='$id'>%s</textarea></div>\n");
+    <?php if ( 'html' != $wp_default_editor ) : ?>
+    <script type="text/javascript">
+    // <![CDATA[
+        if ( typeof tinyMCE != "undefined" )
+            document.getElementById("quicktags").style.display="none";
+    // ]]>
+    </script>
+    <?php endif; // 'html' != $wp_default_editor
+
+	$the_editor = apply_filters('the_editor', "<div id='editorcontainer'><textarea class='' $rows cols='40' name='$id' tabindex='$tab_index' id='$id'>%s</textarea></div>\n");
 	$the_editor_content = apply_filters('the_editor_content', $content);
 
 	printf($the_editor, $the_editor_content);
 
 	?>
-	<script type="text/javascript">
-	//<!--
-	edCanvas = document.getElementById('<?php echo $id; ?>');
-	<?php if ( $prev_id && user_can_richedit() ) : ?>
-	// If tinyMCE is defined.
-	if ( typeof tinyMCE != 'undefined' ) {
-	// This code is meant to allow tabbing from Title to Post (TinyMCE).
-		if ( tinyMCE.isMSIE ) {
-			document.getElementById('<?php echo $prev_id; ?>').onkeydown = function (e) {
-				e = e ? e : window.event;
-				if (e.keyCode == 9 && !e.shiftKey && !e.controlKey && !e.altKey) {
-					var i = tinyMCE.getInstanceById('<?php echo $id; ?>');
-					if(typeof i ==  'undefined')
-						return true;
-					tinyMCE.execCommand("mceStartTyping");
-					this.blur();
-					i.contentWindow.focus();
-					e.returnValue = false;
-					return false;
-				}
-			}
-		} else {
-			document.getElementById('<?php echo $prev_id; ?>').onkeypress = function (e) {
-				e = e ? e : window.event;
-				if (e.keyCode == 9 && !e.shiftKey && !e.controlKey && !e.altKey) {
-					var i = tinyMCE.getInstanceById('<?php echo $id; ?>');
-					if(typeof i ==  'undefined')
-						return true;
-					tinyMCE.execCommand("mceStartTyping");
-					this.blur();
-					i.contentWindow.focus();
-					e.returnValue = false;
-					return false;
-				}
-			}
-		}
-	}
-	<?php endif; ?>
-	//-->
-	</script>
-	<?php
+    <script type="text/javascript">
+    // <![CDATA[
+    edCanvas = document.getElementById('<?php echo $id; ?>');
+    <?php if ( $prev_id && user_can_richedit() ) : ?>
+    // If tinyMCE is defined.
+    if ( typeof tinyMCE != 'undefined' ) {
+    // This code is meant to allow tabbing from Title to Post (TinyMCE).
+        document.getElementById('<?php echo $prev_id; ?>').onkeydown = function (e) {
+            e = e || window.event;
+            if (e.keyCode == 9 && !e.shiftKey && !e.controlKey && !e.altKey) {
+                if ( tinyMCE.activeEditor ) {
+                    if ( (jQuery("#post_ID").val() < 1) && (jQuery("#title").val().length > 0) ) { autosave(); }
+                    e = null;
+                    if ( tinyMCE.activeEditor.isHidden() ) return true;
+                    tinyMCE.activeEditor.focus();
+                    return false;
+                }
+                return true;
+            }
+        }
+    }
+    <?php endif; ?>
+    // ]]>
+    </script>
+    <?php
 }
 
 function get_search_query() {
@@ -963,17 +1001,23 @@ function the_search_query() {
 	echo attribute_escape( apply_filters( 'the_search_query', get_search_query() ) );
 }
 
-function language_attributes() {
+function language_attributes($doctype = 'html') {
+	$attributes = array();
 	$output = '';
+
 	if ( $dir = get_bloginfo('text_direction') )
-		$output = "dir=\"$dir\"";
+		$attributes[] = "dir=\"$dir\"";
+
 	if ( $lang = get_bloginfo('language') ) {
-		if ( $dir ) $output .= ' ';
-		if ( get_option('html_type') == 'text/html' )
-			$output .= "lang=\"$lang\"";
-		else $output .= "xml:lang=\"$lang\"";
+		if ( get_option('html_type') == 'text/html' || $doctype == 'xhtml' )
+			$attributes[] = "lang=\"$lang\"";
+
+		if ( get_option('html_type') != 'text/html' || $doctype == 'xhtml' )
+			$attributes[] = "xml:lang=\"$lang\"";
 	}
 
+	$output = implode(' ', $attributes);
+	$output = apply_filters('language_attributes', $output);
 	echo $output;
 }
 
@@ -1057,17 +1101,38 @@ function paginate_links( $args = '' ) {
 	return $r;
 }
 
+function wp_admin_css_color($key, $name, $url, $colors = array()) {
+	global $_wp_admin_css_colors;
+
+	if ( !isset($_wp_admin_css_colors) )
+		$_wp_admin_css_colors = array();
+
+	$_wp_admin_css_colors[$key] = (object) array('name' => $name, 'url' => $url, 'colors' => $colors);
+}
+
 function wp_admin_css_uri( $file = 'wp-admin' ) {
-	if ( defined('WP_INSTALLING') )
-	{
-		$_file = add_query_arg( 'version', get_bloginfo( 'version' ), "./$file.css" );
+	if ( defined('WP_INSTALLING') ) {
+		$_file = "./$file.css";
 	} else {
-		$_file = add_query_arg( 'version', get_bloginfo( 'version' ), get_option( 'siteurl' ) . "/wp-admin/$file.css" );
+		if ( 'css/colors' == $file || 'css/colors-rtl' == $file ) {
+			global $_wp_admin_css_colors;
+			$color = get_user_option('admin_color');
+			if ( empty($color) || !isset($_wp_admin_css_colors[$color]) )
+				$color = 'fresh';
+			$color = $_wp_admin_css_colors[$color];
+			$_file = $color->url;
+			$_file = ('css/colors-rtl' == $file) ? str_replace('.css','-rtl.css',$_file) : $_file;
+		} else {
+			$_file = get_option( 'siteurl' ) . "/wp-admin/$file.css";
+		}
 	}
+	$_file = add_query_arg( 'version', get_bloginfo( 'version' ),  $_file );
+
 	return apply_filters( 'wp_admin_css_uri', $_file, $file );
 }
 
 function wp_admin_css( $file = 'wp-admin' ) {
+
 	echo apply_filters( 'wp_admin_css', "<link rel='stylesheet' href='" . wp_admin_css_uri( $file ) . "' type='text/css' />\n", $file );
 	if ( 'rtl' == get_bloginfo( 'text_direction' ) ) {
 		$rtl = ( 'wp-admin' == $file ) ? 'rtl' : "$file-rtl";
@@ -1075,4 +1140,50 @@ function wp_admin_css( $file = 'wp-admin' ) {
 	}
 }
 
+/**
+ * Outputs the XHTML generator that is generated on the wp_head hook.
+ */
+function wp_generator()
+{
+	the_generator( apply_filters( 'wp_generator_type', 'xhtml' ) );
+}
+
+/**
+ * Outputs the generator XML or Comment for RSS, ATOM, etc.
+ * @param {String} $type The type of generator to return.
+ */
+function the_generator ( $type ) {
+	echo apply_filters('the_generator',get_the_generator($type),$type) . "\n";
+}
+
+/**
+ * Creates the generator XML or Comment for RSS, ATOM, etc.
+ * @param {String} $type The type of generator to return.
+ */
+function get_the_generator ( $type ) {
+	switch ($type) {
+		case 'html':
+			$gen = '<meta name="generator" content="WordPress ' . get_bloginfo( 'version' ) . '">' . "\n";
+			break;
+		case 'xhtml':
+			$gen = '<meta name="generator" content="WordPress ' . get_bloginfo( 'version' ) . '" />' . "\n";
+			break;
+		case 'atom':
+			$gen = '<generator uri="http://wordpress.org/" version="' . get_bloginfo_rss( 'version' ) . '">WordPress</generator>';
+			break;
+		case 'rss2':
+			$gen = '<generator>http://wordpress.org/?v=' . get_bloginfo_rss( 'version' ) . '</generator>';
+			break;
+		case 'rdf':
+			$gen = '<admin:generatorAgent rdf:resource="http://wordpress.org/?v=' . get_bloginfo_rss( 'version' ) . '" />';
+			break;
+		case 'comment':
+			$gen = '<!-- generator="WordPress/' . get_bloginfo( 'version' ) . '" -->';
+			break;
+		case 'export':
+			$gen = '<!-- generator="WordPress/' . get_bloginfo_rss('version') . '" created="'. date('Y-m-d H:i') . '"-->';
+			break;
+	}
+	return apply_filters( "get_the_generator_{$type}", $gen, $type );
+}
 ?>

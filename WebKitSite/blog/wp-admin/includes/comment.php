@@ -8,9 +8,7 @@ function comment_exists($comment_author, $comment_date) {
 }
 
 function edit_comment() {
-	global $user_ID;
 
-	$comment_ID = (int) $_POST['comment_ID'];
 	$comment_post_ID = (int) $_POST['comment_post_ID'];
 
 	if (!current_user_can( 'edit_post', $comment_post_ID ))
@@ -22,6 +20,14 @@ function edit_comment() {
 	$_POST['comment_approved'] = $_POST['comment_status'];
 	$_POST['comment_content'] = $_POST['content'];
 	$_POST['comment_ID'] = (int) $_POST['comment_ID'];
+
+	foreach ( array ('aa', 'mm', 'jj', 'hh', 'mm') as $timeunit ) {
+		if ( !empty( $_POST['hidden_' . $timeunit] ) && $_POST['hidden_' . $timeunit] != $_POST[$timeunit] ) {
+			$_POST['edit_date'] = '1';
+			break;
+		}
+	}
+
 
 	if (!empty ( $_POST['edit_date'] ) ) {
 		$aa = $_POST['aa'];
@@ -63,6 +69,28 @@ function get_pending_comments_num( $post_id ) {
 	$post_id = (int) $post_id;
 	$pending = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->comments WHERE comment_post_ID = $post_id AND comment_approved = '0'" );
 	return $pending;
+}
+
+// Add avatars to relevant places in admin, or try to
+
+function floated_admin_avatar( $name ) {
+	global $comment;
+
+	$id = $avatar = false;
+	if ( $comment->comment_author_email )
+		$id = $comment->comment_author_email;
+	if ( $comment->user_id )
+		$id = $comment->user_id;
+
+	if ( $id )
+		$avatar = get_avatar( $id, 32 );
+
+	return "$avatar $name";
+}
+
+if ( is_admin() && ('edit-comments.php' == $pagenow || 'edit.php' == $pagenow) ) {
+	if ( get_option('show_avatars') )
+		add_filter( 'comment_author', 'floated_admin_avatar' );
 }
 
 ?>

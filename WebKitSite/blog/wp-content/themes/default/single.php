@@ -10,7 +10,7 @@
 		</div>
 
 		<div class="post" id="post-<?php the_ID(); ?>">
-			<h2><a href="<?php echo get_permalink() ?>" rel="bookmark" title="Permanent Link: <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h2>
+			<h2><?php the_title(); ?></h2>
 
 			<div class="entry">
 				<?php the_content('<p class="serif">Read the rest of this entry &raquo;</p>'); ?>
@@ -27,7 +27,7 @@
 							/* $entry_datetime = abs(strtotime($post->post_date) - (60*120)); echo time_since($entry_datetime); echo ' ago'; */ ?>
 						on <?php the_time('l, F jS, Y') ?> at <?php the_time() ?>
 						and is filed under <?php the_category(', ') ?>.
-						You can follow any responses to this entry through the <?php comments_rss_link('RSS 2.0'); ?> feed.
+						You can follow any responses to this entry through the <?php post_comments_feed_link('RSS 2.0'); ?> feed.
 
 						<?php if (('open' == $post-> comment_status) && ('open' == $post->ping_status)) {
 							// Both Comments and Pings are open ?>

@@ -4,6 +4,7 @@ Theme URI: http://wordpress.org/
 Description: The original WordPress theme that graced versions 1.2.x and prior.
 Version: 1.5
 Author: Dave Shea
+Tags: mantle color, variable width, two columns, widgets
 
 Default WordPress by Dave Shea || http://mezzoblue.com
 Modifications by Matthew Mullenweg || http://photomatt.net
@@ -157,6 +158,13 @@ ul.post-meta span.post-meta-key {
 	border-left: 1px solid #ddd;
 	font-size: 110%;
 	list-style-type: none;
+}
+
+#commentlist li .avatar {
+	float: right;
+	margin-right: 25px;
+	border: 1px dotted #ccc;
+	padding: 2px;
 }
 
 #content {

@@ -8,45 +8,44 @@ $menu[0] = array(__('Dashboard'), 'read', 'index.php');
 
 if (strpos($_SERVER['REQUEST_URI'], 'edit-pages.php') !== false)
 	$menu[5] = array(__('Write'), 'edit_pages', 'page-new.php');
+elseif (strpos($_SERVER['REQUEST_URI'], 'link-manager.php') !== false)
+	$menu[5] = array(__('Write'), 'manage_links', 'link-add.php');
 else
 	$menu[5] = array(__('Write'), 'edit_posts', 'post-new.php');
+
 if (strpos($_SERVER['REQUEST_URI'], 'page-new.php') !== false)
 	$menu[10] = array(__('Manage'), 'edit_pages', 'edit-pages.php');
+elseif (strpos($_SERVER['REQUEST_URI'], 'link-add.php') !== false)
+	$menu[10] = array(__('Manage'), 'manage_links', 'link-manager.php');
 else
 	$menu[10] = array(__('Manage'), 'edit_posts', 'edit.php');
 
-$menu[15] = array(__('Comments'), 'edit_posts', 'edit-comments.php');
-$menu[20] = array(__('Blogroll'), 'manage_links', 'link-manager.php');
-$menu[25] = array(__('Presentation'), 'switch_themes', 'themes.php');
-$menu[30] = array(__('Plugins'), 'activate_plugins', 'plugins.php');
+$awaiting_mod = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->comments WHERE comment_approved = '0'");
+$menu[15] = array(__('Design'), 'switch_themes', 'themes.php');
+$menu[20] = array( sprintf( __('Comments %s'), "<span id='awaiting-mod' class='count-$awaiting_mod'><span class='comment-count'>$awaiting_mod</span></span>" ), 'edit_posts', 'edit-comments.php');
+$menu[30] = array(__('Settings'), 'manage_options', 'options-general.php');
+$menu[35] = array(__('Plugins'), 'activate_plugins', 'plugins.php');
 if ( current_user_can('edit_users') )
-	$menu[35] = array(__('Users'), 'edit_users', 'users.php');
+	$menu[40] = array(__('Users'), 'edit_users', 'users.php');
 else
-	$menu[35] = array(__('Profile'), 'read', 'profile.php');
-$menu[40] = array(__('Options'), 'manage_options', 'options-general.php');
-
+	$menu[40] = array(__('Profile'), 'read', 'profile.php');
 
 $_wp_real_parent_file['post.php'] = 'post-new.php'; // Back-compat
-$submenu['post-new.php'][5] = array(__('Write Post'), 'edit_posts', 'post-new.php');
-$submenu['post-new.php'][10] = array(__('Write Page'), 'edit_pages', 'page-new.php');
+$submenu['post-new.php'][5] = array(__('Post'), 'edit_posts', 'post-new.php');
+$submenu['post-new.php'][10] = array(__('Page'), 'edit_pages', 'page-new.php');
+$submenu['post-new.php'][15] = array(__('Link'), 'manage_links', 'link-add.php');
 
 $submenu['edit-comments.php'][5] = array(__('Comments'), 'edit_posts', 'edit-comments.php');
-$awaiting_mod = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->comments WHERE comment_approved = '0'");
-$submenu['edit-comments.php'][25] = array(sprintf(__("Awaiting Moderation (%s)"), "<span id='awaitmod'>$awaiting_mod</span>"), 'edit_posts', 'moderation.php');
-
 
 $submenu['edit.php'][5] = array(__('Posts'), 'edit_posts', 'edit.php');
 $submenu['edit.php'][10] = array(__('Pages'), 'edit_pages', 'edit-pages.php');
-$submenu['edit.php'][12] = array(__('Uploads'), 'upload_files', 'upload.php');
-$submenu['edit.php'][15] = array(__('Categories'), 'manage_categories', 'categories.php');
-$submenu['edit.php'][30] = array(__('Files'), 'edit_files', 'templates.php');
-$submenu['edit.php'][35] = array(__('Import'), 'import', 'import.php');
-$submenu['edit.php'][40] = array(__('Export'), 'import', 'export.php');
-
-$submenu['link-manager.php'][5] = array(__('Manage Blogroll'), 'manage_links', 'link-manager.php');
-$submenu['link-manager.php'][10] = array(__('Add Link'), 'manage_links', 'link-add.php');
-$submenu['link-manager.php'][20] = array(__('Import Links'), 'manage_links', 'link-import.php');
-$submenu['link-manager.php'][30] = array(__('Categories'), 'manage_links', 'edit-link-categories.php');
+$submenu['edit.php'][15] = array(__('Links'), 'manage_links', 'link-manager.php');
+$submenu['edit.php'][20] = array(__('Categories'), 'manage_categories', 'categories.php');
+$submenu['edit.php'][25] = array(__('Tags'), 'manage_categories', 'edit-tags.php');
+$submenu['edit.php'][30] = array(__('Link Categories'), 'manage_categories', 'edit-link-categories.php');
+$submenu['edit.php'][35] = array(__('Media Library'), 'upload_files', 'upload.php');
+$submenu['edit.php'][40] = array(__('Import'), 'import', 'import.php');
+$submenu['edit.php'][45] = array(__('Export'), 'import', 'export.php');
 
 if ( current_user_can('edit_users') ) {
 	$_wp_real_parent_file['profile.php'] = 'users.php'; // Back-compat for plugins adding submenus to profile.php.
@@ -137,6 +136,7 @@ unset($id);
 uksort($menu, "strnatcasecmp"); // make it all pretty
 
 if (! user_can_access_admin_page()) {
+	do_action('admin_page_access_denied');
 	wp_die( __('You do not have sufficient permissions to access this page.') );
 }
 

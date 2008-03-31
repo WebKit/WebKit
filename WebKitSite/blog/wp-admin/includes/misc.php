@@ -1,18 +1,8 @@
 <?php
 
 function got_mod_rewrite() {
-	global $is_apache;
-
-	// take 3 educated guesses as to whether or not mod_rewrite is available
-	if ( !$is_apache )
-		return false;
-
-	if ( function_exists( 'apache_get_modules' ) ) {
-		if ( !in_array( 'mod_rewrite', apache_get_modules() ) )
-			return false;
-	}
-
-	return true;
+	$got_rewrite = apache_mod_loaded('mod_rewrite', true);
+	return apply_filters('got_rewrite', $got_rewrite);
 }
 
 // Returns an array of strings from a file (.htaccess ) from between BEGIN
@@ -128,19 +118,15 @@ function update_recently_edited( $file ) {
 	update_option( 'recently_edited', $oldfiles );
 }
 
-// If siteurl or home changed, reset cookies and flush rewrite rules.
+// If siteurl or home changed, flush rewrite rules.
 function update_home_siteurl( $old_value, $value ) {
-	global $wp_rewrite, $user_login, $user_pass_md5;
+	global $wp_rewrite;
 
 	if ( defined( "WP_INSTALLING" ) )
 		return;
 
 	// If home changed, write rewrite rules to new location.
 	$wp_rewrite->flush_rules();
-	// Clear cookies for old paths.
-	wp_clearcookie();
-	// Set cookies for new paths.
-	wp_setcookie( $user_login, $user_pass_md5, true, get_option( 'home' ), get_option( 'siteurl' ));
 }
 
 add_action( 'update_option_home', 'update_home_siteurl', 10, 2 );

@@ -3,7 +3,10 @@
 
 $charset_collate = '';
 
-if ( version_compare(mysql_get_server_info(), '4.1.0', '>=') ) {
+// Declare these as global in case schema.php is included from a function.
+global $wpdb, $wp_queries;
+
+if ( $wpdb->supports_collation() ) {
 	if ( ! empty($wpdb->charset) )
 		$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
 	if ( ! empty($wpdb->collate) )
@@ -31,6 +34,7 @@ CREATE TABLE $wpdb->term_taxonomy (
 CREATE TABLE $wpdb->term_relationships (
  object_id bigint(20) NOT NULL default 0,
  term_taxonomy_id bigint(20) NOT NULL default 0,
+ term_order int(11) NOT NULL default 0,
  PRIMARY KEY  (object_id,term_taxonomy_id),
  KEY term_taxonomy_id (term_taxonomy_id)
 ) $charset_collate;
@@ -45,14 +49,16 @@ CREATE TABLE $wpdb->comments (
   comment_date_gmt datetime NOT NULL default '0000-00-00 00:00:00',
   comment_content text NOT NULL,
   comment_karma int(11) NOT NULL default '0',
-  comment_approved enum('0','1','spam') NOT NULL default '1',
+  comment_approved varchar(20) NOT NULL default '1',
   comment_agent varchar(255) NOT NULL default '',
   comment_type varchar(20) NOT NULL default '',
   comment_parent bigint(20) NOT NULL default '0',
   user_id bigint(20) NOT NULL default '0',
   PRIMARY KEY  (comment_ID),
   KEY comment_approved (comment_approved),
-  KEY comment_post_ID (comment_post_ID)
+  KEY comment_post_ID (comment_post_ID),
+  KEY comment_approved_date_gmt (comment_approved,comment_date_gmt),
+  KEY comment_date_gmt (comment_date_gmt)
 ) $charset_collate;
 CREATE TABLE $wpdb->links (
   link_id bigint(20) NOT NULL auto_increment,
@@ -62,7 +68,7 @@ CREATE TABLE $wpdb->links (
   link_target varchar(25) NOT NULL default '',
   link_category bigint(20) NOT NULL default '0',
   link_description varchar(255) NOT NULL default '',
-  link_visible enum('Y','N') NOT NULL default 'Y',
+  link_visible varchar(20) NOT NULL default 'Y',
   link_owner int(11) NOT NULL default '1',
   link_rating int(11) NOT NULL default '0',
   link_updated datetime NOT NULL default '0000-00-00 00:00:00',
@@ -78,7 +84,7 @@ CREATE TABLE $wpdb->options (
   blog_id int(11) NOT NULL default '0',
   option_name varchar(64) NOT NULL default '',
   option_value longtext NOT NULL,
-  autoload enum('yes','no') NOT NULL default 'yes',
+  autoload varchar(20) NOT NULL default 'yes',
   PRIMARY KEY  (option_id,blog_id,option_name),
   KEY option_name (option_name)
 ) $charset_collate;
@@ -100,9 +106,9 @@ CREATE TABLE $wpdb->posts (
   post_title text NOT NULL,
   post_category int(4) NOT NULL default '0',
   post_excerpt text NOT NULL,
-  post_status enum('publish','draft','private','static','object','attachment','inherit','future', 'pending') NOT NULL default 'publish',
-  comment_status enum('open','closed','registered_only') NOT NULL default 'open',
-  ping_status enum('open','closed') NOT NULL default 'open',
+  post_status varchar(20) NOT NULL default 'publish',
+  comment_status varchar(20) NOT NULL default 'open',
+  ping_status varchar(20) NOT NULL default 'open',
   post_password varchar(20) NOT NULL default '',
   post_name varchar(200) NOT NULL default '',
   to_ping text NOT NULL,
@@ -224,7 +230,7 @@ function populate_options() {
 	}
 
 	// 2.0.3
-	add_option('secret', md5(uniqid(microtime())));
+	add_option('secret', wp_generate_password());
 
 	// 2.1
 	add_option('blog_public', '1');
@@ -234,8 +240,18 @@ function populate_options() {
 	// 2.2
 	add_option('tag_base');
 
+	// 2.5
+	add_option('show_avatars', '1');
+	add_option('avatar_rating', 'G');
+	add_option('upload_url_path', '');
+	add_option('thumbnail_size_w', 150);
+	add_option('thumbnail_size_h', 150);
+	add_option('thumbnail_crop', 1);
+	add_option('medium_size_w', 300);
+	add_option('medium_size_h', 300);
+
 	// Delete unused options
-	$unusedoptions = array ('blodotgsping_url', 'bodyterminator', 'emailtestonly', 'phoneemail_separator', 'smilies_directory', 'subjectprefix', 'use_bbcode', 'use_blodotgsping', 'use_phoneemail', 'use_quicktags', 'use_weblogsping', 'weblogs_cache_file', 'use_preview', 'use_htmltrans', 'smilies_directory', 'fileupload_allowedusers', 'use_phoneemail', 'default_post_status', 'default_post_category', 'archive_mode', 'time_difference', 'links_minadminlevel', 'links_use_adminlevels', 'links_rating_type', 'links_rating_char', 'links_rating_ignore_zero', 'links_rating_single_image', 'links_rating_image0', 'links_rating_image1', 'links_rating_image2', 'links_rating_image3', 'links_rating_image4', 'links_rating_image5', 'links_rating_image6', 'links_rating_image7', 'links_rating_image8', 'links_rating_image9', 'weblogs_cacheminutes', 'comment_allowed_tags', 'search_engine_friendly_urls', 'default_geourl_lat', 'default_geourl_lon', 'use_default_geourl', 'weblogs_xml_url', 'new_users_can_blog', '_wpnonce', '_wp_http_referer', 'Update', 'action', 'rich_editing');
+	$unusedoptions = array ('blodotgsping_url', 'bodyterminator', 'emailtestonly', 'phoneemail_separator', 'smilies_directory', 'subjectprefix', 'use_bbcode', 'use_blodotgsping', 'use_phoneemail', 'use_quicktags', 'use_weblogsping', 'weblogs_cache_file', 'use_preview', 'use_htmltrans', 'smilies_directory', 'fileupload_allowedusers', 'use_phoneemail', 'default_post_status', 'default_post_category', 'archive_mode', 'time_difference', 'links_minadminlevel', 'links_use_adminlevels', 'links_rating_type', 'links_rating_char', 'links_rating_ignore_zero', 'links_rating_single_image', 'links_rating_image0', 'links_rating_image1', 'links_rating_image2', 'links_rating_image3', 'links_rating_image4', 'links_rating_image5', 'links_rating_image6', 'links_rating_image7', 'links_rating_image8', 'links_rating_image9', 'weblogs_cacheminutes', 'comment_allowed_tags', 'search_engine_friendly_urls', 'default_geourl_lat', 'default_geourl_lon', 'use_default_geourl', 'weblogs_xml_url', 'new_users_can_blog', '_wpnonce', '_wp_http_referer', 'Update', 'action', 'rich_editing', 'autosave_interval');
 	foreach ($unusedoptions as $option) :
 		delete_option($option);
 	endforeach;
@@ -251,17 +267,24 @@ function populate_roles() {
 	populate_roles_160();
 	populate_roles_210();
 	populate_roles_230();
+	populate_roles_250();
 }
 
 function populate_roles_160() {
-	global $wp_roles;
-
 	// Add roles
-	add_role('administrator', __('Administrator'));
-	add_role('editor', __('Editor'));
-	add_role('author', __('Author'));
-	add_role('contributor', __('Contributor'));
-	add_role('subscriber', __('Subscriber'));
+
+	// Dummy gettext calls to get strings in the catalog.
+	_c('Administrator|User role');
+	_c('Editor|User role');
+	_c('Author|User role');
+	_c('Contributor|User role');
+	_c('Subscriber|User role');
+
+	add_role('administrator', 'Administrator|User role');
+	add_role('editor', 'Editor|User role');
+	add_role('author', 'Author|User role');
+	add_role('contributor', 'Contributor|User role');
+	add_role('subscriber', 'Subscriber|User role');
 
 	// Add caps for Administrator role
 	$role = get_role('administrator');
@@ -389,6 +412,14 @@ function populate_roles_230() {
 
 	if ( !empty( $role ) ) {
 		$role->add_cap( 'unfiltered_upload' );
+	}
+}
+
+function populate_roles_250() {
+	$role = get_role( 'administrator' );
+
+	if ( !empty( $role ) ) {
+		$role->add_cap( 'edit_dashboard' );
 	}
 }
 

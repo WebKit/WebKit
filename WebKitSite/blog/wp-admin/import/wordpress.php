@@ -2,14 +2,21 @@
 
 class WP_Import {
 
-	var $posts = array ();
-	var $posts_processed = array ();
-    // Array of arrays. [[0] => XML fragment, [1] => New post ID]
+	var $post_ids_processed = array ();
+	var $orphans = array ();
 	var $file;
 	var $id;
 	var $mtnames = array ();
 	var $newauthornames = array ();
+	var $allauthornames = array ();
+
+	var $author_ids = array ();
+	var $tags = array ();
+	var $categories = array ();
+
 	var $j = -1;
+	var $fetch_attachments = false;
+	var $url_remap = array ();
 
 	function header() {
 		echo '<div class="wrap">';
@@ -42,60 +49,48 @@ class WP_Import {
 		return $return;
 	}
 
-	function users_form($n) {
-		global $wpdb, $testing;
-		$users = $wpdb->get_results("SELECT user_login FROM $wpdb->users ORDER BY user_login");
-?><select name="userselect[<?php echo $n; ?>]">
-	<option value="#NONE#">- Select -</option>
-	<?php
-		foreach ($users as $user) {
-			echo '<option value="'.$user->user_login.'">'.$user->user_login.'</option>';
-		}
-?>
-	</select>
-	<?php
+	function has_gzip() {
+		return is_callable('gzopen');
 	}
 
-	//function to check the authorname and do the mapping
-	function checkauthor($author) {
-		global $wpdb;
-		//mtnames is an array with the names in the mt import file
-		$pass = 'changeme';
-		if (!(in_array($author, $this->mtnames))) { //a new mt author name is found
-			++ $this->j;
-			$this->mtnames[$this->j] = $author; //add that new mt author name to an array
-			$user_id = username_exists($this->newauthornames[$this->j]); //check if the new author name defined by the user is a pre-existing wp user
-			if (!$user_id) { //banging my head against the desk now.
-				if ($this->newauthornames[$this->j] == 'left_blank') { //check if the user does not want to change the authorname
-					$user_id = wp_create_user($author, $pass);
-					$this->newauthornames[$this->j] = $author; //now we have a name, in the place of left_blank.
-				} else {
-					$user_id = wp_create_user($this->newauthornames[$this->j], $pass);
-				}
-			} else {
-				return $user_id; // return pre-existing wp username if it exists
-			}
-		} else {
-			$key = array_search($author, $this->mtnames); //find the array key for $author in the $mtnames array
-			$user_id = username_exists($this->newauthornames[$key]); //use that key to get the value of the author's name from $newauthornames
-		}
-
-		return $user_id;
+	function fopen($filename, $mode='r') {
+		if ( $this->has_gzip() )
+			return gzopen($filename, $mode);
+		return fopen($filename, $mode);
 	}
 
-	function get_entries() {
+	function feof($fp) {
+		if ( $this->has_gzip() )
+			return gzeof($fp);
+		return feof($fp);
+	}
+
+	function fgets($fp, $len=8192) {
+		if ( $this->has_gzip() )
+			return gzgets($fp, $len);
+		return fgets($fp, $len);
+	}
+
+	function fclose($fp) {
+		if ( $this->has_gzip() )
+			return gzclose($fp);
+		return fclose($fp);
+	}
+
+	function get_entries($process_post_func=NULL) {
 		set_magic_quotes_runtime(0);
 
-		$this->posts = array();
-		$this->categories = array();
-		$this->tags = array();
-		$num = 0;
 		$doing_entry = false;
+		$is_wxr_file = false;
 
-		$fp = fopen($this->file, 'r');
+		$fp = $this->fopen($this->file, 'r');
 		if ($fp) {
-			while ( !feof($fp) ) {
-				$importline = rtrim(fgets($fp));
+			while ( !$this->feof($fp) ) {
+				$importline = rtrim($this->fgets($fp));
+
+				// this doesn't check that the file is perfectly valid but will at least confirm that it's not the wrong format altogether
+				if ( !$is_wxr_file && preg_match('|xmlns:wp="http://wordpress[.]org/export/\d+[.]\d+/"|', $importline) )
+					$is_wxr_file = true;
 
 				if ( false !== strpos($importline, '<wp:category>') ) {
 					preg_match('|<wp:category>(.*?)</wp:category>|is', $importline, $category);
@@ -108,44 +103,31 @@ class WP_Import {
 					continue;
 				}
 				if ( false !== strpos($importline, '<item>') ) {
-					$this->posts[$num] = '';
+					$this->post = '';
 					$doing_entry = true;
 					continue;
 				}
 				if ( false !== strpos($importline, '</item>') ) {
-					$num++;
 					$doing_entry = false;
+					if ($process_post_func)
+						call_user_func($process_post_func, $this->post);
 					continue;
 				}
 				if ( $doing_entry ) {
-					$this->posts[$num] .= $importline . "\n";
+					$this->post .= $importline . "\n";
 				}
 			}
 
-			foreach ($this->posts as $post) {
-				$post_ID = (int) $this->get_tag( $post, 'wp:post_id' );
-				if ($post_ID) {
-					$this->posts_processed[$post_ID][0] = &$post;
-					$this->posts_processed[$post_ID][1] = 0;
-				}
-			}
-
-			fclose($fp);
+			$this->fclose($fp);
 		}
+
+		return $is_wxr_file;
+
 	}
 
 	function get_wp_authors() {
-		$temp = array ();
-		$i = -1;
-		foreach ($this->posts as $post) {
-			if ('' != trim($post)) {
-				++ $i;
-				$author = $this->get_tag( $post, 'dc:creator' );
-				array_push($temp, "$author"); //store the extracted author names in a temporary array
-			}
-		}
-
 		// We need to find unique values of author names, while preserving the order, so this function emulates the unique_value(); php function, without the sorting.
+		$temp = $this->allauthornames;
 		$authors[0] = array_shift($temp);
 		$y = count($temp) + 1;
 		for ($x = 1; $x < $y; $x ++) {
@@ -158,37 +140,50 @@ class WP_Import {
 	}
 
 	function get_authors_from_post() {
-		$formnames = array ();
-		$selectnames = array ();
+		global $current_user;
 
-		foreach ($_POST['user'] as $key => $line) {
-			$newname = trim(stripslashes($line));
-			if ($newname == '')
-				$newname = 'left_blank'; //passing author names from step 1 to step 2 is accomplished by using POST. left_blank denotes an empty entry in the form.
-			array_push($formnames, "$newname");
-		} // $formnames is the array with the form entered names
+		// this will populate $this->author_ids with a list of author_names => user_ids
 
-		foreach ($_POST['userselect'] as $user => $key) {
-			$selected = trim(stripslashes($key));
-			array_push($selectnames, "$selected");
-		}
+		foreach ( $_POST['author_in'] as $i => $in_author_name ) {
 
-		$count = count($formnames);
-		for ($i = 0; $i < $count; $i ++) {
-			if ($selectnames[$i] != '#NONE#') { //if no name was selected from the select menu, use the name entered in the form
-				array_push($this->newauthornames, "$selectnames[$i]");
-			} else {
-				array_push($this->newauthornames, "$formnames[$i]");
+			if ( !empty($_POST['user_select'][$i]) ) {
+				// an existing user was selected in the dropdown list
+				$user = get_userdata( intval($_POST['user_select'][$i]) );
+				if ( isset($user->ID) )
+					$this->author_ids[$in_author_name] = $user->ID;
+			}
+			elseif ( $this->allow_create_users() ) {
+				// nothing was selected in the dropdown list, so we'll use the name in the text field
+
+				$new_author_name = trim($_POST['user_create'][$i]);
+				// if the user didn't enter a name, assume they want to use the same name as in the import file
+				if ( empty($new_author_name) )
+					$new_author_name = $in_author_name;
+
+				$user_id = username_exists($new_author_name);
+				if ( !$user_id ) {
+					$user_id = wp_create_user($new_author_name, wp_generate_password());
+				}
+
+				$this->author_ids[$in_author_name] = $user_id;
+			}
+
+			// failsafe: if the user_id was invalid, default to the current user
+			if ( empty($this->author_ids[$in_author_name]) ) {
+				$this->author_ids[$in_author_name] = intval($current_user->ID);
 			}
 		}
+
 	}
 
 	function wp_authors_form() {
 ?>
 <h2><?php _e('Assign Authors'); ?></h2>
 <p><?php _e('To make it easier for you to edit and save the imported posts and drafts, you may want to change the name of the author of the posts. For example, you may want to import all the entries as <code>admin</code>s entries.'); ?></p>
-<p><?php _e('If a new user is created by WordPress, the password will be set, by default, to "changeme". Quite suggestive, eh? ;)'); ?></p>
-	<?php
+<?php
+	if ( $this->allow_create_users() ) {
+		echo '<p>'.__('If a new user is created by WordPress, a password will be randomly generated. Manually change the user\'s details if necessary.')."</p>\n";
+	}
 
 
 		$authors = $this->get_wp_authors();
@@ -198,30 +193,75 @@ class WP_Import {
 		$j = -1;
 		foreach ($authors as $author) {
 			++ $j;
-			echo '<li>'.__('Current author:').' <strong>'.$author.'</strong><br />'.sprintf(__('Create user %1$s or map to existing'), ' <input type="text" value="'.$author.'" name="'.'user[]'.'" maxlength="30"> <br />');
-			$this->users_form($j);
+			echo '<li>'.__('Import author:').' <strong>'.$author.'</strong><br />';
+			$this->users_form($j, $author);
 			echo '</li>';
 		}
 
-		echo '<input type="submit" value="Submit">'.'<br />';
-		echo '</form>';
-		echo '</ol>';
+		if ( $this->allow_fetch_attachments() ) {
+?>
+</ol>
+<h2><?php _e('Import Attachments'); ?></h2>
+<p>
+	<input type="checkbox" value="1" name="attachments" id="import-attachments" />
+	<label for="import-attachments"><?php _e('Download and import file attachments') ?></label>
+</p>
 
+<?php
+		}
+
+		echo '<input type="submit" value="'.attribute_escape( __('Submit') ).'">'.'<br />';
+		echo '</form>';
+
+	}
+
+	function users_form($n, $author) {
+
+		if ( $this->allow_create_users() ) {
+			printf(__('Create user %1$s or map to existing'), ' <input type="text" value="'.$author.'" name="'.'user_create['.intval($n).']'.'" maxlength="30"> <br />');
+		}
+		else {
+			echo __('Map to existing').'<br />';
+		}
+
+		// keep track of $n => $author name
+		echo '<input type="hidden" name="author_in['.intval($n).']" value="'.htmlspecialchars($author).'" />';
+
+		$users = get_users_of_blog();
+?><select name="user_select[<?php echo $n; ?>]">
+	<option value="0"><?php _e('- Select -'); ?></option>
+	<?php
+		foreach ($users as $user) {
+			echo '<option value="'.$user->user_id.'">'.$user->user_login.'</option>';
+		}
+?>
+	</select>
+	<?php
 	}
 
 	function select_authors() {
-		$file = wp_import_handle_upload();
-		if ( isset($file['error']) ) {
-			echo '<p>'.__('Sorry, there has been an error.').'</p>';
-			echo '<p><strong>' . $file['error'] . '</strong></p>';
-			return;
+		$is_wxr_file = $this->get_entries(array(&$this, 'process_author'));
+		if ( $is_wxr_file ) {
+			$this->wp_authors_form();
 		}
-		$this->file = $file['file'];
-		$this->id = (int) $file['id'];
-
-		$this->get_entries();
-		$this->wp_authors_form();
+		else {
+			echo '<h2>'.__('Invalid file').'</h2>';
+			echo '<p>'.__('Please upload a valid WXR (WordPress eXtended RSS) export file.').'</p>';
+		}
 	}
+
+	// fetch the user ID for a given author name, respecting the mapping preferences
+	function checkauthor($author) {
+		global $current_user;
+
+		if ( !empty($this->author_ids[$author]) )
+			return $this->author_ids[$author];
+
+		// failsafe: map to the current user
+		return $current_user->ID;
+	}
+
+
 
 	function process_categories() {
 		global $wpdb;
@@ -273,19 +313,22 @@ class WP_Import {
 		}
 	}
 
+	function process_author($post) {
+		$author = $this->get_tag( $post, 'dc:creator' );
+		if ($author)
+			$this->allauthornames[] = $author;
+	}
+
 	function process_posts() {
 		$i = -1;
 		echo '<ol>';
 
-		foreach ($this->posts as $post) {
-			$result = $this->process_post($post);
-			if ( is_wp_error( $result ) )
-				return $result;
-		}
+		$this->get_entries(array(&$this, 'process_post'));
 
 		echo '</ol>';
 
 		wp_import_cleanup($this->id);
+		do_action('import_done', 'wordpress');
 
 		echo '<h3>'.sprintf(__('All done.').' <a href="%s">'.__('Have fun!').'</a>', get_option('home')).'</h3>';
 	}
@@ -294,8 +337,10 @@ class WP_Import {
 		global $wpdb;
 
 		$post_ID = (int) $this->get_tag( $post, 'wp:post_id' );
-  		if ( $post_ID && !empty($this->posts_processed[$post_ID][1]) ) // Processed already
+  		if ( $post_ID && !empty($this->post_ids_processed[$post_ID]) ) // Processed already
 			return 0;
+		
+		set_time_limit( 60 );
 
 		// There are only ever one of these
 		$post_title     = $this->get_tag( $post, 'title' );
@@ -308,6 +353,7 @@ class WP_Import {
 		$post_parent    = $this->get_tag( $post, 'wp:post_parent' );
 		$menu_order     = $this->get_tag( $post, 'wp:menu_order' );
 		$post_type      = $this->get_tag( $post, 'wp:post_type' );
+		$post_password  = $this->get_tag( $post, 'wp:post_password' );
 		$guid           = $this->get_tag( $post, 'guid' );
 		$post_author    = $this->get_tag( $post, 'dc:creator' );
 
@@ -334,35 +380,52 @@ class WP_Import {
 			$cat_index++;
 		}
 
-		if ($post_id = post_exists($post_title, '', $post_date)) {
+		$post_exists = post_exists($post_title, '', $post_date);
+
+		if ( $post_exists ) {
 			echo '<li>';
-			printf(__('Post <i>%s</i> already exists.'), stripslashes($post_title));
+			printf(__('Post <em>%s</em> already exists.'), stripslashes($post_title));
 		} else {
 
 			// If it has parent, process parent first.
 			$post_parent = (int) $post_parent;
-			if ($parent = $this->posts_processed[$post_parent]) {
-				if (!$parent[1]) { 
-					$result = $this->process_post($parent[0]); // If not yet, process the parent first.
-					if ( is_wp_error( $result ) )
-						return $result;
+			if ($post_parent) {
+				// if we already know the parent, map it to the local ID
+				if ( $parent = $this->post_ids_processed[$post_parent] ) {
+					$post_parent = $parent;  // new ID of the parent
 				}
-				$post_parent = $parent[1]; // New ID of the parent;
+				else {
+					// record the parent for later
+					$this->orphans[intval($post_ID)] = $post_parent;
+				}
 			}
 
 			echo '<li>';
-			printf(__('Importing post <i>%s</i>...'), stripslashes($post_title));
 
 			$post_author = $this->checkauthor($post_author); //just so that if a post already exists, new users are not created by checkauthor
 
-			$postdata = compact('post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_excerpt', 'post_status', 'post_name', 'comment_status', 'ping_status', 'post_modified', 'post_modified_gmt', 'guid', 'post_parent', 'menu_order', 'post_type');
-			$comment_post_ID = $post_id = wp_insert_post($postdata);
+			$postdata = compact('post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_status', 'post_name', 'comment_status', 'ping_status', 'guid', 'post_parent', 'menu_order', 'post_type', 'post_password');
+			if ($post_type == 'attachment') {
+				$remote_url = $this->get_tag( $post, 'wp:attachment_url' );
+				if ( !$remote_url )
+					$remote_url = $guid;
+
+				$comment_post_ID = $post_id = $this->process_attachment($postdata, $remote_url);
+				if ( !$post_id or is_wp_error($post_id) )
+					return $post_id;
+			}
+			else {
+				printf(__('Importing post <em>%s</em>...'), stripslashes($post_title));
+				$comment_post_ID = $post_id = wp_insert_post($postdata);
+			}
+
 			if ( is_wp_error( $post_id ) )
 				return $post_id;
 
 			// Memorize old and new ID.
-			if ( $post_id && $post_ID && $this->posts_processed[$post_ID] )
-				$this->posts_processed[$post_ID][1] = $post_id; // New ID.
+			if ( $post_id && $post_ID ) {
+				$this->post_ids_processed[intval($post_ID)] = intval($post_id);
+			}
 
 			// Add categories.
 			if (count($categories) > 0) {
@@ -396,7 +459,7 @@ class WP_Import {
 						$tag_id = wp_insert_term($tag, 'post_tag');
 						$tag_id = $tag_id['term_id'];
 					}
-					$post_tags[] = $tag_id;
+					$post_tags[] = intval($tag_id);
 				}
 				wp_set_post_tags($post_id, $post_tags);
 			}
@@ -418,7 +481,8 @@ class WP_Import {
 			$comment_type         = $this->get_tag( $comment, 'wp:comment_type');
 			$comment_parent       = $this->get_tag( $comment, 'wp:comment_parent');
 
-			if ( !comment_exists($comment_author, $comment_date) ) {
+			// if this is a new post we can skip the comment_exists() check
+			if ( !$post_exists || !comment_exists($comment_author, $comment_date) ) {
 				$commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_author_IP', 'comment_date', 'comment_date_gmt', 'comment_content', 'comment_approved', 'comment_type', 'comment_parent');
 				wp_insert_comment($commentdata);
 				$num_comments++;
@@ -426,7 +490,7 @@ class WP_Import {
 		} }
 
 		if ( $num_comments )
-			printf(' '.__('(%s comments)'), $num_comments);
+			printf(' '.__ngettext('(%s comment)', '(%s comments)', $num_comments), $num_comments);
 
 		// Now for post meta
 		preg_match_all('|<wp:postmeta>(.*?)</wp:postmeta>|is', $post, $postmeta);
@@ -435,21 +499,215 @@ class WP_Import {
 			$key   = $this->get_tag( $p, 'wp:meta_key' );
 			$value = $this->get_tag( $p, 'wp:meta_value' );
 			$value = stripslashes($value); // add_post_meta() will escape.
-			add_post_meta( $post_id, $key, $value );
+
+			$this->process_post_meta($post_id, $key, $value);
+
 		} }
+
+		do_action('import_post_added', $post_id);
+		print "</li>\n";
 	}
 
-	function import() {
-		$this->id = (int) $_GET['id'];
+	function process_post_meta($post_id, $key, $value) {
+		// the filter can return false to skip a particular metadata key
+		$_key = apply_filters('import_post_meta_key', $key);
+		if ( $_key ) {
+			add_post_meta( $post_id, $_key, $value );
+			do_action('import_post_meta', $post_id, $_key, $value);
+		}
+	}
 
-		$this->file = get_attached_file($this->id);
+	function process_attachment($postdata, $remote_url) {
+		if ($this->fetch_attachments and $remote_url) {
+			printf( __('Importing attachment <em>%s</em>... '), htmlspecialchars($remote_url) );
+			$upload = $this->fetch_remote_file($postdata, $remote_url);
+			if ( is_wp_error($upload) ) {
+				printf( __('Remote file error: %s'), htmlspecialchars($upload->get_error_message()) );
+				return $upload;
+			}
+			else {
+				print '('.size_format(filesize($upload['file'])).')';
+			}
+
+			if ( $info = wp_check_filetype($upload['file']) ) {
+				$postdata['post_mime_type'] = $info['type'];
+			}
+			else {
+				print __('Invalid file type');
+				return;
+			}
+
+			$postdata['guid'] = $upload['url'];
+
+			// as per wp-admin/includes/upload.php
+			$post_id = wp_insert_attachment($postdata, $upload['file']);
+			wp_update_attachment_metadata( $post_id, wp_generate_attachment_metadata( $post_id, $upload['file'] ) );
+
+			// remap the thumbnail url.  this isn't perfect because we're just guessing the original url.
+			if ( preg_match('@^image/@', $info['type']) && $thumb_url = wp_get_attachment_thumb_url($post_id) ) {
+				$parts = pathinfo($remote_url);
+				$ext = $parts['extension'];
+				$name = basename($parts['basename'], ".{$ext}");
+				$this->url_remap[$parts['dirname'] . '/' . $name . '.thumbnail.' . $ext] = $thumb_url;
+			}
+
+			return $post_id;
+		}
+		else {
+			printf( __('Skipping attachment <em>%s</em>'), htmlspecialchars($remote_url) );
+		}
+	}
+
+	function fetch_remote_file($post, $url) {
+		$upload = wp_upload_dir($post['post_date']);
+
+		// extract the file name and extension from the url
+		$file_name = basename($url);
+
+		// get placeholder file in the upload dir with a unique sanitized filename
+		$upload = wp_upload_bits( $file_name, 0, '', $post['post_date']);
+		if ( $upload['error'] ) {
+			echo $upload['error'];
+			return new WP_Error( 'upload_dir_error', $upload['error'] );
+		}
+
+		// fetch the remote url and write it to the placeholder file
+		$headers = wp_get_http($url, $upload['file']);
+
+		// make sure the fetch was successful
+		if ( $headers['response'] != '200' ) {
+			@unlink($upload['file']);
+			return new WP_Error( 'import_file_error', sprintf(__('Remote file returned error response %d'), intval($headers['response'])) );
+		}
+		elseif ( isset($headers['content-length']) && filesize($upload['file']) != $headers['content-length'] ) {
+			@unlink($upload['file']);
+			return new WP_Error( 'import_file_error', __('Remote file is incorrect size') );
+		}
+
+		$max_size = $this->max_attachment_size();
+		if ( !empty($max_size) and filesize($upload['file']) > $max_size ) {
+			@unlink($upload['file']);
+			return new WP_Error( 'import_file_error', sprintf(__('Remote file is too large, limit is %s', size_format($max_size))) );
+		}
+
+		// keep track of the old and new urls so we can substitute them later
+		$this->url_remap[$url] = $upload['url'];
+		// if the remote url is redirected somewhere else, keep track of the destination too
+		if ( $headers['x-final-location'] != $url )
+			$this->url_remap[$headers['x-final-location']] = $upload['url'];
+
+		return $upload;
+
+	}
+
+	// sort by strlen, longest string first
+	function cmpr_strlen($a, $b) {
+		return strlen($b) - strlen($a);
+	}
+
+	// update url references in post bodies to point to the new local files
+	function backfill_attachment_urls() {
+
+		// make sure we do the longest urls first, in case one is a substring of another
+		uksort($this->url_remap, array(&$this, 'cmpr_strlen'));
+
+		global $wpdb;
+		foreach ($this->url_remap as $from_url => $to_url) {
+			// remap urls in post_content
+			$wpdb->query( $wpdb->prepare("UPDATE {$wpdb->posts} SET post_content = REPLACE(post_content, '%s', '%s')", $from_url, $to_url) );
+			// remap enclosure urls
+			$result = $wpdb->query( $wpdb->prepare("UPDATE {$wpdb->postmeta} SET meta_value = REPLACE(meta_value, '%s', '%s') WHERE meta_key='enclosure'", $from_url, $to_url) );
+		}
+	}
+
+	// update the post_parent of orphans now that we know the local id's of all parents
+	function backfill_parents() {
+		global $wpdb;
+
+		foreach ($this->orphans as $child_id => $parent_id) {
+			$local_child_id = $this->post_ids_processed[$child_id];
+			$local_parent_id = $this->post_ids_processed[$parent_id];
+			if ($local_child_id and $local_parent_id) {
+				$wpdb->query( $wpdb->prepare("UPDATE {$wpdb->posts} SET post_parent = %d WHERE ID = %d", $local_parent_id, $local_child_id));
+			}
+		}
+	}
+
+	function is_valid_meta_key($key) {
+		// skip _wp_attached_file metadata since we'll regenerate it from scratch
+		if ( $key == '_wp_attached_file' )
+			return false;
+		return $key;
+	}
+
+	// give the user the option of creating new users to represent authors in the import file?
+	function allow_create_users() {
+		return apply_filters('import_allow_create_users', true);
+	}
+
+	// give the user the option of downloading and importing attached files
+	function allow_fetch_attachments() {
+		return apply_filters('import_allow_fetch_attachments', true);
+	}
+
+	function max_attachment_size() {
+		// can be overridden with a filter - 0 means no limit
+		return apply_filters('import_attachment_size_limit', 0);
+	}
+
+	function import_start() {
+		wp_defer_term_counting(true);
+		wp_defer_comment_counting(true);
+		do_action('import_start');
+	}
+
+	function import_end() {
+		do_action('import_end');
+
+		// clear the caches after backfilling
+		foreach ($this->post_ids_processed as $post_id)
+			clean_post_cache($post_id);
+
+		wp_defer_term_counting(false);
+		wp_defer_comment_counting(false);
+	}
+
+	function import($id, $fetch_attachments = false) {
+		$this->id = (int) $id;
+		$this->fetch_attachments = ($this->allow_fetch_attachments() && (bool) $fetch_attachments);
+
+		add_filter('import_post_meta_key', array($this, 'is_valid_meta_key'));
+		$file = get_attached_file($this->id);
+		$this->import_file($file);
+	}
+
+	function import_file($file) {
+		$this->file = $file;
+
+		$this->import_start();
 		$this->get_authors_from_post();
 		$this->get_entries();
 		$this->process_categories();
 		$this->process_tags();
 		$result = $this->process_posts();
+		$this->backfill_parents();
+		$this->backfill_attachment_urls();
+		$this->import_end();
+
 		if ( is_wp_error( $result ) )
 			return $result;
+	}
+
+	function handle_upload() {
+		$file = wp_import_handle_upload();
+		if ( isset($file['error']) ) {
+			echo '<p>'.__('Sorry, there has been an error.').'</p>';
+			echo '<p><strong>' . $file['error'] . '</strong></p>';
+			return false;
+		}
+		$this->file = $file['file'];
+		$this->id = (int) $file['id'];
+		return true;
 	}
 
 	function dispatch() {
@@ -465,11 +723,12 @@ class WP_Import {
 				break;
 			case 1 :
 				check_admin_referer('import-upload');
-				$this->select_authors();
+				if ( $this->handle_upload() )
+					$this->select_authors();
 				break;
 			case 2:
 				check_admin_referer('import-wordpress');
-				$result = $this->import();
+				$result = $this->import( $_GET['id'], $_POST['attachments'] );
 				if ( is_wp_error( $result ) )
 					echo $result->get_error_message();
 				break;
@@ -484,6 +743,6 @@ class WP_Import {
 
 $wp_import = new WP_Import();
 
-register_importer('wordpress', 'WordPress', __('Import <strong>posts, comments, custom fields, pages, and categories</strong> from a WordPress export file'), array ($wp_import, 'dispatch'));
+register_importer('wordpress', 'WordPress', __('Import <strong>posts, comments, custom fields, pages, and categories</strong> from a WordPress export file.'), array ($wp_import, 'dispatch'));
 
 ?>

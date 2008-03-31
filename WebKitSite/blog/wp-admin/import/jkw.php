@@ -14,17 +14,17 @@ class JeromesKeyword_Import {
 
 	function greet() {
 		echo '<div class="narrow">';
-		echo '<p>'.__('Howdy! This imports tags from an existing Jerome&#8217;s Keywords installation into this blog using the new WordPress native tagging structure.').'</p>';
+		echo '<p>'.__('Howdy! This imports tags from Jerome&#8217;s Keywords into WordPress tags.').'</p>';
 		echo '<p>'.__('This is suitable for Jerome&#8217;s Keywords version 1.x and 2.0a.').'</p>';
 		echo '<p><strong>'.__('All existing Jerome&#8217;s Keywords will be removed after import.').'</strong></p>';
 		echo '<p><strong>'.__('Don&#8217;t be stupid - backup your database before proceeding!').'</strong></p>';
 		echo '<form action="admin.php?import=jkw&amp;step=1" method="post">';
 		wp_nonce_field('import-jkw');
-		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Import Version 1.x &raquo;').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" class="button" value="'.__('Import Version 1.x').'" /></p>';
 		echo '</form>';
 		echo '<form action="admin.php?import=jkw&amp;step=3" method="post">';
 		wp_nonce_field('import-jkw');
-		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Import Version 2.0a &raquo;').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" class="button" value="'.__('Import Version 2.0a').'" /></p>';
 		echo '</form>';
 		echo '</div>';
 	}
@@ -33,7 +33,7 @@ class JeromesKeyword_Import {
 		if ( empty($_GET['step']) )
 			$step = 0;
 		else
-			$step = abs(intval($_GET['step']));
+			$step = absint($_GET['step']);
 
 		// load the header
 		$this->header();
@@ -77,14 +77,14 @@ class JeromesKeyword_Import {
 		echo '<div class="narrow">';
 		echo '<p><h3>'.__('Reading Jerome&#8217;s Keywords Tags&#8230;').'</h3></p>';
 
-		// import Jerome's Keywords tags 
+		// import Jerome's Keywords tags
 		$metakeys = $wpdb->get_results("SELECT post_id, meta_id, meta_key, meta_value FROM $wpdb->postmeta WHERE $wpdb->postmeta.meta_key = 'keywords'");
 		if ( !is_array($metakeys)) {
 			echo '<p>' . __('No Tags Found!') . '</p>';
 			return false;
 		} else {
 			$count = count($metakeys);
-			echo '<p>' . sprintf( __('Done! <strong>%s</strong> posts with tags were read.'), $count ) . '<br /></p>';
+			echo '<p>' . sprintf( __ngettext('Done! <strong>%s</strong> post with tags were read.', 'Done! <strong>%s</strong> posts with tags were read.', $count), $count ) . '<br /></p>';
 			echo '<ul>';
 			foreach ( $metakeys as $post_meta ) {
 				if ( $post_meta->meta_value != '' ) {
@@ -106,7 +106,7 @@ class JeromesKeyword_Import {
 
 		echo '<form action="admin.php?import=jkw&amp;step='.($precheck? 2:6).'" method="post">';
 		wp_nonce_field('import-jkw');
-		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Next &raquo;').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Next').'" /></p>';
 		echo '</form>';
 		echo '</div>';
 	}
@@ -117,7 +117,7 @@ class JeromesKeyword_Import {
 		echo '<div class="narrow">';
 		echo '<p><h3>'.__('Reading Jerome&#8217;s Keywords Tags&#8230;').'</h3></p>';
 
-		// import Jerome's Keywords tags 
+		// import Jerome's Keywords tags
 		$tablename = $wpdb->prefix . substr(get_option('jkeywords_keywords_table'), 1, -1);
 		$metakeys = $wpdb->get_results("SELECT post_id, tag_name FROM $tablename");
 		if ( !is_array($metakeys) ) {
@@ -125,7 +125,7 @@ class JeromesKeyword_Import {
 			return false;
 		} else {
 			$count = count($metakeys);
-			echo '<p>' . sprintf( __('Done! <strong>%s</strong> tags were read.'), $count ) . '<br /></p>';
+			echo '<p>' . sprintf( __ngettext('Done! <strong>%s</strong> tag were read.', 'Done! <strong>%s</strong> tags were read.', $count), $count ) . '<br /></p>';
 			echo '<ul>';
 			foreach ( $metakeys as $post_meta ) {
 				$keyword = addslashes(trim($post_meta->tag_name));
@@ -139,7 +139,7 @@ class JeromesKeyword_Import {
 		}
 		echo '<form action="admin.php?import=jkw&amp;step='.($precheck? 4:5).'" method="post">';
 		wp_nonce_field('import-jkw');
-		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Next &raquo;').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Next').'" /></p>';
 		echo '</form>';
 		echo '</div>';
 	}
@@ -173,6 +173,6 @@ class JeromesKeyword_Import {
 $jkw_import = new JeromesKeyword_Import();
 
 // add it to the import page!
-register_importer('jkw', 'Jerome&#8217;s Keywords', __('Import Jerome&#8217;s Keywords into the new native tagging structure.'), array($jkw_import, 'dispatch'));
+register_importer('jkw', 'Jerome&#8217;s Keywords', __('Import Jerome&#8217;s Keywords into WordPress tags.'), array($jkw_import, 'dispatch'));
 
 ?>

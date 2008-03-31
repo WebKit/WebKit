@@ -1,3 +1,9 @@
+2008-03-31  Mark Rowe  <mrowe@apple.com>
+
+        Upgrade to WordPress 2.5
+
+        * blog/:
+
 2008-03-28  Darin Adler  <darin@apple.com>
 
         * building/build.html: Add another mention of using the Cygwin shell.

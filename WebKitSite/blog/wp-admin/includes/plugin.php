@@ -31,7 +31,7 @@ function get_plugin_data( $plugin_file ) {
 	return array('Name' => $name, 'Title' => $plugin, 'Description' => $description, 'Author' => $author, 'Version' => $version);
 }
 
-function get_plugins() {
+function get_plugins($plugin_folder = '') {
 	global $wp_plugins;
 
 	if ( isset( $wp_plugins ) ) {
@@ -40,6 +40,8 @@ function get_plugins() {
 
 	$wp_plugins = array ();
 	$plugin_root = ABSPATH . PLUGINDIR;
+	if( !empty($plugin_folder) )
+		$plugin_root .= $plugin_folder;
 
 	// Files in wp-content/plugins directory
 	$plugins_dir = @ opendir( $plugin_root);
@@ -86,6 +88,117 @@ function get_plugins() {
 	return $wp_plugins;
 }
 
+function is_plugin_active($plugin){
+	return in_array($plugin, get_option('active_plugins'));
+}
+
+function activate_plugin($plugin, $redirect = '') {
+		$current = get_option('active_plugins');
+		$plugin = trim($plugin);
+
+		$valid = validate_plugin($plugin);
+		if ( is_wp_error($valid) )
+			return $valid;
+
+		if ( !in_array($plugin, $current) ) {
+			if ( !empty($redirect) )
+				wp_redirect(add_query_arg('_error_nonce', wp_create_nonce('plugin-activation-error_' . $plugin), $redirect)); // we'll override this later if the plugin can be included without fatal error
+			ob_start();
+			@include(ABSPATH . PLUGINDIR . '/' . $plugin);
+			$current[] = $plugin;
+			sort($current);
+			update_option('active_plugins', $current);
+			do_action('activate_' . $plugin);
+			ob_end_clean();
+		}
+
+		return null;
+}
+
+function deactivate_plugins($plugins, $silent= false) {
+	$current = get_option('active_plugins');
+
+	if ( !is_array($plugins) )
+		$plugins = array($plugins);
+
+	foreach ( $plugins as $plugin ) {
+		if( ! is_plugin_active($plugin) )
+			continue;
+		array_splice($current, array_search( $plugin, $current), 1 ); // Fixed Array-fu!
+		if ( ! $silent ) //Used by Plugin updater to internally deactivate plugin, however, not to notify plugins of the fact to prevent plugin output.
+			do_action('deactivate_' . trim( $plugin ));
+	}
+
+	update_option('active_plugins', $current);
+}
+
+function deactivate_all_plugins() {
+	$current = get_option('active_plugins');
+	if ( empty($current) )
+		return;
+
+	deactivate_plugins($current);
+
+	update_option('deactivated_plugins', $current);
+}
+
+function reactivate_all_plugins($redirect = '') {
+	$plugins = get_option('deactivated_plugins');
+
+	if ( empty($plugins) )
+		return;
+
+	if ( !empty($redirect) )
+		wp_redirect(add_query_arg('_error_nonce', wp_create_nonce('plugin-activation-error_' . $plugin), $redirect));
+
+	$errors = array();
+	foreach ( (array) $plugins as $plugin ) {
+		$result = activate_plugin($plugin);
+		if ( is_wp_error($result) )
+			$errors[$plugin] = $result;
+	}
+
+	delete_option('deactivated_plugins');
+
+	if ( !empty($errors) )
+		return new WP_Error('plugins_invalid', __('One of the plugins is invalid.'), $errors);
+
+	return true;
+}
+
+function validate_active_plugins() {
+	$check_plugins = get_option('active_plugins');
+
+	// Sanity check.  If the active plugin list is not an array, make it an
+	// empty array.
+	if ( !is_array($check_plugins) ) {
+		update_option('active_plugins', array());
+		return;
+	}
+
+	// If a plugin file does not exist, remove it from the list of active
+	// plugins.
+	foreach ( $check_plugins as $check_plugin ) {
+		if ( !file_exists(ABSPATH . PLUGINDIR . '/' . $check_plugin) ) {
+			$current = get_option('active_plugins');
+			$key = array_search($check_plugin, $current);
+			if ( false !== $key && NULL !== $key ) {
+				unset($current[$key]);
+				update_option('active_plugins', $current);
+			}
+		}
+	}
+}
+
+function validate_plugin($plugin) {
+	if ( validate_file($plugin) )
+		return new WP_Error('plugin_invalid', __('Invalid plugin.'));
+	if ( ! file_exists(ABSPATH . PLUGINDIR . '/' . $plugin) )
+		return new WP_Error('plugin_not_found', __('Plugin file does not exist.'));
+
+	return 0;
+}
+
 //
 // Menu
 //
@@ -111,7 +224,6 @@ function add_submenu_page( $parent, $page_title, $menu_title, $access_level, $fi
 	global $menu;
 	global $_wp_real_parent_file;
 	global $_wp_submenu_nopriv;
-	global $_wp_menu_nopriv;
 
 	$file = plugin_basename( $file );
 
@@ -287,10 +399,8 @@ function get_admin_page_title() {
 }
 
 function get_plugin_page_hook( $plugin_page, $parent_page ) {
-	global $wp_filter;
-
 	$hook = get_plugin_page_hookname( $plugin_page, $parent_page );
-	if ( isset( $wp_filter[$hook] ))
+	if ( has_action($hook) )
 		return $hook;
 	else
 		return null;

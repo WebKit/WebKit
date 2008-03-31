@@ -76,9 +76,16 @@ function get_theme_data( $theme_file ) {
 	preg_match( '|Theme Name:(.*)$|mi', $theme_data, $theme_name );
 	preg_match( '|Theme URI:(.*)$|mi', $theme_data, $theme_uri );
 	preg_match( '|Description:(.*)$|mi', $theme_data, $description );
-	preg_match( '|Author:(.*)$|mi', $theme_data, $author_name );
-	preg_match( '|Author URI:(.*)$|mi', $theme_data, $author_uri );
-	preg_match( '|Template:(.*)$|mi', $theme_data, $template );
+
+	if ( preg_match( '|Author URI:(.*)$|mi', $theme_data, $author_uri ) )
+		$author_uri = clean_url( trim( $author_uri[1]) );
+	else
+		$author_uti = '';
+
+	if ( preg_match( '|Template:(.*)$|mi', $theme_data, $template ) )
+		$template = wp_kses( trim( $template[1] ), $themes_allowed_tags );
+	else
+		$template = '';
 
 	if ( preg_match( '|Version:(.*)|i', $theme_data, $version ) )
 		$version = wp_kses( trim( $version[1] ), $themes_allowed_tags );
@@ -90,20 +97,26 @@ function get_theme_data( $theme_file ) {
 	else
 		$status = 'publish';
 
+	if ( preg_match('|Tags:(.*)|i', $theme_data, $tags) )
+		$tags = array_map( 'trim', explode( ',', wp_kses( trim( $tags[1] ), array() ) ) );
+	else
+		$tags = array();
+
 	$name = $theme = wp_kses( trim( $theme_name[1] ), $themes_allowed_tags );
 	$theme_uri = clean_url( trim( $theme_uri[1] ) );
 	$description = wptexturize( wp_kses( trim( $description[1] ), $themes_allowed_tags ) );
-	$template = wp_kses( trim( $template[1] ), $themes_allowed_tags );
 
-	$author_uri = clean_url( trim( $author_uri[1] ) );
-
-	if ( empty( $author_uri[1] ) ) {
-		$author = wp_kses( trim( $author_name[1] ), $themes_allowed_tags );
+	if ( preg_match( '|Author:(.*)$|mi', $theme_data, $author_name ) ) {
+		if ( empty( $author_uri ) ) {
+			$author = wp_kses( trim( $author_name[1] ), $themes_allowed_tags );
+		} else {
+			$author = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>', $author_uri, __( 'Visit author homepage' ), wp_kses( trim( $author_name[1] ), $themes_allowed_tags ) );
+		}
 	} else {
-		$author = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>', $author_uri, __( 'Visit author homepage' ), wp_kses( trim( $author_name[1] ), $themes_allowed_tags ) );
+		$author = __('Anonymous');
 	}
 
-	return array( 'Name' => $name, 'Title' => $theme, 'URI' => $theme_uri, 'Description' => $description, 'Author' => $author, 'Version' => $version, 'Template' => $template, 'Status' => $status );
+	return array( 'Name' => $name, 'Title' => $theme, 'URI' => $theme_uri, 'Description' => $description, 'Author' => $author, 'Version' => $version, 'Template' => $template, 'Status' => $status, 'Tags' => $tags );
 }
 
 function get_themes() {
@@ -162,7 +175,8 @@ function get_themes() {
 			}
 		}
 	}
-	@closedir($theme_dir);
+	if ( is_dir( $theme_dir ) )
+		@closedir( $theme_dir );
 
 	if ( !$themes_dir || !$theme_files )
 		return $themes;
@@ -261,7 +275,7 @@ function get_themes() {
 			}
 		}
 
-		$themes[$name] = array('Name' => $name, 'Title' => $title, 'Description' => $description, 'Author' => $author, 'Version' => $version, 'Template' => $template, 'Stylesheet' => $stylesheet, 'Template Files' => $template_files, 'Stylesheet Files' => $stylesheet_files, 'Template Dir' => $template_dir, 'Stylesheet Dir' => $stylesheet_dir, 'Status' => $theme_data['Status'], 'Screenshot' => $screenshot);
+		$themes[$name] = array('Name' => $name, 'Title' => $title, 'Description' => $description, 'Author' => $author, 'Version' => $version, 'Template' => $template, 'Stylesheet' => $stylesheet, 'Template Files' => $template_files, 'Stylesheet Files' => $stylesheet_files, 'Template Dir' => $template_dir, 'Stylesheet Dir' => $stylesheet_dir, 'Status' => $theme_data['Status'], 'Screenshot' => $screenshot, 'Tags' => $theme_data['Tags']);
 	}
 
 	// Resolve theme dependencies.
@@ -294,6 +308,9 @@ function get_theme($theme) {
 }
 
 function get_current_theme() {
+	if ( $theme = get_option('current_theme') )
+		return $theme;
+
 	$themes = get_themes();
 	$theme_names = array_keys($themes);
 	$current_template = get_option('template');
@@ -310,6 +327,8 @@ function get_current_theme() {
 		}
 	}
 
+	update_option('current_theme', $current_theme);
+
 	return $current_theme;
 }
 
@@ -323,6 +342,7 @@ function get_theme_root_uri() {
 
 function get_query_template($type) {
 	$template = '';
+	$type = preg_replace( '|[^a-z0-9-]+|', '', $type );
 	if ( file_exists(TEMPLATEPATH . "/{$type}.php") )
 		$template = TEMPLATEPATH . "/{$type}.php";
 
@@ -361,6 +381,19 @@ function get_tag_template() {
 	return apply_filters('tag_template', $template);
 }
 
+function get_taxonomy_template() {
+	$template = '';
+	$taxonomy = get_query_var('taxonomy');
+	$term = get_query_var('term');
+	if ( $taxonomy && $term && file_exists(TEMPLATEPATH . "/taxonomy-$taxonomy-$term.php") )
+		$template = TEMPLATEPATH . "/taxonomy-$taxonomy-$term.php";
+	elseif ( $taxonomy && file_exists(TEMPLATEPATH . "/taxonomy-$taxonomy.php") )
+		$template = TEMPLATEPATH . "/taxonomy-$taxonomy.php";
+	elseif ( file_exists(TEMPLATEPATH . "/taxonomy.php") )
+		$template = TEMPLATEPATH . "/taxonomy.php";
+
+	return apply_filters('taxonomy_template', $template);
+}
 
 function get_date_template() {
 	return get_query_template('date');
@@ -431,8 +464,7 @@ function get_comments_popup_template() {
 }
 
 function load_template($_template_file) {
-	global $posts, $post, $wp_did_header, $wp_did_template_redirect, $wp_query,
-		$wp_rewrite, $wpdb, $wp_version, $wp, $id, $comment, $user_ID;
+	global $posts, $post, $wp_did_header, $wp_did_template_redirect, $wp_query, $wp_rewrite, $wpdb, $wp_version, $wp, $id, $comment, $user_ID;
 
 	if ( is_array($wp_query->query_vars) )
 		extract($wp_query->query_vars, EXTR_SKIP);
@@ -447,22 +479,26 @@ function locale_stylesheet() {
 	echo '<link rel="stylesheet" href="' . $stylesheet . '" type="text/css" media="screen" />';
 }
 
+function switch_theme($template, $stylesheet) {
+	update_option('template', $template);
+	update_option('stylesheet', $stylesheet);
+	delete_option('current_theme');
+	$theme = get_current_theme();
+	do_action('switch_theme', $theme);
+}
+
 function validate_current_theme() {
 	// Don't validate during an install/upgrade.
 	if ( defined('WP_INSTALLING') )
 		return true;
 
 	if ( get_template() != 'default' && !file_exists(get_template_directory() . '/index.php') ) {
-		update_option('template', 'default');
-		update_option('stylesheet', 'default');
-		do_action('switch_theme', 'Default');
+		switch_theme('default', 'default');
 		return false;
 	}
 
 	if ( get_stylesheet() != 'default' && !file_exists(get_template_directory() . '/style.css') ) {
-		update_option('template', 'default');
-		update_option('stylesheet', 'default');
-		do_action('switch_theme', 'Default');
+		switch_theme('default', 'default');
 		return false;
 	}
 
@@ -477,7 +513,7 @@ function get_theme_mod($name, $default = false) {
 	if ( isset($mods[$name]) )
 		return apply_filters( "theme_mod_$name", $mods[$name] );
 
-	return apply_filters( "theme_mod_$name", sprintf($default, get_template_directory_uri()) );
+	return apply_filters( "theme_mod_$name", sprintf($default, get_template_directory_uri(), get_stylesheet_directory_uri()) );
 }
 
 function set_theme_mod($name, $value) {

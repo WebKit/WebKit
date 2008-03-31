@@ -1,4 +1,16 @@
 <?php
+/**
+ * Sets up the default filters and actions for most
+ * of the WordPress hooks.
+ *
+ * If you need to remove a default hook, this file will
+ * give you the priority for which to use to remove the
+ * hook.
+ *
+ * Not all of the default hooks are found in default-filters.php
+ *
+ * @package WordPress
+ */
 
 // Strip, trim, kses, special chars for string saves
 $filters = array('pre_term_name', 'pre_comment_author_name', 'pre_link_name', 'pre_link_target',
@@ -50,6 +62,12 @@ foreach ( $filters as $filter ) {
 	add_filter($filter, 'sanitize_title');
 }
 
+// Keys
+$filters = array('pre_post_type');
+foreach ( $filters as $filter ) {
+	add_filter($filter, 'sanitize_user');
+}
+
 // Places to balance tags on input
 $filters = array('content_save_pre', 'excerpt_save_pre', 'comment_save_pre', 'pre_comment_content');
 foreach ( $filters as $filter ) {
@@ -88,6 +106,7 @@ add_filter('the_content', 'wptexturize');
 add_filter('the_content', 'convert_smilies');
 add_filter('the_content', 'convert_chars');
 add_filter('the_content', 'wpautop');
+add_filter('the_content', 'prepend_attachment');
 
 add_filter('the_excerpt', 'wptexturize');
 add_filter('the_excerpt', 'convert_smilies');
@@ -107,6 +126,8 @@ add_filter('comment_excerpt', 'convert_chars');
 add_filter('list_cats', 'wptexturize');
 add_filter('single_post_title', 'wptexturize');
 
+add_filter('wp_sprintf', 'wp_sprintf_l', 10, 2);
+
 // RSS filters
 add_filter('the_title_rss', 'strip_tags');
 add_filter('the_title_rss', 'ent2ncr', 8);
@@ -125,8 +146,7 @@ add_filter('option_ping_sites', 'privacy_ping_filter');
 add_filter('option_blog_charset', 'wp_specialchars');
 add_filter('option_home', '_config_wp_home');
 add_filter('option_siteurl', '_config_wp_siteurl');
-add_filter('mce_plugins', '_mce_load_rtl_plugin');
-add_filter('mce_buttons', '_mce_add_direction_buttons');
+add_filter('tiny_mce_before_init', '_mce_set_direction');
 add_filter('pre_kses', 'wp_pre_kses_less_than');
 add_filter('sanitize_title', 'sanitize_title_with_dashes');
 add_action('check_comment_flood', 'check_comment_flood_db', 10, 3);
@@ -134,13 +154,17 @@ add_filter('comment_flood_filter', 'wp_throttle_comment_flood', 10, 3);
 add_filter('pre_comment_content', 'wp_rel_nofollow', 15);
 add_filter('comment_email', 'antispambot');
 
+//Atom SSL support
+add_filter('atom_service_url','atom_service_url_filter');
+
 // Actions
 add_action('wp_head', 'rsd_link');
 add_action('wp_head', 'wlwmanifest_link');
 add_action('wp_head', 'locale_stylesheet');
-add_action('publish_future_post', 'wp_publish_post', 10, 1);
+add_action('publish_future_post', 'check_and_publish_future_post', 10, 1);
 add_action('wp_head', 'noindex', 1);
 add_action('wp_head', 'wp_print_scripts');
+add_action('wp_head', 'wp_generator');
 if(!defined('DOING_CRON'))
 	add_action('init', 'wp_cron');
 add_action('do_feed_rdf', 'do_feed_rdf', 10, 1);
@@ -151,7 +175,6 @@ add_action('do_pings', 'do_all_pings', 10, 1);
 add_action('do_robots', 'do_robots');
 add_action('sanitize_comment_cookies', 'sanitize_comment_cookies');
 add_action('admin_print_scripts', 'wp_print_scripts', 20);
-add_action('mce_options', '_mce_set_direction');
 add_action('init', 'smilies_init', 5);
 add_action( 'plugins_loaded', 'wp_maybe_load_widgets', 0 );
 add_action( 'shutdown', 'wp_ob_end_flush_all', 1);

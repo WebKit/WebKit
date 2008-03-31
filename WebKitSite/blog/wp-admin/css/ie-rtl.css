@@ -1,0 +1,53 @@
+/* footer */
+body, td {
+	font-family: Tahoma,Verdana,sans-serif;
+}
+
+.wrap {
+	text-align: right;
+}
+
+.wrap h2 {
+	margin: 5px 0 0 4px;
+}
+
+#footer {
+	padding-left:50px;
+}
+#footer p {
+	background:none;
+	height:auto;
+	padding: 5px 5px 0;
+}
+
+#bh {
+	padding-left: 15px;
+	padding-right: 0px;
+}
+/* write post */
+#poststuff .togbox {
+	margin-right:-16px;
+}
+#poststuff h3 {
+	padding-right:20px;
+}
+
+p#widget-search, p#post-search {
+	padding-left: 15px;
+}
+
+.widefat th {
+	padding-bottom: 8px;
+}
+
+/* template editor */
+#template textarea {
+	float:left;
+}
+
+/* Editor */
+
+.mceToolbar {
+	direction: ltr;
+	text-align: left;
+}

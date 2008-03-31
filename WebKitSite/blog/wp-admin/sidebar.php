@@ -11,13 +11,16 @@ if ('b' == $_GET['a']) {
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>WordPress &#8250; Posted</title>
 <meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=UTF-8" />
-<?php wp_admin_css(); ?>
+<title><?php _e('WordPress &#8250; Posted'); ?></title>
+<?php
+wp_admin_css( 'css/global' );
+wp_admin_css();
+?>
 </head>
 <body>
-	<p>Posted !</p>
-	<p><a href="sidebar.php">Click here</a> to post again.</p>
+	<p><?php _e('Posted !'); ?></p>
+	<p><?php printf(__('<a href="%s">Click here</a> to post again.'), 'sidebar.php'); ?></p>
 </body>
 </html><?php
 
@@ -26,9 +29,12 @@ if ('b' == $_GET['a']) {
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>WordPress &#8250; Sidebar</title>
 <meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php bloginfo('blog_charset'); ?>" />
-<?php wp_admin_css(); ?>
+<title><?php _e('WordPress &#8250; Sidebar'); ?></title>
+<?php
+wp_admin_css( 'css/global' );
+wp_admin_css();
+?>
 <style type="text/css" media="screen">
 form {
 	padding: 3px;
@@ -49,13 +55,15 @@ form {
 <body id="sidebar">
 <h1 id="wphead"><a href="http://wordpress.org/" rel="external">WordPress</a></h1>
 <form name="post" action="post.php" method="post">
-<div><input type="hidden" name="action" value="post" />
+<div>
+<input type="hidden" name="action" value="post" />
 <input type="hidden" name="user_ID" value="<?php echo $user_ID ?>" />
 <input type="hidden" name="mode" value="sidebar" />
-<p>Title:
+<?php wp_nonce_field('add-post'); ?>
+<p><?php _e('Title:'); ?>
 <input type="text" name="post_title" size="20" tabindex="1" style="width: 100%;" />
 </p>
-<p>Categories:
+<p><?php _e('Categories:'); ?>
 <span class="sidebar-categories">
 <?php dropdown_categories(); ?>
 </span>
@@ -65,9 +73,9 @@ Post:
 <textarea rows="8" cols="12" style="width: 100%" name="content" tabindex="2"></textarea>
 </p>
 <p>
-	<input name="saveasdraft" type="submit" id="saveasdraft" tabindex="9" value="Save as Draft" />
+	<input name="saveasdraft" type="submit" id="saveasdraft" tabindex="9" value="<?php _e('Save as Draft'); ?>" />
 <?php if ( current_user_can('publish_posts') ) : ?>
-	<input name="publish" type="submit" id="publish" tabindex="6" style="font-weight: bold;" value="Publish" />
+	<input name="publish" type="submit" id="publish" tabindex="6" value="<?php _e('Publish') ?>" class="button button-highlighted" />
 <?php endif; ?>
 </p>
 </div>

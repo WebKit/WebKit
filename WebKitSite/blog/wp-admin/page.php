@@ -6,6 +6,48 @@ $submenu_file = 'edit-pages.php';
 
 wp_reset_vars(array('action'));
 
+function redirect_page($page_ID) {
+	$referredby = '';
+	if ( !empty($_POST['referredby']) )
+		$referredby = preg_replace('|https?://[^/]+|i', '', $_POST['referredby']);
+	$referer = preg_replace('|https?://[^/]+|i', '', wp_get_referer());
+
+	if ( 'post' == $_POST['originalaction'] && !empty($_POST['mode']) && 'bookmarklet' == $_POST['mode'] ) {
+		$location = $_POST['referredby'];
+	} elseif ( 'post' == $_POST['originalaction'] && !empty($_POST['mode']) && 'sidebar' == $_POST['mode'] ) {
+		$location = 'sidebar.php?a=b';
+	} elseif ( isset($_POST['save']) && ( empty($referredby) || $referredby == $referer || 'redo' != $referredby ) ) {
+		if ( $_POST['_wp_original_http_referer'] && strpos( $_POST['_wp_original_http_referer'], '/wp-admin/page.php') === false && strpos( $_POST['_wp_original_http_referer'], '/wp-admin/page-new.php') === false )
+			$location = add_query_arg( '_wp_original_http_referer', urlencode( stripslashes( $_POST['_wp_original_http_referer'] ) ), "page.php?action=edit&post=$page_ID&message=1" );
+		else
+			$location = "page.php?action=edit&post=$page_ID&message=4";
+	} elseif ($_POST['addmeta']) {
+		$location = add_query_arg( 'message', 2, wp_get_referer() );
+		$location = explode('#', $location);
+		$location = $location[0] . '#postcustom';
+	} elseif ($_POST['deletemeta']) {
+		$location = add_query_arg( 'message', 3, wp_get_referer() );
+		$location = explode('#', $location);
+		$location = $location[0] . '#postcustom';
+	} elseif (!empty($referredby) && $referredby != $referer) {
+		$location = $_POST['referredby'];
+		if ( $_POST['referredby'] == 'redo' )
+			$location = get_permalink( $page_ID );
+		elseif ( false !== strpos($location, 'edit-pages.php') )
+			$location = add_query_arg('posted', $page_ID, $location);
+		elseif ( false !== strpos($location, 'wp-admin') )
+			$location = "page-new.php?posted=$page_ID";
+	} elseif ( isset($_POST['publish']) ) {
+		$location = "page-new.php?posted=$page_ID";
+	} elseif ($action == 'editattachment') {
+		$location = 'attachments.php';
+	} else {
+		$location = "page.php?action=edit&post=$page_ID&message=4";
+	}
+
+	wp_redirect($location);
+}
+
 if (isset($_POST['deletepost'])) {
 $action = "delete";
 }
@@ -15,27 +57,8 @@ case 'post':
 	check_admin_referer('add-page');
 	$page_ID = write_post();
 
-	// Redirect.
-	if (!empty($_POST['mode'])) {
-	switch($_POST['mode']) {
-		case 'bookmarklet':
-			$location = $_POST['referredby'];
-			break;
-		case 'sidebar':
-			$location = 'sidebar.php?a=b';
-			break;
-		default:
-			$location = 'page-new.php';
-			break;
-		}
-	} else {
-		$location = "page-new.php?posted=$page_ID";
-	}
+	redirect_page($page_ID);
 
-	if ( isset($_POST['save']) )
-		$location = "page.php?action=edit&post=$page_ID";
-
-	wp_redirect($location);
 	exit();
 	break;
 
@@ -52,11 +75,22 @@ case 'edit':
 		exit();
 	}
 
-	if($post->post_status == 'draft') {
-		wp_enqueue_script('prototype');
-		wp_enqueue_script('interface');
+	wp_enqueue_script('page');
+	if ( user_can_richedit() )
+		wp_enqueue_script('editor');
+	wp_enqueue_script('thickbox');
+	wp_enqueue_script('media-upload');
+	if ( $last = wp_check_post_lock( $post->ID ) ) {
+		$last_user = get_userdata( $last );
+		$last_user_name = $last_user ? $last_user->display_name : __('Somebody');
+		$message = sprintf( __( 'Warning: %s is currently editing this page' ), wp_specialchars( $last_user_name ) );
+		$message = str_replace( "'", "\'", "<div class='error'><p>$message</p></div>" );
+		add_action('admin_notices', create_function( '', "echo '$message';" ) );
+	} else {
+		wp_set_post_lock( $post->ID );
 		wp_enqueue_script('autosave');
 	}
+
 	require_once('admin-header.php');
 
 	if ( !current_user_can('edit_page', $page_ID) )
@@ -85,43 +119,7 @@ case 'editpost':
 
 	$page_ID = edit_post();
 
-	if ( 'post' == $_POST['originalaction'] ) {
-		if (!empty($_POST['mode'])) {
-		switch($_POST['mode']) {
-			case 'bookmarklet':
-				$location = $_POST['referredby'];
-				break;
-			case 'sidebar':
-				$location = 'sidebar.php?a=b';
-				break;
-			default:
-				$location = 'page-new.php';
-				break;
-			}
-		} else {
-			$location = "page-new.php?posted=$page_ID";
-		}
-
-		if ( isset($_POST['save']) )
-			$location = "page.php?action=edit&post=$page_ID";
-	} else {
-		if ($_POST['save']) {
-			$location = "page.php?action=edit&post=$page_ID";
-		} elseif ($_POST['updatemeta']) {
-			$location = wp_get_referer() . '&message=2#postcustom';
-		} elseif ($_POST['deletemeta']) {
-			$location = wp_get_referer() . '&message=3#postcustom';
-		} elseif (!empty($_POST['referredby']) && $_POST['referredby'] != wp_get_referer()) {
-			$location = $_POST['referredby'];
-			if ( $_POST['referredby'] == 'redo' )
-				$location = get_permalink( $page_ID );
-		} elseif ($action == 'editattachment') {
-			$location = 'attachments.php';
-		} else {
-			$location = 'page-new.php';
-		}
-	}
-	wp_redirect($location); // Send user on their way while we keep working
+	redirect_page($page_ID);
 
 	exit();
 	break;

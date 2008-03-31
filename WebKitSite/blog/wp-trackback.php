@@ -43,6 +43,10 @@ if ($charset)
 else
 	$charset = 'ASCII, UTF-8, ISO-8859-1, JIS, EUC-JP, SJIS';
 
+// No valid uses for UTF-7
+if ( false !== strpos($charset, 'UTF-7') )
+	die;
+
 if ( function_exists('mb_convert_encoding') ) { // For international trackbacks
 	$title     = mb_convert_encoding($title, get_option('blog_charset'), $charset);
 	$excerpt   = mb_convert_encoding($excerpt, get_option('blog_charset'), $charset);
@@ -69,20 +73,11 @@ if (empty($title) && empty($tb_url) && empty($blog_name)) {
 if ( !empty($tb_url) && !empty($title) ) {
 	header('Content-Type: text/xml; charset=' . get_option('blog_charset') );
 
-	$pingstatus = $wpdb->get_var("SELECT ping_status FROM $wpdb->posts WHERE ID = $tb_id");
-
-	if ( 'open' != $pingstatus )
+	if ( !pings_open($tb_id) )
 		trackback_response(1, 'Sorry, trackbacks are closed for this item.');
 
-	$title =  wp_specialchars( strip_tags( $title ) );
-	$excerpt = strip_tags($excerpt);
-	if ( function_exists('mb_strcut') ) { // For international trackbacks
-		$excerpt = mb_strcut($excerpt, 0, 252, get_option('blog_charset')) . '...';
-		$title = mb_strcut($title, 0, 250, get_option('blog_charset')) . '...';
-	} else {
-		$excerpt = (strlen($excerpt) > 255) ? substr($excerpt, 0, 252) . '...' : $excerpt;
-		$title = (strlen($title) > 250) ? substr($title, 0, 250) . '...' : $title;
-	}
+	$title =  wp_html_excerpt( $title, 250 ).'...';
+	$excerpt = wp_html_excerpt( $excerpt, 252 ).'...';
 
 	$comment_post_ID = (int) $tb_id;
 	$comment_author = $blog_name;

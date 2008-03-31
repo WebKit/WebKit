@@ -1,0 +1,242 @@
+div#media-upload-header {
+	margin: 0;
+	padding: 0 5px;
+	font-weight: bold;
+	position: relative;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	height: 2.5em;
+}
+
+body#media-upload ul#sidemenu {
+	font-weight: normal;
+	margin: 0 5px;
+	position: absolute;
+	left: 0px;
+	bottom: -1px;
+}
+
+div#media-upload-error {
+	margin: 1em;
+	font-weight: bold;
+}
+
+form {
+	margin: 1em;
+}
+
+#search-filter {
+	text-align: right;
+}
+
+.media-upload-form label, .media-upload-form legend {
+	display:block;
+	font-weight: bold;
+	margin-bottom: 0.5em;
+	margin: 0 0 0.5em 0;
+}
+
+th { position: relative; }
+
+.media-upload-form label.form-help, td.help {
+	font-style: italic;
+	font-weight: normal;
+}
+
+.media-upload-form p.help {
+	margin: 0;
+	padding: 0;
+}
+
+.media-upload-form fieldset {
+	width: 100%;
+	border: none;
+	text-align: justify;
+	margin: 0 0 1em 0;
+	padding: 0;
+}
+
+/* specific to the image upload form */
+.align .field label {
+	display: inline;
+	padding: 0 0 0 28px;
+	margin: 0 1em 0 0;
+}
+.image-align-none-label {
+	background: url(../images/align-none.png) no-repeat center left;
+}
+
+.image-align-left-label {
+	background: url(../images/align-left.png) no-repeat center left;
+}
+
+.image-align-center-label {
+	background: url(../images/align-center.png) no-repeat center left;
+}
+
+.image-align-right-label {
+	background: url(../images/align-right.png) no-repeat center left;
+}
+
+#flash-upload-ui, .insert-gallery {
+	display: none;
+}
+
+tr.image-size label {
+	display: inline;
+	margin: 0 1em 0 0;
+}
+.pinkynail {
+	max-width: 40px;
+	max-height: 40px;
+}
+
+.filename {
+	display: none;
+}
+button.dismiss {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	z-index: 4;
+}
+.file-error {
+	margin: 0 0 5px 50px;
+	font-weight: bold;
+}
+
+.progress {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 623px;
+	height: 36px;
+}
+.bar {
+	width: 0px;
+	height: 100%;
+	border-right-width: 3px;
+	border-right-style: solid;
+}
+.media-item .thumbnail {
+	max-width: 128px;
+	max-height: 128px;
+}
+.media-item .pinkynail {
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	height: 32px;
+	max-width: 40px;
+}
+
+tbody.media-item-info tr {
+	background-color: transparent;
+}
+tbody.media-item-info th, tbody.media-item-info td {
+	border: none;
+	margin: 0;
+}
+
+.form-table tbody.media-item-info {
+	border: 8px solid #fff;
+}
+
+.describe.startopen, .describe.startclosed {
+	display: none;
+}
+abbr.required {
+	text-decoration: none;
+	border: none;
+}
+.describe label {
+	display: inline;
+}
+.describe td {
+	vertical-align: middle;
+}
+.describe td.A1 {
+	width: 132px;
+}
+.describe input[type="text"], .describe textarea {
+	width: 460px;
+}
+.describe-toggle-on, .describe-toggle-off {
+	display: block;
+	line-height: 36px;
+	z-index: 2;
+	position: absolute;
+	top: 0px;
+	right: 20px;
+}
+.describe-toggle-off {
+	display: none;
+}
+.clickmask {
+	background: transparent;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	cursor: pointer;
+	border: none;
+	z-index: 3;
+	height: 36px;
+}
+
+.hidden {
+	height: 0px;
+	width: 0px;
+	overflow: hidden;
+	border: none;
+}
+
+/* Specific to Uploader */
+
+#media-upload .media-upload-form p {
+	margin: 0 1em 1em 0;
+}
+#media-upload p.help {
+	font-style: italic;
+	font-weight: normal;
+}
+#media-upload tr.image-size td.field {
+	text-align: center;
+}
+#media-upload #media-items {
+	border-width: 1px;
+	border-style: solid;
+	border-bottom: none;
+	width: 623px;
+}
+
+#media-upload .media-item {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	width: 623px;
+	position: relative;
+	min-height: 36px;
+}
+#media-upload .filename {
+	display: block;
+	line-height: 36px;
+	margin-left: 50px;
+	z-index: 2;
+}
+#media-upload .describe {
+	border-top-width: 1px;
+	border-top-style: solid;
+	padding: 5px;
+	width: 100%;
+	clear: both;
+}
+#media-upload .describe th.label {
+	padding-top: .5em;
+	text-align: left;
+}
+#media-upload tr.align td.field {
+	text-align: center;
+}
+#media-upload tr.image-size {
+	margin-bottom: 1em;
+	height: 3em;
+}

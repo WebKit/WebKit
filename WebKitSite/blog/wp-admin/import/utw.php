@@ -14,12 +14,12 @@ class UTW_Import {
 
 	function greet() {
 		echo '<div class="narrow">';
-		echo '<p>'.__('Howdy! This imports tags from an existing Ultimate Tag Warrior 3 installation into this blog using the new WordPress native tagging structure.').'</p>';
+		echo '<p>'.__('Howdy! This imports tags from Ultimate Tag Warrior 3 into WordPress tags.').'</p>';
 		echo '<p>'.__('This has not been tested on any other versions of Ultimate Tag Warrior. Mileage may vary.').'</p>';
 		echo '<p>'.__('To accommodate larger databases for those tag-crazy authors out there, we have made this into an easy 5-step program to help you kick that nasty UTW habit. Just keep clicking along and we will let you know when you are in the clear!').'</p>';
 		echo '<p><strong>'.__('Don&#8217;t be stupid - backup your database before proceeding!').'</strong></p>';
 		echo '<form action="admin.php?import=utw&amp;step=1" method="post">';
-		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Step 1 &raquo;').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Step 1').'" /></p>';
 		echo '</form>';
 		echo '</div>';
 	}
@@ -84,7 +84,7 @@ class UTW_Import {
 
 			$count = count($tags);
 
-			echo '<p>' . sprintf( __('Done! <strong>%s</strong> tags were read.'), $count ) . '<br /></p>';
+			echo '<p>' . sprintf( __ngettext('Done! <strong>%s</strong> tag were read.', 'Done! <strong>%s</strong> tags were read.', $count), $count ) . '<br /></p>';
 			echo '<p>' . __('The following tags were found:') . '</p>';
 
 			echo '<ul>';
@@ -106,7 +106,7 @@ class UTW_Import {
 
 		echo '<form action="admin.php?import=utw&amp;step=2" method="post">';
 		wp_nonce_field('import-utw');
-		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Step 2 &raquo;').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Step 2').'" /></p>';
 		echo '</form>';
 		echo '</div>';
 	}
@@ -136,13 +136,13 @@ class UTW_Import {
 
 			$count = count($posts);
 
-			echo '<p>' . sprintf( __('Done! <strong>%s</strong> tag to post relationships were read.'), $count ) . '<br /></p>';
+			echo '<p>' . sprintf( __ngettext('Done! <strong>%s</strong> tag to post relationships were read.', 'Done! <strong>%s</strong> tags to post relationships were read.', $count), $count ) . '<br /></p>';
 
 		}
 
 		echo '<form action="admin.php?import=utw&amp;step=3" method="post">';
 		wp_nonce_field('import-utw');
-		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Step 3 &raquo;').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Step 3').'" /></p>';
 		echo '</form>';
 		echo '</div>';
 
@@ -157,11 +157,11 @@ class UTW_Import {
 		// run that funky magic!
 		$tags_added = $this->tag2post();
 
-		echo '<p>' . sprintf( __('Done! <strong>%s</strong> tags were added!'), $tags_added ) . '<br /></p>';
+		echo '<p>' . sprintf( __ngettext( 'Done! <strong>%s</strong> tag were added!', 'Done! <strong>%s</strong> tags were added!', $tags_added ), $tags_added ) . '<br /></p>';
 
 		echo '<form action="admin.php?import=utw&amp;step=4" method="post">';
 		wp_nonce_field('import-utw');
-		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Step 4 &raquo;').'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" value="'.__('Step 4').'" /></p>';
 		echo '</form>';
 		echo '</div>';
 
@@ -271,6 +271,6 @@ class UTW_Import {
 $utw_import = new UTW_Import();
 
 // add it to the import page!
-register_importer('utw', 'Ultimate Tag Warrior', __('Import Ultimate Tag Warrior tags into the new native tagging structure.'), array($utw_import, 'dispatch'));
+register_importer('utw', 'Ultimate Tag Warrior', __('Import Ultimate Tag Warrior tags into WordPress tags.'), array($utw_import, 'dispatch'));
 
 ?>

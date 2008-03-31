@@ -13,6 +13,8 @@ function edit_link( $link_id = '' ) {
 	$_POST['link_name'] = wp_specialchars( $_POST['link_name'] );
 	$_POST['link_image'] = wp_specialchars( $_POST['link_image'] );
 	$_POST['link_rss'] = clean_url($_POST['link_rss']);
+	if ( 'N' != $_POST['link_visible'] )
+		$_POST['link_visible'] = 'Y';
 
 	if ( !empty( $link_id ) ) {
 		$_POST['link_id'] = $link_id;
@@ -60,7 +62,7 @@ function wp_get_link_cats($link_id = 0) {
 }
 
 function get_link_to_edit( $link_id ) {
-	return get_link( $link_id, OBJECT, 'edit' );
+	return get_bookmark( $link_id, OBJECT, 'edit' );
 }
 
 function wp_insert_link($linkdata) {
@@ -151,8 +153,6 @@ function wp_set_link_cats($link_id = 0, $link_categories = array()) {
 }	// wp_set_link_cats()
 
 function wp_update_link($linkdata) {
-	global $wpdb;
-
 	$link_id = (int) $linkdata['link_id'];
 
 	$link = get_link($link_id, ARRAY_A);

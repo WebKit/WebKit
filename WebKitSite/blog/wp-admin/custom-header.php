@@ -169,7 +169,7 @@ Event.observe( window, 'load', hide_text );
 <input type="button" value="<?php _e('Hide Text'); ?>" onclick="hide_text()" id="hidetext" />
 <input type="button" value="<?php _e('Select a Text Color'); ?>" onclick="colorSelect($('textcolor'), 'pickcolor')" id="pickcolor" /><input type="button" value="<?php _e('Use Original Color'); ?>" onclick="colorDefault()" id="defaultcolor" />
 <?php wp_nonce_field('custom-header') ?>
-<input type="hidden" name="textcolor" id="textcolor" value="#<?php attribute_escape(header_textcolor()) ?>" /><input name="submit" type="submit" value="<?php _e('Save Changes &raquo;'); ?>" /></form>
+<input type="hidden" name="textcolor" id="textcolor" value="#<?php attribute_escape(header_textcolor()) ?>" /><input name="submit" type="submit" value="<?php _e('Save Changes'); ?>" /></form>
 <?php } ?>
 
 <div id="colorPickerDiv" style="z-index: 100;background:#eee;border:1px solid #ccc;position:absolute;visibility:hidden;"> </div>
@@ -183,7 +183,7 @@ Event.observe( window, 'load', hide_text );
 <input type="hidden" name="action" value="save" />
 <?php wp_nonce_field('custom-header') ?>
 <p class="submit">
-<input type="submit" value="<?php _e('Upload &raquo;'); ?>" />
+<input type="submit" value="<?php _e('Upload'); ?>" />
 </p>
 </form>
 
@@ -211,6 +211,7 @@ Event.observe( window, 'load', hide_text );
 		die( $file['error'] );
 
 		$url = $file['url'];
+		$type = $file['type'];
 		$file = $file['file'];
 		$filename = basename($file);
 
@@ -218,19 +219,20 @@ Event.observe( window, 'load', hide_text );
 		$object = array(
 		'post_title' => $filename,
 		'post_content' => $url,
-		'post_mime_type' => 'import',
+		'post_mime_type' => $type,
 		'guid' => $url);
 
 		// Save the data
 		$id = wp_insert_attachment($object, $file);
 
-		$upload = array('file' => $file, 'id' => $id);
-
 		list($width, $height, $type, $attr) = getimagesize( $file );
 
 		if ( $width == HEADER_IMAGE_WIDTH && $height == HEADER_IMAGE_HEIGHT ) {
+			// Add the meta-data
+			wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $file ) );
+
 			set_theme_mod('header_image', clean_url($url));
-			$header = apply_filters('wp_create_file_in_uploads', $file, $id); // For replication
+			do_action('wp_create_file_in_uploads', $file, $id); // For replication
 			return $this->finished();
 		} elseif ( $width > HEADER_IMAGE_WIDTH ) {
 			$oitar = $width / HEADER_IMAGE_WIDTH;
@@ -264,7 +266,7 @@ Event.observe( window, 'load', hide_text );
 <input type="hidden" name="attachment_id" id="attachment_id" value="<?php echo $id; ?>" />
 <input type="hidden" name="oitar" id="oitar" value="<?php echo $oitar; ?>" />
 <?php wp_nonce_field('custom-header') ?>
-<input type="submit" value="<?php _e('Crop Header &raquo;'); ?>" />
+<input type="submit" value="<?php _e('Crop Header'); ?>" />
 </p>
 
 </form>
@@ -281,22 +283,34 @@ Event.observe( window, 'load', hide_text );
 			$_POST['height'] = $_POST['height'] * $_POST['oitar'];
 		}
 
-		$header = wp_crop_image($_POST['attachment_id'], $_POST['x1'], $_POST['y1'], $_POST['width'], $_POST['height'], HEADER_IMAGE_WIDTH, HEADER_IMAGE_HEIGHT);
-		$header = apply_filters('wp_create_file_in_uploads', $header); // For replication
+		$original = get_attached_file( $_POST['attachment_id'] );
+
+		$cropped = wp_crop_image($_POST['attachment_id'], $_POST['x1'], $_POST['y1'], $_POST['width'], $_POST['height'], HEADER_IMAGE_WIDTH, HEADER_IMAGE_HEIGHT);
+		$cropped = apply_filters('wp_create_file_in_uploads', $cropped, $_POST['attachment_id']); // For replication
 
 		$parent = get_post($_POST['attachment_id']);
-
 		$parent_url = $parent->guid;
+		$url = str_replace(basename($parent_url), basename($cropped), $parent_url);
 
-		$url = str_replace(basename($parent_url), basename($header), $parent_url);
+		// Construct the object array
+		$object = array(
+			'ID' => $_POST['attachment_id'],
+			'post_title' => basename($cropped),
+			'post_content' => $url,
+			'post_mime_type' => 'image/jpeg',
+			'guid' => $url
+		);
+
+		// Update the attachment
+		wp_insert_attachment($object, $cropped);
+		wp_update_attachment_metadata( $_POST['attachment_id'], wp_generate_attachment_metadata( $_POST['attachment_id'], $cropped ) );
 
 		set_theme_mod('header_image', $url);
 
 		// cleanup
-		$file = get_attached_file( $_POST['attachment_id'] );
-		$medium = str_replace(basename($file), 'midsize-'.basename($file), $file);
+		$medium = str_replace(basename($original), 'midsize-'.basename($original), $original);
 		@unlink( apply_filters( 'wp_delete_file', $medium ) );
-		wp_delete_attachment( $_POST['attachment_id'] );
+		@unlink( apply_filters( 'wp_delete_file', $original ) );
 
 		return $this->finished();
 	}

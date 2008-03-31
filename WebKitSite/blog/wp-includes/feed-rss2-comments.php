@@ -1,12 +1,18 @@
 <?php
+/**
+ * RSS2 Feed Template for displaying RSS2 Comments feed.
+ *
+ * @package WordPress
+ */
+
 header('Content-Type: text/xml;charset=' . get_option('blog_charset'), true);
 
 echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
 ?>
-<!-- generator="wordpress/<?php echo $wp_version ?>" -->
 <rss version="2.0"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
 	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
 	>
 <channel>
 	<title><?php
@@ -17,10 +23,11 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
 		else
 			printf(__('Comments for %s'), get_bloginfo_rss( 'name' ) . get_wp_title_rss());
 	?></title>
+	<atom:link href="<?php self_link(); ?>" rel="self" type="application/rss+xml" />
 	<link><?php (is_single()) ? the_permalink_rss() : bloginfo_rss("url") ?></link>
 	<description><?php bloginfo_rss("description") ?></description>
 	<pubDate><?php echo gmdate('r'); ?></pubDate>
-	<generator>http://wordpress.org/?v=<?php echo $wp_version ?></generator>
+	<?php the_generator( 'rss2' ); ?>
 	<?php do_action('commentsrss2_head'); ?>
 <?php
 if ( have_comments() ) : while ( have_comments() ) : the_comment();
@@ -40,7 +47,7 @@ if ( have_comments() ) : while ( have_comments() ) : the_comment();
 		<link><?php comment_link() ?></link>
 		<dc:creator><?php echo get_comment_author_rss() ?></dc:creator>
 		<pubDate><?php echo mysql2date('D, d M Y H:i:s +0000', get_comment_time('Y-m-d H:i:s', true), false); ?></pubDate>
-		<guid><?php comment_link() ?></guid>
+		<guid isPermaLink="false"><?php comment_guid() ?></guid>
 <?php if (!empty($comment_post->post_password) && $_COOKIE['wp-postpass'] != $comment_post->post_password) : ?>
 		<description><?php _e('Protected Comments: Please enter your password to view comments.'); ?></description>
 		<content:encoded><![CDATA[<?php echo get_the_password_form() ?>]]></content:encoded>

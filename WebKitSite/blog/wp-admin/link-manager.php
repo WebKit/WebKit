@@ -1,12 +1,30 @@
 <?php
 
-
-// Links
-// Copyright (C) 2002, 2003 Mike Little -- mike@zed1.com
-
 require_once ('admin.php');
 
-wp_enqueue_script( 'listman' );
+// Handle bulk deletes
+if ( isset($_GET['deleteit']) && isset($_GET['linkcheck']) ) {
+	check_admin_referer('bulk-bookmarks');
+
+	if ( ! current_user_can('manage_links') )
+		wp_die( __('You do not have sufficient permissions to edit the links for this blog.') );
+
+	foreach ( (array) $_GET['linkcheck'] as $link_id) {
+		$link_id = (int) $link_id;
+
+		wp_delete_link($link_id);
+	}
+
+	$sendback = wp_get_referer();
+	$sendback = preg_replace('|[^a-z0-9-~+_.?#=&;,/:]|i', '', $sendback);
+	wp_redirect($sendback);
+	exit;
+} elseif ( !empty($_GET['_wp_http_referer']) ) {
+	 wp_redirect(remove_query_arg(array('_wp_http_referer', '_wpnonce'), stripslashes($_SERVER['REQUEST_URI'])));
+	 exit;
+}
+
+wp_enqueue_script('admin-forms');
 
 wp_reset_vars(array('action', 'cat_id', 'linkurl', 'name', 'image', 'description', 'visible', 'target', 'category', 'link_id', 'submit', 'order_by', 'links_show_cat_id', 'rating', 'rel', 'notes', 'linkcheck[]'));
 
@@ -16,8 +34,8 @@ if (empty ($cat_id))
 if (empty ($order_by))
 	$order_by = 'order_name';
 
-$title = __('Manage Blogroll');
-$this_file = $parent_file = 'link-manager.php';
+$title = __('Manage Links');
+$this_file = $parent_file = 'edit.php';
 include_once ("./admin-header.php");
 
 if (!current_user_can('manage_links'))
@@ -44,64 +62,67 @@ switch ($order_by) {
 		$sqlorderby = 'name';
 		break;
 }
-?>
-<script type="text/javascript">
-<!--
-function checkAll(form)
-{
-	for (i = 0, n = form.elements.length; i < n; i++) {
-		if(form.elements[i].type == "checkbox") {
-			if(form.elements[i].checked == true)
-				form.elements[i].checked = false;
-			else
-				form.elements[i].checked = true;
-		}
-	}
-}
-//-->
-</script>
 
-<?php
 if ( isset($_GET['deleted']) ) {
 	echo '<div style="background-color: rgb(207, 235, 247);" id="message" class="updated fade"><p>';
 	$deleted = (int) $_GET['deleted'];
 	printf(__ngettext('%s link deleted.', '%s links deleted', $deleted), $deleted);
 	echo '</p></div>';
+	$_SERVER['REQUEST_URI'] = remove_query_arg(array('deleted'), $_SERVER['REQUEST_URI']);
 }
 ?>
 
 <div class="wrap">
 
-<h2><?php _e('Blogroll Management'); ?></h2>
-<p><?php _e('Here you <a href="link-add.php">add links</a> to sites that you visit often and share them on your blog. When you have a list of links in your sidebar to other blogs, it&#8217;s called a &#8220;blogroll.&#8221;'); ?></p>
-<form id="cats" method="get" action="">
-<p><?php
+<form id="posts-filter" action="" method="get">
+<h2><?php printf( __( 'Manage Links (<a href="%s">add new</a>)' ), 'link-add.php' ); ?></h2>
+
+<p id="post-search">
+	<input type="text" id="post-search-input" name="s" value="<?php echo attribute_escape(stripslashes($_GET['s'])); ?>" />
+	<input type="submit" value="<?php _e( 'Search Links' ); ?>" class="button" />
+</p>
+
+<br class="clear" />
+
+<div class="tablenav">
+
+<div class="alignleft">
+<input type="submit" value="<?php _e('Delete'); ?>" name="deleteit" class="button-secondary delete" />
+<?php
 $categories = get_terms('link_category', "hide_empty=1");
 $select_cat = "<select name=\"cat_id\">\n";
-$select_cat .= '<option value="all"'  . (($cat_id == 'all') ? " selected='selected'" : '') . '>' . __('All') . "</option>\n";
+$select_cat .= '<option value="all"'  . (($cat_id == 'all') ? " selected='selected'" : '') . '>' . __('View all Categories') . "</option>\n";
 foreach ((array) $categories as $cat)
 	$select_cat .= '<option value="' . $cat->term_id . '"' . (($cat->term_id == $cat_id) ? " selected='selected'" : '') . '>' . sanitize_term_field('name', $cat->name, $cat->term_id, 'link_category', 'display') . "</option>\n";
 $select_cat .= "</select>\n";
 
 $select_order = "<select name=\"order_by\">\n";
-$select_order .= '<option value="order_id"' . (($order_by == 'order_id') ? " selected='selected'" : '') . '>' .  __('Link ID') . "</option>\n";
-$select_order .= '<option value="order_name"' . (($order_by == 'order_name') ? " selected='selected'" : '') . '>' .  __('Name') . "</option>\n";
-$select_order .= '<option value="order_url"' . (($order_by == 'order_url') ? " selected='selected'" : '') . '>' .  __('Address') . "</option>\n";
-$select_order .= '<option value="order_rating"' . (($order_by == 'order_rating') ? " selected='selected'" : '') . '>' .  __('Rating') . "</option>\n";
+$select_order .= '<option value="order_id"' . (($order_by == 'order_id') ? " selected='selected'" : '') . '>' .  __('Order by Link ID') . "</option>\n";
+$select_order .= '<option value="order_name"' . (($order_by == 'order_name') ? " selected='selected'" : '') . '>' .  __('Order by Name') . "</option>\n";
+$select_order .= '<option value="order_url"' . (($order_by == 'order_url') ? " selected='selected'" : '') . '>' .  __('Order by Address') . "</option>\n";
+$select_order .= '<option value="order_rating"' . (($order_by == 'order_rating') ? " selected='selected'" : '') . '>' .  __('Order by Rating') . "</option>\n";
 $select_order .= "</select>\n";
 
-printf(__('Currently showing %1$s links ordered by %2$s'), $select_cat, $select_order);
+echo $select_cat;
+echo $select_order;
+
 ?>
-<input type="submit" name="action" value="<?php _e('Update &raquo;') ?>" /></p>
-</form>
+<input type="submit" id="post-query-submit" value="<?php _e('Filter'); ?>" class="button-secondary" />
+
+</div>
+
+<br class="clear" />
+</div>
+
+<br class="clear" />
+
 <?php
 $link_columns = array(
-	'name'       => '<th width="15%">' . __('Name') . '</th>',
+	'name'       => '<th style="width: 15%;">' . __('Name') . '</th>',
 	'url'       => '<th>' . __('URL') . '</th>',
 	'categories' => '<th>' . __('Categories') . '</th>',
 	'rel'      => '<th style="text-align: center">' . __('rel') . '</th>',
 	'visible'   => '<th style="text-align: center">' . __('Visible') . '</th>',
-	'action'   => '<th colspan="2" style="text-align: center">' . __('Action') . '</th>',
 );
 $link_columns = apply_filters('manage_link_columns', $link_columns);
 ?>
@@ -109,26 +130,24 @@ $link_columns = apply_filters('manage_link_columns', $link_columns);
 <?php
 if ( 'all' == $cat_id )
 	$cat_id = '';
-$links = get_bookmarks( "category=$cat_id&hide_invisible=0&orderby=$sqlorderby&hide_empty=0" );
+$args = array('category' => $cat_id, 'hide_invisible' => 0, 'orderby' => $sqlorderby, 'hide_empty' => 0);
+if ( !empty($_GET['s']) )
+	$args['search'] = $_GET['s'];
+$links = get_bookmarks( $args );
 if ( $links ) {
 ?>
 
-<form id="links" method="post" action="link.php">
 <?php wp_nonce_field('bulk-bookmarks') ?>
-<input type="hidden" name="link_id" value="" />
-<input type="hidden" name="action" value="" />
-<input type="hidden" name="order_by" value="<?php echo attribute_escape($order_by); ?>" />
-<input type="hidden" name="cat_id" value="<?php echo (int) $cat_id ?>" />
 <table class="widefat">
 	<thead>
 	<tr>
+	<th scope="col" class="check-column"><input type="checkbox" onclick="checkAll(document.getElementById('posts-filter'));" /></th>
 <?php foreach($link_columns as $column_display_name) {
 	echo $column_display_name;
 } ?>
-	<th style="text-align: center"><input type="checkbox" onclick="checkAll(document.getElementById('links'));" /></th>
 	</tr>
 	</thead>
-	<tbody id="the-list">
+	<tbody>
 <?php
 	foreach ($links as $link) {
 		$link = sanitize_bookmark($link);
@@ -145,10 +164,12 @@ if ( $links ) {
 		++ $i;
 		$style = ($i % 2) ? '' : ' class="alternate"';
 		?><tr id="link-<?php echo $link->link_id; ?>" valign="middle" <?php echo $style; ?>><?php
+		echo '<th scope="row" class="check-column"><input type="checkbox" name="linkcheck[]" value="'.$link->link_id.'" /></th>';
 		foreach($link_columns as $column_name=>$column_display_name) {
 			switch($column_name) {
 				case 'name':
-					?><td><strong><?php echo $link->link_name; ?></strong><br /><?php
+
+					echo "<td><strong><a class='row-title' href='link.php?link_id=$link->link_id&amp;action=edit' title='" . attribute_escape(sprintf(__('Edit "%s"'), $link->link_name)) . "' class='edit'>$link->link_name</a></strong><br />";
 					echo $link->link_description . "</td>";
 					break;
 				case 'url':
@@ -173,11 +194,7 @@ if ( $links ) {
 					?><td><?php echo $link->link_rel; ?></td><?php
 					break;
 				case 'visible':
-					?><td align='center'><?php echo $visible; ?></td><?php
-					break;
-				case 'action':
-					echo '<td><a href="link.php?link_id='.$link->link_id.'&amp;action=edit" class="edit">'.__('Edit').'</a></td>';
-					echo '<td><a href="' . wp_nonce_url('link.php?link_id='.$link->link_id.'&amp;action=delete', 'delete-bookmark_' . $link->link_id ) . '"'." onclick=\"return deleteSomething( 'link', $link->link_id , '".js_escape(sprintf(__("You are about to delete the '%s' link to %s.\n'Cancel' to stop, 'OK' to delete."), $link->link_name, $link->link_url )).'\' );" class="delete">'.__('Delete').'</a></td>';
+					?><td style='text-align: center;'><?php echo $visible; ?></td><?php
 					break;
 				default:
 					?>
@@ -187,19 +204,23 @@ if ( $links ) {
 
 			}
 		}
-		echo '<td align="center"><input type="checkbox" name="linkcheck[]" value="'.$link->link_id.'" /></td>';
 		echo "\n    </tr>\n";
 	}
 ?>
 	</tbody>
 </table>
 
-<div id="ajax-response"></div>
-
-<p class="submit"><input type="submit" class="button" name="deletebookmarks" id="deletebookmarks" value="<?php _e('Delete Checked Links &raquo;') ?>" onclick="return confirm('<?php echo js_escape(__("You are about to delete these links permanently.\n'Cancel' to stop, 'OK' to delete.")); ?>')" /></p>
+<?php } else { ?>
+<p><?php _e('No links found.') ?></p>
+<?php } ?>
 </form>
 
-<?php } ?>
+<div id="ajax-response"></div>
+
+<div class="tablenav">
+<br class="clear" />
+</div>
+
 
 </div>
 

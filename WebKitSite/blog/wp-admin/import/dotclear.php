@@ -128,7 +128,7 @@ class Dotclear_Import {
 		echo '<form action="admin.php?import=dotclear&amp;step=1" method="post">';
 		wp_nonce_field('import-dotclear');
 		$this->db_form();
-		echo '<p class="submit"><input type="submit" name="submit" value="'.attribute_escape(__('Import Categories &raquo;')).'" /></p>';
+		echo '<p class="submit"><input type="submit" name="submit" value="'.attribute_escape(__('Import Categories')).'" /></p>';
 		echo '</form></div>';
 	}
 
@@ -225,7 +225,7 @@ class Dotclear_Import {
 
 			// Store category translation for future use
 			add_option('dccat2wpcat',$dccat2wpcat);
-			echo '<p>'.sprintf(__('Done! <strong>%1$s</strong> categories imported.'), $count).'<br /><br /></p>';
+			echo '<p>'.sprintf(__ngettext('Done! <strong>%1$s</strong> category imported.', 'Done! <strong>%1$s</strong> categories imported.', $count), $count).'<br /><br /></p>';
 			return true;
 		}
 		echo __('No Categories to Import!');
@@ -526,7 +526,7 @@ class Dotclear_Import {
 			}
 			add_option('dclinks2wplinks',$dclinks2wplinks);
 			echo '<p>';
-			printf(__('Done! <strong>%s</strong> links or link categories imported'), $count);
+			printf(__ngettext('Done! <strong>%s</strong> link or link category imported.', 'Done! <strong>%s</strong> links or link categories imported.', $count), $count);
 			echo '<br /><br /></p>';
 			return true;
 		}
@@ -615,6 +615,7 @@ class Dotclear_Import {
 		delete_option('dcname');
 		delete_option('dchost');
 		delete_option('dccharset');
+		do_action('import_done', 'dotclear');
 		$this->tips();
 	}
 
@@ -639,7 +640,7 @@ class Dotclear_Import {
 
 	function db_form()
 	{
-		echo '<table class="editform">';
+		echo '<table class="form-table">';
 		printf('<tr><th><label for="dbuser">%s</label></th><td><input type="text" name="dbuser" id="dbuser" /></td></tr>', __('DotClear Database User:'));
 		printf('<tr><th><label for="dbpass">%s</label></th><td><input type="password" name="dbpass" id="dbpass" /></td></tr>', __('DotClear Database Password:'));
 		printf('<tr><th><label for="dbname">%s</label></th><td><input type="text" name="dbname" id="dbname" /></td></tr>', __('DotClear Database Name:'));
@@ -741,5 +742,5 @@ class Dotclear_Import {
 }
 
 $dc_import = new Dotclear_Import();
-register_importer('dotclear', __('DotClear'), __('Import categories, users, posts, comments, and links from a DotClear blog'), array ($dc_import, 'dispatch'));
+register_importer('dotclear', __('DotClear'), __('Import categories, users, posts, comments, and links from a DotClear blog.'), array ($dc_import, 'dispatch'));
 ?>

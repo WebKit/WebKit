@@ -11,117 +11,28 @@ $parent_file = 'users.php';
 $action = $_REQUEST['action'];
 $update = '';
 
-if ( empty($_POST) ) {
+if ( empty($action) ) {
+	if ( isset($_GET['deleteit']) )
+		$action = 'delete';
+	elseif ( isset($_GET['changeit']) && !empty($_GET['new_role']) )
+		$action = 'promote';
+}
+
+if ( empty($_REQUEST) ) {
 	$referer = '<input type="hidden" name="wp_http_referer" value="'. attribute_escape(stripslashes($_SERVER['REQUEST_URI'])) . '" />';
-} elseif ( isset($_POST['wp_http_referer']) ) {
-	$redirect = remove_query_arg(array('wp_http_referer', 'updated', 'delete_count'), stripslashes($_POST['wp_http_referer']));
+} elseif ( isset($_REQUEST['wp_http_referer']) ) {
+	$redirect = remove_query_arg(array('wp_http_referer', 'updated', 'delete_count'), stripslashes($_REQUEST['wp_http_referer']));
 	$referer = '<input type="hidden" name="wp_http_referer" value="' . attribute_escape($redirect) . '" />';
 } else {
 	$redirect = 'users.php';
 }
-
-
-// WP_User_Search class
-// by Mark Jaquith
-
-
-class WP_User_Search {
-	var $results;
-	var $search_term;
-	var $page;
-	var $raw_page;
-	var $users_per_page = 50;
-	var $first_user;
-	var $last_user;
-	var $query_limit;
-	var $query_from_where;
-	var $total_users_for_query = 0;
-	var $too_many_total_users = false;
-	var $search_errors;
-
-	function WP_User_Search ($search_term = '', $page = '') { // constructor
-		$this->search_term = $search_term;
-		$this->raw_page = ( '' == $page ) ? false : (int) $page;
-		$this->page = (int) ( '' == $page ) ? 1 : $page;
-
-		$this->prepare_query();
-		$this->query();
-		$this->prepare_vars_for_template_usage();
-		$this->do_paging();
-	}
-
-	function prepare_query() {
-		global $wpdb;
-		$this->first_user = ($this->page - 1) * $this->users_per_page;
-		$this->query_limit = 'LIMIT ' . $this->first_user . ',' . $this->users_per_page;
-		if ( $this->search_term ) {
-			$searches = array();
-			$search_sql = 'AND (';
-			foreach ( array('user_login', 'user_nicename', 'user_email', 'user_url', 'display_name') as $col )
-				$searches[] = $col . " LIKE '%$this->search_term%'";
-			$search_sql .= implode(' OR ', $searches);
-			$search_sql .= ')';
-		}
-		$this->query_from_where = "FROM $wpdb->users WHERE 1=1 $search_sql";
-
-	}
-
-	function query() {
-		global $wpdb;
-		$this->results = $wpdb->get_col('SELECT ID ' . $this->query_from_where . $this->query_limit);
-
-		if ( $this->results )
-			$this->total_users_for_query = $wpdb->get_var('SELECT COUNT(ID) ' . $this->query_from_where); // no limit
-		else
-			$this->search_errors = new WP_Error('no_matching_users_found', __('No matching users were found!'));
-	}
-
-	function prepare_vars_for_template_usage() {
-		$this->search_term = stripslashes($this->search_term); // done with DB, from now on we want slashes gone
-	}
-
-	function do_paging() {
-		if ( $this->total_users_for_query > $this->users_per_page ) { // have to page the results
-			$this->paging_text = paginate_links( array(
-				'total' => ceil($this->total_users_for_query / $this->users_per_page),
-				'current' => $this->page,
-				'prev_text' => __('&laquo; Previous Page'),
-				'next_text' => __('Next Page &raquo;'),
-				'base' => 'users.php?%_%',
-				'format' => 'userspage=%#%',
-				'add_args' => array( 'usersearch' => urlencode($this->search_term) )
-			) );
-		}
-	}
-
-	function get_results() {
-		return (array) $this->results;
-	}
-
-	function page_links() {
-		echo $this->paging_text;
-	}
-
-	function results_are_paged() {
-		if ( $this->paging_text )
-			return true;
-		return false;
-	}
-
-	function is_search() {
-		if ( $this->search_term )
-			return true;
-		return false;
-	}
-}
-
 
 switch ($action) {
 
 case 'promote':
 	check_admin_referer('bulk-users');
 
-	if (empty($_POST['users'])) {
+	if (empty($_REQUEST['users'])) {
 		wp_redirect($redirect);
 		exit();
 	}
@@ -129,19 +40,19 @@ case 'promote':
 	if ( !current_user_can('edit_users') )
 		wp_die(__('You can&#8217;t edit users.'));
 
-	$userids = $_POST['users'];
+	$userids = $_REQUEST['users'];
 	$update = 'promote';
 	foreach($userids as $id) {
 		if ( ! current_user_can('edit_user', $id) )
 			wp_die(__('You can&#8217;t edit that user.'));
 		// The new role of the current user must also have edit_users caps
-		if($id == $current_user->ID && !$wp_roles->role_objects[$_POST['new_role']]->has_cap('edit_users')) {
+		if($id == $current_user->ID && !$wp_roles->role_objects[$_REQUEST['new_role']]->has_cap('edit_users')) {
 			$update = 'err_admin_role';
 			continue;
 		}
 
 		$user = new WP_User($id);
-		$user->set_role($_POST['new_role']);
+		$user->set_role($_REQUEST['new_role']);
 	}
 
 	wp_redirect(add_query_arg('update', $update, $redirect));
@@ -153,7 +64,7 @@ case 'dodelete':
 
 	check_admin_referer('delete-users');
 
-	if ( empty($_POST['users']) ) {
+	if ( empty($_REQUEST['users']) ) {
 		wp_redirect($redirect);
 		exit();
 	}
@@ -161,7 +72,7 @@ case 'dodelete':
 	if ( !current_user_can('delete_users') )
 		wp_die(__('You can&#8217;t delete users.'));
 
-	$userids = $_POST['users'];
+	$userids = $_REQUEST['users'];
 	$update = 'del';
 	$delete_count = 0;
 
@@ -173,12 +84,12 @@ case 'dodelete':
 			$update = 'err_admin_del';
 			continue;
 		}
-		switch($_POST['delete_option']) {
+		switch($_REQUEST['delete_option']) {
 		case 'delete':
 			wp_delete_user($id);
 			break;
 		case 'reassign':
-			wp_delete_user($id, $_POST['reassign_user']);
+			wp_delete_user($id, $_REQUEST['reassign_user']);
 			break;
 		}
 		++$delete_count;
@@ -194,7 +105,7 @@ case 'delete':
 
 	check_admin_referer('bulk-users');
 
-	if ( empty($_POST['users']) ) {
+	if ( empty($_REQUEST['users']) ) {
 		wp_redirect($redirect);
 		exit();
 	}
@@ -202,13 +113,14 @@ case 'delete':
 	if ( !current_user_can('delete_users') )
 		$errors = new WP_Error('edit_users', __('You can&#8217;t delete users.'));
 
-	$userids = $_POST['users'];
+	$userids = $_REQUEST['users'];
 
 	include ('admin-header.php');
 ?>
 <form action="" method="post" name="updateusers" id="updateusers">
 <?php wp_nonce_field('delete-users') ?>
 <?php echo $referer; ?>
+
 <div class="wrap">
 <h2><?php _e('Delete Users'); ?></h2>
 <p><?php _e('You have specified these users for deletion:'); ?></p>
@@ -241,7 +153,7 @@ case 'delete':
 		<?php echo '<label for="delete_option1">'.__('Attribute all posts and links to:')."</label> $user_dropdown"; ?></li>
 	</ul>
 	<input type="hidden" name="action" value="dodelete" />
-	<p class="submit"><input type="submit" name="submit" value="<?php _e('Confirm Deletion'); ?>" /></p>
+	<p class="submit"><input type="submit" name="submit" value="<?php _e('Confirm Deletion'); ?>" class="button-secondary" /></p>
 <?php else : ?>
 	<p><?php _e('There are no valid users selected for deletion.'); ?></p>
 <?php endif; ?>
@@ -262,27 +174,26 @@ case 'adduser':
 	if ( is_wp_error( $user_id ) )
 		$add_user_errors = $user_id;
 	else {
-		$new_user_login = apply_filters('pre_user_login', sanitize_user(stripslashes($_POST['user_login']), true));
+		$new_user_login = apply_filters('pre_user_login', sanitize_user(stripslashes($_REQUEST['user_login']), true));
 		$redirect = add_query_arg( array('usersearch' => urlencode($new_user_login), 'update' => $update), $redirect );
 		wp_redirect( $redirect . '#user-' . $user_id );
 		die();
 	}
 
 default:
+
+	if ( !empty($_GET['_wp_http_referer']) ) {
+		wp_redirect(remove_query_arg(array('_wp_http_referer', '_wpnonce'), stripslashes($_SERVER['REQUEST_URI'])));
+		exit;
+	}
+
 	wp_enqueue_script('admin-users');
+	wp_enqueue_script('admin-forms');
 
 	include('admin-header.php');
 
 	// Query the users
-	$wp_user_search = new WP_User_Search($_GET['usersearch'], $_GET['userspage']);
-
-	// Make the user objects
-	foreach ( $wp_user_search->get_results() as $userid ) {
-		$tmp_user = new WP_User($userid);
-		$roles = $tmp_user->roles;
-		$role = array_shift($roles);
-		$roleclasses[$role][$tmp_user->user_login] = $tmp_user;
-	}
+	$wp_user_search = new WP_User_Search($_GET['usersearch'], $_GET['userspage'], $_GET['role']);
 
 	if ( isset($_GET['update']) ) :
 		switch($_GET['update']) {
@@ -330,16 +241,73 @@ default:
 <?php endif; ?>
 
 <div class="wrap">
-
+<form id="posts-filter" action="" method="get">
 	<?php if ( $wp_user_search->is_search() ) : ?>
-		<h2><?php printf(__('Users Matching "%s" by Role'), wp_specialchars($wp_user_search->search_term)); ?></h2>
+		<h2><?php printf(__('Users Matching "%s"'), wp_specialchars($wp_user_search->search_term)); ?></h2>
 	<?php else : ?>
-		<h2><?php _e('User List by Role'); ?></h2>
+		<h2><?php _e('Manage Users'); ?></h2>
 	<?php endif; ?>
 
-	<form action="" method="get" name="search" id="search">
-		<p><input type="text" name="usersearch" id="usersearch" value="<?php echo attribute_escape($wp_user_search->search_term); ?>" /> <input type="submit" value="<?php _e('Search Users &raquo;'); ?>" class="button" /></p>
-	</form>
+<ul class="subsubsub">
+<?php
+$role_links = array();
+$avail_roles = array();
+$users_of_blog = get_users_of_blog();
+//var_dump($users_of_blog);
+foreach ( (array) $users_of_blog as $b_user ) {
+	$b_roles = unserialize($b_user->meta_value);
+	foreach ( (array) $b_roles as $b_role => $val ) {
+		if ( !isset($avail_roles[$b_role]) )
+			$avail_roles[$b_role] = 0;
+		$avail_roles[$b_role]++;
+	}
+}
+unset($users_of_blog);
+
+$current_role = false;
+$class = empty($_GET['role']) ? ' class="current"' : '';
+$role_links[] = "<li><a href=\"users.php\"$class>" . __('All Users') . "</a>";
+foreach ( $wp_roles->get_names() as $role => $name ) {
+	if ( !isset($avail_roles[$role]) )
+		continue;
+
+	$class = '';
+
+	if ( $role == $_GET['role'] ) {
+		$current_role = $_GET['role'];
+		$class = ' class="current"';
+	}
+
+	$name = translate_with_context($name);
+	$name = sprintf(_c('%1$s (%2$s)|user role with count'), $name, $avail_roles[$role]);
+	$role_links[] = "<li><a href=\"users.php?role=$role\"$class>" . $name . '</a>';
+}
+echo implode(' |</li>', $role_links) . '</li>';
+unset($role_links);
+?>
+</ul>
+	<p id="post-search">
+	<input type="text" id="post-search-input" name="usersearch" value="<?php echo attribute_escape($wp_user_search->search_term); ?>" />
+	<input type="submit" value="<?php _e( 'Search Users' ); ?>" class="button" />
+	</p>
+
+<div class="tablenav">
+
+<?php if ( $wp_user_search->results_are_paged() ) : ?>
+	<div class="tablenav-pages"><?php $wp_user_search->page_links(); ?></div>
+<?php endif; ?>
+
+<div class="alignleft">
+<input type="submit" value="<?php _e('Delete'); ?>" name="deleteit" class="button-secondary delete" />
+<select name="new_role"><option value=''><?php _e('Change role to&hellip;') ?></option>"<?php wp_dropdown_roles(); ?></select>
+<input type="submit" value="<?php _e('Change'); ?>" name="changeit" class="button-secondary" />
+<?php wp_nonce_field('bulk-users'); ?>
+</div>
+
+<br class="clear" />
+</div>
+
+<br class="clear" />
 
 	<?php if ( is_wp_error( $wp_user_search->search_errors ) ) : ?>
 		<div class="error">
@@ -359,81 +327,57 @@ default:
 		<p><a href="users.php"><?php _e('&laquo; Back to All Users'); ?></a></p>
 	<?php endif; ?>
 
-	<h3><?php
-	if ( 0 == $wp_user_search->first_user && $wp_user_search->total_users_for_query <= 50 )
-		printf(__('%3$s shown below'), $wp_user_search->first_user + 1, min($wp_user_search->first_user + $wp_user_search->users_per_page, $wp_user_search->total_users_for_query), $wp_user_search->total_users_for_query);
-	else
-		printf(__('%1$s &#8211; %2$s of %3$s shown below'), $wp_user_search->first_user + 1, min($wp_user_search->first_user + $wp_user_search->users_per_page, $wp_user_search->total_users_for_query), $wp_user_search->total_users_for_query); ?></h3>
-
-	<?php if ( $wp_user_search->results_are_paged() ) : ?>
-		<div class="user-paging-text"><p><?php $wp_user_search->page_links(); ?></p></div>
-	<?php endif; ?>
-
-<form action="" method="post" name="updateusers" id="updateusers">
-<?php wp_nonce_field('bulk-users') ?>
 <table class="widefat">
-<?php
-foreach($roleclasses as $role => $roleclass) {
-	uksort($roleclass, "strnatcasecmp");
-?>
-<tbody>
-<tr>
-<?php if ( !empty($role) ) : ?>
-	<th colspan="7"><h3><?php echo $wp_roles->role_names[$role]; ?></h3></th>
-<?php else : ?>
-	<th colspan="7"><h3><em><?php _e('No role for this blog'); ?></em></h3></th>
-<?php endif; ?>
-</tr>
+<thead>
 <tr class="thead">
-	<th><?php _e('ID') ?></th>
+	<th scope="col" class="check-column"><input type="checkbox" onclick="checkAll(document.getElementById('posts-filter'));" /> </th>
 	<th><?php _e('Username') ?></th>
 	<th><?php _e('Name') ?></th>
 	<th><?php _e('E-mail') ?></th>
-	<th><?php _e('Website') ?></th>
-	<th colspan="2" style="text-align: center"><?php _e('Actions') ?></th>
+	<th><?php _e('Role') ?></th>
+	<th class="num"><?php _e('Posts') ?></th>
 </tr>
-</tbody>
-<tbody id="role-<?php echo $role; ?>"><?php
+</thead>
+<tbody id="users" class="list:user user-list">
+<?php
 $style = '';
-foreach ( (array) $roleclass as $user_object ) {
+foreach ( $wp_user_search->get_results() as $userid ) {
+	$user_object = new WP_User($userid);
+	$roles = $user_object->roles;
+	$role = array_shift($roles);
+
 	$style = ( ' class="alternate"' == $style ) ? '' : ' class="alternate"';
-	echo "\n\t" . user_row($user_object, $style);
+	echo "\n\t" . user_row($user_object, $style, $role);
 }
 ?>
-
 </tbody>
-<?php } ?>
 </table>
 
+<div class="tablenav">
+
 <?php if ( $wp_user_search->results_are_paged() ) : ?>
-	<div class="user-paging-text"><p><?php $wp_user_search->page_links(); ?></p></div>
+	<div class="tablenav-pages"><?php $wp_user_search->page_links(); ?></div>
 <?php endif; ?>
 
-	<h3><?php _e('Update Selected'); ?></h3>
-	<ul style="list-style:none;">
-		<li><input type="radio" name="action" id="action0" value="delete" /> <label for="action0"><?php _e('Delete checked users.'); ?></label></li>
-		<li>
-			<input type="radio" name="action" id="action1" value="promote" /> <label for="action1"><?php _e('Set the Role of checked users to:'); ?></label>
-			<select name="new_role" onchange="getElementById('action1').checked = 'true'"><?php wp_dropdown_roles(); ?></select>
-		</li>
-	</ul>
-	<p class="submit" style="width: 420px">
-		<?php echo $referer; ?>
-		<input type="submit" value="<?php _e('Bulk Update &raquo;'); ?>" />
-	</p>
+<br class="clear" />
+</div>
+
 </form>
 <?php endif; ?>
+
 </div>
 
 <?php
 	if ( is_wp_error($add_user_errors) ) {
 		foreach ( array('user_login' => 'user_login', 'first_name' => 'user_firstname', 'last_name' => 'user_lastname', 'email' => 'user_email', 'url' => 'user_uri', 'role' => 'user_role') as $formpost => $var ) {
 			$var = 'new_' . $var;
-			$$var = attribute_escape(stripslashes($_POST[$formpost]));
+			$$var = attribute_escape(stripslashes($_REQUEST[$formpost]));
 		}
 		unset($name);
 	}
 ?>
+
+<br class="clear" />
 
 <div class="wrap">
 <h2 id="add-new-user"><?php _e('Add New User') ?></h2>
@@ -448,40 +392,38 @@ foreach ( (array) $roleclass as $user_object ) {
 <?php endif; ?>
 <div id="ajax-response"></div>
 
-<div class="narrow">
-
 <?php
 	if ( get_option('users_can_register') )
 		echo '<p>' . sprintf(__('Users can <a href="%1$s">register themselves</a> or you can manually create users here.'), get_option('siteurl').'/wp-register.php') . '</p>';
 	else
-        echo '<p>' . sprintf(__('Users cannot currently <a href="%1$s">register themselves</a>, but you can manually create users here.'), get_option('siteurl').'/wp-admin/options-general.php#users_can_register') . '</p>';
+	        echo '<p>' . sprintf(__('Users cannot currently <a href="%1$s">register themselves</a>, but you can manually create users here.'), get_option('siteurl').'/wp-admin/options-general.php#users_can_register') . '</p>';
 ?>
-<form action="#add-new-user" method="post" name="adduser" id="adduser">
+<form action="#add-new-user" method="post" name="adduser" id="adduser" class="add:users: validate">
 <?php wp_nonce_field('add-user') ?>
-<table class="editform" width="100%" cellspacing="2" cellpadding="5">
-	<tr>
-		<th scope="row" width="33%"><?php _e('Username (required)') ?><input name="action" type="hidden" id="action" value="adduser" /></th>
-		<td width="66%"><input name="user_login" type="text" id="user_login" value="<?php echo $new_user_login; ?>" /></td>
+<table class="form-table">
+	<tr class="form-field form-required">
+		<th scope="row"><?php _e('Username (required)') ?><input name="action" type="hidden" id="action" value="adduser" /></th>
+		<td ><input name="user_login" type="text" id="user_login" value="<?php echo $new_user_login; ?>" /></td>
 	</tr>
-	<tr>
+	<tr class="form-field">
 		<th scope="row"><?php _e('First Name') ?> </th>
 		<td><input name="first_name" type="text" id="first_name" value="<?php echo $new_user_firstname; ?>" /></td>
 	</tr>
-	<tr>
+	<tr class="form-field">
 		<th scope="row"><?php _e('Last Name') ?> </th>
 		<td><input name="last_name" type="text" id="last_name" value="<?php echo $new_user_lastname; ?>" /></td>
 	</tr>
-	<tr>
+	<tr class="form-field form-required">
 		<th scope="row"><?php _e('E-mail (required)') ?></th>
 		<td><input name="email" type="text" id="email" value="<?php echo $new_user_email; ?>" /></td>
 	</tr>
-	<tr>
+	<tr class="form-field">
 		<th scope="row"><?php _e('Website') ?></th>
 		<td><input name="url" type="text" id="url" value="<?php echo $new_user_uri; ?>" /></td>
 	</tr>
 
 <?php if ( apply_filters('show_password_fields', true) ) : ?>
-	<tr>
+	<tr class="form-field form-required">
 		<th scope="row"><?php _e('Password (twice)') ?> </th>
 		<td><input name="pass1" type="password" id="pass1" />
 		<br />
@@ -489,12 +431,12 @@ foreach ( (array) $roleclass as $user_object ) {
 	</tr>
 <?php endif; ?>
 
-	<tr>
+	<tr class="form-field">
 		<th scope="row"><?php _e('Role'); ?></th>
 		<td><select name="role" id="role">
 			<?php
 			if ( !$new_user_role )
-				$new_user_role = get_option('default_role');
+				$new_user_role = $current_role ? $current_role : get_option('default_role');
 			wp_dropdown_roles($new_user_role);
 			?>
 			</select>
@@ -503,11 +445,10 @@ foreach ( (array) $roleclass as $user_object ) {
 </table>
 <p class="submit">
 	<?php echo $referer; ?>
-	<input name="adduser" type="submit" id="addusersub" value="<?php _e('Add User &raquo;') ?>" />
+	<input name="adduser" type="submit" id="addusersub" value="<?php _e('Add User') ?>" />
 </p>
 </form>
 
-</div>
 </div>
 
 <?php

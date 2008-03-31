@@ -1,10 +1,11 @@
-/*  
+/*
 Theme Name: WordPress Default
 Theme URI: http://wordpress.org/
 Description: The default WordPress theme based on the famous <a href="http://binarybonsai.com/kubrick/">Kubrick</a>.
 Version: 1.6
 Author: Michael Heilemann
 Author URI: http://binarybonsai.com/
+Tags: blue, custom header, fixed width, two columns, widgets
 
 	Kubrick v1.5
 	 http://binarybonsai.com/kubrick/
@@ -38,11 +39,11 @@ body {
 	background: #73a0c5 url('images/kubrickheader.jpg') no-repeat bottom center;
 	}
 
-#headerimg 	{ 
-	margin: 7px 9px 0; 
-	height: 192px; 
-	width: 740px; 
-	} 
+#headerimg 	{
+	margin: 7px 9px 0;
+	height: 192px;
+	width: 740px;
+	}
 
 #content {
 	font-size: 1.2em
@@ -71,7 +72,7 @@ body {
 	}
 
 #footer {
-	background: #eee url('images/kubrickfooter.jpg') no-repeat top; 
+	background: #eee url('images/kubrickfooter.jpg') no-repeat top;
 	border: none;
 	}
 
@@ -136,6 +137,13 @@ h2, h2 a, h2 a:hover, h2 a:visited, h3, h3 a, h3 a:hover, h3 a:visited, #sidebar
 
 .commentlist li {
 	font-weight: bold;
+	}
+
+.commentlist li .avatar { 
+	float: right;
+	border: 1px solid #eee;
+	padding: 2px;
+	background: #fff;
 	}
 
 .commentlist cite, .commentlist cite a {
@@ -210,7 +218,7 @@ a:hover {
 /* Begin Structure */
 body {
 	margin: 0 0 20px 0;
-	padding: 0; 
+	padding: 0;
 	}
 
 #page {
@@ -223,9 +231,9 @@ body {
 
 #header {
 	background-color: #73a0c5;
-	margin: 0 0 0 1px; 
-	padding: 0; 
-	height: 200px; 
+	margin: 0 0 0 1px;
+	padding: 0;
+	height: 200px;
 	width: 758px;
 	}
 
@@ -283,6 +291,10 @@ body {
 
 .postmetadata {
 	clear: left;
+}
+
+.clear {
+	clear: both;
 }
 
 #footer {
@@ -385,7 +397,7 @@ html>body .entry ul {
 	list-style: none;
 	padding-left: 10px;
 	text-indent: -10px;
-	} 
+	}
 
 html>body .entry li {
 	margin: 7px 0 8px 10px;
@@ -449,7 +461,7 @@ ol li, #sidebar ul ol li {
 /* Begin Form Elements */
 #searchform {
 	margin: 10px auto;
-	padding: 5px 3px; 
+	padding: 5px 3px;
 	text-align: center;
 	}
 

@@ -6,17 +6,8 @@
 <?php if (isset($mode) && 'bookmarklet' == $mode) : ?>
 <input type="hidden" name="mode" value="bookmarklet" />
 <?php endif; ?>
-<input type="hidden" name="user_ID" value="<?php echo (int) $user_ID ?>" />
+<input type="hidden" id="user-id" name="user_ID" value="<?php echo (int) $user_ID ?>" />
 <input type="hidden" name="action" value='post' />
-
-<script type="text/javascript">
-<!--
-function focusit() { // focus on first input field
-	document.getElementById('title').focus();
-}
-addLoadEvent(focusit);
-//-->
-</script>
 
 <div id="poststuff">
     <fieldset id="titlediv">
@@ -39,6 +30,7 @@ addLoadEvent(focusit);
  }
 ?>
 <div><textarea rows="<?php echo $rows; ?>" cols="40" name="content" tabindex="4" id="content"><?php echo $post->post_content ?></textarea></div>
+<?php wp_nonce_field( 'autosave', 'autosavenonce', false ); ?>
 </fieldset>
 
 
@@ -57,11 +49,11 @@ edCanvas = document.getElementById('content');
 	<input name="saveasprivate" type="submit" id="saveasprivate" tabindex="10" value="<?php _e('Save as Private') ?>" />
 
 	 <?php if ( current_user_can('edit_posts') ) : ?>
-	<input name="publish" type="submit" id="publish" tabindex="6" style="font-weight: bold;" value="<?php _e('Publish') ?>" />
+	<input name="publish" type="submit" id="publish" tabindex="6" value="<?php _e('Publish') ?>" class="button button-highlighted" />
 <?php endif; ?>
 
 <?php if ('bookmarklet' != $mode) {
-		echo '<input name="advanced" type="submit" id="advancededit" tabindex="7" value="' .  __('Advanced Editing &raquo;') . '" />';
+		echo '<input name="advanced" type="submit" id="advancededit" tabindex="7" value="' .  __('Advanced Editing') . '" />';
 	} ?>
 	<input name="referredby" type="hidden" id="referredby" value="<?php if ( $refby = wp_get_referer() ) echo urlencode($refby); ?>" />
 </p>
@@ -71,4 +63,7 @@ edCanvas = document.getElementById('content');
 </div>
 </form>
 
+<script type="text/javascript">
+try{document.getElementById('title').focus();}catch(e){}
+</script>
 </div>

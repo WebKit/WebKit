@@ -1,102 +1,12 @@
 <?php
-
-/* Functions missing from older PHP versions */
-
-
-/* Added in PHP 4.2.0 */
-
-if (!function_exists('floatval')) {
-	function floatval($string) {
-		return ((float) $string);
-	}
-}
-
-if (!function_exists('is_a')) {
-	function is_a($object, $class) {
-		// by Aidan Lister <aidan@php.net>
-		if (get_class($object) == strtolower($class)) {
-			return true;
-		} else {
-			return is_subclass_of($object, $class);
-		}
-	}
-}
-
-if (!function_exists('ob_clean')) {
-	function ob_clean() {
-		// by Aidan Lister <aidan@php.net>
-		if (@ob_end_clean()) {
-			return ob_start();
-		}
-		return false;
-	}
-}
-
-
-/* Added in PHP 4.3.0 */
-
-function printr($var, $do_not_echo = false) {
-	// from php.net/print_r user contributed notes
-	ob_start();
-	print_r($var);
-	$code =  htmlentities(ob_get_contents());
-	ob_clean();
-	if (!$do_not_echo) {
-		echo "<pre>$code</pre>";
-	}
-	ob_end_clean();
-	return $code;
-}
-
-/* compatibility with PHP versions older than 4.3 */
-if ( !function_exists('file_get_contents') ) {
-	function file_get_contents( $file ) {
-		$file = file($file);
-		return !$file ? false : implode('', $file);
-	}
-}
-
-if (!defined('CASE_LOWER')) {
-		define('CASE_LOWER', 0);
-}
-
-if (!defined('CASE_UPPER')) {
-		define('CASE_UPPER', 1);
-}
-
-
 /**
- * Replace array_change_key_case()
+ * WordPress implementation for PHP functions missing from older PHP versions.
  *
- * @category    PHP
- * @package     PHP_Compat
- * @link        http://php.net/function.array_change_key_case
- * @author      Stephan Schmidt <schst@php.net>
- * @author      Aidan Lister <aidan@php.net>
- * @version     $Revision: 6070 $
- * @since       PHP 4.2.0
- * @require     PHP 4.0.0 (user_error)
+ * @package PHP
+ * @access private
  */
-if (!function_exists('array_change_key_case')) {
-		function array_change_key_case($input, $case = CASE_LOWER)
-		{
-				if (!is_array($input)) {
-						user_error('array_change_key_case(): The argument should be an array',
-								E_USER_WARNING);
-						return false;
-				}
 
-				$output   = array ();
-				$keys     = array_keys($input);
-				$casefunc = ($case == CASE_LOWER) ? 'strtolower' : 'strtoupper';
-
-				foreach ($keys as $key) {
-						$output[$casefunc($key)] = $input[$key];
-				}
-
-				return $output;
-		}
-}
+// Added in PHP 5.0
 
 if (!function_exists('http_build_query')) {
 	function http_build_query($data, $prefix=null, $sep=null) {
@@ -140,11 +50,50 @@ if ( !function_exists('_') ) {
 	}
 }
 
-// Added in PHP 5.0
 if (!function_exists('stripos')) {
 	function stripos($haystack, $needle, $offset = 0) {
 		return strpos(strtolower($haystack), strtolower($needle), $offset);
 	}
+}
+
+if ( ! function_exists('hash_hmac') ):
+function hash_hmac($algo, $data, $key, $raw_output = false) {
+	$packs = array('md5' => 'H32', 'sha1' => 'H40');
+
+	if ( !isset($packs[$algo]) )
+		return false;
+
+	$pack = $packs[$algo];
+
+	if (strlen($key) > 64)
+		$key = pack($pack, $algo($key));
+	else if (strlen($key) < 64)
+		$key = str_pad($key, 64, chr(0));
+
+	$ipad = (substr($key, 0, 64) ^ str_repeat(chr(0x36), 64));
+	$opad = (substr($key, 0, 64) ^ str_repeat(chr(0x5C), 64));
+
+	return $algo($opad . pack($pack, $algo($ipad . $data)));
+}
+endif;
+
+if ( ! function_exists('mb_strcut') ):
+	function mb_strcut( $str, $start, $length=null, $encoding=null ) {
+		return _mb_strcut($str, $start, $length, $encoding);
+	}
+endif;
+
+function _mb_strcut( $str, $start, $length=null, $encoding=null ) {
+	// the solution below, works only for utf-8, so in case of a different
+	// charset, just use built-in substr
+	$charset = get_option( 'blog_charset' );
+	if ( !in_array( $charset, array('utf8', 'utf-8', 'UTF8', 'UTF-8') ) ) {
+		return is_null( $length )? substr( $str, $start ) : substr( $str, $start, $length);
+	}
+	// use the regex unicode support to separate the UTF-8 characters into an array
+	preg_match_all( '/./us', $str, $match );
+	$chars = is_null( $length )? array_slice( $match[0], $start ) : array_slice( $match[0], $start, $length );
+	return implode( '', $chars );
 }
 
 ?>

@@ -1,19 +1,19 @@
 <?php
 require_once('./admin.php');
 
-$title = __('Privacy Options');
+$title = __('Privacy Settings');
 $parent_file = 'options-general.php';
 
 include('./admin-header.php');
 ?>
 
 <div class="wrap">
-<h2><?php _e('Privacy Options') ?></h2>
+<h2><?php _e('Privacy Settings') ?></h2>
 <form method="post" action="options.php">
 <?php wp_nonce_field('update-options') ?>
-<table class="optiontable">
+<table class="form-table">
 <tr valign="top">
-<th scope="row"><?php _e('Blog visibility:') ?> </th>
+<th scope="row"><?php _e('Blog Visibility') ?> </th>
 <td>
 <p><input id="blog-public" type="radio" name="blog_public" value="1" <?php checked('1', get_option('blog_public')); ?> />
 <label for="blog-public"><?php _e('I would like my blog to be visible to everyone, including search engines (like Google, Sphere, Technorati) and archivers');?></label></p>
@@ -24,7 +24,7 @@ include('./admin-header.php');
 </tr>
 </table>
 
-<p class="submit"><input type="submit" name="Submit" value="<?php _e('Update Options &raquo;') ?>" />
+<p class="submit"><input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
 <input type="hidden" name="action" value="update" />
 <input type="hidden" name="page_options" value="blog_public" />
 </p>

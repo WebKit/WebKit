@@ -23,14 +23,16 @@ class MT_Import {
 ?>
 <div class="narrow">
 <p><?php _e('Howdy! We&#8217;re about to begin importing all of your Movable Type or Typepad entries into WordPress. To begin, either choose a file to upload and click "Upload file and import," or use FTP to upload your MT export file as <code>mt-export.txt</code> in your <code>/wp-content/</code> directory and then click "Import mt-export.txt"'); ?></p>
+
 <?php wp_import_upload_form( add_query_arg('step', 1) ); ?>
 <form method="post" action="<?php echo add_query_arg('step', 1); ?>" class="import-upload-form">
+
 <?php wp_nonce_field('import-upload'); ?>
 <p>
 	<input type="hidden" name="upload_type" value="ftp" />
 <?php _e('Or use <code>mt-export.txt</code> in your <code>/wp-content/</code> directory'); ?></p>
 <p class="submit">
-<input type="submit" value="<?php echo attribute_escape(__('Import mt-export.txt &raquo;')); ?>" />
+<input type="submit" value="<?php echo attribute_escape(__('Import mt-export.txt')); ?>" />
 </p>
 </form>
 <p><?php _e('The importer is smart enough not to import duplicates, so you can run this multiple times without worry if&#8212;for whatever reason&#8212;it doesn\'t finish. If you get an <strong>out of memory</strong> error try splitting up the import file into pieces.'); ?> </p>
@@ -61,7 +63,7 @@ class MT_Import {
 	function checkauthor($author) {
 		global $wpdb;
 		//mtnames is an array with the names in the mt import file
-		$pass = 'changeme';
+		$pass = wp_generate_password();
 		if (!(in_array($author, $this->mtnames))) { //a new mt author name is found
 			++ $this->j;
 			$this->mtnames[$this->j] = $author; //add that new mt author name to an array
@@ -152,8 +154,8 @@ class MT_Import {
 <div class="wrap">
 <h2><?php _e('Assign Authors'); ?></h2>
 <p><?php _e('To make it easier for you to edit and save the imported posts and drafts, you may want to change the name of the author of the posts. For example, you may want to import all the entries as admin\'s entries.'); ?></p>
-<p><?php _e('Below, you can see the names of the authors of the MovableType posts in <i>italics</i>. For each of these names, you can either pick an author in your WordPress installation from the menu, or enter a name for the author in the textbox.'); ?></p>
-<p><?php _e('If a new user is created by WordPress, the password will be set, by default, to "changeme". Quite suggestive, eh? ;)'); ?></p>
+<p><?php _e('Below, you can see the names of the authors of the MovableType posts in <em>italics</em>. For each of these names, you can either pick an author in your WordPress installation from the menu, or enter a name for the author in the textbox.'); ?></p>
+<p><?php _e('If a new user is created by WordPress, a password will be randomly generated. Manually change the user\'s details if necessary.'); ?></p>
 	<?php
 
 
@@ -205,22 +207,29 @@ class MT_Import {
 
 		if ( $post_id = post_exists($post->post_title, '', $post->post_date) ) {
 			echo '<li>';
-			printf(__('Post <i>%s</i> already exists.'), stripslashes($post->post_title));
+			printf(__('Post <em>%s</em> already exists.'), stripslashes($post->post_title));
 		} else {
 			echo '<li>';
-			printf(__('Importing post <i>%s</i>...'), stripslashes($post->post_title));
+			printf(__('Importing post <em>%s</em>...'), stripslashes($post->post_title));
 
 			if ( '' != trim( $post->extended ) )
 					$post->post_content .= "\n<!--more-->\n$post->extended";
 
 			$post->post_author = $this->checkauthor($post->post_author); //just so that if a post already exists, new users are not created by checkauthor
 			$post_id = wp_insert_post($post);
-			if ( is_wp_error( $post_id ) ) 
+			if ( is_wp_error( $post_id ) )
 				return $post_id;
 
 			// Add categories.
 			if ( 0 != count($post->categories) ) {
 				wp_create_categories($post->categories, $post_id);
+			}
+			
+			 // Add tags or keywords
+			if ( 1 < strlen($post->post_keywords) ) {
+			 	// Keywords exist. 
+				printf(__('<br />Adding tags <i>%s</i>...'), stripslashes($post->post_keywords));
+				wp_add_post_tags($post_id, $post->post_keywords);
 			}
 		}
 
@@ -238,7 +247,7 @@ class MT_Import {
 		}
 
 		if ( $num_comments )
-			printf(' '.__('(%s comments)'), $num_comments);
+			printf(' '.__ngettext('(%s comment)', '(%s comments)', $num_comments), $num_comments);
 
 		$num_pings = 0;
 		foreach ( $pings as $ping ) {
@@ -255,7 +264,7 @@ class MT_Import {
 		}
 
 		if ( $num_pings )
-			printf(' '.__('(%s pings)'), $num_pings);
+			printf(' '.__ngettext('(%s ping)', '(%s pings)', $num_pings), $num_pings);
 
 		echo "</li>";
 		//ob_flush();flush();
@@ -294,7 +303,7 @@ class MT_Import {
 				// Finishing a post.
 				$context = '';
 				$result = $this->save_post($post, $comments, $pings);
-				if ( is_wp_error( $result ) ) 
+				if ( is_wp_error( $result ) )
 					return $result;
 				$post = new StdClass;
 				$comment = new StdClass();
@@ -396,6 +405,8 @@ class MT_Import {
 					$post->extended .= $line;
 				} else if ( 'excerpt' == $context ) {
 					$post->post_excerpt .= $line;
+				} else if ( 'keywords' == $context ) {
+					$post->post_keywords .= $line;
 				} else if ( 'comment' == $context ) {
 					$comment->comment_content .= $line;
 				} else if ( 'ping' == $context ) {
@@ -420,7 +431,7 @@ class MT_Import {
 			$this->file = get_attached_file($this->id);
 		$this->get_authors_from_post();
 		$result = $this->process_posts();
-		if ( is_wp_error( $result ) ) 
+		if ( is_wp_error( $result ) )
 			return $result;
 	}
 
@@ -454,5 +465,5 @@ class MT_Import {
 
 $mt_import = new MT_Import();
 
-register_importer('mt', __('Movable Type and TypePad'), __('Import posts and comments from a Movable Type or Typepad blog'), array ($mt_import, 'dispatch'));
+register_importer('mt', __('Movable Type and TypePad'), __('Import posts and comments from a Movable Type or Typepad blog.'), array ($mt_import, 'dispatch'));
 ?>
