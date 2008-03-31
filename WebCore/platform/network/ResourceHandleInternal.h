@@ -27,6 +27,7 @@
 #ifndef ResourceHandleInternal_h
 #define ResourceHandleInternal_h
 
+#include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "AuthenticationChallenge.h"
 #include "Timer.h"
