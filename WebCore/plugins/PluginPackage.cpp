@@ -59,8 +59,7 @@ void PluginPackage::freeLibraryTimerFired(Timer<PluginPackage>*)
 }
 
 PluginPackage::PluginPackage(const String& path, const PlatformFileTime& lastModified)
-    : RefCounted<PluginPackage>(0)
-    , m_path(path)
+    : m_path(path)
     , m_moduleVersion(0)
     , m_module(0)
     , m_lastModified(lastModified)
@@ -104,16 +103,14 @@ void PluginPackage::unloadWithoutShutdown()
     m_isLoaded = false;
 }
 
-PluginPackage* PluginPackage::createPackage(const String& path, const PlatformFileTime& lastModified)
+PassRefPtr<PluginPackage> PluginPackage::createPackage(const String& path, const PlatformFileTime& lastModified)
 {
-    PluginPackage* package = new PluginPackage(path, lastModified);
+    RefPtr<PluginPackage> package = adoptRef(new PluginPackage(path, lastModified));
 
-    if (!package->fetchInfo()) {
-        delete package;
+    if (!package->fetchInfo())
         return 0;
-    }
     
-    return package;
+    return package.release();
 }
 
 }

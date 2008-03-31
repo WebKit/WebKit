@@ -1,5 +1,27 @@
 2008-03-29  Adam Roben  <aroben@apple.com>
 
+        Make PluginPackage work like our other RefCounted classes
+
+        PluginPackage now starts with a ref count of 1, and its createPackage
+        method now returns a PassRefPtr instead of a raw pointer.
+
+        Reviewed by Darin Adler.
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::PluginPackage): Removed explicit call to the
+        RefCounted constructor so that we'll start with a ref count of 1.
+        (WebCore::PluginPackage::createPackage): Changed to return a
+        PassRefPtr.
+        * plugins/PluginPackage.h:
+        * plugins/gtk/PluginDatabaseGtk.cpp:
+        (WebCore::PluginDatabase::getPluginsInPaths): Changed to store the
+        newly-created PluginPackage in a RefPtr.
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::addPluginsFromRegistry): Ditto.
+        (WebCore::PluginDatabase::getPluginsInPaths): Ditto.
+
+2008-03-29  Adam Roben  <aroben@apple.com>
+
         Fix Bug 18214: WebKit will sometimes load duplicate plugins
 
         <http://bugs.webkit.org/show_bug.cgi?id=18214>

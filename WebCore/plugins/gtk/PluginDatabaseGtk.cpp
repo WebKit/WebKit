@@ -49,7 +49,7 @@ PluginSet PluginDatabase::getPluginsInPaths() const
                 continue;
 
             gchar* filename = g_build_filename((it->utf8()).data(), name, 0);
-            PluginPackage* pluginPackage = PluginPackage::createPackage(filename, time(0));
+            RefPtr<PluginPackage> pluginPackage = PluginPackage::createPackage(filename, time(0));
             if (pluginPackage)
                 plugins.add(pluginPackage);
             g_free(filename);
