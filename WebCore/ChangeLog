@@ -1,3 +1,14 @@
+2008-03-31  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver Hunt
+
+        "Turn on" WebArchives for Windows
+        
+        Thought I'd done this already, but I hadn't!
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedNonImageMimeTypes): Apply known ArchiveFactory MIME types
+
 2008-03-31  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

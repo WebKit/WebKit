@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
+#include "ArchiveFactory.h"
 #include "MediaPlayer.h"
 #include "StringHash.h"
 #include <wtf/HashMap.h>
@@ -185,9 +186,6 @@ static void initializeSupportedNonImageMimeTypes()
         "application/xhtml+xml",
         "application/rss+xml",
         "application/atom+xml",
-#if PLATFORM(MAC)
-        "application/x-webarchive",
-#endif
 #if ENABLE(SVG)
       "image/svg+xml",
 #endif
@@ -198,6 +196,8 @@ static void initializeSupportedNonImageMimeTypes()
     };
     for (size_t i = 0; i < sizeof(types)/sizeof(types[0]); ++i)
         supportedNonImageMIMETypes->add(types[i]);
+
+    ArchiveFactory::registerKnownArchiveMIMETypes();
 }
 
 static void initializeSupportedMediaMIMETypes()
