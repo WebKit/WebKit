@@ -1,5 +1,29 @@
 2008-03-29  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 18208: Acid3 test 65 takes >33ms due to plugin refreshing on
+        Windows
+
+        <http://bugs.webkit.org/show_bug.cgi?id=18208>
+
+        We now keep track of all the plugin paths found each time refresh() is
+        called. We'll only instantiate PluginPackages if there are new paths
+        or paths with changed timestamps since the last time refresh() was
+        called.
+
+        Reviewed by Darin Adler and Anders Carlsson.
+
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::refresh):
+          - Only instantiate PluginPackages if there is a new path or a path
+            with a changed timestamp since we last ran refresh().
+          - Cache the set of plugin paths found and their timestamps for the
+            next call to refresh().
+          - Only re-register MIME types if our set of plugins changed.
+        * plugins/PluginDatabase.h: Added a new member to cache plugin paths
+        and their timestamps.
+
+2008-03-29  Adam Roben  <aroben@apple.com>
+
         Separate filesystem crawling from PluginPackage instantiation
 
         Part of Bug 18208: Acid3 test 65 takes >33ms due to plugin refreshing

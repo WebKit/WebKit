@@ -68,8 +68,6 @@ bool PluginDatabase::refresh()
     bool pluginSetChanged = false;
 
     if (!m_plugins.isEmpty()) {
-        m_registeredMIMETypes.clear();
-
         PluginSet pluginsToUnload;
         getDeletedPlugins(pluginsToUnload);
 
@@ -84,21 +82,41 @@ bool PluginDatabase::refresh()
     HashSet<String> paths;
     getPluginPathsInDirectories(paths);
 
+    HashMap<String, time_t> pathsWithTimes;
+
+    // We should only skip unchanged files if we didn't remove any plugins above. If we did remove
+    // any plugins, we need to look at every plugin file so that, e.g., if the user has two versions
+    // of RealPlayer installed and just removed the newer one, we'll pick up the older one.
+    bool shouldSkipUnchangedFiles = !pluginSetChanged;
+
     HashSet<String>::const_iterator pathsEnd = paths.end();
     for (HashSet<String>::const_iterator it = paths.begin(); it != pathsEnd; ++it) {
         time_t lastModified;
         if (!getFileModificationTime(*it, lastModified))
             continue;
 
+        pathsWithTimes.add(*it, lastModified);
+
+        // If the path's timestamp hasn't changed since the last time we ran refresh(), we don't have to do anything.
+        if (shouldSkipUnchangedFiles && m_pluginPathsWithTimes.get(*it) == lastModified)
+            continue;
+
         if (RefPtr<PluginPackage> oldPackage = m_pluginsByPath.get(*it)) {
-            if (oldPackage->lastModified() == lastModified)
-                continue;
+            ASSERT(!shouldSkipUnchangedFiles || oldPackage->lastModified() != lastModified);
             remove(oldPackage.get());
         }
 
         if (add(PluginPackage::createPackage(*it, lastModified)))
             pluginSetChanged = true;
     }
+
+    // Cache all the paths we found with their timestamps for next time.
+    pathsWithTimes.swap(m_pluginPathsWithTimes);
+
+    if (!pluginSetChanged)
+        return false;
+
+    m_registeredMIMETypes.clear();
 
     // Register plug-in MIME types
     PluginSet::const_iterator end = m_plugins.end();
@@ -110,7 +128,7 @@ bool PluginDatabase::refresh()
         }
     }
 
-    return pluginSetChanged;
+    return true;
 }
 
 Vector<PluginPackage*> PluginDatabase::plugins() const
