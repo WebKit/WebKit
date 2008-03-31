@@ -1,3 +1,24 @@
+2008-03-31  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin.
+
+        Bug 18177: m_encoding is used twice in XMLHttpRequest
+        http://bugs.webkit.org/show_bug.cgi?id=18177
+
+        - Change XMLHttpRequest variable m_encoding to m_responseEncoding.
+
+        - Change send local variable m_encoding to encoding.
+
+        No test case (no functionnal change).
+
+        * platform/network/ResourceResponseBase.h: Removed unused variable.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send): Changed local m_encoding to encoding.
+        (WebCore::XMLHttpRequest::didReceiveResponse): m_encoding -> m_responseEncoding.
+        (WebCore::XMLHttpRequest::didReceiveData): Ditto.
+        * xml/XMLHttpRequest.h: Change m_encoding to m_responseEncoding to disambiguate
+        the name as it is only used for response.
+
 2008-03-27  Adam Roben  <aroben@apple.com>
 
         Pass the right ExecStates to toJS when creating JS wrappers for

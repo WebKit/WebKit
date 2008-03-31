@@ -125,7 +125,7 @@ private:
     XMLHttpRequestState m_state;
 
     ResourceResponse m_response;
-    String m_encoding;
+    String m_responseEncoding;
 
     RefPtr<TextResourceDecoder> m_decoder;
     unsigned long m_identifier;
