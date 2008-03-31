@@ -1,3 +1,13 @@
+2008-03-26  Adam Roben  <aroben@apple.com>
+
+        Fix an exception while adding a message to the console
+
+        Reviewed by Mark Rowe.
+
+        * page/inspector/ConsolePanel.js: Don't call addMessageToSource if the
+        panel has no such method. This can happen if we get a message for,
+        e.g., a Database.
+
 2008-03-31  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin and Mitz's rubber stamp

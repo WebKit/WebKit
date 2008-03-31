@@ -105,11 +105,13 @@ WebInspector.ConsolePanel.prototype = {
             switch (msg.level) {
                 case WebInspector.ConsoleMessage.MessageLevel.Warning:
                     ++msg.resource.warnings;
-                    msg.resource.panel.addMessageToSource(msg);
+                    if (msg.resource.panel.addMessageToSource)
+                        msg.resource.panel.addMessageToSource(msg);
                     break;
                 case WebInspector.ConsoleMessage.MessageLevel.Error:
                     ++msg.resource.errors;
-                    msg.resource.panel.addMessageToSource(msg);
+                    if (msg.resource.panel.addMessageToSource)
+                        msg.resource.panel.addMessageToSource(msg);
                     break;
             }
         }
