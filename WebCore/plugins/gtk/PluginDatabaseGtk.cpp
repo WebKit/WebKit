@@ -32,11 +32,10 @@
 
 namespace WebCore {
 
-PluginSet PluginDatabase::getPluginsInDirectories() const
+void PluginDatabase::getPluginsInDirectories(PluginSet& plugins) const
 {
     // FIXME: This should be a case insensitive set.
     HashSet<String> uniqueFilenames;
-    PluginSet plugins;
 
     Vector<String>::const_iterator end = m_pluginDirectories.end();
     for (Vector<String>::const_iterator it = m_pluginDirectories.begin(); it != end; ++it) {
@@ -56,8 +55,6 @@ PluginSet PluginDatabase::getPluginsInDirectories() const
         }
         g_dir_close(dir);
     }
-
-    return plugins;
 }
 
 Vector<String> PluginDatabase::defaultPluginDirectories()

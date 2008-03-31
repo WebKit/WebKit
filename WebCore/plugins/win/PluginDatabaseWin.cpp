@@ -77,11 +77,10 @@ static inline void addPluginsFromRegistry(HKEY rootKey, PluginSet& plugins)
     RegCloseKey(key);
 }
 
-PluginSet PluginDatabase::getPluginsInDirectories() const
+void PluginDatabase::getPluginsInDirectories(PluginSet& plugins) const
 {
     // FIXME: This should be a case insensitive set.
     HashSet<String> uniqueFilenames;
-    PluginSet plugins;
 
     HANDLE hFind = INVALID_HANDLE_VALUE;
     WIN32_FIND_DATAW findFileData;
@@ -138,8 +137,6 @@ PluginSet PluginDatabase::getPluginsInDirectories() const
     // we remove the old one so we don't end up choosing the old one.
     if (oldWMPPlugin && newWMPPlugin)
         plugins.remove(oldWMPPlugin);
-
-    return plugins;
 }
 
 static inline Vector<int> parseVersionString(const String& versionString)

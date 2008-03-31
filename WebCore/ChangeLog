@@ -1,5 +1,21 @@
 2008-03-29  Adam Roben  <aroben@apple.com>
 
+        Change getPluginsInDirectories to use an out parameter
+
+        This avoids copying a HashSet.
+
+        Reviewed by Mitz Pettel.
+
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::refresh):
+        * plugins/PluginDatabase.h:
+        * plugins/gtk/PluginDatabaseGtk.cpp:
+        (WebCore::PluginDatabase::getPluginsInDirectories):
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabase::getPluginsInDirectories):
+
+2008-03-29  Adam Roben  <aroben@apple.com>
+
         Make some PluginPackage methods return const String&
 
         Reviewed by Mitz Pettel.

@@ -70,7 +70,7 @@ bool PluginDatabase::refresh()
     bool pluginSetChanged = false;
 
     // Create a new set of plugins
-    newPlugins = getPluginsInDirectories();
+    getPluginsInDirectories(newPlugins);
 
     if (!m_plugins.isEmpty()) {
         m_registeredMIMETypes.clear();
