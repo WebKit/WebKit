@@ -43,7 +43,7 @@ namespace WebCore {
     class PluginPackage : public RefCounted<PluginPackage> {
     public:
         ~PluginPackage();
-        static PassRefPtr<PluginPackage> createPackage(const String& path, const PlatformFileTime& lastModified);
+        static PassRefPtr<PluginPackage> createPackage(const String& path, const time_t& lastModified);
         
         String name() const { return m_name; }
         String description() const { return m_description; }
@@ -67,7 +67,7 @@ namespace WebCore {
         const PlatformModuleVersion& version() const { return m_moduleVersion; }
 
     private:
-        PluginPackage(const String& path, const PlatformFileTime& lastModified);
+        PluginPackage(const String& path, const time_t& lastModified);
         bool fetchInfo();
         bool isPluginBlacklisted();
         void determineQuirks(const String& mimeType);
@@ -87,7 +87,7 @@ namespace WebCore {
         MIMEToExtensionsMap m_mimeToExtensions;
 
         PlatformModule m_module;
-        PlatformFileTime m_lastModified;
+        time_t m_lastModified;
 
         NPP_ShutdownProcPtr m_NPP_Shutdown;
         NPPluginFuncs m_pluginFuncs;

@@ -1,5 +1,18 @@
 2008-03-29  Adam Roben  <aroben@apple.com>
 
+        Remove PlatformFileTime
+
+        This typedef is time_t on all platforms, so we can just get rid of the
+        typedef.
+
+        Reviewed by Mitz Pettel.
+
+        * platform/FileSystem.h:
+        * plugins/PluginPackage.cpp:
+        * plugins/PluginPackage.h:
+
+2008-03-29  Adam Roben  <aroben@apple.com>
+
         Change PlatformFileTime on Windows to be time_t
 
         This matches other platforms and our existing functions in
