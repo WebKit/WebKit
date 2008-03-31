@@ -1,3 +1,15 @@
+2008-03-31  Jasper Bryant-Greene  <jasper@unix.geek.nz>
+
+        Reviewed by Darin.
+
+        Resolves http://bugs.webkit.org/show_bug.cgi?id=18010
+        "WebKitNetworkRequestPrivate is defined in two places unnecessarily"
+
+        Removed unnecessary definition of WebKitNetworkRequestPrivate in
+        webkitprivate.h
+
+        * webkit/webkitprivate.h:
+
 2008-03-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin
