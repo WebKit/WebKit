@@ -1,3 +1,21 @@
+2008-03-31  Adam Roben  <aroben@apple.com>
+
+        Stop relying on functions added to prototypes in the Inspector being
+        callable on objects from the inspected window
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/Console.js:
+        (WebInspector.ConsolePanel._formatnode): Use nodeTitleInfo.call(node)
+        instead of node.titleInfo().
+        * page/inspector/StylesSidebarPane.js: Changed uses of
+        getShorthandValue, getShorthandPriority, getLonghandProperties, and
+        getUniqueStyleProperties to call them as functions instead of as
+        methods on the CSSStyleDeclaration objects.
+        * page/inspector/utilities.js: Removed Node.prototype.titleInfo, and
+        changed our CSSStyleDeclaration methods to just be standalone
+        functions.
+
 2008-03-26  Adam Roben  <aroben@apple.com>
 
         Fix an exception while adding a message to the console

@@ -195,7 +195,6 @@ Node.prototype.previousSiblingSkippingWhitespace = previousSiblingSkippingWhites
 Node.prototype.traverseNextNode = traverseNextNode;
 Node.prototype.traversePreviousNode = traversePreviousNode;
 Node.prototype.onlyTextChild = onlyTextChild;
-Node.prototype.titleInfo = nodeTitleInfo;
 
 String.prototype.hasSubstring = function(string, caseInsensitive)
 {
@@ -265,21 +264,21 @@ String.prototype.trimURL = function(baseURLDomain)
     return result;
 }
 
-CSSStyleDeclaration.prototype.getShorthandValue = function(shorthandProperty)
+function getShorthandValue(style, shorthandProperty)
 {
-    var value = this.getPropertyValue(shorthandProperty);
+    var value = style.getPropertyValue(shorthandProperty);
     if (!value) {
         // Some shorthands (like border) return a null value, so compute a shorthand value.
         // FIXME: remove this when http://bugs.webkit.org/show_bug.cgi?id=15823 is fixed.
 
         var foundProperties = {};
-        for (var i = 0; i < this.length; ++i) {
-            var individualProperty = this[i];
-            if (individualProperty in foundProperties || this.getPropertyShorthand(individualProperty) !== shorthandProperty)
+        for (var i = 0; i < style.length; ++i) {
+            var individualProperty = style[i];
+            if (individualProperty in foundProperties || style.getPropertyShorthand(individualProperty) !== shorthandProperty)
                 continue;
 
-            var individualValue = this.getPropertyValue(individualProperty);
-            if (this.isPropertyImplicit(individualProperty) || individualValue === "initial")
+            var individualValue = style.getPropertyValue(individualProperty);
+            if (style.isPropertyImplicit(individualProperty) || individualValue === "initial")
                 continue;
 
             foundProperties[individualProperty] = true;
@@ -294,29 +293,29 @@ CSSStyleDeclaration.prototype.getShorthandValue = function(shorthandProperty)
     return value;
 }
 
-CSSStyleDeclaration.prototype.getShorthandPriority = function(shorthandProperty)
+function getShorthandPriority(style, shorthandProperty)
 {
-    var priority = this.getPropertyPriority(shorthandProperty);
+    var priority = style.getPropertyPriority(shorthandProperty);
     if (!priority) {
-        for (var i = 0; i < this.length; ++i) {
-            var individualProperty = this[i];
-            if (this.getPropertyShorthand(individualProperty) !== shorthandProperty)
+        for (var i = 0; i < style.length; ++i) {
+            var individualProperty = style[i];
+            if (style.getPropertyShorthand(individualProperty) !== shorthandProperty)
                 continue;
-            priority = this.getPropertyPriority(individualProperty);
+            priority = style.getPropertyPriority(individualProperty);
             break;
         }
     }
     return priority;
 }
 
-CSSStyleDeclaration.prototype.getLonghandProperties = function(shorthandProperty)
+function getLonghandProperties(style, shorthandProperty)
 {
     var properties = [];
     var foundProperties = {};
 
-    for (var i = 0; i < this.length; ++i) {
-        var individualProperty = this[i];
-        if (individualProperty in foundProperties || this.getPropertyShorthand(individualProperty) !== shorthandProperty)
+    for (var i = 0; i < style.length; ++i) {
+        var individualProperty = style[i];
+        if (individualProperty in foundProperties || style.getPropertyShorthand(individualProperty) !== shorthandProperty)
             continue;
         foundProperties[individualProperty] = true;
         properties.push(individualProperty);
@@ -325,13 +324,13 @@ CSSStyleDeclaration.prototype.getLonghandProperties = function(shorthandProperty
     return properties;
 }
 
-CSSStyleDeclaration.prototype.getUniqueProperties = function()
+function getUniqueStyleProperties(style)
 {
     var properties = [];
     var foundProperties = {};
 
-    for (var i = 0; i < this.length; ++i) {
-        var property = this[i];
+    for (var i = 0; i < style.length; ++i) {
+        var property = style[i];
         if (property in foundProperties)
             continue;
         foundProperties[property] = true;

@@ -621,7 +621,7 @@ WebInspector.ConsolePanel.prototype = {
     _formatnode: function(node, elem)
     {
         var anchor = document.createElement("a");
-        anchor.innerHTML = node.titleInfo().title;
+        anchor.innerHTML = nodeTitleInfo.call(node).title;
         anchor.representedNode = node;
         anchor.addEventListener("mouseover", function() { InspectorController.highlightDOMNode(node) }, false);
         anchor.addEventListener("mouseout", function() { InspectorController.hideDOMNodeHighlight() }, false);
