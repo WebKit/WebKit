@@ -407,7 +407,9 @@ static JSValueRef getResourceDocumentNode(JSContextRef ctx, JSObjectRef /*functi
     if (!resource)
         return undefined;
 
-    Document* document = resource->frame->document();
+    Frame* frame = resource->frame.get();
+
+    Document* document = frame->document();
     if (!document)
         return undefined;
 
@@ -415,7 +417,7 @@ static JSValueRef getResourceDocumentNode(JSContextRef ctx, JSObjectRef /*functi
         return undefined;
 
     KJS::JSLock lock;
-    JSValueRef documentValue = toRef(toJS(toJS(controller->scriptContext()), document));
+    JSValueRef documentValue = toRef(toJS(toJSDOMWindow(frame)->globalExec(), document));
     return documentValue;
 }
 
@@ -779,11 +781,15 @@ void InspectorController::focusNode()
     ASSERT(m_scriptObject);
     ASSERT(m_nodeToFocus);
 
+    Frame* frame = m_nodeToFocus->document()->frame();
+    if (!frame)
+        return;
+
     JSValueRef arg0;
 
     {
         KJS::JSLock lock;
-        arg0 = toRef(toJS(toJS(m_scriptContext), m_nodeToFocus.get()));
+        arg0 = toRef(toJS(toJSDOMWindow(frame)->globalExec(), m_nodeToFocus.get()));
     }
 
     m_nodeToFocus = 0;
@@ -1412,6 +1418,10 @@ JSObjectRef InspectorController::addDatabaseScriptResource(InspectorDatabaseReso
     if (!m_scriptContext || !m_scriptObject)
         return 0;
 
+    Frame* frame = resource->database->document()->frame();
+    if (!frame)
+        return 0;
+
     JSValueRef exception = 0;
 
     JSRetainPtr<JSStringRef> databaseString(Adopt, JSStringCreateWithUTF8CString("Database"));
@@ -1427,7 +1437,7 @@ JSObjectRef InspectorController::addDatabaseScriptResource(InspectorDatabaseReso
 
     {
         KJS::JSLock lock;
-        database = toRef(toJS(toJS(m_scriptContext), resource->database.get()));
+        database = toRef(toJS(toJSDOMWindow(frame)->globalExec(), resource->database.get()));
     }
 
     JSRetainPtr<JSStringRef> domain(Adopt, JSStringCreateWithCharacters(resource->domain.characters(), resource->domain.length()));

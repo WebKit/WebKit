@@ -1,3 +1,19 @@
+2008-03-27  Adam Roben  <aroben@apple.com>
+
+        Pass the right ExecStates to toJS when creating JS wrappers for
+        objects from the inspected page
+
+        We now use an ExecState from the inspected page to create the JS
+        wrappers for objects from the inspected page, rather than use an
+        ExecState from the Inspector.
+
+        Reviewed by Tim Hatcher.
+
+        * page/InspectorController.cpp:
+        (WebCore::getResourceDocumentNode):
+        (WebCore::InspectorController::focusNode):
+        (WebCore::InspectorController::addDatabaseScriptResource):
+
 2008-03-31  Adam Roben  <aroben@apple.com>
 
         Stop relying on functions added to prototypes in the Inspector being
