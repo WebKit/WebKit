@@ -152,6 +152,13 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
                                         CSSPropertyListStyleImage };
             return getShorthandValue(properties, 3);
         }
+#if ENABLE_SVG
+        case CSSPropertyMarker: {
+            RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyMarkerStart);
+            if (value)
+                return value->cssText();
+        }
+#endif
     }
     return String();
 }

@@ -290,6 +290,23 @@ namespace WebCore {
     int cssPropertyID(const String&);
     int cssValueKeywordID(const ParseString&);
 
+    class ShorthandScope {
+    public:
+        ShorthandScope(CSSParser* parser, int propId) : m_parser(parser)
+        {
+            if (!(m_parser->m_inParseShorthand++))
+                m_parser->m_currentShorthand = propId;
+        }
+        ~ShorthandScope()
+        {
+            if (!(--m_parser->m_inParseShorthand))
+                m_parser->m_currentShorthand = 0;
+        }
+
+    private:
+        CSSParser* m_parser;
+    };
+
 } // namespace WebCore
 
 #endif // CSSParser_h

@@ -118,25 +118,6 @@ ValueList::~ValueList()
              delete m_values[i].function;
 }
 
-namespace {
-    class ShorthandScope {
-    public:
-        ShorthandScope(CSSParser* parser, int propId) : m_parser(parser)
-        {
-            if (!(m_parser->m_inParseShorthand++))
-                m_parser->m_currentShorthand = propId;
-        }
-        ~ShorthandScope()
-        {
-            if (!(--m_parser->m_inParseShorthand))
-                m_parser->m_currentShorthand = 0;
-        }
-
-    private:
-        CSSParser* m_parser;
-    };
-}
-
 CSSParser* CSSParser::currentParser = 0;
 
 CSSParser::CSSParser(bool strictParsing)

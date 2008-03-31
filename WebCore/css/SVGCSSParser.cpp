@@ -276,10 +276,15 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     /* shorthand properties */
     case CSSPropertyMarker:
     {
+        ShorthandScope scope(this, propId);
+        m_implicitShorthand = true;
         if (!parseValue(CSSPropertyMarkerStart, important))
             return false;
+        if (valueList->current()) {
+            rollbackLastProperties(1);
+            return false;
+        }
         CSSValue *value = parsedProperties[numParsedProperties - 1]->value();
-        m_implicitShorthand = true;
         addProperty(CSSPropertyMarkerMid, value, important);
         addProperty(CSSPropertyMarkerEnd, value, important);
         m_implicitShorthand = false;

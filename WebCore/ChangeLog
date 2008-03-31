@@ -1,3 +1,24 @@
+2008-03-31  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15595
+        marker property doesn't show up correctly as "shorthand" in inspector
+
+        Make sure parsing the marker property sets the individual
+        marker properties as implicit with marker as shorthand.
+        Also let CSSStyleDecleration::getPropertyValue return
+        the correct value for the marker property.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue):
+        * css/CSSParser.cpp:
+        * css/CSSParser.h:
+        (WebCore::ShorthandScope::ShorthandScope):
+        (WebCore::ShorthandScope::~ShorthandScope):
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+
 2008-03-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.
