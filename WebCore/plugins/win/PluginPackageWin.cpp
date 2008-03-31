@@ -75,8 +75,8 @@ int PluginPackage::compare(const PluginPackage& compareTo) const
         return AallowsMultipleInstances ? -1 : 1;
 
     // Sort plug-ins in a preferred path first.
-    bool AisInPreferredPath = PluginDatabase::isPreferredPluginPath(parentDirectory());
-    bool BisInPreferredPath = PluginDatabase::isPreferredPluginPath(compareTo.parentDirectory());
+    bool AisInPreferredPath = PluginDatabase::isPreferredPluginDirectory(parentDirectory());
+    bool BisInPreferredPath = PluginDatabase::isPreferredPluginDirectory(compareTo.parentDirectory());
     if (AisInPreferredPath != BisInPreferredPath)
         return AisInPreferredPath ? -1 : 1;
 

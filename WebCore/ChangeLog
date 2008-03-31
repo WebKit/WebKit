@@ -1,5 +1,34 @@
 2008-03-29  Adam Roben  <aroben@apple.com>
 
+        Rename PluginDatabase's "PluginPaths" to "PluginDirectories"
+
+        The code expects these paths to all be directories, so it seems good
+        to refer to them as such.
+
+        This patch just changes "Paths" to "Directories" and "Path" to
+        "Directory".
+
+        Reviewed by Mitz Pettel.
+
+        * platform/qt/TemporaryLinkStubs.cpp:
+        * platform/wx/TemporaryLinkStubs.cpp:
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::installedPlugins):
+        (WebCore::PluginDatabase::refresh):
+        * plugins/PluginDatabase.h:
+        (WebCore::PluginDatabase::setPluginDirectories):
+        * plugins/gtk/PluginDatabaseGtk.cpp:
+        (WebCore::PluginDatabase::getPluginsInDirectories):
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabase::getPluginsInDirectories):
+        (WebCore::safariPluginsDirectory):
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+        (WebCore::PluginDatabase::isPreferredPluginDirectory):
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::compare):
+
+2008-03-29  Adam Roben  <aroben@apple.com>
+
         Remove PlatformFileTime
 
         This typedef is time_t on all platforms, so we can just get rid of the

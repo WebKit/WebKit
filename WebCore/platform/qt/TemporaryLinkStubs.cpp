@@ -72,8 +72,8 @@
 
 using namespace WebCore;
 
-PluginSet PluginDatabase::getPluginsInPaths() const { notImplemented(); return PluginSet(); }
-Vector<String> PluginDatabase::defaultPluginPaths() { notImplemented(); return Vector<String>(); }
+PluginSet PluginDatabase::getPluginsInDirectories() const { notImplemented(); return PluginSet(); }
+Vector<String> PluginDatabase::defaultPluginDirectories() { notImplemented(); return Vector<String>(); }
 bool PluginDatabase::isPreferredPluginPath(const String&) { notImplemented(); return false; }
 int PluginPackage::compare(const PluginPackage&) const { notImplemented(); return 0; }
 bool PluginPackage::fetchInfo() { notImplemented(); return false; }

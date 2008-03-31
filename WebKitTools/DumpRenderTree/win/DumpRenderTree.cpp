@@ -964,7 +964,7 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
     BSTR pluginPath = SysAllocStringLen(0, exePath().length() + _tcslen(TestPluginDir));
     _tcscpy(pluginPath, exePath().c_str());
     _tcscat(pluginPath, TestPluginDir);
-    failed = FAILED(viewPrivate->addAdditionalPluginPath(pluginPath));
+    failed = FAILED(viewPrivate->addAdditionalPluginDirectory(pluginPath));
     SysFreeString(pluginPath);
     if (failed)
         return 0;

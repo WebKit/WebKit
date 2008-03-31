@@ -1,3 +1,17 @@
+2008-03-29  Adam Roben  <aroben@apple.com>
+
+        Rename IWebViewPrivate::addAdditionalPluginPath to
+        addAdditionalPluginDirectory
+
+        Reviewed by Mitz Pettel.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * Interfaces/WebKit.idl: Touched to make sure the Interfaces project
+        rebuilds.
+        * WebView.cpp:
+        (WebView::addAdditionalPluginDirectory):
+        * WebView.h:
+
 2008-03-26  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Adam Roben.

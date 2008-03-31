@@ -32,14 +32,14 @@
 
 namespace WebCore {
 
-PluginSet PluginDatabase::getPluginsInPaths() const
+PluginSet PluginDatabase::getPluginsInDirectories() const
 {
     // FIXME: This should be a case insensitive set.
     HashSet<String> uniqueFilenames;
     PluginSet plugins;
 
-    Vector<String>::const_iterator end = m_pluginPaths.end();
-    for (Vector<String>::const_iterator it = m_pluginPaths.begin(); it != end; ++it) {
+    Vector<String>::const_iterator end = m_pluginDirectories.end();
+    for (Vector<String>::const_iterator it = m_pluginDirectories.begin(); it != end; ++it) {
         GDir* dir = g_dir_open((it->utf8()).data(), 0, 0);
         if (!dir)
             continue;
@@ -60,45 +60,45 @@ PluginSet PluginDatabase::getPluginsInPaths() const
     return plugins;
 }
 
-Vector<String> PluginDatabase::defaultPluginPaths()
+Vector<String> PluginDatabase::defaultPluginDirectories()
 {
-    Vector<String> paths;
-    gchar* path;
+    Vector<String> directories;
+    gchar* directory;
 
 #if defined(GDK_WINDOWING_X11)
-    path = g_build_filename(g_get_home_dir(), ".mozilla", "plugins", 0);
-    paths.append(path);
-    g_free(path);
+    directory = g_build_filename(g_get_home_dir(), ".mozilla", "plugins", 0);
+    directories.append(directory);
+    g_free(directory);
 
     const gchar* mozPath = g_getenv("MOZ_PLUGIN_PATH");
     if (mozPath) {
         gchar** pluginPaths = g_strsplit(mozPath, ":", -1);
 
         for (gint i = 0; pluginPaths[i]; i++)
-            paths.append(pluginPaths[i]);
+            directories.append(pluginPaths[i]);
 
         g_strfreev(pluginPaths);
     }
 
-    path = g_build_filename(G_DIR_SEPARATOR_S "usr", "lib", "browser", "plugins", 0);
-    paths.append(path);
-    g_free(path);
-    path = g_build_filename(G_DIR_SEPARATOR_S "usr", "local", "lib", "mozilla", "plugins", 0);
-    paths.append(path);
-    g_free (path);
-    path = g_build_filename(G_DIR_SEPARATOR_S "usr", "lib", "mozilla", "plugins", 0);
-    paths.append(path);
-    g_free (path);
+    directory = g_build_filename(G_DIR_SEPARATOR_S "usr", "lib", "browser", "plugins", 0);
+    directories.append(directory);
+    g_free(directory);
+    directory = g_build_filename(G_DIR_SEPARATOR_S "usr", "local", "lib", "mozilla", "plugins", 0);
+    directories.append(directory);
+    g_free (directory);
+    directory = g_build_filename(G_DIR_SEPARATOR_S "usr", "lib", "mozilla", "plugins", 0);
+    directories.append(directory);
+    g_free (directory);
 #elif defined(GDK_WINDOWING_WIN32)
-    path = g_build_filename(g_get_home_dir(), "Application Data", "Mozilla", "plugins", 0);
-    paths.append(path);
-    g_free(path);
+    directory = g_build_filename(g_get_home_dir(), "Application Data", "Mozilla", "plugins", 0);
+    directories.append(directory);
+    g_free(directory);
 #endif
 
-    return paths;
+    return directories;
 }
 
-bool PluginDatabase::isPreferredPluginPath(const String& path)
+bool PluginDatabase::isPreferredPluginDirectory(const String& directory)
 {
     return false;
 }

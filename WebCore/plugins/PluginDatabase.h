@@ -50,23 +50,23 @@ namespace WebCore {
         bool refresh();
         Vector<PluginPackage*> plugins() const;
         bool isMIMETypeRegistered(const String& mimeType);
-        void addExtraPluginPath(const String&);
+        void addExtraPluginDirectory(const String&);
 
-        static bool isPreferredPluginPath(const String& path);
+        static bool isPreferredPluginDirectory(const String& directory);
         static int preferredPluginCompare(const void*, const void*);
 
         PluginPackage* findPlugin(const KURL&, String& mimeType);
 
     private:
-        void setPluginPaths(const Vector<String>& paths) { m_pluginPaths = paths; }
-        PluginSet getPluginsInPaths() const;
+        void setPluginDirectories(const Vector<String>& directories) { m_pluginDirectories = directories; }
+        PluginSet getPluginsInDirectories() const;
 
         PluginPackage* pluginForMIMEType(const String& mimeType);
         String MIMETypeForExtension(const String& extension) const;
 
-        static Vector<String> defaultPluginPaths();
+        static Vector<String> defaultPluginDirectories();
 
-        Vector<String> m_pluginPaths;
+        Vector<String> m_pluginDirectories;
         HashSet<String> m_registeredMIMETypes;
         PluginSet m_plugins;
     };

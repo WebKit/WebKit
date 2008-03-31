@@ -94,7 +94,7 @@ interface IWebViewPrivate : IUnknown
     HRESULT tabKeyCyclesThroughElements([out, retval] BOOL* result);
 
     HRESULT setAllowSiteSpecificHacks([in] BOOL allows);
-    HRESULT addAdditionalPluginPath([in] BSTR path);
+    HRESULT addAdditionalPluginDirectory([in] BSTR directory);
 
     HRESULT loadBackForwardListFromOtherView([in] IWebView* otherView);
 
