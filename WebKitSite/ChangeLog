@@ -1,5 +1,11 @@
 2008-03-31  Mark Rowe  <mrowe@apple.com>
 
+        Add some images that were missed in the WordPress 2.5 upgrade.
+
+        * blog/: 
+
+2008-03-31  Mark Rowe  <mrowe@apple.com>
+
         Upgrade to WordPress 2.5
 
         * blog/:
