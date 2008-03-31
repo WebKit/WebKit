@@ -297,14 +297,6 @@ void WebEditorClient::didSetSelectionTypesForPasteboard()
     [[m_webView _editingDelegateForwarder] webView:m_webView didSetSelectionTypesForPasteboard:[NSPasteboard generalPasteboard]];
 }
 
-NSData* WebEditorClient::dataForArchivedSelection(Frame* frame)
-{
-    RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::createFromSelection(frame);
-    RetainPtr<CFDataRef> data = coreArchive ? coreArchive->rawDataRepresentation() : 0;
-
-    return [[(NSData *)data.get() retain] autorelease];
-}
-
 NSString* WebEditorClient::userVisibleString(NSURL *URL)
 {
     return [URL _web_userVisibleString];

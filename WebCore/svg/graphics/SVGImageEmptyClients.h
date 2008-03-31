@@ -324,9 +324,6 @@ public:
     
 #if PLATFORM(MAC)
     virtual void markedTextAbandoned(Frame*) { }
-
-    // FIXME: This should become SelectionController::toWebArchive()
-    virtual NSData* dataForArchivedSelection(Frame*) { return 0; } 
     
     virtual NSString* userVisibleString(NSURL*) { return 0; }
 #ifdef BUILDING_ON_TIGER

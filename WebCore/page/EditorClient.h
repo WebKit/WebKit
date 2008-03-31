@@ -119,9 +119,6 @@ public:
     virtual void textDidChangeInTextArea(Element*) = 0;
 
 #if PLATFORM(MAC)
-    // FIXME: This should become SelectionController::toWebArchive()
-    virtual NSData* dataForArchivedSelection(Frame*) = 0; 
-
     virtual NSString* userVisibleString(NSURL*) = 0;
 #ifdef BUILDING_ON_TIGER
     virtual NSArray* pasteboardTypesForSelection(Frame*) = 0;

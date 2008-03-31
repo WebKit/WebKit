@@ -1,5 +1,17 @@
 2008-03-31  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Darin and Mitz's rubber stamp
+
+        Remove dataForArchivedSelection(WebCore::Frame*) from the EditorClient - only usage is now directly in WebCore
+
+        * page/EditorClient.h:
+        * svg/graphics/SVGImageEmptyClients.h:
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection): Make the archive and get the data directly
+
+2008-03-31  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Mitz Pettel
 
         Fix for http://bugs.webkit.org/show_bug.cgi?id=18183

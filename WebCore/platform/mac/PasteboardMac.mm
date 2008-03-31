@@ -37,6 +37,7 @@
 #import "HitTestResult.h"
 #import "Image.h"
 #import "KURL.h"
+#import "LegacyWebArchive.h"
 #import "LoaderNSURLExtras.h"
 #import "MIMETypeRegistry.h"
 #import "RenderImage.h"
@@ -159,7 +160,9 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, Range* selectedRange, 
     
     // Put HTML on the pasteboard.
     if ([types containsObject:WebArchivePboardType]) {
-        [pasteboard setData:frame->editor()->client()->dataForArchivedSelection(frame) forType:WebArchivePboardType];
+        RefPtr<LegacyWebArchive> archive = LegacyWebArchive::createFromSelection(frame);
+        RetainPtr<CFDataRef> data = archive ? archive->rawDataRepresentation() : 0;
+        [pasteboard setData:(NSData *)data.get() forType:WebArchivePboardType];
     }
     
     // Put the attributed string on the pasteboard (RTF/RTFD format).

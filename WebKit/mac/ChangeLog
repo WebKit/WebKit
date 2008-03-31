@@ -1,3 +1,12 @@
+2008-03-31  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin and Mitz's rubber stamp
+
+        Remove dataForArchivedSelection(WebCore::Frame*) from the EditorClient - only usage is now directly in WebCore
+
+        * WebCoreSupport/WebEditorClient.mm:
+        * WebCoreSupport/WebEditorClient.h:
+
 2008-03-28  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Darin Adler
