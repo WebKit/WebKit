@@ -1,5 +1,11 @@
 2008-04-01  Dan Bernstein  <mitz@apple.com>
 
+        - Mac build fix
+
+        * WebCore.xcodeproj/project.pbxproj: Made FontRenderingMode.h private.
+
+2008-04-01  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - move the FontRenderingMode enumeration into its own header file
