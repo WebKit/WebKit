@@ -72,7 +72,9 @@ Cursor::Cursor(Image* img, const IntPoint& hotspot)
         SetBkMode(workingDC, TRANSPARENT);
         SelectObject(workingDC, hOldBitmap);
 
-        OwnPtr<HBITMAP> hMask(CreateBitmap(img->width(), img->height(), 1, 1, NULL));
+        Vector<unsigned char, 128> maskBits;
+        maskBits.fill(0xff, (img->width() + 7) / 8 * img->height());
+        OwnPtr<HBITMAP> hMask(CreateBitmap(img->width(), img->height(), 1, 1, maskBits.data()));
 
         ICONINFO ii;
         ii.fIcon = FALSE;

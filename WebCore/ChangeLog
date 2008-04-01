@@ -1,3 +1,15 @@
+2008-03-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/5741075> Google Maps: cursor and placemarks don't match up
+
+        * platform/win/CursorWin.cpp:
+        (WebCore::Cursor::Cursor): Set the 1-bit mask for full-alpha cursors
+        to fully opaque. The mask is ignored and the alpha values from the
+        32-bit image are used except in the case of a fully-transparent image,
+        in which the fully-opaque 1-bit mask is required to get transparency.
+
 2008-03-31  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Jon Honeycutt
