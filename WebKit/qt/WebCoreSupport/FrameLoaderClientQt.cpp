@@ -136,39 +136,6 @@ bool FrameLoaderClientQt::hasFrameView() const
     return true;
 }
 
-
-bool FrameLoaderClientQt::hasBackForwardList() const
-{
-    notImplemented();
-    return false;
-}
-
-
-void FrameLoaderClientQt::resetBackForwardList()
-{
-    notImplemented();
-}
-
-
-bool FrameLoaderClientQt::provisionalItemIsTarget() const
-{
-    notImplemented();
-    return false;
-}
-
-
-bool FrameLoaderClientQt::loadProvisionalItemFromPageCache()
-{
-    notImplemented();
-    return false;
-}
-
-
-void FrameLoaderClientQt::invalidateCurrentItemPageCache()
-{
-    notImplemented();
-}
-
 void FrameLoaderClientQt::savePlatformDataToCachedPage(CachedPage*) 
 {
     notImplemented();
@@ -212,30 +179,6 @@ void FrameLoaderClientQt::setCopiesOnScroll()
 }
 
 
-LoadErrorResetToken* FrameLoaderClientQt::tokenForLoadErrorReset()
-{
-    notImplemented();
-    return 0;
-}
-
-
-void FrameLoaderClientQt::resetAfterLoadError(LoadErrorResetToken*)
-{
-    notImplemented();
-}
-
-
-void FrameLoaderClientQt::doNotResetAfterLoadError(LoadErrorResetToken*)
-{
-    notImplemented();
-}
-
-
-void FrameLoaderClientQt::willCloseDocument()
-{
-    notImplemented();
-}
-
 void FrameLoaderClientQt::detachedFromParent2()
 {
 }
@@ -255,13 +198,6 @@ void FrameLoaderClientQt::detachedFromParent4()
     m_webFrame = 0;
     m_frame = 0;
 }
-
-
-void FrameLoaderClientQt::loadedFromCachedPage()
-{
-    notImplemented();
-}
-
 
 void FrameLoaderClientQt::dispatchDidHandleOnloadEvents()
 {
@@ -376,19 +312,6 @@ void FrameLoaderClientQt::dispatchDidLoadMainResource(DocumentLoader*)
 }
 
 
-void FrameLoaderClientQt::clearLoadingFromPageCache(DocumentLoader*)
-{
-    notImplemented();
-}
-
-
-bool FrameLoaderClientQt::isLoadingFromPageCache(DocumentLoader*)
-{
-    notImplemented();
-    return false;
-}
-
-
 void FrameLoaderClientQt::revertToProvisionalState(DocumentLoader*)
 {
     notImplemented();
@@ -486,19 +409,6 @@ void FrameLoaderClientQt::restoreViewState()
 void FrameLoaderClientQt::provisionalLoadStarted()
 {
     // don't need to do anything here
-}
-
-
-bool FrameLoaderClientQt::shouldTreatURLAsSameAsCurrent(const KURL&) const
-{
-    notImplemented();
-    return false;
-}
-
-
-void FrameLoaderClientQt::addHistoryItemForFragmentScroll()
-{
-    notImplemented();
 }
 
 
