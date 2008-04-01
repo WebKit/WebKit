@@ -2,6 +2,21 @@
 
         Reviewed by Simon.
 
+        * Do not store the QWebFrame associated with a ScrollView/FrameView
+        in the WebCore::Widget.
+        * Instead of asking the Widget for the QWebFrame use the QWebFramePrivate::core
+        and QWebFramePrivate::kit function to convert from and to QWebFrame.
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createMainFrame):
+
+2008-04-01  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Do not store the FrameView in the QWebFrame and cope with the situation when
         a WebCore::Frame has no WebCore::FrameView.
         

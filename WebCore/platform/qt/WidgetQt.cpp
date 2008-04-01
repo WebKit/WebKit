@@ -43,6 +43,7 @@
 #include "NotImplemented.h"
 
 #include "qwebframe.h"
+#include "qwebframe_p.h"
 #include "qwebpage.h"
 #include <QPainter>
 #include <QPaintEngine>
@@ -58,9 +59,8 @@ struct WidgetPrivate
         , enabled(true)
         , suppressInvalidation(false)
         , m_widget(0)
-        , m_webFrame(0)
         , m_parentScrollView(0) { }
-    ~WidgetPrivate() { delete m_webFrame; }
+    ~WidgetPrivate() {}
 
     WidgetClient* m_client;
 
@@ -68,7 +68,6 @@ struct WidgetPrivate
     bool suppressInvalidation;
     QRect m_geometry;
     QWidget *m_widget; //for plugins
-    QWebFrame *m_webFrame;
     ScrollView *m_parentScrollView;
 };
 
@@ -130,16 +129,6 @@ void Widget::hide()
 {
     if (data->m_widget)
         data->m_widget->hide();
-}
-
-QWebFrame* Widget::qwebframe() const
-{
-    return data->m_webFrame;
-}
-
-void Widget::setQWebFrame(QWebFrame* webFrame)
-{
-    data->m_webFrame = webFrame;
 }
 
 QWidget* Widget::nativeWidget() const
@@ -255,12 +244,14 @@ QWidget *Widget::containingWindow() const
     ScrollView *topLevel = this->topLevel();
     if (!topLevel)
         return 0;
-    QWidget *view = 0;
-    if (topLevel->data->m_webFrame)
-        view = topLevel->data->m_webFrame->page()->view();
-    if (!view)
-        view = data->m_widget;
-    return view;
+
+    if (!topLevel->isFrameView())
+        return data->m_widget;
+
+    QWebFrame* frame = QWebFramePrivate::kit(static_cast<FrameView*>(topLevel)->frame());
+    QWidget* view = frame->page()->view();
+
+    return view ? view : data->m_widget;
 }
 
 
