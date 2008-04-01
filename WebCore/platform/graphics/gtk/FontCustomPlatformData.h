@@ -21,7 +21,7 @@
 #ifndef FontCustomPlatformData_h
 #define FontCustomPlatformData_h
 
-#include "FontDescription.h"
+#include "FontRenderingMode.h"
 #include <wtf/Noncopyable.h>
 
 typedef struct _cairo_font_face cairo_font_face_t;

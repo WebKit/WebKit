@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-6 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,15 +25,12 @@
 #define FontDescription_h
 
 #include "FontFamily.h"
+#include "FontRenderingMode.h"
 
 namespace WebCore {
 
 const unsigned cNormalWeight = 50;
 const unsigned cBoldWeight = 63;
-
-// This setting is used to provide ways of switching between multiple rendering modes that may have different
-// metrics.  It is used to switch between CG and GDI text on Windows.
-enum FontRenderingMode { NormalRenderingMode, AlternateRenderingMode };
 
 class FontDescription {
 public:

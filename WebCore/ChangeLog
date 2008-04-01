@@ -1,3 +1,20 @@
+2008-04-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - move the FontRenderingMode enumeration into its own header file
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/CachedFont.h:
+        * platform/graphics/FontDescription.h:
+        * platform/graphics/FontRenderingMode.h: Added.
+        (WebCore::):
+        * platform/graphics/gtk/FontCustomPlatformData.h:
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        * platform/graphics/qt/FontCustomPlatformData.h:
+        * platform/graphics/win/FontCustomPlatformData.h:
+
 2008-04-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

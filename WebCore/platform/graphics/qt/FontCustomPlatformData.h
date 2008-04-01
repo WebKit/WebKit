@@ -22,7 +22,7 @@
 #ifndef FontCustomPlatformData_h_
 #define FontCustomPlatformData_h_
 
-#include "FontDescription.h"
+#include "FontRenderingMode.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {

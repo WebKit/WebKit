@@ -27,7 +27,7 @@
 #define CachedFont_h
 
 #include "CachedResource.h"
-#include "FontDescription.h"
+#include "FontRenderingMode.h"
 #include <wtf/Vector.h>
 
 #if ENABLE(SVG_FONTS)
