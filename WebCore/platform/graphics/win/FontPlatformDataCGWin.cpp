@@ -111,23 +111,23 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
     // Try the face name first.  Windows may end up localizing this name, and CG doesn't know about
     // the localization.  If the create fails, we'll try the PostScript name.
     RetainPtr<CFStringRef> fullName(AdoptCF, CFStringCreateWithCharacters(NULL, (const UniChar*)faceName, wcslen(faceName)));
-    m_cgFont = CGFontCreateWithFontName(fullName.get());
+    m_cgFont.adoptCF(CGFontCreateWithFontName(fullName.get()));
     if (!m_cgFont) {
         CFStringRef postScriptName = getPostScriptName(fullName.get(), hdc);
         if (postScriptName) {
-            m_cgFont = CGFontCreateWithFontName(postScriptName);
+            m_cgFont.adoptCF(CGFontCreateWithFontName(postScriptName));
             ASSERT(m_cgFont);
         }
     }
 }
 
-FontPlatformData::FontPlatformData(CGFontRef font, float size, bool bold, bool oblique)
-    : m_font(0)
+FontPlatformData::FontPlatformData(HFONT hfont, CGFontRef font, float size, bool bold, bool oblique, bool useGDI)
+    : m_font(RefCountedHFONT::create(hfont))
     , m_size(size)
     , m_cgFont(font)
     , m_syntheticBold(bold)
     , m_syntheticOblique(oblique)
-    , m_useGDI(false)
+    , m_useGDI(useGDI)
 {
 }
 

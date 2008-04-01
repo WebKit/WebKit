@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #define CachedFont_h
 
 #include "CachedResource.h"
+#include "FontDescription.h"
 #include <wtf/Vector.h>
 
 #if ENABLE(SVG_FONTS)
@@ -62,7 +63,7 @@ public:
     void beginLoadIfNeeded(DocLoader* dl);
 
     bool ensureCustomFontData();
-    FontPlatformData platformDataFromCustomData(float size, bool bold, bool italic);
+    FontPlatformData platformDataFromCustomData(float size, bool bold, bool italic, FontRenderingMode = NormalRenderingMode);
 
 #if ENABLE(SVG_FONTS)
     bool isSVGFont() const { return m_isSVGFont; }

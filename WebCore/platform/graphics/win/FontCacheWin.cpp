@@ -325,7 +325,7 @@ bool FontCache::fontExists(const FontDescription& fontDescription, const AtomicS
 #else
     winfont.lfOutPrecision = OUT_TT_PRECIS;
 #endif
-    winfont.lfQuality = 5; // Force cleartype.
+    winfont.lfQuality = CLEARTYPE_QUALITY;
     winfont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
     winfont.lfItalic = fontDescription.italic();
 

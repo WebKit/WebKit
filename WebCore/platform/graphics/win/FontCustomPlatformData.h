@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Computer, Inc.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +21,7 @@
 #ifndef FontCustomPlatformData_h
 #define FontCustomPlatformData_h
 
+#include "FontDescription.h"
 #include <wtf/Noncopyable.h>
 
 typedef struct CGFont* CGFontRef;
@@ -31,15 +32,18 @@ class FontPlatformData;
 class SharedBuffer;
 
 struct FontCustomPlatformData : Noncopyable {
-    FontCustomPlatformData(CGFontRef cgFont)
+    FontCustomPlatformData(CGFontRef cgFont, HANDLE fontReference = 0)
         : m_cgFont(cgFont)
+        , m_fontReference(fontReference)
     {
     }
+
     ~FontCustomPlatformData();
 
-    FontPlatformData fontPlatformData(int size, bool bold, bool italic);
+    FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontRenderingMode = NormalRenderingMode);
 
     CGFontRef m_cgFont;
+    HANDLE m_fontReference;
 };
 
 FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer*);

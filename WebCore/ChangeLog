@@ -1,3 +1,87 @@
+2008-03-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5792638> @font-face with downloadable fonts doesn't work with GDI text
+
+        * WebCore.vcproj/WebCore.vcproj: Added GetEOTHeader.{h,cpp}
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData): Changed to pass the rendering
+        mode to CachedFont::platformDataFromCustomData().
+
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::platformDataFromCustomData): Added a rendering
+        mode parameter which is passed down to
+        FontCustomPlatformData::fontPlatformData().
+
+        * loader/CachedFont.h:
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::fontExists): Changed the number 5 to the named
+        constant CLEARTYPE_QUALITY.
+
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData): Added code
+        to delete the embedded font reference.
+        (WebCore::FontCustomPlatformData::fontPlatformData): Added code to
+        create an HFONT from the embedded font reference and pass it along with
+        the CGFontRef to the FontPlatformData constructor. Added a rendering
+        mode parameter which is passed down to the FontPlatformData constructor.
+        (WebCore::EOTStream::EOTStream): Added this helper class used to feed
+        data to TTLoadEmbeddedFont().
+        (WebCore::EOTStream::read): Added.
+        (WebCore::readEmbedProc): Added this TTLoadEmbeddedFont() callback.
+        (WebCore::createUniqueFontName): Added. Creates a unique GUID-derived
+        font name. 
+        (WebCore::createFontCustomPlatformData): Added code to make the font
+        accessible to GDI by creating an Embedded OpenType stream and
+        activating it in the process under a globally-unique name.
+
+        * platform/graphics/win/FontCustomPlatformData.h:
+        Added a font reference data member which holds the embedded font.
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData): Added a
+        rendering mode parameter.
+
+        * platform/graphics/win/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData): Made this class always
+        own the CGFontRef and the HFONT by turning these data members into a
+        RetainPtr and a RefPtr around a RefCountedHFONT.
+        Added an HFONT parameter to the CGFontRef-based constructor.
+        Made platformDataInit() private.
+        (WebCore::FontPlatformData::hfont):
+        (WebCore::FontPlatformData::cgFont):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::RefCountedHFONT::RefCountedHFONT): Added.
+        (WebCore::FontPlatformData::RefCountedHFONT::~RefCountedHFONT):
+        (WebCore::FontPlatformData::RefCountedHFONT::hfont):
+        (WebCore::FontPlatformData::RefCountedHFONT::hash):
+
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::platformDataInit): Changed to take
+        ownership of the CGFontRef created here.
+        (WebCore::FontPlatformData::FontPlatformData): Added an HFONT parameter
+        and a useGDI flag.
+
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Changed to take ownership
+        of the HFONT.
+
+        * platform/graphics/win/GetEOTHeader.cpp: Added.
+        (WebCore::BigEndianUShort::operator unsigned short):
+        (WebCore::BigEndianULong::operator unsigned):
+        (WebCore::appendBigEndianStringToEOTHeader):
+        (WebCore::getEOTHeader): Added. Creates an Embedded OpenType (.eot)
+        header for the given font data, making it suitable as input for
+        TTLoadEmbeddedFont.
+
+        * platform/graphics/win/GetEOTHeader.h: Added.
+
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::SimpleFontData::platformDestroy): Removed code to delete parts
+        of the FontPlatformData, since they are now always owned and managed
+        by the FontPlatformData.
+
 2008-03-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
