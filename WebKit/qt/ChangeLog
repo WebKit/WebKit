@@ -2,6 +2,19 @@
 
         Reviewed by Simon.
 
+        * Do not save a RefPtr to the frame. The FrameLoaderClient, Frame and
+        QWebFrame should have the same lifetime everything else is a leak
+        or issue.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init):
+        * Api/qwebframe_p.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+
+2008-04-01  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Do not store the QWebFrame associated with a ScrollView/FrameView
         in the WebCore::Widget.
         * Instead of asking the Widget for the QWebFrame use the QWebFramePrivate::core

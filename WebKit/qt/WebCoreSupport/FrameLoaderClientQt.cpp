@@ -663,7 +663,7 @@ WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage()
     QWebPage *newPage = m_webFrame->page()->createWindow();
     if (!newPage)
         return 0;
-    return newPage->mainFrame()->d->frame.get();
+    return newPage->mainFrame()->d->frame;
 }
 
 void FrameLoaderClientQt::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const WebCore::String& MIMEType, const WebCore::ResourceRequest&)
