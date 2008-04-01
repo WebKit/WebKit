@@ -1,5 +1,13 @@
 2008-03-31  Dan Bernstein  <mitz@apple.com>
 
+        - Mac build fix
+
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.h:
+
+2008-03-31  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - fix <rdar://problem/5792638> @font-face with downloadable fonts doesn't work with GDI text
