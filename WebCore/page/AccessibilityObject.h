@@ -32,7 +32,9 @@
 #include "VisiblePosition.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
+#endif
 
 typedef struct _NSRange NSRange;
 
