@@ -1,3 +1,13 @@
+2008-03-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix crash seen on buildbot (regression from a recent speedup)
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createElement): Check validity before calling isLower, since
+        that takes care of the null string case.
+
 2008-03-31  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

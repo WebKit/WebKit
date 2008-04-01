@@ -300,11 +300,11 @@ bool HTMLDocument::childAllowed(Node *newChild)
 
 PassRefPtr<Element> HTMLDocument::createElement(const AtomicString& name, ExceptionCode& ec)
 {
-    AtomicString lowerName = name.string().impl()->isLower() ? name : AtomicString(name.string().lower());
-    if (!isValidName(lowerName)) {
+    if (!isValidName(name)) {
         ec = INVALID_CHARACTER_ERR;
         return 0;
     }
+    AtomicString lowerName = name.string().impl()->isLower() ? name : AtomicString(name.string().lower());
     return HTMLElementFactory::createHTMLElement(lowerName, this, 0, false);
 }
 
