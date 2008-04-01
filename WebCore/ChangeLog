@@ -1,5 +1,17 @@
 2008-04-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by Mitz.
+
+        - fix <rdar://problem/5833351> REGRESSION: Leak in JSCustomXPathNSResolver::create
+        - fix <rdar://problem/5833216> REGRESSION: Leak in CSSStyleSelector::addViewportDependentMediaQueryResult
+
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::create): Added a missing adoptRef.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::~CSSStyleSelector): Added a missing call to deleteAllValues.
+
+2008-04-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam.
 
         - speed up hasChildNodes, which does not need to be virtual

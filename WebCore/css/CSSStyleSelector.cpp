@@ -313,6 +313,7 @@ CSSStyleSelector::~CSSStyleSelector()
     ::delete m_rootDefaultStyle;
     delete m_authorStyle;
     delete m_userStyle;
+    deleteAllValues(m_viewportDependentMediaQueryResults);
 }
 
 static CSSStyleSheet* parseUASheet(const char* characters, unsigned size)
