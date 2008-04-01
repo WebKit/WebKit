@@ -277,11 +277,6 @@ void Node::remove(ExceptionCode& ec)
     deref();
 }
 
-bool Node::hasChildNodes() const
-{
-    return false;
-}
-
 void Node::normalize()
 {
     // Go through the subtree beneath us, normalizing all nodes. This means that

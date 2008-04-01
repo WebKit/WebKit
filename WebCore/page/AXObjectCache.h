@@ -31,16 +31,11 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-#endif
 
 #ifdef __OBJC__
-    @class AccessibilityObjectWrapper;
-    @class WebCoreTextMarker;
+@class WebCoreTextMarker;
 #else
-    class AccessibilityObjectWrapper;
-    class WebCoreTextMarker;
+class WebCoreTextMarker;
 #endif
 
 namespace WebCore {
@@ -64,14 +59,17 @@ namespace WebCore {
 
         void removeAXID(AccessibilityObject*);
 
+#if PLATFORM(MAC)
+        // FIXME: Move this to AccessibilityObjectWrapper.
         WebCoreTextMarker* textMarkerForVisiblePosition(const VisiblePosition&);
         VisiblePosition visiblePositionForTextMarker(WebCoreTextMarker*);
+#endif
         
         void childrenChanged(RenderObject*);
         void postNotification(RenderObject*, const String& message);
         void postNotificationToElement(RenderObject*, const String& message);
         void handleFocusedUIElementChanged();
-        
+
 #if PLATFORM(MAC)
         static void enableAccessibility() { gAccessibilityEnabled = true; }
         static bool accessibilityEnabled() { return gAccessibilityEnabled; }

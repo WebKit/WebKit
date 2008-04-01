@@ -32,6 +32,7 @@
 #include "VisiblePosition.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 #endif
@@ -341,7 +342,6 @@ public:
     void AXAttributeStringSetHeadingLevel(NSMutableAttributedString*, RenderObject*, NSRange);
     void AXAttributedStringAppendText(NSMutableAttributedString*, Node*, int offset, const UChar* chars, int length);
     AccessibilityObject* AXLinkElementForNode(Node*);
-
 #endif
     
 private:
@@ -349,6 +349,7 @@ private:
     RefPtr<HTMLAreaElement> m_areaElement;
     Vector<RefPtr<AccessibilityObject> >m_children;
     unsigned m_id; 
+
 #if PLATFORM(MAC)
     RetainPtr<AccessibilityObjectWrapper> m_wrapper;
 #endif

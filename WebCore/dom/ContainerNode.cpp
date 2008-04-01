@@ -574,11 +574,6 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec)
     return true;
 }
 
-bool ContainerNode::hasChildNodes() const
-{
-    return m_firstChild;
-}
-
 ContainerNode* ContainerNode::addChild(PassRefPtr<Node> newChild)
 {
     // This function is only used during parsing.

@@ -1,3 +1,14 @@
+2008-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - speed up hasChildNodes, which does not need to be virtual
+
+        * dom/ContainerNode.cpp: Removed hasChildNodes.
+        * dom/ContainerNode.h: Added non-virtual inline hasChildNodes.
+        * dom/Node.cpp: Removed hasChildNodes.
+        * dom/Node.h: Added non-vritual inline hasChildNodes.
+
 2008-04-01  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the non-mac build.
