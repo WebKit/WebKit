@@ -72,7 +72,7 @@
 
 using namespace WebCore;
 
-void PluginDatabase::getPluginPathsInDirectories(HashSet<String>&) const { notImplemented(); return PluginSet(); }
+void PluginDatabase::getPluginPathsInDirectories(HashSet<String>&) const { notImplemented(); }
 Vector<String> PluginDatabase::defaultPluginDirectories() { notImplemented(); return Vector<String>(); }
 bool PluginDatabase::isPreferredPluginDirectory(const String&) { notImplemented(); return false; }
 int PluginPackage::compare(const PluginPackage&) const { notImplemented(); return 0; }

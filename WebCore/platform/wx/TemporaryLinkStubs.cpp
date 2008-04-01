@@ -116,7 +116,7 @@ const WebCore::Cursor& WebCore::moveCursor() { return localCursor; }
 
 void WebCore::findWordBoundary(UChar const* str,int len,int position,int* start, int* end) { notImplemented(); *start=position; *end=position; }
 
-void PluginDatabase::getPluginPathsInDirectories(HashSet<String>&) const { notImplemented(); return PluginSet(); }
+void PluginDatabase::getPluginPathsInDirectories(HashSet<String>&) const { notImplemented(); }
 Vector<String> PluginDatabase::defaultPluginDirectories() { notImplemented(); return Vector<String>(); }
 bool PluginDatabase::isPreferredPluginDirectory(const String&) { notImplemented(); return false; }
 int PluginPackage::compare(const PluginPackage&) const { notImplemented(); return 0; }

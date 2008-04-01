@@ -1,5 +1,14 @@
 2008-03-31  Dan Bernstein  <mitz@apple.com>
 
+        - fix previous attempted fixes
+
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (PluginDatabase::getPluginPathsInDirectories):
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (PluginDatabase::getPluginPathsInDirectories):
+
+2008-03-31  Dan Bernstein  <mitz@apple.com>
+
         - fix Qt link stubs
 
         * platform/qt/TemporaryLinkStubs.cpp:
