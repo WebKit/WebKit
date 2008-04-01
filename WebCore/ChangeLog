@@ -1,3 +1,17 @@
+2008-04-01  Timothy Hatcher  <timothy@apple.com>
+
+        Rename DatabasePanel.js to DatabasesPanel.js to facilitate the up-coming UI refresh changes.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17773
+
+        Rubber-stamped by Brady Eidson.
+
+        * WebCore.vcproj/WebCore.vcproj: Reference DatabasesPanel.js.
+        * page/inspector/DatabasePanel.js: Removed.
+        * page/inspector/DatabasesPanel.js: Copied from page/inspector/DatabasePanel.js.
+        * page/inspector/WebKit.qrc: Reference DatabasesPanel.js.
+        * page/inspector/inspector.html: Reference DatabasesPanel.js.
+
 2008-04-01  Brady Eidson  <beidson@apple.com>
 
         Touch a file to get Windows to rebuild WebCore

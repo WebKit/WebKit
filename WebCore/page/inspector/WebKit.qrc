@@ -2,7 +2,7 @@
 <qresource prefix="/webkit/inspector">
     <file>Console.js</file>
     <file>Database.js</file>
-    <file>DatabasePanel.js</file>
+    <file>DatabasesPanel.js</file>
     <file>ElementsPanel.js</file>
     <file>FontView.js</file>
     <file>ImageView.js</file>
