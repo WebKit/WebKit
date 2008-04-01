@@ -153,7 +153,9 @@ QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
 
 QWebFrame::~QWebFrame()
 {
-    Q_ASSERT(d->frame == 0);
+    if (d->frame && d->frame->loader() && d->frame->loader()->client())
+        static_cast<FrameLoaderClientQt*>(d->frame->loader()->client())->m_webFrame = 0;
+        
     delete d;
 }
 

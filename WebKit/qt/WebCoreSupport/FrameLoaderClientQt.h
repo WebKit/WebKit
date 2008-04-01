@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007-2008 Trolltech ASA
  *
  * All rights reserved.
  *
@@ -54,6 +55,7 @@ namespace WebCore {
     class FrameLoaderClientQt : public QObject, public FrameLoaderClient {
         Q_OBJECT
 
+        friend class ::QWebFrame;
         void callPolicyFunction(FramePolicyFunction function, PolicyAction action);
     private slots:
         void slotCallPolicyFunction(int);

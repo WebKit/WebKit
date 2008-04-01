@@ -2,6 +2,29 @@
 
         Reviewed by Simon.
 
+        * Get the RefCounting of WebCore::Frame right and make sure that both QWebFrame
+        and WebCore::Frame get destroyed if we leave site with subframes and on the
+        end of the application.
+        * Use adoptRef in FrameLoaderClientQt::createFrame to get the refs right for subframes. We
+        do not want to add an extra reference. Without this we are leaking subframes.
+        * Assume that the lifetime of a Frame and FrameLoader are the same, when the Frame is gone
+        we want to destroy the QWebFrame (e.g. on a page with subframes). Add delete m_webFrame
+        in the frameLoaderDestroyed method to do that.
+        * If we happen to delete the QWebFrame before the FrameLoaderClientQt we set m_webFrame to
+        zero in the FrameLoaderClientQt to avoid bad things.
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::~QWebFrame):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::shouldGoToHistoryItem):
+        (WebCore::FrameLoaderClientQt::objectContentType):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
+2008-04-01  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Do not save a RefPtr to the frame. The FrameLoaderClient, Frame and
         QWebFrame should have the same lifetime everything else is a leak
         or issue.
