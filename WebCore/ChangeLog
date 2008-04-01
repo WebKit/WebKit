@@ -1,5 +1,13 @@
 2008-03-31  Dan Bernstein  <mitz@apple.com>
 
+        - fix Qt link stubs
+
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (PluginDatabase::getPluginPathsInDirectories):
+        (PluginDatabase::isPreferredPluginDirectory):
+
+2008-03-31  Dan Bernstein  <mitz@apple.com>
+
         - try to fix the Wx build
 
         * platform/wx/TemporaryLinkStubs.cpp:
