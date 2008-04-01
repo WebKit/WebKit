@@ -33,7 +33,7 @@ FontCustomPlatformData::~FontCustomPlatformData()
     QFontDatabase::removeApplicationFont(handle);
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic)
+FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontRenderingMode)
 {
     FontPlatformData result;
     result.handle = handle;

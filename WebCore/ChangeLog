@@ -1,5 +1,16 @@
 2008-03-31  Dan Bernstein  <mitz@apple.com>
 
+        - Gtk and Qt build fixes
+
+        * platform/graphics/gtk/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/gtk/FontCustomPlatformData.h:
+        * platform/graphics/qt/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/qt/FontCustomPlatformData.h:
+
+2008-03-31  Dan Bernstein  <mitz@apple.com>
+
         - Mac build fix
 
         * platform/graphics/mac/FontCustomPlatformData.cpp:

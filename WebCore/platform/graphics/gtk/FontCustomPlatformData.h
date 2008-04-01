@@ -21,6 +21,7 @@
 #ifndef FontCustomPlatformData_h
 #define FontCustomPlatformData_h
 
+#include "FontDescription.h"
 #include <wtf/Noncopyable.h>
 
 typedef struct _cairo_font_face cairo_font_face_t;
@@ -37,7 +38,7 @@ struct FontCustomPlatformData : Noncopyable {
 
     ~FontCustomPlatformData();
 
-    FontPlatformData fontPlatformData(int size, bool bold, bool italic);
+    FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontRenderingMode = NormalRenderingMode);
 
     cairo_font_face_t* m_fontFace;
 };
