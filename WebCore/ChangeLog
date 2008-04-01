@@ -1,3 +1,231 @@
+2008-04-01  Alice Liu  <alice.liu@apple.com>
+        Patch by Beth Dakin <bdakin@apple.com> and Alice Liu
+
+        Reviewed by Darin.
+
+        Refactored WebCore Accessibility code.  Prior to this patch, WebCore
+        accessibility was implemented in an ObjC class named WebCoreAXObject,
+        with much of the "guts" in C++.  This patch the next natural step of
+        factoring out the C++ code into a class named AccessibilityObject, and 
+        in order to maintain the required ObjC object ties, also implements an
+        ObjC class named AccessibilityObjectWrapper as a thin wrapper around the
+        C++ object.  Internally within WebCore we operate on the C++ object as
+        much as possible, and the ObjC object gets used mostly when we need to
+        return something to AppKit or call something implemented on NSObject.
+        The AXObjectCache still keeps one HashMap, now of RenderObjects to
+        AccessibilityObjects instead of WebCoreAXObjects, and the
+        AccessibilityObject keeps track of its ObjC wrapper.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/AXObjectCache.h:
+        (WebCore::AXObjectCache::get):
+        (WebCore::AXObjectCache::removeAXID):
+        * page/AccessibilityObject.cpp: Added.
+        (WebCore::AccessibilityObject::AccessibilityObject):
+        (WebCore::AccessibilityObject::~AccessibilityObject):
+        (WebCore::AccessibilityObject::create):
+        (WebCore::AccessibilityObject::detach):
+        (WebCore::AccessibilityObject::firstChild):
+        (WebCore::AccessibilityObject::lastChild):
+        (WebCore::AccessibilityObject::previousSibling):
+        (WebCore::AccessibilityObject::nextSibling):
+        (WebCore::AccessibilityObject::parentObject):
+        (WebCore::AccessibilityObject::parentObjectUnignored):
+        (WebCore::AccessibilityObject::isWebArea):
+        (WebCore::AccessibilityObject::isImageButton):
+        (WebCore::AccessibilityObject::isAnchor):
+        (WebCore::AccessibilityObject::isTextControl):
+        (WebCore::AccessibilityObject::isImage):
+        (WebCore::AccessibilityObject::isAttachment):
+        (WebCore::isPasswordFieldElement):
+        (WebCore::AccessibilityObject::isPasswordField):
+        (WebCore::AccessibilityObject::headingLevel):
+        (WebCore::AccessibilityObject::isHeading):
+        (WebCore::AccessibilityObject::anchorElement):
+        (WebCore::isCheckboxOrRadio):
+        (WebCore::AccessibilityObject::actionElement):
+        (WebCore::AccessibilityObject::mouseButtonListener):
+        (WebCore::AccessibilityObject::helpText):
+        (WebCore::AccessibilityObject::textUnderElement):
+        (WebCore::AccessibilityObject::hasIntValue):
+        (WebCore::AccessibilityObject::intValue):
+        (WebCore::AccessibilityObject::stringValue):
+        (WebCore::labelForElement):
+        (WebCore::AccessibilityObject::title):
+        (WebCore::AccessibilityObject::accessibilityDescription):
+        (WebCore::AccessibilityObject::boundingBoxRect):
+        (WebCore::AccessibilityObject::size):
+        (WebCore::AccessibilityObject::linkedUIElement):
+        (WebCore::AccessibilityObject::accessibilityShouldUseUniqueId):
+        (WebCore::AccessibilityObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityObject::loaded):
+        (WebCore::AccessibilityObject::layoutCount):
+        (WebCore::AccessibilityObject::textLength):
+        (WebCore::AccessibilityObject::selectedText):
+        (WebCore::AccessibilityObject::selection):
+        (WebCore::AccessibilityObject::selectedTextRange):
+        (WebCore::AccessibilityObject::setSelectedText):
+        (WebCore::AccessibilityObject::setSelectedTextRange):
+        (WebCore::AccessibilityObject::makeRangeVisible):
+        (WebCore::AccessibilityObject::url):
+        (WebCore::AccessibilityObject::isVisited):
+        (WebCore::AccessibilityObject::isFocused):
+        (WebCore::AccessibilityObject::setFocused):
+        (WebCore::AccessibilityObject::setValue):
+        (WebCore::AccessibilityObject::isEnabled):
+        (WebCore::AccessibilityObject::press):
+        (WebCore::AccessibilityObject::topRenderer):
+        (WebCore::AccessibilityObject::textControl):
+        (WebCore::AccessibilityObject::widget):
+        (WebCore::AccessibilityObject::axObjectCache):
+        (WebCore::AccessibilityObject::documentLinks):
+        (WebCore::AccessibilityObject::documentFrameView):
+        (WebCore::AccessibilityObject::frameViewIfRenderView):
+        (WebCore::AccessibilityObject::visiblePositionRange):
+        (WebCore::AccessibilityObject::doAXTextMarkerRangeForLine):
+        (WebCore::AccessibilityObject::doAXTextMarkerRangeForUnorderedTextMarkers):
+        (WebCore::AccessibilityObject::doAXLeftWordTextMarkerRangeForTextMarker):
+        (WebCore::AccessibilityObject::doAXRightWordTextMarkerRangeForTextMarker):
+        (WebCore::updateAXLineStartForVisiblePosition):
+        (WebCore::AccessibilityObject::doAXLeftLineTextMarkerRangeForTextMarker):
+        (WebCore::AccessibilityObject::doAXRightLineTextMarkerRangeForTextMarker):
+        (WebCore::AccessibilityObject::doAXSentenceTextMarkerRangeForTextMarker):
+        (WebCore::AccessibilityObject::doAXParagraphTextMarkerRangeForTextMarker):
+        (WebCore::startOfStyleRange):
+        (WebCore::endOfStyleRange):
+        (WebCore::AccessibilityObject::doAXStyleTextMarkerRangeForTextMarker):
+        (WebCore::AccessibilityObject::textMarkerRangeForRange):
+        (WebCore::AccessibilityObject::stringForReplacedNode):
+        (WebCore::AccessibilityObject::doAXStringForTextMarkerRange):
+        (WebCore::AccessibilityObject::doAXBoundsForTextMarkerRange):
+        (WebCore::AccessibilityObject::doAXLengthForTextMarkerRange):
+        (WebCore::AccessibilityObject::doSetAXSelectedTextMarkerRange):
+        (WebCore::AccessibilityObject::doAXTextMarkerForPosition):
+        (WebCore::AccessibilityObject::doAXNextTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXPreviousTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXNextWordEndTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXPreviousWordStartTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXNextLineEndTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXPreviousLineStartTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXNextSentenceEndTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXPreviousSentenceStartTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXNextParagraphEndTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXPreviousParagraphStartTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::textMarkerForIndex):
+        (WebCore::AccessibilityObject::doAXUIElementForTextMarker):
+        (WebCore::AccessibilityObject::doAXLineForTextMarker):
+        (WebCore::AccessibilityObject::rangeForTextMarkerRange):
+        (WebCore::AccessibilityObject::indexForTextMarker):
+        (WebCore::AccessibilityObject::doAXRangeForLine):
+        (WebCore::AccessibilityObject::doAXRangeForPosition):
+        (WebCore::AccessibilityObject::doAXRangeForIndex):
+        (WebCore::AccessibilityObject::doAXStyleRangeForIndex):
+        (WebCore::AccessibilityObject::doAXStringForRange):
+        (WebCore::AccessibilityObject::doAXBoundsForRange):
+        (WebCore::AccessibilityObject::doAXLineForIndex):
+        (WebCore::AccessibilityObject::doAccessibilityHitTest):
+        (WebCore::AccessibilityObject::focusedUIElement):
+        (WebCore::AccessibilityObject::observableObject):
+        (WebCore::AccessibilityObject::roleValue):
+        (WebCore::AccessibilityObject::canSetFocusAttribute):
+        (WebCore::AccessibilityObject::canSetValueAttribute):
+        (WebCore::AccessibilityObject::canSetTextRangeAttributes):
+        (WebCore::AccessibilityObject::childrenChanged):
+        (WebCore::AccessibilityObject::clearChildren):
+        (WebCore::AccessibilityObject::hasChildren):
+        (WebCore::AccessibilityObject::addChildren):
+        (WebCore::AccessibilityObject::axObjectID):
+        (WebCore::AccessibilityObject::setAXObjectID):
+        (WebCore::AccessibilityObject::removeAXObjectID):
+        * page/AccessibilityObject.h: Added.
+        (WebCore::):
+        (WebCore::VisiblePositionRange::VisiblePositionRange):
+        (WebCore::VisiblePositionRange::isNull):
+        (WebCore::AccessibilityObject::detached):
+        (WebCore::AccessibilityObject::PlainTextRange::PlainTextRange):
+        (WebCore::AccessibilityObject::PlainTextRange::isNull):
+        (WebCore::AccessibilityObject::renderer):
+        (WebCore::AccessibilityObject::children):
+        (WebCore::AccessibilityObject::wrapper):
+        (WebCore::AccessibilityObject::setWrapper):
+        * page/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::~AXObjectCache):
+        (WebCore::AXObjectCache::get):
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::getAXID):
+        (WebCore::AXObjectCache::removeAXID):
+        (WebCore::AXObjectCache::textMarkerForVisiblePosition):
+        (WebCore::AXObjectCache::childrenChanged):
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::postNotificationToElement):
+        * page/mac/AccessibilityObjectMac.mm: Added.
+        (createAccessibilityRoleMap):
+        (RoleEntry::):
+        (roleValueToNSString):
+        (AccessibilityObject::attachmentView):
+        (AccessibilityObject::performPressActionForAttachment):
+        (AccessibilityObject::textMarkerRange):
+        (AccessibilityObject::textMarkerForVisiblePosition):
+        (AccessibilityObject::startTextMarker):
+        (AccessibilityObject::visiblePositionForTextMarker):
+        (AccessibilityObject::visiblePositionForStartOfTextMarkerRange):
+        (AccessibilityObject::visiblePositionForEndOfTextMarkerRange):
+        (AccessibilityObject::textMarkerRangeFromVisiblePositions):
+        (AccessibilityObject::textMarkerRangeForSelection):
+        (AccessibilityObject::textMarkerRangeFromMarkers):
+        (AccessibilityObject::convertViewRectToScreenCoords):
+        (AccessibilityObject::convertAbsolutePointToViewCoords):
+        (AccessibilityObject::convertWidgetChildrenToNSArray):
+        (AccessibilityObject::position):
+        (AccessibilityObject::role):
+        (AccessibilityObject::subrole):
+        (AccessibilityObject::roleDescription):
+        (blockquoteLevel):
+        (AccessibilityObject::AXAttributeStringSetElement):
+        (AXAttributeStringSetBlockquoteLevel):
+        (CreateCGColorIfDifferent):
+        (AXAttributeStringSetColor):
+        (AXAttributeStringSetNumber):
+        (AXAttributeStringSetFont):
+        (AXAttributeStringSetStyle):
+        (AccessibilityObject::AXAttributeStringSetHeadingLevel):
+        (AccessibilityObject::AXLinkElementForNode):
+        (AXAttributeStringSetSpelling):
+        (AccessibilityObject::AXAttributedStringAppendText):
+        (nsStringForReplacedNode):
+        (AccessibilityObject::doAXAttributedStringForTextMarkerRange):
+        (AccessibilityObject::doAXAttributedStringForRange):
+        (AccessibilityObject::doAXRTFForRange):
+        * page/mac/AccessibilityObjectWrapper.h: Added.
+        * page/mac/AccessibilityObjectWrapper.mm: Added.
+        (-[AccessibilityObjectWrapper initWithAccessibilityObject:]):
+        (-[AccessibilityObjectWrapper unregisterUniqueIdForUIElement]):
+        (-[AccessibilityObjectWrapper detach]):
+        (-[AccessibilityObjectWrapper accessibilityObject]):
+        (-[AccessibilityObjectWrapper accessibilityActionNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper visiblePositionRangeForTextMarkerRange:]):
+        (-[AccessibilityObjectWrapper renderWidgetChildren]):
+        (convertToNSArray):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilityFocusedUIElement]):
+        (-[AccessibilityObjectWrapper accessibilityHitTest:]):
+        (-[AccessibilityObjectWrapper accessibilityIsAttributeSettable:]):
+        (-[AccessibilityObjectWrapper accessibilityIsIgnored]):
+        (-[AccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityPerformAction:]):
+        (-[AccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        (rendererForView):
+        (-[AccessibilityObjectWrapper _accessibilityParentForSubview:]):
+        (-[AccessibilityObjectWrapper accessibilityActionDescription:]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        (-[AccessibilityObjectWrapper accessibilityShouldUseUniqueId]):
+        * page/mac/WebCoreAXObject.h: Removed.
+        * page/mac/WebCoreAXObject.mm: Removed.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::selectElement):
+        * rendering/RenderMenuList.h:
+
 2008-03-31  Dan Bernstein  <mitz@apple.com>
 
         - fix previous attempted fixes

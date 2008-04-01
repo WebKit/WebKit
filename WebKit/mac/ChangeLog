@@ -1,3 +1,11 @@
+2008-03-31  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _accessibilityTree]):
+        The syntax for fetching an object from the AXObjectCache changed slightly
+
 2008-03-31  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Jon Honeycutt

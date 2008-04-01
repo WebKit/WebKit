@@ -47,6 +47,7 @@
 #import "WebScriptDebugger.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/APICast.h>
+#import <WebCore/AccessibilityObject.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/DOMImplementation.h>
@@ -648,7 +649,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     RenderView* root = static_cast<RenderView *>(_private->coreFrame->document()->renderer());
     if (!root)
         return nil;
-    return _private->coreFrame->document()->axObjectCache()->get(root);
+    return _private->coreFrame->document()->axObjectCache()->get(root)->wrapper();
 }
 
 - (DOMRange *)_rangeByAlteringCurrentSelection:(SelectionController::EAlteration)alteration direction:(SelectionController::EDirection)direction granularity:(TextGranularity)granularity

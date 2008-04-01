@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +26,19 @@
 #ifndef AXObjectCache_h
 #define AXObjectCache_h
 
+#include "AccessibilityObject.h"
 #include <limits.h>
-
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
 
 #ifdef __OBJC__
-@class WebCoreAXObject;
-@class WebCoreTextMarker;
+    @class AccessibilityObjectWrapper;
+    @class WebCoreTextMarker;
 #else
-class WebCoreAXObject;
-class WebCoreTextMarker;
+    class AccessibilityObjectWrapper;
+    class WebCoreTextMarker;
 #endif
 
 namespace WebCore {
@@ -55,10 +57,10 @@ namespace WebCore {
     public:
         ~AXObjectCache();
 
-        WebCoreAXObject* get(RenderObject*);
+        AccessibilityObject* get(RenderObject*);
         void remove(RenderObject*);
 
-        void removeAXID(WebCoreAXObject*);
+        void removeAXID(AccessibilityObject*);
 
         WebCoreTextMarker* textMarkerForVisiblePosition(const VisiblePosition&);
         VisiblePosition visiblePositionForTextMarker(WebCoreTextMarker*);
@@ -80,17 +82,17 @@ namespace WebCore {
         static bool gAccessibilityEnabled;
 #endif
 
-        AXID getAXID(WebCoreAXObject*);
+        AXID getAXID(AccessibilityObject*);
 
-        HashMap<RenderObject*, WebCoreAXObject*> m_objects;
+        HashMap<RenderObject*, RefPtr<AccessibilityObject> > m_objects;
         HashSet<AXID, IntHash<AXID>, AXIDHashTraits> m_idsInUse;
     };
 
 #if !PLATFORM(MAC)
     inline AXObjectCache::~AXObjectCache() { }
-    inline WebCoreAXObject* AXObjectCache::get(RenderObject*) { return 0; }
+    inline AccessibilityObject* AXObjectCache::get(RenderObject*) { return 0; }
     inline void AXObjectCache::remove(RenderObject*) { }
-    inline void AXObjectCache::removeAXID(WebCoreAXObject*) { }
+    inline void AXObjectCache::removeAXID(AccessibilityObject*) { }
     inline void AXObjectCache::childrenChanged(RenderObject*) { }
     inline void AXObjectCache::postNotification(RenderObject*, const String&) { }
     inline void AXObjectCache::postNotificationToElement(RenderObject*, const String&) { }

@@ -62,6 +62,12 @@ RenderMenuList::~RenderMenuList()
     m_popup = 0;
 }
 
+// this static cast is safe because RenderMenuLists are only created for HTMLSelectElements
+HTMLSelectElement* RenderMenuList::selectElement()
+{
+    return static_cast<HTMLSelectElement*>(node());
+}
+
 void RenderMenuList::createInnerBlock()
 {
     if (m_innerBlock) {
