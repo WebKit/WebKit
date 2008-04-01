@@ -33,6 +33,7 @@
 
 #include "Frame.h"
 #include "FrameLoaderClientQt.h"
+#include "FrameView.h"
 #include "ChromeClientQt.h"
 #include "ContextMenu.h"
 #include "ContextMenuClientQt.h"
@@ -336,22 +337,38 @@ void QWebPagePrivate::updateEditorActions()
 
 void QWebPagePrivate::mouseMoveEvent(QMouseEvent *ev)
 {
-    QWebFramePrivate::core(mainFrame)->eventHandler()->mouseMoved(PlatformMouseEvent(ev, 0));
+    WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
+    if (!frame->view())
+        return;
+
+    frame->eventHandler()->mouseMoved(PlatformMouseEvent(ev, 0));
 }
 
 void QWebPagePrivate::mousePressEvent(QMouseEvent *ev)
 {
-    QWebFramePrivate::core(mainFrame)->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 1));
+    WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
+    if (!frame->view())
+        return;
+
+    frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 1));
 }
 
 void QWebPagePrivate::mouseDoubleClickEvent(QMouseEvent *ev)
 {
-    QWebFramePrivate::core(mainFrame)->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 2));
+    WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
+    if (!frame->view())
+        return;
+
+    frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 2));
 }
 
 void QWebPagePrivate::mouseReleaseEvent(QMouseEvent *ev)
 {
-    QWebFramePrivate::core(mainFrame)->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
+    WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
+    if (!frame->view())
+        return;
+
+    frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
 }
 
 void QWebPagePrivate::contextMenuEvent(QContextMenuEvent *ev)
@@ -381,8 +398,12 @@ void QWebPagePrivate::contextMenuEvent(QContextMenuEvent *ev)
 
 void QWebPagePrivate::wheelEvent(QWheelEvent *ev)
 {
+    WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
+    if (!frame->view())
+        return;
+
     WebCore::PlatformWheelEvent pev(ev);
-    bool accepted = QWebFramePrivate::core(mainFrame)->eventHandler()->handleWheelEvent(pev);
+    bool accepted = frame->eventHandler()->handleWheelEvent(pev);
     ev->setAccepted(accepted);
 }
 
@@ -1035,8 +1056,8 @@ void QWebPage::triggerAction(WebAction action, bool checked)
 QSize QWebPage::viewportSize() const
 {
     QWebFrame *frame = mainFrame();
-    if (frame->d->frame && frame->d->frameView)
-        return frame->d->frameView->frameGeometry().size();
+    if (frame->d->frame && frame->d->frame->view())
+        return frame->d->frame->view()->frameGeometry().size();
     return QSize(0, 0);
 }
 
@@ -1049,10 +1070,11 @@ QSize QWebPage::viewportSize() const
 void QWebPage::setViewportSize(const QSize &size) const
 {
     QWebFrame *frame = mainFrame();
-    if (frame->d->frame && frame->d->frameView) {
-        frame->d->frameView->setFrameGeometry(QRect(QPoint(0, 0), size));
+    if (frame->d->frame && frame->d->frame->view()) {
+        WebCore::FrameView* view = frame->d->frame->view();
+        view->setFrameGeometry(QRect(QPoint(0, 0), size));
         frame->d->frame->forceLayout();
-        frame->d->frame->view()->adjustViewSize();
+        view->adjustViewSize();
     }
 }
 

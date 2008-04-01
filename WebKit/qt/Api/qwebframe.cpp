@@ -83,8 +83,7 @@ void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *webcorePage, QWebF
     frame = new Frame(webcorePage, frameData->ownerElement, frameLoaderClient);
     frameLoaderClient->setFrame(qframe, frame.get());
 
-    frameView = new FrameView(frame.get());
-    frameView->deref();
+    FrameView* frameView = new FrameView(frame.get());
     frameView->setQWebFrame(qframe);
     if (!frameData->allowsScrolling)
         frameView->setScrollbarsMode(ScrollbarAlwaysOff);
@@ -95,6 +94,7 @@ void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *webcorePage, QWebF
 
     frame->setView(frameView.get());
     frame->init();
+    frameView->deref();
 
     QObject::connect(q, SIGNAL(hoveringOverLink(const QString&, const QString&, const QString&)),
                      page, SIGNAL(hoveringOverLink(const QString&, const QString&, const QString&)));
@@ -102,14 +102,16 @@ void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *webcorePage, QWebF
 
 WebCore::PlatformScrollbar *QWebFramePrivate::horizontalScrollBar() const
 {
-    Q_ASSERT(frameView);
-    return frameView->horizontalScrollBar();
+    if (!frame->view())
+        return 0;
+    return frame->view()->horizontalScrollBar();
 }
 
 WebCore::PlatformScrollbar *QWebFramePrivate::verticalScrollBar() const
 {
-    Q_ASSERT(frameView);
-    return frameView->verticalScrollBar();
+    if (!frame->view())
+        return 0;
+    return frame->view()->verticalScrollBar();
 }
 
 /*!
@@ -153,7 +155,6 @@ QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
 QWebFrame::~QWebFrame()
 {
     Q_ASSERT(d->frame == 0);
-    Q_ASSERT(d->frameView == 0);
     delete d;
 }
 
@@ -196,8 +197,8 @@ QString QWebFrame::markup() const
 */
 QString QWebFrame::innerText() const
 {
-    if (d->frameView->layoutPending())
-        d->frameView->layout();
+    if (d->frame->view() && d->frame->view()->layoutPending())
+        d->frame->view()->layout();
 
     Element *documentElement = d->frame->document()->documentElement();
     return documentElement->innerText();
@@ -208,8 +209,8 @@ QString QWebFrame::innerText() const
 */
 QString QWebFrame::renderTreeDump() const
 {
-    if (d->frameView->layoutPending())
-        d->frameView->layout();
+    if (d->frame->view() && d->frame->view()->layoutPending())
+        d->frame->view()->layout();
 
     return externalRepresentation(d->frame->renderer());
 }
@@ -451,7 +452,7 @@ QList<QWebFrame*> QWebFrame::childFrames() const
 */
 Qt::ScrollBarPolicy QWebFrame::verticalScrollBarPolicy() const
 {
-    return (Qt::ScrollBarPolicy) d->frameView->vScrollbarMode();
+    return d->verticalScrollBarPolicy;
 }
 
 void QWebFrame::setVerticalScrollBarPolicy(Qt::ScrollBarPolicy policy)
@@ -459,7 +460,10 @@ void QWebFrame::setVerticalScrollBarPolicy(Qt::ScrollBarPolicy policy)
     Q_ASSERT((int)ScrollbarAuto == (int)Qt::ScrollBarAsNeeded);
     Q_ASSERT((int)ScrollbarAlwaysOff == (int)Qt::ScrollBarAlwaysOff);
     Q_ASSERT((int)ScrollbarAlwaysOn == (int)Qt::ScrollBarAlwaysOn);
-    d->frameView->setVScrollbarMode((ScrollbarMode)policy);
+
+    d->verticalScrollBarPolicy = policy;
+    if (d->frame->view())
+        d->frame->view()->setVScrollbarMode((ScrollbarMode)policy);
 }
 
 /*!
@@ -471,12 +475,14 @@ void QWebFrame::setVerticalScrollBarPolicy(Qt::ScrollBarPolicy policy)
 */
 Qt::ScrollBarPolicy QWebFrame::horizontalScrollBarPolicy() const
 {
-    return (Qt::ScrollBarPolicy) d->frameView->hScrollbarMode();
+    return d->horizontalScrollBarPolicy;
 }
 
 void QWebFrame::setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy policy)
 {
-    d->frameView->setHScrollbarMode((ScrollbarMode)policy);
+    d->horizontalScrollBarPolicy = policy;
+    if (d->frame->view())
+        d->frame->view()->setHScrollbarMode((ScrollbarMode)policy);
 }
 
 /*!
@@ -484,15 +490,16 @@ void QWebFrame::setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy policy)
 */
 void QWebFrame::render(QPainter *painter, const QRegion &clip)
 {
-    if (!d->frameView || !d->frame->renderer())
+    if (!d->frame->view() || !d->frame->renderer())
         return;
 
     layout();
 
     GraphicsContext ctx(painter);
     QVector<QRect> vector = clip.rects();
+    WebCore::FrameView* view = d->frame->view();
     for (int i = 0; i < vector.size(); ++i) 
-        d->frameView->paint(&ctx, vector.at(i));
+        view->paint(&ctx, vector.at(i));
 }
 
 /*!
@@ -500,10 +507,10 @@ void QWebFrame::render(QPainter *painter, const QRegion &clip)
 */
 void QWebFrame::layout()
 {
-    if (!d->frameView)
+    if (!d->frame->view())
         return;
 
-    d->frameView->layoutIfNeededRecursive();
+    d->frame->view()->layoutIfNeededRecursive();
 }
 
 /*!
@@ -511,8 +518,10 @@ void QWebFrame::layout()
 */
 QPoint QWebFrame::pos() const
 {
-    Q_ASSERT(d->frameView);
-    return d->pos();
+    if (!d->frame->view())
+        return QPoint();
+
+    return d->frame->view()->frameGeometry().topLeft();
 }
 
 /*!
@@ -520,8 +529,9 @@ QPoint QWebFrame::pos() const
 */
 QRect QWebFrame::geometry() const
 {
-    Q_ASSERT(d->frameView);
-    return d->frameView->frameGeometry();
+    if (!d->frame->view())
+        return QRect();
+    return d->frame->view()->frameGeometry();
 }
 
 /*!

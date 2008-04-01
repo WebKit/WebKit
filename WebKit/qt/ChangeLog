@@ -2,6 +2,37 @@
 
         Reviewed by Simon.
 
+        * Do not store the FrameView in the QWebFrame and cope with the situation when
+        a WebCore::Frame has no WebCore::FrameView.
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init):
+        (QWebFramePrivate::horizontalScrollBar):
+        (QWebFramePrivate::verticalScrollBar):
+        (QWebFrame::innerText):
+        (QWebFrame::renderTreeDump):
+        (QWebFrame::setVerticalScrollBarPolicy):
+        (QWebFrame::setHorizontalScrollBarPolicy):
+        (QWebFrame::render):
+        (QWebFrame::layout):
+        (QWebFrame::pos):
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateEditorActions):
+        (QWebPagePrivate::mouseMoveEvent):
+        (QWebPagePrivate::mousePressEvent):
+        (QWebPagePrivate::mouseDoubleClickEvent):
+        (QWebPagePrivate::contextMenuEvent):
+        (QWebPagePrivate::wheelEvent):
+        (QWebPage::triggerAction):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+
+2008-04-01  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Change the order of the methods to match with the FrameLoaderClient.h to ease
         removing methods in the future.
 

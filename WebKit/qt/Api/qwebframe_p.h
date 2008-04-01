@@ -27,7 +27,6 @@
 #include "qwebpage_p.h"
 
 #include "EventHandler.h"
-#include "FrameView.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include "wtf/RefPtr.h"
@@ -61,9 +60,10 @@ class QWebFramePrivate
 public:
     QWebFramePrivate()
         : q(0)
+        , horizontalScrollBarPolicy(Qt::ScrollBarAsNeeded)
+        , verticalScrollBarPolicy(Qt::ScrollBarAsNeeded)
         , frameLoaderClient(0)
         , frame(0)
-        , frameView(0)
         , page(0)
         {}
     void init(QWebFrame *qframe, WebCore::Page *page,
@@ -74,8 +74,8 @@ public:
     WebCore::PlatformScrollbar *horizontalScrollBar() const;
     WebCore::PlatformScrollbar *verticalScrollBar() const;
 
-    inline QPoint pos() const
-    { return frameView->frameGeometry().topLeft(); }
+    Qt::ScrollBarPolicy horizontalScrollBarPolicy;
+    Qt::ScrollBarPolicy verticalScrollBarPolicy; 
 
     static WebCore::Frame* core(QWebFrame*);
     static QWebFrame* kit(WebCore::Frame*);
@@ -83,7 +83,6 @@ public:
     QWebFrame *q;
     WebCore::FrameLoaderClientQt *frameLoaderClient;
     WTF::RefPtr<WebCore::Frame> frame;
-    WTF::RefPtr<WebCore::FrameView> frameView;
     QWebPage *page;
 };
 

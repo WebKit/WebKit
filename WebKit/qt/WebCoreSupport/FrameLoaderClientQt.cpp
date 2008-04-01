@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2007 Trolltech ASA
+ * Copyright (C) 2007-2008 Trolltech ASA
  *
  * All rights reserved.
  *
@@ -163,8 +163,7 @@ void FrameLoaderClientQt::makeRepresentation(DocumentLoader*)
 
 void FrameLoaderClientQt::forceLayout()
 {
-    m_frame->view()->setNeedsLayout();
-    m_frame->view()->layout();
+    m_frame->forceLayout(true);
 }
 
 
@@ -194,7 +193,6 @@ void FrameLoaderClientQt::detachedFromParent4()
     if (!m_webFrame)
         return;
     m_webFrame->d->frame = 0;
-    m_webFrame->d->frameView = 0;
     m_webFrame = 0;
     m_frame = 0;
 }
