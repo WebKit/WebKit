@@ -1,3 +1,13 @@
+2008-04-01  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Fix Qt DRT run by also printing EOF on stderr, as expected by
+        run-webkit-tests.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::dump):
+
 2008-03-31  Julien Chaffraix  <julien.chaffraix@gmail.com>
 
         Reviewed by Darin.

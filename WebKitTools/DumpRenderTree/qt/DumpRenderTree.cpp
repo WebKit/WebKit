@@ -260,6 +260,10 @@ void DumpRenderTree::dump()
 
     fflush(stdout);
 
+    fprintf(stderr, "#EOF\n");
+
+    fflush(stderr);
+
     if (!m_notifier) {
         // Exit now in single file mode...
         quit();
