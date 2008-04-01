@@ -1,5 +1,13 @@
 2008-04-01  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Adam Roben
+
+        Export loader/archive and loader/archive/cf headers for WebKitWin to use
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2008-04-01  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin
 
         WebArchives need to load on Windows the same way as on Mac, and this change in the 

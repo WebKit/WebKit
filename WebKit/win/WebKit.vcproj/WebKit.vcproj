@@ -663,6 +663,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebArchive.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebBackForwardList.h"
 				>
 			</File>
@@ -888,6 +892,10 @@
 			</File>
 			<File
 				RelativePath="..\WebActionPropertyBag.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebArchive.cpp"
 				>
 			</File>
 			<File

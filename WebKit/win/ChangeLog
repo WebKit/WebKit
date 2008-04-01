@@ -1,3 +1,26 @@
+2008-04-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben
+
+        Add empty implementations of WebArchive for future work
+        
+        * WebArchive.cpp: Added.
+        (WebArchive::createInstance):
+        (WebArchive::WebArchive):
+        (WebArchive::~WebArchive):
+        (WebArchive::QueryInterface):
+        (WebArchive::AddRef):
+        (WebArchive::Release):
+        (WebArchive::initWithMainResource):
+        (WebArchive::initWithData):
+        (WebArchive::mainResource):
+        (WebArchive::subResources):
+        (WebArchive::subframeArchives):
+        (WebArchive::data):
+        * WebArchive.h: Added.
+        
+        * WebKit.vcproj/WebKit.vcproj:
+
 2008-03-29  Adam Roben  <aroben@apple.com>
 
         Rename IWebViewPrivate::addAdditionalPluginPath to
