@@ -27,6 +27,8 @@
 #include "WebKitDLL.h"
 #include "WebArchive.h"
 
+#include "DOMCoreClasses.h"
+#include "MemoryStream.h"
 #include <WebCore/LegacyWebArchive.h>
 
 using namespace WebCore;
@@ -97,6 +99,21 @@ HRESULT STDMETHODCALLTYPE WebArchive::initWithData(
     return E_NOTIMPL;
 }
 
+HRESULT STDMETHODCALLTYPE WebArchive::initWithNode(
+        /* [in] */ IDOMNode* node)
+{
+    if (!node)
+        return E_POINTER;
+
+    COMPtr<DOMNode> domNode(Query, node);
+    if (!domNode)
+        return E_NOINTERFACE;
+
+    m_archive = LegacyWebArchive::create(domNode->node());
+    
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE WebArchive::mainResource(
         /* [out, retval] */ IWebResource**)
 {
@@ -116,7 +133,15 @@ HRESULT STDMETHODCALLTYPE WebArchive::subframeArchives(
 }
 
 HRESULT STDMETHODCALLTYPE WebArchive::data(
-        /* [out, retval] */ IStream**)
+        /* [out, retval] */ IStream** stream)
 {
-    return E_NOTIMPL;
+    RetainPtr<CFDataRef> cfData = m_archive->rawDataRepresentation();
+    if (!cfData)
+        return E_FAIL;
+
+    RefPtr<SharedBuffer> buffer = SharedBuffer::create(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
+
+    *stream = MemoryStream::createInstance(buffer);
+
+    return S_OK;
 }

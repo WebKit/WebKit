@@ -1,5 +1,20 @@
 2008-04-01  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Jon Honeycutt and Cake
+
+        Hookup WebArchive API enough to be able to save the archive of a DOMNode
+        
+        * DOMCoreClasses.h: Add a GUID for DOMNode
+
+        * Interfaces/IWebArchive.idl: Add initWithNode()
+
+        * WebArchive.cpp:
+        (WebArchive::initWithNode):
+        (WebArchive::data): Actually return LegacyWebArchive-style data
+        * WebArchive.h:
+
+2008-04-01  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Adam Roben
 
         Add empty implementations of WebArchive for future work
