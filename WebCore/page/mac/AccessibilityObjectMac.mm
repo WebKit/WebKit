@@ -99,8 +99,10 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { RulerMarkerRole, NSAccessibilityRulerMarkerRole },
         { SortButtonRole, NSAccessibilitySortButtonRole },
         { LinkRole, NSAccessibilityLinkRole },
+#ifndef BUILDING_ON_TIGER        
         { DisclosureTriangleRole, NSAccessibilityDisclosureTriangleRole },
         { GridRole, NSAccessibilityGridRole },
+#endif
         { WebCoreLinkRole, @"AXLink" }, // why isn't this just NSAccessibilityLinkRole ?
         { ImageMapRole, @"AXImageMap" },
         { ListMarkerRole, @"AXListMarker" },
