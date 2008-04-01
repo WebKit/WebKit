@@ -1,3 +1,14 @@
+2008-04-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        WebArchives need to load on Windows the same way as on Mac, and this change in the 
+        finished-loading code path was a big part of that
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::finishedLoadingDocument): Only call the client's finishedLoading()
+          for non-archive loads
+
 2008-04-01  Dan Bernstein  <mitz@apple.com>
 
         - Mac build fix
