@@ -1,5 +1,15 @@
 2008-03-31  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Jon Honeycutt
+        
+        Move a WebArchive loading check into WebCore
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation receivedData:withDataSource:]): Don't check "isDisplayingWebArchive" as WebCore is now
+          responsible for checking that state
+
+2008-03-31  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin and Mitz's rubber stamp
 
         Remove dataForArchivedSelection(WebCore::Frame*) from the EditorClient - only usage is now directly in WebCore

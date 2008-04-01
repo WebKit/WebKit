@@ -158,7 +158,7 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
     WebFrame *frame = [dataSource webFrame];
-    if (frame && ![self _isDisplayingWebArchive]) {
+    if (frame) {
         if (!_private->pluginView)
             [frame _receivedData:data textEncodingName:[[_private->dataSource response] textEncodingName]];
 

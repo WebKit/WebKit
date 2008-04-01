@@ -1,5 +1,14 @@
 2008-03-31  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Jon Honeycutt
+
+        Move a WebArchive loading check into WebCore
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::committedLoad): Don't call the client method if currently loading a WebArchive
+
+2008-03-31  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Oliver Hunt
 
         "Turn on" WebArchives for Windows
