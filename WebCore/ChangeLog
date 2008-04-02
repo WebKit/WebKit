@@ -1,3 +1,41 @@
+2008-04-02  Adam Roben  <aroben@apple.com>
+
+        Make it possible for JavaScriptDebugListeners to listen to specific Pages
+
+        JavaScriptDebugServer now has overloads of its
+        addListener/removeListener methods that take a Page* to indicate for
+        which Page the JavaScriptDebugListener wishes to receive messages.
+
+        Reviewed by Darin.
+
+        * page/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::~JavaScriptDebugServer): Delete all
+        ListenerSets being held in m_pageListenersMap.
+        (WebCore::JavaScriptDebugServer::addListener): Changed to call
+        hasListeners().
+        (WebCore::JavaScriptDebugServer::removeListener): Ditto.
+        (WebCore::JavaScriptDebugServer::addListener): Added. This overload
+        takes a Page* and puts the listener in the appropriate ListenerSet
+        within m_pageListenersMap. The ListenerSet is allocated and added to
+        m_pageListenersMap when its first listener is added.
+        (WebCore::JavaScriptDebugServer::removeListener): Added. This overload
+        takes a Page* and removes the listener from the appropriate
+        ListenerSet in m_pageListenersMap. The ListenerSet is deleted and
+        removed from m_pageListenersMap when its last listener is removed.
+        (WebCore::toPage): Added. Retrieves the parent Page from an ExecState.
+        (WebCore::JavaScriptDebugServer::sourceParsed): Changed to call
+        dispatchDidParseSource/dispatchDidFailToParseSource for both the
+        global listeners and the Page listeners.
+        (WebCore::dispatchFunctionToListeners): Added. This code was extracted
+        from the JavaScriptDebugServer method of the same name.
+        (WebCore::JavaScriptDebugServer::dispatchFunctionToListeners): Call
+        dispatchFunctionToListeners for both the global listeners and the Page
+        listeners.
+        * page/JavaScriptDebugServer.h:
+          - Added declarations for new methods.
+          - Made JavaScriptExecutionCallback typedef public so that it could
+            be used by a helper method.
+          - Added new m_pageListenersMap member.
 2008-04-02  Simon Hausmann  <hausmann@webkit.org>
 
         Fix compilation on case-sensitive file systems.

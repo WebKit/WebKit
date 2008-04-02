@@ -47,15 +47,20 @@ namespace WebCore {
         void addListener(JavaScriptDebugListener*);
         void removeListener(JavaScriptDebugListener*);
 
+        void addListener(JavaScriptDebugListener*, Page*);
+        void removeListener(JavaScriptDebugListener*, Page*);
+
         void pageCreated(Page*);
 
         typedef HashSet<JavaScriptDebugListener*> ListenerSet;
+        typedef void (JavaScriptDebugListener::*JavaScriptExecutionCallback)(KJS::ExecState*, int sourceID, int lineNumber);
 
     private:
         JavaScriptDebugServer();
         ~JavaScriptDebugServer();
 
-        typedef void (JavaScriptDebugListener::*JavaScriptExecutionCallback)(KJS::ExecState*, int sourceID, int lineNumber);
+        bool hasListeners() const { return !m_listeners.isEmpty() || !m_pageListenersMap.isEmpty(); }
+
         void dispatchFunctionToListeners(JavaScriptExecutionCallback, KJS::ExecState*, int sourceID, int lineNumber);
 
         virtual bool sourceParsed(KJS::ExecState*, int sourceID, const KJS::UString& sourceURL, const KJS::UString& source, int startingLineNumber, int errorLine, const KJS::UString& errorMsg);
@@ -64,6 +69,8 @@ namespace WebCore {
         virtual bool returnEvent(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSObject* function);
         virtual bool exception(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSValue* exception);
 
+        typedef HashMap<Page*, ListenerSet*> PageListenersMap;
+        PageListenersMap m_pageListenersMap;
         ListenerSet m_listeners;
         bool m_callingListeners;
     };
