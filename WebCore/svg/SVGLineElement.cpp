@@ -37,10 +37,10 @@ SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_x1(this, LengthModeWidth)
-    , m_y1(this, LengthModeHeight)
-    , m_x2(this, LengthModeWidth)
-    , m_y2(this, LengthModeHeight)
+    , m_x1(SVGLength(this, LengthModeWidth))
+    , m_y1(SVGLength(this, LengthModeHeight))
+    , m_x2(SVGLength(this, LengthModeWidth))
+    , m_y2(SVGLength(this, LengthModeHeight))
 {
 }
 

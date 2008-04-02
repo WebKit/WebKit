@@ -25,15 +25,15 @@
 
 #if ENABLE(SVG)
 #include "SVGExternalResourcesRequired.h"
-#include "SVGLangSpace.h"
 #include "SVGImageLoader.h"
+#include "SVGLangSpace.h"
+#include "SVGPreserveAspectRatio.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {
 
-    class SVGPreserveAspectRatio;
     class SVGLength;
 
     class SVGImageElement : public SVGStyledTransformableElement,
@@ -62,11 +62,11 @@ namespace WebCore {
         virtual bool hasRelativeValues() const;
 
     protected:
-        virtual const SVGElement* contextElement() const { return this; }
+        virtual SVGElement* contextElement() { return this; }
 
     private:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired) 
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGImageElement, SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired) 
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGImageElement, SVGURIReference, String, Href, href)
 
         ANIMATED_PROPERTY_DECLARATIONS(SVGImageElement, SVGLength, SVGLength, X, x)
         ANIMATED_PROPERTY_DECLARATIONS(SVGImageElement, SVGLength, SVGLength, Y, y)

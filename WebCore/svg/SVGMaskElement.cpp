@@ -50,10 +50,10 @@ SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* doc)
     , SVGExternalResourcesRequired()
     , m_maskUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_maskContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_x(this, LengthModeWidth)
-    , m_y(this, LengthModeHeight)
-    , m_width(this, LengthModeWidth)
-    , m_height(this, LengthModeHeight)
+    , m_x(SVGLength(this, LengthModeWidth))
+    , m_y(SVGLength(this, LengthModeHeight))
+    , m_width(SVGLength(this, LengthModeWidth))
+    , m_height(SVGLength(this, LengthModeHeight))
 {
     // Spec: If the attribute is not specified, the effect is as if a value of "-10%" were specified.
     setXBaseValue(SVGLength(this, LengthModeWidth, "-10%"));

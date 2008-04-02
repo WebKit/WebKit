@@ -20,15 +20,44 @@ function createSVGTestCase() {
     bodyElement.insertBefore(rootSVGElement, document.getElementById("description"));
 }
 
-function triggerUpdate() {
+function triggerUpdate(x, y) {
+    // Default x position
+    if (!x) {
+        x = 150;
+    }
+
+    // Default y position
+    if (!y) {
+        y = 200;
+    }
+
+    // Translation due to <h1> above us - is there a more precise way then guessing?
+    x = x + 8;
+    y = y + 66;
+
     if (window.eventSender) {
-        eventSender.mouseMoveTo(150, 200);
+        eventSender.mouseMoveTo(x, y);
         eventSender.mouseDown();
         eventSender.mouseUp();
     }
 }
 
-function waitForClickEvent(obj) {
-    if (window.layoutTestController)
-        obj.setAttribute("onclick", "layoutTestController.notifyDone()");
+function startTest(obj, x, y) {
+    obj.setAttribute("onclick", "executeTest()");
+
+    // Assure first layout finished
+    window.setTimeout("triggerUpdate(" + x + ", " + y + ")", 0);
+}
+
+function completeTest() {
+    var script = document.createElement("script");
+
+    script.onload = function() {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    };
+
+    script.src = "../../fast/js/resources/js-test-post.js";
+    successfullyParsed = true;
+    document.body.appendChild(script);
 }

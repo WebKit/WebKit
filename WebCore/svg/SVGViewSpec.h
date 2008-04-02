@@ -37,7 +37,7 @@ namespace WebCore {
     class SVGViewSpec : public SVGFitToViewBox,
                         public SVGZoomAndPan {
     public:
-        SVGViewSpec(const SVGSVGElement*);
+        SVGViewSpec(SVGSVGElement*);
         virtual ~SVGViewSpec();
 
         bool parseViewSpec(const String&);
@@ -54,11 +54,11 @@ namespace WebCore {
         SVGElement* viewTarget() const;
 
     protected:
-        virtual const SVGElement* contextElement() const;
+        virtual SVGElement* contextElement();
 
     private:
         mutable RefPtr<SVGTransformList> m_transform;
-        const SVGSVGElement* m_contextElement;
+        SVGSVGElement* m_contextElement;
         String m_viewTargetString;
     };
 

@@ -6,7 +6,7 @@ Tests dynamic updates of the 'height' attribute of the SVGForeignObjectElement o
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS foreignObjectElement.getAttribute('height') is "0"
+PASS foreignObjectElement.getAttribute('height') is "2"
 PASS foreignObjectElement.getAttribute('height') is "150"
 PASS successfullyParsed is true
 

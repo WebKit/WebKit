@@ -48,7 +48,7 @@ SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Docum
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_textLength(this, LengthModeOther)
+    , m_textLength(SVGLength(this, LengthModeOther))
     , m_lengthAdjust(LENGTHADJUST_SPACING)
 {
 }

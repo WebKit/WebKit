@@ -46,7 +46,7 @@ namespace WebCore {
         virtual void applyAnimatedValueToElement();
 
     protected:
-        virtual const SVGElement* contextElement() const { return this; }
+        virtual SVGElement* contextElement() { return this; }
         
         virtual bool updateAnimatedValue(EAnimationMode, float timePercentage, unsigned valueIndex, float percentagePast);
         virtual bool calculateFromAndToValues(EAnimationMode, unsigned valueIndex);

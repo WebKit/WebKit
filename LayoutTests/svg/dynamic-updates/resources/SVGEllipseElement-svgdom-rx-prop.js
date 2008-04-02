@@ -1,5 +1,5 @@
 // [Name] SVGEllipseElement-svgdom-rx-prop.js
-// [Expected rendering result] green ellipse - and a series of PASS mesages
+// [Expected rendering result] green ellipse with rx = ry (in fact a circle)- and a series of PASS mesages
 
 description("Tests dynamic updates of the 'rx' property of the SVGEllipseElement object")
 createSVGTestCase();
@@ -7,20 +7,18 @@ createSVGTestCase();
 var ellipseElement = createSVGElement("ellipse");
 ellipseElement.setAttribute("cx", "150");
 ellipseElement.setAttribute("cy", "150");
-ellipseElement.setAttribute("rx", "0");
+ellipseElement.setAttribute("rx", "10");
 ellipseElement.setAttribute("ry", "150");
 ellipseElement.setAttribute("fill", "green");
 
 rootSVGElement.appendChild(ellipseElement);
-shouldBe("ellipseElement.rx.baseVal.value", "0");
+shouldBe("ellipseElement.rx.baseVal.value", "10");
 
 function executeTest() {
-    ellipseElement.rx.baseVal.value = "100";
-    shouldBe("ellipseElement.rx.baseVal.value", "100");
+    ellipseElement.rx.baseVal.value = "150";
+    shouldBe("ellipseElement.rx.baseVal.value", "150");
 
-    waitForClickEvent(ellipseElement); 
-    triggerUpdate();
+    completeTest();
 }
 
-executeTest();
-var successfullyParsed = true;
+startTest(ellipseElement, 150, 150);

@@ -82,4 +82,16 @@ SVGTransform SVGTransformList::concatenateForType(SVGTransform::SVGTransformType
     return totalTransform.addToSVGTransform(SVGTransform());
 }
 
+String SVGTransformList::valueAsString() const
+{
+    // TODO: We may want to build a real transform string, instead of concatting to a matrix(...).
+    SVGTransform transform = concatenate();
+    if (transform.type() == SVGTransform::SVG_TRANSFORM_MATRIX) {
+        AffineTransform matrix = transform.matrix();
+        return String::format("matrix(%f %f %f %f %f %f)", matrix.a(), matrix.b(), matrix.c(), matrix.d(), matrix.e(), matrix.f());
+    }
+
+    return String();
+}
+
 #endif // ENABLE(SVG)

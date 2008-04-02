@@ -54,6 +54,22 @@ void SVGNumberList::parse(const String& value)
     }
 }
 
+String SVGNumberList::valueAsString() const
+{
+    String result;
+
+    ExceptionCode ec = 0;
+    for (unsigned int i = 0; i < numberOfItems(); ++i) {
+        if (i > 0)
+            result += ", ";
+
+        result += String::number(getItem(i, ec));
+        ASSERT(ec == 0);
+    }
+
+    return result;
+}
+
 }
 
 #endif // ENABLE(SVG)

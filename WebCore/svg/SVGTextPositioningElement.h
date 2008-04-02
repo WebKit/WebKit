@@ -24,12 +24,11 @@
 #define SVGTextPositioningElement_h
 
 #if ENABLE(SVG)
+#include "SVGLengthList.h"
+#include "SVGNumberList.h"
 #include "SVGTextContentElement.h"
 
 namespace WebCore {
-
-    class SVGLengthList;
-    class SVGNumberList;
 
     class SVGTextPositioningElement : public SVGTextContentElement {
     public:

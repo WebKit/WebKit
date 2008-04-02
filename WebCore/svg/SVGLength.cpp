@@ -122,6 +122,33 @@ SVGLength::SVGLength(const SVGStyledElement* context, SVGLengthMode mode, const 
     setValueAsString(valueAsString);
 }
 
+SVGLength::SVGLength(const SVGLength& other)
+    : m_valueInSpecifiedUnits(other.m_valueInSpecifiedUnits)
+    , m_unit(other.m_unit)
+    , m_context(other.m_context)
+{
+}
+
+SVGLength& SVGLength::operator=(const SVGLength& other)
+{
+    m_valueInSpecifiedUnits = other.m_valueInSpecifiedUnits;
+    m_unit = other.m_unit;
+    m_context = other.m_context;
+    return (*this);
+}
+
+bool SVGLength::operator==(const SVGLength& other) const
+{
+    return m_valueInSpecifiedUnits == other.m_valueInSpecifiedUnits &&
+           m_unit == other.m_unit &&
+           m_context == other.m_context;
+}
+
+bool SVGLength::operator!=(const SVGLength& other) const
+{
+    return !((*this) == other);
+}
+
 SVGLengthType SVGLength::unitType() const
 {
     return extractType(m_unit);

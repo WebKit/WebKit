@@ -69,6 +69,11 @@ namespace WebCore {
         };
 
         SVGLength(const SVGStyledElement* context = 0, SVGLengthMode mode = LengthModeOther, const String& valueAsString = String());
+        SVGLength(const SVGLength&);
+
+        SVGLength& operator=(const SVGLength&);
+        bool operator==(const SVGLength&) const;
+        bool operator!=(const SVGLength&) const;
 
         // 'SVGLength' functions
         SVGLengthType unitType() const;

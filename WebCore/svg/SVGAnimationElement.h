@@ -151,7 +151,8 @@ namespace WebCore {
         static void parseKeyNumbers(Vector<float>& keyNumbers, const String& value);
         static void parseBeginOrEndValue(double& number, const String& value);
 
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+        ANIMATED_PROPERTY_START_DECLARATIONS(SVGAnimationElement)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGAnimationElement, SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
 
         bool m_connectedToTimer : 1;
         

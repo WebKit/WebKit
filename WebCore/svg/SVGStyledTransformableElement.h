@@ -26,11 +26,11 @@
 #if ENABLE(SVG)
 #include "SVGStyledLocatableElement.h"
 #include "SVGTransformable.h"
+#include "SVGTransformList.h"
 
 namespace WebCore {
 
     class AffineTransform;
-    class SVGTransformList;
 
     class SVGStyledTransformableElement : public SVGStyledLocatableElement,
                                           public SVGTransformable {

@@ -63,10 +63,10 @@ SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , SVGExternalResourcesRequired()
     , SVGFitToViewBox()
     , SVGZoomAndPan()
-    , m_x(this, LengthModeWidth)
-    , m_y(this, LengthModeHeight)
-    , m_width(this, LengthModeWidth)
-    , m_height(this, LengthModeHeight)
+    , m_x(SVGLength(this, LengthModeWidth))
+    , m_y(SVGLength(this, LengthModeHeight))
+    , m_width(SVGLength(this, LengthModeWidth))
+    , m_height(SVGLength(this, LengthModeHeight))
     , m_useCurrentView(false)
     , m_timeScheduler(new TimeScheduler(doc))
     , m_viewSpec(0)
@@ -187,7 +187,7 @@ void SVGSVGElement::setUseCurrentView(bool currentView)
 SVGViewSpec* SVGSVGElement::currentView() const
 {
     if (!m_viewSpec)
-        m_viewSpec.set(new SVGViewSpec(this));
+        m_viewSpec.set(new SVGViewSpec(const_cast<SVGSVGElement*>(this)));
 
     return m_viewSpec.get();
 }

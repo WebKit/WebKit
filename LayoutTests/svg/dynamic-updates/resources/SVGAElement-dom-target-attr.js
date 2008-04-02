@@ -21,8 +21,8 @@ rootSVGElement.appendChild(anchorElement);
 
 function executeTest() {
     anchorElement.setAttribute("target", "_self");
+    completeTest();
     triggerUpdate();
 }
 
 executeTest();
-var successfullyParsed = true;

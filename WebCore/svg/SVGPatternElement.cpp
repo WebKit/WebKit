@@ -57,10 +57,10 @@ SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document* doc
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , SVGFitToViewBox()
-    , m_x(this, LengthModeWidth)
-    , m_y(this, LengthModeHeight)
-    , m_width(this, LengthModeWidth)
-    , m_height(this, LengthModeHeight)
+    , m_x(SVGLength(this, LengthModeWidth))
+    , m_y(SVGLength(this, LengthModeHeight))
+    , m_width(SVGLength(this, LengthModeWidth))
+    , m_height(SVGLength(this, LengthModeHeight))
     , m_patternUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_patternContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
     , m_patternTransform(SVGTransformList::create(SVGNames::patternTransformAttr))
@@ -77,7 +77,7 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, X, x
 ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, Y, y, SVGNames::yAttr, m_y)
 ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr, m_width)
 ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr, m_height)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGTransformList*, TransformList, transformList, PatternTransform, patternTransform, SVGNames::patternTransformAttr, m_patternTransform.get())
+ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGPatternElement, SVGTransformList, TransformList, transformList, PatternTransform, patternTransform, SVGNames::patternTransformAttr, m_patternTransform)
 
 void SVGPatternElement::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -297,10 +297,10 @@ PatternAttributes SVGPatternElement::collectPatternProperties() const
             attributes.setHeight(current->height());
 
         if (!attributes.hasBoundingBoxMode() && current->hasAttribute(SVGNames::patternUnitsAttr))
-            attributes.setBoundingBoxMode(current->getAttribute(SVGNames::patternUnitsAttr) == "objectBoundingBox");
+            attributes.setBoundingBoxMode(current->patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
 
         if (!attributes.hasBoundingBoxModeContent() && current->hasAttribute(SVGNames::patternContentUnitsAttr))
-            attributes.setBoundingBoxModeContent(current->getAttribute(SVGNames::patternContentUnitsAttr) == "objectBoundingBox");
+            attributes.setBoundingBoxModeContent(current->patternContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
 
         if (!attributes.hasPatternTransform() && current->hasAttribute(SVGNames::patternTransformAttr))
             attributes.setPatternTransform(current->patternTransform()->consolidate().matrix());
