@@ -176,7 +176,6 @@ void QWebPagePrivate::createMainFrame()
         frameData.marginWidth = 0;
         frameData.marginHeight = 0;
         mainFrame = new QWebFrame(q, &frameData);
-        mainFrame->d->frame->view()->setFrameGeometry(IntRect(IntPoint(0,0), q->viewportSize()));
 
         emit q->frameCreated(mainFrame);
     }

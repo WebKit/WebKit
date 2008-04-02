@@ -2,6 +2,36 @@
 
         Reviewed by Simon.
 
+        Prepapre everything for enabling the PageCache for the Qt Platform:
+        * Claim that we can cache pages
+        * Create the FrameView FrameLoaderClientQt::transitionToCommittedForNewPage using
+        the initial size of the viewport and stop creating it in the QWebFramePrivate::init
+        
+        Differences to the Windows port:
+        * attachToWindow/detachFromWindow is not called and is not (yet) part
+        of Widget/ScrollView of the Qt platform. We might need that for plugin
+        support in the future.
+        * We store the margin's and scrolling flag inside QWebFrame and use it when
+        creating the FrameView.
+        
+        What is missing:
+        * API to call pageCache()->setCapacity(XYZ);
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init):
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createMainFrame):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+        (WebCore::FrameLoaderClientQt::blockedError):
+
+2008-04-02  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * For the PageCache support we do not want to create a FrameView in the constructor
         of QWebFrame. In QWegPage::viewportSize() we currently call mainFrame() and that will
         create a QWebFrame if no mainFrame is present and this gets called when we try to

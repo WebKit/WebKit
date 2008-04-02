@@ -79,21 +79,14 @@ void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *webcorePage, QWebF
 {
     q = qframe;
 
+    allowsScrolling = frameData->allowsScrolling;
+    marginWidth = frameData->marginWidth;
+    marginHeight = frameData->marginHeight;
+
     frameLoaderClient = new FrameLoaderClientQt();
     frame = new Frame(webcorePage, frameData->ownerElement, frameLoaderClient);
     frameLoaderClient->setFrame(qframe, frame);
-
-    FrameView* frameView = new FrameView(frame);
-    if (!frameData->allowsScrolling)
-        frameView->setScrollbarsMode(ScrollbarAlwaysOff);
-    if (frameData->marginWidth != -1)
-        frameView->setMarginWidth(frameData->marginWidth);
-    if (frameData->marginHeight != -1)
-        frameView->setMarginHeight(frameData->marginHeight);
-
-    frame->setView(frameView);
     frame->init();
-    frameView->deref();
 
     QObject::connect(q, SIGNAL(hoveringOverLink(const QString&, const QString&, const QString&)),
                      page, SIGNAL(hoveringOverLink(const QString&, const QString&, const QString&)));
