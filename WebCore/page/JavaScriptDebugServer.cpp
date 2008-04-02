@@ -116,38 +116,38 @@ void JavaScriptDebugServer::pageCreated(Page* page)
     page->setDebugger(this);
 }
 
-static void dispatchDidParseSource(const ListenerSet& listeners, ExecState* state, const String& source, int startingLineNumber, const String& sourceURL, int sourceID)
+static void dispatchDidParseSource(const ListenerSet& listeners, ExecState* exec, const String& source, int startingLineNumber, const String& sourceURL, int sourceID)
 {
     Vector<JavaScriptDebugListener*> copy;
     copyToVector(listeners, copy);
     for (size_t i = 0; i < copy.size(); ++i)
-        copy[i]->didParseSource(state, source, startingLineNumber, sourceURL, sourceID);
+        copy[i]->didParseSource(exec, source, startingLineNumber, sourceURL, sourceID);
 }
 
-static void dispatchFailedToParseSource(const ListenerSet& listeners, ExecState* state, const String& source, int startingLineNumber, const String& sourceURL, int errorLine, const String& errorMessage)
+static void dispatchFailedToParseSource(const ListenerSet& listeners, ExecState* exec, const String& source, int startingLineNumber, const String& sourceURL, int errorLine, const String& errorMessage)
 {
     Vector<JavaScriptDebugListener*> copy;
     copyToVector(listeners, copy);
     for (size_t i = 0; i < copy.size(); ++i)
-        copy[i]->failedToParseSource(state, source, startingLineNumber, sourceURL, errorLine, errorMessage);
+        copy[i]->failedToParseSource(exec, source, startingLineNumber, sourceURL, errorLine, errorMessage);
 }
 
-static Page* toPage(ExecState* state)
+static Page* toPage(ExecState* exec)
 {
-    ASSERT_ARG(state, state);
+    ASSERT_ARG(exec, exec);
 
-    JSDOMWindow* window = toJSDOMWindow(state->dynamicGlobalObject());
+    JSDOMWindow* window = toJSDOMWindow(exec->dynamicGlobalObject());
     ASSERT(window);
 
     return window->impl()->frame()->page();
 }
 
-bool JavaScriptDebugServer::sourceParsed(ExecState* state, int sourceID, const UString& sourceURL, const UString& source, int startingLineNumber, int errorLine, const UString& errorMessage)
+bool JavaScriptDebugServer::sourceParsed(ExecState* exec, int sourceID, const UString& sourceURL, const UString& source, int startingLineNumber, int errorLine, const UString& errorMessage)
 {
     if (m_callingListeners)
         return true;
 
-    Page* page = toPage(state);
+    Page* page = toPage(exec);
     if (!page)
         return true;
 
@@ -159,37 +159,37 @@ bool JavaScriptDebugServer::sourceParsed(ExecState* state, int sourceID, const U
 
     if (!m_listeners.isEmpty()) {
         if (isError)
-            dispatchFailedToParseSource(m_listeners, state, source, startingLineNumber, sourceURL, errorLine, errorMessage);
+            dispatchFailedToParseSource(m_listeners, exec, source, startingLineNumber, sourceURL, errorLine, errorMessage);
         else
-            dispatchDidParseSource(m_listeners, state, source, startingLineNumber, sourceURL, sourceID);
+            dispatchDidParseSource(m_listeners, exec, source, startingLineNumber, sourceURL, sourceID);
     }
 
     if (ListenerSet* pageListeners = m_pageListenersMap.get(page)) {
         ASSERT(!pageListeners->isEmpty());
         if (isError)
-            dispatchFailedToParseSource(*pageListeners, state, source, startingLineNumber, sourceURL, errorLine, errorMessage);
+            dispatchFailedToParseSource(*pageListeners, exec, source, startingLineNumber, sourceURL, errorLine, errorMessage);
         else
-            dispatchDidParseSource(*pageListeners, state, source, startingLineNumber, sourceURL, sourceID);
+            dispatchDidParseSource(*pageListeners, exec, source, startingLineNumber, sourceURL, sourceID);
     }
 
     m_callingListeners = false;
     return true;
 }
 
-static void dispatchFunctionToListeners(const ListenerSet& listeners, JavaScriptDebugServer::JavaScriptExecutionCallback callback, ExecState* state, int sourceID, int lineNumber)
+static void dispatchFunctionToListeners(const ListenerSet& listeners, JavaScriptDebugServer::JavaScriptExecutionCallback callback, ExecState* exec, int sourceID, int lineNumber)
 {
     Vector<JavaScriptDebugListener*> copy;
     copyToVector(listeners, copy);
     for (size_t i = 0; i < copy.size(); ++i)
-        (copy[i]->*callback)(state, sourceID, lineNumber);
+        (copy[i]->*callback)(exec, sourceID, lineNumber);
 }
 
-void JavaScriptDebugServer::dispatchFunctionToListeners(JavaScriptExecutionCallback callback, ExecState* state, int sourceID, int lineNumber)
+void JavaScriptDebugServer::dispatchFunctionToListeners(JavaScriptExecutionCallback callback, ExecState* exec, int sourceID, int lineNumber)
 {
     if (m_callingListeners)
         return;
 
-    Page* page = toPage(state);
+    Page* page = toPage(exec);
     if (!page)
         return;
 
@@ -197,36 +197,36 @@ void JavaScriptDebugServer::dispatchFunctionToListeners(JavaScriptExecutionCallb
 
     ASSERT(hasListeners());
 
-    WebCore::dispatchFunctionToListeners(m_listeners, callback, state, sourceID, lineNumber);
+    WebCore::dispatchFunctionToListeners(m_listeners, callback, exec, sourceID, lineNumber);
     if (ListenerSet* pageListeners = m_pageListenersMap.get(page)) {
         ASSERT(!pageListeners->isEmpty());
-        WebCore::dispatchFunctionToListeners(*pageListeners, callback, state, sourceID, lineNumber);
+        WebCore::dispatchFunctionToListeners(*pageListeners, callback, exec, sourceID, lineNumber);
     }
 
     m_callingListeners = false;
 }
 
-bool JavaScriptDebugServer::callEvent(ExecState* state, int sourceID, int lineNumber, JSObject*, const List&)
+bool JavaScriptDebugServer::callEvent(ExecState* exec, int sourceID, int lineNumber, JSObject*, const List&)
 {
-    dispatchFunctionToListeners(&JavaScriptDebugListener::didEnterCallFrame, state, sourceID, lineNumber);
+    dispatchFunctionToListeners(&JavaScriptDebugListener::didEnterCallFrame, exec, sourceID, lineNumber);
     return true;
 }
 
-bool JavaScriptDebugServer::atStatement(ExecState* state, int sourceID, int firstLine, int)
+bool JavaScriptDebugServer::atStatement(ExecState* exec, int sourceID, int firstLine, int)
 {
-    dispatchFunctionToListeners(&JavaScriptDebugListener::willExecuteStatement, state, sourceID, firstLine);
+    dispatchFunctionToListeners(&JavaScriptDebugListener::willExecuteStatement, exec, sourceID, firstLine);
     return true;
 }
 
-bool JavaScriptDebugServer::returnEvent(ExecState* state, int sourceID, int lineNumber, JSObject*)
+bool JavaScriptDebugServer::returnEvent(ExecState* exec, int sourceID, int lineNumber, JSObject*)
 {
-    dispatchFunctionToListeners(&JavaScriptDebugListener::willLeaveCallFrame, state, sourceID, lineNumber);
+    dispatchFunctionToListeners(&JavaScriptDebugListener::willLeaveCallFrame, exec, sourceID, lineNumber);
     return true;
 }
 
-bool JavaScriptDebugServer::exception(ExecState* state, int sourceID, int lineNumber, JSValue*)
+bool JavaScriptDebugServer::exception(ExecState* exec, int sourceID, int lineNumber, JSValue*)
 {
-    dispatchFunctionToListeners(&JavaScriptDebugListener::exceptionWasRaised, state, sourceID, lineNumber);
+    dispatchFunctionToListeners(&JavaScriptDebugListener::exceptionWasRaised, exec, sourceID, lineNumber);
     return true;
 }
 

@@ -1,5 +1,14 @@
 2008-04-02  Adam Roben  <aroben@apple.com>
 
+        Rename instances of ExecState from "state" to "exec" in
+        JavaScriptDebugServer
+
+        Rename requested by Darin Adler.
+
+        * page/JavaScriptDebugServer.cpp:
+
+2008-04-02  Adam Roben  <aroben@apple.com>
+
         Make it possible for JavaScriptDebugListeners to listen to specific Pages
 
         JavaScriptDebugServer now has overloads of its
