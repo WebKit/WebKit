@@ -31,9 +31,9 @@ function triggerUpdate(x, y) {
         y = 200;
     }
 
-    // Translation due to <h1> above us - is there a more precise way then guessing?
-    x = x + 8;
-    y = y + 66;
+    // Translation as we live in a XHTML document
+    x = x + rootSVGElement.offsetLeft;
+    y = y + rootSVGElement.offsetTop;
 
     if (window.eventSender) {
         eventSender.mouseMoveTo(x, y);
