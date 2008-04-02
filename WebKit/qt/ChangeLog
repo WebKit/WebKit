@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        * Always return true in FrameLoaderClientQt::shouldGoToHistoryItem, like the windows port
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::):
+
+2008-04-02  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Attempt to make the m_webFrame null pointer checking consistent. Always check for
         m_webFrame. It should get set by the QWebFrame with the FramerLoaderClientQt::setFrame
         call and should stay valid until the destruction of the QWebFrame.

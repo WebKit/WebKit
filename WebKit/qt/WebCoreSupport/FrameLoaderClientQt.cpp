@@ -481,10 +481,7 @@ void FrameLoaderClientQt::updateGlobalHistory(const WebCore::KURL& url)
 
 bool FrameLoaderClientQt::shouldGoToHistoryItem(WebCore::HistoryItem *item) const
 {
-    if (item) {
-        return true;
-    }
-    return false;
+    return true;
 }
 
 void FrameLoaderClientQt::saveViewStateToItem(WebCore::HistoryItem*)
