@@ -1,3 +1,13 @@
+2008-04-02  Eric Seidel  <eric@webkit.org>
+
+        No review, build fix only.
+
+        Speculative build fix for no-svg build.
+        Use #if ENABLE(SVG) instead of #if ENABLE_SVG
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue):
+
 2008-04-02  Adam Roben  <aroben@apple.com>
 
         Rename instances of ExecState from "state" to "exec" in
