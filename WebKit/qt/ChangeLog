@@ -2,6 +2,22 @@
 
         Reviewed by Simon.
 
+        * Export the PageCache and Cache capacity call one to one. This is only there
+        to allow the QtLauncher to play with caching.
+        * TODO: make API decisions and consider following the windows Api to set a WebCacheModel
+        and determine certain values automatically.
+        
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::setPageCacheCapacity):
+        (QWebSettings::setObjectCacheCapacities):
+        * Api/qwebsettings.h:
+        * QtLauncher/main.cpp:
+
+2008-04-02  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         Prepapre everything for enabling the PageCache for the Qt Platform:
         * Claim that we can cache pages
         * Create the FrameView FrameLoaderClientQt::transitionToCommittedForNewPage using

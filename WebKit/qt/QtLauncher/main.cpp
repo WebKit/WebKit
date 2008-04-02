@@ -387,6 +387,9 @@ int main(int argc, char **argv)
     QString url = QString("%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
     QApplication app(argc, argv);
 
+    QWebSettings::setPageCacheCapacity(4);
+    QWebSettings::setObjectCacheCapacities((16*1024*1024)/8, (16*1024*1024)/8, 16*1024*1024);
+
     QWebSettings::defaultSettings()->setAttribute(QWebSettings::PluginsEnabled);
     QWebSettings::defaultSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled);
 

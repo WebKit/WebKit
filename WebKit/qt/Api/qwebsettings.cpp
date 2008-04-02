@@ -26,7 +26,9 @@
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 
+#include "Cache.h"
 #include "Page.h"
+#include "PageCache.h"
 #include "Settings.h"
 #include "KURL.h"
 #include "PlatformString.h"
@@ -310,6 +312,24 @@ void QWebSettings::setWebGraphic(WebGraphic type, const QPixmap &graphic)
 QPixmap QWebSettings::webGraphic(WebGraphic type)
 {
     return graphics()->value(type);
+}
+
+/*!
+ @internal
+*/
+void QWebSettings::setPageCacheCapacity(int numberOfPages)
+{
+    WebCore::pageCache()->setCapacity(qMax(0, numberOfPages));
+}
+
+/*!
+ @internal
+*/
+void QWebSettings::setObjectCacheCapacities(int cacheMinDeadCapacity, int cacheMaxDead, int totalCapacity)
+{
+    WebCore::cache()->setCapacities(qMax(0, cacheMinDeadCapacity),
+                                    qMax(0, cacheMaxDead),
+                                    qMax(0, totalCapacity));
 }
 
 /*!
