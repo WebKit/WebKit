@@ -2,6 +2,23 @@
 
         Reviewed by Simon.
 
+        * For the PageCache support we do not want to create a FrameView in the constructor
+        of QWebFrame. In QWegPage::viewportSize() we currently call mainFrame() and that will
+        create a QWebFrame if no mainFrame is present and this gets called when we try to
+        create a FrameView...
+        * Keep a copy of the initial viewportSize around and use it if we do not have a Frame
+        or FrameView.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPage::triggerAction):
+        * Api/qwebpage_p.h:
+
+2008-04-02  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Always return true in FrameLoaderClientQt::shouldGoToHistoryItem, like the windows port
 
         * WebCoreSupport/FrameLoaderClientQt.cpp:

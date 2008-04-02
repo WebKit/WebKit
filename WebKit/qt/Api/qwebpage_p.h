@@ -149,6 +149,7 @@ public:
     QNetworkAccessManager *networkManager;
 #endif
 
+    QSize viewportSize;
     QWebHistory history;
     QWebPageContext currentContext;
     QWebSettings *settings;

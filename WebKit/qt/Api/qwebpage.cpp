@@ -112,6 +112,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     : q(qq)
     , view(0)
     , modified(false)
+    , viewportSize(QSize(0,0))
 {
     chromeClient = new ChromeClientQt(q);
     contextMenuClient = new ContextMenuClientQt();
@@ -1055,10 +1056,10 @@ void QWebPage::triggerAction(WebAction action, bool checked)
 
 QSize QWebPage::viewportSize() const
 {
-    QWebFrame *frame = mainFrame();
-    if (frame->d->frame && frame->d->frame->view())
-        return frame->d->frame->view()->frameGeometry().size();
-    return QSize(0, 0);
+    if (d->mainFrame && d->mainFrame->d->frame->view())
+        return d->mainFrame->d->frame->view()->frameGeometry().size();
+
+    return d->viewportSize;
 }
 
 /*!
@@ -1069,6 +1070,8 @@ QSize QWebPage::viewportSize() const
 */
 void QWebPage::setViewportSize(const QSize &size) const
 {
+    d->viewportSize = size;
+
     QWebFrame *frame = mainFrame();
     if (frame->d->frame && frame->d->frame->view()) {
         WebCore::FrameView* view = frame->d->frame->view();
