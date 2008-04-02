@@ -1,3 +1,22 @@
+2008-04-02  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Attempt to make the m_webFrame null pointer checking consistent. Always check for
+        m_webFrame. It should get set by the QWebFrame with the FramerLoaderClientQt::setFrame
+        call and should stay valid until the destruction of the QWebFrame.
+        * Currently the same checking is not needed for m_frame as it will only set to 0 in
+        FrameLoaderClientQt::frameLoaderDestroyed and should be not 0 because of the setFrame
+        initialisation.
+        
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientQt::setMainDocumentError):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveContentLength):
+        (WebCore::FrameLoaderClientQt::objectContentType):
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2008-04-01  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.

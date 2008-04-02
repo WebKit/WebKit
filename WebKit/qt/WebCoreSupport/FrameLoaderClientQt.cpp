@@ -238,6 +238,9 @@ void FrameLoaderClientQt::dispatchDidStartProvisionalLoad()
 
 void FrameLoaderClientQt::dispatchDidReceiveTitle(const String& title)
 {
+    if (!m_webFrame)
+        return;
+
     // ### hack
     emit m_webFrame->urlChanged(m_webFrame->url());
     emit titleChanged(title);
@@ -246,7 +249,7 @@ void FrameLoaderClientQt::dispatchDidReceiveTitle(const String& title)
 
 void FrameLoaderClientQt::dispatchDidCommitLoad()
 {
-    if (m_frame->tree()->parent())
+    if (m_frame->tree()->parent() || !m_webFrame)
         return;
     m_webFrame->page()->d->updateNavigationActions();
 }
@@ -254,7 +257,7 @@ void FrameLoaderClientQt::dispatchDidCommitLoad()
 
 void FrameLoaderClientQt::dispatchDidFinishDocumentLoad()
 {
-    if (m_frame->tree()->parent())
+    if (m_frame->tree()->parent() || !m_webFrame)
         return;
     m_webFrame->page()->d->updateNavigationActions();
 }
@@ -264,7 +267,7 @@ void FrameLoaderClientQt::dispatchDidFinishLoad()
 {
     if (m_webFrame)
         emit m_webFrame->loadDone(true);
-    if (m_frame->tree()->parent())
+    if (m_frame->tree()->parent() || !m_webFrame)
         return;
     m_webFrame->page()->d->updateNavigationActions();
 }
@@ -315,7 +318,7 @@ void FrameLoaderClientQt::postProgressStartedNotification()
 {
     if (m_webFrame && m_frame->page())
         emit loadStarted();
-    if (m_frame->tree()->parent())
+    if (m_frame->tree()->parent() || !m_webFrame)
         return;
     m_webFrame->page()->d->updateNavigationActions();
 }
@@ -459,7 +462,7 @@ void FrameLoaderClientQt::windowObjectCleared()
 
 void FrameLoaderClientQt::didPerformFirstNavigation() const
 {
-    if (m_frame->tree()->parent())
+    if (m_frame->tree()->parent() || !m_webFrame)
         return;
     m_webFrame->page()->d->updateNavigationActions();
 }
@@ -578,6 +581,9 @@ WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientQt::createDocumentLoad
 void FrameLoaderClientQt::download(WebCore::ResourceHandle* handle, const WebCore::ResourceRequest&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
 {
 #if QT_VERSION >= 0x040400
+    if (!m_webFrame)
+        return;
+
     QNetworkReplyHandler* handler = handle->getInternal()->m_job;
     QNetworkReply* reply = handler->release();
     if (reply) {
@@ -711,6 +717,9 @@ void FrameLoaderClientQt::dispatchUnableToImplementPolicy(const WebCore::Resourc
 void FrameLoaderClientQt::startDownload(const WebCore::ResourceRequest& request)
 {
 #if QT_VERSION >= 0x040400
+    if (!m_webFrame)
+        return;
+
     QWebPage *page = m_webFrame->page();
     emit m_webFrame->page()->download(request.toNetworkRequest());
 #endif
@@ -719,6 +728,9 @@ void FrameLoaderClientQt::startDownload(const WebCore::ResourceRequest& request)
 PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                                         const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
 {
+    if (!m_webFrame)
+        return 0;
+
     QWebFrameData frameData;
     frameData.url = url;
     frameData.name = name;
@@ -799,6 +811,10 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize&, Element* element, cons
 {
 //     qDebug()<<"------ Creating plugin in FrameLoaderClientQt::createPlugin for "<<url.prettyURL() << mimeType;
 //     qDebug()<<"------\t url = "<<url.prettyURL();
+
+    if (!m_webFrame)
+        return 0;
+
     QStringList params;
     QStringList values;
     for (int i = 0; i < paramNames.size(); ++i)
