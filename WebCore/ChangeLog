@@ -1,3 +1,101 @@
+2008-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam and Antti.
+
+        - fix <rdar://problem/5829565> paste performance slowed down with the Range Acid3 changes
+
+        Added a new class, RangeBoundaryPoint, to use for range boundary points. The "truth" of
+        the offset is now stored as a node pointer, and the offset is computed as and when needed.
+        This allows us to efficiently update when the DOM tree is changed -- computation of the
+        node offsets is deferred until the Range is used later.
+
+        * WebCore.base.exp: Export nodeIndex().
+
+        * WebCore.xcodeproj/project.pbxproj: Added RangeBoundaryPoint.h, removed NodeWithIndexBefore.h
+        and NodeWIthIndexAfter.h. Also let Xcode tweak the file formatting.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::childrenChanged): Pass fewer arguments to Document.
+
+        * dom/Document.cpp:
+        (WebCore::Document::nodeChildrenChanged): Pass fewer arguments to Range.
+        (WebCore::Document::nodeWillBeRemoved): Pass node to range as a raw node pointer; no need for
+        the index.
+        * dom/Document.h: Take fewer arguments.
+
+        * dom/NodeWithIndexAfter.h: Removed.
+        * dom/NodeWithIndexBefore.h: Removed.
+
+        * dom/Range.cpp:
+        (WebCore::Range::Range): Changed to use the new RangeBoundaryPoint constructor.
+        (WebCore::Range::create): Updated to use RangeBoundaryPoint instead of Position.
+        (WebCore::Range::~Range): Ditto.
+        (WebCore::Range::startContainer): Ditto.
+        (WebCore::Range::startOffset): Ditto.
+        (WebCore::Range::endContainer): Ditto.
+        (WebCore::Range::endOffset): Ditto.
+        (WebCore::Range::commonAncestorContainer): Ditto.
+        (WebCore::Range::collapsed): Ditto.
+        (WebCore::Range::setStart): Ditto.
+        (WebCore::Range::setEnd): Ditto.
+        (WebCore::Range::collapse): Ditto.
+        (WebCore::Range::isPointInRange): Ditto.
+        (WebCore::Range::comparePoint): Ditto.
+        (WebCore::Range::compareNode): Ditto.
+        (WebCore::Range::compareBoundaryPoints): Ditto.
+        (WebCore::Range::boundaryPointsValid): Ditto.
+        (WebCore::Range::intersectsNode): Ditto.
+        (WebCore::Range::processContents): Ditto.
+        (WebCore::Range::cloneContents): Ditto.
+        (WebCore::Range::insertNode): Updated to use RangeBoundaryPoint. Also simplified the code
+        at the end that updates the range -- not all of it is needed now since most of the fixup
+        is done automatically by the range document mutation machinery. The one bit that remains
+        is arguably a bug, but we need to keep it to keep passing Acid3 until we get clarification
+        that it is indeed a bug (and then Acid3 will probably have to change).
+        (WebCore::Range::toString): Update to use RangeBoundaryPoint instead of Position.
+        (WebCore::Range::text): Ditto.
+        (WebCore::Range::createContextualFragment): Ditto.
+        (WebCore::Range::detach): Ditto.
+        (WebCore::Range::checkNodeWOffset): Changed case where the offset is a node offset to
+        be more efficient by using childNode instead of childNodeCount, and also return the node
+        before which is needed to set the value of a RangeBoundaryPoint.
+        (WebCore::Range::cloneRange): Ditto.
+        (WebCore::Range::setStartAfter): Ditto.
+        (WebCore::Range::setEndBefore): Ditto.
+        (WebCore::Range::setEndAfter): Ditto.
+        (WebCore::Range::selectNode): Ditto.
+        (WebCore::Range::selectNodeContents): Ditto.
+        (WebCore::Range::surroundContents): Ditto.
+        (WebCore::Range::setStartBefore): Ditto.
+        (WebCore::Range::checkDeleteExtract): Ditto.
+        (WebCore::Range::containedByReadOnly): Ditto.
+        (WebCore::Range::firstNode): Ditto.
+        (WebCore::Range::editingStartPosition): Ditto.
+        (WebCore::Range::pastLastNode): Ditto.
+        (WebCore::Range::addLineBoxRects): Ditto.
+        (WebCore::Range::formatForDebugger): Ditto.
+        (WebCore::Range::maxStartOffset): Ditto.
+        (WebCore::Range::maxEndOffset): Ditto.
+        (WebCore::boundaryNodeChildrenChanged): Updated to use RangeBoundaryPoint instead of
+        Position. Also changed name and changed to just call invalidateOffset.
+        (WebCore::Range::nodeChildrenChanged): Changed to take just a container node.
+        (WebCore::boundaryNodeWillBeRemoved): Updated to use RangeBoundaryPoint instead of
+        Position. Also changed name and changed to update childBefore.
+        (WebCore::Range::nodeWillBeRemoved): Changed to just take a Node*.
+        (WebCore::boundaryTextInserted): Updated to use RangeBoundaryPoint instead of
+        Position. Also changed name.
+        (WebCore::Range::textInserted): Ditto.
+        (WebCore::boundaryTextRemoved): Ditto.
+        (WebCore::Range::textRemoved): Ditto.
+        (WebCore::boundaryTextNodesMerged): Ditto.
+        (WebCore::Range::textNodesMerged): Ditto.
+        (WebCore::boundaryTextNodesSplit): Ditto.
+        (WebCore::Range::textNodeSplit): Ditto.
+
+        * dom/Range.h: Updated to use RangeBoundaryPoint instead of Position.
+
+        * dom/RangeBoundaryPoint.h: Added.
+
 2008-04-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
