@@ -1,3 +1,10 @@
+2008-04-02  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix compilation on case-sensitive file systems.
+
+        * svg/SVGGradientElement.h: Include SVGTransformList.h instead of
+        SVGTRansformlist.h
+
 2008-04-02  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

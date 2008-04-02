@@ -27,7 +27,7 @@
 #include "SVGExternalResourcesRequired.h"
 #include "SVGPaintServerGradient.h"
 #include "SVGStyledElement.h"
-#include "SVGTransformlist.h"
+#include "SVGTransformList.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {
