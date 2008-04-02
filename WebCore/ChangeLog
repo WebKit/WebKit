@@ -1,5 +1,9 @@
 2008-04-01  Darin Adler  <darin@apple.com>
 
+        * WebCore.vcproj/WebCore.vcproj: Added RangeBoundaryPoint.h -- not required, but convenient.
+
+2008-04-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam and Antti.
 
         - fix <rdar://problem/5829565> paste performance slowed down with the Range Acid3 changes

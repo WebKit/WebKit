@@ -10822,6 +10822,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\RangeBoundaryPoint.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\RangeException.h"
 				>
 			</File>
