@@ -1,3 +1,18 @@
+2008-04-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Get rid of old "bindings" forwarding headers.
+
+        * ForwardingHeaders/bindings: Removed.
+        * ForwardingHeaders/bindings/NP_jsobject.h: Removed.
+        * ForwardingHeaders/bindings/npruntime.h: Removed.
+        * ForwardingHeaders/bindings/npruntime_impl.h: Removed.
+        * ForwardingHeaders/bindings/npruntime_internal.h: Removed.
+        * ForwardingHeaders/bindings/runtime.h: Removed.
+        * ForwardingHeaders/bindings/runtime_object.h: Removed.
+        * ForwardingHeaders/bindings/runtime_root.h: Removed.
+
 2008-04-01  Timothy Hatcher  <timothy@apple.com>
 
         Rename DatabasePanel.js to DatabasesPanel.js to facilitate the up-coming UI refresh changes.
