@@ -1,3 +1,15 @@
+2008-04-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey.
+
+        - fix storage leak seen on buildbot
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::utiFromMIMEType): Put the result of createCFString() into a RetainPtr. Changed
+        result to be a RetainPtr.
+        (WebCore::ImageBuffer::toDataURL): Tweak a little bit, removing one local variable and
+        some unneeded explicit conversions.
+
 2008-04-01  Darin Adler  <darin@apple.com>
 
         * WebCore.vcproj/WebCore.vcproj: Added RangeBoundaryPoint.h -- not required, but convenient.

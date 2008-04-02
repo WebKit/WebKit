@@ -215,13 +215,14 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
     }
 }
 
-static CFStringRef utiFromMIMEType(const String& mimeType)
+static RetainPtr<CFStringRef> utiFromMIMEType(const String& mimeType)
 {
 #if PLATFORM(MAC)
-    return UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString(), 0);
+    RetainPtr<CFStringRef> mimeTypeCFString(AdoptCF, mimeType.createCFString());
+    return RetainPtr<CFStringRef>(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeTypeCFString.get(), 0));
 #else
-    // FIXME: Add Windows support for all the supported UTI's when a way to convert from MIMEType to UTI reliably is found.
-    // For now, only support PNG, the minimum that the spec requires.
+    // FIXME: Add Windows support for all the supported UTIs when a way to convert from MIMEType to UTI reliably is found.
+    // For now, only support PNG, the minimum that HTML5 requires.
     ASSERT(equalIgnoringCase(mimeType, "image/png"));
     static const CFStringRef kUTTypePNG = CFSTR("public.png");
     return kUTTypePNG;
@@ -234,18 +235,20 @@ String ImageBuffer::toDataURL(const String& mimeType) const
 
     RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(context()->platformContext()));
     if (!image)
-        return String("data:,");
+        return "data:,";
 
     size_t width = CGImageGetWidth(image.get());
     size_t height = CGImageGetHeight(image.get());
 
     OwnArrayPtr<uint32_t> imageData(new uint32_t[width * height]);
+    if (!imageData)
+        return "data:,";
 
     RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(imageData.get(), width, height,
         CGImageGetBitsPerComponent(image.get()), CGImageGetBytesPerRow(image.get()),
         CGImageGetColorSpace(image.get()), kCGImageAlphaPremultipliedFirst));
     if (!bitmapContext)
-        return String("data:,");
+        return "data:,";
 
     CGContextSaveGState(bitmapContext.get());
     CGContextTranslateCTM(bitmapContext.get(), 0, height);
@@ -256,16 +259,16 @@ String ImageBuffer::toDataURL(const String& mimeType) const
 
     RetainPtr<CGImageRef> transformedImage(AdoptCF, CGBitmapContextCreateImage(bitmapContext.get()));
     if (!transformedImage)
-        return String("data:,");
+        return "data:,";
 
     RetainPtr<CFMutableDataRef> transformedImageData(AdoptCF, CFDataCreateMutable(kCFAllocatorDefault, 0));
     if (!transformedImageData)
-        return String("data:,");
+        return "data:,";
 
-    RetainPtr<CFStringRef> imageUTI(AdoptCF, utiFromMIMEType(mimeType));
-    RetainPtr<CGImageDestinationRef> imageDestination(AdoptCF, CGImageDestinationCreateWithData(transformedImageData.get(), imageUTI.get(), 1, 0));
+    RetainPtr<CGImageDestinationRef> imageDestination(AdoptCF, CGImageDestinationCreateWithData(transformedImageData.get(),
+        utiFromMIMEType(mimeType).get(), 1, 0));
     if (!imageDestination)
-        return String("data:,");
+        return "data:,";
 
     CGImageDestinationAddImage(imageDestination.get(), transformedImage.get(), 0);
     CGImageDestinationFinalize(imageDestination.get());
