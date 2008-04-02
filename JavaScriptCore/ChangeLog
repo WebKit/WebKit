@@ -1,5 +1,16 @@
 2008-04-01  Alexey Proskuryakov  <ap@webkit.org>
 
+        Rubber-stamped by Darin.
+
+        Turn off using 64-bit arithmetic on 32-bit hardware, as dtoa own code is faster than
+        compiler-provided emulation.
+
+        1% speedup on Acid3 test 26.
+
+        * kjs/dtoa.cpp:
+
+2008-04-01  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         Make MathExtras.h thread safe.

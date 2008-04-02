@@ -394,7 +394,10 @@ extern double rnd_prod(double, double), rnd_quot(double, double);
 #define Pack_32
 #endif
 
+#if PLATFORM(PPC64) || PLATFORM(X86_64)
+// 64-bit emulation provided by the compiler is likely to be slower than dtoa own code on 32-bit hardware.
 #define USE_LONG_LONG
+#endif
 
 #ifndef USE_LONG_LONG
 #ifdef Just_16
