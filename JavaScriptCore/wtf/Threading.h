@@ -242,14 +242,6 @@ void initializeThreading();
 
 extern Mutex* atomicallyInitializedStaticMutex;
 
-#if !PLATFORM(GTK)
-inline void initializeThreading()
-{
-    if (!atomicallyInitializedStaticMutex)
-        atomicallyInitializedStaticMutex = new Mutex;
-}
-#endif
-
 } // namespace WTF
 
 using WTF::Mutex;

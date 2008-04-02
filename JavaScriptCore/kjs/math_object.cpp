@@ -206,14 +206,16 @@ JSValue* mathProtoFuncPow(ExecState* exec, JSObject*, const List& args)
     return jsNumber(pow(arg, arg2));
 }
 
-static bool didInitRandom;
-
 JSValue* mathProtoFuncRandom(ExecState*, JSObject*, const List&)
 {
+#if !USE(MULTIPLE_THREADS)
+    static bool didInitRandom;
     if (!didInitRandom) {
         wtf_random_init();
         didInitRandom = true;
     }
+#endif
+
     return jsNumber(wtf_random());
 }
 

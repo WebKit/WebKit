@@ -1,3 +1,25 @@
+2008-04-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Make MathExtras.h thread safe.
+
+        * kjs/math_object.cpp:
+        (KJS::mathProtoFuncRandom): If threading is enabled, rely on initializeThreading to call
+        wtf_random_init().
+
+        * wtf/Threading.h:
+        * wtf/ThreadingGtk.cpp:
+        (WTF::initializeThreading):
+        * wtf/ThreadingNone.cpp:
+        (WTF::initializeThreading):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading):
+        * wtf/ThreadingWin.cpp:
+        (WTF::initializeThreading):
+        Call wtf_random_init(); made the function non-inline to avoid having to include too many
+        headers in Threading.h.
+
 2008-03-31  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

@@ -30,6 +30,7 @@
 #include "Threading.h"
 
 #include <wtf/HashMap.h>
+#include <wtf/MathExtras.h>
 
 #include <errno.h>
 #include <sys/time.h>
@@ -37,6 +38,14 @@
 namespace WTF {
 
 Mutex* atomicallyInitializedStaticMutex;
+
+void initializeThreading()
+{
+    if (!atomicallyInitializedStaticMutex) {
+        atomicallyInitializedStaticMutex = new Mutex;
+        wtf_random_init();
+    }
+}
 
 static Mutex& threadMapMutex()
 {
