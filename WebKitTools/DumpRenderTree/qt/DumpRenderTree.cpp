@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -184,8 +185,14 @@ void DumpRenderTree::readStdin(int /* socket */)
     //fprintf(stderr, "\n    opening %s\n", line.constData());
     if (line.isEmpty())
         quit();
-    QFileInfo fi(line);
-    open(QUrl::fromLocalFile(fi.absoluteFilePath()));
+
+    if (line.startsWith("http:") || line.startsWith("https:"))
+        open(QUrl(line));
+    else {
+        QFileInfo fi(line);
+        open(QUrl::fromLocalFile(fi.absoluteFilePath()));
+    }
+
     fflush(stdout);
 }
 

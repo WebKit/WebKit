@@ -157,7 +157,9 @@ int main(int argc, char* argv[])
         dumper.open();
     } else {
         if (!args.last().startsWith("/")
-            && !args.last().startsWith("file:")) {
+            && !args.last().startsWith("file:")
+            && !args.last().startsWith("http:")
+            && !args.last().startsWith("https:")) {
             QString path = QDir::currentPath();
             if (!path.endsWith('/'))
                 path.append('/');

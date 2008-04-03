@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        * Treat http and https as special URLs as well. Change the main.cpp and
+        DumpRenderTree.cpp to handle http and https URIs as input.
+        * I'm not doing the clean up and merging of these two checks now.
+        
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::readStdin):
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+
+2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Remove dumpFrameLoadCallbacks from simple-subframe.html because it is
         located in a directory with the name "loading". And this will autoamtically
         enable dumping.
