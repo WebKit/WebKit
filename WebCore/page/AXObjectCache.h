@@ -73,11 +73,11 @@ namespace WebCore {
 #if PLATFORM(MAC)
         static void enableAccessibility() { gAccessibilityEnabled = true; }
         static bool accessibilityEnabled() { return gAccessibilityEnabled; }
+        bool isIDinUse(AXID id) const { return m_idsInUse.contains(id); }
 #else
         static bool accessibilityEnabled() { return false; }
 #endif
         AXID getAXID(AccessibilityObject*);
-        bool isIDinUse(AXID id) const { return m_idsInUse.contains(id); }
 
     private:
 #if PLATFORM(MAC)
