@@ -216,7 +216,7 @@ void IconDatabase::removeAllIcons()
     wakeSyncThread();
 }
 
-Image* IconDatabase::iconForPageURL(const String& pageURLOriginal, const IntSize& size, bool cache)
+Image* IconDatabase::iconForPageURL(const String& pageURLOriginal, const IntSize& size)
 {   
     ASSERT_NOT_SYNC_THREAD();
 

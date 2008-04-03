@@ -74,7 +74,7 @@ public:
             
     void removeAllIcons();
 
-    Image* iconForPageURL(const String&, const IntSize&, bool cache = true);
+    Image* iconForPageURL(const String&, const IntSize&);
     void readIconForPageURLFromDisk(const String&);
     String iconURLForPageURL(const String&);
     Image* defaultIcon(const IntSize&);

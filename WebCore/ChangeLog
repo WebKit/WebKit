@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        * Remove the unused 'cache' parameter
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::iconForPageURL):
+        * loader/icon/IconDatabase.h:
+
+2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Add WebCore/loader/icon to the DEPENDPATH as well
 
         * WebCore.pro:
