@@ -29,6 +29,7 @@
 
 #include "ForEachCoClass.h"
 #include "CFDictionaryPropertyBag.h"
+#include "WebArchive.h"
 #include "WebCache.h"
 #include "WebDatabaseManager.h"
 #include "WebDownload.h"

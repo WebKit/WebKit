@@ -50,8 +50,6 @@
 #pragma warning(pop)
 
 #include <initguid.h>
-// {79A193A5-D783-4c73-9AD9-D10678B943DE}
-DEFINE_GUID(IID_DOMNode, 0x79a193a5, 0xd783, 0x4c73, 0x9a, 0xd9, 0xd1, 0x6, 0x78, 0xb9, 0x43, 0xde);
 // {3B0C0EFF-478B-4b0b-8290-D2321E08E23E}
 DEFINE_GUID(IID_DOMElement, 0x3b0c0eff, 0x478b, 0x4b0b, 0x82, 0x90, 0xd2, 0x32, 0x1e, 0x8, 0xe2, 0x3e);
 
@@ -79,7 +77,7 @@ HRESULT STDMETHODCALLTYPE DOMNode::QueryInterface(REFIID riid, void** ppvObject)
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IDOMNode))
         *ppvObject = static_cast<IDOMNode*>(this);
-    else if (IsEqualGUID(riid, IID_DOMNode))
+    else if (IsEqualGUID(riid, __uuidof(DOMNode)))
         *ppvObject = static_cast<DOMNode*>(this);
     else
         return DOMObject::QueryInterface(riid, ppvObject);
@@ -301,7 +299,7 @@ HRESULT STDMETHODCALLTYPE DOMNode::isSameNode(
         return E_POINTER;
 
     COMPtr<DOMNode> domOther;
-    HRESULT hr = other->QueryInterface(IID_DOMNode, (void**)&domOther);
+    HRESULT hr = other->QueryInterface(__uuidof(DOMNode), (void**)&domOther);
     if (FAILED(hr))
         return hr;
 

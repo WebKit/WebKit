@@ -34,7 +34,14 @@
 using namespace WebCore;
 
 // WebArchive ----------------------------------------------------------------
-    
+
+WebArchive* WebArchive::createInstance()
+{
+    WebArchive* instance = new WebArchive(0);
+    instance->AddRef();
+    return instance;
+}
+
 WebArchive* WebArchive::createInstance(PassRefPtr<LegacyWebArchive> coreArchive)
 {
     WebArchive* instance = new WebArchive(coreArchive);

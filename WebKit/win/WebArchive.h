@@ -38,6 +38,7 @@ namespace WebCore {
 class WebArchive : public IWebArchive
 {
 public:
+    static WebArchive* createInstance();
     static WebArchive* createInstance(PassRefPtr<WebCore::LegacyWebArchive>);
 protected:
     WebArchive(PassRefPtr<WebCore::LegacyWebArchive>);

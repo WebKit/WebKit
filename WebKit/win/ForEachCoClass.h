@@ -33,6 +33,7 @@
 
 #define FOR_EACH_COCLASS(macro) \
     macro(CFDictionaryPropertyBag) \
+    macro(WebArchive) \
     macro(WebCache) \
     macro(WebDatabaseManager) \
     macro(WebDownload) \

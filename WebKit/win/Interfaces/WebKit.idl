@@ -436,4 +436,13 @@ library OpenSourceWebKit
     coclass WebDatabaseManager {
         [default] interface IWebDatabaseManager;
     }
+
+#if __PRODUCTION__
+    [uuid(1B63D781-9BC4-4a04-899F-C4B05BBD3BE5)]
+#else
+    [uuid(EE627CCF-0FEC-4557-AAAE-6283FEA2B823)]
+#endif
+    coclass WebArchive{
+        [default] interface IWebArchive;
+    }
 }
