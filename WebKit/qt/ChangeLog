@@ -1,3 +1,24 @@
+2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Safari is using the IconDatabase the following way (assumption). Before they
+        call iconDatabase()->open they "retain" all URLs they are interested in, these
+        could come from the history.
+        * When opening the iconDatabase() a thread will be started that is going to import
+        the URLs, all none manually retained URLs are scheduled for removal. The removal
+        is going to happen when the next icon gets stored in the database.
+        * We do not have any IconDatabase code, we can not retain the URLs before opening the
+        database. To disable the automatic pruning of the icons we will ask the IconDatabase
+        to delay this operation. This means our IconDatabase, when used, will grow, so we should
+        try to have a IconDatabase class in 4.4.
+        * The only way to counter the growth is a call to QWebSettings::clearIconDatabase
+        
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::clearIconDatabase):
+        * Api/qwebsettings.h:
+
 2008-04-03  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.
