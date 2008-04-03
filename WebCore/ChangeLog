@@ -1,3 +1,25 @@
+2008-04-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz Pettel
+
+        <rdar://problem/5838347> and http://bugs.webkit.org/show_bug.cgi?id=11839
+        Webarchive fails to save CSS files in @import statements
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::addSubresourceURLStrings): Recursively add the URL each @import rule under the current style sheet.
+        * css/CSSStyleSheet.h:
+        * css/StyleSheet.h:
+        (WebCore::StyleSheet::addSubresourceURLStrings):
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::getSubresourceAttributeStrings): Add the linked URL as well as all @import
+          rules rooted at the linked stylesheet.
+
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::getSubresourceAttributeStrings): Walk all @import rules rooted at this
+          stylesheet to add to the list.
+        * html/HTMLStyleElement.h:
+
 2008-04-02  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

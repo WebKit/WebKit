@@ -1,3 +1,22 @@
+2008-04-02  Brady Eidson  <beidson@apple.com>
+
+        Written by David Kilzer, tweaked by Brady, Reviewed by Mitz Pettel
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=11839
+          Webarchive fails to save CSS files in @import statements
+
+        The idea is to <link> to a CSS file which @imports another CSS file,
+        and also @import a CSS file inside a <style> element, which also @imports another CSS file
+
+        Then make sure all 4 of the css files are in the resulting webarchive
+
+        * webarchive/resources/test-css-import-recurse.css: Added.
+        * webarchive/resources/test-css-import.css: Added.
+        * webarchive/resources/test-css-link-recurse.css: Added.
+        * webarchive/resources/test-css-link.css: Added.
+        * webarchive/test-css-import-expected.txt: Added.
+        * webarchive/test-css-import.html: Added.
+
 2008-04-02  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

@@ -64,6 +64,8 @@ public:
 
     virtual void setLoading(bool loading) { m_loading = loading; }
 
+    virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+
 protected:
     String m_media;
     bool m_loading;

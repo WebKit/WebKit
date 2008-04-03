@@ -348,11 +348,27 @@ void HTMLLinkElement::setType(const String& value)
 }
 
 void HTMLLinkElement::getSubresourceAttributeStrings(Vector<String>& urls) const
-{
-    if (!m_isStyleSheet && !m_isIcon)
+{    
+    if (m_isIcon) {
+        urls.append(href().string());
         return;
+    }
     
+    if (!m_isStyleSheet)
+        return;
+        
+    // Append the URL of this link element.
     urls.append(href().string());
+    
+    // Walk the URLs linked by the linked-to stylesheet.
+    HashSet<String> styleURLs;
+    StyleSheet* styleSheet = const_cast<HTMLLinkElement*>(this)->sheet();
+    if (styleSheet)
+        styleSheet->addSubresourceURLStrings(styleURLs, href());
+    
+    HashSet<String>::iterator end = styleURLs.end();
+    for (HashSet<String>::iterator i = styleURLs.begin(); i != end; ++i)
+        urls.append(*i);
 }
 
 }
