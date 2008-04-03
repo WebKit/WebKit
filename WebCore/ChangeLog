@@ -1,3 +1,13 @@
+2008-04-03  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Darin.
+
+        Correct build error due to incomplete merging of changes to project
+        files from Issue 17985.  This small project file patch corrects
+        the build issue (see http://bugs.webkit.org/show_bug.cgi?id=18195).
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-04-02  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
