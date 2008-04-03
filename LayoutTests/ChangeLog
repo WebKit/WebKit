@@ -2,6 +2,19 @@
 
         Reviewed by Simon.
 
+        * Add a Qt specific result for bad-scheme-subframe-expected.txt
+        * To match the mac-port we would have to return IgnoreNavigationRequest for
+        schemes/URLs not supported by the QNetworkAccessManager in QWebPage::navigationRequested
+        but we can't do that because QNetworkAccessManager does not expose a list of supported
+        schemes and operations. So in contrast to the mac we will try to load the frame and fail.
+        
+
+        * platform/qt/http/tests/loading/bad-scheme-subframe-expected.txt: Added.
+
+2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Fix http/tests/loading/simple-subframe.html by adding a test result. The result is
         quite similar to the one of the mac port.
         
