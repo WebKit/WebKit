@@ -1,3 +1,16 @@
+2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Remove dumpFrameLoadCallbacks from simple-subframe.html because it is
+        located in a directory with the name "loading". And this will autoamtically
+        enable dumping.
+        * Remove this method from the LayoutTestController as it is unused now and this
+        avoids adding it to the DRT of the Qt port.
+        
+
+        * http/tests/loading/simple-subframe.html:
+
 2008-04-02  Brady Eidson  <beidson@apple.com>
 
         Written by David Kilzer, tweaked by Brady, Reviewed by Mitz Pettel
