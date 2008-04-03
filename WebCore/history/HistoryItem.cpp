@@ -166,7 +166,8 @@ const String& HistoryItem::alternateTitle() const
 
 Image* HistoryItem::icon() const
 {
-    Image* result = iconDatabase()->iconForPageURL(m_urlString, IntSize(16,16));
+    Image* result = 0;
+    iconDatabase()->iconForPageURL(m_urlString, IntSize(16,16), &result);
     return result ? result : iconDatabase()->defaultIcon(IntSize(16,16));
 }
 

@@ -1,3 +1,22 @@
+2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Change IconDatabase::iconForPageURL to return more information. E.g. if
+        an image has been found, or if the loading of an image has been scheduled.
+        * Update FrameLoader to use another method to trigger reading from disk
+        * Update the QWebFrame and QWebSettings
+
+        * history/HistoryItem.cpp:
+        * loader/FrameLoader.cpp:
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::iconForPageURL):
+        (WebCore::IconDatabase::readIconForPageURLFromDisk):
+        (WebCore::IconDatabase::iconURLForPageURL):
+        (WebCore::IconDatabase::defaultIcon):
+        * loader/icon/IconDatabase.h:
+        (WebCore::):
+
 2008-04-03  Dan Bernstein  <mitz@apple.com>
 
         - Mac build fix

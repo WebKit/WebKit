@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        * Change IconDatabase::iconForPageURL to return more information. E.g. if
+        an image has been found, or if the loading of an image has been scheduled.
+        * Update FrameLoader to use another method to trigger reading from disk
+        * Update the QWebFrame and QWebSettings
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::icon):
+        * Api/qwebsettings.cpp:
+        (QWebSettings::iconForUrl):
+
+2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Safari is using the IconDatabase the following way (assumption). Before they
         call iconDatabase()->open they "retain" all URLs they are interested in, these
         could come from the history.
