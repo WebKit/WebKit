@@ -1,3 +1,74 @@
+2008-04-02  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        This patch eliminates AccessibilityObjectMac. All of the platform-
+        specific code is now in AccessibilityObjectWrapper.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.h:
+        (WebCore::Element::isPasswordField):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isPasswordField):
+        * page/AXObjectCache.h:
+        (WebCore::AXObjectCache::isIDinUse):
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isPasswordField):
+        (WebCore::AccessibilityObject::press):
+        (WebCore::AccessibilityObject::widgetForAttachmentView):
+        (WebCore::AccessibilityObject::doAXBoundsForTextMarkerRange):
+        (WebCore::AccessibilityObject::doAXTextMarkerForPosition):
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::areaElement):
+        (WebCore::AccessibilityObject::setWrapper):
+        * page/mac/AXObjectCacheMac.mm:
+        * page/mac/AccessibilityObjectMac.mm: Removed.
+        * page/mac/AccessibilityObjectWrapper.h:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper attachmentView]):
+        (textMarkerForVisiblePosition):
+        (visiblePositionForTextMarker):
+        (visiblePositionForStartOfTextMarkerRange):
+        (visiblePositionForEndOfTextMarkerRange):
+        (textMarkerRangeFromMarkers):
+        (AXAttributeStringSetFont):
+        (CreateCGColorIfDifferent):
+        (AXAttributeStringSetColor):
+        (AXAttributeStringSetNumber):
+        (AXAttributeStringSetStyle):
+        (blockquoteLevel):
+        (AXAttributeStringSetBlockquoteLevel):
+        (AXAttributeStringSetSpelling):
+        (AXAttributeStringSetHeadingLevel):
+        (AXLinkElementForNode):
+        (AXAttributeStringSetElement):
+        (AXAttributedStringAppendText):
+        (nsStringForReplacedNode):
+        (-[AccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:]):
+        (textMarkerRangeFromVisiblePositions):
+        (-[AccessibilityObjectWrapper accessibilityActionNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper visiblePositionRangeForTextMarkerRange:]):
+        (-[AccessibilityObjectWrapper textMarkerRangeForSelection]):
+        (-[AccessibilityObjectWrapper position]):
+        (createAccessibilityRoleMap):
+        (RoleEntry::):
+        (roleValueToNSString):
+        (-[AccessibilityObjectWrapper role]):
+        (-[AccessibilityObjectWrapper subrole]):
+        (-[AccessibilityObjectWrapper roleDescription]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilityIsIgnored]):
+        (-[AccessibilityObjectWrapper accessibilityPerformAction:]):
+        (-[AccessibilityObjectWrapper doAXAttributedStringForRange:]):
+        (-[AccessibilityObjectWrapper doAXRTFForRange:]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        (-[AccessibilityObjectWrapper accessibilityShouldUseUniqueId]):
+        * platform/ScrollView.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::viewRectToScreen):
+        (WebCore::ScrollView::absolutePointToView):
+
 2008-04-03  David Hyatt  <hyatt@apple.com>
 
         Create a new cross-platform Gradient abstraction and make CanvasGradient wrap it.  This first

@@ -303,6 +303,30 @@ IntRect ScrollView::windowToContents(const IntRect& rect) const
     return IntRect();
 }
 
+IntRect ScrollView::contentsToScreen(const IntRect& rect) const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    if (NSView* documentView = this->documentView()) {
+        NSRect tempRect = rect;
+        tempRect = [documentView convertRect:tempRect toView:nil];
+        tempRect.origin = [[documentView window] convertBaseToScreen:tempRect.origin];
+        return enclosingIntRect(tempRect);
+    }
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return IntRect();
+}
+
+IntPoint ScrollView::screenToContents(const IntPoint& point) const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    if (NSView* documentView = this->documentView()) {
+        NSPoint windowCoord = [[documentView window] convertScreenToBase: point];
+        return IntPoint([documentView convertPoint:windowCoord fromView:nil]);
+    }
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return IntPoint();
+}
+
 void ScrollView::setStaticBackground(bool staticBackground)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

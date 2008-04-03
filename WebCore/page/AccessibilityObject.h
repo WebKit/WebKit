@@ -241,12 +241,14 @@ public:
     void press();
     RenderObject* renderer() { return m_renderer; }
     RenderObject* topRenderer();
+    HTMLAreaElement* areaElement() { return m_areaElement.get(); }
     RenderTextControl* textControl();
     Widget* widget();
     AXObjectCache* axObjectCache();
     void documentLinks(Vector<RefPtr<AccessibilityObject> >&);
     FrameView* frameViewIfRenderView();
     FrameView* documentFrameView();
+    Widget* widgetForAttachmentView();
 
     VisiblePositionRange visiblePositionRange();
     VisiblePositionRange doAXTextMarkerRangeForLine(unsigned);
@@ -259,9 +261,6 @@ public:
     VisiblePositionRange doAXParagraphTextMarkerRangeForTextMarker(const VisiblePosition&);
     VisiblePositionRange doAXStyleTextMarkerRangeForTextMarker(const VisiblePosition&);
     VisiblePositionRange textMarkerRangeForRange(const PlainTextRange&, RenderTextControl*);
-
-    IntRect convertViewRectToScreenCoords(const IntRect&);
-    IntPoint convertAbsolutePointToViewCoords(const IntPoint&, const FrameView*);
 
     String doAXStringForTextMarkerRange(VisiblePositionRange&);
     IntRect doAXBoundsForTextMarkerRange(VisiblePositionRange);
@@ -311,37 +310,6 @@ public:
 #if PLATFORM(MAC)
     AccessibilityObjectWrapper* wrapper() { return m_wrapper.get(); }
     void setWrapper(AccessibilityObjectWrapper* wrapper) { m_wrapper = wrapper; }
-
-    NSView* attachmentView();
-    void performPressActionForAttachment();
-    NSArray* accessibilityAttributeNames();
-    WebCoreTextMarkerRange* textMarkerRange(WebCoreTextMarker* fromMarker, WebCoreTextMarker* toMarker);
-    WebCoreTextMarker* textMarkerForVisiblePosition(VisiblePosition);
-    WebCoreTextMarker* startTextMarker();
-    VisiblePositionRange visiblePositionRangeForTextMarkerRange(WebCoreTextMarkerRange*);
-    VisiblePosition visiblePositionForTextMarker(WebCoreTextMarker*);
-    VisiblePosition visiblePositionForStartOfTextMarkerRange(WebCoreTextMarkerRange*);
-    VisiblePosition visiblePositionForEndOfTextMarkerRange(WebCoreTextMarkerRange*);
-    WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePosition startPosition, VisiblePosition endPosition);
-    WebCoreTextMarkerRange* textMarkerRangeForSelection();
-    WebCoreTextMarkerRange* textMarkerRange();
-    WebCoreTextMarkerRange* textMarkerRangeFromMarkers(WebCoreTextMarker*, WebCoreTextMarker*);
-    NSAttributedString* doAXAttributedStringForTextMarkerRange(WebCoreTextMarkerRange*);
-    NSAttributedString* doAXAttributedStringForRange(NSRange);
-    NSData* doAXRTFForRange(NSRange);
-
-    NSArray* convertChildrenToNSArray();
-    NSArray* convertWidgetChildrenToNSArray();
-   
-    NSValue* position(); 
-    NSString* role();
-    NSString* subrole();
-    NSString* roleDescription();
-    
-    void AXAttributeStringSetElement(NSMutableAttributedString*, NSString*, AccessibilityObject*, NSRange);
-    void AXAttributeStringSetHeadingLevel(NSMutableAttributedString*, RenderObject*, NSRange);
-    void AXAttributedStringAppendText(NSMutableAttributedString*, Node*, int offset, const UChar* chars, int length);
-    AccessibilityObject* AXLinkElementForNode(Node*);
 #endif
     
 private:
@@ -354,8 +322,6 @@ private:
     RetainPtr<AccessibilityObjectWrapper> m_wrapper;
 #endif
 };
-
-bool isPasswordFieldElement(Node*);
 
 } // namespace WebCore
 

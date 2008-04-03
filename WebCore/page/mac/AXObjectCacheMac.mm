@@ -37,13 +37,6 @@
 
 namespace WebCore {
 
-struct TextMarkerData  {
-    AXID axID;
-    Node* node;
-    int offset;
-    EAffinity affinity;
-};
-
 bool AXObjectCache::gAccessibilityEnabled = false;
 
 AXObjectCache::~AXObjectCache()
@@ -115,52 +108,6 @@ void AXObjectCache::removeAXID(AccessibilityObject* obj)
     ASSERT(m_idsInUse.contains(objID));
     obj->setAXObjectID(0);
     m_idsInUse.remove(objID);
-}
-
-WebCoreTextMarker* AXObjectCache::textMarkerForVisiblePosition(const VisiblePosition& visiblePos)
-{
-    Position deepPos = visiblePos.deepEquivalent();
-    Node* domNode = deepPos.node();
-    ASSERT(domNode);
-    if (!domNode)
-        return nil;
-    
-    // locate the renderer, which must exist for a visible dom node
-    RenderObject* renderer = domNode->renderer();
-    ASSERT(renderer);
-    
-    // find or create an accessibility object for this renderer
-    RefPtr<AccessibilityObject> obj = get(renderer);
-    
-    // create a text marker, adding an ID for the AccessibilityObject if needed
-    TextMarkerData textMarkerData;
-    textMarkerData.axID = getAXID(obj.get());
-    textMarkerData.node = domNode;
-    textMarkerData.offset = deepPos.offset();
-    textMarkerData.affinity = visiblePos.affinity();
-    return [[WebCoreViewFactory sharedFactory] textMarkerWithBytes:&textMarkerData length:sizeof(textMarkerData)]; 
-}
-
-VisiblePosition AXObjectCache::visiblePositionForTextMarker(WebCoreTextMarker* textMarker)
-{
-    TextMarkerData textMarkerData;
-    
-    if (![[WebCoreViewFactory sharedFactory] getBytes:&textMarkerData fromTextMarker:textMarker length:sizeof(textMarkerData)])
-        return VisiblePosition();
-
-    // return empty position if the text marker is no longer valid
-    if (!m_idsInUse.contains(textMarkerData.axID))
-        return VisiblePosition();
-
-    // generate a VisiblePosition from the data we stored earlier
-    VisiblePosition visiblePos = VisiblePosition(textMarkerData.node, textMarkerData.offset, textMarkerData.affinity);
-
-    // make sure the node and offset still match (catches stale markers). affinity is not critical for this.
-    Position deepPos = visiblePos.deepEquivalent();
-    if (deepPos.node() != textMarkerData.node || deepPos.offset() != textMarkerData.offset)
-        return VisiblePosition();
-    
-    return visiblePos;
 }
 
 void AXObjectCache::childrenChanged(RenderObject* renderer)

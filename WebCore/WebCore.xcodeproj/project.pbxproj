@@ -398,7 +398,6 @@
 		4B3043CC0AE0373B00A82647 /* Editor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B3043CA0AE0373B00A82647 /* Editor.cpp */; };
 		4B3043CD0AE0373B00A82647 /* Editor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3043CB0AE0373B00A82647 /* Editor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B5B7C8E0D945CFA00DDF3AB /* AccessibilityObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B5B7C8D0D945CFA00DDF3AB /* AccessibilityObject.cpp */; };
-		4B5B7C9C0D945D5600DDF3AB /* AccessibilityObjectMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B5B7C9B0D945D5500DDF3AB /* AccessibilityObjectMac.mm */; };
 		4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6FA6F20C39E48C00087011 /* SmartReplace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B6FA6F50C39E48C00087011 /* SmartReplace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B6FA6F30C39E48C00087011 /* SmartReplace.cpp */; };
 		4B6FA6F70C39E4A100087011 /* SmartReplaceCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B6FA6F60C39E4A100087011 /* SmartReplaceCF.cpp */; };
@@ -4785,7 +4784,6 @@
 		4B3043CA0AE0373B00A82647 /* Editor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Editor.cpp; sourceTree = "<group>"; };
 		4B3043CB0AE0373B00A82647 /* Editor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Editor.h; sourceTree = "<group>"; };
 		4B5B7C8D0D945CFA00DDF3AB /* AccessibilityObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityObject.cpp; sourceTree = "<group>"; };
-		4B5B7C9B0D945D5500DDF3AB /* AccessibilityObjectMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectMac.mm; sourceTree = "<group>"; };
 		4B6FA6F20C39E48C00087011 /* SmartReplace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartReplace.h; sourceTree = "<group>"; };
 		4B6FA6F30C39E48C00087011 /* SmartReplace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmartReplace.cpp; sourceTree = "<group>"; };
 		4B6FA6F60C39E4A100087011 /* SmartReplaceCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmartReplaceCF.cpp; sourceTree = "<group>"; };
@@ -10103,7 +10101,6 @@
 		93C09A820B064F05005ABD4D /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				4B5B7C9B0D945D5500DDF3AB /* AccessibilityObjectMac.mm */,
 				4B17CBCA0D945B910053F183 /* AccessibilityObjectWrapper.mm */,
 				4B17CBCB0D945B910053F183 /* AccessibilityObjectWrapper.h */,
 				1AF326400D78B5530068F0C4 /* AXObjectCacheMac.mm */,
@@ -16334,7 +16331,6 @@
 				1CE3F8B40D89CFDC00FB035F /* MainThread.cpp in Sources */,
 				4B17CBCC0D945B910053F183 /* AccessibilityObjectWrapper.mm in Sources */,
 				4B5B7C8E0D945CFA00DDF3AB /* AccessibilityObject.cpp in Sources */,
-				4B5B7C9C0D945D5600DDF3AB /* AccessibilityObjectMac.mm in Sources */,
 				512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */,
 				512DD8F40D91E6AF000F89EE /* LegacyWebArchive.cpp in Sources */,
 				512DD8F70D91E6AF000F89EE /* ArchiveResourceCollection.cpp in Sources */,

@@ -50,20 +50,20 @@ namespace WebCore {
         static TraitType deletedValue() { return UINT_MAX; }
     };
 
+    struct TextMarkerData  {
+        AXID axID;
+        Node* node;
+        int offset;
+        EAffinity affinity;
+    };
+
     class AXObjectCache {
     public:
         ~AXObjectCache();
 
         AccessibilityObject* get(RenderObject*);
         void remove(RenderObject*);
-
         void removeAXID(AccessibilityObject*);
-
-#if PLATFORM(MAC)
-        // FIXME: Move this to AccessibilityObjectWrapper.
-        WebCoreTextMarker* textMarkerForVisiblePosition(const VisiblePosition&);
-        VisiblePosition visiblePositionForTextMarker(WebCoreTextMarker*);
-#endif
         
         void childrenChanged(RenderObject*);
         void postNotification(RenderObject*, const String& message);
@@ -76,13 +76,13 @@ namespace WebCore {
 #else
         static bool accessibilityEnabled() { return false; }
 #endif
+        AXID getAXID(AccessibilityObject*);
+        bool isIDinUse(AXID id) const { return m_idsInUse.contains(id); }
 
     private:
 #if PLATFORM(MAC)
         static bool gAccessibilityEnabled;
 #endif
-
-        AXID getAXID(AccessibilityObject*);
 
 #if PLATFORM(MAC)
         HashMap<RenderObject*, RefPtr<AccessibilityObject> > m_objects;
