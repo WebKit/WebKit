@@ -1,3 +1,9 @@
+2008-04-03  Dan Bernstein  <mitz@apple.com>
+
+        - Mac build fix
+
+        * WebCore.base.exp:
+
 2008-04-03  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the build when building without icondatabase.
