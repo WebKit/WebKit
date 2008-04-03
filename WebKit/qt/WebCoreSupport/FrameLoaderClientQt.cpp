@@ -65,6 +65,38 @@
 #include "qwebnetworkinterface_p.h"
 #endif
 
+static bool dumpFrameLoaderCallbacks = false;
+
+void QWEBKIT_EXPORT qt_dump_frame_loader(bool b)
+{
+    dumpFrameLoaderCallbacks = b;
+}
+
+// Compare with WebKitTools/DumpRenderTree/mac/FrameLoadDelegate.mm
+static QString drtDescriptionSuitableForTestResult(WebCore::Frame* _frame)
+{
+    QWebFrame* frame = QWebFramePrivate::kit(_frame);
+    QString name = frame->name();
+
+    bool isMainFrame = frame == frame->page()->mainFrame();  
+    if (isMainFrame) {
+        if (!name.isEmpty())
+            return QString::fromLatin1("main frame \"%1\"").arg(name);
+        return QLatin1String("main frame");
+    } else {
+        if (!name.isEmpty())
+            return QString::fromLatin1("frame \"%1\"").arg(name);
+        return QLatin1String("frame (anonymous)");
+    }
+}
+
+static QString drtDescriptionSuitableForTestResult(const WebCore::KURL& _url)
+{
+    QUrl url = _url;
+    return url.toString();
+}
+
+
 namespace WebCore
 {
 
@@ -224,42 +256,62 @@ void FrameLoaderClientQt::detachedFromParent4()
 void FrameLoaderClientQt::dispatchDidHandleOnloadEvents()
 {
     // don't need this one
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - didHandleOnloadEventsForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
+
 }
 
 
 void FrameLoaderClientQt::dispatchDidReceiveServerRedirectForProvisionalLoad()
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - didReceiveServerRedirectForProvisionalLoadForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
+
     notImplemented();
 }
 
 
 void FrameLoaderClientQt::dispatchDidCancelClientRedirect()
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - didCancelClientRedirectForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
+
     notImplemented();
 }
 
 
-void FrameLoaderClientQt::dispatchWillPerformClientRedirect(const KURL&,
+void FrameLoaderClientQt::dispatchWillPerformClientRedirect(const KURL& url,
                                                             double interval,
                                                             double fireDate)
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - willPerformClientRedirectToURL: %s \n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)), qPrintable(drtDescriptionSuitableForTestResult(url)));
+
     notImplemented();
 }
 
 
 void FrameLoaderClientQt::dispatchDidChangeLocationWithinPage()
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - didChangeLocationWithinPageForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
+
     notImplemented();
 }
 
 
 void FrameLoaderClientQt::dispatchWillClose()
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - willCloseFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 }
 
 
 void FrameLoaderClientQt::dispatchDidStartProvisionalLoad()
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - didStartProvisionalLoadForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
+
     if (m_webFrame)
         emit m_webFrame->provisionalLoad();
 }
@@ -267,8 +319,13 @@ void FrameLoaderClientQt::dispatchDidStartProvisionalLoad()
 
 void FrameLoaderClientQt::dispatchDidReceiveTitle(const String& title)
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - didReceiveTitle: %s\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)), qPrintable(QString(title)));
+
     if (!m_webFrame)
         return;
+
+
 
     // ### hack
     emit m_webFrame->urlChanged(m_webFrame->url());
@@ -278,22 +335,33 @@ void FrameLoaderClientQt::dispatchDidReceiveTitle(const String& title)
 
 void FrameLoaderClientQt::dispatchDidCommitLoad()
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - didCommitLoadForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
+
     if (m_frame->tree()->parent() || !m_webFrame)
         return;
+
     m_webFrame->page()->d->updateNavigationActions();
 }
 
 
 void FrameLoaderClientQt::dispatchDidFinishDocumentLoad()
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - didFinishDocumentLoadForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
+
     if (m_frame->tree()->parent() || !m_webFrame)
         return;
+        
     m_webFrame->page()->d->updateNavigationActions();
 }
 
 
 void FrameLoaderClientQt::dispatchDidFinishLoad()
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - didFinishLoadForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
+
     if (m_webFrame)
         emit m_webFrame->loadDone(true);
     if (m_frame->tree()->parent() || !m_webFrame)
@@ -464,6 +532,9 @@ String FrameLoaderClientQt::userAgent(const KURL& url)
 
 void FrameLoaderClientQt::dispatchDidReceiveIcon()
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - didReceiveIconForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
+
     if (m_webFrame) {
         emit m_webFrame->iconLoaded();
     }
@@ -485,6 +556,9 @@ bool FrameLoaderClientQt::canHandleRequest(const WebCore::ResourceRequest&) cons
 
 void FrameLoaderClientQt::windowObjectCleared()
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - didClearWindowObjectForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
+
     if (m_webFrame)
         emit m_webFrame->cleared();
 }
@@ -673,12 +747,18 @@ bool FrameLoaderClientQt::dispatchDidLoadResourceFromMemoryCache(WebCore::Docume
 
 void FrameLoaderClientQt::dispatchDidFailProvisionalLoad(const WebCore::ResourceError&)
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - didFailProvisionalLoadWithError\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
+
     if (m_webFrame)
         emit m_webFrame->loadDone(false);
 }
 
 void FrameLoaderClientQt::dispatchDidFailLoad(const WebCore::ResourceError&)
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("%s - didFailLoadWithError\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
+
     if (m_webFrame)
         emit m_webFrame->loadDone(false);
 }

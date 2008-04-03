@@ -1,3 +1,32 @@
+2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * For the http tests we need the output of the FrameLoaderClient. The QtWebKit API
+        is not exporting enough to create the output in DRT itself. Settle with the approach
+        Lars has taken for the Editing support and add branches to our FrameLoaderClient code.
+        * run-webkit-tests http/tests(/loading) can now be executed.
+        * For tests in loading/ directories we are going to throw away the dirty
+        QWebPage to start with something clean.
+        
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (qt_dump_frame_loader):
+        (drtDescriptionSuitableForTestResult):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidCancelClientRedirect):
+        (WebCore::FrameLoaderClientQt::dispatchWillPerformClientRedirect):
+        (WebCore::FrameLoaderClientQt::dispatchDidChangeLocationWithinPage):
+        (WebCore::FrameLoaderClientQt::dispatchWillClose):
+        (WebCore::FrameLoaderClientQt::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientQt::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishDocumentLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientQt::registerForIconNotification):
+        (WebCore::FrameLoaderClientQt::setMainDocumentError):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+
 2008-04-02  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.

@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        * For the http tests we need the output of the FrameLoaderClient. The QtWebKit API
+        is not exporting enough to create the output in DRT itself. Settle with the approach
+        Lars has taken for the Editing support and add branches to our FrameLoaderClient code.
+        * run-webkit-tests http/tests(/loading) can now be executed.
+        * For tests in loading/ directories we are going to throw away the dirty
+        QWebPage to start with something clean.
+        
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+
+2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Treat http and https as special URLs as well. Change the main.cpp and
         DumpRenderTree.cpp to handle http and https URIs as input.
         * I'm not doing the clean up and merging of these two checks now.

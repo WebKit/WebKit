@@ -48,8 +48,10 @@
 
 #include <unistd.h>
 #include <qdebug.h>
+
 extern void qt_drt_run(bool b);
 extern void qt_dump_set_accepts_editing(bool b);
+extern void qt_dump_frame_loader(bool b);
 
 
 namespace WebCore {
@@ -173,6 +175,8 @@ void DumpRenderTree::open()
 void DumpRenderTree::open(const QUrl& url)
 {
     resetJSObjects();
+
+    qt_dump_frame_loader(url.toString().contains("loading/"));
     m_page->mainFrame()->load(url);
 }
 
