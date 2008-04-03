@@ -302,7 +302,7 @@ bool QWebSettings::iconDatabaseEnabled()
 */
 QPixmap QWebSettings::iconForUrl(const QUrl &url)
 {
-    WebCore::Image* image = WebCore::iconDatabase()->iconForPageURL(WebCore::KURL(url).url(),
+    WebCore::Image* image = WebCore::iconDatabase()->iconForPageURL(WebCore::KURL(url).string(),
                                 WebCore::IntSize(16, 16));
     if (!image) {
         return QPixmap();
