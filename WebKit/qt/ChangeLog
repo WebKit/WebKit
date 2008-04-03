@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        * Update the Copyright info in QWebSettings
+        
+
+        * Api/qwebsettings.cpp:
+        * Api/qwebsettings.h:
+
+2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * The isEmpty check is not needed anymore with the earlier backport
         
 
