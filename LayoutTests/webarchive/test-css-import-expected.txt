@@ -12,7 +12,7 @@
 &lt;/script&gt;
 &lt;link rel="stylesheet" href="resources/test-css-link.css" type="text/css"&gt;
 &lt;style type="text/css"&gt;
-	@import url('resources/test-css-import.css');
+    @import url('resources/test-css-import.css');
 &lt;/style&gt;
 &lt;/head&gt;&lt;body&gt;
 &lt;div class="blue"&gt;This text should be blue.&lt;/div&gt;
