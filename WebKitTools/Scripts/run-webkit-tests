@@ -129,7 +129,7 @@ my $mergeDepth;
 my @leaksFilenames;
 
 # Default to --no-http for Qt, Gtk and wx for now.
-$testHTTP = 0 if (isQt() || isGtk() || isWx());
+$testHTTP = 0 if (isGtk() || isWx());
 
 my $expectedTag = "expected";
 my $actualTag = "actual";

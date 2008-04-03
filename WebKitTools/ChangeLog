@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        * Enable running http tests for Qt again. Failing tests can be put into the skipped list.
+        * Running these tests on windows and other platforms might need some work.
+
+        * Scripts/run-webkit-tests:
+
+2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * For the http tests we need the output of the FrameLoaderClient. The QtWebKit API
         is not exporting enough to create the output in DRT itself. Settle with the approach
         Lars has taken for the Editing support and add branches to our FrameLoaderClient code.
