@@ -1,3 +1,10 @@
+2008-04-03  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the build when building without icondatabase.
+
+        * loader/icon/IconDatabaseNone.cpp: Fix the function signature, no
+        bool cache anymore.
+
 2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.
