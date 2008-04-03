@@ -41,7 +41,7 @@ namespace WebCore {
         static String getTarget(const String& url);
 
     protected:
-        virtual SVGElement* contextElement() = 0;
+        virtual const SVGElement* contextElement() const = 0;
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS_WITH_CONTEXT(SVGURIReference, String, String, Href, href)

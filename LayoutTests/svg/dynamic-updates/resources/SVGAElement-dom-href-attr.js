@@ -20,8 +20,8 @@ rootSVGElement.appendChild(anchorElement);
 
 function executeTest() {
     anchorElement.setAttributeNS(xlinkNS, "xlink:href", "resources/linkTarget.svg");
-    completeTest();
     triggerUpdate();
 }
 
 executeTest();
+var successfullyParsed = true;

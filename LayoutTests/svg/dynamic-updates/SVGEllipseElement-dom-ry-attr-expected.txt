@@ -5,7 +5,7 @@ Tests dynamic updates of the 'ry' attribute of the SVGEllipseElement object
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS ellipseElement.getAttribute('ry') is "10"
+PASS ellipseElement.getAttribute('ry') is "0"
 PASS ellipseElement.getAttribute('ry') is "150"
 PASS successfullyParsed is true
 

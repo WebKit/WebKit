@@ -17,7 +17,7 @@ circleElement.setAttribute("cy", "150");
 circleElement.setAttribute("r", "150");
 clipPathElement.appendChild(circleElement);
 
-defsElement.appendChild(clipPathElement);
+defsElement.appendChild(clipPathElement);;
 
 var rectElement = createSVGElement("rect");
 rectElement.setAttribute("width", "300");
@@ -32,7 +32,9 @@ function executeTest() {
     clipPathElement.setAttribute("clipPathUnits", "userSpaceOnUse");
     shouldBeEqualToString("clipPathElement.getAttribute('clipPathUnits')", "userSpaceOnUse");
 
-    completeTest();
+    waitForClickEvent(rectElement);
+    triggerUpdate();
 }
 
-startTest(rectElement, 150, 150);
+executeTest();
+var successfullyParsed = true;

@@ -51,10 +51,11 @@ namespace WebCore {
         virtual SVGResource* canvasResource();
 
     protected:
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGClipPathElement, SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+
         ANIMATED_PROPERTY_DECLARATIONS(SVGClipPathElement, int, int, ClipPathUnits, clipPathUnits)
 
         RefPtr<SVGResourceClipper> m_clipper;

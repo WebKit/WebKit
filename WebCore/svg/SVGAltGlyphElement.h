@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
     Copyright (C) 2008 Apple Computer, Inc.
 
@@ -21,18 +21,17 @@
 
 #ifndef SVGAltGlyphElement_h
 #define SVGAltGlyphElement_h
-
 #if ENABLE(SVG_FONTS)
+
 #include "AtomicString.h"
 #include "SVGTextPositioningElement.h"
 #include "SVGURIReference.h"
 
-namespace WebCore {
-
+namespace WebCore
+{
     class SVGGlyphElement;
 
-    class SVGAltGlyphElement : public SVGTextPositioningElement,
-                               public SVGURIReference
+    class SVGAltGlyphElement : public SVGTextPositioningElement, public SVGURIReference
     {
     public:
         SVGAltGlyphElement(const QualifiedName&, Document*);
@@ -49,10 +48,12 @@ namespace WebCore {
         SVGGlyphElement* glyphElement() const;
 
     protected:
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
+
+// vim:ts=4:noet

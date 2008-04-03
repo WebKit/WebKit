@@ -1,23 +1,25 @@
 // [Name] SVGCircleElement-dom-cx-attr.js
-// [Expected rendering result] unclipped green circle - and a series of PASS mesages
+// [Expected rendering result] green circle - and a series of PASS mesages
 
 description("Tests dynamic updates of the 'cx' attribute of the SVGCircleElement object")
 createSVGTestCase();
 
 var circleElement = createSVGElement("circle");
-circleElement.setAttribute("cx", "-50");
+circleElement.setAttribute("cx", "-150");
 circleElement.setAttribute("cy", "150");
 circleElement.setAttribute("r", "150");
 circleElement.setAttribute("fill", "green");
 
 rootSVGElement.appendChild(circleElement);
-shouldBeEqualToString("circleElement.getAttribute('cx')", "-50");
+shouldBeEqualToString("circleElement.getAttribute('cx')", "-150");
 
 function executeTest() {
     circleElement.setAttribute("cx", "150");
     shouldBeEqualToString("circleElement.getAttribute('cx')", "150");
 
-    completeTest();
+    waitForClickEvent(circleElement);
+    triggerUpdate();
 }
 
-startTest(circleElement, 50, 150);
+executeTest();
+var successfullyParsed = true;

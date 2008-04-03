@@ -47,11 +47,11 @@ namespace WebCore {
         virtual Path toPathData() const;
 
     protected:
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
         virtual bool hasRelativeValues() const;
 
     private:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGEllipseElement, SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
  
         ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength, SVGLength, Cx, cx)
         ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength, SVGLength, Cy, cy)

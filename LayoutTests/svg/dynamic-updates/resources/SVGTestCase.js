@@ -20,44 +20,15 @@ function createSVGTestCase() {
     bodyElement.insertBefore(rootSVGElement, document.getElementById("description"));
 }
 
-function triggerUpdate(x, y) {
-    // Default x position
-    if (!x) {
-        x = 150;
-    }
-
-    // Default y position
-    if (!y) {
-        y = 200;
-    }
-
-    // Translation as we live in a XHTML document
-    x = x + rootSVGElement.offsetLeft;
-    y = y + rootSVGElement.offsetTop;
-
+function triggerUpdate() {
     if (window.eventSender) {
-        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseMoveTo(150, 200);
         eventSender.mouseDown();
         eventSender.mouseUp();
     }
 }
 
-function startTest(obj, x, y) {
-    obj.setAttribute("onclick", "executeTest()");
-
-    // Assure first layout finished
-    window.setTimeout("triggerUpdate(" + x + ", " + y + ")", 0);
-}
-
-function completeTest() {
-    var script = document.createElement("script");
-
-    script.onload = function() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    };
-
-    script.src = "../../fast/js/resources/js-test-post.js";
-    successfullyParsed = true;
-    document.body.appendChild(script);
+function waitForClickEvent(obj) {
+    if (window.layoutTestController)
+        obj.setAttribute("onclick", "layoutTestController.notifyDone()");
 }

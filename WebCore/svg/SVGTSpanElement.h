@@ -38,7 +38,7 @@ namespace WebCore
         bool childShouldCreateRenderer(Node*) const;
     
     protected:
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
     };
 
 } // namespace WebCore

@@ -24,15 +24,17 @@
 #define SVGMarkerElement_h
 
 #if ENABLE(SVG)
-#include "SVGAngle.h"
+#include "SVGResourceMarker.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
-#include "SVGResourceMarker.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {
 
+    class Document;
+    class SVGAngle;
+    
     class SVGMarkerElement : public SVGStyledElement,
                              public SVGLangSpace,
                              public SVGExternalResourcesRequired,
@@ -64,12 +66,12 @@ namespace WebCore {
         virtual SVGResource* canvasResource();
 
     protected:
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGMarkerElement, SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired) 
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGMarkerElement, SVGFitToViewBox, FloatRect, ViewBox, viewBox)
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGMarkerElement, SVGFitToViewBox, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired) 
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, FloatRect, ViewBox, viewBox)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio)
 
         ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGLength, SVGLength, RefX, refX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGLength, SVGLength, RefY, refY)

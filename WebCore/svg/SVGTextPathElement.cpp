@@ -38,7 +38,7 @@ namespace WebCore {
 SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document* doc)
     : SVGTextContentElement(tagName, doc)
     , SVGURIReference()
-    , m_startOffset(SVGLength(this, LengthModeOther))
+    , m_startOffset(this, LengthModeOther)
     , m_method(SVG_TEXTPATH_METHODTYPE_ALIGN)
     , m_spacing(SVG_TEXTPATH_SPACINGTYPE_EXACT)
 {

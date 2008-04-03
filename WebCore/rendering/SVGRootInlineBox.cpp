@@ -319,41 +319,6 @@ FloatPoint topLeftPositionOfCharacterRange(Vector<SVGChar>::iterator it, Vector<
     return FloatPoint(lowX, lowY);
 }
 
-static inline SVGTextContentElement* nodeToTextContentElement(Node* node)
-{
-    if (!node || !node->isSVGElement())
-        return 0;
-
-    if (node->hasTagName(SVGNames::textTag)
-        || node->hasTagName(SVGNames::trefTag)
-        || node->hasTagName(SVGNames::tspanTag)
-        || node->hasTagName(SVGNames::textPathTag)
-#if ENABLE(SVG_FONTS)
-        || node->hasTagName(SVGNames::altGlyphTag)
-#endif
-        )
-         return static_cast<SVGTextContentElement*>(node);
-
-    return 0;
-}
-
-static inline SVGTextPositioningElement* nodeToTextPositioningElement(Node* node)
-{
-    if (!node || !node->isSVGElement())
-        return 0;
-
-    if (node->hasTagName(SVGNames::textTag)
-        || node->hasTagName(SVGNames::trefTag)
-        || node->hasTagName(SVGNames::tspanTag)
-#if ENABLE(SVG_FONTS)
-        || node->hasTagName(SVGNames::altGlyphTag)
-#endif
-        )
-         return static_cast<SVGTextPositioningElement*>(node);
-
-    return 0;
-}
-
 // Helper function
 static float calculateKerning(RenderObject* item)
 {
@@ -934,7 +899,7 @@ void SVGRootInlineBox::buildLayoutInformation(InlineFlowBox* start, SVGCharacter
     if (start->isRootInlineBox()) {
         ASSERT(start->object()->element()->hasTagName(SVGNames::textTag));
 
-        SVGTextPositioningElement* positioningElement = nodeToTextPositioningElement(start->object()->element());
+        SVGTextPositioningElement* positioningElement = static_cast<SVGTextPositioningElement*>(start->object()->element());
         ASSERT(positioningElement);
         ASSERT(positioningElement->parentNode());
 
@@ -954,7 +919,7 @@ void SVGRootInlineBox::buildLayoutInformation(InlineFlowBox* start, SVGCharacter
             bool isTextPath = flowBox->object()->element()->hasTagName(SVGNames::textPathTag);
 
             if (!isTextPath && !isAnchor) {
-                SVGTextPositioningElement* positioningElement = nodeToTextPositioningElement(flowBox->object()->element());
+                SVGTextPositioningElement* positioningElement = static_cast<SVGTextPositioningElement*>(flowBox->object()->element());
                 ASSERT(positioningElement);
                 ASSERT(positioningElement->parentNode());
 
@@ -963,7 +928,10 @@ void SVGRootInlineBox::buildLayoutInformation(InlineFlowBox* start, SVGCharacter
                 info.setInPathLayout(true);
 
                 // Handle text-anchor/textLength on path, which is special.
-                SVGTextContentElement* textContent = nodeToTextContentElement(flowBox->object()->element());
+                SVGTextContentElement* textContent = 0;
+                Node* node = flowBox->object()->element();
+                if (node && node->isSVGElement())
+                    textContent = static_cast<SVGTextContentElement*>(node);
                 ASSERT(textContent);
 
                 ELengthAdjust lengthAdjust = (ELengthAdjust) textContent->lengthAdjust();
@@ -1410,15 +1378,11 @@ void SVGRootInlineBox::buildTextChunks(Vector<SVGChar>& svgChars, InlineFlowBox*
             ASSERT(text);
             ASSERT(text->element());
 
-            SVGTextContentElement* textContent = nodeToTextContentElement(text->element()->parent());
-            if (!textContent) {
-                // text->element()->parent() can point to a <a> element. Ask for its parent.
-                textContent = nodeToTextContentElement(text->element()->parent()->parent());
-                ASSERT(textContent);
-            }
-
-            if (!textContent)
-                continue;
+            SVGTextContentElement* textContent = 0;
+            Node* node = text->element()->parent();
+            if (node && node->isSVGElement())
+                textContent = static_cast<SVGTextContentElement*>(node);
+            ASSERT(textContent);
 
             // Start new character range for the first chunk
             bool isFirstCharacter = info.svgTextChunks.isEmpty() && info.chunk.start == info.it && info.chunk.start == info.chunk.end;

@@ -53,7 +53,7 @@ SVGGradientElement::~SVGGradientElement()
 }
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGGradientElement, int, Enumeration, enumeration, GradientUnits, gradientUnits, SVGNames::gradientUnitsAttr, m_gradientUnits)
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGGradientElement, SVGTransformList, TransformList, transformList, GradientTransform, gradientTransform, SVGNames::gradientTransformAttr, m_gradientTransform)
+ANIMATED_PROPERTY_DEFINITIONS(SVGGradientElement, SVGTransformList*, TransformList, transformList, GradientTransform, gradientTransform, SVGNames::gradientTransformAttr, m_gradientTransform.get())
 ANIMATED_PROPERTY_DEFINITIONS(SVGGradientElement, int, Enumeration, enumeration, SpreadMethod, spreadMethod, SVGNames::spreadMethodAttr, m_spreadMethod)
 
 void SVGGradientElement::parseMappedAttribute(MappedAttribute* attr)

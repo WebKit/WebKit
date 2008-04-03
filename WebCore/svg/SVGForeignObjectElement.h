@@ -49,11 +49,11 @@ namespace WebCore {
         virtual RenderObject* createRenderer(RenderArena* arena, RenderStyle* style);
 
     protected:
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGForeignObjectElement, SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired) 
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGForeignObjectElement, SVGURIReference, String, Href, href)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired) 
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
 
         ANIMATED_PROPERTY_DECLARATIONS(SVGForeignObjectElement, SVGLength, SVGLength, X, x)
         ANIMATED_PROPERTY_DECLARATIONS(SVGForeignObjectElement, SVGLength, SVGLength, Y, y)

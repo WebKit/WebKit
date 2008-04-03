@@ -59,22 +59,6 @@ void SVGLengthList::parse(const String& value, const SVGStyledElement* context, 
     }
 }
 
-String SVGLengthList::valueAsString() const
-{
-    String result;
-
-    ExceptionCode ec = 0;
-    for (unsigned int i = 0; i < numberOfItems(); ++i) {
-        if (i > 0)
-            result += ", ";
-
-        result += getItem(i, ec).valueAsString();
-        ASSERT(ec == 0);
-    }
-
-    return result;
-}
-
 }
 
 #endif // ENABLE(SVG)

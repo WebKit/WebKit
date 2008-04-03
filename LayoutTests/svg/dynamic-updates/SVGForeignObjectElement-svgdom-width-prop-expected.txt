@@ -6,7 +6,7 @@ Tests dynamic updates of the 'width' property of the SVGForeignObjectElement obj
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS foreignObjectElement.width.baseVal.value is 2
+PASS foreignObjectElement.width.baseVal.value is 0
 PASS foreignObjectElement.width.baseVal.value is 150
 PASS successfullyParsed is true
 

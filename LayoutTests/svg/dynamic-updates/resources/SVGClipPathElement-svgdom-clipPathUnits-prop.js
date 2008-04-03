@@ -32,7 +32,9 @@ function executeTest() {
     clipPathElement.clipPathUnits.baseVal = SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE;
     shouldBe("clipPathElement.clipPathUnits.baseVal", "SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE");
 
-    completeTest();
+    waitForClickEvent(rectElement);
+    triggerUpdate();
 }
 
-startTest(rectElement, 150, 150);
+executeTest();
+var successfullyParsed = true;

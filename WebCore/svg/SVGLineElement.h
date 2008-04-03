@@ -51,11 +51,11 @@ namespace WebCore {
         virtual bool supportsMarkers() const { return true; }
 
     protected:
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
         virtual bool hasRelativeValues() const;
 
     private:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGLineElement, SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
  
         ANIMATED_PROPERTY_DECLARATIONS(SVGLineElement, SVGLength, SVGLength, X1, x1)
         ANIMATED_PROPERTY_DECLARATIONS(SVGLineElement, SVGLength, SVGLength, Y1, y1)

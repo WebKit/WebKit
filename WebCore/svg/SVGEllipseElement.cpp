@@ -37,10 +37,10 @@ SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document* doc
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_cx(SVGLength(this, LengthModeWidth))
-    , m_cy(SVGLength(this, LengthModeHeight))
-    , m_rx(SVGLength(this, LengthModeWidth))
-    , m_ry(SVGLength(this, LengthModeHeight))
+    , m_cx(this, LengthModeWidth)
+    , m_cy(this, LengthModeHeight)
+    , m_rx(this, LengthModeWidth)
+    , m_ry(this, LengthModeHeight)
 {
 }    
 

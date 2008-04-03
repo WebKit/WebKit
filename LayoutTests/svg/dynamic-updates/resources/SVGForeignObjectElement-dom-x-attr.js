@@ -1,5 +1,5 @@
 // [Name] SVGForeignObjectElement-dom-x-attr.js
-// [Expected rendering result] unclipped 'Test passed' text - and a series of PASS mesages
+// [Expected rendering result] 'Test passed' text - and a series of PASS mesages
 
 description("Tests dynamic updates of the 'x' attribute of the SVGForeignObjectElement object")
 createSVGTestCase();
@@ -23,7 +23,9 @@ function executeTest() {
     foreignObjectElement.setAttribute("x", "100");
     shouldBeEqualToString("foreignObjectElement.getAttribute('x')", "100");
 
-    completeTest();
+    waitForClickEvent(foreignObjectElement);
+    triggerUpdate();
 }
 
-startTest(foreignObjectElement, 10, 100);
+executeTest();
+var successfullyParsed = true;

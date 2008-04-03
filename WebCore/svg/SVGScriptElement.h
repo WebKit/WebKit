@@ -48,12 +48,11 @@ namespace WebCore
         virtual void getSubresourceAttributeStrings(Vector<String>&) const;
 
     protected:
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_START_DECLARATIONS(SVGScriptElement)
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGScriptElement, SVGURIReference, String, Href, href)
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGScriptElement, SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
 
         String m_type;
     };

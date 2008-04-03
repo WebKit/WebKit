@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -252,18 +252,6 @@ void SVGElement::attributeChanged(Attribute* attr, bool preserveDecls)
 
     StyledElement::attributeChanged(attr, preserveDecls);
     svgAttributeChanged(attr->name());
-}
-
-const AtomicString& SVGElement::getAttribute(const String& name) const
-{
-    invokeSVGPropertySynchronizer(name.impl());
-    return StyledElement::getAttribute(name);
-}
-
-const AtomicString& SVGElement::getAttribute(const QualifiedName& name) const
-{
-    invokeSVGPropertySynchronizer(name.localName().impl());
-    return StyledElement::getAttribute(name);
 }
 
 }

@@ -35,9 +35,7 @@ namespace WebCore {
         virtual ~SVGLengthList();
 
         void parse(const String& value, const SVGStyledElement* context, SVGLengthMode mode);
- 
-        String valueAsString() const;
-
+        
     private:
         SVGLengthList(const QualifiedName&);
     };

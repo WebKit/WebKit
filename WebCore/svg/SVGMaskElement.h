@@ -54,9 +54,9 @@ namespace WebCore {
         std::auto_ptr<ImageBuffer> drawMaskerContent(const FloatRect& targetRect, FloatRect& maskRect) const;
 
     protected:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGMaskElement, SVGURIReference, String, Href, href)
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGMaskElement, SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
-
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+            
         ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, int, int, MaskUnits, maskUnits)
         ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, int, int, MaskContentUnits, maskContentUnits)
  
@@ -65,7 +65,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, SVGLength, SVGLength, Width, width)
         ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, SVGLength, SVGLength, Height, height)
 
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
 
     private:
         RefPtr<SVGResourceMasker> m_masker;

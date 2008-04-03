@@ -101,12 +101,13 @@ namespace WebCore {
         virtual bool supportsMarkers() const { return true; }
 
     protected:
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
 
     private:
         mutable RefPtr<SVGPathSegList> m_pathSegList;
 
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGPathElement, SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+ 
         ANIMATED_PROPERTY_DECLARATIONS(SVGPathElement, float, float, PathLength, pathLength)
     };
 

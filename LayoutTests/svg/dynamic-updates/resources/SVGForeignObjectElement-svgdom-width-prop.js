@@ -1,5 +1,5 @@
 // [Name] SVGForeignObjectElement-svgdom-width-prop.js
-// [Expected rendering result] unclipped 'Test passed' text - and a series of PASS mesages
+// [Expected rendering result] 'Test passed' text - and a series of PASS mesages
 
 description("Tests dynamic updates of the 'width' property of the SVGForeignObjectElement object")
 createSVGTestCase();
@@ -7,7 +7,7 @@ createSVGTestCase();
 var foreignObjectElement = createSVGElement("foreignObject");
 foreignObjectElement.setAttribute("x", "100");
 foreignObjectElement.setAttribute("y", "80");
-foreignObjectElement.setAttribute("width", "2");
+foreignObjectElement.setAttribute("width", "0");
 foreignObjectElement.setAttribute("height", "150");
 
 var htmlDivElement = document.createElementNS(xhtmlNS, "xhtml:div");
@@ -17,13 +17,15 @@ htmlDivElement.textContent = "Test passed";
 foreignObjectElement.appendChild(htmlDivElement);
 rootSVGElement.appendChild(foreignObjectElement);
 
-shouldBe("foreignObjectElement.width.baseVal.value", "2");
+shouldBe("foreignObjectElement.width.baseVal.value", "0");
 
 function executeTest() {
     foreignObjectElement.width.baseVal.value = "150";
     shouldBe("foreignObjectElement.width.baseVal.value", "150");
 
-    completeTest();
+    waitForClickEvent(foreignObjectElement);
+    triggerUpdate();
 }
 
-startTest(foreignObjectElement, 101, 100);
+executeTest();
+var successfullyParsed = true;

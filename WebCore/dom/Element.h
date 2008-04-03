@@ -44,7 +44,7 @@ public:
 
     const AtomicString& getIDAttribute() const;
     bool hasAttribute(const QualifiedName&) const;
-    virtual const AtomicString& getAttribute(const QualifiedName&) const;
+    const AtomicString& getAttribute(const QualifiedName&) const;
     void setAttribute(const QualifiedName&, const AtomicString& value, ExceptionCode&);
     void removeAttribute(const QualifiedName&, ExceptionCode&);
 
@@ -53,7 +53,7 @@ public:
     bool hasAttribute(const String& name) const;
     bool hasAttributeNS(const String& namespaceURI, const String& localName) const;
 
-    virtual const AtomicString& getAttribute(const String& name) const;
+    const AtomicString& getAttribute(const String& name) const;
     const AtomicString& getAttributeNS(const String& namespaceURI, const String& localName) const;
 
     void setAttribute(const AtomicString& name, const AtomicString& value, ExceptionCode&);
