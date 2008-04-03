@@ -24,33 +24,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CanvasGradient_h
-#define CanvasGradient_h
-
-#include "FloatPoint.h"
+#include "config.h"
 #include "Gradient.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+
+#include "CSSParser.h"
+
+#include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
 
-    class String;
+void Gradient::platformDestroy()
+{
+    CGShadingRelease(m_gradient);
+    m_gradient = 0;
+}
 
-    class CanvasGradient : public RefCounted<CanvasGradient> {
-    public:
-        CanvasGradient(const FloatPoint& p0, const FloatPoint& p1);
-        CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
-        
-        Gradient& gradient() { return m_gradient; }
+static void gradientCallback(void* info, const CGFloat* in, CGFloat* out)
+{
+    float r, g, b, a;
+    static_cast<const Gradient*>(info)->getColor(*in, &r, &g, &b, &a);
+    out[0] = r;
+    out[1] = g;
+    out[2] = b;
+    out[3] = a;
+}
 
-        void addColorStop(float value, const String& color) { m_gradient.addColorStop(value, color); }
+CGShadingRef Gradient::platformGradient()
+{
+    if (m_gradient)
+        return m_gradient;
 
-        void getColor(float value, float* r, float* g, float* b, float* a) const { m_gradient.getColor(value, r, g, b, a); }
+    const CGFloat intervalRanges[2] = { 0, 1 };
+    const CGFloat colorComponentRanges[4 * 2] = { 0, 1, 0, 1, 0, 1, 0, 1 };
+    const CGFunctionCallbacks gradientCallbacks = { 0, gradientCallback, 0 };
+    CGFunctionRef colorFunction = CGFunctionCreate(this, 1, intervalRanges, 4, colorComponentRanges, &gradientCallbacks);
 
-    private:
-        Gradient m_gradient;
-    };
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+
+    if (m_radial)
+        m_gradient = CGShadingCreateRadial(colorSpace, m_p0, m_r0, m_p1, m_r1, colorFunction, true, true);
+    else
+        m_gradient = CGShadingCreateAxial(colorSpace, m_p0, m_p1, colorFunction, true, true);
+
+    CGColorSpaceRelease(colorSpace);
+    CGFunctionRelease(colorFunction);
+
+    return m_gradient;
+}
 
 } //namespace
-
-#endif

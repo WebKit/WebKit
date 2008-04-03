@@ -788,6 +788,7 @@ SOURCES += \
     platform/graphics/FloatRect.cpp \
     platform/graphics/FloatSize.cpp \
     platform/graphics/FontData.cpp \
+    platform/graphics/Gradient.cpp \
     platform/graphics/GraphicsContext.cpp \
     platform/graphics/GraphicsTypes.cpp \
     platform/graphics/Image.cpp \
@@ -950,6 +951,7 @@ qt-port {
     platform/graphics/qt/ColorQt.cpp \
     platform/graphics/qt/FloatPointQt.cpp \
     platform/graphics/qt/FloatRectQt.cpp \
+    platform/graphics/qt/GradientQt.cpp \
     platform/graphics/qt/GraphicsContextQt.cpp \
     platform/graphics/qt/IconQt.cpp \
     platform/graphics/qt/ImageBufferQt.cpp \

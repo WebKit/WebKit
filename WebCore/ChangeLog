@@ -1,3 +1,49 @@
+2008-04-03  David Hyatt  <hyatt@apple.com>
+
+        Create a new cross-platform Gradient abstraction and make CanvasGradient wrap it.  This first
+        step just cleans up CanvasGradient.  The code that calls it remains ifdef'd however.
+
+        Reviewed by olliej
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::toJS):
+        * html/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::CanvasGradient):
+        * html/CanvasGradient.h:
+        (WebCore::CanvasGradient::gradient):
+        (WebCore::CanvasGradient::addColorStop):
+        (WebCore::CanvasGradient::getColor):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        * html/CanvasStyle.h:
+        (WebCore::CanvasStyle::canvasGradient):
+        * platform/graphics/Gradient.cpp: Added.
+        (WebCore::Gradient::Gradient):
+        (WebCore::Gradient::~Gradient):
+        (WebCore::Gradient::addColorStop):
+        (WebCore::compareStops):
+        (WebCore::Gradient::getColor):
+        (WebCore::Gradient::findStop):
+        * platform/graphics/Gradient.h: Added.
+        (WebCore::Gradient::ColorStop::ColorStop):
+        (WebCore::Gradient::platformInit):
+        * platform/graphics/cairo/GradientCairo.cpp: Added.
+        (WebCore::Gradient::platformDestroy):
+        (WebCore::Gradient::platformGradient):
+        * platform/graphics/cg/GradientCG.cpp: Added.
+        (WebCore::Gradient::platformDestroy):
+        (WebCore::gradientCallback):
+        (WebCore::Gradient::platformGradient):
+        * platform/graphics/qt/GradientQt.cpp: Added.
+        (WebCore::Gradient::platformDestroy):
+        (WebCore::Gradient::platformGradient):
+
 2008-04-03  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Mark Rowe.

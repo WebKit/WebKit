@@ -642,6 +642,7 @@ This file contains the list of files needed to build WebCore.
         platform/graphics/FloatPoint.cpp
         platform/graphics/FloatRect.cpp
         platform/graphics/FloatSize.cpp
+        platform/graphics/Gradient.cpp
         platform/graphics/GraphicsContext.cpp
         platform/graphics/GraphicsTypes.cpp
         platform/graphics/Image.cpp

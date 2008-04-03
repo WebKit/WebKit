@@ -24,33 +24,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CanvasGradient_h
-#define CanvasGradient_h
-
-#include "FloatPoint.h"
+#include "config.h"
 #include "Gradient.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+
+#include "CSSParser.h"
 
 namespace WebCore {
 
-    class String;
+void Gradient::platformDestroy()
+{
+    delete m_shading;
+    m_shading = 0;
+}
 
-    class CanvasGradient : public RefCounted<CanvasGradient> {
-    public:
-        CanvasGradient(const FloatPoint& p0, const FloatPoint& p1);
-        CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
-        
-        Gradient& gradient() { return m_gradient; }
+QGradient* Gradient::platformGradient()
+{
+    if (m_gradient)
+        return m_gradient;
 
-        void addColorStop(float value, const String& color) { m_gradient.addColorStop(value, color); }
+    if (m_radial)
+        m_gradient = new QRadialGradient(m_p0.x(), m_p0.y(), m_r0, m_p1.x(), m_p1.y());
+    else
+        m_gradient = new QLinearGradient(m_p0.x(), m_p0.y(), m_p1.x(), m_p1.y());
 
-        void getColor(float value, float* r, float* g, float* b, float* a) const { m_gradient.getColor(value, r, g, b, a); }
+    QColor stopColor;
+    Vector<ColorStop>::iterator stopIterator = m_stops.begin();;
+    while (stopIterator != m_stops.end()) {
+        stopColor.setRgbF(stopIterator->red, stopIterator->green, stopIterator->blue, stopIterator->alpha);
+        m_gradient->setColorAt(stopIterator->stop, stopColor);
+        ++stopIterator;
+    }
 
-    private:
-        Gradient m_gradient;
-    };
+    return m_gradient;
+}
 
 } //namespace
-
-#endif
