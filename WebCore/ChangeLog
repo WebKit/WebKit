@@ -1,3 +1,18 @@
+2008-04-03  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Roll out r31599 and r31605 again after discussion with Mark Rowe.
+
+        * history/HistoryItem.cpp:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::startIconLoader):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::iconForPageURL):
+        (WebCore::IconDatabase::readIconForPageURLFromDisk):
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconDatabaseNone.cpp:
+
 2008-04-03  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 18194, resizable text fields get messed up when resizing in the presence of zoom.

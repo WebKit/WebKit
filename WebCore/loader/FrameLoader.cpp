@@ -1107,8 +1107,8 @@ void FrameLoader::startIconLoader()
             if (!iconDatabase()->iconDataKnownForIconURL(urlString)) {
                 LOG(IconDatabase, "Told not to load icon %s but icon data is not yet available - registering for notification and requesting load from disk", urlString.ascii().data());
                 m_client->registerForIconNotification();
-                iconDatabase()->readIconForPageURLFromDisk(m_URL.string());
-                iconDatabase()->readIconForPageURLFromDisk(originalRequestURL().string());
+                iconDatabase()->iconForPageURL(m_URL.string(), IntSize(0, 0));
+                iconDatabase()->iconForPageURL(originalRequestURL().string(), IntSize(0, 0));
             } else
                 m_client->dispatchDidReceiveIcon();
                 

@@ -99,10 +99,9 @@ void IconDatabase::readIconForPageURLFromDisk(const String&)
 
 }
 
-IconLoadStatus IconDatabase::iconForPageURL(const String& pageURL, const IntSize& size, Image** outImage)
+Image* IconDatabase::iconForPageURL(const String& pageURL, const IntSize& size)
 {
-    *outImage = defaultIcon(size);
-    return IconNotFound;
+    return defaultIcon(size);
 }
 
 

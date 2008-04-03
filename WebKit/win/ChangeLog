@@ -1,5 +1,14 @@
 2008-04-03  Simon Hausmann  <hausmann@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        Roll out r31599 and r31605 again after discussion with Mark Rowe.
+
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::iconForURL):
+
+2008-04-03  Simon Hausmann  <hausmann@webkit.org>
+
         Attempted build fix
 
         * WebIconDatabase.cpp:

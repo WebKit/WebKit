@@ -1,3 +1,14 @@
+2008-04-03  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Roll out r31599 and r31605 again after discussion with Mark Rowe.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::icon):
+        * Api/qwebsettings.cpp:
+        (QWebSettings::iconForUrl):
+
 2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.
