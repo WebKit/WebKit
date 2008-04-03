@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        * Fix http/tests/loading/simple-subframe.html by adding a test result. The result is
+        quite similar to the one of the mac port.
+        
+
+        * platform/qt/http/tests/loading/simple-subframe-expected.txt: Added.
+
+2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Remove dumpFrameLoadCallbacks from simple-subframe.html because it is
         located in a directory with the name "loading". And this will autoamtically
         enable dumping.
