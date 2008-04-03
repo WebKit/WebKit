@@ -22,6 +22,7 @@
 
 #include <JavaScriptCore/JSStringRef.h>
 #include <webkit/webkit.h>
+#include <string.h>
 
 // Returns a newly allocated UTF-8 character buffer which must be freed with g_free()
 static gchar* JSStringCopyUTF8CString(JSStringRef jsString)

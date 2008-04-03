@@ -34,6 +34,7 @@
 #include "Assertions.h"
 #include "Threading.h"
 #include <unicode/ucol.h>
+#include <string.h>
 
 #if PLATFORM(DARWIN)
 #include <CoreFoundation/CoreFoundation.h>

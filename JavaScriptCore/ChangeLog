@@ -1,3 +1,9 @@
+2008-04-01  Christian Dywan  <christian@imendio.com>
+
+        Build fix for GCC 4.3.
+
+        * wtf/unicode/icu/CollatorICU.cpp: include string.h
+
 2008-04-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Darin.

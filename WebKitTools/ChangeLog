@@ -1,3 +1,9 @@
+2008-04-01  Christian Dywan  <christian@imendio.com>
+
+        Build fix for GCC 4.3.
+
+        * DumpRenderTree/gtk/WorkQueueItemGtk.cpp: include string.h
+
 2008-04-01  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
