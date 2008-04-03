@@ -773,7 +773,6 @@ protected:
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
 
     ULONG m_refCount;
-    WebCore::String m_groupName;
     HWND m_hostWindow;
     HWND m_viewWindow;
     WebFrame* m_mainFrame;

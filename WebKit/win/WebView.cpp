@@ -584,7 +584,9 @@ void WebView::close()
         m_mouseOutTracker.set(0);
     }
 
-    m_page->setGroupName(String());
+    if (m_page)
+        m_page->setGroupName(String());
+    
     setHostWindow(0);
 
     setDownloadDelegate(0);
@@ -2057,8 +2059,6 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     sharedPreferences->willAddToWebView();
     m_preferences = sharedPreferences;
 
-    m_groupName = String(groupName, SysStringLen(groupName));
-
     WebKitSetWebDatabasesPathIfNecessary();
 
     m_page = new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this));
@@ -2081,7 +2081,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 
     m_page->mainFrame()->tree()->setName(String(frameName, SysStringLen(frameName)));
     m_page->mainFrame()->init();
-    m_page->setGroupName(m_groupName);
+    setGroupName(groupName);
 
     addToAllWebViewsSet();
 
@@ -2833,15 +2833,21 @@ HRESULT STDMETHODCALLTYPE WebView::registerViewClass(
 HRESULT STDMETHODCALLTYPE WebView::setGroupName( 
         /* [in] */ BSTR groupName)
 {
-    m_groupName = String(groupName, SysStringLen(groupName));
+    if (!m_page)
+        return S_OK;
+    m_page->setGroupName(String(groupName, SysStringLen(groupName)));
     return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE WebView::groupName( 
         /* [retval][out] */ BSTR* groupName)
 {
-    *groupName = SysAllocStringLen(m_groupName.characters(), m_groupName.length());
-    if (!*groupName && m_groupName.length())
+    *groupName = 0;
+    if (!m_page)
+        return S_OK;
+    String groupNameString = m_page->groupName();
+    *groupName = SysAllocStringLen(groupNameString.characters(), groupNameString.length());
+    if (!*groupName && groupNameString.length())
         return E_OUTOFMEMORY;
     return S_OK;
 }

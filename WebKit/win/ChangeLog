@@ -1,3 +1,19 @@
+2008-04-03  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/5835382> Calling window.open immediately after window.close can sometimes result in no window being created
+        
+        Group name tracking needs to happen using code in WebCore::Page, since it is more involved than
+        just setting a string.
+        
+        Reviewed by Adam Roben.
+
+        * WebView.cpp:
+        (WebView::close): Add null check (found via code inspection).
+        (WebView::initWithFrame): Store the group name directly in Page.
+        (WebView::setGroupName): Store the group name directly in Page.
+        (WebView::groupName): Retrieve the group name directly from Page.
+        * WebView.h: Removed m_groupName
+
 2008-04-03  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Mark Rowe.
