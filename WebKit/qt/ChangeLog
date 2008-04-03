@@ -1,3 +1,15 @@
+2008-04-03  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
+        Add a way to get the site icon for a url
+        static QPixmap iconForUrl(const QUrl &url);
+        
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::iconForUrl):
+        * Api/qwebsettings.h:
+
 2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.

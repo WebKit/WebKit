@@ -33,6 +33,8 @@
 #include "KURL.h"
 #include "PlatformString.h"
 #include "IconDatabase.h"
+#include "Image.h"
+#include "IntSize.h"
 
 #include <QHash>
 #include <QSharedData>
@@ -292,6 +294,24 @@ void QWebSettings::setIconDatabaseEnabled(bool enabled, const QString &location)
 bool QWebSettings::iconDatabaseEnabled()
 {
     return WebCore::iconDatabase()->isEnabled() && WebCore::iconDatabase()->isOpen();
+}
+
+/*!
+    Returns the site icon for \a url
+    If there is no icon for the url a null QIcon is returned.
+*/
+QPixmap QWebSettings::iconForUrl(const QUrl &url)
+{
+    WebCore::Image* image = WebCore::iconDatabase()->iconForPageURL(WebCore::KURL(url).url(),
+                                WebCore::IntSize(16, 16));
+    if (!image) {
+        return QPixmap();
+    }
+    QPixmap *icon = image->getPixmap();
+    if (!icon) {
+        return QPixmap();
+    }
+    return *icon;
 }
 
 /*!
