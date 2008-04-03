@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        * The isEmpty check is not needed anymore with the earlier backport
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::icon):
+
+2008-04-03  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * For the http tests we need the output of the FrameLoaderClient. The QtWebKit API
         is not exporting enough to create the output in DRT itself. Settle with the approach
         Lars has taken for the Editing support and add branches to our FrameLoaderClient code.
