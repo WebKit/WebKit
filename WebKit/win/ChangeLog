@@ -1,3 +1,11 @@
+2008-04-03  Simon Hausmann  <hausmann@webkit.org>
+
+        Attempted build fix
+
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::iconForURL): Adjust to changed iconForPageURL
+        signature
+
 2008-04-03  Ada Chan  <adachan@apple.com>
 
         Allow WebArchive to be created via COM.
