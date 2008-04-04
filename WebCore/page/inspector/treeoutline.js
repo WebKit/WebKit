@@ -460,6 +460,16 @@ TreeElement.prototype = {
             if (this._childrenListNode)
                 this._childrenListNode.removeStyleClass("hidden");
         }
+    },
+
+    get shouldRefreshChildren() {
+        return this._shouldRefreshChildren;
+    },
+
+    set shouldRefreshChildren(x) {
+        this._shouldRefreshChildren = x;
+        if (x && this.expanded)
+            this.expand();
     }
 }
 
@@ -471,7 +481,7 @@ TreeElement.prototype.removeChildrenRecursive = TreeOutline._removeChildrenRecur
 
 TreeElement.prototype._attach = function()
 {
-    if (!this._listItemNode || this.parent.refreshChildren) {
+    if (!this._listItemNode || this.parent._shouldRefreshChildren) {
         if (this._listItemNode && this._listItemNode.parentNode)
             this._listItemNode.parentNode.removeChild(this._listItemNode);
 
@@ -587,10 +597,10 @@ TreeElement.prototype.collapseRecursively = function()
 
 TreeElement.prototype.expand = function()
 {
-    if (!this.hasChildren || (this.expanded && !this.refreshChildren && this._childrenListNode))
+    if (!this.hasChildren || (this.expanded && !this._shouldRefreshChildren && this._childrenListNode))
         return;
 
-    if (!this._childrenListNode || this.refreshChildren) {
+    if (!this._childrenListNode || this._shouldRefreshChildren) {
         if (this._childrenListNode && this._childrenListNode.parentNode)
             this._childrenListNode.parentNode.removeChild(this._childrenListNode);
 
@@ -607,7 +617,7 @@ TreeElement.prototype.expand = function()
         for (var i = 0; i < this.children.length; ++i)
             this.children[i]._attach();
 
-        delete this.refreshChildren;
+        delete this._shouldRefreshChildren;
     }
 
     if (this._listItemNode) {

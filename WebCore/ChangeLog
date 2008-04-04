@@ -1,3 +1,18 @@
+2008-04-04  Timothy Hatcher  <timothy@apple.com>
+
+        Makes setting shouldRefreshChildren on a TreeElement perform the refresh
+        immediately if the element is already expanded.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/treeoutline.js:
+        (TreeElement.prototype.get shouldRefreshChildren): Return this._shouldRefreshChildren.
+        (TreeElement.prototype.set shouldRefreshChildren): If changing to true, and
+        already expanded,
+        call expand again to trigger the refresh. Sets this._shouldRefreshChildren.
+        (TreeElement.prototype._attach): Check for this._shouldRefreshChildren.
+        (TreeElement.prototype.expand): Ditto.
+
 2008-04-04  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Beth.
