@@ -37,7 +37,9 @@ namespace WebCore {
 
 FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const AtomicString& familyName)
     : m_pattern(0)
-    , m_fontDescription(fontDescription)
+    , m_size(fontDescription.computedSize())
+    , m_syntheticBold(false)
+    , m_syntheticOblique(false)
     , m_scaledFont(0)
 {
     FontPlatformData::init();
@@ -45,11 +47,12 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     CString familyNameString = familyName.string().utf8();
     const char* fcfamily = familyNameString.data();
     int fcslant = FC_SLANT_ROMAN;
+    // FIXME: Map all FontWeight values to fontconfig weights.
     int fcweight = FC_WEIGHT_NORMAL;
     float fcsize = fontDescription.computedSize();
     if (fontDescription.italic())
         fcslant = FC_SLANT_ITALIC;
-    if (fontDescription.bold())
+    if (fontDescription.weight() >= FontWeight600)
         fcweight = FC_WEIGHT_BOLD;
 
     int type = fontDescription.genericFamily();
@@ -98,7 +101,7 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
         goto freePattern;
     fontFace = cairo_ft_font_face_create_for_pattern(m_pattern);
     cairo_matrix_t ctm;
-    cairo_matrix_init_scale(&fontMatrix, m_fontDescription.computedSize(), m_fontDescription.computedSize());
+    cairo_matrix_init_scale(&fontMatrix, fontDescription.computedSize(), fontDescription.computedSize());
     cairo_matrix_init_identity(&ctm);
 
 #if GTK_CHECK_VERSION(2,10,0)
@@ -119,23 +122,20 @@ freePattern:
 
 FontPlatformData::FontPlatformData(float size, bool bold, bool italic)
     : m_pattern(0)
-    , m_fontDescription()
+    , m_size(size)
+    , m_syntheticBold(bold)
+    , m_syntheticOblique(italic)
     , m_scaledFont(0)
 {
-    m_fontDescription.setSpecifiedSize(size);
-    m_fontDescription.setBold(bold);
-    m_fontDescription.setItalic(italic);
 }
 
 FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, int size, bool bold, bool italic)
     : m_pattern(0)
-    , m_fontDescription()
+    , m_size(size)
+    , m_syntheticBold(bold)
+    , m_syntheticOblique(italic)
     , m_scaledFont(0)
 {
-    m_fontDescription.setSpecifiedSize(size);
-    m_fontDescription.setBold(bold);
-    m_fontDescription.setItalic(italic);
-
     cairo_matrix_t fontMatrix;
     cairo_matrix_init_scale(&fontMatrix, size, size);
     cairo_matrix_t ctm;

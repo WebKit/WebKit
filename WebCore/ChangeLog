@@ -1,5 +1,16 @@
 2008-04-03  Dan Bernstein  <mitz@apple.com>
 
+        - Gtk build fix
+
+        * platform/graphics/gtk/FontPlatformData.h:
+        (WebCore::FontPlatformData::size):
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/gtk/FontPlatformDataPango.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
+2008-04-03  Dan Bernstein  <mitz@apple.com>
+
         - project file updates in preparation for build fixes
 
         * GNUmakefile.am:

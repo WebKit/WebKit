@@ -48,7 +48,9 @@ namespace WebCore {
 FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const AtomicString& familyName)
     : m_context(0)
     , m_font(0)
-    , m_fontDescription(fontDescription)
+    , m_size(fontDescription.computedSize())
+    , m_syntheticBold(false)
+    , m_syntheticOblique(false)
     , m_scaledFont(0)
 {
     FontPlatformData::init();
@@ -79,7 +81,8 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     PangoFontDescription* description = pango_font_description_new();
     pango_font_description_set_absolute_size(description, fontDescription.computedSize() * PANGO_SCALE);
 
-    if (fontDescription.bold())
+    // FIXME: Map all FontWeight values to Pango font weights.
+    if (fontDescription.weight() >= FontWeight600)
         pango_font_description_set_weight(description, PANGO_WEIGHT_BOLD);
     if (fontDescription.italic())
         pango_font_description_set_style(description, PANGO_STYLE_ITALIC);
@@ -122,24 +125,21 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
 FontPlatformData::FontPlatformData(float size, bool bold, bool italic)
     : m_context(0)
     , m_font(0)
-    , m_fontDescription()
+    , m_size(size)
+    , m_syntheticBold(bold)
+    , m_syntheticOblique(italic)
     , m_scaledFont(0)
 {
-    m_fontDescription.setSpecifiedSize(size);
-    m_fontDescription.setBold(bold);
-    m_fontDescription.setItalic(italic);
 }
 
 FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, int size, bool bold, bool italic)
     : m_context(0)
     , m_font(0)
-    , m_fontDescription()
+    , m_size(size)
+    , m_syntheticBold(bold)
+    , m_syntheticOblique(italic)
     , m_scaledFont(0)
 {
-    m_fontDescription.setSpecifiedSize(size);
-    m_fontDescription.setBold(bold);
-    m_fontDescription.setItalic(italic);
-
     cairo_matrix_t fontMatrix;
     cairo_matrix_init_scale(&fontMatrix, size, size);
     cairo_matrix_t ctm;
