@@ -1,5 +1,15 @@
 2008-04-04  Adam Roben  <aroben@apple.com>
 
+        Copy icu/ to PrivateHeaders for WebKit's benefit
+
+        Rubberstamped by Tim Hatcher.
+
+        * WebCore.xcodeproj/project.pbxproj: Renamed the Copy Forwarding
+        Headers build phase to Copy Forwarding and ICU Headers, and added the
+        icu/ directory to it.
+
+2008-04-04  Adam Roben  <aroben@apple.com>
+
         Fix <rdar://problem/5804776> Would like to use WebCore's
         ForwardingHeaders in WebKit without manually creating copies
 

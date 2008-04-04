@@ -1,5 +1,14 @@
 2008-04-04  Adam Roben  <aroben@apple.com>
 
+        Use WebCore's ICU headers instead of our own copy
+
+        Rubberstamped by Tim Hatcher.
+
+        * Configurations/WebKit.xcconfig: Pick up ICU headers from WebCore's
+        PrivateHeaders.
+
+2008-04-04  Adam Roben  <aroben@apple.com>
+
         Fix <rdar://problem/5804776> Would like to use WebCore's
         ForwardingHeaders in WebKit without manually creating copies
 
