@@ -28,13 +28,14 @@
 #include "Gradient.h"
 
 #include "CSSParser.h"
+#include <QGradient>
 
 namespace WebCore {
 
 void Gradient::platformDestroy()
 {
-    delete m_shading;
-    m_shading = 0;
+    delete m_gradient;
+    m_gradient = 0;
 }
 
 QGradient* Gradient::platformGradient()

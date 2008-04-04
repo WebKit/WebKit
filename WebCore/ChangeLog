@@ -1,5 +1,12 @@
 2008-04-03  Dan Bernstein  <mitz@apple.com>
 
+        - attempted Qt build fix
+
+        * platform/graphics/qt/GradientQt.cpp:
+        (WebCore::Gradient::platformDestroy):
+
+2008-04-03  Dan Bernstein  <mitz@apple.com>
+
         - attempted Gtk build fix
 
         * html/CanvasRenderingContext2D.cpp:
