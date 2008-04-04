@@ -1,3 +1,14 @@
+2008-04-04  David Hyatt  <hyatt@apple.com>
+
+        Improve the background size heuristic for SVGs used as background images with no intrinsic size specified.
+        Treat them as having a background-size of 100%.  This means their maximal size will be the box established
+        by background-origin.
+
+        Reviewed by Beth
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calculateBackgroundSize):
+
 2008-04-04  Timothy Hatcher  <timothy@apple.com>
 
         Correctly show DOCTYPE in the breadcrumbs and match the CSS rules
