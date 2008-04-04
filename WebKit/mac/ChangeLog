@@ -1,3 +1,13 @@
+2008-04-04  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://problem/5804776> Would like to use WebCore's
+        ForwardingHeaders in WebKit without manually creating copies
+
+        Patch by Tim Hatcher, typed by me.
+
+        * Configurations/WebKit.xcconfig: Use the copy of ForwardingHeaders in
+        WebCore's PrivateHeaders instead of our own copy.
+
 2008-04-04  Ada Chan  <adachan@apple.com>
 
         Now we pass width and height directly as integers to format

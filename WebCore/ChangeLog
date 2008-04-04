@@ -1,3 +1,14 @@
+2008-04-04  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://problem/5804776> Would like to use WebCore's
+        ForwardingHeaders in WebKit without manually creating copies
+
+        Patch by Tim Hatcher, typed by me.
+
+        * WebCore.xcodeproj/project.pbxproj: Added a new build phase, Copy
+        Forwarding Headers, that copies the ForwardingHeaders directory to
+        WebCore's PrivateHeaders directory.
+
 2008-04-04  Ada Chan  <adachan@apple.com>
 
         Changed the signature of imageTitleForFilename so we can pass in the width

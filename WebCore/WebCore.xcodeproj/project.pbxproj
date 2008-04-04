@@ -3801,6 +3801,7 @@
 		C02B14C20D81E02A00D8A970 /* JavaScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = C02B14BF0D81E02A00D8A970 /* JavaScriptDebugListener.h */; };
 		C02B14C30D81E02A00D8A970 /* JavaScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C02B14C00D81E02A00D8A970 /* JavaScriptDebugServer.cpp */; };
 		C02B14C40D81E02A00D8A970 /* JavaScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = C02B14C10D81E02A00D8A970 /* JavaScriptDebugServer.h */; };
+		C09953F40DA6956F00041021 /* ForwardingHeaders in Copy Forwarding Headers */ = {isa = PBXBuildFile; fileRef = C09953500DA6955A00041021 /* ForwardingHeaders */; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
 		D05CED290A40BB2C00C5AF38 /* FormatBlockCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */; };
@@ -4359,6 +4360,17 @@
 				14DC0D3809FED073007B0235 /* JSNode.h in Copy Generated Headers */,
 			);
 			name = "Copy Generated Headers";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C099522D0DA6943300041021 /* Copy Forwarding Headers */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Versions/A/PrivateHeaders;
+			dstSubfolderSpec = 1;
+			files = (
+				C09953F40DA6956F00041021 /* ForwardingHeaders in Copy Forwarding Headers */,
+			);
+			name = "Copy Forwarding Headers";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -8037,6 +8049,7 @@
 		C02B14BF0D81E02A00D8A970 /* JavaScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptDebugListener.h; sourceTree = "<group>"; };
 		C02B14C00D81E02A00D8A970 /* JavaScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptDebugServer.cpp; sourceTree = "<group>"; };
 		C02B14C10D81E02A00D8A970 /* JavaScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptDebugServer.h; sourceTree = "<group>"; };
+		C09953500DA6955A00041021 /* ForwardingHeaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ForwardingHeaders; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
@@ -8223,6 +8236,7 @@
 				B22277CA0D00BF1E0071B782 /* svg */,
 				E1F0424309839389006694EA /* xml */,
 				656580EC09D12B20000E61D7 /* Derived Sources */,
+				C09953500DA6955A00041021 /* ForwardingHeaders */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
@@ -14707,6 +14721,7 @@
 				5D2F7DA00C6879C600B5B72B /* Update Info.plist with version information */,
 				93F198A608245E59001E9ABC /* Headers */,
 				1C11CCB40AA6093700DADB20 /* Copy Generated Headers */,
+				C099522D0DA6943300041021 /* Copy Forwarding Headers */,
 				93F199FD08245E59001E9ABC /* Resources */,
 				93F19A0C08245E59001E9ABC /* Sources */,
 				939D050109D9FF6B00984996 /* Check For Global Initializers */,
