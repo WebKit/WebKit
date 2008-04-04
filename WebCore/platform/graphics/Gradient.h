@@ -36,10 +36,10 @@ typedef struct CGShading* CGShadingRef;
 typedef CGShadingRef PlatformGradient;
 #elif PLATFORM(QT)
 class QGradient;
-typedef QGradient PlatformGradient;
+typedef QGradient* PlatformGradient;
 #elif PLATFORM(CAIRO)
 typedef struct _cairo_pattern cairo_pattern_t;
-typedef cairo_pattern_t PlatformGradient;
+typedef cairo_pattern_t* PlatformGradient;
 #else
 typedef void* PlatformGradient;
 #endif
