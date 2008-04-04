@@ -1,5 +1,13 @@
 2008-04-03  Kevin Ollivier  <kevino@theolliviers.com>
 
+        wx build fix. Add stubs for gradient class platform functions.
+
+        * platform/graphics/wx/GradientWx.cpp: Added.
+        (WebCore::Gradient::platformDestroy):
+        (WebCore::Gradient::platformGradient):
+
+2008-04-03  Kevin Ollivier  <kevino@theolliviers.com>
+
         Reviewed by Dan Bernstein.
 
         Refactor Gradient.h to have the same API on platforms 
