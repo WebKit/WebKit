@@ -110,6 +110,25 @@ WebInspector.TextPrompt.prototype = {
         if (this.autoCompleteElement.parentNode)
             this.autoCompleteElement.parentNode.removeChild(this.autoCompleteElement);
         delete this.autoCompleteElement;
+
+        if (!this._userEnteredRange || !this._userEnteredText)
+            return;
+
+        this._userEnteredRange.deleteContents();
+
+        var userTextNode = document.createTextNode(this._userEnteredText);
+        this._userEnteredRange.insertNode(userTextNode);           
+
+        var selectionRange = document.createRange();
+        selectionRange.setStart(userTextNode, this._userEnteredText.length);
+        selectionRange.setEnd(userTextNode, this._userEnteredText.length);
+
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(selectionRange);
+
+        delete this._userEnteredRange;
+        delete this._userEnteredText;
     },
 
     autoCompleteSoon: function()
@@ -161,6 +180,9 @@ WebInspector.TextPrompt.prototype = {
         }
 
         var wordPrefixLength = wordPrefixRange.toString().length;
+
+        this._userEnteredRange = fullWordRange;
+        this._userEnteredText = fullWordRange.toString();
 
         fullWordRange.deleteContents();
 

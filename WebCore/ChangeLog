@@ -1,5 +1,21 @@
 2008-04-04  Timothy Hatcher  <timothy@apple.com>
 
+        Restore the user entered text when clearing the auto-completion.
+        This is important when the user typed text that is a different
+        case than the completion. This has no affect on the Console, since
+        it matches completions case-sensitively. This is used in the up-coming
+        Database Query view for words like "SELECT" and "INSERT".
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.clearAutoComplete): Restore the user typed
+        text in the original DOM range that complete() saved away.
+        (WebInspector.TextPrompt.prototype.complete): Store away the fullWordRange
+        and it's text content so clearAutoComplete can restore it.
+
+2008-04-04  Timothy Hatcher  <timothy@apple.com>
+
         Don't trim whitespace when looking for the current match, this prevents
         tabbing through matches in the up-coming Database Query view.
 
