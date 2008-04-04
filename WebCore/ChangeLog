@@ -1,3 +1,15 @@
+2008-04-04  Timothy Hatcher  <timothy@apple.com>
+
+        Changing WebInspector.currentFocusElement to/from an input element
+        does not change the actual focus of that input element. You see this
+        in the search field.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/inspector.js:
+        (WebInspector.set currentFocusElement): Call blur and focus if the
+        node implements them.
+
 2008-04-04  David Hyatt  <hyatt@apple.com>
 
         Improve the background size heuristic for SVGs used as background images with no intrinsic size specified.

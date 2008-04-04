@@ -90,6 +90,8 @@ var WebInspector = {
         if (this._currentFocusElement) {
             this._currentFocusElement.removeStyleClass("focused");
             this._currentFocusElement.addStyleClass("blurred");
+            if (this._currentFocusElement.blur)
+                this._currentFocusElement.blur();
             if (this._currentFocusElement.blurred)
                 this._currentFocusElement.blurred();
         }
@@ -99,6 +101,8 @@ var WebInspector = {
         if (x) {
             x.addStyleClass("focused");
             x.removeStyleClass("blurred");
+            if (this._currentFocusElement.focus)
+                this._currentFocusElement.focus();
             if (this._currentFocusElement.focused)
                 this._currentFocusElement.focused();
         }
