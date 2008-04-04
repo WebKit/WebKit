@@ -1,3 +1,15 @@
+2008-04-04  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5830598> Image file opened in the browser window shows "Localized String Not Found' in window's title bar instead file name
+        Save WebCoreLocalizedStrings.cpp with UTF8 encoding.
+        Changed the format string to take in integers.
+
+        Reviewed by Dan.
+
+        * English.lproj/Localizable.strings: Updated.
+        * WebCoreLocalizedStrings.cpp:
+        (WebCore::imageTitle):
+
 2008-04-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
