@@ -146,7 +146,7 @@ WebInspector.TextPrompt.prototype = {
         if (completions.length === 1 || selection.isCollapsed || auto) {
             var completionText = completions[0];
         } else {
-            var currentText = fullWordRange.toString().trimTrailingWhitespace();
+            var currentText = fullWordRange.toString();
 
             var foundIndex = null;
             for (var i = 0; i < completions.length; ++i) {

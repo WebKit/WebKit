@@ -1,5 +1,14 @@
 2008-04-04  Timothy Hatcher  <timothy@apple.com>
 
+        Don't trim whitespace when looking for the current match, this prevents
+        tabbing through matches in the up-coming Database Query view.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/TextPrompt.js: Removed a trimTrailingWhitespace() call.
+
+2008-04-04  Timothy Hatcher  <timothy@apple.com>
+
         Factor out the Console text completion and command history into
         a new TextPrompt object. This TextPrompt object will be used later
         other parts of the Inspector that need text completion and history.
