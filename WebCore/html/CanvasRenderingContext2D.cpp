@@ -591,7 +591,7 @@ void CanvasRenderingContext2D::stroke()
 #elif PLATFORM(CAIRO)
     cairo_t* cr = c->platformContext();
     cairo_save(cr);
-    if (state().m_strokeStyle->gradient()) {
+    if (state().m_strokeStyle->canvasGradient()) {
         cairo_set_source(cr, state().m_strokeStyle->canvasGradient()->gradient().platformGradient());
         c->addPath(m_path);
         cairo_stroke(cr);
