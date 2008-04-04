@@ -452,9 +452,9 @@
     return UI_STRING("Unknown", "Unknown filesize FTP directory listing item");
 }
 
-- (NSString*)imageTitleForFilename:(NSString*)filename size:(NSSize)size
+- (NSString*)imageTitleForFilename:(NSString*)filename width:(int)width height:(int)height
 {
-    return [NSString stringWithFormat:UI_STRING("%@ %.0f×%.0f pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename, size.width, size.height];
+    return [NSString stringWithFormat:UI_STRING("%@ %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename, width, height];
 }
 
 @end

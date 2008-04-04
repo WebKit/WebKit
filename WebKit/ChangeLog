@@ -1,3 +1,11 @@
+2008-04-04  Ada Chan  <adachan@apple.com>
+
+        Updated the format string for window title for a standalone image to take integers.
+
+        Reviewed by Dan.
+
+        * English.lproj/Localizable.strings:
+
 2008-03-28  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Darin Adler

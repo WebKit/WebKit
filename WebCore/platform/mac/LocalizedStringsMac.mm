@@ -508,7 +508,7 @@ String unknownFileSizeText()
 String imageTitle(const String& filename, const IntSize& size)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] imageTitleForFilename:filename size:size];
+    return [[WebCoreViewFactory sharedFactory] imageTitleForFilename:filename width:size.width() height:size.height()];
     END_BLOCK_OBJC_EXCEPTIONS;
     return String();
 }

@@ -1,3 +1,14 @@
+2008-04-04  Ada Chan  <adachan@apple.com>
+
+        Changed the signature of imageTitleForFilename so we can pass in the width
+        and height as integers.
+
+        Reviewed by Dan.
+
+        * page/mac/WebCoreViewFactory.h:
+        * platform/mac/LocalizedStringsMac.mm:
+        (WebCore::imageTitle):
+
 2008-04-03  Dan Bernstein  <mitz@apple.com>
 
         - Windows build fix

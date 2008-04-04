@@ -1,3 +1,13 @@
+2008-04-04  Ada Chan  <adachan@apple.com>
+
+        Now we pass width and height directly as integers to format
+        the window title for a standalone image.
+
+        Reviewed by Dan.
+
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory imageTitleForFilename:width:height:]):
+
 2008-04-03  Nicholas Shanks  <webkit@nickshanks.com>
 
         Updated by Dan Bernstein. Reviewed by Dave Hyatt.
