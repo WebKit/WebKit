@@ -365,7 +365,7 @@ static int CALLBACK matchImprovingEnumProc(CONST LOGFONT* candidate, CONST TEXTM
         return 1;
     }
 
-    if (!matchData->m_desiredItalic)
+    if (!matchData->m_desiredItalic) {
         // Prefer the candidate if it helps us lose undesired italics.
         if (matchData->m_chosen.lfItalic && !candidate->lfItalic) {
             matchData->m_chosen = *candidate;
