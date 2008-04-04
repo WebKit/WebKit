@@ -32,9 +32,6 @@ WebInspector.ConsolePanel = function()
 
     this.messages = [];
 
-    this.commandHistory = [];
-    this.commandOffset = 0;
-
     this.messagesElement = document.createElement("div");
     this.messagesElement.id = "console-messages";
     this.messagesElement.addEventListener("selectstart", this.messagesSelectStart.bind(this), true);
@@ -47,6 +44,8 @@ WebInspector.ConsolePanel = function()
     this.promptElement.appendChild(document.createElement("br"));
     this.messagesElement.appendChild(this.promptElement);
 
+    this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), " .=:[({;");
+
     this.clearButton = document.createElement("button");
     this.clearButton.title = WebInspector.UIString("Clear");
     this.clearButton.textContent = WebInspector.UIString("Clear");
@@ -54,23 +53,6 @@ WebInspector.ConsolePanel = function()
 }
 
 WebInspector.ConsolePanel.prototype = {
-    get promptText()
-    {
-        return this.promptElement.textContent;
-    },
-
-    set promptText(x)
-    {
-        if (!x) {
-            // Append a break element instead of setting textContent to make sure the selection is inside the prompt.
-            this.promptElement.removeChildren();
-            this.promptElement.appendChild(document.createElement("br"));
-        } else
-            this.promptElement.textContent = x;
-
-        this._moveCaretToEndOfPrompt();
-    },
-
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
@@ -84,8 +66,8 @@ WebInspector.ConsolePanel.prototype = {
 
         function focusPrompt()
         {
-            if (!this._caretInsidePrompt())
-                this._moveCaretToEndOfPrompt();
+            if (!this.prompt.isCaretInsidePrompt())
+                this.prompt.moveCaretToEndOfPrompt();
         }
 
         setTimeout(focusPrompt.bind(this), 0);
@@ -139,132 +121,10 @@ WebInspector.ConsolePanel.prototype = {
             this.messagesElement.removeChild(this.messagesElement.firstChild);
     },
 
-    acceptAutoComplete: function()
-    {
-        if (!this.autoCompleteElement || !this.autoCompleteElement.parentNode)
-            return false;
-
-        var text = this.autoCompleteElement.textContent;
-        var textNode = document.createTextNode(text);
-        this.autoCompleteElement.parentNode.replaceChild(textNode, this.autoCompleteElement);
-        delete this.autoCompleteElement;
-
-        var finalSelectionRange = document.createRange();
-        finalSelectionRange.setStart(textNode, text.length);
-        finalSelectionRange.setEnd(textNode, text.length);
-
-        var selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(finalSelectionRange);
-
-        return true;
-    },
-
-    clearAutoComplete: function(includeTimeout)
-    {
-        if (includeTimeout && "completeTimeout" in this) {
-            clearTimeout(this.completeTimeout);
-            delete this.completeTimeout;
-        }
-
-        if (!this.autoCompleteElement)
-            return;
-
-        if (this.autoCompleteElement.parentNode)
-            this.autoCompleteElement.parentNode.removeChild(this.autoCompleteElement);
-        delete this.autoCompleteElement;
-    },
-
-    autoCompleteSoon: function()
-    {
-        if (!("completeTimeout" in this))
-            this.completeTimeout = setTimeout(this.complete.bind(this, true), 250);
-    },
-
-    complete: function(auto)
-    {
-        this.clearAutoComplete(true);
-
-        var selection = window.getSelection();
-        if (!selection.rangeCount)
-            return;
-
-        var selectionRange = selection.getRangeAt(0);
-        if (!selectionRange.commonAncestorContainer.isDescendant(this.promptElement))
-            return;
-        if (auto && !this._caretAtEndOfPrompt())
-            return;
-
-        // Pass more characters to _backwardsRange so the range will be as short as possible.
-        var wordPrefixRange = this._backwardsRange(" .=:[({;", selectionRange.startContainer, selectionRange.startOffset, this.promptElement);
-
-        var completions = this.completions(wordPrefixRange, auto);
-
-        if (!completions || !completions.length)
-            return;
-
-        var fullWordRange = document.createRange();
-        fullWordRange.setStart(wordPrefixRange.startContainer, wordPrefixRange.startOffset);
-        fullWordRange.setEnd(selectionRange.endContainer, selectionRange.endOffset);
-
-        if (completions.length === 1 || selection.isCollapsed || auto) {
-            var completionText = completions[0];
-        } else {
-            var currentText = fullWordRange.toString().trimTrailingWhitespace();
-
-            var foundIndex = null;
-            for (var i = 0; i < completions.length; ++i) {
-                if (completions[i] === currentText)
-                    foundIndex = i;
-            }
-
-            if (foundIndex === null || (foundIndex + 1) >= completions.length)
-                var completionText = completions[0];
-            else
-                var completionText = completions[foundIndex + 1];
-        }
-
-        var wordPrefixLength = wordPrefixRange.toString().length;
-
-        fullWordRange.deleteContents();
-
-        var finalSelectionRange = document.createRange();
-
-        if (auto) {
-            var prefixText = completionText.substring(0, wordPrefixLength);
-            var suffixText = completionText.substring(wordPrefixLength);
-
-            var prefixTextNode = document.createTextNode(prefixText);
-            fullWordRange.insertNode(prefixTextNode);           
-
-            this.autoCompleteElement = document.createElement("span");
-            this.autoCompleteElement.className = "auto-complete-text";
-            this.autoCompleteElement.textContent = suffixText;
-
-            prefixTextNode.parentNode.insertBefore(this.autoCompleteElement, prefixTextNode.nextSibling);
-
-            finalSelectionRange.setStart(prefixTextNode, wordPrefixLength);
-            finalSelectionRange.setEnd(prefixTextNode, wordPrefixLength);
-        } else {
-            var completionTextNode = document.createTextNode(completionText);
-            fullWordRange.insertNode(completionTextNode);           
-
-            if (completions.length > 1)
-                finalSelectionRange.setStart(completionTextNode, wordPrefixLength);
-            else
-                finalSelectionRange.setStart(completionTextNode, completionText.length);
-
-            finalSelectionRange.setEnd(completionTextNode, completionText.length);
-        }
-
-        selection.removeAllRanges();
-        selection.addRange(finalSelectionRange);
-    },
-
     completions: function(wordRange, bestMatchOnly)
     {
-        // Pass less characters to _backwardsRange so the range will be a more complete expression.
-        var expression = this._backwardsRange(" =:{;", wordRange.startContainer, wordRange.startOffset, this.promptElement);
+        // Pass less characters to scanBackwards so the range will be a more complete expression.
+        var expression = this.prompt.scanBackwards(" =:{;", wordRange.startContainer, wordRange.startOffset);
         var expressionString = expression.toString();
         var lastIndex = expressionString.length - 1;
 
@@ -322,14 +182,14 @@ WebInspector.ConsolePanel.prototype = {
         if (this._selectionTimeout)
             clearTimeout(this._selectionTimeout);
 
-        this.clearAutoComplete();
+        this.prompt.clearAutoComplete();
 
         function moveBackIfOutside()
         {
             delete this._selectionTimeout;
-            if (!this._caretInsidePrompt() && window.getSelection().isCollapsed)
-                this._moveCaretToEndOfPrompt();
-            this.autoCompleteSoon();
+            if (!this.prompt.isCaretInsidePrompt() && window.getSelection().isCollapsed)
+                this.prompt.moveCaretToEndOfPrompt();
+            this.prompt.autoCompleteSoon();
         }
 
         this._selectionTimeout = setTimeout(moveBackIfOutside.bind(this), 100);
@@ -367,64 +227,11 @@ WebInspector.ConsolePanel.prototype = {
     {
         switch (event.keyIdentifier) {
             case "Enter":
-                this._onEnterPressed(event);
-                break;
-            case "Up":
-                this._onUpPressed(event);
-                break;
-            case "Down":
-                this._onDownPressed(event);
-                break;
-            case "U+0009": // Tab
-                this._onTabPressed(event);
-                break;
-            case "Right":
-                if (!this.acceptAutoComplete())
-                    this.autoCompleteSoon();
-                break;
-            default:
-                this.clearAutoComplete();
-                this.autoCompleteSoon();
-                break;
-        }
-    },
-
-    _backwardsRange: function(stopCharacters, endNode, endOffset, stayWithinElement)
-    {
-        var startNode;
-        var startOffset = 0;
-        var node = endNode;
-
-        while (node) {
-            if (node === stayWithinElement) {
-                if (!startNode)
-                    startNode = stayWithinElement;
-                break;
-            }
-
-            if (node.nodeType === Node.TEXT_NODE) {
-                var start = (node === endNode ? endOffset : node.nodeValue.length);
-                for (var i = (start - 1); i >= 0; --i) {
-                    var character = node.nodeValue[i];
-                    if (stopCharacters.indexOf(character) !== -1) {
-                        startNode = node;
-                        startOffset = i + 1;
-                        break;
-                    }
-                }
-            }
-
-            if (startNode)
-                break;
-
-            node = node.traversePreviousNode();
+                this._enterKeyPressed(event);
+                return;
         }
 
-        var result = document.createRange();
-        result.setStart(startNode, startOffset);
-        result.setEnd(endNode, endOffset);
-
-        return result;
+        this.prompt.handleKeyEvent(event);
     },
 
     _evalInInspectedWindow: function(expression)
@@ -435,71 +242,14 @@ WebInspector.ConsolePanel.prototype = {
         }
     },
 
-    _caretInsidePrompt: function()
-    {
-        var selection = window.getSelection();
-        if (!selection.rangeCount || !selection.isCollapsed)
-            return false;
-        var selectionRange = selection.getRangeAt(0);
-        return selectionRange.startContainer === this.promptElement || selectionRange.startContainer.isDescendant(this.promptElement);
-    },
-
-    _caretAtEndOfPrompt: function()
-    {
-        var selection = window.getSelection();
-        if (!selection.rangeCount || !selection.isCollapsed)
-            return false;
-
-        var selectionRange = selection.getRangeAt(0);
-        var node = selectionRange.startContainer;
-        if (node !== this.promptElement && !node.isDescendant(this.promptElement))
-            return false;
-
-        if (node.nodeType === Node.TEXT_NODE && selectionRange.startOffset < node.nodeValue.length)
-            return false;
-
-        var foundNextText = false;
-        while (node) {
-            if (node.nodeType === Node.TEXT_NODE && node.nodeValue.length) {
-                if (foundNextText)
-                    return false;
-                foundNextText = true;
-            }
-
-            node = node.traverseNextNode(false, this.promptElement);
-        }
-
-        return true;
-    },
-
-    _moveCaretToEndOfPrompt: function()
-    {
-        var selection = window.getSelection();
-        var selectionRange = document.createRange();
-
-        var offset = this.promptElement.childNodes.length;
-        selectionRange.setStart(this.promptElement, offset);
-        selectionRange.setEnd(this.promptElement, offset);
-
-        selection.removeAllRanges();
-        selection.addRange(selectionRange);
-    },
-
-    _onTabPressed: function(event)
-    {
-        event.preventDefault();
-        event.stopPropagation();
-        this.complete();
-    },
-
-    _onEnterPressed: function(event)
+    _enterKeyPressed: function(event)
     {
         event.preventDefault();
         event.stopPropagation();
 
-        this.clearAutoComplete(true);
+        this.prompt.clearAutoComplete(true);
 
-        var str = this.promptText;
+        var str = this.prompt.text;
         if (!str.length)
             return;
 
@@ -517,42 +267,12 @@ WebInspector.ConsolePanel.prototype = {
             exception = true;
         }
 
+        this.prompt.history.push(str);
+        this.prompt.historyOffset = 0;
+        this.prompt.text = "";
+
         var level = exception ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log;
         this.addMessage(new WebInspector.ConsoleCommand(str, result, this._format(result), level));
-    },
-
-    _onUpPressed: function(event)
-    {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (this.commandOffset == this.commandHistory.length)
-            return;
-
-        if (this.commandOffset == 0)
-            this.tempSavedCommand = this.promptText;
-
-        ++this.commandOffset;
-        this.promptText = this.commandHistory[this.commandHistory.length - this.commandOffset];
-    },
-
-    _onDownPressed: function(event)
-    {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (this.commandOffset == 0)
-            return;
-
-        --this.commandOffset;
-
-        if (this.commandOffset == 0) {
-            this.promptText = this.tempSavedCommand;
-            delete this.tempSavedCommand;
-            return;
-        }
-
-        this.promptText = this.commandHistory[this.commandHistory.length - this.commandOffset];
     },
 
     _format: function(output)

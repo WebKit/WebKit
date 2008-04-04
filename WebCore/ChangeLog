@@ -1,5 +1,21 @@
 2008-04-04  Timothy Hatcher  <timothy@apple.com>
 
+        Factor out the Console text completion and command history into
+        a new TextPrompt object. This TextPrompt object will be used later
+        other parts of the Inspector that need text completion and history.
+        Not functionality changed, just moved code around.
+
+        Reviewed by Adam Roben.
+
+        * WebCore.vcproj/WebCore.vcproj: Add TextPrompt.js.
+        * page/inspector/Console.js: Call the new prompt object and
+          delete all the code that moved.
+        * page/inspector/TextPrompt.js: Added. Moved code from Console.js.
+        * page/inspector/WebKit.qrc: Add TextPrompt.js.
+        * page/inspector/inspector.html: Add TextPrompt.js.
+
+2008-04-04  Timothy Hatcher  <timothy@apple.com>
+
         Makes setting shouldRefreshChildren on a TreeElement perform the refresh
         immediately if the element is already expanded.
 
