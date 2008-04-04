@@ -1,3 +1,11 @@
+2008-04-03  Dan Bernstein  <mitz@apple.com>
+
+        - project file updates in preparation for build fixes
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCoreSources.bkl:
+
 2008-04-03  Nicholas Shanks  <webkit@nickshanks.com>
 
         Updated by Dan Bernstein. Reviewed by Dave Hyatt.

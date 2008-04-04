@@ -844,6 +844,7 @@ webcore_sources += \
 	WebCore/platform/DragData.cpp \
 	WebCore/platform/DragImage.cpp \
 	WebCore/platform/FileChooser.cpp \
+	WebCore/platform/graphics/FontDescription.cpp \
 	WebCore/platform/graphics/FontFamily.cpp \
 	WebCore/platform/graphics/AffineTransform.cpp \
 	WebCore/platform/graphics/BitmapImage.cpp \
