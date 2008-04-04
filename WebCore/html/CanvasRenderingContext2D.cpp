@@ -578,7 +578,7 @@ void CanvasRenderingContext2D::stroke()
 #elif PLATFORM(QT)
     QPainterPath* path = m_path.platformPath();
     QPainter* p = static_cast<QPainter*>(c->platformContext());
-    if (state().m_strokeStyle->gradient()) {
+    if (state().m_strokeStyle->canvasGradient()) {
         p->save();
         p->setBrush(*(state().m_strokeStyle->canvasGradient()->gradient().platformGradient()));
         p->strokePath(*path, p->pen());
