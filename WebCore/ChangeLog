@@ -1,5 +1,15 @@
 2008-04-04  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes a null exception when hovering in some areas of the DOM tree.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/treeoutline.js:
+        (TreeOutline.prototype.treeElementFromPoint): Check listNode for null/undefined
+        before accessing any properties. Return null if listNode is null.
+
+2008-04-04  Timothy Hatcher  <timothy@apple.com>
+
         Changing WebInspector.currentFocusElement to/from an input element
         does not change the actual focus of that input element. You see this
         in the search field.

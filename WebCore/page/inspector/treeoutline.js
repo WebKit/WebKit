@@ -289,7 +289,9 @@ TreeOutline.prototype.treeElementFromPoint = function(x, y)
 {
     var node = this._childrenListNode.ownerDocument.elementFromPoint(x, y);
     var listNode = node.enclosingNodeOrSelfWithNodeNameInArray(["ol", "li"]);
-    return listNode.parentTreeElement || listNode.treeElement;
+    if (listNode)
+        return listNode.parentTreeElement || listNode.treeElement;
+    return null;
 }
 
 TreeOutline.prototype.handleKeyEvent = function(event)
