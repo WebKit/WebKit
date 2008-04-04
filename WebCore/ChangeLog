@@ -1,3 +1,35 @@
+2008-04-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Beth.
+
+        Some clean up of AccessibilityObject:
+        - Use existing isImage() in more places.
+        - Use existing isTextControl() in more places.
+        - Added isRenderImage(). Check this before casting to RenderImage,
+          since other, non-RenderImage derived RenderObjects (e.g.
+          RenderListMarker) can return true for isImage().
+        - Fix two copy/paste errors with improper semicolons.
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isImageButton): Use isImage().
+        (WebCore::AccessibilityObject::isRenderImage): Added.
+        (WebCore::AccessibilityObject::isAnchor): Use isImage().
+        (WebCore::AccessibilityObject::isAttachment): Same.
+        (WebCore::AccessibilityObject::accessibilityDescription): Same.
+        (WebCore::AccessibilityObject::accessibilityIsIgnored): Use
+        isRenderImage() instead of isImage().
+        (WebCore::AccessibilityObject::url): Use isImage().
+        (WebCore::AccessibilityObject::textControl): Remove improper semicolon, 
+        and use isTextControl().
+        (WebCore::AccessibilityObject::textMarkerForIndex): Same.
+        (WebCore::AccessibilityObject::indexForTextMarker): Use isTextControl().
+        (WebCore::AccessibilityObject::doAXRangeForLine): Same.
+        (WebCore::AccessibilityObject::doAXRangeForIndex): Same
+        (WebCore::AccessibilityObject::doAXStringForRange): Same.
+        (WebCore::AccessibilityObject::roleValue):  Use isImage().
+        (WebCore::AccessibilityObject::addChildren): Use isRenderImage().
+        * page/AccessibilityObject.h:
+
 2008-04-04  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a null exception when hovering in some areas of the DOM tree.
