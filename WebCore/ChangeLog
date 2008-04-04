@@ -1,5 +1,12 @@
 2008-04-03  Dan Bernstein  <mitz@apple.com>
 
+        - Tiger build fix
+
+        * platform/mac/WebFontCache.mm:
+        * rendering/RenderThemeMac.mm:
+
+2008-04-03  Dan Bernstein  <mitz@apple.com>
+
         - Gtk build fix
 
         * platform/graphics/gtk/FontPlatformData.h:

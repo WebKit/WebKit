@@ -32,6 +32,10 @@
 
 #import <math.h>
 
+#ifdef BUILDING_ON_TIGER
+typedef int NSInteger;
+#endif
+
 #define SYNTHESIZED_FONT_TRAITS (NSBoldFontMask | NSItalicFontMask)
 
 #define IMPORTANT_FONT_TRAITS (0 \

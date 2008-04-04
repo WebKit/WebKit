@@ -43,6 +43,7 @@
 #import <math.h>
 
 #ifdef BUILDING_ON_TIGER
+typedef int NSInteger;
 typedef unsigned NSUInteger;
 #endif
 
