@@ -1144,6 +1144,11 @@ body.attached #main {
     color: rgb(136, 18, 128);
 }
 
+.webkit-html-doctype {
+    /* Keep this in sync with view-source.css (.webkit-html-doctype) */
+    color: rgb(192, 192, 192);
+}
+
 .webkit-html-attribute-name {
     /* Keep this in sync with view-source.css (.webkit-html-attribute-name) */
     color: rgb(153, 69, 0);

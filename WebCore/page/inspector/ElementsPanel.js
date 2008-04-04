@@ -365,6 +365,10 @@ WebInspector.DocumentPanel.prototype = {
                     crumbTitle = "<!-->";
                     break;
 
+                case Node.DOCUMENT_TYPE_NODE:
+                    crumbTitle = "<!DOCTYPE>";
+                    break;
+
                 default:
                     crumbTitle = current.nodeName.toLowerCase();
             }

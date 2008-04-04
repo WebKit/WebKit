@@ -661,7 +661,7 @@ function nodeTitleInfo(hasChildren, linkify)
             break;
 
         case Node.DOCUMENT_TYPE_NODE:
-            info.title = "<span class=\"webkit-html-tag\">&lt;!DOCTYPE " + this.nodeName;
+            info.title = "<span class=\"webkit-html-doctype\">&lt;!DOCTYPE " + this.nodeName;
             if (this.publicId) {
                 info.title += " PUBLIC \"" + this.publicId + "\"";
                 if (this.systemId)

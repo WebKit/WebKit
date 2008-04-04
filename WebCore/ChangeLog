@@ -1,3 +1,20 @@
+2008-04-04  Timothy Hatcher  <timothy@apple.com>
+
+        Correctly show DOCTYPE in the breadcrumbs and match the CSS rules
+        from view-source.css for the DOCTYPE in the DOM tree.
+
+        Reviewed by Adam Roben.
+
+        * css/view-source.css: Add and correct comments about keeping
+        in-sync with inspector.css.
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.DocumentPanel.prototype.updateBreadcrumb):
+        Add a case for Node.DOCUMENT_TYPE_NODE.
+        * page/inspector/inspector.css: Add a rule for .webkit-html-doctype.
+        * page/inspector/utilities.js:
+        (nodeTitleInfo): Use the webkit-html-doctype class for nodes
+        with Node.DOCUMENT_TYPE_NODE.
+
 2008-04-04  Dan Bernstein  <mitz@apple.com>
 
         - try to fix the Tiger build
