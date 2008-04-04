@@ -28,13 +28,14 @@
 #include "Gradient.h"
 
 #include "CSSParser.h"
+#include <cairo.h>
 
 namespace WebCore {
 
 void Gradient::platformDestroy()
 {
-    cairo_pattern_destroy(m_shading);
-    m_shading = 0;
+    cairo_pattern_destroy(m_gradient);
+    m_gradient = 0;
 }
 
 cairo_pattern_t* Gradient::platformGradient()

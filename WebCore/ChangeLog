@@ -1,5 +1,12 @@
 2008-04-03  Dan Bernstein  <mitz@apple.com>
 
+        - another Gtk build fix attempt
+
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::platformDestroy):
+
+2008-04-03  Dan Bernstein  <mitz@apple.com>
+
         - attempted Gtk build fix
 
         * GNUmakefile.am:
