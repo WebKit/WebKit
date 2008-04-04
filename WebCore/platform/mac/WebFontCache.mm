@@ -164,7 +164,7 @@ static inline void fixUpWeight(NSInteger& weight, NSString *fontName)
 
         // Array indices must be hard coded because of lame AppKit API.
         NSString *fontFullName = [fontInfo objectAtIndex:0];
-        int fontWeight = [[fontInfo objectAtIndex:2] intValue];
+        NSInteger fontWeight = [[fontInfo objectAtIndex:2] intValue];
         fixUpWeight(fontWeight, fontFullName);
 
         NSFontTraitMask fontTraits = [[fontInfo objectAtIndex:3] unsignedIntValue];
