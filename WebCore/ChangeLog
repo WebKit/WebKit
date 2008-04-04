@@ -1,5 +1,12 @@
 2008-04-03  Dan Bernstein  <mitz@apple.com>
 
+        - Qt build fix
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::Font):
+
+2008-04-03  Dan Bernstein  <mitz@apple.com>
+
         - Tiger build fix
 
         * platform/mac/WebFontCache.mm:

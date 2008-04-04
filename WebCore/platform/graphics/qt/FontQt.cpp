@@ -64,12 +64,12 @@ Font::Font(const FontDescription& description, short letterSpacing, short wordSp
     m_font.setFamily(familyName);
     m_font.setPixelSize(qRound(description.computedSize()));
     m_font.setItalic(description.italic());
-    if (description.bold()) {
-        // Qt's Bold is 75, Webkit is 63.
+    // FIXME: Map all FontWeight values to QFont weights.
+    if (description.weight() >= FontWeight600)
         m_font.setWeight(QFont::Bold);
-    } else {
-        m_font.setWeight(description.weight());
-    }
+    else
+        m_font.setWeight(QFont::Normal);
+
     bool smallCaps = description.smallCaps();
     m_font.setCapitalization(smallCaps ? QFont::SmallCaps : QFont::MixedCase);
 
@@ -279,12 +279,12 @@ Font::Font(const FontDescription& description, short letterSpacing, short wordSp
     m_font.setFamily(familyName);
     m_font.setPixelSize(qRound(description.computedSize()));
     m_font.setItalic(description.italic());
-    if (description.bold()) {
-        // Qt's Bold is 75, Webkit is 63.
+    // FIXME: Map all FontWeight values to QFont weights.
+    if (description.weight() >= FontWeight600)
         m_font.setWeight(QFont::Bold);
-    } else {
-        m_font.setWeight(description.weight());
-    }
+    else
+        m_font.setWeight(QFont::Normal);
+
     QFontMetrics metrics = QFontMetrics(m_font);
     m_spaceWidth = metrics.width(QLatin1Char(' '));
     m_scFont = m_font;
