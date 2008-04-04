@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +35,6 @@
 #define SYNTHESIZED_FONT_TRAITS (NSBoldFontMask | NSItalicFontMask)
 
 #define IMPORTANT_FONT_TRAITS (0 \
-    | NSBoldFontMask \
     | NSCompressedFontMask \
     | NSCondensedFontMask \
     | NSExpandedFontMask \
@@ -44,10 +44,7 @@
     | NSSmallCapsFontMask \
 )
 
-#define DESIRED_WEIGHT 5
-
-static BOOL acceptableChoice(NSFontTraitMask desiredTraits, int desiredWeight,
-    NSFontTraitMask candidateTraits, int candidateWeight)
+static BOOL acceptableChoice(NSFontTraitMask desiredTraits, int desiredWeight, NSFontTraitMask candidateTraits, int candidateWeight)
 {
     desiredTraits &= ~SYNTHESIZED_FONT_TRAITS;
     return (candidateTraits & desiredTraits) == desiredTraits;
@@ -57,10 +54,9 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     NSFontTraitMask chosenTraits, int chosenWeight,
     NSFontTraitMask candidateTraits, int candidateWeight)
 {
-    if (!acceptableChoice(desiredTraits, desiredWeight, candidateTraits, candidateWeight)) {
+    if (!acceptableChoice(desiredTraits, desiredWeight, candidateTraits, candidateWeight))
         return NO;
-    }
-    
+
     // A list of the traits we care about.
     // The top item in the list is the worst trait to mismatch; if a font has this
     // and we didn't ask for it, we'd prefer any other font in the family.
@@ -72,8 +68,9 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
         NSCondensedFontMask,
         NSExpandedFontMask,
         NSNarrowFontMask,
-        NSBoldFontMask,
-        0 };
+        0
+    };
+
     int i = 0;
     NSFontTraitMask mask;
     while ((mask = masks[i++])) {
@@ -85,24 +82,23 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
         if (!chosenHasUnwantedTrait && candidateHasUnwantedTrait)
             return NO;
     }
-    
-    int chosenWeightDelta = chosenWeight - desiredWeight;
-    int candidateWeightDelta = candidateWeight - desiredWeight;
-    
-    int chosenWeightDeltaMagnitude = abs(chosenWeightDelta);
-    int candidateWeightDeltaMagnitude = abs(candidateWeightDelta);
-    
-    // Smaller magnitude wins.
-    // If both have same magnitude, tie breaker is that the smaller weight wins.
-    // Otherwise, first font in the array wins (should almost never happen).
-    if (candidateWeightDeltaMagnitude < chosenWeightDeltaMagnitude) {
-        return YES;
-    }
-    if (candidateWeightDeltaMagnitude == chosenWeightDeltaMagnitude && candidateWeight < chosenWeight) {
-        return YES;
-    }
-    
-    return NO;
+
+    int chosenWeightDeltaMagnitude = abs(chosenWeight - desiredWeight);
+    int candidateWeightDeltaMagnitude = abs(candidateWeight - desiredWeight);
+
+    // If both are the same distance from the desired weight, prefer the candidate if it is further from regular.
+    if (chosenWeightDeltaMagnitude == candidateWeightDeltaMagnitude)
+        return abs(candidateWeight - 5) > abs(chosenWeight - 5);
+
+    // Otherwise, prefer the one closer to the desired weight.
+    return candidateWeightDeltaMagnitude < chosenWeightDeltaMagnitude;
+}
+
+// Workaround for <rdar://problem/5781372>.
+static inline void fixUpWeight(NSInteger& weight, NSString *fontName)
+{
+    if (weight == 3 && [fontName rangeOfString:@"ultralight" options:NSCaseInsensitiveSearch | NSBackwardsSearch | NSLiteralSearch].location != NSNotFound)
+        weight = 2;
 }
 
 @implementation WebFontCache
@@ -110,7 +106,7 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
 // Family name is somewhat of a misnomer here.  We first attempt to find an exact match
 // comparing the desiredFamily to the PostScript name of the installed fonts.  If that fails
 // we then do a search based on the family names of the installed fonts.
-+ (NSFont *)internalFontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits size:(float)size
++ (NSFont *)internalFontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits weight:(int)desiredWeight size:(float)size
 {
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
@@ -128,7 +124,10 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
                 return nameMatchedFont;
 
             NSFontTraitMask traits = [fontManager traitsOfFont:nameMatchedFont];
-            if ((traits & desiredTraits) == desiredTraits)
+            NSInteger weight = [fontManager weightOfFont:nameMatchedFont];
+            fixUpWeight(weight, availableFont);
+
+            if ((traits & desiredTraits) == desiredTraits && weight == desiredWeight)
                 return [fontManager convertFont:nameMatchedFont toHaveTrait:desiredTraits];
             break;
         }
@@ -151,6 +150,7 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     BOOL choseFont = false;
     int chosenWeight = 0;
     NSFontTraitMask chosenTraits = 0;
+    NSString *chosenFullName = 0;
 
     NSArray *fonts = [fontManager availableMembersOfFontFamily:availableFamily];    
     unsigned n = [fonts count];
@@ -159,21 +159,25 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
         NSArray *fontInfo = [fonts objectAtIndex:i];
 
         // Array indices must be hard coded because of lame AppKit API.
+        NSString *fontFullName = [fontInfo objectAtIndex:0];
         int fontWeight = [[fontInfo objectAtIndex:2] intValue];
+        fixUpWeight(fontWeight, fontFullName);
+
         NSFontTraitMask fontTraits = [[fontInfo objectAtIndex:3] unsignedIntValue];
 
         BOOL newWinner;
         if (!choseFont)
-            newWinner = acceptableChoice(desiredTraits, DESIRED_WEIGHT, fontTraits, fontWeight);
+            newWinner = acceptableChoice(desiredTraits, desiredWeight, fontTraits, fontWeight);
         else
-            newWinner = betterChoice(desiredTraits, DESIRED_WEIGHT, chosenTraits, chosenWeight, fontTraits, fontWeight);
+            newWinner = betterChoice(desiredTraits, desiredWeight, chosenTraits, chosenWeight, fontTraits, fontWeight);
 
         if (newWinner) {
             choseFont = YES;
             chosenWeight = fontWeight;
             chosenTraits = fontTraits;
+            chosenFullName = fontFullName;
 
-            if (chosenWeight == DESIRED_WEIGHT && (chosenTraits & IMPORTANT_FONT_TRAITS) == (desiredTraits & IMPORTANT_FONT_TRAITS))
+            if (chosenWeight == desiredWeight && (chosenTraits & IMPORTANT_FONT_TRAITS) == (desiredTraits & IMPORTANT_FONT_TRAITS))
                 break;
         }
     }
@@ -181,17 +185,18 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     if (!choseFont)
         return nil;
 
-    NSFont *font = [fontManager fontWithFamily:availableFamily traits:chosenTraits weight:chosenWeight size:size];
+    NSFont *font = [NSFont fontWithName:chosenFullName size:size];
 
     if (!font)
         return nil;
 
     NSFontTraitMask actualTraits = 0;
-    if (desiredTraits & (NSItalicFontMask | NSBoldFontMask))
-        actualTraits = [[NSFontManager sharedFontManager] traitsOfFont:font];
+    if (desiredTraits & NSFontItalicTrait)
+        actualTraits = [fontManager traitsOfFont:font];
+    int actualWeight = [fontManager weightOfFont:font];
 
-    bool syntheticBold = (desiredTraits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask);
-    bool syntheticOblique = (desiredTraits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask);
+    bool syntheticBold = desiredWeight >= 7 && actualWeight < 7;
+    bool syntheticOblique = (desiredTraits & NSFontItalicTrait) && !(actualTraits & NSFontItalicTrait);
 
     // There are some malformed fonts that will be correctly returned by -fontWithFamily:traits:weight:size: as a match for a particular trait,
     // though -[NSFontManager traitsOfFont:] incorrectly claims the font does not have the specified trait. This could result in applying 
@@ -215,10 +220,10 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     return font;
 }
 
-+ (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits size:(float)size
++ (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits weight:(int)desiredWeight size:(float)size
 {
 #ifndef BUILDING_ON_TIGER
-    NSFont *font = [self internalFontWithFamily:desiredFamily traits:desiredTraits size:size];
+    NSFont *font = [self internalFontWithFamily:desiredFamily traits:desiredTraits weight:desiredWeight size:size];
     if (font)
         return font;
 
@@ -227,7 +232,7 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     [NSFont fontWithName:desiredFamily size:size];
 #endif
 
-    return [self internalFontWithFamily:desiredFamily traits:desiredTraits size:size];
+    return [self internalFontWithFamily:desiredFamily traits:desiredTraits weight:desiredWeight size:size];
 }
 
 @end

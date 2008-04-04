@@ -76,11 +76,11 @@ DocLoader* CSSFontSelector::docLoader() const
     return m_document->docLoader();
 }
 
-static String hashForFont(const String& familyName, bool bold, bool italic)
+static String hashForFont(const String& familyName, FontWeight weight, bool italic)
 {
     String familyHash(familyName);
-    if (bold)
-        familyHash += "-webkit-bold";
+    familyHash += "-webkit-weight-";
+    familyHash += String::number(weight);
     if (italic)
         familyHash += "-webkit-italic";
     return AtomicString(familyHash);
@@ -113,16 +113,38 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
         fontDescription.setItalic(static_cast<CSSPrimitiveValue*>(fontStyle.get())->getIdent() != CSSValueNormal);
 
     if (RefPtr<CSSValue> fontWeight = style->getPropertyCSSValue(CSSPropertyFontWeight)) {
-        // FIXME: Need to support weights for real, since we're effectively limiting the number of supported weights to two.
-        // This behavior could also result in the "last kinda bold variant" described winning even if it isn't the best match for bold.
         switch (static_cast<CSSPrimitiveValue*>(fontWeight.get())->getIdent()) {
-            case CSSValueBold:
             case CSSValueBolder:
-            case CSSValue600:
+            case CSSValueBold:
             case CSSValue700:
-            case CSSValue800:
+                fontDescription.setWeight(FontWeightBold);
+                break;
+            case CSSValueNormal:
+            case CSSValue400:
+                fontDescription.setWeight(FontWeightNormal);
+                break;
             case CSSValue900:
-                fontDescription.setWeight(cBoldWeight);
+                fontDescription.setWeight(FontWeight900);
+                break;
+            case CSSValue800:
+                fontDescription.setWeight(FontWeight800);
+                break;
+            case CSSValue600:
+                fontDescription.setWeight(FontWeight600);
+                break;
+            case CSSValue500:
+                fontDescription.setWeight(FontWeight500);
+                break;
+            case CSSValue300:
+                fontDescription.setWeight(FontWeight300);
+                break;
+            case CSSValueLighter:
+            case CSSValue200:
+                fontDescription.setWeight(FontWeight200);
+                break;
+            case CSSValue100:
+                fontDescription.setWeight(FontWeight100);
+                break;
             default:
                 break;
         }
@@ -242,7 +264,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
             familyName += "-webkit-svg-small-caps";
 #endif
 
-        String hash = hashForFont(familyName.lower(), fontDescription.bold(), fontDescription.italic());
+        String hash = hashForFont(familyName.lower(), fontDescription.weight(), fontDescription.italic());
         CSSSegmentedFontFace* segmentedFontFace = m_fonts.get(hash).get();
         if (!segmentedFontFace) {
             segmentedFontFace = new CSSSegmentedFontFace(this);
@@ -281,7 +303,7 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
     if (m_fonts.isEmpty() && !familyName.startsWith("-webkit-"))
         return 0;
     
-    bool bold = fontDescription.bold();
+    FontWeight weight = fontDescription.weight();
     bool italic = fontDescription.italic();
     
     bool syntheticBold = false;
@@ -289,38 +311,31 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
 
     String family = familyName.string().lower();
 
-#if ENABLE(SVG_FONTS)
     RefPtr<CSSSegmentedFontFace> face;
 
-    if (fontDescription.smallCaps()) {
-        String testFamily = family + "-webkit-svg-small-caps";
-        face = m_fonts.get(hashForFont(testFamily, bold, italic));
-    } else
-        face = m_fonts.get(hashForFont(family, bold, italic));
-#else
-    RefPtr<CSSSegmentedFontFace> face = m_fonts.get(hashForFont(family, bold, italic));
+#if ENABLE(SVG_FONTS)
+    if (fontDescription.smallCaps())
+        family += "-webkit-svg-small-caps";
 #endif
 
-    // If we don't find a face, and if bold/italic are set, we should try other variants.
-    // Bold/italic should try bold first, then italic, then normal (on the assumption that we are better at synthesizing italic than we are
-    // at synthesizing bold).
-    if (!face) {
-        if (bold && italic) {
-            syntheticItalic = true;
-            face = m_fonts.get(hashForFont(family, bold, false));
-            if (!face) {
-                syntheticBold = true;
-                face = m_fonts.get(hashForFont(family, false, italic));
+    // If we don't find a face, we should try synthesizing it from another variant. We are presumably better at synthesizing italic than
+    // synthesizing bold, and we cannot synthesize a lighter face at all.
+    int attemptedWeight = weight;
+    while (!face) {
+        face = m_fonts.get(hashForFont(family, static_cast<FontWeight>(attemptedWeight), italic));
+        if (face)
+            break;
+        if (italic) {
+            face = m_fonts.get(hashForFont(family, static_cast<FontWeight>(attemptedWeight), false));
+            if (face) {
+                syntheticItalic = true;
+                break;
             }
         }
-        
-        // Bold should try normal.
-        // Italic should try normal.
-        if (!face && (bold || italic)) {
-            syntheticBold = bold;
-            syntheticItalic = italic;
-            face = m_fonts.get(hashForFont(family, false, false));
-        }
+        if (attemptedWeight == FontWeight100)
+            break;
+        attemptedWeight--;
+        syntheticBold = true;
     }
 
 #if ENABLE(SVG_FONTS)
@@ -328,14 +343,21 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
     // <font-face> specified font-weight and/or font-style to be ie. bold and italic.
     // And the font-family requested is non-bold & non-italic. For SVG Fonts we still
     // have to return the defined font, and not fallback to the system default.
-    if (!face && !bold)
-        face = m_fonts.get(hashForFont(family, true, italic));
+    if (!face) {
+        syntheticBold = false;
+        // Try all heavier weights
+        for (attemptedWeight = weight + 1; !face && attemptedWeight <= FontWeight900; ++attemptedWeight)
+            face = m_fonts.get(hashForFont(family, static_cast<FontWeight>(attemptedWeight), italic));
 
-    if (!face && !italic)
-        face = m_fonts.get(hashForFont(family, bold, true));
+        // Try italics with all weights
+        if (!face && !italic) {
+            for (attemptedWeight = weight; !face && attemptedWeight >= FontWeight100; --attemptedWeight)
+                face = m_fonts.get(hashForFont(family, static_cast<FontWeight>(attemptedWeight), true));
 
-    if (!face && !bold && !italic)
-        face = m_fonts.get(hashForFont(family, true, true));
+            for (attemptedWeight = weight + 1; !face && attemptedWeight <= FontWeight900; ++attemptedWeight)
+                face = m_fonts.get(hashForFont(family, static_cast<FontWeight>(attemptedWeight), true));
+        }
+    }
 #endif
 
     // If no face was found, then return 0 and let the OS come up with its best match for the name.

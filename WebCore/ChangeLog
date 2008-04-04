@@ -1,3 +1,147 @@
+2008-04-03  Nicholas Shanks  <webkit@nickshanks.com>
+
+        Updated by Dan Bernstein. Reviewed by Dave Hyatt.
+
+        - WebCore part of fixing http://bugs.webkit.org/show_bug.cgi?id=6484
+          font-weight does not properly support graded weights
+
+        Tests to come: <http://bugs.webkit.org/show_bug.cgi?id=18306>
+
+        Build fixes for platforms other than Mac and Windows to come.
+
+        * WebCore.vcproj/WebCore.vcproj: Added FontDescription.cpp.
+
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Changed to
+        return additional weight value keywords 100, 200, 300, 500, 600, 800
+        and 900.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::hashForFont): Changed the bold parameter into a weight
+        parameter and added the weight to the string to be hashed.
+        (WebCore::CSSFontSelector::addFontFaceRule): Changed to apply all CSS
+        weight values to the font description.
+        (WebCore::CSSFontSelector::getFontData): Updated the fallback logic to
+        go through all weights equal or lighter from the desired weight. For
+        SVG, to also consider heavier weights.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Cleaned up parsing of the font-weight
+        property.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Changed to apply all CSS
+        weight values to the font description.
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::weight): Updated for the change to
+        FontDescription::weight().
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey): Replaced
+        the bold component of the key with a weight component.
+        (WebCore::FontPlatformDataCacheKey::operator==): Updated for the above.
+        (WebCore::computeHash): Ditto.
+        (WebCore::FontPlatformDataCacheKeyTraits::deletedValue): Removed
+        unnecessary parameters.
+        (WebCore::FontPlatformDataCacheKeyTraits::emptyValue): Ditto.
+        (WebCore::FontCache::getCachedFontPlatformData): Updated for the change
+        in FontPlatformDataCacheKey.
+
+        * platform/graphics/FontDescription.cpp: Added.
+        (WebCore::FontDescription::lighterWeight): Added. Returns a lighter CSS
+        font-weight value if there is one, or the lightest value.
+        (WebCore::FontDescription::bolderWeight): Added. Returns a heavier CSS
+        font-weight value if there is one, or the heaviest value.
+
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontWeight): Added this enumeration.
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::bold): Removed.
+        (WebCore::FontDescription::weight): Changed to return a FontWeight.
+        (WebCore::FontDescription::setBold): Removed.
+        (WebCore::FontDescription::setWeight): Changed to take a FontWeight.
+
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::toAppKitFontWeight): Added. Maps a FontWeight to the AppKit
+        font weight scale of 0-15.
+        (WebCore::isAppKitFontWeightBold): Added.
+        (WebCore::FontCache::getFontDataForCharacters): Changed to use a weight
+        instead of the bold trait for custom fonts, and to decide whether to
+        synthesize bold based on the weights rather than the bold trait.
+        (WebCore::FontCache::fontExists): Updated for the change in
+        WebFontCache .
+        (WebCore::FontCache::createFontPlatformData): Ditto. Also changed to
+        decide whether to synthesize bold based on the weights rather than on
+        the bold trait.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::toGDIFontWeight): Added. Maps a FontWeight to a GDI font
+        weight constant.
+        (WebCore::isGDIFontWeightBold): Added.
+        (WebCore::adjustedGDIFontWeight): Added.
+        (WebCore::MatchImprovingProcData::MatchImprovingProcData): Added this
+        data structure for use by the following callback.
+        (WebCore::matchImprovingEnumProc): Added. The logic of this method is a
+        simplification of the betterChoice() predicate in WebFontCache.mm, which
+        considers only the italic trait and the weight.
+        (WebCore::createGDIFont): Added. Similarly to
+        +[WebFontCache fontWithFamily:traits:weight:size:], this function
+        finds the closest match in the family for the desired italic bit and
+        weight.
+        (WebCore::FontCache::fontExists): Changed to call createGDIFont().
+        (WebCore::FontCache::createFontPlatformData): Ditto. Also changed to
+        compute the synthetic bold and synthetic italic flags based on weights
+        and italic bits and pass them to the FontPlatformData constructor.
+
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Changed the bold and
+        oblique parameters to mean whether these should be synthesized and
+        removed the font enumeration code that used to decide that.
+
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::smallCapsFontData): Changed to pass the
+        synthetic bold and oblique flags from the full-size FontPlatformData to
+        the FontPlatformData constructor for the small caps font.
+
+        * platform/mac/WebCoreTextRenderer.h:
+        * platform/mac/WebCoreTextRenderer.mm:
+        (WebCoreFindFont): Added a weight parameter, which is passed to
+        +[WebFontCache fontWithFamily:traits:weight:size:].
+
+        * platform/mac/WebFontCache.h:
+        * platform/mac/WebFontCache.mm:
+        (acceptableChoice):
+        (betterChoice): Changed to ignore the bold trait. Changed the logic for
+        deciding based on weights to prefer the font whose weight is closer to
+        the desired one, or, if both candidates' weights are the same distance
+        from the desired weight, the one that is more "off-center". 
+        (+[WebFontCache internalFontWithFamily:traits:weight:size:]): Changed to
+        check for weight when matching by full name. Changed to pass
+        the actual desired weight instead of the constant 5 to
+        acceptableChoice() and betterChoice(). Changed to use weights to decide
+        whether to synthesize bold.
+        (+[WebFontCache fontWithFamily:traits:weight:size:]): Added a weight
+        parameter, which is passed to the internal method.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::paint): Updated for the change to FontDescription.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement): Ditto.
+        (WebCore::RenderListBox::paintItemForeground): Ditto.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::toFontWeight): Added. Maps the AppKit font weight range of
+        0-15 to the FontWeight range.
+        (WebCore::RenderThemeMac::systemFont): Updated for the change to
+        FontDescription.
+
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::systemFont): Ditto.
+
 2008-04-03  Dan Bernstein  <mitz@apple.com>
 
         - another Gtk build fix attempt

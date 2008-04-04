@@ -253,8 +253,8 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 #define WebSmartPastePboardType @"NeXT smart paste pasteboard type"
 
 #define STANDARD_WEIGHT 5
-#define MIN_BOLD_WEIGHT 9
-#define STANDARD_BOLD_WEIGHT 10
+#define MIN_BOLD_WEIGHT 7
+#define STANDARD_BOLD_WEIGHT 9
 
 // Fake URL scheme.
 #define WebDataProtocolScheme @"webkit-fake-url"
@@ -3713,7 +3713,7 @@ noPromisedData:
     [style setBackgroundColor:[self _colorAsString:color]];
 
     NSFont *font = [dictionary objectForKey:NSFontAttributeName];
-    if (font == nil) {
+    if (!font) {
         [style setFontFamily:@"Helvetica"];
         [style setFontSize:@"12px"];
         [style setFontWeight:@"normal"];
@@ -3724,11 +3724,12 @@ noPromisedData:
         // with characters like single quote or backslash in their names.
         [style setFontFamily:[NSString stringWithFormat:@"'%@'", [font familyName]]];
         [style setFontSize:[NSString stringWithFormat:@"%0.fpx", [font pointSize]]];
+        // FIXME: Map to the entire range of CSS weight values.
         if ([fm weightOfFont:font] >= MIN_BOLD_WEIGHT)
             [style setFontWeight:@"bold"];
         else
             [style setFontWeight:@"normal"];
-        if (([fm traitsOfFont:font] & NSItalicFontMask) != 0)
+        if ([fm traitsOfFont:font] & NSItalicFontMask)
             [style setFontStyle:@"italic"];
         else
             [style setFontStyle:@"normal"];
@@ -3863,7 +3864,7 @@ noPromisedData:
 
 - (NSFont *)_originalFontB
 {
-    return [[NSFontManager sharedFontManager] fontWithFamily:@"Times" traits:(NSBoldFontMask | NSItalicFontMask) weight:STANDARD_BOLD_WEIGHT size:12.0f];
+    return [[NSFontManager sharedFontManager] fontWithFamily:@"Times" traits:NSFontItalicTrait weight:STANDARD_BOLD_WEIGHT size:12.0f];
 }
 
 - (void)_addToStyle:(DOMCSSStyleDeclaration *)style fontA:(NSFont *)a fontB:(NSFont *)b
@@ -3889,8 +3890,6 @@ noPromisedData:
     int aWeight = [fm weightOfFont:a];
     int bWeight = [fm weightOfFont:b];
 
-    BOOL aIsBold = aWeight >= MIN_BOLD_WEIGHT;
-
     BOOL aIsItalic = ([fm traitsOfFont:a] & NSItalicFontMask) != 0;
     BOOL bIsItalic = ([fm traitsOfFont:b] & NSItalicFontMask) != 0;
 
@@ -3902,18 +3901,13 @@ noPromisedData:
         // the Postscript name.
         
         // Find the font the same way the rendering code would later if it encountered this CSS.
-        NSFontTraitMask traits = 0;
-        if (aIsBold)
-            traits |= NSBoldFontMask;
-        if (aIsItalic)
-            traits |= NSItalicFontMask;
-        NSFont *foundFont = WebCoreFindFont(aFamilyName, traits, aPointSize);
+        NSFontTraitMask traits = aIsItalic ? NSFontItalicTrait : 0;
+        NSFont *foundFont = WebCoreFindFont(aFamilyName, traits, aWeight, aPointSize);
 
         // If we don't find a font with the same Postscript name, then we'll have to use the
         // Postscript name to make the CSS specific enough.
-        if (![[foundFont fontName] isEqualToString:[a fontName]]) {
+        if (![[foundFont fontName] isEqualToString:[a fontName]])
             familyNameForCSS = [a fontName];
-        }
 
         // FIXME: Need more sophisticated escaping code if we want to handle family names
         // with characters like single quote or backslash in their names.
@@ -3929,7 +3923,7 @@ noPromisedData:
         [style _setFontSizeDelta:@"1px"];
 
     if (aWeight == bWeight)
-        [style setFontWeight:aIsBold ? @"bold" : @"normal"];
+        [style setFontWeight:aWeight > MIN_BOLD_WEIGHT ? @"bold" : @"normal"];
 
     if (aIsItalic == bIsItalic)
         [style setFontStyle:aIsItalic ? @"italic" :  @"normal"];

@@ -4655,6 +4655,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\FontDescription.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\FontDescription.h"
 					>
 				</File>

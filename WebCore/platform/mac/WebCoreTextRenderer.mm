@@ -82,7 +82,7 @@ void WebCoreSetAlwaysUseATSU(bool useATSU)
     Font::setCodePath(useATSU ? Font::Complex : Font::Auto);
 }
 
-NSFont* WebCoreFindFont(NSString* familyName, NSFontTraitMask traits, int size)
+NSFont* WebCoreFindFont(NSString* familyName, NSFontTraitMask traits, int weight, int size)
 {
-    return [WebFontCache fontWithFamily:familyName traits:traits size:size];
+    return [WebFontCache fontWithFamily:familyName traits:traits weight:weight size:size];
 }

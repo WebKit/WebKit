@@ -3,6 +3,7 @@
  * Copyright (C) 2004 Zack Rusin <zack@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
+ * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -519,10 +520,27 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 return new CSSPrimitiveValue(CSSValueSmallCaps);
             return new CSSPrimitiveValue(CSSValueNormal);
         case CSSPropertyFontWeight:
-            // FIXME: this does not reflect the full range of weights
-            // that can be expressed with CSS
-            if (style->fontDescription().weight() == cBoldWeight)
-                return new CSSPrimitiveValue(CSSValueBold);
+            switch (style->fontDescription().weight()) {
+                case FontWeight100:
+                    return new CSSPrimitiveValue(CSSValue100);
+                case FontWeight200:
+                    return new CSSPrimitiveValue(CSSValue200);
+                case FontWeight300:
+                    return new CSSPrimitiveValue(CSSValue300);
+                case FontWeightNormal:
+                    return new CSSPrimitiveValue(CSSValueNormal);
+                case FontWeight500:
+                    return new CSSPrimitiveValue(CSSValue500);
+                case FontWeight600:
+                    return new CSSPrimitiveValue(CSSValue600);
+                case FontWeightBold:
+                    return new CSSPrimitiveValue(CSSValueBold);
+                case FontWeight800:
+                    return new CSSPrimitiveValue(CSSValue800);
+                case FontWeight900:
+                    return new CSSPrimitiveValue(CSSValue900);
+            }
+            ASSERT_NOT_REACHED();
             return new CSSPrimitiveValue(CSSValueNormal);
         case CSSPropertyHeight:
             if (renderer)

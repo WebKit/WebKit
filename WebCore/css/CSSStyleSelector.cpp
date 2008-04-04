@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
- *           (C) 2006 Nicholas Shanks (webkit@nickshanks.com)
+ * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
  * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
@@ -2428,38 +2428,52 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (isInherit)
             fontDescription.setWeight(m_parentStyle->fontDescription().weight());
         else if (isInitial)
-            fontDescription.setWeight(cNormalWeight);
+            fontDescription.setWeight(FontWeightNormal);
         else {
             if (!primitiveValue)
                 return;
             if (primitiveValue->getIdent()) {
                 switch (primitiveValue->getIdent()) {
-                    // FIXME: We aren't genuinely supporting specific weight values.
-                    case CSSValueBold:
                     case CSSValueBolder:
-                    case CSSValue600:
+                        fontDescription.setWeight(fontDescription.bolderWeight());
+                        break;
+                    case CSSValueLighter:
+                        fontDescription.setWeight(fontDescription.lighterWeight());
+                        break;
+                    case CSSValueBold:
                     case CSSValue700:
-                    case CSSValue800:
-                    case CSSValue900:
-                        fontDescription.setWeight(cBoldWeight);
+                        fontDescription.setWeight(FontWeightBold);
                         break;
                     case CSSValueNormal:
-                    case CSSValueLighter:
-                    case CSSValue100:
-                    case CSSValue200:
-                    case CSSValue300:
                     case CSSValue400:
+                        fontDescription.setWeight(FontWeightNormal);
+                        break;
+                    case CSSValue900:
+                        fontDescription.setWeight(FontWeight900);
+                        break;
+                    case CSSValue800:
+                        fontDescription.setWeight(FontWeight800);
+                        break;
+                    case CSSValue600:
+                        fontDescription.setWeight(FontWeight600);
+                        break;
                     case CSSValue500:
-                        fontDescription.setWeight(cNormalWeight);
+                        fontDescription.setWeight(FontWeight500);
+                        break;
+                    case CSSValue300:
+                        fontDescription.setWeight(FontWeight300);
+                        break;
+                    case CSSValue200:
+                        fontDescription.setWeight(FontWeight200);
+                        break;
+                    case CSSValue100:
+                        fontDescription.setWeight(FontWeight100);
                         break;
                     default:
                         return;
                 }
-            }
-            else
-            {
-                // ### fix parsing of 100-900 values in parser, apply them here
-            }
+            } else
+                ASSERT_NOT_REACHED();
         }
         if (m_style->setFontDescription(fontDescription))
             m_fontDirty = true;

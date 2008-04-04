@@ -517,7 +517,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
         Font itemFont = client()->clientStyle()->font();
         if (client()->itemIsLabel(index)) {
             FontDescription d = itemFont.fontDescription();
-            d.setBold(true);
+            d.setWeight(d.bolderWeight());
             itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
             itemFont.update(m_popupClient->fontSelector());
         }

@@ -109,7 +109,7 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
             GetObject(m_font.hfont(), sizeof(LOGFONT), &winfont);
             winfont.lfHeight = -lroundf(smallCapsHeight * (m_font.useGDI() ? 1 : 32));
             HFONT hfont = CreateFontIndirect(&winfont);
-            m_smallCapsFontData = new SimpleFontData(FontPlatformData(hfont, smallCapsHeight, fontDescription.bold(), fontDescription.italic(), m_font.useGDI()));
+            m_smallCapsFontData = new SimpleFontData(FontPlatformData(hfont, smallCapsHeight, m_font.syntheticBold(), m_font.syntheticOblique(), m_font.useGDI()));
         }
     }
     return m_smallCapsFontData;

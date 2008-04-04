@@ -308,55 +308,131 @@ FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fo
     return getCachedFontPlatformData(fontDescription, timesStr);
 }
 
+static LONG toGDIFontWeight(FontWeight fontWeight)
+{
+    static LONG gdiFontWeights[] = {
+        FW_THIN,        // FontWeight100
+        FW_EXTRALIGHT,  // FontWeight200
+        FW_LIGHT,       // FontWeight300
+        FW_NORMAL,      // FontWeight400
+        FW_MEDIUM,      // FontWeight500
+        FW_SEMIBOLD,    // FontWeight600
+        FW_BOLD,        // FontWeight700
+        FW_EXTRABOLD,   // FontWeight800
+        FW_HEAVY        // FontWeight900
+    };
+    return gdiFontWeights[fontWeight];
+}
+
+static inline bool isGDIFontWeightBold(LONG gdiFontWeight)
+{
+    return gdiFontWeight >= FW_SEMIBOLD;
+}
+
+static LONG adjustedGDIFontWeight(LONG gdiFontWeight, const String& family)
+{
+    static AtomicString lucidaStr("Lucida Grande");
+    if (equalIgnoringCase(family, lucidaStr)) {
+        if (gdiFontWeight == FW_NORMAL)
+            return FW_MEDIUM;
+        if (gdiFontWeight == FW_BOLD)
+            return FW_SEMIBOLD;
+    }
+    return gdiFontWeight;
+}
+
+struct MatchImprovingProcData {
+    MatchImprovingProcData(LONG desiredWeight, bool desiredItalic)
+        : m_desiredWeight(desiredWeight)
+        , m_desiredItalic(desiredItalic)
+        , m_hasMatched(false)
+    {
+    }
+
+    LONG m_desiredWeight;
+    bool m_desiredItalic;
+    bool m_hasMatched;
+    LOGFONT m_chosen;
+};
+
+static int CALLBACK matchImprovingEnumProc(CONST LOGFONT* candidate, CONST TEXTMETRIC* metrics, DWORD fontType, LPARAM lParam)
+{
+    MatchImprovingProcData* matchData = reinterpret_cast<MatchImprovingProcData*>(lParam);
+
+    if (!matchData->m_hasMatched) {
+        matchData->m_hasMatched = true;
+        matchData->m_chosen = *candidate;
+        return 1;
+    }
+
+    if (!matchData->m_desiredItalic)
+        // Prefer the candidate if it helps us lose undesired italics.
+        if (matchData->m_chosen.lfItalic && !candidate->lfItalic) {
+            matchData->m_chosen = *candidate;
+            return 1;
+        }
+        // Reject the candidate if it adds undesired italics.
+        if (candidate->lfItalic && !matchData->m_chosed.lfItalic)
+            return 1;
+    }
+
+    unsigned chosenWeightDeltaMagnitude = abs(matchData->m_chosen.lfWeight - matchData->m_desiredWeight);
+    unsigned candidateWeightDeltaMagnitude = abs(candidate->lfWeight - matchData->m_desiredWeight);
+
+    // If both are the same distance from the desired weight, prefer the candidate if it is further from regular.
+    if (chosenWeightDeltaMagnitude == candidateWeightDeltaMagnitude && abs(candidate->lfWeight - FW_NORMAL) > abs(matchData->m_chosen.lfWeight - FW_NORMAL)) {
+        matchData->m_chosen = *candidate;
+        return 1;
+    }
+
+    // Otherwise, prefer the one closer to the desired weight.
+    if (candidateWeightDeltaMagnitude < chosenWeightDeltaMagnitude)
+        matchData->m_chosen = *candidate;
+
+    return 1;
+}
+
+static HFONT createGDIFont(const AtomicString& family, LONG desiredWeight, bool desiredItalic, int size)
+{
+    HDC hdc = GetDC(0);
+
+    LOGFONT logFont;
+    logFont.lfCharSet = DEFAULT_CHARSET;
+    unsigned familyLength = min(family.length(), static_cast<unsigned>(LF_FACESIZE - 1));
+    memcpy(logFont.lfFaceName, family.characters(), familyLength * sizeof(UChar));
+    logFont.lfFaceName[familyLength] = 0;
+    logFont.lfPitchAndFamily = 0;
+
+    MatchImprovingProcData matchData(desiredWeight, desiredItalic);
+    EnumFontFamiliesEx(hdc, &logFont, matchImprovingEnumProc, reinterpret_cast<LPARAM>(&matchData), 0);
+
+    ReleaseDC(0, hdc);
+
+    if (!matchData.m_hasMatched)
+        return 0;
+
+    matchData.m_chosen.lfHeight = -size;
+    matchData.m_chosen.lfUnderline = false;
+    matchData.m_chosen.lfStrikeOut = false;
+#if PLATFORM(CG)
+    matchData.m_chosen.lfOutPrecision = OUT_TT_ONLY_PRECIS;
+#else
+    matchData.m_chosen.lfOutPrecision = OUT_TT_PRECIS;
+#endif
+    matchData.m_chosen.lfQuality = CLEARTYPE_QUALITY;
+
+    return CreateFontIndirect(&matchData.m_chosen);
+}
+
 bool FontCache::fontExists(const FontDescription& fontDescription, const AtomicString& family)
 {
-    LOGFONT winfont;
+    HFONT hfont = createGDIFont(family, adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family),
+                                fontDescription.italic(), fontDescription.computedPixelSize());
 
-    // The size here looks unusual.  The negative number is intentional.  The logical size constant is 32.
-    winfont.lfHeight = -fontDescription.computedPixelSize() * 32;
-    winfont.lfWidth = 0;
-    winfont.lfEscapement = 0;
-    winfont.lfOrientation = 0;
-    winfont.lfUnderline = false;
-    winfont.lfStrikeOut = false;
-    winfont.lfCharSet = DEFAULT_CHARSET;
-#if PLATFORM(CG)
-    winfont.lfOutPrecision = OUT_TT_ONLY_PRECIS;
-#else
-    winfont.lfOutPrecision = OUT_TT_PRECIS;
-#endif
-    winfont.lfQuality = CLEARTYPE_QUALITY;
-    winfont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
-    winfont.lfItalic = fontDescription.italic();
-
-    // FIXME: Support weights for real.  Do our own enumeration of the available weights.
-    // We can't rely on Windows here, since we need to follow the CSS2 algorithm for how to fill in
-    // gaps in the weight list.
-    // FIXME: Hardcoding Lucida Grande for now.  It uses different weights than typical Win32 fonts
-    // (500/600 instead of 400/700).
-    static AtomicString lucidaStr("Lucida Grande");
-    if (equalIgnoringCase(family, lucidaStr))
-        winfont.lfWeight = fontDescription.bold() ? 600 : 500;
-    else
-        winfont.lfWeight = fontDescription.bold() ? 700 : 400;
-    int len = min(family.length(), (unsigned int)LF_FACESIZE - 1);
-    memcpy(winfont.lfFaceName, family.characters(), len * sizeof(WORD));
-    winfont.lfFaceName[len] = '\0';
-
-    HFONT hfont = CreateFontIndirect(&winfont);
-    // Windows will always give us a valid pointer here, even if the face name is non-existent.  We have to double-check
-    // and see if the family name was really used.
-    HDC dc = GetDC(0);
-    SaveDC(dc);
-    SelectObject(dc, hfont);
-    WCHAR name[LF_FACESIZE];
-    GetTextFace(dc, LF_FACESIZE, name);
-    RestoreDC(dc, -1);
-    ReleaseDC(0, dc);
-
+    bool result = hfont;
     DeleteObject(hfont);
 
-    return !wcsicmp(winfont.lfFaceName, name);
+    return result;
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
@@ -368,56 +444,26 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
 
     bool useGDI = fontDescription.renderingMode() == AlternateRenderingMode && !isLucidaGrande;
 
-    LOGFONT winfont;
+    // The logical size constant is 32. We do this for subpixel precision when rendering using Uniscribe.
+    // This masks rounding errors related to the HFONT metrics being  different from the CGFont metrics.
+    // FIXME: We will eventually want subpixel precision for GDI mode, but the scaled rendering doesn't
+    // look as nice. That may be solvable though.
+    LONG weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family);
+    HFONT hfont = createGDIFont(family, weight, fontDescription.italic(), fontDescription.computedPixelSize() * (useGDI ? 1 : 32));
 
-    // The size here looks unusual.  The negative number is intentional.  The logical size constant is 32. We do this
-    // for subpixel precision when rendering using Uniscribe.  This masks rounding errors related to the HFONT metrics being
-    // different from the CGFont metrics.
-    // FIXME: We will eventually want subpixel precision for GDI mode, but the scaled rendering doesn't look as nice.  That may be solvable though.
-    winfont.lfHeight = -fontDescription.computedPixelSize() * (useGDI ? 1 : 32);
-    winfont.lfWidth = 0;
-    winfont.lfEscapement = 0;
-    winfont.lfOrientation = 0;
-    winfont.lfUnderline = false;
-    winfont.lfStrikeOut = false;
-    winfont.lfCharSet = DEFAULT_CHARSET;
-    winfont.lfOutPrecision = OUT_TT_ONLY_PRECIS;
-    winfont.lfQuality = DEFAULT_QUALITY;
-    winfont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
-    winfont.lfItalic = fontDescription.italic();
-
-    // FIXME: Support weights for real.  Do our own enumeration of the available weights.
-    // We can't rely on Windows here, since we need to follow the CSS2 algorithm for how to fill in
-    // gaps in the weight list.
-    // FIXME: Hardcoding Lucida Grande for now.  It uses different weights than typical Win32 fonts
-    // (500/600 instead of 400/700).
-    if (isLucidaGrande) {
-        winfont.lfWeight = fontDescription.bold() ? 600 : 500;
-        useGDI = false; // Never use GDI for Lucida Grande.
-    } else
-        winfont.lfWeight = fontDescription.bold() ? 700 : 400;
-    int len = min(family.length(), (unsigned int)LF_FACESIZE - 1);
-    memcpy(winfont.lfFaceName, family.characters(), len * sizeof(WORD));
-    winfont.lfFaceName[len] = '\0';
-
-    HFONT hfont = CreateFontIndirect(&winfont);
-    // Windows will always give us a valid pointer here, even if the face name is non-existent.  We have to double-check
-    // and see if the family name was really used.
-    HDC dc = GetDC(0);
-    SaveDC(dc);
-    SelectObject(dc, hfont);
-    WCHAR name[LF_FACESIZE];
-    GetTextFace(dc, LF_FACESIZE, name);
-    RestoreDC(dc, -1);
-    ReleaseDC(0, dc);
-
-    if (_wcsicmp(winfont.lfFaceName, name)) {
-        DeleteObject(hfont);
+    if (!hfont)
         return 0;
-    }
-    
-    FontPlatformData* result = new FontPlatformData(hfont, fontDescription.computedPixelSize(),
-                                                    fontDescription.bold(), fontDescription.italic(), useGDI);
+
+    if (isLucidaGrande)
+        useGDI = false; // Never use GDI for Lucida Grande.
+
+    LOGFONT logFont;
+    GetObject(hfont, sizeof(LOGFONT), &logFont);
+
+    bool synthesizeBold = isGDIFontWeightBold(weight) && !isGDIFontWeightBold(logFont.lfWeight);
+    bool synthesizeItalic = fontDescription.italic() && !logFont.lfItalic;
+
+    FontPlatformData* result = new FontPlatformData(hfont, fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic, useGDI);
 
 #if PLATFORM(CG)
     bool fontCreationFailed = !result->cgFont();

@@ -138,6 +138,33 @@ Color RenderThemeMac::activeListBoxSelectionBackgroundColor() const
     return Color(static_cast<int>(255.0 * [color redComponent]), static_cast<int>(255.0 * [color greenComponent]), static_cast<int>(255.0 * [color blueComponent]));
 }
 
+static FontWeight toFontWeight(NSInteger appKitFontWeight)
+{
+    ASSERT(appKitFontWeight > 0 && appKitFontWeight < 15);
+    if (appKitFontWeight > 14)
+        appKitFontWeight = 14;
+    else if (appKitFontWeight < 1)
+        appKitFontWeight = 1;
+
+    static FontWeight fontWeights[] = {
+        FontWeight100,
+        FontWeight100,
+        FontWeight200,
+        FontWeight300,
+        FontWeight400,
+        FontWeight500,
+        FontWeight600,
+        FontWeight600,
+        FontWeight700,
+        FontWeight800,
+        FontWeight800,
+        FontWeight900,
+        FontWeight900,
+        FontWeight900
+    };
+    return fontWeights[appKitFontWeight - 1];
+}
+
 void RenderThemeMac::systemFont(int cssValueId, FontDescription& fontDescription) const
 {
     static FontDescription systemFont;
@@ -188,13 +215,13 @@ void RenderThemeMac::systemFont(int cssValueId, FontDescription& fontDescription
     }
 
     if (font) {
+        NSFontManager *fontManager = [NSFontManager sharedFontManager];
         cachedDesc->setIsAbsoluteSize(true);
         cachedDesc->setGenericFamily(FontDescription::NoFamily);
         cachedDesc->firstFamily().setFamily([font familyName]);
         cachedDesc->setSpecifiedSize([font pointSize]);
-        NSFontTraitMask traits = [[NSFontManager sharedFontManager] traitsOfFont:font];
-        cachedDesc->setBold(traits & NSBoldFontMask);
-        cachedDesc->setItalic(traits & NSItalicFontMask);
+        cachedDesc->setWeight(toFontWeight([fontManager weightOfFont:font]));
+        cachedDesc->setItalic([fontManager traitsOfFont:font] & NSItalicFontMask);
     }
     fontDescription = *cachedDesc;
 }

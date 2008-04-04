@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -121,13 +122,33 @@ void FontCache::platformInit()
     wkSetUpFontCache(s);
 }
 
+static int toAppKitFontWeight(FontWeight fontWeight)
+{
+    static int appKitFontWeights[] = {
+        1,  // FontWeight100
+        2,  // FontWeight200
+        3,  // FontWeight300
+        5,  // FontWeight400
+        6,  // FontWeight500
+        7,  // FontWeight600
+        9,  // FontWeight700
+        10, // FontWeight800
+        12, // FontWeight900
+    };
+    return appKitFontWeights[fontWeight];
+}
+
+static inline bool isAppKitFontWeightBold(NSInteger appKitFontWeight)
+{
+    return appKitFontWeight >= 7;
+}
+
 const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
     const FontPlatformData& platformData = font.fontDataAt(0)->fontDataForCharacter(characters[0])->platformData();
     NSFont *nsFont = platformData.font();
 
-    NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(characters)
-        length:length freeWhenDone:NO];
+    NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(characters) length:length freeWhenDone:NO];
     NSFont *substituteFont = wkGetFontInLanguageForRange(nsFont, string, NSMakeRange(0, length));
     [string release];
 
@@ -135,49 +156,45 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
         substituteFont = wkGetFontInLanguageForCharacter(nsFont, characters[0]);
     if (!substituteFont)
         return 0;
-    
+
     // Use the family name from the AppKit-supplied substitute font, requesting the
     // traits, weight, and size we want. One way this does better than the original
     // AppKit request is that it takes synthetic bold and oblique into account.
     // But it does create the possibility that we could end up with a font that
     // doesn't actually cover the characters we need.
 
-    NSFontManager *manager = [NSFontManager sharedFontManager];
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
     NSFontTraitMask traits;
     NSInteger weight;
     CGFloat size;
 
     if (nsFont) {
-        traits = [manager traitsOfFont:nsFont];
+        traits = [fontManager traitsOfFont:nsFont];
         if (platformData.m_syntheticBold)
             traits |= NSBoldFontMask;
         if (platformData.m_syntheticOblique)
-            traits |= NSItalicFontMask;
-        weight = [manager weightOfFont:nsFont];
+            traits |= NSFontItalicTrait;
+        weight = [fontManager weightOfFont:nsFont];
         size = [nsFont pointSize];
     } else {
         // For custom fonts nsFont is nil.
-        traits = (font.bold() ? NSBoldFontMask : 0) | (font.italic() ? NSItalicFontMask : 0);
-        weight = 5;
+        traits = font.italic() ? NSFontItalicTrait : 0;
+        weight = toAppKitFontWeight(font.weight());
         size = font.pixelSize();
     }
 
-    NSFont *bestVariation = [manager fontWithFamily:[substituteFont familyName]
-        traits:traits
-        weight:weight
-        size:size];
-    if (bestVariation)
+    if (NSFont *bestVariation = [fontManager fontWithFamily:[substituteFont familyName] traits:traits weight:weight size:size])
         substituteFont = bestVariation;
 
-    substituteFont = font.fontDescription().usePrinterFont()
-        ? [substituteFont printerFont] : [substituteFont screenFont];
+    substituteFont = font.fontDescription().usePrinterFont() ? [substituteFont printerFont] : [substituteFont screenFont];
 
-    NSFontTraitMask substituteFontTraits = [manager traitsOfFont:substituteFont];
+    NSFontTraitMask substituteFontTraits = [fontManager traitsOfFont:substituteFont];
+    NSInteger substituteFontWeight = [fontManager weightOfFont:substituteFont];
 
     FontPlatformData alternateFont(substituteFont, 
-        !font.isPlatformFont() && (traits & NSBoldFontMask) && !(substituteFontTraits & NSBoldFontMask),
-        !font.isPlatformFont() && (traits & NSItalicFontMask) && !(substituteFontTraits & NSItalicFontMask));
+        !font.isPlatformFont() && isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(substituteFontWeight),
+        !font.isPlatformFont() && (traits & NSFontItalicTrait) && !(substituteFontTraits & NSFontItalicTrait));
     return getCachedFontData(&alternateFont);
 }
 
@@ -222,40 +239,35 @@ FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fo
 
 bool FontCache::fontExists(const FontDescription& fontDescription, const AtomicString& family)
 {
-    NSFontTraitMask traits = 0;
-    if (fontDescription.italic())
-        traits |= NSItalicFontMask;
-    if (fontDescription.bold())
-        traits |= NSBoldFontMask;
+    NSFontTraitMask traits = fontDescription.italic() ? NSFontItalicTrait : 0;
+    int weight = toAppKitFontWeight(fontDescription.weight());
     float size = fontDescription.computedPixelSize();
-    
-    NSFont* nsFont = [WebFontCache fontWithFamily:family traits:traits size:size];
-    return nsFont != 0;
+
+    return [WebFontCache fontWithFamily:family traits:traits weight:weight size:size];
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
-    NSFontTraitMask traits = 0;
-    if (fontDescription.italic())
-        traits |= NSItalicFontMask;
-    if (fontDescription.bold())
-        traits |= NSBoldFontMask;
+    NSFontTraitMask traits = fontDescription.italic() ? NSFontItalicTrait : 0;
+    NSInteger weight = toAppKitFontWeight(fontDescription.weight());
     float size = fontDescription.computedPixelSize();
-    
-    NSFont* nsFont = [WebFontCache fontWithFamily:family traits:traits size:size];
+
+    NSFont *nsFont = [WebFontCache fontWithFamily:family traits:traits weight:weight size:size];
     if (!nsFont)
         return 0;
 
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
     NSFontTraitMask actualTraits = 0;
-    if (fontDescription.bold() || fontDescription.italic())
-        actualTraits = [[NSFontManager sharedFontManager] traitsOfFont:nsFont];
-    
+    if (fontDescription.italic())
+        actualTraits = [fontManager traitsOfFont:nsFont];
+    NSInteger actualWeight = [fontManager weightOfFont:nsFont];
+
     FontPlatformData* result = new FontPlatformData;
-    
+
     // Use the correct font for print vs. screen.
     result->setFont(fontDescription.usePrinterFont() ? [nsFont printerFont] : [nsFont screenFont]);
-    result->m_syntheticBold = (traits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask);
-    result->m_syntheticOblique = (traits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask);
+    result->m_syntheticBold = isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(actualWeight);
+    result->m_syntheticOblique = (traits & NSFontItalicTrait) && !(actualTraits & NSFontItalicTrait);
     return result;
 }
 

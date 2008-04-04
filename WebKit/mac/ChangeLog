@@ -1,3 +1,15 @@
+2008-04-03  Nicholas Shanks  <webkit@nickshanks.com>
+
+        Updated by Dan Bernstein. Reviewed by Dave Hyatt.
+
+        - WebKit part of fixing http://bugs.webkit.org/show_bug.cgi?id=6484
+          font-weight does not properly support graded weights
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _styleFromFontAttributes:]):
+        (-[WebHTMLView _originalFontB]):
+        (-[WebHTMLView _addToStyle:fontA:fontB:]):
+
 2008-04-02  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

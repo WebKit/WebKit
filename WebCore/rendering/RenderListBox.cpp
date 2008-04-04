@@ -112,7 +112,7 @@ void RenderListBox::updateFromElement()
             else if (element->hasTagName(optgroupTag)) {
                 text = static_cast<HTMLOptGroupElement*>(element)->groupLabelText();
                 FontDescription d = itemFont.fontDescription();
-                d.setBold(true);
+                d.setWeight(d.bolderWeight());
                 itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
                 itemFont.update(document()->styleSelector()->fontSelector());
             }
@@ -331,7 +331,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
     Font itemFont = style()->font();
     if (element->hasTagName(optgroupTag)) {
         FontDescription d = itemFont.fontDescription();
-        d.setBold(true);
+        d.setWeight(d.bolderWeight());
         itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
         itemFont.update(document()->styleSelector()->fontSelector());
     }

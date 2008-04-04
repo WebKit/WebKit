@@ -39,6 +39,7 @@ struct WebFontDescription {
     LPCTSTR family;
     unsigned familyLength;
     float size;
+    // FIXME: Change to weight.
     bool bold;
     bool italic;
 };

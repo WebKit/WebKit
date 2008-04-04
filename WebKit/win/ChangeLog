@@ -1,3 +1,18 @@
+2008-04-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - WebKit part of fixing http://bugs.webkit.org/show_bug.cgi?id=6484
+          font-weight does not properly support graded weights
+
+        * DOMCoreClasses.cpp:
+        (DOMElement::font): Updated for the change to FontDescription.
+        * WebCoreSupport/WebDragClient.cpp:
+        (dragLabelFont): Ditto.
+        * WebKitGraphics.cpp:
+        (makeFont): Ditto.
+        * WebKitGraphics.h: Added a FIXME.
+
 2008-04-03  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/5835382> Calling window.open immediately after window.close can sometimes result in no window being created

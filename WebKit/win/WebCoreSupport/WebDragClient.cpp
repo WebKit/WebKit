@@ -160,7 +160,7 @@ void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, c
 static Font dragLabelFont(int size, bool bold)
 {
     FontDescription desc;
-    desc.setBold(bold);
+    desc.setWeight(bold ? FontWeightBold : FontWeightNormal);
     FontFamily family;
     family.setFamily("Lucida Grande");
     desc.setFamily(family);

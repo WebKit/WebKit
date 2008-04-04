@@ -196,8 +196,7 @@ public:
     const FontFamily& family() const { return m_fontDescription.family(); }
 
     bool italic() const { return m_fontDescription.italic(); }
-    unsigned weight() const { return m_fontDescription.weight(); }
-    bool bold() const { return m_fontDescription.bold(); }
+    FontWeight weight() const { return m_fontDescription.weight(); }
 
 #if !PLATFORM(QT)
     bool isPlatformFont() const { return m_isPlatformFont; }

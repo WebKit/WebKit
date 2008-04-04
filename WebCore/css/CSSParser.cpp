@@ -2,6 +2,7 @@
  * Copyright (C) 2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -728,14 +729,13 @@ bool CSSParser::parseValue(int propId, bool important)
             valid_primitive = true;
         break;
 
-    case CSSPropertyFontWeight:  // normal | bold | bolder | lighter | 100 | 200 | 300 | 400 |
-        // 500 | 600 | 700 | 800 | 900 | inherit
+    case CSSPropertyFontWeight:  // normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit
         if (id >= CSSValueNormal && id <= CSSValue900) {
-            // Allready correct id
+            // Valid weight keyword
             valid_primitive = true;
-        } else if (validUnit(value, FInteger|FNonNeg, false)) {
-            int weight = (int)value->fValue;
-            if ((weight % 100))
+        } else if (validUnit(value, FInteger | FNonNeg, false)) {
+            int weight = static_cast<int>(value->fValue);
+            if (weight % 100)
                 break;
             weight /= 100;
             if (weight >= 1 && weight <= 9) {
