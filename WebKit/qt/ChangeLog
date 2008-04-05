@@ -1,5 +1,15 @@
 2008-04-05  Olivier Goffart  <ogoffart@trolltech.com>
 
+        Reviewed by Holger.
+
+        Fixes: Right clicking an image and choosing "copy image" doesnt put anything in the clipboard.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction):
+
+2008-04-05  Olivier Goffart  <ogoffart@trolltech.com>
+
         Reviewed by Simon.
 
         Fixes: Right click, and "Open image" open the link instead of the image.

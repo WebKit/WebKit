@@ -75,6 +75,7 @@
 #include <QUndoStack>
 #include <QUrl>
 #include <QPainter>
+#include <QClipboard>
 #if QT_VERSION >= 0x040400
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -914,6 +915,7 @@ void QWebPage::triggerAction(WebAction action, bool checked)
             frame->loader()->client()->startDownload(WebCore::ResourceRequest(d->currentContext.linkUrl(), frame->loader()->outgoingReferrer()));
             break;
         case CopyImageToClipboard:
+            QApplication::clipboard()->setPixmap(d->currentContext.image());
             break;
         case GoBack:
             d->page->goBack();
