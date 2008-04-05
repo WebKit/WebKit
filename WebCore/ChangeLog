@@ -1,3 +1,20 @@
+2008-04-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Oliver.
+
+        Replace AccessibilityObject::isRenderImage() with a virtual
+        RenderObject::isRenderImage().
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityObject::addChildren):
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isDetached):
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::isRenderImage):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderImage):
+
 2008-04-04  Dan Bernstein  <mitz@apple.com>
 
         - try to fix the wx build

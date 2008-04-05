@@ -258,6 +258,7 @@ public:
 
     virtual bool isRenderBlock() const { return false; }
     virtual bool isRenderInline() const { return false; }
+    virtual bool isRenderImage() const { return false; }
     virtual bool isInlineFlow() const { return false; }
     virtual bool isBlockFlow() const { return false; }
     virtual bool isInlineBlockOrInlineTable() const { return false; }

@@ -159,11 +159,6 @@ bool AccessibilityObject::isImageButton() const
     return isImage() && m_renderer->element() && m_renderer->element()->hasTagName(inputTag);
 }
 
-bool AccessibilityObject::isRenderImage() const
-{
-    return isImage() && !strcmp(m_renderer->renderName(), "RenderImage");
-}
-
 bool AccessibilityObject::isAnchor() const
 {
     return m_areaElement || (!isImage() && m_renderer->element() && m_renderer->element()->isLink());
@@ -599,7 +594,7 @@ bool AccessibilityObject::accessibilityIsIgnored() const
         return !static_cast<RenderBlock*>(m_renderer)->firstLineBox() && !mouseButtonListener();
 
     // ignore images seemingly used as spacers
-    if (isRenderImage()) {
+    if (m_renderer->isRenderImage()) {
         // informal standard is to ignore images with zero-length alt strings
         Node* node = m_renderer->element();
         if (node && node->isElementNode()) {
@@ -1812,7 +1807,7 @@ void AccessibilityObject::addChildren()
     }
 
     // for a RenderImage, add the <area> elements as individual accessibility objects
-    if (isRenderImage() && !m_areaElement) {
+    if (m_renderer->isRenderImage() && !m_areaElement) {
         HTMLMapElement* map = static_cast<RenderImage*>(m_renderer)->imageMap();
         if (map) {
             for (Node* current = map->firstChild(); current; current = current->traverseNextNode(map)) {
