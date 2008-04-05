@@ -1,3 +1,12 @@
+2008-04-05  Olivier Goffart  <ogoffart@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixes: Right click, and "Open image" open the link instead of the image.
+        
+
+        * Api/qwebpage.cpp:
+
 2008-04-05  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.
