@@ -298,11 +298,37 @@ void CSSFontSelector::fontLoaded(CSSSegmentedFontFace*)
     m_document->renderer()->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
+static FontData* fontDataForGenericFamily(Document* document, const FontDescription& fontDescription, const AtomicString& familyName)
+{
+    const Settings* settings = document->frame()->settings();
+    AtomicString genericFamily;
+    if (familyName == "-webkit-serif")
+        genericFamily = settings->serifFontFamily();
+    else if (familyName == "-webkit-sans-serif")
+        genericFamily = settings->sansSerifFontFamily();
+    else if (familyName == "-webkit-cursive")
+        genericFamily = settings->cursiveFontFamily();
+    else if (familyName == "-webkit-fantasy")
+        genericFamily = settings->fantasyFontFamily();
+    else if (familyName == "-webkit-monospace")
+        genericFamily = settings->fixedFontFamily();
+    else if (familyName == "-webkit-standard")
+        genericFamily = settings->standardFontFamily();
+
+    if (!genericFamily.isEmpty())
+        return FontCache::getCachedFontData(FontCache::getCachedFontPlatformData(fontDescription, genericFamily));
+
+    return 0;
+}
+
 FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, const AtomicString& familyName)
 {
-    if (m_fonts.isEmpty() && !familyName.startsWith("-webkit-"))
+    if (m_fonts.isEmpty()) {
+        if (familyName.startsWith("-webkit-"))
+            return fontDataForGenericFamily(m_document, fontDescription, familyName);
         return 0;
-    
+    }
+
     FontWeight weight = fontDescription.weight();
     bool italic = fontDescription.italic();
     
@@ -364,24 +390,7 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
     if (!face) {
         // If we were handed a generic family, but there was no match, go ahead and return the correct font based off our
         // settings.
-        const Settings* settings = m_document->frame()->settings();
-        AtomicString genericFamily;
-        if (familyName == "-webkit-serif")
-            genericFamily = settings->serifFontFamily();
-        else if (familyName == "-webkit-sans-serif")
-            genericFamily = settings->sansSerifFontFamily();
-        else if (familyName == "-webkit-cursive")
-            genericFamily = settings->cursiveFontFamily();
-        else if (familyName == "-webkit-fantasy")
-            genericFamily = settings->fantasyFontFamily();
-        else if (familyName == "-webkit-monospace")
-            genericFamily = settings->fixedFontFamily();
-        else if (familyName == "-webkit-standard")
-            genericFamily = settings->standardFontFamily();
-        
-        if (!genericFamily.isEmpty())
-            return FontCache::getCachedFontData(FontCache::getCachedFontPlatformData(fontDescription, genericFamily));
-        return 0;
+        return fontDataForGenericFamily(m_document, fontDescription, familyName);
     }
 
     // We have a face.  Ask it for a font data.  If it cannot produce one, it will fail, and the OS will take over.

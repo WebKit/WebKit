@@ -1,3 +1,14 @@
+2008-04-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - speed up CSSFontSelector::getFontData()
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::fontDataForGenericFamily): Factored out of getFontData().
+        (WebCore::CSSFontSelector::getFontData): Changed to call
+        fontDataForGenericFamily() directly if the map is empty.
+
 2008-04-04  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Oliver.
