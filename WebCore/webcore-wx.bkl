@@ -52,6 +52,7 @@ wxWebCore port Bakefile project file.
             platform/graphics/wx/AffineTransformWx.cpp
             platform/graphics/wx/ColorWx.cpp
             platform/graphics/wx/FloatRectWx.cpp
+            platform/graphics/wx/GradientWx.cpp
             platform/graphics/wx/GraphicsContextWx.cpp
             platform/graphics/wx/ImageBufferWx.cpp
             platform/graphics/wx/ImageSourceWx.cpp
