@@ -1,3 +1,20 @@
+2008-04-05  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17129
+        Incorrect style resolution in CSS styled SVG, with multiple style sheets
+
+        Fix the style resolution on the svg by ensuring xml-stylesheet pseudo
+        attributes title and alternate are transferred to the stylesheet
+        created from the ProcessingInstruction.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::ProcessingInstruction):
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::setCSSStyleSheet):
+        * dom/ProcessingInstruction.h:
+
 2008-04-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

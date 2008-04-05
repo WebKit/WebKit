@@ -38,6 +38,7 @@ ProcessingInstruction::ProcessingInstruction(Document* doc)
     : ContainerNode(doc)
     , m_cachedSheet(0)
     , m_loading(false)
+    , m_alternate(false)
 #if ENABLE(XSLT)
     , m_isXSL(false)
 #endif
@@ -50,6 +51,7 @@ ProcessingInstruction::ProcessingInstruction(Document* doc, const String& target
     , m_data(data)
     , m_cachedSheet(0)
     , m_loading(false)
+    , m_alternate(false)
 #if ENABLE(XSLT)
     , m_isXSL(false)
 #endif
@@ -134,6 +136,9 @@ bool ProcessingInstruction::checkStyleSheet()
             return true;
 
         String href = attrs.get("href");
+        String alternate = attrs.get("alternate");
+        m_alternate = alternate == "yes";
+        m_title = attrs.get("title");
 
         if (href.length() > 1) {
             if (href[0] == '#') {
@@ -206,6 +211,8 @@ void ProcessingInstruction::setCSSStyleSheet(const String& url, const String& ch
 #endif
     m_sheet = new CSSStyleSheet(this, url, charset);
     parseStyleSheet(sheet->sheetText());
+    m_sheet->setTitle(m_title);
+    m_sheet->setDisabled(m_alternate);
 }
 
 #if ENABLE(XSLT)
@@ -243,6 +250,8 @@ void ProcessingInstruction::setCSSStyleSheet(CSSStyleSheet* sheet)
     ASSERT(!m_cachedSheet);
     ASSERT(!m_loading);
     m_sheet = sheet;
+    m_sheet->setTitle(m_title);
+    m_sheet->setDisabled(m_alternate);
 }
 
 bool ProcessingInstruction::offsetInCharacters() const

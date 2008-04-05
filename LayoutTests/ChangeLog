@@ -1,3 +1,16 @@
+2008-04-05  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcases for:
+        http://bugs.webkit.org/show_bug.cgi?id=17129
+        Incorrect style resolution in CSS styled SVG, with multiple style sheets
+
+        * fast/css/xml-stylesheet-alternate-processing-expected.txt: Added.
+        * fast/css/xml-stylesheet-alternate-processing.xhtml: Added.
+        * fast/css/xml-stylesheet-title-processing-expected.txt: Added.
+        * fast/css/xml-stylesheet-title-processing.xhtml: Added.
+
 2008-04-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
@@ -14,7 +27,6 @@
         Reviewed by NOBODY (Rollout).
 
         Rollout layout test changes for r31566
-
 
 2008-04-03  Brady Eidson  <beidson@apple.com>
 
