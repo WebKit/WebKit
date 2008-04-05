@@ -1,5 +1,17 @@
 2008-04-04  Steve Falkenburg  <sfalken@apple.com>
 
+        Fix tooltip window leak.
+        
+        Explicitly call DestroyWindow on the tooltip.
+        Destroying its parent won't destroy the tooltip, since it not a WS_CHILD style window.
+
+        Reviewed by Ada Chan.
+
+        * WebView.cpp:
+        (WebView::~WebView):
+
+2008-04-04  Steve Falkenburg  <sfalken@apple.com>
+
         Delete backing store after we go 5 seconds without a paint.
                 
         Timer will be reset if a paint occurs, so this won't negatively impact performance.

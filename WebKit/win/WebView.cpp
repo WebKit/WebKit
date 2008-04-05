@@ -298,6 +298,10 @@ WebView::~WebView()
     if (::IsWindow(m_viewWindow))
         ::DestroyWindow(m_viewWindow);
 
+    // the tooltip window needs to be explicitly destroyed since it isn't a WS_CHILD
+    if (::IsWindow(m_toolTipHwnd))
+        ::DestroyWindow(m_toolTipHwnd);
+
     ASSERT(!m_page);
     ASSERT(!m_preferences);
 
