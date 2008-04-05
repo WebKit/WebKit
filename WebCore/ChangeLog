@@ -1,3 +1,123 @@
+2008-04-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Beth.
+
+        Some more clean-up of AccessibilityObject:
+        - Rearranged/grouped methods.
+        - Marked many methods const.
+        - Changed many methods to take args by const ref instead of by val.
+        - Made headingLevel() static.
+        - Renamed detached() to isDetached(), loaded() to isLoaded(),
+          documentLinks to getDocumentLinks().
+        - Made clearChildren(), removeAXObjectID(), isDetached() private.
+        - Added notImplemented() calls for unimplemented methods.
+        - Replaced stringForReplacedNode method with static function.
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::~AccessibilityObject):
+        (WebCore::AccessibilityObject::firstChild):
+        (WebCore::AccessibilityObject::lastChild):
+        (WebCore::AccessibilityObject::previousSibling):
+        (WebCore::AccessibilityObject::nextSibling):
+        (WebCore::AccessibilityObject::parentObject):
+        (WebCore::AccessibilityObject::parentObjectUnignored):
+        (WebCore::AccessibilityObject::headingLevel):
+        (WebCore::AccessibilityObject::anchorElement):
+        (WebCore::AccessibilityObject::actionElement):
+        (WebCore::AccessibilityObject::mouseButtonListener):
+        (WebCore::AccessibilityObject::helpText):
+        (WebCore::AccessibilityObject::textUnderElement):
+        (WebCore::AccessibilityObject::hasIntValue):
+        (WebCore::AccessibilityObject::intValue):
+        (WebCore::AccessibilityObject::stringValue):
+        (WebCore::AccessibilityObject::title):
+        (WebCore::AccessibilityObject::accessibilityDescription):
+        (WebCore::AccessibilityObject::boundingBoxRect):
+        (WebCore::AccessibilityObject::size):
+        (WebCore::AccessibilityObject::linkedUIElement):
+        (WebCore::AccessibilityObject::accessibilityShouldUseUniqueId):
+        (WebCore::AccessibilityObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityObject::isLoaded):
+        (WebCore::AccessibilityObject::layoutCount):
+        (WebCore::AccessibilityObject::textLength):
+        (WebCore::AccessibilityObject::selectedText):
+        (WebCore::AccessibilityObject::selection):
+        (WebCore::AccessibilityObject::selectedTextRange):
+        (WebCore::AccessibilityObject::setSelectedText):
+        (WebCore::AccessibilityObject::setSelectedTextRange):
+        (WebCore::AccessibilityObject::makeRangeVisible):
+        (WebCore::AccessibilityObject::url):
+        (WebCore::AccessibilityObject::isVisited):
+        (WebCore::AccessibilityObject::isFocused):
+        (WebCore::AccessibilityObject::setValue):
+        (WebCore::AccessibilityObject::isEnabled):
+        (WebCore::AccessibilityObject::topRenderer):
+        (WebCore::AccessibilityObject::textControl):
+        (WebCore::AccessibilityObject::widget):
+        (WebCore::AccessibilityObject::axObjectCache):
+        (WebCore::AccessibilityObject::getDocumentLinks):
+        (WebCore::AccessibilityObject::documentFrameView):
+        (WebCore::AccessibilityObject::widgetForAttachmentView):
+        (WebCore::AccessibilityObject::frameViewIfRenderView):
+        (WebCore::AccessibilityObject::visiblePositionRange):
+        (WebCore::AccessibilityObject::doAXTextMarkerRangeForLine):
+        (WebCore::AccessibilityObject::doAXTextMarkerRangeForUnorderedTextMarkers):
+        (WebCore::AccessibilityObject::doAXLeftWordTextMarkerRangeForTextMarker):
+        (WebCore::AccessibilityObject::doAXRightWordTextMarkerRangeForTextMarker):
+        (WebCore::AccessibilityObject::doAXLeftLineTextMarkerRangeForTextMarker):
+        (WebCore::AccessibilityObject::doAXRightLineTextMarkerRangeForTextMarker):
+        (WebCore::AccessibilityObject::doAXSentenceTextMarkerRangeForTextMarker):
+        (WebCore::AccessibilityObject::doAXParagraphTextMarkerRangeForTextMarker):
+        (WebCore::AccessibilityObject::doAXStyleTextMarkerRangeForTextMarker):
+        (WebCore::AccessibilityObject::textMarkerRangeForRange):
+        (WebCore::stringForReplacedNode):
+        (WebCore::AccessibilityObject::doAXStringForTextMarkerRange):
+        (WebCore::AccessibilityObject::doAXBoundsForTextMarkerRange):
+        (WebCore::AccessibilityObject::doAXLengthForTextMarkerRange):
+        (WebCore::AccessibilityObject::doSetAXSelectedTextMarkerRange):
+        (WebCore::AccessibilityObject::doAXTextMarkerForPosition):
+        (WebCore::AccessibilityObject::doAXNextTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXPreviousTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXNextWordEndTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXPreviousWordStartTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXNextLineEndTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXPreviousLineStartTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXNextSentenceEndTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXPreviousSentenceStartTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXNextParagraphEndTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::doAXPreviousParagraphStartTextMarkerForTextMarker):
+        (WebCore::AccessibilityObject::textMarkerForIndex):
+        (WebCore::AccessibilityObject::doAXUIElementForTextMarker):
+        (WebCore::AccessibilityObject::doAXLineForTextMarker):
+        (WebCore::AccessibilityObject::rangeForTextMarkerRange):
+        (WebCore::AccessibilityObject::indexForTextMarker):
+        (WebCore::AccessibilityObject::doAXRangeForLine):
+        (WebCore::AccessibilityObject::doAXRangeForPosition):
+        (WebCore::AccessibilityObject::doAXRangeForIndex):
+        (WebCore::AccessibilityObject::doAXStyleRangeForIndex):
+        (WebCore::AccessibilityObject::doAXStringForRange):
+        (WebCore::AccessibilityObject::doAXBoundsForRange):
+        (WebCore::AccessibilityObject::doAccessibilityHitTest):
+        (WebCore::AccessibilityObject::focusedUIElement):
+        (WebCore::AccessibilityObject::observableObject):
+        (WebCore::AccessibilityObject::roleValue):
+        (WebCore::AccessibilityObject::canSetFocusAttribute):
+        (WebCore::AccessibilityObject::canSetValueAttribute):
+        (WebCore::AccessibilityObject::canSetTextRangeAttributes):
+        (WebCore::AccessibilityObject::hasChildren):
+        (WebCore::AccessibilityObject::axObjectID):
+        * page/AccessibilityObject.h:
+        (WebCore::VisiblePositionRange::VisiblePositionRange):
+        (WebCore::AccessibilityObject::PlainTextRange::PlainTextRange):
+        (WebCore::AccessibilityObject::areaElement):
+        (WebCore::AccessibilityObject::renderer):
+        (WebCore::AccessibilityObject::children):
+        (WebCore::AccessibilityObject::wrapper):
+        (WebCore::AccessibilityObject::isDetached):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (AXAttributeStringSetHeadingLevel):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2008-04-04  Timothy Hatcher  <timothy@apple.com>
 
         Restore the user entered text when clearing the auto-completion.

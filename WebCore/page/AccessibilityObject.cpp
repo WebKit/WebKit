@@ -46,6 +46,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "NodeList.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderListMarker.h"
@@ -77,7 +78,7 @@ AccessibilityObject::AccessibilityObject(RenderObject* renderer)
 
 AccessibilityObject::~AccessibilityObject()
 {
-    ASSERT(detached());
+    ASSERT(isDetached());
 }
 
 PassRefPtr<AccessibilityObject> AccessibilityObject::create(RenderObject* renderer)
@@ -97,7 +98,7 @@ void AccessibilityObject::detach()
     clearChildren();
 }
 
-AccessibilityObject* AccessibilityObject::firstChild()
+AccessibilityObject* AccessibilityObject::firstChild() const
 {
     if (!m_renderer || !m_renderer->firstChild())
         return 0;
@@ -105,7 +106,7 @@ AccessibilityObject* AccessibilityObject::firstChild()
     return m_renderer->document()->axObjectCache()->get(m_renderer->firstChild());
 }
 
-AccessibilityObject* AccessibilityObject::lastChild()
+AccessibilityObject* AccessibilityObject::lastChild() const
 {
     if (!m_renderer || !m_renderer->lastChild())
         return 0;
@@ -113,7 +114,7 @@ AccessibilityObject* AccessibilityObject::lastChild()
     return m_renderer->document()->axObjectCache()->get(m_renderer->lastChild());
 }
 
-AccessibilityObject* AccessibilityObject::previousSibling()
+AccessibilityObject* AccessibilityObject::previousSibling() const
 {
     if (!m_renderer || !m_renderer->previousSibling())
         return 0;
@@ -121,7 +122,7 @@ AccessibilityObject* AccessibilityObject::previousSibling()
     return m_renderer->document()->axObjectCache()->get(m_renderer->previousSibling());
 }
 
-AccessibilityObject* AccessibilityObject::nextSibling()
+AccessibilityObject* AccessibilityObject::nextSibling() const
 {
     if (!m_renderer || !m_renderer->nextSibling())
         return 0;
@@ -129,7 +130,7 @@ AccessibilityObject* AccessibilityObject::nextSibling()
     return m_renderer->document()->axObjectCache()->get(m_renderer->nextSibling());
 }
 
-AccessibilityObject* AccessibilityObject::parentObject()
+AccessibilityObject* AccessibilityObject::parentObject() const
 {
     if (m_areaElement)
         return m_renderer->document()->axObjectCache()->get(m_renderer);
@@ -140,7 +141,7 @@ AccessibilityObject* AccessibilityObject::parentObject()
     return m_renderer->document()->axObjectCache()->get(m_renderer->parent());
 }
 
-AccessibilityObject* AccessibilityObject::parentObjectUnignored()
+AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
 {
     AccessibilityObject* parent;
     for (parent = parentObject(); parent && parent->accessibilityIsIgnored(); parent = parent->parentObject())
@@ -199,7 +200,7 @@ bool AccessibilityObject::isPasswordField() const
     return static_cast<HTMLElement*>(m_renderer->element())->isPasswordField();
 }
 
-int AccessibilityObject::headingLevel(Node* node) const
+int AccessibilityObject::headingLevel(Node* node)
 {
     // headings can be in block flow and non-block flow
 
@@ -232,7 +233,7 @@ bool AccessibilityObject::isHeading() const
     return headingLevel(m_renderer->element()) != 0;
 }
 
-HTMLAnchorElement* AccessibilityObject::anchorElement()
+HTMLAnchorElement* AccessibilityObject::anchorElement() const
 {
     // return already-known anchor for image areas
     if (m_areaElement)
@@ -273,7 +274,7 @@ static bool isCheckboxOrRadio(Node* node)
     return isCheckboxOrRadio(static_cast<HTMLInputElement*>(node));
 }
 
-Element* AccessibilityObject::actionElement()
+Element* AccessibilityObject::actionElement() const
 {
     if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
@@ -294,7 +295,7 @@ Element* AccessibilityObject::actionElement()
     return elt;
 }
 
-Element* AccessibilityObject::mouseButtonListener()
+Element* AccessibilityObject::mouseButtonListener() const
 {
     Node* node = m_renderer->element();
     if (!node)
@@ -311,7 +312,7 @@ Element* AccessibilityObject::mouseButtonListener()
     return 0;
 }
 
-String AccessibilityObject::helpText()
+String AccessibilityObject::helpText() const
 {
     if (!m_renderer)
         return String();
@@ -339,7 +340,7 @@ String AccessibilityObject::helpText()
     return String();
 }
 
-String AccessibilityObject::textUnderElement()
+String AccessibilityObject::textUnderElement() const
 {
     if (!m_renderer)
         return String();
@@ -359,7 +360,7 @@ String AccessibilityObject::textUnderElement()
     return String();
 }
 
-bool AccessibilityObject::hasIntValue()
+bool AccessibilityObject::hasIntValue() const
 {
     if (isHeading())
         return true;
@@ -370,7 +371,7 @@ bool AccessibilityObject::hasIntValue()
     return false;
 }
 
-int AccessibilityObject::intValue()
+int AccessibilityObject::intValue() const
 {
     if (!m_renderer || m_areaElement || isPasswordField())
         return 0;
@@ -385,7 +386,7 @@ int AccessibilityObject::intValue()
     return 0;
 }
 
-String AccessibilityObject::stringValue()
+String AccessibilityObject::stringValue() const
 {
     if (!m_renderer || m_areaElement || isPasswordField())
         return String();
@@ -437,7 +438,7 @@ static HTMLLabelElement* labelForElement(Element* element)
     return 0;
 }
 
-String AccessibilityObject::title()
+String AccessibilityObject::title() const
 {
     if (!m_renderer || m_areaElement || !m_renderer->element())
         return String();
@@ -461,7 +462,7 @@ String AccessibilityObject::title()
     return String();
 }
 
-String AccessibilityObject::accessibilityDescription()
+String AccessibilityObject::accessibilityDescription() const
 {
     if (!m_renderer || m_areaElement)
         return String();
@@ -492,7 +493,7 @@ String AccessibilityObject::accessibilityDescription()
     return String();
 }
 
-IntRect AccessibilityObject::boundingBoxRect()
+IntRect AccessibilityObject::boundingBoxRect() const
 {
     IntRect rect;
     RenderObject* obj = m_renderer;
@@ -518,14 +519,14 @@ IntRect AccessibilityObject::boundingBoxRect()
     return rect;
 }
 
-IntSize AccessibilityObject::size()
+IntSize AccessibilityObject::size() const
 {
     IntRect rect = m_areaElement ? m_areaElement->getRect(m_renderer) : boundingBoxRect();
     return rect.size();
 }
 
 // the closest object for an internal anchor
-AccessibilityObject* AccessibilityObject::linkedUIElement()
+AccessibilityObject* AccessibilityObject::linkedUIElement() const
 {
     if (!isAnchor())
         return 0;
@@ -563,12 +564,12 @@ AccessibilityObject* AccessibilityObject::linkedUIElement()
     return linkedAXElement;
 }
 
-bool AccessibilityObject::accessibilityShouldUseUniqueId()
+bool AccessibilityObject::accessibilityShouldUseUniqueId() const
 {
     return isWebArea() || isTextControl();
 }
 
-bool AccessibilityObject::accessibilityIsIgnored()
+bool AccessibilityObject::accessibilityIsIgnored() const
 {
     // ignore invisible element
     if (!m_renderer || m_renderer->style()->visibility() != VISIBLE)
@@ -625,17 +626,17 @@ bool AccessibilityObject::accessibilityIsIgnored()
     return !m_renderer->isListMarker() && !isWebArea();
 }
 
-bool AccessibilityObject::loaded()
+bool AccessibilityObject::isLoaded() const
 {
     return !m_renderer->document()->tokenizer();
 }
 
-int AccessibilityObject::layoutCount()
+int AccessibilityObject::layoutCount() const
 {
     return static_cast<RenderView*>(m_renderer)->frameView()->layoutCount();
 }
 
-int AccessibilityObject::textLength()
+int AccessibilityObject::textLength() const
 {
     ASSERT(isTextControl());
 
@@ -645,7 +646,7 @@ int AccessibilityObject::textLength()
     return static_cast<RenderTextControl*>(m_renderer)->text().length();
 }
 
-String AccessibilityObject::selectedText()
+String AccessibilityObject::selectedText() const
 {
     ASSERT(isTextControl());
 
@@ -656,12 +657,12 @@ String AccessibilityObject::selectedText()
     return textControl->text().substring(textControl->selectionStart(), textControl->selectionEnd() - textControl->selectionStart());
 }
 
-Selection AccessibilityObject::selection()
+Selection AccessibilityObject::selection() const
 {
     return m_renderer->document()->frame()->selectionController()->selection();
 }
 
-AccessibilityObject::PlainTextRange AccessibilityObject::selectedTextRange()
+AccessibilityObject::PlainTextRange AccessibilityObject::selectedTextRange() const
 {
     ASSERT(isTextControl());
 
@@ -672,23 +673,25 @@ AccessibilityObject::PlainTextRange AccessibilityObject::selectedTextRange()
     return PlainTextRange(textControl->selectionStart(), textControl->selectionEnd() - textControl->selectionStart());
 }
 
-void AccessibilityObject::setSelectedText(String text)
+void AccessibilityObject::setSelectedText(const String&)
 {
     // TODO: set selected text (ReplaceSelectionCommand). <rdar://problem/4712125>
+    notImplemented();
 }
 
-void AccessibilityObject::setSelectedTextRange(PlainTextRange range)
+void AccessibilityObject::setSelectedTextRange(const PlainTextRange& range)
 {
     RenderTextControl* textControl = static_cast<RenderTextControl*>(m_renderer);
     textControl->setSelectionRange(range.start, range.start + range.length);
 }
 
-void AccessibilityObject::makeRangeVisible(PlainTextRange range)
+void AccessibilityObject::makeRangeVisible(const PlainTextRange&)
 {
     // TODO: make range visible (scrollRectToVisible).  <rdar://problem/4712101>
+    notImplemented();
 }
 
-KURL AccessibilityObject::url()
+KURL AccessibilityObject::url() const
 {
     if (isAnchor()) {
         if (HTMLAnchorElement* anchor = anchorElement())
@@ -700,12 +703,12 @@ KURL AccessibilityObject::url()
     return KURL();
 }
 
-bool AccessibilityObject::isVisited()
+bool AccessibilityObject::isVisited() const
 {
     return m_renderer->style()->pseudoState() == PseudoVisited;
 }
 
-bool AccessibilityObject::isFocused()
+bool AccessibilityObject::isFocused() const
 {
     return (m_renderer->element() && m_renderer->document()->focusedNode() == m_renderer->element());
 }
@@ -725,7 +728,7 @@ void AccessibilityObject::setFocused(bool on)
     }
 }
 
-void AccessibilityObject::setValue(String string)
+void AccessibilityObject::setValue(const String& string)
 {
     if (m_renderer->isTextField()) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
@@ -736,7 +739,7 @@ void AccessibilityObject::setValue(String string)
     }
 }
 
-bool AccessibilityObject::isEnabled()
+bool AccessibilityObject::isEnabled() const
 {
     return m_renderer->element() ? m_renderer->element()->isEnabled() : true;
 }
@@ -751,17 +754,12 @@ void AccessibilityObject::press()
     actionElem->accessKeyAction(true);
 }
 
-/*RenderObject* AccessibilityObject::renderer()
-{
-    return m_renderer;
-}*/
-
-RenderObject* AccessibilityObject::topRenderer()
+RenderObject* AccessibilityObject::topRenderer() const
 {
     return m_renderer->document()->topDocument()->renderer();
 }
 
-RenderTextControl* AccessibilityObject::textControl()
+RenderTextControl* AccessibilityObject::textControl() const
 {
     if (!isTextControl())
         return 0;
@@ -769,7 +767,7 @@ RenderTextControl* AccessibilityObject::textControl()
     return static_cast<RenderTextControl*>(m_renderer);
 }
 
-Widget* AccessibilityObject::widget()
+Widget* AccessibilityObject::widget() const
 {
     if (!m_renderer->isWidget())
         return 0;
@@ -777,12 +775,12 @@ Widget* AccessibilityObject::widget()
     return static_cast<RenderWidget*>(m_renderer)->widget();
 }
 
-AXObjectCache* AccessibilityObject::axObjectCache()
+AXObjectCache* AccessibilityObject::axObjectCache() const
 {
     return m_renderer->document()->axObjectCache();
 }
 
-void AccessibilityObject::documentLinks(Vector<RefPtr<AccessibilityObject> >& result)
+void AccessibilityObject::getDocumentLinks(Vector<RefPtr<AccessibilityObject> >& result) const
 {
     Document* document = m_renderer->document();
     RefPtr<HTMLCollection> coll = document->links();
@@ -800,20 +798,20 @@ void AccessibilityObject::documentLinks(Vector<RefPtr<AccessibilityObject> >& re
     }
 }
 
-FrameView* AccessibilityObject::documentFrameView()
+FrameView* AccessibilityObject::documentFrameView() const
 {
     // this is the RenderObject's Document's Frame's FrameView
     return m_renderer->document()->view();
 }
 
-Widget* AccessibilityObject::widgetForAttachmentView()
+Widget* AccessibilityObject::widgetForAttachmentView() const
 {
     if (!isAttachment())
         return 0;
     return static_cast<RenderWidget*>(m_renderer)->widget();
 }
 
-FrameView* AccessibilityObject::frameViewIfRenderView()
+FrameView* AccessibilityObject::frameViewIfRenderView() const
 {
     if (!m_renderer->isRenderView())
         return 0;
@@ -823,7 +821,7 @@ FrameView* AccessibilityObject::frameViewIfRenderView()
 
 // This function is like a cross-platform version of - (WebCoreTextMarkerRange*)textMarkerRange. It returns
 // a Range that we can convert to a WebCoreTextMarkerRange in the Obj-C file
-VisiblePositionRange AccessibilityObject::visiblePositionRange()
+VisiblePositionRange AccessibilityObject::visiblePositionRange() const
 {
     if (!m_renderer)
         return VisiblePositionRange();
@@ -843,7 +841,7 @@ VisiblePositionRange AccessibilityObject::visiblePositionRange()
     return VisiblePositionRange(startPos, endPos);
 }
 
-VisiblePositionRange AccessibilityObject::doAXTextMarkerRangeForLine(unsigned lineCount)
+VisiblePositionRange AccessibilityObject::doAXTextMarkerRangeForLine(unsigned lineCount) const
 {
     if (lineCount == 0 || !m_renderer)
         return VisiblePositionRange();
@@ -871,7 +869,7 @@ VisiblePositionRange AccessibilityObject::doAXTextMarkerRangeForLine(unsigned li
     return VisiblePositionRange(selectionController.selection().visibleStart(), selectionController.selection().visibleEnd());
 }
 
-VisiblePositionRange AccessibilityObject::doAXTextMarkerRangeForUnorderedTextMarkers(const VisiblePosition& visiblePos1, const VisiblePosition& visiblePos2)
+VisiblePositionRange AccessibilityObject::doAXTextMarkerRangeForUnorderedTextMarkers(const VisiblePosition& visiblePos1, const VisiblePosition& visiblePos2) const
 {
     if (visiblePos1.isNull() || visiblePos2.isNull())
         return VisiblePositionRange();
@@ -899,14 +897,14 @@ VisiblePositionRange AccessibilityObject::doAXTextMarkerRangeForUnorderedTextMar
     return VisiblePositionRange(startPos, endPos);
 }
 
-VisiblePositionRange AccessibilityObject::doAXLeftWordTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos)
+VisiblePositionRange AccessibilityObject::doAXLeftWordTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos) const
 {
     VisiblePosition startPosition = startOfWord(visiblePos, LeftWordIfOnBoundary);
     VisiblePosition endPosition = endOfWord(startPosition);
     return VisiblePositionRange(startPosition, endPosition);
 }
 
-VisiblePositionRange AccessibilityObject::doAXRightWordTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos)
+VisiblePositionRange AccessibilityObject::doAXRightWordTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos) const
 {
     VisiblePosition startPosition = startOfWord(visiblePos, RightWordIfOnBoundary);
     VisiblePosition endPosition = endOfWord(startPosition);
@@ -937,7 +935,7 @@ static VisiblePosition updateAXLineStartForVisiblePosition(const VisiblePosition
     return startPosition;
 }
 
-VisiblePositionRange AccessibilityObject::doAXLeftLineTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos)
+VisiblePositionRange AccessibilityObject::doAXLeftLineTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePositionRange();
@@ -966,7 +964,7 @@ VisiblePositionRange AccessibilityObject::doAXLeftLineTextMarkerRangeForTextMark
     return VisiblePositionRange(startPosition, endPosition);
 }
 
-VisiblePositionRange AccessibilityObject::doAXRightLineTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos)
+VisiblePositionRange AccessibilityObject::doAXRightLineTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePositionRange();
@@ -999,7 +997,7 @@ VisiblePositionRange AccessibilityObject::doAXRightLineTextMarkerRangeForTextMar
     return VisiblePositionRange(startPosition, endPosition);
 }
 
-VisiblePositionRange AccessibilityObject::doAXSentenceTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos)
+VisiblePositionRange AccessibilityObject::doAXSentenceTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos) const
 {
     // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
@@ -1008,7 +1006,7 @@ VisiblePositionRange AccessibilityObject::doAXSentenceTextMarkerRangeForTextMark
     return VisiblePositionRange(startPosition, endPosition);
 }
 
-VisiblePositionRange AccessibilityObject::doAXParagraphTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos)
+VisiblePositionRange AccessibilityObject::doAXParagraphTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos) const
 {
     VisiblePosition startPosition = startOfParagraph(visiblePos);
     VisiblePosition endPosition = endOfParagraph(startPosition);
@@ -1061,7 +1059,7 @@ static VisiblePosition endOfStyleRange(const VisiblePosition visiblePos)
     return VisiblePosition(endRenderer->node(), maxDeepOffset(endRenderer->node()), VP_DEFAULT_AFFINITY);
 }
 
-VisiblePositionRange AccessibilityObject::doAXStyleTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos)
+VisiblePositionRange AccessibilityObject::doAXStyleTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePositionRange();
@@ -1070,7 +1068,7 @@ VisiblePositionRange AccessibilityObject::doAXStyleTextMarkerRangeForTextMarker(
 }
 
 // NOTE: Consider providing this utility method as AX API
-VisiblePositionRange AccessibilityObject::textMarkerRangeForRange(const PlainTextRange& range, RenderTextControl* textControl)
+VisiblePositionRange AccessibilityObject::textMarkerRangeForRange(const PlainTextRange& range, RenderTextControl* textControl) const
 {
     if (range.start + range.length > textControl->text().length())
         return VisiblePositionRange();
@@ -1081,7 +1079,7 @@ VisiblePositionRange AccessibilityObject::textMarkerRangeForRange(const PlainTex
     return VisiblePositionRange(startPosition, endPosition);
 }
 
-String AccessibilityObject::stringForReplacedNode(Node* replacedNode)
+static String stringForReplacedNode(Node* replacedNode)
 {
     // we should always be given a rendered node and a replaced node, but be safe
     // replaced nodes are either attachments (widgets) or images
@@ -1098,7 +1096,7 @@ String AccessibilityObject::stringForReplacedNode(Node* replacedNode)
     return String(&objectReplacementCharacter, 1);
 }
 
-String AccessibilityObject::doAXStringForTextMarkerRange(VisiblePositionRange& visiblePositionRange)
+String AccessibilityObject::doAXStringForTextMarkerRange(const VisiblePositionRange& visiblePositionRange) const
 {
     if (visiblePositionRange.isNull())
         return String();
@@ -1127,24 +1125,26 @@ String AccessibilityObject::doAXStringForTextMarkerRange(VisiblePositionRange& v
     return resultString.isEmpty() ? String() : resultString;
 }
 
-IntRect AccessibilityObject::doAXBoundsForTextMarkerRange(VisiblePositionRange visiblePositionRange)
+IntRect AccessibilityObject::doAXBoundsForTextMarkerRange(const VisiblePositionRange& visiblePositionRange) const
 {
     if (visiblePositionRange.isNull())
         return IntRect();
 
-    IntRect rect1 = visiblePositionRange.start.caretRect();
-    IntRect rect2 = visiblePositionRange.end.caretRect();
+    // Create a mutable VisiblePositionRange.
+    VisiblePositionRange range(visiblePositionRange);
+    IntRect rect1 = range.start.caretRect();
+    IntRect rect2 = range.end.caretRect();
 
     // readjust for position at the edge of a line.  This is to exclude line rect that doesn't need to be accounted in the range bounds
     if (rect2.y() != rect1.y()) {
-        VisiblePosition endOfFirstLine = endOfLine(visiblePositionRange.start);
-        if (visiblePositionRange.start == endOfFirstLine) {
-            visiblePositionRange.start.setAffinity(DOWNSTREAM);
-            rect1 = visiblePositionRange.start.caretRect();
+        VisiblePosition endOfFirstLine = endOfLine(range.start);
+        if (range.start == endOfFirstLine) {
+            range.start.setAffinity(DOWNSTREAM);
+            rect1 = range.start.caretRect();
         }
-        if (visiblePositionRange.end == endOfFirstLine) {
-            visiblePositionRange.end.setAffinity(UPSTREAM);
-            rect2 = visiblePositionRange.end.caretRect();
+        if (range.end == endOfFirstLine) {
+            range.end.setAffinity(UPSTREAM);
+            rect2 = range.end.caretRect();
         }
     }
 
@@ -1153,7 +1153,7 @@ IntRect AccessibilityObject::doAXBoundsForTextMarkerRange(VisiblePositionRange v
 
     // if the rectangle spans lines and contains multiple text chars, use the range's bounding box intead
     if (rect1.bottom() != rect2.bottom()) {
-        RefPtr<Range> dataRange = makeRange(visiblePositionRange.start, visiblePositionRange.end);
+        RefPtr<Range> dataRange = makeRange(range.start, range.end);
         IntRect boundingBox = dataRange->boundingBox();
         String rangeString = plainText(dataRange.get());
         if (rangeString.length() > 1 && !boundingBox.isEmpty())
@@ -1167,7 +1167,7 @@ IntRect AccessibilityObject::doAXBoundsForTextMarkerRange(VisiblePositionRange v
 #endif
 }
 
-int AccessibilityObject::doAXLengthForTextMarkerRange(VisiblePositionRange visiblePositionRange)
+int AccessibilityObject::doAXLengthForTextMarkerRange(const VisiblePositionRange& visiblePositionRange) const
 {
     // FIXME: Multi-byte support
     String string = doAXStringForTextMarkerRange(visiblePositionRange);
@@ -1177,7 +1177,7 @@ int AccessibilityObject::doAXLengthForTextMarkerRange(VisiblePositionRange visib
     return string.length();
 }
 
-void AccessibilityObject::doSetAXSelectedTextMarkerRange(VisiblePositionRange textMarkerRange)
+void AccessibilityObject::doSetAXSelectedTextMarkerRange(const VisiblePositionRange& textMarkerRange) const
 {
     if (textMarkerRange.start.isNull() || textMarkerRange.end.isNull())
         return;
@@ -1187,7 +1187,7 @@ void AccessibilityObject::doSetAXSelectedTextMarkerRange(VisiblePositionRange te
     m_renderer->document()->frame()->selectionController()->setSelection(newSelection);
 }
 
-VisiblePosition AccessibilityObject::doAXTextMarkerForPosition(const IntPoint& point)
+VisiblePosition AccessibilityObject::doAXTextMarkerForPosition(const IntPoint& point) const
 {
     // convert absolute point to view coordinates
     FrameView* frameView = m_renderer->document()->topDocument()->renderer()->view()->frameView();
@@ -1234,17 +1234,17 @@ VisiblePosition AccessibilityObject::doAXTextMarkerForPosition(const IntPoint& p
     return innerNode->renderer()->positionForPoint(pointResult);
 }
 
-VisiblePosition AccessibilityObject::doAXNextTextMarkerForTextMarker(const VisiblePosition& visiblePos)
+VisiblePosition AccessibilityObject::doAXNextTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
 {
     return visiblePos.next();
 }
 
-VisiblePosition AccessibilityObject::doAXPreviousTextMarkerForTextMarker(const VisiblePosition& visiblePos)
+VisiblePosition AccessibilityObject::doAXPreviousTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
 {
     return visiblePos.previous();
 }
 
-VisiblePosition AccessibilityObject::doAXNextWordEndTextMarkerForTextMarker(const VisiblePosition& visiblePos)
+VisiblePosition AccessibilityObject::doAXNextWordEndTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePosition();
@@ -1257,7 +1257,7 @@ VisiblePosition AccessibilityObject::doAXNextWordEndTextMarkerForTextMarker(cons
     return endOfWord(nextVisiblePos, LeftWordIfOnBoundary);
 }
 
-VisiblePosition AccessibilityObject::doAXPreviousWordStartTextMarkerForTextMarker(const VisiblePosition& visiblePos)
+VisiblePosition AccessibilityObject::doAXPreviousWordStartTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePosition();
@@ -1270,7 +1270,7 @@ VisiblePosition AccessibilityObject::doAXPreviousWordStartTextMarkerForTextMarke
     return startOfWord(prevVisiblePos, RightWordIfOnBoundary);
 }
 
-VisiblePosition AccessibilityObject::doAXNextLineEndTextMarkerForTextMarker(const VisiblePosition& visiblePos)
+VisiblePosition AccessibilityObject::doAXNextLineEndTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePosition();
@@ -1292,7 +1292,7 @@ VisiblePosition AccessibilityObject::doAXNextLineEndTextMarkerForTextMarker(cons
     return endPosition;
 }
 
-VisiblePosition AccessibilityObject::doAXPreviousLineStartTextMarkerForTextMarker(const VisiblePosition& visiblePos)
+VisiblePosition AccessibilityObject::doAXPreviousLineStartTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePosition();
@@ -1317,7 +1317,7 @@ VisiblePosition AccessibilityObject::doAXPreviousLineStartTextMarkerForTextMarke
     return startPosition;
 }
 
-VisiblePosition AccessibilityObject::doAXNextSentenceEndTextMarkerForTextMarker(const VisiblePosition& visiblePos)
+VisiblePosition AccessibilityObject::doAXNextSentenceEndTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
 {
     // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
@@ -1341,7 +1341,7 @@ VisiblePosition AccessibilityObject::doAXNextSentenceEndTextMarkerForTextMarker(
     return endPosition;
 }
 
-VisiblePosition AccessibilityObject::doAXPreviousSentenceStartTextMarkerForTextMarker(const VisiblePosition& visiblePos)
+VisiblePosition AccessibilityObject::doAXPreviousSentenceStartTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
 {
     // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
@@ -1364,7 +1364,7 @@ VisiblePosition AccessibilityObject::doAXPreviousSentenceStartTextMarkerForTextM
     return startPosition;
 }
 
-VisiblePosition AccessibilityObject::doAXNextParagraphEndTextMarkerForTextMarker(const VisiblePosition& visiblePos)
+VisiblePosition AccessibilityObject::doAXNextParagraphEndTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePosition();
@@ -1377,7 +1377,7 @@ VisiblePosition AccessibilityObject::doAXNextParagraphEndTextMarkerForTextMarker
     return endOfParagraph(nextPos);
 }
 
-VisiblePosition AccessibilityObject::doAXPreviousParagraphStartTextMarkerForTextMarker(const VisiblePosition& visiblePos)
+VisiblePosition AccessibilityObject::doAXPreviousParagraphStartTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePosition();
@@ -1391,7 +1391,7 @@ VisiblePosition AccessibilityObject::doAXPreviousParagraphStartTextMarkerForText
 }
 
 // NOTE: Consider providing this utility method as AX API
-VisiblePosition AccessibilityObject::textMarkerForIndex(unsigned indexValue, bool lastIndexOK)
+VisiblePosition AccessibilityObject::textMarkerForIndex(unsigned indexValue, bool lastIndexOK) const
 {
     if (!isTextControl())
         return VisiblePosition();
@@ -1408,7 +1408,7 @@ VisiblePosition AccessibilityObject::textMarkerForIndex(unsigned indexValue, boo
     return position;
 }
 
-AccessibilityObject* AccessibilityObject::doAXUIElementForTextMarker(const VisiblePosition& visiblePos)
+AccessibilityObject* AccessibilityObject::doAXUIElementForTextMarker(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return 0;
@@ -1420,7 +1420,7 @@ AccessibilityObject* AccessibilityObject::doAXUIElementForTextMarker(const Visib
     return obj->document()->axObjectCache()->get(obj);
 }
 
-unsigned AccessibilityObject::doAXLineForTextMarker(const VisiblePosition& visiblePos)
+unsigned AccessibilityObject::doAXLineForTextMarker(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return 0;
@@ -1443,7 +1443,7 @@ unsigned AccessibilityObject::doAXLineForTextMarker(const VisiblePosition& visib
 }
 
 // NOTE: Consider providing this utility method as AX API
-AccessibilityObject::PlainTextRange AccessibilityObject::rangeForTextMarkerRange(const VisiblePositionRange& positionRange)
+AccessibilityObject::PlainTextRange AccessibilityObject::rangeForTextMarkerRange(const VisiblePositionRange& positionRange) const
 {
     int index1 = indexForTextMarker(positionRange.start);
     int index2 = indexForTextMarker(positionRange.end);
@@ -1454,7 +1454,7 @@ AccessibilityObject::PlainTextRange AccessibilityObject::rangeForTextMarkerRange
 }
 
 // NOTE: Consider providing this utility method as AX API
-int AccessibilityObject::indexForTextMarker(VisiblePosition position)
+int AccessibilityObject::indexForTextMarker(const VisiblePosition& position) const
 {
     if (!isTextControl())
         return -1;
@@ -1474,7 +1474,7 @@ int AccessibilityObject::indexForTextMarker(VisiblePosition position)
 
 // Given a line number, the range of characters of the text associated with this accessibility
 // object that contains the line number.
-AccessibilityObject::PlainTextRange AccessibilityObject::doAXRangeForLine(unsigned lineNumber)
+AccessibilityObject::PlainTextRange AccessibilityObject::doAXRangeForLine(unsigned lineNumber) const
 {
     if (!isTextControl())
         return PlainTextRange();
@@ -1522,7 +1522,7 @@ AccessibilityObject::PlainTextRange AccessibilityObject::doAXRangeForLine(unsign
 // screen coordinates.
 // NOTE: This varies from AppKit when the point is below the last line. AppKit returns an
 // an error in that case. We return textControl->text().length(), 1. Does this matter?
-AccessibilityObject::PlainTextRange AccessibilityObject::doAXRangeForPosition(const IntPoint& point)
+AccessibilityObject::PlainTextRange AccessibilityObject::doAXRangeForPosition(const IntPoint& point) const
 {
     int index = indexForTextMarker(doAXTextMarkerForPosition(point));
     if (index < 0)
@@ -1534,7 +1534,7 @@ AccessibilityObject::PlainTextRange AccessibilityObject::doAXRangeForPosition(co
 // The composed character range in the text associated with this accessibility object that
 // is specified by the given index value. This parameterized attribute returns the complete
 // range of characters (including surrogate pairs of multi-byte glyphs) at the given index.
-AccessibilityObject::PlainTextRange AccessibilityObject::doAXRangeForIndex(unsigned index)
+AccessibilityObject::PlainTextRange AccessibilityObject::doAXRangeForIndex(unsigned index) const
 {
     if (!isTextControl())
         return PlainTextRange();
@@ -1549,7 +1549,7 @@ AccessibilityObject::PlainTextRange AccessibilityObject::doAXRangeForIndex(unsig
 
 // Given a character index, the range of text associated with this accessibility object
 // over which the style in effect at that character index applies.
-AccessibilityObject::PlainTextRange AccessibilityObject::doAXStyleRangeForIndex(unsigned index)
+AccessibilityObject::PlainTextRange AccessibilityObject::doAXStyleRangeForIndex(unsigned index) const
 {
     VisiblePositionRange textMarkerRange = doAXStyleTextMarkerRangeForTextMarker(textMarkerForIndex(index, false));
     return rangeForTextMarkerRange(textMarkerRange);
@@ -1557,7 +1557,7 @@ AccessibilityObject::PlainTextRange AccessibilityObject::doAXStyleRangeForIndex(
 
 // A substring of the text associated with this accessibility object that is
 // specified by the given character range.
-String AccessibilityObject::doAXStringForRange(const PlainTextRange& range)
+String AccessibilityObject::doAXStringForRange(const PlainTextRange& range) const
 {
     if (isPasswordField())
         return String();
@@ -1579,7 +1579,7 @@ String AccessibilityObject::doAXStringForRange(const PlainTextRange& range)
 // The bounding rectangle of the text associated with this accessibility object that is
 // specified by the given range. This is the bounding rectangle a sighted user would see
 // on the display screen, in pixels.
-IntRect AccessibilityObject::doAXBoundsForRange(PlainTextRange range)
+IntRect AccessibilityObject::doAXBoundsForRange(const PlainTextRange& range) const
 {
     if (isTextControl())
         return doAXBoundsForTextMarkerRange(textMarkerRangeForRange(range, static_cast<RenderTextControl*>(m_renderer)));
@@ -1593,7 +1593,7 @@ unsigned AccessibilityObject::doAXLineForIndex(unsigned index)
     return doAXLineForTextMarker(textMarkerForIndex(index, false));
 }
 
-AccessibilityObject* AccessibilityObject::doAccessibilityHitTest(IntPoint point)
+AccessibilityObject* AccessibilityObject::doAccessibilityHitTest(const IntPoint& point) const
 {
     if (!m_renderer)
         return 0;
@@ -1611,7 +1611,7 @@ AccessibilityObject* AccessibilityObject::doAccessibilityHitTest(IntPoint point)
     return obj->document()->axObjectCache()->get(obj);
 }
 
-AccessibilityObject* AccessibilityObject::focusedUIElement()
+AccessibilityObject* AccessibilityObject::focusedUIElement() const
 {
     // get the focused node in the page
     Page* page = m_renderer->document()->page();
@@ -1632,7 +1632,7 @@ AccessibilityObject* AccessibilityObject::focusedUIElement()
     return obj;
 }
 
-AccessibilityObject* AccessibilityObject::observableObject()
+AccessibilityObject* AccessibilityObject::observableObject() const
 {
     for (RenderObject* renderer = m_renderer; renderer && renderer->element(); renderer = renderer->parent()) {
         if (renderer->isTextField() || renderer->isTextArea())
@@ -1642,7 +1642,7 @@ AccessibilityObject* AccessibilityObject::observableObject()
     return 0;
 }
 
-AccessibilityRole AccessibilityObject::roleValue()
+AccessibilityRole AccessibilityObject::roleValue() const
 {
     if (!m_renderer)
         return UnknownRole;
@@ -1696,7 +1696,7 @@ AccessibilityRole AccessibilityObject::roleValue()
     return UnknownRole;
 }
 
-bool AccessibilityObject::canSetFocusAttribute()
+bool AccessibilityObject::canSetFocusAttribute() const
 {
     // NOTE: It would be more accurate to ask the document whether setFocusedNode() would
     // do anything.  For example, it setFocusedNode() will do nothing if the current focused
@@ -1765,12 +1765,12 @@ bool AccessibilityObject::canSetFocusAttribute()
     return false;
 }
 
-bool AccessibilityObject::canSetValueAttribute()
+bool AccessibilityObject::canSetValueAttribute() const
 {
     return isTextControl();
 }
 
-bool AccessibilityObject::canSetTextRangeAttributes()
+bool AccessibilityObject::canSetTextRangeAttributes() const
 {
     return isTextControl();
 }
@@ -1788,7 +1788,7 @@ void AccessibilityObject::clearChildren()
     m_children.clear();
 }
 
-bool AccessibilityObject::hasChildren()
+bool AccessibilityObject::hasChildren() const
 {
     return m_children.size();
 }
@@ -1829,7 +1829,7 @@ void AccessibilityObject::addChildren()
     }
 }
 
-unsigned AccessibilityObject::axObjectID()
+unsigned AccessibilityObject::axObjectID() const
 {
     return m_id;
 }

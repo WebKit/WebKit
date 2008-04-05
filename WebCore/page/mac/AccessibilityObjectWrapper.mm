@@ -334,7 +334,7 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
 
 static void AXAttributeStringSetHeadingLevel(AccessibilityObject* object, NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
 {
-    int parentHeadingLevel = object->headingLevel(renderer->parent()->element());
+    int parentHeadingLevel = AccessibilityObject::headingLevel(renderer->parent()->element());
     
     if (parentHeadingLevel)
         [attrString addAttribute:@"AXHeadingLevel" value:[NSNumber numberWithInt:parentHeadingLevel] range:range];
@@ -816,11 +816,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (m_object->isWebArea()) {
         if ([attributeName isEqualToString: @"AXLinkUIElements"]) {
             Vector<RefPtr<AccessibilityObject> > links;
-            m_object->documentLinks(links);
+            m_object->getDocumentLinks(links);
             return convertToNSArray(links);
         }
         if ([attributeName isEqualToString: @"AXLoaded"])
-            return [NSNumber numberWithBool: m_object->loaded()];
+            return [NSNumber numberWithBool: m_object->isLoaded()];
         if ([attributeName isEqualToString: @"AXLayoutCount"])
             return [NSNumber numberWithInt: m_object->layoutCount()];
     }
