@@ -1,3 +1,13 @@
+2008-04-05  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
+        Added doc stub for QWebSettings so class docs are generated
+        
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+
 2008-04-05  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.

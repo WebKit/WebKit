@@ -164,6 +164,13 @@ QWebSettings *QWebSettings::defaultSettings()
 }
 
 /*!
+    \class QWebSettings
+    \since 4.4
+    \brief The QWebSettings class provides a objects that is used to store the settings
+    used by QWebPage and QWebFrame.
+*/
+
+/*!
     \internal
 */
 QWebSettings::QWebSettings()
