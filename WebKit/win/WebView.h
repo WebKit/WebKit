@@ -737,6 +737,7 @@ public:
     static WebCacheModel maxCacheModelInAnyInstance();
 
     void updateActiveStateSoon() const;
+    void deleteBackingStoreSoon() const;
 
     HWND topLevelParent() const { return m_topLevelParent; }
 

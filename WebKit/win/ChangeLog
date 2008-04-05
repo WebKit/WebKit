@@ -1,3 +1,17 @@
+2008-04-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Delete backing store after we go 5 seconds without a paint.
+                
+        Timer will be reset if a paint occurs, so this won't negatively impact performance.
+        
+        Reviewed by Ada Chan.
+
+        * WebView.cpp:
+        (WebView::paint): Call deleteBackingStoreSoon after paint.
+        (WebViewWndProc): Add DeleteBackingStoreTimer.
+        (WebView::deleteBackingStoreSoon): Added.
+        * WebView.h: Add deleteBackingStoreSoon.
+
 2008-04-04  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5830598> Image file opened in the browser window shows "Localized String Not Found' in window's title bar instead file name
