@@ -1,3 +1,15 @@
+2008-04-05  Simon Hausmann  <hausmann@webkit.org>
+
+        Rubber-stamped by Holger
+
+        Revert "* Load images incrementally. This will show warnings on the console"
+        This rolls out -r29739.
+
+        This unfortunately caused some crashes and drawing errors. Backing out for now.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::setData):
+
 2008-04-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         Add GradientWx.cpp to the wx build process. 
