@@ -303,7 +303,8 @@ void ChromeClientQt::addToDirtyRegion(const IntRect& r)
         rect = rect.intersected(QRect(QPoint(0, 0), m_webPage->viewportSize()));
         if (!r.isEmpty())
             view->update(r);
-    }
+    } else
+        emit m_webPage->updateRequest(r);
 }
 
 void ChromeClientQt::scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
@@ -311,6 +312,8 @@ void ChromeClientQt::scrollBackingStore(int dx, int dy, const IntRect& scrollVie
     QWidget* view = m_webPage->view();
     if (view)
         view->scroll(dx, dy, scrollViewRect);
+    else
+        emit m_webPage->scrollRequest(dx, dy, scrollViewRect);
 }
 
 void ChromeClientQt::updateBackingStore()

@@ -1,3 +1,23 @@
+2008-04-05  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Propose the addition of updateRequest and scrollRequest to the QWebPage.
+        
+        * The question is if these signals belong to QWebPage or  QWebFrame.
+        -It is more easy to have them in QWebPage because ScrollView is invoking
+        the ChromeClient with the right coordinates
+        -On the other hand someone wants to render frames separately. But this is partly
+        doomed as you can have overlapping frames and what you paint would not relate to
+        what you normally see on webpages.
+        
+
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::scrollBackingStore):
+        (WebCore::ChromeClientQt::mouseDidMoveOverElement):
+
 2008-04-03  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Mark Rowe.

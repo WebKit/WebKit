@@ -1628,6 +1628,29 @@ QWebFrame *QWebPageContext::targetFrame() const
 */
 
 /*!
+    \fn void QWebPage::updateRequest(const QRect& dirtyRect)
+
+    This signal is emitted whenever this QWebPage should be updated and no view was set.
+    \a dirtyRect contains the area that needs to be updated. To paint the QWebPage get
+    the mainFrame() and call the render(QPainter*, const QRegion&) method with the
+    \a dirtyRect as the second parameter.
+    
+    \sa mainFrame()
+    \sa QWebFrame::render(QPainter*, const QRegion&)
+    \sa view()
+*/
+
+/*!
+    \fn void QWebPage::scrollRequest(int dy, int dy, const QRect& rectToScroll)
+
+    This signal is emitted whenever the content given by \a rectToScroll needs
+    to be scrolled dx and dy downwards and no view was set.
+
+    \sa view()
+    
+*/
+
+/*!
     \fn void QWebPage::handleUnsupportedContent(QNetworkReply *reply)
 
     This signals is emitted when webkit cannot handle a link the user navigated to.

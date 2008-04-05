@@ -198,6 +198,8 @@ Q_SIGNALS:
     void selectionChanged();
     void frameCreated(QWebFrame *frame);
     void geometryChangeRequest(const QRect& geom);
+    void updateRequest(const QRect& dirtyRect);
+    void scrollRequest(int dx, int dy, const QRect& scrollViewRect);
 
 #if QT_VERSION >= 0x040400
     void handleUnsupportedContent(QNetworkReply *reply);
