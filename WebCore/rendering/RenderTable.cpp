@@ -290,20 +290,22 @@ void RenderTable::layout()
     int calculatedHeight = 0;
     int oldTableTop = m_caption ? m_caption->height() + m_caption->marginTop() + m_caption->marginBottom() : 0;
 
-    RenderObject* child = firstChild();
-    while (child) {
+    bool collapsing = collapseBorders();
+
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         // FIXME: What about a form that has a display value that makes it a table section?
         if (child->needsLayout() && !(child->element() && child->element()->hasTagName(formTag)))
             child->layout();
         if (child->isTableSection()) {
-            static_cast<RenderTableSection*>(child)->calcRowHeight();
-            calculatedHeight += static_cast<RenderTableSection*>(child)->layoutRows(0);
+            RenderTableSection* section = static_cast<RenderTableSection*>(child);
+            calculatedHeight += section->calcRowHeight();
+            if (collapsing)
+                section->recalcOuterBorder();
         }
-        child = child->nextSibling();
     }
 
-    m_overflowWidth = m_width + (collapseBorders() ? outerBorderRight() - borderRight() : 0);
-    m_overflowLeft = collapseBorders() ? borderLeft() - outerBorderLeft() : 0;
+    m_overflowWidth = m_width + (collapsing ? outerBorderRight() - borderRight() : 0);
+    m_overflowLeft = collapsing ? borderLeft() - outerBorderLeft() : 0;
 
     // If any table section moved vertically, we will just repaint everything from that
     // section down (it is quite unlikely that any of the following sections
@@ -331,15 +333,13 @@ void RenderTable::layout()
         }
     }
 
-    int bpTop = borderTop() + (collapseBorders() ? 0 : paddingTop());
-    int bpBottom = borderBottom() + (collapseBorders() ? 0 : paddingBottom());
+    int bpTop = borderTop() + (collapsing ? 0 : paddingTop());
+    int bpBottom = borderBottom() + (collapsing ? 0 : paddingBottom());
     
     m_height += bpTop;
 
-    int oldHeight = m_height;
     if (!isPositioned())
         calcHeight();
-    m_height = oldHeight;
 
     Length h = style()->height();
     int th = 0;
@@ -350,23 +350,21 @@ void RenderTable::layout()
         th = calcPercentageHeight(h);
     th = max(0, th);
 
-    // layout rows
-    if (th > calculatedHeight) {
-        // we have to redistribute that height to get the constraint correctly
-        // just force the first body to the height needed
-        // FIXME: This should take height constraints on all table sections into account and distribute
-        // accordingly. For now this should be good enough.
-        if (m_firstBody) {
-            m_firstBody->calcRowHeight();
-            m_firstBody->layoutRows(th - calculatedHeight);
-        } else if (!style()->htmlHacks())
-            // Completely empty tables (with no sections or anything) should at least honor specified height
-            // in strict mode.
-            m_height += th;
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (!child->isTableSection())
+            continue;
+        // FIXME: Distribute extra height between all table body sections instead of giving it all to the first one.
+        static_cast<RenderTableSection*>(child)->layoutRows(child == m_firstBody ? max(0, th - calculatedHeight) : 0);
+    }
+
+    if (!m_firstBody && th > calculatedHeight && !style()->htmlHacks()) {
+        // Completely empty tables (with no sections or anything) should at least honor specified height
+        // in strict mode.
+        m_height += th;
     }
     
     int bl = borderLeft();
-    if (!collapseBorders())
+    if (!collapsing)
         bl += paddingLeft();
 
     // position the table sections

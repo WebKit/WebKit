@@ -1,3 +1,14 @@
+2008-04-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - repaint test for <rdar://problem/5843719> Excessive repainting of cells in tables with non-auto height
+
+        * fast/repaint/table-two-pass-layout-overpaint.html: Added.
+        * platform/mac/fast/repaint/table-two-pass-layout-overpaint-expected.checksum: Added.
+        * platform/mac/fast/repaint/table-two-pass-layout-overpaint-expected.png: Added.
+        * platform/mac/fast/repaint/table-two-pass-layout-overpaint-expected.txt: Added.
+
 2008-04-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Rollout).

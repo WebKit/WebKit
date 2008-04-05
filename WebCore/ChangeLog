@@ -1,3 +1,30 @@
+2008-04-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5843719> Excessive repainting of cells in tables with non-auto height
+
+        Test: fast/repaint/table-two-pass-layout-overpaint.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout): Changed the first pass over the sections
+        to only call calcRowHeight() and recalcOuterBorder() but not
+        layoutRows(), because the section's final height is unknown yet.
+        Removed caching of m_height before the call to calcHeight(), because
+        for non-positioned tables, calcHeight() only calculates the vertical
+        margins and does not change m_height.
+        Added a second pass over the sections, after the table height is known,
+        to call layoutRows() on each section, with additional height if needed.
+        Did minimal cleanup including caching the value of collapseBorders() in
+        a local variable and changing a while loop into a for loop.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowHeight): Changed to return the
+        height of the section based on row height calculations.
+        (WebCore::RenderTableSection::layoutRows): Removed a call to
+        recalcOuterBorder(), which is now done by RenderTable::layout().
+        * rendering/RenderTableSection.h: Changed calcRowHeight() to have a
+        return value.
+
 2008-04-05  Simon Hausmann  <shausman@trolltech.com>
 
         Reviewed by Holger.
