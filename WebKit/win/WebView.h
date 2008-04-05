@@ -737,7 +737,8 @@ public:
     static WebCacheModel maxCacheModelInAnyInstance();
 
     void updateActiveStateSoon() const;
-    void deleteBackingStoreSoon() const;
+    void deleteBackingStoreSoon();
+    void cancelDeleteBackingStoreSoon();
 
     HWND topLevelParent() const { return m_topLevelParent; }
 
@@ -752,6 +753,7 @@ private:
     HRESULT zoomOut(bool isTextOnly);
     bool canResetZoom(bool isTextOnly);
     HRESULT resetZoom(bool isTextOnly);
+    bool active();
 
 protected:
     HIMC getIMMContext();
@@ -818,6 +820,7 @@ protected:
     unsigned m_inIMEComposition;
     HWND m_toolTipHwnd;
     WebCore::String m_toolTip;
+    bool m_deleteBackingStoreTimerActive;
 
     static bool s_allowSiteSpecificHacks;
 

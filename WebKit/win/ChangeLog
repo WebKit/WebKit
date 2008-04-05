@@ -1,5 +1,21 @@
 2008-04-04  Steve Falkenburg  <sfalken@apple.com>
 
+        Only delete the backing store of background windows.
+
+        Reviewed by Ada Chan.
+
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::deleteBackingStore):
+        (WebView::paint): Added active check.
+        (WebView::deleteBackingStoreSoon):
+        (WebView::cancelDeleteBackingStoreSoon): Added.
+        (WebView::active): Added.
+        (WebView::updateActiveState): Moved active check code from here to active().
+        * WebView.h:
+
+2008-04-04  Steve Falkenburg  <sfalken@apple.com>
+
         Fix tooltip window leak.
         
         Explicitly call DestroyWindow on the tooltip.

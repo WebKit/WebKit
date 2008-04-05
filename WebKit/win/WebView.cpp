@@ -268,6 +268,7 @@ WebView::WebView()
 , m_toolTipHwnd(0)
 , m_closeWindowTimer(this, &WebView::closeWindowTimerFired)
 , m_topLevelParent(0)
+, m_deleteBackingStoreTimerActive(false)
 {
     KJS::Collector::registerAsMainThread();
 
@@ -630,6 +631,10 @@ void WebView::close()
 
 void WebView::deleteBackingStore()
 {
+    if (m_deleteBackingStoreTimerActive) {
+        KillTimer(m_viewWindow, DeleteBackingStoreTimer);
+        m_deleteBackingStoreTimerActive = false;
+    }
     m_backingStoreBitmap.clear();
     m_backingStoreDirtyRegion.clear();
 
@@ -892,7 +897,10 @@ void WebView::paint(HDC dc, LPARAM options)
 
     m_paintCount--;
 
-    deleteBackingStoreSoon();
+    if (active())
+        cancelDeleteBackingStoreSoon();
+    else
+        deleteBackingStoreSoon();
 }
 
 void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const IntRect& dirtyRect)
@@ -1828,7 +1836,6 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
                     webView->updateActiveState();
                     break;
                 case DeleteBackingStoreTimer:
-                    KillTimer(hWnd, DeleteBackingStoreTimer);
                     webView->deleteBackingStore();
                     break;
             }
@@ -2675,9 +2682,18 @@ void WebView::updateActiveStateSoon() const
     SetTimer(m_viewWindow, UpdateActiveStateTimer, 0, 0);
 }
 
-void WebView::deleteBackingStoreSoon() const
+void WebView::deleteBackingStoreSoon()
 {
+    m_deleteBackingStoreTimerActive = true;
     SetTimer(m_viewWindow, DeleteBackingStoreTimer, delayBeforeDeletingBackingStoreMsec, 0);
+}
+
+void WebView::cancelDeleteBackingStoreSoon()
+{
+    if (!m_deleteBackingStoreTimerActive)
+        return;
+    m_deleteBackingStoreTimerActive = false;
+    KillTimer(m_viewWindow, DeleteBackingStoreTimer);
 }
 
 HRESULT STDMETHODCALLTYPE WebView::setHostWindow( 
@@ -2730,10 +2746,15 @@ HRESULT STDMETHODCALLTYPE WebView::searchFor(
     return S_OK;
 }
 
-void WebView::updateActiveState()
+bool WebView::active()
 {
     HWND activeWindow = GetActiveWindow();
-    m_page->focusController()->setActive(activeWindow && m_topLevelParent == findTopLevelParent(activeWindow));
+    return (activeWindow && m_topLevelParent == findTopLevelParent(activeWindow));
+}
+
+void WebView::updateActiveState()
+{
+    m_page->focusController()->setActive(active());
 }
 
 HRESULT STDMETHODCALLTYPE WebView::updateFocusedAndActiveState()
