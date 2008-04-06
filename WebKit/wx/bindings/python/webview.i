@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-%module(package="wx") webview
+%module webview
 
 %{
 #include "wx/wxPython/wxPython.h"
@@ -42,9 +42,6 @@ MustHaveApp(wxWebFrame);
 
 %include WebView.h
 %include WebFrame.h
-
-%pythoncode { wx = _core }
-%pythoncode { __docfilter__ = wx.__DocFilter(globals()) }
 
 %constant wxEventType wxEVT_WEBVIEW_BEFORE_LOAD;
 %constant wxEventType wxEVT_WEBVIEW_LOAD;
