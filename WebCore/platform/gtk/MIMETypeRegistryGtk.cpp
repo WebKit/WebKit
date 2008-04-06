@@ -37,6 +37,7 @@ struct ExtensionMap {
 
 static const ExtensionMap extensionMap [] = {
     { "bmp", "image/bmp" },
+    { "css", "text/css" },
     { "gif", "image/gif" },
     { "html", "text/html" },
     { "ico", "image/x-icon" },

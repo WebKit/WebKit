@@ -1,3 +1,15 @@
+2008-04-05  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Mark Rowe.
+
+        Add CSS to the MIMETypeRegistry, which ensures CSS files get
+        the right MIMEType when loaded from disk.
+
+        * platform/gtk/MIMETypeRegistryGtk.cpp:
+        (WebCore::):
+        * platform/wx/MimeTypeRegistryWx.cpp:
+        (WebCore::):
+
 2008-04-05  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
