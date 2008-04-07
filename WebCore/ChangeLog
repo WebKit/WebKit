@@ -1,3 +1,9 @@
+2008-04-07  Brady Eidson  <beidson@apple.com>
+
+        Whoops, idls don't go in the vcproj!
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-04-06  Brady Eidson <beidson@apple.com>
 
         Attempt to tickle Windows build into accepting this idl

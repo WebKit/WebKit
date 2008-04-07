@@ -15798,19 +15798,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\Storage.idl"
-				>
-			</File>
-			<File
 				RelativePath="..\storage\StorageEvent.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\storage\StorageEvent.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\StorageEvent.idl"
 				>
 			</File>
 			<File
