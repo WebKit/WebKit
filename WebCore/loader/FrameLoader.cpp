@@ -980,7 +980,7 @@ void FrameLoader::write(const char* str, int len, bool flush)
     if (!m_decoder) {
         Settings* settings = m_frame->settings();
         m_decoder = new TextResourceDecoder(m_responseMIMEType, settings ? settings->defaultTextEncodingName() : String());
-        if (m_encoding.isNull()) {
+        if (m_encoding.isEmpty()) {
             Frame* parentFrame = m_frame->tree()->parent();
             SecurityOrigin::Reason reason;
             if (parentFrame && parentFrame->document()->securityOrigin()->canAccess(m_frame->document()->securityOrigin(), reason))

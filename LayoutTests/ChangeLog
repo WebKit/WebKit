@@ -1,3 +1,12 @@
+2008-04-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/5574946> Inline frame ISO-8859-1 even though parent character set is UTF-8
+
+        * fast/loader/inherit-charset-to-empty-frame-expected.txt: Added.
+        * fast/loader/inherit-charset-to-empty-frame.html: Added.
+
 2008-04-05  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

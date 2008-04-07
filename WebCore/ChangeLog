@@ -1,3 +1,14 @@
+2008-04-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/5574946> Inline frame ISO-8859-1 even though parent character set is UTF-8
+
+        Test: fast/loader/inherit-charset-to-empty-frame.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::write): Treat an empty m_encoding the same as null one.
+
 2008-04-07  Timothy Hatcher  <timothy@apple.com>
 
         Rename some Inspector panel objects to facilitate the up-coming
