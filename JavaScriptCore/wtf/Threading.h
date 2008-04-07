@@ -105,6 +105,7 @@ typedef void* (*ThreadFunction)(void* argument);
 // Returns 0 if thread creation failed
 ThreadIdentifier createThread(ThreadFunction, void*);
 ThreadIdentifier currentThread();
+bool isMainThread();
 int waitForThreadCompletion(ThreadIdentifier, void**);
 void detachThread(ThreadIdentifier);
 
@@ -252,6 +253,7 @@ using WTF::ThreadSafeShared;
 
 using WTF::createThread;
 using WTF::currentThread;
+using WTF::isMainThread;
 using WTF::detachThread;
 using WTF::waitForThreadCompletion;
 

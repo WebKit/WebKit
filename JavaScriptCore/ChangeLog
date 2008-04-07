@@ -1,3 +1,23 @@
+2008-04-07  Adam Roben  <aroben@apple.com>
+
+        Add WTF::isMainThread
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/Threading.h: Declare the new function.
+        * wtf/ThreadingGtk.cpp:
+        (WTF::initializeThreading): Initialize the main thread identifier.
+        (WTF::isMainThread): Added.
+        * wtf/ThreadingNone.cpp: Ditto ThreadingGtk.cpp.
+        (WTF::initializeThreading):
+        (WTF::isMainThread):
+        * wtf/ThreadingPthreads.cpp: Ditto.
+        (WTF::initializeThreading):
+        (WTF::isMainThread):
+        * wtf/ThreadingWin.cpp: Ditto.
+        (WTF::initializeThreading):
+        (WTF::isMainThread):
+
 2008-04-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
