@@ -1,3 +1,23 @@
+2008-04-07  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18297
+        Bug #18297 - Acid2/Acid3 -tests don't load load with soup.
+
+        Fixes in the libsoup backend: data url parsing, acid tests, redirects,
+        response headers handling and re-entrancy issues on job cancellation.
+        Thanks to Dan Winship for libsoup hints.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal): add m_cancelled and remove unuseful m_session
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::restartedCallback): added to route redirects to webkit
+        (WebCore::dataCallback): add response headers, some checks and fix re-entrancy
+        (WebCore::parseDataUrl): be an idle callback for the main loop
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel): fixed re-entrancy
+
 2008-04-07  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Build fix, rubber-stamped and landed by ap.

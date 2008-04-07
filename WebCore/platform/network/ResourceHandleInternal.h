@@ -109,6 +109,7 @@ namespace WebCore {
 #endif
 #if USE(SOUP)
             , m_msg(0)
+            , m_cancelled(false)
 #endif
 #if PLATFORM(QT)
             , m_job(0)
@@ -173,8 +174,8 @@ namespace WebCore {
 #endif
 #if USE(SOUP)
         SoupMessage* m_msg;
-        SoupSession* session;
         ResourceResponse m_response;
+        bool m_cancelled;
 #endif
 #if PLATFORM(QT)
 #if QT_VERSION < 0x040400
