@@ -263,11 +263,19 @@ AC_ARG_ENABLE(cross_document_messaging,
               [],[enable_cross_document_messaging="yes"])
 AC_MSG_RESULT([$enable_cross_document_messaging])
 
+# check whether to enable HTML5 client-side session and persitent storage support
+AC_MSG_CHECKING([whether to enable HTML5 client-side session and persistent storage support])
+AC_ARG_ENABLE(dom_storage,
+              AC_HELP_STRING([--enable-dom-storage],
+                             [enable HTML5 client-side session and persistent storage support [default=no]]),
+              [],[enable_dom_storage="no"])
+AC_MSG_RESULT([$enable_dom_storage])
+
 # check whether to build with database support
-AC_MSG_CHECKING([whether to enable HTML5 client-side storage support])
+AC_MSG_CHECKING([whether to enable HTML5 client-side database storage support])
 AC_ARG_ENABLE(database,
               AC_HELP_STRING([--enable-database],
-                             [enable HTML5 client-side storage support [default=yes]]),
+                             [enable HTML5 client-side database storage support [default=yes]]),
               [],[enable_database="yes"])
 AC_MSG_RESULT([$enable_database])
 
@@ -498,6 +506,7 @@ AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
 AM_CONDITIONAL([ENABLE_CROSS_DOCUMENT_MESSAGING],[test "$enable_cross_document_messaging" = "yes"])
+AM_CONDITIONAL([ENABLE_DOM_STORAGE],[test "$enable_dom_storage" = "yes"])
 AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
@@ -526,27 +535,28 @@ echo "
 WebKit was configured with the following options:
 
 Build configuration:
- Enable debugging (slow)           : $enable_debug
- Code coverage support             : $enable_coverage
- Unicode backend                   : $unicode_backend
- HTTP backend                      : $with_http_backend
- Font backend                      : $with_font_backend
- Optimized memory allocator        : $enable_fast_malloc
+ Enable debugging (slow)                                  : $enable_debug
+ Code coverage support                                    : $enable_coverage
+ Unicode backend                                          : $unicode_backend
+ HTTP backend                                             : $with_http_backend
+ Font backend                                             : $with_font_backend
+ Optimized memory allocator                               : $enable_fast_malloc
 Features:
- HTML5 cross-document messaging    : $enable_cross_document_messaging
- HTML5 client-side storage support : $enable_database
- HTML5 video element support       : $enable_video
- Icon database support             : $enable_icon_database
- SVG support                       : $enable_svg
- SVG animation support             : $enable_svg_animation
- SVG filters support               : $enable_svg_filters
- SVG fonts support                 : $enable_svg_fonts
- SVG foreign object support        : $enable_svg_foreign_object
- SVG as image support              : $enable_svg_as_image
- SVG use element support           : $enable_svg_use_element
- XPATH support                     : $enable_xpath
- XSLT support                      : $enable_xslt
+ HTML5 cross-document messaging                           : $enable_cross_document_messaging
+ HTML5 client-side session and persistent storage support : $enable_dom_storage
+ HTML5 client-side database storage support               : $enable_database
+ HTML5 video element support                              : $enable_video
+ Icon database support                                    : $enable_icon_database
+ SVG support                                              : $enable_svg
+ SVG animation support                                    : $enable_svg_animation
+ SVG filters support                                      : $enable_svg_filters
+ SVG fonts support                                        : $enable_svg_fonts
+ SVG foreign object support                               : $enable_svg_foreign_object
+ SVG as image support                                     : $enable_svg_as_image
+ SVG use element support                                  : $enable_svg_use_element
+ XPATH support                                            : $enable_xpath
+ XSLT support                                             : $enable_xslt
 GTK+ configuration:
- GDK target                        : $with_target
- Hildon UI extensions              : $with_hildon
+ GDK target                                               : $with_target
+ Hildon UI extensions                                     : $with_hildon
 "

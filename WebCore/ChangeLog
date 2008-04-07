@@ -1,3 +1,9 @@
+2008-04-07  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Build fix, rubber-stamped and landed by ap.
+
+        * GNUmakefile.am: Fix dom_storage conditional and typo: ENABLE_DOM_STORAG
+
 2008-04-07  Brady Eidson  <beidson@apple.com>
 
         Whoops, idls don't go in the vcproj!

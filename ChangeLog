@@ -1,3 +1,9 @@
+2008-04-07  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Build fix, rubber-stamped and landed by ap.
+
+        * configure.ac: Add autoconf flag for HTML5 client-side session and persistent storage support.
+
 2008-03-21  Rodney Dawes  <dobey@wayofthemonkey.com>
 
         Reviewed by Holger.

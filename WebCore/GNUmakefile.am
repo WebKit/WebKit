@@ -1168,7 +1168,7 @@ webcore_sources += \
 endif # END ENABLE_DATABASE
 
 # ----
-# Database Support
+# HTML5 client-side session and persistent storage
 # ----
 if ENABLE_DOM_STORAGE
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_DOM_STORAGE =1
@@ -1184,7 +1184,7 @@ IDL_BINDINGS += \
 	WebCore/storage/StorageEvent.idl
 
 webcore_cppflags += \
-	-DENABLE_DOM_STORAG=1 \
+	-DENABLE_DOM_STORAGE=1 \
 	-I$(top_srcdir)/WebCore/storage
 
 webcore_sources += \
