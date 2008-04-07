@@ -1,3 +1,12 @@
+2008-04-04  Adam Roben  <aroben@apple.com>
+
+        Export some more WTF functions from WebKit.dll
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_debug.def:
+
 2008-04-04  Steve Falkenburg  <sfalken@apple.com>
 
         Only delete the backing store of background windows.

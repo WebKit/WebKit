@@ -102,6 +102,19 @@ EXPORTS
         ?fastZeroedMalloc@WTF@@YAPAXI@Z
         ?fastFree@WTF@@YAXPAX@Z
         ?fastCalloc@WTF@@YAPAXII@Z
+        ??0Mutex@WTF@@QAE@XZ
+        ??0ThreadCondition@WTF@@QAE@XZ
+        ??1Mutex@WTF@@QAE@XZ
+        ??1ThreadCondition@WTF@@QAE@XZ
+        ?broadcast@ThreadCondition@WTF@@QAEXXZ
+        ?createThread@WTF@@YAIP6APAXPAX@Z0@Z
+        ?initializeThreading@WTF@@YAXXZ
+        ?isMainThread@WTF@@YA_NXZ
+        ?lock@Mutex@WTF@@QAEXXZ
+        ?signal@ThreadCondition@WTF@@QAEXXZ
+        ?unlock@Mutex@WTF@@QAEXXZ
+        ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
+        ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
 
         ; These functions are deprecated
         WebLocalizedString
