@@ -495,6 +495,7 @@
 		51C81B890C4422F70019ECE3 /* FTPDirectoryParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */; };
 		51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */; };
 		51CBFC990D10E483002DBF51 /* CachedPagePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFC980D10E483002DBF51 /* CachedPagePlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51D0C5160DAA90B7003B3831 /* JSStorageCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */; };
 		51DCE8020CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */; };
 		51DF6D7E0B92A16D00C2DC85 /* ThreadCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51DF6D800B92A18E00C2DC85 /* ThreadCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51DF6D7F0B92A18E00C2DC85 /* ThreadCheck.mm */; };
@@ -4914,6 +4915,7 @@
 		51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryParser.cpp; sourceTree = "<group>"; };
 		51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryParser.h; sourceTree = "<group>"; };
 		51CBFC980D10E483002DBF51 /* CachedPagePlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedPagePlatformData.h; sourceTree = "<group>"; };
+		51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageCustom.cpp; sourceTree = "<group>"; };
 		51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLResultSetRowListCustom.cpp; sourceTree = "<group>"; };
 		51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadCheck.h; sourceTree = "<group>"; };
 		51DF6D7F0B92A18E00C2DC85 /* ThreadCheck.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ThreadCheck.mm; sourceTree = "<group>"; };
@@ -12032,6 +12034,7 @@
 				A9C6E64B0D7465E7006442E9 /* JSPluginCustom.cpp */,
 				51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */,
 				1AD2316D0CD269E700C1F194 /* JSSQLTransactionCustom.cpp */,
+				51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */,
 				BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */,
 				A84EBD770CB8C89200079609 /* JSStyleSheetListCustom.cpp */,
 				B25DFAAE0B2E2929000E6510 /* JSSVGMatrixCustom.cpp */,
@@ -16429,6 +16432,7 @@
 				BC53C6080DA56C570021EB5D /* Gradient.cpp in Sources */,
 				BC53C60B0DA56CF10021EB5D /* GradientCG.cpp in Sources */,
 				51272D850DA9800900844E2F /* OriginStorage.cpp in Sources */,
+				51D0C5160DAA90B7003B3831 /* JSStorageCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

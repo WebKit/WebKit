@@ -88,6 +88,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSRGBColor.cpp
         bindings/js/JSSQLResultSetRowListCustom.cpp
         bindings/js/JSSQLTransactionCustom.cpp
+        bindings/js/JSStorageCustom.cpp
         bindings/js/JSStyleSheetCustom.cpp
         bindings/js/JSStyleSheetListCustom.cpp
         bindings/js/JSTreeWalkerCustom.cpp

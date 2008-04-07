@@ -1192,7 +1192,8 @@ webcore_sources += \
 	WebCore/storage/Storage.cpp \
 	WebCore/storage/StorageEvent.cpp \
 	WebCore/storage/StorageMap.cpp \
-	WebCore/storage/SessionStorage.cpp
+	WebCore/storage/SessionStorage.cpp \
+	WebCore/bindings/js/JSStorageCustom.cpp
 
 endif # END ENABLE_DOM_STORAGE
 

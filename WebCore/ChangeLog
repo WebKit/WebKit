@@ -1,3 +1,17 @@
+2008-04-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        Add 1 more empty file for upcoming work, as a separate step, to keep all build-systems working
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+
+        * bindings/js/JSStorageCustom.cpp: Added.
+
 2008-04-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.

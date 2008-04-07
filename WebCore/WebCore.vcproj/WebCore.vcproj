@@ -13277,6 +13277,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSStorageCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSStyleSheetCustom.cpp"
 					>
 				</File>
