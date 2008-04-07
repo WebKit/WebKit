@@ -1,3 +1,11 @@
+2008-04-06  Luca Bruno  <lethalman88@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        Fix webkit_web_view_get_transparent() return value.
+
+        * webkit/webkitwebview.cpp:
+
 2008-03-31  Jasper Bryant-Greene  <jasper@unix.geek.nz>
 
         Reviewed by Darin.
