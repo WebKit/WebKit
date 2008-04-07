@@ -26,4 +26,36 @@
 #include "config.h"
 #include "StorageEvent.h"
 
-// FIXME: Code will go here
+#include "DOMWindow.h"
+
+namespace WebCore {
+
+StorageEvent::StorageEvent()
+{
+}
+
+StorageEvent::StorageEvent(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& uri, DOMWindow* source)
+    : Event(type, false, true)
+    , m_key(key)
+    , m_oldValue(oldValue)
+    , m_newValue(newValue)
+    , m_uri(uri)
+    , m_source(source)
+{
+}
+
+void StorageEvent::initStorageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& key, const String& oldValue, const String& newValue, const String& uri, DOMWindow* source)
+{
+    if (dispatched())
+        return;
+
+    initEvent(type, canBubble, cancelable);
+
+    m_key = key;
+    m_oldValue = oldValue;
+    m_newValue = newValue;
+    m_uri = uri;
+    m_source = source;
+}
+
+}

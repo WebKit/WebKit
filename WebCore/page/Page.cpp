@@ -53,6 +53,11 @@
 #include <kjs/JSLock.h>
 #include <wtf/HashMap.h>
 
+#if ENABLE(DOM_STORAGE)
+#include "OriginStorage.h"
+#include "SessionStorage.h"
+#endif
+
 namespace WebCore {
 
 typedef HashMap<String, PageGroup*> PageGroupMap;
@@ -473,5 +478,21 @@ void Page::setDebugger(KJS::Debugger* debugger)
     for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree()->traverseNext())
         frame->scriptProxy()->attachDebugger(m_debugger);
 }
+
+#if ENABLE(DOM_STORAGE)
+SessionStorage* Page::sessionStorage(bool optionalCreate)
+{
+    if (!m_sessionStorage && optionalCreate)
+        m_sessionStorage = SessionStorage::create(this);
+
+    return m_sessionStorage.get();
+}
+
+void Page::setSessionStorage(PassRefPtr<SessionStorage> newStorage)
+{
+    ASSERT(newStorage->page() == this);
+    m_sessionStorage = newStorage;
+}
+#endif
 
 } // namespace WebCore

@@ -26,25 +26,39 @@
 #ifndef Storage_h
 #define Storage_h
 
-// FIXME: More code will go here
+#include "OriginStorage.h"
 
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+    class Frame;
     class String;
     typedef int ExceptionCode;
 
     class Storage : public RefCounted<Storage> {
     public:
+        static PassRefPtr<Storage> create(Frame*, PassRefPtr<OriginStorage>);
         
         unsigned length() const;
         String key(unsigned index, ExceptionCode&) const;
         String getItem(const String&) const;
         void setItem(const String& key, const String& value, ExceptionCode&);
         void removeItem(const String&);
+        
+        bool contains(const String& key) const;
+
+        void disconnectFrame() { m_frame = 0; }
+
+    private:
+        Storage(Frame*, PassRefPtr<OriginStorage>);
+            
+        Frame* m_frame;
+        RefPtr<OriginStorage> m_originStorage;
     };
 
 } // namespace WebCore
 
-#endif // StorageEvent_h
+#endif // Storage_h

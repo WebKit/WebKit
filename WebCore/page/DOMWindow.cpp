@@ -59,6 +59,12 @@
 #include "Database.h"
 #endif
 
+#if ENABLE(DOM_STORAGE)
+#include "OriginStorage.h"
+#include "SessionStorage.h"
+#include "Storage.h"
+#endif
+
 using std::min;
 using std::max;
 
@@ -168,6 +174,12 @@ void DOMWindow::clear()
     if (m_location)
         m_location->disconnectFrame();
     m_location = 0;
+    
+#if ENABLE(DOM_STORAGE)
+    if (m_sessionStorage)
+        m_sessionStorage->disconnectFrame();
+    m_sessionStorage = 0;
+#endif
 }
 
 Screen* DOMWindow::screen() const
@@ -246,6 +258,32 @@ Location* DOMWindow::location() const
         m_location = Location::create(m_frame);
     return m_location.get();
 }
+
+#if ENABLE(DOM_STORAGE)
+Storage* DOMWindow::sessionStorage() const
+{
+    if (m_sessionStorage)
+        return m_sessionStorage.get();
+        
+    Page* page = m_frame->page();
+    if (!page)
+        return 0;
+
+    Document* document = m_frame->document();
+    if (!document)
+        return 0;
+
+    RefPtr<OriginStorage> originStorage = page->sessionStorage()->originStorage(document->securityOrigin());
+    m_sessionStorage = Storage::create(m_frame, originStorage.release());
+    return m_sessionStorage.get();
+}
+
+Storage* DOMWindow::localStorage() const
+{
+    // FIXME: When implementing LocalStorage, return appropriate object from a centralized "LocalStorage repository"
+    return 0;
+}
+#endif
 
 #if ENABLE(CROSS_DOCUMENT_MESSAGING)
 void DOMWindow::postMessage(const String& message, const String& domain, const String& uri, DOMWindow* source) const

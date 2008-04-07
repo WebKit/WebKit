@@ -26,4 +26,41 @@
 #include "config.h"
 #include "SessionStorage.h"
 
-// FIXME: Code will go here
+#include "OriginStorage.h"
+#include "StorageMap.h"
+
+namespace WebCore {
+
+PassRefPtr<SessionStorage> SessionStorage::create(Page* page)
+{
+    return adoptRef(new SessionStorage(page));
+}
+
+SessionStorage::SessionStorage(Page* page)
+    : m_page(page)
+{
+}
+
+PassRefPtr<SessionStorage> SessionStorage::copy(Page* newPage)
+{
+    RefPtr<SessionStorage> newSession = SessionStorage::create(newPage);
+    
+    OriginStorageMap::iterator end = m_originStorageMap.end();
+    for (OriginStorageMap::iterator i = m_originStorageMap.begin(); i != end; ++i)
+        newSession->m_originStorageMap.set(i->first, i->second->copy(newPage, i->first.get()));
+        
+    return newSession.release();
+}
+
+PassRefPtr<OriginStorage> SessionStorage::originStorage(SecurityOrigin* origin)
+{
+    RefPtr<OriginStorage> originStorage;
+    if (originStorage = m_originStorageMap.get(origin))
+        return originStorage.release();
+        
+    originStorage = OriginStorage::create(m_page, origin);
+    m_originStorageMap.set(origin, originStorage);
+    return originStorage.release();
+}
+
+}

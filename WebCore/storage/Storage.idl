@@ -25,7 +25,11 @@
 
 module storage {
 
-    interface Storage {
+    interface [
+        GenerateConstructor,
+        HasNameGetter,
+        CustomPutFunction
+    ] Storage {
         readonly attribute unsigned long length;
         DOMString key(in unsigned long index) 
             raises (DOMException);

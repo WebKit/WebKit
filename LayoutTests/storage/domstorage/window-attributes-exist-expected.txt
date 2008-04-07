@@ -1,0 +1,9 @@
+This test checks to see if window.localStorage and window.sessionStorage exist.
+window.sessionStorage exists
+Storage object sessionStorage has length
+Storage object sessionStorage has key
+Storage object sessionStorage has getItem
+Storage object sessionStorage has setItem
+Storage object sessionStorage has removeItem
+window.localStorage DOES NOT exist
+

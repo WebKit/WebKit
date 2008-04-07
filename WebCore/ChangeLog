@@ -1,3 +1,121 @@
+2008-04-07  Brady Eidson  <beidson@apple.com>
+
+        Lovingly reviewed by Sam Weinig
+
+        <rdar://problem/5797684> - HTML5 SessionStorage and underpinnings for LocalStorage
+
+        Tests: storage/domstorage/sessionstorage/iframe-events.html
+               storage/domstorage/sessionstorage/index-get-and-set.html
+               storage/domstorage/sessionstorage/simple-events.html
+               storage/domstorage/sessionstorage/simple-usage.html
+               storage/domstorage/sessionstorage/window-open.html
+               storage/domstorage/window-attributes-exist.html
+
+        * Configurations/WebCore.xcconfig: Define to enable DOM_STORAGE
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::mark): Add optionalSessionStorage case
+
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS): Add StorageEvent case
+
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::canGetItemsForName):
+        (WebCore::JSStorage::nameGetter): If the property doesn't exist on the object, call through to getItem()
+        (WebCore::JSStorage::customPut): If the property doesn't exist on the object, call through to setItem()
+
+        * dom/Event.cpp:
+        (WebCore::Event::isStorageEvent):
+        * dom/Event.h:
+
+        * dom/EventNames.h: Add "storage"
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchStorageEvent):
+        * dom/EventTargetNode.h:
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow): After a new page has been created, set its SessionStorage object
+          to a copy of the previous Page's
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage): Accessor to pull the appropriate OriginStorage out of the Page's
+          SessionStorage.
+        (WebCore::DOMWindow::localStorage): To be filled in later
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::optionalSessionStorage): Return the session Storage object for this window to mark, 
+          if any exists
+        * page/DOMWindow.idl:
+
+        * page/Page.cpp:
+        (WebCore::Page::sessionStorage):  Create and/or return the SessionStorage for this Page.
+        (WebCore::Page::setSessionStorage): Set the SessionStorage for this Page - used in FrameLoader after a
+          Window.open();
+        * page/Page.h:
+
+        * storage/OriginStorage.cpp: Intermediate layer between individual Storage objects, and shared StorageMap 
+          objects.  There is one OriginStorage object per SecurityOrigin in each "unique set of storage areas", such
+          as the SessionStorage.  This layer forwards DOM-level calls down to the backing StorageMap, handles 
+          copy-on-write along with the StorageMap, fires StorageEvents to the DOM when a value is changed, and will
+          eventually handle quota enforcement.
+        (WebCore::OriginStorage::create):
+        (WebCore::OriginStorage::OriginStorage):
+        (WebCore::OriginStorage::~OriginStorage):
+        (WebCore::OriginStorage::copy):
+        (WebCore::OriginStorage::length):
+        (WebCore::OriginStorage::key):
+        (WebCore::OriginStorage::getItem):
+        (WebCore::OriginStorage::setItem):
+        (WebCore::OriginStorage::removeItem):
+        (WebCore::OriginStorage::contains):
+        (WebCore::OriginStorage::dispatchStorageEvent):
+        * storage/OriginStorage.h:
+
+        * storage/SessionStorage.cpp: From the HTML5 spec:
+          "Each top-level browsing context has a unique set of session storage areas, one for each origin."
+          This object represents that "unique set of session storage areas", and creates or returns the Storage
+          object for the requested SecurityOrigin
+        (WebCore::SessionStorage::create):
+        (WebCore::SessionStorage::SessionStorage):
+        (WebCore::SessionStorage::copy):
+        (WebCore::SessionStorage::originStorage):
+        * storage/SessionStorage.h:
+        (WebCore::SessionStorage::page):
+
+        * storage/Storage.cpp: Representation of the DOM-level object, wrapped by JSStorage.  There is a unique
+          Storage object per Window (per-Frame) that wraps a specific shared OriginStorage object.
+        (WebCore::Storage::create):
+        (WebCore::Storage::Storage):
+        (WebCore::Storage::length):
+        (WebCore::Storage::key):
+        (WebCore::Storage::getItem):
+        (WebCore::Storage::setItem):
+        (WebCore::Storage::removeItem):
+        (WebCore::Storage::contains):
+        * storage/Storage.h:
+        * storage/Storage.idl:
+
+        * storage/StorageEvent.cpp:
+        (WebCore::StorageEvent::StorageEvent):
+        (WebCore::StorageEvent::initStorageEvent):
+        * storage/StorageEvent.h:
+        (WebCore::StorageEvent::isStorageEvent):
+
+        * storage/StorageMap.cpp: The physical map of key/value pairs that is shared between OriginStorage objects, 
+          and implements copy-on-write semantics whenever a value is changed
+        (WebCore::StorageMap::create):
+        (WebCore::StorageMap::StorageMap):
+        (WebCore::StorageMap::copy):
+        (WebCore::StorageMap::invalidateIterator): Used to support the key(unsigned i) part of the API
+        (WebCore::StorageMap::setIteratorToIndex): Ditto
+        (WebCore::StorageMap::length):
+        (WebCore::StorageMap::key):
+        (WebCore::StorageMap::getItem):
+        (WebCore::StorageMap::setItem):
+        (WebCore::StorageMap::removeItem):
+        (WebCore::StorageMap::contains):
+        * storage/StorageMap.h:
+
 2008-04-07  Timothy Hatcher  <timothy@apple.com>
 
         Renamed various functions that are internal to the Console

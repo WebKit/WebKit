@@ -26,6 +26,37 @@
 #ifndef SessionStorage_h
 #define SessionStorage_h
 
-// FIXME: Code will go here
+#include "SecurityOriginHash.h"
 
-#endif // StorageEvent_h
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+
+    class OriginStorage;
+    class Page;
+
+    class SessionStorage : public RefCounted<SessionStorage> {
+    public:
+        static PassRefPtr<SessionStorage> create(Page*);
+        PassRefPtr<SessionStorage> copy(Page*);
+        
+        PassRefPtr<OriginStorage> originStorage(SecurityOrigin*);
+
+#ifndef NDEBUG
+        Page* page() { return m_page; }
+#endif
+
+    private:
+        SessionStorage(Page*);
+
+        Page* m_page;
+        
+        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<OriginStorage>, SecurityOriginHash, SecurityOriginTraits> OriginStorageMap;
+        OriginStorageMap m_originStorageMap;
+    };
+
+} // namespace WebCore
+
+#endif // SessionStorage_h

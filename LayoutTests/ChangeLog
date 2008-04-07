@@ -1,3 +1,30 @@
+2008-04-07  Brady Eidson  <beidson@apple.com>
+
+        Begrudgingly reviewed by Sam Weinig
+
+        Initial suite of layout tests for HTML5 key/value SessionStorage (<rdar://problem/5797684>)
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * storage/domstorage: Added.
+        * storage/domstorage/localstorage: Added.
+        * storage/domstorage/sessionstorage: Added.
+        * storage/domstorage/sessionstorage/iframe-events-expected.txt: Added.
+        * storage/domstorage/sessionstorage/iframe-events.html: Added.
+        * storage/domstorage/sessionstorage/index-get-and-set-expected.txt: Added.
+        * storage/domstorage/sessionstorage/index-get-and-set.html: Added.
+        * storage/domstorage/sessionstorage/resources: Added.
+        * storage/domstorage/sessionstorage/resources/clearSessionStorage.js: Added.
+        * storage/domstorage/sessionstorage/resources/iframe-events-second.html: Added.
+        * storage/domstorage/sessionstorage/resources/window-open-second.html: Added.
+        * storage/domstorage/sessionstorage/simple-events-expected.txt: Added.
+        * storage/domstorage/sessionstorage/simple-events.html: Added.
+        * storage/domstorage/sessionstorage/simple-usage-expected.txt: Added.
+        * storage/domstorage/sessionstorage/simple-usage.html: Added.
+        * storage/domstorage/sessionstorage/window-open-expected.txt: Added.
+        * storage/domstorage/sessionstorage/window-open.html: Added.
+        * storage/domstorage/window-attributes-exist-expected.txt: Added.
+        * storage/domstorage/window-attributes-exist.html: Added.
+
 2008-04-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.

@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class Frame;
+
 class EventTargetNode : public Node,
                         public EventTarget {
 public:
@@ -63,6 +65,9 @@ public:
     void dispatchSimulatedMouseEvent(const AtomicString& eventType, PassRefPtr<Event> underlyingEvent = 0);
     void dispatchSimulatedClick(PassRefPtr<Event> underlyingEvent, bool sendMouseEvents = false, bool showPressedLook = true);
     bool dispatchProgressEvent(const AtomicString &eventType, bool lengthComputableArg, unsigned loadedArg, unsigned totalArg);
+#if ENABLE(DOM_STORAGE)
+    void dispatchStorageEvent(const AtomicString &eventType, const String& key, const String& oldValue, const String& newValue, Frame* source);
+#endif
 
     virtual void handleLocalEvents(Event*, bool useCapture);
 

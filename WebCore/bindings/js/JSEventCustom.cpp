@@ -50,6 +50,11 @@
 #include "WheelEvent.h"
 #include "kjs_events.h"
 
+#if ENABLE(DOM_STORAGE)
+#include "JSStorageEvent.h"
+#include "StorageEvent.h"
+#endif
+
 #if ENABLE(CROSS_DOCUMENT_MESSAGING)
 #include "JSMessageEvent.h"
 #include "MessageEvent.h"
@@ -105,6 +110,10 @@ JSValue* toJS(ExecState* exec, Event* event)
 #endif
     else if (event->isProgressEvent())
         ret = new JSProgressEvent(JSProgressEventPrototype::self(exec), static_cast<ProgressEvent*>(event));
+#if ENABLE(DOM_STORAGE)
+    else if (event->isStorageEvent())
+        ret = new JSStorageEvent(JSStorageEventPrototype::self(exec), static_cast<StorageEvent*>(event));
+#endif
     else
         ret = new JSEvent(JSEventPrototype::self(exec), event);
 

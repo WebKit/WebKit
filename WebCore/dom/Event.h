@@ -111,6 +111,9 @@ namespace WebCore {
 #if ENABLE(SVG)
         virtual bool isSVGZoomEvent() const;
 #endif
+#if ENABLE(DOM_STORAGE)
+        virtual bool isStorageEvent() const;
+#endif
 
         bool propagationStopped() const { return m_propagationStopped; }
 

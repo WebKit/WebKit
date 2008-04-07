@@ -60,6 +60,9 @@ void JSDOMWindow::mark()
     markDOMObjectWrapper(impl()->optionalStatusbar());
     markDOMObjectWrapper(impl()->optionalToolbar());
     markDOMObjectWrapper(impl()->optionalLocation());
+#if ENABLE(DOM_STORAGE)
+    markDOMObjectWrapper(impl()->optionalSessionStorage());
+#endif
 }
 
 bool JSDOMWindow::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

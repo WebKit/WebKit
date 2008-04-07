@@ -26,33 +26,73 @@
 #include "config.h"
 #include "Storage.h"
 
+#include "OriginStorage.h"
 #include "PlatformString.h"
-
-// FIXME: More code will go here
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
+PassRefPtr<Storage> Storage::create(Frame* frame, PassRefPtr<OriginStorage> originStorage)
+{
+    return adoptRef(new Storage(frame, originStorage));
+}
+
+Storage::Storage(Frame* frame, PassRefPtr<OriginStorage> originStorage)
+    : m_frame(frame)
+    , m_originStorage(originStorage)
+{
+    ASSERT(m_frame);
+    ASSERT(m_originStorage);
+}
+
 unsigned Storage::length() const
 {
-    return 0;
+    if (!m_frame)
+        return 0;
+
+    return m_originStorage->length();
 }
 
-String Storage::key(unsigned index, ExceptionCode&) const
+String Storage::key(unsigned index, ExceptionCode& ec) const
 {
-    return String();
+    ec = 0;
+    if (!m_frame)
+        return String();
+
+    return m_originStorage->key(index, ec);
 }
 
-String Storage::getItem(const String&) const
+String Storage::getItem(const String& key) const
 {
-    return String();
+    if (!m_frame)
+        return String();
+
+    return m_originStorage->getItem(key);
 }
 
-void Storage::setItem(const String& key, const String& value, ExceptionCode&)
+void Storage::setItem(const String& key, const String& value, ExceptionCode& ec)
 {
+    ec = 0;
+    if (!m_frame)
+        return;
+
+    m_originStorage->setItem(key, value, ec, m_frame);
 }
 
-void Storage::removeItem(const String&)
+void Storage::removeItem(const String& key)
 {
+    if (!m_frame)
+        return;
+
+    m_originStorage->removeItem(key, m_frame);
+}
+
+bool Storage::contains(const String& key) const
+{
+    if (!m_frame)
+        return false;
+
+    return m_originStorage->contains(key);
 }
 
 }

@@ -1,0 +1,48 @@
+<html>
+<head>
+<script>
+
+if (layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(a)
+{
+    document.getElementById("logger").innerHTML += a + "<br>";
+}
+
+function testStorage(name, storage)
+{
+    if ("length" in storage)
+        log("Storage object " + name + " has length");
+    if ("key" in storage)
+        log("Storage object " + name + " has key");
+    if ("getItem" in storage)
+        log("Storage object " + name + " has getItem");
+    if ("setItem" in storage)
+        log("Storage object " + name + " has setItem");
+    if ("removeItem" in storage)
+        log("Storage object " + name + " has removeItem");
+}
+
+function runTest()
+{
+    if (window.sessionStorage) {
+        log("window.sessionStorage exists");
+        testStorage("sessionStorage", window.sessionStorage);
+    } else
+        log("window.sessionStorage DOES NOT exist");
+
+    if (window.localStorage) {
+        log("window.localStorage exists");
+        testStorage("localStorage", window.localStorage);
+    } else
+        log("window.localStorage DOES NOT exist");
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This test checks to see if window.localStorage and window.sessionStorage exist.<br>
+<div id="logger"></div>
+</body>
+</html>

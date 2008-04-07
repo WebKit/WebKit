@@ -70,6 +70,7 @@ namespace WebCore { namespace EventNames {
     macro(search) \
     macro(select) \
     macro(selectstart) \
+    macro(storage) \
     macro(submit) \
     macro(textInput) \
     macro(unload) \

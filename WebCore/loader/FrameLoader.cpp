@@ -98,6 +98,11 @@
 #include "SVGViewSpec.h"
 #endif
 
+#if ENABLE(DOM_STORAGE)
+#include "OriginStorage.h"
+#include "SessionStorage.h"
+#endif
+
 using KJS::UString;
 using KJS::JSLock;
 using KJS::JSValue;
@@ -327,12 +332,19 @@ Frame* FrameLoader::createWindow(FrameLoader* frameLoaderForFrameLookup, const F
     // FIXME: Setting the referrer should be the caller's responsibility.
     FrameLoadRequest requestWithReferrer = request;
     requestWithReferrer.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
-    
-    Page* page = m_frame->page();
-    if (page)
-        page = page->chrome()->createWindow(m_frame, requestWithReferrer, features);
+
+    Page* oldPage = m_frame->page();
+    if (!oldPage)
+        return 0;
+        
+    Page* page = oldPage->chrome()->createWindow(m_frame, requestWithReferrer, features);
     if (!page)
         return 0;
+
+#if ENABLE(DOM_STORAGE)
+    if (SessionStorage* oldSessionStorage = oldPage->sessionStorage(false))
+        page->setSessionStorage(oldSessionStorage->copy(page));
+#endif
 
     Frame* frame = page->mainFrame();
     if (request.frameName() != "_blank")

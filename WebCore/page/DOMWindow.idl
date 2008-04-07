@@ -135,6 +135,10 @@ module window {
         Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize)
             raises(DOMException);
 #endif
+#if defined(ENABLE_DOM_STORAGE)
+        readonly attribute Storage sessionStorage;
+        readonly attribute Storage localStorage;
+#endif
 
                  attribute [Replaceable] Console console;
 
@@ -287,6 +291,11 @@ module window {
 
 #if defined(ENABLE_CROSS_DOCUMENT_MESSAGING)
         attribute MessageEventConstructor MessageEvent;
+#endif
+
+#if defined(ENABLE_DOM_STORAGE)
+        attribute StorageConstructor Storage;
+        attribute StorageEventConstructor StorageEvent;
 #endif
 
 #if defined(ENABLE_VIDEO)

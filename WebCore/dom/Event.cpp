@@ -141,6 +141,12 @@ bool Event::isSVGZoomEvent() const
 }
 #endif
 
+#if ENABLE(DOM_STORAGE)
+bool Event::isStorageEvent() const
+{
+    return false;
+}
+#endif
 
 bool Event::storesResultAsString() const
 {

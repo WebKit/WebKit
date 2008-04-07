@@ -26,4 +26,124 @@
 #include "config.h"
 #include "StorageMap.h"
 
-// FIXME: Code will go here
+namespace WebCore {
+
+PassRefPtr<StorageMap> StorageMap::create()
+{
+    return adoptRef(new StorageMap);
+}
+    
+StorageMap::StorageMap()
+    : m_iterator(m_map.end())
+    , m_iteratorIndex(UINT_MAX)
+{
+}
+
+PassRefPtr<StorageMap> StorageMap::copy()
+{
+    RefPtr<StorageMap> newMap = create();
+    newMap->m_map = m_map;
+    return newMap.release();
+}
+
+void StorageMap::invalidateIterator()
+{
+    m_iterator = m_map.end();
+    m_iteratorIndex = UINT_MAX;
+}
+
+void StorageMap::setIteratorToIndex(unsigned index) const
+{
+    // FIXME: Once we have bidirectional iterators for HashMap we can be more intelligent about this.
+    // The requested index will be closest to begin(), our current iterator, or end(), and we 
+    // can take the shortest route.
+    // Until that mechanism is available, we'll always increment our iterator from begin() or current.
+    
+    if (m_iteratorIndex == index)
+        return;
+    
+    if (index < m_iteratorIndex) {
+        m_iteratorIndex = 0;
+        m_iterator = m_map.begin();
+        ASSERT(m_iterator != m_map.end());
+    }
+    
+    while (m_iteratorIndex < index) {
+        ++m_iteratorIndex;
+        ++m_iterator;
+        ASSERT(m_iterator != m_map.end());
+    }
+}
+
+unsigned StorageMap::length() const
+{
+    return m_map.size();
+}
+
+bool StorageMap::key(unsigned index, String& key) const
+{
+    if (index >= length())
+        return false;
+    
+    setIteratorToIndex(index);
+    
+    key = m_iterator->first;
+    return true;
+}
+
+String StorageMap::getItem(const String& key) const
+{
+    return m_map.get(key);
+}
+
+PassRefPtr<StorageMap> StorageMap::setItem(const String& key, const String& value, String& oldValue)
+{
+    ASSERT(!value.isNull());
+    
+    // Implement copy-on-write semantics here.  We're guaranteed that the only refs of StorageMaps belong to Storage objects
+    // so if more than one Storage object refs this map, copy it before mutating it.
+    if (refCount() > 1) {
+        RefPtr<StorageMap> newStorageMap = copy();
+        newStorageMap->setItem(key, value, oldValue);
+        return newStorageMap.release();
+    }
+
+    pair<HashMap<String, String>::iterator, bool> addResult = m_map.add(key, value);
+
+    if (addResult.second) {
+        // If the add succeeded, the map has been mutated and the iterator needs to be invalidated
+        invalidateIterator();
+        
+        // Plus, there was no "oldValue" so null it out.
+        oldValue = String();
+    } else {
+        oldValue = addResult.first->second;
+        m_map.set(key, value);
+    }
+
+    return 0;
+}
+
+PassRefPtr<StorageMap> StorageMap::removeItem(const String& key, String& oldValue)
+{
+    // Implement copy-on-write semantics here.  We're guaranteed that the only refs of StorageMaps belong to Storage objects
+    // so if more than one Storage object refs this map, copy it before mutating it.
+    if (refCount() > 1) {
+        RefPtr<StorageMap> newStorage = copy();
+        newStorage->removeItem(key, oldValue);
+        return newStorage.release();
+    }
+
+    oldValue = m_map.take(key);
+    if (!oldValue.isNull())
+        invalidateIterator();
+
+    return 0;
+}
+
+bool StorageMap::contains(const String& key) const
+{
+    return m_map.contains(key);
+}
+
+}

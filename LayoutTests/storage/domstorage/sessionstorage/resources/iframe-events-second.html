@@ -1,0 +1,29 @@
+<html>
+<head>
+<script>
+
+function log(a)
+{
+    parent.document.getElementById("logger").innerHTML += a + "<br>";
+}
+
+function handleStorageEvent(e)
+{
+    log("Subframe received storage event:");
+    log("Key           - " + e.key);
+    log("New Value     - " + e.newValue);
+    log("Old Value     - " + e.oldValue);
+    log("");
+    
+    if (e.key != "Subframe") {
+        log("Subframe about to change sessionStorage...");
+        sessionStorage.setItem("Subframe", "SET");
+    }
+}
+
+</script>
+</head>
+<body onload="document.body.addEventListener('storage', handleStorageEvent, false);">
+This is the subframe which exists to make sure that both frames of a same security origin receive the event for that origin's sessionStorage object mutating
+</body>
+</html>

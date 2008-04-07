@@ -26,6 +26,45 @@
 #ifndef OriginStorage_h
 #define OriginStorage_h
 
-// FIXME: Code will go here
+#include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
-#endif // StorageEvent_h
+namespace WebCore {
+
+    class Frame;
+    class Page;
+    class SecurityOrigin;
+    class StorageMap;
+    class String;
+    typedef int ExceptionCode;
+
+    class OriginStorage : public RefCounted<OriginStorage> {
+    public:
+        virtual ~OriginStorage();
+        
+        static PassRefPtr<OriginStorage> create(Page*, SecurityOrigin*);
+        PassRefPtr<OriginStorage> copy(Page*, SecurityOrigin*);
+        
+        unsigned length() const;
+        String key(unsigned index, ExceptionCode&) const;
+        String getItem(const String&) const;
+        void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame);
+        void removeItem(const String&, Frame* sourceFrame);
+
+        bool contains(const String& key) const;
+
+    private:
+        OriginStorage(Page*, SecurityOrigin*);
+        OriginStorage(Page*, SecurityOrigin*, PassRefPtr<StorageMap>);
+        
+        void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
+        
+        Page* m_page;
+        RefPtr<SecurityOrigin> m_securityOrigin;
+        RefPtr<StorageMap> m_storageMap;
+    };
+
+} // namespace WebCore
+
+#endif // OriginStorage_h
