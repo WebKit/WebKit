@@ -262,11 +262,7 @@ WebInspector.TextPrompt.prototype = {
 
     isCaretInsidePrompt: function()
     {
-        var selection = window.getSelection();
-        if (!selection.rangeCount || !selection.isCollapsed)
-            return false;
-        var selectionRange = selection.getRangeAt(0);
-        return selectionRange.startContainer === this.element || selectionRange.startContainer.isDescendant(this.element);
+        return this.element.isInsertionCaretInside();
     },
 
     isCaretAtEndOfPrompt: function()

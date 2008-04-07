@@ -105,6 +105,18 @@ var WebInspector = {
                 this._currentFocusElement.focus();
             if (this._currentFocusElement.focused)
                 this._currentFocusElement.focused();
+
+            // Make a caret selection inside the new element if there isn't a range selection and
+            // there isn't already a caret selection inside.
+            var selection = window.getSelection();
+            if (selection.isCollapsed && !this._currentFocusElement.isInsertionCaretInside()) {
+                var selectionRange = document.createRange();
+                selectionRange.setStart(this._currentFocusElement, 0);
+                selectionRange.setEnd(this._currentFocusElement, 0);
+
+                selection.removeAllRanges();
+                selection.addRange(selectionRange);
+            }
         }
     },
 

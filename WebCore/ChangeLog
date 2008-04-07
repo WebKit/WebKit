@@ -1,3 +1,21 @@
+2008-04-07  Timothy Hatcher  <timothy@apple.com>
+
+        When the WebInspector.currentFocusElement changes, move the caret
+        selection to be inside the focused element. This makes sure the
+        caret moves in and out of the console when the focus changes.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/TextPrompt.js:
+        (TextPrompt.prototype.isCaretInsidePrompt): Just call isInsertionCaretInside.
+        * page/inspector/inspector.js: 
+        (WebInspector.set currentFocusElement): Make a caret selection inside
+        the focused element if there isn't a range selection and there isn't
+        already a caret selection inside.
+        * page/inspector/utilities.js:
+        (Element.prototype.isInsertionCaretInside): Added. Tests if the
+        selection is collapsed and is inside the element.
+
 2008-04-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher

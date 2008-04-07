@@ -166,6 +166,15 @@ Element.prototype.removeChildren = function()
         this.removeChild(this.firstChild);        
 }
 
+Element.prototype.isInsertionCaretInside = function()
+{
+    var selection = window.getSelection();
+    if (!selection.rangeCount || !selection.isCollapsed)
+        return false;
+    var selectionRange = selection.getRangeAt(0);
+    return selectionRange.startContainer === this || selectionRange.startContainer.isDescendant(this);
+}
+
 Element.prototype.__defineGetter__("totalOffsetLeft", function() {
     var total = 0;
     for (var element = this; element; element = element.offsetParent)
