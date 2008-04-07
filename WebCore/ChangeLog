@@ -1,5 +1,14 @@
 2008-04-07  Timothy Hatcher  <timothy@apple.com>
 
+        Renamed various functions that are internal to the Console
+        object to have an underscore prefix.
+
+        Rubber-stamped by Adam Roben.
+
+        * page/inspector/Console.js:
+
+2008-04-07  Timothy Hatcher  <timothy@apple.com>
+
         Renamed various functions and properties that are internal
         to an object to have an underscore prefix.
 

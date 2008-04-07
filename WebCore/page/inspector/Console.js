@@ -34,13 +34,13 @@ WebInspector.ConsolePanel = function()
 
     this.messagesElement = document.createElement("div");
     this.messagesElement.id = "console-messages";
-    this.messagesElement.addEventListener("selectstart", this.messagesSelectStart.bind(this), true);
-    this.messagesElement.addEventListener("click", this.messagesClicked.bind(this), true);
+    this.messagesElement.addEventListener("selectstart", this._messagesSelectStart.bind(this), true);
+    this.messagesElement.addEventListener("click", this._messagesClicked.bind(this), true);
     this.element.appendChild(this.messagesElement);
 
     this.promptElement = document.createElement("div");
     this.promptElement.id = "console-prompt";
-    this.promptElement.addEventListener("keydown", this.promptKeyDown.bind(this), false);
+    this.promptElement.addEventListener("keydown", this._promptKeyDown.bind(this), false);
     this.promptElement.appendChild(document.createElement("br"));
     this.messagesElement.appendChild(this.promptElement);
 
@@ -49,7 +49,7 @@ WebInspector.ConsolePanel = function()
     this.clearButton = document.createElement("button");
     this.clearButton.title = WebInspector.UIString("Clear");
     this.clearButton.textContent = WebInspector.UIString("Clear");
-    this.clearButton.addEventListener("click", this.clearButtonClicked.bind(this), false);
+    this.clearButton.addEventListener("click", this._clearButtonClicked.bind(this), false);
 }
 
 WebInspector.ConsolePanel.prototype = {
@@ -172,12 +172,12 @@ WebInspector.ConsolePanel.prototype = {
         return results;
     },
 
-    clearButtonClicked: function()
+    _clearButtonClicked: function()
     {
         this.clearMessages();
     },
 
-    messagesSelectStart: function(event)
+    _messagesSelectStart: function(event)
     {
         if (this._selectionTimeout)
             clearTimeout(this._selectionTimeout);
@@ -195,7 +195,7 @@ WebInspector.ConsolePanel.prototype = {
         this._selectionTimeout = setTimeout(moveBackIfOutside.bind(this), 100);
     },
 
-    messagesClicked: function(event)
+    _messagesClicked: function(event)
     {
         var link = event.target.enclosingNodeOrSelfWithNodeName("a");
         if (link && link.representedNode) {
@@ -223,7 +223,7 @@ WebInspector.ConsolePanel.prototype = {
         event.preventDefault();
     },
 
-    promptKeyDown: function(event)
+    _promptKeyDown: function(event)
     {
         switch (event.keyIdentifier) {
             case "Enter":
