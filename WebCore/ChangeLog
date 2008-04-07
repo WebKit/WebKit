@@ -1,5 +1,15 @@
 2008-04-07  Timothy Hatcher  <timothy@apple.com>
 
+        Fix an exception and remove code that was missed when TextPrompt
+        was added. This makes the Console work again.
+        
+        Reviewed by Adam Roben.
+        
+        * page/inspector/Console.js: Removed code that used non-existent
+        properties.
+
+2008-04-07  Timothy Hatcher  <timothy@apple.com>
+
         Remove the workaround for bug 11399 now that it is fixed.
 
         Reviewed by Adam Roben.

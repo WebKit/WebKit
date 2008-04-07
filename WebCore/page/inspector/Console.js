@@ -250,11 +250,6 @@ WebInspector.ConsolePanel.prototype = {
         if (!str.length)
             return;
 
-        this.commandHistory.push(str);
-        this.commandOffset = 0;
-
-        this.promptText = "";
-
         var result;
         var exception = false;
         try {
