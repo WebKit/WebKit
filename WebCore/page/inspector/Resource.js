@@ -203,7 +203,7 @@ WebInspector.Resource.prototype = {
                 WebInspector.drawLoadingPieChart(canvas, (x / this._expectedContentLength));
         }
 
-        WebInspector.networkPanel.updateSummaryGraphSoon();
+        WebInspector.networkPanel._updateSummaryGraphSoon();
     },
 
     get expectedContentLength()

@@ -87,7 +87,7 @@ WebInspector.NetworkPanel = function()
     this.legendElement.className = "network-graph-legend";
     graphSideElement.appendChild(this.legendElement);
 
-    this.drawSummaryGraph(); // draws an empty graph
+    this._drawSummaryGraph(); // draws an empty graph
 
     this.needsRefresh = true; 
 }
@@ -108,7 +108,7 @@ WebInspector.NetworkPanel.prototype = {
 
     resize: function()
     {
-        this.updateTimelineDividersIfNeeded();
+        this._updateGraphDividersIfNeeded();
     },
 
     resourcesClicked: function(event)
@@ -135,7 +135,7 @@ WebInspector.NetworkPanel.prototype = {
 
     changeGraphMode: function(event)
     {
-        this.updateSummaryGraph();
+        this._updateSummaryGraph();
     },
 
     get calculator()
@@ -172,7 +172,7 @@ WebInspector.NetworkPanel.prototype = {
     {
         this.needsRefresh = false;
 
-        // calling refresh will call updateTimelineBoundriesIfNeeded, which can clear needsRefresh for future entries,
+        // calling refresh will call _updateGraphBoundriesIfNeeded, which can clear needsRefresh for future entries,
         // so find all the entries that needs refresh first, then loop back trough them to call refresh
         var entriesNeedingRefresh = [];
         var entriesLength = this.timelineEntries.length;
@@ -186,12 +186,12 @@ WebInspector.NetworkPanel.prototype = {
         for (var i = 0; i < entriesLength; ++i)
             entriesNeedingRefresh[i].refresh(false, true, true);
 
-        this.updateTimelineDividersIfNeeded();
-        this.sortTimelineEntriesIfNeeded();
-        this.updateSummaryGraph();
+        this._updateGraphDividersIfNeeded();
+        this._sortResourcesIfNeeded();
+        this._updateSummaryGraph();
     },
 
-    makeLegendElement: function(label, value, color)
+    _makeLegendElement: function(label, value, color)
     {
         var legendElement = document.createElement("label");
         legendElement.className = "network-graph-legend-item";
@@ -204,7 +204,7 @@ WebInspector.NetworkPanel.prototype = {
 
             legendElement.appendChild(swatch);
 
-            this.drawSwatch(swatch, color);
+            this._drawSwatch(swatch, color);
         }
 
         var labelElement = document.createElement("div");
@@ -225,18 +225,18 @@ WebInspector.NetworkPanel.prototype = {
         return legendElement;
     },
 
-    sortTimelineEntriesSoonIfNeeded: function()
+    _sortResourcesSoonIfNeeded: function()
     {
-        if ("sortTimelineEntriesTimeout" in this)
+        if ("_sortResourcesTimeout" in this)
             return;
-        this.sortTimelineEntriesTimeout = setTimeout(this.sortTimelineEntriesIfNeeded.bind(this), 500);
+        this._sortResourcesTimeout = setTimeout(this._sortResourcesIfNeeded.bind(this), 500);
     },
 
-    sortTimelineEntriesIfNeeded: function()
+    _sortResourcesIfNeeded: function()
     {
-        if ("sortTimelineEntriesTimeout" in this) {
-            clearTimeout(this.sortTimelineEntriesTimeout);
-            delete this.sortTimelineEntriesTimeout;
+        if ("_sortResourcesTimeout" in this) {
+            clearTimeout(this._sortResourcesTimeout);
+            delete this._sortResourcesTimeout;
         }
 
         this.timelineEntries.sort(WebInspector.NetworkPanel.timelineEntryCompare);
@@ -250,44 +250,44 @@ WebInspector.NetworkPanel.prototype = {
         }
     },
 
-    updateTimelineBoundriesIfNeeded: function(resource, immediate)
+    _updateGraphBoundriesIfNeeded: function(resource, immediate)
     {
-        var didUpdate = false;
+        var didChange = false;
         if (resource.startTime !== -1 && (this.earliestStartTime === undefined || resource.startTime < this.earliestStartTime)) {
             this.earliestStartTime = resource.startTime;
-            didUpdate = true;
+            didChange = true;
         }
 
         if (resource.endTime !== -1 && (this.latestEndTime === undefined || resource.endTime > this.latestEndTime)) {
             this.latestEndTime = resource.endTime;
-            didUpdate = true;
+            didChange = true;
         }
 
-        if (didUpdate) {
+        if (didChange) {
             if (immediate) {
-                this.refreshAllTimelineEntries(true, true, immediate);
-                this.updateTimelineDividersIfNeeded();
+                this._refreshAllResources(true, true, immediate);
+                this._updateGraphDividersIfNeeded();
             } else {
-                this.refreshAllTimelineEntriesSoon(true, true, immediate);
-                this.updateTimelineDividersSoonIfNeeded();
+                this._refreshAllResourcesSoon(true, true, immediate);
+                this._updateGraphDividersSoonIfNeeded();
             }
         }
 
-        return didUpdate;
+        return didChange;
     },
 
-    updateTimelineDividersSoonIfNeeded: function()
+    _updateGraphDividersSoonIfNeeded: function()
     {
-        if ("updateTimelineDividersTimeout" in this)
+        if ("_updateGraphDividersTimeout" in this)
             return;
-        this.updateTimelineDividersTimeout = setTimeout(this.updateTimelineDividersIfNeeded.bind(this), 500);
+        this._updateGraphDividersTimeout = setTimeout(this._updateGraphDividersIfNeeded.bind(this), 500);
     },
 
-    updateTimelineDividersIfNeeded: function()
+    _updateGraphDividersIfNeeded: function()
     {
-        if ("updateTimelineDividersTimeout" in this) {
-            clearTimeout(this.updateTimelineDividersTimeout);
-            delete this.updateTimelineDividersTimeout;
+        if ("_updateGraphDividersTimeout" in this) {
+            clearTimeout(this._updateGraphDividersTimeout);
+            delete this._updateGraphDividersTimeout;
         }
 
         if (!this.visible) {
@@ -297,17 +297,17 @@ WebInspector.NetworkPanel.prototype = {
 
         if (document.body.offsetWidth <= 0) {
             // The stylesheet hasn't loaded yet, so we need to update later.
-            setTimeout(this.updateTimelineDividersIfNeeded.bind(this), 0);
+            setTimeout(this._updateGraphDividersIfNeeded.bind(this), 0);
             return;
         }
 
         var dividerCount = Math.round(this.dividersElement.offsetWidth / 64);
         var timeSlice = this.totalDuration / dividerCount;
 
-        if (this.lastDividerTimeSlice === timeSlice)
+        if (this._currentDividerSlice === timeSlice)
             return;
 
-        this.lastDividerTimeSlice = timeSlice;
+        this._currentDividerSlice = timeSlice;
 
         this.dividersElement.removeChildren();
 
@@ -327,26 +327,26 @@ WebInspector.NetworkPanel.prototype = {
         }
     },
 
-    refreshAllTimelineEntriesSoon: function(skipBoundryUpdate, skipTimelineSort, immediate)
+    _refreshAllResourcesSoon: function(skipBoundaryUpdate, skipSort, immediate)
     {
-        if ("refreshAllTimelineEntriesTimeout" in this)
+        if ("_refreshAllResourcesTimeout" in this)
             return;
-        this.refreshAllTimelineEntriesTimeout = setTimeout(this.refreshAllTimelineEntries.bind(this), 500, skipBoundryUpdate, skipTimelineSort, immediate);
+        this._refreshAllResourcesTimeout = setTimeout(this._refreshAllResources.bind(this), 500, skipBoundaryUpdate, skipSort, immediate);
     },
 
-    refreshAllTimelineEntries: function(skipBoundryUpdate, skipTimelineSort, immediate)
+    _refreshAllResources: function(skipBoundaryUpdate, skipSort, immediate)
     {
-        if ("refreshAllTimelineEntriesTimeout" in this) {
-            clearTimeout(this.refreshAllTimelineEntriesTimeout);
-            delete this.refreshAllTimelineEntriesTimeout;
+        if ("_refreshAllResourcesTimeout" in this) {
+            clearTimeout(this._refreshAllResourcesTimeout);
+            delete this._refreshAllResourcesTimeout;
         }
 
         var entriesLength = this.timelineEntries.length;
         for (var i = 0; i < entriesLength; ++i)
-            this.timelineEntries[i].refresh(skipBoundryUpdate, skipTimelineSort, immediate);
+            this.timelineEntries[i].refresh(skipBoundaryUpdate, skipSort, immediate);
     },
 
-    fadeOutRect: function(ctx, x, y, w, h, a1, a2)
+    _fadeOutRect: function(ctx, x, y, w, h, a1, a2)
     {
         ctx.save();
 
@@ -363,7 +363,7 @@ WebInspector.NetworkPanel.prototype = {
         ctx.restore();
     },
 
-    drawSwatch: function(canvas, color)
+    _drawSwatch: function(canvas, color)
     {
         var ctx = canvas.getContext("2d");
 
@@ -402,10 +402,10 @@ WebInspector.NetworkPanel.prototype = {
 
         ctx.restore();
 
-        this.fadeOutRect(ctx, 0, 13, 13, 13, 0.5, 0.0);
+        this._fadeOutRect(ctx, 0, 13, 13, 13, 0.5, 0.0);
     },
 
-    drawSummaryGraph: function(segments)
+    _drawSummaryGraph: function(segments)
     {
         if (!this.summaryGraphElement)
             return;
@@ -577,24 +577,24 @@ WebInspector.NetworkPanel.prototype = {
 
         ctx.restore();
 
-        this.fadeOutRect(ctx, x, y + h + 1, w, h, 0.5, 0.0);
+        this._fadeOutRect(ctx, x, y + h + 1, w, h, 0.5, 0.0);
     },
 
-    updateSummaryGraphSoon: function()
+    _updateSummaryGraphSoon: function()
     {
-        if ("updateSummaryGraphTimeout" in this)
+        if ("_updateSummaryGraphTimeout" in this)
             return;
-        this.updateSummaryGraphTimeout = setTimeout(this.updateSummaryGraph.bind(this), 500);
+        this._updateSummaryGraphTimeout = setTimeout(this._updateSummaryGraph.bind(this), 500);
     },
 
-    updateSummaryGraph: function()
+    _updateSummaryGraph: function()
     {
-        if ("updateSummaryGraphTimeout" in this) {
-            clearTimeout(this.updateSummaryGraphTimeout);
-            delete this.updateSummaryGraphTimeout;
+        if ("_updateSummaryGraphTimeout" in this) {
+            clearTimeout(this._updateSummaryGraphTimeout);
+            delete this._updateSummaryGraphTimeout;
         }
 
-        var graphInfo = this.calculator.computeValues(this.timelineEntries);
+        var graphInfo = this.calculator.computeSummaryValues(this.timelineEntries);
 
         var categoryOrder = ["documents", "stylesheets", "images", "scripts", "fonts", "other"];
         var categoryColors = {documents: {r: 47, g: 102, b: 236}, stylesheets: {r: 157, g: 231, b: 119}, images: {r: 164, g: 60, b: 255}, scripts: {r: 255, g: 121, b: 0}, fonts: {r: 231, g: 231, b: 10}, other: {r: 186, g: 186, b: 186}};
@@ -605,7 +605,7 @@ WebInspector.NetworkPanel.prototype = {
         if (this.totalLegendLabel)
             this.totalLegendLabel.parentNode.removeChild(this.totalLegendLabel);
 
-        this.totalLegendLabel = this.makeLegendElement(this.calculator.totalTitle, this.calculator.formatValue(graphInfo.total));
+        this.totalLegendLabel = this._makeLegendElement(this.calculator.totalTitle, this.calculator.formatValue(graphInfo.total));
         this.totalLegendLabel.addStyleClass("network-graph-legend-total");
         this.graphLabelElement.appendChild(this.totalLegendLabel);
 
@@ -621,11 +621,11 @@ WebInspector.NetworkPanel.prototype = {
             var fillSegment = {color: colorString, value: size};
             fillSegments.push(fillSegment);
 
-            var legendLabel = this.makeLegendElement(WebInspector.resourceCategories[category].title, this.calculator.formatValue(size), colorString);
+            var legendLabel = this._makeLegendElement(WebInspector.resourceCategories[category].title, this.calculator.formatValue(size), colorString);
             this.legendElement.appendChild(legendLabel);
         }
 
-        this.drawSummaryGraph(fillSegments);
+        this._drawSummaryGraph(fillSegments);
     },
 
     clearTimeline: function()
@@ -640,7 +640,7 @@ WebInspector.NetworkPanel.prototype = {
         this.timelineEntries = [];
         this.resourcesElement.removeChildren();
 
-        this.drawSummaryGraph(); // draws an empty graph
+        this._drawSummaryGraph(); // draws an empty graph
     },
 
     addResourceToTimeline: function(resource)
@@ -650,7 +650,7 @@ WebInspector.NetworkPanel.prototype = {
         this.resourcesElement.appendChild(timelineEntry.resourceElement);
 
         timelineEntry.refresh();
-        this.updateSummaryGraphSoon();
+        this._updateSummaryGraphSoon();
     }
 }
 
@@ -708,7 +708,7 @@ WebInspector.NetworkTimelineEntry = function(panel, resource)
 }
 
 WebInspector.NetworkTimelineEntry.prototype = {
-    refresh: function(skipBoundryUpdate, skipTimelineSort, immediate)
+    refresh: function(skipBoundaryUpdate, skipSort, immediate)
     {
         if (!this.panel.visible) {
             this.needsRefresh = true;
@@ -718,16 +718,16 @@ WebInspector.NetworkTimelineEntry.prototype = {
 
         delete this.needsRefresh;
 
-        if (!skipBoundryUpdate) {
-            if (this.panel.updateTimelineBoundriesIfNeeded(this.resource, immediate))
-                return; // updateTimelineBoundriesIfNeeded calls refresh() on all entries, so we can just return
+        if (!skipBoundaryUpdate) {
+            if (this.panel._updateGraphBoundriesIfNeeded(this.resource, immediate))
+                return; // _updateGraphBoundriesIfNeeded calls refresh() on all entries, so we can just return
         }
 
-        if (!skipTimelineSort) {
+        if (!skipSort) {
             if (immediate)
-                this.panel.sortTimelineEntriesIfNeeded();
+                this.panel._sortResourcesIfNeeded();
             else
-                this.panel.sortTimelineEntriesSoonIfNeeded();
+                this.panel._sortResourcesSoonIfNeeded();
         }
 
         if (this.resource.startTime !== -1) {
@@ -896,7 +896,7 @@ WebInspector.TimelineValueCalculator = function()
 }
 
 WebInspector.TimelineValueCalculator.prototype = {
-    computeValues: function(entries)
+    computeSummaryValues: function(entries)
     {
         var total = 0;
         var categoryValues = {};
@@ -939,7 +939,7 @@ WebInspector.TransferTimeCalculator = function()
 }
 
 WebInspector.TransferTimeCalculator.prototype = {
-    computeValues: function(entries)
+    computeSummaryValues: function(entries)
     {
         var entriesByCategory = {};
         entries.forEach(function(entry) {

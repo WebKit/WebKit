@@ -1,5 +1,15 @@
 2008-04-07  Timothy Hatcher  <timothy@apple.com>
 
+        Renamed various functions and properties that are internal
+        to an object to have an underscore prefix.
+
+        Rubber-stamped by Adam Roben.
+
+        * page/inspector/Resource.js:
+        * page/inspector/ResourcesPanel.js:
+
+2008-04-07  Timothy Hatcher  <timothy@apple.com>
+
         Fixes coding style for two utility getters.
 
         * page/inspector/utilities.js: Fix coding style for the
