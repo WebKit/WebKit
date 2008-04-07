@@ -392,6 +392,7 @@
 		4B17CBC90D945B370053F183 /* AccessibilityObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B17CBC80D945B370053F183 /* AccessibilityObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B17CBCC0D945B910053F183 /* AccessibilityObjectWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B17CBCA0D945B910053F183 /* AccessibilityObjectWrapper.mm */; };
 		4B17CBCD0D945B910053F183 /* AccessibilityObjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B17CBCB0D945B910053F183 /* AccessibilityObjectWrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4B24F9A80DA7050B00269E58 /* AXObjectCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B24F9A70DA7050B00269E58 /* AXObjectCache.cpp */; };
 		4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B2708C50AF19EE40065127F /* Pasteboard.h */; };
 		4B2709830AF2E5E00065127F /* PasteboardMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B2709810AF2E5E00065127F /* PasteboardMac.mm */; };
 		4B3043C70AE0370300A82647 /* Sound.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3043C60AE0370300A82647 /* Sound.h */; };
@@ -4808,6 +4809,7 @@
 		4B17CBC80D945B370053F183 /* AccessibilityObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityObject.h; sourceTree = "<group>"; };
 		4B17CBCA0D945B910053F183 /* AccessibilityObjectWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectWrapper.mm; sourceTree = "<group>"; };
 		4B17CBCB0D945B910053F183 /* AccessibilityObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityObjectWrapper.h; sourceTree = "<group>"; };
+		4B24F9A70DA7050B00269E58 /* AXObjectCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AXObjectCache.cpp; sourceTree = "<group>"; };
 		4B2708C50AF19EE40065127F /* Pasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pasteboard.h; sourceTree = "<group>"; };
 		4B2709810AF2E5E00065127F /* PasteboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardMac.mm; sourceTree = "<group>"; };
 		4B3043C60AE0370300A82647 /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Sound.h; sourceTree = "<group>"; };
@@ -8806,6 +8808,7 @@
 				4B5B7C8D0D945CFA00DDF3AB /* AccessibilityObject.cpp */,
 				BC80C9890CD2950500A0B7B3 /* AnimationController.cpp */,
 				BC80C98A0CD2950500A0B7B3 /* AnimationController.h */,
+				4B24F9A70DA7050B00269E58 /* AXObjectCache.cpp */,
 				1AF326760D78B9440068F0C4 /* AXObjectCache.h */,
 				BC124EE40C2641CD009E2349 /* BarInfo.cpp */,
 				BC124EE50C2641CD009E2349 /* BarInfo.h */,
@@ -16431,6 +16434,7 @@
 				37ACCF690DA414E70089E602 /* FontDescription.cpp in Sources */,
 				BC53C6080DA56C570021EB5D /* Gradient.cpp in Sources */,
 				BC53C60B0DA56CF10021EB5D /* GradientCG.cpp in Sources */,
+				4B24F9A80DA7050B00269E58 /* AXObjectCache.cpp in Sources */,
 				51272D850DA9800900844E2F /* OriginStorage.cpp in Sources */,
 				51D0C5160DAA90B7003B3831 /* JSStorageCustom.cpp in Sources */,
 			);

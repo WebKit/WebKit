@@ -2978,6 +2978,14 @@
 			Name="page"
 			>
 			<File
+				RelativePath="..\page\AccessibilityObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityObject.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\AnimationController.cpp"
 				>
 				<FileConfiguration
@@ -2991,6 +2999,10 @@
 			</File>
 			<File
 				RelativePath="..\page\AnimationController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AXObjectCache.cpp"
 				>
 			</File>
 			<File

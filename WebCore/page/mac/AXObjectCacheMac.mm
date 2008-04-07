@@ -37,44 +37,14 @@
 
 namespace WebCore {
 
-bool AXObjectCache::gAccessibilityEnabled = false;
-
-AXObjectCache::~AXObjectCache()
+void AXObjectCache::detachWrapper(AccessibilityObject* obj)
 {
-    HashMap<RenderObject*, RefPtr<AccessibilityObject> >::iterator end = m_objects.end();
-    for (HashMap<RenderObject*, RefPtr<AccessibilityObject> >::iterator it = m_objects.begin(); it != end; ++it) {
-        AccessibilityObject* obj = (*it).second.get();
-        [obj->wrapper() detach];
-        obj->detach();
-    }
+    [obj->wrapper() detach];
 }
 
-AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
+void AXObjectCache::attachWrapper(AccessibilityObject* obj)
 {
-    RefPtr<AccessibilityObject> obj = m_objects.get(renderer).get();
-    if (obj)
-        return obj.get();
-    obj = AccessibilityObject::create(renderer);
-    m_objects.set(renderer, obj);    
-    obj->setWrapper([[AccessibilityObjectWrapper alloc] initWithAccessibilityObject:obj.get()]);
-    return obj.get();
-}
-
-void AXObjectCache::remove(RenderObject* renderer)
-{
-    // first fetch object to operate some cleanup functions on it 
-    AccessibilityObject* obj = m_objects.get(renderer).get();
-    if (obj) {
-        [obj->wrapper() detach];
-        obj->detach();
-        
-        // finally remove the object
-        if (!m_objects.take(renderer)) {
-            ASSERT(!renderer->hasAXObject());
-            return;
-        }
-    }
-    ASSERT(m_objects.size() >= m_idsInUse.size());
+    obj->setWrapper([[AccessibilityObjectWrapper alloc] initWithAccessibilityObject:obj]);
 }
 
 AXID AXObjectCache::getAXID(AccessibilityObject* obj)
@@ -108,13 +78,6 @@ void AXObjectCache::removeAXID(AccessibilityObject* obj)
     ASSERT(m_idsInUse.contains(objID));
     obj->setAXObjectID(0);
     m_idsInUse.remove(objID);
-}
-
-void AXObjectCache::childrenChanged(RenderObject* renderer)
-{
-    AccessibilityObject* obj = m_objects.get(renderer).get();
-    if (obj)
-        obj->childrenChanged();
 }
 
 void AXObjectCache::postNotification(RenderObject* renderer, const String& message)

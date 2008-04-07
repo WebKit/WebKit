@@ -1,3 +1,42 @@
+2008-04-07  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        * WebCore.vcproj/WebCore.vcproj:
+            Added a few cross-platform accessibility source files
+            
+        * WebCore.xcodeproj/project.pbxproj:
+            Added AXObjectCache.cpp
+            
+        * page/AXObjectCache.cpp: Added.
+            These were made cross-platform:
+        (WebCore::AXObjectCache::~AXObjectCache):
+        (WebCore::AXObjectCache::get):
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::childrenChanged):
+        
+        * page/AXObjectCache.h:
+            These were made platform-specific
+        (WebCore::AXObjectCache::isIDinUse):
+        (WebCore::AXObjectCache::detachWrapper):
+        (WebCore::AXObjectCache::attachWrapper):
+        (WebCore::AXObjectCache::postNotificationToElement):
+        
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::detach):
+            Since only the mac has a wrapper for now, so temporarily 
+            wrapping this line in #if PLATFORM(MAC)
+            
+        (WebCore::AccessibilityObject::removeAXObjectID):
+            Since only the mac has uses Accessibility Object IDs,
+            wrap this line in #if PLATFORM(MAC)
+            
+        * page/mac/AXObjectCacheMac.mm:
+            Detaching and attaching the wrapper is platform-specific 
+            since each wrapper class is platform-specific.
+        (WebCore::AXObjectCache::detachWrapper):
+        (WebCore::AXObjectCache::attachWrapper):        
+
 2008-04-07  Brady Eidson  <beidson@apple.com>
 
         Lovingly reviewed by Sam Weinig

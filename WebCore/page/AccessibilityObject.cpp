@@ -94,7 +94,9 @@ void AccessibilityObject::detach()
         m_renderer->setHasAXObject(false);
 #endif
     m_renderer = 0;
+#if PLATFORM(MAC)
     m_wrapper = 0;
+#endif
     clearChildren();
 }
 
@@ -1838,8 +1840,9 @@ void AccessibilityObject::removeAXObjectID()
 {
     if (!m_id)
         return;
-
+#if PLATFORM(MAC)
     m_renderer->document()->axObjectCache()->removeAXID(this);
+#endif
 }
 
 } // namespace WebCore

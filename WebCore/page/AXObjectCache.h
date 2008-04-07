@@ -59,46 +59,38 @@ namespace WebCore {
 
     class AXObjectCache {
     public:
+    
         ~AXObjectCache();
-
         AccessibilityObject* get(RenderObject*);
         void remove(RenderObject*);
-        void removeAXID(AccessibilityObject*);
-        
+        void detachWrapper(AccessibilityObject*);
+        void attachWrapper(AccessibilityObject*);        
+        void postNotification(RenderObject*, const String&);
+        void postNotificationToElement(RenderObject*, const String&);
         void childrenChanged(RenderObject*);
-        void postNotification(RenderObject*, const String& message);
-        void postNotificationToElement(RenderObject*, const String& message);
-        void handleFocusedUIElementChanged();
-
-#if PLATFORM(MAC)
         static void enableAccessibility() { gAccessibilityEnabled = true; }
         static bool accessibilityEnabled() { return gAccessibilityEnabled; }
-        bool isIDinUse(AXID id) const { return m_idsInUse.contains(id); }
-#else
-        static bool accessibilityEnabled() { return false; }
-#endif
+
+#if PLATFORM(MAC)
         AXID getAXID(AccessibilityObject*);
+        void removeAXID(AccessibilityObject*);
+        void handleFocusedUIElementChanged();        
+        bool isIDinUse(AXID id) const { return m_idsInUse.contains(id); }
+#endif
 
     private:
-#if PLATFORM(MAC)
-        static bool gAccessibilityEnabled;
-#endif
-
-#if PLATFORM(MAC)
         HashMap<RenderObject*, RefPtr<AccessibilityObject> > m_objects;
+        static bool gAccessibilityEnabled;
+#if PLATFORM(MAC)
         HashSet<AXID, IntHash<AXID>, AXIDHashTraits> m_idsInUse;
 #endif
     };
 
 #if !PLATFORM(MAC)
-    inline AXObjectCache::~AXObjectCache() { }
-    inline AccessibilityObject* AXObjectCache::get(RenderObject*) { return 0; }
-    inline void AXObjectCache::remove(RenderObject*) { }
-    inline void AXObjectCache::removeAXID(AccessibilityObject*) { }
-    inline void AXObjectCache::childrenChanged(RenderObject*) { }
+    inline void AXObjectCache::detachWrapper(AccessibilityObject*) { }
+    inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
     inline void AXObjectCache::postNotification(RenderObject*, const String&) { }
     inline void AXObjectCache::postNotificationToElement(RenderObject*, const String&) { }
-    inline void AXObjectCache::handleFocusedUIElementChanged() { }
 #endif
 
 }
