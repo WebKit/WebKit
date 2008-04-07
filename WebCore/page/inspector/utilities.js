@@ -175,14 +175,16 @@ Element.prototype.isInsertionCaretInside = function()
     return selectionRange.startContainer === this || selectionRange.startContainer.isDescendant(this);
 }
 
-Element.prototype.__defineGetter__("totalOffsetLeft", function() {
+Element.prototype.__defineGetter__("totalOffsetLeft", function()
+{
     var total = 0;
     for (var element = this; element; element = element.offsetParent)
         total += element.offsetLeft;
     return total;
 });
 
-Element.prototype.__defineGetter__("totalOffsetTop", function() {
+Element.prototype.__defineGetter__("totalOffsetTop", function()
+{
     var total = 0;
     for (var element = this; element; element = element.offsetParent)
         total += element.offsetTop;

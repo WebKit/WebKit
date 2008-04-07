@@ -1,3 +1,10 @@
+2008-04-07  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes coding style for two utility getters.
+
+        * page/inspector/utilities.js: Fix coding style for the
+        totalOffsetLeft and totalOffsetTop getters.
+
 2008-04-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
