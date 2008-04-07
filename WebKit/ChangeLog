@@ -1,3 +1,14 @@
+2008-04-07  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim
+        
+        - made the JavaScript text input panel not block Quit (part of 4133196)
+
+        * English.lproj/WebJavaScriptTextInputPanel.nib/classes.nib:
+        * English.lproj/WebJavaScriptTextInputPanel.nib/info.nib:
+        * English.lproj/WebJavaScriptTextInputPanel.nib/keyedobjects.nib:
+        Made the panel be a NonBlockingPanel
+
 2008-04-04  Ada Chan  <adachan@apple.com>
 
         Updated the format string for window title for a standalone image to take integers.
