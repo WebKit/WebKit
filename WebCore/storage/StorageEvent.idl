@@ -25,7 +25,9 @@
 
 module storage {
 
-    interface StorageEvent : Event {
+    interface [
+        GenerateConstructor
+    ] StorageEvent : Event {
         readonly attribute DOMString key;
         readonly attribute [ConvertNullStringTo=Null] DOMString oldValue;
         readonly attribute [ConvertNullStringTo=Null] DOMString newValue;

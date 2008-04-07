@@ -1,5 +1,11 @@
 2008-04-06  Brady Eidson <beidson@apple.com>
 
+        Attempt to tickle Windows build into accepting this idl
+
+        * storage/StorageEvent.idl:
+
+2008-04-06  Brady Eidson <beidson@apple.com>
+
         Reviewed by Sam
 
         HTML5 Session and Local Storage
