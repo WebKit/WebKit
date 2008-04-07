@@ -1,3 +1,12 @@
+2008-04-07  Timothy Hatcher  <timothy@apple.com>
+
+        Remove the workaround for bug 11399 now that it is fixed.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Console.js: Removed the 'with' statement
+        around the eval and call eval directly on the inspected window.
+
 2008-04-07  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.

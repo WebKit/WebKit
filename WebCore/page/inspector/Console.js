@@ -236,10 +236,7 @@ WebInspector.ConsolePanel.prototype = {
 
     _evalInInspectedWindow: function(expression)
     {
-        // This with block is needed to work around http://bugs.webkit.org/show_bug.cgi?id=11399
-        with (InspectorController.inspectedWindow()) {
-            return eval(expression);
-        }
+        return InspectorController.inspectedWindow().eval(expression);
     },
 
     _enterKeyPressed: function(event)
