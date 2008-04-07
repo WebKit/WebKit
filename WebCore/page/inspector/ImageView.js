@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ImagePanel = function(resource)
+WebInspector.ImageView = function(resource)
 {
-    WebInspector.ResourcePanel.call(this, resource);
+    WebInspector.ResourceView.call(this, resource);
 
     this.element.addStyleClass("image");
 
@@ -67,8 +67,8 @@ WebInspector.ImagePanel = function(resource)
     container.appendChild(infoListElement);
 }
 
-WebInspector.ImagePanel.prototype = {
+WebInspector.ImageView.prototype = {
     
 }
 
-WebInspector.ImagePanel.prototype.__proto__ = WebInspector.ResourcePanel.prototype;
+WebInspector.ImageView.prototype.__proto__ = WebInspector.ResourceView.prototype;

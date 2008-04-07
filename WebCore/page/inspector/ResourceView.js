@@ -26,13 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourcePanel = function(resource, views)
+WebInspector.ResourceView = function(resource, views)
 {
     WebInspector.Panel.call(this, views);
     this.resource = resource;
 }
 
-WebInspector.ResourcePanel.prototype = {
+WebInspector.ResourceView.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
@@ -47,4 +47,4 @@ WebInspector.ResourcePanel.prototype = {
     }
 }
 
-WebInspector.ResourcePanel.prototype.__proto__ = WebInspector.Panel.prototype;
+WebInspector.ResourceView.prototype.__proto__ = WebInspector.Panel.prototype;

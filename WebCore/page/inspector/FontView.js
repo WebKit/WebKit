@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FontPanel = function(resource)
+WebInspector.FontView = function(resource)
 {
-    WebInspector.ResourcePanel.call(this, resource);
+    WebInspector.ResourceView.call(this, resource);
 
     this.element.addStyleClass("font");
 
@@ -44,10 +44,10 @@ WebInspector.FontPanel = function(resource)
     this.updateFontPreviewSize();
 }
 
-WebInspector.FontPanel.prototype = {
+WebInspector.FontView.prototype = {
     show: function()
     {
-        WebInspector.ResourcePanel.prototype.show.call(this);
+        WebInspector.ResourceView.prototype.show.call(this);
         this.updateFontPreviewSize();
     },
 
@@ -100,4 +100,4 @@ WebInspector.FontPanel.prototype = {
     }
 }
 
-WebInspector.FontPanel.prototype.__proto__ = WebInspector.ResourcePanel.prototype;
+WebInspector.FontView.prototype.__proto__ = WebInspector.ResourceView.prototype;

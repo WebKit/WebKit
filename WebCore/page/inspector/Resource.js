@@ -583,19 +583,19 @@ WebInspector.Resource.prototype = {
                     break;
                 case WebInspector.resourceCategories.stylesheets:
                 case WebInspector.resourceCategories.scripts:
-                    this._panel = new WebInspector.SourcePanel(this);
+                    this._panel = new WebInspector.SourceView(this);
                     break;
                 case WebInspector.resourceCategories.images:
-                    this._panel = new WebInspector.ImagePanel(this);
+                    this._panel = new WebInspector.ImageView(this);
                     break;
                 case WebInspector.resourceCategories.fonts:
-                    this._panel = new WebInspector.FontPanel(this);
+                    this._panel = new WebInspector.FontView(this);
                     break;
                 }
             }
 
             if (!this._panel)
-                this._panel = new WebInspector.ResourcePanel(this);
+                this._panel = new WebInspector.ResourceView(this);
         }
 
         return this._panel;

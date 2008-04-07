@@ -32,7 +32,7 @@ WebInspector.DocumentPanel = function(resource, views)
     if (views)
         allViews = allViews.concat(views);
 
-    WebInspector.SourcePanel.call(this, resource, allViews);
+    WebInspector.SourceView.call(this, resource, allViews);
 
     var panel = this;
     var domView = this.views.dom;
@@ -841,7 +841,7 @@ WebInspector.DocumentPanel.prototype = {
     },
 }
 
-WebInspector.DocumentPanel.prototype.__proto__ = WebInspector.SourcePanel.prototype;
+WebInspector.DocumentPanel.prototype.__proto__ = WebInspector.SourceView.prototype;
 
 WebInspector.DOMNodeTreeElement = function(node)
 {

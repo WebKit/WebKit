@@ -26,13 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourcePanel = function(resource, views)
+WebInspector.SourceView = function(resource, views)
 {
     var allViews = [{ title: WebInspector.UIString("Source"), name: "source" }];
     if (views)
         allViews = allViews.concat(views);
 
-    WebInspector.ResourcePanel.call(this, resource, allViews);
+    WebInspector.ResourceView.call(this, resource, allViews);
 
     this.currentView = this.views.source;
 
@@ -46,10 +46,10 @@ WebInspector.SourcePanel = function(resource, views)
     sourceView.contentElement.appendChild(sourceView.frameElement);
 }
 
-WebInspector.SourcePanel.prototype = {
+WebInspector.SourceView.prototype = {
     show: function()
     {
-        WebInspector.ResourcePanel.prototype.show.call(this);
+        WebInspector.ResourceView.prototype.show.call(this);
         this.setupSourceFrameIfNeeded();
     },
 
@@ -141,4 +141,4 @@ WebInspector.SourcePanel.prototype = {
     }
 }
 
-WebInspector.SourcePanel.prototype.__proto__ = WebInspector.ResourcePanel.prototype;
+WebInspector.SourceView.prototype.__proto__ = WebInspector.ResourceView.prototype;

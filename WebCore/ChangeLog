@@ -1,5 +1,20 @@
 2008-04-07  Timothy Hatcher  <timothy@apple.com>
 
+        Rename some Inspector panel objects to facilitate the up-coming
+        UI refresh changes.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/DatabasesPanel.js: Renamed ResourcePanel to ResourceView.
+        * page/inspector/ElementsPanel.js: Renamed SourcePanel to SourceView.
+        * page/inspector/FontView.js: Renamed FontPanel to FontView.
+        * page/inspector/ImageView.js: Renamed ImagePanel to ImageView.
+        * page/inspector/Resource.js: Instantiate the new "View" named objects.
+        * page/inspector/ResourceView.js: Renamed ResourcePanel to ResourceView.
+        * page/inspector/SourceView.js: Renamed SourcePanel to SourceView.
+
+2008-04-07  Timothy Hatcher  <timothy@apple.com>
+
         Fix an exception and remove code that was missed when TextPrompt
         was added. This makes the Console work again.
         

@@ -32,7 +32,7 @@ WebInspector.DatabasePanel = function(database, views)
     if (views)
         allViews = allViews.concat(views);
 
-    WebInspector.ResourcePanel.call(this, database, allViews);
+    WebInspector.ResourceView.call(this, database, allViews);
 
     this.currentView = this.views.browse;
 
@@ -102,7 +102,7 @@ var Math = window.Math;
 return {
     show: function()
     {
-        WebInspector.ResourcePanel.prototype.show.call(this);
+        WebInspector.ResourceView.prototype.show.call(this);
         this.queryPromptElement.focus();
     },
 
@@ -459,4 +459,4 @@ return {
 }
 })();
 
-WebInspector.DatabasePanel.prototype.__proto__ = WebInspector.ResourcePanel.prototype;
+WebInspector.DatabasePanel.prototype.__proto__ = WebInspector.ResourceView.prototype;
