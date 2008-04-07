@@ -110,6 +110,15 @@ CString::~CString()
   delete [] data;
 }
 
+CString CString::adopt(char* c, size_t len)
+{
+    CString s;
+    s.data = c;
+    s.length = len;
+    
+    return s;
+}
+
 CString &CString::append(const CString &t)
 {
   char *n;
@@ -162,18 +171,15 @@ bool operator==(const CString& c1, const CString& c2)
   return len == c2.size() && (len == 0 || memcmp(c1.c_str(), c2.c_str(), len) == 0);
 }
 
-// Hack here to avoid a global with a constructor; point to an unsigned short instead of a UChar.
+// These static strings are immutable, except for rc, whose initial value is chosen to reduce the possibility of it becoming zero due to ref/deref not being thread-safe.
 static UChar sharedEmptyChar;
-UString::Rep UString::Rep::null = { 0, 0, 1, 0, 0, &UString::Rep::null, 0, 0, 0, 0, 0, 0 };
-UString::Rep UString::Rep::empty = { 0, 0, 1, 0, 0, &UString::Rep::empty, 0, &sharedEmptyChar, 0, 0, 0, 0 };
-const int normalStatBufferSize = 4096;
-static char *statBuffer = 0; // FIXME: This buffer is never deallocated.
-static int statBufferSize = 0;
+UString::Rep UString::Rep::null = { 0, 0, INT_MAX / 2, 0, false, true, &UString::Rep::null, 0, 0, 0, 0, 0, 0 };
+UString::Rep UString::Rep::empty = { 0, 0, INT_MAX / 2, 0, false, true, &UString::Rep::empty, 0, &sharedEmptyChar, 0, 0, 0, 0 };
+
+static char* statBuffer = 0; // Only used for debugging via UString::ascii().
 
 PassRefPtr<UString::Rep> UString::Rep::createCopying(const UChar *d, int l)
 {
-  ASSERT(JSLock::lockCount() > 0);
-
   int sizeInBytes = l * sizeof(UChar);
   UChar *copyD = static_cast<UChar *>(fastMalloc(sizeInBytes));
   memcpy(copyD, d, sizeInBytes);
@@ -183,14 +189,13 @@ PassRefPtr<UString::Rep> UString::Rep::createCopying(const UChar *d, int l)
 
 PassRefPtr<UString::Rep> UString::Rep::create(UChar *d, int l)
 {
-  ASSERT(JSLock::lockCount() > 0);
-
   Rep* r = new Rep;
   r->offset = 0;
   r->len = l;
   r->rc = 1;
   r->_hash = 0;
-  r->isIdentifier = 0;
+  r->isIdentifier = false;
+  r->isStatic = false;
   r->baseString = r;
   r->reportedCost = 0;
   r->buf = d;
@@ -205,7 +210,6 @@ PassRefPtr<UString::Rep> UString::Rep::create(UChar *d, int l)
 
 PassRefPtr<UString::Rep> UString::Rep::create(PassRefPtr<Rep> base, int offset, int length)
 {
-  ASSERT(JSLock::lockCount() > 0);
   ASSERT(base);
 
   int baseOffset = base->offset;
@@ -220,7 +224,8 @@ PassRefPtr<UString::Rep> UString::Rep::create(PassRefPtr<Rep> base, int offset, 
   r->len = length;
   r->rc = 1;
   r->_hash = 0;
-  r->isIdentifier = 0;
+  r->isIdentifier = false;
+  r->isStatic = false;
   r->baseString = base.releaseRef();
   r->reportedCost = 0;
   r->buf = 0;
@@ -235,16 +240,17 @@ PassRefPtr<UString::Rep> UString::Rep::create(PassRefPtr<Rep> base, int offset, 
 
 void UString::Rep::destroy()
 {
-  ASSERT(JSLock::lockCount() > 0);
+  // Static null and empty strings can never be destroyed, but we cannot rely on reference counting, because ref/deref are not thread-safe.
+  if (!isStatic) {
+    if (isIdentifier)
+      Identifier::remove(this);
+    if (baseString == this)
+      fastFree(buf);
+    else
+      baseString->deref();
 
-  if (isIdentifier)
-    Identifier::remove(this);
-  if (baseString != this) {
-    baseString->deref();
-  } else {
-    fastFree(buf);
+    delete this;
   }
-  delete this;
 }
 
 // Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
@@ -518,7 +524,7 @@ UString::UString(const UString &a, const UString &b)
 
 const UString& UString::null()
 {
-  static UString* n = new UString;
+  static UString* n = new UString; // Should be called from main thread at least once to be safely initialized.
   return *n;
 }
 
@@ -857,23 +863,29 @@ UString& UString::append(UChar c)
 
 CString UString::cstring() const
 {
-  return ascii();
+  int length = size();
+  int neededSize = length + 1;
+  char* buf = new char[neededSize];
+  
+  const UChar* p = data();
+  char* q = buf;
+  const UChar* limit = p + length;
+  while (p != limit) {
+    *q = static_cast<char>(p[0]);
+    ++p;
+    ++q;
+  }
+  *q = '\0';
+  
+  return CString::adopt(buf, length);
 }
 
 char *UString::ascii() const
 {
-  // Never make the buffer smaller than normalStatBufferSize.
-  // Thus we almost never need to reallocate.
   int length = size();
   int neededSize = length + 1;
-  if (neededSize < normalStatBufferSize) {
-    neededSize = normalStatBufferSize;
-  }
-  if (neededSize != statBufferSize) {
-    delete [] statBuffer;
-    statBuffer = new char [neededSize];
-    statBufferSize = neededSize;
-  }
+  delete[] statBuffer;
+  statBuffer = new char[neededSize];
   
   const UChar *p = data();
   char *q = statBuffer;
@@ -949,7 +961,8 @@ double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) co
   if (!is8Bit())
     return NaN;
 
-  const char *c = ascii();
+  CString s = cstring();
+  const char* c = s.c_str();
 
   // skip leading white space
   while (isASCIISpace(*c))

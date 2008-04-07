@@ -1,3 +1,41 @@
+2008-04-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Make UString thread-safe.
+
+        No change on SunSpider total, although individual tests have changed a lot, up to 3%.
+
+        * kjs/InitializeThreading.cpp: (KJS::initializeThreading): Call UString::null() to initialize
+        a static.
+        
+        * kjs/identifier.cpp:
+        (KJS::CStringTranslator::translate):
+        (KJS::UCharBufferTranslator::translate):
+        Use "true" for a boolean value instead of 1, because it's C++.
+
+        * kjs/ustring.h:
+        (KJS::CString::adopt): Added a method to create from a char* buffer without copying.
+        (KJS::UString::Rep::ref): Removed an assertion for JSLock::lockCount, as it's no longer
+        necessary to hold JSLock when working with strings.
+        (KJS::UString::Rep::deref): Ditto.
+        (KJS::UString::Rep::isStatic): Added a field to quickly determine that this is an empty
+        or null static string.
+
+        * kjs/ustring.cpp:
+        (KJS::): Removed normalStatBufferSize and statBufferSize, as there is no reason to have such
+        an advanced implementation of a debug-only ascii() method. Removed a long-obsolete comment
+        about UChar.
+        (KJS::UString::Rep::createCopying): Removed an assertion for JSLock::lockCount.
+        (KJS::UString::Rep::create): Ditto.
+        (KJS::UString::Rep::destroy): Ditto. Do not do anything for static null and empty strings,
+        as refcounting is not reliable for those. Reordered branches for a noticeable speed gain -
+        apparently this functiton is hot enough for SunSpider to see an effect from this!
+        (KJS::UString::null): Moved a star, added a comment.
+        (KJS::UString::cstring): Reimplemented to not call ascii(), which is not thread-safe.
+        (KJS::UString::ascii): Simplified statBuffer handling logic.
+        (KJS::UString::toDouble): Use cstring() instead of ascii().
+
 2008-04-02  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

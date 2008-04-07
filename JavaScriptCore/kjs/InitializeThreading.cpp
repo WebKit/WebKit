@@ -30,6 +30,7 @@
 #include "InitializeThreading.h"
 
 #include "dtoa.h"
+#include "ustring.h"
 #include <wtf/Threading.h>
 
 namespace KJS {
@@ -40,6 +41,7 @@ void initializeThreading()
 #if USE(MULTIPLE_THREADS)
     if (!s_dtoaP5Mutex)
         s_dtoaP5Mutex = new Mutex;
+    UString::null();
 #endif
 }
 

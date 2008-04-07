@@ -61,6 +61,8 @@ namespace KJS {
 
     ~CString();
 
+    static CString adopt(char* c, size_t len); // c should be allocated with new[].
+
     CString &append(const CString &);
     CString &operator=(const char *c);
     CString &operator=(const CString &);
@@ -101,15 +103,16 @@ namespace KJS {
       static unsigned computeHash(const UChar *, int length);
       static unsigned computeHash(const char *);
 
-      Rep* ref() { ASSERT(JSLock::lockCount() > 0); ++rc; return this; }
-      ALWAYS_INLINE void deref() { ASSERT(JSLock::lockCount() > 0); if (--rc == 0) destroy(); }
+      Rep* ref() { ++rc; return this; }
+      ALWAYS_INLINE void deref() { if (--rc == 0) destroy(); }
 
       // unshared data
       int offset;
       int len;
-      int rc;
+      int rc; // For null and empty static strings, this field does not reflect a correct count, because ref/deref are not thread-safe. A special case in destroy() guarantees that these do not get deleted.
       mutable unsigned _hash;
-      bool isIdentifier;
+      bool isIdentifier : 1;
+      bool isStatic : 1;
       UString::Rep* baseString;
       size_t reportedCost;
 
@@ -222,9 +225,9 @@ namespace KJS {
     /**
      * Convert the Unicode string to plain ASCII chars chopping of any higher
      * bytes. This method should only be used for *debugging* purposes as it
-     * is neither Unicode safe nor free from side effects. In order not to
-     * waste any memory the char buffer is static and *shared* by all UString
-     * instances.
+     * is neither Unicode safe nor free from side effects nor thread-safe.
+     * In order not to waste any memory the char buffer is static and *shared*
+     * by all UString instances.
      */
     char* ascii() const;
 
