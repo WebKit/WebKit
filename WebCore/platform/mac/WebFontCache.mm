@@ -114,29 +114,6 @@ static inline void fixUpWeight(NSInteger& weight, NSString *fontName)
 {
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
-    // Look for an exact match first.
-    NSEnumerator *availableFonts = [[fontManager availableFonts] objectEnumerator];
-    NSString *availableFont;
-    NSFont *nameMatchedFont = nil;
-    while ((availableFont = [availableFonts nextObject])) {
-        if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
-            nameMatchedFont = [NSFont fontWithName:availableFont size:size];
-
-            // Special case Osaka-Mono.  According to <rdar://problem/3999467>, we need to 
-            // treat Osaka-Mono as fixed pitch.
-            if ([desiredFamily caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame && desiredTraits == 0)
-                return nameMatchedFont;
-
-            NSFontTraitMask traits = [fontManager traitsOfFont:nameMatchedFont];
-            NSInteger weight = [fontManager weightOfFont:nameMatchedFont];
-            fixUpWeight(weight, availableFont);
-
-            if ((traits & desiredTraits) == desiredTraits && weight == desiredWeight)
-                return [fontManager convertFont:nameMatchedFont toHaveTrait:desiredTraits];
-            break;
-        }
-    }
-
     // Do a simple case insensitive search for a matching font family.
     // NSFontManager requires exact name matches.
     // This addresses the problem of matching arial to Arial, etc., but perhaps not all the issues.
@@ -147,8 +124,30 @@ static inline void fixUpWeight(NSInteger& weight, NSString *fontName)
             break;
     }
 
-    if (!availableFamily)
-        availableFamily = [nameMatchedFont familyName];
+    if (!availableFamily) {
+        // Match by PostScript name.
+        NSEnumerator *availableFonts = [[fontManager availableFonts] objectEnumerator];
+        NSString *availableFont;
+        NSFont *nameMatchedFont = nil;
+        NSFontTraitMask desiredTraitsForNameMatch = desiredTraits | (desiredWeight >= 7 ? NSBoldFontMask : 0);
+        while ((availableFont = [availableFonts nextObject])) {
+            if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
+                nameMatchedFont = [NSFont fontWithName:availableFont size:size];
+
+                // Special case Osaka-Mono.  According to <rdar://problem/3999467>, we need to 
+                // treat Osaka-Mono as fixed pitch.
+                if ([desiredFamily caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame && desiredTraitsForNameMatch == 0)
+                    return nameMatchedFont;
+
+                NSFontTraitMask traits = [fontManager traitsOfFont:nameMatchedFont];
+                if ((traits & desiredTraitsForNameMatch) == desiredTraitsForNameMatch)
+                    return [fontManager convertFont:nameMatchedFont toHaveTrait:desiredTraitsForNameMatch];
+
+                availableFamily = [nameMatchedFont familyName];
+                break;
+            }
+        }
+    }
 
     // Found a family, now figure out what weight and traits to use.
     BOOL choseFont = false;

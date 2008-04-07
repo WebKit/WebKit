@@ -1,3 +1,16 @@
+2008-04-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=18311
+          <rdar://problem/5842980> REGRESSION (r31620): Font variants (e.g. Helvetica Neue *Light*) don't render correctly
+
+        * platform/mac/WebFontCache.mm:
+        (+[WebFontCache internalFontWithFamily:traits:weight:size:]): Changed to
+        match by family name first, and only if that fails, look for a match by
+        full (PostScript) name. Reverted the full name-based match logic to only
+        distinguish between the broad categories of "bold" and "not bold".
+
 2008-04-07  Timothy Hatcher  <timothy@apple.com>
 
         When the WebInspector.currentFocusElement changes, move the caret
