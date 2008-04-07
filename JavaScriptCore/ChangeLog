@@ -1,5 +1,11 @@
 2008-04-07  Adam Roben  <aroben@apple.com>
 
+        Windows build fix
+
+        * wtf/ThreadingWin.cpp: Back out some changes I didn't mean to land.
+
+2008-04-07  Adam Roben  <aroben@apple.com>
+
         Add WTF::isMainThread
 
         Reviewed by Alexey Proskuryakov.
