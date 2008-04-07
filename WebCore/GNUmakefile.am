@@ -1168,6 +1168,35 @@ webcore_sources += \
 endif # END ENABLE_DATABASE
 
 # ----
+# Database Support
+# ----
+if ENABLE_DOM_STORAGE
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_DOM_STORAGE =1
+
+webcore_built_sources += \
+	DerivedSources/JSStorage.h \
+	DerivedSources/JSStorageEvent.h \
+	DerivedSources/JSStorage.cpp \
+	DerivedSources/JSStorageEvent.cpp
+
+IDL_BINDINGS += \
+	WebCore/storage/Storage.idl \
+	WebCore/storage/StorageEvent.idl
+
+webcore_cppflags += \
+	-DENABLE_DOM_STORAG=1 \
+	-I$(top_srcdir)/WebCore/storage
+
+webcore_sources += \
+	WebCore/storage/OriginStorage.cpp \
+	WebCore/storage/Storage.cpp \
+	WebCore/storage/StorageEvent.cpp \
+	WebCore/storage/StorageMap.cpp \
+	WebCore/storage/SessionStorage.cpp
+
+endif # END ENABLE_DOM_STORAGE
+
+# ----
 # Icon Database Support
 # ----
 if ENABLE_ICONDATABASE

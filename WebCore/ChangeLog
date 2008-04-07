@@ -1,3 +1,47 @@
+2008-04-06  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Sam
+
+        HTML5 Session and Local Storage
+
+        Land a bunch of empty files and interfaces to keep things building while 
+        I finish off the rest of the implementation of SessionStorage
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+
+        * storage/OriginStorage.cpp: Added.
+        * storage/OriginStorage.h: Added.
+
+        * storage/SessionStorage.cpp: Added.
+        * storage/SessionStorage.h: Added.
+
+        * storage/Storage.cpp: Added.
+        (WebCore::Storage::length):
+        (WebCore::Storage::key):
+        (WebCore::Storage::getItem):
+        (WebCore::Storage::setItem):
+        (WebCore::Storage::removeItem):
+        * storage/Storage.h: Added.
+        * storage/Storage.idl: Added.
+
+        * storage/StorageEvent.cpp: Added.
+        * storage/StorageEvent.h: Added.
+        (WebCore::StorageEvent::key):
+        (WebCore::StorageEvent::oldValue):
+        (WebCore::StorageEvent::newValue):
+        (WebCore::StorageEvent::uri):
+        (WebCore::StorageEvent::source):
+        (WebCore::StorageEvent::initStorageEvent):
+        * storage/StorageEvent.idl: Added.
+
+        * storage/StorageMap.cpp: Added.
+        * storage/StorageMap.h: Added.
+
 2008-04-05  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Mark Rowe.

@@ -292,6 +292,8 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSRangeException.cpp
         DerivedSources/WebCore/JSRect.cpp
         DerivedSources/WebCore/JSScreen.cpp
+        DerivedSources/WebCore/JSStorage.cpp
+        DerivedSources/WebCore/JSStorageEvent.cpp
         DerivedSources/WebCore/JSSQLError.cpp
         DerivedSources/WebCore/JSSQLResultSet.cpp
         DerivedSources/WebCore/JSSQLResultSetRowList.cpp
@@ -787,11 +789,16 @@ This file contains the list of files needed to build WebCore.
         storage/DatabaseThread.cpp
         storage/DatabaseTracker.cpp
         storage/OriginQuotaManager.cpp
+        storage/OriginStorage.cpp
         storage/OriginUsageRecord.cpp
         storage/SQLResultSet.cpp
         storage/SQLResultSetRowList.cpp
         storage/SQLStatement.cpp
         storage/SQLTransaction.cpp
+        storage/Storage.cpp
+        storage/StorageEvent.cpp
+        storage/StorageMap.cpp
+        storage/SessionStorage.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_XML">

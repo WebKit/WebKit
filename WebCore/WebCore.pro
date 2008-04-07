@@ -1202,6 +1202,23 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         storage/SQLTransaction.idl
 }
 
+contains(DEFINES, ENABLE_DOM_STORAGE=1) {
+    FEATURE_DEFINES_JAVASCRIPT += ENABLE_DOM_STORAGE =1
+
+    SOURCES += \
+        storage/OriginStorage.cpp \
+        storage/Storage.cpp \
+        storage/StorageEvent.cpp \
+        storage/StorageMap.cpp \
+        storage/SessionStorage.cpp \
+        bindings/js/JSStorage.cpp \
+        bindings/js/JSStorageEvent.cpp \
+
+    IDL_BINDINGS += \
+        storage/Storage.idl \
+        storage/StorageEvent.idl
+}
+
 contains(DEFINES, ENABLE_ICONDATABASE=1) {
     SOURCES += \
         loader/icon/IconDatabase.cpp \

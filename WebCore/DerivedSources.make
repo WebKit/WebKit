@@ -179,6 +179,8 @@ DOM_CLASSES = \
     SQLResultSet \
     SQLResultSetRowList \
     SQLTransaction \
+    Storage \
+    StorageEvent \
     SVGAElement \
     SVGAltGlyphElement \
     SVGAngle \

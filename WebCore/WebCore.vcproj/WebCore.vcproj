@@ -1654,6 +1654,22 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStorage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStorage.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStorageEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStorageEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStyleSheet.cpp"
 				>
 			</File>
@@ -15702,6 +15718,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\OriginStorage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\OriginStorage.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\OriginUsageRecord.cpp"
 				>
 			</File>
@@ -15763,6 +15787,46 @@
 			</File>
 			<File
 				RelativePath="..\storage\SQLTransactionErrorCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\Storage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\Storage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\Storage.idl"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageEvent.idl"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageMap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageMap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SessionStorage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SessionStorage.h"
 				>
 			</File>
 			<File
