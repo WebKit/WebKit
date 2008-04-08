@@ -1,5 +1,11 @@
 2008-04-08  Adam Roben  <aroben@apple.com>
 
+        Wx build fix
+
+        * webcore-wx.bkl: Removed entry for non-existent file.
+
+2008-04-08  Adam Roben  <aroben@apple.com>
+
         qmake build fixes
 
         * WebCore.pro: Removed entries for non-existent files.
