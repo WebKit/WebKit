@@ -742,7 +742,7 @@ SOURCES += \
     loader/TextResourceDecoder.cpp \
     page/AccessibilityObject.cpp \    
     page/AnimationController.cpp \    
-    page/AXObject.cpp \
+    page/AXObjectCache.cpp \
     page/BarInfo.cpp \
     page/Chrome.cpp \
     page/Console.cpp \
