@@ -86,7 +86,7 @@ LayoutState::LayoutState(RenderObject* root)
     RenderObject* container = root->container();
     int x = 0;
     int y = 0;
-    container->absolutePosition(x, y);
+    container->absolutePositionForContent(x, y);
     m_offset = IntSize(x, y);
     m_next = 0;
 }

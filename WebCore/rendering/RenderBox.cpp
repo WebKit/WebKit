@@ -883,7 +883,7 @@ bool RenderBox::absolutePosition(int& xPos, int& yPos, bool fixed) const
         fixed = true;
 
     RenderObject* o = container();
-    if (o && o->absolutePosition(xPos, yPos, fixed)) {
+    if (o && o->absolutePositionForContent(xPos, yPos, fixed)) {
         if (style()->position() == AbsolutePosition) {
             IntSize offset = offsetForPositionedInContainer(o);
             xPos += offset.width();

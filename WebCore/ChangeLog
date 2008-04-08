@@ -2,6 +2,30 @@
 
         Reviewed by Antti Koivisto.
 
+        - fix a regression from r31313 which made the inspector highlight and
+          yellow find highlight for table cells with extra top appear in the
+          wrong position
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState): Changed absolutePosition() to
+        absolutePositionForContent(), to get the right position for children of
+        table cells. This is the correct fix for this part of r31313.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absolutePosition): Reverted the change from r31313
+        by changing absolutePosition() to absolutePositionForContent() here too.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::absolutePositionForContent): Changed to return
+        the result from absolutePosition().
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::absoluteClippedOverflowRect): Turned the
+        "else" case into an early return.
+        (WebCore::RenderTableCell::absolutePosition): Reverted the change from
+        r31313.
+
+2008-04-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Antti Koivisto.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=18172
           REGRESSION (r31114-31132): Page renders structured almost horizontally (at flickr.com)
 

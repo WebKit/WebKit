@@ -143,48 +143,48 @@ IntRect RenderTableCell::absoluteClippedOverflowRect()
     // so we ignore outside borders. This should not be a problem because it means that
     // the table is going to recalculate the grid, relayout and repaint its current rect, which
     // includes any outside borders of this cell.
-    if (table()->collapseBorders() && !table()->needsSectionRecalc()) {
-        bool rtl = table()->style()->direction() == RTL;
-        int outlineSize = style()->outlineSize();
-        int left = max(borderHalfLeft(true), outlineSize);
-        int right = max(borderHalfRight(true), outlineSize);
-        int top = max(borderHalfTop(true), outlineSize);
-        int bottom = max(borderHalfBottom(true), outlineSize);
-        if (left && !rtl || right && rtl) {
-            if (RenderTableCell* before = table()->cellBefore(this)) {
-                top = max(top, before->borderHalfTop(true));
-                bottom = max(bottom, before->borderHalfBottom(true));
-            }
-        }
-        if (left && rtl || right && !rtl) {
-            if (RenderTableCell* after = table()->cellAfter(this)) {
-                top = max(top, after->borderHalfTop(true));
-                bottom = max(bottom, after->borderHalfBottom(true));
-            }
-        }
-        if (top) {
-            if (RenderTableCell* above = table()->cellAbove(this)) {
-                left = max(left, above->borderHalfLeft(true));
-                right = max(right, above->borderHalfRight(true));
-            }
-        }
-        if (bottom) {
-            if (RenderTableCell* below = table()->cellBelow(this)) {
-                left = max(left, below->borderHalfLeft(true));
-                right = max(right, below->borderHalfRight(true));
-            }
-        }
-        left = max(left, -overflowLeft(false));
-        top = max(top, -overflowTop(false) - borderTopExtra());
-        IntRect r(-left, -borderTopExtra() - top, left + max(width() + right, overflowWidth(false)), borderTopExtra() + top + max(height() + bottom + borderBottomExtra(), overflowHeight(false)));
+    if (!table()->collapseBorders() || table()->needsSectionRecalc())
+        return RenderBlock::absoluteClippedOverflowRect();
 
-        if (RenderView* v = view())
-            r.move(v->layoutDelta());
-
-        computeAbsoluteRepaintRect(r);
-        return r;
+    bool rtl = table()->style()->direction() == RTL;
+    int outlineSize = style()->outlineSize();
+    int left = max(borderHalfLeft(true), outlineSize);
+    int right = max(borderHalfRight(true), outlineSize);
+    int top = max(borderHalfTop(true), outlineSize);
+    int bottom = max(borderHalfBottom(true), outlineSize);
+    if (left && !rtl || right && rtl) {
+        if (RenderTableCell* before = table()->cellBefore(this)) {
+            top = max(top, before->borderHalfTop(true));
+            bottom = max(bottom, before->borderHalfBottom(true));
+        }
     }
-    return RenderBlock::absoluteClippedOverflowRect();
+    if (left && rtl || right && !rtl) {
+        if (RenderTableCell* after = table()->cellAfter(this)) {
+            top = max(top, after->borderHalfTop(true));
+            bottom = max(bottom, after->borderHalfBottom(true));
+        }
+    }
+    if (top) {
+        if (RenderTableCell* above = table()->cellAbove(this)) {
+            left = max(left, above->borderHalfLeft(true));
+            right = max(right, above->borderHalfRight(true));
+        }
+    }
+    if (bottom) {
+        if (RenderTableCell* below = table()->cellBelow(this)) {
+            left = max(left, below->borderHalfLeft(true));
+            right = max(right, below->borderHalfRight(true));
+        }
+    }
+    left = max(left, -overflowLeft(false));
+    top = max(top, -overflowTop(false) - borderTopExtra());
+    IntRect r(-left, -borderTopExtra() - top, left + max(width() + right, overflowWidth(false)), borderTopExtra() + top + max(height() + bottom + borderBottomExtra(), overflowHeight(false)));
+
+    if (RenderView* v = view())
+        r.move(v->layoutDelta());
+
+    computeAbsoluteRepaintRect(r);
+    return r;
 }
 
 void RenderTableCell::computeAbsoluteRepaintRect(IntRect& r, bool fixed)
@@ -199,7 +199,6 @@ void RenderTableCell::computeAbsoluteRepaintRect(IntRect& r, bool fixed)
 bool RenderTableCell::absolutePosition(int& xPos, int& yPos, bool fixed) const
 {
     bool result = RenderBlock::absolutePosition(xPos, yPos, fixed);
-    yPos += m_topExtra;
     RenderView* v = view();
     if (!v || !v->layoutState()) {
         xPos -= parent()->xPos(); // Rows are in the same coordinate space, so don't add their offset in.
