@@ -1,3 +1,10 @@
+2008-04-08  Adam Roben  <aroben@apple.com>
+
+        Mac build fix
+
+        * WebCore.xcodeproj/project.pbxproj: Removed MainThread* files which
+        were moved to WTF.
+
 2008-04-08  Timothy Hatcher  <timothy@apple.com>
 
         Change WebInspector.elementDragStart and WebInspector.elementDragEnd to have more
