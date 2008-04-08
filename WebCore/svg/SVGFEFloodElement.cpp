@@ -54,7 +54,6 @@ SVGFEFlood* SVGFEFloodElement::filterEffect(SVGResourceFilter* filter) const
     if (!m_filterEffect)
         m_filterEffect = new SVGFEFlood(filter);
     
-    m_filterEffect->setIn(in1());
     setStandardAttributes(m_filterEffect);
 
     SVGFEFloodElement* nonConstThis = const_cast<SVGFEFloodElement*>(this);

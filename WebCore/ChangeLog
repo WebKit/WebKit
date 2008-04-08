@@ -1,3 +1,10 @@
+2008-04-08  Rob Buis  <buis@kde.org>
+
+        Fix the SVG build.
+
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::filterEffect):
+
 2008-04-08  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Dan Bernstein.
