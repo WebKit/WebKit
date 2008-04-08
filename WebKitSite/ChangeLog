@@ -1,3 +1,13 @@
+2008-04-08  Dean Jackson  <dino@apple.com>
+
+        Add some updated proposals for CSS specifications, such as 
+        Transforms and Transitions which are already implemented in TOT.
+
+        * specs/CSSVisualEffects: Added.
+        * specs/CSSVisualEffects/CSSAnimation.html: Added.
+        * specs/CSSVisualEffects/CSSTransforms.html: Added.
+        * specs/CSSVisualEffects/CSSTransitions.html: Added.
+
 2008-03-31  Mark Rowe  <mrowe@apple.com>
 
         Add some images that were missed in the WordPress 2.5 upgrade.
