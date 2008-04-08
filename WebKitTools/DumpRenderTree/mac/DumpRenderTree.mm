@@ -53,8 +53,8 @@
 #import <WebKit/DOMRange.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebCoreStatistics.h>
-#import <WebKit/WebDatabaseManagerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDatabaseManagerPrivate.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFrameView.h>
@@ -64,6 +64,7 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
+#import <WebKit/WebTypesInternal.h>
 #import <WebKit/WebViewPrivate.h>
 #import <getopt.h>
 #import <mach-o/getsect.h>

@@ -1,3 +1,9 @@
+2008-04-08  Mark Rowe  <mrowe@apple.com>
+
+        Clean up after Brady.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: Add an include so that NSInteger can be found.
+
 2008-04-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mitzpettel
