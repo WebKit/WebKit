@@ -24,8 +24,9 @@
  */
 
 #include "config.h"
-
 #include "WebDocumentLoader.h"
+
+#include "WebKitDLL.h"
 
 using namespace WebCore;
 
@@ -34,10 +35,12 @@ WebDocumentLoader::WebDocumentLoader(const ResourceRequest& request, const Subst
     , m_dataSource(0)
     , m_detachedDataSource(0)
 {
+    gClassCount++;
 }
 
 WebDocumentLoader::~WebDocumentLoader()
 {
+    gClassCount--;
     if (m_dataSource) {
         ASSERT(!m_detachedDataSource);
         m_dataSource->Release();

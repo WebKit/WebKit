@@ -46,10 +46,12 @@ WebActionPropertyBag::WebActionPropertyBag(const NavigationAction& action, Frame
     , m_action(action) 
     , m_frame(frame)
 {
+    gClassCount++;
 }
 
 WebActionPropertyBag::~WebActionPropertyBag()
 {
+    gClassCount--;
 }
 
 WebActionPropertyBag* WebActionPropertyBag::createInstance(const NavigationAction& action, Frame* frame)

@@ -35,6 +35,7 @@ public:
     static CFDictionaryPropertyBag* createInstance();
 protected:
     CFDictionaryPropertyBag();
+    ~CFDictionaryPropertyBag();
 
 public:
     // IUnknown

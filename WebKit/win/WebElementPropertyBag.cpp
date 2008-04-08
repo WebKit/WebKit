@@ -46,10 +46,12 @@ WebElementPropertyBag::WebElementPropertyBag(const HitTestResult& result)
     : m_result(new HitTestResult(result))
     , m_refCount(0)
 {
+    gClassCount++;
 }
 
 WebElementPropertyBag::~WebElementPropertyBag()
 {
+    gClassCount--;
 }
 
 WebElementPropertyBag* WebElementPropertyBag::createInstance(const HitTestResult& result)

@@ -1,3 +1,36 @@
+2008-04-08  Steve Falkenburg  <sfalken@apple.com>
+
+        Add missing increment/decrement COM class counts to detect leaks.
+        
+        Reviewed by Adam Roben.
+
+        * CFDictionaryPropertyBag.cpp:
+        (CFDictionaryPropertyBag::CFDictionaryPropertyBag):
+        (CFDictionaryPropertyBag::~CFDictionaryPropertyBag):
+        * CFDictionaryPropertyBag.h:
+        * HTTPHeaderPropertyBag.cpp:
+        (HTTPHeaderPropertyBag::HTTPHeaderPropertyBag):
+        (HTTPHeaderPropertyBag::~HTTPHeaderPropertyBag):
+        * HTTPHeaderPropertyBag.h:
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::WebActionPropertyBag):
+        (WebActionPropertyBag::~WebActionPropertyBag):
+        * WebDocumentLoader.cpp:
+        (WebDocumentLoader::WebDocumentLoader):
+        (WebDocumentLoader::~WebDocumentLoader):
+        * WebDropSource.cpp:
+        (WebDropSource::WebDropSource):
+        (WebDropSource::~WebDropSource):
+        * WebDropSource.h:
+        * WebElementPropertyBag.cpp:
+        (WebElementPropertyBag::WebElementPropertyBag):
+        (WebElementPropertyBag::~WebElementPropertyBag):
+        * WebTextRenderer.cpp:
+        (WebTextRenderer::WebTextRenderer):
+        (WebTextRenderer::~WebTextRenderer):
+        * WebView.cpp:
+        (WebView::updateActiveState):
+
 2008-04-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John Honeycutt

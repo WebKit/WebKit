@@ -50,7 +50,7 @@ public:
         /* [in] */ VARIANT *pVar);
 
 protected:
-    virtual ~HTTPHeaderPropertyBag() {}
+    virtual ~HTTPHeaderPropertyBag();
 
 private:
     HTTPHeaderPropertyBag(WebURLResponse*);
