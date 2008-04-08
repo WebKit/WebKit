@@ -1,5 +1,14 @@
 2008-04-08  Adam Roben  <aroben@apple.com>
 
+        Export callOnMainThread from WebKit.dll
+
+        Rubberstamped by Anders.
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_debug.def:
+
+2008-04-08  Adam Roben  <aroben@apple.com>
+
         Move callOnMainThread to WTF
 
         Reviewed by Alexey Proskuryakov.
