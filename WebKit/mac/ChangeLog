@@ -1,3 +1,9 @@
+2008-04-07  Brady Eidson  <beidson@apple.com>
+
+        Add "ENABLE_DOM_STORAGE" to keep in sync with the rest of the project
+
+        * Configurations/WebKit.xcconfig:
+
 2008-04-04  Adam Roben  <aroben@apple.com>
 
         Use WebCore's ICU headers instead of our own copy
