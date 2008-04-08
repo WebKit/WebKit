@@ -1,3 +1,13 @@
+2008-04-08  Adam Roben  <aroben@apple.com>
+
+        Check in diff.rb
+
+        This came from
+        http://instiki.rubyforge.org/svn/instiki/trunk/lib/diff.rb
+        revision 28521
+
+        * PrettyPatch/diff.rb: Added.
+
 2008-03-04  Adam Roben  <aroben@apple.com>
 
         * PrettyPatch/PrettyPatch.rb: Allow the extent of the previous file to
