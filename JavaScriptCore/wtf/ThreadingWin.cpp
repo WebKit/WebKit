@@ -63,6 +63,7 @@
 #include "config.h"
 #include "Threading.h"
 
+#include "MainThread.h"
 #include <windows.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
@@ -78,6 +79,7 @@ void initializeThreading()
     if (!atomicallyInitializedStaticMutex) {
         atomicallyInitializedStaticMutex = new Mutex;
         wtf_random_init();
+        initializeMainThread();
         mainThreadIdentifier = currentThread();
     }
 }

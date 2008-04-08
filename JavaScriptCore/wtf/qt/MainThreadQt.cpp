@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
+ * Copyright (C) 2007 Staikos Computing Services Inc.
+ * Copyright (C) 2007 Trolltech ASA
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,31 +28,42 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MainThread_h
-#define MainThread_h
+#include "config.h"
+#include "MainThread.h"
 
-#include <kjs/InitializeThreading.h>
+#include <QtCore/QObject>
+#include <QtCore/QCoreApplication>
 
-namespace WebCore {
 
-typedef void MainThreadFunction(void*);
+namespace WTF {
 
-void callOnMainThread(MainThreadFunction*, void* context);
-void setMainThreadCallbacksPaused(bool paused);
+class MainThreadInvoker : public QObject {
+    Q_OBJECT
+public:
+    MainThreadInvoker();
 
-void initializeThreadingAndMainThread();
+private Q_SLOTS:
+    void dispatch();
+};
 
-#if !PLATFORM(WIN)
-inline void initializeThreadingAndMainThread()
+MainThreadInvoker::MainThreadInvoker()
 {
-    KJS::initializeThreading();
+    moveToThread(QCoreApplication::instance()->thread());
 }
-#endif
 
-// These functions are internal to the callOnMainThread implementation.
-void dispatchFunctionsFromMainThread();
-void scheduleDispatchFunctionsOnMainThread();
+void MainThreadInvoker::dispatch()
+{
+    dispatchFunctionsFromMainThread();
+}
 
-} // namespace WebCore
+Q_GLOBAL_STATIC(MainThreadInvoker, webkit_main_thread_invoker)
 
-#endif // MainThread_h
+
+void scheduleDispatchFunctionsOnMainThread()
+{
+    QMetaObject::invokeMethod(webkit_main_thread_invoker(), "dispatch", Qt::QueuedConnection);
+}
+
+}
+
+#include "MainThreadQt.moc"

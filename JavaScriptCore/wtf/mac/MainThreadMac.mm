@@ -25,52 +25,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+#import "config.h"
+#import "MainThread.h"
 
-#include "config.h"
-#include "MainThread.h"
+#import <Foundation/NSThread.h>
 
-#include "Page.h"
-#include <windows.h>
+@interface WTFMainThreadCaller : NSObject {
+}
+- (void)call;
+@end
 
-namespace WebCore {
+@implementation WTFMainThreadCaller
 
-static HWND threadingWindowHandle;
-static UINT threadingFiredMessage;
-const LPCWSTR kThreadingWindowClassName = L"ThreadingWindowClass";
-
-LRESULT CALLBACK ThreadingWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+- (void)call
 {
-    if (message == threadingFiredMessage)
-        dispatchFunctionsFromMainThread();
-    else
-        return DefWindowProc(hWnd, message, wParam, lParam);
-    return 0;
+    WTF::dispatchFunctionsFromMainThread();
 }
 
-void initializeThreadingAndMainThread()
-{
-    if (threadingWindowHandle)
-        return;
+@end // implementation WTFMainThreadCaller
 
-    KJS::initializeThreading();
-
-    WNDCLASSEX wcex;
-    memset(&wcex, 0, sizeof(WNDCLASSEX));
-    wcex.cbSize = sizeof(WNDCLASSEX);
-    wcex.lpfnWndProc    = ThreadingWindowWndProc;
-    wcex.hInstance      = Page::instanceHandle();
-    wcex.lpszClassName  = kThreadingWindowClassName;
-    RegisterClassEx(&wcex);
-
-    threadingWindowHandle = CreateWindow(kThreadingWindowClassName, 0, 0,
-       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, 0, Page::instanceHandle(), 0);
-    threadingFiredMessage = RegisterWindowMessage(L"com.apple.WebKit.MainThreadFired");
-}
+namespace WTF {
 
 void scheduleDispatchFunctionsOnMainThread()
 {
-    ASSERT(threadingWindowHandle);
-    PostMessage(threadingWindowHandle, threadingFiredMessage, 0, 0);
+    WTFMainThreadCaller *caller = [[WTFMainThreadCaller alloc] init];
+    [caller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO];
+    [caller release];
 }
 
-} // namespace WebCore
+} // namespace WTF

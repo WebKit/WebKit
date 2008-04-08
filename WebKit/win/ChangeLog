@@ -1,3 +1,11 @@
+2008-04-08  Adam Roben  <aroben@apple.com>
+
+        Move callOnMainThread to WTF
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebIconDatabase.cpp: Updated #include
+
 2008-04-08  Steve Falkenburg  <sfalken@apple.com>
 
         Add missing increment/decrement COM class counts to detect leaks.

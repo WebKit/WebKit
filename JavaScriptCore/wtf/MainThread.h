@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +26,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#import "config.h"
-#import "MainThread.h"
 
-@interface WebCoreMainThreadCaller : NSObject {
-}
-- (void)call;
-@end
+#ifndef MainThread_h
+#define MainThread_h
 
-@implementation WebCoreMainThreadCaller
+namespace WTF {
 
-- (void)call
-{
-    WebCore::dispatchFunctionsFromMainThread();
-}
+typedef void MainThreadFunction(void*);
 
-@end // implementation WebCoreMainThreadCaller
+void callOnMainThread(MainThreadFunction*, void* context);
+void setMainThreadCallbacksPaused(bool paused);
 
-namespace WebCore {
+#if PLATFORM(WIN)
+void initializeMainThread();
+#endif
 
-void scheduleDispatchFunctionsOnMainThread()
-{
-    WebCoreMainThreadCaller *caller = [[WebCoreMainThreadCaller alloc] init];
-    [caller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO];
-    [caller release];
-}
+// These functions are internal to the callOnMainThread implementation.
+void dispatchFunctionsFromMainThread();
+void scheduleDispatchFunctionsOnMainThread();
 
-} // namespace WebCore
+} // namespace WTF
+
+using WTF::callOnMainThread;
+using WTF::setMainThreadCallbacksPaused;
+
+#endif // MainThread_h

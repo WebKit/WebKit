@@ -1,3 +1,12 @@
+2008-04-08  Adam Roben  <aroben@apple.com>
+
+        Move callOnMainThread to WTF
+
+        Reviewed by Alexey Proskuryakov.
+
+        * webkit/webkitprivate.cpp: Updated #include.
+        (webkit_init): Changed to call KJS::initializeThreading.
+
 2008-04-06  Luca Bruno  <lethalman88@gmail.com>
 
         Reviewed by Alp Toker.

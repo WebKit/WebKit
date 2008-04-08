@@ -32,7 +32,7 @@
 
 #include <glib.h>
 
-namespace WebCore {
+namespace WTF {
 
 static gboolean timeoutFired(gpointer)
 {

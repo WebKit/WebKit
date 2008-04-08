@@ -49,7 +49,9 @@ javascriptcore_sources += \
 	JavaScriptCore/pcre/pcre_xclass.cpp \
 	JavaScriptCore/wtf/Assertions.cpp \
 	JavaScriptCore/wtf/HashTable.cpp \
+	JavaScriptCore/wtf/MainThread.cpp \
 	JavaScriptCore/wtf/ThreadingGtk.cpp \
+	JavaScriptCore/wtf/gtk/MainThreadGtk.cpp \
 	JavaScriptCore/wtf/unicode/CollatorDefault.cpp \
 	JavaScriptCore/wtf/unicode/icu/CollatorICU.cpp \
 	JavaScriptCore/wtf/unicode/UTF8.cpp

@@ -622,7 +622,6 @@ This file contains the list of files needed to build WebCore.
         platform/KURL.cpp
         platform/Logging.cpp
         platform/MIMETypeRegistry.cpp
-        platform/MainThread.cpp
         platform/text/RegularExpression.cpp
         platform/ScrollBar.cpp
         platform/SecurityOrigin.cpp

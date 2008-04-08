@@ -866,7 +866,6 @@ webcore_sources += \
 	WebCore/platform/KURL.cpp \
 	WebCore/platform/Logging.cpp \
 	WebCore/platform/MIMETypeRegistry.cpp \
-	WebCore/platform/MainThread.cpp \
 	WebCore/platform/network/AuthenticationChallengeBase.cpp \
 	WebCore/platform/network/Credential.cpp \
 	WebCore/platform/network/FormData.cpp \
@@ -1000,7 +999,6 @@ webkitgtk_sources += \
 	WebCore/platform/gtk/Language.cpp \
 	WebCore/platform/gtk/LocalizedStringsGtk.cpp \
 	WebCore/platform/gtk/LoggingGtk.cpp \
-	WebCore/platform/gtk/MainThreadGtk.cpp \
 	WebCore/platform/gtk/MIMETypeRegistryGtk.cpp \
 	WebCore/platform/gtk/MouseEventGtk.cpp \
 	WebCore/platform/gtk/PasteboardGtk.cpp \

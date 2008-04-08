@@ -35,6 +35,7 @@ KJSBISON += \
 SOURCES += \
     wtf/Assertions.cpp \
     wtf/HashTable.cpp \
+    wtf/MainThread.cpp \
     wtf/unicode/CollatorDefault.cpp \
     wtf/unicode/icu/CollatorICU.cpp \
     wtf/unicode/UTF8.cpp \
@@ -104,10 +105,12 @@ SOURCES += \
 }
 
 gtk-port:SOURCES += \
-    wtf/ThreadingGtk.cpp
+    wtf/ThreadingGtk.cpp \
+    wtf/gtk/MainThreadGtk.cpp
 
 !gtk-port:SOURCES += \
-    wtf/ThreadingNone.cpp
+    wtf/ThreadingNone.cpp \
+    wtf/qt/MainThreadQt.cpp
 
 !CONFIG(QTDIR_build) {
     defineTest(addExtraCompiler) {

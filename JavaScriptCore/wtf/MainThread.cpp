@@ -29,11 +29,10 @@
 #include "config.h"
 #include "MainThread.h"
 
-#include "Logging.h"
-#include <wtf/Threading.h>
-#include <wtf/Vector.h>
+#include "Threading.h"
+#include "Vector.h"
 
-namespace WebCore {
+namespace WTF {
 
 struct FunctionWithContext {
     MainThreadFunction* function;
@@ -68,7 +67,6 @@ void dispatchFunctionsFromMainThread()
         queueCopy.swap(functionQueue());
     }
 
-    LOG(Threading, "Calling %u functions on the main thread", static_cast<unsigned>(queueCopy.size()));
     for (unsigned i = 0; i < queueCopy.size(); ++i)
         queueCopy[i].function(queueCopy[i].context);
 }
@@ -96,4 +94,4 @@ void setMainThreadCallbacksPaused(bool paused)
         scheduleDispatchFunctionsOnMainThread();
 }
 
-} // namespace WebCore
+} // namespace WTF

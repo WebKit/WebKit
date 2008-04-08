@@ -203,6 +203,14 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="win"
+			>
+			<File
+				RelativePath="..\..\wtf\win\MainThreadWin.cpp"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\wtf\AlwaysInline.h"
 			>
@@ -293,6 +301,14 @@
 		</File>
 		<File
 			RelativePath="..\..\wtf\Locker.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\MainThread.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\MainThread.h"
 			>
 		</File>
 		<File

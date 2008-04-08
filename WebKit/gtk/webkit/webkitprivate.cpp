@@ -24,10 +24,10 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"
 #include "Logging.h"
-#include "MainThread.h"
 #include "NotImplemented.h"
 #include "Pasteboard.h"
 #include "PasteboardHelperGtk.h"
+#include <kjs/InitializeThreading.h>
 
 #if ENABLE(DATABASE)
 #include "DatabaseTracker.h"
@@ -90,7 +90,7 @@ void webkit_init()
         return;
     isInitialized = true;
 
-    WebCore::initializeThreadingAndMainThread();
+    KJS::initializeThreading();
     WebCore::InitializeLoggingChannelsIfNecessary();
 
 #if ENABLE(DATABASE)

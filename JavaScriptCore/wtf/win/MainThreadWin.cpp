@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Kevin Ollivier
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,45 @@
 #include "config.h"
 #include "MainThread.h"
 
-#include "NotImplemented.h"
+#include "Assertions.h"
+#include <windows.h>
 
-namespace WebCore {
+namespace WTF {
+
+static HWND threadingWindowHandle;
+static UINT threadingFiredMessage;
+const LPCWSTR kThreadingWindowClassName = L"ThreadingWindowClass";
+
+LRESULT CALLBACK ThreadingWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    if (message == threadingFiredMessage)
+        dispatchFunctionsFromMainThread();
+    else
+        return DefWindowProc(hWnd, message, wParam, lParam);
+    return 0;
+}
+
+void initializeMainThread()
+{
+    if (threadingWindowHandle)
+        return;
+
+    WNDCLASSEX wcex;
+    memset(&wcex, 0, sizeof(WNDCLASSEX));
+    wcex.cbSize = sizeof(WNDCLASSEX);
+    wcex.lpfnWndProc    = ThreadingWindowWndProc;
+    wcex.lpszClassName  = kThreadingWindowClassName;
+    RegisterClassEx(&wcex);
+
+    threadingWindowHandle = CreateWindow(kThreadingWindowClassName, 0, 0,
+       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, 0, 0, 0);
+    threadingFiredMessage = RegisterWindowMessage(L"com.apple.WebKit.MainThreadFired");
+}
 
 void scheduleDispatchFunctionsOnMainThread()
 {
-    notImplemented();
+    ASSERT(threadingWindowHandle);
+    PostMessage(threadingWindowHandle, threadingFiredMessage, 0, 0);
 }
 
-}
+} // namespace WebCore

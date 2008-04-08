@@ -4062,14 +4062,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\MainThread.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\MainThread.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\MIMETypeRegistry.cpp"
 				>
 			</File>
@@ -4330,10 +4322,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\Language.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\win\MainThreadWin.cpp"
 					>
 				</File>
 				<File
@@ -4738,11 +4726,11 @@
 					RelativePath="..\platform\graphics\GlyphWidthMap.h"
 					>
 				</File>
-                                <File
+				<File
 					RelativePath="..\platform\graphics\Gradient.cpp"
 					>
 				</File>
-                                <File
+				<File
 					RelativePath="..\platform\graphics\Gradient.h"
 					>
 				</File>
@@ -5453,7 +5441,7 @@
 							/>
 						</FileConfiguration>
 					</File>
-                                        <File
+					<File
 						RelativePath="..\platform\graphics\cg\GradientCG.cpp"
 						>
 						<FileConfiguration
@@ -5805,7 +5793,7 @@
 							/>
 						</FileConfiguration>
 					</File>
-                                        <File
+					<File
 						RelativePath="..\platform\graphics\cairo\GradientCairo.cpp"
 						>
 						<FileConfiguration
@@ -15441,6 +15429,10 @@
 		<Filter
 			Name="ForwardingHeaders"
 			>
+			<File
+				RelativePath="..\ForwardingHeaders\wtf\MainThread.h"
+				>
+			</File>
 			<Filter
 				Name="wtf"
 				>

@@ -36,9 +36,9 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Image.h>
-#include <WebCore/MainThread.h>
 #include <WebCore/PlatformString.h>
 #pragma warning(pop)
+#include <wtf/MainThread.h>
 #include "shlobj.h"
 
 using namespace WebCore;

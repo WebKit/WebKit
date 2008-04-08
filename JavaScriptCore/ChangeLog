@@ -1,3 +1,32 @@
+2008-04-08  Adam Roben  <aroben@apple.com>
+
+        Move callOnMainThread to WTF
+
+        Reviewed by Alexey Proskuryakov.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        Added new files.
+
+        * wtf/MainThread.cpp:
+        * wtf/MainThread.h:
+        * wtf/gtk/MainThreadGtk.cpp:
+        * wtf/mac/MainThreadMac.mm:
+        * wtf/qt/MainThreadQt.cpp:
+        * wtf/win/MainThreadWin.cpp:
+        * wtf/wx/MainThreadWx.cpp:
+        Moved here from WebCore/platform. Replaced all instances of "WebCore"
+        with "WTF".
+
+        * kjs/bool_object.cpp: Touched to force JavaScriptCore.vcproj to
+        build.
+        to the WTF namespace.
+        * wtf/ThreadingWin.cpp:
+        (WTF::initializeThreading): Call initializeMainThread.
+
 2008-04-07  Brady Eidson  <beidson@apple.com>
 
         Add "ENABLE_DOM_STORAGE" to keep in sync with the rest of the project

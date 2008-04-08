@@ -1,3 +1,33 @@
+2008-04-08  Adam Roben  <aroben@apple.com>
+
+        Move callOnMainThread to WTF
+
+        Reviewed by Alexey Proskuryakov.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCoreSources.bkl:
+        Removed MainThread files.
+
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::iconDatabase):
+        * storage/Database.cpp:
+        (WebCore::Database::Database):
+        * storage/DatabaseTracker.cpp:
+        Updated #includes and replaced calls to
+        WebCore::initializeThreadingAndMainThread with calls to
+        KJS::initializeThreading.
+
+        * platform/MainThread.cpp: Removed.
+        * platform/MainThread.h: Removed.
+        * platform/gtk/MainThreadGtk.cpp: Removed.
+        * platform/mac/MainThreadMac.mm: Removed.
+        * platform/qt/MainThreadQt.cpp: Removed.
+        * platform/win/MainThreadWin.cpp: Removed.
+        * platform/wx/MainThreadWx.cpp: Removed.
+
 2008-04-07  Timothy Hatcher  <timothy@apple.com>
 
         Makes the Network timeline graph resource sizes on the bar graph

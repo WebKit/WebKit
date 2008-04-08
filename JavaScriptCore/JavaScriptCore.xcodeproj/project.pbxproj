@@ -33,6 +33,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		06D358B20DAADA93003B174E /* MainThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 06D358A30DAAD9C4003B174E /* MainThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		06D358B30DAADAA4003B174E /* MainThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 06D358A20DAAD9C4003B174E /* MainThread.cpp */; };
+		06D358B40DAADAAA003B174E /* MainThreadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06D358A10DAAD9C4003B174E /* MainThreadMac.mm */; };
 		141211310A48794D00480255 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		141211340A48795800480255 /* minidom.c in Sources */ = {isa = PBXBuildFile; fileRef = 141211020A48780900480255 /* minidom.c */; };
 		1419D32D0CEA7CDE00FF507A /* RefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 1419D32C0CEA7CDE00FF507A /* RefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -331,6 +334,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		06D358A10DAAD9C4003B174E /* MainThreadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainThreadMac.mm; sourceTree = "<group>"; };
+		06D358A20DAAD9C4003B174E /* MainThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainThread.cpp; sourceTree = "<group>"; };
+		06D358A30DAAD9C4003B174E /* MainThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainThread.h; sourceTree = "<group>"; };
 		141211020A48780900480255 /* minidom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = minidom.c; sourceTree = "<group>"; };
 		1412110D0A48788700480255 /* minidom.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = minidom.js; sourceTree = "<group>"; };
 		141211200A48793C00480255 /* minidom */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = minidom; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -613,6 +619,14 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		06D358A00DAAD9C4003B174E /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				06D358A10DAAD9C4003B174E /* MainThreadMac.mm */,
+			);
+			path = mac;
+			sourceTree = "<group>";
+		};
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
@@ -748,6 +762,7 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
+				06D358A00DAAD9C4003B174E /* mac */,
 				93AA4F770957251F0084B3A7 /* AlwaysInline.h */,
 				938C4F690CA06BC700D9310A /* ASCIICType.h */,
 				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
@@ -769,6 +784,8 @@
 				657EB7450B708F540063461B /* ListHashSet.h */,
 				148A1626095D16BB00666D0D /* ListRefPtr.h */,
 				E1EE79270D6C964500FEA3BA /* Locker.h */,
+				06D358A20DAAD9C4003B174E /* MainThread.cpp */,
+				06D358A30DAAD9C4003B174E /* MainThread.h */,
 				5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */,
 				BCF6553B0A2048DE0038A194 /* MathExtras.h */,
 				E1EE798B0D6CA53D00FEA3BA /* MessageQueue.h */,
@@ -1100,6 +1117,7 @@
 				E1EE79280D6C964500FEA3BA /* Locker.h in Headers */,
 				E1A862AB0D7EBB7D001EC6AA /* Collator.h in Headers */,
 				E17863400D9BEC0000D74E75 /* InitializeThreading.h in Headers */,
+				06D358B20DAADA93003B174E /* MainThread.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1353,6 +1371,8 @@
 				E1A862A90D7EBB76001EC6AA /* CollatorICU.cpp in Sources */,
 				E1A862D60D7F2B5C001EC6AA /* CollatorDefault.cpp in Sources */,
 				E178636D0D9BEEC300D74E75 /* InitializeThreading.cpp in Sources */,
+				06D358B30DAADAA4003B174E /* MainThread.cpp in Sources */,
+				06D358B40DAADAAA003B174E /* MainThreadMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
