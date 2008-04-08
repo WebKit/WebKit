@@ -1,3 +1,13 @@
+2008-04-08  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Adam Roben
+        
+        Touch some files to *strongly* encourage Windows to rebuilt with DOM_STORAGE enabled
+
+        * WebCore.vcproj/build-generated-files.sh:
+        * bindings/scripts/CodeGenerator.pm:
+        * config.h:
+
 2008-04-08  Timothy Hatcher  <timothy@apple.com>
 
         Implements the majority of the Inspector UI refresh as shown at:

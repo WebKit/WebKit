@@ -344,7 +344,7 @@ int equivalentYearForDST(int year)
 {
     static int minYear = mimimumYearForDST();
     static int maxYear = maximumYearForDST();
-    
+
     int difference;
     if (year > maxYear)
         difference = minYear - year;
@@ -485,7 +485,7 @@ void msToGregorianDateTime(double ms, bool outputIsUTC, GregorianDateTime& tm)
     // input is UTC
     double dstOff = 0.0;
     const double utcOff = getUTCOffset();
-    
+
     if (!outputIsUTC) {  // convert to local time
         dstOff = getDSTOffset(ms, utcOff);
         ms += dstOff + utcOff;

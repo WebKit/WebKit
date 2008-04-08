@@ -370,14 +370,6 @@ editing/selection/caret-rtl.html
 # Caret, RenderBlock
 editing/pasteboard/undoable-fragment-removes.html
 
-# Windows hangs on new SessionStorage tests, disable until I can explore
-storage/domstorage/window-attributes-exist.html
-storage/domstorage/sessionstorage/iframe-events.html
-storage/domstorage/sessionstorage/index-get-and-set.html
-storage/domstorage/sessionstorage/simple-events.html
-storage/domstorage/sessionstorage/simple-usage.html
-storage/domstorage/sessionstorage/window-open.html
-
 ################################################################################
 ######################### All of above may be related ##########################
 ################################################################################

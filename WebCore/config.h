@@ -54,8 +54,8 @@
 
 #endif /* PLATFORM(WIN_OS) */
 
-// On MSW, wx headers need to be included before windows.h is. 
-// The only way we can always ensure this is if we include wx here. 
+// On MSW, wx headers need to be included before windows.h is.
+// The only way we can always ensure this is if we include wx here.
 #if PLATFORM(WX)
 #include <wx/defs.h>
 #endif
@@ -77,7 +77,7 @@
 
 // this breaks compilation of <QFontDatabase>, at least, so turn it off for now
 // Also generates errors on wx on Windows, presumably because these functions
-// are used from wx headers. 
+// are used from wx headers.
 #if !PLATFORM(QT) && !PLATFORM(WX)
 #include <wtf/DisallowCType.h>
 #endif

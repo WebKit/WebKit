@@ -1,3 +1,9 @@
+2008-04-08  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Adam
+
+        * platform/win/Skipped: SessionStorage tests pass fine on Windows, as long as the feature is enabled!
+
 2008-04-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Antti Koivisto.

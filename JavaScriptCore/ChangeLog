@@ -1,3 +1,11 @@
+2008-04-08  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Adam Roben
+        
+        Touch some files to *strongly* encourage Windows to rebuilt with DOM_STORAGE enabled
+
+        * kjs/DateMath.cpp:
+
 2008-04-08  Adam Roben  <aroben@apple.com>
 
         Move callOnMainThread to WTF
