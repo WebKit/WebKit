@@ -1,3 +1,11 @@
+2008-04-07  Brady Eidson  <beidson@apple.com>
+
+        Fix build for builds without DOM_STORAGE enabled
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchStorageEvent):
+        * dom/EventTargetNode.h:
+
 2008-04-07  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Beth Dakin.
