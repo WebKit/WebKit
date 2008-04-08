@@ -570,7 +570,9 @@ This file contains the list of files needed to build WebCore.
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_PAGE">
+        page/AccessibilityObjeect.cpp
         page/AnimationController.cpp
+        page/AXObjectCache.cpp
         page/BarInfo.cpp
         page/Chrome.cpp
         page/Console.cpp
