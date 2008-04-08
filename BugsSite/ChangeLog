@@ -1,5 +1,42 @@
 2008-04-08  Adam Roben  <aroben@apple.com>
 
+        Change PrettyPatch to use DiffBuilder for intra-line diffs
+
+        This gives us much prettier intra-line diffs, largely because it can
+        distinguish multiple changes on the same line. e.g., if a line changes
+        from:
+
+        const int myConstant = 0;
+
+        to
+
+        static const unsigned myConstant;
+
+        You will see that "static " was inserted, "int" changed to "unsigned",
+        and " = 0" was deleted.
+
+        This seems to have also gotten rid of some spurious instances of
+        "<ins></ins>" and "<del></del>" at the end of a line.
+
+        * PrettyPatch/PrettyPatch.rb:
+        (PrettyPatch::DiffSection.initialize): Use DiffBuilder instead of
+        setChangeExtentFromLine (which had been copied from Trac's diffing
+        code).
+        (PrettyPatch::CodeLine):
+         - Removed the changeExtent attribute
+         - Added the operations attribute
+         - Removed the setChangeExtentFromLine method
+        (PrettyPatch::CodeLine.text_as_html): Uses @operations to determine
+        what text to wrap in <ins> and <del> tags.
+        * PrettyPatch/diff.rb: Deleted a bunch of code we don't use.
+        (HTMLDiff::DiffBuilder.initialize): Moved code here from the old build
+        method, but left out the calls to perform_operation, since we build
+        the diff HTML outside of this class.
+        (HTMLDiff::DiffBuilder.split_inputs_to_words): Removed calls to
+        convert_html_to_list_of_words, since we're not diffing HTML.
+
+2008-04-08  Adam Roben  <aroben@apple.com>
+
         Check in diff.rb
 
         This came from

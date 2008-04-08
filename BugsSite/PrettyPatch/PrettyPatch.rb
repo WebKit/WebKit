@@ -1,4 +1,5 @@
 require 'cgi'
+require 'diff'
 require 'pp'
 require 'set'
 
@@ -239,8 +240,9 @@ EOF
             for change in changes
                 next unless change.first.length == change.last.length
                 for i in (0...change.first.length)
-                    change.first[i].setChangeExtentFromLine(change.last[i])
-                    change.last[i].changeExtent = change.first[i].changeExtent
+                    operations = HTMLDiff::DiffBuilder.new(change.first[i].text, change.last[i].text).operations
+                    change.first[i].operations = operations
+                    change.last[i].operations = operations
                 end
             end
         end
@@ -297,28 +299,32 @@ EOF
     end
 
     class CodeLine < Line
-        attr :changeExtent, true
-
-        def setChangeExtentFromLine(line)
-            limit = [@text.length, line.text.length].min
-            start = 0
-            while (start < limit && @text[start] == line.text[start])
-                start += 1
-            end
-            limit -= start
-            eend = -1
-            while (-eend <= limit && @text[eend] == line.text[eend])
-                eend -= 1
-            end
-
-            @changeExtent = start..eend
-        end
+        attr :operations, true
 
         def text_as_html
-            html = @text
-            html = html.insert(@changeExtent.begin, START_OF_EXTENT_STRING).insert(@changeExtent.end, END_OF_EXTENT_STRING) unless @changeExtent.nil?
-            html = CGI.escapeHTML(html)
-            html.gsub(START_OF_EXTENT_STRING, @fromLineNumber.nil? ? "<ins>" : "<del>").gsub(END_OF_EXTENT_STRING, @fromLineNumber.nil? ? "</ins>" : "</del>")
+            html = []
+            tag = @fromLineNumber.nil? ? "ins" : "del"
+            if @operations.nil? or @operations.empty?
+                return CGI.escapeHTML(@text)
+            end
+            @operations.each do |operation|
+                start = @fromLineNumber.nil? ? operation.start_in_new : operation.start_in_old
+                eend = @fromLineNumber.nil? ? operation.end_in_new : operation.end_in_old
+                escaped_text = CGI.escapeHTML(@text[start...eend])
+                case operation.action
+                when :insert
+                    next if @toLineNumber.nil?
+                    html << "<#{tag}>#{escaped_text}</#{tag}>"
+                when :delete
+                    next if @fromLineNumber.nil?
+                    html << "<#{tag}>#{escaped_text}</#{tag}>"
+                when :replace
+                    html << "<#{tag}>#{escaped_text}</#{tag}>"
+                when :equal
+                    html << escaped_text
+                end
+            end
+            html.join
         end
     end
 

@@ -17,19 +17,13 @@ module HTMLDiff
 
     def initialize(old_version, new_version)
       @old_version, @new_version = old_version, new_version
-      @content = []
-    end
-
-    def build
       split_inputs_to_words
       index_new_words
-      operations.each { |op| perform_operation(op) }
-      return @content.join
     end
 
     def split_inputs_to_words
-      @old_words = convert_html_to_list_of_words(explode(@old_version))
-      @new_words = convert_html_to_list_of_words(explode(@new_version))
+      @old_words = explode(@old_version)
+      @new_words = explode(@new_version)
     end
 
     def index_new_words
@@ -160,157 +154,11 @@ module HTMLDiff
       end
       [match_in_old, match_in_new, match_size]
     end
-    
-    VALID_METHODS = [:replace, :insert, :delete, :equal]
-
-    def perform_operation(operation)
-      @operation = operation
-      self.send operation.action, operation
-    end
-
-    def replace(operation)
-      delete(operation, 'diffmod')
-      insert(operation, 'diffmod')
-    end
-    
-    def insert(operation, tagclass = 'diffins')
-      insert_tag('ins', tagclass, @new_words[operation.start_in_new...operation.end_in_new])
-    end
-    
-    def delete(operation, tagclass = 'diffdel')
-       insert_tag('del', tagclass, @old_words[operation.start_in_old...operation.end_in_old])
-    end
-    
-    def equal(operation)
-      # no tags to insert, simply copy the matching words from one of the versions
-      @content += @new_words[operation.start_in_new...operation.end_in_new]
-    end
-  
-    def opening_tag?(item)
-      item =~ %r!^\s*<[^>]+>\s*$!
-    end
-
-    def closing_tag?(item)
-      item =~ %r!^\s*</[^>]+>\s*$!
-    end
-
-    def tag?(item)
-      opening_tag?(item) or closing_tag?(item)
-    end
-
-    def extract_consecutive_words(words, &condition)
-      index_of_first_tag = nil
-      words.each_with_index do |word, i| 
-        if !condition.call(word)
-          index_of_first_tag = i
-          break
-        end
-      end
-      if index_of_first_tag
-        return words.slice!(0...index_of_first_tag)
-      else
-        return words.slice!(0..words.length)
-      end
-    end
-
-    # This method encloses words within a specified tag (ins or del), and adds this into @content, 
-    # with a twist: if there are words contain tags, it actually creates multiple ins or del, 
-    # so that they don't include any ins or del. This handles cases like
-    # old: '<p>a</p>'
-    # new: '<p>ab</p><p>c</b>'
-    # diff result: '<p>a<ins>b</ins></p><p><ins>c</ins></p>'
-    # this still doesn't guarantee valid HTML (hint: think about diffing a text containing ins or
-    # del tags), but handles correctly more cases than the earlier version.
-    # 
-    # P.S.: Spare a thought for people who write HTML browsers. They live in this ... every day.
-
-    def insert_tag(tagname, cssclass, words)
-      loop do
-        break if words.empty?
-        non_tags = extract_consecutive_words(words) { |word| not tag?(word) }
-        @content << wrap_text(non_tags.join, tagname, cssclass) unless non_tags.empty?
-
-        break if words.empty?
-        @content += extract_consecutive_words(words) { |word| tag?(word) }
-      end
-    end
-
-    def wrap_text(text, tagname, cssclass)
-      %(<#{tagname} class="#{cssclass}">#{text}</#{tagname}>)
-    end
 
     def explode(sequence)
       sequence.is_a?(String) ? sequence.split(//) : sequence
     end
-  
-    def end_of_tag?(char)
-      char == '>'
-    end
-  
-    def start_of_tag?(char)
-      char == '<'
-    end
-    
-    def whitespace?(char)
-      char =~ /\s/
-    end
-  
-    def convert_html_to_list_of_words(x, use_brackets = false)
-      mode = :char
-      current_word  = ''
-      words = []
-      
-      explode(x).each do |char|
-        case mode
-        when :tag
-          if end_of_tag? char
-            current_word << (use_brackets ? ']' : '>')
-            words << current_word
-            current_word = ''
-            if whitespace?(char) 
-              mode = :whitespace 
-            else
-              mode = :char
-            end
-          else
-            current_word << char
-          end
-        when :char
-          if start_of_tag? char
-            words << current_word unless current_word.empty?
-            current_word = (use_brackets ? '[' : '<')
-            mode = :tag
-          elsif /\s/.match char
-            words << current_word unless current_word.empty?
-            current_word = char
-            mode = :whitespace
-          else
-            current_word << char
-          end
-        when :whitespace
-          if start_of_tag? char
-            words << current_word unless current_word.empty?
-            current_word = (use_brackets ? '[' : '<')
-            mode = :tag
-          elsif /\s/.match char
-            current_word << char
-          else
-            words << current_word unless current_word.empty?
-            current_word = char
-            mode = :char
-          end
-        else 
-          raise "Unknown mode #{mode.inspect}"
-        end
-      end
-      words << current_word unless current_word.empty?
-      words
-    end
 
   end # of class Diff Builder
   
-  def diff(a, b)
-    DiffBuilder.new(a, b).build
-  end
-
 end
