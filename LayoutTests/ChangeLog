@@ -1,5 +1,13 @@
 2008-04-07  Brady Eidson  <beidson@apple.com>
 
+        Rubberstamped by Geoff Garen
+
+        Forgot to update these results after I added the Prototype
+
+        * fast/dom/Window/window-properties-expected.txt:
+
+2008-04-07  Brady Eidson  <beidson@apple.com>
+
         I can't fathom why the new storage tests could be hanging, but alas they are on Windows
         Disable until I can figure out why
 
