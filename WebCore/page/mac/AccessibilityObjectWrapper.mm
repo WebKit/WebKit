@@ -1209,9 +1209,16 @@ static RenderObject* rendererForView(NSView* view)
     }
     
     // Convert values to WebCore types
-    VisiblePosition visiblePos = visiblePositionForTextMarker(textMarker);
+    // FIXME: prepping all of these values as WebCore types is unnecessary in many 
+    // cases. Re-organization of this function or performing the conversion on a 
+    // need basis are possible improvements. 
+    VisiblePosition visiblePos;
+    if (textMarker)
+        visiblePos = visiblePositionForTextMarker(textMarker);
     int intNumber = [number intValue];
-    VisiblePositionRange visiblePosRange = [self visiblePositionRangeForTextMarkerRange:textMarkerRange];
+    VisiblePositionRange visiblePosRange;
+    if (textMarkerRange)
+        visiblePosRange = [self visiblePositionRangeForTextMarkerRange:textMarkerRange];
     IntPoint webCorePoint = IntPoint(point);
     AccessibilityObject::PlainTextRange plainTextRange = AccessibilityObject::PlainTextRange(range.location, range.length);
 

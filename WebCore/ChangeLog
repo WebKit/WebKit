@@ -1,3 +1,18 @@
+2008-04-08  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        fixed http://bugs.webkit.org/show_bug.cgi?id=18329
+        REGRESSION: Assertion failure in -[WebViewFactory endOfTextMarkerRange:] 
+        when invoking the Dictionary pop-up
+
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        In the section of code where WebCore-equivalents of mac-specific types are
+        prepared, some functions weren't meant to operate on the default initialized
+        values.  Checking for nil in certain places will better maintain the original
+        pre-refactoring code path. 
+
 2008-04-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.
