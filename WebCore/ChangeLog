@@ -1,5 +1,11 @@
 2008-04-08  Adam Roben  <aroben@apple.com>
 
+        Build fix
+
+        * ForwardingHeaders/wtf/MainThread.h: Added. Forgot to commit this.
+
+2008-04-08  Adam Roben  <aroben@apple.com>
+
         Move callOnMainThread to WTF
 
         Reviewed by Alexey Proskuryakov.
