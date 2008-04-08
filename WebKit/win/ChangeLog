@@ -28,8 +28,6 @@
         * WebTextRenderer.cpp:
         (WebTextRenderer::WebTextRenderer):
         (WebTextRenderer::~WebTextRenderer):
-        * WebView.cpp:
-        (WebView::updateActiveState):
 
 2008-04-07  Brady Eidson  <beidson@apple.com>
 
