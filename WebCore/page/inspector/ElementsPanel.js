@@ -718,19 +718,12 @@ WebInspector.DocumentPanel.prototype = {
 
     rightSidebarResizerDragStart: function(event)
     {
-        if (this.sidebarDragEventListener || this.sidebarDragEndEventListener)
-            return this.rightSidebarResizerDragEnd(event);
-
-        this.sidebarDragEventListener = this.rightSidebarResizerDrag.bind(this);
-        this.sidebarDragEndEventListener = this.rightSidebarResizerDragEnd.bind(this);
-        WebInspector.elementDragStart(this.views.dom.sidebarElement, this.sidebarDragEventListener, this.sidebarDragEndEventListener, event, "col-resize");
+        WebInspector.elementDragStart(this.views.dom.sidebarElement, this.rightSidebarResizerDrag.bind(this), this.rightSidebarResizerDragEnd.bind(this), event, "col-resize");
     },
 
     rightSidebarResizerDragEnd: function(event)
     {
-        WebInspector.elementDragEnd(this.views.dom.sidebarElement, this.sidebarDragEventListener, this.sidebarDragEndEventListener, event);
-        delete this.sidebarDragEventListener;
-        delete this.sidebarDragEndEventListener;
+        WebInspector.elementDragEnd(event);
     },
 
     rightSidebarResizerDrag: function(event)

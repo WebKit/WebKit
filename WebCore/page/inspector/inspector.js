@@ -588,7 +588,7 @@ WebInspector.sidebarResizerDragStart = function(event)
 
 WebInspector.sidebarResizerDragEnd = function(event)
 {
-    WebInspector.elementDragEnd(document.getElementById("sidebar"), WebInspector.sidebarResizerDrag, WebInspector.sidebarResizerDragEnd, event);
+    WebInspector.elementDragEnd(event);
 }
 
 WebInspector.sidebarResizerDrag = function(event)
@@ -616,7 +616,7 @@ WebInspector.searchResultsResizerDragStart = function(event)
 
 WebInspector.searchResultsResizerDragEnd = function(event)
 {
-    WebInspector.elementDragEnd(document.getElementById("searchResults"), WebInspector.searchResultsResizerDrag, WebInspector.searchResultsResizerDragEnd, event);
+    WebInspector.elementDragEnd(event);
 }
 
 WebInspector.searchResultsResizerDrag = function(event)
@@ -635,25 +635,29 @@ WebInspector.searchResultsResizerDrag = function(event)
 
 WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor) 
 {
-    if (WebInspector.draggingElement)
-        return elementDragEnd(event);
+    if (this._elementDraggingEventListener || this._elementEndDraggingEventListener)
+        this.elementDragEnd(event);
 
-    WebInspector.draggingElement = true;
+    this._elementDraggingEventListener = dividerDrag;
+    this._elementEndDraggingEventListener = elementDragEnd;
 
     document.addEventListener("mousemove", dividerDrag, true);
     document.addEventListener("mouseup", elementDragEnd, true);
+
     document.body.style.cursor = cursor;
 
     event.preventDefault();
 }
 
-WebInspector.elementDragEnd = function(element, dividerDrag, elementDragEnd, event) 
+WebInspector.elementDragEnd = function(event)
 {
-    document.removeEventListener("mousemove", dividerDrag, true);
-    document.removeEventListener("mouseup", elementDragEnd, true);
+    document.removeEventListener("mousemove", this._elementDraggingEventListener, true);
+    document.removeEventListener("mouseup", this._elementEndDraggingEventListener, true);
+
     document.body.style.removeProperty("cursor");
 
-    delete WebInspector.draggingElement;
+    delete this._elementDraggingEventListener;
+    delete this._elementEndDraggingEventListener;
 
     event.preventDefault();
 }

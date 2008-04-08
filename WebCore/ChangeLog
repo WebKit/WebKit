@@ -1,3 +1,24 @@
+2008-04-08  Timothy Hatcher  <timothy@apple.com>
+
+        Change WebInspector.elementDragStart and WebInspector.elementDragEnd to have more
+        state, so calling elementDragEnd does not need the listener functions. Also makes
+        calling elementDragStart again without elementDragEnd work correctly.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/ElementsPanel.js:
+        (DocumentPanel.prototype.rightSidebarResizerDragStart): Just call WebInspector.elementDragStart.
+        Removed code that stored away the listeners now that elementDragStart does it.
+        (DocumentPanel.prototype.rightSidebarResizerDragEnd): Just call WebInspector.elementDragEnd.
+        Removed code that deleted listeners properties now that elementDragEnd does it.
+        * page/inspector/inspector.js:
+        (WebInspector.sidebarResizerDragEnd): Pass less arguments to elementDragEnd.
+        (WebInspector.searchResultsResizerDragEnd): Ditto.
+        (WebInspector.elementDragStart): Store the listeners as private properties on WebInspector.
+        If the properties are already defined, call elementDragEnd first.
+        (WebInspector.elementDragEnd): Remove the event listeners using the stored properties.
+        Delete the private listener properties.
+
 2008-04-08  Adam Roben  <aroben@apple.com>
 
         Build fix
