@@ -985,7 +985,6 @@ qt-port {
     platform/graphics/qt/SimpleFontDataQt.cpp \
     platform/qt/KURLQt.cpp \
     platform/qt/Localizations.cpp \
-    platform/qt/MainThreadQt.cpp \
     platform/qt/MIMETypeRegistryQt.cpp \
     platform/qt/PasteboardQt.cpp \
     platform/qt/PlatformKeyboardEventQt.cpp \
@@ -1086,7 +1085,6 @@ gtk-port {
         platform/gtk/Language.cpp \
         platform/gtk/LocalizedStringsGtk.cpp \
         platform/gtk/LoggingGtk.cpp \
-        platform/gtk/MainThreadGtk.cpp \
         platform/gtk/MIMETypeRegistryGtk.cpp \
         platform/gtk/MouseEventGtk.cpp \
         platform/gtk/PasteboardGtk.cpp \
