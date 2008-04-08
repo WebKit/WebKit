@@ -809,7 +809,9 @@ webcore_sources += \
 	WebCore/loader/SubresourceLoader.cpp \
 	WebCore/loader/TextDocument.cpp \
 	WebCore/loader/TextResourceDecoder.cpp \
+	WebCore/page/AccessibilityObject.cpp \
 	WebCore/page/AnimationController.cpp \
+	WebCore/page/AXObjectCache.cpp \
 	WebCore/page/BarInfo.cpp \
 	WebCore/page/Chrome.cpp \
 	WebCore/page/Console.cpp \
