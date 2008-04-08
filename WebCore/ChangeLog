@@ -1,3 +1,16 @@
+2008-04-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - fix most of the Windows layout test regressions from the font-weight patch
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::matchImprovingEnumProc): Changed to be symmetric with respect
+        to italics: always prefer (reject) a candidate that changes the italics
+        trait to (from) the desired value.
+        (WebCore::createGDIFont): Added code to set more members of the LOGFONT
+        structure before creating the font.
+
 2008-04-07  Rob Buis  <buis@kde.org>
 
         Reviewed by Ollie.
