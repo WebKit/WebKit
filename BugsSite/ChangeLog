@@ -1,5 +1,25 @@
 2008-04-08  Adam Roben  <aroben@apple.com>
 
+        Combine :equal operations with the following operation if they are
+        fewer than 3 characters long
+
+        This keeps us from showing lots of small changes on long lines, just
+        because some letters happened to be the same.
+
+        Inspired by
+        http://code.google.com/p/reviewboard/source/browse/trunk/reviewboard/diffviewer/diffutils.py?r=1264#147
+
+        * PrettyPatch/PrettyPatch.rb:
+        (PrettyPatch::DiffSection.initialize): Remove :equal operations fewer
+        than 3 characters long. The characters from the removed operations
+        become part of the subsequent operation.
+        (PrettyPatch::CodeLine.text_as_html): Don't wrap 0-length strings in
+        <ins>/<del> tags. Also removed the @fromLineNumber.nil? and
+        @toLineNumber.nil? checks as they are no longer reliable now that
+        we're removing operations.
+
+2008-04-08  Adam Roben  <aroben@apple.com>
+
         Change PrettyPatch to use DiffBuilder for intra-line diffs
 
         This gives us much prettier intra-line diffs, largely because it can

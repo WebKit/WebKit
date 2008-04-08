@@ -42,6 +42,8 @@ private
     START_OF_EXTENT_STRING = "%c" % 0
     END_OF_EXTENT_STRING = "%c" % 1
 
+    SMALLEST_EQUAL_OPERATION = 3
+
     OPENSOURCE_TRAC_URL = "http://trac.webkit.org/projects/webkit/"
 
     OPENSOURCE_DIRS = Set.new [
@@ -240,7 +242,22 @@ EOF
             for change in changes
                 next unless change.first.length == change.last.length
                 for i in (0...change.first.length)
-                    operations = HTMLDiff::DiffBuilder.new(change.first[i].text, change.last[i].text).operations
+                    raw_operations = HTMLDiff::DiffBuilder.new(change.first[i].text, change.last[i].text).operations
+                    operations = []
+                    back = 0
+                    raw_operations.each_with_index do |operation, j|
+                        if operation.action == :equal and j < raw_operations.length - 1
+                           length = operation.end_in_new - operation.start_in_new
+                           if length < SMALLEST_EQUAL_OPERATION
+                               back = length
+                               next
+                           end
+                        end
+                        operation.start_in_old -= back
+                        operation.start_in_new -= back
+                        back = 0
+                        operations << operation
+                    end
                     change.first[i].operations = operations
                     change.last[i].operations = operations
                 end
@@ -311,17 +328,10 @@ EOF
                 start = @fromLineNumber.nil? ? operation.start_in_new : operation.start_in_old
                 eend = @fromLineNumber.nil? ? operation.end_in_new : operation.end_in_old
                 escaped_text = CGI.escapeHTML(@text[start...eend])
-                case operation.action
-                when :insert
-                    next if @toLineNumber.nil?
-                    html << "<#{tag}>#{escaped_text}</#{tag}>"
-                when :delete
-                    next if @fromLineNumber.nil?
-                    html << "<#{tag}>#{escaped_text}</#{tag}>"
-                when :replace
-                    html << "<#{tag}>#{escaped_text}</#{tag}>"
-                when :equal
+                if eend - start === 0 or operation.action === :equal
                     html << escaped_text
+                else
+                    html << "<#{tag}>#{escaped_text}</#{tag}>"
                 end
             end
             html.join
