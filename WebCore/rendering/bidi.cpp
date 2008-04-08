@@ -869,8 +869,19 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
 
         BidiIterator end = start.position();
 
-        if (!fullLayout && end.atEnd() && lastRootBox() && lastRootBox()->lastChild()->object()->isBR() && lastRootBox()->object()->lastChild()->style()->clear() != CNONE)
-            newLine(lastRootBox()->object()->lastChild()->style()->clear());
+        if (!fullLayout && lastRootBox() && lastRootBox()->endsWithBreak()) {
+            // If the last line before the start line ends with a line break that clear floats,
+            // adjust the height accordingly.
+            // A line break can be either the first or the last object on a line, depending on its direction.
+            RenderObject* lastObject = lastRootBox()->lastLeafChild()->object();
+            if (!lastObject->isBR())
+                lastObject = lastRootBox()->firstLeafChild()->object();
+            if (lastObject->isBR()) {
+                EClear clear = lastObject->style()->clear();
+                if (clear != CNONE)
+                    newLine(clear);
+            }
+        }
 
         bool endLineMatched = false;
         bool checkForEndLineMatch = endLine;

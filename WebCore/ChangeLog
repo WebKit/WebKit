@@ -1,3 +1,21 @@
+2008-04-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=18172
+          REGRESSION (r31114-31132): Page renders structured almost horizontally (at flickr.com)
+
+        Test: fast/block/float/br-with-clear-2.html
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): The existing code for
+        handling a float-clearing <br> in incremental layout had several bugs in
+        it: it only applied when the <br> was on the last line of the block; it
+        assumed that the <br> was always the rightmost box on the line (which is
+        false in right-to-left runs); and in some places it looked at the last
+        child of the block instead of the last box on the line. Fixed these
+        bugs.
+
 2008-04-08  Adam Roben  <aroben@apple.com>
 
         Mac build fix

@@ -1,3 +1,15 @@
+2008-04-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=18172
+          REGRESSION (r31114-31132): Page renders structured almost horizontally (at flickr.com)
+
+        * fast/block/float/br-with-clear-2.html: Added.
+        * platform/mac/fast/block/float/br-with-clear-2-expected.checksum: Added.
+        * platform/mac/fast/block/float/br-with-clear-2-expected.png: Added.
+        * platform/mac/fast/block/float/br-with-clear-2-expected.txt: Added.
+
 2008-04-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mitzpettel
