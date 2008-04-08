@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2007 Rob Buis <buis@kde.org>
+                  2004, 2005, 2007, 2008 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -44,15 +44,9 @@ SVGFEFloodElement::~SVGFEFloodElement()
     delete m_filterEffect;
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEFloodElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
-
 void SVGFEFloodElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const String& value = attr->value();
-    if (attr->name() == SVGNames::inAttr)
-        setIn1BaseValue(value);
-    else
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+    SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
 SVGFEFlood* SVGFEFloodElement::filterEffect(SVGResourceFilter* filter) const
