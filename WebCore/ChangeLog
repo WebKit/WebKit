@@ -1,3 +1,56 @@
+2008-04-07  Timothy Hatcher  <timothy@apple.com>
+
+        Makes the Network timeline graph resource sizes on the bar graph
+        when Transfer Size is selected.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18351
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Resource.js:
+        (WebInspector.Resource.CompareByTime): Array sorting function for time.
+        Copied from WebInspector.NetworkPanel.timelineEntryCompare.
+
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.NetworkPanel): Set the selectedIndex of graphModeSelectElement to
+        make Transfer Time the default graph.
+        (WebInspector.NetworkPanel.prototype.changeGraphMode): Call calculator.reset,
+        _refreshAllResources and _updateGraphDividersIfNeeded.
+        (WebInspector.NetworkPanel.prototype.get totalDuration): Removed.
+        (WebInspector.NetworkPanel.prototype._updateGraphBoundriesIfNeeded): Removed boundary
+        checking code and just call calculator.updateBoundries.
+        (WebInspector.NetworkPanel.prototype._updateGraphDividersIfNeeded): Add a force argument.
+        Use calculator.boundarySpan when computing the slice. If the slice is NaN, don't make a label.
+        Ask the calculator to format the label values for each slice.
+        (WebInspector.NetworkPanel.prototype.clearTimeline): Call calculator.reset.
+        (WebInspector.NetworkPanel.timelineEntryCompare): Call WebInspector.Resource.CompareByTime.
+
+        (WebInspector.NetworkTimelineEntry.prototype.refresh): Ask the panel's calculator to compute
+        bar graph percentages for a resource. Use those percentages to change the bar style.
+
+        (WebInspector.ResourceCalculator): Renamed from WebInspector.TimelineValueCalculator.
+        (WebInspector.ResourceCalculator.prototype.computeSummaryValues): Changed the Array.forEach
+        to a normal for loop. Work with resources instead of TimelineEntries.
+        (WebInspector.ResourceCalculator.prototype.computeBarGraphPercentages): Return basic bar graph
+        percents with start always being zero.
+        (WebInspector.ResourceCalculator.prototype.get boundarySpan): Return the difference between
+        maximumBoundary and minimumBoundary.
+        (WebInspector.ResourceCalculator.prototype.updateBoundries): Update maximumBoundary based on _value.
+        The minimumBoundary is always zero.
+        (WebInspector.ResourceCalculator.prototype.reset): Delete maximumBoundary and minimumBoundary.
+        (WebInspector.ResourceCalculator.prototype._value): Takes a Resource instead of TimelineEntry.
+
+        (WebInspector.ResourceTransferTimeCalculator): Renamed from TransferTimeCalculator.
+        (WebInspector.ResourceTransferTimeCalculator.prototype.computeSummaryValues): Work with resources
+        instead of entries. Changed the Array.forEach to a normal for loop.
+        (WebInspector.ResourceTransferTimeCalculator.prototype.computeBarGraphPercentages): Return percents
+        just like WebInspector.NetworkTimelineEntry.prototype.refresh was doing before.
+        (WebInspector.ResourceTransferTimeCalculator.prototype.updateBoundries): Update minimumBoundary and
+        maximumBoundary just like the checks WebInspector.NetworkPanel.prototype._updateGraphBoundriesIfNeeded was doing.
+
+        (WebInspector.ResourceTransferSizeCalculator): Renamed from TransferSizeCalculator.
+        (WebInspector.ResourceTransferSizeCalculator.prototype._value): Takes a Resource instead of TimelineEntry.
+
 2008-04-08  Rob Buis  <buis@kde.org>
 
         Fix the SVG build.

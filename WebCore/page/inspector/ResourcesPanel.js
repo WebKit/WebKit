@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,14 +64,16 @@ WebInspector.NetworkPanel = function()
     this.graphLabelElement.appendChild(document.createElement("br"));
 
     var sizeOptionElement = document.createElement("option");
-    sizeOptionElement.calculator = new WebInspector.TransferSizeCalculator();
+    sizeOptionElement.calculator = new WebInspector.ResourceTransferSizeCalculator();
     sizeOptionElement.textContent = sizeOptionElement.calculator.title;
     this.graphModeSelectElement.appendChild(sizeOptionElement);
 
     var timeOptionElement = document.createElement("option");
-    timeOptionElement.calculator = new WebInspector.TransferTimeCalculator();
+    timeOptionElement.calculator = new WebInspector.ResourceTransferTimeCalculator();
     timeOptionElement.textContent = timeOptionElement.calculator.title;
     this.graphModeSelectElement.appendChild(timeOptionElement);
+
+    this.graphModeSelectElement.selectedIndex = 1;
 
     var graphSideElement = document.createElement("div");
     graphSideElement.className = "network-graph-side";
@@ -135,17 +137,15 @@ WebInspector.NetworkPanel.prototype = {
 
     changeGraphMode: function(event)
     {
+        this.calculator.reset();
+        this._refreshAllResources(false, true, true);
+        this._updateGraphDividersIfNeeded(true);
         this._updateSummaryGraph();
     },
 
     get calculator()
     {
         return this.graphModeSelectElement.options[this.graphModeSelectElement.selectedIndex].calculator;
-    },
-
-    get totalDuration()
-    {
-        return this.latestEndTime - this.earliestStartTime;
     },
 
     get needsRefresh() 
@@ -252,16 +252,7 @@ WebInspector.NetworkPanel.prototype = {
 
     _updateGraphBoundriesIfNeeded: function(resource, immediate)
     {
-        var didChange = false;
-        if (resource.startTime !== -1 && (this.earliestStartTime === undefined || resource.startTime < this.earliestStartTime)) {
-            this.earliestStartTime = resource.startTime;
-            didChange = true;
-        }
-
-        if (resource.endTime !== -1 && (this.latestEndTime === undefined || resource.endTime > this.latestEndTime)) {
-            this.latestEndTime = resource.endTime;
-            didChange = true;
-        }
+        var didChange = this.calculator.updateBoundries(resource);
 
         if (didChange) {
             if (immediate) {
@@ -283,7 +274,7 @@ WebInspector.NetworkPanel.prototype = {
         this._updateGraphDividersTimeout = setTimeout(this._updateGraphDividersIfNeeded.bind(this), 500);
     },
 
-    _updateGraphDividersIfNeeded: function()
+    _updateGraphDividersIfNeeded: function(force)
     {
         if ("_updateGraphDividersTimeout" in this) {
             clearTimeout(this._updateGraphDividersTimeout);
@@ -302,12 +293,11 @@ WebInspector.NetworkPanel.prototype = {
         }
 
         var dividerCount = Math.round(this.dividersElement.offsetWidth / 64);
-        var timeSlice = this.totalDuration / dividerCount;
-
-        if (this._currentDividerSlice === timeSlice)
+        var slice = this.calculator.boundarySpan / dividerCount;
+        if (!force && this._currentDividerSlice === slice)
             return;
 
-        this._currentDividerSlice = timeSlice;
+        this._currentDividerSlice = slice;
 
         this.dividersElement.removeChildren();
 
@@ -320,7 +310,8 @@ WebInspector.NetworkPanel.prototype = {
 
             var label = document.createElement("div");
             label.className = "network-divider-label";
-            label.textContent = Number.secondsToString(timeSlice * i);
+            if (!isNaN(slice))
+                label.textContent = this.calculator.formatValue(slice * i);
             divider.appendChild(label);
 
             this.dividersElement.appendChild(divider);
@@ -630,8 +621,7 @@ WebInspector.NetworkPanel.prototype = {
 
     clearTimeline: function()
     {
-        delete this.earliestStartTime;
-        delete this.latestEndTime;
+        this.calculator.reset();
 
         var entriesLength = this.timelineEntries.length;
         for (var i = 0; i < entriesLength; ++i)
@@ -658,15 +648,7 @@ WebInspector.NetworkPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 WebInspector.NetworkPanel.timelineEntryCompare = function(a, b)
 {
-    if (a.resource.startTime < b.resource.startTime)
-        return -1;
-    if (a.resource.startTime > b.resource.startTime)
-        return 1;
-    if (a.resource.endTime < b.resource.endTime)
-        return -1;
-    if (a.resource.endTime > b.resource.endTime)
-        return 1;
-    return 0;
+    return WebInspector.Resource.CompareByTime(a.resource, b.resource);
 }
 
 WebInspector.NetworkTimelineEntry = function(panel, resource)
@@ -730,19 +712,9 @@ WebInspector.NetworkTimelineEntry.prototype = {
                 this.panel._sortResourcesSoonIfNeeded();
         }
 
-        if (this.resource.startTime !== -1) {
-            var percentStart = ((this.resource.startTime - this.panel.earliestStartTime) / this.panel.totalDuration) * 100;
-            this.barElement.style.left = percentStart + "%";
-        } else {
-            this.barElement.style.left = null;
-        }
-
-        if (this.resource.endTime !== -1) {
-            var percentEnd = ((this.panel.latestEndTime - this.resource.endTime) / this.panel.totalDuration) * 100;
-            this.barElement.style.right = percentEnd + "%";
-        } else {
-            this.barElement.style.right = "0px";
-        }
+        var percentages = this.panel.calculator.computeBarGraphPercentages(this.resource);
+        this.barElement.style.left = percentages.start + "%";
+        this.barElement.style.right = (100 - percentages.end) + "%";
 
         this.barElement.className = "network-bar network-category-" + this.resource.category.name;
 
@@ -891,33 +863,61 @@ WebInspector.NetworkTimelineEntry.prototype = {
     }
 }
 
-WebInspector.TimelineValueCalculator = function()
+WebInspector.ResourceCalculator = function()
 {
 }
 
-WebInspector.TimelineValueCalculator.prototype = {
-    computeSummaryValues: function(entries)
+WebInspector.ResourceCalculator.prototype = {
+    computeSummaryValues: function(resources)
     {
         var total = 0;
         var categoryValues = {};
 
-        function compute(entry)
-        {
-            var value = this._value(entry);
-            if (value === undefined)
-                return;
-
-            if (!(entry.resource.category.name in categoryValues))
-                categoryValues[entry.resource.category.name] = 0;
-            categoryValues[entry.resource.category.name] += value;
+        var resourcesLength = resources.length;
+        for (var i = 0; i < resourcesLength; ++i) {
+            var resource = resources[i].resource;
+            var value = this._value(resource);
+            if (typeof value === "undefined")
+                continue;
+            if (!(resource.category.name in categoryValues))
+                categoryValues[resource.category.name] = 0;
+            categoryValues[resource.category.name] += value;
             total += value;
         }
-        entries.forEach(compute, this);
 
         return {categoryValues: categoryValues, total: total};
     },
 
-    _value: function(entry)
+    computeBarGraphPercentages: function(resource)
+    {
+        return {start: 0, end: (this._value(resource) / this.boundarySpan) * 100};
+    },
+
+    get boundarySpan()
+    {
+        return this.maximumBoundary - this.minimumBoundary;
+    },
+
+    updateBoundries: function(resource)
+    {
+        this.minimumBoundary = 0;
+
+        var value = this._value(resource);
+        if (typeof this.maximumBoundary === "undefined" || value > this.maximumBoundary) {
+            this.maximumBoundary = value;
+            return true;
+        }
+
+        return false;
+    },
+
+    reset: function()
+    {
+        delete this.minimumBoundary;
+        delete this.maximumBoundary;
+    },
+
+    _value: function(resource)
     {
         return 0;
     },
@@ -933,59 +933,96 @@ WebInspector.TimelineValueCalculator.prototype = {
     }
 }
 
-WebInspector.TransferTimeCalculator = function()
+WebInspector.ResourceTransferTimeCalculator = function()
 {
-    WebInspector.TimelineValueCalculator.call(this);
+    WebInspector.ResourceCalculator.call(this);
 }
 
-WebInspector.TransferTimeCalculator.prototype = {
-    computeSummaryValues: function(entries)
+WebInspector.ResourceTransferTimeCalculator.prototype = {
+    computeSummaryValues: function(resources)
     {
-        var entriesByCategory = {};
-        entries.forEach(function(entry) {
-            if (!(entry.resource.category.name in entriesByCategory))
-                entriesByCategory[entry.resource.category.name] = [];
-            entriesByCategory[entry.resource.category.name].push(entry);
-        });
+        var resourcesByCategory = {};
+        var resourcesLength = resources.length;
+        for (var i = 0; i < resourcesLength; ++i) {
+            var resource = resources[i].resource;
+            if (!(resource.category.name in resourcesByCategory))
+                resourcesByCategory[resource.category.name] = [];
+            resourcesByCategory[resource.category.name].push(resource);
+        }
 
         var earliestStart;
         var latestEnd;
         var categoryValues = {};
-        for (var category in entriesByCategory) {
-            entriesByCategory[category].sort(WebInspector.NetworkPanel.timelineEntryCompare);
+        for (var category in resourcesByCategory) {
+            resourcesByCategory[category].sort(WebInspector.Resource.CompareByTime);
             categoryValues[category] = 0;
 
             var segment = {start: -1, end: -1};
-            entriesByCategory[category].forEach(function(entry) {
-                if (entry.resource.startTime == -1 || entry.resource.endTime == -1)
-                    return;
 
-                if (earliestStart === undefined)
-                    earliestStart = entry.resource.startTime;
+            var categoryResources = resourcesByCategory[category];
+            var resourcesLength = categoryResources.length;
+            for (var i = 0; i < resourcesLength; ++i) {
+                var resource = categoryResources[i];
+                if (resource.startTime === -1 || resource.endTime === -1)
+                    continue;
+
+                if (typeof earliestStart === "undefined")
+                    earliestStart = resource.startTime;
                 else
-                    earliestStart = Math.min(earliestStart, entry.resource.startTime);
+                    earliestStart = Math.min(earliestStart, resource.startTime);
 
-                if (latestEnd === undefined)
-                    latestEnd = entry.resource.endTime;
+                if (typeof latestEnd === "undefined")
+                    latestEnd = resource.endTime;
                 else
-                    latestEnd = Math.max(latestEnd, entry.resource.endTime);
+                    latestEnd = Math.max(latestEnd, resource.endTime);
 
-                if (entry.resource.startTime <= segment.end) {
-                    segment.end = Math.max(segment.end, entry.resource.endTime);
-                    return;
+                if (resource.startTime <= segment.end) {
+                    segment.end = Math.max(segment.end, resource.endTime);
+                    continue;
                 }
 
                 categoryValues[category] += segment.end - segment.start;
 
-                segment.start = entry.resource.startTime;
-                segment.end = entry.resource.endTime;
-            });
+                segment.start = resource.startTime;
+                segment.end = resource.endTime;
+            }
 
             // Add the last segment
             categoryValues[category] += segment.end - segment.start;
         }
 
         return {categoryValues: categoryValues, total: latestEnd - earliestStart};
+    },
+
+    computeBarGraphPercentages: function(resource)
+    {
+        if (resource.startTime !== -1)
+            var start = ((resource.startTime - this.minimumBoundary) / this.boundarySpan) * 100;
+        else
+            var start = 100;
+
+        if (resource.endTime !== -1)
+            var end = ((resource.endTime - this.minimumBoundary) / this.boundarySpan) * 100;
+        else
+            var end = 100;
+
+        return {start: start, end: end};
+    },
+
+    updateBoundries: function(resource)
+    {
+        var didChange = false;
+        if (resource.startTime !== -1 && (typeof this.minimumBoundary === "undefined" || resource.startTime < this.minimumBoundary)) {
+            this.minimumBoundary = resource.startTime;
+            didChange = true;
+        }
+
+        if (resource.endTime !== -1 && (typeof this.maximumBoundary === "undefined" || resource.endTime > this.maximumBoundary)) {
+            this.maximumBoundary = resource.endTime;
+            didChange = true;
+        }
+
+        return didChange;
     },
 
     get title()
@@ -1004,17 +1041,17 @@ WebInspector.TransferTimeCalculator.prototype = {
     }
 }
 
-WebInspector.TransferTimeCalculator.prototype.__proto__ = WebInspector.TimelineValueCalculator.prototype;
+WebInspector.ResourceTransferTimeCalculator.prototype.__proto__ = WebInspector.ResourceCalculator.prototype;
 
-WebInspector.TransferSizeCalculator = function()
+WebInspector.ResourceTransferSizeCalculator = function()
 {
-    WebInspector.TimelineValueCalculator.call(this);
+    WebInspector.ResourceCalculator.call(this);
 }
 
-WebInspector.TransferSizeCalculator.prototype = {
-    _value: function(entry)
+WebInspector.ResourceTransferSizeCalculator.prototype = {
+    _value: function(resource)
     {
-        return entry.resource.contentLength;
+        return resource.contentLength;
     },
 
     get title()
@@ -1033,4 +1070,4 @@ WebInspector.TransferSizeCalculator.prototype = {
     }
 }
 
-WebInspector.TransferSizeCalculator.prototype.__proto__ = WebInspector.TimelineValueCalculator.prototype;
+WebInspector.ResourceTransferSizeCalculator.prototype.__proto__ = WebInspector.ResourceCalculator.prototype;

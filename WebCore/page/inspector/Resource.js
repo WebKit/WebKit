@@ -662,6 +662,19 @@ WebInspector.Resource.prototype = {
     }
 }
 
+WebInspector.Resource.CompareByTime = function(a, b)
+{
+    if (a.startTime < b.startTime)
+        return -1;
+    if (a.startTime > b.startTime)
+        return 1;
+    if (a.endTime < b.endTime)
+        return -1;
+    if (a.endTime > b.endTime)
+        return 1;
+    return 0;
+}
+
 WebInspector.ResourceTreeElement = function(resource)
 {
     TreeElement.call(this, "", resource, false);
