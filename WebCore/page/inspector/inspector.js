@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Matt Lilek (pewtermoose@gmail.com).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,9 @@ var Preferences = {
     showUserAgentStyles: true,
     maxInlineTextChildLength: 80,
     maxTextSearchResultLength: 80,
+    minConsoleHeight: 75,
+    minSidebarWidth: 100,
+    minElementsSidebarWidth: 200,
     showInheritedComputedStyleProperties: false,
     showMissingLocalizedStrings: false
 }
@@ -39,43 +42,9 @@ var Preferences = {
 var WebInspector = {
     resources: [],
     resourceURLMap: {},
-    backForwardList: [],
     searchResultsHeight: 100,
     localizedStrings: {},
     missingLocalizedStrings: {},
-
-    get consolePanel()
-    {
-        if (!this._consolePanel)
-            this._consolePanel = new WebInspector.ConsolePanel();
-
-        return this._consolePanel;
-    },
-
-    get networkPanel()
-    {
-        if (!this._networkPanel)
-            this._networkPanel = new WebInspector.NetworkPanel();
-
-        return this._networkPanel;
-    },
-
-    get currentBackForwardIndex()
-    {
-        if (this._currentBackForwardIndex === undefined)
-            this._currentBackForwardIndex = -1;
-
-        return this._currentBackForwardIndex;
-    },
-
-    set currentBackForwardIndex(x)
-    {
-        if (this._currentBackForwardIndex === x)
-            return;
-
-        this._currentBackForwardIndex = x;
-        this.updateBackForwardButtons();
-    },
 
     get currentFocusElement()
     {
@@ -93,9 +62,10 @@ var WebInspector = {
             if (this._currentFocusElement.blur)
                 this._currentFocusElement.blur();
             if (this._currentFocusElement.blurred)
-                this._currentFocusElement.blurred();
+                this._currentFocusElement.blurred(x);
         }
 
+        var previousFocusElement = this._currentFocusElement;
         this._currentFocusElement = x;
 
         if (x) {
@@ -104,7 +74,7 @@ var WebInspector = {
             if (this._currentFocusElement.focus)
                 this._currentFocusElement.focus();
             if (this._currentFocusElement.focused)
-                this._currentFocusElement.focused();
+                this._currentFocusElement.focused(previousFocusElement);
 
             // Make a caret selection inside the new element if there isn't a range selection and
             // there isn't already a caret selection inside.
@@ -151,15 +121,19 @@ var WebInspector = {
 
         this._attached = x;
 
+        var dockToggleButton = document.getElementById("dock-status-bar-item");
         var body = document.body;
+
         if (x) {
             InspectorController.attach();
             body.removeStyleClass("detached");
             body.addStyleClass("attached");
+            dockToggleButton.title = WebInspector.UIString("Undock into separate window.");
         } else {
             InspectorController.detach();
             body.removeStyleClass("attached");
             body.addStyleClass("detached");
+            dockToggleButton.title = WebInspector.UIString("Dock to main window.");
         }
     },
 
@@ -215,11 +189,26 @@ WebInspector.loaded = function()
     var platform = InspectorController.platform();
     document.body.addStyleClass("platform-" + platform);
 
-    this.fileOutline = new TreeOutline(document.getElementById("list"));
-    this.fileOutline.expandTreeElementsWhenArrowing = true;
+    this.console = new WebInspector.Console();
+    this.panels = {
+        elements: new WebInspector.ElementsPanel(),
+        resources: new WebInspector.ResourcesPanel(),
+        databases: new WebInspector.DatabasesPanel()
+    };
 
-    this.statusOutline = new TreeOutline(document.getElementById("status"));
-    this.statusOutline.expandTreeElementsWhenArrowing = true;
+    var toolbarElement = document.getElementById("toolbar");
+    for (var panelName in this.panels) {
+        var panel = this.panels[panelName];
+        var panelToolbarItem = panel.toolbarItem;
+        panelToolbarItem.addEventListener("click", this._toolbarItemClicked.bind(this));
+        if (previousToolbarItem)
+            toolbarElement.insertBefore(panelToolbarItem, previousToolbarItem.nextSibling);
+        else
+            toolbarElement.insertBefore(panelToolbarItem, toolbarElement.firstChild);
+        var previousToolbarItem = panelToolbarItem;
+    }
+
+    this.currentPanel = this.panels.elements;
 
     this.resourceCategories = {
         documents: new WebInspector.ResourceCategory(WebInspector.UIString("documents"), "documents"),
@@ -227,7 +216,6 @@ WebInspector.loaded = function()
         images: new WebInspector.ResourceCategory(WebInspector.UIString("images"), "images"),
         scripts: new WebInspector.ResourceCategory(WebInspector.UIString("scripts"), "scripts"),
         fonts: new WebInspector.ResourceCategory(WebInspector.UIString("fonts"), "fonts"),
-        databases: new WebInspector.ResourceCategory(WebInspector.UIString("databases"), "databases"),
         other: new WebInspector.ResourceCategory(WebInspector.UIString("other"), "other")
     };
 
@@ -238,16 +226,6 @@ WebInspector.loaded = function()
     this.Warnings = {
         IncorrectMIMEType: {id: 0, message: WebInspector.UIString("Resource interpreted as %s but transferred with MIME type %s.")}
     };
-
-    this.consoleListItem = new WebInspector.ConsoleStatusTreeElement(WebInspector.consolePanel);
-    this.statusOutline.appendChild(this.consoleListItem);
-
-    this.networkListItem = new WebInspector.StatusTreeElement(WebInspector.UIString("Network"), "network", WebInspector.networkPanel);
-    this.statusOutline.appendChild(this.networkListItem);
-
-    this.resourceCategories.documents.listItem.expand();
-
-    this.currentFocusElement = document.getElementById("sidebar");
 
     this.addMainEventListeners(document);
 
@@ -260,25 +238,24 @@ WebInspector.loaded = function()
     document.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
     document.addEventListener("copy", this.documentCopy.bind(this), true);
 
-    document.getElementById("back").title = WebInspector.UIString("Show previous panel.");
-    document.getElementById("forward").title = WebInspector.UIString("Show next panel.");
+    var mainPanelsElement = document.getElementById("main-panels");
+    mainPanelsElement.handleKeyEvent = this.mainKeyDown.bind(this);
+    mainPanelsElement.handleCopyEvent = this.mainCopy.bind(this);
 
-    document.getElementById("search").setAttribute("placeholder", WebInspector.UIString("Search"));
+    this.currentFocusElement = mainPanelsElement;
 
-    document.getElementById("back").addEventListener("click", this.back.bind(this), true);
-    document.getElementById("forward").addEventListener("click", this.forward.bind(this), true);
-    this.updateBackForwardButtons();
+    var dockToggleButton = document.getElementById("dock-status-bar-item");
+    dockToggleButton.addEventListener("click", this.toggleAttach.bind(this), false);
 
-    document.getElementById("attachToggle").addEventListener("click", this.toggleAttach.bind(this), true);
+    if (this.attached)
+        dockToggleButton.title = WebInspector.UIString("Undock into separate window.");
+    else
+        dockToggleButton.title = WebInspector.UIString("Dock to main window.");
 
-    document.getElementById("sidebarResizeWidget").addEventListener("mousedown", this.sidebarResizerDragStart, true);
-    document.getElementById("sidebarResizer").addEventListener("mousedown", this.sidebarResizerDragStart, true);
-    document.getElementById("searchResultsResizer").addEventListener("mousedown", this.searchResultsResizerDragStart, true);
+    document.getElementById("search-toolbar-label").textContent = WebInspector.UIString("Search");
 
     if (platform === "mac-leopard")
         document.getElementById("toolbar").addEventListener("mousedown", this.toolbarDragStart, true);
-
-    document.body.addStyleClass("detached");
 
     InspectorController.loaded();
 }
@@ -369,6 +346,15 @@ WebInspector.documentKeyDown = function(event)
         this.currentFocusElement.handleKeyEvent(event);
     else if (this.currentFocusElement.id && this.currentFocusElement.id.length && WebInspector[this.currentFocusElement.id + "KeyDown"])
         WebInspector[this.currentFocusElement.id + "KeyDown"](event);
+
+    if (!event.handled) {
+        switch (event.keyIdentifier) {
+            case "U+001B": // Escape key
+                this.console.visible = !this.console.visible;
+                event.preventDefault();
+                break;
+        }
+    }
 }
 
 WebInspector.documentCanCopy = function(event)
@@ -390,52 +376,6 @@ WebInspector.documentCopy = function(event)
         this.currentFocusElement.handleCopyEvent(event);
     else if (this.currentFocusElement.id && this.currentFocusElement.id.length && WebInspector[this.currentFocusElement.id + "Copy"])
         WebInspector[this.currentFocusElement.id + "Copy"](event);
-}
-
-WebInspector.sidebarKeyDown = function(event)
-{
-    var nextSelectedElement;
-
-    if (this.fileOutline.selectedTreeElement) {
-        if (!this.fileOutline.handleKeyEvent(event) && event.keyIdentifier === "Down" && !event.altKey) {
-            var nextSelectedElement = this.statusOutline.children[0];
-            while (nextSelectedElement && !nextSelectedElement.selectable)
-                nextSelectedElement = nextSelectedElement.traverseNextTreeElement(false);
-        }
-    } else if (this.statusOutline.selectedTreeElement) {
-        if (!this.statusOutline.handleKeyEvent(event) && event.keyIdentifier === "Up" && !event.altKey) {
-            var nextSelectedElement = this.fileOutline.children[0];
-            var lastSelectable = null;
-
-            while (nextSelectedElement) {
-                if (nextSelectedElement.selectable)
-                    lastSelectable = nextSelectedElement;
-                nextSelectedElement = nextSelectedElement.traverseNextTreeElement(false);
-            }
-
-            nextSelectedElement = lastSelectable;
-        }
-    }
-
-    if (nextSelectedElement) {
-        nextSelectedElement.reveal();
-        nextSelectedElement.select();
-
-        event.preventDefault();
-        event.stopPropagation();
-    }
-}
-
-WebInspector.sidebarCopy = function(event)
-{
-    event.clipboardData.clearData();
-    event.preventDefault();
-
-    var selectedElement = this.fileOutline.selectedTreeElement;
-    if (!selectedElement || !selectedElement.representedObject || !selectedElement.representedObject.url)
-        return;
-
-    event.clipboardData.setData("URL", this.fileOutline.selectedTreeElement.representedObject.url);
 }
 
 WebInspector.mainKeyDown = function(event)
@@ -581,34 +521,6 @@ WebInspector.toolbarDrag = function(event)
     event.preventDefault();
 }
 
-WebInspector.sidebarResizerDragStart = function(event)
-{
-    WebInspector.elementDragStart(document.getElementById("sidebar"), WebInspector.sidebarResizerDrag, WebInspector.sidebarResizerDragEnd, event, "col-resize");
-}
-
-WebInspector.sidebarResizerDragEnd = function(event)
-{
-    WebInspector.elementDragEnd(event);
-}
-
-WebInspector.sidebarResizerDrag = function(event)
-{
-    var x = event.pageX;
-
-    // FIXME: We can should come up with a better hueristic for constraining the size of the sidebar.
-    var newWidth = Number.constrain(x, 100, window.innerWidth - 100);
-
-    document.getElementById("sidebar").style.width = newWidth + "px";
-    document.getElementById("sidebarResizer").style.left = (newWidth - 3) + "px";
-    document.getElementById("main").style.left = newWidth + "px";
-    document.getElementById("toolbarButtons").style.left = newWidth + "px";
-
-    if (WebInspector.currentPanel && WebInspector.currentPanel.resize)
-        WebInspector.currentPanel.resize();
-
-    event.preventDefault();
-}
-
 WebInspector.searchResultsResizerDragStart = function(event)
 {
     WebInspector.elementDragStart(document.getElementById("searchResults"), WebInspector.searchResultsResizerDrag, WebInspector.searchResultsResizerDragEnd, event, "row-resize");
@@ -662,65 +574,33 @@ WebInspector.elementDragEnd = function(event)
     event.preventDefault();
 }
 
-WebInspector.back = function()
-{
-    if (this.currentBackForwardIndex <= 0) {
-        console.error("Can't go back from index " + this.currentBackForwardIndex);
-        return;
-    }
-
-    this.navigateToPanel(this.backForwardList[--this.currentBackForwardIndex], null, true);
-}
-
-WebInspector.forward = function()
-{
-    if (this.currentBackForwardIndex >= this.backForwardList.length - 1) {
-        console.error("Can't go forward from index " + this.currentBackForwardIndex);
-        return;
-    }
-
-    this.navigateToPanel(this.backForwardList[++this.currentBackForwardIndex], null, true);
-}
-
-WebInspector.updateBackForwardButtons = function()
-{
-    var index = this.currentBackForwardIndex;
-
-    document.getElementById("back").disabled = index <= 0;
-    document.getElementById("forward").disabled = index >= this.backForwardList.length - 1;
-}
-
 WebInspector.showConsole = function()
 {
-    this.navigateToPanel(WebInspector.consolePanel);
+    this.console.show();
 }
 
 WebInspector.showTimeline = function()
 {
-    this.navigateToPanel(WebInspector.networkPanel);
+    this.currentPanel = this.panels.resources;
 }
 
 WebInspector.addResource = function(resource)
 {
     this.resources.push(resource);
+    this.resourceURLMap[resource.url] = resource;
 
-    if (resource.mainResource)
+    if (resource.mainResource) {
         this.mainResource = resource;
-
-    if (resource.url) {
-        this.resourceURLMap[resource.url] = resource;
-        this.networkPanel.addResourceToTimeline(resource);
+        this.panels.elements.reset();
     }
+
+    this.panels.resources.addResource(resource);
 }
 
 WebInspector.removeResource = function(resource)
 {
-    resource.detach();
-
     resource.category.removeResource(resource);
-
-    if (resource.url)
-        delete this.resourceURLMap[resource.url];
+    delete this.resourceURLMap[resource.url];
 
     var resourcesLength = this.resources.length;
     for (var i = 0; i < resourcesLength; ++i) {
@@ -731,19 +611,28 @@ WebInspector.removeResource = function(resource)
     }
 }
 
-WebInspector.clearResources = function()
+WebInspector.addDatabase = function(database)
 {
-    for (var category in this.resourceCategories)
-        this.resourceCategories[category].removeAllResources();
-    this.resources = [];
-    this.backForwardList = [];
-    this.currentBackForwardIndex = -1;
-    delete this.mainResource;
+    this.panels.databases.addDatabase(database);
 }
 
-WebInspector.clearDatabaseResources = function()
+WebInspector.reset = function()
 {
-    this.resourceCategories.databases.removeAllResources();
+    for (var panelName in this.panels) {
+        var panel = this.panels[panelName];
+        if ("reset" in panel)
+            panel.reset();
+    }
+
+    for (var category in this.resourceCategories)
+        this.resourceCategories[category].removeAllResources();
+
+    this.resources = [];
+    this.resourceURLMap = {};
+
+    delete this.mainResource;
+
+    this.console.clearMessages();
 }
 
 WebInspector.resourceURLChanged = function(resource, oldURL)
@@ -754,27 +643,7 @@ WebInspector.resourceURLChanged = function(resource, oldURL)
 
 WebInspector.addMessageToConsole = function(msg)
 {
-    this.consolePanel.addMessage(msg);
-    switch (msg.level) {
-        case WebInspector.ConsoleMessage.MessageLevel.Warning:
-            ++this.consoleListItem.warnings;
-            break;
-        case WebInspector.ConsoleMessage.MessageLevel.Error:
-            ++this.consoleListItem.errors;
-            break;
-    }
-}
-
-WebInspector.clearConsoleMessages = function()
-{
-    this.consolePanel.clearMessages();
-    this.consoleListItem.warnings = this.consoleListItem.errors = 0;
-}
-
-WebInspector.clearNetworkTimeline = function()
-{
-    if (this._networkPanel)
-        this._networkPanel.clearTimeline();
+    this.console.addMessage(msg);
 }
 
 WebInspector.drawLoadingPieChart = function(canvas, percent) {
@@ -813,18 +682,8 @@ WebInspector.updateFocusedNode = function(node)
         // FIXME: Should we deselect if null is passed in?
         return;
 
-    for (var i = 0; i < this.resourceCategories.documents.resources.length; ++i) {
-        var resource = this.resourceCategories.documents.resources[i];
-        if (resource.documentNode !== node.ownerDocument)
-            continue;
-
-        this.navigateToPanel(resource.panel, "dom");
-        resource.panel.focusedDOMNode = node;
-
-        this.currentFocusElement = document.getElementById("main");
-
-        break;
-    }
+    this.currentPanel = this.panels.elements;
+    this.panels.elements.focusedDOMNode = node;
 }
 
 WebInspector.resourceForURL = function(url)
@@ -843,7 +702,8 @@ WebInspector.showResourceForURL = function(url)
     if (!resource)
         return false;
 
-    this.navigateToResource(resource);
+    this.currentPanel = this.panels.resources;
+    this.panels.resources.showResource(resource);
     return true;
 }
 
@@ -954,15 +814,16 @@ WebInspector.performSearch = function(query)
         selection.removeAllRanges();
         selection.addRange(element.representedObject.range);
 
-        WebInspector.navigateToPanel(element.representedObject.panel, "source");
+        this.currentPanel = element.representedObject.panel;
+
         element.representedObject.line.scrollIntoViewIfNeeded(true);
         element.listItemElement.scrollIntoViewIfNeeded(false);
     }
 
     var domResultSelected = function(element)
     {
-        WebInspector.navigateToPanel(element.representedObject.panel, "dom");
-        element.representedObject.panel.focusedDOMNode = element.representedObject.node;
+        this.currentPanel = this.panels.elements;
+        this.panels.elements.focusedDOMNode = element.representedObject.node;
         element.listItemElement.scrollIntoViewIfNeeded(false);
     }
 
@@ -1038,32 +899,6 @@ WebInspector.performSearch = function(query)
     }
 }
 
-WebInspector.navigateToResource = function(resource)
-{
-    this.navigateToPanel(resource.panel);
-}
-
-WebInspector.navigateToPanel = function(panel, view, fromBackForwardAction)
-{
-    if (this.currentPanel === panel) {
-        if (panel && view)
-            panel.currentView = view;
-        return;
-    }
-
-    if (!fromBackForwardAction) {
-        var oldIndex = this.currentBackForwardIndex;
-        if (oldIndex >= 0)
-            this.backForwardList.splice(oldIndex + 1, this.backForwardList.length - oldIndex);
-        this.currentBackForwardIndex++;
-        this.backForwardList.push(panel);
-    }
-
-    this.currentPanel = panel;
-    if (panel && view)
-        panel.currentView = view;
-}
-
 WebInspector.UIString = function(string)
 {
     if (string in this.localizedStrings)
@@ -1134,6 +969,7 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
         } else if (event.keyCode === 27) { // Escape key
             editingCancelled.call(element);
             event.preventDefault();
+            event.handled = true;
         }
     }
 
@@ -1142,102 +978,11 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
     WebInspector.currentFocusElement = element;
 }
 
-WebInspector.StatusTreeElement = function(title, iconClass, panel)
+WebInspector._toolbarItemClicked = function(event)
 {
-    TreeElement.call(this, "<span class=\"title only\">" + title + "</span><span class=\"icon " + iconClass + "\"></span>", null, false);
-    this.panel = panel;
+    var toolbarItem = event.currentTarget;
+    this.currentPanel = toolbarItem.panel;
 }
-
-WebInspector.StatusTreeElement.prototype = {
-    onselect: function()
-    {
-        var selectedElement = WebInspector.fileOutline.selectedTreeElement;
-        if (selectedElement)
-            selectedElement.deselect();
-        if (this.panel)
-            WebInspector.navigateToPanel(this.panel);
-    },
-
-    ondeselect: function()
-    {
-        if (this.panel)
-            this.panel.hide();
-    }
-}
-
-WebInspector.StatusTreeElement.prototype.__proto__ = TreeElement.prototype;
-
-WebInspector.ConsoleStatusTreeElement = function(panel)
-{
-    WebInspector.StatusTreeElement.call(this, WebInspector.UIString("Console"), "console", panel);
-}
-
-WebInspector.ConsoleStatusTreeElement.prototype = {
-    get warnings()
-    {
-        if (!("_warnings" in this))
-            this._warnings = 0;
-
-        return this._warnings;
-    },
-
-    set warnings(x)
-    {
-        if (this._warnings === x)
-            return;
-
-        this._warnings = x;
-
-        this._updateTitle();
-    },
-
-    get errors()
-    {
-        if (!("_errors" in this))
-            this._errors = 0;
-
-        return this._errors;
-    },
-
-    set errors(x)
-    {
-        if (this._errors === x)
-            return;
-
-        this._errors = x;
-
-        this._updateTitle();
-    },
-
-    _updateTitle: function()
-    {
-        var title = "<span class=\"title";
-        if (!this.warnings && !this.errors)
-            title += " only";
-        title += "\">" + WebInspector.UIString("Console") + "</span><span class=\"icon console\"></span>";
-
-        if (this.warnings || this.errors) {
-            title += "<span class=\"info\">";
-            if (this.errors) {
-                title += this.errors + " error";
-                if (this.errors > 1)
-                    title += "s";
-            }
-            if (this.warnings) {
-                if (this.errors)
-                    title += ", ";
-                title += this.warnings + " warning";
-                if (this.warnings > 1)
-                    title += "s";
-            }
-            title += "</span>";
-        }
-
-        this.title = title;
-    }
-}
-
-WebInspector.ConsoleStatusTreeElement.prototype.__proto__ = WebInspector.StatusTreeElement.prototype;
 
 // This table maps MIME types to the Resource.Types which are valid for them.
 // The following line:

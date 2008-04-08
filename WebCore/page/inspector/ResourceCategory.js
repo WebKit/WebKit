@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,9 +31,6 @@ WebInspector.ResourceCategory = function(title, name)
     this.name = name;
     this.title = title;
     this.resources = [];
-    this.listItem = new WebInspector.ResourceCategoryTreeElement(this);
-    this.listItem.hidden = true;
-    WebInspector.fileOutline.appendChild(this.listItem);
 }
 
 WebInspector.ResourceCategory.prototype = {
@@ -57,16 +54,10 @@ WebInspector.ResourceCategory.prototype = {
         }
 
         this.resources.splice(i, 0, resource);
-        this.listItem.insertChild(resource.listItem, i);
-        this.listItem.hidden = false;
-
-        resource.attach();
     },
 
     removeResource: function(resource)
     {
-        resource.detach();
-
         var resourcesLength = this.resources.length;
         for (var i = 0; i < resourcesLength; ++i) {
             if (this.resources[i] === resource) {
@@ -74,32 +65,10 @@ WebInspector.ResourceCategory.prototype = {
                 break;
             }
         }
-
-        this.listItem.removeChild(resource.listItem);
-
-        if (!this.resources.length)
-            this.listItem.hidden = true;
     },
 
     removeAllResources: function(resource)
     {
-        var resourcesLength = this.resources.length;
-        for (var i = 0; i < resourcesLength; ++i)
-            this.resources[i].detach();
         this.resources = [];
-        this.listItem.removeChildren();
-        this.listItem.hidden = true;
     }
 }
-
-WebInspector.ResourceCategoryTreeElement = function(category)
-{
-    TreeElement.call(this, category.title, category, true);
-}
-
-WebInspector.ResourceCategoryTreeElement.prototype = {
-    selectable: false,
-    arrowToggleWidth: 20
-}
-
-WebInspector.ResourceCategoryTreeElement.prototype.__proto__ = TreeElement.prototype;

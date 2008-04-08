@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,9 +40,6 @@ WebInspector.Resource = function(requestHeaders, url, domain, path, lastPathComp
     this.lastPathComponent = lastPathComponent;
     this.cached = cached;
 
-    this.listItem = new WebInspector.ResourceTreeElement(this);
-    this.updateTitle();
-
     this.category = WebInspector.resourceCategories.other;
 }
 
@@ -58,7 +55,7 @@ WebInspector.Resource.Type = {
 
     isTextType: function(type)
     {
-        return (type == this.Document) || (type == this.Stylesheet) || (type == this.Script);
+        return (type === this.Document) || (type === this.Stylesheet) || (type === this.Script);
     },
 
     toString: function(type)
@@ -96,7 +93,6 @@ WebInspector.Resource.prototype = {
         var oldURL = this._url;
         this._url = x;
         WebInspector.resourceURLChanged(this, oldURL);
-        this.updateTitleSoon();
     },
 
     get domain()
@@ -109,7 +105,6 @@ WebInspector.Resource.prototype = {
         if (this._domain === x)
             return;
         this._domain = x;
-        this.updateTitleSoon();
     },
 
     get lastPathComponent()
@@ -123,17 +118,24 @@ WebInspector.Resource.prototype = {
             return;
         this._lastPathComponent = x;
         this._lastPathComponentLowerCase = x ? x.toLowerCase() : null;
-        this.updateTitleSoon();
     },
 
     get displayName()
     {
         var title = this.lastPathComponent;
         if (!title)
-            title = this.domain;
+            title = this.displayDomain;
         if (!title)
             title = this.url;
         return title;
+    },
+
+    get displayDomain()
+    {
+        // WebInspector.Database calls this, so don't access more than this.domain.
+        if (this.domain && (!WebInspector.mainResource || (WebInspector.mainResource && this.domain !== WebInspector.mainResource.domain)))
+            return this.domain;
+        return "";
     },
 
     get startTime()
@@ -148,8 +150,8 @@ WebInspector.Resource.prototype = {
 
         this._startTime = x;
 
-        if (this.networkTimelineEntry)
-            this.networkTimelineEntry.refresh();
+        if (WebInspector.panels.resources)
+            WebInspector.panels.resources.refreshResource(this);
     },
 
     get responseReceivedTime()
@@ -164,8 +166,8 @@ WebInspector.Resource.prototype = {
 
         this._responseReceivedTime = x;
 
-        if (this.networkTimelineEntry)
-            this.networkTimelineEntry.refresh();
+        if (WebInspector.panels.resources)
+            WebInspector.panels.resources.refreshResource(this);
     },
 
     get endTime()
@@ -180,8 +182,8 @@ WebInspector.Resource.prototype = {
 
         this._endTime = x;
 
-        if (this.networkTimelineEntry)
-            this.networkTimelineEntry.refresh();
+        if (WebInspector.panels.resources)
+            WebInspector.panels.resources.refreshResource(this);
     },
 
     get contentLength()
@@ -196,14 +198,8 @@ WebInspector.Resource.prototype = {
 
         this._contentLength = x;
 
-        if (this._expectedContentLength && this._expectedContentLength > x) {
-            this.updateTitle();
-            var canvas = document.getElementById("loadingIcon" + this.identifier);
-            if (canvas)
-                WebInspector.drawLoadingPieChart(canvas, (x / this._expectedContentLength));
-        }
-
-        WebInspector.networkPanel._updateSummaryGraphSoon();
+        if (WebInspector.panels.resources)
+            WebInspector.panels.resources.refreshResource(this);
     },
 
     get expectedContentLength()
@@ -215,14 +211,7 @@ WebInspector.Resource.prototype = {
     {
         if (this._expectedContentLength === x)
             return;
-
         this._expectedContentLength = x;
-
-        if (x && this._contentLength && this._contentLength <= x) {
-            var canvas = document.getElementById("loadingIcon" + this.identifier);
-            if (canvas)
-                WebInspector.drawLoadingPieChart(canvas, (this._contentLength / x));
-        }
     },
 
     get finished()
@@ -238,16 +227,9 @@ WebInspector.Resource.prototype = {
         this._finished = x;
 
         if (x) {
-            var canvas = document.getElementById("loadingIcon" + this.identifier);
-            if (canvas)
-                canvas.parentNode.removeChild(canvas);
-
             this._checkTips();
             this._checkWarnings();
         }
-
-        this.updateTitleSoon();
-        this.updatePanel();
     },
 
     get failed()
@@ -258,9 +240,6 @@ WebInspector.Resource.prototype = {
     set failed(x)
     {
         this._failed = x;
-
-        this.updateTitleSoon();
-        this.updatePanel();
     },
 
     get category()
@@ -278,12 +257,12 @@ WebInspector.Resource.prototype = {
             oldCategory.removeResource(this);
 
         this._category = x;
-        this.updateTitle();
 
         if (this._category)
             this._category.addResource(this);
 
-        this.updatePanel();
+        if (WebInspector.panels.resources)
+            WebInspector.panels.resources.refreshResource(this);
     },
 
     get mimeType()
@@ -356,8 +335,8 @@ WebInspector.Resource.prototype = {
         this._requestHeaders = x;
         delete this._sortedRequestHeaders;
 
-        if (this.networkTimelineEntry)
-            this.networkTimelineEntry.refreshInfo();
+        if (WebInspector.panels.resources)
+            WebInspector.panels.resources.refreshResource(this);
     },
 
     get sortedRequestHeaders()
@@ -388,8 +367,8 @@ WebInspector.Resource.prototype = {
         this._responseHeaders = x;
         delete this._sortedResponseHeaders;
 
-        if (this.networkTimelineEntry)
-            this.networkTimelineEntry.refreshInfo();
+        if (WebInspector.panels.resources)
+            WebInspector.panels.resources.refreshResource(this);
     },
 
     get sortedResponseHeaders()
@@ -403,6 +382,34 @@ WebInspector.Resource.prototype = {
         this._sortedResponseHeaders.sort(function(a,b) { return a.header.localeCompare(b.header) });
 
         return this._sortedResponseHeaders;
+    },
+
+    get errors()
+    {
+        if (!("_errors" in this))
+            this._errors = 0;
+        return this._errors;
+    },
+
+    set errors(x)
+    {
+        if (this._errors === x)
+            return;
+        this._errors = x;
+    },
+
+    get warnings()
+    {
+        if (!("_warnings" in this))
+            this._warnings = 0;
+        return this._warnings;
+    },
+
+    set warnings(x)
+    {
+        if (this._warnings === x)
+            return;
+        this._warnings = x;
     },
 
     get tips()
@@ -426,9 +433,6 @@ WebInspector.Resource.prototype = {
                     WebInspector.ConsoleMessage.MessageLevel.Tip, tip.message, -1, this.url);
         WebInspector.consolePanel.addMessage(msg);
         */
-
-        if (this.networkTimelineEntry)
-            this.networkTimelineEntry.showingTipButton = true;
     },
 
     _checkTips: function()
@@ -486,179 +490,13 @@ WebInspector.Resource.prototype = {
                     msg = new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
                                 WebInspector.ConsoleMessage.MessageLevel.Warning,
                                 String.sprintf(WebInspector.Warnings.IncorrectMIMEType.message,
-                                    WebInspector.Resource.Type.toString(this.type), this.mimeType),
+                                WebInspector.Resource.Type.toString(this.type), this.mimeType),
                                 -1, this.url);
                 break;
         }
 
         if (msg)
             WebInspector.consolePanel.addMessage(msg);
-    },
-
-    updateTitleSoon: function()
-    {
-        if (this.updateTitleTimeout)
-            return;
-        this.updateTitleTimeout = setTimeout(this.updateTitle.bind(this), 0);
-    },
-
-    updateTitle: function()
-    {
-        delete this.updateTitleTimeout;
-
-        var title = this.displayName;
-
-        var info = "";
-        if (this.domain && (!WebInspector.mainResource || (WebInspector.mainResource && this.domain !== WebInspector.mainResource.domain)))
-            info = this.domain;
-
-        if (this.path && this.lastPathComponent) {
-            var lastPathComponentIndex = this.path.lastIndexOf("/" + this.lastPathComponent);
-            if (lastPathComponentIndex != -1)
-                info += this.path.substring(0, lastPathComponentIndex);
-        }
-
-        var fullTitle = "";
-
-        if (this.errors)
-            fullTitle += "<span class=\"count errors\">" + (this.errors + this.warnings) + "</span>";
-        else if (this.warnings)
-            fullTitle += "<span class=\"count warnings\">" + this.warnings + "</span>";
-
-        fullTitle += "<span class=\"title" + (info && info.length ? "" : " only") + "\">" + title.escapeHTML() + "</span>";
-        if (info && info.length)
-            fullTitle += "<span class=\"info\">" + info.escapeHTML() + "</span>";
-
-        var iconClass = "icon";
-        switch (this.category) {
-        default:
-            break;
-        case WebInspector.resourceCategories.images:
-        case WebInspector.resourceCategories.other:
-            iconClass = "icon plain";
-            break;
-        case WebInspector.resourceCategories.fonts:
-            iconClass = "icon font";
-        }
-
-        if (!this.finished)
-            fullTitle += "<div class=\"" + iconClass + "\"><canvas id=\"loadingIcon" + this.identifier + "\" class=\"progress\" width=\"16\" height=\"16\"></canvas></div>";
-        else if (this.category === WebInspector.resourceCategories.images)
-            fullTitle += "<div class=\"" + iconClass + "\"><img class=\"preview\" src=\"" + this.url + "\"></div>";
-        else if (this.category === WebInspector.resourceCategories.fonts) {
-            var uniqueFontName = "WebInspectorFontPreview" + this.identifier;
-
-            this.fontStyleElement = document.createElement("style");
-            this.fontStyleElement.textContent = "@font-face { font-family: \"" + uniqueFontName + "\"; src: url(" + this.url + "); }";
-            document.getElementsByTagName("head").item(0).appendChild(this.fontStyleElement);
-
-            fullTitle += "<div class=\"" + iconClass + "\"><div class=\"preview\" style=\"font-family: " + uniqueFontName + "\">Ag</div></div>";
-        } else
-            fullTitle += "<div class=\"" + iconClass + "\"></div>";
-
-        this.listItem.title = fullTitle;
-        this.listItem.tooltip = this.url;
-    },
-
-    updatePanel: function()
-    {
-        if (this._panel) {
-            var current = (WebInspector.currentPanel === this._panel);
-
-            this._panel.detach();
-            delete this._panel;
-
-            if (current)
-                WebInspector.currentPanel = this.panel;
-        }
-    },
-
-    get panel()
-    {
-        if (!this._panel) {
-            if (this.finished && !this.failed) {
-                switch (this.category) {
-                case WebInspector.resourceCategories.documents:
-                    this._panel = new WebInspector.DocumentPanel(this);
-                    break;
-                case WebInspector.resourceCategories.stylesheets:
-                case WebInspector.resourceCategories.scripts:
-                    this._panel = new WebInspector.SourceView(this);
-                    break;
-                case WebInspector.resourceCategories.images:
-                    this._panel = new WebInspector.ImageView(this);
-                    break;
-                case WebInspector.resourceCategories.fonts:
-                    this._panel = new WebInspector.FontView(this);
-                    break;
-                }
-            }
-
-            if (!this._panel)
-                this._panel = new WebInspector.ResourceView(this);
-        }
-
-        return this._panel;
-    },
-
-    select: function()
-    {
-        WebInspector.navigateToResource(this);
-    },
-
-    deselect: function()
-    {
-        this.listItem.deselect(true);
-        if (WebInspector.currentPanel === this._panel)
-            WebInspector.currentPanel = null;
-    },
-
-    attach: function()
-    {
-        if (this._panel)
-            this._panel.attach();
-    },
-
-    detach: function()
-    {
-        if (this._panel)
-            this._panel.detach();
-        if (this.fontStyleElement && this.fontStyleElement.parentNode)
-            this.fontStyleElement.parentNode.removeChild(this.fontStyleElement);
-    },
-
-    get errors()
-    {
-        if (!("_errors" in this))
-            this._errors = 0;
-
-        return this._errors;
-    },
-
-    set errors(x)
-    {
-        if (this._errors === x)
-            return;
-
-        this._errors = x;
-        this.updateTitleSoon();
-    },
-
-    get warnings()
-    {
-        if (!("_warnings" in this))
-            this._warnings = 0;
-
-        return this._warnings;
-    },
-
-    set warnings(x)
-    {
-        if (this._warnings === x)
-            return;
-
-        this._warnings = x;
-        this.updateTitleSoon();
     }
 }
 
@@ -675,31 +513,16 @@ WebInspector.Resource.CompareByTime = function(a, b)
     return 0;
 }
 
-WebInspector.ResourceTreeElement = function(resource)
+WebInspector.Resource.CompareBySize = function(a, b)
 {
-    TreeElement.call(this, "", resource, false);
-    this.resource = resource;
+    if (a.contentLength < b.contentLength)
+        return -1;
+    if (a.contentLength > b.contentLength)
+        return 1;
+    return 0;
 }
 
-WebInspector.ResourceTreeElement.prototype = {
-    onselect: function()
-    {
-        var selectedElement = WebInspector.fileOutline.selectedTreeElement;
-        if (selectedElement)
-            selectedElement.deselect();
-        this.resource.select();
-    },
-
-    ondeselect: function()
-    {
-        this.resource.deselect();
-    },
-
-    onreveal: function()
-    {
-        if (this.listItemElement)
-            this.listItemElement.scrollIntoViewIfNeeded(false);
-    }
+WebInspector.Resource.CompareByDescendingSize = function(a, b)
+{
+    return this.CompareBySize(a, b) * -1;
 }
-
-WebInspector.ResourceTreeElement.prototype.__proto__ = TreeElement.prototype;

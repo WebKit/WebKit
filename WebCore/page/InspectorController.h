@@ -102,8 +102,8 @@ public:
 
     void scriptObjectReady();
 
-    void populateScriptResources();
-    void clearScriptResources();
+    void populateScriptObjects();
+    void resetScriptObjects();
 
     void didCommitLoad(DocumentLoader*);
     void frameDetachedFromParent(Frame*);
@@ -132,10 +132,6 @@ private:
     void focusNode();
 
     void addScriptConsoleMessage(const ConsoleMessage*);
-    void clearScriptConsoleMessages();
-
-    void clearNetworkTimeline();
-    void clearDatabaseScriptResources();
 
     void addResource(InspectorResource*);
     void removeResource(InspectorResource*);

@@ -843,19 +843,15 @@ void InspectorController::setWindowVisible(bool visible)
         return;
 
     if (m_windowVisible) {
-        populateScriptResources();
+        populateScriptObjects();
         if (m_nodeToFocus)
             focusNode();
         if (m_showAfterVisible == ConsolePanel)
             showConsole();
         else if (m_showAfterVisible == TimelinePanel)
             showTimeline();
-    } else {
-        clearScriptResources();
-        clearScriptConsoleMessages();
-        clearDatabaseScriptResources();
-        clearNetworkTimeline();
-    }
+    } else
+        resetScriptObjects();
 
     m_showAfterVisible = FocusedNodeDocumentPanel;
 }
@@ -1379,16 +1375,11 @@ void InspectorController::updateScriptResource(InspectorResource* resource, doub
     HANDLE_EXCEPTION(exception);
 }
 
-void InspectorController::populateScriptResources()
+void InspectorController::populateScriptObjects()
 {
     ASSERT(m_scriptContext);
     if (!m_scriptContext)
         return;
-
-    clearScriptResources();
-    clearScriptConsoleMessages();
-    clearDatabaseScriptResources();
-    clearNetworkTimeline();
 
     ResourcesMap::iterator resourcesEnd = m_resources.end();
     for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
@@ -1456,17 +1447,17 @@ JSObjectRef InspectorController::addDatabaseScriptResource(InspectorDatabaseReso
 
     ASSERT(result);
 
-    JSRetainPtr<JSStringRef> addResourceString(Adopt, JSStringCreateWithUTF8CString("addResource"));
-    JSValueRef addResourceProperty = JSObjectGetProperty(m_scriptContext, m_scriptObject, addResourceString.get(), &exception);
+    JSRetainPtr<JSStringRef> addDatabaseString(Adopt, JSStringCreateWithUTF8CString("addDatabase"));
+    JSValueRef addDatabaseProperty = JSObjectGetProperty(m_scriptContext, m_scriptObject, addDatabaseString.get(), &exception);
     if (HANDLE_EXCEPTION(exception))
         return 0;
 
-    JSObjectRef addResourceFunction = JSValueToObject(m_scriptContext, addResourceProperty, &exception);
+    JSObjectRef addDatabaseFunction = JSValueToObject(m_scriptContext, addDatabaseProperty, &exception);
     if (HANDLE_EXCEPTION(exception))
         return 0;
 
     JSValueRef addArguments[] = { result };
-    JSObjectCallAsFunction(m_scriptContext, addResourceFunction, m_scriptObject, 1, addArguments, &exception);
+    JSObjectCallAsFunction(m_scriptContext, addDatabaseFunction, m_scriptObject, 1, addArguments, &exception);
     if (HANDLE_EXCEPTION(exception))
         return 0;
 
@@ -1492,17 +1483,17 @@ void InspectorController::removeDatabaseScriptResource(InspectorDatabaseResource
 
     JSValueRef exception = 0;
 
-    JSRetainPtr<JSStringRef> removeResourceString(Adopt, JSStringCreateWithUTF8CString("removeResource"));
-    JSValueRef removeResourceProperty = JSObjectGetProperty(m_scriptContext, m_scriptObject, removeResourceString.get(), &exception);
+    JSRetainPtr<JSStringRef> removeDatabaseString(Adopt, JSStringCreateWithUTF8CString("removeDatabase"));
+    JSValueRef removeDatabaseProperty = JSObjectGetProperty(m_scriptContext, m_scriptObject, removeDatabaseString.get(), &exception);
     if (HANDLE_EXCEPTION(exception))
         return;
 
-    JSObjectRef removeResourceFunction = JSValueToObject(m_scriptContext, removeResourceProperty, &exception);
+    JSObjectRef removeDatabaseFunction = JSValueToObject(m_scriptContext, removeDatabaseProperty, &exception);
     if (HANDLE_EXCEPTION(exception))
         return;
 
     JSValueRef arguments[] = { scriptObject };
-    JSObjectCallAsFunction(m_scriptContext, removeResourceFunction, m_scriptObject, 1, arguments, &exception);
+    JSObjectCallAsFunction(m_scriptContext, removeDatabaseFunction, m_scriptObject, 1, arguments, &exception);
     HANDLE_EXCEPTION(exception);
 }
 #endif
@@ -1548,7 +1539,7 @@ void InspectorController::addScriptConsoleMessage(const ConsoleMessage* message)
     HANDLE_EXCEPTION(exception);
 }
 
-void InspectorController::clearScriptResources()
+void InspectorController::resetScriptObjects()
 {
     if (!m_scriptContext || !m_scriptObject)
         return;
@@ -1559,39 +1550,15 @@ void InspectorController::clearScriptResources()
         resource->setScriptObject(0, 0);
     }
 
-    callSimpleFunction(m_scriptContext, m_scriptObject, "clearResources");
-}
-
-void InspectorController::clearDatabaseScriptResources()
-{
 #if ENABLE(DATABASE)
-    if (!m_scriptContext || !m_scriptObject)
-        return;
-
     DatabaseResourcesSet::iterator databasesEnd = m_databaseResources.end();
     for (DatabaseResourcesSet::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it) {
         InspectorDatabaseResource* resource = (*it).get();
         resource->setScriptObject(0, 0);
     }
-
-    callSimpleFunction(m_scriptContext, m_scriptObject, "clearDatabaseResources");
 #endif
-}
 
-void InspectorController::clearScriptConsoleMessages()
-{
-    if (!m_scriptContext || !m_scriptObject)
-        return;
-
-    callSimpleFunction(m_scriptContext, m_scriptObject, "clearConsoleMessages");
-}
-
-void InspectorController::clearNetworkTimeline()
-{
-    if (!m_scriptContext || !m_scriptObject)
-        return;
-
-    callSimpleFunction(m_scriptContext, m_scriptObject, "clearNetworkTimeline");
+    callSimpleFunction(m_scriptContext, m_scriptObject, "reset");
 }
 
 void InspectorController::pruneResources(ResourcesMap* resourceMap, DocumentLoader* loaderToKeep)
@@ -1629,11 +1596,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
 #endif
 
         if (windowVisible()) {
-            clearScriptConsoleMessages();
-#if ENABLE(DATABASE)
-            clearDatabaseScriptResources();
-#endif
-            clearNetworkTimeline();
+            resetScriptObjects();
 
             if (!loader->isLoadingFromCachedPage()) {
                 ASSERT(m_mainResource && m_mainResource->loader == loader);

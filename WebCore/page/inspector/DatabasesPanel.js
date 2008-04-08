@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,346 +26,129 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabasePanel = function(database, views)
+WebInspector.DatabasesPanel = function(database)
 {
-    var allViews = [{ title: WebInspector.UIString("Query"), name: "query" }, { title: WebInspector.UIString("Browse"), name: "browse" }];
-    if (views)
-        allViews = allViews.concat(views);
+    WebInspector.Panel.call(this);
 
-    WebInspector.ResourceView.call(this, database, allViews);
+    this.sidebarElement = document.createElement("div");
+    this.sidebarElement.id = "databases-sidebar";
+    this.sidebarElement.className = "sidebar";
+    this.element.appendChild(this.sidebarElement);
 
-    this.currentView = this.views.browse;
+    this.sidebarResizeElement = document.createElement("div");
+    this.sidebarResizeElement.className = "sidebar-resizer-vertical";
+    this.sidebarResizeElement.addEventListener("mousedown", this._startSidebarDragging.bind(this), false);
+    this.element.appendChild(this.sidebarResizeElement);
 
-    this.queryPromptElement = document.createElement("textarea");
-    this.queryPromptElement.className = "database-prompt";
-    this.element.appendChild(this.queryPromptElement);
+    this.sidebarTreeElement = document.createElement("ol");
+    this.sidebarTreeElement.className = "sidebar-tree";
+    this.sidebarElement.appendChild(this.sidebarTreeElement);
 
-    this.queryPromptElement.addEventListener("keydown", this.queryInputKeyDown.bind(this), false);
+    this.sidebarTree = new TreeOutline(this.sidebarTreeElement);
 
-    this.queryPromptHistory = [];
-    this.queryPromptHistoryOffset = 0;
+    this.databaseViews = document.createElement("div");
+    this.databaseViews.id = "database-views";
+    this.element.appendChild(this.databaseViews);
 
-    var queryView = this.views.query;
-
-    queryView.commandListElement = document.createElement("ol");
-    queryView.commandListElement.className = "database-command-list";
-    queryView.contentElement.appendChild(queryView.commandListElement);
-
-    var panel = this;
-    queryView.show = function()
-    {
-        panel.queryPromptElement.focus();
-        this.commandListElement.scrollTop = this.previousScrollTop;
-    };
-
-    queryView.hide = function()
-    {
-        this.previousScrollTop = this.commandListElement.scrollTop;
-    };
-
-    var browseView = this.views.browse;
-
-    browseView.reloadTableElement = document.createElement("button");
-    browseView.reloadTableElement.appendChild(document.createElement("img"));
-    browseView.reloadTableElement.className = "database-table-reload";
-    browseView.reloadTableElement.title = WebInspector.UIString("Reload");
-    browseView.reloadTableElement.addEventListener("click", this.reloadClicked.bind(this), false);
-
-    browseView.show = function()
-    {
-        panel.updateTableList();
-        panel.queryPromptElement.focus();
-
-        this.tableSelectElement.removeStyleClass("hidden");
-        if (!this.tableSelectElement.parentNode)
-            document.getElementById("toolbarButtons").appendChild(this.tableSelectElement);
-
-        this.reloadTableElement.removeStyleClass("hidden");
-        if (!this.reloadTableElement.parentNode)
-            document.getElementById("toolbarButtons").appendChild(this.reloadTableElement);
-
-        this.contentElement.scrollTop = this.previousScrollTop;
-    };
-
-    browseView.hide = function()
-    {
-        this.tableSelectElement.addStyleClass("hidden");
-        this.reloadTableElement.addStyleClass("hidden");
-        this.previousScrollTop = this.contentElement.scrollTop;
-    };
+    this.reset();
 }
 
-// FIXME: The function and local variables are a workaround for http://bugs.webkit.org/show_bug.cgi?id=15574.
-WebInspector.DatabasePanel.prototype = (function() {
-var document = window.document;
-var Math = window.Math;
-return {
+WebInspector.DatabasesPanel.prototype = {
+    toolbarItemClass: "databases",
+
+    get toolbarItemLabel()
+    {
+        return WebInspector.UIString("Databases");
+    },
+
     show: function()
     {
-        WebInspector.ResourceView.prototype.show.call(this);
-        this.queryPromptElement.focus();
+        WebInspector.Panel.prototype.show.call(this);
+        this._updateSidebarWidth();
     },
 
-    get currentTable()
+    reset: function()
     {
-        return this._currentTable;
+        this._databases = [];
+
+        this.sidebarTree.removeChildren();
     },
 
-    set currentTable(x)
+    handleKeyEvent: function(event)
     {
-        if (this._currentTable === x)
+        this.sidebarTree.handleKeyEvent(event);
+    },
+
+    addDatabase: function(database)
+    {
+        this._databases.push(database);
+
+        var databaseTreeElement = new WebInspector.DatabaseSidebarTreeElement(database);
+        database._databasesTreeElement = databaseTreeElement;
+
+        this.sidebarTree.appendChild(databaseTreeElement);
+    },
+
+    showDatabase: function(database, tableName)
+    {
+        if (!database)
             return;
 
-        this._currentTable = x;
+        if (this.visibleDatabaseView)
+            this.visibleDatabaseView.hide();
 
-        if (x) {
-            var browseView = this.views.browse;
-            if (browseView.tableSelectElement) {
-                var length = browseView.tableSelectElement.options.length;
-                for (var i = 0; i < length; ++i) {
-                    var option = browseView.tableSelectElement.options[i];
-                    if (option.value === x) {
-                        browseView.tableSelectElement.selectedIndex = i;
-                        break;
-                    }
-                }
+        var view;
+        if (tableName) {
+            if (!("_tableViews" in database))
+                database._tableViews = {};
+            view = database._tableViews[tableName];
+            if (!view) {
+                view = new WebInspector.DatabaseTableView(database, tableName);
+                database._tableViews[tableName] = view;
             }
-
-            this.updateTableBrowser();
-        }
-    },
-
-    reloadClicked: function()
-    {
-        this.updateTableList();
-        this.updateTableBrowser();
-    },
-
-    updateTableList: function()
-    {
-        var browseView = this.views.browse;
-        if (!browseView.tableSelectElement) {
-            browseView.tableSelectElement = document.createElement("select");
-            browseView.tableSelectElement.className = "database-table-select hidden";
-
-            var panel = this;
-            var changeTableFunction = function()
-            {
-                var index = browseView.tableSelectElement.selectedIndex;
-                if (index != -1)
-                    panel.currentTable = browseView.tableSelectElement.options[index].value;
-                else
-                    panel.currentTable = null;
-            };
-
-            browseView.tableSelectElement.addEventListener("change", changeTableFunction, false);
-        }
-
-        browseView.tableSelectElement.removeChildren();
-
-        var selectedTableName = this.currentTable;
-        var tableNames = InspectorController.databaseTableNames(this.resource.database).sort();
-
-        var length = tableNames.length;
-        for (var i = 0; i < length; ++i) {
-            var option = document.createElement("option");
-            option.value = tableNames[i];
-            option.text = tableNames[i];
-            browseView.tableSelectElement.appendChild(option);
-
-            if (tableNames[i] === selectedTableName)
-                browseView.tableSelectElement.selectedIndex = i;
-        }
-
-        if (!selectedTableName && length)
-            this.currentTable = tableNames[0];
-    },
-
-    updateTableBrowser: function()
-    {
-        if (!this.currentTable) {
-            this.views.browse.contentElement.removeChildren();
-            return;
-        }
-
-        var panel = this;
-        var query = "SELECT * FROM " + this.currentTable;
-        this.resource.database.transaction(function(tx)
-        {
-            tx.executeSql(query, [], function(tx, result) { panel.browseQueryFinished(result) }, function(tx, error) { panel.browseQueryError(error) });
-        }, function(tx, error) { panel.browseQueryError(error) });
-    },
-
-    browseQueryFinished: function(result)
-    {
-        this.views.browse.contentElement.removeChildren();
-
-        var table = this._tableForResult(result);
-        if (!table) {
-            var emptyMsgElement = document.createElement("div");
-            emptyMsgElement.className = "database-table-empty";
-            emptyMsgElement.textContent = WebInspector.UIString("The “%s”\ntable is empty.", this.currentTable);
-            this.views.browse.contentElement.appendChild(emptyMsgElement);
-            return;
-        }
-
-        var rowCount = table.getElementsByTagName("tr").length;
-        var columnCount = table.getElementsByTagName("tr").item(0).getElementsByTagName("th").length;
-
-        var tr = document.createElement("tr");
-        tr.className = "database-result-filler-row";
-        table.appendChild(tr);
-
-        if (!(rowCount % 2))
-            tr.addStyleClass("alternate");
-
-        for (var i = 0; i < columnCount; ++i) {
-            var td = document.createElement("td");
-            tr.appendChild(td);
-        }
-
-        table.addStyleClass("database-browse-table");
-        this.views.browse.contentElement.appendChild(table);
-    },
-
-    browseQueryError: function(error)
-    {
-        this.views.browse.contentElement.removeChildren();
-
-        var errorMsgElement = document.createElement("div");
-        errorMsgElement.className = "database-table-error";
-        errorMsgElement.textContent = WebInspector.UIString("An error occurred trying to\nread the “%s” table.", this.currentTable);
-        this.views.browse.contentElement.appendChild(errorMsgElement);
-    },
-
-    queryInputKeyDown: function(event)
-    {
-        switch (event.keyIdentifier) {
-            case "Enter":
-                this._onQueryInputEnterPressed(event);
-                break;
-            case "Up":
-                this._onQueryInputUpPressed(event);
-                break;
-            case "Down":
-                this._onQueryInputDownPressed(event);
-                break;
-        }
-    },
-
-    appendQueryResult: function(query, result, resultClassName)
-    {
-        var commandItem = document.createElement("li");
-        commandItem.className = "database-command";
-
-        var queryDiv = document.createElement("div");
-        queryDiv.className = "database-command-query";
-        queryDiv.textContent = query;
-        commandItem.appendChild(queryDiv);
-
-        var resultDiv = document.createElement("div");
-        resultDiv.className = "database-command-result";
-        commandItem.appendChild(resultDiv);
-
-        if (resultClassName)
-            resultDiv.addStyleClass(resultClassName);
-
-        if (typeof result === "string" || result instanceof String)
-            resultDiv.textContent = result;
-        else if (result && result.nodeName)
-            resultDiv.appendChild(result);
-
-        this.views.query.commandListElement.appendChild(commandItem);
-        commandItem.scrollIntoView(false);
-    },
-
-    queryFinished: function(query, result)
-    {
-        this.appendQueryResult(query, this._tableForResult(result));
-    },
-
-    queryError: function(query, error)
-    {
-        if (this.currentView !== this.views.query)
-            this.currentView = this.views.query;
-
-        if (error.code == 1)
-            var message = error.message;
-        else if (error.code == 2)
-            var message = WebInspector.UIString("Database no longer has expected version.");
-        else
-            var message = WebInspector.UIString("An unexpected error %s occured.", error.code);
-
-        this.appendQueryResult(query, message, "error");
-    },
-
-    _onQueryInputEnterPressed: function(event)
-    {
-        event.preventDefault();
-        event.stopPropagation();
-
-        var query = this.queryPromptElement.value;
-        if (!query.length)
-            return;
-
-        var panel = this;
-        this.resource.database.transaction(function(tx) 
-        {
-            tx.executeSql(query, [], function(tx, result) { panel.queryFinished(query, result) }, function(tx, error) { panel.queryError(query, error) });
-        }, function(tx, error) { panel.queryError(query, error) });
-
-        this.queryPromptHistory.push(query);
-        this.queryPromptHistoryOffset = 0;
-
-        this.queryPromptElement.value = "";
-
-        if (query.match(/^select /i)) {
-            if (this.currentView !== this.views.query)
-                this.currentView = this.views.query;
         } else {
-            if (query.match(/^create /i) || query.match(/^drop table /i))
-                this.updateTableList();
-
-            // FIXME: we should only call updateTableBrowser() is we know the current table was modified
-            this.updateTableBrowser();
-        }
-    },
-
-    _onQueryInputUpPressed: function(event)
-    {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (this.queryPromptHistoryOffset == this.queryPromptHistory.length)
-            return;
-
-        if (this.queryPromptHistoryOffset == 0)
-            this.tempSavedQuery = this.queryPromptElement.value;
-
-        ++this.queryPromptHistoryOffset;
-        this.queryPromptElement.value = this.queryPromptHistory[this.queryPromptHistory.length - this.queryPromptHistoryOffset];
-        this.queryPromptElement.moveCursorToEnd();
-    },
-
-    _onQueryInputDownPressed: function(event)
-    {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (this.queryPromptHistoryOffset == 0)
-            return;
-
-        --this.queryPromptHistoryOffset;
-
-        if (this.queryPromptHistoryOffset == 0) {
-            this.queryPromptElement.value = this.tempSavedQuery;
-            this.queryPromptElement.moveCursorToEnd();
-            delete this.tempSavedQuery;
-            return;
+            view = database._queryView;
+            if (!view) {
+                view = new WebInspector.DatabaseQueryView(database);
+                database._queryView = view;
+            }
         }
 
-        this.queryPromptElement.value = this.queryPromptHistory[this.queryPromptHistory.length - this.queryPromptHistoryOffset];
-        this.queryPromptElement.moveCursorToEnd();
+        view.show(this.databaseViews);
+
+        this.visibleDatabaseView = view;
+    },
+
+    closeVisibleView: function()
+    {
+        if (this.visibleDatabaseView)
+            this.visibleDatabaseView.hide();
+        delete this.visibleDatabaseView;
+    },
+
+    updateDatabaseTables: function(database)
+    {
+        if (!database || !database._databasesTreeElement)
+            return;
+
+        database._databasesTreeElement.refreshChildren = true;
+
+        if (!("_tableViews" in database))
+            return;
+
+        var tableNamesHash = {};
+        var tableNames = database.tableNames;
+        var tableNamesLength = tableNames.length;
+        for (var i = 0; i < tableNamesLength; ++i)
+            tableNamesHash[tableNames[i]] = true;
+
+        for (var tableName in database._tableViews) {
+            if (!(tableName in tableNamesHash)) {
+                if (this.visibleDatabaseView === database._tableViews[tableName])
+                    this.closeVisibleView();
+                delete database._tableViews[tableName];
+            }
+        }
     },
 
     _tableForResult: function(result)
@@ -455,8 +238,112 @@ return {
         }
 
         return table;
+    },
+
+    _startSidebarDragging: function(event)
+    {
+        WebInspector.elementDragStart(this.sidebarResizeElement, this._sidebarDragging.bind(this), this._endSidebarDragging.bind(this), event, "col-resize");
+    },
+
+    _sidebarDragging: function(event)
+    {
+        this._updateSidebarWidth(event.pageX);
+
+        event.preventDefault();
+    },
+
+    _endSidebarDragging: function(event)
+    {
+        WebInspector.elementDragEnd(event);
+    },
+
+    _updateSidebarWidth: function(width)
+    {
+        if (this.sidebarElement.offsetWidth <= 0) {
+            // The stylesheet hasn't loaded yet, so we need to update later.
+            setTimeout(this._updateSidebarWidth.bind(this), 0, width);
+            return;
+        }
+
+        if (!("_currentSidebarWidth" in this))
+            this._currentSidebarWidth = this.sidebarElement.offsetWidth;
+
+        if (typeof width === "undefined")
+            width = this._currentSidebarWidth;
+
+        width = Number.constrain(width, Preferences.minSidebarWidth, window.innerWidth / 2);
+
+        this._currentSidebarWidth = width;
+
+        this.sidebarElement.style.width = width + "px";
+        this.databaseViews.style.left = width + "px";
+        this.sidebarResizeElement.style.left = (width - 3) + "px";
     }
 }
-})();
 
-WebInspector.DatabasePanel.prototype.__proto__ = WebInspector.ResourceView.prototype;
+WebInspector.DatabasesPanel.prototype.__proto__ = WebInspector.Panel.prototype;
+
+WebInspector.DatabaseSidebarTreeElement = function(database)
+{
+    this.database = database;
+
+    WebInspector.SidebarTreeElement.call(this, "database-sidebar-tree-item", "", "", database, true);
+
+    this.refreshTitles();
+}
+
+WebInspector.DatabaseSidebarTreeElement.prototype = {
+    onselect: function()
+    {
+        WebInspector.panels.databases.showDatabase(this.database);
+    },
+
+    onpopulate: function()
+    {
+        this.removeChildren();
+
+        var tableNames = this.database.tableNames;
+        var tableNamesLength = tableNames.length;
+        for (var i = 0; i < tableNamesLength; ++i)
+            this.appendChild(new WebInspector.SidebarDatabaseTableTreeElement(this.database, tableNames[i]));
+    },
+
+    get mainTitle()
+    {
+        return this.database.name;
+    },
+
+    set mainTitle(x)
+    {
+        // Do nothing.
+    },
+
+    get subtitle()
+    {
+        return this.database.displayDomain;
+    },
+
+    set subtitle(x)
+    {
+        // Do nothing.
+    }
+}
+
+WebInspector.DatabaseSidebarTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;
+
+WebInspector.SidebarDatabaseTableTreeElement = function(database, tableName)
+{
+    this.database = database;
+    this.tableName = tableName;
+
+    WebInspector.SidebarTreeElement.call(this, "database-table-sidebar-tree-item small", tableName, "", null, false);
+}
+
+WebInspector.SidebarDatabaseTableTreeElement.prototype = {
+    onselect: function()
+    {
+        WebInspector.panels.databases.showDatabase(this.database, this.tableName);
+    }
+}
+
+WebInspector.SidebarDatabaseTableTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;

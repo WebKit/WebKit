@@ -26,126 +26,148 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkPanel = function()
+WebInspector.ResourcesPanel = function()
 {
     WebInspector.Panel.call(this);
 
-    this.timelineEntries = [];
+    this.element.addStyleClass("resources");
 
-    this.timelineElement = document.createElement("div");
-    this.timelineElement.className = "network-timeline";
-    this.element.appendChild(this.timelineElement);
+    this.resourceViews = document.createElement("div");
+    this.resourceViews.id = "resource-views";
+    this.element.appendChild(this.resourceViews);
+
+    this.containerElement = document.createElement("div");
+    this.containerElement.id = "resources-container";
+    this.containerElement.addEventListener("scroll", this._updateDividersLabelBarPosition.bind(this), false);
+    this.element.appendChild(this.containerElement);
+
+    this.sidebarElement = document.createElement("div");
+    this.sidebarElement.id = "resources-sidebar";
+    this.sidebarElement.className = "sidebar";
+    this.containerElement.appendChild(this.sidebarElement);
+
+    this.sidebarResizeElement = document.createElement("div");
+    this.sidebarResizeElement.className = "sidebar-resizer-vertical";
+    this.sidebarResizeElement.addEventListener("mousedown", this._startSidebarDragging.bind(this), false);
+    this.element.appendChild(this.sidebarResizeElement);
+
+    this.containerContentElement = document.createElement("div");
+    this.containerContentElement.id = "resources-container-content";
+    this.containerElement.appendChild(this.containerContentElement);
 
     this.summaryElement = document.createElement("div");
-    this.summaryElement.className = "network-summary";
-    this.element.appendChild(this.summaryElement);
+    this.summaryElement.id = "resources-summary";
+    this.containerContentElement.appendChild(this.summaryElement);
 
     this.dividersElement = document.createElement("div");
-    this.dividersElement.className = "network-dividers";
-    this.timelineElement.appendChild(this.dividersElement);
+    this.dividersElement.id = "resources-dividers";
+    this.containerContentElement.appendChild(this.dividersElement);
 
-    this.resourcesElement = document.createElement("div");
-    this.resourcesElement.className = "network-resources";
-    this.resourcesElement.addEventListener("click", this.resourcesClicked.bind(this), false);
-    this.timelineElement.appendChild(this.resourcesElement);
-
-    var graphArea = document.createElement("div");
-    graphArea.className = "network-graph-area";
-    this.summaryElement.appendChild(graphArea);
-
-    this.graphLabelElement = document.createElement("div");
-    this.graphLabelElement.className = "network-graph-label";
-    graphArea.appendChild(this.graphLabelElement);
-
-    this.graphModeSelectElement = document.createElement("select");
-    this.graphModeSelectElement.className = "network-graph-mode";
-    this.graphModeSelectElement.addEventListener("change", this.changeGraphMode.bind(this), false);
-    this.graphLabelElement.appendChild(this.graphModeSelectElement);
-    this.graphLabelElement.appendChild(document.createElement("br"));
-
-    var sizeOptionElement = document.createElement("option");
-    sizeOptionElement.calculator = new WebInspector.ResourceTransferSizeCalculator();
-    sizeOptionElement.textContent = sizeOptionElement.calculator.title;
-    this.graphModeSelectElement.appendChild(sizeOptionElement);
-
-    var timeOptionElement = document.createElement("option");
-    timeOptionElement.calculator = new WebInspector.ResourceTransferTimeCalculator();
-    timeOptionElement.textContent = timeOptionElement.calculator.title;
-    this.graphModeSelectElement.appendChild(timeOptionElement);
-
-    this.graphModeSelectElement.selectedIndex = 1;
-
-    var graphSideElement = document.createElement("div");
-    graphSideElement.className = "network-graph-side";
-    graphArea.appendChild(graphSideElement);
+    this.dividersLabelBarElement = document.createElement("div");
+    this.dividersLabelBarElement.id = "resources-dividers-label-bar";
+    this.containerContentElement.appendChild(this.dividersLabelBarElement);
 
     this.summaryGraphElement = document.createElement("canvas");
     this.summaryGraphElement.setAttribute("width", "450");
     this.summaryGraphElement.setAttribute("height", "38");
-    this.summaryGraphElement.className = "network-summary-graph";
-    graphSideElement.appendChild(this.summaryGraphElement);
+    this.summaryGraphElement.id = "resources-summary-graph";
+    this.summaryElement.appendChild(this.summaryGraphElement);
 
     this.legendElement = document.createElement("div");
-    this.legendElement.className = "network-graph-legend";
-    graphSideElement.appendChild(this.legendElement);
+    this.legendElement.id = "resources-graph-legend";
+    this.summaryElement.appendChild(this.legendElement);
 
-    this._drawSummaryGraph(); // draws an empty graph
+    this.sidebarTreeElement = document.createElement("ol");
+    this.sidebarTreeElement.className = "sidebar-tree";
+    this.sidebarElement.appendChild(this.sidebarTreeElement);
 
-    this.needsRefresh = true; 
+    this.sidebarTree = new TreeOutline(this.sidebarTreeElement);
+
+    var timeGraphItem = new WebInspector.SidebarTreeElement("resources-time-graph-sidebar-item", WebInspector.UIString("Time"));
+    timeGraphItem.calculator = new WebInspector.ResourceTransferTimeCalculator();
+    timeGraphItem.onselect = this._graphSelected.bind(this);
+
+    var sizeGraphItem = new WebInspector.SidebarTreeElement("resources-size-graph-sidebar-item", WebInspector.UIString("Size"));
+    sizeGraphItem.calculator = new WebInspector.ResourceTransferSizeCalculator();
+    sizeGraphItem.onselect = this._graphSelected.bind(this);
+
+    this.graphsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("GRAPHS"), {}, true);
+    this.sidebarTree.appendChild(this.graphsTreeElement);
+
+    this.graphsTreeElement.appendChild(timeGraphItem);
+    this.graphsTreeElement.appendChild(sizeGraphItem);
+    this.graphsTreeElement.expand();
+
+    this.resourcesTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RESOURCES"), {}, true);
+    this.sidebarTree.appendChild(this.resourcesTreeElement);
+
+    this.resourcesTreeElement.expand();
+
+    this.sortingFunction = WebInspector.ResourceSidebarTreeElement.CompareByTime;
+
+    this.reset();
+
+    timeGraphItem.select();
 }
 
-WebInspector.NetworkPanel.prototype = {
+WebInspector.ResourcesPanel.prototype = {
+    toolbarItemClass: "resources",
+
+    get toolbarItemLabel()
+    {
+        return WebInspector.UIString("Resources");
+    },
+
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-        WebInspector.networkListItem.select();
+        this._updateDividersLabelBarPosition();
+        this._updateGraphBars();
+        this._updateSidebarWidth();
         this.refreshIfNeeded();
-    },
-
-    hide: function()
-    {
-        WebInspector.Panel.prototype.hide.call(this);
-        WebInspector.networkListItem.deselect();
     },
 
     resize: function()
     {
         this._updateGraphDividersIfNeeded();
+        this._updateGraphBars();
+
+        var visibleResourceView = this.visibleResourceView;
+        if (visibleResourceView && "resize" in visibleResourceView)
+            visibleResourceView.resize();
     },
 
-    resourcesClicked: function(event)
+    get visibleResourceView()
     {
-        // If the click wasn't inside a network resource row, ignore it.
-        var resourceElement = event.target.enclosingNodeOrSelfWithClass("network-resource");
-        if (!resourceElement)
-            return;
-
-        // If the click was within the network info element, ignore it.
-        var networkInfo = event.target.enclosingNodeOrSelfWithClass("network-info");
-        if (networkInfo)
-            return;
-
-        // If the click was within the tip balloon element, hide it.
-        var balloon = event.target.enclosingNodeOrSelfWithClass("tip-balloon");
-        if (balloon) {
-            resourceElement.timelineEntry.showingTipBalloon = false;
-            return;
-        }
-
-        resourceElement.timelineEntry.toggleShowingInfo();
+        if (this.visibleResource)
+            return this.visibleResource._resourcesView;
+        return null;
     },
 
-    changeGraphMode: function(event)
+    get calculator()
     {
-        this.calculator.reset();
+        return this._calculator;
+    },
+
+    set calculator(x)
+    {
+        this._calculator = x;
+        if (this._calculator)
+            this._calculator.reset();
         this._refreshAllResources(false, true, true);
         this._updateGraphDividersIfNeeded(true);
         this._updateSummaryGraph();
     },
 
-    get calculator()
+    get sortingFunction()
     {
-        return this.graphModeSelectElement.options[this.graphModeSelectElement.selectedIndex].calculator;
+        return this._sortingFunction;
+    },
+
+    set sortingFunction(x)
+    {
+        this._sortingFunction = x;
+        this._sortResourcesIfNeeded();
     },
 
     get needsRefresh() 
@@ -172,33 +194,121 @@ WebInspector.NetworkPanel.prototype = {
     {
         this.needsRefresh = false;
 
-        // calling refresh will call _updateGraphBoundriesIfNeeded, which can clear needsRefresh for future entries,
-        // so find all the entries that needs refresh first, then loop back trough them to call refresh
-        var entriesNeedingRefresh = [];
-        var entriesLength = this.timelineEntries.length;
-        for (var i = 0; i < entriesLength; ++i) {
-            var entry = this.timelineEntries[i];
-            if (entry.needsRefresh || entry.infoNeedsRefresh)
-                entriesNeedingRefresh.push(entry);
-        }
+        var staleResourcesLength = this._staleResources.length;
+        for (var i = 0; i < staleResourcesLength; ++i)
+            this.refreshResource(this._staleResources[i], false, true, true);
 
-        entriesLength = entriesNeedingRefresh.length;
-        for (var i = 0; i < entriesLength; ++i)
-            entriesNeedingRefresh[i].refresh(false, true, true);
+        this._staleResources = [];
 
         this._updateGraphDividersIfNeeded();
         this._sortResourcesIfNeeded();
         this._updateSummaryGraph();
     },
 
+    reset: function()
+    {
+        if (this._calculator)
+            this._calculator.reset();
+
+        this._resources = [];
+        this._staleResources = [];
+
+        this.resourcesTreeElement.removeChildren();
+
+        this._updateGraphDividersIfNeeded();
+
+        this._drawSummaryGraph(); // draws an empty graph
+    },
+
+    addResource: function(resource)
+    {
+        this._resources.push(resource);
+
+        var resourceTreeElement = new WebInspector.ResourceSidebarTreeElement(resource);
+        resource._resourcesTreeElement = resourceTreeElement;
+
+        this.resourcesTreeElement.appendChild(resourceTreeElement);
+
+        this.refreshResource(resource);
+    },
+
+    refreshResource: function(resource, skipBoundaryUpdate, skipSort, immediate)
+    {
+        if (!this.visible) {
+            this._staleResources.push(resource);
+            this.needsRefresh = true;
+            return;
+        }
+
+        if (!skipBoundaryUpdate) {
+            if (this._updateGraphBoundriesIfNeeded(resource, immediate))
+                return; // _updateGraphBoundriesIfNeeded refreshes all resources if it returns true, so just return.
+        }
+
+        if (!skipSort) {
+            if (immediate)
+                this._sortResourcesIfNeeded();
+            else
+                this._sortResourcesSoonIfNeeded();
+        }
+
+        this._updateSummaryGraphSoon();
+
+        if (!resource._resourcesTreeElement)
+            return;
+
+        resource._resourcesTreeElement.refresh();
+
+        var percentages = this.calculator.computeBarGraphPercentages(resource);
+
+        var barElement = resource._resourcesTreeElement.barElement;
+        barElement.style.left = percentages.start + "%";
+        barElement.style.right = (100 - percentages.end) + "%";
+    },
+
+    showResource: function(resource)
+    {
+        if (!resource)
+            return;
+
+        this.containerElement.addStyleClass("viewing-resource");
+
+        if (this.visibleResource && this.visibleResource._resourcesView)
+            this.visibleResource._resourcesView.hide();
+
+        if (!resource._resourcesView)
+            resource._resourcesView = this._createResourceView(resource);
+        resource._resourcesView.show();
+
+        this.visibleResource = resource;
+
+        this._updateSidebarWidth();
+    },
+
+    closeVisibleResource: function()
+    {
+        this.containerElement.removeStyleClass("viewing-resource");
+        this._updateDividersLabelBarPosition();
+        if (this.visibleResource && this.visibleResource._resourcesView)
+            this.visibleResource._resourcesView.hide();
+        delete this.visibleResource;
+
+        this._updateSidebarWidth();
+    },
+
+    handleKeyEvent: function(event)
+    {
+        this.sidebarTree.handleKeyEvent(event);
+    },
+
     _makeLegendElement: function(label, value, color)
     {
         var legendElement = document.createElement("label");
-        legendElement.className = "network-graph-legend-item";
+        legendElement.className = "resources-graph-legend-item";
 
         if (color) {
             var swatch = document.createElement("canvas");
-            swatch.className = "network-graph-legend-swatch";
+            swatch.className = "resources-graph-legend-swatch";
             swatch.setAttribute("width", "13");
             swatch.setAttribute("height", "24");
 
@@ -208,17 +318,17 @@ WebInspector.NetworkPanel.prototype = {
         }
 
         var labelElement = document.createElement("div");
-        labelElement.className = "network-graph-legend-label";
+        labelElement.className = "resources-graph-legend-label";
         legendElement.appendChild(labelElement);
 
         var headerElement = document.createElement("div");
         var headerElement = document.createElement("div");
-        headerElement.className = "network-graph-legend-header";
+        headerElement.className = "resources-graph-legend-header";
         headerElement.textContent = label;
         labelElement.appendChild(headerElement);
 
         var valueElement = document.createElement("div");
-        valueElement.className = "network-graph-legend-value";
+        valueElement.className = "resources-graph-legend-value";
         valueElement.textContent = value;
         labelElement.appendChild(valueElement);
 
@@ -239,14 +349,16 @@ WebInspector.NetworkPanel.prototype = {
             delete this._sortResourcesTimeout;
         }
 
-        this.timelineEntries.sort(WebInspector.NetworkPanel.timelineEntryCompare);
+        var sortedElements = [].concat(this.resourcesTreeElement.children);
+        sortedElements.sort(this.sortingFunction);
 
-        var nextSibling = null;
-        for (var i = (this.timelineEntries.length - 1); i >= 0; --i) {
-            var entry = this.timelineEntries[i];
-            if (entry.resourceElement.nextSibling !== nextSibling)
-                this.resourcesElement.insertBefore(entry.resourceElement, nextSibling);
-            nextSibling = entry.resourceElement;
+        var sortedElementsLength = sortedElements.length;
+        for (var i = 0; i < sortedElementsLength; ++i) {
+            var treeElement = sortedElements[i];
+            if (treeElement === this.resourcesTreeElement.children[i])
+                continue;
+            this.resourcesTreeElement.removeChild(treeElement);
+            this.resourcesTreeElement.insertChild(treeElement, i);
         }
     },
 
@@ -300,21 +412,58 @@ WebInspector.NetworkPanel.prototype = {
         this._currentDividerSlice = slice;
 
         this.dividersElement.removeChildren();
+        this.dividersLabelBarElement.removeChildren();
 
         for (var i = 1; i <= dividerCount; ++i) {
             var divider = document.createElement("div");
-            divider.className = "network-divider";
+            divider.className = "resources-divider";
+            if (i === dividerCount)
+                divider.addStyleClass("last");
+            divider.style.left = ((i / dividerCount) * 100) + "%";
+
+            this.dividersElement.appendChild(divider);
+        }
+
+        for (var i = 1; i <= dividerCount; ++i) {
+            var divider = document.createElement("div");
+            divider.className = "resources-divider";
             if (i === dividerCount)
                 divider.addStyleClass("last");
             divider.style.left = ((i / dividerCount) * 100) + "%";
 
             var label = document.createElement("div");
-            label.className = "network-divider-label";
+            label.className = "resources-divider-label";
             if (!isNaN(slice))
                 label.textContent = this.calculator.formatValue(slice * i);
             divider.appendChild(label);
 
-            this.dividersElement.appendChild(divider);
+            this.dividersLabelBarElement.appendChild(divider);
+        }
+    },
+
+    _updateGraphBars: function()
+    {
+        if (!this.visible) {
+            this.needsRefresh = true;
+            return;
+        }
+
+        if (document.body.offsetWidth <= 0) {
+            // The stylesheet hasn't loaded yet, so we need to update later.
+            setTimeout(this._updateGraphBars.bind(this), 0);
+            return;
+        }
+
+        // Add one to account for the sidebar border width.
+        var dividersElementWidth = this.dividersElement.offsetWidth + 1;
+
+        var resourcesLength = this._resources.length;
+        for (var i = 0; i < resourcesLength; ++i) {
+            var resourceTreeItem = this._resources[i]._resourcesTreeElement;
+            if (!resourceTreeItem)
+                continue;
+            resourceTreeItem.graphSideElement.style.right = -dividersElementWidth + "px";
+            resourceTreeItem.graphSideElement.style.width = dividersElementWidth + "px";
         }
     },
 
@@ -332,9 +481,9 @@ WebInspector.NetworkPanel.prototype = {
             delete this._refreshAllResourcesTimeout;
         }
 
-        var entriesLength = this.timelineEntries.length;
-        for (var i = 0; i < entriesLength; ++i)
-            this.timelineEntries[i].refresh(skipBoundaryUpdate, skipSort, immediate);
+        var resourcesLength = this._resources.length;
+        for (var i = 0; i < resourcesLength; ++i)
+            this.refreshResource(this._resources[i], skipBoundaryUpdate, skipSort, immediate);
     },
 
     _fadeOutRect: function(ctx, x, y, w, h, a1, a2)
@@ -401,8 +550,11 @@ WebInspector.NetworkPanel.prototype = {
         if (!this.summaryGraphElement)
             return;
 
-        if (!segments || !segments.length)
+        if (!segments || !segments.length) {
             segments = [{color: "white", value: 1}];
+            this._showingEmptySummaryGraph = true;
+        } else
+            delete this._showingEmptySummaryGraph;
 
         // Calculate the total of all segments.
         var total = 0;
@@ -575,7 +727,7 @@ WebInspector.NetworkPanel.prototype = {
     {
         if ("_updateSummaryGraphTimeout" in this)
             return;
-        this._updateSummaryGraphTimeout = setTimeout(this._updateSummaryGraph.bind(this), 500);
+        this._updateSummaryGraphTimeout = setTimeout(this._updateSummaryGraph.bind(this), (this._showingEmptySummaryGraph ? 0 : 500));
     },
 
     _updateSummaryGraph: function()
@@ -585,7 +737,7 @@ WebInspector.NetworkPanel.prototype = {
             delete this._updateSummaryGraphTimeout;
         }
 
-        var graphInfo = this.calculator.computeSummaryValues(this.timelineEntries);
+        var graphInfo = this.calculator.computeSummaryValues(this._resources);
 
         var categoryOrder = ["documents", "stylesheets", "images", "scripts", "fonts", "other"];
         var categoryColors = {documents: {r: 47, g: 102, b: 236}, stylesheets: {r: 157, g: 231, b: 119}, images: {r: 164, g: 60, b: 255}, scripts: {r: 255, g: 121, b: 0}, fonts: {r: 231, g: 231, b: 10}, other: {r: 186, g: 186, b: 186}};
@@ -595,10 +747,6 @@ WebInspector.NetworkPanel.prototype = {
 
         if (this.totalLegendLabel)
             this.totalLegendLabel.parentNode.removeChild(this.totalLegendLabel);
-
-        this.totalLegendLabel = this._makeLegendElement(this.calculator.totalTitle, this.calculator.formatValue(graphInfo.total));
-        this.totalLegendLabel.addStyleClass("network-graph-legend-total");
-        this.graphLabelElement.appendChild(this.totalLegendLabel);
 
         for (var i = 0; i < categoryOrder.length; ++i) {
             var category = categoryOrder[i];
@@ -616,252 +764,101 @@ WebInspector.NetworkPanel.prototype = {
             this.legendElement.appendChild(legendLabel);
         }
 
+        if (graphInfo.total) {
+            var totalLegendLabel = this._makeLegendElement(WebInspector.UIString("Total"), this.calculator.formatValue(graphInfo.total));
+            totalLegendLabel.addStyleClass("total");
+            this.legendElement.appendChild(totalLegendLabel);
+        }
+
         this._drawSummaryGraph(fillSegments);
     },
 
-    clearTimeline: function()
+    _updateDividersLabelBarPosition: function()
     {
-        this.calculator.reset();
-
-        var entriesLength = this.timelineEntries.length;
-        for (var i = 0; i < entriesLength; ++i)
-            delete this.timelineEntries[i].resource.networkTimelineEntry;
-
-        this.timelineEntries = [];
-        this.resourcesElement.removeChildren();
-
-        this._drawSummaryGraph(); // draws an empty graph
+        var scrollTop = this.containerElement.scrollTop;
+        var dividersTop = (scrollTop < this.summaryElement.offsetHeight ? this.summaryElement.offsetHeight : scrollTop);
+        this.dividersElement.style.top = scrollTop + "px";
+        this.dividersLabelBarElement.style.top = dividersTop + "px";
     },
 
-    addResourceToTimeline: function(resource)
+    _graphSelected: function(treeElement)
     {
-        var timelineEntry = new WebInspector.NetworkTimelineEntry(this, resource);
-        this.timelineEntries.push(timelineEntry);
-        this.resourcesElement.appendChild(timelineEntry.resourceElement);
-
-        timelineEntry.refresh();
-        this._updateSummaryGraphSoon();
-    }
-}
-
-WebInspector.NetworkPanel.prototype.__proto__ = WebInspector.Panel.prototype;
-
-WebInspector.NetworkPanel.timelineEntryCompare = function(a, b)
-{
-    return WebInspector.Resource.CompareByTime(a.resource, b.resource);
-}
-
-WebInspector.NetworkTimelineEntry = function(panel, resource)
-{
-    this.panel = panel;
-    this.resource = resource;
-    resource.networkTimelineEntry = this;
-
-    this.resourceElement = document.createElement("div");
-    this.resourceElement.className = "network-resource";
-    this.resourceElement.timelineEntry = this;
-
-    this.titleElement = document.createElement("div");
-    this.titleElement.className = "network-title";
-    this.resourceElement.appendChild(this.titleElement);
-
-    this.fileElement = document.createElement("div");
-    this.fileElement.className = "network-file";
-    this.fileElement.innerHTML = WebInspector.linkifyURL(resource.url, resource.displayName);
-    this.titleElement.appendChild(this.fileElement);
-
-    this.tipButtonElement = document.createElement("button");
-    this.tipButtonElement.className = "tip-button";
-    this.showingTipButton = this.resource.tips.length;
-    this.fileElement.insertBefore(this.tipButtonElement, this.fileElement.firstChild);
-
-    this.tipButtonElement.addEventListener("click", this.toggleTipBalloon.bind(this), false );
-
-    this.areaElement = document.createElement("div");
-    this.areaElement.className = "network-area";
-    this.titleElement.appendChild(this.areaElement);
-
-    this.barElement = document.createElement("div");
-    this.areaElement.appendChild(this.barElement);
-
-    this.infoElement = document.createElement("div");
-    this.infoElement.className = "network-info hidden";
-    this.resourceElement.appendChild(this.infoElement);
-}
-
-WebInspector.NetworkTimelineEntry.prototype = {
-    refresh: function(skipBoundaryUpdate, skipSort, immediate)
-    {
-        if (!this.panel.visible) {
-            this.needsRefresh = true;
-            this.panel.needsRefresh = true;
-            return;
-        }
-
-        delete this.needsRefresh;
-
-        if (!skipBoundaryUpdate) {
-            if (this.panel._updateGraphBoundriesIfNeeded(this.resource, immediate))
-                return; // _updateGraphBoundriesIfNeeded calls refresh() on all entries, so we can just return
-        }
-
-        if (!skipSort) {
-            if (immediate)
-                this.panel._sortResourcesIfNeeded();
-            else
-                this.panel._sortResourcesSoonIfNeeded();
-        }
-
-        var percentages = this.panel.calculator.computeBarGraphPercentages(this.resource);
-        this.barElement.style.left = percentages.start + "%";
-        this.barElement.style.right = (100 - percentages.end) + "%";
-
-        this.barElement.className = "network-bar network-category-" + this.resource.category.name;
-
-        if (this.infoNeedsRefresh)
-            this.refreshInfo();
+        this.closeVisibleResource();
+        this.calculator = treeElement.calculator;
+        this.containerElement.scrollTop = 0;
     },
 
-    refreshInfo: function()
+    _createResourceView: function(resource)
     {
-        if (!this.showingInfo) {
-            this.infoNeedsRefresh = true;
-            return;
-        }
-
-        if (!this.panel.visible) {
-            this.panel.needsRefresh = true;
-            this.infoNeedsRefresh = true;
-            return;
-        }
-
-        this.infoNeedsRefresh = false;
-
-        this.infoElement.removeChildren();
-
-        var sections = [
-            {title: WebInspector.UIString("Request"), info: this.resource.sortedRequestHeaders},
-            {title: WebInspector.UIString("Response"), info: this.resource.sortedResponseHeaders}
-        ];
-
-        function createSectionTable(section)
-        {
-            if (!section.info.length)
-                return;
-
-            var table = document.createElement("table");
-            this.infoElement.appendChild(table);
-
-            var heading = document.createElement("th");
-            heading.textContent = section.title;
-
-            var row = table.createTHead().insertRow(-1).appendChild(heading);
-            var body = document.createElement("tbody");
-            table.appendChild(body);
-
-            section.info.forEach(function(header) {
-                var row = body.insertRow(-1);
-                var th = document.createElement("th");
-                th.textContent = header.header;
-                row.appendChild(th);
-                row.insertCell(-1).textContent = header.value;
-            });
-        }
-
-        sections.forEach(createSectionTable, this);
-    },
-
-    refreshInfoIfNeeded: function()
-    {
-        if (this.infoNeedsRefresh === false)
-            return;
-
-        this.refreshInfo();
-    },
-
-    toggleShowingInfo: function()
-    {
-        this.showingInfo = !this.showingInfo;
-    },
-
-    get showingInfo()
-    {
-        return this._showingInfo;
-    },
-
-    set showingInfo(x)
-    {
-        if (this._showingInfo === x)
-            return;
-
-        this._showingInfo = x;
-
-        var element = this.infoElement;
-        if (x) {
-            element.removeStyleClass("hidden");
-            element.style.setProperty("overflow", "hidden");
-            this.refreshInfoIfNeeded();
-            WebInspector.animateStyle([{element: element, start: {height: 0}, end: {height: element.offsetHeight}}], 250, function() { element.style.removeProperty("height"); element.style.removeProperty("overflow") });
-        } else {
-            element.style.setProperty("overflow", "hidden");
-            WebInspector.animateStyle([{element: element, end: {height: 0}}], 250, function() { element.addStyleClass("hidden"); element.style.removeProperty("height") });
-        }
-    },
-
-    get showingTipButton()
-    {
-        return !this.tipButtonElement.hasStyleClass("hidden");
-    },
-
-    set showingTipButton(x)
-    {
-        if (x)
-            this.tipButtonElement.removeStyleClass("hidden");
-        else
-            this.tipButtonElement.addStyleClass("hidden");
-    },
-
-    toggleTipBalloon: function(event)
-    {
-        this.showingTipBalloon = !this.showingTipBalloon;
-        event.stopPropagation();
-    },
-
-    get showingTipBalloon()
-    {
-        return this._showingTipBalloon;
-    },
-
-    set showingTipBalloon(x)
-    {
-        if (this._showingTipBalloon === x)
-            return;
-
-        this._showingTipBalloon = x;
-
-        if (x) {
-            if (!this.tipBalloonElement) {
-                this.tipBalloonElement = document.createElement("div");
-                this.tipBalloonElement.className = "tip-balloon";
-                this.titleElement.appendChild(this.tipBalloonElement);
-
-                this.tipBalloonContentElement = document.createElement("div");
-                this.tipBalloonContentElement.className = "tip-balloon-content";
-                this.tipBalloonElement.appendChild(this.tipBalloonContentElement);
-                var tipText = "";
-                for (var id in this.resource.tips)
-                    tipText += this.resource.tips[id].message + "\n";
-                this.tipBalloonContentElement.textContent = tipText;
+        if (resource.finished && !resource.failed) {
+            switch (resource.category) {
+            case WebInspector.resourceCategories.documents:
+            case WebInspector.resourceCategories.stylesheets:
+            case WebInspector.resourceCategories.scripts:
+                return new WebInspector.SourceView(resource);
+            case WebInspector.resourceCategories.images:
+                return new WebInspector.ImageView(resource);
+            case WebInspector.resourceCategories.fonts:
+                return new WebInspector.FontView(resource);
             }
-
-            this.tipBalloonElement.removeStyleClass("hidden");
-            WebInspector.animateStyle([{element: this.tipBalloonElement, start: {left: 160, opacity: 0}, end: {left: 145, opacity: 1}}], 250);
-        } else {
-            var element = this.tipBalloonElement;
-            WebInspector.animateStyle([{element: this.tipBalloonElement, start: {left: 145, opacity: 1}, end: {left: 160, opacity: 0}}], 250, function() { element.addStyleClass("hidden") });
         }
+
+        return new WebInspector.ResourceView(resource);
+    },
+
+    _startSidebarDragging: function(event)
+    {
+        WebInspector.elementDragStart(this.sidebarResizeElement, this._sidebarDragging.bind(this), this._endSidebarDragging.bind(this), event, "col-resize");
+    },
+
+    _sidebarDragging: function(event)
+    {
+        this._updateSidebarWidth(event.pageX);
+
+        event.preventDefault();
+    },
+
+    _endSidebarDragging: function(event)
+    {
+        WebInspector.elementDragEnd(event);
+    },
+
+    _updateSidebarWidth: function(width)
+    {
+        if (this.sidebarElement.offsetWidth <= 0) {
+            // The stylesheet hasn't loaded yet, so we need to update later.
+            setTimeout(this._updateSidebarWidth.bind(this), 0, width);
+            return;
+        }
+
+        if (!("_currentSidebarWidth" in this))
+            this._currentSidebarWidth = this.sidebarElement.offsetWidth;
+
+        if (typeof width === "undefined")
+            width = this._currentSidebarWidth;
+
+        width = Number.constrain(width, Preferences.minSidebarWidth, window.innerWidth / 2);
+
+        this._currentSidebarWidth = width;
+
+        if (this.visibleResource) {
+            this.containerElement.style.width = width + "px";
+            this.sidebarElement.style.removeProperty("width");
+        } else {
+            this.sidebarElement.style.width = width + "px";
+            this.containerElement.style.removeProperty("width");
+        }
+
+        this.containerContentElement.style.left = width + "px";
+        this.resourceViews.style.left = width + "px";
+        this.sidebarResizeElement.style.left = (width - 3) + "px";
+
+        this._updateGraphBars();
+        this._updateGraphDividersIfNeeded();
     }
 }
+
+WebInspector.ResourcesPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 WebInspector.ResourceCalculator = function()
 {
@@ -875,7 +872,7 @@ WebInspector.ResourceCalculator.prototype = {
 
         var resourcesLength = resources.length;
         for (var i = 0; i < resourcesLength; ++i) {
-            var resource = resources[i].resource;
+            var resource = resources[i];
             var value = this._value(resource);
             if (typeof value === "undefined")
                 continue;
@@ -922,11 +919,6 @@ WebInspector.ResourceCalculator.prototype = {
         return 0;
     },
 
-    get title()
-    {
-        return "";
-    },
-
     formatValue: function(value)
     {
         return value.toString();
@@ -944,7 +936,7 @@ WebInspector.ResourceTransferTimeCalculator.prototype = {
         var resourcesByCategory = {};
         var resourcesLength = resources.length;
         for (var i = 0; i < resourcesLength; ++i) {
-            var resource = resources[i].resource;
+            var resource = resources[i];
             if (!(resource.category.name in resourcesByCategory))
                 resourcesByCategory[resource.category.name] = [];
             resourcesByCategory[resource.category.name].push(resource);
@@ -1025,16 +1017,6 @@ WebInspector.ResourceTransferTimeCalculator.prototype = {
         return didChange;
     },
 
-    get title()
-    {
-        return WebInspector.UIString("Transfer Time");
-    },
-
-    get totalTitle()
-    {
-        return WebInspector.UIString("Total Time");
-    },
-
     formatValue: function(value)
     {
         return Number.secondsToString(value);
@@ -1054,16 +1036,6 @@ WebInspector.ResourceTransferSizeCalculator.prototype = {
         return resource.contentLength;
     },
 
-    get title()
-    {
-        return WebInspector.UIString("Transfer Size");
-    },
-
-    get totalTitle()
-    {
-        return WebInspector.UIString("Total Size");
-    },
-
     formatValue: function(value)
     {
         return Number.bytesToString(value);
@@ -1071,3 +1043,92 @@ WebInspector.ResourceTransferSizeCalculator.prototype = {
 }
 
 WebInspector.ResourceTransferSizeCalculator.prototype.__proto__ = WebInspector.ResourceCalculator.prototype;
+
+WebInspector.ResourceSidebarTreeElement = function(resource)
+{
+    this.resource = resource;
+
+    WebInspector.SidebarTreeElement.call(this, "resource-sidebar-tree-item", "", "", resource);
+
+    this.refreshTitles();
+
+    this.graphSideElement = document.createElement("div");
+    this.graphSideElement.className = "resources-graph-side";
+
+    this.barAreaElement = document.createElement("div");
+    this.barAreaElement.className = "resources-graph-bar-area";
+    this.graphSideElement.appendChild(this.barAreaElement);
+
+    this.barElement = document.createElement("div");
+    this.barElement.className = "resources-graph-bar";
+    this.barAreaElement.appendChild(this.barElement);
+}
+
+WebInspector.ResourceSidebarTreeElement.prototype = {
+    onattach: function()
+    {
+        WebInspector.SidebarTreeElement.prototype.onattach.call(this);
+
+        this._listItemNode.appendChild(this.graphSideElement);
+        this._listItemNode.addStyleClass("resources-category-" + this.resource.category.name);
+    },
+
+    onselect: function()
+    {
+        WebInspector.panels.resources.showResource(this.resource);
+    },
+
+    get mainTitle()
+    {
+        return this.resource.displayName;
+    },
+
+    set mainTitle(x)
+    {
+        // Do nothing.
+    },
+
+    get subtitle()
+    {
+        var subtitle = this.resource.displayDomain;
+
+        if (this.resource.path && this.resource.lastPathComponent) {
+            var lastPathComponentIndex = this.resource.path.lastIndexOf("/" + this.resource.lastPathComponent);
+            if (lastPathComponentIndex != -1)
+                subtitle += this.resource.path.substring(0, lastPathComponentIndex);
+        }
+
+        return subtitle;
+    },
+
+    set subtitle(x)
+    {
+        // Do nothing.
+    },
+
+    refresh: function()
+    {
+        this.refreshTitles();
+
+        var newClassName = "sidebar-tree-item resource-sidebar-tree-item resources-category-" + this.resource.category.name;
+        if (this._listItemNode && this._listItemNode.className !== newClassName)
+            this._listItemNode.className = newClassName;
+    }
+}
+
+WebInspector.ResourceSidebarTreeElement.CompareByTime = function(a, b)
+{
+    return WebInspector.Resource.CompareByTime(a.resource, b.resource);
+}
+
+WebInspector.ResourceSidebarTreeElement.CompareBySize = function(a, b)
+{
+    return WebInspector.Resource.CompareBySize(a.resource, b.resource);
+}
+
+WebInspector.ResourceSidebarTreeElement.CompareByDescendingSize = function(a, b)
+{
+    return WebInspector.Resource.CompareByDescendingSize(a.resource, b.resource);
+}
+
+WebInspector.ResourceSidebarTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;

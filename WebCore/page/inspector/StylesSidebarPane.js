@@ -36,6 +36,9 @@ WebInspector.StylesSidebarPane.prototype = {
     {
         var refresh = false;
 
+        if (forceUpdate)
+            delete this.node;
+
         if (!forceUpdate && (!node || node === this.node))
             refresh = true;
 
@@ -251,7 +254,7 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
         if (!subtitle) {
             if (this.styleRule.parentStyleSheet && this.styleRule.parentStyleSheet.href) {
                 var url = this.styleRule.parentStyleSheet.href;
-                subtitle = WebInspector.linkifyURL(url, url.trimURL(WebInspector.mainResource.domain).escapeHTML());
+                subtitle = WebInspector.linkifyURL(url, url.trimURL(WebInspector.mainResource ? WebInspector.mainResource.domain : "").escapeHTML());
                 this.subtitleElement.addStyleClass("file");
             } else if (this.styleRule.parentStyleSheet && !this.styleRule.parentStyleSheet.ownerNode)
                 subtitle = WebInspector.UIString("user agent stylesheet");

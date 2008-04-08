@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@ WebInspector.ImageView = function(resource)
 
     var container = document.createElement("div");
     container.className = "image";
-    this.element.appendChild(container);
+    this.contentElement.appendChild(container);
 
     this.imagePreviewElement = document.createElement("img");
     this.imagePreviewElement.setAttribute("src", this.resource.url);
@@ -43,7 +43,7 @@ WebInspector.ImageView = function(resource)
 
     container = document.createElement("div");
     container.className = "info";
-    this.element.appendChild(container);
+    this.contentElement.appendChild(container);
 
     var imageNameElement = document.createElement("h1");
     imageNameElement.className = "title";

@@ -26,62 +26,117 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ConsolePanel = function()
+WebInspector.Console = function()
 {
-    WebInspector.Panel.call(this);
-
     this.messages = [];
 
-    this.messagesElement = document.createElement("div");
-    this.messagesElement.id = "console-messages";
-    this.messagesElement.addEventListener("selectstart", this._messagesSelectStart.bind(this), true);
+    WebInspector.View.call(this, document.getElementById("console"));
+
+    this.messagesElement = document.getElementById("console-messages");
+    this.messagesElement.addEventListener("selectstart", this._messagesSelectStart.bind(this), false);
     this.messagesElement.addEventListener("click", this._messagesClicked.bind(this), true);
-    this.element.appendChild(this.messagesElement);
 
-    this.promptElement = document.createElement("div");
-    this.promptElement.id = "console-prompt";
-    this.promptElement.addEventListener("keydown", this._promptKeyDown.bind(this), false);
-    this.promptElement.appendChild(document.createElement("br"));
-    this.messagesElement.appendChild(this.promptElement);
+    // The messagesElement is the focusable element so clicking anywhere in the
+    // console area will focus the prompt.
+    this.messagesElement.focused = this._messagesFocused.bind(this);
+    this.messagesElement.handleKeyEvent = this._promptKeyDown.bind(this);
 
+    this.promptElement = document.getElementById("console-prompt");
     this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), " .=:[({;");
 
-    this.clearButton = document.createElement("button");
-    this.clearButton.title = WebInspector.UIString("Clear");
-    this.clearButton.textContent = WebInspector.UIString("Clear");
+    this.toggleButton = document.getElementById("console-status-bar-item");
+    this.toggleButton.title = WebInspector.UIString("Show console.");
+    this.toggleButton.addEventListener("click", this._toggleButtonClicked.bind(this), false);
+
+    this.clearButton = document.getElementById("clear-console-status-bar-item");
+    this.clearButton.title = WebInspector.UIString("Clear console log.");
     this.clearButton.addEventListener("click", this._clearButtonClicked.bind(this), false);
+
+    document.getElementById("main-status-bar").addEventListener("mousedown", this._startStatusBarDragging.bind(this), true);
 }
 
-WebInspector.ConsolePanel.prototype = {
+WebInspector.Console.prototype = {
     show: function()
     {
-        WebInspector.Panel.prototype.show.call(this);
-        WebInspector.consoleListItem.select();
+        if (this._animating)
+            return;
 
-        this.clearButton.removeStyleClass("hidden");
-        if (!this.clearButton.parentNode)
-            document.getElementById("toolbarButtons").appendChild(this.clearButton);
+        WebInspector.View.prototype.show.call(this);
 
-        WebInspector.currentFocusElement = document.getElementById("main");
+        this._animating = true;
 
-        function focusPrompt()
+        this.toggleButton.addStyleClass("toggled-on");
+        this.toggleButton.title = WebInspector.UIString("Hide console.");
+
+        document.body.addStyleClass("console-visible");
+
+        var anchoredItems = document.getElementById("anchored-status-bar-items");
+
+        var animations = [
+            {element: document.getElementById("main"), end: {bottom: this.element.offsetHeight}},
+            {element: document.getElementById("main-status-bar"), start: {"padding-left": anchoredItems.offsetWidth - 1}, end: {"padding-left": 0}},
+            {element: document.getElementById("other-console-status-bar-items"), start: {opacity: 0}, end: {opacity: 1}}
+        ];
+
+        var consoleStatusBar = document.getElementById("console-status-bar");
+        consoleStatusBar.insertBefore(anchoredItems, consoleStatusBar.firstChild);
+
+        function animationFinished()
         {
-            if (!this.prompt.isCaretInsidePrompt())
-                this.prompt.moveCaretToEndOfPrompt();
+            if ("updateStatusBarItems" in WebInspector.currentPanel)
+                WebInspector.currentPanel.updateStatusBarItems();
+            WebInspector.currentFocusElement = this.messagesElement;
+            delete this._animating;
         }
 
-        setTimeout(focusPrompt.bind(this), 0);
+        WebInspector.animateStyle(animations, window.event && window.event.shiftKey ? 2000 : 250, animationFinished.bind(this));
+
+        if (!this.prompt.isCaretInsidePrompt())
+            this.prompt.moveCaretToEndOfPrompt();
     },
 
     hide: function()
     {
-        WebInspector.Panel.prototype.hide.call(this);
-        WebInspector.consoleListItem.deselect();
-        this.clearButton.addStyleClass("hidden");
+        if (this._animating)
+            return;
+
+        WebInspector.View.prototype.hide.call(this);
+
+        this._animating = true;
+
+        this.toggleButton.removeStyleClass("toggled-on");
+        this.toggleButton.title = WebInspector.UIString("Show console.");
+
+        if (WebInspector.currentFocusElement === this.messagesElement)
+            WebInspector.currentFocusElement = this._previousFocusElement;
+        delete this._previousFocusElement;
+
+        var anchoredItems = document.getElementById("anchored-status-bar-items");
+
+        var animations = [
+            {element: document.getElementById("main"), end: {bottom: 0}},
+            {element: document.getElementById("main-status-bar"), start: {"padding-left": 0}, end: {"padding-left": anchoredItems.offsetWidth - 1}},
+            {element: document.getElementById("other-console-status-bar-items"), start: {opacity: 1}, end: {opacity: 0}}
+        ];
+
+        function animationFinished()
+        {
+            var mainStatusBar = document.getElementById("main-status-bar");
+            mainStatusBar.insertBefore(anchoredItems, mainStatusBar.firstChild);
+            mainStatusBar.style.removeProperty("padding-left");
+            document.body.removeStyleClass("console-visible");
+            if ("updateStatusBarItems" in WebInspector.currentPanel)
+                WebInspector.currentPanel.updateStatusBarItems();
+            delete this._animating;
+        }
+
+        WebInspector.animateStyle(animations, window.event && window.event.shiftKey ? 2000 : 250, animationFinished.bind(this));
     },
 
     addMessage: function(msg)
     {
+/*
+        FIXME: Re-implement addMessageToSource in SourceView and ResourcesPanel.
         if (msg.url in WebInspector.resourceURLMap) {
             msg.resource = WebInspector.resourceURLMap[msg.url];
             switch (msg.level) {
@@ -97,6 +152,7 @@ WebInspector.ConsolePanel.prototype = {
                     break;
             }
         }
+*/
 
         this.messages.push(msg);
 
@@ -172,6 +228,11 @@ WebInspector.ConsolePanel.prototype = {
         return results;
     },
 
+    _toggleButtonClicked: function()
+    {
+        this.visible = !this.visible;
+    },
+
     _clearButtonClicked: function()
     {
         this.clearMessages();
@@ -215,8 +276,7 @@ WebInspector.ConsolePanel.prototype = {
             return;
 
         if (link && link.hasStyleClass("console-message-url")) {
-            WebInspector.navigateToResource(resource);
-            resource.panel.showSourceLine(item.message.line);
+            // FIXME: show the source in the Resources panel and scroll to the line.
         }
 
         event.stopPropagation();
@@ -232,6 +292,48 @@ WebInspector.ConsolePanel.prototype = {
         }
 
         this.prompt.handleKeyEvent(event);
+    },
+
+    _messagesFocused: function(previousFocusElement)
+    {
+        this._previousFocusElement = previousFocusElement;
+        if (!this.prompt.isCaretInsidePrompt())
+            this.prompt.moveCaretToEndOfPrompt();
+    },
+
+    _startStatusBarDragging: function(event)
+    {
+        if (!this.visible || event.target !== document.getElementById("main-status-bar"))
+            return;
+
+        WebInspector.elementDragStart(document.getElementById("main-status-bar"), this._statusBarDragging.bind(this), this._endStatusBarDragging.bind(this), event, "row-resize");
+
+        this._statusBarDragOffset = event.pageY - this.element.totalOffsetTop;
+
+        event.stopPropagation();
+    },
+
+    _statusBarDragging: function(event)
+    {
+        var mainElement = document.getElementById("main");
+
+        var height = window.innerHeight - event.pageY + this._statusBarDragOffset;
+        height = Number.constrain(height, Preferences.minConsoleHeight, window.innerHeight - mainElement.totalOffsetTop - Preferences.minConsoleHeight);
+
+        mainElement.style.bottom = height + "px";
+        this.element.style.height = height + "px";
+
+        event.preventDefault();
+        event.stopPropagation();
+    },
+
+    _endStatusBarDragging: function(event)
+    {
+        WebInspector.elementDragEnd(event);
+
+        delete this._statusBarDragOffset;
+
+        event.stopPropagation();
     },
 
     _evalInInspectedWindow: function(expression)
@@ -346,7 +448,7 @@ WebInspector.ConsolePanel.prototype = {
     },
 }
 
-WebInspector.ConsolePanel.prototype.__proto__ = WebInspector.Panel.prototype;
+WebInspector.Console.prototype.__proto__ = WebInspector.View.prototype;
 
 WebInspector.ConsoleMessage = function(source, level, message, line, url)
 {

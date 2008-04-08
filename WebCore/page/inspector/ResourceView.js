@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,25 +26,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceView = function(resource, views)
+WebInspector.ResourceView = function(resource)
 {
-    WebInspector.Panel.call(this, views);
+    WebInspector.View.call(this);
+
+    this.element.addStyleClass("resource-view");
+
     this.resource = resource;
+
+    this.contentElement = document.createElement("div");
+    this.contentElement.className = "resource-view-content";
+    this.element.appendChild(this.contentElement);
 }
 
 WebInspector.ResourceView.prototype = {
-    show: function()
+    attach: function()
     {
-        WebInspector.Panel.prototype.show.call(this);
-        this.resource.listItem.select(true); // passing true prevents a cycle
-        this.resource.listItem.reveal();
-    },
-
-    hide: function()
-    {
-        this.resource.listItem.deselect(true); // passing true prevents a cycle
-        WebInspector.Panel.prototype.hide.call(this);
+        document.getElementById("resource-views").appendChild(this.element);
     }
 }
 
-WebInspector.ResourceView.prototype.__proto__ = WebInspector.Panel.prototype;
+WebInspector.ResourceView.prototype.__proto__ = WebInspector.View.prototype;

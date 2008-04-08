@@ -1,3 +1,120 @@
+2008-04-08  Timothy Hatcher  <timothy@apple.com>
+
+        Implements the majority of the Inspector UI refresh as shown at:
+        http://trac.webkit.org/projects/webkit/wiki/ProposedWebInspectorUIRefresh
+
+        http://bugs.webkit.org/show_bug.cgi?id=17773
+
+        A few areas that have not been re-implemented with the new UI are:
+        * Search and search results.
+        * Request and response headers in the Resources panel.
+        * Changing the sorting, grouping or toggling small rows in Resources.
+        * Image and font previews in the icon of resources.
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/InspectorLocalizedStrings.js: Updated to match actual strings.
+        * WebCore.vcproj/WebCore.vcproj: Added new files.
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::setWindowVisible): Call resetScriptObjects()
+        instead of individual clear functions.
+        (WebCore::InspectorController::populateScriptObjects): Renamed from
+        populateScriptResources.
+        (WebCore::InspectorController::addDatabaseScriptResource): Call
+        addDatabase instead of addResource.
+        (WebCore::InspectorController::removeDatabaseScriptResource): Call
+        removeDatabase instead of removeResource.
+        (WebCore::InspectorController::resetScriptObjects): Renamed from
+        clearScriptResources.
+        (WebCore::InspectorController::didCommitLoad): Call resetScriptObjects()
+        instead of individual clear functions.
+        * page/InspectorController.h: Rename functions.
+        * page/inspector/Console.js: Changed the object name to Console from
+        ConsolePanel. Made it inherit the prototype from View. Added code
+        to animate in and out.
+        * page/inspector/Database.js: Removed title updating and Resource
+        pseudo-subclassing. Made more of a Model object that just encapsulates
+        data. Add a getter for table names.
+        * page/inspector/DatabaseQueryView.js: Added. Implements the view seen
+        when selecting a Database in the DatabasesPanel. Implemented as an
+        interactive console-like area.
+        * page/inspector/DatabaseTableView.js: Added. Implements the view seen
+        when selecting a Database Table in the DatabasesPanel. Matches the old
+        Browse view of Database panels.
+        * page/inspector/DatabasesPanel.js: Changed the object name to DatabasesPanel
+        from DatabasePanel. Implements a panel that shows a sidebar of Databases
+        and Database Tables.
+        * page/inspector/ElementsPanel.js:  Changed the object name to ElementsPanel
+        from DocumentPanel. Implements the DOM tree that shows the DOM rooted at the
+        main resource.
+        * page/inspector/FontView.js: Use this.contentElement instead of this.element.
+        * page/inspector/ImageView.js: Ditto.
+        * page/inspector/Images/clearConsoleButtons.png: Added.
+        * page/inspector/Images/consoleButtons.png: Added.
+        * page/inspector/Images/darkShadow.png: Flipped.
+        * page/inspector/Images/database.png: Modified to be 32x32.
+        * page/inspector/Images/databaseTable.png: Added.
+        * page/inspector/Images/databasesIcon.png: Added.
+        * page/inspector/Images/disclosureTriangleSmallDown.png: Added.
+        * page/inspector/Images/disclosureTriangleSmallDownBlack.png: Added.
+        * page/inspector/Images/disclosureTriangleSmallDownWhite.png: Added.
+        * page/inspector/Images/disclosureTriangleSmallRight.png: Added.
+        * page/inspector/Images/disclosureTriangleSmallRightBlack.png: Added.
+        * page/inspector/Images/disclosureTriangleSmallRightDown.png: Added.
+        * page/inspector/Images/disclosureTriangleSmallRightDownBlack.png: Added.
+        * page/inspector/Images/disclosureTriangleSmallRightDownWhite.png: Added.
+        * page/inspector/Images/disclosureTriangleSmallRightWhite.png: Added.
+        * page/inspector/Images/dockButtons.png: Added.
+        * page/inspector/Images/elementsIcon.png: Added.
+        * page/inspector/Images/gradientHighlightBottom.png:
+        * page/inspector/Images/resourceCSSIcon.png: Added.
+        * page/inspector/Images/resourceDocumentIcon.png: Added.
+        * page/inspector/Images/resourcePlainIcon.png: Added.
+        * page/inspector/Images/resourcesIcon.png: Added.
+        * page/inspector/Images/resourcesSizeGraphIcon.png: Added.
+        * page/inspector/Images/resourcesTimeGraphIcon.png: Added.
+        * page/inspector/Images/scriptsIcon.png: Added.
+        * page/inspector/Images/segment.png: Modified to fit the taller status bar.
+        * page/inspector/Images/segmentEnd.png: Ditto.
+        * page/inspector/Images/segmentHover.png: Ditto.
+        * page/inspector/Images/segmentHoverEnd.png: Ditto.
+        * page/inspector/Images/segmentSelected.png: Ditto.
+        * page/inspector/Images/segmentSelectedEnd.png: Ditto.
+        * page/inspector/Images/sidebarSelectionBackground.png: Added.
+        * page/inspector/Images/sidebarSelectionBackgroundFocused.png: Added.
+        * page/inspector/Images/sidebarSelectionBackgroundInactive.png: Added.
+        * page/inspector/Images/sidebarSmallSelectionBackground.png: Added.
+        * page/inspector/Images/sidebarSmallSelectionBackgroundFocused.png: Added.
+        * page/inspector/Images/sidebarSmallSelectionBackgroundInactive.png: Added.
+        * page/inspector/Images/statusbarBackground.png: Added.
+        * page/inspector/Images/statusbarBottomBackground.png: Added.
+        * page/inspector/Images/statusbarButtons.png: Added.
+        * page/inspector/Images/statusbarResizerVertical.png: Added.
+        * page/inspector/Images/toolbarItemSelected.png: Added.
+        * page/inspector/Panel.js: Added support for toolbar items and status bar items.
+        Inherits from the View prototype.
+        * page/inspector/Resource.js: Removed title updating and the ResourceTreeElement.
+        Made more of a Model object that just encapsulates data.
+        * page/inspector/ResourceCategory.js: Removed the ResourceCategoryTreeElement.
+        Made more of a Model object that just encapsulates data.
+        * page/inspector/ResourceView.js: A simple base object for Resource views
+        shown in ResourcesPanel. Inherits from the View prototype.
+        * page/inspector/ResourcesPanel.js: Changed the object name to ResourcesPanel
+        from NetworkPanel. Implements the timeline graph, size graph and resource
+        viewing by using ResourceViews.
+        * page/inspector/SidebarTreeElement.js: Added. Inherits from TreeElement and implements
+        a section element and a regular element that has an icon, title and optional subtitle.
+        * page/inspector/SourceView.js: Use this.contentElement instead of this.element.
+        * page/inspector/StylesSidebarPane.js: Null check WebInspector.mainResource.
+        * page/inspector/View.js: Added. A simple object to manage showing and hiding an element.
+        * page/inspector/WebKit.qrc: Added new files.
+        * page/inspector/inspector.css: New and changed style rules to support the new UI.
+        * page/inspector/inspector.html: New and changed HTML for the UI. The search field
+        is disabled until search is reimplemented.
+        * page/inspector/inspector.js: Removed code related to the sidebar and back-forward lists.
+        Also removed code related to navigation to panels. Added code to instantiate the new
+        panels and setup the toolbar.
+
 2008-04-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Antti Koivisto.

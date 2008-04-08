@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,27 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DocumentPanel = function(resource, views)
+WebInspector.ElementsPanel = function()
 {
-    var allViews = [{ title: WebInspector.UIString("DOM"), name: "dom" }];
-    if (views)
-        allViews = allViews.concat(views);
+    WebInspector.Panel.call(this);
 
-    WebInspector.SourceView.call(this, resource, allViews);
+    this.element.addStyleClass("elements");
 
-    var panel = this;
-    var domView = this.views.dom;
-    domView.hide = function() { InspectorController.hideDOMNodeHighlight() };
-    domView.show = function() {
-        panel.updateBreadcrumb();
-        panel.updateTreeSelection();
-    };
-
-    domView.sideContentElement = document.createElement("div");
-    domView.sideContentElement.className = "content side";
-
-    domView.treeContentElement = document.createElement("div");
-    domView.treeContentElement.className = "content tree outline-disclosure";
+    this.contentElement = document.createElement("div");
+    this.contentElement.id = "elements-content";
+    this.contentElement.className = "outline-disclosure";
 
     function clearNodeHighlight(event)
     {
@@ -54,66 +42,107 @@ WebInspector.DocumentPanel = function(resource, views)
             InspectorController.hideDOMNodeHighlight();
     }
 
-    domView.treeListElement = document.createElement("ol");
-    domView.treeListElement.addEventListener("mousedown", this._onmousedown.bind(this), false);
-    domView.treeListElement.addEventListener("dblclick", this._ondblclick.bind(this), false);
-    domView.treeListElement.addEventListener("mousemove", this._onmousemove.bind(this), false);
-    domView.treeListElement.addEventListener("mouseout", clearNodeHighlight.bind(domView.treeListElement), false);
-    domView.treeOutline = new TreeOutline(domView.treeListElement);
-    domView.treeOutline.panel = this;
+    this.treeListElement = document.createElement("ol");
+    this.treeListElement.addEventListener("mousedown", this._onmousedown.bind(this), false);
+    this.treeListElement.addEventListener("dblclick", this._ondblclick.bind(this), false);
+    this.treeListElement.addEventListener("mousemove", this._onmousemove.bind(this), false);
+    this.treeListElement.addEventListener("mouseout", clearNodeHighlight.bind(this.treeListElement), false);
 
-    domView.crumbsElement = document.createElement("div");
-    domView.crumbsElement.className = "crumbs";
-    domView.crumbsElement.addEventListener("mouseout", clearNodeHighlight.bind(domView.crumbsElement), false);
+    this.treeOutline = new TreeOutline(this.treeListElement);
+    this.treeOutline.panel = this;
 
-    domView.innerCrumbsElement = document.createElement("div");
-    domView.crumbsElement.appendChild(domView.innerCrumbsElement);
+    this.contentElement.appendChild(this.treeListElement);
 
-    domView.sidebarPanes = {};
-    domView.sidebarPanes.styles = new WebInspector.StylesSidebarPane();
-    domView.sidebarPanes.metrics = new WebInspector.MetricsSidebarPane();
-    domView.sidebarPanes.properties = new WebInspector.PropertiesSidebarPane();
+    this.crumbsElement = document.createElement("div");
+    this.crumbsElement.className = "crumbs";
+    this.crumbsElement.addEventListener("mouseout", clearNodeHighlight.bind(this.crumbsElement), false);
 
-    domView.sidebarPanes.styles.onexpand = function() { panel.updateStyles() };
-    domView.sidebarPanes.metrics.onexpand = function() { panel.updateMetrics() };
-    domView.sidebarPanes.properties.onexpand = function() { panel.updateProperties() };
+    this.sidebarPanes = {};
+    this.sidebarPanes.styles = new WebInspector.StylesSidebarPane();
+    this.sidebarPanes.metrics = new WebInspector.MetricsSidebarPane();
+    this.sidebarPanes.properties = new WebInspector.PropertiesSidebarPane();
 
-    domView.sidebarPanes.styles.expanded = true;
+    this.sidebarPanes.styles.onexpand = this.updateStyles.bind(this);
+    this.sidebarPanes.metrics.onexpand = this.updateMetrics.bind(this);
+    this.sidebarPanes.properties.onexpand = this.updateProperties.bind(this);
 
-    domView.sidebarElement = document.createElement("div");
-    domView.sidebarElement.className = "sidebar";
+    this.sidebarPanes.styles.expanded = true;
 
-    domView.sidebarElement.appendChild(domView.sidebarPanes.styles.element);
-    domView.sidebarElement.appendChild(domView.sidebarPanes.metrics.element);
-    domView.sidebarElement.appendChild(domView.sidebarPanes.properties.element);
+    this.sidebarElement = document.createElement("div");
+    this.sidebarElement.id = "elements-sidebar";
 
-    domView.sideContentElement.appendChild(domView.treeContentElement);
-    domView.sideContentElement.appendChild(domView.crumbsElement);
-    domView.treeContentElement.appendChild(domView.treeListElement);
+    this.sidebarElement.appendChild(this.sidebarPanes.styles.element);
+    this.sidebarElement.appendChild(this.sidebarPanes.metrics.element);
+    this.sidebarElement.appendChild(this.sidebarPanes.properties.element);
 
-    domView.sidebarResizeElement = document.createElement("div");
-    domView.sidebarResizeElement.className = "sidebar-resizer-vertical sidebar-resizer-vertical-right";
-    domView.sidebarResizeElement.addEventListener("mousedown", this.rightSidebarResizerDragStart.bind(this), false);
+    this.sidebarResizeElement = document.createElement("div");
+    this.sidebarResizeElement.className = "sidebar-resizer-vertical";
+    this.sidebarResizeElement.addEventListener("mousedown", this.rightSidebarResizerDragStart.bind(this), false);
 
-    domView.contentElement.appendChild(domView.sideContentElement);
-    domView.contentElement.appendChild(domView.sidebarElement);
-    domView.contentElement.appendChild(domView.sidebarResizeElement);
+    this.element.appendChild(this.contentElement);
+    this.element.appendChild(this.sidebarElement);
+    this.element.appendChild(this.sidebarResizeElement);
 
-    this.rootDOMNode = this.resource.documentNode;
+    this.reset();
 }
 
-WebInspector.DocumentPanel.prototype = {
+WebInspector.ElementsPanel.prototype = {
+    toolbarItemClass: "elements",
+
+    get toolbarItemLabel()
+    {
+        return WebInspector.UIString("Elements");
+    },
+
+    get statusBarItems()
+    {
+        return [this.crumbsElement];
+    },
+
+    updateStatusBarItems: function()
+    {
+        this.updateBreadcrumbSizes();
+    },
+
+    show: function()
+    {
+        WebInspector.Panel.prototype.show.call(this);
+        this.sidebarResizeElement.style.right = (this.sidebarElement.offsetWidth - 3) + "px";
+        this.updateBreadcrumb();
+        this.updateTreeSelection();
+    },
+
+    hide: function()
+    {
+        WebInspector.Panel.prototype.hide.call(this);
+        InspectorController.hideDOMNodeHighlight();
+    },
+
     resize: function()
     {
         this.updateTreeSelection();
         this.updateBreadcrumbSizes();
     },
 
+    reset: function()
+    {
+        var inspectedRootDocument = InspectorController.inspectedWindow().document;
+        this.rootDOMNode = inspectedRootDocument;
+
+        var canidateFocusNode = inspectedRootDocument.body || inspectedRootDocument.documentElement;
+        if (canidateFocusNode) {
+            this.focusedDOMNode = canidateFocusNode;
+            if (this.treeOutline.selectedTreeElement)
+                this.treeOutline.selectedTreeElement.expand();
+        } else
+            this.focusedDOMNode = null;
+    },
+
     updateTreeSelection: function()
     {
-        if (!this.views.dom.treeOutline || !this.views.dom.treeOutline.selectedTreeElement)
+        if (!this.treeOutline || !this.treeOutline.selectedTreeElement)
             return;
-        var element = this.views.dom.treeOutline.selectedTreeElement;
+        var element = this.treeOutline.selectedTreeElement;
         element.updateSelection();
     },
 
@@ -160,8 +189,8 @@ WebInspector.DocumentPanel.prototype = {
     {
         this.updateBreadcrumb(forceUpdate);
 
-        for (var pane in this.views.dom.sidebarPanes)
-            this.views.dom.sidebarPanes[pane].needsUpdate = true;
+        for (var pane in this.sidebarPanes)
+            this.sidebarPanes[pane].needsUpdate = true;
 
         this.updateStyles(forceUpdate);
         this.updateMetrics();
@@ -170,7 +199,7 @@ WebInspector.DocumentPanel.prototype = {
 
     revealNode: function(node)
     {
-        var nodeItem = this.views.dom.treeOutline.findTreeElement(node, this._isAncestorIncludingParentFramesWithinPanel.bind(this), this._parentNodeOrFrameElementWithinPanel.bind(this));
+        var nodeItem = this.treeOutline.findTreeElement(node, this._isAncestorIncludingParentFrames.bind(this), this._parentNodeOrFrameElement.bind(this));
         if (!nodeItem)
             return;
 
@@ -180,7 +209,7 @@ WebInspector.DocumentPanel.prototype = {
 
     updateTreeOutline: function()
     {
-        this.views.dom.treeOutline.removeChildrenRecursive();
+        this.treeOutline.removeChildrenRecursive();
 
         if (!this.rootDOMNode)
             return;
@@ -188,7 +217,7 @@ WebInspector.DocumentPanel.prototype = {
         // FIXME: this could use findTreeElement to reuse a tree element if it already exists
         var node = (Preferences.ignoreWhitespace ? firstChildSkippingWhitespace.call(this.rootDOMNode) : this.rootDOMNode.firstChild);
         while (node) {
-            this.views.dom.treeOutline.appendChild(new WebInspector.DOMNodeTreeElement(node));
+            this.treeOutline.appendChild(new WebInspector.DOMNodeTreeElement(node));
             node = Preferences.ignoreWhitespace ? nextSiblingSkippingWhitespace.call(node) : node.nextSibling;
         }
 
@@ -200,7 +229,7 @@ WebInspector.DocumentPanel.prototype = {
         if (!this.visible)
             return;
 
-        var crumbs = this.views.dom.innerCrumbsElement;
+        var crumbs = this.crumbsElement;
 
         var handled = false;
         var foundRoot = false;
@@ -238,7 +267,7 @@ WebInspector.DocumentPanel.prototype = {
             var crumb = event.currentTarget;
             if (crumb.hasStyleClass("collapsed")) {
                 // Clicking a collapsed crumb will expose the hidden crumbs.
-                if (crumb === panel.views.dom.innerCrumbsElement.firstChild) {
+                if (crumb === panel.crumbsElement.firstChild) {
                     // If the focused crumb is the first child, pick the farthest crumb
                     // that is still hidden. This allows the user to expose every crumb.
                     var currentCrumb = crumb;
@@ -260,6 +289,8 @@ WebInspector.DocumentPanel.prototype = {
                     panel.rootDOMNode = crumb.representedObject.parentNode;
                 panel.focusedDOMNode = crumb.representedObject;
             }
+
+            WebInspector.currentFocusElement = document.getElementById("main-panels");
 
             event.preventDefault();
         };
@@ -291,10 +322,7 @@ WebInspector.DocumentPanel.prototype = {
         };
 
         foundRoot = false;
-        for (var current = this.focusedDOMNode; current; current = this._parentNodeOrFrameElementWithinPanel(current)) {
-            if (current === this.resource.documentNode)
-                break;
-
+        for (var current = this.focusedDOMNode; current; current = this._parentNodeOrFrameElement(current)) {
             if (current.nodeType === Node.DOCUMENT_NODE)
                 continue;
 
@@ -408,13 +436,9 @@ WebInspector.DocumentPanel.prototype = {
             return;
         }
 
-        var crumbs = this.views.dom.innerCrumbsElement;
-        if (!crumbs.childNodes.length)
+        var crumbs = this.crumbsElement;
+        if (!crumbs.childNodes.length || crumbs.offsetWidth <= 0)
             return; // No crumbs, do nothing.
-
-        var crumbsContainer = this.views.dom.crumbsElement;
-        if (crumbsContainer.offsetWidth <= 0 || crumbs.offsetWidth <= 0)
-            return;
 
         // A Zero index is the right most child crumb in the breadcrumb.
         var selectedIndex = 0;
@@ -456,10 +480,8 @@ WebInspector.DocumentPanel.prototype = {
 
         function crumbsAreSmallerThanContainer()
         {
-            // There is some fixed extra space that is not returned in the crumbs' offsetWidth.
-            // This padding is added to the crumbs' offsetWidth when comparing to the crumbsContainer.
-            var rightPadding = 9;
-            return ((crumbs.offsetWidth + rightPadding) < crumbsContainer.offsetWidth);
+            var rightPadding = 20;
+            return ((crumbs.totalOffsetLeft + crumbs.offsetWidth + rightPadding) < window.innerWidth);
         }
 
         if (crumbsAreSmallerThanContainer())
@@ -499,7 +521,7 @@ WebInspector.DocumentPanel.prototype = {
             }
 
             // Shrink crumbs one at a time by applying the shrinkingFunction until the crumbs
-            // fit in the crumbsContainer or we run out of crumbs to shrink.
+            // fit in the container or we run out of crumbs to shrink.
             if (direction) {
                 // Crumbs are shrunk on only one side (based on direction) of the signifcant crumb.
                 var index = (direction > 0 ? 0 : crumbs.childNodes.length - 1);
@@ -652,17 +674,17 @@ WebInspector.DocumentPanel.prototype = {
 
     updateStyles: function(forceUpdate)
     {
-        var stylesSidebarPane = this.views.dom.sidebarPanes.styles;
+        var stylesSidebarPane = this.sidebarPanes.styles;
         if (!stylesSidebarPane.expanded || !stylesSidebarPane.needsUpdate)
             return;
 
-        stylesSidebarPane.update(this.focusedDOMNode, undefined, forceUpdate);
+        stylesSidebarPane.update(this.focusedDOMNode, null, forceUpdate);
         stylesSidebarPane.needsUpdate = false;
     },
 
     updateMetrics: function()
     {
-        var metricsSidebarPane = this.views.dom.sidebarPanes.metrics;
+        var metricsSidebarPane = this.sidebarPanes.metrics;
         if (!metricsSidebarPane.expanded || !metricsSidebarPane.needsUpdate)
             return;
 
@@ -672,7 +694,7 @@ WebInspector.DocumentPanel.prototype = {
 
     updateProperties: function()
     {
-        var propertiesSidebarPane = this.views.dom.sidebarPanes.properties;
+        var propertiesSidebarPane = this.sidebarPanes.properties;
         if (!propertiesSidebarPane.expanded || !propertiesSidebarPane.needsUpdate)
             return;
 
@@ -682,15 +704,11 @@ WebInspector.DocumentPanel.prototype = {
 
     handleKeyEvent: function(event)
     {
-        if (this.views.dom.treeOutline && this.currentView && this.currentView === this.views.dom)
-            this.views.dom.treeOutline.handleKeyEvent(event);
+        this.treeOutline.handleKeyEvent(event);
     },
 
     handleCopyEvent: function(event)
     {
-        if (this.currentView !== this.views.dom)
-            return;
-
         // Don't prevent the normal copy if the user has a selection.
         if (!window.getSelection().isCollapsed)
             return;
@@ -718,7 +736,7 @@ WebInspector.DocumentPanel.prototype = {
 
     rightSidebarResizerDragStart: function(event)
     {
-        WebInspector.elementDragStart(this.views.dom.sidebarElement, this.rightSidebarResizerDrag.bind(this), this.rightSidebarResizerDragEnd.bind(this), event, "col-resize");
+        WebInspector.elementDragStart(this.sidebarElement, this.rightSidebarResizerDrag.bind(this), this.rightSidebarResizerDragEnd.bind(this), event, "col-resize");
     },
 
     rightSidebarResizerDragEnd: function(event)
@@ -729,16 +747,13 @@ WebInspector.DocumentPanel.prototype = {
     rightSidebarResizerDrag: function(event)
     {
         var x = event.pageX;
+        var newWidth = Number.constrain(window.innerWidth - x, Preferences.minElementsSidebarWidth, window.innerWidth * 0.66);
 
-        var leftSidebarWidth = document.getElementById("sidebar").offsetWidth;
-        var newWidth = Number.constrain(window.innerWidth - x, 100, window.innerWidth - leftSidebarWidth - 100);
-
-        this.views.dom.sidebarElement.style.width = newWidth + "px";
-        this.views.dom.sideContentElement.style.right = newWidth + "px";
-        this.views.dom.sidebarResizeElement.style.right = (newWidth - 3) + "px";
+        this.sidebarElement.style.width = newWidth + "px";
+        this.contentElement.style.right = newWidth + "px";
+        this.sidebarResizeElement.style.right = (newWidth - 3) + "px";
 
         this.updateTreeSelection();
-        this.updateBreadcrumbSizes();
 
         event.preventDefault();
     },
@@ -748,41 +763,29 @@ WebInspector.DocumentPanel.prototype = {
         return node.nodeType == Node.DOCUMENT_NODE ? node : node.ownerDocument;
     },
 
-    _parentNodeOrFrameElementWithinPanel: function(node)
+    _parentNodeOrFrameElement: function(node)
     {
         var parent = node.parentNode;
         if (parent)
             return parent;
 
         var document = this._getDocumentForNode(node);
-
-        if (document === this.resource.documentNode)
-            return undefined;
-
         return document.defaultView.frameElement;
     },
 
-    _isAncestorIncludingParentFramesWithinPanel: function(a, b)
+    _isAncestorIncludingParentFrames: function(a, b)
     {
-        for (var node = b; node; node = this._getDocumentForNode(node).defaultView.frameElement) {
+        for (var node = b; node; node = this._getDocumentForNode(node).defaultView.frameElement)
             if (isAncestorNode.call(a, node))
                 return true;
-
-            if (this._getDocumentForNode(node) === this.resource.documentNode) {
-                // We've gone as high in the frame hierarchy as we can without
-                // moving out of this DocumentPanel.
-                return false;
-            }
-        }
-
         return false;
     },
 
     _treeElementFromEvent: function(event)
     {
-        var outline = this.views.dom.treeOutline;
+        var outline = this.treeOutline;
 
-        var root = this.views.dom.treeListElement;
+        var root = this.treeListElement;
 
         // We choose this X coordinate based on the knowledge that our list
         // items extend nearly to the right edge of the outer <ol>.
@@ -834,7 +837,7 @@ WebInspector.DocumentPanel.prototype = {
     },
 }
 
-WebInspector.DocumentPanel.prototype.__proto__ = WebInspector.SourceView.prototype;
+WebInspector.ElementsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 WebInspector.DOMNodeTreeElement = function(node)
 {

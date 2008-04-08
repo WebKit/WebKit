@@ -3,6 +3,9 @@
     <file>Console.js</file>
     <file>Database.js</file>
     <file>DatabasesPanel.js</file>
+    <file>View.js</file>
+    <file>DatabaseTableView.js</file>
+    <file>DatabaseQueryView.js</file>
     <file>ElementsPanel.js</file>
     <file>FontView.js</file>
     <file>TextPrompt.js</file>
@@ -16,6 +19,7 @@
     <file>ResourceView.js</file>
     <file>ResourcesPanel.js</file>
     <file>SidebarPane.js</file>
+    <file>SidebarTreeElement.js</file>
     <file>SourceView.js</file>
     <file>StylesSidebarPane.js</file>
     <file>inspector.css</file>

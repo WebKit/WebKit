@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,24 +26,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceView = function(resource, views)
+WebInspector.SourceView = function(resource)
 {
-    var allViews = [{ title: WebInspector.UIString("Source"), name: "source" }];
-    if (views)
-        allViews = allViews.concat(views);
+    WebInspector.ResourceView.call(this, resource);
 
-    WebInspector.ResourceView.call(this, resource, allViews);
+    this.element.addStyleClass("source");
 
-    this.currentView = this.views.source;
+    this.messages = [];
+    this._frameNeedsSetup = true;
 
-    var sourceView = this.views.source;
-
-    sourceView.messages = [];
-    sourceView.frameNeedsSetup = true;
-
-    sourceView.frameElement = document.createElement("iframe");
-    sourceView.frameElement.setAttribute("viewsource", "true");
-    sourceView.contentElement.appendChild(sourceView.frameElement);
+    this.frameElement = document.createElement("iframe");
+    this.frameElement.className = "source-view-frame";
+    this.frameElement.setAttribute("viewsource", "true");
+    this.contentElement.appendChild(this.frameElement);
 }
 
 WebInspector.SourceView.prototype = {
@@ -55,17 +50,17 @@ WebInspector.SourceView.prototype = {
 
     setupSourceFrameIfNeeded: function()
     {
-        if (this.views.source.frameNeedsSetup) {
+        if (this._frameNeedsSetup) {
             this.attach();
 
-            InspectorController.addSourceToFrame(this.resource.identifier, this.views.source.frameElement);
-            WebInspector.addMainEventListeners(this.views.source.frameElement.contentDocument);
+            InspectorController.addSourceToFrame(this.resource.identifier, this.frameElement);
+            WebInspector.addMainEventListeners(this.frameElement.contentDocument);
 
-            var length = this.views.source.messages;
+            var length = this.messages;
             for (var i = 0; i < length; ++i)
-                this._addMessageToSource(this.views.source.messages[i]);
+                this._addMessageToSource(this.messages[i]);
 
-            delete this.views.source.frameNeedsSetup;
+            delete this._frameNeedsSetup;
         }
     },
 
@@ -73,7 +68,7 @@ WebInspector.SourceView.prototype = {
     {
         this.setupSourceFrameIfNeeded();
 
-        var doc = this.views.source.frameElement.contentDocument;
+        var doc = this.frameElement.contentDocument;
         var rows = doc.getElementsByTagName("table")[0].rows;
 
         // Line numbers are a 1-based index, but the rows collection is 0-based.
@@ -89,14 +84,13 @@ WebInspector.SourceView.prototype = {
         var row = this.sourceRow(lineNumber);
         if (!row)
             return;
-        this.currentView = this.views.source;
         row.scrollIntoViewIfNeeded(true);
     },
 
     addMessageToSource: function(msg)
     {
-        this.views.source.messages.push(msg);
-        if (!this.views.source.frameNeedsSetup)
+        this.messages.push(msg);
+        if (!this._frameNeedsSetup)
             this._addMessageToSource(msg);
     },
 
@@ -106,7 +100,7 @@ WebInspector.SourceView.prototype = {
         if (!row)
             return;
 
-        var doc = this.views.source.frameElement.contentDocument;
+        var doc = this.frameElement.contentDocument;
         var cell = row.getElementsByTagName("td")[1];
 
         var errorDiv = cell.lastChild;

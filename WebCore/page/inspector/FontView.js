@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ WebInspector.FontView = function(resource)
 
     this.fontPreviewElement = document.createElement("div");
     this.fontPreviewElement.className = "preview";
-    this.element.appendChild(this.fontPreviewElement);
+    this.contentElement.appendChild(this.fontPreviewElement);
 
     this.fontPreviewElement.style.setProperty("font-family", uniqueFontName, null);
     this.fontPreviewElement.innerHTML = "ABCDEFGHIJKLM<br>NOPQRSTUVWXYZ<br>abcdefghijklm<br>nopqrstuvwxyz<br>1234567890";
@@ -71,8 +71,8 @@ WebInspector.FontView.prototype = {
         var height = this.fontPreviewElement.offsetHeight;
         var width = this.fontPreviewElement.offsetWidth;
 
-        var containerHeight = this.element.offsetHeight;
-        var containerWidth = this.element.offsetWidth;
+        var containerHeight = this.contentElement.offsetHeight;
+        var containerWidth = this.contentElement.offsetWidth;
 
         if (!height || !width || !containerHeight || !containerWidth) {
             this.fontPreviewElement.style.removeProperty("font-size");

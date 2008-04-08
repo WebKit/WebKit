@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,11 +32,6 @@ WebInspector.Database = function(database, domain, name, version)
     this.domain = domain;
     this.name = name;
     this.version = version;
-
-    this.listItem = new WebInspector.ResourceTreeElement(this);
-    this.updateTitle();
-
-    this.category.addResource(this);
 }
 
 WebInspector.Database.prototype = {
@@ -62,7 +57,6 @@ WebInspector.Database.prototype = {
         if (this._name === x)
             return;
         this._name = x;
-        this.updateTitleSoon();
     },
 
     get version()
@@ -87,43 +81,15 @@ WebInspector.Database.prototype = {
         if (this._domain === x)
             return;
         this._domain = x;
-        this.updateTitleSoon();
     },
 
-    get category()
+    get displayDomain()
     {
-        return WebInspector.resourceCategories.databases;
+        return WebInspector.Resource.prototype.__lookupGetter__("displayDomain").call(this);
     },
 
-    updateTitle: function()
+    get tableNames()
     {
-        delete this.updateTitleTimeout;
-
-        var title = this.name;
-
-        var info = "";
-        if (this.domain && (!WebInspector.mainResource || (WebInspector.mainResource && this.domain !== WebInspector.mainResource.domain)))
-            info = this.domain;
-
-        var fullTitle = "<span class=\"title" + (info && info.length ? "" : " only") + "\">" + title.escapeHTML() + "</span>";
-        if (info && info.length)
-            fullTitle += "<span class=\"info\">" + info.escapeHTML() + "</span>";
-        fullTitle += "<div class=\"icon database\"></div>";
-
-        this.listItem.title = fullTitle;
-    },
-
-    get panel()
-    {
-        if (!this._panel)
-            this._panel = new WebInspector.DatabasePanel(this);
-        return this._panel;
-    },
-
-    // Inherit the other functions from the Resource prototype.
-    updateTitleSoon: WebInspector.Resource.prototype.updateTitleSoon,
-    select: WebInspector.Resource.prototype.select,
-    deselect: WebInspector.Resource.prototype.deselect,
-    attach: WebInspector.Resource.prototype.attach,
-    detach: WebInspector.Resource.prototype.detach
+        return InspectorController.databaseTableNames(this.database).sort();
+    }
 }

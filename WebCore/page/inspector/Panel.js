@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,155 +26,79 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Panel = function(views)
+WebInspector.Panel = function()
 {
-    this._visible = false;
+    WebInspector.View.call(this);
 
-    this.element = document.createElement("div");
-    this.element.className = "panel";
-
-    this.views = {};
-    this.viewButtons = [];
-
-    if (views) {
-        var selectViewFunction = function(event)
-        {
-            var clickedView = event.currentTarget.view;
-            clickedView.panel.currentView = clickedView;
-        };
-
-        for (var i = 0; i < views.length; ++i) {
-            var view = views[i];
-            view.panel = this;
-
-            view.buttonElement = document.createElement("button");
-            view.buttonElement.title = view.title;
-            view.buttonElement.addEventListener("click", selectViewFunction, false);
-            view.buttonElement.appendChild(document.createElement("img"));
-            view.buttonElement.view = view;
-
-            view.contentElement = document.createElement("div");
-            view.contentElement.className = "content " + view.name;
-
-            this.views[view.name] = view;
-            this.viewButtons.push(view.buttonElement);
-            this.element.appendChild(view.contentElement);
-        }
-    }
+    this.element.addStyleClass("panel");
 }
 
 WebInspector.Panel.prototype = {
+    get toolbarItem()
+    {
+        if (this._toolbarItem)
+            return this._toolbarItem;
+
+        // Sample toolbar item as markup:
+        // <button class="toolbar-item resources toggleable">
+        // <img class="toolbar-icon">
+        // <div class="toolbar-label">Resources</div>
+        // </button>
+
+        this._toolbarItem = document.createElement("button");
+        this._toolbarItem.className = "toolbar-item toggleable";
+        this._toolbarItem.panel = this;
+
+        if ("toolbarItemClass" in this)
+            this._toolbarItem.addStyleClass(this.toolbarItemClass);
+
+        var iconElement = document.createElement("img");
+        iconElement.className = "toolbar-icon";
+        this._toolbarItem.appendChild(iconElement);
+
+        if ("toolbarItemLabel" in this) {
+            var labelElement = document.createElement("div");
+            labelElement.className = "toolbar-label";
+            labelElement.textContent = this.toolbarItemLabel;
+            this._toolbarItem.appendChild(labelElement);
+        }
+
+        return this._toolbarItem;
+    },
+
     show: function()
     {
-        this._visible = true;
-        if (!this.element.parentNode)
-            this.attach();
-        this.element.addStyleClass("selected");
-        this.updateToolbar();
-        if (this.currentView && this.currentView.show)
-            this.currentView.show();
+        WebInspector.View.prototype.show.call(this);
+
+        var statusBarItems = this.statusBarItems;
+        if (statusBarItems) {
+            this._statusBarItemContainer = document.createElement("div");
+            for (var i = 0; i < statusBarItems.length; ++i)
+                this._statusBarItemContainer.appendChild(statusBarItems[i]);
+            document.getElementById("main-status-bar").appendChild(this._statusBarItemContainer);
+        }
+
+        if ("_toolbarItem" in this)
+            this._toolbarItem.addStyleClass("toggled-on");
+
+        WebInspector.currentFocusElement = document.getElementById("main-panels");
     },
 
     hide: function()
     {
-        if (this.currentView && this.currentView.hide)
-            this.currentView.hide();
-        document.getElementById("toolbarButtons").removeChildren();
-        this.element.removeStyleClass("selected");
-        this._visible = false;
-    },
+        WebInspector.View.prototype.hide.call(this);
 
-    updateToolbar: function()
-    {
-        var buttonContainer = document.getElementById("toolbarButtons");
-        buttonContainer.removeChildren();
-
-        var buttons = this.viewButtons;
-        if (buttons.length < 2)
-            return;
-
-        for (var i = 0; i < buttons.length; ++i) {
-            var button = buttons[i];
-
-            if (i === 0)
-                button.addStyleClass("first");
-            else if (i === (buttons.length - 1))
-                button.addStyleClass("last");
-
-            if (i) {
-                var divider = document.createElement("img");
-                divider.className = "split-button-divider";
-                buttonContainer.appendChild(divider);
-            }
-
-            button.addStyleClass("split-button");
-            button.addStyleClass("view-button-" + button.title.toLowerCase());
-
-            buttonContainer.appendChild(button);
-        }
+        if (this._statusBarItemContainer && this._statusBarItemContainer.parentNode)
+            this._statusBarItemContainer.parentNode.removeChild(this._statusBarItemContainer);
+        delete this._statusBarItemContainer;
+        if ("_toolbarItem" in this)
+            this._toolbarItem.removeStyleClass("toggled-on");
     },
 
     attach: function()
     {
-        document.getElementById("panels").appendChild(this.element);
-    },
-
-    detach: function()
-    {
-        if (WebInspector.currentPanel === this)
-            WebInspector.currentPanel = null;
-        if (this.element && this.element.parentNode)
-            this.element.parentNode.removeChild(this.element);
-    },
-
-    get currentView()
-    {
-        return this._currentView;
-    },
-
-    set currentView(x)
-    {
-        if (typeof x === "string" || x instanceof String)
-            x = this.views[x];
-
-        if (this._currentView === x)
-            return;
-
-        if (this !== x.panel) {
-            console.error("Set currentView to a view " + x.title + " whose panel is not this panel");
-            return;
-        }
-
-        if (this._currentView) {
-            this._currentView.buttonElement.removeStyleClass("selected");
-            this._currentView.contentElement.removeStyleClass("selected");
-            if (this._currentView.hide)
-                this._currentView.hide();
-        }
-
-        this._currentView = x;
-
-        if (x) {
-            x.buttonElement.addStyleClass("selected");
-            x.contentElement.addStyleClass("selected");
-            if (x.show)
-                x.show();
-        }
-    },
-
-    get visible()
-    {
-        return this._visible;
-    },
-
-    set visible(x)
-    {
-        if (this._visible === x)
-            return;
-
-        if (x)
-            this.show();
-        else
-            this.hide();
+        document.getElementById("main-panels").appendChild(this.element);
     }
 }
+
+WebInspector.Panel.prototype.__proto__ = WebInspector.View.prototype;
