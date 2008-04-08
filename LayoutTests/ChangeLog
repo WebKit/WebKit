@@ -1,5 +1,12 @@
 2008-04-07  Brady Eidson  <beidson@apple.com>
 
+        I can't fathom why the new storage tests could be hanging, but alas they are on Windows
+        Disable until I can figure out why
+
+        * platform/win/Skipped:
+
+2008-04-07  Brady Eidson  <beidson@apple.com>
+
         Begrudgingly reviewed by Sam Weinig
 
         Initial suite of layout tests for HTML5 key/value SessionStorage (<rdar://problem/5797684>)
