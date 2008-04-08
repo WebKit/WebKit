@@ -1,5 +1,14 @@
 2008-04-07  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by John Honeycutt
+
+        ENABLE_DOM_STORAGE for Windows
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/build-generated-files.sh:
+
+2008-04-07  Brady Eidson  <beidson@apple.com>
+
         Fix build for builds without DOM_STORAGE enabled
 
         * dom/EventTargetNode.cpp:

@@ -1,3 +1,11 @@
+2008-04-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Honeycutt
+
+        ENABLE_DOM_STORAGE for Windows
+
+        * WebKit.vcproj/WebKit.vcproj:
+
 2008-04-04  Adam Roben  <aroben@apple.com>
 
         Export some more WTF functions from WebKit.dll
