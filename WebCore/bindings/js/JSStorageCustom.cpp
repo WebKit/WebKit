@@ -48,8 +48,8 @@ JSValue* JSStorage::nameGetter(ExecState* exec, JSObject* originalObject, const 
 
 bool JSStorage::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
-    // We need to only perform the custom put if the object doesn't have a native property by this name.
-    // since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
+    // Only perform the custom put if the object doesn't have a native property by this name.
+    // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
     // the native property slots manually.
     PropertySlot slot;
     if (getStaticValueSlot<JSStorage, Base>(exec, s_info.propHashTable, this, propertyName, slot))
