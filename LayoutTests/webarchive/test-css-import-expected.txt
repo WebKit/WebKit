@@ -35,44 +35,6 @@
 	<array>
 		<dict>
 			<key>WebResourceData</key>
-			<string>@import url('test-css-link-recurse.css');
-.red { color: red; }
-</string>
-			<key>WebResourceMIMEType</key>
-			<string>text/css</string>
-			<key>WebResourceResponse</key>
-			<dict>
-				<key>MIMEType</key>
-				<string>text/css</string>
-				<key>URL</key>
-				<string>file:///LayoutTests/webarchive/resources/test-css-link.css</string>
-				<key>expectedContentLength</key>
-				<integer>63</integer>
-			</dict>
-			<key>WebResourceURL</key>
-			<string>file:///LayoutTests/webarchive/resources/test-css-link.css</string>
-		</dict>
-		<dict>
-			<key>WebResourceData</key>
-			<string>@import url('test-css-link-recurse.css');
-.purple { color: purple; }
-</string>
-			<key>WebResourceMIMEType</key>
-			<string>text/css</string>
-			<key>WebResourceResponse</key>
-			<dict>
-				<key>MIMEType</key>
-				<string>text/css</string>
-				<key>URL</key>
-				<string>file:///LayoutTests/webarchive/resources/test-css-link-recurse.css</string>
-				<key>expectedContentLength</key>
-				<integer>69</integer>
-			</dict>
-			<key>WebResourceURL</key>
-			<string>file:///LayoutTests/webarchive/resources/test-css-link-recurse.css</string>
-		</dict>
-		<dict>
-			<key>WebResourceData</key>
 			<string>@import url('test-css-import.css');
 .green { color: green; }
 </string>
@@ -108,6 +70,44 @@
 			</dict>
 			<key>WebResourceURL</key>
 			<string>file:///LayoutTests/webarchive/resources/test-css-import.css</string>
+		</dict>
+		<dict>
+			<key>WebResourceData</key>
+			<string>@import url('test-css-link-recurse.css');
+.purple { color: purple; }
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/css</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/test-css-link-recurse.css</string>
+				<key>expectedContentLength</key>
+				<integer>69</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/test-css-link-recurse.css</string>
+		</dict>
+		<dict>
+			<key>WebResourceData</key>
+			<string>@import url('test-css-link-recurse.css');
+.red { color: red; }
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/css</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/test-css-link.css</string>
+				<key>expectedContentLength</key>
+				<integer>63</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/test-css-link.css</string>
 		</dict>
 	</array>
 </dict>

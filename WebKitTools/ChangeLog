@@ -1,3 +1,14 @@
+2008-04-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitzpettel
+
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=18302
+        -WebArchive subresources dump in random order, intermittent failures
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (compareResourceURLs): Sorting function based on the resource URLs
+        (serializeWebArchiveToXML): Sort the subresource array
+
 2008-04-07  Brady Eidson  <beidson@apple.com>
 
         OMG, BUILD - please!

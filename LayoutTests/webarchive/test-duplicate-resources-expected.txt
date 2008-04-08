@@ -67,24 +67,6 @@
 			<array>
 				<dict>
 					<key>WebResourceData</key>
-					<string>div { font-family: Arial, Helvetica, sans-serif; color: red; }
-</string>
-					<key>WebResourceMIMEType</key>
-					<string>text/css</string>
-					<key>WebResourceResponse</key>
-					<dict>
-						<key>MIMEType</key>
-						<string>text/css</string>
-						<key>URL</key>
-						<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
-						<key>expectedContentLength</key>
-						<integer>63</integer>
-					</dict>
-					<key>WebResourceURL</key>
-					<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
-				</dict>
-				<dict>
-					<key>WebResourceData</key>
 					<data>
 					R0lGODlhNABAAMQfAGJiYvLz9ImKitvb2/39
 					/cnJyaSkpOPj49TU1MHBwbW1terq7Lu7u/X1
@@ -156,48 +138,29 @@
 					<key>WebResourceURL</key>
 					<string>file:///LayoutTests/webarchive/resources/apple.gif</string>
 				</dict>
+				<dict>
+					<key>WebResourceData</key>
+					<string>div { font-family: Arial, Helvetica, sans-serif; color: red; }
+</string>
+					<key>WebResourceMIMEType</key>
+					<string>text/css</string>
+					<key>WebResourceResponse</key>
+					<dict>
+						<key>MIMEType</key>
+						<string>text/css</string>
+						<key>URL</key>
+						<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
+						<key>expectedContentLength</key>
+						<integer>63</integer>
+					</dict>
+					<key>WebResourceURL</key>
+					<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
+				</dict>
 			</array>
 		</dict>
 	</array>
 	<key>WebSubresources</key>
 	<array>
-		<dict>
-			<key>WebResourceData</key>
-			<string>if (window.layoutTestController)
-    layoutTestController.dumpDOMAsWebArchive();
-</string>
-			<key>WebResourceMIMEType</key>
-			<string>text/javascript</string>
-			<key>WebResourceResponse</key>
-			<dict>
-				<key>MIMEType</key>
-				<string>text/javascript</string>
-				<key>URL</key>
-				<string>file:///LayoutTests/webarchive/resources/dump-webarchive.js</string>
-				<key>expectedContentLength</key>
-				<integer>81</integer>
-			</dict>
-			<key>WebResourceURL</key>
-			<string>file:///LayoutTests/webarchive/resources/dump-webarchive.js</string>
-		</dict>
-		<dict>
-			<key>WebResourceData</key>
-			<string>div { font-family: Arial, Helvetica, sans-serif; color: red; }
-</string>
-			<key>WebResourceMIMEType</key>
-			<string>text/css</string>
-			<key>WebResourceResponse</key>
-			<dict>
-				<key>MIMEType</key>
-				<string>text/css</string>
-				<key>URL</key>
-				<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
-				<key>expectedContentLength</key>
-				<integer>63</integer>
-			</dict>
-			<key>WebResourceURL</key>
-			<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
-		</dict>
 		<dict>
 			<key>WebResourceData</key>
 			<data>
@@ -253,6 +216,43 @@
 			</dict>
 			<key>WebResourceURL</key>
 			<string>file:///LayoutTests/webarchive/resources/apple.gif</string>
+		</dict>
+		<dict>
+			<key>WebResourceData</key>
+			<string>if (window.layoutTestController)
+    layoutTestController.dumpDOMAsWebArchive();
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/javascript</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/javascript</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/dump-webarchive.js</string>
+				<key>expectedContentLength</key>
+				<integer>81</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/dump-webarchive.js</string>
+		</dict>
+		<dict>
+			<key>WebResourceData</key>
+			<string>div { font-family: Arial, Helvetica, sans-serif; color: red; }
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/css</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
+				<key>expectedContentLength</key>
+				<integer>63</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
 		</dict>
 	</array>
 </dict>

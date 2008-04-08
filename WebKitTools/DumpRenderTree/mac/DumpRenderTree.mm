@@ -608,6 +608,14 @@ static void convertWebResourceResponseToDictionary(NSMutableDictionary *property
     [responseDictionary release];
 }
 
+static NSInteger compareResourceURLs(id resource1, id resource2, void *context)
+{
+    NSString *url1 = [resource1 objectForKey:@"WebResourceURL"];
+    NSString *url2 = [resource2 objectForKey:@"WebResourceURL"];
+ 
+    return [url1 compare:url2];
+}
+
 static NSString *serializeWebArchiveToXML(WebArchive *webArchive)
 {
     NSString *errorString;
@@ -642,6 +650,10 @@ static NSString *serializeWebArchiveToXML(WebArchive *webArchive)
             convertWebResourceResponseToDictionary(subresourcePropertyList);
             convertWebResourceDataToString(subresourcePropertyList);
         }
+        
+        // Sort the subresources so they're always in a predictable order for the dump
+        if (NSArray *sortedSubresources = [subresources sortedArrayUsingFunction:compareResourceURLs context:nil])
+            [resourcePropertyList setObject:sortedSubresources forKey:@"WebSubresources"];
     }
 
     NSData *xmlData = [NSPropertyListSerialization dataFromPropertyList:propertyList

@@ -1,3 +1,16 @@
+2008-04-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitzpettel
+
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=18302
+        -WebArchive subresources dump in random order, intermittent failures
+
+        Now that a DRT fix has set the order, these 3 tests needed new results
+
+        * webarchive/test-css-import-expected.txt:
+        * webarchive/test-duplicate-resources-expected.txt:
+        * webarchive/test-frameset-expected.txt:
+
 2008-04-07  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Geoff Garen
