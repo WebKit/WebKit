@@ -65,7 +65,7 @@ public:
     void createInlineStyleDecl();
     void destroyInlineStyleDecl();
     void invalidateStyleAttribute();
-    virtual void updateStyleAttributeIfNeeded() const;
+    virtual void updateStyleAttribute() const;
     
     const ClassNames& classNames() const { ASSERT(hasClass()); ASSERT(mappedAttributes()); return mappedAttributes()->classNames(); }
 

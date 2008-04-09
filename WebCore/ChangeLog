@@ -1,3 +1,27 @@
+2008-04-09  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mitz.
+
+        Avoid unnecessary calls to virtual updateStyleAttributeIfNeeded() method.
+        - do the the checking in call sites instead of inside the function
+        - rename to updateStyleAttribute()
+        - use namedAttrMap directly (for getting id attribute) in insertedIntoDocument/removedFromDocument 
+          to avoid calling attributes() which may trigger style attribute update.
+        
+        * dom/Element.cpp:
+        (WebCore::Element::attributes):
+        (WebCore::Element::getAttribute):
+        (WebCore::Element::hasAttributes):
+        (WebCore::Element::insertedIntoDocument):
+        (WebCore::Element::removedFromDocument):
+        * dom/Element.h:
+        (WebCore::Element::updateStyleAttribute):
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedAttrMap::addAttribute):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateStyleAttribute):
+        * dom/StyledElement.h:
+
 2008-04-09  Timothy Hatcher  <timothy@apple.com>
 
         A more complete fix for: can't drag the Web Inspector when grabbing

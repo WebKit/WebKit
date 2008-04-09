@@ -261,7 +261,7 @@ void NamedAttrMap::addAttribute(PassRefPtr<Attribute> prpAttribute)
     // Note that element may be null here if we are called from insertAttr() during parsing
     if (m_element) {
         m_element->attributeChanged(attribute.get());
-        // Because of our updateStyleAttributeIfNeeded() style modification events are never sent at the right time, so don't bother sending them.
+        // Because of our updateStyleAttribute() style modification events are never sent at the right time, so don't bother sending them.
         if (attribute->name() != styleAttr) {
             m_element->dispatchAttrAdditionEvent(attribute.get());
             m_element->dispatchSubtreeModifiedEvent();
