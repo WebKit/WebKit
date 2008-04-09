@@ -18,6 +18,8 @@
  *
  */
 
+#include "Platform.h"
+
 #ifndef ALWAYS_INLINE
 #if COMPILER(GCC) && defined(NDEBUG)
 #define ALWAYS_INLINE inline __attribute__ ((__always_inline__))

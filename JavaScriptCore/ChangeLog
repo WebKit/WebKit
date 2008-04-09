@@ -1,3 +1,10 @@
+2008-04-09  Adam Roben  <aroben@apple.com>
+
+        Build fix
+
+        * wtf/AlwaysInline.h: Make sure to #include Platform.h before using
+        the macros it defines.
+
 2008-04-08  Mark Rowe  <mrowe@apple.com>
 
         Export WTF::initializeThreading() from JavaScriptCore.
