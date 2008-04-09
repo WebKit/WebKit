@@ -484,6 +484,8 @@
 		519611780CAC56A80010A80C /* DatabaseThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 519611620CAC56570010A80C /* DatabaseThread.h */; };
 		519611EA0CAC749C0010A80C /* DatabaseTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 519611E80CAC749C0010A80C /* DatabaseTask.h */; };
 		519611EB0CAC749C0010A80C /* DatabaseTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 519611E90CAC749C0010A80C /* DatabaseTask.cpp */; };
+		519FE0A30DAD446E00A08F21 /* HTMLAttributeNames.in in Resources */ = {isa = PBXBuildFile; fileRef = 519FE0A10DAD446E00A08F21 /* HTMLAttributeNames.in */; };
+		519FE0A40DAD446E00A08F21 /* HTMLTagNames.in in Resources */ = {isa = PBXBuildFile; fileRef = 519FE0A20DAD446E00A08F21 /* HTMLTagNames.in */; };
 		51A45B560CAD7FD7000D2BE9 /* DatabaseAuthorizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A45B540CAD7FD7000D2BE9 /* DatabaseAuthorizer.h */; };
 		51A45B570CAD7FD7000D2BE9 /* DatabaseAuthorizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A45B550CAD7FD7000D2BE9 /* DatabaseAuthorizer.cpp */; };
 		51A9267C0D53F0570063ECC2 /* OriginQuotaManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A926780D53F0570063ECC2 /* OriginQuotaManager.cpp */; };
@@ -4904,6 +4906,8 @@
 		519611690CAC56570010A80C /* SQLResultSet.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLResultSet.idl; sourceTree = "<group>"; };
 		519611E80CAC749C0010A80C /* DatabaseTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseTask.h; sourceTree = "<group>"; };
 		519611E90CAC749C0010A80C /* DatabaseTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseTask.cpp; sourceTree = "<group>"; };
+		519FE0A10DAD446E00A08F21 /* HTMLAttributeNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLAttributeNames.in; sourceTree = "<group>"; };
+		519FE0A20DAD446E00A08F21 /* HTMLTagNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLTagNames.in; sourceTree = "<group>"; };
 		51A45B540CAD7FD7000D2BE9 /* DatabaseAuthorizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseAuthorizer.h; sourceTree = "<group>"; };
 		51A45B550CAD7FD7000D2BE9 /* DatabaseAuthorizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseAuthorizer.cpp; sourceTree = "<group>"; };
 		51A926780D53F0570063ECC2 /* OriginQuotaManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginQuotaManager.cpp; sourceTree = "<group>"; };
@@ -10186,18 +10190,15 @@
 		93EEC1EC09C2877700C515D1 /* html */ = {
 			isa = PBXGroup;
 			children = (
-				A77979100D6B9D0C003851B9 /* CanvasPixelArray.cpp */,
-				A77979110D6B9D0C003851B9 /* CanvasPixelArray.h */,
-				A77979120D6B9D0C003851B9 /* CanvasPixelArray.idl */,
-				A77979130D6B9D0C003851B9 /* ImageData.cpp */,
-				A77979140D6B9D0C003851B9 /* ImageData.h */,
-				A77979150D6B9D0C003851B9 /* ImageData.idl */,
 				93EEC1F009C2877700C515D1 /* CanvasGradient.cpp */,
 				93EEC1F109C2877700C515D1 /* CanvasGradient.h */,
 				930CAB8809C49EFA00229C04 /* CanvasGradient.idl */,
 				93EEC26E09C3218000C515D1 /* CanvasPattern.cpp */,
 				93EEC1F209C2877700C515D1 /* CanvasPattern.h */,
 				930CAB8F09C49F1B00229C04 /* CanvasPattern.idl */,
+				A77979100D6B9D0C003851B9 /* CanvasPixelArray.cpp */,
+				A77979110D6B9D0C003851B9 /* CanvasPixelArray.h */,
+				A77979120D6B9D0C003851B9 /* CanvasPixelArray.idl */,
 				93EEC1ED09C2877700C515D1 /* CanvasRenderingContext2D.cpp */,
 				93EEC1EE09C2877700C515D1 /* CanvasRenderingContext2D.h */,
 				930CAAD609C495B600229C04 /* CanvasRenderingContext2D.idl */,
@@ -10214,6 +10215,7 @@
 				A8EA7D270A19385500A8EF5F /* HTMLAreaElement.cpp */,
 				A8EA7D260A19385500A8EF5F /* HTMLAreaElement.h */,
 				1AE2A9F00A1CDA5700B42B25 /* HTMLAreaElement.idl */,
+				519FE0A10DAD446E00A08F21 /* HTMLAttributeNames.in */,
 				E446138F0CD6331000FADA75 /* HTMLAudioElement.cpp */,
 				E44613900CD6331000FADA75 /* HTMLAudioElement.h */,
 				E44613910CD6331000FADA75 /* HTMLAudioElement.idl */,
@@ -10406,11 +10408,12 @@
 				A871DB220A150BD600B12A68 /* HTMLTableRowElement.cpp */,
 				A871DB230A150BD600B12A68 /* HTMLTableRowElement.h */,
 				8555425B0AA48B1E00BA89F2 /* HTMLTableRowElement.idl */,
-				93442C9D0D2B335C00338FF9 /* HTMLTableRowsCollection.h */,
 				93442C9F0D2B336000338FF9 /* HTMLTableRowsCollection.cpp */,
+				93442C9D0D2B335C00338FF9 /* HTMLTableRowsCollection.h */,
 				A871DB180A150BD600B12A68 /* HTMLTableSectionElement.cpp */,
 				A871DB170A150BD600B12A68 /* HTMLTableSectionElement.h */,
 				8555425C0AA48B1E00BA89F2 /* HTMLTableSectionElement.idl */,
+				519FE0A20DAD446E00A08F21 /* HTMLTagNames.in */,
 				A81369BB097374F500D74463 /* HTMLTextAreaElement.cpp */,
 				A81369BA097374F500D74463 /* HTMLTextAreaElement.h */,
 				A80E7E160A1A7CCB007FB8C5 /* HTMLTextAreaElement.idl */,
@@ -10429,6 +10432,9 @@
 				E446139A0CD6331000FADA75 /* HTMLVideoElement.idl */,
 				BCCD74E40A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp */,
 				BCCD74DB0A4C8D35005FDA6D /* HTMLViewSourceDocument.h */,
+				A77979130D6B9D0C003851B9 /* ImageData.cpp */,
+				A77979140D6B9D0C003851B9 /* ImageData.h */,
+				A77979150D6B9D0C003851B9 /* ImageData.idl */,
 				E446139B0CD6331000FADA75 /* MediaError.h */,
 				E446139C0CD6331000FADA75 /* MediaError.idl */,
 				E4D4ABE00D7542F000F96869 /* PreloadScanner.cpp */,
@@ -14887,6 +14893,8 @@
 				BCE1C4230D9829F2003B02F2 /* Location.idl in Resources */,
 				51E3F9D20DA05D7100250911 /* Storage.idl in Resources */,
 				51E0BABE0DA5548400A9E417 /* StorageEvent.idl in Resources */,
+				519FE0A30DAD446E00A08F21 /* HTMLAttributeNames.in in Resources */,
+				519FE0A40DAD446E00A08F21 /* HTMLTagNames.in in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
