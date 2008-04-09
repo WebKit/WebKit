@@ -13105,6 +13105,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSDOMWindowWrapper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDOMWindowWrapper.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSElementCustom.cpp"
 					>
 				</File>

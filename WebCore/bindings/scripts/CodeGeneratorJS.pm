@@ -1126,15 +1126,24 @@ sub GenerateImplementation
     # Functions
     if ($numFunctions > 0) {
         foreach my $function (@{$dataNode->functions}) {
+            AddIncludesForType($function->signature->type);
+
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
             push(@implContent, "JSValue* ${functionName}(ExecState* exec, JSObject* thisObj, const List& args)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    if (!thisObj->inherits(&${className}::s_info))\n");
-            push(@implContent, "        return throwError(exec, TypeError);\n");
 
-            AddIncludesForType($function->signature->type);
+            if ($interfaceName eq "DOMWindow") {
+                AddIncludesForType("JSDOMWindowWrapper");
+                push(@implContent, "    ASSERT(!thisObj->inherits(&JSDOMWindow::s_info));\n");
+                push(@implContent, "    if (!thisObj->inherits(&JSDOMWindowWrapper::s_info))\n");
+                push(@implContent, "        return throwError(exec, TypeError);\n");
+                push(@implContent, "    $className* castedThisObj = static_cast<JSDOMWindowWrapper*>(thisObj)->window();\n");
+            } else {
+                push(@implContent, "    if (!thisObj->inherits(&${className}::s_info))\n");
+                push(@implContent, "        return throwError(exec, TypeError);\n");
+                push(@implContent, "    $className* castedThisObj = static_cast<$className*>(thisObj);\n");
+            }
 
-            push(@implContent, "    $className* castedThisObj = static_cast<$className*>(thisObj);\n");
 
             if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && 
                 !$function->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {

@@ -34,6 +34,7 @@ namespace WebCore {
     class DOMWindowTimer;
     class Frame;
     class JSDOMWindow;
+    class JSDOMWindowWrapper;
     class JSEventListener;
     class JSLocation;
     class JSUnprotectedEventListener;
@@ -112,6 +113,9 @@ namespace WebCore {
 
         // Don't call this version of allowsAccessFrom -- it's a slightly incorrect implementation used only by WebScriptObject
         virtual bool allowsAccessFrom(const KJS::JSGlobalObject*) const;
+
+        virtual KJS::JSObject* toThisObject(KJS::ExecState*) const;
+        JSDOMWindowWrapper* wrapper() const;
 
         enum {
             // Attributes

@@ -286,8 +286,8 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
     JSObject* jsThisObject = toJS(thisObject);
 
     if (!jsThisObject)
-        jsThisObject = exec->dynamicGlobalObject();
-    
+        jsThisObject = exec->globalThisValue();
+
     List argList;
     for (size_t i = 0; i < argumentCount; i++)
         argList.append(toJS(arguments[i]));

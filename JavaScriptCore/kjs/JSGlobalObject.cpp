@@ -327,7 +327,7 @@ void JSGlobalObject::reset(JSValue* prototype)
 
     // Set global functions.
 
-    d()->evalFunction = new PrototypeReflexiveFunction(exec, d()->functionPrototype, 1, exec->propertyNames().eval, globalFuncEval);
+    d()->evalFunction = new PrototypeReflexiveFunction(exec, d()->functionPrototype, 1, exec->propertyNames().eval, globalFuncEval, this);
     putDirectFunction(d()->evalFunction, DontEnum);
     putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 2, "parseInt", globalFuncParseInt), DontEnum);
     putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "parseFloat", globalFuncParseFloat), DontEnum);
@@ -532,6 +532,11 @@ void JSGlobalObject::mark()
     markIfNeeded(d()->syntaxErrorPrototype);
     markIfNeeded(d()->typeErrorPrototype);
     markIfNeeded(d()->URIErrorPrototype);
+}
+
+JSGlobalObject* JSGlobalObject::toGlobalObject(ExecState*) const
+{
+    return const_cast<JSGlobalObject*>(this);
 }
 
 ExecState* JSGlobalObject::globalExec()

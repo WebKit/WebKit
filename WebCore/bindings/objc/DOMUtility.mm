@@ -35,6 +35,7 @@
 #import "JSCounter.h"
 #import "JSDOMImplementation.h"
 #import "JSDOMWindow.h"
+#import "JSDOMWindowWrapper.h"
 #import "JSEvent.h"
 #import "JSHTMLCollection.h"
 #import "JSHTMLOptionsCollection.h"
@@ -101,6 +102,9 @@ static inline id createDOMWrapper(KJS::JSObject* object)
 
     if (object->inherits(&WebCore::JSDOMWindow::s_info))
         return [DOMAbstractView _wrapAbstractView:static_cast<WebCore::JSDOMWindow*>(object)->impl()];
+    if (object->inherits(&WebCore::JSDOMWindowWrapper::s_info))
+        return [DOMAbstractView _wrapAbstractView:static_cast<WebCore::JSDOMWindowWrapper*>(object)->impl()];
+
     if (object->inherits(&WebCore::JSDOMImplementation::s_info))
         return [DOMImplementation _wrapDOMImplementation:implementationFront(static_cast<WebCore::JSDOMImplementation*>(object))];
     if (object->inherits(&WebCore::JSNodeIterator::s_info))

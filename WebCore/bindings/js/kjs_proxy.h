@@ -1,7 +1,7 @@
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
+ *  Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,7 @@
 #ifndef kjs_proxy_h
 #define kjs_proxy_h
 
-#include "JSDOMWindow.h"
+#include "JSDOMWindowWrapper.h"
 #include <kjs/protect.h>
 #include <wtf/RefPtr.h>
 
@@ -45,11 +45,17 @@ public:
     KJSProxy(Frame*);
     ~KJSProxy();
 
-    bool haveGlobalObject() const { return m_globalObject; }
+    bool haveWindowWrapper() const { return m_windowWrapper; }
+    JSDOMWindowWrapper* windowWrapper()
+    {
+        initScriptIfNeeded();
+        return m_windowWrapper;
+    }
+
     JSDOMWindow* globalObject()
     {
         initScriptIfNeeded();
-        return m_globalObject;
+        return m_windowWrapper->window();
     }
 
     KJS::JSValue* evaluate(const String& filename, int baseLine, const String& code);
@@ -76,12 +82,12 @@ public:
 private:
     void initScriptIfNeeded()
     {
-        if (!m_globalObject)
+        if (!m_windowWrapper)
             initScript();
     }
     void initScript();
 
-    KJS::ProtectedPtr<JSDOMWindow> m_globalObject;
+    KJS::ProtectedPtr<JSDOMWindowWrapper> m_windowWrapper;
     Frame* m_frame;
     int m_handlerLineno;
     
@@ -90,6 +96,6 @@ private:
     bool m_paused;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // kjs_proxy_h

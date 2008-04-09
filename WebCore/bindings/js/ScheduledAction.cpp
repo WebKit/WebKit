@@ -46,9 +46,9 @@ ScheduledAction::ScheduledAction(JSValue* func, const List& args)
 }
 
 
-void ScheduledAction::execute(JSDOMWindow* window)
+void ScheduledAction::execute(JSDOMWindowWrapper* windowWrapper)
 {
-    RefPtr<Frame> frame = window->impl()->frame();
+    RefPtr<Frame> frame = windowWrapper->window()->impl()->frame();
     if (!frame)
         return;
 
@@ -56,24 +56,24 @@ void ScheduledAction::execute(JSDOMWindow* window)
         return;
 
     KJSProxy* scriptProxy = frame->scriptProxy();
-    JSDOMWindow* globalObject = scriptProxy->globalObject();
+    
 
     scriptProxy->setProcessingTimerCallback(true);
 
     if (JSValue* func = m_func.get()) {
         JSLock lock;
         if (func->isObject() && static_cast<JSObject*>(func)->implementsCall()) {
+            JSDOMWindow* window = windowWrapper->window();
             ExecState* exec = window->globalExec();
-            ASSERT(window == globalObject);
 
             List args;
             size_t size = m_args.size();
             for (size_t i = 0; i < size; ++i)
                 args.append(m_args[i]);
 
-            globalObject->startTimeoutCheck();
-            static_cast<JSObject*>(func)->call(exec, window, args);
-            globalObject->stopTimeoutCheck();
+            window->startTimeoutCheck();
+            static_cast<JSObject*>(func)->call(exec, windowWrapper, args);
+            window->stopTimeoutCheck();
             if (exec->hadException()) {
                 JSObject* exception = exec->exception()->toObject(exec);
                 exec->clearException();

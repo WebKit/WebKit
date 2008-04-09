@@ -51,6 +51,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSDatabaseCustom.cpp
         bindings/js/JSDOMWindowBase.cpp
         bindings/js/JSDOMWindowCustom.cpp
+        bindings/js/JSDOMWindowWrapper.cpp
         bindings/js/JSDocumentCustom.cpp
         bindings/js/JSElementCustom.cpp
         bindings/js/JSEventCustom.cpp

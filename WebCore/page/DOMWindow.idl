@@ -27,6 +27,7 @@ module window {
 
     interface [
         CheckDomainSecurity,
+        CustomNativeConverter,
         CustomDeleteProperty,
         CustomGetOwnPropertySlot,
         CustomGetPropertyNames,

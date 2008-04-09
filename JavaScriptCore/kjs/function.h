@@ -142,12 +142,16 @@ namespace KJS {
   public:
     typedef JSValue* (*JSMemberFunction)(ExecState*, PrototypeReflexiveFunction*, JSObject* thisObj, const List&);
 
-    PrototypeReflexiveFunction(ExecState*, FunctionPrototype*, int len, const Identifier&, JSMemberFunction);
+    PrototypeReflexiveFunction(ExecState*, FunctionPrototype*, int len, const Identifier&, JSMemberFunction, JSGlobalObject* expectedThisObject);
 
+    virtual void mark();
     virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const List&);
+
+    JSGlobalObject* cachedGlobalObject() const { return m_cachedGlobalObject; }
 
   private:
     const JSMemberFunction m_function;
+    JSGlobalObject* m_cachedGlobalObject;
   };
 
     // Global Functions

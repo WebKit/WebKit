@@ -108,44 +108,12 @@ JSValue* objectProtoFuncDefineSetter(ExecState* exec, JSObject* thisObj, const L
 
 JSValue* objectProtoFuncLookupGetter(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    Identifier propertyName = Identifier(args[0]->toString(exec));
-    JSObject* obj = thisObj;
-    while (true) {
-        JSValue* v = obj->getDirect(propertyName);
-        if (v) {
-            if (v->type() != GetterSetterType)
-                return jsUndefined();
-            JSObject* funcObj = static_cast<GetterSetterImp*>(v)->getGetter();
-            if (!funcObj)
-                return jsUndefined();
-            return funcObj;
-        }
-
-        if (!obj->prototype() || !obj->prototype()->isObject())
-            return jsUndefined();
-        obj = static_cast<JSObject*>(obj->prototype());
-    }
+    return thisObj->lookupGetter(exec, Identifier(args[0]->toString(exec)));
 }
 
 JSValue* objectProtoFuncLookupSetter(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    Identifier propertyName = Identifier(args[0]->toString(exec));
-    JSObject* obj = thisObj;
-    while (true) {
-        JSValue* v = obj->getDirect(propertyName);
-        if (v) {
-            if (v->type() != GetterSetterType)
-                return jsUndefined();
-            JSObject* funcObj = static_cast<GetterSetterImp*>(v)->getSetter();
-            if (!funcObj)
-                return jsUndefined();
-            return funcObj;
-        }
-
-        if (!obj->prototype() || !obj->prototype()->isObject())
-            return jsUndefined();
-        obj = static_cast<JSObject*>(obj->prototype());
-    }
+    return thisObj->lookupSetter(exec, Identifier(args[0]->toString(exec)));
 }
 
 JSValue* objectProtoFuncPropertyIsEnumerable(ExecState* exec, JSObject* thisObj, const List& args)

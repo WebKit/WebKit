@@ -481,6 +481,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSDocumentCustom.cpp \
 	WebCore/bindings/js/JSDOMWindowBase.cpp \
 	WebCore/bindings/js/JSDOMWindowCustom.cpp \
+	WebCore/bindings/js/JSDOMWindowWrapper.cpp \
 	WebCore/bindings/js/JSElementCustom.cpp \
 	WebCore/bindings/js/JSEventCustom.cpp \
 	WebCore/bindings/js/JSEventTargetBase.cpp \

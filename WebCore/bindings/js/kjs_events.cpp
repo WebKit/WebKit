@@ -54,12 +54,12 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
     if (!listener)
         return;
 
-    JSDOMWindow* window = windowObj();
-    // Null check as clearWindowObj() can clear this and we still get called back by
+    JSDOMWindowWrapper* windowWrapper = this->windowWrapper();
+    // Null check as clearWindowWrapper() can clear this and we still get called back by
     // xmlhttprequest objects. See http://bugs.webkit.org/show_bug.cgi?id=13275
-    if (!window)
+    if (!windowWrapper)
         return;
-    Frame* frame = window->impl()->frame();
+    Frame* frame = windowWrapper->window()->impl()->frame();
     if (!frame)
         return;
     KJSProxy* scriptProxy = frame->scriptProxy();
@@ -68,8 +68,7 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
 
     JSLock lock;
 
-    JSGlobalObject* globalObject = scriptProxy->globalObject();
-    ExecState* exec = globalObject->globalExec();
+    ExecState* exec = windowWrapper->window()->globalExec();
 
     JSValue* handleEventFuncValue = listener->get(exec, "handleEvent");
     JSObject* handleEventFunc = 0;
@@ -85,24 +84,24 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
         List args;
         args.append(toJS(exec, event));
 
-        window->setCurrentEvent(event);
+        windowWrapper->window()->setCurrentEvent(event);
 
         JSValue* retval;
         if (handleEventFunc) {
-            globalObject->startTimeoutCheck();
+            windowWrapper->window()->startTimeoutCheck();
             retval = handleEventFunc->call(exec, listener, args);
         } else {
             JSObject* thisObj;
             if (isWindowEvent)
-                thisObj = window;
+                thisObj = windowWrapper;
             else
                 thisObj = static_cast<JSObject*>(toJS(exec, event->currentTarget()));
-            globalObject->startTimeoutCheck();
+            windowWrapper->window()->startTimeoutCheck();
             retval = listener->call(exec, thisObj, args);
         }
-        globalObject->stopTimeoutCheck();
+        windowWrapper->window()->stopTimeoutCheck();
 
-        window->setCurrentEvent(0);
+        windowWrapper->window()->setCurrentEvent(0);
 
         if (exec->hadException()) {
             JSObject* exception = exec->exception()->toObject(exec);
@@ -136,23 +135,23 @@ bool JSAbstractEventListener::isHTMLEventListener() const
 
 // -------------------------------------------------------------------------
 
-JSUnprotectedEventListener::JSUnprotectedEventListener(JSObject* listener, JSDOMWindow* win, bool html)
+JSUnprotectedEventListener::JSUnprotectedEventListener(JSObject* listener, JSDOMWindowWrapper* windowWrapper, bool html)
     : JSAbstractEventListener(html)
     , m_listener(listener)
-    , m_win(win)
+    , m_windowWrapper(windowWrapper)
 {
     if (m_listener) {
         JSDOMWindow::UnprotectedListenersMap& listeners = html
-            ? m_win->jsUnprotectedHTMLEventListeners() : m_win->jsUnprotectedEventListeners();
+            ? m_windowWrapper->window()->jsUnprotectedHTMLEventListeners() : m_windowWrapper->window()->jsUnprotectedEventListeners();
         listeners.set(m_listener, this);
     }
 }
 
 JSUnprotectedEventListener::~JSUnprotectedEventListener()
 {
-    if (m_listener && m_win) {
+    if (m_listener && m_windowWrapper) {
         JSDOMWindow::UnprotectedListenersMap& listeners = isHTMLEventListener()
-            ? m_win->jsUnprotectedHTMLEventListeners() : m_win->jsUnprotectedEventListeners();
+            ? m_windowWrapper->window()->jsUnprotectedHTMLEventListeners() : m_windowWrapper->window()->jsUnprotectedEventListeners();
         listeners.remove(m_listener);
     }
 }
@@ -162,14 +161,14 @@ JSObject* JSUnprotectedEventListener::listenerObj() const
     return m_listener;
 }
 
-JSDOMWindow* JSUnprotectedEventListener::windowObj() const
+JSDOMWindowWrapper* JSUnprotectedEventListener::windowWrapper() const
 {
-    return m_win;
+    return m_windowWrapper;
 }
 
-void JSUnprotectedEventListener::clearWindowObj()
+void JSUnprotectedEventListener::clearWindowWrapper()
 {
-    m_win = 0;
+    m_windowWrapper = 0;
 }
 
 void JSUnprotectedEventListener::mark()
@@ -198,14 +197,14 @@ static EventListenerCounter eventListenerCounter;
 
 // -------------------------------------------------------------------------
 
-JSEventListener::JSEventListener(JSObject* listener, JSDOMWindow* win, bool html)
+JSEventListener::JSEventListener(JSObject* listener, JSDOMWindowWrapper* windowWrapper, bool html)
     : JSAbstractEventListener(html)
     , m_listener(listener)
-    , m_win(win)
+    , m_windowWrapper(windowWrapper)
 {
     if (m_listener) {
         JSDOMWindow::ListenersMap& listeners = html
-            ? m_win->jsHTMLEventListeners() : m_win->jsEventListeners();
+            ? m_windowWrapper->window()->jsHTMLEventListeners() : m_windowWrapper->window()->jsEventListeners();
         listeners.set(m_listener, this);
     }
 #ifndef NDEBUG
@@ -215,9 +214,9 @@ JSEventListener::JSEventListener(JSObject* listener, JSDOMWindow* win, bool html
 
 JSEventListener::~JSEventListener()
 {
-    if (m_listener && m_win) {
+    if (m_listener && m_windowWrapper) {
         JSDOMWindow::ListenersMap& listeners = isHTMLEventListener()
-            ? m_win->jsHTMLEventListeners() : m_win->jsEventListeners();
+            ? m_windowWrapper->window()->jsHTMLEventListeners() : m_windowWrapper->window()->jsEventListeners();
         listeners.remove(m_listener);
     }
 #ifndef NDEBUG
@@ -230,20 +229,20 @@ JSObject* JSEventListener::listenerObj() const
     return m_listener;
 }
 
-JSDOMWindow* JSEventListener::windowObj() const
+JSDOMWindowWrapper* JSEventListener::windowWrapper() const
 {
-    return m_win;
+    return m_windowWrapper;
 }
 
-void JSEventListener::clearWindowObj()
+void JSEventListener::clearWindowWrapper()
 {
-    m_win = 0;
+    m_windowWrapper = 0;
 }
 
 // -------------------------------------------------------------------------
 
-JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& code, JSDOMWindow* win, Node* node, int lineNumber)
-    : JSEventListener(0, win, true)
+JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& code, JSDOMWindowWrapper* windowWrapper, Node* node, int lineNumber)
+    : JSEventListener(0, windowWrapper, true)
     , m_functionName(functionName)
     , m_code(code)
     , m_parsed(false)
@@ -275,12 +274,12 @@ void JSLazyEventListener::parseCode() const
         return;
     m_parsed = true;
 
-    Frame* frame = windowObj()->impl()->frame();
+    Frame* frame = windowWrapper()->window()->impl()->frame();
     if (frame && frame->scriptProxy()->isEnabled()) {
-        ExecState* exec = frame->scriptProxy()->globalObject()->globalExec();
+        ExecState* exec = windowWrapper()->window()->globalExec();
 
         JSLock lock;
-        JSObject* constr = frame->scriptProxy()->globalObject()->functionConstructor();
+        JSObject* constr = windowWrapper()->window()->functionConstructor();
         List args;
 
         UString sourceURL(frame->loader()->url().string());
@@ -314,7 +313,7 @@ void JSLazyEventListener::parseCode() const
 
     if (m_listener) {
         JSDOMWindow::ListenersMap& listeners = isHTMLEventListener()
-            ? windowObj()->jsHTMLEventListeners() : windowObj()->jsEventListeners();
+            ? windowWrapper()->window()->jsHTMLEventListeners() : windowWrapper()->window()->jsEventListeners();
         listeners.set(m_listener, const_cast<JSLazyEventListener*>(this));
     }
 }

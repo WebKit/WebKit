@@ -1,3 +1,103 @@
+2008-04-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        First step in implementing the "split window"
+
+        - This patch takes the first step in changing the window navigation model
+          from clearing the window properties on navigation, to replacing
+          an inner window.  This is necessary to safely perform security checks
+          using the lexical global object.
+
+          This first step adds a new class called JSDOMWindowWrapper, which wraps
+          the real window object.  All JS calls that would go to the window object
+          now go to it, which it forwards to the current inner window.  To accomplish
+          this, the wrapper window is used as the ThisValue wherever the window was used
+          before.
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        (WebCore::JSDOMWindowBase::clear): Reset the wrapper windows prototype too.
+        (WebCore::JSDOMWindowBase::toThisObject):
+        (WebCore::JSDOMWindowBase::wrapper):
+        (WebCore::windowProtoFuncAToB):
+        (WebCore::windowProtoFuncBToA):
+        (WebCore::windowProtoFuncOpen):
+        (WebCore::windowProtoFuncSetTimeout):
+        (WebCore::windowProtoFuncClearTimeout):
+        (WebCore::windowProtoFuncSetInterval):
+        (WebCore::windowProtoFuncAddEventListener):
+        (WebCore::windowProtoFuncRemoveEventListener):
+        (WebCore::windowProtoFuncShowModalDialog):
+        (WebCore::windowProtoFuncNotImplemented):
+        (WebCore::toJS):
+        * bindings/js/JSDOMWindowBase.h:
+        Fix to expect the wrapper as the thisObj.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::postMessage):
+        (WebCore::toDOMWindow):
+        * bindings/js/JSDOMWindowWrapper.cpp: Added.
+        (WebCore::):
+        (WebCore::JSDOMWindowWrapper::JSDOMWindowWrapper):
+        (WebCore::JSDOMWindowWrapper::~JSDOMWindowWrapper):
+        (WebCore::JSDOMWindowWrapper::mark):
+        (WebCore::JSDOMWindowWrapper::className):
+        (WebCore::JSDOMWindowWrapper::getOwnPropertySlot):
+        (WebCore::JSDOMWindowWrapper::put):
+        (WebCore::JSDOMWindowWrapper::deleteProperty):
+        (WebCore::JSDOMWindowWrapper::getPropertyNames):
+        (WebCore::JSDOMWindowWrapper::getPropertyAttributes):
+        (WebCore::JSDOMWindowWrapper::defineGetter):
+        (WebCore::JSDOMWindowWrapper::defineSetter):
+        (WebCore::JSDOMWindowWrapper::lookupGetter):
+        (WebCore::JSDOMWindowWrapper::lookupSetter):
+        (WebCore::JSDOMWindowWrapper::toGlobalObject):
+        (WebCore::JSDOMWindowWrapper::impl):
+        (WebCore::JSDOMWindowWrapper::disconnectFrame):
+        (WebCore::JSDOMWindowWrapper::clear):
+        (WebCore::toJS):
+        * bindings/js/JSDOMWindowWrapper.h: Added.
+        (WebCore::JSDOMWindowWrapper::innerWindow):
+        (WebCore::JSDOMWindowWrapper::setInnerWindow):
+        (WebCore::JSDOMWindowWrapper::classInfo):
+        Forward methods to the innerWindow.
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::open):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::~KJSProxy):
+        (WebCore::KJSProxy::evaluate):
+        (WebCore::KJSProxy::clear):
+        (WebCore::KJSProxy::initScript):
+        (WebCore::KJSProxy::clearDocumentWrapper):
+        (WebCore::KJSProxy::processingUserGesture):
+        (WebCore::KJSProxy::attachDebugger):
+        * bindings/js/kjs_proxy.h:
+        (WebCore::KJSProxy::haveWindowWrapper):
+        (WebCore::KJSProxy::windowWrapper):
+        (WebCore::KJSProxy::globalObject):
+        (WebCore::KJSProxy::initScriptIfNeeded):
+        Hold onto the wrapper window instead of global object.  As a convenience,
+        keep the globalObject() as a forward to the inner window.
+        * bindings/objc/DOMUtility.mm:
+        (KJS::createDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Document.cpp:
+        (WebCore::Document::domWindow):
+        * dom/Document.h:
+        (WebCore::Document::defaultView):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchWindowObjectAvailable):
+        * page/DOMWindow.idl:
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::pageDestroyed):
+
 2008-04-08  Brady Eidson  <beidson@apple.com>
 
         Encourage Windows to rebuild - AGAIN...

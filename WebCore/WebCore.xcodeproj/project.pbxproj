@@ -3551,6 +3551,8 @@
 		BC3452430D7E00EA0016574A /* JSRGBColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3452410D7E00EA0016574A /* JSRGBColor.cpp */; };
 		BC3452440D7E00EA0016574A /* JSRGBColor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3452420D7E00EA0016574A /* JSRGBColor.h */; };
 		BC3452560D7E02850016574A /* JSRGBColor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3452550D7E02850016574A /* JSRGBColor.lut.h */; };
+		BC3A9E880DA2E18200A05E6A /* JSDOMWindowWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3A9E860DA2E18200A05E6A /* JSDOMWindowWrapper.cpp */; };
+		BC3A9E890DA2E18200A05E6A /* JSDOMWindowWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3A9E870DA2E18200A05E6A /* JSDOMWindowWrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */; };
 		BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */; };
 		BC3FCAA90AC3DB5800BA54AD /* PlatformScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3FCAA80AC3DB5800BA54AD /* PlatformScrollBar.h */; settings = {ATTRIBUTES = (); }; };
@@ -7800,6 +7802,8 @@
 		BC3452410D7E00EA0016574A /* JSRGBColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRGBColor.cpp; sourceTree = "<group>"; };
 		BC3452420D7E00EA0016574A /* JSRGBColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRGBColor.h; sourceTree = "<group>"; };
 		BC3452550D7E02850016574A /* JSRGBColor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRGBColor.lut.h; sourceTree = "<group>"; };
+		BC3A9E860DA2E18200A05E6A /* JSDOMWindowWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowWrapper.cpp; sourceTree = "<group>"; };
+		BC3A9E870DA2E18200A05E6A /* JSDOMWindowWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowWrapper.h; sourceTree = "<group>"; };
 		BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaList.cpp; sourceTree = "<group>"; };
 		BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSMediaList.h; sourceTree = "<group>"; };
 		BC3FCAA80AC3DB5800BA54AD /* PlatformScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformScrollBar.h; sourceTree = "<group>"; };
@@ -11893,6 +11897,8 @@
 				E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */,
 				BC6932710D7E293900AE44D1 /* JSDOMWindowBase.cpp */,
 				BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */,
+				BC3A9E860DA2E18200A05E6A /* JSDOMWindowWrapper.cpp */,
+				BC3A9E870DA2E18200A05E6A /* JSDOMWindowWrapper.h */,
 				B25BE50E0D06B70800B524C6 /* JSEventTargetBase.cpp */,
 				B25BE50F0D06B70800B524C6 /* JSEventTargetBase.h */,
 				BCD9C26A0C17AA81005C90A2 /* JSEventTargetNode.cpp */,
@@ -14753,6 +14759,7 @@
 				E415F1840D9A1A830033CE97 /* ElementTimeControl.h in Headers */,
 				650FBF2B0D9AF047008FC292 /* SVGHKernElement.h in Headers */,
 				37ACCE420DA2980F0089E602 /* FontRenderingMode.h in Headers */,
+				BC3A9E890DA2E18200A05E6A /* JSDOMWindowWrapper.h in Headers */,
 				51E0BABB0DA5547100A9E417 /* StorageEvent.h in Headers */,
 				51E0BAEB0DA55D4A00A9E417 /* JSStorageEvent.h in Headers */,
 				51E0BB230DA572A600A9E417 /* SessionStorage.h in Headers */,
@@ -16413,6 +16420,7 @@
 				BCE1C41C0D982981003B02F2 /* Location.cpp in Sources */,
 				BCE1C43B0D9830D3003B02F2 /* JSLocation.cpp in Sources */,
 				BCE1C4400D9830F4003B02F2 /* JSLocationCustom.cpp in Sources */,
+				BC3A9E880DA2E18200A05E6A /* JSDOMWindowWrapper.cpp in Sources */,
 				51E3F9C70DA059DC00250911 /* Storage.cpp in Sources */,
 				51E3F9D60DA05E1D00250911 /* JSStorage.cpp in Sources */,
 				51E0BABC0DA5547100A9E417 /* StorageEvent.cpp in Sources */,

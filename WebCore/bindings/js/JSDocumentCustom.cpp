@@ -93,7 +93,7 @@ JSValue* toJS(ExecState* exec, Document* doc)
     // Make sure the document is kept around by the window object, and works right with the
     // back/forward cache.
     if (doc->frame())
-        toJSDOMWindow(doc->frame())->putDirect("document", ret, DontDelete|ReadOnly);
+        toJSDOMWindowWrapper(doc->frame())->window()->putDirect("document", ret, DontDelete|ReadOnly);
     else {
         size_t nodeCount = 0;
         for (Node* n = doc; n; n = n->traverseNextNode())

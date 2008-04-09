@@ -487,7 +487,9 @@ public:
     void textNodesMerged(Text* oldNode, unsigned offset);
     void textNodeSplit(Text* oldNode);
 
-    DOMWindow* defaultView() const;
+    DOMWindow* defaultView() const { return domWindow(); } 
+    DOMWindow* domWindow() const;
+
     PassRefPtr<Event> createEvent(const String& eventType, ExceptionCode&);
 
     // keep track of what types of event listeners are registered, so we don't

@@ -417,7 +417,7 @@ static JSValueRef getResourceDocumentNode(JSContextRef ctx, JSObjectRef /*functi
         return undefined;
 
     KJS::JSLock lock;
-    JSValueRef documentValue = toRef(toJS(toJSDOMWindow(frame)->globalExec(), document));
+    JSValueRef documentValue = toRef(toJS(toJSDOMWindowWrapper(frame)->window()->globalExec(), document));
     return documentValue;
 }
 
@@ -621,11 +621,7 @@ static JSValueRef inspectedWindow(JSContextRef ctx, JSObjectRef /*function*/, JS
     if (!controller)
         return JSValueMakeUndefined(ctx);
 
-    JSDOMWindow* window = toJSDOMWindow(controller->inspectedPage()->mainFrame());
-    if (!window)
-        return JSValueMakeNull(ctx);
-
-    return toRef(window);
+    return toRef(toJS(toJS(ctx), controller->inspectedPage()->mainFrame()));
 }
 
 static JSValueRef localizedStrings(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)

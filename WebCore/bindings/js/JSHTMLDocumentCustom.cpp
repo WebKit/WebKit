@@ -34,6 +34,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "JSDOMWindow.h"
+#include "JSDOMWindowWrapper.h"
 #include "JSHTMLCollection.h"
 #include "kjs_html.h"
 
@@ -66,7 +67,7 @@ JSValue* JSHTMLDocument::nameGetter(ExecState* exec, JSObject* originalObject, c
 
         Frame* frame;
         if (node->hasTagName(iframeTag) && (frame = static_cast<HTMLIFrameElement*>(node)->contentFrame()))
-            return toJSDOMWindow(frame);
+            return toJS(exec, frame);
 
         return toJS(exec, node);
     } 
@@ -99,12 +100,12 @@ JSValue* JSHTMLDocument::open(ExecState* exec, const List& args)
     if (args.size() > 2) {
         Frame* frame = static_cast<HTMLDocument*>(impl())->frame();
         if (frame) {
-            JSDOMWindow* window = toJSDOMWindow(frame);
-            if (window) {
-                JSObject* functionObject = window->get(exec, "open")->getObject();
+            JSDOMWindowWrapper* wrapper = toJSDOMWindowWrapper(frame);
+            if (wrapper) {
+                JSObject* functionObject = wrapper->get(exec, "open")->getObject();
                 if (!functionObject || !functionObject->implementsCall())
                     return throwError(exec, TypeError);
-                return functionObject->call(exec, window, args);
+                return functionObject->call(exec, wrapper, args);
             }
         }
         return jsUndefined();

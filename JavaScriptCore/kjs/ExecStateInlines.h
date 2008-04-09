@@ -30,7 +30,7 @@
 
 namespace KJS  {
 
-    inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject, 
+    inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject, JSObject* globalThisValue,
                                 FunctionBodyNode* functionBodyNode, ExecState* callingExec,
                                 FunctionImp* func, const List& args)
         : m_globalObject(globalObject)
@@ -44,6 +44,7 @@ namespace KJS  {
         , m_scopeChain(func->scope())
         , m_inlineScopeChainNode(0, 0)
         , m_thisValue(thisObject)
+        , m_globalThisValue(globalThisValue)
         , m_iterationDepth(0)
         , m_switchDepth(0) 
         , m_codeType(FunctionCode)
@@ -68,10 +69,10 @@ namespace KJS  {
     {
     }
 
-    inline FunctionExecState::FunctionExecState(JSGlobalObject* globalObject, JSObject* thisObject, 
+    inline FunctionExecState::FunctionExecState(JSGlobalObject* globalObject, JSObject* thisObject, JSObject* globalThisValue,
                                                 FunctionBodyNode* functionBodyNode, ExecState* callingExec,
                                                 FunctionImp* func, const List& args)
-        : ExecState(globalObject, thisObject, functionBodyNode, callingExec, func, args)
+        : ExecState(globalObject, thisObject, globalThisValue, functionBodyNode, callingExec, func, args)
     {
         m_globalObject->activeExecStates().append(this);
     }

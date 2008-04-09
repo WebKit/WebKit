@@ -23,7 +23,6 @@
 #include "config.h"
 #include "array_instance.h"
 
-#include "JSGlobalObject.h"
 #include "PropertyNameArray.h"
 #include <wtf/Assertions.h>
 
@@ -489,14 +488,14 @@ struct CompareWithCompareFunctionArguments {
     CompareWithCompareFunctionArguments(ExecState *e, JSObject *cf)
         : exec(e)
         , compareFunction(cf)
-        , globalObject(e->dynamicGlobalObject())
+        , globalThisValue(e->globalThisValue())
     {
     }
 
     ExecState *exec;
     JSObject *compareFunction;
     List arguments;
-    JSGlobalObject* globalObject;
+    JSObject* globalThisValue;
 };
 
 static CompareWithCompareFunctionArguments* compareWithCompareFunctionArguments = 0;
@@ -513,8 +512,7 @@ static int compareWithCompareFunctionForQSort(const void* a, const void* b)
     args->arguments.clear();
     args->arguments.append(va);
     args->arguments.append(vb);
-    double compareResult = args->compareFunction->call
-        (args->exec, args->globalObject, args->arguments)->toNumber(args->exec);
+    double compareResult = args->compareFunction->call(args->exec, args->globalThisValue, args->arguments)->toNumber(args->exec);
     return compareResult < 0 ? -1 : compareResult > 0 ? 1 : 0;
 }
 

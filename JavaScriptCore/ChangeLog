@@ -1,3 +1,82 @@
+2008-04-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        First step in implementing the "split window"
+
+        - Add a GlobalThisValue to ExecState which should be used 
+          in places that used to implement the "use the global object
+          as this if null" rule.
+        - Factor out lookupGetter/lookupSetter into virtual methods 
+          on JSObject so that they can be forwarded.
+        - Make defineGetter/defineSetter virtual methods for the same
+          reason.
+        - Have PrototypeReflexiveFunction store the globalObject used
+          to create it so that it can be used to get the correct thisObject
+          for eval.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectCallAsFunction):
+        * JavaScriptCore.exp:
+        * kjs/Activation.h:
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::ExecState):
+        (KJS::GlobalExecState::GlobalExecState):
+        * kjs/ExecState.h:
+        (KJS::ExecState::globalThisValue):
+        * kjs/ExecStateInlines.h:
+        (KJS::ExecState::ExecState):
+        (KJS::FunctionExecState::FunctionExecState):
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::reset):
+        (KJS::JSGlobalObject::toGlobalObject):
+        * kjs/JSGlobalObject.h:
+        (KJS::JSGlobalObject::JSGlobalObjectData::JSGlobalObjectData):
+        (KJS::JSGlobalObject::JSGlobalObject):
+        * kjs/array_instance.cpp:
+        (KJS::CompareWithCompareFunctionArguments::CompareWithCompareFunctionArguments):
+        (KJS::compareWithCompareFunctionForQSort):
+        * kjs/array_object.cpp:
+        (KJS::arrayProtoFuncSort):
+        (KJS::arrayProtoFuncFilter):
+        (KJS::arrayProtoFuncMap):
+        (KJS::arrayProtoFuncEvery):
+        (KJS::arrayProtoFuncForEach):
+        (KJS::arrayProtoFuncSome):
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction):
+        (KJS::ActivationImp::toThisObject):
+        (KJS::globalFuncEval):
+        (KJS::PrototypeReflexiveFunction::PrototypeReflexiveFunction):
+        (KJS::PrototypeReflexiveFunction::mark):
+        * kjs/function.h:
+        (KJS::PrototypeReflexiveFunction::cachedGlobalObject):
+        * kjs/function_object.cpp:
+        (KJS::functionProtoFuncApply):
+        (KJS::functionProtoFuncCall):
+        * kjs/nodes.cpp:
+        (KJS::ExpressionNode::resolveAndCall):
+        (KJS::FunctionCallValueNode::evaluate):
+        (KJS::LocalVarFunctionCallNode::inlineEvaluate):
+        (KJS::ScopedVarFunctionCallNode::inlineEvaluate):
+        (KJS::FunctionCallBracketNode::evaluate):
+        (KJS::FunctionCallDotNode::inlineEvaluate):
+        * kjs/object.cpp:
+        (KJS::JSObject::call):
+        (KJS::JSObject::put):
+        (KJS::tryGetAndCallProperty):
+        (KJS::JSObject::lookupGetter):
+        (KJS::JSObject::lookupSetter):
+        (KJS::JSObject::toThisObject):
+        (KJS::JSObject::toGlobalObject):
+        (KJS::JSObject::fillGetterPropertySlot):
+        * kjs/object.h:
+        * kjs/object_object.cpp:
+        (KJS::objectProtoFuncLookupGetter):
+        (KJS::objectProtoFuncLookupSetter):
+        * kjs/string_object.cpp:
+        (KJS::replace):
+
 2008-04-08  Brady Eidson  <beidson@apple.com>
 
         Encourage Windows to rebuild - AGAIN...

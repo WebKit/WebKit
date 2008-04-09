@@ -27,7 +27,7 @@
 namespace WebCore {
 
     class Event;
-    class JSDOMWindow;
+    class JSDOMWindowWrapper;
     class Node;
 
     class JSAbstractEventListener : public EventListener {
@@ -37,7 +37,7 @@ namespace WebCore {
         virtual void handleEvent(Event*, bool isWindowEvent);
         virtual bool isHTMLEventListener() const;
         virtual KJS::JSObject* listenerObj() const = 0;
-        virtual JSDOMWindow* windowObj() const = 0;
+        virtual JSDOMWindowWrapper* windowWrapper() const = 0;
 
     private:
         bool m_html;
@@ -45,38 +45,38 @@ namespace WebCore {
 
     class JSUnprotectedEventListener : public JSAbstractEventListener {
     public:
-        JSUnprotectedEventListener(KJS::JSObject* listener, JSDOMWindow*, bool html = false);
+        JSUnprotectedEventListener(KJS::JSObject* listener, JSDOMWindowWrapper*, bool html = false);
         virtual ~JSUnprotectedEventListener();
 
         virtual KJS::JSObject* listenerObj() const;
-        virtual JSDOMWindow* windowObj() const;
-        void clearWindowObj();
+        virtual JSDOMWindowWrapper* windowWrapper() const;
+        void clearWindowWrapper();
         void mark();
 
     private:
         KJS::JSObject* m_listener;
-        JSDOMWindow* m_win;
+        JSDOMWindowWrapper* m_windowWrapper;
     };
 
     class JSEventListener : public JSAbstractEventListener {
     public:
-        JSEventListener(KJS::JSObject* listener, JSDOMWindow*, bool html = false);
+        JSEventListener(KJS::JSObject* listener, JSDOMWindowWrapper*, bool html = false);
         virtual ~JSEventListener();
 
         virtual KJS::JSObject* listenerObj() const;
-        virtual JSDOMWindow* windowObj() const;
-        void clearWindowObj();
+        virtual JSDOMWindowWrapper* windowWrapper() const;
+        void clearWindowWrapper();
 
     protected:
         mutable KJS::ProtectedPtr<KJS::JSObject> m_listener;
 
     private:
-        KJS::ProtectedPtr<JSDOMWindow> m_win;
+        KJS::ProtectedPtr<JSDOMWindowWrapper> m_windowWrapper;
     };
 
     class JSLazyEventListener : public JSEventListener {
     public:
-        JSLazyEventListener(const String& functionName, const String& code, JSDOMWindow*, Node*, int lineNumber = 0);
+        JSLazyEventListener(const String& functionName, const String& code, JSDOMWindowWrapper*, Node*, int lineNumber = 0);
         virtual KJS::JSObject* listenerObj() const;
 
     private:

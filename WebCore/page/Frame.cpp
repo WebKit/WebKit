@@ -52,7 +52,7 @@
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "HitTestResult.h"
-#include "JSDOMWindow.h"
+#include "JSDOMWindowWrapper.h"
 #include "Logging.h"
 #include "MediaFeatureNames.h"
 #include "NP_jsobject.h"
@@ -173,8 +173,8 @@ Frame::~Frame()
     --FrameCounter::count;
 #endif
 
-    if (d->m_jscript && d->m_jscript->haveGlobalObject())
-        static_cast<JSDOMWindow*>(d->m_jscript->globalObject())->disconnectFrame();
+    if (d->m_jscript && d->m_jscript->haveWindowWrapper())
+        d->m_jscript->windowWrapper()->disconnectFrame();
 
     disconnectOwnerElement();
     
@@ -1704,9 +1704,10 @@ void Frame::pageDestroyed()
         d->m_page->focusController()->setFocusedFrame(0);
 
     // This will stop any JS timers
-    if (d->m_jscript && d->m_jscript->haveGlobalObject())
-        if (JSDOMWindow* w = toJSDOMWindow(this))
-            w->disconnectFrame();
+    if (d->m_jscript && d->m_jscript->haveWindowWrapper()) {
+        if (JSDOMWindowWrapper* windowWrapper = toJSDOMWindowWrapper(this))
+            windowWrapper->disconnectFrame();
+    }
 
     clearScriptObjects();
     

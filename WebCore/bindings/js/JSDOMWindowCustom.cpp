@@ -27,6 +27,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
+#include "JSDOMWindowWrapper.h"
 #include "Settings.h"
 #include "kjs_proxy.h"
 #include <kjs/object.h>
@@ -200,19 +201,28 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue* value)
 JSValue* JSDOMWindow::postMessage(ExecState* exec, const List& args)
 {
     DOMWindow* window = impl();
-    
+
     DOMWindow* source = toJSDOMWindow(exec->dynamicGlobalObject())->impl();
     String domain = source->frame()->loader()->url().host();
     String uri = source->frame()->loader()->url().string();
     String message = args[0]->toString(exec);
-    
+
     if (exec->hadException())
         return jsUndefined();
-    
+
     window->postMessage(message, domain, uri, source);
-    
+
     return jsUndefined();
 }
 #endif
+
+DOMWindow* toDOMWindow(JSValue* val)
+{
+    if (val->isObject(&JSDOMWindow::s_info))
+        return static_cast<JSDOMWindow*>(val)->impl();
+    if (val->isObject(&JSDOMWindowWrapper::s_info))
+        return static_cast<JSDOMWindowWrapper*>(val)->impl();
+    return 0;
+}
 
 } // namespace WebCore

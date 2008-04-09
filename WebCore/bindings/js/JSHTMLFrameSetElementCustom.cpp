@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,13 @@
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
 #include "JSDOMWindow.h"
+#include "JSDOMWindowWrapper.h"
 #include "kjs_binding.h"
+
+using namespace KJS;
 
 namespace WebCore {
 
-using namespace KJS;
 using namespace HTMLNames;
 
 bool JSHTMLFrameSetElement::canGetItemsForName(ExecState*, HTMLFrameSetElement* frameSet, const Identifier& propertyName)
@@ -51,7 +53,7 @@ JSValue* JSHTMLFrameSetElement::nameGetter(ExecState* exec, JSObject* originalOb
 
     Node* frame = element->children()->namedItem(propertyName);
     if (Document* doc = static_cast<HTMLFrameElement*>(frame)->contentDocument()) {
-        if (JSDOMWindow* window = toJSDOMWindow(doc->frame()))
+        if (JSDOMWindowWrapper* window = toJSDOMWindowWrapper(doc->frame()))
             return window;
     }
 

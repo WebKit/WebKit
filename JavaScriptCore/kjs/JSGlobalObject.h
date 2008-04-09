@@ -76,9 +76,9 @@ namespace KJS {
         using JSVariableObject::JSVariableObjectData;
 
         struct JSGlobalObjectData : public JSVariableObjectData {
-            JSGlobalObjectData(JSGlobalObject* globalObject)
+            JSGlobalObjectData(JSGlobalObject* globalObject, JSObject* thisValue)
                 : JSVariableObjectData(&inlineSymbolTable)
-                , globalExec(globalObject)
+                , globalExec(globalObject, thisValue)
             {
             }
 
@@ -141,14 +141,14 @@ namespace KJS {
 
     public:
         JSGlobalObject()
-            : JSVariableObject(new JSGlobalObjectData(this))
+            : JSVariableObject(new JSGlobalObjectData(this, this))
         {
             init();
         }
 
     protected:
-        JSGlobalObject(JSValue* proto)
-            : JSVariableObject(proto, new JSGlobalObjectData(this))
+        JSGlobalObject(JSValue* proto, JSObject* globalThisValue)
+            : JSVariableObject(proto, new JSGlobalObjectData(this, globalThisValue))
         {
             init();
         }
@@ -225,6 +225,7 @@ namespace KJS {
         virtual void mark();
 
         virtual bool isGlobalObject() const { return true; }
+        virtual JSGlobalObject* toGlobalObject(ExecState*) const;
 
         virtual ExecState* globalExec();
 

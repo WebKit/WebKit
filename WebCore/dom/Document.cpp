@@ -2527,11 +2527,11 @@ void Document::textNodeSplit(Text* oldNode)
     // FIXME: This should update markers for spelling and grammar checking.
 }
 
-DOMWindow* Document::defaultView() const
+// FIXME: eventually, this should return a DOMWindow stored in the document.
+DOMWindow* Document::domWindow() const
 {
     if (!frame())
         return 0;
-    
     return frame()->domWindow();
 }
 

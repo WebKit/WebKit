@@ -28,8 +28,8 @@ using namespace KJS;
 
 namespace WebCore {
 
-JSSVGLazyEventListener::JSSVGLazyEventListener(const String& functionName, const String& code, JSDOMWindow* win, Node* node, int lineNumber)
-    : JSLazyEventListener(functionName, code, win, node, lineNumber)
+JSSVGLazyEventListener::JSSVGLazyEventListener(const String& functionName, const String& code, JSDOMWindowWrapper* windowWrapper, Node* node, int lineNumber)
+    : JSLazyEventListener(functionName, code, windowWrapper, node, lineNumber)
 {
 }
 
