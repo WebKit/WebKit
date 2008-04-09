@@ -1,3 +1,20 @@
+2008-04-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix more Windows layout test regressions from the font-weight patch 
+
+        The patch silently introduced the ability to select some fonts 
+        by their full name on Windows. Firefox and IE allow the same.
+        This made these tests use different, Windows-only fonts on
+        Windows. The patch removes references to these fonts from the 
+        tests.
+
+        * tables/mozilla/bugs/bug4093.html:
+        * tables/mozilla/bugs/bug43854-1.html:
+        * tables/mozilla/bugs/bug8381.html:
+        * tables/mozilla/core/bloomberg.html:
+
 2008-04-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam Roben
