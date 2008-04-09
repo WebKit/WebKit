@@ -47,7 +47,7 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
             if (!g_str_has_suffix(name, "." G_MODULE_SUFFIX))
                 continue;
 
-            gchar* filename = g_build_filename((it->utf8()).data(), name, 0);
+            gchar* filename = g_build_filename((it->utf8()).data(), name, NULL);
             paths.add(filename);
             g_free(filename);
         }
@@ -61,7 +61,7 @@ Vector<String> PluginDatabase::defaultPluginDirectories()
     gchar* directory;
 
 #if defined(GDK_WINDOWING_X11)
-    directory = g_build_filename(g_get_home_dir(), ".mozilla", "plugins", 0);
+    directory = g_build_filename(g_get_home_dir(), ".mozilla", "plugins", NULL);
     directories.append(directory);
     g_free(directory);
 
@@ -75,17 +75,17 @@ Vector<String> PluginDatabase::defaultPluginDirectories()
         g_strfreev(pluginPaths);
     }
 
-    directory = g_build_filename(G_DIR_SEPARATOR_S "usr", "lib", "browser", "plugins", 0);
+    directory = g_build_filename(G_DIR_SEPARATOR_S "usr", "lib", "browser", "plugins", NULL);
     directories.append(directory);
     g_free(directory);
-    directory = g_build_filename(G_DIR_SEPARATOR_S "usr", "local", "lib", "mozilla", "plugins", 0);
+    directory = g_build_filename(G_DIR_SEPARATOR_S "usr", "local", "lib", "mozilla", "plugins", NULL);
     directories.append(directory);
     g_free (directory);
-    directory = g_build_filename(G_DIR_SEPARATOR_S "usr", "lib", "mozilla", "plugins", 0);
+    directory = g_build_filename(G_DIR_SEPARATOR_S "usr", "lib", "mozilla", "plugins", NULL);
     directories.append(directory);
     g_free (directory);
 #elif defined(GDK_WINDOWING_WIN32)
-    directory = g_build_filename(g_get_home_dir(), "Application Data", "Mozilla", "plugins", 0);
+    directory = g_build_filename(g_get_home_dir(), "Application Data", "Mozilla", "plugins", NULL);
     directories.append(directory);
     g_free(directory);
 #endif

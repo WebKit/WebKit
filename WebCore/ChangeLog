@@ -1,3 +1,16 @@
+2008-04-08  Christian Persch  <chpe@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18360
+        "missing sentinel" warnings in PluginDatabaseGtk.cpp
+
+        Use NULL, not 0 as sentinel in varargs calls.
+
+        * plugins/gtk/PluginDatabaseGtk.cpp:
+        (WebCore::PluginDatabase::getPluginPathsInDirectories):
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+
 2008-04-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
