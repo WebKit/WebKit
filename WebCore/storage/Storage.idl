@@ -28,6 +28,7 @@ module storage {
     interface [
         GenerateConstructor,
         HasNameGetter,
+        CustomGetPropertyNames,
         CustomPutFunction
     ] Storage {
         readonly attribute unsigned long length;

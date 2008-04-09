@@ -104,7 +104,7 @@ bool JSLocation::deleteProperty(ExecState* exec, const Identifier& propertyName)
     return Base::deleteProperty(exec, propertyName);
 }
 
-bool JSLocation::customGetPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
+bool JSLocation::customGetPropertyNames(ExecState* exec, PropertyNameArray&)
 {
     // Only allow the location object to enumerated by frames in the same origin.
     if (!allowsAccessFromFrame(exec, impl()->frame()))

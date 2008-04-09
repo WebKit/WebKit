@@ -1,3 +1,20 @@
+2008-04-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben
+
+        Per the HTML5 spec, enumerating a Storage object should walk the keys in the storage area, 
+        and should not return the built-in properties.
+
+        Test: storage/domstorage/sessionstorage/enumerate-storage.html
+
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::customGetPropertyNames): Removed the name from an unused parameter
+
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::customGetPropertyNames): Copy all of the keys into the property names array
+
+        * storage/Storage.idl: Add CustomGetPropertyNames
+
 2008-04-09  Timothy Hatcher  <timothy@apple.com>
 
         Fixes the regression where resource time/size pills do not

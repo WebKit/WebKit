@@ -1,3 +1,16 @@
+2008-04-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben
+
+        Per the HTML5 spec, enumerating a Storage object should walk the keys in the storage area, 
+        and should not return the built-in properties.
+
+        This test adds some keys to sessionStorage, enumerates the sessionStorage object, and logs 
+        the sorted result.  It should *not* contain the built in properties of the Storage object
+
+        * storage/domstorage/sessionstorage/enumerate-storage-expected.txt: Added.
+        * storage/domstorage/sessionstorage/enumerate-storage.html: Added.
+
 2008-04-08  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Adam
