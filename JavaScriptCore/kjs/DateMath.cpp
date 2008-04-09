@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
- *
+ * 
  * The Original Code is Mozilla Communicator client code, released
  * March 31, 1998.
  *

@@ -1,3 +1,9 @@
+2008-04-08  Brady Eidson  <beidson@apple.com>
+
+        Encourage Windows to rebuild - AGAIN...
+
+        * kjs/DateMath.cpp:
+
 2008-04-08  Adam Roben  <aroben@apple.com>
 
         Mac build fix

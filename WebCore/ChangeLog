@@ -1,5 +1,14 @@
 2008-04-08  Brady Eidson  <beidson@apple.com>
 
+        Encourage Windows to rebuild - AGAIN...
+
+        * WebCore.vcproj/build-generated-files.sh:
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * config.h:
+
+2008-04-08  Brady Eidson  <beidson@apple.com>
+
         OMG release builds didn't have this flag Windows build bots I'm so 
         sorry will you ever forgive me?
 

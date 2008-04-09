@@ -1,6 +1,6 @@
 #
 # WebKit IDL parser
-#
+# 
 # Copyright (C) 2005 Nikolas Zimmermann <wildfox@kde.org>
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2007 Apple Inc. All rights reserved.
