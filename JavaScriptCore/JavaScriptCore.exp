@@ -207,6 +207,7 @@ __ZN3WTF10fastMallocEm
 __ZN3WTF11fastReallocEPvm
 __ZN3WTF12createThreadEPFPvS0_ES0_
 __ZN3WTF12detachThreadEj
+__ZN3WTF12isMainThreadEv
 __ZN3WTF13currentThreadEv
 __ZN3WTF15ThreadCondition4waitERNS_5MutexE
 __ZN3WTF15ThreadCondition6signalEv
