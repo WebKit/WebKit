@@ -477,8 +477,15 @@ WebInspector.toggleAttach = function()
 
 WebInspector.toolbarDragStart = function(event)
 {
+    if (WebInspector.attached)
+        return;
+
+    var target = event.target;
+    if (target.hasStyleClass("toolbar-item") && target.hasStyleClass("toggleable"))
+        return;
+
     var toolbar = document.getElementById("toolbar");
-    if (event.target !== toolbar || WebInspector.attached)
+    if (target !== toolbar && !target.hasStyleClass("toolbar-item"))
         return;
 
     toolbar.lastScreenX = event.screenX;

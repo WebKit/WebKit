@@ -1,3 +1,18 @@
+2008-04-09  Timothy Hatcher  <timothy@apple.com>
+
+        A more complete fix for: can't drag the Web Inspector when grabbing
+        in the toolbar area. Makes dragging under the search field in the
+        empty space work again.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18373
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/inspector.js:
+        (WebInspector.toolbarDragStart): Prevent dragging if the event target
+        is a toggleable toolbar item. Allow dragging when the target is a
+        normal toolbar item.
+
 2008-04-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Timothy Hatcher.
