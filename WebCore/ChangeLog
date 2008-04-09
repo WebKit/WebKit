@@ -1,3 +1,12 @@
+2008-04-08  Brady Eidson  <beidson@apple.com>
+
+        OMG release builds didn't have this flag Windows build bots I'm so 
+        sorry will you ever forgive me?
+
+        (Found by Stephanie, rubberstamped and landed by Brady)
+
+        * WebCore.vcproj/WebCore.vcproj: Add ENABLE_DOM_STORAGE for release builds
+
 2008-04-08  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a crash in KJS::JSValue::toObject when closing
