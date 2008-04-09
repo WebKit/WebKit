@@ -96,6 +96,7 @@ body.detached.platform-mac-leopard #toolbar {
 
 .toolbar-item.flexable-space {
     -webkit-box-flex: 1;
+    visibility: hidden;
 }
 
 .toolbar-item input {

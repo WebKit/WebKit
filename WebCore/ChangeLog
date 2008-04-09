@@ -1,3 +1,12 @@
+2008-04-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=18373
+        REGRESSION: Can't drag the Web Inspector when grabbing in the toolbar area
+
+        * page/inspector/inspector.css:
+
 2008-04-08  Christian Persch  <chpe@gnome.org>
 
         Reviewed by Alp Toker.
