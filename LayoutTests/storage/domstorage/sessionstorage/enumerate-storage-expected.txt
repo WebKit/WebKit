@@ -4,5 +4,6 @@ bar
 batman
 foo
 fu
+prototypeTestKey
 zeta
 

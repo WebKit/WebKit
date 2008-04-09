@@ -54,7 +54,7 @@ bool JSStorage::customGetPropertyNames(ExecState* exec, PropertyNameArray& prope
     for (unsigned i = 0; i < length; ++i)
         propertyNames.add(m_impl->key(i, ec));
         
-    return true;
+    return false;
 }
 
 bool JSStorage::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value)

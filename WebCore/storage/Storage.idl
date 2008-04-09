@@ -31,13 +31,13 @@ module storage {
         CustomGetPropertyNames,
         CustomPutFunction
     ] Storage {
-        readonly attribute unsigned long length;
-        DOMString key(in unsigned long index) 
-            raises (DOMException);
-        [ConvertNullStringTo=Null] DOMString getItem(in DOMString key);
-        void setItem(in DOMString key, in DOMString data) 
-            raises (DOMException);
-        void removeItem(in DOMString key);
+        readonly attribute [DontEnum] unsigned long length;
+        [DontEnum] DOMString key(in unsigned long index) 
+            raises(DOMException);
+        [DontEnum, ConvertNullStringTo=Null] DOMString getItem(in DOMString key);
+        [DontEnum] void setItem(in DOMString key, in DOMString data) 
+            raises(DOMException);
+        [DontEnum] void removeItem(in DOMString key);
     };
 
 }

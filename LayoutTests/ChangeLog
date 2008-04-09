@@ -1,3 +1,14 @@
+2008-04-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        When enumerating a Storage object, the Storage built-ins should not be included, but the 
+        prototype chain SHOULD be included.
+
+        Updated the layout test to test this.
+        * storage/domstorage/sessionstorage/enumerate-storage-expected.txt:
+        * storage/domstorage/sessionstorage/enumerate-storage.html:
+
 2008-04-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

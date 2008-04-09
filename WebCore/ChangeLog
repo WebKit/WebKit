@@ -1,5 +1,17 @@
 2008-04-09  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Sam Weinig
+
+        When enumerating a Storage object, the Storage built-ins should not be included, but the 
+        prototype chain SHOULD be included.
+
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::customGetPropertyNames): Return false so the prototype chain is walked
+
+        * storage/Storage.idl: Mark all built-ins as "DontEnum"
+
+2008-04-09  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Adam Roben
 
         Per the HTML5 spec, enumerating a Storage object should walk the keys in the storage area, 

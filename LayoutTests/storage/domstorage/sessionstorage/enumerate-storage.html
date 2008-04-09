@@ -23,7 +23,8 @@ function startTest()
         log("window.sessionStorage DOES NOT exist");
         return;
     }
- 
+
+    Storage.prototype.prototypeTestKey = "prototypeTestValue";
     sessionStorage.foo = "bar";
     sessionStorage.fu = "baz";
     sessionStorage.batman = "bin suparman";
