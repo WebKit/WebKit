@@ -126,7 +126,14 @@ WebInspector.ElementsPanel.prototype = {
 
     reset: function()
     {
-        var inspectedRootDocument = InspectorController.inspectedWindow().document;
+        var inspectedWindow = InspectorController.inspectedWindow();
+        if (!inspectedWindow) {
+            this.rootDOMNode = null;
+            this.focusedDOMNode = null;
+            return;
+        }
+
+        var inspectedRootDocument = inspectedWindow.document;
         this.rootDOMNode = inspectedRootDocument;
 
         var canidateFocusNode = inspectedRootDocument.body || inspectedRootDocument.documentElement;

@@ -621,7 +621,11 @@ static JSValueRef inspectedWindow(JSContextRef ctx, JSObjectRef /*function*/, JS
     if (!controller)
         return JSValueMakeUndefined(ctx);
 
-    return toRef(toJSDOMWindow(controller->inspectedPage()->mainFrame()));
+    JSDOMWindow* window = toJSDOMWindow(controller->inspectedPage()->mainFrame());
+    if (!window)
+        return JSValueMakeNull(ctx);
+
+    return toRef(window);
 }
 
 static JSValueRef localizedStrings(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)

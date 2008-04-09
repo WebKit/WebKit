@@ -1,3 +1,19 @@
+2008-04-08  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a crash in KJS::JSValue::toObject when closing
+        Safari with Inspector open.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18371
+
+        Reviewed by Adam Roben.
+
+        * page/InspectorController.cpp:
+        (WebCore::inspectedWindow): NULL check the result of toJSDOMWindow.
+        Return JSNull if JSDOMWindow is 0.
+        * page/inspector/ElementsPanel.js:
+        (ElementsPanel.prototype.reset): NULL check the result of
+        InspectorController.inspectedWindow.
+
 2008-04-08  Adam Roben  <aroben@apple.com>
 
         Wx build fix
