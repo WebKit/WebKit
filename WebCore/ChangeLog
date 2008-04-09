@@ -1,3 +1,20 @@
+2008-04-09  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes the regression where resource time/size pills do not
+        update during a load in the Inspector.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18374
+
+        Reviewed by John Sullivan.
+
+        * page/inspector/ResourcesPanel.js:
+        (ResourcesPanel.prototype.show): Remove an unneeded call to _updateGraphBars,
+        since _updateSidebarWidth already calls _updateGraphBars.
+        (ResourcesPanel.prototype.addResource): Call updateGraphSideWidth.
+        (ResourcesPanel.prototype._updateGraphBars): Ditto.
+        (ResourceSidebarTreeElement.prototype.updateGraphSideWidth): Update the
+        style for graphSideElement with the passed in width.
+
 2008-04-09  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz.

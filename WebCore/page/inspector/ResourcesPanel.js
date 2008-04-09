@@ -122,7 +122,6 @@ WebInspector.ResourcesPanel.prototype = {
     {
         WebInspector.Panel.prototype.show.call(this);
         this._updateDividersLabelBarPosition();
-        this._updateGraphBars();
         this._updateSidebarWidth();
         this.refreshIfNeeded();
     },
@@ -226,6 +225,8 @@ WebInspector.ResourcesPanel.prototype = {
 
         var resourceTreeElement = new WebInspector.ResourceSidebarTreeElement(resource);
         resource._resourcesTreeElement = resourceTreeElement;
+
+        resourceTreeElement.updateGraphSideWidth(this.dividersElement.offsetWidth);
 
         this.resourcesTreeElement.appendChild(resourceTreeElement);
 
@@ -454,16 +455,13 @@ WebInspector.ResourcesPanel.prototype = {
             return;
         }
 
-        // Add one to account for the sidebar border width.
-        var dividersElementWidth = this.dividersElement.offsetWidth + 1;
-
+        var dividersElementWidth = this.dividersElement.offsetWidth;
         var resourcesLength = this._resources.length;
         for (var i = 0; i < resourcesLength; ++i) {
             var resourceTreeItem = this._resources[i]._resourcesTreeElement;
             if (!resourceTreeItem)
                 continue;
-            resourceTreeItem.graphSideElement.style.right = -dividersElementWidth + "px";
-            resourceTreeItem.graphSideElement.style.width = dividersElementWidth + "px";
+            resourceTreeItem.updateGraphSideWidth(dividersElementWidth);
         }
     },
 
@@ -1113,6 +1111,13 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
         var newClassName = "sidebar-tree-item resource-sidebar-tree-item resources-category-" + this.resource.category.name;
         if (this._listItemNode && this._listItemNode.className !== newClassName)
             this._listItemNode.className = newClassName;
+    },
+
+    updateGraphSideWidth: function(width)
+    {
+        width += 1; // Add one to account for the sidebar border width.
+        this.graphSideElement.style.right = -width + "px";
+        this.graphSideElement.style.width = width + "px";
     }
 }
 
