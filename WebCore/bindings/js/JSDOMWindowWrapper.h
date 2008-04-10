@@ -30,16 +30,17 @@
 #define JSDOMWindowWrapper_h
 
 #include "JSDOMWindow.h"
-#include <kjs/object.h>
+#include "kjs_binding.h"
 
 namespace WebCore {
 
+    class DOMWindow;
     class Frame;
 
-    class JSDOMWindowWrapper : public KJS::JSObject {
-        typedef KJS::JSObject Base;
+    class JSDOMWindowWrapper : public DOMObject {
+        typedef DOMObject Base;
     public:
-        JSDOMWindowWrapper();
+        JSDOMWindowWrapper(DOMWindow*);
         virtual ~JSDOMWindowWrapper();
 
         JSDOMWindow* window() const { return m_window; }

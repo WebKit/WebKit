@@ -82,9 +82,10 @@ const int cMaxTimerNestingLevel = 5;
 const double cMinimumTimerInterval = 0.010;
 
 struct JSDOMWindowBasePrivate {
-    JSDOMWindowBasePrivate()
+    JSDOMWindowBasePrivate(JSDOMWindowWrapper* wrapper)
         : m_evt(0)
         , m_returnValueSlot(0)
+        , m_wrapper(wrapper)
     {
     }
 
@@ -94,6 +95,7 @@ struct JSDOMWindowBasePrivate {
     JSDOMWindowBase::UnprotectedListenersMap jsUnprotectedHTMLEventListeners;
     Event* m_evt;
     JSValue** m_returnValueSlot;
+    JSDOMWindowWrapper* m_wrapper;
 
     typedef HashMap<int, DOMWindowTimer*> TimeoutsMap;
     TimeoutsMap m_timeouts;
@@ -191,10 +193,10 @@ const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, &JSDOMWindowBaseTable }
 @end
 */
 
-JSDOMWindowBase::JSDOMWindowBase(JSObject* prototype, DOMWindow* window)
-    : JSGlobalObject(prototype, window->frame()->scriptProxy()->windowWrapper())
+JSDOMWindowBase::JSDOMWindowBase(JSObject* prototype, DOMWindow* window, JSDOMWindowWrapper* wrapper)
+    : JSGlobalObject(prototype, wrapper)
     , m_impl(window)
-    , d(new JSDOMWindowBasePrivate)
+    , d(new JSDOMWindowBasePrivate(wrapper))
 {
     // JSDOMWindowBase destruction is not thread-safe because of
     // the non-thread-safe WebCore structures it references.
@@ -961,7 +963,7 @@ void JSDOMWindowBase::clear()
     JSDOMWindowWrapper* wrapper = frame->scriptProxy()->windowWrapper();
     wrapper->window()->reset(JSDOMWindowPrototype::self());
 
-    // Set the prototype on the wrapper to point to it's window's prototype so resolving worksing correctly
+    // Set the prototype on the wrapper to point to it's window's prototype so resolving works correctly
     wrapper->setPrototype(wrapper->window()->prototype());
   }
 
@@ -986,7 +988,7 @@ JSObject* JSDOMWindowBase::toThisObject(ExecState*) const
 
 JSDOMWindowWrapper* JSDOMWindowBase::wrapper() const
 {
-    return impl()->frame()->scriptProxy()->windowWrapper();
+    return d->m_wrapper;
 }
 
 JSValue* windowProtoFuncAToB(ExecState* exec, JSObject* thisObj, const List& args)

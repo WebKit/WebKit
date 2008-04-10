@@ -1,3 +1,28 @@
+2008-04-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=18389
+        Crash in JSDOMWindowWrapper::mark loading digg.com
+
+        - Add a null check to JSDOMWindowWrapper::mark for the case when the collector
+          runs during its allocation.
+        - Cleans up the creation of the window to be a little more straight forward.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBasePrivate::JSDOMWindowBasePrivate):
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        (WebCore::JSDOMWindowBase::clear):
+        (WebCore::JSDOMWindowBase::wrapper):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowWrapper.cpp:
+        (WebCore::JSDOMWindowWrapper::JSDOMWindowWrapper):
+        (WebCore::JSDOMWindowWrapper::mark):
+        * bindings/js/JSDOMWindowWrapper.h:
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::initScript):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2008-04-09  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Mitzpettel

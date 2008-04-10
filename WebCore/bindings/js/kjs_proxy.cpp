@@ -144,8 +144,7 @@ void KJSProxy::initScript()
 
     JSLock lock;
 
-    m_windowWrapper = new JSDOMWindowWrapper();
-    m_windowWrapper->setWindow(new JSDOMWindow(m_frame->domWindow()));
+    m_windowWrapper = new JSDOMWindowWrapper(m_frame->domWindow());
 
     if (Page* page = m_frame->page())
         attachDebugger(page->debugger());

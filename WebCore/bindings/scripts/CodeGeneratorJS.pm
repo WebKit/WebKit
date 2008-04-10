@@ -304,6 +304,7 @@ sub GenerateHeader
 
     # Implementation class forward declaration
     AddClassForwardIfNeeded($implClassName) unless $podType;
+    AddClassForwardIfNeeded("JSDOMWindowWrapper") if $interfaceName eq "DOMWindow";
 
     # Class declaration
     push(@headerContent, "class $className : public $parentClassName {\n");
@@ -311,8 +312,8 @@ sub GenerateHeader
     push(@headerContent, "public:\n");
 
     # Constructor
-    if ($dataNode->extendedAttributes->{"DoNotCache"}) {
-        push(@headerContent, "    $className($passType);\n");
+    if ($interfaceName eq "DOMWindow") {
+        push(@headerContent, "    $className($passType, JSDOMWindowWrapper*);\n");
     } else {
         push(@headerContent, "    $className(KJS::JSObject* prototype, $passType" . (IsSVGTypeNeedingContextParameter($implClassName) ? ", SVGElement* context" : "") .");\n");
     }
@@ -783,9 +784,10 @@ sub GenerateImplementation
     my $parentNeedsSVGContext = ($needsSVGContext and $parentClassName =~ /SVG/);
 
     # Constructor
-    if ($dataNode->extendedAttributes->{"DoNotCache"}) {
-        push(@implContent, "${className}::$className($passType impl)\n");
-        push(@implContent, "    : $parentClassName(${className}Prototype::self(), impl)\n");
+    if ($interfaceName eq "DOMWindow") {
+        AddIncludesForType("JSDOMWindowWrapper");
+        push(@implContent, "${className}::$className($passType impl, JSDOMWindowWrapper* wrapper)\n");
+        push(@implContent, "    : $parentClassName(${className}Prototype::self(), impl, wrapper)\n");
     } else {
         push(@implContent, "${className}::$className(JSObject* prototype, $passType impl" . ($needsSVGContext ? ", SVGElement* context" : "") . ")\n");
         if ($hasParent) {
