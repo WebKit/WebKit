@@ -1016,7 +1016,11 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     if (newSubframe) {
         // Update over/out state before passing the event to the subframe.
         updateMouseEventTargetNode(mev.targetNode(), mouseEvent, true);
-        swallowEvent |= passMouseMoveEventToSubframe(mev, newSubframe.get(), hoveredNode);
+        
+        // Event dispatch in updateMouseEventTargetNode may have caused the subframe of the target
+        // node to be detached from its FrameView, in which case the event should not be passed.
+        if (newSubframe->view())
+            swallowEvent |= passMouseMoveEventToSubframe(mev, newSubframe.get(), hoveredNode);
     } else {
         if (scrollbar && !m_mousePressed)
             scrollbar->handleMouseMoveEvent(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.

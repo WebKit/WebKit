@@ -1,3 +1,12 @@
+2008-04-10  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Added test for <rdar://5815856> CrashTracer: [USER] 8384 crashes in WebCore::Widget::getView const + 6
+
+        * fast/events/mouseout-dead-subframe-expected.txt: Added.
+        * fast/events/mouseout-dead-subframe.html: Added.
+
 2008-04-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mitz Pettel

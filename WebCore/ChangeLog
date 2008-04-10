@@ -1,3 +1,16 @@
+2008-04-010  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fixed <rdar://5815856> CrashTracer: [USER] 8384 crashes in WebCore::Widget::getView const + 6
+
+        Test: fast/events/mouseout-dead-subframe.html
+
+        * page/EventHandler.cpp:
+        dispatching a mouse event can change the document structure, necessitating
+        a check for whether we still want to pass the event to the pre-determined subframe 
+        (WebCore::EventHandler::handleMouseMoveEvent):
+
 2008-04-10  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Eric.
