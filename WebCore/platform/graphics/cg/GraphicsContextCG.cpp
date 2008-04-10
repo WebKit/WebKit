@@ -29,6 +29,7 @@
 
 #include "AffineTransform.h"
 #include "FloatConversion.h"
+#include "Gradient.h"
 #include "GraphicsContextPlatformPrivateCG.h"
 #include "ImageBuffer.h"
 #include "KURL.h"
@@ -415,6 +416,18 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
         if (oldFillColor != color)
             setCGFillColor(context, oldFillColor);
     }
+}
+
+void GraphicsContext::fillRect(const IntRect& rect, Gradient& gradient)
+{
+    if (paintingDisabled())
+        return;
+    
+    // CG fills to the clip when painting a gradient.
+    save();
+    clip(rect);
+    CGContextDrawShading(platformContext(), gradient.platformGradient());     
+    restore();
 }
 
 void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color)

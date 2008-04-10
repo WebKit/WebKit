@@ -1,5 +1,19 @@
 2008-04-10  David Hyatt  <hyatt@apple.com>
 
+        Add a gradient fillRect method to GraphicsContext.  This is implemented only in the CG port.  I stubbed
+        out a method in GraphicsContext.cpp with notImplemented().  Other platforms will need to add their own
+        gradient fill methods.
+
+        Reviewed by aroben
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillRect):
+
+2008-04-10  David Hyatt  <hyatt@apple.com>
+
         Gradient improvements.  Support for adding color stops by Color and not just by String.  Add the ability to mark
         stops as already being sorted.
 

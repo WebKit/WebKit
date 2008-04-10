@@ -423,6 +423,11 @@ void GraphicsContext::clipToImageBuffer(const IntRect&, const ImageBuffer*)
 {
     notImplemented();
 }
+
+void GraphicsContext::fillRect(const IntRect&, Gradient&)
+{
+    notImplemented();
+}
 #endif
 
 #if !PLATFORM(QT) && !PLATFORM(CAIRO)

@@ -81,6 +81,7 @@ namespace WebCore {
 
     class AffineTransform;
     class Font;
+    class Gradient;
     class GraphicsContextPrivate;
     class GraphicsContextPlatformPrivate;
     class ImageBuffer;
@@ -135,6 +136,7 @@ namespace WebCore {
         
         void fillRect(const IntRect&, const Color&);
         void fillRect(const FloatRect&, const Color&);
+        void fillRect(const IntRect&, Gradient&);
         void fillRoundedRect(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color&);
         void clearRect(const FloatRect&);
         void strokeRect(const FloatRect&, float lineWidth);
