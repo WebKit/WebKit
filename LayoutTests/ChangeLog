@@ -1,5 +1,16 @@
 2008-04-09  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Mitz Pettel
+
+        Add the "onstorage" attribute for the body element to provide easy setup of StorageEvent handling.
+
+        * storage/domstorage/sessionstorage/onstorage-attribute-markup-expected.txt: Added.
+        * storage/domstorage/sessionstorage/onstorage-attribute-markup.html: Added.
+        * storage/domstorage/sessionstorage/onstorage-attribute-setattribute-expected.txt: Added.
+        * storage/domstorage/sessionstorage/onstorage-attribute-setattribute.html: Added.
+
+2008-04-09  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Sam Weinig
 
         When enumerating a Storage object, the Storage built-ins should not be included, but the 

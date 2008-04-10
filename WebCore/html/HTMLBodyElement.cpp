@@ -144,6 +144,11 @@ void HTMLBodyElement::parseMappedAttribute(MappedAttribute *attr)
         document()->setHTMLWindowEventListener(resizeEvent, attr);
     } else if (attr->name() == onscrollAttr) {
         document()->setHTMLWindowEventListener(scrollEvent, attr);
+    } else if (attr->name() == onstorageAttr) {
+        // The HTML5 spec currently specifies that storage events are fired only at the body element of
+        // an HTMLDocument, which is why the onstorage attribute differs from the ones before it.
+        // The spec might change on this, and then so should we!
+        setHTMLEventListener(storageEvent, attr);
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

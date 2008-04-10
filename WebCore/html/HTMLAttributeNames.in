@@ -131,6 +131,7 @@ onscroll
 onsearch
 onselect
 onselectstart
+onstorage
 onsubmit
 onunload
 pagex

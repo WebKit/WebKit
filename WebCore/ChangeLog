@@ -1,3 +1,17 @@
+2008-04-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz Pettel
+
+        Add the "onstorage" attribute for the body element to provide easy setup of StorageEvent handling.
+
+        Tests: storage/domstorage/sessionstorage/onstorage-attribute-markup.html
+               storage/domstorage/sessionstorage/onstorage-attribute-setattribute.html
+
+        * html/HTMLAttributeNames.in: Added "onstorage"
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute): Handle this attribute on the body element *only*
+          because that's where the HTML5 spec says StorageEvents go.  This might change in the future
+
 2008-04-09  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz.
