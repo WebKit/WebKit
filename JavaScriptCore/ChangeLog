@@ -1,3 +1,11 @@
+2008-04-10  Adam Roben  <aroben@apple.com>
+
+        VC++ Express build fix
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Link against user32.lib so
+        that anyone who links against WTF.lib will get user32.lib
+        automatically.
+
 2008-04-09  Adam Roben  <aroben@apple.com>
 
         VC++ Express build fix
