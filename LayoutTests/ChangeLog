@@ -1,5 +1,12 @@
 2008-04-09  Brady Eidson  <beidson@apple.com>
 
+        Forgot to check in this updated result with my Storage-enumeration change
+        earlier today
+
+        * fast/dom/Window/window-properties-expected.txt:
+
+2008-04-09  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Mitz Pettel
 
         Add the "onstorage" attribute for the body element to provide easy setup of StorageEvent handling.
