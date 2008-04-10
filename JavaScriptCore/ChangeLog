@@ -1,3 +1,26 @@
+2008-04-10  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=18367 and the many dupes.
+        Bug 18367: Crash during celtic kane js speed 2007 test
+
+        GCC 4.2 on x86_64 Linux decided to reorder the local variables in markCurrentThreadConservatively's
+        stack frame.  This lead to the range of addresses the collector treated as stack to exclude the
+        contents of volatile registers that markCurrentThreadConservatively forces onto the stack.  This was
+        leading to objects being prematurely collected if the only reference to them was via a register at
+        the time a collection occurred.
+
+        The fix for this is to move the calculation of the top of the stack into a NEVER_INLINE function
+        that is called from markCurrentThreadConservatively.  This forces the dummy variable we use for
+        determining the top of stack to be in a different stack frame which prevents the compiler from
+        reordering it relative to the registers that markCurrentThreadConservatively forces onto the stack.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::markCurrentThreadConservativelyInternal):
+        (KJS::Collector::markCurrentThreadConservatively):
+        * kjs/collector.h:
+
 2008-04-10  Adam Roben  <aroben@apple.com>
 
         VC++ Express build fix

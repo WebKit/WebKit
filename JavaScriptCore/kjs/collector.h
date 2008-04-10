@@ -79,6 +79,7 @@ namespace KJS {
     static void markProtectedObjects();
     static void markMainThreadOnlyObjects();
     static void markCurrentThreadConservatively();
+    static void markCurrentThreadConservativelyInternal();
     static void markOtherThreadConservatively(Thread*);
     static void markStackObjectsConservatively();
     static void markStackObjectsConservatively(void* start, void* end);

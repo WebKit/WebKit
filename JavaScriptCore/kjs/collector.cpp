@@ -528,6 +528,14 @@ void Collector::markStackObjectsConservatively(void *start, void *end)
   }
 }
 
+void NEVER_INLINE Collector::markCurrentThreadConservativelyInternal()
+{
+    void* dummy;
+    void* stackPointer = &dummy;
+    void* stackBase = currentThreadStackBase();
+    markStackObjectsConservatively(stackPointer, stackBase);
+}
+
 void Collector::markCurrentThreadConservatively()
 {
     // setjmp forces volatile registers onto the stack
@@ -541,11 +549,7 @@ void Collector::markCurrentThreadConservatively()
 #pragma warning(pop)
 #endif
 
-    void* dummy;
-    void* stackPointer = &dummy;
-    void* stackBase = currentThreadStackBase();
-
-    markStackObjectsConservatively(stackPointer, stackBase);
+    markCurrentThreadConservativelyInternal();
 }
 
 #if USE(MULTIPLE_THREADS)
