@@ -1,3 +1,28 @@
+2008-04-10  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes floating point precision in the Resources graph labels by using String.sprintf to
+        format the values. Also makes the image view use Number.bytesToString when showing the file
+        size. Makes Number.bytesToString and Number.secondsToString take an optional formatter function
+        so the Inspector can pass WebInspector.UIString, so the format strings can be localized.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18381
+        https://bugs.webkit.org/show_bug.cgi?id=14333
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/InspectorLocalizedStrings.js: Added the new strings.
+        * page/inspector/ImageView.js:
+        (WebInspector.ImageView): Use Number.bytesToString to format this.resource.contentLength.
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourceTransferTimeCalculator.prototype.formatValue): Pass WebInspector.UIString
+        to Number.secondsToString.
+        (WebInspector.ResourceTransferSizeCalculator.prototype.formatValue): Pass WebInspector.UIString
+        to Number.bytesToString.
+        * page/inspector/utilities.js:
+        (Number.secondsToString): Added a formatterFunction argument. Use the formatter and format strings
+        to control the number precision.
+        (Number.bytesToString): Ditto.
+
 2008-04-010  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Dan Bernstein.

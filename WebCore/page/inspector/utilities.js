@@ -690,38 +690,44 @@ function nodeTitleInfo(hasChildren, linkify)
     return info;
 }
 
-Number.secondsToString = function(seconds)
+Number.secondsToString = function(seconds, formatterFunction)
 {
+    if (!formatterFunction)
+        formatterFunction = String.sprintf;
+
     var ms = seconds * 1000;
     if (ms < 1000)
-        return Math.round(ms) + "ms";
+        return formatterFunction("%.0fms", ms);
 
     if (seconds < 60)
-        return (Math.round(seconds * 100) / 100) + "s";
+        return formatterFunction("%.2fs", seconds);
 
     var minutes = seconds / 60;
     if (minutes < 60)
-        return (Math.round(minutes * 10) / 10) + "min";
+        return formatterFunction("%.1fmin", minutes);
 
     var hours = minutes / 60;
     if (hours < 24)
-        return (Math.round(hours * 10) / 10) + "hrs";
+        return formatterFunction("%.1fhrs", hours);
 
     var days = hours / 24;
-    return (Math.round(days * 10) / 10) + " days";
+    return formatterFunction("%.1f days", days);
 }
 
-Number.bytesToString = function(bytes)
+Number.bytesToString = function(bytes, formatterFunction)
 {
+    if (!formatterFunction)
+        formatterFunction = String.sprintf;
+
     if (bytes < 1024)
-        return bytes + "B";
+        return formatterFunction("%.0fB", bytes);
 
     var kilobytes = bytes / 1024;
     if (kilobytes < 1024)
-        return (Math.round(kilobytes * 100) / 100) + "KB";
+        return formatterFunction("%.2fKB", kilobytes);
 
     var megabytes = kilobytes / 1024;
-    return (Math.round(megabytes * 1000) / 1000) + "MB";
+    return formatterFunction("%.3fMB", megabytes);
 }
 
 Number.constrain = function(num, min, max)

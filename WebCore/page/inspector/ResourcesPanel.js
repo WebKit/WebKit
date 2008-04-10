@@ -1017,7 +1017,7 @@ WebInspector.ResourceTransferTimeCalculator.prototype = {
 
     formatValue: function(value)
     {
-        return Number.secondsToString(value);
+        return Number.secondsToString(value, WebInspector.UIString.bind(WebInspector));
     }
 }
 
@@ -1036,7 +1036,7 @@ WebInspector.ResourceTransferSizeCalculator.prototype = {
 
     formatValue: function(value)
     {
-        return Number.bytesToString(value);
+        return Number.bytesToString(value, WebInspector.UIString.bind(WebInspector));
     }
 }
 
