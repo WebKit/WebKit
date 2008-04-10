@@ -1,3 +1,19 @@
+2008-04-09  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mitz.
+
+        Remove a less-than-critical bit from Node and replace it with a hash. Those bits are valuable!
+
+        Also moved setting of the guard to dispatchSimulatedClick for better consistency. 
+        No one else calls dispatchSimulatedMouseEvent() currently and this is really a click() specific behavior.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchSimulatedMouseEvent):
+        (WebCore::EventTargetNode::dispatchSimulatedClick):
+        * dom/Node.cpp:
+        (WebCore::Node::Node):
+        * dom/Node.h:
+
 2008-04-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
