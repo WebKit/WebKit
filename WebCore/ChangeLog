@@ -1,3 +1,15 @@
+2008-04-10  David Hyatt  <hyatt@apple.com>
+
+        Gradient improvements.  Support for adding color stops by Color and not just by String.  Add the ability to mark
+        stops as already being sorted.
+
+        Reviewed by aroben
+
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::addColorStop):
+        * platform/graphics/Gradient.h:
+        (WebCore::Gradient::setStopsSorted):
+
 2008-04-10  Timothy Hatcher  <timothy@apple.com>
 
         Fixes the build where some wtf headers would not be copied due

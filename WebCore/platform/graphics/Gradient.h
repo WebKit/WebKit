@@ -46,6 +46,7 @@ typedef void* PlatformGradient;
 
 namespace WebCore {
 
+    class Color;
     class String;
 
     class Gradient : public Noncopyable {
@@ -54,7 +55,8 @@ namespace WebCore {
         Gradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
         ~Gradient();
 
-        void addColorStop(float, const String& color);
+        void addColorStop(float, const String&);
+        void addColorStop(float, const Color&);
 
         void getColor(float value, float* r, float* g, float* b, float* a) const;
 
@@ -70,6 +72,8 @@ namespace WebCore {
             ColorStop() : stop(0), red(0), green(0), blue(0), alpha(0) { }
             ColorStop(float s, float r, float g, float b, float a) : stop(s), red(r), green(g), blue(b), alpha(a) { }
         };
+
+        void setStopsSorted(bool s) { m_stopsSorted = s; }
 
     private:
         void platformInit() { m_gradient = 0; }

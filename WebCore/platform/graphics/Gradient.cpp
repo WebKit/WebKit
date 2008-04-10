@@ -63,6 +63,19 @@ void Gradient::addColorStop(float value, const String& color)
     platformDestroy();
 }
 
+void Gradient::addColorStop(float value, const Color& color)
+{
+    m_stops.append(ColorStop(value,
+        color.red() / 255.0f,
+        color.green() / 255.0f,
+        color.blue() / 255.0f,
+        color.alpha() / 255.0f));
+
+    m_stopsSorted = false;
+
+    platformDestroy();
+}
+
 static inline bool compareStops(const Gradient::ColorStop &a, const Gradient::ColorStop &b)
 {
     return a.stop < b.stop;
