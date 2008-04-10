@@ -35,6 +35,7 @@
     macro(CFDictionaryPropertyBag) \
     macro(WebArchive) \
     macro(WebCache) \
+    macro(WebCoreStatistics) \
     macro(WebDatabaseManager) \
     macro(WebDownload) \
     macro(WebError) \

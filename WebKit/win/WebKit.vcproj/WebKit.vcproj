@@ -679,6 +679,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebCoreStatistics.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebDatabaseManager.h"
 				>
 			</File>
@@ -904,6 +908,10 @@
 			</File>
 			<File
 				RelativePath="..\WebCache.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreStatistics.cpp"
 				>
 			</File>
 			<File

@@ -69,6 +69,7 @@ import "ocidl.idl";
 #include "IWebBackForwardList.idl"
 #include "IWebBackForwardListPrivate.idl"
 #include "IWebCache.idl"
+#include "IWebCoreStatistics.idl"
 #include "IWebDataSource.idl"
 #include "IWebDatabaseManager.idl"
 #include "IWebDocument.idl"
@@ -444,5 +445,14 @@ library OpenSourceWebKit
 #endif
     coclass WebArchive{
         [default] interface IWebArchive;
+    }
+
+#if __PRODUCTION__
+    [uuid(96B93356-9D61-4b3f-A6CF-A78283AC9649)]
+#else
+    [uuid(69038EB7-AF7B-4653-BB02-E48DCCC41559)]
+#endif
+    coclass WebCoreStatistics{
+        [default] interface IWebCoreStatistics;
     }
 }

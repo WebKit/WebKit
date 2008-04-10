@@ -89,10 +89,10 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     /* [in][out] */ int* count,
     /* [retval][out] */ IPropertyBag ** s)
 {
-    if (!count || (s && *count < 2))
+    if (!count || (s && *count < 4))
         return E_FAIL;
 
-    *count = 2;
+    *count = 4;
     if (!s)
         return S_OK;
 
@@ -100,10 +100,11 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
 
     static CFStringRef imagesKey = CFSTR("images");
     static CFStringRef stylesheetsKey = CFSTR("style sheets");
+    static CFStringRef xslKey = CFSTR("xsl");
     static CFStringRef scriptsKey = CFSTR("scripts");
 
     RetainPtr<CFMutableDictionaryRef> dictionary(AdoptCF,
-        CFDictionaryCreateMutable(0, 0, 0, &kCFTypeDictionaryValueCallBacks));
+        CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     RetainPtr<CFNumberRef> value(AdoptCF, CFNumberCreate(0, kCFNumberIntType, &stat.images.count));
     CFDictionaryAddValue(dictionary.get(), imagesKey, value.get());
@@ -111,6 +112,9 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.count));
     CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
     
+    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.count));
+    CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
+
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.count));
     CFDictionaryAddValue(dictionary.get(), scriptsKey, value.get());
 
@@ -118,7 +122,7 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     propBag->setDictionary(dictionary.get());
     s[0] = propBag;
 
-    dictionary.adoptCF(CFDictionaryCreateMutable(0, 0, 0, &kCFTypeDictionaryValueCallBacks));
+    dictionary.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.size));
     CFDictionaryAddValue(dictionary.get(), imagesKey, value.get());
@@ -126,12 +130,51 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.size));
     CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
     
+    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.size));
+    CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
+
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.size));
     CFDictionaryAddValue(dictionary.get(), scriptsKey, value.get());
 
     propBag = CFDictionaryPropertyBag::createInstance();
     propBag->setDictionary(dictionary.get());
     s[1] = propBag;
+
+    dictionary.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.liveSize));
+    CFDictionaryAddValue(dictionary.get(), imagesKey, value.get());
+    
+    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.liveSize));
+    CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
+    
+    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.liveSize));
+    CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
+
+    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.liveSize));
+    CFDictionaryAddValue(dictionary.get(), scriptsKey, value.get());
+
+    propBag = CFDictionaryPropertyBag::createInstance();
+    propBag->setDictionary(dictionary.get());
+    s[2] = propBag;
+
+    dictionary.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.decodedSize));
+    CFDictionaryAddValue(dictionary.get(), imagesKey, value.get());
+    
+    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.decodedSize));
+    CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
+    
+    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.decodedSize));
+    CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
+
+    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.decodedSize));
+    CFDictionaryAddValue(dictionary.get(), scriptsKey, value.get());
+
+    propBag = CFDictionaryPropertyBag::createInstance();
+    propBag->setDictionary(dictionary.get());
+    s[3] = propBag;
 
     return S_OK;
 }

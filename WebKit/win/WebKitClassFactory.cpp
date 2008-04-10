@@ -31,6 +31,7 @@
 #include "CFDictionaryPropertyBag.h"
 #include "WebArchive.h"
 #include "WebCache.h"
+#include "WebCoreStatistics.h"
 #include "WebDatabaseManager.h"
 #include "WebDownload.h"
 #include "WebError.h"

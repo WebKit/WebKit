@@ -1,3 +1,37 @@
+2008-04-10  Ada Chan  <adachan@apple.com>
+
+        Added WebCoreStatistics that provides stats on Javascript objects
+        and IconDatabase.
+        
+        Changed WebCache::statistics() to additionally return xsl stylesheets data
+        and data on live sizes and decoded sizes.
+
+        Reviewed by Steve.
+
+        * ForEachCoClass.h:
+        * Interfaces/IWebCoreStatistics.idl: Added.
+        * Interfaces/WebKit.idl:
+        * WebCache.cpp:
+        (WebCache::statistics):
+        * WebCoreStatistics.cpp: Added.
+        (WebCoreStatistics::WebCoreStatistics):
+        (WebCoreStatistics::~WebCoreStatistics):
+        (WebCoreStatistics::createInstance):
+        (WebCoreStatistics::QueryInterface):
+        (WebCoreStatistics::AddRef):
+        (WebCoreStatistics::Release):
+        (WebCoreStatistics::javaScriptObjectsCount):
+        (WebCoreStatistics::javaScriptGlobalObjectsCount):
+        (WebCoreStatistics::javaScriptProtectedObjectsCount):
+        (WebCoreStatistics::javaScriptProtectedGlobalObjectsCount):
+        (WebCoreStatistics::iconPageURLMappingCount):
+        (WebCoreStatistics::iconRetainedPageURLCount):
+        (WebCoreStatistics::iconRecordCount):
+        (WebCoreStatistics::iconsWithDataCount):
+        * WebCoreStatistics.h: Added.
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKitClassFactory.cpp:
+
 2008-04-09  Steve Falkenburg  <sfalken@apple.com>
 
         Delete backing store (after a delay) when a WebView's top-level parent becomes inactive.
