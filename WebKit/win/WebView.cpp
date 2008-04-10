@@ -2668,11 +2668,13 @@ HRESULT STDMETHODCALLTYPE WebView::preferencesIdentifier(
     return E_NOTIMPL;
 }
 
-void WebView::windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM)
+void WebView::windowReceivedMessage(HWND, UINT message, WPARAM wParam, LPARAM)
 {
     switch (message) {
     case WM_NCACTIVATE:
         updateActiveStateSoon();
+        if (!wParam)
+            deleteBackingStoreSoon();
         break;
     }
 }

@@ -1,3 +1,12 @@
+2008-04-09  Steve Falkenburg  <sfalken@apple.com>
+
+        Delete backing store (after a delay) when a WebView's top-level parent becomes inactive.
+
+        Reviewed by Brady Eidson.
+
+        * WebView.cpp:
+        (WebView::windowReceivedMessage):
+
 2008-04-08  Adam Roben  <aroben@apple.com>
 
         Export callOnMainThread from WebKit.dll
