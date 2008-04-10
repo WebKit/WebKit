@@ -1,3 +1,13 @@
+2008-04-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Eric.
+
+        Fix scale transform. This will be tested by the animation test suite when
+        SVG animation support lands.
+
+        * svg/SVGTransformDistance.cpp:
+        (WebCore::SVGTransformDistance::SVGTransformDistance):
+
 2008-04-10  David Hyatt  <hyatt@apple.com>
 
         Add a gradient fillRect method to GraphicsContext.  This is implemented only in the CG port.  I stubbed

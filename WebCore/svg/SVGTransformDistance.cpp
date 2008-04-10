@@ -77,8 +77,8 @@ SVGTransformDistance::SVGTransformDistance(const SVGTransform& fromSVGTransform,
     }
     case SVGTransform::SVG_TRANSFORM_SCALE:
     {
-        float scaleX = fromSVGTransform.scale().width() != 0 ? toSVGTransform.scale().width() / fromSVGTransform.scale().width() : toSVGTransform.scale().width() / 0.00001f;
-        float scaleY = fromSVGTransform.scale().height() != 0 ? toSVGTransform.scale().height() / fromSVGTransform.scale().height() : toSVGTransform.scale().height() / 0.00001f;
+        float scaleX = toSVGTransform.scale().width() - fromSVGTransform.scale().width();        
+        float scaleY = toSVGTransform.scale().height() - fromSVGTransform.scale().height();
         m_transform.scale(scaleX, scaleY);
         return;
     }
