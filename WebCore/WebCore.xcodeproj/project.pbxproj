@@ -3820,8 +3820,6 @@
 		C02B14C20D81E02A00D8A970 /* JavaScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = C02B14BF0D81E02A00D8A970 /* JavaScriptDebugListener.h */; };
 		C02B14C30D81E02A00D8A970 /* JavaScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C02B14C00D81E02A00D8A970 /* JavaScriptDebugServer.cpp */; };
 		C02B14C40D81E02A00D8A970 /* JavaScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = C02B14C10D81E02A00D8A970 /* JavaScriptDebugServer.h */; };
-		C09581AD0DA6A60900094E41 /* icu in Copy Forwarding and ICU Headers */ = {isa = PBXBuildFile; fileRef = C095818C0DA6A5F900094E41 /* icu */; };
-		C09953F40DA6956F00041021 /* ForwardingHeaders in Copy Forwarding and ICU Headers */ = {isa = PBXBuildFile; fileRef = C09953500DA6955A00041021 /* ForwardingHeaders */; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
 		D05CED290A40BB2C00C5AF38 /* FormatBlockCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */; };
@@ -4378,18 +4376,6 @@
 				14DC0D3809FED073007B0235 /* JSNode.h in Copy Generated Headers */,
 			);
 			name = "Copy Generated Headers";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C099522D0DA6943300041021 /* Copy Forwarding and ICU Headers */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = Versions/A/PrivateHeaders;
-			dstSubfolderSpec = 1;
-			files = (
-				C09581AD0DA6A60900094E41 /* icu in Copy Forwarding and ICU Headers */,
-				C09953F40DA6956F00041021 /* ForwardingHeaders in Copy Forwarding and ICU Headers */,
-			);
-			name = "Copy Forwarding and ICU Headers";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -8089,8 +8075,6 @@
 		C02B14BF0D81E02A00D8A970 /* JavaScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptDebugListener.h; sourceTree = "<group>"; };
 		C02B14C00D81E02A00D8A970 /* JavaScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptDebugServer.cpp; sourceTree = "<group>"; };
 		C02B14C10D81E02A00D8A970 /* JavaScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptDebugServer.h; sourceTree = "<group>"; };
-		C095818C0DA6A5F900094E41 /* icu */ = {isa = PBXFileReference; lastKnownFileType = folder; path = icu; sourceTree = "<group>"; };
-		C09953500DA6955A00041021 /* ForwardingHeaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ForwardingHeaders; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
@@ -8266,7 +8250,6 @@
 				93309D86099E64910056E581 /* editing */,
 				51741D080B07257000ED442C /* history */,
 				93EEC1EC09C2877700C515D1 /* html */,
-				C095818C0DA6A5F900094E41 /* icu */,
 				BCB16BFB0979C38700467741 /* loader */,
 				65BF02180974806300C43196 /* page */,
 				BCF1A5BA097832090061A123 /* platform */,
@@ -8276,7 +8259,6 @@
 				B22277CA0D00BF1E0071B782 /* svg */,
 				E1F0424309839389006694EA /* xml */,
 				656580EC09D12B20000E61D7 /* Derived Sources */,
-				C09953500DA6955A00041021 /* ForwardingHeaders */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
@@ -14785,7 +14767,7 @@
 				5D2F7DA00C6879C600B5B72B /* Update Info.plist with version information */,
 				93F198A608245E59001E9ABC /* Headers */,
 				1C11CCB40AA6093700DADB20 /* Copy Generated Headers */,
-				C099522D0DA6943300041021 /* Copy Forwarding and ICU Headers */,
+				1CC93C640DAE929600E4BC3A /* Copy Forwarding and ICU Headers */,
 				93F199FD08245E59001E9ABC /* Resources */,
 				93F19A0C08245E59001E9ABC /* Sources */,
 				939D050109D9FF6B00984996 /* Check For Global Initializers */,
@@ -14917,6 +14899,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Corrections for 64-bit\n# 1) Exclude _NPN_ symbols as NPAPI support is disabled in 64-bit\n# 2) Switch NSRect, NSSize and NSPoint with their CG counterparts\n# 3) Append any 64-bit only symbols from WebCore.LP64.exp\ngrep -v \"^__NPN_\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.exp\" | sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ -e s/^__ZN7WebCore5Frame20windowScriptNPObjectEv$// > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.LP64.exp\"\ncat \"${SRCROOT}/WebCore.LP64.exp\" >> \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.LP64.exp\"\n";
+		};
+		1CC93C640DAE929600E4BC3A /* Copy Forwarding and ICU Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Forwarding and ICU Headers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "rsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/ForwardingHeaders\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\nrsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/icu\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\n";
 		};
 		5D2F7DA00C6879C600B5B72B /* Update Info.plist with version information */ = {
 			isa = PBXShellScriptBuildPhase;

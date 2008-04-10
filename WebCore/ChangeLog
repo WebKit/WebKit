@@ -1,3 +1,14 @@
+2008-04-10  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes the build where some wtf headers would not be copied due
+        to a bug in some older versions of Xcode.
+
+        Rubber-stamped by Adam Roben.
+
+        * WebCore.xcodeproj/project.pbxproj: Adds a new script phase to handle
+        the copying of the icu and ForwardingHeaders folder to WebCore's PrivateHeaders.
+        Removes the old copy files phase and the icu and ForwardingHeaders folder references.
+
 2008-04-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mitz Pettel
