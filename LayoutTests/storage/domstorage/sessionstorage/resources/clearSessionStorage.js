@@ -1,8 +1,11 @@
 function clearSessionStorage()
 {
-    var i = 0;
-    for (;i < sessionStorage.length; ++i)
-        sessionStorage.removeItem(sessionStorage.key(i));
+    var keys = new Array();
+    for (key in sessionStorage)
+        keys.push(key);
+                
+    for (key in keys)
+        sessionStorage.removeItem(keys[key]);
 }
 
 if (window.sessionStorage)

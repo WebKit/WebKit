@@ -1,3 +1,14 @@
+2008-04-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz Pettel
+
+        DOM Storage layout test cleanup
+
+        * storage/domstorage/sessionstorage/iframe-events.html: Check for the layoutTestController in a manner that
+          won't confuse Firefox
+        * storage/domstorage/sessionstorage/resources/clearSessionStorage.js: Don't mutate while iterating!  Clea
+          the sessionStorage properly
+
 2008-04-09  Brady Eidson  <beidson@apple.com>
 
         Forgot to check in this updated result with my Storage-enumeration change
