@@ -1,5 +1,12 @@
 2008-04-09  Adam Roben  <aroben@apple.com>
 
+        VC++ Express build fix
+
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj: Link against
+        user32.lib.
+
+2008-04-09  Adam Roben  <aroben@apple.com>
+
         Build fix
 
         * JavaScriptCore.exp: Export isMainThread.
