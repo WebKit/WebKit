@@ -7,7 +7,7 @@ layer at (0,0) size 480x360
         RenderPath {rect} at (58,18) size 54x204 [stroke={[type=SOLID] [color=#DFDFDF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#DFDFDF]}] [data="M60.00,20.00L110.00,20.00L110.00,220.00L60.00,220.00"]
         RenderPath {line} at (40,218) size 60x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [data="M40.00,220.00L100.00,220.00"]
         RenderPath {line} at (40,118) size 60x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [data="M40.00,120.00L100.00,120.00"]
-        RenderPath {rect} at (58,18) size 54x24 [stroke={[type=SOLID] [color=#008855] [stroke width=4.00]}] [fill={[type=SOLID] [color=#00FF55]}] [data="M60.00,20.00L110.00,20.00L110.00,40.00L60.00,40.00"]
+        RenderPath {rect} at (58,18) size 54x204 [stroke={[type=SOLID] [color=#008855] [stroke width=4.00]}] [fill={[type=SOLID] [color=#00FF55]}] [data="M60.00,20.00L110.00,20.00L110.00,220.00L60.00,220.00"]
         RenderSVGText {text} at (30,285) size 91x33 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-27) size 91x33
             chunk 1 text run 1 at (30.00,285.00) startOffset 0 endOffset 6 width 91.00: "anim.5"
@@ -15,7 +15,7 @@ layer at (0,0) size 480x360
         RenderPath {rect} at (168,18) size 54x204 [stroke={[type=SOLID] [color=#DFDFDF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#DFDFDF]}] [data="M60.00,20.00L110.00,20.00L110.00,220.00L60.00,220.00"]
         RenderPath {line} at (150,218) size 60x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [data="M40.00,220.00L100.00,220.00"]
         RenderPath {line} at (150,118) size 60x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [data="M40.00,120.00L100.00,120.00"]
-        RenderPath {rect} at (168,18) size 54x24 [stroke={[type=SOLID] [color=#008855] [stroke width=4.00]}] [fill={[type=SOLID] [color=#00FF55]}] [data="M60.00,20.00L110.00,20.00L110.00,40.00L60.00,40.00"]
+        RenderPath {rect} at (168,18) size 54x224 [stroke={[type=SOLID] [color=#008855] [stroke width=4.00]}] [fill={[type=SOLID] [color=#00FF55]}] [data="M60.00,20.00L110.00,20.00L110.00,240.00L60.00,240.00"]
         RenderSVGText {text} at (30,285) size 91x33 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-27) size 91x33
             chunk 1 text run 1 at (30.00,285.00) startOffset 0 endOffset 6 width 91.00: "anim.6"
@@ -23,7 +23,7 @@ layer at (0,0) size 480x360
         RenderPath {rect} at (278,18) size 54x204 [stroke={[type=SOLID] [color=#DFDFDF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#DFDFDF]}] [data="M60.00,20.00L110.00,20.00L110.00,220.00L60.00,220.00"]
         RenderPath {line} at (260,218) size 60x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [data="M40.00,220.00L100.00,220.00"]
         RenderPath {line} at (260,118) size 60x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [data="M40.00,120.00L100.00,120.00"]
-        RenderPath {rect} at (278,18) size 54x24 [stroke={[type=SOLID] [color=#008855] [stroke width=4.00]}] [fill={[type=SOLID] [color=#00FF55]}] [data="M60.00,20.00L110.00,20.00L110.00,40.00L60.00,40.00"]
+        RenderPath {rect} at (278,18) size 54x204 [stroke={[type=SOLID] [color=#008855] [stroke width=4.00]}] [fill={[type=SOLID] [color=#00FF55]}] [data="M60.00,20.00L110.00,20.00L110.00,220.00L60.00,220.00"]
         RenderSVGText {text} at (30,285) size 91x33 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-27) size 91x33
             chunk 1 text run 1 at (30.00,285.00) startOffset 0 endOffset 6 width 91.00: "anim.7"
@@ -31,7 +31,7 @@ layer at (0,0) size 480x360
         RenderPath {rect} at (388,18) size 54x204 [stroke={[type=SOLID] [color=#DFDFDF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#DFDFDF]}] [data="M60.00,20.00L110.00,20.00L110.00,220.00L60.00,220.00"]
         RenderPath {line} at (370,218) size 60x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [data="M40.00,220.00L100.00,220.00"]
         RenderPath {line} at (370,118) size 60x4 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [data="M40.00,120.00L100.00,120.00"]
-        RenderPath {rect} at (388,18) size 54x24 [stroke={[type=SOLID] [color=#008855] [stroke width=4.00]}] [fill={[type=SOLID] [color=#00FF55]}] [data="M60.00,20.00L110.00,20.00L110.00,40.00L60.00,40.00"]
+        RenderPath {rect} at (388,18) size 54x224 [stroke={[type=SOLID] [color=#008855] [stroke width=4.00]}] [fill={[type=SOLID] [color=#00FF55]}] [data="M60.00,20.00L110.00,20.00L110.00,240.00L60.00,240.00"]
         RenderSVGText {text} at (30,285) size 91x33 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-27) size 91x33
             chunk 1 text run 1 at (30.00,285.00) startOffset 0 endOffset 6 width 91.00: "anim.8"

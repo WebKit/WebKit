@@ -151,9 +151,9 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (-52,60) size 103x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (1,-14) size 103x18
             chunk 1 (middle anchor) text run 1 at (-51.50,60.00) startOffset 0 endOffset 16 width 103.00: "x/y on <text>(2)"
-      RenderSVGContainer {g} at (139.50,169.50) size 81x119.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,210.00)}]
+      RenderSVGContainer {g} at (138,168) size 82.50x121 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,210.00)}]
         RenderImage {image} at (0,0) size 50x50
-        RenderPath {rect} at (139.50,169.50) size 51x51 [stroke={[type=SOLID] [color=#FFB400]}] [data="M-40.00,-40.00L10.00,-40.00L10.00,10.00L-40.00,10.00"]
+        RenderPath {rect} at (138,168) size 54x54 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [data="M-40.00,-40.00L10.00,-40.00L10.00,10.00L-40.00,10.00"]
         RenderPath {rect} at (139.50,169.50) size 81x21 [stroke={[type=SOLID] [color=#FFB400]}] [data="M-40.00,-40.00L40.00,-40.00L40.00,-20.00L-40.00,-20.00"]
         RenderPath {rect} at (139.50,169.50) size 21x81 [stroke={[type=SOLID] [color=#FFB400]}] [data="M-40.00,-40.00L-20.00,-40.00L-20.00,40.00L-40.00,40.00"]
         RenderSVGText {text} at (-40,60) size 79x18 contains 1 chunk(s)
@@ -162,9 +162,9 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (-38,75) size 76x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 76x18
             chunk 1 (middle anchor) text run 1 at (-38.00,75.00) startOffset 0 endOffset 10 width 76.00: "on <image>"
-      RenderSVGContainer {g} at (259.50,169.50) size 81x119.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,210.00)}]
+      RenderSVGContainer {g} at (258,168) size 82.50x121 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,210.00)}]
         RenderPath {rect} at (260,170) size 50x50 [fill={[type=SOLID] [color=#808080]}] [data="M-40.00,-40.00L10.00,-40.00L10.00,10.00L-40.00,10.00"]
-        RenderPath {rect} at (259.50,169.50) size 51x51 [stroke={[type=SOLID] [color=#FFB400]}] [data="M-40.00,-40.00L10.00,-40.00L10.00,10.00L-40.00,10.00"]
+        RenderPath {rect} at (258,168) size 54x54 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [data="M-40.00,-40.00L10.00,-40.00L10.00,10.00L-40.00,10.00"]
         RenderPath {rect} at (259.50,169.50) size 81x21 [stroke={[type=SOLID] [color=#FFB400]}] [data="M-40.00,-40.00L40.00,-40.00L40.00,-20.00L-40.00,-20.00"]
         RenderPath {rect} at (259.50,169.50) size 21x81 [stroke={[type=SOLID] [color=#FFB400]}] [data="M-40.00,-40.00L-20.00,-40.00L-20.00,40.00L-40.00,40.00"]
         RenderSVGText {text} at (-40,60) size 79x18 contains 1 chunk(s)

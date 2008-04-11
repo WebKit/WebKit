@@ -16,7 +16,7 @@ layer at (0,0) size 480x360
         RenderPath {line} at (-0.50,-45) size 1x90 [stroke={[type=SOLID] [color=#C0C0C0]}] [data="M0.00,-45.00L0.00,45.00"]
     RenderSVGContainer {g} at (8,56) size 465.63x243
       RenderSVGContainer {g} at (8,56) size 104x98 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,90.00)}]
-        RenderPath {rect} at (33.19,73) size 53.63x34 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M-15.00,-15.00L15.00,-15.00L15.00,15.00L-15.00,15.00"]
+        RenderPath {rect} at (43,73) size 34x34 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M-15.00,-15.00L15.00,-15.00L15.00,15.00L-15.00,15.00"]
         RenderPath {rect} at (26,56) size 68x68 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [data="M-15.00,-15.00L15.00,-15.00L15.00,15.00L-15.00,15.00"]
         RenderSVGText {text} at (-52,60) size 104x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 104x18
@@ -28,7 +28,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (1,-14) size 85x18
             chunk 1 (middle anchor) text run 1 at (-42.50,60.00) startOffset 0 endOffset 12 width 85.00: "additive=sum"
       RenderSVGContainer {g} at (245,56) size 111x113 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,90.00)}]
-        RenderPath {rect} at (273.19,73) size 53.63x34 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M-15.00,-15.00L15.00,-15.00L15.00,15.00L-15.00,15.00"]
+        RenderPath {rect} at (283,73) size 34x34 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M-15.00,-15.00L15.00,-15.00L15.00,15.00L-15.00,15.00"]
         RenderPath {rect} at (266,56) size 68x68 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [data="M-15.00,-15.00L15.00,-15.00L15.00,15.00L-15.00,15.00"]
         RenderSVGText {text} at (-56,60) size 111x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (1,-14) size 111x18
@@ -37,7 +37,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-14) size 104x18
             chunk 1 (middle anchor) text run 1 at (-52.00,75.00) startOffset 0 endOffset 16 width 104.00: "additive=replace"
       RenderSVGContainer {g} at (367,56) size 106x113 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,90.00)}]
-        RenderPath {rect} at (406.59,81.50) size 26.81x17 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=2.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M-7.50,-7.50L7.50,-7.50L7.50,7.50L-7.50,7.50"]
+        RenderPath {rect} at (411.50,81.50) size 17x17 [stroke={[type=SOLID] [color=#808080] [stroke width=2.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M-7.50,-7.50L7.50,-7.50L7.50,7.50L-7.50,7.50"]
         RenderPath {rect} at (386,56) size 68x68 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=2.00]}] [data="M-7.50,-7.50L7.50,-7.50L7.50,7.50L-7.50,7.50"]
         RenderSVGText {text} at (-53,60) size 106x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 106x18

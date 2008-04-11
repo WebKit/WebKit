@@ -3,10 +3,10 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0.50,0.50) size 479x359
     RenderSVGContainer {g} at (30,50) size 420x270
-      RenderPath {rect} at (30,50) size 90x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M30.00,50.00L120.00,50.00L120.00,150.00L30.00,150.00"]
-      RenderPath {rect} at (140,50) size 90x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M140.00,50.00L230.00,50.00L230.00,150.00L140.00,150.00"]
-      RenderPath {rect} at (250,50) size 90x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M250.00,50.00L340.00,50.00L340.00,150.00L250.00,150.00"]
-      RenderPath {rect} at (360,50) size 90x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M360.00,50.00L450.00,50.00L450.00,150.00L360.00,150.00"]
+      RenderPath {rect} at (30,50) size 90x100 [fill={[type=SOLID] [color=#000000]}] [data="M30.00,50.00L120.00,50.00L120.00,150.00L30.00,150.00"]
+      RenderPath {rect} at (140,50) size 90x100 [fill={[type=SOLID] [color=#000000]}] [data="M140.00,50.00L230.00,50.00L230.00,150.00L140.00,150.00"]
+      RenderPath {rect} at (250,50) size 90x100 [fill={[type=SOLID] [color=#000000]}] [data="M250.00,50.00L340.00,50.00L340.00,150.00L250.00,150.00"]
+      RenderPath {rect} at (360,50) size 90x100 [fill={[type=SOLID] [color=#000000]}] [data="M360.00,50.00L450.00,50.00L450.00,150.00L360.00,150.00"]
       RenderPath {rect} at (100,180) size 280x60 [fill={[type=SOLID] [color=#FF0000]}] [data="M100.00,180.00L380.00,180.00L380.00,240.00L100.00,240.00"]
       RenderPath {rect} at (100,260) size 280x60 [fill={[type=SOLID] [color=#FF0000]}] [data="M100.00,260.00L380.00,260.00L380.00,320.00L100.00,320.00"]
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
