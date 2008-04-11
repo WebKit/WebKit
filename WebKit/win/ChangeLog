@@ -1,5 +1,9 @@
 2008-04-11  Adam Roben  <aroben@apple.com>
 
+        * ForEachCoClass.h: Added a deprecation notice.
+
+2008-04-11  Adam Roben  <aroben@apple.com>
+
         Fix Bug 18376: r31733 and 27 don't work w/Safari 3.1
         
         <https://bugs.webkit.org/show_bug.cgi?id=18376>
