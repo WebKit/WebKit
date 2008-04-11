@@ -1,5 +1,16 @@
 2008-04-11  Alexey Proskuryakov  <ap@webkit.org>
 
+        Tiger build fix. Forward declaring a union didn't work for whatever reason, make the
+        parameters void*.
+
+        * kjs/grammar.y:
+        * kjs/lexer.cpp:
+        (kjsyylex):
+        (KJS::Lexer::lex):
+        * kjs/lexer.h:
+
+2008-04-11  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Geoff.
 
         Generate a pure (re-entrant) parser with Bison.

@@ -49,7 +49,7 @@
 #define YYERROR_VERBOSE
 #endif
 
-extern int kjsyylex(YYSTYPE* lvalp, YYLTYPE* llocp, void* lexer);
+int kjsyylex(void* lvalp, void* llocp, void* lexer);
 int kjsyyerror(const char*);
 static inline bool allowAutomaticSemicolon(Lexer&, int);
 

@@ -48,7 +48,7 @@ using namespace KJS;
 #include "lexer.lut.h"
 
 // a bridge for yacc from the C world to C++
-int kjsyylex(YYSTYPE* lvalp, YYLTYPE* llocp, void* lexer)
+int kjsyylex(void* lvalp, void* llocp, void* lexer)
 {
   return static_cast<Lexer*>(lexer)->lex(lvalp, llocp);
 }
@@ -141,8 +141,10 @@ void Lexer::setDone(State s)
   done = true;
 }
 
-int Lexer::lex(YYSTYPE* lvalp, YYLTYPE* llocp)
+int Lexer::lex(void* p1, void* p2)
 {
+  YYSTYPE* lvalp = static_cast<YYSTYPE*>(p1);
+  YYLTYPE* llocp = static_cast<YYLTYPE*>(p2);
   int token = 0;
   state = Start;
   unsigned short stringType = 0; // either single or double quotes
