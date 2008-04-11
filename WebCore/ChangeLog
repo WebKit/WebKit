@@ -1,3 +1,28 @@
+2008-04-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Move archive loading from FrameLoader to DocumentLoader.
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::clearArchiveResources):
+        (WebCore::DocumentLoader::deliverArchivedResourcesAfterDelay):
+        (WebCore::DocumentLoader::archiveResourceDeliveryTimerFired):
+        (WebCore::DocumentLoader::isArchiveLoadPending):
+        (WebCore::DocumentLoader::cancelPendingArchiveLoad):
+        (WebCore::DocumentLoader::scheduleArchiveLoad):
+        (WebCore::DocumentLoader::setDefersLoading):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::setDefersLoading):
+        (WebCore::FrameLoader::stopAllLoaders):
+        * loader/FrameLoader.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::load):
+        (WebCore::ResourceLoader::didCancel):
+
 2008-04-11  Timothy Hatcher  <timothy@apple.com>
 
         Fixes the regression where the DOM tree does not update when navigating

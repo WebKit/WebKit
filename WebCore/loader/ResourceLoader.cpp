@@ -106,7 +106,7 @@ bool ResourceLoader::load(const ResourceRequest& r)
 {
     ASSERT(!m_handle);
     ASSERT(m_deferredRequest.isNull());
-    ASSERT(!frameLoader()->isArchiveLoadPending(this));
+    ASSERT(!m_documentLoader->isArchiveLoadPending(this));
     
     ResourceRequest clientRequest(r);
     willSendRequest(clientRequest, ResourceResponse());
@@ -115,7 +115,7 @@ bool ResourceLoader::load(const ResourceRequest& r)
         return false;
     }
     
-    if (frameLoader()->scheduleArchiveLoad(this, clientRequest, r.url()))
+    if (m_documentLoader->scheduleArchiveLoad(this, clientRequest, r.url()))
         return true;
     
     if (m_defersLoading) {
@@ -304,7 +304,7 @@ void ResourceLoader::didCancel(const ResourceError& error)
     if (m_handle)
         m_handle->clearAuthentication();
 
-    frameLoader()->cancelPendingArchiveLoad(this);
+    m_documentLoader->cancelPendingArchiveLoad(this);
     if (m_handle) {
         m_handle->cancel();
         m_handle = 0;

@@ -40,6 +40,7 @@
 #include "HistoryItem.h"
 #include "Logging.h"
 #include "MainResourceLoader.h"
+#include "Page.h"
 #include "PlatformString.h"
 #include "SharedBuffer.h"
 #include "StringBuffer.h"
@@ -142,6 +143,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_isClientRedirect(false)
     , m_loadingFromCachedPage(false)
     , m_stopRecordingResponses(false)
+    , m_archiveResourceDeliveryTimer(this, &DocumentLoader::archiveResourceDeliveryTimerFired)
 {
 }
 
@@ -484,6 +486,7 @@ PassRefPtr<Archive> DocumentLoader::popArchiveForSubframe(const String& frameNam
 void DocumentLoader::clearArchiveResources()
 {
     m_archiveResourceCollection.clear();
+    m_archiveResourceDeliveryTimer.stop();
 }
 
 void DocumentLoader::setParsedArchiveData(PassRefPtr<SharedBuffer> data)
@@ -537,7 +540,73 @@ void DocumentLoader::getSubresources(Vector<PassRefPtr<ArchiveResource> >& subre
 
     return;
 }
+
+void DocumentLoader::deliverArchivedResourcesAfterDelay()
+{
+    if (m_pendingArchiveResources.isEmpty())
+        return;
+    ASSERT(m_frame && m_frame->page());
+    if (m_frame->page()->defersLoading())
+        return;
+    if (!m_archiveResourceDeliveryTimer.isActive())
+        m_archiveResourceDeliveryTimer.startOneShot(0);
+}
+
+void DocumentLoader::archiveResourceDeliveryTimerFired(Timer<DocumentLoader>*)
+{
+    if (m_pendingArchiveResources.isEmpty())
+        return;
+    ASSERT(m_frame && m_frame->page());
+    if (m_frame->page()->defersLoading())
+        return;
+
+    ArchiveResourceMap copy;
+    copy.swap(m_pendingArchiveResources);
+
+    ArchiveResourceMap::const_iterator end = copy.end();
+    for (ArchiveResourceMap::const_iterator it = copy.begin(); it != end; ++it) {
+        RefPtr<ResourceLoader> loader = it->first;
+        ArchiveResource* resource = it->second.get();
         
+        SharedBuffer* data = resource->data();
+        
+        loader->didReceiveResponse(resource->response());
+        loader->didReceiveData(data->data(), data->size(), data->size(), true);
+        loader->didFinishLoading();
+    }
+}
+
+#ifndef NDEBUG
+bool DocumentLoader::isArchiveLoadPending(ResourceLoader* loader) const
+{
+    return m_pendingArchiveResources.contains(loader);
+}
+#endif
+
+void DocumentLoader::cancelPendingArchiveLoad(ResourceLoader* loader)
+{
+    if (m_pendingArchiveResources.isEmpty())
+        return;
+    m_pendingArchiveResources.remove(loader);
+    if (m_pendingArchiveResources.isEmpty())
+        m_archiveResourceDeliveryTimer.stop();
+}
+
+bool DocumentLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL)
+{
+    if (request.url() != originalURL)
+        return false;
+        
+    ArchiveResource* resource = archiveResourceForURL(originalURL);
+    if (!resource)
+        return false;
+
+    m_pendingArchiveResources.set(loader, resource);
+    deliverArchivedResourcesAfterDelay();
+    
+    return true;
+}
+
 void DocumentLoader::addResponse(const ResourceResponse& r)
 {
     if (!m_stopRecordingResponses)
@@ -614,6 +683,8 @@ void DocumentLoader::setDefersLoading(bool defers)
         m_mainResourceLoader->setDefersLoading(defers);
     setAllDefersLoading(m_subresourceLoaders, defers);
     setAllDefersLoading(m_plugInStreamLoaders, defers);
+    if (!defers)
+        deliverArchivedResourcesAfterDelay();
 }
 
 void DocumentLoader::stopLoadingPlugIns()

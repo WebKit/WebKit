@@ -261,7 +261,6 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_isDisplayingInitialEmptyDocument(false)
     , m_committedFirstRealDocumentLoad(false)
     , m_didPerformFirstNavigation(false)
-    , m_archiveResourceDeliveryTimer(this, &FrameLoader::archiveResourceDeliveryTimerFired)
 #ifndef NDEBUG
     , m_didDispatchDidCommitLoad(false)
 #endif
@@ -309,8 +308,6 @@ void FrameLoader::setDefersLoading(bool defers)
         m_provisionalDocumentLoader->setDefersLoading(defers);
     if (m_policyDocumentLoader)
         m_policyDocumentLoader->setDefersLoading(defers);
-    if (!defers)
-        deliverArchivedResourcesAfterDelay();
 }
 
 Frame* FrameLoader::createWindow(FrameLoader* frameLoaderForFrameLookup, const FrameLoadRequest& request, const WindowFeatures& features, bool& created)
@@ -1504,39 +1501,6 @@ void FrameLoader::redirectionTimerFired(Timer<FrameLoader>*)
     ASSERT_NOT_REACHED();
 }
 
-void FrameLoader::deliverArchivedResourcesAfterDelay()
-{
-    if (m_pendingArchiveResources.isEmpty())
-        return;
-    if (m_frame->page()->defersLoading())
-        return;
-    if (!m_archiveResourceDeliveryTimer.isActive())
-        m_archiveResourceDeliveryTimer.startOneShot(0);
-}
-
-void FrameLoader::archiveResourceDeliveryTimerFired(Timer<FrameLoader>*)
-{
-    if (m_pendingArchiveResources.isEmpty())
-        return;
-    if (m_frame->page()->defersLoading())
-        return;
-
-    ArchiveResourceMap copy;
-    copy.swap(m_pendingArchiveResources);
-
-    ArchiveResourceMap::const_iterator end = copy.end();
-    for (ArchiveResourceMap::const_iterator it = copy.begin(); it != end; ++it) {
-        RefPtr<ResourceLoader> loader = it->first;
-        ArchiveResource* resource = it->second.get();
-        
-        SharedBuffer* data = resource->data();
-        
-        loader->didReceiveResponse(resource->response());
-        loader->didReceiveData(data->data(), data->size(), data->size(), true);
-        loader->didFinishLoading();
-    }
-}
-
 /*
     In the case of saving state about a page with frames, we store a tree of items that mirrors the frame tree.  
     The item that was the target of the user's navigation is designated as the "targetItem".  
@@ -2319,26 +2283,6 @@ void FrameLoader::receivedData(const char* data, int length)
     activeDocumentLoader()->receivedData(data, length);
 }
 
-bool FrameLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL)
-{
-    if (request.url() != originalURL)
-        return false;
-        
-    DocumentLoader* activeLoader = activeDocumentLoader();
-    ASSERT(activeLoader);
-    if (!activeLoader)
-        return false;
-        
-    ArchiveResource* resource = activeLoader->archiveResourceForURL(originalURL);
-    if (!resource)
-        return false;
-
-    m_pendingArchiveResources.set(loader, resource);
-    deliverArchivedResourcesAfterDelay();
-    
-    return true;
-}
-
 void FrameLoader::handleUnimplementablePolicy(const ResourceError& error)
 {
     m_delegateIsHandlingUnimplementablePolicy = true;
@@ -2532,7 +2476,6 @@ void FrameLoader::stopAllLoaders()
     if (m_documentLoader) {
         m_documentLoader->stopLoading();
         m_documentLoader->clearArchiveResources();
-        m_archiveResourceDeliveryTimer.stop();
     }
     setProvisionalDocumentLoader(0);
 
@@ -2547,15 +2490,6 @@ void FrameLoader::stopForUserCancel(bool deferCheckLoadComplete)
         scheduleCheckLoadComplete();
     else if (m_frame->page())
         checkLoadComplete();
-}
-
-void FrameLoader::cancelPendingArchiveLoad(ResourceLoader* loader)
-{
-    if (m_pendingArchiveResources.isEmpty())
-        return;
-    m_pendingArchiveResources.remove(loader);
-    if (m_pendingArchiveResources.isEmpty())
-        m_archiveResourceDeliveryTimer.stop();
 }
 
 DocumentLoader* FrameLoader::activeDocumentLoader() const
@@ -2944,13 +2878,6 @@ void FrameLoader::finishedLoading()
     m_client->dispatchDidLoadMainResource(dl.get());
     checkLoadComplete();
 }
-
-#ifndef NDEBUG
-bool FrameLoader::isArchiveLoadPending(ResourceLoader* loader) const
-{
-    return m_pendingArchiveResources.contains(loader);
-}
-#endif
 
 bool FrameLoader::isHostedByObjectElement() const
 {
