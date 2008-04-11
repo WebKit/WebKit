@@ -116,13 +116,13 @@ libJavaScriptCore_la_CXXFLAGS = \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
 	$(UNICODE_CFLAGS) \
-	-fstrict-aliasing
+	-fno-strict-aliasing
 
 libJavaScriptCore_la_CFLAGS = \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
 	$(UNICODE_CFLAGS) \
-	-fstrict-aliasing
+	-fno-strict-aliasing
 
 libJavaScriptCore_la_CPPFLAGS = \
 	$(global_cppflags) \

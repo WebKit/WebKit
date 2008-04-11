@@ -1,3 +1,18 @@
+2008-04-11  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=18430
+        Bug 18430: SIGSEGV on amd64 when built with gcc 4.3
+
+        GCC 4.3 generates bad code in some instances when working with our HashTables
+        as some of the HashTable code violates the strict aliasing requirements.  Since
+        GCC 4.2 this code has generated warnings when -fstrict-aliasing is enabled. Until
+        the code can be fixed to be safe with strict aliasing enabled, we will disable
+        strict aliasing.
+
+        * GNUmakefile.am:
+
 2008-03-12  Michael Emmel  <mike.emmel@gmail.com>
 
         Reviewed by Alp Toker.
