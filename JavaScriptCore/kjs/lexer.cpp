@@ -47,12 +47,10 @@ using namespace KJS;
 #include "lookup.h"
 #include "lexer.lut.h"
 
-extern YYLTYPE kjsyylloc; // global bison variable holding token info
-
 // a bridge for yacc from the C world to C++
-int kjsyylex()
+int kjsyylex(YYSTYPE* lvalp, YYLTYPE* llocp, void* lexer)
 {
-  return lexer().lex();
+  return static_cast<Lexer*>(lexer)->lex(lvalp, llocp);
 }
 
 namespace KJS {
@@ -143,7 +141,7 @@ void Lexer::setDone(State s)
   done = true;
 }
 
-int Lexer::lex()
+int Lexer::lex(YYSTYPE* lvalp, YYLTYPE* llocp)
 {
   int token = 0;
   state = Start;
@@ -528,8 +526,8 @@ int Lexer::lex()
 
   restrKeyword = false;
   delimited = false;
-  kjsyylloc.first_line = yylineno; // ???
-  kjsyylloc.last_line = yylineno;
+  llocp->first_line = yylineno; // ???
+  llocp->last_line = yylineno;
 
   switch (state) {
   case Eof:
@@ -543,15 +541,15 @@ int Lexer::lex()
     // Apply anonymous-function hack below (eat the identifier).
     if (eatNextIdentifier) {
       eatNextIdentifier = false;
-      token = lex();
+      token = lex(lvalp, llocp);
       break;
     }
-    kjsyylval.ident = makeIdentifier(m_buffer16);
+    lvalp->ident = makeIdentifier(m_buffer16);
     token = IDENT;
     break;
   case IdentifierOrKeyword:
-    kjsyylval.ident = makeIdentifier(m_buffer16);
-    if ((token = mainTable.value(*kjsyylval.ident)) < 0) {
+    lvalp->ident = makeIdentifier(m_buffer16);
+    if ((token = mainTable.value(*lvalp->ident)) < 0) {
       // Lookup for keyword failed, means this is an identifier.
       token = IDENT;
       break;
@@ -562,11 +560,11 @@ int Lexer::lex()
       restrKeyword = true;
     break;
   case String:
-    kjsyylval.string = makeUString(m_buffer16);
+    lvalp->string = makeUString(m_buffer16);
     token = STRING;
     break;
   case Number:
-    kjsyylval.doubleValue = dval;
+    lvalp->doubleValue = dval;
     token = NUMBER;
     break;
   case Bad:

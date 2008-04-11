@@ -586,7 +586,7 @@ static bool isStrWhiteSpace(unsigned short c)
         case 0x2029:
             return true;
         default:
-            return isSeparatorSpace(c);
+            return c > 0xff && isSeparatorSpace(c);
     }
 }
 

@@ -1,3 +1,5 @@
+%pure_parser
+
 %{
 
 /*
@@ -36,9 +38,6 @@
 #include "Parser.h"
 #include <wtf/MathExtras.h>
 
-// Not sure why, but yacc doesn't add this define along with the others.
-#define yylloc kjsyylloc
-
 #define YYMAXDEPTH 10000
 #define YYENABLE_NLS 0
 
@@ -50,11 +49,11 @@
 #define YYERROR_VERBOSE
 #endif
 
-extern int kjsyylex();
-int kjsyyerror(const char *);
-static bool allowAutomaticSemicolon();
+extern int kjsyylex(YYSTYPE* lvalp, YYLTYPE* llocp, void* lexer);
+int kjsyyerror(const char*);
+static inline bool allowAutomaticSemicolon(Lexer&, int);
 
-#define AUTO_SEMICOLON do { if (!allowAutomaticSemicolon()) YYABORT; } while (0)
+#define AUTO_SEMICOLON do { if (!allowAutomaticSemicolon(*static_cast<Lexer*>(lexer), yychar)) YYABORT; } while (0)
 #define DBG(l, s, e) (l)->setLoc((s).first_line, (e).last_line)
 
 using namespace KJS;
@@ -88,6 +87,9 @@ static ExpressionNode* combineVarInitializers(ExpressionNode* list, AssignResolv
 #define YYFREE free
 
 #endif
+
+#define YYPARSE_PARAM lexer
+#define YYLEX_PARAM lexer
 
 template <typename T> NodeDeclarationInfo<T> createNodeDeclarationInfo(T node, ParserRefCountedData<DeclarationStacks::VarStack>* varDecls, 
                                                                        ParserRefCountedData<DeclarationStacks::FunctionStack>* funcDecls,
@@ -279,13 +281,13 @@ Literal:
   | NUMBER                              { $$ = createNodeFeatureInfo<ExpressionNode*>(makeNumberNode($1), 0); }
   | STRING                              { $$ = createNodeFeatureInfo<ExpressionNode*>(new StringNode($1), 0); }
   | '/' /* regexp */                    {
-                                            Lexer& l = lexer();
+                                            Lexer& l = *static_cast<Lexer*>(lexer);
                                             if (!l.scanRegExp())
                                                 YYABORT;
                                             $$ = createNodeFeatureInfo<ExpressionNode*>(new RegExpNode(l.pattern(), l.flags()), 0);
                                         }
   | DIVEQUAL /* regexp with /= */       {
-                                            Lexer& l = lexer();
+                                            Lexer& l = *static_cast<Lexer*>(lexer);
                                             if (!l.scanRegExp())
                                                 YYABORT;
                                             $$ = createNodeFeatureInfo<ExpressionNode*>(new RegExpNode("=" + l.pattern(), l.flags()), 0);
@@ -1286,9 +1288,9 @@ int yyerror(const char *)
 }
 
 /* may we automatically insert a semicolon ? */
-static bool allowAutomaticSemicolon()
+static bool allowAutomaticSemicolon(Lexer& lexer, int yychar)
 {
-    return yychar == '}' || yychar == 0 || lexer().prevTerminator();
+    return yychar == '}' || yychar == 0 || lexer.prevTerminator();
 }
 
 static ExpressionNode* combineVarInitializers(ExpressionNode* list, AssignResolveNode* init)

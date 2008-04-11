@@ -29,7 +29,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
-extern int kjsyyparse();
+extern int kjsyyparse(void*);
 
 namespace KJS {
 
@@ -56,7 +56,7 @@ void Parser::parse(int startingLineNumber,
     if (sourceId)
         *sourceId = m_sourceId;
 
-    int parseError = kjsyyparse();
+    int parseError = kjsyyparse(&lexer);
     bool lexError = lexer.sawError();
     lexer.clear();
 

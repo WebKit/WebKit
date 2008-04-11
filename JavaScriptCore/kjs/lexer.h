@@ -27,6 +27,9 @@
 #include "ustring.h"
 #include <wtf/Vector.h>
 
+union YYSTYPE;
+struct YYLTYPE;
+
 namespace KJS {
 
   class Identifier;
@@ -35,7 +38,7 @@ namespace KJS {
   class Lexer : Noncopyable {
   public:
     void setCode(int startingLineNumber, const UChar *c, unsigned int len);
-    int lex();
+    int lex(YYSTYPE* lvalp, YYLTYPE* llocp);
 
     int lineNo() const { return yylineno; }
 

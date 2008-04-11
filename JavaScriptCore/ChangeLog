@@ -1,3 +1,26 @@
+2008-04-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
+        Generate a pure (re-entrant) parser with Bison.
+
+        No change on SunSpider.
+
+        * kjs/Parser.cpp:
+        (KJS::Parser::parse):
+        * kjs/grammar.y:
+        * kjs/lexer.cpp:
+        (kjsyylex):
+        (KJS::Lexer::lex):
+        * kjs/lexer.h:
+        Pass state as function arguments, instead of global data. Don't call lexer() as often as
+        before, as this function is about to become slower due to thread-specific storage.
+
+        * kjs/function.cpp:
+        (KJS::isStrWhiteSpace): Don't call isSeparatorSpace() for 8-bit characters, as these are
+        already taken care of. This is a small speedup, compensating for a small slowdown caused
+        by switching Bison mode.
+
 2008-04-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff.
