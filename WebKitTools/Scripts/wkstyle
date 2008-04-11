@@ -25,16 +25,36 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-astyle \
+cmdcpp="astyle \
+--unpad=paren \
 --style=linux \
+--brackets=linux \
 --indent=spaces=4 \
---convert-tabs \
-$@
+--indent-switches \
+--convert-tabs" 
+
+cmdh="astyle \
+--unpad=paren \
+--style=linux \
+--brackets=break \
+--indent=spaces=4 \
+--convert-tabs" 
 
 #astyle does not support unpadding so we use sed
 for i in $@
 do
 echo $i
+
+ext=`echo $i|awk -F . '{print $NF}'`
+
+cmd=$cmdcpp
+
+if [ $ext == "h" ] ; then
+    cmd=$cmdh
+fi
+
+$cmd $i
+
 #first print the changes we are making
 sed  -n -e '
 /( .*/p  
@@ -59,6 +79,9 @@ s/ )/)/g
 N
 s/\n{/ {/
 }
+#fixup extra tab in constructor initalizer
+/^ \+,/{s/^    //}
+/^ \+:/{s/^    //}
 ' $i > $i.sed
 mv $i.sed $i
 done
