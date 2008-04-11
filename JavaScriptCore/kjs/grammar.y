@@ -51,9 +51,9 @@
 
 int kjsyylex(void* lvalp, void* llocp, void* lexer);
 int kjsyyerror(const char*);
-static inline bool allowAutomaticSemicolon(Lexer&, int);
+static inline bool allowAutomaticSemicolon(KJS::Lexer&, int);
 
-#define AUTO_SEMICOLON do { if (!allowAutomaticSemicolon(*static_cast<Lexer*>(lexer), yychar)) YYABORT; } while (0)
+#define AUTO_SEMICOLON do { if (!allowAutomaticSemicolon(*static_cast<KJS::Lexer*>(lexer), yychar)) YYABORT; } while (0)
 #define DBG(l, s, e) (l)->setLoc((s).first_line, (e).last_line)
 
 using namespace KJS;
