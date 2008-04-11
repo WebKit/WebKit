@@ -1,3 +1,10 @@
+2008-04-11  Antti Koivisto  <antti@apple.com>
+
+        Try to fix Windows build by switching to std::sort().
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::sortTimeList):
+
 2008-04-11  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

@@ -192,14 +192,9 @@ SMILTime SVGSMILElement::parseClockValue(const String& data)
     return result;
 }
     
-static int smilTimeSortFunction(const void* a, const void* b)
-{
-    return static_cast<int>((*static_cast<const SMILTime*>(a) - *static_cast<const SMILTime*>(b)).value());
-}
-    
 static void sortTimeList(Vector<SMILTime>& timeList)
 {
-    mergesort(timeList.data(), timeList.size(), sizeof(SMILTime), smilTimeSortFunction);
+    std::sort(timeList.begin(), timeList.end());
 }
     
 bool SVGSMILElement::parseCondition(const String& value, BeginOrEnd beginOrEnd)
