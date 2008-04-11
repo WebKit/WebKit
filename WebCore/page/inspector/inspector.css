@@ -859,6 +859,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
 
 .section .properties li.editing {
     margin-left: 8px;
+    text-overflow: clip;
 }
 
 .section .properties li.editing.parent::before {
