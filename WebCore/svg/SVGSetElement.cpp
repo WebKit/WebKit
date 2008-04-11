@@ -23,12 +23,13 @@
 #include "config.h"
 #if ENABLE(SVG)
 #include "SVGSetElement.h"
-#include "TimeScheduler.h"
 #include "Document.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGSVGElement.h"
 
 namespace WebCore {
+    
+// FIXME: This class needs to die. SVGAnimateElement should be instantiated instead.
 
 SVGSetElement::SVGSetElement(const QualifiedName& tagName, Document *doc)
     : SVGAnimationElement(tagName, doc)
@@ -39,13 +40,23 @@ SVGSetElement::~SVGSetElement()
 {
 }
 
-bool SVGSetElement::updateAnimatedValue(EAnimationMode, float timePercentage, unsigned valueIndex, float percentagePast)
+void SVGSetElement::applyAnimatedValueToElement(unsigned repeat)
 {
-    m_animatedValue = m_to;
-    return true;
+    setTargetAttributeAnimatedValue(toValue());
+}
+    
+bool SVGSetElement::calculateFromAndToValues(const String&, const String& toString) 
+{ 
+    m_animatedValue = toString;
+    return true; 
 }
 
-bool SVGSetElement::calculateFromAndToValues(EAnimationMode, unsigned valueIndex)
+bool SVGSetElement::calculateFromAndByValues(const String& fromString, const String& byString) 
+{ 
+    return false; 
+}
+
+bool SVGSetElement::updateAnimatedValue(float percentage)
 {
     return true;
 }

@@ -36,10 +36,10 @@ using namespace SVGNames;
 
 SVGAnimateMotionElement::SVGAnimateMotionElement(const QualifiedName& tagName, Document* doc)
     : SVGAnimationElement(tagName, doc)
+    , m_baseIndexInTransformList(0)
     , m_rotateMode(AngleMode)
     , m_angle(0)
 {
-    m_calcMode = CALCMODE_PACED;
 }
 
 SVGAnimateMotionElement::~SVGAnimateMotionElement()
@@ -86,8 +86,7 @@ void SVGAnimateMotionElement::parseMappedAttribute(MappedAttribute* attr)
             m_angle = attr->value().toFloat();
         }
     } else if (attr->name() == SVGNames::keyPointsAttr) {
-        m_keyPoints.clear();
-        parseKeyNumbers(m_keyPoints, attr->value());
+        // FIXME: Implement key points.
     } else if (attr->name() == SVGNames::dAttr) {
         m_path = Path();
         pathFromSVGData(m_path, attr->value());
@@ -111,18 +110,13 @@ Path SVGAnimateMotionElement::animationPath()
     return Path();
 }
 
-bool SVGAnimateMotionElement::updateAnimatedValue(EAnimationMode animationMode, float timePercentage, unsigned valueIndex, float percentagePast)
+bool SVGAnimateMotionElement::updateAnimatedValue(float percentage)
 {
-    if (animationMode == TO_ANIMATION) {
-        // to-animations have a special equation: value = (to - base) * (time/duration) + base
-        m_animatedTranslation.setWidth((m_toPoint.x() - m_basePoint.x()) * timePercentage + m_basePoint.x());
-        m_animatedTranslation.setHeight((m_toPoint.y() - m_basePoint.y()) * timePercentage + m_basePoint.y());
-        m_animatedAngle = 0.0f;
-    } else {
-        m_animatedTranslation.setWidth(m_pointDiff.width() * percentagePast + m_fromPoint.x());
-        m_animatedTranslation.setHeight(m_pointDiff.height() * percentagePast + m_fromPoint.y());
-        m_animatedAngle = m_angleDiff * percentagePast + m_fromAngle;
-    }
+    FloatSize diff = m_toPoint - m_fromPoint;
+    m_animatedTranslation.setWidth(diff.width() * percentage + m_fromPoint.x());
+    m_animatedTranslation.setHeight(diff.height() * percentage + m_fromPoint.y());
+    // FIXME: Animate angles
+    m_animatedAngle = 0;
     return true;
 }
 
@@ -146,59 +140,27 @@ static bool parsePoint(const String& s, FloatPoint& point)
     
     point = FloatPoint(x, y);
     
-    // disallow anying except spaces at the end
+    // disallow anything except spaces at the end
     return !skipOptionalSpaces(cur, end);
 }
 
-bool SVGAnimateMotionElement::calculateFromAndToValues(EAnimationMode animationMode, unsigned valueIndex)
+bool SVGAnimateMotionElement::calculateFromAndToValues(const String& fromString, const String& toString)
 {
-    m_fromAngle = 0.0f;
-    m_toAngle = 0.0f;
-    switch (animationMode) {
-    case FROM_TO_ANIMATION:
-        parsePoint(m_from, m_fromPoint);
-        // fall through
-    case TO_ANIMATION:
-        parsePoint(m_to, m_toPoint);
-        break;
-    case FROM_BY_ANIMATION:
-        parsePoint(m_from, m_fromPoint);
-        parsePoint(m_to, m_toPoint);
-        break;
-    case BY_ANIMATION:
-    {
-        parsePoint(m_from, m_fromPoint);
-        FloatPoint byPoint;
-        parsePoint(m_by, byPoint);
-        m_toPoint = FloatPoint(m_fromPoint.x() + byPoint.x(), m_fromPoint.y() + byPoint.y());
-        break;
-    }
-    case VALUES_ANIMATION:
-        parsePoint(m_values[valueIndex], m_fromPoint);
-        if ((valueIndex + 1) < m_values.size())
-            parsePoint(m_values[valueIndex + 1], m_toPoint);
-        else
-            m_toPoint = m_fromPoint;
-        break;
-    case NO_ANIMATION:
-        ASSERT_NOT_REACHED();
-    }
-    
-    m_pointDiff = m_toPoint - m_fromPoint;
-    m_angleDiff = 0.0f;
-    return (m_pointDiff.width() != 0 || m_pointDiff.height() != 0);
+    parsePoint(fromString, m_fromPoint);
+    parsePoint(toString, m_toPoint);
+    return true;
 }
-
-bool SVGAnimateMotionElement::updateAnimationBaseValueFromElement()
-{
-    if (!targetElement()->isStyledTransformable())
-        return false;
     
-    m_basePoint = static_cast<SVGStyledTransformableElement*>(targetElement())->getBBox().location();
+bool SVGAnimateMotionElement::calculateFromAndByValues(const String& fromString, const String& byString)
+{
+    parsePoint(fromString, m_fromPoint);
+    FloatPoint byPoint;
+    parsePoint(byString, byPoint);
+    m_toPoint = FloatPoint(m_fromPoint.x() + byPoint.x(), m_fromPoint.y() + byPoint.y());
     return true;
 }
 
-void SVGAnimateMotionElement::applyAnimatedValueToElement()
+void SVGAnimateMotionElement::applyAnimatedValueToElement(unsigned repeat)
 {
     if (!targetElement()->isStyledTransformable())
         return;
@@ -208,19 +170,34 @@ void SVGAnimateMotionElement::applyAnimatedValueToElement()
     if (!transformList)
         return;
     
+    // FIXME: Handle multiple additive animations.
     ExceptionCode ec;
-    if (!isAdditive())
+    if (isAdditive()) {
+        while (transformList->numberOfItems() > m_baseIndexInTransformList)
+            transformList->removeItem(transformList->numberOfItems() - 1, ec);
+    } else
         transformList->clear(ec);
-    
+
     AffineTransform transform;
     transform.rotate(m_animatedAngle);
     transform.translate(m_animatedTranslation.width(), m_animatedTranslation.height());
     if (!transform.isIdentity()) {
         transformList->appendItem(SVGTransform(transform), ec);
         transformableElement->setTransform(transformList.get());
-        if (transformableElement->renderer())
-            transformableElement->renderer()->setNeedsLayout(true); // should be part of setTransform
     }
+    if (transformableElement->renderer())
+        transformableElement->renderer()->setNeedsLayout(true); // should be part of setTransform
+}
+
+void SVGAnimateMotionElement::startedActiveInterval()
+{
+    // FIXME: Make multiple additive animations work.
+    SVGAnimationElement::startedActiveInterval();
+    if (!m_animationValid)
+        return;
+    
+    SVGStyledTransformableElement* transformableElement = static_cast<SVGStyledTransformableElement*>(targetElement());
+    m_baseIndexInTransformList = transformableElement->transform()->numberOfItems();
 }
 
 }

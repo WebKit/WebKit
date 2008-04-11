@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2008 Apple Inc. All rights reserved.
 
     This file is part of the KDE project
 
@@ -37,13 +38,25 @@ namespace WebCore {
     protected:
         virtual const SVGElement* contextElement() const { return this; }
         
-        virtual bool updateAnimatedValue(EAnimationMode, float timePercentage, unsigned valueIndex, float percentagePast) { return false; }
-        virtual bool calculateFromAndToValues(EAnimationMode, unsigned valueIndex) { return false; }
+        virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
+        virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
+        virtual bool updateAnimatedValue(float percentage);
+        virtual void applyAnimatedValueToElement(unsigned repeat);
 
     private:
-        int m_currentItem;
-
-        String m_savedTo;
+        enum PropertyType { NumberProperty, ColorProperty, StringProperty };
+        PropertyType m_propertyType;
+        
+        double m_fromNumber;
+        double m_toNumber;
+        double m_animatedNumber;
+        String m_numberUnit;
+        Color m_fromColor;
+        Color m_toColor;
+        Color m_animatedColor;
+        String m_fromString;
+        String m_toString;
+        String m_animatedString;
     };
 
 } // namespace WebCore

@@ -119,10 +119,9 @@ void SVGUseElement::insertedIntoDocument()
 
 void SVGUseElement::removedFromDocument()
 {
-    SVGElement::removedFromDocument();
-
     m_targetElementInstance = 0;
     m_shadowTreeRootElement = 0;
+    SVGElement::removedFromDocument();
 }
 
 void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)

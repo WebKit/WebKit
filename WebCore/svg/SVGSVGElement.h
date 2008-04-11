@@ -40,7 +40,7 @@ namespace WebCore
     class SVGTransform;
     class SVGViewSpec;
     class SVGViewElement;
-    class TimeScheduler;
+    class SMILTimeContainer;
     class SVGSVGElement : public SVGStyledLocatableElement,
                           public SVGTests,
                           public SVGLangSpace,
@@ -87,7 +87,7 @@ namespace WebCore
         FloatPoint currentTranslate() const;
         void setCurrentTranslate(const FloatPoint&);
         
-        TimeScheduler* timeScheduler() { return m_timeScheduler; }
+        SMILTimeContainer* timeContainer() const { return m_timeContainer.get(); }
         
         void pauseAnimations();
         void unpauseAnimations();
@@ -155,9 +155,12 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength, SVGLength, Y, y)
         ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength, SVGLength, Width, width)
         ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength, SVGLength, Height, height)
+        
+        virtual void willSaveToCache();
+        virtual void willRestoreFromCache();
 
         bool m_useCurrentView;
-        TimeScheduler* m_timeScheduler;
+        RefPtr<SMILTimeContainer> m_timeContainer;
         FloatPoint m_translation;
         mutable OwnPtr<SVGViewSpec> m_viewSpec;
         IntSize m_containerSize;

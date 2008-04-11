@@ -107,11 +107,6 @@ CachedPage::CachedPage(Page* page)
     }
 
     m_document->setInPageCache(true);
-
-#if ENABLE(SVG)
-    if (m_document && m_document->svgExtensions())
-        m_document->accessSVGExtensions()->pauseAnimations();
-#endif
 }
 
 CachedPage::~CachedPage()

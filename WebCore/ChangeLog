@@ -2,6 +2,279 @@
 
         Reviewed by Eric.
 
+        Redo the SVG animation support.
+        
+        It does
+        - Full SMIL interval timing model including syncbase and event base timing (the hard part).
+        - CSS and XML attribute animation.
+        - Linear, discrete and spline calcModes.
+        - Values animation with keyTimes and keySplines.
+        - Link activated animations.
+        - Pretty good support for <animate> and <set> animations
+        - Basic support for <animateColor>, <animateMotion> and <animateTransform>.
+
+        This passes some 35 of the 56 tests in W3C SVG animation test suite, a bunch more
+        with some subtest failures.
+
+        What is still missing
+        - Additive animation with multiple animations operating on the same property. This is a
+          major architectural feature in animation code. It shouldn't be too hard to add.
+        - Only <animate> implements accumulate.
+        - <animateMotion> does not do paths, keypoints, rotate.
+        - <animateTransform> does not work correctly in all cases
+        - calcMode paced is missing.
+        - repeat, beginEvent, endEvent are missing.
+        - accesskey() is missing.
+        - JS does not see correct values for baseVal/animVal, changing values that are being
+          animted for a script produces wrong results. This problem needs to be solved outside
+          the animation code.
+        - Some other stuff I forgot or do not know about.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        
+        Use cache notification mechanism to start/stop animations.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        
+        Start target animation on link activation.
+        
+        * svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::applyAnimatedValueToElement):
+        (WebCore::SVGAnimateColorElement::updateAnimatedValue):
+        (WebCore::SVGAnimateColorElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateColorElement::calculateFromAndByValues):
+        * svg/SVGAnimateColorElement.h:
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::SVGAnimateElement):
+        (WebCore::parseNumberValueAndUnit):
+        (WebCore::SVGAnimateElement::applyAnimatedValueToElement):
+        (WebCore::SVGAnimateElement::updateAnimatedValue):
+        (WebCore::isColorAttribute):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        * svg/SVGAnimateElement.h:
+        (WebCore::SVGAnimateElement::):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::SVGAnimateMotionElement):
+        (WebCore::SVGAnimateMotionElement::parseMappedAttribute):
+        (WebCore::SVGAnimateMotionElement::updateAnimatedValue):
+        (WebCore::parsePoint):
+        (WebCore::SVGAnimateMotionElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateMotionElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateMotionElement::applyAnimatedValueToElement):
+        (WebCore::SVGAnimateMotionElement::startedActiveInterval):
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::SVGAnimateTransformElement):
+        (WebCore::SVGAnimateTransformElement::hasValidTarget):
+        (WebCore::SVGAnimateTransformElement::updateAnimatedValue):
+        (WebCore::transformListFor):
+        (WebCore::SVGAnimateTransformElement::applyAnimatedValueToElement):
+        (WebCore::SVGAnimateTransformElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateTransformElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateTransformElement::startedActiveInterval):
+        (WebCore::SVGAnimateTransformElement::parseTransformValue):
+        * svg/SVGAnimateTransformElement.h:
+        
+        Concrete anmation element classes.
+        
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::SVGAnimationElement):
+        (WebCore::SVGAnimationElement::~SVGAnimationElement):
+        (WebCore::parseKeyTimes):
+        (WebCore::parseKeySplines):
+        (WebCore::SVGAnimationElement::parseMappedAttribute):
+        (WebCore::SVGAnimationElement::attributeChanged):
+        (WebCore::SVGAnimationElement::getStartTime):
+        (WebCore::SVGAnimationElement::getCurrentTime):
+        (WebCore::SVGAnimationElement::getSimpleDuration):
+        (WebCore::SVGAnimationElement::beginElement):
+        (WebCore::SVGAnimationElement::beginElementAt):
+        (WebCore::SVGAnimationElement::endElement):
+        (WebCore::SVGAnimationElement::endElementAt):
+        (WebCore::SVGAnimationElement::animationMode):
+        (WebCore::SVGAnimationElement::calcMode):
+        (WebCore::SVGAnimationElement::attributeType):
+        (WebCore::SVGAnimationElement::toValue):
+        (WebCore::SVGAnimationElement::byValue):
+        (WebCore::SVGAnimationElement::fromValue):
+        (WebCore::SVGAnimationElement::attributeName):
+        (WebCore::SVGAnimationElement::isAdditive):
+        (WebCore::SVGAnimationElement::isAccumulated):
+        (WebCore::SVGAnimationElement::hasValidTarget):
+        (WebCore::SVGAnimationElement::targetAttributeIsCSS):
+        (WebCore::SVGAnimationElement::setTargetAttributeAnimatedValue):
+        (WebCore::SVGAnimationElement::targetAttributeBaseValue):
+        (WebCore::solveEpsilon):
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation):
+        (WebCore::SVGAnimationElement::startedActiveInterval):
+        (WebCore::SVGAnimationElement::applyAnimation):
+        (WebCore::SVGAnimationElement::unapplyAnimation):
+        (WebCore::SVGAnimationElement::endedActiveInterval):
+        * svg/SVGAnimationElement.h:
+        (WebCore::SVGAnimationElement::):
+        
+        This is pretty much a complete rewrite of the SVGAnimationElement. Timing related functionality
+        was refactored to SMILTimingElement class that this class now inherits.
+        
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::startAnimations):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::ownerSVGElement):
+        * svg/SVGSVGElement.cpp:
+        
+        We need to reach the <svg> element from <use> too so go out from the shadow tree.
+        
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::~SVGSVGElement):
+        (WebCore::SVGSVGElement::pauseAnimations):
+        (WebCore::SVGSVGElement::unpauseAnimations):
+        (WebCore::SVGSVGElement::animationsPaused):
+        (WebCore::SVGSVGElement::getCurrentTime):
+        (WebCore::SVGSVGElement::willSaveToCache):
+        (WebCore::SVGSVGElement::willRestoreFromCache):
+        * svg/SVGSVGElement.h:
+        (WebCore::SVGSVGElement::timeContainer):
+        * svg/SVGSetElement.cpp:
+        (WebCore::SVGSetElement::applyAnimatedValueToElement):
+        (WebCore::SVGSetElement::calculateFromAndToValues):
+        (WebCore::SVGSetElement::calculateFromAndByValues):
+        (WebCore::SVGSetElement::updateAnimatedValue):
+        * svg/SVGSetElement.h:
+        
+        Concrete anmation element classes.
+        
+        * svg/SVGTimer.cpp: Removed.
+        * svg/SVGTimer.h: Removed.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::removedFromDocument):
+        * svg/TimeScheduler.cpp: Removed.
+        * svg/TimeScheduler.h: Removed.
+        
+        Replaced these with SMILTimeContainer class.
+        
+        * svg/animation: Added.
+        * svg/animation/SMILTime.cpp: Added.
+        (WebCore::operator+):
+        (WebCore::operator-):
+        (WebCore::operator*):
+        * svg/animation/SMILTime.h: Added.
+        (WebCore::SMILTime::SMILTime):
+        (WebCore::SMILTime::unresolved):
+        (WebCore::SMILTime::indefinite):
+        (WebCore::SMILTime::operator=):
+        (WebCore::SMILTime::value):
+        (WebCore::SMILTime::isFinite):
+        (WebCore::SMILTime::isIndefinite):
+        (WebCore::SMILTime::isUnresolved):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::operator>):
+        (WebCore::operator<):
+        (WebCore::operator>=):
+        (WebCore::operator<=):
+        (WebCore::max):
+        (WebCore::min):
+        
+        A floating point number with special values "indefinite" and "unresolved". Defines math for those.
+        
+        * svg/animation/SMILTimeContainer.cpp: Added.
+        (WebCore::SMILTimeContainer::SMILTimeContainer):
+        (WebCore::SMILTimeContainer::schedule):
+        (WebCore::SMILTimeContainer::unschedule):
+        (WebCore::SMILTimeContainer::elapsed):
+        (WebCore::SMILTimeContainer::isActive):
+        (WebCore::SMILTimeContainer::isPaused):
+        (WebCore::SMILTimeContainer::begin):
+        (WebCore::SMILTimeContainer::pause):
+        (WebCore::SMILTimeContainer::resume):
+        (WebCore::SMILTimeContainer::startTimer):
+        (WebCore::SMILTimeContainer::timerFired):
+        (WebCore::SMILTimeContainer::updateAnimations):
+        * svg/animation/SMILTimeContainer.h: Added.
+        
+        Manages the clock and time line for active animations in a document.
+        
+        * svg/animation/SVGSMILElement.cpp: Added.
+        (WebCore::ConditionEventListener::ConditionEventListener):
+        (WebCore::ConditionEventListener::handleEvent):
+        (WebCore::SVGSMILElement::Condition::Condition):
+        (WebCore::SVGSMILElement::SVGSMILElement):
+        (WebCore::SVGSMILElement::~SVGSMILElement):
+        (WebCore::SVGSMILElement::insertedIntoDocument):
+        (WebCore::SVGSMILElement::removedFromDocument):
+        (WebCore::SVGSMILElement::finishParsingChildren):
+        (WebCore::SVGSMILElement::parseOffsetValue):
+        (WebCore::SVGSMILElement::parseClockValue):
+        (WebCore::smilTimeSortFunction):
+        (WebCore::sortTimeList):
+        (WebCore::SVGSMILElement::parseCondition):
+        (WebCore::SVGSMILElement::isTimingElement):
+        (WebCore::SVGSMILElement::parseBeginOrEnd):
+        (WebCore::SVGSMILElement::parseMappedAttribute):
+        (WebCore::SVGSMILElement::attributeChanged):
+        (WebCore::SVGSMILElement::connectConditions):
+        (WebCore::SVGSMILElement::disconnectConditions):
+        (WebCore::SVGSMILElement::reschedule):
+        (WebCore::SVGSMILElement::targetElement):
+        (WebCore::SVGSMILElement::elapsed):
+        (WebCore::SVGSMILElement::restart):
+        (WebCore::SVGSMILElement::fill):
+        (WebCore::SVGSMILElement::xlinkHref):
+        (WebCore::SVGSMILElement::dur):
+        (WebCore::SVGSMILElement::repeatDur):
+        (WebCore::SVGSMILElement::repeatCount):
+        (WebCore::SVGSMILElement::maxValue):
+        (WebCore::SVGSMILElement::minValue):
+        (WebCore::SVGSMILElement::simpleDuration):
+        (WebCore::SVGSMILElement::addBeginTime):
+        (WebCore::SVGSMILElement::addEndTime):
+        (WebCore::SVGSMILElement::findInstanceTime):
+        (WebCore::SVGSMILElement::repeatingDuration):
+        (WebCore::SVGSMILElement::resolveActiveEnd):
+        (WebCore::SVGSMILElement::resolveInterval):
+        (WebCore::SVGSMILElement::resolveFirstInterval):
+        (WebCore::SVGSMILElement::resolveNextInterval):
+        (WebCore::SVGSMILElement::nextProgressTime):
+        (WebCore::SVGSMILElement::beginListChanged):
+        (WebCore::SVGSMILElement::endListChanged):
+        (WebCore::SVGSMILElement::checkRestart):
+        (WebCore::SVGSMILElement::calculateAnimationPercentAndRepeat):
+        (WebCore::SVGSMILElement::calculateNextProgressTime):
+        (WebCore::SVGSMILElement::determineActiveState):
+        (WebCore::SVGSMILElement::progress):
+        (WebCore::SVGSMILElement::notifyDependentsIntervalChanged):
+        (WebCore::SVGSMILElement::createInstanceTimesFromSyncbase):
+        (WebCore::SVGSMILElement::addTimeDependent):
+        (WebCore::SVGSMILElement::removeTimeDependent):
+        (WebCore::SVGSMILElement::handleConditionEvent):
+        (WebCore::SVGSMILElement::beginByLinkActivation):
+        * svg/animation/SVGSMILElement.h: Added.
+        (WebCore::SVGSMILElement::timeContainer):
+        (WebCore::SVGSMILElement::):
+        (WebCore::SVGSMILElement::intervalBegin):
+        (WebCore::SVGSMILElement::intervalEnd):
+        (WebCore::SVGSMILElement::Condition::):
+        
+            This abstract class implements the SMIL timing model. As an output it produces calls
+            to these virtual functions:
+        
+            virtual void startedActiveInterval() = 0;
+            virtual void applyAnimation(float percent, unsigned repeat) = 0;
+            virtual void unapplyAnimation() = 0;
+            virtual void endedActiveInterval() = 0;
+
+2008-04-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Eric.
+
         Move CurveData out from AnimationController.cpp and rename
         it to UnitBezier. This makes it possible to reuse this nice class from the 
         SVG animation code.

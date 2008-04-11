@@ -195,6 +195,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/platform \
                 $$PWD/platform/network \
                 $$PWD/platform/graphics \
+                $$PWD/svg/animation \
                 $$PWD/svg/graphics \
                 $$PWD/svg/graphics/filters \
                 $$PWD/platform/sql \
@@ -1480,8 +1481,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/PointerEventsHitRules.cpp \
         svg/SVGDocumentExtensions.cpp \
         svg/SVGImageLoader.cpp \
-        svg/SVGTimer.cpp \
-        svg/TimeScheduler.cpp \
         svg/ColorDistance.cpp \
         svg/SVGAElement.cpp \
         svg/SVGAltGlyphElement.cpp \
@@ -1609,6 +1608,9 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGViewElement.cpp \
         svg/SVGViewSpec.cpp \
         svg/SVGZoomAndPan.cpp \
+        WebCore/svg/animation/SMILTime.cpp \
+        WebCore/svg/animation/SMILTimeContainer.cpp \
+        WebCore/svg/animation/SVGSMILElement.cpp \
         svg/graphics/filters/SVGFEBlend.cpp \
         svg/graphics/filters/SVGFEColorMatrix.cpp \
         svg/graphics/filters/SVGFEComponentTransfer.cpp \

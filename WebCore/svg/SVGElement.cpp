@@ -87,12 +87,12 @@ void SVGElement::setXmlbase(const String& value, ExceptionCode&)
 
 SVGSVGElement* SVGElement::ownerSVGElement() const
 {
-    Node* n = parentNode();
+    Node* n = isShadowNode() ? const_cast<SVGElement*>(this)->shadowParentNode() : parentNode();
     while (n) {
         if (n->hasTagName(SVGNames::svgTag))
             return static_cast<SVGSVGElement*>(n);
 
-        n = n->parentNode();
+        n = n->isShadowNode() ? n->shadowParentNode() : n->parentNode();
     }
 
     return 0;

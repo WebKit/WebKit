@@ -48,7 +48,7 @@
 #include "SVGViewSpec.h"
 #include "SVGZoomEvent.h"
 #include "SelectionController.h"
-#include "TimeScheduler.h"
+#include "SMILTimeContainer.h"
 
 namespace WebCore {
 
@@ -68,20 +68,19 @@ SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , m_width(this, LengthModeWidth)
     , m_height(this, LengthModeHeight)
     , m_useCurrentView(false)
-    , m_timeScheduler(new TimeScheduler(doc))
+    , m_timeContainer(new SMILTimeContainer)
     , m_viewSpec(0)
     , m_containerSize(300, 150)
     , m_hasSetContainerSize(false)
 {
     setWidthBaseValue(SVGLength(this, LengthModeWidth, "100%"));
     setHeightBaseValue(SVGLength(this, LengthModeHeight, "100%"));
+    doc->registerForCacheCallbacks(this);
 }
 
 SVGSVGElement::~SVGSVGElement()
 {
-    delete m_timeScheduler;
-    m_timeScheduler = 0;
-
+    document()->unregisterForCacheCallbacks(this);
     // There are cases where removedFromDocument() is not called.
     // see ContainerNode::removeAllChildren, called by it's destructor.
     document()->accessSVGExtensions()->removeTimeContainer(this);
@@ -454,24 +453,24 @@ void SVGSVGElement::removedFromDocument()
 
 void SVGSVGElement::pauseAnimations()
 {
-    if (!m_timeScheduler->animationsPaused())
-        m_timeScheduler->toggleAnimations();
+    if (!m_timeContainer->isPaused())
+        m_timeContainer->pause();
 }
 
 void SVGSVGElement::unpauseAnimations()
 {
-    if (m_timeScheduler->animationsPaused())
-        m_timeScheduler->toggleAnimations();
+    if (m_timeContainer->isPaused())
+        m_timeContainer->resume();
 }
 
 bool SVGSVGElement::animationsPaused() const
 {
-    return m_timeScheduler->animationsPaused();
+    return m_timeContainer->isPaused();
 }
 
 float SVGSVGElement::getCurrentTime() const
 {
-    return narrowPrecisionToFloat(m_timeScheduler->elapsed());
+    return narrowPrecisionToFloat(m_timeContainer->elapsed().value());
 }
 
 void SVGSVGElement::setCurrentTime(float /* seconds */)
@@ -529,6 +528,16 @@ void SVGSVGElement::inheritViewAttributes(SVGViewElement* viewElement)
     if (viewElement->hasAttribute(SVGNames::zoomAndPanAttr))
         currentView()->setZoomAndPan(viewElement->zoomAndPan());
     renderer()->setNeedsLayout(true);
+}
+    
+void SVGSVGElement::willSaveToCache()
+{
+    pauseAnimations();
+}
+
+void SVGSVGElement::willRestoreFromCache()
+{
+    unpauseAnimations();
 }
 
 }

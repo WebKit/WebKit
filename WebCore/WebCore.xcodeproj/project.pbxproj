@@ -3158,10 +3158,6 @@
 		B28C6A280D00C44800334AA4 /* SVGDocumentExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = B28C6A1F0D00C44800334AA4 /* SVGDocumentExtensions.h */; };
 		B28C6A290D00C44800334AA4 /* SVGImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B28C6A200D00C44800334AA4 /* SVGImageLoader.cpp */; };
 		B28C6A2A0D00C44800334AA4 /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = B28C6A210D00C44800334AA4 /* SVGImageLoader.h */; };
-		B28C6A2B0D00C44800334AA4 /* SVGTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B28C6A220D00C44800334AA4 /* SVGTimer.cpp */; };
-		B28C6A2C0D00C44800334AA4 /* SVGTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = B28C6A230D00C44800334AA4 /* SVGTimer.h */; };
-		B28C6A2D0D00C44800334AA4 /* TimeScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B28C6A240D00C44800334AA4 /* TimeScheduler.cpp */; };
-		B28C6A2E0D00C44800334AA4 /* TimeScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = B28C6A250D00C44800334AA4 /* TimeScheduler.h */; };
 		B297BC700B3C14CF0045A590 /* JSSVGPathSegListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B297BC6F0B3C14CF0045A590 /* JSSVGPathSegListCustom.cpp */; };
 		B2A015A80AF6CD53006BCE0E /* GraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A015920AF6CD53006BCE0E /* GraphicsContext.cpp */; };
 		B2A015A90AF6CD53006BCE0E /* GraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015930AF6CD53006BCE0E /* GraphicsContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3901,6 +3897,12 @@
 		E49626C20D80D94800E3405C /* PreloadScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4D4ABE00D7542F000F96869 /* PreloadScanner.cpp */; };
 		E49626C30D80D94900E3405C /* PreloadScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D4ABE10D7542F100F96869 /* PreloadScanner.h */; };
 		E4AFCFA50DAF29A300F5F55C /* UnitBezier.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */; };
+		E4AFD00B0DAF335400F5F55C /* SMILTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4AFD0050DAF335400F5F55C /* SMILTime.cpp */; };
+		E4AFD00C0DAF335400F5F55C /* SMILTime.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AFD0060DAF335400F5F55C /* SMILTime.h */; };
+		E4AFD00D0DAF335500F5F55C /* SMILTimeContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4AFD0070DAF335400F5F55C /* SMILTimeContainer.cpp */; };
+		E4AFD00E0DAF335500F5F55C /* SMILTimeContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AFD0080DAF335400F5F55C /* SMILTimeContainer.h */; };
+		E4AFD00F0DAF335500F5F55C /* SVGSMILElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4AFD0090DAF335400F5F55C /* SVGSMILElement.cpp */; };
+		E4AFD0100DAF335500F5F55C /* SVGSMILElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AFD00A0DAF335400F5F55C /* SVGSMILElement.h */; };
 		E4C279580CF9741900E97B98 /* RenderMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C279560CF9741900E97B98 /* RenderMedia.cpp */; };
 		E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C279570CF9741900E97B98 /* RenderMedia.h */; };
 		E4EEFFC80D34550C00469A58 /* JSAudioConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4EEFFC60D34550C00469A58 /* JSAudioConstructor.cpp */; };
@@ -7384,10 +7386,6 @@
 		B28C6A1F0D00C44800334AA4 /* SVGDocumentExtensions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGDocumentExtensions.h; sourceTree = "<group>"; };
 		B28C6A200D00C44800334AA4 /* SVGImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImageLoader.cpp; sourceTree = "<group>"; };
 		B28C6A210D00C44800334AA4 /* SVGImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGImageLoader.h; sourceTree = "<group>"; };
-		B28C6A220D00C44800334AA4 /* SVGTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTimer.cpp; sourceTree = "<group>"; };
-		B28C6A230D00C44800334AA4 /* SVGTimer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGTimer.h; sourceTree = "<group>"; };
-		B28C6A240D00C44800334AA4 /* TimeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TimeScheduler.cpp; sourceTree = "<group>"; };
-		B28C6A250D00C44800334AA4 /* TimeScheduler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TimeScheduler.h; sourceTree = "<group>"; };
 		B28C6A260D00C44800334AA4 /* xlinkattrs.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = xlinkattrs.in; sourceTree = "<group>"; };
 		B297BC6F0B3C14CF0045A590 /* JSSVGPathSegListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegListCustom.cpp; sourceTree = "<group>"; };
 		B2A015920AF6CD53006BCE0E /* GraphicsContext.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext.cpp; sourceTree = "<group>"; };
@@ -8144,6 +8142,12 @@
 		E44614120CD6826900FADA75 /* JSTimeRanges.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTimeRanges.cpp; sourceTree = "<group>"; };
 		E44614130CD6826900FADA75 /* JSTimeRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTimeRanges.h; sourceTree = "<group>"; };
 		E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitBezier.h; sourceTree = "<group>"; };
+		E4AFD0050DAF335400F5F55C /* SMILTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SMILTime.cpp; sourceTree = "<group>"; };
+		E4AFD0060DAF335400F5F55C /* SMILTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMILTime.h; sourceTree = "<group>"; };
+		E4AFD0070DAF335400F5F55C /* SMILTimeContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SMILTimeContainer.cpp; sourceTree = "<group>"; };
+		E4AFD0080DAF335400F5F55C /* SMILTimeContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMILTimeContainer.h; sourceTree = "<group>"; };
+		E4AFD0090DAF335400F5F55C /* SVGSMILElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGSMILElement.cpp; sourceTree = "<group>"; };
+		E4AFD00A0DAF335400F5F55C /* SVGSMILElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGSMILElement.h; sourceTree = "<group>"; };
 		E4B41E010CBF8EAA00AF2ECE /* ProgressEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgressEvent.cpp; sourceTree = "<group>"; };
 		E4B41E020CBF8EAA00AF2ECE /* ProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressEvent.h; sourceTree = "<group>"; };
 		E4B41E030CBF8EAA00AF2ECE /* ProgressEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ProgressEvent.idl; sourceTree = "<group>"; };
@@ -11047,6 +11051,7 @@
 		B22277CA0D00BF1E0071B782 /* svg */ = {
 			isa = PBXGroup;
 			children = (
+				E46E97860DAAD61B0071E894 /* animation */,
 				B25598860D00D8B800BB825C /* graphics */,
 				B22277CB0D00BF1F0071B782 /* ColorDistance.cpp */,
 				B22277CC0D00BF1F0071B782 /* ColorDistance.h */,
@@ -11430,8 +11435,6 @@
 				B222793A0D00BF210071B782 /* SVGTextPositioningElement.cpp */,
 				B222793B0D00BF210071B782 /* SVGTextPositioningElement.h */,
 				B222793C0D00BF210071B782 /* SVGTextPositioningElement.idl */,
-				B28C6A220D00C44800334AA4 /* SVGTimer.cpp */,
-				B28C6A230D00C44800334AA4 /* SVGTimer.h */,
 				B222793D0D00BF210071B782 /* SVGTitleElement.cpp */,
 				B222793E0D00BF210071B782 /* SVGTitleElement.h */,
 				B222793F0D00BF210071B782 /* SVGTitleElement.idl */,
@@ -11472,8 +11475,6 @@
 				B2E4EC940D00C22B00432643 /* SVGZoomEvent.cpp */,
 				B2E4EC950D00C22B00432643 /* SVGZoomEvent.h */,
 				B2E4EC960D00C22B00432643 /* SVGZoomEvent.idl */,
-				B28C6A240D00C44800334AA4 /* TimeScheduler.cpp */,
-				B28C6A250D00C44800334AA4 /* TimeScheduler.h */,
 				B28C6A260D00C44800334AA4 /* xlinkattrs.in */,
 			);
 			path = svg;
@@ -12305,6 +12306,19 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		E46E97860DAAD61B0071E894 /* animation */ = {
+			isa = PBXGroup;
+			children = (
+				E4AFD0050DAF335400F5F55C /* SMILTime.cpp */,
+				E4AFD0060DAF335400F5F55C /* SMILTime.h */,
+				E4AFD0070DAF335400F5F55C /* SMILTimeContainer.cpp */,
+				E4AFD0080DAF335400F5F55C /* SMILTimeContainer.h */,
+				E4AFD0090DAF335400F5F55C /* SVGSMILElement.cpp */,
+				E4AFD00A0DAF335400F5F55C /* SVGSMILElement.h */,
+			);
+			path = animation;
+			sourceTree = "<group>";
 		};
 		ED501DC90B249F3900AE18D9 /* mac */ = {
 			isa = PBXGroup;
@@ -14472,7 +14486,6 @@
 				B2227ACB0D00BF220071B782 /* SVGTextElement.h in Headers */,
 				B2227ACE0D00BF220071B782 /* SVGTextPathElement.h in Headers */,
 				B2227AD10D00BF220071B782 /* SVGTextPositioningElement.h in Headers */,
-				B28C6A2C0D00C44800334AA4 /* SVGTimer.h in Headers */,
 				B2227AD40D00BF220071B782 /* SVGTitleElement.h in Headers */,
 				B2227AD70D00BF220071B782 /* SVGTransform.h in Headers */,
 				B2227ADD0D00BF220071B782 /* SVGTransformDistance.h in Headers */,
@@ -14545,7 +14558,6 @@
 				B2C3DA4B0D006C1D00EF6F26 /* TextStream.h in Headers */,
 				51DF6D7E0B92A16D00C2DC85 /* ThreadCheck.h in Headers */,
 				E44613B00CD6331000FADA75 /* TimeRanges.h in Headers */,
-				B28C6A2E0D00C44800334AA4 /* TimeScheduler.h in Headers */,
 				9305B24D098F1B6B00C28855 /* Timer.h in Headers */,
 				BCCFBAE80B5152ED0001F1D7 /* Tokenizer.h in Headers */,
 				854FE7370A2297BE0058D7AD /* Traversal.h in Headers */,
@@ -14758,6 +14770,9 @@
 				BC53C5F50DA56B920021EB5D /* Gradient.h in Headers */,
 				51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */,
 				E4AFCFA50DAF29A300F5F55C /* UnitBezier.h in Headers */,
+				E4AFD00C0DAF335400F5F55C /* SMILTime.h in Headers */,
+				E4AFD00E0DAF335500F5F55C /* SMILTimeContainer.h in Headers */,
+				E4AFD0100DAF335500F5F55C /* SVGSMILElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16173,7 +16188,6 @@
 				B2227ACA0D00BF220071B782 /* SVGTextElement.cpp in Sources */,
 				B2227ACD0D00BF220071B782 /* SVGTextPathElement.cpp in Sources */,
 				B2227AD00D00BF220071B782 /* SVGTextPositioningElement.cpp in Sources */,
-				B28C6A2B0D00C44800334AA4 /* SVGTimer.cpp in Sources */,
 				B2227AD30D00BF220071B782 /* SVGTitleElement.cpp in Sources */,
 				B2227AD60D00BF220071B782 /* SVGTransform.cpp in Sources */,
 				B2227ADC0D00BF220071B782 /* SVGTransformDistance.cpp in Sources */,
@@ -16243,7 +16257,6 @@
 				B2C3DA4A0D006C1D00EF6F26 /* TextStream.cpp in Sources */,
 				51DF6D800B92A18E00C2DC85 /* ThreadCheck.mm in Sources */,
 				E44613AF0CD6331000FADA75 /* TimeRanges.cpp in Sources */,
-				B28C6A2D0D00C44800334AA4 /* TimeScheduler.cpp in Sources */,
 				93309EA4099EB78C0056E581 /* Timer.cpp in Sources */,
 				854FE7360A2297BE0058D7AD /* Traversal.cpp in Sources */,
 				854FE7380A2297BE0058D7AD /* TreeWalker.cpp in Sources */,
@@ -16441,6 +16454,9 @@
 				4B24F9A80DA7050B00269E58 /* AXObjectCache.cpp in Sources */,
 				51D0C5160DAA90B7003B3831 /* JSStorageCustom.cpp in Sources */,
 				51BE37DF0DAEE00E001085FC /* StorageArea.cpp in Sources */,
+				E4AFD00B0DAF335400F5F55C /* SMILTime.cpp in Sources */,
+				E4AFD00D0DAF335500F5F55C /* SMILTimeContainer.cpp in Sources */,
+				E4AFD00F0DAF335500F5F55C /* SVGSMILElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

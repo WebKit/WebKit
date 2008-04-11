@@ -37,20 +37,18 @@ namespace WebCore {
     public:
         SVGAnimateColorElement(const QualifiedName&, Document*);
         virtual ~SVGAnimateColorElement();
-        
-        virtual bool updateAnimationBaseValueFromElement();
-        virtual void applyAnimatedValueToElement();
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
         
-        virtual bool updateAnimatedValue(EAnimationMode, float timePercentage, unsigned valueIndex, float percentagePast);
-        virtual bool calculateFromAndToValues(EAnimationMode, unsigned valueIndex);
+        virtual void applyAnimatedValueToElement(unsigned repeat);
+        virtual bool updateAnimatedValue(float percent);
+        virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
+        virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
 
     private:
         Color m_baseColor;
         Color m_animatedColor;
-
         Color m_toColor;
         Color m_fromColor;
     };

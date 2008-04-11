@@ -36,8 +36,7 @@ namespace WebCore {
         
         virtual bool hasValidTarget() const;
         
-        virtual bool updateAnimationBaseValueFromElement();
-        virtual void applyAnimatedValueToElement();
+        virtual void applyAnimatedValueToElement(unsigned repeat);
         
         virtual void parseMappedAttribute(MappedAttribute*);
                 
@@ -46,11 +45,13 @@ namespace WebCore {
     protected:
         virtual const SVGElement* contextElement() const { return this; }
         
-        virtual bool updateAnimatedValue(EAnimationMode, float timePercentage, unsigned valueIndex, float percentagePast);
-        virtual bool calculateFromAndToValues(EAnimationMode, unsigned valueIndex);
+        virtual bool updateAnimatedValue(float percent);
+        virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
+        virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
+        
+        virtual void startedActiveInterval();
         
     private:
-        FloatPoint m_basePoint;
         FloatSize m_animatedTranslation;
         float m_animatedAngle;
         
@@ -60,9 +61,8 @@ namespace WebCore {
         FloatPoint m_toPoint;
         float m_toAngle;
         
-        FloatSize m_pointDiff;
-        float m_angleDiff;
-        
+        unsigned m_baseIndexInTransformList;
+                
         Path m_path;
         Vector<float> m_keyPoints;
         enum RotateMode {

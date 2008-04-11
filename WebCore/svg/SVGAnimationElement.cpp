@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
     Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+    Copyright (C) 2008 Apple Inc. All rights reserved.
 
     This file is part of the KDE project
 
@@ -25,767 +26,137 @@
 #if ENABLE(SVG)
 #include "SVGAnimationElement.h"
 
+#include "CSSComputedStyleDeclaration.h"
+#include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
+#include "Event.h"
+#include "EventListener.h"
 #include "FloatConversion.h"
+#include "HTMLNames.h"
 #include "SVGNames.h"
-#include "SVGParserUtilities.h"
-#include "SVGSVGElement.h"
 #include "SVGURIReference.h"
-#include "TimeScheduler.h"
 #include "XLinkNames.h"
-#include <float.h>
-#include <math.h>
-#include <wtf/MathExtras.h>
-#include <wtf/Vector.h>
 
 using namespace std;
 
 namespace WebCore {
     
-using namespace SVGNames;
-
 SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document* doc)
-    : SVGElement(tagName, doc)
+    : SVGSMILElement(tagName, doc)
     , SVGTests()
     , SVGExternalResourcesRequired()
-    , m_targetElement(0)
-    , m_connectedToTimer(false)
-    , m_currentTime(0.0)
-    , m_simpleDuration(0.0)
-    , m_fill(FILL_REMOVE)
-    , m_restart(RESTART_ALWAYS)
-    , m_calcMode(CALCMODE_LINEAR)
-    , m_additive(ADDITIVE_REPLACE)
-    , m_accumulate(ACCUMULATE_NONE)
-    , m_attributeType(ATTRIBUTETYPE_AUTO)
-    , m_max(0.0)
-    , m_min(0.0)
-    , m_end(0.0)
-    , m_begin(0.0)
-    , m_repetitions(0)
-    , m_repeatCount(0)
-    , m_animationBegin(DBL_MAX)
-    , m_animationEnd(DBL_MAX)
+    , m_animationValid(false)
 {
-
 }
 
 SVGAnimationElement::~SVGAnimationElement()
 {
 }
-
-bool SVGAnimationElement::hasValidTarget() const
+    
+static void parseKeyTimes(const String& parse, Vector<float>& result)
 {
-    return targetElement();
+    result.clear();
+    Vector<String> parseList;
+    parse.split(';', parseList);
+    for (unsigned n = 0; n < parseList.size(); ++n) {
+        String timeString = parseList[n];
+        bool ok;
+        float time = timeString.toFloat(&ok);
+        if (!ok || time < 0 || time > 1.f)
+            goto fail;
+        if (!n) {
+            if (time != 0)
+                goto fail;
+        } else if (time <= result.last())
+            goto fail;
+        result.append(time);
+    }
+    return;
+fail:
+    result.clear();
 }
 
-SVGElement* SVGAnimationElement::targetElement() const
+static void parseKeySplines(const String& parse, Vector<UnitBezier>& result)
 {
-    if (!m_targetElement) {
-        Node *target = 0;
-        if (!m_href.isEmpty()) {
-            target = document()->getElementById(SVGURIReference::getTarget(m_href));
-        } else if (parentNode()) {
-            // TODO : do we really need to skip non element nodes? Can that happen at all?
-            target = parentNode();
-            while (target) {
-                if (target->nodeType() != ELEMENT_NODE)
-                    target = target->parentNode();
-                else
-                    break;
-            }
+    result.clear();
+    Vector<String> parseList;
+    parse.split(';', parseList);
+    for (unsigned n = 0; n < parseList.size(); ++n) {
+        Vector<String> parseSpline;
+        parseList[n].split(',', parseSpline);
+        // The spec says the sepator is a space, all tests use commas. Weird.
+        if (parseSpline.size() == 1) 
+            parseList[n].split(' ', parseSpline);
+        if (parseSpline.size() != 4)
+            goto fail;
+        double curveValues[4];
+        for (unsigned i = 0; i < 4; ++i) {
+            String parseNumber = parseSpline[i]; 
+            bool ok;
+            curveValues[i] = parseNumber.toDouble(&ok);
+            if (!ok || curveValues[i] < 0.0 || curveValues[i] > 1.0)
+                goto fail;
         }
-        if (target && target->isSVGElement())
-            m_targetElement = static_cast<SVGElement*>(target);
+        result.append(UnitBezier(curveValues[0], curveValues[1], curveValues[2], curveValues[3]));
     }
- 
-    return m_targetElement;
-}
-
-float SVGAnimationElement::getEndTime() const
-{
-    return narrowPrecisionToFloat(m_end);
-}
-
-float SVGAnimationElement::getStartTime() const
-{
-    return narrowPrecisionToFloat(m_begin);
-}
-
-float SVGAnimationElement::getCurrentTime() const
-{
-    return narrowPrecisionToFloat(m_currentTime);
-}
-
-float SVGAnimationElement::getSimpleDuration(ExceptionCode&) const
-{
-    return narrowPrecisionToFloat(m_simpleDuration);
-}
-
-void SVGAnimationElement::parseKeyNumbers(Vector<float>& keyNumbers, const String& value)
-{
-    float number = 0.0f;
-    
-    const UChar* ptr = value.characters();
-    const UChar* end = ptr + value.length();
-    skipOptionalSpaces(ptr, end);
-    while (ptr < end) {
-        if (!parseNumber(ptr, end, number, false))
-            return;
-        keyNumbers.append(number);
-        
-        if (!skipOptionalSpaces(ptr, end) || *ptr != ';')
-            return;
-        ptr++;
-        skipOptionalSpaces(ptr, end);
-    }
-}
-
-static void parseKeySplines(Vector<SVGAnimationElement::KeySpline>& keySplines, const String& value)
-{
-    float number = 0.0f;
-    SVGAnimationElement::KeySpline keySpline;
-    
-    const UChar* ptr = value.characters();
-    const UChar* end = ptr + value.length();
-    skipOptionalSpaces(ptr, end);
-    while (ptr < end) {
-        if (!(parseNumber(ptr, end, number, false) && skipOptionalSpaces(ptr, end)))
-            return;
-        keySpline.control1.setX(number);
-        if (!(parseNumber(ptr, end, number, false) && skipOptionalSpaces(ptr, end)))
-            return;
-        keySpline.control1.setY(number);
-        if (!(parseNumber(ptr, end, number, false) && skipOptionalSpaces(ptr, end)))
-            return;
-        keySpline.control2.setX(number);
-        if (!parseNumber(ptr, end, number, false))
-            return;
-        keySpline.control2.setY(number);
-        keySplines.append(keySpline);
-        
-        if (!skipOptionalSpaces(ptr, end) || *ptr != ';')
-            return;
-        ptr++;
-        skipOptionalSpaces(ptr, end);
-    }
-}
-
-void SVGAnimationElement::parseBeginOrEndValue(double& number, const String& value)
-{
-    // TODO: Don't use SVGStringList for parsing.
-    AtomicString dummy;
-    RefPtr<SVGStringList> valueList = SVGStringList::create(QualifiedName(dummy, dummy, dummy));
-    valueList->parse(value, ';');
-    
-    ExceptionCode ec = 0;
-    for (unsigned int i = 0; i < valueList->numberOfItems(); i++) {
-        String current = valueList->getItem(i, ec);
-        
-        if (current.startsWith("accessKey")) {
-            // Register keyDownEventListener for the character
-            String character = current.substring(current.length() - 2, 1);
-            // FIXME: Not implemented! Supposed to register accessKey character
-        } else if (current.startsWith("wallclock")) {
-            int firstBrace = current.find('(');
-            int secondBrace = current.find(')');
-            
-            String wallclockValue = current.substring(firstBrace + 1, secondBrace - firstBrace - 2);
-            // FIXME: Not implemented! Supposed to use wallClock value
-        } else if (current.contains('.')) {
-            int dotPosition = current.find('.');
-            
-            String element = current.substring(0, dotPosition);
-            String clockValue;
-            if (current.contains("begin"))
-                clockValue = current.substring(dotPosition + 6);
-            else if (current.contains("end"))
-                clockValue = current.substring(dotPosition + 4);
-            else if (current.contains("repeat"))
-                clockValue = current.substring(dotPosition + 7);
-            else { // DOM2 Event Reference
-                int plusMinusPosition = -1;
-                
-                if (current.contains('+'))
-                    plusMinusPosition = current.find('+');
-                else if (current.contains('-'))
-                    plusMinusPosition = current.find('-');
-                
-                String event = current.substring(dotPosition + 1, plusMinusPosition - dotPosition - 1);
-                clockValue = current.substring(dotPosition + event.length() + 1);
-                // FIXME: supposed to use DOM Event
-            }
-        } else {
-            number = parseClockValue(current);
-            if (!isIndefinite(number))
-                number *= 1000.0;
-            // FIXME: supposed to set begin/end time
-        }
-    }    
+    return;
+fail:
+    result.clear();
 }
 
 void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    if (attr->name().matches(XLinkNames::hrefAttr))
-        m_href = attr->value();
-    else if (attr->name() == SVGNames::attributeNameAttr)
-        m_attributeName = attr->value();
-    else if (attr->name() == SVGNames::attributeTypeAttr) {
-        if (attr->value() == "CSS")
-            m_attributeType = ATTRIBUTETYPE_CSS;
-        else if (attr->value() == "XML")
-            m_attributeType = ATTRIBUTETYPE_XML;
-        else if (attr->value() == "auto")
-            m_attributeType = ATTRIBUTETYPE_AUTO;
-    } else if (attr->name() == SVGNames::beginAttr)
-        parseBeginOrEndValue(m_begin, attr->value());
-    else if (attr->name() == SVGNames::endAttr)
-        parseBeginOrEndValue(m_end, attr->value());
-    else if (attr->name() == SVGNames::durAttr) {
-        m_simpleDuration = parseClockValue(attr->value());
-        if (!isIndefinite(m_simpleDuration))
-            m_simpleDuration *= 1000.0;
-    } else if (attr->name() == SVGNames::minAttr) {
-        m_min = parseClockValue(attr->value());
-        if (!isIndefinite(m_min))
-            m_min *= 1000.0;
-    } else if (attr->name() == SVGNames::maxAttr) {
-        m_max = parseClockValue(attr->value());
-        if (!isIndefinite(m_max))
-            m_max *= 1000.0;
-    } else if (attr->name() == SVGNames::restartAttr) {
-        if (attr->value() == "whenNotActive")
-            m_restart = RESTART_WHENNOTACTIVE;
-        else if (attr->value() == "never")
-            m_restart = RESTART_NEVER;
-        else if (attr->value() == "always")
-            m_restart = RESTART_ALWAYS;
-    } else if (attr->name() == SVGNames::repeatCountAttr) {
-        if (attr->value() == "indefinite")
-            m_repeatCount = DBL_MAX;
-        else
-            m_repeatCount = attr->value().toDouble();
-    } else if (attr->name() == SVGNames::repeatDurAttr)
-        m_repeatDur = attr->value();
-    else if (attr->name() == SVGNames::fillAttr) {
-        if (attr->value() == "freeze")
-            m_fill = FILL_FREEZE;
-        else if (attr->value() == "remove")
-            m_fill = FILL_REMOVE;
-    } else if (attr->name() == SVGNames::calcModeAttr) {
-        if (attr->value() == "discrete")
-            m_calcMode = CALCMODE_DISCRETE;
-        else if (attr->value() == "linear")
-            m_calcMode = CALCMODE_LINEAR;
-        else if (attr->value() == "spline")
-            m_calcMode = CALCMODE_SPLINE;
-        else if (attr->value() == "paced")
-            m_calcMode = CALCMODE_PACED;
-    } else if (attr->name() == SVGNames::valuesAttr) {
-        m_values.clear();
-        m_values = parseDelimitedString(attr->value(), ';');
-    } else if (attr->name() == SVGNames::keyTimesAttr) {
-        m_keyTimes.clear();
-        parseKeyNumbers(m_keyTimes, attr->value());
-    } else if (attr->name() == SVGNames::keySplinesAttr) {
-        m_keySplines.clear();
-        parseKeySplines(m_keySplines, attr->value());
-    } else if (attr->name() == SVGNames::fromAttr)
-        m_from = attr->value();
-    else if (attr->name() == SVGNames::toAttr)
-        m_to = attr->value();
-    else if (attr->name() == SVGNames::byAttr)
-        m_by = attr->value();
-    else if (attr->name() == SVGNames::additiveAttr) {
-        if (attr->value() == "sum")
-            m_additive = ADDITIVE_SUM;
-        else if (attr->value() == "replace")
-            m_additive = ADDITIVE_REPLACE;
-    } else if (attr->name() == SVGNames::accumulateAttr) {
-        if (attr->value() == "sum")
-            m_accumulate = ACCUMULATE_SUM;
-        else if (attr->value() == "none")
-            m_accumulate = ACCUMULATE_NONE;
-    } else {
+    if (attr->name() == SVGNames::valuesAttr)
+        attr->value().string().split(';', m_values);
+    else if (attr->name() == SVGNames::keyTimesAttr)
+        parseKeyTimes(attr->value(), m_keyTimes);
+    else if (attr->name() == SVGNames::keySplinesAttr)
+        parseKeySplines(attr->value(), m_keySplines);
+    else {
         if (SVGTests::parseMappedAttribute(attr))
             return;
         if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
             return;
-        SVGElement::parseMappedAttribute(attr);
+        SVGSMILElement::parseMappedAttribute(attr);
     }
 }
 
-double SVGAnimationElement::parseClockValue(const String& data)
+void SVGAnimationElement::attributeChanged(Attribute* attr, bool preserveDecls)
 {
-    String parse = data.stripWhiteSpace();
-
-    if (parse == "indefinite")
-        return DBL_MAX;
-
-    double result;
-
-    int doublePointOne = parse.find(':');
-    int doublePointTwo = parse.find(':', doublePointOne + 1);
-
-    if (doublePointOne != -1 && doublePointTwo != -1) { // Spec: "Full clock values"
-        unsigned hours = parse.substring(0, 2).toUIntStrict();
-        unsigned minutes = parse.substring(3, 2).toUIntStrict();
-        unsigned seconds = parse.substring(6, 2).toUIntStrict();
-        unsigned milliseconds = 0;
-
-        result = (3600 * hours) + (60 * minutes) + seconds;
-
-        if (parse.find('.') != -1) {
-            String temp = parse.substring(9, 2);
-            milliseconds = temp.toUIntStrict();
-            result += (milliseconds * (1 / pow(10.0, int(temp.length()))));
-        }
-    } else if (doublePointOne != -1 && doublePointTwo == -1) { // Spec: "Partial clock values"
-        unsigned minutes = parse.substring(0, 2).toUIntStrict();
-        unsigned seconds = parse.substring(3, 2).toUIntStrict();
-        unsigned milliseconds = 0;
-
-        result = (60 * minutes) + seconds;
-
-        if (parse.find('.') != -1) {
-            String temp = parse.substring(6, 2);
-            milliseconds = temp.toUIntStrict();
-            result += (milliseconds * (1 / pow(10.0, int(temp.length()))));
-        }
-    } else { // Spec: "Timecount values"
-        int dotPosition = parse.find('.');
-
-        if (parse.endsWith("h")) {
-            if (dotPosition == -1)
-                result = parse.substring(0, parse.length() - 1).toUIntStrict() * 3600;
-            else {
-                result = parse.substring(0, dotPosition).toUIntStrict() * 3600;
-                String temp = parse.substring(dotPosition + 1, parse.length() - dotPosition - 2);
-                result += (3600.0 * temp.toUIntStrict()) * (1 / pow(10.0, int(temp.length())));
-            }
-        } else if (parse.endsWith("min")) {
-            if (dotPosition == -1)
-                result = parse.substring(0, parse.length() - 3).toUIntStrict() * 60;
-            else {
-                result = parse.substring(0, dotPosition).toUIntStrict() * 60;
-                String temp = parse.substring(dotPosition + 1, parse.length() - dotPosition - 4);
-                result += (60.0 * temp.toUIntStrict()) * (1 / pow(10.0, int(temp.length())));
-            }
-        } else if (parse.endsWith("ms")) {
-            if (dotPosition == -1)
-                result = parse.substring(0, parse.length() - 2).toUIntStrict() / 1000.0;
-            else {
-                result = parse.substring(0, dotPosition).toUIntStrict() / 1000.0;
-                String temp = parse.substring(dotPosition + 1, parse.length() - dotPosition - 3);
-                result += (temp.toUIntStrict() / 1000.0) * (1 / pow(10.0, int(temp.length())));
-            }
-        } else if (parse.endsWith("s")) {
-            if (dotPosition == -1)
-                result = parse.substring(0, parse.length() - 1).toUIntStrict();
-            else {
-                result = parse.substring(0, dotPosition).toUIntStrict();
-                String temp = parse.substring(dotPosition + 1, parse.length() - dotPosition - 2);
-                result += temp.toUIntStrict() * (1 / pow(10.0, int(temp.length())));
-            }
-        } else
-            result = parse.toDouble();
-    }
-
-    return result;
+    // Assumptions may not hold after an attribute change.
+    m_animationValid = false;
+    SVGSMILElement::attributeChanged(attr, preserveDecls);
 }
 
-void SVGAnimationElement::finishParsingChildren()
+float SVGAnimationElement::getStartTime() const
 {
-    if (ownerSVGElement())
-        ownerSVGElement()->timeScheduler()->addTimer(this, lround(getStartTime()));
-    SVGElement::finishParsingChildren();
+    return narrowPrecisionToFloat(intervalBegin().value());
 }
 
-String SVGAnimationElement::targetAttributeAnimatedValue() const
+float SVGAnimationElement::getCurrentTime() const
 {
-    // FIXME: This method is not entirely correct
-    // It does not properly grab the true "animVal" instead grabs the baseVal (or something very close)
-
-    if (!targetElement())
-        return String();
-    
-    SVGElement* target = targetElement();
-    SVGStyledElement* styled = 0;
-    if (target && target->isStyled())
-        styled = static_cast<SVGStyledElement*>(target);
-    
-    String ret;
-
-    EAttributeType attributeType = static_cast<EAttributeType>(m_attributeType);
-    if (attributeType == ATTRIBUTETYPE_AUTO) {
-        attributeType = ATTRIBUTETYPE_XML;
-
-        // Spec: The implementation should match the attributeName to an attribute
-        // for the target element. The implementation must first search through the
-        // list of CSS properties for a matching property name, and if none is found,
-        // search the default XML namespace for the element.
-        if (styled && styled->style()) {
-            if (styled->style()->getPropertyCSSValue(m_attributeName))
-                attributeType = ATTRIBUTETYPE_CSS;
-        }
-    }
-    
-    if (attributeType == ATTRIBUTETYPE_CSS) {
-        if (styled && styled->style())
-            ret = styled->style()->getPropertyValue(m_attributeName);
-    }
-
-    if (attributeType == ATTRIBUTETYPE_XML || ret.isEmpty())
-        ret = targetElement()->getAttribute(m_attributeName);
-
-    return ret;
+    return narrowPrecisionToFloat(elapsed().value());
 }
 
-void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
+float SVGAnimationElement::getSimpleDuration(ExceptionCode&) const
 {
-    // FIXME: This method is not entirely correct
-    // It does not properly set the "animVal", rather it sets the "baseVal"
-    SVGAnimationElement::setTargetAttribute(targetElement(), m_attributeName, value, static_cast<EAttributeType>(m_attributeType));
-}
-
-void SVGAnimationElement::setTargetAttribute(SVGElement* target, const String& name, const String& value, EAttributeType type)
-{
-    if (!target || name.isNull() || value.isNull())
-        return;
-    
-    SVGStyledElement* styled = (target && target->isStyled()) ? static_cast<SVGStyledElement*>(target) : 0;
-
-    EAttributeType attributeType = type;
-    if (type == ATTRIBUTETYPE_AUTO) {
-        // Spec: The implementation should match the attributeName to an attribute
-        // for the target element. The implementation must first search through the
-        // list of CSS properties for a matching property name, and if none is found,
-        // search the default XML namespace for the element.
-        if (styled && styled->style() && styled->style()->getPropertyCSSValue(name))
-            attributeType = ATTRIBUTETYPE_CSS;
-        else
-            attributeType = ATTRIBUTETYPE_XML;
-    }
-    ExceptionCode ec = 0;
-    if (attributeType == ATTRIBUTETYPE_CSS && styled && styled->style())
-        styled->style()->setProperty(name, value, "", ec);
-    else if (attributeType == ATTRIBUTETYPE_XML)
-        target->setAttribute(name, value, ec);
-}
-
-String SVGAnimationElement::attributeName() const
-{
-    return m_attributeName;
-}
-
-bool SVGAnimationElement::connectedToTimer() const
-{
-    return m_connectedToTimer;
-}
-
-bool SVGAnimationElement::isFrozen() const
-{
-    return (m_fill == FILL_FREEZE);
-}
-
-bool SVGAnimationElement::isAdditive() const
-{
-    return (m_additive == ADDITIVE_SUM) || (detectAnimationMode() == BY_ANIMATION);
-}
-
-bool SVGAnimationElement::isAccumulated() const
-{
-    return (m_accumulate == ACCUMULATE_SUM) && (detectAnimationMode() != TO_ANIMATION);
-}
-
-EAnimationMode SVGAnimationElement::detectAnimationMode() const
-{
-    if (hasAttribute(SVGNames::valuesAttr))
-        return VALUES_ANIMATION;
-    else if ((!m_from.isEmpty() && !m_to.isEmpty()) || (!m_to.isEmpty())) { // to/from-to animation
-        if (!m_from.isEmpty()) // from-to animation
-            return FROM_TO_ANIMATION;
-        else
-            return TO_ANIMATION;
-    } else if ((m_from.isEmpty() && m_to.isEmpty() && !m_by.isEmpty()) ||
-            (!m_from.isEmpty() && !m_by.isEmpty())) { // by/from-by animation
-        if (!m_from.isEmpty()) // from-by animation
-            return FROM_BY_ANIMATION;
-        else
-            return BY_ANIMATION;
-    }
-
-    return NO_ANIMATION;
-}
-
-double SVGAnimationElement::repeations() const
-{
-    return m_repetitions;
-}
-
-bool SVGAnimationElement::isIndefinite(double value)
-{
-    return (value == DBL_MAX);
-}
-
-void SVGAnimationElement::connectTimer()
-{
-    ASSERT(!m_connectedToTimer);
-    ownerSVGElement()->timeScheduler()->connectIntervalTimer(this);
-    m_connectedToTimer = true;
-}
-
-void SVGAnimationElement::disconnectTimer()
-{
-    ASSERT(m_connectedToTimer);
-    ownerSVGElement()->timeScheduler()->disconnectIntervalTimer(this);
-    m_connectedToTimer = false;
-}
-
-static double calculateTimePercentage(double elapsedSeconds, double start, double end, double duration, double repetitions)
-{
-    double percentage = 0.0;
-    double useElapsed = elapsedSeconds - (duration * repetitions);
-    
-    if (duration > 0.0 && end == 0.0)
-        percentage = 1.0 - (((start + duration) - useElapsed) / duration);
-    else if (duration > 0.0 && end != 0.0) {
-        if (duration > end)
-            percentage = 1.0 - (((start + end) - useElapsed) / end);
-        else
-            percentage = 1.0 - (((start + duration) - useElapsed) / duration);
-    } else if (duration == 0.0 && end != 0.0)
-        percentage = 1.0 - (((start + end) - useElapsed) / end);
-    
-    return percentage;
-}
-
-static inline void adjustPercentagePastForKeySplines(const Vector<SVGAnimationElement::KeySpline>& keySplines, unsigned valueIndex, float& percentagePast)
-{
-    if (percentagePast == 0.0f) // values at key times need no spline adjustment
-        return;
-    const SVGAnimationElement::KeySpline& keySpline = keySplines[valueIndex];
-    Path path;
-    path.moveTo(FloatPoint());
-    path.addBezierCurveTo(keySpline.control1, keySpline.control2, FloatPoint(1.0f, 1.0f));
-    // FIXME: This needs to use a y-at-x function on path, to compute the y value then multiply percentagePast by that value
-}
-
-void SVGAnimationElement::valueIndexAndPercentagePastForDistance(float distancePercentage, unsigned& valueIndex, float& percentagePast)
-{
-    // Unspecified: animation elements which do not support CALCMODE_PACED, we just always show the first value
-    valueIndex = 0;
-    percentagePast = 0;
-}
-
-float SVGAnimationElement::calculateTotalDistance()
-{
-    return 0;
-}
-
-static inline void caculateValueIndexForKeyTimes(float timePercentage, const Vector<float>& keyTimes, unsigned& valueIndex, float& lastKeyTime, float& nextKeyTime)
-{
-    unsigned keyTimesCountMinusOne = keyTimes.size() - 1;
-    valueIndex = 0;
-    ASSERT(timePercentage >= keyTimes.first());
-    while ((valueIndex < keyTimesCountMinusOne) && (timePercentage >= keyTimes[valueIndex + 1]))
-        valueIndex++;
-    
-    lastKeyTime = keyTimes[valueIndex];
-    if (valueIndex < keyTimesCountMinusOne)
-        nextKeyTime = keyTimes[valueIndex + 1];
-    else
-        nextKeyTime = lastKeyTime;
-}
-
-bool SVGAnimationElement::isValidAnimation() const
-{
-    EAnimationMode animationMode = detectAnimationMode();
-    if (!hasValidTarget() || (animationMode == NO_ANIMATION))
-        return false;
-    if (animationMode == VALUES_ANIMATION) {
-        if (!m_values.size())
-            return false;
-        if (m_keyTimes.size()) {
-            if ((m_values.size() != m_keyTimes.size()) || (m_keyTimes.first() != 0))
-                return false;
-            if (((m_calcMode == CALCMODE_SPLINE) || (m_calcMode == CALCMODE_LINEAR)) && (m_keyTimes.last() != 1))
-                return false;
-            float lastKeyTime = 0;
-            for (unsigned x = 0; x < m_keyTimes.size(); x++) {
-                if (m_keyTimes[x] < lastKeyTime || m_keyTimes[x] > 1)
-                    return false;
-            }
-        }
-        if (m_keySplines.size()) {
-            if ((m_values.size() - 1) != m_keySplines.size())
-                return false;
-            for (unsigned x = 0; x < m_keyTimes.size(); x++)
-                if (m_keyTimes[x] < 0 || m_keyTimes[x] > 1)
-                    return false;
-        }
-    }
-    return true;
-}
-
-void SVGAnimationElement::calculateValueIndexAndPercentagePast(float timePercentage, unsigned& valueIndex, float& percentagePast)
-{
-    ASSERT(timePercentage <= 1.0f);
-    ASSERT(isValidAnimation());
-    EAnimationMode animationMode = detectAnimationMode();
-    
-    // to-animations have their own special handling
-    if (animationMode == TO_ANIMATION)
-        return;
-    
-    // paced is special, caculates values based on distance instead of time
-    if (m_calcMode == CALCMODE_PACED) {
-        float totalDistance = calculateTotalDistance();
-        float distancePercentage = totalDistance * timePercentage;
-        valueIndexAndPercentagePastForDistance(distancePercentage, valueIndex, percentagePast);
-        return;
-    }
-    
-    // Figure out what our current index is based on on time
-    // all further calculations are based on time percentages, to allow unifying keyTimes handling & normal animation
-    float lastKeyTimePercentage = 0;
-    float nextKeyTimePercentage = 0;
-    if (m_keyTimes.size() && (m_keyTimes.size() == m_values.size()))
-        caculateValueIndexForKeyTimes(timePercentage, m_keyTimes, valueIndex, lastKeyTimePercentage, nextKeyTimePercentage);
-    else {
-        unsigned lastPossibleIndex = (m_values.size() ? m_values.size() - 1: 1);
-        unsigned flooredValueIndex = static_cast<unsigned>(timePercentage * lastPossibleIndex);
-        valueIndex = flooredValueIndex;
-        lastKeyTimePercentage = flooredValueIndex / (float)lastPossibleIndex;
-        nextKeyTimePercentage = (flooredValueIndex + 1) / (float)lastPossibleIndex;
-    }
-    
-    // No further caculation is needed if we're exactly on an index.
-    if (timePercentage == lastKeyTimePercentage || lastKeyTimePercentage == nextKeyTimePercentage) {
-        percentagePast = 0.0f;
-        return;
-    }
-    
-    // otherwise we decide what percent after that index
-    if ((m_calcMode == CALCMODE_SPLINE) && (m_keySplines.size() == (m_values.size() - 1)))
-        adjustPercentagePastForKeySplines(m_keySplines, valueIndex, percentagePast);
-    else if (m_calcMode == CALCMODE_DISCRETE)
-        percentagePast = 0.0f;
-    else { // default (and fallback) mode: linear
-        float keyTimeSpan = nextKeyTimePercentage - lastKeyTimePercentage;
-        float timeSinceLastKeyTime = timePercentage - lastKeyTimePercentage;
-        percentagePast = (timeSinceLastKeyTime / keyTimeSpan);
-    }
-}
-
-bool SVGAnimationElement::updateAnimationBaseValueFromElement()
-{
-    m_baseValue = targetAttributeAnimatedValue();
-    return true;
-}
-
-void SVGAnimationElement::applyAnimatedValueToElement()
-{
-    setTargetAttributeAnimatedValue(m_animatedValue);
-}
-
-void SVGAnimationElement::handleTimerEvent(double elapsedSeconds, double timePercentage)
-{
-    timePercentage = min(timePercentage, 1.0);
-    if (!connectedToTimer()) {
-        connectTimer();
-        return;
-    }
-    
-    // FIXME: accumulate="sum" will not work w/o code similar to this:
-//    if (isAccumulated() && repeations() != 0.0)
-//        accumulateForRepetitions(m_repetitions);
-    
-    EAnimationMode animationMode = detectAnimationMode();
-    
-    unsigned valueIndex = 0;
-    float percentagePast = 0;
-    calculateValueIndexAndPercentagePast(narrowPrecisionToFloat(timePercentage), valueIndex, percentagePast);
-        
-    calculateFromAndToValues(animationMode, valueIndex);
-    
-    updateAnimatedValue(animationMode, narrowPrecisionToFloat(timePercentage), valueIndex, percentagePast);
-    
-    if (timePercentage == 1.0) {
-        if ((m_repeatCount > 0 && m_repetitions < m_repeatCount - 1) || isIndefinite(m_repeatCount)) {
-            m_repetitions++;
-            return;
-        } else
-            disconnectTimer();
-    }
-}
-
-bool SVGAnimationElement::updateAnimatedValueForElapsedSeconds(double elapsedSeconds)
-{
-    // FIXME: fill="freeze" will not work without saving off the m_stoppedTime in a stop() method and having code similar to this:
-//    if (isStopped()) {
-//        if (m_fill == FILL_FREEZE)
-//            elapsedSeconds = m_stoppedTime;
-//        else
-//            return false;
-//    }
-    
-    // Validate animation timing settings:
-    // #1 (duration > 0) -> fine
-    // #2 (duration <= 0.0 && end > 0) -> fine
-    // FIXME: This allows indefinite duration for the <set> element, not sure if it should be allowed for others too. 
-    // FIXME: Value won't naturally animate in this case so keeping the timer repeating is sort of pointless.
-    if ((m_simpleDuration <= 0.0 && m_end <= 0.0) || (isIndefinite(m_simpleDuration) && m_end <= 0.0 && !hasTagName(setTag)))
-        return false; // Ignore dur="0" or dur="-neg"
-    
-    if (isIndefinite(m_animationBegin))
-        m_animationBegin = m_begin;
-    
-    double percentage = calculateTimePercentage(elapsedSeconds, m_animationBegin, m_end, m_simpleDuration, m_repetitions);
-    
-    if (percentage <= 1.0 || connectedToTimer())
-        handleTimerEvent(elapsedSeconds, percentage);
-    
-    if (elapsedSeconds > m_animationEnd) {
-        if (connectedToTimer())
-            disconnectTimer();
-        m_animationEnd = DBL_MAX;
-    }
-    
-    return true; // value was updated, need to apply
-}
+    return narrowPrecisionToFloat(simpleDuration().value());
+}    
     
 bool SVGAnimationElement::beginElement(ExceptionCode& ec)
 {
-    // FIXME: Should this be synchronous?
     return beginElementAt(0, ec);
 }
 
 bool SVGAnimationElement::beginElementAt(float offset, ExceptionCode& ec)
 {
-    // FIXME: Handle negative offsets correctly.
-    // In general we need to make SMIL concepts like "active duration" explicit in the code 
-    if (offset < 0)
-        offset = 0;
-    
-    if (connectedToTimer())
-        return false;
-    
-    m_animationBegin = offset;
-    if (ownerSVGElement()) {
-        ownerSVGElement()->timeScheduler()->addTimer(this, offset);
-        ownerSVGElement()->timeScheduler()->startAnimations();
-        connectTimer();
-    } else
-        return false;
-
-    return false;
+    addBeginTime(elapsed() + offset);
+    return true;
 }
 
 bool SVGAnimationElement::endElement(ExceptionCode& ec)
 {
-    // FIXME: Should this be synchronous?
     return endElementAt(0, ec);
 }
 
@@ -793,10 +164,274 @@ bool SVGAnimationElement::endElementAt(float offset, ExceptionCode& ec)
 {
     if (offset < 0)
         return false;
-    if (!connectedToTimer())
-        return false;
-    m_animationEnd = ownerSVGElement()->timeScheduler()->elapsed() + offset;
+    
+    addEndTime(elapsed() + offset);
     return true;
+}
+    
+SVGAnimationElement::AnimationMode SVGAnimationElement::animationMode() const
+{
+    // http://www.w3.org/TR/2001/REC-smil-animation-20010904/#AnimFuncValues
+
+    if (hasTagName(SVGNames::setTag))
+        return ToAnimation;
+    if (hasAttribute(SVGNames::valuesAttr))
+        return ValuesAnimation;
+    if (!toValue().isEmpty())
+        return fromValue().isEmpty() ? ToAnimation : FromToAnimation;
+    if (!byValue().isEmpty())
+        return fromValue().isEmpty() ? ByAnimation : FromByAnimation;
+    return NoAnimation;
+}
+
+SVGAnimationElement::CalcMode SVGAnimationElement::calcMode() const
+{    
+    static const AtomicString discrete("discrete");
+    static const AtomicString linear("linear");
+    static const AtomicString paced("paced");
+    static const AtomicString spline("spline");
+    const AtomicString& value = getAttribute(SVGNames::calcModeAttr);
+    if (value == discrete)
+        return CalcModeDiscrete;
+    if (value == linear)
+        return CalcModeLinear;
+    if (value == paced)
+        return CalcModePaced;
+    if (value == spline)
+        return CalcModeSpline;
+    return hasTagName(SVGNames::animateMotionTag) ? CalcModePaced : CalcModeLinear;
+}
+
+SVGAnimationElement::AttributeType SVGAnimationElement::attributeType() const
+{    
+    static const AtomicString css("CSS");
+    static const AtomicString xml("XML");
+    const AtomicString& value = getAttribute(SVGNames::attributeTypeAttr);
+    if (value == css)
+        return AttributeTypeCSS;
+    if (value == xml)
+        return AttributeTypeXML;
+    return AttributeTypeAuto;
+}
+
+String SVGAnimationElement::toValue() const
+{    
+    return getAttribute(SVGNames::toAttr);
+}
+
+String SVGAnimationElement::byValue() const
+{    
+    return getAttribute(SVGNames::byAttr);
+}
+
+String SVGAnimationElement::fromValue() const
+{    
+    return getAttribute(SVGNames::fromAttr);
+}
+    
+String SVGAnimationElement::attributeName() const
+{    
+    return getAttribute(SVGNames::attributeNameAttr).string().stripWhiteSpace();
+}
+
+bool SVGAnimationElement::isAdditive() const
+{
+    static const AtomicString sum("sum");
+    const AtomicString& value = getAttribute(SVGNames::additiveAttr);
+    return value == sum || animationMode() == ByAnimation;
+}
+
+bool SVGAnimationElement::isAccumulated() const
+{
+    static const AtomicString sum("sum");
+    const AtomicString& value = getAttribute(SVGNames::accumulateAttr);
+    return value == sum && animationMode() != ToAnimation;
+}
+
+bool SVGAnimationElement::hasValidTarget() const
+{
+    return targetElement();
+}
+    
+bool SVGAnimationElement::targetAttributeIsCSS() const
+{
+    AttributeType type = attributeType();
+    if (type == AttributeTypeCSS)
+        return true;
+    if (type == AttributeTypeXML)
+        return false;
+    // FIXME: We should have a map of all SVG properties and their attribute types so we
+    // could validate animations better. The spec is very vague about this.
+    unsigned id = cssPropertyID(attributeName());
+    // SVG range
+    if (id >= CSSPropertyClipPath && id <= CSSPropertyWritingMode)
+        return true;
+    // Regular CSS properties also in SVG
+    return id == CSSPropertyColor || id == CSSPropertyDisplay || id == CSSPropertyOpacity
+        || (id >= CSSPropertyFont && id <= CSSPropertyFontWeight) 
+        || id == CSSPropertyOverflow || id == CSSPropertyVisibility;
+}
+
+void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
+{
+    SVGElement* target = targetElement();
+    String attributeName = this->attributeName();
+    if (!target || attributeName.isEmpty() || value.isNull())
+        return;
+    ExceptionCode ec;
+    if (targetAttributeIsCSS()) {
+        // FIXME: This should set the override style, not the inline style.
+        // Sadly override styles are not yet implemented.
+        target->style()->setProperty(attributeName, value, "", ec);
+    } else {
+        // FIXME: This should set the 'presentation' value, not the actual 
+        // attribute value. Whatever that means in practice.
+        target->setAttribute(attributeName, value, ec);
+    }
+}
+
+String SVGAnimationElement::targetAttributeBaseValue() const
+{
+    String attributeName = this->attributeName();
+    if (!targetElement() || attributeName.isEmpty())
+        return String();
+    
+    SVGElement* target = targetElement();
+    String result;
+    
+    if (targetAttributeIsCSS()) {
+        CSSComputedStyleDeclaration computedStyle(target);
+        return computedStyle.getPropertyValue(cssPropertyID(attributeName));
+    } else
+        result = targetElement()->getAttribute(attributeName);
+    
+    return result;
+}
+    
+static inline double solveEpsilon(double duration) { return 1. / (200. * duration); }
+    
+void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to)
+{
+    unsigned keyTimesCount = m_keyTimes.size();
+    unsigned valuesCount = m_values.size();
+    ASSERT(m_animationValid);
+    ASSERT(valuesCount > 1);
+    ASSERT(!keyTimesCount || valuesCount == keyTimesCount);
+    ASSERT(!keyTimesCount || (keyTimesCount > 1 && m_keyTimes[0] == 0));
+
+    unsigned index;
+    for (index = 1; index < keyTimesCount; ++index) {
+        if (m_keyTimes[index] >= percent)
+            break;
+    }
+    --index;
+    
+    if (calcMode() == CalcModeDiscrete) {
+        if (!keyTimesCount) 
+            index = percent == 1.0f ? valuesCount - 1 : static_cast<unsigned>(percent * valuesCount);
+        from = m_values[index];
+        to = m_values[index];
+        effectivePercent = 0.0f;
+        return;
+    }
+    
+    float fromPercent;
+    float toPercent;
+    if (keyTimesCount) {
+        fromPercent = m_keyTimes[index];
+        toPercent = m_keyTimes[index + 1];
+    } else {        
+        index = static_cast<unsigned>(percent * (valuesCount - 1));
+        fromPercent =  static_cast<float>(index) / (valuesCount - 1);
+        toPercent =  static_cast<float>(index + 1) / (valuesCount - 1);
+    }
+    
+    if (index == valuesCount - 1)
+        --index;
+    from = m_values[index];
+    to = m_values[index + 1];
+    ASSERT(toPercent > fromPercent);
+    effectivePercent = percent == 1.0f ? 1.0f : (percent - fromPercent) / (toPercent - fromPercent);
+    
+    if (calcMode() == CalcModeSpline) {
+        ASSERT(m_keySplines.size() == m_values.size() - 1);
+        UnitBezier bezier = m_keySplines[index];
+        SMILTime duration = simpleDuration();
+        if (!duration.isFinite())
+            duration = 100.0;
+        double t = bezier.solve(effectivePercent, solveEpsilon(duration.value()));
+        effectivePercent = narrowPrecisionToFloat(t);
+    }
+}
+    
+void SVGAnimationElement::startedActiveInterval()
+{
+    m_animationValid = false;
+
+    if (!hasValidTarget())
+        return;
+
+    // FIXME: This is not correct if there are multiple animations on the same target or if 
+    // the timing attibutes change during animation due to DOM manipulation.
+    m_savedBaseValue = targetAttributeBaseValue();
+
+    AnimationMode animationMode = this->animationMode();
+    if (animationMode == NoAnimation)
+        return;
+    if (animationMode == FromToAnimation)
+        m_animationValid = calculateFromAndToValues(fromValue(), toValue());
+    else if (animationMode == ToAnimation)
+        m_animationValid = calculateFromAndToValues(m_savedBaseValue, toValue());
+    else if (animationMode == FromByAnimation)
+        m_animationValid = calculateFromAndByValues(fromValue(), byValue());
+    else if (animationMode == ByAnimation)
+        m_animationValid = calculateFromAndByValues(String(), byValue());
+    else if (animationMode == ValuesAnimation) {
+        CalcMode calcMode = this->calcMode();
+        m_animationValid = m_values.size() > 1
+            && (calcMode == CalcModePaced || !hasAttribute(SVGNames::keyTimesAttr) || (m_values.size() == m_keyTimes.size()))
+            && (calcMode == CalcModeDiscrete || !m_keyTimes.size() || m_keyTimes.last() == 1.0)
+            && (calcMode != CalcModeSpline || (m_keySplines.size() && m_keySplines.size() == m_values.size() - 1));
+    }
+}
+    
+void SVGAnimationElement::applyAnimation(float percent, unsigned repeat)
+{    
+    if (!m_animationValid)
+        return;
+    
+    if (animationMode() == ValuesAnimation) {
+        String from;
+        String to;
+        float effectivePercent;
+        currentValuesForValuesAnimation(percent, effectivePercent, from, to);
+        if (from != m_lastValuesAnimationFrom || to != m_lastValuesAnimationTo ) {
+            m_animationValid = calculateFromAndToValues(from, to);
+            if (!m_animationValid)
+                return;
+            m_lastValuesAnimationFrom = from;
+            m_lastValuesAnimationTo = to;
+        }
+        updateAnimatedValue(effectivePercent);
+    } else
+        updateAnimatedValue(percent);
+
+    applyAnimatedValueToElement(repeat);
+}
+
+void SVGAnimationElement::unapplyAnimation()
+{
+    // FIXME: This is not correct if there are multiple animations on the same target or if 
+    // the timing attibutes change during animation due to DOM manipulation.
+    if (m_savedBaseValue.isNull())
+        return;
+    setTargetAttributeAnimatedValue(m_savedBaseValue);
+    m_savedBaseValue = String();
+}
+
+void SVGAnimationElement::endedActiveInterval()
+{
+    m_savedBaseValue = String();
 }
 
 }

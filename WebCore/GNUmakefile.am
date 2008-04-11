@@ -1768,6 +1768,7 @@ IDL_BINDINGS += \
 webcore_cppflags += \
 	-DENABLE_SVG=1 \
 	-I\$(top_srcdir)/WebCore/svg \
+	-I\$(top_srcdir)/WebCore/svg/animation
 	-I\$(top_srcdir)/WebCore/svg/graphics \
 	-I\$(top_srcdir)/WebCore/svg/graphics/filters
 
@@ -1789,8 +1790,6 @@ webcore_sources += \
 	WebCore/svg/SVGZoomEvent.cpp \
 	WebCore/svg/SVGDocumentExtensions.cpp \
 	WebCore/svg/SVGImageLoader.cpp \
-	WebCore/svg/SVGTimer.cpp \
-	WebCore/svg/TimeScheduler.cpp \
 	WebCore/svg/ColorDistance.cpp \
 	WebCore/svg/SVGAElement.cpp \
 	WebCore/svg/SVGAltGlyphElement.cpp \
@@ -1919,6 +1918,9 @@ webcore_sources += \
 	WebCore/svg/SVGViewElement.cpp \
 	WebCore/svg/SVGViewSpec.cpp \
 	WebCore/svg/SVGZoomAndPan.cpp \
+	WebCore/svg/animation/SMILTime.cpp \
+	WebCore/svg/animation/SMILTimeContainer.cpp \
+	WebCore/svg/animation/SVGSMILElement.cpp \
 	WebCore/svg/graphics/filters/SVGFEBlend.cpp \
 	WebCore/svg/graphics/filters/SVGFEColorMatrix.cpp \
 	WebCore/svg/graphics/filters/SVGFEComponentTransfer.cpp \
