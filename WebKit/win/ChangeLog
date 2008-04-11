@@ -1,3 +1,17 @@
+2008-04-11  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 18376: r31733 and 27 don't work w/Safari 3.1
+        
+        <https://bugs.webkit.org/show_bug.cgi?id=18376>
+
+        Rubberstamped by Steve.
+
+        * ForEachCoClass.h: Move post-3.1 classes to the end of the
+        FOR_EACH_COCLASS macro so that pre-3.1 classes will be in the place
+        Safari expects them to be. We will soon be deprecating
+        setUseOpenSourceWebKit/progIDForClass because it is clearly very
+        fragile.
+
 2008-04-10  Ada Chan  <adachan@apple.com>
 
         Added WebCoreStatistics that provides stats on Javascript objects
