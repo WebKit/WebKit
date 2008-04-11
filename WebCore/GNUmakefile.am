@@ -1768,7 +1768,7 @@ IDL_BINDINGS += \
 webcore_cppflags += \
 	-DENABLE_SVG=1 \
 	-I\$(top_srcdir)/WebCore/svg \
-	-I\$(top_srcdir)/WebCore/svg/animation
+	-I\$(top_srcdir)/WebCore/svg/animation \
 	-I\$(top_srcdir)/WebCore/svg/graphics \
 	-I\$(top_srcdir)/WebCore/svg/graphics/filters
 
