@@ -4862,6 +4862,10 @@
 					RelativePath="..\platform\graphics\SimpleFontData.h"
 					>
 				</File>
+				<File
+					RelativePath="..\platform\graphics\UnitBezier.h"
+					>
+				</File>
 				<Filter
 					Name="win"
 					>

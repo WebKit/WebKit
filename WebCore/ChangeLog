@@ -1,3 +1,23 @@
+2008-04-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Eric.
+
+        Move CurveData out from AnimationController.cpp and rename
+        it to UnitBezier. This makes it possible to reuse this nice class from the 
+        SVG animation code.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/AnimationController.cpp:
+        (WebCore::solveCubicBezierFunction):
+        * platform/graphics/UnitBezier.h: Added.
+        (WebCore::UnitBezier::UnitBezier):
+        (WebCore::UnitBezier::sampleCurveX):
+        (WebCore::UnitBezier::sampleCurveY):
+        (WebCore::UnitBezier::sampleCurveDerivativeX):
+        (WebCore::UnitBezier::solveCurveX):
+        (WebCore::UnitBezier::solve):
+
 2008-04-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
