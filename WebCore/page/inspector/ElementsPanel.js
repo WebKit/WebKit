@@ -126,10 +126,38 @@ WebInspector.ElementsPanel.prototype = {
 
     reset: function()
     {
+        this.rootDOMNode = null;
+        this.focusedDOMNode = null;
+
         var inspectedWindow = InspectorController.inspectedWindow();
-        if (!inspectedWindow) {
-            this.rootDOMNode = null;
-            this.focusedDOMNode = null;
+        if (!inspectedWindow || !inspectedWindow.document)
+            return;
+
+        if (!inspectedWindow.document.firstChild) {
+            // FIXME: This whole if block can be simplified once we can add an event listener to
+            // the inspected page and have it get called in the Inspector's context.
+
+            var elementsPanel = this;
+            function contentLoaded()
+            {
+                // This function will be called in the inspected page's context.
+                elementsPanel._domContentLoaded = true;
+            }
+
+            function checkContentLoaded()
+            {
+                if (!this._domContentLoaded)
+                    return;
+                this.reset();
+                inspectedWindow.document.removeEventListener("DOMContentLoaded", contentLoaded, false);
+                clearInterval(contentLoadedPollingInterval);
+                delete this._domContentLoaded;
+            }
+
+            this._domContentLoaded = false;
+            var contentLoadedPollingInterval = setInterval(checkContentLoaded.bind(this), 100);
+
+            inspectedWindow.document.addEventListener("DOMContentLoaded", contentLoaded, false);
             return;
         }
 
@@ -141,8 +169,7 @@ WebInspector.ElementsPanel.prototype = {
             this.focusedDOMNode = canidateFocusNode;
             if (this.treeOutline.selectedTreeElement)
                 this.treeOutline.selectedTreeElement.expand();
-        } else
-            this.focusedDOMNode = null;
+        }
     },
 
     updateTreeSelection: function()
@@ -199,7 +226,7 @@ WebInspector.ElementsPanel.prototype = {
         for (var pane in this.sidebarPanes)
             this.sidebarPanes[pane].needsUpdate = true;
 
-        this.updateStyles(forceUpdate);
+        this.updateStyles(true);
         this.updateMetrics();
         this.updateProperties();
     },

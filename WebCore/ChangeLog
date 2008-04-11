@@ -1,3 +1,19 @@
+2008-04-11  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes the regression where the DOM tree does not update when navigating
+        to another page with the Inspector open.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18418
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.reset): If the inspected document does not have a
+        firstChild yet, add an event listener for DOMContentLoaded. The event listener just sets
+        a proeprty that a polling functions looks for then triggers the reset.
+        (WebInspector.ElementsPanel.prototype._focusedNodeChanged): Always call updateStyles with
+        forceUpdate as true. This makes sure the Styles pane clears when there isn't a focused node.
+
 2008-04-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Timothy Hatcher.
