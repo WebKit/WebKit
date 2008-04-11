@@ -1,3 +1,15 @@
+2008-04-11  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18340
+        Elements with display="none" in a <clipPath> still contribute to clipping path
+
+        Skip elements in clip-path container that have display=none specified.
+
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::canvasResource):
+
 2008-04-10  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Eric.

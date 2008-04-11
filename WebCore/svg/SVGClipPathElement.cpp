@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -105,11 +105,13 @@ SVGResource* SVGClipPathElement::canvasResource()
         if (n->isSVGElement() && static_cast<SVGElement*>(n)->isStyledTransformable()) {
             SVGStyledTransformableElement* styled = static_cast<SVGStyledTransformableElement*>(n);
             RenderStyle* pathStyle = document()->styleSelector()->styleForElement(styled, clipPathStyle);
-            Path pathData = styled->toClipPath();
-            // FIXME: How do we know the element has done a layout?
-            pathData.transform(styled->animatedLocalTransform());
-            if (!pathData.isEmpty())
-                m_clipper->addClipData(pathData, pathStyle->svgStyle()->clipRule(), bbox);
+            if (pathStyle->display() != NONE) {
+                Path pathData = styled->toClipPath();
+                // FIXME: How do we know the element has done a layout?
+                pathData.transform(styled->animatedLocalTransform());
+                if (!pathData.isEmpty())
+                    m_clipper->addClipData(pathData, pathStyle->svgStyle()->clipRule(), bbox);
+            }
             pathStyle->deref(document()->renderArena());
         }
     }

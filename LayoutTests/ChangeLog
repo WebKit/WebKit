@@ -1,3 +1,16 @@
+2008-04-11  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=18340
+        Elements with display="none" in a <clipPath> still contribute to clipping path
+
+        * platform/mac/svg/custom/clip-path-display-none-child-expected.checksum: Added.
+        * platform/mac/svg/custom/clip-path-display-none-child-expected.png: Added.
+        * platform/mac/svg/custom/clip-path-display-none-child-expected.txt: Added.
+        * svg/custom/clip-path-display-none-child.svg: Added.
+
 2008-04-10  Antti Koivisto  <antti@apple.com>
 
         Update SVG animation test results.
