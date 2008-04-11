@@ -29,6 +29,7 @@
 #include "config.h"
 #include "InitializeThreading.h"
 
+#include "DateMath.h"
 #include "dtoa.h"
 #include "ustring.h"
 #include <wtf/Threading.h>
@@ -39,9 +40,11 @@ void initializeThreading()
 {
     WTF::initializeThreading();
 #if USE(MULTIPLE_THREADS)
-    if (!s_dtoaP5Mutex)
+    if (!s_dtoaP5Mutex) {
         s_dtoaP5Mutex = new Mutex;
-    UString::null();
+        UString::null();
+        initDateMath();
+    }
 #endif
 }
 

@@ -1,5 +1,26 @@
 2008-04-11  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Geoff.
+
+        Make DateMath.cpp thread safe.
+
+        No measurable change on SunSpider (should be a very small speedup).
+
+        * kjs/DateMath.cpp:
+        (KJS::mimimumYearForDST): (KJS::equivalentYearForDST): Got rid of double caching of the
+        same precomputed value.
+        (KJS::calculateUTCOffset): (KJS::getUTCOffset): Factored actual UTC offset calculation code
+        out of getUTCOffset(), and notification setup into initDateMath().
+
+        (KJS::initDateMath): Added.
+
+        * kjs/DateMath.h:
+        * kjs/InitializeThreading.cpp:
+        (KJS::initializeThreading):
+        Added initDateMath().
+
+2008-04-11  Alexey Proskuryakov  <ap@webkit.org>
+
         Windows build fix.
 
         * kjs/grammar.y:

@@ -49,6 +49,7 @@ namespace KJS {
 
 struct GregorianDateTime;
 
+void initDateMath();
 void msToGregorianDateTime(double, bool outputIsUTC, GregorianDateTime&);
 double gregorianDateTimeToMS(const GregorianDateTime&, double, bool inputIsUTC);
 double getUTCOffset();

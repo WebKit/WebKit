@@ -317,17 +317,13 @@ static inline int maximumYearForDST()
     return 2037;
 }
 
-// It is ok if the cached year is not the current year (e.g. Dec 31st)
-// so long as the rules for DST did not change between the two years, if it does
-// the app would need to be restarted.
-static int mimimumYearForDST()
+static inline int mimimumYearForDST()
 {
     // Because of the 2038 issue (see maximumYearForDST) if the current year is
     // greater than the max year minus 27 (2010), we want to use the max year
     // minus 27 instead, to ensure there is a range of 28 years that all years
     // can map to.
-    static int minYear = std::min(msToYear(getCurrentUTCTime()), maximumYearForDST() - 27) ;
-    return minYear;
+    return std::min(msToYear(getCurrentUTCTime()), maximumYearForDST() - 27) ;
 }
 
 /*
@@ -342,8 +338,11 @@ static int mimimumYearForDST()
  */
 int equivalentYearForDST(int year)
 {
+    // It is ok if the cached year is not the current year as long as the rules
+    // for DST did not change between the two years; if they did the app would need
+    // to be restarted.
     static int minYear = mimimumYearForDST();
-    static int maxYear = maximumYearForDST();
+    int maxYear = maximumYearForDST();
 
     int difference;
     if (year > maxYear)
@@ -361,6 +360,25 @@ int equivalentYearForDST(int year)
     return year;
 }
 
+static int32_t calculateUTCOffset()
+{
+    tm localt;
+    memset(&localt, 0, sizeof(localt));
+ 
+    // get the difference between this time zone and UTC on Jan 01, 2000 12:00:00 AM
+    localt.tm_mday = 1;
+    localt.tm_year = 100;
+    time_t utcOffset = 946684800 - mktime(&localt);
+
+    return static_cast<int32_t>(utcOffset * 1000);
+}
+
+#if PLATFORM(DARWIN)
+static int32_t s_cachedUTCOffset; // In milliseconds. An assumption here is that access to an int32_t variable is atomic on platforms that take this code path.
+static bool s_haveCachedUTCOffset;
+static int s_notificationToken;
+#endif
+
 /*
  * Get the difference in milliseconds between this time zone and UTC (GMT)
  * NOT including DST.
@@ -368,43 +386,20 @@ int equivalentYearForDST(int year)
 double getUTCOffset()
 {
 #if PLATFORM(DARWIN)
-    // Register for a notification whenever the time zone changes.
-    static bool triedToRegister = false;
-    static bool haveNotificationToken = false;
-    static int notificationToken;
-    if (!triedToRegister) {
-        triedToRegister = true;
-        uint32_t status = notify_register_check("com.apple.system.timezone", &notificationToken);
-        if (status == NOTIFY_STATUS_OK)
-            haveNotificationToken = true;
-    }
-
-    // If we can verify that we have not received a time zone notification,
-    // then use the cached offset from the last time this function was called.
-    static bool haveCachedOffset = false;
-    static double cachedOffset;
-    if (haveNotificationToken && haveCachedOffset) {
+    if (s_haveCachedUTCOffset) {
         int notified;
-        uint32_t status = notify_check(notificationToken, &notified);
+        uint32_t status = notify_check(s_notificationToken, &notified);
         if (status == NOTIFY_STATUS_OK && !notified)
-            return cachedOffset;
+            return s_cachedUTCOffset;
     }
 #endif
 
-    tm localt;
-
-    memset(&localt, 0, sizeof(localt));
-
-    // get the difference between this time zone and UTC on Jan 01, 2000 12:00:00 AM
-    localt.tm_mday = 1;
-    localt.tm_year = 100;
-    double utcOffset = 946684800.0 - mktime(&localt);
-
-    utcOffset *= msPerSecond;
+    int32_t utcOffset = calculateUTCOffset();
 
 #if PLATFORM(DARWIN)
-    haveCachedOffset = true;
-    cachedOffset = utcOffset;
+    // Theoretically, it is possible that several threads will be executing this code at once, in which case we will have a race condition,
+    // and a newer value may be overwritten. In practice, time zones don't change that often.
+    s_cachedUTCOffset = utcOffset;
 #endif
 
     return utcOffset;
@@ -504,6 +499,24 @@ void msToGregorianDateTime(double ms, bool outputIsUTC, GregorianDateTime& tm)
 
     tm.utcOffset = static_cast<long>((dstOff + utcOff) / msPerSecond);
     tm.timeZone = NULL;
+}
+
+void initDateMath()
+{
+#ifndef NDEBUG
+    static bool alreadyInitialized;
+    ASSERT(!alreadyInitialized++);
+#endif
+
+    equivalentYearForDST(2000); // Need to call once to initialize a static used in this function.
+#if PLATFORM(DARWIN)
+    // Register for a notification whenever the time zone changes.
+    uint32_t status = notify_register_check("com.apple.system.timezone", &s_notificationToken);
+    if (status == NOTIFY_STATUS_OK) {
+        s_cachedUTCOffset = calculateUTCOffset();
+        s_haveCachedUTCOffset = true;
+    }
+#endif
 }
 
 } // namespace KJS
