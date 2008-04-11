@@ -40,6 +40,7 @@
 #include "SVGURIReference.h"
 #include "SMILTimeContainer.h"
 #include "XLinkNames.h"
+#include <math.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 

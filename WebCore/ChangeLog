@@ -1,5 +1,15 @@
 2008-04-11  Antti Koivisto  <antti@apple.com>
 
+        Try to fix Qt build by including some headers.
+
+        * ChangeLog:
+        * platform/graphics/UnitBezier.h:
+        * svg/SVGAnimationElement.cpp:
+        * svg/animation/SMILTime.h:
+        * svg/animation/SVGSMILElement.cpp:
+
+2008-04-11  Antti Koivisto  <antti@apple.com>
+
         Try to fix Windows build by switching to std::sort().
 
         * svg/animation/SVGSMILElement.cpp:

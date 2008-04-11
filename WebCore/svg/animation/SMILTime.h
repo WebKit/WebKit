@@ -28,6 +28,8 @@
 
 #if ENABLE(SVG)
 
+#include <algorithm>
+
 namespace WebCore {
 
     class SMILTime {

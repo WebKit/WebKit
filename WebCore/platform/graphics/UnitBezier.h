@@ -26,6 +26,8 @@
 #ifndef UnitBezier_h
 #define UnitBezier_h
 
+#include <math.h>
+
 namespace WebCore {
 
     struct UnitBezier {

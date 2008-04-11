@@ -37,6 +37,7 @@
 #include "SVGNames.h"
 #include "SVGURIReference.h"
 #include "XLinkNames.h"
+#include <math.h>
 
 using namespace std;
 
