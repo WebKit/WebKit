@@ -127,6 +127,19 @@ namespace WTF {
 
     template<typename T> struct DefaultHash;
 
+    template<typename T, typename U> struct PairHash {
+        static unsigned hash(const std::pair<T, U>& p)
+        {
+            return intHash((static_cast<uint64_t>(DefaultHash<T>::Hash::hash(p.first)) << 32 | DefaultHash<U>::Hash::hash(p.second)));
+        }
+        static bool equal(const std::pair<T, U>& a, const std::pair<T, U>& b)
+        {
+            return DefaultHash<T>::Hash::equal(a.first, b.first) && DefaultHash<U>::Hash::equal(a.second, b.second);
+        }
+        static const bool safeToCompareToEmptyOrDeleted = DefaultHash<T>::Hash::safeToCompareToEmptyOrDeleted 
+                                                            && DefaultHash<U>::Hash::safeToCompareToEmptyOrDeleted;
+    };
+
     // make IntHash the default hash function for many integer types
 
     template<> struct DefaultHash<short> { typedef IntHash<unsigned> Hash; };
@@ -149,6 +162,8 @@ namespace WTF {
 
     template<typename P> struct DefaultHash<P*> { typedef PtrHash<P*> Hash; };
     template<typename P> struct DefaultHash<RefPtr<P> > { typedef PtrHash<RefPtr<P> > Hash; };
+
+    template<typename T, typename U> struct DefaultHash<std::pair<T, U> > { typedef PairHash<T, U> Hash; };
 
 } // namespace WTF
 

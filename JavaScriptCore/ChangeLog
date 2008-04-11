@@ -1,3 +1,14 @@
+2008-04-11  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        Add default hash for pairs of hashable types.
+
+        * wtf/HashFunctions.h:
+        (WTF::PairHash::hash):
+        (WTF::PairHash::equal):
+        (WTF::):
+
 2008-04-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff.
