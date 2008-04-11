@@ -11,6 +11,7 @@ animate
 animateColor
 animateMotion
 animateTransform
+set
 #endif
 circle
 clipPath
@@ -93,7 +94,6 @@ polyline
 radialGradient
 rect
 script
-set
 stop
 style
 svg

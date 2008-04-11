@@ -196,6 +196,7 @@ static void createElementClassMap()
     addElementClass(SVGNames::animateTag, [DOMSVGAnimateElement class]);
     addElementClass(SVGNames::animateColorTag, [DOMSVGAnimateColorElement class]);
     addElementClass(SVGNames::animateTransformTag, [DOMSVGAnimateTransformElement class]);
+    addElementClass(SVGNames::setTag, [DOMSVGSetElement class]);
 #endif
     addElementClass(SVGNames::circleTag, [DOMSVGCircleElement class]);
     addElementClass(SVGNames::clipPathTag, [DOMSVGClipPathElement class]);
@@ -257,7 +258,6 @@ static void createElementClassMap()
     addElementClass(SVGNames::radialGradientTag, [DOMSVGRadialGradientElement class]);
     addElementClass(SVGNames::rectTag, [DOMSVGRectElement class]);
     addElementClass(SVGNames::scriptTag, [DOMSVGScriptElement class]);
-    addElementClass(SVGNames::setTag, [DOMSVGSetElement class]);
     addElementClass(SVGNames::stopTag, [DOMSVGStopElement class]);
     addElementClass(SVGNames::styleTag, [DOMSVGStyleElement class]);
     addElementClass(SVGNames::svgTag, [DOMSVGSVGElement class]);

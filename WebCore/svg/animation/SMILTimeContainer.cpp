@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-#if ENABLE(SVG)
 #include "SMILTimeContainer.h"
 
 #include "Document.h"
@@ -44,7 +43,16 @@ SMILTimeContainer::SMILTimeContainer()
     , m_timer(this, &SMILTimeContainer::timerFired)
 {
 }
-
+    
+#if !ENABLE(SVG_ANIMATION)
+void SMILTimeContainer::begin() {}
+void SMILTimeContainer::pause() {}
+void SMILTimeContainer::resume() {}
+SMILTime SMILTimeContainer::elapsed() const { return 0; }
+bool SMILTimeContainer::isPaused() const { return false; }
+void SMILTimeContainer::timerFired(Timer<SMILTimeContainer>*) {}
+#else
+    
 void SMILTimeContainer::schedule(SVGSMILElement* animation)
 {
     ASSERT(animation->timeContainer() == this);
@@ -160,6 +168,6 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed)
     Document::updateDocumentsRendering();
 }
 
-
-}
 #endif
+}
+

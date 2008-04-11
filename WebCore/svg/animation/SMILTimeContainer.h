@@ -26,12 +26,12 @@
 #ifndef SMILTimeContainer_H
 #define SMILTimeContainer_H
 
+#if ENABLE(SVG)
+
 #include "SMILTime.h"
 #include "Timer.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
-
-#if ENABLE(SVG)
 
 namespace WebCore {
     

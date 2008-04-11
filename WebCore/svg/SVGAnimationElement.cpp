@@ -23,7 +23,7 @@
 */
 
 #include "config.h"
-#if ENABLE(SVG)
+#if ENABLE(SVG_ANIMATION)
 #include "SVGAnimationElement.h"
 
 #include "CSSComputedStyleDeclaration.h"
@@ -173,7 +173,6 @@ bool SVGAnimationElement::endElementAt(float offset, ExceptionCode& ec)
 SVGAnimationElement::AnimationMode SVGAnimationElement::animationMode() const
 {
     // http://www.w3.org/TR/2001/REC-smil-animation-20010904/#AnimFuncValues
-
     if (hasTagName(SVGNames::setTag))
         return ToAnimation;
     if (hasAttribute(SVGNames::valuesAttr))
@@ -438,5 +437,5 @@ void SVGAnimationElement::endedActiveInterval()
 }
 
 // vim:ts=4:noet
-#endif // ENABLE(SVG)
+#endif // ENABLE(SVG_ANIMATION)
 

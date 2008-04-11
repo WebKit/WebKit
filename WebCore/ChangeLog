@@ -1,3 +1,38 @@
+2008-04-11  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix build when SVG is enabled but SVG_ANIMATION is not.
+
+        * ChangeLog:
+        * bindings/js/JSSVGElementWrapperFactory.cpp:
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        * svg/SVGAnimateColorElement.cpp:
+        * svg/SVGAnimateColorElement.h:
+        * svg/SVGAnimateColorElement.idl:
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::animationMode):
+        * svg/SVGAnimationElement.h:
+        * svg/SVGAnimationElement.idl:
+        * svg/SVGSetElement.cpp:
+        * svg/SVGSetElement.h:
+        * svg/SVGSetElement.idl:
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::begin):
+        (WebCore::SMILTimeContainer::pause):
+        (WebCore::SMILTimeContainer::resume):
+        (WebCore::SMILTimeContainer::elapsed):
+        (WebCore::SMILTimeContainer::isPaused):
+        (WebCore::SMILTimeContainer::timerFired):
+        * svg/animation/SMILTimeContainer.h:
+        * svg/animation/SVGSMILElement.cpp:
+        * svg/animation/SVGSMILElement.h:
+        * svg/svgtags.in:
+
 2008-04-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

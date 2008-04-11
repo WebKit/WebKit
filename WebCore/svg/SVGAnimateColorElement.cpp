@@ -22,7 +22,7 @@
 */
 
 #include "config.h"
-#if ENABLE(SVG)
+#if ENABLE(SVG_ANIMATION)
 #include "SVGAnimateColorElement.h"
 
 #include "Document.h"

@@ -185,6 +185,7 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
     macro(animateColor, AnimateColor) \
     macro(animate, Animate) \
     macro(animateTransform, AnimateTransform) \
+    macro(set, Set) \
     // end of macro
 
 #else
@@ -270,7 +271,6 @@ typedef JSNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEle
     macro(radialGradient, RadialGradient) \
     macro(rect, Rect) \
     macro(script, Script) \
-    macro(set, Set) \
     macro(stop, Stop) \
     macro(style, Style) \
     macro(svg, SVG) \
