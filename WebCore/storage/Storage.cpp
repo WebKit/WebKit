@@ -26,23 +26,23 @@
 #include "config.h"
 #include "Storage.h"
 
-#include "OriginStorage.h"
+#include "StorageArea.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-PassRefPtr<Storage> Storage::create(Frame* frame, PassRefPtr<OriginStorage> originStorage)
+PassRefPtr<Storage> Storage::create(Frame* frame, PassRefPtr<StorageArea> storageArea)
 {
-    return adoptRef(new Storage(frame, originStorage));
+    return adoptRef(new Storage(frame, storageArea));
 }
 
-Storage::Storage(Frame* frame, PassRefPtr<OriginStorage> originStorage)
+Storage::Storage(Frame* frame, PassRefPtr<StorageArea> storageArea)
     : m_frame(frame)
-    , m_originStorage(originStorage)
+    , m_storageArea(storageArea)
 {
     ASSERT(m_frame);
-    ASSERT(m_originStorage);
+    ASSERT(m_storageArea);
 }
 
 unsigned Storage::length() const
@@ -50,7 +50,7 @@ unsigned Storage::length() const
     if (!m_frame)
         return 0;
 
-    return m_originStorage->length();
+    return m_storageArea->length();
 }
 
 String Storage::key(unsigned index, ExceptionCode& ec) const
@@ -59,7 +59,7 @@ String Storage::key(unsigned index, ExceptionCode& ec) const
     if (!m_frame)
         return String();
 
-    return m_originStorage->key(index, ec);
+    return m_storageArea->key(index, ec);
 }
 
 String Storage::getItem(const String& key) const
@@ -67,7 +67,7 @@ String Storage::getItem(const String& key) const
     if (!m_frame)
         return String();
 
-    return m_originStorage->getItem(key);
+    return m_storageArea->getItem(key);
 }
 
 void Storage::setItem(const String& key, const String& value, ExceptionCode& ec)
@@ -76,7 +76,7 @@ void Storage::setItem(const String& key, const String& value, ExceptionCode& ec)
     if (!m_frame)
         return;
 
-    m_originStorage->setItem(key, value, ec, m_frame);
+    m_storageArea->setItem(key, value, ec, m_frame);
 }
 
 void Storage::removeItem(const String& key)
@@ -84,7 +84,7 @@ void Storage::removeItem(const String& key)
     if (!m_frame)
         return;
 
-    m_originStorage->removeItem(key, m_frame);
+    m_storageArea->removeItem(key, m_frame);
 }
 
 bool Storage::contains(const String& key) const
@@ -92,7 +92,7 @@ bool Storage::contains(const String& key) const
     if (!m_frame)
         return false;
 
-    return m_originStorage->contains(key);
+    return m_storageArea->contains(key);
 }
 
 }

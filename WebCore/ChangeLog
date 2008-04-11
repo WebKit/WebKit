@@ -1,3 +1,58 @@
+2008-04-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        The name "OriginStorage" never felt right to a few of us.  The HTML5 spec refers to our 
+        concept of "OriginStorage" as a "storage area", which makes more sense here.
+
+        This patch is basically:
+        s/OriginStorage/StorageArea/
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+
+        * loader/FrameLoader.cpp:
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage):
+        * page/Page.cpp:
+
+        * storage/OriginStorage.cpp: Removed.
+        * storage/OriginStorage.h: Removed.
+
+        * storage/SessionStorage.cpp:
+        (WebCore::SessionStorage::copy):
+        (WebCore::SessionStorage::storageArea):
+        * storage/SessionStorage.h:
+
+        * storage/Storage.cpp:
+        (WebCore::Storage::create):
+        (WebCore::Storage::Storage):
+        (WebCore::Storage::length):
+        (WebCore::Storage::key):
+        (WebCore::Storage::getItem):
+        (WebCore::Storage::setItem):
+        (WebCore::Storage::removeItem):
+        (WebCore::Storage::contains):
+        * storage/Storage.h:
+
+        * storage/StorageArea.cpp: Copied from storage/OriginStorage.cpp.
+        (WebCore::StorageArea::create):
+        (WebCore::StorageArea::StorageArea):
+        (WebCore::StorageArea::~StorageArea):
+        (WebCore::StorageArea::copy):
+        (WebCore::StorageArea::length):
+        (WebCore::StorageArea::key):
+        (WebCore::StorageArea::getItem):
+        (WebCore::StorageArea::setItem):
+        (WebCore::StorageArea::removeItem):
+        (WebCore::StorageArea::contains):
+        (WebCore::StorageArea::dispatchStorageEvent):
+        * storage/StorageArea.h: Copied from storage/OriginStorage.h.
+
 2008-04-10  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.

@@ -60,9 +60,9 @@
 #endif
 
 #if ENABLE(DOM_STORAGE)
-#include "OriginStorage.h"
 #include "SessionStorage.h"
 #include "Storage.h"
+#include "StorageArea.h"
 #endif
 
 using std::min;
@@ -273,8 +273,8 @@ Storage* DOMWindow::sessionStorage() const
     if (!document)
         return 0;
 
-    RefPtr<OriginStorage> originStorage = page->sessionStorage()->originStorage(document->securityOrigin());
-    m_sessionStorage = Storage::create(m_frame, originStorage.release());
+    RefPtr<StorageArea> storageArea = page->sessionStorage()->storageArea(document->securityOrigin());
+    m_sessionStorage = Storage::create(m_frame, storageArea.release());
     return m_sessionStorage.get();
 }
 

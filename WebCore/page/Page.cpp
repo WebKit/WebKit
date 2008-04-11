@@ -54,8 +54,8 @@
 #include <wtf/HashMap.h>
 
 #if ENABLE(DOM_STORAGE)
-#include "OriginStorage.h"
 #include "SessionStorage.h"
+#include "StorageArea.h"
 #endif
 
 namespace WebCore {

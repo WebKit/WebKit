@@ -1206,8 +1206,8 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_DOM_STORAGE =1
 
     SOURCES += \
-        storage/OriginStorage.cpp \
         storage/Storage.cpp \
+	storage/StorageArea.cpp \
         storage/StorageEvent.cpp \
         storage/StorageMap.cpp \
         storage/SessionStorage.cpp \

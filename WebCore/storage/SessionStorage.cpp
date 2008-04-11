@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SessionStorage.h"
 
-#include "OriginStorage.h"
+#include "StorageArea.h"
 #include "StorageMap.h"
 
 namespace WebCore {
@@ -45,22 +45,22 @@ PassRefPtr<SessionStorage> SessionStorage::copy(Page* newPage)
 {
     RefPtr<SessionStorage> newSession = SessionStorage::create(newPage);
     
-    OriginStorageMap::iterator end = m_originStorageMap.end();
-    for (OriginStorageMap::iterator i = m_originStorageMap.begin(); i != end; ++i)
-        newSession->m_originStorageMap.set(i->first, i->second->copy(newPage, i->first.get()));
+    StorageAreaMap::iterator end = m_storageAreaMap.end();
+    for (StorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i)
+        newSession->m_storageAreaMap.set(i->first, i->second->copy(newPage, i->first.get()));
         
     return newSession.release();
 }
 
-PassRefPtr<OriginStorage> SessionStorage::originStorage(SecurityOrigin* origin)
+PassRefPtr<StorageArea> SessionStorage::storageArea(SecurityOrigin* origin)
 {
-    RefPtr<OriginStorage> originStorage;
-    if (originStorage = m_originStorageMap.get(origin))
-        return originStorage.release();
+    RefPtr<StorageArea> storageArea;
+    if (storageArea = m_storageAreaMap.get(origin))
+        return storageArea.release();
         
-    originStorage = OriginStorage::create(m_page, origin);
-    m_originStorageMap.set(origin, originStorage);
-    return originStorage.release();
+    storageArea = StorageArea::create(m_page, origin);
+    m_storageAreaMap.set(origin, storageArea);
+    return storageArea.release();
 }
 
 }

@@ -24,7 +24,7 @@
  */
  
 #include "config.h"
-#include "OriginStorage.h"
+#include "StorageArea.h"
 
 #include "CString.h"
 #include "EventNames.h"
@@ -38,40 +38,40 @@
 
 namespace WebCore {
 
-PassRefPtr<OriginStorage> OriginStorage::create(Page* page, SecurityOrigin* origin)
+PassRefPtr<StorageArea> StorageArea::create(Page* page, SecurityOrigin* origin)
 {
-    return adoptRef(new OriginStorage(page, origin));
+    return adoptRef(new StorageArea(page, origin));
 }
 
-OriginStorage::OriginStorage(Page* page, SecurityOrigin* origin)
+StorageArea::StorageArea(Page* page, SecurityOrigin* origin)
     : m_page(page)
     , m_securityOrigin(origin)
     , m_storageMap(StorageMap::create())
 {
 }
 
-OriginStorage::OriginStorage(Page* page, SecurityOrigin* origin, PassRefPtr<StorageMap> map)
+StorageArea::StorageArea(Page* page, SecurityOrigin* origin, PassRefPtr<StorageMap> map)
     : m_page(page)
     , m_securityOrigin(origin)
     , m_storageMap(map)
 {
 }
 
-OriginStorage::~OriginStorage()
+StorageArea::~StorageArea()
 {
 }
 
-PassRefPtr<OriginStorage> OriginStorage::copy(Page* newPage, SecurityOrigin* origin)
+PassRefPtr<StorageArea> StorageArea::copy(Page* newPage, SecurityOrigin* origin)
 {
-    return adoptRef(new OriginStorage(newPage, origin, m_storageMap));
+    return adoptRef(new StorageArea(newPage, origin, m_storageMap));
 }
 
-unsigned OriginStorage::length() const
+unsigned StorageArea::length() const
 {
     return m_storageMap->length();
 }
 
-String OriginStorage::key(unsigned index, ExceptionCode& ec) const
+String StorageArea::key(unsigned index, ExceptionCode& ec) const
 {
     String key;
     
@@ -83,12 +83,12 @@ String OriginStorage::key(unsigned index, ExceptionCode& ec) const
     return key;
 }
 
-String OriginStorage::getItem(const String& key) const
+String StorageArea::getItem(const String& key) const
 {
     return m_storageMap->getItem(key);
 }
 
-void OriginStorage::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
+void StorageArea::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
 {
     // Per the spec, inserting a NULL value into the map is the same as removing the key altogether
     if (value.isNull()) {
@@ -112,7 +112,7 @@ void OriginStorage::setItem(const String& key, const String& value, ExceptionCod
     dispatchStorageEvent(key, oldValue, value, frame);
 }
 
-void OriginStorage::removeItem(const String& key, Frame* frame)
+void StorageArea::removeItem(const String& key, Frame* frame)
 {    
     String oldValue;
     RefPtr<StorageMap> newMap = m_storageMap->removeItem(key, oldValue);
@@ -124,12 +124,12 @@ void OriginStorage::removeItem(const String& key, Frame* frame)
         dispatchStorageEvent(key, oldValue, String(), frame);
 }
 
-bool OriginStorage::contains(const String& key) const
+bool StorageArea::contains(const String& key) const
 {
     return m_storageMap->contains(key);
 }
 
-void OriginStorage::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
+void StorageArea::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
 {
     // For SessionStorage events, each frame in the page's frametree with the same origin as this Storage needs to be notified of the change
     for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {

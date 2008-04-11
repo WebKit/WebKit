@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef OriginStorage_h
-#define OriginStorage_h
+#ifndef StorageArea_h
+#define StorageArea_h
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -39,12 +39,12 @@ namespace WebCore {
     class String;
     typedef int ExceptionCode;
 
-    class OriginStorage : public RefCounted<OriginStorage> {
+    class StorageArea : public RefCounted<StorageArea> {
     public:
-        virtual ~OriginStorage();
+        virtual ~StorageArea();
         
-        static PassRefPtr<OriginStorage> create(Page*, SecurityOrigin*);
-        PassRefPtr<OriginStorage> copy(Page*, SecurityOrigin*);
+        static PassRefPtr<StorageArea> create(Page*, SecurityOrigin*);
+        PassRefPtr<StorageArea> copy(Page*, SecurityOrigin*);
         
         unsigned length() const;
         String key(unsigned index, ExceptionCode&) const;
@@ -55,8 +55,8 @@ namespace WebCore {
         bool contains(const String& key) const;
 
     private:
-        OriginStorage(Page*, SecurityOrigin*);
-        OriginStorage(Page*, SecurityOrigin*, PassRefPtr<StorageMap>);
+        StorageArea(Page*, SecurityOrigin*);
+        StorageArea(Page*, SecurityOrigin*, PassRefPtr<StorageMap>);
         
         void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
         
@@ -67,4 +67,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // OriginStorage_h
+#endif // StorageArea_h

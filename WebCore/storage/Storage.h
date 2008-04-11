@@ -26,7 +26,7 @@
 #ifndef Storage_h
 #define Storage_h
 
-#include "OriginStorage.h"
+#include "StorageArea.h"
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -40,7 +40,7 @@ namespace WebCore {
 
     class Storage : public RefCounted<Storage> {
     public:
-        static PassRefPtr<Storage> create(Frame*, PassRefPtr<OriginStorage>);
+        static PassRefPtr<Storage> create(Frame*, PassRefPtr<StorageArea>);
         
         unsigned length() const;
         String key(unsigned index, ExceptionCode&) const;
@@ -53,10 +53,10 @@ namespace WebCore {
         void disconnectFrame() { m_frame = 0; }
 
     private:
-        Storage(Frame*, PassRefPtr<OriginStorage>);
+        Storage(Frame*, PassRefPtr<StorageArea>);
             
         Frame* m_frame;
-        RefPtr<OriginStorage> m_originStorage;
+        RefPtr<StorageArea> m_storageArea;
     };
 
 } // namespace WebCore

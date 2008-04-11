@@ -15750,14 +15750,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\OriginStorage.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\OriginStorage.h"
-				>
-			</File>
-			<File
 				RelativePath="..\storage\OriginUsageRecord.cpp"
 				>
 			</File>
@@ -15827,6 +15819,14 @@
 			</File>
 			<File
 				RelativePath="..\storage\Storage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageArea.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageArea.h"
 				>
 			</File>
 			<File
