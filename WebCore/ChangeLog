@@ -1,5 +1,11 @@
 2008-04-11  Antti Koivisto  <antti@apple.com>
 
+        Another attempted Qt build fix.
+
+        * WebCore.pro:
+
+2008-04-11  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Oliver.
 
         Fix build when SVG is enabled but SVG_ANIMATION is not.

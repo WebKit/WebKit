@@ -1608,9 +1608,9 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGViewElement.cpp \
         svg/SVGViewSpec.cpp \
         svg/SVGZoomAndPan.cpp \
-        WebCore/svg/animation/SMILTime.cpp \
-        WebCore/svg/animation/SMILTimeContainer.cpp \
-        WebCore/svg/animation/SVGSMILElement.cpp \
+        svg/animation/SMILTime.cpp \
+        svg/animation/SMILTimeContainer.cpp \
+        svg/animation/SVGSMILElement.cpp \
         svg/graphics/filters/SVGFEBlend.cpp \
         svg/graphics/filters/SVGFEColorMatrix.cpp \
         svg/graphics/filters/SVGFEComponentTransfer.cpp \
