@@ -1,3 +1,17 @@
+2008-04-10  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18342
+        Bug #18342 - Add logging to HTTP soup backend
+        
+        Add soup logging facilities to HTTP soup backend.
+        Enable defining WEBKIT_SOUP_LOGGING, with values from
+        0 to 3 for more verbosity.
+        
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::start):
+
 2008-04-10  Timothy Hatcher  <timothy@apple.com>
 
         Fixes floating point precision in the Resources graph labels by using String.sprintf to

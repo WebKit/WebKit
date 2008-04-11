@@ -244,8 +244,17 @@ bool ResourceHandle::start(Frame* frame)
         d->m_response.setMimeType(MIMETypeRegistry::getMIMETypeForPath(String(urlString)));
     }
 
-    if (!session)
+    if (!session) {
         session = soup_session_async_new();
+        const char* soup_debug = g_getenv("WEBKIT_SOUP_LOGGING");
+        if (soup_debug) {
+            int soup_debug_level = atoi(soup_debug);
+
+            SoupLogger* logger = soup_logger_new(static_cast<SoupLoggerLogLevel>(soup_debug_level), -1);
+            soup_logger_attach(logger, session);
+            g_object_unref(logger);
+        }
+    }
 
     SoupMessage* msg;
     msg = soup_message_new(request().httpMethod().utf8().data(), urlString.utf8().data());
