@@ -183,7 +183,7 @@ HRESULT PreferencesChangedOrRemovedObserver::notifyPreferencesChanged(WebCacheMo
 {
     HRESULT hr = S_OK;
 
-    if (WebView::didSetCacheModel() || cacheModel > WebView::cacheModel())
+    if (!WebView::didSetCacheModel() || cacheModel > WebView::cacheModel())
         WebView::setCacheModel(cacheModel);
     else if (cacheModel < WebView::cacheModel()) {
         WebCacheModel sharedPreferencesCacheModel;

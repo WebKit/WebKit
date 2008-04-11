@@ -1,3 +1,14 @@
+2008-04-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix caching typo.
+        
+        Made this code match the Mac.
+        
+        Reviewed by Mark Rowe.
+
+        * WebView.cpp:
+        (PreferencesChangedOrRemovedObserver::notifyPreferencesChanged):
+
 2008-04-11  Adam Roben  <aroben@apple.com>
 
         * ForEachCoClass.h: Added a deprecation notice.
