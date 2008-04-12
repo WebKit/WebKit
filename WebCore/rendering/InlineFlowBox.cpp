@@ -658,7 +658,7 @@ void InlineFlowBox::paintBackgrounds(const RenderObject::PaintInfo& paintInfo, c
 void InlineFlowBox::paintBackground(const RenderObject::PaintInfo& paintInfo, const Color& c, const BackgroundLayer* bgLayer,
                                     int my, int mh, int tx, int ty, int w, int h)
 {
-    CachedImage* bg = bgLayer->backgroundImage();
+    StyleImage* bg = bgLayer->backgroundImage();
     bool hasBackgroundImage = bg && bg->canRender(object()->style()->effectiveZoom());
     if ((!hasBackgroundImage && !object()->style()->hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent())
         object()->paintBackgroundExtended(paintInfo, c, bgLayer, my, mh, tx, ty, w, h, this);

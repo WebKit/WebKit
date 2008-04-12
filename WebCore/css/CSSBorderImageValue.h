@@ -23,25 +23,29 @@
 #ifndef CSSBorderImageValue_h
 #define CSSBorderImageValue_h
 
-#include "CSSValue.h"
+#include "CSSImageGeneratorValue.h"
+#include "CSSImageValue.h"
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class CSSImageValue;
 class Rect;
 
 class CSSBorderImageValue : public CSSValue {
 public:
     CSSBorderImageValue();
-    CSSBorderImageValue(PassRefPtr<CSSImageValue>, PassRefPtr<Rect>, int horizontalRule, int verticalRule);
+    CSSBorderImageValue(PassRefPtr<CSSValue>, PassRefPtr<Rect>, int horizontalRule, int verticalRule);
 
     virtual String cssText() const;
 
+    CSSImageValue* imageValue() const { return m_image->isImageValue() ? static_cast<CSSImageValue*>(m_image.get()) : 0; }
+    CSSImageGeneratorValue* generatorValue() const { return m_image->isImageGeneratorValue() ? static_cast<CSSImageGeneratorValue*>(m_image.get()) : 0; }
+
 public:
     // The border image.
-    RefPtr<CSSImageValue> m_image;
+    RefPtr<CSSValue> m_image;
 
     // These four values are used to make "cuts" in the image.  They can be numbers
     // or percentages.

@@ -29,7 +29,6 @@
 
 #include "AffineTransform.h"
 #include "FloatConversion.h"
-#include "Gradient.h"
 #include "GraphicsContextPlatformPrivateCG.h"
 #include "ImageBuffer.h"
 #include "KURL.h"
@@ -418,18 +417,6 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
     }
 }
 
-void GraphicsContext::fillRect(const IntRect& rect, Gradient& gradient)
-{
-    if (paintingDisabled())
-        return;
-    
-    // CG fills to the clip when painting a gradient.
-    save();
-    clip(rect);
-    CGContextDrawShading(platformContext(), gradient.platformGradient());     
-    restore();
-}
-
 void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color)
 {
     if (paintingDisabled() || !color.alpha())
@@ -448,7 +435,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
 }
 
 
-void GraphicsContext::clip(const IntRect& rect)
+void GraphicsContext::clip(const FloatRect& rect)
 {
     if (paintingDisabled())
         return;
@@ -495,12 +482,16 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     CGContextEOClip(context);
 }
 
-void GraphicsContext::clipToImageBuffer(const IntRect& rect, const ImageBuffer* imageBuffer)
+void GraphicsContext::clipToImageBuffer(const FloatRect& rect, const ImageBuffer* imageBuffer)
 {
     if (paintingDisabled())
         return;
     
-    CGContextClipToMask(platformContext(), rect, imageBuffer->cgImage());
+    CGContextTranslateCTM(platformContext(), rect.x(), rect.y() + rect.height());
+    CGContextScaleCTM(platformContext(), 1, -1);
+    CGContextClipToMask(platformContext(), FloatRect(FloatPoint(), rect.size()), imageBuffer->cgImage());
+    CGContextScaleCTM(platformContext(), 1, -1);
+    CGContextTranslateCTM(platformContext(), -rect.x(), -rect.y() - rect.height());
 }
 
 void GraphicsContext::beginTransparencyLayer(float opacity)
@@ -955,7 +946,11 @@ void GraphicsContext::paintBuffer(ImageBuffer* buffer, const IntRect& r)
         return;
     CGContextFlush(context);
     if (CGImageRef image = CGBitmapContextCreateImage(context)) {
-        CGContextDrawImage(platformContext(), roundToDevicePixels(r), image);
+        save();
+        CGContextTranslateCTM(platformContext(), r.x(), r.y() + r.height());
+        CGContextScaleCTM(platformContext(), 1, -1);
+        CGContextDrawImage(platformContext(), roundToDevicePixels(IntRect(IntPoint(), r.size())), image);
+        restore();
         CGImageRelease(image);
     }
 }
@@ -967,10 +962,12 @@ void GraphicsContext::drawImage(ImageBuffer* buffer, const FloatRect& srcRect, c
     RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(context));
     float iw = CGImageGetWidth(image.get());
     float ih = CGImageGetHeight(image.get());
-    if (srcRect.x() == 0 && srcRect.y() == 0 && iw == srcRect.width() && ih == srcRect.height()) {
-        // Fast path, yay!
+    save();
+    CGContextTranslateCTM(platformContext(), destRect.x(), destRect.y() + destRect.height());
+    CGContextScaleCTM(platformContext(), 1, -1);
+    if (srcRect.x() == 0 && srcRect.y() == 0 && iw == srcRect.width() && ih == srcRect.height())
         CGContextDrawImage(platformContext(), destRect, image.get());
-    } else {
+    else {
         // Slow path, boo!
         // FIXME: We can do this without creating a separate image
         
@@ -989,6 +986,7 @@ void GraphicsContext::drawImage(ImageBuffer* buffer, const FloatRect& srcRect, c
         
         CGContextDrawImage(platformContext(), destRect, clippedSourceImage.get());
     }
+    restore();
 }
 
 }

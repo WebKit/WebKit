@@ -624,7 +624,7 @@ bool CanvasRenderingContext2D::isPointInPath(const float x, const float y)
     FloatPoint point(x, y);
     // We have to invert the current transform to ensure we correctly handle the
     // transforms applied to the current path.
-    AffineTransform ctm = c->getCTM();
+    AffineTransform ctm = state().m_transform;
     if (!ctm.isInvertible())
         return false;
     FloatPoint transformedPoint = ctm.inverse().mapPoint(point);

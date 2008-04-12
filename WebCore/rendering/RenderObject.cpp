@@ -838,7 +838,7 @@ bool RenderObject::mustRepaintBackgroundOrBorder() const
         return true;
 
     // Make sure we have a valid background image.
-    CachedImage* bg = bgLayer->backgroundImage();
+    StyleImage* bg = bgLayer->backgroundImage();
     bool shouldPaintBackgroundImage = bg && bg->canRender(style()->effectiveZoom());
 
     // These are always percents or auto.
@@ -2276,11 +2276,11 @@ void RenderObject::updateBackgroundImages(RenderStyle* oldStyle)
     const BackgroundLayer* newLayers = m_style ? m_style->backgroundLayers() : 0;
     for (const BackgroundLayer* currOld = oldLayers; currOld; currOld = currOld->next()) {
         if (currOld->backgroundImage() && (!newLayers || !newLayers->containsImage(currOld->backgroundImage())))
-            currOld->backgroundImage()->deref(this);
+            currOld->backgroundImage()->removeClient(this);
     }
     for (const BackgroundLayer* currNew = newLayers; currNew; currNew = currNew->next()) {
         if (currNew->backgroundImage() && (!oldLayers || !oldLayers->containsImage(currNew->backgroundImage())))
-            currNew->backgroundImage()->ref(this);
+            currNew->backgroundImage()->addClient(this);
     }
 
     CachedImage* oldBorderImage = oldStyle ? oldStyle->borderImage().image() : 0;
@@ -2479,8 +2479,8 @@ void RenderObject::arenaDelete(RenderArena* arena, void* base)
 {
     if (m_style) {
         for (const BackgroundLayer* bgLayer = m_style->backgroundLayers(); bgLayer; bgLayer = bgLayer->next()) {
-            if (CachedImage* backgroundImage = bgLayer->backgroundImage())
-                backgroundImage->deref(this);
+            if (StyleImage* backgroundImage = bgLayer->backgroundImage())
+                backgroundImage->removeClient(this);
         }
 
         if (CachedImage* borderImage = m_style->borderImage().image())

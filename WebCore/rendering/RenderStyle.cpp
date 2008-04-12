@@ -22,8 +22,10 @@
 #include "config.h"
 #include "RenderStyle.h"
 
+#include "CachedImage.h"
 #include "CSSStyleSelector.h"
 #include "RenderArena.h"
+#include "RenderObject.h"
 
 namespace WebCore {
 
@@ -108,6 +110,72 @@ StyleVisualData::StyleVisualData(const StyleVisualData& o)
     , counterReset(o.counterReset)
     , m_zoom(RenderStyle::initialZoom())
 {
+}
+
+PassRefPtr<CSSValue> StyleCachedImage::cssValue()
+{
+    return new CSSPrimitiveValue(m_image->url(), CSSPrimitiveValue::CSS_URI);
+}
+
+bool StyleCachedImage::canRender(float multiplier) const
+{
+    return m_image->canRender(multiplier);
+}
+
+IntSize StyleCachedImage::imageSize(float multiplier) const
+{
+    return m_image->imageSize(multiplier);
+}
+
+void StyleCachedImage::setImageContainerSize(const IntSize& size)
+{
+    return m_image->setImageContainerSize(size);
+}
+
+void StyleCachedImage::addClient(RenderObject* renderer)
+{
+    return m_image->ref(renderer);
+}
+
+void StyleCachedImage::removeClient(RenderObject* renderer)
+{
+    return m_image->deref(renderer);
+}
+
+Image* StyleCachedImage::image(RenderObject* renderer, const IntSize&) const
+{
+    return m_image->image();
+}
+
+PassRefPtr<CSSValue> StyleGeneratedImage::cssValue()
+{
+    return m_generator;
+}
+
+IntSize StyleGeneratedImage::imageSize(float /* multiplier */) const
+{
+    // We can ignore the multiplier, since we always store a raw zoomed size.
+    return m_containerSize;
+}
+
+void StyleGeneratedImage::setImageContainerSize(const IntSize& size)
+{
+    m_containerSize = size;
+}
+
+void StyleGeneratedImage::addClient(RenderObject* renderer)
+{
+    m_generator->addClient(renderer, IntSize());
+}
+
+void StyleGeneratedImage::removeClient(RenderObject* renderer)
+{
+    m_generator->removeClient(renderer);
+}
+
+Image* StyleGeneratedImage::image(RenderObject* renderer, const IntSize& size) const
+{
+    return m_generator->image(renderer, size);
 }
 
 BackgroundLayer::BackgroundLayer()

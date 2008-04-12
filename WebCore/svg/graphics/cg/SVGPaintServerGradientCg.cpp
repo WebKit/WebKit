@@ -208,7 +208,7 @@ void SVGPaintServerGradient::teardown(GraphicsContext*& context, const RenderObj
 
             // Clip current context to mask image (gradient)
             m_savedContext->concatCTM(transform.inverse());
-            CGContextClipToMask(m_savedContext->platformContext(), CGRect(textBoundary), m_imageBuffer->cgImage());
+            m_savedContext->clipToImageBuffer(textBoundary, m_imageBuffer);
             m_savedContext->concatCTM(transform);
 
             handleBoundingBoxModeAndGradientTransformation(m_savedContext, maskBBox);

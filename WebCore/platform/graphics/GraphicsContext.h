@@ -81,7 +81,7 @@ namespace WebCore {
 
     class AffineTransform;
     class Font;
-    class Gradient;
+    class Generator;
     class GraphicsContextPrivate;
     class GraphicsContextPlatformPrivate;
     class ImageBuffer;
@@ -136,7 +136,7 @@ namespace WebCore {
         
         void fillRect(const IntRect&, const Color&);
         void fillRect(const FloatRect&, const Color&);
-        void fillRect(const IntRect&, Gradient&);
+        void fillRect(const FloatRect&, Generator&);
         void fillRoundedRect(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color&);
         void clearRect(const FloatRect&);
         void strokeRect(const FloatRect&, float lineWidth);
@@ -163,13 +163,13 @@ namespace WebCore {
         bool useLowQualityImageInterpolation() const { return false; }
 #endif
 
-        void clip(const IntRect&);
+        void clip(const FloatRect&);
         void addRoundedRectClip(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
         void addInnerRoundedRectClip(const IntRect&, int thickness);
         void clipOut(const IntRect&);
         void clipOutEllipseInRect(const IntRect&);
         void clipOutRoundedRect(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
-        void clipToImageBuffer(const IntRect&, const ImageBuffer*);
+        void clipToImageBuffer(const FloatRect&, const ImageBuffer*);
 
         int textDrawingMode();
         void setTextDrawingMode(int);

@@ -156,8 +156,8 @@ IntSize CachedImage::imageSize(float multiplier) const
     // Don't let images that have a width/height >= 1 shrink below 1 when zoomed.
     bool hasWidth = m_image->size().width() > 0;
     bool hasHeight = m_image->size().height() > 0;
-    int width = m_image->size().width() * multiplier;
-    int height = m_image->size().height() * multiplier;
+    int width = m_image->size().width() * (m_image->hasRelativeWidth() ? 1.0f : multiplier);
+    int height = m_image->size().height() * (m_image->hasRelativeHeight() ? 1.0f : multiplier);
     if (hasWidth)
         width = max(1, width);
     if (hasHeight)
@@ -175,13 +175,13 @@ IntRect CachedImage::imageRect(float multiplier) const
     // Don't let images that have a width/height >= 1 shrink below 1 when zoomed.
     bool hasWidth = m_image->rect().width() > 0;
     bool hasHeight = m_image->rect().height() > 0;
-    int width = m_image->rect().width() * multiplier;
-    int height = m_image->rect().height() * multiplier;
+    int width = m_image->rect().width() * (m_image->hasRelativeWidth() ? 1.0f : multiplier);
+    int height = m_image->rect().height() * (m_image->hasRelativeHeight() ? 1.0f : multiplier);
     if (hasWidth)
         width = max(1, width);
     if (hasHeight)
         height = max(1, height);
-    return IntRect(m_image->rect().x() * multiplier, m_image->rect().y() * multiplier, width, height);
+    return IntRect(m_image->rect().x() * (m_image->hasRelativeWidth() ? 1.0f : multiplier), m_image->rect().y() * (m_image->hasRelativeHeight() ? 1.0f : multiplier), width, height);
 }
 
 void CachedImage::notifyObservers()

@@ -54,6 +54,7 @@ class KURL;
 class MediaQueryEvaluator;
 class Node;
 class Settings;
+class StyleImage;
 class StyleSheet;
 class StyleSheetList;
 class StyledElement;
@@ -193,6 +194,8 @@ public:
         void applySVGProperty(int id, CSSValue*);
 #endif
 
+        StyleImage* createStyleImage(CSSValue* value);
+        
         PseudoState checkPseudoState(Element*, bool checkVisited = true);
 
         // We collect the set of decls that match in |m_matchedDecls|.  We then walk the

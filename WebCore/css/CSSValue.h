@@ -48,6 +48,8 @@ public:
     virtual bool isFontValue() { return false; }
     virtual bool isImplicitInitialValue() const { return false; }
     virtual bool isTransitionTimingFunctionValue() { return false; }
+    virtual bool isImageValue() const { return false; }
+    virtual bool isImageGeneratorValue() const { return false; }
 };
 
 } // namespace WebCore

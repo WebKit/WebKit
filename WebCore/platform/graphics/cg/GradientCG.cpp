@@ -28,6 +28,7 @@
 #include "Gradient.h"
 
 #include "CSSParser.h"
+#include "GraphicsContext.h"
 
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -70,6 +71,12 @@ CGShadingRef Gradient::platformGradient()
     CGFunctionRelease(colorFunction);
 
     return m_gradient;
+}
+
+void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
+{
+    context->clip(rect);
+    CGContextDrawShading(context->platformContext(), platformGradient());
 }
 
 } //namespace

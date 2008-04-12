@@ -4742,6 +4742,18 @@
 					RelativePath="..\platform\graphics\GlyphWidthMap.h"
 					>
 				</File>
+                                <File
+					RelativePath="..\platform\graphics\GeneratedImage.cpp"
+					>
+				</File>
+                                <File
+					RelativePath="..\platform\graphics\GeneratedImage.h"
+					>
+				</File>
+                                <File
+					RelativePath="..\platform\graphics\Generator.h"
+					>
+				</File>
 				<File
 					RelativePath="..\platform\graphics\Gradient.cpp"
 					>
@@ -7711,6 +7723,39 @@
 				RelativePath="..\css\CSSFontSelector.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\css\CSSImageGeneratorValue.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\CSSImageGeneratorValue.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\css\CSSGradientValue.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\CSSGradientValue.h"
+				>
+			</File>
+
 			<File
 				RelativePath="..\css\CSSGrammar.y"
 				>

@@ -547,7 +547,9 @@ webcore_sources += \
 	WebCore/css/CSSFontFaceSrcValue.cpp \
 	WebCore/css/CSSFontSelector.cpp \
 	WebCore/css/CSSFontFaceSource.cpp \
+        WebCore/css/CSSGradientValue.cpp \
 	WebCore/css/CSSHelper.cpp \
+        WebCore/css/CSSImageGeneratorValue.cpp \
 	WebCore/css/CSSImageValue.cpp \
 	WebCore/css/CSSImportRule.cpp \
 	WebCore/css/CSSInheritedValue.cpp \
@@ -856,6 +858,7 @@ webcore_sources += \
 	WebCore/platform/graphics/FloatPoint.cpp \
 	WebCore/platform/graphics/FloatRect.cpp \
 	WebCore/platform/graphics/FloatSize.cpp \
+        WebCore/platform/graphics/GeneratedImage.cpp \
 	WebCore/platform/graphics/Gradient.cpp \
 	WebCore/platform/graphics/GraphicsContext.cpp \
 	WebCore/platform/graphics/GraphicsTypes.cpp \

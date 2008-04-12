@@ -127,8 +127,10 @@ This file contains the list of files needed to build WebCore.
         css/CSSFontFaceSource.cpp
         css/CSSFontFaceSrcValue.cpp
         css/CSSFontSelector.cpp
+        css/CSSGradientValue.cpp
         css/CSSHelper.cpp
         css/CSSImageValue.cpp
+        css/CSSImageGeneratorValue.cpp
         css/CSSImportRule.cpp
         css/CSSInheritedValue.cpp
         css/CSSInitialValue.cpp
@@ -648,6 +650,7 @@ This file contains the list of files needed to build WebCore.
         platform/graphics/FloatPoint.cpp
         platform/graphics/FloatRect.cpp
         platform/graphics/FloatSize.cpp
+        platform/graphics/GeneratedImage.cpp
         platform/graphics/Gradient.cpp
         platform/graphics/GraphicsContext.cpp
         platform/graphics/GraphicsTypes.cpp

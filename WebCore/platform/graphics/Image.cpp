@@ -118,9 +118,6 @@ static inline FloatSize calculatePatternScale(const FloatRect& dstRect, const Fl
 
 void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, CompositeOperator op)
 {    
-    if (!nativeImageForCurrentFrame())
-        return;
-    
     if (mayFillWithSolidColor()) {
         fillWithSolidColor(ctxt, destRect, solidColor(), op);
         return;
@@ -161,9 +158,6 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
 // FIXME: Merge with the other drawTiled eventually, since we need a combination of both for some things.
 void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, CompositeOperator op)
 {    
-    if (!nativeImageForCurrentFrame())
-        return;
-
     if (mayFillWithSolidColor()) {
         fillWithSolidColor(ctxt, dstRect, solidColor(), op);
         return;

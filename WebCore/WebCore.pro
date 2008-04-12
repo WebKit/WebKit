@@ -479,8 +479,10 @@ SOURCES += \
     css/CSSFontFaceSrcValue.cpp \
     css/CSSFontSelector.cpp \
     css/CSSFontFaceSource.cpp \
+    css/CSSGradientValue.cpp \
     css/CSSHelper.cpp \
     css/CSSImageValue.cpp \
+    css/CSSImageGeneratorValue.cpp \
     css/CSSImportRule.cpp \
     css/CSSInheritedValue.cpp \
     css/CSSInitialValue.cpp \
@@ -794,6 +796,7 @@ SOURCES += \
     platform/graphics/FloatRect.cpp \
     platform/graphics/FloatSize.cpp \
     platform/graphics/FontData.cpp \
+    platform/graphics/GeneratedImage.cpp \
     platform/graphics/Gradient.cpp \
     platform/graphics/GraphicsContext.cpp \
     platform/graphics/GraphicsTypes.cpp \

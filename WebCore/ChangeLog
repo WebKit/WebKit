@@ -1,3 +1,149 @@
+2008-04-11  David Hyatt  <hyatt@apple.com>
+
+        This patch adds support for CSS gradients as background images.  RenderStyles now hold a StyleImage
+        RefPtr, which is a wrapper for two types of images: CachedImages (loaded from URLs) and generated images
+        (patterns created on the fly such as gradients).
+
+        All of the features of <canvas> are supported: gradients can be linear or radial, have multiple stops, and
+        can specify their points as percentages (for reusable gradients across different box sizes).
+
+        Reviewed by olliej
+
+        Added fast/gradients/simple-gradients.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSBorderImageValue.cpp:
+        (WebCore::CSSBorderImageValue::CSSBorderImageValue):
+        * css/CSSBorderImageValue.h:
+        (WebCore::CSSBorderImageValue::imageValue):
+        (WebCore::CSSBorderImageValue::generatorValue):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSGradientValue.cpp: Added.
+        (WebCore::CSSGradientValue::cssText):
+        (WebCore::CSSGradientValue::createGradient):
+        (WebCore::CSSGradientValue::image):
+        (WebCore::compareStops):
+        (WebCore::CSSGradientValue::sortStopsIfNeeded):
+        (WebCore::CSSGradientValue::resolvePoint):
+        (WebCore::CSSGradientValue::resolveRadius):
+        * css/CSSGradientValue.h: Added.
+        (WebCore::):
+        (WebCore::CSSGradientColorStop::CSSGradientColorStop):
+        (WebCore::CSSGradientValue::CSSGradientValue):
+        (WebCore::CSSGradientValue::type):
+        (WebCore::CSSGradientValue::setType):
+        (WebCore::CSSGradientValue::setFirstX):
+        (WebCore::CSSGradientValue::setFirstY):
+        (WebCore::CSSGradientValue::setSecondX):
+        (WebCore::CSSGradientValue::setSecondY):
+        (WebCore::CSSGradientValue::setFirstRadius):
+        (WebCore::CSSGradientValue::setSecondRadius):
+        (WebCore::CSSGradientValue::addStop):
+        * css/CSSImageGeneratorValue.cpp: Added.
+        (WebCore::CSSImageGeneratorValue::~CSSImageGeneratorValue):
+        (WebCore::CSSImageGeneratorValue::addClient):
+        (WebCore::CSSImageGeneratorValue::removeClient):
+        (WebCore::CSSImageGeneratorValue::getImage):
+        (WebCore::CSSImageGeneratorValue::putImage):
+        * css/CSSImageGeneratorValue.h: Added.
+        (WebCore::CSSImageGeneratorValue::isImageGeneratorValue):
+        * css/CSSImageValue.h:
+        (WebCore::CSSImageValue::isImageValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBackgroundImage):
+        (WebCore::BorderImageParseContext::commitImage):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::parseGradientPoint):
+        (WebCore::parseGradientColorStop):
+        (WebCore::CSSParser::parseGradient):
+        * css/CSSParser.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::createStyleImage):
+        (WebCore::CSSStyleSelector::mapBackgroundImage):
+        * css/CSSStyleSelector.h:
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isImageValue):
+        (WebCore::CSSValue::isImageGeneratorValue):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::isPointInPath):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::dataChanged):
+        (WebCore::BitmapImage::frameCount):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::cgImage):
+        (WebCore::ImageBuffer::image):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        (WebCore::GraphicsContext::paintBuffer):
+        (WebCore::GraphicsContext::drawImage):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::create):
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::~ImageBuffer):
+        (WebCore::ImageBuffer::image):
+        (WebCore::ImageBuffer::getImageData):
+        (WebCore::ImageBuffer::putImageData):
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::draw):
+        (WebCore::Image::drawPattern):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBackground):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calculateBackgroundSize):
+        (WebCore::RenderBox::imageChanged):
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mustRepaintBackgroundOrBorder):
+        (WebCore::RenderObject::updateBackgroundImages):
+        (WebCore::RenderObject::arenaDelete):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleCachedImage::cssValue):
+        (WebCore::StyleCachedImage::canRender):
+        (WebCore::StyleCachedImage::imageSize):
+        (WebCore::StyleCachedImage::setImageContainerSize):
+        (WebCore::StyleCachedImage::addClient):
+        (WebCore::StyleCachedImage::removeClient):
+        (WebCore::StyleCachedImage::image):
+        (WebCore::StyleGeneratedImage::cssValue):
+        (WebCore::StyleGeneratedImage::imageSize):
+        (WebCore::StyleGeneratedImage::setImageContainerSize):
+        (WebCore::StyleGeneratedImage::addClient):
+        (WebCore::StyleGeneratedImage::removeClient):
+        (WebCore::StyleGeneratedImage::image):
+        * rendering/RenderStyle.h:
+        (WebCore::StyleImage::StyleImage):
+        (WebCore::StyleImage::~StyleImage):
+        (WebCore::StyleImage::operator==):
+        (WebCore::StyleImage::canRender):
+        (WebCore::StyleImage::isCachedImage):
+        (WebCore::StyleImage::isGeneratedImage):
+        (WebCore::StyleCachedImage::StyleCachedImage):
+        (WebCore::StyleCachedImage::data):
+        (WebCore::StyleCachedImage::isCachedImage):
+        (WebCore::StyleGeneratedImage::StyleGeneratedImage):
+        (WebCore::StyleGeneratedImage::data):
+        (WebCore::StyleGeneratedImage::isGeneratedImage):
+        (WebCore::BackgroundLayer::backgroundImage):
+        (WebCore::BackgroundLayer::setBackgroundImage):
+        (WebCore::BackgroundLayer::containsImage):
+        (WebCore::RenderStyle::backgroundImage):
+        (WebCore::RenderStyle::initialBackgroundImage):
+        * svg/graphics/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::teardown):
+        * svg/graphics/cg/SVGResourceMaskerCg.mm:
+        (WebCore::SVGResourceMasker::applyMask):
+
 2008-04-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

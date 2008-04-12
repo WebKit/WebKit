@@ -36,6 +36,7 @@
 
 #include "AffineTransform.h"
 #include "CSSHelper.h"
+#include "CSSImageGeneratorValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
 #include "Color.h"
@@ -124,6 +125,84 @@ enum EPosition {
 
 enum EFloat {
     FNONE = 0, FLEFT, FRIGHT
+};
+
+class StyleImage : public RefCounted<StyleImage>
+{
+public:
+    StyleImage()
+    : RefCounted<StyleImage>(0)
+    {}
+
+    virtual ~StyleImage()
+    {}
+    
+    virtual void* data() const = 0;
+    
+    bool operator==(const StyleImage& other)
+    {
+        return data() == other.data();
+    }
+    
+    virtual PassRefPtr<CSSValue> cssValue() = 0;
+
+    virtual bool canRender(float multiplier) const { return true; }
+    virtual IntSize imageSize(float multiplier) const = 0;
+    virtual void setImageContainerSize(const IntSize&) = 0;
+    virtual void addClient(RenderObject*) = 0;
+    virtual void removeClient(RenderObject*) = 0;
+    virtual Image* image(RenderObject*, const IntSize&) const = 0;
+    
+    virtual bool isCachedImage() const { return false; }
+    virtual bool isGeneratedImage() const { return false; }
+};
+
+class StyleCachedImage : public StyleImage
+{
+public:
+    StyleCachedImage(CachedImage* image)
+    : m_image(image)
+    {}
+
+    virtual void* data() const { return m_image; }
+
+    virtual bool isCachedImage() const { return true; }
+    
+    virtual PassRefPtr<CSSValue> cssValue();
+    
+    virtual bool canRender(float multiplier) const;
+    virtual IntSize imageSize(float multiplier) const;
+    virtual void setImageContainerSize(const IntSize&);
+    virtual void addClient(RenderObject*);
+    virtual void removeClient(RenderObject*);
+    virtual Image* image(RenderObject*, const IntSize&) const;
+    
+private:
+    CachedImage* m_image;
+};
+
+class StyleGeneratedImage : public StyleImage
+{
+public:
+    StyleGeneratedImage(PassRefPtr<CSSImageGeneratorValue> val)
+    : m_generator(val)
+    {}
+    
+    virtual void* data() const { return m_generator.get(); }
+
+    virtual bool isGeneratedImage() const { return true; }
+    
+    virtual PassRefPtr<CSSValue> cssValue();
+
+    virtual IntSize imageSize(float multiplier) const;
+    virtual void setImageContainerSize(const IntSize&);
+    virtual void addClient(RenderObject*);
+    virtual void removeClient(RenderObject*);
+    virtual Image* image(RenderObject*, const IntSize&) const;
+    
+private:
+    RefPtr<CSSImageGeneratorValue> m_generator;
+    IntSize m_containerSize;
 };
 
 //------------------------------------------------
@@ -467,7 +546,7 @@ public:
     BackgroundLayer();
     ~BackgroundLayer();
 
-    CachedImage* backgroundImage() const { return m_image; }
+    StyleImage* backgroundImage() const { return m_image.get(); }
     Length backgroundXPosition() const { return m_xPosition; }
     Length backgroundYPosition() const { return m_yPosition; }
     bool backgroundAttachment() const { return m_bgAttachment; }
@@ -490,7 +569,7 @@ public:
     bool isBackgroundCompositeSet() const { return m_compositeSet; }
     bool isBackgroundSizeSet() const { return m_backgroundSizeSet; }
     
-    void setBackgroundImage(CachedImage* i) { m_image = i; m_imageSet = true; }
+    void setBackgroundImage(PassRefPtr<StyleImage> i) { m_image = i; m_imageSet = true; }
     void setBackgroundXPosition(const Length& l) { m_xPosition = l; m_xPosSet = true; }
     void setBackgroundYPosition(const Length& l) { m_yPosition = l; m_yPosSet = true; }
     void setBackgroundAttachment(bool b) { m_bgAttachment = b; m_attachmentSet = true; }
@@ -520,7 +599,15 @@ public:
         return !(*this == o);
     }
 
-    bool containsImage(CachedImage* c) const { if (c == m_image) return true; if (m_next) return m_next->containsImage(c); return false; }
+    bool containsImage(StyleImage* s) const {
+        if (!s)
+            return false;
+        if (m_image && *s == *m_image)
+            return true;
+        if (m_next)
+            return m_next->containsImage(s);
+        return false;
+    }
     
     bool hasImage() const {
         if (m_image)
@@ -536,7 +623,7 @@ public:
     void fillUnsetProperties();
     void cullEmptyLayers();
 
-    CachedImage* m_image;
+    RefPtr<StyleImage> m_image;
 
     Length m_xPosition;
     Length m_yPosition;
@@ -1759,7 +1846,7 @@ public:
     }
 
     const Color & backgroundColor() const { return background->m_color; }
-    CachedImage *backgroundImage() const { return background->m_background.m_image; }
+    StyleImage* backgroundImage() const { return background->m_background.m_image.get(); }
     EBackgroundRepeat backgroundRepeat() const { return static_cast<EBackgroundRepeat>(background->m_background.m_bgRepeat); }
     CompositeOperator backgroundComposite() const { return static_cast<CompositeOperator>(background->m_background.m_bgComposite); }
     bool backgroundAttachment() const { return background->m_background.m_bgAttachment; }
@@ -2228,7 +2315,7 @@ public:
     static short initialVerticalBorderSpacing() { return 0; }
     static ECursor initialCursor() { return CURSOR_AUTO; }
     static Color initialColor() { return Color::black; }
-    static CachedImage* initialBackgroundImage() { return 0; }
+    static StyleImage* initialBackgroundImage() { return 0; }
     static CachedImage* initialListStyleImage() { return 0; }
     static unsigned short initialBorderWidth() { return 3; }
     static int initialLetterWordSpacing() { return 0; }

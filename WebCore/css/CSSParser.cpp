@@ -32,6 +32,7 @@
 #include "CSSImageValue.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSrcValue.h"
+#include "CSSGradientValue.h"
 #include "CSSImportRule.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
@@ -1924,6 +1925,8 @@ bool CSSParser::parseBackgroundImage(RefPtr<CSSValue>& value)
             value = new CSSImageValue(KURL(styleElement->baseURL(), uri).string(), styleElement);
         return true;
     }
+    if (valueList->current()->unit == Value::Function && equalIgnoringCase(valueList->current()->function->name, "-webkit-gradient("))
+        return parseGradient(value);
     return false;
 }
 
@@ -3168,7 +3171,7 @@ struct BorderImageParseContext
     bool allowWidth() const { return m_allowWidth; }
     bool allowRule() const { return m_allowRule; }
 
-    void commitImage(CSSImageValue* image) { m_image = image; m_allowNumber = true; }
+    void commitImage(PassRefPtr<CSSValue> image) { m_image = image; m_allowNumber = true; }
     void commitNumber(Value* v) {
         PassRefPtr<CSSPrimitiveValue> val = new CSSPrimitiveValue(v->fValue, (CSSPrimitiveValue::UnitTypes)v->unit);
         if (!m_top)
@@ -3264,8 +3267,8 @@ struct BorderImageParseContext
     bool m_allowWidth;
     bool m_allowRule;
     
-    RefPtr<CSSImageValue> m_image;
-    
+    RefPtr<CSSValue> m_image;
+
     RefPtr<CSSPrimitiveValue> m_top;
     RefPtr<CSSPrimitiveValue> m_right;
     RefPtr<CSSPrimitiveValue> m_bottom;
@@ -3285,14 +3288,20 @@ bool CSSParser::parseBorderImage(int propId, bool important)
     // Look for an image initially.  If the first value is not a URI, then we're done.
     BorderImageParseContext context;
     Value* val = valueList->current();
-    if (val->unit != CSSPrimitiveValue::CSS_URI)
+    if (val->unit == CSSPrimitiveValue::CSS_URI) {        
+        String uri = parseURL(val->string);
+        if (uri.isEmpty())
+            return false;
+        context.commitImage(new CSSImageValue(KURL(styleElement->baseURL(), uri).string(), styleElement));
+    } else if (val->unit == Value::Function && equalIgnoringCase(val->function->name, "-webkit-gradient(")) {
+        RefPtr<CSSValue> value;
+        if (parseGradient(value))
+            context.commitImage(value);
+        else
+            return false;
+    } else
         return false;
-        
-    String uri = parseURL(val->string);
-    if (uri.isEmpty())
-        return false;
-    
-    context.commitImage(new CSSImageValue(KURL(styleElement->baseURL(), uri).string(), styleElement));
+
     while ((val = valueList->next())) {
         if (context.allowNumber() && validUnit(val, FInteger|FNonNeg|FPercent, true)) {
             context.commitNumber(val);
@@ -3359,6 +3368,200 @@ bool CSSParser::parseCounter(int propId, int defaultValue, bool important)
     }
 
     return false;
+}
+
+static PassRefPtr<CSSPrimitiveValue> parseGradientPoint(Value* a, bool horizontal)
+{
+    RefPtr<CSSPrimitiveValue> result;
+    if (a->unit == CSSPrimitiveValue::CSS_IDENT) {
+        if ((equalIgnoringCase(a->string, "left") && horizontal) || 
+            (equalIgnoringCase(a->string, "top") && !horizontal))
+            result = new CSSPrimitiveValue(0., CSSPrimitiveValue::CSS_PERCENTAGE);
+        else if ((equalIgnoringCase(a->string, "right") && horizontal) ||
+                 (equalIgnoringCase(a->string, "bottom") && !horizontal))
+            result = new CSSPrimitiveValue(100., CSSPrimitiveValue::CSS_PERCENTAGE);
+        else if (equalIgnoringCase(a->string, "center"))
+            result = new CSSPrimitiveValue(50., CSSPrimitiveValue::CSS_PERCENTAGE);
+    } else if (a->unit == CSSPrimitiveValue::CSS_NUMBER || a->unit == CSSPrimitiveValue::CSS_PERCENTAGE)
+        result = new CSSPrimitiveValue(a->fValue, (CSSPrimitiveValue::UnitTypes)a->unit);
+    return result;
+}
+
+bool parseGradientColorStop(CSSParser* p, Value* a, CSSGradientColorStop& stop)
+{
+    if (a->unit != Value::Function)
+        return false;
+    
+    if (!equalIgnoringCase(a->function->name, "from(") &&
+        !equalIgnoringCase(a->function->name, "to(") &&
+        !equalIgnoringCase(a->function->name, "color-stop("))
+        return false;
+    
+    ValueList* args = a->function->args;
+    if (!args)
+        return false;
+    
+    if (equalIgnoringCase(a->function->name, "from(") || 
+        equalIgnoringCase(a->function->name, "to(")) {
+        // The "from" and "to" stops expect 1 argument.
+        if (args->size() != 1)
+            return false;
+        
+        if (equalIgnoringCase(a->function->name, "from("))
+            stop.m_stop = 0.f;
+        else
+            stop.m_stop = 1.f;
+        
+        stop.m_color = p->parseColor(args->current());
+        if (!stop.m_color)
+            return false;
+    }
+    
+    // The "color-stop" function expects 3 arguments.
+    if (equalIgnoringCase(a->function->name, "color-stop(")) {
+        if (args->size() != 3)
+            return false;
+        
+        Value* stopArg = args->current();
+        if (stopArg->unit == CSSPrimitiveValue::CSS_PERCENTAGE)
+            stop.m_stop = (float)stopArg->fValue / 100.f;
+        else if (stopArg->unit == CSSPrimitiveValue::CSS_NUMBER)
+            stop.m_stop = (float)stopArg->fValue;
+        else
+            return false;
+
+        stopArg = args->next();
+        if (stopArg->unit != Value::Operator || stopArg->iValue != ',')
+            return false;
+            
+        stopArg = args->next();
+        stop.m_color = p->parseColor(stopArg);
+        if (!stop.m_color)
+            return false;
+    }
+
+    return true;
+}
+
+bool CSSParser::parseGradient(RefPtr<CSSValue>& gradient)
+{
+    RefPtr<CSSGradientValue> result = new CSSGradientValue;
+    
+    // Walk the arguments.
+    ValueList* args = valueList->current()->function->args;
+    if (!args || args->size() == 0)
+        return false;
+    
+    // The first argument is the gradient type.  It is an identifier.
+    Value* a = args->current();
+    if (!a || a->unit != CSSPrimitiveValue::CSS_IDENT)
+        return false;
+    if (equalIgnoringCase(a->string, "linear"))
+        result->setType(CSSLinearGradient);
+    else if (equalIgnoringCase(a->string, "radial"))
+        result->setType(CSSRadialGradient);
+    else
+        return false;
+    
+    // Comma.
+    a = args->next();
+    if (!a || a->unit != Value::Operator || a->iValue != ',')
+        return false;
+    
+    // Next comes the starting point for the gradient as an x y pair.  There is no
+    // comma between the x and the y values.
+    // First X.  It can be left, right, number or percent.
+    a = args->next();
+    if (!a)
+        return false;
+    RefPtr<CSSPrimitiveValue> point = parseGradientPoint(a, true);
+    if (!point)
+        return false;
+    result->setFirstX(point.release());
+    
+    // First Y.  It can be top, bottom, number or percent.
+    a = args->next();
+    if (!a)
+        return false;
+    point = parseGradientPoint(a, false);
+    if (!point)
+        return false;
+    result->setFirstY(point.release());
+    
+    // Comma after the first point.
+    a = args->next();
+    if (!a || a->unit != Value::Operator || a->iValue != ',')
+        return false;
+            
+    // For radial gradients only, we now expect a numeric radius.
+    if (result->type() == CSSRadialGradient) {
+        a = args->next();
+        if (!a || a->unit != CSSPrimitiveValue::CSS_NUMBER)
+            return false;
+        result->setFirstRadius(new CSSPrimitiveValue(a->fValue, CSSPrimitiveValue::CSS_NUMBER));
+        
+        // Comma after the first radius.
+        a = args->next();
+        if (!a || a->unit != Value::Operator || a->iValue != ',')
+            return false;
+    }
+    
+    // Next is the ending point for the gradient as an x, y pair.
+    // Second X.  It can be left, right, number or percent.
+    a = args->next();
+    if (!a)
+        return false;
+    point = parseGradientPoint(a, true);
+    if (!point)
+        return false;
+    result->setSecondX(point.release());
+    
+    // Second Y.  It can be top, bottom, number or percent.
+    a = args->next();
+    if (!a)
+        return false;
+    point = parseGradientPoint(a, false);
+    if (!point)
+        return false;
+    result->setSecondY(point.release());
+
+    // For radial gradients only, we now expect the second radius.
+    if (result->type() == CSSRadialGradient) {
+        // Comma after the second point.
+        a = args->next();
+        if (!a || a->unit != Value::Operator || a->iValue != ',')
+            return false;
+        
+        a = args->next();
+        if (!a || a->unit != CSSPrimitiveValue::CSS_NUMBER)
+            return false;
+        result->setSecondRadius(new CSSPrimitiveValue(a->fValue, CSSPrimitiveValue::CSS_NUMBER));
+    }
+
+    // We now will accept any number of stops (0 or more).
+    a = args->next();
+    while (a) {
+        // Look for the comma before the next stop.
+        if (a->unit != Value::Operator || a->iValue != ',')
+            return false;
+        
+        // Now examine the stop itself.
+        a = args->next();
+        if (!a)
+            return false;
+        
+        // The function name needs to be one of "from", "to", or "color-stop."
+        CSSGradientColorStop stop;
+        if (!parseGradientColorStop(this, a, stop))
+            return false;
+        result->addStop(stop);
+        
+        // Advance
+        a = args->next();
+    }
+    
+    gradient = result;
+    return true;
 }
 
 class TransformOperationInfo {

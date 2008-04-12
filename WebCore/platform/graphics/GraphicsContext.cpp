@@ -27,6 +27,7 @@
 #include "GraphicsContext.h"
 
 #include "BidiResolver.h"
+#include "Generator.h"
 #include "GraphicsContextPrivate.h"
 #include "Font.h"
 #include "NotImplemented.h"
@@ -411,6 +412,13 @@ void GraphicsContext::setTextDrawingMode(int mode)
     setPlatformTextDrawingMode(mode);
 }
 
+void GraphicsContext::fillRect(const FloatRect& rect, Generator& generator)
+{
+    if (paintingDisabled())
+        return;
+    generator.fill(this, rect);
+}
+
 #if !PLATFORM(CG)
 // Implement this if you want to go ahead and push the drawing mode into your native context
 // immediately.
@@ -419,12 +427,7 @@ void GraphicsContext::setPlatformTextDrawingMode(int mode)
 }
 
 // Other platforms need to implement this.
-void GraphicsContext::clipToImageBuffer(const IntRect&, const ImageBuffer*)
-{
-    notImplemented();
-}
-
-void GraphicsContext::fillRect(const IntRect&, Gradient&)
+void GraphicsContext::clipToImageBuffer(const FloatRect&, const ImageBuffer*)
 {
     notImplemented();
 }

@@ -27,8 +27,10 @@
 #ifndef Gradient_h
 #define Gradient_h
 
+#include "Generator.h"
+
 #include "FloatPoint.h"
-#include <wtf/Noncopyable.h>
+#include "NotImplemented.h"
 #include <wtf/Vector.h>
 
 #if PLATFORM(CG)
@@ -49,11 +51,11 @@ namespace WebCore {
     class Color;
     class String;
 
-    class Gradient : public Noncopyable {
+    class Gradient : public Generator {
     public:
         Gradient(const FloatPoint& p0, const FloatPoint& p1);
         Gradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
-        ~Gradient();
+        virtual ~Gradient();
 
         void addColorStop(float, const String&);
         void addColorStop(float, const Color&);
@@ -74,6 +76,12 @@ namespace WebCore {
         };
 
         void setStopsSorted(bool s) { m_stopsSorted = s; }
+
+#if PLATFORM(CG)
+        virtual void fill(GraphicsContext*, const FloatRect&);
+#else
+        virtual void fill(GraphicsContext*, const FloatRect&) { notImplemented(); }
+#endif
 
     private:
         void platformInit() { m_gradient = 0; }

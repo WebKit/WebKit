@@ -88,10 +88,13 @@ struct FrameData : Noncopyable {
 // =================================================
 
 class BitmapImage : public Image {
+    friend class GeneratedImage;
     friend class GraphicsContext;
 public:
 #if PLATFORM(QT)
     BitmapImage(const QPixmap &pixmap, ImageObserver* = 0);
+#elif PLATFORM(CG)
+    BitmapImage(CGImageRef, ImageObserver* = 0);
 #endif
     BitmapImage(ImageObserver* = 0);
     ~BitmapImage();
@@ -129,7 +132,7 @@ public:
 
     virtual NativeImagePtr nativeImageForCurrentFrame() { return frameAtIndex(currentFrame()); }
 
-private:
+protected:
 #if PLATFORM(WIN)
     virtual void drawFrameMatchingSourceSize(GraphicsContext*, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator);
 #endif
@@ -195,6 +198,9 @@ private:
     mutable bool m_haveSize; // Whether or not our |m_size| member variable has the final overall image size yet.
     bool m_sizeAvailable; // Whether or not we can obtain the size of the first image frame yet from ImageIO.
     unsigned m_decodedSize; // The current size of all decoded frames.
+
+    mutable bool m_haveFrameCount;
+    size_t m_frameCount;
 
 #if PLATFORM(QT)
     QPixmap *m_pixmap;
