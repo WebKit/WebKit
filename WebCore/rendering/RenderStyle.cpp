@@ -134,12 +134,12 @@ void StyleCachedImage::setImageContainerSize(const IntSize& size)
 
 void StyleCachedImage::addClient(RenderObject* renderer)
 {
-    return m_image->ref(renderer);
+    return m_image->addClient(renderer);
 }
 
 void StyleCachedImage::removeClient(RenderObject* renderer)
 {
-    return m_image->deref(renderer);
+    return m_image->removeClient(renderer);
 }
 
 Image* StyleCachedImage::image(RenderObject* renderer, const IntSize&) const

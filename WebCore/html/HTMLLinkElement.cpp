@@ -52,7 +52,7 @@ HTMLLinkElement::HTMLLinkElement(Document *doc)
 HTMLLinkElement::~HTMLLinkElement()
 {
     if (m_cachedSheet) {
-        m_cachedSheet->deref(this);
+        m_cachedSheet->removeClient(this);
         if (m_loading && !isDisabled() && !isAlternate())
             document()->removePendingSheet();
     }
@@ -190,12 +190,12 @@ void HTMLLinkElement::process()
             if (m_cachedSheet) {
                 if (m_loading)
                     document()->removePendingSheet();
-                m_cachedSheet->deref(this);
+                m_cachedSheet->removeClient(this);
             }
             m_loading = true;
             m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(m_url, chset);
             if (m_cachedSheet)
-                m_cachedSheet->ref(this);
+                m_cachedSheet->addClient(this);
             else if (!isAlternate()) { // request may have been denied if stylesheet is local and document is remote.
                 m_loading = false;
                 document()->removePendingSheet();

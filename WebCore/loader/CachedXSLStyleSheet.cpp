@@ -49,9 +49,9 @@ CachedXSLStyleSheet::CachedXSLStyleSheet(const String &url)
     setAccept("text/xml, application/xml, application/xhtml+xml, text/xsl, application/rss+xml, application/atom+xml");
 }
 
-void CachedXSLStyleSheet::ref(CachedResourceClient *c)
+void CachedXSLStyleSheet::addClient(CachedResourceClient *c)
 {
-    CachedResource::ref(c);
+    CachedResource::addClient(c);
     
     if (!m_loading)
         c->setXSLStyleSheet(m_url, m_sheet);

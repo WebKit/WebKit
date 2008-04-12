@@ -2287,9 +2287,9 @@ void RenderObject::updateBackgroundImages(RenderStyle* oldStyle)
     CachedImage* newBorderImage = m_style ? m_style->borderImage().image() : 0;
     if (oldBorderImage != newBorderImage) {
         if (oldBorderImage)
-            oldBorderImage->deref(this);
+            oldBorderImage->removeClient(this);
         if (newBorderImage)
-            newBorderImage->ref(this);
+            newBorderImage->addClient(this);
     }
 }
 
@@ -2484,7 +2484,7 @@ void RenderObject::arenaDelete(RenderArena* arena, void* base)
         }
 
         if (CachedImage* borderImage = m_style->borderImage().image())
-            borderImage->deref(this);
+            borderImage->removeClient(this);
 
         m_style->deref(arena);
     }

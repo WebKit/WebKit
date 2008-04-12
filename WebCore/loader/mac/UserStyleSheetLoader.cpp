@@ -41,7 +41,7 @@ UserStyleSheetLoader::UserStyleSheetLoader(PassRefPtr<Document> document, const 
 {
     if (m_cachedSheet) {
         m_document->addPendingSheet();
-        m_cachedSheet->ref(this);
+        m_cachedSheet->addClient(this);
     }
 }
 
@@ -50,7 +50,7 @@ UserStyleSheetLoader::~UserStyleSheetLoader()
     if (m_cachedSheet) {
         if (!m_cachedSheet->isLoaded())
             m_document->removePendingSheet();
-        m_cachedSheet->deref(this);
+        m_cachedSheet->removeClient(this);
     }
 }
 

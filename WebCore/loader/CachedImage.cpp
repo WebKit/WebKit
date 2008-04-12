@@ -74,9 +74,9 @@ void CachedImage::load(DocLoader* docLoader)
         m_loading = false;
 }
 
-void CachedImage::ref(CachedResourceClient* c)
+void CachedImage::addClient(CachedResourceClient* c)
 {
-    CachedResource::ref(c);
+    CachedResource::addClient(c);
 
     if (m_image && !m_image->rect().isEmpty())
         c->imageChanged(this);

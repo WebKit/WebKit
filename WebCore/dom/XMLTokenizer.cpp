@@ -591,7 +591,7 @@ XMLTokenizer::~XMLTokenizer()
     if (m_parsingFragment && m_doc)
         m_doc->deref();
     if (m_pendingScript)
-        m_pendingScript->deref(this);
+        m_pendingScript->removeClient(this);
 #if defined(USE_QXMLSTREAM) && QT_VERSION >= 0x040400
     delete m_stream.entityResolver();
 #endif
@@ -854,7 +854,7 @@ void XMLTokenizer::endElementNs()
             const AtomicString& charset = scriptElement->getAttribute(charsetAttr);
             if ((m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, charset))) {
                 m_scriptElement = scriptElement;
-                m_pendingScript->ref(this);
+                m_pendingScript->addClient(this);
                     
                 // m_pendingScript will be 0 if script was already loaded and ref() executed it
                 if (m_pendingScript)
@@ -1418,7 +1418,7 @@ void XMLTokenizer::notifyFinished(CachedResource* finishedObj)
     String cachedScriptUrl = m_pendingScript->url();
     String scriptSource = m_pendingScript->script();
     bool errorOccurred = m_pendingScript->errorOccurred();
-    m_pendingScript->deref(this);
+    m_pendingScript->removeClient(this);
     m_pendingScript = 0;
     
     RefPtr<Element> e = m_scriptElement;

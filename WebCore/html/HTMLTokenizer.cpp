@@ -213,7 +213,7 @@ void HTMLTokenizer::reset()
     while (!pendingScripts.isEmpty()) {
       CachedScript *cs = pendingScripts.dequeue();
       ASSERT(cache()->disabled() || cs->accessCount() > 0);
-      cs->deref(this);
+      cs->removeClient(this);
     }
     
     fastFree(buffer);
@@ -465,7 +465,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
             m_state = state;
             bool savedRequestingScript = m_requestingScript;
             m_requestingScript = true;
-            cs->ref(this);
+            cs->addClient(this);
             m_requestingScript = savedRequestingScript;
             state = m_state;
             // will be 0 if script was already loaded and ref() executed it
@@ -1972,7 +1972,7 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
         // infinite recursion might happen otherwise
         String cachedScriptUrl(cs->url());
         bool errorOccurred = cs->errorOccurred();
-        cs->deref(this);
+        cs->removeClient(this);
         RefPtr<Node> n = scriptNode.release();
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING

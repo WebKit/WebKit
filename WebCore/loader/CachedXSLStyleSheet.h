@@ -43,7 +43,7 @@ namespace WebCore {
 
         const String& sheet() const { return m_sheet; }
         
-        virtual void ref(CachedResourceClient*);
+        virtual void addClient(CachedResourceClient*);
         
         virtual void setEncoding(const String&);
         virtual String encoding() const;

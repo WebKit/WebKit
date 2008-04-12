@@ -1,5 +1,95 @@
 2008-04-11  David Hyatt  <hyatt@apple.com>
 
+        Rename CachedResource's ref/deref methods to addClient/removeClient.  This matches the new
+        StyleImage class and is a more accurate description of what those methods really do.
+
+        Reviewed by olliej
+
+        * WebCore.base.exp:
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::updateIfSVGCursorIsUsed):
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource):
+        (WebCore::CSSFontFaceSource::~CSSFontFaceSource):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::~CSSImageValue):
+        (WebCore::CSSImageValue::image):
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::~CSSImportRule):
+        (WebCore::CSSImportRule::insertedIntoParent):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::~ProcessingInstruction):
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::parseStyleSheet):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::~XMLTokenizer):
+        (WebCore::XMLTokenizer::endElementNs):
+        (WebCore::XMLTokenizer::notifyFinished):
+        * html/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::CanvasPattern):
+        (WebCore::CanvasPattern::~CanvasPattern):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::~HTMLImageLoader):
+        (WebCore::HTMLImageLoader::setImage):
+        (WebCore::HTMLImageLoader::updateFromElement):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::~HTMLLinkElement):
+        (WebCore::HTMLLinkElement::process):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::~HTMLScriptElement):
+        (WebCore::HTMLScriptElement::parseMappedAttribute):
+        (WebCore::HTMLScriptElement::insertedIntoDocument):
+        (WebCore::HTMLScriptElement::removedFromDocument):
+        (WebCore::HTMLScriptElement::notifyFinished):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::reset):
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::addClient):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::addClient):
+        * loader/CachedFont.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::addClient):
+        * loader/CachedImage.h:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::addClient):
+        (WebCore::CachedResource::removeClient):
+        * loader/CachedResource.h:
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::addClient):
+        * loader/CachedScript.h:
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::addClient):
+        * loader/CachedXSLStyleSheet.h:
+        * loader/mac/UserStyleSheetLoader.cpp:
+        (UserStyleSheetLoader::UserStyleSheetLoader):
+        (UserStyleSheetLoader::~UserStyleSheetLoader):
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::setDragImage):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::~RenderImage):
+        (WebCore::RenderImage::setCachedImage):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::~RenderListMarker):
+        (WebCore::RenderListMarker::setStyle):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::updateBackgroundImages):
+        (WebCore::RenderObject::arenaDelete):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleCachedImage::addClient):
+        (WebCore::StyleCachedImage::removeClient):
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::updateFromElement):
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::~XSLImportRule):
+        (WebCore::XSLImportRule::loadSheet):
+
+2008-04-11  David Hyatt  <hyatt@apple.com>
+
         This patch adds support for CSS gradients as background images.  RenderStyles now hold a StyleImage
         RefPtr, which is a wrapper for two types of images: CachedImages (loaded from URLs) and generated images
         (patterns created on the fly such as gradients).

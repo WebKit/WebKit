@@ -53,9 +53,9 @@ CachedScript::~CachedScript()
 {
 }
 
-void CachedScript::ref(CachedResourceClient* c)
+void CachedScript::addClient(CachedResourceClient* c)
 {
-    CachedResource::ref(c);
+    CachedResource::addClient(c);
     if (!m_loading)
         c->notifyFinished(this);
 }

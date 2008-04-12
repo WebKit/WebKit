@@ -46,7 +46,7 @@ namespace WebCore {
         
         XBL::XBLDocument* document() const { return m_document; }
         
-        virtual void ref(CachedResourceClient*);
+        virtual void addClient(CachedResourceClient*);
         
         virtual void setEncoding(const String&);
         virtual String encoding() const;

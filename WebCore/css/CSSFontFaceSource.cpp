@@ -51,13 +51,13 @@ CSSFontFaceSource::CSSFontFaceSource(const String& str, CachedFont* font)
 , m_face(0)
 {
     if (m_font)
-        m_font->ref(this);
+        m_font->addClient(this);
 }
 
 CSSFontFaceSource::~CSSFontFaceSource()
 {
     if (m_font)
-        m_font->deref(this);
+        m_font->removeClient(this);
     pruneTable();
 }
 

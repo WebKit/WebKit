@@ -44,7 +44,7 @@ XSLImportRule::~XSLImportRule()
         m_styleSheet->setParent(0);
     
     if (m_cachedSheet)
-        m_cachedSheet->deref(this);
+        m_cachedSheet->removeClient(this);
 }
 
 XSLStyleSheet* XSLImportRule::parentStyleSheet() const
@@ -100,7 +100,7 @@ void XSLImportRule::loadSheet()
     m_cachedSheet = docLoader->requestXSLStyleSheet(absHref);
     
     if (m_cachedSheet) {
-        m_cachedSheet->ref(this);
+        m_cachedSheet->addClient(this);
         
         // If the imported sheet is in the cache, then setXSLStyleSheet gets called,
         // and the sheet even gets parsed (via parseString).  In this case we have

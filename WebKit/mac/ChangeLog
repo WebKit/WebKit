@@ -1,3 +1,15 @@
+2008-04-11  David Hyatt  <hyatt@apple.com>
+
+        Rename CachedResource ref/deref methods to addClient/removeClient.
+
+        Reviewed by olliej
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate dealloc]):
+        (-[WebHTMLViewPrivate finalize]):
+        (-[WebHTMLViewPrivate clear]):
+        (-[WebHTMLView setPromisedDragTIFFDataSource:WebCore::]):
+
 2008-04-07  Brady Eidson  <beidson@apple.com>
 
         Add "ENABLE_DOM_STORAGE" to keep in sync with the rest of the project

@@ -50,7 +50,7 @@ HTMLScriptElement::HTMLScriptElement(Document* doc)
 HTMLScriptElement::~HTMLScriptElement()
 {
     if (m_cachedScript)
-        m_cachedScript->deref(this);
+        m_cachedScript->removeClient(this);
 }
 
 bool HTMLScriptElement::isURLAttribute(Attribute* attr) const
@@ -84,7 +84,7 @@ void HTMLScriptElement::parseMappedAttribute(MappedAttribute* attr)
         if (!url.isEmpty()) {
             m_cachedScript = document()->docLoader()->requestScript(url, scriptCharset());
             if (m_cachedScript)
-                m_cachedScript->ref(this);
+                m_cachedScript->addClient(this);
             else
                 dispatchHTMLEvent(errorEvent, true, false);
         }
@@ -122,7 +122,7 @@ void HTMLScriptElement::insertedIntoDocument()
     if (!url.isEmpty()) {
         m_cachedScript = document()->docLoader()->requestScript(url, scriptCharset());
         if (m_cachedScript)
-            m_cachedScript->ref(this);
+            m_cachedScript->addClient(this);
         else
             dispatchHTMLEvent(errorEvent, true, false);
         return;
@@ -141,7 +141,7 @@ void HTMLScriptElement::removedFromDocument()
     HTMLElement::removedFromDocument();
 
     if (m_cachedScript) {
-        m_cachedScript->deref(this);
+        m_cachedScript->removeClient(this);
         m_cachedScript = 0;
     }
 }
@@ -165,7 +165,7 @@ void HTMLScriptElement::notifyFinished(CachedResource* o)
 
     // script evaluation may have dereffed it already
     if (m_cachedScript) {
-        m_cachedScript->deref(this);
+        m_cachedScript->removeClient(this);
         m_cachedScript = 0;
     }
 }

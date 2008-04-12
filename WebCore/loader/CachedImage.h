@@ -59,7 +59,7 @@ public:
     IntSize imageSize(float multiplier) const;  // returns the size of the complete image.
     IntRect imageRect(float multiplier) const;  // The size of the currently decoded portion of the image.
 
-    virtual void ref(CachedResourceClient*);
+    virtual void addClient(CachedResourceClient*);
     
     virtual void allReferencesRemoved();
     virtual void destroyDecodedData();

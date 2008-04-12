@@ -477,7 +477,7 @@ static NSCellStateValue kit(TriState state)
     [dataSource release];
     [highlighters release];
     if (promisedDragTIFFDataSource)
-        promisedDragTIFFDataSource->deref(promisedDataClient());
+        promisedDragTIFFDataSource->removeClient(promisedDataClient());
 
     [super dealloc];
 }
@@ -487,7 +487,7 @@ static NSCellStateValue kit(TriState state)
     ASSERT_MAIN_THREAD();
 
     if (promisedDragTIFFDataSource)
-        promisedDragTIFFDataSource->deref(promisedDataClient());
+        promisedDragTIFFDataSource->removeClient(promisedDataClient());
 
     [super finalize];
 }
@@ -502,7 +502,7 @@ static NSCellStateValue kit(TriState state)
     [dataSource release];
     [highlighters release];
     if (promisedDragTIFFDataSource)
-        promisedDragTIFFDataSource->deref(promisedDataClient());
+        promisedDragTIFFDataSource->removeClient(promisedDataClient());
 
     mouseDownEvent = nil;
     keyDownEvent = nil;
@@ -4775,10 +4775,10 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 - (void)setPromisedDragTIFFDataSource:(WebCore::CachedImage*)source
 {
     if (source)
-        source->ref(promisedDataClient());
+        source->addClient(promisedDataClient());
     
     if (_private->promisedDragTIFFDataSource)
-        _private->promisedDragTIFFDataSource->deref(promisedDataClient());
+        _private->promisedDragTIFFDataSource->removeClient(promisedDataClient());
     _private->promisedDragTIFFDataSource = source;
 }
 

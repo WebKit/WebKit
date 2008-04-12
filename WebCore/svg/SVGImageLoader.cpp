@@ -63,9 +63,9 @@ void SVGImageLoader::updateFromElement()
     if (newImage != oldImage) {
         setLoadingImage(newImage);
         if (newImage)
-            newImage->ref(this);
+            newImage->addClient(this);
         if (oldImage)
-            oldImage->deref(this);
+            oldImage->removeClient(this);
     }
 
     if (RenderImage* renderer = static_cast<RenderImage*>(imageElement->renderer()))

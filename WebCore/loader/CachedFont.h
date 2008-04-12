@@ -50,7 +50,7 @@ public:
     
     virtual void load(DocLoader* docLoader);
 
-    virtual void ref(CachedResourceClient*);
+    virtual void addClient(CachedResourceClient*);
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
     virtual void error();
 

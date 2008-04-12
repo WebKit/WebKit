@@ -44,7 +44,7 @@ namespace WebCore {
 
         const String sheetText(bool strict = true) const { return canUseSheet(strict) ? m_sheet : ""; }
 
-        virtual void ref(CachedResourceClient*);
+        virtual void addClient(CachedResourceClient*);
  
         virtual void setEncoding(const String&);
         virtual String encoding() const;

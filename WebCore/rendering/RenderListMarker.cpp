@@ -483,7 +483,7 @@ RenderListMarker::RenderListMarker(RenderListItem* item)
 RenderListMarker::~RenderListMarker()
 {
     if (m_image)
-        m_image->deref(this);
+        m_image->removeClient(this);
 }
 
 void RenderListMarker::setStyle(RenderStyle* s)
@@ -495,10 +495,10 @@ void RenderListMarker::setStyle(RenderStyle* s)
 
     if (m_image != style()->listStyleImage()) {
         if (m_image)
-            m_image->deref(this);
+            m_image->removeClient(this);
         m_image = style()->listStyleImage();
         if (m_image)
-            m_image->ref(this);
+            m_image->addClient(this);
     }
 }
 
