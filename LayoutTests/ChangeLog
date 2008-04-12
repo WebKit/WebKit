@@ -1,3 +1,11 @@
+2008-04-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - revert incorrect expected results from r31324
+
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+
 2008-04-10  Alexey Proskuryakov  <ap@webkit.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=18402

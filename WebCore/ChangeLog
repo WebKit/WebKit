@@ -1,3 +1,29 @@
+2008-04-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix a regression from r31324 which caused most Arabic text to render
+          as missing glyphs
+
+        Test: svg/W3C-SVG-1.1/fonts-glyph-02-t.svg
+
+        * svg/SVGFont.cpp:
+        (WebCore::SVGTextRunWalker::walk): Changed to always process characters
+        in logical order and therefore dispatch the callbacks with a logically-
+        ordered glyph stream. Changed the call to isCompatibleGlyph() to check
+        for compatibility only with the range of characters the candidate glyph
+        is derived from rather than with the entire lookup range. Changed to
+        mark the <missing-glyph> glyph identifier as valid, to facilitate the
+        use of invalid glyph identifiers to mark font fallback.
+        (WebCore::drawTextUsingSVGFontCallback): Changed to only append the
+        glyph identifier to a vector.
+        (WebCore::drawTextMissingGlyphCallback): Changed to only append the
+        character to a vector and append an invalid glyph identifier to the
+        glyph vector.
+        (WebCore::Font::drawTextUsingSVGFont): Moved the drawing from the
+        callbacks into this function, iterating over the glyph and fallback
+        characters vector in visual order.
+
 2008-04-11  Dirk Schulze <vbs85@gmx.de>
 
         Reviewed by eseidel.
