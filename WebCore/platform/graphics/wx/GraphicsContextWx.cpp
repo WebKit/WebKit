@@ -293,7 +293,7 @@ void GraphicsContext::drawFocusRing(const Color& color)
     notImplemented();
 }
 
-void GraphicsContext::clip(const IntRect& r)
+void GraphicsContext::clip(const FloatRect& r)
 {
     wxWindowDC* windc = dynamic_cast<wxWindowDC*>(m_data->context);
     wxPoint pos(0, 0);

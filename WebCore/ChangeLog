@@ -1,3 +1,10 @@
+2008-04-12  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Update clip to take a FloatRect.
+
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::clip):
+
 2008-04-12  David Hyatt  <hyatt@apple.com>
 
         Add gradient support to border-image (even though it's mostly just weird).
