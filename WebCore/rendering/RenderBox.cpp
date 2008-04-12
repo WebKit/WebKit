@@ -480,7 +480,7 @@ void RenderBox::imageChanged(CachedImage* image)
     if (!image || !image->canRender(style()->effectiveZoom()) || !parent() || !view())
         return;
 
-    if (isInlineFlow() || style()->borderImage().image()->data() == image) {
+    if (isInlineFlow() || style()->borderImage().image() && style()->borderImage().image()->data() == image) {
         repaint();
         return;
     }
