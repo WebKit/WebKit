@@ -14070,6 +14070,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGGlyphMap.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGGradientElement.cpp"
 				>
 			</File>
