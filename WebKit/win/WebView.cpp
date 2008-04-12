@@ -4759,9 +4759,9 @@ HRESULT STDMETHODCALLTYPE WebView::paintDocumentRectToContext(
     gc.save();
     LONG width = rect.right - rect.left;
     LONG height = rect.bottom - rect.top;
-    RECT dirtyRect = {0};
-    dirtyRect.right = width;
-    dirtyRect.bottom = height;
+    FloatRect dirtyRect;
+    dirtyRect.setWidth(width);
+    dirtyRect.setHeight(height);
     gc.clip(dirtyRect);
     gc.translate(-rect.left, -rect.top);
     frame->paint(&gc, rect);

@@ -1,3 +1,10 @@
+2008-04-12  Matt Lilek  <webkit@mattlilek.com>
+
+        Not reviewed, build fix.
+
+        * WebView.cpp:
+        (WebView::paintDocumentRectToContext):
+
 2008-04-11  Steve Falkenburg  <sfalken@apple.com>
 
         Fix caching typo.
