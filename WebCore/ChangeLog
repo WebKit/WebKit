@@ -1,3 +1,13 @@
+2008-04-11  Anders Carlsson  <andersca@apple.com>
+
+        Fix release build.
+        
+        * WebCore.base.exp:
+        
+        * loader/archive/ArchiveResource.h:
+        (WebCore::ArchiveResource::response):
+        This should be const.
+
 2008-04-11  Antti Koivisto  <antti@apple.com>
 
         Try to fix Qt build.
