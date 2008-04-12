@@ -50,7 +50,7 @@ public:
     const String& mimeType() const { return m_mimeType; }
     const String& textEncoding() const { return m_textEncoding; }
     const String& frameName() const { return m_frameName; }
-    const ResourceResponse& response();
+    const ResourceResponse& response() { return m_response; }
     
     void ignoreWhenUnarchiving() { m_shouldIgnoreWhenUnarchiving = true; }
     bool shouldIgnoreWhenUnarchiving() const { return m_shouldIgnoreWhenUnarchiving; }

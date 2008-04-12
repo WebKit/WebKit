@@ -1,3 +1,14 @@
+2008-04-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Don't create the ArchiveResource response lazily.
+        
+        * loader/archive/ArchiveResource.cpp:
+        (WebCore::ArchiveResource::ArchiveResource):
+        * loader/archive/ArchiveResource.h:
+        (WebCore::ArchiveResource::response):
+
 2008-04-11  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Mark Rowe.

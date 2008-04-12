@@ -54,6 +54,7 @@ ArchiveResource::ArchiveResource(PassRefPtr<SharedBuffer> data, const KURL& url,
     , m_mimeType(response.mimeType())
     , m_textEncoding(response.textEncodingName())
     , m_response(response)
+    , m_shouldIgnoreWhenUnarchiving(false)
 {
 }
 
@@ -63,6 +64,7 @@ ArchiveResource::ArchiveResource(PassRefPtr<SharedBuffer> data, const KURL& url,
     , m_mimeType(mimeType)
     , m_textEncoding(textEncoding)
     , m_frameName(frameName)
+    , m_response(ResourceResponse(m_url, m_mimeType, m_data ? m_data->size() : 0, m_textEncoding, String()))
     , m_shouldIgnoreWhenUnarchiving(false)
 {
 }
@@ -73,18 +75,9 @@ ArchiveResource::ArchiveResource(PassRefPtr<SharedBuffer> data, const KURL& url,
     , m_mimeType(mimeType)
     , m_textEncoding(textEncoding)
     , m_frameName(frameName)
-    , m_response(response)
+    , m_response(response.isNull() ? ResourceResponse(m_url, m_mimeType, m_data ? m_data->size() : 0, m_textEncoding, String()) : response)
     , m_shouldIgnoreWhenUnarchiving(false)
 {
-}
-
-const ResourceResponse& ArchiveResource::response()
-{
-    if (!m_response.isNull())
-        return m_response;
-    
-    m_response = ResourceResponse(m_url, m_mimeType, m_data ? m_data->size() : 0, m_textEncoding, String());
-    return m_response;
 }
 
 }
