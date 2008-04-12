@@ -371,7 +371,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
         fillRectSourceOver(m_data->cr, rect, color);
 }
 
-void GraphicsContext::clip(const IntRect& rect)
+void GraphicsContext::clip(const FloatRect& rect)
 {
     if (paintingDisabled())
         return;

@@ -1,3 +1,12 @@
+2008-04-11  Dirk Schulze <vbs85@gmx.de>
+
+        Reviewed by eseidel.
+
+        Attempt to fix Cairo build.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+
 2008-04-11  David Hyatt  <hyatt@apple.com>
 
         Rename CachedResource's ref/deref methods to addClient/removeClient.  This matches the new
