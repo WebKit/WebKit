@@ -27,6 +27,8 @@
 #if ENABLE(SVG)
 #include "SMILTime.h"
 
+#include <float.h>
+
 using namespace WebCore;
 
 const double SMILTime::unresolvedValue = DBL_MAX;

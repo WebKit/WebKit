@@ -1,3 +1,9 @@
+2008-04-11  Antti Koivisto  <antti@apple.com>
+
+        Try to fix Qt build.
+
+        * svg/animation/SMILTime.cpp:
+
 2008-04-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.
