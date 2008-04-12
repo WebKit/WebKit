@@ -23,8 +23,7 @@
 #ifndef CSSBorderImageValue_h
 #define CSSBorderImageValue_h
 
-#include "CSSImageGeneratorValue.h"
-#include "CSSImageValue.h"
+#include "CSSValue.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -40,9 +39,8 @@ public:
 
     virtual String cssText() const;
 
-    CSSImageValue* imageValue() const { return m_image->isImageValue() ? static_cast<CSSImageValue*>(m_image.get()) : 0; }
-    CSSImageGeneratorValue* generatorValue() const { return m_image->isImageGeneratorValue() ? static_cast<CSSImageGeneratorValue*>(m_image.get()) : 0; }
-
+    CSSValue* imageValue() const { return m_image.get(); }
+ 
 public:
     // The border image.
     RefPtr<CSSValue> m_image;

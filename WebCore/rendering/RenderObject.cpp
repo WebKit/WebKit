@@ -851,7 +851,7 @@ bool RenderObject::mustRepaintBackgroundOrBorder() const
     // Background is ok.  Let's check border.
     if (style()->hasBorder()) {
         // Border images are not ok.
-        CachedImage* borderImage = style()->borderImage().image();
+        StyleImage* borderImage = style()->borderImage().image();
         bool shouldPaintBorderImage = borderImage && borderImage->canRender(style()->effectiveZoom());
 
         // If the image hasn't loaded, we're still using the normal border style.
@@ -1148,7 +1148,7 @@ void RenderObject::drawBorder(GraphicsContext* graphicsContext, int x1, int y1, 
 
 bool RenderObject::paintBorderImage(GraphicsContext* graphicsContext, int tx, int ty, int w, int h, const RenderStyle* style)
 {
-    CachedImage* borderImage = style->borderImage().image();
+    StyleImage* borderImage = style->borderImage().image();
     if (!borderImage->isLoaded())
         return true; // Never paint a border image incrementally, but don't paint the fallback borders either.
 
@@ -1162,14 +1162,17 @@ bool RenderObject::paintBorderImage(GraphicsContext* graphicsContext, int tx, in
         clipped = true;
     }
 
+    // FIXME: border-image is broken with full page zooming when tiling has to happen, since the tiling function
+    // doesn't have any understanding of the zoom that is in effect on the tile.
     borderImage->setImageContainerSize(IntSize(w, h));
-    int imageWidth = borderImage->image()->width();
-    int imageHeight = borderImage->image()->height();
+    IntSize imageSize = borderImage->imageSize(1.0f);
+    int imageWidth = imageSize.width();
+    int imageHeight = imageSize.height();
 
-    int topSlice = min(imageHeight, style->borderImage().m_slices.top.calcValue(borderImage->image()->height()));
-    int bottomSlice = min(imageHeight, style->borderImage().m_slices.bottom.calcValue(borderImage->image()->height()));
-    int leftSlice = min(imageWidth, style->borderImage().m_slices.left.calcValue(borderImage->image()->width()));
-    int rightSlice = min(imageWidth, style->borderImage().m_slices.right.calcValue(borderImage->image()->width()));
+    int topSlice = min(imageHeight, style->borderImage().m_slices.top.calcValue(imageHeight));
+    int bottomSlice = min(imageHeight, style->borderImage().m_slices.bottom.calcValue(imageHeight));
+    int leftSlice = min(imageWidth, style->borderImage().m_slices.left.calcValue(imageWidth));
+    int rightSlice = min(imageWidth, style->borderImage().m_slices.right.calcValue(imageWidth));
 
     EBorderImageRule hRule = style->borderImage().horizontalRule();
     EBorderImageRule vRule = style->borderImage().verticalRule();
@@ -1181,24 +1184,27 @@ bool RenderObject::paintBorderImage(GraphicsContext* graphicsContext, int tx, in
     bool drawMiddle = (imageWidth - leftSlice - rightSlice) > 0 && (w - style->borderLeftWidth() - style->borderRightWidth()) > 0 &&
                       (imageHeight - topSlice - bottomSlice) > 0 && (h - style->borderTopWidth() - style->borderBottomWidth()) > 0;
 
+
+    Image* image = borderImage->image(this, imageSize);
+
     if (drawLeft) {
         // Paint the top and bottom left corners.
 
         // The top left corner rect is (tx, ty, leftWidth, topWidth)
         // The rect to use from within the image is obtained from our slice, and is (0, 0, leftSlice, topSlice)
         if (drawTop)
-            graphicsContext->drawImage(borderImage->image(), IntRect(tx, ty, style->borderLeftWidth(), style->borderTopWidth()),
+            graphicsContext->drawImage(image, IntRect(tx, ty, style->borderLeftWidth(), style->borderTopWidth()),
                                        IntRect(0, 0, leftSlice, topSlice));
 
         // The bottom left corner rect is (tx, ty + h - bottomWidth, leftWidth, bottomWidth)
         // The rect to use from within the image is (0, imageHeight - bottomSlice, leftSlice, botomSlice)
         if (drawBottom)
-            graphicsContext->drawImage(borderImage->image(), IntRect(tx, ty + h - style->borderBottomWidth(), style->borderLeftWidth(), style->borderBottomWidth()),
+            graphicsContext->drawImage(image, IntRect(tx, ty + h - style->borderBottomWidth(), style->borderLeftWidth(), style->borderBottomWidth()),
                                        IntRect(0, imageHeight - bottomSlice, leftSlice, bottomSlice));
 
         // Paint the left edge.
         // Have to scale and tile into the border rect.
-        graphicsContext->drawTiledImage(borderImage->image(), IntRect(tx, ty + style->borderTopWidth(), style->borderLeftWidth(),
+        graphicsContext->drawTiledImage(image, IntRect(tx, ty + style->borderTopWidth(), style->borderLeftWidth(),
                                         h - style->borderTopWidth() - style->borderBottomWidth()),
                                         IntRect(0, topSlice, leftSlice, imageHeight - topSlice - bottomSlice),
                                         Image::StretchTile, (Image::TileRule)vRule);
@@ -1209,17 +1215,17 @@ bool RenderObject::paintBorderImage(GraphicsContext* graphicsContext, int tx, in
         // The top right corner rect is (tx + w - rightWidth, ty, rightWidth, topWidth)
         // The rect to use from within the image is obtained from our slice, and is (imageWidth - rightSlice, 0, rightSlice, topSlice)
         if (drawTop)
-            graphicsContext->drawImage(borderImage->image(), IntRect(tx + w - style->borderRightWidth(), ty, style->borderRightWidth(), style->borderTopWidth()),
+            graphicsContext->drawImage(image, IntRect(tx + w - style->borderRightWidth(), ty, style->borderRightWidth(), style->borderTopWidth()),
                                        IntRect(imageWidth - rightSlice, 0, rightSlice, topSlice));
 
         // The bottom right corner rect is (tx + w - rightWidth, ty + h - bottomWidth, rightWidth, bottomWidth)
         // The rect to use from within the image is (imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, botomSlice)
         if (drawBottom)
-            graphicsContext->drawImage(borderImage->image(), IntRect(tx + w - style->borderRightWidth(), ty + h - style->borderBottomWidth(), style->borderRightWidth(), style->borderBottomWidth()),
+            graphicsContext->drawImage(image, IntRect(tx + w - style->borderRightWidth(), ty + h - style->borderBottomWidth(), style->borderRightWidth(), style->borderBottomWidth()),
                                        IntRect(imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice));
 
         // Paint the right edge.
-        graphicsContext->drawTiledImage(borderImage->image(), IntRect(tx + w - style->borderRightWidth(), ty + style->borderTopWidth(), style->borderRightWidth(),
+        graphicsContext->drawTiledImage(image, IntRect(tx + w - style->borderRightWidth(), ty + style->borderTopWidth(), style->borderRightWidth(),
                                         h - style->borderTopWidth() - style->borderBottomWidth()),
                                         IntRect(imageWidth - rightSlice, topSlice, rightSlice, imageHeight - topSlice - bottomSlice),
                                         Image::StretchTile, (Image::TileRule)vRule);
@@ -1227,20 +1233,20 @@ bool RenderObject::paintBorderImage(GraphicsContext* graphicsContext, int tx, in
 
     // Paint the top edge.
     if (drawTop)
-        graphicsContext->drawTiledImage(borderImage->image(), IntRect(tx + style->borderLeftWidth(), ty, w - style->borderLeftWidth() - style->borderRightWidth(), style->borderTopWidth()),
+        graphicsContext->drawTiledImage(image, IntRect(tx + style->borderLeftWidth(), ty, w - style->borderLeftWidth() - style->borderRightWidth(), style->borderTopWidth()),
                                         IntRect(leftSlice, 0, imageWidth - rightSlice - leftSlice, topSlice),
                                         (Image::TileRule)hRule, Image::StretchTile);
 
     // Paint the bottom edge.
     if (drawBottom)
-        graphicsContext->drawTiledImage(borderImage->image(), IntRect(tx + style->borderLeftWidth(), ty + h - style->borderBottomWidth(),
+        graphicsContext->drawTiledImage(image, IntRect(tx + style->borderLeftWidth(), ty + h - style->borderBottomWidth(),
                                         w - style->borderLeftWidth() - style->borderRightWidth(), style->borderBottomWidth()),
                                         IntRect(leftSlice, imageHeight - bottomSlice, imageWidth - rightSlice - leftSlice, bottomSlice),
                                         (Image::TileRule)hRule, Image::StretchTile);
 
     // Paint the middle.
     if (drawMiddle)
-        graphicsContext->drawTiledImage(borderImage->image(), IntRect(tx + style->borderLeftWidth(), ty + style->borderTopWidth(), w - style->borderLeftWidth() - style->borderRightWidth(),
+        graphicsContext->drawTiledImage(image, IntRect(tx + style->borderLeftWidth(), ty + style->borderTopWidth(), w - style->borderLeftWidth() - style->borderRightWidth(),
                                         h - style->borderTopWidth() - style->borderBottomWidth()),
                                         IntRect(leftSlice, topSlice, imageWidth - rightSlice - leftSlice, imageHeight - topSlice - bottomSlice),
                                         (Image::TileRule)hRule, (Image::TileRule)vRule);
@@ -1255,7 +1261,7 @@ bool RenderObject::paintBorderImage(GraphicsContext* graphicsContext, int tx, in
 void RenderObject::paintBorder(GraphicsContext* graphicsContext, int tx, int ty, int w, int h,
                                const RenderStyle* style, bool begin, bool end)
 {
-    CachedImage* borderImage = style->borderImage().image();
+    StyleImage* borderImage = style->borderImage().image();
     bool shouldPaintBackgroundImage = borderImage && borderImage->canRender(style->effectiveZoom());
     if (shouldPaintBackgroundImage)
         shouldPaintBackgroundImage = paintBorderImage(graphicsContext, tx, ty, w, h, style);
@@ -2283,8 +2289,8 @@ void RenderObject::updateBackgroundImages(RenderStyle* oldStyle)
             currNew->backgroundImage()->addClient(this);
     }
 
-    CachedImage* oldBorderImage = oldStyle ? oldStyle->borderImage().image() : 0;
-    CachedImage* newBorderImage = m_style ? m_style->borderImage().image() : 0;
+    StyleImage* oldBorderImage = oldStyle ? oldStyle->borderImage().image() : 0;
+    StyleImage* newBorderImage = m_style ? m_style->borderImage().image() : 0;
     if (oldBorderImage != newBorderImage) {
         if (oldBorderImage)
             oldBorderImage->removeClient(this);
@@ -2483,7 +2489,7 @@ void RenderObject::arenaDelete(RenderArena* arena, void* base)
                 backgroundImage->removeClient(this);
         }
 
-        if (CachedImage* borderImage = m_style->borderImage().image())
+        if (StyleImage* borderImage = m_style->borderImage().image())
             borderImage->removeClient(this);
 
         m_style->deref(arena);

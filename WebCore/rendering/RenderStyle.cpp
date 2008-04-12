@@ -122,6 +122,11 @@ bool StyleCachedImage::canRender(float multiplier) const
     return m_image->canRender(multiplier);
 }
 
+bool StyleCachedImage::isLoaded() const
+{
+    return m_image->isLoaded();
+}
+
 IntSize StyleCachedImage::imageSize(float multiplier) const
 {
     return m_image->imageSize(multiplier);

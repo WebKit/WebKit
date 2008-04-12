@@ -732,7 +732,7 @@ void InlineFlowBox::paintBoxDecorations(RenderObject::PaintInfo& paintInfo, int 
         // :first-line cannot be used to put borders on a line. Always paint borders with our
         // non-first-line style.
         if (parent() && object()->style()->hasBorder()) {
-            CachedImage* borderImage = object()->style()->borderImage().image();
+            StyleImage* borderImage = object()->style()->borderImage().image();
             bool hasBorderImage = borderImage && borderImage->canRender(styleToUse->effectiveZoom());
             if (hasBorderImage && !borderImage->isLoaded())
                 return; // Don't paint anything while we wait for the image to load.

@@ -36,16 +36,13 @@ namespace WebCore {
 
 void GeneratedImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp)
 {
-    // Generated images should never be scaled, since it was the front end's responsibility to update our size to the correct
-    // resolution.
-    ASSERT(dstRect.size() == srcRect.size());
-    ASSERT(srcRect.x() + srcRect.width() == m_size.width());
-    ASSERT(srcRect.y() + srcRect.height() == m_size.height());
-    
     context->save();
     context->setCompositeOperation(compositeOp);
     context->clip(dstRect);
-    context->translate(dstRect.x() - srcRect.x(), dstRect.y() - srcRect.y());
+    context->translate(dstRect.x(), dstRect.y());
+    if (dstRect.size() != srcRect.size())
+        context->scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
+    context->translate(-srcRect.x(), -srcRect.y());
     context->fillRect(FloatRect(FloatPoint(), m_size), *m_generator.get());
     context->restore();
 }

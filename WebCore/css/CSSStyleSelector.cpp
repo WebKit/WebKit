@@ -3817,11 +3817,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             CSSBorderImageValue* borderImage = static_cast<CSSBorderImageValue*>(value);
             
             // Set the image (this kicks off the load).
-            if (borderImage->imageValue())
-                image.m_image = borderImage->imageValue()->image(m_element->document()->docLoader());
-            else
-                return; // FIXME: Add gradient support.
-            
+            image.m_image = createStyleImage(borderImage->imageValue());
+
             // Set up a length box to represent our image slices.
             LengthBox& l = image.m_slices;
             Rect* r = borderImage->m_imageSliceRect.get();
