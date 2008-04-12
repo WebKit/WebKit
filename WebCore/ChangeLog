@@ -1,3 +1,10 @@
+2008-04-12  Dan Bernstein  <mitz@apple.com>
+
+        - Windows build fix
+
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::setDragImage):
+
 2008-04-12  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Update clip to take a FloatRect.
