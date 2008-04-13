@@ -34,6 +34,12 @@
 
 namespace WebCore {
 
+CSSImageGeneratorValue::CSSImageGeneratorValue()
+: m_accessedImage(false)
+{
+
+}
+
 CSSImageGeneratorValue::~CSSImageGeneratorValue()
 {
     deleteAllValues(m_images);
@@ -76,6 +82,15 @@ Image* CSSImageGeneratorValue::getImage(RenderObject* renderer, const IntSize& s
 void CSSImageGeneratorValue::putImage(const IntSize& size, Image* image)
 {
     m_images.add(size, image);
+}
+
+StyleGeneratedImage* CSSImageGeneratorValue::generatedImage()
+{
+    if (!m_accessedImage) {
+        m_accessedImage = true;
+        m_image = new StyleGeneratedImage(this);
+    }
+    return m_image.get();
 }
 
 } // namespace WebCore

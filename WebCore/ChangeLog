@@ -1,9 +1,39 @@
+2008-04-12  David Hyatt  <hyatt@apple.com>
+
+        Memory management cleanup for the new StyleCachedImage and StyleGeneratedImage classes.  Make the back end
+        values hold refptrs to cached front end values.  This will avoid malloc churn as RenderStyles get
+        re-resolved.
+
+        Reviewed by olliej
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::updateIfSVGCursorIsUsed):
+        (WebCore::CSSCursorImageValue::cachedImage):
+        * css/CSSCursorImageValue.h:
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::CSSImageGeneratorValue):
+        (WebCore::CSSImageGeneratorValue::generatedImage):
+        * css/CSSImageGeneratorValue.h:
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::CSSImageValue):
+        (WebCore::CSSImageValue::~CSSImageValue):
+        (WebCore::CSSImageValue::cachedImage):
+        * css/CSSImageValue.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::createStyleImage):
+        * css/CSSStyleSelector.h:
+        * rendering/RenderStyle.h:
+        (WebCore::StyleCachedImage::cachedImage):
+        (WebCore::StyleGeneratedImage::StyleGeneratedImage):
+        (WebCore::StyleGeneratedImage::data):
+
 2008-04-12  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Not reviewed, Qt build fix.
 
         * dom/XMLTokenizer.cpp:
-        (WebCore::XMLTokenizer::parseEndElement):
+       (WebCore::XMLTokenizer::parseEndElement):
         * platform/graphics/qt/GraphicsContextQt.cpp:
         (WebCore::GraphicsContext::clip):
         * platform/qt/ClipboardQt.cpp:

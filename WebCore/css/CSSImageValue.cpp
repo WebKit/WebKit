@@ -25,19 +25,18 @@
 #include "Cache.h"
 #include "CachedImage.h"
 #include "DocLoader.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
 
 CSSImageValue::CSSImageValue(const String& url, StyleBase* style)
     : CSSPrimitiveValue(url, CSS_URI)
-    , m_image(0)
     , m_accessedImage(false)
 {
 }
 
 CSSImageValue::CSSImageValue()
     : CSSPrimitiveValue(CSSValueNone)
-    , m_image(0)
     , m_accessedImage(true)
 {
 }
@@ -45,31 +44,34 @@ CSSImageValue::CSSImageValue()
 CSSImageValue::~CSSImageValue()
 {
     if (m_image)
-        m_image->removeClient(this);
+        m_image->cachedImage()->removeClient(this);
 }
 
-CachedImage* CSSImageValue::image(DocLoader* loader)
+StyleCachedImage* CSSImageValue::cachedImage(DocLoader* loader)
 {
-    return image(loader, getStringValue());
+    return cachedImage(loader, getStringValue());
 }
 
-CachedImage* CSSImageValue::image(DocLoader* loader, const String& url)
+StyleCachedImage* CSSImageValue::cachedImage(DocLoader* loader, const String& url)
 {
     if (!m_accessedImage) {
         m_accessedImage = true;
 
+        CachedImage* cachedImage = 0;
         if (loader)
-            m_image = loader->requestImage(url);
+            cachedImage = loader->requestImage(url);
         else {
             // FIXME: Should find a way to make these images sit in their own memory partition, since they are user agent images.
-            m_image = static_cast<CachedImage*>(cache()->requestResource(0, CachedResource::ImageResource, KURL(url), String()));
+            cachedImage = static_cast<CachedImage*>(cache()->requestResource(0, CachedResource::ImageResource, KURL(url), String()));
         }
 
-        if (m_image)
-            m_image->addClient(this);
+        if (cachedImage) {
+            cachedImage->addClient(this);
+            m_image = new StyleCachedImage(cachedImage);
+        }
     }
     
-    return m_image;
+    return m_image.get();
 }
 
 } // namespace WebCore

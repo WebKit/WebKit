@@ -2662,7 +2662,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                     CSSCursorImageValue* image = static_cast<CSSCursorImageValue*>(primitiveValue);
                     if (image->updateIfSVGCursorIsUsed(m_element)) // Elements with SVG cursors are not allowed to share style.
                         m_style->setUnique();
-                    m_style->addCursor(image->image(m_element->document()->docLoader()), image->hotspot());
+                    // FIXME: Temporary clumsiness to pass off a CachedImage to an API that will eventually convert to using
+                    // StyleImage.
+                    RefPtr<StyleCachedImage> styleCachedImage(image->cachedImage(m_element->document()->docLoader()));
+                    if (styleCachedImage)
+                        m_style->addCursor(styleCachedImage->cachedImage(), image->hotspot());
                 } else if (type == CSSPrimitiveValue::CSS_IDENT)
                     m_style->setCursor(*primitiveValue);
             }
@@ -3395,7 +3399,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 }
                 case CSSPrimitiveValue::CSS_URI: {
                     CSSImageValue *image = static_cast<CSSImageValue*>(val);
-                    m_style->setContent(image->image(m_element->document()->docLoader()), didSet);
+                    // FIXME: Temporary clumsiness to pass off a CachedImage to an API that will eventually convert to using
+                    // StyleImage.
+                    RefPtr<StyleCachedImage> styleCachedImage(image->cachedImage(m_element->document()->docLoader()));
+                    if (styleCachedImage)
+                        m_style->setContent(styleCachedImage->cachedImage(), didSet);
                     didSet = true;
                     break;
                 }
@@ -4639,18 +4647,12 @@ void CSSStyleSelector::mapBackgroundOrigin(BackgroundLayer* layer, CSSValue* val
     layer->setBackgroundOrigin(*primitiveValue);
 }
 
-StyleImage* CSSStyleSelector::createStyleImage(CSSValue* value)
+PassRefPtr<StyleImage> CSSStyleSelector::createStyleImage(CSSValue* value)
 {
-    // FIXME: There will be malloc churn here.  We need to convert all accesses of CSSImageValue over to
-    // StyleImage, and once that is done, we can start caching that inside the values instead.
-    if (value->isImageValue()) {
-        CachedImage* image = static_cast<CSSImageValue*>(value)->image(m_element->document()->docLoader());
-        if (image)
-            return new StyleCachedImage(image);
-        return 0;
-    }
+    if (value->isImageValue())
+        return static_cast<CSSImageValue*>(value)->cachedImage(m_element->document()->docLoader());
     if (value->isImageGeneratorValue())
-        return new StyleGeneratedImage(static_cast<CSSImageGeneratorValue*>(value));
+        return static_cast<CSSImageGeneratorValue*>(value)->generatedImage();
     return 0;
 }
 

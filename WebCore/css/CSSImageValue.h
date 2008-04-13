@@ -25,10 +25,12 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CachedResourceClient.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class DocLoader;
+class StyleCachedImage;
 
 class CSSImageValue : public CSSPrimitiveValue,
                       public CachedResourceClient {
@@ -37,14 +39,14 @@ public:
     CSSImageValue(const String& url, StyleBase*);
     virtual ~CSSImageValue();
 
-    virtual CachedImage* image(DocLoader*);
+    virtual StyleCachedImage* cachedImage(DocLoader*);
     
     virtual bool isImageValue() const { return true; }
 
 protected:
-    CachedImage* image(DocLoader*, const String& url);
+    StyleCachedImage* cachedImage(DocLoader*, const String& url);
 
-    CachedImage* m_image;
+    RefPtr<StyleCachedImage> m_image;
     bool m_accessedImage;
 };
 
