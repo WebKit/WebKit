@@ -72,7 +72,6 @@ bool canHaveChildrenForEditing(const Node* node)
            !node->hasTagName(textareaTag) &&
            !node->hasTagName(objectTag) &&
            !node->hasTagName(iframeTag) &&
-           !node->hasTagName(buttonTag) &&
            !node->hasTagName(embedTag) &&
            !node->hasTagName(appletTag) &&
            !node->hasTagName(selectTag) &&

@@ -1,5 +1,14 @@
 2008-04-13  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Jessica Kahn.
+
+        - remove duplicate condition in canHaveChildrenForEditing()
+
+        * editing/htmlediting.cpp:
+        (WebCore::canHaveChildrenForEditing):
+
+2008-04-13  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=18307
