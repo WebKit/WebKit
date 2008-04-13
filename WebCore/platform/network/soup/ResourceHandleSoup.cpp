@@ -73,7 +73,7 @@ static void fillResponseFromMessage(SoupMessage* msg, ResourceResponse* response
     g_free(uri);
     response->setMimeType(extractMIMETypeFromMediaType(contentType));
     response->setTextEncodingName(extractCharsetFromMediaType(contentType));
-    response->setExpectedContentLength(msg->response_body->length);
+    response->setExpectedContentLength(soup_message_headers_get_content_length(msg->response_headers));
     response->setHTTPStatusCode(msg->status_code);
     response->setSuggestedFilename(filenameFromHTTPContentDisposition(response->httpHeaderField("Content-Disposition")));
 }
@@ -93,20 +93,58 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
     String location = String(uri);
     g_free(uri);
     KURL newURL = KURL(handle->request().url(), location);
-            
+
     ResourceRequest request = handle->request();
     ResourceResponse response;
     request.setURL(newURL);
     fillResponseFromMessage(msg, &response);
     if (d->client())
         d->client()->willSendRequest(handle, request, response);
-    
+
     d->m_request.setURL(newURL);
+}
+
+static void gotHeadersCallback(SoupMessage* msg, gpointer data)
+{
+    if (!SOUP_STATUS_IS_SUCCESSFUL(msg->status_code))
+        return;
+
+    ResourceHandle* handle = static_cast<ResourceHandle*>(data);
+    if (!handle)
+        return;
+    ResourceHandleInternal* d = handle->getInternal();
+    if (d->m_cancelled)
+        return;
+    ResourceHandleClient* client = handle->client();
+    if (!client)
+        return;
+
+    fillResponseFromMessage(msg, &d->m_response);
+    client->didReceiveResponse(handle, d->m_response);
+    soup_message_set_flags(msg, SOUP_MESSAGE_OVERWRITE_CHUNKS);
+}
+
+static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
+{
+    if (!SOUP_STATUS_IS_SUCCESSFUL(msg->status_code))
+        return;
+
+    ResourceHandle* handle = static_cast<ResourceHandle*>(data);
+    if (!handle)
+        return;
+    ResourceHandleInternal* d = handle->getInternal();
+    if (d->m_cancelled)
+        return;
+    ResourceHandleClient* client = handle->client();
+    if (!client)
+        return;
+
+    client->didReceiveData(handle, chunk->data, chunk->length, false);
 }
 
 // Called at the end of the message, with all the necessary about the last informations.
 // Doesn't get called for redirects.
-static void dataCallback(SoupSession *session, SoupMessage* msg, gpointer data)
+static void finishedCallback(SoupSession *session, SoupMessage* msg, gpointer data)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
     // TODO: maybe we should run this code even if there's no client?
@@ -130,17 +168,18 @@ static void dataCallback(SoupSession *session, SoupMessage* msg, gpointer data)
         g_free(uri);
         client->didFail(handle, error);
         return;
+    } else if (!SOUP_STATUS_IS_SUCCESSFUL(msg->status_code)) {
+        fillResponseFromMessage(msg, &d->m_response);
+        client->didReceiveResponse(handle, d->m_response);
+
+        // WebCore might have cancelled the job in the while
+        if (d->m_cancelled)
+            return;
+
+        if (msg->response_body->data)
+            client->didReceiveData(handle, msg->response_body->data, msg->response_body->length, true);
     }
-   
-    fillResponseFromMessage(msg, &d->m_response);
-    client->didReceiveResponse(handle, d->m_response);
 
-    // WebCore might have cancelled the job in the while
-    if (d->m_cancelled)
-        return;
-
-    if (msg->response_body->data)
-        client->didReceiveData(handle, msg->response_body->data, msg->response_body->length, 0);
     client->didFinishLoading(handle);
 }
 
@@ -260,6 +299,9 @@ bool ResourceHandle::start(Frame* frame)
     msg = soup_message_new(request().httpMethod().utf8().data(), urlString.utf8().data());
     g_signal_connect(msg, "restarted", G_CALLBACK(restartedCallback), this);
 
+    g_signal_connect(msg, "got-headers", G_CALLBACK(gotHeadersCallback), this);
+    g_signal_connect(msg, "got-chunk", G_CALLBACK(gotChunkCallback), this);
+
     HTTPHeaderMap customHeaders = d->m_request.httpHeaderFields();
     if (!customHeaders.isEmpty()) {
         HTTPHeaderMap::const_iterator end = customHeaders.end();
@@ -283,7 +325,7 @@ bool ResourceHandle::start(Frame* frame)
     }
 
     d->m_msg = static_cast<SoupMessage*>(g_object_ref(msg));
-    soup_session_queue_message(session, d->m_msg, dataCallback, this);
+    soup_session_queue_message(session, d->m_msg, finishedCallback, this);
 
     return true;
 }

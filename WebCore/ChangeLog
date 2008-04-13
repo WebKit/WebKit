@@ -1,3 +1,21 @@
+2008-04-13  Dan Winship  <danw@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18391
+        return body data incrementally from libsoup backend
+
+        Fix libsoup backend to pass data to the loader incrementally
+        rather than all at once at the end.
+
+        * platform/network/soup/ResourceHandleSoup.cpp
+        (ResourceHandle::start): connect to "got-headers" and "got-chunk"
+        signals on the message
+        (gotHeadersCallback): call client->didReceiveResponse() from here
+        (gotChunkCallback): call client->didReceiveData() from here
+        (finishedCallback): renamed from dataCallback. mostly just calls
+        client->didFinishLoading() now.
+
 2008-04-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Jessica Kahn.
