@@ -1,3 +1,14 @@
+2008-04-12  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Not reviewed, Qt build fix.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::parseEndElement):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::clip):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::setDragImage):
+
 2008-04-12  David Hyatt  <hyatt@apple.com>
 
         Add support for list-style-image gradients.  Also improve the image comparisons between two RenderStyles        

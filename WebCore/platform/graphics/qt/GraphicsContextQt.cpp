@@ -517,7 +517,7 @@ PlatformPath* GraphicsContext::currentPath()
     return &m_data->currentPath;
 }
 
-void GraphicsContext::clip(const IntRect& rect)
+void GraphicsContext::clip(const FloatRect& rect)
 {
     if (paintingDisabled())
         return;
