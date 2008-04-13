@@ -471,7 +471,6 @@ String listMarkerText(EListStyleType type, int value)
 
 RenderListMarker::RenderListMarker(RenderListItem* item)
     : RenderBox(item->document())
-    , m_image(0)
     , m_listItem(item)
     , m_selectionState(SelectionNone)
 {
@@ -542,7 +541,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
             paintCustomHighlight(tx, ty, style()->highlight(), true);
 #endif
-        context->drawImage(m_image->image(), marker.location());
+        context->drawImage(m_image->image(this, marker.size()), marker.location());
         if (selectionState() != SelectionNone)
             context->fillRect(selectionRect(), selectionBackgroundColor());
         return;
@@ -655,7 +654,7 @@ void RenderListMarker::layout()
 void RenderListMarker::imageChanged(CachedImage* o)
 {
     // A list marker can't have a background or border image, so no need to call the base class method.
-    if (o != m_image)
+    if (o != m_image->data())
         return;
 
     if (m_width != m_image->imageSize(style()->effectiveZoom()).width() || m_height != m_image->imageSize(style()->effectiveZoom()).height() || m_image->errorOccurred())
@@ -670,14 +669,18 @@ void RenderListMarker::calcPrefWidths()
 
     m_text = "";
 
+    const Font& font = style()->font();
+
     if (isImage()) {
-        m_minPrefWidth = m_maxPrefWidth = m_image->image()->width();
+        // FIXME: This is a somewhat arbitrary width.  Generated images for markers really won't become particularly useful
+        // until we support the CSS3 marker pseudoclass to allow control over the width and height of the marker box.
+        int bulletWidth = font.ascent() / 2;
+        m_image->setImageContainerSize(IntSize(bulletWidth, bulletWidth));
+        m_minPrefWidth = m_maxPrefWidth = m_image->imageSize(style()->effectiveZoom()).width();
         setPrefWidthsDirty(false);
         updateMargins();
         return;
     }
-
-    const Font& font = style()->font();
 
     int width = 0;
     EListStyleType type = style()->listStyleType();

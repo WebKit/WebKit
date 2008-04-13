@@ -2752,9 +2752,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyListStyleImage:
     {
         HANDLE_INHERIT_AND_INITIAL(listStyleImage, ListStyleImage)
-        if (!primitiveValue)
-            return;
-        m_style->setListStyleImage(static_cast<CSSImageValue*>(primitiveValue)->image(m_element->document()->docLoader()));
+        m_style->setListStyleImage(createStyleImage(value));
         return;
     }
 
@@ -4643,6 +4641,8 @@ void CSSStyleSelector::mapBackgroundOrigin(BackgroundLayer* layer, CSSValue* val
 
 StyleImage* CSSStyleSelector::createStyleImage(CSSValue* value)
 {
+    // FIXME: There will be malloc churn here.  We need to convert all accesses of CSSImageValue over to
+    // StyleImage, and once that is done, we can start caching that inside the values instead.
     if (value->isImageValue()) {
         CachedImage* image = static_cast<CSSImageValue*>(value)->image(m_element->document()->docLoader());
         if (image)

@@ -148,6 +148,7 @@ public:
 
     virtual bool canRender(float multiplier) const { return true; }
     virtual bool isLoaded() const { return true; }
+    virtual bool errorOccurred() const { return false; }
     virtual IntSize imageSize(float multiplier) const = 0;
     virtual void setImageContainerSize(const IntSize&) = 0;
     virtual void addClient(RenderObject*) = 0;
@@ -173,6 +174,7 @@ public:
     
     virtual bool canRender(float multiplier) const;
     virtual bool isLoaded() const;
+    virtual bool errorOccurred() const;
     virtual IntSize imageSize(float multiplier) const;
     virtual void setImageContainerSize(const IntSize&);
     virtual void addClient(RenderObject*);
@@ -307,11 +309,7 @@ public:
     BorderImage(StyleImage* image, LengthBox slices, EBorderImageRule h, EBorderImageRule v) 
       :m_image(image), m_slices(slices), m_horizontalRule(h), m_verticalRule(v) {}
 
-    bool operator==(const BorderImage& o) const
-    {
-        return m_image == o.m_image && m_slices == o.m_slices && m_horizontalRule == o.m_horizontalRule &&
-               m_verticalRule == o.m_verticalRule;
-    }
+    bool operator==(const BorderImage& o) const;
 
     bool hasImage() const { return m_image != 0; }
     StyleImage* image() const { return m_image.get(); }
@@ -1368,7 +1366,7 @@ public:
     // make a difference currently because of padding
     Length line_height;
 
-    CachedImage *style_image;
+    RefPtr<StyleImage> list_style_image;
     RefPtr<CursorList> cursorData;
 
     Font font;
@@ -1871,7 +1869,7 @@ public:
     short counterReset() const { return visual->counterReset; }
 
     EListStyleType listStyleType() const { return static_cast<EListStyleType>(inherited_flags._list_style_type); }
-    CachedImage *listStyleImage() const { return inherited->style_image; }
+    StyleImage* listStyleImage() const { return inherited->list_style_image.get(); }
     EListStylePosition listStylePosition() const { return static_cast<EListStylePosition>(inherited_flags._list_style_position); }
 
     Length marginTop() const { return surround->margin.top; }
@@ -2104,7 +2102,7 @@ public:
     void setCounterReset(short v) {  SET_VAR(visual,counterReset,v) }
 
     void setListStyleType(EListStyleType v) { inherited_flags._list_style_type = v; }
-    void setListStyleImage(CachedImage *v) {  SET_VAR(inherited,style_image,v)}
+    void setListStyleImage(PassRefPtr<StyleImage> v) { if (inherited->list_style_image != v) inherited.access()->list_style_image = v; }
     void setListStylePosition(EListStylePosition v) { inherited_flags._list_style_position = v; }
 
     void resetMargin() { SET_VAR(surround, margin, LengthBox(Fixed)) }
@@ -2318,7 +2316,7 @@ public:
     static ECursor initialCursor() { return CURSOR_AUTO; }
     static Color initialColor() { return Color::black; }
     static StyleImage* initialBackgroundImage() { return 0; }
-    static CachedImage* initialListStyleImage() { return 0; }
+    static StyleImage* initialListStyleImage() { return 0; }
     static unsigned short initialBorderWidth() { return 3; }
     static int initialLetterWordSpacing() { return 0; }
     static Length initialSize() { return Length(); }

@@ -890,14 +890,18 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSSValueNone) {
             parsedValue = new CSSImageValue();
             valueList->next();
-        }
-        else if (value->unit == CSSPrimitiveValue::CSS_URI) {
+        } else if (value->unit == CSSPrimitiveValue::CSS_URI) {
             // ### allow string in non strict mode?
             String uri = parseURL(value->string);
             if (!uri.isEmpty()) {
                 parsedValue = new CSSImageValue(KURL(styleElement->baseURL(), uri).string(), styleElement);
                 valueList->next();
             }
+        } else if (value->unit == Value::Function && equalIgnoringCase(value->function->name, "-webkit-gradient(")) {
+            if (parseGradient(parsedValue))
+                valueList->next();
+            else
+                return false;
         }
         break;
 

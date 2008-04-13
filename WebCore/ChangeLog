@@ -1,3 +1,40 @@
+2008-04-12  David Hyatt  <hyatt@apple.com>
+
+        Add support for list-style-image gradients.  Also improve the image comparisons between two RenderStyles        
+        to not mistakenly believe that images have changed.
+
+        Reviewed by olliej
+
+        Added fast/gradients/list-item-gradient.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::createStyleImage):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::RenderListMarker):
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::imageChanged):
+        (WebCore::RenderListMarker::calcPrefWidths):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderStyle.cpp:
+        (WebCore::imagesEquivalent):
+        (WebCore::BorderImage::operator==):
+        (WebCore::StyleCachedImage::errorOccurred):
+        (WebCore::BackgroundLayer::operator==):
+        (WebCore::StyleInheritedData::StyleInheritedData):
+        (WebCore::cursorDataEquivalent):
+        (WebCore::StyleInheritedData::operator==):
+        (WebCore::RenderStyle::diff):
+        * rendering/RenderStyle.h:
+        (WebCore::StyleImage::errorOccurred):
+        (WebCore::RenderStyle::listStyleImage):
+        (WebCore::RenderStyle::setListStyleImage):
+        (WebCore::RenderStyle::initialListStyleImage):
+
 2008-04-12  Dan Bernstein  <mitz@apple.com>
 
         - Windows build fix
