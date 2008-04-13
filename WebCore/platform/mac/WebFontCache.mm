@@ -90,9 +90,9 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     int chosenWeightDeltaMagnitude = abs(chosenWeight - desiredWeight);
     int candidateWeightDeltaMagnitude = abs(candidateWeight - desiredWeight);
 
-    // If both are the same distance from the desired weight, prefer the candidate if it is further from regular.
+    // If both are the same distance from the desired weight, prefer the candidate if it is further from medium.
     if (chosenWeightDeltaMagnitude == candidateWeightDeltaMagnitude)
-        return abs(candidateWeight - 5) > abs(chosenWeight - 5);
+        return abs(candidateWeight - 6) > abs(chosenWeight - 6);
 
     // Otherwise, prefer the one closer to the desired weight.
     return candidateWeightDeltaMagnitude < chosenWeightDeltaMagnitude;

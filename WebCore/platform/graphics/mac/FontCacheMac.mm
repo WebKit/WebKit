@@ -125,12 +125,12 @@ void FontCache::platformInit()
 static int toAppKitFontWeight(FontWeight fontWeight)
 {
     static int appKitFontWeights[] = {
-        1,  // FontWeight100
-        2,  // FontWeight200
-        3,  // FontWeight300
+        2,  // FontWeight100
+        3,  // FontWeight200
+        4,  // FontWeight300
         5,  // FontWeight400
         6,  // FontWeight500
-        7,  // FontWeight600
+        8,  // FontWeight600
         9,  // FontWeight700
         10, // FontWeight800
         12, // FontWeight900

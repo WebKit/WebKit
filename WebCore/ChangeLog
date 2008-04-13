@@ -1,3 +1,20 @@
+2008-04-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=18307
+          <rdar://problem/5842546> REGRESSION (r31620): Incorrect Hiragino Kaku Gothic, font-weight:500
+
+        Test: fast/css/font-weight-1.html
+
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::toAppKitFontWeight): Adjusted the mapping to cover the AppKit
+        weight range from 2 to 12, because AppKit weight 1 never occurs. The
+        new mapping matches font-weight: n00 to ISO weight Wn.
+        * platform/mac/WebFontCache.mm:
+        (betterChoice): Changed the midpoint used when deciding between two
+        candidates that deviate from the desired weight by the same amount.
+
 2008-04-12  David Hyatt  <hyatt@apple.com>
 
         Memory management cleanup for the new StyleCachedImage and StyleGeneratedImage classes.  Make the back end
