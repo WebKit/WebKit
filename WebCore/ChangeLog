@@ -1,3 +1,11 @@
+2008-04-13  David Hyatt  <hyatt@apple.com>
+
+        Fix build bustage on the filters SVG code path (not built by default).
+
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::~SVGFEImageElement):
+        (WebCore::SVGFEImageElement::parseMappedAttribute):
+
 2008-04-13  Dan Winship  <danw@gnome.org>
 
         Reviewed by Alp Toker.

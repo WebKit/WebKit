@@ -51,7 +51,7 @@ SVGFEImageElement::~SVGFEImageElement()
 {
     delete m_filterEffect;
     if (m_cachedImage)
-        m_cachedImage->deref(this);
+        m_cachedImage->removeClient(this);
 }
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEImageElement, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio, PreserveAspectRatio, preserveAspectRatio, SVGNames::preserveAspectRatioAttr, m_preserveAspectRatio.get())
@@ -68,10 +68,10 @@ void SVGFEImageElement::parseMappedAttribute(MappedAttribute* attr)
             if (!href().startsWith("#")) {
                 // FIXME: this code needs to special-case url fragments and later look them up using getElementById instead of loading them here
                 if (m_cachedImage)
-                    m_cachedImage->deref(this);
+                    m_cachedImage->removeClient(this);
                 m_cachedImage = ownerDocument()->docLoader()->requestImage(href());
                 if (m_cachedImage)
-                    m_cachedImage->ref(this);
+                    m_cachedImage->addClient(this);
             }
             return;
         }
