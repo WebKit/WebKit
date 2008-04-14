@@ -42,6 +42,8 @@ namespace WebCore {
 
 using namespace SVGNames;
 
+static HashSet<const SVGStyledElement*>* gElementsWithInstanceUpdatesBlocked = 0;
+
 SVGStyledElement::SVGStyledElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
 {
@@ -236,6 +238,9 @@ void SVGStyledElement::childrenChanged(bool changedByParser, Node* beforeChange,
 
 void SVGStyledElement::updateElementInstance(SVGDocumentExtensions* extensions) const
 {
+    if (gElementsWithInstanceUpdatesBlocked && gElementsWithInstanceUpdatesBlocked->contains(this))
+        return;
+
     SVGStyledElement* nonConstThis = const_cast<SVGStyledElement*>(this);
     HashSet<SVGElementInstance*>* set = extensions->instancesForElement(nonConstThis);
     if (!set || set->isEmpty())
@@ -285,6 +290,19 @@ void SVGStyledElement::detach()
     SVGElement::detach();
 }
 
+void SVGStyledElement::setInstanceUpdatesBlocked(bool blockUpdates)
+{
+    if (blockUpdates) {
+        if (!gElementsWithInstanceUpdatesBlocked)
+            gElementsWithInstanceUpdatesBlocked = new HashSet<const SVGStyledElement*>;
+        gElementsWithInstanceUpdatesBlocked->add(this);
+    } else {
+        ASSERT(gElementsWithInstanceUpdatesBlocked);
+        ASSERT(gElementsWithInstanceUpdatesBlocked->contains(this));
+        gElementsWithInstanceUpdatesBlocked->remove(this);
+    }
+}
+    
 }
 
 #endif // ENABLE(SVG)

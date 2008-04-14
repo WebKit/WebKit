@@ -62,6 +62,8 @@ namespace WebCore {
 
         void invalidateResourcesInAncestorChain() const;        
         virtual void detach();
+                                 
+        void setInstanceUpdatesBlocked(bool);
         
     protected:
         virtual bool hasRelativeValues() const { return true; }

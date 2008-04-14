@@ -1,3 +1,38 @@
+2008-04-14  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Eric.
+
+        Some preparations for additive animations and animations in <use>.
+        - Disallow animation elements in instance trees.
+        - Fix buggy SVGUseElement::removeDisallowedElementsFromSubtree(), make it 
+          public and static
+        - Invoke it from SVGElementInstance::updateInstance() to clean up the instance tree
+          there as well.
+        - Add mechanism for blocking instance updates when an animation changes
+          the referenced tree.
+        
+        The added assert in SVGSMILElement::insertedIntoDocument() verifies the fixes
+        with the existing test cases.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::updateInstance):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::updateElementInstance):
+        (WebCore::SVGStyledElement::setInstanceUpdatesBlocked):
+        * svg/SVGStyledElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::isDisallowedElement):
+        (WebCore::SVGUseElement::removeDisallowedElementsFromSubtree):
+        * svg/SVGUseElement.h:
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::insertedIntoDocument):
+        (WebCore::SVGSMILElement::isSMILElement):
+        (WebCore::SVGSMILElement::connectConditions):
+        (WebCore::SVGSMILElement::disconnectConditions):
+        * svg/animation/SVGSMILElement.h:
+
 2008-04-14  Adam Roben  <aroben@apple.com>
 
         Don't let the inspected page overwrite properties of JS objects in the

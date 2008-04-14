@@ -65,6 +65,8 @@ namespace WebCore {
 
         virtual Path toClipPath() const;
 
+        static void removeDisallowedElementsFromSubtree(Node* element);
+
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
@@ -89,7 +91,6 @@ namespace WebCore {
         // Shadow tree handling
         PassRefPtr<SVGSVGElement> buildShadowTreeForSymbolTag(SVGElement* target, SVGElementInstance* targetInstance);
         void alterShadowTreeForSVGTag(SVGElement* target);
-        void removeDisallowedElementsFromSubtree(Node* element);
 
         void buildShadowTree(SVGElement* target, SVGElementInstance* targetInstance);
 

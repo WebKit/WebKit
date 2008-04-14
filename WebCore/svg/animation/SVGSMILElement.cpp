@@ -101,6 +101,11 @@ SVGSMILElement::~SVGSMILElement()
 void SVGSMILElement::insertedIntoDocument()
 {
     SVGElement::insertedIntoDocument();
+#ifndef NDEBUG
+    // Verify we are not in <use> instance tree.
+    for (Node* n = this; n; n = n->parent())
+        ASSERT(!n->isShadowNode());
+#endif
     SVGSVGElement* owner = ownerSVGElement();
     if (!owner)
         return;
@@ -265,12 +270,12 @@ bool SVGSMILElement::parseCondition(const String& value, BeginOrEnd beginOrEnd)
     return true;
 }
 
-bool SVGSMILElement::isTimingElement(Element* element)
+bool SVGSMILElement::isSMILElement(Node* node)
 {
-    if (!element)
+    if (!node)
         return false;
-    return element->hasTagName(SVGNames::setTag) || element->hasTagName(SVGNames::animateTag) || element->hasTagName(SVGNames::animateMotionTag)
-            || element->hasTagName(SVGNames::animateTransformTag) || element->hasTagName(SVGNames::animateColorTag);
+    return node->hasTagName(SVGNames::setTag) || node->hasTagName(SVGNames::animateTag) || node->hasTagName(SVGNames::animateMotionTag)
+            || node->hasTagName(SVGNames::animateTransformTag) || node->hasTagName(SVGNames::animateColorTag);
 }
     
 void SVGSMILElement::parseBeginOrEnd(const String& parseString, BeginOrEnd beginOrEnd)
@@ -361,7 +366,7 @@ void SVGSMILElement::connectConditions()
         } else if (condition.m_type == Condition::Syncbase) {
             ASSERT(!condition.m_baseID.isEmpty());
             condition.m_base = document()->getElementById(condition.m_baseID);
-            if (!isTimingElement(condition.m_base.get())) {
+            if (!isSMILElement(condition.m_base.get())) {
                 condition.m_base = 0;
                 continue;
             }
@@ -384,7 +389,7 @@ void SVGSMILElement::disconnectConditions()
             condition.m_eventListener = 0;
         } else if (condition.m_type == Condition::Syncbase) {
             if (condition.m_base) {
-                ASSERT(isTimingElement(condition.m_base.get()));
+                ASSERT(isSMILElement(condition.m_base.get()));
                 static_cast<SVGSMILElement*>(condition.m_base.get())->removeTimeDependent(this);
             }
         }

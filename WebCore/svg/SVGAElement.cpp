@@ -144,7 +144,7 @@ void SVGAElement::defaultEventHandler(Event* evt)
 #if ENABLE(SVG_ANIMATION)
             if (url.startsWith("#")) {
                 Element* targetElement = document()->getElementById(url.substring(1));
-                if (SVGSMILElement::isTimingElement(targetElement)) {
+                if (SVGSMILElement::isSMILElement(targetElement)) {
                     SVGSMILElement* timed = static_cast<SVGSMILElement*>(targetElement);
                     timed->beginByLinkActivation();
                     evt->setDefaultHandled();
