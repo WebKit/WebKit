@@ -46,7 +46,6 @@ using namespace HTMLNames;
 RenderImage::RenderImage(Node* node)
     : RenderReplaced(node, IntSize(0, 0))
     , m_cachedImage(0)
-    , m_isAnonymousImage(false)
 {
     updateAltText();
 }
@@ -59,7 +58,7 @@ RenderImage::~RenderImage()
 
 void RenderImage::setCachedImage(CachedImage* newImage)
 {
-    if (m_isAnonymousImage || m_cachedImage == newImage)
+    if (m_cachedImage == newImage)
         return;
     if (m_cachedImage)
         m_cachedImage->removeClient(this);
@@ -191,7 +190,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 
     GraphicsContext* context = paintInfo.context;
 
-    if (!m_cachedImage || errorOccurred()) {
+    if (!hasImage() || errorOccurred()) {
         if (paintInfo.phase == PaintPhaseSelection)
             return;
 
@@ -245,7 +244,11 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
                     context->drawText(textRun, IntPoint(ax, ay + ascent));
             }
         }
-    } else if (m_cachedImage && !image()->isNull()) {
+    } else if (hasImage() && cWidth > 0 && cHeight > 0) {
+        Image* img = image(cWidth, cHeight);
+        if (!img || img->isNull())
+            return;
+
 #if PLATFORM(MAC)
         if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
             paintCustomHighlight(tx - m_x, ty - m_y, style()->highlight(), true);
@@ -255,7 +258,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 
         HTMLImageElement* imageElt = (element() && element()->hasTagName(imgTag)) ? static_cast<HTMLImageElement*>(element()) : 0;
         CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
-        context->drawImage(image(), rect, compositeOperator, document()->page()->inLowQualityImageInterpolationMode());
+        context->drawImage(image(cWidth, cHeight), rect, compositeOperator, document()->page()->inLowQualityImageInterpolationMode());
     }
 }
 
@@ -336,16 +339,16 @@ bool RenderImage::isHeightSpecified() const
 
 int RenderImage::calcReplacedWidth() const
 {
-    if (m_cachedImage && m_cachedImage->imageHasRelativeWidth() && !m_cachedImage->usesImageContainerSize())
+    if (imageHasRelativeWidth())
         if (RenderObject* cb = isPositioned() ? container() : containingBlock())
-            m_cachedImage->setImageContainerSize(IntSize(cb->availableWidth(), cb->availableHeight()));
-    
+            setImageContainerSize(IntSize(cb->availableWidth(), cb->availableHeight()));
+
     int width;
     if (isWidthSpecified())
         width = calcReplacedWidthUsing(style()->width());
-    else if (m_cachedImage && m_cachedImage->usesImageContainerSize())
-        width = m_cachedImage->imageSize(style()->effectiveZoom()).width();
-    else if (m_cachedImage && m_cachedImage->imageHasRelativeWidth())
+    else if (usesImageContainerSize())
+        width = imageSize(style()->effectiveZoom()).width();
+    else if (imageHasRelativeWidth())
         width = 0; // If the image is relatively-sized, set the width to 0 until there is a set container size.
     else
         width = calcAspectRatioWidth();
@@ -361,9 +364,9 @@ int RenderImage::calcReplacedHeight() const
     int height;
     if (isHeightSpecified())
         height = calcReplacedHeightUsing(style()->height());
-    else if (m_cachedImage && m_cachedImage->usesImageContainerSize())
-        height = m_cachedImage->imageSize(style()->effectiveZoom()).height();
-    else if (m_cachedImage && m_cachedImage->imageHasRelativeHeight())
+    else if (usesImageContainerSize())
+        height = imageSize(style()->effectiveZoom()).height();
+    else if (imageHasRelativeHeight())
         height = 0; // If the image is relatively-sized, set the height to 0 until there is a set container size.
     else
         height = calcAspectRatioHeight();
@@ -379,7 +382,7 @@ int RenderImage::calcAspectRatioWidth() const
     IntSize size = intrinsicSize();
     if (!size.height())
         return 0;
-    if (!m_cachedImage || m_cachedImage->errorOccurred())
+    if (!hasImage() || errorOccurred())
         return size.width(); // Don't bother scaling.
     return RenderReplaced::calcReplacedHeight() * size.width() / size.height();
 }
@@ -389,7 +392,7 @@ int RenderImage::calcAspectRatioHeight() const
     IntSize size = intrinsicSize();
     if (!size.width())
         return 0;
-    if (!m_cachedImage || m_cachedImage->errorOccurred())
+    if (!hasImage() || errorOccurred())
         return size.height(); // Don't bother scaling.
     return RenderReplaced::calcReplacedWidth() * size.height() / size.width();
 }

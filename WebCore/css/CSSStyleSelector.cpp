@@ -2756,7 +2756,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyListStyleImage:
     {
         HANDLE_INHERIT_AND_INITIAL(listStyleImage, ListStyleImage)
-        m_style->setListStyleImage(createStyleImage(value));
+        m_style->setListStyleImage(styleImage(value));
         return;
     }
 
@@ -3375,6 +3375,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         bool didSet = false;
         for (int i = 0; i < len; i++) {
             CSSValue* item = list->itemWithoutBoundsCheck(i);
+            if (item->isImageGeneratorValue()) {
+                m_style->setContent(static_cast<CSSImageGeneratorValue*>(item)->generatedImage(), didSet);
+                didSet = true;
+            }
+            
             if (!item->isPrimitiveValue())
                 continue;
             
@@ -3398,12 +3403,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                     break;
                 }
                 case CSSPrimitiveValue::CSS_URI: {
-                    CSSImageValue *image = static_cast<CSSImageValue*>(val);
-                    // FIXME: Temporary clumsiness to pass off a CachedImage to an API that will eventually convert to using
-                    // StyleImage.
-                    RefPtr<StyleCachedImage> styleCachedImage(image->cachedImage(m_element->document()->docLoader()));
-                    if (styleCachedImage)
-                        m_style->setContent(styleCachedImage->cachedImage(), didSet);
+                    CSSImageValue* image = static_cast<CSSImageValue*>(val);
+                    m_style->setContent(image->cachedImage(m_element->document()->docLoader()), didSet);
                     didSet = true;
                     break;
                 }
@@ -3823,7 +3824,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             CSSBorderImageValue* borderImage = static_cast<CSSBorderImageValue*>(value);
             
             // Set the image (this kicks off the load).
-            image.m_image = createStyleImage(borderImage->imageValue());
+            image.m_image = styleImage(borderImage->imageValue());
 
             // Set up a length box to represent our image slices.
             LengthBox& l = image.m_slices;
@@ -4647,7 +4648,7 @@ void CSSStyleSelector::mapBackgroundOrigin(BackgroundLayer* layer, CSSValue* val
     layer->setBackgroundOrigin(*primitiveValue);
 }
 
-PassRefPtr<StyleImage> CSSStyleSelector::createStyleImage(CSSValue* value)
+StyleImage* CSSStyleSelector::styleImage(CSSValue* value)
 {
     if (value->isImageValue())
         return static_cast<CSSImageValue*>(value)->cachedImage(m_element->document()->docLoader());
@@ -4663,7 +4664,7 @@ void CSSStyleSelector::mapBackgroundImage(BackgroundLayer* layer, CSSValue* valu
         return;
     }
 
-    layer->setBackgroundImage(createStyleImage(value));
+    layer->setBackgroundImage(styleImage(value));
 }
 
 void CSSStyleSelector::mapBackgroundRepeat(BackgroundLayer* layer, CSSValue* value)

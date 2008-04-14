@@ -194,7 +194,7 @@ public:
         void applySVGProperty(int id, CSSValue*);
 #endif
 
-        PassRefPtr<StyleImage> createStyleImage(CSSValue* value);
+        StyleImage* styleImage(CSSValue* value);
         
         PseudoState checkPseudoState(Element*, bool checkVisited = true);
 

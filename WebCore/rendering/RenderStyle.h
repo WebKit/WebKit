@@ -150,11 +150,13 @@ public:
     virtual bool isLoaded() const { return true; }
     virtual bool errorOccurred() const { return false; }
     virtual IntSize imageSize(float multiplier) const = 0;
+    virtual bool imageHasRelativeWidth() const = 0;
+    virtual bool imageHasRelativeHeight() const = 0;
+    virtual bool usesImageContainerSize() const = 0;
     virtual void setImageContainerSize(const IntSize&) = 0;
     virtual void addClient(RenderObject*) = 0;
     virtual void removeClient(RenderObject*) = 0;
     virtual Image* image(RenderObject*, const IntSize&) const = 0;
-    
     virtual bool isCachedImage() const { return false; }
     virtual bool isGeneratedImage() const { return false; }
 };
@@ -178,6 +180,9 @@ public:
     virtual bool isLoaded() const;
     virtual bool errorOccurred() const;
     virtual IntSize imageSize(float multiplier) const;
+    virtual bool imageHasRelativeWidth() const;
+    virtual bool imageHasRelativeHeight() const;
+    virtual bool usesImageContainerSize() const;
     virtual void setImageContainerSize(const IntSize&);
     virtual void addClient(RenderObject*);
     virtual void removeClient(RenderObject*);
@@ -201,6 +206,9 @@ public:
     virtual PassRefPtr<CSSValue> cssValue();
 
     virtual IntSize imageSize(float multiplier) const;
+    virtual bool imageHasRelativeWidth() const { return true; }
+    virtual bool imageHasRelativeHeight() const { return true; }
+    virtual bool usesImageContainerSize() const { return true; }
     virtual void setImageContainerSize(const IntSize&);
     virtual void addClient(RenderObject*);
     virtual void removeClient(RenderObject*);
@@ -571,7 +579,7 @@ public:
     bool isBackgroundCompositeSet() const { return m_compositeSet; }
     bool isBackgroundSizeSet() const { return m_backgroundSizeSet; }
     
-    void setBackgroundImage(PassRefPtr<StyleImage> i) { m_image = i; m_imageSet = true; }
+    void setBackgroundImage(StyleImage* i) { m_image = i; m_imageSet = true; }
     void setBackgroundXPosition(const Length& l) { m_xPosition = l; m_xPosSet = true; }
     void setBackgroundYPosition(const Length& l) { m_yPosition = l; m_yPosSet = true; }
     void setBackgroundAttachment(bool b) { m_bgAttachment = b; m_attachmentSet = true; }
@@ -1139,7 +1147,7 @@ struct ContentData : Noncopyable {
 
     ContentType m_type;
     union {
-        CachedResource* m_object;
+        StyleImage* m_image;
         StringImpl* m_text;
         CounterContent* m_counter;
     } m_content;
@@ -2104,7 +2112,7 @@ public:
     void setCounterReset(short v) {  SET_VAR(visual,counterReset,v) }
 
     void setListStyleType(EListStyleType v) { inherited_flags._list_style_type = v; }
-    void setListStyleImage(PassRefPtr<StyleImage> v) { if (inherited->list_style_image != v) inherited.access()->list_style_image = v; }
+    void setListStyleImage(StyleImage* v) { if (inherited->list_style_image != v) inherited.access()->list_style_image = v; }
     void setListStylePosition(EListStylePosition v) { inherited_flags._list_style_position = v; }
 
     void resetMargin() { SET_VAR(surround, margin, LengthBox(Fixed)) }
@@ -2223,7 +2231,7 @@ public:
     bool contentDataEquivalent(const RenderStyle* otherStyle) const;
     void clearContent();
     void setContent(StringImpl*, bool add = false);
-    void setContent(CachedResource*, bool add = false);
+    void setContent(StyleImage*, bool add = false);
     void setContent(CounterContent*, bool add = false);
 
     const CounterDirectiveMap* counterDirectives() const;

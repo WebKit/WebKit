@@ -1863,7 +1863,7 @@ bool CSSParser::parseContent(int propId, bool important)
             String value = parseURL(val->string);
             parsedValue = new CSSImageValue(KURL(styleElement->baseURL(), value).string(), styleElement);
         } else if (val->unit == Value::Function) {
-            // attr(X) | counter(X [,Y]) | counters(X, Y, [,Z])
+            // attr(X) | counter(X [,Y]) | counters(X, Y, [,Z]) | -webkit-gradient(...)
             ValueList* args = val->function->args;
             if (!args)
                 return false;
@@ -1881,6 +1881,9 @@ bool CSSParser::parseContent(int propId, bool important)
             } else if (equalIgnoringCase(val->function->name, "counters(")) {
                 parsedValue = parseCounterContent(args, true);
                 if (!parsedValue)
+                    return false;
+            } else if (equalIgnoringCase(val->function->name, "-webkit-gradient(")) {
+                if (!parseGradient(parsedValue))
                     return false;
             } else
                 return false;

@@ -871,6 +871,7 @@ SOURCES += \
     rendering/RenderFrameSet.cpp \
     rendering/RenderHTMLCanvas.cpp \
     rendering/RenderImage.cpp \
+    rendering/RenderImageGeneratedContent.cpp \
     rendering/RenderInline.cpp \
     rendering/RenderLayer.cpp \
     rendering/RenderLegend.cpp \

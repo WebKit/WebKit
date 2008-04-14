@@ -1,3 +1,74 @@
+2008-04-14  David Hyatt  <hyatt@apple.com>
+
+        Add support for gradients in the CSS content property.
+
+        Reviewed by olliej
+
+        Added fast/gradients/generated-gradients.html
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseContent):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::styleImage):
+        (WebCore::CSSStyleSelector::mapBackgroundImage):
+        * css/CSSStyleSelector.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::attach):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::updateBeforeAfterContentForContainer):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage):
+        (WebCore::RenderImage::setCachedImage):
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::calcReplacedWidth):
+        (WebCore::RenderImage::calcReplacedHeight):
+        (WebCore::RenderImage::calcAspectRatioWidth):
+        (WebCore::RenderImage::calcAspectRatioHeight):
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::hasImage):
+        (WebCore::RenderImage::image):
+        (WebCore::RenderImage::errorOccurred):
+        (WebCore::RenderImage::usesImageContainerSize):
+        (WebCore::RenderImage::setImageContainerSize):
+        (WebCore::RenderImage::imageHasRelativeWidth):
+        (WebCore::RenderImage::imageHasRelativeHeight):
+        (WebCore::RenderImage::imageSize):
+        * rendering/RenderImageGeneratedContent.cpp: Added.
+        (WebCore::RenderImageGeneratedContent::RenderImageGeneratedContent):
+        (WebCore::RenderImageGeneratedContent::~RenderImageGeneratedContent):
+        (WebCore::RenderImageGeneratedContent::setStyleImage):
+        * rendering/RenderImageGeneratedContent.h: Added.
+        (WebCore::RenderImageGeneratedContent::hasImage):
+        (WebCore::RenderImageGeneratedContent::image):
+        (WebCore::RenderImageGeneratedContent::errorOccurred):
+        (WebCore::RenderImageGeneratedContent::usesImageContainerSize):
+        (WebCore::RenderImageGeneratedContent::setImageContainerSize):
+        (WebCore::RenderImageGeneratedContent::imageHasRelativeWidth):
+        (WebCore::RenderImageGeneratedContent::imageHasRelativeHeight):
+        (WebCore::RenderImageGeneratedContent::imageSize):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleCachedImage::imageHasRelativeWidth):
+        (WebCore::StyleCachedImage::imageHasRelativeHeight):
+        (WebCore::StyleCachedImage::usesImageContainerSize):
+        (WebCore::RenderStyle::contentDataEquivalent):
+        (WebCore::RenderStyle::setContent):
+        (WebCore::ContentData::clear):
+        * rendering/RenderStyle.h:
+        (WebCore::StyleGeneratedImage::imageHasRelativeWidth):
+        (WebCore::StyleGeneratedImage::imageHasRelativeHeight):
+        (WebCore::StyleGeneratedImage::usesImageContainerSize):
+        (WebCore::BackgroundLayer::setBackgroundImage):
+        (WebCore::ContentData::):
+        (WebCore::RenderStyle::setListStyleImage):
+
 2008-04-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam, but Anders too, and he was more thorough in his review

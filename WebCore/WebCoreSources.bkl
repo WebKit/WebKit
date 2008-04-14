@@ -756,6 +756,7 @@ This file contains the list of files needed to build WebCore.
         rendering/RenderFrameSet.cpp
         rendering/RenderHTMLCanvas.cpp
         rendering/RenderImage.cpp
+        rendering/RenderImageGeneratedContent.cpp
         rendering/RenderInline.cpp
         rendering/RenderLayer.cpp
         rendering/RenderLegend.cpp

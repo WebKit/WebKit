@@ -29,7 +29,7 @@
 #include "AXObjectCache.h"
 #include "Document.h"
 #include "RenderCounter.h"
-#include "RenderImage.h"
+#include "RenderImageGeneratedContent.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderTable.h"
@@ -336,18 +336,16 @@ void RenderContainer::updateBeforeAfterContentForContainer(RenderStyle::PseudoId
                 renderer = new (renderArena()) RenderTextFragment(document() /* anonymous object */, content->m_content.m_text);
                 renderer->setStyle(pseudoElementStyle);
                 break;
-            case CONTENT_OBJECT:
-                if (CachedResource* resource = content->m_content.m_object)
-                    if (resource->type() == CachedResource::ImageResource) {
-                        RenderImage* image = new (renderArena()) RenderImage(document()); // anonymous object
-                        RenderStyle* style = new (renderArena()) RenderStyle;
-                        style->inheritFrom(pseudoElementStyle);
-                        image->setStyle(style);
-                        image->setCachedImage(static_cast<CachedImage*>(resource));
-                        image->setIsAnonymousImage(true);
-                        renderer = image;
-                    }
+            case CONTENT_OBJECT: {
+                RenderImageGeneratedContent* image = new (renderArena()) RenderImageGeneratedContent(document()); // anonymous object
+                RenderStyle* style = new (renderArena()) RenderStyle;
+                style->inheritFrom(pseudoElementStyle);
+                image->setStyle(style);
+                if (StyleImage* styleImage = content->m_content.m_image)
+                    image->setStyleImage(styleImage);
+                renderer = image;
                 break;
+            }
             case CONTENT_COUNTER:
                 renderer = new (renderArena()) RenderCounter(document(), *content->m_content.m_counter);
                 renderer->setStyle(pseudoElementStyle);

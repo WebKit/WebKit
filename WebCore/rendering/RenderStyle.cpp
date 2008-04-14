@@ -153,6 +153,21 @@ IntSize StyleCachedImage::imageSize(float multiplier) const
     return m_image->imageSize(multiplier);
 }
 
+bool StyleCachedImage::imageHasRelativeWidth() const
+{
+    return m_image->imageHasRelativeWidth();
+}
+
+bool StyleCachedImage::imageHasRelativeHeight() const
+{
+    return m_image->imageHasRelativeHeight();
+}
+
+bool StyleCachedImage::usesImageContainerSize() const
+{
+    return m_image->usesImageContainerSize();
+}
+
 void StyleCachedImage::setImageContainerSize(const IntSize& size)
 {
     return m_image->setImageContainerSize(size);
@@ -1481,7 +1496,7 @@ bool RenderStyle::contentDataEquivalent(const RenderStyle* otherStyle) const
                     return false;
                 break;
             case CONTENT_OBJECT:
-                if (c1->m_content.m_object != c2->m_content.m_object)
+                if (!imagesEquivalent(c1->m_content.m_image, c2->m_content.m_image))
                     return false;
                 break;
             case CONTENT_COUNTER:
@@ -1503,9 +1518,9 @@ void RenderStyle::clearContent()
         rareNonInheritedData->m_content->clear();
 }
 
-void RenderStyle::setContent(CachedResource* o, bool add)
+void RenderStyle::setContent(StyleImage* image, bool add)
 {
-    if (!o)
+    if (!image)
         return; // The object is null. Nothing to do. Just bail.
 
     ContentData*& content = rareNonInheritedData.access()->m_content;
@@ -1526,8 +1541,9 @@ void RenderStyle::setContent(CachedResource* o, bool add)
     else
         content = newContentData;
 
-    newContentData->m_content.m_object = o;
+    newContentData->m_content.m_image = image;
     newContentData->m_type = CONTENT_OBJECT;
+    image->ref();
 }
 
 void RenderStyle::setContent(StringImpl* s, bool add)
@@ -1602,7 +1618,9 @@ void ContentData::clear()
 {
     switch (m_type) {
         case CONTENT_NONE:
+            break;
         case CONTENT_OBJECT:
+            m_content.m_image->deref();
             break;
         case CONTENT_TEXT:
             m_content.m_text->deref();

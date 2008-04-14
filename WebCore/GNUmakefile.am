@@ -937,6 +937,7 @@ webcore_sources += \
 	WebCore/rendering/RenderFrameSet.cpp \
 	WebCore/rendering/RenderHTMLCanvas.cpp \
 	WebCore/rendering/RenderImage.cpp \
+	WebCore/rendering/RenderImageGeneratedContent.cpp \
 	WebCore/rendering/RenderInline.cpp \
 	WebCore/rendering/RenderLayer.cpp \
 	WebCore/rendering/RenderLegend.cpp \
