@@ -156,6 +156,14 @@ public:
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
     virtual void imageChanged(CachedImage*);
 
+    // Called when a positioned object moves but doesn't change size.  A simplified layout is done
+    // that just updates the object's position.
+    virtual void layoutDoingPositionedMovementOnly() {
+        calcWidth();
+        calcHeight();
+        setNeedsLayout(false);
+    }
+
 protected:
     void paintBackground(const PaintInfo&, const Color&, const BackgroundLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);
     void paintBackgrounds(const PaintInfo&, const Color&, const BackgroundLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);

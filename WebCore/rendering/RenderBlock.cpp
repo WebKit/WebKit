@@ -1172,7 +1172,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         // Make sure we layout children if they need it.
         // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
         // an auto value.  Add a method to determine this, so that we can avoid the relayout.
-        if (relayoutChildren || (child->style()->height().isPercent() || child->style()->minHeight().isPercent() || child->style()->maxHeight().isPercent()))
+        if (relayoutChildren || ((child->style()->height().isPercent() || child->style()->minHeight().isPercent() || child->style()->maxHeight().isPercent()) && !isRenderView()))
             child->setChildNeedsLayout(true, false);
 
         // If relayoutChildren is set and we have percentage padding, we also need to invalidate the child's pref widths.
@@ -1330,8 +1330,12 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
             // If relayoutChildren is set and we have percentage padding, we also need to invalidate the child's pref widths.
             if (relayoutChildren && (r->style()->paddingLeft().isPercent() || r->style()->paddingRight().isPercent()))
                 r->setPrefWidthsDirty(true, false);
-                    
-            r->layoutIfNeeded();
+            
+            // We don't have to do a full layout.  We just have to update our position.
+            if (r->needsPositionedMovementLayoutOnly())
+                r->layoutDoingPositionedMovementOnly();
+            else
+                r->layoutIfNeeded();
         }
     }
 }

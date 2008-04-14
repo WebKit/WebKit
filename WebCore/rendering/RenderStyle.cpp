@@ -1232,6 +1232,29 @@ bool RenderStyle::inheritedNotEqual(RenderStyle* other) const
            rareInheritedData != other->rareInheritedData;
 }
 
+bool positionedObjectMoved(const LengthBox& a, const LengthBox& b)
+{
+    // If any unit types are different, then we can't guarantee
+    // that this was just a movement.
+    if (a.left.type() != b.left.type() ||
+        a.right.type() != b.right.type() ||
+        a.top.type() != b.top.type() ||
+        a.bottom.type() != b.bottom.type())
+        return false;
+        
+    // Only one unit can be non-auto in the horizontal direction and
+    // in the vertical direction.  Otherwise the adjustment of values
+    // is changing the size of the box.
+    if (!a.left.isIntrinsicOrAuto() && !a.right.isIntrinsicOrAuto())
+        return false;
+    if (!a.top.isIntrinsicOrAuto() && !a.bottom.isIntrinsicOrAuto())
+        return false;
+        
+    // One of the units is fixed or percent in both directions and stayed
+    // that way in the new style.  Therefore all we are doing is moving.
+    return true;
+}
+
 /*
   compares two styles. The result gives an idea of the action that
   needs to be taken when replacing the old style with a new one.
@@ -1398,8 +1421,12 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
 
     // Make sure these left/top/right/bottom checks stay below all layout checks and above
     // all visible checks.
-    if (other->position() != StaticPosition) {
+    if (position() != StaticPosition) {
         if (surround->offset != other->surround->offset) {
+             // Optimize for the case where a positioned layer is moving but not changing size.
+            if (position() == AbsolutePosition && positionedObjectMoved(surround->offset, other->surround->offset))
+                return LayoutPositionedMovementOnly;
+
             // FIXME: We will need to do a bit of work in RenderObject/Box::setStyle before we
             // can stop doing a layout when relative positioned objects move.  In particular, we'll need
             // to update scrolling positions and figure out how to do a repaint properly of the updated layer.
@@ -1407,8 +1434,7 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
             //    return RepaintLayer;
             //else
                 return Layout;
-        }
-        else if (box->z_index != other->box->z_index || box->z_auto != other->box->z_auto ||
+        } else if (box->z_index != other->box->z_index || box->z_auto != other->box->z_auto ||
                  visual->clip != other->visual->clip || visual->hasClip != other->visual->hasClip)
             return RepaintLayer;
     }
