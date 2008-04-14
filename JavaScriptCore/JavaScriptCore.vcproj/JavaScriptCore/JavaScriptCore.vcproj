@@ -679,11 +679,36 @@
 					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\grammar.cpp"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							DisableSpecificWarnings="4701"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							DisableSpecificWarnings="4701"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							DisableSpecificWarnings="4701"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release_PGO|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
 							WholeProgramOptimization="false"
+							DisableSpecificWarnings="4701"
 						/>
 					</FileConfiguration>
 				</File>

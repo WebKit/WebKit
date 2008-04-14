@@ -1,3 +1,14 @@
+2008-04-14  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        Rubberstamped by Alexey Proskuryakov.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Disable
+        the "potentially uninitialized variable" warning for grammar.cpp, as
+        it seems to be incorrect. yylval gets initialized by the lexer, but
+        MSVC doesn't seem to understand this.
+
 2008-04-11  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.
