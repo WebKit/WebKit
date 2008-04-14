@@ -1,3 +1,16 @@
+2008-04-14  Adam Roben  <aroben@apple.com>
+
+        Don't store objects from the Inspector on CSSStyleRules from the
+        inspected page
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.update): Don't store raw CSSStyleRules
+        from the inspected page in the styleRules array. Instead, always use a
+        wrapper object. This will keep us from setting Inspector objects as
+        properties of inspected objects.
+
 2008-04-14  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a regression where clicking a resource URL in the Console would not

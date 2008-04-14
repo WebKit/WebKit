@@ -99,8 +99,10 @@ WebInspector.StylesSidebarPane.prototype = {
             var matchedStyleRules = node.ownerDocument.defaultView.getMatchedCSSRules(node, "", !Preferences.showUserAgentStyles);
             if (matchedStyleRules) {
                 // Add rules in reverse order to match the cascade order.
-                for (var i = (matchedStyleRules.length - 1); i >= 0; --i)
-                    styleRules.push(matchedStyleRules[i]);
+                for (var i = (matchedStyleRules.length - 1); i >= 0; --i) {
+                    var rule = matchedStyleRules[i];
+                    styleRules.push({ style: rule.style, selectorText: rule.selectorText });
+                }
             }
         }
 
