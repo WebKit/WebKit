@@ -1,3 +1,13 @@
+2008-04-13  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by David.
+
+        More SVG filters build fix.
+
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::SVGFEImage::~SVGFEImage):
+        (WebCore::SVGFEImage::setCachedImage):
+
 2008-04-13  David Hyatt  <hyatt@apple.com>
 
         Fix build bustage on the filters SVG code path (not built by default).
