@@ -93,6 +93,10 @@ public:
         m_wasScrolledByUser = false;
         lastLayoutSize = IntSize();
         lastZoomFactor = 1.0f;
+        m_deferringRepaints = 0;
+        m_repaintCount = 0;
+        m_repaintRect = IntRect();
+        m_repaintRects.clear();
     }
 
     bool doFullRepaint;
@@ -133,6 +137,11 @@ public:
 
     bool m_wasScrolledByUser;
     bool m_inProgrammaticScroll;
+    
+    unsigned m_deferringRepaints;
+    unsigned m_repaintCount;
+    IntRect m_repaintRect;
+    Vector<IntRect> m_repaintRects;
 };
 
 FrameView::FrameView(Frame* frame)
@@ -466,9 +475,13 @@ void FrameView::layout(bool allowSubtree)
 
     if (subtree)
         root->view()->pushLayoutState(root);
+        
     d->midLayout = true;
+    beginDeferredRepaints();
     root->layout();
+    endDeferredRepaints();
     d->midLayout = false;
+
     if (subtree)
         root->view()->popLayoutState();
     d->layoutRoot = 0;
@@ -481,8 +494,10 @@ void FrameView::layout(bool allowSubtree)
         adjustViewSize();
 
     // Now update the positions of all layers.
+    beginDeferredRepaints();
     layer->updateLayerPositions(d->doFullRepaint);
-
+    endDeferredRepaints();
+    
     d->layoutCount++;
 
 #if PLATFORM(MAC)
@@ -693,9 +708,57 @@ void FrameView::setContentsPos(int x, int y)
     d->m_inProgrammaticScroll = wasInProgrammaticScroll;
 }
 
+const unsigned cRepaintRectUnionThreshold = 25;
+
 void FrameView::repaintRectangle(const IntRect& r, bool immediate)
 {
+    if (d->m_deferringRepaints && !immediate) {
+        IntRect visibleContent = enclosingIntRect(visibleContentRect());
+        visibleContent.intersect(r);
+        if (!visibleContent.isEmpty()) {
+            d->m_repaintCount++;
+            d->m_repaintRect.unite(r);
+            if (d->m_repaintCount == cRepaintRectUnionThreshold)
+                d->m_repaintRects.clear();
+            else if (d->m_repaintCount < cRepaintRectUnionThreshold)
+                d->m_repaintRects.append(r);
+        }
+        return;
+    }
+    
     updateContents(r, immediate);
+}
+
+void FrameView::beginDeferredRepaints()
+{
+    Page* page = m_frame->page();
+    if (page->mainFrame() != m_frame)
+        return page->mainFrame()->view()->beginDeferredRepaints();
+
+    d->m_deferringRepaints++;
+    d->m_repaintCount = 0;
+    d->m_repaintRect = IntRect();
+    d->m_repaintRects.clear();
+}
+
+
+void FrameView::endDeferredRepaints()
+{
+    Page* page = m_frame->page();
+    if (page->mainFrame() != m_frame)
+        return page->mainFrame()->view()->endDeferredRepaints();
+
+    ASSERT(d->m_deferringRepaints > 0);
+    if (--d->m_deferringRepaints == 0) {
+        if (d->m_repaintCount >= cRepaintRectUnionThreshold)
+            repaintRectangle(d->m_repaintRect, false);
+        else {
+            unsigned size = d->m_repaintRects.size();
+            for (unsigned i = 0; i < size; i++)
+                repaintRectangle(d->m_repaintRects[i], false);
+            d->m_repaintRects.clear();
+        }
+    }
 }
 
 void FrameView::layoutTimerFired(Timer<FrameView>*)

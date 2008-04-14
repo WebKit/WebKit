@@ -1,3 +1,19 @@
+2008-04-13  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 18466, WebKit exhibits slow performance on Opera DHTML benchmark.  Improve layout's rect
+        invalidation code to only invalidate a single unioned rect once enough individual little rects have
+        been detected.
+
+        Reviewed by olliej
+
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::reset):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::repaintRectangle):
+        (WebCore::FrameView::beginDeferredRepaints):
+        (WebCore::FrameView::endDeferredRepaints):
+        * page/FrameView.h:
+
 2008-04-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.
