@@ -355,9 +355,9 @@ WebInspector.Console.prototype = {
 
     _format: function(output)
     {
-        var type = Object.type(output);
+        var type = Object.type(output, InspectorController.inspectedWindow());
         if (type === "object") {
-            if (output instanceof Node)
+            if (output instanceof InspectorController.inspectedWindow().Node)
                 type = "node";
         }
 

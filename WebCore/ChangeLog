@@ -1,5 +1,25 @@
 2008-04-14  Adam Roben  <aroben@apple.com>
 
+        Use prototypes/constructors from the inspected page when operating on
+        objects from the inspected page
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/Console.js:
+        (WebInspector.ConsolePanel._format): Use the Node constructor from the
+        inspected Window with the instanceof operator.
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.DOMNodeTreeElement._attributeEditingCommitted): Use the
+        Element prototype from the inspected Window instead of the Element
+        prototype from this Window.
+        * page/inspector/inspector.js:
+        (WebInspector.performSearch): Ditto for Document prototype.
+        * page/inspector/utilities.js:
+        (Object.type): Now takes an optional Window parameter that is used to
+        find the built-in constructors.
+
+2008-04-14  Adam Roben  <aroben@apple.com>
+
         Don't store objects from the Inspector on CSSStyleRules from the
         inspected page
 

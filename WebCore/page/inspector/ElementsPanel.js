@@ -1114,11 +1114,11 @@ WebInspector.DOMNodeTreeElement.prototype = {
         for (var i = 0; i < parseElement.attributes.length; ++i) {
             var attr = parseElement.attributes[i];
             foundOriginalAttribute = foundOriginalAttribute || attr.name === attributeName;
-            Element.prototype.setAttribute.call(this.representedObject, attr.name, attr.value);
+            InspectorController.inspectedWindow().Element.prototype.setAttribute.call(this.representedObject, attr.name, attr.value);
         }
 
         if (!foundOriginalAttribute)
-            Element.prototype.removeAttribute.call(this.representedObject, attributeName);
+            InspectorController.inspectedWindow().Element.prototype.removeAttribute.call(this.representedObject, attributeName);
 
         this._updateTitle();
         this.treeOutline.panel._focusedNodeChanged(true);

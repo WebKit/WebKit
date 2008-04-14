@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-Object.type = function(obj)
+Object.type = function(obj, win)
 {
     if (obj === null)
         return "null";
@@ -35,19 +35,21 @@ Object.type = function(obj)
     if (type !== "object" && type !== "function")
         return type;
 
-    if (obj instanceof String)
+    win = win || window;
+
+    if (obj instanceof win.String)
         return "string";
-    if (obj instanceof Array)
+    if (obj instanceof win.Array)
         return "array";
-    if (obj instanceof Boolean)
+    if (obj instanceof win.Boolean)
         return "boolean";
-    if (obj instanceof Number)
+    if (obj instanceof win.Number)
         return "number";
-    if (obj instanceof Date)
+    if (obj instanceof win.Date)
         return "date";
-    if (obj instanceof RegExp)
+    if (obj instanceof win.RegExp)
         return "regexp";
-    if (obj instanceof Error)
+    if (obj instanceof win.Error)
         return "error";
     return type;
 }
