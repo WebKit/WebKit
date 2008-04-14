@@ -1,3 +1,25 @@
+2008-04-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam, but Anders too, and he was more thorough in his review
+        and thats the only reason Sam beat him
+
+        Swap the Page and SecurityOrigin arguments when creating a StorageArea.
+
+        SecurityOrigin is really the primary identifying characteristic of a StorageArea,
+        and StorageAreas that represent LocalStorage won't have an owner Page.
+
+        * storage/SessionStorage.cpp:
+        (WebCore::SessionStorage::copy):
+        (WebCore::SessionStorage::storageArea):
+
+        * storage/StorageArea.cpp:
+        (WebCore::StorageArea::create):
+        (WebCore::StorageArea::StorageArea):
+        (WebCore::StorageArea::copy):
+        (WebCore::StorageArea::dispatchStorageEvent): Null check m_page here, as in the future
+          it might be null
+        * storage/StorageArea.h:
+
 2008-04-14  Timothy Hatcher  <timothy@apple.com>
 
         Add support for changing the sort order of the resources. The two sorting

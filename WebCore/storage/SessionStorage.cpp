@@ -47,7 +47,7 @@ PassRefPtr<SessionStorage> SessionStorage::copy(Page* newPage)
     
     StorageAreaMap::iterator end = m_storageAreaMap.end();
     for (StorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i)
-        newSession->m_storageAreaMap.set(i->first, i->second->copy(newPage, i->first.get()));
+        newSession->m_storageAreaMap.set(i->first, i->second->copy(i->first.get(), newPage));
         
     return newSession.release();
 }
@@ -58,7 +58,7 @@ PassRefPtr<StorageArea> SessionStorage::storageArea(SecurityOrigin* origin)
     if (storageArea = m_storageAreaMap.get(origin))
         return storageArea.release();
         
-    storageArea = StorageArea::create(m_page, origin);
+    storageArea = StorageArea::create(origin, m_page);
     m_storageAreaMap.set(origin, storageArea);
     return storageArea.release();
 }

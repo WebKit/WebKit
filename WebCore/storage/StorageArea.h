@@ -43,8 +43,8 @@ namespace WebCore {
     public:
         virtual ~StorageArea();
         
-        static PassRefPtr<StorageArea> create(Page*, SecurityOrigin*);
-        PassRefPtr<StorageArea> copy(Page*, SecurityOrigin*);
+        static PassRefPtr<StorageArea> create(SecurityOrigin*, Page*);
+        PassRefPtr<StorageArea> copy(SecurityOrigin*, Page*);
         
         unsigned length() const;
         String key(unsigned index, ExceptionCode&) const;
@@ -55,8 +55,8 @@ namespace WebCore {
         bool contains(const String& key) const;
 
     private:
-        StorageArea(Page*, SecurityOrigin*);
-        StorageArea(Page*, SecurityOrigin*, PassRefPtr<StorageMap>);
+        StorageArea(SecurityOrigin*, Page*);
+        StorageArea(SecurityOrigin*, Page*, PassRefPtr<StorageMap>);
         
         void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
         
