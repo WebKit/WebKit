@@ -262,9 +262,13 @@ WebInspector.ResourcesPanel.prototype = {
 
         var percentages = this.calculator.computeBarGraphPercentages(resource);
 
-        var barElement = resource._resourcesTreeElement.barElement;
-        barElement.style.left = percentages.start + "%";
-        barElement.style.right = (100 - percentages.end) + "%";
+        var barLeftElement = resource._resourcesTreeElement.barLeftElement;
+        barLeftElement.style.left = percentages.start + "%";
+        barLeftElement.style.right = (100 - percentages.end) + "%";
+        
+        var barRightElement = resource._resourcesTreeElement.barRightElement;
+        barRightElement.style.left = percentages.middle + "%";
+        barRightElement.style.right = (100 - percentages.end) + "%";
     },
 
     showResource: function(resource)
@@ -885,7 +889,7 @@ WebInspector.ResourceCalculator.prototype = {
 
     computeBarGraphPercentages: function(resource)
     {
-        return {start: 0, end: (this._value(resource) / this.boundarySpan) * 100};
+        return {start: 0, middle: 0, end: (this._value(resource) / this.boundarySpan) * 100};
     },
 
     get boundarySpan()
@@ -990,13 +994,18 @@ WebInspector.ResourceTransferTimeCalculator.prototype = {
             var start = ((resource.startTime - this.minimumBoundary) / this.boundarySpan) * 100;
         else
             var start = 100;
-
+        
+        if (resource.responseReceivedTime !== -1)
+            var middle = ((resource.responseReceivedTime - this.minimumBoundary) / this.boundarySpan) * 100;
+        else
+            var middle = 100;
+        
         if (resource.endTime !== -1)
             var end = ((resource.endTime - this.minimumBoundary) / this.boundarySpan) * 100;
         else
             var end = 100;
 
-        return {start: start, end: end};
+        return {start: start, middle: middle, end: end};
     },
 
     updateBoundries: function(resource)
@@ -1057,9 +1066,13 @@ WebInspector.ResourceSidebarTreeElement = function(resource)
     this.barAreaElement.className = "resources-graph-bar-area";
     this.graphSideElement.appendChild(this.barAreaElement);
 
-    this.barElement = document.createElement("div");
-    this.barElement.className = "resources-graph-bar";
-    this.barAreaElement.appendChild(this.barElement);
+    this.barLeftElement = document.createElement("div");
+    this.barLeftElement.className = "resources-graph-bar waiting";
+    this.barAreaElement.appendChild(this.barLeftElement);
+    
+    this.barRightElement = document.createElement("div");
+    this.barRightElement.className = "resources-graph-bar";
+    this.barAreaElement.appendChild(this.barRightElement);
 }
 
 WebInspector.ResourceSidebarTreeElement.prototype = {

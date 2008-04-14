@@ -1390,8 +1390,12 @@ body.inactive .sidebar {
     border-width: 6px 7px 6px 7px;
     height: 13px;
     min-width: 14px;
-    opacity: 0.8;
+    opacity: 0.65;
     -webkit-border-image: url(Images/timelinePillGray.png) 6 7 6 7;
+}
+
+.resources-graph-bar.waiting {
+    opacity: 0.35;
 }
 
 .resource-sidebar-tree-item.resources-category-documents .resources-graph-bar {

@@ -502,6 +502,10 @@ WebInspector.Resource.prototype = {
 
 WebInspector.Resource.CompareByTime = function(a, b)
 {
+    if (a.responseReceivedTime < b.responseReceivedTime)
+        return -1;
+    if (a.responseReceivedTime > b.responseReceivedTime)
+        return 1;
     if (a.startTime < b.startTime)
         return -1;
     if (a.startTime > b.startTime)

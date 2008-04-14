@@ -1,3 +1,14 @@
+2008-04-14  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+        
+        - Fix https://bugs.webkit.org/show_bug.cgi?id=14258
+        Response time vs. download time should be shown in the network profile
+
+        * page/inspector/Resource.js: Change the sorting function to sort by response received time.
+        * page/inspector/ResourcesPanel.js: Hook up the existing infrastructure to two bars instead of one; one for the total time, one for the time post-response.
+        * page/inspector/inspector.css: Add a new rule to make the waiting bar have a lower opacity, and change the total bar opacity to handle the overlap
+
 2008-04-14  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Ap.
