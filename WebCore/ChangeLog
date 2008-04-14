@@ -1,5 +1,24 @@
 2008-04-14  Timothy Hatcher  <timothy@apple.com>
 
+        Add support for changing the sort order of the resources. The two sorting
+        methods supported current are Time and Size.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Images/statusbarMenuButton.png: Added.
+        * page/inspector/Images/statusbarMenuButtonSelected.png: Added.
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel): Create the status bar menu button and
+        setup the event listener to call _changeSortingFunction. Each option in
+        the select references a sorting function.
+        (WebInspector.ResourcesPanel.get statusBarItems): Add the sorting menu to the
+        items returned.
+        (WebInspector.ResourcesPanel._changeSortingFunction): Set the sorting function
+        to the selected option's function in the sorting menu.
+        * page/inspector/inspector.css: Added CSS rules for select elements in status bars.
+
+2008-04-14  Timothy Hatcher  <timothy@apple.com>
+
         Add support for toggling between small and large resource rows
         in the Resources panel.
 

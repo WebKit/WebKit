@@ -210,6 +210,24 @@ button.status-bar-item:active {
     background-position: 32px 0;
 }
 
+select.status-bar-item {
+    min-width: 48px;
+    border-width: 0 17px 0 2px;
+    outline: none;
+    padding: 0 2px 0 6px;
+    font-weight: bold;
+    color: rgb(48, 48, 48);
+    text-shadow: rgba(255, 255, 255, 0.75) 0 1px 0;
+    -webkit-border-image: url(Images/statusbarMenuButton.png) 0 17 0 2;
+    -webkit-border-radius: 0;
+    -webkit-appearance: none;
+}
+
+select.status-bar-item:active {
+    color: black;
+    -webkit-border-image: url(Images/statusbarMenuButtonSelected.png) 0 17 0 2;
+}
+
 #dock-status-bar-item {
     background-image: url(Images/dockButtons.png);
 }

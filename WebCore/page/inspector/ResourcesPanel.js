@@ -109,6 +109,20 @@ WebInspector.ResourcesPanel = function()
     this.largerResourcesButton.title = WebInspector.UIString("Use large resource rows.");
     this.largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
 
+    this.sortingSelectElement = document.createElement("select");
+    this.sortingSelectElement.className = "status-bar-item";
+    this.sortingSelectElement.addEventListener("change", this._changeSortingFunction.bind(this), false);
+
+    var sortingOption = document.createElement("option");
+    sortingOption.label = WebInspector.UIString("Sort by Time");
+    sortingOption.sortingFunction = WebInspector.ResourceSidebarTreeElement.CompareByTime;
+    this.sortingSelectElement.appendChild(sortingOption);
+
+    sortingOption = document.createElement("option");
+    sortingOption.label = WebInspector.UIString("Sort by Size");
+    sortingOption.sortingFunction = WebInspector.ResourceSidebarTreeElement.CompareByDescendingSize;
+    this.sortingSelectElement.appendChild(sortingOption);
+
     this.sortingFunction = WebInspector.ResourceSidebarTreeElement.CompareByTime;
 
     this.reset();
@@ -126,7 +140,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.largerResourcesButton];
+        return [this.largerResourcesButton, this.sortingSelectElement];
     },
 
     show: function()
@@ -813,6 +827,12 @@ WebInspector.ResourcesPanel.prototype = {
             this.resourcesTreeElement._childrenListNode.addStyleClass("small");
             this.largerResourcesButton.removeStyleClass("toggled-on");
         }
+    },
+
+    _changeSortingFunction: function()
+    {
+        var selectedOption = this.sortingSelectElement[this.sortingSelectElement.selectedIndex];
+        this.sortingFunction = selectedOption.sortingFunction;
     },
 
     _createResourceView: function(resource)
