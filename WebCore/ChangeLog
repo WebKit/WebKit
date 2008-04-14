@@ -1,3 +1,12 @@
+2008-04-13  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Oliver Hunt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18239
+        [Gtk] Build breaks if SVG is enabled but SVG Fonts disabled
+
+        * svg/SVGAltGlyphElement.idl: Add SVG_FONTS in Conditional
+
 2008-04-13  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by David.
