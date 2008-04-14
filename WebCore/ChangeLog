@@ -1,3 +1,16 @@
+2008-04-14  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18230
+        tspan in link not working
+
+        Implement SVG Errata: "The 'a' element may contain any
+        element that its parent may contain, except itself."
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::childShouldCreateRenderer):
+
 2008-04-13  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 18466, WebKit exhibits slow performance on Opera DHTML benchmark.  Improve layout's rect

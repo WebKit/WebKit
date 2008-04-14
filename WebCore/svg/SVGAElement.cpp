@@ -201,8 +201,12 @@ bool SVGAElement::isKeyboardFocusable(KeyboardEvent* event) const
 
 bool SVGAElement::childShouldCreateRenderer(Node* child) const
 {
-    if (static_cast<SVGElement*>(parent())->isTextContent())
-        return child->isTextNode();
+    // http://www.w3.org/2003/01/REC-SVG11-20030114-errata#linking-text-environment
+    // The 'a' element may contain any element that its parent may contain, except itself.
+    if (child->hasTagName(SVGNames::aTag))
+        return false;
+    if (parent() && parent()->isSVGElement())
+        return static_cast<SVGElement*>(parent())->childShouldCreateRenderer(child);
 
     return SVGElement::childShouldCreateRenderer(child);
 }

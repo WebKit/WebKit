@@ -1,3 +1,14 @@
+2008-04-14  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=18230
+        tspan in link not working
+
+        * platform/mac/svg/custom/text-linking-expected.txt: Added.
+        * svg/custom/text-linking.svg: Added.
+
 2008-04-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
