@@ -72,7 +72,7 @@
 #if PLATFORM(WIN)
 // Currently, Apple's Windows port uses a mixture of native and pthreads functions in FastMalloc.
 // To ensure that thread-specific data is properly destroyed, we need to end each thread with pthread_exit().
-#include <pthreads.h>
+#include <pthread.h>
 #endif
 
 namespace WTF {
