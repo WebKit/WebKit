@@ -1,3 +1,21 @@
+2008-04-14  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18411
+        Enable Page caching and create FrameViews on the fly
+
+        Create the FrameView on the fly and cache pages
+
+        - Keep a copy of the GtkAdjustment to be able to reuse it for the
+          FrameViews
+        - Do not initially create a FrameView and update the WebKit code to
+          cope with not having a view.
+        - Cache seven pages by default.
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::setGtkAdjustments):
+
 2008-04-14  David Hyatt  <hyatt@apple.com>
 
         Add a new optimized layout path for positioned objects that move.  Also avoid always marking the <html>

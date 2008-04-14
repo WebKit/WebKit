@@ -114,6 +114,10 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
     Page* page = core(webView);
     page->contextMenuController()->clearContextMenu();
     Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
+
+    if (!focusedFrame->view())
+        return FALSE;
+
     focusedFrame->view()->setCursor(pointerCursor());
     bool handledEvent = focusedFrame->eventHandler()->sendContextMenuEvent(event);
     if (!handledEvent)
@@ -151,6 +155,9 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
     // The context menu event was generated from the keyboard, so show the context menu by the current selection.
     Page* page = core(WEBKIT_WEB_VIEW(widget));
     FrameView* view = page->mainFrame()->view();
+    if (!view)
+        return FALSE;    
+
     Position start = page->mainFrame()->selectionController()->selection().start();
     Position end = page->mainFrame()->selectionController()->selection().end();
 
@@ -251,7 +258,7 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
     cairo_t* cr = gdk_cairo_create(event->window);
     GraphicsContext ctx(cr);
     ctx.setGdkExposeEvent(event);
-    if (frame->renderer()) {
+    if (frame->renderer() && frame->view()) {
         frame->view()->layoutIfNeededRecursive();
 
         if (priv->transparent) {
@@ -274,6 +281,9 @@ static gboolean webkit_web_view_key_press_event(GtkWidget* widget, GdkEventKey* 
 
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
     PlatformKeyboardEvent keyboardEvent(event);
+
+    if (!frame->view())
+        return FALSE;
 
     if (frame->eventHandler()->keyEvent(keyboardEvent))
         return TRUE;
@@ -317,6 +327,9 @@ static gboolean webkit_web_view_key_release_event(GtkWidget* widget, GdkEventKey
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
 
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    if (!frame->view())
+        return FALSE;
+
     PlatformKeyboardEvent keyboardEvent(event);
 
     if (frame->eventHandler()->keyEvent(keyboardEvent))
@@ -338,6 +351,9 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
     if (event->button == 3)
         return webkit_web_view_forward_context_menu_event(webView, PlatformMouseEvent(event));
 
+    if (!frame->view())
+        return FALSE;
+
     return frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
 }
 
@@ -356,6 +372,9 @@ static gboolean webkit_web_view_button_release_event(GtkWidget* widget, GdkEvent
 #endif
     }
 
+    if (!focusedFrame->view())
+        return FALSE;
+
     return focusedFrame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
 }
 
@@ -364,6 +383,9 @@ static gboolean webkit_web_view_motion_event(GtkWidget* widget, GdkEventMotion* 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
 
     Frame* frame = core(webView)->mainFrame();
+    if (!frame->view())
+        return FALSE;
+
     return frame->eventHandler()->mouseMoved(PlatformMouseEvent(event));
 }
 
@@ -372,6 +394,9 @@ static gboolean webkit_web_view_scroll_event(GtkWidget* widget, GdkEventScroll* 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
 
     Frame* frame = core(webView)->mainFrame();
+    if (!frame->view())
+        return FALSE;
+
     PlatformWheelEvent wheelEvent(event);
     return frame->eventHandler()->handleWheelEvent(wheelEvent);
 }
@@ -383,6 +408,9 @@ static void webkit_web_view_size_allocate(GtkWidget* widget, GtkAllocation* allo
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
 
     Frame* frame = core(webView)->mainFrame();
+    if (!frame->view())
+        return;
+
     frame->view()->resize(allocation->width, allocation->height);
     frame->forceLayout();
     frame->view()->adjustViewSize();
@@ -438,6 +466,25 @@ static void webkit_web_view_realize(GtkWidget* widget)
 static void webkit_web_view_set_scroll_adjustments(WebKitWebView* webView, GtkAdjustment* hadj, GtkAdjustment* vadj)
 {
     FrameView* view = core(webkit_web_view_get_main_frame(webView))->view();
+
+    if (hadj)
+        g_object_ref(hadj);
+    if (vadj)
+        g_object_ref(vadj);
+
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    if (priv->horizontalAdjustment)
+        g_object_unref(priv->horizontalAdjustment);
+    if (priv->verticalAdjustment)
+        g_object_unref(priv->verticalAdjustment);
+
+    priv->horizontalAdjustment = hadj;
+    priv->verticalAdjustment = vadj;
+
+    if (!view)
+        return;
+
     view->setGtkAdjustments(hadj, vadj);
 }
 
@@ -631,6 +678,10 @@ static void webkit_web_view_finalize(GObject* object)
     core(priv->mainFrame)->loader()->detachChildren();
     delete priv->corePage;
 
+    if (priv->horizontalAdjustment)
+        g_object_unref(priv->horizontalAdjustment);
+    if (priv->verticalAdjustment)
+        g_object_unref(priv->verticalAdjustment);
     g_object_unref(priv->backForwardList);
     g_object_unref(priv->webSettings);
     g_object_unref(priv->mainFrame);
@@ -1247,6 +1298,19 @@ static void webkit_web_view_init(WebKitWebView* webView)
 
     priv->imContext = gtk_im_multicontext_new();
     priv->corePage = new Page(new WebKit::ChromeClient(webView), new WebKit::ContextMenuClient, new WebKit::EditorClient(webView), new WebKit::DragClient, new WebKit::InspectorClient);
+
+    priv->horizontalAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    priv->verticalAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+
+#if GLIB_CHECK_VERSION(2,10,0)
+    g_object_ref_sink(priv->horizontalAdjustment);
+    g_object_ref_sink(priv->verticalAdjustment);
+#else
+    g_object_ref(priv->horizontalAdjustment);
+    gtk_object_sink(GTK_OBJECT(priv->horizontalAdjustment));
+    g_object_ref(priv->verticalAdjustment);
+    gtk_object_sink(GTK_OBJECT(priv->verticalAdjustment));
+#endif
 
     GTK_WIDGET_SET_FLAGS(webView, GTK_CAN_FOCUS);
     priv->mainFrame = WEBKIT_WEB_FRAME(webkit_web_frame_new(webView));

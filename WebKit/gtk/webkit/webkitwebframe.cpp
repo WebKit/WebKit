@@ -217,17 +217,10 @@ WebKitWebFrame* webkit_web_frame_new(WebKitWebView* webView)
     WebKitWebFramePrivate* priv = frame->priv;
     WebKitWebViewPrivate* viewPriv = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
 
+    priv->webView = webView;
     priv->client = new WebKit::FrameLoaderClient(frame);
     priv->coreFrame = new Frame(viewPriv->corePage, 0, priv->client);
-
-    FrameView* frameView = new FrameView(priv->coreFrame.get());
-    frameView->setContainingWindow(GTK_WIDGET(webView));
-    frameView->setGtkAdjustments(GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)),
-                                 GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)));
-    priv->coreFrame->setView(frameView);
-    frameView->deref();
     priv->coreFrame->init();
-    priv->webView = webView;
 
     return frame;
 }
@@ -238,15 +231,10 @@ WebKitWebFrame* webkit_web_frame_init_with_web_view(WebKitWebView* webView, HTML
     WebKitWebFramePrivate* priv = frame->priv;
     WebKitWebViewPrivate* viewPriv = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
 
+    priv->webView = webView;
     priv->client = new WebKit::FrameLoaderClient(frame);
     priv->coreFrame = new Frame(viewPriv->corePage, element, priv->client);
-
-    FrameView* frameView = new FrameView(priv->coreFrame.get());
-    frameView->setContainingWindow(GTK_WIDGET(webView));
-    priv->coreFrame->setView(frameView);
-    frameView->deref();
     priv->coreFrame->init();
-    priv->webView = webView;
 
     return frame;
 }
@@ -488,7 +476,7 @@ gchar* webkit_web_frame_get_inner_text(WebKitWebFrame* frame)
 
     FrameView* view = coreFrame->view();
 
-    if (view->layoutPending())
+    if (view && view->layoutPending())
         view->layout();
 
     Element* documentElement = coreFrame->document()->documentElement();

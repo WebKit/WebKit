@@ -25,6 +25,7 @@
 #include "FrameLoaderClientGtk.h"
 #include "Logging.h"
 #include "NotImplemented.h"
+#include "PageCache.h"
 #include "Pasteboard.h"
 #include "PasteboardHelperGtk.h"
 #include <kjs/InitializeThreading.h>
@@ -92,6 +93,9 @@ void webkit_init()
 
     KJS::initializeThreading();
     WebCore::InitializeLoggingChannelsIfNecessary();
+
+    // FIXME: Expose this with an API
+    WebCore::pageCache()->setCapacity(7);
 
 #if ENABLE(DATABASE)
     // FIXME: It should be possible for client applications to override this default location

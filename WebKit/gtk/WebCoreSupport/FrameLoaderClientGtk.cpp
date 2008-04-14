@@ -35,6 +35,7 @@
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "PluginDatabase.h"
+#include "RenderPart.h"
 #include "ResourceRequest.h"
 #include "CString.h"
 #include "ProgressTracker.h"
@@ -283,19 +284,6 @@ PassRefPtr<Frame> FrameLoaderClient::createFrame(const KURL& url, const String& 
     // The frame's onload handler may have removed it from the document.
     if (!childFrame->tree()->parent())
         return 0;
-
-    // Propagate the marginwidth/height and scrolling modes to the view.
-    if (ownerElement->hasTagName(HTMLNames::frameTag) || ownerElement->hasTagName(HTMLNames::iframeTag)) {
-        HTMLFrameElement* frameElt = static_cast<HTMLFrameElement*>(ownerElement);
-        if (frameElt->scrollingMode() == ScrollbarAlwaysOff)
-            childFrame->view()->setScrollbarsMode(ScrollbarAlwaysOff);
-        int marginWidth = frameElt->getMarginWidth();
-        int marginHeight = frameElt->getMarginHeight();
-        if (marginWidth != -1)
-            childFrame->view()->setMarginWidth(marginWidth);
-        if (marginHeight != -1)
-            childFrame->view()->setMarginHeight(marginHeight);
-    }
 
     return childFrame.release();
 }
@@ -708,8 +696,7 @@ bool FrameLoaderClient::shouldFallBack(const ResourceError&)
 
 bool FrameLoaderClient::canCachePage() const
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 Frame* FrameLoaderClient::dispatchCreatePage()
@@ -740,17 +727,57 @@ void FrameLoaderClient::updateGlobalHistory(const KURL&)
 
 void FrameLoaderClient::savePlatformDataToCachedPage(CachedPage*)
 {
-    notImplemented();
 }
 
 void FrameLoaderClient::transitionToCommittedFromCachedPage(CachedPage*)
 {
-    notImplemented();
 }
 
 void FrameLoaderClient::transitionToCommittedForNewPage()
 {
-    notImplemented();
+    Frame* frame = core(m_frame);
+    ASSERT(frame);
+
+    Page* page = frame->page();
+    ASSERT(page);
+
+    WebKitWebView* containingWindow = getViewFromFrame(m_frame);
+    bool isMainFrame = frame == page->mainFrame();
+    frame->setView(0);
+
+    FrameView* frameView;
+    if (isMainFrame) {
+        IntSize size = IntSize(GTK_WIDGET(containingWindow)->allocation.width,
+                               GTK_WIDGET(containingWindow)->allocation.height);
+        frameView = new FrameView(frame, size);
+        WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(containingWindow);
+        frameView->setGtkAdjustments(priv->horizontalAdjustment, priv->verticalAdjustment);
+    } else
+        frameView = new FrameView(frame);
+
+    frame->setView(frameView);
+    // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
+    frameView->deref();
+    frameView->setContainingWindow(GTK_WIDGET(containingWindow));
+
+    if (frame->ownerRenderer())
+        frame->ownerRenderer()->setWidget(frameView);
+
+    if (!frame->ownerElement())
+        return;
+
+    HTMLFrameOwnerElement* ownerElement = frame->ownerElement();
+    if (ownerElement->hasTagName(HTMLNames::frameTag) || ownerElement->hasTagName(HTMLNames::iframeTag)) {
+        HTMLFrameElement* frameElt = static_cast<HTMLFrameElement*>(ownerElement);
+        if (frameElt->scrollingMode() == ScrollbarAlwaysOff)
+            frameView->setScrollbarsMode(ScrollbarAlwaysOff);
+        int marginWidth = frameElt->getMarginWidth();
+        int marginHeight = frameElt->getMarginHeight();
+        if (marginWidth != -1)
+            frameView->setMarginWidth(marginWidth);
+        if (marginHeight != -1)
+            frameView->setMarginHeight(marginHeight);
+    }
 }
 
 }
