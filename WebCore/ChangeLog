@@ -1,3 +1,23 @@
+2008-04-14  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for toggling between small and large resource rows
+        in the Resources panel.
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/InspectorLocalizedStrings.js: Added new tooltip string.
+        * page/inspector/Images/largerResourcesButtons.png: Added.
+        * page/inspector/Images/resourceDocumentIconSmall.png: Added.
+        * page/inspector/Images/resourcePlainIconSmall.png: Added.
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel): Create the status bar button and
+        setup the event listener to call _toggleLargerResources.
+        (WebInspector.ResourcesPanel.get statusBarItems): Return the status bar button.
+        (WebInspector.ResourcesPanel._toggleLargerResources): Toggle the class names
+        for the resources children list and the status bar button.
+        * page/inspector/inspector.css: New style rules for small resources
+        and the status bar item.
+
 2008-04-14  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler

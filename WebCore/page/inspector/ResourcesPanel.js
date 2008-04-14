@@ -103,6 +103,12 @@ WebInspector.ResourcesPanel = function()
 
     this.resourcesTreeElement.expand();
 
+    this.largerResourcesButton = document.createElement("button");
+    this.largerResourcesButton.id = "resources-larger-resources-status-bar-item";
+    this.largerResourcesButton.className = "status-bar-item toggled-on";
+    this.largerResourcesButton.title = WebInspector.UIString("Use large resource rows.");
+    this.largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
+
     this.sortingFunction = WebInspector.ResourceSidebarTreeElement.CompareByTime;
 
     this.reset();
@@ -116,6 +122,11 @@ WebInspector.ResourcesPanel.prototype = {
     get toolbarItemLabel()
     {
         return WebInspector.UIString("Resources");
+    },
+
+    get statusBarItems()
+    {
+        return [this.largerResourcesButton];
     },
 
     show: function()
@@ -788,6 +799,20 @@ WebInspector.ResourcesPanel.prototype = {
         this.closeVisibleResource();
         this.calculator = treeElement.calculator;
         this.containerElement.scrollTop = 0;
+    },
+
+    _toggleLargerResources: function()
+    {
+        if (!this.resourcesTreeElement._childrenListNode)
+            return;
+
+        if (this.resourcesTreeElement._childrenListNode.hasStyleClass("small")) {
+            this.resourcesTreeElement._childrenListNode.removeStyleClass("small");
+            this.largerResourcesButton.addStyleClass("toggled-on");
+        } else {
+            this.resourcesTreeElement._childrenListNode.addStyleClass("small");
+            this.largerResourcesButton.removeStyleClass("toggled-on");
+        }
     },
 
     _createResourceView: function(resource)
