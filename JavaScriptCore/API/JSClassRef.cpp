@@ -117,12 +117,16 @@ PassRefPtr<OpaqueJSClass> OpaqueJSClass::create(const JSClassDefinition* definit
         JSClassDefinition protoDefinition = kJSClassDefinitionEmpty;
         protoDefinition.staticFunctions = staticFunctions;
         protoDefinition.finalize = clearReferenceToPrototype;
-        OpaqueJSClass* protoClass = new OpaqueJSClass(&protoDefinition, 0);
+        
+        // We are supposed to use JSClassRetain/Release but since we know that we currently have
+        // the only reference to this class object we cheat and use a RefPtr instead.
+        RefPtr<OpaqueJSClass> protoClass = adoptRef(new OpaqueJSClass(&protoDefinition, 0));
 
         // remove functions from the original class
         JSClassDefinition objectDefinition = *definition;
         objectDefinition.staticFunctions = 0;
-        return adoptRef(new OpaqueJSClass(&objectDefinition, protoClass));
+
+        return adoptRef(new OpaqueJSClass(&objectDefinition, protoClass.get()));
     }
 
     return adoptRef(new OpaqueJSClass(definition, 0));
