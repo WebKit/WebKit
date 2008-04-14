@@ -606,7 +606,8 @@ static NSMutableArray* convertToNSArray(const Vector<RefPtr<AccessibilityObject>
     
     // The Cocoa accessibility API wants the lower-left corner.
     NSPoint point = NSMakePoint(rect.x(), rect.bottom());
-    if (FrameView* frameView = m_object->frameViewIfRenderView()) {
+    FrameView* frameView = m_object->documentFrameView();
+    if (frameView) {
         NSView* view = frameView->documentView();
         point = [[view window] convertBaseToScreen: [view convertPoint: point toView:nil]];
     }
