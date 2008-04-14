@@ -1,3 +1,27 @@
+2008-04-14  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17917
+        Bug 17917: Cookie support for HTTP soup backend
+
+        Initial implementation of cookies for the http soup backend.
+
+        Moved CookieJarGtk to CookieJarSoup in network/soup and left the original
+        one as CookieJarCurl in network/curl.
+
+        * GNUmakefile.am:
+        * platform/CookieJar.h:
+        * platform/network/curl/CookieJarCurl.cpp: Renamed from WebCore/platform/gtk/CookieJarGtk.cpp.
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        * platform/network/soup/CookieJarSoup.cpp: Added.
+        (WebCore::getCookieJar):
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::start):
+
 2008-04-14  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Alp Toker.

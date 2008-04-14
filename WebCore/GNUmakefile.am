@@ -990,7 +990,6 @@ webkitgtk_sources += \
 	WebCore/page/gtk/FrameGtk.cpp \
 	WebCore/page/gtk/DragControllerGtk.cpp \
 	WebCore/platform/gtk/ClipboardGtk.cpp \
-	WebCore/platform/gtk/CookieJarGtk.cpp \
 	WebCore/platform/gtk/CursorGtk.cpp \
 	WebCore/platform/gtk/ContextMenuGtk.cpp \
 	WebCore/platform/gtk/ContextMenuItemGtk.cpp \
@@ -1052,6 +1051,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/platform/network/curl
 
 webcore_sources += \
+	WebCore/platform/network/curl/CookieJarCurl.cpp \
 	WebCore/platform/network/curl/ResourceHandleCurl.cpp \
 	WebCore/platform/network/curl/ResourceHandleManager.cpp
 
@@ -1063,6 +1063,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/platform/network/soup
 
 webcore_sources += \
+	WebCore/platform/network/soup/CookieJarSoup.cpp \
 	WebCore/platform/network/soup/ResourceHandleSoup.cpp
 endif
 

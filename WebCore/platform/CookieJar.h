@@ -26,6 +26,10 @@
 #ifndef CookieJar_h
 #define CookieJar_h
 
+#if USE(SOUP)
+#include <libsoup/soup.h>
+#endif
+
 namespace WebCore {
 
     class KURL;
@@ -35,7 +39,9 @@ namespace WebCore {
     String cookies(const Document* document, const KURL&);
     void setCookies(Document* document, const KURL&, const KURL& policyBaseURL, const String&);
     bool cookiesEnabled(const Document* document);
-
+#if USE(SOUP)
+    SoupCookieJar* getCookieJar(void);
+#endif
 }
 
 #endif

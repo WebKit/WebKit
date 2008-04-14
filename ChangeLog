@@ -1,3 +1,14 @@
+2008-04-14  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17917
+        Bug 17917: Cookie support for HTTP soup backend
+
+        Bumped the libsoup required version to 2.23 for cookie support.
+
+        * configure.ac:
+
 2008-04-11  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Anders Carlsson.

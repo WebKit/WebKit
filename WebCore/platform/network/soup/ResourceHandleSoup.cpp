@@ -32,6 +32,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
+#include "CookieJar.h"
 
 #include <libsoup/soup.h>
 #include <libsoup/soup-message.h>
@@ -285,6 +286,9 @@ bool ResourceHandle::start(Frame* frame)
 
     if (!session) {
         session = soup_session_async_new();
+
+        soup_session_add_feature(session, SOUP_SESSION_FEATURE(getCookieJar()));
+
         const char* soup_debug = g_getenv("WEBKIT_SOUP_LOGGING");
         if (soup_debug) {
             int soup_debug_level = atoi(soup_debug);
