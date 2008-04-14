@@ -64,9 +64,16 @@
 #include "Threading.h"
 
 #include "MainThread.h"
+#include <process.h>
 #include <windows.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
+
+#if PLATFORM(WIN)
+// Currently, Apple's Windows port uses a mixture of native and pthreads functions in FastMalloc.
+// To ensure that thread-specific data is properly destroyed, we need to end each thread with pthread_exit().
+#include <pthreads.h>
+#endif
 
 namespace WTF {
 
@@ -74,20 +81,21 @@ Mutex* atomicallyInitializedStaticMutex;
 
 static ThreadIdentifier mainThreadIdentifier;
 
-void initializeThreading()
-{
-    if (!atomicallyInitializedStaticMutex) {
-        atomicallyInitializedStaticMutex = new Mutex;
-        wtf_random_init();
-        initializeMainThread();
-        mainThreadIdentifier = currentThread();
-    }
-}
-
 static Mutex& threadMapMutex()
 {
     static Mutex mutex;
     return mutex;
+}
+
+void initializeThreading()
+{
+    if (!atomicallyInitializedStaticMutex) {
+        atomicallyInitializedStaticMutex = new Mutex;
+        threadMapMutex();
+        wtf_random_init();
+        initializeMainThread();
+        mainThreadIdentifier = currentThread();
+    }
 }
 
 static HashMap<DWORD, HANDLE>& threadMap()
@@ -115,14 +123,36 @@ static void clearThreadHandleForIdentifier(ThreadIdentifier id)
     threadMap().remove(id);
 }
 
+struct ThreadFunctionInvocation {
+    ThreadFunctionInvocation(ThreadFunction function, void* data) : function(function), data(data) {}
+
+    ThreadFunction function;
+    void* data;
+};
+
+static unsigned __stdcall wtfThreadEntryPoint(void* param)
+{
+    ThreadFunctionInvocation invocation = *static_cast<ThreadFunctionInvocation*>(param);
+    delete static_cast<ThreadFunctionInvocation*>(param);
+
+    void* result = invocation.function(invocation.data);
+
+#if PLATFORM(WIN)
+    // pthreads-win32 knows how to work with threads created with Win32 or CRT functions, so it's OK to mix APIs.
+    pthread_exit(result);
+#endif
+
+    return reinterpret_cast<unsigned>(result);
+}
+
 ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
 {
-    DWORD threadIdentifier = 0;
+    unsigned threadIdentifier = 0;
     ThreadIdentifier threadID = 0;
-    HANDLE hEvent = ::CreateEvent(0, FALSE, FALSE, 0);
-    HANDLE threadHandle = ::CreateThread(0, 0, (LPTHREAD_START_ROUTINE)entryPoint, data, 0, &threadIdentifier);
+    ThreadFunctionInvocation* invocation = new ThreadFunctionInvocation(entryPoint, data);
+    HANDLE threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(0, 0, wtfThreadEntryPoint, invocation, 0, &threadIdentifier));
     if (!threadHandle) {
-        LOG_ERROR("Failed to create thread at entry point %p with data %p", entryPoint, data);
+        LOG_ERROR("Failed to create thread at entry point %p with data %p: %ld", entryPoint, data, errno);
         return 0;
     }
 

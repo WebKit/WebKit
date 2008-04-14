@@ -1,5 +1,20 @@
 2008-04-14  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18488
+        FastMalloc doesn't release thread-specific data on Windows
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::threadMapMutex): (WTF::initializeThreading): Call threadMapMutex once to initialize the static safely.
+        (WTF::ThreadFunctionInvocation::ThreadFunctionInvocation): Added a structure to wrap thread entry point and arguments.
+        (WTF::wtfThreadEntryPoint): Make sure to end all WTF threads with pthread_exit(), to give pthreads-win32 a chance to call
+        destructors of thread-specific data.
+        (WTF::createThread): Use _beginthreadex instead of CreateThread, because MSDN says so. Also removed a call to CreateEvent,
+        for which I could see no reason at all.
+
+2008-04-14  Alexey Proskuryakov  <ap@webkit.org>
+
         Touched a file to make JavaScriptCore.vcproj rebuild.
 
         * wtf/MathExtras.h:
