@@ -1,3 +1,12 @@
+2008-04-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
+        Build fix for +SVG_ANIMATION -SVG_FOREIGN_OBJECT build, no tests.
+
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::hasValidTarget):
+
 2008-04-13  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Oliver Hunt.
