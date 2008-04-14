@@ -1,5 +1,173 @@
 2008-04-14  Adam Roben  <aroben@apple.com>
 
+        Don't let the inspected page overwrite properties of JS objects in the
+        Inspector
+
+        <https://bugs.webkit.org/show_bug.cgi?id=16011>
+        <rdar://problem/5604409>
+
+        <https://bugs.webkit.org/show_bug.cgi?id=16837>
+        <rdar://problem/5813850>
+
+        Reviewed by Sam Weinig and Geoff Garen.
+
+        Tests (contributed by Adam Barth and Collin Jackson):
+        manual-tests/inspector-wrappers
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        Added new files to the projects.
+
+        * bindings/js/JSQuarantinedObjectWrapper.cpp: Added.
+        (WebCore::):
+        (WebCore::JSQuarantinedObjectWrapper::asWrapper): Converts a JSValue
+        into a JSQuarantinedObjectWrapper, if the JSValue is in fact a
+        JSQuarantinedObjectWrapper.
+        (WebCore::JSQuarantinedObjectWrapper::cachedValueGetter): Callback to
+        be used with PropertySlot.
+        (WebCore::JSQuarantinedObjectWrapper::JSQuarantinedObjectWrapper):
+        Hold onto the object we're wrapping and its global object. Pass the
+        wrapped prototype up to the JSObject constructor.
+        (WebCore::JSQuarantinedObjectWrapper::~JSQuarantinedObjectWrapper):
+        (WebCore::JSQuarantinedObjectWrapper::unwrappedExecStateMatches):
+        Returns true if our underlying object originated from the same global
+        object as the passed-in ExecState.
+        (WebCore::JSQuarantinedObjectWrapper::unwrappedExecState):
+        (WebCore::JSQuarantinedObjectWrapper::transferExceptionToExecState):
+        Wraps and moves an exception from our underlying ExecState to the
+        passed-in one.
+        (WebCore::JSQuarantinedObjectWrapper::mark): Marks ourselves and the
+        objects we're holding references to.
+
+        (WebCore::JSQuarantinedObjectWrapper::getOwnPropertySlot):
+        (WebCore::JSQuarantinedObjectWrapper::put):
+        (WebCore::JSQuarantinedObjectWrapper::deleteProperty):
+        (WebCore::JSQuarantinedObjectWrapper::implementsConstruct):
+        (WebCore::JSQuarantinedObjectWrapper::construct):
+        (WebCore::JSQuarantinedObjectWrapper::implementsHasInstance):
+        (WebCore::JSQuarantinedObjectWrapper::hasInstance):
+        (WebCore::JSQuarantinedObjectWrapper::implementsCall):
+        (WebCore::JSQuarantinedObjectWrapper::callAsFunction):
+        (WebCore::JSQuarantinedObjectWrapper::getPropertyNames):
+        JSObject overrides. These each check the appropriate permission before
+        allowing the call to proceed. We wrap all outgoing values using
+        m_wrapOutgoingValue, and we prepare all incoming values with the
+        virtual prepareIncomingValue function. If an exception is raised when
+        calling the underlying object, we transfer the exception in wrapped
+        form to the passed-in ExecState.
+
+        * bindings/js/JSQuarantinedObjectWrapper.h: Added.
+        (WebCore::JSQuarantinedObjectWrapper::unwrappedObject):
+        (WebCore::JSQuarantinedObjectWrapper::className): We return the
+        underlying object's class name so that we can successfully masquerade
+        as that underlying object when, e.g., Object.prototype.toString is
+        called on us.
+        (WebCore::JSQuarantinedObjectWrapper::classInfo):
+
+        (WebCore::JSQuarantinedObjectWrapper::allowsGetProperty):
+        (WebCore::JSQuarantinedObjectWrapper::allowsSetProperty):
+        (WebCore::JSQuarantinedObjectWrapper::allowsDeleteProperty):
+        (WebCore::JSQuarantinedObjectWrapper::allowsConstruct):
+        (WebCore::JSQuarantinedObjectWrapper::allowsHasInstance):
+        (WebCore::JSQuarantinedObjectWrapper::allowsCallAsFunction):
+        (WebCore::JSQuarantinedObjectWrapper::allowsGetPropertyNames):
+        These virtual methods let subclasses define the allowed operations on
+        the wrapped object. By default all operations are disabled.
+
+        * bindings/js/JSInspectedObjectWrapper.cpp: Added. This subclass of
+        JSQuarantinedObjectWrapper is used to wrap objects from the inspected
+        page being passed to the Inspector.
+        (WebCore::wrappers):
+        (WebCore::):
+        (WebCore::JSInspectedObjectWrapper::wrap): Wraps the passed-in object
+        if needed and returns the wrapper. If this object has been wrapped
+        previously we'll return the old wrapper rather than make a new one.
+        (WebCore::JSInspectedObjectWrapper::JSInspectedObjectWrapper): Add
+        ourselves to the wrapper map.
+        (WebCore::JSInspectedObjectWrapper::~JSInspectedObjectWrapper): Remove
+        ourselves from the wrapper map.
+        (WebCore::JSInspectedObjectWrapper::prepareIncomingValue): Ensure that
+        any objects passed to the inspected object are either wrappers around
+        objects from the inspected page (in which case we unwrap them so that
+        the inspected page never sees the wrapper), or wrapped callbacks from
+        the Inspector.
+        * bindings/js/JSInspectedObjectWrapper.h: Added.
+        (WebCore::JSInspectedObjectWrapper::classInfo):
+        (WebCore::JSInspectedObjectWrapper::allowsGetProperty):
+        (WebCore::JSInspectedObjectWrapper::allowsSetProperty):
+        (WebCore::JSInspectedObjectWrapper::allowsDeleteProperty):
+        (WebCore::JSInspectedObjectWrapper::allowsConstruct):
+        (WebCore::JSInspectedObjectWrapper::allowsHasInstance):
+        (WebCore::JSInspectedObjectWrapper::allowsCallAsFunction):
+        (WebCore::JSInspectedObjectWrapper::allowsGetPropertyNames):
+        These all return true so that the Inspector can use objects from the
+        inspected page however it needs.
+        (WebCore::JSInspectedObjectWrapper::wrapOutgoingValue): Wrap all
+        outgoing values as JSInspectedObjectWrappers.
+
+        * bindings/js/JSInspectorCallbackWrapper.cpp: Added. This subclass of
+        JSQuarantinedObjectWrapper is used to wrap callbacks that the
+        Inspector passes to the inspected page (e.g., for event listeners or
+        client-side storage callbacks).
+        (WebCore::wrappers):
+        (WebCore::):
+        (WebCore::JSInspectorCallbackWrapper::wrap): Wraps the passed-in
+        object if needed and returns the wrapper. If this object has been
+        wrapped previously we'll return the old wrapper rather than make a new
+        one.
+        (WebCore::JSInspectorCallbackWrapper::JSInspectorCallbackWrapper): Add
+        ourselves to the wrapper map.
+        (WebCore::JSInspectorCallbackWrapper::~JSInspectorCallbackWrapper):
+        Remove ourselves from the wrapper map.
+        (WebCore::JSInspectorCallbackWrapper::prepareIncomingValue): Ensure
+        that values passed from the inspected page to an Inspector callback
+        are wrapped in JSInspectedObjectWrappers. We also allow the inspected
+        page to pass ourselves in (which will happen in the case of a
+        client-side storage callback, where the callback itself is passed as
+        the `this` object). In this case we unwrap ourselves so that the
+        Inspector doesn't have to deal with the wrapper.
+        * bindings/js/JSInspectorCallbackWrapper.h: Added.
+        (WebCore::JSInspectorCallbackWrapper::classInfo):
+        (WebCore::JSInspectorCallbackWrapper::allowsCallAsFunction):
+        This is the only allowed operation on a JSInspectorCallbackWrapper.
+        (WebCore::JSInspectorCallbackWrapper::wrapOutgoingValue): Wrap all
+        outgoing values as JSInspectorCallbackWrappers.
+
+        * page/InspectorController.cpp:
+        (WebCore::getResourceDocumentNode): Wrap the Document before passing
+        it to the Inspector.
+        (WebCore::highlightDOMNode): Unwrap the Node that the Inspector passed
+        to us.
+        (WebCore::databaseTableNames): Unwrap the Database that the Inspector
+        passed to us.
+        (WebCore::inspectedWindow): Wrap the Window before passing it to the
+        Inspector.
+        (WebCore::InspectorController::focusNode): Wrap the Node before
+        passing it to the Inspector.
+        (WebCore::wrapCallback): Wraps the passed-in callback in a
+        JSInspectorCallbackWrapper.
+        (WebCore::InspectorController::addDatabaseScriptResource): Wrap the
+        Database beore pasing it to the Inspector.
+        (WebCore::InspectorController::windowScriptObjectAvailable): Add the
+        new wrapCallback function to the InspectorController JS object.
+
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel.reset): Wrap the contentLoaded callback.
+
+        * page/inspector/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView._enterKeyPressed):
+        * page/inspector/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView.update):
+        Pass null instead of an empty array to executeSql since we're no
+        longer allowed to pass any unwrapped objects to the inspected page.
+        We now wrap all callbacks being passed to the inspected page using
+        InspectorController.wrapCallback.
+
+2008-04-14  Adam Roben  <aroben@apple.com>
+
         Use prototypes/constructors from the inspected page when operating on
         objects from the inspected page
 

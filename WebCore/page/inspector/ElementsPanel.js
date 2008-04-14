@@ -138,11 +138,11 @@ WebInspector.ElementsPanel.prototype = {
             // the inspected page and have it get called in the Inspector's context.
 
             var elementsPanel = this;
-            function contentLoaded()
+            var contentLoaded = InspectorController.wrapCallback(function()
             {
                 // This function will be called in the inspected page's context.
                 elementsPanel._domContentLoaded = true;
-            }
+            });
 
             function checkContentLoaded()
             {

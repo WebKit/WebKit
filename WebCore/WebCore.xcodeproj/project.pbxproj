@@ -3826,6 +3826,12 @@
 		C02B14C20D81E02A00D8A970 /* JavaScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = C02B14BF0D81E02A00D8A970 /* JavaScriptDebugListener.h */; };
 		C02B14C30D81E02A00D8A970 /* JavaScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C02B14C00D81E02A00D8A970 /* JavaScriptDebugServer.cpp */; };
 		C02B14C40D81E02A00D8A970 /* JavaScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = C02B14C10D81E02A00D8A970 /* JavaScriptDebugServer.h */; };
+		C091588A0DB4209200E55AF4 /* JSInspectedObjectWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C09158840DB4209200E55AF4 /* JSInspectedObjectWrapper.cpp */; };
+		C091588B0DB4209200E55AF4 /* JSInspectedObjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = C09158850DB4209200E55AF4 /* JSInspectedObjectWrapper.h */; };
+		C091588C0DB4209200E55AF4 /* JSInspectorCallbackWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C09158860DB4209200E55AF4 /* JSInspectorCallbackWrapper.cpp */; };
+		C091588D0DB4209200E55AF4 /* JSInspectorCallbackWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = C09158870DB4209200E55AF4 /* JSInspectorCallbackWrapper.h */; };
+		C091588E0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C09158880DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp */; };
+		C091588F0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = C09158890DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h */; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
 		D05CED290A40BB2C00C5AF38 /* FormatBlockCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */; };
@@ -8094,6 +8100,12 @@
 		C02B14BF0D81E02A00D8A970 /* JavaScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptDebugListener.h; sourceTree = "<group>"; };
 		C02B14C00D81E02A00D8A970 /* JavaScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptDebugServer.cpp; sourceTree = "<group>"; };
 		C02B14C10D81E02A00D8A970 /* JavaScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptDebugServer.h; sourceTree = "<group>"; };
+		C09158840DB4209200E55AF4 /* JSInspectedObjectWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectedObjectWrapper.cpp; sourceTree = "<group>"; };
+		C09158850DB4209200E55AF4 /* JSInspectedObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInspectedObjectWrapper.h; sourceTree = "<group>"; };
+		C09158860DB4209200E55AF4 /* JSInspectorCallbackWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorCallbackWrapper.cpp; sourceTree = "<group>"; };
+		C09158870DB4209200E55AF4 /* JSInspectorCallbackWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInspectorCallbackWrapper.h; sourceTree = "<group>"; };
+		C09158880DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSQuarantinedObjectWrapper.cpp; sourceTree = "<group>"; };
+		C09158890DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSQuarantinedObjectWrapper.h; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
@@ -11926,12 +11938,18 @@
 				A80E7E630A1A82EC007FB8C5 /* JSHTMLInputElementBase.h */,
 				A826E8AD0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.cpp */,
 				A826E8AC0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.h */,
+				C09158840DB4209200E55AF4 /* JSInspectedObjectWrapper.cpp */,
+				C09158850DB4209200E55AF4 /* JSInspectedObjectWrapper.h */,
+				C09158860DB4209200E55AF4 /* JSInspectorCallbackWrapper.cpp */,
+				C09158870DB4209200E55AF4 /* JSInspectorCallbackWrapper.h */,
 				BC6C49F10D7DBA0500FFA558 /* JSImageConstructor.cpp */,
 				BC6C49F20D7DBA0500FFA558 /* JSImageConstructor.h */,
 				BCD9C26C0C17AA81005C90A2 /* JSNamedNodesCollection.cpp */,
 				BCD9C26D0C17AA81005C90A2 /* JSNamedNodesCollection.h */,
 				BCB7735E0C17853D00132BA4 /* JSNodeFilterCondition.cpp */,
 				BCB7735F0C17853D00132BA4 /* JSNodeFilterCondition.h */,
+				C09158880DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp */,
+				C09158890DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h */,
 				BC3452410D7E00EA0016574A /* JSRGBColor.cpp */,
 				BC3452420D7E00EA0016574A /* JSRGBColor.h */,
 				8574D1F10ADE6122004CBA11 /* JSSVGElementWrapperFactory.cpp */,
@@ -14809,6 +14827,9 @@
 				E4AFD0100DAF335500F5F55C /* SVGSMILElement.h in Headers */,
 				3744570F0DB05FA500AE0992 /* SVGGlyphMap.h in Headers */,
 				BCB4F8900DB28DD60039139B /* RenderImageGeneratedContent.h in Headers */,
+				C091588B0DB4209200E55AF4 /* JSInspectedObjectWrapper.h in Headers */,
+				C091588D0DB4209200E55AF4 /* JSInspectorCallbackWrapper.h in Headers */,
+				C091588F0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16497,6 +16518,9 @@
 				E4AFD00D0DAF335500F5F55C /* SMILTimeContainer.cpp in Sources */,
 				E4AFD00F0DAF335500F5F55C /* SVGSMILElement.cpp in Sources */,
 				BCB4F8930DB28E530039139B /* RenderImageGeneratedContent.cpp in Sources */,
+				C091588A0DB4209200E55AF4 /* JSInspectedObjectWrapper.cpp in Sources */,
+				C091588C0DB4209200E55AF4 /* JSInspectorCallbackWrapper.cpp in Sources */,
+				C091588E0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

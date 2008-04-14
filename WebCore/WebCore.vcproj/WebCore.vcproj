@@ -3521,11 +3521,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\TextPrompt.js"
+					RelativePath="..\page\inspector\Database.js"
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\Database.js"
+					RelativePath="..\page\inspector\DatabaseQueryView.js"
 					>
 				</File>
 				<File
@@ -3533,15 +3533,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\View.js"
-					>
-				</File>
-				<File
 					RelativePath="..\page\inspector\DatabaseTableView.js"
-					>
-				</File>
-				<File
-					RelativePath="..\page\inspector\DatabaseQueryView.js"
 					>
 				</File>
 				<File
@@ -3617,11 +3609,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\page\inspector\TextPrompt.js"
+					>
+				</File>
+				<File
 					RelativePath="..\page\inspector\treeoutline.js"
 					>
 				</File>
 				<File
 					RelativePath="..\page\inspector\utilities.js"
+					>
+				</File>
+				<File
+					RelativePath="..\page\inspector\View.js"
 					>
 				</File>
 			</Filter>
@@ -13294,6 +13294,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSInspectedObjectWrapper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSInspectedObjectWrapper.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSInspectorCallbackWrapper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSInspectorCallbackWrapper.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSLocationCustom.cpp"
 					>
 				</File>
@@ -13347,6 +13363,14 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSPluginCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSQuarantinedObjectWrapper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSQuarantinedObjectWrapper.h"
 					>
 				</File>
 				<File
@@ -14750,30 +14774,30 @@
 				Name="animation"
 				>
 				<File
-				    RelativePath="..\svg\animation\SMILTime.cpp"
-				    >
+					RelativePath="..\svg\animation\SMILTime.cpp"
+					>
 				</File>
 				<File
-				    RelativePath="..\svg\animation\SMILTime.h"
-				    >
+					RelativePath="..\svg\animation\SMILTime.h"
+					>
 				</File>
 				<File
-				    RelativePath="..\svg\animation\SMILTimeContainer.cpp"
-				    >
+					RelativePath="..\svg\animation\SMILTimeContainer.cpp"
+					>
 				</File>
 				<File
-				    RelativePath="..\svg\animation\SMILTimeContainer.h"
-				    >
+					RelativePath="..\svg\animation\SMILTimeContainer.h"
+					>
 				</File>
 				<File
-				    RelativePath="..\svg\animation\SVGSMILElement.cpp"
-				    >
+					RelativePath="..\svg\animation\SVGSMILElement.cpp"
+					>
 				</File>
 				<File
-				    RelativePath="..\svg\animation\SVGSMILElement.h"
-				    >
+					RelativePath="..\svg\animation\SVGSMILElement.h"
+					>
 				</File>
-            </Filter>
+			</Filter>
 			<Filter
 				Name="graphics"
 				>
@@ -15839,6 +15863,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\SessionStorage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SessionStorage.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\SQLCallback.h"
 				>
 			</File>
@@ -15924,14 +15956,6 @@
 			</File>
 			<File
 				RelativePath="..\storage\StorageMap.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\SessionStorage.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\SessionStorage.h"
 				>
 			</File>
 			<File

@@ -45,10 +45,10 @@ WebInspector.DatabaseTableView.prototype = {
     {
         function queryTransaction(tx)
         {
-            tx.executeSql("SELECT * FROM " + this.tableName, [], this._queryFinished.bind(this), this._queryError.bind(this));
+            tx.executeSql("SELECT * FROM " + this.tableName, null, InspectorController.wrapCallback(this._queryFinished.bind(this)), InspectorController.wrapCallback(this._queryError.bind(this)));
         }
 
-        this.database.database.transaction(queryTransaction.bind(this), this._queryError.bind(this));
+        this.database.database.transaction(InspectorController.wrapCallback(queryTransaction.bind(this)), InspectorController.wrapCallback(this._queryError.bind(this)));
     },
 
     _queryFinished: function(tx, result)

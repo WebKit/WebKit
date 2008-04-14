@@ -487,6 +487,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSEventTargetBase.cpp \
 	WebCore/bindings/js/JSHistoryCustom.cpp \
 	WebCore/bindings/js/JSImageConstructor.cpp \
+	WebCore/bindings/js/JSInspectedObjectWrapper.cpp \
+	WebCore/bindings/js/JSInspectorCallbackWrapper.cpp \
 	WebCore/bindings/js/JSLocationCustom.cpp \
 	WebCore/bindings/js/JSEventTargetNode.cpp \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
@@ -513,6 +515,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSNodeFilterCustom.cpp \
 	WebCore/bindings/js/JSNodeIteratorCustom.cpp \
 	WebCore/bindings/js/JSNodeListCustom.cpp \
+	WebCore/bindings/js/JSQuarantinedObjectWrapper.cpp \
 	WebCore/bindings/js/JSRGBColor.cpp \
 	WebCore/bindings/js/JSPluginArrayCustom.cpp \
 	WebCore/bindings/js/JSPluginCustom.cpp \

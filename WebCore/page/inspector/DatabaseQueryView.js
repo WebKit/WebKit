@@ -142,10 +142,10 @@ WebInspector.DatabaseQueryView.prototype = {
 
         function queryTransaction(tx)
         {
-            tx.executeSql(query, [], this._queryFinished.bind(this, query), this._queryError.bind(this, query));
+            tx.executeSql(query, null, InspectorController.wrapCallback(this._queryFinished.bind(this, query)), InspectorController.wrapCallback(this._queryError.bind(this, query)));
         }
 
-        this.database.database.transaction(queryTransaction.bind(this), this._queryError.bind(this, query));
+        this.database.database.transaction(InspectorController.wrapCallback(queryTransaction.bind(this)), InspectorController.wrapCallback(this._queryError.bind(this, query)));
     },
 
     _queryFinished: function(query, tx, result)

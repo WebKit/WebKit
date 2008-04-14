@@ -45,6 +45,8 @@
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorClient.h"
 #include "JSDOMWindow.h"
+#include "JSInspectedObjectWrapper.h"
+#include "JSInspectorCallbackWrapper.h"
 #include "JSNode.h"
 #include "JSRange.h"
 #include "Page.h"
@@ -68,6 +70,8 @@
 #include "Database.h"
 #include "JSDatabase.h"
 #endif
+
+using namespace KJS;
 
 namespace WebCore {
 
@@ -416,8 +420,10 @@ static JSValueRef getResourceDocumentNode(JSContextRef ctx, JSObjectRef /*functi
     if (document->isPluginDocument() || document->isImageDocument())
         return undefined;
 
+    ExecState* exec = toJSDOMWindowWrapper(resource->frame.get())->window()->globalExec();
+
     KJS::JSLock lock;
-    JSValueRef documentValue = toRef(toJS(toJSDOMWindowWrapper(frame)->window()->globalExec(), document));
+    JSValueRef documentValue = toRef(JSInspectedObjectWrapper::wrap(exec, toJS(exec, document)));
     return documentValue;
 }
 
@@ -429,7 +435,10 @@ static JSValueRef highlightDOMNode(JSContextRef context, JSObjectRef /*function*
     if (argumentCount < 1 || !controller)
         return undefined;
 
-    Node* node = toNode(toJS(arguments[0]));
+    JSQuarantinedObjectWrapper* wrapper = JSQuarantinedObjectWrapper::asWrapper(toJS(arguments[0]));
+    if (!wrapper)
+        return undefined;
+    Node* node = toNode(wrapper->unwrappedObject());
     if (!node)
         return undefined;
 
@@ -570,7 +579,11 @@ static JSValueRef databaseTableNames(JSContextRef ctx, JSObjectRef /*function*/,
     if (argumentCount < 1)
         return JSValueMakeUndefined(ctx);
 
-    Database* database = toDatabase(toJS(arguments[0]));
+    JSQuarantinedObjectWrapper* wrapper = JSQuarantinedObjectWrapper::asWrapper(toJS(arguments[0]));
+    if (!wrapper)
+        return JSValueMakeUndefined(ctx);
+
+    Database* database = toDatabase(wrapper->unwrappedObject());
     if (!database)
         return JSValueMakeUndefined(ctx);
 
@@ -621,7 +634,9 @@ static JSValueRef inspectedWindow(JSContextRef ctx, JSObjectRef /*function*/, JS
     if (!controller)
         return JSValueMakeUndefined(ctx);
 
-    return toRef(toJS(toJS(ctx), controller->inspectedPage()->mainFrame()));
+    JSDOMWindow* inspectedWindow = toJSDOMWindow(controller->inspectedPage()->mainFrame());
+    JSLock lock;
+    return toRef(JSInspectedObjectWrapper::wrap(inspectedWindow->globalExec(), inspectedWindow));
 }
 
 static JSValueRef localizedStrings(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
@@ -684,6 +699,19 @@ static JSValueRef moveByUnrestricted(JSContextRef ctx, JSObjectRef /*function*/,
     controller->moveWindowBy(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y));
 
     return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef wrapCallback(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(ctx);
+
+    JSLock lock;
+    return toRef(JSInspectorCallbackWrapper::wrap(toJS(ctx), toJS(arguments[0])));
 }
 
 #pragma mark -
@@ -785,11 +813,13 @@ void InspectorController::focusNode()
     if (!frame)
         return;
 
+    ExecState* exec = toJSDOMWindow(frame)->globalExec();
+
     JSValueRef arg0;
 
     {
         KJS::JSLock lock;
-        arg0 = toRef(toJS(toJSDOMWindow(frame)->globalExec(), m_nodeToFocus.get()));
+        arg0 = toRef(JSInspectedObjectWrapper::wrap(exec, toJS(exec, m_nodeToFocus.get())));
     }
 
     m_nodeToFocus = 0;
@@ -909,6 +939,7 @@ void InspectorController::windowScriptObjectAvailable()
         { "localizedStringsURL", localizedStrings, kJSPropertyAttributeNone },
         { "platform", platform, kJSPropertyAttributeNone },
         { "moveByUnrestricted", moveByUnrestricted, kJSPropertyAttributeNone },
+        { "wrapCallback", wrapCallback, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
 
@@ -1424,11 +1455,13 @@ JSObjectRef InspectorController::addDatabaseScriptResource(InspectorDatabaseReso
     if (HANDLE_EXCEPTION(exception))
         return 0;
 
+    ExecState* exec = toJSDOMWindow(frame)->globalExec();
+
     JSValueRef database;
 
     {
         KJS::JSLock lock;
-        database = toRef(toJS(toJSDOMWindow(frame)->globalExec(), resource->database.get()));
+        database = toRef(JSInspectedObjectWrapper::wrap(exec, toJS(exec, resource->database.get())));
     }
 
     JSRetainPtr<JSStringRef> domain(Adopt, JSStringCreateWithCharacters(resource->domain.characters(), resource->domain.length()));
