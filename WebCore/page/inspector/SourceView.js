@@ -66,6 +66,9 @@ WebInspector.SourceView.prototype = {
 
     sourceRow: function(lineNumber)
     {
+        if (!lineNumber)
+            return;
+
         this.setupSourceFrameIfNeeded();
 
         var doc = this.frameElement.contentDocument;
@@ -79,7 +82,7 @@ WebInspector.SourceView.prototype = {
         return rows[lineNumber];
     },
 
-    showSourceLine: function(lineNumber)
+    showLine: function(lineNumber)
     {
         var row = this.sourceRow(lineNumber);
         if (!row)

@@ -169,6 +169,10 @@ body.console-visible #main-status-bar * {
     cursor: default;
 }
 
+body.console-visible #main-panels {
+    bottom: 24px;
+}
+
 .status-bar {
     background-color: rgb(235, 235, 235);
     background-image: url(Images/statusbarBackground.png);
@@ -366,7 +370,7 @@ body.console-visible #console {
 }
 
 .console-message-url {
-    color: rgb(33%, 33%, 33%);
+    color: rgb(33%, 33%, 33%) !important;
     cursor: pointer;
 }
 
@@ -423,6 +427,14 @@ body.console-visible #console {
     display: block;
 }
 
+.resource-view .resource-view-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+
 .resource-view.font {
     font-size: 60px;
     white-space: pre-wrap;
@@ -438,12 +450,6 @@ body.console-visible #console {
     left: 0;
     right: 0;
     bottom: 0;
-}
-
-.resource-view.image .resource-view-content {
-    position: relative;
-    width: 100%;
-    height: 100%;
 }
 
 .resource-view.image .resource-view-content > .image {

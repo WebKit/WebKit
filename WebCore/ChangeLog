@@ -1,3 +1,43 @@
+2008-04-14  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a regression where clicking a resource URL in the Console would not
+        show the resource in the Resources panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18493
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Console.js:
+        (WebInspector.Console.prototype._messagesClicked): Removed console-message-url
+        handling to show resources. This is now handled by WebInspector.showResourceForURL.
+        (WebInspector.ConsoleMessage.prototype.toMessageElement): Add the webkit-html-resource-link
+        class name to the URL anchor. Also add the line number as a property to the anchor.
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel): Add a reference to the tree element to each calculator.
+        (WebInspector.ResourcesPanel.prototype.showResource): Select and reveal the resource in
+        the sidebar. Call showLine on the resource view if it is implemented.
+        (WebInspector.ResourcesPanel.prototype.closeVisibleResource): Select the current calculator's
+        tree element in the sidebar.
+        (WebInspector.ResourcesPanel.prototype._graphSelected): Call closeVisibleResource after
+        the calculator changes since closeVisibleResource uses the calculator.
+        * page/inspector/SourceView.js:
+        (WebInspector.SourceView.prototype.sourceRow): Early return if the line is null/zero.
+        (WebInspector.SourceView.prototype.showLine):  Renamed from showSourceLine.
+        * page/inspector/inspector.css:
+        (body.console-visible #main-panels): Made the bottom 24px to match
+        the height of #main-status-bar.
+        (.console-message-url): Make the color important so it wins over
+        the .webkit-html-resource-link rule.
+        (.resource-view .resource-view-content): Made more generic from .image
+        so all resource views get sized correctly.
+        (.resource-view.image .resource-view-content): Removed.
+        * page/inspector/inspector.js:
+        (WebInspector.documentClick): Pass the line number from the anchor to
+        WebInspector.showResourceForURL.
+        (WebInspector.showResourceForURL): Add line number support. Pass the line
+        to ResourcesPanel.showResource.
+        (WebInspector.addMainEventListeners): Use bind for the event listeners.
+
 2008-04-14  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.

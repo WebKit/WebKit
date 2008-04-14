@@ -259,26 +259,10 @@ WebInspector.Console.prototype = {
     _messagesClicked: function(event)
     {
         var link = event.target.enclosingNodeOrSelfWithNodeName("a");
-        if (link && link.representedNode) {
-            WebInspector.updateFocusedNode(link.representedNode);
-            return;
-        }
-
-        var messageElement = event.target.enclosingNodeOrSelfWithClass("console-message");
-        if (!messageElement)
+        if (!link || !link.representedNode)
             return;
 
-        if (!messageElement.message)
-            return;
-
-        var resource = messageElement.message.resource;
-        if (!resource)
-            return;
-
-        if (link && link.hasStyleClass("console-message-url")) {
-            // FIXME: show the source in the Resources panel and scroll to the line.
-        }
-
+        WebInspector.updateFocusedNode(link.representedNode);
         event.stopPropagation();
         event.preventDefault();
     },
@@ -514,7 +498,9 @@ WebInspector.ConsoleMessage.prototype = {
 
         if (this.url && this.url !== "undefined") {
             var urlElement = document.createElement("a");
-            urlElement.className = "console-message-url";
+            urlElement.className = "console-message-url webkit-html-resource-link";
+            urlElement.href = this.url;
+            urlElement.lineNumber = this.line;
 
             if (this.line > 0)
                 urlElement.textContent = WebInspector.UIString("%s (line %d)", this.url, this.line);

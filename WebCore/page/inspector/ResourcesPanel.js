@@ -86,10 +86,12 @@ WebInspector.ResourcesPanel = function()
     var timeGraphItem = new WebInspector.SidebarTreeElement("resources-time-graph-sidebar-item", WebInspector.UIString("Time"));
     timeGraphItem.calculator = new WebInspector.ResourceTransferTimeCalculator();
     timeGraphItem.onselect = this._graphSelected.bind(this);
+    timeGraphItem.calculator._graphsTreeElement = timeGraphItem;
 
     var sizeGraphItem = new WebInspector.SidebarTreeElement("resources-size-graph-sidebar-item", WebInspector.UIString("Size"));
     sizeGraphItem.calculator = new WebInspector.ResourceTransferSizeCalculator();
     sizeGraphItem.onselect = this._graphSelected.bind(this);
+    sizeGraphItem.calculator._graphsTreeElement = sizeGraphItem;
 
     this.graphsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("GRAPHS"), {}, true);
     this.sidebarTree.appendChild(this.graphsTreeElement);
@@ -296,7 +298,7 @@ WebInspector.ResourcesPanel.prototype = {
         barRightElement.style.right = (100 - percentages.end) + "%";
     },
 
-    showResource: function(resource)
+    showResource: function(resource, line)
     {
         if (!resource)
             return;
@@ -310,6 +312,14 @@ WebInspector.ResourcesPanel.prototype = {
             resource._resourcesView = this._createResourceView(resource);
         resource._resourcesView.show();
 
+        if (line && resource._resourcesView.showLine)
+            resource._resourcesView.showLine(line);
+
+        if (resource._resourcesTreeElement) {
+            resource._resourcesTreeElement.reveal();
+            resource._resourcesTreeElement.select(true);
+        }
+
         this.visibleResource = resource;
 
         this._updateSidebarWidth();
@@ -319,9 +329,12 @@ WebInspector.ResourcesPanel.prototype = {
     {
         this.containerElement.removeStyleClass("viewing-resource");
         this._updateDividersLabelBarPosition();
+
         if (this.visibleResource && this.visibleResource._resourcesView)
             this.visibleResource._resourcesView.hide();
         delete this.visibleResource;
+
+        this.calculator._graphsTreeElement.select(true);
 
         this._updateSidebarWidth();
     },
@@ -810,8 +823,8 @@ WebInspector.ResourcesPanel.prototype = {
 
     _graphSelected: function(treeElement)
     {
-        this.closeVisibleResource();
         this.calculator = treeElement.calculator;
+        this.closeVisibleResource();
         this.containerElement.scrollTop = 0;
     },
 

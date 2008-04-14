@@ -332,7 +332,7 @@ WebInspector.documentClick = function(event)
     if (!anchor.hasStyleClass("webkit-html-resource-link"))
         return;
 
-    if (WebInspector.showResourceForURL(anchor.getAttribute("href"))) {
+    if (WebInspector.showResourceForURL(anchor.href, anchor.lineNumber)) {
         event.preventDefault();
         event.stopPropagation();
     }
@@ -703,14 +703,14 @@ WebInspector.resourceForURL = function(url)
     return null;
 }
 
-WebInspector.showResourceForURL = function(url)
+WebInspector.showResourceForURL = function(url, line)
 {
     var resource = this.resourceForURL(url);
     if (!resource)
         return false;
 
     this.currentPanel = this.panels.resources;
-    this.panels.resources.showResource(resource);
+    this.panels.resources.showResource(resource, line);
     return true;
 }
 
@@ -726,9 +726,9 @@ WebInspector.linkifyURL = function(url, linkText, classes, isExternal)
 
 WebInspector.addMainEventListeners = function(doc)
 {
-    doc.defaultView.addEventListener("focus", function(event) { WebInspector.windowFocused(event) }, true);
-    doc.defaultView.addEventListener("blur", function(event) { WebInspector.windowBlured(event) }, true);
-    doc.addEventListener("click", function(event) { WebInspector.documentClick(event) }, true);
+    doc.defaultView.addEventListener("focus", this.windowFocused.bind(this), true);
+    doc.defaultView.addEventListener("blur", this.windowBlured.bind(this), true);
+    doc.addEventListener("click", this.documentClick.bind(this), true);
 }
 
 WebInspector.performSearch = function(query)
