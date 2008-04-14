@@ -1,3 +1,13 @@
+2008-04-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Ap.
+
+        Layout test for http://bugs.webkit.org/show_bug.cgi?id=17403:
+        WebKit Creates Invalid Xhtml Links with Ajax
+
+        * fast/parser/ampersand-escaped-parseXMLFragment-expected.txt: Added.
+        * fast/parser/ampersand-escaped-parseXMLFragment.xhtml: Added.
+
 2008-04-14  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

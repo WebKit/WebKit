@@ -81,6 +81,9 @@ namespace WebCore {
         virtual void notifyFinished(CachedResource* finishedObj);
 
 #ifndef USE_QXMLSTREAM
+
+        friend bool parseXMLDocumentFragment(const String& chunk, DocumentFragment* fragment, Element* parent);
+
         // callbacks from parser SAX
         void error(ErrorType, const char* message, va_list args) WTF_ATTRIBUTE_PRINTF(3, 0); 
         void startElementNs(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces,
@@ -115,7 +118,7 @@ namespace WebCore {
         int columnNumber() const;
 
     private:
-        void initializeParserContext();
+        void initializeParserContext(const char* chunk = 0);
         void setCurrentNode(Node*);
 
         void insertErrorMessageBlock();

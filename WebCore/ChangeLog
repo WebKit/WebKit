@@ -1,3 +1,30 @@
+2008-04-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Ap.
+
+        Bug 17403: WebKit Creates Invalid Xhtml Links with Ajax
+        http://bugs.webkit.org/show_bug.cgi?id=17403
+
+        The previous code had callbacks for the normal parsing (full document) and fragment parsing.
+        The difference was induced by the method we were using which did not accept a xmlParserCtxt.
+        The code has been refactored to allow us to share the callbacks between the different cases.
+        A drawback is that we have to use xmlParseContent which is an internal libxml method and thus
+        some internal intialization is done in WebCore.
+
+        Test: fast/parser/ampersand-escaped-parseXMLFragment.xhtml
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::createStringParser): Moved didInit in the global scope as it is shared by the
+        2 create methods.
+
+        (WebCore::createMemoryParser): Create a memory parser similar to the previous code.
+        Initialize the xmlParserContext to call xmlParseContent in parseXMLDocumentFragment.
+
+        (WebCore::XMLTokenizer::initializeParserContext): Check m_parsingFragment to know
+        which create method to call.
+
+        * dom/XMLTokenizer.h: Added parseXMLDocumentFragment as a friend of XMLTokenizer.
+
 2008-04-14  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

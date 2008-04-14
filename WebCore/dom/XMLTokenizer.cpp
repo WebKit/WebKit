@@ -437,9 +437,10 @@ void setLoaderForLibXMLCallbacks(DocLoader* docLoader)
     globalDocLoader = docLoader;
 }
 
+static bool didInit = false;
+
 static xmlParserCtxtPtr createStringParser(xmlSAXHandlerPtr handlers, void* userData)
 {
-    static bool didInit = false;
     if (!didInit) {
         xmlInitParser();
         xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, closeFunc);
@@ -454,6 +455,44 @@ static xmlParserCtxtPtr createStringParser(xmlSAXHandlerPtr handlers, void* user
     const UChar BOM = 0xFEFF;
     const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&BOM);
     xmlSwitchEncoding(parser, BOMHighByte == 0xFF ? XML_CHAR_ENCODING_UTF16LE : XML_CHAR_ENCODING_UTF16BE);
+
+    return parser;
+}
+
+
+// Chunk should be encoded in UTF-8
+static xmlParserCtxtPtr createMemoryParser(xmlSAXHandlerPtr handlers, void* userData, const char* chunk)
+{
+    if (!didInit) {
+        xmlInitParser();
+        xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, closeFunc);
+        xmlRegisterOutputCallbacks(matchFunc, openFunc, writeFunc, closeFunc);
+        libxmlLoaderThread = currentThread();
+        didInit = true;
+    }
+
+    xmlParserCtxtPtr parser = xmlCreateMemoryParserCtxt(chunk, xmlStrlen((const xmlChar*)chunk));
+
+    if (!parser)
+        return 0;
+
+    // Copy the sax handler
+    memcpy(parser->sax, handlers, sizeof(xmlSAXHandler));
+
+    // Set parser options.
+    // XML_PARSE_NODICT: default dictionary option.
+    // XML_PARSE_NOENT: force entities substitutions.
+    xmlCtxtUseOptions(parser, XML_PARSE_NODICT | XML_PARSE_NOENT);
+
+    // Internal initialization
+    parser->sax2 = 1;
+    parser->instate = XML_PARSER_CONTENT; // We are parsing a CONTENT
+    parser->depth = 0;
+    parser->str_xml = xmlDictLookup(parser->dict, BAD_CAST "xml", 3);
+    parser->str_xmlns = xmlDictLookup(parser->dict, BAD_CAST "xmlns", 5);
+    parser->str_xml_ns = xmlDictLookup(parser->dict, XML_XML_NAMESPACE, 36);
+    parser->_private = userData;
+
     return parser;
 }
 #endif
@@ -594,6 +633,10 @@ XMLTokenizer::~XMLTokenizer()
         m_pendingScript->removeClient(this);
 #if defined(USE_QXMLSTREAM) && QT_VERSION >= 0x040400
     delete m_stream.entityResolver();
+#endif
+#ifndef USE_QXMLSTREAM
+    if (m_context)
+        xmlFreeParserCtxt(m_context);
 #endif
 }
 
@@ -1257,11 +1300,12 @@ void XMLTokenizer::exitText()
         setCurrentNode(par);
 }
 
-void XMLTokenizer::initializeParserContext()
+void XMLTokenizer::initializeParserContext(const char* chunk)
 {
 #ifndef USE_QXMLSTREAM
     xmlSAXHandler sax;
     memset(&sax, 0, sizeof(sax));
+
     sax.error = normalErrorHandler;
     sax.fatalError = fatalErrorHandler;
     sax.characters = charactersHandler;
@@ -1284,9 +1328,12 @@ void XMLTokenizer::initializeParserContext()
     m_sawError = false;
     m_sawXSLTransform = false;
     m_sawFirstElement = false;
-    
+
 #ifndef USE_QXMLSTREAM
-    m_context = createStringParser(&sax, this);
+    if (m_parsingFragment)
+        m_context = createMemoryParser(&sax, this, chunk);
+    else
+        m_context = createStringParser(&sax, this);
 #endif
 }
 
@@ -1544,75 +1591,30 @@ void XMLTokenizer::resumeParsing()
         end();
 }
 
-#ifndef USE_QXMLSTREAM
-static void balancedStartElementNsHandler(void* closure, const xmlChar* localname, const xmlChar* prefix,
-                                          const xmlChar* uri, int nb_namespaces, const xmlChar** namespaces,
-                                          int nb_attributes, int nb_defaulted, const xmlChar** libxmlAttributes)
+bool parseXMLDocumentFragment(const String& chunk, DocumentFragment* fragment, Element* parent)
 {
-   static_cast<XMLTokenizer*>(closure)->startElementNs(localname, prefix, uri, nb_namespaces, namespaces, nb_attributes, nb_defaulted, libxmlAttributes);
-}
-
-static void balancedEndElementNsHandler(void* closure, const xmlChar* localname, const xmlChar* prefix, const xmlChar* uri)
-{
-    static_cast<XMLTokenizer*>(closure)->endElementNs();
-}
-
-static void balancedCharactersHandler(void* closure, const xmlChar* s, int len)
-{
-    static_cast<XMLTokenizer*>(closure)->characters(s, len);
-}
-
-static void balancedProcessingInstructionHandler(void* closure, const xmlChar* target, const xmlChar* data)
-{
-    static_cast<XMLTokenizer*>(closure)->processingInstruction(target, data);
-}
-
-static void balancedCdataBlockHandler(void* closure, const xmlChar* s, int len)
-{
-    static_cast<XMLTokenizer*>(closure)->cdataBlock(s, len);
-}
-
-static void balancedCommentHandler(void* closure, const xmlChar* comment)
-{
-    static_cast<XMLTokenizer*>(closure)->comment(comment);
-}
-
-WTF_ATTRIBUTE_PRINTF(2, 3)
-static void balancedWarningHandler(void* closure, const char* message, ...)
-{
-    va_list args;
-    va_start(args, message);
-    static_cast<XMLTokenizer*>(closure)->error(XMLTokenizer::warning, message, args);
-    va_end(args);
-}
-#endif
-bool parseXMLDocumentFragment(const String& string, DocumentFragment* fragment, Element* parent)
-{
-    if (!string.length())
+    if (!chunk.length())
         return true;
 
     XMLTokenizer tokenizer(fragment, parent);
     
 #ifndef USE_QXMLSTREAM
-    xmlSAXHandler sax;
-    memset(&sax, 0, sizeof(sax));
+    tokenizer.initializeParserContext(chunk.utf8().data());
 
-    sax.characters = balancedCharactersHandler;
-    sax.processingInstruction = balancedProcessingInstructionHandler;
-    sax.startElementNs = balancedStartElementNsHandler;
-    sax.endElementNs = balancedEndElementNsHandler;
-    sax.cdataBlock = balancedCdataBlockHandler;
-    sax.ignorableWhitespace = balancedCharactersHandler;
-    sax.comment = balancedCommentHandler;
-    sax.warning = balancedWarningHandler;
-    sax.initialized = XML_SAX2_MAGIC;
-    
-    int result = xmlParseBalancedChunkMemory(0, &sax, &tokenizer, 0, (const xmlChar*)string.utf8().data(), 0);
+    xmlParseContent(tokenizer.m_context);
+
     tokenizer.endDocument();
-    return result == 0;
+
+    // Check if all the chunk has been processed.
+    long bytesProcessed = xmlByteConsumed(tokenizer.m_context);
+    if (bytesProcessed == -1 || ((unsigned long)bytesProcessed) == sizeof(UChar) * chunk.length())
+        return false;
+
+    // No error if the chunk is well formed or it is not but we have no error.
+    return tokenizer.m_context->wellFormed || xmlCtxtGetLastError(tokenizer.m_context) == 0;
 #else
     tokenizer.write(String("<qxmlstreamdummyelement>"), false);
-    tokenizer.write(string, false);
+    tokenizer.write(chunk, false);
     tokenizer.write(String("</qxmlstreamdummyelement>"), false);
     tokenizer.finish();
     return !tokenizer.hasError();
