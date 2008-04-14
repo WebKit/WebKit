@@ -2,8 +2,6 @@
     Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -60,7 +58,7 @@ SVGTextContentElement::~SVGTextContentElement()
 ANIMATED_PROPERTY_DEFINITIONS(SVGTextContentElement, SVGLength, Length, length, TextLength, textLength, SVGNames::textLengthAttr, m_textLength)
 ANIMATED_PROPERTY_DEFINITIONS(SVGTextContentElement, int, Enumeration, enumeration, LengthAdjust, lengthAdjust, SVGNames::lengthAdjustAttr, m_lengthAdjust)
 
-static inline float cummulatedCharacterRangeLength(const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end, SVGInlineTextBox* textBox,
+static inline float cumulativeCharacterRangeLength(const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end, SVGInlineTextBox* textBox,
                                                    int startOffset, long startPosition, long length, bool isVerticalText, long& atCharacter)
 {
     if (!length)
@@ -142,7 +140,7 @@ struct SVGInlineTextBoxQueryWalker {
         }
         case TextLength:
         {
-            float textLength = cummulatedCharacterRangeLength(start, end, textBox, startOffset, -1, -1, isVerticalText, m_atCharacter);
+            float textLength = cumulativeCharacterRangeLength(start, end, textBox, startOffset, -1, -1, isVerticalText, m_atCharacter);
 
             if (isVerticalText)
                 m_queryFloatResult += textLength;
@@ -157,7 +155,7 @@ struct SVGInlineTextBoxQueryWalker {
             long startPosition = m_queryStartPosition;
             long length = m_queryLength;
 
-            float textLength = cummulatedCharacterRangeLength(start, end, textBox, startOffset, startPosition, length, isVerticalText, m_atCharacter);
+            float textLength = cumulativeCharacterRangeLength(start, end, textBox, startOffset, startPosition, length, isVerticalText, m_atCharacter);
 
             if (isVerticalText)
                 m_queryFloatResult += textLength;

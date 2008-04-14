@@ -2,6 +2,15 @@
 
         Reviewed by Oliver.
 
+        Fix spelling error in function name, no test case.
+
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGInlineTextBoxQueryWalker::chunkPortionCallback):
+
+2008-04-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
         Build fix for +SVG_ANIMATION -SVG_FOREIGN_OBJECT build, no tests.
 
         * svg/SVGAnimateMotionElement.cpp:
