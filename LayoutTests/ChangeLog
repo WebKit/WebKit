@@ -1,3 +1,15 @@
+2008-04-15  Anatoli Papirovski  <apapirovski@mac.com>
+
+        Reviewed by hyatt
+
+        Added test case for background-origin calculation on root elements
+        (background-repeat and background-size), r10794 [CSS1 + CSS3]
+
+        * fast/backgrounds/background-origin-root-element.html: Added.
+        * platform/mac/fast/backgrounds/background-origin-root-element-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/background-origin-root-element-expected.png: Added.
+        * platform/mac/fast/backgrounds/background-origin-root-element-expected.txt: Added.
+
 2008-04-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

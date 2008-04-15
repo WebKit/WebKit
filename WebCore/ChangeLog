@@ -1,3 +1,17 @@
+2008-04-15  Anatoli Papirovski  <apapirovski@mac.com>
+
+        Reviewed by hyatt
+
+        [CSS1, CSS3] Fixed the background-origin calculation for root elements
+        (background-size and background-position are affected), r10794
+        [CSS3] Fixed the background-size transformation where width is specified in percentage and height is left to auto
+
+        Test: fast/backgrounds/background-origin-root-element.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calculateBackgroundSize):
+        (WebCore::RenderBox::calculateBackgroundImageGeometry):
+
 2008-04-15  Timothy Hatcher  <timothy@apple.com>
 
         Fixes the regression where the error and warning counts did not show up in the Resources
