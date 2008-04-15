@@ -211,12 +211,13 @@ WebInspector.loaded = function()
     this.currentPanel = this.panels.elements;
 
     this.resourceCategories = {
-        documents: new WebInspector.ResourceCategory(WebInspector.UIString("documents"), "documents"),
-        stylesheets: new WebInspector.ResourceCategory(WebInspector.UIString("stylesheets"), "stylesheets"),
-        images: new WebInspector.ResourceCategory(WebInspector.UIString("images"), "images"),
-        scripts: new WebInspector.ResourceCategory(WebInspector.UIString("scripts"), "scripts"),
-        fonts: new WebInspector.ResourceCategory(WebInspector.UIString("fonts"), "fonts"),
-        other: new WebInspector.ResourceCategory(WebInspector.UIString("other"), "other")
+        documents: new WebInspector.ResourceCategory(WebInspector.UIString("Documents"), "documents"),
+        stylesheets: new WebInspector.ResourceCategory(WebInspector.UIString("Stylesheets"), "stylesheets"),
+        images: new WebInspector.ResourceCategory(WebInspector.UIString("Images"), "images"),
+        scripts: new WebInspector.ResourceCategory(WebInspector.UIString("Scripts"), "scripts"),
+        xhr: new WebInspector.ResourceCategory(WebInspector.UIString("XHR"), "xhr"),
+        fonts: new WebInspector.ResourceCategory(WebInspector.UIString("Fonts"), "fonts"),
+        other: new WebInspector.ResourceCategory(WebInspector.UIString("Other"), "other")
     };
 
     this.Tips = {

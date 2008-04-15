@@ -1,3 +1,21 @@
+2008-04-15  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        - <rdar://problem/5792587> AJAX (XMLHttpRequest) support for the Inspector (17776)
+        - Add XMLHttpRequest support to the inspector.
+
+        * English.lproj/InspectorLocalizedStrings.js: Specify capitalization
+        instead of using text-transform because XHR must capitalize all the letters.
+        * page/inspector/Resource.js: Assume XHRs are textType even though this
+        may not always be true.
+        Also add the XHR category and let all mime types be consistent with it.
+        * page/inspector/ResourcesPanel.js: Set the XHR category color.
+        * page/inspector/inspector.css: Make XHRs yellow and fonts red because
+        XHRs are more common than fonts and yellow next to orange (scripts) is
+        not as harsh on the eyes as red next to orange.
+        * page/inspector/inspector.js: Specify capitalization again.
+
 2008-04-15  David Hyatt  <hyatt@apple.com>
 
         Fix the zoom property so that it works properly with font-size.

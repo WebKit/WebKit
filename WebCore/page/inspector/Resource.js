@@ -55,7 +55,7 @@ WebInspector.Resource.Type = {
 
     isTextType: function(type)
     {
-        return (type === this.Document) || (type === this.Stylesheet) || (type === this.Script);
+        return (type === this.Document) || (type === this.Stylesheet) || (type === this.Script) || (type === this.XHR);
     },
 
     toString: function(type)
@@ -72,6 +72,7 @@ WebInspector.Resource.Type = {
             case this.Script:
                 return WebInspector.UIString("script");
             case this.XHR:
+                return WebInspector.UIString("XHR");
             case this.Other:
             default:
                 return WebInspector.UIString("other");
@@ -307,6 +308,8 @@ WebInspector.Resource.prototype = {
                 this.category = WebInspector.resourceCategories.fonts;
                 break;
             case WebInspector.Resource.Type.XHR:
+                this.category = WebInspector.resourceCategories.xhr;
+                break;
             case WebInspector.Resource.Type.Other:
             default:
                 this.category = WebInspector.resourceCategories.other;
@@ -465,7 +468,9 @@ WebInspector.Resource.prototype = {
 
     _mimeTypeIsConsistentWithType: function()
     {
-        if (this.type === undefined || this.type === WebInspector.Resource.Type.Other)
+        if (typeof this.type === "undefined"
+         || this.type === WebInspector.Resource.Type.Other
+         || this.type === WebInspector.Resource.Type.XHR)
             return true;
 
         if (this.mimeType in WebInspector.MIMETypes)

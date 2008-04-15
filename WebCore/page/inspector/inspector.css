@@ -1363,7 +1363,6 @@ body.inactive .sidebar {
 
 .resources-graph-legend-header {
     font-size: 12px;
-    text-transform: capitalize;
 }
 
 .resources-graph-legend-value {
@@ -1451,11 +1450,15 @@ body.inactive .sidebar {
 }
 
 .resource-sidebar-tree-item.resources-category-fonts .resources-graph-bar {
-    -webkit-border-image: url(Images/timelinePillYellow.png) 6 7 6 7;
+    -webkit-border-image: url(Images/timelinePillRed.png) 6 7 6 7;
 }
 
 .resource-sidebar-tree-item.resources-category-scripts .resources-graph-bar {
     -webkit-border-image: url(Images/timelinePillOrange.png) 6 7 6 7;
+}
+
+.resource-sidebar-tree-item.resources-category-xhr .resources-graph-bar {
+    -webkit-border-image: url(Images/timelinePillYellow.png) 6 7 6 7;
 }
 
 .tip-button {
@@ -1855,6 +1858,14 @@ body.inactive .sidebar-tree.small .sidebar-tree-item.selected, body.inactive .si
 }
 
 .children.small .resource-sidebar-tree-item.resources-category-scripts .icon {
+    content: url(Images/resourceDocumentIconSmall.png);
+}
+
+.resource-sidebar-tree-item.resources-category-xhr .icon {
+    content: url(Images/resourcePlainIcon.png);
+}
+
+.children.small .resource-sidebar-tree-item.resources-category-xhr .icon {
     content: url(Images/resourceDocumentIconSmall.png);
 }
 

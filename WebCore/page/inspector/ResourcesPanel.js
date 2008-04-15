@@ -863,8 +863,8 @@ WebInspector.ResourcesPanel.prototype = {
 
         var graphInfo = this.calculator.computeSummaryValues(this._resources);
 
-        var categoryOrder = ["documents", "stylesheets", "images", "scripts", "fonts", "other"];
-        var categoryColors = {documents: {r: 47, g: 102, b: 236}, stylesheets: {r: 157, g: 231, b: 119}, images: {r: 164, g: 60, b: 255}, scripts: {r: 255, g: 121, b: 0}, fonts: {r: 231, g: 231, b: 10}, other: {r: 186, g: 186, b: 186}};
+        var categoryOrder = ["documents", "stylesheets", "images", "scripts", "xhr", "fonts", "other"];
+        var categoryColors = {documents: {r: 47, g: 102, b: 236}, stylesheets: {r: 157, g: 231, b: 119}, images: {r: 164, g: 60, b: 255}, scripts: {r: 255, g: 121, b: 0}, xhr: {r: 231, g: 231, b: 10}, fonts: {r: 255, g: 82, b: 62}, other: {r: 186, g: 186, b: 186}};
         var fillSegments = [];
 
         this.legendElement.removeChildren();
@@ -948,6 +948,7 @@ WebInspector.ResourcesPanel.prototype = {
             case WebInspector.resourceCategories.documents:
             case WebInspector.resourceCategories.stylesheets:
             case WebInspector.resourceCategories.scripts:
+            case WebInspector.resourceCategories.xhr:
                 return new WebInspector.SourceView(resource);
             case WebInspector.resourceCategories.images:
                 return new WebInspector.ImageView(resource);
