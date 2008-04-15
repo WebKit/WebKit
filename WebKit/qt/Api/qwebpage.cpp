@@ -132,6 +132,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     mainFrame = 0;
 #if QT_VERSION < 0x040400
     networkInterface = 0;
+    pluginFactory = 0;
 #else
     networkManager = 0;
     pluginFactory = 0;
