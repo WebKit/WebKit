@@ -36,7 +36,9 @@ namespace WebCore
 
 class QWebPage;
 class QWebSettingsPrivate;
+QT_BEGIN_NAMESPACE
 class QUrl;
+QT_END_NAMESPACE
 
 class QWEBKIT_EXPORT QWebSettings
 {

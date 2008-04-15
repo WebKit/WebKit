@@ -32,7 +32,9 @@ typedef const struct __CFString * CFStringRef;
 #endif
 
 #if PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QString;
+QT_END_NAMESPACE
 #endif
 
 #if PLATFORM(WX)

@@ -28,9 +28,12 @@
 #include <QtNetwork/qnetworkaccessmanager.h>
 #endif
 
+QT_BEGIN_NAMESPACE
+class QNetworkRequest;
+QT_END_NAMESPACE
+
 class QWebPage;
 class QWebViewPrivate;
-class QNetworkRequest;
 class QWebNetworkRequest;
 
 class QWEBKIT_EXPORT QWebView : public QWidget

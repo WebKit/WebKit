@@ -33,8 +33,11 @@
 #include <QObject>
 #include <QTextStream>
 #include <QSocketNotifier>
+
+QT_BEGIN_NAMESPACE
 class QUrl;
 class QFile;
+QT_END_NAMESPACE
 class QWebPage;
 class QWebFrame;
 

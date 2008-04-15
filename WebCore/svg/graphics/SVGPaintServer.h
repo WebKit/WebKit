@@ -35,7 +35,10 @@
 #endif
 
 #if PLATFORM(QT)
+#include <qglobal.h>
+QT_BEGIN_NAMESPACE
 class QPen;
+QT_END_NAMESPACE
 #endif
 
 #if PLATFORM(CG)

@@ -50,7 +50,9 @@ typedef struct _GdkEventKey GdkEventKey;
 #endif
 
 #if PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QKeyEvent;
+QT_END_NAMESPACE
 #endif
 
 #if PLATFORM(WX)

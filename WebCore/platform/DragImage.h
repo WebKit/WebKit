@@ -37,7 +37,9 @@
 class NSImage;
 #endif
 #elif PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QPixmap;
+QT_END_NAMESPACE
 #elif PLATFORM(WIN)
 typedef struct HBITMAP__* HBITMAP;
 #elif PLATFORM(WX)

@@ -41,7 +41,9 @@ class NSURL;
 #endif
 
 #if PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QUrl;
+QT_END_NAMESPACE
 #endif
 
 namespace WebCore {

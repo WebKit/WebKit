@@ -1,3 +1,49 @@
+2008-04-15  Andre Poenitz  <andre.poenitz@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix compilation with Qt namespaces
+
+        Qt can be configured to have all of its classes inside a specified namespaces.
+        This is for example used in plugin/component environments like Eclipse.
+
+        This change makes it possible to let the Qt port compile against a namespaced
+        Qt by the use of macros Qt provides to properly forward declare Qt classes in
+        the namespace.
+
+        * WebCore.pro:
+        * bridge/qt/qt_class.h:
+        * bridge/qt/qt_instance.h:
+        * html/HTMLCanvasElement.h:
+        * platform/DragData.h:
+        * platform/DragImage.h:
+        * platform/KURL.h:
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformWheelEvent.h:
+        * platform/Widget.h:
+        * platform/graphics/Color.h:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/Gradient.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.h:
+        * platform/network/qt/QNetworkReplyHandler.h:
+        * platform/network/qt/ResourceRequest.h:
+        * platform/qt/ClipboardQt.h:
+        * platform/qt/RenderThemeQt.h:
+        * platform/text/PlatformString.h:
+        * platform/text/qt/TextCodecQt.h:
+        * svg/graphics/SVGPaintServer.h:
+        * svg/graphics/SVGPaintServerGradient.h:
+
 2008-04-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

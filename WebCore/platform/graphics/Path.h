@@ -30,7 +30,10 @@
 #if PLATFORM(CG)
 typedef struct CGPath PlatformPath;
 #elif PLATFORM(QT)
+#include <qglobal.h>
+QT_BEGIN_NAMESPACE
 class QPainterPath;
+QT_END_NAMESPACE
 typedef QPainterPath PlatformPath;
 #elif PLATFORM(WX) && USE(WXGC)
 class wxGraphicsPath;

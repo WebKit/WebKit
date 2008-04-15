@@ -30,7 +30,9 @@
 #include "CachedResourceClient.h"
 #include "ClipboardAccessPolicy.h"
 
+QT_BEGIN_NAMESPACE
 class QMimeData;
+QT_END_NAMESPACE
 
 namespace WebCore {
 

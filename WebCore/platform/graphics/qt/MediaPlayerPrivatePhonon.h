@@ -29,7 +29,6 @@
 QT_BEGIN_NAMESPACE
 class QWidget;
 class QUrl;
-QT_END_NAMESPACE
 
 namespace Phonon {
     class MediaObject;
@@ -37,6 +36,7 @@ namespace Phonon {
     class AudioOutput;
     class MediaSource;
 }
+QT_END_NAMESPACE
 
 namespace WebCore {
 

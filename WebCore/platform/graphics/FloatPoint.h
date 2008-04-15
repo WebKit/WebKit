@@ -43,7 +43,10 @@ typedef struct _NSPoint NSPoint;
 #endif
 
 #if PLATFORM(QT)
+#include "qglobal.h"
+QT_BEGIN_NAMESPACE
 class QPointF;
+QT_END_NAMESPACE
 #endif
 
 #if PLATFORM(SYMBIAN)

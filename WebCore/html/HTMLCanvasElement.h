@@ -35,8 +35,10 @@
 typedef struct CGContext* CGContextRef;
 typedef struct CGImage* CGImageRef;
 #elif PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QPixmap;
 class QPainter;
+QT_END_NAMESPACE
 #elif PLATFORM(CAIRO)
 typedef struct _cairo_surface cairo_surface_t;
 #endif

@@ -42,7 +42,9 @@ typedef struct _NSRect NSRect;
 #endif
 
 #if PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QRectF;
+QT_END_NAMESPACE
 #endif
 
 #if PLATFORM(WX) && USE(WXGC)

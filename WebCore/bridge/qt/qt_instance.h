@@ -25,8 +25,6 @@
 #include <qpointer.h>
 #include <qhash.h>
 
-class QObject;
-
 namespace KJS {
 
 namespace Bindings {

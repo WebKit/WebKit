@@ -1,3 +1,18 @@
+2008-04-15  Andre Poenitz  <andre.poenitz@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix compilation with Qt namespaces
+
+        Qt can be configured to have all of its classes inside a specified namespaces.
+        This is for example used in plugin/component environments like Eclipse.
+
+        This change makes it possible to let the Qt port compile against a namespaced
+        Qt by the use of macros Qt provides to properly forward declare Qt classes in
+        the namespace.
+
+        * DumpRenderTree/qt/DumpRenderTree.h:
+
 2008-04-08  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.

@@ -32,6 +32,9 @@
 #include <QDebug>
 #include <QPainter>
 #include <QWidget>
+#include <QMetaEnum>
+#include <QUrl>
+#include <QEvent>
 #include <phonon>
 
 using namespace Phonon;

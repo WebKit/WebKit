@@ -46,8 +46,10 @@ namespace WebCore
     class Page;
 }
 
+QT_BEGIN_NAMESPACE
 class QUndoStack;
 class QMenu;
+QT_END_NAMESPACE
 
 class QWebPageContextPrivate
 {

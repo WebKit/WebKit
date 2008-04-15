@@ -29,14 +29,18 @@
 
 #include <QtCore/qobject.h>
 #include <QtGui/qwidget.h>
+
+QT_BEGIN_NAMESPACE
 class QNetworkProxy;
 class QUndoStack;
 class QUrl;
-class QWebFrame;
-class QWebNetworkRequest;
 class QNetworkRequest;
 class QNetworkReply;
 class QNetworkAccessManager;
+QT_END_NAMESPACE
+
+class QWebFrame;
+class QWebNetworkRequest;
 class QWebHistory;
 
 class QWebPagePrivate;

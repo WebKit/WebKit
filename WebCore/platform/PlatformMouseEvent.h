@@ -54,7 +54,9 @@ typedef struct _GdkEventMotion GdkEventMotion;
 #endif
 
 #if PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QInputEvent;
+QT_END_NAMESPACE
 #endif
 
 #if PLATFORM(WX)

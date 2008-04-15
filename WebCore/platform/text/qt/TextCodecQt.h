@@ -30,8 +30,6 @@
 #include "TextEncoding.h"
 #include <QTextCodec>
 
-class QTextCodec;
-
 namespace WebCore {
 
     class TextCodecQt : public TextCodec {

@@ -36,7 +36,10 @@
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(QT)
+#include <qglobal.h>
+QT_BEGIN_NAMESPACE
 class QGradient;
+QT_END_NAMESPACE
 #endif
 
 namespace WebCore {

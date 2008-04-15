@@ -47,7 +47,9 @@ typedef struct _GdkEventScroll GdkEventScroll;
 #endif
 
 #if PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QWheelEvent;
+QT_END_NAMESPACE
 #endif
 
 #if PLATFORM(WX)

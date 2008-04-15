@@ -30,7 +30,9 @@
 
 #include "ResourceRequestBase.h"
 
+QT_BEGIN_NAMESPACE
 class QNetworkRequest;
+QT_END_NAMESPACE
 
 namespace WebCore {
 

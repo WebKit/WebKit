@@ -39,7 +39,9 @@ typedef struct CGContext PlatformGraphicsContext;
 #elif PLATFORM(CAIRO)
 typedef struct _cairo PlatformGraphicsContext;
 #elif PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QPainter;
+QT_END_NAMESPACE
 typedef QPainter PlatformGraphicsContext;
 #elif PLATFORM(WX)
 class wxGCDC;

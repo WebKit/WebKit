@@ -37,7 +37,9 @@
 typedef struct CGShading* CGShadingRef;
 typedef CGShadingRef PlatformGradient;
 #elif PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QGradient;
+QT_END_NAMESPACE
 typedef QGradient* PlatformGradient;
 #elif PLATFORM(CAIRO)
 typedef struct _cairo_pattern cairo_pattern_t;

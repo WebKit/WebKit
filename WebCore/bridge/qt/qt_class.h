@@ -21,8 +21,13 @@
 #define BINDINGS_QT_CLASS_H_
 
 #include "runtime.h"
+
+#include "qglobal.h"
+
+QT_BEGIN_NAMESPACE
 class QObject;
 class QMetaObject;
+QT_END_NAMESPACE
 
 namespace KJS {
 namespace Bindings {

@@ -43,7 +43,9 @@ typedef struct CGImage* CGImageRef;
 
 #if PLATFORM(QT)
 #include <QPixmap>
+QT_BEGIN_NAMESPACE
 class QPainter;
+QT_END_NAMESPACE
 #endif
 
 #if PLATFORM(CAIRO)

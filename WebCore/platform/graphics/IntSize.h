@@ -43,7 +43,10 @@ typedef struct _NSSize NSSize;
 #if PLATFORM(WIN)
 typedef struct tagSIZE SIZE;
 #elif PLATFORM(QT)
+#include <qglobal.h>
+QT_BEGIN_NAMESPACE
 class QSize;
+QT_END_NAMESPACE
 #endif
 #if PLATFORM(SYMBIAN)
 class TSize;

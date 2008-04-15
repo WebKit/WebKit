@@ -24,10 +24,12 @@
 
 #include "RenderTheme.h"
 
+QT_BEGIN_NAMESPACE
 class QStyle;
 class QPainter;
 class QWidget;
 class QStyleOption;
+QT_END_NAMESPACE
 
 namespace WebCore {
 

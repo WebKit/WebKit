@@ -45,7 +45,9 @@ typedef struct _NSPoint NSPoint;
 typedef struct tagPOINT POINT;
 typedef struct tagPOINTS POINTS;
 #elif PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QPoint;
+QT_END_NAMESPACE
 #elif PLATFORM(GTK)
 typedef struct _GdkPoint GdkPoint;
 #endif

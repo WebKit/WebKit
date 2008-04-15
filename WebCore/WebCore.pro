@@ -1044,6 +1044,7 @@ qt-port {
             ../WebKit/qt/Api/qwebnetworkinterface.cpp \
             ../WebKit/qt/Api/qcookiejar.cpp
 
+        DEFINES += QT_BEGIN_NAMESPACE="" QT_END_NAMESPACE=""
      }
 }
 

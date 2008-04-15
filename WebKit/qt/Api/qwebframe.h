@@ -31,18 +31,20 @@
 #endif
 #include "qwebkitglobal.h"
 
+QT_BEGIN_NAMESPACE
 class QRect;
 class QPoint;
 class QPainter;
 class QPixmap;
 class QMouseEvent;
 class QWheelEvent;
-class QWebNetworkRequest;
 class QNetworkRequest;
+class QRegion;
+QT_END_NAMESPACE
 
+class QWebNetworkRequest;
 class QWebFramePrivate;
 class QWebPage;
-class QRegion;
 
 namespace WebCore {
     class WidgetPrivate;
