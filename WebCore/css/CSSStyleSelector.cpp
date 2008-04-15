@@ -1196,6 +1196,7 @@ void CSSStyleSelector::updateFont()
 {
     checkForTextSizeAdjust();
     checkForGenericFamilyChange(m_style, m_parentStyle);
+    checkForZoomChange(m_style, m_parentStyle);
     m_style->font().update(m_fontSelector);
     m_fontDirty = false;
 }
@@ -3582,6 +3583,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (primitiveValue->getFloatValue())
                 m_style->setZoom(primitiveValue->getFloatValue());
         }
+        
+        m_fontDirty = true;
         return;
     }
 // shorthand properties
@@ -4875,6 +4878,17 @@ void CSSStyleSelector::checkForTextSizeAdjust()
     FontDescription newFontDescription(m_style->fontDescription());
     newFontDescription.setComputedSize(newFontDescription.specifiedSize());
     m_style->setFontDescription(newFontDescription);
+}
+
+void CSSStyleSelector::checkForZoomChange(RenderStyle* style, RenderStyle* parentStyle)
+{
+    if (style->effectiveZoom() == parentStyle->effectiveZoom())
+        return;
+    
+    const FontDescription& childFont = style->fontDescription();
+    FontDescription newFontDescription(childFont);
+    setFontSize(newFontDescription, childFont.specifiedSize());
+    style->setFontDescription(newFontDescription);
 }
 
 void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* style, RenderStyle* parentStyle)

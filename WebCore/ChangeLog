@@ -1,3 +1,17 @@
+2008-04-15  David Hyatt  <hyatt@apple.com>
+
+        Fix the zoom property so that it works properly with font-size.
+
+        Reviewed by John Sullivan
+
+        Added fast/css/zoom-font-size.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::updateFont):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::checkForZoomChange):
+        * css/CSSStyleSelector.h:
+
 2008-04-15  Timothy Hatcher  <timothy@apple.com>
 
         Fixes the bug where a resource view could still be shown after the inspected
