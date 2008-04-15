@@ -58,6 +58,7 @@ class QWEBKIT_EXPORT QWebFrame : public QObject
     Q_OBJECT
     Q_PROPERTY(Qt::ScrollBarPolicy verticalScrollBarPolicy READ verticalScrollBarPolicy WRITE setVerticalScrollBarPolicy)
     Q_PROPERTY(Qt::ScrollBarPolicy horizontalScrollBarPolicy READ horizontalScrollBarPolicy WRITE setHorizontalScrollBarPolicy)
+    Q_PROPERTY(int textZoomFactor READ textZoomFactor WRITE setTextZoomFactor)
 private:
     QWebFrame(QWebPage *parent, QWebFrameData *frameData);
     QWebFrame(QWebFrame *parent, QWebFrameData *frameData);
@@ -86,7 +87,7 @@ public:
     QString title() const;
     QUrl url() const;
     QPixmap icon() const;
-    
+
     QString name() const;
 
     QWebFrame *parentFrame() const;
@@ -104,6 +105,9 @@ public:
 
     void render(QPainter *painter, const QRegion &clip);
     void layout();
+
+    void setTextZoomFactor(int percent);
+    int textZoomFactor() const;
 
     QPoint pos() const;
     QRect geometry() const;

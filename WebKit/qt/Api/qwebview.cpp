@@ -310,6 +310,22 @@ QSize QWebView::sizeHint() const
 }
 
 /*!
+  \property QWebView::textZoomFactor
+
+  This property defines the zoom factor for all text in percent.
+*/
+
+void QWebView::setTextZoomFactor(int percent)
+{
+    page()->mainFrame()->setTextZoomFactor(percent);
+}
+
+int QWebView::textZoomFactor() const
+{
+    return page()->mainFrame()->textZoomFactor();
+}
+
+/*!
     Convenience slot that stops loading the document.
 
     It is equivalent to

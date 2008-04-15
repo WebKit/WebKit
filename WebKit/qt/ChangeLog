@@ -1,3 +1,19 @@
+2008-04-15  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Added (QWebFrame|QWebView)::textZoomFactor.
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setTextZoomFactor):
+        (QWebFrame::textZoomFactor):
+        * Api/qwebframe.h:
+        * Api/qwebview.cpp:
+        (QWebView::setTextZoomFactor):
+        (QWebView::textZoomFactor):
+        * Api/qwebview.h:
+
 2008-04-15  Michael Brasser  <michael.brasser@trolltech.com>
 
         Reviewed by Simon.

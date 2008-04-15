@@ -45,6 +45,7 @@ class QWEBKIT_EXPORT QWebView : public QWidget
     Q_PROPERTY(QString selectedText READ selectedText)
     Q_PROPERTY(bool modified READ isModified)
     Q_PROPERTY(Qt::TextInteractionFlags textInteractionFlags READ textInteractionFlags WRITE setTextInteractionFlags)
+    Q_PROPERTY(int textZoomFactor READ textZoomFactor WRITE setTextZoomFactor)
 public:
     explicit QWebView(QWidget *parent = 0);
     virtual ~QWebView();
@@ -90,6 +91,10 @@ public:
     */
 
     QSize sizeHint() const;
+
+    void setTextZoomFactor(int percent);
+    int textZoomFactor() const;
+
 public Q_SLOTS:
     void stop();
     void backward();

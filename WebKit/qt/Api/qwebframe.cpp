@@ -553,6 +553,22 @@ void QWebFrame::render(QPainter *painter, const QRegion &clip)
 }
 
 /*!
+  \property QWebFrame::textZoomFactor
+
+  This property defines the zoom factor for all text in percent.
+*/
+
+void QWebFrame::setTextZoomFactor(int percent)
+{
+    d->frame->setZoomFactor(percent, /*isTextOnly*/true);
+}
+
+int QWebFrame::textZoomFactor() const
+{
+    return d->frame->zoomFactor();
+}
+
+/*!
   Ensure that the content of the frame and all subframes are correctly layouted.
 */
 void QWebFrame::layout()
