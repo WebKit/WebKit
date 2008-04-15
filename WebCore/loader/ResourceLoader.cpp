@@ -107,7 +107,7 @@ bool ResourceLoader::load(const ResourceRequest& r)
 {
     ASSERT(!m_handle);
     ASSERT(m_deferredRequest.isNull());
-    ASSERT(!m_documentLoader->isArchiveLoadPending(this));
+    ASSERT(!m_documentLoader->isSubstituteLoadPending(this));
     
     ResourceRequest clientRequest(r);
     willSendRequest(clientRequest, ResourceResponse());
@@ -314,7 +314,7 @@ void ResourceLoader::didCancel(const ResourceError& error)
     if (m_handle)
         m_handle->clearAuthentication();
 
-    m_documentLoader->cancelPendingArchiveLoad(this);
+    m_documentLoader->cancelPendingSubstituteLoad(this);
     if (m_handle) {
         m_handle->cancel();
         m_handle = 0;

@@ -2,6 +2,26 @@
 
         Reviewed by Adam.
 
+        Rename "archive" to "substitute" in a couple of places.
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::clearArchiveResources):
+        (WebCore::DocumentLoader::deliverSubstituteResourcesAfterDelay):
+        (WebCore::DocumentLoader::substituteResourceDeliveryTimerFired):
+        (WebCore::DocumentLoader::isSubstituteLoadPending):
+        (WebCore::DocumentLoader::cancelPendingSubstituteLoad):
+        (WebCore::DocumentLoader::scheduleArchiveLoad):
+        (WebCore::DocumentLoader::setDefersLoading):
+        * loader/DocumentLoader.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::load):
+        (WebCore::ResourceLoader::didCancel):
+
+2008-04-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
         Move the URL, response and data to SubstituteResource.
         
         * loader/SubstituteResource.h:

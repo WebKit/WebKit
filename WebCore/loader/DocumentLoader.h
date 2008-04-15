@@ -56,6 +56,7 @@ namespace WebCore {
     class SchedulePair;
     class SharedBuffer;
     class SubstituteData;
+    class SubstituteResource;
 
     typedef HashSet<RefPtr<ResourceLoader> > ResourceLoaderSet;
     typedef Vector<ResourceResponse> ResponseVector;
@@ -139,9 +140,9 @@ namespace WebCore {
         
         bool scheduleArchiveLoad(ResourceLoader*, const ResourceRequest&, const KURL&);
 #ifndef NDEBUG
-        bool isArchiveLoadPending(ResourceLoader*) const;
+        bool isSubstituteLoadPending(ResourceLoader*) const;
 #endif
-        void cancelPendingArchiveLoad(ResourceLoader*);   
+        void cancelPendingSubstituteLoad(ResourceLoader*);   
         
         void addResponse(const ResourceResponse&);
         const ResponseVector& responses() const { return m_responses; }
@@ -194,8 +195,8 @@ namespace WebCore {
         void commitLoad(const char*, int);
         bool doesProgressiveLoad(const String& MIMEType) const;
 
-        void deliverArchivedResourcesAfterDelay();
-        void archiveResourceDeliveryTimerFired(Timer<DocumentLoader>*);
+        void deliverSubstituteResourcesAfterDelay();
+        void substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*);
                 
         Frame* m_frame;
 
@@ -255,9 +256,9 @@ namespace WebCore {
         ResponseVector m_responses;
         bool m_stopRecordingResponses;
         
-        typedef HashMap<RefPtr<ResourceLoader>, RefPtr<ArchiveResource> > ArchiveResourceMap;
-        ArchiveResourceMap m_pendingArchiveResources;
-        Timer<DocumentLoader> m_archiveResourceDeliveryTimer;
+        typedef HashMap<RefPtr<ResourceLoader>, RefPtr<SubstituteResource> > SubstituteResourceMap;
+        SubstituteResourceMap m_pendingSubstituteResources;
+        Timer<DocumentLoader> m_substituteResourceDeliveryTimer;
                 
         OwnPtr<ArchiveResourceCollection> m_archiveResourceCollection;
         RefPtr<SharedBuffer> m_parsedArchiveData;
