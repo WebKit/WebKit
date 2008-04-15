@@ -54,6 +54,9 @@ WebInspector.SidebarTreeElement = function(className, title, subtitle, represent
         this.disclosureButton.className = "disclosure-button";
     }
 
+    this.statusElement = document.createElement("div");
+    this.statusElement.className = "status";
+
     this.titlesElement = document.createElement("div");
     this.titlesElement.className = "titles";
 
@@ -93,6 +96,23 @@ WebInspector.SidebarTreeElement.prototype = {
         this.refreshTitles();
     },
 
+    get bubbleText()
+    {
+        return this._bubbleText;
+    },
+
+    set bubbleText(x)
+    {
+        if (!this.bubbleElement) {
+            this.bubbleElement = document.createElement("div");
+            this.bubbleElement.className = "bubble";
+            this.statusElement.appendChild(this.bubbleElement);
+        }
+
+        this._bubbleText = x;
+        this.bubbleElement.textContent = x;
+    },
+
     refreshTitles: function()
     {
         var mainTitle = this.mainTitle;
@@ -125,8 +145,9 @@ WebInspector.SidebarTreeElement.prototype = {
 
         var iconElement = document.createElement("img");
         iconElement.className = "icon";
-        this._listItemNode.appendChild(iconElement);
 
+        this._listItemNode.appendChild(iconElement);
+        this._listItemNode.appendChild(this.statusElement);
         this._listItemNode.appendChild(this.titlesElement);
     },
 

@@ -265,6 +265,23 @@ WebInspector.ResourcesPanel.prototype = {
         if (!resource)
             return;
 
+        var bubbleClass;
+        switch (msg.level) {
+        case WebInspector.ConsoleMessage.MessageLevel.Warning:
+            ++resource.warnings;
+            bubbleClass = "warning";
+            break;
+        case WebInspector.ConsoleMessage.MessageLevel.Error:
+            ++resource.errors;
+            bubbleClass = "error";
+            break;
+        }
+
+        resource._resourcesTreeElement.bubbleText = (resource.warnings + resource.errors);
+
+        if (bubbleClass)
+            resource._resourcesTreeElement.bubbleElement.addStyleClass(bubbleClass);
+
         var view = this._resourceView(resource);
         if (view.addMessage)
             view.addMessage(msg);
@@ -275,6 +292,13 @@ WebInspector.ResourcesPanel.prototype = {
         var resourcesLength = this._resources.length;
         for (var i = 0; i < resourcesLength; ++i) {
             var resource = this._resources[i];
+            resource.warnings = 0;
+            resource.errors = 0;
+
+            resource._resourcesTreeElement.bubbleText = "";
+            resource._resourcesTreeElement.bubbleElement.removeStyleClass("error");
+            resource._resourcesTreeElement.bubbleElement.removeStyleClass("warning");
+
             var view = resource._resourcesView;
             if (!view || !view.clearMessages)
                 continue;

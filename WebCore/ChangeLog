@@ -1,5 +1,28 @@
 2008-04-15  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes the regression where the error and warning counts did not show up in the Resources
+        sidebar next to resources.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18494
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.addMessageToResource): Increment errors or warnings
+        on the resource. Set the bubbleText to the total of the errors and warnings. Add a error
+        or warning class to the bubble.
+        (WebInspector.ResourcesPanel.prototype.clearMessages): Zero out the errors and warnings
+        properties on each resource. Set the bubbleText back to an empty string.
+        * page/inspector/SidebarTreeElement.js:
+        (WebInspector.SidebarTreeElement): Create a statusElement.
+        (WebInspector.SidebarTreeElement.prototype.get bubbleText): Return _bubbleText.
+        (WebInspector.SidebarTreeElement.prototype.set bubbleText): Create bubbleElement if needed.
+        Assign the value to _bubbleText and bubbleElement.textContent.
+        (WebInspector.SidebarTreeElement.prototype.onattach): Append statusElement to _listItemNode.
+        * page/inspector/inspector.css: Style rules for bubbles and status elements.
+
+2008-04-15  Timothy Hatcher  <timothy@apple.com>
+
         Fixes the regression where error and warning bubbles would not be added
         to the source view of a resource.
 
