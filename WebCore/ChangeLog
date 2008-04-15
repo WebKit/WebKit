@@ -1,3 +1,19 @@
+2008-04-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Move the URL, response and data to SubstituteResource.
+        
+        * loader/SubstituteResource.h:
+        (WebCore::SubstituteResource::url):
+        (WebCore::SubstituteResource::response):
+        (WebCore::SubstituteResource::data):
+        (WebCore::SubstituteResource::SubstituteResource):
+        * loader/archive/ArchiveResource.cpp:
+        (WebCore::ArchiveResource::ArchiveResource):
+        * loader/archive/ArchiveResource.h:
+        (WebCore::ArchiveResource::frameName):
+
 2008-04-15  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=18467
