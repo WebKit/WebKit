@@ -1,3 +1,42 @@
+2008-04-15  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes the regression where error and warning bubbles would not be added
+        to the source view of a resource.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18495
+
+        Reviewed by Adam Roben.
+
+        * css/view-source.css:
+        (.webkit-html-message-bubble): Add a min-height to make sure the border-radius
+        has enough room to apply.
+        * page/inspector/Console.js:
+        (WebInspector.Console.prototype.addMessage): Removed code that added messages
+        to resource panels and incremented error and warning counts on resources.
+        Now just call ResourcesPanel.addMessageToResource after assigning the resource
+        to the console message.
+        (WebInspector.Console.prototype.clearMessages): Removed code that cleared error
+        and warning counts from resources an call ResourcesPanel.clearMessages.
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.addMessageToResource): Call addMessage
+        on the resource's view, if it is implemented.
+        (WebInspector.ResourcesPanel.prototype.clearMessages): Call clearMessages
+        on all the resource views for the ones that implement it.
+        (WebInspector.ResourcesPanel.prototype.refreshResource): Call _resourceView
+        to make the resource's view if needed. Use a local view variable.
+        (WebInspector.ResourcesPanel.prototype._resourceView): Added helper function
+        to create a resource view if needed.
+        * page/inspector/SourceView.js:
+        (WebInspector.SourceView.prototype.setupSourceFrameIfNeeded): Delete the 
+        _frameNeedsSetup property at the beginning to prevent recursion. Get the
+        length of the messages array when assigning the local length variable.
+        (WebInspector.SourceView.prototype.addMessage): Renamed from addMessageToSource.
+        (WebInspector.SourceView.prototype.clearMessages): Added. Clear all the message
+        bubbles that might be sprinkled in the source. Also clears the messages array.
+        (WebInspector.SourceView.prototype._addMessageToSource): Create the image
+        element in the Inspector's document so we can use relative image URLs. Then
+        adopt the image element into the frame's document.
+
 2008-04-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

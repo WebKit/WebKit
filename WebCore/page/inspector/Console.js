@@ -135,24 +135,10 @@ WebInspector.Console.prototype = {
 
     addMessage: function(msg)
     {
-/*
-        FIXME: Re-implement addMessageToSource in SourceView and ResourcesPanel.
         if (msg.url in WebInspector.resourceURLMap) {
             msg.resource = WebInspector.resourceURLMap[msg.url];
-            switch (msg.level) {
-                case WebInspector.ConsoleMessage.MessageLevel.Warning:
-                    ++msg.resource.warnings;
-                    if (msg.resource.panel.addMessageToSource)
-                        msg.resource.panel.addMessageToSource(msg);
-                    break;
-                case WebInspector.ConsoleMessage.MessageLevel.Error:
-                    ++msg.resource.errors;
-                    if (msg.resource.panel.addMessageToSource)
-                        msg.resource.panel.addMessageToSource(msg);
-                    break;
-            }
+            WebInspector.panels.resources.addMessageToResource(msg.resource, msg);
         }
-*/
 
         this.messages.push(msg);
 
@@ -163,13 +149,7 @@ WebInspector.Console.prototype = {
 
     clearMessages: function()
     {
-        for (var i = 0; i < this.messages.length; ++i) {
-            var resource = this.messages[i].resource;
-            if (!resource)
-                continue;
-            resource.errors = 0;
-            resource.warnings = 0;
-        }
+        WebInspector.panels.resources.clearMessages();
 
         this.messages = [];
 

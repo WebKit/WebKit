@@ -260,6 +260,28 @@ WebInspector.ResourcesPanel.prototype = {
         this.refreshResource(resource);
     },
 
+    addMessageToResource: function(resource, msg)
+    {
+        if (!resource)
+            return;
+
+        var view = this._resourceView(resource);
+        if (view.addMessage)
+            view.addMessage(msg);
+    },
+
+    clearMessages: function()
+    {
+        var resourcesLength = this._resources.length;
+        for (var i = 0; i < resourcesLength; ++i) {
+            var resource = this._resources[i];
+            var view = resource._resourcesView;
+            if (!view || !view.clearMessages)
+                continue;
+            view.clearMessages();
+        }
+    },
+
     refreshResource: function(resource, skipBoundaryUpdate, skipSort, immediate)
     {
         if (!this.visible) {
@@ -308,12 +330,11 @@ WebInspector.ResourcesPanel.prototype = {
         if (this.visibleResource && this.visibleResource._resourcesView)
             this.visibleResource._resourcesView.hide();
 
-        if (!resource._resourcesView)
-            resource._resourcesView = this._createResourceView(resource);
-        resource._resourcesView.show();
+        var view = this._resourceView(resource);
+        view.show();
 
-        if (line && resource._resourcesView.showLine)
-            resource._resourcesView.showLine(line);
+        if (line && view.showLine)
+            view.showLine(line);
 
         if (resource._resourcesTreeElement) {
             resource._resourcesTreeElement.reveal();
@@ -846,6 +867,15 @@ WebInspector.ResourcesPanel.prototype = {
     {
         var selectedOption = this.sortingSelectElement[this.sortingSelectElement.selectedIndex];
         this.sortingFunction = selectedOption.sortingFunction;
+    },
+
+    _resourceView: function(resource)
+    {
+        if (!resource)
+            return null;
+        if (!resource._resourcesView)
+            resource._resourcesView = this._createResourceView(resource);
+        return resource._resourcesView;
     },
 
     _createResourceView: function(resource)

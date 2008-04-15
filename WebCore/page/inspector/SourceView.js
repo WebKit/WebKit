@@ -51,16 +51,16 @@ WebInspector.SourceView.prototype = {
     setupSourceFrameIfNeeded: function()
     {
         if (this._frameNeedsSetup) {
+            delete this._frameNeedsSetup;
+
             this.attach();
 
             InspectorController.addSourceToFrame(this.resource.identifier, this.frameElement);
             WebInspector.addMainEventListeners(this.frameElement.contentDocument);
 
-            var length = this.messages;
+            var length = this.messages.length;
             for (var i = 0; i < length; ++i)
                 this._addMessageToSource(this.messages[i]);
-
-            delete this._frameNeedsSetup;
         }
     },
 
@@ -90,11 +90,28 @@ WebInspector.SourceView.prototype = {
         row.scrollIntoViewIfNeeded(true);
     },
 
-    addMessageToSource: function(msg)
+    addMessage: function(msg)
     {
         this.messages.push(msg);
         if (!this._frameNeedsSetup)
             this._addMessageToSource(msg);
+    },
+
+    clearMessages: function()
+    {
+        this.messages = [];
+
+        if (this._frameNeedsSetup)
+            return;
+
+        var bubbles = this.frameElement.contentDocument.querySelectorAll(".webkit-html-message-bubble");
+        if (!bubbles)
+            return;
+
+        for (var i = 0; i < bubbles.length; ++i) {
+            var bubble = bubbles[i];
+            bubble.parentNode.removeChild(bubble);
+        }
     },
 
     _addMessageToSource: function(msg)
@@ -129,9 +146,13 @@ WebInspector.SourceView.prototype = {
         lineDiv.className = "webkit-html-message-line";
         errorDiv.appendChild(lineDiv);
 
-        var image = doc.createElement("img");
+        // Create the image element in the Inspector's document so we can use relative image URLs.
+        var image = document.createElement("img");
         image.src = imageURL;
         image.className = "webkit-html-message-icon";
+
+        // Adopt the image element since it wasn't created in doc.
+        image = doc.adoptNode(image);
         lineDiv.appendChild(image);
 
         lineDiv.appendChild(doc.createTextNode(msg.message));
