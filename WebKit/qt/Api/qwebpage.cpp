@@ -1766,7 +1766,16 @@ QWebFrame *QWebPageContext::targetFrame() const
 /*!
     \fn void QWebPage::download(const QNetworkRequest &request)
 
-    This signals is emitted when the user decides to download a link.
+    This signal is emitted when the user decides to download a link.
+*/
+
+/*!
+    \fn void QWebPage::microFocusChanged()
+
+    This signal is emitted when for example the position of the cursor in an editable form
+    element changes. It is used inform input methods about the new on-screen position where
+    the user is able to enter text. This signal is usually connected to QWidget's updateMicroFocus()
+    slot.
 */
 
 #include "moc_qwebpage.cpp"

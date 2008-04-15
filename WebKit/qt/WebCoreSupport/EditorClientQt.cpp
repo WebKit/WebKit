@@ -218,6 +218,7 @@ void EditorClientQt::respondToChangedSelection()
 
     m_page->d->updateEditorActions();
     emit m_page->selectionChanged();
+    emit m_page->microFocusChanged();
 }
 
 void EditorClientQt::didEndEditing()
@@ -545,8 +546,10 @@ bool EditorClientQt::isEditing() const
 void EditorClientQt::setInputMethodState(bool active)
 {
     QWidget *view = m_page->view();
-    if (view)
+    if (view) {
         view->setAttribute(Qt::WA_InputMethodEnabled, active);
+        emit m_page->microFocusChanged();
+    }
 }
 
 }

@@ -218,6 +218,8 @@ Q_SIGNALS:
     //QHash<QString, QWidget *> embeddableWidgets() const;
     //void clearEmbeddableWidgets();
 
+    void microFocusChanged();
+
 protected:
     virtual QWebPage *createWindow();
     virtual QWebPage *createModalDialog();

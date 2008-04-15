@@ -2,6 +2,22 @@
 
         Reviewed by Holger.
 
+        Update the micro focus for input methods as soon as the composition mode changes
+        or the caret/selection changes.
+        
+
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * Api/qwebview.cpp:
+        (QWebView::setPage):
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::respondToChangedSelection):
+        (WebCore::EditorClientQt::setInputMethodState):
+
+2008-04-15  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Don't use QDir, QString or any locale sensitive function before constructing Q(Core)Application,
         it yields undefined behaviour or wrong default codec initialization.
         

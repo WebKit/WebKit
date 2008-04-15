@@ -123,6 +123,9 @@ void QWebView::setPage(QWebPage *page)
                 this, SIGNAL(loadProgressChanged(int)));
         connect(d->page, SIGNAL(statusBarTextChanged(const QString &)),
                 this, SIGNAL(statusBarTextChanged(const QString &)));
+
+        connect(d->page, SIGNAL(microFocusChanged()),
+                this, SLOT(updateMicroFocus()));
     }
     update();
 }
