@@ -69,7 +69,7 @@
 
         Add a hidden pref to debug WebArchive loading.  With this pref on, when loading a WebArchive,
         if the resource isn't in the ArchiveResourceCollection, the loader will not fall back to the 
-        network and will instead fail the load as "cancelled."
+        network and will instead fail the load with a "cannot show URL" error.
 
         * loader/ResourceLoader.cpp:
         (WebCore::ResourceLoader::load): Do the check here.
