@@ -1,3 +1,31 @@
+2008-04-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Hook up event dispatching for window.localStorage changes.
+        Now a meaningful LayoutTest suite can be landed for window.localStorage.
+
+        * storage/domstorage/localstorage/enumerate-storage-expected.txt: Added.
+        * storage/domstorage/localstorage/enumerate-storage.html: Added.
+        * storage/domstorage/localstorage/iframe-events-expected.txt: Added.
+        * storage/domstorage/localstorage/iframe-events.html: Added.
+        * storage/domstorage/localstorage/index-get-and-set-expected.txt: Added.
+        * storage/domstorage/localstorage/index-get-and-set.html: Added.
+        * storage/domstorage/localstorage/onstorage-attribute-markup-expected.txt: Added.
+        * storage/domstorage/localstorage/onstorage-attribute-markup.html: Added.
+        * storage/domstorage/localstorage/onstorage-attribute-setattribute-expected.txt: Added.
+        * storage/domstorage/localstorage/onstorage-attribute-setattribute.html: Added.
+        * storage/domstorage/localstorage/resources: Added.
+        * storage/domstorage/localstorage/resources/clearLocalStorage.js: Added.
+        * storage/domstorage/localstorage/resources/iframe-events-second.html: Added.
+        * storage/domstorage/localstorage/resources/window-open-second.html: Added.
+        * storage/domstorage/localstorage/simple-events-expected.txt: Added.
+        * storage/domstorage/localstorage/simple-events.html: Added.
+        * storage/domstorage/localstorage/simple-usage-expected.txt: Added.
+        * storage/domstorage/localstorage/simple-usage.html: Added.
+        * storage/domstorage/localstorage/window-open-expected.txt: Added.
+        * storage/domstorage/localstorage/window-open.html: Added.
+
 2008-04-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

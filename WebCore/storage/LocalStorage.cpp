@@ -26,6 +26,11 @@
 #include "config.h"
 #include "LocalStorage.h"
 
+#include "EventNames.h"
+#include "Frame.h"
+#include "FrameTree.h"
+#include "Page.h"
+#include "PageGroup.h"
 #include "StorageArea.h"
 
 namespace WebCore {
@@ -71,8 +76,28 @@ void LocalStorage::itemRemoved(StorageArea* area, const String& key, const Strin
 
 void LocalStorage::dispatchStorageEvent(StorageArea* area, const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
 {
-    // FIXME: StorageEvents for local storage areas need to be dispatched to every WebView currently displaying a document associated with this
-    // StorageArea.  This will involved refering to all open Pages, mapped by SecurityOrigin
+    Page* page = sourceFrame->page();
+    if (!page)
+        return;
+
+    // Need to copy all relevant frames from every page to a vector, since sending the event to one frame might mutate the frame tree
+    // of any given page in the group, or mutate the page group itself
+    Vector<RefPtr<Frame> > frames;
+    const HashSet<Page*>& pages = page->group().pages();
+    
+    HashSet<Page*>::const_iterator end = pages.end();
+    for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
+        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+            if (Document* document = frame->document())
+                if (document->securityOrigin()->equal(area->securityOrigin()))
+                    frames.append(frame);
+        }
+    }
+
+    for (unsigned i = 0; i < frames.size(); ++i) {
+        if (HTMLElement* body = frames[i]->document()->body())
+            body->dispatchStorageEvent(EventNames::storageEvent, key, oldValue, newValue, sourceFrame);        
+    }
 }
 
 } // namespace WebCore

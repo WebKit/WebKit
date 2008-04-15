@@ -1,3 +1,27 @@
+2008-04-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Hook up event dispatching for window.localStorage changes.
+
+        Tests: storage/domstorage/localstorage/enumerate-storage.html
+               storage/domstorage/localstorage/iframe-events.html
+               storage/domstorage/localstorage/index-get-and-set.html
+               storage/domstorage/localstorage/onstorage-attribute-markup.html
+               storage/domstorage/localstorage/onstorage-attribute-setattribute.html
+               storage/domstorage/localstorage/simple-events.html
+               storage/domstorage/localstorage/simple-usage.html
+               storage/domstorage/localstorage/window-open.html
+
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::dispatchStorageEvent): Walk every Page in the PageGroup, adding
+          each Frame that matches the storage area's security origin to a Vector.  Then dispatch
+          the StorageEvent to each Frame in the Vector
+
+        * storage/SessionStorage.cpp:
+        (WebCore::SessionStorage::dispatchStorageEvent): Adopt the technique used in LocalStorage,
+          which is to only add the Frames to the Vector if their security origin matches
+
 2008-04-15  Olivier Goffart  <ogoffart@trolltech.com>
 
         Reviewed by Simon.

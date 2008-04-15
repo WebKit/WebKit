@@ -86,17 +86,19 @@ void SessionStorage::itemRemoved(StorageArea* area, const String& key, const Str
 void SessionStorage::dispatchStorageEvent(StorageArea* area, const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
 {
     ASSERT(area->page() == m_page);
+    ASSERT(m_page);
     
     // For SessionStorage events, each frame in the page's frametree with the same origin as this Storage needs to be notified of the change
     Vector<RefPtr<Frame> > frames;
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext())
-        frames.append(frame);
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (Document* document = frame->document())
+            if (document->securityOrigin()->equal(area->securityOrigin()))
+                frames.append(frame);
+    }
         
     for (unsigned i = 0; i < frames.size(); ++i) {
-        if (frames[i]->document()->securityOrigin()->equal(area->securityOrigin())) {
-            if (HTMLElement* body = frames[i]->document()->body())
-                body->dispatchStorageEvent(EventNames::storageEvent, key, oldValue, newValue, sourceFrame);        
-        }
+        if (HTMLElement* body = frames[i]->document()->body())
+            body->dispatchStorageEvent(EventNames::storageEvent, key, oldValue, newValue, sourceFrame);        
     }
 }
 
