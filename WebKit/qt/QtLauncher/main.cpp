@@ -384,8 +384,8 @@ QWebPage *WebPage::createWindow()
 
 int main(int argc, char **argv)
 {
-    QString url = QString("%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
     QApplication app(argc, argv);
+    QString url = QString("%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
 
     QWebSettings::setPageCacheCapacity(4);
     QWebSettings::setObjectCacheCapacities((16*1024*1024)/8, (16*1024*1024)/8, 16*1024*1024);

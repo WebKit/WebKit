@@ -1,3 +1,14 @@
+2008-04-15  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Don't use QDir, QString or any locale sensitive function before constructing Q(Core)Application,
+        it yields undefined behaviour or wrong default codec initialization.
+        
+
+        * QtLauncher/main.cpp:
+        (WebPage::createWindow):
+
 2008-04-15  Olivier Goffart  <ogoffart@trolltech.com>
 
         Reviewed by Simon.
