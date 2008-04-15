@@ -219,7 +219,7 @@ if (isGtk() && !useQmake()) {
     push @options, autotoolsFlag($databaseSupport, "database");
     push @options, autotoolsFlag($domStorageSupport, "dom-storage");
     push @options, autotoolsFlag($iconDatabaseSupport, "icon-database");
-    push @options, autotoolsFlag($offlineWebApplicationSupport, "offline-web-applications")
+    push @options, autotoolsFlag($offlineWebApplicationSupport, "offline-web-applications");
     push @options, autotoolsFlag($svgSupport, "svg");
     push @options, autotoolsFlag($svgAnimationSupport, "svg-animation");
     push @options, autotoolsFlag($svgFiltersSupport, "svg-filters");

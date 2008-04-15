@@ -1,5 +1,11 @@
 2008-04-15  Anders Carlsson  <andersca@apple.com>
 
+        Add missing ;
+        
+        * Scripts/build-webkit:
+        
+2008-04-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam.
 
         Add ENABLE_OFFLINE_WEB_APPLICATIONS to FEATURE_DEFINES.
