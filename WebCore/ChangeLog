@@ -1,3 +1,28 @@
+2008-04-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add empty files for the application cache.
+        
+        * Configurations/WebCore.xcconfig:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/build-generated-files.sh:
+        Add ENABLE_OFFLINE_WEB_APPLICATIONS to FEATURE_DEFINES.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/appcache: Added.
+        * loader/appcache/ApplicationCache.cpp: Added.
+        * loader/appcache/ApplicationCache.h: Added.
+        * loader/appcache/ApplicationCacheGroup.cpp: Added.
+        * loader/appcache/ApplicationCacheGroup.h: Added.
+        * loader/appcache/ApplicationCacheResource.cpp: Added.
+        * loader/appcache/ApplicationCacheResource.h: Added.
+        * loader/appcache/DOMApplicationCache.cpp: Added.
+        * loader/appcache/DOMApplicationCache.h: Added.
+        * loader/appcache/DOMApplicationCache.idl: Added.
+        * loader/appcache/ManifestParser.cpp: Added.
+        * loader/appcache/ManifestParser.h: Added.
+
 2008-04-15  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

@@ -193,6 +193,17 @@
 		1A85B2B60A1B2AC700D8C87C /* JSHTMLDivElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */; };
 		1A85B2B70A1B2AC700D8C87C /* JSHTMLDivElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */; };
 		1A8F6B020DB53006001DB794 /* SubstituteResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6B010DB53006001DB794 /* SubstituteResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A8F6BBC0DB55CDC001DB794 /* ApplicationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8F6BB10DB55CDC001DB794 /* ApplicationCache.cpp */; };
+		1A8F6BBD0DB55CDC001DB794 /* ApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6BB20DB55CDC001DB794 /* ApplicationCache.h */; };
+		1A8F6BBE0DB55CDC001DB794 /* ApplicationCacheGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8F6BB30DB55CDC001DB794 /* ApplicationCacheGroup.cpp */; };
+		1A8F6BBF0DB55CDC001DB794 /* ApplicationCacheGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6BB40DB55CDC001DB794 /* ApplicationCacheGroup.h */; };
+		1A8F6BC00DB55CDC001DB794 /* ApplicationCacheResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8F6BB50DB55CDC001DB794 /* ApplicationCacheResource.cpp */; };
+		1A8F6BC10DB55CDC001DB794 /* ApplicationCacheResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6BB60DB55CDC001DB794 /* ApplicationCacheResource.h */; };
+		1A8F6BC20DB55CDC001DB794 /* DOMApplicationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8F6BB70DB55CDC001DB794 /* DOMApplicationCache.cpp */; };
+		1A8F6BC30DB55CDC001DB794 /* DOMApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6BB80DB55CDC001DB794 /* DOMApplicationCache.h */; };
+		1A8F6BC40DB55CDC001DB794 /* DOMApplicationCache.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A8F6BB90DB55CDC001DB794 /* DOMApplicationCache.idl */; };
+		1A8F6BC50DB55CDC001DB794 /* ManifestParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8F6BBA0DB55CDC001DB794 /* ManifestParser.cpp */; };
+		1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6BBB0DB55CDC001DB794 /* ManifestParser.h */; };
 		1A98956B0AA78F80005EF5EF /* KURLCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */; };
 		1A9EF4570A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */; };
 		1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AB1AE780C051FDE00139F4F /* zoomInCursor.png */; };
@@ -4606,6 +4617,17 @@
 		1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDivElement.cpp; sourceTree = "<group>"; };
 		1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLDivElement.h; sourceTree = "<group>"; };
 		1A8F6B010DB53006001DB794 /* SubstituteResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubstituteResource.h; sourceTree = "<group>"; };
+		1A8F6BB10DB55CDC001DB794 /* ApplicationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationCache.cpp; sourceTree = "<group>"; };
+		1A8F6BB20DB55CDC001DB794 /* ApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCache.h; sourceTree = "<group>"; };
+		1A8F6BB30DB55CDC001DB794 /* ApplicationCacheGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationCacheGroup.cpp; sourceTree = "<group>"; };
+		1A8F6BB40DB55CDC001DB794 /* ApplicationCacheGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheGroup.h; sourceTree = "<group>"; };
+		1A8F6BB50DB55CDC001DB794 /* ApplicationCacheResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationCacheResource.cpp; sourceTree = "<group>"; };
+		1A8F6BB60DB55CDC001DB794 /* ApplicationCacheResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheResource.h; sourceTree = "<group>"; };
+		1A8F6BB70DB55CDC001DB794 /* DOMApplicationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMApplicationCache.cpp; sourceTree = "<group>"; };
+		1A8F6BB80DB55CDC001DB794 /* DOMApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMApplicationCache.h; sourceTree = "<group>"; };
+		1A8F6BB90DB55CDC001DB794 /* DOMApplicationCache.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMApplicationCache.idl; sourceTree = "<group>"; };
+		1A8F6BBA0DB55CDC001DB794 /* ManifestParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManifestParser.cpp; sourceTree = "<group>"; };
+		1A8F6BBB0DB55CDC001DB794 /* ManifestParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManifestParser.h; sourceTree = "<group>"; };
 		1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KURLCFNet.cpp; sourceTree = "<group>"; };
 		1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2DCustom.cpp; sourceTree = "<group>"; };
 		1AB1AE780C051FDE00139F4F /* zoomInCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoomInCursor.png; sourceTree = "<group>"; };
@@ -8490,6 +8512,24 @@
 			path = bridge/objc;
 			sourceTree = "<group>";
 		};
+		1A8F6BB00DB55CDC001DB794 /* appcache */ = {
+			isa = PBXGroup;
+			children = (
+				1A8F6BB10DB55CDC001DB794 /* ApplicationCache.cpp */,
+				1A8F6BB20DB55CDC001DB794 /* ApplicationCache.h */,
+				1A8F6BB30DB55CDC001DB794 /* ApplicationCacheGroup.cpp */,
+				1A8F6BB40DB55CDC001DB794 /* ApplicationCacheGroup.h */,
+				1A8F6BB50DB55CDC001DB794 /* ApplicationCacheResource.cpp */,
+				1A8F6BB60DB55CDC001DB794 /* ApplicationCacheResource.h */,
+				1A8F6BB70DB55CDC001DB794 /* DOMApplicationCache.cpp */,
+				1A8F6BB80DB55CDC001DB794 /* DOMApplicationCache.h */,
+				1A8F6BB90DB55CDC001DB794 /* DOMApplicationCache.idl */,
+				1A8F6BBA0DB55CDC001DB794 /* ManifestParser.cpp */,
+				1A8F6BBB0DB55CDC001DB794 /* ManifestParser.h */,
+			);
+			path = appcache;
+			sourceTree = "<group>";
+		};
 		1AE42F670AA4B8CB00C8612D /* cf */ = {
 			isa = PBXGroup;
 			children = (
@@ -12145,6 +12185,7 @@
 		BCB16BFB0979C38700467741 /* loader */ = {
 			isa = PBXGroup;
 			children = (
+				1A8F6BB00DB55CDC001DB794 /* appcache */,
 				512DD8E80D91E691000F89EE /* archive */,
 				93A1EAA20A5634D8006960A0 /* mac */,
 				5126E6B60A2E3AEF005C29FA /* icon */,
@@ -14845,6 +14886,11 @@
 				C091588D0DB4209200E55AF4 /* JSInspectorCallbackWrapper.h in Headers */,
 				C091588F0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h in Headers */,
 				1A8F6B020DB53006001DB794 /* SubstituteResource.h in Headers */,
+				1A8F6BBD0DB55CDC001DB794 /* ApplicationCache.h in Headers */,
+				1A8F6BBF0DB55CDC001DB794 /* ApplicationCacheGroup.h in Headers */,
+				1A8F6BC10DB55CDC001DB794 /* ApplicationCacheResource.h in Headers */,
+				1A8F6BC30DB55CDC001DB794 /* DOMApplicationCache.h in Headers */,
+				1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14968,6 +15014,7 @@
 				51E0BABE0DA5548400A9E417 /* StorageEvent.idl in Resources */,
 				519FE0A30DAD446E00A08F21 /* HTMLAttributeNames.in in Resources */,
 				519FE0A40DAD446E00A08F21 /* HTMLTagNames.in in Resources */,
+				1A8F6BC40DB55CDC001DB794 /* DOMApplicationCache.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16537,6 +16584,11 @@
 				C091588A0DB4209200E55AF4 /* JSInspectedObjectWrapper.cpp in Sources */,
 				C091588C0DB4209200E55AF4 /* JSInspectorCallbackWrapper.cpp in Sources */,
 				C091588E0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp in Sources */,
+				1A8F6BBC0DB55CDC001DB794 /* ApplicationCache.cpp in Sources */,
+				1A8F6BBE0DB55CDC001DB794 /* ApplicationCacheGroup.cpp in Sources */,
+				1A8F6BC00DB55CDC001DB794 /* ApplicationCacheResource.cpp in Sources */,
+				1A8F6BC20DB55CDC001DB794 /* DOMApplicationCache.cpp in Sources */,
+				1A8F6BC50DB55CDC001DB794 /* ManifestParser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
