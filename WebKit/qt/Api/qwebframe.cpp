@@ -478,6 +478,64 @@ void QWebFrame::setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy policy)
 }
 
 /*!
+  Sets the current value for the scrollbar with orientation \a orientation.
+
+  The scrollbar forces the value to be within the legal range: minimum <= value <= maximum.
+
+  Changing the value also updates the thumb position.
+*/
+void QWebFrame::setScrollBarValue(Qt::Orientation orientation, int value)
+{
+    PlatformScrollbar *sb;
+    sb = (orientation == Qt::Horizontal) ? d->horizontalScrollBar() : d->verticalScrollBar();
+    if (sb) {
+        if (value < 0)
+            value = 0;
+        else if (value > scrollBarMaximum(orientation))
+            value = scrollBarMaximum(orientation);
+        sb->setValue(value);
+    }
+}
+
+/*!
+  Returns the current value for the scrollbar with orientation \a orientation, or 0
+  if no scrollbar is found for \a orientation.
+*/
+int QWebFrame::scrollBarValue(Qt::Orientation orientation) const
+{
+    PlatformScrollbar *sb;
+    sb = (orientation == Qt::Horizontal) ? d->horizontalScrollBar() : d->verticalScrollBar();
+    if (sb) {
+        return sb->value();
+    }
+    return 0;
+}
+
+/*!
+  Returns the maximum value for the scrollbar with orientation \a orientation, or 0
+  if no scrollbar is found for \a orientation.
+*/
+int QWebFrame::scrollBarMaximum(Qt::Orientation orientation) const
+{
+    PlatformScrollbar *sb;
+    sb = (orientation == Qt::Horizontal) ? d->horizontalScrollBar() : d->verticalScrollBar();
+    if (sb) {
+        return (orientation == Qt::Horizontal) ? sb->width() : sb->height();
+    }
+    return 0;
+}
+
+/*!
+  Returns the minimum value for the scrollbar with orientation \a orientation.
+
+  The minimum value is always 0.
+*/
+int QWebFrame::scrollBarMinimum(Qt::Orientation orientation) const
+{
+    return 0;
+}
+
+/*!
   Render the frame into \a painter clipping to \a clip.
 */
 void QWebFrame::render(QPainter *painter, const QRegion &clip)

@@ -1,3 +1,19 @@
+2008-04-15  Michael Brasser  <michael.brasser@trolltech.com>
+
+        Reviewed by Simon.
+
+        Added simple scrolling API to QWebFrame.
+        
+        The intent is that it works similar to QAbstractScrollArea.
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setScrollBarValue):
+        (QWebFrame::scrollBarValue):
+        (QWebFrame::scrollBarMaximum):
+        (QWebFrame::scrollBarMinimum):
+        * Api/qwebframe.h:
+
 2008-04-15  Olivier Goffart  <ogoffart@trolltech.com>
 
         Reviewed by Holger.
