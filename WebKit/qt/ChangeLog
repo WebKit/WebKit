@@ -1,3 +1,13 @@
+2008-04-15  Olivier Goffart  <ogoffart@trolltech.com>
+
+        Reviewed by Holger.
+
+        Fixes: implement the OpenFrameInNewWindow action.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction):
+
 2008-04-15  Andre Poenitz  <andre.poenitz@trolltech.com>
 
         Reviewed by Simon.

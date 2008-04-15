@@ -37,6 +37,7 @@
 #include "ChromeClientQt.h"
 #include "ContextMenu.h"
 #include "ContextMenuClientQt.h"
+#include "DocumentLoader.h"
 #include "DragClientQt.h"
 #include "DragController.h"
 #include "DragData.h"
@@ -881,6 +882,8 @@ static void openNewWindow(const QUrl& url, WebCore::Frame* frame)
 void QWebPage::triggerAction(WebAction action, bool checked)
 {
     WebCore::Frame *frame = d->page->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
     WebCore::Editor *editor = frame->editor();
     const char *command = 0;
 
@@ -896,14 +899,18 @@ void QWebPage::triggerAction(WebAction action, bool checked)
                                                       /*formValues*/
                                                       WTF::HashMap<String, String>());
                 break;
-            } else {
             }
             // fall through
         case OpenLinkInNewWindow:
             openNewWindow(d->currentContext.linkUrl(), frame);
             break;
-        case OpenFrameInNewWindow:
+        case OpenFrameInNewWindow: {
+            KURL url = frame->loader()->documentLoader()->unreachableURL();
+            if (url.isEmpty())
+                url = frame->loader()->documentLoader()->url();
+            openNewWindow(url, frame);
             break;
+        }
         case CopyLinkToClipboard:
             editor->copyURL(d->currentContext.linkUrl(), d->currentContext.text());
             break;
@@ -1043,6 +1050,7 @@ void QWebPage::triggerAction(WebAction action, bool checked)
             break;
         case ToggleUnderline:
             editor->toggleUnderline();
+            break;
 
         case InspectElement:
             d->page->inspectorController()->inspect(d->currentContext.d->innerNonSharedNode.get());
