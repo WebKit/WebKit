@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x250
+  RenderBlock {HTML} at (0,0) size 800x250
+    RenderBody {BODY} at (8,8) size 784x234
+      RenderBlock {DIV} at (0,0) size 250x234
+        RenderText {#text} at (0,0) size 250x234
+          text run at (0,0) width 177: "Lorem ipsum dolor sit amet,"
+          text run at (0,18) width 215: "consectetur adipisicing elit, sed do"
+          text run at (0,36) width 242: "eiusmod tempor incididunt ut labore et"
+          text run at (0,54) width 250: "dolore magna aliqua. Ut enim ad minim"
+          text run at (0,72) width 208: "veniam, quis nostrud exercitation"
+          text run at (0,90) width 222: "ullamco laboris nisi ut aliquip ex ea"
+          text run at (0,108) width 231: "commodo consequat. Duis aute irure"
+          text run at (0,126) width 245: "dolor in reprehenderit in voluptate velit"
+          text run at (0,144) width 207: "esse cillum dolore eu fugiat nulla"
+          text run at (0,162) width 204: "pariatur. Excepteur sint occaecat"
+          text run at (0,180) width 229: "cupidatat non proident, sunt in culpa"
+          text run at (0,198) width 233: "qui officia deserunt mollit anim id est"
+          text run at (0,216) width 56: "laborum."

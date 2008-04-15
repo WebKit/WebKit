@@ -3575,10 +3575,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (primitiveValue->getIdent() == CSSValueReset) {
             m_style->setEffectiveZoom(RenderStyle::initialZoom());
             m_style->setZoom(RenderStyle::initialZoom());
-        } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-            m_style->setZoom(primitiveValue->getFloatValue() / 100.0f);
-        else if (type == CSSPrimitiveValue::CSS_NUMBER)
-            m_style->setZoom(primitiveValue->getFloatValue());
+        } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE) {
+            if (primitiveValue->getFloatValue())
+                m_style->setZoom(primitiveValue->getFloatValue() / 100.0f);
+        } else if (type == CSSPrimitiveValue::CSS_NUMBER) {
+            if (primitiveValue->getFloatValue())
+                m_style->setZoom(primitiveValue->getFloatValue());
+        }
         return;
     }
 // shorthand properties

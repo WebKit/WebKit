@@ -1,3 +1,19 @@
+2008-04-15  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=18467
+
+        Make sure to ignore zoom:0.  That is not supposed to actually do anything.  It's a hack in IE
+        to cause an element to set "hasLayout."
+
+        Reviewed by Anders
+
+        Added fast/css/zoom-property-parsing.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2008-04-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
