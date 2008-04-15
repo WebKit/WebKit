@@ -751,14 +751,19 @@ static WebCacheModel cacheModelForMainBundle(void)
     return [self _boolValueForKey:WebKitAuthorAndUserStylesEnabledPreferenceKey];
 }
 
-- (BOOL)_webArchiveDebugModeEnabled
+- (void)setAuthorAndUserStylesEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAuthorAndUserStylesEnabledPreferenceKey];
+}
+
+- (BOOL)webArchiveDebugModeEnabled
 {
     return [self _boolValueForKey:WebKitWebArchiveDebugModeEnabledPreferenceKey];
 }
 
-- (void)setAuthorAndUserStylesEnabled:(BOOL)flag
+- (void)setWebArchiveDebugModeEnabled:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitAuthorAndUserStylesEnabledPreferenceKey];
+    [self _setBoolValue:flag forKey:WebKitWebArchiveDebugModeEnabledPreferenceKey];
 }
 
 - (BOOL)respectStandardStyleKeyEquivalents

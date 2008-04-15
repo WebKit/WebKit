@@ -1,3 +1,17 @@
+2008-04-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan
+
+        Do a more complete job adding the "WebArchiveDebugMode" pref
+
+        * WebView/WebPreferences.m: Add both getter *and* setter
+        (-[WebPreferences webArchiveDebugModeEnabled]):
+        (-[WebPreferences setWebArchiveDebugModeEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]): Call the renamed getter
+
 2008-04-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders
