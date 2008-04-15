@@ -1,3 +1,26 @@
+2008-04-15  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes the bug where a resource view could still be shown after the inspected
+        page navigates to another page.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18517
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.reset): Close the visible resource.
+        Iterate over all the resources and zero errors and warnings and delete the
+        resource view and tree element. Removes all children of resourceViews. Passes
+        true to _updateGraphDividersIfNeeded to force an immediate update.
+        (WebInspector.ResourcesPanel.prototype.removeResource): Added. Closes
+        the resource view if it is visible. Removes the resource from the _resources
+        array. Removes the tree element from the outline tree. Zeros out the errors
+        and warnings properties. Deletes the tree element and resource view properties.
+        (WebInspector.ResourcesPanel.prototype.closeVisibleResource): Null check
+        this._calculator for times when reset is called before the calculator is set.
+        * page/inspector/inspector.js:
+        (WebInspector.removeResource): Call ResourcesPanel.removeResource.
+
 2008-04-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

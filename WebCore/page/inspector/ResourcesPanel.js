@@ -233,15 +233,31 @@ WebInspector.ResourcesPanel.prototype = {
 
     reset: function()
     {
+        this.closeVisibleResource();
+
         if (this._calculator)
             this._calculator.reset();
+
+        if (this._resources) {
+            var resourcesLength = this._resources.length;
+            for (var i = 0; i < resourcesLength; ++i) {
+                var resource = this._resources[i];
+
+                resource.warnings = 0;
+                resource.errors = 0;
+
+                delete resource._resourcesTreeElement;
+                delete resource._resourcesView;
+            }
+        }
 
         this._resources = [];
         this._staleResources = [];
 
         this.resourcesTreeElement.removeChildren();
+        this.resourceViews.removeChildren();
 
-        this._updateGraphDividersIfNeeded();
+        this._updateGraphDividersIfNeeded(true);
 
         this._drawSummaryGraph(); // draws an empty graph
     },
@@ -258,6 +274,28 @@ WebInspector.ResourcesPanel.prototype = {
         this.resourcesTreeElement.appendChild(resourceTreeElement);
 
         this.refreshResource(resource);
+    },
+
+    removeResource: function(resource)
+    {
+        if (this.visibleResourceView === resource._resourcesView)
+            this.closeVisibleResource();
+
+        var resourcesLength = this._resources.length;
+        for (var i = 0; i < resourcesLength; ++i) {
+            if (this._resources[i] === resource) {
+                this._resources.splice(i, 1);
+                break;
+            }
+        }
+
+        this.resourcesTreeElement.removeChild(resource._resourcesTreeElement);
+
+        resource.warnings = 0;
+        resource.errors = 0;
+
+        delete resource._resourcesTreeElement;
+        delete resource._resourcesView;
     },
 
     addMessageToResource: function(resource, msg)
@@ -379,7 +417,8 @@ WebInspector.ResourcesPanel.prototype = {
             this.visibleResource._resourcesView.hide();
         delete this.visibleResource;
 
-        this.calculator._graphsTreeElement.select(true);
+        if (this._calculator && this._calculator._graphsTreeElement)
+            this._calculator._graphsTreeElement.select(true);
 
         this._updateSidebarWidth();
     },

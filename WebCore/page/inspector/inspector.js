@@ -616,6 +616,8 @@ WebInspector.removeResource = function(resource)
             break;
         }
     }
+
+    this.panels.resources.removeResource(resource);
 }
 
 WebInspector.addDatabase = function(database)
