@@ -1,3 +1,25 @@
+2008-04-15  Michael Brasser  <michael.brasser@trolltech.com>
+
+        Reviewed by Simon.
+
+        Add basic input method support.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::dropEvent):
+        (QWebPagePrivate::inputMethodEvent):
+        (QWebPage::inputMethodQuery):
+        (QWebPage::event):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebview.cpp:
+        (QWebView::QWebView):
+        (QWebView::inputMethodQuery):
+        (QWebView::inputMethodEvent):
+        * Api/qwebview.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::setInputMethodState):
+
 2008-04-15  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

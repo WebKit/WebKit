@@ -638,6 +638,80 @@ void QWebPagePrivate::dropEvent(QDropEvent *ev)
 #endif
 }
 
+void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
+{
+    WebCore::Frame *frame = page->focusController()->focusedOrMainFrame();
+    WebCore::Editor *editor = frame->editor();
+
+    if (!editor->canEdit()) {
+        ev->ignore();
+        return;
+    }
+
+    if (!ev->preeditString().isEmpty()) {        
+        QString preedit = ev->preeditString();
+        // ### FIXME: use the provided QTextCharFormat (use color at least)
+        Vector<CompositionUnderline> underlines;
+        underlines.append(CompositionUnderline(0, preedit.length(), Color(0,0,0), false));
+        editor->setComposition(preedit, underlines, preedit.length(), 0);
+    } else if (!ev->commitString().isEmpty()) {
+        editor->confirmComposition(ev->commitString());
+    }
+    ev->accept();
+}
+
+/*!
+  This method is used by the input method to query a set of properties of the page
+  to be able to support complex input method operations as support for surrounding
+  text and reconversions.
+
+  \a property specifies which property is queried.
+
+  \sa inputMethodEvent(), QInputMethodEvent, QInputContext.
+*/
+QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
+{
+    switch(property) {
+    case Qt::ImMicroFocus: {
+        Frame *frame = d->page->focusController()->focusedFrame();
+        if (frame) {
+            return QVariant(frame->selectionController()->caretRect());
+        }
+        return QVariant();
+    }
+    case Qt::ImFont: {
+        QWebView *webView = qobject_cast<QWebView *>(d->view);
+        if (webView)
+            return QVariant(webView->font());
+        return QVariant();
+    }
+    case Qt::ImCursorPosition: {
+        Frame *frame = d->page->focusController()->focusedFrame();
+        if (frame) {
+            Selection selection = frame->selectionController()->selection();
+            if (selection.isCaret()) {
+                return QVariant(selection.start().offset());
+            }
+        }
+        return QVariant();
+    }
+    case Qt::ImSurroundingText: {
+        Frame *frame = d->page->focusController()->focusedFrame();
+        if (frame) {
+            Document *document = frame->document();
+            if (document->focusedNode()) {
+                return QVariant(document->focusedNode()->nodeValue());
+            }
+        }
+        return QVariant();
+    }
+    case Qt::ImCurrentSelection:
+        return QVariant(selectedText());
+    default:
+        return QVariant();
+    }
+}
+
 /*!
     \enum QWebPage::WebAction
 
@@ -1353,6 +1427,8 @@ bool QWebPage::event(QEvent *ev)
         d->dropEvent(static_cast<QDropEvent*>(ev));
         break;
 #endif
+    case QEvent::InputMethod:
+        d->inputMethodEvent(static_cast<QInputMethodEvent*>(ev));
     default:
         return QObject::event(ev);
     }

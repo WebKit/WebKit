@@ -82,6 +82,8 @@ public:
     Qt::TextInteractionFlags textInteractionFlags() const;
     void setTextInteractionFlags(Qt::TextInteractionFlags flags);
 
+    QVariant inputMethodQuery(Qt::InputMethodQuery property) const;
+
     /* #### QTextBrowser compatibility?
     bool openLinks() const;
     void setOpenLinks(bool open);
@@ -132,6 +134,7 @@ protected:
     virtual void dropEvent(QDropEvent *);
     virtual void focusInEvent(QFocusEvent*);
     virtual void focusOutEvent(QFocusEvent*);
+    virtual void inputMethodEvent(QInputMethodEvent*);
 
     virtual bool focusNextPrevChild(bool next);
 
