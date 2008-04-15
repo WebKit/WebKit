@@ -76,6 +76,7 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 - (BOOL)getPluginInfoFromPLists;
 
 - (BOOL)load;
+- (void)unload;
 
 - (NSString *)name;
 - (NSString *)path;

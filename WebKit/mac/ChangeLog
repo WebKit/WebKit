@@ -1,3 +1,20 @@
+2008-04-15  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5412759> CrashTracer: [USER] 22 crashes in Safari at com.apple.quicktime.webplugin: NPN_SetValue + 15403
+        
+        In certain situations, code in WebBasePluginPackage would load a plug-in only for the explicit reason of asking it to create a
+        preference file, but wouldn't actually unload the bundle. This created problems for the QuickTime WebKit plug-in by unloading
+        a bundle out from underneath itself.
+
+        * Plugins/WebBasePluginPackage.h: Added unload method.
+        * Plugins/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage unload]): Added new method. Currently, only Netscape plug-ins support unload.
+        (-[WebBasePluginPackage pListForPath:createFile:]): Added a call to unload.
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage unload]): Added.
+
 2008-04-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

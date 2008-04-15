@@ -299,6 +299,11 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         
 }
 
+- (void)unload
+{
+    [self _unloadWithShutdown:YES];
+}
+
 - (BOOL)load
 {    
     NP_GetEntryPointsFuncPtr NP_GetEntryPoints = NULL;

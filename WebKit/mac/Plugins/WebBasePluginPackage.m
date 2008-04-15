@@ -189,10 +189,16 @@
     return YES;
 }
 
+- (void)unload
+{
+}
+
 - (NSDictionary *)pListForPath:(NSString *)pListPath createFile:(BOOL)createFile
 {
-    if (createFile && [self load] && BP_CreatePluginMIMETypesPreferences)
+    if (createFile && [self load] && BP_CreatePluginMIMETypesPreferences) {
         BP_CreatePluginMIMETypesPreferences();
+        [self unload];
+    }
     
     NSDictionary *pList = nil;
     NSData *data = [NSData dataWithContentsOfFile:pListPath];
