@@ -1197,6 +1197,7 @@ webcore_cppflags += \
 	-I$(top_srcdir)/WebCore/storage
 
 webcore_sources += \
+	WebCore/storage/LocalStorage.cpp \
 	WebCore/storage/Storage.cpp \
 	WebCore/storage/StorageArea.cpp \
 	WebCore/storage/StorageEvent.cpp \

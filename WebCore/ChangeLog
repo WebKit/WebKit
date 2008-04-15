@@ -2,6 +2,71 @@
 
         Reviewed by Anders
 
+        Lay the underpinnings for LocalStorage.
+
+        For now, this just exposes window.localStorage to the dom which returns an in-memory Storage object, much
+        like SessionStorage.  The primary difference at this point is that the object returned is shared globally,
+        and isn't copied for new top-level browsing contexts like SessionStorage.
+
+        Later, I'll add proper event dispatch and a persistent storage backing.
+
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::mark): Mark the optionalLocalStorage
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clear):
+        (WebCore::DOMWindow::localStorage):
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::optionalLocalStorage):
+
+        * storage/LocalStorage.cpp: Added.
+        (WebCore::LocalStorage::sharedLocalStorage):
+        (WebCore::LocalStorage::LocalStorage):
+        (WebCore::LocalStorage::storageArea):
+        (WebCore::LocalStorage::itemChanged):
+        (WebCore::LocalStorage::itemRemoved):
+        (WebCore::LocalStorage::dispatchStorageEvent):
+        * storage/LocalStorage.h: Added.
+
+        * storage/SessionStorage.cpp: Refactor to use the client interface for event dispatching for sessionStorage objects
+        (WebCore::SessionStorage::SessionStorage):
+        (WebCore::SessionStorage::copy):
+        (WebCore::SessionStorage::storageArea):
+        (WebCore::SessionStorage::itemChanged):
+        (WebCore::SessionStorage::itemRemoved):
+        (WebCore::SessionStorage::dispatchStorageEvent):
+        * storage/SessionStorage.h:
+
+        * storage/StorageArea.cpp: Add a client parameter, and call to the client when an item is changed or removed.
+        (WebCore::StorageArea::create):
+        (WebCore::StorageArea::StorageArea):
+        (WebCore::StorageArea::copy):
+        (WebCore::StorageArea::setItem):
+        (WebCore::StorageArea::removeItem):
+        (WebCore::StorageArea::setClient):
+        * storage/StorageArea.h:
+        (WebCore::StorageArea::page):
+        (WebCore::StorageArea::securityOrigin):
+
+        * storage/StorageAreaClient.h: Added.  Break out "itemChanged" and "itemRemoved" to a StorageAreaClient
+          This way, both SessionStorage and LocalStorage areas can have different behavior on changes with
+          that behavior managed from a central location.
+        (WebCore::StorageAreaClient::~StorageAreaClient):
+        (WebCore::StorageAreaClient::StorageAreaClient):
+        (WebCore::StorageAreaClient::itemChanged):
+        (WebCore::StorageAreaClient::itemRemoved):
+
+2008-04-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
         Add a hidden pref to debug WebArchive loading.  With this pref on, when loading a WebArchive,
         if the resource isn't in the ArchiveResourceCollection, the loader will not fall back to the 
         network and will instead fail the load as "cancelled."

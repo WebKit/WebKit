@@ -5,5 +5,10 @@ Storage object sessionStorage has key
 Storage object sessionStorage has getItem
 Storage object sessionStorage has setItem
 Storage object sessionStorage has removeItem
-window.localStorage DOES NOT exist
+window.localStorage exists
+Storage object localStorage has length
+Storage object localStorage has key
+Storage object localStorage has getItem
+Storage object localStorage has setItem
+Storage object localStorage has removeItem
 

@@ -495,6 +495,9 @@
 		51B2417B0D931F3F00E83F5C /* LegacyWebArchiveMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */; };
 		51BE37DF0DAEE00E001085FC /* StorageArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BE37DD0DAEE00E001085FC /* StorageArea.cpp */; };
 		51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE37DE0DAEE00E001085FC /* StorageArea.h */; };
+		51BE38280DAEF7DA001085FC /* LocalStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BE38260DAEF7DA001085FC /* LocalStorage.cpp */; };
+		51BE38290DAEF7DA001085FC /* LocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE38270DAEF7DA001085FC /* LocalStorage.h */; };
+		51BE382C0DAEF7F3001085FC /* StorageAreaClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE382B0DAEF7F3001085FC /* StorageAreaClient.h */; };
 		51C81B890C4422F70019ECE3 /* FTPDirectoryParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */; };
 		51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */; };
 		51CBFC990D10E483002DBF51 /* CachedPagePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFC980D10E483002DBF51 /* CachedPagePlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4922,6 +4925,9 @@
 		51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyWebArchiveMac.mm; sourceTree = "<group>"; };
 		51BE37DD0DAEE00E001085FC /* StorageArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageArea.cpp; sourceTree = "<group>"; };
 		51BE37DE0DAEE00E001085FC /* StorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageArea.h; sourceTree = "<group>"; };
+		51BE38260DAEF7DA001085FC /* LocalStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorage.cpp; sourceTree = "<group>"; };
+		51BE38270DAEF7DA001085FC /* LocalStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorage.h; sourceTree = "<group>"; };
+		51BE382B0DAEF7F3001085FC /* StorageAreaClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaClient.h; sourceTree = "<group>"; };
 		51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryParser.cpp; sourceTree = "<group>"; };
 		51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryParser.h; sourceTree = "<group>"; };
 		51CBFC980D10E483002DBF51 /* CachedPagePlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedPagePlatformData.h; sourceTree = "<group>"; };
@@ -8512,6 +8518,8 @@
 				1AD51A130CB59CD300953D11 /* DatabaseTracker.cpp */,
 				1AD51A120CB59CD300953D11 /* DatabaseTracker.h */,
 				51FAFE330CECBF2D00BB3F24 /* DatabaseTrackerClient.h */,
+				51BE38260DAEF7DA001085FC /* LocalStorage.cpp */,
+				51BE38270DAEF7DA001085FC /* LocalStorage.h */,
 				51A926780D53F0570063ECC2 /* OriginQuotaManager.cpp */,
 				51A926790D53F0570063ECC2 /* OriginQuotaManager.h */,
 				51A9267A0D53F0570063ECC2 /* OriginUsageRecord.cpp */,
@@ -8542,6 +8550,7 @@
 				51E3F9D10DA05D7100250911 /* Storage.idl */,
 				51BE37DD0DAEE00E001085FC /* StorageArea.cpp */,
 				51BE37DE0DAEE00E001085FC /* StorageArea.h */,
+				51BE382B0DAEF7F3001085FC /* StorageAreaClient.h */,
 				51E0BABA0DA5547100A9E417 /* StorageEvent.cpp */,
 				51E0BAB90DA5547100A9E417 /* StorageEvent.h */,
 				51E0BABD0DA5548400A9E417 /* StorageEvent.idl */,
@@ -14818,6 +14827,8 @@
 				BC53C5F50DA56B920021EB5D /* Gradient.h in Headers */,
 				BC53C6920DA591140021EB5D /* CSSGradientValue.h in Headers */,
 				51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */,
+				51BE38290DAEF7DA001085FC /* LocalStorage.h in Headers */,
+				51BE382C0DAEF7F3001085FC /* StorageAreaClient.h in Headers */,
 				BC23EE920DAED2BC009FDC91 /* CSSImageGeneratorValue.h in Headers */,
 				BC23F0DB0DAFF4A4009FDC91 /* GeneratedImage.h in Headers */,
 				BCE04C8A0DAFF7A0007A0F41 /* Generator.h in Headers */,
@@ -16511,6 +16522,7 @@
 				4B24F9A80DA7050B00269E58 /* AXObjectCache.cpp in Sources */,
 				51D0C5160DAA90B7003B3831 /* JSStorageCustom.cpp in Sources */,
 				51BE37DF0DAEE00E001085FC /* StorageArea.cpp in Sources */,
+				51BE38280DAEF7DA001085FC /* LocalStorage.cpp in Sources */,
 				BC23E4E10DAACE0F009FDC91 /* CSSGradientValue.cpp in Sources */,
 				BC23E76C0DAE88A9009FDC91 /* CSSImageGeneratorValue.cpp in Sources */,
 				BCE04C940DAFF902007A0F41 /* GeneratedImage.cpp in Sources */,

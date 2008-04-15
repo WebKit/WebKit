@@ -42,6 +42,7 @@
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
 #include "History.h"
+#include "LocalStorage.h"
 #include "Location.h"
 #include "Navigator.h"
 #include "Page.h"
@@ -179,6 +180,10 @@ void DOMWindow::clear()
     if (m_sessionStorage)
         m_sessionStorage->disconnectFrame();
     m_sessionStorage = 0;
+
+    if (m_localStorage)
+        m_localStorage->disconnectFrame();
+    m_localStorage = 0;
 #endif
 }
 
@@ -280,8 +285,13 @@ Storage* DOMWindow::sessionStorage() const
 
 Storage* DOMWindow::localStorage() const
 {
-    // FIXME: When implementing LocalStorage, return appropriate object from a centralized "LocalStorage repository"
-    return 0;
+    Document* document = this->document();
+    if (!document)
+        return 0;
+        
+    RefPtr<StorageArea> storageArea = LocalStorage::sharedLocalStorage().storageArea(document->securityOrigin());
+    m_localStorage = Storage::create(m_frame, storageArea.release());
+    return m_localStorage.get();
 }
 #endif
 

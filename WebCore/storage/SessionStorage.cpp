@@ -26,6 +26,11 @@
 #include "config.h"
 #include "SessionStorage.h"
 
+#include "EventNames.h"
+#include "Frame.h"
+#include "FrameTree.h"
+#include "Page.h"
+#include "SecurityOrigin.h"
 #include "StorageArea.h"
 #include "StorageMap.h"
 
@@ -39,16 +44,21 @@ PassRefPtr<SessionStorage> SessionStorage::create(Page* page)
 SessionStorage::SessionStorage(Page* page)
     : m_page(page)
 {
+    ASSERT(m_page);
 }
 
 PassRefPtr<SessionStorage> SessionStorage::copy(Page* newPage)
 {
+    ASSERT(newPage);
     RefPtr<SessionStorage> newSession = SessionStorage::create(newPage);
     
     StorageAreaMap::iterator end = m_storageAreaMap.end();
-    for (StorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i)
-        newSession->m_storageAreaMap.set(i->first, i->second->copy(i->first.get(), newPage));
-        
+    for (StorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i) {
+        RefPtr<StorageArea> areaCopy = i->second->copy(i->first.get(), newPage);
+        areaCopy->setClient(newSession.get());
+        newSession->m_storageAreaMap.set(i->first, areaCopy.release());
+    }
+    
     return newSession.release();
 }
 
@@ -58,9 +68,36 @@ PassRefPtr<StorageArea> SessionStorage::storageArea(SecurityOrigin* origin)
     if (storageArea = m_storageAreaMap.get(origin))
         return storageArea.release();
         
-    storageArea = StorageArea::create(origin, m_page);
+    storageArea = StorageArea::create(origin, m_page, this);
     m_storageAreaMap.set(origin, storageArea);
     return storageArea.release();
+}
+
+void SessionStorage::itemChanged(StorageArea* area, const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
+{
+    dispatchStorageEvent(area, key, oldValue, newValue, sourceFrame);
+}
+
+void SessionStorage::itemRemoved(StorageArea* area, const String& key, const String& oldValue, Frame* sourceFrame)
+{
+    dispatchStorageEvent(area, key, oldValue, String(), sourceFrame);
+}
+
+void SessionStorage::dispatchStorageEvent(StorageArea* area, const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
+{
+    ASSERT(area->page() == m_page);
+    
+    // For SessionStorage events, each frame in the page's frametree with the same origin as this Storage needs to be notified of the change
+    Vector<RefPtr<Frame> > frames;
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frames.append(frame);
+        
+    for (unsigned i = 0; i < frames.size(); ++i) {
+        if (frames[i]->document()->securityOrigin()->equal(area->securityOrigin())) {
+            if (HTMLElement* body = frames[i]->document()->body())
+                body->dispatchStorageEvent(EventNames::storageEvent, key, oldValue, newValue, sourceFrame);        
+        }
+    }
 }
 
 }

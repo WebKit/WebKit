@@ -63,6 +63,7 @@ void JSDOMWindow::mark()
     markDOMObjectWrapper(impl()->optionalLocation());
 #if ENABLE(DOM_STORAGE)
     markDOMObjectWrapper(impl()->optionalSessionStorage());
+    markDOMObjectWrapper(impl()->optionalLocalStorage());
 #endif
 }
 

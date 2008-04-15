@@ -23,46 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SessionStorage_h
-#define SessionStorage_h
+#ifndef StorageAreaClient_h
+#define StorageAreaClient_h
 
-#include "SecurityOriginHash.h"
-
-#include "StorageAreaClient.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-    class StorageArea;
-    class Page;
+class StorageArea;
+class String;
 
-    class SessionStorage : public StorageAreaClient {
-    public:
-        static PassRefPtr<SessionStorage> create(Page*);
-        PassRefPtr<SessionStorage> copy(Page*);
-        
-        PassRefPtr<StorageArea> storageArea(SecurityOrigin*);
+class StorageAreaClient : public RefCounted<StorageAreaClient> {
+public:
+    virtual ~StorageAreaClient() { }
 
-        virtual void itemChanged(StorageArea*, const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
-        virtual void itemRemoved(StorageArea*, const String& key, const String& oldValue, Frame* sourceFrame);
+    virtual void itemChanged(StorageArea*, const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame) = 0;
+    virtual void itemRemoved(StorageArea*, const String& key, const String& oldValue, Frame* sourceFrame) = 0;
 
-#ifndef NDEBUG
-        Page* page() { return m_page; }
-#endif
-
-    private:
-        SessionStorage(Page*);
-
-        void dispatchStorageEvent(StorageArea*, const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
-
-        Page* m_page;
-        
-        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash, SecurityOriginTraits> StorageAreaMap;
-        StorageAreaMap m_storageAreaMap;
-    };
+protected:
+    StorageAreaClient() { }
+};
 
 } // namespace WebCore
 
-#endif // SessionStorage_h
+#endif // StorageAreaClient_h

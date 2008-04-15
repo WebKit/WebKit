@@ -15847,6 +15847,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\LocalStorage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\LocalStorage.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\OriginQuotaManager.cpp"
 				>
 			</File>
@@ -15940,6 +15948,10 @@
 			</File>
 			<File
 				RelativePath="..\storage\StorageArea.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageAreaClient.h"
 				>
 			</File>
 			<File

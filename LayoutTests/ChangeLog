@@ -1,3 +1,12 @@
+2008-04-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        As underpinnings for LocalStorage are laid, it is exposed to the dom - update the relevant layout tests.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * storage/domstorage/window-attributes-exist-expected.txt:
+
 2008-04-14  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Ap.
