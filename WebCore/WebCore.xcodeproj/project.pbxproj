@@ -192,6 +192,7 @@
 		1A85B2110A1B258700D8C87C /* JSHTMLUListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A85B20F0A1B258700D8C87C /* JSHTMLUListElement.h */; };
 		1A85B2B60A1B2AC700D8C87C /* JSHTMLDivElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */; };
 		1A85B2B70A1B2AC700D8C87C /* JSHTMLDivElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */; };
+		1A8F6B020DB53006001DB794 /* SubstituteResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6B010DB53006001DB794 /* SubstituteResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A98956B0AA78F80005EF5EF /* KURLCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */; };
 		1A9EF4570A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */; };
 		1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AB1AE780C051FDE00139F4F /* zoomInCursor.png */; };
@@ -4604,6 +4605,7 @@
 		1A85B2AD0A1B2A6D00D8C87C /* HTMLDivElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDivElement.idl; sourceTree = "<group>"; };
 		1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDivElement.cpp; sourceTree = "<group>"; };
 		1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLDivElement.h; sourceTree = "<group>"; };
+		1A8F6B010DB53006001DB794 /* SubstituteResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubstituteResource.h; sourceTree = "<group>"; };
 		1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KURLCFNet.cpp; sourceTree = "<group>"; };
 		1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2DCustom.cpp; sourceTree = "<group>"; };
 		1AB1AE780C051FDE00139F4F /* zoomInCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoomInCursor.png; sourceTree = "<group>"; };
@@ -12202,6 +12204,7 @@
 				656D37300ADBA5DE00A4554D /* SubresourceLoader.h */,
 				1A3178920B20A81600316987 /* SubresourceLoaderClient.h */,
 				659A7D120B6DB4D9001155B3 /* SubstituteData.h */,
+				1A8F6B010DB53006001DB794 /* SubstituteResource.h */,
 				1A6937FF0A11100A00C127FE /* TextDocument.cpp */,
 				1A6938000A11100A00C127FE /* TextDocument.h */,
 				F523D27802DE43D7018635CA /* TextResourceDecoder.cpp */,
@@ -14841,6 +14844,7 @@
 				C091588B0DB4209200E55AF4 /* JSInspectedObjectWrapper.h in Headers */,
 				C091588D0DB4209200E55AF4 /* JSInspectorCallbackWrapper.h in Headers */,
 				C091588F0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h in Headers */,
+				1A8F6B020DB53006001DB794 /* SubstituteResource.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3854,6 +3854,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\SubstituteResource.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\TextDocument.cpp"
 				>
 			</File>

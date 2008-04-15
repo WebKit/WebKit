@@ -29,16 +29,16 @@
 #ifndef ArchiveResource_h
 #define ArchiveResource_h
 
+#include "SubstituteResource.h"
+
 #include "KURL.h"
 #include "PlatformString.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
 
-class ArchiveResource : public RefCounted<ArchiveResource> {
+class ArchiveResource : public SubstituteResource {
 public:
     static PassRefPtr<ArchiveResource> create(PassRefPtr<SharedBuffer>, const KURL&, const ResourceResponse&);
     static PassRefPtr<ArchiveResource> create(PassRefPtr<SharedBuffer>, const KURL&, const String& mimeType, const String& textEncoding, const String& frameName);

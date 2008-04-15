@@ -1,3 +1,14 @@
+2008-04-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add a (currently empty) SubstituteResource class and make ArchiveResource inherit from it.
+        
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/SubstituteResource.h: Added.
+        * loader/archive/ArchiveResource.h:
+
 2008-04-15  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Geoff.
