@@ -91,6 +91,10 @@ public:
     bool canSmartReplace();
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText);
     String plainText(Frame* = 0);
+#if PLATFORM(QT)
+    bool isSelectionMode() const;
+    void setSelectionMode(bool selectionMode);
+#endif
 
 #if PLATFORM(GTK)
     void setHelper(PasteboardHelper*);
@@ -113,6 +117,9 @@ private:
     PasteboardHelper* m_helper;
 #endif
 
+#if PLATFORM(QT)
+    bool m_selectionMode;
+#endif
 };
 
 } // namespace WebCore

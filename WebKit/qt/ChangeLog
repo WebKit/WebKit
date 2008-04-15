@@ -1,3 +1,13 @@
+2008-04-15  Olivier Goffart  <ogoffart@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixes: copy to clipboard when selecting, and paste when clicking with the middle button
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::mouseReleaseEvent): If the clipboard supports
+        selections then we support copy & paste into the selection.
+
 2008-04-15  Michael Brasser  <michael.brasser@trolltech.com>
 
         Reviewed by Simon.

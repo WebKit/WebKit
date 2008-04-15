@@ -1,3 +1,19 @@
+2008-04-15  Olivier Goffart  <ogoffart@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixes: copy to clipboard when selecting, and paste when clicking with the middle button
+
+        * platform/Pasteboard.h: Added Qt-specific selection mode
+        * platform/qt/PasteboardQt.cpp: Choose the clipboard or the selecton
+        according to the selection mode
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::clear):
+        (WebCore::Pasteboard::isSelectionMode):
+
 2008-04-15  Andre Poenitz  <andre.poenitz@trolltech.com>
 
         Reviewed by Simon.

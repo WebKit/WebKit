@@ -44,6 +44,7 @@
 #include "EditorClientQt.h"
 #include "Settings.h"
 #include "Page.h"
+#include "Pasteboard.h"
 #include "FrameLoader.h"
 #include "FrameLoadRequest.h"
 #include "KURL.h"
@@ -85,7 +86,7 @@
 #endif
 
 using namespace WebCore;
-
+        
 static inline DragOperation dropActionToDragOp(Qt::DropActions actions)
 {
     unsigned result = 0;
@@ -371,6 +372,24 @@ void QWebPagePrivate::mouseReleaseEvent(QMouseEvent *ev)
         return;
 
     frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
+
+#ifndef QT_NO_CLIPBOARD
+    if (QApplication::clipboard()->supportsSelection()) {
+        bool oldSelectionMode = Pasteboard::generalPasteboard()->isSelectionMode();
+        Pasteboard::generalPasteboard()->setSelectionMode(true);
+        WebCore::Frame* focusFrame = page->focusController()->focusedOrMainFrame();
+        if (ev->button() == Qt::LeftButton) {
+            if(focusFrame && (focusFrame->editor()->canCopy() || focusFrame->editor()->canDHTMLCopy())) {
+                focusFrame->editor()->copy();
+            }
+        } else if (ev->button() == Qt::MidButton) {
+            if(focusFrame && (focusFrame->editor()->canPaste() || focusFrame->editor()->canDHTMLPaste())) {
+                focusFrame->editor()->paste();
+            }
+        }
+        Pasteboard::generalPasteboard()->setSelectionMode(oldSelectionMode);
+    }
+#endif
 }
 
 void QWebPagePrivate::contextMenuEvent(QContextMenuEvent *ev)
