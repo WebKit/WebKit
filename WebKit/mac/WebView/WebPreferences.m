@@ -330,8 +330,9 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitDOMPasteAllowedPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitUsesPageCachePreferenceKey,
         [NSNumber numberWithInt:cacheModelForMainBundle()], WebKitCacheModelPreferenceKey,
-        [NSNumber numberWithBool:NO],  WebKitDeveloperExtrasEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitDeveloperExtrasEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAuthorAndUserStylesEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitWebArchiveDebugModeEnabledPreferenceKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -748,6 +749,11 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (BOOL)authorAndUserStylesEnabled
 {
     return [self _boolValueForKey:WebKitAuthorAndUserStylesEnabledPreferenceKey];
+}
+
+- (BOOL)_webArchiveDebugModeEnabled
+{
+    return [self _boolValueForKey:WebKitWebArchiveDebugModeEnabledPreferenceKey];
 }
 
 - (void)setAuthorAndUserStylesEnabled:(BOOL)flag

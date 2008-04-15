@@ -983,6 +983,7 @@ static bool debugWidget = true;
     settings->setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
     settings->setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
     settings->setNeedsSiteSpecificQuirks(_private->useSiteSpecificSpoofing);
+    settings->setWebArchiveDebugModeEnabled([preferences _webArchiveDebugModeEnabled]);
 }
 
 static inline IMP getMethod(id o, SEL s)

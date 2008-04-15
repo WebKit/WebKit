@@ -148,6 +148,9 @@ namespace WebCore {
 
         void setNeedsSiteSpecificQuirks(bool);
         bool needsSiteSpecificQuirks() const { return m_needsSiteSpecificQuirks; }
+        
+        void setWebArchiveDebugModeEnabled(bool);
+        bool webArchiveDebugModeEnabled() const { return m_webArchiveDebugModeEnabled; }
 
     private:
         Page* m_page;
@@ -186,6 +189,7 @@ namespace WebCore {
         bool m_authorAndUserStylesEnabled : 1;
         bool m_needsSiteSpecificQuirks : 1;
         unsigned m_fontRenderingMode : 1;
+        bool m_webArchiveDebugModeEnabled : 1;
     };
 
 } // namespace WebCore

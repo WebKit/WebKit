@@ -1,3 +1,20 @@
+2008-04-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Add a hidden pref to debug WebArchive loading.  With this pref on, when loading a WebArchive,
+        if the resource isn't in the ArchiveResourceCollection, the loader will not fall back to the 
+        network and will instead fail the load as "cancelled."
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::load): Do the check here.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setWebArchiveDebugModeEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::webArchiveDebugModeEnabled):
+
 2008-04-14  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Eric.

@@ -1,3 +1,21 @@
+2008-04-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Add a hidden pref to debug WebArchive loading.  With this pref on, when loading a WebArchive,
+        if the resource isn't in the ArchiveResourceCollection, the loader will not fall back to the 
+        network and will instead fail the load as "cancelled."
+
+        * WebView/WebPreferenceKeysPrivate.h:
+
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences _webArchiveDebugModeEnabled]):
+        * WebView/WebPreferencesPrivate.h:
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2008-04-11  David Hyatt  <hyatt@apple.com>
 
         Rename CachedResource ref/deref methods to addClient/removeClient.

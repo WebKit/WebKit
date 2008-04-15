@@ -71,6 +71,7 @@ Settings::Settings(Page* page)
     , m_authorAndUserStylesEnabled(true)
     , m_needsSiteSpecificQuirks(false)
     , m_fontRenderingMode(0)
+    , m_webArchiveDebugModeEnabled(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.
@@ -321,6 +322,11 @@ FontRenderingMode Settings::fontRenderingMode() const
 void Settings::setNeedsSiteSpecificQuirks(bool needsQuirks)
 {
     m_needsSiteSpecificQuirks = needsQuirks;
+}
+
+void Settings::setWebArchiveDebugModeEnabled(bool enabled)
+{
+    m_webArchiveDebugModeEnabled = enabled;
 }
 
 } // namespace WebCore

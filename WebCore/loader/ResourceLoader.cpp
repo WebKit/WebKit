@@ -30,6 +30,7 @@
 #include "config.h"
 #include "ResourceLoader.h"
 
+#include "ArchiveFactory.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -118,6 +119,15 @@ bool ResourceLoader::load(const ResourceRequest& r)
     if (m_documentLoader->scheduleArchiveLoad(this, clientRequest, r.url()))
         return true;
     
+    // WebArchiveDebugMode means we don't load resources not in the archive.  Representing these loads as "cannot show URL" is clear enough
+    // for developers debugging webarchives
+    if (m_frame->settings()->webArchiveDebugModeEnabled()) {
+        if (ArchiveFactory::isArchiveMimeType(m_documentLoader->responseMIMEType())) {
+            didFail(cannotShowURLError());
+            return false;
+        }
+    }
+
     if (m_defersLoading) {
         m_deferredRequest = clientRequest;
         return true;
