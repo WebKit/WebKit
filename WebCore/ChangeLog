@@ -1,3 +1,18 @@
+2008-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam and Brady.
+        
+        Add implementation of ApplicationCacheResource.
+        
+        * loader/appcache/ApplicationCacheResource.cpp:
+        (WebCore::ApplicationCacheResource::ApplicationCacheResource):
+        (WebCore::ApplicationCacheResource::dumpType):
+        * loader/appcache/ApplicationCacheResource.h:
+        (WebCore::ApplicationCacheResource::):
+        (WebCore::ApplicationCacheResource::create):
+        (WebCore::ApplicationCacheResource::type):
+        (WebCore::ApplicationCacheResource::addType):
+
 2008-04-16  Timothy Hatcher  <timothy@apple.com>
 
         Fixes an issue where the source for a resource that had errors would

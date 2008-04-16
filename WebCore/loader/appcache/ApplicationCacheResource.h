@@ -28,6 +28,41 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
+#include "SubstituteResource.h"
+
+namespace WebCore {
+
+class ApplicationCacheResource : public SubstituteResource {
+public:
+    enum Type {
+        Implicit = 1 << 0,
+        Manifest = 1 << 1,
+        Explicit = 1 << 2,
+        Foreign = 1 << 3,
+        Fallback = 1 << 4,
+        Opportunistic = 1 << 5,
+        Dynamic = 1 << 6
+    };
+        
+    static PassRefPtr<ApplicationCacheResource> create(const KURL& url, const ResourceResponse& response, unsigned type, PassRefPtr<SharedBuffer> buffer = SharedBuffer::create())
+    {
+        return adoptRef(new ApplicationCacheResource(url, response, type, buffer));
+    }
+
+    unsigned type() const { return m_type; }
+    void addType(unsigned type) { m_type |= type; }
+    
+#ifndef NDEBUG
+    static void dumpType(unsigned type);
+#endif
+    
+private:
+    ApplicationCacheResource(const KURL& url, const ResourceResponse& response, unsigned type, PassRefPtr<SharedBuffer> buffer);
+
+    unsigned m_type;
+};
+    
+} // namespace WebCore
 
 #endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
 

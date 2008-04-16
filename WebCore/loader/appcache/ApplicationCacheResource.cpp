@@ -28,5 +28,36 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
+namespace WebCore {
+
+ApplicationCacheResource::ApplicationCacheResource(const KURL& url, const ResourceResponse& response, unsigned type, PassRefPtr<SharedBuffer> data)
+    : SubstituteResource(url, response, data)
+    , m_type(type)
+{
+}
+
+#ifndef NDEBUG
+void ApplicationCacheResource::dumpType(unsigned type)
+{
+    if (type & Implicit)
+        printf("implicit ");
+    if (type & Manifest)
+        printf("manifest ");
+    if (type & Explicit)
+        printf("explicit ");
+    if (type & Foreign)
+        printf("foreign ");
+    if (type & Fallback)
+        printf("fallback ");
+    if (type & Opportunistic)
+        printf("opportunistic ");
+    if (type & Dynamic)
+        printf("dynamic ");
+    
+    printf("\n");
+}
+#endif
+
+} // namespace WebCore
 
 #endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
