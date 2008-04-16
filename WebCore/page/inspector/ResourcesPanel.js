@@ -303,22 +303,16 @@ WebInspector.ResourcesPanel.prototype = {
         if (!resource)
             return;
 
-        var bubbleClass;
         switch (msg.level) {
         case WebInspector.ConsoleMessage.MessageLevel.Warning:
             ++resource.warnings;
-            bubbleClass = "warning";
             break;
         case WebInspector.ConsoleMessage.MessageLevel.Error:
             ++resource.errors;
-            bubbleClass = "error";
             break;
         }
 
-        resource._resourcesTreeElement.bubbleText = (resource.warnings + resource.errors);
-
-        if (bubbleClass)
-            resource._resourcesTreeElement.bubbleElement.addStyleClass(bubbleClass);
+        resource._resourcesTreeElement.updateErrorsAndWarnings();
 
         var view = this._resourceView(resource);
         if (view.addMessage)
@@ -333,9 +327,7 @@ WebInspector.ResourcesPanel.prototype = {
             resource.warnings = 0;
             resource.errors = 0;
 
-            resource._resourcesTreeElement.bubbleText = "";
-            resource._resourcesTreeElement.bubbleElement.removeStyleClass("error");
-            resource._resourcesTreeElement.bubbleElement.removeStyleClass("warning");
+            resource._resourcesTreeElement.updateErrorsAndWarnings();
 
             var view = resource._resourcesView;
             if (!view || !view.clearMessages)
@@ -376,7 +368,7 @@ WebInspector.ResourcesPanel.prototype = {
         var barLeftElement = resource._resourcesTreeElement.barLeftElement;
         barLeftElement.style.left = percentages.start + "%";
         barLeftElement.style.right = (100 - percentages.end) + "%";
-        
+
         var barRightElement = resource._resourcesTreeElement.barRightElement;
         barRightElement.style.left = percentages.middle + "%";
         barRightElement.style.right = (100 - percentages.end) + "%";
@@ -1276,6 +1268,24 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
         var newClassName = "sidebar-tree-item resource-sidebar-tree-item resources-category-" + this.resource.category.name;
         if (this._listItemNode && this._listItemNode.className !== newClassName)
             this._listItemNode.className = newClassName;
+    },
+
+    updateErrorsAndWarnings: function()
+    {
+        if (this.resource.warnings || this.resource.errors)
+            this.bubbleText = (this.resource.warnings + this.resource.errors);
+        else
+            this.bubbleText = "";
+
+        if (this.resource.warnings)
+            this.bubbleElement.addStyleClass("warning");
+        else
+            this.bubbleElement.removeStyleClass("warning");
+
+        if (this.resource.errors)
+            this.bubbleElement.addStyleClass("error");
+        else
+            this.bubbleElement.removeStyleClass("error");
     },
 
     updateGraphSideWidth: function(width)

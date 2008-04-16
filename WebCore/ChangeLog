@@ -1,3 +1,18 @@
+2008-04-16  Timothy Hatcher  <timothy@apple.com>
+
+        Refactors code that updates the errors and warnings count in the
+        resources sidebar so other functions can easily trigger updates.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.addMessageToResource): Call updateErrorsAndWarnings.
+        Removes code that updates the bubbleText and class names.
+        (WebInspector.ResourcesPanel.prototype.clearMessages): Ditto.
+        (WebInspector.ResourceSidebarTreeElement.prototype.updateErrorsAndWarnings):
+        Added. Updates the bubbleText and adds or removes the class names
+        depending on if the values are zero.
+
 2008-04-16  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Alexey.
