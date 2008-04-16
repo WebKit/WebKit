@@ -1,5 +1,19 @@
 2008-04-16  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        MSVC build fix.
+
+        * kjs/CommonIdentifiers.cpp:
+        * kjs/CommonIdentifiers.h:
+        * kjs/Parser.cpp:
+        * kjs/Parser.h:
+        * kjs/identifier.cpp:
+        * kjs/lexer.h:
+        * wtf/ThreadSpecific.h:
+
+2008-04-16  Alexey Proskuryakov  <ap@webkit.org>
+
         Build fix.
 
         * kjs/date_object.cpp:

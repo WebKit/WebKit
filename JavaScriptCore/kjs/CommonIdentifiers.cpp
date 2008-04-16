@@ -23,6 +23,7 @@
 
 #if USE(MULTIPLE_THREADS)
 #include <wtf/ThreadSpecific.h>
+using namespace WTF;
 #endif
 
 namespace KJS {

@@ -92,7 +92,7 @@ namespace KJS {
 
   private:
     friend Lexer& lexer();
-    template<typename T> friend class WTF::ThreadSpecific;
+    friend class WTF::ThreadSpecific<Lexer>;
     Lexer();
 
     int yylineno;
