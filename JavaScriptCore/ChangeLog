@@ -1,5 +1,50 @@
 2008-04-16  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Cache Gregorian date/time structure on DateInstance objects for 1.027x SunSpider speedup
+        (1.65x on date-format-xparb, 1.13x on date-format-tofte).
+
+        * kjs/DateMath.h:
+        (KJS::GregorianDateTime::copyFrom): Added. It presumably makes sense to keep GregorianDateTime
+        Noncopiable, so it's not just operator=.
+
+        * kjs/date_object.h: Added a per-object cache.
+
+        * kjs/date_object.cpp:
+        (KJS::DateInstance::DateInstance):
+        (KJS::DateInstance::msToGregorianDateTime):
+        (KJS::dateProtoFuncToString):
+        (KJS::dateProtoFuncToUTCString):
+        (KJS::dateProtoFuncToDateString):
+        (KJS::dateProtoFuncToTimeString):
+        (KJS::dateProtoFuncToLocaleString):
+        (KJS::dateProtoFuncToLocaleDateString):
+        (KJS::dateProtoFuncToLocaleTimeString):
+        (KJS::dateProtoFuncGetFullYear):
+        (KJS::dateProtoFuncGetUTCFullYear):
+        (KJS::dateProtoFuncToGMTString):
+        (KJS::dateProtoFuncGetMonth):
+        (KJS::dateProtoFuncGetUTCMonth):
+        (KJS::dateProtoFuncGetDate):
+        (KJS::dateProtoFuncGetUTCDate):
+        (KJS::dateProtoFuncGetDay):
+        (KJS::dateProtoFuncGetUTCDay):
+        (KJS::dateProtoFuncGetHours):
+        (KJS::dateProtoFuncGetUTCHours):
+        (KJS::dateProtoFuncGetMinutes):
+        (KJS::dateProtoFuncGetUTCMinutes):
+        (KJS::dateProtoFuncGetSeconds):
+        (KJS::dateProtoFuncGetUTCSeconds):
+        (KJS::dateProtoFuncGetTimezoneOffset):
+        (KJS::setNewValueFromTimeArgs):
+        (KJS::setNewValueFromDateArgs):
+        (KJS::dateProtoFuncSetYear):
+        (KJS::dateProtoFuncGetYear):
+        Use the cache when converting.
+
+2008-04-16  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         Implement an abstraction for thread-specific storage, use it to get rid of some static objects.
