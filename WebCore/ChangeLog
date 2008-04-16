@@ -1,5 +1,21 @@
 2008-04-15  Adam Roben  <aroben@apple.com>
 
+        Generalize String.format some more
+
+        String.format now takes an initial value and an append function which
+        it uses to build the result. Each time a token is processed,
+        append(valueSoFar, newValue) is called.
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/utilities.js:
+        (String.vsprintf): Pass the empty string for the initial value, and
+        a function that concatenates two strings as the append function.
+        (String.format): Use initialValue and append to build the result
+        instead of only working with strings.
+
+2008-04-15  Adam Roben  <aroben@apple.com>
+
         Add String.format
 
         String.format is a more generic form of String.vsprintf that takes a

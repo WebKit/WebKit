@@ -837,13 +837,13 @@ String.standardFormatters = {
 
 String.vsprintf = function(format, substitutions)
 {
-    return String.format(format, substitutions, String.standardFormatters);
+    return String.format(format, substitutions, String.standardFormatters, "", function(a, b) { return a + b; });
 }
 
-String.format = function(format, substitutions, formatters)
+String.format = function(format, substitutions, formatters, initialValue, append)
 {
     if (!format || !substitutions || !substitutions.length)
-        return format;
+        return append(initialValue, format);
 
     function prettyFunctionName()
     {
@@ -860,14 +860,14 @@ String.format = function(format, substitutions, formatters)
         console.error(prettyFunctionName() + ": " + msg);
     }
 
-    var result = "";
+    var result = initialValue;
     var tokens = String.tokenizeFormatString(format);
 
     for (var i = 0; i < tokens.length; ++i) {
         var token = tokens[i];
 
         if (token.type === "string") {
-            result += token.value;
+            result = append(result, token.value);
             continue;
         }
 
@@ -880,18 +880,18 @@ String.format = function(format, substitutions, formatters)
             // If there are not enough substitutions for the current substitutionIndex
             // just output the format specifier literally and move on.
             error("not enough substitution arguments. Had " + substitutions.length + " but needed " + (token.substitutionIndex + 1) + ", so substitution was skipped.");
-            result += "%" + (token.precision > -1 ? token.precision : "") + token.specifier;
+            result = append(result, "%" + (token.precision > -1 ? token.precision : "") + token.specifier);
             continue;
         }
 
         if (!(token.specifier in formatters)) {
             // Encountered an unsupported format character, treat as a string.
             warn("unsupported format character \u201C" + token.specifier + "\u201D. Treating as a string.");
-            result += substitutions[token.substitutionIndex];
+            result = append(result, substitutions[token.substitutionIndex]);
             continue;
         }
 
-        result += formatters[token.specifier](substitutions[token.substitutionIndex], token);
+        result = append(result, formatters[token.specifier](substitutions[token.substitutionIndex], token));
     }
 
     return result;
