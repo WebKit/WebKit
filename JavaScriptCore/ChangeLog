@@ -1,5 +1,19 @@
 2008-04-16  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Darin.
+
+        Get rid of static execForCompareByStringForQSort in array_instance.cpp.
+
+        No change on SunSpider, CelticKane or iBench JavaScript.
+
+        * kjs/array_instance.cpp:
+        (KJS::ArraySortComparator::ArraySortComparator):
+        (KJS::ArraySortComparator::operator()):
+        (KJS::ArrayInstance::sort):
+        Switch slow case to std::sort, so that ExecState can be passed in a comparator.
+
+2008-04-16  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Adam Roben.
 
         MSVC build fix.
