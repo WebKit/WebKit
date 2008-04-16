@@ -1,5 +1,17 @@
 2008-04-16  Timothy Hatcher  <timothy@apple.com>
 
+        Adds a console formatter for Error objects. So typing a expression in the
+        console that ends in an exception will print meaningful info. Also calling
+        console.{log,error,warn,info} with an error object will output nicely.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Console.js:
+        (WebInspector.Console.prototype._formaterror): Added. Formats an error
+        object by showing it like other exceptions, with a clickable file URL.
+
+2008-04-16  Timothy Hatcher  <timothy@apple.com>
+
         Refactors code that updates the errors and warnings count in the
         resources sidebar so other functions can easily trigger updates.
 

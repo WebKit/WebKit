@@ -410,6 +410,25 @@ WebInspector.Console.prototype = {
     {
         elem.appendChild(document.createTextNode(Object.describe(obj)));
     },
+
+    _formaterror: function(obj, elem)
+    {
+        elem.appendChild(document.createTextNode(obj.name + ": " + obj.message + " "));
+
+        if (obj.sourceURL) {
+            var urlElement = document.createElement("a");
+            urlElement.className = "console-message-url webkit-html-resource-link";
+            urlElement.href = obj.sourceURL;
+            urlElement.lineNumber = obj.line;
+
+            if (obj.line > 0)
+                urlElement.textContent = WebInspector.UIString("%s (line %d)", obj.sourceURL, obj.line);
+            else
+                urlElement.textContent = obj.sourceURL;
+
+            elem.appendChild(urlElement);
+        }
+    },
 }
 
 WebInspector.Console.prototype.__proto__ = WebInspector.View.prototype;
