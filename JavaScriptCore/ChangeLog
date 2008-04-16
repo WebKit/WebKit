@@ -7,7 +7,7 @@
 
         * kjs/DateMath.h:
         (KJS::GregorianDateTime::copyFrom): Added. It presumably makes sense to keep GregorianDateTime
-        Noncopiable, so it's not just operator=.
+        Noncopyable, so it's not just operator=.
 
         * kjs/date_object.h: Added a per-object cache.
 
