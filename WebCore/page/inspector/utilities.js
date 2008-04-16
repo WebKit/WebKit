@@ -814,14 +814,40 @@ String.tokenizeFormatString = function(format)
     return tokens;
 }
 
+String.standardFormatters = {
+    d: function(substitution)
+    {
+        substitution = parseInt(substitution);
+        return !isNaN(substitution) ? substitution : 0;
+    },
+
+    f: function(substitution, token)
+    {
+        substitution = parseFloat(substitution);
+        if (substitution && token.precision > -1)
+            substitution = substitution.toFixed(token.precision);
+        return !isNaN(substitution) ? substitution : (token.precision > -1 ? Number(0).toFixed(token.precision) : 0);
+    },
+
+    s: function(substitution)
+    {
+        return substitution;
+    },
+};
+
 String.vsprintf = function(format, substitutions)
+{
+    return String.format(format, substitutions, String.standardFormatters);
+}
+
+String.format = function(format, substitutions, formatters)
 {
     if (!format || !substitutions || !substitutions.length)
         return format;
 
     function prettyFunctionName()
     {
-        return "String.vsprintf(\"" + format + "\", \"" + substitutions.join("\", \"") + "\")";
+        return "String.format(\"" + format + "\", \"" + substitutions.join("\", \"") + "\")";
     }
 
     function warn(msg)
@@ -858,25 +884,14 @@ String.vsprintf = function(format, substitutions)
             continue;
         }
 
-        switch (token.specifier) {
-        case "d":
-            var substitution = parseInt(substitutions[token.substitutionIndex]);
-            result += (!isNaN(substitution) ? substitution : 0);
-            break;
-        case "f":
-            var substitution = parseFloat(substitutions[token.substitutionIndex]);
-            if (substitution && token.precision > -1)
-                substitution = substitution.toFixed(token.precision);
-            result += (!isNaN(substitution) ? substitution : (token.precision > -1 ? Number(0).toFixed(token.precision) : 0));
-            break;
-        default:
+        if (!(token.specifier in formatters)) {
             // Encountered an unsupported format character, treat as a string.
             warn("unsupported format character \u201C" + token.specifier + "\u201D. Treating as a string.");
-            // Fall through to treat this like a string.
-        case "s":
             result += substitutions[token.substitutionIndex];
-            break;
+            continue;
         }
+
+        result += formatters[token.specifier](substitutions[token.substitutionIndex], token);
     }
 
     return result;

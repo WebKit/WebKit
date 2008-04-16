@@ -1,5 +1,24 @@
 2008-04-15  Adam Roben  <aroben@apple.com>
 
+        Add String.format
+
+        String.format is a more generic form of String.vsprintf that takes a
+        set of formatter functions, one for each supported format specifier.
+        Each formatter function is passed the relevant token and substitution
+        value, and returns the formatted result.
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/utilities.js:
+        (String.standardFormatters): Added.
+        (String.vsprintf): Changed to call through to String.format.
+        (String.format): Added. Most of the code came from String.vsprintf,
+        except that we use the passed-in formatters to format the
+        substitutions rather than hard-coding how to handle each format
+        specifier.
+
+2008-04-15  Adam Roben  <aroben@apple.com>
+
         Refactor String.vsprintf to separate tokenizing and substituting
 
         This will eventually be useful for the various console methods that
