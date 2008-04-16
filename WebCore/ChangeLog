@@ -1,3 +1,12 @@
+2008-04-16  Anatoli Papirovski  <apapirovski@mac.com>
+
+        Reviewed by David.
+
+        Optimized the calculation of background-size.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calculateBackgroundSize):
+
 2008-04-16  Adam Roben  <aroben@apple.com>
 
         Fix Bug 17228: console.{log,warn,info,error} should support format

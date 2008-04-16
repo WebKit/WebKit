@@ -436,37 +436,27 @@ IntSize RenderBox::calculateBackgroundSize(const BackgroundLayer* bgLayer, int s
         Length bgWidth = bgLayer->backgroundSize().width;
         Length bgHeight = bgLayer->backgroundSize().height;
 
-        if (bgWidth.isPercent())
-            w = bgWidth.calcValue(scaledWidth);
-        else if (bgWidth.isFixed())
+        if (bgWidth.isFixed())
             w = bgWidth.value();
-        else if (bgWidth.isAuto()) {
-            // If the width is auto and the height is not, we have to use the appropriate
-            // scale to maintain our aspect ratio.
-            if (bgHeight.isPercent()) {
-                int scaledH = bgHeight.calcValue(scaledHeight);
-                w = bg->imageSize(style()->effectiveZoom()).width() * scaledH / bg->imageSize(style()->effectiveZoom()).height();
-            } else if (bgHeight.isFixed())
-                w = bg->imageSize(style()->effectiveZoom()).width() * bgHeight.value() / bg->imageSize(style()->effectiveZoom()).height();
-        }
-
-        if (bgHeight.isPercent())
-            h = bgHeight.calcValue(scaledHeight);
-        else if (bgHeight.isFixed())
+        else if (bgWidth.isPercent())
+            w = bgWidth.calcValue(scaledWidth);
+        
+        if (bgHeight.isFixed())
             h = bgHeight.value();
-        else if (bgHeight.isAuto()) {
-            // If the height is auto and the width is not, we have to use the appropriate
-            // scale to maintain our aspect ratio.
-            if (bgWidth.isPercent())
-                h = bg->imageSize(style()->effectiveZoom()).height() * w / bg->imageSize(style()->effectiveZoom()).width();
-            else if (bgWidth.isFixed())
-                h = bg->imageSize(style()->effectiveZoom()).height() * bgWidth.value() / bg->imageSize(style()->effectiveZoom()).width();
-            else if (bgWidth.isAuto()) {
-                // If both width and height are auto, we just want to use the image's
-                // intrinsic size.
-                w = bg->imageSize(style()->effectiveZoom()).width();
-                h = bg->imageSize(style()->effectiveZoom()).height();
-            }
+        else if (bgHeight.isPercent())
+            h = bgHeight.calcValue(scaledHeight);
+        
+        // If one of the values is auto we have to use the appropriate
+        // scale to maintain our aspect ratio.
+        if (bgWidth.isAuto() && !bgHeight.isAuto())
+            w = bg->imageSize(style()->effectiveZoom()).width() * h / bg->imageSize(style()->effectiveZoom()).height();        
+        else if (!bgWidth.isAuto() && bgHeight.isAuto())
+            h = bg->imageSize(style()->effectiveZoom()).height() * w / bg->imageSize(style()->effectiveZoom()).width();
+        else if (bgWidth.isAuto() && bgHeight.isAuto()) {
+            // If both width and height are auto, we just want to use the image's
+            // intrinsic size.
+            w = bg->imageSize(style()->effectiveZoom()).width();
+            h = bg->imageSize(style()->effectiveZoom()).height();
         }
         
         return IntSize(max(1, w), max(1, h));
