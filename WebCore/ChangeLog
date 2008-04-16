@@ -1,3 +1,48 @@
+2008-04-16  Steve Falkenburg  <sfalken@apple.com>
+
+        Improve timer latency/resolution.
+                
+        The primary timing mechanism is now CreateTimerQueueTimer, with a PostMessage from
+        the callback proc.  This event will be delivered sooner than if we used SetTimer(),
+        since it is higher priority than other messages.
+        
+        If there is an input message pending, we'll use we SetTimer() based timers to avoid
+        starving user input.
+
+        Don't call PostMessage immediately on all timers < 10ms.  Only call immediately if
+        timer is already expired.  This avoids the case where no timers would be processed,
+        causing the timer to be re-posted via the slower SetTimer method.
+
+        Don't call PostMessage immediately if there's a pending WM_PAINT, since
+        we don't want to starve all paints when bombarded with a continuous stream of low
+        duration timers.
+
+        Removed reentrancy check, since we're now looking for specific starvation cases,
+        and will typically defer non-expired timers through CreateTimerQueueTimer.
+
+        The reason Windows wouldn't starve paints in favor of timers with the old code:
+        When we went to reset the timer when it fired, the timer reset code treated this as a
+        reentrant timer, causing us to hit the slow SetTimer code rather than calling PostMessage,
+        even for timers expiring in < 10ms.  I corrected that, exposing the paint starvation problem.
+
+        Use timeBeginPeriod/timeEndPeriod to improve resolution of system timers.
+        Limit this resolution change to within 20ms of the last high resolution timer request.
+                        
+        Corrected GetQueueStatus to check for specific input (and paint) messages rather than
+        checking QS_ALLINPUT.  Contrary to its name, QS_ALLINPUT actually indicates interest
+        in ALL queued messages, not just input messages.
+        
+        Fix SetTimer/KillTimer calls to pass our window handle.
+
+        Reviewed by Brady.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::):
+        (WebCore::TimerWindowWndProc):
+        (WebCore::queueTimerProc):
+        (WebCore::setSharedTimerFireTime):
+        (WebCore::stopSharedTimer):
+
 2008-04-16  Adam Roben  <aroben@apple.com>
 
         Fix console-log-formatting to truly test formatting an undefined value
