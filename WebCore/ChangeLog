@@ -1,5 +1,21 @@
 2008-04-15  Adam Roben  <aroben@apple.com>
 
+        Refactor String.vsprintf to separate tokenizing and substituting
+
+        This will eventually be useful for the various console methods that
+        take a format string.
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/utilities.js:
+        (String.tokenizeFormatString): Added. This uses the format parsing
+        code from String.vsprintf but just returns an array of "string" and
+        "specifier" tokens.
+        (String.vsprintf): Now calls String.tokenizeFormatString and processes
+        the tokens one at a time.
+
+2008-04-15  Adam Roben  <aroben@apple.com>
+
         Pass all arguments to console.{log,warn,info,error} into the Inspector's JS
 
         Part of Bug 17228: console.{log,warn,info,error} should support format

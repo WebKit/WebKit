@@ -752,21 +752,28 @@ String.sprintf = function(format)
     return String.vsprintf(format, Array.prototype.slice.call(arguments, 1));
 }
 
-String.vsprintf = function(format, substitutions)
+String.tokenizeFormatString = function(format)
 {
-    if (!format || !substitutions || !substitutions.length)
-        return format;
-
-    var result = "";
+    var tokens = [];
     var substitutionIndex = 0;
+
+    function addStringToken(str)
+    {
+        tokens.push({ type: "string", value: str });
+    }
+
+    function addSpecifierToken(specifier, precision, substitutionIndex)
+    {
+        tokens.push({ type: "specifier", specifier: specifier, precision: precision, substitutionIndex: substitutionIndex });
+    }
 
     var index = 0;
     for (var precentIndex = format.indexOf("%", index); precentIndex !== -1; precentIndex = format.indexOf("%", index)) {
-        result += format.substring(index, precentIndex);
+        addStringToken(format.substring(index, precentIndex));
         index = precentIndex + 1;
 
         if (format[index] === "%") {
-            result += "%";
+            addStringToken("%");
             ++index;
             continue;
         }
@@ -796,40 +803,81 @@ String.vsprintf = function(format, substitutions)
                 ++index;
         }
 
-        if (substitutionIndex >= substitutions.length) {
-            // If there are not enough substitutions for the current substitutionIndex
-            // just output the format specifier literally and move on.
-            console.error("String.vsprintf(\"" + format + "\", \"" + substitutions.join("\", \"") + "\"): not enough substitution arguments. Had " + substitutions.length + " but needed " + (substitutionIndex + 1) + ", so substitution was skipped.");
-            index = precentIndex + 1;
-            result += "%";
-            continue;
-        }
-
-        switch (format[index]) {
-        case "d":
-            var substitution = parseInt(substitutions[substitutionIndex]);
-            result += (!isNaN(substitution) ? substitution : 0);
-            break;
-        case "f":
-            var substitution = parseFloat(substitutions[substitutionIndex]);
-            if (substitution && precision > -1)
-                substitution = substitution.toFixed(precision);
-            result += (!isNaN(substitution) ? substitution : (precision > -1 ? Number(0).toFixed(precision) : 0));
-            break;
-        default:
-            // Encountered an unsupported format character, treat as a string.
-            console.warn("String.vsprintf(\"" + format + "\", \"" + substitutions.join("\", \"") + "\"): unsupported format character \u201C" + format[index] + "\u201D. Treating as a string.");
-            // Fall through to treat this like a string.
-        case "s":
-            result += substitutions[substitutionIndex];
-            break;
-        }
+        addSpecifierToken(format[index], precision, substitutionIndex);
 
         ++substitutionIndex;
         ++index;
     }
 
-    result += format.substring(index);
+    addStringToken(format.substring(index));
+
+    return tokens;
+}
+
+String.vsprintf = function(format, substitutions)
+{
+    if (!format || !substitutions || !substitutions.length)
+        return format;
+
+    function prettyFunctionName()
+    {
+        return "String.vsprintf(\"" + format + "\", \"" + substitutions.join("\", \"") + "\")";
+    }
+
+    function warn(msg)
+    {
+        console.warn(prettyFunctionName() + ": " + msg);
+    }
+
+    function error(msg)
+    {
+        console.error(prettyFunctionName() + ": " + msg);
+    }
+
+    var result = "";
+    var tokens = String.tokenizeFormatString(format);
+
+    for (var i = 0; i < tokens.length; ++i) {
+        var token = tokens[i];
+
+        if (token.type === "string") {
+            result += token.value;
+            continue;
+        }
+
+        if (token.type !== "specifier") {
+            error("Unknown token type \"" + token.type + "\" found.");
+            continue;
+        }
+
+        if (token.substitutionIndex >= substitutions.length) {
+            // If there are not enough substitutions for the current substitutionIndex
+            // just output the format specifier literally and move on.
+            error("not enough substitution arguments. Had " + substitutions.length + " but needed " + (token.substitutionIndex + 1) + ", so substitution was skipped.");
+            result += "%" + (token.precision > -1 ? token.precision : "") + token.specifier;
+            continue;
+        }
+
+        switch (token.specifier) {
+        case "d":
+            var substitution = parseInt(substitutions[token.substitutionIndex]);
+            result += (!isNaN(substitution) ? substitution : 0);
+            break;
+        case "f":
+            var substitution = parseFloat(substitutions[token.substitutionIndex]);
+            if (substitution && token.precision > -1)
+                substitution = substitution.toFixed(token.precision);
+            result += (!isNaN(substitution) ? substitution : (token.precision > -1 ? Number(0).toFixed(token.precision) : 0));
+            break;
+        default:
+            // Encountered an unsupported format character, treat as a string.
+            warn("unsupported format character \u201C" + token.specifier + "\u201D. Treating as a string.");
+            // Fall through to treat this like a string.
+        case "s":
+            result += substitutions[token.substitutionIndex];
+            break;
+        }
+    }
 
     return result;
 }
