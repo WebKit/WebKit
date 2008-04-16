@@ -1,3 +1,36 @@
+2008-04-16  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 18505: REGRESSION: Search is disabled and not functional
+
+        <https://bugs.webkit.org/show_bug.cgi?id=18505>
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.sourceFrameForResource): Added.
+        * page/inspector/inspector.css: Added back rules for the search field
+        that were removed in r31736.
+        * page/inspector/inspector.html:
+          - Removed the disabled attribute from the search field
+          - Added back the #searchResults and #searchResultsResizer divs which
+            were removed in r31736
+        * page/inspector/inspector.js:
+        (WebInspector.set showingSearchResults): Updated for class rename
+        panels -> main-panels.
+        (WebInspector.loaded): Added back the mousedown event listener for the
+        search results resizer that was removed in r31736.
+        (WebInspector.searchResultsResizerDrag): Updated for class rename
+        panels -> main-panels.
+        (WebInspector.performSearch):
+          - Changed to use sourceFrameForResource
+          - Changed to use showResource
+          - Changed to save/restore the focused element around the setting of
+            the current panel
+          - Changed to get the source document from the match range instead of
+            by crawling back up to the source view
+          - Changed to bind the onselect handlers to this so that we can
+            access the Elements/Resources panels
+
 2008-04-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig

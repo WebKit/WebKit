@@ -159,7 +159,7 @@ var WebInspector = {
             var animations = [
                 {element: resultsContainer, end: {top: 0}},
                 {element: searchResultsResizer, end: {top: WebInspector.searchResultsHeight - 3}},
-                {element: document.getElementById("panels"), end: {top: WebInspector.searchResultsHeight}}
+                {element: document.getElementById("main-panels"), end: {top: WebInspector.searchResultsHeight}}
             ];
 
             WebInspector.animateStyle(animations, 250);
@@ -169,7 +169,7 @@ var WebInspector = {
             var animations = [
                 {element: resultsContainer, end: {top: -WebInspector.searchResultsHeight}},
                 {element: searchResultsResizer, end: {top: 0}},
-                {element: document.getElementById("panels"), end: {top: 0}}
+                {element: document.getElementById("main-panels"), end: {top: 0}}
             ];
 
             var animationFinished = function()
@@ -238,6 +238,8 @@ WebInspector.loaded = function()
     document.addEventListener("keydown", this.documentKeyDown.bind(this), true);
     document.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
     document.addEventListener("copy", this.documentCopy.bind(this), true);
+
+    document.getElementById("searchResultsResizer").addEventListener("mousedown", this.searchResultsResizerDragStart, true);
 
     var mainPanelsElement = document.getElementById("main-panels");
     mainPanelsElement.handleKeyEvent = this.mainKeyDown.bind(this);
@@ -547,7 +549,7 @@ WebInspector.searchResultsResizerDrag = function(event)
     WebInspector.searchResultsHeight = newHeight;
 
     document.getElementById("searchResults").style.height = WebInspector.searchResultsHeight + "px";
-    document.getElementById("panels").style.top = newHeight + "px";
+    document.getElementById("main-panels").style.top = newHeight + "px";
     document.getElementById("searchResultsResizer").style.top = (newHeight - 3) + "px";
 
     event.preventDefault();
@@ -761,9 +763,10 @@ WebInspector.performSearch = function(query)
         var resource = resourcesToSearch[i];
 
         var sourceResults = [];
-        if (!isXPath && "source" in resource.panel.views) {
-            resource.panel.setupSourceFrameIfNeeded();
-            sourceResults = InspectorController.search(resource.panel.views.source.frameElement.contentDocument, query);
+        if (!isXPath) {
+            var sourceFrame = this.panels.resources.sourceFrameForResource(resource);
+            if (sourceFrame)
+                sourceResults = InspectorController.search(sourceFrame.contentDocument, query);
         }
 
         var domResults = [];
@@ -824,7 +827,11 @@ WebInspector.performSearch = function(query)
         selection.removeAllRanges();
         selection.addRange(element.representedObject.range);
 
-        this.currentPanel = element.representedObject.panel;
+        var oldFocusElement = this.currentFocusElement;
+        this.currentPanel = this.panels.resources;
+        this.currentFocusElement = oldFocusElement;
+
+        this.panels.resources.showResource(element.representedObject.resource);
 
         element.representedObject.line.scrollIntoViewIfNeeded(true);
         element.listItemElement.scrollIntoViewIfNeeded(false);
@@ -832,7 +839,10 @@ WebInspector.performSearch = function(query)
 
     var domResultSelected = function(element)
     {
+        var oldFocusElement = this.currentFocusElement;
         this.currentPanel = this.panels.elements;
+        this.currentFocusElement = oldFocusElement;
+
         this.panels.elements.focusedDOMNode = element.representedObject.node;
         element.listItemElement.scrollIntoViewIfNeeded(false);
     }
@@ -848,11 +858,12 @@ WebInspector.performSearch = function(query)
         if (file.sourceResults && file.sourceResults.length) {
             for (var j = 0; j < file.sourceResults.length; ++j) {
                 var range = file.sourceResults[j];
+                var sourceDocument = range.startContainer.ownerDocument;
 
                 var line = range.startContainer;
                 while (line.parentNode && line.nodeName.toLowerCase() != "tr")
                     line = line.parentNode;
-                var lineRange = file.resource.panel.views.source.frameElement.contentDocument.createRange();
+                var lineRange = sourceDocument.createRange();
                 lineRange.selectNodeContents(line);
 
                 // Don't include any error bubbles in the search result
@@ -863,11 +874,11 @@ WebInspector.performSearch = function(query)
                     lineRange.setEndAfter(end);
                 }
 
-                var beforeRange = file.resource.panel.views.source.frameElement.contentDocument.createRange();
+                var beforeRange = sourceDocument.createRange();
                 beforeRange.setStart(lineRange.startContainer, lineRange.startOffset);
                 beforeRange.setEnd(range.startContainer, range.startOffset);
 
-                var afterRange = file.resource.panel.views.source.frameElement.contentDocument.createRange();
+                var afterRange = sourceDocument.createRange();
                 afterRange.setStart(range.endContainer, range.endOffset);
                 afterRange.setEnd(lineRange.endContainer, lineRange.endOffset);
 
@@ -888,8 +899,8 @@ WebInspector.performSearch = function(query)
                 if (j == 0)
                     title += "<div class=\"search-results-section\">" + WebInspector.UIString("Source") + "</div>";
                 title += beforeText.escapeHTML() + "<span class=\"search-matched-string\">" + text.escapeHTML() + "</span>" + afterText.escapeHTML();
-                var item = new TreeElement(title, {panel: file.resource.panel, line: line, range: range}, false);
-                item.onselect = sourceResultSelected;
+                var item = new TreeElement(title, {resource: file.resource, line: line, range: range}, false);
+                item.onselect = sourceResultSelected.bind(this);
                 fileItem.appendChild(item);
             }
         }
@@ -901,8 +912,8 @@ WebInspector.performSearch = function(query)
                 if (j == 0)
                     title += "<div class=\"search-results-section\">" + WebInspector.UIString("DOM") + "</div>";
                 title += nodeTitleInfo.call(node).title;
-                var item = new TreeElement(title, {panel: file.resource.panel, node: node}, false);
-                item.onselect = domResultSelected;
+                var item = new TreeElement(title, {resource: file.resource, node: node}, false);
+                item.onselect = domResultSelected.bind(this);
                 fileItem.appendChild(item);
             }
         }

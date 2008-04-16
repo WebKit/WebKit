@@ -440,6 +440,23 @@ WebInspector.ResourcesPanel.prototype = {
         this._updateSidebarWidth();
     },
 
+    sourceFrameForResource: function(resource)
+    {
+        var view = this._resourceView(resource);
+        if (!view)
+            return null;
+
+        if (!view.setupSourceFrameIfNeeded)
+            return null;
+
+        // Setting up the source frame requires that we be attached.
+        if (!this.element.parentNode)
+            this.attach();
+
+        view.setupSourceFrameIfNeeded();
+        return view.frameElement;
+    },
+
     handleKeyEvent: function(event)
     {
         this.sidebarTree.handleKeyEvent(event);

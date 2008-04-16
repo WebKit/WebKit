@@ -59,9 +59,11 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <body class="detached">
     <div id="toolbar">
         <div class="toolbar-item flexable-space"></div>
-        <div class="toolbar-item"><input id="search" disabled type="search" results="20" incremental="incremental" onsearch="WebInspector.performSearch(this.value)"><div id="search-toolbar-label" class="toolbar-label"></div></div>
+        <div class="toolbar-item"><input id="search" type="search" results="20" incremental="incremental" onsearch="WebInspector.performSearch(this.value)"><div id="search-toolbar-label" class="toolbar-label"></div></div>
     </div>
     <div id="main">
+        <div id="searchResults" class="focusable hidden"></div>
+        <div id="searchResultsResizer" class="hidden"></div>
         <div id="main-panels" class="focusable focused"></div>
         <div id="main-status-bar" class="status-bar"><div id="anchored-status-bar-items"><button id="dock-status-bar-item" class="status-bar-item toggled"></button><button id="console-status-bar-item" class="status-bar-item"></button></div></div>
     </div>
