@@ -1,5 +1,31 @@
 2008-04-16  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes an issue where the source for a resource that had errors would
+        not be shown because the view was created before the resource load
+        finished. The right view is now created, even if the resource isn't 
+        finished. The SourceView just makes sure to not load the source until
+        the resource is finished. Only if the category changes, does the view
+        need to be recreated.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Resource.js:
+        (WebInspector.Resource.prototype.set category): Call recreateViewForResourceIfNeeded.
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.recreateViewForResourceIfNeeded):
+        Added. Tries to make a new view, if the view is the same prototype of the
+        previous view, return early. If they differ, close and detach the old view
+        and associate the resource with the new view. Calling updateErrorsAndWarnings
+        is needed, because the errors and warnings that might have been added to the
+        previous view will be lost, so make the tree element match.
+        (WebInspector.Resource.prototype._createResourceView): Always create a view
+        that matches the resource category. Ignore the loading and failed status.
+        * page/inspector/SourceView.js:
+        (WebInspector.SourceView.prototype.setupSourceFrameIfNeeded): Don't setup the
+        frame if the resource hasn't finished or if the load failed.
+
+2008-04-16  Timothy Hatcher  <timothy@apple.com>
+
         Adds a console formatter for Error objects. So typing a expression in the
         console that ends in an exception will print meaningful info. Also calling
         console.{log,error,warn,info} with an error object will output nicely.

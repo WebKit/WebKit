@@ -262,8 +262,10 @@ WebInspector.Resource.prototype = {
         if (this._category)
             this._category.addResource(this);
 
-        if (WebInspector.panels.resources)
+        if (WebInspector.panels.resources) {
             WebInspector.panels.resources.refreshResource(this);
+            WebInspector.panels.resources.recreateViewForResourceIfNeeded(this);
+        }
     },
 
     get mimeType()

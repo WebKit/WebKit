@@ -50,7 +50,7 @@ WebInspector.SourceView.prototype = {
 
     setupSourceFrameIfNeeded: function()
     {
-        if (this._frameNeedsSetup) {
+        if (this.resource.finished && !this.resource.failed && this._frameNeedsSetup) {
             delete this._frameNeedsSetup;
 
             this.attach();

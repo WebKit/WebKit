@@ -374,6 +374,31 @@ WebInspector.ResourcesPanel.prototype = {
         barRightElement.style.right = (100 - percentages.end) + "%";
     },
 
+    recreateViewForResourceIfNeeded: function(resource)
+    {
+        if (!resource || !resource._resourcesView)
+            return;
+
+        var newView = this._createResourceView(resource);
+        if (newView.prototype === resource._resourcesView.prototype)
+            return;
+
+        resource.warnings = 0;
+        resource.errors = 0;
+
+        resource._resourcesTreeElement.updateErrorsAndWarnings();
+
+        resource._resourcesView.detach();
+        delete resource._resourcesView;
+
+        resource._resourcesView = newView;
+
+        if (resource !== this.visibleResource)
+            return;
+
+        newView.show();
+    },
+
     showResource: function(resource, line)
     {
         if (!resource)
@@ -935,8 +960,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     _createResourceView: function(resource)
     {
-        if (resource.finished && !resource.failed) {
-            switch (resource.category) {
+        switch (resource.category) {
             case WebInspector.resourceCategories.documents:
             case WebInspector.resourceCategories.stylesheets:
             case WebInspector.resourceCategories.scripts:
@@ -946,10 +970,9 @@ WebInspector.ResourcesPanel.prototype = {
                 return new WebInspector.ImageView(resource);
             case WebInspector.resourceCategories.fonts:
                 return new WebInspector.FontView(resource);
-            }
+            default:
+                return new WebInspector.ResourceView(resource);
         }
-
-        return new WebInspector.ResourceView(resource);
     },
 
     _startSidebarDragging: function(event)
