@@ -1,3 +1,40 @@
+2008-04-16  David Hyatt  <hyatt@apple.com>
+
+        Eliminate the paintBuffer and drawImage(ImageBuffer*) methods from GraphicsContext* in favor of just
+        snagging an Image* from the ImageBuffer and drawing that instead.
+
+        Enhance canvas with a CanvasObserver so that notifications of dirtying or resizing can be tracked by
+        a consumer.
+
+        Reviewed by olliej
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::willDraw):
+        (WebCore::HTMLCanvasElement::reset):
+        (WebCore::HTMLCanvasElement::paint):
+        * html/HTMLCanvasElement.h:
+        (WebCore::CanvasObserver::~CanvasObserver):
+        (WebCore::HTMLCanvasElement::setSize):
+        (WebCore::HTMLCanvasElement::setObserver):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::clearImage):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+        (WebCore::Image::drawPattern):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+
 2008-04-16  Steve Falkenburg  <sfalken@apple.com>
 
         Improve timer latency/resolution.

@@ -997,7 +997,7 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, const FloatR
         m_canvas->setOriginTainted();
 
     willDraw(destRect);
-    c->drawImage(buffer, sourceRect, destRect);
+    c->drawImage(buffer->image(), sourceRect, destRect);
 }
 
 // FIXME: Why isn't this just another overload of drawImage? Why have a different name?

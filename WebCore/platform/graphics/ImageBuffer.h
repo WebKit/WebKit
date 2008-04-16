@@ -82,6 +82,8 @@ namespace WebCore {
         Image* image() const { notImplemented(); return 0; }
 #endif
 
+        void clearImage() { m_image.release(); }
+
         PassRefPtr<ImageData> getImageData(const IntRect& rect) const;
         void putImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint);
 

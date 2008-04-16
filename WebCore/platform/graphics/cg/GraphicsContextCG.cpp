@@ -939,55 +939,5 @@ void GraphicsContext::setCompositeOperation(CompositeOperator mode)
 }
 #endif
 
-void GraphicsContext::paintBuffer(ImageBuffer* buffer, const IntRect& r)
-{
-    CGContextRef context = buffer->context()->platformContext();
-    if (!context)
-        return;
-    CGContextFlush(context);
-    if (CGImageRef image = CGBitmapContextCreateImage(context)) {
-        save();
-        CGContextTranslateCTM(platformContext(), r.x(), r.y() + r.height());
-        CGContextScaleCTM(platformContext(), 1, -1);
-        CGContextDrawImage(platformContext(), roundToDevicePixels(IntRect(IntPoint(), r.size())), image);
-        restore();
-        CGImageRelease(image);
-    }
-}
-
-void GraphicsContext::drawImage(ImageBuffer* buffer, const FloatRect& srcRect, const FloatRect& destRect)
-{
-    CGContextRef context = buffer->context()->platformContext();
-    CGContextFlush(context);
-    RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(context));
-    float iw = CGImageGetWidth(image.get());
-    float ih = CGImageGetHeight(image.get());
-    save();
-    CGContextTranslateCTM(platformContext(), destRect.x(), destRect.y() + destRect.height());
-    CGContextScaleCTM(platformContext(), 1, -1);
-    if (srcRect.x() == 0 && srcRect.y() == 0 && iw == srcRect.width() && ih == srcRect.height())
-        CGContextDrawImage(platformContext(), destRect, image.get());
-    else {
-        // Slow path, boo!
-        // FIXME: We can do this without creating a separate image
-        
-        size_t csw = static_cast<size_t>(ceilf(srcRect.width()));
-        size_t csh = static_cast<size_t>(ceilf(srcRect.height()));
-        
-        RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-        size_t bytesPerRow = csw * 4;
-        OwnArrayPtr<char> buffer(new char[csh * bytesPerRow]);
-        RetainPtr<CGContextRef> clippedSourceContext(AdoptCF, CGBitmapContextCreate(buffer.get(), csw, csh,
-                                                                8, bytesPerRow, colorSpace.get(), kCGImageAlphaPremultipliedLast));
-        CGContextTranslateCTM(clippedSourceContext.get(), -srcRect.x(), -srcRect.y());
-        CGContextDrawImage(clippedSourceContext.get(), CGRectMake(0, 0, iw, ih), image.get());
-        
-        RetainPtr<CGImageRef> clippedSourceImage(AdoptCF, CGBitmapContextCreateImage(clippedSourceContext.get()));
-        
-        CGContextDrawImage(platformContext(), destRect, clippedSourceImage.get());
-    }
-    restore();
-}
-
 }
 

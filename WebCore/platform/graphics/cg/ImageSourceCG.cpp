@@ -154,6 +154,9 @@ size_t ImageSource::frameCount() const
 
 CGImageRef ImageSource::createFrameAtIndex(size_t index)
 {
+    if (!initialized())
+        return 0;
+
     CGImageRef image = CGImageSourceCreateImageAtIndex(m_decoder, index, imageSourceOptions());
     CFStringRef imageUTI = CGImageSourceGetType(m_decoder);
     static const CFStringRef xbmUTI = CFSTR("public.xbitmap-image");

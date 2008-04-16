@@ -149,14 +149,12 @@ namespace WebCore {
         void drawImage(Image*, const IntRect& destRect, const IntRect& srcRect, CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
         void drawImage(Image*, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1),
                        CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
-        void drawImage(ImageBuffer*, const FloatRect& srcRect, const FloatRect& destRect);
         void drawTiledImage(Image*, const IntRect& destRect, const IntPoint& srcPoint, const IntSize& tileSize,
                        CompositeOperator = CompositeSourceOver);
         void drawTiledImage(Image*, const IntRect& destRect, const IntRect& srcRect, 
                             Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
                             CompositeOperator = CompositeSourceOver);
 
-        void paintBuffer(ImageBuffer*, const IntRect&);
 #if PLATFORM(CG)
         void setUseLowQualityImageInterpolation(bool = true);
         bool useLowQualityImageInterpolation() const;
