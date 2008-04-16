@@ -13094,6 +13094,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSConsoleCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSCSSRuleCustom.cpp"
 					>
 				</File>
@@ -15699,6 +15703,10 @@
 				</File>
 				<File
 					RelativePath="..\ForwardingHeaders\kjs\JSLock.h"
+					>
+				</File>
+				<File
+					RelativePath="..\ForwardingHeaders\kjs\list.h"
 					>
 				</File>
 				<File

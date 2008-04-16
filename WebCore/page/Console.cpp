@@ -34,6 +34,9 @@
 #include "FrameLoader.h"
 #include "Page.h"
 #include "PlatformString.h"
+#include <kjs/list.h>
+
+using namespace KJS;
 
 namespace WebCore {
 
@@ -47,8 +50,11 @@ void Console::disconnectFrame()
     m_frame = 0;
 }
 
-void Console::error(const String& message)
+void Console::error(ExecState* exec, const List& arguments)
 {
+    if (arguments.isEmpty())
+        return;
+
     if (!m_frame)
         return;
 
@@ -56,11 +62,14 @@ void Console::error(const String& message)
     if (!page)
         return;
 
-    page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, 0, m_frame->loader()->url().prettyURL());
+    page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, arguments[0]->toString(exec), 0, m_frame->loader()->url().prettyURL());
 }
 
-void Console::info(const String& message)
+void Console::info(ExecState* exec, const List& arguments)
 {
+    if (arguments.isEmpty())
+        return;
+
     if (!m_frame)
         return;
 
@@ -68,11 +77,14 @@ void Console::info(const String& message)
     if (!page)
         return;
 
-    page->chrome()->addMessageToConsole(JSMessageSource, LogMessageLevel, message, 0, m_frame->loader()->url().prettyURL());
+    page->chrome()->addMessageToConsole(JSMessageSource, LogMessageLevel, arguments[0]->toString(exec), 0, m_frame->loader()->url().prettyURL());
 }
 
-void Console::log(const String& message)
+void Console::log(ExecState* exec, const List& arguments)
 {
+    if (arguments.isEmpty())
+        return;
+
     if (!m_frame)
         return;
 
@@ -80,11 +92,14 @@ void Console::log(const String& message)
     if (!page)
         return;
 
-    page->chrome()->addMessageToConsole(JSMessageSource, LogMessageLevel, message, 0, m_frame->loader()->url().prettyURL());
+    page->chrome()->addMessageToConsole(JSMessageSource, LogMessageLevel, arguments[0]->toString(exec), 0, m_frame->loader()->url().prettyURL());
 }
 
-void Console::warn(const String& message)
+void Console::warn(ExecState* exec, const List& arguments)
 {
+    if (arguments.isEmpty())
+        return;
+
     if (!m_frame)
         return;
 
@@ -92,7 +107,7 @@ void Console::warn(const String& message)
     if (!page)
         return;
 
-    page->chrome()->addMessageToConsole(JSMessageSource, WarningMessageLevel, message, 0, m_frame->loader()->url().prettyURL());
+    page->chrome()->addMessageToConsole(JSMessageSource, WarningMessageLevel, arguments[0]->toString(exec), 0, m_frame->loader()->url().prettyURL());
 }
 
 } // namespace WebCore

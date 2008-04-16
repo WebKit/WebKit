@@ -3847,6 +3847,7 @@
 		C091588D0DB4209200E55AF4 /* JSInspectorCallbackWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = C09158870DB4209200E55AF4 /* JSInspectorCallbackWrapper.h */; };
 		C091588E0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C09158880DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp */; };
 		C091588F0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = C09158890DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h */; };
+		C0DFC8700DB6841A003EAE7C /* JSConsoleCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0DFC86F0DB6841A003EAE7C /* JSConsoleCustom.cpp */; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
 		D05CED290A40BB2C00C5AF38 /* FormatBlockCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */; };
@@ -8136,6 +8137,7 @@
 		C09158870DB4209200E55AF4 /* JSInspectorCallbackWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInspectorCallbackWrapper.h; sourceTree = "<group>"; };
 		C09158880DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSQuarantinedObjectWrapper.cpp; sourceTree = "<group>"; };
 		C09158890DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSQuarantinedObjectWrapper.h; sourceTree = "<group>"; };
+		C0DFC86F0DB6841A003EAE7C /* JSConsoleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConsoleCustom.cpp; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
@@ -11972,6 +11974,7 @@
 				1432E8460C51493800B1500F /* GCController.h */,
 				E4EEFFC60D34550C00469A58 /* JSAudioConstructor.cpp */,
 				E4EEFFC70D34550C00469A58 /* JSAudioConstructor.h */,
+				C0DFC86F0DB6841A003EAE7C /* JSConsoleCustom.cpp */,
 				E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */,
 				E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */,
 				BC6932710D7E293900AE44D1 /* JSDOMWindowBase.cpp */,
@@ -16589,6 +16592,7 @@
 				1A8F6BC00DB55CDC001DB794 /* ApplicationCacheResource.cpp in Sources */,
 				1A8F6BC20DB55CDC001DB794 /* DOMApplicationCache.cpp in Sources */,
 				1A8F6BC50DB55CDC001DB794 /* ManifestParser.cpp in Sources */,
+				C0DFC8700DB6841A003EAE7C /* JSConsoleCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

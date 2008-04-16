@@ -473,6 +473,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSCanvasPixelArrayCustom.cpp \
 	WebCore/bindings/js/JSCanvasRenderingContext2DCustom.cpp \
 	WebCore/bindings/js/JSClipboardCustom.cpp \
+	WebCore/bindings/js/JSConsoleCustom.cpp \
 	WebCore/bindings/js/JSCSSRuleCustom.cpp \
 	WebCore/bindings/js/JSCSSStyleDeclarationCustom.cpp \
 	WebCore/bindings/js/JSCSSValueCustom.cpp \

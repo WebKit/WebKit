@@ -1,3 +1,42 @@
+2008-04-15  Adam Roben  <aroben@apple.com>
+
+        Pass JSConsole's arguments unmodified to Console
+
+        Part of Bug 17228: console.{log,warn,info,error} should support format
+        strings, variable arguments
+        <http://bugs.webkit.org/show_bug.cgi?id=17228>
+        <rdar://problem/5732828>
+
+        All of JSConsole's methods are now custom, so that we can pass the
+        arguments unmodified to Console. Console now handles calling
+        toString() on the first argument. Later it will pass the arguments off
+        to InspectorController.
+
+        There should be no behavioral changes caused by this patch.
+
+        Reviewed by Darin Adler.
+
+        * ForwardingHeaders/kjs/list.h: Added.
+        * GNUmakefile.am: Added JSConsoleCustom.cpp to the project.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+        * bindings/js/JSConsoleCustom.cpp: Added.
+        (WebCore::JSConsole::error):
+        (WebCore::JSConsole::info):
+        (WebCore::JSConsole::log):
+        (WebCore::JSConsole::warn):
+        * page/Console.cpp: Changed all methods to take an ExecState* and a
+        const List&. The first item in the List is toString()ed and passed to
+        Chrome.
+        (WebCore::Console::error):
+        (WebCore::Console::info):
+        (WebCore::Console::log):
+        (WebCore::Console::warn):
+        * page/Console.h:
+        * page/Console.idl:
+
 2008-04-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
