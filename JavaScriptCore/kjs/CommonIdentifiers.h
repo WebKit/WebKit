@@ -74,7 +74,7 @@ namespace KJS {
 
     private:
         CommonIdentifiers();
-        template<typename T> friend class WTF::ThreadSpecific;
+        template<typename T> friend class ::WTF::ThreadSpecific;
 
     public:
         static CommonIdentifiers* shared();

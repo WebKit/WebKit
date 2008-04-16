@@ -1,5 +1,12 @@
 2008-04-16  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Unreviewed build fix for MSVC. It does not want to have
+        WTF in the KJS namespace.
+
+        * kjs/CommonIdentifiers.h:
+
+2008-04-16  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Unreviewed build fix for gcc.
 
         ::msToGregorianDateTime  is not known to it.
