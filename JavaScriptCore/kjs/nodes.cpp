@@ -3842,7 +3842,7 @@ void ConstDeclNode::handleSlowCase(ExecState* exec, const ScopeChain& chain, JSV
 
     ASSERT(base && base->isVariableObject());
 
-    static_cast<JSVariableObject*>(base)->initializeVariable(exec, m_ident, val, ReadOnly);
+    static_cast<JSVariableObject*>(base)->putWithAttributes(exec, m_ident, val, ReadOnly);
 }
 
 // ECMA 12.2
@@ -3862,7 +3862,7 @@ inline void ConstDeclNode::evaluateSingle(ExecState* exec)
             unsigned attributes = ReadOnly;
             if (exec->codeType() != EvalCode)
                 attributes |= DontDelete;
-            variableObject->initializeVariable(exec, m_ident, val, attributes);
+            variableObject->putWithAttributes(exec, m_ident, val, attributes);
         } else {
             JSValue* val = m_init->evaluate(exec);
             KJS_CHECKEXCEPTIONVOID
@@ -3873,7 +3873,7 @@ inline void ConstDeclNode::evaluateSingle(ExecState* exec)
             if (chain.top() != variableObject)
                 return handleSlowCase(exec, chain, val);
 
-            variableObject->initializeVariable(exec, m_ident, val, ReadOnly);
+            variableObject->putWithAttributes(exec, m_ident, val, ReadOnly);
         }
     }
 }
@@ -4850,12 +4850,12 @@ void EvalNode::processDeclarations(ExecState* exec)
         int attributes = 0;
         if (m_varStack[i].second & DeclarationStacks::IsConstant)
             attributes = ReadOnly;
-        variableObject->initializeVariable(exec, ident, jsUndefined(), attributes);
+        variableObject->putWithAttributes(exec, ident, jsUndefined(), attributes);
     }
 
     for (i = 0, size = m_functionStack.size(); i < size; ++i) {
         FuncDeclNode* funcDecl = m_functionStack[i];
-        variableObject->initializeVariable(exec, funcDecl->m_ident, funcDecl->makeFunction(exec), 0);
+        variableObject->putWithAttributes(exec, funcDecl->m_ident, funcDecl->makeFunction(exec), 0);
     }
 }
 

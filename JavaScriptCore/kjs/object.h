@@ -245,6 +245,9 @@ namespace KJS {
     virtual void put(ExecState*, const Identifier& propertyName, JSValue* value);
     virtual void put(ExecState*, unsigned propertyName, JSValue* value);
 
+    virtual void putWithAttributes(ExecState*, const Identifier& propertyName, JSValue* value, unsigned attributes);
+    virtual void putWithAttributes(ExecState*, unsigned propertyName, JSValue* value, unsigned attributes);
+
     /**
      * Checks if a property is enumerable, that is if it doesn't have the DontEnum
      * flag set

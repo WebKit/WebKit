@@ -595,7 +595,7 @@ WebScriptObject* Frame::windowScriptObject()
 
     if (!d->m_windowScriptObject) {
         KJS::JSLock lock;
-        KJS::JSObject* win = toJSDOMWindow(this);
+        KJS::JSObject* win = toJSDOMWindowWrapper(this);
         KJS::Bindings::RootObject *root = bindingRootObject();
         d->m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(win) originRootObject:root rootObject:root];
     }

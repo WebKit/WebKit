@@ -295,6 +295,16 @@ void JSObject::put(ExecState* exec, unsigned propertyName, JSValue* value)
     put(exec, Identifier::from(propertyName), value);
 }
 
+void JSObject::putWithAttributes(ExecState*, const Identifier& propertyName, JSValue* value, unsigned attributes)
+{
+    putDirect(propertyName, value, attributes);
+}
+
+void JSObject::putWithAttributes(ExecState* exec, unsigned propertyName, JSValue* value, unsigned attributes)
+{
+    putWithAttributes(exec, Identifier::from(propertyName), value, attributes);
+}
+
 // ECMA 8.6.2.4
 bool JSObject::hasProperty(ExecState *exec, const Identifier &propertyName) const
 {

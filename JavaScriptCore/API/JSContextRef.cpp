@@ -72,5 +72,7 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
 JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
 {
     ExecState* exec = toJS(ctx);
-    return toRef(exec->dynamicGlobalObject());
+
+    // It is necessary to call toThisObject to get the wrapper object when used with WebCore.
+    return toRef(exec->dynamicGlobalObject()->toThisObject(exec));
 }

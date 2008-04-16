@@ -160,9 +160,9 @@ void JSGlobalObject::put(ExecState* exec, const Identifier& propertyName, JSValu
     return JSVariableObject::put(exec, propertyName, value);
 }
 
-void JSGlobalObject::initializeVariable(ExecState* exec, const Identifier& propertyName, JSValue* value, unsigned attributes)
+void JSGlobalObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue* value, unsigned attributes)
 {
-    if (symbolTableInitializeVariable(propertyName, value, attributes))
+    if (symbolTablePutWithAttributes(propertyName, value, attributes))
         return;
 
     JSValue* valueBefore = getDirect(propertyName);

@@ -1,3 +1,44 @@
+2008-04-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        - To keep the behavior of the WebKit and JavaScriptCore API's the same,
+          we need to hide the fact that the global object and the window object
+          are no longer the same thing, and the the global object now changes on
+          navigations.  To do this, only the wrapper should ever be exposed.  This
+          fixes the two remaining spots where the internal global object is exposed,
+          the windowScriptObject returned from [WebFrame windowObject] and the object
+          return by calling JSContextGetGlobalObject on [WebFrame globalContext].
+
+        * API/JSContextRef.cpp:
+        (JSContextGetGlobalObject):
+        This is a bit of a hack, this returns the "this" representation of the globalObject
+        which will be the WrapperWindow for WebCore and the globalObject for non-WebCore.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectSetProperty):
+        Call the new putWithAttributes method instead of relying on lower-level calls.
+        This is needed so that the window wrapper can forward the calls.
+
+        * JavaScriptCore.exp:
+        * kjs/Activation.h:
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::putWithAttributes):
+        * kjs/JSGlobalObject.h:
+        * kjs/JSVariableObject.h:
+        (KJS::JSVariableObject::symbolTablePutWithAttributes):
+        * kjs/function.cpp:
+        (KJS::ActivationImp::putWithAttributes):
+        * kjs/nodes.cpp:
+        (KJS::ConstDeclNode::handleSlowCase):
+        (KJS::ConstDeclNode::evaluateSingle):
+        (KJS::EvalNode::processDeclarations):
+        * kjs/object.cpp:
+        (KJS::JSObject::putWithAttributes):
+        * kjs/object.h:
+        Rename initializeVariable to putWithAttributes and move it down to JSObject so it
+        can be used for JSObjectSetProperty.
+
 2008-04-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam and Geoff.

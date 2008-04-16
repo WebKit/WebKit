@@ -33,7 +33,7 @@
 #include "JSDOMWindow.h"
 #include "DOMWindow.h"
 #include "kjs_proxy.h"
-#include <kjs/object_object.h>
+#include <kjs/object.h>
 
 using namespace KJS;
 
@@ -77,6 +77,11 @@ bool JSDOMWindowWrapper::getOwnPropertySlot(ExecState* exec, const Identifier& p
 void JSDOMWindowWrapper::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
     m_window->put(exec, propertyName, value);
+}
+
+void JSDOMWindowWrapper::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue* value, unsigned attributes)
+{
+    m_window->putWithAttributes(exec, propertyName, value, attributes);
 }
 
 bool JSDOMWindowWrapper::deleteProperty(ExecState* exec, const Identifier& propertyName)

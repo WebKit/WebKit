@@ -179,18 +179,11 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
     Identifier name(toJS(propertyName));
     JSValue* jsValue = toJS(value);
 
-    // If non-0 attributes were passed, we may need to use a lower-level call than
-    // the normal JSObject::put. If there is no existing property, then use either
-    // initializeVariable or putDirect instead, since those have the power to set attributes.
-    if (attributes && !jsObject->hasProperty(exec, name)) {
-        if (jsObject->isGlobalObject())
-            static_cast<JSGlobalObject*>(jsObject)->initializeVariable(exec, name, jsValue, attributes);
-        else
-            jsObject->putDirect(name, jsValue, attributes);
-        return;
-    }
+    if (attributes && !jsObject->hasProperty(exec, name))
+        jsObject->putWithAttributes(exec, name, jsValue, attributes);
+    else
+        jsObject->put(exec, name, jsValue);
 
-    jsObject->put(exec, name, jsValue);
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec->exception());

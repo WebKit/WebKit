@@ -1,3 +1,25 @@
+2008-04-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        - To keep the behavior of the WebKit and JavaScriptCore API's the same,
+          we need to hide the fact that the global object and the window object
+          are no longer the same thing, and the the global object now changes on
+          navigations.  To do this, only the wrapper should ever be exposed.  This
+          fixes the two remaining spots where the internal global object is exposed,
+          the windowScriptObject returned from [WebFrame windowObject] and the object
+          return by calling JSContextGetGlobalObject on [WebFrame globalContext]
+
+        * bindings/js/JSDOMWindowWrapper.cpp:
+        (WebCore::JSDOMWindowWrapper::putWithAttributes):
+        * bindings/js/JSDOMWindowWrapper.h:
+        Forward this new method so that JSObjectSetProperty doesn't set properties on the 
+        wrapper.
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::windowScriptObject):
+        Return the wrapper instead of the global object.
+
 2008-04-16  David Hyatt  <hyatt@apple.com>
 
         Eliminate the paintBuffer and drawImage(ImageBuffer*) methods from GraphicsContext* in favor of just

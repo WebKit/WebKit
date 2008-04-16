@@ -422,9 +422,9 @@ void ActivationImp::put(ExecState*, const Identifier& propertyName, JSValue* val
     _prop.put(propertyName, value, 0, true);
 }
 
-void ActivationImp::initializeVariable(ExecState*, const Identifier& propertyName, JSValue* value, unsigned attributes)
+void ActivationImp::putWithAttributes(ExecState*, const Identifier& propertyName, JSValue* value, unsigned attributes)
 {
-    if (symbolTableInitializeVariable(propertyName, value, attributes))
+    if (symbolTablePutWithAttributes(propertyName, value, attributes))
         return;
 
     // We don't call through to JSObject because __proto__ and getter/setter 
