@@ -1854,7 +1854,7 @@ body.inactive .sidebar-tree.small .sidebar-tree-item.selected, body.inactive .si
 }
 
 .resource-sidebar-tree-item.resources-category-scripts .icon {
-    content: url(Images/resourcePlainIcon.png);
+    content: url(Images/resourceJSIcon.png);
 }
 
 .children.small .resource-sidebar-tree-item.resources-category-scripts .icon {

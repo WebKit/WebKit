@@ -1,3 +1,15 @@
+2008-04-15  Timothy Hatcher  <timothy@apple.com>
+
+        Adds a script resource icon. Update the CSS icon to better match the script icon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18499
+
+        Rubber-stamped by Adele Peterson.
+
+        * page/inspector/Images/resourceCSSIcon.png: Updated.
+        * page/inspector/Images/resourceJSIcon.png: Added.
+        * page/inspector/inspector.css: Changed the script icon rule to reference the new image.
+
 2008-04-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
