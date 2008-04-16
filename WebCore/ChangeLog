@@ -1,3 +1,43 @@
+2008-04-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson
+
+        Fix for <rdar://problem/5820819> - Crash sometime occurs when interrupting a load.
+
+        Each SubresourceLoader has a client.  That client is often a Loader::Host object.  
+        The Loader/Host/CachedResource system predates our ref-counting and ownership models, and therefore manages
+        object lifetime manually.
+
+        The cause of this crash was that we would sometimes call "didFail()" on a Host object twice - Once when 
+        beginning the new navigation, and once when the new navigation is committed.
+
+        The problem is after the first time Host::didFail() gets called, the Host is almost always deleted shortly 
+        thereafter.  But the SubresourceLoader had a dangling pointer to the Host which is now invalid.
+
+        I explored a few options to fix this bug.  The one that was most obviously "clean" was to call cancel() on
+        the SubresourceLoader itself, which would end up calling Host::didFail() and doing the appropriate cache
+        cleanup.
+
+        This problem with that approach was that it had other side effects - when you cut off a load that had already
+        partially displayed in the WebView, images that hadn't finished loading would be invalidated and immediately
+        turn into broken image icons.  This was visually jarring and pretty unacceptable. 
+
+        So I decided to follow a much simpler approach, which was to have the Host clear the client pointer from each
+        SubresourceLoader before it forgets about it.  This leaves things the same visually and fixes the crash.
+
+        Note that the layout test for this - if possible - will require other enhancements to DRT including possibly 
+        adding support for window.stop(). That task is non-trivial, and is documented in <rdar://problem/5061826> 
+
+        * loader/SubresourceLoader.h:
+        (WebCore::SubresourceLoader::clearClient): Add a method to clear the SubresourceLoaderClient.  This is 
+          perfectly safe to do on an in-flight SubresourceLoader as they are already designed to be client-less,
+          and already null-check the client before calling it.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::didFail): The SubresourceLoader itself might not be finished loading and might decide 
+          to call into its client later.  Since the client has no guaranteed lifetime and is liable to be deleted 
+          after didFail() is called, call clearClient() on the SubresourceLoader so such an invalid call can't happen.
+
 2008-04-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

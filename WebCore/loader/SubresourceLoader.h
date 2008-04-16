@@ -56,6 +56,8 @@ namespace WebCore {
         virtual void didFail(const ResourceError&);
         virtual void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
         virtual void receivedCancellation(const AuthenticationChallenge&);
+        
+        void clearClient() { m_client = 0; }
 
     private:
         SubresourceLoader(Frame*, SubresourceLoaderClient*, bool sendResourceLoadCallbacks, bool shouldContentSniff);

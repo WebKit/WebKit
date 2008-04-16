@@ -287,6 +287,8 @@ void Loader::Host::didFail(SubresourceLoader* loader, const ResourceError&)
 
 void Loader::Host::didFail(SubresourceLoader* loader, bool cancelled)
 {
+    loader->clearClient();
+
     RequestMap::iterator i = m_requestsLoading.find(loader);
     if (i == m_requestsLoading.end())
         return;
