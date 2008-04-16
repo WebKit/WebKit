@@ -26,8 +26,9 @@
 #ifndef ApplicationCacheGroup_h
 #define ApplicationCacheGroup_h
 
-#ifdef ENABLE(ENABLE_OFFLINE_WEB_APPLICATIONS)
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
-#endif // ENABLE(ENABLE_OFFLINE_WEB_APPLICATIONS)
+
+#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #endif // ApplicationCacheGroup_h

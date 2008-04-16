@@ -1,3 +1,26 @@
+2008-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Generate the DOMApplicationCache JS wrapper, add JSDOMApplicationCacheCustom.cpp and 
+        fix typos in the #if line.
+        
+        * DerivedSources.make:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMApplicationCacheCustom.cpp: Added.
+        * loader/appcache/ApplicationCache.cpp:
+        * loader/appcache/ApplicationCache.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/appcache/ApplicationCacheResource.cpp:
+        * loader/appcache/ApplicationCacheResource.h:
+        * loader/appcache/DOMApplicationCache.cpp:
+        * loader/appcache/DOMApplicationCache.h:
+        * loader/appcache/DOMApplicationCache.idl:
+        * loader/appcache/ManifestParser.cpp:
+        * loader/appcache/ManifestParser.h:
+
 2008-04-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

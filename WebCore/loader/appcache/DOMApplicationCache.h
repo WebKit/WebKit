@@ -26,8 +26,19 @@
 #ifndef DOMApplicationCache_h
 #define DOMApplicationCache_h
 
-#ifdef ENABLE(ENABLE_OFFLINE_WEB_APPLICATIONS)
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
-#endif // ENABLE(ENABLE_OFFLINE_WEB_APPLICATIONS)
+
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+ 
+class DOMApplicationCache : public RefCounted<DOMApplicationCache> {
+};    
+    
+}
+
+
+#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #endif // DOMApplicationCache_h

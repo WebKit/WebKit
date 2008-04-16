@@ -22,10 +22,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
-module offline {
 
-interface [Conditional=OFFLINE_WEB_APPLICATIONS] DOMApplicationCache {
-};
+#include "config.h"
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+
+namespace WebCore {
+    
 
 }
+
+#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)

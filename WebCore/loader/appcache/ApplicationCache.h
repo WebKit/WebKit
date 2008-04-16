@@ -26,8 +26,9 @@
 #ifndef ApplicationCache_h
 #define ApplicationCache_h
 
-#ifdef ENABLE(ENABLE_OFFLINE_WEB_APPLICATIONS)
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
-#endif // ENABLE(ENABLE_OFFLINE_WEB_APPLICATIONS)
+
+#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #endif // ApplicationCache_h

@@ -26,8 +26,9 @@
 #ifndef ManifestParser_h
 #define ManifestParser_h
 
-#ifdef ENABLE(ENABLE_OFFLINE_WEB_APPLICATIONS)
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
-#endif // ENABLE(ENABLE_OFFLINE_WEB_APPLICATIONS)
+
+#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #endif // ManifestParser_h

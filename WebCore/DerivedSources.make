@@ -32,6 +32,7 @@ VPATH = \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/html \
+	$(WebCore)/loader/appcache \
     $(WebCore)/page \
     $(WebCore)/plugins \
     $(WebCore)/storage \
@@ -67,6 +68,7 @@ DOM_CLASSES = \
     Comment \
     Console \
     Counter \
+	DOMApplicationCache \
     DOMCoreException \
     DOMImplementation \
     DOMParser \

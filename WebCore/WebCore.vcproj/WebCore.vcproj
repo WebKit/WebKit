@@ -806,6 +806,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMApplicationCache.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMApplicationCache.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMCoreException.cpp"
 				>
 			</File>
@@ -13163,6 +13171,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSDocumentCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDOMApplicationCacheCustom.cpp"
 					>
 				</File>
 				<File
