@@ -41,19 +41,20 @@ Mutex* atomicallyInitializedStaticMutex;
 
 static ThreadIdentifier mainThreadIdentifier;
 
-void initializeThreading()
-{
-    if (!atomicallyInitializedStaticMutex) {
-        atomicallyInitializedStaticMutex = new Mutex;
-        wtf_random_init();
-        mainThreadIdentifier = currentThread();
-    }
-}
-
 static Mutex& threadMapMutex()
 {
     static Mutex mutex;
     return mutex;
+}
+
+void initializeThreading()
+{
+    if (!atomicallyInitializedStaticMutex) {
+        atomicallyInitializedStaticMutex = new Mutex;
+        threadMapMutex();
+        wtf_random_init();
+        mainThreadIdentifier = currentThread();
+    }
 }
 
 static HashMap<ThreadIdentifier, pthread_t>& threadMap()

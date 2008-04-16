@@ -1,5 +1,18 @@
 2008-04-16  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        Initialize threadMapMutex safely (as already done in ThreadingWin).
+
+        * wtf/ThreadingGtk.cpp:
+        (WTF::threadMapMutex):
+        (WTF::initializeThreading):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::threadMapMutex):
+        (WTF::initializeThreading):
+
+2008-04-16  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Adam Roben.
 
         Cache Gregorian date/time structure on DateInstance objects for 1.027x SunSpider speedup
