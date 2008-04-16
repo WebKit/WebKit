@@ -21,13 +21,13 @@
 #ifndef DATE_OBJECT_H
 #define DATE_OBJECT_H
 
-#include "DateMath.h"
 #include "function.h"
 #include "JSWrapperObject.h"
 #include "lookup.h"
 
 namespace KJS {
 
+    struct GregorianDateTime;
     class FunctionPrototype;
     class ObjectPrototype;
 
@@ -47,13 +47,7 @@ namespace KJS {
         void msToGregorianDateTime(double, bool outputIsUTC, GregorianDateTime&) const;
 
     private:
-        struct Cache {
-            double m_gregorianDateTimeCachedForMS;
-            GregorianDateTime m_cachedGregorianDateTime;
-            double m_gregorianDateTimeUTCCachedForMS;
-            GregorianDateTime m_cachedGregorianDateTimeUTC;
-        };
-
+        struct Cache;
         mutable Cache* m_cache;
     };
 

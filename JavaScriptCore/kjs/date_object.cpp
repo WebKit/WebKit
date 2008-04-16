@@ -94,6 +94,13 @@ private:
     int id;
 };
 
+struct DateInstance::Cache {
+    double m_gregorianDateTimeCachedForMS;
+    GregorianDateTime m_cachedGregorianDateTime;
+    double m_gregorianDateTimeUTCCachedForMS;
+    GregorianDateTime m_cachedGregorianDateTimeUTC;
+};
+
 #if PLATFORM(MAC)
 
 static CFDateFormatterStyle styleFromArgString(const UString& string, CFDateFormatterStyle defaultStyle)

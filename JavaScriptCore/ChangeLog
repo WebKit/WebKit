@@ -1,3 +1,12 @@
+2008-04-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Build fix.
+
+        * kjs/date_object.cpp:
+        * kjs/date_object.h:
+        Don't include DateMath.h from date_object.h, as the latter is used from WebCore, while
+        where the former is not available.
+
 2008-04-16  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Unreviewed build fix for MSVC. It does not want to have
