@@ -59,7 +59,7 @@ void GeneratedImage::drawPattern(GraphicsContext* context, const FloatRect& srcR
     graphicsContext->fillRect(FloatRect(FloatPoint(), m_size), *m_generator.get());
     
     // Grab the final image from the image buffer.
-    Image* bitmap = imageBuffer->image(true);
+    Image* bitmap = imageBuffer->image();
     
     // Now just call drawTiled on that image.
     bitmap->drawPattern(context, srcRect, patternTransform, phase, compositeOp, destRect);

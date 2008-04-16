@@ -1,3 +1,15 @@
+2008-04-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+
+        Fix leaky ImageBuffer code.
+
+        * platform/graphics/GeneratedImage.cpp:
+        (WebCore::GeneratedImage::drawPattern):
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::image):
+
 2008-04-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver.

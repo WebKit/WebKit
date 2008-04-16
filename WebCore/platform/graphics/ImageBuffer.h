@@ -70,7 +70,7 @@ namespace WebCore {
         GraphicsContext* context() const;
 
 #if PLATFORM(CG)
-        Image* image(bool createNewImage = false) const;
+        Image* image() const;
         CGImageRef cgImage() const { return image()->getCGImageRef(); }
 #elif PLATFORM(QT)
         QPixmap* pixmap() const;
@@ -79,7 +79,7 @@ namespace WebCore {
 #endif
 
 #if !PLATFORM(CG)
-        Image* image(bool createNewImage = false) const { notImplemented(); return 0; }
+        Image* image() const { notImplemented(); return 0; }
 #endif
 
         PassRefPtr<ImageData> getImageData(const IntRect& rect) const;

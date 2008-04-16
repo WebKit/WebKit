@@ -94,17 +94,15 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
-Image* ImageBuffer::image(bool createNewImage) const
+Image* ImageBuffer::image() const
 {
-    if (!m_image || createNewImage) {
+    if (!m_image) {
         // It's assumed that if image() is called, the actual rendering to the
         // GraphicsContext must be done.
         ASSERT(context());
         CGImageRef cgImage = CGBitmapContextCreateImage(context()->platformContext());
-        BitmapImage* result = new BitmapImage(cgImage);
-        if (createNewImage)
-            return result;
-        m_image.set(new BitmapImage(cgImage)); // The ref is now held by the BitmapImage.
+        // BitmapImage will release the passed in CGImage on destruction
+        m_image.set(new BitmapImage(cgImage));
     }
     return m_image.get();
 }
