@@ -19,7 +19,7 @@
         try {
             eval("console.log(" + args + ")");
         } catch (e) {
-            console.log("%o", e);
+            console.error(e);
         }
     }
 
@@ -30,7 +30,7 @@
 
     function runTests() {
         var values = [
-            { value: "noSuchVariable", description: "undefined" },
+            { value: "window.noSuchVariable", description: "undefined" },
             { value: "s", description: "string" },
             { value: "i", description: "positive integer" },
             { value: "ni", description: "negative integer" },

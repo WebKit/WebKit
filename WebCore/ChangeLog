@@ -1,3 +1,16 @@
+2008-04-16  Adam Roben  <aroben@apple.com>
+
+        Fix console-log-formatting to truly test formatting an undefined value
+
+        Exceptions thrown by the test will also now be shown as errors.
+
+        Reviewed by Tim Hatcher.
+
+        * manual-tests/inspector/console-log-formatting.html:
+        (test): Use console.error to report exceptions.
+        (runTests): Use window.noSuchVariable instead of just noSuchVariable
+        to avoid an exception.
+
 2008-04-16  Anatoli Papirovski  <apapirovski@mac.com>
 
         Reviewed by David.
