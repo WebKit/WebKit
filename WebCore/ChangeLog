@@ -1,5 +1,21 @@
 2008-04-15  Adam Roben  <aroben@apple.com>
 
+        Make String.format return an array of unused substitutions
+
+        String.format now returns an object with two properties:
+        formattedResult and unusedSubstitutions.
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/utilities.js:
+        (String.vsprintf): Updated for changes to String.format. We throw away
+        the array of unused substitutions.
+        (String.format): Changed to keep track of which substitutions are used
+        when formatting. We then return both the formatted result and the
+        array of unused substitutions.
+
+2008-04-15  Adam Roben  <aroben@apple.com>
+
         Generalize String.format some more
 
         String.format now takes an initial value and an append function which

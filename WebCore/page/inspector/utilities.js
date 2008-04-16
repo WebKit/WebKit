@@ -837,13 +837,13 @@ String.standardFormatters = {
 
 String.vsprintf = function(format, substitutions)
 {
-    return String.format(format, substitutions, String.standardFormatters, "", function(a, b) { return a + b; });
+    return String.format(format, substitutions, String.standardFormatters, "", function(a, b) { return a + b; }).formattedResult;
 }
 
 String.format = function(format, substitutions, formatters, initialValue, append)
 {
     if (!format || !substitutions || !substitutions.length)
-        return append(initialValue, format);
+        return { formattedResult: append(initialValue, format), unusedSubstitutions: substitutions };
 
     function prettyFunctionName()
     {
@@ -862,6 +862,7 @@ String.format = function(format, substitutions, formatters, initialValue, append
 
     var result = initialValue;
     var tokens = String.tokenizeFormatString(format);
+    var usedSubstitutionIndexes = {};
 
     for (var i = 0; i < tokens.length; ++i) {
         var token = tokens[i];
@@ -884,6 +885,8 @@ String.format = function(format, substitutions, formatters, initialValue, append
             continue;
         }
 
+        usedSubstitutionIndexes[token.substitutionIndex] = true;
+
         if (!(token.specifier in formatters)) {
             // Encountered an unsupported format character, treat as a string.
             warn("unsupported format character \u201C" + token.specifier + "\u201D. Treating as a string.");
@@ -894,5 +897,12 @@ String.format = function(format, substitutions, formatters, initialValue, append
         result = append(result, formatters[token.specifier](substitutions[token.substitutionIndex], token));
     }
 
-    return result;
+    var unusedSubstitutions = [];
+    for (var i = 0; i < substitutions.length; ++i) {
+        if (i in usedSubstitutionIndexes)
+            continue;
+        unusedSubstitutions.push(substitutions[i]);
+    }
+
+    return { formattedResult: result, unusedSubstitutions: unusedSubstitutions };
 }
