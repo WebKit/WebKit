@@ -1,3 +1,15 @@
+2008-04-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18259
+        XML+XSLT pages in iframe contains document.location of a parent window
+
+        * fast/xsl/resources/subframe-location-frame.xml: Added.
+        * fast/xsl/resources/subframe-location-frame.xsl: Added.
+        * fast/xsl/subframe-location-expected.txt: Added.
+        * fast/xsl/subframe-location.html: Added.
+
 2008-04-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver.

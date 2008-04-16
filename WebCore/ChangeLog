@@ -1,3 +1,16 @@
+2008-04-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18259
+        XML+XSLT pages in iframe contains document.location of a parent window
+
+        Test: fast/xsl/subframe-location.html
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource): Set resulting document URL before opening
+        it, so that the document loader picks a correct URL, too.
+
 2008-04-16  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by John Sullivan.
