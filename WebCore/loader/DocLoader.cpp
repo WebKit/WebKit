@@ -238,9 +238,12 @@ int DocLoader::requestCount()
     return m_requestCount;
 }
     
-void DocLoader::preload(CachedResource::Type type, const String& url)
+void DocLoader::preload(CachedResource::Type type, const String& url, const String& charset)
 {
-    String encoding = (type == CachedResource::Script || type == CachedResource::CSSStyleSheet) ? m_doc->frame()->loader()->encoding() : String();
+    String encoding;
+    if (type == CachedResource::Script || type == CachedResource::CSSStyleSheet)
+        encoding = charset.isEmpty() ? m_doc->frame()->loader()->encoding() : charset;
+
     CachedResource* resource = requestResource(type, url, encoding, true);
     if (!resource || m_preloads.contains(resource))
         return;

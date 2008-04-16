@@ -1,3 +1,23 @@
+2008-04-16  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey.
+        
+        Fix <rdar://problem/5863728>
+        REGRESSION: Garbage character shown in temperatures in the Weather widget (encoding issue with degree symbol)
+        
+        Parse the encoding attribute in PreloadScanner.
+
+        Test: fast/encoding/script-preload-encoding.html
+
+        * html/PreloadScanner.cpp:
+        (WebCore::PreloadScanner::processAttribute):
+        (WebCore::PreloadScanner::emitTag):
+        (WebCore::PreloadScanner::emitCSSRule):
+        * html/PreloadScanner.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::preload):
+        * loader/DocLoader.h:
+
 2008-04-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

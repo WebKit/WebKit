@@ -1,3 +1,15 @@
+2008-04-16  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey.
+        
+        Test for <rdar://problem/5863728>
+        REGRESSION: Garbage character shown in temperatures in the Weather widget (encoding issue with degree symbol)
+
+        * fast/encoding/resources/utf-8.css: Added.
+        * fast/encoding/resources/utf-8.js: Added.
+        * fast/encoding/preload-encoding-expected.txt: Added.
+        * fast/encoding/preload-encoding.html: Added.
+
 2008-04-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam.
