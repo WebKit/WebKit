@@ -346,13 +346,13 @@ void DateInstance::msToGregorianDateTime(double milli, bool outputIsUTC, Gregori
 
     if (outputIsUTC) {
         if (m_cache->m_gregorianDateTimeUTCCachedForMS != milli) {
-            ::msToGregorianDateTime(milli, true, m_cache->m_cachedGregorianDateTimeUTC);
+            KJS::msToGregorianDateTime(milli, true, m_cache->m_cachedGregorianDateTimeUTC);
             m_cache->m_gregorianDateTimeUTCCachedForMS = milli;
         }
         t.copyFrom(m_cache->m_cachedGregorianDateTimeUTC);
     } else {
         if (m_cache->m_gregorianDateTimeCachedForMS != milli) {
-            ::msToGregorianDateTime(milli, false, m_cache->m_cachedGregorianDateTime);
+            KJS::msToGregorianDateTime(milli, false, m_cache->m_cachedGregorianDateTime);
             m_cache->m_gregorianDateTimeCachedForMS = milli;
         }
         t.copyFrom(m_cache->m_cachedGregorianDateTime);
