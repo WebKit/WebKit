@@ -1,3 +1,43 @@
+2008-04-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Implement an abstraction for thread-specific storage, use it to get rid of some static objects.
+
+        SunSpider results were not conclusive, possibly up to 0.2% slowdown.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        Added ThreadSpecific.h
+
+        * wtf/ThreadSpecific.h: Added.
+        (WTF::::ThreadSpecific):
+        (WTF::::~ThreadSpecific):
+        (WTF::::get):
+        (WTF::::set):
+        (WTF::::destroy):
+        (WTF::T):
+        (WTF::::operator):
+        Only implemented for platforms that use pthreads.
+
+        * kjs/CommonIdentifiers.cpp:
+        (KJS::CommonIdentifiers::shared):
+        * kjs/CommonIdentifiers.h:
+        * kjs/InitializeThreading.cpp:
+        (KJS::initializeThreading):
+        * kjs/Parser.cpp:
+        (KJS::parser):
+        * kjs/Parser.h:
+        * kjs/identifier.cpp:
+        (KJS::identifierTable):
+        (KJS::literalIdentifierTable):
+        (KJS::Identifier::initializeIdentifierThreading):
+        * kjs/identifier.h:
+        * kjs/lexer.cpp:
+        (KJS::lexer):
+        * kjs/lexer.h:
+        Make static instances per-thread.
+
 2008-04-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

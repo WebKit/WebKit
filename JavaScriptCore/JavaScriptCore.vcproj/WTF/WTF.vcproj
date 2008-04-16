@@ -395,6 +395,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\ThreadSpecific.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\unicode\Unicode.h"
 			>
 		</File>

@@ -32,6 +32,9 @@
 #include <limits.h>
 #include <string.h>
 #include <wtf/Assertions.h>
+#if USE(MULTIPLE_THREADS)
+#include <wtf/ThreadSpecific.h>
+#endif
 #include <wtf/unicode/Unicode.h>
 
 using namespace WTF;
@@ -62,13 +65,13 @@ static const size_t initialStringTableCapacity = 64;
 
 Lexer& lexer()
 {
-    ASSERT(JSLock::currentThreadIsHoldingLock());
-
-    // FIXME: We'd like to avoid calling new here, but we don't currently 
-    // support tearing down the Lexer at app quit time, since that would involve
-    // tearing down its UString data members without holding the JSLock.
-    static Lexer* staticLexer = new Lexer;
+#if USE(MULTIPLE_THREADS)
+    static ThreadSpecific<Lexer> staticLexer;
     return *staticLexer;
+#else
+    static Lexer staticLexer;
+    return staticLexer;
+#endif
 }
 
 Lexer::Lexer()

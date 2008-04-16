@@ -199,6 +199,7 @@
 		E1A862A90D7EBB76001EC6AA /* CollatorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A862A80D7EBB76001EC6AA /* CollatorICU.cpp */; };
 		E1A862AB0D7EBB7D001EC6AA /* Collator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A862AA0D7EBB7D001EC6AA /* Collator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1A862D60D7F2B5C001EC6AA /* CollatorDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A862D50D7F2B5C001EC6AA /* CollatorDefault.cpp */; };
+		E1B7C8BE0DA3A3360074B0DC /* ThreadSpecific.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B7C8BD0DA3A3360074B0DC /* ThreadSpecific.h */; };
 		E1EE79230D6C95CD00FEA3BA /* Threading.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE79220D6C95CD00FEA3BA /* Threading.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1EE79280D6C964500FEA3BA /* Locker.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE79270D6C964500FEA3BA /* Locker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1EE793D0D6C9B9200FEA3BA /* ThreadingPthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */; };
@@ -504,6 +505,7 @@
 		E1A862A80D7EBB76001EC6AA /* CollatorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollatorICU.cpp; sourceTree = "<group>"; };
 		E1A862AA0D7EBB7D001EC6AA /* Collator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Collator.h; sourceTree = "<group>"; };
 		E1A862D50D7F2B5C001EC6AA /* CollatorDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollatorDefault.cpp; sourceTree = "<group>"; };
+		E1B7C8BD0DA3A3360074B0DC /* ThreadSpecific.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadSpecific.h; sourceTree = "<group>"; };
 		E1EE79220D6C95CD00FEA3BA /* Threading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Threading.h; sourceTree = "<group>"; };
 		E1EE79270D6C964500FEA3BA /* Locker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Locker.h; sourceTree = "<group>"; };
 		E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadingPthreads.cpp; sourceTree = "<group>"; };
@@ -806,6 +808,7 @@
 				6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */,
 				E1EE79220D6C95CD00FEA3BA /* Threading.h */,
 				E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */,
+				E1B7C8BD0DA3A3360074B0DC /* ThreadSpecific.h */,
 				E195678D09E7CF1200B89D13 /* unicode */,
 				935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */,
 				6592C316098B7DE10003D4F6 /* Vector.h */,
@@ -1117,6 +1120,7 @@
 				E1EE79280D6C964500FEA3BA /* Locker.h in Headers */,
 				E1A862AB0D7EBB7D001EC6AA /* Collator.h in Headers */,
 				E17863400D9BEC0000D74E75 /* InitializeThreading.h in Headers */,
+				E1B7C8BE0DA3A3360074B0DC /* ThreadSpecific.h in Headers */,
 				06D358B20DAADA93003B174E /* MainThread.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

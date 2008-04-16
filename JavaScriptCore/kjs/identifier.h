@@ -69,6 +69,8 @@ namespace KJS {
 
         static PassRefPtr<UString::Rep> add(const char*);
 
+        static void initializeIdentifierThreading();
+
     private:
         UString _ustring;
         

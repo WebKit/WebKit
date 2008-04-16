@@ -31,6 +31,9 @@
 
 #include "DateMath.h"
 #include "dtoa.h"
+#include "identifier.h"
+#include "lexer.h"
+#include "Parser.h"
 #include "ustring.h"
 #include <wtf/Threading.h>
 
@@ -43,6 +46,9 @@ void initializeThreading()
     if (!s_dtoaP5Mutex) {
         s_dtoaP5Mutex = new Mutex;
         UString::null();
+        Identifier::initializeIdentifierThreading();
+        CommonIdentifiers::shared();
+        lexer();
         initDateMath();
     }
 #endif

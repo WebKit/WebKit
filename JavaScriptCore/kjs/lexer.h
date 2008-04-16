@@ -27,6 +27,10 @@
 #include "ustring.h"
 #include <wtf/Vector.h>
 
+namespace WTF {
+    template<typename T> class ThreadSpecific;
+}
+
 namespace KJS {
 
   class Identifier;
@@ -88,6 +92,7 @@ namespace KJS {
 
   private:
     friend Lexer& lexer();
+    template<typename T> friend class WTF::ThreadSpecific;
     Lexer();
 
     int yylineno;
