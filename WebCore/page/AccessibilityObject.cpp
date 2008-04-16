@@ -1751,7 +1751,6 @@ bool AccessibilityObject::canSetFocusAttribute() const
     case MatteRole:
     case RulerRole:
     case RulerMarkerRole:
-    case SortButtonRole:
     case LinkRole:
     case DisclosureTriangleRole:
     case GridRole:

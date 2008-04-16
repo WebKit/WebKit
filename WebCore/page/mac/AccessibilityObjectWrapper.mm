@@ -669,7 +669,6 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { MatteRole, NSAccessibilityMatteRole }, 
         { RulerRole, NSAccessibilityRulerRole },
         { RulerMarkerRole, NSAccessibilityRulerMarkerRole },
-        { SortButtonRole, NSAccessibilitySortButtonRole },
         { LinkRole, NSAccessibilityLinkRole },
 #ifndef BUILDING_ON_TIGER        
         { DisclosureTriangleRole, NSAccessibilityDisclosureTriangleRole },

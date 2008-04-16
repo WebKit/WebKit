@@ -125,10 +125,12 @@ enum AccessibilityRole {
     MatteRole,
     RulerRole,
     RulerMarkerRole,
-    SortButtonRole,
     LinkRole,
     DisclosureTriangleRole,
     GridRole,
+
+    // AppKit includes SortButtonRole but it is misnamed and really a subrole of ButtonRole so we do not include it here.
+
     // WebCore-specific roles
     WebCoreLinkRole,
     ImageMapRole,
