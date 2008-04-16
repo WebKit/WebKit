@@ -414,13 +414,14 @@ WebInspector.Console.prototype = {
 
 WebInspector.Console.prototype.__proto__ = WebInspector.View.prototype;
 
-WebInspector.ConsoleMessage = function(source, level, message, line, url)
+WebInspector.ConsoleMessage = function(source, level, line, url)
 {
     this.source = source;
     this.level = level;
-    this.message = message;
     this.line = line;
     this.url = url;
+
+    this.message = arguments[4];
 }
 
 WebInspector.ConsoleMessage.prototype = {

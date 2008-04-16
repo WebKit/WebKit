@@ -74,6 +74,7 @@
 #endif
 
 using namespace KJS;
+using namespace std;
 
 namespace WebCore {
 
@@ -115,9 +116,22 @@ struct ConsoleMessage {
     {
     }
 
+    ConsoleMessage(MessageSource s, MessageLevel l, ExecState* exec, const List& args, unsigned li, const String& u)
+        : source(s)
+        , level(l)
+        , wrappedArguments(args.size())
+        , line(li)
+        , url(u)
+    {
+        JSLock lock;
+        for (unsigned i = 0; i < args.size(); ++i)
+            wrappedArguments[i] = JSInspectedObjectWrapper::wrap(exec, args[i]);
+    }
+
     MessageSource source;
     MessageLevel level;
     String message;
+    Vector<ProtectedPtr<JSValue> > wrappedArguments;
     unsigned line;
     String url;
 };
@@ -888,12 +902,27 @@ void InspectorController::setWindowVisible(bool visible)
     m_showAfterVisible = FocusedNodeDocumentPanel;
 }
 
+void InspectorController::addMessageToConsole(MessageSource source, MessageLevel level, ExecState* exec, const List& arguments, unsigned lineNumber, const String& sourceURL)
+{
+    if (!enabled())
+        return;
+
+    addConsoleMessage(new ConsoleMessage(source, level, exec, arguments, lineNumber, sourceURL));
+}
+
 void InspectorController::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
 {
     if (!enabled())
         return;
 
-    ConsoleMessage* consoleMessage = new ConsoleMessage(source, level, message, lineNumber, sourceID);
+    addConsoleMessage(new ConsoleMessage(source, level, message, lineNumber, sourceID));
+}
+
+void InspectorController::addConsoleMessage(ConsoleMessage* consoleMessage)
+{
+    ASSERT(enabled());
+    ASSERT_ARG(consoleMessage, consoleMessage);
+
     m_consoleMessages.append(consoleMessage);
 
     if (windowVisible())
@@ -1559,14 +1588,30 @@ void InspectorController::addScriptConsoleMessage(const ConsoleMessage* message)
 
     JSValueRef sourceValue = JSValueMakeNumber(m_scriptContext, message->source);
     JSValueRef levelValue = JSValueMakeNumber(m_scriptContext, message->level);
-    JSRetainPtr<JSStringRef> messageString(Adopt, JSStringCreateWithCharacters(message->message.characters(), message->message.length()));
-    JSValueRef messageValue = JSValueMakeString(m_scriptContext, messageString.get());
     JSValueRef lineValue = JSValueMakeNumber(m_scriptContext, message->line);
     JSRetainPtr<JSStringRef> urlString(Adopt, JSStringCreateWithCharacters(message->url.characters(), message->url.length()));
     JSValueRef urlValue = JSValueMakeString(m_scriptContext, urlString.get());
 
-    JSValueRef args[] = { sourceValue, levelValue, messageValue, lineValue, urlValue };
-    JSObjectRef messageObject = JSObjectCallAsConstructor(m_scriptContext, messageConstructor, 5, args, &exception);
+    static const unsigned maximumMessageArguments = 256;
+    JSValueRef arguments[maximumMessageArguments];
+    unsigned argumentCount = 0;
+    arguments[argumentCount++] = sourceValue;
+    arguments[argumentCount++] = levelValue;
+    arguments[argumentCount++] = lineValue;
+    arguments[argumentCount++] = urlValue;
+
+    if (!message->wrappedArguments.isEmpty()) {
+        unsigned remainingSpaceInArguments = maximumMessageArguments - argumentCount;
+        unsigned argumentsToAdd = min(remainingSpaceInArguments, static_cast<unsigned>(message->wrappedArguments.size()));
+        for (unsigned i = 0; i < argumentsToAdd; ++i)
+            arguments[argumentCount++] = toRef(message->wrappedArguments[i]);
+    } else {
+        JSRetainPtr<JSStringRef> messageString(Adopt, JSStringCreateWithCharacters(message->message.characters(), message->message.length()));
+        JSValueRef messageValue = JSValueMakeString(m_scriptContext, messageString.get());
+        arguments[argumentCount++] = messageValue;
+    }
+
+    JSObjectRef messageObject = JSObjectCallAsConstructor(m_scriptContext, messageConstructor, argumentCount, arguments, &exception);
     if (HANDLE_EXCEPTION(exception))
         return;
 

@@ -433,7 +433,7 @@ WebInspector.Resource.prototype = {
         // Otherwise, we flood the Console with too many tips.
         /*
         var msg = new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
-                    WebInspector.ConsoleMessage.MessageLevel.Tip, tip.message, -1, this.url);
+                    WebInspector.ConsoleMessage.MessageLevel.Tip, -1, this.url, tip.message);
         WebInspector.consolePanel.addMessage(msg);
         */
     },
@@ -493,10 +493,9 @@ WebInspector.Resource.prototype = {
             case WebInspector.Warnings.IncorrectMIMEType.id:
                 if (!this._mimeTypeIsConsistentWithType())
                     msg = new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
-                                WebInspector.ConsoleMessage.MessageLevel.Warning,
+                                WebInspector.ConsoleMessage.MessageLevel.Warning, -1, this.url,
                                 String.sprintf(WebInspector.Warnings.IncorrectMIMEType.message,
-                                WebInspector.Resource.Type.toString(this.type), this.mimeType),
-                                -1, this.url);
+                                    WebInspector.Resource.Type.toString(this.type), this.mimeType));
                 break;
         }
 

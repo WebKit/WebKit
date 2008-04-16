@@ -1,5 +1,44 @@
 2008-04-15  Adam Roben  <aroben@apple.com>
 
+        Pass all arguments to console.{log,warn,info,error} into the Inspector's JS
+
+        Part of Bug 17228: console.{log,warn,info,error} should support format
+        strings, variable arguments
+        <http://bugs.webkit.org/show_bug.cgi?id=17228>
+        <rdar://problem/5732828>
+
+        We don't use the extra arguments yet.
+
+        Reviewed by Tim Hatcher.
+
+        * page/Console.cpp:
+        (WebCore::Console::error): Pass the arguments list to
+        InspectorController.
+        (WebCore::Console::info): Ditto.
+        (WebCore::Console::log): Ditto.
+        (WebCore::Console::warn): Ditto.
+        * page/InspectorController.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage): Added a new constructor
+        that takes an ExecState and a List instead of a String. We wrap and
+        store the JSValues from the List in a Vector<ProtectedPtr<JSValue> >.
+        (WebCore::InspectorController::addMessageToConsole): Added an overload
+        that takes an ExecState and a List.
+        (WebCore::InspectorController::addConsoleMessage): Moved code here
+        from addMessageToConsole. Both overloads of addMessageToConsole now
+        call this helper method.
+        (WebCore::InspectorController::addScriptConsoleMessage): Updated for
+        the new parameter order of WebInspector.ConsoleMessage. If the
+        ConsoleMessage has a non-empty wrappedArguments Vector, we use that
+        instead of the ConsoleMessage's message String.
+        * page/InspectorController.h:
+        * page/inspector/Console.js:
+        (WebInspector.ConsoleMessage): Removed the explicit message parameter.
+        We now get the message from the unnamed 5th parameter.
+        * page/inspector/Resource.js: Updated for the change to
+        WebInspector.ConsoleMessage's parameter order.
+
+2008-04-15  Adam Roben  <aroben@apple.com>
+
         Change calls to Chrome::addMessageToConsole to use Console::addMessage
 
         Part of Bug 17228: console.{log,warn,info,error} should support format
