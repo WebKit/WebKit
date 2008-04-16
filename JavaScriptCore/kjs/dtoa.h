@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -26,12 +26,13 @@ namespace WTF {
 }
 
 namespace KJS {
-    extern WTF::Mutex* s_dtoaP5Mutex;
-}
 
-extern "C" double kjs_strtod(const char* s00, char** se);
-extern "C" char* kjs_dtoa(double d, int mode, int ndigits,
-                          int* decpt, int* sign, char** rve);
-extern "C" void kjs_freedtoa(char* s);
+    extern WTF::Mutex* s_dtoaP5Mutex;
+
+    double strtod(const char* s00, char** se);
+    char* dtoa(double d, int ndigits, int* decpt, int* sign, char** rve);
+    void freedtoa(char* s);
+
+} // namespace KJS
 
 #endif /* KJS_dtoa_h */

@@ -1,3 +1,35 @@
+2008-04-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        - Remove kjs_ prefix from strtod, dtoa, and freedtoa and put it
+          in the KJS namespace.
+        - Make strtod, dtoa, and freedtoa c++ functions instead of extern "C".
+        - Remove mode switching from dtoa.  ~2% improvement on test 26. 
+        - Removes all unnecessary #defines from dtoa code.
+
+        * JavaScriptCore.exp:
+        * kjs/dtoa.cpp:
+        (KJS::ulp):
+        (KJS::b2d):
+        (KJS::d2b):
+        (KJS::ratio):
+        (KJS::):
+        (KJS::strtod):
+        (KJS::freedtoa):
+        (KJS::dtoa):
+        * kjs/dtoa.h:
+        * kjs/function.cpp:
+        (KJS::parseInt):
+        * kjs/lexer.cpp:
+        (KJS::Lexer::lex):
+        * kjs/number_object.cpp:
+        (KJS::integer_part_noexp):
+        (KJS::numberProtoFuncToExponential):
+        * kjs/ustring.cpp:
+        (KJS::UString::from):
+        (KJS::UString::toDouble):
+
 2008-04-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

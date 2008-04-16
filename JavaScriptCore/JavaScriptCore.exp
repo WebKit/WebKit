@@ -149,6 +149,7 @@ __ZN3KJS6JSLock6unlockEv
 __ZN3KJS6JSLock9lockCountEv
 __ZN3KJS6Parser5parseEiPKtjPiS3_PNS_7UStringE
 __ZN3KJS6parserEv
+__ZN3KJS6strtodEPKcPPc
 __ZN3KJS7CStringD1Ev
 __ZN3KJS7CStringaSERKS0_
 __ZN3KJS7UString3Rep11computeHashEPKti
@@ -291,4 +292,3 @@ __ZTVN3KJS8JSObjectE
 _jscore_collector_introspection
 _jscore_fastmalloc_introspection
 _kJSClassDefinitionEmpty
-_kjs_strtod
