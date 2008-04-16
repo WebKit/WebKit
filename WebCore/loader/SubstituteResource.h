@@ -38,6 +38,8 @@ namespace WebCore {
 
 class SubstituteResource : public RefCounted<SubstituteResource> {
 public:
+    virtual ~SubstituteResource() { }
+
     const KURL& url() const { return m_url; }
     const ResourceResponse& response() const { return m_response; }
     SharedBuffer* data() const { return m_data.get(); }

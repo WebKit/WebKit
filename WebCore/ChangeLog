@@ -1,3 +1,11 @@
+2008-04-15  Anders Carlsson  <andersca@apple.com>
+
+        Fix leaks seen on bot.
+        
+        * loader/SubstituteResource.h:
+        (WebCore::SubstituteResource::~SubstituteResource):
+        Add a virtual destructor.
+
 2008-04-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson
