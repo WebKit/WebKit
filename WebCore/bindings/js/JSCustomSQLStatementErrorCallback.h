@@ -46,10 +46,13 @@ class SQLError;
     
 class JSCustomSQLStatementErrorCallback : public SQLStatementErrorCallback {
 public:
-    JSCustomSQLStatementErrorCallback(KJS::JSObject* callback, Frame*);
+    static PassRefPtr<JSCustomSQLStatementErrorCallback> create(KJS::JSObject* callback, Frame* frame) { return adoptRef(new JSCustomSQLStatementErrorCallback(callback, frame)); }
         
     virtual bool handleEvent(SQLTransaction*, SQLError*);
+
 private:
+    JSCustomSQLStatementErrorCallback(KJS::JSObject* callback, Frame*);
+
     KJS::ProtectedPtr<KJS::JSObject> m_callback;
     RefPtr<Frame> m_frame;
 };

@@ -60,7 +60,7 @@ JSValue* JSDatabase::changeVersion(ExecState* exec, const List& args)
         return jsUndefined();
     }
     
-    RefPtr<SQLTransactionCallback> callback(new JSCustomSQLTransactionCallback(object, frame));
+    RefPtr<SQLTransactionCallback> callback(JSCustomSQLTransactionCallback::create(object, frame));
     
     RefPtr<SQLTransactionErrorCallback> errorCallback;
     if (!args[3]->isNull()) {
@@ -69,7 +69,7 @@ JSValue* JSDatabase::changeVersion(ExecState* exec, const List& args)
             return jsUndefined();
         }
         
-        errorCallback = new JSCustomSQLTransactionErrorCallback(object, frame);
+        errorCallback = JSCustomSQLTransactionErrorCallback::create(object, frame);
     }
     
     RefPtr<VoidCallback> successCallback;
@@ -99,7 +99,7 @@ JSValue* JSDatabase::transaction(ExecState* exec, const List& args)
     if (!frame)
         return jsUndefined();
     
-    RefPtr<SQLTransactionCallback> callback(new JSCustomSQLTransactionCallback(object, frame));
+    RefPtr<SQLTransactionCallback> callback(JSCustomSQLTransactionCallback::create(object, frame));
     RefPtr<SQLTransactionErrorCallback> errorCallback;
     
     if (args.size() > 1 && !args[1]->isNull()) {
@@ -108,7 +108,7 @@ JSValue* JSDatabase::transaction(ExecState* exec, const List& args)
             return jsUndefined();
         }
 
-        errorCallback = new JSCustomSQLTransactionErrorCallback(object, frame);
+        errorCallback = JSCustomSQLTransactionErrorCallback::create(object, frame);
     }
 
     RefPtr<VoidCallback> successCallback;

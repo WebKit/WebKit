@@ -1,3 +1,91 @@
+2008-04-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Changing ThreadSafeShared to start with a ref count of 1, so updating all users to
+        adoptRef() that initial reference.
+
+        * bindings/js/JSCustomSQLStatementCallback.h:
+        (WebCore::JSCustomSQLStatementCallback::create):
+        * bindings/js/JSCustomSQLStatementErrorCallback.h:
+        (WebCore::JSCustomSQLStatementErrorCallback::create):
+        * bindings/js/JSCustomSQLTransactionCallback.h:
+        (WebCore::JSCustomSQLTransactionCallback::create):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.h:
+        (WebCore::JSCustomSQLTransactionErrorCallback::create):
+
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::changeVersion):
+        (WebCore::JSDatabase::transaction):
+
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql):
+
+        * dom/Document.cpp:
+        (WebCore::Document::databaseThread):
+
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::create):
+
+        * platform/sql/SQLiteAuthorizer.h:
+        (WebCore::SQLiteAuthorizer::create):
+        (WebCore::SQLiteAuthorizer::SQLiteAuthorizer):
+
+        * storage/ChangeVersionWrapper.cpp:
+        (WebCore::ChangeVersionWrapper::performPreflight):
+        (WebCore::ChangeVersionWrapper::performPostflight):
+        * storage/ChangeVersionWrapper.h:
+        (WebCore::ChangeVersionWrapper::create):
+
+        * storage/Database.cpp:
+        (WebCore::Database::openAndVerifyVersion):
+        (WebCore::Database::markAsDeletedAndClose):
+        (WebCore::Database::changeVersion):
+        (WebCore::Database::transaction):
+        (WebCore::Database::scheduleTransaction):
+        (WebCore::Database::scheduleTransactionStep):
+        (WebCore::Database::tableNames):
+
+        * storage/DatabaseAuthorizer.h:
+        (WebCore::DatabaseAuthorizer::create):
+
+        * storage/DatabaseTask.h:
+        (WebCore::DatabaseOpenTask::create):
+        (WebCore::DatabaseCloseTask::create):
+        (WebCore::DatabaseTransactionTask::create):
+        (WebCore::DatabaseTableNamesTask::create):
+
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::scheduleTask): Change to take a PassRefPtr instead of raw
+        (WebCore::DatabaseThread::scheduleImmediateTask): Ditto
+        * storage/DatabaseThread.h:
+        (WebCore::DatabaseThread::create):
+
+        * storage/SQLError.h:
+        (WebCore::SQLError::create):
+        (WebCore::SQLError::SQLError):
+
+        * storage/SQLResultSet.h:
+        (WebCore::SQLResultSet::create):
+
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::create):
+        (WebCore::SQLStatement::execute):
+        (WebCore::SQLStatement::setDatabaseDeletedError):
+        (WebCore::SQLStatement::setVersionMismatchedError):
+        (WebCore::SQLStatement::setFailureDueToQuota):
+        * storage/SQLStatement.h:
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::create):
+        (WebCore::SQLTransaction::executeSQL):
+        (WebCore::SQLTransaction::openTransactionAndPreflight):
+        (WebCore::SQLTransaction::deliverTransactionCallback):
+        (WebCore::SQLTransaction::handleCurrentStatementError):
+        (WebCore::SQLTransaction::deliverStatementCallback):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        * storage/SQLTransaction.h:
+
 2008-04-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam and Brady.

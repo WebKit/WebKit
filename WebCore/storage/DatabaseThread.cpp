@@ -99,12 +99,12 @@ void* DatabaseThread::databaseThread()
     return 0;
 }
 
-void DatabaseThread::scheduleTask(DatabaseTask* task)
+void DatabaseThread::scheduleTask(PassRefPtr<DatabaseTask> task)
 {
     m_queue.append(task);
 }
 
-void DatabaseThread::scheduleImmediateTask(DatabaseTask* task)
+void DatabaseThread::scheduleImmediateTask(PassRefPtr<DatabaseTask> task)
 {
     m_queue.prepend(task);
 }

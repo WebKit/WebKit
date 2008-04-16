@@ -28,6 +28,7 @@
 #ifndef SQLiteAuthorizer_h
 #define SQLiteAuthorizer_h
 
+#include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -40,6 +41,8 @@ extern const int SQLAuthDeny;
 
 class SQLiteAuthorizer : public ThreadSafeShared<SQLiteAuthorizer> {
 public:
+    static PassRefPtr<SQLiteAuthorizer> create() { return adoptRef(new SQLiteAuthorizer); }
+
     virtual ~SQLiteAuthorizer() { }
 
     virtual int createTable(const String& tableName) { return SQLAuthAllow; }
@@ -81,6 +84,9 @@ public:
     virtual int allowAnalyze(const String& tableName) { return SQLAuthAllow; }
     virtual int allowFunction(const String& functionName) { return SQLAuthAllow; }
     virtual int allowPragma(const String& pragmaName, const String& firstArgument) { return SQLAuthAllow; }
+    
+protected:
+    SQLiteAuthorizer() { }
 };
 
 } // namespace WebCore

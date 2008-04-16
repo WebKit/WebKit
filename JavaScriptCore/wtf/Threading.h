@@ -190,8 +190,8 @@ inline int atomicDecrement(int volatile* addend) { return __gnu_cxx::__exchange_
 
 template<class T> class ThreadSafeShared : Noncopyable {
 public:
-    ThreadSafeShared()
-        : m_refCount(0)
+    ThreadSafeShared(int initialRefCount = 1)
+        : m_refCount(initialRefCount)
     {
     }
 

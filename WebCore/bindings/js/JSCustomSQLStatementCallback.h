@@ -46,10 +46,13 @@ class SQLResultSet;
 
 class JSCustomSQLStatementCallback : public SQLStatementCallback {
 public:
-    JSCustomSQLStatementCallback(KJS::JSObject* callback, Frame*);
-    
+    static PassRefPtr<JSCustomSQLStatementCallback> create(KJS::JSObject* callback, Frame* frame) { return adoptRef(new JSCustomSQLStatementCallback(callback, frame)); }
+
     virtual void handleEvent(SQLTransaction*, SQLResultSet*, bool& raisedException);
+
 private:
+    JSCustomSQLStatementCallback(KJS::JSObject* callback, Frame*);
+
     KJS::ProtectedPtr<KJS::JSObject> m_callback;
     RefPtr<Frame> m_frame;
 };

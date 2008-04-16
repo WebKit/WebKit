@@ -78,12 +78,14 @@ private:
 class DatabaseOpenTask : public DatabaseTask
 {
 public:
-    DatabaseOpenTask(Database*);
+    static PassRefPtr<DatabaseOpenTask> create(Database* db) { return adoptRef(new DatabaseOpenTask(db)); }
 
     ExceptionCode exceptionCode() const { return m_code; }
     bool openSuccessful() const { return m_success; }
 
 private:
+    DatabaseOpenTask(Database*);
+
     virtual void doPerformTask();
 #ifndef NDEBUG
     virtual const char* debugTaskName() const;
@@ -96,9 +98,11 @@ private:
 class DatabaseCloseTask : public DatabaseTask
 {
 public:
-    DatabaseCloseTask(Database*);
+    static PassRefPtr<DatabaseCloseTask> create(Database* db) { return adoptRef(new DatabaseCloseTask(db)); }
 
 private:
+    DatabaseCloseTask(Database*);
+
     virtual void doPerformTask();
 #ifndef NDEBUG
     virtual const char* debugTaskName() const;
@@ -108,11 +112,14 @@ private:
 class DatabaseTransactionTask : public DatabaseTask
 {
 public:
-    DatabaseTransactionTask(PassRefPtr<SQLTransaction>);
+    static PassRefPtr<DatabaseTransactionTask> create(PassRefPtr<SQLTransaction> transaction) { return adoptRef(new DatabaseTransactionTask(transaction)); }
+
     SQLTransaction* transaction() const { return m_transaction.get(); }
 
     virtual ~DatabaseTransactionTask();
 private:
+    DatabaseTransactionTask(PassRefPtr<SQLTransaction>);
+
     virtual void doPerformTask();
 #ifndef NDEBUG
     virtual const char* debugTaskName() const;
@@ -124,11 +131,13 @@ private:
 class DatabaseTableNamesTask : public DatabaseTask
 {
 public:
-    DatabaseTableNamesTask(Database*);
+    static PassRefPtr<DatabaseTableNamesTask> create(Database* db) { return adoptRef(new DatabaseTableNamesTask(db)); }
 
     Vector<String>& tableNames() { return m_tableNames; }
 
 private:
+    DatabaseTableNamesTask(Database*);
+
     virtual void doPerformTask();
 #ifndef NDEBUG
     virtual const char* debugTaskName() const;

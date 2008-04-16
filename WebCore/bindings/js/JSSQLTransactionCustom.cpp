@@ -89,7 +89,7 @@ JSValue* JSSQLTransaction::executeSql(ExecState* exec, const List& args)
         }
         
         if (Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame())
-            callback = new JSCustomSQLStatementCallback(object, frame);
+            callback = JSCustomSQLStatementCallback::create(object, frame);
     }
     
     RefPtr<SQLStatementErrorCallback> errorCallback;
@@ -101,7 +101,7 @@ JSValue* JSSQLTransaction::executeSql(ExecState* exec, const List& args)
         }
         
         if (Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame())
-            errorCallback = new JSCustomSQLStatementErrorCallback(object, frame);
+            errorCallback = JSCustomSQLStatementErrorCallback::create(object, frame);
     }
     
     ExceptionCode ec = 0;

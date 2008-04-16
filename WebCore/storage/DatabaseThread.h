@@ -28,11 +28,11 @@
 #ifndef DatabaseThread_h
 #define DatabaseThread_h
 
-#include <wtf/MessageQueue.h>
-
+#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/Deque.h>
+#include <wtf/MessageQueue.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -44,18 +44,20 @@ class Document;
 class DatabaseThread : public ThreadSafeShared<DatabaseThread>
 {
 public:
-    DatabaseThread(Document*);
+    static PassRefPtr<DatabaseThread> create(Document* doc) { return adoptRef(new DatabaseThread(doc)); }
     ~DatabaseThread();
 
     bool start();
     void requestTermination();
     bool terminationRequested() const;
 
-    void scheduleTask(DatabaseTask*);
-    void scheduleImmediateTask(DatabaseTask*); // This just adds the task to the front of the queue - the caller needs to be extremely careful not to create deadlocks when waiting for completion.
+    void scheduleTask(PassRefPtr<DatabaseTask>);
+    void scheduleImmediateTask(PassRefPtr<DatabaseTask>); // This just adds the task to the front of the queue - the caller needs to be extremely careful not to create deadlocks when waiting for completion.
     void unscheduleDatabaseTasks(Database*);
 
 private:
+    DatabaseThread(Document*);
+
     static void* databaseThreadStart(void*);
     void* databaseThread();
 

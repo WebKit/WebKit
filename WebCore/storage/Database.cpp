@@ -174,12 +174,12 @@ Database::~Database()
 
 bool Database::openAndVerifyVersion(ExceptionCode& e)
 {
-    m_databaseAuthorizer = new DatabaseAuthorizer();
+    m_databaseAuthorizer = DatabaseAuthorizer::create();
 
-    RefPtr<DatabaseOpenTask> task = new DatabaseOpenTask(this);
+    RefPtr<DatabaseOpenTask> task = DatabaseOpenTask::create(this);
 
     task->lockForSynchronousScheduling();
-    m_document->databaseThread()->scheduleImmediateTask(task.get());
+    m_document->databaseThread()->scheduleImmediateTask(task);
     task->waitForSynchronousCompletion();
 
     ASSERT(task->isComplete());
@@ -287,10 +287,10 @@ void Database::markAsDeletedAndClose()
 
     document()->databaseThread()->unscheduleDatabaseTasks(this);
 
-    RefPtr<DatabaseCloseTask> task = new DatabaseCloseTask(this);
+    RefPtr<DatabaseCloseTask> task = DatabaseCloseTask::create(this);
 
     task->lockForSynchronousScheduling();
-    m_document->databaseThread()->scheduleImmediateTask(task.get());
+    m_document->databaseThread()->scheduleImmediateTask(task);
     task->waitForSynchronousCompletion();
 }
 
@@ -465,7 +465,7 @@ void Database::changeVersion(const String& oldVersion, const String& newVersion,
                              PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
                              PassRefPtr<VoidCallback> successCallback)
 {
-    m_transactionQueue.append(new SQLTransaction(this, callback, errorCallback, successCallback, new ChangeVersionWrapper(oldVersion, newVersion)));
+    m_transactionQueue.append(SQLTransaction::create(this, callback, errorCallback, successCallback, ChangeVersionWrapper::create(oldVersion, newVersion)));
     MutexLocker locker(m_transactionInProgressMutex);
     if (!m_transactionInProgress)
         scheduleTransaction();
@@ -474,7 +474,7 @@ void Database::changeVersion(const String& oldVersion, const String& newVersion,
 void Database::transaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
                            PassRefPtr<VoidCallback> successCallback)
 {
-    m_transactionQueue.append(new SQLTransaction(this, callback, errorCallback, successCallback, 0));
+    m_transactionQueue.append(SQLTransaction::create(this, callback, errorCallback, successCallback, 0));
     MutexLocker locker(m_transactionInProgressMutex);
     if (!m_transactionInProgress)
         scheduleTransaction();
@@ -485,10 +485,10 @@ void Database::scheduleTransaction()
     ASSERT(!m_transactionInProgressMutex.tryLock()); // Locked by caller.
     RefPtr<SQLTransaction> transaction;
     if (m_transactionQueue.tryGetMessage(transaction) && m_document->databaseThread()) {
-        DatabaseTransactionTask* task = new DatabaseTransactionTask(transaction);
-        LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task, task->transaction());
+        RefPtr<DatabaseTransactionTask> task = DatabaseTransactionTask::create(transaction);
+        LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task.get(), task->transaction());
         m_transactionInProgress = true;
-        m_document->databaseThread()->scheduleTask(task);
+        m_document->databaseThread()->scheduleTask(task.release());
     } else
         m_transactionInProgress = false;
 }
@@ -496,9 +496,9 @@ void Database::scheduleTransaction()
 void Database::scheduleTransactionStep(SQLTransaction* transaction)
 {
     if (m_document->databaseThread()) {
-        DatabaseTransactionTask* task = new DatabaseTransactionTask(transaction);
-        LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task);
-        m_document->databaseThread()->scheduleTask(task);
+        RefPtr<DatabaseTransactionTask> task = DatabaseTransactionTask::create(transaction);
+        LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task.get());
+        m_document->databaseThread()->scheduleTask(task.release());
     }
 }
 
@@ -554,10 +554,10 @@ void Database::deliverPendingCallback(void* context)
 
 Vector<String> Database::tableNames()
 {
-    RefPtr<DatabaseTableNamesTask> task = new DatabaseTableNamesTask(this);
+    RefPtr<DatabaseTableNamesTask> task = DatabaseTableNamesTask::create(this);
 
     task->lockForSynchronousScheduling();
-    m_document->databaseThread()->scheduleImmediateTask(task.get());
+    m_document->databaseThread()->scheduleImmediateTask(task);
     task->waitForSynchronousCompletion();
 
     return task->tableNames();

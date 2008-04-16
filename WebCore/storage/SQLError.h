@@ -36,11 +36,13 @@ namespace WebCore {
 
 class SQLError : public ThreadSafeShared<SQLError> {
 public:
-    SQLError(unsigned code, const String& message) : m_code(code), m_message(message.copy()) { }
+    static PassRefPtr<SQLError> create(unsigned code, const String& message) { return adoptRef(new SQLError(code, message)); }
+
     unsigned code() const { return m_code; }
     String message() const { return m_message.copy(); }
     
 private:
+    SQLError(unsigned code, const String& message) : m_code(code), m_message(message.copy()) { }
     unsigned m_code;
     String m_message;
 };

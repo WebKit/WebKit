@@ -83,7 +83,7 @@ bool SecurityOrigin::isEmpty() const
 
 PassRefPtr<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String& host, unsigned short port, SecurityOrigin* ownerFrameOrigin)
 {
-    RefPtr<SecurityOrigin> origin = new SecurityOrigin(protocol, host, port);
+    RefPtr<SecurityOrigin> origin = adoptRef(new SecurityOrigin(protocol, host, port));
 
     // If we do not obtain a meaningful origin from the URL, then we try to find one
     // via the frame hierarchy.
