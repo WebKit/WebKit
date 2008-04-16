@@ -24,13 +24,12 @@
 #include "ScheduledAction.h"
 
 #include "CString.h"
-#include "Chrome.h"
+#include "Console.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "JSDOMWindow.h"
-#include "Page.h"
 #include "kjs_proxy.h"
 
 using namespace KJS;
@@ -81,8 +80,7 @@ void ScheduledAction::execute(JSDOMWindowWrapper* windowWrapper)
                 int lineNumber = exception->get(exec, "line")->toInt32(exec);
                 if (Interpreter::shouldPrintExceptions())
                     printf("(timer):%s\n", message.utf8().data());
-                if (Page* page = frame->page())
-                    page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, lineNumber, String());
+                frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, String());
             }
         }
     } else

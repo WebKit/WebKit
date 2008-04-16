@@ -27,7 +27,8 @@
 #include "SVGDocumentExtensions.h"
 
 #include "AtomicString.h"
-#include "Chrome.h"
+#include "Console.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "EventListener.h"
 #include "Frame.h"
@@ -97,15 +98,13 @@ void SVGDocumentExtensions::unpauseAnimations()
 void SVGDocumentExtensions::reportWarning(const String& message)
 {
     if (Frame* frame = m_doc->frame())
-        if (Page* page = frame->page())
-            page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, "Warning: " + message, m_doc->tokenizer() ? m_doc->tokenizer()->lineNumber() : 1, String());
+        frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, "Warning: " + message, m_doc->tokenizer() ? m_doc->tokenizer()->lineNumber() : 1, String());
 }
 
 void SVGDocumentExtensions::reportError(const String& message)
 {
     if (Frame* frame = m_doc->frame())
-        if (Page* page = frame->page())
-            page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, "Error: " + message, m_doc->tokenizer() ? m_doc->tokenizer()->lineNumber() : 1, String());
+        frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, "Error: " + message, m_doc->tokenizer() ? m_doc->tokenizer()->lineNumber() : 1, String());
 }
 
 void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyledElement* obj)

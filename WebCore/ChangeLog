@@ -1,5 +1,35 @@
 2008-04-15  Adam Roben  <aroben@apple.com>
 
+        Change calls to Chrome::addMessageToConsole to use Console::addMessage
+
+        Part of Bug 17228: console.{log,warn,info,error} should support format
+        strings, variable arguments
+        <http://bugs.webkit.org/show_bug.cgi?id=17228>
+        <rdar://problem/5732828>
+
+        Console now takes care of calling ChromeClient::addMessageToConsole
+        for the appropriate messages (i.e., just messages from JavaScript). If
+        you ever want to add a message to the console, Console is the place to
+        do it.
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj: Mark Console.h Private.
+        * page/Chrome.cpp: Removed addMessageToConsole
+        * page/Chrome.h: Moved MessageSource/MessageLevel to Console.h.
+        * page/Console.cpp:
+        (WebCore::Console::addMessage): Added. Calls
+        ChromeClient::addMessageToConsole for JS messages, and calls
+        InspectorController::addMessageToConsole for all messages.
+        (WebCore::Console::error): Changed to call directly to
+        InspectorController in addition to ChromeClient.
+        (WebCore::Console::info): Ditto.
+        (WebCore::Console::log): Ditto.
+        (WebCore::Console::warn): Ditto.
+        * page/Console.h: Added MessageSource/MessageLevel enums from Chrome.h.
+
+2008-04-15  Adam Roben  <aroben@apple.com>
+
         Pass JSConsole's arguments unmodified to Console
 
         Part of Bug 17228: console.{log,warn,info,error} should support format

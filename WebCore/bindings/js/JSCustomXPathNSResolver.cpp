@@ -29,12 +29,12 @@
 #if ENABLE(XPATH)
 
 #include "CString.h"
+#include "Console.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "JSDOMWindow.h"
-#include "Page.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
 
@@ -90,8 +90,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 
     if (!lookupNamespaceURIFunc && !m_customResolver->implementsCall()) {
         // FIXME: pass actual line number and source URL.
-        if (Page* page = m_frame->page())
-            page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, "XPathNSResolver does not have a lookupNamespaceURI method.", 0, String());
+        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, "XPathNSResolver does not have a lookupNamespaceURI method.", 0, String());
         return String();
     }
 
@@ -116,8 +115,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
         String sourceURL = exception->get(exec, "sourceURL")->toString(exec);
         if (Interpreter::shouldPrintExceptions())
             printf("XPathNSResolver: %s\n", message.utf8().data());
-        if (Page* page = m_frame->page())
-            page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
+        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
         exec->clearException();
     } else {
         if (!retval->isUndefinedOrNull())

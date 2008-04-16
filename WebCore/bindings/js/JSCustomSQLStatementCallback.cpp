@@ -30,11 +30,12 @@
 #include "JSCustomSQLStatementCallback.h"
 
 #include "CString.h"
+#include "Console.h"
+#include "DOMWindow.h"
 #include "Frame.h"
 #include "kjs_proxy.h"
 #include "JSSQLResultSet.h"
 #include "JSSQLTransaction.h"
-#include "Page.h"
 
 namespace WebCore {
     
@@ -92,8 +93,7 @@ void JSCustomSQLStatementCallback::handleEvent(SQLTransaction* transaction, SQLR
         String sourceURL = exception->get(exec, "sourceURL")->toString(exec);
         if (Interpreter::shouldPrintExceptions())
             printf("SQLStatementCallback: %s\n", message.utf8().data());
-        if (Page* page = m_frame->page())
-            page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
+        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
         
         raisedException = true;
         

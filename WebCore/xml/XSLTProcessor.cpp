@@ -28,7 +28,9 @@
 
 #include "CString.h"
 #include "Cache.h"
+#include "Console.h"
 #include "DOMImplementation.h"
+#include "DOMWindow.h"
 #include "DocLoader.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
@@ -75,8 +77,8 @@ namespace WebCore {
 
 void XSLTProcessor::parseErrorFunc(void* userData, xmlError* error)
 {
-    Chrome* chrome = static_cast<Chrome*>(userData);
-    if (!chrome)
+    Console* console = static_cast<Console*>(userData);
+    if (!console)
         return;
 
     MessageLevel level;
@@ -94,7 +96,7 @@ void XSLTProcessor::parseErrorFunc(void* userData, xmlError* error)
             break;
     }
 
-    chrome->addMessageToConsole(XMLMessageSource, level, error->message, error->line, error->file);
+    console->addMessage(XMLMessageSource, level, error->message, error->line, error->file);
 }
 
 // FIXME: There seems to be no way to control the ctxt pointer for loading here, thus we have globals.
@@ -123,10 +125,10 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
             if (globalDocLoader->frame()) 
                 globalDocLoader->frame()->loader()->loadResourceSynchronously(url, error, response, data);
 
-            Chrome* chrome = 0;
-            if (Page* page = globalProcessor->xslStylesheet()->ownerDocument()->page())
-                chrome = page->chrome();
-            xmlSetStructuredErrorFunc(chrome, XSLTProcessor::parseErrorFunc);
+            Console* console = 0;
+            if (Frame* frame = globalProcessor->xslStylesheet()->ownerDocument()->frame())
+                console = frame->domWindow()->console();
+            xmlSetStructuredErrorFunc(console, XSLTProcessor::parseErrorFunc);
 
             // We don't specify an encoding here. Neither Gecko nor WinIE respects
             // the encoding specified in the HTTP headers.

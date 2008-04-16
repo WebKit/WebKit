@@ -30,6 +30,8 @@
 #include "JSCustomSQLTransactionCallback.h"
 
 #include "CString.h"
+#include "Console.h"
+#include "DOMWindow.h"
 #include "Frame.h"
 #include "Logging.h"
 #include "kjs_proxy.h"
@@ -144,8 +146,7 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
         String sourceURL = exception->get(exec, "sourceURL")->toString(exec);
         if (Interpreter::shouldPrintExceptions())
             printf("SQLTransactionCallback: %s\n", message.utf8().data());
-        if (Page* page = m_data->frame()->page())
-            page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
+        m_data->frame()->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
         exec->clearException();
         
         raisedException = true;

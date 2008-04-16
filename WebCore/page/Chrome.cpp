@@ -30,7 +30,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
-#include "InspectorController.h"
 #include "JSDOMWindow.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -191,14 +190,6 @@ bool Chrome::menubarVisible() const
 void Chrome::setResizable(bool b) const
 {
     m_client->setResizable(b);
-}
-
-void Chrome::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
-{
-    if (source == JSMessageSource)
-        m_client->addMessageToConsole(message, lineNumber, sourceID);
-
-    m_page->inspectorController()->addMessageToConsole(source, level, message, lineNumber, sourceID);
 }
 
 bool Chrome::canRunBeforeUnloadConfirmPanel()

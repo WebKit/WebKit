@@ -29,9 +29,10 @@
 #include "config.h"
 #include "Console.h"
 
-#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "InspectorController.h"
 #include "Page.h"
 #include "PlatformString.h"
 #include <kjs/list.h>
@@ -50,6 +51,21 @@ void Console::disconnectFrame()
     m_frame = 0;
 }
 
+void Console::addMessage(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+{
+    if (!m_frame)
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    if (source == JSMessageSource)
+        page->chrome()->client()->addMessageToConsole(message, lineNumber, sourceURL);
+
+    page->inspectorController()->addMessageToConsole(source, level, message, lineNumber, sourceURL);
+}
+
 void Console::error(ExecState* exec, const List& arguments)
 {
     if (arguments.isEmpty())
@@ -62,7 +78,11 @@ void Console::error(ExecState* exec, const List& arguments)
     if (!page)
         return;
 
-    page->chrome()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, arguments[0]->toString(exec), 0, m_frame->loader()->url().prettyURL());
+    String message = arguments[0]->toString(exec);
+    String url = m_frame->loader()->url().prettyURL();
+
+    page->chrome()->client()->addMessageToConsole(message, 0, url);
+    page->inspectorController()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, message, 0, url);
 }
 
 void Console::info(ExecState* exec, const List& arguments)
@@ -77,7 +97,11 @@ void Console::info(ExecState* exec, const List& arguments)
     if (!page)
         return;
 
-    page->chrome()->addMessageToConsole(JSMessageSource, LogMessageLevel, arguments[0]->toString(exec), 0, m_frame->loader()->url().prettyURL());
+    String message = arguments[0]->toString(exec);
+    String url = m_frame->loader()->url().prettyURL();
+
+    page->chrome()->client()->addMessageToConsole(message, 0, url);
+    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, message, 0, url);
 }
 
 void Console::log(ExecState* exec, const List& arguments)
@@ -92,7 +116,11 @@ void Console::log(ExecState* exec, const List& arguments)
     if (!page)
         return;
 
-    page->chrome()->addMessageToConsole(JSMessageSource, LogMessageLevel, arguments[0]->toString(exec), 0, m_frame->loader()->url().prettyURL());
+    String message = arguments[0]->toString(exec);
+    String url = m_frame->loader()->url().prettyURL();
+
+    page->chrome()->client()->addMessageToConsole(message, 0, url);
+    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, message, 0, url);
 }
 
 void Console::warn(ExecState* exec, const List& arguments)
@@ -107,7 +135,11 @@ void Console::warn(ExecState* exec, const List& arguments)
     if (!page)
         return;
 
-    page->chrome()->addMessageToConsole(JSMessageSource, WarningMessageLevel, arguments[0]->toString(exec), 0, m_frame->loader()->url().prettyURL());
+    String message = arguments[0]->toString(exec);
+    String url = m_frame->loader()->url().prettyURL();
+
+    page->chrome()->client()->addMessageToConsole(message, 0, url);
+    page->inspectorController()->addMessageToConsole(JSMessageSource, WarningMessageLevel, message, 0, url);
 }
 
 } // namespace WebCore

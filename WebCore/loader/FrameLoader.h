@@ -165,7 +165,7 @@ namespace WebCore {
         static bool canLoad(const KURL&, const String& referrer);
         static bool canLoad(const KURL&, const Document*);
         static bool canLoad(const CachedResource&, const Document*);
-        static void reportLocalLoadFailed(const Page*, const String& url);
+        static void reportLocalLoadFailed(Frame*, const String& url);
 
         static bool shouldHideReferrer(const KURL& url, const String& referrer);
 

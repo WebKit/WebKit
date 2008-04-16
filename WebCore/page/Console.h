@@ -41,12 +41,30 @@ namespace KJS {
 namespace WebCore {
 
     class Frame;
+    class String;
+
+    enum MessageSource {
+        HTMLMessageSource,
+        XMLMessageSource,
+        JSMessageSource,
+        CSSMessageSource,
+        OtherMessageSource
+    };
+
+    enum MessageLevel {
+        TipMessageLevel,
+        LogMessageLevel,
+        WarningMessageLevel,
+        ErrorMessageLevel
+    };
 
     class Console : public RefCounted<Console> {
     public:
         static PassRefPtr<Console> create(Frame* frame) { return adoptRef(new Console(frame)); }
 
         void disconnectFrame();
+
+        void addMessage(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
 
         void error(KJS::ExecState*, const KJS::List& arguments);
         void info(KJS::ExecState*, const KJS::List& arguments);

@@ -29,7 +29,7 @@
 #ifndef InspectorController_h
 #define InspectorController_h
 
-#include "Chrome.h"
+#include "Console.h"
 #include <JavaScriptCore/JSContextRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -46,6 +46,7 @@ class DocumentLoader;
 class GraphicsContext;
 class InspectorClient;
 class Node;
+class Page;
 class ResourceResponse;
 class ResourceError;
 class SharedBuffer;
