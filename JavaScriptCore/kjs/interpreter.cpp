@@ -27,6 +27,7 @@
 #include "JSGlobalObject.h"
 #include "Parser.h"
 #include "debugger.h"
+#include <profiler/Profiler.h>
 #include <stdio.h>
 
 #if !PLATFORM(WIN_OS)
@@ -70,6 +71,11 @@ Completion Interpreter::evaluate(ExecState* exec, const UString& sourceURL, int 
     int sourceId;
     int errLine;
     UString errMsg;
+
+#if JAVASCRIPT_PROFILING
+    Profiler::profiler()->willExecute(exec, sourceURL, startingLineNumber);
+#endif
+
     RefPtr<ProgramNode> progNode = parser().parse<ProgramNode>(sourceURL, startingLineNumber, code, codeLength, &sourceId, &errLine, &errMsg);
     
     // notify debugger that source has been parsed
@@ -103,7 +109,11 @@ Completion Interpreter::evaluate(ExecState* exec, const UString& sourceURL, int 
         JSValue* value = progNode->execute(&newExec);
         res = Completion(newExec.completionType(), value);
     }
-    
+
+#if JAVASCRIPT_PROFILING
+        Profiler::profiler()->didExecute(exec, sourceURL, startingLineNumber);
+#endif
+
     globalObject->decRecursion();
     
     if (shouldPrintExceptions() && res.complType() == Throw) {

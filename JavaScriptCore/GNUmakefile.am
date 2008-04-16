@@ -47,6 +47,8 @@ javascriptcore_sources += \
 	JavaScriptCore/pcre/pcre_tables.cpp \
 	JavaScriptCore/pcre/pcre_ucp_searchfuncs.cpp \
 	JavaScriptCore/pcre/pcre_xclass.cpp \
+	JavaScriptCore/profiler/FunctionCallProfile.cpp \
+	JavaScriptCore/profiler/Profiler.cpp \
 	JavaScriptCore/wtf/Assertions.cpp \
 	JavaScriptCore/wtf/HashTable.cpp \
 	JavaScriptCore/wtf/MainThread.cpp \

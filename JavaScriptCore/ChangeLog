@@ -1,3 +1,51 @@
+2008-04-16  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam and Geoff.
+
+        -<rdar://problem/5770054> JavaScript profiler (10928)
+        Inital profiler prototype
+
+        * GNUmakefile.am: Added new files to project
+        * JavaScriptCore.pri: Ditto
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Ditto
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto
+        * JavaScriptCoreSources.bkl: Ditto
+        * kjs/config.h: Put compiling flag in here.
+        * kjs/function.cpp: Instrument calling the function eval().
+        (KJS::eval):
+        * kjs/interpreter.cpp: Instrument evaluating global scopes.
+        (KJS::Interpreter::evaluate):
+        * kjs/object.cpp: Instrument JS function calls.
+        (KJS::JSObject::call):
+        * profiler: Added.
+        * profiler/FunctionCallProfile.cpp: Added.
+        (KJS::FunctionCallProfile::FunctionCallProfile):
+        (KJS::FunctionCallProfile::~FunctionCallProfile):
+        (KJS::FunctionCallProfile::willExecute): Call right before the JS function or executing context is executed to start the profiler's timer.
+        (KJS::FunctionCallProfile::didExecute): Call right after the JS function or executing context is executed to stop the profiler's timer.
+        (KJS::FunctionCallProfile::addChild): Add a child to the current FunctionCallProfile if it isn't already a child of the current FunctionalCallProfile.
+        (KJS::FunctionCallProfile::findChild): Return the child that matches the given name if there is one.
+        (KJS::FunctionCallProfile::printDataSampleStyle): Print the current profiled information in a format that matches sample's output.
+        * profiler/FunctionCallProfile.h: Added.
+        (KJS::FunctionCallProfile::FunctionCallProfile):
+        (KJS::FunctionCallProfile::~FunctionCallProfile):
+        (KJS::FunctionCallProfile::functionName):
+        (KJS::FunctionCallProfile::microSecs):
+        * profiler/Profiler.cpp: Added.
+        (KJS::Profiler::profiler):
+        (KJS::Profiler::sharedProfiler): Return global singleton (may change due to multi-threading concerns)
+        (KJS::Profiler::startProfiling): Don't start collecting profiling information until the user starts the profiler. Also don't clear old prfiled data until the profiler is restarted.
+        (KJS::Profiler::stopProfiling): Stop collecting profile information.
+        (KJS::Profiler::willExecute): Same as above. 
+        (KJS::Profiler::didExecute): Same as above.
+        (KJS::Profiler::insertStackNamesInTree): Follow the stack of the given names and if a sub-stack is not in the current tree, add it.
+        (KJS::Profiler::getStackNames): Get the names from the different passed in parameters and order them as a stack.
+        (KJS::Profiler::getFunctionName): Get the function name from the given parameter.
+        (KJS::Profiler::printDataSampleStyle): Print the current profiled information in a format that matches sample's output.
+        (KJS::Profiler::debugLog):
+        * profiler/Profiler.h: Added.
+        (KJS::Profiler::Profiler):
+
 2008-04-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

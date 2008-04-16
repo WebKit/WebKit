@@ -41,6 +41,7 @@
 #include "scope_chain_mark.h"
 #include "ExecStateInlines.h"
 #include <errno.h>
+#include <profiler/Profiler.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -717,6 +718,11 @@ JSValue* eval(ExecState* exec, const ScopeChain& scopeChain, JSVariableObject* v
     int sourceId;
     int errLine;
     UString errMsg;
+
+#if JAVASCRIPT_PROFILING
+    Profiler::profiler()->willExecute(exec, UString(), 0);
+#endif
+
     RefPtr<EvalNode> evalNode = parser().parse<EvalNode>(UString(), 0, s.data(), s.size(), &sourceId, &errLine, &errMsg);
 
     Debugger* dbg = exec->dynamicGlobalObject()->debugger();
@@ -732,6 +738,10 @@ JSValue* eval(ExecState* exec, const ScopeChain& scopeChain, JSVariableObject* v
     EvalExecState newExec(globalObject, thisObj, evalNode.get(), exec, scopeChain, variableObject);
 
     JSValue* value = evalNode->execute(&newExec);
+
+#if JAVASCRIPT_PROFILING
+    Profiler::profiler()->didExecute(exec, UString(), 0);
+#endif
 
     if (newExec.completionType() == Throw) {
         exec->setException(value);

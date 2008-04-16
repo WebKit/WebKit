@@ -98,6 +98,8 @@ SOURCES += \
     kjs/string_object.cpp \
     kjs/ustring.cpp \
     kjs/value.cpp \
+    profiler/FunctionCallProfile.cpp \
+    profiler/Profiler.cpp \
     wtf/FastMalloc.cpp
 
 !qt-port:SOURCES += \

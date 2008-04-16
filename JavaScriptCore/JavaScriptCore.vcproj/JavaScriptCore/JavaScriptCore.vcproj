@@ -882,6 +882,26 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Profiler"
+			>
+			<File
+				RelativePath="..\..\profiler\FunctionCallProfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\FunctionCallProfile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\Profiler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\Profiler.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
