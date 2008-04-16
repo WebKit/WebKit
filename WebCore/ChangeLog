@@ -1,3 +1,26 @@
+2008-04-16  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 17228: console.{log,warn,info,error} should support format
+        strings, variable arguments
+
+        <https://bugs.webkit.org/show_bug.cgi?id=17228>
+        <rdar://problem/5732828>
+
+        Reviewed by Tim Hatcher.
+
+        Test: manual-tests/inspector/console-log-formatting.html
+
+        * page/inspector/Console.js:
+        (WebInspector.ConsoleMessage): Pass any extra arguments down to
+        _format.
+        (WebInspector.ConsoleMessage._format): This method constructs
+        this.formattedMessage. We treat the first parameter as a format
+        string. Any parameters that have not been used after substituting into
+        the format string are concatenated together, separated by spaces.
+        (WebInspector.ConsoleMessage.toMessageElement): Updated to use
+        this.formattedMessage.
+        (WebInspector.ConsoleMessage.toString): Ditto.
+
 2008-04-15  Adam Roben  <aroben@apple.com>
 
         Make String.format return an array of unused substitutions

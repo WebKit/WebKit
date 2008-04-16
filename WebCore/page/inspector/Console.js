@@ -421,10 +421,52 @@ WebInspector.ConsoleMessage = function(source, level, line, url)
     this.line = line;
     this.url = url;
 
-    this.message = arguments[4];
+    this._format(Array.prototype.slice.call(arguments, 4));
 }
 
 WebInspector.ConsoleMessage.prototype = {
+    _format: function(parameters)
+    {
+        this.formattedMessage = document.createElement("span");
+
+        if (!parameters.length)
+            return;
+
+        var formatForConsole = WebInspector.console._format.bind(WebInspector.console);
+
+        if (Object.type(parameters[0], InspectorController.inspectedWindow()) === "string") {
+            var formatters = {}
+            for (var i in String.standardFormatters)
+                formatters[i] = String.standardFormatters[i];
+
+            // Firebug uses %o for formatting objects.
+            formatters.o = formatForConsole;
+            // Firebug allows both %i and %d for formatting integers.
+            formatters.i = formatters.d;
+
+            function append(a, b)
+            {
+                if (!(b instanceof Node))
+                    b = document.createTextNode(b);
+
+                a.appendChild(b);
+                return a;
+            }
+
+            var result = String.format(parameters[0], parameters.slice(1), formatters, this.formattedMessage, append);
+            this.formattedMessage = result.formattedResult;
+            parameters = result.unusedSubstitutions;
+            if (parameters.length)
+                this.formattedMessage.appendChild(document.createTextNode(" "));
+        }
+
+        for (var i = 0; i < parameters.length; ++i) {
+            this.formattedMessage.appendChild(formatForConsole(parameters[i]));
+            if (i < parameters.length - 1)
+                this.formattedMessage.appendChild(document.createTextNode(" "));
+        }
+    },
+
     get shortURL()
     {
         if (this.resource)
@@ -472,7 +514,7 @@ WebInspector.ConsoleMessage.prototype = {
 
         var messageTextElement = document.createElement("span");
         messageTextElement.className = "console-message-text";
-        messageTextElement.textContent = this.message;
+        messageTextElement.appendChild(this.formattedMessage);
         element.appendChild(messageTextElement);
 
         element.appendChild(document.createTextNode(" "));
@@ -531,7 +573,7 @@ WebInspector.ConsoleMessage.prototype = {
                 break;
         }
 
-        return sourceString + " " + levelString + ": " + this.message + "\n" + this.url + " line " + this.line;
+        return sourceString + " " + levelString + ": " + this.formattedMessage.textContent + "\n" + this.url + " line " + this.line;
     }
 }
 
