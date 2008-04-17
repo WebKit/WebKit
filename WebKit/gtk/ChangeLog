@@ -1,3 +1,19 @@
+2008-04-17  Alp Toker  <alp@atoker.com>
+
+        Rubber-stamped by Holger Freyther.
+
+        Reduce hard-coded page-cache count to 3 based on research done for the
+        Mac port on value / page.
+
+        We will need to make this more dynamic or configurable at some point
+        but for now it's best to keep closer to the behaviour before page
+        caching was enabled.
+
+        Issue spotted by Mark Rowe.
+
+        * webkit/webkitprivate.cpp:
+        (webkit_init):
+
 2008-04-17  Daniele Metilli  <daniele.metilli@gmail.com>
 
         Reviewed by Eric.

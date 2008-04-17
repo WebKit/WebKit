@@ -94,8 +94,10 @@ void webkit_init()
     KJS::initializeThreading();
     WebCore::InitializeLoggingChannelsIfNecessary();
 
-    // FIXME: Expose this with an API
-    WebCore::pageCache()->setCapacity(7);
+    // Page cache capacity (in pages). Comment from Mac port:
+    // (Research indicates that value / page drops substantially after 3 pages.)
+    // FIXME: Expose this with an API and/or calculate based on available resources
+    WebCore::pageCache()->setCapacity(3);
 
 #if ENABLE(DATABASE)
     // FIXME: It should be possible for client applications to override this default location
