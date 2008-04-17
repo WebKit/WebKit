@@ -2,6 +2,26 @@
 
         Reviewed by Darin.
 
+        Add AXObjectCache to Windows.
+
+        * WebCore.vcproj/WebCore.vcproj: Add AXObjectCacheWin.cpp.
+        * page/AXObjectCache.h: Add handleFocusedUIElementChanged definition to
+        non-Mac platforms, and added stub for it. Replace PLATFORM(MAC)
+        conditional with HAVE(ACCESSIBILITY) for stubs.
+        (WebCore::AXObjectCache::enableAccessibility):
+        (WebCore::AXObjectCache::accessibilityEnabled):
+        * page/win/AXObjectCacheWin.cpp: Added; contains stubs for the methods
+        below.
+        (WebCore::AXObjectCache::detachWrapper):
+        (WebCore::AXObjectCache::attachWrapper):
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::postNotificationToElement):
+        * config.h: Define HAVE_ACCESSIBILITY on Mac and Windows.
+
+2008-04-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
         * WebCore.vcproj/WebCore.vcproj: Fix path to AXObjectCache.h.
 
 2008-04-16  Brady Eidson  <beidson@apple.com>

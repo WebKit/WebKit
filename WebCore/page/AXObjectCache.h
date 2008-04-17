@@ -59,22 +59,22 @@ namespace WebCore {
 
     class AXObjectCache {
     public:
-    
+
         ~AXObjectCache();
         AccessibilityObject* get(RenderObject*);
         void remove(RenderObject*);
         void detachWrapper(AccessibilityObject*);
-        void attachWrapper(AccessibilityObject*);        
+        void attachWrapper(AccessibilityObject*);
         void postNotification(RenderObject*, const String&);
         void postNotificationToElement(RenderObject*, const String&);
         void childrenChanged(RenderObject*);
         static void enableAccessibility() { gAccessibilityEnabled = true; }
         static bool accessibilityEnabled() { return gAccessibilityEnabled; }
+        void handleFocusedUIElementChanged();
 
 #if PLATFORM(MAC)
         AXID getAXID(AccessibilityObject*);
         void removeAXID(AccessibilityObject*);
-        void handleFocusedUIElementChanged();        
         bool isIDinUse(AXID id) const { return m_idsInUse.contains(id); }
 #endif
 
@@ -86,7 +86,8 @@ namespace WebCore {
 #endif
     };
 
-#if !PLATFORM(MAC)
+#if !HAVE(ACCESSIBILITY)
+    inline void AXObjectCache::handleFocusedUIElementChanged() { }
     inline void AXObjectCache::detachWrapper(AccessibilityObject*) { }
     inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
     inline void AXObjectCache::postNotification(RenderObject*, const String&) { }
