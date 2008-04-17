@@ -1,3 +1,11 @@
+2008-04-17  Daniele Metilli  <daniele.metilli@gmail.com>
+
+        Reviewed by Eric.
+
+        Fixed a typo in the copyright header.
+
+        * webkit/webkitprivate.h:
+
 2008-04-14  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Alp Toker.
