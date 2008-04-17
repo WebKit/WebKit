@@ -4423,8 +4423,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                                 if (values->length() > 1) {
                                     CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(1));
                                     ty = convertToLength(secondValue, m_style, &ok);
-                                } else
-                                    ty = tx;
+                                }
                             }
                         }
                         

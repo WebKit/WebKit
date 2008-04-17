@@ -1,3 +1,14 @@
+2008-04-17  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Hyatt.
+
+        Test for <rdar://problem/5849968> translate method should have Y=0 when only X is present
+
+        * fast/css/transform-default-parameter.html: Added.
+        * platform/mac/fast/css/transform-default-parameter-expected.checksum: Added.
+        * platform/mac/fast/css/transform-default-parameter-expected.png: Added.
+        * platform/mac/fast/css/transform-default-parameter-expected.txt: Added.
+
 2008-04-16  Darin Adler  <darin@apple.com>
 
         Earlier version reviewed by Mitz.
