@@ -1013,6 +1013,7 @@ int main(int argc, char* argv[])
     leakChecking = false;
 
     _setmode(1, _O_BINARY);
+    _setmode(2, _O_BINARY);
 
     initialize();
 

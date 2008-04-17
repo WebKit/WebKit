@@ -1,5 +1,14 @@
 2008-04-17  Adam Roben  <aroben@apple.com>
 
+        Get rid of carriage returns in DRT/win's stderr
+
+        Reviewed by Eric Seidel.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main): Mark stderr as binary like we already do for stdout.
+
+2008-04-17  Adam Roben  <aroben@apple.com>
+
         Fix Bug 17678: run-webkit-tests should have a watchdog timer (and
         timeout long tests)
 
