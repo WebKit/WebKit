@@ -24,8 +24,50 @@
  */
  
 module offline {
+ 
+    interface [Conditional=OFFLINE_WEB_APPLICATIONS,
+               CustomMarkFunction] DOMApplicationCache {
+    
+        // update status
+        const unsigned short UNCACHED = 0;
+        const unsigned short IDLE = 1;
+        const unsigned short CHECKING = 2;
+        const unsigned short DOWNLOADING = 3;
+        const unsigned short UPDATEREADY = 4;
+        readonly attribute unsigned short status;
 
-interface [Conditional=OFFLINE_WEB_APPLICATIONS] DOMApplicationCache {
+        void update()
+            raises(DOMException);
+        void swapCache()
+            raises(DOMException);
+    
+        // dynamic entries
+        readonly attribute unsigned long length;
+        DOMString item(in [IsIndex] unsigned long index)
+            raises(DOMException);
+        [Custom] void add(in DOMString uri)
+            raises(DOMException);
+        [Custom] void remove(in DOMString uri)
+            raises(DOMException);
+    
+        // events
+        attribute [Custom] EventListener onchecking;
+        attribute [Custom] EventListener onerror;
+        attribute [Custom] EventListener onnoupdate;
+        attribute [Custom] EventListener ondownloading;
+        attribute [Custom] EventListener onprogress;
+        attribute [Custom] EventListener onupdateready;
+        attribute [Custom] EventListener oncached;
+    
+        // EventTarget interface
+        [Custom] void addEventListener(in DOMString type, 
+                                       in EventListener listener, 
+                                       in boolean useCapture);
+        [Custom] void removeEventListener(in DOMString type, 
+                                          in EventListener listener, 
+                                          in boolean useCapture);
+        [Custom] boolean dispatchEvent(in Event evt)
+            raises(EventException);
 };
 
 }

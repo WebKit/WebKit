@@ -1,3 +1,37 @@
+2008-04-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Add JS bindings for the DOMApplicationCache object.
+        
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::add):
+        (WebCore::JSDOMApplicationCache::remove):
+        (WebCore::JSDOMApplicationCache::addEventListener):
+        (WebCore::JSDOMApplicationCache::removeEventListener):
+        (WebCore::JSDOMApplicationCache::dispatchEvent):
+        (WebCore::JSDOMApplicationCache::setOnchecking):
+        (WebCore::JSDOMApplicationCache::onchecking):
+        (WebCore::JSDOMApplicationCache::setOnerror):
+        (WebCore::JSDOMApplicationCache::onerror):
+        (WebCore::JSDOMApplicationCache::setOnnoupdate):
+        (WebCore::JSDOMApplicationCache::onnoupdate):
+        (WebCore::JSDOMApplicationCache::setOndownloading):
+        (WebCore::JSDOMApplicationCache::ondownloading):
+        (WebCore::JSDOMApplicationCache::setOnprogress):
+        (WebCore::JSDOMApplicationCache::onprogress):
+        (WebCore::JSDOMApplicationCache::setOnupdateready):
+        (WebCore::JSDOMApplicationCache::onupdateready):
+        (WebCore::JSDOMApplicationCache::setOncached):
+        (WebCore::JSDOMApplicationCache::oncached):
+        (WebCore::JSDOMApplicationCache::mark):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::mark):
+        * bindings/js/JSEventTargetBase.cpp:
+        (WebCore::toJS):
+        * loader/appcache/DOMApplicationCache.idl:
+        * page/DOMWindow.idl:
+
 2008-04-17 Eric Carlson  <eric.carlson@apple.com> 
 
         Reviewed by Adele. 

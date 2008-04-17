@@ -65,6 +65,9 @@ void JSDOMWindow::mark()
     markDOMObjectWrapper(impl()->optionalSessionStorage());
     markDOMObjectWrapper(impl()->optionalLocalStorage());
 #endif
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    markDOMObjectWrapper(impl()->optionalApplicationCache());
+#endif
 }
 
 bool JSDOMWindow::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
