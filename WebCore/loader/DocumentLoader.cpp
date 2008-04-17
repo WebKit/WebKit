@@ -620,11 +620,11 @@ bool DocumentLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceR
         resource = archiveResourceForURL(originalURL);
 
     if (!resource) {
-         // WebArchiveDebugMode means we fail loads instead of trying to fetch them from the network if they're not in the archive.
-         bool shouldFailLoad = m_frame->settings()->webArchiveDebugModeEnabled() && ArchiveFactory::isArchiveMimeType(responseMIMEType());
+        // WebArchiveDebugMode means we fail loads instead of trying to fetch them from the network if they're not in the archive.
+        bool shouldFailLoad = m_frame->settings()->webArchiveDebugModeEnabled() && ArchiveFactory::isArchiveMimeType(responseMIMEType());
 
-         if (!shouldFailLoad)
-             return false;
+        if (!shouldFailLoad)
+            return false;
     }
     
     m_pendingSubstituteResources.set(loader, resource);

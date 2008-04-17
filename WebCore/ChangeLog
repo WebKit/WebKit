@@ -1,5 +1,12 @@
 2008-04-17  Anders Carlsson  <andersca@apple.com>
 
+        Fix indentation.
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::scheduleArchiveLoad):
+
+2008-04-17  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Brady.
 
         When in the web archive debug mode, don't call didFail immediately. Instead,
