@@ -971,7 +971,7 @@ if ($counts{crash}) {
         my $base = stripExtension($test);
         my $expectedDir = $expectedResultDirectory{$base};
         print HTML "<tr>\n";
-        print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$base</a></td>\n";
+        print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$test</a></td>\n";
         print HTML htmlForExpectedAndActualResults($base);
         print HTML "<td><a href=\"$base-$errorTag.txt\">stderr</a></td>\n";
         print HTML "</tr>\n";
@@ -986,7 +986,7 @@ if ($counts{error}) {
         my $base = stripExtension($test);
         my $expectedDir = $expectedResultDirectory{$base};
         print HTML "<tr>\n";
-        print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$base</a></td>\n";
+        print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$test</a></td>\n";
         print HTML htmlForExpectedAndActualResults($base);
         print HTML "<td><a href=\"$base-$errorTag.txt\">stderr</a></td>\n";
         print HTML "</tr>\n";
@@ -1001,7 +1001,7 @@ if ($counts{new}) {
         my $base = stripExtension($test);
         my $expectedDir = $expectedResultDirectory{$base};
         print HTML "<tr>\n";
-        print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$base</a></td>\n";
+        print HTML "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$test</a></td>\n";
         print HTML "<td><a href=\"" . toURL("$expectedDir/$base-$expectedTag.txt") . "\">results</a></td>\n";
         if ($pixelTests && -f "$expectedDir/$base-$expectedTag.png") {
             print HTML "<td><a href=\"" . toURL("$expectedDir/$base-$expectedTag.png") . "\">image</a></td>\n";

@@ -1,5 +1,13 @@
 2008-04-17  Adam Roben  <aroben@apple.com>
 
+        Print the extension for all tests in the test results page
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/run-webkit-tests:
+
+2008-04-17  Adam Roben  <aroben@apple.com>
+
         Move code that counts finished tests into a subroutine
 
         Reviewed by Eric Seidel.
