@@ -48,6 +48,7 @@ use strict;
 use warnings;
 
 use Cwd;
+use Fcntl qw(F_GETFL F_SETFL O_NONBLOCK);
 use File::Basename;
 use File::Copy;
 use File::Find;
@@ -58,7 +59,7 @@ use FindBin;
 use Getopt::Long;
 use IPC::Open2;
 use IPC::Open3;
-use Time::HiRes qw(time);
+use Time::HiRes qw(time usleep);
 
 use List::Util 'shuffle';
 
@@ -82,7 +83,7 @@ sub stripExtension($);
 sub isTextOnlyTest($);
 sub expectedDirectoryForTest($;$;$);
 sub countFinishedTest($$$$);
-sub testCrashed($$$$);
+sub testCrashedOrTimedOut($$$$$);
 sub printFailureMessageForTest($$);
 sub toURL($);
 sub toWindowsPath($);
@@ -94,6 +95,8 @@ sub recordActualResultsAndDiff($$);
 sub buildPlatformHierarchy();
 sub epiloguesAndPrologues($$);
 sub parseLeaksandPrintUniqueLeaks();
+sub readFromDumpToolWithTimer(*);
+sub setFileHandleNonBlocking(*$);
 
 # Argument handling
 my $addPlatformExceptions = 0;
@@ -554,17 +557,14 @@ for my $test (@tests) {
         }
     }
 
-    my $actual = "";
-    while (<IN>) {
-        last if /#EOF/;
-        $actual .= $_;
-    }
+    my $actual = readFromDumpToolWithTimer(IN);
+    my $error = readFromDumpToolWithTimer(ERROR);
 
-    my $error = "";
-    while (<ERROR>) {
-       last if /#EOF/;
-       $error .= $_;
-    }
+    unless (defined($actual) && defined($error)) {
+        testCrashedOrTimedOut($test, $base, 0, undef, undef);
+        countFinishedTest($test, $base, "timedout", 0);
+        next;
+     }
 
     my $isText = isTextOnlyTest($actual);
 
@@ -719,7 +719,7 @@ for my $test (@tests) {
 
     if (dumpToolDidCrash()) {
         $result = "crash";
-        testCrashed($test, $base, $actual, $error);
+        testCrashedOrTimedOut($test, $base, 1, $actual, $error);
     } elsif (!defined $expected) {
         if ($verbose) {
             print "new " . ($resetResults ? "result" : "test") ."\n";
@@ -913,11 +913,12 @@ my %text = (
     match => "succeeded",
     mismatch => "had incorrect layout",
     new => "were new",
+    timedout => "timed out",
     crash => "crashed",
     error => "had stderr output"
 );
 
-for my $type ("match", "mismatch", "new", "crash", "error") {
+for my $type ("match", "mismatch", "new", "timedout", "crash", "error") {
     my $c = $counts{$type};
     if ($c) {
         my $t = $text{$type};
@@ -943,6 +944,7 @@ print HTML "</head>\n";
 print HTML "<body>\n";
 
 print HTML htmlForResultsSection(@{$tests{mismatch}}, "Tests where results did not match expected results", \&linksForMismatchTest);
+print HTML htmlForResultsSection(@{$tests{timedout}}, "Tests that timed out", \&linksForTimedOutTest);
 print HTML htmlForResultsSection(@{$tests{crash}}, "Tests that caused the DumpRenderTree tool to crash", \&linksForCrashOrErrorTest);
 print HTML htmlForResultsSection(@{$tests{error}}, "Tests that had stderr output", \&linksForCrashOrErrorTest);
 print HTML htmlForResultsSection(@{$tests{new}}, "Tests that had no expected results (probably new)", \&linksForNewTest);
@@ -1396,10 +1398,10 @@ sub countFinishedTest($$$$) {
     $testType{$test} = $isText;
 }
 
-sub testCrashed($$$$) {
-    my ($test, $base, $actual, $error) = @_;
+sub testCrashedOrTimedOut($$$$$) {
+    my ($test, $base, $didCrash, $actual, $error) = @_;
 
-    printFailureMessageForTest($test, "crashed");
+    printFailureMessageForTest($test, $didCrash ? "crashed" : "timed out");
 
     my $dir = "$testResultsDirectory/$base";
     $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
@@ -1407,11 +1409,15 @@ sub testCrashed($$$$) {
 
     deleteExpectedAndActualResults($base);
 
-    open CRASH, ">", "$testResultsDirectory/$base-$errorTag.txt" or die;
-    print CRASH $error;
-    close CRASH;
+    if (defined($error) && length($error)) {
+        open CRASH, ">", "$testResultsDirectory/$base-$errorTag.txt" or die;
+        print CRASH $error;
+        close CRASH;
+    }
 
     recordActualResultsAndDiff($base, $actual);
+
+    kill 9, $dumpToolPID unless $didCrash;
 
     closeDumpTool();
 }
@@ -1556,6 +1562,14 @@ sub linksForMismatchTest
     return \@links;
 }
 
+sub linksForTimedOutTest
+{
+    my ($test) = @_;
+
+    my @links = ();
+    return \@links;
+}
+
 sub linksForCrashOrErrorTest
 {
     my ($test) = @_;
@@ -1600,7 +1614,7 @@ sub recordActualResultsAndDiff($$)
 {
     my ($base, $actual) = @_;
 
-    return unless length($actual);
+    return unless defined($actual) && length($actual);
 
     open ACTUAL, ">", "$testResultsDirectory/$base-$actualTag.txt" or die "Couldn't open actual results file for $base";
     print ACTUAL $actual;
@@ -1683,4 +1697,63 @@ sub parseLeaksandPrintUniqueLeaks() {
     print "WARNING: $uniqueLeakCount unique leaks found!\n";
     print "See above for individual leaks results.\n" if ($leaksOutputFileNumber > 2);
     
+}
+
+sub readFromDumpToolWithTimer(*)
+{
+    my ($fh) = @_;
+
+    setFileHandleNonBlocking($fh, 1);
+
+    my $maximumSecondsWithoutOutput = 5;
+    my $microsecondsToWaitBeforeReadingAgain = 1000;
+
+    my $timeOfLastSuccessfulRead = time;
+
+    my $readSoFar = 0;
+    my $output;
+
+    while (1) {
+        if (time - $timeOfLastSuccessfulRead > $maximumSecondsWithoutOutput) {
+            $output = undef;
+            last;
+        }
+
+        my $read = sysread($fh, $output, 1024, $readSoFar);
+        if (!defined($read) && $! == EAGAIN) {
+            # No data ready
+            usleep($microsecondsToWaitBeforeReadingAgain);
+            next;
+        }
+
+        last if $read == 0;
+
+        if ($output =~ s/^#EOF//m) {
+            chomp $output;
+            last;
+        }
+
+        $readSoFar += $read;
+        $timeOfLastSuccessfulRead = time;
+    }
+
+    setFileHandleNonBlocking($fh, 0);
+    return $output;
+}
+
+sub setFileHandleNonBlocking(*$)
+{
+    my ($fh, $nonBlocking) = @_;
+
+    my $flags = fcntl($fh, F_GETFL, 0) or die "Couldn't get filehandle flags";
+
+    if ($nonBlocking) {
+        $flags |= O_NONBLOCK;
+    } else {
+        $flags &= ~O_NONBLOCK;
+    }
+
+    $flags = fcntl($fh, F_SETFL, $flags | O_NONBLOCK) or die "Couldn't set filehandle flags";
+
+    return 1;
 }

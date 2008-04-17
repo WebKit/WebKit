@@ -1,5 +1,34 @@
 2008-04-17  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 17678: run-webkit-tests should have a watchdog timer (and
+        timeout long tests)
+
+        <https://bugs.webkit.org/show_bug.cgi?id=17678>
+
+        We now abort tests that take longer than 60 seconds to produce output.
+        This matches the watchdog timer in DRT/mac and DRT/win (which we can
+        now remove).
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/run-webkit-tests:
+        (top level): Read DRT's output using the new readFromDumpToolWithTimer
+        subroutine. If readFromDumpToolWithTimer returns undefined it means
+        the test timed out, so we register the test as a hang and move on.
+        (sub testCrashedOrTimedOut): Renamed from testCrashed. Now handles
+        both crashed and timed out tests. If the test timed out, we kill DRT
+        before returning.
+        (sub linksForTimedOutTest): Added. We don't have any output to link to for
+        tests that timed out.
+        (sub recordActualResultsAndDiff): Don't call length on undefined.
+        (sub readFromDumpToolWithTimer): Added. Performs non-blocking reads
+        from a filehandle until an #EOF is reached or
+        $maximumSecondsWithoutOutput have elapsed.
+        (sub setFileHandleNonBlocking): Marks a filehandle as blocking or
+        non-blocking.
+
+2008-04-17  Adam Roben  <aroben@apple.com>
+
         Refactor test results page generation
 
         Reviewed by Eric Seidel.
