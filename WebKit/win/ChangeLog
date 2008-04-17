@@ -1,3 +1,48 @@
+2008-04-16  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
+        Add a base AccessibilityObject wrapper class. Currently just stubs all
+        of the IAccessible methods.
+
+        * AccessibleBase.cpp: Added. Implements IAccessible, and inherits from
+        WebCore::AccessibilityObjectWrapper.
+        (AccessibleBase::AccessibleBase): Set the object's wrapper to this
+        instance. 
+        (AccessibleBase::~AccessibleBase):
+        (AccessibleBase::createInstance): Create an instance of a wrapper for
+        this AccessibilityObject.
+        (AccessibleBase::QueryInterface):
+        (AccessibleBase::Release):
+        (AccessibleBase::get_accParent):
+        (AccessibleBase::get_accChildCount):
+        (AccessibleBase::get_accChild):
+        (AccessibleBase::get_accName):
+        (AccessibleBase::get_accValue):
+        (AccessibleBase::get_accDescription):
+        (AccessibleBase::get_accRole):
+        (AccessibleBase::get_accState):
+        (AccessibleBase::get_accHelp):
+        (AccessibleBase::get_accKeyboardShortcut):
+        (AccessibleBase::accSelect):
+        (AccessibleBase::get_accFocus):
+        (AccessibleBase::get_accSelection):
+        (AccessibleBase::get_accDefaultAction):
+        (AccessibleBase::accLocation):
+        (AccessibleBase::accNavigate):
+        (AccessibleBase::accHitTest):
+        * AccessibleBase.h: Added.
+        (AccessibleBase::AddRef):
+        (AccessibleBase::put_accName):
+        (AccessibleBase::put_accValue):
+        (AccessibleBase::get_accHelpTopic):
+        (AccessibleBase::GetTypeInfoCount):
+        (AccessibleBase::GetTypeInfo):
+        (AccessibleBase::GetIDsOfNames):
+        (AccessibleBase::Invoke):
+        (AccessibleBase::detach): Detach this wrapper from its object.
+        * WebKit.vcproj/WebKit.vcproj:
+
 2008-04-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
