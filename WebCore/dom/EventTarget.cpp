@@ -67,6 +67,13 @@ XMLHttpRequest* EventTarget::toXMLHttpRequest()
     return 0;
 }
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+DOMApplicationCache* EventTarget::toDOMApplicationCache()
+{
+    return 0;
+}
+#endif
+
 #if ENABLE(SVG)
 SVGElementInstance* EventTarget::toSVGElementInstance()
 {

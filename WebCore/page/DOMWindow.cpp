@@ -32,6 +32,9 @@
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
 #include "Console.h"
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+#include "DOMApplicationCache.h"
+#endif
 #include "DOMSelection.h"
 #include "Document.h"
 #include "Element.h"
@@ -185,6 +188,12 @@ void DOMWindow::clear()
         m_localStorage->disconnectFrame();
     m_localStorage = 0;
 #endif
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    if (m_applicationCache)
+        m_applicationCache->disconnectFrame();
+    m_applicationCache = 0;
+#endif
 }
 
 Screen* DOMWindow::screen() const
@@ -249,6 +258,15 @@ Console* DOMWindow::console() const
         m_console = Console::create(m_frame);
     return m_console.get();
 }
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+DOMApplicationCache* DOMWindow::applicationCache() const
+{
+    if (!m_applicationCache)
+        m_applicationCache = DOMApplicationCache::create(m_frame);
+    return m_applicationCache.get();
+}
+#endif
 
 Navigator* DOMWindow::navigator() const
 {

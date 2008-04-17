@@ -37,6 +37,9 @@ namespace WebCore {
     class CSSRuleList;
     class CSSStyleDeclaration;
     class Console;
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    class DOMApplicationCache;
+#endif
     class DOMSelection;
     class Database;
     class Document;
@@ -157,7 +160,10 @@ namespace WebCore {
 #endif
 
         Console* console() const;
-        
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+        DOMApplicationCache* applicationCache() const;
+#endif
 #if ENABLE(CROSS_DOCUMENT_MESSAGING)
         void postMessage(const String& message, const String& domain, const String& uri, DOMWindow* source) const;
 #endif
@@ -172,6 +178,8 @@ namespace WebCore {
         void resizeBy(float x, float y) const;
         void resizeTo(float width, float height) const;
 
+        // These methods are used for GC marking. See JSDOMWindow::mark() in
+        // JSDOMWindowCustom.cpp.
         Screen* optionalScreen() const { return m_screen.get(); }
         DOMSelection* optionalSelection() const { return m_selection.get(); }
         History* optionalHistory() const { return m_history.get(); }
@@ -188,7 +196,10 @@ namespace WebCore {
         Storage* optionalSessionStorage() const { return m_sessionStorage.get(); }
         Storage* optionalLocalStorage() const { return m_sessionStorage.get(); }
 #endif
-
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+        DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
+#endif
+        
     private:
         DOMWindow(Frame*);
         
@@ -208,6 +219,9 @@ namespace WebCore {
 #if ENABLE(DOM_STORAGE)
         mutable RefPtr<Storage> m_sessionStorage;
         mutable RefPtr<Storage> m_localStorage;
+#endif
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+        mutable RefPtr<DOMApplicationCache> m_applicationCache;
 #endif
     };
 

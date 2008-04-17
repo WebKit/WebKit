@@ -1,5 +1,36 @@
 2008-04-17  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam.
+
+        Add DOMApplicationCache implementation.
+        
+        * dom/EventNames.h:
+        Add new event names.
+        
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toDOMApplicationCache):
+        * dom/EventTarget.h:
+        Add EventTarget conversion method.
+        
+        * loader/appcache/ApplicationCacheGroup.h:
+        (WebCore::ApplicationCacheGroup::):
+        (WebCore::ApplicationCacheGroup::status):
+        (WebCore::ApplicationCacheGroup::update):
+        (WebCore::ApplicationCacheGroup::newestCache):
+        Add more stubs.
+        
+        * loader/appcache/DOMApplicationCache.cpp:
+        * loader/appcache/DOMApplicationCache.h:
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clear):
+        (WebCore::DOMWindow::applicationCache):
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::optionalApplicationCache):
+        Add ApplicationCache member.
+        
+2008-04-17  Anders Carlsson  <andersca@apple.com>
+
         Build fix.
 
         * WebCore.vcproj/WebCore.vcproj:

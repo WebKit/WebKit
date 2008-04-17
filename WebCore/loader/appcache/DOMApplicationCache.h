@@ -28,16 +28,112 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
-
 #include <wtf/RefCounted.h>
+#include "EventTarget.h"
+
+#include "EventListener.h"
+#include <wtf/HashMap.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
- 
-class DOMApplicationCache : public RefCounted<DOMApplicationCache> {
-};    
-    
-}
 
+class ApplicationCache;
+class AtomicStringImpl;
+class Frame;
+class KURL;
+class String;
+    
+class DOMApplicationCache : public RefCounted<DOMApplicationCache>, public EventTarget {
+public:
+    static PassRefPtr<DOMApplicationCache> create(Frame* frame) { return adoptRef(new DOMApplicationCache(frame)); }
+    void disconnectFrame();
+
+    enum Status {
+        UNCACHED = 0,
+        IDLE = 1,
+        CHECKING = 2,
+        DOWNLOADING = 3,
+        UPDATEREADY = 4,
+    };
+
+    unsigned short status() const;
+    
+    void update(ExceptionCode&);
+    void swapCache(ExceptionCode&);
+    
+    unsigned length() const;
+    String item(unsigned item, ExceptionCode&);
+    void add(const KURL&, ExceptionCode&);
+    void remove(const KURL&, ExceptionCode&);
+
+    virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
+    virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
+    virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent = false);
+    
+    typedef Vector<RefPtr<EventListener> > ListenerVector;
+    typedef HashMap<AtomicStringImpl*, ListenerVector> EventListenersMap;
+    EventListenersMap& eventListeners() { return m_eventListeners; }
+
+    using RefCounted<DOMApplicationCache>::ref;
+    using RefCounted<DOMApplicationCache>::deref;
+
+    void setOnCheckingListener(EventListener* eventListener) { m_onCheckingListener = eventListener; }
+    EventListener* onCheckingListener() const { return m_onCheckingListener.get(); }
+
+    void setOnErrorListener(EventListener* eventListener) { m_onErrorListener = eventListener; }
+    EventListener* onErrorListener() const { return m_onErrorListener.get(); }
+
+    void setOnNoUpdateListener(EventListener* eventListener) { m_onNoUpdateListener = eventListener; }
+    EventListener* onNoUpdateListener() const { return m_onNoUpdateListener.get(); }
+
+    void setOnDownloadingListener(EventListener* eventListener) { m_onDownloadingListener = eventListener; }
+    EventListener* onDownloadingListener() const { return m_onDownloadingListener.get(); }
+    
+    void setOnProgressListener(EventListener* eventListener) { m_onProgressListener = eventListener; }
+    EventListener* onProgressListener() const { return m_onProgressListener.get(); }
+
+    void setOnUpdateReadyListener(EventListener* eventListener) { m_onUpdateReadyListener = eventListener; }
+    EventListener* onUpdateReadyListener() const { return m_onUpdateReadyListener.get(); }
+
+    void setOnCachedListener(EventListener* eventListener) { m_onCachedListener = eventListener; }
+    EventListener* onCachedListener() const { return m_onCachedListener.get(); }
+    
+    Frame* frame() const { return m_frame; }
+    DOMApplicationCache* toDOMApplicationCache() { return this; }
+
+    void callCheckingListener();
+    void callErrorListener();    
+    void callNoUpdateListener();    
+    void callDownloadingListener();
+    void callProgressListener();
+    void callUpdateReadyListener();
+    void callCachedListener();
+    
+private:
+    DOMApplicationCache(Frame* frame);
+    void callListener(const AtomicString& eventType, EventListener* listener);
+    
+    virtual void refEventTarget() { ref(); }
+    virtual void derefEventTarget() { deref(); }
+
+    ApplicationCache* associatedCache() const;
+    bool swapCache();
+    
+    RefPtr<EventListener> m_onCheckingListener;
+    RefPtr<EventListener> m_onErrorListener;
+    RefPtr<EventListener> m_onNoUpdateListener;
+    RefPtr<EventListener> m_onDownloadingListener;
+    RefPtr<EventListener> m_onProgressListener;
+    RefPtr<EventListener> m_onUpdateReadyListener;
+    RefPtr<EventListener> m_onCachedListener;
+    
+    EventListenersMap m_eventListeners;
+
+    Frame* m_frame;
+};
+
+} // namespace WebCore
 
 #endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
 
