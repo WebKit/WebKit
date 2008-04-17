@@ -1,3 +1,13 @@
+2008-04-16  Darin Adler  <darin@apple.com>
+
+        Earlier version reviewed by Mitz.
+
+        - test for <rdar://problem/5858617> REGRESSION (r21452-Safari 3.1):
+          Safari does not find words containing ß (German letter sharp-s)
+
+        * fast/text/find-case-folding-expected.txt: Added.
+        * fast/text/find-case-folding.html: Added.
+
 2008-04-16  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Alexey.

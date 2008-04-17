@@ -412,7 +412,7 @@ PassRefPtr<StringImpl> StringImpl::foldCase()
     if (!error && realLength == length)
         return adopt(data);
     data.resize(realLength);
-    Unicode::foldCase(data.characters(), length, m_data, m_length, &error);
+    Unicode::foldCase(data.characters(), realLength, m_data, m_length, &error);
     if (error)
         return this;
     return adopt(data);

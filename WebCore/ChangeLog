@@ -1,3 +1,17 @@
+2008-04-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix <rdar://problem/5858617> REGRESSION (r21452-Safari 3.1):
+          Safari does not find words containing ß (German letter sharp-s)
+
+        Test: fast/text/find-case-folding.html
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::foldCase):
+        Pass the folded length to foldCase rather than the original string length.
+        Without this, we get an error code every time.
+
 2008-04-16  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

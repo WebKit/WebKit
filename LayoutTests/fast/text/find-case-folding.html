@@ -1,0 +1,53 @@
+<html>
+<head>
+    <script>
+        function canFind(target, specimen)
+        {
+            getSelection().empty();
+            document.body.innerHTML = specimen;
+            document.execCommand("FindString", false, target);
+            var result = getSelection().rangeCount != 0;
+            getSelection().empty();
+            return result;
+        }
+
+        function runTests()
+        {
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            var smallSharpS = String.fromCharCode(0xDF);
+
+            var success = true;
+
+            var message = "FAILURE:";
+
+            if (!canFind("Stra" + smallSharpS + "e", "Stra" + smallSharpS + "e")) {
+                success = false;
+                message += " Cannot find small sharp s when searching for small sharp s.";
+            }
+
+            if (!canFind("Strasse", "Stra" + smallSharpS + "e")) {
+                success = false;
+                message += " Cannot find small sharp s when searching for ss.";
+            }
+
+            if (!canFind("Stra" + smallSharpS + "e", "Strasse")) {
+                success = false;
+                message += " Cannot find ss when searching for small sharp s.";
+            }
+
+            if (!canFind("Strasse", "Strasse")) {
+                success = false;
+                message += " Cannot find ss when searching for ss. ";
+            }
+
+            if (success)
+                message = "SUCCESS: Found all the variants of Strasse.";
+
+            document.body.innerHTML = message;
+        }
+    </script>
+</head>
+<body onload="runTests()"></body>
+</html>
