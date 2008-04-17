@@ -1,3 +1,19 @@
+2008-04-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        Thread static data destructors are not guaranteed to be called in any particular order;
+        turn ThreadSpecific into a phoenix-style singleton to avoid accessing freed memory when
+        deleted objects are interdependent (e.g. CommonIdentifiers and internal identifier tables).
+
+        No change on SunSpider.
+
+        * wtf/ThreadSpecific.h:
+        (WTF::ThreadSpecific::Data::Data):
+        (WTF::::get):
+        (WTF::::set):
+        (WTF::::destroy):
+
 2008-04-15  Srinivas Rao. M Hamse  <msrinirao@gmail.com>
 
         Reviewed by Maciej Stachowiak.

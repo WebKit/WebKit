@@ -53,6 +53,13 @@ private:
     void static destroy(void* ptr);
 
 #if USE(PTHREADS) || PLATFORM(WIN)
+    struct Data : Noncopyable {
+        Data(T* value, ThreadSpecific<T>* owner) : value(value), owner(owner) {}
+
+        T* value;
+        ThreadSpecific<T>* owner;
+    };
+
     pthread_key_t m_key;
 #endif
 };
@@ -73,20 +80,24 @@ inline ThreadSpecific<T>::~ThreadSpecific()
 template<typename T>
 inline T* ThreadSpecific<T>::get()
 {
-    return static_cast<T*>(pthread_getspecific(m_key));
+    Data* data = static_cast<Data*>(pthread_getspecific(m_key));
+    return data ? data->value : 0;
 }
 
 template<typename T>
 inline void ThreadSpecific<T>::set(T* ptr)
 {
     ASSERT(!get());
-    pthread_setspecific(m_key, ptr);
+    pthread_setspecific(m_key, new Data(ptr, this));
 }
 
 template<typename T>
 inline void ThreadSpecific<T>::destroy(void* ptr)
 {
-    delete static_cast<T*>(ptr);
+    Data* data = static_cast<Data*>(ptr);
+    pthread_setspecific(data->owner->m_key, 0);
+    delete data->value;
+    delete data;
 }
 
 #else
