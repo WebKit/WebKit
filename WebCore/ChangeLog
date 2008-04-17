@@ -1,3 +1,17 @@
+2008-04-17  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18335
+        Pango font backend unable to display japanese properly
+
+        Different fonts can have different glyph indices, so we need to pass
+        the right font when retrieving a glyph index.
+
+        * platform/graphics/gtk/GlyphPageTreeNodePango.cpp:
+        (WebCore::pango_font_get_glyph): Temporarily override the font in the
+        PangoAnalysis passed to pango_shape.
+
 2008-04-17  Anders Carlsson  <andersca@apple.com>
 
         According to Sam and David, it's "topLevel", not "toplevel".

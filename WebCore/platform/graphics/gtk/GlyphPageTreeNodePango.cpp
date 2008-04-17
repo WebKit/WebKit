@@ -48,9 +48,14 @@ static PangoGlyph pango_font_get_glyph(PangoFont* font, PangoContext* context, g
     GList* items = pango_itemize(context, buffer, 0, length, NULL, NULL);
 
     if (g_list_length(items) == 1) {
-        PangoGlyphString* glyphs = pango_glyph_string_new();
+        PangoItem* item = reinterpret_cast<PangoItem*>(items->data);
+        PangoFont* tmpFont = item->analysis.font;
+        item->analysis.font = font;
 
-        pango_shape(buffer, length, &((PangoItem*)items->data)->analysis, glyphs);
+        PangoGlyphString* glyphs = pango_glyph_string_new();
+        pango_shape(buffer, length, &item->analysis, glyphs);
+
+        item->analysis.font = tmpFont;
 
         if (glyphs->num_glyphs == 1)
             result = glyphs->glyphs[0].glyph;
