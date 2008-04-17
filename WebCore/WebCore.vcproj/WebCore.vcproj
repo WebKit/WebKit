@@ -3930,6 +3930,50 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="appcache"
+				>
+				<File
+					RelativePath="..\loader\appcache\ApplicationCache.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\appcache\ApplicationCache.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\appcache\ApplicationCacheGroup.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\appcache\ApplicationCacheGroup.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\appcache\ApplicationCacheResource.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\appcache\ApplicationCacheResource.h"
+					>
+				</File>				
+				<File
+					RelativePath="..\loader\appcache\DOMApplicationCache.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\appcache\DOMApplicationCache.h"
+					>
+				</File>				
+				<File
+					RelativePath="..\loader\appcache\ManifestParser.cpp"
+					>
+				</File>				
+				<File
+					RelativePath="..\loader\appcache\ManifestParser.h"
+					>
+				</File>				
+			</Filter>
+			<Filter
 				Name="archive"
 				>
 				<File

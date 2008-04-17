@@ -1,3 +1,9 @@
+2008-04-17  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-04-17  Dean Jackson  <dino@apple.com>
 
         Reviewed by Hyatt.
