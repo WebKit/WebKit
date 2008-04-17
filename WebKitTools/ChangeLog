@@ -1,5 +1,14 @@
 2008-04-17  Adam Roben  <aroben@apple.com>
 
+        Move code that counts finished tests into a subroutine
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/run-webkit-tests:
+        (sub countFinishedTest): Added.
+
+2008-04-17  Adam Roben  <aroben@apple.com>
+
         Move code that handles a crash into a subroutine
 
         Reviewed by Eric Seidel.

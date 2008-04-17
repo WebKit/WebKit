@@ -81,6 +81,7 @@ sub splitpath($);
 sub stripExtension($);
 sub isTextOnlyTest($);
 sub expectedDirectoryForTest($;$;$);
+sub countFinishedTest($$$$);
 sub testCrashed($$$$);
 sub printFailureMessageForTest($$);
 sub toURL($);
@@ -839,22 +840,6 @@ for my $test (@tests) {
         }
     }
 
-    if (($count + 1) % $testsPerDumpTool == 0 || $count == $#tests) {
-        if ($shouldCheckLeaks) {
-            my $fileName;
-            if ($testsPerDumpTool == 1) {
-                $fileName = "$testResultsDirectory/$base-leaks.txt";
-            } else {
-                $fileName = "$testResultsDirectory/" . fileNameWithNumber($dumpToolName, $leaksOutputFileNumber) . "-leaks.txt";
-            }
-            my $leakCount = countAndPrintLeaks($dumpToolName, $dumpToolPID, $fileName);
-            $totalLeaks += $leakCount;
-            $leaksOutputFileNumber++ if ($leakCount);
-        }
-
-        closeDumpTool();
-    }
-    
     if ($error) {
         my $dir = "$testResultsDirectory/$base";
         $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
@@ -868,10 +853,7 @@ for my $test (@tests) {
         push @{$tests{error}}, $test;
     }
 
-    $count++;
-    $counts{$result}++;
-    push @{$tests{$result}}, $test;
-    $testType{$test} = $isText;
+    countFinishedTest($test, $base, $result, $isText);
 }
 printf "\n%0.2fs total testing time\n", (time - $overallStartTime) . "";
 
@@ -1451,6 +1433,31 @@ sub expectedDirectoryForTest($;$;$)
     # For cross-platform tests, text-only results should go in the cross-platform directory,
     # while render tree dumps should go in the least-specific platform directory.
     return $isText ? $expectedDirectory : $platformHierarchy[$#platformHierarchy];
+}
+
+sub countFinishedTest($$$$) {
+    my ($test, $base, $result, $isText) = @_;
+
+    if (($count + 1) % $testsPerDumpTool == 0 || $count == $#tests) {
+        if ($shouldCheckLeaks) {
+            my $fileName;
+            if ($testsPerDumpTool == 1) {
+                $fileName = "$testResultsDirectory/$base-leaks.txt";
+            } else {
+                $fileName = "$testResultsDirectory/" . fileNameWithNumber($dumpToolName, $leaksOutputFileNumber) . "-leaks.txt";
+            }
+            my $leakCount = countAndPrintLeaks($dumpToolName, $dumpToolPID, $fileName);
+            $totalLeaks += $leakCount;
+            $leaksOutputFileNumber++ if ($leakCount);
+        }
+
+        closeDumpTool();
+    }
+    
+    $count++;
+    $counts{$result}++;
+    push @{$tests{$result}}, $test;
+    $testType{$test} = $isText;
 }
 
 sub testCrashed($$$$) {
