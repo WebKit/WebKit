@@ -1,5 +1,19 @@
 2008-04-17  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Brady.
+
+        When in the web archive debug mode, don't call didFail immediately. Instead,
+        add the loader to the substitute resource map, but with a null resource, which
+        indicates to substituteResourceDeliveryTimerFired that the load should fail.
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::substituteResourceDeliveryTimerFired):
+        (WebCore::DocumentLoader::scheduleArchiveLoad):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::load):
+
+2008-04-17  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam.
 
         Add JS bindings for the DOMApplicationCache object.

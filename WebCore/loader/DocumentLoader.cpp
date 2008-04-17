@@ -31,6 +31,7 @@
 
 #include "ApplicationCache.h"
 #include "ApplicationCacheGroup.h"
+#include "ArchiveFactory.h"
 #include "ArchiveResourceCollection.h"
 #include "CachedPage.h"
 #include "DocLoader.h"
@@ -44,6 +45,7 @@
 #include "MainResourceLoader.h"
 #include "Page.h"
 #include "PlatformString.h"
+#include "Settings.h"
 #include "SharedBuffer.h"
 #include "StringBuffer.h"
 #include "XMLTokenizer.h"
@@ -580,11 +582,17 @@ void DocumentLoader::substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*
         RefPtr<ResourceLoader> loader = it->first;
         SubstituteResource* resource = it->second.get();
         
-        SharedBuffer* data = resource->data();
+        if (resource) {
+            SharedBuffer* data = resource->data();
         
-        loader->didReceiveResponse(resource->response());
-        loader->didReceiveData(data->data(), data->size(), data->size(), true);
-        loader->didFinishLoading();
+            loader->didReceiveResponse(resource->response());
+            loader->didReceiveData(data->data(), data->size(), data->size(), true);
+            loader->didFinishLoading();
+        } else {
+            // A null resource means that we should fail the load.
+            // FIXME: Maybe we should use another error here - something like "not in cache".
+            loader->didFail(loader->cannotShowURLError());
+        }
     }
 }
 
@@ -606,13 +614,19 @@ void DocumentLoader::cancelPendingSubstituteLoad(ResourceLoader* loader)
 
 bool DocumentLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL)
 {
-    if (request.url() != originalURL)
-        return false;
-        
-    ArchiveResource* resource = archiveResourceForURL(originalURL);
-    if (!resource)
-        return false;
+    ArchiveResource* resource = 0;
+    
+    if (request.url() == originalURL)
+        resource = archiveResourceForURL(originalURL);
 
+    if (!resource) {
+         // WebArchiveDebugMode means we fail loads instead of trying to fetch them from the network if they're not in the archive.
+         bool shouldFailLoad = m_frame->settings()->webArchiveDebugModeEnabled() && ArchiveFactory::isArchiveMimeType(responseMIMEType());
+
+         if (!shouldFailLoad)
+             return false;
+    }
+    
     m_pendingSubstituteResources.set(loader, resource);
     deliverSubstituteResourcesAfterDelay();
     
