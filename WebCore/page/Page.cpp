@@ -37,6 +37,7 @@
 #include "HistoryItem.h"
 #include "InspectorController.h"
 #include "JavaScriptDebugServer.h"
+#include "LocalStorage.h"
 #include "Logging.h"
 #include "Navigator.h"
 #include "PageGroup.h"

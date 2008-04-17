@@ -1,3 +1,30 @@
+2008-04-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by the Mitzpettel
+
+        Before things get much more intertwined, move away from a global LocalStorage model
+        to a per-PageGroup LocalStorage model.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::localStorage): Get it from the current PageGroup, not the global
+          LocalStorage (which doesn't exist anymore).
+
+        * page/Page.cpp:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::localStorage): Create a LocalStorage object on demand.
+        * page/PageGroup.h:
+
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::LocalStorage): Hold a back pointer to the owning PageGroup.
+        (WebCore::LocalStorage::storageArea):
+        * storage/LocalStorage.h:
+        (WebCore::LocalStorage::create):
+
+        * storage/LocalStorageArea.cpp:
+        (WebCore::LocalStorageArea::LocalStorageArea): Hold a back pointer to the owning LocalStorage.
+        * storage/LocalStorageArea.h:
+        (WebCore::LocalStorageArea::create):
+
 2008-04-17  Anders Carlsson  <andersca@apple.com>
 
         Fix indentation.

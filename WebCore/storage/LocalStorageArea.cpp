@@ -36,8 +36,9 @@
 
 namespace WebCore {
 
-LocalStorageArea::LocalStorageArea(SecurityOrigin* origin)
+LocalStorageArea::LocalStorageArea(SecurityOrigin* origin, LocalStorage* localStorage)
     : StorageArea(origin)
+    , m_localStorage(localStorage)
 {
 }
 

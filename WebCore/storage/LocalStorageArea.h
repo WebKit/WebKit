@@ -32,17 +32,21 @@
 
 namespace WebCore {
     
+    class LocalStorage;
+    
     class LocalStorageArea : public StorageArea {
     public:
-        static PassRefPtr<LocalStorageArea> create(SecurityOrigin* origin) { return adoptRef(new LocalStorageArea(origin)); }
+        static PassRefPtr<LocalStorageArea> create(SecurityOrigin* origin, LocalStorage* localStorage) { return adoptRef(new LocalStorageArea(origin, localStorage)); }
 
     private:
-        LocalStorageArea(SecurityOrigin*);
+        LocalStorageArea(SecurityOrigin*, LocalStorage*);
 
         virtual void itemChanged(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
         virtual void itemRemoved(const String& key, const String& oldValue, Frame* sourceFrame);
 
         void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
+        
+        LocalStorage* m_localStorage;
     };
 
 } // namespace WebCore

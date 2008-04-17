@@ -36,18 +36,11 @@
 
 namespace WebCore {
 
-LocalStorage& LocalStorage::sharedLocalStorage()
-{
-    static LocalStorage* sharedLocalStorage = 0;
-    
-    if (!sharedLocalStorage)
-        sharedLocalStorage = new LocalStorage();
-        
-    return *sharedLocalStorage;
-}
 
-LocalStorage::LocalStorage()
+LocalStorage::LocalStorage(PageGroup* group)
+    : m_group(group)
 {
+    ASSERT(m_group);
 }
 
 PassRefPtr<StorageArea> LocalStorage::storageArea(SecurityOrigin* origin)
@@ -56,7 +49,7 @@ PassRefPtr<StorageArea> LocalStorage::storageArea(SecurityOrigin* origin)
     if (storageArea = m_storageAreaMap.get(origin))
         return storageArea.release();
         
-    storageArea = LocalStorageArea::create(origin);
+    storageArea = LocalStorageArea::create(origin, this);
     m_storageAreaMap.set(origin, storageArea);
     return storageArea.release();
 }
