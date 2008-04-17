@@ -35,6 +35,8 @@
 #include "CString.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+
+#include <QDateTime>
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
@@ -64,10 +66,11 @@ bool getFileSize(const String& path, long long& result)
     return info.exists(); 
 }
 
-bool getFileModificationTime(const String&, time_t&)
+bool getFileModificationTime(const String& path, time_t& result)
 {
-    notImplemented();
-    return false;
+    QFileInfo info(path);
+    result = info.lastModified().toTime_t();
+    return info.exists();
 }
 
 bool makeAllDirectories(const String& path)
@@ -80,10 +83,9 @@ String pathByAppendingComponent(const String& path, const String& component)
     return QDir(path).filePath(component);
 }
 
-String pathGetFileName(const String&)
+String pathGetFileName(const String& path)
 {
-    notImplemented();
-    return String();
+    return QFileInfo(path).fileName();
 }
 
 bool unloadModule(PlatformModule)
