@@ -1,3 +1,9 @@
+2008-04-16  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
+        * WebCore.vcproj/WebCore.vcproj: Fix path to AXObjectCache.h.
+
 2008-04-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler
