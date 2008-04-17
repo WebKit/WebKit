@@ -1,5 +1,13 @@
 2008-04-17  Mark Rowe  <mrowe@apple.com>
 
+        Fix the non-Mac builds that I broke with my Mac build fix.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getLayeredShorthandValue): Explicitly use the size_t version of max
+        to avoid making assumptions about sizeof(size_t).
+
+2008-04-17  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Dan Bernstein.
 
         Fix the Mac build.

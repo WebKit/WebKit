@@ -197,7 +197,7 @@ String CSSMutableStyleDeclaration::getLayeredShorthandValue(const int* propertie
                 CSSValueList* valueList = static_cast<CSSValueList*>(values[i].get());
                 numLayers = max(valueList->length(), numLayers);
             } else
-                numLayers = max(1UL, numLayers);
+                numLayers = max<size_t>(1U, numLayers);
         }
     }
     
