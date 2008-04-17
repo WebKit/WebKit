@@ -1,3 +1,14 @@
+2008-04-17  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Fix the Mac build.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getLayeredShorthandValue): Update to use size_t in place of unsigned.
+        * dom/NamedNodeMap.h: Ditto.
+        * page/AccessibilityObject.h: Forward-declare AccessibilityObjectWrapper in the non-Objective-C case too.
+
 2008-04-16  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Darin.

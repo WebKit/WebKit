@@ -1,3 +1,13 @@
+2008-04-17  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Fix the Mac build.
+
+        * WebView/WebFrame.mm: Define HAVE_ACCESSIBILITY before including AccessibilityObject.h and AXObjectCache.h to get things building
+        for now.  This comes from config.h in WebCore but we don't have an equivalent in WebKit so we'll need to work out the correct place
+        for this to live going forward.
+
 2008-04-15  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Anders.

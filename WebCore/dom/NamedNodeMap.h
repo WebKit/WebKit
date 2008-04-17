@@ -56,7 +56,7 @@ public:
     virtual PassRefPtr<Node> setNamedItem(Node*, ExceptionCode&) = 0;
 
     virtual PassRefPtr<Node> item(unsigned index) const = 0;
-    virtual unsigned length() const = 0;
+    virtual size_t length() const = 0;
 };
 
 } //namespace

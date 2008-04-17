@@ -54,6 +54,7 @@ typedef struct _NSRange NSRange;
 @class WebCoreTextMarker;
 @class WebCoreTextMarkerRange;
 #else
+class AccessibilityObjectWrapper;
 class NSArray;
 class NSAttributedString;
 class NSData;
