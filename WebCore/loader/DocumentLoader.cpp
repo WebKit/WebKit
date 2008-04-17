@@ -813,7 +813,7 @@ void DocumentLoader::setApplicationCache(PassRefPtr<ApplicationCache> applicatio
     m_applicationCache = applicationCache;
 }
 
-ApplicationCache* DocumentLoader::toplevelApplicationCache() const
+ApplicationCache* DocumentLoader::topLevelApplicationCache() const
 {
     if (!m_frame)
         return 0;

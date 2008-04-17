@@ -1,5 +1,15 @@
 2008-04-17  Anders Carlsson  <andersca@apple.com>
 
+        According to Sam and David, it's "topLevel", not "toplevel".
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::topLevelApplicationCache):
+        * loader/DocumentLoader.h:
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::associatedCache):
+
+2008-04-17  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam.
 
         Add DOMApplicationCache implementation.
