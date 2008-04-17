@@ -2,6 +2,27 @@
 
         Reviewed by Darin.
 
+        Add AccessibilityObjectWrapper to Windows.
+
+        * WebCore.vcproj/WebCore.vcproj: Add AccessibilityObjectWrapperWin.h
+        * page/AccessibilityObject.h: Include COMPtr.h,
+        AccessibilityObjectWrapperWin.h on Windows. Define wrapper() and
+        setWrapper() if accessibility is present. Add an m_wrapper on Windows.
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::detach): Clear m_wrapper if
+        accessibility is present.
+        * page/win/AccessibilityObjectWrapperWin.h: Added; defines a wrapper for
+        AccessibilityObjects on Windows.
+        (WebCore::AccessibilityObjectWrapper::attached): Return true if attached
+        to an object.
+        (WebCore::AccessibilityObjectWrapper::accessibilityObject): Return the
+        wrapped object.
+        (WebCore::AccessibilityObjectWrapper::AccessibilityObjectWrapper):
+
+2008-04-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
         Add AXObjectCache to Windows.
 
         * WebCore.vcproj/WebCore.vcproj: Add AXObjectCacheWin.cpp.

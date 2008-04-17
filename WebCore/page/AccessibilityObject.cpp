@@ -94,7 +94,7 @@ void AccessibilityObject::detach()
         m_renderer->setHasAXObject(false);
 #endif
     m_renderer = 0;
-#if PLATFORM(MAC)
+#if HAVE(ACCESSIBILITY)
     m_wrapper = 0;
 #endif
     clearChildren();

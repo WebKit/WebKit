@@ -35,6 +35,9 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
+#elif PLATFORM(WIN)
+#include "AccessibilityObjectWrapperWin.h"
+#include "COMPtr.h"
 #endif
 
 typedef struct _NSRange NSRange;
@@ -51,7 +54,6 @@ typedef struct _NSRange NSRange;
 @class WebCoreTextMarker;
 @class WebCoreTextMarkerRange;
 #else
-class AccessibilityObjectWrapper;
 class NSArray;
 class NSAttributedString;
 class NSData;
@@ -302,7 +304,7 @@ public:
 
     unsigned doAXLineForIndex(unsigned);
 
-#if PLATFORM(MAC)
+#if HAVE(ACCESSIBILITY)
     AccessibilityObjectWrapper* wrapper() const { return m_wrapper.get(); }
     void setWrapper(AccessibilityObjectWrapper* wrapper) { m_wrapper = wrapper; }
 #endif
@@ -320,6 +322,8 @@ private:
 
 #if PLATFORM(MAC)
     RetainPtr<AccessibilityObjectWrapper> m_wrapper;
+#elif PLATFORM(WIN)
+    COMPtr<AccessibilityObjectWrapper> m_wrapper;
 #endif
 };
 

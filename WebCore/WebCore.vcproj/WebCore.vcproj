@@ -3453,6 +3453,10 @@
 				Name="win"
 				>
 				<File
+					RelativePath="..\page\win\AccessibilityObjectWrapperWin.h"
+					>
+				</File>
+				<File
 					RelativePath="..\page\win\AXObjectCacheWin.cpp"
 					>
 				</File>
