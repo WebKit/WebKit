@@ -1,3 +1,15 @@
+2008-04-17  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17865
+        [Gtk] Improve detection of jpeglib and glib tools
+
+        Improve detecting jpeglib and glib tools
+
+        * configure.ac: Throw an error if the dependencies above are
+        currently not installed
+
 2008-04-14  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Alp Toker.

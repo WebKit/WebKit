@@ -97,6 +97,9 @@ fi
 # Check for glib-genmarshal and glib-mkenums
 AC_PATH_PROG([GLIB_GENMARSHAL], [glib-genmarshal])
 AC_PATH_PROG([GLIB_MKENUMS],[glib-mkenums])
+if test -z "$GLIB_GENMARSHAL" || test -z "$GLIB_MKENUMS"; then
+   AC_MSG_ERROR([You need the GLib dev tools in your path])
+fi
 
 # Check whether a C++ was found (AC_PROG_CXX sets $CXX to "g++" even when it
 # doesn't exist)
@@ -116,12 +119,14 @@ AC_HEADER_STDBOOL
 # pthread (not needed on Windows)
 if test "$os_win32" = "no"; then
 AC_CHECK_HEADERS([pthread.h],
-                 AC_DEFINE([HAVE_PTHREAD_H],[1],[Define if pthread exist]),
+                 AC_DEFINE([HAVE_PTHREAD_H],[1],[Define if pthread exists]),
                  AC_MSG_ERROR([pthread support is required to build WebKit]))
 fi
 
 # libjpeg headers
-AC_CHECK_HEADERS([jpeglib.h])
+AC_CHECK_HEADERS([jpeglib.h],
+                 AC_DEFINE([HAVE_JPEGLIB_H],[1],[Define if libjpeg exists]),
+                 AC_MSG_ERROR([libjpeg is required to build WebKit]))
 
 # check for pkg-config
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
