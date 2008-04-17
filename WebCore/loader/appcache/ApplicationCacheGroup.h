@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class ApplicationCache;
+class DocumentLoader;
 
 class ApplicationCacheGroup {
 public:
@@ -40,6 +41,7 @@ public:
     
     void cacheDestroyed(ApplicationCache*) { }
     
+    void documentLoaderDestroyed(DocumentLoader*) { }
 private:
     KURL m_manifestURL;
 };

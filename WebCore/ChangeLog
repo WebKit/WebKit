@@ -1,3 +1,25 @@
+2008-04-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+        
+        Add plumbing for associating document loaders with application caches.
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::~DocumentLoader):
+        (WebCore::DocumentLoader::originalURL):
+        (WebCore::DocumentLoader::requestURL):
+        (WebCore::DocumentLoader::responseURL):
+        (WebCore::DocumentLoader::responseMIMEType):
+        (WebCore::DocumentLoader::setCandidateApplicationCacheGroup):
+        (WebCore::DocumentLoader::setApplicationCache):
+        (WebCore::DocumentLoader::toplevelApplicationCache):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::candidateApplicationCacheGroup):
+        (WebCore::DocumentLoader::applicationCache):
+        * loader/appcache/ApplicationCacheGroup.h:
+        (WebCore::ApplicationCacheGroup::documentLoaderDestroyed):
+
 2008-04-17  Adam Roben  <aroben@apple.com>
 
         Fix Bug 18544: REGRESSION (r31951): Two fast/xsl tests crash
