@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+        Use size_t instead of unsigned where appropriate.
+
+        * css/CSSValueList.h:
+        * dom/NamedAttrMap.h:
+        * rendering/RenderStyle.h:
+
+2008-04-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
         Add some methods to check AccessibilityObject state.
 
         * page/AccessibilityObject.cpp:

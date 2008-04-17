@@ -63,7 +63,7 @@ public:
     virtual PassRefPtr<Node> setNamedItem(Node* arg, ExceptionCode&);
 
     virtual PassRefPtr<Node> item(unsigned index) const;
-    unsigned length() const { return m_attributes.size(); }
+    size_t length() const { return m_attributes.size(); }
 
     // Other methods (not part of DOM)
     Attribute* attributeItem(unsigned index) const { return m_attributes[index].get(); }

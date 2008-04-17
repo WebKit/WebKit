@@ -34,7 +34,7 @@ public:
     CSSValueList(bool isSpaceSeparated = false);
     virtual ~CSSValueList();
 
-    unsigned length() const { return m_values.size(); }
+    size_t length() const { return m_values.size(); }
     CSSValue* item(unsigned);
     CSSValue* itemWithoutBoundsCheck(unsigned index) { return m_values[index].get(); }
 

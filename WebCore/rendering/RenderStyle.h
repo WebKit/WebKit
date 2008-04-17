@@ -930,7 +930,7 @@ public:
     }
     
     bool isEmpty() const { return m_operations.isEmpty(); }
-    unsigned size() const { return m_operations.size(); }
+    size_t size() const { return m_operations.size(); }
     const RefPtr<TransformOperation>& operator[](size_t i) const { return m_operations.at(i); }
 
     void append(const RefPtr<TransformOperation>& op) { return m_operations.append(op); }
