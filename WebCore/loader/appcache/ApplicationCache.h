@@ -28,6 +28,66 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+
+#include "StringHash.h"
+#include "PlatformString.h"
+
+namespace WebCore {
+
+class ApplicationCacheGroup;
+class ApplicationCacheResource;
+class DocumentLoader;
+class KURL;
+class ResourceRequest;
+    
+class ApplicationCache : public RefCounted<ApplicationCache> {
+public:
+    static PassRefPtr<ApplicationCache> create(ApplicationCacheGroup* group) { return adoptRef(new ApplicationCache(group)); }
+    ~ApplicationCache();
+
+    void addResource(PassRefPtr<ApplicationCacheResource> resource);
+    unsigned removeResource(const String& url);
+    
+    void setManifestResource(PassRefPtr<ApplicationCacheResource> manifest);
+    ApplicationCacheResource* manifestResource() const { return m_manifest; }
+    
+    ApplicationCacheGroup* group() const { return m_group; }
+    
+    ApplicationCacheResource* resourceForRequest(const ResourceRequest&);
+    ApplicationCacheResource* resourceForURL(const String& url);
+
+    unsigned numDynamicEntries() const;
+    String dynamicEntry(unsigned index) const;
+    
+    bool addDynamicEntry(const String& url);
+    void removeDynamicEntry(const String& url);
+    
+    void setOnlineWhitelist(const HashSet<String>& onlineWhitelist);
+    bool isURLInOnlineWhitelist(const KURL&);
+    
+#ifndef NDEBUG
+    void dump();
+#endif
+
+    typedef HashMap<String, RefPtr<ApplicationCacheResource> > ResourceMap;
+    ResourceMap::const_iterator begin() const { return m_resources.begin(); }
+    ResourceMap::const_iterator end() const { return m_resources.end(); }
+    
+private:
+    ApplicationCache(ApplicationCacheGroup*);
+    
+    ApplicationCacheGroup* m_group;
+    ResourceMap m_resources;
+    ApplicationCacheResource* m_manifest;
+    
+    HashSet<String> m_onlineWhitelist;
+};
+
+} // namespace WebCore
 
 #endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
 

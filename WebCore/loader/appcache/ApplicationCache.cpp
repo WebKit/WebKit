@@ -28,5 +28,135 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
+#include "ApplicationCacheGroup.h"
+#include "ApplicationCacheResource.h"
+#include "ResourceRequest.h"
+
+namespace WebCore {
+ 
+ApplicationCache::ApplicationCache(ApplicationCacheGroup* group)
+    : m_group(group)
+    , m_manifest(0)
+{
+    ASSERT(m_group);
+}
+
+ApplicationCache::~ApplicationCache()
+{
+    m_group->cacheDestroyed(this);
+}
+
+void ApplicationCache::setManifestResource(PassRefPtr<ApplicationCacheResource> manifest)
+{
+    ASSERT(manifest);
+    ASSERT(!m_manifest);
+
+    ASSERT(manifest->type() & ApplicationCacheResource::Manifest);
+    
+    m_manifest = manifest.get();
+    
+    addResource(manifest);
+}
+    
+void ApplicationCache::addResource(PassRefPtr<ApplicationCacheResource> resource)
+{
+    ASSERT(resource);
+    
+    const String& url = resource->url();
+    
+    ASSERT(!m_resources.contains(url));
+    
+    m_resources.set(url, resource);
+}
+
+unsigned ApplicationCache::removeResource(const String& url)
+{
+    
+    HashMap<String, RefPtr<ApplicationCacheResource> >::iterator it = m_resources.find(url);
+    if (it == m_resources.end())
+        return 0;
+
+    // The resource exists, get its type so we can return it.
+    unsigned type = it->second->type();
+
+    m_resources.remove(it);
+    
+    return type;
+}    
+    
+ApplicationCacheResource* ApplicationCache::resourceForURL(const String& url)
+{
+    return m_resources.get(url).get();
+}    
+
+ApplicationCacheResource* ApplicationCache::resourceForRequest(const ResourceRequest& request)
+{
+    // We only care about HTTP/HTTPS GET requests.
+    if (!request.url().protocolIs("http") && !request.url().protocolIs("https"))
+        return false;
+    
+    if (!equalIgnoringCase(request.httpMethod(), "get"))
+        return false;
+    
+    return resourceForURL(request.url());
+}
+
+unsigned ApplicationCache::numDynamicEntries() const
+{
+    // FIXME: Implement
+    return 0;
+}
+    
+String ApplicationCache::dynamicEntry(unsigned index) const
+{
+    // FIXME: Implement
+    return String();
+}
+    
+bool ApplicationCache::addDynamicEntry(const String& url)
+{
+    if (!equalIgnoringCase(m_group->manifestURL().protocol(),
+                           KURL(url).protocol()))
+        return false;
+
+    // FIXME: Implement
+    return true;
+}
+    
+void ApplicationCache::removeDynamicEntry(const String& url)
+{
+    // FIXME: Implement
+}
+
+void ApplicationCache::setOnlineWhitelist(const HashSet<String>& onlineWhitelist)
+{
+    ASSERT(m_onlineWhitelist.isEmpty());
+    m_onlineWhitelist = onlineWhitelist; 
+}
+
+bool ApplicationCache::isURLInOnlineWhitelist(const KURL& url)
+{
+    if (!url.hasRef())
+        return m_onlineWhitelist.contains(url);
+    
+    KURL copy(url);
+    copy.setRef(String());
+    return m_onlineWhitelist.contains(copy);
+}
+    
+#ifndef NDEBUG
+void ApplicationCache::dump()
+{
+    HashMap<String, RefPtr<ApplicationCacheResource> >::const_iterator end = m_resources.end();
+    
+    for (HashMap<String, RefPtr<ApplicationCacheResource> >::const_iterator it = m_resources.begin(); it != end; ++it) {
+        printf("%s ", it->first.ascii().data());
+        ApplicationCacheResource::dumpType(it->second->type());
+    }
+}
+    
+#endif
+
+}
 
 #endif // ENABLE(OFFLINE_WEB_APPLICATIONS)

@@ -1,3 +1,35 @@
+2008-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady and Sam.
+
+        Add ApplicationCache implementation. Stub out ApplicationCacheGroup methods
+        needed by ApplicationCache.
+        
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::ApplicationCache):
+        (WebCore::ApplicationCache::~ApplicationCache):
+        (WebCore::ApplicationCache::setManifestResource):
+        (WebCore::ApplicationCache::addResource):
+        (WebCore::ApplicationCache::removeResource):
+        (WebCore::ApplicationCache::resourceForURL):
+        (WebCore::ApplicationCache::resourceForRequest):
+        (WebCore::ApplicationCache::numDynamicEntries):
+        (WebCore::ApplicationCache::dynamicEntry):
+        (WebCore::ApplicationCache::addDynamicEntry):
+        (WebCore::ApplicationCache::removeDynamicEntry):
+        (WebCore::ApplicationCache::setOnlineWhitelist):
+        (WebCore::ApplicationCache::isURLInOnlineWhitelist):
+        (WebCore::ApplicationCache::dump):
+        * loader/appcache/ApplicationCache.h:
+        (WebCore::ApplicationCache::create):
+        (WebCore::ApplicationCache::manifestResource):
+        (WebCore::ApplicationCache::group):
+        (WebCore::ApplicationCache::begin):
+        (WebCore::ApplicationCache::end):
+        * loader/appcache/ApplicationCacheGroup.h:
+        (WebCore::ApplicationCacheGroup::manifestURL):
+        (WebCore::ApplicationCacheGroup::cacheDestroyed):
+
 2008-04-16  Adam Roben  <aroben@apple.com>
 
         Fix Bug 18505: REGRESSION: Search is disabled and not functional

@@ -28,6 +28,22 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
+#include "KURL.h"
+
+namespace WebCore {
+
+class ApplicationCache;
+
+class ApplicationCacheGroup {
+public:
+    const KURL& manifestURL() const { return m_manifestURL; }
+    
+    void cacheDestroyed(ApplicationCache*) { }
+private:
+    KURL m_manifestURL;
+};
+
+} // namespace WebCore
 
 #endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
 
