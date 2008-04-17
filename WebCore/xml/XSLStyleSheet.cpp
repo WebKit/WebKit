@@ -25,11 +25,13 @@
 #if ENABLE(XSLT)
 
 #include "CString.h"
+#include "Console.h"
+#include "DOMWindow.h"
 #include "DocLoader.h"
 #include "Document.h"
+#include "Frame.h"
 #include "loader.h"
 #include "Node.h"
-#include "Page.h"
 #include "XMLTokenizer.h"
 #include "XSLImportRule.h"
 #include "XSLTProcessor.h"
@@ -139,10 +141,10 @@ bool XSLStyleSheet::parseString(const String& string, bool strict)
         xmlFreeDoc(m_stylesheetDoc);
     m_stylesheetDocTaken = false;
 
-    Chrome* chrome = 0;
-    if (Page* page = ownerDocument()->page())
-        chrome = page->chrome();
-    xmlSetStructuredErrorFunc(chrome, XSLTProcessor::parseErrorFunc);
+    Console* console = 0;
+    if (Frame* frame = ownerDocument()->frame())
+        console = frame->domWindow()->console();
+    xmlSetStructuredErrorFunc(console, XSLTProcessor::parseErrorFunc);
 
     m_stylesheetDoc = xmlReadMemory(reinterpret_cast<const char*>(string.characters()), string.length() * sizeof(UChar),
         href().utf8().data(),
