@@ -3,7 +3,7 @@
         Reviewed by Darin Adler
 
         Merge the StorageAreaClient into the StorageArea class itself as pure virtual methods.
-        Add "LocalStorageArea" add "SessionStorageArea" implementations, and have SessionStorage
+        Add "LocalStorageArea" and "SessionStorageArea" implementations, and have SessionStorage
         and LocalStorage instantiate the appropriate type of StorageArea object.
 
         This purpose of this change is because while adding the persistent store to LocalStorage,
