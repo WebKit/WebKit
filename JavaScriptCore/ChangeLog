@@ -1,3 +1,11 @@
+2008-04-15  Srinivas Rao. M Hamse  <msrinirao@gmail.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - gcc 3.x build fix
+
+        * kjs/nodes.h: CallerType definition made public for gcc 3.x compilation
+
 2008-04-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
