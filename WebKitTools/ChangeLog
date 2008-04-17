@@ -1,5 +1,22 @@
 2008-04-17  Adam Roben  <aroben@apple.com>
 
+        Refactor test results page generation
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/run-webkit-tests:
+        (sub htmlForResultsSection): Added. Takes a set of tests, a
+        description, and a subroutine to generate the links for each test, and
+        creates a HTML string containing a table of the tests and their
+        links.
+        (sub linksForExpectedAndActualResults): Added. Replaces the
+        htmlForExpectedAndActualResults subroutine.
+        (sub linksForMismatchTest): Added.
+        (sub linksForCrashOrErrorTest): Added.
+        (sub linksForNewTest): Added.
+
+2008-04-17  Adam Roben  <aroben@apple.com>
+
         Print the extension for all tests in the test results page
 
         Reviewed by Eric Seidel.
