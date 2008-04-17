@@ -1,3 +1,15 @@
+2008-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Add manifest parser.
+
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::):
+        (WebCore::parseManifest):
+        * loader/appcache/ManifestParser.h:
+        * platform/text/CharacterNames.h:
+
 2008-04-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

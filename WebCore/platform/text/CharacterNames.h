@@ -48,6 +48,7 @@ namespace WebCore {
     const UChar noBreakSpace = 0x00A0;
     const UChar objectReplacementCharacter = 0xFFFC;
     const UChar popDirectionalFormatting = 0x202C;
+    const UChar replacementCharacter = 0xFFFD;
     const UChar rightToLeftMark = 0x200F;
     const UChar rightToLeftEmbed = 0x202B;
     const UChar rightToLeftOverride = 0x202E;
