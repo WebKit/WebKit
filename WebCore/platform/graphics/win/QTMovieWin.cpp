@@ -320,11 +320,15 @@ void QTMovieWin::pause()
 
 float QTMovieWin::rate() const
 {
+    if (!m_private->m_movie)
+        return 0;
     return FixedToFloat(GetMovieRate(m_private->m_movie));
 }
 
 void QTMovieWin::setRate(float rate)
 {
+    if (!m_private->m_movie)
+        return;
     SetMovieRate(m_private->m_movie, FloatToFixed(rate));
     updateTaskTimer();
 }
@@ -359,6 +363,8 @@ void QTMovieWin::setCurrentTime(float time) const
 
 void QTMovieWin::setVolume(float volume)
 {
+    if (!m_private->m_movie)
+        return;
     SetMovieVolume(m_private->m_movie, static_cast<short>(volume * 256));
 }
 
@@ -385,8 +391,10 @@ long QTMovieWin::loadState() const
 
 void QTMovieWin::getNaturalSize(int& width, int& height)
 {
-    Rect rect;
-    GetMovieNaturalBoundsRect(m_private->m_movie, &rect);
+    Rect rect = { 0, };
+
+    if (m_private->m_movie)
+        GetMovieNaturalBoundsRect(m_private->m_movie, &rect);
     width = rect.right;
     height = rect.bottom;
 }

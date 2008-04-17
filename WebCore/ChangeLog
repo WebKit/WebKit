@@ -1,3 +1,15 @@
+2008-04-17 Eric Carlson  <eric.carlson@apple.com> 
+
+        Reviewed by Adele. 
+
+        Fix for <rdar://problem/5861642> QTMovieWin returns uninitialized values
+
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWin::rate):
+        (QTMovieWin::setRate):
+        (QTMovieWin::setVolume):
+        (QTMovieWin::getNaturalSize):
+
 2008-04-17  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Alp Toker.
