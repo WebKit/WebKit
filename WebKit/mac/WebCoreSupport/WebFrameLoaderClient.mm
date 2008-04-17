@@ -1212,7 +1212,7 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element
     NSURL *URL = url;
 
     if ([[webView UIDelegate] respondsToSelector:selector]) {
-        NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:kit(paramNames) forKeys:kit(paramValues)];
+        NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:kit(paramValues) forKeys:kit(paramNames)];
         NSDictionary *arguments = [[NSDictionary alloc] initWithObjectsAndKeys:
             attributes, WebPlugInAttributesKey,
             [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
