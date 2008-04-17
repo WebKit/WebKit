@@ -1,3 +1,12 @@
+2008-04-17  Adam Roben  <aroben@apple.com>
+
+        Move code that handles a crash into a subroutine
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/run-webkit-tests:
+        (sub testCrashed): Added.
+
 2008-04-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.

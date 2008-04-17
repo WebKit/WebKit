@@ -81,6 +81,7 @@ sub splitpath($);
 sub stripExtension($);
 sub isTextOnlyTest($);
 sub expectedDirectoryForTest($;$;$);
+sub testCrashed($$$$);
 sub printFailureMessageForTest($$);
 sub toURL($);
 sub toWindowsPath($);
@@ -717,22 +718,7 @@ for my $test (@tests) {
 
     if (dumpToolDidCrash()) {
         $result = "crash";
-
-        printFailureMessageForTest($test, "crashed");
-
-        my $dir = "$testResultsDirectory/$base";
-        $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
-        mkpath $dir;
-
-        deleteExpectedAndActualResults($base);
-
-        open CRASH, ">", "$testResultsDirectory/$base-$errorTag.txt" or die;
-        print CRASH $error;
-        close CRASH;
-
-        recordActualResultsAndDiff($base, $actual);
-
-        closeDumpTool();
+        testCrashed($test, $base, $actual, $error);
     } elsif (!defined $expected) {
         if ($verbose) {
             print "new " . ($resetResults ? "result" : "test") ."\n";
@@ -1465,6 +1451,26 @@ sub expectedDirectoryForTest($;$;$)
     # For cross-platform tests, text-only results should go in the cross-platform directory,
     # while render tree dumps should go in the least-specific platform directory.
     return $isText ? $expectedDirectory : $platformHierarchy[$#platformHierarchy];
+}
+
+sub testCrashed($$$$) {
+    my ($test, $base, $actual, $error) = @_;
+
+    printFailureMessageForTest($test, "crashed");
+
+    my $dir = "$testResultsDirectory/$base";
+    $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
+    mkpath $dir;
+
+    deleteExpectedAndActualResults($base);
+
+    open CRASH, ">", "$testResultsDirectory/$base-$errorTag.txt" or die;
+    print CRASH $error;
+    close CRASH;
+
+    recordActualResultsAndDiff($base, $actual);
+
+    closeDumpTool();
 }
 
 sub printFailureMessageForTest($$)
