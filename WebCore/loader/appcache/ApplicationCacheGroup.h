@@ -39,6 +39,7 @@ public:
     const KURL& manifestURL() const { return m_manifestURL; }
     
     void cacheDestroyed(ApplicationCache*) { }
+    
 private:
     KURL m_manifestURL;
 };

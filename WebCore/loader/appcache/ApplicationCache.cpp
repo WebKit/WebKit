@@ -38,7 +38,7 @@ ApplicationCache::ApplicationCache(ApplicationCacheGroup* group)
     : m_group(group)
     , m_manifest(0)
 {
-    ASSERT(m_group);
+    ASSERT_ARG(group);
 }
 
 ApplicationCache::~ApplicationCache()
@@ -48,9 +48,8 @@ ApplicationCache::~ApplicationCache()
 
 void ApplicationCache::setManifestResource(PassRefPtr<ApplicationCacheResource> manifest)
 {
-    ASSERT(manifest);
+    ASSERT_ARG(manifest);
     ASSERT(!m_manifest);
-
     ASSERT(manifest->type() & ApplicationCacheResource::Manifest);
     
     m_manifest = manifest.get();
@@ -60,7 +59,7 @@ void ApplicationCache::setManifestResource(PassRefPtr<ApplicationCacheResource> 
     
 void ApplicationCache::addResource(PassRefPtr<ApplicationCacheResource> resource)
 {
-    ASSERT(resource);
+    ASSERT_ARG(resource);
     
     const String& url = resource->url();
     
@@ -71,7 +70,6 @@ void ApplicationCache::addResource(PassRefPtr<ApplicationCacheResource> resource
 
 unsigned ApplicationCache::removeResource(const String& url)
 {
-    
     HashMap<String, RefPtr<ApplicationCacheResource> >::iterator it = m_resources.find(url);
     if (it == m_resources.end())
         return 0;
@@ -154,7 +152,6 @@ void ApplicationCache::dump()
         ApplicationCacheResource::dumpType(it->second->type());
     }
 }
-    
 #endif
 
 }

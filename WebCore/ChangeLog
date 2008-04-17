@@ -1,5 +1,19 @@
 2008-04-16  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam.
+        
+        Fix some style nits.
+        
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::ApplicationCache):
+        (WebCore::ApplicationCache::setManifestResource):
+        (WebCore::ApplicationCache::addResource):
+        (WebCore::ApplicationCache::removeResource):
+        (WebCore::ApplicationCache::dump):
+        * loader/appcache/ApplicationCacheGroup.h:
+
+2008-04-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Brady and Sam.
 
         Add ApplicationCache implementation. Stub out ApplicationCacheGroup methods
