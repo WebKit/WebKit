@@ -203,6 +203,7 @@ my %renames = (
     "RegExpObjectImp" => "RegExpConstructor",
     "RegExpObjectImpPrivate" => "RegExpConstructorPrivate",
     "RegExpProtoFunc" => "RegExpFunction",
+    "RenderView" => "RenderViewport",
     "RuntimeObjectImp" => "ForeignObject",
     "StringImp" => "JSString",
     "StringImpl" => "SharedString",

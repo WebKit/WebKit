@@ -1,3 +1,11 @@
+2008-04-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+        
+        Rename RenderView to RenderViewport in the next rename patch.
+
+        * Scripts/do-webcore-rename:
+
 2008-04-17  Mario Bensi  <mbensi@pleyo.com>
 
         Reviewed by Alp Toker.
