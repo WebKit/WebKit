@@ -1,3 +1,15 @@
+2008-04-17  Mario Bensi  <mbensi@pleyo.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18543
+        DumpRenderTree gtk freeze
+
+        fix DumpRenderTree gtk freeze 
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dump):
+
 2008-04-15  Anders Carlsson  <andersca@apple.com>
 
         Add missing ;

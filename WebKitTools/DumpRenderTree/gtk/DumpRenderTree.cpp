@@ -187,8 +187,10 @@ void dump()
             // FIXME: not implemented
         }
 
-        if (printSeparators)
+        if (printSeparators) {
             puts("#EOF");
+            fputs("#EOF\n", stderr);
+        }
     }
 
     if (dumpPixels) {
