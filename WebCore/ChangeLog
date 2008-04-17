@@ -1,3 +1,60 @@
+2008-04-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        Merge the StorageAreaClient into the StorageArea class itself as pure virtual methods.
+        Add "LocalStorageArea" add "SessionStorageArea" implementations, and have SessionStorage
+        and LocalStorage instantiate the appropriate type of StorageArea object.
+
+        This purpose of this change is because while adding the persistent store to LocalStorage,
+        it became obvious that the client approach wasn't scaling well.  Additionally, a StorageArea
+        backing a local storage area required vastly different data members compared to one backing
+        a session storage area.
+
+        This will be much cleaner going forward.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::storageArea):
+        * storage/LocalStorage.h:
+
+        * storage/LocalStorageArea.cpp: Added.
+        (WebCore::LocalStorageArea::LocalStorageArea):
+        (WebCore::LocalStorageArea::itemChanged):
+        (WebCore::LocalStorageArea::itemRemoved):
+        (WebCore::LocalStorageArea::dispatchStorageEvent):
+        * storage/LocalStorageArea.h: Added.
+        (WebCore::LocalStorageArea::create):
+
+        * storage/SessionStorage.cpp:
+        (WebCore::SessionStorage::copy):
+        (WebCore::SessionStorage::storageArea):
+        * storage/SessionStorage.h:
+
+        * storage/SessionStorageArea.cpp: Added.
+        (WebCore::SessionStorageArea::copy):
+        (WebCore::SessionStorageArea::SessionStorageArea):
+        (WebCore::SessionStorageArea::itemChanged):
+        (WebCore::SessionStorageArea::itemRemoved):
+        (WebCore::SessionStorageArea::dispatchStorageEvent):
+        * storage/SessionStorageArea.h: Added.
+        (WebCore::SessionStorageArea::create):
+        (WebCore::SessionStorageArea::page):
+
+        * storage/StorageArea.cpp:
+        (WebCore::StorageArea::StorageArea):
+        (WebCore::StorageArea::setItem):
+        (WebCore::StorageArea::removeItem):
+        (WebCore::StorageArea::storageMap):
+        * storage/StorageArea.h:
+
+        * storage/StorageAreaClient.h: Removed.
+
 2008-04-16  David Hyatt  <hyatt@apple.com>
 
         Add support for the ability to draw directly into CSS images using CanvasRenderingContext2D.

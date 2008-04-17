@@ -1200,11 +1200,13 @@ webcore_cppflags += \
 
 webcore_sources += \
 	WebCore/storage/LocalStorage.cpp \
+	WebCore/storage/LocalStorageArea.cpp \
 	WebCore/storage/Storage.cpp \
 	WebCore/storage/StorageArea.cpp \
 	WebCore/storage/StorageEvent.cpp \
 	WebCore/storage/StorageMap.cpp \
 	WebCore/storage/SessionStorage.cpp \
+	WebCore/storage/SessionStorageArea.cpp \
 	WebCore/bindings/js/JSStorageCustom.cpp
 
 endif # END ENABLE_DOM_STORAGE

@@ -450,6 +450,10 @@
 		514185EF0CD65F0400763C99 /* ChangeVersionWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514185ED0CD65F0400763C99 /* ChangeVersionWrapper.cpp */; };
 		514B3F730C722047000530DF /* FileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 514B3F720C722047000530DF /* FileSystem.h */; };
 		514B3F760C722055000530DF /* FileSystemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514B3F750C722055000530DF /* FileSystemMac.mm */; };
+		514B49DB0DB6D6AD001C3770 /* LocalStorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 514B49D90DB6D6AD001C3770 /* LocalStorageArea.h */; };
+		514B49DC0DB6D6AD001C3770 /* LocalStorageArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514B49DA0DB6D6AD001C3770 /* LocalStorageArea.cpp */; };
+		514B49DF0DB6D6B6001C3770 /* SessionStorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 514B49DD0DB6D6B6001C3770 /* SessionStorageArea.h */; };
+		514B49E00DB6D6B6001C3770 /* SessionStorageArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514B49DE0DB6D6B6001C3770 /* SessionStorageArea.cpp */; };
 		514C76370CE9225E007EF3CD /* JSSQLError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76350CE9225E007EF3CD /* JSSQLError.cpp */; };
 		514C76380CE9225E007EF3CD /* JSSQLTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76360CE9225E007EF3CD /* JSSQLTransaction.cpp */; };
 		514C764C0CE9234E007EF3CD /* AuthenticationMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76420CE9234E007EF3CD /* AuthenticationMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -512,7 +516,6 @@
 		51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE37DE0DAEE00E001085FC /* StorageArea.h */; };
 		51BE38280DAEF7DA001085FC /* LocalStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BE38260DAEF7DA001085FC /* LocalStorage.cpp */; };
 		51BE38290DAEF7DA001085FC /* LocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE38270DAEF7DA001085FC /* LocalStorage.h */; };
-		51BE382C0DAEF7F3001085FC /* StorageAreaClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE382B0DAEF7F3001085FC /* StorageAreaClient.h */; };
 		51C81B890C4422F70019ECE3 /* FTPDirectoryParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */; };
 		51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */; };
 		51CBFC990D10E483002DBF51 /* CachedPagePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFC980D10E483002DBF51 /* CachedPagePlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4894,6 +4897,10 @@
 		514185ED0CD65F0400763C99 /* ChangeVersionWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeVersionWrapper.cpp; sourceTree = "<group>"; };
 		514B3F720C722047000530DF /* FileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystem.h; sourceTree = "<group>"; };
 		514B3F750C722055000530DF /* FileSystemMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSystemMac.mm; sourceTree = "<group>"; };
+		514B49D90DB6D6AD001C3770 /* LocalStorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorageArea.h; sourceTree = "<group>"; };
+		514B49DA0DB6D6AD001C3770 /* LocalStorageArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorageArea.cpp; sourceTree = "<group>"; };
+		514B49DD0DB6D6B6001C3770 /* SessionStorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionStorageArea.h; sourceTree = "<group>"; };
+		514B49DE0DB6D6B6001C3770 /* SessionStorageArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionStorageArea.cpp; sourceTree = "<group>"; };
 		514C76350CE9225E007EF3CD /* JSSQLError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLError.cpp; sourceTree = "<group>"; };
 		514C76360CE9225E007EF3CD /* JSSQLTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransaction.cpp; sourceTree = "<group>"; };
 		514C76420CE9234E007EF3CD /* AuthenticationMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationMac.h; sourceTree = "<group>"; };
@@ -4960,7 +4967,6 @@
 		51BE37DE0DAEE00E001085FC /* StorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageArea.h; sourceTree = "<group>"; };
 		51BE38260DAEF7DA001085FC /* LocalStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorage.cpp; sourceTree = "<group>"; };
 		51BE38270DAEF7DA001085FC /* LocalStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorage.h; sourceTree = "<group>"; };
-		51BE382B0DAEF7F3001085FC /* StorageAreaClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaClient.h; sourceTree = "<group>"; };
 		51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryParser.cpp; sourceTree = "<group>"; };
 		51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryParser.h; sourceTree = "<group>"; };
 		51CBFC980D10E483002DBF51 /* CachedPagePlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedPagePlatformData.h; sourceTree = "<group>"; };
@@ -8584,10 +8590,16 @@
 				51FAFE330CECBF2D00BB3F24 /* DatabaseTrackerClient.h */,
 				51BE38260DAEF7DA001085FC /* LocalStorage.cpp */,
 				51BE38270DAEF7DA001085FC /* LocalStorage.h */,
+				514B49DA0DB6D6AD001C3770 /* LocalStorageArea.cpp */,
+				514B49D90DB6D6AD001C3770 /* LocalStorageArea.h */,
 				51A926780D53F0570063ECC2 /* OriginQuotaManager.cpp */,
 				51A926790D53F0570063ECC2 /* OriginQuotaManager.h */,
 				51A9267A0D53F0570063ECC2 /* OriginUsageRecord.cpp */,
 				51A9267B0D53F0570063ECC2 /* OriginUsageRecord.h */,
+				51E0BB220DA572A600A9E417 /* SessionStorage.cpp */,
+				51E0BB210DA572A600A9E417 /* SessionStorage.h */,
+				514B49DE0DB6D6B6001C3770 /* SessionStorageArea.cpp */,
+				514B49DD0DB6D6B6001C3770 /* SessionStorageArea.h */,
 				51EC92570CE90DB400F90308 /* SQLError.h */,
 				51EC92580CE90DB400F90308 /* SQLError.idl */,
 				519611670CAC56570010A80C /* SQLResultSet.cpp */,
@@ -8614,14 +8626,11 @@
 				51E3F9D10DA05D7100250911 /* Storage.idl */,
 				51BE37DD0DAEE00E001085FC /* StorageArea.cpp */,
 				51BE37DE0DAEE00E001085FC /* StorageArea.h */,
-				51BE382B0DAEF7F3001085FC /* StorageAreaClient.h */,
 				51E0BABA0DA5547100A9E417 /* StorageEvent.cpp */,
 				51E0BAB90DA5547100A9E417 /* StorageEvent.h */,
 				51E0BABD0DA5548400A9E417 /* StorageEvent.idl */,
 				51E0BB370DA5ACB600A9E417 /* StorageMap.cpp */,
 				51E0BB360DA5ACB600A9E417 /* StorageMap.h */,
-				51E0BB220DA572A600A9E417 /* SessionStorage.cpp */,
-				51E0BB210DA572A600A9E417 /* SessionStorage.h */,
 			);
 			indentWidth = 4;
 			path = storage;
@@ -14898,7 +14907,6 @@
 				BC53C6920DA591140021EB5D /* CSSGradientValue.h in Headers */,
 				51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */,
 				51BE38290DAEF7DA001085FC /* LocalStorage.h in Headers */,
-				51BE382C0DAEF7F3001085FC /* StorageAreaClient.h in Headers */,
 				BC23EE920DAED2BC009FDC91 /* CSSImageGeneratorValue.h in Headers */,
 				BC23F0DB0DAFF4A4009FDC91 /* GeneratedImage.h in Headers */,
 				BCE04C8A0DAFF7A0007A0F41 /* Generator.h in Headers */,
@@ -14919,6 +14927,8 @@
 				1A8F6BC30DB55CDC001DB794 /* DOMApplicationCache.h in Headers */,
 				1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */,
 				1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */,
+				514B49DB0DB6D6AD001C3770 /* LocalStorageArea.h in Headers */,
+				514B49DF0DB6D6B6001C3770 /* SessionStorageArea.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16621,6 +16631,8 @@
 				C0DFC8700DB6841A003EAE7C /* JSConsoleCustom.cpp in Sources */,
 				1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */,
 				1AC226170DB69F740089B669 /* JSDOMApplicationCacheCustom.cpp in Sources */,
+				514B49DC0DB6D6AD001C3770 /* LocalStorageArea.cpp in Sources */,
+				514B49E00DB6D6B6001C3770 /* SessionStorageArea.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

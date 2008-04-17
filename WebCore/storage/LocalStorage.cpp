@@ -29,6 +29,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameTree.h"
+#include "LocalStorageArea.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "StorageArea.h"
@@ -55,49 +56,9 @@ PassRefPtr<StorageArea> LocalStorage::storageArea(SecurityOrigin* origin)
     if (storageArea = m_storageAreaMap.get(origin))
         return storageArea.release();
         
-    storageArea = StorageArea::create(origin, 0, this);
+    storageArea = LocalStorageArea::create(origin);
     m_storageAreaMap.set(origin, storageArea);
     return storageArea.release();
-}
-
-void LocalStorage::itemChanged(StorageArea* area, const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
-{
-    // FIXME: Flag this change to be written out to the persistent store
-
-    dispatchStorageEvent(area, key, oldValue, newValue, sourceFrame);
-}
-
-void LocalStorage::itemRemoved(StorageArea* area, const String& key, const String& oldValue, Frame* sourceFrame)
-{
-    // FIXME: Flag this removal to be written out to the persistent store
-
-    dispatchStorageEvent(area, key, oldValue, String(), sourceFrame);
-}
-
-void LocalStorage::dispatchStorageEvent(StorageArea* area, const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
-{
-    Page* page = sourceFrame->page();
-    if (!page)
-        return;
-
-    // Need to copy all relevant frames from every page to a vector, since sending the event to one frame might mutate the frame tree
-    // of any given page in the group, or mutate the page group itself
-    Vector<RefPtr<Frame> > frames;
-    const HashSet<Page*>& pages = page->group().pages();
-    
-    HashSet<Page*>::const_iterator end = pages.end();
-    for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
-        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-            if (Document* document = frame->document())
-                if (document->securityOrigin()->equal(area->securityOrigin()))
-                    frames.append(frame);
-        }
-    }
-
-    for (unsigned i = 0; i < frames.size(); ++i) {
-        if (HTMLElement* body = frames[i]->document()->body())
-            body->dispatchStorageEvent(EventNames::storageEvent, key, oldValue, newValue, sourceFrame);        
-    }
 }
 
 } // namespace WebCore

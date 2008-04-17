@@ -27,26 +27,23 @@
 #define LocalStorage_h
 
 #include "SecurityOriginHash.h"
-#include "StorageAreaClient.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-    class LocalStorage : public StorageAreaClient {
+    class StorageArea;
+
+    class LocalStorage : Noncopyable{
     public:
         static LocalStorage& sharedLocalStorage();
         
         PassRefPtr<StorageArea> storageArea(SecurityOrigin*);
-
-        virtual void itemChanged(StorageArea*, const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
-        virtual void itemRemoved(StorageArea*, const String& key, const String& oldValue, Frame* sourceFrame);
     
     private:
         LocalStorage();
-
-        void dispatchStorageEvent(StorageArea*, const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
 
         typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash, SecurityOriginTraits> StorageAreaMap;
         StorageAreaMap m_storageAreaMap;

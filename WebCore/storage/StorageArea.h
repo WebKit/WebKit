@@ -27,15 +27,14 @@
 #define StorageArea_h
 
 #include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
     class Frame;
-    class Page;
     class SecurityOrigin;
-    class StorageAreaClient;
     class StorageMap;
     class String;
     typedef int ExceptionCode;
@@ -43,9 +42,6 @@ namespace WebCore {
     class StorageArea : public RefCounted<StorageArea> {
     public:
         virtual ~StorageArea();
-        
-        static PassRefPtr<StorageArea> create(SecurityOrigin*, Page*, PassRefPtr<StorageAreaClient>);
-        PassRefPtr<StorageArea> copy(SecurityOrigin*, Page*);
         
         unsigned length() const;
         String key(unsigned index, ExceptionCode&) const;
@@ -55,19 +51,20 @@ namespace WebCore {
 
         bool contains(const String& key) const;
         
-        void setClient(PassRefPtr<StorageAreaClient> client);
-
-        Page* page() { return m_page; }
         SecurityOrigin* securityOrigin() { return m_securityOrigin.get(); }
 
+    protected:
+        StorageArea(SecurityOrigin*);
+        StorageArea(SecurityOrigin*, PassRefPtr<StorageMap>);
+
+        PassRefPtr<StorageMap> storageMap();
+        
     private:
-        StorageArea(SecurityOrigin*, Page*, PassRefPtr<StorageAreaClient>);
-        StorageArea(SecurityOrigin*, Page*, PassRefPtr<StorageMap>, PassRefPtr<StorageAreaClient>);
-                
-        Page* m_page;
+        virtual void itemChanged(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame) = 0;
+        virtual void itemRemoved(const String& key, const String& oldValue, Frame* sourceFrame) = 0;
+
         RefPtr<SecurityOrigin> m_securityOrigin;
         RefPtr<StorageMap> m_storageMap;
-        RefPtr<StorageAreaClient> m_client;
     };
 
 } // namespace WebCore

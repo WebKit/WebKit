@@ -23,27 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StorageAreaClient_h
-#define StorageAreaClient_h
+#ifndef SessionStorageArea_h
+#define SessionStorageArea_h
 
-#include <wtf/RefCounted.h>
+#include "StorageArea.h"
 
 namespace WebCore {
 
-class StorageArea;
-class String;
+    class Page;
+    
+    class SessionStorageArea : public StorageArea {
+    public:
+        static PassRefPtr<SessionStorageArea> create(SecurityOrigin* origin, Page* page) { return adoptRef(new SessionStorageArea(origin, page)); }
+        PassRefPtr<SessionStorageArea> copy(SecurityOrigin*, Page*);
+                
+        Page* page() { return m_page; }
 
-class StorageAreaClient : public RefCounted<StorageAreaClient> {
-public:
-    virtual ~StorageAreaClient() { }
+    private:
+        SessionStorageArea(SecurityOrigin*, Page*);
+        SessionStorageArea(SecurityOrigin*, Page*, PassRefPtr<StorageMap>);
 
-    virtual void itemChanged(StorageArea*, const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame) = 0;
-    virtual void itemRemoved(StorageArea*, const String& key, const String& oldValue, Frame* sourceFrame) = 0;
+        virtual void itemChanged(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
+        virtual void itemRemoved(const String& key, const String& oldValue, Frame* sourceFrame);
 
-protected:
-    StorageAreaClient() { }
-};
+        void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
+        
+        Page* m_page;
+    };
 
 } // namespace WebCore
 
-#endif // StorageAreaClient_h
+#endif // SessionStorageArea_h

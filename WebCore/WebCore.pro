@@ -1218,11 +1218,13 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
 
     SOURCES += \
         storage/LocalStorage.cpp \
+        storage/LocalStorageArea.cpp \
         storage/Storage.cpp \
         storage/StorageArea.cpp \
         storage/StorageEvent.cpp \
         storage/StorageMap.cpp \
         storage/SessionStorage.cpp \
+        storage/SessionStorageArea.cpp \
         bindings/js/JSStorage.cpp \
         bindings/js/JSStorageCustom.cpp \
         bindings/js/JSStorageEvent.cpp \

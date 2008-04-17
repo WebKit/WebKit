@@ -801,6 +801,7 @@ This file contains the list of files needed to build WebCore.
         storage/DatabaseThread.cpp
         storage/DatabaseTracker.cpp
         storage/LocalStorage.cpp
+        storage/LocalStorageArea.cpp
         storage/OriginQuotaManager.cpp
         storage/OriginUsageRecord.cpp
         storage/SQLResultSet.cpp
@@ -812,6 +813,7 @@ This file contains the list of files needed to build WebCore.
         storage/StorageEvent.cpp
         storage/StorageMap.cpp
         storage/SessionStorage.cpp
+        storage/SessionStorageArea.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_XML">

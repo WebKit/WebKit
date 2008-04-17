@@ -52,10 +52,9 @@ PassRefPtr<SessionStorage> SessionStorage::copy(Page* newPage)
     ASSERT(newPage);
     RefPtr<SessionStorage> newSession = SessionStorage::create(newPage);
     
-    StorageAreaMap::iterator end = m_storageAreaMap.end();
-    for (StorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i) {
-        RefPtr<StorageArea> areaCopy = i->second->copy(i->first.get(), newPage);
-        areaCopy->setClient(newSession.get());
+    SessionStorageAreaMap::iterator end = m_storageAreaMap.end();
+    for (SessionStorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i) {
+        RefPtr<SessionStorageArea> areaCopy = i->second->copy(i->first.get(), newPage);
         newSession->m_storageAreaMap.set(i->first, areaCopy.release());
     }
     
@@ -64,42 +63,13 @@ PassRefPtr<SessionStorage> SessionStorage::copy(Page* newPage)
 
 PassRefPtr<StorageArea> SessionStorage::storageArea(SecurityOrigin* origin)
 {
-    RefPtr<StorageArea> storageArea;
+    RefPtr<SessionStorageArea> storageArea;
     if (storageArea = m_storageAreaMap.get(origin))
         return storageArea.release();
         
-    storageArea = StorageArea::create(origin, m_page, this);
+    storageArea = SessionStorageArea::create(origin, m_page);
     m_storageAreaMap.set(origin, storageArea);
     return storageArea.release();
-}
-
-void SessionStorage::itemChanged(StorageArea* area, const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
-{
-    dispatchStorageEvent(area, key, oldValue, newValue, sourceFrame);
-}
-
-void SessionStorage::itemRemoved(StorageArea* area, const String& key, const String& oldValue, Frame* sourceFrame)
-{
-    dispatchStorageEvent(area, key, oldValue, String(), sourceFrame);
-}
-
-void SessionStorage::dispatchStorageEvent(StorageArea* area, const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
-{
-    ASSERT(area->page() == m_page);
-    ASSERT(m_page);
-    
-    // For SessionStorage events, each frame in the page's frametree with the same origin as this Storage needs to be notified of the change
-    Vector<RefPtr<Frame> > frames;
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (Document* document = frame->document())
-            if (document->securityOrigin()->equal(area->securityOrigin()))
-                frames.append(frame);
-    }
-        
-    for (unsigned i = 0; i < frames.size(); ++i) {
-        if (HTMLElement* body = frames[i]->document()->body())
-            body->dispatchStorageEvent(EventNames::storageEvent, key, oldValue, newValue, sourceFrame);        
-    }
 }
 
 }

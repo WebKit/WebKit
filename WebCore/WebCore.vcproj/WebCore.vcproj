@@ -15896,6 +15896,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\LocalStorageArea.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\LocalStorageArea.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\OriginQuotaManager.cpp"
 				>
 			</File>
@@ -15917,6 +15925,14 @@
 			</File>
 			<File
 				RelativePath="..\storage\SessionStorage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SessionStorageArea.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SessionStorageArea.h"
 				>
 			</File>
 			<File
@@ -15989,10 +16005,6 @@
 			</File>
 			<File
 				RelativePath="..\storage\StorageArea.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\StorageAreaClient.h"
 				>
 			</File>
 			<File

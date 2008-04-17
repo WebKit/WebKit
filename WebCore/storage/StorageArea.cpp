@@ -30,41 +30,24 @@
 #include "ExceptionCode.h"
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
-#include "StorageAreaClient.h"
 #include "StorageMap.h"
 
 namespace WebCore {
 
-PassRefPtr<StorageArea> StorageArea::create(SecurityOrigin* origin, Page* page, PassRefPtr<StorageAreaClient> client)
-{
-    return adoptRef(new StorageArea(origin, page, client));
-}
-
-StorageArea::StorageArea(SecurityOrigin* origin, Page* page, PassRefPtr<StorageAreaClient> client)
-    : m_page(page)
-    , m_securityOrigin(origin)
+StorageArea::StorageArea(SecurityOrigin* origin)
+    : m_securityOrigin(origin)
     , m_storageMap(StorageMap::create())
-    , m_client(client)
 {
-    ASSERT(m_client);
 }
 
-StorageArea::StorageArea(SecurityOrigin* origin, Page* page, PassRefPtr<StorageMap> map, PassRefPtr<StorageAreaClient> client)
-    : m_page(page)
-    , m_securityOrigin(origin)
+StorageArea::StorageArea(SecurityOrigin* origin, PassRefPtr<StorageMap> map)
+    : m_securityOrigin(origin)
     , m_storageMap(map)
-    , m_client(client)
 {
-    ASSERT(m_client);
 }
 
 StorageArea::~StorageArea()
 {
-}
-
-PassRefPtr<StorageArea> StorageArea::copy(SecurityOrigin* origin, Page* newPage)
-{
-    return adoptRef(new StorageArea(origin, newPage, m_storageMap, m_client));
 }
 
 unsigned StorageArea::length() const
@@ -112,7 +95,7 @@ void StorageArea::setItem(const String& key, const String& value, ExceptionCode&
 
     // Only notify the client if an item was actually changed
     if (oldValue != value)
-        m_client->itemChanged(this, key, oldValue, value, frame);
+        itemChanged(key, oldValue, value, frame);
 }
 
 void StorageArea::removeItem(const String& key, Frame* frame)
@@ -124,7 +107,7 @@ void StorageArea::removeItem(const String& key, Frame* frame)
 
     // Only notify the client if an item was actually removed
     if (!oldValue.isNull())
-        m_client->itemRemoved(this, key, oldValue, frame);
+        itemRemoved(key, oldValue, frame);
 }
 
 bool StorageArea::contains(const String& key) const
@@ -132,10 +115,9 @@ bool StorageArea::contains(const String& key) const
     return m_storageMap->contains(key);
 }
 
-void StorageArea::setClient(PassRefPtr<StorageAreaClient> client)
+PassRefPtr<StorageMap> StorageArea::storageMap()
 {
-    ASSERT(client);
-    m_client = client;
+    return m_storageMap;
 }
 
 }
