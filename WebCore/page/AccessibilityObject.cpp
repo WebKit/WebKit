@@ -32,6 +32,7 @@
 #include "AXObjectCache.h"
 #include "CharacterNames.h"
 #include "EventNames.h"
+#include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -71,6 +72,7 @@ AccessibilityObject::AccessibilityObject(RenderObject* renderer)
     : m_renderer(renderer)
     , m_id(0)
 {
+    ASSERT_ARG(renderer, renderer);
 #ifndef NDEBUG
     m_renderer->setHasAXObject(true);
 #endif
@@ -188,13 +190,60 @@ bool AccessibilityObject::isAttachment() const
 
 bool AccessibilityObject::isPasswordField() const
 {
-    if (!m_renderer)
-        return 0;
-    if (!m_renderer->element())
-        return 0;
-    if (!m_renderer->element()->isHTMLElement())
-        return 0;
+    ASSERT(m_renderer);
+    if (!m_renderer->element() || !m_renderer->element()->isHTMLElement())
+        return false;
     return static_cast<HTMLElement*>(m_renderer->element())->isPasswordField();
+}
+
+bool AccessibilityObject::isPressed() const
+{
+    ASSERT(m_renderer);
+    if (roleValue() != ButtonRole)
+        return false;
+    return m_renderer->node() && m_renderer->node()->active();
+}
+
+bool AccessibilityObject::isIndeterminate() const
+{
+    ASSERT(m_renderer);
+    return m_renderer->node() && m_renderer->node()->isIndeterminate();
+}
+
+bool AccessibilityObject::isChecked() const
+{
+    ASSERT(m_renderer);
+    return m_renderer->node() && m_renderer->node()->isChecked();
+}
+
+bool AccessibilityObject::isHovered() const
+{
+    ASSERT(m_renderer);
+    return m_renderer->node() && m_renderer->node()->hovered();
+}
+
+bool AccessibilityObject::isMultiSelect() const
+{
+    ASSERT(m_renderer);
+    if (!m_renderer->isListBox())
+        return false;
+    return m_renderer->element() && static_cast<HTMLSelectElement*>(m_renderer->element())->multiple();
+}
+
+bool AccessibilityObject::isReadOnly() const
+{
+    ASSERT(m_renderer);
+    return !m_renderer->node() || !m_renderer->node()->isContentEditable();
+}
+
+bool AccessibilityObject::isOffScreen() const
+{
+    ASSERT(m_renderer);
+    IntRect contentRect = m_renderer->absoluteClippedOverflowRect();
+    FrameView* view = m_renderer->document()->frame()->view();
+    FloatRect viewRect = view->visibleContentRect();
+    viewRect.intersect(contentRect);
+    return viewRect.isEmpty();
 }
 
 int AccessibilityObject::headingLevel(Node* node)

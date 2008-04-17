@@ -2,6 +2,33 @@
 
         Reviewed by Darin.
 
+        Add some methods to check AccessibilityObject state.
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::AccessibilityObject): Assert that the
+        passed renderer is not null.
+        (WebCore::AccessibilityObject::isPasswordField): Refactored to use early
+        return.
+        (WebCore::AccessibilityObject::isPressed): Return true if this is a
+        button in the pressed state.
+        (WebCore::AccessibilityObject::isIndeterminate): Return true if this is
+        a tri-state checkbox in the indeterminate state.
+        (WebCore::AccessibilityObject::isChecked): True if this is a radio
+        button or checkbox in the checked state.
+        (WebCore::AccessibilityObject::isHovered): True if object is currently
+        under the mouse cursor.
+        (WebCore::AccessibilityObject::isMultiSelect): True if this is a select
+        element capable of multi-select.
+        (WebCore::AccessibilityObject::isReadOnly): False if this object has
+        editable content.
+        (WebCore::AccessibilityObject::isOffScreen): True if this object is not
+        in the visible portion of the view.
+        * page/AccessibilityObject.h: Grouped methods into is-state and is-kind.
+
+2008-04-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
         Add AccessibilityObjectWrapper to Windows.
 
         * WebCore.vcproj/WebCore.vcproj: Add AccessibilityObjectWrapperWin.h

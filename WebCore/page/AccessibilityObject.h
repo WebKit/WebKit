@@ -184,16 +184,24 @@ public:
 
     bool isAnchor() const;
     bool isAttachment() const;
-    bool isEnabled() const;
-    bool isFocused() const;
     bool isHeading() const;
-    bool isImageButton() const;
     bool isImage() const;
-    bool isLoaded() const;
+    bool isImageButton() const;
     bool isPasswordField() const;
     bool isTextControl() const;
-    bool isVisited() const;
     bool isWebArea() const;
+
+    bool isChecked() const;
+    bool isEnabled() const;
+    bool isFocused() const;
+    bool isHovered() const;
+    bool isIndeterminate() const;
+    bool isLoaded() const;
+    bool isMultiSelect() const;
+    bool isOffScreen() const;
+    bool isPressed() const;
+    bool isReadOnly() const;
+    bool isVisited() const;
 
     bool canSetFocusAttribute() const;
     bool canSetTextRangeAttributes() const;
