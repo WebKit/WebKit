@@ -38,7 +38,7 @@ ApplicationCache::ApplicationCache(ApplicationCacheGroup* group)
     : m_group(group)
     , m_manifest(0)
 {
-    ASSERT_ARG(group);
+    ASSERT(group);
 }
 
 ApplicationCache::~ApplicationCache()
@@ -48,7 +48,7 @@ ApplicationCache::~ApplicationCache()
 
 void ApplicationCache::setManifestResource(PassRefPtr<ApplicationCacheResource> manifest)
 {
-    ASSERT_ARG(manifest);
+    ASSERT(manifest);
     ASSERT(!m_manifest);
     ASSERT(manifest->type() & ApplicationCacheResource::Manifest);
     
@@ -59,7 +59,7 @@ void ApplicationCache::setManifestResource(PassRefPtr<ApplicationCacheResource> 
     
 void ApplicationCache::addResource(PassRefPtr<ApplicationCacheResource> resource)
 {
-    ASSERT_ARG(resource);
+    ASSERT(resource);
     
     const String& url = resource->url();
     

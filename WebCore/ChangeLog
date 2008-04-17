@@ -1,5 +1,14 @@
 2008-04-16  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+        
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::ApplicationCache):
+        (WebCore::ApplicationCache::setManifestResource):
+        (WebCore::ApplicationCache::addResource):
+
+2008-04-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin.
 
         Add new protocolHostAndPortAreEqual function.
