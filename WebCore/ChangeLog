@@ -1,5 +1,19 @@
 2008-04-16  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin.
+
+        Add new protocolHostAndPortAreEqual function.
+        
+        * platform/KURL.cpp:
+        (WebCore::KURL::host):
+        (WebCore::KURL::setHost):
+        (WebCore::KURL::setHostAndPort):
+        (WebCore::protocolHostAndPortAreEqual):
+        * platform/KURL.h:
+        (WebCore::KURL::hostStart):
+
+2008-04-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam.
         
         Fix some style nits.

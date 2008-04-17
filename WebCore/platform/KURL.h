@@ -146,6 +146,8 @@ public:
 
     friend bool equalIgnoringRef(const KURL&, const KURL&);
 
+    friend bool protocolHostAndPortAreEqual(const KURL&, const KURL&);
+    
     operator const String&() const { return m_string; }
     operator KJS::UString() const { return m_string; }
 
@@ -181,7 +183,8 @@ private:
     void init(const KURL&, const String&, const TextEncoding&);
     static bool protocolIs(const String&, const char*);
     void copyToBuffer(Vector<char, 512>& buffer) const;
-
+    int hostStart() const { return (m_passwordEnd == m_userStart) ? m_passwordEnd : m_passwordEnd + 1; }
+    
     // Parses the given URL. The originalString parameter allows for an
     // optimization: When the source is the same as the fixed-up string,
     // it will use the passed-in string instead of allocating a new one.
@@ -210,7 +213,8 @@ bool operator!=(const KURL&, const String&);
 bool operator!=(const String&, const KURL&);
 
 bool equalIgnoringRef(const KURL&, const KURL&);
-
+bool protocolHostAndPortAreEqual(const KURL&, const KURL&);
+    
 const KURL& blankURL();
 
 // Functions to do URL operations on strings.

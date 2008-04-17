@@ -541,7 +541,7 @@ String KURL::protocol() const
 
 String KURL::host() const
 {
-    int start = (m_passwordEnd == m_userStart) ? m_passwordEnd : m_passwordEnd + 1;
+    int start = hostStart();
     return decodeURLEscapeSequences(m_string.substring(start, m_hostEnd - start));
 }
 
@@ -632,9 +632,8 @@ void KURL::setHost(const String& s)
         return;
 
     bool slashSlashNeeded = m_userStart == m_schemeEnd + 1;
-    int hostStart = (m_passwordEnd == m_userStart) ? m_passwordEnd : m_passwordEnd + 1;
 
-    parse(m_string.left(hostStart) + (slashSlashNeeded ? "//" : "") + s + m_string.substring(m_hostEnd));
+    parse(m_string.left(hostStart()) + (slashSlashNeeded ? "//" : "") + s + m_string.substring(m_hostEnd));
 }
 
 void KURL::setPort(unsigned short i)
@@ -654,9 +653,8 @@ void KURL::setHostAndPort(const String& hostAndPort)
         return;
 
     bool slashSlashNeeded = m_userStart == m_schemeEnd + 1;
-    int hostStart = (m_passwordEnd == m_userStart) ? m_passwordEnd : m_passwordEnd + 1;
 
-    parse(m_string.left(hostStart) + (slashSlashNeeded ? "//" : "") + hostAndPort + m_string.substring(m_portEnd));
+    parse(m_string.left(hostStart()) + (slashSlashNeeded ? "//" : "") + hostAndPort + m_string.substring(m_portEnd));
 }
 
 void KURL::setUser(const String& user)
@@ -1238,6 +1236,32 @@ bool equalIgnoringRef(const KURL& a, const KURL& b)
             return false;
     return true;
 }
+
+bool protocolHostAndPortAreEqual(const KURL& a, const KURL& b)
+{
+    if (a.m_schemeEnd != b.m_schemeEnd)
+        return false;
+    int hostStartA = a.hostStart();
+    int hostStartB = b.hostStart();
+    if (a.m_hostEnd - hostStartA != b.m_hostEnd - hostStartB)
+        return false;
+
+    // Check the scheme
+    for (int i = 0; i < a.m_schemeEnd; ++i)
+        if (a.string()[i] != b.string()[i])
+            return false;
+    
+    // And the host
+    for (int i = hostStartA; i < a.m_hostEnd; ++i)
+        if (a.string()[i] != b.string()[i])
+            return false;
+    
+    if (a.port() != b.port())
+        return false;
+
+    return true;
+}
+    
 
 String encodeWithURLEscapeSequences(const String& notEncodedString)
 {
