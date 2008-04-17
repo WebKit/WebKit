@@ -124,9 +124,7 @@ AC_CHECK_HEADERS([pthread.h],
 fi
 
 # libjpeg headers
-AC_CHECK_HEADERS([jpeglib.h],
-                 AC_DEFINE([HAVE_JPEGLIB_H],[1],[Define if libjpeg exists]),
-                 AC_MSG_ERROR([libjpeg is required to build WebKit]))
+AC_CHECK_HEADERS([jpeglib.h])
 
 # check for pkg-config
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)

@@ -1,3 +1,10 @@
+2008-04-17  Alp Toker  <alp@atoker.com>
+
+        GTK+ build fix. Back out the libjpeg check part of r32008 from bug
+        #17865 (reopened).
+
+        * configure.ac:
+
 2008-04-17  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.
