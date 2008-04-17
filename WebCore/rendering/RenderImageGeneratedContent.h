@@ -52,7 +52,8 @@ protected:
     virtual void setImageContainerSize(const IntSize& size) const { m_styleImage->setImageContainerSize(size); }
     virtual bool imageHasRelativeWidth() const { return m_styleImage->imageHasRelativeWidth(); }
     virtual bool imageHasRelativeHeight() const { return m_styleImage->imageHasRelativeHeight(); }
-    virtual IntSize imageSize(float multiplier) const { return m_styleImage->imageSize(multiplier); }
+    virtual IntSize imageSize(float multiplier) const { return m_styleImage->imageSize(this, multiplier); }
+    virtual WrappedImagePtr imagePtr() const { return m_styleImage->data(); }
 
 private:
     RefPtr<StyleImage> m_styleImage;

@@ -154,7 +154,7 @@ public:
     virtual IntRect getClipRect(int tx, int ty);
 
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
-    virtual void imageChanged(CachedImage*);
+    virtual void imageChanged(WrappedImagePtr);
 
     // Called when a positioned object moves but doesn't change size.  A simplified layout is done
     // that just updates the object's position.

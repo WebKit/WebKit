@@ -26,6 +26,7 @@
 #include "CString.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSBorderImageValue.h"
+#include "CSSCanvasValue.h"
 #include "CSSCharsetRule.h"
 #include "CSSCursorImageValue.h"
 #include "CSSHelper.h"
@@ -1885,6 +1886,9 @@ bool CSSParser::parseContent(int propId, bool important)
             } else if (equalIgnoringCase(val->function->name, "-webkit-gradient(")) {
                 if (!parseGradient(parsedValue))
                     return false;
+            } else if (equalIgnoringCase(val->function->name, "-webkit-canvas(")) {
+                if (!parseCanvas(parsedValue))
+                    return false;
             } else
                 return false;
         } else if (val->unit == CSSPrimitiveValue::CSS_IDENT) {
@@ -1932,8 +1936,12 @@ bool CSSParser::parseBackgroundImage(RefPtr<CSSValue>& value)
             value = new CSSImageValue(KURL(styleElement->baseURL(), uri).string(), styleElement);
         return true;
     }
-    if (valueList->current()->unit == Value::Function && equalIgnoringCase(valueList->current()->function->name, "-webkit-gradient("))
-        return parseGradient(value);
+    if (valueList->current()->unit == Value::Function) {
+        if (equalIgnoringCase(valueList->current()->function->name, "-webkit-gradient("))
+            return parseGradient(value);
+        if (equalIgnoringCase(valueList->current()->function->name, "-webkit-canvas("))
+            return parseCanvas(value);
+    }
     return false;
 }
 
@@ -3300,9 +3308,10 @@ bool CSSParser::parseBorderImage(int propId, bool important)
         if (uri.isEmpty())
             return false;
         context.commitImage(new CSSImageValue(KURL(styleElement->baseURL(), uri).string(), styleElement));
-    } else if (val->unit == Value::Function && equalIgnoringCase(val->function->name, "-webkit-gradient(")) {
+    } else if (val->unit == Value::Function) {
         RefPtr<CSSValue> value;
-        if (parseGradient(value))
+        if ((equalIgnoringCase(val->function->name, "-webkit-gradient(") && parseGradient(value)) ||
+            (equalIgnoringCase(val->function->name, "-webkit-canvas(") && parseCanvas(value)))
             context.commitImage(value);
         else
             return false;
@@ -3568,6 +3577,24 @@ bool CSSParser::parseGradient(RefPtr<CSSValue>& gradient)
     }
     
     gradient = result;
+    return true;
+}
+
+bool CSSParser::parseCanvas(RefPtr<CSSValue>& canvas)
+{
+    RefPtr<CSSCanvasValue> result = new CSSCanvasValue;
+    
+    // Walk the arguments.
+    ValueList* args = valueList->current()->function->args;
+    if (!args || args->size() != 1)
+        return false;
+    
+    // The first argument is the canvas name.  It is an identifier.
+    Value* a = args->current();
+    if (!a || a->unit != CSSPrimitiveValue::CSS_IDENT)
+        return false;
+    result->setName(a->string);
+    canvas = result;
     return true;
 }
 

@@ -201,11 +201,8 @@ void RenderTableRow::paint(PaintInfo& paintInfo, int tx, int ty)
     }
 }
 
-void RenderTableRow::imageChanged(CachedImage* image)
+void RenderTableRow::imageChanged(WrappedImagePtr image)
 {
-    if (!image || !image->canRender(style()->effectiveZoom()) || !parent())
-        return;
-    
     // FIXME: Examine cells and repaint only the rect the image paints in.
     repaint();
 }

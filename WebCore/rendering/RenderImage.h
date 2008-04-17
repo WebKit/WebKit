@@ -46,7 +46,7 @@ public:
 
     virtual int minimumReplacedHeight() const;
 
-    virtual void imageChanged(CachedImage*);
+    virtual void imageChanged(WrappedImagePtr);
     
     bool setImageSizeForAltText(CachedImage* newImage = 0);
 
@@ -76,8 +76,9 @@ protected:
     virtual bool imageHasRelativeWidth() const { return m_cachedImage ? m_cachedImage->imageHasRelativeWidth() : false; }
     virtual bool imageHasRelativeHeight() const { return m_cachedImage ? m_cachedImage->imageHasRelativeHeight() : false; }
     virtual IntSize imageSize(float multiplier) const { return m_cachedImage ? m_cachedImage->imageSize(multiplier) : IntSize(); }
+    virtual WrappedImagePtr imagePtr() const { return m_cachedImage; }
 
-    virtual void intrinsicSizeChanged() { imageChanged(m_cachedImage); }
+    virtual void intrinsicSizeChanged() { imageChanged(imagePtr()); }
 
 private:
     int calcAspectRatioWidth() const;

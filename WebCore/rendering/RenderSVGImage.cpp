@@ -227,7 +227,7 @@ FloatRect RenderSVGImage::relativeBBox(bool) const
     return m_localBounds;
 }
 
-void RenderSVGImage::imageChanged(CachedImage* image)
+void RenderSVGImage::imageChanged(WrappedImagePtr image)
 {
     RenderImage::imageChanged(image);
 

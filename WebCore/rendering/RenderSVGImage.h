@@ -47,7 +47,7 @@ namespace WebCore {
         virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
         virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
-        virtual void imageChanged(CachedImage*);
+        virtual void imageChanged(WrappedImagePtr);
         void adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatio*);
         
         virtual void layout();

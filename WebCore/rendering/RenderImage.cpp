@@ -114,7 +114,7 @@ bool RenderImage::setImageSizeForAltText(CachedImage* newImage /* = 0 */)
     return true;
 }
 
-void RenderImage::imageChanged(CachedImage* newImage)
+void RenderImage::imageChanged(WrappedImagePtr newImage)
 {
     if (documentBeingDestroyed())
         return;
@@ -122,21 +122,21 @@ void RenderImage::imageChanged(CachedImage* newImage)
     if (hasBoxDecorations())
         RenderReplaced::imageChanged(newImage);
     
-    if (newImage != m_cachedImage || !newImage)
+    if (newImage != imagePtr() || !newImage)
         return;
 
     bool imageSizeChanged = false;
 
     // Set image dimensions, taking into account the size of the alt text.
-    if (newImage->errorOccurred())
-        imageSizeChanged = setImageSizeForAltText(newImage);
+    if (errorOccurred())
+        imageSizeChanged = setImageSizeForAltText(m_cachedImage);
     
     bool shouldRepaint = true;
 
     // Image dimensions have been changed, see what needs to be done
-    if (newImage->imageSize(style()->effectiveZoom()) != intrinsicSize() || imageSizeChanged) {
-        if (!newImage->errorOccurred())
-            setIntrinsicSize(newImage->imageSize(style()->effectiveZoom()));
+    if (imageSize(style()->effectiveZoom()) != intrinsicSize() || imageSizeChanged) {
+        if (!errorOccurred())
+            setIntrinsicSize(imageSize(style()->effectiveZoom()));
 
         // In the case of generated image content using :before/:after, we might not be in the
         // render tree yet.  In that case, we don't need to worry about check for layout, since we'll get a

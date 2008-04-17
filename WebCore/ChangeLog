@@ -1,3 +1,97 @@
+2008-04-16  David Hyatt  <hyatt@apple.com>
+
+        Add support for the ability to draw directly into CSS images using CanvasRenderingContext2D.
+
+        Reviewed by olliej
+
+        Added fast/canvas/canvas-bg.html
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * css/CSSCanvasValue.cpp: Added.
+        (WebCore::CSSCanvasValue::~CSSCanvasValue):
+        (WebCore::CSSCanvasValue::cssText):
+        (WebCore::CSSCanvasValue::canvasChanged):
+        (WebCore::CSSCanvasValue::canvasResized):
+        (WebCore::CSSCanvasValue::fixedSize):
+        (WebCore::CSSCanvasValue::element):
+        (WebCore::CSSCanvasValue::image):
+        * css/CSSCanvasValue.h: Added.
+        (WebCore::CSSCanvasValue::CSSCanvasValue):
+        (WebCore::CSSCanvasValue::isFixedSize):
+        (WebCore::CSSCanvasValue::setName):
+        * css/CSSGradientValue.cpp:
+        * css/CSSGradientValue.h:
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::generatedImage):
+        * css/CSSImageGeneratorValue.h:
+        (WebCore::CSSImageGeneratorValue::isFixedSize):
+        (WebCore::CSSImageGeneratorValue::fixedSize):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseBackgroundImage):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::CSSParser::parseCanvas):
+        * css/CSSParser.h:
+        * dom/Document.cpp:
+        (WebCore::Document::getCSSCanvasContext):
+        (WebCore::Document::getCSSCanvasElement):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::reset):
+        * html/HTMLCanvasElement.h:
+        (WebCore::HTMLCanvasElement::setSize):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calculateBackgroundSize):
+        (WebCore::RenderBox::imageChanged):
+        * rendering/RenderBox.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::imagePtr):
+        (WebCore::RenderImage::intrinsicSizeChanged):
+        * rendering/RenderImageGeneratedContent.h:
+        (WebCore::RenderImageGeneratedContent::imageSize):
+        (WebCore::RenderImageGeneratedContent::imagePtr):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::layout):
+        (WebCore::RenderListMarker::imageChanged):
+        (WebCore::RenderListMarker::calcPrefWidths):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintBorderImage):
+        (WebCore::RenderObject::imageChanged):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::imageChanged):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::imageChanged):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleCachedImage::imageSize):
+        (WebCore::StyleGeneratedImage::imageSize):
+        * rendering/RenderStyle.h:
+        (WebCore::StyleCachedImage::data):
+        (WebCore::StyleGeneratedImage::StyleGeneratedImage):
+        (WebCore::StyleGeneratedImage::data):
+        (WebCore::StyleGeneratedImage::imageHasRelativeWidth):
+        (WebCore::StyleGeneratedImage::imageHasRelativeHeight):
+        (WebCore::StyleGeneratedImage::usesImageContainerSize):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::imageChanged):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::imageChanged):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::imageChanged):
+        * rendering/RenderTableSection.h:
+
 2008-04-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

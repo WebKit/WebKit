@@ -449,26 +449,23 @@ IntSize RenderBox::calculateBackgroundSize(const BackgroundLayer* bgLayer, int s
         // If one of the values is auto we have to use the appropriate
         // scale to maintain our aspect ratio.
         if (bgWidth.isAuto() && !bgHeight.isAuto())
-            w = bg->imageSize(style()->effectiveZoom()).width() * h / bg->imageSize(style()->effectiveZoom()).height();        
+            w = bg->imageSize(this, style()->effectiveZoom()).width() * h / bg->imageSize(this, style()->effectiveZoom()).height();        
         else if (!bgWidth.isAuto() && bgHeight.isAuto())
-            h = bg->imageSize(style()->effectiveZoom()).height() * w / bg->imageSize(style()->effectiveZoom()).width();
+            h = bg->imageSize(this, style()->effectiveZoom()).height() * w / bg->imageSize(this, style()->effectiveZoom()).width();
         else if (bgWidth.isAuto() && bgHeight.isAuto()) {
             // If both width and height are auto, we just want to use the image's
             // intrinsic size.
-            w = bg->imageSize(style()->effectiveZoom()).width();
-            h = bg->imageSize(style()->effectiveZoom()).height();
+            w = bg->imageSize(this, style()->effectiveZoom()).width();
+            h = bg->imageSize(this, style()->effectiveZoom()).height();
         }
         
         return IntSize(max(1, w), max(1, h));
     } else
-        return bg->imageSize(style()->effectiveZoom());
+        return bg->imageSize(this, style()->effectiveZoom());
 }
 
-void RenderBox::imageChanged(CachedImage* image)
+void RenderBox::imageChanged(WrappedImagePtr image)
 {
-    if (!image || !image->canRender(style()->effectiveZoom()) || !parent() || !view())
-        return;
-
     if (isInlineFlow() || style()->borderImage().image() && style()->borderImage().image()->data() == image) {
         repaint();
         return;

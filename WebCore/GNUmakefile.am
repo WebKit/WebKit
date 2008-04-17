@@ -543,6 +543,7 @@ webcore_sources += \
 	WebCore/bridge/runtime_object.cpp \
 	WebCore/bridge/runtime_root.cpp \
 	WebCore/css/CSSBorderImageValue.cpp \
+	WebCore/css/CSSCanvasValue.cpp \
 	WebCore/css/CSSCharsetRule.cpp \
 	WebCore/css/CSSComputedStyleDeclaration.cpp \
 	WebCore/css/CSSCursorImageValue.cpp \

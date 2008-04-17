@@ -475,6 +475,7 @@ SOURCES += \
     bridge/c/c_runtime.cpp \
     bridge/c/c_utility.cpp \
     css/CSSBorderImageValue.cpp \
+    css/CSSCanvasValue.cpp \
     css/CSSCharsetRule.cpp \
     css/CSSComputedStyleDeclaration.cpp \
     css/CSSCursorImageValue.cpp \

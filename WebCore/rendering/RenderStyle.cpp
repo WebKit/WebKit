@@ -148,7 +148,7 @@ bool StyleCachedImage::errorOccurred() const
     return m_image->errorOccurred();
 }
 
-IntSize StyleCachedImage::imageSize(float multiplier) const
+IntSize StyleCachedImage::imageSize(const RenderObject* /*renderer*/, float multiplier) const
 {
     return m_image->imageSize(multiplier);
 }
@@ -193,9 +193,11 @@ PassRefPtr<CSSValue> StyleGeneratedImage::cssValue()
     return m_generator;
 }
 
-IntSize StyleGeneratedImage::imageSize(float /* multiplier */) const
+IntSize StyleGeneratedImage::imageSize(const RenderObject* renderer, float /* multiplier */) const
 {
     // We can ignore the multiplier, since we always store a raw zoomed size.
+    if (m_fixedSize)
+        return m_generator->fixedSize(renderer);
     return m_containerSize;
 }
 

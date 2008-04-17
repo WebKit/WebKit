@@ -7619,6 +7619,23 @@
 					/>
 				</FileConfiguration>
 			</File>
+                        <File
+				RelativePath="..\css\CSSCanvasValue.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\CSSCanvasValue.h"
+				>
+			</File>
+
 			<File
 				RelativePath="..\css\CSSCharsetRule.h"
 				>

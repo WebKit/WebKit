@@ -55,6 +55,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLBodyElement.h"
+#include "HTMLCanvasElement.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFrameOwnerElement.h"
@@ -4147,6 +4148,25 @@ void Document::detachRange(Range* range)
 {
     ASSERT(m_ranges.contains(range));
     m_ranges.remove(range);
+}
+
+CanvasRenderingContext2D* Document::getCSSCanvasContext(const String& type, const String& name, int width, int height)
+{
+    HTMLCanvasElement* result = getCSSCanvasElement(name);
+    if (!result)
+        return 0;
+    result->setSize(IntSize(width, height));
+    return result->getContext(type);
+}
+
+HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)
+{
+    RefPtr<HTMLCanvasElement> result = m_cssCanvasElements.get(name).get();
+    if (!result) {
+        result = new HTMLCanvasElement(this);
+        m_cssCanvasElements.set(name, result);
+    }
+    return result.get();
 }
 
 } // namespace WebCore

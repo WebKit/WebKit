@@ -221,6 +221,11 @@ module core {
         [UsesView] CSSRuleList getMatchedCSSRules(in Element element,
                                                   in DOMString pseudoElement,
                                                   in [Optional] boolean authorOnly);
+                                                  
+#endif
+
+#if !defined(LANGUAGE_OBJECTIVE_C)
+        DOMObject getCSSCanvasContext(in DOMString contextId, in DOMString name, in long width, in long height);
 #endif
 
         // HTML 5

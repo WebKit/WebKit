@@ -3619,6 +3619,8 @@
 		BC5A86850C33676000EEA649 /* DOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86820C33676000EEA649 /* DOMSelection.h */; };
 		BC5A86B50C3367E800EEA649 /* JSDOMSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5A86B30C3367E800EEA649 /* JSDOMSelection.cpp */; };
 		BC5A86B60C3367E800EEA649 /* JSDOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86B40C3367E800EEA649 /* JSDOMSelection.h */; };
+		BC6049CC0DB560C200204739 /* CSSCanvasValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6049CB0DB560C200204739 /* CSSCanvasValue.h */; };
+		BC604A430DB5634E00204739 /* CSSCanvasValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC604A420DB5634E00204739 /* CSSCanvasValue.cpp */; };
 		BC60D6E90D28D83400B9918F /* DOMCoreException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D6E80D28D83400B9918F /* DOMCoreException.h */; };
 		BC60D7C00D29A46300B9918F /* JSDOMCoreException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60D7BE0D29A46300B9918F /* JSDOMCoreException.cpp */; };
 		BC60D7C10D29A46300B9918F /* JSDOMCoreException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D7BF0D29A46300B9918F /* JSDOMCoreException.h */; };
@@ -7897,6 +7899,8 @@
 		BC5A86B30C3367E800EEA649 /* JSDOMSelection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMSelection.cpp; sourceTree = "<group>"; };
 		BC5A86B40C3367E800EEA649 /* JSDOMSelection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMSelection.h; sourceTree = "<group>"; };
 		BC5EC1760A507E3E006007F5 /* view-source.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "view-source.css"; sourceTree = "<group>"; };
+		BC6049CB0DB560C200204739 /* CSSCanvasValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSCanvasValue.h; sourceTree = "<group>"; };
+		BC604A420DB5634E00204739 /* CSSCanvasValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCanvasValue.cpp; sourceTree = "<group>"; };
 		BC60D6E80D28D83400B9918F /* DOMCoreException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCoreException.h; sourceTree = "<group>"; };
 		BC60D6EB0D28D99900B9918F /* DOMCoreException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMCoreException.idl; sourceTree = "<group>"; };
 		BC60D7BE0D29A46300B9918F /* JSDOMCoreException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMCoreException.cpp; sourceTree = "<group>"; };
@@ -12451,6 +12455,8 @@
 				930705C709E0C95F00B17FE4 /* Counter.idl */,
 				A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */,
 				A80E6CDD0A1989CA007FB8C5 /* CSSBorderImageValue.h */,
+				BC604A420DB5634E00204739 /* CSSCanvasValue.cpp */,
+				BC6049CB0DB560C200204739 /* CSSCanvasValue.h */,
 				E1EBBBD30AAC9B87001FE8E2 /* CSSCharsetRule.cpp */,
 				A80E6CCF0A1989CA007FB8C5 /* CSSCharsetRule.h */,
 				85C56CAC0AA89F8E00D95755 /* CSSCharsetRule.idl */,
@@ -14902,6 +14908,7 @@
 				E4AFD0100DAF335500F5F55C /* SVGSMILElement.h in Headers */,
 				3744570F0DB05FA500AE0992 /* SVGGlyphMap.h in Headers */,
 				BCB4F8900DB28DD60039139B /* RenderImageGeneratedContent.h in Headers */,
+				BC6049CC0DB560C200204739 /* CSSCanvasValue.h in Headers */,
 				C091588B0DB4209200E55AF4 /* JSInspectedObjectWrapper.h in Headers */,
 				C091588D0DB4209200E55AF4 /* JSInspectorCallbackWrapper.h in Headers */,
 				C091588F0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h in Headers */,
@@ -16602,6 +16609,7 @@
 				E4AFD00D0DAF335500F5F55C /* SMILTimeContainer.cpp in Sources */,
 				E4AFD00F0DAF335500F5F55C /* SVGSMILElement.cpp in Sources */,
 				BCB4F8930DB28E530039139B /* RenderImageGeneratedContent.cpp in Sources */,
+				BC604A430DB5634E00204739 /* CSSCanvasValue.cpp in Sources */,
 				C091588A0DB4209200E55AF4 /* JSInspectedObjectWrapper.cpp in Sources */,
 				C091588C0DB4209200E55AF4 /* JSInspectorCallbackWrapper.cpp in Sources */,
 				C091588E0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp in Sources */,

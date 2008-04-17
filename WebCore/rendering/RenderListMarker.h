@@ -49,7 +49,7 @@ public:
     virtual void layout();
     virtual void calcPrefWidths();
 
-    virtual void imageChanged(CachedImage*);
+    virtual void imageChanged(WrappedImagePtr);
 
     virtual InlineBox* createInlineBox(bool, bool, bool);
 

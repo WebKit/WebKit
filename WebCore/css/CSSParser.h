@@ -175,6 +175,8 @@ namespace WebCore {
         bool parseShadow(int propId, bool important);
         bool parseBorderImage(int propId, bool important);
         
+        // Image generators
+        bool parseCanvas(RefPtr<CSSValue>&);
         bool parseGradient(RefPtr<CSSValue>&);
 
         PassRefPtr<CSSValue> parseTransform();

@@ -632,8 +632,8 @@ void RenderListMarker::layout()
     ASSERT(!prefWidthsDirty());
 
     if (isImage()) {
-        m_width = m_image->imageSize(style()->effectiveZoom()).width();
-        m_height = m_image->imageSize(style()->effectiveZoom()).height();
+        m_width = m_image->imageSize(this, style()->effectiveZoom()).width();
+        m_height = m_image->imageSize(this, style()->effectiveZoom()).height();
     } else {
         m_width = minPrefWidth();
         m_height = style()->font().height();
@@ -651,13 +651,13 @@ void RenderListMarker::layout()
     setNeedsLayout(false);
 }
 
-void RenderListMarker::imageChanged(CachedImage* o)
+void RenderListMarker::imageChanged(WrappedImagePtr o)
 {
     // A list marker can't have a background or border image, so no need to call the base class method.
     if (o != m_image->data())
         return;
 
-    if (m_width != m_image->imageSize(style()->effectiveZoom()).width() || m_height != m_image->imageSize(style()->effectiveZoom()).height() || m_image->errorOccurred())
+    if (m_width != m_image->imageSize(this, style()->effectiveZoom()).width() || m_height != m_image->imageSize(this, style()->effectiveZoom()).height() || m_image->errorOccurred())
         setNeedsLayoutAndPrefWidthsRecalc();
     else
         repaint();
@@ -676,7 +676,7 @@ void RenderListMarker::calcPrefWidths()
         // until we support the CSS3 marker pseudoclass to allow control over the width and height of the marker box.
         int bulletWidth = font.ascent() / 2;
         m_image->setImageContainerSize(IntSize(bulletWidth, bulletWidth));
-        m_minPrefWidth = m_maxPrefWidth = m_image->imageSize(style()->effectiveZoom()).width();
+        m_minPrefWidth = m_maxPrefWidth = m_image->imageSize(this, style()->effectiveZoom()).width();
         setPrefWidthsDirty(false);
         updateMargins();
         return;
@@ -825,7 +825,7 @@ bool RenderListMarker::isInside() const
 IntRect RenderListMarker::getRelativeMarkerRect()
 {
     if (isImage())
-        return IntRect(m_x, m_y, m_image->imageSize(style()->effectiveZoom()).width(), m_image->imageSize(style()->effectiveZoom()).height());
+        return IntRect(m_x, m_y, m_image->imageSize(this, style()->effectiveZoom()).width(), m_image->imageSize(this, style()->effectiveZoom()).height());
 
     switch (style()->listStyleType()) {
         case DISC:

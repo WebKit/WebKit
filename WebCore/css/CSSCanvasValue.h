@@ -23,54 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CSSImageGeneratorValue_h
-#define CSSImageGeneratorValue_h
+#ifndef CSSCanvasValue_h
+#define CSSCanvasValue_h
 
-#include "CSSValue.h"
+#include "CSSImageGeneratorValue.h"
 
-#include "IntSize.h"
-#include "IntSizeHash.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashCountedSet.h>
-#include <wtf/PassRefPtr.h>
+#include "CSSPrimitiveValue.h"
+#include "HTMLCanvasElement.h"
+#include "PlatformString.h"
+
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Image;
-class IntSize;
-class StyleGeneratedImage;
-class RenderObject;
+class Document;
 
-class CSSImageGeneratorValue : public CSSValue {
+class CSSCanvasValue : public CSSImageGeneratorValue, public CanvasObserver {
 public:
-    CSSImageGeneratorValue();
-    virtual ~CSSImageGeneratorValue();
+    CSSCanvasValue() {};
+    ~CSSCanvasValue();
 
-    virtual bool isImageGeneratorValue() const { return true; }
-    
-    void addClient(RenderObject*, const IntSize&);
-    void removeClient(RenderObject*);
-    virtual Image* image(RenderObject*, const IntSize&) = 0;
+    virtual String cssText() const;
 
-    virtual StyleGeneratedImage* generatedImage();
-    
-    virtual bool isFixedSize() const { return false; }
-    virtual IntSize fixedSize(const RenderObject*) { return IntSize(); }
-    
+    virtual Image* image(RenderObject*, const IntSize&);
+    virtual bool isFixedSize() const { return true; }
+    virtual IntSize fixedSize(const RenderObject*);
+
+    virtual void canvasChanged(HTMLCanvasElement* element, const FloatRect& changedRect);
+    virtual void canvasResized(HTMLCanvasElement* element);
+
+    void setName(const String& name) { m_name = name; }
+
 protected:
-    Image* getImage(RenderObject*, const IntSize&);
-    void putImage(const IntSize&, Image*);
-
-    HashCountedSet<IntSize> m_sizes; // A count of how many times a given image size is in use.
-    HashMap<RenderObject*, IntSize> m_clients; // A map from RenderObjects to image sizes.
-    HashMap<IntSize, Image*> m_images; // A map from sizes to generated images.
-    
-    RefPtr<StyleGeneratedImage> m_image;
-    bool m_accessedImage;
+    HTMLCanvasElement* element(Document*);
+     
+    // The name of the canvas.
+    String m_name;
+    RefPtr<HTMLCanvasElement> m_element;
 };
 
 } // namespace WebCore
 
-#endif // CSSImageGeneratorValue_h
+#endif // CSSCanvasValue_h

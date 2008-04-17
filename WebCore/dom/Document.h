@@ -54,6 +54,7 @@ namespace WebCore {
     class Attribute;
     class CDATASection;
     class CachedCSSStyleSheet;
+    class CanvasRenderingContext2D;
     class CharacterData;
     class CSSStyleDeclaration;
     class CSSStyleSelector;
@@ -74,6 +75,7 @@ namespace WebCore {
     class EventListener;
     class Frame;
     class FrameView;
+    class HTMLCanvasElement;
     class HTMLDocument;
     class HTMLElement;
     class HTMLFormControlElementWithState;
@@ -713,6 +715,10 @@ public:
     // FF method for accessing the selection added for compatability.
     DOMSelection* getSelection() const;
     
+    // Extension for manipulating canvas drawing contexts for use in CSS
+    CanvasRenderingContext2D* getCSSCanvasContext(const String& type, const String& name, int width, int height);
+    HTMLCanvasElement* getCSSCanvasElement(const String& name);
+
 private:
     CSSStyleSelector* m_styleSelector;
     bool m_didCalculateStyleSelector;
@@ -948,6 +954,8 @@ private:
     Vector<DashboardRegionValue> m_dashboardRegions;
     bool m_hasDashboardRegions;
     bool m_dashboardRegionsDirty;
+
+    HashMap<String, RefPtr<HTMLCanvasElement> > m_cssCanvasElements;
 
     mutable bool m_accessKeyMapValid;
     bool m_createRenderers;
