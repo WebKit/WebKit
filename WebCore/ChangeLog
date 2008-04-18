@@ -1,3 +1,29 @@
+2008-04-17  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver.
+
+        Implement calcMode=paced.
+        
+        Tested by SVG testsuite tests
+        animate-elem-11-t.svg
+        animate-elem-15-t.svg
+        animate-elem-82-t.svg
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateDistance):
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::calculateDistance):
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::calculateDistance):
+        * svg/SVGAnimateTransformElement.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::calculateKeyTimesForCalcModePaced):
+        (WebCore::SVGAnimationElement::startedActiveInterval):
+        * svg/SVGAnimationElement.h:
+        (WebCore::SVGAnimationElement::calculateDistance):
+
 2008-04-17  David Hyatt  <hyatt@apple.com>
 
         Fix a leak in ImageBuffer's clearImage method.

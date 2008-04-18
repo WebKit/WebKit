@@ -317,6 +317,36 @@ void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
         (*it)->correspondingUseElement()->setChanged();
     }
 }
+    
+void SVGAnimationElement::calculateKeyTimesForCalcModePaced()
+{
+    ASSERT(calcMode() == CalcModePaced);
+    ASSERT(animationMode() == ValuesAnimation);
+
+    unsigned valuesCount = m_values.size();
+    ASSERT(valuesCount > 1);
+    Vector<float> keyTimesForPaced;
+    float totalDistance = 0;
+    keyTimesForPaced.append(0);
+    for (unsigned n = 0; n < valuesCount - 1; ++n) {
+        // Distance in any units
+        float distance = calculateDistance(m_values[n], m_values[n + 1]);
+        if (distance < 0)
+            return;
+        totalDistance += distance;
+        keyTimesForPaced.append(distance);
+    }
+    if (!totalDistance)
+        return;
+
+    // Normalize.
+    for (unsigned n = 1; n < keyTimesForPaced.size() - 1; ++n)
+        keyTimesForPaced[n] = keyTimesForPaced[n - 1] + keyTimesForPaced[n] / totalDistance;
+    keyTimesForPaced[keyTimesForPaced.size() - 1] = 1.f;
+
+    // Use key times calculated based on pacing instead of the user provided ones.
+    m_keyTimes.swap(keyTimesForPaced);
+}
 
 static inline double solveEpsilon(double duration) { return 1. / (200. * duration); }
     
@@ -400,6 +430,8 @@ void SVGAnimationElement::startedActiveInterval()
             && (calcMode == CalcModePaced || !hasAttribute(SVGNames::keyTimesAttr) || (m_values.size() == m_keyTimes.size()))
             && (calcMode == CalcModeDiscrete || !m_keyTimes.size() || m_keyTimes.last() == 1.0)
             && (calcMode != CalcModeSpline || (m_keySplines.size() && m_keySplines.size() == m_values.size() - 1));
+        if (calcMode == CalcModePaced && m_animationValid)
+            calculateKeyTimesForCalcModePaced();
     }
 }
     

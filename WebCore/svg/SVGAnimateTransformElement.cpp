@@ -27,6 +27,7 @@
 #include "SVGAnimateTransformElement.h"
 
 #include "AffineTransform.h"
+#include "FloatConversion.h"
 #include "RenderObject.h"
 #include "SVGAngle.h"
 #include "SVGElementInstance.h"
@@ -177,6 +178,29 @@ void SVGAnimateTransformElement::applyResultsToTarget()
         if (shadowTreeElement->renderer())
             shadowTreeElement->renderer()->setNeedsLayout(true);
     }
+}
+    
+float SVGAnimateTransformElement::calculateDistance(const String& fromString, const String& toString)
+{
+    // FIXME: This is not correct in all cases. The spec demands that each component (translate x and y for example) 
+    // is paced separately. To implement this we need to treat each component as individual animation everywhere.
+    SVGTransform from = parseTransformValue(fromString);
+    if (!from.isValid())
+        return -1.f;
+    SVGTransform to = parseTransformValue(toString);
+    if (!to.isValid() || from.type() != to.type())
+        return -1.f;
+    if (to.type() == SVGTransform::SVG_TRANSFORM_TRANSLATE) {
+        FloatSize diff = to.translate() - from.translate();
+        return narrowPrecisionToFloat(sqrt(diff.width() * diff.width() + diff.height() * diff.height()));
+    }
+    if (to.type() == SVGTransform::SVG_TRANSFORM_ROTATE)
+        return narrowPrecisionToFloat(fabs(to.angle() - from.angle()));
+    if (to.type() == SVGTransform::SVG_TRANSFORM_SCALE) {
+        FloatSize diff = to.scale() - from.scale();
+        return narrowPrecisionToFloat(sqrt(diff.width() * diff.width() + diff.height() * diff.height()));
+    }
+    return -1.f;
 }
 
 }

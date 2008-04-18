@@ -100,6 +100,10 @@ private:
         virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement) = 0;
         
         void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to);
+
+        virtual float calculateDistance(const String& fromString, const String& toString) { return -1.f; }
+
+        void calculateKeyTimesForCalcModePaced();
     
 protected:
         bool m_animationValid;

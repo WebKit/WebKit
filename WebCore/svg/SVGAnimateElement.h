@@ -43,6 +43,7 @@ namespace WebCore {
         virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
         virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement);
         virtual void applyResultsToTarget();
+        virtual float calculateDistance(const String& fromString, const String& toString);
 
     private:
         enum PropertyType { NumberProperty, ColorProperty, StringProperty };
