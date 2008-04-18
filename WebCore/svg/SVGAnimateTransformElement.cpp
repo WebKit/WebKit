@@ -192,13 +192,13 @@ float SVGAnimateTransformElement::calculateDistance(const String& fromString, co
         return -1.f;
     if (to.type() == SVGTransform::SVG_TRANSFORM_TRANSLATE) {
         FloatSize diff = to.translate() - from.translate();
-        return narrowPrecisionToFloat(sqrt(diff.width() * diff.width() + diff.height() * diff.height()));
+        return sqrtf(diff.width() * diff.width() + diff.height() * diff.height());
     }
     if (to.type() == SVGTransform::SVG_TRANSFORM_ROTATE)
         return narrowPrecisionToFloat(fabs(to.angle() - from.angle()));
     if (to.type() == SVGTransform::SVG_TRANSFORM_SCALE) {
         FloatSize diff = to.scale() - from.scale();
-        return narrowPrecisionToFloat(sqrt(diff.width() * diff.width() + diff.height() * diff.height()));
+        return sqrtf(diff.width() * diff.width() + diff.height() * diff.height());
     }
     return -1.f;
 }

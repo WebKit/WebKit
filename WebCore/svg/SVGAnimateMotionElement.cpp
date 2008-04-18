@@ -25,7 +25,6 @@
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimateMotionElement.h"
 
-#include "FloatConversion.h"
 #include "RenderObject.h"
 #include "SVGMPathElement.h"
 #include "SVGParserUtilities.h"
@@ -200,7 +199,7 @@ float SVGAnimateMotionElement::calculateDistance(const String& fromString, const
     if (!parsePoint(toString, to))
         return -1.f;
     FloatSize diff = to - from;
-    return narrowPrecisionToFloat(sqrt(diff.width() * diff.width() + diff.height() * diff.height()));
+    return sqrtf(diff.width() * diff.width() + diff.height() * diff.height());
 }
 
 }

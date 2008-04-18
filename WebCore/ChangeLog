@@ -1,3 +1,17 @@
+2008-04-18  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        In MSVC, sqrt() has three overloads: float, double, and long
+        double. In GCC, sqrt() is only for doubles. Both MSVC and GCC have
+        sqrtf() to operate explicitly on floats.
+
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::calculateDistance): Changed to use
+        sqrtf and removed narrowPrecisionToFloat.
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::calculateDistance): Ditto.
+
 2008-04-18  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the build without Database support (fixes the Qt/win build).
