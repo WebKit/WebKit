@@ -1,5 +1,13 @@
 2008-04-17  Adam Roben  <aroben@apple.com>
 
+        Rename ExecState* instances from state to exec
+
+        Requested by Darin Adler and Sam Weinig.
+
+        * bindings/js/JSConsoleCustom.cpp:
+
+2008-04-17  Adam Roben  <aroben@apple.com>
+
         Clean up InspectorController's use of JSStringRef
 
         All JSStringRef creation now happens through a helper function,

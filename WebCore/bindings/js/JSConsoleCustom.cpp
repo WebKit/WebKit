@@ -32,27 +32,27 @@ using namespace KJS;
 
 namespace WebCore {
 
-JSValue* JSConsole::error(ExecState* state, const List& arguments)
+JSValue* JSConsole::error(ExecState* exec, const List& arguments)
 {
-    impl()->error(state, arguments);
+    impl()->error(exec, arguments);
     return jsUndefined();
 }
 
-JSValue* JSConsole::info(ExecState* state, const List& arguments)
+JSValue* JSConsole::info(ExecState* exec, const List& arguments)
 {
-    impl()->info(state, arguments);
+    impl()->info(exec, arguments);
     return jsUndefined();
 }
 
-JSValue* JSConsole::log(ExecState* state, const List& arguments)
+JSValue* JSConsole::log(ExecState* exec, const List& arguments)
 {
-    impl()->log(state, arguments);
+    impl()->log(exec, arguments);
     return jsUndefined();
 }
 
-JSValue* JSConsole::warn(ExecState* state, const List& arguments)
+JSValue* JSConsole::warn(ExecState* exec, const List& arguments)
 {
-    impl()->warn(state, arguments);
+    impl()->warn(exec, arguments);
     return jsUndefined();
 }
 
