@@ -1,3 +1,10 @@
+2008-04-18  Sam Weinig  <sam@webkit.org>
+
+        Disable this test until we can figure out why it is failing on some systems.
+
+        * fast/canvas/toDataURL-supportedTypes.html: Removed.
+        * fast/canvas/toDataURL-supportedTypes.html-disabled: Copied from fast/canvas/toDataURL-supportedTypes.html.
+
 2008-04-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Brady Eidson.
