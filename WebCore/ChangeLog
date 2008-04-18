@@ -1,5 +1,18 @@
 2008-04-18  Dean Jackson <dino@apple.com>
 
+        Fixed marquee suspension on wrong document. Passes current
+        document into Frame::clearTimers.
+
+        Reviewed by hyatt.
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::clear):
+        * page/Frame.cpp:
+        (WebCore::Frame::clearTimers):
+        * page/Frame.h:
+
+2008-04-18  Dean Jackson <dino@apple.com>
+
         Add 'ease' timing function to transitions and
         make it the default. See latest specification proposal at:
         http://webkit.org/specs/CSSVisualEffects/CSSTransitions.html

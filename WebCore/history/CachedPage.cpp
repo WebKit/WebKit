@@ -164,7 +164,7 @@ void CachedPage::clear()
     ASSERT(m_document->frame() == m_view->frame());
 
     if (m_document->inPageCache()) {
-        Frame::clearTimers(m_view.get());
+        Frame::clearTimers(m_view.get(), m_document.get());
 
         m_document->setInPageCache(false);
         // FIXME: We don't call willRemove here. Why is that OK?
