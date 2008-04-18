@@ -1,5 +1,58 @@
 2008-04-18  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Darin Adler.
+
+        - test and updated results for https://bugs.webkit.org/show_bug.cgi?id=17921
+          Extra white space at the end of right-aligned or justified text with -webkit-line-break: after-white-space
+
+        * fast/text/trailing-white-space.html: Added.
+        * http/tests/misc/acid3-expected.txt:
+        * platform/mac/editing/deleting/delete-block-table-expected.txt:
+        * platform/mac/editing/deleting/delete-to-select-table-expected.txt:
+        * platform/mac/editing/deleting/deletionUI-single-instance-expected.txt:
+        * platform/mac/editing/execCommand/5482023-expected.txt:
+        * platform/mac/editing/execCommand/boldSelection-expected.txt:
+        * platform/mac/editing/execCommand/italicizeByCharacter-expected.txt:
+        * platform/mac/editing/execCommand/modifyForeColorByCharacter-expected.txt:
+        * platform/mac/editing/execCommand/print-expected.txt:
+        * platform/mac/editing/execCommand/selectAll-expected.txt:
+        * platform/mac/editing/execCommand/strikethroughSelection-expected.txt:
+        * platform/mac/editing/inserting/editable-html-element-expected.txt:
+        * platform/mac/editing/inserting/insert-div-027-expected.txt:
+        * platform/mac/editing/pasteboard/5028447-expected.txt:
+        * platform/mac/editing/pasteboard/block-wrappers-necessary-expected.checksum:
+        * platform/mac/editing/pasteboard/block-wrappers-necessary-expected.png:
+        * platform/mac/editing/pasteboard/block-wrappers-necessary-expected.txt:
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-area-expected.checksum:
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-area-expected.png:
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-area-expected.txt:
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-field-expected.checksum:
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-field-expected.png:
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-field-expected.txt:
+        * platform/mac/editing/selection/5081257-1-expected.txt:
+        * platform/mac/editing/selection/after-line-wrap-expected.txt:
+        * platform/mac/editing/selection/mixed-editability-1-expected.txt:
+        * platform/mac/editing/selection/select-all-001-expected.txt:
+        * platform/mac/editing/selection/select-all-002-expected.txt:
+        * platform/mac/editing/selection/select-all-003-expected.txt:
+        * platform/mac/editing/style/apple-style-editable-mix-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-012-expected.checksum:
+        * platform/mac/editing/style/create-block-for-style-012-expected.png:
+        * platform/mac/editing/style/create-block-for-style-012-expected.txt:
+        * platform/mac/fast/clip/outline-overflowClip-expected.txt:
+        * platform/mac/fast/forms/textarea-rows-cols-expected.txt:
+        * platform/mac/fast/replaced/width100percent-textarea-expected.txt:
+        * platform/mac/fast/text/embed-at-end-of-pre-wrap-line-expected.txt:
+        * platform/mac/fast/text/justified-text-rect-expected.txt:
+        * platform/mac/fast/text/trailing-white-space-expected.checksum: Added.
+        * platform/mac/fast/text/trailing-white-space-expected.png: Added.
+        * platform/mac/fast/text/trailing-white-space-expected.txt: Added.
+        * platform/mac/fast/text/whitespace/pre-wrap-last-char-expected.txt:
+        * platform/mac/fast/text/whitespace/pre-wrap-overflow-selection-expected.txt:
+        * platform/mac/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.txt:
+
+2008-04-18  Dan Bernstein  <mitz@apple.com>
+
         - add css2.1/t1506-c525-font-wt-00-b.html to the Windows skipped list
 
         * platform/win/Skipped:

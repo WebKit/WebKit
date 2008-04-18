@@ -109,8 +109,7 @@ layer at (11,481) size 161x26
 layer at (11,513) size 161x26
   RenderBlock {DIV} at (1,1) size 161x26
     RenderText {#text} at (3,0) size 155x26
-      text run at (3,0) width 153: "cols = -1; should be default"
-      text run at (156,0) width 2: " "
+      text run at (3,0) width 155: "cols = -1; should be default "
       text run at (3,13) width 30: "width"
 layer at (11,545) size 161x26
   RenderBlock {DIV} at (1,1) size 161x26
