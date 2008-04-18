@@ -32,6 +32,7 @@
 #include "qwebsettings.h"
 
 #include "Frame.h"
+#include "FrameTree.h"
 #include "FrameLoaderClientQt.h"
 #include "FrameView.h"
 #include "ChromeClientQt.h"
@@ -1472,6 +1473,25 @@ bool QWebPage::focusNextPrevChild(bool next)
     }
     //qDebug() << "focusNextPrevChild(" << next << ") =" << ev.isAccepted() << "focusedNode?" << hasFocusedNode;
     return hasFocusedNode;
+}
+
+/*!
+    Finds the next occurrence of the string, \a subString, in the page, using the given \a options.
+    Returns true of \a subString was found and selects the match visually; otherwise returns false;
+*/
+bool QWebPage::find(const QString &subString, FindFlags options)
+{
+    ::TextCaseSensitivity caseSensitivity = ::TextCaseInsensitive;
+    if (options & FindCaseSensitively)
+        caseSensitivity = ::TextCaseSensitive;
+
+    ::FindDirection direction = ::FindDirectionForward;
+    if (options & FindBackward)
+        direction = ::FindDirectionBackward;
+
+    const bool shouldWrap = options & FindWrapsAroundDocument;
+
+    return d->page->findString(subString, caseSensitivity, direction, shouldWrap);
 }
 
 /*!

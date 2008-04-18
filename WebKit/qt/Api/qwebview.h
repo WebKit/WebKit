@@ -97,6 +97,8 @@ public:
     void setTextZoomFactor(int percent);
     int textZoomFactor() const;
 
+    bool find(const QString &subString, QWebPage::FindFlags options = 0);
+
 public Q_SLOTS:
     void stop();
     void backward();

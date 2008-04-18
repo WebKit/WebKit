@@ -146,6 +146,12 @@ public:
         WebActionCount
     };
 
+    enum FindFlag {
+        FindBackward,
+        FindCaseSensitively,
+        FindWrapsAroundDocument
+    };
+    Q_DECLARE_FLAGS(FindFlags, FindFlag);
 
     explicit QWebPage(QObject *parent = 0);
     ~QWebPage();
@@ -196,6 +202,8 @@ public:
     virtual bool focusNextPrevChild(bool next);
 
     QVariant inputMethodQuery(Qt::InputMethodQuery property) const;
+
+    bool find(const QString &subString, FindFlags options = 0);
 
 Q_SIGNALS:
     void loadProgressChanged(int progress);
@@ -251,6 +259,6 @@ private:
     QWebPagePrivate *d;
 };
 
-
+Q_DECLARE_OPERATORS_FOR_FLAGS(QWebPage::FindFlags)
 
 #endif

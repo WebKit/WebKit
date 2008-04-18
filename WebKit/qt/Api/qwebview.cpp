@@ -330,6 +330,17 @@ int QWebView::textZoomFactor() const
 }
 
 /*!
+    Finds the next occurrence of the string, \a subString, in the page, using the given \a options.
+    Returns true of \a subString was found and selects the match visually; otherwise returns false;
+*/
+bool QWebView::find(const QString &subString, QWebPage::FindFlags options)
+{
+    if (d->page)
+        return d->page->find(subString, options);
+    return false;
+}
+
+/*!
     Convenience slot that stops loading the document.
 
     It is equivalent to
