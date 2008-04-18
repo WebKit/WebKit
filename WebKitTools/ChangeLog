@@ -1,5 +1,15 @@
 2008-04-18  Adam Roben  <aroben@apple.com>
 
+        Drop the hang timer to 30 seconds
+
+        This matches what DRT/mac was using.
+
+        Reviewed by Mitz Pettel.
+
+        * Scripts/run-webkit-tests:
+
+2008-04-18  Adam Roben  <aroben@apple.com>
+
         Get rid of DRT's Watchdog
 
         run-webkit-tests now detects hangs and samples DRT as needed.
