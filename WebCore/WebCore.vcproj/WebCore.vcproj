@@ -2814,6 +2814,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXMLHttpRequest.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXMLHttpRequest.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXMLHttpRequestException.cpp"
 				>
 			</File>
@@ -13535,11 +13543,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSXMLHttpRequest.cpp"
+					RelativePath="..\bindings\js\JSXMLHttpRequestConstructor.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSXMLHttpRequest.h"
+					RelativePath="..\bindings\js\JSXMLHttpRequestConstructor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSXMLHttpRequestCustom.cpp"
 					>
 				</File>
 				<File

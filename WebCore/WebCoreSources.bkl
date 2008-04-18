@@ -97,7 +97,8 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSStyleSheetCustom.cpp
         bindings/js/JSStyleSheetListCustom.cpp
         bindings/js/JSTreeWalkerCustom.cpp
-        bindings/js/JSXMLHttpRequest.cpp
+        bindings/js/JSXMLHttpRequestConstructor.cpp
+        bindings/js/JSXMLHttpRequestCustom.cpp
         bindings/js/JSXSLTProcessor.cpp
         bindings/js/kjs_binding.cpp
         bindings/js/kjs_events.cpp
@@ -314,6 +315,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSTreeWalker.cpp
         DerivedSources/WebCore/JSUIEvent.cpp
         DerivedSources/WebCore/JSWheelEvent.cpp
+        DerivedSources/WebCore/JSXMLHttpRequest.cpp
         DerivedSources/WebCore/JSXMLHttpRequestException.cpp
         DerivedSources/WebCore/JSXMLSerializer.cpp
         DerivedSources/WebCore/JSXPathEvaluator.cpp

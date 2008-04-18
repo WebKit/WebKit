@@ -48,20 +48,20 @@ public:
     static void detachRequests(Document*);
     static void cancelRequests(Document*);
 
-    String getStatusText(ExceptionCode&) const;
-    int getStatus(ExceptionCode&) const;
-    XMLHttpRequestState getReadyState() const;
+    String statusText(ExceptionCode&) const;
+    int status(ExceptionCode&) const;
+    XMLHttpRequestState readyState() const;
     void open(const String& method, const KURL&, bool async, ExceptionCode&);
     void open(const String& method, const KURL&, bool async, const String& user, ExceptionCode&);
     void open(const String& method, const KURL&, bool async, const String& user, const String& password, ExceptionCode&);
     void send(const String& body, ExceptionCode&);
     void abort();
     void setRequestHeader(const String& name, const String& value, ExceptionCode&);
-    void overrideMIMEType(const String& override);
+    void overrideMimeType(const String& override);
     String getAllResponseHeaders(ExceptionCode&) const;
     String getResponseHeader(const String& name, ExceptionCode&) const;
-    const KJS::UString& getResponseText(ExceptionCode&) const;
-    Document* getResponseXML(ExceptionCode&) const;
+    const KJS::UString& responseText(ExceptionCode&) const;
+    Document* responseXML(ExceptionCode&) const;
 
     void setOnReadyStateChangeListener(EventListener*);
     EventListener* onReadyStateChangeListener() const;

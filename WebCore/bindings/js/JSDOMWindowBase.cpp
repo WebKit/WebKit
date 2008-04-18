@@ -45,7 +45,7 @@
 #include "JSHTMLOptionElementConstructor.h"
 #include "JSImageConstructor.h"
 #include "JSNode.h"
-#include "JSXMLHttpRequest.h"
+#include "JSXMLHttpRequestConstructor.h"
 #include "Logging.h"
 #include "MediaPlayer.h"
 #include "Page.h"

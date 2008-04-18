@@ -338,6 +338,7 @@ DOM_CLASSES = \
     UIEvent \
     VoidCallback \
     WheelEvent \
+    XMLHttpRequest \
     XMLHttpRequestException \
     XMLSerializer \
     XPathEvaluator \
@@ -355,7 +356,6 @@ all : \
     JSDOMWindowBase.lut.h \
     JSEventTargetBase.lut.h \
     JSRGBColor.lut.h \
-    JSXMLHttpRequest.lut.h \
     JSXSLTProcessor.lut.h \
     \
     JSHTMLInputElementBaseTable.cpp \

@@ -1,3 +1,45 @@
+2008-04-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Autogenerate the XMLHttpRequest javascript binding.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCoreSources.bkl:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSXMLHttpRequest.cpp: Removed.
+        * bindings/js/JSXMLHttpRequest.h: Removed.
+        * bindings/js/JSXMLHttpRequestConstructor.cpp: Added.
+        (WebCore::JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor):
+        (WebCore::JSXMLHttpRequestConstructor::implementsConstruct):
+        (WebCore::JSXMLHttpRequestConstructor::construct):
+        * bindings/js/JSXMLHttpRequestConstructor.h: Added.
+        (WebCore::JSXMLHttpRequestConstructor::classInfo):
+        * bindings/js/JSXMLHttpRequestCustom.cpp: Added.
+        (WebCore::JSXMLHttpRequest::mark):
+        (WebCore::JSXMLHttpRequest::onreadystatechange):
+        (WebCore::JSXMLHttpRequest::setOnreadystatechange):
+        (WebCore::JSXMLHttpRequest::onload):
+        (WebCore::JSXMLHttpRequest::setOnload):
+        (WebCore::JSXMLHttpRequest::responseXML):
+        (WebCore::JSXMLHttpRequest::open):
+        (WebCore::JSXMLHttpRequest::setRequestHeader):
+        (WebCore::JSXMLHttpRequest::send):
+        (WebCore::JSXMLHttpRequest::getResponseHeader):
+        (WebCore::JSXMLHttpRequest::overrideMimeType):
+        (WebCore::JSXMLHttpRequest::addEventListener):
+        (WebCore::JSXMLHttpRequest::removeEventListener):
+        (WebCore::JSXMLHttpRequest::dispatchEvent):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::readyState):
+        (WebCore::XMLHttpRequest::responseText):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl: Added.
+
 2008-04-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

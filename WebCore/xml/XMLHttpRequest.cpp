@@ -137,17 +137,17 @@ static bool isValidHeaderValue(const String& name)
     return !name.contains('\r') && !name.contains('\n');
 }
     
-XMLHttpRequestState XMLHttpRequest::getReadyState() const
+XMLHttpRequestState XMLHttpRequest::readyState() const
 {
     return m_state;
 }
 
-const KJS::UString& XMLHttpRequest::getResponseText(ExceptionCode& ec) const
+const KJS::UString& XMLHttpRequest::responseText(ExceptionCode& ec) const
 {
     return m_responseText;
 }
 
-Document* XMLHttpRequest::getResponseXML(ExceptionCode& ec) const
+Document* XMLHttpRequest::responseXML(ExceptionCode& ec) const
 {
     if (m_state != Loaded)
         return 0;
@@ -530,7 +530,7 @@ void XMLHttpRequest::dropProtection()
     deref();
 }
 
-void XMLHttpRequest::overrideMIMEType(const String& override)
+void XMLHttpRequest::overrideMimeType(const String& override)
 {
     m_mimeTypeOverride = override;
 }
@@ -627,7 +627,7 @@ bool XMLHttpRequest::responseIsXML() const
     return DOMImplementation::isXMLMIMEType(responseMIMEType());
 }
 
-int XMLHttpRequest::getStatus(ExceptionCode& ec) const
+int XMLHttpRequest::status(ExceptionCode& ec) const
 {
     if (m_response.httpStatusCode())
         return m_response.httpStatusCode();
@@ -641,7 +641,7 @@ int XMLHttpRequest::getStatus(ExceptionCode& ec) const
     return 0;
 }
 
-String XMLHttpRequest::getStatusText(ExceptionCode& ec) const
+String XMLHttpRequest::statusText(ExceptionCode& ec) const
 {
     // FIXME: <http://bugs.webkit.org/show_bug.cgi?id=3547> XMLHttpRequest.statusText returns always "OK".
     if (m_response.httpStatusCode())

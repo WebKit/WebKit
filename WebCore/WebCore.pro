@@ -256,7 +256,6 @@ LUT_FILES += \
     bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSEventTargetBase.cpp \
     bindings/js/JSRGBColor.cpp \
-    bindings/js/JSXMLHttpRequest.cpp \
     bindings/js/JSXSLTProcessor.cpp
 
 LUT_TABLE_FILES += \
@@ -395,6 +394,7 @@ IDL_BINDINGS += \
     plugins/PluginArray.idl \
     plugins/MimeTypeArray.idl \
     xml/DOMParser.idl \
+    xml/XMLHttpRequest.idl \
     xml/XMLHttpRequestException.idl \
     xml/XMLSerializer.idl
 
@@ -452,7 +452,8 @@ SOURCES += \
     bindings/js/JSStyleSheetCustom.cpp \
     bindings/js/JSStyleSheetListCustom.cpp \
     bindings/js/JSTreeWalkerCustom.cpp \
-    bindings/js/JSXMLHttpRequest.cpp \
+    bindings/js/JSXMLHttpRequestConstructor.cpp \
+    bindings/js/JSXMLHttpRequestCustom.cpp \
     bindings/js/JSXSLTProcessor.cpp \
     bindings/js/JSPluginCustom.cpp \
     bindings/js/JSPluginArrayCustom.cpp \

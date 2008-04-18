@@ -1,3 +1,11 @@
+2008-04-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Update test result for additon of XMLHttpRequest constants.
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-04-17  Anders Carlsson  <andersca@apple.com>
 
         Add applicationCache object.
