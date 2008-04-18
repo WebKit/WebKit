@@ -1,5 +1,11 @@
 2008-04-17  Adam Roben  <aroben@apple.com>
 
+        Make the hang timer 60 seconds
+
+        * Scripts/run-webkit-tests:
+
+2008-04-17  Adam Roben  <aroben@apple.com>
+
         Get rid of carriage returns in DRT/win's stderr
 
         Reviewed by Eric Seidel.

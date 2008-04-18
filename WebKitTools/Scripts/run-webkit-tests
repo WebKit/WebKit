@@ -1705,7 +1705,7 @@ sub readFromDumpToolWithTimer(*)
 
     setFileHandleNonBlocking($fh, 1);
 
-    my $maximumSecondsWithoutOutput = 5;
+    my $maximumSecondsWithoutOutput = 60;
     my $microsecondsToWaitBeforeReadingAgain = 1000;
 
     my $timeOfLastSuccessfulRead = time;
