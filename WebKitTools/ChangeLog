@@ -1,5 +1,20 @@
 2008-04-17  Adam Roben  <aroben@apple.com>
 
+        Don't wait for the hang timer twice in the case of a hang
+
+        Previously we'd wait for a hang while reading both stdout and stderr
+        from DRT. Now we'll only wait for one or the other.
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/run-webkit-tests:
+        (top level): Don't wait for stderr to time out if stdout already timed
+        out.
+        (readFromDumpToolWithTimer): If $dontWaitForTimeOut is true, quit
+        after the first read that returns no data.
+
+2008-04-17  Adam Roben  <aroben@apple.com>
+
         Don't throw away the output from timed out tests
 
         Reviewed by Anders Carlsson.

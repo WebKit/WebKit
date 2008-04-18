@@ -95,7 +95,7 @@ sub recordActualResultsAndDiff($$);
 sub buildPlatformHierarchy();
 sub epiloguesAndPrologues($$);
 sub parseLeaksandPrintUniqueLeaks();
-sub readFromDumpToolWithTimer(*);
+sub readFromDumpToolWithTimer(*;$);
 sub setFileHandleNonBlocking(*$);
 
 # Argument handling
@@ -558,7 +558,7 @@ for my $test (@tests) {
     }
 
     my $actualRead = readFromDumpToolWithTimer(IN);
-    my $errorRead = readFromDumpToolWithTimer(ERROR);
+    my $errorRead = readFromDumpToolWithTimer(ERROR, $actualRead->{timedout});
 
     my $actual = $actualRead->{output};
     my $error = $errorRead->{output};
@@ -1694,9 +1694,9 @@ sub parseLeaksandPrintUniqueLeaks() {
     
 }
 
-sub readFromDumpToolWithTimer(*)
+sub readFromDumpToolWithTimer(*;$)
 {
-    my ($fh) = @_;
+    my ($fh, $dontWaitForTimeOut) = @_;
 
     setFileHandleNonBlocking($fh, 1);
 
@@ -1717,6 +1717,10 @@ sub readFromDumpToolWithTimer(*)
 
         my $read = sysread($fh, $output, 1024, $readSoFar);
         if (!defined($read) && $! == EAGAIN) {
+            if ($dontWaitForTimeOut) {
+                last;
+            }
+
             # No data ready
             usleep($microsecondsToWaitBeforeReadingAgain);
             next;
