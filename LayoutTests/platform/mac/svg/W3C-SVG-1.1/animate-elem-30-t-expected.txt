@@ -53,7 +53,7 @@ layer at (0,0) size 480x360
           RenderPath {polyline} at (278.70,26) size 28.60x52 [stroke={[type=SOLID] [color=#105D8C] [stroke width=2.00]}] [data="M200.00,20.00L200.00,40.00L220.00,40.00L220.00,60.00"]
       RenderSVGContainer {use} at (408.70,11.70) size 28.60x28.60
         RenderSVGContainer {g} at (408.70,11.70) size 28.60x28.60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,-10.00)}]
-          RenderPath {polygon} at (408.70,11.70) size 28.60x28.60 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#008000]}] [data="M240.00,20.00L240.00,40.00L260.00,40.00L260.00,20.00"]
+          RenderPath {polygon} at (408.70,11.70) size 28.60x28.60 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M240.00,20.00L240.00,40.00L260.00,40.00L260.00,20.00"]
       RenderSVGContainer {use} at (319,1.62) size 52x26 [transform={m=((1.00,0.00)(0.00,0.25)) t=(0.00,0.00)}]
         RenderSVGContainer {g} at (319,1.62) size 52x26
           RenderImage {image} at (0,0) size 40x80
