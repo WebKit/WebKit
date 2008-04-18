@@ -1,3 +1,20 @@
+2008-04-17  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver.
+        
+        Fix https://bugs.webkit.org/show_bug.cgi?id=18551
+        Bug 18551: REGRESSION (r31801?): Crash in ContainerNode::removedFromDocument on many SVG tests under guard malloc
+        
+        Freeing a RefPtr that is the last ref to the parent from removedFromDocument() is a bad idea.
+
+        Caching the target element is too dangerous, let's simply not do it. Getting it is very cheap anyway.
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::removedFromDocument):
+        (WebCore::SVGSMILElement::attributeChanged):
+        (WebCore::SVGSMILElement::targetElement):
+        * svg/animation/SVGSMILElement.h:
+
 2008-04-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -124,7 +124,6 @@ void SVGSMILElement::removedFromDocument()
     // OK, but we don't want to die inside the call.
     RefPtr<SVGSMILElement> keepAlive(this);
     disconnectConditions();
-    m_targetElement = 0;
     SVGElement::removedFromDocument();
 }
    
@@ -327,9 +326,7 @@ void SVGSMILElement::attributeChanged(Attribute* attr, bool preserveDecls)
     SVGElement::attributeChanged(attr, preserveDecls);
     
     const QualifiedName& attrName = attr->name();
-    if (attrName == XLinkNames::hrefAttr)
-        m_targetElement = 0;
-    else if (attrName == SVGNames::durAttr)
+    if (attrName == SVGNames::durAttr)
         m_cachedDur = invalidCachedTime;
     else if (attrName == SVGNames::repeatDurAttr)
         m_cachedRepeatDur = invalidCachedTime;
@@ -405,13 +402,11 @@ void SVGSMILElement::reschedule()
 
 SVGElement* SVGSMILElement::targetElement() const
 {
-    if (!m_targetElement) {
-        String href = xlinkHref();
-        Node *target = href.isEmpty() ? parentNode() : document()->getElementById(SVGURIReference::getTarget(href));
-        if (target && target->isSVGElement())
-            m_targetElement = static_cast<SVGElement*>(target);
-    }
-    return m_targetElement.get();
+    String href = xlinkHref();
+    Node* target = href.isEmpty() ? parentNode() : document()->getElementById(SVGURIReference::getTarget(href));
+    if (target && target->isSVGElement())
+        return static_cast<SVGElement*>(target);
+    return 0;
 }
     
 SMILTime SVGSMILElement::elapsed() const 
