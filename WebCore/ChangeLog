@@ -1,3 +1,30 @@
+2008-04-18  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18551
+        REGRESSION (r31801?): Crash in ContainerNode::removedFromDocument on many SVG tests
+        
+        Fix for test svg/W3C-SVG-1.1/animate-elem-62-t.svg which was still
+        crashing under guard malloc after the previous fix.
+        
+        If the event base element was a parent of the current element, dereffing it during 
+        removedFromDocument() would cause problems. Avoid this by not holding ref pointer
+        to the event base but instead checking from the ref count of the event listener whether
+        it is still alive and in need for unregistering.
+        
+        This shold not be a problem for syncbase pointers since those are always animation elements
+        and leaf nodes.
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::ConditionEventListener::ConditionEventListener):
+        (WebCore::ConditionEventListener::unregister):
+        (WebCore::ConditionEventListener::handleEvent):
+        (WebCore::SVGSMILElement::connectConditions):
+        (WebCore::SVGSMILElement::disconnectConditions):
+        (WebCore::SVGSMILElement::createInstanceTimesFromSyncbase):
+        * svg/animation/SVGSMILElement.h:
+
 2008-04-18  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam and Adam.

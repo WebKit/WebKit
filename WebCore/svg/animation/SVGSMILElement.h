@@ -129,7 +129,7 @@ private:
             String m_name;
             SMILTime m_offset;
             int m_repeats;
-            RefPtr<Element> m_base;
+            RefPtr<Element> m_syncbase;
             RefPtr<ConditionEventListener> m_eventListener;
         };
         bool parseCondition(const String&, BeginOrEnd beginOrEnd);
