@@ -259,6 +259,7 @@ http/tests/security/cross-frame-access-put.html
 fast/forms/input-readonly-autoscroll.html
 
 # <rdar://5673709>
+fast/xsl/sort-locale.xml
 fast/xsl/sort-unicode.xml
 
 # <rdar://5683523> Failing on at least one bot
