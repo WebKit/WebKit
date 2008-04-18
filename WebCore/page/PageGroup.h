@@ -28,12 +28,12 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include "LocalStorage.h"
 #include "StringHash.h"
 
 namespace WebCore {
 
     class KURL;
-    class LocalStorage;
     class Page;
 
     class PageGroup : Noncopyable {

@@ -186,6 +186,11 @@ gtk-port {
     ../WebKit/gtk/webkit
 }
 
+# Make sure storage/ appears before JavaScriptCore/kjs. Both provide LocalStorage.h
+# but the header from the former include path is included across directories while
+# kjs/LocalStorage.h is included only from files within the same directory
+INCLUDEPATH = $$PWD/storage $$INCLUDEPATH
+
 INCLUDEPATH +=  $$PWD \
                 $$PWD/ForwardingHeaders \
                 $$PWD/.. \
@@ -200,8 +205,8 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/svg/graphics/filters \
                 $$PWD/platform/sql \
                 $$PWD/platform/text \
-                $$PWD/storage \
                 $$PWD/loader \
+                $$PWD/loader/appcache \
                 $$PWD/loader/archive \
                 $$PWD/loader/icon \
                 $$PWD/css \
@@ -1192,8 +1197,12 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         storage/DatabaseTask.cpp \
         storage/DatabaseThread.cpp \
         storage/DatabaseTracker.cpp \
+        storage/LocalStorage.cpp \
+        storage/LocalStorageArea.cpp \
         storage/OriginQuotaManager.cpp \
         storage/OriginUsageRecord.cpp \
+        storage/StorageArea.cpp \
+        storage/StorageMap.cpp \
         storage/SQLResultSet.cpp \
         storage/SQLResultSetRowList.cpp \
         storage/SQLStatement.cpp \

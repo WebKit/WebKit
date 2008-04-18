@@ -1,5 +1,15 @@
 2008-04-18  Simon Hausmann  <hausmann@webkit.org>
 
+        Build fix for Qt and gcc 4.3.
+
+        * WebCore.pro: Added missing files and include paths, re-ordered
+        the storage/ include path to avoid conflict of storage/LocalStorage.h
+        with kjs/LocalStorage.h
+        * page/PageGroup.h: Include LocalStorage.h instead of forward
+        declaration to fix compilation with gcc 4.3.
+
+2008-04-18  Simon Hausmann  <hausmann@webkit.org>
+
         Build fix for Gtk and gcc 4.3.
 
         * GNUmakefile.am: Added missing files and include paths.
