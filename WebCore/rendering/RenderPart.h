@@ -37,6 +37,7 @@ public:
     RenderPart(HTMLFrameOwnerElement*);
     virtual ~RenderPart();
     
+    virtual bool isRenderPart() const { return true; }
     virtual const char* renderName() const { return "RenderPart"; }
 
     virtual void setWidget(Widget*);
@@ -54,8 +55,6 @@ protected:
 
 private:
     virtual void deleteWidget();
-
-    Frame* m_frame;
 };
 
 }

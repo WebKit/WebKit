@@ -1,3 +1,42 @@
+2008-04-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Fix probable crasher caused by invalid static_cast
+        https://bugs.webkit.org/show_bug.cgi?id=18585
+
+        * page/Frame.cpp:
+        (WebCore::Frame::contentRenderer):
+        (WebCore::Frame::ownerRenderer):
+        * rendering/RenderObject.h: sort the "is*" functions
+        (WebCore::RenderObject::isApplet):
+        (WebCore::RenderObject::isBR):
+        (WebCore::RenderObject::isBlockFlow):
+        (WebCore::RenderObject::isCounter):
+        (WebCore::RenderObject::isFrame):
+        (WebCore::RenderObject::isFrameSet):
+        (WebCore::RenderObject::isImage):
+        (WebCore::RenderObject::isInlineBlockOrInlineTable):
+        (WebCore::RenderObject::isInlineFlow):
+        (WebCore::RenderObject::isListBox):
+        (WebCore::RenderObject::isListItem):
+        (WebCore::RenderObject::isListMarker):
+        (WebCore::RenderObject::isMedia):
+        (WebCore::RenderObject::isMenuList):
+        (WebCore::RenderObject::isRenderBlock):
+        (WebCore::RenderObject::isRenderImage):
+        (WebCore::RenderObject::isRenderInline):
+        (WebCore::RenderObject::isRenderPart):
+        (WebCore::RenderObject::isRenderView):
+        (WebCore::RenderObject::isSlider):
+        (WebCore::RenderObject::isTable):
+        (WebCore::RenderObject::isTableCell):
+        (WebCore::RenderObject::isTableCol):
+        (WebCore::RenderObject::isTableRow):
+        (WebCore::RenderObject::isTableSection):
+        (WebCore::RenderObject::isTextArea):
+        * rendering/RenderPart.h:
+
 2008-04-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by beth.

@@ -256,34 +256,36 @@ private:
 public:
     RenderArena* renderArena() const { return document()->renderArena(); }
 
-    virtual bool isRenderBlock() const { return false; }
-    virtual bool isRenderInline() const { return false; }
-    virtual bool isRenderImage() const { return false; }
-    virtual bool isInlineFlow() const { return false; }
-    virtual bool isBlockFlow() const { return false; }
-    virtual bool isInlineBlockOrInlineTable() const { return false; }
-    virtual bool isInlineContinuation() const;
-    virtual bool isListItem() const { return false; }
-    virtual bool isListMarker() const { return false; }
-    virtual bool isCounter() const { return false; }
-    virtual bool isRenderView() const { return false; }
+    virtual bool isApplet() const { return false; }
     virtual bool isBR() const { return false; }
-    virtual bool isTableCell() const { return false; }
-    virtual bool isTableRow() const { return false; }
-    virtual bool isTableSection() const { return false; }
-    virtual bool isTableCol() const { return false; }
-    virtual bool isTable() const { return false; }
-    virtual bool isWidget() const { return false; }
-    virtual bool isImage() const { return false; }
-    virtual bool isTextArea() const { return false; }
-    virtual bool isTextField() const { return false; }
+    virtual bool isBlockFlow() const { return false; }
+    virtual bool isCounter() const { return false; }
     virtual bool isFrame() const { return false; }
     virtual bool isFrameSet() const { return false; }
-    virtual bool isApplet() const { return false; }
-    virtual bool isMenuList() const { return false; }
+    virtual bool isImage() const { return false; }
+    virtual bool isInlineBlockOrInlineTable() const { return false; }
+    virtual bool isInlineContinuation() const;
+    virtual bool isInlineFlow() const { return false; }
     virtual bool isListBox() const { return false; }
-    virtual bool isSlider() const { return false; }
+    virtual bool isListItem() const { return false; }
+    virtual bool isListMarker() const { return false; }
     virtual bool isMedia() const { return false; }
+    virtual bool isMenuList() const { return false; }
+    virtual bool isRenderBlock() const { return false; }
+    virtual bool isRenderImage() const { return false; }
+    virtual bool isRenderInline() const { return false; }
+    virtual bool isRenderPart() const { return false; }
+    virtual bool isRenderView() const { return false; }
+    virtual bool isSlider() const { return false; }
+    virtual bool isTable() const { return false; }
+    virtual bool isTableCell() const { return false; }
+    virtual bool isTableCol() const { return false; }
+    virtual bool isTableRow() const { return false; }
+    virtual bool isTableSection() const { return false; }
+    virtual bool isTextArea() const { return false; }
+    virtual bool isTextField() const { return false; }
+    virtual bool isWidget() const { return false; }
+
 
     bool isRoot() const { return document()->documentElement() == node(); }
     bool isBody() const;

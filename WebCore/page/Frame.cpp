@@ -1169,6 +1169,8 @@ RenderView* Frame::contentRenderer() const
     if (!doc)
         return 0;
     RenderObject* object = doc->renderer();
+    if (!object)
+        return 0;
     ASSERT(object->isRenderView());
     return static_cast<RenderView*>(object);
 }
@@ -1183,7 +1185,16 @@ RenderPart* Frame::ownerRenderer() const
     HTMLFrameOwnerElement* ownerElement = d->m_ownerElement;
     if (!ownerElement)
         return 0;
-    return static_cast<RenderPart*>(ownerElement->renderer());
+    RenderObject* object = ownerElement->renderer();
+    if (!object)
+        return 0;
+    // FIXME: If <object> is ever fixed to disassociate itself from frames
+    // that it has started but canceled, then this can turn into an ASSERT
+    // since d->m_ownerElement would be 0 when the load is canceled.
+    // https://bugs.webkit.org/show_bug.cgi?id=18585
+    if (!object->isRenderPart())
+        return 0;
+    return static_cast<RenderPart*>(object);
 }
 
 // returns FloatRect because going through IntRect would truncate any floats
