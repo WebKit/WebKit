@@ -1,5 +1,12 @@
 2008-04-18  Adam Roben  <aroben@apple.com>
 
+        Mac build fix
+
+        * WebCore.xcodeproj/project.pbxproj: Mark JavaScriptDebugListener.h
+        private.
+
+2008-04-18  Adam Roben  <aroben@apple.com>
+
         Make InspectorController a JavaScriptDebugListener
 
         I added two new functions to the InspectorController JS object:

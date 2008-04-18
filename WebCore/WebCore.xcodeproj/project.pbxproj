@@ -3849,7 +3849,7 @@
 		BCFE8E320A02A1D30009E61D /* WebCoreTextRenderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCFE8E310A02A1D30009E61D /* WebCoreTextRenderer.mm */; };
 		C0294DF30D5A6FD800CC7D6B /* UserStyleSheetLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0294DF10D5A6FD800CC7D6B /* UserStyleSheetLoader.cpp */; };
 		C0294DF40D5A6FD800CC7D6B /* UserStyleSheetLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = C0294DF20D5A6FD800CC7D6B /* UserStyleSheetLoader.h */; };
-		C02B14C20D81E02A00D8A970 /* JavaScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = C02B14BF0D81E02A00D8A970 /* JavaScriptDebugListener.h */; };
+		C02B14C20D81E02A00D8A970 /* JavaScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = C02B14BF0D81E02A00D8A970 /* JavaScriptDebugListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C02B14C30D81E02A00D8A970 /* JavaScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C02B14C00D81E02A00D8A970 /* JavaScriptDebugServer.cpp */; };
 		C02B14C40D81E02A00D8A970 /* JavaScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = C02B14C10D81E02A00D8A970 /* JavaScriptDebugServer.h */; };
 		C091588A0DB4209200E55AF4 /* JSInspectedObjectWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C09158840DB4209200E55AF4 /* JSInspectedObjectWrapper.cpp */; };
