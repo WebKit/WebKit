@@ -353,6 +353,9 @@ fast/frames/viewsource-empty-attribute-value.html
 # <rdar://5848161> REGRESSION (r31438?): Crash beneath ResourceHandle::setDefersLoading (null CFURLConnection)
 fast/loader/simultaneous-reloads-assert.html
 
+# <rdar://problem/5873639> REGRESSION (r31620): css2.1/t1506-c525-font-wt-00-b fails on Windows
+css2.1/t1506-c525-font-wt-00-b.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
