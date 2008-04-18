@@ -1,5 +1,20 @@
 2008-04-17  Adam Roben  <aroben@apple.com>
 
+        Clean up InspectorController's use of JSStringRef
+
+        All JSStringRef creation now happens through a helper function,
+        jsStringRef, which takes either a const char* or a const String& and
+        returns a JSRetainPtr<JSStringRef>.
+
+        Reviewed by Mitz Pettel.
+
+        * page/InspectorController.cpp:
+        Added jsStringRef and converted all callers to
+        JSStringCreateWithUTF8CString or JSStringCreateWithCharacters to use
+        it.
+
+2008-04-17  Adam Roben  <aroben@apple.com>
+
         Add wrappers around InspectorClient::{show,close}Window
 
         This will let us perform actions when the window is actually
