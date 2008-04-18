@@ -679,6 +679,8 @@ bool AccessibilityObject::isLoaded() const
 
 int AccessibilityObject::layoutCount() const
 {
+    if (!m_renderer->isRenderView())
+        return 0;
     return static_cast<RenderView*>(m_renderer)->frameView()->layoutCount();
 }
 

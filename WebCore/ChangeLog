@@ -1,3 +1,11 @@
+2008-04-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by aliu.
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::layoutCount): Check isRenderView() before
+        casting to RenderView.
+
 2008-04-17  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver.
@@ -79,7 +87,6 @@
         Reviewed by Jon Honeycutt.
 
         Added some asserts to catch undesirable usage of setWrapper and addChildren.
-
         * page/AccessibilityObject.cpp:
         (WebCore::AccessibilityObject::addChildren):
         * page/AccessibilityObject.h:
