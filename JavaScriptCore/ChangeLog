@@ -1,5 +1,19 @@
 2008-04-18  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Sam.
+
+        -<rdar://problem/5770054> JavaScript profiler (10928)
+        - Use Deque instead of Vector since the profiler uses prepend a lot
+        and deque is faster at that.
+
+        * profiler/FunctionCallProfile.h:
+        (KJS::FunctionCallProfile::milliSecs): Corrected the name to match
+        its output.
+        * wtf/Deque.h:
+        (WTF::deleteAllValues):
+
+2008-04-18  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Sam and Adam.
 
         -<rdar://problem/5770054> JavaScript profiler (10928)

@@ -30,12 +30,13 @@
 #define FunctionCallProfile_h
 
 #include <kjs/ustring.h>
+#include <wtf/Deque.h>
 
 namespace KJS {
 
     class FunctionCallProfile;
 
-    typedef Vector<FunctionCallProfile*>::const_iterator StackIterator;
+    typedef Deque<FunctionCallProfile*>::const_iterator StackIterator;
 
     class FunctionCallProfile {
     public:
@@ -49,7 +50,7 @@ namespace KJS {
         FunctionCallProfile* findChild(const UString& name);
 
         UString functionName() const { return m_functionName; }
-        double microSecs() const { return m_timeSum; }
+        double milliSecs() const { return m_timeSum; }
 
         void printDataInspectorStyle(int indentLevel) const;
         double printDataSampleStyle(int indentLevel) const;
@@ -59,7 +60,7 @@ namespace KJS {
         double m_timeSum;
         double m_startTime;
 
-        Vector<FunctionCallProfile*> m_children;
+        Deque<FunctionCallProfile*> m_children;
     };
 
 } // namespace KJS

@@ -313,6 +313,15 @@ namespace WTF {
     }
 
     template<typename T>
+    void deleteAllValues(const Deque<T>& collection)
+    {
+        typedef typename Deque<T>::const_iterator iterator;
+        iterator end = collection.end();
+        for (iterator it = collection.begin(); it != end; ++it)
+            delete *it;
+    }
+
+    template<typename T>
     inline Deque<T>& Deque<T>::operator=(const Deque<T>& other)
     {
         Deque<T> copy(other);
