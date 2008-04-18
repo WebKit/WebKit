@@ -1,5 +1,15 @@
 2008-04-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Reviewed by mrowe.
+
+        Define HAVE_ACCESSIBILITY in a way that WebKit and WebCore can see it.
+
+        * config.h: Remove HAVE_ACCESSIBILITY.
+        * page/AccessibilityObject.h: Include wtf/Platform.h to pick up
+        HAVE_ACCESSIBILITY.
+
+2008-04-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Reviewed by aliu.
 
         * page/AccessibilityObject.cpp:

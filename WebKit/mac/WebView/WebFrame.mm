@@ -47,6 +47,8 @@
 #import "WebScriptDebugger.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/APICast.h>
+#import <WebCore/AccessibilityObject.h>
+#import <WebCore/AXObjectCache.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/DOMImplementation.h>
 #import <WebCore/DocLoader.h>
@@ -72,11 +74,6 @@
 #import <WebCore/kjs_proxy.h>
 #import <WebCore/markup.h>
 #import <WebCore/visible_units.h>
-
-// FIXME: Where should HAVE_ACCESSIBILITY come from? In WebCore it comes from config.h, but we don't have an equivalent in WebKit.
-#define HAVE_ACCESSIBILITY 1
-#import <WebCore/AccessibilityObject.h>
-#import <WebCore/AXObjectCache.h>
 
 using namespace std;
 using namespace WebCore;

@@ -1,3 +1,9 @@
+2008-04-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by mrowe.
+
+        * wtf/Platform.h: Add HAVE_ACCESSIBILITY to Platform.h.
+
 2008-04-17  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

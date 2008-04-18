@@ -1,3 +1,9 @@
+2008-04-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by mrowe.
+
+        * WebView/WebFrame.mm: Remove temporary build fix.
+
 2008-04-17  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

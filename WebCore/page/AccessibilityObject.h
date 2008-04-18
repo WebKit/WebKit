@@ -30,6 +30,7 @@
 #define AccessibilityObject_h
 
 #include "VisiblePosition.h"
+#include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

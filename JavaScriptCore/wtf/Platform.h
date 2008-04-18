@@ -240,6 +240,10 @@
 #define USE_SYSTEM_MALLOC 1
 #endif
 
+#if PLATFORM(MAC) || PLATFORM(WIN)
+#define HAVE_ACCESSIBILITY 1
+#endif
+
 /* ENABLE macro defaults */
 
 #if !defined(ENABLE_ICONDATABASE)
