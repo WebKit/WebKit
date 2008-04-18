@@ -1,5 +1,16 @@
 2008-04-17  Adam Roben  <aroben@apple.com>
 
+        Don't throw away the output from timed out tests
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/run-webkit-tests:
+        (top level): Updated for changes to readFromDumpToolWithTimer.
+        (readFromDumpToolWithTimer): Return a hash that contains both the
+        output and whether or not the test timed out.
+
+2008-04-17  Adam Roben  <aroben@apple.com>
+
         Make the hang timer 60 seconds
 
         * Scripts/run-webkit-tests:

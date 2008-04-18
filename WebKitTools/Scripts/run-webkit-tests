@@ -557,11 +557,14 @@ for my $test (@tests) {
         }
     }
 
-    my $actual = readFromDumpToolWithTimer(IN);
-    my $error = readFromDumpToolWithTimer(ERROR);
+    my $actualRead = readFromDumpToolWithTimer(IN);
+    my $errorRead = readFromDumpToolWithTimer(ERROR);
 
-    unless (defined($actual) && defined($error)) {
-        testCrashedOrTimedOut($test, $base, 0, undef, undef);
+    my $actual = $actualRead->{output};
+    my $error = $errorRead->{output};
+
+    if ($actualRead->{timedout} || $errorRead->{timedout}) {
+        testCrashedOrTimedOut($test, $base, 0, $actual, $error);
         countFinishedTest($test, $base, "timedout", 0);
         next;
      }
@@ -944,9 +947,9 @@ print HTML "</head>\n";
 print HTML "<body>\n";
 
 print HTML htmlForResultsSection(@{$tests{mismatch}}, "Tests where results did not match expected results", \&linksForMismatchTest);
-print HTML htmlForResultsSection(@{$tests{timedout}}, "Tests that timed out", \&linksForTimedOutTest);
-print HTML htmlForResultsSection(@{$tests{crash}}, "Tests that caused the DumpRenderTree tool to crash", \&linksForCrashOrErrorTest);
-print HTML htmlForResultsSection(@{$tests{error}}, "Tests that had stderr output", \&linksForCrashOrErrorTest);
+print HTML htmlForResultsSection(@{$tests{timedout}}, "Tests that timed out", \&linksForErrorTest);
+print HTML htmlForResultsSection(@{$tests{crash}}, "Tests that caused the DumpRenderTree tool to crash", \&linksForErrorTest);
+print HTML htmlForResultsSection(@{$tests{error}}, "Tests that had stderr output", \&linksForErrorTest);
 print HTML htmlForResultsSection(@{$tests{new}}, "Tests that had no expected results (probably new)", \&linksForNewTest);
 
 print HTML "</body>\n";
@@ -1562,15 +1565,7 @@ sub linksForMismatchTest
     return \@links;
 }
 
-sub linksForTimedOutTest
-{
-    my ($test) = @_;
-
-    my @links = ();
-    return \@links;
-}
-
-sub linksForCrashOrErrorTest
+sub linksForErrorTest
 {
     my ($test) = @_;
 
@@ -1711,11 +1706,12 @@ sub readFromDumpToolWithTimer(*)
     my $timeOfLastSuccessfulRead = time;
 
     my $readSoFar = 0;
-    my $output;
+    my $output = "";
+    my $timedOut = 0;
 
     while (1) {
         if (time - $timeOfLastSuccessfulRead > $maximumSecondsWithoutOutput) {
-            $output = undef;
+            $timedOut = 1;
             last;
         }
 
@@ -1738,7 +1734,7 @@ sub readFromDumpToolWithTimer(*)
     }
 
     setFileHandleNonBlocking($fh, 0);
-    return $output;
+    return { output => $output, timedout => $timedOut };
 }
 
 sub setFileHandleNonBlocking(*$)
