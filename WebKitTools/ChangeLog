@@ -1,5 +1,15 @@
 2008-04-17  Adam Roben  <aroben@apple.com>
 
+        Remove DRT/win's hang timer
+
+        run-webkit-tests takes care of this for us now
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+
+2008-04-17  Adam Roben  <aroben@apple.com>
+
         Don't wait for the hang timer twice in the case of a hang
 
         Previously we'd wait for a hang while reading both stdout and stderr
