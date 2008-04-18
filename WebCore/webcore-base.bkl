@@ -73,6 +73,7 @@ wxWebCore port Bakefile project file.
         <include>$(SRCDIR)/html</include>
         <include>$(SRCDIR)/loader</include>
         <include>$(SRCDIR)/loader/gdk</include>
+        <include>$(SRCDIR)/loader/appcache</include>
         <include>$(SRCDIR)/loader/archive</include>
         <include>$(SRCDIR)/loader/icon</include>
         <include>$(SRCDIR)/page</include>

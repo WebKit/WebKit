@@ -1,5 +1,11 @@
 2008-04-18  Simon Hausmann  <hausmann@webkit.org>
 
+        Prospective wx build fix.
+
+        * webcore-base.bkl: Add loader/appcache to include paths.
+
+2008-04-18  Simon Hausmann  <hausmann@webkit.org>
+
         Build fix. Back out previous #include fix for PageGroup.h as it broke
         the Mac build due to forwarding headers.
 
