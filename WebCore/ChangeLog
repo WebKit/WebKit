@@ -1,6 +1,30 @@
 2008-04-17  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=18573
+
+        Implement supplemental transforms and use them for <animateMotion> instead of the transform list.
+        This will allow <animateTransform> and <animateMotion> combine properly.
+
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::resetToBaseValue):
+        (WebCore::SVGAnimateMotionElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::supplementalTransform):
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::animatedLocalTransform):
+        * svg/SVGStyledTransformableElement.h:
+        (WebCore::SVGStyledTransformableElement::supplementalTransform):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::animatedLocalTransform):
+        * svg/SVGTextElement.h:
+        (WebCore::SVGTextElement::supplementalTransform):
+
+2008-04-17  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver.
 
         Implement calcMode=paced.
         

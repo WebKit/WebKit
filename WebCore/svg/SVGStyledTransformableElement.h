@@ -46,6 +46,7 @@ namespace WebCore {
         virtual SVGElement* farthestViewportElement() const;
         
         virtual AffineTransform animatedLocalTransform() const;
+        virtual AffineTransform* supplementalTransform();
 
         virtual FloatRect getBBox() const;
 
@@ -59,6 +60,9 @@ namespace WebCore {
 
     protected:
         ANIMATED_PROPERTY_DECLARATIONS(SVGStyledTransformableElement, SVGTransformList*, RefPtr<SVGTransformList>, Transform, transform)
+    private:
+        // Used by <animateMotion>
+        OwnPtr<AffineTransform> m_supplementalTransform;
     };
 
 } // namespace WebCore

@@ -224,6 +224,8 @@ namespace WebCore {
         virtual void attributeChanged(Attribute*, bool preserveDecls = false);
 
         void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);
+        
+        virtual AffineTransform* supplementalTransform() { return 0; }
 
         // Forwarded properties (declared/defined anywhere else in the inheritance structure)
 

@@ -94,7 +94,14 @@ AffineTransform SVGTextElement::getCTM() const
 
 AffineTransform SVGTextElement::animatedLocalTransform() const
 {
-    return transform()->concatenate().matrix();
+    return m_supplementalTransform ? transform()->concatenate().matrix() * *m_supplementalTransform : transform()->concatenate().matrix();
+}
+
+AffineTransform* SVGTextElement::supplementalTransform()
+{
+    if (!m_supplementalTransform)
+        m_supplementalTransform.set(new AffineTransform());
+    return m_supplementalTransform.get();
 }
 
 RenderObject* SVGTextElement::createRenderer(RenderArena* arena, RenderStyle* style)

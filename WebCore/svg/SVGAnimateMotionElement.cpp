@@ -144,10 +144,11 @@ void SVGAnimateMotionElement::resetToBaseValue(const String&)
 {
     if (!hasValidTarget())
         return;
-    SVGStyledTransformableElement* transformableElement = static_cast<SVGStyledTransformableElement*>(targetElement());
-    // FIXME: This should modify supplemental transform, not the transform attribute!
-    ExceptionCode ec;
-    transformableElement->transform()->clear(ec);
+    SVGElement* target = targetElement();
+    AffineTransform* transform = target->supplementalTransform();
+    if (!transform)
+        return;
+    transform->reset();
 }
 
 bool SVGAnimateMotionElement::calculateFromAndToValues(const String& fromString, const String& toString)
@@ -166,40 +167,28 @@ bool SVGAnimateMotionElement::calculateFromAndByValues(const String& fromString,
     return true;
 }
 
-void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement)
+void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement*)
 {
-    if (!resultElement->targetElement()->isStyledTransformable())
+    SVGElement* target = targetElement();
+    if (!target)
+        return;
+    AffineTransform* transform = target->supplementalTransform();
+    if (!transform)
         return;
     
-    // FIXME: This should modify supplemental transform, not the transform attribute!
-    SVGStyledTransformableElement* transformableElement = static_cast<SVGStyledTransformableElement*>(resultElement->targetElement());
-    RefPtr<SVGTransformList> transformList = transformableElement->transform();
-    if (!transformList)
-        return;
+    if (!isAdditive())
+        transform->reset();
     
-    ExceptionCode ec;
-    if (!isAdditive()) {
-        ASSERT(this == resultElement);
-        transformList->clear(ec);
-    }
-    
+    // FIXME: This needs to do paths and all that.
     FloatSize diff = m_toPoint - m_fromPoint;
-    AffineTransform transform;
-    // FIXME: Animate angles
-    transform.translate(diff.width() * percentage + m_fromPoint.x(), diff.height() * percentage + m_fromPoint.y());
-    
-    // FIXME: Accumulate.
-
-    if (!transform.isIdentity())
-        transformList->appendItem(SVGTransform(transform), ec);
-
-    if (transformableElement->renderer())
-        transformableElement->renderer()->setNeedsLayout(true); // should be part of setTransform
+    transform->translate(diff.width() * percentage + m_fromPoint.x(), diff.height() * percentage + m_fromPoint.y());
 }
     
 void SVGAnimateMotionElement::applyResultsToTarget()
 {
-    
+    SVGElement* target = targetElement();
+    if (target && target->renderer())
+        target->renderer()->setNeedsLayout(true);
 }
 
 float SVGAnimateMotionElement::calculateDistance(const String& fromString, const String& toString)
