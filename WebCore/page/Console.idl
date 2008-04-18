@@ -33,6 +33,9 @@ module window {
         [Custom] void info();
         [Custom] void log();
         [Custom] void warn();
+
+        void profile();
+        void profileEnd();
     };
 
 }

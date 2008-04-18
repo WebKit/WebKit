@@ -70,6 +70,8 @@ namespace WebCore {
         void info(KJS::ExecState*, const KJS::List& arguments);
         void log(KJS::ExecState*, const KJS::List& arguments);
         void warn(KJS::ExecState*, const KJS::List& arguments);
+        void profile(KJS::ExecState*, const KJS::List& arguments) const;
+        void profileEnd() const;
 
     private:
         Console(Frame*);

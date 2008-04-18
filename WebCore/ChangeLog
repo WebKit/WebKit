@@ -1,3 +1,18 @@
+2008-04-18  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam and Adam.
+
+        -<rdar://problem/5770054> JavaScript profiler (10928)
+        - Added support for console.profile() and console.profileEnd().
+
+        * ForwardingHeaders/kjs/FunctionCallProfile.h: Added.
+        * ForwardingHeaders/kjs/Profiler.h: Added.
+        * page/Console.cpp:
+        (WebCore::Console::profile):
+        (WebCore::Console::profileEnd):
+        * page/Console.h:
+        * page/Console.idl:
+
 2008-04-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Add the new loader/appcache files.
