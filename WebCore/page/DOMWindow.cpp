@@ -32,9 +32,6 @@
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
 #include "Console.h"
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-#include "DOMApplicationCache.h"
-#endif
 #include "DOMSelection.h"
 #include "Document.h"
 #include "Element.h"
@@ -45,7 +42,6 @@
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
 #include "History.h"
-#include "LocalStorage.h"
 #include "Location.h"
 #include "Navigator.h"
 #include "Page.h"
@@ -65,9 +61,14 @@
 #endif
 
 #if ENABLE(DOM_STORAGE)
+#include "LocalStorage.h"
 #include "SessionStorage.h"
 #include "Storage.h"
 #include "StorageArea.h"
+#endif
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+#include "DOMApplicationCache.h"
 #endif
 
 using std::min;

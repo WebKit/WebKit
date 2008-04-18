@@ -28,9 +28,12 @@
 
 #include "ChromeClient.h"
 #include "Document.h"
-#include "LocalStorage.h"
 #include "Page.h"
+
+#if ENABLE(DOM_STORAGE)
+#include "LocalStorage.h"
 #include "StorageArea.h"
+#endif
 
 namespace WebCore {
 
@@ -116,6 +119,7 @@ void PageGroup::setShouldTrackVisitedLinks(bool shouldTrack)
         removeAllVisitedLinks();
 }
 
+#if ENABLE(DOM_STORAGE)
 LocalStorage* PageGroup::localStorage()
 {
 #if ENABLE(DATABASE)
@@ -125,5 +129,6 @@ LocalStorage* PageGroup::localStorage()
 
     return m_localStorage.get();
 }
+#endif
 
 } // namespace WebCore

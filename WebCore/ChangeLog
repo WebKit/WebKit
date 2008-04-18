@@ -1,3 +1,14 @@
+2008-04-10  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Brady Eidson.
+
+        Fix builds that do not have DOM storage enabled.
+
+        * page/DOMWindow.cpp:
+        * page/Page.cpp:
+        * page/PageGroup.cpp:
+        * page/PageGroup.h:
+
 2008-04-18  Timothy Hatcher  <timothy@apple.com>
 
         Fixes the regression where style rules in the Inspector always show "inline stylesheet"
