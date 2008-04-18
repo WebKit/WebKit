@@ -1,3 +1,20 @@
+2008-04-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        The SessionStorage for a Page has to be copied every time a new Page is created.
+
+        I thought I had the right choke point for creating new Pages at FrameLoader::createWindow(),
+        but it just so happens there was another - in the ContextMenuController.
+
+        The *real* choke point for this, then, is in the Chrome itself.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow): Don't do the SessionStorage copy here...
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::createWindow): Do it here, instead!
+
 2008-04-17  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Jon Honeycutt.
