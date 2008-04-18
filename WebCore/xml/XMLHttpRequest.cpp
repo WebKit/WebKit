@@ -142,12 +142,12 @@ XMLHttpRequestState XMLHttpRequest::readyState() const
     return m_state;
 }
 
-const KJS::UString& XMLHttpRequest::responseText(ExceptionCode& ec) const
+const KJS::UString& XMLHttpRequest::responseText() const
 {
     return m_responseText;
 }
 
-Document* XMLHttpRequest::responseXML(ExceptionCode& ec) const
+Document* XMLHttpRequest::responseXML() const
 {
     if (m_state != Loaded)
         return 0;

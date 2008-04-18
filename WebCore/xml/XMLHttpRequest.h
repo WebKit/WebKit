@@ -60,8 +60,8 @@ public:
     void overrideMimeType(const String& override);
     String getAllResponseHeaders(ExceptionCode&) const;
     String getResponseHeader(const String& name, ExceptionCode&) const;
-    const KJS::UString& responseText(ExceptionCode&) const;
-    Document* responseXML(ExceptionCode&) const;
+    const KJS::UString& responseText() const;
+    Document* responseXML() const;
 
     void setOnReadyStateChangeListener(EventListener*);
     EventListener* onReadyStateChangeListener() const;

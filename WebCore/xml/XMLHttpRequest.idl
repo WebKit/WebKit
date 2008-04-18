@@ -67,10 +67,8 @@ module xml {
             raises(DOMException);
         [Custom, ConvertNullStringTo=Null] DOMString getResponseHeader(in DOMString header)
             raises(DOMException);
-        [ConvertNullStringTo=Null] readonly attribute DOMString responseText
-            getter raises(DOMException);
-        readonly attribute [Custom] Document responseXML
-            getter raises(DOMException);
+        readonly attribute [ConvertNullStringTo=Null] DOMString responseText;
+        readonly attribute Document responseXML;
         readonly attribute unsigned short status
             getter raises(DOMException);
         readonly attribute DOMString statusText

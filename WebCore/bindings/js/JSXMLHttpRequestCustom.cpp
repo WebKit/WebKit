@@ -98,14 +98,6 @@ void JSXMLHttpRequest::setOnload(ExecState*, JSValue* value)
     }
 }
 
-JSValue* JSXMLHttpRequest::responseXML(ExecState* exec) const
-{
-    ExceptionCode ec = 0;
-    Document* responseXML = impl()->responseXML(ec);
-    setDOMException(exec, ec);
-    return toJS(exec, responseXML);
-}
-
 // Custom functions
 JSValue* JSXMLHttpRequest::open(ExecState* exec, const List& args)
 {

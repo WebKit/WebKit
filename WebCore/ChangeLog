@@ -1,3 +1,16 @@
+2008-04-18  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Mark Rowe.
+
+        responseText and responseXML don't throw exceptions so they don't need an ExceptionCode parameter.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseText):
+        (WebCore::XMLHttpRequest::responseXML):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl:
+
 2008-04-18  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.
