@@ -54,6 +54,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformScrollBar.h"
 #include "PlatformWheelEvent.h"
+#include "RenderFrameSet.h"
 #include "RenderWidget.h"
 #include "SelectionController.h"
 #include "Settings.h"
@@ -688,6 +689,14 @@ Cursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, Pla
     Node* node = event.targetNode();
     RenderObject* renderer = node ? node->renderer() : 0;
     RenderStyle* style = renderer ? renderer->style() : 0;
+
+    if (renderer && renderer->isFrameSet()) {
+        RenderFrameSet* fs = static_cast<RenderFrameSet*>(renderer);
+        if (fs->canResizeRow(event.localPoint()))
+            return rowResizeCursor();
+        if (fs->canResizeColumn(event.localPoint()))
+            return columnResizeCursor();
+    }
 
     if (style && style->cursors()) {
         const CursorList* cursors = style->cursors();
