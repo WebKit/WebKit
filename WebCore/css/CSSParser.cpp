@@ -2222,7 +2222,7 @@ bool CSSParser::parseTimingFunctionValue(ValueList*& args, double& result)
 PassRefPtr<CSSValue> CSSParser::parseTransitionTimingFunction()
 {
     Value* value = valueList->current();
-    if (value->id == CSSValueAuto || value->id == CSSValueLinear || value->id == CSSValueEaseIn || value->id == CSSValueEaseOut || value->id == CSSValueEaseInOut)
+    if (value->id == CSSValueEase || value->id == CSSValueLinear || value->id == CSSValueEaseIn || value->id == CSSValueEaseOut || value->id == CSSValueEaseInOut)
         return new CSSPrimitiveValue(value->id);
     
     // We must be a function.

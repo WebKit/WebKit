@@ -561,6 +561,7 @@ lines
 #
 # CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION
 #
+ease
 linear
 ease-in
 ease-out

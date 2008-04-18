@@ -1,3 +1,19 @@
+2008-04-18  Dean Jackson <dino@apple.com>
+
+        Add 'ease' timing function to transitions and
+        make it the default. See latest specification proposal at:
+        http://webkit.org/specs/CSSVisualEffects/CSSTransitions.html
+
+        Reviewed by hyatt.
+
+        NOTE: still working on a way to test animating/transitioning content
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseTransitionTimingFunction):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapTransitionTimingFunction):
+        * css/CSSValueKeywords.in:
+
 2008-04-18  Adam Roben  <aroben@apple.com>
 
         Change JavaScriptDebugListener to use KJS::UString instead of
