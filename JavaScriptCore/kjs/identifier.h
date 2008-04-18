@@ -82,7 +82,7 @@ namespace KJS {
         static PassRefPtr<UString::Rep> add(const UChar*, int length);
         static PassRefPtr<UString::Rep> add(UString::Rep* r)
         {
-            if (r->isIdentifier)
+            if (r->identifierTable)
                 return r;
             return addSlowCase(r);
         }

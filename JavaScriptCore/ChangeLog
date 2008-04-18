@@ -2,6 +2,52 @@
 
         Reviewed by Darin.
 
+        Fix leaks during plugin tests (which actually excercise background JS), and potential
+        PAC brokenness that was not reported, but very likely.
+
+        The leaks shadowed a bigger problem with Identifier destruction. Identifier::remove involves
+        an IdentifierTable lookup, which is now a per-thread instance. Since garbage collection can
+        currently happen on a different thread than allocation, a wrong table was used.
+
+        No measurable change on SunSpider total, ~1% variation on individual tests.
+
+        * kjs/ustring.cpp:
+        (KJS::):
+        (KJS::UString::Rep::create):
+        (KJS::UString::Rep::destroy):
+        * kjs/ustring.h:
+        Replaced isIdentifier with a pointer to IdentifierTable, so that destruction can be done
+        correctly. Took one bit from reportedCost, to avoid making UString::Rep larger (performance
+        effect was measurable on SunSpider).
+
+        * kjs/identifier.cpp:
+        (KJS::IdentifierTable::IdentifierTable):
+        (KJS::IdentifierTable::~IdentifierTable):
+        (KJS::IdentifierTable::add):
+        (KJS::IdentifierTable::remove):
+        Make IdentifierTable a real class. Its destructor needs to zero out outstanding references,
+        because some identifiers may briefly outlive it during thread destruction, and we don't want
+        them to use their stale pointers.
+
+        (KJS::LiteralIdentifierTable):
+        (KJS::Identifier::add):
+        Now that LiteralIdentifierTable is per-thread and can be destroyed not just during application
+        shutdown, it is not appropriate to simply bump refcount for strings that get there; changed
+        the table to hold RefPtrs.
+
+        (KJS::CStringTranslator::translate):
+        (KJS::UCharBufferTranslator::translate):
+        (KJS::Identifier::addSlowCase):
+        (KJS::Identifier::remove):
+        * kjs/identifier.h:
+        (KJS::Identifier::add):
+        Use and update UString::Rep::identifierTable as appropriate. Updating it is now done in
+        IdentifierTable::add, not in translators.
+
+2008-04-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         Get rid of static compareWithCompareFunctionArguments in array_instance.cpp.
 
         No change on SunSpider, CelticKane or iBench JavaScript. It is probable that in some cases,

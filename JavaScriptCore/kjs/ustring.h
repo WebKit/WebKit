@@ -47,6 +47,7 @@ namespace KJS {
   using WTF::PlacementNewAdoptType;
   using WTF::PlacementNewAdopt;
 
+  class IdentifierTable;
   class UString;
   
   /**
@@ -111,10 +112,10 @@ namespace KJS {
       int len;
       int rc; // For null and empty static strings, this field does not reflect a correct count, because ref/deref are not thread-safe. A special case in destroy() guarantees that these do not get deleted.
       mutable unsigned _hash;
-      bool isIdentifier : 1;
-      bool isStatic : 1;
+      IdentifierTable* identifierTable; // 0 if not an identifier. Since garbage collection can happen on a different thread, there is no other way to get to the table during destruction.
       UString::Rep* baseString;
-      size_t reportedCost;
+      bool isStatic : 1;
+      size_t reportedCost : 31;
 
       // potentially shared data
       UChar *buf;

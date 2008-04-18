@@ -173,8 +173,8 @@ bool operator==(const CString& c1, const CString& c2)
 
 // These static strings are immutable, except for rc, whose initial value is chosen to reduce the possibility of it becoming zero due to ref/deref not being thread-safe.
 static UChar sharedEmptyChar;
-UString::Rep UString::Rep::null = { 0, 0, INT_MAX / 2, 0, false, true, &UString::Rep::null, 0, 0, 0, 0, 0, 0 };
-UString::Rep UString::Rep::empty = { 0, 0, INT_MAX / 2, 0, false, true, &UString::Rep::empty, 0, &sharedEmptyChar, 0, 0, 0, 0 };
+UString::Rep UString::Rep::null = { 0, 0, INT_MAX / 2, 0, 0, &UString::Rep::null, true, 0, 0, 0, 0, 0, 0 };
+UString::Rep UString::Rep::empty = { 0, 0, INT_MAX / 2, 0, 0, &UString::Rep::empty, true, 0, &sharedEmptyChar, 0, 0, 0, 0 };
 
 static char* statBuffer = 0; // Only used for debugging via UString::ascii().
 
@@ -194,9 +194,9 @@ PassRefPtr<UString::Rep> UString::Rep::create(UChar *d, int l)
   r->len = l;
   r->rc = 1;
   r->_hash = 0;
-  r->isIdentifier = false;
-  r->isStatic = false;
+  r->identifierTable = 0;
   r->baseString = r;
+  r->isStatic = false;
   r->reportedCost = 0;
   r->buf = d;
   r->usedCapacity = l;
@@ -224,9 +224,9 @@ PassRefPtr<UString::Rep> UString::Rep::create(PassRefPtr<Rep> base, int offset, 
   r->len = length;
   r->rc = 1;
   r->_hash = 0;
-  r->isIdentifier = false;
-  r->isStatic = false;
+  r->identifierTable = 0;
   r->baseString = base.releaseRef();
+  r->isStatic = false;
   r->reportedCost = 0;
   r->buf = 0;
   r->usedCapacity = 0;
@@ -242,7 +242,7 @@ void UString::Rep::destroy()
 {
   // Static null and empty strings can never be destroyed, but we cannot rely on reference counting, because ref/deref are not thread-safe.
   if (!isStatic) {
-    if (isIdentifier)
+    if (identifierTable)
       Identifier::remove(this);
     if (baseString == this)
       fastFree(buf);
