@@ -1,3 +1,9 @@
+2008-04-18  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Add the new loader/appcache files.
+
+        * WebCoreSources.bkl:
+
 2008-04-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

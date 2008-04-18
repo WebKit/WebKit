@@ -50,6 +50,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSCustomVoidCallback.cpp
         bindings/js/JSCustomXPathNSResolver.cpp
         bindings/js/JSDatabaseCustom.cpp
+        bindings/js/JSDOMApplicationCacheCustom.cpp
         bindings/js/JSDOMWindowBase.cpp
         bindings/js/JSDOMWindowCustom.cpp
         bindings/js/JSDOMWindowWrapper.cpp
@@ -541,6 +542,11 @@ This file contains the list of files needed to build WebCore.
     </set>
     
     <set append="1" var="WEBCORE_SOURCES_LOADER">
+        loader/appcache/ApplicationCache.cpp
+        loader/appcache/ApplicationCacheGroup.cpp
+        loader/appcache/ApplicationCacheResource.cpp
+        loader/appcache/DOMApplicationCache.cpp
+        loader/appcache/ManifestParser.cpp
         loader/archive/ArchiveFactory.cpp
         loader/archive/ArchiveResource.cpp
         loader/archive/ArchiveResourceCollection.cpp

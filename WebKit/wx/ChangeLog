@@ -1,3 +1,9 @@
+2008-04-18  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. We need to use ENABLE_DOM_STORAGE now.
+
+        * wxwk-settings.bkl:
+
 2008-04-05  Kevin Ollivier  <kevino@theolliviers.com>
 
         Rubber stamped by Mark Rowe.

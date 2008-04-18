@@ -51,6 +51,7 @@ JavaScriptCore Bakefile project file.
         <cxx-rtti>on</cxx-rtti>
         <cxx-exceptions>on</cxx-exceptions>
         <define>BUILDING_WX__=1</define>
+        <define>ENABLE_DOM_STORAGE</define>
         <define>
             $(substituteFromDict(DEBUG,{'1':'','0':'NDEBUG'}))
         </define>
