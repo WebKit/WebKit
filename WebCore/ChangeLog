@@ -1,3 +1,15 @@
+2008-04-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        - fix <rdar://problem/5872671> REGRESSION (3.1.1-TOT): Repro crash going to Ortega Park home page
+
+        Test: fast/dynamic/5872671.html
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Added a missing null
+        check.
+
 2008-04-18  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Mark Rowe.

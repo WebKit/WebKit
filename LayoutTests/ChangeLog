@@ -1,5 +1,14 @@
 2008-04-18  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Brady Eidson.
+
+        - test for <rdar://problem/5872671> REGRESSION (3.1.1-TOT): Repro crash going to Ortega Park home page
+
+        * fast/dynamic/5872671-expected.txt: Added.
+        * fast/dynamic/5872671.html: Added.
+
+2008-04-18  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - test and updated results for https://bugs.webkit.org/show_bug.cgi?id=17921

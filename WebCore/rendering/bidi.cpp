@@ -911,13 +911,15 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
             // If the last line before the start line ends with a line break that clear floats,
             // adjust the height accordingly.
             // A line break can be either the first or the last object on a line, depending on its direction.
-            RenderObject* lastObject = lastRootBox()->lastLeafChild()->object();
-            if (!lastObject->isBR())
-                lastObject = lastRootBox()->firstLeafChild()->object();
-            if (lastObject->isBR()) {
-                EClear clear = lastObject->style()->clear();
-                if (clear != CNONE)
-                    newLine(clear);
+            if (InlineBox* lastLeafChild = lastRootBox()->lastLeafChild()) {
+                RenderObject* lastObject = lastLeafChild->object();
+                if (!lastObject->isBR())
+                    lastObject = lastRootBox()->firstLeafChild()->object();
+                if (lastObject->isBR()) {
+                    EClear clear = lastObject->style()->clear();
+                    if (clear != CNONE)
+                        newLine(clear);
+                }
             }
         }
 
