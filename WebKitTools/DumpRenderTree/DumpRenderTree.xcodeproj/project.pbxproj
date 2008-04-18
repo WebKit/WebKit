@@ -34,9 +34,6 @@
 		1AC6C8490D07638600CD3161 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C77F0D07589B00CD3161 /* main.cpp */; };
 		1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7800D07589B00CD3161 /* PluginObject.cpp */; };
 		1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6C7810D07589B00CD3161 /* TestObject.cpp */; };
-		5199B2DA0D7F8A5200CFE8D7 /* WatchdogMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5199B2D90D7F8A5200CFE8D7 /* WatchdogMac.mm */; };
-		5199B2DF0D7F8A9A00CFE8D7 /* Watchdog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5199B2DD0D7F8A9A00CFE8D7 /* Watchdog.cpp */; };
-		5199B2E00D7F8A9A00CFE8D7 /* Watchdog.h in Headers */ = {isa = PBXBuildFile; fileRef = 5199B2DE0D7F8A9A00CFE8D7 /* Watchdog.h */; };
 		9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */; };
 		9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
 		A817090008B163EF00CCB9FB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
@@ -131,10 +128,6 @@
 		1AC6C7800D07589B00CD3161 /* PluginObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginObject.cpp; sourceTree = "<group>"; };
 		1AC6C7810D07589B00CD3161 /* TestObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestObject.cpp; sourceTree = "<group>"; };
 		32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTreePrefix.h; sourceTree = "<group>"; };
-		5199B2C80D7F876F00CFE8D7 /* WatchdogMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WatchdogMac.h; path = mac/WatchdogMac.h; sourceTree = "<group>"; };
-		5199B2D90D7F8A5200CFE8D7 /* WatchdogMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WatchdogMac.mm; path = mac/WatchdogMac.mm; sourceTree = "<group>"; };
-		5199B2DD0D7F8A9A00CFE8D7 /* Watchdog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Watchdog.cpp; sourceTree = "<group>"; };
-		5199B2DE0D7F8A9A00CFE8D7 /* Watchdog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Watchdog.h; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = DumpRenderTree.h; sourceTree = "<group>"; };
@@ -254,10 +247,6 @@
 				BCA18C0A0C9B59EF00114369 /* DumpRenderTreeMac.h */,
 				BCA18B730C9B08F100114369 /* DumpRenderTreeDraggingInfo.h */,
 				BCA18B740C9B08F100114369 /* DumpRenderTreeDraggingInfo.mm */,
-				5199B2DE0D7F8A9A00CFE8D7 /* Watchdog.h */,
-				5199B2DD0D7F8A9A00CFE8D7 /* Watchdog.cpp */,
-				5199B2C80D7F876F00CFE8D7 /* WatchdogMac.h */,
-				5199B2D90D7F8A5200CFE8D7 /* WatchdogMac.mm */,
 				BC9D90210C97472D0099A4A3 /* WorkQueue.cpp */,
 				BC9D90220C97472E0099A4A3 /* WorkQueue.h */,
 				BC9D90230C97472E0099A4A3 /* WorkQueueItem.h */,
@@ -444,7 +433,6 @@
 				BCB284C70CFA83C4007E533E /* PixelDumpSupport.h in Headers */,
 				BCB284D00CFA83CC007E533E /* PixelDumpSupportCG.h in Headers */,
 				BC47412A0D038A4C0072B006 /* JavaScriptThreading.h in Headers */,
-				5199B2E00D7F8A9A00CFE8D7 /* Watchdog.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -585,8 +573,6 @@
 				BCB284CD0CFA83C8007E533E /* PixelDumpSupportCG.cpp in Sources */,
 				BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */,
 				BC4741410D038A570072B006 /* JavaScriptThreadingPthreads.cpp in Sources */,
-				5199B2DA0D7F8A5200CFE8D7 /* WatchdogMac.mm in Sources */,
-				5199B2DF0D7F8A9A00CFE8D7 /* Watchdog.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,25 @@
+2008-04-18  Adam Roben  <aroben@apple.com>
+
+        Get rid of DRT's Watchdog
+
+        run-webkit-tests now detects hangs and samples DRT as needed.
+
+        Reviewed by Mitz Pettel.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Removed
+        Watchdog* files from the project.
+        * DumpRenderTree/Watchdog.cpp: Removed.
+        * DumpRenderTree/Watchdog.h: Removed.
+        * DumpRenderTree/mac/DumpRenderTree.mm: Removed uses of Watchdog
+        (dumpRenderTree):
+        (runTest):
+        * DumpRenderTree/mac/WatchdogMac.h: Removed.
+        * DumpRenderTree/mac/WatchdogMac.mm: Removed.
+        * Scripts/run-webkit-tests:
+        (sub testCrashedOrTimedOut): Call sampleDumpTool() if we timed out.
+        (sub sampleDumpTool): Added. Writes a sample report to
+        ~/Library/Logs/DumpRenderTree/HangReport.txt.
+
 2008-04-18  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

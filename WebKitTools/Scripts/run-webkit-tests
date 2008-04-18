@@ -84,6 +84,7 @@ sub isTextOnlyTest($);
 sub expectedDirectoryForTest($;$;$);
 sub countFinishedTest($$$$);
 sub testCrashedOrTimedOut($$$$$);
+sub sampleDumpTool();
 sub printFailureMessageForTest($$);
 sub toURL($);
 sub toWindowsPath($);
@@ -1406,6 +1407,8 @@ sub testCrashedOrTimedOut($$$$$) {
 
     printFailureMessageForTest($test, $didCrash ? "crashed" : "timed out");
 
+    sampleDumpTool() unless $didCrash;
+
     my $dir = "$testResultsDirectory/$base";
     $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
     mkpath $dir;
@@ -1759,4 +1762,15 @@ sub setFileHandleNonBlocking(*$)
     fcntl($fh, F_SETFL, $flags) or die "Couldn't set filehandle flags";
 
     return 1;
+}
+
+sub sampleDumpTool()
+{
+    return unless isOSX();
+
+    my $outputDirectory = "$ENV{HOME}/Library/Logs/DumpRenderTree";
+    -d $outputDirectory or mkdir $outputDirectory;
+
+    my $outputFile = "$outputDirectory/HangReport.txt";
+    system "/usr/bin/sample", $dumpToolPID, qw(10 10 -file), $outputFile;
 }
