@@ -1,3 +1,16 @@
+2008-04-18  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes the regression where style rules in the Inspector always show "inline stylesheet"
+        for the source of the rule and not the URL or other sources.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18592
+
+        Reviewed by Dan Bernstein.
+
+        * page/inspector/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update): Add parentStyleSheet to the anonymous obejct
+        that we make for each matched rule. The parentStyleSheet property is used later to make the subtitle.
+
 2008-04-18  Dean Jackson <dino@apple.com>
 
         Fixed marquee suspension on wrong document. Passes current
