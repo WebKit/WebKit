@@ -1,3 +1,16 @@
+2008-04-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin and Sam
+
+        Don't forget PageGroups when their last Page goes away, as this hurts visited links and anything
+        else that will be per-PageGroup in the future (such as LocalStorage).
+
+        This also fixes a leak, since PageGroups are ref-counted and therefore clearing the raw pointer out
+        of the PageGroups map without manual deletion leaked it!
+
+        * page/Page.cpp:
+        (WebCore::Page::setGroupName):
+
 2008-04-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Brady Eidson.

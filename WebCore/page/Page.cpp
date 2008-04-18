@@ -188,8 +188,6 @@ void Page::setGroupName(const String& name)
         ASSERT(pageGroups);
         ASSERT(pageGroups->get(m_groupName) == m_group);
         m_group->removePage(this);
-        if (m_group->pages().isEmpty())
-            pageGroups->remove(m_groupName);
     }
     m_groupName = name;
     if (name.isEmpty())
