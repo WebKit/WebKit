@@ -51,6 +51,7 @@
 #include "JSInspectorCallbackWrapper.h"
 #include "JSNode.h"
 #include "JSRange.h"
+#include "JavaScriptDebugServer.h"
 #include "Page.h"
 #include "Range.h"
 #include "ResourceRequest.h"
@@ -732,6 +733,28 @@ static JSValueRef wrapCallback(JSContextRef ctx, JSObjectRef /*function*/, JSObj
     return toRef(JSInspectorCallbackWrapper::wrap(toJS(ctx), toJS(arguments[0])));
 }
 
+static JSValueRef startDebuggingAndReloadInspectedPage(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    controller->startDebuggingAndReloadInspectedPage();
+
+    return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef stopDebugging(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    controller->stopDebugging();
+
+    return JSValueMakeUndefined(ctx);
+}
+
 #pragma mark -
 #pragma mark InspectorController Class
 
@@ -769,6 +792,8 @@ InspectorController::~InspectorController()
 
     if (m_page)
         m_page->setParentInspectorController(0);
+
+    stopDebugging();
 
     deleteAllValues(m_frameResources);
     deleteAllValues(m_consoleMessages);
@@ -971,6 +996,8 @@ void InspectorController::windowScriptObjectAvailable()
         { "platform", platform, kJSPropertyAttributeNone },
         { "moveByUnrestricted", moveByUnrestricted, kJSPropertyAttributeNone },
         { "wrapCallback", wrapCallback, kJSPropertyAttributeNone },
+        { "startDebuggingAndReloadInspectedPage", WebCore::startDebuggingAndReloadInspectedPage, kJSPropertyAttributeNone },
+        { "stopDebugging", WebCore::stopDebugging, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
 
@@ -1093,6 +1120,7 @@ void InspectorController::showWindow()
 
 void InspectorController::closeWindow()
 {
+    stopDebugging();
     m_client->closeWindow();
 }
 
@@ -1881,6 +1909,17 @@ void InspectorController::moveWindowBy(float x, float y) const
     m_page->chrome()->setWindowRect(frameRect);
 }
 
+void InspectorController::startDebuggingAndReloadInspectedPage()
+{
+    JavaScriptDebugServer::shared().addListener(this, m_inspectedPage);
+    m_inspectedPage->mainFrame()->loader()->reload();
+}
+
+void InspectorController::stopDebugging()
+{
+    JavaScriptDebugServer::shared().removeListener(this, m_inspectedPage);
+}
+
 static void drawOutlinedRect(GraphicsContext& context, const IntRect& rect, const Color& fillColor)
 {
     static const int outlineThickness = 1;
@@ -1982,6 +2021,33 @@ bool InspectorController::handleException(JSValueRef exception, unsigned lineNum
 
     m_page->mainFrame()->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, __FILE__);
     return true;
+}
+
+#pragma mark -
+#pragma mark JavaScriptDebugListener functions
+
+void InspectorController::didParseSource(ExecState*, const String& /*source*/, int /*startingLineNumber*/, const String& /*sourceURL*/, int /*sourceID*/)
+{
+}
+
+void InspectorController::failedToParseSource(ExecState*, const String& /*source*/, int /*startingLineNumber*/, const String& /*sourceURL*/, int /*errorLine*/, const String& /*errorMessage*/)
+{
+}
+
+void InspectorController::didEnterCallFrame(ExecState*, int /*sourceID*/, int /*lineNumber*/)
+{
+}
+
+void InspectorController::willExecuteStatement(ExecState*, int /*sourceID*/, int /*lineNumber*/)
+{
+}
+
+void InspectorController::willLeaveCallFrame(ExecState*, int /*sourceID*/, int /*lineNumber*/)
+{
+}
+
+void InspectorController::exceptionWasRaised(ExecState*, int /*sourceID*/, int /*lineNumber*/)
+{
 }
 
 } // namespace WebCore

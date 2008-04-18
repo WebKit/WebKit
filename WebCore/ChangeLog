@@ -1,3 +1,38 @@
+2008-04-18  Adam Roben  <aroben@apple.com>
+
+        Make InspectorController a JavaScriptDebugListener
+
+        I added two new functions to the InspectorController JS object:
+        reloadInspectedPageAndStartDebugging and stopDebugging. These control
+        when the InspectorController adds/removes itself to/from the
+        JavaScriptDebugServer.
+
+        Reviewed by Tim Hatcher.
+
+        * page/InspectorController.cpp:
+        (WebCore::reloadInspectedPageAndStartDebugging): Added. Just calls
+        through to InspectorController.
+        (WebCore::stopDebugging): Ditto.
+        (WebCore::InspectorController::~InspectorController): Make sure we
+        stop debugging before we are destroyed so the JavaScriptDebugServer
+        won't be left with a stale pointer.
+        (WebCore::InspectorController::windowScriptObjectAvailable): Added two
+        new functions to our JS object.
+        (WebCore::InspectorController::closeWindow): Stop debugging when the
+        window closes.
+        (WebCore::InspectorController::reloadInspectedPageAndStartDebugging):
+        Added.
+        (WebCore::InspectorController::stopDebugging): Added.
+
+        (WebCore::InspectorController::didParseSource):
+        (WebCore::InspectorController::failedToParseSource):
+        (WebCore::InspectorController::didEnterCallFrame):
+        (WebCore::InspectorController::willExecuteStatement):
+        (WebCore::InspectorController::willLeaveCallFrame):
+        Added empty implementations of the JavaScriptDebugListener functions.
+
+        * page/InspectorController.h:
+
 2008-04-17  Adam Roben  <aroben@apple.com>
 
         Rename ExecState* instances from state to exec
