@@ -1,3 +1,17 @@
+2008-04-18  Alp Toker  <alp@atoker.com>
+
+        Rubber-stamped by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18218
+        [Gtk] segfault when clicking on a disabled button
+
+        Always use the main frame for mouse events (not the focused frame)
+        since it knows best how to get the event through to the right target.
+
+        This also fixes a null crasher.
+
+        * webkit/webkitwebview.cpp:
+
 2008-04-17  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Holger Freyther.
