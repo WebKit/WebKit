@@ -1843,6 +1843,10 @@ bool AccessibilityObject::hasChildren() const
 
 void AccessibilityObject::addChildren()
 {
+    // If the need to add more children in addition to existing children arises, 
+    // childrenChanged should have been called, leaving the object with no children.
+    ASSERT(!hasChildren()); 
+
     // nothing to add if there is no RenderObject
     if (!m_renderer)
         return;

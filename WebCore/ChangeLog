@@ -1,3 +1,14 @@
+2008-04-17  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Added some asserts to catch undesirable usage of setWrapper and addChildren.
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::addChildren):
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::setWrapper):
+
 2008-04-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by the Mitzpettel

@@ -315,7 +315,11 @@ public:
 
 #if HAVE(ACCESSIBILITY)
     AccessibilityObjectWrapper* wrapper() const { return m_wrapper.get(); }
-    void setWrapper(AccessibilityObjectWrapper* wrapper) { m_wrapper = wrapper; }
+    void setWrapper(AccessibilityObjectWrapper* wrapper) 
+    {
+        ASSERT(!m_wrapper);
+        m_wrapper = wrapper;
+    }
 #endif
 
 private:
