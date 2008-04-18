@@ -35,6 +35,7 @@
 #import <WebCore/GCController.h>
 #import <WebCore/IconDatabase.h>
 #import <WebCore/RenderTreeAsText.h>
+#import <WebCore/RenderView.h>
 
 using namespace KJS;
 using namespace WebCore;
@@ -180,7 +181,7 @@ using namespace WebCore;
 
 - (NSString *)renderTreeAsExternalRepresentation
 {
-    return externalRepresentation(_private->coreFrame->renderer());
+    return externalRepresentation(_private->coreFrame->contentRenderer());
 }
 
 @end

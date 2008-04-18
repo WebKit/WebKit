@@ -56,6 +56,7 @@
 #include "PlatformWheelEvent.h"
 #include "RenderFrameSet.h"
 #include "RenderWidget.h"
+#include "RenderView.h"
 #include "SelectionController.h"
 #include "Settings.h"
 #include "TextEvent.h"
@@ -387,7 +388,7 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     // that its logic needs to stay in sync with handleMouseMoveEvent() and the way we setMouseDownMayStartDrag
     // in handleMousePressEvent
     
-    if (!m_frame->renderer() || !m_frame->renderer()->hasLayer()
+    if (!m_frame->contentRenderer() || !m_frame->contentRenderer()->hasLayer()
         || event.button() != LeftButton || event.clickCount() != 1)
         return false;
     
@@ -399,7 +400,7 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     
     HitTestRequest request(true, false);
     HitTestResult result(m_frame->view()->windowToContents(event.pos()));
-    m_frame->renderer()->layer()->hitTest(request, result);
+    m_frame->contentRenderer()->layer()->hitTest(request, result);
     bool srcIsDHTML;
     return result.innerNode() && result.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, result.point().x(), result.point().y(), srcIsDHTML);
 }
@@ -409,7 +410,7 @@ void EventHandler::updateSelectionForMouseDrag()
     FrameView* view = m_frame->view();
     if (!view)
         return;
-    RenderObject* renderer = m_frame->renderer();
+    RenderObject* renderer = m_frame->contentRenderer();
     if (!renderer)
         return;
     RenderLayer* layer = renderer->layer();
@@ -570,9 +571,9 @@ void EventHandler::allowDHTMLDrag(bool& flagDHTML, bool& flagUA) const
 HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent)
 {
     HitTestResult result(point);
-    if (!m_frame->renderer())
+    if (!m_frame->contentRenderer())
         return result;
-    m_frame->renderer()->layer()->hitTest(HitTestRequest(true, true), result);
+    m_frame->contentRenderer()->layer()->hitTest(HitTestRequest(true, true), result);
 
     while (true) {
         Node* n = result.innerNode();
@@ -582,13 +583,13 @@ HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool all
         if (!widget || !widget->isFrameView())
             break;
         Frame* frame = static_cast<HTMLFrameElementBase*>(n)->contentFrame();
-        if (!frame || !frame->renderer())
+        if (!frame || !frame->contentRenderer())
             break;
         FrameView* view = static_cast<FrameView*>(widget);
         IntPoint widgetPoint(result.localPoint().x() + view->contentsX() - n->renderer()->borderLeft() - n->renderer()->paddingLeft(), 
             result.localPoint().y() + view->contentsY() - n->renderer()->borderTop() - n->renderer()->paddingTop());
         HitTestResult widgetHitTestResult(widgetPoint);
-        frame->renderer()->layer()->hitTest(HitTestRequest(true, true), widgetHitTestResult);
+        frame->contentRenderer()->layer()->hitTest(HitTestRequest(true, true), widgetHitTestResult);
         result = widgetHitTestResult;
     }
 
@@ -1449,7 +1450,7 @@ void EventHandler::hoverTimerFired(Timer<EventHandler>*)
     ASSERT(m_frame);
     ASSERT(m_frame->document());
 
-    if (RenderObject* renderer = m_frame->renderer()) {
+    if (RenderObject* renderer = m_frame->contentRenderer()) {
         HitTestResult result(m_frame->view()->windowToContents(m_currentMousePosition));
         renderer->layer()->hitTest(HitTestRequest(false, false, true), result);
         m_frame->document()->updateRendering();
@@ -1685,7 +1686,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
         // try to find an element that wants to be dragged
         HitTestRequest request(true, false);
         HitTestResult result(m_mouseDownPos);
-        m_frame->renderer()->layer()->hitTest(request, result);
+        m_frame->contentRenderer()->layer()->hitTest(request, result);
         Node* node = result.innerNode();
         if (node && node->renderer())
             dragState().m_dragSrc = node->renderer()->draggableNode(dragState().m_dragSrcMayBeDHTML, dragState().m_dragSrcMayBeUA,

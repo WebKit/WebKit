@@ -74,6 +74,7 @@
 #include "ProgressTracker.h"
 #include "RenderPart.h"
 #include "RenderWidget.h"
+#include "RenderView.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
@@ -1619,8 +1620,8 @@ bool FrameLoader::gotoAnchor(const String& name)
     // really mess things up if an anchor scroll comes at a bad moment.
     if (m_frame->document()) {
         m_frame->document()->updateRendering();
-        // Only do a layout if changes have occurred that make it necessary.      
-        if (m_frame->view() && m_frame->document()->renderer() && m_frame->document()->renderer()->needsLayout())
+        // Only do a layout if changes have occurred that make it necessary.
+        if (m_frame->view() && m_frame->contentRenderer() && m_frame->contentRenderer()->needsLayout())
             m_frame->view()->layout();
     }
   

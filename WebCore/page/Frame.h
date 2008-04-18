@@ -104,9 +104,8 @@ public:
     AnimationController* animationController() const;
     KJSProxy* scriptProxy();
 
-    // FIXME: Rename to contentRenderer and change type to RenderView.
-    RenderObject* renderer() const; // root renderer for the document contained in this frame
-    RenderPart* ownerRenderer(); // renderer for the element that contains this frame
+    RenderView* contentRenderer() const; // root renderer for the document contained in this frame
+    RenderPart* ownerRenderer() const; // renderer for the element that contains this frame
 
     friend class FramePrivate;
 

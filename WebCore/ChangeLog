@@ -1,3 +1,44 @@
+2008-04-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by beth.
+
+        Rename Frame::renderer() to contentRenderer() and fix uses.
+
+        * WebCore.base.exp:
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedContents):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::gotoAnchor):
+        * page/DragController.cpp:
+        (WebCore::DragController::canProcessDrag):
+        (WebCore::DragController::mayStartDragAtEventLocation):
+        (WebCore::DragController::startDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::eventMayStartDrag):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        (WebCore::EventHandler::hoverTimerFired):
+        (WebCore::EventHandler::handleDrag):
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionLayoutChanged):
+        (WebCore::Frame::contentRenderer):
+        (WebCore::Frame::paint):
+        (WebCore::Frame::markAllMatchesForText):
+        (WebCore::Frame::documentAtPoint):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::adjustViewSize):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::scheduleRelayoutOfSubtree):
+        (WebCore::FrameView::needsLayout):
+        (WebCore::FrameView::setNeedsLayout):
+        (WebCore::FrameView::updateControlTints):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+
 2008-04-18  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver.

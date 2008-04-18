@@ -39,6 +39,7 @@
 #include "ImageObserver.h"
 #include "NotImplemented.h"
 #include "Page.h"
+#include "RenderView.h"
 #include "ResourceError.h"
 #include "SVGDocument.h"
 #include "SVGLength.h"
@@ -167,7 +168,7 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame()
         m_frameCache.set(ImageBuffer::create(size(), false).release());
         if (!m_frameCache) // failed to allocate image
             return 0;
-        renderSubtreeToImage(m_frameCache.get(), m_frame->renderer());
+        renderSubtreeToImage(m_frameCache.get(), m_frame->contentRenderer());
     }
 #if PLATFORM(CG)
     return m_frameCache->cgImage();

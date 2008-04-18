@@ -33,6 +33,7 @@
 #import "WebHTMLView.h"
 #import <WebCore/Frame.h>
 #import <WebCore/RenderWidget.h>
+#import <WebCore/RenderView.h>
 #import <WebCore/Widget.h>
 
 using namespace WebCore;
@@ -104,7 +105,7 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
     if (![[view documentView] isMemberOfClass:[WebHTMLView class]])
         return nil;
 
-    RenderObject* renderer = core([view webFrame])->renderer();
+    RenderObject* renderer = core([view webFrame])->contentRenderer();
     if (!renderer)
         return nil;
 

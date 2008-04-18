@@ -1,3 +1,13 @@
+2008-04-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by beth.
+
+        Rename Frame::renderer() to contentRenderer() and fix uses.
+
+        * Misc/WebCoreStatistics.mm:
+        * WebView/WebRenderNode.mm:
+        (-[WebRenderNode initWithWebFrameView:]):
+
 2008-04-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by mrowe.

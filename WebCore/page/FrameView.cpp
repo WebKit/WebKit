@@ -180,7 +180,7 @@ FrameView::~FrameView()
     ASSERT(!d->m_enqueueEvents);
 
     if (m_frame) {
-        ASSERT(m_frame->view() != this || !m_frame->document() || !m_frame->document()->renderer());
+        ASSERT(m_frame->view() != this || !m_frame->document() || !m_frame->contentRenderer());
         RenderPart* renderer = m_frame->ownerRenderer();
         if (renderer && renderer->widget() == this)
             renderer->setWidget(0);
@@ -257,7 +257,7 @@ void FrameView::setMarginHeight(int h)
 void FrameView::adjustViewSize()
 {
     ASSERT(m_frame->view() == this);
-    RenderView* root = static_cast<RenderView*>(m_frame->renderer());
+    RenderView* root = m_frame->contentRenderer();
     if (!root)
         return;
     resizeContents(root->overflowWidth(), root->overflowHeight());
@@ -810,38 +810,37 @@ static bool isObjectAncestorContainerOf(RenderObject* ancestor, RenderObject* de
     return false;
 }
 
-void FrameView::scheduleRelayoutOfSubtree(RenderObject* o)
+void FrameView::scheduleRelayoutOfSubtree(RenderObject* relayoutRoot)
 {
     ASSERT(m_frame->view() == this);
 
-    if (!d->layoutSchedulingEnabled || (m_frame->document()
-            && m_frame->document()->renderer()
-            && m_frame->document()->renderer()->needsLayout())) {
-        if (o)
-            o->markContainingBlocksForLayout(false);
+    if (!d->layoutSchedulingEnabled || (m_frame->contentRenderer()
+            && m_frame->contentRenderer()->needsLayout())) {
+        if (relayoutRoot)
+            relayoutRoot->markContainingBlocksForLayout(false);
         return;
     }
 
     if (layoutPending()) {
-        if (d->layoutRoot != o) {
-            if (isObjectAncestorContainerOf(d->layoutRoot, o)) {
+        if (d->layoutRoot != relayoutRoot) {
+            if (isObjectAncestorContainerOf(d->layoutRoot, relayoutRoot)) {
                 // Keep the current root
-                o->markContainingBlocksForLayout(false, d->layoutRoot);
-            } else if (d->layoutRoot && isObjectAncestorContainerOf(o, d->layoutRoot)) {
-                // Re-root at o
-                d->layoutRoot->markContainingBlocksForLayout(false, o);
-                d->layoutRoot = o;
+                relayoutRoot->markContainingBlocksForLayout(false, d->layoutRoot);
+            } else if (d->layoutRoot && isObjectAncestorContainerOf(relayoutRoot, d->layoutRoot)) {
+                // Re-root at relayoutRoot
+                d->layoutRoot->markContainingBlocksForLayout(false, relayoutRoot);
+                d->layoutRoot = relayoutRoot;
             } else {
                 // Just do a full relayout
                 if (d->layoutRoot)
                     d->layoutRoot->markContainingBlocksForLayout(false);
                 d->layoutRoot = 0;
-                o->markContainingBlocksForLayout(false);
+                relayoutRoot->markContainingBlocksForLayout(false);
             }
         }
     } else {
         int delay = m_frame->document()->minimumLayoutDelay();
-        d->layoutRoot = o;
+        d->layoutRoot = relayoutRoot;
         d->delayedLayout = delay != 0;
         d->layoutTimer.startOneShot(delay * 0.001);
     }
@@ -858,7 +857,7 @@ bool FrameView::needsLayout() const
     // then we are not allowed to schedule layouts yet, so we won't be pending layout.
     if (!m_frame)
         return false;
-    RenderView* root = static_cast<RenderView*>(m_frame->renderer());
+    RenderView* root = m_frame->contentRenderer();
     Document * doc = m_frame->document();
     // doc->hasChangedChild() condition can occur when using WebKit ObjC interface
     return layoutPending() || (root && root->needsLayout()) || d->layoutRoot || (doc && doc->hasChangedChild()) || m_frame->needsReapplyStyles();
@@ -866,8 +865,9 @@ bool FrameView::needsLayout() const
 
 void FrameView::setNeedsLayout()
 {
-    if (m_frame->renderer())
-        m_frame->renderer()->setNeedsLayout(true);
+    RenderView* root = m_frame->contentRenderer();
+    if (root)
+        root->setNeedsLayout(true);
 }
 
 void FrameView::unscheduleRelayout()
@@ -937,7 +937,7 @@ void FrameView::resumeScheduledEvents()
 
 void FrameView::performPostLayoutTasks()
 {
-    RenderView* root = static_cast<RenderView*>(m_frame->document()->renderer());
+    RenderView* root = m_frame->contentRenderer();
 
     root->updateWidgetPositions();
     if (m_widgetUpdateSet && d->nestedLayoutCount <= 1) {
@@ -1097,7 +1097,7 @@ void FrameView::updateControlTints()
     if (!m_frame || m_frame->loader()->url().isEmpty()) 
         return;
     
-    if (theme()->supportsControlTints() && m_frame->renderer()) {
+    if (theme()->supportsControlTints() && m_frame->contentRenderer()) {
         if (needsLayout())
             layout();
         PlatformGraphicsContext* const noContext = 0;

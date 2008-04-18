@@ -434,7 +434,7 @@ bool DragController::canProcessDrag(DragData* dragData)
     
     IntPoint point = m_page->mainFrame()->view()->windowToContents(dragData->clientPosition());
     HitTestResult result = HitTestResult(point);
-    if (!m_page->mainFrame()->renderer())
+    if (!m_page->mainFrame()->contentRenderer())
         return false;
 
     result = m_page->mainFrame()->eventHandler()->hitTestResultAtPoint(point, true);
@@ -498,7 +498,7 @@ bool DragController::mayStartDragAtEventLocation(const Frame* frame, const IntPo
     ASSERT(frame);
     ASSERT(frame->settings());
 
-    if (!frame->view() || !frame->renderer())
+    if (!frame->view() || !frame->contentRenderer())
         return false;
 
     HitTestResult mouseDownTarget = HitTestResult(framePos);
@@ -593,7 +593,7 @@ bool DragController::startDrag(Frame* src, Clipboard* clipboard, DragOperation s
     ASSERT(src);
     ASSERT(clipboard);
     
-    if (!src->view() || !src->renderer())
+    if (!src->view() || !src->contentRenderer())
         return false;
     
     HitTestResult dragSource = HitTestResult(dragOrigin);
