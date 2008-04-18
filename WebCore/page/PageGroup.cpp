@@ -118,9 +118,11 @@ void PageGroup::setShouldTrackVisitedLinks(bool shouldTrack)
 
 LocalStorage* PageGroup::localStorage()
 {
+#if ENABLE(DATABASE)
     if (!m_localStorage)
         m_localStorage = LocalStorage::create(this);
-        
+#endif
+
     return m_localStorage.get();
 }
 

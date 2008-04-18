@@ -1,5 +1,12 @@
 2008-04-18  Simon Hausmann  <hausmann@webkit.org>
 
+        Fix the build without Database support (fixes the Qt/win build).
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::localStorage):
+
+2008-04-18  Simon Hausmann  <hausmann@webkit.org>
+
         Fix the Gtk build on the build bot.
 
         * GNUmakefile.am: Back out the previous LocalStorage, etc. additions
