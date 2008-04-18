@@ -281,7 +281,7 @@ void WebScriptDebugServer::didLoadMainResourceForDataSource(IWebView* webView, I
         (**it).didLoadMainResourceForDataSource(webView, dataSource);
 }
 
-void WebScriptDebugServer::didParseSource(ExecState* exec, const String& source, int startingLineNumber, const String& sourceURL, int sourceID)
+void WebScriptDebugServer::didParseSource(ExecState* exec, const UString& source, int startingLineNumber, const UString& sourceURL, int sourceID)
 {
     BString bSource = source;
     BString bSourceURL = sourceURL;
@@ -292,7 +292,7 @@ void WebScriptDebugServer::didParseSource(ExecState* exec, const String& source,
         (**it).didParseSource(webView(exec), bSource, startingLineNumber, bSourceURL, sourceID, webFrame(exec));
 }
 
-void WebScriptDebugServer::failedToParseSource(ExecState* exec, const String& source, int startingLineNumber, const String& sourceURL, int errorLine, const String& errorMessage)
+void WebScriptDebugServer::failedToParseSource(ExecState* exec, const UString& source, int startingLineNumber, const UString& sourceURL, int errorLine, const UString& errorMessage)
 {
     BString bSource = source;
     BString bSourceURL = sourceURL;

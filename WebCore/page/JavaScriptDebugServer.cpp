@@ -116,7 +116,7 @@ void JavaScriptDebugServer::pageCreated(Page* page)
     page->setDebugger(this);
 }
 
-static void dispatchDidParseSource(const ListenerSet& listeners, ExecState* exec, const String& source, int startingLineNumber, const String& sourceURL, int sourceID)
+static void dispatchDidParseSource(const ListenerSet& listeners, ExecState* exec, const UString& source, int startingLineNumber, const UString& sourceURL, int sourceID)
 {
     Vector<JavaScriptDebugListener*> copy;
     copyToVector(listeners, copy);
@@ -124,7 +124,7 @@ static void dispatchDidParseSource(const ListenerSet& listeners, ExecState* exec
         copy[i]->didParseSource(exec, source, startingLineNumber, sourceURL, sourceID);
 }
 
-static void dispatchFailedToParseSource(const ListenerSet& listeners, ExecState* exec, const String& source, int startingLineNumber, const String& sourceURL, int errorLine, const String& errorMessage)
+static void dispatchFailedToParseSource(const ListenerSet& listeners, ExecState* exec, const UString& source, int startingLineNumber, const UString& sourceURL, int errorLine, const UString& errorMessage)
 {
     Vector<JavaScriptDebugListener*> copy;
     copyToVector(listeners, copy);

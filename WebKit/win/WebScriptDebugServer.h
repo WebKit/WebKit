@@ -82,8 +82,8 @@ private:
     void suspendProcessIfPaused();
 
     // JavaScriptDebugListener
-    virtual void didParseSource(KJS::ExecState*, const WebCore::String& source, int startingLineNumber, const WebCore::String& sourceURL, int sourceID);
-    virtual void failedToParseSource(KJS::ExecState*, const WebCore::String& source, int startingLineNumber, const WebCore::String& sourceURL, int errorLine, const WebCore::String& errorMessage);
+    virtual void didParseSource(KJS::ExecState*, const KJS::UString& source, int startingLineNumber, const KJS::UString& sourceURL, int sourceID);
+    virtual void failedToParseSource(KJS::ExecState*, const KJS::UString& source, int startingLineNumber, const KJS::UString& sourceURL, int errorLine, const KJS::UString& errorMessage);
     virtual void didEnterCallFrame(KJS::ExecState*, int sourceID, int lineNumber);
     virtual void willExecuteStatement(KJS::ExecState*, int sourceID, int lineNumber);
     virtual void willLeaveCallFrame(KJS::ExecState*, int sourceID, int lineNumber);

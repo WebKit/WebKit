@@ -36,6 +36,8 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+using namespace KJS;
+
 namespace WebCore {
 
 BString::BString()
@@ -81,6 +83,14 @@ BString::BString(const AtomicString& s)
         m_bstr = 0;
     else
         m_bstr = SysAllocStringLen(s.characters(), s.length());
+}
+
+BString::BString(const UString& s)
+{
+    if (s.isNull())
+        m_bstr = 0;
+    else
+        m_bstr = SysAllocStringLen(s.data(), s.size());
 }
 
 #if PLATFORM(CF)

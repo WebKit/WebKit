@@ -1,5 +1,26 @@
 2008-04-18  Adam Roben  <aroben@apple.com>
 
+        Change JavaScriptDebugListener to use KJS::UString instead of
+        WebCore::String
+
+        This should reduce the number of string allocations performed while
+        debugging.
+
+        Reviewed by Tim Hatcher.
+
+        * page/InspectorController.cpp: Updated JavaScriptDebugListener
+        functions.
+        * page/InspectorController.h: Ditto.
+        * page/JavaScriptDebugListener.h: Changed to use KJS::UString instead
+        of WebCore::String.
+        * page/JavaScriptDebugServer.cpp: Ditto.
+        * platform/win/BString.cpp:
+        (WebCore::BString::BString): Added a constructor that takes a
+        KJS::UString.
+        * platform/win/BString.h:
+
+2008-04-18  Adam Roben  <aroben@apple.com>
+
         Mac build fix
 
         * WebCore.xcodeproj/project.pbxproj: Mark JavaScriptDebugListener.h

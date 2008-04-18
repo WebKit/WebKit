@@ -2026,11 +2026,11 @@ bool InspectorController::handleException(JSValueRef exception, unsigned lineNum
 #pragma mark -
 #pragma mark JavaScriptDebugListener functions
 
-void InspectorController::didParseSource(ExecState*, const String& /*source*/, int /*startingLineNumber*/, const String& /*sourceURL*/, int /*sourceID*/)
+void InspectorController::didParseSource(ExecState*, const UString& /*source*/, int /*startingLineNumber*/, const UString& /*sourceURL*/, int /*sourceID*/)
 {
 }
 
-void InspectorController::failedToParseSource(ExecState*, const String& /*source*/, int /*startingLineNumber*/, const String& /*sourceURL*/, int /*errorLine*/, const String& /*errorMessage*/)
+void InspectorController::failedToParseSource(ExecState*, const UString& /*source*/, int /*startingLineNumber*/, const UString& /*sourceURL*/, int /*errorLine*/, const UString& /*errorMessage*/)
 {
 }
 

@@ -31,20 +31,20 @@
 
 namespace KJS {
     class ExecState;
+    class UString;
 }
 
 namespace WebCore {
 
     class Frame;
     class Page;
-    class String;
 
     class JavaScriptDebugListener {
     public:
         virtual ~JavaScriptDebugListener() { }
 
-        virtual void didParseSource(KJS::ExecState*, const String& source, int startingLineNumber, const String& sourceURL, int sourceID) = 0;
-        virtual void failedToParseSource(KJS::ExecState*, const String& source, int startingLineNumber, const String& sourceURL, int errorLine, const String& errorMessage) = 0;
+        virtual void didParseSource(KJS::ExecState*, const KJS::UString& source, int startingLineNumber, const KJS::UString& sourceURL, int sourceID) = 0;
+        virtual void failedToParseSource(KJS::ExecState*, const KJS::UString& source, int startingLineNumber, const KJS::UString& sourceURL, int errorLine, const KJS::UString& errorMessage) = 0;
         virtual void didEnterCallFrame(KJS::ExecState*, int sourceID, int lineNumber) = 0;
         virtual void willExecuteStatement(KJS::ExecState*, int sourceID, int lineNumber) = 0;
         virtual void willLeaveCallFrame(KJS::ExecState*, int sourceID, int lineNumber) = 0;
