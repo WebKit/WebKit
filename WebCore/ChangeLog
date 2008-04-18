@@ -1,5 +1,12 @@
 2008-04-18  Simon Hausmann  <hausmann@webkit.org>
 
+        Build fix. Back out previous #include fix for PageGroup.h as it broke
+        the Mac build due to forwarding headers.
+
+        * page/PageGroup.h:
+
+2008-04-18  Simon Hausmann  <hausmann@webkit.org>
+
         Build fix for Qt and gcc 4.3.
 
         * WebCore.pro: Added missing files and include paths, re-ordered
