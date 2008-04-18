@@ -1,5 +1,16 @@
 2008-04-17  Adam Roben  <aroben@apple.com>
 
+        Fix many tests on Windows
+
+        * Scripts/run-webkit-tests:
+        (readFromDumpToolWithTimer):
+         - Use read instead of sysread to ensure that we don't interfere with
+           other uses of buffered IO in this script.
+        (setFileHandleNonBlocking): Actually set the filehandle to blocking
+        when specified.
+
+2008-04-17  Adam Roben  <aroben@apple.com>
+
         Fix ~10 tests
 
         * Scripts/run-webkit-tests: Only remove the newline after #EOF, not

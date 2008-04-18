@@ -1715,7 +1715,7 @@ sub readFromDumpToolWithTimer(*;$)
             last;
         }
 
-        my $read = sysread($fh, $output, 1024, $readSoFar);
+        my $read = read($fh, $output, 1024, $readSoFar);
         if (!defined($read) && $! == EAGAIN) {
             if ($dontWaitForTimeOut) {
                 last;
@@ -1729,6 +1729,10 @@ sub readFromDumpToolWithTimer(*;$)
         last if $read == 0;
 
         if ($output =~ s/^#EOF\n//m) {
+            # In theory we should make sure we haven't read past the end of the
+            # #EOF, but since we know that #EOF is the last thing DRT prints
+            # until we give it another test to run, we can just assume #EOF is
+            # at the end of $output.
             last;
         }
 
@@ -1752,7 +1756,7 @@ sub setFileHandleNonBlocking(*$)
         $flags &= ~O_NONBLOCK;
     }
 
-    $flags = fcntl($fh, F_SETFL, $flags | O_NONBLOCK) or die "Couldn't set filehandle flags";
+    fcntl($fh, F_SETFL, $flags) or die "Couldn't set filehandle flags";
 
     return 1;
 }
