@@ -26,6 +26,7 @@
 #ifndef LocalStorage_h
 #define LocalStorage_h
 
+#include "LocalStorageArea.h"
 #include "SecurityOriginHash.h"
 
 #include <wtf/HashMap.h>
@@ -33,7 +34,6 @@
 
 namespace WebCore {
 
-    class LocalStorageArea;
     class PageGroup;
     class StorageArea;
 

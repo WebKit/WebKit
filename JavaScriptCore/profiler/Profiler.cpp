@@ -33,6 +33,8 @@
 #include <kjs/ExecState.h>
 #include <kjs/function.h>
 
+#include <stdio.h>
+
 namespace KJS {
 
 static Profiler* sharedProfiler = 0;

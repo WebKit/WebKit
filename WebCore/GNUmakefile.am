@@ -11,6 +11,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/platform/graphics \
 	-I$(srcdir)/WebCore/platform/text \
 	-I$(srcdir)/WebCore/loader \
+	-I$(srcdir)/WebCore/loader/appcache \
 	-I$(srcdir)/WebCore/loader/archive \
 	-I$(srcdir)/WebCore/loader/icon \
 	-I$(srcdir)/WebCore/css \
@@ -1165,8 +1166,12 @@ webcore_sources += \
 	WebCore/storage/DatabaseTask.cpp \
 	WebCore/storage/DatabaseThread.cpp \
 	WebCore/storage/DatabaseTracker.cpp \
+	WebCore/storage/LocalStorage.cpp \
+	WebCore/storage/LocalStorageArea.cpp \
 	WebCore/storage/OriginQuotaManager.cpp \
 	WebCore/storage/OriginUsageRecord.cpp \
+	WebCore/storage/StorageArea.cpp \
+	WebCore/storage/StorageMap.cpp \
 	WebCore/storage/SQLResultSet.cpp \
 	WebCore/storage/SQLResultSetRowList.cpp \
 	WebCore/storage/SQLStatement.cpp \

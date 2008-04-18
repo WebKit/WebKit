@@ -32,6 +32,8 @@
 #include "Profiler.h"
 #include "DateMath.h"
 
+#include <stdio.h>
+
 namespace KJS {
 
 FunctionCallProfile::FunctionCallProfile(const UString& name)
