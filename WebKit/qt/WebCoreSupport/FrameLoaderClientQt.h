@@ -62,7 +62,7 @@ namespace WebCore {
     signals:
         void sigCallPolicyFunction(int);
         void loadStarted();
-        void loadProgressChanged(int d);
+        void loadProgress(int d);
         void loadFinished();
         void titleChanged(const QString& title);
 

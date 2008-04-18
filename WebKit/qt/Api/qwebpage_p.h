@@ -140,7 +140,7 @@ public:
     quint64 m_bytesReceived;
 
 #if QT_VERSION < 0x040400
-    QWebPage::NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, QWebPage::NavigationType type);
+    bool acceptNavigationRequest(QWebFrame *frame, const QWebNetworkRequest &request, QWebPage::NavigationType type);
 
     QWebNetworkInterface *networkInterface;
 #ifndef QT_NO_NETWORKPROXY
@@ -148,9 +148,12 @@ public:
 #endif
 
 #else
-    QWebPage::NavigationRequestResponse navigationRequested(QWebFrame *frame, const QNetworkRequest &request, QWebPage::NavigationType type);
+    bool acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, QWebPage::NavigationType type);
     QNetworkAccessManager *networkManager;
 #endif
+
+    bool forwardUnsupportedContent;
+    QWebPage::LinkDelegationPolicy linkPolicy;
 
     QSize viewportSize;
     QWebHistory history;

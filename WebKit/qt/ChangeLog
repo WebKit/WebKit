@@ -2,6 +2,101 @@
 
         Reviewed by Holger.
 
+        Many API changes and additions after a full review with Jasmin Blanchette <jasmin@trolltech.com>
+
+        The diff is too big to mention the changes individually, but most of the changes were of cosmetic
+        nature where methods or enums have been renamed or prefixed/suffixed according to the consistency
+        rules of the Qt API.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJavaScriptWindowObject):
+        (QWebFrame::toHtml):
+        (QWebFrame::toPlainText):
+        (QWebFrame::icon):
+        (QWebFrame::setContent):
+        (QWebFrame::setScrollBarPolicy):
+        (QWebFrame::render):
+        (QWebFrame::setTextSizeMultiplier):
+        (QWebFrame::textSizeMultiplier):
+        (QWebFrame::pos):
+        * Api/qwebframe.h:
+        * Api/qwebhistory.cpp:
+        * Api/qwebhistory.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::~QWebPagePrivate):
+        (QWebPagePrivate::acceptNavigationRequest):
+        (webActionForContextMenuAction):
+        (QWebPagePrivate::updateAction):
+        (QWebPagePrivate::keyPressEvent):
+        (QWebPage::view):
+        (QWebPage::javaScriptPrompt):
+        (QWebPage::createWindow):
+        (QWebPage::triggerAction):
+        (QWebPage::setViewportSize):
+        (QWebPage::acceptNavigationRequest):
+        (QWebPage::action):
+        (QWebPage::focusNextPrevChild):
+        (QWebPage::setForwardUnsupportedContent):
+        (QWebPage::forwardUnsupportedContent):
+        (QWebPage::setLinkDelegationPolicy):
+        (QWebPage::findText):
+        (QWebPage::networkAccessManager):
+        (QWebPageContext::imageUrl):
+        (QWebPageContext::image):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::QWebSettings):
+        (QWebSettings::setIconDatabasePath):
+        (QWebSettings::iconDatabasePath):
+        (QWebSettings::clearIconDatabase):
+        (QWebSettings::iconForUrl):
+        (QWebSettings::setWebGraphic):
+        (QWebSettings::fontFamily):
+        (QWebSettings::setAttribute):
+        (QWebSettings::testAttribute):
+        (QWebSettings::resetAttribute):
+        * Api/qwebsettings.h:
+        * Api/qwebview.cpp:
+        (QWebView::setPage):
+        (QWebView::icon):
+        (QWebView::setTextSizeMultiplier):
+        (QWebView::textSizeMultiplier):
+        (QWebView::findText):
+        (QWebView::reload):
+        (QWebView::mouseMoveEvent):
+        * Api/qwebview.h:
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+        (main):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::ChromeClientQt):
+        (WebCore::ChromeClientQt::setWindowRect):
+        (WebCore::ChromeClientQt::toolbarsVisible):
+        (WebCore::ChromeClientQt::setStatusbarVisible):
+        (WebCore::ChromeClientQt::statusbarVisible):
+        (WebCore::ChromeClientQt::setScrollbarsVisible):
+        (WebCore::ChromeClientQt::setResizable):
+        (WebCore::ChromeClientQt::scrollBackingStore):
+        (WebCore::ChromeClientQt::mouseDidMoveOverElement):
+        (WebCore::ChromeClientQt::setToolTip):
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::setFrame):
+        (WebCore::FrameLoaderClientQt::didPerformFirstNavigation):
+        (WebCore::FrameLoaderClientQt::setMainDocumentError):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientQt::createFrame):
+        (WebCore::FrameLoaderClientQt::objectContentType):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+        * WebCoreSupport/InspectorClientQt.cpp:
+
+2008-04-18  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Added QWebView::find/QWebFrame::find.
 
         * Api/qwebpage.cpp:

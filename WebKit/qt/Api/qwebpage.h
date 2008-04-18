@@ -65,16 +65,14 @@ class QWEBKIT_EXPORT QWebPage : public QObject
     Q_PROPERTY(bool modified READ isModified)
     Q_PROPERTY(QString selectedText READ selectedText)
     Q_PROPERTY(QSize viewportSize READ viewportSize WRITE setViewportSize)
+    Q_PROPERTY(bool forwardUnsupportedContent READ forwardUnsupportedContent WRITE setForwardUnsupportedContent)
+    Q_PROPERTY(LinkDelegationPolicy linkDelegationPolicy READ linkDelegationPolicy WRITE setLinkDelegationPolicy)
+    Q_ENUMS(LinkDelegationPolicy NavigationType WebAction)
 public:
-    enum NavigationRequestResponse {
-        AcceptNavigationRequest,
-        IgnoreNavigationRequest
-    };
-
     enum NavigationType {
         NavigationTypeLinkClicked,
         NavigationTypeFormSubmitted,
-        NavigationTypeBackForward,
+        NavigationTypeBackOrForward,
         NavigationTypeReload,
         NavigationTypeFormResubmitted,
         NavigationTypeOther
@@ -95,8 +93,8 @@ public:
         DownloadImageToDisk,
         CopyImageToClipboard,
 
-        GoBack, // ###GoBackward instead?
-        GoForward,
+        Back,
+        Forward,
         Stop,
         Reload,
 
@@ -147,11 +145,22 @@ public:
     };
 
     enum FindFlag {
-        FindBackward,
-        FindCaseSensitively,
-        FindWrapsAroundDocument
+        FindBackward = 1,
+        FindCaseSensitively = 2,
+        FindWrapsAroundDocument = 4
     };
     Q_DECLARE_FLAGS(FindFlags, FindFlag);
+
+    enum LinkDelegationPolicy {
+        DontDelegateLinks,
+        DelegateExternalLinks,
+        DelegateAllLinks
+    };
+
+    enum WebWindowType {
+        WebBrowserWindow,
+        WebModalDialog
+    };
 
     explicit QWebPage(QObject *parent = 0);
     ~QWebPage();
@@ -160,8 +169,7 @@ public:
     QWebFrame *currentFrame() const;
 
     QWebHistory *history() const;
-
-    QWebSettings *settings();
+    QWebSettings *settings() const;
 
     void setView(QWidget *view);
     QWidget *view() const;
@@ -199,52 +207,56 @@ public:
     void setViewportSize(const QSize &size) const;
 
     virtual bool event(QEvent*);
-    virtual bool focusNextPrevChild(bool next);
+    bool focusNextPrevChild(bool next);
 
     QVariant inputMethodQuery(Qt::InputMethodQuery property) const;
 
-    bool find(const QString &subString, FindFlags options = 0);
+    bool findText(const QString &subString, FindFlags options = 0);
+
+    void setForwardUnsupportedContent(bool forward);
+    bool forwardUnsupportedContent() const;
+
+    void setLinkDelegationPolicy(LinkDelegationPolicy policy);
+    LinkDelegationPolicy linkDelegationPolicy() const;
 
 Q_SIGNALS:
-    void loadProgressChanged(int progress);
-    void hoveringOverLink(const QString &link, const QString &title, const QString &textContent = QString());
-    void statusBarTextChanged(const QString& text);
+    void loadProgress(int progress);
+    void linkHovered(const QString &link, const QString &title, const QString &textContent);
+    void statusBarMessage(const QString& text);
     void selectionChanged();
     void frameCreated(QWebFrame *frame);
-    void geometryChangeRequest(const QRect& geom);
-    void updateRequest(const QRect& dirtyRect);
-    void scrollRequest(int dx, int dy, const QRect& scrollViewRect);
+    void geometryChangeRequested(const QRect& geom);
+    void repaintRequested(const QRect& dirtyRect);
+    void scrollRequested(int dx, int dy, const QRect& scrollViewRect);
+    void linkClicked(const QUrl &url);
+
+    void toolBarVisibilityChangeRequested(bool visible);
+    void statusBarVisibilityChangeRequested(bool visible);
+    void menuBarVisibilityChangeRequested(bool visible);
 
 #if QT_VERSION >= 0x040400
-    void handleUnsupportedContent(QNetworkReply *reply);
-    void download(const QNetworkRequest &request);
+    void unsupportedContent(QNetworkReply *reply);
+    void downloadRequested(const QNetworkRequest &request);
 #endif
-
-    //void addEmbeddableWidget(QWidget *widget);
-    //void addEmbeddableWidget(const QString &classid, QWidget *widget);
-    //void removeEmbeddableWidget(QWidget *widget);
-    //QHash<QString, QWidget *> embeddableWidgets() const;
-    //void clearEmbeddableWidgets();
 
     void microFocusChanged();
 
 protected:
-    virtual QWebPage *createWindow();
-    virtual QWebPage *createModalDialog();
+    virtual QWebPage *createWindow(WebWindowType type);
     virtual QObject *createPlugin(const QString &classid, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
 
 #if QT_VERSION < 0x040400
-    virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QWebNetworkRequest &request, NavigationType type);
+    virtual bool acceptNavigationRequest(QWebFrame *frame, const QWebNetworkRequest &request, NavigationType type);
 #else
-    virtual NavigationRequestResponse navigationRequested(QWebFrame *frame, const QNetworkRequest &request, NavigationType type);
+    virtual bool acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, NavigationType type);
 #endif
     virtual QString chooseFile(QWebFrame *originatingFrame, const QString& oldFile);
     virtual void javaScriptAlert(QWebFrame *originatingFrame, const QString& msg);
     virtual bool javaScriptConfirm(QWebFrame *originatingFrame, const QString& msg);
     virtual bool javaScriptPrompt(QWebFrame *originatingFrame, const QString& msg, const QString& defaultValue, QString* result);
-    virtual void javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID);
+    virtual void javaScriptConsoleMessage(const QString& message, int lineNumber, const QString& sourceID);
 
-    virtual QString userAgentFor(const QUrl& url) const;
+    virtual QString userAgentForUrl(const QUrl& url) const;
 
 private:
     Q_PRIVATE_SLOT(d, void _q_onLoadProgressChanged(int))

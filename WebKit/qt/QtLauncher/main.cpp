@@ -276,7 +276,7 @@ class WebPage : public QWebPage
 public:
     inline WebPage(QWidget *parent) : QWebPage(parent) {}
 
-    virtual QWebPage *createWindow();
+    virtual QWebPage *createWindow(QWebPage::WebWindowType);
 };
 
 class MainWindow : public QMainWindow
@@ -291,7 +291,7 @@ public:
 
         connect(view, SIGNAL(loadStarted()),
                 info, SLOT(startLoad()));
-        connect(view, SIGNAL(loadProgressChanged(int)),
+        connect(view, SIGNAL(loadProgress(int)),
                 info, SLOT(changeLoad(int)));
         connect(view, SIGNAL(loadFinished()),
                 info, SLOT(endLoad()));
@@ -299,7 +299,7 @@ public:
                 this, SLOT(loadFinished()));
         connect(view, SIGNAL(titleChanged(const QString&)),
                 this, SLOT(setWindowTitle(const QString&)));
-        connect(view->page(), SIGNAL(hoveringOverLink(const QString&, const QString&)),
+        connect(view->page(), SIGNAL(linkHovered(const QString&, const QString&, const QString &)),
                 this, SLOT(showLinkHover(const QString&, const QString&)));
 
 
@@ -310,19 +310,19 @@ public:
         urlEdit->setSizePolicy(QSizePolicy::Expanding, urlEdit->sizePolicy().verticalPolicy());
         connect(urlEdit, SIGNAL(returnPressed()),
                 SLOT(changeLocation()));
-        bar->addAction(view->action(QWebPage::GoBack));
-        bar->addAction(view->action(QWebPage::Stop));
-        bar->addAction(view->action(QWebPage::GoForward));
-        QAction* reloadAction = view->action(QWebPage::Reload);
+        bar->addAction(view->pageAction(QWebPage::Back));
+        bar->addAction(view->pageAction(QWebPage::Stop));
+        bar->addAction(view->pageAction(QWebPage::Forward));
+        QAction* reloadAction = view->pageAction(QWebPage::Reload);
         reloadAction->setShortcut(QKeySequence::Refresh);
         bar->addAction(reloadAction);
         bar->addSeparator();
-        bar->addAction(view->action(QWebPage::Cut));
-        bar->addAction(view->action(QWebPage::Copy));
-        bar->addAction(view->action(QWebPage::Paste));
+        bar->addAction(view->pageAction(QWebPage::Cut));
+        bar->addAction(view->pageAction(QWebPage::Copy));
+        bar->addAction(view->pageAction(QWebPage::Paste));
         bar->addSeparator();
-        bar->addAction(view->action(QWebPage::Undo));
-        bar->addAction(view->action(QWebPage::Redo));
+        bar->addAction(view->pageAction(QWebPage::Undo));
+        bar->addAction(view->pageAction(QWebPage::Redo));
 
         addToolBarBreak();
         bar = addToolBar("Location");
@@ -374,7 +374,7 @@ private:
     InfoWidget *info;
 };
 
-QWebPage *WebPage::createWindow()
+QWebPage *WebPage::createWindow(QWebPage::WebWindowType)
 {
     MainWindow *mw = new MainWindow;
     return mw->webPage();
@@ -387,11 +387,11 @@ int main(int argc, char **argv)
     QApplication app(argc, argv);
     QString url = QString("%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
 
-    QWebSettings::setPageCacheCapacity(4);
+    QWebSettings::setMaximumPagesInCache(4);
     QWebSettings::setObjectCacheCapacities((16*1024*1024)/8, (16*1024*1024)/8, 16*1024*1024);
 
-    QWebSettings::defaultSettings()->setAttribute(QWebSettings::PluginsEnabled);
-    QWebSettings::defaultSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled);
+    QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
+    QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
 
     const QStringList args = app.arguments();
     if (args.count() > 1)

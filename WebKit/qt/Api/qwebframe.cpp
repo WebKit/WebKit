@@ -87,9 +87,6 @@ void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *webcorePage, QWebF
     frame = new Frame(webcorePage, frameData->ownerElement, frameLoaderClient);
     frameLoaderClient->setFrame(qframe, frame);
     frame->init();
-
-    QObject::connect(q, SIGNAL(hoveringOverLink(const QString&, const QString&, const QString&)),
-                     page, SIGNAL(hoveringOverLink(const QString&, const QString&, const QString&)));
 }
 
 WebCore::PlatformScrollbar *QWebFramePrivate::horizontalScrollBar() const
@@ -160,7 +157,7 @@ QWebFrame::~QWebFrame()
   Qt properties will be exposed as JavaScript properties and slots as
   JavaScript methods.
 */
-void QWebFrame::addToJSWindowObject(const QString &name, QObject *object)
+void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object)
 {
       KJS::JSLock lock;
       JSDOMWindow *window = toJSDOMWindow(d->frame);
@@ -179,7 +176,7 @@ void QWebFrame::addToJSWindowObject(const QString &name, QObject *object)
 /*!
   returns the markup (HTML) contained in the current frame.
 */
-QString QWebFrame::markup() const
+QString QWebFrame::toHtml() const
 {
     if (!d->frame->document())
         return QString();
@@ -189,7 +186,7 @@ QString QWebFrame::markup() const
 /*!
   returns the content of this frame as plain text.
 */
-QString QWebFrame::innerText() const
+QString QWebFrame::toPlainText() const
 {
     if (d->frame->view() && d->frame->view()->layoutPending())
         d->frame->view()->layout();
@@ -231,7 +228,7 @@ QUrl QWebFrame::url() const
 /*!
   The icon associated with this frame.
 */
-QPixmap QWebFrame::icon() const
+QIcon QWebFrame::icon() const
 {
     String url = d->frame->loader()->url().string();
 
@@ -256,7 +253,7 @@ QPixmap QWebFrame::icon() const
 /*!
   The name of this frame as defined by the parent frame.
 */
-QString QWebFrame::name() const
+QString QWebFrame::frameName() const
 {
     return d->frame->tree()->name();
 }
@@ -388,9 +385,11 @@ void QWebFrame::setHtml(const QByteArray &html, const QUrl &baseUrl)
 }
 
 /*!
-  Sets the content of this frame to \a data assuming \a mimeType. If
-  \a mimeType is not specified it defaults to 'text/html'.  \a baseUrl
-  us optional and used to resolve relative URLs in the document.
+  Sets the content of this frame to the specified content \a data. If the \a mimeType argument
+  is empty it is currently assumed that the content is HTML but in future versions we may introduce
+  auto-detection.
+
+  External objects referenced in the content are located relative to \a baseUrl.
 */
 void QWebFrame::setContent(const QByteArray &data, const QString &mimeType, const QUrl &baseUrl)
 {
@@ -436,45 +435,33 @@ QList<QWebFrame*> QWebFrame::childFrames() const
 }
 
 /*!
-  \property QWebFrame::verticalScrollBarPolicy
-
-  This property defines the vertical scrollbar policy.
-
-  \sa Qt::ScrollBarPolicy
+    Returns the scrollbar policy for the scrollbar defined by \a orientation.
 */
-Qt::ScrollBarPolicy QWebFrame::verticalScrollBarPolicy() const
+Qt::ScrollBarPolicy QWebFrame::scrollBarPolicy(Qt::Orientation orientation) const
 {
+    if (orientation == Qt::Horizontal)
+        return d->horizontalScrollBarPolicy;
     return d->verticalScrollBarPolicy;
 }
 
-void QWebFrame::setVerticalScrollBarPolicy(Qt::ScrollBarPolicy policy)
+/*!
+    Sets the scrollbar policy for the scrollbar defined by \a orientation to \a policy.
+*/
+void QWebFrame::setScrollBarPolicy(Qt::Orientation orientation, Qt::ScrollBarPolicy policy)
 {
     Q_ASSERT((int)ScrollbarAuto == (int)Qt::ScrollBarAsNeeded);
     Q_ASSERT((int)ScrollbarAlwaysOff == (int)Qt::ScrollBarAlwaysOff);
     Q_ASSERT((int)ScrollbarAlwaysOn == (int)Qt::ScrollBarAlwaysOn);
 
-    d->verticalScrollBarPolicy = policy;
-    if (d->frame->view())
-        d->frame->view()->setVScrollbarMode((ScrollbarMode)policy);
-}
-
-/*!
-  \property QWebFrame::horizontalScrollBarPolicy
-
-  This property defines the horizontal scrollbar policy.
-
-  \sa Qt::ScrollBarPolicy
-*/
-Qt::ScrollBarPolicy QWebFrame::horizontalScrollBarPolicy() const
-{
-    return d->horizontalScrollBarPolicy;
-}
-
-void QWebFrame::setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy policy)
-{
-    d->horizontalScrollBarPolicy = policy;
-    if (d->frame->view())
-        d->frame->view()->setHScrollbarMode((ScrollbarMode)policy);
+    if (orientation == Qt::Horizontal) {
+        d->horizontalScrollBarPolicy = policy;
+        if (d->frame->view())
+            d->frame->view()->setHScrollbarMode((ScrollbarMode)policy);
+    } else {
+        d->verticalScrollBarPolicy = policy;
+        if (d->frame->view())
+            d->frame->view()->setVScrollbarMode((ScrollbarMode)policy);
+    }
 }
 
 /*!
@@ -543,7 +530,7 @@ void QWebFrame::render(QPainter *painter, const QRegion &clip)
     if (!d->frame->view() || !d->frame->renderer())
         return;
 
-    layout();
+    d->frame->view()->layoutIfNeededRecursive();
 
     GraphicsContext ctx(painter);
     QVector<QRect> vector = clip.rects();
@@ -553,30 +540,34 @@ void QWebFrame::render(QPainter *painter, const QRegion &clip)
 }
 
 /*!
-  \property QWebFrame::textZoomFactor
-
-  This property defines the zoom factor for all text in percent.
+  Render the frame into \a painter.
 */
-
-void QWebFrame::setTextZoomFactor(int percent)
+void QWebFrame::render(QPainter *painter)
 {
-    d->frame->setZoomFactor(percent, /*isTextOnly*/true);
-}
-
-int QWebFrame::textZoomFactor() const
-{
-    return d->frame->zoomFactor();
-}
-
-/*!
-  Ensure that the content of the frame and all subframes are correctly layouted.
-*/
-void QWebFrame::layout()
-{
-    if (!d->frame->view())
+    if (!d->frame->view() || !d->frame->renderer())
         return;
 
     d->frame->view()->layoutIfNeededRecursive();
+
+    GraphicsContext ctx(painter);
+    WebCore::FrameView* view = d->frame->view();
+    view->paint(&ctx, view->frameGeometry());
+}
+
+/*!
+  \property QWebFrame::textSizeMultiplier
+
+  This property defines the scaling factor for all text in the frame.
+*/
+
+void QWebFrame::setTextSizeMultiplier(qreal factor)
+{
+    d->frame->setZoomFactor(factor, /*isTextOnly*/true);
+}
+
+qreal QWebFrame::textSizeMultiplier() const
+{
+    return qreal(d->frame->zoomFactor()) / 100.;
 }
 
 /*!
@@ -628,10 +619,10 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
 
 
 /*!
-  \fn void QWebFrame::cleared()
+  \fn void QWebFrame::javaScriptWindowObjectCleared()
 
-  This signal is emitted whenever the content of the frame is cleared
-  (e.g. before starting a new load).
+  This signal is emitted whenever the global window object of the JavaScript environment
+  is cleared (e.g. before starting a new load).
 */
 
 /*!
@@ -664,15 +655,6 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
   \sa url()
 */
 
-/*!
-  \fn void QWebFrame::hoveringOverLink(const QString &link, const QString &title, const QString &textContent)
-
-  This signal is emitted whenever the mouse cursor is hovering over a
-  link. It can be used to display information about the link in
-  e.g. the status bar. The signal arguments consist of the \a link destination, the \a title and the
-  link text as \a textContent .
-*/
-
 
 /*!
   \fn void QWebFrame::loadStarted()
@@ -687,7 +669,7 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
 */
 
 /*!
-  \fn void QWebFrame::initialLayoutComplete()
+  \fn void QWebFrame::initialLayoutCompleted()
 
   This signal is emitted when the first (initial) layout of the frame
   has happened. This is the earliest time something can be shown on
@@ -695,7 +677,7 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
 */
     
 /*!
-  \fn void QWebFrame::iconLoaded()
+  \fn void QWebFrame::iconChanged()
 
   This signal is emitted when the icon ("favicon") associated with the frame has been loaded.
 */

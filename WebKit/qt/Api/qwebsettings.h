@@ -27,6 +27,7 @@
 
 #include <QtCore/qstring.h>
 #include <QtGui/qpixmap.h>
+#include <QtGui/qicon.h>
 #include <QtCore/qshareddata.h>
 
 namespace WebCore
@@ -43,7 +44,7 @@ QT_END_NAMESPACE
 class QWEBKIT_EXPORT QWebSettings
 {
 public:
-    enum FontType {
+    enum FontFamily {
         StandardFont,
         FixedFont,
         SerifFont,
@@ -65,8 +66,8 @@ public:
     enum WebGraphic {
         MissingImageGraphic,
         MissingPluginGraphic,
-        DefaultFaviconGraphic,
-        TextAreaResizeCornerGraphic
+        DefaultFrameIconGraphic,
+        TextAreaSizeGripCornerGraphic
     };
     enum FontSize {
         MinimumFontSize,
@@ -75,32 +76,33 @@ public:
         DefaultFixedFontSize
     };
 
-    static QWebSettings *defaultSettings();
+    static QWebSettings *globalSettings();
 
-    void setFontFamily(FontType type, const QString &family);
-    QString fontFamily(FontType type) const;
-    void resetFontFamily(FontType type);
+    void setFontFamily(FontFamily which, const QString &family);
+    QString fontFamily(FontFamily which) const;
+    void resetFontFamily(FontFamily which);
 
     void setFontSize(FontSize type, int size);
     int fontSize(FontSize type) const;
     void resetFontSize(FontSize type);
 
-    void setAttribute(WebAttribute attr, bool on = true);
+    void setAttribute(WebAttribute attr, bool on);
     bool testAttribute(WebAttribute attr) const;
-    void clearAttribute(WebAttribute attr);
+    void resetAttribute(WebAttribute attr);
 
-    void setUserStyleSheetLocation(const QUrl &location);
-    QUrl userStyleSheetLocation() const;
+    void setUserStyleSheetUrl(const QUrl &location);
+    QUrl userStyleSheetUrl() const;
 
-    static void setIconDatabaseEnabled(bool enabled, const QString &location = QString());
-    static bool iconDatabaseEnabled();
+    static void setIconDatabasePath(const QString &location);
+    static QString iconDatabasePath();
     static void clearIconDatabase();
-    static QPixmap iconForUrl(const QUrl &url);
+    static QIcon iconForUrl(const QUrl &url);
 
     static void setWebGraphic(WebGraphic type, const QPixmap &graphic);
     static QPixmap webGraphic(WebGraphic type);
 
-    static void setPageCacheCapacity(int numberOfPages);
+    static void setMaximumPagesInCache(int pages);
+    static int maximumPagesInCache();
     static void setObjectCacheCapacities(int cacheMinDeadCapacity, int cacheMaxDead, int totalCapacity);
 
 private:

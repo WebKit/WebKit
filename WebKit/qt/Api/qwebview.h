@@ -23,6 +23,7 @@
 #include "qwebkitglobal.h"
 #include "qwebpage.h"
 #include <QtGui/qwidget.h>
+#include <QtGui/qicon.h>
 #include <QtCore/qurl.h>
 #if QT_VERSION >= 0x040400
 #include <QtNetwork/qnetworkaccessmanager.h>
@@ -41,11 +42,11 @@ class QWEBKIT_EXPORT QWebView : public QWidget
     Q_OBJECT
     Q_PROPERTY(QString title READ title)
     Q_PROPERTY(QUrl url READ url WRITE load)
-    Q_PROPERTY(QPixmap icon READ icon)
+    Q_PROPERTY(QIcon icon READ icon)
     Q_PROPERTY(QString selectedText READ selectedText)
     Q_PROPERTY(bool modified READ isModified)
-    Q_PROPERTY(Qt::TextInteractionFlags textInteractionFlags READ textInteractionFlags WRITE setTextInteractionFlags)
-    Q_PROPERTY(int textZoomFactor READ textZoomFactor WRITE setTextZoomFactor)
+    //Q_PROPERTY(Qt::TextInteractionFlags textInteractionFlags READ textInteractionFlags WRITE setTextInteractionFlags)
+    Q_PROPERTY(qreal textSizeMultiplier READ textSizeMultiplier WRITE setTextSizeMultiplier)
 public:
     explicit QWebView(QWidget *parent = 0);
     virtual ~QWebView();
@@ -70,57 +71,52 @@ public:
 
     QString title() const;
     QUrl url() const;
-    QPixmap icon() const;
+    QIcon icon() const;
 
     QString selectedText() const;
 
-    QAction *action(QWebPage::WebAction action) const;
-    void triggerAction(QWebPage::WebAction action, bool checked = false);
+    QAction *pageAction(QWebPage::WebAction action) const;
+    void triggerPageAction(QWebPage::WebAction action, bool checked = false);
 
     bool isModified() const;
 
+    /*
     Qt::TextInteractionFlags textInteractionFlags() const;
     void setTextInteractionFlags(Qt::TextInteractionFlags flags);
+    void setTextInteractionFlag(Qt::TextInteractionFlag flag);
+    */
 
     QVariant inputMethodQuery(Qt::InputMethodQuery property) const;
 
-    /* #### QTextBrowser compatibility?
-    bool openLinks() const;
-    void setOpenLinks(bool open);
-
-    bool openExternalLinks() const;
-    void setOpenExternalLinks(bool open);
-    */
-
     QSize sizeHint() const;
 
-    void setTextZoomFactor(int percent);
-    int textZoomFactor() const;
+    void setTextSizeMultiplier(qreal factor);
+    qreal textSizeMultiplier() const;
 
-    bool find(const QString &subString, QWebPage::FindFlags options = 0);
+    bool findText(const QString &subString, QWebPage::FindFlags options = 0);
 
 public Q_SLOTS:
     void stop();
-    void backward();
+    void back();
     void forward();
     void reload();
 
 Q_SIGNALS:
     void loadStarted();
-    void loadProgressChanged(int progress);
+    void loadProgress(int progress);
     void loadFinished();
     void titleChanged(const QString& title);
-    void statusBarTextChanged(const QString& text);
+    void statusBarMessage(const QString& text);
     void linkClicked(const QUrl &url);
     void selectionChanged();
-    void iconLoaded();
+    void iconChanged();
     void urlChanged(const QUrl &url);
 
 protected:
     void resizeEvent(QResizeEvent *e);
     void paintEvent(QPaintEvent *ev);
 
-    virtual QWebView *createWindow();
+    virtual QWebView *createWindow(QWebPage::WebWindowType type);
 
     virtual void mouseMoveEvent(QMouseEvent*);
     virtual void mousePressEvent(QMouseEvent*);

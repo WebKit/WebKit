@@ -26,6 +26,7 @@
 
 #include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
+#include <QtGui/qicon.h>
 #if QT_VERSION >= 0x040400
 #include <QtNetwork/qnetworkaccessmanager.h>
 #endif
@@ -56,9 +57,10 @@ class QWebFrameData;
 class QWEBKIT_EXPORT QWebFrame : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Qt::ScrollBarPolicy verticalScrollBarPolicy READ verticalScrollBarPolicy WRITE setVerticalScrollBarPolicy)
-    Q_PROPERTY(Qt::ScrollBarPolicy horizontalScrollBarPolicy READ horizontalScrollBarPolicy WRITE setHorizontalScrollBarPolicy)
-    Q_PROPERTY(int textZoomFactor READ textZoomFactor WRITE setTextZoomFactor)
+    Q_PROPERTY(qreal textSizeMultiplier READ textSizeMultiplier WRITE setTextSizeMultiplier)
+    Q_PROPERTY(QString title READ title)
+    Q_PROPERTY(QUrl url READ url)
+    Q_PROPERTY(QIcon icon READ icon)
 private:
     QWebFrame(QWebPage *parent, QWebFrameData *frameData);
     QWebFrame(QWebFrame *parent, QWebFrameData *frameData);
@@ -79,24 +81,22 @@ public:
     void setHtml(const QByteArray &html, const QUrl &baseUrl = QUrl());
     void setContent(const QByteArray &data, const QString &mimeType = QString(), const QUrl &baseUrl = QUrl());
 
-    void addToJSWindowObject(const QString &name, QObject *object);
-    QString markup() const;
-    QString innerText() const;
+    void addToJavaScriptWindowObject(const QString &name, QObject *object);
+    QString toHtml() const;
+    QString toPlainText() const;
     QString renderTreeDump() const;
 
     QString title() const;
     QUrl url() const;
-    QPixmap icon() const;
+    QIcon icon() const;
 
-    QString name() const;
+    QString frameName() const;
 
     QWebFrame *parentFrame() const;
     QList<QWebFrame*> childFrames() const;
 
-    Qt::ScrollBarPolicy verticalScrollBarPolicy() const;
-    void setVerticalScrollBarPolicy(Qt::ScrollBarPolicy);
-    Qt::ScrollBarPolicy horizontalScrollBarPolicy() const;
-    void setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy);
+    Qt::ScrollBarPolicy scrollBarPolicy(Qt::Orientation orientation) const;
+    void setScrollBarPolicy(Qt::Orientation orientation, Qt::ScrollBarPolicy policy);
 
     void setScrollBarValue(Qt::Orientation orientation, int value);
     int scrollBarValue(Qt::Orientation orientation) const;
@@ -104,10 +104,10 @@ public:
     int scrollBarMaximum(Qt::Orientation orientation) const;
 
     void render(QPainter *painter, const QRegion &clip);
-    void layout();
+    void render(QPainter *painter);
 
-    void setTextZoomFactor(int percent);
-    int textZoomFactor() const;
+    void setTextSizeMultiplier(qreal factor);
+    qreal textSizeMultiplier() const;
 
     QPoint pos() const;
     QRect geometry() const;
@@ -116,25 +116,18 @@ public Q_SLOTS:
     QString evaluateJavaScript(const QString& scriptSource);
 
 Q_SIGNALS:
-    void cleared();
+    void javaScriptWindowObjectCleared();
     void loadDone(bool ok);
     void provisionalLoad();
     void titleChanged(const QString &title);
-    void hoveringOverLink(const QString &link, const QString &title, const QString &textContent);
     void urlChanged(const QUrl &url);
 
     void loadStarted();
     void loadFinished();
 
-    /**
-      * Signal is emitted when the mainframe()'s initial layout is completed.
-     */
-    void initialLayoutComplete();
-    
-    /**
-     * Signal is emitted when an icon ("favicon") is loaded from the site.
-     */
-    void iconLoaded();
+    void initialLayoutCompleted();
+
+    void iconChanged();
 
 private:
     friend class QWebPage;

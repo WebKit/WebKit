@@ -1,3 +1,12 @@
+2008-04-18  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Adapt to the API changes in WebKit/qt/
+
+        * platform/graphics/qt/ImageQt.cpp:
+        (loadResourcePixmap):
+
 2008-04-18  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Adam Roben.

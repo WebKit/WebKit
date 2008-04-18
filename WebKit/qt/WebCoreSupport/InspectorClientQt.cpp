@@ -46,7 +46,7 @@ namespace WebCore {
 class InspectorClientWebPage : public QWebPage
 {
 public:
-    QWebPage* createWindow()
+    QWebPage* createWindow(QWebPage::WebWindowType)
     {
         QWidget *w = new QWebView(0);
         QWebPage *page = new QWebPage(w);

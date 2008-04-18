@@ -76,7 +76,7 @@ void QWEBKIT_EXPORT qt_dump_frame_loader(bool b)
 static QString drtDescriptionSuitableForTestResult(WebCore::Frame* _frame)
 {
     QWebFrame* frame = QWebFramePrivate::kit(_frame);
-    QString name = frame->name();
+    QString name = frame->frameName();
 
     bool isMainFrame = frame == frame->page()->mainFrame();  
     if (isMainFrame) {
@@ -125,8 +125,8 @@ void FrameLoaderClientQt::setFrame(QWebFrame* webFrame, Frame* frame)
 
     connect(this, SIGNAL(loadStarted()),
             m_webFrame, SIGNAL(loadStarted()));
-    connect(this, SIGNAL(loadProgressChanged(int)),
-            m_webFrame->page(), SIGNAL(loadProgressChanged(int)));
+    connect(this, SIGNAL(loadProgress(int)),
+            m_webFrame->page(), SIGNAL(loadProgress(int)));
     connect(this, SIGNAL(loadFinished()),
             m_webFrame, SIGNAL(loadFinished()));
     connect(this, SIGNAL(titleChanged(const QString&)),
@@ -373,7 +373,7 @@ void FrameLoaderClientQt::dispatchDidFinishLoad()
 void FrameLoaderClientQt::dispatchDidFirstLayout()
 {
     if (m_webFrame)
-        emit m_webFrame->initialLayoutComplete();
+        emit m_webFrame->initialLayoutCompleted();
 }
 
 
@@ -423,7 +423,7 @@ void FrameLoaderClientQt::postProgressStartedNotification()
 void FrameLoaderClientQt::postProgressEstimateChangedNotification()
 {
     if (m_webFrame && m_frame->page())
-        emit loadProgressChanged(qRound(m_frame->page()->progress()->estimatedProgress() * 100));
+        emit loadProgress(qRound(m_frame->page()->progress()->estimatedProgress() * 100));
 }
 
 void FrameLoaderClientQt::postProgressFinishedNotification()
@@ -525,7 +525,7 @@ void FrameLoaderClientQt::setTitle(const String&, const KURL&)
 String FrameLoaderClientQt::userAgent(const KURL& url)
 {
     if (m_webFrame) {
-        return m_webFrame->page()->userAgentFor(QUrl((QString)url.string()));
+        return m_webFrame->page()->userAgentForUrl(url);
     }
     return String();
 }
@@ -536,7 +536,7 @@ void FrameLoaderClientQt::dispatchDidReceiveIcon()
         printf("%s - didReceiveIconForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
     if (m_webFrame) {
-        emit m_webFrame->iconLoaded();
+        emit m_webFrame->iconChanged();
     }
 }
 
@@ -560,7 +560,7 @@ void FrameLoaderClientQt::windowObjectCleared()
         printf("%s - didClearWindowObjectForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
     if (m_webFrame)
-        emit m_webFrame->cleared();
+        emit m_webFrame->javaScriptWindowObjectCleared();
 }
 
 void FrameLoaderClientQt::didPerformFirstNavigation() const
@@ -686,8 +686,8 @@ void FrameLoaderClientQt::download(WebCore::ResourceHandle* handle, const WebCor
     QNetworkReply* reply = handler->release();
     if (reply) {
         QWebPage *page = m_webFrame->page();
-        if (page->receivers(SIGNAL(handleUnsupportedContent(QNetworkReply *))))
-            emit m_webFrame->page()->handleUnsupportedContent(reply);
+        if (page->forwardUnsupportedContent())
+            emit m_webFrame->page()->unsupportedContent(reply);
         else
             reply->abort();
     }
@@ -767,7 +767,7 @@ WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage()
 {
     if (!m_webFrame)
         return 0;
-    QWebPage *newPage = m_webFrame->page()->createWindow();
+    QWebPage *newPage = m_webFrame->page()->createWindow(QWebPage::WebBrowserWindow);
     if (!newPage)
         return 0;
     return newPage->mainFrame()->d->frame;
@@ -803,8 +803,7 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFun
 #endif
         QWebPage *page = m_webFrame->page();
 
-        if (page->d->navigationRequested(m_webFrame, r, QWebPage::NavigationType(action.type())) ==
-            QWebPage::IgnoreNavigationRequest) {
+        if (!page->d->acceptNavigationRequest(m_webFrame, r, QWebPage::NavigationType(action.type()))) {
             slotCallPolicyFunction(PolicyIgnore);
             return;
         }
@@ -825,7 +824,7 @@ void FrameLoaderClientQt::startDownload(const WebCore::ResourceRequest& request)
         return;
 
     QWebPage *page = m_webFrame->page();
-    emit m_webFrame->page()->download(request.toNetworkRequest());
+    emit m_webFrame->page()->downloadRequested(request.toNetworkRequest());
 #endif
 }
 

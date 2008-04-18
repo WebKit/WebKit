@@ -49,9 +49,8 @@ namespace WebCore
 ChromeClientQt::ChromeClientQt(QWebPage* webPage)
     : m_webPage(webPage)
 {
-
+    toolBarsVisible = statusBarVisible = menuBarVisible = true;
 }
-
 
 ChromeClientQt::~ChromeClientQt()
 {
@@ -62,7 +61,7 @@ void ChromeClientQt::setWindowRect(const FloatRect& rect)
 {
     if (!m_webPage)
         return;
-    emit m_webPage->geometryChangeRequest(QRect(qRound(rect.x()), qRound(rect.y()),
+    emit m_webPage->geometryChangeRequested(QRect(qRound(rect.x()), qRound(rect.y()),
                             qRound(rect.width()), qRound(rect.height())));
 }
 
@@ -135,7 +134,7 @@ void ChromeClientQt::takeFocus(FocusDirection)
 
 Page* ChromeClientQt::createWindow(Frame*, const FrameLoadRequest& request, const WindowFeatures& features)
 {
-    QWebPage *newPage = features.dialog ? m_webPage->createModalDialog() : m_webPage->createWindow();
+    QWebPage *newPage = m_webPage->createWindow(features.dialog ? QWebPage::WebModalDialog : QWebPage::WebBrowserWindow);
     if (!newPage)
         return 0;
     newPage->mainFrame()->load(request.resourceRequest().url());
@@ -166,28 +165,29 @@ void ChromeClientQt::runModal()
 }
 
 
-void ChromeClientQt::setToolbarsVisible(bool)
+void ChromeClientQt::setToolbarsVisible(bool visible)
 {
-    notImplemented();
+    toolBarsVisible = visible;
+    emit m_webPage->toolBarVisibilityChangeRequested(visible);
 }
 
 
 bool ChromeClientQt::toolbarsVisible()
 {
-    notImplemented();
-    return false;
+    return toolBarsVisible;
 }
 
 
-void ChromeClientQt::setStatusbarVisible(bool)
+void ChromeClientQt::setStatusbarVisible(bool visible)
 {
-    notImplemented();
+    emit m_webPage->statusBarVisibilityChangeRequested(visible);
+    statusBarVisible = visible;
 }
 
 
 bool ChromeClientQt::statusbarVisible()
 {
-    notImplemented();
+    return statusBarVisible;
     return false;
 }
 
@@ -205,15 +205,15 @@ bool ChromeClientQt::scrollbarsVisible()
 }
 
 
-void ChromeClientQt::setMenubarVisible(bool)
+void ChromeClientQt::setMenubarVisible(bool visible)
 {
-    notImplemented();
+    menuBarVisible = visible;
+    emit m_webPage->menuBarVisibilityChangeRequested(visible);
 }
 
 bool ChromeClientQt::menubarVisible()
 {
-    notImplemented();
-    return false;
+    return menuBarVisible;
 }
 
 void ChromeClientQt::setResizable(bool)
@@ -276,7 +276,7 @@ bool ChromeClientQt::runJavaScriptPrompt(Frame* f, const String& message, const 
 void ChromeClientQt::setStatusbarText(const String& msg)
 {
     QString x = msg;
-    emit m_webPage->statusBarTextChanged(x);
+    emit m_webPage->statusBarMessage(x);
 }
 
 bool ChromeClientQt::shouldInterruptJavaScript()
@@ -304,7 +304,7 @@ void ChromeClientQt::addToDirtyRegion(const IntRect& r)
         if (!r.isEmpty())
             view->update(r);
     } else
-        emit m_webPage->updateRequest(r);
+        emit m_webPage->repaintRequested(r);
 }
 
 void ChromeClientQt::scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
@@ -313,7 +313,7 @@ void ChromeClientQt::scrollBackingStore(int dx, int dy, const IntRect& scrollVie
     if (view)
         view->scroll(dx, dy, scrollViewRect);
     else
-        emit m_webPage->scrollRequest(dx, dy, scrollViewRect);
+        emit m_webPage->scrollRequested(dx, dy, scrollViewRect);
 }
 
 void ChromeClientQt::updateBackingStore()
@@ -328,7 +328,7 @@ void ChromeClientQt::mouseDidMoveOverElement(const HitTestResult& result, unsign
         lastHoverURL = result.absoluteLinkURL();
         lastHoverTitle = result.title();
         lastHoverContent = result.textContent();
-        emit m_webPage->hoveringOverLink(lastHoverURL.prettyURL(),
+        emit m_webPage->linkHovered(lastHoverURL.prettyURL(),
                 lastHoverTitle, lastHoverContent);
     }
 }

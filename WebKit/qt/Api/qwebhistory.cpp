@@ -73,9 +73,9 @@ QUrl QWebHistoryItem::originalUrl() const
 
 
 /*!
- The current url associated with the history item.
+ The url associated with the history item.
 */
-QUrl QWebHistoryItem::currentUrl() const
+QUrl QWebHistoryItem::url() const
 {
     return QUrl(d->item->url().string());
 }
@@ -103,7 +103,7 @@ QDateTime QWebHistoryItem::lastVisited() const
 /*!
  The icon associated with the history item.
 */
-QPixmap QWebHistoryItem::icon() const
+QIcon QWebHistoryItem::icon() const
 {
     return *d->item->icon()->getPixmap();
 }
@@ -217,7 +217,7 @@ bool QWebHistory::canGoForward() const
 /*!
   goes back one history item.
 */
-void QWebHistory::goBack()
+void QWebHistory::back()
 {
     d->lst->goBack();
 }
@@ -225,7 +225,7 @@ void QWebHistory::goBack()
 /*!
   goes forward one history item.
 */
-void QWebHistory::goForward()
+void QWebHistory::forward()
 {
     d->lst->goBack();
 }
@@ -271,11 +271,19 @@ QWebHistoryItem QWebHistory::forwardItem() const
 /*!
   returns the item at index \a i.
 */
-QWebHistoryItem QWebHistory::itemAtIndex(int i) const
+QWebHistoryItem QWebHistory::itemAt(int i) const
 {
     WebCore::HistoryItem *item = d->lst->itemAtIndex(i);
 
     QWebHistoryItemPrivate *priv = new QWebHistoryItemPrivate(item);
     return QWebHistoryItem(priv);
+}
+
+/*!
+    Returns the total number of items in the back-forward history.
+*/
+int QWebHistory::count() const
+{
+    return d->lst->entries().size();
 }
 
