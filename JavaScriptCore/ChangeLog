@@ -1,3 +1,21 @@
+2008-04-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Get rid of static compareWithCompareFunctionArguments in array_instance.cpp.
+
+        No change on SunSpider, CelticKane or iBench JavaScript. It is probable that in some cases,
+        merge sort is still faster, but more investigation is needed to determine a new cutoff.
+        Or possibly, it would be better to do what FIXME says (change to tree sort).
+
+        Also, made arguments a local variable - not sure why it was a member of
+        CompareWithCompareFunctionArguments.
+
+        * kjs/array_instance.cpp:
+        (KJS::CompareWithCompareFunctionArguments::CompareWithCompareFunctionArguments):
+        (KJS::CompareWithCompareFunctionArguments::operator()):
+        (KJS::ArrayInstance::sort):
+
 2008-04-18  Simon Hausmann  <hausmann@webkit.org>
 
         Build fix for gcc 4.3. Include stdio.h for printf.

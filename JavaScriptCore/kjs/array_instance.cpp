@@ -484,71 +484,38 @@ void ArrayInstance::sort(ExecState* exec)
 }
 
 struct CompareWithCompareFunctionArguments {
-    CompareWithCompareFunctionArguments(ExecState *e, JSObject *cf)
-        : exec(e)
+    CompareWithCompareFunctionArguments(ExecState* exec, JSObject* cf)
+        : exec(exec)
         , compareFunction(cf)
-        , globalThisValue(e->globalThisValue())
+        , globalThisValue(exec->globalThisValue())
     {
     }
 
-    ExecState *exec;
-    JSObject *compareFunction;
-    List arguments;
+    bool operator()(JSValue* va, JSValue* vb)
+    {
+        ASSERT(!va->isUndefined());
+        ASSERT(!vb->isUndefined());
+
+        List arguments;
+        arguments.append(va);
+        arguments.append(vb);
+        double compareResult = compareFunction->call(exec, globalThisValue, arguments)->toNumber(exec);
+        return compareResult < 0;
+    }
+
+    ExecState* exec;
+    JSObject* compareFunction;
     JSObject* globalThisValue;
 };
-
-static CompareWithCompareFunctionArguments* compareWithCompareFunctionArguments = 0;
-
-static int compareWithCompareFunctionForQSort(const void* a, const void* b)
-{
-    CompareWithCompareFunctionArguments *args = compareWithCompareFunctionArguments;
-
-    JSValue* va = *static_cast<JSValue* const*>(a);
-    JSValue* vb = *static_cast<JSValue* const*>(b);
-    ASSERT(!va->isUndefined());
-    ASSERT(!vb->isUndefined());
-
-    args->arguments.clear();
-    args->arguments.append(va);
-    args->arguments.append(vb);
-    double compareResult = args->compareFunction->call(args->exec, args->globalThisValue, args->arguments)->toNumber(args->exec);
-    return compareResult < 0 ? -1 : compareResult > 0 ? 1 : 0;
-}
 
 void ArrayInstance::sort(ExecState* exec, JSObject* compareFunction)
 {
     size_t lengthNotIncludingUndefined = compactForSorting();
 
-    CompareWithCompareFunctionArguments* oldArgs = compareWithCompareFunctionArguments;
-    CompareWithCompareFunctionArguments args(exec, compareFunction);
-    compareWithCompareFunctionArguments = &args;
-
-#if HAVE(MERGESORT)
-    // Because mergesort usually does fewer compares, it is faster than qsort here.
-    // However, because it requires extra copies of the storage buffer, don't use it for very
-    // large arrays.
-
     // FIXME: A tree sort using a perfectly balanced tree (e.g. an AVL tree) could do an even
     // better job of minimizing compares.
 
-    if (lengthNotIncludingUndefined < copyingSortCutoff) {
-        // During the sort, we could do a garbage collect, and it's important to still
-        // have references to every object in the array for ArrayInstance::mark.
-        // The mergesort algorithm does not guarantee this, so we sort a copy rather
-        // than the original.
-        size_t size = storageSize(m_vectorLength);
-        ArrayStorage* copy = static_cast<ArrayStorage*>(fastMalloc(size));
-        memcpy(copy, m_storage, size);
-        mergesort(copy->m_vector, lengthNotIncludingUndefined, sizeof(JSValue*), compareWithCompareFunctionForQSort);
-        fastFree(m_storage);
-        m_storage = copy;
-        compareWithCompareFunctionArguments = oldArgs;
-        return;
-    }
-#endif
-
-    qsort(m_storage->m_vector, lengthNotIncludingUndefined, sizeof(JSValue*), compareWithCompareFunctionForQSort);
-    compareWithCompareFunctionArguments = oldArgs;
+    std::sort(m_storage->m_vector, m_storage->m_vector + lengthNotIncludingUndefined, CompareWithCompareFunctionArguments(exec, compareFunction));
 }
 
 unsigned ArrayInstance::compactForSorting()
