@@ -25,32 +25,14 @@
 #define SVGAnimateColorElement_h
 #if ENABLE(SVG_ANIMATION)
 
-#include "SVGAnimationElement.h"
-#include "ColorDistance.h"
-#include <wtf/RefPtr.h>
+#include "SVGAnimateElement.h"
 
 namespace WebCore {
 
-    class SVGColor;
-
-    class SVGAnimateColorElement : public SVGAnimationElement {
+    // SVGAnimateElement implements superset of the functionality.
+    class SVGAnimateColorElement : public SVGAnimateElement {
     public:
         SVGAnimateColorElement(const QualifiedName&, Document*);
-        virtual ~SVGAnimateColorElement();
-
-    protected:
-        virtual const SVGElement* contextElement() const { return this; }
-        
-        virtual void applyAnimatedValueToElement(unsigned repeat);
-        virtual bool updateAnimatedValue(float percent);
-        virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
-        virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
-
-    private:
-        Color m_baseColor;
-        Color m_animatedColor;
-        Color m_toColor;
-        Color m_fromColor;
     };
 
 } // namespace WebCore

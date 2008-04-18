@@ -61,6 +61,8 @@ namespace WebCore {
         virtual bool beginElementAt(float offset, ExceptionCode&);
         virtual bool endElement(ExceptionCode&);
         virtual bool endElementAt(float offset, ExceptionCode&);
+        
+        static bool attributeIsCSS(const String& attributeName);
 
 protected:
         
@@ -73,7 +75,6 @@ protected:
         String toValue() const;
         String byValue() const;
         String fromValue() const;
-        String attributeName() const;
         
         enum AnimationMode { NoAnimation, ToAnimation, ByAnimation, ValuesAnimation, FromToAnimation, FromByAnimation };
         AnimationMode animationMode() const;
@@ -89,21 +90,18 @@ protected:
     
         // from SVGSMILElement
         virtual void startedActiveInterval();
-        virtual void applyAnimation(float percent, unsigned repeat);
-        virtual void unapplyAnimation();
+        virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement);
         virtual void endedActiveInterval();
         
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
 private:
         virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
         virtual bool calculateFromAndByValues(const String& fromString, const String& byString) = 0;
-        virtual bool updateAnimatedValue(float percentage) = 0;
-        virtual void applyAnimatedValueToElement(unsigned repeat) = 0;
+        virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement) = 0;
         
         void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to);
     
 protected:
-        String m_savedBaseValue;
         bool m_animationValid;
 
         Vector<String> m_values;

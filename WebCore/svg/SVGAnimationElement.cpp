@@ -34,8 +34,10 @@
 #include "EventListener.h"
 #include "FloatConversion.h"
 #include "HTMLNames.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGURIReference.h"
+#include "SVGUseElement.h"
 #include "XLinkNames.h"
 #include <math.h>
 
@@ -228,11 +230,6 @@ String SVGAnimationElement::fromValue() const
 {    
     return getAttribute(SVGNames::fromAttr);
 }
-    
-String SVGAnimationElement::attributeName() const
-{    
-    return getAttribute(SVGNames::attributeNameAttr).string().stripWhiteSpace();
-}
 
 bool SVGAnimationElement::isAdditive() const
 {
@@ -253,6 +250,20 @@ bool SVGAnimationElement::hasValidTarget() const
     return targetElement();
 }
     
+bool SVGAnimationElement::attributeIsCSS(const String& attributeName)
+{
+    // FIXME: We should have a map of all SVG properties and their attribute types so we
+    // could validate animations better. The spec is very vague about this.
+    unsigned id = cssPropertyID(attributeName);
+    // SVG range
+    if (id >= CSSPropertyClipPath && id <= CSSPropertyWritingMode)
+        return true;
+    // Regular CSS properties also in SVG
+    return id == CSSPropertyColor || id == CSSPropertyDisplay || id == CSSPropertyOpacity
+            || (id >= CSSPropertyFont && id <= CSSPropertyFontWeight) 
+            || id == CSSPropertyOverflow || id == CSSPropertyVisibility;
+}
+    
 bool SVGAnimationElement::targetAttributeIsCSS() const
 {
     AttributeType type = attributeType();
@@ -260,26 +271,25 @@ bool SVGAnimationElement::targetAttributeIsCSS() const
         return true;
     if (type == AttributeTypeXML)
         return false;
-    // FIXME: We should have a map of all SVG properties and their attribute types so we
-    // could validate animations better. The spec is very vague about this.
-    unsigned id = cssPropertyID(attributeName());
-    // SVG range
-    if (id >= CSSPropertyClipPath && id <= CSSPropertyWritingMode)
-        return true;
-    // Regular CSS properties also in SVG
-    return id == CSSPropertyColor || id == CSSPropertyDisplay || id == CSSPropertyOpacity
-        || (id >= CSSPropertyFont && id <= CSSPropertyFontWeight) 
-        || id == CSSPropertyOverflow || id == CSSPropertyVisibility;
+    return attributeIsCSS(attributeName());
 }
 
 void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
 {
+    if (!hasValidTarget())
+        return;
     SVGElement* target = targetElement();
     String attributeName = this->attributeName();
     if (!target || attributeName.isEmpty() || value.isNull())
         return;
+
+    // We don't want the instance tree to get rebuild. Instances are updated in the loop below.
+    if (target->isStyled())
+        static_cast<SVGStyledElement*>(target)->setInstanceUpdatesBlocked(true);
+        
     ExceptionCode ec;
-    if (targetAttributeIsCSS()) {
+    bool isCSS = targetAttributeIsCSS();
+    if (isCSS) {
         // FIXME: This should set the override style, not the inline style.
         // Sadly override styles are not yet implemented.
         target->style()->setProperty(attributeName, value, "", ec);
@@ -288,26 +298,26 @@ void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
         // attribute value. Whatever that means in practice.
         target->setAttribute(attributeName, value, ec);
     }
+    
+    if (target->isStyled())
+        static_cast<SVGStyledElement*>(target)->setInstanceUpdatesBlocked(false);
+    
+    // If the target element is used in an <use> instance tree, update that as well.
+    HashSet<SVGElementInstance*>* instances = document()->accessSVGExtensions()->instancesForElement(target);
+    if (!instances)
+        return;
+    HashSet<SVGElementInstance*>::iterator end = instances->end();
+    for (HashSet<SVGElementInstance*>::iterator it = instances->begin(); it != end; ++it) {
+        SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
+        ASSERT(shadowTreeElement);
+        if (isCSS)
+            shadowTreeElement->style()->setProperty(attributeName, value, "", ec);
+        else
+            shadowTreeElement->setAttribute(attributeName, value, ec);
+        (*it)->correspondingUseElement()->setChanged();
+    }
 }
 
-String SVGAnimationElement::targetAttributeBaseValue() const
-{
-    String attributeName = this->attributeName();
-    if (!targetElement() || attributeName.isEmpty())
-        return String();
-    
-    SVGElement* target = targetElement();
-    String result;
-    
-    if (targetAttributeIsCSS()) {
-        CSSComputedStyleDeclaration computedStyle(target);
-        return computedStyle.getPropertyValue(cssPropertyID(attributeName));
-    } else
-        result = targetElement()->getAttribute(attributeName);
-    
-    return result;
-}
-    
 static inline double solveEpsilon(double duration) { return 1. / (200. * duration); }
     
 void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to)
@@ -371,18 +381,16 @@ void SVGAnimationElement::startedActiveInterval()
     if (!hasValidTarget())
         return;
 
-    // FIXME: This is not correct if there are multiple animations on the same target or if 
-    // the timing attibutes change during animation due to DOM manipulation.
-    m_savedBaseValue = targetAttributeBaseValue();
-
     AnimationMode animationMode = this->animationMode();
     if (animationMode == NoAnimation)
         return;
     if (animationMode == FromToAnimation)
         m_animationValid = calculateFromAndToValues(fromValue(), toValue());
-    else if (animationMode == ToAnimation)
-        m_animationValid = calculateFromAndToValues(m_savedBaseValue, toValue());
-    else if (animationMode == FromByAnimation)
+    else if (animationMode == ToAnimation) {
+        // For to-animations the from value is the current accumulated value from lower priority animations.
+        // The value is not static and is determined during the animation.
+        m_animationValid = calculateFromAndToValues(String(), toValue());
+    } else if (animationMode == FromByAnimation)
         m_animationValid = calculateFromAndByValues(fromValue(), byValue());
     else if (animationMode == ByAnimation)
         m_animationValid = calculateFromAndByValues(String(), byValue());
@@ -395,15 +403,15 @@ void SVGAnimationElement::startedActiveInterval()
     }
 }
     
-void SVGAnimationElement::applyAnimation(float percent, unsigned repeat)
+void SVGAnimationElement::updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement)
 {    
     if (!m_animationValid)
         return;
     
+    float effectivePercent;
     if (animationMode() == ValuesAnimation) {
         String from;
         String to;
-        float effectivePercent;
         currentValuesForValuesAnimation(percent, effectivePercent, from, to);
         if (from != m_lastValuesAnimationFrom || to != m_lastValuesAnimationTo ) {
             m_animationValid = calculateFromAndToValues(from, to);
@@ -412,26 +420,14 @@ void SVGAnimationElement::applyAnimation(float percent, unsigned repeat)
             m_lastValuesAnimationFrom = from;
             m_lastValuesAnimationTo = to;
         }
-        updateAnimatedValue(effectivePercent);
     } else
-        updateAnimatedValue(percent);
+        effectivePercent = percent;
 
-    applyAnimatedValueToElement(repeat);
-}
-
-void SVGAnimationElement::unapplyAnimation()
-{
-    // FIXME: This is not correct if there are multiple animations on the same target or if 
-    // the timing attibutes change during animation due to DOM manipulation.
-    if (m_savedBaseValue.isNull())
-        return;
-    setTargetAttributeAnimatedValue(m_savedBaseValue);
-    m_savedBaseValue = String();
+    calculateAnimatedValue(effectivePercent, repeat, resultElement);
 }
 
 void SVGAnimationElement::endedActiveInterval()
 {
-    m_savedBaseValue = String();
 }
 
 }

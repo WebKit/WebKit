@@ -1,3 +1,109 @@
+2008-04-17  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Eric.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=12438
+
+        More SVG animation:
+        
+        - Make multiple additive animations work
+        - Support animating <use> instance trees
+
+        * svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::SVGAnimateColorElement):
+        * svg/SVGAnimateColorElement.h:
+        
+        Made this AnimateElement subclass. All functionality is now provided by AnimateElement.
+        
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::determinePropertyType):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::resetToBaseValue):
+        (WebCore::SVGAnimateMotionElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget):
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::resetToBaseValue):
+        (WebCore::SVGAnimateTransformElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateTransformElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateTransformElement::applyResultsToTarget):
+        * svg/SVGAnimateTransformElement.h:
+        
+        Switch to new model where
+        - resetToBaseValue() resets the animated value back to the base value
+        - calculateAnimatedValue() computes the value and adds it to the element used for accumulation
+        - applyResultsToTarget() sets the computed value the target element
+        
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::fromValue):
+        (WebCore::SVGAnimationElement::attributeIsCSS):
+        (WebCore::SVGAnimationElement::targetAttributeIsCSS):
+        (WebCore::SVGAnimationElement::setTargetAttributeAnimatedValue):
+        
+        Update instances too.
+        
+        (WebCore::SVGAnimationElement::startedActiveInterval):
+        (WebCore::SVGAnimationElement::updateAnimation):
+        (WebCore::SVGAnimationElement::endedActiveInterval):
+        * svg/SVGAnimationElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        * svg/SVGSetElement.cpp:
+        (WebCore::SVGSetElement::SVGSetElement):
+        * svg/SVGSetElement.h:
+        
+        Made this AnimateElement subclass. All functionality is now provided by AnimateElement.
+        
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::SMILTimeContainer):
+        (WebCore::SMILTimeContainer::unschedule):
+        (WebCore::SMILTimeContainer::updateDocumentOrderIndexes):
+        (WebCore::PriorityCompare::PriorityCompare):
+        (WebCore::PriorityCompare::operator()):
+        (WebCore::SMILTimeContainer::sortByPriority):
+        (WebCore::applyOrderSortFunction):
+        (WebCore::sortByApplyOrder):
+        (WebCore::SMILTimeContainer::baseValueFor):
+        (WebCore::SMILTimeContainer::updateAnimations):
+        * svg/animation/SMILTimeContainer.h:
+        (WebCore::SMILTimeContainer::create):
+        (WebCore::SMILTimeContainer::setDocumentOrderIndexesDirty):
+        
+        Do additive animation with the following steps
+        - sort active animations based on their priority (begin time, document order).
+        - if not yet saved for each (element, attribute) pair save the base value.
+        - lowest priority animation for each (element, attribute) acts as the result element.
+        - animation results are resolved in priority order and results are accumulated to the result element.
+        - after all active animations have been processed the values in result elements are applied to the target elements.
+        
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::SVGSMILElement):
+        (WebCore::SVGSMILElement::insertedIntoDocument):
+        
+        Invalidate document order index.
+        
+        (WebCore::SVGSMILElement::attributeName):
+        (WebCore::SVGSMILElement::isInactive):
+        (WebCore::SVGSMILElement::isFrozen):
+        (WebCore::SVGSMILElement::beginListChanged):
+        (WebCore::SVGSMILElement::determineActiveState):
+        (WebCore::SVGSMILElement::isContributing):
+        (WebCore::SVGSMILElement::progress):
+        
+        Take care that animations in frozen state still contribute to the total. Since we now build the result starting
+        from the base value, fill="replace" works magically simply by not contributing anything.
+        
+        * svg/animation/SVGSMILElement.h:
+        (WebCore::SVGSMILElement::previousIntervalBegin):
+        (WebCore::SVGSMILElement::documentOrderIndex):
+        (WebCore::SVGSMILElement::setDocumentOrderIndex):
+
 2008-04-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by mrowe.

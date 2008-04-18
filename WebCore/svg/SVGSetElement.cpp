@@ -23,44 +23,13 @@
 #include "config.h"
 #if ENABLE(SVG_ANIMATION)
 #include "SVGSetElement.h"
-#include "Document.h"
-#include "SVGDocumentExtensions.h"
-#include "SVGSVGElement.h"
 
 namespace WebCore {
     
-// FIXME: This class needs to die. SVGAnimateElement should be instantiated instead.
-
 SVGSetElement::SVGSetElement(const QualifiedName& tagName, Document *doc)
-    : SVGAnimationElement(tagName, doc)
+    : SVGAnimateElement(tagName, doc)
 {
 }
-
-SVGSetElement::~SVGSetElement()
-{
-}
-
-void SVGSetElement::applyAnimatedValueToElement(unsigned repeat)
-{
-    setTargetAttributeAnimatedValue(toValue());
-}
-    
-bool SVGSetElement::calculateFromAndToValues(const String&, const String& toString) 
-{ 
-    m_animatedValue = toString;
-    return true; 
-}
-
-bool SVGSetElement::calculateFromAndByValues(const String& fromString, const String& byString) 
-{ 
-    return false; 
-}
-
-bool SVGSetElement::updateAnimatedValue(float percentage)
-{
-    return true;
-}
-
 }
 
 // vim:ts=4:noet

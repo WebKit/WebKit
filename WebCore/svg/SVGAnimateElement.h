@@ -38,13 +38,15 @@ namespace WebCore {
     protected:
         virtual const SVGElement* contextElement() const { return this; }
         
+        virtual void resetToBaseValue(const String&);
         virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
         virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
-        virtual bool updateAnimatedValue(float percentage);
-        virtual void applyAnimatedValueToElement(unsigned repeat);
+        virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement);
+        virtual void applyResultsToTarget();
 
     private:
         enum PropertyType { NumberProperty, ColorProperty, StringProperty };
+        PropertyType determinePropertyType(const String& attribute) const;
         PropertyType m_propertyType;
         
         double m_fromNumber;

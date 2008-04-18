@@ -55,6 +55,7 @@ namespace WebCore {
         SMILTimeContainer* timeContainer() const { return m_timeContainer.get(); }
 
         SVGElement* targetElement() const;
+        String attributeName() const;
         
         void beginByLinkActivation();
 
@@ -76,13 +77,25 @@ namespace WebCore {
         
         SMILTime intervalBegin() const { return m_intervalBegin; }
         SMILTime intervalEnd() const { return m_intervalEnd; }
+        SMILTime previousIntervalBegin() const { return m_previousIntervalBegin; }
         SMILTime simpleDuration() const;
         
-        void progress(SMILTime elapsed);
+        void progress(SMILTime elapsed, SVGSMILElement* resultsElement);
         SMILTime nextProgressTime() const;
         
         static SMILTime parseClockValue(const String&);
         static SMILTime parseOffsetValue(const String&);
+        
+        bool isContributing(SMILTime elapsed) const;
+        bool isInactive() const;
+        bool isFrozen() const;
+        
+        unsigned documentOrderIndex() const { return m_documentOrderIndex; }
+        void setDocumentOrderIndex(unsigned index) { m_documentOrderIndex = index; }
+        
+        virtual bool isAdditive() const = 0;
+        virtual void resetToBaseValue(const String&) = 0;
+        virtual void applyResultsToTarget() = 0;
         
 protected:
         void addBeginTime(SMILTime time);
@@ -90,8 +103,7 @@ protected:
         
 private:
         virtual void startedActiveInterval() = 0;
-        virtual void applyAnimation(float percent, unsigned repeat) = 0;
-        virtual void unapplyAnimation() = 0;
+        virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement) = 0;
         virtual void endedActiveInterval() = 0;
         
         enum BeginOrEnd { Begin, End };
@@ -156,13 +168,18 @@ private:
         SMILTime m_intervalBegin;
         SMILTime m_intervalEnd;
         
+        SMILTime m_previousIntervalBegin;
+        
         bool m_isWaitingForFirstInterval;
     
         ActiveState m_activeState;
+        float m_lastPercent;
+        unsigned m_lastRepeat;
         
         SMILTime m_nextProgressTime;
         
         RefPtr<SMILTimeContainer> m_timeContainer;
+        unsigned m_documentOrderIndex;
 
         mutable SMILTime m_cachedDur;
         mutable SMILTime m_cachedRepeatDur;

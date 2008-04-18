@@ -25,54 +25,11 @@
 #if ENABLE(SVG_ANIMATION)
 #include "SVGAnimateColorElement.h"
 
-#include "Document.h"
-#include "PlatformString.h"
-#include "SVGColor.h"
-#include "SVGSVGElement.h"
-#include <math.h>
-#include <wtf/MathExtras.h>
-
 namespace WebCore {
     
-// FIXME: This class needs to die. SVGAnimateElement (which has superset of the functionality) should be instantiated instead.
-
 SVGAnimateColorElement::SVGAnimateColorElement(const QualifiedName& tagName, Document* doc)
-    : SVGAnimationElement(tagName, doc)
+    : SVGAnimateElement(tagName, doc)
 {
-}
-
-SVGAnimateColorElement::~SVGAnimateColorElement()
-{
-}
-
-void SVGAnimateColorElement::applyAnimatedValueToElement(unsigned repeat)
-{
-    if (isAdditive()) {
-        Color baseColor = SVGColor::colorFromRGBColorString(m_savedBaseValue);
-        setTargetAttributeAnimatedValue(ColorDistance::addColorsAndClamp(baseColor, m_animatedColor).name());
-    } else
-        setTargetAttributeAnimatedValue(m_animatedColor.name());
-}
-
-bool SVGAnimateColorElement::updateAnimatedValue(float percentage)
-{
-    Color oldColor = m_animatedColor;
-    m_animatedColor = ColorDistance(m_fromColor, m_toColor).scaledDistance(percentage).addToColorAndClamp(m_fromColor);
-    return m_animatedColor != oldColor;
-}
-    
-bool SVGAnimateColorElement::calculateFromAndToValues(const String& fromString, const String& toString)
-{
-    m_fromColor = SVGColor::colorFromRGBColorString(fromString);
-    m_toColor = SVGColor::colorFromRGBColorString(toString);
-    return true;
-}
-
-bool SVGAnimateColorElement::calculateFromAndByValues(const String& fromString, const String& byString)
-{
-    m_fromColor = SVGColor::colorFromRGBColorString(fromString);
-    m_toColor = ColorDistance::addColorsAndClamp(m_fromColor, SVGColor::colorFromRGBColorString(byString));
-    return true;
 }
 
 }

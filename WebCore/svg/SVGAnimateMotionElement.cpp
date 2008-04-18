@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2007 Eric Seidel <eric@webkit.org>
               (C) 2007 Rob Buis <buis@kde.org>
+    Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
     This file is part of the WebKit project
 
@@ -113,16 +114,6 @@ Path SVGAnimateMotionElement::animationPath()
     return Path();
 }
 
-bool SVGAnimateMotionElement::updateAnimatedValue(float percentage)
-{
-    FloatSize diff = m_toPoint - m_fromPoint;
-    m_animatedTranslation.setWidth(diff.width() * percentage + m_fromPoint.x());
-    m_animatedTranslation.setHeight(diff.height() * percentage + m_fromPoint.y());
-    // FIXME: Animate angles
-    m_animatedAngle = 0;
-    return true;
-}
-
 static bool parsePoint(const String& s, FloatPoint& point)
 {
     if (s.isEmpty())
@@ -146,6 +137,16 @@ static bool parsePoint(const String& s, FloatPoint& point)
     // disallow anything except spaces at the end
     return !skipOptionalSpaces(cur, end);
 }
+    
+void SVGAnimateMotionElement::resetToBaseValue(const String&)
+{
+    if (!hasValidTarget())
+        return;
+    SVGStyledTransformableElement* transformableElement = static_cast<SVGStyledTransformableElement*>(targetElement());
+    // FIXME: This should modify supplemental transform, not the transform attribute!
+    ExceptionCode ec;
+    transformableElement->transform()->clear(ec);
+}
 
 bool SVGAnimateMotionElement::calculateFromAndToValues(const String& fromString, const String& toString)
 {
@@ -163,44 +164,40 @@ bool SVGAnimateMotionElement::calculateFromAndByValues(const String& fromString,
     return true;
 }
 
-void SVGAnimateMotionElement::applyAnimatedValueToElement(unsigned repeat)
+void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement)
 {
-    if (!targetElement()->isStyledTransformable())
+    if (!resultElement->targetElement()->isStyledTransformable())
         return;
     
-    SVGStyledTransformableElement* transformableElement = static_cast<SVGStyledTransformableElement*>(targetElement());
+    // FIXME: This should modify supplemental transform, not the transform attribute!
+    SVGStyledTransformableElement* transformableElement = static_cast<SVGStyledTransformableElement*>(resultElement->targetElement());
     RefPtr<SVGTransformList> transformList = transformableElement->transform();
     if (!transformList)
         return;
     
-    // FIXME: Handle multiple additive animations.
     ExceptionCode ec;
-    if (isAdditive()) {
-        while (transformList->numberOfItems() > m_baseIndexInTransformList)
-            transformList->removeItem(transformList->numberOfItems() - 1, ec);
-    } else
+    if (!isAdditive()) {
+        ASSERT(this == resultElement);
         transformList->clear(ec);
-
-    AffineTransform transform;
-    transform.rotate(m_animatedAngle);
-    transform.translate(m_animatedTranslation.width(), m_animatedTranslation.height());
-    if (!transform.isIdentity()) {
-        transformList->appendItem(SVGTransform(transform), ec);
-        transformableElement->setTransform(transformList.get());
     }
+    
+    FloatSize diff = m_toPoint - m_fromPoint;
+    AffineTransform transform;
+    // FIXME: Animate angles
+    transform.translate(diff.width() * percentage + m_fromPoint.x(), diff.height() * percentage + m_fromPoint.y());
+    
+    // FIXME: Accumulate.
+
+    if (!transform.isIdentity())
+        transformList->appendItem(SVGTransform(transform), ec);
+
     if (transformableElement->renderer())
         transformableElement->renderer()->setNeedsLayout(true); // should be part of setTransform
 }
-
-void SVGAnimateMotionElement::startedActiveInterval()
-{
-    // FIXME: Make multiple additive animations work.
-    SVGAnimationElement::startedActiveInterval();
-    if (!m_animationValid)
-        return;
     
-    SVGStyledTransformableElement* transformableElement = static_cast<SVGStyledTransformableElement*>(targetElement());
-    m_baseIndexInTransformList = transformableElement->transform()->numberOfItems();
+void SVGAnimateMotionElement::applyResultsToTarget()
+{
+    
 }
 
 }

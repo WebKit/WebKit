@@ -80,9 +80,13 @@ SVGSMILElement::SVGSMILElement(const QualifiedName& tagName, Document* doc)
     , m_hasEndEventConditions(false)
     , m_intervalBegin(SMILTime::unresolved())
     , m_intervalEnd(SMILTime::unresolved())
+    , m_previousIntervalBegin(SMILTime::unresolved())
     , m_isWaitingForFirstInterval(true)
     , m_activeState(Inactive)
+    , m_lastPercent(0)
+    , m_lastRepeat(0)
     , m_nextProgressTime(0)
+    , m_documentOrderIndex(0)
     , m_cachedDur(invalidCachedTime)
     , m_cachedRepeatDur(invalidCachedTime)
     , m_cachedRepeatCount(invalidCachedTime)
@@ -111,6 +115,7 @@ void SVGSMILElement::insertedIntoDocument()
         return;
     m_timeContainer = owner->timeContainer();
     ASSERT(m_timeContainer);
+    m_timeContainer->setDocumentOrderIndexesDirty();
     reschedule();
 }
 
@@ -409,11 +414,26 @@ SVGElement* SVGSMILElement::targetElement() const
     return 0;
 }
     
+String SVGSMILElement::attributeName() const
+{    
+    return getAttribute(SVGNames::attributeNameAttr).string().stripWhiteSpace();
+}
+    
 SMILTime SVGSMILElement::elapsed() const 
 {
     return m_timeContainer ? m_timeContainer->elapsed() : 0;
 } 
+    
+bool SVGSMILElement::isInactive() const
+{
+     return m_activeState == Inactive;
+}
 
+bool SVGSMILElement::isFrozen() const
+{
+    return m_activeState == Frozen;
+}
+    
 SVGSMILElement::Restart SVGSMILElement::restart() const
 {    
     static const AtomicString never("never");
@@ -657,7 +677,7 @@ void SVGSMILElement::beginListChanged()
             if (m_intervalBegin != oldBegin)
                 notifyDependentsIntervalChanged(ExistingInterval);
         }
-    }    
+    }
     m_nextProgressTime = elapsed;
     reschedule();
 }
@@ -752,7 +772,7 @@ SMILTime SVGSMILElement::calculateNextProgressTime(SMILTime elapsed) const
 SVGSMILElement::ActiveState SVGSMILElement::determineActiveState(SMILTime elapsed) const
 {
     if (elapsed >= m_intervalBegin && elapsed < m_intervalEnd)
-            return Active;
+        return Active;
 
     if (m_activeState == Active)
         return fill() == FillFreeze ? Frozen : Inactive;
@@ -760,7 +780,13 @@ SVGSMILElement::ActiveState SVGSMILElement::determineActiveState(SMILTime elapse
     return m_activeState;
 }
     
-void SVGSMILElement::progress(SMILTime elapsed)
+bool SVGSMILElement::isContributing(SMILTime elapsed) const 
+{ 
+    // Animation does not contribute during the active time if it is past its repeating duration and has fill=remove.
+    return (m_activeState == Active && (fill() == FillFreeze || elapsed <= m_intervalBegin + repeatingDuration())) || m_activeState == Frozen;
+}
+    
+void SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement* resultElement)
 {
     ASSERT(m_timeContainer);
     ASSERT(m_isWaitingForFirstInterval || m_intervalBegin.isFinite());
@@ -770,14 +796,19 @@ void SVGSMILElement::progress(SMILTime elapsed)
     
     if (!m_intervalBegin.isFinite()) {
         ASSERT(m_activeState == Inactive);
+        m_nextProgressTime = SMILTime::unresolved();
         return;
     }
     
     if (elapsed < m_intervalBegin) {
         ASSERT(m_activeState != Active);
+        if (m_activeState == Frozen && resultElement)
+            updateAnimation(m_lastPercent, m_lastRepeat, resultElement);
         m_nextProgressTime = m_intervalBegin;
         return;
     }
+    
+    m_previousIntervalBegin = m_intervalBegin;
     
     if (m_activeState == Inactive) {
         m_isWaitingForFirstInterval = false;
@@ -787,21 +818,22 @@ void SVGSMILElement::progress(SMILTime elapsed)
     
     unsigned repeat;
     float percent = calculateAnimationPercentAndRepeat(elapsed, repeat);
-    applyAnimation(percent, repeat);
 
     checkRestart(elapsed);
 
-    ActiveState newState = determineActiveState(elapsed);
-
-    if (newState == Active && fill() == FillRemove && elapsed > m_intervalBegin + repeatingDuration())
-        unapplyAnimation();
-        
-    if (m_activeState == Active && newState != Active) {
-        if (newState != Frozen)
-            unapplyAnimation();
-        endedActiveInterval();
+    ActiveState oldActiveState = m_activeState;
+    m_activeState = determineActiveState(elapsed);
+    
+    if (isContributing(elapsed)) {
+        if (resultElement)
+            updateAnimation(percent, repeat, resultElement);
+        m_lastPercent = percent;
+        m_lastRepeat = repeat;
     }
-    m_activeState = newState;
+
+    if (oldActiveState == Active && m_activeState != Active)
+        endedActiveInterval();
+
     m_nextProgressTime = calculateNextProgressTime(elapsed);
 }
     

@@ -24,26 +24,15 @@
 #define SVGSetElement_h
 #if ENABLE(SVG_ANIMATION)
 
-#include "SVGAnimationElement.h"
+#include "SVGAnimateElement.h"
 
 namespace WebCore
 {
-    class SVGSetElement : public SVGAnimationElement
+    // SVGAnimateElement implements superset of the functionality.
+    class SVGSetElement : public SVGAnimateElement
     {
     public:
         SVGSetElement(const QualifiedName&, Document*);
-        virtual ~SVGSetElement();
-
-    protected:
-        virtual const SVGElement* contextElement() const { return this; }
-        
-        virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
-        virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
-        virtual bool updateAnimatedValue(float percentage);
-        virtual void applyAnimatedValueToElement(unsigned repeat);
-
-    private:
-        String m_animatedValue;
     };
 
 } // namespace WebCore

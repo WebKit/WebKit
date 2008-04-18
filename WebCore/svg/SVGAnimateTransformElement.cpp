@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
     Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+    Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
     This file is part of the WebKit project
 
@@ -28,12 +29,14 @@
 #include "AffineTransform.h"
 #include "RenderObject.h"
 #include "SVGAngle.h"
+#include "SVGElementInstance.h"
 #include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTextElement.h"
 #include "SVGTransform.h"
 #include "SVGTransformList.h"
+#include "SVGUseElement.h"
 
 #include <math.h>
 #include <wtf/MathExtras.h>
@@ -76,11 +79,6 @@ void SVGAnimateTransformElement::parseMappedAttribute(MappedAttribute* attr)
         SVGAnimationElement::parseMappedAttribute(attr);
 }
 
-bool SVGAnimateTransformElement::updateAnimatedValue(float percentage)
-{
-    m_animatedTransform = SVGTransformDistance(m_fromTransform, m_toTransform).scaledDistance(percentage).addToSVGTransform(m_fromTransform);
-    return true;
-}
     
 static PassRefPtr<SVGTransformList> transformListFor(SVGElement* element)
 {
@@ -91,25 +89,36 @@ static PassRefPtr<SVGTransformList> transformListFor(SVGElement* element)
         return static_cast<SVGTextElement*>(element)->transform();
     return 0;
 }
-
-void SVGAnimateTransformElement::applyAnimatedValueToElement(unsigned repeat)
+    
+void SVGAnimateTransformElement::resetToBaseValue(const String& baseValue)
 {
-    SVGElement* targetElement = this->targetElement();
+    if (!hasValidTarget())
+        return;
+    if (baseValue.isEmpty()) {
+        ExceptionCode ec;
+        RefPtr<SVGTransformList> list = transformListFor(targetElement());
+        list->clear(ec);
+    } else
+        targetElement()->setAttribute(SVGNames::transformAttr, baseValue);
+}
+
+void SVGAnimateTransformElement::calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement)
+{
+    if (!hasValidTarget())
+        return;
+    SVGElement* targetElement = resultElement->targetElement();
     RefPtr<SVGTransformList> transformList = transformListFor(targetElement);
     ASSERT(transformList);
 
-    // FIXME: Handle multiple additive tranforms.
-    // FIXME: Handle accumulate.
     ExceptionCode ec;
-    if (isAdditive()) {
-        while (transformList->numberOfItems() > m_baseIndexInTransformList)
-            transformList->removeItem(transformList->numberOfItems() - 1, ec);
-    } else
+    if (!isAdditive())
         transformList->clear(ec);
-    transformList->appendItem(m_animatedTransform, ec);
-    
-    if (targetElement->renderer())
-        targetElement->renderer()->setNeedsLayout(true); // should really be in setTransform
+    if (isAccumulated() && repeat) {
+        SVGTransform accumulatedTransform = SVGTransformDistance(m_fromTransform, m_toTransform).scaledDistance(repeat).addToSVGTransform(SVGTransform());
+        transformList->appendItem(accumulatedTransform, ec);
+    }
+    SVGTransform transform = SVGTransformDistance(m_fromTransform, m_toTransform).scaledDistance(percentage).addToSVGTransform(m_fromTransform);
+    transformList->appendItem(transform, ec);
 }
     
 bool SVGAnimateTransformElement::calculateFromAndToValues(const String& fromString, const String& toString)
@@ -130,18 +139,6 @@ bool SVGAnimateTransformElement::calculateFromAndByValues(const String& fromStri
     m_toTransform = SVGTransformDistance::addSVGTransforms(m_fromTransform, parseTransformValue(byString));
     return m_toTransform.isValid();
 }
-    
-void SVGAnimateTransformElement::startedActiveInterval()
-{
-    // FIXME: Make multiple additive animations work.
-    SVGAnimationElement::startedActiveInterval();
-    if (!m_animationValid)
-        return;
-    
-    RefPtr<SVGTransformList> transformList = transformListFor(targetElement());
-    ASSERT(transformList);
-    m_baseIndexInTransformList = transformList->numberOfItems();
-}
 
 SVGTransform SVGAnimateTransformElement::parseTransformValue(const String& value) const
 {
@@ -153,6 +150,33 @@ SVGTransform SVGAnimateTransformElement::parseTransformValue(const String& value
     const UChar* ptr = parseString.characters();
     SVGTransformable::parseTransformValue(m_type, ptr, ptr + parseString.length(), result); // ignoring return value
     return result;
+}
+    
+void SVGAnimateTransformElement::applyResultsToTarget()
+{
+    if (!hasValidTarget())
+        return;
+    // We accumulate to the target element transform list so there is not much to do here.
+    SVGElement* targetElement = this->targetElement();
+    if (targetElement->renderer())
+        targetElement->renderer()->setNeedsLayout(true);
+    
+    // ...except in case where we have additional instances in <use> trees.
+    HashSet<SVGElementInstance*>* instances = document()->accessSVGExtensions()->instancesForElement(targetElement);
+    if (!instances)
+        return;
+    RefPtr<SVGTransformList> transformList = transformListFor(targetElement);
+    HashSet<SVGElementInstance*>::iterator end = instances->end();
+    for (HashSet<SVGElementInstance*>::iterator it = instances->begin(); it != end; ++it) {
+        SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
+        ASSERT(shadowTreeElement);
+        if (shadowTreeElement->isStyledTransformable())
+            static_cast<SVGStyledTransformableElement*>(shadowTreeElement)->setTransform(transformList.get());
+        else if (shadowTreeElement->hasTagName(SVGNames::textTag))
+            static_cast<SVGTextElement*>(shadowTreeElement)->setTransform(transformList.get());
+        if (shadowTreeElement->renderer())
+            shadowTreeElement->renderer()->setNeedsLayout(true);
+    }
 }
 
 }
