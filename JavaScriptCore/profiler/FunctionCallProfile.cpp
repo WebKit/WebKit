@@ -61,7 +61,7 @@ void FunctionCallProfile::didExecute(Vector<UString> stackNames, unsigned int st
 
         m_timeSum += getCurrentUTCTime() - m_startTime;
 
-        ASSERT(m_timeSum > 0);
+        // FIXME: We may need something with higher resolution than ms as some functions will take 0ms.
         return;
     }
 
@@ -96,8 +96,26 @@ FunctionCallProfile* FunctionCallProfile::findChild(const UString& name)
     return 0;
 }
 
+void FunctionCallProfile::printDataInspectorStyle(int indentLevel) const
+{
+    // Print function names
+    if (indentLevel) {
+        for (int i = 0; i < indentLevel; ++i)
+            printf("  ");
+
+        printf("%.0fms %s\n", m_timeSum, m_functionName.UTF8String().c_str());
+    } else
+        printf("%s\n", m_functionName.UTF8String().c_str());
+
+    ++indentLevel;
+
+    // Print children's names and information
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+        (*currentChild)->printDataInspectorStyle(indentLevel);
+}
+
 // print the profiled data in a format that matches the tool sample's output.
-double FunctionCallProfile::printDataSampleStyle(int indentLevel)
+double FunctionCallProfile::printDataSampleStyle(int indentLevel) const
 {
     printf("    ");
 
@@ -107,7 +125,7 @@ double FunctionCallProfile::printDataSampleStyle(int indentLevel)
             printf("  ");
 
         // We've previously asserted that m_timeSum will always be >= 1
-        printf("%f %s\n", m_timeSum, m_functionName.UTF8String().c_str());
+        printf("%.0f %s\n", m_timeSum ? m_timeSum : 1, m_functionName.UTF8String().c_str());
     } else
         printf("%s\n", m_functionName.UTF8String().c_str());
 

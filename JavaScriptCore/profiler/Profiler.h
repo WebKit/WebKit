@@ -51,7 +51,8 @@ namespace KJS {
         void willExecute(ExecState*, const UString& sourceURL, int startingLineNumber);
         void didExecute(ExecState*, JSObject* calledFunction);
         void didExecute(ExecState*, const UString& sourceURL, int startingLineNumber);
-        
+
+        void printDataInspectorStyle() const;
         void printDataSampleStyle() const;
 
     private:
@@ -60,15 +61,10 @@ namespace KJS {
         {
         }
 
-        void getStackNames(Vector<UString>&, ExecState*) const;
-        void getStackNames(Vector<UString>&, ExecState*, JSObject*) const;
-        void getStackNames(Vector<UString>&, ExecState*, const UString& sourceURL, int startingLineNumber) const;
-
         void insertStackNamesInTree(const Vector<UString>& callStackNames);
 
-        UString getFunctionName(FunctionImp*) const;
-
         bool m_profiling;
+
         // FIXME: Make this a vector of FunctionCallProfiles where each one is the
         // root of a new thread.
         OwnPtr<FunctionCallProfile> m_callTree;

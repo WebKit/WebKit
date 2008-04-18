@@ -51,7 +51,8 @@ namespace KJS {
         UString functionName() const { return m_functionName; }
         double microSecs() const { return m_timeSum; }
 
-        double printDataSampleStyle(int indentLevel);
+        void printDataInspectorStyle(int indentLevel) const;
+        double printDataSampleStyle(int indentLevel) const;
 
     private:
         UString m_functionName;

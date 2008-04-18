@@ -40,6 +40,11 @@ namespace KJS {
 static Profiler* sharedProfiler = 0;
 static const char* Script = "[SCRIPT] ";
 
+static void getStackNames(Vector<UString>&, ExecState*);
+static void getStackNames(Vector<UString>&, ExecState*, JSObject*);
+static void getStackNames(Vector<UString>&, ExecState*, const UString& sourceURL, int startingLineNumber);
+static UString getFunctionName(FunctionImp*);
+
 Profiler* Profiler::profiler()
 {
     if (!sharedProfiler)
@@ -65,7 +70,8 @@ void Profiler::stopProfiling()
 
 void Profiler::willExecute(ExecState* exec, JSObject* calledFunction)
 {
-    ASSERT(m_profiling);
+    if (!m_profiling)
+        return;
 
     Vector<UString> callStackNames;
     getStackNames(callStackNames, exec, calledFunction);
@@ -74,7 +80,8 @@ void Profiler::willExecute(ExecState* exec, JSObject* calledFunction)
 
 void Profiler::willExecute(ExecState* exec, const UString& sourceURL, int startingLineNumber)
 {
-    ASSERT(m_profiling);
+    if (!m_profiling)
+        return;
 
     Vector<UString> callStackNames;
     getStackNames(callStackNames, exec, sourceURL, startingLineNumber);
@@ -83,7 +90,8 @@ void Profiler::willExecute(ExecState* exec, const UString& sourceURL, int starti
 
 void Profiler::didExecute(ExecState* exec, JSObject* calledFunction)
 {
-    ASSERT(m_profiling);
+    if (!m_profiling)
+        return;
 
     Vector<UString> callStackNames;
     getStackNames(callStackNames, exec, calledFunction);
@@ -92,7 +100,8 @@ void Profiler::didExecute(ExecState* exec, JSObject* calledFunction)
 
 void Profiler::didExecute(ExecState* exec, const UString& sourceURL, int startingLineNumber)
 {
-    ASSERT(m_profiling);
+    if (!m_profiling)
+        return;
 
     Vector<UString> callStackNames;
     getStackNames(callStackNames, exec, sourceURL, startingLineNumber);
@@ -122,21 +131,20 @@ void Profiler::insertStackNamesInTree(const Vector<UString>& callStackNames)
         foundNameInTree->willExecute();
 }
 
-void Profiler::getStackNames(Vector<UString>& names, ExecState* exec) const
+void getStackNames(Vector<UString>& names, ExecState* exec)
 {
-    UString currentName;
     for (ExecState* currentState = exec; currentState; currentState = currentState->callingExecState()) {
-        if (FunctionImp* functionImp = exec->function())
+
+        if (FunctionImp* functionImp = currentState->function())
             names.prepend(getFunctionName(functionImp));
-        else if (ScopeNode* scopeNode = exec->scopeNode())
+        else if (ScopeNode* scopeNode = currentState->scopeNode())
             names.prepend(Script + scopeNode->sourceURL() + ": " + UString::from(scopeNode->lineNo() + 1));   // FIXME: Why is the line number always off by one?
     }
 }
 
-void Profiler::getStackNames(Vector<UString>& names, ExecState* exec, JSObject* calledFunction) const
+void getStackNames(Vector<UString>& names, ExecState* exec, JSObject* calledFunction)
 {
     getStackNames(names, exec);
-
     if (calledFunction->inherits(&FunctionImp::info))
         names.append(getFunctionName(static_cast<FunctionImp*>(calledFunction)));
     else if (calledFunction->inherits(&InternalFunctionImp::info))
@@ -144,19 +152,25 @@ void Profiler::getStackNames(Vector<UString>& names, ExecState* exec, JSObject* 
 }
 
 
-void Profiler::getStackNames(Vector<UString>& names, ExecState* exec, const UString& sourceURL, int startingLineNumber) const
+void getStackNames(Vector<UString>& names, ExecState* exec, const UString& sourceURL, int startingLineNumber)
 {
     getStackNames(names, exec);
     names.append(Script + sourceURL + ": " + UString::from(startingLineNumber + 1));
 }
 
-UString Profiler::getFunctionName(FunctionImp* functionImp) const
+UString getFunctionName(FunctionImp* functionImp)
 {
     UString name = functionImp->functionName().ustring();
     int lineNumber = functionImp->body->lineNo();
     UString URL = functionImp->body->sourceURL();
 
     return (name.isEmpty() ? "[anonymous function]" : name) + " " + URL + ": " + UString::from(lineNumber);
+}
+
+void Profiler::printDataInspectorStyle() const
+{
+    printf("Profiler Call graph:\n");
+    m_callTree->printDataInspectorStyle(0);
 }
 
 void Profiler::printDataSampleStyle() const

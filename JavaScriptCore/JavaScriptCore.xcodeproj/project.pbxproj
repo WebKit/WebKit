@@ -187,9 +187,9 @@
 		93E26BFE08B151D400F85226 /* ucpinternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26BFC08B151D400F85226 /* ucpinternal.h */; };
 		93F0B3AC09BB4DC00068FCE3 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F0B3AA09BB4DC00068FCE3 /* Parser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		95AB83420DA4322500BC83F3 /* Profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */; };
-		95AB83480DA432EB00BC83F3 /* Profiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 95AB832F0DA42CAD00BC83F3 /* Profiler.h */; };
+		95AB83480DA432EB00BC83F3 /* Profiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 95AB832F0DA42CAD00BC83F3 /* Profiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		95AB83560DA43C3000BC83F3 /* FunctionCallProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB83540DA43B4400BC83F3 /* FunctionCallProfile.cpp */; };
-		95AB83570DA43C3000BC83F3 /* FunctionCallProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 95AB83550DA43B4400BC83F3 /* FunctionCallProfile.h */; };
+		95AB83570DA43C3000BC83F3 /* FunctionCallProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 95AB83550DA43B4400BC83F3 /* FunctionCallProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		95C18D490C90E82600E72F73 /* JSRetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 95C18D3E0C90E7EF00E72F73 /* JSRetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8E894320CD0602400367179 /* JSCallbackObjectFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */; };
 		A8E894340CD0603F00367179 /* JSGlobalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E894330CD0603F00367179 /* JSGlobalObject.h */; settings = {ATTRIBUTES = (Private, ); }; };

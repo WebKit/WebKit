@@ -1,3 +1,38 @@
+2008-04-18  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam and Adam.
+
+        -<rdar://problem/5770054> JavaScript profiler (10928)
+        - Cleaned up the header file and made some functions static, added
+        a new, sane, printing function, and fixed a few minor bugs.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * profiler/FunctionCallProfile.cpp:
+        (KJS::FunctionCallProfile::didExecute): Removed assertion that time is
+        > 0 because at ms resolution that may not be true and only cross-
+        platform way to get time differences is in ms.
+        (KJS::FunctionCallProfile::printDataInspectorStyle): Added a new
+        printing function for dumping data in a sane style.
+        (KJS::FunctionCallProfile::printDataSampleStyle): Fixed a bug where we
+        displayed too much precision when printing our floats. Also added logic
+        to make sure we don't display 0 because that doesn't make sense for a
+        sampling profile.
+        * profiler/FunctionCallProfile.h:
+        * profiler/Profiler.cpp: Moved functions that could be static into the
+        implementation, and chaned the ASSERTs to early returns.  I did this
+        because console.profile() is a JS function and so was being profiled
+        but asserting because the profiler had not been started! In the future
+        I would like to put the ASSERTs back and not profile the calls to
+        console.profile() and console.profileEnd().
+        (KJS::Profiler::willExecute):
+        (KJS::Profiler::didExecute):
+        (KJS::getStackNames): Fixed a bug where the wrong ExecState was being
+        used.
+        (KJS::getFunctionName):
+        (KJS::Profiler::printDataInspectorStyle):
+        * profiler/Profiler.h:
+
 2008-04-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
