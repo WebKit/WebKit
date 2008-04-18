@@ -27,7 +27,6 @@
 #include "SVGAnimateTransformElement.h"
 
 #include "AffineTransform.h"
-#include "FloatConversion.h"
 #include "RenderObject.h"
 #include "SVGAngle.h"
 #include "SVGElementInstance.h"
@@ -195,7 +194,7 @@ float SVGAnimateTransformElement::calculateDistance(const String& fromString, co
         return sqrtf(diff.width() * diff.width() + diff.height() * diff.height());
     }
     if (to.type() == SVGTransform::SVG_TRANSFORM_ROTATE)
-        return narrowPrecisionToFloat(fabs(to.angle() - from.angle()));
+        return fabsf(to.angle() - from.angle());
     if (to.type() == SVGTransform::SVG_TRANSFORM_SCALE) {
         FloatSize diff = to.scale() - from.scale();
         return sqrtf(diff.width() * diff.width() + diff.height() * diff.height());
