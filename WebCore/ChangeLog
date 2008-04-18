@@ -1,5 +1,13 @@
 2008-04-18  Simon Hausmann  <hausmann@webkit.org>
 
+        Fix the Gtk build on the build bot.
+
+        * GNUmakefile.am: Back out the previous LocalStorage, etc. additions
+        as they're already listed in another sources group that wasn't used
+        due to a local configure error.
+
+2008-04-18  Simon Hausmann  <hausmann@webkit.org>
+
         Prospective wx build fix.
 
         * webcore-base.bkl: Add loader/appcache to include paths.
