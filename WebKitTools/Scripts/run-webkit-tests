@@ -1728,8 +1728,7 @@ sub readFromDumpToolWithTimer(*;$)
 
         last if $read == 0;
 
-        if ($output =~ s/^#EOF//m) {
-            chomp $output;
+        if ($output =~ s/^#EOF\n//m) {
             last;
         }
 

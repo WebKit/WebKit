@@ -1,5 +1,12 @@
 2008-04-17  Adam Roben  <aroben@apple.com>
 
+        Fix ~10 tests
+
+        * Scripts/run-webkit-tests: Only remove the newline after #EOF, not
+        whatever newline happens to be at the end of what we've read.
+
+2008-04-17  Adam Roben  <aroben@apple.com>
+
         Remove DRT/win's hang timer
 
         run-webkit-tests takes care of this for us now
