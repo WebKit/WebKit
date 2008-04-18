@@ -1,3 +1,22 @@
+2008-04-17  Adam Roben  <aroben@apple.com>
+
+        Add wrappers around InspectorClient::{show,close}Window
+
+        This will let us perform actions when the window is actually
+        showing/closing (InspectorController::show doesn't always directly
+        show the window).
+
+        Reviewed by Tim Hatcher.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::scriptObjectReady): Call showWindow()
+        instead of m_client->showWindow().
+        (WebCore::InspectorController::show): Ditto.
+        (WebCore::InspectorController::close): Ditto for closeWindow().
+        (WebCore::InspectorController::showWindow):
+        (WebCore::InspectorController::closeWindow):
+        * page/InspectorController.h:
+
 2008-04-18  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
