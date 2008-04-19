@@ -27,6 +27,7 @@
 #if ENABLE(SVG_ANIMATION)
 
 #include "ElementTimeControl.h"
+#include "Path.h"
 #include "SMILTime.h"
 #include "SVGSMILElement.h"
 #include "SVGExternalResourcesRequired.h"
@@ -76,7 +77,7 @@ protected:
         String byValue() const;
         String fromValue() const;
         
-        enum AnimationMode { NoAnimation, ToAnimation, ByAnimation, ValuesAnimation, FromToAnimation, FromByAnimation };
+        enum AnimationMode { NoAnimation, ToAnimation, ByAnimation, ValuesAnimation, FromToAnimation, FromByAnimation, PathAnimation };
         AnimationMode animationMode() const;
 
         virtual bool hasValidTarget() const;
@@ -98,10 +99,10 @@ private:
         virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
         virtual bool calculateFromAndByValues(const String& fromString, const String& byString) = 0;
         virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement) = 0;
+        virtual float calculateDistance(const String& fromString, const String& toString) { return -1.f; }
+        virtual Path animationPath() const { return Path(); }
         
         void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to);
-
-        virtual float calculateDistance(const String& fromString, const String& toString) { return -1.f; }
 
         void calculateKeyTimesForCalcModePaced();
     

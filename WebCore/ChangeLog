@@ -1,3 +1,33 @@
+2008-04-18  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver.
+
+        Implement path animation for <animateMotion>.
+        
+        SVG test suite tests
+        animate-elem-07-t.svg
+        animate-elem-08-t.svg
+        animate-elem-24-t.svg
+        animate-elem-30-t.svg
+
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::SVGAnimateMotionElement):
+        (WebCore::SVGAnimateMotionElement::hasValidTarget):
+        (WebCore::SVGAnimateMotionElement::parseMappedAttribute):
+        (WebCore::SVGAnimateMotionElement::rotateMode):
+        (WebCore::SVGAnimateMotionElement::animationPath):
+        (WebCore::SVGAnimateMotionElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget):
+        * svg/SVGAnimateMotionElement.h:
+        (WebCore::SVGAnimateMotionElement::):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::animationMode):
+        (WebCore::SVGAnimationElement::startedActiveInterval):
+        * svg/SVGAnimationElement.h:
+        (WebCore::SVGAnimationElement::):
+        (WebCore::SVGAnimationElement::calculateDistance):
+        (WebCore::SVGAnimationElement::animationPath):
+
 2008-04-11  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Antti Koivisto.
