@@ -1,7 +1,3 @@
-# tell automake to create gensources/ for us
-nodist_EXTRA_libJavaScriptCore_la_SOURCES = \
-	DerivedSources/dummy.cxx
-
 javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
 	-I$(srcdir)/JavaScriptCore/wtf/unicode \
@@ -155,7 +151,7 @@ Programs_minidom_CXXFLAGS = \
 Programs_minidom_LDADD = \
 	 libJavaScriptCore.la \
 	 -lstdc++
-Programs_minidom_LDFLAGS = -rpath $(CURDIR)/.libs
+Programs_minidom_LDFLAGS = -rpath @abs_top_builddir@/.libs
 
 # testkjs
 Programs_testkjs_SOURCES = JavaScriptCore/kjs/testkjs.cpp
@@ -169,7 +165,7 @@ Programs_testkjs_CXXFLAGS = \
 	$(UNICODE_CFLAGS)
 Programs_testkjs_LDADD = \
 	libJavaScriptCore.la
-Programs_testkjs_LDFLAGS = -rpath $(CURDIR)/.libs
+Programs_testkjs_LDFLAGS = -rpath @abs_top_builddir@/.libs
 
 # Clean rules for JavaScriptCore
 CLEANFILES += \
@@ -179,4 +175,6 @@ CLEANFILES += \
 	JavaScriptCore/kjs/number_object.lut.h \
 	JavaScriptCore/kjs/regexp_object.lut.h \
 	JavaScriptCore/kjs/string_object.lut.h \
-	JavaScriptCore/pcre/chartables.c
+	JavaScriptCore/pcre/chartables.c \
+	Programs/testkjs \
+	Programs/minidom

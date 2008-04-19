@@ -1,3 +1,14 @@
+2008-04-18 Jan  Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14750
+        [gtk] Implement plugin support in GTK backend
+
+        Cleanups.
+
+        * GNUmakefile.am:
+
 2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Ollie.

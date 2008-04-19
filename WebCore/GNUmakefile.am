@@ -1186,7 +1186,7 @@ endif # END ENABLE_DATABASE
 # HTML5 client-side session and persistent storage
 # ----
 if ENABLE_DOM_STORAGE
-FEATURE_DEFINES_JAVASCRIPT += ENABLE_DOM_STORAGE =1
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_DOM_STORAGE=1
 
 webcore_built_sources += \
 	DerivedSources/JSStorage.h \
@@ -2085,29 +2085,28 @@ DerivedSources/CSSValueKeywords.h: $(WebCore)/css/CSSValueKeywords.in $(WebCore)
 endif !ENABLE_SVG # END ENABLE_SVG
 
 # DOCTYPE strings
-$(GENSOURCES)/DocTypeStrings.cpp : $(WebCore)/html/DocTypeStrings.gperf
-	$(GPERF) -CEot -L ANSI-C -k "*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards \
-	$(WebCore)/html/DocTypeStrings.gperf > $@
+DerivedSources/DocTypeStrings.cpp : $(WebCore)/html/DocTypeStrings.gperf
+	$(GPERF) -CEot -L ANSI-C -k "*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards $(WebCore)/html/DocTypeStrings.gperf > $@
 
 # HTML entity names
-$(GENSOURCES)/HTMLEntityNames.c : $(WebCore)/html/HTMLEntityNames.gperf
+DerivedSources/HTMLEntityNames.c : $(WebCore)/html/HTMLEntityNames.gperf
 	$(GPERF) -a -L ANSI-C -C -G -c -o -t -k '*' -N findEntity -D -s 2 \
 	$(WebCore)/html/HTMLEntityNames.gperf > $@
 
 # color names
-$(GENSOURCES)/ColorData.c: $(WebCore)/platform/ColorData.gperf
+DerivedSources/ColorData.c: $(WebCore)/platform/ColorData.gperf
 	$(GPERF) -CDEot -L ANSI-C -k '*' -N findColor -D -s 2 $< > $@
 
 # CSS tokenizer
-$(GENSOURCES)/tokenizer.cpp : $(WebCore)/css/tokenizer.flex $(WebCore)/css/maketokenizer
+DerivedSources/tokenizer.cpp : $(WebCore)/css/tokenizer.flex $(WebCore)/css/maketokenizer
 	$(FLEX) -t $< | $(PERL) $(WebCore)/css/maketokenizer > $@
 
 # CSS grammar
 
-$(GENSOURCES)/CSSGrammar.h: $(GENSOURCES)/CSSGrammar.cpp;
+DerivedSources/CSSGrammar.h: $(GENSOURCES)/CSSGrammar.cpp;
 
 # NOTE: older versions of bison do not inject an inclusion guard, so we do it
-$(GENSOURCES)/CSSGrammar.cpp: $(WebCore)/css/CSSGrammar.y
+DerivedSources/CSSGrammar.cpp: $(WebCore)/css/CSSGrammar.y
 	rm -f $(GENSOURCES)/CSSGrammar.cpp.h $(GENSOURCES)/CSSGrammar.hpp
 	$(BISON) -d -p cssyy $< -o $(GENSOURCES)/CSSGrammar.cpp
 	touch $(GENSOURCES)/CSSGrammar.cpp.h $(GENSOURCES)/CSSGrammar.hpp
@@ -2118,21 +2117,23 @@ $(GENSOURCES)/CSSGrammar.cpp: $(WebCore)/css/CSSGrammar.y
 	rm -f $(GENSOURCES)/CSSGrammar.cpp.h $(GENSOURCES)/CSSGrammar.hpp
 
 # user agent style sheets
-USER_AGENT_STYLE_SHEETS = $(WebCore)/css/html4.css $(WebCore)/css/quirks.css $(WebCore)/css/view-source.css $(WebCore)/css/svg.css
+USER_AGENT_STYLE_SHEETS = \
+	$(WebCore)/css/html4.css \
+	$(WebCore)/css/quirks.css \
+	$(WebCore)/css/view-source.css \
+	$(WebCore)/css/svg.css
+
+# new-style JavaScript bindings
+SCRIPTS_BINDINGS = \
+	$(WebCore)/bindings/scripts/CodeGenerator.pm \
+	$(WebCore)/bindings/scripts/IDLParser.pm \
+	$(WebCore)/bindings/scripts/IDLStructure.pm \
+	$(WebCore)/bindings/scripts/generate-bindings.pl
 
 DerivedSources/UserAgentStyleSheetsData.cpp: DerivedSources/UserAgentStyleSheets.h;
 
 DerivedSources/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arrays.pl $(USER_AGENT_STYLE_SHEETS)
 	$(PERL) $< $@ DerivedSources/UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
-
-# character set name table
-CHARSET_TABLE_DEPS := \
-	$(WebCore)/platform/text/mac/make-charset-table.pl \
-	$(WebCore)/platform/text/mac/character-sets.txt \
-	$(WebCore)/platform/text/mac/mac-encodings.txt
-
-DerivedSources/CharsetData.cpp : $(CHARSET_TABLE_DEPS)
-	$(PERL) $^ kTextEncoding > $@
 
 # lookup tables for old-style JavaScript bindings
 %.lut.h: %.cpp $(CREATE_HASH_TABLE)
@@ -2145,25 +2146,12 @@ WebCore/bindings/js/%Table.cpp: $(srcdir)/WebCore/bindings/js/JSHTMLInputElement
 DerivedSources/HTMLNames.h: DerivedSources/HTMLNames.cpp;
 
 DerivedSources/HTMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
-	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in \
-	    --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore \
-	    --namespaceURI "http://www.w3.org/1999/xhtml" --attrsNullNamespace \
-	    --output $(GENSOURCES)
+	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --attrsNullNamespace --output $(GENSOURCES)
 
 DerivedSources/XMLNames.h: DerivedSources/XMLNames.cpp;
 
 DerivedSources/XMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlattrs.in
-	$(PERL) $< --attrs $(WebCore)/xml/xmlattrs.in \
-            --namespace XML --cppNamespace WebCore --namespaceURI "http://www.w3.org/XML/1998/namespace" \
-	    --output $(GENSOURCES)
-
-# new-style JavaScript bindings
-SCRIPTS_JS_BINDINGS = \
-	$(WebCore)/bindings/scripts/CodeGenerator.pm \
-	$(WebCore)/bindings/scripts/CodeGeneratorJS.pm \
-	$(WebCore)/bindings/scripts/IDLParser.pm \
-	$(WebCore)/bindings/scripts/IDLStructure.pm \
-	$(WebCore)/bindings/scripts/generate-bindings.pl
+	$(PERL) $< --attrs $(WebCore)/xml/xmlattrs.in --namespace XML --cppNamespace WebCore --namespaceURI "http://www.w3.org/XML/1998/namespace" --output $(GENSOURCES)
 
 vpath %.idl = \
     $(WebCore) \
@@ -2180,19 +2168,15 @@ vpath %.idl = \
 
 DerivedSources/JS%.h: DerivedSources/JS%.cpp;
 
-DerivedSources/JS%.cpp: %.idl $(SCRIPTS_JS_BINDINGS)
-	$(PERL) -I$(WebCore)/bindings/scripts \
-	$(WebCore)/bindings/scripts/generate-bindings.pl --defines \
-	"$(FEATURE_DEFINES_JAVASCRIPT)" --generator JS --include $(WebCore)/dom \
-	--include $(WebCore)/html --include $(WebCore)/css --include $(WebCore)/page \
-	--include $(WebCore)/xml --include $(WebCore)/svg --outputdir $(GENSOURCES) $<
+DerivedSources/JS%.cpp: %.idl $(SCRIPTS_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm
+	$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --include $(WebCore)/dom --include $(WebCore)/html --include $(WebCore)/css --include $(WebCore)/page --include $(WebCore)/xml --include $(WebCore)/svg --outputdir $(GENSOURCES) --defines "$(FEATURE_DEFINES_JAVASCRIPT)" --generator JS $<
 
 # Clean rules for WebCore
 
 CLEANFILES += \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
 	WebCore/bindings/js/JSHTMLInputElementBaseTable.cpp \
-	JSDOMWindowBase.lut.h \
-	JSRGBColor.lut.h \
-	JSXSLTProcessor.lut.h
+	WebCore/bindings/js/JSDOMWindowBase.lut.h \
+	WebCore/bindings/js/JSRGBColor.lut.h \
+	WebCore/bindings/js/JSXSLTProcessor.lut.h
 
