@@ -1,3 +1,16 @@
+2008-04-19  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        Add LocalStorageDatabasePath to the settings for the location of persistent local storage.
+
+        * WebCore.base.exp:
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setLocalStorageDatabasePath):
+        * page/Settings.h:
+        (WebCore::Settings::localStorageDatabasePath):
+
 2008-04-18 Jan  Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.

@@ -152,11 +152,15 @@ namespace WebCore {
         void setWebArchiveDebugModeEnabled(bool);
         bool webArchiveDebugModeEnabled() const { return m_webArchiveDebugModeEnabled; }
 
+        void setLocalStorageDatabasePath(const String&);
+        const String& localStorageDatabasePath() const { return m_localStorageDatabasePath; }
+
     private:
         Page* m_page;
         
         String m_defaultTextEncodingName;
         String m_ftpDirectoryTemplatePath;
+        String m_localStorageDatabasePath;
         KURL m_userStyleSheetLocation;
         AtomicString m_standardFontFamily;
         AtomicString m_fixedFontFamily;

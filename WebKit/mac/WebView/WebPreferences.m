@@ -963,6 +963,16 @@ static NSString *classIBCreatorID = nil;
     [self _setStringValue:path forKey:WebKitFTPDirectoryTemplatePath];
 }
 
+- (NSString *)_localStorageDatabasePath
+{
+    return [self _stringValueForKey:WebKitLocalStorageDatabasePathPreferenceKey];
+}
+
+- (void)_setLocalStorageDatabasePath:(NSString *)path
+{
+    [self _setStringValue:path forKey:WebKitLocalStorageDatabasePathPreferenceKey];
+}
+
 - (NSString *)_ftpDirectoryTemplatePath
 {
     return [self _stringValueForKey:WebKitFTPDirectoryTemplatePath];

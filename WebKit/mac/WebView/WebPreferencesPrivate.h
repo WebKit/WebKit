@@ -92,6 +92,8 @@ extern NSString *WebPreferencesRemovedNotification;
 - (void)_setFTPDirectoryTemplatePath:(NSString *)path;
 - (void)_setForceFTPDirectoryListings:(BOOL)force;
 - (BOOL)_forceFTPDirectoryListings;
+- (NSString *)_localStorageDatabasePath;
+- (void)_setLocalStorageDatabasePath:(NSString *)path;
 
 // Other private methods
 - (void)_postPreferencesChangesNotification;

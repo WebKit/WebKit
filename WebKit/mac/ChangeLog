@@ -1,3 +1,19 @@
+2008-04-19  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        Add a WebPreference for the path of the local storage persistent store.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+
+        * WebView/WebPreferences.m:
+        (-[WebPreferences _localStorageDatabasePath]):
+        (-[WebPreferences _setLocalStorageDatabasePath:]):
+        * WebView/WebPreferencesPrivate.h:
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2008-04-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig

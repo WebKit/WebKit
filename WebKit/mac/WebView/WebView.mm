@@ -954,6 +954,7 @@ static bool debugWidget = true;
     settings->setFixedFontFamily([preferences fixedFontFamily]);
     settings->setForceFTPDirectoryListings([preferences _forceFTPDirectoryListings]);
     settings->setFTPDirectoryTemplatePath([preferences _ftpDirectoryTemplatePath]);
+    settings->setLocalStorageDatabasePath([preferences _localStorageDatabasePath]);
     settings->setJavaEnabled([preferences isJavaEnabled]);
     settings->setJavaScriptEnabled([preferences isJavaScriptEnabled]);
     settings->setJavaScriptCanOpenWindowsAutomatically([preferences javaScriptCanOpenWindowsAutomatically]);
