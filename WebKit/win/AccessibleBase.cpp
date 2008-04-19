@@ -208,8 +208,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accDoDefaultAction(VARIANT)
     return E_NOTIMPL;
 }
 
-HRESULT AccessibleBase::getAccessibilityObjectForChild(VARIANT vChild, Accessibi
-lityObject*& childObj) const
+HRESULT AccessibleBase::getAccessibilityObjectForChild(VARIANT vChild, AccessibilityObject*& childObj) const
 {
     childObj = 0;
 

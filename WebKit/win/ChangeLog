@@ -1,5 +1,9 @@
 2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        * AccessibleBase.cpp: Build fix for copy/paste error.
+
+2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Reviewed by Darin.
 
         Implement IAccessible::get_accChild().
