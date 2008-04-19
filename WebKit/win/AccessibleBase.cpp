@@ -94,9 +94,15 @@ ULONG STDMETHODCALLTYPE AccessibleBase::Release(void)
 }
 
 // IAccessible
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accParent(IDispatch**)
+HRESULT STDMETHODCALLTYPE AccessibleBase::get_accParent(IDispatch** parent)
 {
-    return E_NOTIMPL;
+    *parent = 0;
+
+    if (!m_object)
+        return E_FAIL;
+
+    return WebView::AccessibleObjectFromWindow(m_object->topRenderer()->view()->frameView()->containingWindow(),
+        OBJID_WINDOW, __uuidof(IAccessible), reinterpret_cast<void**>(parent));
 }
 
 HRESULT STDMETHODCALLTYPE AccessibleBase::get_accChildCount(long*)

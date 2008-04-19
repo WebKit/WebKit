@@ -2,6 +2,21 @@
 
         Reviewed by Darin.
 
+        Implement IAccessible::get_accParent(). 
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accParent): Call AccessibleObjectFromWindow with
+        OBJID_WINDOW. This will be handled by Windows to return the default
+        accessible object for the WebView, because we only handle OBJID_CLIENT.
+        * WebView.cpp:
+        (WebView::AccessibleObjectFromWindow): Added; calls through to the
+        AccessibleObjectFromWindow in the MSAA DLL.
+        * WebView.h: Added definition for AccessibleObjectFromWindow.
+
+2008-04-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
         Return an AccessibleDocument when our root accessible object is queried
         for.
 

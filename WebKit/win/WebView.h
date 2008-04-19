@@ -745,6 +745,7 @@ public:
     void updateActiveState();
 
     bool onGetObject(WPARAM, LPARAM, LRESULT&) const;
+    static STDMETHODIMP AccessibleObjectFromWindow(HWND, DWORD objectID, REFIID, void** ppObject);
 
 private:
     void setZoomMultiplier(float multiplier, bool isTextOnly);
