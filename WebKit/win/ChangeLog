@@ -1,3 +1,23 @@
+2008-04-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
+        Respond to WM_GETOBJECT messages. Currently returns NULL.
+
+        * WebFrame.cpp:
+        (WebFrame::accessible): Added; will return the root accessible object
+        for this frame.
+        * WebFrame.h: Added definition for accessible().
+        * WebView.cpp:
+        (WebViewWndProc): Handle WM_GETOBJECT messages by calling onGetObject().
+        (WebView::onGetObject): Added; enables the AXObjectCache in WebCore,
+        queries the top-level frame for its root accessible object, and loads
+        the MSAA DLL and locates its LresultFromObject function. If calling
+        LresultFromObject succeeds, it returns a reference to the accessible
+        object to pass back to Windows. If not, we return false and let Windows
+        handle the request through DefWindowProc.
+        * WebView.h: Added definition for onGetObject().
+
 2008-04-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig

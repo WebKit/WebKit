@@ -49,6 +49,7 @@
 #include "WebPreferences.h"
 #pragma warning( push, 0 )
 #include <CoreGraphics/CGContext.h>
+#include <WebCore/AXObjectCache.h>
 #include <WebCore/BString.h>
 #include <WebCore/Cache.h>
 #include <WebCore/ContextMenu.h>
@@ -100,16 +101,19 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/HashSet.h>
-#include <tchar.h>
 #include <dimm.h>
-#include <windowsx.h>
+#include <oleacc.h>
 #include <ShlObj.h>
+#include <tchar.h>
+#include <windowsx.h>
 
 using namespace WebCore;
 using namespace WebCore::EventNames;
 using KJS::JSLock;
 using std::min;
 using std::max;
+
+static HMODULE accessibilityLib;
 
 WebView* kit(Page* page)
 {
@@ -1801,7 +1805,9 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             handled = false;
             break;
         }
-
+        case WM_GETOBJECT:
+            handled = webView->onGetObject(wParam, lParam, lResult);
+            break;
         case WM_IME_STARTCOMPOSITION:
             handled = webView->onIMEStartComposition();
             break;
@@ -4767,6 +4773,39 @@ HRESULT STDMETHODCALLTYPE WebView::paintDocumentRectToContext(
     return S_OK;
 }
 
+bool WebView::onGetObject(WPARAM wParam, LPARAM lParam, LRESULT& lResult) const
+{
+    lResult = 0;
+
+    if (lParam != OBJID_CLIENT)
+        return false;
+
+    AXObjectCache::enableAccessibility();
+
+    // Get the accessible object for the top-level frame.
+    WebFrame* mainFrameImpl = topLevelFrame();
+    if (!mainFrameImpl)
+        return false;
+
+    COMPtr<IAccessible> accessible = mainFrameImpl->accessible();
+    if (!accessible)
+        return false;
+
+    if (!accessibilityLib) {
+        if (!(accessibilityLib = ::LoadLibrary(TEXT("oleacc.dll"))))
+            return false;
+    }
+
+    static LPFNLRESULTFROMOBJECT procPtr = reinterpret_cast<LPFNLRESULTFROMOBJECT>(::GetProcAddress(accessibilityLib, "LresultFromObject"));
+    if (!procPtr)
+        return false;
+
+    // LresultFromObject returns a reference to the accessible object, stored
+    // in an LRESULT. If this call is not successful, Windows will handle the
+    // request through DefWindowProc.
+    return SUCCEEDED(lResult = procPtr(__uuidof(IAccessible), wParam, accessible.get()));
+}
+
 class EnumTextMatches : public IEnumTextMatches
 {
     long m_ref;
@@ -4850,3 +4889,4 @@ Page* core(IWebView* iWebView)
 
     return page;
 }
+

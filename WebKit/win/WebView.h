@@ -710,7 +710,7 @@ public:
     HRESULT revokeDragDrop();
 
     // Convenient to be able to violate the rules of COM here for easy movement to the frame.
-    WebFrame* topLevelFrame() { return m_mainFrame; }
+    WebFrame* topLevelFrame() const { return m_mainFrame; }
     const WebCore::String& userAgentForKURL(const WebCore::KURL& url);
 
     static bool canHandleRequest(const WebCore::ResourceRequest&);
@@ -743,6 +743,8 @@ public:
     HWND topLevelParent() const { return m_topLevelParent; }
 
     void updateActiveState();
+
+    bool onGetObject(WPARAM, LPARAM, LRESULT&) const;
 
 private:
     void setZoomMultiplier(float multiplier, bool isTextOnly);

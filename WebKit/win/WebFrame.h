@@ -38,6 +38,7 @@
 #include <WebCore/ResourceHandleClient.h>
 #pragma warning(pop)
 
+#include <oleacc.h>
 #include <WTF/RefPtr.h>
 #include <WTF/HashMap.h>
 #include <WTF/OwnPtr.h>
@@ -294,6 +295,8 @@ public:
     WebCore::KURL url() const;
 
     WebView* webView() const;
+
+    COMPtr<IAccessible> accessible() const;
 
 protected:
     void loadHTMLString(BSTR string, BSTR baseURL, BSTR unreachableURL);

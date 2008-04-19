@@ -1906,3 +1906,9 @@ WebView* WebFrame::webView() const
 {
     return d->webView;
 }
+
+COMPtr<IAccessible> WebFrame::accessible() const
+{
+    return 0;
+}
+
