@@ -95,6 +95,10 @@ protected:
     AccessibleBase(AccessibilityObject*);
     virtual ~AccessibleBase();
 
+    HRESULT getAccessibilityObjectForChild(VARIANT vChild, AccessibilityObject*&) const;
+
+    static AccessibleBase* wrapper(AccessibilityObject*);
+
     int m_refCount;
 
 private:
@@ -102,3 +106,4 @@ private:
 };
 
 #endif // AccessibleBase_h
+

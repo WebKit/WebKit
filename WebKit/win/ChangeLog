@@ -1,5 +1,23 @@
 2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Reviewed by Darin.
+
+        Implement IAccessible::get_accChild().
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accChild): Call getAccessibilityObjectForChild
+        to find the AccessibilityObject for the VARIANT vChild. Get the
+        AccessibilityObjectWrapper for the child, add a ref, and pass it back.
+        (AccessibleBase::getAccessibilityObjectForChild): Added; finds the
+        AccessibilityObject referred to by a VARIANT, or returns a COM error on
+        failure.
+        (AccessibleBase::wrapper): Added; returns the wrapper for the
+        AccessibilityObject. Creates one if necessary.
+        * AccessibleBase.h: Added definitions for wrapper() and
+        getAccessibilityObjectForChild().
+
+2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Reviewed by Darin, Ollie. 
 
         * AccessibleBase.cpp:

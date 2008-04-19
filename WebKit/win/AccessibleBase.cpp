@@ -115,9 +115,22 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accChildCount(long* count)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accChild(VARIANT, IDispatch**)
+HRESULT STDMETHODCALLTYPE AccessibleBase::get_accChild(VARIANT vChild, IDispatch** ppChild)
 {
-    return E_NOTIMPL;
+    if (!ppChild)
+        return E_POINTER;
+
+    *ppChild = 0;
+
+    AccessibilityObject* childObj;
+
+    HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
+    if (FAILED(hr))
+        return hr;
+
+    *ppChild = static_cast<IDispatch*>(wrapper(childObj));
+    (*ppChild)->AddRef();
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE AccessibleBase::get_accName(VARIANT, BSTR*)
@@ -193,5 +206,40 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accHitTest(long, long, VARIANT*)
 HRESULT STDMETHODCALLTYPE AccessibleBase::accDoDefaultAction(VARIANT)
 {
     return E_NOTIMPL;
+}
+
+HRESULT AccessibleBase::getAccessibilityObjectForChild(VARIANT vChild, Accessibi
+lityObject*& childObj) const
+{
+    childObj = 0;
+
+    if (!m_object)
+        return E_FAIL;
+
+    if (vChild.vt != VT_I4)
+        return E_INVALIDARG;
+
+    if (vChild.lVal == CHILDID_SELF)
+        childObj = m_object;
+    else {
+        size_t childIndex = static_cast<size_t>(vChild.lVal - 1);
+
+        if (childIndex >= m_object->children().size())
+            return E_FAIL;
+        childObj = m_object->children().at(childIndex).get();
+    }
+
+    if (!childObj)
+        return E_FAIL;
+
+    return S_OK;
+}
+
+AccessibleBase* AccessibleBase::wrapper(AccessibilityObject* obj)
+{
+    AccessibleBase* result = static_cast<AccessibleBase*>(obj->wrapper());
+    if (!result)
+        result = createInstance(obj);
+    return result;
 }
 
