@@ -1,3 +1,12 @@
+2008-04-19  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Nikolas.
+
+        Add text shadow support for simple text in FontCairo.
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs):
+
 2008-04-19  David Hyatt  <hyatt@apple.com>
 
         Fix a minor typo in CSSGradientValue's cssText() method.

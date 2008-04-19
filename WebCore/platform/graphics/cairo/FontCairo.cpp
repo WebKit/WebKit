@@ -34,30 +34,58 @@
 
 namespace WebCore {
 
-void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* font, const GlyphBuffer& glyphBuffer,
+void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer,
                       int from, int numGlyphs, const FloatPoint& point) const
 {
-    cairo_t* cr = graphicsContext->platformContext();
+    cairo_t* cr = context->platformContext();
     cairo_save(cr);
-
-    // Set the text color to use for drawing.
-    float red, green, blue, alpha;
-    Color penColor = graphicsContext->fillColor();
-    penColor.getRGBA(red, green, blue, alpha);
-    cairo_set_source_rgba(cr, red, green, blue, alpha);
 
     font->setFont(cr);
 
     GlyphBufferGlyph* glyphs = (GlyphBufferGlyph*)glyphBuffer.glyphs(from);
 
     float offset = point.x();
-
     for (int i = 0; i < numGlyphs; i++) {
         glyphs[i].x = offset;
         glyphs[i].y = point.y();
         offset += glyphBuffer.advanceAt(from + i);
     }
+
+    Color fillColor = context->fillColor();
+
+    // Text shadow, inspired by FontMac
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+    context->getShadow(shadowSize, shadowBlur, shadowColor);
+
+    // TODO: Blur support
+    bool hasShadow = context->textDrawingMode() == cTextFill && shadowColor.isValid() && !shadowSize.isEmpty();
+    if (hasShadow) {
+        // Disable graphics context shadows (not yet implemented) and paint them manually
+        context->clearShadow();
+        Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
+        cairo_save(cr);
+
+        float red, green, blue, alpha;
+        shadowFillColor.getRGBA(red, green, blue, alpha);
+        cairo_set_source_rgba(cr, red, green, blue, alpha);
+
+        cairo_translate(cr, shadowSize.width(), shadowSize.height());
+        cairo_show_glyphs(cr, glyphs, numGlyphs);
+
+        cairo_restore(cr);
+    }
+
+    float red, green, blue, alpha;
+    fillColor.getRGBA(red, green, blue, alpha);
+    cairo_set_source_rgba(cr, red, green, blue, alpha);
+
     cairo_show_glyphs(cr, glyphs, numGlyphs);
+
+    // Re-enable the platform shadow we disabled earlier
+    if (hasShadow)
+        context->setShadow(shadowSize, shadowBlur, shadowColor);
 
     cairo_restore(cr);
 }
