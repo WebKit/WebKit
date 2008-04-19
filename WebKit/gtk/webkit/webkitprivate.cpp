@@ -26,6 +26,7 @@
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "PageCache.h"
+#include "PageGroup.h"
 #include "Pasteboard.h"
 #include "PasteboardHelperGtk.h"
 #include <kjs/InitializeThreading.h>
@@ -105,6 +106,8 @@ void webkit_init()
     WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(databaseDirectory);
     g_free(databaseDirectory);
 #endif
+
+    PageGroup::setShouldTrackVisitedLinks(true);
 
     Pasteboard::generalPasteboard()->setHelper(new WebKit::PasteboardHelperGtk());
 }

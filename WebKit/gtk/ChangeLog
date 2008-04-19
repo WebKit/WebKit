@@ -1,3 +1,16 @@
+2008-04-19  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Maciej.
+
+        Enable visited link tracking by default at startup.
+
+        With this patch, the GTK+ port rendering of Acid3 now matches the
+        reference page.
+
+        * webkit/webkitprivate.cpp:
+        (WebKit::core):
+        (webkit_init):
+
 2008-04-11  Mark Rowe  <mrowe@apple.com>
 
         Gtk build fix after r32231.
