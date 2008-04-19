@@ -1,3 +1,11 @@
+2008-04-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. renderer() -> contentRenderer()
+
+        * WebView.cpp:
+        (wxWebView::GetExternalRepresentation):
+        (wxWebView::OnPaint):
+
 2008-04-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. We need to use ENABLE_DOM_STORAGE now.

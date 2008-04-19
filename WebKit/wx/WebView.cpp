@@ -44,6 +44,7 @@
 #include "PlatformWheelEvent.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
+#include "RenderView.h"
 #include "SelectionController.h"
 #include "Settings.h"
 #include "SubstituteData.h"
@@ -312,7 +313,7 @@ wxString wxWebView::GetExternalRepresentation()
     if (m_impl->frameView && m_impl->frameView->layoutPending())
         m_impl->frameView->layout();
 
-    return externalRepresentation(m_impl->frame->renderer());
+    return externalRepresentation(m_impl->frame->contentRenderer());
 }
 
 wxString wxWebView::RunScript(const wxString& javascript)
@@ -432,7 +433,7 @@ void wxWebView::OnPaint(wxPaintEvent& event)
 #else
             WebCore::GraphicsContext* gc = new WebCore::GraphicsContext((wxWindowDC*)&dc);
 #endif
-            if (gc && m_impl->frame->renderer()) {
+            if (gc && m_impl->frame->contentRenderer()) {
                 if (m_impl->frameView->needsLayout())
                     m_impl->frameView->layout();
 
