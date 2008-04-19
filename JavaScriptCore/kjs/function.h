@@ -26,7 +26,7 @@
 #define KJS_FUNCTION_H
 
 #include "JSVariableObject.h"
-#include "LocalStorage.h"
+#include "LocalStorageEntry.h"
 #include "SymbolTable.h"
 #include "nodes.h"
 #include "object.h"

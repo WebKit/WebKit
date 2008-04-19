@@ -25,7 +25,7 @@
 #define ExecState_h
 
 #include "LabelStack.h"
-#include "LocalStorage.h"
+#include "LocalStorageEntry.h"
 #include "completion.h"
 #include "list.h"
 #include "scope_chain.h"

@@ -40,6 +40,7 @@ JavaScriptCore Bakefile project file.
             $(JSCORE_SOURCES_API)
             $(JSCORE_SOURCES_KJS)
             $(JSCORE_SOURCES_PCRE)
+            $(PROFILER_SOURCES)
             $(WTF_SOURCES)
         </sources>
         <install-to>$(WKOUTPUTDIR)</install-to>

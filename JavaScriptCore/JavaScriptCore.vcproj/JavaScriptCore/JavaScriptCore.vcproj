@@ -485,7 +485,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\LocalStorage.h"
+				RelativePath="..\..\kjs\LocalStorageEntry.h"
 				>
 			</File>
 			<File

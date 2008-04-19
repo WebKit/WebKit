@@ -29,7 +29,7 @@
 #ifndef JSVariableObject_h
 #define JSVariableObject_h
 
-#include "LocalStorage.h"
+#include "LocalStorageEntry.h"
 #include "SymbolTable.h"
 #include "object.h"
 

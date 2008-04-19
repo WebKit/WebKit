@@ -1,3 +1,18 @@
+2008-04-18  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes. Rename LocalStorage.h to LocalStorageEntry.h
+        to avoid header detection issues between WebCore/storage/LocalStorage.h 
+        and it, and add $(PROFILER_SOURCES) to the wx JSCore build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jscore.bkl:
+        * kjs/ExecState.h:
+        * kjs/JSVariableObject.h:
+        * kjs/LocalStorage.h: Removed.
+        * kjs/LocalStorageEntry.h: Copied from JavaScriptCore/kjs/LocalStorage.h.
+        * kjs/function.h:
+
 2008-04-18 Jan  Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Alp Toker.
