@@ -2,6 +2,25 @@
 
         Reviewed by Darin.
 
+        Return an AccessibleDocument when our root accessible object is queried
+        for.
+
+        * AccessibleDocument.cpp: Added; represents an AccessibilityObject that
+        itself represents a Document.
+        (AccessibleDocument::AccessibleDocument): Initialize AccessibleBase with
+        the AccessibilityObject for this Document.
+        * AccessibleDocument.h: Added.
+        * WebFrame.cpp:
+        (WebFrame::accessible): If m_accessible is 0, or if Document in this
+        frame does not match the Document in the cached m_accessible object,
+        create a new AccessibleDocument for this frame's Document.
+        * WebFrame.h: Swap AccessibleBase.h for AccessibleDocument.h
+        * WebKit.vcproj/WebKit.vcproj: Add AccessibleDocument.{h,cpp}
+
+2008-04-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
         Respond to WM_GETOBJECT messages. Currently returns NULL.
 
         * WebFrame.cpp:

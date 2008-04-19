@@ -1909,6 +1909,19 @@ WebView* WebFrame::webView() const
 
 COMPtr<IAccessible> WebFrame::accessible() const
 {
-    return 0;
+    Frame* coreFrame = core(this);
+    ASSERT(coreFrame);
+
+    Document* currentDocument = coreFrame->document();
+    if (!currentDocument)
+        m_accessible = 0;
+    else if (!m_accessible || m_accessible->document() != currentDocument) {
+        // Either we've never had a wrapper for this frame's top-level Document,
+        // the Document renderer was destroyed and its wrapper was detached, or
+        // the previous Document is in the page cache, and the current document
+        // needs to be wrapped.
+        m_accessible = new AccessibleDocument(currentDocument);
+    }
+    return m_accessible.get();
 }
 

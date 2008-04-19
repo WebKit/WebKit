@@ -599,6 +599,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\AccessibleDocument.h"
+				>
+			</File>
+			<File
 				RelativePath=".\autoversion.h"
 				>
 			</File>
@@ -860,6 +864,10 @@
 			>
 			<File
 				RelativePath="..\AccessibleBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\AccessibleDocument.cpp"
 				>
 			</File>
 			<File

@@ -31,6 +31,8 @@
 #include "WebKit.h"
 #include "WebDataSource.h"
 
+#include "AccessibleDocument.h"
+
 #pragma warning(push, 0)
 #include <WebCore/FrameWin.h>
 #include <WebCore/KURL.h>
@@ -38,7 +40,6 @@
 #include <WebCore/ResourceHandleClient.h>
 #pragma warning(pop)
 
-#include <oleacc.h>
 #include <WTF/RefPtr.h>
 #include <WTF/HashMap.h>
 #include <WTF/OwnPtr.h>
@@ -315,6 +316,7 @@ protected:
     bool                m_inPrintingMode;
     Vector<WebCore::IntRect> m_pageRects;
     int m_pageHeight;   // height of the page adjusted by margins
+    mutable COMPtr<AccessibleDocument> m_accessible;
 };
 
 #endif
