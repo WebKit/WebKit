@@ -71,6 +71,7 @@ using namespace HTMLNames;
 AccessibilityObject::AccessibilityObject(RenderObject* renderer)
     : m_renderer(renderer)
     , m_id(0)
+    , m_haveChildren(false)
 {
     ASSERT_ARG(renderer, renderer);
 #ifndef NDEBUG
@@ -1835,23 +1836,28 @@ void AccessibilityObject::childrenChanged()
 
 void AccessibilityObject::clearChildren()
 {
+    m_haveChildren = false;
     m_children.clear();
 }
 
-bool AccessibilityObject::hasChildren() const
+const Vector<RefPtr<AccessibilityObject> >& AccessibilityObject::children() const
 {
-    return m_children.size();
+    if (!m_haveChildren)
+        addChildren();
+    return m_children;
 }
 
-void AccessibilityObject::addChildren()
+void AccessibilityObject::addChildren() const
 {
     // If the need to add more children in addition to existing children arises, 
     // childrenChanged should have been called, leaving the object with no children.
-    ASSERT(!hasChildren()); 
+    ASSERT(!m_haveChildren); 
 
     // nothing to add if there is no RenderObject
     if (!m_renderer)
         return;
+
+    m_haveChildren = true;
 
     // add all unignored acc children
     for (RefPtr<AccessibilityObject> obj = firstChild(); obj; obj = obj->nextSibling()) {

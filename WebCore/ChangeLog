@@ -1,3 +1,28 @@
+2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Ollie.
+
+        Change when AccessibilityObject children are added.
+
+        Children are now added when children() is called if the children vector
+        is not up to date. This removes the need for addChildren() and
+        hasChildren() to be called from outside of AccessibilityObject.
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::AccessibilityObject): Initialize
+        m_haveChildren to false.
+        (WebCore::AccessibilityObject::clearChildren): Set m_haveChildren to
+        false.
+        (WebCore::AccessibilityObject::children): If m_haveChildren is false,
+        call addChildren().
+        (WebCore::AccessibilityObject::addChildren): Set m_haveChildren to true.
+        * page/AccessibilityObject.h: Removed hasChildren(). Made addChildren()
+        private and const. Added m_haveChildren. Made m_children mutable so
+        children() could modify it.
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]): Don't
+        call hasChildren() or addChildren().
+
 2008-04-18  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Alexey.

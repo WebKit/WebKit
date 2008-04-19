@@ -210,7 +210,6 @@ public:
     bool canSetValueAttribute() const;
 
     bool hasIntValue() const;
-    bool hasChildren() const;
 
     bool accessibilityShouldUseUniqueId() const;
     bool accessibilityIsIgnored() const;
@@ -255,7 +254,7 @@ public:
     Widget* widget() const;
     Widget* widgetForAttachmentView() const;
     void getDocumentLinks(Vector< RefPtr<AccessibilityObject> >&) const;
-    const Vector<RefPtr<AccessibilityObject> >& children() const { return m_children; }
+    const Vector<RefPtr<AccessibilityObject> >& children() const;
 
     void setAXObjectID(unsigned);
     void setFocused(bool);
@@ -267,7 +266,6 @@ public:
     void makeRangeVisible(const PlainTextRange&);
     void press();
     void childrenChanged();
-    void addChildren();
 
     VisiblePositionRange visiblePositionRange() const;
     VisiblePositionRange doAXTextMarkerRangeForLine(unsigned) const;
@@ -326,9 +324,11 @@ public:
 private:
     RenderObject* m_renderer;
     RefPtr<HTMLAreaElement> m_areaElement;
-    Vector<RefPtr<AccessibilityObject> > m_children;
     unsigned m_id;
+    mutable Vector<RefPtr<AccessibilityObject> > m_children;
+    mutable bool m_haveChildren;
 
+    void addChildren() const;
     void clearChildren();
     void removeAXObjectID();
 

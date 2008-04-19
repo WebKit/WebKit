@@ -804,11 +804,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     }
 
     if ([attributeName isEqualToString: NSAccessibilityChildrenAttribute]) {
-        if (!m_object->hasChildren()) {
+        if (m_object->children().isEmpty()) {
             NSArray* children = [self renderWidgetChildren];
             if (children != nil)
                 return children;
-            m_object->addChildren();
         }
         return convertToNSArray(m_object->children());
     }

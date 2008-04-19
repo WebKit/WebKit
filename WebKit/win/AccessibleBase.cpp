@@ -105,9 +105,14 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accParent(IDispatch** parent)
         OBJID_WINDOW, __uuidof(IAccessible), reinterpret_cast<void**>(parent));
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accChildCount(long*)
+HRESULT STDMETHODCALLTYPE AccessibleBase::get_accChildCount(long* count)
 {
-    return E_NOTIMPL;
+    if (!m_object)
+        return E_FAIL;
+    if (!count)
+        return E_POINTER;
+    *count = static_cast<long>(m_object->children().size());
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE AccessibleBase::get_accChild(VARIANT, IDispatch**)
@@ -189,3 +194,4 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accDoDefaultAction(VARIANT)
 {
     return E_NOTIMPL;
 }
+
