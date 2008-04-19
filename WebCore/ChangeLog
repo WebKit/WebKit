@@ -1,5 +1,17 @@
 2008-04-18  Brady Eidson  <beidson@apple.com>
 
+        Rubberstamped by Mark Rowe
+
+        Roll out http://trac.webkit.org/projects/webkit/changeset/32204 as it was an incorrect build fix.
+        The feature in question was NOT database support.
+
+        The proper build fix was later applied by Mark in http://trac.webkit.org/projects/webkit/changeset/32225
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::localStorage):
+
+2008-04-18  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin and Sam
 
         Don't forget PageGroups when their last Page goes away, as this hurts visited links and anything
