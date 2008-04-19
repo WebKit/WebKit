@@ -1,3 +1,11 @@
+2008-04-19  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Qt build fix (renderer() -> contentRenderer()).
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::renderTreeDump):
+        (QWebFrame::render):
+
 2008-04-18  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
