@@ -1,3 +1,9 @@
+2008-04-19  Brady Eidson  <beidson@apple.com>
+
+        Update window-properties to add the profiler and fix a layout test
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-04-18  Antti Koivisto  <antti@apple.com>
 
         Update test results.
