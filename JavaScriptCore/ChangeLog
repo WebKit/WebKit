@@ -1,3 +1,8 @@
+2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Windows
+        build fix.
+
 2008-04-11  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Antti Koivisto.
