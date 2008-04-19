@@ -1,3 +1,13 @@
+2008-04-11  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Antti Koivisto.
+
+        Silence GCC 4.3 warnings by removing extraneous consts.
+
+        * platform/graphics/Font.h:
+        * platform/network/ResourceRequestBase.cpp:
+        * platform/network/ResourceRequestBase.h:
+
 2008-04-18  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Mark Rowe

@@ -59,7 +59,7 @@ global_cflags := \
 	-Wall -W -Wcast-align -Wchar-subscripts -Wreturn-type \
 	-Wformat -Wformat-security -Wno-format-y2k -Wundef \
 	-Wmissing-format-attribute -Wpointer-arith -Wwrite-strings \
-	-Wno-unused-parameter
+	-Wno-unused-parameter -Wno-parentheses
 
 global_cxxflags := \
 	$(SYMBOL_VISIBILITY_INLINES)

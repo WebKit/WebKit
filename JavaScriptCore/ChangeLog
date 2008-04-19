@@ -1,3 +1,12 @@
+2008-04-11  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Antti Koivisto.
+
+        Silence GCC 4.3 warnings by removing extraneous consts.
+
+        * kjs/ustring.cpp:
+        * kjs/ustring.h:
+
 2008-04-18  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.
