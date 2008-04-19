@@ -2,8 +2,8 @@
 
         Reviewed by Alp Toker.
 
-        http://bugs.webkit.org/show_bug.cgi?id=14750
-        [gtk] Implement plugin support in GTK backend
+        http://bugs.webkit.org/show_bug.cgi?id=16620
+        [GTK] Autotools make dist and make check support
 
         Cleanups.
 
