@@ -1,3 +1,13 @@
+2008-04-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Don't clear the PageGroup on _close, as the WebCore::Page destructor already does this.
+        No reason to do the work twice...
+
+        * WebView/WebView.mm:
+        (-[WebView _close]):
+
 2008-04-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by beth.

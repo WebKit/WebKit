@@ -591,9 +591,6 @@ void WebView::close()
         ::TrackMouseEvent(m_mouseOutTracker.get());
         m_mouseOutTracker.set(0);
     }
-
-    if (m_page)
-        m_page->setGroupName(String());
     
     setHostWindow(0);
 

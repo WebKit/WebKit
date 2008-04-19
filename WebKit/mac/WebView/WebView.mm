@@ -693,7 +693,6 @@ static bool debugWidget = true;
         mainFrame->loader()->detachFromParent();
 
     [self _removeFromAllWebViewsSet];
-    [self setGroupName:nil];
     [self setHostWindow:nil];
 
     [self setDownloadDelegate:nil];
