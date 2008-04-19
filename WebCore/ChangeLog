@@ -1,3 +1,15 @@
+2008-04-18  Marco Barisione  <marco@barisione.org>
+
+        Reviewed by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18576
+        [GTK] windowsKeyCodeForKeyEvent doesn't handle GDK_ISO_Enter and
+        GDK_KP_Enter
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent): handle GDK_ISO_Enter and
+        GDK_KP_Enter in windowsKeyCodeForKeyEvent.
+
 2008-04-18  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Mark Rowe.

@@ -188,6 +188,8 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
             return VK_TAB; // (09) TAB key
         case GDK_Clear:
             return VK_CLEAR; // (0C) CLEAR key
+        case GDK_ISO_Enter:
+        case GDK_KP_Enter:
         case GDK_Return:
             return VK_RETURN; //(0D) Return key
         case GDK_Shift_L:
