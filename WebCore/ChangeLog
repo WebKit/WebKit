@@ -1,3 +1,15 @@
+2008-04-18  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Alexey.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18357
+        [GTK] Enter on buttons doesn't work
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::singleCharacterString): Set the text of a keyboard event for
+        GDK_ISO_Enter, GDK_KP_Enter, GDK_Return to "\r" instead of an empty
+        string.
+
 2008-04-18  Marco Barisione  <marco@barisione.org>
 
         Reviewed by Alp Toker.

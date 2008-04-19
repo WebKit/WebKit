@@ -472,19 +472,26 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
 
 static String singleCharacterString(guint val)
 {
-    glong nwc;
-    String retVal;
-    gunichar c = gdk_keyval_to_unicode(val);
-    gunichar2* uchar16 = g_ucs4_to_utf16(&c, 1, 0, &nwc, 0);
+    switch (val) {
+        case GDK_ISO_Enter:
+        case GDK_KP_Enter:
+        case GDK_Return:
+            return String("\r");
+        default:
+            gunichar c = gdk_keyval_to_unicode(val);
+            glong nwc;
+            gunichar2* uchar16 = g_ucs4_to_utf16(&c, 1, 0, &nwc, 0);
 
-    if (uchar16)
-        retVal = String((UChar*)uchar16, nwc);
-    else
-        retVal = String();
+            String retVal;
+            if (uchar16)
+                retVal = String((UChar*)uchar16, nwc);
+            else
+                retVal = String();
 
-    g_free(uchar16);
+            g_free(uchar16);
 
-    return retVal;
+            return retVal;
+    }
 }
 
 // Keep this in sync with the other platform event constructors
