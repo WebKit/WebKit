@@ -19,8 +19,6 @@ Programs_GtkLauncher_CFLAGS = \
 Programs_GtkLauncher_LDADD = \
 	libwebkit-1.0.la
 
-Programs_GtkLauncher_LDFLAGS = -rpath @abs_top_builddir@/.libs
-
 # DumpRenderTree
 Programs_DumpRenderTree_CPPFLAGS = \
 	-I$(srcdir)/WebKitTools/DumpRenderTree \
@@ -46,8 +44,6 @@ Programs_DumpRenderTree_CXXFLAGS = \
 
 Programs_DumpRenderTree_LDADD = \
 	libwebkit-1.0.la
-
-Programs_DumpRenderTree_LDFLAGS = -rpath @abs_top_builddir@/.libs
 
 # clean target
 CLEANFILES += \

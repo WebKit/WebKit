@@ -151,7 +151,6 @@ Programs_minidom_CXXFLAGS = \
 Programs_minidom_LDADD = \
 	 libJavaScriptCore.la \
 	 -lstdc++
-Programs_minidom_LDFLAGS = -rpath @abs_top_builddir@/.libs
 
 # testkjs
 Programs_testkjs_SOURCES = JavaScriptCore/kjs/testkjs.cpp
@@ -165,7 +164,6 @@ Programs_testkjs_CXXFLAGS = \
 	$(UNICODE_CFLAGS)
 Programs_testkjs_LDADD = \
 	libJavaScriptCore.la
-Programs_testkjs_LDFLAGS = -rpath @abs_top_builddir@/.libs
 
 # Clean rules for JavaScriptCore
 CLEANFILES += \
