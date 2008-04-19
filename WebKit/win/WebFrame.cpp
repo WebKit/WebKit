@@ -83,7 +83,7 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceHandleWin.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/RenderFrame.h>
+#include <WebCore/RenderView.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/Settings.h>
 #include <WebCore/TextIterator.h>
@@ -709,7 +709,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::renderTreeAsExternalRepresentation(
     if (!coreFrame)
         return E_FAIL;
 
-    *result = BString(externalRepresentation(coreFrame->renderer())).release();
+    *result = BString(externalRepresentation(coreFrame->contentRenderer())).release();
     return S_OK;
 }
 
