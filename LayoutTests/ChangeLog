@@ -1,3 +1,12 @@
+2008-04-18  Antti Koivisto  <antti@apple.com>
+
+        Update test results.
+
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-33-t-expected.txt:
+
 2008-04-18  Sam Weinig  <sam@webkit.org>
 
         Disable this test until we can figure out why it is failing on some systems.
