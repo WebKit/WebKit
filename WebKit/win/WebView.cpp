@@ -921,7 +921,7 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
 #endif
 
     FillRect(bitmapDC, &rect, (HBRUSH)GetStockObject(WHITE_BRUSH));
-    if (frameView && frameView->frame() && frameView->frame()->renderer()) {
+    if (frameView && frameView->frame() && frameView->frame()->contentRenderer()) {
         GraphicsContext gc(bitmapDC);
         gc.save();
         gc.clip(dirtyRect);
@@ -2942,7 +2942,7 @@ HRESULT STDMETHODCALLTYPE WebView::elementAtPoint(
 
     IntPoint webCorePoint = IntPoint(point->x, point->y);
     HitTestResult result = HitTestResult(webCorePoint);
-    if (frame->renderer())
+    if (frame->contentRenderer())
         result = frame->eventHandler()->hitTestResultAtPoint(webCorePoint, false);
     *elementDictionary = WebElementPropertyBag::createInstance(result);
     return S_OK;
