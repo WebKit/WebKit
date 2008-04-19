@@ -1,3 +1,9 @@
+2008-04-11  Mark Rowe  <mrowe@apple.com>
+
+        Gtk build fix after r32231.
+
+        * webkit/webkitwebview.cpp: Update to use contentRenderer.
+
 2008-04-18  Alp Toker  <alp@atoker.com>
 
         Rubber-stamped by Holger Freyther.

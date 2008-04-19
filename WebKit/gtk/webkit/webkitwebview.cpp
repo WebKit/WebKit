@@ -258,7 +258,7 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
     cairo_t* cr = gdk_cairo_create(event->window);
     GraphicsContext ctx(cr);
     ctx.setGdkExposeEvent(event);
-    if (frame->renderer() && frame->view()) {
+    if (frame->contentRenderer() && frame->view()) {
         frame->view()->layoutIfNeededRecursive();
 
         if (priv->transparent) {
