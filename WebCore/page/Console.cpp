@@ -35,8 +35,8 @@
 #include "InspectorController.h"
 #include "Page.h"
 #include "PlatformString.h"
-#include <kjs/Profiler.h>
 #include <kjs/list.h>
+#include <profiler/Profiler.h>
 
 using namespace KJS;
 

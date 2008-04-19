@@ -1,3 +1,13 @@
+2008-04-18  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Mark Rowe.
+
+        Gtk build fix.  Profiler.h does not live inside the kjs directory of JavaScriptCore
+        so it doesn't make sense to include it as kjs/Profiler.h from WebCore.
+
+        * ForwardingHeaders/profiler/Profiler.h: Renamed from WebCore/ForwardingHeaders/kjs/Profiler.h.
+        * page/Console.cpp:
+
 2008-04-18  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver.
