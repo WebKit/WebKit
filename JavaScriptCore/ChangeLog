@@ -1,3 +1,10 @@
+2008-04-19  Matt Lilek  <webkit@mattlilek.com>
+
+        Not reviewed, Windows build fix - copy the profiler headers in all
+        configurations, not just Debug_Internal.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
 2008-04-19  Mike Hommey  <glandium@debian.org>
 
         Reviewed by Alp Toker.
