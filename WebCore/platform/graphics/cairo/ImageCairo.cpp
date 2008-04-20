@@ -48,11 +48,39 @@ void FrameData::clear()
     }
 }
 
+BitmapImage::BitmapImage(cairo_surface_t* surface, ImageObserver* observer)
+    : Image(observer)
+    , m_currentFrame(0)
+    , m_frames(0)
+    , m_frameTimer(0)
+    , m_repetitionCount(0)
+    , m_repetitionsComplete(0)
+    , m_isSolidColor(false)
+    , m_animatingImageType(false)
+    , m_animationFinished(true)
+    , m_allDataReceived(true)
+    , m_haveSize(true)
+    , m_sizeAvailable(true)
+    , m_decodedSize(0)
+    , m_haveFrameCount(true)
+    , m_frameCount(1)
+{
+    initPlatformData();
+
+    // TODO: check to be sure this is an image surface
+
+    int width = cairo_image_surface_get_width(surface);
+    int height = cairo_image_surface_get_height(surface);
+    m_decodedSize = width * height * 4;
+    m_size = IntSize(width, height);
+
+    m_frames.grow(1);
+    m_frames[0].m_frame = surface;
+    checkForSolidColor();
+}
+
 void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, CompositeOperator op)
 {
-    if (!m_source.initialized())
-        return;
-
     FloatRect srcRect(src);
     FloatRect dstRect(dst);
 

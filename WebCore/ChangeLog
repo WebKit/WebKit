@@ -1,3 +1,21 @@
+2008-04-19  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Dave Hyatt.
+
+        Restore Cairo canvas support following the recent changes in
+        BitmapImage and ImageBuffer integrating canvas with CSS. Some
+        drawing regressions remain unfixed.
+
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::image):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+
 2008-04-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -157,6 +157,9 @@ size_t ImageSource::frameCount() const
 
 NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
 {
+    if (!initialized())
+        return 0;
+
     if (!m_decoder)
         return 0;
 
