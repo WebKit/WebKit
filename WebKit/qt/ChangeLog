@@ -1,3 +1,17 @@
+2008-04-20  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Alp Toker.
+
+        Share the printing code between the Gtk and the Qt port
+        and added printing to the Qt WebKit API.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::print):
+        * Api/qwebframe.h:
+        * Api/qwebview.cpp:
+        (QWebView::print):
+        * Api/qwebview.h:
+
 2008-04-19  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Qt build fix (renderer() -> contentRenderer()).

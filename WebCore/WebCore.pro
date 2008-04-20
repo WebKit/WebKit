@@ -778,6 +778,7 @@ SOURCES += \
     page/MouseEventWithHitTestResults.cpp \
     page/Page.cpp \
     page/PageGroup.cpp \
+    page/PrintContext.cpp \
     page/Screen.cpp \
     page/Settings.cpp \
     page/WindowFeatures.cpp \

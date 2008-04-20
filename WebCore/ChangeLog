@@ -1,3 +1,24 @@
+2008-04-20  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18578
+        Share the printing code between the Gtk and the Qt port
+
+        Share the printing code between the Gtk and the Qt port
+        and added printing to the Qt WebKit API.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * page/PrintContext.cpp: Added.
+        (WebCore::PrintContext::PrintContext):
+        (WebCore::PrintContext::~PrintContext):
+        (WebCore::PrintContext::pageCount):
+        (WebCore::PrintContext::computePageRects):
+        (WebCore::PrintContext::begin):
+        (WebCore::PrintContext::spoolPage):
+        * page/PrintContext.h: Added.
+
 2008-04-19  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Mark Rowe.

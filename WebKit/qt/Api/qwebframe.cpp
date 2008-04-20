@@ -35,8 +35,10 @@
 #include "IconDatabase.h"
 #include "Page.h"
 #include "ResourceRequest.h"
+#include "RenderView.h"
 #include "SelectionController.h"
 #include "PlatformScrollBar.h"
+#include "PrintContext.h"
 #include "SubstituteData.h"
 
 #include "markup.h"
@@ -72,6 +74,7 @@
 #include "qwebnetworkinterface.h"
 #endif
 #include <qregion.h>
+#include <qprinter.h>
 
 using namespace WebCore;
 
@@ -589,6 +592,82 @@ QRect QWebFrame::geometry() const
     if (!d->frame->view())
         return QRect();
     return d->frame->view()->frameGeometry();
+}
+
+/*!
+  Prints the frame to the given \a printer.
+*/
+void QWebFrame::print(QPrinter *printer) const
+{
+    PrintContext printContext(d->frame);
+    float pageHeight = 0;
+
+    printContext.begin(printer->pageRect().width());
+
+    printContext.computePageRects(IntRect(printer->pageRect()), /*headerHeight*/0, /*footerHeight*/0, /*userScaleFactor*/1.0, pageHeight);
+
+    int docCopies;
+    int pageCopies;
+    if (printer->collateCopies() == true){
+        docCopies = 1;
+        pageCopies = printer->numCopies();
+    } else {
+        docCopies = printer->numCopies();
+        pageCopies = 1;
+    }
+
+    int fromPage = printer->fromPage();
+    int toPage = printer->toPage();
+    bool ascending = true;
+
+    if (fromPage == 0 && toPage == 0) {
+        fromPage = 1;
+        toPage = printContext.pageCount();
+    }
+    // paranoia check
+    fromPage = qMax(1, fromPage);
+    toPage = qMin(printContext.pageCount(), toPage);
+
+    if (printer->pageOrder() == QPrinter::LastPageFirst) {
+        int tmp = fromPage;
+        fromPage = toPage;
+        toPage = tmp;
+        ascending = false;
+    }
+
+    QPainter painter(printer);
+    GraphicsContext ctx(&painter);
+
+    for (int i = 0; i < docCopies; ++i) {
+        int page = fromPage;
+        while (true) {
+            for (int j = 0; j < pageCopies; ++j) {
+                if (printer->printerState() == QPrinter::Aborted
+                    || printer->printerState() == QPrinter::Error) {
+                    printContext.end();
+                    return;
+                }
+                printContext.spoolPage(ctx, page - 1, printer->pageRect().width());
+                if (j < pageCopies - 1)
+                    printer->newPage();
+            }
+
+            if (page == toPage)
+                break;
+
+            if (ascending)
+                ++page;
+            else
+                --page;
+
+            printer->newPage();
+        }
+
+        if ( i < docCopies - 1)
+            printer->newPage();
+    }
+
+    printContext.end();
 }
 
 /*!

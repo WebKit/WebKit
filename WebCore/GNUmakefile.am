@@ -844,6 +844,7 @@ webcore_sources += \
 	WebCore/page/Navigator.cpp \
 	WebCore/page/Page.cpp \
 	WebCore/page/PageGroup.cpp \
+	WebCore/page/PrintContext.cpp \
 	WebCore/page/Screen.cpp \
 	WebCore/page/Settings.cpp \
 	WebCore/page/WindowFeatures.cpp \

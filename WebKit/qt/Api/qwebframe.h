@@ -41,6 +41,7 @@ class QMouseEvent;
 class QWheelEvent;
 class QNetworkRequest;
 class QRegion;
+class QPrinter;
 QT_END_NAMESPACE
 
 class QWebNetworkRequest;
@@ -114,6 +115,7 @@ public:
 
 public Q_SLOTS:
     QString evaluateJavaScript(const QString& scriptSource);
+    void print(QPrinter *printer) const;
 
 Q_SIGNALS:
     void javaScriptWindowObjectCleared();

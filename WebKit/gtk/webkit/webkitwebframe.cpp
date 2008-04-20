@@ -36,6 +36,7 @@
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "JSDOMWindow.h"
+#include "PrintContext.h"
 #include "RenderView.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
@@ -485,121 +486,6 @@ gchar* webkit_web_frame_get_inner_text(WebKitWebFrame* frame)
 }
 
 #if GTK_CHECK_VERSION(2,10,0)
-
-// This could be shared between ports once it's complete
-class PrintContext
-{
-public:
-    PrintContext(Frame* frame)
-        : m_frame(frame)
-    {
-    }
-
-    ~PrintContext()
-    {
-        m_pageRects.clear();
-    }
-
-    int pageCount()
-    {
-        return m_pageRects.size();
-    }
-
-    void computePageRects(const FloatRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, float& outPageHeight)
-    {
-        m_pageRects.clear();
-        outPageHeight = 0;
-
-        if (!m_frame->document() || !m_frame->view() || !m_frame->document()->renderer())
-            return;
-
-        RenderView* root = static_cast<RenderView*>(m_frame->document()->renderer());
-
-        if (!root) {
-            LOG_ERROR("document to be printed has no renderer");
-            return;
-        }
-
-        if (userScaleFactor <= 0) {
-            LOG_ERROR("userScaleFactor has bad value %.2f", userScaleFactor);
-            return;
-        }
-
-        float ratio = printRect.height() / printRect.width();
-
-        float pageWidth  = (float)root->docWidth();
-        float pageHeight = pageWidth * ratio;
-        outPageHeight = pageHeight;   // this is the height of the page adjusted by margins
-        pageHeight -= headerHeight + footerHeight;
-
-        if (pageHeight <= 0) {
-            LOG_ERROR("pageHeight has bad value %.2f", pageHeight);
-            return;
-        }
-
-        float currPageHeight = pageHeight / userScaleFactor;
-        float docHeight = root->layer()->height();
-        float currPageWidth = pageWidth / userScaleFactor;
-
-        // always return at least one page, since empty files should print a blank page
-        float printedPagesHeight = 0.0;
-        do {
-            float proposedBottom = min(docHeight, printedPagesHeight + pageHeight);
-            m_frame->adjustPageHeight(&proposedBottom, printedPagesHeight, proposedBottom, printedPagesHeight);
-            currPageHeight = max(1.0f, proposedBottom - printedPagesHeight);
-
-            m_pageRects.append(IntRect(0, (int)printedPagesHeight, (int)currPageWidth, (int)currPageHeight));
-            printedPagesHeight += currPageHeight;
-        } while (printedPagesHeight < docHeight);
-    }
-
-    // TODO: eliminate width param
-    void begin(float width)
-    {
-        // By imaging to a width a little wider than the available pixels,
-        // thin pages will be scaled down a little, matching the way they
-        // print in IE and Camino. This lets them use fewer sheets than they
-        // would otherwise, which is presumably why other browsers do this.
-        // Wide pages will be scaled down more than this.
-        const float PrintingMinimumShrinkFactor = 1.25f;
-
-        // This number determines how small we are willing to reduce the page content
-        // in order to accommodate the widest line. If the page would have to be
-        // reduced smaller to make the widest line fit, we just clip instead (this
-        // behavior matches MacIE and Mozilla, at least)
-        const float PrintingMaximumShrinkFactor = 2.0f;
-
-        float minLayoutWidth = width * PrintingMinimumShrinkFactor;
-        float maxLayoutWidth = width * PrintingMaximumShrinkFactor;
-
-        // FIXME: This will modify the rendering of the on-screen frame.
-        // Could lead to flicker during printing.
-        m_frame->setPrinting(true, minLayoutWidth, maxLayoutWidth, true);
-    }
-
-    // TODO: eliminate width param
-    void spoolPage(GraphicsContext& ctx, int pageNumber, float width)
-    {
-        IntRect pageRect = m_pageRects[pageNumber];
-        float scale = width / pageRect.width();
-
-        ctx.save();
-        ctx.scale(FloatSize(scale, scale));
-        ctx.translate(-pageRect.x(), -pageRect.y());
-        ctx.clip(pageRect);
-        m_frame->paint(&ctx, pageRect);
-        ctx.restore();
-    }
-
-    void end()
-    {
-        m_frame->setPrinting(false, 0, 0, true);
-    }
-
-protected:
-    Frame* m_frame;
-    Vector<IntRect> m_pageRects;
-};
 
 static void begin_print(GtkPrintOperation* op, GtkPrintContext* context, gpointer user_data)
 {

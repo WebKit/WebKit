@@ -22,6 +22,7 @@
 #include "qwebframe.h"
 #include "qevent.h"
 #include "qpainter.h"
+#include "qprinter.h"
 
 class QWebViewPrivate
 {
@@ -345,6 +346,14 @@ bool QWebView::findText(const QString &subString, QWebPage::FindFlags options)
     if (d->page)
         return d->page->findText(subString, options);
     return false;
+}
+
+/*!
+  Prints the main frame to the given \a printer.
+*/
+void QWebView::print(QPrinter *printer) const
+{
+    page()->mainFrame()->print(printer);
 }
 
 /*!

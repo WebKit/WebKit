@@ -36,6 +36,7 @@ QT_END_NAMESPACE
 class QWebPage;
 class QWebViewPrivate;
 class QWebNetworkRequest;
+class QPrinter;
 
 class QWEBKIT_EXPORT QWebView : public QWidget
 {
@@ -100,6 +101,8 @@ public Q_SLOTS:
     void back();
     void forward();
     void reload();
+
+    void print(QPrinter *printer) const;
 
 Q_SIGNALS:
     void loadStarted();
