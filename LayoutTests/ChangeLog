@@ -1,3 +1,16 @@
+2008-04-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - more test cases for https://bugs.webkit.org/show_bug.cgi?id=17921
+          in which the trailing white space is already in a separate
+          run but still needs to be re-ordered.
+
+        * fast/text/trailing-white-space-2.html: Copied from LayoutTests/fast/text/trailing-white-space.html.
+        * platform/mac/fast/text/trailing-white-space-2-expected.checksum: Added.
+        * platform/mac/fast/text/trailing-white-space-2-expected.png: Added.
+        * platform/mac/fast/text/trailing-white-space-2-expected.txt: Added.
+
 2008-04-19  Brady Eidson  <beidson@apple.com>
 
         Update window-properties to add the profiler and fix a layout test

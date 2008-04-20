@@ -965,26 +965,36 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                         }
                         if (firstSpace == trailingSpaceRun->stop())
                             trailingSpaceRun = 0;
-                        else if (firstSpace != trailingSpaceRun->start()) {
-                            ETextAlign textAlign = style()->textAlign();
-                            // If the trailing white space is at the right hand side of a left-aligned line, then computeHorizontalPositionsForLine()
-                            // does not care if trailingSpaceRun includes non-spaces at the beginning. In all other cases, trailingSpaceRun has to
-                            // contain only the spaces, either because we re-order them or because computeHorizontalPositionsForLine() needs to know
-                            // their width.
-                            bool shouldSeparateSpaces = textAlign != LEFT && textAlign != WEBKIT_LEFT && textAlign != TAAUTO || trailingSpaceRun->m_level % 2 || style()->direction() == RTL || trailingSpaceRun != start.lastRun();
+                        else {
+                            TextDirection direction = style()->direction();
+                            bool shouldReorder = trailingSpaceRun != (direction == LTR ? start.lastRun() : start.firstRun());
+                            if (firstSpace != trailingSpaceRun->start()) {
+                                ETextAlign textAlign = style()->textAlign();
+                                // If the trailing white space is at the right hand side of a left-aligned line, then computeHorizontalPositionsForLine()
+                                // does not care if trailingSpaceRun includes non-spaces at the beginning. In all other cases, trailingSpaceRun has to
+                                // contain only the spaces, either because we re-order them or because computeHorizontalPositionsForLine() needs to know
+                                // their width.
+                                bool shouldSeparateSpaces = textAlign != LEFT && textAlign != WEBKIT_LEFT && textAlign != TAAUTO || trailingSpaceRun->m_level % 2 || direction == RTL || shouldReorder;
+                                if (shouldSeparateSpaces) {
+                                    BidiContext* baseContext = start.context();
+                                    while (BidiContext* parent = baseContext->parent())
+                                        baseContext = parent;
 
-                            if (shouldSeparateSpaces) {
-                                BidiContext* baseContext = start.context();
-                                while (BidiContext* parent = baseContext->parent())
-                                    baseContext = parent;
-
-                                BidiRun* newTrailingRun = new (renderArena()) BidiRun(firstSpace, trailingSpaceRun->m_stop, trailingSpaceRun->m_object, baseContext, OtherNeutral);
-                                trailingSpaceRun->m_stop = firstSpace;
-                                if (style()->direction() == LTR)
-                                    start.addRun(newTrailingRun);
+                                    BidiRun* newTrailingRun = new (renderArena()) BidiRun(firstSpace, trailingSpaceRun->m_stop, trailingSpaceRun->m_object, baseContext, OtherNeutral);
+                                    trailingSpaceRun->m_stop = firstSpace;
+                                    if (direction == LTR)
+                                        start.addRun(newTrailingRun);
+                                    else
+                                        start.prependRun(newTrailingRun);
+                                    trailingSpaceRun = newTrailingRun;
+                                    shouldReorder = false;
+                                }
+                            }
+                            if (shouldReorder) {
+                                if (direction == LTR)
+                                    start.moveRunToEnd(trailingSpaceRun);
                                 else
-                                    start.prependRun(newTrailingRun);
-                                trailingSpaceRun = newTrailingRun;
+                                    start.moveRunToBeginning(trailingSpaceRun);
                             }
                         }
                     } else

@@ -144,6 +144,10 @@ public :
 
     void addRun(Run*);
     void prependRun(Run*);
+
+    void moveRunToEnd(Run*);
+    void moveRunToBeginning(Run*);
+
     void deleteRuns();
 
 protected:
@@ -189,6 +193,52 @@ inline void BidiResolver<Iterator, Run>::prependRun(Run* run)
         run->m_next = m_firstRun;
     m_firstRun = run;
     m_runCount++;
+}
+
+template <class Iterator, class Run>
+inline void BidiResolver<Iterator, Run>::moveRunToEnd(Run* run)
+{
+    ASSERT(m_firstRun);
+    ASSERT(m_lastRun);
+    ASSERT(run->m_next);
+
+    Run* current = 0;
+    Run* next = m_firstRun;
+    while (next != run) {
+        current = next;
+        next = current->next();
+    }
+
+    if (!current)
+        m_firstRun = run->next();
+    else
+        current->m_next = run->m_next;
+
+    run->m_next = 0;
+    m_lastRun->m_next = run;
+    m_lastRun = run;
+}
+
+template <class Iterator, class Run>
+inline void BidiResolver<Iterator, Run>::moveRunToBeginning(Run* run)
+{
+    ASSERT(m_firstRun);
+    ASSERT(m_lastRun);
+    ASSERT(run != m_firstRun);
+
+    Run* current = m_firstRun;
+    Run* next = current->next();
+    while (next != run) {
+        current = next;
+        next = current->next();
+    }
+
+    current->m_next = run->m_next;
+    if (run == m_lastRun)
+        m_lastRun = current;
+
+    run->m_next = m_firstRun;
+    m_firstRun = run;
 }
 
 template <class Iterator, class Run>
