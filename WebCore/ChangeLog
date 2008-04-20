@@ -1,5 +1,16 @@
 2008-04-19  Alp Toker  <alp@nuanti.com>
 
+        Reviewed by Mark Rowe.
+
+        Complete the Cairo (CSS) gradient implementation.
+
+        * platform/graphics/Gradient.h:
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::platformDestroy):
+        (WebCore::Gradient::fill):
+
+2008-04-19  Alp Toker  <alp@nuanti.com>
+
         Reviewed by Dave Hyatt.
 
         Restore Cairo canvas support following the recent changes in

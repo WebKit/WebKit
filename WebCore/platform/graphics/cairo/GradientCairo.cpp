@@ -28,14 +28,17 @@
 #include "Gradient.h"
 
 #include "CSSParser.h"
+#include "GraphicsContext.h"
 #include <cairo.h>
 
 namespace WebCore {
 
 void Gradient::platformDestroy()
 {
-    cairo_pattern_destroy(m_gradient);
-    m_gradient = 0;
+    if (m_gradient) {
+        cairo_pattern_destroy(m_gradient);
+        m_gradient = 0;
+    }
 }
 
 cairo_pattern_t* Gradient::platformGradient()
@@ -55,6 +58,17 @@ cairo_pattern_t* Gradient::platformGradient()
     }
 
     return m_gradient;
+}
+
+void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
+{
+    cairo_t* cr = context->platformContext();
+
+    cairo_save(cr);
+    cairo_set_source(cr, platformGradient());
+    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
+    cairo_fill(cr);
+    cairo_restore(cr);
 }
 
 } //namespace

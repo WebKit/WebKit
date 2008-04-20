@@ -79,7 +79,7 @@ namespace WebCore {
 
         void setStopsSorted(bool s) { m_stopsSorted = s; }
 
-#if PLATFORM(CG)
+#if PLATFORM(CG) || PLATFORM(CAIRO)
         virtual void fill(GraphicsContext*, const FloatRect&);
 #else
         virtual void fill(GraphicsContext*, const FloatRect&) { notImplemented(); }
