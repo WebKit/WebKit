@@ -2502,22 +2502,30 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 
 - (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)draggingInfo
 {
+    Page* page = core(self);
+    if (!page)
+        return NSDragOperationNone;
+
     NSView <WebDocumentView>* view = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
     WebPasteboardHelper helper([view isKindOfClass:[WebHTMLView class]] ? (WebHTMLView*)view : nil);
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
     DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask], &helper);
-    return core(self)->dragController()->dragUpdated(&dragData);
+    return page->dragController()->dragUpdated(&dragData);
 }
 
 - (void)draggingExited:(id <NSDraggingInfo>)draggingInfo
 {
+    Page* page = core(self);
+    if (!page)
+        return;
+
     NSView <WebDocumentView>* view = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
     WebPasteboardHelper helper([view isKindOfClass:[WebHTMLView class]] ? (WebHTMLView*)view : nil);
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
     DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask], &helper);
-    core(self)->dragController()->dragExited(&dragData);
+    page->dragController()->dragExited(&dragData);
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)draggingInfo

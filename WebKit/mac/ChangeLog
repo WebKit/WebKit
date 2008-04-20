@@ -1,3 +1,16 @@
+2008-04-20  Matt Lilek  <webkit@mattlilek.com>
+
+        Mysteriously reviewed by mitz|away.
+
+        Bug 18111: Closing a tab while dragging crashes Safari
+        https://bugs.webkit.org/show_bug.cgi?id=18111
+
+        Null check the page before handling drag events.
+
+        * WebView/WebView.mm:
+        (-[WebView draggingUpdated:]):
+        (-[WebView draggingExited:]):
+
 2008-04-19  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher
