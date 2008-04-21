@@ -1,9 +1,23 @@
+2008-04-21  Simon Hausmann  <shausman@trolltech.com>
+
+        Reviewed by Holger.
+
+        Fixes: QWebView::url property behaviour strange in designer
+
+        Added QWebView/QWebFrame::setUrl, which unlike load() clears the view immediately, schedules a load of the url but also makes sure url() returns the set url. This setter is now also used for the url property.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setUrl):
+        * Api/qwebframe.h:
+        * Api/qwebview.cpp:
+        (QWebView::setUrl):
+        * Api/qwebview.h:
+
 2008-04-21  Andre Poenitz  <andre.poenitz@trolltech.com>
 
         Reviewed by Simon Hausmann <hausmann@webkit.org>.
 
-        Fixe compilation with Qt namespaces
-        
+        Fix compilation with Qt namespaces
 
         * Api/qwebframe.cpp:
         (QWebFrame::print):

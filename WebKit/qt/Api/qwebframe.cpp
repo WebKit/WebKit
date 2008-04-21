@@ -226,8 +226,17 @@ QString QWebFrame::title() const
 }
 
 /*!
-  The url of this frame.
+    \property QWebFrame::url
+    \brief the url of the frame currently viewed.
 */
+
+void QWebFrame::setUrl(const QUrl &url)
+{
+    d->frame->loader()->begin(url);
+    d->frame->loader()->end();
+    load(url);
+}
+
 QUrl QWebFrame::url() const
 {
     return d->frame->loader()->url();

@@ -227,6 +227,12 @@ QString QWebView::title() const
     \property QWebView::url
     \brief the url of the web page currently viewed.
 */
+
+void QWebView::setUrl(const QUrl &url)
+{
+    page()->mainFrame()->setUrl(url);
+}
+
 QUrl QWebView::url() const
 {
     if (d->page)
