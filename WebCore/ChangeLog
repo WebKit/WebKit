@@ -1,3 +1,32 @@
+2008-04-21  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Fix painting of text fields in the CleanLooks style.
+
+        The CleanLooks style calls painter->drawRect() and expects a painter
+        that has no brush set. This is a fairly common assumption and therefore
+        we now always set the brush to NoBrush before calling a style. This
+        is done by centralizing the painter setup code into StylePainter
+        and restore the old brush in the StylePainter destructor.
+
+        In addition for textfields it is not necessary anymore to draw
+        PE_FrameLineEdit as we set the lineWidth in the style option correctly
+        and it's the style responsibility (QCommonStyle usually) to draw
+        PE_FrameLineEdit.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintButton):
+        (WebCore::RenderThemeQt::paintTextField):
+        (WebCore::RenderThemeQt::paintMenuList):
+        (WebCore::StylePainter::StylePainter):
+        (WebCore::StylePainter::~StylePainter):
+        * platform/qt/RenderThemeQt.h:
+        (WebCore::StylePainter::isValid):
+        (WebCore::StylePainter::drawPrimitive):
+        (WebCore::StylePainter::drawControl):
+        (WebCore::StylePainter::drawComplexControl):
+
 2008-04-21  Olivier Goffart  <ogoffart@trolltech.com>
 
         Reviewed by Simon.

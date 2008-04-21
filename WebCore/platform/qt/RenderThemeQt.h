@@ -24,11 +24,11 @@
 
 #include "RenderTheme.h"
 
+#include <QStyle>
+
 QT_BEGIN_NAMESPACE
-class QStyle;
 class QPainter;
 class QWidget;
-class QStyleOption;
 QT_END_NAMESPACE
 
 namespace WebCore {
@@ -105,7 +105,6 @@ protected:
 private:
     bool supportsFocus(EAppearance) const;
 
-    bool getStylePainterAndWidgetFromPaintInfo(const RenderObject::PaintInfo&, QStyle*&, QPainter*&, QWidget*&) const;
     EAppearance applyTheme(QStyleOption&, RenderObject*) const;
 
     void setSizeFromFont(RenderStyle*) const;
@@ -113,6 +112,31 @@ private:
     void setButtonPadding(RenderStyle*) const;
     void setPopupPadding(RenderStyle*) const;
     void setPrimitiveSize(RenderStyle*) const;
+};
+
+class StylePainter
+{
+public:
+    explicit StylePainter(const RenderObject::PaintInfo& paintInfo);
+    ~StylePainter();
+
+    bool isValid() const { return painter && style; }
+
+    QPainter* painter;
+    QWidget* widget;
+    QStyle* style;
+
+    void drawPrimitive(QStyle::PrimitiveElement pe, const QStyleOption& opt)
+    { style->drawPrimitive(pe, &opt, painter, widget); }
+    void drawControl(QStyle::ControlElement ce, const QStyleOption& opt)
+    { style->drawControl(ce, &opt, painter, widget); }
+    void drawComplexControl(QStyle::ComplexControl cc, const QStyleOptionComplex& opt)
+    { style->drawComplexControl(cc, &opt, painter, widget); }
+
+private:
+    QBrush oldBrush;
+
+    Q_DISABLE_COPY(StylePainter)
 };
 
 }

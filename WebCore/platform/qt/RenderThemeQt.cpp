@@ -34,7 +34,6 @@
 #include <QApplication>
 #include <QColor>
 #include <QDebug>
-#include <QStyle>
 #include <QWidget>
 #include <QPainter>
 #include <QStyleOptionButton>
@@ -218,27 +217,24 @@ void RenderThemeQt::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* s
 
 bool RenderThemeQt::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    QStyle* style = 0;
-    QPainter* painter = 0;
-    QWidget* widget = 0;
-
-    if (!getStylePainterAndWidgetFromPaintInfo(i, style, painter, widget))
+    StylePainter p(i);
+    if (!p.isValid())
         return true;
 
     QStyleOptionButton option;
-    if (widget)
-        option.initFrom(widget);
+    if (p.widget)
+        option.initFrom(p.widget);
     option.rect = r;
 
     // Get the correct theme data for a button
     EAppearance appearance = applyTheme(option, o);
 
     if(appearance == PushButtonAppearance || appearance == ButtonAppearance)
-        style->drawControl(QStyle::CE_PushButton, &option, painter);
+        p.drawControl(QStyle::CE_PushButton, option);
     else if(appearance == RadioAppearance)
-        style->drawPrimitive(QStyle::PE_IndicatorRadioButton, &option, painter, widget);
+        p.drawPrimitive(QStyle::PE_IndicatorRadioButton, option);
     else if(appearance == CheckboxAppearance)
-        style->drawPrimitive(QStyle::PE_IndicatorCheckBox, &option, painter, widget);
+        p.drawPrimitive(QStyle::PE_IndicatorCheckBox, option);
 
     return false;
 }
@@ -250,18 +246,15 @@ void RenderThemeQt::setButtonSize(RenderStyle* style) const
 
 bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    QStyle* style = 0;
-    QPainter* painter = 0;
-    QWidget* widget = 0;
-
-    if (!getStylePainterAndWidgetFromPaintInfo(i, style, painter, widget))
+    StylePainter p(i);
+    if (!p.isValid())
         return true;
 
     QStyleOptionFrameV2 panel;
-    if (widget)
-        panel.initFrom(widget);
+    if (p.widget)
+        panel.initFrom(p.widget);
     panel.rect = r;
-    panel.lineWidth = style->pixelMetric(QStyle::PM_DefaultFrameWidth, &panel, widget);
+    panel.lineWidth = p.style->pixelMetric(QStyle::PM_DefaultFrameWidth, &panel, p.widget);
     panel.state |= QStyle::State_Sunken;
     panel.features = QStyleOptionFrameV2::None;
 
@@ -270,9 +263,8 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
     Q_ASSERT(appearance == TextFieldAppearance || appearance == SearchFieldAppearance);
 
     // Now paint the text field.
-    style->drawPrimitive(QStyle::PE_PanelLineEdit, &panel, painter, widget);
-    style->drawPrimitive(QStyle::PE_FrameLineEdit, &panel, painter, widget);
-      
+    p.drawPrimitive(QStyle::PE_PanelLineEdit, panel);
+
     return false;
 }
 
@@ -303,26 +295,23 @@ void RenderThemeQt::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, E
 
 bool RenderThemeQt::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    QStyle* style = 0;
-    QPainter* painter = 0;
-    QWidget* widget = 0;
-
-    if (!getStylePainterAndWidgetFromPaintInfo(i, style, painter, widget))
+    StylePainter p(i);
+    if (!p.isValid())
         return true;
 
     QStyleOptionComboBox opt;
-    if (widget)
-        opt.initFrom(widget);
+    if (p.widget)
+        opt.initFrom(p.widget);
     EAppearance appearance = applyTheme(opt, o);
     const QPoint topLeft = r.topLeft();
-    painter->translate(topLeft);
+    p.painter->translate(topLeft);
     opt.rect.moveTo(QPoint(0,0));
     opt.rect.setSize(r.size());
 
     opt.frame = false;
 
-    style->drawComplexControl(QStyle::CC_ComboBox, &opt, painter, widget);
-    painter->translate(-topLeft);
+    p.drawComplexControl(QStyle::CC_ComboBox, opt);
+    p.painter->translate(-topLeft);
     return false;
 }
 
@@ -424,21 +413,6 @@ bool RenderThemeQt::supportsFocus(EAppearance appearance) const
         default: // No for all others...
             return false;
     }
-}
-
-bool RenderThemeQt::getStylePainterAndWidgetFromPaintInfo(const RenderObject::PaintInfo& i, QStyle*& style,
-                                                          QPainter*& painter, QWidget*& widget) const
-{
-    painter = (i.context ? static_cast<QPainter*>(i.context->platformContext()) : 0);
-    widget = 0;
-    QPaintDevice* dev = 0;
-    if (painter)
-        dev = painter->device();
-    if (dev && dev->devType() == QInternal::Widget)
-        widget = static_cast<QWidget*>(dev);
-    style = (widget ? widget->style() : QApplication::style());
-
-    return (painter && style);
 }
 
 EAppearance RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) const
@@ -587,6 +561,31 @@ void RenderThemeQt::setPrimitiveSize(RenderStyle* style) const
 
     // Use the font size to determine the intrinsic width of the control.
     setSizeFromFont(style);
+}
+
+StylePainter::StylePainter(const RenderObject::PaintInfo& paintInfo)
+{
+    painter = (paintInfo.context ? static_cast<QPainter*>(paintInfo.context->platformContext()) : 0);
+    widget = 0;
+    QPaintDevice* dev = 0;
+    if (painter)
+        dev = painter->device();
+    if (dev && dev->devType() == QInternal::Widget)
+        widget = static_cast<QWidget*>(dev);
+    style = (widget ? widget->style() : QApplication::style());
+
+    if (painter) {
+        // the styles often assume being called with a pristine painter where no brush is set,
+        // so reset it manually
+        oldBrush = painter->brush();
+        painter->setBrush(Qt::NoBrush);
+    }
+}
+
+StylePainter::~StylePainter()
+{
+    if (painter)
+        painter->setBrush(oldBrush);
 }
 
 }
