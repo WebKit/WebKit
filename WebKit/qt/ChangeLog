@@ -1,3 +1,12 @@
+2008-04-21  Marius Bugge Monsen  <mmonsen@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix compile failure on solaris-cc
+
+        * Api/qwebpage.h: Removed trailing semicolons and moved the private
+        d-pointer to not confuse the compiler
+
 2008-04-21  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.
