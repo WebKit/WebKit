@@ -116,6 +116,13 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-marquee-increment: 6px
     -webkit-marquee-repetition: infinite
     -webkit-marquee-style: scroll
+    -webkit-mask-attachment: scroll
+    -webkit-mask-image: none
+    -webkit-mask-position: 0% 0%
+    -webkit-mask-repeat: repeat
+    -webkit-mask-clip: border
+    -webkit-mask-origin: border
+    -webkit-mask-size: 100% 100%
     -webkit-nbsp-mode: normal
     -webkit-rtl-ordering: logical
     -webkit-text-decorations-in-effect: none

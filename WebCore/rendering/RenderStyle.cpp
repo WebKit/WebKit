@@ -221,16 +221,16 @@ Image* StyleGeneratedImage::image(RenderObject* renderer, const IntSize& size) c
     return m_generator->image(renderer, size);
 }
 
-FillLayer::FillLayer()
-    : m_image(RenderStyle::initialFillImage())
-    , m_xPosition(RenderStyle::initialFillXPosition())
-    , m_yPosition(RenderStyle::initialFillYPosition())
-    , m_attachment(RenderStyle::initialFillAttachment())
-    , m_clip(RenderStyle::initialFillClip())
-    , m_origin(RenderStyle::initialFillOrigin())
-    , m_repeat(RenderStyle::initialFillRepeat())
-    , m_composite(RenderStyle::initialFillComposite())
-    , m_size(RenderStyle::initialFillSize())
+FillLayer::FillLayer(EFillLayerType type)
+    : m_image(FillLayer::initialFillImage(type))
+    , m_xPosition(FillLayer::initialFillXPosition(type))
+    , m_yPosition(FillLayer::initialFillYPosition(type))
+    , m_attachment(FillLayer::initialFillAttachment(type))
+    , m_clip(FillLayer::initialFillClip(type))
+    , m_origin(FillLayer::initialFillOrigin(type))
+    , m_repeat(FillLayer::initialFillRepeat(type))
+    , m_composite(FillLayer::initialFillComposite(type))
+    , m_size(FillLayer::initialFillSize(type))
     , m_imageSet(false)
     , m_attachmentSet(false)
     , m_clipSet(false)
@@ -240,6 +240,7 @@ FillLayer::FillLayer()
     , m_yPosSet(false)
     , m_compositeSet(false)
     , m_sizeSet(false)
+    , m_type(type)
     , m_next(0)
 {
 }
@@ -263,6 +264,7 @@ FillLayer::FillLayer(const FillLayer& o)
     , m_yPosSet(o.m_yPosSet)
     , m_compositeSet(o.m_compositeSet)
     , m_sizeSet(o.m_sizeSet)
+    , m_type(o.m_type)
     , m_next(o.m_next ? new FillLayer(*o.m_next) : 0)
 {
 }
@@ -298,6 +300,8 @@ FillLayer& FillLayer::operator=(const FillLayer& o)
     m_xPosSet = o.m_xPosSet;
     m_yPosSet = o.m_yPosSet;
     m_sizeSet = o.m_sizeSet;
+    
+    m_type = o.m_type;
 
     return *this;
 }
@@ -309,7 +313,7 @@ bool FillLayer::operator==(const FillLayer& o) const
     return imagesEquivalent(m_image.get(), o.m_image.get()) && m_xPosition == o.m_xPosition && m_yPosition == o.m_yPosition &&
            m_attachment == o.m_attachment && m_clip == o.m_clip && 
            m_composite == o.m_composite && m_origin == o.m_origin && m_repeat == o.m_repeat &&
-           m_size.width == o.m_size.width && m_size.height == o.m_size.height && 
+           m_size.width == o.m_size.width && m_size.height == o.m_size.height && m_type == o.m_type &&
            ((m_next && o.m_next) ? *m_next == *o.m_next : m_next == o.m_next);
 }
 
@@ -434,6 +438,7 @@ void FillLayer::cullEmptyLayers()
 }
 
 StyleBackgroundData::StyleBackgroundData()
+: m_background(BackgroundFillLayer)
 {
 }
 
@@ -780,6 +785,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_borderFit(RenderStyle::initialBorderFit())
     , m_boxShadow(0)
     , m_transition(0)
+    , m_mask(MaskFillLayer)
 #if ENABLE(XBL)
     , bindingURI(0)
 #endif
@@ -805,6 +811,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_borderFit(o.m_borderFit)
     , m_boxShadow(o.m_boxShadow ? new ShadowData(*o.m_boxShadow) : 0)
     , m_transition(o.m_transition ? new Transition(*o.m_transition) : 0)
+    , m_mask(o.m_mask)
 #if ENABLE(XBL)
     , bindingURI(o.bindingURI ? o.bindingURI->copy() : 0)
 #endif
@@ -854,6 +861,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_borderFit == o.m_borderFit
         && shadowDataEquivalent(o)
         && transitionDataEquivalent(o)
+        && m_mask == o.m_mask
 #if ENABLE(XBL)
         && bindingsEquivalent(o)
 #endif
@@ -1441,7 +1449,8 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
             return RepaintLayer;
     }
 
-    if (rareNonInheritedData->opacity != other->rareNonInheritedData->opacity)
+    if (rareNonInheritedData->opacity != other->rareNonInheritedData->opacity ||
+        rareNonInheritedData->m_mask != other->rareNonInheritedData->m_mask)
         return RepaintLayer;
 
     if (inherited->color != other->inherited->color ||
@@ -1465,17 +1474,6 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
     // Transitions don't need to be checked either.  We always set the new style on the RenderObject, so we will get a chance to fire off
     // the resulting transition properly.
     return Equal;
-}
-
-void RenderStyle::adjustBackgroundLayers()
-{
-    if (backgroundLayers()->next()) {
-        // First we cull out layers that have no properties set.
-        accessBackgroundLayers()->cullEmptyLayers();
-        
-        // Next we repeat patterns into layers that don't have some properties set.
-        accessBackgroundLayers()->fillUnsetProperties();
-    }
 }
 
 void RenderStyle::setClip( Length top, Length right, Length bottom, Length left )

@@ -160,6 +160,13 @@ static const int computedProperties[] = {
     CSSPropertyWebkitMarqueeIncrement,
     CSSPropertyWebkitMarqueeRepetition,
     CSSPropertyWebkitMarqueeStyle,
+    CSSPropertyWebkitMaskAttachment,
+    CSSPropertyWebkitMaskImage,
+    CSSPropertyWebkitMaskPosition,
+    CSSPropertyWebkitMaskRepeat,
+    CSSPropertyWebkitMaskClip,
+    CSSPropertyWebkitMaskOrigin,
+    CSSPropertyWebkitMaskSize,
     CSSPropertyWebkitNbspMode,
     CSSPropertyWebkitRtlOrdering,
     CSSPropertyWebkitTextDecorationsInEffect,
@@ -614,6 +621,39 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return new CSSPrimitiveValue(style->marqueeLoopCount(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitMarqueeStyle:
             return new CSSPrimitiveValue(style->marqueeBehavior());
+        case CSSPropertyWebkitMaskImage:
+            if (style->maskImage())
+                return style->maskImage()->cssValue();
+            return new CSSPrimitiveValue(CSSValueNone);
+        case CSSPropertyWebkitMaskSize: {
+            RefPtr<CSSValueList> list = new CSSValueList(true);
+            list->append(new CSSPrimitiveValue(style->maskSize().width));
+            list->append(new CSSPrimitiveValue(style->maskSize().height));
+            return list.release();
+        }  
+        case CSSPropertyWebkitMaskRepeat:
+            return new CSSPrimitiveValue(style->maskRepeat());
+        case CSSPropertyWebkitMaskAttachment:
+            if (style->maskAttachment())
+                return new CSSPrimitiveValue(CSSValueScroll);
+            return new CSSPrimitiveValue(CSSValueFixed);
+        case CSSPropertyWebkitMaskClip:
+        case CSSPropertyWebkitMaskOrigin: {
+            EFillBox box = (propertyID == CSSPropertyWebkitMaskClip ? style->maskClip() : style->maskOrigin());
+            return new CSSPrimitiveValue(box);
+        }
+        case CSSPropertyWebkitMaskPosition: {
+            RefPtr<CSSValueList> list = new CSSValueList(true);
+
+            list->append(new CSSPrimitiveValue(style->maskXPosition()));
+            list->append(new CSSPrimitiveValue(style->maskYPosition()));
+
+            return list.release();
+        }
+        case CSSPropertyWebkitMaskPositionX:
+            return new CSSPrimitiveValue(style->maskXPosition());
+        case CSSPropertyWebkitMaskPositionY:
+            return new CSSPrimitiveValue(style->maskYPosition());
         case CSSPropertyWebkitUserModify:
             return new CSSPrimitiveValue(style->userModify());
         case CSSPropertyMaxHeight: {

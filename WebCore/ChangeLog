@@ -1,3 +1,75 @@
+2008-04-21  David Hyatt  <hyatt@apple.com>
+
+        Make the back end parsing of background properties generic.  Rename all the parsing functions from
+        background -> fill.
+
+        Add a new set of properties for doing masks.  The code is now refactored so that the mask properties
+        and the background properties share parsing routines.
+
+        Reviewed by Dan
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::addFillValue):
+        (WebCore::CSSParser::parseFillShorthand):
+        (WebCore::CSSParser::parseFillImage):
+        (WebCore::CSSParser::parseFillPositionXY):
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parseFillSize):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseTransformOrigin):
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::mapFillAttachment):
+        (WebCore::CSSStyleSelector::mapFillClip):
+        (WebCore::CSSStyleSelector::mapFillComposite):
+        (WebCore::CSSStyleSelector::mapFillOrigin):
+        (WebCore::CSSStyleSelector::mapFillImage):
+        (WebCore::CSSStyleSelector::mapFillRepeat):
+        (WebCore::CSSStyleSelector::mapFillSize):
+        (WebCore::CSSStyleSelector::mapFillXPosition):
+        (WebCore::CSSStyleSelector::mapFillYPosition):
+        * rendering/RenderStyle.cpp:
+        (WebCore::FillLayer::FillLayer):
+        (WebCore::FillLayer::operator=):
+        (WebCore::FillLayer::operator==):
+        (WebCore::StyleBackgroundData::StyleBackgroundData):
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::RenderStyle::diff):
+        * rendering/RenderStyle.h:
+        (WebCore::LengthSize::LengthSize):
+        (WebCore::):
+        (WebCore::FillLayer::type):
+        (WebCore::FillLayer::initialFillAttachment):
+        (WebCore::FillLayer::initialFillClip):
+        (WebCore::FillLayer::initialFillOrigin):
+        (WebCore::FillLayer::initialFillRepeat):
+        (WebCore::FillLayer::initialFillComposite):
+        (WebCore::FillLayer::initialFillSize):
+        (WebCore::FillLayer::initialFillXPosition):
+        (WebCore::FillLayer::initialFillYPosition):
+        (WebCore::FillLayer::initialFillImage):
+        (WebCore::RenderStyle::maskImage):
+        (WebCore::RenderStyle::maskRepeat):
+        (WebCore::RenderStyle::maskComposite):
+        (WebCore::RenderStyle::maskAttachment):
+        (WebCore::RenderStyle::maskClip):
+        (WebCore::RenderStyle::maskOrigin):
+        (WebCore::RenderStyle::maskXPosition):
+        (WebCore::RenderStyle::maskYPosition):
+        (WebCore::RenderStyle::maskSize):
+        (WebCore::RenderStyle::accessMaskLayers):
+        (WebCore::RenderStyle::maskLayers):
+        (WebCore::RenderStyle::clearBackgroundLayers):
+        (WebCore::RenderStyle::clearMaskLayers):
+        (WebCore::RenderStyle::inheritMaskLayers):
+
 2008-04-21  Timothy Hatcher  <timothy@apple.com>
 
         Fixes the issue were a Database view could still be visible after navigating to a new page.

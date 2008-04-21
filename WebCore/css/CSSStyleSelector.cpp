@@ -103,15 +103,15 @@ if (isInitial) { \
     return;\
 }
 
-#define HANDLE_MULTILAYER_INHERIT_AND_INITIAL(LayerType, LayerTypePrefix, layerName, LayerName, prop, Prop) \
+#define HANDLE_FILL_LAYER_INHERIT_AND_INITIAL(layerType, LayerType, prop, Prop) \
 if (isInherit) { \
-    LayerType* currChild = m_style->access##LayerName##s(); \
-    LayerType* prevChild = 0; \
-    const LayerType* currParent = m_parentStyle->layerName##s(); \
+    FillLayer* currChild = m_style->access##LayerType##Layers(); \
+    FillLayer* prevChild = 0; \
+    const FillLayer* currParent = m_parentStyle->layerType##Layers(); \
     while (currParent && currParent->is##Prop##Set()) { \
         if (!currChild) { \
             /* Need to make a new layer.*/ \
-            currChild = new LayerType(); \
+            currChild = new FillLayer(LayerType##FillLayer); \
             prevChild->setNext(currChild); \
         } \
         currChild->set##Prop(currParent->prop()); \
@@ -126,33 +126,33 @@ if (isInherit) { \
         currChild = currChild->next(); \
     } \
 } else if (isInitial) { \
-    LayerType* currChild = m_style->access##LayerName##s(); \
-    currChild->set##Prop(RenderStyle::initial##LayerTypePrefix##Prop()); \
+    FillLayer* currChild = m_style->access##LayerType##Layers(); \
+    currChild->set##Prop(FillLayer::initialFill##Prop(LayerType##FillLayer)); \
     for (currChild = currChild->next(); currChild; currChild = currChild->next()) \
         currChild->clear##Prop(); \
 }
 
-#define HANDLE_MULTILAYER_VALUE(LayerType, LayerTypePrefix, layerName, LayerName, prop, Prop, value) { \
-HANDLE_MULTILAYER_INHERIT_AND_INITIAL(LayerType, LayerTypePrefix, layerName, LayerName, prop, Prop) \
+#define HANDLE_FILL_LAYER_VALUE(layerType, LayerType, prop, Prop, value) { \
+HANDLE_FILL_LAYER_INHERIT_AND_INITIAL(layerType, LayerType, prop, Prop) \
 if (isInherit || isInitial) \
     return; \
-LayerType* currChild = m_style->access##LayerName##s(); \
-LayerType* prevChild = 0; \
+FillLayer* currChild = m_style->access##LayerType##Layers(); \
+FillLayer* prevChild = 0; \
 if (value->isValueList()) { \
     /* Walk each value and put it into a layer, creating new layers as needed. */ \
     CSSValueList* valueList = static_cast<CSSValueList*>(value); \
     for (unsigned int i = 0; i < valueList->length(); i++) { \
         if (!currChild) { \
             /* Need to make a new layer to hold this value */ \
-            currChild = new LayerType(); \
+            currChild = new FillLayer(LayerType##FillLayer); \
             prevChild->setNext(currChild); \
         } \
-        map##LayerTypePrefix##Prop(currChild, valueList->itemWithoutBoundsCheck(i)); \
+        mapFill##Prop(currChild, valueList->itemWithoutBoundsCheck(i)); \
         prevChild = currChild; \
         currChild = currChild->next(); \
     } \
 } else { \
-    map##LayerTypePrefix##Prop(currChild, value); \
+    mapFill##Prop(currChild, value); \
     currChild = currChild->next(); \
 } \
 while (currChild) { \
@@ -162,13 +162,68 @@ while (currChild) { \
 } }
 
 #define HANDLE_BACKGROUND_INHERIT_AND_INITIAL(prop, Prop) \
-HANDLE_MULTILAYER_INHERIT_AND_INITIAL(FillLayer, Fill, backgroundLayer, BackgroundLayer, prop, Prop)
+HANDLE_FILL_LAYER_INHERIT_AND_INITIAL(background, Background, prop, Prop)
 
 #define HANDLE_BACKGROUND_VALUE(prop, Prop, value) \
-HANDLE_MULTILAYER_VALUE(FillLayer, Fill, backgroundLayer, BackgroundLayer, prop, Prop, value)
+HANDLE_FILL_LAYER_VALUE(background, Background, prop, Prop, value)
 
-#define HANDLE_TRANSITION_VALUE(prop, Prop, value) \
-HANDLE_MULTILAYER_VALUE(Transition, Transition, transition, Transition, prop, Prop, value)
+#define HANDLE_TRANSITION_INHERIT_AND_INITIAL(prop, Prop) \
+if (isInherit) { \
+    Transition* currChild = m_style->accessTransitions(); \
+    Transition* prevChild = 0; \
+    const Transition* currParent = m_parentStyle->transitions(); \
+    while (currParent && currParent->is##Prop##Set()) { \
+        if (!currChild) { \
+            /* Need to make a new layer.*/ \
+            currChild = new Transition(); \
+            prevChild->setNext(currChild); \
+        } \
+        currChild->set##Prop(currParent->prop()); \
+        prevChild = currChild; \
+        currChild = prevChild->next(); \
+        currParent = currParent->next(); \
+    } \
+    \
+    while (currChild) { \
+        /* Reset any remaining layers to not have the property set. */ \
+        currChild->clear##Prop(); \
+        currChild = currChild->next(); \
+    } \
+} else if (isInitial) { \
+    Transition* currChild = m_style->accessTransitions(); \
+    currChild->set##Prop(RenderStyle::initialTransition##Prop()); \
+    for (currChild = currChild->next(); currChild; currChild = currChild->next()) \
+        currChild->clear##Prop(); \
+}
+
+#define HANDLE_TRANSITION_VALUE(prop, Prop, value) { \
+HANDLE_TRANSITION_INHERIT_AND_INITIAL(prop, Prop) \
+if (isInherit || isInitial) \
+    return; \
+Transition* currChild = m_style->accessTransitions(); \
+Transition* prevChild = 0; \
+if (value->isValueList()) { \
+    /* Walk each value and put it into a layer, creating new layers as needed. */ \
+    CSSValueList* valueList = static_cast<CSSValueList*>(value); \
+    for (unsigned int i = 0; i < valueList->length(); i++) { \
+        if (!currChild) { \
+            /* Need to make a new layer to hold this value */ \
+            currChild = new Transition(); \
+            prevChild->setNext(currChild); \
+        } \
+        mapTransition##Prop(currChild, valueList->itemWithoutBoundsCheck(i)); \
+        prevChild = currChild; \
+        currChild = currChild->next(); \
+    } \
+} else { \
+    mapTransition##Prop(currChild, value); \
+    currChild = currChild->next(); \
+} \
+while (currChild) { \
+    /* Reset all remaining layers to not have the property set. */ \
+    currChild->clear##Prop(); \
+    currChild = currChild->next(); \
+} }
 
 #define HANDLE_INHERIT_COND(propID, prop, Prop) \
 if (id == propID) { \
@@ -239,6 +294,7 @@ static const MediaQueryEvaluator& printEval()
 
 CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, StyleSheetList* styleSheets, CSSStyleSheet* mappedElementSheet, bool strictParsing, bool matchAuthorAndUserStyles)
     : m_strictParsing(strictParsing)
+    , m_backgroundData(BackgroundFillLayer)
 {
     init();
     
@@ -1155,6 +1211,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
 
     // Cull out any useless layers and also repeat patterns into additional layers.
     style->adjustBackgroundLayers();
+    style->adjustMaskLayers();
 
     // Do the same for transitions.
     style->adjustTransitions();
@@ -4591,7 +4648,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 void CSSStyleSelector::mapFillAttachment(FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        layer->setAttachment(RenderStyle::initialFillAttachment());
+        layer->setAttachment(FillLayer::initialFillAttachment(layer->type()));
         return;
     }
 
@@ -4614,7 +4671,7 @@ void CSSStyleSelector::mapFillAttachment(FillLayer* layer, CSSValue* value)
 void CSSStyleSelector::mapFillClip(FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        layer->setClip(RenderStyle::initialFillClip());
+        layer->setClip(FillLayer::initialFillClip(layer->type()));
         return;
     }
 
@@ -4628,7 +4685,7 @@ void CSSStyleSelector::mapFillClip(FillLayer* layer, CSSValue* value)
 void CSSStyleSelector::mapFillComposite(FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        layer->setComposite(RenderStyle::initialFillComposite());
+        layer->setComposite(FillLayer::initialFillComposite(layer->type()));
         return;
     }
     
@@ -4642,7 +4699,7 @@ void CSSStyleSelector::mapFillComposite(FillLayer* layer, CSSValue* value)
 void CSSStyleSelector::mapFillOrigin(FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        layer->setOrigin(RenderStyle::initialFillOrigin());
+        layer->setOrigin(FillLayer::initialFillOrigin(layer->type()));
         return;
     }
 
@@ -4665,7 +4722,7 @@ StyleImage* CSSStyleSelector::styleImage(CSSValue* value)
 void CSSStyleSelector::mapFillImage(FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        layer->setImage(RenderStyle::initialFillImage());
+        layer->setImage(FillLayer::initialFillImage(layer->type()));
         return;
     }
 
@@ -4675,7 +4732,7 @@ void CSSStyleSelector::mapFillImage(FillLayer* layer, CSSValue* value)
 void CSSStyleSelector::mapFillRepeat(FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        layer->setRepeat(RenderStyle::initialFillRepeat());
+        layer->setRepeat(FillLayer::initialFillRepeat(layer->type()));
         return;
     }
     
@@ -4688,7 +4745,7 @@ void CSSStyleSelector::mapFillRepeat(FillLayer* layer, CSSValue* value)
 
 void CSSStyleSelector::mapFillSize(FillLayer* layer, CSSValue* value)
 {
-    LengthSize b = RenderStyle::initialFillSize();
+    LengthSize b = FillLayer::initialFillSize(layer->type());
     
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setSize(b);
@@ -4741,7 +4798,7 @@ void CSSStyleSelector::mapFillSize(FillLayer* layer, CSSValue* value)
 void CSSStyleSelector::mapFillXPosition(FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        layer->setXPosition(RenderStyle::initialFillXPosition());
+        layer->setXPosition(FillLayer::initialFillXPosition(layer->type()));
         return;
     }
     
@@ -4765,7 +4822,7 @@ void CSSStyleSelector::mapFillXPosition(FillLayer* layer, CSSValue* value)
 void CSSStyleSelector::mapFillYPosition(FillLayer* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        layer->setYPosition(RenderStyle::initialFillYPosition());
+        layer->setYPosition(FillLayer::initialFillYPosition(layer->type()));
         return;
     }
     

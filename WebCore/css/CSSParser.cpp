@@ -875,11 +875,20 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBackgroundPositionX:
     case CSSPropertyBackgroundPositionY:
     case CSSPropertyWebkitBackgroundSize:
-    case CSSPropertyBackgroundRepeat: {
+    case CSSPropertyBackgroundRepeat:
+    case CSSPropertyWebkitMaskAttachment:
+    case CSSPropertyWebkitMaskClip:
+    case CSSPropertyWebkitMaskImage:
+    case CSSPropertyWebkitMaskOrigin:
+    case CSSPropertyWebkitMaskPosition:
+    case CSSPropertyWebkitMaskPositionX:
+    case CSSPropertyWebkitMaskPositionY:
+    case CSSPropertyWebkitMaskSize:
+    case CSSPropertyWebkitMaskRepeat: {
         RefPtr<CSSValue> val1;
         RefPtr<CSSValue> val2;
         int propId1, propId2;
-        if (parseBackgroundProperty(propId, propId1, propId2, val1, val2)) {
+        if (parseFillProperty(propId, propId1, propId2, val1, val2)) {
             addProperty(propId1, val1.release(), important);
             if (val2)
                 addProperty(propId2, val2.release(), important);
@@ -1435,10 +1444,21 @@ bool CSSParser::parseValue(int propId, bool important)
     // End Apple-specific properties
 
         /* shorthand properties */
-    case CSSPropertyBackground:
-        // ['background-color' || 'background-image' || 'background-size' || 'background-repeat' ||
-        // 'background-attachment' || 'background-position'] | inherit
-        return parseBackgroundShorthand(important);
+    case CSSPropertyBackground: {
+        // Position must come before color in this array because a plain old "0" is a legal color
+        // in quirks mode but it's usually the X coordinate of a position.
+        // FIXME: Add CSSPropertyWebkitBackgroundSize to the shorthand.
+        const int properties[] = { CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeat, 
+                                   CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPosition, CSSPropertyWebkitBackgroundClip,
+                                   CSSPropertyWebkitBackgroundOrigin, CSSPropertyBackgroundColor };
+        return parseFillShorthand(propId, properties, 7, important);
+    }
+    case CSSPropertyWebkitMask: {
+        const int properties[] = { CSSPropertyWebkitMaskImage, CSSPropertyWebkitMaskRepeat, 
+                                   CSSPropertyWebkitMaskAttachment, CSSPropertyWebkitMaskPosition, CSSPropertyWebkitMaskClip,
+                                   CSSPropertyWebkitMaskOrigin };
+        return parseFillShorthand(propId, properties, 6, important);
+    }
     case CSSPropertyBorder:
         // [ 'border-width' || 'border-style' || <color> ] | inherit
     {
@@ -1579,7 +1599,7 @@ bool CSSParser::parseValue(int propId, bool important)
     return false;
 }
 
-void CSSParser::addBackgroundValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval)
+void CSSParser::addFillValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval)
 {
     if (lval) {
         if (lval->isValueList())
@@ -1596,19 +1616,17 @@ void CSSParser::addBackgroundValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> 
         lval = rval;
 }
 
-bool CSSParser::parseBackgroundShorthand(bool important)
-{
-    // Position must come before color in this array because a plain old "0" is a legal color
-    // in quirks mode but it's usually the X coordinate of a position.
-    // FIXME: Add CSSPropertyKhtmlBackgroundSize to the shorthand.
-    const int properties[] = { CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeat, 
-        CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPosition, CSSPropertyWebkitBackgroundClip,
-        CSSPropertyWebkitBackgroundOrigin, CSSPropertyBackgroundColor };
-    const int numProperties = sizeof(properties) / sizeof(properties[0]);
-    
-    ShorthandScope scope(this, CSSPropertyBackground);
+const int cMaxFillProperties = 7;
 
-    bool parsedProperty[numProperties] = { false }; // compiler will repeat false as necessary
+bool CSSParser::parseFillShorthand(int propId, const int* properties, int numProperties, bool important)
+{
+    ASSERT(numProperties <= cMaxFillProperties);
+    if (numProperties > cMaxFillProperties)
+        return false;
+
+    ShorthandScope scope(this, propId);
+
+    bool parsedProperty[cMaxFillProperties] = { false };
     RefPtr<CSSValue> values[numProperties];
     RefPtr<CSSValue> positionYValue;
     int i;
@@ -1620,14 +1638,14 @@ bool CSSParser::parseBackgroundShorthand(bool important)
             valueList->next();
             for (i = 0; i < numProperties; ++i) {
                 if (properties[i] == CSSPropertyBackgroundColor && parsedProperty[i])
-                    // Color is not allowed except as the last item in a list.  Reject the entire
-                    // property.
+                    // Color is not allowed except as the last item in a list for backgrounds.
+                    // Reject the entire property.
                     return false;
 
                 if (!parsedProperty[i] && properties[i] != CSSPropertyBackgroundColor) {
-                    addBackgroundValue(values[i], new CSSInitialValue(true));
-                    if (properties[i] == CSSPropertyBackgroundPosition)
-                        addBackgroundValue(positionYValue, new CSSInitialValue(true));
+                    addFillValue(values[i], new CSSInitialValue(true));
+                    if (properties[i] == CSSPropertyBackgroundPosition || properties[i] == CSSPropertyWebkitMaskPosition)
+                        addFillValue(positionYValue, new CSSInitialValue(true));
                 }
                 parsedProperty[i] = false;
             }
@@ -1641,11 +1659,11 @@ bool CSSParser::parseBackgroundShorthand(bool important)
                 RefPtr<CSSValue> val1;
                 RefPtr<CSSValue> val2;
                 int propId1, propId2;
-                if (parseBackgroundProperty(properties[i], propId1, propId2, val1, val2)) {
+                if (parseFillProperty(properties[i], propId1, propId2, val1, val2)) {
                     parsedProperty[i] = found = true;
-                    addBackgroundValue(values[i], val1.release());
-                    if (properties[i] == CSSPropertyBackgroundPosition)
-                        addBackgroundValue(positionYValue, val2.release());
+                    addFillValue(values[i], val1.release());
+                    if (properties[i] == CSSPropertyBackgroundPosition || properties[i] == CSSPropertyWebkitMaskPosition)
+                        addFillValue(positionYValue, val2.release());
                 }
             }
         }
@@ -1659,9 +1677,9 @@ bool CSSParser::parseBackgroundShorthand(bool important)
     // Fill in any remaining properties with the initial value.
     for (i = 0; i < numProperties; ++i) {
         if (!parsedProperty[i]) {
-            addBackgroundValue(values[i], new CSSInitialValue(true));
-            if (properties[i] == CSSPropertyBackgroundPosition)
-                addBackgroundValue(positionYValue, new CSSInitialValue(true));
+            addFillValue(values[i], new CSSInitialValue(true));
+            if (properties[i] == CSSPropertyBackgroundPosition || properties[i] == CSSPropertyWebkitMaskPosition)
+                addFillValue(positionYValue, new CSSInitialValue(true));
         }
     }
     
@@ -1671,6 +1689,10 @@ bool CSSParser::parseBackgroundShorthand(bool important)
             addProperty(CSSPropertyBackgroundPositionX, values[i].release(), important);
             // it's OK to call positionYValue.release() since we only see CSSPropertyBackgroundPosition once
             addProperty(CSSPropertyBackgroundPositionY, positionYValue.release(), important);
+        } else if (properties[i] == CSSPropertyWebkitMaskPosition) {
+            addProperty(CSSPropertyWebkitMaskPositionX, values[i].release(), important);
+            // it's OK to call positionYValue.release() since we only see CSSPropertyWebkitMaskPosition once
+            addProperty(CSSPropertyWebkitMaskPositionY, positionYValue.release(), important);
         } else
             addProperty(properties[i], values[i].release(), important);
     }
@@ -1924,7 +1946,7 @@ PassRefPtr<CSSValue> CSSParser::parseBackgroundColor()
     return parseColor();
 }
 
-bool CSSParser::parseBackgroundImage(RefPtr<CSSValue>& value)
+bool CSSParser::parseFillImage(RefPtr<CSSValue>& value)
 {
     if (valueList->current()->id == CSSValueNone) {
         value = new CSSImageValue();
@@ -1945,7 +1967,7 @@ bool CSSParser::parseBackgroundImage(RefPtr<CSSValue>& value)
     return false;
 }
 
-PassRefPtr<CSSValue> CSSParser::parseBackgroundPositionXY(bool& xFound, bool& yFound)
+PassRefPtr<CSSValue> CSSParser::parseFillPositionXY(bool& xFound, bool& yFound)
 {
     int id = valueList->current()->id;
     if (id == CSSValueLeft || id == CSSValueTop || id == CSSValueRight || id == CSSValueBottom || id == CSSValueCenter) {
@@ -1976,13 +1998,13 @@ PassRefPtr<CSSValue> CSSParser::parseBackgroundPositionXY(bool& xFound, bool& yF
     return 0;
 }
 
-void CSSParser::parseBackgroundPosition(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
+void CSSParser::parseFillPosition(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
 {
     Value* value = valueList->current();
     
     // Parse the first value.  We're just making sure that it is one of the valid keywords or a percentage/length.
     bool value1IsX = false, value1IsY = false;
-    value1 = parseBackgroundPositionXY(value1IsX, value1IsY);
+    value1 = parseFillPositionXY(value1IsX, value1IsY);
     if (!value1)
         return;
     
@@ -1997,7 +2019,7 @@ void CSSParser::parseBackgroundPosition(RefPtr<CSSValue>& value1, RefPtr<CSSValu
     
     bool value2IsX = false, value2IsY = false;
     if (value) {
-        value2 = parseBackgroundPositionXY(value2IsX, value2IsY);
+        value2 = parseFillPositionXY(value2IsX, value2IsY);
         if (value2)
             valueList->next();
         else {
@@ -2019,7 +2041,7 @@ void CSSParser::parseBackgroundPosition(RefPtr<CSSValue>& value1, RefPtr<CSSValu
         value1.swap(value2);
 }
 
-PassRefPtr<CSSValue> CSSParser::parseBackgroundSize()
+PassRefPtr<CSSValue> CSSParser::parseFillSize()
 {
     Value* value = valueList->current();
     CSSPrimitiveValue* parsedValue1;
@@ -2049,8 +2071,8 @@ PassRefPtr<CSSValue> CSSParser::parseBackgroundSize()
     return new CSSPrimitiveValue(pair);
 }
 
-bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2, 
-                                        RefPtr<CSSValue>& retValue1, RefPtr<CSSValue>& retValue2)
+bool CSSParser::parseFillProperty(int propId, int& propId1, int& propId2, 
+                                  RefPtr<CSSValue>& retValue1, RefPtr<CSSValue>& retValue2)
 {
     RefPtr<CSSValueList> values;
     RefPtr<CSSValueList> values2;
@@ -2079,42 +2101,49 @@ bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2,
             allowComma = false;
         } else {
             switch (propId) {
-                case CSSPropertyBackgroundAttachment:
-                    if (val->id == CSSValueScroll || val->id == CSSValueFixed) {
-                        currValue = new CSSPrimitiveValue(val->id);
-                        valueList->next();
-                    }
-                    break;
                 case CSSPropertyBackgroundColor:
                     currValue = parseBackgroundColor();
                     if (currValue)
                         valueList->next();
                     break;
+                case CSSPropertyBackgroundAttachment:
+                case CSSPropertyWebkitMaskAttachment:
+                    if (val->id == CSSValueScroll || val->id == CSSValueFixed) {
+                        currValue = new CSSPrimitiveValue(val->id);
+                        valueList->next();
+                    }
+                    break;
                 case CSSPropertyBackgroundImage:
-                    if (parseBackgroundImage(currValue))
+                case CSSPropertyWebkitMask:
+                    if (parseFillImage(currValue))
                         valueList->next();
                     break;
                 case CSSPropertyWebkitBackgroundClip:
                 case CSSPropertyWebkitBackgroundOrigin:
+                case CSSPropertyWebkitMaskClip:
+                case CSSPropertyWebkitMaskOrigin:
                     if (val->id == CSSValueBorder || val->id == CSSValuePadding || val->id == CSSValueContent || val->id == CSSValueText) {
                         currValue = new CSSPrimitiveValue(val->id);
                         valueList->next();
                     }
                     break;
                 case CSSPropertyBackgroundPosition:
-                    parseBackgroundPosition(currValue, currValue2);
-                    // unlike the other functions, parseBackgroundPosition advances the valueList pointer
+                case CSSPropertyWebkitMaskPosition:
+                    parseFillPosition(currValue, currValue2);
+                    // unlike the other functions, parseFillPosition advances the valueList pointer
                     break;
-                case CSSPropertyBackgroundPositionX: {
+                case CSSPropertyBackgroundPositionX:
+                case CSSPropertyWebkitMaskPositionX: {
                     bool xFound = false, yFound = true;
-                    currValue = parseBackgroundPositionXY(xFound, yFound);
+                    currValue = parseFillPositionXY(xFound, yFound);
                     if (currValue)
                         valueList->next();
                     break;
                 }
-                case CSSPropertyBackgroundPositionY: {
+                case CSSPropertyBackgroundPositionY:
+                case CSSPropertyWebkitMaskPositionY: {
                     bool xFound = true, yFound = false;
-                    currValue = parseBackgroundPositionXY(xFound, yFound);
+                    currValue = parseFillPositionXY(xFound, yFound);
                     if (currValue)
                         valueList->next();
                     break;
@@ -2126,13 +2155,15 @@ bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2,
                     }
                     break;
                 case CSSPropertyBackgroundRepeat:
+                case CSSPropertyWebkitMaskRepeat:
                     if (val->id >= CSSValueRepeat && val->id <= CSSValueNoRepeat) {
                         currValue = new CSSPrimitiveValue(val->id);
                         valueList->next();
                     }
                     break;
                 case CSSPropertyWebkitBackgroundSize:
-                    currValue = parseBackgroundSize();
+                case CSSPropertyWebkitMaskSize:
+                    currValue = parseFillSize();
                     if (currValue)
                         valueList->next();
                     break;
@@ -2163,7 +2194,7 @@ bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2,
             allowComma = true;
         }
         
-        // When parsing the 'background' shorthand property, we let it handle building up the lists for all
+        // When parsing any fill shorthand property, we let it handle building up the lists for all
         // properties.
         if (inShorthand())
             break;
@@ -3725,19 +3756,19 @@ bool CSSParser::parseTransformOrigin(int propId, int& propId1, int& propId2, Ref
 
     switch (propId) {
         case CSSPropertyWebkitTransformOrigin:
-            parseBackgroundPosition(value, value2);
+            parseFillPosition(value, value2);
             // Unlike the other functions, parseBackgroundPosition advances the valueList pointer
             break;
         case CSSPropertyWebkitTransformOriginX: {
             bool xFound = false, yFound = true;
-            value = parseBackgroundPositionXY(xFound, yFound);
+            value = parseFillPositionXY(xFound, yFound);
             if (value)
                 valueList->next();
             break;
         }
         case CSSPropertyWebkitTransformOriginY: {
             bool xFound = true, yFound = false;
-            value = parseBackgroundPositionXY(xFound, yFound);
+            value = parseFillPositionXY(xFound, yFound);
             if (value)
                 valueList->next();
             break;

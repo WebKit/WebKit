@@ -198,6 +198,16 @@ zoom
 -webkit-marquee-repetition
 -webkit-marquee-speed
 -webkit-marquee-style
+-webkit-mask
+-webkit-mask-attachment
+-webkit-mask-clip
+-webkit-mask-image
+-webkit-mask-origin
+-webkit-mask-position
+-webkit-mask-position-x
+-webkit-mask-position-y
+-webkit-mask-repeat
+-webkit-mask-size
 -webkit-match-nearest-mail-blockquote-color
 -webkit-nbsp-mode
 -webkit-padding-start

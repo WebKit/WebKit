@@ -552,11 +552,23 @@ enum EFillRepeat {
 struct LengthSize {
     Length width;
     Length height;
+    
+    LengthSize()
+    {}
+    
+    LengthSize(const Length& w, const Length& h)
+    : width(w)
+    , height(h)
+    {}
+};
+
+enum EFillLayerType {
+    BackgroundFillLayer, MaskFillLayer
 };
 
 struct FillLayer {
 public:
-    FillLayer();
+    FillLayer(EFillLayerType);
     ~FillLayer();
 
     StyleImage* image() const { return m_image.get(); }
@@ -633,8 +645,20 @@ public:
         return m_next ? m_next->hasFixedImage() : false;
     }
 
+    EFillLayerType type() const { return static_cast<EFillLayerType>(m_type); }
+
     void fillUnsetProperties();
     void cullEmptyLayers();
+
+    static bool initialFillAttachment(EFillLayerType) { return true; }
+    static EFillBox initialFillClip(EFillLayerType) { return BorderFillBox; }
+    static EFillBox initialFillOrigin(EFillLayerType type) { return type == BackgroundFillLayer ? PaddingFillBox : BorderFillBox; }
+    static EFillRepeat initialFillRepeat(EFillLayerType) { return RepeatFill; }
+    static CompositeOperator initialFillComposite(EFillLayerType type) { return type == BackgroundFillLayer ? CompositeSourceOver : CompositeDestinationOut; }
+    static LengthSize initialFillSize(EFillLayerType type) { return type == BackgroundFillLayer ? LengthSize() : LengthSize(Length(100.0, Percent), Length(100.0, Percent)); }
+    static Length initialFillXPosition(EFillLayerType type) { return Length(0.0, Percent); }
+    static Length initialFillYPosition(EFillLayerType type) { return Length(0.0, Percent); }
+    static StyleImage* initialFillImage(EFillLayerType) { return 0; }
 
     RefPtr<StyleImage> m_image;
 
@@ -658,6 +682,8 @@ public:
     bool m_yPosSet : 1;
     bool m_compositeSet : 1;
     bool m_sizeSet : 1;
+    
+    unsigned m_type : 1; // EFillLayerType
 
     FillLayer* m_next;
 };
@@ -1294,6 +1320,8 @@ public:
     
     Transition* m_transition;
 
+    FillLayer m_mask;
+
 #if ENABLE(XBL)
     BindingURI* bindingURI; // The XBL binding URI list.
 #endif
@@ -1868,6 +1896,18 @@ public:
     FillLayer* accessBackgroundLayers() { return &(background.access()->m_background); }
     const FillLayer* backgroundLayers() const { return &(background->m_background); }
 
+    StyleImage* maskImage() const { return rareNonInheritedData->m_mask.m_image.get(); }
+    EFillRepeat maskRepeat() const { return static_cast<EFillRepeat>(rareNonInheritedData->m_mask.m_repeat); }
+    CompositeOperator maskComposite() const { return static_cast<CompositeOperator>(rareNonInheritedData->m_mask.m_composite); }
+    bool maskAttachment() const { return rareNonInheritedData->m_mask.m_attachment; }
+    EFillBox maskClip() const { return static_cast<EFillBox>(rareNonInheritedData->m_mask.m_clip); }
+    EFillBox maskOrigin() const { return static_cast<EFillBox>(rareNonInheritedData->m_mask.m_origin); }
+    Length maskXPosition() const { return rareNonInheritedData->m_mask.m_xPosition; }
+    Length maskYPosition() const { return rareNonInheritedData->m_mask.m_yPosition; }
+    LengthSize maskSize() const { return rareNonInheritedData->m_mask.m_size; }
+    FillLayer* accessMaskLayers() { return &(rareNonInheritedData.access()->m_mask); }
+    const FillLayer* maskLayers() const { return &(rareNonInheritedData->m_mask); }
+
     // returns true for collapsing borders, false for separate borders
     bool borderCollapse() const { return inherited_flags._border_collapse; }
     short horizontalBorderSpacing() const { return inherited->horizontal_border_spacing; }
@@ -2097,16 +2137,29 @@ public:
     void setWordSpacing(int v) { inherited.access()->font.setWordSpacing(v); }
     void setLetterSpacing(int v) { inherited.access()->font.setLetterSpacing(v); }
 
-    void clearBackgroundLayers() { background.access()->m_background = FillLayer(); }
+    void clearBackgroundLayers() { background.access()->m_background = FillLayer(BackgroundFillLayer); }
     void inheritBackgroundLayers(const FillLayer& parent) { background.access()->m_background = parent; }
-    void adjustBackgroundLayers();
+    void adjustBackgroundLayers() {
+        if (backgroundLayers()->next()) {
+            accessBackgroundLayers()->cullEmptyLayers();
+            accessBackgroundLayers()->fillUnsetProperties();
+        }
+    }
+
+    void clearMaskLayers() { rareNonInheritedData.access()->m_mask = FillLayer(MaskFillLayer); }
+    void inheritMaskLayers(const FillLayer& parent) { rareNonInheritedData.access()->m_mask = parent; }
+    void adjustMaskLayers() {
+        if (maskLayers()->next()) {
+            accessMaskLayers()->cullEmptyLayers();
+            accessMaskLayers()->fillUnsetProperties();
+        }
+    }
 
     void setBorderCollapse(bool collapse) { inherited_flags._border_collapse = collapse; }
     void setHorizontalBorderSpacing(short v) { SET_VAR(inherited,horizontal_border_spacing,v) }
     void setVerticalBorderSpacing(short v) { SET_VAR(inherited,vertical_border_spacing,v) }
     void setEmptyCells(EEmptyCell v) { inherited_flags._empty_cells = v; }
     void setCaptionSide(ECaptionSide v) { inherited_flags._caption_side = v; }
-
 
     void setCounterIncrement(short v) {  SET_VAR(visual,counterIncrement,v) }
     void setCounterReset(short v) {  SET_VAR(visual,counterReset,v) }
@@ -2292,15 +2345,6 @@ public:
     void setChildIndex(unsigned index) { m_childIndex = index; }
 
     // Initial values for all the properties
-    static bool initialFillAttachment() { return true; }
-    static EFillBox initialFillClip() { return BorderFillBox; }
-    static EFillBox initialFillOrigin() { return PaddingFillBox; }
-    static EFillRepeat initialFillRepeat() { return RepeatFill; }
-    static CompositeOperator initialFillComposite() { return CompositeSourceOver; }
-    static LengthSize initialFillSize() { return LengthSize(); }
-    static Length initialFillXPosition() { return Length(0.0, Percent); }
-    static Length initialFillYPosition() { return Length(0.0, Percent); }
-    static StyleImage* initialFillImage() { return 0; }
     static bool initialBorderCollapse() { return false; }
     static EBorderStyle initialBorderStyle() { return BNONE; }
     static BorderImage initialBorderImage() { return BorderImage(); }
