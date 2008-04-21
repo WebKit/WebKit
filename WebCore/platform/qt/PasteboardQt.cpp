@@ -64,7 +64,12 @@ void Pasteboard::writeSelection(Range* selectedRange, bool, Frame* frame)
     QString text = frame->selectedText();
     text.replace(QChar(0xa0), QLatin1Char(' '));
     md->setText(text);
-    md->setHtml(createMarkup(selectedRange, 0, AnnotateForInterchange));
+
+    QString html = QLatin1String("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /></head><body>");
+    html += createMarkup(selectedRange, 0, AnnotateForInterchange);
+    html += QLatin1String("</body></html>");
+    md->setHtml(html);
+
     QApplication::clipboard()->setMimeData(md, m_selectionMode ? 
             QClipboard::Selection : QClipboard::Clipboard);
 }

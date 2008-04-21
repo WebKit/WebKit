@@ -2,6 +2,18 @@
 
         Reviewed by Simon.
 
+        Fixes copy and paste of international characters.
+
+        When exporting HTML to the clipboard we need meta tags for now that confirm the
+        conversion to utf-8 done inside QClipboard.
+
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeSelection):
+
+2008-04-21  Olivier Goffart  <ogoffart@trolltech.com>
+
+        Reviewed by Simon.
+
         Fixes: Copying on X11 doesn't always work in webkit
 
         Calling QClipboard::clear right before QClipboard::setData create a race condition with klipper. So don't call QClipboard::clear since it's not required.
