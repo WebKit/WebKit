@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        * Assume that our lineedit has a frame. This is needed for the motif style
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintTextField):
+
+2008-04-21  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Follow the windows render theme when determining whether to style
         listboxes or not.
 
