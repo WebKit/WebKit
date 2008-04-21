@@ -407,7 +407,18 @@ inline size_t UString::cost() const
    if (capacityDelta < static_cast<size_t>(minShareSize))
        return 0;
 
+#if COMPILER(MSVC)
+// MSVC complains about this assignment, since reportedCost is a 31-bit size_t.
+#pragma warning(push)
+#pragma warning(disable: 4267)
+#endif
+
    m_rep->baseString->reportedCost = capacity;
+
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
+
    return capacityDelta;
 }
 
