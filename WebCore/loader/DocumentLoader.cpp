@@ -866,9 +866,7 @@ bool DocumentLoader::scheduleApplicationCacheLoad(ResourceLoader* loader, const 
         return false;
     
     // If the resource is not a HTTP/HTTPS GET, then abort
-    if (!request.url().protocolIs("http") && !request.url().protocolIs("https"))
-        return false;    
-    if (!equalIgnoringCase(request.httpMethod(), "get"))
+    if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
         return false;
 
     if (cache->isURLInOnlineWhitelist(request.url()))

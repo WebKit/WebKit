@@ -1,3 +1,46 @@
+2008-04-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add cache group implementation.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::scheduleApplicationCacheLoad):
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::requestIsHTTPOrHTTPSGet):
+        (WebCore::ApplicationCache::resourceForRequest):
+        * loader/appcache/ApplicationCache.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::cacheGroupMap):
+        (WebCore::ApplicationCacheGroup::ApplicationCacheGroup):
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::selectCacheWithoutManifestURL):
+        (WebCore::ApplicationCacheGroup::finishedLoadingMainResource):
+        (WebCore::ApplicationCacheGroup::documentLoaderDestroyed):
+        (WebCore::ApplicationCacheGroup::cacheDestroyed):
+        (WebCore::ApplicationCacheGroup::update):
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didReceiveData):
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::didReceiveManifestResponse):
+        (WebCore::ApplicationCacheGroup::didReceiveManifestData):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        (WebCore::ApplicationCacheGroup::cacheUpdateFailed):
+        (WebCore::ApplicationCacheGroup::didFailToLoadManifest):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+        (WebCore::ApplicationCacheGroup::addEntry):
+        (WebCore::ApplicationCacheGroup::associateDocumentLoaderWithCache):
+        (WebCore::ApplicationCacheGroup::callListenersOnAssociatedDocuments):
+        (WebCore::ApplicationCacheGroup::callListeners):
+        * loader/appcache/ApplicationCacheGroup.h:
+        (WebCore::ApplicationCacheGroup::status):
+        (WebCore::ApplicationCacheGroup::newestCache):
+        * platform/KURL.h:
+        (WebCore::KURL::hostStart):
+        (WebCore::KURL::hostEnd):
+
 2008-04-21  David Hyatt  <hyatt@apple.com>
 
         Rename BackgroundLayer -> FillLayer in preparation for it being used for other types of fills.
@@ -147,6 +190,7 @@
         * rendering/RenderThemeMac.mm:
         (WebCore::RenderThemeMac::isControlStyled):
 
+>>>>>>> .r32337
 2008-04-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Rubber-stamped by Ap.

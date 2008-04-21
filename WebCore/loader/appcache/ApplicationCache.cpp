@@ -87,13 +87,21 @@ ApplicationCacheResource* ApplicationCache::resourceForURL(const String& url)
     return m_resources.get(url).get();
 }    
 
-ApplicationCacheResource* ApplicationCache::resourceForRequest(const ResourceRequest& request)
+bool ApplicationCache::requestIsHTTPOrHTTPSGet(const ResourceRequest& request)
 {
-    // We only care about HTTP/HTTPS GET requests.
     if (!request.url().protocolIs("http") && !request.url().protocolIs("https"))
         return false;
     
-    if (!equalIgnoringCase(request.httpMethod(), "get"))
+    if (!equalIgnoringCase(request.httpMethod(), "GET"))
+        return false;
+
+    return true;
+}    
+
+ApplicationCacheResource* ApplicationCache::resourceForRequest(const ResourceRequest& request)
+{
+    // We only care about HTTP/HTTPS GET requests.
+    if (!requestIsHTTPOrHTTPSGet(request))
         return false;
     
     return resourceForURL(request.url());

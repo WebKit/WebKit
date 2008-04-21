@@ -28,30 +28,99 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
+#include <wtf/Noncopyable.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+
 #include "KURL.h"
+#include "PlatformString.h"
+#include "ResourceHandle.h"
+#include "ResourceHandleClient.h"
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
 class ApplicationCache;
+class ApplicationCacheResource;
+class DOMApplicationCache;
+class Document;
 class DocumentLoader;
 class Frame;
 
-class ApplicationCacheGroup {
+class ApplicationCacheGroup : Noncopyable, ResourceHandleClient {
 public:
     enum Status { Idle, Checking, Downloading };
+
+    static void selectCache(Frame*, const KURL& manifestURL);
+    static void selectCacheWithoutManifestURL(Frame*);
     
     const KURL& manifestURL() const { return m_manifestURL; }
-    Status status() const { return Idle; }
+    Status status() const { return m_status; }
     
-    void update(Frame*) { }
-    void cacheDestroyed(ApplicationCache*) { }
-    
-    ApplicationCache* newestCache() const { return 0; }
+    void update(Frame*);
+    void cacheDestroyed(ApplicationCache*);
+        
+    ApplicationCache* newestCache() const { return m_newestCache.get(); }
 
-    void finishedLoadingMainResource(DocumentLoader*) { }
-    void documentLoaderDestroyed(DocumentLoader*) { }
+    void finishedLoadingMainResource(DocumentLoader* loader);
+    void documentLoaderDestroyed(DocumentLoader* loader);
+
 private:
+    ApplicationCacheGroup(const KURL& manifestURL);
+
+    typedef void (DOMApplicationCache::*ListenerFunction)();
+    void callListenersOnAssociatedDocuments(ListenerFunction);
+    void callListeners(ListenerFunction, const Vector<RefPtr<DocumentLoader> >& loaders);
+    
+    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
+    virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived);
+    virtual void didFinishLoading(ResourceHandle*);
+    virtual void didFail(ResourceHandle*, const ResourceError&);
+
+    void didReceiveManifestResponse(const ResourceResponse&);
+    void didReceiveManifestData(const char*, int);
+    void didFinishLoadingManifest();
+    void didFailToLoadManifest();
+    
+    void startLoadingEntry();
+    void checkIfLoadIsComplete();
+    void cacheUpdateFailed();
+    
+    void addEntry(const String&, unsigned type);
+    
+    void associateDocumentLoaderWithCache(DocumentLoader*, ApplicationCache*);
+    
     KURL m_manifestURL;
+    Status m_status;
+    
+    // This is the newest cache in the group.
+    RefPtr<ApplicationCache> m_newestCache;
+    
+    // The caches in this cache group.
+    HashSet<ApplicationCache*> m_caches;
+    
+    // The cache being updated (if any).
+    RefPtr<ApplicationCache> m_cacheBeingUpdated;
+
+    // When a cache group does not yet have a complete cache, this contains the document loaders
+    // that should be associated with the cache once it has been downloaded.
+    HashSet<DocumentLoader*> m_cacheCandidates;
+    
+    // These are all the document loaders that are associated with a cache in this group.
+    HashSet<DocumentLoader*> m_associatedDocumentLoaders;
+    
+    // The URLs and types of pending cache entries.
+    typedef HashMap<String, unsigned> EntryMap;
+    EntryMap m_pendingEntries;
+
+    // Frame used for fetching resources when updating
+    Frame* m_frame;
+  
+    RefPtr<ResourceHandle> m_currentHandle;
+    RefPtr<ApplicationCacheResource> m_currentResource;
+    
+    RefPtr<ApplicationCacheResource> m_manifestResource;
+    RefPtr<ResourceHandle> m_manifestHandle;
 };
 
 } // namespace WebCore
