@@ -1,5 +1,15 @@
 2008-04-21  Simon Hausmann  <hausmann@webkit.org>
 
+        Reviewed by Lars.
+
+        Changed the return type of QWebFrame::evaluateJavaScript from a QString to a QVariant.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::evaluateJavaScript):
+        * Api/qwebframe.h:
+
+2008-04-21  Simon Hausmann  <hausmann@webkit.org>
+
         Reviewed by Holger.
 
         Fixes redundant "Fonts" submenu in default lineedits that has only disabled items.

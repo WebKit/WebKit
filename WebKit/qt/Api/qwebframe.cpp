@@ -62,6 +62,7 @@
 #include "kjs_binding.h"
 #include "ExecState.h"
 #include "object.h"
+#include "qt_runtime.h"
 
 #include "wtf/HashMap.h"
 
@@ -707,14 +708,15 @@ void QWebFrame::print(QPrinter *printer) const
 /*!
   Evaluate JavaScript defined by \a scriptSource using this frame as context.
 */
-QString QWebFrame::evaluateJavaScript(const QString& scriptSource)
+QVariant QWebFrame::evaluateJavaScript(const QString& scriptSource)
 {
     KJSProxy *proxy = d->frame->scriptProxy();
-    QString rc;
+    QVariant rc;
     if (proxy) {
         KJS::JSValue *v = proxy->evaluate(String(), 0, scriptSource);
         if (v) {
-            rc = String(v->toString(proxy->globalObject()->globalExec()));
+            int distance = 0;
+            rc = KJS::Bindings::convertValueToQVariant(proxy->globalObject()->globalExec(), v, QMetaType::Void, &distance);
         }
     }
     return rc;
