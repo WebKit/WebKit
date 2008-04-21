@@ -970,20 +970,28 @@ PassRefPtr<StringImpl> StringImpl::createStrippingNullCharacters(const UChar* ch
     ASSERT(characters);
     ASSERT(length);
 
-    StringBuffer strippedCopy(length);
+    // Optimize for the case where there are no Null characters by quickly
+    // searching for nulls, and then using StringImpl::create, which will
+    // memcpy the whole buffer.  This is faster than assigning character by
+    // character during the loop. 
+
+    // Fast case.
     int foundNull = 0;
-    for (unsigned i = 0; i < length; i++) {
+    for (unsigned i = 0; !foundNull && i < length; i++) {
         int c = characters[i]; // more efficient than using UChar here (at least on Intel Mac OS)
-        strippedCopy[i] = c;
-        foundNull |= ~c;
+        foundNull |= !c;
     }
     if (!foundNull)
-        return adoptRef(new StringImpl(strippedCopy.release(), length, AdoptBuffer()));
+        return StringImpl::create(characters, length);
+    
+    // Slow case.
+    StringBuffer strippedCopy(length);
     unsigned strippedLength = 0;
     for (unsigned i = 0; i < length; i++) {
         if (int c = characters[i])
             strippedCopy[strippedLength++] = c;
     }
+    ASSERT(strippedLength < length);  // Only take the slow case when stripping.
     strippedCopy.shrink(strippedLength);
     return adopt(strippedCopy);
 }

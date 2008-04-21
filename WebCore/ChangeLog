@@ -1,3 +1,12 @@
+2008-04-21  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by eseidel and darin.  Landed by eseidel.
+
+        Fix broken optimization in createStrippingNullCharacters.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::createStrippingNullCharacters):
+
 2008-04-21  David Hyatt  <hyatt@apple.com>
 
         Make the back end parsing of background properties generic.  Rename all the parsing functions from
