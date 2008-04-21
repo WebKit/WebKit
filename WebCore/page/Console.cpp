@@ -137,7 +137,6 @@ void Console::profileEnd() const
     // FIXME: We need to hook into the WebInspector here so that it can process over the data
     // that is in the profiler and display it in some new cool way, as opposed to just printing
     // it or dumping it to the console.
-    Profiler::profiler()->printDataInspectorStyle();
 }
 
 void Console::warn(ExecState* exec, const List& arguments)

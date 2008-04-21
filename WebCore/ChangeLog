@@ -1,3 +1,14 @@
+2008-04-21  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        Took out debugging printing since we really want to hook into the
+        inspector and not to print to the terminal.
+
+        * page/Console.cpp:
+        (WebCore::Console::profileEnd):
+
 2008-04-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
@@ -213,7 +224,6 @@
         * rendering/RenderThemeMac.mm:
         (WebCore::RenderThemeMac::isControlStyled):
 
->>>>>>> .r32337
 2008-04-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Rubber-stamped by Ap.
@@ -248,6 +258,7 @@
         * loader/appcache/ApplicationCacheGroup.h:
         (WebCore::ApplicationCacheGroup::finishedLoadingMainResource):
 
+>>>>>>> .r32341
 2008-04-21  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by eseidel.  Landed by eseidel.
