@@ -48,6 +48,7 @@ public:
     
     ApplicationCache* newestCache() const { return 0; }
 
+    void finishedLoadingMainResource(DocumentLoader*) { }
     void documentLoaderDestroyed(DocumentLoader*) { }
 private:
     KURL m_manifestURL;

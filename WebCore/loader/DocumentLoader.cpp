@@ -29,8 +29,11 @@
 #include "config.h"
 #include "DocumentLoader.h"
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 #include "ApplicationCache.h"
 #include "ApplicationCacheGroup.h"
+#include "ApplicationCacheResource.h"
+#endif
 #include "ArchiveFactory.h"
 #include "ArchiveResourceCollection.h"
 #include "CachedPage.h"
@@ -430,6 +433,9 @@ void DocumentLoader::setPrimaryLoadComplete(bool flag)
     if (flag) {
         if (m_mainResourceLoader) {
             m_mainResourceData = m_mainResourceLoader->resourceData();
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+            m_mainResourceApplicationCache = m_mainResourceLoader->applicationCache();
+#endif
             m_mainResourceLoader = 0;
         }
         updateLoading();
@@ -840,6 +846,47 @@ ApplicationCache* DocumentLoader::topLevelApplicationCache() const
     
     return 0;
 }
-#endif
+
+ApplicationCache* DocumentLoader::mainResourceApplicationCache() const
+{
+    if (m_mainResourceApplicationCache)
+        return m_mainResourceApplicationCache.get();
+    if (m_mainResourceLoader)
+        return m_mainResourceLoader->applicationCache();
+    return 0;
+}
+
+bool DocumentLoader::scheduleApplicationCacheLoad(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL)
+{
+    if (request.url() != originalURL)
+        return false;
+
+    ApplicationCache* cache = topLevelApplicationCache();    
+    if (!cache)
+        return false;
     
+    // If the resource is not a HTTP/HTTPS GET, then abort
+    if (!request.url().protocolIs("http") && !request.url().protocolIs("https"))
+        return false;    
+    if (!equalIgnoringCase(request.httpMethod(), "get"))
+        return false;
+
+    if (cache->isURLInOnlineWhitelist(request.url()))
+        return false;
+    
+    ApplicationCacheResource* resource = cache->resourceForURL(request.url());
+    
+    // FIXME: Handle opportunistic caching namespaces
+    if (!resource || (resource->type() & ApplicationCacheResource::Foreign))
+        // A null resource means that the load should fail.
+        m_pendingSubstituteResources.set(loader, 0);
+    else 
+        m_pendingSubstituteResources.set(loader, resource);
+    deliverSubstituteResourcesAfterDelay();
+        
+    return true;
+}
+
+#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
+
 }

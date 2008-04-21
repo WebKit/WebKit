@@ -1,3 +1,27 @@
+2008-04-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Make it possible to load resources from the cache. 
+        (Currently no documents are ever associated with a cache though.)
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setPrimaryLoadComplete):
+        (WebCore::DocumentLoader::mainResourceApplicationCache):
+        (WebCore::DocumentLoader::scheduleApplicationCacheLoad):
+        * loader/DocumentLoader.h:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didFinishLoading):
+        (WebCore::MainResourceLoader::load):
+        * loader/MainResourceLoader.h:
+        (WebCore::MainResourceLoader::applicationCache):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::load):
+        * loader/ResourceLoader.h:
+        * loader/appcache/ApplicationCacheGroup.h:
+        (WebCore::ApplicationCacheGroup::finishedLoadingMainResource):
+
 2008-04-21  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by eseidel.  Landed by eseidel.
