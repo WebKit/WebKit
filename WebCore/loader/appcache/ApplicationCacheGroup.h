@@ -51,6 +51,8 @@ class ApplicationCacheGroup : Noncopyable, ResourceHandleClient {
 public:
     enum Status { Idle, Checking, Downloading };
 
+    static ApplicationCache* cacheForMainRequest(const ResourceRequest&, DocumentLoader*);
+    
     static void selectCache(Frame*, const KURL& manifestURL);
     static void selectCacheWithoutManifestURL(Frame*);
     

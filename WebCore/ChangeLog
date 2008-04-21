@@ -1,3 +1,29 @@
+2008-04-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Perform cache selection. If a main resource has a URL that exists in a cache, load it from there.
+        
+        * html/HTMLAttributeNames.in:
+        Add manifest attribute.
+        
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::insertedIntoDocument):
+        * html/HTMLHtmlElement.h:
+        Perform cache selection.
+        
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::load):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::cacheHostSet):
+        (WebCore::urlHostHash):
+        (WebCore::ApplicationCacheGroup::cacheForRequest):
+        (WebCore::ApplicationCacheGroup::selectCache):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * platform/KURL.h:
+        (WebCore::KURL::hostStart):
+        (WebCore::KURL::hostEnd):
+
 2008-04-21  Mike Belshe  <mike@belshe.com>
 
         Reviewed by eseidel and darin.  Landed by eseidel.

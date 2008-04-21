@@ -25,6 +25,8 @@
 #include "config.h"
 #include "HTMLHtmlElement.h"
 
+#include "ApplicationCacheGroup.h"
+#include "Document.h"
 #include "HTMLNames.h"
 
 namespace WebCore {
@@ -57,5 +59,22 @@ bool HTMLHtmlElement::checkDTD(const Node* newChild)
            newChild->hasTagName(framesetTag) || newChild->hasTagName(noframesTag) ||
            newChild->hasTagName(scriptTag);
 }
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+void HTMLHtmlElement::insertedIntoDocument()
+{
+    HTMLElement::insertedIntoDocument();
+    
+    if (!document()->parsing())
+        return;
+    
+    // Check the manifest attribute
+    AtomicString manifest = getAttribute(manifestAttr);
+    if (manifest.isNull())
+        ApplicationCacheGroup::selectCacheWithoutManifestURL(document()->frame());
+    else
+        ApplicationCacheGroup::selectCache(document()->frame(), document()->completeURL(manifest));
+}
+#endif
 
 }

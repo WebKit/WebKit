@@ -413,6 +413,9 @@ bool MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& su
         
         m_applicationCache = frameLoader()->documentLoader()->topLevelApplicationCache();
         
+        if (!m_applicationCache)
+            m_applicationCache = ApplicationCacheGroup::cacheForMainRequest(r, m_documentLoader.get());
+            
         if (m_applicationCache) {
             // Get the resource from the application cache.
             // FIXME: If the resource does not exist, the load should fail.

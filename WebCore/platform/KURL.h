@@ -151,6 +151,9 @@ public:
     operator const String&() const { return m_string; }
     operator KJS::UString() const { return m_string; }
 
+    unsigned hostStart() const { return (m_passwordEnd == m_userStart) ? m_passwordEnd : m_passwordEnd + 1; }
+    unsigned hostEnd() const { return m_hostEnd; }
+    
     unsigned pathStart() const { return m_portEnd; }
     unsigned pathEnd() const { return m_pathEnd; }
     unsigned pathAfterLastSlash() const { return m_pathAfterLastSlash; }
@@ -183,7 +186,6 @@ private:
     void init(const KURL&, const String&, const TextEncoding&);
     static bool protocolIs(const String&, const char*);
     void copyToBuffer(Vector<char, 512>& buffer) const;
-    int hostStart() const { return (m_passwordEnd == m_userStart) ? m_passwordEnd : m_passwordEnd + 1; }
     
     // Parses the given URL. The originalString parameter allows for an
     // optimization: When the source is the same as the fixed-up string,
