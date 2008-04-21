@@ -120,7 +120,9 @@ include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 #LIBS += -L$$OUTPUT_DIR/lib -lJavaScriptCore
 
 qt-port {
-RESOURCES += $$PWD/../WebCore/page/inspector/WebKit.qrc
+RESOURCES += \
+            $$PWD/../WebCore/page/inspector/WebKit.qrc \
+            $$PWD/../WebCore/Resources/WebKitResources.qrc
 INCLUDEPATH += \
                 $$PWD/platform/qt \
                 $$PWD/platform/network/qt \

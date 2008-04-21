@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        * Package the Resources into a qrc
+
+        * Resources/WebKitResources.qrc: Added.
+        * WebCore.pro:
+
+2008-04-21  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Make sure every resource is available als png as well.
 
         * Resources/deleteButton.png: Added.
