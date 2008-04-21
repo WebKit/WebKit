@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        * Try to bring the notImplemented implementations closer together. This will
+        print each unimplemted method name only once.
+
+        * We might want to change wtf/Assertions.cpp to use qDebug
+
+        * platform/NotImplemented.h:
+
+2008-04-21  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Remove the special Qt ctor of BitmapImage as it did not work. The Bitmap returned
         0 as width and after intialising drawing would fail. BitmapImage relies on a proper
         ImageSource.
