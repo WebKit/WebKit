@@ -590,6 +590,8 @@ void dump()
     if (printSeparators) {
         puts("#EOF");
         fputs("#EOF\n", stderr);
+        fflush(stdout);
+        fflush(stderr);
     }
 
     if (dumpPixels) {
@@ -597,6 +599,7 @@ void dump()
             printf("#EOF\n");
         else
             dumpWebViewAsPixelsAndCompareWithExpected(currentTest, dumpAllPixels);
+        fflush(stdout);
     }
 
 fail:
@@ -1058,8 +1061,6 @@ int main(int argc, char* argv[])
                 continue;
 
             runTest(filenameBuffer);
-            fflush(stdout);
-            fflush(stderr);
         }
     } else {
         printSeparators = tests.size() > 1;
