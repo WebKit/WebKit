@@ -1,3 +1,46 @@
+2008-04-20  Christian Persch  <chpe@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        Bundle GTK+ Xt compatibility code from Mozilla. These files are used
+        by all currently proposed GTK+ plugin patches and will make the
+        proposed patches smaller and easier to review.
+
+        These files should be kept as close to the upstream versions as
+        possible so fixes can be shared between projects and to ensure
+        compatibility with the reference implementation.
+
+        * plugins/gtk/gtk2xtbin.c: Added.
+        (xt_event_prepare):
+        (xt_event_check):
+        (xt_event_dispatch):
+        (xt_event_polling_timer_callback):
+        (gtk_xtbin_get_type):
+        (gtk_xtbin_class_init):
+        (gtk_xtbin_init):
+        (gtk_xtbin_realize):
+        (gtk_xtbin_new):
+        (gtk_xtbin_set_position):
+        (gtk_xtbin_resize):
+        (gtk_xtbin_unrealize):
+        (gtk_xtbin_destroy):
+        (xt_client_init):
+        (xt_client_create):
+        (xt_client_unrealize):
+        (xt_client_destroy):
+        (xt_client_set_info):
+        (xt_client_handle_xembed_message):
+        (xt_client_event_handler):
+        (send_xembed_message):
+        (error_handler):
+        (trap_errors):
+        (untrap_error):
+        (xt_client_focus_listener):
+        (xt_add_focus_listener):
+        (xt_remove_focus_listener):
+        (xt_add_focus_listener_tree):
+        * plugins/gtk/gtk2xtbin.h: Added.
+
 2008-04-20  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Alp Toker.
