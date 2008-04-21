@@ -1,3 +1,15 @@
+2008-04-20  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15449
+        [CAIRO] SVG gradients do not work properly
+
+        Fixed SVG-gradients in Cairo.
+
+        * svg/graphics/cairo/SVGPaintServerGradientCairo.cpp:
+        (WebCore::SVGPaintServerGradient::setup):
+
 2008-04-20  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Alp Toker.

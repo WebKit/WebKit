@@ -43,31 +43,55 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
     cairo_matrix_init_identity (&matrix);
     const cairo_matrix_t gradient_matrix = gradientTransform();
 
-    // TODO: revise this code, it is known not to work in many cases
     if (this->type() == LinearGradientPaintServer) {
         const SVGPaintServerLinearGradient* linear = static_cast<const SVGPaintServerLinearGradient*>(this);
 
         if (boundingBoxMode()) {
-            // TODO: use RenderPathCairo's strokeBBox?
-            double x1, y1, x2, y2;
-            cairo_fill_extents(cr, &x1, &y1, &x2, &y2);
-            cairo_matrix_translate(&matrix, x1, y1);
-            cairo_matrix_scale(&matrix, x2 - x1, y2 - y1);
-            cairo_matrix_multiply(&matrix, &matrix, &gradient_matrix);
-            cairo_matrix_invert(&matrix);
+            FloatRect bbox = object->relativeBBox(false);
+            cairo_matrix_translate(&matrix, bbox.x(), bbox.y());
+            cairo_matrix_scale(&matrix, bbox.width(), bbox.height());
         }
 
-        double x0, x1, y0, y1;
-        x0 = linear->gradientStart().x();
-        y0 = linear->gradientStart().y();
-        x1 = linear->gradientEnd().x();
-        y1 = linear->gradientEnd().y();
+        double x0 = linear->gradientStart().x();
+        double y0 = linear->gradientStart().y();
+        double x1 = linear->gradientEnd().x();
+        double y1 = linear->gradientEnd().y();
+
         pattern = cairo_pattern_create_linear(x0, y0, x1, y1);
 
     } else if (this->type() == RadialGradientPaintServer) {
-        // const SVGPaintServerRadialGradient* radial = static_cast<const SVGPaintServerRadialGradient*>(this);
-        // TODO: pattern = cairo_pattern_create_radial();
-        return false;
+        const SVGPaintServerRadialGradient* radial = static_cast<const SVGPaintServerRadialGradient*>(this);
+
+        if (boundingBoxMode()) {
+            FloatRect bbox = object->relativeBBox(false);
+            cairo_matrix_translate(&matrix, bbox.x(), bbox.y());
+            cairo_matrix_scale(&matrix, bbox.width(), bbox.height());
+        }
+
+        double cx = radial->gradientCenter().x();
+        double cy = radial->gradientCenter().y();
+        double radius = radial->gradientRadius();
+        double fx = radial->gradientFocal().x();
+        double fy = radial->gradientFocal().y();
+
+        fx -= cx;
+        fy -= cy;
+        double fradius = 0.0;
+
+        if (sqrt(fx * fx + fy * fy) > radius) {
+            double angle = atan2(fy, fx);
+            if ((fx + cx) < cx)
+                fx = int(cos(angle) * radius) + 1;
+            else
+                fx = int(cos(angle) * radius) - 1;
+            if ((fy + cy) < cy)
+                fy = int(sin(angle) * radius) + 1;
+            else
+                fy = int(sin(angle) * radius) - 1;
+        }
+
+        pattern = cairo_pattern_create_radial(fx + cx, fy + cy, fradius, cx, cy, radius);
+
     } else {
         return false;
     }
@@ -89,6 +113,8 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
             break;
     }
 
+    cairo_matrix_multiply(&matrix, &matrix, &gradient_matrix);
+    cairo_matrix_invert(&matrix);
     cairo_pattern_set_matrix(pattern, &matrix);
 
     const Vector<SVGGradientStop>& stops = gradientStops();
@@ -97,7 +123,7 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
         float offset = stops[i].first;
         Color color = stops[i].second;
 
-        cairo_pattern_add_color_stop_rgba(pattern, offset, color.red(), color.green(), color.blue(), color.alpha());
+        cairo_pattern_add_color_stop_rgba(pattern, offset, color.red() / 255.0, color.green() / 255.0, color.blue() / 255.0, color.alpha() / 255.0);
     }
 
     cairo_set_source(cr, pattern);
