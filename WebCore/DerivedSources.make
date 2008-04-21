@@ -340,6 +340,7 @@ DOM_CLASSES = \
     WheelEvent \
     XMLHttpRequest \
     XMLHttpRequestException \
+    XMLHttpRequestProgressEvent \
     XMLSerializer \
     XPathEvaluator \
     XPathException \

@@ -1,3 +1,12 @@
+2008-04-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Ap.
+
+        Bug 13596: Implement .onprogress handler on XMLHttpRequest objects to support progressive download content length information.
+
+        * http/tests/xmlhttprequest/infoOnProgressEvent-expected.txt: Added.
+        * http/tests/xmlhttprequest/infoOnProgressEvent.html: Added.
+
 2008-04-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -1,3 +1,59 @@
+2008-04-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Ap.
+
+        Bug 13596: Implement .onprogress handler on XMLHttpRequest objects to support
+        progressive download content length information.
+
+        - Add the onprogress attribute to XMLHttpRequest and the necessary bindings.
+
+        - We use a custom event XMLHttpRequestProgressEvent that is derived from ProgressEvent
+         (as specified by the XHR2 specification) but also implement LSProgressEvent interface
+         (to be compliant with Firefox event).
+
+        Test: http/tests/xmlhttprequest/infoOnProgressEvent.html
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::mark):
+        (WebCore::JSXMLHttpRequest::onprogress):
+        (WebCore::JSXMLHttpRequest::setOnprogress):
+        * dom/Event.cpp:
+        (WebCore::Event::isXMLHttpRequestProgressEvent):
+        * dom/Event.h:
+        * dom/ProgressEvent.h: Replaced 'private' by 'protected' to enable derivation.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::onProgressListener): onprogress getter.
+        (WebCore::XMLHttpRequest::setOnProgressListener): onprogress setter.
+        (WebCore::XMLHttpRequest::XMLHttpRequest): initialize m_receivedLength.
+        (WebCore::XMLHttpRequest::internalAbort): reset m_receivedLength on abort.
+        (WebCore::XMLHttpRequest::didReceiveData): add updateAndDispatchOnProgress call.
+        (WebCore::XMLHttpRequest::updateAndDispatchOnProgress):
+        (WebCore::XMLHttpRequest::dispatchProgressEvent):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl: Add onprogress event handler.
+        * xml/XMLHttpRequestProgressEvent.cpp: Added.
+        (WebCore::XMLHttpRequestProgressEvent::XMLHttpRequestProgressEvent):
+        (WebCore::XMLHttpRequestProgressEvent::position):
+        (WebCore::XMLHttpRequestProgressEvent::totalSize):
+        The two previous methods are used for Firefox compatibility and map to the
+        same value as the ProgressEvent methods (but they are deprecated and display
+
+        * xml/XMLHttpRequestProgressEvent.h: Added.
+        (WebCore::XMLHttpRequestProgressEvent::isXMLHttpRequestProgressEvent):
+        (WebCore::XMLHttpRequestProgressEvent::isProgressEvent):
+        (WebCore::XMLHttpRequestProgressEvent::lengthComputable):
+        (WebCore::XMLHttpRequestProgressEvent::loaded):
+        (WebCore::XMLHttpRequestProgressEvent::total):
+        * xml/XMLHttpRequestProgressEvent.idl: Added.
+
 2008-04-21  Michael Goddard  <michael.goddard@trolltech.com>
 
         Reviewed by Simon.

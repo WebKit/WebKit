@@ -2830,6 +2830,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXMLHttpRequestProgressEvent.h"
+			>
+			</File>
+			<File
+			RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXMLHttpRequestProgressEvent.cpp"
+			>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXMLSerializer.cpp"
 				>
 			</File>
@@ -10007,6 +10015,14 @@
 			</File>
 			<File
 				RelativePath="..\xml\XMLHttpRequestException.h"
+				>
+			</File>
+			<File
+				RelativePath="..\xml\XMLHttpRequestProgressEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\xml\XMLHttpRequestProgressEvent.h"
 				>
 			</File>
 			<File

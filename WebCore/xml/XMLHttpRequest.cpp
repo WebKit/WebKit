@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2005-2007 Alexey Proskuryakov <ap@webkit.org>
- *  Copyright (C) 2007 Julien Chaffraix <julien.chaffraix@gmail.com>
+ *  Copyright (C) 2007, 2008 Julien Chaffraix <jchaffraix@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -38,6 +38,7 @@
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
 #include "XMLHttpRequestException.h"
+#include "XMLHttpRequestProgressEvent.h"
 #include "kjs_binding.h"
 
 namespace WebCore {
@@ -189,9 +190,19 @@ EventListener* XMLHttpRequest::onLoadListener() const
     return m_onLoadListener.get();
 }
 
+EventListener* XMLHttpRequest::onProgressListener() const
+{
+    return m_onProgressListener.get();
+}
+
 void XMLHttpRequest::setOnLoadListener(EventListener* eventListener)
 {
     m_onLoadListener = eventListener;
+}
+
+void XMLHttpRequest::setOnProgressListener(EventListener* eventListener)
+{
+    m_onProgressListener = eventListener;
 }
 
 void XMLHttpRequest::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
@@ -252,6 +263,7 @@ XMLHttpRequest::XMLHttpRequest(Document* d)
     , m_responseText("")
     , m_createdDocument(false)
     , m_aborted(false)
+    , m_receivedLength(0)
 {
     ASSERT(m_doc);
     addToRequestsByDocument(m_doc, this);
@@ -497,6 +509,9 @@ void XMLHttpRequest::internalAbort()
     bool hadLoader = m_loader;
 
     m_aborted = true;
+
+    // FIXME: when we add the support for multi-part XHR, we will have to think be careful with this initialization.
+    m_receivedLength = 0;
 
     if (hadLoader) {
         m_loader->cancel();
@@ -763,12 +778,43 @@ void XMLHttpRequest::didReceiveData(SubresourceLoader*, const char* data, int le
     }
 
     if (!m_aborted) {
+        updateAndDispatchOnProgress(len);
+
         if (m_state != Receiving)
             changeState(Receiving);
         else
             // Firefox calls readyStateChanged every time it receives data, 4449442
             callReadyStateChangeListener();
     }
+}
+
+void XMLHttpRequest::updateAndDispatchOnProgress(unsigned int len)
+{
+    long long expectedLength = m_response.expectedContentLength();
+
+    m_receivedLength += len;
+
+    // FIXME: the spec requires that we dispatch the event according to the least
+    // frequent method between every 350ms (+/-200ms) and for every byte received.
+    dispatchProgressEvent(expectedLength);
+}
+
+void XMLHttpRequest::dispatchProgressEvent(long long expectedLength)
+{
+    RefPtr<XMLHttpRequestProgressEvent> evt;
+
+    // If we do not have the information or it is odd, set lengthComputable to false.
+    evt = new XMLHttpRequestProgressEvent(progressEvent, expectedLength && m_receivedLength <= expectedLength, m_receivedLength, expectedLength);
+
+    if (m_onProgressListener) {
+        evt->setTarget(this);
+        evt->setCurrentTarget(this);
+        m_onProgressListener->handleEvent(evt.get(), false);
+    }
+
+    ExceptionCode ec = 0;
+    dispatchEvent(evt, ec, false);
+    ASSERT(!ec);
 }
 
 void XMLHttpRequest::cancelRequests(Document* m_doc)

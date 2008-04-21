@@ -403,6 +403,7 @@ IDL_BINDINGS += \
     xml/DOMParser.idl \
     xml/XMLHttpRequest.idl \
     xml/XMLHttpRequestException.idl \
+    xml/XMLHttpRequestProgressEvent.idl \
     xml/XMLSerializer.idl
 
 
@@ -917,6 +918,7 @@ SOURCES += \
     xml/DOMParser.cpp \
     xml/NativeXPathNSResolver.cpp \
     xml/XMLHttpRequest.cpp \
+    xml/XMLHttpRequestProgressEvent.cpp \
     xml/XMLSerializer.cpp \
     xml/XPathEvaluator.cpp \
     xml/XPathExpression.cpp \

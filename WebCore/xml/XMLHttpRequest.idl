@@ -36,6 +36,9 @@ module xml {
         // Note: onload is not in the specification
         attribute [Custom] EventListener onload;
 
+        // XMLHttpRequest 2 extension
+        attribute [Custom] EventListener onprogress;
+
         // state
         const unsigned short UNSENT = 0;
         const unsigned short OPENED = 1;

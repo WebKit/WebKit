@@ -332,6 +332,7 @@ webcore_built_sources += \
 	DerivedSources/JSWheelEvent.cpp \
 	DerivedSources/JSXMLHttpRequest.cpp \
 	DerivedSources/JSXMLHttpRequestException.cpp \
+	DerivedSources/JSXMLHttpRequestProgressEvent.cpp \
 	DerivedSources/JSXMLSerializer.cpp
 
 IDL_BINDINGS +=  \
@@ -464,6 +465,7 @@ IDL_BINDINGS +=  \
 	WebCore/plugins/PluginArray.idl \
 	WebCore/xml/DOMParser.idl \
 	WebCore/xml/XMLHttpRequest.idl \
+	WebCore/xml/XMLHttpRequestProgressEvent.idl \
 	WebCore/xml/XMLHttpRequestException.idl \
 	WebCore/xml/XMLSerializer.idl
 
@@ -977,6 +979,7 @@ webcore_sources += \
 	WebCore/rendering/RootInlineBox.cpp \
 	WebCore/xml/DOMParser.cpp \
 	WebCore/xml/XMLHttpRequest.cpp \
+	WebCore/xml/XMLHttpRequestProgressEvent.cpp \
 	WebCore/xml/XMLSerializer.cpp
 
 webkitgtk_headers += \

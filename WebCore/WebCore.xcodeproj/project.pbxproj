@@ -3948,6 +3948,10 @@
 		E4AFD0100DAF335500F5F55C /* SVGSMILElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AFD00A0DAF335400F5F55C /* SVGSMILElement.h */; };
 		E4C279580CF9741900E97B98 /* RenderMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C279560CF9741900E97B98 /* RenderMedia.cpp */; };
 		E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C279570CF9741900E97B98 /* RenderMedia.h */; };
+		F916C48D0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F916C48B0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp */; };
+		F916C48E0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F916C48C0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h */; };
+		F9F0ED790DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9F0ED760DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.cpp */; };
+		F9F0ED7A0DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */; };
 		E4EEFFC80D34550C00469A58 /* JSAudioConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4EEFFC60D34550C00469A58 /* JSAudioConstructor.cpp */; };
 		E4EEFFC90D34550C00469A58 /* JSAudioConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E4EEFFC70D34550C00469A58 /* JSAudioConstructor.h */; };
 		ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
@@ -8274,6 +8278,11 @@
 		F523D27902DE43D7018635CA /* TextResourceDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TextResourceDecoder.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D30302DE4476018635CA /* Range.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Range.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D30402DE4476018635CA /* Range.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Range.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F916C48B0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequestProgressEvent.cpp; sourceTree="<group>"; };
+		F916C48C0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequestProgressEvent.h; sourceTree = "<group>"; };
+		F9F0ED760DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestProgressEvent.cpp; sourceTree = "<group>"; };
+		F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestProgressEvent.h; sourceTree = "<group>"; };
+		F9F0ED780DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XMLHttpRequestProgressEvent.idl; sourceTree = "<group>"; };
 		F523D30902DE4476018635CA /* XMLTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTokenizer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D30A02DE4476018635CA /* XMLTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XMLTokenizer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784F002DE375901EA4122 /* CursorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CursorMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -11147,6 +11156,8 @@
 				BC348BD20DB7F804004ABAB9 /* JSXMLHttpRequest.h */,
 				BC60DA370D2A302800B9918F /* JSXMLHttpRequestException.cpp */,
 				BC60DA380D2A302800B9918F /* JSXMLHttpRequestException.h */,
+				F916C48B0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp */,
+				F916C48C0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h */,
 				1ACE53F40A8D19470022947D /* JSXMLSerializer.cpp */,
 				1ACE53F50A8D19470022947D /* JSXMLSerializer.h */,
 				656581D909D1508D000E61D7 /* JSXSLTProcessor.lut.h */,
@@ -12388,6 +12399,9 @@
 				BC348BA70DB7F1B8004ABAB9 /* XMLHttpRequest.idl */,
 				BC60D9C70D2A29E500B9918F /* XMLHttpRequestException.h */,
 				BC60D9C80D2A29E500B9918F /* XMLHttpRequestException.idl */,
+				F9F0ED760DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.cpp */,
+				F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */,
+				F9F0ED780DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.idl */,
 				1ACE53E40A8D18E70022947D /* XMLSerializer.cpp */,
 				1ACE53E50A8D18E70022947D /* XMLSerializer.h */,
 				1ACE53E60A8D18E70022947D /* XMLSerializer.idl */,
@@ -14938,6 +14952,8 @@
 				514B49DF0DB6D6B6001C3770 /* SessionStorageArea.h in Headers */,
 				BC348BD40DB7F804004ABAB9 /* JSXMLHttpRequest.h in Headers */,
 				BC348BEA0DB80354004ABAB9 /* JSXMLHttpRequestConstructor.h in Headers */,
+				F9F0ED7A0DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h in Headers */,
+				F916C48E0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16645,6 +16661,8 @@
 				BC348BBE0DB7F531004ABAB9 /* JSXMLHttpRequestCustom.cpp in Sources */,
 				BC348BD30DB7F804004ABAB9 /* JSXMLHttpRequest.cpp in Sources */,
 				BC348BE90DB80354004ABAB9 /* JSXMLHttpRequestConstructor.cpp in Sources */,
+				F9F0ED790DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.cpp in Sources */,
+				F916C48D0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

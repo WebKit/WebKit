@@ -48,7 +48,7 @@ namespace WebCore {
         
         virtual bool isProgressEvent() const { return true; }
         
-    private:
+    protected:
         bool m_lengthComputable;
         unsigned m_loaded;
         unsigned m_total;

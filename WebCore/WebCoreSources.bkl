@@ -318,6 +318,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSWheelEvent.cpp
         DerivedSources/WebCore/JSXMLHttpRequest.cpp
         DerivedSources/WebCore/JSXMLHttpRequestException.cpp
+        DerivedSources/WebCore/JSXMLHttpRequestProgressEvent.cpp
         DerivedSources/WebCore/JSXMLSerializer.cpp
         DerivedSources/WebCore/JSXPathEvaluator.cpp
         DerivedSources/WebCore/JSXPathException.cpp
@@ -828,6 +829,7 @@ This file contains the list of files needed to build WebCore.
         xml/DOMParser.cpp
         xml/NativeXPathNSResolver.cpp
         xml/XMLHttpRequest.cpp
+        xml/XMLHttpRequestProgressEvent.cpp
         xml/XMLSerializer.cpp
         xml/XPathEvaluator.cpp
         xml/XPathExpression.cpp

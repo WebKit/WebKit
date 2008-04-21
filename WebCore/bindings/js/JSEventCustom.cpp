@@ -40,6 +40,7 @@
 #include "JSTextEvent.h"
 #include "JSUIEvent.h"
 #include "JSWheelEvent.h"
+#include "JSXMLHttpRequestProgressEvent.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "MutationEvent.h"
@@ -48,6 +49,7 @@
 #include "TextEvent.h"
 #include "UIEvent.h"
 #include "WheelEvent.h"
+#include "XMLHttpRequestProgressEvent.h"
 #include "kjs_events.h"
 
 #if ENABLE(DOM_STORAGE)
@@ -114,6 +116,8 @@ JSValue* toJS(ExecState* exec, Event* event)
     else if (event->isStorageEvent())
         ret = new JSStorageEvent(JSStorageEventPrototype::self(exec), static_cast<StorageEvent*>(event));
 #endif
+    else if (event->isXMLHttpRequestProgressEvent())
+        ret = new JSXMLHttpRequestProgressEvent(JSXMLHttpRequestProgressEventPrototype::self(exec), static_cast<XMLHttpRequestProgressEvent*>(event));
     else
         ret = new JSEvent(JSEventPrototype::self(exec), event);
 
