@@ -40,7 +40,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e,
-                              bool UAHasAppearance, const BorderData& border, const BackgroundLayer& background, const Color& backgroundColor)
+                              bool UAHasAppearance, const BorderData& border, const FillLayer& background, const Color& backgroundColor)
 {
     // Force inline and table display styles to be inline-block (except for table- which is block)
     if (style->display() == INLINE || style->display() == INLINE_TABLE || style->display() == TABLE_ROW_GROUP ||
@@ -310,7 +310,7 @@ bool RenderTheme::isControlContainer(EAppearance appearance) const
     return appearance != CheckboxAppearance && appearance != RadioAppearance;
 }
 
-bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& border, const BackgroundLayer& background,
+bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& border, const FillLayer& background,
                                   const Color& backgroundColor) const
 {
     switch (style->appearance()) {

@@ -843,20 +843,20 @@ bool RenderObject::mustRepaintBackgroundOrBorder() const
         return false;
 
     // Ok, let's check the background first.
-    const BackgroundLayer* bgLayer = style()->backgroundLayers();
+    const FillLayer* bgLayer = style()->backgroundLayers();
 
     // Nobody will use multiple background layers without wanting fancy positioning.
     if (bgLayer->next())
         return true;
 
     // Make sure we have a valid background image.
-    StyleImage* bg = bgLayer->backgroundImage();
+    StyleImage* bg = bgLayer->image();
     bool shouldPaintBackgroundImage = bg && bg->canRender(style()->effectiveZoom());
 
     // These are always percents or auto.
     if (shouldPaintBackgroundImage &&
-            (!bgLayer->backgroundXPosition().isZero() || !bgLayer->backgroundYPosition().isZero() ||
-             bgLayer->backgroundSize().width.isPercent() || bgLayer->backgroundSize().height.isPercent()))
+            (!bgLayer->xPosition().isZero() || !bgLayer->yPosition().isZero() ||
+             bgLayer->size().width.isPercent() || bgLayer->size().height.isPercent()))
         // The background image will shift unpredictably if the size changes.
         return true;
 
@@ -2292,15 +2292,15 @@ void RenderObject::setStyleInternal(RenderStyle* style)
 void RenderObject::updateBackgroundImages(RenderStyle* oldStyle)
 {
     // FIXME: This will be slow when a large number of images is used.  Fix by using a dict.
-    const BackgroundLayer* oldLayers = oldStyle ? oldStyle->backgroundLayers() : 0;
-    const BackgroundLayer* newLayers = m_style ? m_style->backgroundLayers() : 0;
-    for (const BackgroundLayer* currOld = oldLayers; currOld; currOld = currOld->next()) {
-        if (currOld->backgroundImage() && (!newLayers || !newLayers->containsImage(currOld->backgroundImage())))
-            currOld->backgroundImage()->removeClient(this);
+    const FillLayer* oldLayers = oldStyle ? oldStyle->backgroundLayers() : 0;
+    const FillLayer* newLayers = m_style ? m_style->backgroundLayers() : 0;
+    for (const FillLayer* currOld = oldLayers; currOld; currOld = currOld->next()) {
+        if (currOld->image() && (!newLayers || !newLayers->containsImage(currOld->image())))
+            currOld->image()->removeClient(this);
     }
-    for (const BackgroundLayer* currNew = newLayers; currNew; currNew = currNew->next()) {
-        if (currNew->backgroundImage() && (!oldLayers || !oldLayers->containsImage(currNew->backgroundImage())))
-            currNew->backgroundImage()->addClient(this);
+    for (const FillLayer* currNew = newLayers; currNew; currNew = currNew->next()) {
+        if (currNew->image() && (!oldLayers || !oldLayers->containsImage(currNew->image())))
+            currNew->image()->addClient(this);
     }
 
     StyleImage* oldBorderImage = oldStyle ? oldStyle->borderImage().image() : 0;
@@ -2498,8 +2498,8 @@ void RenderObject::destroy()
 void RenderObject::arenaDelete(RenderArena* arena, void* base)
 {
     if (m_style) {
-        for (const BackgroundLayer* bgLayer = m_style->backgroundLayers(); bgLayer; bgLayer = bgLayer->next()) {
-            if (StyleImage* backgroundImage = bgLayer->backgroundImage())
+        for (const FillLayer* bgLayer = m_style->backgroundLayers(); bgLayer; bgLayer = bgLayer->next()) {
+            if (StyleImage* backgroundImage = bgLayer->image())
                 backgroundImage->removeClient(this);
         }
 

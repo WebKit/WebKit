@@ -813,7 +813,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, int tx, i
     int mh = end - my;
 
     Color c = backgroundObject->style()->backgroundColor();
-    const BackgroundLayer* bgLayer = backgroundObject->style()->backgroundLayers();
+    const FillLayer* bgLayer = backgroundObject->style()->backgroundLayers();
 
     if (bgLayer->hasImage() || c.isValid()) {
         // We have to clip here because the background would paint

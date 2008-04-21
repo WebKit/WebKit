@@ -473,7 +473,7 @@ public:
     // RenderBox implements this.
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty) { }
 
-    virtual void paintBackgroundExtended(const PaintInfo&, const Color&, const BackgroundLayer*,
+    virtual void paintBackgroundExtended(const PaintInfo&, const Color&, const FillLayer*,
                                          int clipy, int cliph, int tx, int ty, int width, int height,
                                          InlineFlowBox* box = 0) { }
 

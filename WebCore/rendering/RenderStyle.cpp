@@ -221,16 +221,16 @@ Image* StyleGeneratedImage::image(RenderObject* renderer, const IntSize& size) c
     return m_generator->image(renderer, size);
 }
 
-BackgroundLayer::BackgroundLayer()
-    : m_image(RenderStyle::initialBackgroundImage())
-    , m_xPosition(RenderStyle::initialBackgroundXPosition())
-    , m_yPosition(RenderStyle::initialBackgroundYPosition())
-    , m_bgAttachment(RenderStyle::initialBackgroundAttachment())
-    , m_bgClip(RenderStyle::initialBackgroundClip())
-    , m_bgOrigin(RenderStyle::initialBackgroundOrigin())
-    , m_bgRepeat(RenderStyle::initialBackgroundRepeat())
-    , m_bgComposite(RenderStyle::initialBackgroundComposite())
-    , m_backgroundSize(RenderStyle::initialBackgroundSize())
+FillLayer::FillLayer()
+    : m_image(RenderStyle::initialFillImage())
+    , m_xPosition(RenderStyle::initialFillXPosition())
+    , m_yPosition(RenderStyle::initialFillYPosition())
+    , m_attachment(RenderStyle::initialFillAttachment())
+    , m_clip(RenderStyle::initialFillClip())
+    , m_origin(RenderStyle::initialFillOrigin())
+    , m_repeat(RenderStyle::initialFillRepeat())
+    , m_composite(RenderStyle::initialFillComposite())
+    , m_size(RenderStyle::initialFillSize())
     , m_imageSet(false)
     , m_attachmentSet(false)
     , m_clipSet(false)
@@ -239,21 +239,21 @@ BackgroundLayer::BackgroundLayer()
     , m_xPosSet(false)
     , m_yPosSet(false)
     , m_compositeSet(false)
-    , m_backgroundSizeSet(false)
+    , m_sizeSet(false)
     , m_next(0)
 {
 }
 
-BackgroundLayer::BackgroundLayer(const BackgroundLayer& o)
+FillLayer::FillLayer(const FillLayer& o)
     : m_image(o.m_image)
     , m_xPosition(o.m_xPosition)
     , m_yPosition(o.m_yPosition)
-    , m_bgAttachment(o.m_bgAttachment)
-    , m_bgClip(o.m_bgClip)
-    , m_bgOrigin(o.m_bgOrigin)
-    , m_bgRepeat(o.m_bgRepeat)
-    , m_bgComposite(o.m_bgComposite)
-    , m_backgroundSize(o.m_backgroundSize)
+    , m_attachment(o.m_attachment)
+    , m_clip(o.m_clip)
+    , m_origin(o.m_origin)
+    , m_repeat(o.m_repeat)
+    , m_composite(o.m_composite)
+    , m_size(o.m_size)
     , m_imageSet(o.m_imageSet)
     , m_attachmentSet(o.m_attachmentSet)
     , m_clipSet(o.m_clipSet)
@@ -262,32 +262,32 @@ BackgroundLayer::BackgroundLayer(const BackgroundLayer& o)
     , m_xPosSet(o.m_xPosSet)
     , m_yPosSet(o.m_yPosSet)
     , m_compositeSet(o.m_compositeSet)
-    , m_backgroundSizeSet(o.m_backgroundSizeSet)
-    , m_next(o.m_next ? new BackgroundLayer(*o.m_next) : 0)
+    , m_sizeSet(o.m_sizeSet)
+    , m_next(o.m_next ? new FillLayer(*o.m_next) : 0)
 {
 }
 
-BackgroundLayer::~BackgroundLayer()
+FillLayer::~FillLayer()
 {
     delete m_next;
 }
 
-BackgroundLayer& BackgroundLayer::operator=(const BackgroundLayer& o)
+FillLayer& FillLayer::operator=(const FillLayer& o)
 {
     if (m_next != o.m_next) {
         delete m_next;
-        m_next = o.m_next ? new BackgroundLayer(*o.m_next) : 0;
+        m_next = o.m_next ? new FillLayer(*o.m_next) : 0;
     }
 
     m_image = o.m_image;
     m_xPosition = o.m_xPosition;
     m_yPosition = o.m_yPosition;
-    m_bgAttachment = o.m_bgAttachment;
-    m_bgClip = o.m_bgClip;
-    m_bgComposite = o.m_bgComposite;
-    m_bgOrigin = o.m_bgOrigin;
-    m_bgRepeat = o.m_bgRepeat;
-    m_backgroundSize = o.m_backgroundSize;
+    m_attachment = o.m_attachment;
+    m_clip = o.m_clip;
+    m_composite = o.m_composite;
+    m_origin = o.m_origin;
+    m_repeat = o.m_repeat;
+    m_size = o.m_size;
 
     m_imageSet = o.m_imageSet;
     m_attachmentSet = o.m_attachmentSet;
@@ -297,29 +297,29 @@ BackgroundLayer& BackgroundLayer::operator=(const BackgroundLayer& o)
     m_repeatSet = o.m_repeatSet;
     m_xPosSet = o.m_xPosSet;
     m_yPosSet = o.m_yPosSet;
-    m_backgroundSizeSet = o.m_backgroundSizeSet;
+    m_sizeSet = o.m_sizeSet;
 
     return *this;
 }
 
-bool BackgroundLayer::operator==(const BackgroundLayer& o) const
+bool FillLayer::operator==(const FillLayer& o) const
 {
     // We do not check the "isSet" booleans for each property, since those are only used during initial construction
     // to propagate patterns into layers.  All layer comparisons happen after values have all been filled in anyway.
     return imagesEquivalent(m_image.get(), o.m_image.get()) && m_xPosition == o.m_xPosition && m_yPosition == o.m_yPosition &&
-           m_bgAttachment == o.m_bgAttachment && m_bgClip == o.m_bgClip && 
-           m_bgComposite == o.m_bgComposite && m_bgOrigin == o.m_bgOrigin && m_bgRepeat == o.m_bgRepeat &&
-           m_backgroundSize.width == o.m_backgroundSize.width && m_backgroundSize.height == o.m_backgroundSize.height && 
+           m_attachment == o.m_attachment && m_clip == o.m_clip && 
+           m_composite == o.m_composite && m_origin == o.m_origin && m_repeat == o.m_repeat &&
+           m_size.width == o.m_size.width && m_size.height == o.m_size.height && 
            ((m_next && o.m_next) ? *m_next == *o.m_next : m_next == o.m_next);
 }
 
-void BackgroundLayer::fillUnsetProperties()
+void FillLayer::fillUnsetProperties()
 {
-    BackgroundLayer* curr;
-    for (curr = this; curr && curr->isBackgroundImageSet(); curr = curr->next()) { }
+    FillLayer* curr;
+    for (curr = this; curr && curr->isImageSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
-        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
+        for (FillLayer* pattern = this; curr; curr = curr->next()) {
             curr->m_image = pattern->m_image;
             pattern = pattern->next();
             if (pattern == curr || !pattern)
@@ -327,10 +327,10 @@ void BackgroundLayer::fillUnsetProperties()
         }
     }
     
-    for (curr = this; curr && curr->isBackgroundXPositionSet(); curr = curr->next()) { }
+    for (curr = this; curr && curr->isXPositionSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
-        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
+        for (FillLayer* pattern = this; curr; curr = curr->next()) {
             curr->m_xPosition = pattern->m_xPosition;
             pattern = pattern->next();
             if (pattern == curr || !pattern)
@@ -338,10 +338,10 @@ void BackgroundLayer::fillUnsetProperties()
         }
     }
     
-    for (curr = this; curr && curr->isBackgroundYPositionSet(); curr = curr->next()) { }
+    for (curr = this; curr && curr->isYPositionSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
-        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
+        for (FillLayer* pattern = this; curr; curr = curr->next()) {
             curr->m_yPosition = pattern->m_yPosition;
             pattern = pattern->next();
             if (pattern == curr || !pattern)
@@ -349,66 +349,66 @@ void BackgroundLayer::fillUnsetProperties()
         }
     }
     
-    for (curr = this; curr && curr->isBackgroundAttachmentSet(); curr = curr->next()) { }
+    for (curr = this; curr && curr->isAttachmentSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
-        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
-            curr->m_bgAttachment = pattern->m_bgAttachment;
+        for (FillLayer* pattern = this; curr; curr = curr->next()) {
+            curr->m_attachment = pattern->m_attachment;
             pattern = pattern->next();
             if (pattern == curr || !pattern)
                 pattern = this;
         }
     }
     
-    for (curr = this; curr && curr->isBackgroundClipSet(); curr = curr->next()) { }
+    for (curr = this; curr && curr->isClipSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
-        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
-            curr->m_bgClip = pattern->m_bgClip;
+        for (FillLayer* pattern = this; curr; curr = curr->next()) {
+            curr->m_clip = pattern->m_clip;
             pattern = pattern->next();
             if (pattern == curr || !pattern)
                 pattern = this;
         }
     }
 
-    for (curr = this; curr && curr->isBackgroundCompositeSet(); curr = curr->next()) { }
+    for (curr = this; curr && curr->isCompositeSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
-        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
-            curr->m_bgComposite = pattern->m_bgComposite;
+        for (FillLayer* pattern = this; curr; curr = curr->next()) {
+            curr->m_composite = pattern->m_composite;
             pattern = pattern->next();
             if (pattern == curr || !pattern)
                 pattern = this;
         }
     }
 
-    for (curr = this; curr && curr->isBackgroundOriginSet(); curr = curr->next()) { }
+    for (curr = this; curr && curr->isOriginSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
-        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
-            curr->m_bgOrigin = pattern->m_bgOrigin;
+        for (FillLayer* pattern = this; curr; curr = curr->next()) {
+            curr->m_origin = pattern->m_origin;
             pattern = pattern->next();
             if (pattern == curr || !pattern)
                 pattern = this;
         }
     }
 
-    for (curr = this; curr && curr->isBackgroundRepeatSet(); curr = curr->next()) { }
+    for (curr = this; curr && curr->isRepeatSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
-        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
-            curr->m_bgRepeat = pattern->m_bgRepeat;
+        for (FillLayer* pattern = this; curr; curr = curr->next()) {
+            curr->m_repeat = pattern->m_repeat;
             pattern = pattern->next();
             if (pattern == curr || !pattern)
                 pattern = this;
         }
     }
     
-    for (curr = this; curr && curr->isBackgroundSizeSet(); curr = curr->next()) { }
+    for (curr = this; curr && curr->isSizeSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
-        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
-            curr->m_backgroundSize = pattern->m_backgroundSize;
+        for (FillLayer* pattern = this; curr; curr = curr->next()) {
+            curr->m_size = pattern->m_size;
             pattern = pattern->next();
             if (pattern == curr || !pattern)
                 pattern = this;
@@ -416,16 +416,16 @@ void BackgroundLayer::fillUnsetProperties()
     }
 }
 
-void BackgroundLayer::cullEmptyLayers()
+void FillLayer::cullEmptyLayers()
 {
-    BackgroundLayer *next;
-    for (BackgroundLayer *p = this; p; p = next) {
+    FillLayer *next;
+    for (FillLayer *p = this; p; p = next) {
         next = p->m_next;
-        if (next && !next->isBackgroundImageSet() &&
-            !next->isBackgroundXPositionSet() && !next->isBackgroundYPositionSet() &&
-            !next->isBackgroundAttachmentSet() && !next->isBackgroundClipSet() &&
-            !next->isBackgroundCompositeSet() && !next->isBackgroundOriginSet() &&
-            !next->isBackgroundRepeatSet() && !next->isBackgroundSizeSet()) {
+        if (next && !next->isImageSet() &&
+            !next->isXPositionSet() && !next->isYPositionSet() &&
+            !next->isAttachmentSet() && !next->isClipSet() &&
+            !next->isCompositeSet() && !next->isOriginSet() &&
+            !next->isRepeatSet() && !next->isSizeSet()) {
             delete next;
             p->m_next = 0;
             break;
@@ -721,7 +721,7 @@ bool Transition::operator==(const Transition& o) const
 void Transition::fillUnsetProperties()
 {
     Transition* curr;
-    for (curr = this; curr && curr->isTransitionDurationSet(); curr = curr->next()) { }
+    for (curr = this; curr && curr->isDurationSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (Transition* pattern = this; curr; curr = curr->next()) {
@@ -732,7 +732,7 @@ void Transition::fillUnsetProperties()
         }
     }
     
-    for (curr = this; curr && curr->isTransitionRepeatCountSet(); curr = curr->next()) { }
+    for (curr = this; curr && curr->isRepeatCountSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (Transition* pattern = this; curr; curr = curr->next()) {
@@ -743,7 +743,7 @@ void Transition::fillUnsetProperties()
         }
     }
     
-    for (curr = this; curr && curr->isTransitionTimingFunctionSet(); curr = curr->next()) { }
+    for (curr = this; curr && curr->isTimingFunctionSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (Transition* pattern = this; curr; curr = curr->next()) {
@@ -754,7 +754,7 @@ void Transition::fillUnsetProperties()
         }
     }
 
-    for (curr = this; curr && curr->isTransitionPropertySet(); curr = curr->next()) { }
+    for (curr = this; curr && curr->isPropertySet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.
         for (Transition* pattern = this; curr; curr = curr->next()) {

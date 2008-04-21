@@ -160,7 +160,7 @@ public:
 
         bool m_hasUAAppearance;
         BorderData m_borderData;
-        BackgroundLayer m_backgroundData;
+        FillLayer m_backgroundData;
         Color m_backgroundColor;
 
     public:
@@ -175,15 +175,15 @@ public:
         void updateFont();
         void cacheBorderAndBackground();
 
-        void mapBackgroundAttachment(BackgroundLayer*, CSSValue*);
-        void mapBackgroundClip(BackgroundLayer*, CSSValue*);
-        void mapBackgroundComposite(BackgroundLayer*, CSSValue*);
-        void mapBackgroundOrigin(BackgroundLayer*, CSSValue*);
-        void mapBackgroundImage(BackgroundLayer*, CSSValue*);
-        void mapBackgroundRepeat(BackgroundLayer*, CSSValue*);
-        void mapBackgroundSize(BackgroundLayer*, CSSValue*);
-        void mapBackgroundXPosition(BackgroundLayer*, CSSValue*);
-        void mapBackgroundYPosition(BackgroundLayer*, CSSValue*);
+        void mapFillAttachment(FillLayer*, CSSValue*);
+        void mapFillClip(FillLayer*, CSSValue*);
+        void mapFillComposite(FillLayer*, CSSValue*);
+        void mapFillOrigin(FillLayer*, CSSValue*);
+        void mapFillImage(FillLayer*, CSSValue*);
+        void mapFillRepeat(FillLayer*, CSSValue*);
+        void mapFillSize(FillLayer*, CSSValue*);
+        void mapFillXPosition(FillLayer*, CSSValue*);
+        void mapFillYPosition(FillLayer*, CSSValue*);
 
         void mapTransitionDuration(Transition*, CSSValue*);
         void mapTransitionRepeatCount(Transition*, CSSValue*);

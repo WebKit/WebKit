@@ -1,3 +1,152 @@
+2008-04-21  David Hyatt  <hyatt@apple.com>
+
+        Rename BackgroundLayer -> FillLayer in preparation for it being used for other types of fills.
+
+        Reviewed by Dan
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EFillBox):
+        (WebCore::CSSPrimitiveValue::operator EFillRepeat):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapFillAttachment):
+        (WebCore::CSSStyleSelector::mapFillClip):
+        (WebCore::CSSStyleSelector::mapFillComposite):
+        (WebCore::CSSStyleSelector::mapFillOrigin):
+        (WebCore::CSSStyleSelector::mapFillImage):
+        (WebCore::CSSStyleSelector::mapFillRepeat):
+        (WebCore::CSSStyleSelector::mapFillSize):
+        (WebCore::CSSStyleSelector::mapFillXPosition):
+        (WebCore::CSSStyleSelector::mapFillYPosition):
+        (WebCore::CSSStyleSelector::mapTransitionDuration):
+        (WebCore::CSSStyleSelector::mapTransitionRepeatCount):
+        (WebCore::CSSStyleSelector::mapTransitionTimingFunction):
+        (WebCore::CSSStyleSelector::mapTransitionProperty):
+        * css/CSSStyleSelector.h:
+        * page/AnimationController.cpp:
+        (WebCore::ImplicitAnimation::ImplicitAnimation):
+        (WebCore::CompositeImplicitAnimation::animate):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBackgrounds):
+        (WebCore::InlineFlowBox::paintBackground):
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintRootBoxDecorations):
+        (WebCore::RenderBox::paintBackgrounds):
+        (WebCore::RenderBox::paintBackground):
+        (WebCore::RenderBox::calculateBackgroundSize):
+        (WebCore::RenderBox::imageChanged):
+        (WebCore::RenderBox::calculateBackgroundImageGeometry):
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/RenderBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mustRepaintBackgroundOrBorder):
+        (WebCore::RenderObject::updateBackgroundImages):
+        (WebCore::RenderObject::arenaDelete):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::paintBackgroundExtended):
+        * rendering/RenderStyle.cpp:
+        (WebCore::FillLayer::FillLayer):
+        (WebCore::FillLayer::~FillLayer):
+        (WebCore::FillLayer::operator=):
+        (WebCore::FillLayer::operator==):
+        (WebCore::FillLayer::fillUnsetProperties):
+        (WebCore::FillLayer::cullEmptyLayers):
+        (WebCore::Transition::fillUnsetProperties):
+        * rendering/RenderStyle.h:
+        (WebCore::):
+        (WebCore::FillLayer::image):
+        (WebCore::FillLayer::xPosition):
+        (WebCore::FillLayer::yPosition):
+        (WebCore::FillLayer::attachment):
+        (WebCore::FillLayer::clip):
+        (WebCore::FillLayer::origin):
+        (WebCore::FillLayer::repeat):
+        (WebCore::FillLayer::composite):
+        (WebCore::FillLayer::size):
+        (WebCore::FillLayer::next):
+        (WebCore::FillLayer::isImageSet):
+        (WebCore::FillLayer::isXPositionSet):
+        (WebCore::FillLayer::isYPositionSet):
+        (WebCore::FillLayer::isAttachmentSet):
+        (WebCore::FillLayer::isClipSet):
+        (WebCore::FillLayer::isOriginSet):
+        (WebCore::FillLayer::isRepeatSet):
+        (WebCore::FillLayer::isCompositeSet):
+        (WebCore::FillLayer::isSizeSet):
+        (WebCore::FillLayer::setImage):
+        (WebCore::FillLayer::setXPosition):
+        (WebCore::FillLayer::setYPosition):
+        (WebCore::FillLayer::setAttachment):
+        (WebCore::FillLayer::setClip):
+        (WebCore::FillLayer::setOrigin):
+        (WebCore::FillLayer::setRepeat):
+        (WebCore::FillLayer::setComposite):
+        (WebCore::FillLayer::setSize):
+        (WebCore::FillLayer::clearImage):
+        (WebCore::FillLayer::clearXPosition):
+        (WebCore::FillLayer::clearYPosition):
+        (WebCore::FillLayer::clearAttachment):
+        (WebCore::FillLayer::clearClip):
+        (WebCore::FillLayer::clearOrigin):
+        (WebCore::FillLayer::clearRepeat):
+        (WebCore::FillLayer::clearComposite):
+        (WebCore::FillLayer::clearSize):
+        (WebCore::FillLayer::setNext):
+        (WebCore::FillLayer::operator!=):
+        (WebCore::FillLayer::hasFixedImage):
+        (WebCore::Transition::isDurationSet):
+        (WebCore::Transition::isRepeatCountSet):
+        (WebCore::Transition::isTimingFunctionSet):
+        (WebCore::Transition::isPropertySet):
+        (WebCore::Transition::clearDuration):
+        (WebCore::Transition::clearRepeatCount):
+        (WebCore::Transition::clearTimingFunction):
+        (WebCore::Transition::clearProperty):
+        (WebCore::Transition::duration):
+        (WebCore::Transition::repeatCount):
+        (WebCore::Transition::timingFunction):
+        (WebCore::Transition::property):
+        (WebCore::Transition::setDuration):
+        (WebCore::Transition::setRepeatCount):
+        (WebCore::Transition::setTimingFunction):
+        (WebCore::Transition::setProperty):
+        (WebCore::RenderStyle::NonInheritedFlags::operator==):
+        (WebCore::RenderStyle::setBitDefaults):
+        (WebCore::RenderStyle::backgroundRepeat):
+        (WebCore::RenderStyle::backgroundComposite):
+        (WebCore::RenderStyle::backgroundAttachment):
+        (WebCore::RenderStyle::backgroundClip):
+        (WebCore::RenderStyle::backgroundOrigin):
+        (WebCore::RenderStyle::backgroundSize):
+        (WebCore::RenderStyle::accessBackgroundLayers):
+        (WebCore::RenderStyle::backgroundLayers):
+        (WebCore::RenderStyle::clearBackgroundLayers):
+        (WebCore::RenderStyle::inheritBackgroundLayers):
+        (WebCore::RenderStyle::initialFillAttachment):
+        (WebCore::RenderStyle::initialFillClip):
+        (WebCore::RenderStyle::initialFillOrigin):
+        (WebCore::RenderStyle::initialFillRepeat):
+        (WebCore::RenderStyle::initialFillComposite):
+        (WebCore::RenderStyle::initialFillSize):
+        (WebCore::RenderStyle::initialFillXPosition):
+        (WebCore::RenderStyle::initialFillYPosition):
+        (WebCore::RenderStyle::initialFillImage):
+        (WebCore::RenderStyle::initialWhiteSpace):
+        (WebCore::RenderStyle::initialColor):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::isControlStyled):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::isControlStyled):
+
 2008-04-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Rubber-stamped by Ap.

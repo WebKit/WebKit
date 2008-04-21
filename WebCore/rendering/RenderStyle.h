@@ -541,12 +541,12 @@ private:
 };
 
 //------------------------------------------------
-enum EBackgroundBox {
-    BGBORDER, BGPADDING, BGCONTENT, BGTEXT
+enum EFillBox {
+    BorderFillBox, PaddingFillBox, ContentFillBox, TextFillBox
 };
 
-enum EBackgroundRepeat {
-    REPEAT, REPEAT_X, REPEAT_Y, NO_REPEAT
+enum EFillRepeat {
+    RepeatFill, RepeatXFill, RepeatYFill, NoRepeatFill
 };
 
 struct LengthSize {
@@ -554,61 +554,61 @@ struct LengthSize {
     Length height;
 };
 
-struct BackgroundLayer {
+struct FillLayer {
 public:
-    BackgroundLayer();
-    ~BackgroundLayer();
+    FillLayer();
+    ~FillLayer();
 
-    StyleImage* backgroundImage() const { return m_image.get(); }
-    Length backgroundXPosition() const { return m_xPosition; }
-    Length backgroundYPosition() const { return m_yPosition; }
-    bool backgroundAttachment() const { return m_bgAttachment; }
-    EBackgroundBox backgroundClip() const { return static_cast<EBackgroundBox>(m_bgClip); }
-    EBackgroundBox backgroundOrigin() const { return static_cast<EBackgroundBox>(m_bgOrigin); }
-    EBackgroundRepeat backgroundRepeat() const { return static_cast<EBackgroundRepeat>(m_bgRepeat); }
-    CompositeOperator backgroundComposite() const { return static_cast<CompositeOperator>(m_bgComposite); }
-    LengthSize backgroundSize() const { return m_backgroundSize; }
+    StyleImage* image() const { return m_image.get(); }
+    Length xPosition() const { return m_xPosition; }
+    Length yPosition() const { return m_yPosition; }
+    bool attachment() const { return m_attachment; }
+    EFillBox clip() const { return static_cast<EFillBox>(m_clip); }
+    EFillBox origin() const { return static_cast<EFillBox>(m_origin); }
+    EFillRepeat repeat() const { return static_cast<EFillRepeat>(m_repeat); }
+    CompositeOperator composite() const { return static_cast<CompositeOperator>(m_composite); }
+    LengthSize size() const { return m_size; }
 
-    const BackgroundLayer* next() const { return m_next; }
-    BackgroundLayer* next() { return m_next; }
+    const FillLayer* next() const { return m_next; }
+    FillLayer* next() { return m_next; }
 
-    bool isBackgroundImageSet() const { return m_imageSet; }
-    bool isBackgroundXPositionSet() const { return m_xPosSet; }
-    bool isBackgroundYPositionSet() const { return m_yPosSet; }
-    bool isBackgroundAttachmentSet() const { return m_attachmentSet; }
-    bool isBackgroundClipSet() const { return m_clipSet; }
-    bool isBackgroundOriginSet() const { return m_originSet; }
-    bool isBackgroundRepeatSet() const { return m_repeatSet; }
-    bool isBackgroundCompositeSet() const { return m_compositeSet; }
-    bool isBackgroundSizeSet() const { return m_backgroundSizeSet; }
+    bool isImageSet() const { return m_imageSet; }
+    bool isXPositionSet() const { return m_xPosSet; }
+    bool isYPositionSet() const { return m_yPosSet; }
+    bool isAttachmentSet() const { return m_attachmentSet; }
+    bool isClipSet() const { return m_clipSet; }
+    bool isOriginSet() const { return m_originSet; }
+    bool isRepeatSet() const { return m_repeatSet; }
+    bool isCompositeSet() const { return m_compositeSet; }
+    bool isSizeSet() const { return m_sizeSet; }
     
-    void setBackgroundImage(StyleImage* i) { m_image = i; m_imageSet = true; }
-    void setBackgroundXPosition(const Length& l) { m_xPosition = l; m_xPosSet = true; }
-    void setBackgroundYPosition(const Length& l) { m_yPosition = l; m_yPosSet = true; }
-    void setBackgroundAttachment(bool b) { m_bgAttachment = b; m_attachmentSet = true; }
-    void setBackgroundClip(EBackgroundBox b) { m_bgClip = b; m_clipSet = true; }
-    void setBackgroundOrigin(EBackgroundBox b) { m_bgOrigin = b; m_originSet = true; }
-    void setBackgroundRepeat(EBackgroundRepeat r) { m_bgRepeat = r; m_repeatSet = true; }
-    void setBackgroundComposite(CompositeOperator c) { m_bgComposite = c; m_compositeSet = true; }
-    void setBackgroundSize(const LengthSize& b) { m_backgroundSize = b; m_backgroundSizeSet = true; }
+    void setImage(StyleImage* i) { m_image = i; m_imageSet = true; }
+    void setXPosition(const Length& l) { m_xPosition = l; m_xPosSet = true; }
+    void setYPosition(const Length& l) { m_yPosition = l; m_yPosSet = true; }
+    void setAttachment(bool b) { m_attachment = b; m_attachmentSet = true; }
+    void setClip(EFillBox b) { m_clip = b; m_clipSet = true; }
+    void setOrigin(EFillBox b) { m_origin = b; m_originSet = true; }
+    void setRepeat(EFillRepeat r) { m_repeat = r; m_repeatSet = true; }
+    void setComposite(CompositeOperator c) { m_composite = c; m_compositeSet = true; }
+    void setSize(const LengthSize& b) { m_size = b; m_sizeSet = true; }
     
-    void clearBackgroundImage() { m_imageSet = false; }
-    void clearBackgroundXPosition() { m_xPosSet = false; }
-    void clearBackgroundYPosition() { m_yPosSet = false; }
-    void clearBackgroundAttachment() { m_attachmentSet = false; }
-    void clearBackgroundClip() { m_clipSet = false; }
-    void clearBackgroundOrigin() { m_originSet = false; }
-    void clearBackgroundRepeat() { m_repeatSet = false; }
-    void clearBackgroundComposite() { m_compositeSet = false; }
-    void clearBackgroundSize() { m_backgroundSizeSet = false; }
+    void clearImage() { m_imageSet = false; }
+    void clearXPosition() { m_xPosSet = false; }
+    void clearYPosition() { m_yPosSet = false; }
+    void clearAttachment() { m_attachmentSet = false; }
+    void clearClip() { m_clipSet = false; }
+    void clearOrigin() { m_originSet = false; }
+    void clearRepeat() { m_repeatSet = false; }
+    void clearComposite() { m_compositeSet = false; }
+    void clearSize() { m_sizeSet = false; }
 
-    void setNext(BackgroundLayer* n) { if (m_next != n) { delete m_next; m_next = n; } }
+    void setNext(FillLayer* n) { if (m_next != n) { delete m_next; m_next = n; } }
 
-    BackgroundLayer& operator=(const BackgroundLayer& o);    
-    BackgroundLayer(const BackgroundLayer& o);
+    FillLayer& operator=(const FillLayer& o);    
+    FillLayer(const FillLayer& o);
 
-    bool operator==(const BackgroundLayer& o) const;
-    bool operator!=(const BackgroundLayer& o) const {
+    bool operator==(const FillLayer& o) const;
+    bool operator!=(const FillLayer& o) const {
         return !(*this == o);
     }
 
@@ -628,7 +628,7 @@ public:
         return m_next ? m_next->hasImage() : false;
     }
     bool hasFixedImage() const {
-        if (m_image && !m_bgAttachment)
+        if (m_image && !m_attachment)
             return true;
         return m_next ? m_next->hasFixedImage() : false;
     }
@@ -641,13 +641,13 @@ public:
     Length m_xPosition;
     Length m_yPosition;
 
-    bool m_bgAttachment : 1;
-    unsigned m_bgClip : 2; // EBackgroundBox
-    unsigned m_bgOrigin : 2; // EBackgroundBox
-    unsigned m_bgRepeat : 2; // EBackgroundRepeat
-    unsigned m_bgComposite : 2; // CompositeOperator
+    bool m_attachment : 1;
+    unsigned m_clip : 2; // EFillBox
+    unsigned m_origin : 2; // EFillBox
+    unsigned m_repeat : 2; // EFillRepeat
+    unsigned m_composite : 2; // CompositeOperator
 
-    LengthSize m_backgroundSize;
+    LengthSize m_size;
 
     bool m_imageSet : 1;
     bool m_attachmentSet : 1;
@@ -657,9 +657,9 @@ public:
     bool m_xPosSet : 1;
     bool m_yPosSet : 1;
     bool m_compositeSet : 1;
-    bool m_backgroundSizeSet : 1;
+    bool m_sizeSet : 1;
 
-    BackgroundLayer* m_next;
+    FillLayer* m_next;
 };
 
 class StyleBackgroundData : public RefCounted<StyleBackgroundData> {
@@ -673,7 +673,7 @@ public:
         return !(*this == o);
     }
 
-    BackgroundLayer m_background;
+    FillLayer m_background;
     Color m_color;
     OutlineValue m_outline;
     
@@ -1206,26 +1206,26 @@ public:
     Transition* next() const { return m_next; }
     Transition* next() { return m_next; }
 
-    bool isTransitionDurationSet() const { return m_durationSet; }
-    bool isTransitionRepeatCountSet() const { return m_repeatCountSet; }
-    bool isTransitionTimingFunctionSet() const { return m_timingFunctionSet; }
-    bool isTransitionPropertySet() const { return m_propertySet; }
+    bool isDurationSet() const { return m_durationSet; }
+    bool isRepeatCountSet() const { return m_repeatCountSet; }
+    bool isTimingFunctionSet() const { return m_timingFunctionSet; }
+    bool isPropertySet() const { return m_propertySet; }
     
     bool isEmpty() const { return !m_durationSet && !m_repeatCountSet && !m_timingFunctionSet && !m_propertySet; }
-    void clearTransitionDuration() { m_durationSet = false; }
-    void clearTransitionRepeatCount() { m_repeatCountSet = false; }
-    void clearTransitionTimingFunction() { m_timingFunctionSet = false; }
-    void clearTransitionProperty() { m_propertySet = false; }
+    void clearDuration() { m_durationSet = false; }
+    void clearRepeatCount() { m_repeatCountSet = false; }
+    void clearTimingFunction() { m_timingFunctionSet = false; }
+    void clearProperty() { m_propertySet = false; }
 
-    int transitionDuration() const { return m_duration; }
-    int transitionRepeatCount() const { return m_repeatCount; }
-    const TimingFunction& transitionTimingFunction() const { return m_timingFunction; }
-    int transitionProperty() const { return m_property; }
+    int duration() const { return m_duration; }
+    int repeatCount() const { return m_repeatCount; }
+    const TimingFunction& timingFunction() const { return m_timingFunction; }
+    int property() const { return m_property; }
     
-    void setTransitionDuration(int d) { m_duration = d; m_durationSet = true; }
-    void setTransitionRepeatCount(int c) { m_repeatCount = c; m_repeatCountSet = true; }
-    void setTransitionTimingFunction(const TimingFunction& f) { m_timingFunction = f; m_timingFunctionSet = true; }
-    void setTransitionProperty(int t) { m_property = t; m_propertySet = true; }
+    void setDuration(int d) { m_duration = d; m_durationSet = true; }
+    void setRepeatCount(int c) { m_repeatCount = c; m_repeatCountSet = true; }
+    void setTimingFunction(const TimingFunction& f) { m_timingFunction = f; m_timingFunctionSet = true; }
+    void setProperty(int t) { m_property = t; m_propertySet = true; }
 
     void setNext(Transition* n) { if (m_next != n) { delete m_next; m_next = n; } }
 
@@ -1549,7 +1549,6 @@ protected:
         bool operator==( const NonInheritedFlags &other ) const {
             return (_effectiveDisplay == other._effectiveDisplay) &&
             (_originalDisplay == other._originalDisplay) &&
-            (_bg_repeat == other._bg_repeat) &&
             (_overflowX == other._overflowX) &&
             (_overflowY == other._overflowY) &&
             (_vertical_align == other._vertical_align) &&
@@ -1573,7 +1572,6 @@ protected:
         
         unsigned _effectiveDisplay : 5; // EDisplay
         unsigned _originalDisplay : 5; // EDisplay
-        unsigned _bg_repeat : 2; // EBackgroundRepeat
         unsigned _overflowX : 4; // EOverflow
         unsigned _overflowY : 4; // EOverflow
         unsigned _vertical_align : 4; // EVerticalAlign
@@ -1655,7 +1653,6 @@ protected:
         inherited_flags._force_backgrounds_to_white = false;
         
         noninherited_flags._effectiveDisplay = noninherited_flags._originalDisplay = initialDisplay();
-        noninherited_flags._bg_repeat = initialBackgroundRepeat();
         noninherited_flags._overflowX = initialOverflowX();
         noninherited_flags._overflowY = initialOverflowY();
         noninherited_flags._vertical_align = initialVerticalAlign();
@@ -1860,16 +1857,16 @@ public:
 
     const Color & backgroundColor() const { return background->m_color; }
     StyleImage* backgroundImage() const { return background->m_background.m_image.get(); }
-    EBackgroundRepeat backgroundRepeat() const { return static_cast<EBackgroundRepeat>(background->m_background.m_bgRepeat); }
-    CompositeOperator backgroundComposite() const { return static_cast<CompositeOperator>(background->m_background.m_bgComposite); }
-    bool backgroundAttachment() const { return background->m_background.m_bgAttachment; }
-    EBackgroundBox backgroundClip() const { return static_cast<EBackgroundBox>(background->m_background.m_bgClip); }
-    EBackgroundBox backgroundOrigin() const { return static_cast<EBackgroundBox>(background->m_background.m_bgOrigin); }
+    EFillRepeat backgroundRepeat() const { return static_cast<EFillRepeat>(background->m_background.m_repeat); }
+    CompositeOperator backgroundComposite() const { return static_cast<CompositeOperator>(background->m_background.m_composite); }
+    bool backgroundAttachment() const { return background->m_background.m_attachment; }
+    EFillBox backgroundClip() const { return static_cast<EFillBox>(background->m_background.m_clip); }
+    EFillBox backgroundOrigin() const { return static_cast<EFillBox>(background->m_background.m_origin); }
     Length backgroundXPosition() const { return background->m_background.m_xPosition; }
     Length backgroundYPosition() const { return background->m_background.m_yPosition; }
-    LengthSize backgroundSize() const { return background->m_background.m_backgroundSize; }
-    BackgroundLayer* accessBackgroundLayers() { return &(background.access()->m_background); }
-    const BackgroundLayer* backgroundLayers() const { return &(background->m_background); }
+    LengthSize backgroundSize() const { return background->m_background.m_size; }
+    FillLayer* accessBackgroundLayers() { return &(background.access()->m_background); }
+    const FillLayer* backgroundLayers() const { return &(background->m_background); }
 
     // returns true for collapsing borders, false for separate borders
     bool borderCollapse() const { return inherited_flags._border_collapse; }
@@ -2100,8 +2097,8 @@ public:
     void setWordSpacing(int v) { inherited.access()->font.setWordSpacing(v); }
     void setLetterSpacing(int v) { inherited.access()->font.setLetterSpacing(v); }
 
-    void clearBackgroundLayers() { background.access()->m_background = BackgroundLayer(); }
-    void inheritBackgroundLayers(const BackgroundLayer& parent) { background.access()->m_background = parent; }
+    void clearBackgroundLayers() { background.access()->m_background = FillLayer(); }
+    void inheritBackgroundLayers(const FillLayer& parent) { background.access()->m_background = parent; }
     void adjustBackgroundLayers();
 
     void setBorderCollapse(bool collapse) { inherited_flags._border_collapse = collapse; }
@@ -2295,12 +2292,15 @@ public:
     void setChildIndex(unsigned index) { m_childIndex = index; }
 
     // Initial values for all the properties
-    static bool initialBackgroundAttachment() { return true; }
-    static EBackgroundBox initialBackgroundClip() { return BGBORDER; }
-    static EBackgroundBox initialBackgroundOrigin() { return BGPADDING; }
-    static EBackgroundRepeat initialBackgroundRepeat() { return REPEAT; }
-    static CompositeOperator initialBackgroundComposite() { return CompositeSourceOver; }
-    static LengthSize initialBackgroundSize() { return LengthSize(); }
+    static bool initialFillAttachment() { return true; }
+    static EFillBox initialFillClip() { return BorderFillBox; }
+    static EFillBox initialFillOrigin() { return PaddingFillBox; }
+    static EFillRepeat initialFillRepeat() { return RepeatFill; }
+    static CompositeOperator initialFillComposite() { return CompositeSourceOver; }
+    static LengthSize initialFillSize() { return LengthSize(); }
+    static Length initialFillXPosition() { return Length(0.0, Percent); }
+    static Length initialFillYPosition() { return Length(0.0, Percent); }
+    static StyleImage* initialFillImage() { return 0; }
     static bool initialBorderCollapse() { return false; }
     static EBorderStyle initialBorderStyle() { return BNONE; }
     static BorderImage initialBorderImage() { return BorderImage(); }
@@ -2322,13 +2322,10 @@ public:
     static ETextTransform initialTextTransform() { return TTNONE; }
     static EVisibility initialVisibility() { return VISIBLE; }
     static EWhiteSpace initialWhiteSpace() { return NORMAL; }
-    static Length initialBackgroundXPosition() { return Length(0.0, Percent); }
-    static Length initialBackgroundYPosition() { return Length(0.0, Percent); }
     static short initialHorizontalBorderSpacing() { return 0; }
     static short initialVerticalBorderSpacing() { return 0; }
     static ECursor initialCursor() { return CURSOR_AUTO; }
     static Color initialColor() { return Color::black; }
-    static StyleImage* initialBackgroundImage() { return 0; }
     static StyleImage* initialListStyleImage() { return 0; }
     static unsigned short initialBorderWidth() { return 3; }
     static int initialLetterWordSpacing() { return 0; }

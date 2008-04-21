@@ -302,75 +302,75 @@ template<> inline CSSPrimitiveValue::operator EAppearance() const
         return EAppearance(m_value.ident - CSSValueCheckbox + 1);
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBackgroundBox e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFillBox e)
     : m_type(CSS_IDENT)
 {
     switch (e) {
-        case BGBORDER:
+        case BorderFillBox:
             m_value.ident = CSSValueBorder;
             break;
-        case BGPADDING:
+        case PaddingFillBox:
             m_value.ident = CSSValuePadding;
             break;
-        case BGCONTENT:
+        case ContentFillBox:
             m_value.ident = CSSValueContent;
             break;
-        case BGTEXT:
+        case TextFillBox:
             m_value.ident = CSSValueText;
             break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator EBackgroundBox() const
+template<> inline CSSPrimitiveValue::operator EFillBox() const
 {
     switch (m_value.ident) {
         case CSSValueBorder:
-            return BGBORDER;
+            return BorderFillBox;
         case CSSValuePadding:
-            return BGPADDING;
+            return PaddingFillBox;
         case CSSValueContent:
-            return BGCONTENT;
+            return ContentFillBox;
         case CSSValueText:
-            return BGTEXT;
+            return TextFillBox;
         default:
             ASSERT_NOT_REACHED();
-            return BGBORDER;
+            return BorderFillBox;
     }
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBackgroundRepeat e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFillRepeat e)
     : m_type(CSS_IDENT)
 {
     switch (e) {
-        case REPEAT:
+        case RepeatFill:
             m_value.ident = CSSValueRepeat;
             break;
-        case REPEAT_X:
+        case RepeatXFill:
             m_value.ident = CSSValueRepeatX;
             break;
-        case REPEAT_Y:
+        case RepeatYFill:
             m_value.ident = CSSValueRepeatY;
             break;
-        case NO_REPEAT:
+        case NoRepeatFill:
             m_value.ident = CSSValueNoRepeat;
             break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator EBackgroundRepeat() const
+template<> inline CSSPrimitiveValue::operator EFillRepeat() const
 {
     switch (m_value.ident) {
         case CSSValueRepeat:
-            return REPEAT;
+            return RepeatFill;
         case CSSValueRepeatX:
-            return REPEAT_X;
+            return RepeatXFill;
         case CSSValueRepeatY:
-            return REPEAT_Y;
+            return RepeatYFill;
         case CSSValueNoRepeat:
-            return NO_REPEAT;
+            return NoRepeatFill;
         default:
             ASSERT_NOT_REACHED();
-            return REPEAT;
+            return RepeatFill;
     }
 }
 
