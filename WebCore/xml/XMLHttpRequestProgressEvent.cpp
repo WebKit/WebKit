@@ -49,4 +49,4 @@ unsigned XMLHttpRequestProgressEvent::totalSize()
     return m_total;
 }
 
-} // Namespace WebCore
+} // namespace WebCore

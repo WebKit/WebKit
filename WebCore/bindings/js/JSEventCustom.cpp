@@ -110,14 +110,16 @@ JSValue* toJS(ExecState* exec, Event* event)
     else if (event->isMessageEvent())
         ret = new JSMessageEvent(JSMessageEventPrototype::self(exec), static_cast<MessageEvent*>(event));
 #endif
-    else if (event->isProgressEvent())
-        ret = new JSProgressEvent(JSProgressEventPrototype::self(exec), static_cast<ProgressEvent*>(event));
+    else if (event->isProgressEvent()) {
+        if (event->isXMLHttpRequestProgressEvent())
+            ret = new JSXMLHttpRequestProgressEvent(JSXMLHttpRequestProgressEventPrototype::self(exec), static_cast<XMLHttpRequestProgressEvent*>(event));
+        else
+            ret = new JSProgressEvent(JSProgressEventPrototype::self(exec), static_cast<ProgressEvent*>(event));
+    }
 #if ENABLE(DOM_STORAGE)
     else if (event->isStorageEvent())
         ret = new JSStorageEvent(JSStorageEventPrototype::self(exec), static_cast<StorageEvent*>(event));
 #endif
-    else if (event->isXMLHttpRequestProgressEvent())
-        ret = new JSXMLHttpRequestProgressEvent(JSXMLHttpRequestProgressEventPrototype::self(exec), static_cast<XMLHttpRequestProgressEvent*>(event));
     else
         ret = new JSEvent(JSEventPrototype::self(exec), event);
 

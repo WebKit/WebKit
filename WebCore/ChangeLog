@@ -1,3 +1,14 @@
+2008-04-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix up XMLHttpRequestProgressEvent.
+
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * xml/XMLHttpRequestProgressEvent.cpp:
+        * xml/XMLHttpRequestProgressEvent.h:
+
 2008-04-21  Adam Roben  <aroben@apple.com>
 
         Fix Bug 18615: Crash in PluginPackage::hash

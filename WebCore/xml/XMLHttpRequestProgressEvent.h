@@ -38,20 +38,11 @@ namespace WebCore {
 
         virtual bool isXMLHttpRequestProgressEvent() const { return true; }
 
-        // Avoid matching ProgressEvent.
-        virtual bool isProgressEvent() const { return false; }
-
-        bool lengthComputable() const { return m_lengthComputable; }
-        unsigned loaded() const { return m_loaded; }
-        unsigned total() const { return m_total; }
-
         // Those 2 methods are to be compatible with Firefox and are only a wrapper on top of the real implementation.
-        // FIXME: We should print a warning as they are deprecated.
         unsigned position();
         unsigned totalSize();
+    };
 
-    }; // class XMLHttpRequestProgressEvent
-
-} // Namespace WebCore
+} // namespace WebCore
 
 #endif // XMLHttpRequestProgressEvent_h
