@@ -31,12 +31,12 @@
 
 QT_BEGIN_NAMESPACE
 class QNetworkRequest;
+class QPrinter;
 QT_END_NAMESPACE
 
 class QWebPage;
 class QWebViewPrivate;
 class QWebNetworkRequest;
-class QPrinter;
 
 class QWEBKIT_EXPORT QWebView : public QWidget
 {
