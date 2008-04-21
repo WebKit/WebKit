@@ -2,6 +2,24 @@
 
         Reviewed by Simon.
 
+        Better handle Qt binding object lifetime in JS.
+        Add explicit marking of JS objects created for Qt
+        bindings, and remove the gcProtect calls.
+
+        * bridge/qt/qt_class.cpp:
+        (KJS::Bindings::QtClass::fallbackObject):
+        * bridge/qt/qt_instance.cpp:
+        (KJS::Bindings::QtRuntimeObjectImp::mark):
+        (KJS::Bindings::QtInstance::~QtInstance):
+        (KJS::Bindings::QtInstance::mark):
+        (KJS::Bindings::QtInstance::invokeDefaultMethod):
+        (KJS::Bindings::QtField::valueFromInstance):
+        * bridge/qt/qt_instance.h:
+
+2008-04-21  Michael Goddard  <michael.goddard@trolltech.com>
+
+        Reviewed by Simon.
+
         Add better support for RuntimeArray type conversions.
         It seems that RuntimeArray claims to inherit ArrayInstance
         (in the JS sense), but the C++ class doesn't, so properly

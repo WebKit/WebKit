@@ -66,10 +66,6 @@ const char* QtClass::name() const
 // and not get wrapped in RuntimeMethod).  Also, use this for methods,
 // so we can cache the JSValue* and return the same JSValue for the same
 // identifier...
-//
-// Unfortunately... we need to gcProtect our JSValues, since we don't have
-// access to an actual JS class that can mark() our JSValues.
-//
 JSValue* QtClass::fallbackObject(ExecState *exec, Instance *inst, const Identifier &identifier)
 {
     QtInstance* qtinst = static_cast<QtInstance*>(inst);
@@ -90,7 +86,6 @@ JSValue* QtClass::fallbackObject(ExecState *exec, Instance *inst, const Identifi
         QMetaMethod m = m_metaObject->method(index);
         if (m.access() != QMetaMethod::Private) {
             JSValue *val = new QtRuntimeMetaMethod(exec, identifier, static_cast<QtInstance*>(inst), index, normal, false);
-            gcProtect(val);
             qtinst->m_methods.insert(name, val);
             return val;
         }
@@ -108,7 +103,6 @@ JSValue* QtClass::fallbackObject(ExecState *exec, Instance *inst, const Identifi
 
         if (normal == signature) {
             JSValue* val = new QtRuntimeMetaMethod(exec, identifier, static_cast<QtInstance*>(inst), index, normal, false);
-            gcProtect(val);
             qtinst->m_methods.insert(name, val);
             return val;
         }

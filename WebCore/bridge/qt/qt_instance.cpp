@@ -51,6 +51,13 @@ class QtRuntimeObjectImp : public RuntimeObjectImp {
         ~QtRuntimeObjectImp();
         virtual void invalidate();
 
+        virtual void mark() {
+            QtInstance* instance = static_cast<QtInstance*>(getInternalInstance());
+            if (instance)
+                instance->mark();
+            RuntimeObjectImp::mark();
+        }
+
         // Additions
         virtual bool implementsConstruct() const {return implementsCall();}
         virtual JSObject* construct(ExecState* exec, const List& args);
@@ -112,18 +119,12 @@ QtInstance::~QtInstance()
     cachedInstances.remove(m_hashkey);
 
     // clean up (unprotect from gc) the JSValues we've created
-    foreach(JSValue* val, m_methods.values()) {
-        gcUnprotect(val);
-    }
     m_methods.clear();
 
     foreach(QtField* f, m_fields.values()) {
         delete f;
     }
     m_fields.clear();
-
-    if (m_defaultMethod)
-        gcUnprotect(m_defaultMethod);
 }
 
 PassRefPtr<QtInstance> QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObject> rootObject)
@@ -157,6 +158,20 @@ Class* QtInstance::getClass() const
     if (!m_class)
         m_class = QtClass::classForObject(m_object);
     return m_class;
+}
+
+void QtInstance::mark()
+{
+    if (m_defaultMethod)
+        m_defaultMethod->mark();
+    foreach(JSValue* val, m_methods.values()) {
+        if (val && !val->marked())
+            val->mark();
+    }
+    foreach(JSValue* val, m_children.values()) {
+        if (val && !val->marked())
+            val->mark();
+    }
 }
 
 void QtInstance::begin()
@@ -244,10 +259,8 @@ JSValue* QtInstance::invokeDefaultMethod(ExecState* exec, const List& args)
 
     // implementsCall will update our default method cache, if possible
     if (implementsCall()) {
-        if (!m_defaultMethod) {
+        if (!m_defaultMethod)
             m_defaultMethod = new QtRuntimeMetaMethod(exec, Identifier("[[Call]]"),this, m_defaultMethodIndex, QByteArray("qscript_call"), true);
-            gcProtect(m_defaultMethod);
-        }
 
         return m_defaultMethod->callAsFunction(exec, 0, args); // Luckily QtRuntimeMetaMethod ignores the obj parameter
     } else
@@ -357,7 +370,13 @@ JSValue* QtField::valueFromInstance(ExecState* exec, const Instance* inst) const
         else if (m_type == DynamicProperty)
             val = obj->property(m_dynamicProperty);
 
-        return convertQVariantToValue(exec, inst->rootObject(), val);
+        JSValue* ret = convertQVariantToValue(exec, inst->rootObject(), val);
+
+        // Need to save children so we can mark them
+        if (m_type == ChildObject)
+            instance->m_children.insert(ret);
+
+        return ret;
     } else {
         QString msg = QString("cannot access member `%1' of deleted QObject").arg(name());
         return throwError(exec, GeneralError, msg.toLatin1().constData());
