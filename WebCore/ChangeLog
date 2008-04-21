@@ -1,3 +1,15 @@
+2008-04-21  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 18615: Crash in PluginPackage::hash
+
+        <https://bugs.webkit.org/show_bug.cgi?id=18615>
+
+        Reviewed by Anders Carlsson.
+
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::refresh): Don't pass a null PluginPackage*
+        to add().
+
 2008-04-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

@@ -106,7 +106,8 @@ bool PluginDatabase::refresh()
             remove(oldPackage.get());
         }
 
-        if (add(PluginPackage::createPackage(*it, lastModified)))
+        RefPtr<PluginPackage> package = PluginPackage::createPackage(*it, lastModified);
+        if (package && add(package.release()))
             pluginSetChanged = true;
     }
 
@@ -246,6 +247,8 @@ void PluginDatabase::getDeletedPlugins(PluginSet& plugins) const
 
 bool PluginDatabase::add(PassRefPtr<PluginPackage> prpPackage)
 {
+    ASSERT_ARG(prpPackage, prpPackage);
+
     RefPtr<PluginPackage> package = prpPackage;
 
     if (!m_plugins.add(package).second)
