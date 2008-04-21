@@ -34,7 +34,9 @@
 
 #include <QtGui>
 #include <QDebug>
-
+#if QT_VERSION >= 0x040400
+#include <QPrintPreviewDialog>
+#endif
 
 
 class InfoWidget :public QProgressBar {
@@ -324,6 +326,11 @@ public:
         bar->addAction(view->pageAction(QWebPage::Undo));
         bar->addAction(view->pageAction(QWebPage::Redo));
 
+#if QT_VERSION >= 0x040400
+        bar->addSeparator();
+        bar->addAction(tr("Print"), this, SLOT(print()));
+#endif
+
         addToolBarBreak();
         bar = addToolBar("Location");
         bar->addWidget(new QLabel(tr("Location:")));
@@ -355,6 +362,15 @@ protected slots:
 #ifndef QT_NO_TOOLTIP
         if (!toolTip.isEmpty())
             QToolTip::showText(QCursor::pos(), toolTip);
+#endif
+    }
+    void print()
+    {
+#if QT_VERSION >= 0x040400
+        QPrintPreviewDialog dlg(this);
+        connect(&dlg, SIGNAL(paintRequested(QPrinter *)),
+                view, SLOT(print(QPrinter *)));
+        dlg.exec();
 #endif
     }
 protected:
