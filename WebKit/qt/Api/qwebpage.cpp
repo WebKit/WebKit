@@ -690,7 +690,7 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
 
   \a property specifies which property is queried.
 
-  \sa inputMethodEvent(), QInputMethodEvent, QInputContext.
+  \sa QWidget::inputMethodEvent(), QInputMethodEvent, QInputContext
 */
 QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
 {
@@ -734,6 +734,45 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
         return QVariant();
     }
 }
+
+/*!
+   \enum QWebPage::FindFlag
+
+   This enum describes the options available to QWebPage's findText() function. The options
+   can be OR-ed together from the following list:
+
+   \value FindBackward Searches backwards instead of forwards.
+   \value FindCaseSensitively By default findText() works case insensitive. Specifying this option
+   changes the behaviour to a case sensitive find operation.
+   \value FindWrapsAroundDocument Makes findText() restart from the beginning of the document if the end
+   was reached and the text was not found.
+*/
+
+/*!
+    \enum QWebPage::LinkDelegationPolicy
+
+    This enum defines the delegation policies a webpage can have when activating links and emitting
+    the linkClicked() signal.
+
+    \value DontDelegateLinks No links are delegated. Instead, QWebPage tries to handle them all.
+    \value DelegateExternalLinks When activating links that point to documents not stored on the
+    local filesystem or an equivalent - such as the Qt resource system - then linkClicked() is emitted.
+    \value DelegateAllLinks Whenever a link is activated the linkClicked() signal is emitted.
+*/
+
+/*!
+    \enum QWebPage::NavigationType
+
+    This enum describes the types of navigation available when browsing through hyperlinked
+    documents.
+
+    \value NavigationTypeLinkClicked The user clicked on a link or pressed return on a focused link.
+    \value NavigationTypeFormSubmitted The user activated a submit button for an HTML form.
+    \value NavigationTypeBackOrForward Navigation to a previously shown document in the back or forward history is requested.
+    \value NavigationTypeReload The user activated the reload action.
+    \value NavigationTypeFormResubmitted An HTML form was submitted a second time.
+    \value NavigationTypeOther A navigation to another document using a method not listed above.
+*/
 
 /*!
     \enum QWebPage::WebAction
@@ -885,14 +924,24 @@ QWidget *QWebPage::view() const
 
 
 /*!
-    This function is called whenever a JavaScript program tries to print to what is the console in web browsers.
+    This function is called whenever a JavaScript program tries to print a \a message to the web browser's console.
+
+    For example in case of evaluation errors the source URL may be provided in \a sourceID as well as the \a lineNumber.
+
+    The default implementation prints nothing.
 */
 void QWebPage::javaScriptConsoleMessage(const QString& message, int lineNumber, const QString& sourceID)
 {
+    Q_UNUSED(message)
+    Q_UNUSED(lineNumber)
+    Q_UNUSED(sourceID)
 }
 
 /*!
-    This function is called whenever a JavaScript program calls the alert() function.
+    This function is called whenever a JavaScript program running inside \a frame calls the alert() function with
+    the message \a msg.
+
+    The default implementation shows the message, \a msg, with QMessageBox::information.
 */
 void QWebPage::javaScriptAlert(QWebFrame *frame, const QString& msg)
 {
@@ -900,7 +949,10 @@ void QWebPage::javaScriptAlert(QWebFrame *frame, const QString& msg)
 }
 
 /*!
-    This function is called whenever a JavaScript program calls the confirm() function.
+    This function is called whenever a JavaScript program running inside \a frame calls the confirm() function
+    with the message, \a msg. Returns true if the user confirms the message; otherwise returns false.
+
+    The default implementation executes the query using QMessageBox::information with QMessageBox::Yes and QMessageBox::No buttons.
 */
 bool QWebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
 {
@@ -908,7 +960,13 @@ bool QWebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
 }
 
 /*!
-    This function is called whenever a JavaScript program tries to prompt the user of input.
+    This function is called whenever a JavaScript program running inside \a frame tries to prompt the user for input.
+    The program may provide an optional message, \a msg, as well as a default value for the input in \a defaultValue.
+
+    If the prompt was cancelled by the user the implementation should return false; otherwise the
+    result should be written to \a result and true should be returned.
+
+    The default implementation uses QInputDialog::getText.
 */
 bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result)
 {
@@ -923,8 +981,13 @@ bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QStr
 }
 
 /*!
-    This function is called whenever WebKit wants to create a new window of the given \a type, for example as a result of
-    a JavaScript request to open a document in a new window.
+    This function is called whenever WebKit wants to create a new window of the given \a type, for
+    example when a JavaScript program requests to open a document in a new window.
+
+    If the new window can be created, the new window's QWebPage is returned; otherwise a null pointer is returned.
+
+    If the view associated with the web page is a QWebView object, then the default implementation forwards
+    the request to QWebView's createWindow() function; otherwise it returns a null pointer.
 */
 QWebPage *QWebPage::createWindow(WebWindowType type)
 {
@@ -1169,8 +1232,9 @@ QSize QWebPage::viewportSize() const
 
 /*!
     \property QWebPage::viewportSize
+    \brief the size of the viewport
 
-    Specifies the size of the viewport. The size affects for example the visibility of scrollbars
+    The size affects for example the visibility of scrollbars
     if the document is larger than the viewport.
 */
 void QWebPage::setViewportSize(const QSize &size) const
@@ -1223,8 +1287,7 @@ bool QWebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &
 
 /*!
     \property QWebPage::selectedText
-
-    Returns the text currently selected.
+    \brief the text currently selected
 */
 QString QWebPage::selectedText() const
 {
@@ -1404,8 +1467,7 @@ QAction *QWebPage::action(WebAction action) const
 
 /*!
     \property QWebPage::modified
-
-    Specifies if the page contains unsubmitted form data.
+    \brief whether the page contains unsubmitted form data
 */
 bool QWebPage::isModified() const
 {
@@ -1484,7 +1546,9 @@ bool QWebPage::event(QEvent *ev)
 
 /*!
     Similar to QWidget::focusNextPrevChild it focuses the next focusable web element
-    if \a next is true. Otherwise the previous element is focused.
+    if \a next is true; otherwise the previous element is focused.
+
+    Returns true if it can find a new focusable element, or false if it can't.
 */
 bool QWebPage::focusNextPrevChild(bool next)
 {
@@ -1502,9 +1566,10 @@ bool QWebPage::focusNextPrevChild(bool next)
 
 /*!
     \property QWebPage::forwardUnsupportedContent
+    \brief whether QWebPage should forward unsupported content through the
+    unsupportedContent signal
 
-    This property defines whether QWebPage should forward unsupported content through the
-    unsupportedContent signal. If disabled the download of such content is aborted immediately.
+    If disabled the download of such content is aborted immediately.
 
     By default unsupported content is not forwarded.
 */
@@ -1521,9 +1586,8 @@ bool QWebPage::forwardUnsupportedContent() const
 
 /*!
     \property QWebPage::linkDelegationPolicy
-
-    This property defines how QWebPage should delegate the handling of links through the
-    linkClicked() signal.
+    \brief how QWebPage should delegate the handling of links through the
+    linkClicked() signal
 
     The default is to delegate no links.
 */
@@ -1540,7 +1604,7 @@ QWebPage::LinkDelegationPolicy QWebPage::linkDelegationPolicy() const
 
 /*!
     Finds the next occurrence of the string, \a subString, in the page, using the given \a options.
-    Returns true of \a subString was found and selects the match visually; otherwise returns false;
+    Returns true of \a subString was found and selects the match visually; otherwise returns false.
 */
 bool QWebPage::findText(const QString &subString, FindFlags options)
 {
@@ -1558,7 +1622,7 @@ bool QWebPage::findText(const QString &subString, FindFlags options)
 }
 
 /*!
-    Returns a pointe to the page's settings object.
+    Returns a pointer to the page's settings object.
 */
 QWebSettings *QWebPage::settings() const
 {
@@ -1568,17 +1632,20 @@ QWebSettings *QWebPage::settings() const
 /*!
     This function is called when the web content requests a file name, for example
     as a result of the user clicking on a "file upload" button in a HTML form.
+
+    A suggested filename may be provided in \a suggestedFile. The frame originating the
+    request is provided as \a parentFrame.
 */
-QString QWebPage::chooseFile(QWebFrame *parentFrame, const QString& oldFile)
+QString QWebPage::chooseFile(QWebFrame *parentFrame, const QString& suggestedFile)
 {
 #ifndef QT_NO_FILEDIALOG
-    return QFileDialog::getOpenFileName(d->view, QString::null, oldFile);
+    return QFileDialog::getOpenFileName(d->view, QString::null, suggestedFile);
 #else
     return QString::null;
 #endif
 }
 
-#if QT_VERSION < 0x040400
+#if QT_VERSION < 0x040400 && !defined qdoc
 
 void QWebPage::setNetworkInterface(QWebNetworkInterface *interface)
 {
@@ -1611,7 +1678,7 @@ QNetworkProxy QWebPage::networkProxy() const
     Sets the QNetworkAccessManager \a manager that is responsible for serving network
     requests for this QWebPage.
 
-    \sa networkAccessManager
+    \sa networkAccessManager()
 */
 void QWebPage::setNetworkAccessManager(QNetworkAccessManager *manager)
 {
@@ -1622,10 +1689,10 @@ void QWebPage::setNetworkAccessManager(QNetworkAccessManager *manager)
 }
 
 /*!
-    Returns the QNetworkAccessManager \a manager that is responsible for serving network
+    Returns the QNetworkAccessManager that is responsible for serving network
     requests for this QWebPage.
 
-    \sa setNetworkAccessManager
+    \sa setNetworkAccessManager()
 */
 QNetworkAccessManager *QWebPage::networkAccessManager() const
 {
@@ -1824,20 +1891,18 @@ QWebFrame *QWebPageContext::targetFrame() const
     \a dirtyRect contains the area that needs to be updated. To paint the QWebPage get
     the mainFrame() and call the render(QPainter*, const QRegion&) method with the
     \a dirtyRect as the second parameter.
-    
+
     \sa mainFrame()
-    \sa QWebFrame::render(QPainter*, const QRegion&)
     \sa view()
 */
 
 /*!
-    \fn void QWebPage::scrollRequested(int dy, int dy, const QRect& rectToScroll)
+    \fn void QWebPage::scrollRequested(int dx, int dy, const QRect& rectToScroll)
 
     This signal is emitted whenever the content given by \a rectToScroll needs
-    to be scrolled dx and dy downwards and no view was set.
+    to be scrolled \a dx and \a dy downwards and no view was set.
 
     \sa view()
-    
 */
 
 /*!
@@ -1845,7 +1910,7 @@ QWebFrame *QWebPageContext::targetFrame() const
 
     This signals is emitted when webkit cannot handle a link the user navigated to.
 
-    At signal emissions time the meta data of the QNetworkReply is available.
+    At signal emissions time the meta data of the QNetworkReply \a reply is available.
 
     \note This signal is only emitted if the forwardUnsupportedContent property is set to true.
 */
@@ -1853,7 +1918,8 @@ QWebFrame *QWebPageContext::targetFrame() const
 /*!
     \fn void QWebPage::downloadRequested(const QNetworkRequest &request)
 
-    This signal is emitted when the user decides to download a link.
+    This signal is emitted when the user decides to download a link. The url of
+    the link as well as additional meta-information is contained in \a request.
 */
 
 /*!

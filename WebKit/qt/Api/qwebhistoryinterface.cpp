@@ -52,7 +52,7 @@ static void gCleanupInterface()
 }
 
 /*!
-  Sets a new default interface that will be used by all of WebKit
+  Sets a new default interface, \a defaultInterface, that will be used by all of WebKit
   for managing history.
 */
 void QWebHistoryInterface::setDefaultInterface(QWebHistoryInterface *defaultInterface)
@@ -89,22 +89,30 @@ QWebHistoryInterface *QWebHistoryInterface::defaultInterface()
   historyContains() is used to query whether this page has been
   visited by the user.
 */
+
+/*!
+    Constructs a new QWebHistoryInterface with parent \a parent.
+*/
 QWebHistoryInterface::QWebHistoryInterface(QObject *parent) : QObject(parent)
 {
 }
 
+/*!
+    Destructor.
+*/
 QWebHistoryInterface::~QWebHistoryInterface()
 {
 }
 
 /*!
-  \fn bool QWebHistoryInterface::historyContains(const QString &url) const
+  \fn bool QWebHistoryInterface::historyContains(const QString &url) const = 0
 
-  Called by the WebKit engine to query whether a certain url has been visited by the user already.
+  Called by the WebKit engine to query whether a certain \a url has been visited by the user already.
+  Returns true if the \a url is part of the history of visited links; otherwise returns false.
 */
 
 /*!
-  \fn void QWebHistoryInterface::addHistoryEntry(const QString &url) const
+  \fn void QWebHistoryInterface::addHistoryEntry(const QString &url) = 0
 
-  Called by WebKit to add another url to the list of visited pages.
+  Called by WebKit to add another \a url to the list of visited pages.
 */

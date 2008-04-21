@@ -56,7 +56,7 @@ public:
     void setPage(QWebPage *page);
 
     void load(const QUrl &url);
-#if QT_VERSION < 0x040400
+#if QT_VERSION < 0x040400 && !defined(qdoc)
     void load(const QWebNetworkRequest &request);
 #else
     void load(const QNetworkRequest &request,

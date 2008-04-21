@@ -1,3 +1,43 @@
+2008-04-21  Kavindra Devi Palaraja <kdpalara@trolltech.com>.
+
+        Reviewed by Simon.
+
+        Lots of documentation fixes, fixed all qdoc warnings.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setTextSizeMultiplier):
+        * Api/qwebhistoryinterface.cpp:
+        (gCleanupInterface):
+        (QWebHistoryInterface::QWebHistoryInterface):
+        (QWebHistoryInterface::~QWebHistoryInterface):
+        * Api/qwebpage.cpp:
+        (QWebPage::inputMethodQuery):
+        (QWebPage::view):
+        (QWebPage::javaScriptConsoleMessage):
+        (QWebPage::javaScriptAlert):
+        (QWebPage::javaScriptConfirm):
+        (QWebPage::javaScriptPrompt):
+        (QWebPage::viewportSize):
+        (QWebPage::acceptNavigationRequest):
+        (QWebPage::action):
+        (QWebPage::event):
+        (QWebPage::focusNextPrevChild):
+        (QWebPage::setForwardUnsupportedContent):
+        (QWebPage::setLinkDelegationPolicy):
+        (QWebPage::findText):
+        (QWebPage::settings):
+        (QWebPage::networkProxy):
+        (QWebPage::setNetworkAccessManager):
+        * Api/qwebpage.h:
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+        (QWebSettings::setIconDatabasePath):
+        (QWebSettings::iconForUrl):
+        (QWebSettings::fontFamily):
+        * Api/qwebview.cpp:
+        (QWebView::load):
+        * Api/qwebview.h:
+
 2008-04-21  Marius Bugge Monsen  <mmonsen@trolltech.com>
 
         Reviewed by Simon.

@@ -177,7 +177,7 @@ public:
     bool isModified() const;
     QUndoStack *undoStack() const;
 
-#if QT_VERSION < 0x040400
+#if QT_VERSION < 0x040400 && !defined(qdoc)
     void setNetworkInterface(QWebNetworkInterface *interface);
     QWebNetworkInterface *networkInterface() const;
 

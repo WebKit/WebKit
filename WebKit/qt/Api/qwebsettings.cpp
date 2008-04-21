@@ -187,6 +187,59 @@ QWebSettings *QWebSettings::globalSettings()
 */
 
 /*!
+    \enum QWebSettings::FontFamily
+
+    This enum describes the generic font families defined by CSS 2.
+    For more information see the \l{http://www.w3.org/TR/REC-CSS2/fonts.html#generic-font-families}{CSS standard}.
+
+    \value StandardFont
+    \value FixedFont
+    \value SerifFont
+    \value SansSerifFont
+    \value CursiveFont
+    \value FantasyFont
+*/
+
+/*!
+    \enum QWebSettings::FontSize
+
+    This enum describes the font sizes configurable through QWebSettings.
+
+    \value MinimumFontSize The hard minimum font size.
+    \value MinimumLogicalFontSize The minimum logical font size that is applied after zooming with QWebFrame's textSizeMultiplier().
+    \value DefaultFontSize The default font size for regular text.
+    \value DefaultFixedFontSize The default font size for fixed-pitch text.
+*/
+
+/*!
+    \enum QWebSettings::WebGraphic
+
+    This enums describes the standard graphical elements used in webpages.
+
+    \value MissingImageGraphic The replacement graphic shown when an image could not be loaded.
+    \value MissingPluginGraphic The replacement graphic shown when a plugin could not be loaded.
+    \value DefaultFrameIconGraphic The default icon for QWebFrame::icon().
+    \value TextAreaSizeGripCornerGraphic The graphi shown for the size grip of text areas.
+*/
+
+/*!
+    \enum QWebSettings::WebAttribute
+
+    This enum describes various attributes that are configurable through QWebSettings.
+
+    \value AutoLoadImages Specifies whether to automatically load images in web pages.
+    \value JavascriptEnabled Enables or disables the running of JavaScript programs.
+    \value JavaEnabled Enables or disables Java applets. Currently Java applets are not supported.
+    \value PluginsEnabled Enables or disables plugins in web pages. Currently Flash and other plugins are not supported.
+    \value PrivateBrowsingEnabled Private browsing prevents WebKit from recording visited pages in the history as well as storage of web page icons.
+    \value JavascriptCanOpenWindows Specifies whether JavaScript programs can open new windows.
+    \value JavascriptCanAccessClipboard Specifies whether JavaScript programs can read or write to the clipboard.
+    \value DeveloperExtrasEnabled Enables extra tools for Web developers. Currently this enables the "Inspect" element in the context menu,
+    which shows the WebKit WebInspector for web site debugging.
+    \value LinksIncludedInFocusChain Specifies whether hyperlinks should be included in the keyboard focus chain.
+*/
+
+/*!
     \internal
 */
 QWebSettings::QWebSettings()
@@ -270,9 +323,9 @@ void QWebSettings::resetFontSize(FontSize type)
 /*!
     Specifies the location of a user stylesheet to load with every web page.
 
-    The location can be a URL as well as a path on the local filesystem.
+    The \a location can be a URL as well as a path on the local filesystem.
 
-    \sa userStyleSheetLocation
+    \sa userStyleSheetUrl()
 */
 void QWebSettings::setUserStyleSheetUrl(const QUrl &location)
 {
@@ -283,7 +336,7 @@ void QWebSettings::setUserStyleSheetUrl(const QUrl &location)
 /*!
     Returns the location of the user stylesheet.
 
-    \sa setUserStyleSheetLocation
+    \sa setUserStyleSheetUrl()
 */
 QUrl QWebSettings::userStyleSheetUrl() const
 {
@@ -316,7 +369,7 @@ void QWebSettings::setIconDatabasePath(const QString &path)
 /*!
     Returns whether the path of the icon database or an empty string if the icon database is disabled.
 
-    \sa setIconDatabasePath
+    \sa setIconDatabasePath()
 */
 QString QWebSettings::iconDatabasePath()
 {
@@ -330,8 +383,6 @@ QString QWebSettings::iconDatabasePath()
 /*!
     This will remove all the data from the icon database. If no
     icon database is enabled noting is going to happen.
-
-    \sa iconDatabaseEnabled()
 */
 void QWebSettings::clearIconDatabase()
 {
@@ -385,7 +436,7 @@ void QWebSettings::setMaximumPagesInCache(int pages)
     WebCore::pageCache()->setCapacity(qMax(0, pages));
 }
 
-/*
+/*!
     Returns the maximum number of web pages that are kept in the memory cache.
 */
 int QWebSettings::maximumPagesInCache()
@@ -394,7 +445,13 @@ int QWebSettings::maximumPagesInCache()
 }
 
 /*!
- @internal
+   Specifies the capacities for the memory cache for dead objects such as stylesheets or scripts.
+
+   The \a cacheMinDeadCapacity specifies the minimum number of bytes that dead objects should
+   consume when the cache is under pressue. \a cacheMaxDead is the maximum number of bytes that
+   dead objects should consume when the cache is not under pressure.
+
+   \a totalCapacity specifies the maximum number of bytes that the cache should consume overall.
 */
 void QWebSettings::setObjectCacheCapacities(int cacheMinDeadCapacity, int cacheMaxDead, int totalCapacity)
 {
@@ -413,7 +470,7 @@ void QWebSettings::setFontFamily(FontFamily which, const QString &family)
 }
 
 /*!
-    Returns the default font family to \a family for the specified \a which of font.
+    Returns the default font family for the specified \a which of font.
 */
 QString QWebSettings::fontFamily(FontFamily which) const
 {
@@ -448,7 +505,7 @@ void QWebSettings::setAttribute(WebAttribute attr, bool on)
 }
 
 /*!
-    Returns true if \a attr is enabled; false otherwise.
+    Returns true if \a attr is enabled; otherwise returns false.
 */
 bool QWebSettings::testAttribute(WebAttribute attr) const
 {

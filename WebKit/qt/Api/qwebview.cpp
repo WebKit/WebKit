@@ -134,14 +134,26 @@ void QWebView::setPage(QWebPage *page)
 }
 
 /*!
-    Downloads the specified \a url and displays it.
+    Loads the specified \a url and displays it.
+
+    \note The view remains the same until enough data has arrived to display the new \a url.
 */
 void QWebView::load(const QUrl &url)
 {
     page()->mainFrame()->load(url);
 }
 
-#if QT_VERSION < 0x040400
+/*!
+    \fn void QWebView::load(const QNetworkRequest &request, QNetworkAccessManager::Operation operation, const QByteArray &body)
+
+    Loads a network request, \a request, using the method specified in \a operation.
+
+    \a body is optional and is only used for POST operations.
+
+    \note The view remains the same until enough data has arrived to display the new url.
+*/
+
+#if QT_VERSION < 0x040400 && !defined(qdoc)
 void QWebView::load(const QWebNetworkRequest &request)
 #else
 void QWebView::load(const QNetworkRequest &request,
@@ -213,8 +225,8 @@ QWebSettings *QWebView::settings() const
 }
 
 /*!
-  \property QWebView::title
-  \brief the title of the web page currently viewed.
+    \property QWebView::title
+    \brief the title of the web page currently viewed
 */
 QString QWebView::title() const
 {
@@ -225,7 +237,9 @@ QString QWebView::title() const
 
 /*!
     \property QWebView::url
-    \brief the url of the web page currently viewed.
+    \brief the url of the web page currently viewed
+
+    Setting this property clears the view and loads the url.
 */
 
 void QWebView::setUrl(const QUrl &url)
@@ -242,7 +256,7 @@ QUrl QWebView::url() const
 
 /*!
     \property QWebView::icon
-    \brief the icon associated with the web page currently viewed.
+    \brief the icon associated with the web page currently viewed
 */
 QIcon QWebView::icon() const
 {
@@ -253,7 +267,7 @@ QIcon QWebView::icon() const
 
 /*!
     \property QWebView::selectedText
-    \brief the text currently selected.
+    \brief the text currently selected
 */
 QString QWebView::selectedText() const
 {
@@ -304,7 +318,7 @@ Qt::TextInteractionFlags QWebView::textInteractionFlags() const
 }
 */
 
-/*!
+/*
     \property QWebView::textInteractionFlags
     \brief how the view should handle user input
 
@@ -329,8 +343,7 @@ QSize QWebView::sizeHint() const
 
 /*!
   \property QWebView::textSizeMultiplier
-
-  This property defines the scaling factor for all text in the frame.
+  \brief the scaling factor for all text in the frame
 */
 
 void QWebView::setTextSizeMultiplier(qreal factor)
@@ -345,7 +358,7 @@ qreal QWebView::textSizeMultiplier() const
 
 /*!
     Finds the next occurrence of the string, \a subString, in the page, using the given \a options.
-    Returns true of \a subString was found and selects the match visually; otherwise returns false;
+    Returns true of \a subString was found and selects the match visually; otherwise returns false.
 */
 bool QWebView::findText(const QString &subString, QWebPage::FindFlags options)
 {
@@ -666,9 +679,8 @@ void QWebView::inputMethodEvent(QInputMethodEvent *e)
 /*!
     \fn void QWebView::linkClicked(const QUrl &url)
 
-    This signal is emitted when the user clicks on a link and the page's
-    linkDelegationPolicy property allows the delegation of the clicked link
-    to this signal.
+    This signal is emitted whenever the user clicks on a link and the page's linkDelegationPolicy
+    property is set to delegate the link handling for the specified \a url.
 
     \sa QWebPage::linkDelegationPolicy()
 */

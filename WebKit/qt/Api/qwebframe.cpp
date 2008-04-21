@@ -215,9 +215,10 @@ QString QWebFrame::renderTreeDump() const
 }
 
 /*!
-  The title of the frame as defined by the HTML &lt;title&gt;
-  element.
+    \property QWebFrame::title
+    \brief the title of the frame as defined by the HTML &lt;title&gt; element
 */
+
 QString QWebFrame::title() const
 {
     if (d->frame->document())
@@ -227,7 +228,7 @@ QString QWebFrame::title() const
 
 /*!
     \property QWebFrame::url
-    \brief the url of the frame currently viewed.
+    \brief the url of the frame currently viewed
 */
 
 void QWebFrame::setUrl(const QUrl &url)
@@ -243,8 +244,10 @@ QUrl QWebFrame::url() const
 }
 
 /*!
-  The icon associated with this frame.
+    \property QWebFrame::icon
+    \brief the icon associated with this frame
 */
+
 QIcon QWebFrame::icon() const
 {
     String url = d->frame->loader()->url().string();
@@ -284,7 +287,9 @@ QWebPage *QWebFrame::page() const
 }
 
 /*!
-  Load \a url into this frame.
+  Loads \a url into this frame.
+
+  \note The view remains the same until enough data has arrived to display the new \a url.
 */
 void QWebFrame::load(const QUrl &url)
 {
@@ -297,7 +302,9 @@ void QWebFrame::load(const QUrl &url)
 
 #if QT_VERSION < 0x040400
 /*!
-  Load network request \a req into this frame.
+  Loads a network request, \a req, into this frame.
+
+  \note The view remains the same until enough data has arrived to display the new url.
 */
 void QWebFrame::load(const QWebNetworkRequest &req)
 {
@@ -332,8 +339,12 @@ void QWebFrame::load(const QWebNetworkRequest &req)
 #else
 
 /*!
-  Load network request \a req into this frame. Use the method specified in \a
-  operation. \a body is optional and is only used for POST operations.
+  Loads a network request, \a req, into this frame, using the method specified in \a
+  operation.
+
+  \a body is optional and is only used for POST operations.
+
+  \note The view remains the same until enough data has arrived to display the new \a url.
 */
 void QWebFrame::load(const QNetworkRequest &req,
                      QNetworkAccessManager::Operation operation,
@@ -482,9 +493,9 @@ void QWebFrame::setScrollBarPolicy(Qt::Orientation orientation, Qt::ScrollBarPol
 }
 
 /*!
-  Sets the current value for the scrollbar with orientation \a orientation.
+  Sets the current \a value for the scrollbar with orientation \a orientation.
 
-  The scrollbar forces the value to be within the legal range: minimum <= value <= maximum.
+  The scrollbar forces the \a value to be within the legal range: minimum <= value <= maximum.
 
   Changing the value also updates the thumb position.
 */
@@ -573,8 +584,7 @@ void QWebFrame::render(QPainter *painter)
 
 /*!
   \property QWebFrame::textSizeMultiplier
-
-  This property defines the scaling factor for all text in the frame.
+  \brief the scaling factor for all text in the frame
 */
 
 void QWebFrame::setTextSizeMultiplier(qreal factor)
