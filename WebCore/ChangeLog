@@ -1,3 +1,38 @@
+2008-04-21  Timothy Hatcher  <timothy@apple.com>
+
+        Adds the UI portions of the Scripts panel to the Web Inspector.
+        The Scripts panel has not been added to the toolbar yet.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18601
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/InspectorLocalizedStrings.js: Changed "Show inherited properties"
+        to "Show inherited". Adds new strings for the Scripts' panel tooltips.
+        * page/inspector/BreakpointsSidebarPane.js: Added.
+        * page/inspector/CallStackSidebarPane.js: Added.
+        * page/inspector/Images/back.png: Added.
+        * page/inspector/Images/debuggerContinue.png: Added.
+        * page/inspector/Images/debuggerPause.png: Added.
+        * page/inspector/Images/debuggerStepInto.png: Added.
+        * page/inspector/Images/debuggerStepOut.png: Added.
+        * page/inspector/Images/debuggerStepOver.png: Added.
+        * page/inspector/Images/forward.png: Added.
+        * page/inspector/Images/statusbarResizerHorizontal.png: Added.
+        * page/inspector/PropertiesSection.js:
+        (WebInspector.PropertiesSection): Flip the order the subtile is appended
+        so it can float right in the CSS.
+        * page/inspector/ScriptsPanel.js: Added.
+        * page/inspector/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection): Changed "Show inherited properties"
+        to "Show inherited".
+        * page/inspector/inspector.css: Added new CSS rules for the Scripts panel. 
+        Also changes the look of the section to match the mockup, this affects
+        Styles and Properties in Elements.
+        * page/inspector/inspector.html: Import new files.
+        * page/inspector/inspector.js:
+        (Preferences.minScriptsSidebarWidth): Added.
+
 2008-04-21  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

@@ -35,6 +35,7 @@ var Preferences = {
     minConsoleHeight: 75,
     minSidebarWidth: 100,
     minElementsSidebarWidth: 200,
+    minScriptsSidebarWidth: 200,
     showInheritedComputedStyleProperties: false,
     showMissingLocalizedStrings: false
 }

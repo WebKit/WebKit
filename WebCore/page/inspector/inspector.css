@@ -251,6 +251,7 @@ body.console-visible #main-panels {
     height: 24px;
     padding: 0;
     margin-left: -1px;
+    margin-right: 0;
     vertical-align: top;
     border: 0 transparent none;
     background-color: transparent;
@@ -270,6 +271,10 @@ button.status-bar-item {
 
 button.status-bar-item:active {
     background-position: 32px 0;
+}
+
+button.status-bar-item:disabled {
+    background-position: 0 0 !important;
 }
 
 select.status-bar-item {
@@ -808,37 +813,35 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
 }
 
 .section {
-    display: block;
-    -webkit-box-shadow: rgba(0, 0, 0, .5) 2px 2px 5px;
-    -webkit-border-radius: 8px;
-    background-color: white;
-    font-size: 11px;
-    margin-bottom: 8px;
+    position: relative;
+    margin-top: 1px;
 }
 
 .section .header {
-    padding: 2px 8px 4px;
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    background-color: rgb(214, 221, 229);
-    background-image: url(Images/gradient.png);
-    background-repeat: repeat-x;
-    background-position: bottom;
-    -webkit-background-size: auto 100%;
-    -webkit-border-radius: 8px;
-    text-shadow: rgba(255, 255, 255, 0.75) 0 1px 0;
+    padding: 3px 8px 4px 16px;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(160, 172, 205)), to(rgb(132, 146, 190)));
+    min-height: 18px;
+    white-space: nowrap;
 }
 
-.section.expanded .header {
-    border-bottom: 2px ridge rgba(214, 221, 229, 0.5);
-    -webkit-border-top-right-radius: 8px;
-    -webkit-border-top-left-radius: 8px;
-    -webkit-border-bottom-right-radius: 0;
-    -webkit-border-bottom-left-radius: 0;
+.section .header::before {
+    position: absolute;
+    top: 4px;
+    left: 6px;
+    width: 8px;
+    height: 8px;
+    content: url(Images/treeRightTriangleWhite.png);
+}
+
+.section.expanded .header::before {
+    content: url(Images/treeDownTriangleWhite.png);
 }
 
 .section .header .title {
+    color: white;
     font-weight: bold;
     word-wrap: break-word;
+    white-space: normal;
 }
 
 .section .header label {
@@ -850,18 +853,22 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
 }
 
 .section .header input[type=checkbox] {
-    height: 1em;
-    width: 1em;
+    height: 10px;
+    width: 10px;
     margin-left: 0;
     margin-top: 0;
     margin-bottom: 0;
-    vertical-align: top;
+    vertical-align: 2px;
 }
 
 .section .header .subtitle {
-    margin-top: 2px;
+    float: right;
     font-size: 10px;
-    word-wrap: break-word;
+    margin-left: 5px;
+    max-width: 55%;
+    color: rgba(255, 255, 255, 0.7);
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .section .header .subtitle a {
@@ -873,6 +880,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     margin: 0;
     padding: 2px 6px 5px;
     list-style: none;
+    background-color: white;
 }
 
 .section.expanded .properties {
@@ -986,10 +994,11 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
 
 .swatch {
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: baseline;
     margin-left: 4px;
-    width: 0.75em;
-    height: 0.75em;
+    margin-bottom: -1px;
+    width: 1em;
+    height: 1em;
     border: 1px solid rgb(180, 180, 180);
 }
 
@@ -1001,8 +1010,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     background-image: url(Images/paneHeader.png);
     background-repeat: repeat-x;
     background-position: bottom;
-    -webkit-background-size: auto 100%;
-    height: 14px;
+    height: 16px;
     padding: 0 6px;
     border-top: 1px solid rgb(129, 129, 129);
     border-bottom: 1px solid rgb(129, 129, 129);
@@ -1032,9 +1040,9 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
 
 .pane > .body {
     position: relative;
-    padding: 8px;
     display: none;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .pane.expanded > .body, .pane.expanded > .growbar {
@@ -1051,6 +1059,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
 }
 
 .metrics {
+    padding: 8px;
     font-size: 10px;
     text-align: center;
     white-space: nowrap;
@@ -1321,6 +1330,102 @@ body.inactive .sidebar {
 
 .database-query-result.error::before {
     background-image: url(Images/errorIcon.png);
+}
+
+#scripts-status-bar {
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 24px;
+}
+
+#scripts-status-bar .status-bar-item img {
+    margin-top: 2px;
+}
+
+#scripts-status-bar .status-bar-item:disabled img {
+    opacity: 0.5;
+}
+
+#scripts-back img {
+    content: url(Images/back.png);
+}
+
+#scripts-forward img {
+    content: url(Images/forward.png);
+}
+
+#scripts-pause img {
+    content: url(Images/debuggerPause.png);
+}
+
+#scripts-step-over img {
+    content: url(Images/debuggerStepOver.png);
+}
+
+#scripts-step-into img {
+    content: url(Images/debuggerStepInto.png);
+}
+
+#scripts-step-out img {
+    content: url(Images/debuggerStepOut.png);
+}
+
+#scripts-debugger-status {
+    position: absolute;
+    line-height: 24px;
+    top: 0;
+    right: 8px;
+}
+
+#scripts-debugger-status:empty {
+    display: none;
+}
+
+#scripts-sidebar-resizer-widget {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 225px;
+    width: 16px;
+    cursor: col-resize;
+    background-image: url(Images/statusbarResizerHorizontal.png);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#scripts-sidebar-buttons {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 225px;
+    overflow: hidden;
+    border-left: 1px solid rgb(64%, 64%, 64%);
+}
+
+#script-resource-views {
+    display: block;
+    overflow: auto;
+    padding: 0;
+    position: absolute;
+    top: 23px;
+    left: 0;
+    right: 225px;
+    bottom: 0;
+}
+
+#scripts-sidebar {
+    position: absolute;
+    top: 23px;
+    right: 0;
+    bottom: 0;
+    width: 225px;
+    background-color: rgb(232, 232, 232);
+    border-left: 1px solid rgb(64%, 64%, 64%);
+    cursor: default;
+    overflow: auto;
 }
 
 #resources-larger-resources-status-bar-item {

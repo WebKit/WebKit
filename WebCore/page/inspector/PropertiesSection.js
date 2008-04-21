@@ -40,8 +40,9 @@ WebInspector.PropertiesSection = function(title, subtitle)
     this.subtitleElement = document.createElement("div");
     this.subtitleElement.className = "subtitle";
 
-    this.headerElement.appendChild(this.titleElement);
     this.headerElement.appendChild(this.subtitleElement);
+    this.headerElement.appendChild(this.titleElement);
+
     this.headerElement.addEventListener("click", this.toggleExpanded.bind(this), false);
 
     this.propertiesElement = document.createElement("ol");

@@ -250,7 +250,7 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
         showInheritedLabel.addEventListener("click", showInheritedToggleFunction, false);
 
         showInheritedLabel.appendChild(showInheritedInput);
-        showInheritedLabel.appendChild(document.createTextNode(WebInspector.UIString("Show inherited properties")));
+        showInheritedLabel.appendChild(document.createTextNode(WebInspector.UIString("Show inherited")));
         this.subtitleElement.appendChild(showInheritedLabel);
     } else {
         if (!subtitle) {
