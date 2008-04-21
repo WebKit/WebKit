@@ -59,7 +59,21 @@ public:
 };
 
 typedef QHash<int, QPixmap> WebGraphicHash;
-Q_GLOBAL_STATIC(WebGraphicHash, graphics)
+Q_GLOBAL_STATIC(WebGraphicHash, _graphics)
+
+static WebGraphicHash* graphics()
+{
+    WebGraphicHash* hash = _graphics();
+
+    if (hash->isEmpty()) {
+        hash->insert(QWebSettings::MissingImageGraphic, QPixmap(":webkit/resources/missingImage.png"));
+        hash->insert(QWebSettings::MissingPluginGraphic, QPixmap(":webkit/resources/nullPlugin.png"));
+        hash->insert(QWebSettings::DefaultFrameIconGraphic, QPixmap(":webkit/resources/urlIcon.png"));
+        hash->insert(QWebSettings::TextAreaSizeGripCornerGraphic, QPixmap(":webkit/resources/textAreaResizeCorner.png"));
+    }
+
+    return hash;
+}
 
 Q_GLOBAL_STATIC(QList<QWebSettingsPrivate *>, allSettings);
 
