@@ -2,6 +2,15 @@
 
         Reviewed by Holger.
 
+        When printing on high resolution printers we need to scale the painter accordingly (for now).
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::print):
+
+2008-04-21  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Provide a print preview in the QtLauncher
 
         * QtLauncher/main.cpp:

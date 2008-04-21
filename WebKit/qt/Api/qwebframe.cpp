@@ -599,12 +599,24 @@ QRect QWebFrame::geometry() const
 */
 void QWebFrame::print(QPrinter *printer) const
 {
+    // from text/qfont.cpp
+    extern Q_GUI_EXPORT int qt_defaultDpi();
+
+    const qreal zoomFactorX = printer->logicalDpiX() / qt_defaultDpi();
+    const qreal zoomFactorY = printer->logicalDpiY() / qt_defaultDpi();
+
     PrintContext printContext(d->frame);
     float pageHeight = 0;
 
-    printContext.begin(printer->pageRect().width());
+    QRect qprinterRect = printer->pageRect();
 
-    printContext.computePageRects(IntRect(printer->pageRect()), /*headerHeight*/0, /*footerHeight*/0, /*userScaleFactor*/1.0, pageHeight);
+    IntRect pageRect(0, 0,
+                     qprinterRect.width() / zoomFactorX,
+                     qprinterRect.height() / zoomFactorY);
+
+    printContext.begin(pageRect.width());
+
+    printContext.computePageRects(pageRect, /*headerHeight*/0, /*footerHeight*/0, /*userScaleFactor*/1.0, pageHeight);
 
     int docCopies;
     int pageCopies;
@@ -636,6 +648,7 @@ void QWebFrame::print(QPrinter *printer) const
     }
 
     QPainter painter(printer);
+    painter.scale(zoomFactorX, zoomFactorY);
     GraphicsContext ctx(&painter);
 
     for (int i = 0; i < docCopies; ++i) {
@@ -647,7 +660,7 @@ void QWebFrame::print(QPrinter *printer) const
                     printContext.end();
                     return;
                 }
-                printContext.spoolPage(ctx, page - 1, printer->pageRect().width());
+                printContext.spoolPage(ctx, page - 1, pageRect.width());
                 if (j < pageCopies - 1)
                     printer->newPage();
             }
