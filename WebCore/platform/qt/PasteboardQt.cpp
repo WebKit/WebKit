@@ -135,10 +135,12 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     QApplication::clipboard()->setPixmap(*pixmap, QClipboard::Clipboard);
 }
 
+/* This function is called from Editor::tryDHTMLCopy before actually set the clipboard
+ * It introduce a race condition with klipper, which will try to grab the clipboard 
+ * It's not required to clear it anyway, since QClipboard take care about replacing the clipboard
+ */
 void Pasteboard::clear()
 {
-    QApplication::clipboard()->clear(m_selectionMode ?
-            QClipboard::Selection : QClipboard::Clipboard);
 }
 
 bool Pasteboard::isSelectionMode() const

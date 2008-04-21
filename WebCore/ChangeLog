@@ -1,3 +1,13 @@
+2008-04-21  Olivier Goffart  <ogoffart@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixes: Copying on X11 doesn't always work in webkit
+
+        Calling QClipboard::clear right before QClipboard::setData create a race condition with klipper. So don't call QClipboard::clear since it's not required.
+
+        * platform/qt/PasteboardQt.cpp:
+
 2008-04-21  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.
