@@ -131,7 +131,7 @@ WebInspector.DatabasesPanel.prototype = {
         if (!database || !database._databasesTreeElement)
             return;
 
-        database._databasesTreeElement.refreshChildren = true;
+        database._databasesTreeElement.shouldRefreshChildren = true;
 
         if (!("_tableViews" in database))
             return;
@@ -296,6 +296,13 @@ WebInspector.DatabaseSidebarTreeElement.prototype = {
     onselect: function()
     {
         WebInspector.panels.databases.showDatabase(this.database);
+    },
+
+    oncollapse: function()
+    {
+        // Request a refresh after every collapse so the next
+        // expand will have an updated table list.
+        this.shouldRefreshChildren = true;
     },
 
     onpopulate: function()

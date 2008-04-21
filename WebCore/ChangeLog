@@ -1,5 +1,23 @@
 2008-04-21  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes the bug where the Database table names do not update when
+        running the CREATE TABLE or DROP TABLE queries. Also makes the
+        table names update every time the database is collapsed and expanded.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18453
+
+        Reviewed by Darin Adler.
+
+        * page/inspector/DatabasesPanel.js:
+        (WebInspector.DatabasesPanel.prototype.updateDatabaseTables):
+        Set shouldRefreshChildren to true on the Database's tree element.
+        The refreshChildren property was renamed to shouldRefreshChildren.
+        (WebInspector.DatabaseSidebarTreeElement.prototype.oncollapse):
+        Request a refresh after every collapse so the next expand will
+        have an updated table list.
+
+2008-04-21  Timothy Hatcher  <timothy@apple.com>
+
         Adds INDEX to the list of completion words for the Databases query view.
 
         https://bugs.webkit.org/show_bug.cgi?id=18452
