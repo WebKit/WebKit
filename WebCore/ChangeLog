@@ -1,3 +1,18 @@
+2008-04-21  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Add FrameLoader::policyDocumentLoader, and change
+        provisionalDocumentLoader to have a const signature to be
+        consistent with documentLoader and activeDocumentLoader.
+
+        * WebCore.base.exp:
+        * WebCore.order:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::policyDocumentLoader):
+        (WebCore::FrameLoader::provisionalDocumentLoader):
+        * loader/FrameLoader.h:
+
 2008-04-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Not reviewed, add missing files in my previous commit.

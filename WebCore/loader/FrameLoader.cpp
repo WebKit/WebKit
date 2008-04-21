@@ -2541,8 +2541,13 @@ void FrameLoader::setPolicyDocumentLoader(DocumentLoader* loader)
 
     m_policyDocumentLoader = loader;
 }
+
+DocumentLoader* FrameLoader::policyDocumentLoader() const
+{
+    return m_policyDocumentLoader.get();
+}
    
-DocumentLoader* FrameLoader::provisionalDocumentLoader()
+DocumentLoader* FrameLoader::provisionalDocumentLoader() const
 {
     return m_provisionalDocumentLoader.get();
 }
