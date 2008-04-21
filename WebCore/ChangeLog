@@ -1,5 +1,17 @@
 2008-04-21  Timothy Hatcher  <timothy@apple.com>
 
+        Adds INDEX to the list of completion words for the Databases query view.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18452
+
+        Reviewed by Darin Adler.
+
+        * page/inspector/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView.prototype.completions): Split up "CREATE TABLE "
+        and "DROP TABLE " into "CREATE ", "DROP ", "TABLE ". And added "INDEX ".
+
+2008-04-21  Timothy Hatcher  <timothy@apple.com>
+
         Adds the UI portions of the Scripts panel to the Web Inspector.
         The Scripts panel has not been added to the toolbar yet.
 

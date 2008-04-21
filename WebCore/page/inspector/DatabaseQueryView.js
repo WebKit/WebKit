@@ -84,7 +84,7 @@ WebInspector.DatabaseQueryView.prototype = {
         }
 
         accumulateMatches(this.database.tableNames.map(function(name) { return name + " " }));
-        accumulateMatches(["SELECT ", "FROM ", "WHERE ", "LIMIT ", "DELETE FROM ", "CREATE TABLE ", "DROP TABLE ", "UPDATE ", "INSERT INTO ", "VALUES ("]);
+        accumulateMatches(["SELECT ", "FROM ", "WHERE ", "LIMIT ", "DELETE FROM ", "CREATE ", "DROP ", "TABLE ", "INDEX ", "UPDATE ", "INSERT INTO ", "VALUES ("]);
 
         return results;
     },
