@@ -1,3 +1,10 @@
+2008-04-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Not reviewed, add missing files in my previous commit.
+
+        * http/tests/xmlhttprequest/infoOnProgressEvent-expected.txt: Added.
+        * http/tests/xmlhttprequest/infoOnProgressEvent.html: Added.
+
 2008-04-21  Eric Seidel  <eric@webkit.org>
 
         Stamped by Anders.

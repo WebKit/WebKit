@@ -1,0 +1,60 @@
+<html>
+<head/>
+<body>
+<p> Test case for bug 13596: Implement .onprogress handler on XMLHttpRequest objects to support progressive download content length information </p>
+<p> You should see type, bubble, cancelable, eventPhase, target and current target for synchronous and asynchronous cases </p>
+<script type="text/javascript">
+function log (msg)
+{
+    document.body.appendChild(document.createTextNode(msg));
+    insertNewLine();
+}
+
+function insertNewLine()
+{
+    document.body.appendChild(document.createElement("br"));
+}
+
+function onProgress(e) {
+    log("Type: " + e.type);
+    log("Bubble: " + e.bubbles);
+    log("Cancelable: " + e.cancelable);
+    log("EventPhase: " + e.eventPhase);
+    log("Target: " + e.target);
+    log("Current target: " + e.currentTarget);
+    e.currentTarget.onprogress = null;
+    if (shouldNotify && window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function onError(e) {
+  alert("Error " + e.target.status + " occurred while receiving the document.");
+}
+
+var shouldNotify = false;
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+log("Synchronous case:");
+
+// Test synchronous
+var req = new XMLHttpRequest();
+req.onprogress = onProgress;
+req.open("GET", "resources/1251.html", false);
+req.send(null);
+
+insertNewLine();
+log("Asynchronous case:");
+
+// Test asynchronous
+var req2 = new XMLHttpRequest();
+req2.onprogress = onProgress;
+req2.open("GET", "resources/1251.html", true);
+shouldNotify = true;
+req2.send(null);
+</script>
+</body>
+</html>

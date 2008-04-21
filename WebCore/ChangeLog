@@ -1,5 +1,23 @@
 2008-04-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Not reviewed, add missing files in my previous commit.
+
+        Test: http/tests/xmlhttprequest/infoOnProgressEvent.html
+
+        * xml/XMLHttpRequestProgressEvent.cpp: Added.
+        (WebCore::XMLHttpRequestProgressEvent::XMLHttpRequestProgressEvent):
+        (WebCore::XMLHttpRequestProgressEvent::position):
+        (WebCore::XMLHttpRequestProgressEvent::totalSize):
+        * xml/XMLHttpRequestProgressEvent.h: Added.
+        (WebCore::XMLHttpRequestProgressEvent::isXMLHttpRequestProgressEvent):
+        (WebCore::XMLHttpRequestProgressEvent::isProgressEvent):
+        (WebCore::XMLHttpRequestProgressEvent::lengthComputable):
+        (WebCore::XMLHttpRequestProgressEvent::loaded):
+        (WebCore::XMLHttpRequestProgressEvent::total):
+        * xml/XMLHttpRequestProgressEvent.idl: Added.
+
+2008-04-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Reviewed by Ap.
 
         Bug 13596: Implement .onprogress handler on XMLHttpRequest objects to support
