@@ -1708,8 +1708,7 @@ sub readFromDumpToolWithTimer(*;$)
 
     my $timeOfLastSuccessfulRead = time;
 
-    my $readSoFar = 0;
-    my $output = "";
+    my @output = ();
     my $timedOut = 0;
 
     while (1) {
@@ -1718,8 +1717,8 @@ sub readFromDumpToolWithTimer(*;$)
             last;
         }
 
-        my $read = read($fh, $output, 1024, $readSoFar);
-        if (!defined($read) && $! == EAGAIN) {
+        my $line = readline($fh);
+        if (!defined($line) && $! == EAGAIN) {
             if ($dontWaitForTimeOut) {
                 last;
             }
@@ -1729,22 +1728,14 @@ sub readFromDumpToolWithTimer(*;$)
             next;
         }
 
-        last if $read == 0;
+        last if $line =~ /#EOF/;
 
-        if ($output =~ s/^#EOF\n//m) {
-            # In theory we should make sure we haven't read past the end of the
-            # #EOF, but since we know that #EOF is the last thing DRT prints
-            # until we give it another test to run, we can just assume #EOF is
-            # at the end of $output.
-            last;
-        }
-
-        $readSoFar += $read;
+        push @output, $line;
         $timeOfLastSuccessfulRead = time;
     }
 
     setFileHandleNonBlocking($fh, 0);
-    return { output => $output, timedout => $timedOut };
+    return { output => join("", @output), timedout => $timedOut };
 }
 
 sub setFileHandleNonBlocking(*$)

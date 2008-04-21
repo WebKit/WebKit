@@ -1,3 +1,11 @@
+2008-04-21  Adam Roben  <aroben@apple.com>
+
+        Fix pixel tests
+
+        * Scripts/run-webkit-tests:
+        (sub readFromDumpToolWithTimer): Use readline instead of read to
+        ensure that we don't read past the #EOF marker.
+
 2008-04-21  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
 
         Reviewed by Simon.
