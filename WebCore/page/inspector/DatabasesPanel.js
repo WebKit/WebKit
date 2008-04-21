@@ -69,9 +69,20 @@ WebInspector.DatabasesPanel.prototype = {
 
     reset: function()
     {
+        if (this._databases) {
+            var databasesLength = this._databases.length;
+            for (var i = 0; i < databasesLength; ++i) {
+                var database = this._databases[i];
+
+                delete database._tableViews;
+                delete database._queryView;
+            }
+        }
+
         this._databases = [];
 
         this.sidebarTree.removeChildren();
+        this.databaseViews.removeChildren();
     },
 
     handleKeyEvent: function(event)

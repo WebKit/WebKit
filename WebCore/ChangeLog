@@ -1,5 +1,15 @@
 2008-04-21  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes the issue were a Database view could still be visible after navigating to a new page.
+
+        Reviewed by Darin Adler.
+
+        * page/inspector/DatabasesPanel.js:
+        (WebInspector.DatabasesPanel.prototype.reset): Delete the _tableViews and _queryView properties
+        from all databases. Remove all the children from databaseViews.
+
+2008-04-21  Timothy Hatcher  <timothy@apple.com>
+
         Adds the ability to enter multi-line commands in the console by holding the
         alt/option key when pressing enter/return.
 
