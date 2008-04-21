@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        * Follow the windows render theme when determining whether to style
+        listboxes or not.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::isControlStyled):
+
+2008-04-21  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Try to bring the notImplemented implementations closer together. This will
         print each unimplemted method name only once.
 
