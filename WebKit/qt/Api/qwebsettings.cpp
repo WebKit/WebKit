@@ -66,6 +66,8 @@ Q_GLOBAL_STATIC(QList<QWebSettingsPrivate *>, allSettings);
 void QWebSettingsPrivate::apply()
 {
     if (settings) {
+        settings->setTextAreasAreResizable(true);
+
         QWebSettingsPrivate *global = QWebSettings::globalSettings()->d;
 
         QString family = fontFamilies.value(QWebSettings::StandardFont,

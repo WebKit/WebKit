@@ -1,3 +1,14 @@
+2008-04-21  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Allow TextAreas to be resized.
+        * No QWebSettings for this is introduced.
+        
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+
 2008-04-21  Simon Hausmann  <shausman@trolltech.com>
 
         Reviewed by Holger.
