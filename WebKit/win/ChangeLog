@@ -1,3 +1,12 @@
+2008-04-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Move collector main thread initialization from WebKit/win to KJS::initializeThreading.
+
+        * WebView.cpp:
+        (WebView::WebView):
+
 2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Fix build after r32231.
