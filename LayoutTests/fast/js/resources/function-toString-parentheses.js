@@ -10,6 +10,7 @@ function compileAndSerialize(expression)
     serializedString = serializedString.replace(/[ \t\r\n]+/g, " ");
     serializedString = serializedString.replace("function () { return ", "");
     serializedString = serializedString.replace("; }", "");
+    serializedString = serializedString.replace(/^\s*|\s*$/g, ''); // Opera adds whitespace
     return serializedString;
 }
 
@@ -20,6 +21,7 @@ function compileAndSerializeLeftmostTest(expression)
     serializedString = serializedString.replace(/[ \t\r\n]+/g, " ");
     serializedString = serializedString.replace("function () { ", "");
     serializedString = serializedString.replace("; }", "");
+    serializedString = serializedString.replace(/^\s*|\s*$/g, ''); // Opera adds whitespace
     return serializedString;
 }
 
@@ -58,7 +60,7 @@ function testHigherFirst(opHigher, opLower)
     shouldBe("compileAndSerialize('(a " + opHigher + " b) " + opLower + " c')",
         removesExtraParentheses
             ? "'a " + opHigher + " b " + opLower + " c'"
-            : "'a " + opHigher + " (b " + opLower + " c)'"
+            : "'(a " + opHigher + " b) " + opLower + " c'"
     );
     shouldBe("compileAndSerialize('a " + opHigher + " (b " + opLower + " c)')",
         "'a " + opHigher + " (b " + opLower + " c)'");

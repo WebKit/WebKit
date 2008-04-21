@@ -1,3 +1,11 @@
+2008-04-21  Eric Seidel  <eric@webkit.org>
+
+        Stamped by Anders.
+        
+        Make test work in Opera.  Fix bug in results serialization.
+
+        * fast/js/resources/function-toString-parentheses.js:
+
 2008-04-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Ap.
