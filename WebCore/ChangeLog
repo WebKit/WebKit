@@ -1,3 +1,21 @@
+2008-04-21  Michael Goddard  <michael.goddard@trolltech.com>
+
+        Reviewed by Simon.
+
+        Add better support for RuntimeArray type conversions.
+        It seems that RuntimeArray claims to inherit ArrayInstance
+        (in the JS sense), but the C++ class doesn't, so properly
+        access RuntimeArrays.  Also, properly support turning
+        a JS object into a QVariantMap, since we support the
+        reverse.
+
+        * bridge/qt/qt_runtime.cpp:
+        (KJS::Bindings::):
+        (KJS::Bindings::operator<<):
+        (KJS::Bindings::valueRealType):
+        (KJS::Bindings::convertValueToQVariant):
+        (KJS::Bindings::convertQVariantToValue):
+
 2008-04-21  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
