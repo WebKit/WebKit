@@ -2,6 +2,26 @@
 
         Reviewed by Simon.
 
+        * Remove the special Qt ctor of BitmapImage as it did not work. The Bitmap returned
+        0 as width and after intialising drawing would fail. BitmapImage relies on a proper
+        ImageSource.
+        * Instead of adding more special cases to BitmapImage create a new class called StillImage
+        which is getting one QPixmap and is implementing Image::draw and Image::size. This is
+        working well for the images created using Image::loadPlatformResource.
+
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::initPlatformData):
+        (WebCore::BitmapImage::getPixmap):
+        (WebCore::StillImage::StillImage):
+        (WebCore::StillImage::size):
+        (WebCore::StillImage::getPixmap):
+        (WebCore::StillImage::draw):
+
+2008-04-21  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Package the Resources into a qrc
 
         * Resources/WebKitResources.qrc: Added.

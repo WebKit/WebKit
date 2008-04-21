@@ -50,6 +50,20 @@
 
 #include <math.h>
 
+namespace WebCore {
+class StillImage : public Image {
+public:
+    StillImage(const QPixmap& pixmap);
+
+    virtual IntSize size() const;
+    virtual QPixmap* getPixmap() const;
+    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
+
+private:
+    QPixmap m_pixmap;
+};
+}
+
 // This function loads resources into WebKit
 static QPixmap loadResourcePixmap(const char *name)
 {
@@ -87,8 +101,7 @@ void FrameData::clear()
 
 Image* Image::loadPlatformResource(const char* name)
 {
-    BitmapImage* img = new BitmapImage(loadResourcePixmap(name));
-    return img;
+    return new StillImage(loadResourcePixmap(name));
 }
 
     
@@ -98,35 +111,12 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     notImplemented();
 }
 
-BitmapImage::BitmapImage(const QPixmap &pixmap, ImageObserver *observer)
-    : Image(observer)
-    , m_currentFrame(0)
-    , m_frames(0)
-    , m_frameTimer(0)
-    , m_repetitionCount(0)
-    , m_repetitionsComplete(0)
-    , m_isSolidColor(false)
-    , m_animatingImageType(true)
-    , m_animationFinished(false)
-    , m_allDataReceived(false)
-    , m_haveSize(false)
-    , m_sizeAvailable(false)
-    , m_decodedSize(0)
-    , m_haveFrameCount(false)
-    , m_frameCount(0)
-{
-    m_pixmap = new QPixmap(pixmap);
-}
-
 void BitmapImage::initPlatformData()
 {
-    m_pixmap = 0;
 }
 
 void BitmapImage::invalidatePlatformData()
 {
-    delete m_pixmap;
-    m_pixmap = 0;
 }
     
 // Drawing Routines
@@ -200,10 +190,34 @@ void BitmapImage::checkForSolidColor()
 
 QPixmap* BitmapImage::getPixmap() const
 {
-    if (!m_pixmap)
-      return const_cast<BitmapImage*>(this)->frameAtIndex(0);
-    else
-      return m_pixmap;
+    return const_cast<BitmapImage*>(this)->frameAtIndex(0);
+}
+
+StillImage::StillImage(const QPixmap& pixmap)
+    : m_pixmap(pixmap)
+{}
+
+IntSize StillImage::size() const
+{
+    return IntSize(m_pixmap.width(), m_pixmap.height());
+}
+
+QPixmap* StillImage::getPixmap() const
+{
+    return const_cast<QPixmap*>(&m_pixmap);
+}
+
+void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
+                      const FloatRect& src, CompositeOperator op)
+{
+    if (m_pixmap.isNull())
+        return;
+
+    ctxt->save();
+    ctxt->setCompositeOperation(op);
+    QPainter* painter(ctxt->platformContext());
+    painter->drawPixmap(dst, m_pixmap, src);
+    ctxt->restore();
 }
 
 }
