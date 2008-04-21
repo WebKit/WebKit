@@ -307,6 +307,9 @@ WebInspector.Console.prototype = {
 
     _enterKeyPressed: function(event)
     {
+        if (event.altKey)
+            return;
+
         event.preventDefault();
         event.stopPropagation();
 

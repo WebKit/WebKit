@@ -1,5 +1,20 @@
 2008-04-21  Timothy Hatcher  <timothy@apple.com>
 
+        Adds the ability to enter multi-line commands in the console by holding the
+        alt/option key when pressing enter/return.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18454
+
+        Reviewed by Darin Adler.
+
+        * page/inspector/Console.js:
+        (WebInspector.Console.prototype._enterKeyPressed): Return early if the
+        alt/option key is held when enter is pressed.
+        * page/inspector/inspector.css:
+        (.console-message-text): Added. Set white-space: pre-wrap.
+
+2008-04-21  Timothy Hatcher  <timothy@apple.com>
+
         Fixes the bug where the Database table names do not update when
         running the CREATE TABLE or DROP TABLE queries. Also makes the
         table names update every time the database is collapsed and expanded.

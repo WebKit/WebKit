@@ -406,6 +406,10 @@ body.console-visible #console {
     -webkit-user-select: none;
 }
 
+.console-message-text {
+    white-space: pre-wrap;
+}
+
 .console-error-level .console-message-text {
     color: red;
 }
