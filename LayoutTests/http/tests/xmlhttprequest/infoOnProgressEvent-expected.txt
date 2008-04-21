@@ -5,7 +5,7 @@ You should see type, bubble, cancelable, eventPhase, target and current target f
 Synchronous case:
 Type: progress
 Bubble: false
-Cancelable: false
+Cancelable: true
 EventPhase: 0
 Target: [object XMLHttpRequest]
 Current target: [object XMLHttpRequest]
@@ -13,7 +13,7 @@ Current target: [object XMLHttpRequest]
 Asynchronous case:
 Type: progress
 Bubble: false
-Cancelable: false
+Cancelable: true
 EventPhase: 0
 Target: [object XMLHttpRequest]
 Current target: [object XMLHttpRequest]

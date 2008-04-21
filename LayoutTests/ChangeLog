@@ -1,3 +1,12 @@
+2008-04-21  Mark Rowe  <mrowe@apple.com>
+
+        Land updated results for three tests and disable three more on Tiger.
+
+        * http/tests/xmlhttprequest/infoOnProgressEvent-expected.txt:
+        * platform/mac-tiger/Skipped:  Disable three tests using font-face that fail intermittently on Tiger bots.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt:  Update Tiger results following r32247.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/animate-elem-07-t-expected.txt:  Ditto.
+
 2008-04-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Not reviewed, add missing files in my previous commit.

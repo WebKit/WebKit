@@ -6,3 +6,8 @@ http/tests/xmlhttprequest/small-chunks-response-text.html
 
 # On Tiger, WebKit does not override the MIME type returned by NSHTTPURLResponse
 http/tests/loading/text-content-type-with-binary-extension.html
+
+# Tets using font-face are failing intermittently on Tiger build bots.
+fast/css/font-face-remote.html
+fast/css/font-face-unicode-range.html
+http/tests/misc/acid3.html
