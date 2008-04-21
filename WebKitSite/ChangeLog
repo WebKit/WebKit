@@ -1,3 +1,33 @@
+2008-04-21  Dean Jackson  <dino@apple.com>
+
+        Updated CSS Visual Effects proposals.
+        
+        CSS Animations
+
+        * described simplified sandwich model (that animations have no effect
+          outside their duration and last specified animation wins)
+        * diagram showing the above
+        * specified animations to start at style resolution or document load,
+          whichever is later.
+        * animation start events always have elapsedTime == 0
+
+        CSS Transforms
+
+        * removed text saying that elements cannot be drawn as intersecting.
+        * described that preserve-3d trees often need a flattening parent, otherwise
+          elements can be hidden behind their ancestor's background.
+        * describe that preserve-3d is not always possible, such as when
+          overflow is 'hidden'.
+
+        CSS Transitions
+
+        * no change
+
+        * specs/CSSVisualEffects/CSSAnimation.html:
+        * specs/CSSVisualEffects/CSSTransforms.html:
+        * specs/CSSVisualEffects/CSSTransitions.html:
+        * specs/CSSVisualEffects/sandwich.png: Added.
+
 2008-04-08  Dean Jackson  <dino@apple.com>
 
         Add some updated proposals for CSS specifications, such as 

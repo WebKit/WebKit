@@ -6,7 +6,7 @@
     <title>
       CSS Animation
     </title>
-    <link href="http://www.w3.org/StyleSheets/TR/base" rel="stylesheet" type="text/css">
+    <link href="base.css" rel="stylesheet" type="text/css">
     <style type="text/css">
 
     @media print {
@@ -453,7 +453,7 @@
       CSS Animation
     </h1>
     <h2>
-      4 April 2008
+      21 April 2008
     </h2>
     <dl>
       <dt>
@@ -481,7 +481,7 @@
       Animation is currently possible in languages like SVG, but no system exists for the native animation of CSS styles. This proposal introduces <em>defined animations</em>, which specify the values that CSS properties will take over a given time interval.
     </p>
     <p>
-      This specification is an extension to <a href="CSS%20Transitions.html">CSS Transitions</a>.
+      This specification is an extension to <a href="CSSTransitions.html">CSS Transitions</a>.
     </p>
     <h2>
       2 Keyframes
@@ -593,7 +593,7 @@
 </pre>Five keyframes are specified for the transition or animation named "bounce". Between the first and second keyframe (ie. between 0 and 25%) an "ease-out" timing function is used. Between the second and third keyframe (ie. between 25% and 50%) an "ease-in" timing function is used. And so on. The effect will appear as an element that moves up the page 50px, slowing down as it reaches its highest point then speeding up as it falls back to 100px. The second half of the animation behaves in a similar manner, but only moves the element 25px units up the page.
     </div>
     <p>
-      See <a href="CSS%20Transitions.html#transition-timing-function_tag">the <span class="prop-name">'transition-timing-function'</span> property</a> and <a href="#animation-timing-function_tag">the <span class="prop-name">'animation-timing-function'</span> property</a> for more information.
+      See <a href="CSSTransitions.html#transition-timing-function_tag">the <span class="prop-name">'transition-timing-function'</span> property</a> and <a href="#animation-timing-function_tag">the <span class="prop-name">'animation-timing-function'</span> property</a> for more information.
     </p><!-- ======================================================================================================= -->
     <h2>
       3 Animations
@@ -630,9 +630,55 @@ div {
 }
   
 </pre>This will produce an animation that moves an element from (0, 0) to (100px, 100px) over five seconds and repeats itself nine times (for a total of ten iterations).
-    </div><!-- ======================================================================================================= -->
+    </div>
+    <!-- ======================================================================================================= -->
     <h3>
-      3.1 The <span class="prop-name">'animation-name'</span> Property
+      3.1 Animation behavior
+    </h3>
+
+    <p>
+      CSS Animations affect computed property values. During the execution of an animation, the
+      computed value for a property is controlled by the animation. This overrides the value
+      specified in the normal styling system.
+    </p>
+    
+    <p>
+      In the case of multiple animations specifying behavior for the same property, the animation
+      defined last will override the previously defined animations.
+    </p>
+    
+    <p>
+      An animation does not affect the computed value before the application of the animation,
+      before the animation delay has expired, and after the end of the animation.
+    </p>
+    
+    <div class="figure">
+      <img src="sandwich.png" alt="">
+    </div>
+    <p class="caption">
+      Computation of animated property values
+    </p>
+    
+    <p>
+      The diagram above shows how property values are computed. The intrinsic style is shown at the
+      top of the diagram. The computed value is derived from intrinsic style at the times when an
+      animation is not running and also when an animation is delayed (see below for specification of
+      animation delay). During an animation, the computed style is derived from the animated value.
+    </p>
+
+    <p>
+      The start time of an animation is the latter of two moments: the time at which the style is
+      resolved that specifies the animation, or the time the document's load event is fired.
+      Therefore, an animation specified in the document stylesheet will begin at the document load.
+      An animation specified on an element by modifying the style after the document has loaded will
+      start when the style is resolved. That may be immediately in the case of a pseudo style rule
+      such as hover, or may be when the scripting engine returns control to the browser (in the case
+      of style applied by script).
+    </p>
+
+    <!-- ======================================================================================================= -->
+    <h3>
+      3.2 The <span class="prop-name">'animation-name'</span> Property
     </h3>
     <p>
       The <span class="prop-name">'animation-name'</span> property defines a name for the animation. The name is used to select the keyframe at-rule that provides the property values for the animation. If the name does not match any keyframe at-rule, there are no properties to be animated and the animation will not execute. Furthermore, if the animation name is 'none' then there will be no animation. This can be used to override any inherited animations.
@@ -755,7 +801,7 @@ div {
 
     <!-- ======================================================================================================= -->
     <h3>
-      3.2 The <span class="prop-name">'animation-duration'</span> Property
+      3.3 The <span class="prop-name">'animation-duration'</span> Property
     </h3>
     <p>
       The <span class="prop-name">'animation-duration'</span> property defines the length of time that an animation takes to complete one cycle.
@@ -835,10 +881,10 @@ div {
     
     <!-- ======================================================================================================= -->
     <h3 id="animation-timing-function_tag">
-      3.3 The <span class="prop-name">'animation-timing-function'</span> Property
+      3.4 The <span class="prop-name">'animation-timing-function'</span> Property
     </h3>
     <p>
-      The <span class="prop-name">'animation-timing-function'</span> property describes how the animation will progress over one cycle of its duration. See <a href="CSS%20Transitions.html#transition-timing-function_tag">the <span class="prop-name">'transition-timing-function'</span> property</a> for a complete description of timing function calculation.
+      The <span class="prop-name">'animation-timing-function'</span> property describes how the animation will progress over one cycle of its duration. See <a href="CSSTransitions.html#transition-timing-function_tag">the <span class="prop-name">'transition-timing-function'</span> property</a> for a complete description of timing function calculation.
     </p>
     <table class="propdef">
       <tbody>
@@ -916,7 +962,7 @@ div {
     
     <!-- ======================================================================================================= -->
     <h3>
-      3.4 The <span class="prop-name">'animation-iteration-count'</span> Property
+      3.5 The <span class="prop-name">'animation-iteration-count'</span> Property
     </h3>
     <p>
       The <span class="prop-name">'animation-iteration-count'</span> property defines the number of times an animation cycle is played. The default value is one, meaning the animation will play from beginning to end once. A value of <span class="prop-value">'infinite'</span> will cause the animation to repeat forever. Non-integer numbers will cause the animation to end part-way through a cycle. Negative values for <span class="prop-name">'animation-iteration-count'</span> are treated as zero. This property is often used with an <span class="prop-name">'animation-direction'</span> value of <span class="prop-value">'alternate'</span>, which will cause the animation to play in reverse on alternate cycles.
@@ -990,7 +1036,7 @@ div {
       </tbody>
     </table><!-- ======================================================================================================= -->
     <h3>
-      3.5 The <span class="prop-name">'animation-direction'</span> Property
+      3.6 The <span class="prop-name">'animation-direction'</span> Property
     </h3>
     <p>
       The <span class="prop-name">'animation-direction'</span> property defines whether or not the animation should play in reverse on alternate cycles. If <span class="prop-value">'alternate'</span> is specified, the animation cycle iterations that are odd counts are played in the normal direction, and the animation cycle iterations that are even counts are played in a reverse direction. When an animation is played in reverse the timing functions are also reversed. For example, when played in reverse an ease-in animation would appear to be an ease-out animation.
@@ -1064,7 +1110,7 @@ div {
       </tbody>
     </table><!-- ======================================================================================================= -->
     <h3>
-      3.6 The <span class="prop-name">'animation-play-state'</span> Property
+      3.7 The <span class="prop-name">'animation-play-state'</span> Property
     </h3>
     <p>
       The <span class="prop-name">'animation-play-state'</span> property defines whether the animation is running or paused. A running animation can be paused by setting this property to <span class="prop-value">'paused'</span>. To continue running a paused animation this property can be set to <span class="prop-value">'running'</span>. A paused animation will continue to display the current value of the animation in a static state, as if the time of the animation is constant. When a paused animation is resumed, it restarts from the current value, not necessarily from the beginning of the animation.
@@ -1138,7 +1184,7 @@ div {
       </tbody>
     </table><!-- ======================================================================================================= -->
     <h3>
-      3.7 The <span class="prop-name">'animation-delay'</span> Property
+      3.8 The <span class="prop-name">'animation-delay'</span> Property
     </h3>
     <p>
       The <span class="prop-name">'animation-delay'</span> property defines when the animation will start. It allows an animation to begin execution some time after it is applied. An <span class="prop-name">'animation-delay'</span> value of '0' means the animation will execute as soon as it is applied. Otherwise, the value specifies an offset from the moment the animation is applied, and the animation will delay execution by that offset.
@@ -1215,7 +1261,7 @@ div {
       </tbody>
     </table><!-- ======================================================================================================= -->
     <h3>
-      3.8 The <span class="prop-name">'animation'</span> Shorthand Property
+      3.9 The <span class="prop-name">'animation'</span> Shorthand Property
     </h3>
     <p>
       The <span class="prop-name">'animation'</span> shorthand property combines six of the animation properties into a single property.
@@ -1368,7 +1414,7 @@ interface AnimationEvent : Event {
                 <code class='attribute-name'><a id="Events-AnimationEvent-elapsedTime" name='Events-AnimationEvent-elapsedTime'>elapsedTime</a></code> of type <code>float</code>, readonly
               </dt>
               <dd>
-                The amount of time the animation has been running, in seconds, when this event fired, excluding any time the animation was paused. Note that this value is not affected by the value of <span class="prop-name">animation-delay</span>.
+                The amount of time the animation has been running, in seconds, when this event fired, excluding any time the animation was paused. Note that this value is not affected by the value of <span class="prop-name">animation-delay</span>. For an "animationstart" event, the elapsedTime is always zero.
               </dd>
             </dl>
           </dd>

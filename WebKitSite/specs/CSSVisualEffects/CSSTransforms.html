@@ -4,7 +4,7 @@
     <title>
       CSS Transforms
     </title>
-    <link href="http://www.w3.org/StyleSheets/TR/base" rel="stylesheet" type="text/css">
+    <link href="base.css" rel="stylesheet" type="text/css">
     <style type="text/css">
 
     @media print {
@@ -446,7 +446,7 @@
       CSS Transforms
     </h1>
     <h2>
-      4 April 2008
+      21 April 2008
     </h2>
     <dl>
       <dt>
@@ -539,12 +539,7 @@
       Note that while <span class="prop-name">'transform'</span> uses a
       three-dimensional coordinate system, the elements themselves are not
       three-dimensional objects. Instead, they exist on a two-dimensional
-      plane (a flat surface) and have no depth. Furthermore, elements do not
-      intersect with each other in the manner of real-world objects: an
-      element always appears completely in front of or behind another element.
-      In other words, even though the z axis may not be perpendicular to an
-      element's surface, an element always has a single z position, calculated
-      at the center of the element.
+      plane (a flat surface) and have no depth.
     </p>
     <div class="issue">
       This property should also be applicable to SVG elements, but since SVG
@@ -792,6 +787,23 @@
         </tr>
       </tbody>
     </table>
+    
+    <p>
+      For some effects, the author will have to ensure that an ancestor element to a subtree using
+      <span class="prop-value">'preserve-3d'</span> has a <span
+      class="prop-name">'transform-style'</span> of <span class="prop-value">'flat'</span> (or the
+      default). Otherwise, the elements in the 3D tree may be located behind ancestor elements and,
+      thus, invisible (hidden behind an ancestor's background).
+    </p>
+    
+    <p>
+      Note that while 'preserve-3d' can be specified on an element, the effect may not
+      be possible. Elements that have <span class="prop-name">'overflow'</span> set to
+      <span class="prop-value">'hidden'</span> are unable to keep their children in 3D.
+      In this case the element will behave as if the property was set to 
+      <span class="prop-value">'flat'</span>.
+    </p>
+    
     <div class="issue">
       Does transform-style: preserve-3d need to establish a stacking context and containing block like transform does?
     </div><!-- ======================================================================================================= -->
