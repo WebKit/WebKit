@@ -1,3 +1,14 @@
+2008-04-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/5803706> Pressing return at the end of a header doesn't break out of header (17460)
+
+        * editing/inserting/5803706-1-expected.txt: Added.
+        * editing/inserting/5803706-1.html: Added.
+        * editing/inserting/5803706-2-expected.txt: Added.
+        * editing/inserting/5803706-2.html: Added.
+
 2008-04-21  Mark Rowe  <mrowe@apple.com>
 
         Land updated results for three tests and disable three more on Tiger.

@@ -1,3 +1,20 @@
+2008-04-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/5803706> Pressing return at the end of a header doesn't break out of header (17460)
+        
+        If we're doing InsertParagraphSeparator at the end of a header element, do not clone it.
+        Renamed m_useDefaultParagraphElement to m_mustUseDefaultParagraphElement, since now,
+        when it is false, that does not necessarily mean that a default paragraph element
+        will not be used.  Callers that passed false for this argument are OK with this.
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand): 
+        (WebCore::InsertParagraphSeparatorCommand::shouldUseDefaultParagraphElement):
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.h:
+
 2008-04-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
