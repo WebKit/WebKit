@@ -1,3 +1,16 @@
+2008-04-21  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
+        * Make sure every resource is available als png as well.
+
+        * Resources/deleteButton.png: Added.
+        * Resources/deleteButtonPressed.png: Added.
+        * Resources/missingImage.png: Added.
+        * Resources/nullPlugin.png: Copied from WebKit/win/WebKit.vcproj/nullplugin.png.
+        * Resources/textAreaResizeCorner.png: Added.
+        * Resources/urlIcon.png: Copied from WebKit/win/WebKit.vcproj/urlIcon.png.
+
 2008-04-20  Sriram Neelakandan  <sriram.neelakandan@gmail.com>
 
         Reviewed by Alp Toker.
