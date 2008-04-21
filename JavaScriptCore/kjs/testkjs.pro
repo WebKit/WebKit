@@ -36,3 +36,6 @@ SOURCES -= API/JSBase.cpp \
     API/JSStringRef.cpp \
     API/JSValueRef.cpp
 
+qt-port:lessThan(QT_MINOR_VERSION, 4) {
+    DEFINES += QT_BEGIN_NAMESPACE="" QT_END_NAMESPACE=""
+}

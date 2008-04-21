@@ -36,4 +36,15 @@
 #define QWEBKIT_EXPORT Q_DECL_EXPORT
 #endif
 
+#if QT_VERSION < 0x040400
+    #ifndef QT_BEGIN_NAMESPACE
+    #define QT_BEGIN_NAMESPACE
+    #endif
+
+    #ifndef QT_END_NAMESPACE
+    #define QT_END_NAMESPACE
+    #endif
+#endif
+
+
 #endif // QWEBKITGLOBAL_H

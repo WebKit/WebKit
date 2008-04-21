@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        Build fix for Qt 4.3
+
+        * When building WebCore/internal make sure the QT_[BEGIN,END]_NAMESPACE is
+        always defined. Do this by adding defines to the compiler line
+        * For users of our API this is not feasible. Every public header file should
+        include qwebkitglobal.h. Define the QT_BEGIN_NAMESPACE and QT_END_NAMESPACE
+        when we are building everything < 4.4.0 and don't have them defined.
+
+        * Api/qwebkitglobal.h:
+
+2008-04-21  Holger Hans Peter Freyther  <holger.freyther@trolltech.com>
+
+        Reviewed by Simon.
+
         * Initialize the WebGraphics with the one found in WebCore
         
 
