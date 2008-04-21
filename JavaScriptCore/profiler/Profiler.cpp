@@ -66,6 +66,7 @@ void Profiler::startProfiling()
 void Profiler::stopProfiling()
 {
     m_profiling = false;
+    m_callTree->stopProfiling();
 }
 
 void Profiler::willExecute(ExecState* exec, JSObject* calledFunction)

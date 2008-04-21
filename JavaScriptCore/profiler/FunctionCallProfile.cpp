@@ -60,6 +60,7 @@ void FunctionCallProfile::didExecute(Vector<UString> stackNames, unsigned int st
         ASSERT(stackNames[stackIndex - 1] == m_functionName);
 
         m_timeSum += getCurrentUTCTime() - m_startTime;
+        m_startTime = 0.0;
 
         // FIXME: We may need something with higher resolution than ms as some functions will take 0ms.
         return;
@@ -94,6 +95,16 @@ FunctionCallProfile* FunctionCallProfile::findChild(const UString& name)
     }
 
     return 0;
+}
+
+void FunctionCallProfile::stopProfiling()
+{
+    if (m_startTime)
+        m_timeSum += getCurrentUTCTime() - m_startTime;
+
+    StackIterator endOfChildren = m_children.end();
+    for (StackIterator it = m_children.begin(); it != endOfChildren; ++it)
+        (*it)->stopProfiling();
 }
 
 void FunctionCallProfile::printDataInspectorStyle(int indentLevel) const

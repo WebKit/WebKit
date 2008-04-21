@@ -49,6 +49,8 @@ namespace KJS {
         void addChild(FunctionCallProfile* child);
         FunctionCallProfile* findChild(const UString& name);
 
+        void stopProfiling();
+
         UString functionName() const { return m_functionName; }
         double milliSecs() const { return m_timeSum; }
 
