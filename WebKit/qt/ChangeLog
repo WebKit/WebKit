@@ -1,3 +1,14 @@
+2008-04-21  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Fixes redundant "Fonts" submenu in default lineedits that has only disabled items.
+
+        Don't show sub-menus that have only actions that are disabled.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createContextMenu):
+
 2008-04-21  Kavindra Devi Palaraja <kdpalara@trolltech.com>.
 
         Reviewed by Simon.

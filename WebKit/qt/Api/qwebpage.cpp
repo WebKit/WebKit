@@ -245,7 +245,17 @@ QMenu *QWebPagePrivate::createContextMenu(const WebCore::ContextMenu *webcoreMen
                 break;
             case WebCore::SubmenuType: {
                 QMenu *subMenu = createContextMenu(webcoreMenu, item.platformSubMenu());
-                if (!subMenu->actions().isEmpty()) {
+
+                bool anyEnabledAction = false;
+
+                QList<QAction *> actions = subMenu->actions();
+                for (int i = 0; i < actions.count(); ++i) {
+                    if (actions.at(i)->isVisible())
+                        anyEnabledAction |= actions.at(i)->isEnabled();
+                }
+
+                // don't show sub-menus with just disabled actions
+                if (anyEnabledAction) {
                     subMenu->setTitle(item.title());
                     menu->addAction(subMenu->menuAction());
                 } else {
