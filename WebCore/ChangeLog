@@ -1,3 +1,13 @@
+2008-04-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Rubber-stamped by Ap.
+
+        Add 2 explicit casts.
+        Fixes built on 64-bit machines (64-bit to 32-bit conversion warning).
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dispatchProgressEvent):
+
 2008-04-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
