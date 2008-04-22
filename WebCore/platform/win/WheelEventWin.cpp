@@ -55,7 +55,7 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, 
     , m_metaKey(m_altKey) // FIXME: We'll have to test other browsers
     , m_isContinuous(false)
 {
-    float delta = short(HIWORD(wParam)) / (float)WHEEL_DELTA;
+    float delta = GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
     if (isHorizontal) {
         // Windows sends a positive delta for scrolling right, while AppKit
         // sends a negative delta. EventHandler expects the AppKit values,

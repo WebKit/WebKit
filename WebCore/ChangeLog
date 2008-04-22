@@ -1,3 +1,14 @@
+2008-04-21  Adam Roben  <aroben@apple.com>
+
+        Change PlatformWheelEvent to use GET_WHEEL_DELTA_WPARAM
+
+        Reviewed by Dan Bernstein.
+
+        * platform/win/WheelEventWin.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent): Use
+        GET_WHEEL_DELTA_WPARAM, which is documented way of getting the wheel
+        delta (it is equivalent to what we were previously doing, however).
+
 2008-04-22  Simon Hausmann  <hausmann@webkit.org>
 
         Qt build fix.
