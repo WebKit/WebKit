@@ -66,6 +66,7 @@ public:
     void updateAction(QWebPage::WebAction action);
     void updateNavigationActions();
     void updateEditorActions();
+    void updateContextMenuActions(const WebCore::ContextMenu *webcoreMenu, const QList<WebCore::ContextMenuItem> *items);
 
     void mouseMoveEvent(QMouseEvent*);
     void mousePressEvent(QMouseEvent*);
@@ -121,6 +122,7 @@ public:
     QSize viewportSize;
     QWebHistory history;
     QWebHitTestResult hitTestResult;
+    QMenu *currentContextMenu;
     QWebSettings *settings;
     QPalette palette;
 

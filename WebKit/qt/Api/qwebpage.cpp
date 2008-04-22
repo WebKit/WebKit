@@ -146,6 +146,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     insideOpenCall = false;
     forwardUnsupportedContent = false;
     linkPolicy = QWebPage::DontDelegateLinks;
+    currentContextMenu = 0;
 
     history.d = new QWebHistoryPrivate(page->backForwardList());
     memset(actions, 0, sizeof(actions));
@@ -153,6 +154,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 
 QWebPagePrivate::~QWebPagePrivate()
 {
+    delete currentContextMenu;
     delete undoStack;
     delete settings;
     delete page;
@@ -413,27 +415,11 @@ void QWebPagePrivate::mouseReleaseEvent(QMouseEvent *ev)
 
 void QWebPagePrivate::contextMenuEvent(QContextMenuEvent *ev)
 {
-    page->contextMenuController()->clearContextMenu();
-
-    WebCore::Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
-    focusedFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(ev, 1));
-    ContextMenu *menu = page->contextMenuController()->contextMenu();
-    // If the website defines its own handler then sendContextMenuEvent takes care of
-    // calling/showing it and the context menu pointer will be zero. This is the case
-    // on maps.google.com for example.
-    if (!menu)
-        return;
-
-    QWebHitTestResult oldResult = hitTestResult;
-    hitTestResult = QWebHitTestResult(new QWebHitTestResultPrivate(menu->hitTestResult()));
-
-    const QList<ContextMenuItem> *items = menu->platformDescription();
-    QMenu *qmenu = createContextMenu(menu, items);
-    if (qmenu) {
-        qmenu->exec(ev->globalPos());
-        delete qmenu;
+    if (currentContextMenu) {
+        currentContextMenu->exec(ev->globalPos());
+        delete currentContextMenu;
+        currentContextMenu = 0;
     }
-    hitTestResult = oldResult;
 }
 
 void QWebPagePrivate::wheelEvent(QWheelEvent *ev)
@@ -1633,6 +1619,42 @@ void QWebPage::setLinkDelegationPolicy(LinkDelegationPolicy policy)
 QWebPage::LinkDelegationPolicy QWebPage::linkDelegationPolicy() const
 {
     return d->linkPolicy;
+}
+
+bool QWebPage::swallowContextMenuEvent(QContextMenuEvent *event)
+{
+    d->page->contextMenuController()->clearContextMenu();
+
+    WebCore::Frame* focusedFrame = d->page->focusController()->focusedOrMainFrame();
+    focusedFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(event, 1));
+    ContextMenu *menu = d->page->contextMenuController()->contextMenu();
+    // If the website defines its own handler then sendContextMenuEvent takes care of
+    // calling/showing it and the context menu pointer will be zero. This is the case
+    // on maps.google.com for example.
+    return !menu;
+}
+
+void QWebPage::updatePositionDependentActions(const QPoint &pos)
+{
+    // disable position dependent actions first and enable them if WebCore adds them enabled to the context menu.
+
+    for (int i = ContextMenuItemTagNoAction; i < ContextMenuItemBaseApplicationTag; ++i) {
+        QWebPage::WebAction action = webActionForContextMenuAction(WebCore::ContextMenuAction(i));
+        QAction *a = this->action(action);
+        if (a)
+            a->setEnabled(false);
+    }
+
+    WebCore::Frame* focusedFrame = d->page->focusController()->focusedOrMainFrame();
+    HitTestResult result = focusedFrame->eventHandler()->hitTestResultAtPoint(focusedFrame->view()->windowToContents(pos), /*allowShadowContent*/ false);
+
+    d->hitTestResult = QWebHitTestResult(new QWebHitTestResultPrivate(result));
+    WebCore::ContextMenu menu(result);
+    menu.populate();
+
+    delete d->currentContextMenu;
+    // createContextMenu also enables actions if necessary
+    d->currentContextMenu = d->createContextMenu(&menu, menu.platformDescription());
 }
 
 bool QWebPage::extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output)

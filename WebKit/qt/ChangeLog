@@ -2,6 +2,25 @@
 
         Reviewed by Holger.
 
+        Added QWebPage::swallowContextMenuEvent and QWebPage::updatePositionDependentActions.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::mouseReleaseEvent):
+        (QWebPage::setLinkDelegationPolicy):
+        (QWebPage::linkDelegationPolicy):
+        (QWebPage::swallowContextMenuEvent):
+        (QWebPage::updatePositionDependentActions):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebview.cpp:
+        (QWebView::event):
+
+2008-04-22  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Added Extension APIs for QWebPage.
 
         * Api/qwebpage.cpp:
