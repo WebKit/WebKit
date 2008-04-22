@@ -270,9 +270,22 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accState(VARIANT vChild, VARIANT* 
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accHelp(VARIANT, BSTR*)
+HRESULT STDMETHODCALLTYPE AccessibleBase::get_accHelp(VARIANT vChild, BSTR* helpText)
 {
-    return E_NOTIMPL;
+    if (!helpText)
+        return E_POINTER;
+
+    *helpText = 0;
+
+    AccessibilityObject* childObj;
+    HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
+
+    if (FAILED(hr))
+        return hr;
+
+    if (*helpText = BString(childObj->helpText()).release())
+        return S_OK;
+    return S_FALSE;
 }
 
 HRESULT STDMETHODCALLTYPE AccessibleBase::get_accKeyboardShortcut(VARIANT, BSTR*)

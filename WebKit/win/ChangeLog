@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+        Implement get_accHelp().
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accHelp): Report the result of calling the object's
+        helpText() method.
+
+2008-04-19  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
         Implement get_accState().
 
         * AccessibleBase.cpp:
