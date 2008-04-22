@@ -27,14 +27,12 @@
     <file>inspector.js</file>
     <file>treeoutline.js</file>
     <file>utilities.js</file>
-    <file>Images/alternateTableRows.png</file>
     <file>Images/attachedShadow.png</file>
     <file>Images/backNormal.png</file>
     <file>Images/bottomShadow.png</file>
     <file>Images/breadcrumbBackground.png</file>
     <file>Images/checker.png</file>
     <file>Images/console.png</file>
-    <file>Images/darkShadow.png</file>
     <file>Images/database.png</file>
     <file>Images/databaseBrowserViewNormal.png</file>
     <file>Images/databaseBrowserViewNormalSelected.png</file>
@@ -69,8 +67,6 @@
     <file>Images/paneBottomGrow.png</file>
     <file>Images/paneBottomGrowActive.png</file>
     <file>Images/paneGrowHandleLine.png</file>
-    <file>Images/paneHeader.png</file>
-    <file>Images/paneHeaderActive.png</file>
     <file>Images/plainDocument.png</file>
     <file>Images/popupArrows.png</file>
     <file>Images/popupArrowsBlack.png</file>
@@ -92,12 +88,6 @@
     <file>Images/sidebarDetachWidget.png</file>
     <file>Images/sidebarDetachWidgetPressed.png</file>
     <file>Images/sidebarResizeWidget.png</file>
-    <file>Images/sidebarSelection.png</file>
-    <file>Images/sidebarSelectionBlurred.png</file>
-    <file>Images/sidebarSelectionBlurredTall.png</file>
-    <file>Images/sidebarSelectionGray.png</file>
-    <file>Images/sidebarSelectionGrayTall.png</file>
-    <file>Images/sidebarSelectionTall.png</file>
     <file>Images/sidebarStatusAreaBackground.png</file>
     <file>Images/sourceViewNormal.png</file>
     <file>Images/sourceViewNormalSelected.png</file>
@@ -120,11 +110,6 @@
     <file>Images/tipIconPressed.png</file>
     <file>Images/toggleDown.png</file>
     <file>Images/toggleUp.png</file>
-    <file>Images/toolbarBackground.png</file>
-    <file>Images/toolbarBackgroundInactive.png</file>
-    <file>Images/toolbarButtonNormal.png</file>
-    <file>Images/toolbarButtonNormalInactive.png</file>
-    <file>Images/toolbarButtonNormalPressed.png</file>
     <file>Images/toolbarButtonNormalSelected.png</file>
     <file>Images/toolbarButtonNormalSelectedInactive.png</file>
     <file>Images/toolbarButtonSmall.png</file>

@@ -1,3 +1,11 @@
+2008-04-22  Simon Hausmann  <hausmann@webkit.org>
+
+        Qt build fix.
+
+        Adjust the Qt resource file to removed image files.
+
+        * page/inspector/WebKit.qrc:
+
 2008-04-21  Timothy Hatcher  <timothy@apple.com>
 
         Use CSS gradients to replace many image files in the Web Inspector.
