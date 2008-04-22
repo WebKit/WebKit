@@ -209,6 +209,7 @@ namespace WebCore {
         Vector<MediaQueryExp*>* createFloatingMediaQueryExpList();
         Vector<MediaQueryExp*>* sinkFloatingMediaQueryExpList(Vector<MediaQueryExp*>*);
         MediaQuery* createFloatingMediaQuery(MediaQuery::Restrictor, const String&, Vector<MediaQueryExp*>*);
+        MediaQuery* createFloatingMediaQuery(Vector<MediaQueryExp*>*);
         MediaQuery* sinkFloatingMediaQuery(MediaQuery*);
 
     public:

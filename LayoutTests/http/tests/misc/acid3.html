@@ -1763,11 +1763,11 @@
       style.appendChild(doc.createTextNode('@media all and (bogus) { #e { text-transform: uppercase; } }'));
       style.appendChild(doc.createTextNode('@media not all and (bogus) { #f { text-transform: uppercase; } }'));                            // matches
       style.appendChild(doc.createTextNode('@media only all and (bogus) { #g { text-transform: uppercase; } }'));
-      style.appendChild(doc.createTextNode('@media (bogus), all { #h { text-transform: uppercase; } }'));
+      style.appendChild(doc.createTextNode('@media (bogus), all { #h { text-transform: uppercase; } }'));                                   // matches
       style.appendChild(doc.createTextNode('@media all and (bogus), all { #i { text-transform: uppercase; } }'));                           // matches
       style.appendChild(doc.createTextNode('@media not all and (bogus), all { #j { text-transform: uppercase; } }'));                       // matches
       style.appendChild(doc.createTextNode('@media only all and (bogus), all { #k { text-transform: uppercase; } }'));                      // matches
-      style.appendChild(doc.createTextNode('@media all, (bogus) { #l { text-transform: uppercase; } }'));
+      style.appendChild(doc.createTextNode('@media all, (bogus) { #l { text-transform: uppercase; } }'));                                   // matches
       style.appendChild(doc.createTextNode('@media all, all and (bogus) { #m { text-transform: uppercase; } }'));                           // matches
       style.appendChild(doc.createTextNode('@media all, not all and (bogus) { #n { text-transform: uppercase; } }'));                       // matches
       style.appendChild(doc.createTextNode('@media all, only all and (bogus) { #o { text-transform: uppercase; } }'));                      // matches
@@ -1776,10 +1776,10 @@
       style.appendChild(doc.createTextNode('@media all, all and color { #r { text-transform: uppercase; } }'));
       style.appendChild(doc.createTextNode('@media all, all and min-color: 0 { #s { text-transform: uppercase; } }'));
       style.appendChild(doc.createTextNode('@media all and min-color: 0, all { #t { text-transform: uppercase; } }'));
-      style.appendChild(doc.createTextNode('@media (min-color: 0) and (min-monochrome: 0) { #u { text-transform: uppercase; } }'));
-      style.appendChild(doc.createTextNode('@media (min-color: 0), (min-monochrome: 0) { #v { text-transform: uppercase; } }'));
-      style.appendChild(doc.createTextNode('@media all and (min-color: 0), all and (min-monochrome: 0) { #w { text-transform: uppercase; } }')); // matches
-      style.appendChild(doc.createTextNode('@media not all and (min-color: 0), not all and (min-monochrome: 0) { #x { text-transform: uppercase; } }')); // matches
+      style.appendChild(doc.createTextNode('@media (max-color: 0) and (max-monochrome: 0) { #u { text-transform: uppercase; } }'));
+      style.appendChild(doc.createTextNode('@media (min-color: 1), (min-monochrome: 1) { #v { text-transform: uppercase; } }'));            // matches
+      style.appendChild(doc.createTextNode('@media all and (min-color: 0) and (min-monochrome: 0) { #w { text-transform: uppercase; } }')); // matches
+      style.appendChild(doc.createTextNode('@media not all and (min-color: 1), not all and (min-monochrome: 1) { #x { text-transform: uppercase; } }')); // matches
       style.appendChild(doc.createTextNode('@media all and (min-height: 1em) and (min-width: 1em) { #y1 { text-transform: uppercase; } }'));
       style.appendChild(doc.createTextNode('@media all and (max-height: 1em) and (min-width: 1em) { #y2 { text-transform: uppercase; } }'));
       style.appendChild(doc.createTextNode('@media all and (min-height: 1em) and (max-width: 1em) { #y3 { text-transform: uppercase; } }'));
@@ -1804,11 +1804,11 @@
       check('e', false);
       check('f', true);
       check('g', false);
-      check('h', false);
+      check('h', true);
       check('i', true);
       check('j', true); // 10
       check('k', true);
-      check('l', false);
+      check('l', true);
       check('m', true);
       check('n', true);
       check('o', true);
@@ -1818,7 +1818,7 @@
       check('s', false);
       check('t', false); // 20
       check('u', false);
-      check('v', false);
+      check('v', true);
       check('w', true);
       check('x', true);
       // here the viewport is 0x0

@@ -219,8 +219,13 @@ static bool colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* fr
 
 static bool monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
 {
-    if (!screenIsMonochrome(frame->page()->mainFrame()->view()))
+    if (!screenIsMonochrome(frame->page()->mainFrame()->view())) {
+        if (value) {
+            float number;
+            return numberValue(value, number) && compareValue(0, static_cast<int>(number), op);
+        }
         return false;
+    }
 
     return colorMediaFeatureEval(value, style, frame, op);
 }

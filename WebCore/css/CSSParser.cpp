@@ -4095,6 +4095,11 @@ MediaQuery* CSSParser::createFloatingMediaQuery(MediaQuery::Restrictor r, const 
     return m_floatingMediaQuery;
 }
 
+MediaQuery* CSSParser::createFloatingMediaQuery(Vector<MediaQueryExp*>* exprs)
+{
+    return createFloatingMediaQuery(MediaQuery::None, "all", exprs);
+}
+
 MediaQuery* CSSParser::sinkFloatingMediaQuery(MediaQuery* mq)
 {
     ASSERT(mq == m_floatingMediaQuery);

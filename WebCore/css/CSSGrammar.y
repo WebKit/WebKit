@@ -76,7 +76,7 @@ static int cssyylex(YYSTYPE* yylval) { return CSSParser::current()->lex(yylval);
 
 %}
 
-%expect 41
+%expect 42
 
 %left UNIMPORTANT_TOK
 
@@ -176,7 +176,7 @@ static int cssyylex(YYSTYPE* yylval) { return CSSParser::current()->lex(yylval);
 %type <valueList> maybe_media_value
 %type <mediaQueryExp> media_query_exp
 %type <mediaQueryExpList> media_query_exp_list
-%type <mediaQueryExpList> maybe_media_query_exp_list
+%type <mediaQueryExpList> maybe_and_media_query_exp_list
 
 %type <ruleList> ruleset_list
 
@@ -373,9 +373,9 @@ maybe_media_value:
     ;
 
 media_query_exp:
-    MEDIA_AND maybe_space '(' maybe_space media_feature maybe_space maybe_media_value ')' maybe_space {
-        $5.lower();
-        $$ = static_cast<CSSParser*>(parser)->createFloatingMediaQueryExp($5, $7);
+    '(' maybe_space media_feature maybe_space maybe_media_value ')' maybe_space {
+        $3.lower();
+        $$ = static_cast<CSSParser*>(parser)->createFloatingMediaQueryExp($3, $5);
     }
     ;
 
@@ -385,17 +385,19 @@ media_query_exp_list:
         $$ = p->createFloatingMediaQueryExpList();
         $$->append(p->sinkFloatingMediaQueryExp($1));
     }
-    | media_query_exp_list media_query_exp {
+    | media_query_exp_list maybe_space MEDIA_AND maybe_space media_query_exp {
         $$ = $1;
-        $$->append(static_cast<CSSParser*>(parser)->sinkFloatingMediaQueryExp($2));
+        $$->append(static_cast<CSSParser*>(parser)->sinkFloatingMediaQueryExp($5));
     }
     ;
 
-maybe_media_query_exp_list:
+maybe_and_media_query_exp_list:
     /*empty*/ {
         $$ = static_cast<CSSParser*>(parser)->createFloatingMediaQueryExpList();
     }
-    | media_query_exp_list
+    | MEDIA_AND maybe_space media_query_exp_list {
+        $$ = $3;
+    }
     ;
 
 maybe_media_restrictor:
@@ -411,7 +413,12 @@ maybe_media_restrictor:
     ;
 
 media_query:
-    maybe_media_restrictor maybe_space medium maybe_media_query_exp_list {
+    media_query_exp_list {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        $$ = p->createFloatingMediaQuery(p->sinkFloatingMediaQueryExpList($1));
+    }
+    |
+    maybe_media_restrictor maybe_space medium maybe_and_media_query_exp_list {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $3.lower();
         $$ = p->createFloatingMediaQuery($1, $3, p->sinkFloatingMediaQueryExpList($4));

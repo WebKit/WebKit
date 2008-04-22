@@ -1,3 +1,20 @@
+2008-04-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/media/implicit-media-all.html
+               fast/media/monochrome.html
+
+        - allow implicit "all" media in media queries
+        - use a value of 0 for the monochrome media feature on color displays
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createFloatingMediaQuery):
+        * css/CSSParser.h:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::monochromeMediaFeatureEval):
+
 2008-04-21  Brady Eidson  <beidson@apple.com>
 
         Rockingly reviewed by Adele

@@ -1,3 +1,21 @@
+2008-04-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - update acid3.html to reflect the updated test.
+        - test for implicit "all" media in media queries
+        - test that the value of the monochrome media feature is 0 on color displays
+
+        * http/tests/misc/acid3.html:
+        * fast/media/implicit-media-all.html: Added.
+        * fast/media/monochrome.html: Added.
+        * platform/mac/fast/media/implicit-media-all-expected.checksum: Added.
+        * platform/mac/fast/media/implicit-media-all-expected.png: Added.
+        * platform/mac/fast/media/implicit-media-all-expected.txt: Added.
+        * platform/mac/fast/media/monochrome-expected.checksum: Added.
+        * platform/mac/fast/media/monochrome-expected.png: Added.
+        * platform/mac/fast/media/monochrome-expected.txt: Added.
+
 2008-04-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John Sullivan.
