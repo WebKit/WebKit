@@ -2,6 +2,24 @@
 
         Reviewed by Holger.
 
+        Documentation for QWebPluginFactory and documentation updates for QWebPage.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setLinkDelegationPolicy):
+        (QWebPage::linkDelegationPolicy):
+        (QWebPage::swallowContextMenuEvent):
+        (QWebPage::updatePositionDependentActions):
+        (QWebPage::extension):
+        (QWebPage::networkAccessManager):
+        * Api/qwebpluginfactory.cpp:
+        (QWebPluginFactory::QWebPluginFactory):
+        (QWebPluginFactory::~QWebPluginFactory):
+        (QWebPluginFactory::refreshPlugins):
+
+2008-04-22  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Added QWebPage::swallowContextMenuEvent and QWebPage::updatePositionDependentActions.
         
 

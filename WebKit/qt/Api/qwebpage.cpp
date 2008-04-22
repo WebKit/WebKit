@@ -1621,6 +1621,14 @@ QWebPage::LinkDelegationPolicy QWebPage::linkDelegationPolicy() const
     return d->linkPolicy;
 }
 
+/*!
+    Passes the context menu event, \a event, to the currently displayed webpage and
+    returns true if the page handled the event; otherwise false is returned.
+
+    A web page may swallow a context menu event through a custom event handler, allowing for context
+    menus to be implemented in HTML/JavaScript. This is used by \l{http://maps.google.com/}{Google
+    Maps}, for example.
+*/
 bool QWebPage::swallowContextMenuEvent(QContextMenuEvent *event)
 {
     d->page->contextMenuController()->clearContextMenu();
@@ -1634,6 +1642,10 @@ bool QWebPage::swallowContextMenuEvent(QContextMenuEvent *event)
     return !menu;
 }
 
+/*!
+    Updates the page's actions depending on the position \a pos. For example if \a pos is over an image
+    element the CopyImageToClipboard action is enabled.
+*/
 void QWebPage::updatePositionDependentActions(const QPoint &pos)
 {
     // disable position dependent actions first and enable them if WebCore adds them enabled to the context menu.
@@ -1657,6 +1669,43 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
     d->currentContextMenu = d->createContextMenu(&menu, menu.platformDescription());
 }
 
+/*!
+    \enum QWebPage::Extension
+
+    This enum describes the types of extensions that the page can support. Before using these extensions, you
+    should verify that the extension is supported by calling supportsExtension().
+
+    Currently there are no extensions.
+*/
+
+/*!
+    \class QWebPage::ExtensionOption
+    \since 4.4
+    \brief The ExtensionOption class provides an extended input argument to QWebPage's extension support.
+
+    \sa QWebPage::extension()
+*/
+
+/*!
+    \class QWebPage::ExtensionReturn
+    \since 4.4
+    \brief The ExtensionOption class provides an extended output argument to QWebPage's extension support.
+
+    \sa QWebPage::extension()
+*/
+
+/*!
+    This virtual function can be reimplemented in a QWebPage subclass to provide support for extensions. The \a option
+    argument is provided as input to the extension; the output results can be stored in \a output.
+
+    The behavior of this function is determined by \a extension.
+
+    You can call supportsExtension() to check if an extension is supported by the page.
+
+    By default, no extensions are supported, and this function returns false.
+
+    \sa supportsExtension(), Extension
+*/
 bool QWebPage::extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output)
 {
     Q_UNUSED(extension)
@@ -1665,6 +1714,11 @@ bool QWebPage::extension(Extension extension, const ExtensionOption *option, Ext
     return false;
 }
 
+/*!
+    This virtual function returns true if the web page supports \a extension; otherwise false is returned.
+
+    \sa extension()
+*/
 bool QWebPage::supportsExtension(Extension extension) const
 {
     Q_UNUSED(extension)
@@ -1744,8 +1798,8 @@ QNetworkProxy QWebPage::networkProxy() const
 #else
 
 /*!
-    Sets the QNetworkAccessManager \a manager that is responsible for serving network
-    requests for this QWebPage.
+    Sets the QNetworkAccessManager \a manager responsible for serving network requests for this
+    QWebPage.
 
     \sa networkAccessManager()
 */
@@ -1774,11 +1828,23 @@ QNetworkAccessManager *QWebPage::networkAccessManager() const
 
 #endif
 
+/*!
+    Sets the QWebPluginFactory \a factory responsible for creating plugins embedded into this
+    QWebPage.
+
+    \sa pluginFactory()
+*/
 void QWebPage::setPluginFactory(QWebPluginFactory *factory)
 {
     d->pluginFactory = factory;
 }
 
+/*!
+    Returns the QWebPluginFactory that is responsible for creating plugins embedded into
+    this QWebPage. If no plugin factory is installed a null pointer is returned.
+
+    \sa setPluginFactory()
+*/
 QWebPluginFactory *QWebPage::pluginFactory() const
 {
     return d->pluginFactory;
