@@ -1,3 +1,85 @@
+2008-04-22  Timothy Hatcher  <timothy@apple.com>
+
+        Remove many unused Web Inspector images.
+
+        Rubber-stamped by Adam Roben and Sam Weinig.
+
+        * page/inspector/Images/attachedShadow.png: Removed.
+        * page/inspector/Images/backNormal.png: Removed.
+        * page/inspector/Images/bottomShadow.png: Removed.
+        * page/inspector/Images/breadcrumbBackground.png: Removed.
+        * page/inspector/Images/console.png: Removed.
+        * page/inspector/Images/databaseBrowserViewNormal.png: Removed.
+        * page/inspector/Images/databaseBrowserViewNormalSelected.png: Removed.
+        * page/inspector/Images/databaseBrowserViewSmall.png: Removed.
+        * page/inspector/Images/databaseBrowserViewSmallSelected.png: Removed.
+        * page/inspector/Images/databaseQueryViewNormal.png: Removed.
+        * page/inspector/Images/databaseQueryViewNormalSelected.png: Removed.
+        * page/inspector/Images/databaseQueryViewSmall.png: Removed.
+        * page/inspector/Images/databaseQueryViewSmallSelected.png: Removed.
+        * page/inspector/Images/disclosureDownPressed.png: Removed.
+        * page/inspector/Images/disclosureRightDown.png: Removed.
+        * page/inspector/Images/disclosureRightPressed.png: Removed.
+        * page/inspector/Images/document.png: Removed.
+        * page/inspector/Images/domViewNormal.png: Removed.
+        * page/inspector/Images/domViewNormalSelected.png: Removed.
+        * page/inspector/Images/domViewSmall.png: Removed.
+        * page/inspector/Images/domViewSmallSelected.png: Removed.
+        * page/inspector/Images/downTriangle.png: Removed.
+        * page/inspector/Images/folder.png: Removed.
+        * page/inspector/Images/forwardNormal.png: Removed.
+        * page/inspector/Images/gradient.png: Removed.
+        * page/inspector/Images/gradientHighlight.png: Removed.
+        * page/inspector/Images/gradientHighlightBottom.png: Removed.
+        * page/inspector/Images/hideStatusWidget.png: Removed.
+        * page/inspector/Images/hideStatusWidgetPressed.png: Removed.
+        * page/inspector/Images/network.png: Removed.
+        * page/inspector/Images/plainDocument.png: Removed.
+        * page/inspector/Images/popupArrows.png: Removed.
+        * page/inspector/Images/popupArrowsBlack.png: Removed.
+        * page/inspector/Images/reload.png: Removed.
+        * page/inspector/Images/rightTriangle.png: Removed.
+        * page/inspector/Images/showStatusWidget.png: Removed.
+        * page/inspector/Images/showStatusWidgetPressed.png: Removed.
+        * page/inspector/Images/sidbarItemBackground.png: Removed.
+        * page/inspector/Images/sidebarActionWidget.png: Removed.
+        * page/inspector/Images/sidebarActionWidgetPressed.png: Removed.
+        * page/inspector/Images/sidebarAttachWidget.png: Removed.
+        * page/inspector/Images/sidebarAttachWidgetPressed.png: Removed.
+        * page/inspector/Images/sidebarDetachWidget.png: Removed.
+        * page/inspector/Images/sidebarDetachWidgetPressed.png: Removed.
+        * page/inspector/Images/sidebarResizeWidget.png: Removed.
+        * page/inspector/Images/sidebarStatusAreaBackground.png: Removed.
+        * page/inspector/Images/sourceViewNormal.png: Removed.
+        * page/inspector/Images/sourceViewNormalSelected.png: Removed.
+        * page/inspector/Images/sourceViewSmall.png: Removed.
+        * page/inspector/Images/sourceViewSmallSelected.png: Removed.
+        * page/inspector/Images/tab.png: Removed.
+        * page/inspector/Images/tabSelected.png: Removed.
+        * page/inspector/Images/toggleDown.png: Removed.
+        * page/inspector/Images/toggleUp.png: Removed.
+        * page/inspector/Images/toolbarButtonNormal.png: Removed.
+        * page/inspector/Images/toolbarButtonNormalInactive.png: Removed.
+        * page/inspector/Images/toolbarButtonNormalPressed.png: Removed.
+        * page/inspector/Images/toolbarButtonNormalSelected.png: Removed.
+        * page/inspector/Images/toolbarButtonNormalSelectedInactive.png: Removed.
+        * page/inspector/Images/toolbarButtonSmall.png: Removed.
+        * page/inspector/Images/toolbarButtonSmallInactive.png: Removed.
+        * page/inspector/Images/toolbarButtonSmallPressed.png: Removed.
+        * page/inspector/Images/toolbarButtonSmallSelected.png: Removed.
+        * page/inspector/Images/toolbarButtonSmallSelectedInactive.png: Removed.
+        * page/inspector/Images/toolbarPopupButtonNormal.png: Removed.
+        * page/inspector/Images/toolbarPopupButtonNormalInactive.png: Removed.
+        * page/inspector/Images/toolbarPopupButtonNormalPressed.png: Removed.
+        * page/inspector/Images/toolbarPopupButtonSmall.png: Removed.
+        * page/inspector/Images/toolbarPopupButtonSmallInactive.png: Removed.
+        * page/inspector/Images/toolbarPopupButtonSmallPressed.png: Removed.
+        * page/inspector/Images/toolbarSplitButtonDividerNormal.png: Removed.
+        * page/inspector/Images/toolbarSplitButtonDividerNormalInactive.png: Removed.
+        * page/inspector/Images/toolbarSplitButtonDividerSmall.png: Removed.
+        * page/inspector/Images/toolbarSplitButtonDividerSmallInactive.png: Removed.
+        * page/inspector/Images/treeLeftTriangleBlack.png: Removed.
+
 2008-04-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
