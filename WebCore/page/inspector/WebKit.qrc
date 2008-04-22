@@ -27,76 +27,65 @@
     <file>inspector.js</file>
     <file>treeoutline.js</file>
     <file>utilities.js</file>
-    <file>Images/attachedShadow.png</file>
-    <file>Images/backNormal.png</file>
-    <file>Images/bottomShadow.png</file>
-    <file>Images/breadcrumbBackground.png</file>
+    <file>Images/back.png</file>
     <file>Images/checker.png</file>
-    <file>Images/console.png</file>
+    <file>Images/clearConsoleButtons.png</file>
+    <file>Images/consoleButtons.png</file>
     <file>Images/database.png</file>
-    <file>Images/databaseBrowserViewNormal.png</file>
-    <file>Images/databaseBrowserViewNormalSelected.png</file>
-    <file>Images/databaseBrowserViewSmall.png</file>
-    <file>Images/databaseBrowserViewSmallSelected.png</file>
-    <file>Images/databaseQueryViewNormal.png</file>
-    <file>Images/databaseQueryViewNormalSelected.png</file>
-    <file>Images/databaseQueryViewSmall.png</file>
-    <file>Images/databaseQueryViewSmallSelected.png</file>
-    <file>Images/disclosureDownPressed.png</file>
-    <file>Images/disclosureRightDown.png</file>
-    <file>Images/disclosureRightPressed.png</file>
-    <file>Images/document.png</file>
-    <file>Images/domViewNormal.png</file>
-    <file>Images/domViewNormalSelected.png</file>
-    <file>Images/domViewSmall.png</file>
-    <file>Images/domViewSmallSelected.png</file>
-    <file>Images/downTriangle.png</file>
+    <file>Images/databasesIcon.png</file>
+    <file>Images/databaseTable.png</file>
+    <file>Images/debuggerContinue.png</file>
+    <file>Images/debuggerPause.png</file>
+    <file>Images/debuggerStepInto.png</file>
+    <file>Images/debuggerStepOut.png</file>
+    <file>Images/debuggerStepOver.png</file>
+    <file>Images/debuggingButtons.png</file>
+    <file>Images/disclosureTriangleSmallDownBlack.png</file>
+    <file>Images/disclosureTriangleSmallDown.png</file>
+    <file>Images/disclosureTriangleSmallDownWhite.png</file>
+    <file>Images/disclosureTriangleSmallRightBlack.png</file>
+    <file>Images/disclosureTriangleSmallRightDownBlack.png</file>
+    <file>Images/disclosureTriangleSmallRightDown.png</file>
+    <file>Images/disclosureTriangleSmallRightDownWhite.png</file>
+    <file>Images/disclosureTriangleSmallRight.png</file>
+    <file>Images/disclosureTriangleSmallRightWhite.png</file>
+    <file>Images/dockButtons.png</file>
+    <file>Images/elementsIcon.png</file>
     <file>Images/errorIcon.png</file>
     <file>Images/errorMediumIcon.png</file>
-    <file>Images/folder.png</file>
-    <file>Images/forwardNormal.png</file>
+    <file>Images/forward.png</file>
     <file>Images/glossyHeader.png</file>
     <file>Images/glossyHeaderPressed.png</file>
     <file>Images/goArrow.png</file>
-    <file>Images/gradient.png</file>
-    <file>Images/gradientHighlight.png</file>
-    <file>Images/gradientHighlightBottom.png</file>
-    <file>Images/hideStatusWidget.png</file>
-    <file>Images/hideStatusWidgetPressed.png</file>
-    <file>Images/network.png</file>
-    <file>Images/paneBottomGrow.png</file>
+    <file>Images/largerResourcesButtons.png</file>
     <file>Images/paneBottomGrowActive.png</file>
+    <file>Images/paneBottomGrow.png</file>
     <file>Images/paneGrowHandleLine.png</file>
-    <file>Images/plainDocument.png</file>
-    <file>Images/popupArrows.png</file>
-    <file>Images/popupArrowsBlack.png</file>
-    <file>Images/reload.png</file>
-    <file>Images/rightTriangle.png</file>
-    <file>Images/segment.png</file>
+    <file>Images/resourceCSSIcon.png</file>
+    <file>Images/resourceDocumentIcon.png</file>
+    <file>Images/resourceDocumentIconSmall.png</file>
+    <file>Images/resourceJSIcon.png</file>
+    <file>Images/resourcePlainIcon.png</file>
+    <file>Images/resourcePlainIconSmall.png</file>
+    <file>Images/resourcesIcon.png</file>
+    <file>Images/resourcesSizeGraphIcon.png</file>
+    <file>Images/resourcesTimeGraphIcon.png</file>
+    <file>Images/scriptsIcon.png</file>
     <file>Images/segmentEnd.png</file>
-    <file>Images/segmentHover.png</file>
     <file>Images/segmentHoverEnd.png</file>
-    <file>Images/segmentSelected.png</file>
+    <file>Images/segmentHover.png</file>
+    <file>Images/segment.png</file>
     <file>Images/segmentSelectedEnd.png</file>
-    <file>Images/showStatusWidget.png</file>
-    <file>Images/showStatusWidgetPressed.png</file>
-    <file>Images/sidbarItemBackground.png</file>
-    <file>Images/sidebarActionWidget.png</file>
-    <file>Images/sidebarActionWidgetPressed.png</file>
-    <file>Images/sidebarAttachWidget.png</file>
-    <file>Images/sidebarAttachWidgetPressed.png</file>
-    <file>Images/sidebarDetachWidget.png</file>
-    <file>Images/sidebarDetachWidgetPressed.png</file>
-    <file>Images/sidebarResizeWidget.png</file>
-    <file>Images/sidebarStatusAreaBackground.png</file>
-    <file>Images/sourceViewNormal.png</file>
-    <file>Images/sourceViewNormalSelected.png</file>
-    <file>Images/sourceViewSmall.png</file>
-    <file>Images/sourceViewSmallSelected.png</file>
+    <file>Images/segmentSelected.png</file>
     <file>Images/splitviewDimple.png</file>
     <file>Images/splitviewDividerBackground.png</file>
-    <file>Images/tab.png</file>
-    <file>Images/tabSelected.png</file>
+    <file>Images/statusbarBackground.png</file>
+    <file>Images/statusbarBottomBackground.png</file>
+    <file>Images/statusbarButtons.png</file>
+    <file>Images/statusbarMenuButton.png</file>
+    <file>Images/statusbarMenuButtonSelected.png</file>
+    <file>Images/statusbarResizerHorizontal.png</file>
+    <file>Images/statusbarResizerVertical.png</file>
     <file>Images/timelinePillBlue.png</file>
     <file>Images/timelinePillGray.png</file>
     <file>Images/timelinePillGreen.png</file>
@@ -104,34 +93,17 @@
     <file>Images/timelinePillPurple.png</file>
     <file>Images/timelinePillRed.png</file>
     <file>Images/timelinePillYellow.png</file>
-    <file>Images/tipBalloon.png</file>
     <file>Images/tipBalloonBottom.png</file>
+    <file>Images/tipBalloon.png</file>
     <file>Images/tipIcon.png</file>
     <file>Images/tipIconPressed.png</file>
-    <file>Images/toggleDown.png</file>
-    <file>Images/toggleUp.png</file>
-    <file>Images/toolbarButtonNormalSelected.png</file>
-    <file>Images/toolbarButtonNormalSelectedInactive.png</file>
-    <file>Images/toolbarButtonSmall.png</file>
-    <file>Images/toolbarButtonSmallInactive.png</file>
-    <file>Images/toolbarButtonSmallPressed.png</file>
-    <file>Images/toolbarButtonSmallSelected.png</file>
-    <file>Images/toolbarButtonSmallSelectedInactive.png</file>
-    <file>Images/toolbarPopupButtonNormal.png</file>
-    <file>Images/toolbarPopupButtonNormalInactive.png</file>
-    <file>Images/toolbarPopupButtonNormalPressed.png</file>
-    <file>Images/toolbarPopupButtonSmall.png</file>
-    <file>Images/toolbarPopupButtonSmallInactive.png</file>
-    <file>Images/toolbarPopupButtonSmallPressed.png</file>
-    <file>Images/toolbarSplitButtonDividerNormal.png</file>
-    <file>Images/toolbarSplitButtonDividerNormalInactive.png</file>
-    <file>Images/toolbarSplitButtonDividerSmall.png</file>
-    <file>Images/toolbarSplitButtonDividerSmallInactive.png</file>
+    <file>Images/toolbarItemSelected.png</file>
     <file>Images/treeDownTriangleBlack.png</file>
     <file>Images/treeDownTriangleWhite.png</file>
-    <file>Images/treeLeftTriangleBlack.png</file>
     <file>Images/treeRightTriangleBlack.png</file>
     <file>Images/treeRightTriangleWhite.png</file>
+    <file>Images/userInputIcon.png</file>
+    <file>Images/userInputPreviousIcon.png</file>
     <file>Images/warningIcon.png</file>
     <file>Images/warningMediumIcon.png</file>
     <file>Images/warningsErrors.png</file>

@@ -1,3 +1,12 @@
+2008-04-22  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed build fix.
+
+        Update WebKit.qrc to catch up with the addition and removal of images
+        from page/inspector/Images in recent commits.
+
+        * page/inspector/WebKit.qrc:
+
 2008-04-22  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://5589634>.
