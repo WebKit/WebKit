@@ -122,6 +122,7 @@ public:
     QWebHistory history;
     QWebHitTestResult hitTestResult;
     QWebSettings *settings;
+    QPalette palette;
 
     QAction *actions[QWebPage::WebActionCount];
 

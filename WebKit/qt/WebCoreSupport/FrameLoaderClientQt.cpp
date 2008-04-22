@@ -211,6 +211,9 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
     // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
     frameView->deref();
 
+    if (m_webFrame && m_webFrame->page())
+        m_webFrame->d->updateBackground();
+
     if (m_frame->ownerRenderer())
         m_frame->ownerRenderer()->setWidget(frameView);
 }

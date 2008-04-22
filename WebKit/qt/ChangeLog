@@ -1,3 +1,25 @@
+2008-04-22  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Simon.
+
+        Fix background propagation from the QWebView's palette.
+
+        The background brush of the palette needs to be propagated to the WebCore::FrameView.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::updateBackground):
+        * Api/qwebframe_p.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::dropEvent):
+        (QWebPage::setPalette):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebview.cpp:
+        (QWebView::page):
+        (QWebView::changeEvent):
+        * Api/qwebview.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+
 2008-04-22  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.

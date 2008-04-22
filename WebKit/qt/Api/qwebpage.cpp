@@ -676,6 +676,24 @@ void QWebPagePrivate::dropEvent(QDropEvent *ev)
 #endif
 }
 
+/*!
+    \property QWebPage::palette
+    \brief the page's palette
+
+    The background brush of the palette is used to draw the background of the main frame.
+*/
+void QWebPage::setPalette(const QPalette &pal)
+{
+    d->palette = pal;
+    if (d->mainFrame)
+        d->mainFrame->d->updateBackground();
+}
+
+QPalette QWebPage::palette() const
+{
+    return d->palette;
+}
+
 void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
 {
     WebCore::Frame *frame = page->focusController()->focusedOrMainFrame();

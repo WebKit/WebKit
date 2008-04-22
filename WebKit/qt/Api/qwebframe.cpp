@@ -112,6 +112,19 @@ WebCore::PlatformScrollbar *QWebFramePrivate::verticalScrollBar() const
     return frame->view()->verticalScrollBar();
 }
 
+void QWebFramePrivate::updateBackground()
+{
+    WebCore::FrameView *view = frame->view();
+    if (!view)
+        return;
+    QBrush brush = page->palette().brush(QPalette::Background);
+    if (brush.style() == Qt::SolidPattern) {
+        view->setBaseBackgroundColor(brush.color());
+        if (!brush.color().alpha())
+            view->setTransparent(true);
+    }
+}
+
 /*!
     \class QWebFrame
     \since 4.4
