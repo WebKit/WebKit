@@ -1,3 +1,23 @@
+2008-04-22  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix construction of the user agent.
+        
+        The user-agent is now composed of
+        * the platform and subplatform
+        * the Qt version or application name and version (if set)
+        * the locale
+        * the SSL settings
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPage::networkAccessManager):
+        (QWebPage::setPluginFactory):
+        (QWebPage::pluginFactory):
+        (QWebPage::userAgentForUrl):
+        * QtLauncher/main.cpp:
+
 2008-04-22  Thiago Macieira  <tjmaciei@trolltech.com>
 
         Reviewed by Simon.

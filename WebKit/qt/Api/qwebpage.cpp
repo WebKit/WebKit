@@ -79,6 +79,8 @@
 #include <QUrl>
 #include <QPainter>
 #include <QClipboard>
+#include <QSslSocket>
+#include <QSysInfo>
 #if QT_VERSION >= 0x040400
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -87,7 +89,10 @@
 #endif
 
 using namespace WebCore;
-        
+
+// If you change this make sure to also adjust the docs for QWebPage::userAgentForUrl
+#define WEBKIT_VERSION "523.15"
+
 static inline DragOperation dropActionToDragOp(Qt::DropActions actions)
 {
     unsigned result = 0;
@@ -1728,11 +1733,185 @@ QWebPluginFactory *QWebPage::pluginFactory() const
 /*!
     This function is called when a user agent for HTTP requests is needed. You can re-implement this
     function to dynamically return different user agent's for different urls, based on the \a url parameter.
+
+    The default implementation returns the following value:
+
+    "Mozilla/5.0 (%Platform%; %Security%; %Subplatform%; %Locale%) AppleWebKit/%WebKitVersion% (KHTML, like Gecko, Safari) %AppVersion"
+
+    In this string the following values are replaced at run-time:
+    \list
+    \o %Platform% and %Subplatform% are expanded to the windowing system and the operation system.
+    \o %Security% expands to U if SSL is enabled, otherwise N. SSL is enabled if QSslSocket::supportsSsl() returns true.
+    \o %Locale% is replaced with QLocale::name().
+    \o %WebKitVersion% currently expands to 523.15
+    \o %AppVersion% expands to QCoreApplication::applicationName()/QCoreApplication::applicationVersion() if they're set; otherwise defaulting to Qt and the current Qt version.
+    \endlist
 */
 QString QWebPage::userAgentForUrl(const QUrl& url) const
 {
     Q_UNUSED(url)
-    return QLatin1String("Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en) AppleWebKit/523.15 (KHTML, like Gecko) Safari/419.3 Qt");
+    QString ua = QLatin1String("Mozilla/5.0 ("
+
+    // Plastform
+#ifdef Q_WS_MAC
+    "Macintosh"
+#elif defined Q_WS_QWS
+    "QtEmbedded"
+#elif defined Q_WS_WIN
+    "Windows"
+#elif defined Q_WS_X11
+    "X11"
+#else
+    "Unknown"
+#endif
+    "; "
+
+    // Placeholder for security strength (N or U)
+    "%1; "
+
+    // Subplatform"
+#ifdef Q_OS_AIX
+    "AIX"
+#elif defined Q_OS_BSDI
+    "BSD"
+#elif defined Q_OS_BSD4
+    "BSD Four"
+#elif defined Q_OS_CYGWIN
+    "Cygwin"
+#elif defined Q_OS_DGUX
+    "DG/UX"
+#elif defined Q_OS_DYNIX
+    "DYNIX/ptx"
+#elif defined Q_OS_FREEBSD
+    "FreeBSD"
+#elif defined Q_OS_HPUX
+    "HP-UX"
+#elif defined Q_OS_HURD
+    "GNU Hurd"
+#elif defined Q_OS_IRIX
+    "SGI Irix"
+#elif defined Q_OS_LINUX
+    "Linux"
+#elif defined Q_OS_LYNX
+    "LynxOS"
+#elif defined Q_OS_NETBSD
+    "NetBSD"
+#elif defined Q_OS_OS2
+    "OS/2"
+#elif defined Q_OS_OPENBSD
+    "OpenBSD"
+#elif defined Q_OS_OS2EMX
+    "OS/2"
+#elif defined Q_OS_OSF
+    "HP Tru64 UNIX"
+#elif defined Q_OS_QNX6
+    "QNX RTP Six"
+#elif defined Q_OS_QNX
+    "QNX"
+#elif defined Q_OS_RELIANT
+    "Reliant UNIX"
+#elif defined Q_OS_SCO
+    "SCO OpenServer"
+#elif defined Q_OS_SOLARIS
+    "Sun Solaris"
+#elif defined Q_OS_ULTRIX
+    "DEC Ultrix"
+#elif defined Q_OS_UNIX
+    "UNIX BSD/SYSV system"
+#elif defined Q_OS_UNIXWARE
+    "UnixWare Seven, Open UNIX Eight"
+
+#elif defined Q_OS_WIN32
+    "%2"
+#elif defined Q_OS_DARWIN
+#ifdef __i386__ || __x86_64__
+    "Intel Mac OS X"
+#else
+    "PPC Mac OS X"
+#endif
+#else
+    "Unknown"
+#endif
+    "; ");
+
+    QChar securityStrength(QLatin1Char('N'));
+#if !defined(QT_NO_OPENSSL)
+    if (QSslSocket::supportsSsl())
+        securityStrength = QLatin1Char('U');
+#endif
+    ua = ua.arg(securityStrength);
+
+#if defined Q_OS_WIN32
+    QString ver;
+    switch(QSysInfo::WindowsVersion) {
+        case QSysInfo::WV_32s:
+            ver = "Windows 3.1";
+            break;
+        case QSysInfo::WV_95:
+            ver = "Windows 95";
+            break;
+        case QSysInfo::WV_98:
+            ver = "Windows 98";
+            break;
+        case QSysInfo::WV_Me:
+            ver = "Windows 98; Win 9x 4.90";
+            break;
+        case QSysInfo::WV_NT:
+            ver = "WinNT4.0";
+            break;
+        case QSysInfo::WV_2000:
+            ver = "Windows NT 5.0";
+            break;
+        case QSysInfo::WV_XP:
+            ver = "Windows NT 5.1";
+            break;
+        case QSysInfo::WV_2003:
+            ver = "Windows NT 5.2";
+            break;
+        case QSysInfo::WV_VISTA:
+            ver = "Windows NT 6.0";
+            break;
+        case QSysInfo::WV_CE:
+            ver = "Windows CE";
+            break;
+        case QSysInfo::WV_CENET:
+            ver = "Windows CE .NET";
+            break;
+        case QSysInfo::WV_CE_5:
+            ver = "Windows CE 5.x";
+            break;
+        case QSysInfo::WV_CE_6:
+            ver = "Windows CE 6.x";
+            break;
+    }
+    ua = QString(ua).arg(ver);
+#endif
+
+    // Language
+    QLocale locale;
+    if (d->view)
+        locale = d->view->locale();
+    QString name = locale.name();
+    name[2] = '-';
+    ua.append(name);
+    ua.append(") ");
+
+    // webkit/qt version
+    ua.append("AppleWebKit/" WEBKIT_VERSION " (KHTML, like Gecko, Safari) ");
+
+    // Application name/version
+    QString appName = QCoreApplication::applicationName();
+    if (!appName.isEmpty()) {
+        ua.append(QLatin1Char(' ') + appName);
+        QString appVer = QCoreApplication::applicationVersion();
+        if (!appVer.isEmpty())
+            ua.append(QLatin1Char('/') + appVer);
+    } else {
+        // Qt version
+        ua.append("Qt/");
+        ua.append(qVersion());
+    }
+    return ua;
 }
 
 

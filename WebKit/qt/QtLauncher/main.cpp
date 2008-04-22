@@ -404,6 +404,10 @@ int main(int argc, char **argv)
     QString url = QString("%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
 
     QWebSettings::setMaximumPagesInCache(4);
+
+    app.setApplicationName("QtLauncher");
+    app.setApplicationVersion("0.1");
+
     QWebSettings::setObjectCacheCapacities((16*1024*1024)/8, (16*1024*1024)/8, 16*1024*1024);
 
     QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
