@@ -616,7 +616,9 @@ bool QWebView::focusNextPrevChild(bool next)
 */
 QVariant QWebView::inputMethodQuery(Qt::InputMethodQuery property) const
 {
-    return d->page->inputMethodQuery(property);
+    if (d->page)
+        return d->page->inputMethodQuery(property);
+    return QVariant();
 }
 
 /*!\reimp

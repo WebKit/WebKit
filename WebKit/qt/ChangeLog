@@ -2,6 +2,16 @@
 
         Reviewed by Holger.
 
+        Don't crash if an input method query is done without a page.
+        
+
+        * Api/qwebview.cpp:
+        (QWebView::inputMethodQuery):
+
+2008-04-22  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Added re-implementations of QObject::event for future safety.
         
         This makes it easier to fix bugs with the event handling even in patch releases
