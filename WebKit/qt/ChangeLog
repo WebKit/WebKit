@@ -1,3 +1,13 @@
+2008-04-22  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Emit loadProgress() signal on loadStarted().
+        
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::postProgressEstimateChangedNotification):
+
 2008-04-22  Zack Rusin  <zack@kde.org>
 
         Reviewed by Simon.

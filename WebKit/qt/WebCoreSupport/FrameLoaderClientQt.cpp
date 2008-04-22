@@ -416,8 +416,10 @@ void FrameLoaderClientQt::revertToProvisionalState(DocumentLoader*)
 
 void FrameLoaderClientQt::postProgressStartedNotification()
 {
-    if (m_webFrame && m_frame->page())
+    if (m_webFrame && m_frame->page()) {
         emit loadStarted();
+        postProgressEstimateChangedNotification();
+    }
     if (m_frame->tree()->parent() || !m_webFrame)
         return;
     m_webFrame->page()->d->updateNavigationActions();
