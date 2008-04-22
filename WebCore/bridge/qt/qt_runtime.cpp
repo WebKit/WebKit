@@ -488,14 +488,14 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                 QString qstring = QString::fromUtf16((const ushort*)ustring.rep()->data(),ustring.size());
 
                 // this is of the form '/xxxxxx/i'
-                int firstSlash = qstring.indexOf('/');
-                int lastSlash = qstring.lastIndexOf('/');
+                int firstSlash = qstring.indexOf(QLatin1Char('/'));
+                int lastSlash = qstring.lastIndexOf(QLatin1Char('/'));
                 if (firstSlash >=0 && lastSlash > firstSlash) {
                     QRegExp realRe;
 
                     realRe.setPattern(qstring.mid(firstSlash + 1, lastSlash - firstSlash - 1));
 
-                    if (qstring.mid(lastSlash + 1).contains('i'))
+                    if (qstring.mid(lastSlash + 1).contains(QLatin1Char('i')))
                         realRe.setCaseSensitivity(Qt::CaseInsensitive);
 
                     ret = qVariantFromValue(realRe);
@@ -1447,8 +1447,8 @@ JSValue *QtRuntimeConnectionMethod::callAsFunction(ExecState* exec, JSObject*, c
                 bool ok = QMetaObject::connect(sender, signalIndex, conn, conn->metaObject()->methodOffset());
                 if (!ok) {
                     delete conn;
-                    QString msg = QString("QtMetaMethod.connect: failed to connect to %1::%2()")
-                            .arg(sender->metaObject()->className())
+                    QString msg = QString(QLatin1String("QtMetaMethod.connect: failed to connect to %1::%2()"))
+                            .arg(QLatin1String(sender->metaObject()->className()))
                             .arg(QLatin1String(d->m_signature));
                     return throwError(exec, GeneralError, msg.toLatin1().constData());
                 }
@@ -1473,16 +1473,16 @@ JSValue *QtRuntimeConnectionMethod::callAsFunction(ExecState* exec, JSObject*, c
                 }
 
                 if (!ret) {
-                    QString msg = QString("QtMetaMethod.disconnect: failed to disconnect from %1::%2()")
-                            .arg(sender->metaObject()->className())
+                    QString msg = QString(QLatin1String("QtMetaMethod.disconnect: failed to disconnect from %1::%2()"))
+                            .arg(QLatin1String(sender->metaObject()->className()))
                             .arg(QLatin1String(d->m_signature));
                     return throwError(exec, GeneralError, msg.toLatin1().constData());
                 }
             }
         } else {
-            QString msg = QString("QtMetaMethod.%1: %2::%3() is not a signal")
-                    .arg(d->m_isConnect ? "connect": "disconnect")
-                    .arg(sender->metaObject()->className())
+            QString msg = QString(QLatin1String("QtMetaMethod.%1: %2::%3() is not a signal"))
+                    .arg(QLatin1String(d->m_isConnect ? "connect": "disconnect"))
+                    .arg(QLatin1String(sender->metaObject()->className()))
                     .arg(QLatin1String(d->m_signature));
             return throwError(exec, TypeError, msg.toLatin1().constData());
         }

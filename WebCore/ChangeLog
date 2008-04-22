@@ -1,3 +1,17 @@
+2008-04-22  Andre Poenitz  <andre.poenitz@trolltech.com>
+
+        Reviewed by Simon.
+
+        Remove compiler warnings on string literals used to construct QStrings
+        in webkit.
+
+        * bridge/qt/qt_instance.cpp:
+        (KJS::Bindings::QtField::valueFromInstance):
+        (KJS::Bindings::QtField::setValueToInstance):
+        * bridge/qt/qt_runtime.cpp:
+        (KJS::Bindings::convertValueToQVariant):
+        (KJS::Bindings::QtRuntimeConnectionMethod::callAsFunction):
+
 2008-04-22  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
