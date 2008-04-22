@@ -28,9 +28,10 @@
 
 #include "config.h"
 
-#include "PlatformString.h"
+#include "IntSize.h"
 #include "LocalizedStrings.h"
 #include "NotImplemented.h"
+#include "PlatformString.h"
 
 #include <QCoreApplication>
 
@@ -299,7 +300,7 @@ String unknownFileSizeText()
 
 String imageTitle(const String& filename, const IntSize& size)
 {
-    return String();
+    return QCoreApplication::translate("QWebPage", "%1 (%2x%3 pixels)", "Title string for images").arg(filename).arg(size.width()).arg(size.height());
 }
 
 }
