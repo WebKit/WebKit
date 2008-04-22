@@ -158,9 +158,6 @@ QWebPagePrivate::~QWebPagePrivate()
     delete undoStack;
     delete settings;
     delete page;
-#if QT_VERSION >= 0x040400
-    delete networkManager;
-#endif
 }
 
 #if QT_VERSION < 0x040400
@@ -1807,7 +1804,8 @@ void QWebPage::setNetworkAccessManager(QNetworkAccessManager *manager)
 {
     if (manager == d->networkManager)
         return;
-    delete d->networkManager;
+    if (d->networkManager && d->networkManager->parent() == this)
+        delete d->networkManager;
     d->networkManager = manager;
 }
 

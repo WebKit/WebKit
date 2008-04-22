@@ -1,3 +1,13 @@
+2008-04-22  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixes: QWebPage's QNetworkManager's can be shared among webpages.
+
+        Don't force the deletion of the object, but let QObject take care of it.
+
+        * Api/qwebpage.cpp:
+
 2008-04-22  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
