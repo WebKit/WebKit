@@ -221,12 +221,15 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     }
 
     KURL url(m_reply->url());
-    String contentDisposition = QString::fromAscii(m_reply->rawHeader("Content-Disposition"));
+    String suggestedFilename = filenameFromHTTPContentDisposition(QString::fromAscii(m_reply->rawHeader("Content-Disposition")));
+
+    if (suggestedFilename.isEmpty())
+        suggestedFilename = url.lastPathComponent();
 
     ResourceResponse response(url, mimeType,
                               m_reply->header(QNetworkRequest::ContentLengthHeader).toLongLong(),
                               encoding,
-                              filenameFromHTTPContentDisposition(contentDisposition));
+                              suggestedFilename);
 
     const bool isLocalFileReply = (m_reply->url().scheme() == QLatin1String("file"));
     int statusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
