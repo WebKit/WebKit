@@ -1,3 +1,9 @@
+2008-04-22  Antti Koivisto  <antti@apple.com>
+
+        Update SVG animation test results.
+
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-33-t-expected.txt:
+
 2008-04-22  David Hyatt  <hyatt@apple.com>
 
         Add support for CSS alpha masks.  Test cases.
