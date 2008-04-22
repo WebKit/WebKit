@@ -2,6 +2,41 @@
 
         Reviewed by Holger.
 
+        Added QWebFrame::hitTestContent() and QWebHitTestResult.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::hitTestContent):
+        (QWebFrame::event):
+        (QWebHitTestResult::QWebHitTestResult):
+        (QWebHitTestResultPrivate::QWebHitTestResultPrivate):
+        (QWebHitTestResult::operator=):
+        (QWebHitTestResult::~QWebHitTestResult):
+        (QWebHitTestResult::isNull):
+        (QWebHitTestResult::pos):
+        (QWebHitTestResult::title):
+        (QWebHitTestResult::linkText):
+        (QWebHitTestResult::linkUrl):
+        (QWebHitTestResult::linkTitle):
+        (QWebHitTestResult::linkTargetFrame):
+        (QWebHitTestResult::alternateText):
+        (QWebHitTestResult::imageUrl):
+        (QWebHitTestResult::pixmap):
+        (QWebHitTestResult::isContentEditable):
+        (QWebHitTestResult::isContentSelected):
+        (QWebHitTestResult::frame):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        (QWebHitTestResultPrivate::QWebHitTestResultPrivate):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::contextMenuEvent):
+        (QWebPage::triggerAction):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+
+2008-04-22  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Don't crash if an input method query is done without a page.
         
 

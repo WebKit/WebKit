@@ -619,6 +619,18 @@ QRect QWebFrame::geometry() const
     return d->frame->view()->frameGeometry();
 }
 
+/*!
+    Performs a hit test on the frame contents at the given position \a pos and returns the hit test result.
+*/
+QWebHitTestResult QWebFrame::hitTestContent(const QPoint &pos) const
+{
+    if (!d->frame->view() || !d->frame->contentRenderer())
+        return QWebHitTestResult();
+
+    HitTestResult result = d->frame->eventHandler()->hitTestResultAtPoint(d->frame->view()->windowToContents(pos), /*allowShadowContent*/ false);
+    return QWebHitTestResult(new QWebHitTestResultPrivate(result));
+}
+
 /*! \reimp
 */
 bool QWebFrame::event(QEvent *e)
@@ -803,3 +815,226 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
 
   This signal is emitted when the icon ("favicon") associated with the frame has been loaded.
 */
+
+/*!
+    \class QWebHitTestResult
+    \since 4.4
+    \brief The QWebHitTestResult class provides information about the web page content after a hit test.
+
+    QWebHitTestResult is return by QWebPage::hitTestContent() to provide information about the content of
+    the web page at the specified position.
+*/
+
+/*!
+    \internal
+*/
+QWebHitTestResult::QWebHitTestResult(QWebHitTestResultPrivate *priv)
+    : d(priv)
+{
+}
+
+QWebHitTestResultPrivate::QWebHitTestResultPrivate(const WebCore::HitTestResult &hitTest)
+    : isContentEditable(false)
+    , isContentSelected(false)
+{
+    if (!hitTest.innerNode())
+        return;
+    pos = hitTest.point();
+    title = hitTest.title();
+    linkText = hitTest.textContent();
+    linkUrl = hitTest.absoluteLinkURL();
+    linkTitle = hitTest.titleDisplayString();
+    alternateText = hitTest.altDisplayString();
+    imageUrl = hitTest.absoluteImageURL();
+    innerNonSharedNode = hitTest.innerNonSharedNode();
+    WebCore::Image *img = hitTest.image();
+    if (img) {
+        QPixmap *pix = img->getPixmap();
+        if (pix)
+            pixmap = *pix;
+    }
+    WebCore::Frame *wframe = hitTest.targetFrame();
+    if (wframe)
+        linkTargetFrame = QWebFramePrivate::kit(wframe);
+
+    isContentEditable = hitTest.isContentEditable();
+    isContentSelected = hitTest.isSelected();
+
+    if (innerNonSharedNode && innerNonSharedNode->document()
+        && innerNonSharedNode->document()->frame())
+        frame = QWebFramePrivate::kit(innerNonSharedNode->document()->frame());
+}
+
+/*!
+    Constructs a null hit test result.
+*/
+QWebHitTestResult::QWebHitTestResult()
+    : d(0)
+{
+}
+
+/*!
+    Constructs a hit test result from \a other.
+*/
+QWebHitTestResult::QWebHitTestResult(const QWebHitTestResult &other)
+    : d(0)
+{
+    if (other.d)
+        d = new QWebHitTestResultPrivate(*other.d);
+}
+
+/*!
+    Assigns the \a other hit test result to this.
+*/
+QWebHitTestResult &QWebHitTestResult::operator=(const QWebHitTestResult &other)
+{
+    if (this != &other) {
+        if (other.d) {
+            if (!d)
+                d = new QWebHitTestResultPrivate;
+            *d = *other.d;
+        } else {
+            delete d;
+            d = 0;
+        }
+    }
+    return *this;
+}
+
+/*!
+    Destructor.
+*/
+QWebHitTestResult::~QWebHitTestResult()
+{
+    delete d;
+}
+
+/*!
+    Returns true if the hit test result is null; otherwise returns false.
+*/
+bool QWebHitTestResult::isNull() const
+{
+    return d;
+}
+
+/*!
+    Returns the position where the hit test occured.
+*/
+QPoint QWebHitTestResult::pos() const
+{
+    if (!d)
+        return QPoint();
+    return d->pos;
+}
+
+/*!
+    Returns the title of the nearest enclosing HTML element.
+*/
+QString QWebHitTestResult::title() const
+{
+    if (!d)
+        return QString();
+    return d->title;
+}
+
+/*!
+    Returns the text of the link.
+*/
+QString QWebHitTestResult::linkText() const
+{
+    if (!d)
+        return QString();
+    return d->linkText;
+}
+
+/*!
+    Returns the url to which the link points to.
+*/
+QUrl QWebHitTestResult::linkUrl() const
+{
+    if (!d)
+        return QUrl();
+    return d->linkUrl;
+}
+
+/*!
+    Returns the title of the link.
+*/
+QUrl QWebHitTestResult::linkTitle() const
+{
+    if (!d)
+        return QUrl();
+    return d->linkTitle;
+}
+
+/*!
+    Returns the frame that will load the link if it is activated.
+*/
+QWebFrame *QWebHitTestResult::linkTargetFrame() const
+{
+    if (!d)
+        return 0;
+    return d->linkTargetFrame;
+}
+
+/*!
+    Returns the alternate text of the element. This corresponds to the HTML alt attribute.
+*/
+QString QWebHitTestResult::alternateText() const
+{
+    if (!d)
+        return QString();
+    return d->alternateText;
+}
+
+/*!
+    Returns the url of the image.
+*/
+QUrl QWebHitTestResult::imageUrl() const
+{
+    if (!d)
+        return QUrl();
+    return d->imageUrl;
+}
+
+/*!
+    Returns a QPixmap containing the image. A null pixmap is returned if the
+    element being tested is not an image.
+*/
+QPixmap QWebHitTestResult::pixmap() const
+{
+    if (!d)
+        return QPixmap();
+    return d->pixmap;
+}
+
+/*!
+    Returns true if the content is editable by the user; otherwise returns false.
+*/
+bool QWebHitTestResult::isContentEditable() const
+{
+    if (!d)
+        return false;
+    return d->isContentEditable;
+}
+
+/*!
+    Returns true if the content tested is part of the selection; otherwise returns false.
+*/
+bool QWebHitTestResult::isContentSelected() const
+{
+    if (!d)
+        return false;
+    return d->isContentSelected;
+}
+
+/*!
+    Returns the frame the hit test was executed in.
+*/
+QWebFrame *QWebHitTestResult::frame() const
+{
+    if (!d)
+        return 0;
+    return d->frame;
+}
+

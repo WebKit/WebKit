@@ -424,8 +424,8 @@ void QWebPagePrivate::contextMenuEvent(QContextMenuEvent *ev)
     if (!menu)
         return;
 
-    QWebPageContext oldContext = currentContext;
-    currentContext = QWebPageContext(menu->hitTestResult());
+    QWebHitTestResult oldResult = hitTestResult;
+    hitTestResult = QWebHitTestResult(new QWebHitTestResultPrivate(menu->hitTestResult()));
 
     const QList<ContextMenuItem> *items = menu->platformDescription();
     QMenu *qmenu = createContextMenu(menu, items);
@@ -433,7 +433,7 @@ void QWebPagePrivate::contextMenuEvent(QContextMenuEvent *ev)
         qmenu->exec(ev->globalPos());
         delete qmenu;
     }
-    currentContext = oldContext;
+    hitTestResult = oldResult;
 }
 
 void QWebPagePrivate::wheelEvent(QWheelEvent *ev)
@@ -1063,9 +1063,9 @@ void QWebPage::triggerAction(WebAction action, bool checked)
 
     switch (action) {
         case OpenLink:
-            if (QWebFrame *targetFrame = d->currentContext.targetFrame()) {
+            if (QWebFrame *targetFrame = d->hitTestResult.linkTargetFrame()) {
                 WTF::RefPtr<WebCore::Frame> wcFrame = targetFrame->d->frame;
-                targetFrame->d->frame->loader()->load(frameLoadRequest(d->currentContext.linkUrl(), wcFrame.get()),
+                targetFrame->d->frame->loader()->load(frameLoadRequest(d->hitTestResult.linkUrl(), wcFrame.get()),
                                                       /*lockHistory*/ false,
                                                       /*userGesture*/ true,
                                                       /*event*/ 0,
@@ -1076,7 +1076,7 @@ void QWebPage::triggerAction(WebAction action, bool checked)
             }
             // fall through
         case OpenLinkInNewWindow:
-            openNewWindow(d->currentContext.linkUrl(), frame);
+            openNewWindow(d->hitTestResult.linkUrl(), frame);
             break;
         case OpenFrameInNewWindow: {
             KURL url = frame->loader()->documentLoader()->unreachableURL();
@@ -1086,17 +1086,17 @@ void QWebPage::triggerAction(WebAction action, bool checked)
             break;
         }
         case CopyLinkToClipboard:
-            editor->copyURL(d->currentContext.linkUrl(), d->currentContext.text());
+            editor->copyURL(d->hitTestResult.linkUrl(), d->hitTestResult.linkText());
             break;
         case OpenImageInNewWindow:
-            openNewWindow(d->currentContext.imageUrl(), frame);
+            openNewWindow(d->hitTestResult.imageUrl(), frame);
             break;
         case DownloadImageToDisk:
         case DownloadLinkToDisk:
-            frame->loader()->client()->startDownload(WebCore::ResourceRequest(d->currentContext.linkUrl(), frame->loader()->outgoingReferrer()));
+            frame->loader()->client()->startDownload(WebCore::ResourceRequest(d->hitTestResult.linkUrl(), frame->loader()->outgoingReferrer()));
             break;
         case CopyImageToClipboard:
-            QApplication::clipboard()->setPixmap(d->currentContext.image());
+            QApplication::clipboard()->setPixmap(d->hitTestResult.pixmap());
             break;
         case Back:
             d->page->goBack();
@@ -1227,7 +1227,7 @@ void QWebPage::triggerAction(WebAction action, bool checked)
             break;
 
         case InspectElement:
-            d->page->inspectorController()->inspect(d->currentContext.d->innerNonSharedNode.get());
+            d->page->inspectorController()->inspect(d->hitTestResult.d->innerNonSharedNode.get());
             break;
 
         default: break;
@@ -1935,99 +1935,6 @@ quint64 QWebPage::totalBytes() const {
 */
 quint64 QWebPage::bytesReceived() const {
     return d->m_totalBytes;
-}
-
-QWebPageContext::QWebPageContext(const WebCore::HitTestResult &hitTest)
-    : d(new QWebPageContextPrivate)
-{
-    d->pos = hitTest.point();
-    d->text = hitTest.textContent();
-    d->linkUrl = hitTest.absoluteLinkURL().string();
-    d->imageUrl = hitTest.absoluteImageURL().string();
-    d->innerNonSharedNode = hitTest.innerNonSharedNode();
-    WebCore::Image *img = hitTest.image();
-    if (img) {
-        QPixmap *pix = img->getPixmap();
-        if (pix)
-            d->image = *pix;
-    }
-    WebCore::Frame *frame = hitTest.targetFrame();
-    if (frame)
-        d->targetFrame = QWebFramePrivate::kit(frame);
-}
-
-QWebPageContext::QWebPageContext()
-    : d(0)
-{
-}
-
-QWebPageContext::QWebPageContext(const QWebPageContext &other)
-    : d(0)
-{
-    if (other.d)
-        d = new QWebPageContextPrivate(*other.d);
-}
-
-QWebPageContext &QWebPageContext::operator=(const QWebPageContext &other)
-{
-    if (this != &other) {
-        if (other.d) {
-            if (!d)
-                d = new QWebPageContextPrivate;
-            *d = *other.d;
-        } else {
-            delete d;
-            d = 0;
-        }
-    }
-    return *this;
-}
-
-QWebPageContext::~QWebPageContext()
-{
-    delete d;
-}
-
-QPoint QWebPageContext::pos() const
-{
-    if (!d)
-        return QPoint();
-    return d->pos;
-}
-
-QString QWebPageContext::text() const
-{
-    if (!d)
-        return QString();
-    return d->text;
-}
-
-QUrl QWebPageContext::linkUrl() const
-{
-    if (!d)
-        return QUrl();
-    return d->linkUrl;
-}
-
-QUrl QWebPageContext::imageUrl() const
-{
-    if (!d)
-        return QUrl();
-    return d->imageUrl;
-}
-
-QPixmap QWebPageContext::image() const
-{
-    if (!d)
-        return QPixmap();
-    return d->image;
-}
-
-QWebFrame *QWebPageContext::targetFrame() const
-{
-    if (!d)
-        return 0;
-    return d->targetFrame;
 }
 
 /*!

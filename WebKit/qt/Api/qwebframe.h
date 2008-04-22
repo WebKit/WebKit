@@ -48,6 +48,7 @@ QT_END_NAMESPACE
 class QWebNetworkRequest;
 class QWebFramePrivate;
 class QWebPage;
+class QWebHitTestResult;
 
 namespace WebCore {
     class WidgetPrivate;
@@ -55,6 +56,45 @@ namespace WebCore {
     class ChromeClientQt;
 }
 class QWebFrameData;
+class QWebHitTestResultPrivate;
+class QWebFrame;
+
+class QWEBKIT_EXPORT QWebHitTestResult
+{
+public:
+    QWebHitTestResult();
+    QWebHitTestResult(const QWebHitTestResult &other);
+    QWebHitTestResult &operator=(const QWebHitTestResult &other);
+    ~QWebHitTestResult();
+
+    bool isNull() const;
+
+    QPoint pos() const;
+    QString title() const;
+
+    QString linkText() const;
+    QUrl linkUrl() const;
+    QUrl linkTitle() const;
+    QWebFrame *linkTargetFrame() const;
+
+    QString alternateText() const; // for img, area, input and applet
+
+    QUrl imageUrl() const;
+    QPixmap pixmap() const;
+
+    bool isContentEditable() const;
+    bool isContentSelected() const;
+
+    QWebFrame *frame() const;
+
+private:
+    QWebHitTestResult(QWebHitTestResultPrivate *priv);
+    QWebHitTestResultPrivate *d;
+
+    friend class QWebFrame;
+    friend class QWebPagePrivate;
+    friend class QWebPage;
+};
 
 class QWEBKIT_EXPORT QWebFrame : public QObject
 {
@@ -114,6 +154,8 @@ public:
 
     QPoint pos() const;
     QRect geometry() const;
+
+    QWebHitTestResult hitTestContent(const QPoint &pos) const;
 
     virtual bool event(QEvent *);
 

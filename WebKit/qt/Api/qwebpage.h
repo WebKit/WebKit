@@ -47,6 +47,7 @@ class QWebPagePrivate;
 class QWebFrameData;
 class QWebNetworkInterface;
 class QWebPluginFactory;
+class QWebHitTestResult;
 
 namespace WebCore {
     class ChromeClientQt;

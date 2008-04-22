@@ -51,43 +51,6 @@ class QUndoStack;
 class QMenu;
 QT_END_NAMESPACE
 
-class QWebPageContextPrivate
-{
-public:
-    QPoint pos;
-    QString text;
-    QUrl linkUrl;
-    QUrl imageUrl;
-    QPixmap image;
-    QPointer<QWebFrame> targetFrame;
-    RefPtr<WebCore::Node> innerNonSharedNode;
-};
-
-class QWebPageContext
-{
-public:
-    QWebPageContext();
-    QWebPageContext(const QWebPageContext &other);
-    QWebPageContext &operator=(const QWebPageContext &other);
-    ~QWebPageContext();
-
-    QPoint pos() const;
-    QString text() const;
-    QUrl linkUrl() const;
-    QUrl imageUrl() const;
-    // ### we have a pixmap internally, should this be called pixmap() instead?
-    QPixmap image() const;
-
-    QWebFrame *targetFrame() const;
-
-private:
-    QWebPageContext(const WebCore::HitTestResult &hitTest);
-    QWebPageContextPrivate *d;
-
-    friend class QWebPage;
-    friend class QWebPagePrivate;
-};
-
 class QWebPagePrivate
 {
 public:
@@ -157,7 +120,7 @@ public:
 
     QSize viewportSize;
     QWebHistory history;
-    QWebPageContext currentContext;
+    QWebHitTestResult hitTestResult;
     QWebSettings *settings;
 
     QAction *actions[QWebPage::WebActionCount];
