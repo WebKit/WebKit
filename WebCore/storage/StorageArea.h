@@ -55,10 +55,8 @@ namespace WebCore {
 
     protected:
         StorageArea(SecurityOrigin*);
-        StorageArea(SecurityOrigin*, PassRefPtr<StorageMap>);
-
-        PassRefPtr<StorageMap> storageMap();
-        
+        StorageArea(SecurityOrigin*, StorageArea*);
+                
     private:
         virtual void itemChanged(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame) = 0;
         virtual void itemRemoved(const String& key, const String& oldValue, Frame* sourceFrame) = 0;

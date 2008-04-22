@@ -1,3 +1,22 @@
+2008-04-21  Brady Eidson  <beidson@apple.com>
+
+        Rockingly reviewed by Adele
+
+        Small StorageArea cleanups
+
+        * storage/SessionStorageArea.cpp:
+        (WebCore::SessionStorageArea::copy): Pass "this" instead of the StorageMap belonging to this
+        (WebCore::SessionStorageArea::SessionStorageArea):
+        * storage/SessionStorageArea.h:
+
+        * storage/StorageArea.cpp:  Changed to not expose the StorageMap at all - it's dangerous to expose
+          it since we rely explicitly on its ref-count
+        (WebCore::StorageArea::StorageArea): Take another StorageArea as the c'tor argument and get the 
+          StorageMap from that.
+        (WebCore::StorageArea::setItem):  The previous comment/code here was bogus.  All JS objects passed in
+          to this API are stringified, so there's no such thing as "null" for setItem()
+        * storage/StorageArea.h:
+
 2008-04-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John Sullivan.

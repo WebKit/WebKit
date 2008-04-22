@@ -40,9 +40,9 @@ StorageArea::StorageArea(SecurityOrigin* origin)
 {
 }
 
-StorageArea::StorageArea(SecurityOrigin* origin, PassRefPtr<StorageMap> map)
+StorageArea::StorageArea(SecurityOrigin* origin, StorageArea* area)
     : m_securityOrigin(origin)
-    , m_storageMap(map)
+    , m_storageMap(area->m_storageMap)
 {
 }
 
@@ -74,11 +74,7 @@ String StorageArea::getItem(const String& key) const
 
 void StorageArea::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
 {
-    // Per the spec, inserting a NULL value into the map is the same as removing the key altogether
-    if (value.isNull()) {
-        removeItem(key, frame);
-        return;
-    }
+    ASSERT(!value.isNull());
     
     // FIXME: For LocalStorage where a disk quota will be enforced, here is where we need to do quota checking.
     //        If we decide to enforce a memory quota for SessionStorage, this is where we'd do that, also.
@@ -113,11 +109,6 @@ void StorageArea::removeItem(const String& key, Frame* frame)
 bool StorageArea::contains(const String& key) const
 {
     return m_storageMap->contains(key);
-}
-
-PassRefPtr<StorageMap> StorageArea::storageMap()
-{
-    return m_storageMap;
 }
 
 }
