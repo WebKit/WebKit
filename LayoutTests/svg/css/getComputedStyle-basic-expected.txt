@@ -232,6 +232,20 @@ rect: style.getPropertyValue(-webkit-marquee-repetition) : infinite
 rect: style.getPropertyCSSValue(-webkit-marquee-repetition) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-marquee-style) : scroll
 rect: style.getPropertyCSSValue(-webkit-marquee-style) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-mask-attachment) : scroll
+rect: style.getPropertyCSSValue(-webkit-mask-attachment) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-mask-image) : none
+rect: style.getPropertyCSSValue(-webkit-mask-image) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-mask-position) : 0% 0%
+rect: style.getPropertyCSSValue(-webkit-mask-position) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-mask-repeat) : repeat
+rect: style.getPropertyCSSValue(-webkit-mask-repeat) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-mask-clip) : border
+rect: style.getPropertyCSSValue(-webkit-mask-clip) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-mask-origin) : border
+rect: style.getPropertyCSSValue(-webkit-mask-origin) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-mask-size) : auto auto
+rect: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-nbsp-mode) : normal
 rect: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-rtl-ordering) : logical
@@ -572,6 +586,20 @@ g: style.getPropertyValue(-webkit-marquee-repetition) : infinite
 g: style.getPropertyCSSValue(-webkit-marquee-repetition) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-marquee-style) : scroll
 g: style.getPropertyCSSValue(-webkit-marquee-style) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-mask-attachment) : scroll
+g: style.getPropertyCSSValue(-webkit-mask-attachment) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-mask-image) : none
+g: style.getPropertyCSSValue(-webkit-mask-image) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-mask-position) : 0% 0%
+g: style.getPropertyCSSValue(-webkit-mask-position) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-mask-repeat) : repeat
+g: style.getPropertyCSSValue(-webkit-mask-repeat) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-mask-clip) : border
+g: style.getPropertyCSSValue(-webkit-mask-clip) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-mask-origin) : border
+g: style.getPropertyCSSValue(-webkit-mask-origin) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-mask-size) : auto auto
+g: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-nbsp-mode) : normal
 g: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-rtl-ordering) : logical
