@@ -706,6 +706,14 @@ String AccessibilityObject::selectedText() const
     return textControl->text().substring(textControl->selectionStart(), textControl->selectionEnd() - textControl->selectionStart());
 }
 
+const AtomicString& AccessibilityObject::accessKey() const
+{
+    Node* node = m_renderer->element();
+    if (!node || !node->isElementNode())
+         return nullAtom;
+    return static_cast<Element*>(node)->getAttribute(accesskeyAttr);
+}
+
 Selection AccessibilityObject::selection() const
 {
     return m_renderer->document()->frame()->selectionController()->selection();

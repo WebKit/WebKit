@@ -1,3 +1,14 @@
+2008-04-19  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
+        Add a method to get the AccessibilityObject's access key,
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::accessKey): Added; returns the object's
+        access key attribute.
+        * page/AccessibilityObject.h: Added declaration for accessKey().
+
 2008-04-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
