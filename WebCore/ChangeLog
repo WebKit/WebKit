@@ -1,3 +1,25 @@
+2008-04-22  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver.
+
+        Support keyPoints attribute of <animateMotion>.
+        
+        Tested by SVG test suite test
+        animate-elem-33-t.svg
+
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::parseMappedAttribute):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::parseKeyTimes):
+        (WebCore::SVGAnimationElement::parseMappedAttribute):
+        (WebCore::SVGAnimationElement::calculatePercentForSpline):
+        (WebCore::SVGAnimationElement::calculatePercentFromKeyPoints):
+        (WebCore::SVGAnimationElement::currentValuesFromKeyPoints):
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation):
+        (WebCore::SVGAnimationElement::startedActiveInterval):
+        (WebCore::SVGAnimationElement::updateAnimation):
+        * svg/SVGAnimationElement.h:
+
 2008-04-22  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Unreviewed build fix.

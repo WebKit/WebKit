@@ -82,9 +82,7 @@ bool SVGAnimateMotionElement::hasValidTarget() const
 
 void SVGAnimateMotionElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    if (attr->name() == SVGNames::keyPointsAttr) {
-        // FIXME: Implement key points.
-    } else if (attr->name() == SVGNames::pathAttr) {
+    if (attr->name() == SVGNames::pathAttr) {
         m_path = Path();
         pathFromSVGData(m_path, attr->value());
     } else
