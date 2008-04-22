@@ -68,6 +68,7 @@ WebInspector.ScriptsPanel = function()
     this.pauseButton.className = "status-bar-item";
     this.pauseButton.id = "scripts-pause";
     this.pauseButton.title = WebInspector.UIString("Pause script execution.");
+    this.pauseButton.disabled = true;
     this.pauseButton.appendChild(document.createElement("img"));
     this.sidebarButtonsElement.appendChild(this.pauseButton);
 
@@ -124,6 +125,13 @@ WebInspector.ScriptsPanel = function()
     this.element.appendChild(this.scriptResourceViews);
     this.element.appendChild(this.sidebarElement);
     this.element.appendChild(this.sidebarResizeElement);
+
+    this.debuggingButton = document.createElement("button");
+    this.debuggingButton.id = "scripts-debugging-status-bar-item";
+    this.debuggingButton.className = "status-bar-item";
+    this.debuggingButton.addEventListener("click", this._toggleDebugging.bind(this), false);
+
+    this.reset();
 }
 
 WebInspector.ScriptsPanel.prototype = {
@@ -136,13 +144,18 @@ WebInspector.ScriptsPanel.prototype = {
 
     get statusBarItems()
     {
-        return [];
+        return [this.debuggingButton];
     },
 
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
         this.sidebarResizeElement.style.right = (this.sidebarElement.offsetWidth - 3) + "px";
+    },
+
+    reset: function()
+    {
+        this._updateDebuggerButtons();
     },
 
     _startSidebarResizeDrag: function(event)
@@ -174,6 +187,28 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarResizeElement.style.right = (newWidth - 3) + "px";
 
         event.preventDefault();
+    },
+
+    _updateDebuggerButtons: function()
+    {
+        if (InspectorController.debuggerAttached()) {
+            this.debuggingButton.title = WebInspector.UIString("Stop debugging.");
+            this.debuggingButton.addStyleClass("toggled-on");
+            this.pauseButton.disabled = false;
+        } else {
+            this.debuggingButton.title = WebInspector.UIString("Start debugging and reload inspected page.");
+            this.debuggingButton.removeStyleClass("toggled-on");
+            this.pauseButton.disabled = true;
+        }
+    },
+
+    _toggleDebugging: function()
+    {
+        if (InspectorController.debuggerAttached())
+            InspectorController.stopDebugging();
+        else
+            InspectorController.startDebuggingAndReloadInspectedPage();
+        this._updateDebuggerButtons();
     },
 }
 

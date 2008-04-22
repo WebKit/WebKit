@@ -755,6 +755,14 @@ static JSValueRef stopDebugging(JSContextRef ctx, JSObjectRef /*function*/, JSOb
     return JSValueMakeUndefined(ctx);
 }
 
+static JSValueRef debuggerAttached(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+    return JSValueMakeBoolean(ctx, controller->debuggerAttached());
+}
+
 #pragma mark -
 #pragma mark InspectorController Class
 
@@ -766,6 +774,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_controllerScriptObject(0)
     , m_scriptContext(0)
     , m_windowVisible(false)
+    , m_debuggerAttached(false)
     , m_showAfterVisible(FocusedNodeDocumentPanel)
     , m_nextIdentifier(-2)
 {
@@ -998,6 +1007,7 @@ void InspectorController::windowScriptObjectAvailable()
         { "wrapCallback", wrapCallback, kJSPropertyAttributeNone },
         { "startDebuggingAndReloadInspectedPage", WebCore::startDebuggingAndReloadInspectedPage, kJSPropertyAttributeNone },
         { "stopDebugging", WebCore::stopDebugging, kJSPropertyAttributeNone },
+        { "debuggerAttached", WebCore::debuggerAttached, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
 
@@ -1912,12 +1922,14 @@ void InspectorController::moveWindowBy(float x, float y) const
 void InspectorController::startDebuggingAndReloadInspectedPage()
 {
     JavaScriptDebugServer::shared().addListener(this, m_inspectedPage);
+    m_debuggerAttached = true;
     m_inspectedPage->mainFrame()->loader()->reload();
 }
 
 void InspectorController::stopDebugging()
 {
     JavaScriptDebugServer::shared().removeListener(this, m_inspectedPage);
+    m_debuggerAttached = false;
 }
 
 static void drawOutlinedRect(GraphicsContext& context, const IntRect& rect, const Color& fillColor)

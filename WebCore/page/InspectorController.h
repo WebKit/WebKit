@@ -132,6 +132,7 @@ public:
 
     void startDebuggingAndReloadInspectedPage();
     void stopDebugging();
+    bool debuggerAttached() const { return m_debuggerAttached; }
 
     void drawNodeHighlight(GraphicsContext&) const;
 
@@ -191,6 +192,7 @@ private:
     JSObjectRef m_controllerScriptObject;
     JSContextRef m_scriptContext;
     bool m_windowVisible;
+    bool m_debuggerAttached;
     SpecialPanels m_showAfterVisible;
     long long m_nextIdentifier;
     RefPtr<Node> m_highlightedNode;

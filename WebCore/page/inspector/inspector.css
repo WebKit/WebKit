@@ -1340,6 +1340,22 @@ body.inactive .sidebar {
     background-image: url(Images/errorIcon.png);
 }
 
+#scripts-debugging-status-bar-item {
+    background-image: url(Images/debuggingButtons.png);
+}
+
+#scripts-debugging-status-bar-item:active {
+    background-position: 32px 0;
+}
+
+#scripts-debugging-status-bar-item.toggled-on {
+    background-position: 0 24px;
+}
+
+#scripts-debugging-status-bar-item.toggled-on:active {
+    background-position: 32px 24px;
+}
+
 #scripts-status-bar {
     position: absolute;
     top: -1px;

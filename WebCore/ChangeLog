@@ -1,3 +1,34 @@
+2008-04-22  Timothy Hatcher  <timothy@apple.com>
+
+        Adds a debugger toggle button to the scripts status bar that will start
+        and stop debugging of the inspected page.
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/InspectorLocalizedStrings.js: Adds the two new tooltip strings.
+        * page/InspectorController.cpp:
+        (WebCore::debuggerAttached): Call InspectorController::debuggerAttached.
+        (WebCore::InspectorController::InspectorController): Initialize
+        m_debuggerAttached to false.
+        (WebCore::InspectorController::windowScriptObjectAvailable): Add the debuggerAttached
+        property to the InspectorController class.
+        (WebCore::InspectorController::startDebuggingAndReloadInspectedPage):
+        Set m_debuggerAttached to true.
+        (WebCore::InspectorController::stopDebugging): Set m_debuggerAttached to false.
+        * page/InspectorController.h:
+        * page/inspector/Images/debuggingButtons.png: Added.
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel): Disable the pause button. Create the debugging
+        button and setup the id, className and event listener. Call reset.
+        (WebInspector.ScriptsPanel.prototype.get statusBarItems): Return an array
+        (WebInspector.ScriptsPanel.prototype.reset): Call _updateDebuggerButtons.
+        (WebInspector.ScriptsPanel.prototype._updateDebuggerButtons): Adjust the title of
+        the debugging button to match what will happen when clicked. Change the style class,
+        and toggle the disabled state of the pause button.
+        (WebInspector.ScriptsPanel.prototype._toggleDebugging): Start or stop debugging
+        depending on InspectorController.debuggerAttached().
+        * page/inspector/inspector.css: Added style rules for the debugger button.
+
 2008-04-21  Adam Roben  <aroben@apple.com>
 
         Change PlatformWheelEvent to use GET_WHEEL_DELTA_WPARAM
