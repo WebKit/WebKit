@@ -33,7 +33,7 @@
 namespace WebCore
 {
     class Settings;
-};
+}
 
 class QWebPage;
 class QWebSettingsPrivate;
