@@ -1,3 +1,17 @@
+2008-04-22  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by John Sullivan and Adam Roben.
+
+        Test: fast/events/tabindex-focus-chain.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::nextFocusableNode):
+        (WebCore::Document::previousFocusableNode):
+        If the focused node has been removed from the normal tabbing order,
+        advancing focus from this node should advance to the next focusable
+        node in tree order, and not start over at the beginning of the focus
+        chain. 
+
 2008-04-22  Timothy Hatcher  <timothy@apple.com>
 
         Adds a debugger toggle button to the scripts status bar that will start

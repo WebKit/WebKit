@@ -1820,6 +1820,13 @@ static Node* previousNodeWithLowerTabIndex(Node* start, int tabIndex, KeyboardEv
 Node* Document::nextFocusableNode(Node* start, KeyboardEvent* event)
 {
     if (start) {
+        // If a node is excluded from the normal tabbing cycle, the next focusable node is determined by tree order
+        if (start->tabIndex() < 0) {
+            for (Node* n = start->traverseNextNode(); n; n = n->traverseNextNode())
+                if (n->isKeyboardFocusable(event) && n->tabIndex() >= 0)
+                    return n;
+        }
+    
         // First try to find a node with the same tabindex as start that comes after start in the document.
         if (Node* winner = nextNodeWithExactTabIndex(start->traverseNextNode(), start->tabIndex(), event))
             return winner;
@@ -1856,6 +1863,13 @@ Node* Document::previousFocusableNode(Node* start, KeyboardEvent* event)
     } else {
         startingNode = last;
         startingTabIndex = 0;
+    }
+    
+    // However, if a node is excluded from the normal tabbing cycle, the previous focusable node is determined by tree order
+    if (startingTabIndex < 0) {
+        for (Node* n = startingNode; n; n = n->traversePreviousNode())
+            if (n->isKeyboardFocusable(event) && n->tabIndex() >= 0)
+                return n;        
     }
 
     if (Node* winner = previousNodeWithExactTabIndex(startingNode, startingTabIndex, event))

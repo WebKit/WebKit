@@ -1,3 +1,13 @@
+2008-04-22  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by John Sullivan and Adam Roben.
+
+        Test for new behavior when advancing focus from a focusable-by-script node, which now
+        matches Firefox 2 and 3
+
+        * fast/events/tabindex-focus-chain-expected.txt: Added.
+        * fast/events/tabindex-focus-chain.html: Added.
+
 2008-04-21  Mark Rowe  <mrowe@apple.com>
 
         Fix the case on the file names of test results for svg/custom/altglyph.svg, and remove an extra -expected.txt that was checked in with incorrect
