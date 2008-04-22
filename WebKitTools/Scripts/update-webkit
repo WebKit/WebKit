@@ -81,7 +81,7 @@ sub runSvnUpdate()
         print $line;
         push @conflictedChangeLogs, $1 if $line =~ m/^C\s+(.+)\s*$/ && basename($1) eq "ChangeLog";
     }
-    close UPDATE;
+    close UPDATE or die;
 
     if (@conflictedChangeLogs) {
         print "Attempting to merge conflicted ChangeLogs.\n";

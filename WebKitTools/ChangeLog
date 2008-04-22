@@ -1,3 +1,14 @@
+2008-04-22  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 18683: update-webkit returns 0 even if it fails
+
+        <https://bugs.webkit.org/show_bug.cgi?id=18683>
+
+        Reviewed by Mitz Pettel.
+
+        * Scripts/update-webkit:
+        (runSvnUpdate): Die if close() fails.
+
 2008-04-21  Adam Roben  <aroben@apple.com>
 
         Flush stdout/stderr after printing every #EOF separator
