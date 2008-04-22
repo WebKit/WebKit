@@ -46,6 +46,11 @@ void Frame::clearPlatformScriptObjects()
     notImplemented();
 }
 
+void Frame::disconnectPlatformScriptObjects()
+{
+    notImplemented();
+}
+
 DragImageRef Frame::dragImageForSelection()
 {
     notImplemented();

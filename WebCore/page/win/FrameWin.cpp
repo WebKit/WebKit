@@ -71,6 +71,10 @@ void Frame::clearPlatformScriptObjects()
 {
 }
 
+void Frame::disconnectPlatformScriptObjects()
+{
+}
+
 PassRefPtr<KJS::Bindings::Instance> Frame::createScriptInstanceForWidget(Widget* widget)
 {
     // FIXME: Ideally we'd have an isPluginView() here but we can't add that to the open source tree right now.

@@ -478,7 +478,7 @@ sub GetObjCTypeGetterName
     my $type = $codeGenerator->StripModule(shift);
 
     my $typeGetter = "";
-    if ($type =~ /^(HTML|CSS|SVG)/ or $type eq "DOMImplementation" or $type eq "CDATASection") {
+    if ($type =~ /^(HTML|CSS|SVG)/ or $type eq "DOMImplementation" or $type eq "CDATASection" or $type eq "RGBColor") {
         $typeGetter = $type;
     } elsif ($type =~ /^XPath(.+)/) {
         $typeGetter = "xpath" . $1;
@@ -506,6 +506,58 @@ sub GetObjCTypeGetter
 
     return "nativeResolver" if $type eq "XPathNSResolver";
     return "[$argName $typeGetterMethodName]";
+}
+
+sub GetInternalTypeGetterSignature
+{
+    my ($interfaceName, $podType) = @_;
+
+    my $implClassNameWithNamespace = "WebCore::" . GetImplClassName($interfaceName);
+    my $podTypeWithNamespace;
+    if ($podType) {
+        $podTypeWithNamespace = ($podType eq "float") ? "$podType" : "WebCore::$podType";
+    }
+
+    # - Type-Getter
+    # - (WebCore::FooBar *)_fooBar for implementation class FooBar
+    my $typeGetterName = GetObjCTypeGetterName($interfaceName);
+    return "- " . ($podType ? "($podTypeWithNamespace)" : "($implClassNameWithNamespace *)") . $typeGetterName;
+}
+
+sub GetInternalTypeMakerSignature
+{
+    my ($interfaceName, $podType) = @_;
+
+    my $className = GetClassName($interfaceName);
+    my $implClassNameWithNamespace = "WebCore::" . GetImplClassName($interfaceName);
+    my $podTypeWithNamespace;
+    if ($podType) {
+        $podTypeWithNamespace = ($podType eq "float") ? "$podType" : "WebCore::$podType";
+    }
+ 
+    my @ivarsToRetain = ();
+    my $ivarsToInit = "";
+    my $typeMakerSigAddition = "";
+    if (@ivars > 0) {
+        my @ivarsInitSig = ();
+        my @ivarsInitCall = ();
+        foreach $attribute (@ivars) {
+            my $name = $attribute->signature->name;
+            my $memberName = "m_" . $name;
+            my $varName = "in" . $name;
+            my $type = GetObjCType($attribute->signature->type);
+            push(@ivarsInitSig, "$name:($type)$varName");
+            push(@ivarsInitCall, "$name:$varName");
+            push(@ivarsToRetain, "    $memberName = [$varName retain];\n");
+        }
+        $ivarsToInit = " " . join(" ", @ivarsInitCall);
+        $typeMakerSigAddition = " " . join(" ", @ivarsInitSig);
+    }
+
+    my $typeMakerName = GetObjCTypeMaker($interfaceName);
+    return ("+ ($className *)$typeMakerName:(" . ($podType ? "$podTypeWithNamespace" : "$implClassNameWithNamespace *") . ")impl" . $typeMakerSigAddition,
+            $typeMakerSigAddition,
+            $ivarsToInit);
 }
 
 sub AddForwardDeclarationsForType
@@ -895,6 +947,42 @@ sub GenerateHeader
         push(@privateHeaderContent, "\n") if $buildingForLeopardOrLater and @privateHeaderAttributes > 0 and @privateHeaderFunctions > 0;
         push(@privateHeaderContent, @privateHeaderFunctions) if @privateHeaderFunctions > 0;
         push(@privateHeaderContent, "\@end\n");
+    }
+
+    unless ($isProtocol) {
+        # Generate internal interfaces
+        my $podType = $dataNode->extendedAttributes->{"PODType"};
+        my $typeGetterSig = GetInternalTypeGetterSignature($interfaceName, $podType);
+        my ($typeMakerSig, $typeMakerSigAddition, $ivarsToInit) = GetInternalTypeMakerSignature($interfaceName, $podType);
+
+        # Generate interface definitions. 
+        @internalHeaderContent = split("\r", $implementationLicenceTemplate);
+        push(@internalHeaderContent, "\n#import <WebCore/$className.h>\n");
+        if ($interfaceName eq "Node") {
+            push(@internalHeaderContent, "\n\@protocol DOMEventTarget;\n");
+        }
+        if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
+            push(@internalHeaderContent, "#import <WebCore/SVGAnimatedTemplate.h>\n\n");
+        } elsif ($interfaceName eq "RGBColor") {
+            push(@internalHeaderContent, "#import <WebCore/Color.h>\n\n");
+        } else {
+            if ($podType and $podType ne "float") {
+                push(@internalHeaderContent, "\nnamespace WebCore { class $podType; }\n\n");
+            } elsif ($interfaceName eq "Node") {
+                push(@internalHeaderContent, "\nnamespace WebCore { class Node; class EventTarget; }\n\n");
+            } else {
+                my $implClassName = GetImplClassName($interfaceName);
+                push(@internalHeaderContent, "\nnamespace WebCore { class $implClassName; }\n\n");
+            }
+        }
+
+        push(@internalHeaderContent, "\@interface $className (WebCoreInternal)\n");
+        push(@internalHeaderContent, $typeGetterSig . ";\n");
+        push(@internalHeaderContent, $typeMakerSig . ";\n");
+        if ($interfaceName eq "Node") {
+            push(@internalHeaderContent, "+ (id <DOMEventTarget>)_wrapEventTarget:(WebCore::EventTarget *)eventTarget;\n");
+        }
+        push(@internalHeaderContent, "\@end\n");
     }
 }
 
@@ -1401,66 +1489,11 @@ sub GenerateImplementation
 
 
     # Generate internal interfaces
-
-    # - Type-Getter
-    # - (WebCore::FooBar *)_fooBar for implementation class FooBar
-    my $typeGetterName = GetObjCTypeGetterName($interfaceName);
-    my $typeGetterSig = "- " . ($podType ? "($podTypeWithNamespace)" : "($implClassNameWithNamespace *)") . $typeGetterName;
-
-    my @ivarsToRetain = ();
-    my $ivarsToInit = "";
-    my $typeMakerSigAddition = "";
-    if (@ivars > 0) {
-        my @ivarsInitSig = ();
-        my @ivarsInitCall = ();
-        foreach $attribute (@ivars) {
-            my $name = $attribute->signature->name;
-            my $memberName = "m_" . $name;
-            my $varName = "in" . $name;
-            my $type = GetObjCType($attribute->signature->type);
-            push(@ivarsInitSig, "$name:($type)$varName");
-            push(@ivarsInitCall, "$name:$varName");
-            push(@ivarsToRetain, "    $memberName = [$varName retain];\n");
-        }
-        $ivarsToInit = " " . join(" ", @ivarsInitCall);
-        $typeMakerSigAddition = " " . join(" ", @ivarsInitSig);
-    }
-
-    # - Type-Maker
-    my $typeMakerName = GetObjCTypeMaker($interfaceName);
-    my $typeMakerSig = "+ ($className *)$typeMakerName:($implClassNameWithNamespace *)impl" . $typeMakerSigAddition;
-    $typeMakerSig = "+ ($className *)$typeMakerName:($podTypeWithNamespace)impl" . $typeMakerSigAddition if $podType;
-
-    # Generate interface definitions. 
-    @internalHeaderContent = split("\r", $implementationLicenceTemplate);
-    push(@internalHeaderContent, "\n#import <WebCore/$className.h>\n");
-    if ($interfaceName eq "Node") {
-        push(@internalHeaderContent, "\n\@protocol DOMEventTarget;\n");
-    }
-    if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
-        push(@internalHeaderContent, "#import <WebCore/SVGAnimatedTemplate.h>\n\n");
-    } else {
-        if ($podType and $podType ne "float") {
-            push(@internalHeaderContent, "\nnamespace WebCore { class $podType; }\n\n");
-        } elsif ($interfaceName eq "Node") {
-            push(@internalHeaderContent, "\nnamespace WebCore { class Node; class EventTarget; }\n\n");
-        } else { 
-            push(@internalHeaderContent, "\nnamespace WebCore { class $implClassName; }\n\n");
-        }
-    }
-
-    push(@internalHeaderContent, "\@interface $className (WebCoreInternal)\n");
-    push(@internalHeaderContent, $typeGetterSig . ";\n");
-    push(@internalHeaderContent, $typeMakerSig . ";\n");
-    if ($interfaceName eq "Node") {
-        push(@internalHeaderContent, "+ (id <DOMEventTarget>)_wrapEventTarget:(WebCore::EventTarget *)eventTarget;\n");
-    }
-    push(@internalHeaderContent, "\@end\n");
-
     unless ($dataNode->extendedAttributes->{ObjCCustomInternalImpl}) {
         # - BEGIN WebCoreInternal category @implementation
         push(@implContent, "\n\@implementation $className (WebCoreInternal)\n\n");
 
+        my $typeGetterSig = GetInternalTypeGetterSignature($interfaceName, $podType);
         push(@implContent, "$typeGetterSig\n");
         push(@implContent, "{\n");
 
@@ -1471,6 +1504,8 @@ sub GenerateImplementation
         }
 
         push(@implContent, "}\n\n");
+
+        my ($typeMakerSig, $typeMakerSigAddition, $ivarsToInit) = GetInternalTypeMakerSignature($interfaceName, $podType);
 
         if ($podType) {
             # - (id)_initWithFooBar:(WebCore::FooBar)impl for implementation class FooBar

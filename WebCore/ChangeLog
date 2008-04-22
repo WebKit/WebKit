@@ -1,3 +1,58 @@
+2008-04-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Make DOMAbstractView have a weak reference to the Frame instead of ref'ing
+        the DOMWindow.
+
+        To ensure that the WindowScriptObject (which is a DOMAbstractView) stays valid
+        after a navigation once the split window is completed, the DOMAbstractView must
+        wrap the Frame instead of a DOMWindow since the DOMWindow will change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMAbstractView.mm: Added.
+        (-[DOMAbstractView dealloc]):
+        (-[DOMAbstractView finalize]):
+        (-[DOMAbstractView document]):
+        (-[DOMAbstractView _disconnectFrame]):
+        (-[DOMAbstractView WebCore::]):
+        (-[DOMAbstractView _initWithFrame:WebCore::]):
+        (+[DOMAbstractView _wrapAbstractView:WebCore::]):
+        Add custom implementation to implement weak reference semantics.
+
+        * bindings/objc/DOMAbstractViewFrame.h: Added.
+        Declare the [DOMAbstractView _disconectFrame] selector.
+        * bindings/objc/DOMInternal.h:
+        Remove DOMRGBColor Internal category since it is now generated.
+
+        * bindings/objc/DOMUtility.mm:
+        (KJS::createDOMWrapper):
+        Don't ever create a DOMAbstractView from a JSDOMWindow, only from JSDOMWindowWrapper.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        Generate internal header for IDLs that want custom implementations.
+
+        * css/RGBColor.idl:
+        Make this a PODType as it really is in the implementation.
+
+        * page/AbstractView.idl:
+        This now needs a custom objective-c binding implementation.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+        disconnect the weak frame reference in the WindowScriptObject.
+
+        * page/Frame.h:
+        * page/gtk/FrameGtk.cpp:
+        (WebCore::Frame::disconnectPlatformScriptObjects): Dummy implementation.
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::windowScriptObject): ASSERT that the windowScriptObject is a DOMAbstractView.
+        (WebCore::Frame::disconnectPlatformScriptObjects): Disconnect the frame pointer from the windowScriptObject.
+        * page/qt/FrameQt.cpp:
+        (WebCore::Frame::disconnectPlatformScriptObjects): Dummy implementation.
+        * page/win/FrameWin.cpp:
+        (WebCore::Frame::disconnectPlatformScriptObjects): Ditto.
+
 2008-04-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

@@ -100,8 +100,6 @@ static inline id createDOMWrapper(KJS::JSObject* object)
 
     #undef WRAP
 
-    if (object->inherits(&WebCore::JSDOMWindow::s_info))
-        return [DOMAbstractView _wrapAbstractView:static_cast<WebCore::JSDOMWindow*>(object)->impl()];
     if (object->inherits(&WebCore::JSDOMWindowWrapper::s_info))
         return [DOMAbstractView _wrapAbstractView:static_cast<WebCore::JSDOMWindowWrapper*>(object)->impl()];
 

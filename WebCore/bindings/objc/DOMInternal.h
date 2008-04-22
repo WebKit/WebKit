@@ -27,9 +27,7 @@
 
 #import "DOM.h"
 
-#import "Color.h"
 #import "DOMObject.h"
-#import "DOMRGBColor.h"
 #import "HitTestResult.h"
 
 #if ENABLE(XPATH)
@@ -136,12 +134,13 @@
 #import "DOMNotationInternal.h"
 #import "DOMOverflowEventInternal.h"
 #import "DOMProcessingInstructionInternal.h"
+#import "DOMRGBColorInternal.h"
 #import "DOMRangeInternal.h"
 #import "DOMRectInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "DOMStyleSheetListInternal.h"
-#import "DOMTextInternal.h"
 #import "DOMTextEventInternal.h"
+#import "DOMTextInternal.h"
 #import "DOMTreeWalkerInternal.h"
 #import "DOMUIEventInternal.h"
 #import "DOMWheelEventInternal.h"
@@ -306,13 +305,6 @@ namespace WebCore {
 
 @interface DOMObject (WebCoreInternal)
 - (id)_init;
-@end
-
-// CSS Internal Interfaces
-
-@interface DOMRGBColor (WebCoreInternal)
-+ (DOMRGBColor *)_wrapRGBColor:(WebCore::RGBA32)value;
-- (WebCore::RGBA32)_RGBColor;
 @end
 
 // Traversal Internal Interfaces

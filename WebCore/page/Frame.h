@@ -156,6 +156,7 @@ public:
 
 private:
     void clearPlatformScriptObjects();
+    void disconnectPlatformScriptObjects();
 
     void lifeSupportTimerFired(Timer<Frame>*);
     

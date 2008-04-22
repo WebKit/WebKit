@@ -109,6 +109,10 @@ void Frame::clearPlatformScriptObjects()
 {
 }
 
+void Frame::disconnectPlatformScriptObjects()
+{
+}
+
 DragImageRef Frame::dragImageForSelection() 
 {
     return 0;
