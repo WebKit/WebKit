@@ -97,6 +97,8 @@ public:
 
     bool findText(const QString &subString, QWebPage::FindFlags options = 0);
 
+    virtual bool event(QEvent *);
+
 public Q_SLOTS:
     void stop();
     void back();

@@ -1,3 +1,19 @@
+2008-04-22  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Added re-implementations of QObject::event for future safety.
+        
+        This makes it easier to fix bugs with the event handling even in patch releases
+        and is a general style we follow in Qt.
+        
+
+        * Api/qwebframe.cpp:
+        * Api/qwebframe.h:
+        * Api/qwebview.cpp:
+        (QWebView::event):
+        * Api/qwebview.h:
+
 2008-04-22  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.

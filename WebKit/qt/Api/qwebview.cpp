@@ -367,6 +367,13 @@ bool QWebView::findText(const QString &subString, QWebPage::FindFlags options)
     return false;
 }
 
+/*! \reimp
+*/
+bool QWebView::event(QEvent *e)
+{
+    return QWidget::event(e);
+}
+
 /*!
   Prints the main frame to the given \a printer.
 */
