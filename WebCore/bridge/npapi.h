@@ -614,7 +614,7 @@ typedef struct NP_Port
 #define NPVERS_HAS_POPUPS_ENABLED_STATE   16  /* Not implemented in WebKit */
 #define NPVERS_HAS_RESPONSE_HEADERS       17
 #define NPVERS_HAS_NPOBJECT_ENUM          18
-
+#define NPVERS_HAS_PLUGIN_THREAD_ASYNC_CALL 19
 
 /*----------------------------------------------------------------------*/
 /*             Function Prototypes                */
@@ -706,6 +706,7 @@ void        NPN_InvalidateRegion(NPP instance, NPRegion invalidRegion);
 void        NPN_ForceRedraw(NPP instance);
 void        NPN_PushPopupsEnabledState(NPP instance, NPBool enabled);
 void        NPN_PopPopupsEnabledState(NPP instance);
+void        NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void *), void *userData);
 
 #ifdef __cplusplus
 }  /* end extern "C" */

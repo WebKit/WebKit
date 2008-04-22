@@ -1,3 +1,11 @@
+2008-04-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Add NPN_Construct and NPN_PluginThreadAsyncCall declarations.
+        
+        * Plugins/npfunctions.h:
+
 2008-04-20  Matt Lilek  <webkit@mattlilek.com>
 
         Mysteriously reviewed by mitz|away.

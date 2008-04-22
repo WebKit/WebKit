@@ -1,3 +1,13 @@
+2008-04-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Add NPN_Construct and NPN_PluginThreadAsyncCall declarations.
+
+        * bridge/npapi.h:
+        * bridge/npruntime.h:
+        * plugins/npfunctions.h:
+
 2008-04-22  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by John Sullivan and Adam Roben.
