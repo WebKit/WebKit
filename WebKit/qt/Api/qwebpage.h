@@ -224,6 +224,15 @@ public:
     void setPalette(const QPalette &palette);
     QPalette palette() const;
 
+    enum Extension {
+    };
+    class ExtensionOption
+    {};
+    class ExtensionReturn
+    {};
+    virtual bool extension(Extension extension, const ExtensionOption *option = 0, ExtensionReturn *output = 0);
+    virtual bool supportsExtension(Extension extension) const;
+
 Q_SIGNALS:
     void loadProgress(int progress);
     void linkHovered(const QString &link, const QString &title, const QString &textContent);

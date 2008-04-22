@@ -1635,6 +1635,20 @@ QWebPage::LinkDelegationPolicy QWebPage::linkDelegationPolicy() const
     return d->linkPolicy;
 }
 
+bool QWebPage::extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output)
+{
+    Q_UNUSED(extension)
+    Q_UNUSED(option)
+    Q_UNUSED(output)
+    return false;
+}
+
+bool QWebPage::supportsExtension(Extension extension) const
+{
+    Q_UNUSED(extension)
+    return false;
+}
+
 /*!
     Finds the next occurrence of the string, \a subString, in the page, using the given \a options.
     Returns true of \a subString was found and selects the match visually; otherwise returns false.
