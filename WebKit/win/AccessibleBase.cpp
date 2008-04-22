@@ -209,9 +209,65 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accRole(VARIANT vChild, VARIANT* p
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accState(VARIANT, VARIANT*)
+HRESULT STDMETHODCALLTYPE AccessibleBase::get_accState(VARIANT vChild, VARIANT* pvState)
 {
-    return E_NOTIMPL;
+    if (!pvState)
+        return E_POINTER;
+
+    ::VariantInit(pvState);
+    pvState->vt = VT_EMPTY;
+
+    AccessibilityObject* childObj;
+    HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
+
+    if (FAILED(hr))
+        return hr;
+
+    pvState->vt = VT_I4;
+    pvState->lVal = 0;
+
+    if (m_object->isAnchor())
+        pvState->lVal |= STATE_SYSTEM_LINKED;
+
+    if (m_object->isHovered())
+        pvState->lVal |= STATE_SYSTEM_HOTTRACKED;
+
+    if (!m_object->isEnabled())
+        pvState->lVal |= STATE_SYSTEM_UNAVAILABLE;
+
+    if (m_object->isReadOnly())
+        pvState->lVal |= STATE_SYSTEM_READONLY;
+
+    if (m_object->isOffScreen())
+        pvState->lVal |= STATE_SYSTEM_OFFSCREEN;
+
+    if (m_object->isMultiSelect())
+        pvState->lVal |= STATE_SYSTEM_MULTISELECTABLE;
+
+    if (m_object->isPasswordField())
+        pvState->lVal |= STATE_SYSTEM_PROTECTED;
+
+    if (m_object->isIndeterminate())
+        pvState->lVal |= STATE_SYSTEM_INDETERMINATE;
+
+    if (m_object->isChecked())
+        pvState->lVal |= STATE_SYSTEM_CHECKED;
+
+    if (m_object->isPressed())
+        pvState->lVal |= STATE_SYSTEM_PRESSED;
+
+    if (m_object->isFocused())
+        pvState->lVal |= STATE_SYSTEM_FOCUSED;
+
+    if (m_object->isVisited())
+        pvState->lVal |= STATE_SYSTEM_TRAVERSED;
+
+    if (m_object->canSetFocusAttribute())
+        pvState->lVal |= STATE_SYSTEM_FOCUSABLE;
+
+    // TODO: Add selected and selectable states.
+
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE AccessibleBase::get_accHelp(VARIANT, BSTR*)
