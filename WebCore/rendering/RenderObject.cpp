@@ -499,7 +499,7 @@ RenderLayer* RenderObject::enclosingLayer() const
 
 bool RenderObject::requiresLayer()
 {
-    return isRoot() || isPositioned() || isRelPositioned() || isTransparent() || hasOverflowClip() || hasTransform();
+    return isRoot() || isPositioned() || isRelPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasMask();
 }
 
 RenderBlock* RenderObject::firstLineBlock() const
@@ -836,31 +836,39 @@ int RenderObject::containingBlockHeight() const
     return containingBlock()->contentHeight();
 }
 
-bool RenderObject::mustRepaintBackgroundOrBorder() const
+static bool mustRepaintFillLayers(const RenderObject* renderer, const FillLayer* layer)
 {
-    // If we don't have a background/border, then nothing to do.
-    if (!hasBoxDecorations())
-        return false;
-
-    // Ok, let's check the background first.
-    const FillLayer* bgLayer = style()->backgroundLayers();
-
-    // Nobody will use multiple background layers without wanting fancy positioning.
-    if (bgLayer->next())
+    // Nobody will use multiple layers without wanting fancy positioning.
+    if (layer->next())
         return true;
 
-    // Make sure we have a valid background image.
-    StyleImage* bg = bgLayer->image();
-    bool shouldPaintBackgroundImage = bg && bg->canRender(style()->effectiveZoom());
+    // Make sure we have a valid image.
+    StyleImage* img = layer->image();
+    bool shouldPaintBackgroundImage = img && img->canRender(renderer->style()->effectiveZoom());
 
     // These are always percents or auto.
     if (shouldPaintBackgroundImage &&
-            (!bgLayer->xPosition().isZero() || !bgLayer->yPosition().isZero() ||
-             bgLayer->size().width.isPercent() || bgLayer->size().height.isPercent()))
-        // The background image will shift unpredictably if the size changes.
+        (!layer->xPosition().isZero() || !layer->yPosition().isZero() ||
+         layer->size().width.isPercent() || layer->size().height.isPercent()))
+        // The image will shift unpredictably if the size changes.
         return true;
 
-    // Background is ok.  Let's check border.
+    return false;
+}
+
+bool RenderObject::mustRepaintBackgroundOrBorder() const
+{
+    if (hasMask() && mustRepaintFillLayers(this, style()->maskLayers()))
+        return true;
+
+    // If we don't have a background/border/mask, then nothing to do.
+    if (!hasBoxDecorations())
+        return false;
+
+    if (mustRepaintFillLayers(this, style()->backgroundLayers()))
+        return true;
+     
+    // Our fill layers are ok.  Let's check border.
     if (style()->hasBorder()) {
         // Border images are not ok.
         StyleImage* borderImage = style()->borderImage().image();
@@ -2251,7 +2259,17 @@ void RenderObject::setStyle(RenderStyle* style)
     RenderStyle* oldStyle = m_style;
     m_style = style;
 
-    updateBackgroundImages(oldStyle);
+    updateFillImages(oldStyle ? oldStyle->backgroundLayers() : 0, m_style ? m_style->backgroundLayers() : 0);
+    updateFillImages(oldStyle ? oldStyle->maskLayers() : 0, m_style ? m_style->maskLayers() : 0);
+
+    StyleImage* oldBorderImage = oldStyle ? oldStyle->borderImage().image() : 0;
+    StyleImage* newBorderImage = m_style ? m_style->borderImage().image() : 0;
+    if (oldBorderImage != newBorderImage) {
+        if (oldBorderImage)
+            oldBorderImage->removeClient(this);
+        if (newBorderImage)
+            newBorderImage->addClient(this);
+    }
 
     if (m_style)
         m_style->ref();
@@ -2289,11 +2307,9 @@ void RenderObject::setStyleInternal(RenderStyle* style)
         m_style->ref();
 }
 
-void RenderObject::updateBackgroundImages(RenderStyle* oldStyle)
+void RenderObject::updateFillImages(const FillLayer* oldLayers, const FillLayer* newLayers)
 {
     // FIXME: This will be slow when a large number of images is used.  Fix by using a dict.
-    const FillLayer* oldLayers = oldStyle ? oldStyle->backgroundLayers() : 0;
-    const FillLayer* newLayers = m_style ? m_style->backgroundLayers() : 0;
     for (const FillLayer* currOld = oldLayers; currOld; currOld = currOld->next()) {
         if (currOld->image() && (!newLayers || !newLayers->containsImage(currOld->image())))
             currOld->image()->removeClient(this);
@@ -2301,15 +2317,6 @@ void RenderObject::updateBackgroundImages(RenderStyle* oldStyle)
     for (const FillLayer* currNew = newLayers; currNew; currNew = currNew->next()) {
         if (currNew->image() && (!oldLayers || !oldLayers->containsImage(currNew->image())))
             currNew->image()->addClient(this);
-    }
-
-    StyleImage* oldBorderImage = oldStyle ? oldStyle->borderImage().image() : 0;
-    StyleImage* newBorderImage = m_style ? m_style->borderImage().image() : 0;
-    if (oldBorderImage != newBorderImage) {
-        if (oldBorderImage)
-            oldBorderImage->removeClient(this);
-        if (newBorderImage)
-            newBorderImage->addClient(this);
     }
 }
 

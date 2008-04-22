@@ -1399,7 +1399,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
             return;
     }
 
-    bool useControlClip = phase != PaintPhaseBlockBackground && phase != PaintPhaseSelfOutline && hasControlClip();
+    bool useControlClip = phase != PaintPhaseBlockBackground && phase != PaintPhaseSelfOutline && phase != PaintPhaseMask && hasControlClip();
 
     // Push a clip.
     if (useControlClip) {
@@ -1570,6 +1570,11 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
         (paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) &&
         hasBoxDecorations() && style()->visibility() == VISIBLE) {
         paintBoxDecorations(paintInfo, tx, ty);
+    }
+
+    if (paintPhase == PaintPhaseMask && style()->visibility() == VISIBLE) {
+        paintMask(paintInfo, tx, ty);
+        return;
     }
 
     // We're done.  We don't bother painting any children.

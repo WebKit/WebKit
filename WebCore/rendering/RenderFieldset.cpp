@@ -129,12 +129,34 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 
     paintBoxShadow(paintInfo.context, tx, ty, w, h, style());
 
-    paintBackground(paintInfo, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
+    paintFillLayers(paintInfo, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
 
     if (style()->hasBorder())
         paintBorderMinusLegend(paintInfo.context, tx, ty, w, h, style(), legend->xPos(), legend->width(), legendBottom);
 }
 
+void RenderFieldset::paintMask(PaintInfo& paintInfo, int tx, int ty)
+{
+    if (style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
+        return;
+
+    int w = width();
+    int h = height() + borderTopExtra() + borderBottomExtra();
+    RenderObject* legend = findLegend();
+    if (!legend)
+        return RenderBlock::paintMask(paintInfo, tx, ty);
+
+    int yOff = (legend->yPos() > 0) ? 0 : (legend->height() - borderTop()) / 2;
+    h -= yOff;
+    ty += yOff - borderTopExtra();
+
+    int my = max(ty, paintInfo.rect.y());
+    int end = min(paintInfo.rect.bottom(), ty + h);
+    int mh = end - my;
+
+    paintFillLayers(paintInfo, Color(), style()->maskLayers(), my, mh, tx, ty, w, h);
+}
+        
 void RenderFieldset::paintBorderMinusLegend(GraphicsContext* graphicsContext, int tx, int ty, int w, int h,
                                             const RenderStyle* style, int lx, int lw, int lb)
 {

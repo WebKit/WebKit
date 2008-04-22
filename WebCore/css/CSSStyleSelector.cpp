@@ -167,6 +167,12 @@ HANDLE_FILL_LAYER_INHERIT_AND_INITIAL(background, Background, prop, Prop)
 #define HANDLE_BACKGROUND_VALUE(prop, Prop, value) \
 HANDLE_FILL_LAYER_VALUE(background, Background, prop, Prop, value)
 
+#define HANDLE_MASK_INHERIT_AND_INITIAL(prop, Prop) \
+HANDLE_FILL_LAYER_INHERIT_AND_INITIAL(mask, Mask, prop, Prop)
+
+#define HANDLE_MASK_VALUE(prop, Prop, value) \
+HANDLE_FILL_LAYER_VALUE(mask, Mask, prop, Prop, value)
+
 #define HANDLE_TRANSITION_INHERIT_AND_INITIAL(prop, Prop) \
 if (isInherit) { \
     Transition* currChild = m_style->accessTransitions(); \
@@ -1163,14 +1169,14 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
     }
 
     // Make sure our z-index value is only applied if the object is positioned,
-    // relatively positioned, transparent, or has a transform.
-    if (style->position() == StaticPosition && style->opacity() == 1.0f && !style->hasTransform())
+    // relatively positioned, transparent, or has a transform/mask.
+    if (style->position() == StaticPosition && style->opacity() == 1.0f && !style->hasTransform() && !style->hasMask())
         style->setHasAutoZIndex();
 
     // Auto z-index becomes 0 for the root element and transparent objects.  This prevents
     // cases where objects that should be blended as a single unit end up with a non-transparent
-    // object wedged in between them.  Auto z-index also becomes 0 for objects that specify transforms.
-    if (style->hasAutoZIndex() && ((e && e->document()->documentElement() == e) || style->opacity() < 1.0f || style->hasTransform()))
+    // object wedged in between them.  Auto z-index also becomes 0 for objects that specify transforms/masks.
+    if (style->hasAutoZIndex() && ((e && e->document()->documentElement() == e) || style->opacity() < 1.0f || style->hasTransform() || style->hasMask()))
         style->setZIndex(0);
     
     // Button, legend, input, select and textarea all consider width values of 'auto' to be 'intrinsic'.
@@ -2340,6 +2346,21 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitBackgroundSize:
         HANDLE_BACKGROUND_VALUE(size, Size, value)
         return;
+    case CSSPropertyWebkitMaskAttachment:
+        HANDLE_MASK_VALUE(attachment, Attachment, value)
+        return;
+    case CSSPropertyWebkitMaskClip:
+        HANDLE_MASK_VALUE(clip, Clip, value)
+        return;
+    case CSSPropertyWebkitMaskOrigin:
+        HANDLE_MASK_VALUE(origin, Origin, value)
+        return;
+    case CSSPropertyWebkitMaskRepeat:
+        HANDLE_MASK_VALUE(repeat, Repeat, value)
+        return;
+    case CSSPropertyWebkitMaskSize:
+        HANDLE_MASK_VALUE(size, Size, value)
+        return;
     case CSSPropertyBorderCollapse:
         HANDLE_INHERIT_AND_INITIAL(borderCollapse, BorderCollapse)
         if (!primitiveValue)
@@ -2668,6 +2689,18 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_BACKGROUND_VALUE(yPosition, YPosition, value)
         return;
     }
+    case CSSPropertyWebkitMaskPosition:
+        HANDLE_MASK_INHERIT_AND_INITIAL(xPosition, XPosition);
+        HANDLE_MASK_INHERIT_AND_INITIAL(yPosition, YPosition);
+        return;
+    case CSSPropertyWebkitMaskPositionX: {
+        HANDLE_MASK_VALUE(xPosition, XPosition, value)
+        return;
+    }
+    case CSSPropertyWebkitMaskPositionY: {
+        HANDLE_MASK_VALUE(yPosition, YPosition, value)
+        return;
+    }
     case CSSPropertyBorderSpacing: {
         if (isInherit) {
             m_style->setHorizontalBorderSpacing(m_parentStyle->horizontalBorderSpacing());
@@ -2810,6 +2843,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 // uri || inherit
     case CSSPropertyBackgroundImage:
         HANDLE_BACKGROUND_VALUE(image, Image, value)
+        return;
+    case CSSPropertyWebkitMaskImage:
+        HANDLE_MASK_VALUE(image, Image, value)
         return;
     case CSSPropertyListStyleImage:
     {
@@ -3649,13 +3685,19 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (isInitial) {
             m_style->clearBackgroundLayers();
             m_style->setBackgroundColor(Color());
-            return;
         }
         else if (isInherit) {
             m_style->inheritBackgroundLayers(*m_parentStyle->backgroundLayers());
             m_style->setBackgroundColor(m_parentStyle->backgroundColor());
         }
         return;
+    case CSSPropertyWebkitMask:
+        if (isInitial)
+            m_style->clearMaskLayers();
+        else if (isInherit)
+            m_style->inheritMaskLayers(*m_parentStyle->maskLayers());
+        return;
+
     case CSSPropertyBorder:
     case CSSPropertyBorderStyle:
     case CSSPropertyBorderWidth:

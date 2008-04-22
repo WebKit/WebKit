@@ -1,3 +1,95 @@
+2008-04-22  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://5589634>.
+
+        Implement CSS alpha masks.  The syntax is very similar to that used for backgrounds.  Multiple mask images
+        can be specified, and each one can be tiled, positioned, etc.  The following new properties have been
+        added (all of which are analogous to their background-* counterparts).
+
+        mask, mask-image, mask-clip, mask-origin, mask-repeat, mask-attachment, mask-position
+
+        The alpha values in the final composite image are used to determine how the mask applies (alpha of 1 = show,
+        alpha of 0 = don't show).
+
+        SVG images and CSS gradients can also be used as masks.
+
+        Reviewed by Dan
+
+        Added fast/backgrounds/repeat/mask-negative-offset-repeat.html, fast/backgrounds/svg-as-mask.html
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue):
+        (WebCore::initShorthandMap):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseTransformOrigin):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+        (WebCore::InlineFlowBox::paintFillLayers):
+        (WebCore::InlineFlowBox::paintFillLayer):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintRootBoxDecorations):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::paintMask):
+        (WebCore::RenderBox::paintFillLayers):
+        (WebCore::RenderBox::paintFillLayer):
+        (WebCore::RenderBox::paintFillLayerExtended):
+        * rendering/RenderBox.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        (WebCore::RenderFieldset::paintMask):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::requiresLayer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isTransparent):
+        (WebCore::RenderLayer::paintLayer):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::requiresLayer):
+        (WebCore::mustRepaintFillLayers):
+        (WebCore::RenderObject::mustRepaintBackgroundOrBorder):
+        (WebCore::RenderObject::setStyle):
+        (WebCore::RenderObject::updateFillImages):
+        * rendering/RenderObject.h:
+        (WebCore::):
+        (WebCore::RenderObject::hasMask):
+        (WebCore::RenderObject::paintMask):
+        (WebCore::RenderObject::paintFillExtended):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderStyle.cpp:
+        (WebCore::FillLayer::FillLayer):
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        * rendering/RenderStyle.h:
+        (WebCore::FillLayer::initialFillComposite):
+        (WebCore::FillLayer::initialFillSize):
+        (WebCore::FillLayer::FillLayer):
+        (WebCore::RenderStyle::hasMask):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint):
+        (WebCore::RenderTable::paintBoxDecorations):
+        (WebCore::RenderTable::paintMask):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::requiresLayer):
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        (WebCore::RenderTableCell::paintMask):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw):
+        (WebCore::SVGImage::dataChanged):
+
 2008-04-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

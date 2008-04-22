@@ -434,7 +434,7 @@ RenderLayer::isTransparent() const
     if (m_object->node()->namespaceURI() == SVGNames::svgNamespaceURI)
         return false;
 #endif
-    return m_object->isTransparent();
+    return m_object->isTransparent() || m_object->hasMask();
 }
 
 RenderLayer*
@@ -1625,6 +1625,24 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         for (Vector<RenderLayer*>::iterator it = m_posZOrderList->begin(); it != m_posZOrderList->end(); ++it)
             it[0]->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot);
     
+    if (renderer()->hasMask() && shouldPaint && !selectionOnly && !damageRect.isEmpty()) {
+        setClip(p, paintDirtyRect, damageRect);
+
+        // Paint the mask.  We have to use an extra image buffer to hold the mask. Multiple mask images need
+        // to composite together using source-over so that they can then combine into a single unified mask that
+        // can be composited with the content using destination-in.  SVG images need to be able to set compositing modes
+        // as they draw images contained inside their sub-document, so we paint all our images into a separate buffer
+        // and composite that  buffer as the mask.
+        p->setCompositeOperation(CompositeDestinationIn);
+        p->beginTransparencyLayer(1.0f);
+        RenderObject::PaintInfo paintInfo(p, damageRect, PaintPhaseMask, false, paintingRootForRenderer, 0);
+        renderer()->paint(paintInfo, tx, ty);
+        p->endTransparencyLayer();
+
+        // Restore the clip.
+        restoreClip(p, paintDirtyRect, damageRect);
+    }
+
     // End our transparency layer
     if (isTransparent() && m_usedTransparency) {
         p->endTransparencyLayer();

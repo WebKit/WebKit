@@ -141,8 +141,8 @@ public:
 
     virtual IntRect caretRect(int offset, EAffinity = UPSTREAM, int* extraWidthToEndOfLine = 0);
 
-    virtual void paintBackgroundExtended(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight,
-                                         int tx, int ty, int width, int height, InlineFlowBox* = 0);
+    virtual void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight,
+                                        int tx, int ty, int width, int height, InlineFlowBox* = 0);
     IntSize calculateBackgroundSize(const FillLayer*, int scaledWidth, int scaledHeight) const;
 
     virtual int staticX() const;
@@ -154,6 +154,7 @@ public:
     virtual IntRect getClipRect(int tx, int ty);
 
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
+    virtual void paintMask(PaintInfo& paintInfo, int tx, int ty);
     virtual void imageChanged(WrappedImagePtr);
 
     // Called when a positioned object moves but doesn't change size.  A simplified layout is done
@@ -165,8 +166,8 @@ public:
     }
 
 protected:
-    void paintBackground(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);
-    void paintBackgrounds(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);
+    void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);
+    void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);
 
 #if PLATFORM(MAC)
     void paintCustomHighlight(int tx, int ty, const AtomicString& type, bool behindText);

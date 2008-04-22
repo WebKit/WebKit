@@ -80,7 +80,8 @@ enum PaintPhase {
     PaintPhaseSelfOutline,
     PaintPhaseSelection,
     PaintPhaseCollapsedTableBorders,
-    PaintPhaseTextClip
+    PaintPhaseTextClip,
+    PaintPhaseMask
 };
 
 enum PaintRestriction {
@@ -364,6 +365,8 @@ public:
     
     bool hasTransform() const { return m_hasTransform; }
 
+    bool hasMask() const { return style() && style()->hasMask(); }
+
 private:
     bool includeVerticalScrollbarSize() const { return hasOverflowClip() && (style()->overflowY() == OSCROLL || style()->overflowY() == OAUTO); }
     bool includeHorizontalScrollbarSize() const { return hasOverflowClip() && (style()->overflowX() == OSCROLL || style()->overflowX() == OAUTO); }
@@ -418,7 +421,7 @@ public:
 
     void scheduleRelayout();
 
-    void updateBackgroundImages(RenderStyle* oldStyle);
+    void updateFillImages(const FillLayer*, const FillLayer*);
 
     virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun = false);
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootLineBox = false);
@@ -472,10 +475,10 @@ public:
 
     // RenderBox implements this.
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty) { }
-
-    virtual void paintBackgroundExtended(const PaintInfo&, const Color&, const FillLayer*,
-                                         int clipy, int cliph, int tx, int ty, int width, int height,
-                                         InlineFlowBox* box = 0) { }
+    virtual void paintMask(PaintInfo&, int tx, int ty) { }
+    virtual void paintFillExtended(const PaintInfo&, const Color&, const FillLayer*,
+                                   int clipy, int cliph, int tx, int ty, int width, int height,
+                                   InlineFlowBox* box = 0) { }
 
     
     /*

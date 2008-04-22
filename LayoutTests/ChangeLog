@@ -1,3 +1,13 @@
+2008-04-22  David Hyatt  <hyatt@apple.com>
+
+        Add support for CSS alpha masks.  Test cases.
+
+        Reviewed by Dan
+
+        * fast/backgrounds/repeat/mask-negative-offset-repeat.html: Added.
+        * fast/backgrounds/repeat/resources/white.gif: Added.
+        * fast/backgrounds/svg-as-mask.html: Added.
+
 2008-04-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

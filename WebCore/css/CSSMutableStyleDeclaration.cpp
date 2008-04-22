@@ -87,10 +87,10 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
             return getLayeredShorthandValue(properties, 2);
         }
         case CSSPropertyBackground: {
-            const int properties[6] = { CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeat,
-                                        CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPositionX,
-                                        CSSPropertyBackgroundPositionY, CSSPropertyBackgroundColor };
-            return getLayeredShorthandValue(properties, 6);
+            const int properties[7] = { CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeat, 
+                                        CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPosition, CSSPropertyWebkitBackgroundClip,
+                                        CSSPropertyWebkitBackgroundOrigin, CSSPropertyBackgroundColor };
+            return getLayeredShorthandValue(properties, 7);
         }
         case CSSPropertyBorder: {
             const int properties[3] = { CSSPropertyBorderWidth, CSSPropertyBorderStyle,
@@ -151,6 +151,18 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
             const int properties[3] = { CSSPropertyListStyleType, CSSPropertyListStylePosition,
                                         CSSPropertyListStyleImage };
             return getShorthandValue(properties, 3);
+        }
+        case CSSPropertyWebkitMaskPosition: {
+            // FIXME: Is this correct? The code in cssparser.cpp is confusing
+            const int properties[2] = { CSSPropertyWebkitMaskPositionX,
+                                        CSSPropertyWebkitMaskPositionY };
+            return getLayeredShorthandValue(properties, 2);
+        }
+        case CSSPropertyWebkitMask: {
+            const int properties[] = { CSSPropertyWebkitMaskImage, CSSPropertyWebkitMaskRepeat, 
+                                       CSSPropertyWebkitMaskAttachment, CSSPropertyWebkitMaskPosition, CSSPropertyWebkitMaskClip,
+                                       CSSPropertyWebkitMaskOrigin };
+            return getLayeredShorthandValue(properties, 6);
         }
 #if ENABLE(SVG)
         case CSSPropertyMarker: {
@@ -386,12 +398,13 @@ static void initShorthandMap(HashMap<int, PropertyLonghand>& shorthandMap)
 
     static const int backgroundProperties[] = {
         CSSPropertyBackgroundAttachment,
+        CSSPropertyWebkitBackgroundClip,
         CSSPropertyBackgroundColor,
         CSSPropertyBackgroundImage,
+        CSSPropertyWebkitBackgroundOrigin,
         CSSPropertyBackgroundPositionX,
         CSSPropertyBackgroundPositionY,
         CSSPropertyBackgroundRepeat,
-        CSSPropertyWebkitBackgroundSize
     };
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyBackground, backgroundProperties);
 
@@ -416,6 +429,20 @@ static void initShorthandMap(HashMap<int, PropertyLonghand>& shorthandMap)
     };
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitBorderRadius, borderRadiusProperties);
 
+    static const int maskPositionProperties[] = { CSSPropertyWebkitMaskPositionX, CSSPropertyWebkitMaskPositionY };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitMaskPosition, maskPositionProperties);
+
+    static const int maskProperties[] = {
+        CSSPropertyWebkitMaskAttachment,
+        CSSPropertyWebkitMaskClip,
+        CSSPropertyWebkitMaskImage,
+        CSSPropertyWebkitMaskOrigin,
+        CSSPropertyWebkitMaskPositionX,
+        CSSPropertyWebkitMaskPositionY,
+        CSSPropertyWebkitMaskRepeat,
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyBackground, maskProperties);
+    
     #undef SET_SHORTHAND_MAP_ENTRY
 }
 

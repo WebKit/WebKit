@@ -250,7 +250,7 @@ void RenderTableCell::setStyle(RenderStyle* newStyle)
 
 bool RenderTableCell::requiresLayer()
 {
-    return isPositioned() || isTransparent() || hasOverflowClip() || hasTransform();
+    return isPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasMask();
 }
 
 // The following rules apply for resolving conflicts and figuring out which border
@@ -825,7 +825,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, int tx, i
             paintInfo.context->save();
             paintInfo.context->clip(clipRect);
         }
-        paintBackgrounds(paintInfo, c, bgLayer, my, mh, tx, ty, w, h);
+        paintFillLayers(paintInfo, c, bgLayer, my, mh, tx, ty, w, h);
         if (shouldClip)
             paintInfo.context->restore();
     }
@@ -851,6 +851,25 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 
     ty -= borderTopExtra();
     paintBorder(paintInfo.context, tx, ty, w, h, style());
+}
+
+void RenderTableCell::paintMask(PaintInfo& paintInfo, int tx, int ty)
+{
+    if (style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
+        return;
+
+    RenderTable* tableElt = table();
+    if (!tableElt->collapseBorders() && style()->emptyCells() == HIDE && !firstChild())
+        return;
+
+    int w = width();
+    int h = height() + borderTopExtra() + borderBottomExtra();
+   
+    int my = max(ty, paintInfo.rect.y());
+    int end = min(paintInfo.rect.bottom(), ty + h);
+    int mh = end - my;
+
+    paintFillLayers(paintInfo, Color(), style()->maskLayers(), my, mh, tx, ty, w, h);
 }
 
 } // namespace WebCore

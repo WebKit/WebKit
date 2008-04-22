@@ -83,9 +83,10 @@ public:
     virtual void clearTruncation();
 
     virtual void paintBoxDecorations(RenderObject::PaintInfo&, int tx, int ty);
-    void paintBackgrounds(const RenderObject::PaintInfo&, const Color&, const FillLayer*,
-                          int my, int mh, int tx, int ty, int w, int h);
-    void paintBackground(const RenderObject::PaintInfo&, const Color&, const FillLayer*,
+    virtual void paintMask(RenderObject::PaintInfo&, int tx, int ty);
+    void paintFillLayers(const RenderObject::PaintInfo&, const Color&, const FillLayer*,
+                         int my, int mh, int tx, int ty, int w, int h);
+    void paintFillLayer(const RenderObject::PaintInfo&, const Color&, const FillLayer*,
                          int my, int mh, int tx, int ty, int w, int h);
     void paintBoxShadow(GraphicsContext*, RenderStyle*, int tx, int ty, int w, int h);
     virtual void paintTextDecorations(RenderObject::PaintInfo&, int tx, int ty, bool paintedChildren = false);

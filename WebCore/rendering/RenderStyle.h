@@ -654,12 +654,16 @@ public:
     static EFillBox initialFillClip(EFillLayerType) { return BorderFillBox; }
     static EFillBox initialFillOrigin(EFillLayerType type) { return type == BackgroundFillLayer ? PaddingFillBox : BorderFillBox; }
     static EFillRepeat initialFillRepeat(EFillLayerType) { return RepeatFill; }
-    static CompositeOperator initialFillComposite(EFillLayerType type) { return type == BackgroundFillLayer ? CompositeSourceOver : CompositeDestinationOut; }
-    static LengthSize initialFillSize(EFillLayerType type) { return type == BackgroundFillLayer ? LengthSize() : LengthSize(Length(100.0, Percent), Length(100.0, Percent)); }
+    static CompositeOperator initialFillComposite(EFillLayerType) { return CompositeSourceOver; }
+    static LengthSize initialFillSize(EFillLayerType) { return LengthSize(); }
     static Length initialFillXPosition(EFillLayerType type) { return Length(0.0, Percent); }
     static Length initialFillYPosition(EFillLayerType type) { return Length(0.0, Percent); }
     static StyleImage* initialFillImage(EFillLayerType) { return 0; }
 
+private:
+    FillLayer() { }
+
+public:
     RefPtr<StyleImage> m_image;
 
     Length m_xPosition;
@@ -669,7 +673,7 @@ public:
     unsigned m_clip : 2; // EFillBox
     unsigned m_origin : 2; // EFillBox
     unsigned m_repeat : 2; // EFillRepeat
-    unsigned m_composite : 2; // CompositeOperator
+    unsigned m_composite : 4; // CompositeOperator
 
     LengthSize m_size;
 
@@ -2004,6 +2008,7 @@ public:
     Length transformOriginY() const { return rareNonInheritedData->m_transform->m_y; }
     bool hasTransform() const { return !rareNonInheritedData->m_transform->m_operations.isEmpty(); }
     void applyTransform(AffineTransform&, const IntSize& borderBoxSize) const;
+    bool hasMask() const { return rareNonInheritedData->m_mask.hasImage(); }
     // End CSS3 Getters
 
     // Apple-specific property getter methods

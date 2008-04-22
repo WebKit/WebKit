@@ -2088,6 +2088,9 @@ bool CSSParser::parseFillProperty(int propId, int& propId1, int& propId2,
     if (propId == CSSPropertyBackgroundPosition) {
         propId1 = CSSPropertyBackgroundPositionX;
         propId2 = CSSPropertyBackgroundPositionY;
+    } else if (propId == CSSPropertyWebkitMaskPosition) {
+        propId1 = CSSPropertyWebkitMaskPositionX;
+        propId2 = CSSPropertyWebkitMaskPositionY;
     }
 
     while ((val = valueList->current())) {
@@ -2114,7 +2117,7 @@ bool CSSParser::parseFillProperty(int propId, int& propId1, int& propId2,
                     }
                     break;
                 case CSSPropertyBackgroundImage:
-                case CSSPropertyWebkitMask:
+                case CSSPropertyWebkitMaskImage:
                     if (parseFillImage(currValue))
                         valueList->next();
                     break;
@@ -3757,7 +3760,7 @@ bool CSSParser::parseTransformOrigin(int propId, int& propId1, int& propId2, Ref
     switch (propId) {
         case CSSPropertyWebkitTransformOrigin:
             parseFillPosition(value, value2);
-            // Unlike the other functions, parseBackgroundPosition advances the valueList pointer
+            // Unlike the other functions, parseFillPosition advances the valueList pointer
             break;
         case CSSPropertyWebkitTransformOriginX: {
             bool xFound = false, yFound = true;

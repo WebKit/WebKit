@@ -356,7 +356,7 @@ void RenderBox::paintRootBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 
     int my = max(by, paintInfo.rect.y());
 
-    paintBackgrounds(paintInfo, bgColor, bgLayer, my, paintInfo.rect.height(), bx, by, bw, bh);
+    paintFillLayers(paintInfo, bgColor, bgLayer, my, paintInfo.rect.height(), bx, by, bw, bh);
 
     if (style()->hasBorder() && style()->display() != INLINE)
         paintBorder(paintInfo.context, tx, ty, w, h, style());
@@ -399,7 +399,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         // independent of the body.  Go through the DOM to get to the root element's render object,
         // since the root could be inline and wrapped in an anonymous block.
         if (!isBody() || !document()->isHTMLDocument() || document()->documentElement()->renderer()->style()->hasBackground())
-            paintBackgrounds(paintInfo, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
+            paintFillLayers(paintInfo, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
         if (style()->hasAppearance())
             theme()->paintDecorations(this, paintInfo, IntRect(tx, ty, w, h));
     }
@@ -409,20 +409,43 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         paintBorder(paintInfo.context, tx, ty, w, h, style());
 }
 
-void RenderBox::paintBackgrounds(const PaintInfo& paintInfo, const Color& c, const FillLayer* bgLayer,
-                                 int clipY, int clipH, int tx, int ty, int width, int height)
+void RenderBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!bgLayer)
+    if (!shouldPaintWithinRoot(paintInfo) || style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
 
-    paintBackgrounds(paintInfo, c, bgLayer->next(), clipY, clipH, tx, ty, width, height);
-    paintBackground(paintInfo, c, bgLayer, clipY, clipH, tx, ty, width, height);
+    int w = width();
+    int h = height() + borderTopExtra() + borderBottomExtra();
+    ty -= borderTopExtra();
+
+    // border-fit can adjust where we paint our border and background.  If set, we snugly fit our line box descendants.  (The iChat
+    // balloon layout is an example of this).
+    borderFitAdjust(tx, w);
+
+    int my = max(ty, paintInfo.rect.y());
+    int mh;
+    if (ty < paintInfo.rect.y())
+        mh = max(0, h - (paintInfo.rect.y() - ty));
+    else
+        mh = min(paintInfo.rect.height(), h);
+
+    paintFillLayers(paintInfo, Color(), style()->maskLayers(), my, mh, tx, ty, w, h);
 }
 
-void RenderBox::paintBackground(const PaintInfo& paintInfo, const Color& c, const FillLayer* bgLayer,
+void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer,
                                 int clipY, int clipH, int tx, int ty, int width, int height)
 {
-    paintBackgroundExtended(paintInfo, c, bgLayer, clipY, clipH, tx, ty, width, height);
+    if (!fillLayer)
+        return;
+
+    paintFillLayers(paintInfo, c, fillLayer->next(), clipY, clipH, tx, ty, width, height);
+    paintFillLayer(paintInfo, c, fillLayer, clipY, clipH, tx, ty, width, height);
+}
+
+void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer,
+                               int clipY, int clipH, int tx, int ty, int width, int height)
+{
+    paintFillLayerExtended(paintInfo, c, fillLayer, clipY, clipH, tx, ty, width, height);
 }
 
 IntSize RenderBox::calculateBackgroundSize(const FillLayer* bgLayer, int scaledWidth, int scaledHeight) const
@@ -622,8 +645,8 @@ void RenderBox::calculateBackgroundImageGeometry(const FillLayer* bgLayer, int t
     tileSize = IntSize(scaledImageWidth, scaledImageHeight);
 }
 
-void RenderBox::paintBackgroundExtended(const PaintInfo& paintInfo, const Color& c, const FillLayer* bgLayer, int clipY, int clipH,
-                                        int tx, int ty, int w, int h, InlineFlowBox* box)
+void RenderBox::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& c, const FillLayer* bgLayer, int clipY, int clipH,
+                                       int tx, int ty, int w, int h, InlineFlowBox* box)
 {
     GraphicsContext* context = paintInfo.context;
     bool includeLeftEdge = box ? box->includeLeftEdge() : true;
