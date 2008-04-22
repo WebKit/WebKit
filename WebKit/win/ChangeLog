@@ -9,6 +9,27 @@
 
 2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Reviewed by Darin.
+
+        Implement get_accName(), get_accValue(), get_accDescription(). Added
+        virtual methods that accessible objects can override to customize the
+        result.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accName): Report result of name().
+        (AccessibleBase::get_accValue): Report result of value().
+        (AccessibleBase::get_accDescription): Report result of description().
+        (AccessibleBase::name): Added; returns AccessibilityObject::title().
+        (AccessibleBase::value): Added; returns
+        AccessibilityObject::stringValue().
+        (AccessibleBase::description): Added; returns
+        AccessibilityObject::accessibilityDescription().
+        * AccessibleBase.h: Added declarations for name(), value(), and
+        description().
+        * ChangeLog: Fix my misuse of "definition."
+
+2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Fix build after r32231.
 
         * WebFrame.cpp:
@@ -42,7 +63,7 @@
         failure.
         (AccessibleBase::wrapper): Added; returns the wrapper for the
         AccessibilityObject. Creates one if necessary.
-        * AccessibleBase.h: Added definitions for wrapper() and
+        * AccessibleBase.h: Added declarations for wrapper() and
         getAccessibilityObjectForChild().
 
 2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
@@ -65,7 +86,7 @@
         * WebView.cpp:
         (WebView::AccessibleObjectFromWindow): Added; calls through to the
         AccessibleObjectFromWindow in the MSAA DLL.
-        * WebView.h: Added definition for AccessibleObjectFromWindow.
+        * WebView.h: Added declaration for AccessibleObjectFromWindow.
 
 2008-04-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
@@ -95,7 +116,7 @@
         * WebFrame.cpp:
         (WebFrame::accessible): Added; will return the root accessible object
         for this frame.
-        * WebFrame.h: Added definition for accessible().
+        * WebFrame.h: Added declaration for accessible().
         * WebView.cpp:
         (WebViewWndProc): Handle WM_GETOBJECT messages by calling onGetObject().
         (WebView::onGetObject): Added; enables the AXObjectCache in WebCore,
@@ -104,7 +125,7 @@
         LresultFromObject succeeds, it returns a reference to the accessible
         object to pass back to Windows. If not, we return false and let Windows
         handle the request through DefWindowProc.
-        * WebView.h: Added definition for onGetObject().
+        * WebView.h: Added declaration for onGetObject().
 
 2008-04-18  Brady Eidson  <beidson@apple.com>
 
