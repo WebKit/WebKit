@@ -62,13 +62,15 @@ img {
     height: 56px;
     display: -webkit-box;
     padding: 0 5px;
-    background-color: rgb(171, 171, 171);
-    background-image: url(Images/toolbarBackground.png);
-    background-repeat: repeat-x;
-    background-position: top;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(191, 191, 191)), to(rgb(151, 151, 151)));
     border-bottom: 1px solid rgb(80, 80, 80);
-    -webkit-background-size: auto 135%;
     -webkit-box-orient: horizontal;
+    -webkit-background-origin: padding;
+    -webkit-background-clip: padding;
+}
+
+body.inactive #toolbar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(233, 233, 233)), to(rgb(207, 207, 207)));
 }
 
 body.detached.platform-mac-leopard #toolbar {
@@ -1011,9 +1013,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
 }
 
 .pane > .title {
-    background-image: url(Images/paneHeader.png);
-    background-repeat: repeat-x;
-    background-position: bottom;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(221, 226, 239)), color-stop(0.5, rgb(220, 225, 238)), color-stop(0.5, rgb(194, 203, 219)), to(rgb(217, 222, 234)));
     height: 16px;
     padding: 0 6px;
     border-top: 1px solid rgb(129, 129, 129);
@@ -1021,10 +1021,12 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     font-weight: bold;
     font-size: 11px;
     color: rgb(85, 85, 85);
+    -webkit-background-origin: padding;
+    -webkit-background-clip: padding;
 }
 
 .pane > .title:active {
-    background-image: url(Images/paneHeaderActive.png);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(186, 191, 202)), color-stop(0.5, rgb(185, 190, 201)), color-stop(0.5, rgb(163, 171, 185)), to(rgb(183, 187, 197)));
 }
 
 .pane > .title::before {
@@ -1058,7 +1060,6 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     background-image: url(Images/paneGrowHandleLine.png), url(Images/paneBottomGrow.png);
     background-repeat: no-repeat, repeat-x;
     background-position: center center, bottom;
-    -webkit-background-size: auto 100%, auto 100%;
     height: 5px;
 }
 
@@ -1223,7 +1224,10 @@ body.inactive .sidebar {
 }
 
 .database-result-filler-row td {
-    background-image: url(Images/alternateTableRows.png);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(white), color-stop(0.5, white), color-stop(0.5, rgb(234, 243, 255)), to(rgb(234, 243, 255)));
+    -webkit-background-size: auto 32px;
+    -webkit-background-origin: padding;
+    -webkit-background-clip: padding;
 }
 
 .database-result-table {
@@ -1498,13 +1502,16 @@ body.inactive .sidebar {
     margin-left: -1px;
     border-left: 1px solid rgb(102, 102, 102);
     background-color: rgb(101, 111, 130);
-    background-image: url(Images/darkShadow.png);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.5)));
     background-repeat: repeat-x;
     background-position: bottom;
     text-align: center;
     text-shadow: black 0 1px 1px;
     white-space: nowrap;
     color: white;
+    -webkit-background-size: 1px 6px;
+    -webkit-background-origin: padding;
+    -webkit-background-clip: padding;
 }
 
 #resources-graph-legend {
@@ -1721,6 +1728,7 @@ body.inactive .sidebar {
     white-space: nowrap;
     margin-top: 1px;
     line-height: 34px;
+    border-top: 1px solid transparent;
 }
 
 .sidebar-tree .children {
@@ -1807,14 +1815,14 @@ body.inactive .sidebar-tree-item .disclosure-button:active {
     float: left;
     width: 32px;
     height: 32px;
-    margin-top: 2px;
+    margin-top: 1px;
     margin-right: 3px;
 }
 
 .sidebar-tree-item .status {
     float: right;
     height: 16px;
-    margin-top: 10px;
+    margin-top: 9px;
     margin-left: 4px;
     line-height: 1em;
 }
@@ -1869,44 +1877,32 @@ body.inactive .sidebar-tree-item.selected .status .bubble {
 }
 
 .sidebar-tree.small .sidebar-tree-item .status, .sidebar-tree .children.small .sidebar-tree-item .status, .sidebar-tree-item.small .status {
-    margin-top: 2px;
+    margin-top: 1px;
 }
 
 .sidebar-tree-item.selected {
     color: white;
-    background-image: url(Images/sidebarSelectionBackground.png);
-    background-repeat: repeat-x;
-    background-position: center;
-    background-color: rgb(143, 160, 193);
+    border-top: 1px solid rgb(145, 160, 192);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(162, 177, 207)), to(rgb(120, 138, 177)));
     text-shadow: rgba(0, 0, 0, 0.33) 0 1px 0;
     font-weight: bold;
-}
-
-.sidebar-tree.small .sidebar-tree-item.selected, .sidebar-tree .children.small .sidebar-tree-item.selected, .sidebar-tree-item.small.selected {
-    background-image: url(Images/sidebarSmallSelectionBackground.png);
+    -webkit-background-origin: padding;
+    -webkit-background-clip: padding;
 }
 
 .focused .sidebar-tree-item.selected {
-    background-image: url(Images/sidebarSelectionBackgroundFocused.png);
-    background-color: rgb(61, 118, 194);
-}
-
-.focused .sidebar-tree.small .sidebar-tree-item.selected, .focused .sidebar-tree .children.small .sidebar-tree-item.selected, .focused .sidebar-tree-item.small.selected {
-    background-image: url(Images/sidebarSmallSelectionBackgroundFocused.png);
+    border-top: 1px solid rgb(68, 128, 200);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(92, 147, 213)), to(rgb(21, 83, 170)));
 }
 
 body.inactive .sidebar-tree-item.selected {
-    background-image: url(Images/sidebarSelectionBackgroundInactive.png);
-    background-color: rgb(154, 154, 154);
-}
-
-body.inactive .sidebar-tree.small .sidebar-tree-item.selected, body.inactive .sidebar-tree .children.small .sidebar-tree-item.selected, body.inactive .sidebar-tree-item.small.selected {
-    background-image: url(Images/sidebarSmallSelectionBackgroundInactive.png);
+    border-top: 1px solid rgb(151, 151, 151);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(180, 180, 180)), to(rgb(138, 138, 138)));
 }
 
 .sidebar-tree-item .titles {
     position: relative;
-    top: 6px;
+    top: 5px;
     line-height: 11px;
     padding-bottom: 1px;
     text-overflow: ellipsis;
@@ -1915,11 +1911,11 @@ body.inactive .sidebar-tree.small .sidebar-tree-item.selected, body.inactive .si
 }
 
 .sidebar-tree-item .titles.no-subtitle {
-    top: 11px;
+    top: 10px;
 }
 
 .sidebar-tree.small .sidebar-tree-item .titles, .sidebar-tree .children.small .sidebar-tree-item .titles, .sidebar-tree-item.small .titles {
-    top: 3px;
+    top: 2px;
     line-height: normal;
 }
 

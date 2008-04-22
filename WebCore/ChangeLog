@@ -1,3 +1,29 @@
+2008-04-21  Timothy Hatcher  <timothy@apple.com>
+
+        Use CSS gradients to replace many image files in the Web Inspector.
+
+        Rubber-stamped by Adam Roben.
+
+        * page/inspector/Images/alternateTableRows.png: Removed.
+        * page/inspector/Images/darkShadow.png: Removed.
+        * page/inspector/Images/paneHeader.png: Removed.
+        * page/inspector/Images/paneHeaderActive.png: Removed.
+        * page/inspector/Images/sidebarSelection.png: Removed.
+        * page/inspector/Images/sidebarSelectionBackground.png: Removed.
+        * page/inspector/Images/sidebarSelectionBackgroundFocused.png: Removed.
+        * page/inspector/Images/sidebarSelectionBackgroundInactive.png: Removed.
+        * page/inspector/Images/sidebarSelectionBlurred.png: Removed.
+        * page/inspector/Images/sidebarSelectionBlurredTall.png: Removed.
+        * page/inspector/Images/sidebarSelectionGray.png: Removed.
+        * page/inspector/Images/sidebarSelectionGrayTall.png: Removed.
+        * page/inspector/Images/sidebarSelectionTall.png: Removed.
+        * page/inspector/Images/sidebarSmallSelectionBackground.png: Removed.
+        * page/inspector/Images/sidebarSmallSelectionBackgroundFocused.png: Removed.
+        * page/inspector/Images/sidebarSmallSelectionBackgroundInactive.png: Removed.
+        * page/inspector/Images/toolbarBackground.png: Removed.
+        * page/inspector/Images/toolbarBackgroundInactive.png: Removed.
+        * page/inspector/inspector.css:
+
 2008-04-22  Andre Poenitz  <andre.poenitz@trolltech.com>
 
         Reviewed by Simon.
