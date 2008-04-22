@@ -11,6 +11,18 @@
 
         Reviewed by Darin.
 
+        Implement get_accRole().
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accRole): Report the result of role().
+        (MSAARole): Added; returns the MSAA role for a WebCore role.
+        (AccessibleBase::role): Return the MSAA role for the object's roleValue.
+        * AccessibleBase.h: Add declaration for role().
+
+2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Darin.
+
         Implement get_accName(), get_accValue(), get_accDescription(). Added
         virtual methods that accessible objects can override to customize the
         result.

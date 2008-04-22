@@ -190,9 +190,23 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accDescription(VARIANT vChild, BST
     return S_FALSE;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accRole(VARIANT, VARIANT*)
+HRESULT STDMETHODCALLTYPE AccessibleBase::get_accRole(VARIANT vChild, VARIANT* pvRole)
 {
-    return E_NOTIMPL;
+    if (!pvRole)
+        return E_POINTER;
+
+    ::VariantInit(pvRole);
+    pvRole->vt = VT_EMPTY;
+
+    AccessibilityObject* childObj;
+    HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
+
+    if (FAILED(hr))
+        return hr;
+
+    pvRole->vt = VT_I4;
+    pvRole->lVal = wrapper(childObj)->role();
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE AccessibleBase::get_accState(VARIANT, VARIANT*)
@@ -273,6 +287,54 @@ String AccessibleBase::description() const
     // 'Description: ' part of this string, it will be parsed out by assistive
     // technologies."
     return "Description: " + desc;
+}
+
+static long MSAARole(AccessibilityRole role)
+{
+    switch (role) {
+        case WebCore::ButtonRole:
+            return ROLE_SYSTEM_PUSHBUTTON;
+        case WebCore::RadioButtonRole:
+            return ROLE_SYSTEM_RADIOBUTTON;
+        case WebCore::CheckBoxRole:
+            return ROLE_SYSTEM_CHECKBUTTON;
+        case WebCore::SliderRole:
+            return ROLE_SYSTEM_SLIDER;
+        case WebCore::TabGroupRole:
+            return ROLE_SYSTEM_PAGETABLIST;
+        case WebCore::TextFieldRole:
+        case WebCore::TextAreaRole:
+        case WebCore::ListMarkerRole:
+            return ROLE_SYSTEM_TEXT;
+        case WebCore::StaticTextRole:
+            return ROLE_SYSTEM_STATICTEXT;
+        case WebCore::OutlineRole:
+            return ROLE_SYSTEM_OUTLINE;
+        case WebCore::ColumnRole:
+            return ROLE_SYSTEM_COLUMN;
+        case WebCore::RowRole:
+            return ROLE_SYSTEM_ROW;
+        case WebCore::GroupRole:
+            return ROLE_SYSTEM_GROUPING;
+        case WebCore::ListRole:
+            return ROLE_SYSTEM_LIST;
+        case WebCore::TableRole:
+            return ROLE_SYSTEM_TABLE;
+        case WebCore::LinkRole:
+        case WebCore::WebCoreLinkRole:
+            return ROLE_SYSTEM_LINK;
+        case WebCore::ImageMapRole:
+        case WebCore::ImageRole:
+            return ROLE_SYSTEM_GRAPHIC;
+        default:
+            // This is the default role for MSAA.
+            return ROLE_SYSTEM_CLIENT;
+    }
+}
+
+long AccessibleBase::role() const
+{
+    return MSAARole(m_object->roleValue());
 }
 
 HRESULT AccessibleBase::getAccessibilityObjectForChild(VARIANT vChild, AccessibilityObject*& childObj) const
