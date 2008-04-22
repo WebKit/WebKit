@@ -1,3 +1,14 @@
+2008-04-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - preparation https://bugs.webkit.org/show_bug.cgi?id=3729
+          <rdar://problem/4036353> REGRESSION: arrow keys move insertion bar backwards in RTL text
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Make sure to give the
+        trailing white space a bidi level consistent with its position.
+
 2008-04-22  Timothy Hatcher  <timothy@apple.com>
 
         Remove many unused Web Inspector images.

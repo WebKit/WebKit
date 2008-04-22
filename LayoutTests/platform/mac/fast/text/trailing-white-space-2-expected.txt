@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 185: "Lorem ipsum dolor"
         RenderInline {SPAN} at (0,0) size 79x46 [bgcolor=#FFC0CB]
           RenderText {#text} at (0,0) size 79x46
-            text run at (0,0) width 0: " "
+            text run at (0,0) width 0 RTL: " "
             text run at (0,23) width 79: "sit amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (440,70) size 200x46 [bgcolor=#FFFFE0]
@@ -48,7 +48,7 @@ layer at (0,0) size 800x600
           text run at (7,0) width 185: "Lorem ipsum dolor"
         RenderInline {SPAN} at (0,0) size 138x46 [bgcolor=#FFC0CB]
           RenderText {#text} at (1,0) size 138x46
-            text run at (1,0) width 6: " "
+            text run at (1,0) width 6 RTL: " "
             text run at (60,23) width 79: "sit amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (8,132) size 200x46 [bgcolor=#FFFFE0]
@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
           text run at (15,0) width 185: "Lorem ipsum dolor"
         RenderInline {SPAN} at (0,0) size 191x46 [bgcolor=#FFC0CB]
           RenderText {#text} at (9,0) size 191x46
-            text run at (9,0) width 6: " "
+            text run at (9,0) width 6 RTL: " "
             text run at (121,23) width 79: "sit amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (224,132) size 200x46 [bgcolor=#FFFFE0]
@@ -64,7 +64,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 200: "Lorem ipsum dolor"
         RenderInline {SPAN} at (0,0) size 200x46 [bgcolor=#FFC0CB]
           RenderText {#text} at (0,0) size 200x46
-            text run at (0,0) width 0: " "
+            text run at (0,0) width 0 RTL: " "
             text run at (121,23) width 79: "sit amet"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (440,132) size 200x46 [bgcolor=#FFFFE0]
@@ -73,7 +73,7 @@ layer at (0,0) size 800x600
           text run at (133,0) width 45 RTL: "\x{5D0}\x{5E0}\x{5D8}\x{5E3}"
         RenderInline {SPAN} at (0,0) size 184x46 [bgcolor=#FFC0CB]
           RenderText {#text} at (178,0) size 184x46
-            text run at (178,0) width 6 RTL: " "
+            text run at (178,0) width 6: " "
             text run at (0,23) width 40 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
             text run at (40,23) width 55: " amet"
         RenderText {#text} at (0,0) size 0x0
@@ -83,7 +83,7 @@ layer at (0,0) size 800x600
           text run at (144,0) width 45 RTL: "\x{5D0}\x{5E0}\x{5D8}\x{5E3}"
         RenderInline {SPAN} at (0,0) size 143x46 [bgcolor=#FFC0CB]
           RenderText {#text} at (189,0) size 143x46
-            text run at (189,0) width 6 RTL: " "
+            text run at (189,0) width 6: " "
             text run at (52,23) width 40 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
             text run at (92,23) width 55: " amet"
         RenderText {#text} at (0,0) size 0x0
@@ -93,7 +93,7 @@ layer at (0,0) size 800x600
           text run at (155,0) width 45 RTL: "\x{5D0}\x{5E0}\x{5D8}\x{5E3}"
         RenderInline {SPAN} at (0,0) size 95x46 [bgcolor=#FFC0CB]
           RenderText {#text} at (200,0) size 95x46
-            text run at (200,0) width 0 RTL: " "
+            text run at (200,0) width 0: " "
             text run at (105,23) width 40 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
             text run at (145,23) width 55: " amet"
         RenderText {#text} at (0,0) size 0x0
@@ -103,7 +103,7 @@ layer at (0,0) size 800x600
           text run at (155,0) width 45 RTL: "\x{5D0}\x{5E0}\x{5D8}\x{5E3}"
         RenderInline {SPAN} at (0,0) size 200x46 [bgcolor=#FFC0CB]
           RenderText {#text} at (200,0) size 200x46
-            text run at (200,0) width 0 RTL: " "
+            text run at (200,0) width 0: " "
             text run at (0,23) width 40 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
             text run at (40,23) width 55: " amet"
         RenderText {#text} at (0,0) size 0x0
