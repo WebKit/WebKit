@@ -1,3 +1,19 @@
+2008-04-23  Daniel Zucker  <zucker@wake3.com>
+
+        Reviewed by Adam Roben.
+
+        Fix build errors needed to compile Curl in Cairo build.  Add stubs for
+        didReceiveAuthenticationChallenge, receivedCredential,
+        receivedRequestToContinueWithoutCredential, and receivedCancellation.
+        <https://bugs.webkit.org/show_bug.cgi?id=18468>
+
+        * platform/network/ResourceHandle.h:  
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::receivedCancellation):
+
 2008-04-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

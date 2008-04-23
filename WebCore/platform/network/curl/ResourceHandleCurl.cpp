@@ -176,4 +176,25 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
     response = syncLoader.resourceResponse();
 }
 
+//stubs needed for windows version
+void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge&) 
+{
+    notImplemented();
+}
+
+void ResourceHandle::receivedCredential(const AuthenticationChallenge&, const Credential&) 
+{
+    notImplemented();
+}
+
+void ResourceHandle::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&) 
+{
+    notImplemented();
+}
+
+void ResourceHandle::receivedCancellation(const AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
 } // namespace WebCore

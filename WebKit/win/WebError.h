@@ -33,6 +33,8 @@
 #include <WebCore/ResourceError.h>
 #pragma warning(pop)
 
+#include <wtf/RetainPtr.h>
+
 class WebError : public IWebError, IWebErrorPrivate {
 public:
     static WebError* createInstance(const WebCore::ResourceError&, IPropertyBag* userInfo = 0);

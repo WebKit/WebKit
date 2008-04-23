@@ -30,6 +30,9 @@
 #include "HTTPHeaderMap.h"
 #include <wtf/OwnPtr.h>
 
+#if PLATFORM(CF)
+typedef const struct __CFData * CFDataRef;
+#endif
 
 #if PLATFORM(WIN)
 typedef unsigned long DWORD;
@@ -103,7 +106,7 @@ public:
     
     ~ResourceHandle();
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL)
     void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
     void receivedCredential(const AuthenticationChallenge&, const Credential&);
     void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);

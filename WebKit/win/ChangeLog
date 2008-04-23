@@ -2,6 +2,14 @@
 
         Reviewed by Adam Roben.
 
+        <https://bugs.webkit.org/show_bug.cgi?id=18468>
+
+        * WebError.h:  include RetainPtr.h to fix build errors in Cairo build
+
+2008-04-23  Daniel Zucker  <zucker@wake3.com>
+
+        Reviewed by Adam Roben.
+
         Move the location of #if USE(CFNETWORK) to fix a cairo/curl build error.
         <https://bugs.webkit.org/show_bug.cgi?id=18470>
 
