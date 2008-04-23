@@ -1,3 +1,26 @@
+2008-04-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Make the KJSProxy and FrameLoader member variables instead of pointers
+        in FramePrivate in a bid to do a little clean up before the last of the
+        split window patches.  Also, make the KJSProxy not lazily created, as the
+        real benefit comes from lazily creating the JSDOMWindowWrapper, which we
+        still do.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::init):
+        (WebCore::Frame::loader):
+        (WebCore::Frame::scriptProxy):
+        (WebCore::Frame::document):
+        (WebCore::Frame::setDocument):
+        (WebCore::Frame::clearScriptProxy):
+        (WebCore::Frame::pageDestroyed):
+        (WebCore::FramePrivate::FramePrivate):
+        (WebCore::FramePrivate::~FramePrivate):
+        * page/FramePrivate.h:
+
 2008-04-22  Anatoli Papirovski  <apapirovski@mac.com>
 
         Reviewed by Dan Bernstein.

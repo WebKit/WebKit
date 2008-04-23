@@ -4,7 +4,7 @@
  *                     2000-2001 Simon Hausmann <hausmann@kde.org>
  *                     2000-2001 Dirk Mueller <mueller@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
@@ -29,10 +29,12 @@
 #include "AnimationController.h"
 #include "Editor.h"
 #include "EventHandler.h"
+#include "FrameLoader.h"
 #include "FrameTree.h"
 #include "Range.h"
 #include "SelectionController.h"
 #include "StringHash.h"
+#include "kjs_proxy.h"
 
 namespace KJS {
     class Interpreter;
@@ -70,13 +72,14 @@ namespace WebCore {
 
         Page* m_page;
         FrameTree m_treeNode;
+        FrameLoader m_loader;
         RefPtr<DOMWindow> m_domWindow;
 
         HTMLFrameOwnerElement* m_ownerElement;
         RefPtr<FrameView> m_view;
         RefPtr<Document> m_doc;
 
-        KJSProxy* m_jscript;
+        KJSProxy m_jscript;
 
         String m_kjsStatusBarText;
         String m_kjsDefaultStatusBarText;
@@ -101,8 +104,6 @@ namespace WebCore {
 
         Timer<Frame> m_lifeSupportTimer;
 
-        FrameLoader* m_loader;
-        
         RefPtr<Node> m_elementToDraw;
         PaintRestriction m_paintRestriction;
         

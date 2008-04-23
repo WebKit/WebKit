@@ -173,8 +173,8 @@ Frame::~Frame()
     --FrameCounter::count;
 #endif
 
-    if (d->m_jscript && d->m_jscript->haveWindowWrapper())
-        d->m_jscript->windowWrapper()->disconnectFrame();
+    if (d->m_jscript.haveWindowWrapper())
+        d->m_jscript.windowWrapper()->disconnectFrame();
 
     disconnectOwnerElement();
     
@@ -200,12 +200,12 @@ Frame::~Frame()
 
 void Frame::init()
 {
-    d->m_loader->init();
+    d->m_loader.init();
 }
 
 FrameLoader* Frame::loader() const
 {
-    return d->m_loader;
+    return &d->m_loader;
 }
 
 FrameView* Frame::view() const
@@ -234,18 +234,14 @@ void Frame::setView(FrameView* view)
     loader()->resetMultipleFormSubmissionProtection();
 }
 
-KJSProxy *Frame::scriptProxy()
+KJSProxy* Frame::scriptProxy()
 {
-    if (!d->m_jscript)
-        d->m_jscript = new KJSProxy(this);
-    return d->m_jscript;
+    return &d->m_jscript;
 }
 
-Document *Frame::document() const
+Document* Frame::document() const
 {
-    if (d)
-        return d->m_doc.get();
-    return 0;
+    return d->m_doc.get();
 }
 
 void Frame::setDocument(PassRefPtr<Document> newDoc)
@@ -261,10 +257,9 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
         
     if (d->m_doc && !d->m_doc->attached())
         d->m_doc->attach();
-    
+
     // Remove the cached 'document' property, which is now stale.
-    if (d->m_jscript)
-        d->m_jscript->clearDocumentWrapper();
+    d->m_jscript.clearDocumentWrapper();
 }
 
 Settings* Frame::settings() const
@@ -1116,8 +1111,7 @@ NPObject* Frame::windowScriptNPObject()
     
 void Frame::clearScriptProxy()
 {
-    if (d->m_jscript)
-        d->m_jscript->clear();
+    d->m_jscript.clear();
 }
 
 void Frame::clearDOMWindow()
@@ -1720,7 +1714,7 @@ void Frame::pageDestroyed()
         d->m_page->focusController()->setFocusedFrame(0);
 
     // This will stop any JS timers
-    if (d->m_jscript && d->m_jscript->haveWindowWrapper()) {
+    if (d->m_jscript.haveWindowWrapper()) {
         if (JSDOMWindowWrapper* windowWrapper = toJSDOMWindowWrapper(this))
             windowWrapper->disconnectFrame();
     }
@@ -1902,8 +1896,9 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
                            FrameLoaderClient* frameLoaderClient)
     : m_page(page)
     , m_treeNode(thisFrame, parent)
+    , m_loader(thisFrame, frameLoaderClient)
     , m_ownerElement(ownerElement)
-    , m_jscript(0)
+    , m_jscript(thisFrame)
     , m_zoomFactor(parent ? parent->d->m_zoomFactor : 1.0f)
     , m_zoomFactorIsTextOnly(parent ? parent->d->m_zoomFactorIsTextOnly : true)
     , m_selectionGranularity(CharacterGranularity)
@@ -1916,7 +1911,6 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_caretPaint(true)
     , m_isPainting(false)
     , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
-    , m_loader(new FrameLoader(thisFrame, frameLoaderClient))
     , m_paintRestriction(PaintRestrictionNone)
     , m_highlightTextMatches(false)
     , m_inViewSourceMode(false)
@@ -1937,8 +1931,6 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
 
 FramePrivate::~FramePrivate()
 {
-    delete m_jscript;
-    delete m_loader;
 }
 
 } // namespace WebCore
