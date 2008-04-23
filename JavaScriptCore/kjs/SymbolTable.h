@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,13 +52,8 @@ namespace KJS {
 
     static ALWAYS_INLINE size_t missingSymbolMarker() { return std::numeric_limits<size_t>::max(); }
 
-    struct SymbolTableIndexHashTraits {
-        typedef size_t TraitType;
-        typedef SymbolTableIndexHashTraits StorageTraits;
+    struct SymbolTableIndexHashTraits : HashTraits<size_t> {
         static size_t emptyValue() { return missingSymbolMarker(); }
-        static const bool emptyValueIsZero = false;
-        static const bool needsDestruction = false;
-        static const bool needsRef = false;
     };
 
     typedef HashMap<RefPtr<UString::Rep>, size_t, IdentifierRepHash, IdentifierRepHashTraits, SymbolTableIndexHashTraits> SymbolTable;

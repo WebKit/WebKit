@@ -1,3 +1,12 @@
+2008-04-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - simplify use of HashTraits to prepare for some upcoming hash table changes
+
+        * kjs/SymbolTable.h: Made SymbolTableIndexHashTraits derive from HashTraits<size_t>
+        and specialize only the empty value.
+
 2008-04-23  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
