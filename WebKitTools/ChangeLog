@@ -1,3 +1,17 @@
+2008-04-23  Adam Roben  <aroben@apple.com>
+
+        Make crashes be reported as crashes, not hangs
+
+        Reviewed by David Kilzer.
+
+        * Scripts/run-webkit-tests:
+        (top level): Use the new status field of the output from
+        readFromDumpToolWithTimer to determine if the test crashed or hung.
+        (sub readFromDumpToolWithTimer):
+          - If we fail to read a line and $! is not EAGAIN, then we've crashed
+            and should not try to read any more.
+          - Changed the timedout field to a more general status field.
+
 2008-04-22  David Kilzer  <ddkilzer@apple.com>
 
         Bug 18683: update-webkit returns 0 even if it fails

@@ -559,14 +559,15 @@ for my $test (@tests) {
     }
 
     my $actualRead = readFromDumpToolWithTimer(IN);
-    my $errorRead = readFromDumpToolWithTimer(ERROR, $actualRead->{timedout});
+    my $errorRead = readFromDumpToolWithTimer(ERROR, $actualRead->{status} eq "timedOut");
 
     my $actual = $actualRead->{output};
     my $error = $errorRead->{output};
 
-    if ($actualRead->{timedout} || $errorRead->{timedout}) {
-        testCrashedOrTimedOut($test, $base, 0, $actual, $error);
-        countFinishedTest($test, $base, "timedout", 0);
+    unless ($actualRead->{status} eq "success" && $errorRead->{status} eq "success") {
+        my $crashed = $actualRead->{status} eq "crashed" || $errorRead->{status} eq "crashed";
+        testCrashedOrTimedOut($test, $base, $crashed, $actual, $error);
+        countFinishedTest($test, $base, $crashed ? "crash" : "timedout", 0);
         next;
      }
 
@@ -1709,16 +1710,21 @@ sub readFromDumpToolWithTimer(*;$)
     my $timeOfLastSuccessfulRead = time;
 
     my @output = ();
-    my $timedOut = 0;
+    my $status = "success";
 
     while (1) {
         if (time - $timeOfLastSuccessfulRead > $maximumSecondsWithoutOutput) {
-            $timedOut = 1;
+            $status = "timedOut";
             last;
         }
 
         my $line = readline($fh);
-        if (!defined($line) && $! == EAGAIN) {
+        if (!defined($line)) {
+            if ($! != EAGAIN) {
+                $status = "crashed";
+                last;
+            }
+
             if ($dontWaitForTimeOut) {
                 last;
             }
@@ -1735,7 +1741,7 @@ sub readFromDumpToolWithTimer(*;$)
     }
 
     setFileHandleNonBlocking($fh, 0);
-    return { output => join("", @output), timedout => $timedOut };
+    return { output => join("", @output), status => $status };
 }
 
 sub setFileHandleNonBlocking(*$)
