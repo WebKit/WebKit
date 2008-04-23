@@ -121,8 +121,9 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-mask-position: 0% 0%
     -webkit-mask-repeat: repeat
     -webkit-mask-clip: border
+    -webkit-mask-composite: source-over
     -webkit-mask-origin: border
-    -webkit-mask-size: 100% 100%
+    -webkit-mask-size: auto auto
     -webkit-nbsp-mode: normal
     -webkit-rtl-ordering: logical
     -webkit-text-decorations-in-effect: none

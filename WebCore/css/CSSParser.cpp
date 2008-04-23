@@ -878,6 +878,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBackgroundRepeat:
     case CSSPropertyWebkitMaskAttachment:
     case CSSPropertyWebkitMaskClip:
+    case CSSPropertyWebkitMaskComposite:
     case CSSPropertyWebkitMaskImage:
     case CSSPropertyWebkitMaskOrigin:
     case CSSPropertyWebkitMaskPosition:
@@ -2152,6 +2153,7 @@ bool CSSParser::parseFillProperty(int propId, int& propId1, int& propId2,
                     break;
                 }
                 case CSSPropertyWebkitBackgroundComposite:
+                case CSSPropertyWebkitMaskComposite:
                     if ((val->id >= CSSValueClear && val->id <= CSSValuePlusLighter) || val->id == CSSValueHighlight) {
                         currValue = new CSSPrimitiveValue(val->id);
                         valueList->next();

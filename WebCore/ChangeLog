@@ -1,5 +1,25 @@
 2008-04-22  David Hyatt  <hyatt@apple.com>
 
+        Add support for mask-composite to match background-composite.
+
+        Reviewed by Sam Weinig
+
+        Added fast/backgrounds/mask-composite.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintMask):
+
+2008-04-22  David Hyatt  <hyatt@apple.com>
+
         Fix for bug 18688, background-color stopped painting on inlines.  Fix a virtual function
         misnaming that led to the derived class not getting called properly.
 

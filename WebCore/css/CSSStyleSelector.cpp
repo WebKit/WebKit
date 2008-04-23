@@ -2352,6 +2352,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitMaskClip:
         HANDLE_MASK_VALUE(clip, Clip, value)
         return;
+    case CSSPropertyWebkitMaskComposite:
+        HANDLE_MASK_VALUE(composite, Composite, value)
+        return;
     case CSSPropertyWebkitMaskOrigin:
         HANDLE_MASK_VALUE(origin, Origin, value)
         return;

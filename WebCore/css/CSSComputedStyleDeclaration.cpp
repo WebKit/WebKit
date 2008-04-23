@@ -165,6 +165,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitMaskPosition,
     CSSPropertyWebkitMaskRepeat,
     CSSPropertyWebkitMaskClip,
+    CSSPropertyWebkitMaskComposite,
     CSSPropertyWebkitMaskOrigin,
     CSSPropertyWebkitMaskSize,
     CSSPropertyWebkitNbspMode,
@@ -637,6 +638,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->maskAttachment())
                 return new CSSPrimitiveValue(CSSValueScroll);
             return new CSSPrimitiveValue(CSSValueFixed);
+        case CSSPropertyWebkitMaskComposite:
+            return new CSSPrimitiveValue(style->maskComposite());
         case CSSPropertyWebkitMaskClip:
         case CSSPropertyWebkitMaskOrigin: {
             EFillBox box = (propertyID == CSSPropertyWebkitMaskClip ? style->maskClip() : style->maskOrigin());

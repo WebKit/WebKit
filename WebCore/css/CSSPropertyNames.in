@@ -201,6 +201,7 @@ zoom
 -webkit-mask
 -webkit-mask-attachment
 -webkit-mask-clip
+-webkit-mask-composite
 -webkit-mask-image
 -webkit-mask-origin
 -webkit-mask-position
