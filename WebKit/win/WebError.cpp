@@ -207,6 +207,7 @@ HRESULT STDMETHODCALLTYPE WebError::sslPeerCertificate(
         return E_POINTER;
     *result = 0;
 
+#if USE(CFNETWORK)
     if (!m_cfErrorUserInfoDict) {
         // copy userinfo from CFErrorRef
         CFErrorRef cfError = m_error;
@@ -216,7 +217,6 @@ HRESULT STDMETHODCALLTYPE WebError::sslPeerCertificate(
     if (!m_cfErrorUserInfoDict)
         return E_FAIL;
 
-#if USE(CFNETWORK)
     void* data = wkGetSSLPeerCertificateData(m_cfErrorUserInfoDict.get());
     if (!data)
         return E_FAIL;

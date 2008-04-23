@@ -1,3 +1,13 @@
+2008-04-23  Daniel Zucker  <zucker@wake3.com>
+
+        Reviewed by Adam Roben.
+
+        Move the location of #if USE(CFNETWORK) to fix a cairo/curl build error.
+        <https://bugs.webkit.org/show_bug.cgi?id=18470>
+
+        * WebError.cpp:
+        (WebError::sslPeerCertificate):
+
 2008-04-22  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Sam.
