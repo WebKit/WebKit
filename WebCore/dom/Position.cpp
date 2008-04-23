@@ -375,13 +375,40 @@ Position Position::upstream() const
 
             unsigned textOffset = currentPos.offsetInLeafNode();
             RenderText* textRenderer = static_cast<RenderText*>(renderer);
+            InlineTextBox* lastTextBox = textRenderer->lastTextBox();
             for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-                if (textOffset > box->start() && textOffset <= box->start() + box->len())
-                    return currentPos;
-                    
-                if (box != textRenderer->lastTextBox() && 
-                    !box->nextOnLine() && 
-                    textOffset == box->start() + box->len() + 1)
+                if (textOffset <= box->start() + box->len()) {
+                    if (textOffset > box->start())
+                        return currentPos;
+                    continue;
+                }
+
+                if (box == lastTextBox || textOffset != box->start() + box->len() + 1)
+                    continue;
+
+                // The text continues on the next line only if the last text box is not on this line and
+                // none of the boxes on this line have a larger start offset.
+
+                bool continuesOnNextLine = true;
+                InlineBox* otherBox = box;
+                while (continuesOnNextLine) {
+                    otherBox = otherBox->nextLeafChild();
+                    if (!otherBox)
+                        break;
+                    if (otherBox == lastTextBox || otherBox->object() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() > textOffset)
+                        continuesOnNextLine = false;
+                }
+
+                otherBox = box;
+                while (continuesOnNextLine) {
+                    otherBox = otherBox->prevLeafChild();
+                    if (!otherBox)
+                        break;
+                    if (otherBox == lastTextBox || otherBox->object() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() > textOffset)
+                        continuesOnNextLine = false;
+                }
+
+                if (continuesOnNextLine)
                     return currentPos;
             }
         }
@@ -459,17 +486,42 @@ Position Position::downstream() const
             }
 
             unsigned textOffset = currentPos.offsetInLeafNode();
-
             RenderText* textRenderer = static_cast<RenderText*>(renderer);
+            InlineTextBox* lastTextBox = textRenderer->lastTextBox();
             for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-                if (textOffset >= box->start() && textOffset <= box->end())
-                    return currentPos;
-                
-                if (box != textRenderer->lastTextBox() && 
-                     !box->nextOnLine() &&
-                     textOffset == box->start() + box->len()) {
-                    return currentPos;
+                if (textOffset <= box->end()) {
+                    if (textOffset >= box->start())
+                        return currentPos;
+                    continue;
                 }
+
+                if (box == lastTextBox || textOffset != box->start() + box->len())
+                    continue;
+
+                // The text continues on the next line only if the last text box is not on this line and
+                // none of the boxes on this line have a larger start offset.
+
+                bool continuesOnNextLine = true;
+                InlineBox* otherBox = box;
+                while (continuesOnNextLine) {
+                    otherBox = otherBox->nextLeafChild();
+                    if (!otherBox)
+                        break;
+                    if (otherBox == lastTextBox || otherBox->object() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() >= textOffset)
+                        continuesOnNextLine = false;
+                }
+
+                otherBox = box;
+                while (continuesOnNextLine) {
+                    otherBox = otherBox->prevLeafChild();
+                    if (!otherBox)
+                        break;
+                    if (otherBox == lastTextBox || otherBox->object() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() >= textOffset)
+                        continuesOnNextLine = false;
+                }
+
+                if (continuesOnNextLine)
+                    return currentPos;
             }
         }
     }

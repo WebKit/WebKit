@@ -1,3 +1,15 @@
+2008-04-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test that moving forward through bidirectional text does not skip the
+          position after the last character on the line
+
+        * editing/selection/move-past-trailing-space.html: Added.
+        * platform/mac/editing/selection/move-past-trailing-space-expected.checksum: Added.
+        * platform/mac/editing/selection/move-past-trailing-space-expected.png: Added.
+        * platform/mac/editing/selection/move-past-trailing-space-expected.txt: Added.
+
 2008-04-22  Anatoli Papirovski  <apapirovski@mac.com>
 
         Reviewed by Dan Bernstein.

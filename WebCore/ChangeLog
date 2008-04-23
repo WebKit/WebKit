@@ -1,3 +1,19 @@
+2008-04-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix a bug where moving forward in bidirectional text skips over the
+          position after the end of the line
+
+        Test: editing/selection/move-past-trailing-space.html
+
+        * dom/Position.cpp:
+        (WebCore::Position::upstream): Changed the logic for identifying when a
+        position is after the last character of a text box of a text node that
+        continues on the next line, to make it work correctly when boxes are not
+        laid out in logical order.
+        (WebCore::Position::downstream): Ditto.
+
 2008-04-23  Brad Hughes  <bhughes@trolltech.com>
 
         Reviewed by Simon.
