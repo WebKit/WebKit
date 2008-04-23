@@ -1,3 +1,12 @@
+2008-04-23  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix compilation against Qt 4.3
+
+        * Api/qwebpage.cpp:
+        (QWebPage::userAgentForUrl):
+        * QtLauncher/main.cpp:
+        (main):
+
 2008-04-23  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.

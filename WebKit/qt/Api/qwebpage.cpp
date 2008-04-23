@@ -2023,9 +2023,11 @@ QString QWebPage::userAgentForUrl(const QUrl& url) const
     QString appName = QCoreApplication::applicationName();
     if (!appName.isEmpty()) {
         ua.append(QLatin1Char(' ') + appName);
+#if QT_VERSION >= 0x040400
         QString appVer = QCoreApplication::applicationVersion();
         if (!appVer.isEmpty())
             ua.append(QLatin1Char('/') + appVer);
+#endif
     } else {
         // Qt version
         ua.append(QLatin1String("Qt/"));

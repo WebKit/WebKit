@@ -408,7 +408,9 @@ int main(int argc, char **argv)
     QWebSettings::setMaximumPagesInCache(4);
 
     app.setApplicationName("QtLauncher");
+#if QT_VERSION >= 0x040400
     app.setApplicationVersion("0.1");
+#endif
 
     QWebSettings::setObjectCacheCapacities((16*1024*1024)/8, (16*1024*1024)/8, 16*1024*1024);
 
