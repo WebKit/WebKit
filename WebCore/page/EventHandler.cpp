@@ -1475,21 +1475,14 @@ static EventTargetNode* eventTargetNodeForDocument(Document* doc)
 
 bool EventHandler::handleAccessKey(const PlatformKeyboardEvent& evt)
 {
-#if PLATFORM(MAC) || PLATFORM(QT)
-    if (evt.ctrlKey())
-#else
-    if (evt.altKey())
-#endif
-    {
-        String key = evt.unmodifiedText();
-        Element* elem = m_frame->document()->getElementByAccessKey(key.lower());
-        if (elem) {
-            elem->accessKeyAction(false);
-            return true;
-        }
-    }
-
-    return false;
+    if ((evt.modifiers() & s_accessKeyModifiers) != s_accessKeyModifiers)
+        return false;
+    String key = evt.unmodifiedText();
+    Element* elem = m_frame->document()->getElementByAccessKey(key.lower());
+    if (!elem)
+        return false;
+    elem->accessKeyAction(false);
+    return true;
 }
 
 #if !PLATFORM(MAC)

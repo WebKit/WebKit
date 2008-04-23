@@ -1,3 +1,27 @@
+2008-04-22  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Sam.
+
+        Add a method to query which modifier keys the platform uses for access
+        key actions.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleAccessKey): Bitwise and the event's
+        modifier keys with the platform's access key modifier mask to determine
+        whether this event can perform an access key action.
+        * page/EventHandler.h: Added s_accessKeyModifiers, a platform-defined
+        mask of modifier keys used for access key actions, and a getter.
+        * page/mac/EventHandlerMac.mm: Use PlatformKeyboardEvent::CtrlKey for
+        access key actions.
+        * page/qt/EventHandlerQt.cpp: Same.
+        * page/gtk/EventHandlerGtk.cpp: Use AltKey.
+        * page/win/EventHandlerWin.cpp: Same.
+        * page/wx/EventHandlerWx.cpp: Same.
+        * platform/PlatformKeyboardEvent.h: Added an enum, ModifierKey.
+        (WebCore::PlatformKeyboardEvent::):
+        (WebCore::PlatformKeyboardEvent::modifiers): Return which modifier keys
+        were active, a combination of ModifierKey values.
+
 2008-04-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

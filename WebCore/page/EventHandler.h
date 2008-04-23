@@ -136,6 +136,7 @@ public:
 
     bool needsKeyboardEventDisambiguationQuirks() const;
 
+    static unsigned accessKeyModifiers() { return s_accessKeyModifiers; }
     bool handleAccessKey(const PlatformKeyboardEvent&);
     bool keyEvent(const PlatformKeyboardEvent&);
     void defaultKeyboardEventHandler(KeyboardEvent*);
@@ -311,6 +312,8 @@ private:
     IntPoint m_mouseDownPos; // in our view's coords
     double m_mouseDownTimestamp;
     PlatformMouseEvent m_mouseDown;
+
+    static unsigned s_accessKeyModifiers;
 
 #if PLATFORM(MAC)
     NSView *m_mouseDownView;

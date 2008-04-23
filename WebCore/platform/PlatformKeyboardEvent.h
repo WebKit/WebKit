@@ -77,6 +77,13 @@ namespace WebCore {
             Char
         };
 
+        enum ModifierKey {
+            AltKey = 1 << 0,
+            CtrlKey = 1 << 1,
+            MetaKey = 1 << 2,
+            ShiftKey = 1 << 3,
+        };
+
         Type type() const { return m_type; }
         void disambiguateKeyDownEvent(Type, bool backwardCompatibilityMode = false); // Only used on platforms that need it, i.e. those that generate KeyDown events.
 
@@ -106,6 +113,12 @@ namespace WebCore {
         bool ctrlKey() const { return m_ctrlKey; }
         bool altKey() const { return m_altKey; }
         bool metaKey() const { return m_metaKey; }
+        unsigned modifiers() const {
+            return (altKey() ? AltKey : 0)
+                | (ctrlKey() ? CtrlKey : 0)
+                | (metaKey() ? MetaKey : 0)
+                | (shiftKey() ? ShiftKey : 0);
+        }
 
         static bool currentCapsLockState();
 

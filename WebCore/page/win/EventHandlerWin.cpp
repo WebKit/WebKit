@@ -36,6 +36,7 @@
 #include "HitTestResult.h"
 #include "MouseEventWithHitTestResults.h"
 #include "Page.h"
+#include "PlatformKeyboardEvent.h"
 #include "PlatformScrollbar.h"
 #include "PlatformWheelEvent.h"
 #include "SelectionController.h"
@@ -43,6 +44,8 @@
 #include "NotImplemented.h"
 
 namespace WebCore {
+
+unsigned EventHandler::s_accessKeyModifiers = PlatformKeyboardEvent::AltKey;
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {

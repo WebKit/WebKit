@@ -36,6 +36,7 @@
 #include "MouseEventWithHitTestResults.h"
 #include "NotImplemented.h"
 #include "Page.h"
+#include "PlatformKeyboardEvent.h"
 #include "PlatformScrollBar.h"
 #include "PlatformWheelEvent.h"
 #include "RenderWidget.h"
@@ -43,6 +44,8 @@
 namespace WebCore {
 
 using namespace EventNames;
+
+unsigned EventHandler::s_accessKeyModifiers = PlatformKeyboardEvent::AltKey;
 
 bool EventHandler::tabsToAllControls(KeyboardEvent* event) const
 {

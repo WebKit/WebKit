@@ -54,6 +54,8 @@ namespace WebCore {
 
 using namespace EventNames;
 
+unsigned EventHandler::s_accessKeyModifiers = PlatformKeyboardEvent::CtrlKey;
+
 static bool isKeyboardOptionTab(KeyboardEvent* event)
 {
     return event
