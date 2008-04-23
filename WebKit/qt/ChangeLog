@@ -1,3 +1,15 @@
+2008-04-23  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix the user agent on the mac to be BSD4
+        
+        Put Q_OS_DARWIN before Q_OS_BSD4 sense they are both defined on the mac
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPage::userAgentForUrl):
+
 2008-04-23  Simon Hausmann  <shausman@trolltech.com>
 
         Reviewed by Holger.

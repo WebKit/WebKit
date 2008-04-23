@@ -1890,6 +1890,15 @@ QString QWebPage::userAgentForUrl(const QUrl& url) const
     // Subplatform"
 #ifdef Q_OS_AIX
     "AIX"
+#elif defined Q_OS_WIN32
+    "%2"
+#elif defined Q_OS_DARWIN
+#ifdef __i386__ || __x86_64__
+    "Intel Mac OS X"
+#else
+    "PPC Mac OS X"
+#endif
+
 #elif defined Q_OS_BSDI
     "BSD"
 #elif defined Q_OS_BSD4
@@ -1938,15 +1947,6 @@ QString QWebPage::userAgentForUrl(const QUrl& url) const
     "UNIX BSD/SYSV system"
 #elif defined Q_OS_UNIXWARE
     "UnixWare Seven, Open UNIX Eight"
-
-#elif defined Q_OS_WIN32
-    "%2"
-#elif defined Q_OS_DARWIN
-#ifdef __i386__ || __x86_64__
-    "Intel Mac OS X"
-#else
-    "PPC Mac OS X"
-#endif
 #else
     "Unknown"
 #endif
