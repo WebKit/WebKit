@@ -103,6 +103,7 @@ class QWEBKIT_EXPORT QWebFrame : public QObject
     Q_PROPERTY(QString title READ title)
     Q_PROPERTY(QUrl url READ url WRITE setUrl)
     Q_PROPERTY(QIcon icon READ icon)
+    Q_PROPERTY(QSize contentsSize READ contentsSize)
 private:
     QWebFrame(QWebPage *parent, QWebFrameData *frameData);
     QWebFrame(QWebFrame *parent, QWebFrameData *frameData);
@@ -154,6 +155,7 @@ public:
 
     QPoint pos() const;
     QRect geometry() const;
+    QSize contentsSize() const;
 
     QWebHitTestResult hitTestContent(const QPoint &pos) const;
 

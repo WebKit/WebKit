@@ -633,6 +633,18 @@ QRect QWebFrame::geometry() const
 }
 
 /*!
+    \property QWebFrame::contentsSize
+    \brief the size of the contents in this frame
+*/
+QSize QWebFrame::contentsSize() const
+{
+    FrameView *view = d->frame->view();
+    if (!view)
+        return QSize();
+    return QSize(view->contentsWidth(), view->contentsHeight());
+}
+
+/*!
     Performs a hit test on the frame contents at the given position \a pos and returns the hit test result.
 */
 QWebHitTestResult QWebFrame::hitTestContent(const QPoint &pos) const

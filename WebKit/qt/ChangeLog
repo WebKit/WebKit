@@ -1,3 +1,14 @@
+2008-04-23  Zack Rusin  <zack@tungstengraphics.com>
+
+        Reviewed by Simon.
+
+        Added a contentsSize() property.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::contentsSize):
+        (QWebFrame::hitTestContent):
+        * Api/qwebframe.h:
+
 2008-04-22  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.
