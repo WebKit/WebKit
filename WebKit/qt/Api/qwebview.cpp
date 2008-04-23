@@ -80,7 +80,6 @@ QWebPage *QWebView::page() const
     if (!d->page) {
         QWebView *that = const_cast<QWebView *>(this);
         that->setPage(new QWebPage(that));
-        d->page->setPalette(palette());
     }
     return d->page;
 }
@@ -108,6 +107,7 @@ void QWebView::setPage(QWebPage *page)
     d->page = page;
     if (d->page) {
         d->page->setView(this);
+        d->page->setPalette(palette());
         // #### connect signals
         QWebFrame *mainFrame = d->page->mainFrame();
         connect(mainFrame, SIGNAL(loadStarted()),

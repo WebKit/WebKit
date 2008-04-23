@@ -2,6 +2,19 @@
 
         Reviewed by Simon.
 
+        Fixes background color propagation when using a custom QWebPage
+        
+        Set the palette in setPage(), not during the creation on-demand.
+        
+
+        * Api/qwebview.cpp:
+        (QWebView::page):
+        (QWebView::setPage):
+
+2008-04-23  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
         Fix the user agent on the mac to be BSD4
         
         Put Q_OS_DARWIN before Q_OS_BSD4 sense they are both defined on the mac
