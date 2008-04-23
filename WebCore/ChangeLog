@@ -1,3 +1,13 @@
+2008-04-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - remove unused calls to Position::upstream()
+
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::insertNodeAfterPosition):
+        (WebCore::InsertLineBreakCommand::insertNodeBeforePosition):
+
 2008-04-22  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Sam.
