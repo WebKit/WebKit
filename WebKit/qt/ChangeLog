@@ -1,3 +1,17 @@
+2008-04-23  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Fix parsing of external scripts/stylesheets when using setHtml(const QString &html).
+
+        We used to pass the html string to the frameloader in utf-16, which also meant that the default
+        encoding of external scripts/stylesheets became utf-16. That doesn't make sense, so assume utf-8
+        by default. This is now also documented.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setHtml):
+        * Api/qwebview.cpp:
+
 2008-04-23  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.

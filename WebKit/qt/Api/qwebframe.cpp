@@ -408,13 +408,19 @@ void QWebFrame::load(const QNetworkRequest &req,
 /*!
   Sets the content of this frame to \a html. \a baseUrl is optional and used to resolve relative
   URLs in the document.
+
+  When using this method WebKit assumes that external resources such as JavaScript programs or style
+  sheets are encoded in UTF-8 unless otherwise specified. For example, the encoding of an external
+  script can be specified through the charset attribute of the HTML script tag. It is also possible
+  for the encoding to be specified by web server.
 */
 void QWebFrame::setHtml(const QString &html, const QUrl &baseUrl)
 {
     KURL kurl(baseUrl);
     WebCore::ResourceRequest request(kurl);
-    WTF::RefPtr<WebCore::SharedBuffer> data = WebCore::SharedBuffer::create(reinterpret_cast<const uchar *>(html.unicode()), html.length() * 2);
-    WebCore::SubstituteData substituteData(data, WebCore::String("text/html"), WebCore::String("utf-16"), kurl);
+    const QByteArray utf8 = html.toUtf8();
+    WTF::RefPtr<WebCore::SharedBuffer> data = WebCore::SharedBuffer::create(utf8.constData(), utf8.length());
+    WebCore::SubstituteData substituteData(data, WebCore::String("text/html"), WebCore::String("utf-8"), kurl);
     d->frame->loader()->load(request, substituteData);
 }
 

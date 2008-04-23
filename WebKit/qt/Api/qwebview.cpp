@@ -173,6 +173,11 @@ void QWebView::load(const QNetworkRequest &request,
     Sets the content of the web view to the specified \a html.
 
     External objects referenced in the HTML document are located relative to \a baseUrl.
+
+    When using this method WebKit assumes that external resources such as JavaScript programs or style
+    sheets are encoded in UTF-8 unless otherwise specified. For example, the encoding of an external
+    script can be specified through the charset attribute of the HTML script tag. It is also possible
+    for the encoding to be specified by web server.
 */
 void QWebView::setHtml(const QString &html, const QUrl &baseUrl)
 {
