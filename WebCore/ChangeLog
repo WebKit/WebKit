@@ -1,3 +1,14 @@
+2008-04-22  Alp Toker  <alp@nuanti.com>
+
+        Rubber-stamped by Dave Hyatt.
+
+        Move GraphicsContext::clipToImageBuffer() notImplemented() stub to
+        GraphicsContextCairo.
+
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer):
+
 2008-04-22  David Hyatt  <hyatt@apple.com>
 
         Add support for mask-composite to match background-composite.
