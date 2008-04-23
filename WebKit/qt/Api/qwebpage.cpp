@@ -1660,6 +1660,8 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
     d->hitTestResult = QWebHitTestResult(new QWebHitTestResultPrivate(result));
     WebCore::ContextMenu menu(result);
     menu.populate();
+    if (d->page->inspectorController()->enabled())
+        menu.addInspectElementItem();
 
     delete d->currentContextMenu;
     // createContextMenu also enables actions if necessary

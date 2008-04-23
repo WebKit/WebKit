@@ -1,3 +1,15 @@
+2008-04-23  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        * Make sure the "Inspect Element" item gets added to the ContextMenu, a call
+        to ContextMenu::populate() is not adding it, the ContextMenuController does
+        add it after the call to populate(). Do that as well.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPage::updatePositionDependentActions):
+
 2008-04-23  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
