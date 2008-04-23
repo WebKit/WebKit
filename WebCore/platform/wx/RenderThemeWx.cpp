@@ -67,7 +67,7 @@ public:
     virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
     virtual bool isControlStyled(const RenderStyle*, const BorderData&,
-                                 const BackgroundLayer&, const Color&) const;
+                                 const FillLayer&, const Color&) const;
 
     virtual bool controlSupportsTints(const RenderObject*) const;
 
@@ -93,7 +93,7 @@ RenderTheme* theme()
 }
 
 bool RenderThemeWx::isControlStyled(const RenderStyle* style, const BorderData& border,
-                                     const BackgroundLayer& background, const Color& backgroundColor) const
+                                     const FillLayer& background, const Color& backgroundColor) const
 {
     if (style->appearance() == TextFieldAppearance || style->appearance() == TextAreaAppearance)
         return style->border() != border;

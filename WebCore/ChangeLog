@@ -1,3 +1,13 @@
+2008-04-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes. Changing BackgroundLayer -> FillLayer and adding
+        Frame::disconnectPlatformScriptObjects().
+
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::RenderThemeWx::isControlStyled):
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (Frame::disconnectPlatformScriptObjects):
+
 2008-04-23  David Hyatt  <hyatt@apple.com>
 
         Add support for mask-box-image (similar to border-image).  This property enables a single image
