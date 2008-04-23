@@ -242,6 +242,8 @@ rect: style.getPropertyValue(-webkit-mask-repeat) : repeat
 rect: style.getPropertyCSSValue(-webkit-mask-repeat) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-clip) : border
 rect: style.getPropertyCSSValue(-webkit-mask-clip) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-mask-composite) : source-over
+rect: style.getPropertyCSSValue(-webkit-mask-composite) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-origin) : border
 rect: style.getPropertyCSSValue(-webkit-mask-origin) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-size) : auto auto
@@ -596,6 +598,8 @@ g: style.getPropertyValue(-webkit-mask-repeat) : repeat
 g: style.getPropertyCSSValue(-webkit-mask-repeat) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-clip) : border
 g: style.getPropertyCSSValue(-webkit-mask-clip) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-mask-composite) : source-over
+g: style.getPropertyCSSValue(-webkit-mask-composite) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-origin) : border
 g: style.getPropertyCSSValue(-webkit-mask-origin) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-size) : auto auto
