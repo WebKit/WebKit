@@ -1532,10 +1532,20 @@ void Document::implicitClose()
             ASSERT(!ec);
         }
     }
-    
+
+    // FIXME: We kick off the icon loader when the Document is done parsing.
+    // There are earlier opportunities we could start it:
+    //  -When the <head> finishes parsing
+    //  -When any new HTMLLinkElement is inserted into the document
+    // But those add a dynamic component to the favicon that has UI 
+    // ramifications, and we need to decide what is the Right Thing To Do(tm)
+    Frame* f = frame();
+    if (f)
+        f->loader()->startIconLoader();
+
     dispatchImageLoadEventsNow();
     this->dispatchWindowEvent(loadEvent, false, false);
-    if (Frame* f = frame())
+    if (f)
         f->loader()->handledOnloadEvents();
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())

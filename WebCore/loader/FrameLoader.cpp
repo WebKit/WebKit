@@ -1065,9 +1065,6 @@ void FrameLoader::endIfNotLoadingMainResource()
         // become true.  An example is when a subframe is a pure text doc, and that subframe is the
         // last one to complete.
         checkCompleted();
-
-    if (m_documentLoader && !m_documentLoader->isLoadingFromCachedPage())
-        startIconLoader();
 }
 
 void FrameLoader::iconLoadDecisionAvailable()

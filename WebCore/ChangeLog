@@ -1,3 +1,22 @@
+2008-04-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        <rdar://problem/5733282> and https://bugs.webkit.org/show_bug.cgi?id=18680
+        Always loads default shortcut icon URL when an external <script> is referenced before the icon URL is set.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose): Call FrameLoader->startIconLoader() here, when the document is
+          finished parsing.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::endIfNotLoadingMainResource):  Don't start the icon load here, when the
+          document is finished parsing.  This was often too early, as document parsing may be blocked
+          on an external script and therefore the correct iconURL is not set yet.
+          The isLoadingFromCachedPage() check was when we started the icon load based on *loading* instead parsing,
+          and is now irrelevant.
+        * loader/FrameLoader.h:  Make startIconLoader() public
+
 2008-04-22  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver.
