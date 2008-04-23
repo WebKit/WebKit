@@ -1,3 +1,13 @@
+2008-04-23  Brad Hughes  <bhughes@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix release build with the intel compiler
+
+        Intel compiler can't compile qtwebkit with -O2 or -O1, so we're left with -O0
+
+        * WebCore.pro:
+
 2008-04-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
