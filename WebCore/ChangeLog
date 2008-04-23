@@ -1,3 +1,16 @@
+2008-04-22  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 18688, background-color stopped painting on inlines.  Fix a virtual function
+        misnaming that led to the derived class not getting called properly.
+
+        Reviewed by Mark Rowe
+
+        * ChangeLog:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintFillLayer):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::paintFillLayerExtended):
+
 2008-04-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig

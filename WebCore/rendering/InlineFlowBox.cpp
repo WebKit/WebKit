@@ -667,7 +667,7 @@ void InlineFlowBox::paintFillLayer(const RenderObject::PaintInfo& paintInfo, con
     StyleImage* img = fillLayer->image();
     bool hasFillImage = img && img->canRender(object()->style()->effectiveZoom());
     if ((!hasFillImage && !object()->style()->hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent())
-        object()->paintFillExtended(paintInfo, c, fillLayer, my, mh, tx, ty, w, h, this);
+        object()->paintFillLayerExtended(paintInfo, c, fillLayer, my, mh, tx, ty, w, h, this);
     else {
         // We have a fill image that spans multiple lines.
         // We need to adjust _tx and _ty by the width of all previous lines.
@@ -686,7 +686,7 @@ void InlineFlowBox::paintFillLayer(const RenderObject::PaintInfo& paintInfo, con
             totalWidth += curr->width();
         paintInfo.context->save();
         paintInfo.context->clip(IntRect(tx, ty, width(), height()));
-        object()->paintFillExtended(paintInfo, c, fillLayer, my, mh, startX, ty, totalWidth, h, this);
+        object()->paintFillLayerExtended(paintInfo, c, fillLayer, my, mh, startX, ty, totalWidth, h, this);
         paintInfo.context->restore();
     }
 }
