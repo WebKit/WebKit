@@ -1,3 +1,14 @@
+2008-04-22  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Sam.
+
+        Implement get_accKeyboardShortcut().
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accKeyboardShortcut): Report the key combination
+        that will perform the object's access key action, represented as a
+        string.
+
 2008-04-19  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Darin.

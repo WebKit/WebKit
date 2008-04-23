@@ -32,15 +32,16 @@
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/BString.h>
 #include <WebCore/Element.h>
+#include <WebCore/EventHandler.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLFrameElementBase.h>
 #include <WebCore/HTMLInputElement.h>
-#include <WebCore/RenderFrame.h>
-#include <WebCore/RenderView.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/PlatformString.h>
+#include <WebCore/PlatformKeyboardEvent.h>
+#include <WebCore/RenderFrame.h>
 #include <WebCore/RenderObject.h>
+#include <WebCore/RenderView.h>
 #include "WebView.h"
 #include <wtf/RefPtr.h>
 
@@ -288,9 +289,40 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accHelp(VARIANT vChild, BSTR* help
     return S_FALSE;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accKeyboardShortcut(VARIANT, BSTR*)
+HRESULT STDMETHODCALLTYPE AccessibleBase::get_accKeyboardShortcut(VARIANT vChild, BSTR* shortcut)
 {
-    return E_NOTIMPL;
+    if (!shortcut)
+        return E_POINTER;
+
+    *shortcut = 0;
+
+    AccessibilityObject* childObj;
+    HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
+
+    if (FAILED(hr))
+        return hr;
+
+    String accessKey = childObj->accessKey();
+    if (accessKey.isNull())
+        return S_FALSE;
+
+    static String accessKeyModifiers;
+    if (accessKeyModifiers.isNull()) {
+        unsigned modifiers = EventHandler::accessKeyModifiers();
+        // Follow the same order as Mozilla MSAA implementation:
+        // Ctrl+Alt+Shift+Meta+key. MSDN states that keyboard shortcut strings
+        // should not be localized and defines the separator as "+".
+        if (modifiers & PlatformKeyboardEvent::CtrlKey)
+            accessKeyModifiers += "Ctrl+";
+        if (modifiers & PlatformKeyboardEvent::AltKey)
+            accessKeyModifiers += "Alt+";
+        if (modifiers & PlatformKeyboardEvent::ShiftKey)
+            accessKeyModifiers += "Shift+";
+        if (modifiers & PlatformKeyboardEvent::MetaKey)
+            accessKeyModifiers += "Win+";
+    }
+    *shortcut = BString(accessKeyModifiers + accessKey).release();
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE AccessibleBase::accSelect(long, VARIANT)
