@@ -430,6 +430,7 @@ void RenderBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
         mh = min(paintInfo.rect.height(), h);
 
     paintFillLayers(paintInfo, Color(), style()->maskLayers(), my, mh, tx, ty, w, h);
+    paintNinePieceImage(paintInfo.context, tx, ty, w, h, style(), style()->maskBoxImage());
 }
 
 void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer,

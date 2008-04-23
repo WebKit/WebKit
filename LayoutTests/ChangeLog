@@ -1,3 +1,19 @@
+2008-04-23  David Hyatt  <hyatt@apple.com>
+
+        Add support for a new mask-box-image property that is analogous to border-image.
+
+        Reviewed by Dan Bernstein
+
+        * fast/borders/block-mask-overlay-image.html: Added.
+        * fast/borders/inline-mask-overlay-image.html: Added.
+        * fast/borders/resources/mask.png: Added.
+        * platform/mac/fast/borders/block-mask-overlay-image-expected.checksum: Added.
+        * platform/mac/fast/borders/block-mask-overlay-image-expected.png: Added.
+        * platform/mac/fast/borders/block-mask-overlay-image-expected.txt: Added.
+        * platform/mac/fast/borders/inline-mask-overlay-image-expected.checksum: Added.
+        * platform/mac/fast/borders/inline-mask-overlay-image-expected.png: Added.
+        * platform/mac/fast/borders/inline-mask-overlay-image-expected.txt: Added.
+
 2008-04-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

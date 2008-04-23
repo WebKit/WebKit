@@ -966,6 +966,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitMarginStart:
         case CSSPropertyWebkitMarquee:
         case CSSPropertyWebkitMarqueeSpeed:
+        case CSSPropertyWebkitMaskBoxImage:
         case CSSPropertyWebkitPaddingStart:
         case CSSPropertyWebkitTextStroke:
         case CSSPropertyWebkitTransform:

@@ -3930,12 +3930,26 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSSPropertyWebkitBorderImage: {
-        HANDLE_INHERIT_AND_INITIAL(borderImage, BorderImage)
-        BorderImage image;
+    case CSSPropertyWebkitBorderImage:
+    case CSSPropertyWebkitMaskBoxImage: {
+        if (isInherit) {
+            HANDLE_INHERIT_COND(CSSPropertyWebkitBorderImage, borderImage, BorderImage)
+            HANDLE_INHERIT_COND(CSSPropertyWebkitMaskBoxImage, maskBoxImage, MaskBoxImage)
+            return;
+        } else if (isInitial) {
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWebkitBorderImage, BorderImage, NinePieceImage)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWebkitMaskBoxImage, MaskBoxImage, NinePieceImage)
+            return;
+        }
+
+        NinePieceImage image;
         if (primitiveValue) {
-            if (primitiveValue->getIdent() == CSSValueNone)
-                m_style->setBorderImage(image);
+            if (primitiveValue->getIdent() == CSSValueNone) {
+                if (id == CSSPropertyWebkitBorderImage)
+                    m_style->setBorderImage(image);
+                else
+                    m_style->setMaskBoxImage(image);
+            }
         } else {
             // Retrieve the border image value.
             CSSBorderImageValue* borderImage = static_cast<CSSBorderImageValue*>(value);
@@ -3966,29 +3980,32 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             // Set the appropriate rules for stretch/round/repeat of the slices
             switch (borderImage->m_horizontalSizeRule) {
                 case CSSValueStretch:
-                    image.m_horizontalRule = BI_STRETCH;
+                    image.m_horizontalRule = StretchImageRule;
                     break;
                 case CSSValueRound:
-                    image.m_horizontalRule = BI_ROUND;
+                    image.m_horizontalRule = RoundImageRule;
                     break;
                 default: // CSSValueRepeat
-                    image.m_horizontalRule = BI_REPEAT;
+                    image.m_horizontalRule = RepeatImageRule;
                     break;
             }
 
             switch (borderImage->m_verticalSizeRule) {
                 case CSSValueStretch:
-                    image.m_verticalRule = BI_STRETCH;
+                    image.m_verticalRule = StretchImageRule;
                     break;
                 case CSSValueRound:
-                    image.m_verticalRule = BI_ROUND;
+                    image.m_verticalRule = RoundImageRule;
                     break;
                 default: // CSSValueRepeat
-                    image.m_verticalRule = BI_REPEAT;
+                    image.m_verticalRule = RepeatImageRule;
                     break;
             }
-
-            m_style->setBorderImage(image);
+            
+            if (id == CSSPropertyWebkitBorderImage)
+                m_style->setBorderImage(image);
+            else
+                m_style->setMaskBoxImage(image);
         }
         return;
     }

@@ -200,6 +200,7 @@ zoom
 -webkit-marquee-style
 -webkit-mask
 -webkit-mask-attachment
+-webkit-mask-box-image
 -webkit-mask-clip
 -webkit-mask-composite
 -webkit-mask-image

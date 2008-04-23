@@ -107,7 +107,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
     tx += m_x;
     ty += m_y;
     
-    if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection) && style()->visibility() == VISIBLE) 
+    if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
         paintBoxDecorations(paintInfo, tx, ty);
     
     if (paintInfo.phase == PaintPhaseMask) {
@@ -115,7 +115,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
         return;
     }
 
-    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
+    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
         paintOutline(paintInfo.context, tx, ty, width(), height(), style());
     
     if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection)
@@ -140,7 +140,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
 bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
 {
     if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseOutline && paintInfo.phase != PaintPhaseSelfOutline 
-            && paintInfo.phase != PaintPhaseSelection)
+            && paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseMask)
         return false;
 
     if (!shouldPaintWithinRoot(paintInfo))

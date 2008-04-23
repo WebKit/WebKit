@@ -1,3 +1,49 @@
+2008-04-23  David Hyatt  <hyatt@apple.com>
+
+        Add support for mask-box-image (similar to border-image).  This property enables a single image
+        to overlay the entire mask area (with nine-piece slicing rules similar to border image).
+
+        Reviewed by Dan Bernstein
+
+        Added inline-mask-overlay.html, block-mask-overlay.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseBorderImage):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintMask):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::paintLines):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintNinePieceImage):
+        (WebCore::RenderObject::paintBorder):
+        * rendering/RenderObject.h:
+        * rendering/RenderStyle.cpp:
+        (WebCore::NinePieceImage::operator==):
+        * rendering/RenderStyle.h:
+        (WebCore::):
+        (WebCore::NinePieceImage::m_verticalRule):
+        (WebCore::NinePieceImage::horizontalRule):
+        (WebCore::NinePieceImage::verticalRule):
+        (WebCore::RenderStyle::borderImage):
+        (WebCore::RenderStyle::maskOverlayImage):
+        (WebCore::RenderStyle::hasMask):
+        (WebCore::RenderStyle::resetBorderImage):
+        (WebCore::RenderStyle::setBorderImage):
+        (WebCore::RenderStyle::setMaskOverlayImage):
+        (WebCore::RenderStyle::initialNinePieceImage):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintMask):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintMask):
+
 2008-04-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

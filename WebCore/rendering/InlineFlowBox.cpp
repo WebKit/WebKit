@@ -791,6 +791,31 @@ void InlineFlowBox::paintMask(RenderObject::PaintInfo& paintInfo, int tx, int ty
         mh = min(paintInfo.rect.height(), h);
 
     paintFillLayers(paintInfo, Color(), object()->style()->maskLayers(), my, mh, tx, ty, w, h);
+    
+    StyleImage* maskBoxImage = object()->style()->maskBoxImage().image();
+    bool hasBoxImage = maskBoxImage && maskBoxImage->canRender(object()->style()->effectiveZoom());
+    if (!hasBoxImage || !maskBoxImage->isLoaded())
+        return; // Don't paint anything while we wait for the image to load.
+
+    // The simple case is where we are the only box for this object.  In those
+    // cases only a single call to draw is required.
+    if (!prevLineBox() && !nextLineBox())
+        object()->paintNinePieceImage(paintInfo.context, tx, ty, w, h, object()->style(), object()->style()->maskBoxImage());
+    else {
+        // We have a mask image that spans multiple lines.
+        // We need to adjust _tx and _ty by the width of all previous lines.
+        int xOffsetOnLine = 0;
+        for (InlineRunBox* curr = prevLineBox(); curr; curr = curr->prevLineBox())
+            xOffsetOnLine += curr->width();
+        int startX = tx - xOffsetOnLine;
+        int totalWidth = xOffsetOnLine;
+        for (InlineRunBox* curr = this; curr; curr = curr->nextLineBox())
+            totalWidth += curr->width();
+        paintInfo.context->save();
+        paintInfo.context->clip(IntRect(tx, ty, width(), height()));
+        object()->paintNinePieceImage(paintInfo.context, startX, ty, totalWidth, h, object()->style(), object()->style()->maskBoxImage());
+        paintInfo.context->restore();
+    }
 }
 
 static bool shouldDrawTextDecoration(RenderObject* obj)
