@@ -1,3 +1,14 @@
+2008-04-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5825350> OWA: Caret disappears when navigating with arrows keys in contenteditable div
+
+        * editing/selection/5825350-1-expected.txt: Added.
+        * editing/selection/5825350-1.html: Added.
+        * editing/selection/5825350-2-expected.txt: Added.
+        * editing/selection/5825350-2.html: Added.
+
 2008-04-23  Darin Adler  <darin@apple.com>
 
         - updated a test affected by the addition of mask-composite
