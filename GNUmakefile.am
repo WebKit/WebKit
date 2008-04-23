@@ -98,6 +98,9 @@ javascriptcore_cppflags += \
 # The variables above are already included below so no need to touch
 # these variables unless you really have to
 nodist_EXTRA_libJavaScriptCore_la_SOURCES = \
+	$(javascriptcore_built_nosources)
+
+nodist_libJavaScriptCore_la_SOURCES = \
 	$(javascriptcore_built_sources)
 
 libJavaScriptCore_ladir = $(prefix)/include/webkit-1.0/JavaScriptCore
