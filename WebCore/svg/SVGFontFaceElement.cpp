@@ -33,7 +33,6 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "FontCache.h"
-#include "FontPlatformData.h"
 #include "SimpleFontData.h"
 #include "SVGDefinitionSrcElement.h"
 #include "SVGFontElement.h"

@@ -61,7 +61,7 @@ AXID AXObjectCache::getAXID(AccessibilityObject* obj)
     objID = lastUsedID;
     do
         ++objID;
-    while (objID == 0 || objID == AXIDHashTraits::deletedValue() || m_idsInUse.contains(objID));
+    while (objID == 0 || objID == HashTraits<AXID>::deletedValue() || m_idsInUse.contains(objID));
     m_idsInUse.add(objID);
     lastUsedID = objID;
     obj->setAXObjectID(objID);
@@ -74,7 +74,6 @@ void AXObjectCache::removeAXID(AccessibilityObject* obj)
     AXID objID = obj->axObjectID();
     if (objID == 0)
         return;
-    ASSERT(objID != AXIDHashTraits::deletedValue());
     ASSERT(m_idsInUse.contains(objID));
     obj->setAXObjectID(0);
     m_idsInUse.remove(objID);

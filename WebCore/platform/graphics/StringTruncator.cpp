@@ -31,7 +31,6 @@
 
 #include "CharacterNames.h"
 #include "Font.h"
-#include "FontPlatformData.h"
 #include "TextBreakIterator.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>

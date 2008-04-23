@@ -46,10 +46,6 @@ namespace WebCore {
 
     typedef unsigned AXID;
 
-    struct AXIDHashTraits : WTF::GenericHashTraits<unsigned> {
-        static TraitType deletedValue() { return UINT_MAX; }
-    };
-
     struct TextMarkerData  {
         AXID axID;
         Node* node;
@@ -59,7 +55,6 @@ namespace WebCore {
 
     class AXObjectCache {
     public:
-
         ~AXObjectCache();
         AccessibilityObject* get(RenderObject*);
         void remove(RenderObject*);
@@ -82,7 +77,7 @@ namespace WebCore {
         HashMap<RenderObject*, RefPtr<AccessibilityObject> > m_objects;
         static bool gAccessibilityEnabled;
 #if PLATFORM(MAC)
-        HashSet<AXID, IntHash<AXID>, AXIDHashTraits> m_idsInUse;
+        HashSet<AXID> m_idsInUse;
 #endif
     };
 

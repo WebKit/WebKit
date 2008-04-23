@@ -1,3 +1,18 @@
+2008-04-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - simplify use of HashTraits to prepare for some upcoming hash table changes
+
+        * page/AXObjectCache.h: Removed uneeded AXIDHashTraits, which are no different
+        from the default hash traits for unsigned.
+        * page/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::removeAXID): Remove assertion that's already done
+        by HashTable that the value is not the deleted value.
+
+        * platform/graphics/StringTruncator.cpp: Removed unneeded include.
+        * svg/SVGFontFaceElement.cpp: Removed unneeded include.
+
 2008-04-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes. Changing BackgroundLayer -> FillLayer and adding
