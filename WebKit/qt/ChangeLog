@@ -1,3 +1,12 @@
+2008-04-23  Simon Hausmann  <shausman@trolltech.com>
+
+        Reviewed by Holger.
+
+        Added missing copyright notice.
+        Small fixes to the documentation.
+
+        * Api/qwebpluginfactory.cpp:
+
 2008-04-23  Zack Rusin  <zack@tungstengraphics.com>
 
         Reviewed by Simon.

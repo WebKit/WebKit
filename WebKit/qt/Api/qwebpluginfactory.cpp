@@ -1,10 +1,28 @@
+/*
+    Copyright (C) 2007 Trolltech ASA
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with this library; see the file COPYING.LIB.  If not, write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA 02110-1301, USA.
+*/
 #include "config.h"
 #include "qwebpluginfactory.h"
 
 /*!
     \class QWebPluginFactory
     \since 4.4
-    \brief The QWebPluginFactory creates plugins to be embedded into web pages.
+    \brief The QWebPluginFactory class creates plugins to be embedded into web pages.
 
     QWebPluginFactory is a factory for creating plugins for QWebPage. A plugin factory can be
     installed on a QWebPage using QWebPage::setPluginFactory().
@@ -43,6 +61,7 @@
 
 /*!
     \class QWebPluginFactory::MimeType
+    \since 4.4
     \brief The QWebPluginFactory::MimeType structure describes a mime type supported by a plugin.
 */
 
@@ -59,6 +78,8 @@
 /*!
     \variable QWebPluginFactory::MimeType::fileExtensions
     The list of file extensions that are used by this mime type.
+
+    For example, a mime type for PDF documents would return "pdf" as its file extension.
 */
 
 /*!
@@ -121,6 +142,8 @@ void QWebPluginFactory::refreshPlugins()
     \row    \o argumentVaues
             \o "true" "false"
     \endtable
+
+    The returned object should be a QWidget.
 */
 
 /*!
