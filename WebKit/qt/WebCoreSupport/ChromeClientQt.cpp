@@ -247,7 +247,7 @@ bool ChromeClientQt::runBeforeUnloadConfirmPanel(const String& message, Frame* f
 void ChromeClientQt::closeWindowSoon()
 {
     m_webPage->mainFrame()->d->frame->loader()->stopAllLoaders();
-    m_webPage->deleteLater();
+    emit m_webPage->windowCloseRequested();
 }
 
 void ChromeClientQt::runJavaScriptAlert(Frame* f, const String& msg)

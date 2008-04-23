@@ -2120,6 +2120,13 @@ quint64 QWebPage::bytesReceived() const {
 */
 
 /*!
+    \fn void QWebPage::windowCloseRequested()
+
+    This signal is emitted whenever the page requests the web browser window to be closed,
+    for example through the JavaScript \c{window.close()} call.
+*/
+
+/*!
     \fn void QWebPage::unsupportedContent(QNetworkReply *reply)
 
     This signals is emitted when webkit cannot handle a link the user navigated to.

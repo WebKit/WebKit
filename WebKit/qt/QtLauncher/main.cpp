@@ -303,6 +303,7 @@ public:
                 this, SLOT(setWindowTitle(const QString&)));
         connect(view->page(), SIGNAL(linkHovered(const QString&, const QString&, const QString &)),
                 this, SLOT(showLinkHover(const QString&, const QString&)));
+        connect(view->page(), SIGNAL(windowCloseRequested()), this, SLOT(deleteLater()));
 
 
         setCentralWidget(view);

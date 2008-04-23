@@ -245,6 +245,7 @@ Q_SIGNALS:
     void geometryChangeRequested(const QRect& geom);
     void repaintRequested(const QRect& dirtyRect);
     void scrollRequested(int dx, int dy, const QRect& scrollViewRect);
+    void windowCloseRequested();
     void linkClicked(const QUrl &url);
 
     void toolBarVisibilityChangeRequested(bool visible);

@@ -2,6 +2,24 @@
 
         Reviewed by Holger.
 
+        Fix crashes on window.close().
+
+        We should not delete the QWebPage object in the ChromeClient but leave it up to
+        the application when and whether to delete a browser window. For this we now
+        emit the windowCloseRequested() signal.
+
+        Done with Tor Arne.
+
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+        * WebCoreSupport/ChromeClientQt.cpp:
+
+2008-04-23  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Fix parsing of external scripts/stylesheets when using setHtml(const QString &html).
 
         We used to pass the html string to the frameloader in utf-16, which also meant that the default
