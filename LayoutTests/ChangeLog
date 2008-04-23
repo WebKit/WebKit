@@ -1,3 +1,15 @@
+2008-04-22  Anatoli Papirovski  <apapirovski@mac.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18584
+        Add a test case for border-color inheritance.
+
+        * fast/borders/border-color-inherit.html: Added.
+        * platform/mac/fast/borders/border-color-inherit-expected.checksum: Added.
+        * platform/mac/fast/borders/border-color-inherit-expected.png: Added.
+        * platform/mac/fast/borders/border-color-inherit-expected.txt: Added.
+
 2008-04-22  David Hyatt  <hyatt@apple.com>
 
         Add support for mask-composite.

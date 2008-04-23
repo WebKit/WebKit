@@ -236,6 +236,15 @@ if (id == propID) { \
     m_style->set##Prop(m_parentStyle->prop()); \
     return; \
 }
+    
+#define HANDLE_INHERIT_COND_WITH_BACKUP(propID, prop, propAlt, Prop) \
+if (id == propID) { \
+    if (m_parentStyle->prop().isValid()) \
+        m_style->set##Prop(m_parentStyle->prop()); \
+    else \
+        m_style->set##Prop(m_parentStyle->propAlt()); \
+    return; \
+}
 
 #define HANDLE_INITIAL_COND(propID, Prop) \
 if (id == propID) { \
@@ -2784,15 +2793,15 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         Color col;
         if (isInherit) {
             HANDLE_INHERIT_COND(CSSPropertyBackgroundColor, backgroundColor, BackgroundColor)
-            HANDLE_INHERIT_COND(CSSPropertyBorderTopColor, borderTopColor, BorderTopColor)
-            HANDLE_INHERIT_COND(CSSPropertyBorderBottomColor, borderBottomColor, BorderBottomColor)
-            HANDLE_INHERIT_COND(CSSPropertyBorderRightColor, borderRightColor, BorderRightColor)
-            HANDLE_INHERIT_COND(CSSPropertyBorderLeftColor, borderLeftColor, BorderLeftColor)
+            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyBorderTopColor, borderTopColor, color, BorderTopColor)
+            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyBorderBottomColor, borderBottomColor, color, BorderBottomColor)
+            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyBorderRightColor, borderRightColor, color, BorderRightColor)
+            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyBorderLeftColor, borderLeftColor, color, BorderLeftColor)
             HANDLE_INHERIT_COND(CSSPropertyColor, color, Color)
-            HANDLE_INHERIT_COND(CSSPropertyOutlineColor, outlineColor, OutlineColor)
-            HANDLE_INHERIT_COND(CSSPropertyWebkitColumnRuleColor, columnRuleColor, ColumnRuleColor)
-            HANDLE_INHERIT_COND(CSSPropertyWebkitTextStrokeColor, textStrokeColor, TextStrokeColor)
-            HANDLE_INHERIT_COND(CSSPropertyWebkitTextFillColor, textFillColor, TextFillColor)
+            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyOutlineColor, outlineColor, color, OutlineColor)
+            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyWebkitColumnRuleColor, columnRuleColor, color, ColumnRuleColor)
+            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyWebkitTextStrokeColor, textStrokeColor, color, TextStrokeColor)
+            HANDLE_INHERIT_COND_WITH_BACKUP(CSSPropertyWebkitTextFillColor, textFillColor, color, TextFillColor)
             return;
         }
         if (isInitial) {
@@ -3708,10 +3717,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (id == CSSPropertyBorder || id == CSSPropertyBorderColor)
         {
             if (isInherit) {
-                m_style->setBorderTopColor(m_parentStyle->borderTopColor());
-                m_style->setBorderBottomColor(m_parentStyle->borderBottomColor());
-                m_style->setBorderLeftColor(m_parentStyle->borderLeftColor());
-                m_style->setBorderRightColor(m_parentStyle->borderRightColor());
+                m_style->setBorderTopColor(m_parentStyle->borderTopColor().isValid() ? m_parentStyle->borderTopColor() : m_parentStyle->color());
+                m_style->setBorderBottomColor(m_parentStyle->borderBottomColor().isValid() ? m_parentStyle->borderBottomColor() : m_parentStyle->color());
+                m_style->setBorderLeftColor(m_parentStyle->borderLeftColor().isValid() ? m_parentStyle->borderLeftColor() : m_parentStyle->color());
+                m_style->setBorderRightColor(m_parentStyle->borderRightColor().isValid() ? m_parentStyle->borderRightColor(): m_parentStyle->color());
             }
             else if (isInitial) {
                 m_style->setBorderTopColor(Color()); // Reset to invalid color so currentColor is used instead.
@@ -3753,7 +3762,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     case CSSPropertyBorderTop:
         if (isInherit) {
-            m_style->setBorderTopColor(m_parentStyle->borderTopColor());
+            m_style->setBorderTopColor(m_parentStyle->borderTopColor().isValid() ? m_parentStyle->borderTopColor() : m_parentStyle->color());
             m_style->setBorderTopStyle(m_parentStyle->borderTopStyle());
             m_style->setBorderTopWidth(m_parentStyle->borderTopWidth());
         }
@@ -3762,7 +3771,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     case CSSPropertyBorderRight:
         if (isInherit) {
-            m_style->setBorderRightColor(m_parentStyle->borderRightColor());
+            m_style->setBorderRightColor(m_parentStyle->borderRightColor().isValid() ? m_parentStyle->borderRightColor() : m_parentStyle->color());
             m_style->setBorderRightStyle(m_parentStyle->borderRightStyle());
             m_style->setBorderRightWidth(m_parentStyle->borderRightWidth());
         }
@@ -3771,7 +3780,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     case CSSPropertyBorderBottom:
         if (isInherit) {
-            m_style->setBorderBottomColor(m_parentStyle->borderBottomColor());
+            m_style->setBorderBottomColor(m_parentStyle->borderBottomColor().isValid() ? m_parentStyle->borderBottomColor() : m_parentStyle->color());
             m_style->setBorderBottomStyle(m_parentStyle->borderBottomStyle());
             m_style->setBorderBottomWidth(m_parentStyle->borderBottomWidth());
         }
@@ -3780,7 +3789,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     case CSSPropertyBorderLeft:
         if (isInherit) {
-            m_style->setBorderLeftColor(m_parentStyle->borderLeftColor());
+            m_style->setBorderLeftColor(m_parentStyle->borderLeftColor().isValid() ? m_parentStyle->borderLeftColor() : m_parentStyle->color());
             m_style->setBorderLeftStyle(m_parentStyle->borderLeftStyle());
             m_style->setBorderLeftWidth(m_parentStyle->borderLeftWidth());
         }
@@ -3874,7 +3883,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyOutline:
         if (isInherit) {
             m_style->setOutlineWidth(m_parentStyle->outlineWidth());
-            m_style->setOutlineColor(m_parentStyle->outlineColor());
+            m_style->setOutlineColor(m_parentStyle->outlineColor().isValid() ? m_parentStyle->outlineColor() : m_parentStyle->color());
             m_style->setOutlineStyle(m_parentStyle->outlineStyle());
         }
         else if (isInitial)
@@ -4229,7 +4238,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
      case CSSPropertyWebkitColumnRule:
         if (isInherit) {
-            m_style->setColumnRuleColor(m_parentStyle->columnRuleColor());
+            m_style->setColumnRuleColor(m_parentStyle->columnRuleColor().isValid() ? m_parentStyle->columnRuleColor() : m_parentStyle->color());
             m_style->setColumnRuleStyle(m_parentStyle->columnRuleStyle());
             m_style->setColumnRuleWidth(m_parentStyle->columnRuleWidth());
         }
