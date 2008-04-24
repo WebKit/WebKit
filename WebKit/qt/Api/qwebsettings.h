@@ -15,9 +15,6 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
-
-    This class provides all functionality needed for loading images, style sheets and html
-    pages from the web. It has a memory cache for these objects.
 */
 
 #ifndef QWEBSETTINGS_H

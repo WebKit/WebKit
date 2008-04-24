@@ -2,6 +2,35 @@
 
         Reviewed by Simon.
 
+        Cleaned up copyright headers (removed misplaced class descriptions and
+        fixed inconsistent whitespace and indentation).
+
+        * Api/qwebframe.cpp:
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        * Api/qwebhistory.cpp:
+        * Api/qwebhistory.h:
+        * Api/qwebhistory_p.h:
+        * Api/qwebhistoryinterface.cpp:
+        * Api/qwebhistoryinterface.h:
+        * Api/qwebkitglobal.h:
+        * Api/qwebnetworkinterface.cpp:
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebnetworkinterface_p.h:
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebpluginfactory.cpp:
+        * Api/qwebpluginfactory.h:
+        * Api/qwebsettings.cpp:
+        * Api/qwebsettings.h:
+        * Api/qwebview.h:
+        * QtLauncher/main.cpp:
+
+2008-04-24  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
         Added basic URL guessing to QtLauncher (same as in the demo browser).
         
 
