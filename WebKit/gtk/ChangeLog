@@ -1,3 +1,9 @@
+2008-04-24  Dan Bernstein  <mitz@apple.com>
+
+        - build fix
+
+        * webkit/webkitwebview.cpp:
+
 2008-04-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

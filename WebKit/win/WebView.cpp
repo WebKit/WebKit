@@ -1023,8 +1023,16 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
 
             // Calculate the rect of the first line of the selection (cribbed from -[WebCoreFrameBridge firstRectForDOMRange:]).
             int extraWidthToEndOfLine = 0;
-            IntRect startCaretRect = renderer->caretRect(start.offset(), DOWNSTREAM, &extraWidthToEndOfLine);
-            IntRect endCaretRect = renderer->caretRect(end.offset(), UPSTREAM);
+
+            InlineBox* startInlineBox;
+            int startCaretOffset;
+            start.getInlineBoxAndOffset(DOWNSTREAM, startInlineBox, startCaretOffset);
+            IntRect startCaretRect = renderer->caretRect(startInlineBox, startCaretOffset, &extraWidthToEndOfLine);
+
+            InlineBox* endInlineBox;
+            int endCaretOffset;
+            end.getInlineBoxAndOffset(UPSTREAM, endInlineBox, endCaretOffset);
+            IntRect endCaretRect = renderer->caretRect(endInlineBox, endCaretOffset);
 
             IntRect firstRect;
             if (startCaretRect.y() == endCaretRect.y())

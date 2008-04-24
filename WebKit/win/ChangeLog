@@ -1,3 +1,10 @@
+2008-04-24  Dan Bernstein  <mitz@apple.com>
+
+        - build fix
+
+        * WebView.cpp:
+        (WebView::handleContextMenuEvent):
+
 2008-04-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin
