@@ -1,5 +1,18 @@
 2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Reviewed by Adam and Darin.
+
+        Implement accNavigate().
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::accNavigate): This method navigates between elements,
+        given a start point and a direction. The directions UP, DOWN, LEFT,
+        RIGHT are not are not implemented, matching Mozilla and IE. The
+        directions FIRSTCHILD and LASTCHILD are only allowed from self. NEXT and
+        PREVIOUS are allowed from self or any of our children.
+
+2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Reviewed by Adam.
 
         Implement accLocation().

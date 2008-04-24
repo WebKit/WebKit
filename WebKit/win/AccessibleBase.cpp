@@ -398,9 +398,61 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accLocation(long* left, long* top, lon
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::accNavigate(long, VARIANT, VARIANT*)
+HRESULT STDMETHODCALLTYPE AccessibleBase::accNavigate(long direction, VARIANT vFromChild, VARIANT* pvNavigatedTo)
 {
-    return E_NOTIMPL;
+    if (!pvNavigatedTo)
+        return E_POINTER;
+
+    ::VariantInit(pvNavigatedTo);
+
+    AccessibilityObject* childObj = 0;
+
+    switch (direction) {
+        case NAVDIR_DOWN:
+        case NAVDIR_UP:
+        case NAVDIR_LEFT:
+        case NAVDIR_RIGHT:
+            // These directions are not implemented, matching Mozilla and IE.
+            return E_NOTIMPL;
+        case NAVDIR_LASTCHILD:
+        case NAVDIR_FIRSTCHILD:
+            // MSDN states that navigating to first/last child can only be from self.
+            if (vFromChild.lVal != CHILDID_SELF)
+                return E_INVALIDARG;
+
+            if (!m_object)
+                return E_FAIL;
+
+            if (direction == NAVDIR_FIRSTCHILD)
+                childObj = m_object->firstChild();
+            else
+                childObj = m_object->lastChild();
+            break;
+        case NAVDIR_NEXT:
+        case NAVDIR_PREVIOUS: {
+            // Navigating to next and previous is allowed from self or any of our children.
+            HRESULT hr = getAccessibilityObjectForChild(vFromChild, childObj);
+            if (FAILED(hr))
+                return hr;
+
+            if (direction == NAVDIR_NEXT)
+                childObj = childObj->nextSibling();
+            else
+                childObj = childObj->previousSibling();
+            break;
+        }
+        default:
+            ASSERT_NOT_REACHED();
+            return E_INVALIDARG;
+    }
+
+    if (!childObj)
+        return E_FAIL;
+
+    V_VT(pvNavigatedTo) = VT_DISPATCH;
+    V_DISPATCH(pvNavigatedTo) = wrapper(childObj);
+    V_DISPATCH(pvNavigatedTo)->AddRef();
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE AccessibleBase::accHitTest(long, long, VARIANT*)
