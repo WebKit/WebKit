@@ -1,3 +1,15 @@
+2008-04-24  Paul Olav Tvete  <paul@trolltech.com>
+
+        Reviewed by Simon.
+
+        Automatically wrap tooltip text and hide a shown tooltip when it is empty.
+
+        QWidget::setTooltip("") will still show the old tooltip for up to 10 seconds.
+        Workaround as discussed with Matthias.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::setToolTip):
+
 2008-04-24  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
