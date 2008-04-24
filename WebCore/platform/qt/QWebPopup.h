@@ -25,8 +25,6 @@
 
 #include "PopupMenuClient.h"
 
-class QHideEvent;
-
 namespace WebCore {
 
 class QWebPopup : public QComboBox {
