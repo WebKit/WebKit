@@ -487,9 +487,18 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accHitTest(long x, long y, VARIANT* pv
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::accDoDefaultAction(VARIANT)
+HRESULT STDMETHODCALLTYPE AccessibleBase::accDoDefaultAction(VARIANT vChild)
 {
-    return E_NOTIMPL;
+    AccessibilityObject* childObj;
+    HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
+
+    if (FAILED(hr))
+        return hr;
+
+    if (!childObj->performDefaultAction())
+        return S_FALSE;
+
+    return S_OK;
 }
 
 // AccessibleBase

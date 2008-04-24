@@ -1,5 +1,16 @@
 2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Reviewed by Brady.
+
+        Implement accDoDefaultAction().
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::accDoDefaultAction): Call the object's
+        performDefaultAction() method. Return S_FALSE if the call returns false,
+        indicating that the object has no default action associated with it.
+
+2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Reviewed by Adam.
 
         Implement accHitTest().

@@ -804,14 +804,15 @@ bool AccessibilityObject::isEnabled() const
     return m_renderer->element() ? m_renderer->element()->isEnabled() : true;
 }
 
-void AccessibilityObject::press()
+bool AccessibilityObject::press() const
 {
     Element* actionElem = actionElement();
     if (!actionElem)
-        return;
+        return false;
     if (Frame* f = actionElem->document()->frame())
         f->loader()->resetMultipleFormSubmissionProtection();
     actionElem->accessKeyAction(true);
+    return true;
 }
 
 RenderObject* AccessibilityObject::topRenderer() const

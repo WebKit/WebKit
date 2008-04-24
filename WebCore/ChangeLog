@@ -1,5 +1,16 @@
 2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Reviewed by Brady.
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::press): Return false if this object
+        doesn't have an action element associated with it.
+        * page/AccessibilityObject.h: Added a performDefaultAction() method,
+        which just calls press(). Marked press() const and changed its return
+        type to bool.
+
+2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Reviewed by Adam.
 
         Don't allow a hit test to return an AccessibilityObject that should be
