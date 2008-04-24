@@ -1,3 +1,21 @@
+2008-04-24  John Sullivan  <sullivan@apple.com>
+
+        Mac build fix
+        
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory AXButtonActionVerb]):
+        implement this method using the text in WebCoreLocalizedStrings.cpp
+        (-[WebViewFactory AXRadioButtonActionVerb]):
+        ditto
+        (-[WebViewFactory AXTextFieldActionVerb]):
+        ditto
+        (-[WebViewFactory AXCheckedCheckBoxActionVerb]):
+        ditto
+        (-[WebViewFactory AXUncheckedCheckBoxActionVerb]):
+        ditto
+        (-[WebViewFactory AXLinkActionVerb]):
+        ditto
+
 2008-04-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig

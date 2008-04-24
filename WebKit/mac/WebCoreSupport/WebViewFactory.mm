@@ -447,6 +447,36 @@
     return UI_STRING("heading", "accessibility role description for headings");
 }
 
+- (NSString *)AXButtonActionVerb
+{
+    return UI_STRING("press", "Verb stating the action that will occur when a button is pressed, as used by accessibility");
+}
+
+- (NSString *)AXRadioButtonActionVerb
+{
+    return UI_STRING("select", "Verb stating the action that will occur when a radio button is clicked, as used by accessibility");
+}
+
+- (NSString *)AXTextFieldActionVerb
+{
+    return UI_STRING("activate", "Verb stating the action that will occur when a text field is selected, as used by accessibility");
+}
+
+- (NSString *)AXCheckedCheckBoxActionVerb
+{
+    return UI_STRING("uncheck", "Verb stating the action that will occur when a checked checkbox is clicked, as used by accessibility");
+}
+
+- (NSString *)AXUncheckedCheckBoxActionVerb
+{
+    return UI_STRING("check", "Verb stating the action that will occur when an unchecked checkbox is clicked, as used by accessibility");
+}
+
+- (NSString *)AXLinkActionVerb
+{
+    return UI_STRING("jump", "Verb stating the action that will occur when a link is clicked, as used by accessibility");
+}
+
 - (NSString *)unknownFileSizeText
 {
     return UI_STRING("Unknown", "Unknown filesize FTP directory listing item");

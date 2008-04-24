@@ -496,6 +496,54 @@ String AXHeadingText()
     END_BLOCK_OBJC_EXCEPTIONS;
     return String();
 }
+    
+String AXButtonActionVerb()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] AXButtonActionVerb];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String AXRadioButtonActionVerb()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] AXRadioButtonActionVerb];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String AXTextFieldActionVerb()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] AXTextFieldActionVerb];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String AXCheckedCheckBoxActionVerb()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] AXCheckedCheckBoxActionVerb];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String AXUncheckedCheckBoxActionVerb()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] AXUncheckedCheckBoxActionVerb];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String AXLinkActionVerb()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] AXLinkActionVerb];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
 
 String unknownFileSizeText()
 {

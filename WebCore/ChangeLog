@@ -1,3 +1,24 @@
+2008-04-24  John Sullivan  <sullivan@apple.com>
+
+        Mac buid fix
+
+        * page/mac/WebCoreViewFactory.h:
+        add declarations of six new AX methods that were added to LocalizedStrings.h
+        
+        * platform/mac/LocalizedStringsMac.mm:
+        (WebCore::AXButtonActionVerb):
+        implement by calling through to WebCoreViewFactory as we do with the other functions here
+        (WebCore::AXRadioButtonActionVerb):
+        ditto
+        (WebCore::AXTextFieldActionVerb):
+        ditto
+        (WebCore::AXCheckedCheckBoxActionVerb):
+        ditto
+        (WebCore::AXUncheckedCheckBoxActionVerb):
+        ditto
+        (WebCore::AXLinkActionVerb):
+        ditto
+
 2008-04-24  Simon Hausmann  <hausmann@webkit.org>
 
         Rubber-stamped by Lars

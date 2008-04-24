@@ -113,6 +113,13 @@
 - (NSString *)AXImageMapText;
 - (NSString *)AXHeadingText;
 
+- (NSString *)AXButtonActionVerb;
+- (NSString *)AXRadioButtonActionVerb;
+- (NSString *)AXTextFieldActionVerb;
+- (NSString *)AXCheckedCheckBoxActionVerb;
+- (NSString *)AXUncheckedCheckBoxActionVerb;
+- (NSString *)AXLinkActionVerb;
+
 // FTP Directory Related
 - (NSString *)unknownFileSizeText;
 
