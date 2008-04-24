@@ -143,6 +143,8 @@ void JSGlobalObject::init()
     d()->activations = newStackNode;
     d()->activationCount = 0;
 
+    d()->pageGroupIdentifier = 0;
+
     reset(prototype());
 }
 

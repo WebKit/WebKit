@@ -32,8 +32,10 @@
 #include "ChromeClient.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameTree.h"
 #include "InspectorController.h"
 #include "Page.h"
+#include "PageGroup.h"
 #include "PlatformString.h"
 #include <kjs/list.h>
 #include <profiler/Profiler.h>
@@ -128,7 +130,11 @@ void Console::profile(const String& /*title*/) const
 {
     // FIXME: Figure out something to do with the title passed in so that it can
     // be displayed by the inspector.
-    Profiler::profiler()->startProfiling();
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    Profiler::profiler()->startProfiling(page->group().identifier());
 }
 
 void Console::profileEnd() const

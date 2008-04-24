@@ -1,3 +1,24 @@
+2008-04-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam and Sam.
+
+        -<rdar://problem/5770054> JavaScript profiler (10928)
+        -Only profile the page group that starts profiling to avoid profiling
+        tools that shouldn't be profiled unless explicitly requested to.
+
+        * bindings/js/kjs_proxy.cpp: When a new global object is created set its
+        page group identifier.
+        (WebCore::KJSProxy::clear):
+        (WebCore::KJSProxy::initScript):
+        * page/Console.cpp: When calling console.profile set the identifier of
+        the page group being profiled.
+        (WebCore::Console::profile):
+        * page/PageGroup.cpp: Implement unique identifiers.
+        (WebCore::getUniqueIdentifier):
+        (WebCore::PageGroup::PageGroup):
+        * page/PageGroup.h: Ditto.
+        (WebCore::PageGroup::identifier):
+
 2008-04-24  John Sullivan  <sullivan@apple.com>
 
         Mac buid fix
@@ -1508,7 +1529,6 @@
         * loader/appcache/ApplicationCacheGroup.h:
         (WebCore::ApplicationCacheGroup::finishedLoadingMainResource):
 
->>>>>>> .r32341
 2008-04-21  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by eseidel.  Landed by eseidel.

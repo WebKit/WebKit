@@ -54,6 +54,8 @@ namespace WebCore {
         static void setShouldTrackVisitedLinks(bool);
         static void removeAllVisitedLinks();
 
+        unsigned identifier() { return m_identifier; }
+
 #if ENABLE(DOM_STORAGE)
         LocalStorage* localStorage();
 #endif
@@ -65,6 +67,7 @@ namespace WebCore {
         HashSet<unsigned, AlreadyHashed> m_visitedLinkHashes;
         bool m_visitedLinksPopulated;
 
+        unsigned m_identifier;
 #if ENABLE(DOM_STORAGE)
         RefPtr<LocalStorage> m_localStorage;
 #endif

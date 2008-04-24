@@ -1,3 +1,26 @@
+2008-04-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam and Sam.
+
+        -<rdar://problem/5770054> JavaScript profiler (10928)
+        -Only profile the page group that starts profiling to avoid profiling
+        tools that shouldn't be profiled unless explicitly requested to.
+
+        * JavaScriptCore.exp: Export new signature.
+        * kjs/JSGlobalObject.cpp: Add unique identifiers to the JSGlobalObject.
+        (KJS::JSGlobalObject::init):
+        * kjs/JSGlobalObject.h: Ditto.
+        (KJS::JSGlobalObject::setPageGroupIdentifier):
+        (KJS::JSGlobalObject::pageGroupIdentifier):
+        * profiler/Profiler.cpp: Check the identifier of the page group of the
+        lexical global exec state and only profile if it matches the given page
+        group identifier.
+        (KJS::Profiler::startProfiling):
+        (KJS::Profiler::willExecute):
+        (KJS::Profiler::didExecute):
+        * profiler/Profiler.h: Ditto.
+        (KJS::Profiler::Profiler):
+
 2008-04-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Simon.
