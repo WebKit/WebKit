@@ -1,3 +1,15 @@
+2008-04-24  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
+        Improve keyboard scrolling
+        
+        Match Down/Up keys scroll distance with Safari (i.e. faster) and add Home and End shortcuts to scroll to the top/botom.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::keyPressEvent):
+
 2008-04-24  Olivier Goffart  <ogoffart@trolltech.com>
 
         Reviewed by Simon.
