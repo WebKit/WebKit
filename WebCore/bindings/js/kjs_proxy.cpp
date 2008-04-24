@@ -111,8 +111,6 @@ void KJSProxy::clear()
     // (we used to delete and re-create it, previously)
     if (m_windowWrapper)
         m_windowWrapper->clear();
-        
-    m_windowWrapper->window()->setPageGroupIdentifier(0);
 }
 
 EventListener* KJSProxy::createHTMLEventHandler(const String& functionName, const String& code, Node* node)
