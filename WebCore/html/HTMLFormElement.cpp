@@ -218,7 +218,8 @@ static String pathGetFilename(const String& path)
 #elif PLATFORM(WX)
     return wxFileName(path).GetFullName();
 #elif PLATFORM(WIN_OS)
-    return String(PathFindFileName(path.charactersWithNullTermination()));
+    String copy(path);
+    return String(::PathFindFileName(copy.charactersWithNullTermination()));
 #else
     return path.substring(path.reverseFind('/') + 1);
 #endif

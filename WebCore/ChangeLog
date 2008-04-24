@@ -1,5 +1,12 @@
 2008-04-24  Anders Carlsson  <andersca@apple.com>
 
+        Windows build fix.
+        
+        * html/HTMLFormElement.cpp:
+        (WebCore::pathGetFilename):
+
+2008-04-24  Anders Carlsson  <andersca@apple.com>
+
         Don't crash when the string is empty.
         
         * html/HTMLMediaElement.cpp:
