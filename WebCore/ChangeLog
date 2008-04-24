@@ -1,5 +1,11 @@
 2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::boundingBoxRect): Added FIXME about this
+        method not working correctly for objects with CSS transforms applied.
+
+2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Reviewed by Adam.
 
         Implement contentsToScreen() and screenToContents() on Windows.

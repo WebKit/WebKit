@@ -377,9 +377,25 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accDefaultAction(VARIANT vChild, B
     return S_FALSE;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::accLocation(long*, long*, long*, long*, VARIANT)
+HRESULT STDMETHODCALLTYPE AccessibleBase::accLocation(long* left, long* top, long* width, long* height, VARIANT vChild)
 {
-    return E_NOTIMPL;
+    if (!left || !top || !width || !height)
+        return E_POINTER;
+
+    *left = *top = *width = *height = 0;
+
+    AccessibilityObject* childObj;
+    HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
+
+    if (FAILED(hr))
+        return hr;
+
+    IntRect screenRect(childObj->documentFrameView()->contentsToScreen(childObj->boundingBoxRect()));
+    *left = screenRect.x();
+    *top = screenRect.y();
+    *width = screenRect.width();
+    *height = screenRect.height();
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE AccessibleBase::accNavigate(long, VARIANT, VARIANT*)

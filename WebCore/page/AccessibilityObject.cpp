@@ -551,6 +551,8 @@ IntRect AccessibilityObject::boundingBoxRect() const
 
     if (obj->isInlineContinuation())
         obj = obj->element()->renderer();
+
+    // FIXME: This doesn't work correctly with transforms.
     Vector<IntRect> rects;
     int x, y;
     obj->absolutePosition(x, y);

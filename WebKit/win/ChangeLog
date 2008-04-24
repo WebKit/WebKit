@@ -1,5 +1,15 @@
 2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Reviewed by Adam.
+
+        Implement accLocation().
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::accLocation): Report the screen coordinates for the
+        object's bounding box.
+
+2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Reviewed by Adam, Darin, Oliver.
 
         Implement get_accDefaultAction().
