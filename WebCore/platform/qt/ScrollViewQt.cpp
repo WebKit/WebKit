@@ -687,15 +687,31 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 
 void ScrollView::wheelEvent(PlatformWheelEvent& e)
 {
+    float deltaX = e.deltaX();
+    float deltaY = e.deltaY();
+
+    PlatformMouseEvent mouseEvent(e.pos(), e.globalPos(), NoButton, MouseEventScroll,
+            0, e.shiftKey(), e.ctrlKey(), e.altKey(), e.metaKey(), 0);
+    PlatformScrollbar* scrollBar = scrollbarUnderMouse(mouseEvent);
+
+    if (scrollBar && scrollBar == verticalScrollBar()) {
+        deltaY = (deltaY == 0 ? deltaX : deltaY);
+        deltaX = 0;
+    } else if (scrollBar && scrollBar == horizontalScrollBar()) {
+        deltaX = (deltaX == 0 ? deltaY : deltaX);
+        deltaY = 0;
+    }
+
     // Determine how much we want to scroll.  If we can move at all, we will accept the event.
     IntSize maxScrollDelta = maximumScroll();
-    if ((e.deltaX() < 0 && maxScrollDelta.width() > 0) ||
-        (e.deltaX() > 0 && scrollOffset().width() > 0) ||
-        (e.deltaY() < 0 && maxScrollDelta.height() > 0) ||
-        (e.deltaY() > 0 && scrollOffset().height() > 0))
-        e.accept();
+    if ((deltaX < 0 && maxScrollDelta.width() > 0) ||
+        (deltaX > 0 && scrollOffset().width() > 0) ||
+        (deltaY < 0 && maxScrollDelta.height() > 0) ||
+        (deltaY > 0 && scrollOffset().height() > 0)) {
 
-    scrollBy(-e.deltaX() * LINE_STEP, -e.deltaY() * LINE_STEP);
+        e.accept();
+        scrollBy(-deltaX * LINE_STEP, -deltaY * LINE_STEP);
+    }
 }
 
 bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity)

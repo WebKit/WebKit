@@ -1,3 +1,15 @@
+2008-04-24  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Make mouse wheel events over scrollbars behave the same as in Qt, i.e. both
+        horizontal and vertical wheel events will scroll the view in the orientation
+        of the scrollbar underneath the cursor.
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::paint):
+        (WebCore::ScrollView::wheelEvent):
+
 2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Brady.
