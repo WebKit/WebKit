@@ -257,12 +257,12 @@ static RootInlineBox *rootBoxForLine(const VisiblePosition &c)
     RenderObject *renderer = node->renderer();
     if (!renderer)
         return 0;
+
+    InlineBox* box;
+    int offset;
+    c.getInlineBoxAndOffset(box, offset);
     
-    InlineBox *box = renderer->inlineBox(p.offset(), c.affinity());
-    if (!box)
-        return 0;
-    
-    return box->root();
+    return box ? box->root() : 0;
 }
 
 static VisiblePosition positionAvoidingFirstPositionInTable(const VisiblePosition& c)
@@ -279,7 +279,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c)
 {
     if (c.isNull())
         return VisiblePosition();
-        
+
     RootInlineBox *rootBox = rootBoxForLine(c);
     if (!rootBox) {
         // There are VisiblePositions at offset 0 in blocks without
@@ -347,7 +347,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c)
 {
     if (c.isNull())
         return VisiblePosition();
-        
+
     RootInlineBox *rootBox = rootBoxForLine(c);
     if (!rootBox) {
         // There are VisiblePositions at offset 0 in blocks without
@@ -441,7 +441,9 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
 
     RenderBlock *containingBlock = 0;
     RootInlineBox *root = 0;
-    InlineBox *box = renderer->inlineBox(p.offset(), visiblePosition.affinity());
+    InlineBox* box;
+    int ignoredCaretOffset;
+    visiblePosition.getInlineBoxAndOffset(box, ignoredCaretOffset);
     if (box) {
         root = box->root()->prevRootBox();
         if (root)
@@ -462,7 +464,8 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
             Position pos(n, caretMinOffset(n));
             if (pos.isCandidate()) {
                 ASSERT(n->renderer());
-                box = n->renderer()->inlineBox(caretMaxOffset(n));
+                Position maxPos(n, caretMaxOffset(n));
+                maxPos.getInlineBoxAndOffset(DOWNSTREAM, box, ignoredCaretOffset);
                 if (box) {
                     // previous root line box found
                     root = box->root();
@@ -511,7 +514,9 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
 
     RenderBlock *containingBlock = 0;
     RootInlineBox *root = 0;
-    InlineBox *box = renderer->inlineBox(p.offset(), visiblePosition.affinity());
+    InlineBox* box;
+    int ignoredCaretOffset;
+    visiblePosition.getInlineBoxAndOffset(box, ignoredCaretOffset);
     if (box) {
         root = box->root()->nextRootBox();
         if (root)
@@ -532,7 +537,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
             Position pos(n, caretMinOffset(n));
             if (pos.isCandidate()) {
                 ASSERT(n->renderer());
-                box = n->renderer()->inlineBox(caretMinOffset(n));
+                pos.getInlineBoxAndOffset(DOWNSTREAM, box, ignoredCaretOffset);
                 if (box) {
                     // next root line box found
                     root = box->root();

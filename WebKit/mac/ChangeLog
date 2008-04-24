@@ -1,3 +1,15 @@
+2008-04-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - preparation for https://bugs.webkit.org/show_bug.cgi?id=3729
+          <rdar://problem/4036353> REGRESSION: arrow keys move insertion bar backwards in RTL text
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _caretRectAtNode:offset:affinity:]): Changed to use
+        VisiblePosition::caretRect() instead of the RenderObject method which
+        was removed.
+
 2008-04-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

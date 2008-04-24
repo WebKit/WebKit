@@ -495,14 +495,7 @@ bool SelectionController::modify(EAlteration alter, EDirection dir, TextGranular
 // FIXME: Maybe baseline would be better?
 static bool caretY(const VisiblePosition &c, int &y)
 {
-    Position p = c.deepEquivalent();
-    Node *n = p.node();
-    if (!n)
-        return false;
-    RenderObject *r = p.node()->renderer();
-    if (!r)
-        return false;
-    IntRect rect = r->caretRect(p.offset());
+    IntRect rect = c.caretRect();
     if (rect.isEmpty())
         return false;
     y = rect.y() + rect.height() / 2;
@@ -627,10 +620,10 @@ int SelectionController::xPosForVerticalArrowNavigation(EPositionType type)
         return x;
         
     if (m_xPosForVerticalArrowNavigation == NoXPosForVerticalArrowNavigation) {
-        pos = VisiblePosition(pos, m_sel.affinity()).deepEquivalent();
+        VisiblePosition visiblePosition(pos, m_sel.affinity());
         // VisiblePosition creation can fail here if a node containing the selection becomes visibility:hidden
         // after the selection is created and before this function is called.
-        x = pos.isNotNull() ? pos.node()->renderer()->caretRect(pos.offset(), m_sel.affinity()).x() : 0;
+        x = visiblePosition.isNotNull() ? visiblePosition.caretRect().x() : 0;
         m_xPosForVerticalArrowNavigation = x;
     }
     else
@@ -683,14 +676,13 @@ void SelectionController::layout()
     m_caretPositionOnLayout = IntPoint();
         
     if (isCaret()) {
-        Position pos = m_sel.start();
-        pos = VisiblePosition(m_sel.start(), m_sel.affinity()).deepEquivalent();
+        VisiblePosition pos(m_sel.start(), m_sel.affinity());
         if (pos.isNotNull()) {
-            ASSERT(pos.node()->renderer());
-            m_caretRect = pos.node()->renderer()->caretRect(pos.offset(), m_sel.affinity());
-            
+            ASSERT(pos.deepEquivalent().node()->renderer());
+            m_caretRect = pos.caretRect();
+
             int x, y;
-            pos.node()->renderer()->absolutePositionForContent(x, y);
+            pos.deepEquivalent().node()->renderer()->absolutePositionForContent(x, y);
             m_caretPositionOnLayout = IntPoint(x, y);
         }
     }

@@ -620,11 +620,11 @@ int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf)
     return left;
 }
 
-IntRect RenderFlow::caretRect(int offset, EAffinity affinity, int* extraWidthToEndOfLine)
+IntRect RenderFlow::caretRect(InlineBox* inlineBox, int caretOffset, int* extraWidthToEndOfLine)
 {
     // Do the normal calculation in most cases.
     if (firstChild() || style()->display() == INLINE)
-        return RenderContainer::caretRect(offset, affinity, extraWidthToEndOfLine);
+        return RenderContainer::caretRect(inlineBox, caretOffset, extraWidthToEndOfLine);
 
     // This is a special case:
     // The element is not an inline element, and it's empty. So we have to

@@ -324,43 +324,21 @@ VisiblePosition RenderText::positionForCoordinates(int x, int y)
     return VisiblePosition(element(), lastBoxAbove ? lastBoxAbove->m_start + lastBoxAbove->m_len : 0, DOWNSTREAM);
 }
 
-static inline bool atLineWrap(InlineTextBox* box, int offset)
+IntRect RenderText::caretRect(InlineBox* inlineBox, int caretOffset, int* extraWidthToEndOfLine)
 {
-    return box->nextTextBox() && !box->nextOnLine() && offset == box->m_start + box->m_len;
-}
-
-IntRect RenderText::caretRect(int offset, EAffinity affinity, int* extraWidthToEndOfLine)
-{
-    if (!firstTextBox() || !textLength())
+    if (!inlineBox)
         return IntRect();
 
-    // Find the text box for the given offset
-    InlineTextBox* box = 0;
-    for (box = firstTextBox(); box; box = box->nextTextBox()) {
-        if (box->containsCaretOffset(offset)) {
-            // Check if downstream affinity would make us move to the next line.
-            if (atLineWrap(box, offset) && affinity == DOWNSTREAM) {
-                // Use the next text box
-                box = box->nextTextBox();
-                offset = box->m_start;
-            } else {
-                InlineTextBox* prevBox = box->prevTextBox();
-                if (offset == box->m_start && affinity == UPSTREAM && prevBox && !box->prevOnLine()) {
-                    box = prevBox;
-                    offset = box->m_start + box->m_len;
-                }
-            }
-            break;
-        }
-    }
-
-    if (!box)
+    ASSERT(inlineBox->isInlineTextBox());
+    if (!inlineBox->isInlineTextBox())
         return IntRect();
+
+    InlineTextBox* box = static_cast<InlineTextBox*>(inlineBox);
 
     int height = box->root()->bottomOverflow() - box->root()->topOverflow();
     int top = box->root()->topOverflow();
 
-    int left = box->positionForOffset(offset);
+    int left = box->positionForOffset(caretOffset);
 
     int rootLeft = box->root()->xPos();
     // FIXME: should we use the width of the root inline box or the
@@ -376,7 +354,7 @@ IntRect RenderText::caretRect(int offset, EAffinity affinity, int* extraWidthToE
     RenderBlock* cb = containingBlock();
     if (style()->autoWrap()) {
         int availableWidth = cb->lineWidth(top);
-        if (!box->m_reversed)
+        if (box->direction() == LTR)
             left = min(left, absx + rootLeft + availableWidth - 1);
         else
             left = max(left, absx + rootLeft);
@@ -1005,7 +983,7 @@ void RenderText::position(InlineBox* box)
         return;
     }
 
-    m_containsReversedText |= s->m_reversed;
+    m_containsReversedText |= s->direction() == RTL;
 }
 
 unsigned int RenderText::width(unsigned int from, unsigned int len, int xPos, bool firstLine) const
@@ -1169,24 +1147,6 @@ int RenderText::nextOffset(int current) const
         result = current + 1;
 
     return result;
-}
-
-InlineBox* RenderText::inlineBox(int offset, EAffinity affinity)
-{
-    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        if (box->containsCaretOffset(offset)) {
-            if (atLineWrap(box, offset) && affinity == DOWNSTREAM)
-                return box->nextTextBox();
-            return box;
-        }
-        if (offset < box->m_start)
-            // The offset we're looking for is before this node
-            // this means the offset must be in content that is
-            // not rendered.
-            return box->prevTextBox() ? box->prevTextBox() : firstTextBox();
-    }
-
-    return 0;
 }
 
 #ifndef NDEBUG

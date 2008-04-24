@@ -2522,7 +2522,7 @@ void RenderBox::calcAbsoluteVerticalReplaced()
     m_y = topValue + m_marginTop + containerBlock->borderTop();
 }
 
-IntRect RenderBox::caretRect(int offset, EAffinity affinity, int* extraWidthToEndOfLine)
+IntRect RenderBox::caretRect(InlineBox* box, int caretOffset, int* extraWidthToEndOfLine)
 {
     // VisiblePositions at offsets inside containers either a) refer to the positions before/after
     // those containers (tables and select elements) or b) refer to the position inside an empty block.
@@ -2532,9 +2532,12 @@ IntRect RenderBox::caretRect(int offset, EAffinity affinity, int* extraWidthToEn
     // FIXME: What about border and padding?
     const int caretWidth = 1;
     IntRect rect(xPos(), yPos(), caretWidth, m_height);
-    if (offset)
+    TextDirection direction = box ? box->direction() : style()->direction();
+
+    if ((!caretOffset) ^ (direction == LTR))
         rect.move(IntSize(m_width - caretWidth, 0));
-    if (InlineBox* box = inlineBoxWrapper()) {
+
+    if (box) {
         RootInlineBox* rootBox = box->root();
         int top = rootBox->topOverflow();
         rect.setY(top);

@@ -1,3 +1,12 @@
+2008-04-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test the visual position of the primary caret in bidirectional text
+
+        * platform/mac/editing/input/caret-primary-bidi-expected.txt: Added.
+        * platform/mac/editing/input/caret-primary-bidi.html: Added.
+
 2008-04-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

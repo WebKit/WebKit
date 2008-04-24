@@ -105,7 +105,7 @@ public:
     virtual SelectionState selectionState() const { return static_cast<SelectionState>(m_selectionState); }
     virtual void setSelectionState(SelectionState s);
     virtual IntRect selectionRect(bool clipToVisibleContent = true);
-    virtual IntRect caretRect(int offset, EAffinity, int* extraWidthToEndOfLine = 0);
+    virtual IntRect caretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
 
     virtual int marginLeft() const { return style()->marginLeft().calcMinValue(0); }
     virtual int marginRight() const { return style()->marginRight().calcMinValue(0); }
@@ -114,8 +114,6 @@ public:
 
     InlineTextBox* firstTextBox() const { return m_firstTextBox; }
     InlineTextBox* lastTextBox() const { return m_lastTextBox; }
-
-    virtual InlineBox* inlineBox(int offset, EAffinity = UPSTREAM);
 
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;

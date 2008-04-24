@@ -50,9 +50,10 @@ static Node *nextRenderedEditable(Node *node)
         node = node->nextEditable();
         if (!node)
             return 0;
-        if (!node->renderer())
+        RenderObject* renderer = node->renderer();
+        if (!renderer)
             continue;
-        if (node->renderer()->inlineBox(0))
+        if (renderer->inlineBoxWrapper() || renderer->isText() && static_cast<RenderText*>(renderer)->firstTextBox())
             return node;
     }
     return 0;
@@ -64,9 +65,10 @@ static Node *previousRenderedEditable(Node *node)
         node = node->previousEditable();
         if (!node)
             return 0;
-        if (!node->renderer())
+        RenderObject* renderer = node->renderer();
+        if (!renderer)
             continue;
-        if (node->renderer()->inlineBox(0))
+        if (renderer->inlineBoxWrapper() || renderer->isText() && static_cast<RenderText*>(renderer)->firstTextBox())
             return node;
     }
     return 0;
@@ -683,16 +685,19 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     if (renderer == posRenderer && thisRenderedOffset == posRenderedOffset)
         return false;
 
-    LOG(Editing, "renderer:               %p [%p]\n", renderer, renderer ? renderer->inlineBox(offset()) : 0);
+    int ignoredCaretOffset;
+    InlineBox* b1;
+    getInlineBoxAndOffset(DOWNSTREAM, b1, ignoredCaretOffset);
+    InlineBox* b2;
+    pos.getInlineBoxAndOffset(DOWNSTREAM, b2, ignoredCaretOffset);
+
+    LOG(Editing, "renderer:               %p [%p]\n", renderer, b1);
     LOG(Editing, "thisRenderedOffset:         %d\n", thisRenderedOffset);
-    LOG(Editing, "posRenderer:            %p [%p]\n", posRenderer, posRenderer ? posRenderer->inlineBox(offset()) : 0);
+    LOG(Editing, "posRenderer:            %p [%p]\n", posRenderer, b2);
     LOG(Editing, "posRenderedOffset:      %d\n", posRenderedOffset);
     LOG(Editing, "node min/max:           %d:%d\n", caretMinOffset(node()), caretMaxRenderedOffset(node()));
     LOG(Editing, "pos node min/max:       %d:%d\n", caretMinOffset(pos.node()), caretMaxRenderedOffset(pos.node()));
     LOG(Editing, "----------------------------------------------------------------------\n");
-
-    InlineBox *b1 = renderer ? renderer->inlineBox(offset()) : 0;
-    InlineBox *b2 = posRenderer ? posRenderer->inlineBox(pos.offset()) : 0;
 
     if (!b1 || !b2) {
         return false;
@@ -752,6 +757,144 @@ Position Position::trailingWhitespacePosition(EAffinity affinity, bool considerN
             return *this;
     
     return Position();
+}
+
+void Position::getInlineBoxAndOffset(EAffinity affinity, InlineBox*& inlineBox, int& caretOffset) const
+{
+    TextDirection primaryDirection = LTR;
+    for (RenderObject* r = node()->renderer(); r; r = r->parent()) {
+        if (r->isBlockFlow()) {
+            primaryDirection = r->style()->direction();
+            break;
+        }
+    }
+    getInlineBoxAndOffset(affinity, primaryDirection, inlineBox, caretOffset);
+}
+
+void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDirection, InlineBox*& inlineBox, int& caretOffset) const
+{
+    caretOffset = offset();
+    RenderObject* renderer = node()->renderer();
+    if (!renderer->isText()) {
+        inlineBox = renderer->inlineBoxWrapper();
+        if (!inlineBox || caretOffset > inlineBox->caretMinOffset() && caretOffset < inlineBox->caretMaxOffset())
+            return;
+    } else {
+        RenderText* textRenderer = static_cast<RenderText*>(renderer);
+
+        InlineTextBox* box;
+        InlineTextBox* candidate = 0;
+
+        for (box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+            int caretMinOffset = box->caretMinOffset();
+            int caretMaxOffset = box->caretMaxOffset();
+
+            if (caretOffset < caretMinOffset || caretOffset > caretMaxOffset)
+                continue;
+
+            if (caretOffset > caretMinOffset && caretOffset < caretMaxOffset) {
+                inlineBox = box;
+                return;
+            }
+
+            if (caretOffset == caretMinOffset ^ affinity == UPSTREAM)
+                break;
+
+            candidate = box;
+        }
+        inlineBox = box ? box : candidate;
+    }
+
+    if (!inlineBox)
+        return;
+
+    unsigned char level = inlineBox->bidiLevel();
+
+    if (inlineBox->direction() == primaryDirection) {
+        if (caretOffset == inlineBox->caretRightmostOffset()) {
+            InlineBox* nextBox = inlineBox->nextLeafChild();
+            if (!nextBox || nextBox->bidiLevel() >= level)
+                return;
+
+            level = nextBox->bidiLevel();
+            InlineBox* prevBox = inlineBox;
+            do {
+                prevBox = prevBox->prevLeafChild();
+            } while (prevBox && prevBox->bidiLevel() > level);
+
+            if (prevBox && prevBox->bidiLevel() == level)   // For example, abc FED 123 ^ CBA
+                return;
+
+            // For example, abc 123 ^ CBA
+            while (InlineBox* nextBox = inlineBox->nextLeafChild()) {
+                if (nextBox->bidiLevel() < level)
+                    break;
+                inlineBox = nextBox;
+            }
+            caretOffset = inlineBox->caretRightmostOffset();
+        } else {
+            InlineBox* prevBox = inlineBox->prevLeafChild();
+            if (!prevBox || prevBox->bidiLevel() >= level)
+                return;
+
+            level = prevBox->bidiLevel();
+            InlineBox* nextBox = inlineBox;
+            do {
+                nextBox = nextBox->nextLeafChild();
+            } while (nextBox && nextBox->bidiLevel() > level);
+
+            if (nextBox && nextBox->bidiLevel() == level)
+                return;
+
+            while (InlineBox* prevBox = inlineBox->prevLeafChild()) {
+                if (prevBox->bidiLevel() < level)
+                    break;
+                inlineBox = prevBox;
+            }
+            caretOffset = inlineBox->caretLeftmostOffset();
+        }
+        return;
+    }
+
+    if (caretOffset == inlineBox->caretLeftmostOffset()) {
+        InlineBox* prevBox = inlineBox->prevLeafChild();
+        if (!prevBox || prevBox->bidiLevel() < level) {
+            // Left edge of a secondary run. Set to the right edge of the entire run.
+            while (InlineBox* nextBox = inlineBox->nextLeafChild()) {
+                if (nextBox->bidiLevel() < level)
+                    break;
+                inlineBox = nextBox;
+            }
+            caretOffset = inlineBox->caretRightmostOffset();
+        } else if (prevBox->bidiLevel() > level) {
+            // Right edge of a "tertiary" run. Set to the left edge of that run.
+            while (InlineBox* tertiaryBox = inlineBox->prevLeafChild()) {
+                if (tertiaryBox->bidiLevel() <= level)
+                    break;
+                inlineBox = tertiaryBox;
+            }
+            caretOffset = !inlineBox->caretLeftmostOffset();
+        }
+    } else {
+        InlineBox* nextBox = inlineBox->nextLeafChild();
+        if (!nextBox || nextBox->bidiLevel() < level) {
+            // Right edge of a secondary run. Set to the left edge of the entire run.
+            while (InlineBox* prevBox = inlineBox->prevLeafChild()) {
+                if (prevBox->bidiLevel() < level)
+                    break;
+                inlineBox = prevBox;
+            }
+            caretOffset = inlineBox->caretLeftmostOffset();
+        } else if (nextBox->bidiLevel() > level) {
+            // Left edge of a "tertiary" run. Set to the right edge of that run.
+            while (InlineBox* tertiaryBox = inlineBox->nextLeafChild()) {
+                if (tertiaryBox->bidiLevel() <= level)
+                    break;
+                inlineBox = tertiaryBox;
+            }
+            caretOffset = inlineBox->caretRightmostOffset();
+        }
+    }
 }
 
 void Position::debugPosition(const char* msg) const

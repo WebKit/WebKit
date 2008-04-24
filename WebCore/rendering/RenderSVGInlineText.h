@@ -39,7 +39,7 @@ public:
     virtual bool isSVGText() const { return true; }
     virtual InlineTextBox* createInlineTextBox();
 
-    virtual IntRect caretRect(int offset, EAffinity, int* extraWidthToEndOfLine = 0);
+    virtual IntRect caretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
 private:

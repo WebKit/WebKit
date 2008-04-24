@@ -74,7 +74,7 @@ static inline float cumulativeCharacterRangeLength(const Vector<SVGChar>::iterat
             unsigned int newOffset = textBox->start() + (it - start) + startOffset;
 
             // Take RTL text into account and pick right glyph width/height.
-            if (textBox->m_reversed)
+            if (textBox->direction() == RTL)
                 newOffset = textBox->start() + textBox->end() - newOffset;
 
             // FIXME: does this handle multichar glyphs ok? not sure
@@ -191,7 +191,7 @@ struct SVGInlineTextBoxQueryWalker {
                     unsigned int newOffset = textBox->start() + (it - start) + startOffset;
 
                     // Take RTL text into account and pick right glyph width/height.
-                    if (textBox->m_reversed)
+                    if (textBox->direction() == RTL)
                         newOffset = textBox->start() + textBox->end() - newOffset;
 
                     int charsConsumed;

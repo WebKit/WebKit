@@ -139,7 +139,7 @@ public:
 
     virtual RenderLayer* layer() const { return m_layer; }
 
-    virtual IntRect caretRect(int offset, EAffinity = UPSTREAM, int* extraWidthToEndOfLine = 0);
+    virtual IntRect caretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
 
     virtual void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight,
                                         int tx, int ty, int width, int height, InlineFlowBox* = 0);

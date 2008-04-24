@@ -518,9 +518,11 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
         bool isOnlyRun = (runCount == 1);
         if (runCount == 2 && !r->m_object->isListMarker())
             isOnlyRun = ((style()->direction() == RTL) ? lastRun : firstRun)->m_object->isListMarker();
-        r->m_box = r->m_object->createInlineBox(r->m_object->isPositioned(), false, isOnlyRun);
 
-        if (r->m_box) {
+        InlineBox* box = r->m_object->createInlineBox(r->m_object->isPositioned(), false, isOnlyRun);
+        r->m_box = box;
+
+        if (box) {
             // If we have no parent box yet, or if the run is not simply a sibling,
             // then we need to construct inline boxes as necessary to properly enclose the
             // run's inline box.
@@ -529,14 +531,15 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
                 parentBox = createLineBoxes(r->m_object->parent());
 
             // Append the inline box to this line.
-            parentBox->addToLine(r->m_box);
-            
-            if (r->m_box->isInlineTextBox()) {
-                InlineTextBox* text = static_cast<InlineTextBox*>(r->m_box);
+            parentBox->addToLine(box);
+
+            bool visuallyOrdered = r->m_object->style()->visuallyOrdered();
+            box->setBidiLevel(visuallyOrdered ? 0 : r->level());
+
+            if (box->isInlineTextBox()) {
+                InlineTextBox* text = static_cast<InlineTextBox*>(box);
                 text->setStart(r->m_start);
                 text->setLen(r->m_stop - r->m_start);
-                bool visuallyOrdered = r->m_object->style()->visuallyOrdered();
-                text->m_reversed = r->reversed(visuallyOrdered);
                 text->m_dirOverride = r->dirOverride(visuallyOrdered);
             }
         }

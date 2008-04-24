@@ -242,10 +242,22 @@ UChar VisiblePosition::characterAfter() const
 
 IntRect VisiblePosition::caretRect() const
 {
-    if (!m_deepPosition.node() || !m_deepPosition.node()->renderer())
+    Node* node = m_deepPosition.node();
+    if (!node)
         return IntRect();
 
-    return m_deepPosition.node()->renderer()->caretRect(m_deepPosition.offset(), m_affinity);
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return IntRect();
+
+    InlineBox* inlineBox;
+    int caretOffset;
+    getInlineBoxAndOffset(inlineBox, caretOffset);
+
+    if (inlineBox)
+        renderer = inlineBox->object();
+
+    return renderer->caretRect(inlineBox, caretOffset);
 }
 
 void VisiblePosition::debugPosition(const char* msg) const

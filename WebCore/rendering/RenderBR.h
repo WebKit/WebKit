@@ -60,8 +60,6 @@ public:
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
-    virtual InlineBox* inlineBox(int offset, EAffinity = UPSTREAM);
-
 private:
     mutable short m_lineHeight;
 };

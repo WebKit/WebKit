@@ -278,11 +278,16 @@ IntRect Frame::firstRectForRange(Range* range) const
     ExceptionCode ec = 0;
     ASSERT(range->startContainer(ec));
     ASSERT(range->endContainer(ec));
-    IntRect startCaretRect = range->startContainer(ec)->renderer()->caretRect(range->startOffset(ec), DOWNSTREAM, &extraWidthToEndOfLine);
-    ASSERT(!ec);
-    IntRect endCaretRect = range->endContainer(ec)->renderer()->caretRect(range->endOffset(ec), UPSTREAM);
-    ASSERT(!ec);
-    
+    InlineBox* startInlineBox;
+    int startCaretOffset;
+    range->startPosition().getInlineBoxAndOffset(DOWNSTREAM, startInlineBox, startCaretOffset);
+    IntRect startCaretRect = range->startContainer(ec)->renderer()->caretRect(startInlineBox, startCaretOffset, &extraWidthToEndOfLine);
+
+    InlineBox* endInlineBox;
+    int endCaretOffset;
+    range->endPosition().getInlineBoxAndOffset(UPSTREAM, endInlineBox, endCaretOffset);
+    IntRect endCaretRect = range->endContainer(ec)->renderer()->caretRect(endInlineBox, endCaretOffset);
+
     if (startCaretRect.y() == endCaretRect.y()) {
         // start and end are on the same line
         return IntRect(min(startCaretRect.x(), endCaretRect.x()), 

@@ -1,3 +1,176 @@
+2008-04-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - preparation for https://bugs.webkit.org/show_bug.cgi?id=3729
+          <rdar://problem/4036353> REGRESSION: arrow keys move insertion bar backwards in RTL text
+
+        The three main changes in this patch are:
+
+        1) Making all inline boxes know their bidi level, instead of just text
+           boxes knowing whether their bidi level is odd or even. This is
+           required for the next change.
+
+        2) Replacing RenderObject::inlineBox() with
+           Position::getInlineBoxAndOffset() in recognition of the fact that the
+           inline box containing the primary caret for a position in a given
+           node may belong to a different node's renderer.
+
+        3) Changing RenderObject::caretRect() to take an InlineBox parameter,
+           and changing callers to call VisiblePosition::caretRect(), which
+           locates the inline box, then calls caretRect() on the renderer for
+           that box. This, combined with the previous change, ensures that the
+           primary caret is rendered at the right place for positions that
+           lie on a directionality boundary.
+
+        Test: platform/mac/editing/input/caret-primary-bidi.html
+
+        * WebCore.base.exp: Added the VisiblePosition(Node*, int, EAffinity)
+        constructor and VisiblePosition::caretRect(), and sorted.
+
+        * dom/Position.cpp:
+        (WebCore::nextRenderedEditable): Adjusted for the removal of
+        RenderObject::inlineBox().
+        (WebCore::previousRenderedEditable): Ditto.
+        (WebCore::Position::rendersInDifferentPosition): Ditto.
+        (WebCore::Position::getInlineBoxAndOffset): Added. Gets the inline box
+        and the offset within that box at which the primary caret for this
+        position should render.
+
+        * dom/Position.h:
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Changed to call
+        VisiblePosition::caretRect() instead of calling the RenderObject method.
+
+        * editing/SelectionController.cpp:
+        (WebCore::caretY): Ditto.
+        (WebCore::SelectionController::xPosForVerticalArrowNavigation): Ditto.
+        (WebCore::SelectionController::layout): Ditto.
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::caretRect): Changed to call
+        getInlineBoxAndOffset() to get the correct inline box and call the
+        renderer for that box.
+
+        * editing/VisiblePosition.h:
+        (WebCore::VisiblePosition::getInlineBoxAndOffset): Added convenience
+        methods for getting the inline box and caret offset for a visible
+        position, accounting for its affinity.
+
+        * editing/visible_units.cpp:
+        (WebCore::rootBoxForLine): Changed to use getInlineBoxAndOffset()
+        instead of RenderObject::inlineBox().
+        (WebCore::startPositionForLine):
+        (WebCore::endPositionForLine):
+        (WebCore::previousLinePosition): Ditto.
+        (WebCore::nextLinePosition): Ditto.
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::updateAXLineStartForVisiblePosition): Ditto.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::firstRectForRange): Ditto.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::caretMinOffset): Changed to forward to the
+        renderer.
+        (WebCore::InlineBox::caretMaxOffset): Ditto.
+        * rendering/InlineBox.h: Replaced the m_reversed bit, intended for use
+        in InlineTextBox only, with six bits of the bidi level of the box,
+        intended for use in all leaf inline boxes.
+        (WebCore::InlineBox::InlineBox): Added missing initializer for
+        m_dirOverride and initialized the bidi level.
+        (WebCore::InlineBox::bidiLevel): Added this accessor.
+        (WebCore::InlineBox::setBidiLevel): Ditto.
+        (WebCore::InlineBox::direction): Ditto.
+        (WebCore::InlineBox::caretLeftmostOffset): Added this convenience
+        method.
+        (WebCore::InlineBox::caretRightmostOffset): Ditto.
+
+        * rendering/InlineTextBox.cpp: Replaced all references to m_reversed
+        with checking of direction().
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::placeEllipsisBox):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::textPos):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+
+        * rendering/RenderBR.cpp: Removed inlineBox().
+        * rendering/RenderBR.h: Ditto.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::caretRect): Changed to take an inline box and
+        account for the direction of the box (or the renderer) in positioning
+        the caret: in right-to-left boxes, the "before" position is to the right
+        while "after" is to the left.
+        * rendering/RenderBox.h:
+
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::caretRect): Updated the signature.
+        * rendering/RenderFlow.h:
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::caretRect): Updated the signature.
+        (WebCore::RenderObject::caretMaxOffset): Changed to return the child
+        node count (or 1 if there are no children) for replaced elements, such
+        as <select>s.
+        * rendering/RenderObject.h:
+
+        * rendering/RenderReplaced.cpp: Removed caretMinOffset() and
+        caretMaxOffset() because the base class implementation does the right
+        thing for replaced objects now.
+        * rendering/RenderReplaced.h:
+
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::caretRect): Updated the signature.
+        (WebCore::RenderSVGInlineText::positionForCoordinates): Updated for
+        the change from m_reversed to direction().
+        * rendering/RenderSVGInlineText.h:
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::caretRect): Changed to take an inline box and
+        removed the code that used to find the inline for the given position.
+        Changed use of m_reversed to use direction().
+        (WebCore::RenderText::position): Changed use of m_reversed to use
+        direction().
+        * rendering/RenderText.h:
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::textWithHardLineBreaks): Adjusted for the
+        removal of RenderObject::inlineBox().
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeTextRun): Changed to use direction() instead of
+        m_reversed.
+
+        * rendering/SVGInlineTextBox.cpp: Ditto.
+        (WebCore::SVGInlineTextBox::calculateGlyphBoundaries):
+        (WebCore::SVGInlineTextBoxClosestCharacterToPositionWalker::chunkPortionCallback):
+        (WebCore::SVGInlineTextBox::svgCharacterHitsPosition):
+
+        * rendering/SVGRenderTreeAsText.cpp: Ditto.
+        (WebCore::writeSVGInlineTextBox):
+
+        * rendering/SVGRootInlineBox.cpp: Ditto.
+        (WebCore::svgTextRunForInlineTextBox):
+        (WebCore::cummulatedWidthOrHeightOfTextChunk):
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::constructLine): Made this function set the
+        bidi level on all leaf boxes.
+
+        * svg/SVGTextContentElement.cpp: Changed to use direction() instead of
+        m_reversed.
+        (WebCore::cumulativeCharacterRangeLength):
+        (WebCore::SVGInlineTextBoxQueryWalker::chunkPortionCallback):
+
 2008-04-24  Sam Weinig  <sam@webkit.org>
 
         Fix the world.

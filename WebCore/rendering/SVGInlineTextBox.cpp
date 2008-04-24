@@ -99,7 +99,7 @@ FloatRect SVGInlineTextBox::calculateGlyphBoundaries(RenderStyle* style, int off
     // FIXME: account for multi-character glyphs
     int charsConsumed;
     String glyphName;
-    if (!m_reversed)
+    if (direction() == LTR)
         glyphWidth = calculateGlyphWidth(style, offset, 0, charsConsumed, glyphName);
     else
         glyphWidth = calculateGlyphWidth(style, start() + end() - offset, 0, charsConsumed, glyphName);
@@ -148,7 +148,7 @@ struct SVGInlineTextBoxClosestCharacterToPositionWalker {
 
             // Take RTL text into account and pick right glyph width/height.
             // NOTE: This offset has to be corrected _after_ calling calculateGlyphBoundaries
-            if (textBox->m_reversed)
+            if (textBox->direction() == RTL)
                 newOffset = textBox->start() + textBox->end() - newOffset;
 
             // Calculate distances relative to the glyph mid-point. I hope this is accurate enough.
@@ -248,7 +248,7 @@ bool SVGInlineTextBox::svgCharacterHitsPosition(int x, int y, int& offset) const
     RenderStyle* style = textObject()->style(m_firstLine);
     FloatRect glyphRect = calculateGlyphBoundaries(style, offset, charAtPos);
 
-    if (m_reversed)
+    if (direction() == RTL)
         offset++;
 
     // FIXME: todo list
@@ -260,9 +260,9 @@ bool SVGInlineTextBox::svgCharacterHitsPosition(int x, int y, int& offset) const
 
     // Check whether x position hits the current character
     if (x < charAtPos.x) {
-        if (offset > 0 && !m_reversed)
+        if (offset > 0 && direction() == LTR)
             return true;
-        else if (offset < (int) end() && m_reversed)
+        else if (offset < (int) end() && direction() == RTL)
             return true;
 
         return false;
@@ -274,7 +274,7 @@ bool SVGInlineTextBox::svgCharacterHitsPosition(int x, int y, int& offset) const
 
     // Snap to character at half of it's advance
     if (x >= charAtPos.x + glyphRect.width() / 2.0)
-        offset += m_reversed ? -1 : 1;
+        offset += direction() == RTL ? -1 : 1;
 
     return true;
 }

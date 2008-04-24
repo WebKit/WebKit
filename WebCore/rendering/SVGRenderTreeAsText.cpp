@@ -423,8 +423,8 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
             else
                 ts << " width " << cummulatedWidthOfInlineBoxCharacterRange(range);
 
-            if (textBox->m_reversed || textBox->m_dirOverride) {
-                ts << (textBox->m_reversed ? " RTL" : " LTR");
+            if (textBox->direction() == RTL || textBox->m_dirOverride) {
+                ts << (textBox->direction() == RTL ? " RTL" : " LTR");
 
                 if (textBox->m_dirOverride)
                     ts << " override";

@@ -27,6 +27,7 @@
 #define Position_h
 
 #include "TextAffinity.h"
+#include "TextDirection.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -34,6 +35,7 @@ namespace WebCore {
 
 class CSSComputedStyleDeclaration;
 class Element;
+class InlineBox;
 class Node;
 class Range;
 class RenderObject;
@@ -88,7 +90,10 @@ public:
     bool inRenderedText() const;
     bool isRenderedCharacter() const;
     bool rendersInDifferentPosition(const Position&) const;
-    
+
+    void getInlineBoxAndOffset(EAffinity, InlineBox*&, int& caretOffset) const;
+    void getInlineBoxAndOffset(EAffinity, TextDirection primaryDirection, InlineBox*&, int& caretOffset) const;
+
     static bool hasRenderedNonAnonymousDescendantsWithHeight(RenderObject*);
     static bool nodeIsUserSelectNone(Node*);
     
