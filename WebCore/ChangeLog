@@ -1,3 +1,30 @@
+2008-04-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Jon Honeycutt
+
+        Preparing for making LocalStorageAreas persistent.
+
+        Since LocalStorageAreas will need to do a lot of additional work for each of the basic
+        operations a Storage object supports, this patch makes the API entry points virtual so
+        LocalStorageArea can override them.  The behavior for both Local and Session StorageAreas
+        is unchanged with this patch, but LocalStorageArea will override them in the future.
+
+        * storage/StorageArea.cpp: Rename the implementations to internalFoo
+        (WebCore::StorageArea::internalLength):
+        (WebCore::StorageArea::internalKey):
+        (WebCore::StorageArea::internalGetItem):
+        (WebCore::StorageArea::internalSetItem):
+        (WebCore::StorageArea::internalRemoveItem):
+        (WebCore::StorageArea::internalContains):
+
+        * storage/StorageArea.h: Call internalFoo variants
+        (WebCore::StorageArea::length):
+        (WebCore::StorageArea::key):
+        (WebCore::StorageArea::getItem):
+        (WebCore::StorageArea::setItem):
+        (WebCore::StorageArea::removeItem):
+        (WebCore::StorageArea::contains):
+
 2008-04-23  David Hyatt  <hyatt@apple.com>
 
         Implement getComputedStyle for border-image.

@@ -28,7 +28,6 @@
 
 #include "CString.h"
 #include "ExceptionCode.h"
-#include "PlatformString.h"
 #include "SecurityOrigin.h"
 #include "StorageMap.h"
 
@@ -50,12 +49,12 @@ StorageArea::~StorageArea()
 {
 }
 
-unsigned StorageArea::length() const
+unsigned StorageArea::internalLength() const
 {
     return m_storageMap->length();
 }
 
-String StorageArea::key(unsigned index, ExceptionCode& ec) const
+String StorageArea::internalKey(unsigned index, ExceptionCode& ec) const
 {
     String key;
     
@@ -67,12 +66,12 @@ String StorageArea::key(unsigned index, ExceptionCode& ec) const
     return key;
 }
 
-String StorageArea::getItem(const String& key) const
+String StorageArea::internalGetItem(const String& key) const
 {
     return m_storageMap->getItem(key);
 }
 
-void StorageArea::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
+void StorageArea::internalSetItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
 {
     ASSERT(!value.isNull());
     
@@ -94,8 +93,8 @@ void StorageArea::setItem(const String& key, const String& value, ExceptionCode&
         itemChanged(key, oldValue, value, frame);
 }
 
-void StorageArea::removeItem(const String& key, Frame* frame)
-{    
+void StorageArea::internalRemoveItem(const String& key, Frame* frame)
+{   
     String oldValue;
     RefPtr<StorageMap> newMap = m_storageMap->removeItem(key, oldValue);
     if (newMap)
@@ -106,7 +105,7 @@ void StorageArea::removeItem(const String& key, Frame* frame)
         itemRemoved(key, oldValue, frame);
 }
 
-bool StorageArea::contains(const String& key) const
+bool StorageArea::internalContains(const String& key) const
 {
     return m_storageMap->contains(key);
 }
