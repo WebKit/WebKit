@@ -1,3 +1,24 @@
+2008-04-24  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Don't do anti-aliasing for arcs, lines and rects, but continue to anti-alias
+        all drawing primitives in the HTML Canvas element.
+
+        This speeds up drawing of dashed outlines significantly.
+
+        Also preserve the anti-aliasing renderhint for transparency layers and
+        get rid of the mostly unused device pointer.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::TransparencyLayer::TransparencyLayer):
+        (WebCore::GraphicsContextPlatformPrivate::p):
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::strokeArc):
+
 2008-04-24  Paul Olav Tvete <paul@trolltech.com>
 
         Reviewed by Simon.
