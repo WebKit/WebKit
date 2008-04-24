@@ -2,6 +2,17 @@
 
         Reviewed by Adam.
 
+        Don't allow a hit test to return an AccessibilityObject that should be
+        ignored.
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::doAccessibilityHitTest): If this result
+        object's accessibility is ignored, return the parent unignored object.
+
+2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Adam.
+
         Fix a crash when performing a hit test on an AccessibilityObject with
         no layer (e.g., an AccessibilityObject for a RenderText object).
 

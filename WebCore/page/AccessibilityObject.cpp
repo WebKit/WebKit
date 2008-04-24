@@ -1663,16 +1663,20 @@ AccessibilityObject* AccessibilityObject::doAccessibilityHitTest(const IntPoint&
         return 0;
 
     HitTestRequest request(true, true);
-    HitTestResult result = HitTestResult(point);
-    m_renderer->layer()->hitTest(request, result);
-    if (!result.innerNode())
+    HitTestResult hitTestResult = HitTestResult(point);
+    layer->hitTest(request, hitTestResult);
+    if (!hitTestResult.innerNode())
         return 0;
-    Node* node = result.innerNode()->shadowAncestorNode();
+    Node* node = hitTestResult.innerNode()->shadowAncestorNode();
     RenderObject* obj = node->renderer();
     if (!obj)
         return 0;
 
-    return obj->document()->axObjectCache()->get(obj);
+    AccessibilityObject* result = obj->document()->axObjectCache()->get(obj);
+    if (result->accessibilityIsIgnored())
+        result = result->parentObjectUnignored();
+
+    return result;
 }
 
 AccessibilityObject* AccessibilityObject::focusedUIElement() const
