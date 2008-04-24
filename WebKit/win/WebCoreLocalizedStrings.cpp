@@ -82,6 +82,12 @@ String WebCore::AXLinkText() { return String(LPCTSTR_UI_STRING("link", "accessib
 String WebCore::AXListMarkerText() { return String(LPCTSTR_UI_STRING("list marker", "accessibility role description for list marker")); }
 String WebCore::AXImageMapText() { return String(LPCTSTR_UI_STRING("image map", "accessibility role description for image map")); }
 String WebCore::AXHeadingText() { return String(LPCTSTR_UI_STRING("heading", "accessibility role description for headings")); }
+String WebCore::AXButtonActionVerb() { return String(LPCTSTR_UI_STRING("press", "Verb stating the action that will occur when a button is pressed, as used by accessibility")); }
+String WebCore::AXRadioButtonActionVerb() { return String(LPCTSTR_UI_STRING("select", "Verb stating the action that will occur when a radio button is clicked, as used by accessibility")); }
+String WebCore::AXTextFieldActionVerb() { return String(LPCTSTR_UI_STRING("activate", "Verb stating the action that will occur when a text field is selected, as used by accessibility")); }
+String WebCore::AXCheckedCheckBoxActionVerb() { return String(LPCTSTR_UI_STRING("uncheck", "Verb stating the action that will occur when a checked checkbox is clicked, as used by accessibility")); }
+String WebCore::AXUncheckedCheckBoxActionVerb() { return String(LPCTSTR_UI_STRING("check", "Verb stating the action that will occur when an unchecked checkbox is clicked, as used by accessibility")); }
+String WebCore::AXLinkActionVerb() { return String(LPCTSTR_UI_STRING("jump", "Verb stating the action that will occur when a link is clicked, as used by accessibility")); }
 String WebCore::unknownFileSizeText() { return String(LPCTSTR_UI_STRING("Unknown", "Unknown filesize FTP directory listing item")); }
 String WebCore::uploadFileText() { return String(LPCTSTR_UI_STRING("Upload file", "(Windows) Form submit file upload dialog title")); }
 String WebCore::allFilesText() { return String(LPCTSTR_UI_STRING("All Files", "(Windows) Form submit file upload all files pop-up")); }

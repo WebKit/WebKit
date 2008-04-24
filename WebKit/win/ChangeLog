@@ -1,3 +1,22 @@
+2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Adam, Darin, Oliver.
+
+        Implement get_accDefaultAction().
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accDefaultAction): Report the result of calling the
+        object's actionVerb method.
+        * English.lproj/Localizable.strings: Updated with new strings.
+        * WebCoreLocalizedStrings.cpp: 
+        (WebCore::AXButtonActionVerb): Return a localized string representing
+        the object's default action.
+        (WebCore::AXRadioButtonActionVerb): Same.
+        (WebCore::AXTextFieldActionVerb): Same.
+        (WebCore::AXCheckedCheckBoxActionVerb): Same
+        (WebCore::AXUncheckedCheckBoxActionVerb): Same.
+        (WebCore::AXLinkActionVerb): Same.
+
 2008-04-23  Daniel Zucker  <zucker@wake3.com>
 
         Reviewed by Adam Roben.
@@ -23,8 +42,8 @@
         Implement get_accFocus().
 
         * AccessibleBase.cpp:
-        (AccessibleBase::get_accRole): Remove redundant initialize; VariantInit
-        does this.
+        (AccessibleBase::get_accRole): Remove redundant initialization;
+        VariantInit does this.
         (AccessibleBase::get_accState): Same.
         (AccessibleBase::get_accSelection): Relocated next to accSelect().
         (AccessibleBase::get_accFocus): If the focused object is this object or

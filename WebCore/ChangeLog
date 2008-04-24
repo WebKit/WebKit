@@ -1,3 +1,21 @@
+2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Oliver.
+
+        Add a method to get a localized, human-readable string stating this
+        object's default action, e.g., a button's default action is "press."
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::actionVerb): Added.
+        * page/AccessibilityObject.h: Added declaration for actionVerb().
+        * platform/LocalizedStrings.h: Added declarations for:
+            AXButtonActionVerb()
+            AXRadioButtonActionVerb()
+            AXTextFieldActionVerb()
+            AXCheckedCheckBoxActionVerb()
+            AXUncheckedCheckBoxActionVerb()
+            AXLinkActionVerb()
+
 2008-04-24  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.

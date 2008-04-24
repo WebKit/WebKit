@@ -46,6 +46,7 @@
 #include "HTMLTextAreaElement.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "LocalizedStrings.h"
 #include "NodeList.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -1915,5 +1916,35 @@ void AccessibilityObject::removeAXObjectID()
     m_renderer->document()->axObjectCache()->removeAXID(this);
 #endif
 }
+
+const String& AccessibilityObject::actionVerb() const
+{
+    // FIXME: Need to add verbs for select elements.
+    static const String buttonAction = AXButtonActionVerb();
+    static const String textFieldAction = AXTextFieldActionVerb();
+    static const String radioButtonAction = AXRadioButtonActionVerb();
+    static const String checkedCheckBoxAction = AXCheckedCheckBoxActionVerb();
+    static const String uncheckedCheckBoxAction = AXUncheckedCheckBoxActionVerb();
+    static const String linkAction = AXLinkActionVerb();
+    static const String noAction;
+
+    switch (roleValue()) {
+        case ButtonRole:
+            return buttonAction;
+        case TextFieldRole:
+        case TextAreaRole:
+            return textFieldAction;
+        case RadioButtonRole:
+            return radioButtonAction;
+        case CheckBoxRole:
+            return isChecked() ? checkedCheckBoxAction : uncheckedCheckBoxAction;
+        case LinkRole:
+        case WebCoreLinkRole:
+            return linkAction;
+        default:
+            return noAction;
+    }
+}
+
 
 } // namespace WebCore

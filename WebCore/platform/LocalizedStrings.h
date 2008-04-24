@@ -100,6 +100,13 @@ namespace WebCore {
     String AXImageMapText();
     String AXHeadingText();
 
+    String AXButtonActionVerb();
+    String AXRadioButtonActionVerb();
+    String AXTextFieldActionVerb();
+    String AXCheckedCheckBoxActionVerb();
+    String AXUncheckedCheckBoxActionVerb();
+    String AXLinkActionVerb();
+
     String unknownFileSizeText();
 
 #if PLATFORM(WIN)
