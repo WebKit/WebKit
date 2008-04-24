@@ -1,3 +1,40 @@
+2008-04-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Simon.
+
+        Bug 15940: Implement threading API for Qt
+        https://bugs.webkit.org/show_bug.cgi?id=15940
+
+        Original patch by Justin Haygood, tweaked by me.
+
+        * JavaScriptCore.pri:
+        * wtf/ThreadingQt.cpp: Added.
+        (WTF::threadMapMutex):
+        (WTF::threadMap):
+        (WTF::establishIdentifierForThread):
+        (WTF::clearThreadForIdentifier):
+        (WTF::threadForIdentifier):
+        (WTF::initializeThreading):
+        (WTF::ThreadPrivate::getReturnValue):
+        (WTF::ThreadPrivate::ThreadPrivate):
+        (WTF::ThreadPrivate::run):
+        (WTF::createThread):
+        (WTF::waitForThreadCompletion): return !res to return
+        0 on success (to match the pthreads implementation).
+        (WTF::detachThread):
+        (WTF::identifierByQthreadHandle):
+        (WTF::currentThread):
+        (WTF::Mutex::Mutex):
+        (WTF::Mutex::~Mutex):
+        (WTF::Mutex::lock):
+        (WTF::Mutex::tryLock):
+        (WTF::Mutex::unlock):
+        (WTF::ThreadCondition::ThreadCondition):
+        (WTF::ThreadCondition::~ThreadCondition):
+        (WTF::ThreadCondition::wait):
+        (WTF::ThreadCondition::timedWait):
+        (WTF::ThreadCondition::signal):
+
 2008-04-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

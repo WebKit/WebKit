@@ -111,7 +111,7 @@ gtk-port:SOURCES += \
     wtf/gtk/MainThreadGtk.cpp
 
 !gtk-port:SOURCES += \
-    wtf/ThreadingNone.cpp \
+    wtf/ThreadingQt.cpp \
     wtf/qt/MainThreadQt.cpp
 
 !CONFIG(QTDIR_build) {
