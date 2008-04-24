@@ -202,7 +202,7 @@ float parseTimeOffset(const String& timeString, bool* ok = 0)
     const UChar* characters = timeString.characters();
     unsigned length = timeString.length();
     
-    if (characters[length - 1] == 's')
+    if (length && characters[length - 1] == 's')
         length--;
     
     // FIXME parse time offset values (format not specified yet)
