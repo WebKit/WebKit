@@ -2082,10 +2082,6 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     WebKitSetWebDatabasesPathIfNecessary();
 
     m_page = new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this));
-
-    IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
-    notifyCenter->addObserver(this, WebPreferences::webPreferencesChangedNotification(), static_cast<IWebPreferences*>(m_preferences.get()));
-    m_preferences->postPreferencesChangesNotification();
     
     if (m_uiDelegate) {
         COMPtr<IWebUIDelegate2> uiDelegate2;
@@ -2115,6 +2111,10 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 
     initializeToolTipWindow();
     windowAncestryDidChange();
+
+    IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
+    notifyCenter->addObserver(this, WebPreferences::webPreferencesChangedNotification(), static_cast<IWebPreferences*>(m_preferences.get()));
+    m_preferences->postPreferencesChangesNotification();
 
     setSmartInsertDeleteEnabled(TRUE);
     return hr;

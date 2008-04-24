@@ -1,3 +1,16 @@
+2008-04-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Rework the Settings population again.
+
+        * WebView/WebView.mm:
+        (-[WebView _updateSettingsFromPreferences:]): This method is called both from _preferencesChangedNotification
+          and directly from WebView's common init function.
+        (-[WebView _preferencesChangedNotification:]):
+        (-[WebView _commonInitializationWithFrameName:groupName:]): Call _updateSettingsFromPreferences immediately
+          after creating the new Page
+
 2008-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
