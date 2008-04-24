@@ -1,3 +1,18 @@
+2008-04-24  Paul Olav Tvete <paul@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix various compiler warnings related to QString(const char *)
+        construction by using QLatin1String.
+
+        * bridge/qt/qt_instance.cpp:
+        (KJS::Bindings::QtField::valueFromInstance):
+        (KJS::Bindings::QtField::setValueToInstance):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::):
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::debugString):
+
 2008-04-24  Morten Johan Sørvig  <msorvig@trolltech.com>
 
         Reviewed by Simon.
