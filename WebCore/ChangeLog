@@ -1,5 +1,21 @@
 2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Reviewed by Adam.
+
+        Implement contentsToScreen() and screenToContents() on Windows.
+
+        * platform/ScrollView.h: Make these declarations conditional on
+        HAVE(ACCESSIBILITY) instead of PLATFORM(MAC).
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::contentsToScreen): Translate from coordinates
+        relative to the ScrollView to coordinates relative to the screen. Do
+        this by getting the offset of the ScrollView in screen coordinates and
+        moving the rect by this amount.
+        (WebCore::ScrollView::screenToContents): Translate from coordinates
+        relative to the screen to coordinates relative to the ScrollView.
+
+2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Reviewed by Oliver.
 
         Add a method to get a localized, human-readable string stating this

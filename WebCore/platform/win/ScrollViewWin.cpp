@@ -855,4 +855,26 @@ bool ScrollView::inWindow() const
     return true;
 }
 
+IntRect ScrollView::contentsToScreen(const IntRect& rect) const
+{
+    IntRect result(contentsToWindow(rect));
+    POINT topLeft = {0, 0};
+
+    // Find the top left corner of the Widget's containing window in screen coords,
+    // and adjust the result rect's position by this amount.
+    ::ClientToScreen(containingWindow(), &topLeft);
+    result.move(topLeft.x, topLeft.y);
+
+    return result;
+}
+
+IntPoint ScrollView::screenToContents(const IntPoint& point) const
+{
+    POINT result = point;
+
+    ::ScreenToClient(containingWindow(), &result);
+
+    return windowToContents(result);
+}
+
 } // namespace WebCore
