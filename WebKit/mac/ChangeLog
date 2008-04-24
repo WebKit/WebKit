@@ -1,3 +1,14 @@
+2008-04-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Fix layout test regressions from my earlier preferences/settings tweak.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]): Even if we're not posting
+          the notification to update the settings, each WebView still needs to register for the
+          notification - restore that behavior.
+
 2008-04-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -1825,6 +1825,11 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     WebKitInitializeDatabasesIfNecessary();
 
     _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self), new WebInspectorClient(self));
+
+    WebPreferences *prefs = [self preferences];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
+                                                 name:WebPreferencesChangedNotification object:prefs];
+
     [self _updateSettingsFromPreferences:[self preferences]];
 
     [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView];
