@@ -339,13 +339,15 @@ void ChromeClientQt::setToolTip(const String &tip)
 {
 #ifndef QT_NO_TOOLTIP
     QWidget* view = m_webPage->view();
-    QString dtip = tip;
-    if (!tip.isEmpty())
-        dtip = QLatin1String("<p>") + tip + QLatin1String("</p>");
-    if (view) {
+    if (!view)
+        return;
+
+    if (tip.isEmpty()) {
+        view->setToolTip(QString());
+        QToolTip::hideText();
+    } else {
+        QString dtip = QLatin1String("<p>") + tip + QLatin1String("</p>");
         view->setToolTip(dtip);
-        if (tip.isEmpty())
-            QToolTip::hideText();
     }
 #else
     Q_UNUSED(tip);
