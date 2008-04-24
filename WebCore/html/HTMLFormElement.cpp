@@ -28,6 +28,7 @@
 #include "CSSHelper.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "FileSystem.h"
 #include "FormData.h"
 #include "FormDataList.h"
 #include "Frame.h"
@@ -207,24 +208,6 @@ static int randomNumber()
 #endif
 }
 
-// FIXME: Move to platform directory?
-// Warning: this helper doesn't currently have a reliable cross-platform behavior in
-// certain edge cases (see basename(3) specification for examples).
-// Consider this if it ever needs to become a general purpose method.
-static String pathGetFilename(const String& path)
-{
-#if PLATFORM(QT)
-    return QFileInfo(path).fileName();
-#elif PLATFORM(WX)
-    return wxFileName(path).GetFullName();
-#elif PLATFORM(WIN_OS)
-    String copy(path);
-    return String(::PathFindFileName(copy.charactersWithNullTermination()));
-#else
-    return path.substring(path.reverseFind('/') + 1);
-#endif
-}
-
 TextEncoding HTMLFormElement::dataEncoding() const
 {
     if (isMailtoForm())
@@ -285,7 +268,7 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
                     if (control->hasLocalName(inputTag)
                             && static_cast<HTMLInputElement*>(control)->inputType() == HTMLInputElement::FILE) {
                         String path = static_cast<HTMLInputElement*>(control)->value();
-                        String filename = pathGetFilename(path);
+                        String filename = pathGetFileName(path);
 
                         // FIXME: This won't work if the filename includes a " mark,
                         // or control characters like CR or LF. This also does strange

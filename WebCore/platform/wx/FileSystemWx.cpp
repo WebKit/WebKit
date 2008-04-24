@@ -83,10 +83,9 @@ String homeDirectoryPath()
     return String();
 }
 
-String pathGetFileName(const String&)
+String pathGetFileName(const String& path)
 {
-    notImplemented();
-    return String();
+    return wxFileName(path).GetFullName();
 }
 
 CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)

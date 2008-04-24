@@ -1,3 +1,15 @@
+2008-04-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Consolidate two versions of pathGetFileName.
+
+        * html/HTMLFormElement.cpp: (WebCore::HTMLFormElement::formData): Call FileSystem.h version of pathGetFileName and removed the static helper function.
+        * platform/posix/FileSystemPOSIX.cpp: (WebCore::pathGetFileName): Moved general case from HTMLFormElement version here.
+          If other platforms relied on that default they should implement this function for their platform specific version of FileSystem.cpp
+        * platform/win/FileSystemWin.cpp: (WebCore::pathGetFileName): Moved win implementation from HTMLFormElement here.
+        * platform/wx/FileSystemWx.cpp: (WebCore::pathGetFileName): Moved wx implementation from HTMLFormElement here.
+
 2008-04-24  Anders Carlsson  <andersca@apple.com>
 
         Windows build fix.
