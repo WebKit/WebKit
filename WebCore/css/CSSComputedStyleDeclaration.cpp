@@ -24,6 +24,7 @@
 #include "config.h"
 #include "CSSComputedStyleDeclaration.h"
 
+#include "CSSBorderImageValue.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
@@ -130,6 +131,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitBackgroundOrigin,
     CSSPropertyWebkitBackgroundSize,
     CSSPropertyWebkitBorderFit,
+    CSSPropertyWebkitBorderImage,
     CSSPropertyWebkitBorderHorizontalSpacing,
     CSSPropertyWebkitBorderVerticalSpacing,
     CSSPropertyWebkitBoxAlign,
@@ -161,6 +163,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitMarqueeRepetition,
     CSSPropertyWebkitMarqueeStyle,
     CSSPropertyWebkitMaskAttachment,
+    CSSPropertyWebkitMaskBoxImage,
     CSSPropertyWebkitMaskImage,
     CSSPropertyWebkitMaskPosition,
     CSSPropertyWebkitMaskRepeat,
@@ -243,6 +246,65 @@ static PassRefPtr<CSSValue> valueForShadow(const ShadowData* shadow)
         list->append(new ShadowValue(x.release(), y.release(), blur.release(), color.release()));
     }
     return list.release();
+}
+
+static int valueForRepeatRule(int rule)
+{
+    switch (rule) {
+        case RepeatImageRule:
+            return CSSValueRepeat;
+        case RoundImageRule:
+            return CSSValueRound;
+        default:
+            return CSSValueStretch;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return CSSValueStretch;
+}
+        
+static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image)
+{
+    if (!image.hasImage())
+        return new CSSPrimitiveValue(CSSValueNone);
+    
+    // Image first.
+    RefPtr<CSSValue> imageValue;
+    if (image.image())
+        imageValue = image.image()->cssValue();
+    
+    // Create the slices.
+    RefPtr<CSSPrimitiveValue> top;
+    if (image.m_slices.top.isPercent())
+        top = new CSSPrimitiveValue(image.m_slices.top.value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+    else
+        top = new CSSPrimitiveValue(image.m_slices.top.value(), CSSPrimitiveValue::CSS_NUMBER);
+        
+    RefPtr<CSSPrimitiveValue> right;
+    if (image.m_slices.right.isPercent())
+        right = new CSSPrimitiveValue(image.m_slices.right.value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+    else
+        right = new CSSPrimitiveValue(image.m_slices.right.value(), CSSPrimitiveValue::CSS_NUMBER);
+        
+    RefPtr<CSSPrimitiveValue> bottom;
+    if (image.m_slices.bottom.isPercent())
+        bottom = new CSSPrimitiveValue(image.m_slices.bottom.value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+    else
+        bottom = new CSSPrimitiveValue(image.m_slices.bottom.value(), CSSPrimitiveValue::CSS_NUMBER);
+    
+    RefPtr<CSSPrimitiveValue> left;
+    if (image.m_slices.left.isPercent())
+        left = new CSSPrimitiveValue(image.m_slices.left.value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+    else
+        left = new CSSPrimitiveValue(image.m_slices.left.value(), CSSPrimitiveValue::CSS_NUMBER);
+
+    RefPtr<Rect> rect = new Rect();
+    rect->setTop(top);
+    rect->setRight(right);
+    rect->setBottom(bottom);
+    rect->setLeft(left);
+
+    return new CSSBorderImageValue(imageValue, rect, valueForRepeatRule(image.m_horizontalRule), valueForRepeatRule(image.m_verticalRule));
 }
 
 static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, int propertyID)
@@ -887,6 +949,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
         case CSSPropertyWebkitAppearance:
             return new CSSPrimitiveValue(style->appearance());
+        case CSSPropertyWebkitBorderImage:
+            return valueForNinePieceImage(style->borderImage());
+        case CSSPropertyWebkitMaskBoxImage:
+            return valueForNinePieceImage(style->maskBoxImage());
         case CSSPropertyWebkitFontSizeDelta:
             // Not a real style property -- used by the editing engine -- so has no computed value.
             break;
@@ -958,7 +1024,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyTextUnderlineStyle:
         case CSSPropertyTextUnderlineWidth:
         case CSSPropertyUnicodeRange: // Only used in @font-face rules.
-        case CSSPropertyWebkitBorderImage:
         case CSSPropertyWebkitBorderRadius:
         case CSSPropertyWebkitColumns:
         case CSSPropertyWebkitColumnRule:
@@ -966,7 +1031,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitMarginStart:
         case CSSPropertyWebkitMarquee:
         case CSSPropertyWebkitMarqueeSpeed:
-        case CSSPropertyWebkitMaskBoxImage:
         case CSSPropertyWebkitPaddingStart:
         case CSSPropertyWebkitTextStroke:
         case CSSPropertyWebkitTransform:

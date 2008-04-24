@@ -1,5 +1,14 @@
 2008-04-23  David Hyatt  <hyatt@apple.com>
 
+        Implement getComputedStyle for -webkit-border-image.
+
+        Reviewed by Dan Bernstein
+
+        * fast/css/getComputedStyle-border-image-expected.txt: Added.
+        * fast/css/getComputedStyle-border-image.html: Added.
+
+2008-04-23  David Hyatt  <hyatt@apple.com>
+
         Add support for a new mask-box-image property that is analogous to border-image.
 
         Reviewed by Dan Bernstein

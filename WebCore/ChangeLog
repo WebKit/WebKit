@@ -1,3 +1,17 @@
+2008-04-23  David Hyatt  <hyatt@apple.com>
+
+        Implement getComputedStyle for border-image.
+
+        Reviewed by Dan Bernstein
+
+        Added fast/css/getComputedStyle-border-image.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::valueForRepeatRule):
+        (WebCore::valueForNinePieceImage):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2008-04-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
