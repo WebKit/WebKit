@@ -71,6 +71,7 @@
 #endif
 
 #define DEBUG_COLLECTOR 0
+#define COLLECT_ON_EVERY_ALLOCATION 0
 
 using std::max;
 
@@ -199,6 +200,10 @@ template <Collector::HeapType heapType> void* Collector::heapAllocate(size_t s)
   size_t numLiveObjects = heap.numLiveObjects;
   size_t usedBlocks = heap.usedBlocks;
   size_t i = heap.firstBlockWithPossibleSpace;
+
+#if COLLECT_ON_EVERY_ALLOCATION
+  collect();
+#endif
 
   // if we have a huge amount of extra cost, we'll try to collect even if we still have
   // free cells left.
