@@ -29,6 +29,7 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
 #include "ResourceRequest.h"
+#include <QDateTime>
 #include <QFile>
 #include <QNetworkReply>
 #include <QNetworkCookie>
@@ -132,6 +133,7 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle *handle)
     , m_reply(0)
     , m_redirected(false)
     , m_responseSent(false)
+    , m_startTime(0)
 {
     const ResourceRequest &r = m_resourceHandle->request();
 
@@ -252,6 +254,9 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
         response.setHTTPHeaderField(QString::fromAscii(headerName), QString::fromAscii(m_reply->rawHeader(headerName)));
     }
 
+    if (isLocalFileReply)
+        response.setExpirationDate(m_startTime);
+
     QUrl redirection = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
     if (redirection.isValid()) {
         QUrl newUrl = m_reply->url().resolved(redirection);
@@ -306,6 +311,8 @@ void QNetworkReplyHandler::start()
     if (m_method == QNetworkAccessManager::PostOperation
         && (!url.toLocalFile().isEmpty() || url.scheme() == QLatin1String("data")))
         m_method = QNetworkAccessManager::GetOperation;
+
+    m_startTime = QDateTime::currentDateTime().toTime_t();
 
     switch (m_method) {
         case QNetworkAccessManager::GetOperation:

@@ -1,3 +1,19 @@
+2008-04-24  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        * Set an expiration date for local files as we do not know what will happen
+        to these files (in contrast to a http server with max-age and other headers)
+        * Remember the time when we started the job and use that for the expiration date
+        * QNetworkManager does not handle expiration at all, we might want to set the
+        expiration for all downloads but this will be a performance nightmare.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        (WebCore::QNetworkReplyHandler::start):
+        * platform/network/qt/QNetworkReplyHandler.h:
+
 2008-04-24  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Gtk and Qt builds.
