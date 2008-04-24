@@ -1,3 +1,12 @@
+2008-04-24  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        Allow to disable caching completeley by calling setObjectCacheCapacities(0, 0, 0)
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::setObjectCacheCapacities):
+
 2008-04-24  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.

@@ -449,9 +449,15 @@ int QWebSettings::maximumPagesInCache()
    dead objects should consume when the cache is not under pressure.
 
    \a totalCapacity specifies the maximum number of bytes that the cache should consume overall.
+
+   Calling setObjectCacheCapacities(0, 0, 0) is disabling the cache. Calling it with one non zero
+   value will enable it again. The cache is enabled by default.
 */
 void QWebSettings::setObjectCacheCapacities(int cacheMinDeadCapacity, int cacheMaxDead, int totalCapacity)
 {
+    bool disableCache = cacheMinDeadCapacity == 0 && cacheMaxDead == 0 && totalCapacity == 0;
+    WebCore::cache()->setDisabled(disableCache);
+
     WebCore::cache()->setCapacities(qMax(0, cacheMinDeadCapacity),
                                     qMax(0, cacheMaxDead),
                                     qMax(0, totalCapacity));
