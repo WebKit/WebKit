@@ -1820,6 +1820,14 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     WebKitInitializeDatabasesIfNecessary();
 
     _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self), new WebInspectorClient(self));
+
+    WebPreferences *prefs = [self preferences];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
+                                                 name:WebPreferencesChangedNotification object:prefs];
+
+    // Post a notification so the WebCore settings update.
+    [[self preferences] _postPreferencesChangesNotification];
+
     [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView];
 
 #ifndef BUILDING_ON_TIGER
@@ -1848,13 +1856,6 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     // initialize WebScriptDebugServer here so listeners can register before any pages are loaded.
     if ([WebView _scriptDebuggerEnabled])
         [WebScriptDebugServer sharedScriptDebugServer];
-
-    WebPreferences *prefs = [self preferences];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
-                                                 name:WebPreferencesChangedNotification object:prefs];
-
-    // Post a notification so the WebCore settings update.
-    [[self preferences] _postPreferencesChangesNotification];
 
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION))
         FrameLoader::setRestrictAccessToLocal(false);

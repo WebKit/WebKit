@@ -1,3 +1,14 @@
+2008-04-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        In some current work I noticed that when a new Page is created, it is possible that it requires info from its Settings
+        object before the Settings object is initialized.  It seems quite prudent to post the preferences changed notification,
+        thereby populating the Settings object, immediately after the Page is created.
+
+        * WebView.cpp:
+        (WebView::initWithFrame): Post the notification right after the Page is created
+
 2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Brady.
