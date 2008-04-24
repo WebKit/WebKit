@@ -172,10 +172,14 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
     }
 
     const QPoint topLeft = m_opt.rect.topLeft();
+#ifdef Q_WS_MAC
+    QApplication::style()->drawComplexControl(QStyle::CC_ScrollBar, &m_opt, p, 0);
+#else
     p->translate(topLeft);
     m_opt.rect.moveTo(QPoint(0, 0));
     QApplication::style()->drawComplexControl(QStyle::CC_ScrollBar, &m_opt, p, 0);
     m_opt.rect.moveTo(topLeft);
+#endif
     p->restore();
 }
 

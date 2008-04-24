@@ -1,3 +1,16 @@
+2008-04-24  Morten Johan Sørvig  <msorvig@trolltech.com>
+
+        Reviewed by Simon.
+
+        Work around QMacStyle bug in repainting the vertical scrollbar.
+
+        We draw the scrollbar using HITheme but somehow the translation and the
+        clipping we previously set using ClipCGContextToRegion is ignored. Drawing
+        without the translation fixes the clip.
+
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::paint):
+
 2008-04-24  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
