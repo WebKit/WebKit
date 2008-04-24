@@ -1298,8 +1298,9 @@ void FrameLoader::scheduleCheckCompleted()
 
 void FrameLoader::checkLoadCompleteTimerFired(Timer<FrameLoader>*)
 {
-    if (m_frame->page())
-        checkLoadComplete();
+    if (!m_frame->page())
+        return;
+    checkLoadComplete();
 }
 
 void FrameLoader::scheduleCheckLoadComplete()
@@ -1346,13 +1347,19 @@ void FrameLoader::scheduleHTTPRedirection(double delay, const String& url)
     if (delay < 0 || delay > INT_MAX / 1000)
         return;
         
+    if (!m_frame->page())
+        return;
+
     // We want a new history item if the refresh timeout is > 1 second.
     if (!m_scheduledRedirection || delay <= m_scheduledRedirection->delay)
         scheduleRedirection(new ScheduledRedirection(delay, url, delay <= 1, false));
 }
 
 void FrameLoader::scheduleLocationChange(const String& url, const String& referrer, bool lockHistory, bool wasUserGesture)
-{    
+{
+    if (!m_frame->page())
+        return;
+
     // If the URL we're going to navigate to is the same as the current one, except for the
     // fragment part, we don't need to schedule the location change.
     KURL parsedURL(url);
@@ -1381,6 +1388,9 @@ void FrameLoader::scheduleLocationChange(const String& url, const String& referr
 
 void FrameLoader::scheduleRefresh(bool wasUserGesture)
 {
+    if (!m_frame->page())
+        return;
+
     // Handle a location change of a page with no document as a special case.
     // This may happen when a frame requests a refresh of another frame.
     bool duringLoad = !m_frame->document();
@@ -1413,8 +1423,10 @@ bool FrameLoader::isLocationChange(const ScheduledRedirection& redirection)
 
 void FrameLoader::scheduleHistoryNavigation(int steps)
 {
-    // navigation will always be allowed in the 0 steps case, which is OK because
-    // that's supposed to force a reload.
+    if (!m_frame->page())
+        return;
+
+    // navigation will always be allowed in the 0 steps case, which is OK because that's supposed to force a reload.
     if (!canGoBackOrForward(steps)) {
         cancelRedirection();
         return;
@@ -1467,6 +1479,8 @@ void FrameLoader::goBackOrForward(int distance)
 
 void FrameLoader::redirectionTimerFired(Timer<FrameLoader>*)
 {
+    ASSERT(m_frame->page());
+
     OwnPtr<ScheduledRedirection> redirection(m_scheduledRedirection.release());
 
     switch (redirection->type) {
@@ -1487,6 +1501,7 @@ void FrameLoader::redirectionTimerFired(Timer<FrameLoader>*)
             goBackOrForward(redirection->historySteps);
             return;
     }
+
     ASSERT_NOT_REACHED();
 }
 
@@ -1909,6 +1924,8 @@ bool FrameLoader::isComplete() const
 
 void FrameLoader::scheduleRedirection(ScheduledRedirection* redirection)
 {
+    ASSERT(m_frame->page());
+
     stopRedirectionTimer();
     m_scheduledRedirection.set(redirection);
     if (!m_isComplete && redirection->type != ScheduledRedirection::redirection)
@@ -1919,6 +1936,7 @@ void FrameLoader::scheduleRedirection(ScheduledRedirection* redirection)
 
 void FrameLoader::startRedirectionTimer()
 {
+    ASSERT(m_frame->page());
     ASSERT(m_scheduledRedirection);
 
     m_redirectionTimer.stop();

@@ -1,3 +1,21 @@
+2008-04-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix crash in regression test where we'd ask a frame for a user agent string
+          after the WebView was already closed
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::scheduleHTTPRedirection): Quietly do nothing if this is
+        called on a frame that's already detached from its page.
+        (WebCore::FrameLoader::scheduleLocationChange): Ditto.
+        (WebCore::FrameLoader::scheduleRefresh): Ditto.
+        (WebCore::FrameLoader::scheduleHistoryNavigation): Ditto.
+        (WebCore::FrameLoader::redirectionTimerFired): Assert that this is never called
+        for a frame that's already detached from its page.
+        (WebCore::FrameLoader::scheduleRedirection): Ditto.
+        (WebCore::FrameLoader::startRedirectionTimer): Ditto.
+
 2008-04-23  Timothy Hatcher  <timothy@apple.com>
 
         Add a new callFunction helper function to remove duplicate code
