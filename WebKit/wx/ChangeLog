@@ -1,3 +1,12 @@
+2008-04-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Alp Toker.
+        
+        Typo fix to restore text entry.
+
+        * WebKitSupport/EditorClientWx.cpp:
+        (WebCore::EditorClientWx::handleKeyboardEvent):
+
 2008-04-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. renderer() -> contentRenderer()
