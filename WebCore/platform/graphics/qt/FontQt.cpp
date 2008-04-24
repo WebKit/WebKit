@@ -163,7 +163,9 @@ int Font::width(const TextRun& run) const
     if (!run.length())
         return 0;
     QString string = qstring(run);
-    int w = QFontMetrics(m_font).width(string);
+    QTextLayout layout(string, m_font);
+    QTextLine line = setupLayout(&layout, run);
+    int w = int(line.naturalTextWidth());
     // WebKit expects us to ignore word spacing on the first character (as opposed to what Qt does)
     if (treatAsSpace(run[0]))
         w -= m_wordSpacing;

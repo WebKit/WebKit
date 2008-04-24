@@ -1,3 +1,15 @@
+2008-04-24  Simon Hausmann  <hausmann@webkit.org>
+
+        Rubber-stamped by Lars
+
+        Fix text rendering in -reverse mode on Qt/Mac.
+
+        For Font::width() don't use a plain QFontMetrics object but also the properly
+        setup QTextLayout that has the RTL/LTR force flags set.
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::width):
+
 2008-04-24  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
