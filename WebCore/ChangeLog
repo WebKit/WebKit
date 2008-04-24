@@ -1,3 +1,13 @@
+2008-04-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Only avoid implicit entries when doing the initial caching.
+        
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+
 2008-04-24  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam and Sam.
