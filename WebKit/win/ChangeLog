@@ -1,5 +1,15 @@
 2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Reviewed by Adam.
+
+        Implement accHitTest().
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::accHitTest): Perform a hit test for a child object. If
+        none is found, report whether the point was within our own bounding box.
+
+2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Reviewed by Adam and Darin.
 
         Implement accNavigate().

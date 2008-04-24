@@ -455,9 +455,36 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accNavigate(long direction, VARIANT vF
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::accHitTest(long, long, VARIANT*)
+HRESULT STDMETHODCALLTYPE AccessibleBase::accHitTest(long x, long y, VARIANT* pvChildAtPoint)
 {
-    return E_NOTIMPL;
+    if (!pvChildAtPoint)
+        return E_POINTER;
+
+    ::VariantInit(pvChildAtPoint);
+
+    if (!m_object)
+        return E_FAIL;
+
+    IntPoint point = m_object->documentFrameView()->screenToContents(IntPoint(x, y));
+    AccessibilityObject* childObj = m_object->doAccessibilityHitTest(point);
+
+    if (!childObj) {
+        // If we did not hit any child objects, test whether the point hit us, and
+        // report that.
+        if (!m_object->boundingBoxRect().contains(point))
+            return S_FALSE;
+        childObj = m_object;
+    }
+
+    if (childObj == m_object) {
+        V_VT(pvChildAtPoint) = VT_I4;
+        V_I4(pvChildAtPoint) = CHILDID_SELF;
+    } else {
+        V_VT(pvChildAtPoint) = VT_DISPATCH;
+        V_DISPATCH(pvChildAtPoint) = static_cast<IDispatch*>(wrapper(childObj));
+        V_DISPATCH(pvChildAtPoint)->AddRef();
+    }
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE AccessibleBase::accDoDefaultAction(VARIANT)
