@@ -164,6 +164,7 @@ private:
 #endif
 
     JSValueRef callSimpleFunction(JSContextRef, JSObjectRef thisObject, const char* functionName) const;
+    JSValueRef callFunction(JSContextRef, JSObjectRef thisObject, const char* functionName, size_t argumentCount, const JSValueRef arguments[], JSValueRef& exception) const;
 
     bool handleException(JSValueRef exception, unsigned lineNumber) const;
 

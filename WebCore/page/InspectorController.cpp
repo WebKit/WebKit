@@ -93,10 +93,17 @@ static JSRetainPtr<JSStringRef> jsStringRef(const String& str)
 
 JSValueRef InspectorController::callSimpleFunction(JSContextRef context, JSObjectRef thisObject, const char* functionName) const
 {
+    JSValueRef exception = 0;
+    return callFunction(context, thisObject, functionName, 0, 0, exception);
+}
+
+JSValueRef InspectorController::callFunction(JSContextRef context, JSObjectRef thisObject, const char* functionName, size_t argumentCount, const JSValueRef arguments[], JSValueRef& exception) const
+{
     ASSERT_ARG(context, context);
     ASSERT_ARG(thisObject, thisObject);
 
-    JSValueRef exception = 0;
+    if (exception)
+        return JSValueMakeUndefined(context);
 
     JSValueRef functionProperty = JSObjectGetProperty(context, thisObject, jsStringRef(functionName).get(), &exception);
     if (HANDLE_EXCEPTION(exception))
@@ -106,7 +113,7 @@ JSValueRef InspectorController::callSimpleFunction(JSContextRef context, JSObjec
     if (HANDLE_EXCEPTION(exception))
         return JSValueMakeUndefined(context);
 
-    JSValueRef result = JSObjectCallAsFunction(context, function, thisObject, 0, 0, &exception);
+    JSValueRef result = JSObjectCallAsFunction(context, function, thisObject, argumentCount, arguments, &exception);
     if (HANDLE_EXCEPTION(exception))
         return JSValueMakeUndefined(context);
 
@@ -876,19 +883,7 @@ void InspectorController::focusNode()
     m_nodeToFocus = 0;
 
     JSValueRef exception = 0;
-
-    JSValueRef functionProperty = JSObjectGetProperty(m_scriptContext, m_scriptObject, jsStringRef("updateFocusedNode").get(), &exception);
-    if (HANDLE_EXCEPTION(exception))
-        return;
-
-    JSObjectRef function = JSValueToObject(m_scriptContext, functionProperty, &exception);
-    if (HANDLE_EXCEPTION(exception))
-        return;
-
-    ASSERT(function);
-
-    JSObjectCallAsFunction(m_scriptContext, function, m_scriptObject, 1, &arg0, &exception);
-    HANDLE_EXCEPTION(exception);
+    callFunction(m_scriptContext, m_scriptObject, "updateFocusedNode", 1, &arg0, exception);
 }
 
 void InspectorController::highlight(Node* node)
@@ -1212,18 +1207,9 @@ JSObjectRef InspectorController::addScriptResource(InspectorResource* resource)
     }
 
     JSValueRef exception = 0;
+    callFunction(m_scriptContext, m_scriptObject, "addResource", 1, &resource->scriptObject, exception);
 
-    JSValueRef addResourceProperty = JSObjectGetProperty(m_scriptContext, m_scriptObject, jsStringRef("addResource").get(), &exception);
-    if (HANDLE_EXCEPTION(exception))
-        return 0;
-
-    JSObjectRef addResourceFunction = JSValueToObject(m_scriptContext, addResourceProperty, &exception);
-    if (HANDLE_EXCEPTION(exception))
-        return 0;
-
-    JSValueRef addArguments[] = { resource->scriptObject };
-    JSObjectCallAsFunction(m_scriptContext, addResourceFunction, m_scriptObject, 1, addArguments, &exception);
-    if (HANDLE_EXCEPTION(exception))
+    if (exception)
         return 0;
 
     return resource->scriptObject;
@@ -1260,18 +1246,7 @@ void InspectorController::removeScriptResource(InspectorResource* resource)
     resource->setScriptObject(0, 0);
 
     JSValueRef exception = 0;
-
-    JSValueRef removeResourceProperty = JSObjectGetProperty(m_scriptContext, m_scriptObject, jsStringRef("removeResource").get(), &exception);
-    if (HANDLE_EXCEPTION(exception))
-        return;
-
-    JSObjectRef removeResourceFunction = JSValueToObject(m_scriptContext, removeResourceProperty, &exception);
-    if (HANDLE_EXCEPTION(exception))
-        return;
-
-    JSValueRef arguments[] = { scriptObject };
-    JSObjectCallAsFunction(m_scriptContext, removeResourceFunction, m_scriptObject, 1, arguments, &exception);
-    HANDLE_EXCEPTION(exception);
+    callFunction(m_scriptContext, m_scriptObject, "removeResource", 1, &scriptObject, exception);
 }
 
 static void updateResourceRequest(InspectorResource* resource, const ResourceRequest& request)
@@ -1506,17 +1481,9 @@ JSObjectRef InspectorController::addDatabaseScriptResource(InspectorDatabaseReso
 
     ASSERT(result);
 
-    JSValueRef addDatabaseProperty = JSObjectGetProperty(m_scriptContext, m_scriptObject, jsStringRef("addDatabase").get(), &exception);
-    if (HANDLE_EXCEPTION(exception))
-        return 0;
+    callFunction(m_scriptContext, m_scriptObject, "addDatabase", 1, &result, exception);
 
-    JSObjectRef addDatabaseFunction = JSValueToObject(m_scriptContext, addDatabaseProperty, &exception);
-    if (HANDLE_EXCEPTION(exception))
-        return 0;
-
-    JSValueRef addArguments[] = { result };
-    JSObjectCallAsFunction(m_scriptContext, addDatabaseFunction, m_scriptObject, 1, addArguments, &exception);
-    if (HANDLE_EXCEPTION(exception))
+    if (exception)
         return 0;
 
     resource->setScriptObject(m_scriptContext, result);
@@ -1540,18 +1507,7 @@ void InspectorController::removeDatabaseScriptResource(InspectorDatabaseResource
     resource->setScriptObject(0, 0);
 
     JSValueRef exception = 0;
-
-    JSValueRef removeDatabaseProperty = JSObjectGetProperty(m_scriptContext, m_scriptObject, jsStringRef("removeDatabase").get(), &exception);
-    if (HANDLE_EXCEPTION(exception))
-        return;
-
-    JSObjectRef removeDatabaseFunction = JSValueToObject(m_scriptContext, removeDatabaseProperty, &exception);
-    if (HANDLE_EXCEPTION(exception))
-        return;
-
-    JSValueRef arguments[] = { scriptObject };
-    JSObjectCallAsFunction(m_scriptContext, removeDatabaseFunction, m_scriptObject, 1, arguments, &exception);
-    HANDLE_EXCEPTION(exception);
+    callFunction(m_scriptContext, m_scriptObject, "removeDatabase", 1, &scriptObject, exception);
 }
 #endif
 
@@ -1566,14 +1522,6 @@ void InspectorController::addScriptConsoleMessage(const ConsoleMessage* message)
         return;
 
     JSObjectRef messageConstructor = JSValueToObject(m_scriptContext, messageConstructorProperty, &exception);
-    if (HANDLE_EXCEPTION(exception))
-        return;
-
-    JSValueRef addMessageProperty = JSObjectGetProperty(m_scriptContext, m_scriptObject, jsStringRef("addMessageToConsole").get(), &exception);
-    if (HANDLE_EXCEPTION(exception))
-        return;
-
-    JSObjectRef addMessage = JSValueToObject(m_scriptContext, addMessageProperty, &exception);
     if (HANDLE_EXCEPTION(exception))
         return;
 
@@ -1604,8 +1552,7 @@ void InspectorController::addScriptConsoleMessage(const ConsoleMessage* message)
     if (HANDLE_EXCEPTION(exception))
         return;
 
-    JSObjectCallAsFunction(m_scriptContext, addMessage, m_scriptObject, 1, &messageObject, &exception);
-    HANDLE_EXCEPTION(exception);
+    callFunction(m_scriptContext, m_scriptObject, "addMessageToConsole", 1, &messageObject, exception);
 }
 
 void InspectorController::resetScriptObjects()

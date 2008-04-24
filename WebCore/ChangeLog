@@ -1,3 +1,22 @@
+2008-04-23  Timothy Hatcher  <timothy@apple.com>
+
+        Add a new callFunction helper function to remove duplicate code
+        for calling JavaScript functions with arguments.
+
+        Reviewed by Darin Adler.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::callSimpleFunction): Call callFunction.
+        (WebCore::InspectorController::callFunction): Extended version of the original
+        callSimpleFunction, with script function arguments and an exception argument.
+        (WebCore::InspectorController::focusNode): Use callFunction.
+        (WebCore::InspectorController::addScriptResource): Ditto.
+        (WebCore::InspectorController::removeScriptResource): Ditto.
+        (WebCore::InspectorController::addDatabaseScriptResource): Ditto.
+        (WebCore::InspectorController::removeDatabaseScriptResource): Ditto.
+        (WebCore::InspectorController::addScriptConsoleMessage): Ditto.
+        * page/InspectorController.h: Add callFunction.
+
 2008-04-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
