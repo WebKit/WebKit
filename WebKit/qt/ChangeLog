@@ -1,3 +1,14 @@
+2008-04-24  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Added basic URL guessing to QtLauncher (same as in the demo browser).
+        
+
+        * QtLauncher/main.cpp:
+        (MainWindow::changeLocation):
+        (MainWindow::guessUrlFromString):
+
 2008-04-24  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon Hausmann <hausmann@webkit.org>.
