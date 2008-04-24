@@ -253,6 +253,7 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
     QStyleOptionFrameV2 panel;
     if (p.widget)
         panel.initFrom(p.widget);
+
     panel.rect = r;
     panel.lineWidth = p.style->pixelMetric(QStyle::PM_DefaultFrameWidth, &panel, p.widget);
     panel.state |= QStyle::State_Sunken;
@@ -260,7 +261,9 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
 
     // Get the correct theme data for a button
     EAppearance appearance = applyTheme(panel, o);
-    Q_ASSERT(appearance == TextFieldAppearance || appearance == SearchFieldAppearance);
+    Q_ASSERT(appearance == TextFieldAppearance
+            || appearance == SearchFieldAppearance
+            || appearance == TextAreaAppearance);
 
     // Now paint the text field.
     p.drawPrimitive(QStyle::PE_PanelLineEdit, panel);
@@ -270,6 +273,17 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
 
 void RenderThemeQt::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
+    style->setBackgroundColor(Color::transparent);
+}
+
+bool RenderThemeQt::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    return paintTextField(o, i, r);
+}
+
+void RenderThemeQt::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+{
+    adjustTextFieldStyle(selector, style, element);
 }
 
 void RenderThemeQt::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
@@ -406,6 +420,7 @@ bool RenderThemeQt::supportsFocus(EAppearance appearance) const
         case PushButtonAppearance:
         case ButtonAppearance:
         case TextFieldAppearance:
+        case TextAreaAppearance:
         case MenulistAppearance:
         case RadioAppearance:
         case CheckboxAppearance:

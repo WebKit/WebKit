@@ -82,6 +82,9 @@ protected:
     virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
 
+    virtual bool paintTextArea(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+
     virtual bool paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
     virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
 

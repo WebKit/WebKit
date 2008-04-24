@@ -2,6 +2,19 @@
 
         Reviewed by Simon.
 
+        Render text areas using Qt (ensures proper style).
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintTextField):
+        (WebCore::RenderThemeQt::adjustTextFieldStyle):
+        (WebCore::RenderThemeQt::paintTextArea):
+        (WebCore::RenderThemeQt::supportsFocus):
+        * platform/qt/RenderThemeQt.h:
+
+2008-04-24  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
         Make mouse wheel events over scrollbars behave the same as in Qt, i.e. both
         horizontal and vertical wheel events will scroll the view in the orientation
         of the scrollbar underneath the cursor.
