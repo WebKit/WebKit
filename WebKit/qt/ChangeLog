@@ -1,3 +1,14 @@
+2008-04-24  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon Hausmann <hausmann@webkit.org>.
+
+        Prevent double deletions of the default web interface.
+        
+
+        * Api/qwebhistoryinterface.cpp:
+        (gCleanupInterface):
+        (QWebHistoryInterface::QWebHistoryInterface):
+
 2008-04-23  Simon Hausmann  <hausmann@webkit.org>
 
         Fix compilation against Qt 4.3

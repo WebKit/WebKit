@@ -47,19 +47,24 @@ static bool gRoutineAdded;
 
 static void gCleanupInterface()
 {
-    delete default_interface;
+    if (default_interface && default_interface->parent() == 0)
+        delete default_interface;
     default_interface = 0;
 }
 
 /*!
   Sets a new default interface, \a defaultInterface, that will be used by all of WebKit
   for managing history.
+
+  If an interface without a parent has already been set, the old interface will be deleted.
+  When the application exists QWebHistoryInterface will automatically delete the
+  \a defaultInterface if it does not have a parent.
 */
 void QWebHistoryInterface::setDefaultInterface(QWebHistoryInterface *defaultInterface)
 {
     if (default_interface == defaultInterface)
         return;
-    if (default_interface)
+    if (default_interface && default_interface->parent() == 0)
         delete default_interface;
     default_interface = defaultInterface;
     if (!gRoutineAdded) {
@@ -98,10 +103,12 @@ QWebHistoryInterface::QWebHistoryInterface(QObject *parent) : QObject(parent)
 }
 
 /*!
-    Destructor.
+    Destructor.  If this is currently the default interface it will be unset.
 */
 QWebHistoryInterface::~QWebHistoryInterface()
 {
+    if (default_interface == this)
+        default_interface = 0;
 }
 
 /*!
