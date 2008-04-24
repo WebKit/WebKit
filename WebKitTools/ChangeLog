@@ -1,3 +1,12 @@
+2008-04-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Don't call fprintf from the signal handler.
+        
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (crashHandler):
+
 2008-04-23  Adam Roben  <aroben@apple.com>
 
         Make crashes be reported as crashes, not hangs

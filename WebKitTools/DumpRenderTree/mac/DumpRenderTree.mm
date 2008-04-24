@@ -275,7 +275,9 @@ static void setDefaultsToConsistentValuesForTesting()
 
 static void crashHandler(int sig)
 {
-    fprintf(stderr, "%s\n", strsignal(sig));
+    char *signalName = strsignal(sig);
+    write(STDERR_FILENO, signalName, strlen(signalName));
+    write(STDERR_FILENO, "\n", 1);
     restoreColorSpace(0);
     exit(128 + sig);
 }
