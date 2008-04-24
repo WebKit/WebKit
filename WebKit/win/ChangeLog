@@ -18,6 +18,20 @@
 
 2008-04-22  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Reviewed by Adam.
+
+        Implement get_accFocus().
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accRole): Remove redundant initialize; VariantInit
+        does this.
+        (AccessibleBase::get_accState): Same.
+        (AccessibleBase::get_accSelection): Relocated next to accSelect().
+        (AccessibleBase::get_accFocus): If the focused object is this object or
+        a child of this object, report it. Otherwise, report VT_EMPTY.
+
+2008-04-22  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Reviewed by Sam.
 
         Implement get_accKeyboardShortcut().

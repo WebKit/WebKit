@@ -197,7 +197,6 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accRole(VARIANT vChild, VARIANT* p
         return E_POINTER;
 
     ::VariantInit(pvRole);
-    pvRole->vt = VT_EMPTY;
 
     AccessibilityObject* childObj;
     HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
@@ -216,7 +215,6 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accState(VARIANT vChild, VARIANT* 
         return E_POINTER;
 
     ::VariantInit(pvState);
-    pvState->vt = VT_EMPTY;
 
     AccessibilityObject* childObj;
     HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
@@ -330,14 +328,37 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accSelect(long, VARIANT)
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accFocus(VARIANT*)
+HRESULT STDMETHODCALLTYPE AccessibleBase::get_accSelection(VARIANT*)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accSelection(VARIANT*)
+HRESULT STDMETHODCALLTYPE AccessibleBase::get_accFocus(VARIANT* pvFocusedChild)
 {
-    return E_NOTIMPL;
+    if (!pvFocusedChild)
+        return E_POINTER;
+
+    ::VariantInit(pvFocusedChild);
+
+    if (!m_object)
+        return E_FAIL;
+
+    AccessibilityObject* focusedObj = m_object->focusedUIElement();
+    if (!focusedObj)
+        return S_FALSE;
+
+    // Only return the focused child if it's us or a child of us. Otherwise,
+    // report VT_EMPTY.
+    if (focusedObj == m_object) {
+        V_VT(pvFocusedChild) = VT_I4;
+        V_I4(pvFocusedChild) = CHILDID_SELF;
+    } else if (focusedObj->parentObject() == m_object) {
+        V_VT(pvFocusedChild) = VT_DISPATCH;
+        V_DISPATCH(pvFocusedChild) = wrapper(focusedObj);
+        V_DISPATCH(pvFocusedChild)->AddRef();
+    }
+
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE AccessibleBase::get_accDefaultAction(VARIANT, BSTR*)
