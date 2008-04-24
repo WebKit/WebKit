@@ -1,3 +1,13 @@
+r2008-04-23  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Dave Hyatt.
+
+        - update computed style results for border-image and mask-image
+
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2008-04-23  David Hyatt  <hyatt@apple.com>
 
         Implement getComputedStyle for -webkit-border-image.

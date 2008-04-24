@@ -86,6 +86,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-background-origin: padding
     -webkit-background-size: auto auto
     -webkit-border-fit: border
+    -webkit-border-image: none
     -webkit-border-horizontal-spacing: 0px
     -webkit-border-vertical-spacing: 0px
     -webkit-box-align: stretch
@@ -117,6 +118,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-marquee-repetition: infinite
     -webkit-marquee-style: scroll
     -webkit-mask-attachment: scroll
+    -webkit-mask-box-image: none
     -webkit-mask-image: none
     -webkit-mask-position: 0% 0%
     -webkit-mask-repeat: repeat

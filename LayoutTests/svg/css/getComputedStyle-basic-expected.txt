@@ -172,6 +172,8 @@ rect: style.getPropertyValue(-webkit-background-size) : auto auto
 rect: style.getPropertyCSSValue(-webkit-background-size) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-border-fit) : border
 rect: style.getPropertyCSSValue(-webkit-border-fit) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-border-image) : none
+rect: style.getPropertyCSSValue(-webkit-border-image) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-border-horizontal-spacing) : 0px
 rect: style.getPropertyCSSValue(-webkit-border-horizontal-spacing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-border-vertical-spacing) : 0px
@@ -234,6 +236,8 @@ rect: style.getPropertyValue(-webkit-marquee-style) : scroll
 rect: style.getPropertyCSSValue(-webkit-marquee-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-attachment) : scroll
 rect: style.getPropertyCSSValue(-webkit-mask-attachment) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-mask-box-image) : none
+rect: style.getPropertyCSSValue(-webkit-mask-box-image) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-image) : none
 rect: style.getPropertyCSSValue(-webkit-mask-image) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-position) : 0% 0%
@@ -528,6 +532,8 @@ g: style.getPropertyValue(-webkit-background-size) : auto auto
 g: style.getPropertyCSSValue(-webkit-background-size) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-border-fit) : border
 g: style.getPropertyCSSValue(-webkit-border-fit) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-border-image) : none
+g: style.getPropertyCSSValue(-webkit-border-image) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-border-horizontal-spacing) : 0px
 g: style.getPropertyCSSValue(-webkit-border-horizontal-spacing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-border-vertical-spacing) : 0px
@@ -590,6 +596,8 @@ g: style.getPropertyValue(-webkit-marquee-style) : scroll
 g: style.getPropertyCSSValue(-webkit-marquee-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-attachment) : scroll
 g: style.getPropertyCSSValue(-webkit-mask-attachment) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-mask-box-image) : none
+g: style.getPropertyCSSValue(-webkit-mask-box-image) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-image) : none
 g: style.getPropertyCSSValue(-webkit-mask-image) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-position) : 0% 0%
