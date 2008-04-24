@@ -1,3 +1,16 @@
+2008-04-24  Olivier Goffart  <ogoffart@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix various compiler warnings in the Qt port.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::print):
+        * Api/qwebsettings.cpp:
+        (graphics):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2008-04-24  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.

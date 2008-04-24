@@ -710,7 +710,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         (deltaY > 0 && scrollOffset().height() > 0)) {
 
         e.accept();
-        scrollBy(-deltaX * LINE_STEP, -deltaY * LINE_STEP);
+        scrollBy(int(-deltaX * LINE_STEP), int(-deltaY * LINE_STEP));
     }
 }
 

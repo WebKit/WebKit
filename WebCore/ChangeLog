@@ -1,3 +1,18 @@
+2008-04-24  Olivier Goffart  <ogoffart@trolltech.com>
+
+        Reviewed by Simon
+
+        Fix various compiler warnings in the Qt port.
+
+        * platform/graphics/qt/ImageQt.cpp:
+        (loadResourcePixmap):
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::cookies):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * plugins/qt/PluginDataQt.cpp:
+        (WebCore::PluginData::initPlugins):
+
 2008-04-24  Andre Poenitz  <andre.poenitz@trolltech.com>
 
         Reviewed by Simon.

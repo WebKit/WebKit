@@ -49,7 +49,7 @@ void PluginData::initPlugins()
             MimeClassInfo* mimeInfo = new MimeClassInfo;
             mimeInfo->type = mimeType.name;
             mimeInfo->desc = mimeType.description;
-            mimeInfo->suffixes = mimeType.fileExtensions.join("; ");
+            mimeInfo->suffixes = mimeType.fileExtensions.join(QLatin1String("; "));
 
             info->mimes.append(mimeInfo);
         }

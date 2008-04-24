@@ -67,16 +67,14 @@ private:
 // This function loads resources into WebKit
 static QPixmap loadResourcePixmap(const char *name)
 {
-    const QString resource = name;
-
     QPixmap pixmap;
-    if (resource == "missingImage")
+    if (qstrcmp(name, "missingImage") == 0)
         pixmap = QWebSettings::webGraphic(QWebSettings::MissingImageGraphic);
-    else if (resource == "nullPlugin")
+    else if (qstrcmp(name, "nullPlugin") == 0)
         pixmap = QWebSettings::webGraphic(QWebSettings::MissingPluginGraphic);
-    else if (resource == "urlIcon")
+    else if (qstrcmp(name, "urlIcon") == 0)
         pixmap = QWebSettings::webGraphic(QWebSettings::DefaultFrameIconGraphic);
-    else if (resource == "textAreaResizeCorner")
+    else if (qstrcmp(name, "textAreaResizeCorner") == 0)
         pixmap = QWebSettings::webGraphic(QWebSettings::TextAreaSizeGripCornerGraphic);
 
     return pixmap;

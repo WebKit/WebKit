@@ -948,7 +948,7 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize&, Element* element, cons
             for (int i = 0; i < numqStyleSheetProperties; ++i) {
                 CSSPropertyID property = qstyleSheetProperties[i];
 
-                styleSheet += ::getPropertyName(property);
+                styleSheet += QString::fromLatin1(::getPropertyName(property));
                 styleSheet += QLatin1Char(':');
                 styleSheet += cssDecl.getPropertyValue(property);
                 styleSheet += QLatin1Char(';');

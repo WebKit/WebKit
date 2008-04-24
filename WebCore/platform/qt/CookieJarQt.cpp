@@ -91,7 +91,8 @@ String cookies(const Document* document, const KURL& url)
 
     QStringList resultCookies;
     foreach (QNetworkCookie networkCookie, cookies)
-        resultCookies.append(networkCookie.toRawForm(QNetworkCookie::NameAndValueOnly));
+        resultCookies.append(QString::fromAscii(
+                             networkCookie.toRawForm(QNetworkCookie::NameAndValueOnly).constData()));
 
     return resultCookies.join(QLatin1String("; "));
 #else
