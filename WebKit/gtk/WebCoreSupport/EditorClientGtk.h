@@ -64,7 +64,7 @@ namespace WebKit {
         virtual bool shouldBeginEditing(WebCore::Range*);
         virtual bool shouldEndEditing(WebCore::Range*);
         virtual bool shouldInsertNode(WebCore::Node*, WebCore::Range*, WebCore::EditorInsertAction);
-        virtual bool shouldInsertText(WebCore::String, WebCore::Range*, WebCore::EditorInsertAction);
+        virtual bool shouldInsertText(const WebCore::String&, WebCore::Range*, WebCore::EditorInsertAction);
         virtual bool shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting);
 
         virtual bool shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*);

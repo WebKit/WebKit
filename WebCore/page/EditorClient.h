@@ -80,7 +80,7 @@ public:
     virtual bool shouldBeginEditing(Range*) = 0;
     virtual bool shouldEndEditing(Range*) = 0;
     virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction) = 0;
-    virtual bool shouldInsertText(String, Range*, EditorInsertAction) = 0;
+    virtual bool shouldInsertText(const String&, Range*, EditorInsertAction) = 0;
     virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting) = 0;
     
     virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*) = 0;

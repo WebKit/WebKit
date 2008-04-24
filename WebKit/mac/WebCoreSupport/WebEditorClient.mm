@@ -245,7 +245,7 @@ bool WebEditorClient::shouldEndEditing(Range* range)
                              shouldEndEditingInDOMRange:kit(range)];
 }
 
-bool WebEditorClient::shouldInsertText(String text, Range* range, EditorInsertAction action)
+bool WebEditorClient::shouldInsertText(const String& text, Range* range, EditorInsertAction action)
 {
     WebView* webView = m_webView;
     return [[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:kit(range) givenAction:kit(action)];

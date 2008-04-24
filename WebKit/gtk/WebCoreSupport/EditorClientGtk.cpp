@@ -81,7 +81,7 @@ bool EditorClient::shouldEndEditing(WebCore::Range*)
     return true;
 }
 
-bool EditorClient::shouldInsertText(String, Range*, EditorInsertAction)
+bool EditorClient::shouldInsertText(const String&, Range*, EditorInsertAction)
 {
     notImplemented();
     return true;

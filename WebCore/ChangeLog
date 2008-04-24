@@ -1,3 +1,33 @@
+2008-04-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Change some String arguments to be const references instead.
+        
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::setCssText):
+        * css/CSSRule.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::pathGetFilename):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::parseTimeOffset):
+        * page/EditorClient.h:
+        * platform/SecurityOrigin.cpp:
+        (WebCore::isDefaultPortForProtocol):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load):
+        * platform/graphics/MediaPlayer.h:
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+        * rendering/MediaControlElements.h:
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::Condition::Condition):
+        * svg/animation/SVGSMILElement.h:
+        * svg/graphics/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyEditorClient::shouldInsertText):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::createFragmentFromSource):
+
 2008-04-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

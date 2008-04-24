@@ -211,7 +211,7 @@ static int randomNumber()
 // Warning: this helper doesn't currently have a reliable cross-platform behavior in
 // certain edge cases (see basename(3) specification for examples).
 // Consider this if it ever needs to become a general purpose method.
-static String pathGetFilename(String path)
+static String pathGetFilename(const String& path)
 {
 #if PLATFORM(QT)
     return QFileInfo(path).fileName();

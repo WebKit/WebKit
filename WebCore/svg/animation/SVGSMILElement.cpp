@@ -78,7 +78,7 @@ private:
     Element* m_eventBase;
 };
     
-SVGSMILElement::Condition::Condition(Type type, BeginOrEnd beginOrEnd, String baseID, const String& name, SMILTime offset, int repeats)
+SVGSMILElement::Condition::Condition(Type type, BeginOrEnd beginOrEnd, const String& baseID, const String& name, SMILTime offset, int repeats)
     : m_type(type)
     , m_beginOrEnd(beginOrEnd)
     , m_baseID(baseID)

@@ -1,3 +1,13 @@
+2008-04-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Change some String arguments to be const references instead.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::shouldInsertText):
+
 2008-04-24  John Sullivan  <sullivan@apple.com>
 
         Mac build fix

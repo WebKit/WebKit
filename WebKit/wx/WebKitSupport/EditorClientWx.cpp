@@ -143,7 +143,7 @@ bool EditorClientWx::shouldInsertNode(Node*, Range*,
     return true;
 }
 
-bool EditorClientWx::shouldInsertText(String, Range*,
+bool EditorClientWx::shouldInsertText(const String&, Range*,
                                        EditorInsertAction)
 {
     notImplemented();

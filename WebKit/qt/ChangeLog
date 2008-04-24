@@ -1,3 +1,13 @@
+2008-04-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Change some String arguments to be const references instead.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::shouldInsertText):
+        * WebCoreSupport/EditorClientQt.h:
+
 2008-04-24  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.

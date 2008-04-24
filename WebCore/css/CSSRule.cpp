@@ -44,7 +44,7 @@ String CSSRule::cssText() const
     return String();
 }
 
-void CSSRule::setCssText(String /*cssText*/, ExceptionCode& /*ec*/)
+void CSSRule::setCssText(const String& /*cssText*/, ExceptionCode& /*ec*/)
 {
     // FIXME: Implement!
 }

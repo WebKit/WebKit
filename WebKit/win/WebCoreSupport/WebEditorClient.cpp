@@ -249,7 +249,7 @@ bool WebEditorClient::shouldInsertNode(Node* /*node*/, Range* /*replacingRange*/
     return true; 
 }
 
-bool WebEditorClient::shouldInsertText(String /*str*/, Range* /* replacingRange */, EditorInsertAction /*givenAction*/)
+bool WebEditorClient::shouldInsertText(const String& /*str*/, Range* /* replacingRange */, EditorInsertAction /*givenAction*/)
 {     
     notImplemented(); 
     return true; 

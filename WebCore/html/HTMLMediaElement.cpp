@@ -197,12 +197,16 @@ String serializeTimeOffset(float time)
     return timeString;
 }
 
-float parseTimeOffset(String timeString, bool* ok = 0)
+float parseTimeOffset(const String& timeString, bool* ok = 0)
 {
-    if (timeString.endsWith("s"))
-        timeString = timeString.left(timeString.length() - 1);
+    const UChar* characters = timeString.characters();
+    unsigned length = timeString.length();
+    
+    if (characters[length - 1] == 's')
+        length--;
+    
     // FIXME parse time offset values (format not specified yet)
-    float val = (float)timeString.toDouble(ok);
+    float val = charactersToFloat(characters, length, ok);
     return val;
 }
 

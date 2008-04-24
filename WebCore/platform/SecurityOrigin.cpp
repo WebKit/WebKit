@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-static bool isDefaultPortForProtocol(unsigned short port, String protocol)
+static bool isDefaultPortForProtocol(unsigned short port, const String& protocol)
 {
     if (protocol.isEmpty())
         return false;

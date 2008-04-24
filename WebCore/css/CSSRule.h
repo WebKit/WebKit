@@ -57,7 +57,7 @@ public:
     CSSRule* parentRule() const;
 
     virtual String cssText() const;
-    void setCssText(String, ExceptionCode&);
+    void setCssText(const String&, ExceptionCode&);
 };
 
 } // namespace WebCore

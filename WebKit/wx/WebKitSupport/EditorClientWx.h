@@ -55,7 +55,7 @@ public:
     virtual bool shouldEndEditing(Range*);
     virtual bool shouldInsertNode(Node*, Range*,
                                   EditorInsertAction);
-    virtual bool shouldInsertText(String, Range*,
+    virtual bool shouldInsertText(const String&, Range*,
                                   EditorInsertAction);
     virtual bool shouldApplyStyle(CSSStyleDeclaration*,
                                   Range*);

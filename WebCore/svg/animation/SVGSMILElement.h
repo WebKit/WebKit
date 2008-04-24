@@ -122,7 +122,7 @@ private:
         // for example <animate begin="otherElement.begin + 8s; button.click" ... />
         struct Condition {
             enum Type { EventBase, Syncbase, AccessKey };
-            Condition(Type, BeginOrEnd beginOrEnd, String baseID, const String& name, SMILTime offset, int repeats = -1);
+            Condition(Type, BeginOrEnd beginOrEnd, const String& baseID, const String& name, SMILTime offset, int repeats = -1);
             Type m_type;
             BeginOrEnd m_beginOrEnd;
             String m_baseID;

@@ -60,7 +60,7 @@ public:
     virtual bool shouldBeginEditing(Range*);
     virtual bool shouldEndEditing(Range*);
     virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction);
-    virtual bool shouldInsertText(String, Range*, EditorInsertAction);
+    virtual bool shouldInsertText(const String&, Range*, EditorInsertAction);
     virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting);
 
     virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*);

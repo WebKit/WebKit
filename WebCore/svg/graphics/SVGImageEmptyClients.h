@@ -284,7 +284,7 @@ public:
     virtual bool shouldEndEditing(Range*) { return false; }
     virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction) { return false; }
     //  virtual bool shouldInsertNode(Node*, Range* replacingRange, WebViewInsertAction) { return false; }
-    virtual bool shouldInsertText(String, Range*, EditorInsertAction) { return false; }
+    virtual bool shouldInsertText(const String&, Range*, EditorInsertAction) { return false; }
     virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting) { return false; }
 
     virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*) { return false; }

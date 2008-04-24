@@ -1,3 +1,13 @@
+2008-04-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Change some String arguments to be const references instead.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::shouldInsertText):
+        * WebCoreSupport/EditorClientGtk.h:
+
 2008-04-23  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Alp Toker.

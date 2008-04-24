@@ -58,7 +58,7 @@ private:
 
 class MediaControlInputElement : public HTMLInputElement {
 public:
-    MediaControlInputElement(Document*, RenderStyle::PseudoId, String type, HTMLMediaElement*);
+    MediaControlInputElement(Document*, RenderStyle::PseudoId, const String& type, HTMLMediaElement*);
     void attachToParent(Element*);
     void update();
 protected:
