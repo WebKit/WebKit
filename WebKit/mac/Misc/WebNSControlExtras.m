@@ -42,9 +42,10 @@
     frame.origin.y    -= heightDelta;
     [self setFrame:frame];
 
-    NSRect windowFrame = [[self window] frame];
-    windowFrame.size.height += heightDelta;
-    [[self window] setFrame:windowFrame display:NO];
+    NSWindow *window = [self window];
+    NSRect windowFrame = [window frame];
+    windowFrame.size.height += heightDelta * [window userSpaceScaleFactor];
+    [window setFrame:windowFrame display:NO];
 }
 
 @end

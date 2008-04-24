@@ -1,3 +1,13 @@
+2008-04-24  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Jess
+        
+        - fixed <rdar://problem/5886655> JavaScript input panel automatic resizing doesn't work right with HiDPI
+
+        * Misc/WebNSControlExtras.m:
+        (-[NSControl sizeToFitAndAdjustWindowHeight]):
+        deploy userSpaceScaleFactor when using view distances on the window
+
 2008-04-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
