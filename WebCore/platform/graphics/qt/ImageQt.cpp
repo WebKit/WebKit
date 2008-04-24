@@ -163,23 +163,14 @@ void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, 
         pixmap = pixmap.copy(tr);
     }
 
-    if (patternTransform.isIdentity()) {
-        ctxt->save();
-        ctxt->setCompositeOperation(op);
-        QPainter* p = ctxt->platformContext();
-        p->setBrushOrigin(phase);
-        p->drawTiledPixmap(destRect, pixmap);
-        ctxt->restore();
-    } else {
-        QBrush b(pixmap);
-        b.setMatrix(patternTransform);
-        ctxt->save();
-        ctxt->setCompositeOperation(op);
-        QPainter* p = ctxt->platformContext();
-        p->setBrushOrigin(phase);
-        p->fillRect(destRect, b);
-        ctxt->restore();
-    }
+    QBrush b(pixmap);
+    b.setMatrix(patternTransform);
+    ctxt->save();
+    ctxt->setCompositeOperation(op);
+    QPainter* p = ctxt->platformContext();
+    p->setBrushOrigin(phase);
+    p->fillRect(destRect, b);
+    ctxt->restore();
 }
 
 void BitmapImage::checkForSolidColor()

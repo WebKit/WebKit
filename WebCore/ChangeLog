@@ -1,3 +1,13 @@
+2008-04-24  George Staikos  <george@staikos.net>
+
+        Reviewed by Simon.
+
+        This optimization in BitmapImage::drawPattern for the identity
+        transform is bogus and causes incorrect results on sites like youtube.
+
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::drawPattern):
+
 2008-04-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Jon Honeycutt
