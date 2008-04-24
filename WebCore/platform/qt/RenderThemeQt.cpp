@@ -66,7 +66,7 @@ bool RenderThemeQt::supportsHover(const RenderStyle*) const
 
 bool RenderThemeQt::supportsFocusRing(const RenderStyle* style) const
 {
-    return supportsFocus(style->appearance());
+    return true; // Qt provides this through the style
 }
 
 short RenderThemeQt::baselinePosition(const RenderObject* o) const

@@ -1,3 +1,11 @@
+2008-04-24  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Disable vanlilla focus rings since Qt provides this as part of the style.
+
+        * platform/qt/RenderThemeQt.cpp:
+
 2008-04-24  George Staikos  <george@staikos.net>
 
         Reviewed by Simon.
