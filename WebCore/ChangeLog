@@ -1,5 +1,17 @@
 2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Reviewed by Adam.
+
+        Fix a crash when performing a hit test on an AccessibilityObject with
+        no layer (e.g., an AccessibilityObject for a RenderText object).
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::doAccessibilityHitTest): Added a null
+        check for layer. Removed a null check for m_renderer, which shouldn't
+        occur.
+
+2008-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
         * page/AccessibilityObject.cpp:
         (WebCore::AccessibilityObject::boundingBoxRect): Added FIXME about this
         method not working correctly for objects with CSS transforms applied.

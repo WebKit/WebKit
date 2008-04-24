@@ -1658,7 +1658,8 @@ unsigned AccessibilityObject::doAXLineForIndex(unsigned index)
 
 AccessibilityObject* AccessibilityObject::doAccessibilityHitTest(const IntPoint& point) const
 {
-    if (!m_renderer)
+    RenderLayer* layer = m_renderer->layer();
+    if (!layer)
         return 0;
 
     HitTestRequest request(true, true);
