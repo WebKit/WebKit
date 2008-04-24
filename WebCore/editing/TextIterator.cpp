@@ -145,8 +145,14 @@ void TextIterator::advance()
 
     // handle remembered node that needed a newline after the text node's newline
     if (m_needAnotherNewline) {
-        // emit the newline, with position a collapsed range at the end of current node.
-        emitCharacter('\n', m_node->parentNode(), m_node, 1, 1);
+        // Emit the extra newline, and position it *inside* m_node, after m_node's 
+        // contents, in case it's a block, in the same way that we position the first 
+        // newline.  The range for the emitted newline should start where the line 
+        // break begins.
+        // FIXME: It would be cleaner if we emitted two newlines during the last 
+        // iteration, instead of using m_needAnotherNewline.
+        Node* baseNode = m_node->lastChild() ? m_node->lastChild() : m_node;
+        emitCharacter('\n', baseNode->parentNode(), baseNode, 1, 1);
         m_needAnotherNewline = false;
         return;
     }

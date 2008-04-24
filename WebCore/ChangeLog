@@ -1,3 +1,16 @@
+2008-04-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5604313> FormatBlock to apply an h1 also inserts a style span around the first letter (16004)
+        
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance): We emit an extra newline when leaving a
+        block element that has atypical margin/padding. When we emit the extra newline, 
+        it needs to be positioned after that block's contents, not after the block. 
+        This is how we position the first newline, too, since the range for emitted newlines 
+        should start where the line break begins visually.
+
 2008-04-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
