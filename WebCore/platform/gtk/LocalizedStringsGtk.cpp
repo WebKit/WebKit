@@ -285,6 +285,36 @@ String searchMenuClearRecentSearchesText()
     return String::fromUTF8(_("_Clear recent searches"));
 }
 
+String AXButtonActionVerb()
+{
+    return String();
+}
+
+String AXRadioButtonActionVerb()
+{
+    return String();
+}
+
+String AXTextFieldActionVerb()
+{
+    return String();
+}
+
+String AXCheckedCheckBoxActionVerb()
+{
+    return String();
+}
+
+String AXUncheckedCheckBoxActionVerb()
+{
+    return String();
+}
+
+String AXLinkActionVerb()
+{
+    return String();
+}
+
 String unknownFileSizeText()
 {
     return String::fromUTF8(_("Unknown"));

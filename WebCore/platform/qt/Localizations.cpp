@@ -293,6 +293,36 @@ String AXHeadingText()
     return String();
 }
 
+String AXButtonActionVerb()
+{
+    return String();
+}
+
+String AXRadioButtonActionVerb()
+{
+    return String();
+}
+
+String AXTextFieldActionVerb()
+{
+    return String();
+}
+
+String AXCheckedCheckBoxActionVerb()
+{
+    return String();
+}
+
+String AXUncheckedCheckBoxActionVerb()
+{
+    return String();
+}
+
+String AXLinkActionVerb()
+{
+    return String();
+}
+
 String unknownFileSizeText()
 {
     return QCoreApplication::translate("QWebPage", "Unknown", "Unknown filesize FTP directory listing item");

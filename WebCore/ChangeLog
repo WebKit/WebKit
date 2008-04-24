@@ -1,3 +1,24 @@
+2008-04-24  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Gtk and Qt builds.
+
+        Added missing localization stubs for accessibility.
+
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::AXButtonActionVerb):
+        (WebCore::AXRadioButtonActionVerb):
+        (WebCore::AXTextFieldActionVerb):
+        (WebCore::AXCheckedCheckBoxActionVerb):
+        (WebCore::AXUncheckedCheckBoxActionVerb):
+        (WebCore::AXLinkActionVerb):
+        * platform/qt/Localizations.cpp:
+        (WebCore::AXButtonActionVerb):
+        (WebCore::AXRadioButtonActionVerb):
+        (WebCore::AXTextFieldActionVerb):
+        (WebCore::AXCheckedCheckBoxActionVerb):
+        (WebCore::AXUncheckedCheckBoxActionVerb):
+        (WebCore::AXLinkActionVerb):
+
 2008-04-24  Olivier Goffart  <ogoffart@trolltech.com>
 
         Reviewed by Simon
