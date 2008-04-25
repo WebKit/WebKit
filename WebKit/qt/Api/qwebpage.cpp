@@ -589,14 +589,33 @@ void QWebPagePrivate::keyReleaseEvent(QKeyEvent *ev)
 
 void QWebPagePrivate::focusInEvent(QFocusEvent *ev)
 {
-    if (ev->reason() != Qt::PopupFocusReason)
-        page->focusController()->setFocusedFrame(QWebFramePrivate::core(mainFrame));
+    if (ev->reason() == Qt::PopupFocusReason)
+        return;
+
+    FocusController *focusController = page->focusController();
+    Frame *frame = focusController->focusedFrame();
+    if (frame) {
+        focusController->setActive(true);
+        frame->selectionController()->setFocused(true);
+    } else {
+        focusController->setFocusedFrame(QWebFramePrivate::core(mainFrame));
+    }
 }
 
 void QWebPagePrivate::focusOutEvent(QFocusEvent *ev)
 {
-    if (ev->reason() != Qt::PopupFocusReason)
-        page->focusController()->setFocusedFrame(0);
+    if (ev->reason() == Qt::PopupFocusReason)
+        return;
+
+    // only set the focused frame inactive so that we stop painting the caret
+    // and the focus frame. But don't tell the focus controller so that upon
+    // focusInEvent() we can re-activate the frame.
+    FocusController *focusController = page->focusController();
+    Frame *frame = focusController->focusedFrame();
+    if (frame) {
+        focusController->setActive(false);
+        frame->selectionController()->setFocused(false);
+    }
 }
 
 void QWebPagePrivate::dragEnterEvent(QDragEnterEvent *ev)

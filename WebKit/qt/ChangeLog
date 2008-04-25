@@ -1,3 +1,19 @@
+2008-04-25  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon, Holger.
+
+        Fixed focus handling when a node is focused while the corresponding QWebPage does not have the focus.
+
+        * Correctly de- and reactivate the focused frame in focusOut/focusInEvent
+        without telling the focus controller. We don't want to change the focused frame
+        - the controller has to remember it in fact - but instead just deactivate the
+        frame for correct painting as RenderTheme::isFocused() uses the activation
+        state of the frame.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::focusInEvent):
+        (QWebPagePrivate::focusOutEvent):
+
 2008-04-25  Kavindra Devi Palaraja  <kdpalara@trolltech.com>
 
         Reviewed by Simon.
