@@ -1,3 +1,9 @@
+2008-04-24  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        * WebCore.base.exp: Remove two symbols from the export list that don't need to be exported.
+
 2008-04-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
