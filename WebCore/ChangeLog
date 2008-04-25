@@ -1,3 +1,16 @@
+2008-04-25  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Holger, Simon.
+
+        Implement NoDrop, ZoomIn, and ZoomOut cursors
+
+        * Resources/WebKitResources.qrc:
+        * platform/qt/CursorQt.cpp:
+        (WebCore::noDropCursor):
+        (WebCore::notAllowedCursor):
+        (WebCore::zoomInCursor):
+        (WebCore::zoomOutCursor):
+
 2008-04-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
