@@ -37,6 +37,7 @@
 #include <qwebpage.h>
 
 #include <QDebug>
+#include <QCoreApplication>
 
 namespace WebCore {
 
@@ -339,8 +340,17 @@ void QNetworkReplyHandler::start()
             putDevice->setParent(m_reply);
             break;
         }
-        case QNetworkAccessManager::UnknownOperation:
-            break; // eh?
+        case QNetworkAccessManager::UnknownOperation: {
+            m_reply = 0;
+            ResourceHandleClient* client = m_resourceHandle->client();
+            if (client) {
+                ResourceError error(url.host(), 400 /*bad request*/,
+                                    url.toString(),
+                                    QCoreApplication::translate("QWebPage", "Bad HTTP request"));
+                client->didFail(m_resourceHandle, error);
+            }
+            return;
+        }
     }
 
     m_reply->setParent(this);
