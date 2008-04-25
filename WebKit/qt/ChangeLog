@@ -1,3 +1,13 @@
+2008-04-25  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
+        When pressing Ctrl-Up the keyboard modifiers could include other modifiers
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::keyPressEvent):
+
 2008-04-25  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
