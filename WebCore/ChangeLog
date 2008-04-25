@@ -1,3 +1,17 @@
+2008-04-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        networking: Use Qt::QueuedConnection in QNetworkReplyHandler
+
+        Make sure we leave the networking backend before calling
+        into WebCore. Otheriwse we might return to the networking
+        backend when it is already deleted.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::FormDataIODevice::setParent):
+        (WebCore::QNetworkReplyHandler::start):
+
 2008-04-25  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
