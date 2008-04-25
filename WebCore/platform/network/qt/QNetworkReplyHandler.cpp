@@ -181,9 +181,12 @@ void QNetworkReplyHandler::finish()
     if (!m_resourceHandle)
         return;
     ResourceHandleClient* client = m_resourceHandle->client();
-    m_reply->deleteLater();
-    if (!client)
+    if (!client) {
+        m_reply->deleteLater();
+        m_reply = 0;
         return;
+    }
+    QNetworkReply* oldReply = m_reply;
     if (m_redirected) {
         m_redirected = false;
         m_responseSent = false;
@@ -196,6 +199,9 @@ void QNetworkReplyHandler::finish()
     } else {
         client->didFinishLoading(m_resourceHandle);
     }
+    oldReply->deleteLater();
+    if (oldReply == m_reply)
+        m_reply = 0;
 }
 
 void QNetworkReplyHandler::sendResponseIfNeeded()
