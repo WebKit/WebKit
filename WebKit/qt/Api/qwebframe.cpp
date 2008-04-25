@@ -130,12 +130,12 @@ void QWebFramePrivate::updateBackground()
 
     QWebFrame represents a frame inside a web page. Each QWebPage
     object contains at least one frame, the mainFrame(). Additional
-    frames will be created for HTML &lt;frame&gt; or &lt;iframe&gt;
+    frames will be created for HTML \c{<frame>} or \c{<iframe>}
     elements.
 
     QWebFrame objects are created and controlled by the web page. You
-    can connect to the web pages frameCreated() signal to find out
-    about creation of new frames.
+    can connect to the web page's \l{QWebPage::}{frameCreated()} signal
+    to find out about creation of new frames.
 
     \sa QWebPage
 */

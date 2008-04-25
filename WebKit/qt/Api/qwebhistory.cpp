@@ -27,14 +27,28 @@
 
 /*!
   \class QWebHistoryItem
+  \ingroup explicitly-shared
   \since 4.4
   \brief The QWebHistoryItem class represents one item in the history of a QWebPage
 
-  QWebHistoryItem represents on entry in the history stack of a web page.
+  Each QWebHistoryItem instance represents an entry in the history stack of a Web page,
+  containing information about the page, its location, and when it was last visited.
 
-  \sa QWebPage::history() QWebHistory
+  The following table shows the properties of the page held by the history item, and
+  the functions used to access them.
 
-  QWebHistoryItem objects are value based and explicitly shared. 
+  \table
+  \header \o Function      \o Description
+  \row    \o title()       \o The page title.
+  \row    \o url()         \o The location of the page.
+  \row    \o originalUrl() \o The URL used to access the page.
+  \row    \o lastVisited() \o The date and time of the user's last visit to the page.
+  \row    \o icon()        \o The icon associated with the page that was provided by the server.
+  \endtable
+
+  \note QWebHistoryItem objects are value based and \l{explicitly shared}.
+
+  \sa QWebHistory, QWebPage::history(), QWebHistoryInterface
 */
 
 /*!
@@ -55,14 +69,16 @@ QWebHistoryItem &QWebHistoryItem::operator=(const QWebHistoryItem &other)
 }
 
 /*!
-  Destructs a history item.
+  Destroys the history item.
 */
 QWebHistoryItem::~QWebHistoryItem()
 {
 }
 
 /*!
- The original url associated with the history item.
+ Returns the original URL associated with the history item.
+
+ \sa url()
 */
 QUrl QWebHistoryItem::originalUrl() const
 {
@@ -71,7 +87,9 @@ QUrl QWebHistoryItem::originalUrl() const
 
 
 /*!
- The url associated with the history item.
+ Returns the URL associated with the history item.
+
+ \sa originalUrl(), title(), lastVisited()
 */
 QUrl QWebHistoryItem::url() const
 {
@@ -80,7 +98,9 @@ QUrl QWebHistoryItem::url() const
 
 
 /*!
- The title of the page associated with the history item.
+ Returns the title of the page associated with the history item.
+
+ \sa icon(), url(), lastVisited()
 */
 QString QWebHistoryItem::title() const
 {
@@ -89,7 +109,9 @@ QString QWebHistoryItem::title() const
 
 
 /*!
- The time when the apge associated with the item was last visited.
+ Returns the date and time that the page associated with the item was last visited.
+
+ \sa title(), icon(), url()
 */
 QDateTime QWebHistoryItem::lastVisited() const
 {
@@ -99,7 +121,9 @@ QDateTime QWebHistoryItem::lastVisited() const
 
 
 /*!
- The icon associated with the history item.
+ Returns the icon associated with the history item.
+
+ \sa title(), url(), lastVisited()
 */
 QIcon QWebHistoryItem::icon() const
 {
@@ -119,8 +143,27 @@ QWebHistoryItem::QWebHistoryItem(QWebHistoryItemPrivate *priv)
   \since 4.4
   \brief The QWebHistory class represents the history of a QWebPage
 
-  Each QWebPage contains a history of visited pages that can be accessed by QWebPage::history().
-  QWebHistory represents this history and makes it possible to navigate it.
+  Each QWebPage instance contains a history of visited pages that can be accessed
+  by QWebPage::history(). QWebHistory represents this history and makes it possible
+  to navigate it.
+
+  The history uses the concept of a \e{current item}, dividing the pages visited
+  into those that can be visited by navigating \e back and \e forward using the
+  back() and forward() functions. The current item can be obtained by calling
+  currentItem(), and an arbitrary item in the history can be made the current
+  item by passing it to goToItem().
+
+  A list of items describing the pages that can be visited by going back can be
+  obtained by calling the backItems() function; similarly, items describing the
+  pages ahead of the current page can be obtained with the forwardItems() function.
+  The total list of items is obtained with the items() function.
+
+  Just as with containers, functions are available to examine the history in terms
+  of a list. Arbitrary items in the history can be obtained with itemAt(), the total
+  number of items is given by count(), and the history can be cleared with the
+  clear() function.
+
+  \sa QWebHistoryItem, QWebHistoryInterface, QWebPage
 */
 
 
@@ -136,6 +179,8 @@ QWebHistory::~QWebHistory()
 
 /*!
   Clears the history.
+
+  \sa count(), items()
 */
 void QWebHistory::clear()
 {
@@ -148,7 +193,9 @@ void QWebHistory::clear()
 }
 
 /*!
-  returns a list of all items currently in the history.
+  Returns a list of all items currently in the history.
+
+  \sa count(), clear()
 */
 QList<QWebHistoryItem> QWebHistory::items() const
 {
@@ -163,8 +210,10 @@ QList<QWebHistoryItem> QWebHistory::items() const
 }
 
 /*!
-  Returns the list of items that are in the backwards history.
+  Returns the list of items in the backwards history list.
   At most \a maxItems entries are returned.
+
+  \sa forwardItems()
 */
 QList<QWebHistoryItem> QWebHistory::backItems(int maxItems) const
 {
@@ -180,8 +229,10 @@ QList<QWebHistoryItem> QWebHistory::backItems(int maxItems) const
 }
 
 /*!
-  Returns the list of items that are in the forward history.
+  Returns the list of items in the forward history list.
   At most \a maxItems entries are returned.
+
+  \sa backItems()
 */
 QList<QWebHistoryItem> QWebHistory::forwardItems(int maxItems) const
 {
@@ -197,7 +248,10 @@ QList<QWebHistoryItem> QWebHistory::forwardItems(int maxItems) const
 }
 
 /*!
-  returns true if we have an item to go back to.
+  Returns true if there is an item preceding the current item in the history;
+  otherwise returns false.
+
+  \sa canGoForward()
 */
 bool QWebHistory::canGoBack() const
 {
@@ -205,7 +259,9 @@ bool QWebHistory::canGoBack() const
 }
 
 /*!
-  returns true if we have an item to go forward to.
+  Returns true if we have an item to go forward to; otherwise returns false.
+
+  \sa canGoBack()
 */
 bool QWebHistory::canGoForward() const
 {
@@ -213,7 +269,10 @@ bool QWebHistory::canGoForward() const
 }
 
 /*!
-  goes back one history item.
+  Set the current item to be the previous item in the history; i.e., goes back
+  one history item.
+
+  \sa forward(), goToItem()
 */
 void QWebHistory::back()
 {
@@ -221,7 +280,10 @@ void QWebHistory::back()
 }
 
 /*!
-  goes forward one history item.
+  Sets the current item to be the next item in the history; i.e., goes forward
+  one history item.
+
+  \sa back(), goToItem()
 */
 void QWebHistory::forward()
 {
@@ -229,7 +291,9 @@ void QWebHistory::forward()
 }
 
 /*!
-  goes to item \a item in the history.
+  Sets the current item to be the specified \a item in the history.
+
+  \sa back(), forward()
 */
 void QWebHistory::goToItem(const QWebHistoryItem &item)
 {
@@ -237,7 +301,7 @@ void QWebHistory::goToItem(const QWebHistoryItem &item)
 }
 
 /*!
-  returns the item before the current item.
+  Returns the item before the current item in the history.
 */
 QWebHistoryItem QWebHistory::backItem() const
 {
@@ -247,7 +311,7 @@ QWebHistoryItem QWebHistory::backItem() const
 }
 
 /*!
-  returns the current item.
+  Returns the current item in the history.
 */
 QWebHistoryItem QWebHistory::currentItem() const
 {
@@ -257,7 +321,7 @@ QWebHistoryItem QWebHistory::currentItem() const
 }
 
 /*!
-  returns the item after the current item.
+  Returns the item after the current item in the history.
 */
 QWebHistoryItem QWebHistory::forwardItem() const
 {
@@ -267,7 +331,7 @@ QWebHistoryItem QWebHistory::forwardItem() const
 }
 
 /*!
-  returns the item at index \a i.
+  Returns the item at index \a i in the history.
 */
 QWebHistoryItem QWebHistory::itemAt(int i) const
 {
@@ -278,7 +342,7 @@ QWebHistoryItem QWebHistory::itemAt(int i) const
 }
 
 /*!
-    Returns the total number of items in the back-forward history.
+    Returns the total number of items in the history.
 */
 int QWebHistory::count() const
 {

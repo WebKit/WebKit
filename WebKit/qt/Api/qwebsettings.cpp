@@ -450,7 +450,7 @@ int QWebSettings::maximumPagesInCache()
 
    \a totalCapacity specifies the maximum number of bytes that the cache should consume overall.
 
-   Calling setObjectCacheCapacities(0, 0, 0) is disabling the cache. Calling it with one non zero
+   Calling setObjectCacheCapacities(0, 0, 0) will disable the cache. Calling it with one non-zero
    value will enable it again. The cache is enabled by default.
 */
 void QWebSettings::setObjectCacheCapacities(int cacheMinDeadCapacity, int cacheMaxDead, int totalCapacity)

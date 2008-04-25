@@ -34,6 +34,7 @@ public:
     \class QWebView
     \since 4.4
     \brief The QWebView class provides a widget that is used to view and edit web documents.
+    \ingroup advanced
 
     QWebView is the main widget component of the QtWebKit web browsing module.
 */

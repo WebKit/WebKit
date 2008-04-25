@@ -1,3 +1,14 @@
+2008-04-25  David Boddie <dboddie@trolltech.com>
+
+        Reviewed by Simon.
+
+        Documentation updates for some of the QWeb classes
+
+        * Api/qwebframe.cpp:
+        * Api/qwebhistory.cpp:
+        * Api/qwebsettings.cpp:
+        * Api/qwebview.cpp:
+
 2008-04-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
