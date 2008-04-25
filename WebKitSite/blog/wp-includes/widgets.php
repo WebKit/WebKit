@@ -306,6 +306,24 @@ function wp_get_sidebars_widgets($update = true) {
 					$_sidebars_widgets[$index][$i] = $id;
 					continue;
 				}
+				
+				$found = false;
+				
+				foreach ( $wp_registered_widgets as $widget_id => $widget ) {
+					if ( strtolower($widget['name']) == strtolower($name) ) {
+						$_sidebars_widgets[$index][$i] = $widget['id'];
+						$found = true;
+						break;
+					} elseif ( sanitize_title($widget['name']) == sanitize_title($name) ) {
+						$_sidebars_widgets[$index][$i] = $widget['id'];
+						$found = true;
+						break;
+					}
+				}
+				
+				if ( $found )
+					continue;
+				
 				unset($_sidebars_widgets[$index][$i]);
 			}
 			$_sidebars_widgets['array_version'] = 2;
@@ -428,6 +446,8 @@ function wp_widget_pages_control() {
 
 function wp_widget_links($args) {
 	extract($args, EXTR_SKIP);
+
+	$before_widget = preg_replace('/id="[^"]*"/','id="%id"', $before_widget);
 	wp_list_bookmarks(array(
 		'title_before' => $before_title, 'title_after' => $after_title,
 		'category_before' => $before_widget, 'category_after' => $after_widget,
@@ -614,6 +634,8 @@ function wp_widget_text_control($widget_args) {
 		}
 
 		foreach ( (array) $_POST['widget-text'] as $widget_number => $widget_text ) {
+			if ( !isset($widget_text['text']) && isset($options[$widget_number]) ) // user clicked cancel
+				continue;
 			$title = strip_tags(stripslashes($widget_text['title']));
 			if ( current_user_can('unfiltered_html') )
 				$text = stripslashes( $widget_text['text'] );
@@ -750,6 +772,8 @@ function wp_widget_categories_control( $widget_args ) {
 		}
 
 		foreach ( (array) $_POST['widget-categories'] as $widget_number => $widget_cat ) {
+			if ( !isset($widget_cat['title']) && isset($options[$widget_number]) ) // user clicked cancel
+				continue;
 			$title = trim(strip_tags(stripslashes($widget_cat['title'])));
 			$count = isset($widget_cat['count']);
 			$hierarchical = isset($widget_cat['hierarchical']);
@@ -858,10 +882,12 @@ function wp_widget_categories_upgrade() {
 }
 
 function wp_widget_recent_entries($args) {
-	if ( $output = wp_cache_get('widget_recent_entries', 'widget') )
-		return print($output);
+	if ( '%BEG_OF_TITLE%' != $args['before_title'] ) {
+		if ( $output = wp_cache_get('widget_recent_entries', 'widget') )
+			return print($output);
+		ob_start();
+	}
 
-	ob_start();
 	extract($args);
 	$options = get_option('widget_recent_entries');
 	$title = empty($options['title']) ? __('Recent Posts') : $options['title'];
@@ -886,7 +912,9 @@ function wp_widget_recent_entries($args) {
 <?php
 		wp_reset_query();  // Restore global post data stomped by the_post().
 	endif;
-	wp_cache_add('widget_recent_entries', ob_get_flush(), 'widget');
+
+	if ( '%BEG_OF_TITLE%' != $args['before_title'] )
+		wp_cache_add('widget_recent_entries', ob_get_flush(), 'widget');
 }
 
 function wp_flush_widget_recent_entries() {
@@ -1170,6 +1198,8 @@ function wp_widget_rss_control($widget_args) {
 		}
 
 		foreach( (array) $_POST['widget-rss'] as $widget_number => $widget_rss ) {
+			if ( !isset($widget_rss['url']) && isset($options[$widget_number]) ) // user clicked cancel
+				continue;
 			$widget_rss = stripslashes_deep( $widget_rss );
 			$url = sanitize_url(strip_tags($widget_rss['url']));
 			$options[$widget_number] = wp_widget_rss_process( $widget_rss, !isset($urls[$url]) );
@@ -1460,6 +1490,8 @@ function widget_many_control( $widget_args = 1 ) {
 
 		foreach ( (array) $_POST['widget-many'] as $widget_number => $widget_many_instance ) {
 			// compile data from $widget_many_instance
+			if ( !isset($widget_many_instance['something']) && isset($options[$widget_number]) ) // user clicked cancel
+				continue;
 			$something = wp_specialchars( $widget_many_instance['something'] );
 			$options[$widget_number] = array( 'something' => $something );  // Even simple widgets should store stuff in array, rather than in scalar
 		}

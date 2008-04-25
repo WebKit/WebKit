@@ -27,7 +27,7 @@ class WP_Scripts {
 			'enterImageDescription' => __('Enter a description of the image')
 		) );
 
-		$this->add( 'colorpicker', '/wp-includes/js/colorpicker.js', false, '3517' );
+		$this->add( 'colorpicker', '/wp-includes/js/colorpicker.js', array('prototype'), '3517' );
 
 		// Let a plugin replace the visual editor
 		$visual_editor = apply_filters('visual_editor', array('tiny_mce'));
@@ -36,7 +36,7 @@ class WP_Scripts {
 		$this->add( 'editor_functions', '/wp-admin/js/editor.js', false, '20080325' );
 
 		// Modify this version when tinyMCE plugins are changed.
-		$mce_version = apply_filters('tiny_mce_version', '20080327');
+		$mce_version = apply_filters('tiny_mce_version', '20080414');
 		$this->add( 'tiny_mce', '/wp-includes/js/tinymce/tiny_mce_config.php', array('editor_functions'), $mce_version );
 
 		$this->add( 'prototype', '/wp-includes/js/prototype.js', false, '1.6');
@@ -47,7 +47,7 @@ class WP_Scripts {
 			'broken' => __('An unidentified error has occurred.')
 		) );
 
-		$this->add( 'autosave', '/wp-includes/js/autosave.js', array('schedule', 'wp-ajax-response'), '20080326b' );
+		$this->add( 'autosave', '/wp-includes/js/autosave.js', array('schedule', 'wp-ajax-response'), '20080424' );
 
 		$this->add( 'wp-ajax', '/wp-includes/js/wp-ajax.js', array('prototype'), '20070306');
 		$this->localize( 'wp-ajax', 'WPAjaxL10n', array(
@@ -57,7 +57,7 @@ class WP_Scripts {
 			'whoaText' => __("Slow down, I'm still sending your data!")
 		) );
 
-		$this->add( 'wp-lists', '/wp-includes/js/wp-lists.js', array('wp-ajax-response'), '20080322' );
+		$this->add( 'wp-lists', '/wp-includes/js/wp-lists.js', array('wp-ajax-response'), '20080411' );
 		$this->localize( 'wp-lists', 'wpListL10n', array(
 			'url' => get_option( 'siteurl' ) . '/wp-admin/admin-ajax.php'
 		) );
@@ -87,11 +87,11 @@ class WP_Scripts {
 			'is_lighttpd_before_150' => is_lighttpd_before_150(),
 		) );
 		$this->add( 'swfupload-queue', '/wp-includes/js/swfupload/plugins/swfupload.queue.js', array('swfupload'), '2.0.2');
-		$this->add( 'swfupload-handlers', '/wp-includes/js/swfupload/handlers.js', array('swfupload'), '2.0.2-20080301');
+		$this->add( 'swfupload-handlers', '/wp-includes/js/swfupload/handlers.js', array('swfupload'), '2.0.2-20080407');
 		// these error messages came from the sample swfupload js, they might need changing.
 		$this->localize( 'swfupload-handlers', 'swfuploadL10n', array(
 				'queue_limit_exceeded' => __('You have attempted to queue too many files.'),
-				'file_exceeds_size_limit' => sprintf(__('This file is too big. Your php.ini upload_max_filesize is %s.'), ini_get('upload_max_filesize')),
+				'file_exceeds_size_limit' => sprintf(__('This file is too big. Your php.ini upload_max_filesize is %s.'), @ini_get('upload_max_filesize')),
 				'zero_byte_file' => __('This file is empty. Please try another.'),
 				'invalid_filetype' => __('This file type is not allowed. Please try another.'),
 				'default_error' => __('An error occurred in the upload. Please try again later.'),
@@ -144,7 +144,7 @@ class WP_Scripts {
 				'save' => __('Save'),
 				'cancel' => __('Cancel'),
 			) );
-			$this->add( 'post', '/wp-admin/js/post.js', array('suggest', 'jquery-ui-tabs', 'wp-lists', 'postbox', 'slug'), '20080322' );
+			$this->add( 'post', '/wp-admin/js/post.js', array('suggest', 'jquery-ui-tabs', 'wp-lists', 'postbox', 'slug'), '20080422' );
 			$this->localize( 'post', 'postL10n', array(
 				'tagsUsed' =>  __('Tags used on this post:'),
 				'add' => attribute_escape(__('Add')),
@@ -187,7 +187,7 @@ class WP_Scripts {
 				'saveText' => attribute_escape(__('Save &raquo;')),
 				'confirmText' => __("Are you sure you want to delete the file '%title%'?\nClick ok to delete or cancel to go back.")
 			) );
-			$this->add( 'admin-widgets', '/wp-admin/js/widgets.js', array( 'interface' ), '20080319' );
+			$this->add( 'admin-widgets', '/wp-admin/js/widgets.js', array( 'interface' ), '20080407c' );
 			$this->localize( 'admin-widgets', 'widgetsL10n', array(
 				'add' => __('Add'),
 				'edit' => __('Edit'),

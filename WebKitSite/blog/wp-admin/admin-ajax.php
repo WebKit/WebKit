@@ -162,9 +162,8 @@ case 'add-category' : // On the Fly
 		if ( $parent ) // Do these all at once in a second
 			continue;
 		$category = get_category( $cat_id );
-		$checked_categories[] = $cat_id;
 		ob_start();
-			dropdown_categories( 0, $category );
+			wp_category_checklist( 0, $cat_id, $checked_categories );
 		$data = ob_get_contents();
 		ob_end_clean();
 		$x->add( array(
@@ -434,7 +433,7 @@ case 'add-meta' :
 	break;
 case 'add-user' :
 	check_ajax_referer( $action );
-	if ( !current_user_can('edit_users') )
+	if ( !current_user_can('create_users') )
 		die('-1');
 	require_once(ABSPATH . WPINC . '/registration.php');
 	if ( !$user_id = add_user() )

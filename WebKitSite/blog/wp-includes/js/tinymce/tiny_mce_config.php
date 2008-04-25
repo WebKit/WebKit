@@ -8,11 +8,16 @@
  *
  * This file compresses the TinyMCE JavaScript using GZip.
  **/
-  
+
+// Discard any buffers
+while ( @ob_end_clean() );
+
 @ require('../../../wp-config.php');
 
 function getFileContents($path) {
-	$path = realpath($path);
+
+	if ( function_exists('realpath') )
+		$path = realpath($path);
 
 	if ( ! $path || ! @is_file($path) )
 		return '';
@@ -49,11 +54,11 @@ function putFileContents( $path, $content ) {
 $https = ( isset($_SERVER['HTTPS']) && 'on' == strtolower($_SERVER['HTTPS']) ) ? true : false;
 	
 $baseurl = get_option('siteurl') . '/wp-includes/js/tinymce';
-if ( $https ) str_replace('http://', 'https://', $baseurl);
+if ( $https ) $baseurl = str_replace('http://', 'https://', $baseurl);
 
 $mce_css = $baseurl . '/wordpress.css';
 $mce_css = apply_filters('mce_css', $mce_css);
-if ( $https ) str_replace('http://', 'https://', $mce_css);
+if ( $https ) $mce_css = str_replace('http://', 'https://', $mce_css);
 
 $mce_locale = ( '' == get_locale() ) ? 'en' : strtolower( substr(get_locale(), 0, 2) ); // only ISO 639-1
 
@@ -104,7 +109,7 @@ if ( ! empty($mce_external_plugins) ) {
 
 	foreach ( $mce_external_plugins as $name => $url ) {
 		
-		if ( $https ) str_replace('http://', 'https://', $url);
+		if ( $https ) $url = str_replace('http://', 'https://', $url);
 		
 		$plugins[] = '-' . $name;
 
@@ -150,6 +155,7 @@ $initArray = array (
 	'dialog_type' => 'modal',
 	'relative_urls' => false,
 	'remove_script_host' => false,
+	'convert_urls' => false,
 	'apply_source_formatting' => false,
 	'remove_linebreaks' => true,
 	'paste_convert_middot_lists' => true,
@@ -220,7 +226,7 @@ if ( $compress && isset($_SERVER['HTTP_ACCEPT_ENCODING']) ) {
 // Setup cache info
 if ( $disk_cache ) {
 
-	$cacheKey = apply_filters('tiny_mce_version', '20080327');
+	$cacheKey = apply_filters('tiny_mce_version', '20080414');
 
 	foreach ( $initArray as $v )
 		$cacheKey .= $v;
@@ -255,8 +261,6 @@ if ( $disk_cache && is_file($cache_file) && is_readable($cache_file) ) {
 	
 	if ( '.gz' == $cache_ext )
 		header( 'Content-Encoding: gzip' );
-
-	header( 'Content-Length: ' . strlen($content) );
 
 	echo $content;
 	exit;
@@ -301,7 +305,6 @@ if ( '.gz' == $cache_ext ) {
 }
 
 // Stream to client
-header( 'Content-Length: ' . strlen($content) );
 echo $content;
 
 // Write file

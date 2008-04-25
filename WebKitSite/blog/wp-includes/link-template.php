@@ -80,13 +80,13 @@ function get_permalink($id = 0, $leavename=false) {
 			$category = $cats[0]->slug;
 			if ( $parent=$cats[0]->parent )
 				$category = get_category_parents($parent, FALSE, '/', TRUE) . $category;
-		}
 
-		// show default category in permalinks, without
-		// having to assign it explicitly
-		if ( empty($category) ) {
-			$default_category = get_category( get_option( 'default_category' ) );
-			$category = is_wp_error( $default_category)? '' : $default_category->slug; 
+			// show default category in permalinks, without
+			// having to assign it explicitly
+			if ( empty($category) ) {
+				$default_category = get_category( get_option( 'default_category' ) );
+				$category = is_wp_error( $default_category ) ? '' : $default_category->slug; 
+			}
 		}
 
 		$author = '';
@@ -179,7 +179,7 @@ function get_attachment_link($id = false) {
 			$parentlink = _get_page_link( $object->post_parent ); // Ignores page_on_front
 		else
 			$parentlink = get_permalink( $object->post_parent );
-		if ( ctype_digit($object->post_name) || false !== strpos(get_option('permalink_structure'), '%category%') )
+		if ( is_numeric($object->post_name) || false !== strpos(get_option('permalink_structure'), '%category%') )
 			$name = 'attachment/' . $object->post_name; // <permalink>/<int>/ is paged so we use the explicit attachment marker
 		else
 			$name = $object->post_name;
@@ -554,7 +554,7 @@ function get_adjacent_post($in_same_cat = false, $excluded_categories = '', $pre
 			}
 
 			if ( !empty($excluded_categories) ) {
-				$posts_in_ex_cats_sql = " AND tt.term_id NOT IN (" . implode($excluded_categories, ',') . ')';
+				$posts_in_ex_cats_sql = " AND tt.taxonomy = 'category' AND tt.term_id NOT IN (" . implode($excluded_categories, ',') . ')';
 			}
 		}
 	}

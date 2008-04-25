@@ -22,6 +22,14 @@
 if ( have_posts() ) {
 $bgcolor = '';
 add_filter('the_title','wp_specialchars');
+
+// Create array of post IDs.
+$post_ids = array();
+foreach ( $wp_query->posts as $a_post )
+	$post_ids[] = $a_post->ID;
+
+$comment_pending_count = get_pending_comments_num($post_ids);
+
 while (have_posts()) : the_post();
 $class = 'alternate' == $class ? '' : 'alternate';
 global $current_user;
@@ -67,7 +75,7 @@ foreach($posts_columns as $column_name=>$column_display_name) {
 			}
 		}
 		?>
-		<td><abbr title="<?php echo $t_time ?>"><?php echo $h_time ?></abbr></td>
+		<td><abbr title="<?php echo $t_time ?>"><?php echo apply_filters('post_date_column_time', $h_time, $post, $column_name) ?></abbr></td>
 		<?php
 		break;
 	case 'title':
@@ -113,7 +121,7 @@ foreach($posts_columns as $column_name=>$column_display_name) {
 		?>
 		<td class="num"><div class="post-com-count-wrapper">
 		<?php
-		$left = get_pending_comments_num( $post->ID );
+		$left = isset($comment_pending_count) ? $comment_pending_count[$post->ID] : 0;
 		$pending_phrase = sprintf( __('%s pending'), number_format( $left ) );
 		if ( $left )
 			echo '<strong>';

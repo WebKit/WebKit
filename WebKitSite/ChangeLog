@@ -1,3 +1,9 @@
+2008-04-25  Mark Rowe  <mrowe@apple.com>
+
+        Upgrade to WordPress 2.5.1.  Another day, another security vulnerability in WordPress.
+
+        * blog:
+
 2008-04-21  Dean Jackson  <dino@apple.com>
 
         Updated CSS Visual Effects proposals.

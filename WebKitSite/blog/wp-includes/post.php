@@ -165,19 +165,17 @@ function &get_post(&$post, $output = OBJECT, $filter = 'raw') {
 		else
 			return $null;
 	} elseif ( is_object($post) ) {
+		_get_post_ancestors($post);
 		wp_cache_add($post->ID, $post, 'posts');
 		$_post = &$post;
 	} else {
 		$post = (int) $post;
 		if ( ! $_post = wp_cache_get($post, 'posts') ) {
 			$_post = & $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE ID = %d LIMIT 1", $post));
+			_get_post_ancestors($_post);
 			wp_cache_add($_post->ID, $_post, 'posts');
 		}
 	}
-
-	// Populate the ancestors field.
-	// Not cached since we don't clear cache for ancestors when a post changes.
-	_get_post_ancestors($_post);
 
 	$_post = sanitize_post($_post, $filter);
 
@@ -403,7 +401,7 @@ function set_post_type( $post_id = 0, $post_type = 'post' ) {
  * @param array $args {@internal Missing Description}}
  * @return array {@internal Missing Description}}
  */
-function get_posts($args) {
+function get_posts($args = null) {
 	global $wpdb;
 
 	$defaults = array(
@@ -459,6 +457,10 @@ function get_posts($args) {
 	}
 	if (!empty($exclusions))
 		$exclusions .= ')';
+
+	// orderby
+	if ( preg_match( '/.+ +(ASC|DESC)/i', $orderby ) )
+		$order = ''; // orderby has its own order, so we'll use that
 
 	$query  = "SELECT DISTINCT * FROM $wpdb->posts ";
 	$query .= empty( $category ) ? '' : ", $wpdb->term_relationships, $wpdb->term_taxonomy  ";
@@ -824,12 +826,21 @@ function wp_count_posts( $type = 'post', $perm = '' ) {
 
 	$user = wp_get_current_user();
 
+	$cache_key = $type;
+
 	$query = "SELECT post_status, COUNT( * ) AS num_posts FROM {$wpdb->posts} WHERE post_type = %s";
 	if ( 'readable' == $perm && is_user_logged_in() ) {
-		if ( !current_user_can("read_private_{$type}s") )
+		if ( !current_user_can("read_private_{$type}s") ) {
+			$cache_key .= '_' . $perm . '_' . $user->ID;
 			$query .= " AND (post_status != 'private' OR ( post_author = '$user->ID' AND post_status = 'private' ))";
+		}
 	}
 	$query .= ' GROUP BY post_status';
+
+	$count = wp_cache_get($cache_key, 'counts');
+	if ( false !== $count )
+		return $count;
+
 	$count = $wpdb->get_results( $wpdb->prepare( $query, $type ), ARRAY_A );
 
 	$stats = array( );
@@ -837,8 +848,12 @@ function wp_count_posts( $type = 'post', $perm = '' ) {
 		$stats[$row['post_status']] = $row['num_posts'];
 	}
 
-	return (object) $stats;
+	$stats = (object) $stats;
+	wp_cache_set($cache_key, $stats, 'counts');
+
+	return $stats;
 }
+
 
 /**
  * wp_count_attachments() - Count number of attachments
@@ -2408,7 +2423,7 @@ function wp_mime_type_icon( $mime = 0 ) {
 			$dirs = apply_filters( 'icon_dirs', array($icon_dir => $icon_dir_uri) );
 			$icon_files = array();
 			while ( $dirs ) {
-				$dir = array_shift(array_keys($dirs));
+				$dir = array_shift($keys = array_keys($dirs));
 				$uri = array_shift($dirs);
 				if ( $dh = opendir($dir) ) {
 					while ( false !== $file = readdir($dh) ) {
@@ -2668,6 +2683,9 @@ function update_post_cache(&$posts) {
  * @param int $id The Post ID in the cache to clean
  */
 function clean_post_cache($id) {
+	global $wpdb;
+	$id = (int) $id;
+
 	wp_cache_delete($id, 'posts');
 	wp_cache_delete($id, 'post_meta');
 
@@ -2676,6 +2694,11 @@ function clean_post_cache($id) {
 	wp_cache_delete( 'wp_get_archives', 'general' );
 
 	do_action('clean_post_cache', $id);
+
+	if ( $children = $wpdb->get_col( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_parent = %d", $id) ) ) {
+		foreach( $children as $cid )
+			clean_post_cache( $cid );
+	}
 }
 
 /**
@@ -2937,22 +2960,22 @@ function _save_post_hook($post_id, $post) {
 //
 
 function _get_post_ancestors(&$_post) {
-    global $wpdb;
+	global $wpdb;
 
-    if ( !empty($_post->ancestors) )
-    	return;
+	if ( isset($_post->ancestors) )
+		return;
 
-    $_post->ancestors = array();
+	$_post->ancestors = array();
 
-    if ( empty($_post->post_parent) || $_post->ID == $_post->post_parent )
-    	return;
+	if ( empty($_post->post_parent) || $_post->ID == $_post->post_parent )
+		return;
 
-    $id = $_post->ancestors[] = $_post->post_parent;
-    while ( $ancestor = $wpdb->get_var("SELECT `post_parent` FROM $wpdb->posts WHERE ID= '{$id}' LIMIT 1") ) {
-    	if ( $id == $ancestor )
-    		break;
-    	$id = $_post->ancestors[] = $ancestor;
-    }
+	$id = $_post->ancestors[] = $_post->post_parent;
+	while ( $ancestor = $wpdb->get_var( $wpdb->prepare("SELECT `post_parent` FROM $wpdb->posts WHERE ID = %d LIMIT 1", $id) ) ) {
+		if ( $id == $ancestor )
+			break;
+		$id = $_post->ancestors[] = $ancestor;
+	}
 }
 
 ?>

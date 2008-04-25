@@ -48,7 +48,7 @@ if (isset($mode) && 'bookmarklet' == $mode)
 <input type="hidden" id="post_type" name="post_type" value="<?php echo $post->post_type ?>" />
 <input type="hidden" id="original_post_status" name="original_post_status" value="<?php echo $post->post_status ?>" />
 <input name="referredby" type="hidden" id="referredby" value="<?php
-if ( url_to_postid(wp_get_referer()) == $post_ID && strpos( wp_get_referer(), '/wp-admin/' ) === false )
+if ( strpos( wp_get_referer(), '/wp-admin/' ) === false && $post_ID && url_to_postid(wp_get_referer()) === $post_ID )
 	echo 'redo';
 else
 	echo clean_url(stripslashes(wp_get_referer()));
@@ -72,7 +72,7 @@ else
 <p><strong><?php _e('Publish Status') ?></strong></p>
 <p>
 <select name='post_status' tabindex='4'>
-<?php if ( current_user_can('publish_posts') ) : ?>
+<?php if ( current_user_can('publish_pages') ) : ?>
 <option<?php selected( $post->post_status, 'publish' ); selected( $post->post_status, 'private' );?> value='publish'><?php _e('Published') ?></option>
 <?php else: ?>
 <option<?php selected( $post->post_status, 'private' ); ?> value='private'><?php _e('Published') ?></option>

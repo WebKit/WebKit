@@ -72,12 +72,16 @@ function do_shortcode($content) {
 	if (empty($shortcode_tags) || !is_array($shortcode_tags))
 		return $content;
 
+	$pattern = get_shortcode_regex();
+	return preg_replace_callback('/'.$pattern.'/s', 'do_shortcode_tag', $content);
+}
+
+function get_shortcode_regex() {
+	global $shortcode_tags;
 	$tagnames = array_keys($shortcode_tags);
 	$tagregexp = join( '|', array_map('preg_quote', $tagnames) );
 
-	$pattern = '/\[('.$tagregexp.')\b(.*?)(?:(\/))?\](?:(.+?)\[\/\1\])?/s';
-
-	return preg_replace_callback($pattern, 'do_shortcode_tag', $content);
+	return '\[('.$tagregexp.')\b(.*?)(?:(\/))?\](?:(.+?)\[\/\1\])?';
 }
 
 function do_shortcode_tag($m) {
@@ -98,6 +102,7 @@ function do_shortcode_tag($m) {
 function shortcode_parse_atts($text) {
 	$atts = array();
 	$pattern = '/(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/';
+	$text = preg_replace("/[\x{00a0}\x{200b}]+/u", " ", $text);
 	if ( preg_match_all($pattern, $text, $match, PREG_SET_ORDER) ) {
 		foreach ($match as $m) {
 			if (!empty($m[1]))
@@ -129,6 +134,6 @@ function shortcode_atts($pairs, $atts) {
 	return $out;
 }
 
-add_filter( 'the_content', 'do_shortcode', 9 );
+add_filter('the_content', 'do_shortcode', 11); // AFTER wpautop() 
 
 ?>

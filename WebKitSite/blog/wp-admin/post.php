@@ -10,8 +10,10 @@ function redirect_post($post_ID = '') {
 	global $action;
 
 	$referredby = '';
-	if ( !empty($_POST['referredby']) )
+	if ( !empty($_POST['referredby']) ) {
 		$referredby = preg_replace('|https?://[^/]+|i', '', $_POST['referredby']);
+		$referredby = remove_query_arg('_wp_original_http_referer', $referredby);
+	}
 	$referer = preg_replace('|https?://[^/]+|i', '', wp_get_referer());
 
 	if ( !empty($_POST['mode']) && 'bookmarklet' == $_POST['mode'] ) {
@@ -33,6 +35,7 @@ function redirect_post($post_ID = '') {
 		$location = $location[0] . '#postcustom';
 	} elseif (!empty($referredby) && $referredby != $referer) {
 		$location = $_POST['referredby'];
+		$location = remove_query_arg('_wp_original_http_referer', $location);
 		if ( $_POST['referredby'] == 'redo' )
 			$location = get_permalink( $post_ID );
 		elseif ( false !== strpos($location, 'edit.php') )
@@ -87,15 +90,18 @@ case 'edit':
 		wp_enqueue_script('editor');
 	wp_enqueue_script('thickbox');
 	wp_enqueue_script('media-upload');
-	if ( $last = wp_check_post_lock( $post->ID ) ) {
-		$last_user = get_userdata( $last );
-		$last_user_name = $last_user ? $last_user->display_name : __('Somebody');
-		$message = sprintf( __( 'Warning: %s is currently editing this post' ), wp_specialchars( $last_user_name ) );
-		$message = str_replace( "'", "\'", "<div class='error'><p>$message</p></div>" );
-		add_action('admin_notices', create_function( '', "echo '$message';" ) );
-	} else {
-		wp_set_post_lock( $post->ID );
-		wp_enqueue_script('autosave');
+
+	if ( current_user_can('edit_post', $post_ID) ) {
+		if ( $last = wp_check_post_lock( $post->ID ) ) {
+			$last_user = get_userdata( $last );
+			$last_user_name = $last_user ? $last_user->display_name : __('Somebody');
+			$message = sprintf( __( 'Warning: %s is currently editing this post' ), wp_specialchars( $last_user_name ) );
+			$message = str_replace( "'", "\'", "<div class='error'><p>$message</p></div>" );
+			add_action('admin_notices', create_function( '', "echo '$message';" ) );
+		} else {
+			wp_set_post_lock( $post->ID );
+			wp_enqueue_script('autosave');
+		}
 	}
 
 	require_once('admin-header.php');

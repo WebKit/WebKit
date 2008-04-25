@@ -57,7 +57,7 @@ function get_image_send_to_editor($id, $alt, $title, $align, $url='', $rel = fal
 	if ( $url )
 		$html = "<a href='".attribute_escape($url)."'$rel>$html</a>";
 
-	$html = apply_filters( 'image_send_to_editor', $html, $id, $alt, $title, $align, $url );
+	$html = apply_filters( 'image_send_to_editor', $html, $id, $alt, $title, $align, $url, $size );
 
 	return $html;
 }
@@ -201,18 +201,6 @@ add_action('media_upload_media', 'media_upload_handler');
 
 function media_upload_form_handler() {
 	check_admin_referer('media-form');
-
-	// Insert media button was clicked
-	if ( isset($_POST['html-upload']) && !empty($_FILES) ) {
-		// Upload File button was clicked
-
-		$id = media_handle_upload('async-upload', $_REQUEST['post_id']);
-
-		if ( is_wp_error($id) ) {
-			$errors['upload_error'] = $id;
-			$id = false;
-		}
-	}
 
 	if ( !empty($_POST['attachments']) ) foreach ( $_POST['attachments'] as $attachment_id => $attachment ) {
 		$post = $_post = get_post($attachment_id, ARRAY_A);
@@ -590,8 +578,9 @@ function get_attachment_fields_to_edit($post, $errors = null) {
 }
 
 function get_media_items( $post_id, $errors ) {
-	if ( $post_id && $post = get_post($post_id) ) {
-		if ( $post->post_type == 'attachment' )
+	if ( $post_id ) {
+		$post = get_post($post_id);
+		if ( $post && $post->post_type == 'attachment' )
 			$attachments = array($post->ID => $post);
 		else
 			$attachments = get_children("post_parent=$post_id&post_type=attachment&orderby=menu_order ASC, ID&order=DESC");
@@ -606,7 +595,7 @@ function get_media_items( $post_id, $errors ) {
 
 	foreach ( $attachments as $id => $attachment )
 		if ( $item = get_media_item( $id, array( 'errors' => isset($errors[$id]) ? $errors[$id] : null) ) )
-			$output .= "\n<div id='media-item-$id' class='media-item child-of-$attachment->post_parent preloaded'><div id='media-upload-error-$id'></div><div class='filename'></div><div class='progress'><div class='bar'></div></div>$item<div class='progress clickmask'></div>\n</div>";
+			$output .= "\n<div id='media-item-$id' class='media-item child-of-$attachment->post_parent preloaded'><div class='progress'><div class='bar'></div></div><div id='media-upload-error-$id'></div><div class='filename'></div>$item\n</div>";
 
 	return $output;
 }
@@ -643,7 +632,7 @@ function get_media_item( $attachment_id, $args = null ) {
 	if ( isset($post_mime_types) ) {
 		$keys = array_keys(wp_match_mime_types(array_keys($post_mime_types), $post->post_mime_type));
 		$type = array_shift($keys);
-		$type = "<input type='hidden' id='type-of-$attachment_id' value='$type' />";
+		$type = "<input type='hidden' id='type-of-$attachment_id' value='" . attribute_escape( $type ) . "' />";
 	}
 
 	$form_fields = get_attachment_fields_to_edit($post, $errors);
@@ -665,15 +654,15 @@ function get_media_item( $attachment_id, $args = null ) {
 	$toggle_links
 	<div class='filename new'>$display_title</div>
 	<table class='slidetoggle describe $class'>
-		<tbody class='media-item-info'>
+		<thead class='media-item-info'>
 		<tr>
 			<td class='A1B1' rowspan='4'><img class='thumbnail' src='$thumb_url' alt='' /></td>
 			<td>$filename</td>
 		</tr>
-		<td>$post->post_mime_type</td></tr>
+		<tr><td>$post->post_mime_type</td></tr>
 		<tr><td>" . mysql2date($post->post_date, get_option('time_format')) . "</td></tr>
-		<tr><td>" . apply_filters('media_meta', '', $post) . "</tr></td>
-		</tbody>
+		<tr><td>" . apply_filters('media_meta', '', $post) . "</td></tr>
+		</thead>
 		<tbody>\n";
 
 	$defaults = array(
@@ -685,7 +674,7 @@ function get_media_item( $attachment_id, $args = null ) {
 
 	$delete_href = wp_nonce_url("post.php?action=delete-post&amp;post=$attachment_id", 'delete-post_' . $attachment_id);
 	if ( $send )
-		$send = "<button type='submit' class='button' value='1' name='send[$attachment_id]'>" . __('Insert into Post') . '</button>';
+		$send = "<input type='submit' class='button' name='send[$attachment_id]' value='" . attribute_escape( __( 'Insert into Post' ) ) . "' />";
 	if ( $delete )
 		$delete = "<a href='$delete_href' id='del[$attachment_id]' disabled='disabled' class='delete'>" . __('Delete') . "</button>";
 	if ( ( $send || $delete ) && !isset($form_fields['buttons']) )
@@ -718,9 +707,9 @@ function get_media_item( $attachment_id, $args = null ) {
 		if ( !empty($field[$field['input']]) )
 			$item .= $field[$field['input']];
 		elseif ( $field['input'] == 'textarea' ) {
-			$item .= "<textarea type='text' id='$name' name='$name'>" . wp_specialchars($field['value'], 1) . "</textarea>";
+			$item .= "<textarea type='text' id='$name' name='$name'>" . attribute_escape( $field['value'] ) . "</textarea>";
 		} else {
-			$item .= "<input type='text' id='$name' name='$name' value='" . wp_specialchars($field['value'], 1) . "' />";
+			$item .= "<input type='text' id='$name' name='$name' value='" . attribute_escape( $field['value'] ) . "' />";
 		}
 		if ( !empty($field['helps']) )
 			$item .= "<p class='help'>" . join( "</p>\n<p class='help'>", array_unique((array) $field['helps']) ) . '</p>';
@@ -744,10 +733,11 @@ function get_media_item( $attachment_id, $args = null ) {
 
 	if ( !empty($form_fields['_final']) )
 		$item .= "\t\t<tr class='final'><td colspan='2'>{$form_fields['_final']}</td></tr>\n";
+	$item .= "\t</tbody>\n";
 	$item .= "\t</table>\n";
 
 	foreach ( $hidden_fields as $name => $value )
-		$item .= "\t<input type='hidden' name='$name' id='$name' value='" . wp_specialchars($value, 1) . "' />\n";
+		$item .= "\t<input type='hidden' name='$name' id='$name' value='" . attribute_escape( $value ) . "' />\n";
 
 	return $item;
 }
@@ -775,7 +765,7 @@ function media_upload_form( $errors = null ) {
 	$post_id = intval($_REQUEST['post_id']);
 
 ?>
-<input type='hidden' name='post_id' value='<?php echo $post_id; ?>' />
+<input type='hidden' name='post_id' value='<?php echo (int) $post_id; ?>' />
 <div id="media-upload-notice">
 <?php if (isset($errors['upload_notice']) ) { ?>
 	<?php echo $errors['upload_notice']; ?>
@@ -794,12 +784,13 @@ jQuery(function($){
 			upload_url : "<?php echo attribute_escape( $flash_action_url ); ?>",
 			flash_url : "<?php echo get_option('siteurl').'/wp-includes/js/swfupload/swfupload_f9.swf'; ?>",
 			file_post_name: "async-upload",
-			file_types: "*.*",
+			file_types: "<?php echo apply_filters('upload_file_glob', '*.*'); ?>",
 			post_params : {
 				"post_id" : "<?php echo $post_id; ?>",
 				"auth_cookie" : "<?php echo $_COOKIE[AUTH_COOKIE]; ?>",
 				"type" : "<?php echo $type; ?>",
-				"tab" : "<?php echo $tab; ?>"
+				"tab" : "<?php echo $tab; ?>",
+				"short" : "1"
 			},
 			file_size_limit : "<?php echo wp_max_upload_size(); ?>b",
 			swfupload_element_id : "flash-upload-ui", // id of the element displayed when swfupload is available
@@ -814,7 +805,7 @@ jQuery(function($){
 			file_queue_error_handler : fileQueueError,
 			file_dialog_complete_handler : fileDialogComplete,
 
-			debug: false,
+			debug: false
 		});
 	$("#flash-browse-button").bind( "click", function(){swfu.selectFiles();});
 });
@@ -823,7 +814,7 @@ jQuery(function($){
 
 
 <div id="flash-upload-ui">
-	<p><input id="flash-browse-button" type="button" value="<?php _e('Choose files to upload'); ?>" class="button" /></p>
+	<p><input id="flash-browse-button" type="button" value="<?php echo attribute_escape( __( 'Choose files to upload' ) ); ?>" class="button" /></p>
 	<p><?php _e('After a file has been uploaded, you can add titles and descriptions.'); ?></p>
 </div>
 
@@ -833,7 +824,7 @@ jQuery(function($){
 	<p>
 	<input type="file" name="async-upload" id="async-upload" /> <input type="submit" class="button" name="html-upload" value="<?php echo attribute_escape(__('Upload')); ?>" /> <a href="#" onClick="return top.tb_remove();"><?php _e('Cancel'); ?></a>
 	</p>
-	<input type="hidden" name="post_id" id="post_id" value="<?php echo $post_id; ?>" />
+	<input type="hidden" name="post_id" id="post_id" value="<?php echo (int) $post_id; ?>" />
 	<br class="clear" />
 	<?php if ( is_lighttpd_before_150() ): ?>
 	<p><?php _e('If you want to use all capabilities of the uploader, like uploading multiple files at once, please upgrade to lighttpd 1.5.'); ?></p>
@@ -853,7 +844,7 @@ function media_upload_type_form($type = 'file', $errors = null, $id = null) {
 ?>
 
 <form enctype="multipart/form-data" method="post" action="<?php echo attribute_escape($form_action_url); ?>" class="media-upload-form type-form validate" id="<?php echo $type; ?>-form">
-<input type="hidden" name="post_id" id="post_id" value="<?php echo $post_id; ?>" />
+<input type="hidden" name="post_id" id="post_id" value="<?php echo (int) $post_id; ?>" />
 <?php wp_nonce_field('media-form'); ?>
 <h3><?php _e('From Computer'); ?></h3>
 <?php media_upload_form( $errors ); ?>
@@ -873,7 +864,7 @@ jQuery(function($){
 <div id="media-items">
 <?php echo get_media_items( $id, $errors ); ?>
 </div>
-<input type="submit" class="button savebutton" name="save" value="<?php _e('Save all changes'); ?>" />
+<input type="submit" class="button savebutton" name="save" value="<?php echo attribute_escape( __( 'Save all changes' ) ); ?>" />
 
 <?php elseif ( is_callable($callback) ) : ?>
 
@@ -887,7 +878,7 @@ jQuery(function($){
 <?php echo call_user_func($callback); ?>
 </div>
 </div>
-<input type="submit" class="button savebutton" name="save" value="<?php _e('Save all changes'); ?>" />
+<input type="submit" class="button savebutton" name="save" value="<?php echo attribute_escape( __( 'Save all changes' ) ); ?>" />
 <?php
 	endif;
 }
@@ -920,11 +911,11 @@ jQuery(function($){
 <div id="media-items">
 <?php echo get_media_items($post_id, $errors); ?>
 </div>
-<input type="submit" class="button savebutton" name="save" value="<?php _e('Save all changes'); ?>" />
-<input type="submit" class="button insert-gallery" name="insert-gallery" value="<?php _e('Insert gallery into post'); ?>" />
-<input type="hidden" name="post_id" id="post_id" value="<?php echo $post_id; ?>" />
-<input type="hidden" name="type" value="<?php echo $GLOBALS['type']; ?>" />
-<input type="hidden" name="tab" value="<?php echo $GLOBALS['tab']; ?>" />
+<input type="submit" class="button savebutton" name="save" value="<?php echo attribute_escape( __( 'Save all changes' ) ); ?>" />
+<input type="submit" class="button insert-gallery" name="insert-gallery" value="<?php echo attribute_escape( __( 'Insert gallery into post' ) ); ?>" />
+<input type="hidden" name="post_id" id="post_id" value="<?php echo (int) $post_id; ?>" />
+<input type="hidden" name="type" value="<?php echo attribute_escape( $GLOBALS['type'] ); ?>" />
+<input type="hidden" name="tab" value="<?php echo attribute_escape( $GLOBALS['tab'] ); ?>" />
 </form>
 <?php
 }
@@ -951,14 +942,14 @@ function media_upload_library_form($errors) {
 ?>
 
 <form id="filter" action="" method="get">
-<input type="hidden" name="type" value="<?php echo $type; ?>" />
-<input type="hidden" name="tab" value="<?php echo $tab; ?>" />
-<input type="hidden" name="post_id" value="<?php echo $post_id; ?>" />
-<input type="hidden" name="post_mime_type" value="<?php echo wp_specialchars($_GET['post_mime_type'], true); ?>" />
+<input type="hidden" name="type" value="<?php echo attribute_escape( $type ); ?>" />
+<input type="hidden" name="tab" value="<?php echo attribute_escape( $tab ); ?>" />
+<input type="hidden" name="post_id" value="<?php echo (int) $post_id; ?>" />
+<input type="hidden" name="post_mime_type" value="<?php echo attribute_escape( $_GET['post_mime_type'] ); ?>" />
 
 <div id="search-filter">
 	<input type="text" id="post-search-input" name="s" value="<?php the_search_query(); ?>" />
-	<input type="submit" value="<?php _e( 'Search Media' ); ?>" class="button" />
+	<input type="submit" value="<?php echo attribute_escape( __( 'Search Media' ) ); ?>" class="button" />
 </div>
 
 <p>
@@ -1032,15 +1023,15 @@ foreach ($arc_result as $arc_row) {
 	else
 		$default = '';
 
-	echo "<option$default value='$arc_row->yyear$arc_row->mmonth'>";
-	echo $wp_locale->get_month($arc_row->mmonth) . " $arc_row->yyear";
+	echo "<option$default value='" . attribute_escape( $arc_row->yyear . $arc_row->mmonth ) . "'>";
+	echo wp_specialchars( $wp_locale->get_month($arc_row->mmonth) . " $arc_row->yyear" );
 	echo "</option>\n";
 }
 ?>
 </select>
 <?php } ?>
 
-<input type="submit" id="post-query-submit" value="<?php _e('Filter &#187;'); ?>" class="button-secondary" />
+<input type="submit" id="post-query-submit" value="<?php echo attribute_escape( __( 'Filter &#187;' ) ); ?>" class="button-secondary" />
 
 </div>
 
@@ -1068,8 +1059,8 @@ jQuery(function($){
 <div id="media-items">
 <?php echo get_media_items(null, $errors); ?>
 </div>
-<input type="submit" class="button savebutton" name="save" value="<?php _e('Save all changes'); ?>" />
-<input type="hidden" name="post_id" id="post_id" value="<?php echo $post_id; ?>" />
+<input type="submit" class="button savebutton" name="save" value="<?php echo attribute_escape( __( 'Save all changes' ) ); ?>" />
+<input type="hidden" name="post_id" id="post_id" value="<?php echo (int) $post_id; ?>" />
 </form>
 <?php
 }

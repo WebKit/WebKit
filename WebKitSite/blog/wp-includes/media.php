@@ -98,7 +98,8 @@ function get_image_tag($id, $alt, $title, $align, $size='medium') {
 
 	$html = '<img src="'.attribute_escape($img_src).'" alt="'.attribute_escape($alt).'" title="'.attribute_escape($title).'" '.$hwstring.'class="align'.attribute_escape($align).' size-'.attribute_escape($size).' wp-image-'.$id.'" />';
 
-	$html = apply_filters( 'image_send_to_editor', $html, $id, $alt, $title, $align, $url );
+	$url = '';
+	$html = apply_filters( 'image_send_to_editor', $html, $id, $alt, $title, $align, $url, $size );
 
 	return $html;
 }
@@ -243,6 +244,7 @@ function image_make_intermediate_size($file, $width, $height, $crop=false) {
 	if ( $width || $height ) {
 		$resized_file = image_resize($file, $width, $height, $crop);
 		if ( !is_wp_error($resized_file) && $resized_file && $info = getimagesize($resized_file) ) {
+			$resized_file = apply_filters('image_make_intermediate_size', $resized_file);
 			return array(
 				'file' => basename( $resized_file ),
 				'width' => $info[0],
@@ -324,7 +326,7 @@ function wp_get_attachment_image($attachment_id, $size='thumbnail', $icon = fals
 		$hwstring = image_hwstring($width, $height);
 		if ( is_array($size) )
 			$size = join('x', $size);
-		$html = '<img src="'.attribute_escape($src).'" '.$hwstring.'class="attachment-'.attribute_escape($size).'" />';
+		$html = '<img src="'.attribute_escape($src).'" '.$hwstring.'class="attachment-'.attribute_escape($size).'" alt="" />';
 	}
 	
 	return $html;
@@ -339,7 +341,14 @@ function gallery_shortcode($attr) {
 	$output = apply_filters('post_gallery', '', $attr);
 	if ( $output != '' )
 		return $output;
-		
+
+	// We're trusting author input, so let's at least make sure it looks like a valid orderby statement
+	if ( isset( $attr['orderby'] ) ) {
+		$attr['orderby'] = sanitize_sql_orderby( $attr['orderby'] );
+		if ( !$attr['orderby'] )
+			unset( $attr['orderby'] );
+	}
+
 	extract(shortcode_atts(array(
 		'orderby'    => 'menu_order ASC, ID ASC',
 		'id'         => $post->ID,
@@ -351,8 +360,7 @@ function gallery_shortcode($attr) {
 	), $attr));
 
 	$id = intval($id);
-	$orderby = addslashes($orderby);
-	$attachments = get_children("post_parent=$id&post_type=attachment&post_mime_type=image&orderby=\"{$orderby}\"");
+	$attachments = get_children("post_parent=$id&post_type=attachment&post_mime_type=image&orderby={$orderby}");
 
 	if ( empty($attachments) )
 		return '';
@@ -409,7 +417,7 @@ function gallery_shortcode($attr) {
 	}
 
 	$output .= "
-			<br style='clear: both;' >
+			<br style='clear: both;' />
 		</div>\n";
 
 	return $output;
@@ -426,7 +434,7 @@ function next_image_link() {
 function adjacent_image_link($prev = true) {
 	global $post;
 	$post = get_post($post);
-	$attachments = array_values(get_children("post_parent=$post->post_parent&post_type=attachment&post_mime_type=image&orderby=\"menu_order ASC, ID ASC\""));
+	$attachments = array_values(get_children("post_parent=$post->post_parent&post_type=attachment&post_mime_type=image&orderby=menu_order ASC, ID ASC"));
 
 	foreach ( $attachments as $k => $attachment )
 		if ( $attachment->ID == $post->ID )

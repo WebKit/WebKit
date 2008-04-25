@@ -474,7 +474,11 @@ function wp_validate_auth_cookie($cookie = '') {
 		$cookie = $_COOKIE[AUTH_COOKIE];
 	}
 
-	list($username, $expiration, $hmac) = explode('|', $cookie);
+	$cookie_elements = explode('|', $cookie);
+	if ( count($cookie_elements) != 3 )
+		return false;
+
+	list($username, $expiration, $hmac) = $cookie_elements;
 
 	$expired = $expiration;
 
@@ -482,11 +486,12 @@ function wp_validate_auth_cookie($cookie = '') {
 	if ( defined('DOING_AJAX') || 'POST' == $_SERVER['REQUEST_METHOD'] )
 		$expired += 3600;
 
+	// Quick check to see if an honest cookie has expired
 	if ( $expired < time() )
 		return false;
 
-	$key = wp_hash($username . $expiration);
-	$hash = hash_hmac('md5', $username . $expiration, $key);
+	$key = wp_hash($username . '|' . $expiration);
+	$hash = hash_hmac('md5', $username . '|' . $expiration, $key);
 
 	if ( $hmac != $hash )
 		return false;
@@ -514,8 +519,8 @@ if ( !function_exists('wp_generate_auth_cookie') ) :
 function wp_generate_auth_cookie($user_id, $expiration) {
 	$user = get_userdata($user_id);
 
-	$key = wp_hash($user->user_login . $expiration);
-	$hash = hash_hmac('md5', $user->user_login . $expiration, $key);
+	$key = wp_hash($user->user_login . '|' . $expiration);
+	$hash = hash_hmac('md5', $user->user_login . '|' . $expiration, $key);
 
 	$cookie = $user->user_login . '|' . $expiration . '|' . $hash;
 
@@ -1071,11 +1076,7 @@ if ( !function_exists('wp_hash') ) :
 function wp_hash($data) {
 	$salt = wp_salt();
 
-	if ( function_exists('hash_hmac') ) {
-		return hash_hmac('md5', $data, $salt);
-	} else {
-		return md5($data . $salt);
-	}
+	return hash_hmac('md5', $data, $salt);
 }
 endif;
 
@@ -1167,12 +1168,11 @@ if ( !function_exists('wp_generate_password') ) :
  *
  * @return string The random password
  **/
-function wp_generate_password() {
-	$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	$length = 7;
+function wp_generate_password($length = 12) {
+	$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
 	$password = '';
 	for ( $i = 0; $i < $length; $i++ )
-		$password .= substr($chars, mt_rand(0, 61), 1);
+		$password .= substr($chars, mt_rand(0, strlen($chars) - 1), 1);
 	return $password;
 }
 endif;
@@ -1329,7 +1329,7 @@ if ( !function_exists('wp_login') ) :
  * global for why there was a failure can utilize it later.
  *
  * @since 1.2.2
- * @deprecated Use wp_signin()
+ * @deprecated Use wp_signon()
  * @global string $error Error when false is returned
  *
  * @param string $username User's username

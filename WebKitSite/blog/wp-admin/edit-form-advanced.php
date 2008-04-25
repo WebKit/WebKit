@@ -1,4 +1,4 @@
-<?php
+ <?php
 $action = isset($action)? $action : '';
 if ( isset($_GET['message']) )
 	$_GET['message'] = absint( $_GET['message'] );
@@ -54,13 +54,13 @@ $saveasdraft = '<input name="save" type="submit" id="save" class="button" tabind
 <input type="hidden" id="user-id" name="user_ID" value="<?php echo (int) $user_ID ?>" />
 <input type="hidden" id="hiddenaction" name="action" value="<?php echo $form_action ?>" />
 <input type="hidden" id="originalaction" name="originalaction" value="<?php echo $form_action ?>" />
-<input type="hidden" name="post_author" value="<?php echo attribute_escape( $post->post_author ); ?>" />
+<input type="hidden" id="post_author" name="post_author" value="<?php echo attribute_escape( $post->post_author ); ?>" />
 <input type="hidden" id="post_type" name="post_type" value="<?php echo $post->post_type ?>" />
 <input type="hidden" id="original_post_status" name="original_post_status" value="<?php echo $post->post_status ?>" />
 <input name="referredby" type="hidden" id="referredby" value="<?php
 if ( !empty($_REQUEST['popupurl']) )
 	echo clean_url(stripslashes($_REQUEST['popupurl']));
-else if ( url_to_postid(wp_get_referer()) == $post_ID && strpos( wp_get_referer(), '/wp-admin/' ) === false )
+else if ( strpos( wp_get_referer(), '/wp-admin/' ) === false && $post_ID && url_to_postid(wp_get_referer()) === $post_ID  )
 	echo 'redo';
 else
 	echo clean_url(stripslashes(wp_get_referer()));
@@ -222,7 +222,7 @@ endif; ?>
 	<p id="category-add" class="wp-hidden-child">
 		<input type="text" name="newcat" id="newcat" class="form-required form-input-tip" value="<?php _e( 'New category name' ); ?>" tabindex="3" />
 		<?php wp_dropdown_categories( array( 'hide_empty' => 0, 'name' => 'newcat_parent', 'orderby' => 'name', 'hierarchical' => 1, 'show_option_none' => __('Parent category'), 'tab_index' => 3 ) ); ?>
-		<input type="button" id="category-add-sumbit" class="add:categorychecklist:categorydiv button" value="<?php _e( 'Add' ); ?>" tabindex="3" />
+		<input type="button" id="category-add-sumbit" class="add:categorychecklist:category-add button" value="<?php _e( 'Add' ); ?>" tabindex="3" />
 		<?php wp_nonce_field( 'add-category', '_ajax_nonce', false ); ?>
 		<span id="category-ajax-response"></span>
 	</p>
@@ -233,15 +233,15 @@ endif; ?>
 	<li class="wp-no-js-hidden"><a href="#categories-pop" tabindex="3"><?php _e( 'Most Used' ); ?></a></li>
 </ul>
 
-<div id="categories-all" class="ui-tabs-panel">
-	<ul id="categorychecklist" class="list:category categorychecklist form-no-clear">
-		<?php dropdown_categories(); ?>
+<div id="categories-pop" class="ui-tabs-panel" style="display: none;">
+	<ul id="categorychecklist-pop" class="categorychecklist form-no-clear" >
+		<?php $popular_ids = wp_popular_terms_checklist('category'); ?>
 	</ul>
 </div>
 
-<div id="categories-pop" class="ui-tabs-panel" style="display: none;">
-	<ul id="categorychecklist-pop" class="categorychecklist form-no-clear" >
-		<?php wp_popular_terms_checklist('category'); ?>
+<div id="categories-all" class="ui-tabs-panel">
+	<ul id="categorychecklist" class="list:category categorychecklist form-no-clear">
+		<?php wp_category_checklist($post_ID) ?>
 	</ul>
 </div>
 

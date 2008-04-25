@@ -12,7 +12,9 @@ function fileQueued(fileObj) {
 		jQuery('.slidetoggle').slideUp(200).siblings().removeClass('hidden');
 	}
 	// Create a progress bar containing the filename
-	jQuery('#media-items').append('<div id="media-item-' + fileObj.id + '" class="media-item child-of-' + post_id + '"><div class="filename original">' + fileObj.name + '</div><div class="progress"><div class="bar"></div></div></div>');
+	jQuery('#media-items').append('<div id="media-item-' + fileObj.id + '" class="media-item child-of-' + post_id + '"><div class="progress"><div class="bar"></div></div><div class="filename original">' + fileObj.name + '</div></div>');
+	// Display the progress div
+	jQuery('#media-item-' + fileObj.id + ' .progress').show();
 
 	// Disable the submit button
 	jQuery('#insert-gallery').attr('disabled', 'disabled');
@@ -24,25 +26,33 @@ function uploadProgress(fileObj, bytesDone, bytesTotal) {
 	// Lengthen the progress bar
 	jQuery('#media-item-' + fileObj.id + ' .bar').width(620*bytesDone/bytesTotal);
 
-	if ( bytesDone== bytesTotal )
-		jQuery('#media-item-' + fileObj.id + ' .bar').html('<strong style="display: block; padding-top: 9px; padding-left: 1em;">' + swfuploadL10n.crunching + '</strong>');
+	if ( bytesDone == bytesTotal )
+		jQuery('#media-item-' + fileObj.id + ' .bar').html('<strong class="crunching">' + swfuploadL10n.crunching + '</strong>');
 }
 
 function prepareMediaItem(fileObj, serverData) {
 	// Move the progress bar to 100%
 	jQuery('#media-item-' + fileObj.id + ' .bar').remove();
+	jQuery('#media-item-' + fileObj.id + ' .progress').hide();
 
-	// Append the HTML returned by the server -- thumbnail and form inputs
-	jQuery('#media-item-' + fileObj.id).append(serverData);
+	// Old style: Append the HTML returned by the server -- thumbnail and form inputs
+	if ( isNaN(serverData) || !serverData ) {
+		jQuery('#media-item-' + fileObj.id).append(serverData);
+		prepareMediaItemInit(fileObj);
+	}
+	// New style: server data is just the attachment ID, fetch the thumbnail and form html from the server
+	else {
+		jQuery('#media-item-' + fileObj.id).load('async-upload.php', {attachment_id:serverData, fetch:1}, function(){prepareMediaItemInit(fileObj);updateMediaForm()});
+	}
+}
+		
+function prepareMediaItemInit(fileObj) {
 
 	// Clone the thumbnail as a "pinkynail" -- a tiny image to the left of the filename
 	jQuery('#media-item-' + fileObj.id + ' .thumbnail').clone().attr('className', 'pinkynail toggle').prependTo('#media-item-' + fileObj.id);
 
 	// Replace the original filename with the new (unique) one assigned during upload
 	jQuery('#media-item-' + fileObj.id + ' .filename.original').replaceWith(jQuery('#media-item-' + fileObj.id + ' .filename.new'));
-
-	// Bind toggle function to a new mask over the progress bar area
-	jQuery('#media-item-' + fileObj.id + ' .progress').clone().empty().addClass('clickmask').bind('click', function(){jQuery(this).siblings('.slidetoggle').slideToggle(150);jQuery(this).siblings('.toggle').toggle();}).appendTo('#media-item-' + fileObj.id);
 
 	// Also bind toggle to the links
 	jQuery('#media-item-' + fileObj.id + ' a.toggle').bind('click', function(){jQuery(this).siblings('.slidetoggle').slideToggle(150);jQuery(this).parent().eq(0).children('.toggle').toggle();jQuery(this).siblings('a.toggle').focus();return false;});
@@ -96,7 +106,7 @@ function deleteSuccess(data, textStatus) {
 	jQuery('#media-item-' + this.id + ' .filename').append(' <span class="file-error">'+swfuploadL10n.deleted+'</span>').siblings('a.toggle').remove();
 	jQuery('#media-item-' + this.id).children('.describe').css({backgroundColor:'#fff'}).end()
 			.animate({backgroundColor:'#ffc0c0'}, {queue:false,duration:50})
-			.animate({minHeight:0,height:36,}, 400, null, function(){jQuery(this).children('.describe').remove()})
+			.animate({minHeight:0,height:36}, 400, null, function(){jQuery(this).children('.describe').remove()})
 			.animate({backgroundColor:'#fff'}, 400)
 			.animate({height:0}, 800, null, function(){jQuery(this).remove();updateMediaForm();});
 

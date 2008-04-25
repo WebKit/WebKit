@@ -19,6 +19,8 @@ function wp_signon( $credentials = '' ) {
 	else
 		$credentials['remember'] = false;
 
+	do_action_ref_array('wp_authenticate', array(&$credentials['user_login'], &$credentials['user_password']));
+
 	// If no credential info provided, check cookie.
 	if ( empty($credentials['user_login']) && empty($credentials['user_password']) ) {
 			$user = wp_validate_auth_cookie();
@@ -41,8 +43,6 @@ function wp_signon( $credentials = '' ) {
 			$error->add('empty_password', __('<strong>ERROR</strong>: The password field is empty.'));
 		return $error;
 	}
-
-	do_action_ref_array('wp_authenticate', array(&$credentials['user_login'], &$credentials['user_password']));
 
 	$user = wp_authenticate($credentials['user_login'], $credentials['user_password']);
 	if ( is_wp_error($user) )
@@ -148,9 +148,14 @@ function get_usermeta( $user_id, $meta_key = '') {
 
 	if ( !empty($meta_key) ) {
 		$meta_key = preg_replace('|[^a-z0-9_]|i', '', $meta_key);
-		$metas = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->usermeta WHERE user_id = '$user_id' AND meta_key = '$meta_key'");
+		$user = wp_cache_get($user_id, 'users');
+		// Check the cached user object
+		if ( false !== $user && isset($user->$meta_key) )
+			$metas = array($user->$meta_key);
+		else
+			$metas = $wpdb->get_col( $wpdb->prepare("SELECT meta_value FROM $wpdb->usermeta WHERE user_id = %d AND meta_key = %s", $user_id, $meta_key) );
 	} else {
-		$metas = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->usermeta WHERE user_id = '$user_id'");
+		$metas = $wpdb->get_col( $wpdb->prepare("SELECT meta_value FROM $wpdb->usermeta WHERE user_id = %d", $user_id) );
 	}
 
 	if ( empty($metas) ) {
@@ -160,13 +165,12 @@ function get_usermeta( $user_id, $meta_key = '') {
 			return '';
 	}
 
-	foreach ($metas as $meta)
-		$values[] = maybe_unserialize($meta->meta_value);
+	$metas = array_map('maybe_unserialize', $metas);
 
-	if ( count($values) == 1 )
-		return $values[0];
+	if ( count($metas) == 1 )
+		return $metas[0];
 	else
-		return $values;
+		return $metas;
 }
 
 function update_usermeta( $user_id, $meta_key, $meta_value ) {

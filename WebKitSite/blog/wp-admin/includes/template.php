@@ -55,11 +55,12 @@ function _cat_row( $category, $level, $name_override = false ) {
 	$output = "<tr id='cat-$category->term_id'$class>
 			   <th scope='row' class='check-column'>";
 	if ( absint(get_option( 'default_category' ) ) != $category->term_id ) {
-		$output .= "<input type='checkbox' name='delete[]' value='$category->term_id' /></th>";
+		$output .= "<input type='checkbox' name='delete[]' value='$category->term_id' />";
 	} else {
 		$output .= "&nbsp;";
 	}
-	$output .= "<td>$edit</td>
+	$output .= "</th>
+				<td>$edit</td>
 				<td>$category->description</td>
 				<td class='num'>$posts_count</td>\n\t</tr>\n";
 
@@ -86,11 +87,17 @@ function link_cat_row( $category ) {
 
 	$category->count = number_format_i18n( $category->count );
 	$count = ( $category->count > 0 ) ? "<a href='link-manager.php?cat_id=$category->term_id'>$category->count</a>" : $category->count;
-	$output = "<tr id='link-cat-$category->term_id'$class>" .
-		'<th scope="row" class="check-column"> <input type="checkbox" name="delete[]" value="' . $category->term_id . '" /></th>' .
-		"<td>$edit</td>
-		<td>$category->description</td>
-		<td class='num'>$count</td></tr>";
+	$output = "<tr id='link-cat-$category->term_id'$class>
+			   <th scope='row' class='check-column'>";
+	if ( absint( get_option( 'default_link_category' ) ) != $category->term_id ) {
+		$output .= "<input type='checkbox' name='delete[]' value='$category->term_id' />";
+	} else {
+		$output .= "&nbsp;";
+	}
+	$output .= "</th>
+				<td>$edit</td>
+				<td>$category->description</td>
+				<td class='num'>$count</td></tr>";
 
 	return apply_filters( 'link_cat_row', $output );
 }
@@ -106,93 +113,83 @@ function selected( $selected, $current) {
 }
 
 //
-// Nasty Category Stuff
+// Category Checklists
 //
 
-function sort_cats( $cat1, $cat2 ) {
-	if ( $cat1['checked'] || $cat2['checked'] )
-		return ( $cat1['checked'] && !$cat2['checked'] ) ? -1 : 1;
+// Deprecated. Use wp_link_category_checklist
+function dropdown_categories( $default = 0, $parent = 0, $popular_ids = array() ) {
+	global $post_ID;
+	wp_category_checklist($post_ID);
+}
+
+class Walker_Category_Checklist extends Walker {
+	var $tree_type = 'category';
+	var $db_fields = array ('parent' => 'parent', 'id' => 'term_id'); //TODO: decouple this
+
+	function start_lvl(&$output, $depth, $args) {
+		$indent = str_repeat("\t", $depth);
+		$output .= "$indent<ul class='children'>\n";
+	}
+
+	function end_lvl(&$output, $depth, $args) {
+		$indent = str_repeat("\t", $depth);
+		$output .= "$indent</ul>\n";
+	}
+
+	function start_el(&$output, $category, $depth, $args) {
+		extract($args);
+
+		$class = in_array( $category->term_id, $popular_cats ) ? ' class="popular-category"' : '';
+		$output .= "\n<li id='category-$category->term_id'$class>" . '<label for="in-category-' . $category->term_id . '" class="selectit"><input value="' . $category->term_id . '" type="checkbox" name="post_category[]" id="in-category-' . $category->term_id . '"' . (in_array( $category->term_id, $selected_cats ) ? ' checked="checked"' : "" ) . '/> ' . wp_specialchars( apply_filters('the_category', $category->name )) . '</label>';
+	}
+
+	function end_el(&$output, $category, $depth, $args) {
+		$output .= "</li>\n";
+	}
+}
+
+function wp_category_checklist( $post_id = 0, $descendants_and_self = 0, $selected_cats = false ) {
+	$walker = new Walker_Category_Checklist;
+	$descendants_and_self = (int) $descendants_and_self;
+
+	$args = array();
+	
+	if ( $post_id )
+		$args['selected_cats'] = wp_get_post_categories($post_id);
 	else
-		return strcasecmp( $cat1['cat_name'], $cat2['cat_name'] );
-}
-
-function wp_set_checked_post_categories( $default = 0 ) {
-	global $post_ID, $checked_categories;
-
-	if ( empty($checked_categories) ) {
-		if ( $post_ID ) {
-			$checked_categories = wp_get_post_categories($post_ID);
-
-			if ( count( $checked_categories ) == 0 ) {
-				// No selected categories, strange
-			$checked_categories[] = $default;
-			}
-		} else {
-			$checked_categories[] = $default;
-		}
-	}
-
-}
-function get_nested_categories( $default = 0, $parent = 0 ) {
-	global $checked_categories;
-
-	wp_set_checked_post_categories( $default = 0 );
-
-	if ( is_object($parent) ) { // Hack: if passed a category object, will return nested cats with parent as root
-		$root = array(
-			'children' => get_nested_categories( $default, $parent->term_id ),
-			'cat_ID' => $parent->term_id,
-			'checked' => in_array( $parent->term_id, $checked_categories ),
-			'cat_name' => get_the_category_by_ID( $parent->term_id )
-		);
-		$result = array( $parent->term_id => $root );
+		$args['selected_cats'] = array();
+	if ( is_array( $selected_cats ) )
+		$args['selected_cats'] = $selected_cats;
+	$args['popular_cats'] = get_terms( 'category', array( 'fields' => 'ids', 'orderby' => 'count', 'order' => 'DESC', 'number' => 10, 'hierarchical' => false ) );
+	if ( $descendants_and_self ) {
+		$categories = get_categories( "child_of=$descendants_and_self&hierarchical=0&hide_empty=0" );
+		$self = get_category( $descendants_and_self );
+		array_unshift( $categories, $self );
 	} else {
-		$parent = (int) $parent;
-
-		$cats = get_categories("parent=$parent&hide_empty=0&fields=ids");
-
-		$result = array();
-		if ( is_array( $cats ) ) {
-			foreach ( $cats as $cat ) {
-				$result[$cat]['children'] = get_nested_categories( $default, $cat );
-				$result[$cat]['cat_ID'] = $cat;
-				$result[$cat]['checked'] = in_array( $cat, $checked_categories );
-				$result[$cat]['cat_name'] = get_the_category_by_ID( $cat );
-			}
-		}
+		$categories = get_categories('get=all');
 	}
 
-	$result = apply_filters('get_nested_categories', $result);
-	usort( $result, 'sort_cats' );
+	$args = array($categories, 0, $args);
+	$output = call_user_func_array(array(&$walker, 'walk'), $args);
 
-	return $result;
-}
-
-function write_nested_categories( $categories ) {
-	foreach ( $categories as $category ) {
-		echo "\n", '<li id="category-', $category['cat_ID'], '"><label for="in-category-', $category['cat_ID'], '" class="selectit"><input value="', $category['cat_ID'], '" type="checkbox" name="post_category[]" id="in-category-', $category['cat_ID'], '"', ($category['checked'] ? ' checked="checked"' : "" ), '/> ', wp_specialchars( apply_filters('the_category', $category['cat_name'] )), '</label>';
-
-		if ( $category['children'] ) {
-			echo "\n<ul>";
-			write_nested_categories( $category['children'] );
-			echo "\n</ul>";
-		}
-		echo '</li>';
-	}
-}
-
-function dropdown_categories( $default = 0, $parent = 0 ) {
-	write_nested_categories( get_nested_categories( $default, $parent ) );
+	echo $output;
 }
 
 function wp_popular_terms_checklist( $taxonomy, $default = 0, $number = 10 ) {
-	$categories = get_terms( $taxonomy, array( 'orderby' => 'count', 'order' => 'DESC', 'number' => $number ) );
+	global $post_ID;
+	if ( $post_ID )
+		$checked_categories = wp_get_post_categories($post_ID);
+	else
+		$checked_categories = array();
+	$categories = get_terms( $taxonomy, array( 'orderby' => 'count', 'order' => 'DESC', 'number' => $number, 'hierarchical' => false ) );
 
+	$popular_ids = array();
 	foreach ( (array) $categories as $category ) {
+		$popular_ids[] = $category->term_id;
 		$id = "popular-category-$category->term_id";
 		?>
 
-		<li id="<?php echo $id; ?>" >
+		<li id="<?php echo $id; ?>" class="popular-category">
 			<label class="selectit" for="in-<?php echo $id; ?>">
 			<input id="in-<?php echo $id; ?>" type="checkbox" value="<?php echo (int) $category->term_id; ?>" />
 				<?php echo wp_specialchars( apply_filters( 'the_category', $category->name ) ); ?>
@@ -201,11 +198,17 @@ function wp_popular_terms_checklist( $taxonomy, $default = 0, $number = 10 ) {
 
 		<?php
 	}
+	return $popular_ids;
 }
 
+// Deprecated. Use wp_link_category_checklist
 function dropdown_link_categories( $default = 0 ) {
 	global $link_id;
 
+	wp_link_category_checklist($link_id);
+}
+
+function wp_link_category_checklist( $link_id = 0 ) {
 	if ( $link_id ) {
 		$checked_categories = wp_get_link_cats($link_id);
 
@@ -585,7 +588,7 @@ function _wp_get_comment_list( $status = '', $s = false, $start, $num ) {
 	elseif ( 'spam' == $status )
 		$approved = "comment_approved = 'spam'";
 	else
-		$approved = "comment_approved != 'spam'";
+		$approved = "( comment_approved = '0' OR comment_approved = '1' )";
 
 	if ( $s ) {
 		$s = $wpdb->escape($s);
@@ -1049,7 +1052,7 @@ function add_meta_box($id, $title, $callback, $page, $context = 'advanced') {
 	if ( !isset($wp_meta_boxes[$page][$context]) )
 		$wp_meta_boxes[$page][$context] = array();
 
-	$wp_meta_boxes[$page][$context][] = array('id' => $id, 'title' => $title, 'callback' => $callback);
+	$wp_meta_boxes[$page][$context][$id] = array('id' => $id, 'title' => $title, 'callback' => $callback);
 }
 
 function do_meta_boxes($page, $context, $object) {
