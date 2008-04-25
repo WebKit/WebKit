@@ -41,6 +41,7 @@
 #include "HTMLFormElement.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
+#include "Settings.h"
 
 // FIXME: More that is in common with SubresourceLoader should move up into ResourceLoader.
 
@@ -408,7 +409,7 @@ bool MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& su
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     // Check if this request should be loaded from the application cache
-    if (!m_substituteData.isValid()) {
+    if (!m_substituteData.isValid() && frameLoader()->frame()->settings() && frameLoader()->frame()->settings()->offlineWebApplicationCacheEnabled()) {
         ASSERT(!m_applicationCache);
         
         m_applicationCache = frameLoader()->documentLoader()->topLevelApplicationCache();

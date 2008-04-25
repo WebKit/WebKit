@@ -1,3 +1,18 @@
+2008-04-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Add offlineWebApplicationCacheEnabled preference.
+        
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences offlineWebApplicationCacheEnabled]):
+        (-[WebPreferences setOfflineWebApplicationCacheEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _updateSettingsFromPreferences:]):
+
 2008-04-24  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

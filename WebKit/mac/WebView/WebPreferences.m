@@ -333,6 +333,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitDeveloperExtrasEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAuthorAndUserStylesEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebArchiveDebugModeEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitOfflineWebApplicationCacheEnabledPreferenceKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -764,6 +765,16 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setWebArchiveDebugModeEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitWebArchiveDebugModeEnabledPreferenceKey];
+}
+
+- (BOOL)offlineWebApplicationCacheEnabled
+{
+    return [self _boolValueForKey:WebKitOfflineWebApplicationCacheEnabledPreferenceKey];
+}
+
+- (void)setOfflineWebApplicationCacheEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitOfflineWebApplicationCacheEnabledPreferenceKey];
 }
 
 - (BOOL)respectStandardStyleKeyEquivalents

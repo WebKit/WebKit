@@ -981,6 +981,7 @@ static bool debugWidget = true;
     settings->setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
     settings->setNeedsSiteSpecificQuirks(_private->useSiteSpecificSpoofing);
     settings->setWebArchiveDebugModeEnabled([preferences webArchiveDebugModeEnabled]);
+    settings->setOfflineWebApplicationCacheEnabled([preferences offlineWebApplicationCacheEnabled]);
 }
 
 - (void)_preferencesChangedNotification:(NSNotification *)notification

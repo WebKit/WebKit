@@ -1,5 +1,25 @@
 2008-04-25  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam.
+
+        Add and honor offlineWebApplicationCacheEnabled setting.
+        
+        * WebCore.base.exp:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::scheduleApplicationCacheLoad):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::load):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::selectCacheWithoutManifestURL):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setOfflineWebApplicationCacheEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::offlineWebApplicationCacheEnabled):
+
+2008-04-25  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam.
 
         <rdar://problem/5629139>
