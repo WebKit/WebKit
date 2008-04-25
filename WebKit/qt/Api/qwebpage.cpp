@@ -63,6 +63,7 @@
 #include "LocalizedStrings.h"
 
 #include <QApplication>
+#include <QBasicTimer>
 #include <QDebug>
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>
@@ -354,6 +355,15 @@ void QWebPagePrivate::updateEditorActions()
     updateAction(QWebPage::Paste);
 }
 
+void QWebPagePrivate::timerEvent(QTimerEvent *ev)
+{
+    int timerId = ev->timerId();
+    if (timerId == tripleClickTimer.timerId())
+        tripleClickTimer.stop();
+    else
+        q->QObject::timerEvent(ev);
+}
+
 void QWebPagePrivate::mouseMoveEvent(QMouseEvent *ev)
 {
     WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
@@ -369,6 +379,12 @@ void QWebPagePrivate::mousePressEvent(QMouseEvent *ev)
     if (!frame->view())
         return;
 
+    if (tripleClickTimer.isActive() && (ev->pos() - tripleClick).manhattanLength() <
+         QApplication::startDragDistance()) {
+        mouseTripleClickEvent(ev);
+        return;
+    }
+    
     frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 1));
 }
 
@@ -379,6 +395,18 @@ void QWebPagePrivate::mouseDoubleClickEvent(QMouseEvent *ev)
         return;
 
     frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 2));
+    
+    tripleClickTimer.start(QApplication::doubleClickInterval(), q);
+    tripleClick = ev->pos();
+}
+
+void QWebPagePrivate::mouseTripleClickEvent(QMouseEvent *ev)
+{
+    WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
+    if (!frame->view())
+        return;
+
+    frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 3));
 }
 
 void QWebPagePrivate::mouseReleaseEvent(QMouseEvent *ev)
@@ -1509,6 +1537,9 @@ QUndoStack *QWebPage::undoStack() const
 bool QWebPage::event(QEvent *ev)
 {
     switch (ev->type()) {
+    case QEvent::Timer:    
+        d->timerEvent(static_cast<QTimerEvent*>(ev));
+        break;
     case QEvent::MouseMove:
         d->mouseMoveEvent(static_cast<QMouseEvent*>(ev));
         break;

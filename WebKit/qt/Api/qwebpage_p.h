@@ -20,6 +20,7 @@
 #ifndef QWEBPAGE_P_H
 #define QWEBPAGE_P_H
 
+#include <qbasictimer.h>
 #include <qnetworkproxy.h>
 #include <qpointer.h>
 
@@ -66,9 +67,12 @@ public:
     void updateEditorActions();
     void updateContextMenuActions(const WebCore::ContextMenu *webcoreMenu, const QList<WebCore::ContextMenuItem> *items);
 
+    void timerEvent(QTimerEvent*);
+    
     void mouseMoveEvent(QMouseEvent*);
     void mousePressEvent(QMouseEvent*);
     void mouseDoubleClickEvent(QMouseEvent*);
+    void mouseTripleClickEvent(QMouseEvent*);
     void mouseReleaseEvent(QMouseEvent*);
     void contextMenuEvent(QContextMenuEvent*);
     void wheelEvent(QWheelEvent*);
@@ -100,6 +104,9 @@ public:
     bool insideOpenCall;
     quint64 m_totalBytes;
     quint64 m_bytesReceived;
+    
+    QPoint tripleClick;
+    QBasicTimer tripleClickTimer;
 
 #if QT_VERSION < 0x040400
     bool acceptNavigationRequest(QWebFrame *frame, const QWebNetworkRequest &request, QWebPage::NavigationType type);

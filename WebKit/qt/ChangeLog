@@ -1,3 +1,18 @@
+2008-04-25  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix triple-clicking does not work in a web page
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateEditorActions):
+        (QWebPagePrivate::timerEvent):
+        (QWebPagePrivate::mousePressEvent):
+        (QWebPagePrivate::mouseDoubleClickEvent):
+        (QWebPage::undoStack):
+        * Api/qwebpage_p.h:
+
 2008-04-25  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.
