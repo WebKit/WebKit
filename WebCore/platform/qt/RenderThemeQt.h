@@ -110,11 +110,11 @@ private:
 
     EAppearance applyTheme(QStyleOption&, RenderObject*) const;
 
-    void setSizeFromFont(RenderStyle*) const;
-    IntSize sizeForFont(RenderStyle*) const;
     void setButtonPadding(RenderStyle*) const;
     void setPopupPadding(RenderStyle*) const;
-    void setPrimitiveSize(RenderStyle*) const;
+
+    int m_buttonFontPixelSize;
+    QString m_buttonFontFamily;
 };
 
 class StylePainter

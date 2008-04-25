@@ -1,3 +1,38 @@
+2008-04-25  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixes: Fix strange button sizes (push, radio, and check) in QtWebKit.
+
+        We now use pixel metrics instead of fixed sizes for the
+        button margins, or if the style supports layout rects we
+        use the delta between the content rect and the layout rect.
+
+        In adition we compensate for the difference between the size
+        for content and the actual layout rect (if supported) by
+        reporting back the layout rect to WebKit for page layout,
+        and then inflating the rect we actually paint to.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::StylePainter::StylePainter):
+        (WebCore::StylePainter::~StylePainter):
+        (WebCore::RenderThemeQt::RenderThemeQt):
+        (WebCore::inflateButtonRect):
+        (WebCore::RenderThemeQt::adjustRepaintRect):
+        (WebCore::RenderThemeQt::isControlStyled):
+        (WebCore::computeSizeBasedOnStyle):
+        (WebCore::RenderThemeQt::setCheckboxSize):
+        (WebCore::RenderThemeQt::paintCheckbox):
+        (WebCore::RenderThemeQt::setRadioSize):
+        (WebCore::RenderThemeQt::adjustButtonStyle):
+        (WebCore::RenderThemeQt::setButtonSize):
+        (WebCore::RenderThemeQt::setButtonPadding):
+        (WebCore::RenderThemeQt::paintButton):
+        (WebCore::RenderThemeQt::adjustMenuListStyle):
+        (WebCore::RenderThemeQt::setPopupPadding):
+        (WebCore::RenderThemeQt::paintMenuList):
+        * platform/qt/RenderThemeQt.h:
+
 2008-04-25  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Holger.
