@@ -849,6 +849,8 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFun
         QWebPage *page = m_webFrame->page();
 
         if (!page->d->acceptNavigationRequest(m_webFrame, r, QWebPage::NavigationType(action.type()))) {
+            if (action.type() == NavigationTypeFormSubmitted || action.type() == NavigationTypeFormResubmitted)
+                m_frame->loader()->resetMultipleFormSubmissionProtection();
             slotCallPolicyFunction(PolicyIgnore);
             return;
         }

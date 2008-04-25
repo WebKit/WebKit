@@ -1,3 +1,13 @@
+2008-04-25  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix resubmit of HTML forms when initially denied by QWebPage::acceptNavigationRequest().
+        
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createFrame):
+
 2008-04-25  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
