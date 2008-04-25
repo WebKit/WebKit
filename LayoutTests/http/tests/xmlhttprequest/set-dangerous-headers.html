@@ -29,6 +29,10 @@
     req.setRequestHeader("Proxy-test", "foobar");
     req.setRequestHeader("PROXY-FOO", "foobar");
 
+    req.setRequestHeader("Sec-", "foobar");
+    req.setRequestHeader("Sec-test", "foobar");
+    req.setRequestHeader("SEC-FOO", "foobar");
+
     try {
         req.send("");
         if (req.responseText.match("100-continue|foobar|123456"))

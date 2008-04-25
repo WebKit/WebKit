@@ -1,3 +1,12 @@
+2008-04-24  Adam Barth  <hk9565@gmail.com>
+
+        Reviewed by Sam Weinig.
+
+        Update the XMLHttpRequest header black list to match the spec.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::isSafeRequestHeader):
+
 2008-04-22  Feng Qian  <ian.eng.webkit@gmail.com>
 
         Reviewed by Geoff Garen.
