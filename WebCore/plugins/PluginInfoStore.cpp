@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "PluginInfoStore.h"
+
+#include "KURL.h"
 #include "PluginDatabase.h"
 #include "PluginPackage.h"
 
@@ -71,7 +73,14 @@ unsigned PluginInfoStore::pluginCount() const
 
 String PluginInfoStore::pluginNameForMIMEType(const String& mimeType)
 {
-    // FIXME 5629139: Implement this method on Windows.
+    String mimeTypeCopy(mimeType);
+
+    if (PluginPackage* package = PluginDatabase::installedPlugins()->findPlugin(KURL(), mimeTypeCopy)) {
+        ASSERT(mimeType == mimeTypeCopy);
+
+        return package->name();
+    }
+
     return String();
 }
 

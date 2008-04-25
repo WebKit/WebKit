@@ -1,3 +1,13 @@
+2008-04-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5629139>
+        PluginInfoStoreWin needs to implement pluginNameForMIMEType().
+        
+        * plugins/PluginInfoStore.cpp:
+        (WebCore::PluginInfoStore::pluginNameForMIMEType):
+
 2008-04-25  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
