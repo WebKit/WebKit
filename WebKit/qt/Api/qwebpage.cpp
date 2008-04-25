@@ -1093,6 +1093,8 @@ void QWebPage::triggerAction(WebAction action, bool checked)
             openNewWindow(d->hitTestResult.imageUrl(), frame);
             break;
         case DownloadImageToDisk:
+            frame->loader()->client()->startDownload(WebCore::ResourceRequest(d->hitTestResult.imageUrl(), frame->loader()->outgoingReferrer()));
+            break;
         case DownloadLinkToDisk:
             frame->loader()->client()->startDownload(WebCore::ResourceRequest(d->hitTestResult.linkUrl(), frame->loader()->outgoingReferrer()));
             break;

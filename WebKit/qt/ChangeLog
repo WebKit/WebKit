@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        Fixes: "Save Image" action wasn't doing anything.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction):
+
+2008-04-25  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
         Apply key event changes to the current frame, not the main frame.
         
         Example: hitting space bar should scroll current frame, not the main frame
