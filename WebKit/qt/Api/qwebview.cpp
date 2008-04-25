@@ -33,10 +33,38 @@ public:
 /*!
     \class QWebView
     \since 4.4
-    \brief The QWebView class provides a widget that is used to view and edit web documents.
+    \brief The QWebView class provides a widget that is used to view and edit
+    web documents.
     \ingroup advanced
 
     QWebView is the main widget component of the QtWebKit web browsing module.
+    It can be used in various applications to display web content live from the
+    Internet.
+
+    The image below shows QWebView previewed in \QD with the Trolltech website.
+
+    \image qwebview-url.png
+
+    A web site can be loaded onto QWebView with the load() function. Like all
+    Qt Widgets, the show() function must be invoked in order to display
+    QWebView. The snippet below illustrates this:
+
+    \snippet doc/src/snippets/webkit/simple/main.cpp Using QWebView
+
+    Alternatively, setUrl() can also be used to load a web site. The
+    loadFinished() signal is emitted by QWebView when a frame has loaded
+    completely.
+
+    \section1 Elements of QWebView
+
+    QWebView consists of other objects such as QWebFrame and QWebPage. The
+    flowchart below shows these elements are related.
+
+    \image qwebview-diagram.png
+
+    \note It is possible to use QWebPage and QWebFrame, without using QWebView,
+    if you do not require QWidget attributes.
+
 */
 
 /*!
@@ -62,7 +90,7 @@ QWebView::QWebView(QWidget *parent)
 }
 
 /*!
-    Destructor.
+    Destroys the web view.
 */
 QWebView::~QWebView()
 {
@@ -90,7 +118,7 @@ QWebPage *QWebView::page() const
 
     The parent QObject of the provided page remains the owner
     of the object. If the current document is a child of the web
-    view, then it is deleted.
+    view, it will be deleted.
 
     \sa page()
 */

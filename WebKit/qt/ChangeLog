@@ -1,3 +1,12 @@
+2008-04-25  Kavindra Devi Palaraja  <kdpalara@trolltech.com>
+
+        Reviewed by Simon.
+
+        Doc - added a screenshot, flowchart, and a snippet to the QWebView documentation to improve clarity
+        
+
+        * Api/qwebview.cpp:
+
 2008-04-25  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.
