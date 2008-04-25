@@ -1,3 +1,12 @@
+2008-04-25  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Remove debug output.
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
 2008-04-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.

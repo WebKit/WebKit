@@ -189,7 +189,6 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
     syncLoader.waitForCompletion();
     error = syncLoader.resourceError();
     data = syncLoader.data();
-    qDebug() << data.size();
     response = syncLoader.resourceResponse();
 }
 
