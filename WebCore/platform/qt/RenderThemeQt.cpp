@@ -261,9 +261,10 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
 
     // Get the correct theme data for a text field
     EAppearance appearance = applyTheme(panel, o);
-    Q_ASSERT(appearance == TextFieldAppearance
-            || appearance == SearchFieldAppearance
-            || appearance == TextAreaAppearance);
+    if (appearance != TextFieldAppearance
+        && appearance != SearchFieldAppearance
+        && appearance != TextAreaAppearance)
+        return true;
 
     // Now paint the text field.
     p.drawPrimitive(QStyle::PE_PanelLineEdit, panel);

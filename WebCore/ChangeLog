@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        No reason to exit the application when we can not paint something. Replace the Q_ASSERT
+        with a runtime check. Return true to indicate that we did not handle the painting
+        of this element.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintTextField):
+
+2008-04-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
         Correct the comment. We are in painTextField and don't paint a button.
 
         * platform/qt/RenderThemeQt.cpp:
