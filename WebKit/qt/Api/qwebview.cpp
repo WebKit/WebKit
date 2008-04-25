@@ -406,13 +406,17 @@ bool QWebView::findText(const QString &subString, QWebPage::FindFlags options)
 */
 bool QWebView::event(QEvent *e)
 {
-    if (e->type() == QEvent::ContextMenu && d->page) {
-        QContextMenuEvent *event = static_cast<QContextMenuEvent *>(e);
-        if (d->page->swallowContextMenuEvent(event)) {
-            e->accept();
-            return true;
+    if (d->page) {
+        if (e->type() == QEvent::ContextMenu) {
+            QContextMenuEvent *event = static_cast<QContextMenuEvent *>(e);
+            if (d->page->swallowContextMenuEvent(event)) {
+                e->accept();
+                return true;
+            }
+            d->page->updatePositionDependentActions(event->pos());
+        } else if (e->type() == QEvent::ShortcutOverride) {
+            d->page->event(e);
         }
-        d->page->updatePositionDependentActions(event->pos());
     }
     return QWidget::event(e);
 }

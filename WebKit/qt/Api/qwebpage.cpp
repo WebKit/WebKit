@@ -456,110 +456,63 @@ void QWebPagePrivate::wheelEvent(QWheelEvent *ev)
     ev->setAccepted(accepted);
 }
 
+static QWebPage::WebAction editorActionForKeyEvent(QKeyEvent* event)
+{
+    static struct {
+        QKeySequence::StandardKey standardKey;
+        QWebPage::WebAction action;
+    } editorActions[32] = {
+        { QKeySequence::Cut, QWebPage::Cut },
+        { QKeySequence::Copy, QWebPage::Copy },
+        { QKeySequence::Paste, QWebPage::Paste },
+        { QKeySequence::Undo, QWebPage::Undo },
+        { QKeySequence::Redo, QWebPage::Redo },
+        { QKeySequence::MoveToNextChar, QWebPage::MoveToNextChar },
+        { QKeySequence::MoveToPreviousChar, QWebPage::MoveToPreviousChar },
+        { QKeySequence::MoveToNextWord, QWebPage::MoveToNextWord },
+        { QKeySequence::MoveToPreviousWord, QWebPage::MoveToPreviousWord },
+        { QKeySequence::MoveToNextLine, QWebPage::MoveToNextLine },
+        { QKeySequence::MoveToPreviousLine, QWebPage::MoveToPreviousLine },
+        { QKeySequence::MoveToStartOfLine, QWebPage::MoveToStartOfLine },
+        { QKeySequence::MoveToEndOfLine, QWebPage::MoveToEndOfLine },
+        { QKeySequence::MoveToStartOfBlock, QWebPage::MoveToStartOfBlock },
+        { QKeySequence::MoveToEndOfBlock, QWebPage::MoveToEndOfBlock },
+        { QKeySequence::MoveToStartOfDocument, QWebPage::MoveToStartOfDocument },
+        { QKeySequence::MoveToEndOfDocument, QWebPage::MoveToEndOfDocument },
+        { QKeySequence::SelectNextChar, QWebPage::SelectNextChar },
+        { QKeySequence::SelectPreviousChar, QWebPage::SelectPreviousChar },
+        { QKeySequence::SelectNextWord, QWebPage::SelectNextWord },
+        { QKeySequence::SelectPreviousWord, QWebPage::SelectPreviousWord },
+        { QKeySequence::SelectNextLine, QWebPage::SelectNextLine },
+        { QKeySequence::SelectPreviousLine, QWebPage::SelectPreviousLine },
+        { QKeySequence::SelectStartOfLine, QWebPage::SelectStartOfLine },
+        { QKeySequence::SelectEndOfLine, QWebPage::SelectEndOfLine },
+        { QKeySequence::SelectStartOfBlock, QWebPage::SelectStartOfBlock },
+        { QKeySequence::SelectEndOfBlock,  QWebPage::SelectEndOfBlock },
+        { QKeySequence::SelectStartOfDocument, QWebPage::SelectStartOfDocument },
+        { QKeySequence::SelectEndOfDocument, QWebPage::SelectEndOfDocument },
+        { QKeySequence::DeleteStartOfWord, QWebPage::DeleteStartOfWord },
+        { QKeySequence::DeleteEndOfWord, QWebPage::DeleteEndOfWord },
+        { QKeySequence::UnknownKey, QWebPage::NoWebAction }
+    };
+
+    for (int i = 0; editorActions[i].standardKey != QKeySequence::UnknownKey; ++i)
+        if (event == editorActions[i].standardKey)
+            return editorActions[i].action;
+
+    return QWebPage::NoWebAction;
+}
+
 void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
 {
     bool handled = false;
-    WebCore::Frame *frame = page->focusController()->focusedOrMainFrame();
-    WebCore::Editor *editor = frame->editor();
+    WebCore::Frame* frame = page->focusController()->focusedOrMainFrame();
+    WebCore::Editor* editor = frame->editor();
     if (editor->canEdit()) {
-        if (ev == QKeySequence::Cut) {
-            q->triggerAction(QWebPage::Cut);
+        QWebPage::WebAction action = editorActionForKeyEvent(ev);
+        if (action != QWebPage::NoWebAction) {
+            q->triggerAction(action);
             handled = true;
-        } else if (ev == QKeySequence::Copy) {
-            q->triggerAction(QWebPage::Copy);
-            handled = true;
-        } else if (ev == QKeySequence::Paste) {
-            q->triggerAction(QWebPage::Paste);
-            handled = true;
-        } else if (ev == QKeySequence::Undo) {
-            q->triggerAction(QWebPage::Undo);
-            handled = true;
-        } else if (ev == QKeySequence::Redo) {
-            q->triggerAction(QWebPage::Redo);
-            handled = true;
-        } else if(ev == QKeySequence::MoveToNextChar) {
-            q->triggerAction(QWebPage::MoveToNextChar);
-            handled = true;
-        } else if(ev == QKeySequence::MoveToPreviousChar) {
-            q->triggerAction(QWebPage::MoveToPreviousChar);
-            handled = true;
-        } else if(ev == QKeySequence::MoveToNextWord) {
-            q->triggerAction(QWebPage::MoveToNextWord);
-            handled = true;
-        } else if(ev == QKeySequence::MoveToPreviousWord) {
-            q->triggerAction(QWebPage::MoveToPreviousWord);
-            handled = true;
-        } else if(ev == QKeySequence::MoveToNextLine) {
-            q->triggerAction(QWebPage::MoveToNextLine);
-            handled = true;
-        } else if(ev == QKeySequence::MoveToPreviousLine) {
-            q->triggerAction(QWebPage::MoveToPreviousLine);
-            handled = true;
-//             } else if(ev == QKeySequence::MoveToNextPage) {
-//             } else if(ev == QKeySequence::MoveToPreviousPage) {
-        } else if(ev == QKeySequence::MoveToStartOfLine) {
-            q->triggerAction(QWebPage::MoveToStartOfLine);
-            handled = true;
-        } else if(ev == QKeySequence::MoveToEndOfLine) {
-            q->triggerAction(QWebPage::MoveToEndOfLine);
-            handled = true;
-        } else if(ev == QKeySequence::MoveToStartOfBlock) {
-            q->triggerAction(QWebPage::MoveToStartOfBlock);
-            handled = true;
-        } else if(ev == QKeySequence::MoveToEndOfBlock) {
-            q->triggerAction(QWebPage::MoveToEndOfBlock);
-            handled = true;
-        } else if(ev == QKeySequence::MoveToStartOfDocument) {
-            q->triggerAction(QWebPage::MoveToStartOfDocument);
-            handled = true;
-        } else if(ev == QKeySequence::MoveToEndOfDocument) {
-            q->triggerAction(QWebPage::MoveToEndOfDocument);
-            handled = true;
-        } else if(ev == QKeySequence::SelectNextChar) {
-            q->triggerAction(QWebPage::SelectNextChar);
-            handled = true;
-        } else if(ev == QKeySequence::SelectPreviousChar) {
-            q->triggerAction(QWebPage::SelectPreviousChar);
-            handled = true;
-        } else if(ev == QKeySequence::SelectNextWord) {
-            q->triggerAction(QWebPage::SelectNextWord);
-            handled = true;
-        } else if(ev == QKeySequence::SelectPreviousWord) {
-            q->triggerAction(QWebPage::SelectPreviousWord);
-            handled = true;
-        } else if(ev == QKeySequence::SelectNextLine) {
-            q->triggerAction(QWebPage::SelectNextLine);
-            handled = true;
-        } else if(ev == QKeySequence::SelectPreviousLine) {
-            q->triggerAction(QWebPage::SelectPreviousLine);
-            handled = true;
-//             } else if(ev == QKeySequence::SelectNextPage) {
-//             } else if(ev == QKeySequence::SelectPreviousPage) {
-        } else if(ev == QKeySequence::SelectStartOfLine) {
-            q->triggerAction(QWebPage::SelectStartOfLine);
-            handled = true;
-        } else if(ev == QKeySequence::SelectEndOfLine) {
-            q->triggerAction(QWebPage::SelectEndOfLine);
-            handled = true;
-        } else if(ev == QKeySequence::SelectStartOfBlock) {
-            q->triggerAction(QWebPage::SelectStartOfBlock);
-            handled = true;
-        } else if(ev == QKeySequence::SelectEndOfBlock) {
-            q->triggerAction(QWebPage::SelectEndOfBlock);
-            handled = true;
-        } else if(ev == QKeySequence::SelectStartOfDocument) {
-            q->triggerAction(QWebPage::SelectStartOfDocument);
-            handled = true;
-        } else if(ev == QKeySequence::SelectEndOfDocument) {
-            q->triggerAction(QWebPage::SelectEndOfDocument);
-            handled = true;
-        } else if(ev == QKeySequence::DeleteStartOfWord) {
-            q->triggerAction(QWebPage::DeleteStartOfWord);
-            handled = true;
-        } else if(ev == QKeySequence::DeleteEndOfWord) {
-            q->triggerAction(QWebPage::DeleteEndOfWord);
-            handled = true;
-//             } else if(ev == QKeySequence::DeleteEndOfLine) {
         }
     }
     if (!handled)
@@ -725,6 +678,43 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
         editor->confirmComposition(ev->commitString());
     }
     ev->accept();
+}
+
+void QWebPagePrivate::shortcutOverrideEvent(QKeyEvent* event)
+{
+    WebCore::Frame* frame = page->focusController()->focusedOrMainFrame();
+    WebCore::Editor* editor = frame->editor();
+    if (editor->canEdit()) {
+        if (event->modifiers() == Qt::NoModifier
+            || event->modifiers() == Qt::ShiftModifier
+            || event->modifiers() == Qt::KeypadModifier) {
+                if (event->key() < Qt::Key_Escape) {
+                    event->accept();
+                } else {
+                    switch (event->key()) {
+                    case Qt::Key_Return:
+                    case Qt::Key_Enter:
+                    case Qt::Key_Delete:
+                    case Qt::Key_Home:
+                    case Qt::Key_End:
+                    case Qt::Key_Backspace:
+                    case Qt::Key_Left:
+                    case Qt::Key_Right:
+                    case Qt::Key_Up:
+                    case Qt::Key_Down:
+                    case Qt::Key_Tab:
+                        event->accept();
+                    default:
+                        break;
+                    }
+                }
+        }
+#ifndef QT_NO_SHORTCUT
+        else if (editorActionForKeyEvent(event) != QWebPage::NoWebAction) {
+            event->accept();
+        }
+#endif
+    }
 }
 
 /*!
@@ -1586,6 +1576,9 @@ bool QWebPage::event(QEvent *ev)
 #endif
     case QEvent::InputMethod:
         d->inputMethodEvent(static_cast<QInputMethodEvent*>(ev));
+    case QEvent::ShortcutOverride:
+        d->shortcutOverrideEvent(static_cast<QKeyEvent*>(ev));
+        break;
     default:
         return QObject::event(ev);
     }

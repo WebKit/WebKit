@@ -1,3 +1,24 @@
+2008-04-25  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        When pressing backspace in a line edit in a webpage we should not go back to the previous page.
+        
+        The shortcut for back on Windows is backspace. Implemented shortcut override
+        handling in QWebView/QWebPage to prevent this.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::wheelEvent):
+        (editorActionForKeyEvent):
+        (QWebPagePrivate::keyPressEvent):
+        (QWebPagePrivate::inputMethodEvent):
+        (QWebPagePrivate::shortcutOverrideEvent):
+        (QWebPage::event):
+        * Api/qwebpage_p.h:
+        * Api/qwebview.cpp:
+        (QWebView::event):
+
 2008-04-25  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.

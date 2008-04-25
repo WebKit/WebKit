@@ -88,6 +88,8 @@ public:
 
     void inputMethodEvent(QInputMethodEvent*);
 
+    void shortcutOverrideEvent(QKeyEvent*);
+
     WebCore::ChromeClientQt *chromeClient;
     WebCore::ContextMenuClientQt *contextMenuClient;
     WebCore::EditorClientQt *editorClient;
