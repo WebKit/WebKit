@@ -552,9 +552,8 @@ int QWebFrame::scrollBarMaximum(Qt::Orientation orientation) const
 {
     PlatformScrollbar *sb;
     sb = (orientation == Qt::Horizontal) ? d->horizontalScrollBar() : d->verticalScrollBar();
-    if (sb) {
-        return (orientation == Qt::Horizontal) ? sb->width() : sb->height();
-    }
+    if (sb)
+        return sb->maximum();
     return 0;
 }
 

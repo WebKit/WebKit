@@ -1,3 +1,11 @@
+2008-04-25  Warwick Allison  <warwick@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixes: Scrollbars did not report correct maximum.
+
+        * Api/qwebframe.cpp:
+
 2008-04-25  David Boddie <dboddie@trolltech.com>
 
         Reviewed by Simon.
