@@ -1,3 +1,13 @@
+2008-04-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove code for calculating the glyph cache size.
+
+        * WebKitSystemInterface.h: Remove unused symbol.
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2008-03-28  Steve Falkenburg  <sfalken@apple.com>
 
         Versioning.

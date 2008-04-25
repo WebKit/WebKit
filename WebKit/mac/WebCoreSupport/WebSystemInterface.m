@@ -58,7 +58,6 @@ void InitWebCoreSystemInterface(void)
     INIT(DrawMediaSliderThumb);
     INIT(DrawMediaUnMuteButton);
     INIT(DrawTextFieldCellFocusRing);
-    INIT(FontSmoothingModeIsLCD);
     INIT(GetATSStyleGroup);
     INIT(GetExtensionsForMIMEType);
     INIT(GetFontInLanguageForCharacter);

@@ -71,8 +71,7 @@ void WKAccessibilityHandleFocusChanged(void);
 AXUIElementRef WKCreateAXUIElementRef(id element);
 void WKUnregisterUniqueIdForElement(id element);
 
-BOOL WKFontSmoothingModeIsLCD(int mode);
-void WKSetUpFontCache(size_t s);
+void WKSetUpFontCache(void);
 
 void WKSignalCFReadStreamEnd(CFReadStreamRef stream);
 void WKSignalCFReadStreamHasBytes(CFReadStreamRef stream);

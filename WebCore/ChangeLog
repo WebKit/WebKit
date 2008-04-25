@@ -2,6 +2,17 @@
 
         Reviewed by Sam Weinig.
 
+        Remove code for calculating the glyph cache size.
+
+        * WebCore.base.exp: Remove unused symbol.
+        * platform/graphics/mac/FontCacheMac.mm: Remove code that is unused now that we do not compute the glyph cache size.
+        * platform/mac/WebCoreSystemInterface.h: Remove unused symbol.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
+2008-04-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add a definition of BUILDING_ON_LEOPARD to complement BUILDING_ON_TIGER.
 
         * WebCorePrefix.h:

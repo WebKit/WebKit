@@ -42,84 +42,9 @@ typedef int NSInteger;
 
 namespace WebCore {
 
-static bool getAppDefaultValue(CFStringRef key, int *v)
-{
-    CFPropertyListRef value;
-
-    value = CFPreferencesCopyValue(key, kCFPreferencesCurrentApplication,
-                                   kCFPreferencesAnyUser,
-                                   kCFPreferencesAnyHost);
-    if (value == 0) {
-        value = CFPreferencesCopyValue(key, kCFPreferencesCurrentApplication,
-                                       kCFPreferencesCurrentUser,
-                                       kCFPreferencesAnyHost);
-        if (value == 0)
-            return false;
-    }
-
-    if (CFGetTypeID(value) == CFNumberGetTypeID()) {
-        if (v != 0)
-            CFNumberGetValue((const CFNumberRef)value, kCFNumberIntType, v);
-    } else if (CFGetTypeID(value) == CFStringGetTypeID()) {
-        if (v != 0)
-            *v = CFStringGetIntValue((const CFStringRef)value);
-    } else {
-        CFRelease(value);
-        return false;
-    }
-
-    CFRelease(value);
-    return true;
-}
-
-static bool getUserDefaultValue(CFStringRef key, int *v)
-{
-    CFPropertyListRef value;
-
-    value = CFPreferencesCopyValue(key, kCFPreferencesAnyApplication,
-                                   kCFPreferencesCurrentUser,
-                                   kCFPreferencesCurrentHost);
-    if (value == 0)
-        return false;
-
-    if (CFGetTypeID(value) == CFNumberGetTypeID()) {
-        if (v != 0)
-            CFNumberGetValue((const CFNumberRef)value, kCFNumberIntType, v);
-    } else if (CFGetTypeID(value) == CFStringGetTypeID()) {
-        if (v != 0)
-            *v = CFStringGetIntValue((const CFStringRef)value);
-    } else {
-        CFRelease(value);
-        return false;
-    }
-
-    CFRelease(value);
-    return true;
-}
-
-static int getLCDScaleParameters(void)
-{
-    int mode;
-    CFStringRef key;
-
-    key = CFSTR("AppleFontSmoothing");
-    if (!getAppDefaultValue(key, &mode)) {
-        if (!getUserDefaultValue(key, &mode))
-            return 1;
-    }
-
-    if (wkFontSmoothingModeIsLCD(mode))
-        return 4;
-    return 1;
-}
-
-#define MINIMUM_GLYPH_CACHE_SIZE 1536 * 1024
-
 void FontCache::platformInit()
 {
-    size_t s = MINIMUM_GLYPH_CACHE_SIZE*getLCDScaleParameters();
-
-    wkSetUpFontCache(s);
+    wkSetUpFontCache();
 }
 
 static int toAppKitFontWeight(FontWeight fontWeight)

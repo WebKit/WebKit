@@ -2,6 +2,15 @@
 
         Reviewed by Sam Weinig.
 
+        Remove code for calculating the glyph cache size.
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface): Remove unused symbol.
+
+2008-04-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add a definition of BUILDING_ON_LEOPARD to complement BUILDING_ON_TIGER.
 
         * WebKitPrefix.h:
