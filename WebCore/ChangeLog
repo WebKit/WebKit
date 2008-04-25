@@ -1,3 +1,12 @@
+2008-04-25  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Respect antialiasing hint when drawing focus rects.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawFocusRing):
+
 2008-04-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
