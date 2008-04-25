@@ -4909,7 +4909,7 @@ JSValue* FunctionBodyNodeWithDebuggerHooks::execute(ExecState* exec)
     if (Debugger* dbg = exec->dynamicGlobalObject()->debugger()) {
         if (exec->completionType() == Throw)
             exec->setException(result);
-        if (!dbg->returnEvent(exec, sourceId(), lineNo(), exec->function()))
+        if (!dbg->returnEvent(exec, sourceId(), lastLine(), exec->function()))
             return exec->setInterruptedCompletion();
     }
 

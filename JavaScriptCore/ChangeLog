@@ -1,3 +1,17 @@
+2008-04-25  David Kilzer  <ddkilzer@apple.com>
+
+        <rdar://problem/5819422> REGRESSION: Wrong line number passed to -willLeaveCallFrame
+
+        Patch by George Dicker and Michael Kahl.  Reviewed by Darin.
+
+        When -[NSObject(WebScriptDebugDelegate) webView:willLeaveCallFrame:sourceId:line:forWebFrame:]
+        is invoked, the first line number of the function is returned instead of the last
+        line number.  This regressed in r28458.
+
+        * kjs/nodes.cpp:
+        (KJS::FunctionBodyNodeWithDebuggerHooks::execute): Pass lastLine() instead of lineNo()
+        when calling Debugger::returnEvent().
+
 2008-04-25  Darin Adler  <darin@apple.com>
 
         Done with Stephanie Lewis.
