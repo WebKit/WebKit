@@ -59,7 +59,7 @@ String defaultLanguage()
 
 String searchableIndexIntroduction()
 {
-    return QCoreApplication::translate("QWebPage", "Searchable Index", "text that appears at the start of nearly-obsolete web pages in the form of a 'searchable index'");
+    return QCoreApplication::translate("QWebPage", "This is a searchable index. Enter search keywords: ", "text that appears at the start of nearly-obsolete web pages in the form of a 'searchable index'");
 }
     
 String fileButtonChooseFileLabel()
