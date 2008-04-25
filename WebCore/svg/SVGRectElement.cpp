@@ -98,6 +98,7 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr ||
         attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr ||
+        attrName == SVGNames::rxAttr || attrName == SVGNames::ryAttr ||
         SVGTests::isKnownAttribute(attrName) ||
         SVGLangSpace::isKnownAttribute(attrName) ||
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
@@ -123,7 +124,8 @@ Path SVGRectElement::toPathData() const
 bool SVGRectElement::hasRelativeValues() const
 {
     return (x().isRelative() || width().isRelative() ||
-            y().isRelative() || height().isRelative());
+            y().isRelative() || height().isRelative() ||
+            rx().isRelative() || ry().isRelative());
 }
 
 }

@@ -1,3 +1,18 @@
+2008-04-24  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Maciej Stachowiak.
+
+        Ensure that changes to rx="" and ry="" attributes on an SVG <rect>
+        element cause a relayout.
+
+        Test: svg/dom/SVGRectElement/rect-modify-rx.svg
+
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::svgAttributeChanged): Call needsLayout()
+        when the attribute is rx or ry.
+        (WebCore::SVGRectElement::hasRelativeValues): Return true when the
+        attribute is rx or ry, since they also can have relative values.
+
 2008-04-24  Adam Barth  <hk9565@gmail.com>
 
         Reviewed by Sam Weinig.

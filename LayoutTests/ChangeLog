@@ -1,3 +1,15 @@
+2008-04-24  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Maciej Stachowiak.
+
+        Test for:
+        http://bugs.webkit.org/show_bug.cgi?id=18328
+        Modifying rx="" or ry="" on a <rect> doesn't relayout
+
+        * svg/dom/SVGRectElement: Added.
+        * svg/dom/SVGRectElement/rect-modify-rx-expected.txt: Added.
+        * svg/dom/SVGRectElement/rect-modify-rx.svg: Added.
+
 2008-04-24  Adam Barth  <hk9565@gmail.com>
 
         Reviewed by Sam Weinig.
