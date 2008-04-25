@@ -1,3 +1,13 @@
+2008-04-25  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixes: QWebFrame crash when fetching the icon
+
+        Just call QWebSettings::iconForUrl to not duplicate code and obey the mutex lock.
+
+        * Api/qwebframe.cpp:
+
 2008-04-25  Warwick Allison  <warwick@trolltech.com>
 
         Reviewed by Simon.
