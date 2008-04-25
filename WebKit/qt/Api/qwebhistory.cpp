@@ -22,6 +22,7 @@
 
 #include "PlatformString.h"
 #include "Image.h"
+#include "Page.h"
 
 #include <QSharedData>
 
@@ -269,35 +270,41 @@ bool QWebHistory::canGoForward() const
 }
 
 /*!
-  Set the current item to be the previous item in the history; i.e., goes back
-  one history item.
+  Set the current item to be the previous item in the history and goes to the page;
+  i.e., goes back one history item.
 
   \sa forward(), goToItem()
 */
 void QWebHistory::back()
 {
     d->lst->goBack();
+    WebCore::Page* page = d->lst->page();
+    page->goToItem(currentItem().d->item, WebCore::FrameLoadTypeIndexedBackForward);
 }
 
 /*!
-  Sets the current item to be the next item in the history; i.e., goes forward
-  one history item.
+  Sets the current item to be the next item in the history and goes to the page;
+  i.e., goes forward one history item.
 
   \sa back(), goToItem()
 */
 void QWebHistory::forward()
 {
     d->lst->goBack();
+    WebCore::Page* page = d->lst->page();
+    page->goToItem(currentItem().d->item, WebCore::FrameLoadTypeIndexedBackForward);
 }
 
 /*!
-  Sets the current item to be the specified \a item in the history.
+  Sets the current item to be the specified \a item in the history and goes to the page.
 
   \sa back(), forward()
 */
 void QWebHistory::goToItem(const QWebHistoryItem &item)
 {
     d->lst->goToItem(item.d->item);
+    WebCore::Page* page = d->lst->page();
+    page->goToItem(currentItem().d->item, WebCore::FrameLoadTypeIndexedBackForward);
 }
 
 /*!

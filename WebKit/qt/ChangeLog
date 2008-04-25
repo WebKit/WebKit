@@ -1,3 +1,15 @@
+2008-04-25  Denis Dzyubenko  <denis.dzyubenko@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixed the way QWebHistory works - when you call back(), forward() or goToItem() functions it changes the current item in history *and* loads the corresponding page.
+        
+
+        * Api/qwebhistory.cpp:
+        (QWebHistory::back):
+        (QWebHistory::forward):
+        (QWebHistory::goToItem):
+
 2008-04-25  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
