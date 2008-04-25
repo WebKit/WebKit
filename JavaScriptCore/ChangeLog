@@ -1,3 +1,10 @@
+2008-04-25  Darin Adler  <darin@apple.com>
+
+        Done with Stephanie Lewis.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Prepare for compilation with gcc 4.2 by
+        adding -fno-strict-aliasing to CollatorICU.cpp.
+
 2008-04-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
