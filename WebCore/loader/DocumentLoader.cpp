@@ -858,7 +858,7 @@ ApplicationCache* DocumentLoader::mainResourceApplicationCache() const
 
 bool DocumentLoader::scheduleApplicationCacheLoad(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL)
 {
-    if (!frameLoader()->frame()->settings() || !frameLoader()->frame()->offlineWebApplicationCacheEnabled())
+    if (!frameLoader()->frame()->settings() || !frameLoader()->frame()->settings()->offlineWebApplicationCacheEnabled())
         return false;
     
     if (request.url() != originalURL)
