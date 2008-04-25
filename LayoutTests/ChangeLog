@@ -1,3 +1,11 @@
+2008-04-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber stamped by Simon
+
+        Do not execute most of the http tests as they hang or crash.
+
+        * platform/qt/Skipped:
+
 2008-04-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

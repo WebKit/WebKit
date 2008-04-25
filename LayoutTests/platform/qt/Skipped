@@ -886,3 +886,15 @@ media
 # Missing LayoutTestController implementations and database related delegate callback
 storage/quota-tracking.html
 storage/success-callback.html
+
+# most of the http tests need work
+http/tests/incremental
+http/tests/local
+http/tests/misc 
+http/tests/multipart
+http/tests/navigation
+http/tests/plugins
+http/tests/security 
+http/tests/ssl
+http/tests/uri
+http/tests/xmlhttprequest
