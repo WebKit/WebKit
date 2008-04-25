@@ -1,3 +1,15 @@
+2008-04-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John Sullivan.
+        
+        It is possible, despite our safeguards, for createMarkup to iterate past the end of the Range
+        that is passed to it.  Added a null check to prevent crashes in this situation (we won't crash but
+        we will create too much markup), and added an ASSERT to hopefully catch the scenario in a debugger 
+        and help us understand what's going on.
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup):
+
 2008-04-24  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

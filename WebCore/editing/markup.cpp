@@ -709,6 +709,14 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
 
     Node* next;
     for (Node* n = startNode; n != pastEnd; n = next) {
+    
+        // According to <rdar://problem/5730668>, it is possible for n to blow past pastEnd and become null here.  This 
+        // shouldn't be possible.  This null check will prevent crashes (but create too much markup) and the ASSERT will 
+        // hopefully lead us to understanding the problem.
+        ASSERT(n);
+        if (!n)
+            break;
+    
         next = n->traverseNextNode();
         bool skipDescendants = false;
         bool addMarkupForNode = true;
