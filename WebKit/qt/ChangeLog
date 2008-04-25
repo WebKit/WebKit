@@ -1,3 +1,12 @@
+2008-04-25  Kavindra Devi Palaraja  <kdpalara@trolltech.com>
+
+        Reviewed by Simon.
+
+        completed documentation for the Detailed Description section for QWebView
+        
+
+        * Api/qwebview.cpp:
+
 2008-04-25  Denis Dzyubenko  <denis.dzyubenko@trolltech.com>
 
         Reviewed by Simon.

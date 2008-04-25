@@ -51,9 +51,45 @@ public:
 
     \snippet doc/src/snippets/webkit/simple/main.cpp Using QWebView
 
-    Alternatively, setUrl() can also be used to load a web site. The
-    loadFinished() signal is emitted by QWebView when a frame has loaded
-    completely.
+    Alternatively, setUrl() can also be used to load a web site. If you have
+    the HTML content readily available, you can use setHtml() instead. This
+    function has two overloads: One which accepts a QString and another
+    which accepts a QByteArray.
+    
+    The loadStarted() signal is emitted when the view begins loading.The
+    loadProgress() signal, on the other hand, is emitted whenever an element of
+    the web view completes loading, such as an embedded image, a script, etc.
+    Finally, the loadFinished() signal is emitted when the view has loaded
+    completely. 
+
+    The page() function returns a pointer to the web page object. See
+    \l {Elements of QWebView} for an explanation of how the web page
+    is related to the view. To modify your web view's settings, you can access
+    the QWebSettings object with the settings() function. With QWebSettings,
+    you can change the default fonts, enable or disable features such as
+    JavaScript and plugins.
+
+    The title of an HTML document can be accessed with the title() property.
+    Additionally, a web site may also specify an icon, which can be accessed
+    using the icon() property. If the title or the icon changes, the corresponding
+    titleChanged() and iconChanged() signals will be emitted. The
+    textSizeMultiplier() property can be used to change the overall size of
+    the text displayed in the web view.
+
+    If you require a custom context menu, you can implement it by reimplementing
+    \l{QWidget::}{contextMenuEvent()} and populating your QMenu with the actions
+    obtained from pageAction(). More functionality such as reloading the view,
+    copying selected text to the clip board, or pasting in to the view, is also
+    encapsulated within the QAction objects returned by pageAction(). These
+    actions can be programmatically triggered using triggerPageAction().
+    Alternatively, the actions can be added to a tool bar or a menu directly.
+    QWebView maintains the state of the returned actions but allows for
+    modifying action properties such as \l{QAction::}{text} or
+    \l{QAction::}{icon}.
+
+    If you want to provide support for web sites that allow the user to open
+    new windows, such as pop up windows, you can subclass QWebView and
+    reimplement the createWindow() function.
 
     \section1 Elements of QWebView
 
@@ -65,6 +101,7 @@ public:
     \note It is possible to use QWebPage and QWebFrame, without using QWebView,
     if you do not require QWidget attributes.
 
+    \sa {Previewer Example}, {Browser}
 */
 
 /*!
@@ -201,12 +238,14 @@ void QWebView::load(const QNetworkRequest &request,
 /*!
     Sets the content of the web view to the specified \a html.
 
-    External objects referenced in the HTML document are located relative to \a baseUrl.
+    External objects referenced in the HTML document are located relative to
+    \a baseUrl.
 
-    When using this method WebKit assumes that external resources such as JavaScript programs or style
-    sheets are encoded in UTF-8 unless otherwise specified. For example, the encoding of an external
-    script can be specified through the charset attribute of the HTML script tag. It is also possible
-    for the encoding to be specified by web server.
+    When using this method, WebKit assumes that external resources such as
+    JavaScript programs or style sheets are encoded in UTF-8 unless otherwise
+    specified. For example, the encoding of an external script can be specified
+    through the charset attribute of the HTML script tag. Alternatively, the
+    encoding can also be specified by the web server.
 */
 void QWebView::setHtml(const QString &html, const QUrl &baseUrl)
 {
@@ -717,7 +756,7 @@ void QWebView::changeEvent(QEvent *e)
 /*!
     \fn void QWebView::loadStarted()
 
-    This signal is emitted when a new load of the frame is started.
+    This signal is emitted when a new load of the page is started.
 */
 
 /*!
@@ -735,10 +774,13 @@ void QWebView::changeEvent(QEvent *e)
 /*!
     \fn void QWebView::loadProgress(int progress)
 
-    This signal is emitted when the global progress status changes.
+    This signal is emitted every time an element in the web page
+    completes loading and the overall loading progress advances.
+
+    This signal tracks the progress of all child frames.
+
     The current value is provided by \a progress and scales from 0 to 100,
     which is the default range of QProgressBar.
-    It accumulates changes from all the child frames.
 */
 
 /*!
