@@ -412,6 +412,11 @@ void RenderText::trimmedPrefWidths(int leadWidth,
 
     int len = textLength();
     if (!len || (stripFrontSpaces && m_text->containsOnlyWhitespace())) {
+        beginMinW = 0;
+        endMinW = 0;
+        beginMaxW = 0;
+        endMaxW = 0;
+        minW = 0;
         maxW = 0;
         hasBreak = false;
         return;

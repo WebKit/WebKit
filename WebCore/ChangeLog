@@ -1,3 +1,12 @@
+2008-04-25  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Holger.
+
+        Fixes: Valgrind warnings about uninitilized variables used in jumps
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::trimmedPrefWidths):
+
 2008-04-25  Warwick Allison  <warwick@trolltech.com>
 
         Reviewed by Simon.
