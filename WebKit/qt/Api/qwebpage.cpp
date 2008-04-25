@@ -2133,6 +2133,13 @@ quint64 QWebPage::bytesReceived() const {
 */
 
 /*!
+    \fn void QWebPage::printRequested(QWebFrame *frame)
+
+    This signal is emitted whenever the page requests the web browser to print \a frame,
+    for example through the JavaScript \c{window.print()} call.
+*/
+
+/*!
     \fn void QWebPage::unsupportedContent(QNetworkReply *reply)
 
     This signals is emitted when webkit cannot handle a link the user navigated to.

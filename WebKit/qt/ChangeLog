@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        QWebPage: missing signal when window.print() is requested from javascript
+        
+
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+
+2008-04-25  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
         Fixes: "Save Image" action wasn't doing anything.
         
 
