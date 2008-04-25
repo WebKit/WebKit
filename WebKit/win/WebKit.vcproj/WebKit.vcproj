@@ -194,7 +194,7 @@
 				PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;ENABLE_CROSS_DOCUMENT_MESSAGING;ENABLE_DOM_STORAGE;ENABLE_OFFLINE_WEB_APPLICATIONS;ENABLE_SVG;ENABLE_XSLT;ENABLE_XPATH;FRAMEWORK_NAME=WebKit"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="WebKitPrefix.h"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				ForcedIncludeFiles="WebKitPrefix.h"
 			/>
 			<Tool

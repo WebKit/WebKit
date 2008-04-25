@@ -1,3 +1,11 @@
+2008-04-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Fix internal debug build.
+        
+        * WebKit.vcproj/WebKit.vcproj:
+
 2008-04-24  Dan Bernstein  <mitz@apple.com>
 
         - build fix
