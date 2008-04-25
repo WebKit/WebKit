@@ -1,3 +1,13 @@
+2008-04-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=18722
+          <rdar://problem/5888360> REGRESSION (3.1 -> TOT): Webkit Nightly Build crashes when visiting i has a hotdog
+
+        * fast/dynamic/float-remove-above-line-expected.txt: Added.
+        * fast/dynamic/float-remove-above-line.html: Added.
+
 2008-04-24  Cameron McCormack  <cam@mcc.id.au>
 
         Reviewed by Maciej Stachowiak.

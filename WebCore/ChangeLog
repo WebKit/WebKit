@@ -1,3 +1,18 @@
+2008-04-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=18722
+          <rdar://problem/5888360> REGRESSION (3.1 -> TOT): Webkit Nightly Build crashes when visiting i has a hotdog
+
+        Test: fast/dynamic/float-remove-above-line.html
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Avoid adding floats that
+        do not intrude into the line to its floats vector. When such floats go
+        away, they do not dirty the line (because they do not intersect with it)
+        and having it keep them in its floats vector is what caused the crash.
+
 2008-04-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John Sullivan.

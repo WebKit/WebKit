@@ -928,6 +928,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
 
         bool endLineMatched = false;
         bool checkForEndLineMatch = endLine;
+        int lastHeight = m_height;
 
         while (!end.atEnd()) {
             // FIXME: Is this check necessary before the first iteration or can it be moved to the end?
@@ -1058,7 +1059,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 } else
                     m_floatingObjects->first();
                 for (FloatingObject* f = m_floatingObjects->current(); f; f = m_floatingObjects->next()) {
-                    lastRootBox()->floats().append(f->m_renderer);
+                    if (f->m_bottom > lastHeight)
+                        lastRootBox()->floats().append(f->m_renderer);
                     ASSERT(f->m_renderer == floats[floatIndex].object);
                     // If a float's geometry has changed, give up on syncing with clean lines.
                     if (floats[floatIndex].rect != IntRect(f->m_left, f->m_top, f->m_width, f->m_bottom - f->m_top))
@@ -1068,6 +1070,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 lastFloat = m_floatingObjects->last();
             }
 
+            lastHeight = m_height;
             sNumMidpoints = 0;
             sCurrMidpoint = 0;
             start.setPosition(end);
@@ -1119,8 +1122,10 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                     m_floatingObjects->next();
                 } else
                     m_floatingObjects->first();
-                for (FloatingObject* f = m_floatingObjects->current(); f; f = m_floatingObjects->next())
-                    lastRootBox()->floats().append(f->m_renderer);
+                for (FloatingObject* f = m_floatingObjects->current(); f; f = m_floatingObjects->next()) {
+                    if (f->m_bottom > lastHeight)
+                        lastRootBox()->floats().append(f->m_renderer);
+                }
                 lastFloat = m_floatingObjects->last();
             }
         }
