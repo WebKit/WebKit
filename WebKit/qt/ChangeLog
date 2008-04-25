@@ -2,6 +2,19 @@
 
         Reviewed by Simon.
 
+        Apply key event changes to the current frame, not the main frame.
+        
+        Example: hitting space bar should scroll current frame, not the main frame
+        which doesn't even have a scrollbar.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::keyPressEvent):
+
+2008-04-25  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
         Fixes: QWebFrame crash when fetching the icon
 
         Just call QWebSettings::iconForUrl to not duplicate code and obey the mutex lock.

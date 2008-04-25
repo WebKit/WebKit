@@ -539,8 +539,8 @@ void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
     if (!handled) {
         handled = true;
         PlatformScrollbar *h, *v;
-        h = mainFrame->d->horizontalScrollBar();
-        v = mainFrame->d->verticalScrollBar();
+        h = q->currentFrame()->d->horizontalScrollBar();
+        v = q->currentFrame()->d->verticalScrollBar();
         QFont defaultFont;
         if (view)
             defaultFont = view->font();
