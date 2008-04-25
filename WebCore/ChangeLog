@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        Correct the comment. We are in painTextField and don't paint a button.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintTextField):
+
+2008-04-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
         Allow ListboxAppearance to take focus as well. Stolen from Tor Arne
 
         * platform/qt/RenderThemeQt.cpp:

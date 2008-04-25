@@ -259,7 +259,7 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
     panel.state |= QStyle::State_Sunken;
     panel.features = QStyleOptionFrameV2::None;
 
-    // Get the correct theme data for a button
+    // Get the correct theme data for a text field
     EAppearance appearance = applyTheme(panel, o);
     Q_ASSERT(appearance == TextFieldAppearance
             || appearance == SearchFieldAppearance
