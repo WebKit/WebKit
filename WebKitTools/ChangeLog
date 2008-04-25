@@ -1,3 +1,16 @@
+2008-04-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        Implement dumping of resource load callbacks to pass http/tests/xmlhttprequest/abort-should-cancel-load.html
+        
+        Similar to Editing and Frameloading we do the dumping within WebCore
+        
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::dumpResourceLoadCallbacks):
+        * DumpRenderTree/qt/jsobjects.h:
+
 2008-04-24  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Maciej Stachowiak.

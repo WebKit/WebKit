@@ -35,6 +35,7 @@
 
 #include "DumpRenderTree.h"
 extern void qt_dump_editing_callbacks(bool b);
+extern void qt_dump_resource_load_callbacks(bool b);
 
 LayoutTestController::LayoutTestController(WebCore::DumpRenderTree *drt)
     : QObject()
@@ -107,6 +108,11 @@ void LayoutTestController::dumpEditingCallbacks()
 {
     qDebug() << ">>>dumpEditingCallbacks";
     qt_dump_editing_callbacks(true);
+}
+
+void LayoutTestController::dumpResourceLoadCallbacks()
+{
+    qt_dump_resource_load_callbacks(true);
 }
 
 void LayoutTestController::queueReload()

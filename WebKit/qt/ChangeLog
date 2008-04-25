@@ -1,3 +1,20 @@
+2008-04-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        Implement dumping of resource load callbacks to pass http/tests/xmlhttprequest/abort-should-cancel-load.html
+        
+        Similar to Editing and Frameloading we do the dumping within WebCore
+        
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (qt_dump_frame_loader):
+        (qt_dump_resource_load_callbacks):
+        (drtDescriptionSuitableForTestResult):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientQt::dispatchDidLoadResourceFromMemoryCache):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForMIMEType):
+
 2008-04-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
