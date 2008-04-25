@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        Fix propagation of mouse double click events.
+
+        Treat a mouse double click as a regular mouse press with just a different click count.
+
+        * platform/qt/PlatformMouseEventQt.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
+2008-04-25  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
         Fixes: Fix strange button sizes (push, radio, and check) in QtWebKit.
 
         We now use pixel metrics instead of fixed sizes for the

@@ -45,6 +45,7 @@ PlatformMouseEvent::PlatformMouseEvent(QInputEvent* event, int clickCount)
         m_eventType = MouseEventMoved;
         me = static_cast<QMouseEvent *>(event);
         break;
+    case QEvent::MouseButtonDblClick:
     case QEvent::MouseButtonPress:
         m_eventType = MouseEventPressed;
         me = static_cast<QMouseEvent *>(event);
