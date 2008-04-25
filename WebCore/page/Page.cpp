@@ -61,10 +61,7 @@
 
 namespace WebCore {
 
-typedef HashMap<String, PageGroup*> PageGroupMap;
-
 static HashSet<Page*>* allPages;
-static PageGroupMap* pageGroups;
 
 #ifndef NDEBUG
 WTFLogChannel LogWebCorePageLeaks =  { 0x00000000, "", WTFLogChannelOn };
@@ -182,31 +179,25 @@ void Page::goToItem(HistoryItem* item, FrameLoadType type)
 
 void Page::setGroupName(const String& name)
 {
-    if (!m_groupName.isEmpty()) {
+    if (m_group && !m_group->name().isEmpty()) {
+        ASSERT(m_group != m_singlePageGroup.get());
         ASSERT(!m_singlePageGroup);
-        ASSERT(m_group);
-        ASSERT(pageGroups);
-        ASSERT(pageGroups->get(m_groupName) == m_group);
         m_group->removePage(this);
     }
-    m_groupName = name;
+
     if (name.isEmpty())
         m_group = 0;
     else {
         m_singlePageGroup.clear();
-        if (!pageGroups)
-            pageGroups = new PageGroupMap;
-        pair<PageGroupMap::iterator, bool> result = pageGroups->add(name, 0);
-        if (!result.second) {
-            ASSERT(result.first->second);
-            m_group = result.first->second;
-            m_group->addPage(this);
-        } else {
-            ASSERT(!result.first->second);
-            m_group = new PageGroup(this);
-            result.first->second = m_group;
-        }
+        m_group = PageGroup::pageGroup(name);
+        m_group->addPage(this);
     }
+}
+
+const String& Page::groupName() const
+{
+    static String nullString;
+    return m_group ? m_group->name() : nullString;
 }
 
 void Page::initGroup()

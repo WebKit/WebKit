@@ -1,3 +1,23 @@
+2008-04-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Teh Mitzpettel
+
+        Make it so PageGroups know what their own name is.
+
+        * WebCore.base.exp:
+
+        * page/Page.cpp:
+        (WebCore::Page::setGroupName):
+        (WebCore::Page::groupName):
+        * page/Page.h:
+
+        * page/PageGroup.cpp: Move the PageGroupMap into the PageGroup class.
+        (WebCore::PageGroup::PageGroup): Added a c'tor that takes the group name as an argument instead of
+          the initial Page.
+        (WebCore::PageGroup::pageGroup): Handles creating and mapping names to groups
+        * page/PageGroup.h:
+        (WebCore::PageGroup::name):
+
 2008-04-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

@@ -95,7 +95,7 @@ namespace WebCore {
         void goToItem(HistoryItem*, FrameLoadType);
         
         void setGroupName(const String&);
-        const String& groupName() const { return m_groupName; }
+        const String& groupName() const;
 
         PageGroup& group() { if (!m_group) initGroup(); return *m_group; }
         PageGroup* groupPtr() { return m_group; } // can return 0

@@ -47,12 +47,40 @@ static unsigned getUniqueIdentifier()
 
 static bool shouldTrackVisitedLinks;
 
+PageGroup::PageGroup(const String& name)
+    : m_name(name)
+    , m_visitedLinksPopulated(false)
+    , m_identifier(getUniqueIdentifier())
+{
+}
+
 PageGroup::PageGroup(Page* page)
     : m_visitedLinksPopulated(false)
     , m_identifier(getUniqueIdentifier())
 {
     ASSERT(page);
     m_pages.add(page);
+}
+
+typedef HashMap<String, PageGroup*> PageGroupMap;
+static PageGroupMap* pageGroups = 0;
+
+PageGroup* PageGroup::pageGroup(const String& groupName)
+{
+    ASSERT(!groupName.isEmpty());
+    
+    if (!pageGroups)
+        pageGroups = new PageGroupMap;
+
+    pair<PageGroupMap::iterator, bool> result = pageGroups->add(groupName, 0);
+
+    if (result.second) {
+        ASSERT(!result.first->second);
+        result.first->second = new PageGroup(groupName);
+    }
+
+    ASSERT(result.first->second);
+    return result.first->second;
 }
 
 void PageGroup::addPage(Page* page)
