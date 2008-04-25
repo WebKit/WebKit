@@ -83,6 +83,7 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
         List args;
         args.append(toJS(exec, event));
 
+        Event* savedEvent = windowWrapper->window()->currentEvent();
         windowWrapper->window()->setCurrentEvent(event);
 
         JSValue* retval;
@@ -100,7 +101,7 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
         }
         windowWrapper->window()->stopTimeoutCheck();
 
-        windowWrapper->window()->setCurrentEvent(0);
+        windowWrapper->window()->setCurrentEvent(savedEvent);
 
         if (exec->hadException()) {
             JSObject* exception = exec->exception()->toObject(exec);

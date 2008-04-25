@@ -1,3 +1,15 @@
+2008-04-22  Feng Qian  <ian.eng.webkit@gmail.com>
+
+        Reviewed by Geoff Garen.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=18677
+        Bug 18677: Synchronous event dispatch confuses the popup blocker into incorrectly blocking chat popups in gmail.com.
+
+        Test: fast/events/nested-window-event.html
+
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent): Save and restore the current event around the event dispatch.
+
 2008-04-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Teh Mitzpettel

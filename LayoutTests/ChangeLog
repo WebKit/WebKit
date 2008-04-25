@@ -1,3 +1,12 @@
+2008-04-22  Feng Qian  <ian.eng.webkit@gmail.com>
+
+        Reviewed by Geoff Garen.
+
+        Test for nested event handlers.
+
+        * fast/events/nested-window-event-expected.txt: Added.
+        * fast/events/nested-window-event.html: Added.
+
 2008-04-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
