@@ -1,3 +1,33 @@
+2008-04-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        The EventListeners need to operate and store JSDOMWindows, not JSDOMWrapperWindows.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::~JSDOMWindowBase):
+        (WebCore::JSDOMWindowBase::findOrCreateJSEventListener):
+        (WebCore::JSDOMWindowBase::findOrCreateJSUnprotectedEventListener):
+        * bindings/js/JSSVGLazyEventListener.cpp:
+        (WebCore::JSSVGLazyEventListener::JSSVGLazyEventListener):
+        * bindings/js/JSSVGLazyEventListener.h:
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        (WebCore::JSUnprotectedEventListener::JSUnprotectedEventListener):
+        (WebCore::JSUnprotectedEventListener::~JSUnprotectedEventListener):
+        (WebCore::JSUnprotectedEventListener::window):
+        (WebCore::JSUnprotectedEventListener::clearWindow):
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::~JSEventListener):
+        (WebCore::JSEventListener::window):
+        (WebCore::JSEventListener::clearWindow):
+        (WebCore::JSLazyEventListener::JSLazyEventListener):
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/kjs_events.h:
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::createHTMLEventHandler):
+        (WebCore::KJSProxy::createSVGEventHandler):
+
 2008-04-25  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Sam Weinig.

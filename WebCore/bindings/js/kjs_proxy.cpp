@@ -117,7 +117,7 @@ EventListener* KJSProxy::createHTMLEventHandler(const String& functionName, cons
 {
     initScriptIfNeeded();
     JSLock lock;
-    return new JSLazyEventListener(functionName, code, m_windowWrapper, node, m_handlerLineno);
+    return new JSLazyEventListener(functionName, code, m_windowWrapper->window(), node, m_handlerLineno);
 }
 
 #if ENABLE(SVG)
@@ -125,7 +125,7 @@ EventListener* KJSProxy::createSVGEventHandler(const String& functionName, const
 {
     initScriptIfNeeded();
     JSLock lock;
-    return new JSSVGLazyEventListener(functionName, code, m_windowWrapper, node, m_handlerLineno);
+    return new JSSVGLazyEventListener(functionName, code, m_windowWrapper->window(), node, m_handlerLineno);
 }
 #endif
 
