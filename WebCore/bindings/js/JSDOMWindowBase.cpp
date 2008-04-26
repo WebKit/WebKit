@@ -956,19 +956,6 @@ void JSDOMWindowBase::clear()
 
   clearAllTimeouts();
   clearHelperObjectProperties();
-
-  // Now recreate a working global object for the next URL that will use us; but only if we haven't been
-  // disconnected yet
-  if (Frame* frame = impl()->frame()) {
-    JSDOMWindowWrapper* wrapper = frame->scriptProxy()->windowWrapper();
-    wrapper->window()->reset(JSDOMWindowPrototype::self());
-
-    // Set the prototype on the wrapper to point to it's window's prototype so resolving works correctly
-    wrapper->setPrototype(wrapper->window()->prototype());
-  }
-
-  // there's likely to be lots of garbage now
-  gcController().garbageCollectSoon();
 }
 
 void JSDOMWindowBase::setCurrentEvent(Event* evt)

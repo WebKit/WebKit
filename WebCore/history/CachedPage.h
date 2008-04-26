@@ -28,11 +28,8 @@
 
 #include "KURL.h"
 #include <wtf/OwnPtr.h>
-
-namespace KJS {    
-    class SavedBuiltins;
-    struct SavedProperties;
-}
+#include "PausedTimeouts.h"
+#include <kjs/protect.h>
 
 namespace WebCore {
     
@@ -40,6 +37,7 @@ namespace WebCore {
     class Document;
     class DocumentLoader;
     class FrameView;
+    class JSDOMWindow;
     class Node;
     class Page;
     class PausedTimeouts;
@@ -74,9 +72,7 @@ private:
     RefPtr<FrameView> m_view;
     RefPtr<Node> m_mousePressNode;
     KURL m_URL;
-    OwnPtr<KJS::SavedProperties> m_windowProperties;
-    OwnPtr<KJS::SavedProperties> m_windowLocalStorage;
-    OwnPtr<KJS::SavedBuiltins> m_windowBuiltins;
+    KJS::ProtectedPtr<JSDOMWindow> m_window;
     OwnPtr<PausedTimeouts> m_pausedTimeouts;
     OwnPtr<CachedPagePlatformData> m_cachedPagePlatformData;
 };

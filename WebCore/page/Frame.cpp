@@ -1123,6 +1123,7 @@ void Frame::clearDOMWindow()
 {
     if (d->m_domWindow)
         d->m_domWindow->clear();
+    d->m_domWindow = 0;
 }
 
 void Frame::cleanupScriptObjectsForPlugin(void* nativeHandle)

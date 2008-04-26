@@ -38,14 +38,13 @@
 #include "FrameView.h"
 #include "GCController.h"
 #include "JSDOMWindow.h"
+#include "JSDOMWindowWrapper.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PausedTimeouts.h"
 #include "SystemTime.h"
 #include "kjs_proxy.h"
 #include <kjs/JSLock.h>
-#include <kjs/SavedBuiltins.h>
-#include <kjs/property_map.h>
 
 #if ENABLE(SVG)
 #include "SVGDocumentExtensions.h"
@@ -82,9 +81,6 @@ CachedPage::CachedPage(Page* page)
     , m_view(page->mainFrame()->view())
     , m_mousePressNode(page->mainFrame()->eventHandler()->mousePressNode())
     , m_URL(page->mainFrame()->loader()->url())
-    , m_windowProperties(new SavedProperties)
-    , m_windowLocalStorage(new SavedProperties)
-    , m_windowBuiltins(new SavedBuiltins)
 {
 #ifndef NDEBUG
     ++CachedPageCounter::count;
@@ -93,17 +89,14 @@ CachedPage::CachedPage(Page* page)
     m_document->willSaveToCache(); 
     
     Frame* mainFrame = page->mainFrame();
-    JSDOMWindow* window = toJSDOMWindow(mainFrame);
-
     mainFrame->clearTimers();
 
     JSLock lock;
 
-    if (window) {
-        window->saveBuiltins(*m_windowBuiltins.get());
-        window->saveProperties(*m_windowProperties.get());
-        window->saveLocalStorage(*m_windowLocalStorage.get());
-        m_pausedTimeouts.set(window->pauseTimeouts());
+    KJSProxy* proxy = mainFrame->scriptProxy();
+    if (proxy->haveWindowWrapper()) {
+        m_window = proxy->windowWrapper()->window();
+        m_pausedTimeouts.set(m_window->pauseTimeouts());
     }
 
     m_document->setInPageCache(true);
@@ -123,15 +116,17 @@ void CachedPage::restore(Page* page)
     ASSERT(m_document->view() == m_view);
 
     Frame* mainFrame = page->mainFrame();
-    JSDOMWindow* window = toJSDOMWindow(mainFrame);
 
     JSLock lock;
 
-    if (window) {
-        window->restoreBuiltins(*m_windowBuiltins.get());
-        window->restoreProperties(*m_windowProperties.get());
-        window->restoreLocalStorage(*m_windowLocalStorage.get());
-        window->resumeTimeouts(m_pausedTimeouts.get());
+    KJSProxy* proxy = mainFrame->scriptProxy();
+    if (proxy->haveWindowWrapper()) {
+        JSDOMWindowWrapper* windowWrapper = mainFrame->scriptProxy()->windowWrapper();
+        if (m_window) {
+            windowWrapper->setWindow(m_window.get());
+            windowWrapper->window()->resumeTimeouts(m_pausedTimeouts.get());
+        } else
+            windowWrapper->setWindow(new JSDOMWindow(mainFrame->domWindow(), windowWrapper));
     }
 
 #if ENABLE(SVG)
@@ -182,12 +177,10 @@ void CachedPage::clear()
     m_URL = KURL();
 
     JSLock lock;
-
-    m_windowProperties.clear();
-    m_windowBuiltins.clear();
     m_pausedTimeouts.clear();
+    m_window = 0;
+
     m_cachedPagePlatformData.clear();
-    m_windowLocalStorage.clear();
 
     gcController().garbageCollectSoon();
 }

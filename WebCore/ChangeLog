@@ -1,3 +1,41 @@
+2008-04-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Replace the JSDOMWindow with a new one instead of clearing it.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::clear):
+        Don't reset the window.
+
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::clear):
+        Replace the current JSDOMWindow stored in the wrapper window
+        with a new one.
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        (WebCore::CachedPage::clear):
+        * history/CachedPage.h:
+        Instead of storing the builtins, properties and localstorage in
+        special holding structs, store the entire JSDOMWindow.
+
+        For the case of a page that has no JSDOMWindow before it's first
+        navigation, has one created while it is in the cache and is then
+        navigated back, create a new JSDOMWindow to keep the assumption
+        in JSDOMWindowWrapper that it always has the correct window.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        We must clear the DOMWindow first, so that we create a new JSDOMWindow,
+        it gets a new one.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::clearDOMWindow):
+        Null out the domWindow so that on the next access, a new one is
+        created.
+
 2008-04-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

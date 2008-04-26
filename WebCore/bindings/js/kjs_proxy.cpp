@@ -106,11 +106,17 @@ JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& 
 
 void KJSProxy::clear()
 {
-    // clear resources allocated by the global object, and make it ready to be used by another page
-    // We have to keep it, so that the Window object for the frame remains the same.
-    // (we used to delete and re-create it, previously)
-    if (m_windowWrapper)
-        m_windowWrapper->clear();
+    if (!m_windowWrapper)
+        return;
+
+    JSLock lock;
+    m_windowWrapper->window()->clear();
+    m_windowWrapper->setWindow(new JSDOMWindow(m_frame->domWindow(), m_windowWrapper));
+    if (Page* page = m_frame->page())
+        m_windowWrapper->window()->setPageGroupIdentifier(page->group().identifier());
+
+    // There is likely to be a lot of garbage now.
+    gcController().garbageCollectSoon();
 }
 
 EventListener* KJSProxy::createHTMLEventHandler(const String& functionName, const String& code, Node* node)
