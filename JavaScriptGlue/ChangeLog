@@ -1,5 +1,13 @@
 2008-04-25  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/5891264> Don't install the JavaScriptGlue headers
+
+        * JavaScriptGlue.xcodeproj/project.pbxproj:
+
+2008-04-25  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Sam Weinig.
 
         Add some content to an empty ICU header file to prevent verification errors.
