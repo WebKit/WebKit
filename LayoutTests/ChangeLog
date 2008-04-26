@@ -1,3 +1,23 @@
+2008-04-26  Anatoli Papirovski  <apapirovski@mac.com>
+
+        Reviewed by Dave Hyatt.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=18583
+        Negative values are invalid for font-size and line-height,
+        including in the shorthand "font".
+
+        * fast/css/font-size-negative.html: Added.
+        * fast/css/line-height-negative.html: Added.
+        * platform/mac/css2.1/t100801-c548-ln-ht-02-b-ag-expected.checksum:
+        * platform/mac/css2.1/t100801-c548-ln-ht-02-b-ag-expected.png:
+        * platform/mac/css2.1/t100801-c548-ln-ht-02-b-ag-expected.txt:
+        * platform/mac/fast/css/font-size-negative-expected.checksum: Added.
+        * platform/mac/fast/css/font-size-negative-expected.png: Added.
+        * platform/mac/fast/css/font-size-negative-expected.txt: Added.
+        * platform/mac/fast/css/line-height-negative-expected.checksum: Added.
+        * platform/mac/fast/css/line-height-negative-expected.png: Added.
+        * platform/mac/fast/css/line-height-negative-expected.txt: Added.
+
 2008-04-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber stamped by Simon

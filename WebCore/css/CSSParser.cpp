@@ -976,7 +976,7 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id >= CSSValueXxSmall && id <= CSSValueLarger)
             valid_primitive = true;
         else
-            valid_primitive = (validUnit(value, FLength|FPercent, strict));
+            valid_primitive = (validUnit(value, FLength|FPercent|FNonNeg, strict));
         break;
 
     case CSSPropertyFontStyle:           // normal | italic | oblique | inherit
@@ -1039,7 +1039,7 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSSValueNormal)
             valid_primitive = true;
         else
-            valid_primitive = (!id && validUnit(value, FNumber|FLength|FPercent, strict));
+            valid_primitive = (!id && validUnit(value, FNumber|FLength|FPercent|FNonNeg, strict));
         break;
     case CSSPropertyCounterIncrement:    // [ <identifier> <integer>? ]+ | none | inherit
         if (id != CSSValueNone)
@@ -2689,7 +2689,7 @@ bool CSSParser::parseFont(bool important)
     // <absolute-size> | <relative-size> | <length> | <percentage> | inherit
     if (value->id >= CSSValueXxSmall && value->id <= CSSValueLarger)
         font->size = new CSSPrimitiveValue(value->id);
-    else if (validUnit(value, FLength|FPercent, strict))
+    else if (validUnit(value, FLength|FPercent|FNonNeg, strict))
         font->size = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
     value = valueList->next();
     if (!font->size || !value)
@@ -2702,7 +2702,7 @@ bool CSSParser::parseFont(bool important)
             return false;
         if (value->id == CSSValueNormal) {
             // default value, nothing to do
-        } else if (validUnit(value, FNumber|FLength|FPercent, strict))
+        } else if (validUnit(value, FNumber|FLength|FPercent|FNonNeg, strict))
             font->lineHeight = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
         else
             return false;

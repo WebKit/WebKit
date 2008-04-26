@@ -1,3 +1,18 @@
+2008-04-26  Anatoli Papirovski  <apapirovski@mac.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=18583
+        WebKit should ignore declarations with a negative value for
+        line-height and font-size, including in the shorthand font form.
+
+        Tests: fast/css/font-size-negative.html
+               fast/css/line-height-negative.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFont):
+
 2008-04-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
