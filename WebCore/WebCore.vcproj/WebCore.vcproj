@@ -3973,6 +3973,14 @@
 					>
 				</File>				
 				<File
+					RelativePath="..\loader\appcache\ApplicationCacheStorage.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\appcache\ApplicationCacheStorage.h"
+					>
+				</File>				
+				<File
 					RelativePath="..\loader\appcache\DOMApplicationCache.cpp"
 					>
 				</File>

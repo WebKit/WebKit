@@ -1,3 +1,15 @@
+2008-04-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Add empty ApplicationCacheStorage class.
+        
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/appcache/ApplicationCacheStorage.cpp: Added.
+        (WebCore::cacheStorage):
+        * loader/appcache/ApplicationCacheStorage.h: Added.
+
 2008-04-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
