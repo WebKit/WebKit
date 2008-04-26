@@ -435,9 +435,6 @@ namespace KJS {
     virtual JSValue* lookupGetter(ExecState*, const Identifier& propertyName);
     virtual JSValue* lookupSetter(ExecState*, const Identifier& propertyName);
 
-    void saveProperties(SavedProperties &p) const { _prop.save(p); }
-    void restoreProperties(const SavedProperties &p) { _prop.restore(p); }
-
     virtual bool isActivationObject() const { return false; }
     virtual bool isGlobalObject() const { return false; }
     virtual bool isVariableObject() const { return false; }

@@ -613,10 +613,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\SavedBuiltins.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\scope_chain.cpp"
 				>
 			</File>

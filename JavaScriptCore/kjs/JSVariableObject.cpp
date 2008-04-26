@@ -36,44 +36,6 @@ namespace KJS {
 
 UString::Rep* IdentifierRepHashTraits::nullRepPtr = &UString::Rep::null; // Didn't want to make a whole source file for just this.
 
-void JSVariableObject::saveLocalStorage(SavedProperties& p) const
-{
-    ASSERT(d->symbolTable);
-    ASSERT(static_cast<size_t>(d->symbolTable->size()) == d->localStorage.size());
-
-    unsigned count = d->symbolTable->size();
-
-    p.properties.clear();
-    p.count = count;
-
-    if (!count)
-        return;
-
-    p.properties.set(new SavedProperty[count]);
-
-    SymbolTable::const_iterator end = d->symbolTable->end();
-    for (SymbolTable::const_iterator it = d->symbolTable->begin(); it != end; ++it) {
-        size_t i = it->second;
-        const LocalStorageEntry& entry = d->localStorage[i];
-        p.properties[i].init(it->first.get(), entry.value, entry.attributes);
-    }
-}
-
-void JSVariableObject::restoreLocalStorage(const SavedProperties& p)
-{
-    unsigned count = p.count;
-    d->symbolTable->clear();
-    d->localStorage.resize(count);
-    SavedProperty* property = p.properties.get();
-    for (size_t i = 0; i < count; ++i, ++property) {
-        ASSERT(!d->symbolTable->contains(property->name()));
-        LocalStorageEntry& entry = d->localStorage[i];
-        d->symbolTable->set(property->name(), i);
-        entry.value = property->value();
-        entry.attributes = property->attributes();
-    }
-}
-
 bool JSVariableObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
     if (symbolTable().contains(propertyName.ustring().rep()))

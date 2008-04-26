@@ -39,9 +39,6 @@ namespace KJS {
     public:
         SymbolTable& symbolTable() const { return *d->symbolTable; }
         LocalStorage& localStorage() const { return d->localStorage; }
-        
-        void saveLocalStorage(SavedProperties&) const;
-        void restoreLocalStorage(const SavedProperties&);
 
         virtual void putWithAttributes(ExecState*, const Identifier&, JSValue*, unsigned attributes) = 0;
 

@@ -31,7 +31,6 @@
 #include "JSGlobalObject.h"
 
 #include "Activation.h"
-#include "SavedBuiltins.h"
 #include "array_object.h"
 #include "bool_object.h"
 #include "date_object.h"
@@ -409,86 +408,6 @@ bool JSGlobalObject::checkTimeout()
     }
     
     return false;
-}
-
-void JSGlobalObject::saveBuiltins(SavedBuiltins& builtins) const
-{
-    if (!builtins._internal)
-        builtins._internal = new SavedBuiltinsInternal;
-
-    builtins._internal->objectConstructor = d()->objectConstructor;
-    builtins._internal->functionConstructor = d()->functionConstructor;
-    builtins._internal->arrayConstructor = d()->arrayConstructor;
-    builtins._internal->booleanConstructor = d()->booleanConstructor;
-    builtins._internal->stringConstructor = d()->stringConstructor;
-    builtins._internal->numberConstructor = d()->numberConstructor;
-    builtins._internal->dateConstructor = d()->dateConstructor;
-    builtins._internal->regExpConstructor = d()->regExpConstructor;
-    builtins._internal->errorConstructor = d()->errorConstructor;
-    builtins._internal->evalErrorConstructor = d()->evalErrorConstructor;
-    builtins._internal->rangeErrorConstructor = d()->rangeErrorConstructor;
-    builtins._internal->referenceErrorConstructor = d()->referenceErrorConstructor;
-    builtins._internal->syntaxErrorConstructor = d()->syntaxErrorConstructor;
-    builtins._internal->typeErrorConstructor = d()->typeErrorConstructor;
-    builtins._internal->URIErrorConstructor = d()->URIErrorConstructor;
-    
-    builtins._internal->evalFunction = d()->evalFunction;
-    
-    builtins._internal->objectPrototype = d()->objectPrototype;
-    builtins._internal->functionPrototype = d()->functionPrototype;
-    builtins._internal->arrayPrototype = d()->arrayPrototype;
-    builtins._internal->booleanPrototype = d()->booleanPrototype;
-    builtins._internal->stringPrototype = d()->stringPrototype;
-    builtins._internal->numberPrototype = d()->numberPrototype;
-    builtins._internal->datePrototype = d()->datePrototype;
-    builtins._internal->regExpPrototype = d()->regExpPrototype;
-    builtins._internal->errorPrototype = d()->errorPrototype;
-    builtins._internal->evalErrorPrototype = d()->evalErrorPrototype;
-    builtins._internal->rangeErrorPrototype = d()->rangeErrorPrototype;
-    builtins._internal->referenceErrorPrototype = d()->referenceErrorPrototype;
-    builtins._internal->syntaxErrorPrototype = d()->syntaxErrorPrototype;
-    builtins._internal->typeErrorPrototype = d()->typeErrorPrototype;
-    builtins._internal->URIErrorPrototype = d()->URIErrorPrototype;
-}
-
-void JSGlobalObject::restoreBuiltins(const SavedBuiltins& builtins)
-{
-    if (!builtins._internal)
-        return;
-
-    d()->objectConstructor = builtins._internal->objectConstructor;
-    d()->functionConstructor = builtins._internal->functionConstructor;
-    d()->arrayConstructor = builtins._internal->arrayConstructor;
-    d()->booleanConstructor = builtins._internal->booleanConstructor;
-    d()->stringConstructor = builtins._internal->stringConstructor;
-    d()->numberConstructor = builtins._internal->numberConstructor;
-    d()->dateConstructor = builtins._internal->dateConstructor;
-    d()->regExpConstructor = builtins._internal->regExpConstructor;
-    d()->errorConstructor = builtins._internal->errorConstructor;
-    d()->evalErrorConstructor = builtins._internal->evalErrorConstructor;
-    d()->rangeErrorConstructor = builtins._internal->rangeErrorConstructor;
-    d()->referenceErrorConstructor = builtins._internal->referenceErrorConstructor;
-    d()->syntaxErrorConstructor = builtins._internal->syntaxErrorConstructor;
-    d()->typeErrorConstructor = builtins._internal->typeErrorConstructor;
-    d()->URIErrorConstructor = builtins._internal->URIErrorConstructor;
-    
-    d()->evalFunction = builtins._internal->evalFunction;
-
-    d()->objectPrototype = builtins._internal->objectPrototype;
-    d()->functionPrototype = builtins._internal->functionPrototype;
-    d()->arrayPrototype = builtins._internal->arrayPrototype;
-    d()->booleanPrototype = builtins._internal->booleanPrototype;
-    d()->stringPrototype = builtins._internal->stringPrototype;
-    d()->numberPrototype = builtins._internal->numberPrototype;
-    d()->datePrototype = builtins._internal->datePrototype;
-    d()->regExpPrototype = builtins._internal->regExpPrototype;
-    d()->errorPrototype = builtins._internal->errorPrototype;
-    d()->evalErrorPrototype = builtins._internal->evalErrorPrototype;
-    d()->rangeErrorPrototype = builtins._internal->rangeErrorPrototype;
-    d()->referenceErrorPrototype = builtins._internal->referenceErrorPrototype;
-    d()->syntaxErrorPrototype = builtins._internal->syntaxErrorPrototype;
-    d()->typeErrorPrototype = builtins._internal->typeErrorPrototype;
-    d()->URIErrorPrototype = builtins._internal->URIErrorPrototype;
 }
 
 void JSGlobalObject::mark()

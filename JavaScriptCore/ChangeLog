@@ -1,3 +1,23 @@
+2008-04-25  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Mark Rowe.
+
+        Remove SavedBuiltins and SavedProperties classes and the methods used to
+        save data to them.  The CachedPage now stores a the JSGlobalObject in full.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/JSGlobalObject.cpp:
+        * kjs/JSGlobalObject.h:
+        * kjs/JSVariableObject.cpp:
+        * kjs/JSVariableObject.h:
+        (KJS::JSVariableObject::localStorage):
+        * kjs/SavedBuiltins.h: Removed.
+        * kjs/object.h:
+        * kjs/property_map.cpp:
+        * kjs/property_map.h:
+
 2008-04-25  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Sam Weinig.

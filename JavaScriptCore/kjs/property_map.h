@@ -56,14 +56,6 @@ namespace KJS {
         unsigned m_attributes;
     };
 
-    struct SavedProperties {
-        SavedProperties();
-        ~SavedProperties();
-        
-        unsigned count;
-        OwnArrayPtr<SavedProperty> properties;
-    };
-
     class PropertyMap : Noncopyable {
     public:
         PropertyMap();
@@ -79,9 +71,6 @@ namespace KJS {
 
         void mark() const;
         void getEnumerablePropertyNames(PropertyNameArray&) const;
-
-        void save(SavedProperties&) const;
-        void restore(const SavedProperties&);
 
         bool hasGetterSetterProperties() const { return m_getterSetterFlag; }
         void setHasGetterSetterProperties(bool f) { m_getterSetterFlag = f; }

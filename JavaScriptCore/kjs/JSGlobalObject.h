@@ -58,7 +58,6 @@ namespace KJS {
     class RegExpObjectImp;
     class RegExpPrototype;
     class RuntimeMethod;
-    class SavedBuiltins;
     class ScopeChain;
     class StringObjectImp;
     class StringPrototype;
@@ -213,9 +212,6 @@ namespace KJS {
 
         void setPageGroupIdentifier(unsigned value) { d()->pageGroupIdentifier = value; }
         unsigned pageGroupIdentifier() const { return d()->pageGroupIdentifier; }
-
-        void saveBuiltins(SavedBuiltins&) const;
-        void restoreBuiltins(const SavedBuiltins&);
 
         void setTimeoutTime(unsigned timeoutTime) { d()->timeoutTime = timeoutTime; }
         void startTimeoutCheck();
