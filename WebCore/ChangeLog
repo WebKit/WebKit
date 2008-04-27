@@ -1,3 +1,13 @@
+2008-04-26  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+
+        wx build fix. Add needed wx includes for compilation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18758
+
+        * platform/wx/FileSystemWx.cpp:
+
 2008-04-26  Anatoli Papirovski  <apapirovski@mac.com>
 
         Reviewed by Dave Hyatt.

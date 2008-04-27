@@ -33,6 +33,9 @@
 #include "NotImplemented.h"
 #include "PlatformString.h"
 
+#include <wx/wx.h>
+#include <wx/filename.h>
+
 namespace WebCore {
 
 bool fileExists(const String& path)
