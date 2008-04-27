@@ -1,3 +1,9 @@
+2008-04-26  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Need the latest libpng. (Somehow my initial test passed without it.)
+
+        * wx/install-unix-extras:
+
 2008-04-26  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.

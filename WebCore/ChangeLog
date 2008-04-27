@@ -1,3 +1,15 @@
+2008-04-26  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Add the AX*ActionVerb functions to the wx build.
+        
+        * platform/wx/LocalizedStringsWx.cpp:
+        (WebCore::AXButtonActionVerb):
+        (WebCore::AXRadioButtonActionVerb):
+        (WebCore::AXTextFieldActionVerb):
+        (WebCore::AXCheckedCheckBoxActionVerb):
+        (WebCore::AXUncheckedCheckBoxActionVerb):
+        (WebCore::AXLinkActionVerb):
+
 2008-04-26  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.
