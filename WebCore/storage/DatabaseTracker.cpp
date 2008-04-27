@@ -178,7 +178,7 @@ bool DatabaseTracker::hasEntryForDatabase(SecurityOrigin* origin, const String& 
     if (statement.prepare() != SQLResultOk)
         return false;
 
-    statement.bindText(1, origin->stringIdentifier());
+    statement.bindText(1, origin->databaseIdentifier());
     statement.bindText(2, databaseIdentifier);
 
     return statement.step() == SQLResultRow;
@@ -189,7 +189,7 @@ String DatabaseTracker::originPath(SecurityOrigin* origin) const
     ASSERT(currentThread() == m_thread);
     if (m_databaseDirectoryPath.isEmpty())
         return String();
-    return pathByAppendingComponent(m_databaseDirectoryPath, origin->stringIdentifier());
+    return pathByAppendingComponent(m_databaseDirectoryPath, origin->databaseIdentifier());
 }
 
 String DatabaseTracker::fullPathForDatabase(SecurityOrigin* origin, const String& name, bool createIfNotExists)
@@ -199,7 +199,7 @@ String DatabaseTracker::fullPathForDatabase(SecurityOrigin* origin, const String
     if (m_proposedDatabase && m_proposedDatabase->first == origin && m_proposedDatabase->second.name() == name)
         return String();
 
-    String originIdentifier = origin->stringIdentifier();
+    String originIdentifier = origin->databaseIdentifier();
     String originPath = this->originPath(origin);
     
     // Make sure the path for this SecurityOrigin exists
@@ -226,7 +226,7 @@ String DatabaseTracker::fullPathForDatabase(SecurityOrigin* origin, const String
         return String();
         
     if (result != SQLResultDone) {
-        LOG_ERROR("Failed to retrieve filename from Database Tracker for origin %s, name %s", origin->stringIdentifier().ascii().data(), name.ascii().data());
+        LOG_ERROR("Failed to retrieve filename from Database Tracker for origin %s, name %s", origin->databaseIdentifier().ascii().data(), name.ascii().data());
         return String();
     }
     statement.finalize();
@@ -288,7 +288,7 @@ void DatabaseTracker::populateOrigins()
 
     int result;
     while ((result = statement.step()) == SQLResultRow) {
-        RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromIdentifier(statement.getColumnText(0));
+        RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromDatabaseIdentifier(statement.getColumnText(0));
         m_quotaMap->set(origin.get(), statement.getColumnInt64(1));
     }
 
@@ -316,14 +316,14 @@ bool DatabaseTracker::databaseNamesForOrigin(SecurityOrigin* origin, Vector<Stri
     if (statement.prepare() != SQLResultOk)
         return false;
 
-    statement.bindText(1, origin->stringIdentifier());
+    statement.bindText(1, origin->databaseIdentifier());
 
     int result;
     while ((result = statement.step()) == SQLResultRow)
         resultVector.append(statement.getColumnText(0));
 
     if (result != SQLResultDone) {
-        LOG_ERROR("Failed to retrieve all database names for origin %s", origin->stringIdentifier().ascii().data());
+        LOG_ERROR("Failed to retrieve all database names for origin %s", origin->databaseIdentifier().ascii().data());
         return false;
     }
 
@@ -337,7 +337,7 @@ DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, Sec
     if (m_proposedDatabase && m_proposedDatabase->first == origin && m_proposedDatabase->second.name() == name)
         return m_proposedDatabase->second;
 
-    String originIdentifier = origin->stringIdentifier();
+    String originIdentifier = origin->databaseIdentifier();
 
     openTrackerDatabase(false);
     if (!m_database.isOpen())
@@ -365,7 +365,7 @@ void DatabaseTracker::setDatabaseDetails(SecurityOrigin* origin, const String& n
 {
     ASSERT(currentThread() == m_thread);
 
-    String originIdentifier = origin->stringIdentifier();
+    String originIdentifier = origin->databaseIdentifier();
     int64_t guid = 0;
     
     openTrackerDatabase(true);
@@ -545,26 +545,26 @@ void DatabaseTracker::setQuota(SecurityOrigin* origin, unsigned long long quota)
         if (!m_quotaMap->contains(origin)) {
             SQLiteStatement statement(m_database, "INSERT INTO Origins VALUES (?, ?)");
             if (statement.prepare() != SQLResultOk) {
-                LOG_ERROR("Unable to establish origin %s in the tracker", origin->stringIdentifier().ascii().data());
+                LOG_ERROR("Unable to establish origin %s in the tracker", origin->databaseIdentifier().ascii().data());
             } else {
-                statement.bindText(1, origin->stringIdentifier());
+                statement.bindText(1, origin->databaseIdentifier());
                 statement.bindInt64(2, quota);
 
                 if (statement.step() != SQLResultDone)
-                    LOG_ERROR("Unable to establish origin %s in the tracker", origin->stringIdentifier().ascii().data());
+                    LOG_ERROR("Unable to establish origin %s in the tracker", origin->databaseIdentifier().ascii().data());
             }
         } else {
             SQLiteStatement statement(m_database, "UPDATE Origins SET quota=? WHERE origin=?");        
             bool error = statement.prepare() != SQLResultOk;
             if (!error) {
                 statement.bindInt64(1, quota);
-                statement.bindText(2, origin->stringIdentifier());
+                statement.bindText(2, origin->databaseIdentifier());
 
                 error = !statement.executeCommand();
             }
 
             if (error)
-                LOG_ERROR("Failed to set quota %llu in tracker database for origin %s", quota, origin->stringIdentifier().ascii().data());
+                LOG_ERROR("Failed to set quota %llu in tracker database for origin %s", quota, origin->databaseIdentifier().ascii().data());
         }
 
         // FIXME: Is it really OK to update the quota in memory if we failed to update it on disk?
@@ -590,12 +590,12 @@ bool DatabaseTracker::addDatabase(SecurityOrigin* origin, const String& name, co
     if (statement.prepare() != SQLResultOk)
         return false;
 
-    statement.bindText(1, origin->stringIdentifier());
+    statement.bindText(1, origin->databaseIdentifier());
     statement.bindText(2, name);
     statement.bindText(3, path);
 
     if (!statement.executeCommand()) {
-        LOG_ERROR("Failed to add database %s to origin %s: %s\n", name.ascii().data(), origin->stringIdentifier().ascii().data(), m_database.lastErrorMsg());
+        LOG_ERROR("Failed to add database %s to origin %s: %s\n", name.ascii().data(), origin->databaseIdentifier().ascii().data(), m_database.lastErrorMsg());
         return false;
     }
     
@@ -625,40 +625,40 @@ void DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
 
     Vector<String> databaseNames;
     if (!databaseNamesForOrigin(origin, databaseNames)) {
-        LOG_ERROR("Unable to retrieve list of database names for origin %s", origin->stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to retrieve list of database names for origin %s", origin->databaseIdentifier().ascii().data());
         return;
     }
     
     for (unsigned i = 0; i < databaseNames.size(); ++i) {
         if (!deleteDatabaseFile(origin, databaseNames[i])) {
-            LOG_ERROR("Unable to delete file for database %s in origin %s", databaseNames[i].ascii().data(), origin->stringIdentifier().ascii().data());
+            LOG_ERROR("Unable to delete file for database %s in origin %s", databaseNames[i].ascii().data(), origin->databaseIdentifier().ascii().data());
             return;
         }
     }
     
     SQLiteStatement statement(m_database, "DELETE FROM Databases WHERE origin=?");
     if (statement.prepare() != SQLResultOk) {
-        LOG_ERROR("Unable to prepare deletion of databases from origin %s from tracker", origin->stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to prepare deletion of databases from origin %s from tracker", origin->databaseIdentifier().ascii().data());
         return;
     }
         
-    statement.bindText(1, origin->stringIdentifier());
+    statement.bindText(1, origin->databaseIdentifier());
     
     if (!statement.executeCommand()) {
-        LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin->stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin->databaseIdentifier().ascii().data());
         return;
     }
     
     SQLiteStatement originStatement(m_database, "DELETE FROM Origins WHERE origin=?");
     if (originStatement.prepare() != SQLResultOk) {
-        LOG_ERROR("Unable to prepare deletion of origin %s from tracker", origin->stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to prepare deletion of origin %s from tracker", origin->databaseIdentifier().ascii().data());
         return;
     }
 
-    originStatement.bindText(1, origin->stringIdentifier());
+    originStatement.bindText(1, origin->databaseIdentifier());
     
     if (!originStatement.executeCommand()) {
-        LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin->stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin->databaseIdentifier().ascii().data());
         return;
     }
 
@@ -696,21 +696,21 @@ void DatabaseTracker::deleteDatabase(SecurityOrigin* origin, const String& name)
         return;
 
     if (!deleteDatabaseFile(origin, name)) {
-        LOG_ERROR("Unable to delete file for database %s in origin %s", name.ascii().data(), origin->stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to delete file for database %s in origin %s", name.ascii().data(), origin->databaseIdentifier().ascii().data());
         return;
     }
     
     SQLiteStatement statement(m_database, "DELETE FROM Databases WHERE origin=? AND name=?");
     if (statement.prepare() != SQLResultOk) {
-        LOG_ERROR("Unable to prepare deletion of database %s from origin %s from tracker", name.ascii().data(), origin->stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to prepare deletion of database %s from origin %s from tracker", name.ascii().data(), origin->databaseIdentifier().ascii().data());
         return;
     }
         
-    statement.bindText(1, origin->stringIdentifier());
+    statement.bindText(1, origin->databaseIdentifier());
     statement.bindText(2, name);
     
     if (!statement.executeCommand()) {
-        LOG_ERROR("Unable to execute deletion of database %s from origin %s from tracker", name.ascii().data(), origin->stringIdentifier().ascii().data());
+        LOG_ERROR("Unable to execute deletion of database %s from origin %s from tracker", name.ascii().data(), origin->databaseIdentifier().ascii().data());
         return;
     }
     

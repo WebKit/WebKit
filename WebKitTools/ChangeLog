@@ -1,3 +1,16 @@
+2008-04-26  Adam Barth <hk9565@gmail.com>
+
+        Reviewed by Adam Roben and Sam Weinig.
+
+        Updates LayoutTestController to use host instead of domain.
+
+        Collin Jackson <collinj-webkit@collinjackson.com> also contributed to this patch.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setDatabaseQuota):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:]):
+
 2008-04-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Need the latest libpng. (Somehow my initial test passed without it.)

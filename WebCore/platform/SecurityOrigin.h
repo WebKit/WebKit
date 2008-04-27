@@ -43,14 +43,16 @@ namespace WebCore {
     class SecurityOrigin : public ThreadSafeShared<SecurityOrigin> {
     public:
         static PassRefPtr<SecurityOrigin> createForFrame(Frame*);
-        static PassRefPtr<SecurityOrigin> createFromIdentifier(const String&);
-        static PassRefPtr<SecurityOrigin> create(const String& protocol, const String& host, unsigned short port, SecurityOrigin* ownerFrameOrigin);
+        static PassRefPtr<SecurityOrigin> createFromDatabaseIdentifier(const String&);
+        static PassRefPtr<SecurityOrigin> createFromString(const String&);
+        static PassRefPtr<SecurityOrigin> create(const KURL&);
 
         PassRefPtr<SecurityOrigin> copy();
 
         void setDomainFromDOM(const String& newDomain);
-        String host() const { return m_host; }
         String protocol() const { return m_protocol; }
+        String host() const { return m_host; }
+        String domain() const { return m_domain; }
         unsigned short port() const { return m_port; }
         
         enum Reason  {
@@ -62,19 +64,31 @@ namespace WebCore {
 
         bool isEmpty() const;
         String toString() const;
-        
-        String stringIdentifier() const;
 
-        // do not use this for access checks, it's there only for using this as a hashtable key
-        bool equal(SecurityOrigin* other) const { return m_protocol == other->m_protocol && m_host == other->m_host && m_port == other->m_port; }
-        
+        // Serialize the security origin for storage in the database. This format is
+        // deprecated and should be used only for compatibility with old databases;
+        // use toString() and createFromString() instead.
+        String databaseIdentifier() const;
+
+        // This method checks for equality between SecurityOrigins, not whether
+        // one origin can access another.  It is used for hash table keys.
+        // For access checks, use canAccess().
+        // FIXME: If this method is really only useful for hash table keys, it
+        // should be refactored into SecurityOriginHash.
+        bool equal(const SecurityOrigin*) const;
+
+        // This method checks for equality, ignoring the value of document.domain
+        // (and whether it was set) but considering the host. It is used for postMessage.
+        bool isSameSchemeHostPort(const SecurityOrigin*) const;
+
     private:
-        SecurityOrigin(const String& protocol, const String& host, unsigned short port);
+        explicit SecurityOrigin(const KURL&);
+        explicit SecurityOrigin(const SecurityOrigin*);
 
         String m_protocol;
         String m_host;
+        String m_domain;
         unsigned short m_port;
-        bool m_portSet;
         bool m_noAccess;
         bool m_domainWasSetInDOM;
     };

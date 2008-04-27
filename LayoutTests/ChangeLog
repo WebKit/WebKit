@@ -1,3 +1,28 @@
+2008-04-26  Adam Barth  <hk9565@gmail.com>
+
+        Reviewed by Adam Roben and Sam Weinig.
+
+        Update LayoutTests for new postMessage API.
+
+        Collin Jackson <collinj-webkit@collinjackson.com> also contributed to this patch.
+
+        * http/tests/security/postMessage/domain-and-uri-unaffected-by-base-tag-expected.txt: Removed.
+        * http/tests/security/postMessage/domain-and-uri-unaffected-by-base-tag.html: Removed.
+        * http/tests/security/postMessage/domain-unaffected-by-document-domain-expected.txt: Removed.
+        * http/tests/security/postMessage/domain-unaffected-by-document-domain.html: Removed.
+        * http/tests/security/postMessage/invalid-origin-throws-exception-expected.txt: Added.
+        * http/tests/security/postMessage/invalid-origin-throws-exception.html: Added.
+        * http/tests/security/postMessage/javascript-page-still-sends-domain-expected.txt: Removed.
+        * http/tests/security/postMessage/javascript-page-still-sends-domain.html: Removed.
+        * http/tests/security/postMessage/javascript-page-still-sends-origin-expected.txt: Copied from LayoutTests/http/tests/security/postMessage/javascript-page-still-sends-domain-expected.txt.
+        * http/tests/security/postMessage/javascript-page-still-sends-origin.html: Copied from LayoutTests/http/tests/security/postMessage/javascript-page-still-sends-domain.html.
+        * http/tests/security/postMessage/origin-unaffected-by-base-tag-expected.txt: Copied from LayoutTests/http/tests/security/postMessage/domain-and-uri-unaffected-by-base-tag-expected.txt.
+        * http/tests/security/postMessage/origin-unaffected-by-base-tag.html: Copied from LayoutTests/http/tests/security/postMessage/domain-and-uri-unaffected-by-base-tag.html.
+        * http/tests/security/postMessage/origin-unaffected-by-document-domain-expected.txt: Copied from LayoutTests/http/tests/security/postMessage/domain-unaffected-by-document-domain-expected.txt.
+        * http/tests/security/postMessage/origin-unaffected-by-document-domain.html: Copied from LayoutTests/http/tests/security/postMessage/domain-unaffected-by-document-domain.html.
+        * http/tests/security/postMessage/target-origin-expected.txt: Added.
+        * http/tests/security/postMessage/target-origin.html: Added.
+
 2008-04-26  Anatoli Papirovski  <apapirovski@mac.com>
 
         Reviewed by Dave Hyatt.

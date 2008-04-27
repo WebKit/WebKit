@@ -1,3 +1,14 @@
+2008-04-26  Adam Barth <hk9565@gmail.com>
+
+        Reviewed by Adam Roben and Sam Weinig.
+
+        Renamed "domain" method to "host" to match SecurityOrigin.
+
+        * Interfaces/IWebSecurityOrigin.idl:
+        * WebSecurityOrigin.cpp:
+        (WebSecurityOrigin::host):
+        * WebSecurityOrigin.h:
+
 2008-04-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

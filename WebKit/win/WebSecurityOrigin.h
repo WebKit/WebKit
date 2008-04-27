@@ -52,7 +52,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE protocol( 
         /* [retval][out] */ BSTR* result);
         
-    virtual HRESULT STDMETHODCALLTYPE domain( 
+    virtual HRESULT STDMETHODCALLTYPE host( 
         /* [retval][out] */ BSTR* result);
         
     virtual HRESULT STDMETHODCALLTYPE port( 

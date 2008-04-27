@@ -1,3 +1,85 @@
+2008-04-26  Adam Barth  <hk9565@gmail.com>
+
+        Reviewed by Adam Roben and Sam Weinig.
+
+        Fixes bug http://bugs.webkit.org/show_bug.cgi?id=17331
+        Fixes bug http://bugs.webkit.org/show_bug.cgi?id=16848
+        
+        Updates postMessage implementation to match HTML 5 specification:
+        1) Adds origin parameter to postMessage.
+        2) Removes domain and uri attributes of MessageEvent in favor of
+           origin attribute.
+
+        In order to do this correctly, we need to distinguish between hosts and domains
+        in the SecurityOrigin class. There are now three ways to compare security origins:
+        1) isSameSchemeHostPort compares scheme, host, and port, and is used for postMessage
+        2) equal compares all aspects of the security origin, and is used for hash keys
+        3) canAccess understands the semantics of schemes such as file:// and data:// URLs,
+           and should be used for scripting access checks.
+
+        Changed SecurityOrigin::toString() to generate identifiers that are suitable for 
+        being used as a MessageEvent's origin property. In the future, they could be used 
+        as database string identifiers as well. Re-used KURL parser to parse serialized 
+        SecurityOrigins.
+
+        Collin Jackson <collinj-webkit@collinjackson.com> also contributed to this patch.
+        
+        Tests: http/tests/security/postMessage/invalid-origin-throws-exception.html
+               http/tests/security/postMessage/javascript-page-still-sends-origin.html
+               http/tests/security/postMessage/origin-unaffected-by-base-tag.html
+               http/tests/security/postMessage/origin-unaffected-by-document-domain.html
+               http/tests/security/postMessage/target-origin.html
+
+        * WebCore.base.exp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::postMessage):
+        * dom/Document.cpp:
+        (WebCore::Document::domain):
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        (WebCore::MessageEvent::initMessageEvent):
+        * dom/MessageEvent.h:
+        (WebCore::MessageEvent::origin):
+        * dom/MessageEvent.idl:
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::checkOrigin):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::create):
+        (WebCore::SecurityOrigin::createForFrame):
+        (WebCore::SecurityOrigin::copy):
+        (WebCore::SecurityOrigin::setDomainFromDOM):
+        (WebCore::SecurityOrigin::canAccess):
+        (WebCore::SecurityOrigin::isSecureTransitionTo):
+        (WebCore::SecurityOrigin::toString):
+        (WebCore::SecurityOrigin::createFromString):
+        (WebCore::SecurityOrigin::createFromDatabaseIdentifier):
+        (WebCore::SecurityOrigin::databaseIdentifier):
+        (WebCore::SecurityOrigin::equal):
+        (WebCore::SecurityOrigin::isSameSchemeHostPort):
+        * platform/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::host):
+        (WebCore::SecurityOrigin::domain):
+        * platform/SecurityOriginHash.h:
+        (WebCore::SecurityOriginTraits::deletedValue):
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::hasEntryForDatabase):
+        (WebCore::DatabaseTracker::originPath):
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+        (WebCore::DatabaseTracker::populateOrigins):
+        (WebCore::DatabaseTracker::databaseNamesForOrigin):
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin):
+        (WebCore::DatabaseTracker::setDatabaseDetails):
+        (WebCore::DatabaseTracker::setQuota):
+        (WebCore::DatabaseTracker::addDatabase):
+        (WebCore::DatabaseTracker::deleteOrigin):
+        (WebCore::DatabaseTracker::deleteDatabase):
+
 2008-04-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Add the AX*ActionVerb functions to the wx build.

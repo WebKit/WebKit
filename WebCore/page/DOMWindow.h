@@ -165,7 +165,7 @@ namespace WebCore {
         DOMApplicationCache* applicationCache() const;
 #endif
 #if ENABLE(CROSS_DOCUMENT_MESSAGING)
-        void postMessage(const String& message, const String& domain, const String& uri, DOMWindow* source) const;
+        void postMessage(const String& message, const String& targetOrigin, DOMWindow* source, ExceptionCode& ecForSender) const;
 #endif
 
         void scrollBy(int x, int y) const;

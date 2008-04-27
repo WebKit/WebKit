@@ -9,8 +9,7 @@
 function receiver(e) {
     var result = "";
     result += "data: " + e.data + "\n";
-    result += "uri: " + e.uri + "\n";
-    result += "domain: " + e.domain + "\n";
+    result += "origin: " + e.origin + "\n";
     e.source.postMessage(result);   
 }
 

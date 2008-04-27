@@ -32,11 +32,10 @@
     WebSecurityOriginPrivate *_private;
 }
 
-- (id)initWithProtocol:(NSString *)protocol domain:(NSString *)domain;
-- (id)initWithProtocol:(NSString *)protocol domain:(NSString *)domain port:(unsigned short)port;
+- (id)initWithURL:(NSURL *)url;
 
 - (NSString*)protocol;
-- (NSString*)domain;
+- (NSString*)host;
 
 // Returns zero if the port is the default port for the protocol, non-zero otherwise
 - (unsigned short)port;

@@ -40,7 +40,7 @@ import "ocidl.idl";
 interface IWebSecurityOrigin : IUnknown
 {
     HRESULT protocol([out, retval] BSTR* result);
-    HRESULT domain([out, retval] BSTR* result);
+    HRESULT host([out, retval] BSTR* result);
     HRESULT port([out, retval] unsigned short* result);
 
     HRESULT usage([out, retval] unsigned long long* result);

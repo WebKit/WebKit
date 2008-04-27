@@ -1,0 +1,4 @@
+window.location.href = http://127.0.0.1:8000/security/postMessage/origin-unaffected-by-document-domain.html
+document.domain = 0.0.1
+
+Received message: data="Message from parent" origin="http://127.0.0.1:8000"

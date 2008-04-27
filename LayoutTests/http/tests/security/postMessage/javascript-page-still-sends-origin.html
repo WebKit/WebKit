@@ -8,7 +8,7 @@ if (window.layoutTestController) {
 }
 
 function recv(e) {
-    var msg = 'Received message: data="' + e.data + '" domain="' + e.domain + '" uri="' + e.uri + '"';
+    var msg = 'Received message: data="' + e.data + '" origin="' + e.origin + '"';
 
     document.getElementById("result").firstChild.data = msg;
 

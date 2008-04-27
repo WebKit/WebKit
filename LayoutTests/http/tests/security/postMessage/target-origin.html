@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function recv(e) {
+    document.getElementById("result").innerHTML += "<br>" + e.data;
+}
+ 
+document.addEventListener("message", recv, false);
+
+function tryPostMessage(win, origin) {
+    win.postMessage("Trying origin=" + origin, origin);
+}
+
+function test() {
+    var iframe = document.getElementById('child');
+    var win = iframe.contentWindow;
+
+    // Should succeed:
+    tryPostMessage(win, "http://localhost:8000");
+    tryPostMessage(win, "http://localhost:8000/");
+    tryPostMessage(win, "http://localhost:8000/foo");
+    tryPostMessage(win, "http://localhost:8000/foo?bar");
+    tryPostMessage(win, "http://localhost:8000/foo?bar#baz");
+    tryPostMessage(win, "http://user:pass@localhost:8000/foo?bar#baz");
+    tryPostMessage(win, null);
+    tryPostMessage(win, undefined);
+
+    // Should fail:
+    tryPostMessage(win, "http://localhost:9090");
+    tryPostMessage(win, "http://localhost");
+    tryPostMessage(win, "https://localhost");
+    tryPostMessage(win, "https://localhost:8000");
+    tryPostMessage(win, "http://www.example.com");
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+<body>
+<div>window.location.href = <script>document.write(window.location.href);</script></div>
+<div><iframe src="http://localhost:8000/security/postMessage/resources/post-message-listener.html" onload="test()"
+  id="child" width="800" height="300" style="border: 1px solid black;">
+</iframe></div>
+<div id="result">waiting...</div>
+</body>
+</html>

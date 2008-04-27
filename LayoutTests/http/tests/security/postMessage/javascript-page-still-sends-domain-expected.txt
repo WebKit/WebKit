@@ -1,3 +1,0 @@
-window.location.href = http://127.0.0.1:8000/security/postMessage/javascript-page-still-sends-domain.html
-
-Received message: data="Hello from child" domain="localhost" uri="http://localhost:8000/security/postMessage/resources/javascript-post-message-sender.html"

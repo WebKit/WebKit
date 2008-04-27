@@ -30,11 +30,13 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRuleList.h"
 #include "CSSStyleSelector.h"
+#include "CString.h"
 #include "Chrome.h"
 #include "Console.h"
 #include "DOMSelection.h"
 #include "Document.h"
 #include "Element.h"
+#include "ExceptionCode.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -320,10 +322,39 @@ Storage* DOMWindow::localStorage() const
 #endif
 
 #if ENABLE(CROSS_DOCUMENT_MESSAGING)
-void DOMWindow::postMessage(const String& message, const String& domain, const String& uri, DOMWindow* source) const
+void DOMWindow::postMessage(const String& message, const String& targetOrigin, DOMWindow* source, ExceptionCode& ecForSender) const
 {
-   ExceptionCode ec;
-   document()->dispatchEvent(new MessageEvent(message, domain, uri, source), ec, true);
+    if (!m_frame)
+        return;
+
+    if (!targetOrigin.isNull()) {
+        KURL desiredTargetURL(targetOrigin);
+        if (!desiredTargetURL.isValid()) {
+            ecForSender = SYNTAX_ERR;
+            return;
+        }
+
+        RefPtr<SecurityOrigin> desiredTargetOrigin = SecurityOrigin::create(desiredTargetURL);
+        SecurityOrigin* actualTargetOrigin = document()->securityOrigin();
+        if (desiredTargetOrigin->isEmpty() || !desiredTargetOrigin->isSameSchemeHostPort(actualTargetOrigin)) {
+            // The sender is not allowed to find out the origin of
+            // the recipient, so we fail silently and log a message
+            // to the console.
+            String message = String::format("Unable to post message to %s. Recipient has origin %s.\n", 
+                targetOrigin.utf8().data(), actualTargetOrigin->toString().utf8().data());
+            console()->addMessage(JSMessageSource, ErrorMessageLevel, message, 0, String());
+            return;
+        }
+    }
+
+    Document* sourceDocument = source->document();
+    if (!sourceDocument)
+        return;
+    String sourceOrigin = sourceDocument->securityOrigin()->toString();
+
+    // Sender is not allowed to see exceptions other than syntax errors
+    ExceptionCode ec; 
+    document()->dispatchEvent(new MessageEvent(message, sourceOrigin, source), ec, true);
 }
 #endif
 

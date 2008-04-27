@@ -29,6 +29,7 @@
 #ifndef SecurityOriginHash_h
 #define SecurityOriginHash_h
 
+#include "KURL.h"
 #include "SecurityOrigin.h"
 #include <wtf/RefPtr.h>
 
@@ -59,9 +60,9 @@ struct SecurityOriginHash {
 struct SecurityOriginTraits : WTF::GenericHashTraits<RefPtr<SecurityOrigin> > {
     static const bool emptyValueIsZero = true;
     static const RefPtr<SecurityOrigin>& deletedValue() 
-    { 
-        // Okay deleted value because file: protocols should always have port 0
-        static const RefPtr<SecurityOrigin> securityOriginDeletedValue = SecurityOrigin::create("file", "", 1, 0);    
+    {
+        // Ok deleted value assuming "invalid-protocol" is not a valid protocol
+        static const RefPtr<SecurityOrigin> securityOriginDeletedValue = SecurityOrigin::create(KURL("invalid-protocol:"));
         return securityOriginDeletedValue; 
     }
 

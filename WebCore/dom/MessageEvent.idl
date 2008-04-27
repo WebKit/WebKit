@@ -29,11 +29,10 @@ module events {
     interface [Conditional=CROSS_DOCUMENT_MESSAGING,GenerateConstructor] MessageEvent : Event {
 
         readonly attribute DOMString data;
-        readonly attribute DOMString domain;
-        readonly attribute DOMString uri;
+        readonly attribute DOMString origin;
         readonly attribute DOMWindow source;
         
-        void initMessageEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString dataArg, in DOMString domainArg, in DOMString uriArg, in DOMWindow sourceArg);
+        void initMessageEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString dataArg, in DOMString originArg, in DOMWindow sourceArg);
 
     };
 

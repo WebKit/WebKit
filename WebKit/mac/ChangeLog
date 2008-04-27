@@ -1,3 +1,16 @@
+2008-04-20 Adam Barth <hk9565@gmail.com>
+
+        Reviewed by Adam Roben and Sam Weinig.
+
+        Updated WebSecurityOrigin to match new SecurityOrigin API.
+
+        Collin Jackson <collinj-webkit@collinjackson.com> also contributed to this patch.
+
+        * Storage/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin host]):
+        (-[WebSecurityOrigin domain]):
+        * Storage/WebSecurityOriginPrivate.h:
+
 2008-04-25  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Sam Weinig.

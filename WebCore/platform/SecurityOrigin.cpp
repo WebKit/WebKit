@@ -29,6 +29,7 @@
 #include "config.h"
 #include "SecurityOrigin.h"
 
+#include "CString.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -53,11 +54,10 @@ static bool isDefaultPortForProtocol(unsigned short port, const String& protocol
     return defaultPorts.get(protocol) == port;
 }
 
-SecurityOrigin::SecurityOrigin(const String& protocol, const String& host, unsigned short port)
-    : m_protocol(protocol.isNull() ? "" : protocol.lower())
-    , m_host(host.isNull() ? "" : host.lower())
-    , m_port(port)
-    , m_portSet(port)
+SecurityOrigin::SecurityOrigin(const KURL& url)
+    : m_protocol(url.protocol().isNull() ? "" : url.protocol().lower())
+    , m_host(url.host().isNull() ? "" : url.host().lower())
+    , m_port(url.port())
     , m_noAccess(false)
     , m_domainWasSetInDOM(false)
 {
@@ -69,11 +69,21 @@ SecurityOrigin::SecurityOrigin(const String& protocol, const String& host, unsig
     if (m_protocol == "data")
         m_noAccess = true;
 
+    // document.domain starts as m_host, but can be set by the DOM.
+    m_domain = m_host;
 
-    if (isDefaultPortForProtocol(m_port, m_protocol)) {
+    if (isDefaultPortForProtocol(m_port, m_protocol))
         m_port = 0;
-        m_portSet = false;
-    }   
+}
+
+SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
+    : m_protocol(other->m_protocol.copy())
+    , m_host(other->m_host.copy())
+    , m_domain(other->m_domain.copy())
+    , m_port(other->m_port)
+    , m_noAccess(other->m_noAccess)
+    , m_domainWasSetInDOM(other->m_domainWasSetInDOM)
+{
 }
 
 bool SecurityOrigin::isEmpty() const
@@ -81,24 +91,15 @@ bool SecurityOrigin::isEmpty() const
     return m_protocol.isEmpty();
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String& host, unsigned short port, SecurityOrigin* ownerFrameOrigin)
+PassRefPtr<SecurityOrigin> SecurityOrigin::create(const KURL& url)
 {
-    RefPtr<SecurityOrigin> origin = adoptRef(new SecurityOrigin(protocol, host, port));
-
-    // If we do not obtain a meaningful origin from the URL, then we try to find one
-    // via the frame hierarchy.
-    // We alias the SecurityOrigins to match Firefox, see Bug 15313
-    // http://bugs.webkit.org/show_bug.cgi?id=15313
-    if (origin->isEmpty() && ownerFrameOrigin)
-        return ownerFrameOrigin;
-
-    return origin.release();
+    return adoptRef(new SecurityOrigin(url));
 }
 
 PassRefPtr<SecurityOrigin> SecurityOrigin::createForFrame(Frame* frame)
 {
     if (!frame)
-        return create("", "", 0, 0);
+        return create(KURL());
 
     FrameLoader* loader = frame->loader();
     const KURL& url = loader->url();
@@ -111,19 +112,27 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createForFrame(Frame* frame)
     if (ownerFrame && ownerFrame->document())
         ownerFrameOrigin = ownerFrame->document()->securityOrigin();
 
-    return create(url.protocol(), url.host(), url.port(), ownerFrameOrigin);
+    RefPtr<SecurityOrigin> origin = create(url);
+
+    // If we do not obtain a meaningful origin from the URL, then we try to find one
+    // via the frame hierarchy.
+    // We alias the SecurityOrigins to match Firefox, see Bug 15313
+    // http://bugs.webkit.org/show_bug.cgi?id=15313
+    if (origin->isEmpty() && ownerFrameOrigin)
+        return ownerFrameOrigin;
+
+    return origin.release();
 }
 
 PassRefPtr<SecurityOrigin> SecurityOrigin::copy()
 {
-    return create(m_protocol.copy(), m_host.copy(), m_port, 0);
+    return adoptRef(new SecurityOrigin(this));
 }
-
 
 void SecurityOrigin::setDomainFromDOM(const String& newDomain)
 {
     m_domainWasSetInDOM = true;
-    m_host = newDomain.lower();
+    m_domain = newDomain.lower();
 }
 
 bool SecurityOrigin::canAccess(const SecurityOrigin* other, Reason& reason) const
@@ -166,7 +175,7 @@ bool SecurityOrigin::canAccess(const SecurityOrigin* other, Reason& reason) cons
             if (m_host == other->m_host && m_port == other->m_port)
                 return true;
         } else if (m_domainWasSetInDOM && other->m_domainWasSetInDOM) {
-            if (m_host == other->m_host)
+            if (m_domain == other->m_domain)
                 return true;
         } else {
             if (m_host == other->m_host && m_port == other->m_port) {
@@ -186,55 +195,103 @@ bool SecurityOrigin::isSecureTransitionTo(const KURL& url) const
     if (isEmpty())
         return true;
 
-    if (FrameLoader::shouldTreatSchemeAsLocal(m_protocol))
-        return true;
-
-    return equalIgnoringCase(m_host, String(url.host())) && equalIgnoringCase(m_protocol, String(url.protocol())) && m_port == url.port();
+    RefPtr<SecurityOrigin> other = SecurityOrigin::create(url);
+    Reason reason;
+    return canAccess(other.get(), reason);
 }
 
 String SecurityOrigin::toString() const
 {
-    return m_protocol + ":" + m_host + ":" + String::number(m_port);
+    if (isEmpty())
+        return String();
+
+    if (m_protocol == "file")
+        return String("file://");
+
+    Vector<UChar> result;
+    result.reserveCapacity(m_protocol.length() + m_host.length() + 10);
+    append(result, m_protocol);
+    append(result, "://");
+    append(result, m_host);
+
+    if (m_port) {
+        append(result, ":");
+        append(result, String::number(m_port));
+    }
+
+    return String::adopt(result);
+}
+
+PassRefPtr<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)
+{
+    return SecurityOrigin::create(KURL(originString));
 }
 
 static const char SeparatorCharacter = '_';
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::createFromIdentifier(const String& stringIdentifier)
+PassRefPtr<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const String& databaseIdentifier)
 { 
     // Make sure there's a first separator
-    int separator1 = stringIdentifier.find(SeparatorCharacter);
+    int separator1 = databaseIdentifier.find(SeparatorCharacter);
     if (separator1 == -1)
-        return create("", "", 0, 0);
+        return create(KURL());
         
     // Make sure there's a second separator
-    int separator2 = stringIdentifier.find(SeparatorCharacter, separator1 + 1);
+    int separator2 = databaseIdentifier.find(SeparatorCharacter, separator1 + 1);
     if (separator2 == -1)
-        return create("", "", 0, 0);
+        return create(KURL());
         
     // Make sure there's not a third separator
-    if (stringIdentifier.reverseFind(SeparatorCharacter) != separator2)
-        return create("", "", 0, 0);
+    if (databaseIdentifier.reverseFind(SeparatorCharacter) != separator2)
+        return create(KURL());
         
     // Make sure the port section is a valid port number or doesn't exist
     bool portOkay;
-    int port = stringIdentifier.right(stringIdentifier.length() - separator2 - 1).toInt(&portOkay);
-    if (!portOkay && separator2 + 1 == static_cast<int>(stringIdentifier.length()))
-        return create("", "", 0, 0);
+    int port = databaseIdentifier.right(databaseIdentifier.length() - separator2 - 1).toInt(&portOkay);
+    if (!portOkay && separator2 + 1 == static_cast<int>(databaseIdentifier.length()))
+        return create(KURL());
     
     if (port < 0 || port > 65535)
-        return create("", "", 0, 0);
+        return create(KURL());
         
     // Split out the 3 sections of data
-    String protocol = stringIdentifier.substring(0, separator1);
-    String host = stringIdentifier.substring(separator1 + 1, separator2 - separator1 - 1);
-    return create(protocol, host, port, 0);
+    String protocol = databaseIdentifier.substring(0, separator1);
+    String host = databaseIdentifier.substring(separator1 + 1, separator2 - separator1 - 1);
+    return create(KURL(protocol + "://" + host + ":" + String::number(port)));
 }
-    
-    
-String SecurityOrigin::stringIdentifier() const 
+
+String SecurityOrigin::databaseIdentifier() const 
 {
     static String separatorString = String(&SeparatorCharacter, 1);
     return m_protocol + separatorString + m_host + separatorString + String::number(m_port); 
+}
+
+bool SecurityOrigin::equal(const SecurityOrigin* other) const 
+{
+    if (!isSameSchemeHostPort(other))
+        return false;
+
+    if (m_domainWasSetInDOM != other->m_domainWasSetInDOM)
+        return false;
+
+    if (m_domainWasSetInDOM && m_domain != other->m_domain)
+        return false;
+
+    return true;
+}
+
+bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin* other) const 
+{
+    if (m_host != other->m_host)
+        return false;
+
+    if (m_protocol != other->m_protocol)
+        return false;
+
+    if (m_port != other->m_port)
+        return false;
+
+    return true;
 }
 
 } // namespace WebCore

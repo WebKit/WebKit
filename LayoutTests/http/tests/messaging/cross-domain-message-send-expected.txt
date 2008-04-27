@@ -1,2 +1,2 @@
 
-data: Something uri: http://127.0.0.1:8000/messaging/cross-domain-message-send.html domain: 127.0.0.1
+data: Something origin: http://127.0.0.1:8000

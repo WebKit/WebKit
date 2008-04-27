@@ -207,14 +207,18 @@ JSValue* JSDOMWindow::postMessage(ExecState* exec, const List& args)
     DOMWindow* window = impl();
 
     DOMWindow* source = toJSDOMWindow(exec->dynamicGlobalObject())->impl();
-    String domain = source->frame()->loader()->url().host();
-    String uri = source->frame()->loader()->url().string();
     String message = args[0]->toString(exec);
 
     if (exec->hadException())
         return jsUndefined();
 
-    window->postMessage(message, domain, uri, source);
+    String targetOrigin = valueToStringWithUndefinedOrNullCheck(exec, args[1]);
+    if (exec->hadException())
+        return jsUndefined();
+
+    ExceptionCode ec = 0;
+    window->postMessage(message, targetOrigin, source, ec);
+    setDOMException(exec, ec);
 
     return jsUndefined();
 }

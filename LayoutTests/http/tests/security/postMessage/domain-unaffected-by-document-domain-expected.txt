@@ -1,4 +1,0 @@
-window.location.href = http://127.0.0.1:8000/security/postMessage/domain-unaffected-by-document-domain.html
-document.domain = 0.0.1
-
-Received message: data="Message from parent" domain="127.0.0.1" uri="http://127.0.0.1:8000/security/postMessage/domain-unaffected-by-document-domain.html"

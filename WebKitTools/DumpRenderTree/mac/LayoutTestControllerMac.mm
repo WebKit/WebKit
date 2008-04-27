@@ -179,7 +179,7 @@ void LayoutTestController::setCustomPolicyDelegate(bool setDelegate)
 
 void LayoutTestController::setDatabaseQuota(unsigned long long quota)
 {    
-    WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithProtocol:@"file" domain:nil];
+    WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:@"file:///"]];
     [origin setQuota:quota];
     [origin release];
 }
