@@ -1,3 +1,20 @@
+2008-04-26  David Kilzer  <ddkilzer@apple.com>
+
+        Removed temp files and added appropriate svn:ignore properties.
+
+        Rubber-stamped by Mark Rowe.
+
+        * data: Added svn:ignore property for "versioncache" and "versioncache.*" files.
+
+        * data/template: Added svn:ignore property for "template" subdirectory.
+        * data/template/template: Removed precompiled template subdirectory.
+
+        * data/versioncache: Removed.
+        * data/versioncache.*: Removed backup versioncache files.
+
+        * data/webdot: Added svn:ignore property for "*.dot" files.
+        * data/webdot/*.dot: Removed cached webdot files.
+
 2008-04-08  Adam Roben  <aroben@apple.com>
 
         Combine :equal operations with the following operation if they are

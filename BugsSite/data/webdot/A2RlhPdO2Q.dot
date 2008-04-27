@@ -1,5 +1,0 @@
-digraph G {
-graph [URL="http://bugs.webkit.org/query.cgi", rankdir=LR]
-node [URL="http://bugs.webkit.org/show_bug.cgi?id=\N", style=filled, color=lightgrey]
-16806 [shape=box,color=green]
-}
