@@ -1,3 +1,13 @@
+2008-04-26  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+        
+        Allow the user to set the path to SWIG using an environment variable.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=18660
+
+        * wx/build-wxwebkit:
+
 2008-04-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Download the latest libpng version for building the

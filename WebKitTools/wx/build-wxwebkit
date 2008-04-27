@@ -303,7 +303,9 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
         fi
         
         if [ $wxpython == 1 ]; then
-            SWIG=`which swig`
+            if [ -z $SWIG ]; then
+                SWIG=`which swig`
+            fi
 
             if [ ! -f "$SWIG" ]; then
                 echo "ERROR: Cannot find SWIG. Make sure that SWIG 1.3.29 is located on your path.";
