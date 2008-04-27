@@ -1,3 +1,10 @@
+2008-04-26  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Download the latest libpng version for building the
+        dependencies.
+
+        * wx/install-unix-extras:
+
 2008-04-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
