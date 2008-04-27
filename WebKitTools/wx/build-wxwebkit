@@ -198,11 +198,7 @@ function find_existing_dir {
 
 olddir=$PWD
 
-if [ $do_clean == 1 ]; then
-    rm -rf $WK_ROOT/JavaScriptCore/DerivedSources
-    rm -rf $WK_ROOT/WebCore/DerivedSources
-    rm -rf $WK_ROOT/WebCore/include/JavaScriptCore
-else
+if [ $do_clean != 1 ]; then
 
     mkdir -p $WEBKITOUTPUTDIR/build
 
@@ -289,7 +285,13 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
         do_make $WK_ROOT/WebKit/wx "-DBUILDING_WX__=1 -DWXMAKINGDLL_WEBKIT=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
         do_make $WK_ROOT/WebKitTools/wx/browser  "-DBUILDING_WX__=1 -DWXUSINGDLL_WEBKIT=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
     fi
-    
+
+    if [ $do_clean == 1 ]; then
+        rm -rf $WK_ROOT/JavaScriptCore/DerivedSources
+        rm -rf $WK_ROOT/WebCore/DerivedSources
+        rm -rf $WK_ROOT/WebCore/include/JavaScriptCore
+    fi
+
     if [ $do_build == 1 ]; then 
         if [ "${OSTYPE:0:6}" = "darwin" ]; then
             cd  $WEBKITOUTPUTDIR
@@ -366,6 +368,9 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
             cd $WK_ROOT
             cp $WINDEPS `cygpath -u $WEBKITOUTPUTDIR`
             chmod +x `cygpath -u $WEBKITOUTPUTDIR/`*.dll
+	    if [ -e `cygpath -u $WEBKITOUTPUTDIR/_webview.dll` ]; then
+		mv `cygpath -u $WEBKITOUTPUTDIR/_webview.dll` `cygpath -u $WEBKITOUTPUTDIR/_webview.pyd`
+	    fi
         fi
         
         BROWSERAPP="wxBrowser"

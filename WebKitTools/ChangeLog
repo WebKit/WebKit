@@ -1,3 +1,14 @@
+2008-04-26  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+        
+        Delete the DerivedSources after make clean has been done so that the DerivedSources
+        don't get re-created. Also, use the proper extension for the Win wxPython extension.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=18756
+
+        * wx/build-wxwebkit:
+
 2008-04-26  Adam Barth <hk9565@gmail.com>
 
         Reviewed by Adam Roben and Sam Weinig.
