@@ -213,12 +213,6 @@ bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
     QStyle::SubControl sc = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, &m_opt, pos, 0);
     m_opt.rect.moveTo(topLeft);
 
-    if (sc == m_pressedPart) {
-        m_opt.state |= QStyle::State_Sunken;
-    } else {
-        m_opt.state &= ~QStyle::State_Sunken;
-    }
-
     if (m_pressedPart == QStyle::SC_ScrollBarSlider) {
         // Drag the thumb.
         int thumbPos = thumbPosition();
@@ -275,6 +269,7 @@ bool PlatformScrollbar::handleMouseOutEvent(const PlatformMouseEvent& evt)
 {
     m_opt.state &= ~QStyle::State_MouseOver;
     m_opt.state &= ~QStyle::State_Sunken;
+    m_hoveredPart = QStyle::SC_None;
     invalidate();
     return true;
 }
@@ -308,8 +303,18 @@ bool PlatformScrollbar::handleMousePressEvent(const PlatformMouseEvent& evt)
     return true;
 }
 
-bool PlatformScrollbar::handleMouseReleaseEvent(const PlatformMouseEvent&)
+bool PlatformScrollbar::handleMouseReleaseEvent(const PlatformMouseEvent& evt)
 {
+    const QPoint pos = convertFromContainingWindow(evt.pos());
+    const QPoint topLeft = m_opt.rect.topLeft();
+    m_opt.rect.moveTo(QPoint(0, 0));
+    QStyle::SubControl scAtMousePoint = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, &m_opt, pos, 0);
+    m_opt.rect.moveTo(topLeft);
+
+    m_hoveredPart = scAtMousePoint;
+    if (m_hoveredPart == QStyle::SC_None)
+        m_opt.state &= ~QStyle::State_MouseOver;
+
     m_opt.state &= ~QStyle::State_Sunken;
     m_pressedPart = QStyle::SC_None;
     m_pressedPos = 0;

@@ -455,8 +455,11 @@ bool QWebView::event(QEvent *e)
             d->page->updatePositionDependentActions(event->pos());
         } else if (e->type() == QEvent::ShortcutOverride) {
             d->page->event(e);
+        } else if (e->type() == QEvent::Leave) {
+            d->page->event(e);
         }
     }
+
     return QWidget::event(e);
 }
 

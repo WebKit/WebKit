@@ -659,6 +659,15 @@ void QWebPagePrivate::dropEvent(QDropEvent *ev)
 #endif
 }
 
+void QWebPagePrivate::leaveEvent(QEvent *ev)
+{
+    // Fake a mouse move event just outside of the widget, since all
+    // the interesting mouse-out behavior like invalidating scrollbars
+    // is handled by the WebKit event handler's mouseMoved function.
+    QMouseEvent fakeEvent(QEvent::MouseMove, QCursor::pos(), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
+    mouseMoveEvent(&fakeEvent);
+}
+
 /*!
     \property QWebPage::palette
     \brief the page's palette
@@ -1597,6 +1606,9 @@ bool QWebPage::event(QEvent *ev)
         d->inputMethodEvent(static_cast<QInputMethodEvent*>(ev));
     case QEvent::ShortcutOverride:
         d->shortcutOverrideEvent(static_cast<QKeyEvent*>(ev));
+        break;
+    case QEvent::Leave:
+        d->leaveEvent(ev);
         break;
     default:
         return QObject::event(ev);

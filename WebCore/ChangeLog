@@ -1,3 +1,21 @@
+2008-04-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18713
+
+        Fix scrollbar painting issues in QtWebKit.
+
+        Hovering and click-draging outside of the scrollbar would
+        produce unexpected and inconcistent results. We also didn't
+        pass on leave-events to the underlying WebKit code, which
+        was nessecary to implement the paint fix.
+
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::handleMouseMoveEvent):
+        (WebCore::PlatformScrollbar::handleMouseOutEvent):
+        (WebCore::PlatformScrollbar::handleMouseReleaseEvent):
+
 2008-04-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
