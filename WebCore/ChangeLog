@@ -1,3 +1,26 @@
+2008-04-28  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        Fix the crash on http://www.orad.pl. We called end too early.
+
+        1. we need a ::write that will pause the parser due a pending
+        script
+        2. we need a second write to queue data (tricky part)
+        3. we need to get a finish call (document loaded)
+        4. we resume the script and parse, schedule loading of a new script
+        and have called end
+        5. we resume the new script and we get a crash
+
+        This bug is hard to trigger, e.g. if the web server is only allowing
+        one connection per client/IP. This is why we need to sleep in the scripts. We
+        want to make sure that the page is first fully received before serving the
+        scripts.
+
+        Test: http/tests/misc/xmltokenizer-do-not-crash.pl
+
+        * dom/XMLTokenizer.cpp:
+
 2008-04-28  Ariya Hidayat  <ahidayat@trolltech.com>
 
         Reviewed by Simon.
