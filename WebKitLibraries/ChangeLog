@@ -1,3 +1,12 @@
+2008-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - fix Windows build
+
+        * win/tools/vsprops/common.vsprops: Add warning 4344 to the list of disabled warnings.
+        It's really a warning about a bug they fixed in MSVC -- not helpful to us in WebKit.
+
 2008-04-24  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
