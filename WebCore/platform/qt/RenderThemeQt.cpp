@@ -437,11 +437,11 @@ bool RenderThemeQt::paintButton(RenderObject* o, const RenderObject::PaintInfo& 
     EAppearance appearance = applyTheme(option, o);
     if(appearance == PushButtonAppearance || appearance == ButtonAppearance) {
         option.rect = inflateButtonRect(option.rect);
-        p.drawControl(QStyle::CE_PushButtonBevel, option);
+        p.drawControl(QStyle::CE_PushButton, option);
     } else if(appearance == RadioAppearance) {
-       p.drawPrimitive(QStyle::PE_IndicatorRadioButton, option);
+       p.drawControl(QStyle::CE_RadioButton, option);
     } else if(appearance == CheckboxAppearance) {
-       p.drawPrimitive(QStyle::PE_IndicatorCheckBox, option);
+       p.drawControl(QStyle::CE_CheckBox, option);
     }
 
     return false;

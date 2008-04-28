@@ -1,3 +1,14 @@
+2008-04-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        First part of the fix for tabbing to a checkbox/button doesn't work on Win/X11
+
+        Draw controls instead of pimitive elements, to get focus rects for free.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintButton):
+
 2008-04-28  Lincoln Ramsay  <lincoln.ramsay@trolltech.com>
 
         Reviewed by Simon.
