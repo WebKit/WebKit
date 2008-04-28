@@ -90,13 +90,14 @@ void PopupMenu::populate(const IntRect& r)
 
 void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 {
+    QWidget* window = v->containingWindow();
     populate(r);
     QRect rect = r;
     rect.moveTopLeft(v->contentsToWindow(r.topLeft()));
-    QRect global(v->containingWindow()->mapToGlobal(QPoint(rect.x(), rect.y())),
-                               QSize(rect.width(), m_popup->sizeHint().height()));
+    rect.setHeight(m_popup->sizeHint().height());
 
-    m_popup->setGeometry(global);
+    m_popup->setParent(window);
+    m_popup->setGeometry(rect);
     m_popup->setCurrentIndex(index);
     m_popup->exec();
 }

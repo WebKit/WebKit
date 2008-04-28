@@ -1,3 +1,14 @@
+2008-04-28  Simon Hausmann  <shausman@trolltech.com>
+
+        Reviewed by Holger.
+
+        Fixes: Popups/Context menu in WebKit appearing at the wrong location when embedded in the graphics view or using multiple screens
+        
+        Give the popups the right parent widget and the right coordinates relative within the parent.
+        
+
+        * Api/qwebpage.cpp:
+
 2008-04-28  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.
