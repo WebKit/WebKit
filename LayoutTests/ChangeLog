@@ -1,3 +1,14 @@
+2008-04-28  David Hyatt  <hyatt@apple.com>
+
+        Add layout test for canvas.
+
+        Reviewed by Tim Hatcher
+
+        * fast/canvas/drawImage.html: Added.
+        * platform/mac/fast/canvas/drawImage-expected.checksum: Added.
+        * platform/mac/fast/canvas/drawImage-expected.png: Added.
+        * platform/mac/fast/canvas/drawImage-expected.txt: Added.
+
 2008-04-28  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
