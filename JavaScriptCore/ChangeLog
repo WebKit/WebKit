@@ -1,3 +1,13 @@
+2008-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix assertion hit every time you view www.apple.com
+
+        * kjs/PropertyNameArray.cpp:
+        (KJS::PropertyNameArray::add): Changed assertion to allow null and empty strings.
+        Now to find out why we have a property named "" and if that's a bug!
+
 2008-04-27  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej Stachowiak.
@@ -6,7 +16,7 @@
 
         * wtf/HashFunctions.h: Explicitly use the superclass implementation of hash to avoid infinite recursion.
 
-2008-04-25  Darin Adler  <darin@apple.com>
+2008-04-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
 
