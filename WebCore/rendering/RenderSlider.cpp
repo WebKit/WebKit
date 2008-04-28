@@ -349,6 +349,7 @@ int RenderSlider::positionForOffset(const IntPoint& p)
 void RenderSlider::valueChanged()
 {
     setValueForPosition(currentPosition());
+    static_cast<HTMLInputElement*>(node())->onChange();
 }
 
 int RenderSlider::currentPosition()

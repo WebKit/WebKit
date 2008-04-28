@@ -1,3 +1,14 @@
+2008-04-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Adele.
+
+        Testcase for:
+        https://bugs.webkit.org/show_bug.cgi?id=18652
+        onchange events don't seem to fire for input[type=range] controls.
+
+        * fast/forms/slider-onchange-event-expected.txt: Added.
+        * fast/forms/slider-onchange-event.html: Added.
+
 2008-04-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
