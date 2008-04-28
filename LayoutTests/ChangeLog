@@ -1,3 +1,12 @@
+2008-04-28  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        Update the Skipped list, we pass most of the http/tests/misc
+        
+
+        * platform/qt/Skipped:
+
 2008-04-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

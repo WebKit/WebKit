@@ -890,7 +890,9 @@ storage/success-callback.html
 # most of the http tests need work
 http/tests/incremental
 http/tests/local
-http/tests/misc 
+http/tests/misc/location-test-xsl-style-sheet.xml
+http/tests/misc/willCacheResponse-delegate-callback.html
+http/tests/misc/window-dot-stop.html
 http/tests/multipart
 http/tests/navigation
 http/tests/plugins
