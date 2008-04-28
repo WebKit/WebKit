@@ -55,12 +55,12 @@ public:
     the HTML content readily available, you can use setHtml() instead. This
     function has two overloads: One which accepts a QString and another
     which accepts a QByteArray.
-    
+
     The loadStarted() signal is emitted when the view begins loading.The
     loadProgress() signal, on the other hand, is emitted whenever an element of
     the web view completes loading, such as an embedded image, a script, etc.
     Finally, the loadFinished() signal is emitted when the view has loaded
-    completely. 
+    completely.
 
     The page() function returns a pointer to the web page object. See
     \l {Elements of QWebView} for an explanation of how the web page
@@ -106,6 +106,8 @@ public:
 
 /*!
     Constructs an empty QWebView with parent \a parent.
+
+    \sa load()
 */
 QWebView::QWebView(QWidget *parent)
     : QWidget(parent)
@@ -204,6 +206,8 @@ void QWebView::setPage(QWebPage *page)
     Loads the specified \a url and displays it.
 
     \note The view remains the same until enough data has arrived to display the new \a url.
+
+    \sa setUrl(), url(), urlChanged()
 */
 void QWebView::load(const QUrl &url)
 {
@@ -218,6 +222,8 @@ void QWebView::load(const QUrl &url)
     \a body is optional and is only used for POST operations.
 
     \note The view remains the same until enough data has arrived to display the new url.
+
+    \sa url(), urlChanged()
 */
 
 #if QT_VERSION < 0x040400 && !defined(qdoc)
@@ -246,6 +252,8 @@ void QWebView::load(const QNetworkRequest &request,
     specified. For example, the encoding of an external script can be specified
     through the charset attribute of the HTML script tag. Alternatively, the
     encoding can also be specified by the web server.
+
+    \sa load(), setContent(), QWebFrame::toHtml()
 */
 void QWebView::setHtml(const QString &html, const QUrl &baseUrl)
 {
@@ -256,6 +264,8 @@ void QWebView::setHtml(const QString &html, const QUrl &baseUrl)
     Sets the content of the web view to the specified \a html.
 
     External objects referenced in the HTML document are located relative to \a baseUrl.
+
+    \sa load(), setContent(), QWebFrame::toHtml()
 */
 void QWebView::setHtml(const QByteArray &html, const QUrl &baseUrl)
 {
@@ -268,6 +278,8 @@ void QWebView::setHtml(const QByteArray &html, const QUrl &baseUrl)
     auto-detection.
 
     External objects referenced in the content are located relative to \a baseUrl.
+
+    \sa load(), setHtml(), QWebFrame::toHtml()
 */
 void QWebView::setContent(const QByteArray &data, const QString &mimeType, const QUrl &baseUrl)
 {
@@ -292,6 +304,8 @@ QWebHistory *QWebView::history() const
     It is equivalent to
 
     \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 1
+
+    \sa QWebSettings::globalSettings()
 */
 QWebSettings *QWebView::settings() const
 {
@@ -301,6 +315,8 @@ QWebSettings *QWebView::settings() const
 /*!
     \property QWebView::title
     \brief the title of the web page currently viewed
+
+    \sa titleChanged()
 */
 QString QWebView::title() const
 {
@@ -314,6 +330,8 @@ QString QWebView::title() const
     \brief the url of the web page currently viewed
 
     Setting this property clears the view and loads the url.
+
+    \sa load(), urlChanged()
 */
 
 void QWebView::setUrl(const QUrl &url)
@@ -331,6 +349,8 @@ QUrl QWebView::url() const
 /*!
     \property QWebView::icon
     \brief the icon associated with the web page currently viewed
+
+    \sa iconChanged()
 */
 QIcon QWebView::icon() const
 {
@@ -342,6 +362,8 @@ QIcon QWebView::icon() const
 /*!
     \property QWebView::selectedText
     \brief the text currently selected
+
+    \sa findText(), selectionChanged()
 */
 QString QWebView::selectedText() const
 {
@@ -364,6 +386,8 @@ QAction *QWebView::pageAction(QWebPage::WebAction action) const
     The following example triggers the copy action and therefore copies any selected text to the clipboard.
 
     \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 2
+
+    \sa pageAction()
 */
 void QWebView::triggerPageAction(QWebPage::WebAction action, bool checked)
 {
@@ -433,6 +457,8 @@ qreal QWebView::textSizeMultiplier() const
 /*!
     Finds the next occurrence of the string, \a subString, in the page, using the given \a options.
     Returns true of \a subString was found and selects the match visually; otherwise returns false.
+
+    \sa selectedText(), selectionChanged()
 */
 bool QWebView::findText(const QString &subString, QWebPage::FindFlags options)
 {
@@ -464,7 +490,9 @@ bool QWebView::event(QEvent *e)
 }
 
 /*!
-  Prints the main frame to the given \a printer.
+    Prints the main frame to the given \a printer.
+
+    \sa QWebFrame::print(), QPrintPreviewDialog
 */
 void QWebView::print(QPrinter *printer) const
 {
@@ -477,6 +505,8 @@ void QWebView::print(QPrinter *printer) const
     It is equivalent to
 
     \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 3
+
+    \sa reload(), pageAction(), loadFinished()
 */
 void QWebView::stop()
 {
@@ -492,6 +522,8 @@ void QWebView::stop()
     It is equivalent to
 
     \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 4
+
+    \sa forward(), pageAction()
 */
 void QWebView::back()
 {
@@ -507,6 +539,8 @@ void QWebView::back()
     It is equivalent to
 
     \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 5
+
+    \sa back(), pageAction()
 */
 void QWebView::forward()
 {
@@ -516,6 +550,8 @@ void QWebView::forward()
 
 /*!
     Reloads the current document.
+
+    \sa stop(), pageAction(), loadStarted()
 */
 void QWebView::reload()
 {
@@ -556,6 +592,8 @@ void QWebView::paintEvent(QPaintEvent *ev)
 /*!
     This function is called whenever WebKit wants to create a new window of the given \a type, for example as a result of
     a JavaScript request to open a document in a new window.
+
+    \sa QWebPage::createWindow()
 */
 QWebView *QWebView::createWindow(QWebPage::WebWindowType type)
 {
@@ -741,7 +779,7 @@ void QWebView::changeEvent(QEvent *e)
 
   This signal is emitted whenever the \a url of the main frame changes.
 
-  \sa url()
+  \sa url(), load()
 */
 
 /*!
@@ -754,24 +792,32 @@ void QWebView::changeEvent(QEvent *e)
     \fn void QWebView::iconChanged()
 
     This signal is emitted whenever the icon of the page is loaded or changes.
+
+    \sa icon()
 */
 
 /*!
     \fn void QWebView::loadStarted()
 
     This signal is emitted when a new load of the page is started.
+
+    \sa loadProgress(), loadFinished()
 */
 
 /*!
     \fn void QWebView::loadFinished()
 
     This signal is emitted when a load of the frame is finished.
+
+    \sa loadStarted(), QWebFrame::loadDone()
 */
 
 /*!
     \fn void QWebView::selectionChanged()
 
     This signal is emitted whenever the selection changes.
+
+    \sa selectedText()
 */
 
 /*!
@@ -784,6 +830,8 @@ void QWebView::changeEvent(QEvent *e)
 
     The current value is provided by \a progress and scales from 0 to 100,
     which is the default range of QProgressBar.
+
+    \sa loadStarted(), loadFinished()
 */
 
 /*!

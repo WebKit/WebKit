@@ -384,7 +384,7 @@ void QWebPagePrivate::mousePressEvent(QMouseEvent *ev)
         mouseTripleClickEvent(ev);
         return;
     }
-    
+
     frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 1));
 }
 
@@ -395,7 +395,7 @@ void QWebPagePrivate::mouseDoubleClickEvent(QMouseEvent *ev)
         return;
 
     frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 2));
-    
+
     tripleClickTimer.start(QApplication::doubleClickInterval(), q);
     tripleClick = ev->pos();
 }
@@ -696,7 +696,7 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
         return;
     }
 
-    if (!ev->preeditString().isEmpty()) {        
+    if (!ev->preeditString().isEmpty()) {
         QString preedit = ev->preeditString();
         // ### FIXME: use the provided QTextCharFormat (use color at least)
         Vector<CompositionUnderline> underlines;
@@ -959,7 +959,7 @@ QWebPage::QWebPage(QObject *parent)
 }
 
 /*!
-    Destructor.
+    Destroys the web page.
 */
 QWebPage::~QWebPage()
 {
@@ -974,6 +974,8 @@ QWebPage::~QWebPage()
 
     The main frame provides access to the hierarchy of sub-frames and is also needed if you
     want to explicitly render a web page into a given painter.
+
+    \sa currentFrame()
 */
 QWebFrame *QWebPage::mainFrame() const
 {
@@ -983,6 +985,8 @@ QWebFrame *QWebPage::mainFrame() const
 
 /*!
     Returns the frame currently active.
+
+    \sa mainFrame(), frameCreated()
 */
 QWebFrame *QWebPage::currentFrame() const
 {
@@ -991,7 +995,6 @@ QWebFrame *QWebPage::currentFrame() const
 
 /*!
     Returns a pointer to the view's history of navigated web pages.
-
 */
 QWebHistory *QWebPage::history() const
 {
@@ -1018,7 +1021,6 @@ QWidget *QWebPage::view() const
 {
     return d->view;
 }
-
 
 /*!
     This function is called whenever a JavaScript program tries to print a \a message to the web browser's console.
@@ -1085,6 +1087,8 @@ bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QStr
 
     If the view associated with the web page is a QWebView object, then the default implementation forwards
     the request to QWebView's createWindow() function; otherwise it returns a null pointer.
+
+    \sa acceptNavigationRequest()
 */
 QWebPage *QWebPage::createWindow(WebWindowType type)
 {
@@ -1134,6 +1138,8 @@ static void openNewWindow(const QUrl& url, WebCore::Frame* frame)
 
     If \a action is a checkable action then \a checked specified whether the action
     is toggled or not.
+
+    \sa action()
 */
 void QWebPage::triggerAction(WebAction action, bool checked)
 {
@@ -1360,6 +1366,8 @@ void QWebPage::setViewportSize(const QSize &size) const
 
     The default implementation interprets the page's linkDelegationPolicy and emits linkClicked accordingly or returns true
     to let QWebPage handle the navigation itself.
+
+    \sa createWindow()
 */
 #if QT_VERSION < 0x040400
 bool QWebPage::acceptNavigationRequest(QWebFrame *frame, const QWebNetworkRequest &request, QWebPage::NavigationType type)
@@ -1389,6 +1397,8 @@ bool QWebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &
 /*!
     \property QWebPage::selectedText
     \brief the text currently selected
+
+    \sa selectionChanged()
 */
 QString QWebPage::selectedText() const
 {
@@ -1403,6 +1413,8 @@ QString QWebPage::selectedText() const
 
    QWebPage also takes care of implementing the action, so that upon
    triggering the corresponding action is performed on the page.
+
+   \sa triggerAction()
 */
 QAction *QWebPage::action(WebAction action) const
 {
@@ -1575,7 +1587,6 @@ bool QWebPage::isModified() const
     return d->modified;
 }
 
-
 /*!
     Returns a pointer to the undo stack used for editable content.
 */
@@ -1592,7 +1603,7 @@ QUndoStack *QWebPage::undoStack() const
 bool QWebPage::event(QEvent *ev)
 {
     switch (ev->type()) {
-    case QEvent::Timer:    
+    case QEvent::Timer:
         d->timerEvent(static_cast<QTimerEvent*>(ev));
         break;
     case QEvent::MouseMove:
@@ -1839,6 +1850,8 @@ bool QWebPage::findText(const QString &subString, FindFlags options)
 
 /*!
     Returns a pointer to the page's settings object.
+
+    \sa QWebSettings::globalSettings()
 */
 QWebSettings *QWebPage::settings() const
 {
@@ -2140,6 +2153,8 @@ void QWebPagePrivate::_q_onLoadProgressChanged(int) {
 /*!
     Returns the total number of bytes that were received from the network to render the current page,
     including extra content such as embedded images.
+
+    \sa bytesReceived()
 */
 quint64 QWebPage::totalBytes() const {
     return d->m_bytesReceived;
@@ -2148,6 +2163,8 @@ quint64 QWebPage::totalBytes() const {
 
 /*!
     Returns the number of bytes that were received from the network to render the current page.
+
+    \sa totalBytes()
 */
 quint64 QWebPage::bytesReceived() const {
     return d->m_totalBytes;
@@ -2160,6 +2177,8 @@ quint64 QWebPage::bytesReceived() const {
     The current value is provided by \a progress and scales from 0 to 100,
     which is the default range of QProgressBar.
     It accumulates changes from all the child frames.
+
+    \sa bytesReceived()
 */
 
 /*!
@@ -2169,6 +2188,8 @@ quint64 QWebPage::bytesReceived() const {
     The first parameter is the \a link url, the second is the link \a title
     if any, and third \a textContent is the text content. Method is emitter with both
     empty parameters when the mouse isn't hovering over any link element.
+
+    \sa linkClicked()
 */
 
 /*!
@@ -2187,6 +2208,8 @@ quint64 QWebPage::bytesReceived() const {
     \fn void QWebPage::selectionChanged()
 
     This signal is emitted whenever the selection changes.
+
+    \sa selectedText()
 */
 
 /*!
@@ -2229,6 +2252,8 @@ quint64 QWebPage::bytesReceived() const {
 
     This signal is emitted whenever the page requests the web browser to print \a frame,
     for example through the JavaScript \c{window.print()} call.
+
+    \sa QWebFrame::print(), QPrintPreviewDialog
 */
 
 /*!
@@ -2239,6 +2264,8 @@ quint64 QWebPage::bytesReceived() const {
     At signal emissions time the meta data of the QNetworkReply \a reply is available.
 
     \note This signal is only emitted if the forwardUnsupportedContent property is set to true.
+
+    \sa downloadRequested()
 */
 
 /*!
@@ -2246,6 +2273,8 @@ quint64 QWebPage::bytesReceived() const {
 
     This signal is emitted when the user decides to download a link. The url of
     the link as well as additional meta-information is contained in \a request.
+
+    \sa unsupportedContent()
 */
 
 /*!
@@ -2264,6 +2293,8 @@ quint64 QWebPage::bytesReceived() const {
     property is set to delegate the link handling for the specified \a url.
 
     By default no links are delegated and are handled by QWebPage instead.
+
+    \sa linkHovered()
 */
 
 /*!

@@ -1,3 +1,39 @@
+2008-04-28  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
+        Doc: Add see also's (and a few minor whitespace/typo corrections)
+        
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::~QWebFrame):
+        (QWebFrame::setHtml):
+        (QWebFrame::setContent):
+        (QWebFrame::parentFrame):
+        (QWebFrame::childFrames):
+        (QWebFrame::setScrollBarValue):
+        (QWebFrame::scrollBarValue):
+        (QWebFrame::scrollBarMaximum):
+        (QWebFrame::scrollBarMinimum):
+        (QWebFrame::render):
+        (QWebFrame::pos):
+        (QWebFrame::geometry):
+        (QWebFrame::print):
+        (QWebFrame::evaluateJavaScript):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::mousePressEvent):
+        (QWebPagePrivate::mouseDoubleClickEvent):
+        (QWebPage::~QWebPage):
+        (QWebPage::javaScriptPrompt):
+        (openNewWindow):
+        (QWebPage::setViewportSize):
+        (QWebPage::acceptNavigationRequest):
+        (QWebPage::action):
+        (QWebPage::userAgentForUrl):
+        (QWebPagePrivate::_q_onLoadProgressChanged):
+        * Api/qwebview.cpp:
+        (QWebView::event):
+
 2008-04-28  Kavindra Devi Palaraja  <kdpalara@trolltech.com>
 
         Reviewed by Simon.
