@@ -1,5 +1,11 @@
 2008-04-28  Simon Hausmann  <hausmann@webkit.org>
 
+        Prospective Wx build fix.
+
+        * platform/graphics/wx/FontPlatformData.h:
+
+2008-04-28  Simon Hausmann  <hausmann@webkit.org>
+
         Reviewed by Alp.
 
         Gtk build fix, similar to the changes done in r32609.
