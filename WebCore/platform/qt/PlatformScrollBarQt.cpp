@@ -313,7 +313,7 @@ bool PlatformScrollbar::handleMousePressEvent(const PlatformMouseEvent& evt)
         setValue(pixelPosToRangeValue((m_orientation == HorizontalScrollbar ?
                                         pos.x() : pos.y()) - thumbLength() / 2));
 
-    } else { // Left button
+    } else { // Left button, or if middle click centering is not supported
         const QPoint topLeft = m_opt.rect.topLeft();
         m_opt.rect.moveTo(QPoint(0, 0));
         QStyle::SubControl sc = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, &m_opt, pos, 0);

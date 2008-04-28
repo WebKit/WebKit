@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        Prevent middle-click from triggering open URL from clipboard when the event has already been accepted.
+
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::handleMousePressEvent):
+
+2008-04-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
         Fix scrollbar behavior in QtWebKit to match QScrollBar.
 
         Right click context menu is now supported, along with
