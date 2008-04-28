@@ -1,3 +1,13 @@
+2008-04-28  Olivier Goffart  <ogoffart@trolltech.com>
+
+        Reviewed by Simon.
+
+        Avoid comparing to 0 in qFuzzyCompare for increased
+        numeric stability.
+
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::addArc):
+
 2008-04-28  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.
