@@ -47,6 +47,7 @@
 #include "FrameLoader.h"
 #include "FrameLoadRequest.h"
 #include "KURL.h"
+#include "Logging.h"
 #include "Image.h"
 #include "InspectorClientQt.h"
 #include "InspectorController.h"
@@ -122,6 +123,8 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     , modified(false)
     , viewportSize(QSize(0,0))
 {
+    WebCore::InitializeLoggingChannelsIfNecessary();
+
     chromeClient = new ChromeClientQt(q);
     contextMenuClient = new ContextMenuClientQt();
     editorClient = new EditorClientQt(q);

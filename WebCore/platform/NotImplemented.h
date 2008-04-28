@@ -32,26 +32,14 @@
 #if PLATFORM(GTK)
     #define supressNotImplementedWarning() getenv("DISABLE_NI_WARNING")
 #elif PLATFORM(QT)
+    #include <QByteArray>
     #define supressNotImplementedWarning() !qgetenv("DISABLE_NI_WARNING").isEmpty()
 #else
     #define supressNotImplementedWarning() false
 #endif
 
 #if defined(NDEBUG)
-
-#define notImplemented() ((void)0)
-
-#elif PLATFORM(QT)
-    #include <qglobal.h>
-    #include <qbytearray.h>
-    #define notImplemented() do { \
-        static bool havePrinted = false; \
-        if (!havePrinted && !supressNotImplementedWarning()) { \
-            qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, WTF_PRETTY_FUNCTION); \
-            havePrinted = true; \
-        } \
-    } while (0)
-
+    #define notImplemented() ((void)0)
 #else
 
 #define notImplemented() do { \

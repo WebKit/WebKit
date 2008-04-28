@@ -1,3 +1,16 @@
+2008-04-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Implemented channel-based logging for QtWebKit.
+
+        Comma-separated log channels are read from the QT_WEBKIT_LOG environment variable.
+        Warnings for notImplemented() is still output by default, but can be disabled
+        by setting DISABLE_NI_WARNINGS=1.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+
 2008-04-28  Simon Hausmann  <shausman@trolltech.com>
 
         Rubber-stamped by Lars
