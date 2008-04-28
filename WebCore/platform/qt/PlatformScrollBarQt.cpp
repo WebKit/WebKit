@@ -40,8 +40,14 @@
 #include <QDebug>
 #include <QPainter>
 #include <QStyle>
+#include <QMenu>
 
 using namespace std;
+
+static QString tr(const char* text)
+{
+    return QCoreApplication::translate("QWebPage", text);
+}
 
 namespace WebCore {
 
@@ -202,6 +208,25 @@ int PlatformScrollbar::trackLength() const
     return m_orientation == HorizontalScrollbar ? track.width() : track.height();
 }
 
+int PlatformScrollbar::pixelPosToRangeValue(int pos) const
+{
+    int thumbLen = thumbLength();
+
+    IntRect track = QApplication::style()->subControlRect(QStyle::CC_ScrollBar, &m_opt,
+                                                          QStyle::SC_ScrollBarGroove, 0);
+    int thumbMin, thumbMax;
+    if (m_orientation == HorizontalScrollbar) {
+        thumbMin = track.x();
+        thumbMax = track.right() - thumbLen + 1;
+    } else {
+        thumbMin = track.y();
+        thumbMax = track.bottom() - thumbLen + 1;
+    }
+
+    return  QStyle::sliderValueFromPosition(0, m_totalSize - m_visibleSize, pos - thumbMin,
+                                            thumbMax - thumbMin, m_opt.upsideDown);
+}
+
 bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
 {
     const QPoint pos = convertFromContainingWindow(evt.pos());
@@ -276,30 +301,42 @@ bool PlatformScrollbar::handleMouseOutEvent(const PlatformMouseEvent& evt)
 
 bool PlatformScrollbar::handleMousePressEvent(const PlatformMouseEvent& evt)
 {
-    const QPoint pos = convertFromContainingWindow(evt.pos());
-    //qDebug() << "PlatformScrollbar::handleMousePressEvent" << m_opt.rect << pos << evt.pos();
+    // Early exit for right click
+    if (evt.button() == RightButton)
+        return true; // Handled as context menu
 
-    const QPoint topLeft = m_opt.rect.topLeft();
-    m_opt.rect.moveTo(QPoint(0, 0));
-    QStyle::SubControl sc = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, &m_opt, pos, 0);
-    m_opt.rect.moveTo(topLeft);
-    switch (sc) {
-        case QStyle::SC_ScrollBarAddLine:
-        case QStyle::SC_ScrollBarSubLine:
-        case QStyle::SC_ScrollBarSlider:
-            m_opt.state |= QStyle::State_Sunken;
-        case QStyle::SC_ScrollBarAddPage:
-        case QStyle::SC_ScrollBarSubPage:
-        case QStyle::SC_ScrollBarGroove:
-            m_pressedPart = sc;
-            break;
-        default:
-            m_pressedPart = QStyle::SC_None;
-            return false;
+    const QPoint pos = convertFromContainingWindow(evt.pos());
+    bool midButtonAbsPos = QApplication::style()->styleHint(QStyle::SH_ScrollBar_MiddleClickAbsolutePosition);
+
+    // Middle click centers slider thumb, if supported
+    if (midButtonAbsPos && evt.button() == MiddleButton) {
+        setValue(pixelPosToRangeValue((m_orientation == HorizontalScrollbar ?
+                                        pos.x() : pos.y()) - thumbLength() / 2));
+
+    } else { // Left button
+        const QPoint topLeft = m_opt.rect.topLeft();
+        m_opt.rect.moveTo(QPoint(0, 0));
+        QStyle::SubControl sc = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, &m_opt, pos, 0);
+        m_opt.rect.moveTo(topLeft);
+        switch (sc) {
+            case QStyle::SC_ScrollBarAddLine:
+            case QStyle::SC_ScrollBarSubLine:
+            case QStyle::SC_ScrollBarSlider:
+                m_opt.state |= QStyle::State_Sunken;
+            case QStyle::SC_ScrollBarAddPage:
+            case QStyle::SC_ScrollBarSubPage:
+            case QStyle::SC_ScrollBarGroove:
+                m_pressedPart = sc;
+                break;
+            default:
+                m_pressedPart = QStyle::SC_None;
+                return false;
+        }
+        m_pressedPos = m_orientation == HorizontalScrollbar ? pos.x() : pos.y();
+        autoscrollPressedPart(cInitialTimerDelay);
+        invalidate();
     }
-    m_pressedPos = m_orientation == HorizontalScrollbar ? pos.x() : pos.y();
-    autoscrollPressedPart(cInitialTimerDelay);
-    invalidate();
+
     return true;
 }
 
@@ -320,6 +357,49 @@ bool PlatformScrollbar::handleMouseReleaseEvent(const PlatformMouseEvent& evt)
     m_pressedPos = 0;
     stopTimerIfNeeded();
     invalidate();
+    return true;
+}
+
+bool PlatformScrollbar::handleContextMenuEvent(const PlatformMouseEvent& event)
+{
+    bool horizontal = (m_orientation == HorizontalScrollbar);
+
+    QMenu menu;
+    QAction* actScrollHere = menu.addAction(tr("Scroll here"));
+    menu.addSeparator();
+
+    QAction* actScrollTop = menu.addAction(horizontal ? tr("Left edge") : tr("Top"));
+    QAction* actScrollBottom = menu.addAction(horizontal ? tr("Right edge") : tr("Bottom"));
+    menu.addSeparator();
+
+    QAction* actPageUp = menu.addAction(horizontal ? tr("Page left") : tr("Page up"));
+    QAction* actPageDown = menu.addAction(horizontal ? tr("Page right") : tr("Page down"));
+    menu.addSeparator();
+
+    QAction* actScrollUp = menu.addAction(horizontal ? tr("Scroll left") : tr("Scroll up"));
+    QAction* actScrollDown = menu.addAction(horizontal ? tr("Scroll right") : tr("Scroll down"));
+
+    const QPoint globalPos = QPoint(event.globalX(), event.globalY());
+    QAction* actionSelected = menu.exec(globalPos);
+
+    if (actionSelected == 0)
+        /* Do nothing */ ;
+    else if (actionSelected == actScrollHere) {
+        const QPoint pos = convertFromContainingWindow(event.pos());
+        setValue(pixelPosToRangeValue(horizontal ? pos.x() : pos.y()));
+    } else if (actionSelected == actScrollTop)
+        setValue(0);
+    else if (actionSelected == actScrollBottom)
+        setValue(m_totalSize - m_visibleSize);
+    else if (actionSelected == actPageUp)
+        scroll(horizontal ? ScrollLeft: ScrollUp, ScrollByPage, 1);
+    else if (actionSelected == actPageDown)
+        scroll(horizontal ? ScrollRight : ScrollDown, ScrollByPage, 1);
+    else if (actionSelected == actScrollUp)
+        scroll(horizontal ? ScrollLeft : ScrollUp, ScrollByLine, 1);
+    else if (actionSelected == actScrollDown)
+        scroll(horizontal ? ScrollRight : ScrollDown, ScrollByLine, 1);
+
     return true;
 }
 

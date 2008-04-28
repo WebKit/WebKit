@@ -2,6 +2,23 @@
 
         Reviewed by Simon.
 
+        Fix scrollbar behavior in QtWebKit to match QScrollBar.
+
+        Right click context menu is now supported, along with
+        middle click to center slider thumb over mouse cursor.
+
+        * platform/qt/PlatformScrollBar.h:
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (tr):
+        (WebCore::PlatformScrollbar::pixelPosToRangeValue):
+        (WebCore::PlatformScrollbar::handleMousePressEvent):
+        (WebCore::PlatformScrollbar::handleMouseReleaseEvent):
+        (WebCore::PlatformScrollbar::handleContextMenuEvent):
+
+2008-04-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
         Implemented channel-based logging for QtWebKit.
 
         Comma-separated log channels are read from the QT_WEBKIT_LOG environment variable.

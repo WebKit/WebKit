@@ -1729,8 +1729,9 @@ QWebPage::LinkDelegationPolicy QWebPage::linkDelegationPolicy() const
 }
 
 /*!
-    Passes the context menu event, \a event, to the currently displayed webpage and
-    returns true if the page handled the event; otherwise false is returned.
+    Filters the context menu event, \a event, through handlers for scrollbars and
+    custom event handlers in the web page. Returns true if the event was handled;
+    otherwise false.
 
     A web page may swallow a context menu event through a custom event handler, allowing for context
     menus to be implemented in HTML/JavaScript. This is used by \l{http://maps.google.com/}{Google
@@ -1740,12 +1741,20 @@ bool QWebPage::swallowContextMenuEvent(QContextMenuEvent *event)
 {
     d->page->contextMenuController()->clearContextMenu();
 
+    if (QWebFrame* webFrame = d->frameAt(event->pos())) {
+        Frame* frame = QWebFramePrivate::core(webFrame);
+        if (PlatformScrollbar* scrollbar = frame->view()->scrollbarUnderMouse(PlatformMouseEvent(event, 1))) {
+            return scrollbar->handleContextMenuEvent(PlatformMouseEvent(event, 1));
+        }
+    }
+
     WebCore::Frame* focusedFrame = d->page->focusController()->focusedOrMainFrame();
     focusedFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(event, 1));
     ContextMenu *menu = d->page->contextMenuController()->contextMenu();
     // If the website defines its own handler then sendContextMenuEvent takes care of
     // calling/showing it and the context menu pointer will be zero. This is the case
     // on maps.google.com for example.
+
     return !menu;
 }
 

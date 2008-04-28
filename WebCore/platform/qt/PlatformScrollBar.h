@@ -56,6 +56,7 @@ public:
     virtual bool handleMouseOutEvent(const PlatformMouseEvent&);
     virtual bool handleMousePressEvent(const PlatformMouseEvent&);
     virtual bool handleMouseReleaseEvent(const PlatformMouseEvent&);
+    virtual bool handleContextMenuEvent(const PlatformMouseEvent&);
 
     bool isEnabled() const;
 
@@ -83,6 +84,8 @@ private:
     ScrollGranularity pressedPartScrollGranularity();
 
     bool thumbUnderMouse();
+
+    int pixelPosToRangeValue(int pos) const;
 
     int m_pressedPos;
     QStyle::SubControl m_pressedPart;
