@@ -374,6 +374,11 @@ void FrameLoaderClientQt::dispatchDidCommitLoad()
         return;
 
     m_webFrame->page()->d->updateNavigationActions();
+
+    // We should assume first the frame has no title. If it has, then the above dispatchDidReceiveTitle()
+    // will be called very soon with the correct title.
+    // This properly resets the title when we navigate to a URI without a title.
+    emit titleChanged(String());
 }
 
 
