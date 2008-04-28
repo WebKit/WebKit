@@ -1,5 +1,12 @@
 2008-04-28  Alexey Proskuryakov  <ap@webkit.org>
 
+        Windows build fix.
+
+        * kjs/ExecState.h: For whatever reason, MSVC couldn't generate a default constructor for
+        a struct that had a "const List" member. Removing the const qulifier makes the problem go away.
+
+2008-04-28  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         Fix run-webkit-tests --threading
