@@ -1144,9 +1144,11 @@ void QWebPage::triggerAction(WebAction action, bool checked)
         case DownloadLinkToDisk:
             frame->loader()->client()->startDownload(WebCore::ResourceRequest(d->hitTestResult.linkUrl(), frame->loader()->outgoingReferrer()));
             break;
+#ifndef QT_NO_CLIPBOARD
         case CopyImageToClipboard:
             QApplication::clipboard()->setPixmap(d->hitTestResult.pixmap());
             break;
+#endif
         case Back:
             d->page->goBack();
             break;

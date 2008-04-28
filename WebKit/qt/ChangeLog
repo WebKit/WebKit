@@ -1,3 +1,13 @@
+2008-04-28  Lincoln Ramsay  <lincoln.ramsay@trolltech.com>
+
+        Reviewed by Simon.
+
+        Compile when QT_NO_CLIPBOARD is defined.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction):
+
 2008-04-28  David Boddie  <dboddie@trolltech.com>
 
         Reviewed by Simon.

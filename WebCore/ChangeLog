@@ -1,3 +1,24 @@
+2008-04-28  Lincoln Ramsay  <lincoln.ramsay@trolltech.com>
+
+        Reviewed by Simon.
+
+        Compile when QT_NO_CLIPBOARD is defined.
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::ClipboardQt):
+        (WebCore::ClipboardQt::clearData):
+        (WebCore::ClipboardQt::clearAllData):
+        (WebCore::ClipboardQt::setData):
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+        (WebCore::ClipboardQt::writeURL):
+        (WebCore::ClipboardQt::writeRange):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::writeImage):
+
 2008-04-28  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
