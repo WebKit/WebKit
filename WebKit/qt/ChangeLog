@@ -1,3 +1,10 @@
+2008-04-28  Simon Hausmann  <hausmann@webkit.org>
+
+        Qt/Win build fix. Include config.h to get the implicit MathExtras.h
+        inclusion correct with regards to rand_s.
+
+        * Api/qwebhistory.cpp:
+
 2008-04-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
