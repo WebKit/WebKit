@@ -54,14 +54,14 @@ public:
     Alternatively, setUrl() can also be used to load a web site. If you have
     the HTML content readily available, you can use setHtml() instead.
 
-    The loadStarted() signal is emitted when the view begins loading.The
+    The loadStarted() signal is emitted when the view begins loading. The
     loadProgress() signal, on the other hand, is emitted whenever an element of
     the web view completes loading, such as an embedded image, a script, etc.
     Finally, the loadFinished() signal is emitted when the view has loaded
     completely.
 
     The page() function returns a pointer to the web page object. See
-    \l {Elements of QWebView} for an explanation of how the web page
+    \l{Elements of QWebView} for an explanation of how the web page
     is related to the view. To modify your web view's settings, you can access
     the QWebSettings object with the settings() function. With QWebSettings,
     you can change the default fonts, enable or disable features such as
@@ -77,12 +77,12 @@ public:
     If you require a custom context menu, you can implement it by reimplementing
     \l{QWidget::}{contextMenuEvent()} and populating your QMenu with the actions
     obtained from pageAction(). More functionality such as reloading the view,
-    copying selected text to the clip board, or pasting in to the view, is also
+    copying selected text to the clipboard, or pasting into the view, is also
     encapsulated within the QAction objects returned by pageAction(). These
     actions can be programmatically triggered using triggerPageAction().
-    Alternatively, the actions can be added to a tool bar or a menu directly.
-    QWebView maintains the state of the returned actions but allows for
-    modifying action properties such as \l{QAction::}{text} or
+    Alternatively, the actions can be added to a toolbar or a menu directly.
+    QWebView maintains the state of the returned actions but allows
+    modification of action properties such as \l{QAction::}{text} or
     \l{QAction::}{icon}.
 
     A QWebView can be printed onto a QPrinter using the print() function.
@@ -91,7 +91,7 @@ public:
     signal.
 
     If you want to provide support for web sites that allow the user to open
-    new windows, such as pop up windows, you can subclass QWebView and
+    new windows, such as pop-up windows, you can subclass QWebView and
     reimplement the createWindow() function.
 
     \section1 Elements of QWebView

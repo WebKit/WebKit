@@ -1,3 +1,11 @@
+2008-04-28  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon.
+
+        Minor documentation changes.
+
+        * Api/qwebview.cpp:
+
 2008-04-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
