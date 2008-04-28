@@ -125,9 +125,11 @@ private:
     enum EPositionType { START, END, BASE, EXTENT };
 
     VisiblePosition modifyExtendingRightForward(TextGranularity);
-    VisiblePosition modifyMovingRightForward(TextGranularity);
+    VisiblePosition modifyMovingRight(TextGranularity);
+    VisiblePosition modifyMovingForward(TextGranularity);
     VisiblePosition modifyExtendingLeftBackward(TextGranularity);
-    VisiblePosition modifyMovingLeftBackward(TextGranularity);
+    VisiblePosition modifyMovingLeft(TextGranularity);
+    VisiblePosition modifyMovingBackward(TextGranularity);
 
     void layout();
     IntRect caretRepaintRect() const;

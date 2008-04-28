@@ -1,3 +1,34 @@
+2008-04-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=3729
+          <rdar://problem/4036353> REGRESSION: arrow keys move insertion bar backwards in RTL text
+
+        Test: editing/selection/move-left-right.html
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyMovingRight): Added. Currently
+        implemented for character granularity, all other being treated as
+        "forward".
+        (WebCore::SelectionController::modifyMovingForward): Renamed
+        modifyMovingRightForward() to this.
+        (WebCore::SelectionController::modifyMovingLeft): Added. Currently
+        implemented for character granularity, all other being treated as
+        "backward".
+        (WebCore::SelectionController::modifyMovingBackward): Renamed
+        modifyMovingLeftBackward() to this.
+        (WebCore::SelectionController::modify): Changed to call either the
+        visual (left/right) or logical (backward/forward) methods depending on
+        the 'dir' argument for moves.
+        * editing/SelectionController.h:
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate): Added.
+        (WebCore::VisiblePosition::left): Added.
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate): Added.
+        (WebCore::VisiblePosition::right): Added.
+        * editing/VisiblePosition.h:
+
 2008-04-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

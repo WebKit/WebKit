@@ -70,6 +70,9 @@ public:
     VisiblePosition honorEditableBoundaryAtOrBefore(const VisiblePosition&) const;
     VisiblePosition honorEditableBoundaryAtOrAfter(const VisiblePosition&) const;
 
+    VisiblePosition left(bool stayInEditableContent = false) const;
+    VisiblePosition right(bool stayInEditableContent = false) const;
+
     UChar characterAfter() const;
     UChar characterBefore() const { return previous().characterAfter(); }
     
@@ -97,6 +100,9 @@ public:
 private:
     void init(const Position&, EAffinity);
     Position canonicalPosition(const Position&);
+
+    Position leftVisuallyDistinctCandidate() const;
+    Position rightVisuallyDistinctCandidate() const;
 
     Position m_deepPosition;
     EAffinity m_affinity;
