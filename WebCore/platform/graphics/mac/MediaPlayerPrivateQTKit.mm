@@ -132,8 +132,11 @@ using namespace std;
 namespace WebCore {
 
 static const float endPointTimerInterval = 0.020f;
+
+#ifdef BUILDING_ON_TIGER
 static const long minimumQuickTimeVersion = 0x07300000; // 7.3
-    
+#endif
+
 MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     : m_player(player)
     , m_objcObserver(AdoptNS, [[WebCoreMovieObserver alloc] initWithCallback:this])
@@ -669,9 +672,9 @@ void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
     
 bool MediaPlayerPrivate::isAvailable()
 {
+#ifdef BUILDING_ON_TIGER
     SInt32 version;
     OSErr result;
-    // This Carbon API is available in 64 bit too
     result = Gestalt(gestaltQuickTime, &version);
     if (result != noErr) {
         LOG_ERROR("No QuickTime available. Disabling <video> and <audio> support.");
@@ -682,6 +685,10 @@ bool MediaPlayerPrivate::isAvailable()
         return false;
     }
     return true;
+#else
+    // On 10.5 and higher, QuickTime will always be new enough for <video> and <audio> support, so we just check that the framework can be loaded.
+    return QTKitLibrary();
+#endif
 }
     
 void MediaPlayerPrivate::disableUnsupportedTracks(unsigned& enabledTrackCount)
