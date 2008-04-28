@@ -113,15 +113,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-// FIXME: This is a workaround for a bug in WTF, where it's impossible to use a custom Hash function but with default traits.
-// It should be possible to do this without a StorageTraits specialization.
-namespace WTF {
-    template<> struct HashKeyStorageTraits<WebCore::PluginPackageHash, HashTraits<RefPtr<WebCore::PluginPackage> > > {
-        typedef IntTypes<sizeof(RefPtr<WebCore::PluginPackage>)>::SignedType IntType;
-        typedef WebCore::PluginPackageHash Hash;
-        typedef HashTraits<IntType> Traits;
-    };
-}
-
-
 #endif
