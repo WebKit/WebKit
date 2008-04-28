@@ -52,9 +52,7 @@ public:
     \snippet doc/src/snippets/webkit/simple/main.cpp Using QWebView
 
     Alternatively, setUrl() can also be used to load a web site. If you have
-    the HTML content readily available, you can use setHtml() instead. This
-    function has two overloads: One which accepts a QString and another
-    which accepts a QByteArray.
+    the HTML content readily available, you can use setHtml() instead.
 
     The loadStarted() signal is emitted when the view begins loading.The
     loadProgress() signal, on the other hand, is emitted whenever an element of
@@ -261,18 +259,6 @@ void QWebView::load(const QNetworkRequest &request,
     \sa load(), setContent(), QWebFrame::toHtml()
 */
 void QWebView::setHtml(const QString &html, const QUrl &baseUrl)
-{
-    page()->mainFrame()->setHtml(html, baseUrl);
-}
-
-/*!
-    Sets the content of the web view to the specified \a html.
-
-    External objects referenced in the HTML document are located relative to \a baseUrl.
-
-    \sa load(), setContent(), QWebFrame::toHtml()
-*/
-void QWebView::setHtml(const QByteArray &html, const QUrl &baseUrl)
 {
     page()->mainFrame()->setHtml(html, baseUrl);
 }

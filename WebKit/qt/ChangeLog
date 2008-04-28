@@ -1,3 +1,14 @@
+2008-04-28  Simon Hausmann  <shausman@trolltech.com>
+
+        Rubber-stamped by Lars
+
+        Removed setHtml(const QByteArray &) overload as it breaks the common use of the setHtml() API.
+
+        * Api/qwebframe.cpp:
+        * Api/qwebframe.h:
+        * Api/qwebview.cpp:
+        * Api/qwebview.h:
+
 2008-04-28  Kavindra Devi Palaraja  <kdpalara@trolltech.com>
 
         Reviewed by Simon.

@@ -457,14 +457,6 @@ void QWebFrame::setHtml(const QString &html, const QUrl &baseUrl)
 }
 
 /*!
-  \overload
-*/
-void QWebFrame::setHtml(const QByteArray &html, const QUrl &baseUrl)
-{
-    setContent(html, QString(), baseUrl);
-}
-
-/*!
   Sets the content of this frame to the specified content \a data. If the \a mimeType argument
   is empty it is currently assumed that the content is HTML but in future versions we may introduce
   auto-detection.
