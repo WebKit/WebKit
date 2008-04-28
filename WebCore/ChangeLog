@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        Fixes: Tabbing to a checkbox/button doesn't work on Win/X11
+
+        Respect platform settings for tabbing to all controls.
+
+        * page/qt/EventHandlerQt.cpp:
+
+2008-04-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
         First part of the fix for tabbing to a checkbox/button doesn't work on Win/X11
 
         Draw controls instead of pimitive elements, to get focus rects for free.
