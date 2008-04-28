@@ -1,6 +1,8 @@
 /*
  * This file is part of the WebKit project.
  *
+ * Copyright (C) 2008 Trolltech ASA
+ * 
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  *               2006 Dirk Mueller <mueller@kde.org>
  *               2006 Nikolas Zimmermann <zimmermann@kde.org>
@@ -37,6 +39,7 @@
 #include <QWidget>
 #include <QPainter>
 #include <QPushButton>
+#include <QStyleFactory>
 #include <QStyleOptionButton>
 #include <QStyleOptionFrameV2>
 
@@ -89,6 +92,25 @@ RenderThemeQt::RenderThemeQt()
     QFontInfo fontInfo(defaultButtonFont);
     m_buttonFontFamily = defaultButtonFont.family();
     m_buttonFontPixelSize = fontInfo.pixelSize();
+
+    m_fallbackStyle = 0;
+}
+
+RenderThemeQt::~RenderThemeQt()
+{
+    delete m_fallbackStyle;
+}
+
+// for some widget painting, we need to fallback to Windows style
+QStyle* RenderThemeQt::fallbackStyle()
+{
+    if(!m_fallbackStyle)
+        m_fallbackStyle = QStyleFactory::create("windows");
+
+    if(!m_fallbackStyle)
+        m_fallbackStyle = QApplication::style();
+
+    return m_fallbackStyle;
 }
 
 bool RenderThemeQt::supportsHover(const RenderStyle*) const
@@ -523,18 +545,43 @@ bool RenderThemeQt::paintMenuList(RenderObject* o, const RenderObject::PaintInfo
 }
 
 
-bool RenderThemeQt::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& pi,
+bool RenderThemeQt::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i,
                                         const IntRect& r)
 {
-    notImplemented();
-    return RenderTheme::paintMenuListButton(o, pi, r);
+    StylePainter p(i);
+    if (!p.isValid())
+        return true;
+
+    QStyleOptionComboBox option;
+    if (p.widget)
+        option.initFrom(p.widget);
+    applyTheme(option, o);
+    option.rect = r;
+
+    // for drawing the combo box arrow, rely only on the fallback style
+    p.style = fallbackStyle();
+    option.subControls = QStyle::SC_ComboBoxArrow;
+    p.drawComplexControl(QStyle::CC_ComboBox, option);
+
+    return false;
 }
 
 void RenderThemeQt::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style,
                                               Element* e) const
 {
-    notImplemented();
-    RenderTheme::adjustMenuListButtonStyle(selector, style, e);
+    // Ditch the border.
+    style->resetBorder();
+
+    // Height is locked to auto.
+    style->setHeight(Length(Auto));
+
+    // White-space is locked to pre
+    style->setWhiteSpace(PRE);
+
+    computeSizeBasedOnStyle(style);
+
+    // Add in the padding that we'd like to use.
+    setPopupPadding(style);
 }
 
 bool RenderThemeQt::paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& pi,
