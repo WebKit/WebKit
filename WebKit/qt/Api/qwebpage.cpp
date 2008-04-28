@@ -944,6 +944,8 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
     \l{QWebPage::viewportSize()}{viewportSize}. This image is then sent
     as a parameter to \c painter. Next, we render the contents of the main
     frame and its subframes into \c painter. Finally, we save the scaled image.
+
+    \sa QWebFrame
 */
 
 /*!

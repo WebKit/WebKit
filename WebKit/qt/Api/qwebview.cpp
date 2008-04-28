@@ -87,6 +87,11 @@ public:
     modifying action properties such as \l{QAction::}{text} or
     \l{QAction::}{icon}.
 
+    A QWebView can be printed onto a QPrinter using the print() function.
+    This function is marked as a slot and can be conveniently connected to
+    \l{QPrintPreviewDialog}'s \l{QPrintPreviewDialog::}{paintRequested()}
+    signal.
+
     If you want to provide support for web sites that allow the user to open
     new windows, such as pop up windows, you can subclass QWebView and
     reimplement the createWindow() function.
@@ -381,9 +386,11 @@ QAction *QWebView::pageAction(QWebPage::WebAction action) const
 }
 
 /*!
-    Triggers the specified \a action. If it is a checkable action the specified \a checked state is assumed.
+    Triggers the specified \a action. If it is a checkable action the specified
+    \a checked state is assumed.
 
-    The following example triggers the copy action and therefore copies any selected text to the clipboard.
+    The following example triggers the copy action and therefore copies any
+    selected text to the clipboard.
 
     \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 2
 
@@ -398,8 +405,8 @@ void QWebView::triggerPageAction(QWebPage::WebAction action, bool checked)
     \property QWebView::modified
     \brief whether the document was modified by the user
 
-    Parts of HTML documents can be editable for example through the \c{contenteditable} attribute on
-    HTML elements.
+    Parts of HTML documents can be editable for example through the
+    \c{contenteditable} attribute on HTML elements.
 */
 bool QWebView::isModified() const
 {
@@ -455,8 +462,9 @@ qreal QWebView::textSizeMultiplier() const
 }
 
 /*!
-    Finds the next occurrence of the string, \a subString, in the page, using the given \a options.
-    Returns true of \a subString was found and selects the match visually; otherwise returns false.
+    Finds the next occurrence of the string, \a subString, in the page, using
+    the given \a options. Returns true of \a subString was found and selects
+    the match visually; otherwise returns false.
 
     \sa selectedText(), selectionChanged()
 */
@@ -515,9 +523,8 @@ void QWebView::stop()
 }
 
 /*!
-    Convenience slot that loads the previous document in the list of
-    documents built by navigating links. Does nothing if there is no
-    previous document.
+    Convenience slot that loads the previous document in the list of documents
+    built by navigating links. Does nothing if there is no previous document.
 
     It is equivalent to
 
@@ -532,9 +539,8 @@ void QWebView::back()
 }
 
 /*!
-    Convenience slot that loads the next document in the list of
-    documents built by navigating links. Does nothing if there is no
-    next document.
+    Convenience slot that loads the next document in the list of documents
+    built by navigating links. Does nothing if there is no next document.
 
     It is equivalent to
 
@@ -767,19 +773,19 @@ void QWebView::changeEvent(QEvent *e)
 }
 
 /*!
-  \fn void QWebView::titleChanged(const QString &title)
+    \fn void QWebView::titleChanged(const QString &title)
 
-  This signal is emitted whenever the \a title of the main frame changes.
+    This signal is emitted whenever the \a title of the main frame changes.
 
-  \sa title()
+    \sa title()
 */
 
 /*!
-  \fn void QWebView::urlChanged(const QUrl &url)
+    \fn void QWebView::urlChanged(const QUrl &url)
 
-  This signal is emitted whenever the \a url of the main frame changes.
+    This signal is emitted when the \a url of the view changes.
 
-  \sa url(), load()
+    \sa url(), load()
 */
 
 /*!

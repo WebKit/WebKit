@@ -129,13 +129,43 @@ void QWebFramePrivate::updateBackground()
     \brief The QWebFrame class represents a frame in a web page.
 
     QWebFrame represents a frame inside a web page. Each QWebPage
-    object contains at least one frame, the mainFrame(). Additional
-    frames will be created for HTML \c{<frame>} or \c{<iframe>}
-    elements.
+    object contains at least one frame, the main frame, obtained using
+    QWebPage::mainFrame(). Additional frames will be created for HTML
+    \c{<frame>} or \c{<iframe>} elements.
+
+    A frame can be loaded using load() or setUrl(). Alternatively, if you have
+    the HTML content readily available, you can use setHtml() instead.
+
+    The loadStarted() signal is emitted when the frame begins to load.The
+    loadProgress() signal, on the other hand, is emitted whenever an element
+    of the web frame completes loading, such as an embedded image, a script,
+    etc. Finally, the loadFinished() signal is emitted when the frame has
+    loaded completely. The loadDone() signal is also emitted to indicate if
+    a frame has loaded. It's argument - either \c true or \c false - indicates
+    load success or failure.
+
+    The page() function returns a pointer to the web page object. See
+    \l{Elements of QWebView} for an explanation of how web
+    frames are related to a web page and web view.
+
+    The title of an HTML frame can be accessed with the title() property.
+    Additionally, a frame may also specify an icon, which can be accessed
+    using the icon() property. If the title or the icon changes, the
+    corresponding titleChanged() and iconChanged() signals will be emitted.
+    The textSizeMultiplier() property can be used to change the overall size
+    of the text displayed in the frame.
 
     QWebFrame objects are created and controlled by the web page. You
     can connect to the web page's \l{QWebPage::}{frameCreated()} signal
-    to find out about creation of new frames.
+    to be notified when a new frame is created.
+
+    The hitTestContent() function can be used to programmatically examine the
+    contents of a frame.
+
+    A QWebFrame can be printed onto a QPrinter using the print() function.
+    This function is marked as a slot and can be conveniently connected to
+    \l{QPrintPreviewDialog}'s \l{QPrintPreviewDialog::}{paintRequested()}
+    signal.
 
     \sa QWebPage
 */
@@ -170,12 +200,16 @@ QWebFrame::~QWebFrame()
 }
 
 /*!
-  Make \a object available under \a name from within the frames
-  JavaScript context. The \a object will be inserted as a child of the
-  frames window object.
+    Make \a object available under \a name from within the frame's JavaScript
+    context. The \a object will be inserted as a child of the frame's window
+    object.
 
-  Qt properties will be exposed as JavaScript properties and slots as
-  JavaScript methods.
+    Qt properties will be exposed as JavaScript properties and slots as
+    JavaScript methods.
+
+    If you want to ensure that your QObjects remain accessible after loading a
+    new URL, you should add them in a slot connected to the
+    javaScriptWindowObjectCleared() signal.
 */
 void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object)
 {
@@ -194,7 +228,7 @@ void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object
 }
 
 /*!
-    Returns the markup (HTML) contained in the current frame.
+    Returns the frame's content, converted to HTML.
 
     \sa setHtml(), toPlainText()
 */
@@ -206,7 +240,7 @@ QString QWebFrame::toHtml() const
 }
 
 /*!
-    Returns the content of this frame as plain text.
+    Returns the content of this frame converted to plain text.
 
     \sa toHtml()
 */
@@ -220,7 +254,8 @@ QString QWebFrame::toPlainText() const
 }
 
 /*!
-    Returns a dump of the rendering tree. Mainly useful for debugging html.
+    Returns a dump of the rendering tree. This is mainly useful for debugging
+    html.
 */
 QString QWebFrame::renderTreeDump() const
 {
@@ -800,73 +835,79 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
 
 
 /*!
-  \fn void QWebFrame::javaScriptWindowObjectCleared()
+    \fn void QWebFrame::javaScriptWindowObjectCleared()
 
-  This signal is emitted whenever the global window object of the JavaScript environment
-  is cleared (e.g. before starting a new load).
+    This signal is emitted whenever the global window object of the JavaScript
+    environment is cleared, e.g., before starting a new load.
+ 
+    If you intend to add QObjects to a QWebFrame using
+    addToJavaScriptWindowObject(), you should add them in a slot connected
+    to this signal. This ensures that your objects remain accessible when
+    loading new URLs.
 */
 
 /*!
-  \fn void QWebFrame::loadDone(bool ok)
+    \fn void QWebFrame::loadDone(bool ok)
 
-  This signal is emitted when the frame is completely loaded. \a ok will indicate whether the load
-  was successful or any error occurred.
+    This signal is emitted when the frame is completely loaded.
+    \a ok will indicate whether the load was successful or any error occurred.
 
-  \sa loadFinished(), loadStarted()
+    \sa loadFinished(), loadStarted()
 */
 
 /*!
-  \fn void QWebFrame::provisionalLoad()
-
-  \internal
+    \fn void QWebFrame::provisionalLoad()
+    \internal
 */
 
 /*!
-  \fn void QWebFrame::titleChanged(const QString &title)
+    \fn void QWebFrame::titleChanged(const QString &title)
 
-  This signal is emitted whenever the title of the frame changes.
-  The \a title string specifies the new title.
+    This signal is emitted whenever the title of the frame changes.
+    The \a title string specifies the new title.
 
-  \sa title()
+    \sa title()
 */
 
 /*!
-  \fn void QWebFrame::urlChanged(const QUrl &url)
+    \fn void QWebFrame::urlChanged(const QUrl &url)
 
-  This signal is emitted whenever the \a url of the frame changes.
+    This signal is emitted when the \a url of the frame changes.
 
-  \sa url()
+    \sa url()
 */
 
 
 /*!
-  \fn void QWebFrame::loadStarted()
+    \fn void QWebFrame::loadStarted()
 
-  This signal is emitted when a new load of the frame is started.
+    This signal is emitted when a new load of the frame is started.
 
-  \sa loadFinished()
+    \sa loadFinished()
 */
 
 /*!
-  \fn void QWebFrame::loadFinished()
+    \fn void QWebFrame::loadFinished()
 
-  This signal is emitted when a load of the frame is finished.
+    This signal is emitted when a load of the frame is finished.
 
-  \sa loadStarted()
+    \sa loadStarted()
 */
 
 /*!
-  \fn void QWebFrame::initialLayoutCompleted()
+    \fn void QWebFrame::initialLayoutCompleted()
 
-  This signal is emitted when the first (initial) layout of the frame
-  has happened. This is the earliest time something can be shown on
-  the screen.
+    This signal is emitted when the frame is laid out the first time.
+    This is the first time you will see contents displayed on the frame.
+
+    \note A frame can be laid out multiple times.
 */
 
 /*!
   \fn void QWebFrame::iconChanged()
 
-  This signal is emitted when the icon ("favicon") associated with the frame has been loaded.
+  This signal is emitted when the icon ("favicon") associated with the frame
+  has been loaded.
 
   \sa icon()
 */
