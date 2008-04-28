@@ -108,10 +108,6 @@ namespace KJS {
     AttachedGlobalObject* globalObjects;
   };
 
-#ifndef NDEBUG
-  void printInfo(ExecState *exec, const char *s, JSValue *, int lineno = -1);
-#endif
-
 } // namespace
 
 #endif //  INTERNAL_H

@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -75,6 +75,8 @@ namespace KJS {
     char *data;
     size_t length;
   };
+
+  typedef Vector<char, 32> CStringBuffer;
 
   /**
    * @short Unicode string class
@@ -219,12 +221,12 @@ namespace KJS {
 
     /**
      * @return The string converted to the 8-bit string type CString().
-     * This method is not Unicode safe and shouldn't be used unless the string
-     * is known to be ASCII.
+     * Returns false if any character is non-ASCII.
      */
-    CString cstring() const;
+    bool getCString(CStringBuffer&) const;
+
     /**
-     * Convert the Unicode string to plain ASCII chars chopping of any higher
+     * Convert the Unicode string to plain ASCII chars chopping off any higher
      * bytes. This method should only be used for *debugging* purposes as it
      * is neither Unicode safe nor free from side effects nor thread-safe.
      * In order not to waste any memory the char buffer is static and *shared*

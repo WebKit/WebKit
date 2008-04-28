@@ -1,7 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * This file is part of the KDE libraries
- * Copyright (C) 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -77,190 +76,81 @@ namespace WTF {
     template<typename T> struct HashTraits;
 
     template<bool isInteger, typename T> struct GenericHashTraitsBase;
-    template<typename T> struct GenericHashTraitsBase<true, T> {
-        typedef T TraitType;
-        typedef HashTraits<typename IntTypes<sizeof(T)>::SignedType> StorageTraits;
-        static const bool emptyValueIsZero = true;
-        static const bool needsDestruction = false;
-    };
+
     template<typename T> struct GenericHashTraitsBase<false, T> {
-        typedef T TraitType;
-        typedef HashTraits<T> StorageTraits;
         static const bool emptyValueIsZero = false;
         static const bool needsDestruction = true;
     };
 
+    // default integer traits disallow both 0 and -1 as keys (max value instead of -1 for unsigned)
+    template<typename T> struct GenericHashTraitsBase<true, T> {
+        static const bool emptyValueIsZero = true;
+        static const bool needsDestruction = false;
+        static void constructDeletedValue(T* slot) { *slot = static_cast<T>(-1); }
+        static bool isDeletedValue(T value) { return value == static_cast<T>(-1); }
+    };
+
     template<typename T> struct GenericHashTraits : GenericHashTraitsBase<IsInteger<T>::value, T> {
+        typedef T TraitType;
+        typedef HashTraits<T> StorageTraits;
         static T emptyValue() { return T(); }
         static const bool needsRef = false;
     };
 
     template<typename T> struct HashTraits : GenericHashTraits<T> { };
 
-    // signed integer traits may not be appropriate for all uses since they disallow 0 and -1 as keys
-    template<> struct HashTraits<signed char> : GenericHashTraits<int> {
-        static signed char deletedValue() { return -1; }
-    };
-    template<> struct HashTraits<short> : GenericHashTraits<short> {
-        static short deletedValue() { return -1; }
-    };
-    template<> struct HashTraits<unsigned short> : GenericHashTraits<unsigned short> {
-        static short deletedValue() { return static_cast<unsigned short>(-1); }
-    };
-    template<> struct HashTraits<int> : GenericHashTraits<int> {
-        static int deletedValue() { return -1; }
-    };
-    template<> struct HashTraits<unsigned int> : GenericHashTraits<unsigned int> {
-        static unsigned int deletedValue() { return static_cast<unsigned int>(-1); }
-    };
-    template<> struct HashTraits<long> : GenericHashTraits<long> {
-        static long deletedValue() { return -1; }
-    };
-    template<> struct HashTraits<unsigned long> : GenericHashTraits<unsigned long> {
-        static unsigned long deletedValue() { return static_cast<unsigned long>(-1); }
-    };
-    template<> struct HashTraits<long long> : GenericHashTraits<long long> {
-        static long long deletedValue() { return -1; }
-    };
-    template<> struct HashTraits<unsigned long long> : GenericHashTraits<unsigned long long> {
-        static unsigned long long deletedValue() { return static_cast<unsigned long long>(-1); }
-    };
-    
-#if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
-    template<> struct HashTraits<wchar_t> : GenericHashTraits<wchar_t> {
-        static wchar_t deletedValue() { return static_cast<wchar_t>(-1); }
-    };
-#endif
-
-    template<typename T> struct FloatHashTraits {
-        typedef T TraitType;
-        typedef HashTraits<T> StorageTraits;
-        static T emptyValue() { return std::numeric_limits<T>::infinity(); }
-        static T deletedValue() { return -std::numeric_limits<T>::infinity(); }
-        static const bool emptyValueIsZero = false;
+    template<typename T> struct FloatHashTraits : GenericHashTraits<T> {
         static const bool needsDestruction = false;
-        static const bool needsRef = false;
+        static T emptyValue() { return std::numeric_limits<T>::infinity(); }
+        static void constructDeletedValue(T* slot) { *slot = -std::numeric_limits<T>::infinity(); }
+        static bool isDeletedValue(T value) { return value == -std::numeric_limits<T>::infinity(); }
     };
-    template<> struct HashTraits<float> : FloatHashTraits<float> {
-    };
-    template<> struct HashTraits<double> : FloatHashTraits<double> {
-    };
+
+    template<> struct HashTraits<float> : FloatHashTraits<float> { };
+    template<> struct HashTraits<double> : FloatHashTraits<double> { };
 
     template<typename P> struct HashTraits<P*> : GenericHashTraits<P*> {
-        typedef HashTraits<typename IntTypes<sizeof(P*)>::SignedType> StorageTraits;
         static const bool emptyValueIsZero = true;
         static const bool needsDestruction = false;
-        static P* deletedValue() { return reinterpret_cast<P*>(-1); }
+        static void constructDeletedValue(P** slot) { *slot = reinterpret_cast<P*>(-1); }
+        static bool isDeletedValue(P* value) { return value == reinterpret_cast<P*>(-1); }
     };
 
     template<typename P> struct HashTraits<RefPtr<P> > : GenericHashTraits<RefPtr<P> > {
-        typedef HashTraits<typename IntTypes<sizeof(P*)>::SignedType> StorageTraits;
-        typedef typename StorageTraits::TraitType StorageType;
         static const bool emptyValueIsZero = true;
-        static const bool needsRef = true;
-
-        typedef union { 
-            P* m_p; 
-            StorageType m_s; 
-        } UnionType;
-
-        static void ref(const StorageType& s) 
-        { 
-            if (const P* p = reinterpret_cast<const UnionType*>(&s)->m_p) 
-                const_cast<P*>(p)->ref(); 
-        }
-        static void deref(const StorageType& s) 
-        { 
-            if (const P* p = reinterpret_cast<const UnionType*>(&s)->m_p) 
-                const_cast<P*>(p)->deref(); 
-        }
+        static void constructDeletedValue(RefPtr<P>* slot) { new (slot) RefPtr<P>(HashTableDeletedValue); }
+        static bool isDeletedValue(const RefPtr<P>& value) { return value.isHashTableDeletedValue(); }
     };
-
-    // template to set deleted values
-
-    template<typename Traits> struct DeletedValueAssigner {
-        static void assignDeletedValue(typename Traits::TraitType& location) { location = Traits::deletedValue(); }
-    };
-
-    template<typename T, typename Traits> inline void assignDeleted(T& location)
-    {
-        DeletedValueAssigner<Traits>::assignDeletedValue(location);
-    }
 
     // special traits for pairs, helpful for their use in HashMap implementation
 
     template<typename FirstTraits, typename SecondTraits> struct PairHashTraits;
 
     template<typename FirstTraitsArg, typename SecondTraitsArg>
-    struct PairBaseHashTraits : GenericHashTraits<pair<typename FirstTraitsArg::TraitType, typename SecondTraitsArg::TraitType> > {
+    struct PairHashTraits : GenericHashTraits<pair<typename FirstTraitsArg::TraitType, typename SecondTraitsArg::TraitType> > {
         typedef FirstTraitsArg FirstTraits;
         typedef SecondTraitsArg SecondTraits;
         typedef pair<typename FirstTraits::TraitType, typename SecondTraits::TraitType> TraitType;
 
-        typedef PairHashTraits<typename FirstTraits::StorageTraits, typename SecondTraits::StorageTraits> StorageTraits;
-
         static const bool emptyValueIsZero = FirstTraits::emptyValueIsZero && SecondTraits::emptyValueIsZero;
-
-        static TraitType emptyValue()
-        {
-            return make_pair(FirstTraits::emptyValue(), SecondTraits::emptyValue());
-        }
-    };
-
-    template<typename FirstTraits, typename SecondTraits>
-    struct PairHashTraits : PairBaseHashTraits<FirstTraits, SecondTraits> {
-        typedef pair<typename FirstTraits::TraitType, typename SecondTraits::TraitType> TraitType;
+        static TraitType emptyValue() { return make_pair(FirstTraits::emptyValue(), SecondTraits::emptyValue()); }
 
         static const bool needsDestruction = FirstTraits::needsDestruction || SecondTraits::needsDestruction;
 
-        static TraitType deletedValue()
-        {
-            return TraitType(FirstTraits::deletedValue(), SecondTraits::emptyValue());
-        }
-
-        static void assignDeletedValue(TraitType& location)
-        {
-            assignDeleted<typename FirstTraits::TraitType, FirstTraits>(location.first);
-            location.second = SecondTraits::emptyValue();
-        }
+        static void constructDeletedValue(TraitType* slot) { FirstTraits::constructDeletedValue(&slot->first); }
+        static bool isDeletedValue(const TraitType& value) { return FirstTraits::isDeletedValue(value.first); }
     };
+
+    template<typename FirstTraits, typename SecondTraits>
+    struct PairBaseHashTraits : PairHashTraits<FirstTraits, SecondTraits> { };
 
     template<typename First, typename Second>
     struct HashTraits<pair<First, Second> > : public PairHashTraits<HashTraits<First>, HashTraits<Second> > { };
 
-    template<typename FirstTraits, typename SecondTraits>
-    struct DeletedValueAssigner<PairHashTraits<FirstTraits, SecondTraits> >
-    {
-        static void assignDeletedValue(pair<typename FirstTraits::TraitType, typename SecondTraits::TraitType>& location)
-        {
-            PairHashTraits<FirstTraits, SecondTraits>::assignDeletedValue(location);
-        }
-    };
-
-    template<typename First, typename Second>
-    struct DeletedValueAssigner<HashTraits<pair<First, Second> > >
-    {
-        static void assignDeletedValue(pair<First, Second>& location)
-        {
-            HashTraits<pair<First, Second> >::assignDeletedValue(location);
-        }
-    };
-
-    // hash functions and traits that are equivalent (for code sharing)
-
+    // obsolete code sharing traits -- to be deleted
     template<typename HashArg, typename TraitsArg> struct HashKeyStorageTraits {
         typedef HashArg Hash;
         typedef TraitsArg Traits;
-    };
-    template<typename P> struct HashKeyStorageTraits<PtrHash<P*>, HashTraits<P*> > {
-        typedef typename IntTypes<sizeof(P*)>::SignedType IntType;
-        typedef IntHash<IntType> Hash;
-        typedef HashTraits<IntType> Traits;
-    };
-    template<typename P> struct HashKeyStorageTraits<PtrHash<RefPtr<P> >, HashTraits<RefPtr<P> > > {
-        typedef typename IntTypes<sizeof(P*)>::SignedType IntType;
-        typedef IntHash<IntType> Hash;
-        typedef HashTraits<IntType> Traits;
     };
 
 } // namespace WTF

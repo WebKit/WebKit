@@ -664,7 +664,7 @@ void PropertyMap::getEnumerablePropertyNames(PropertyNameArray& propertyNames) c
 #if USE_SINGLE_ENTRY
         UString::Rep* key = m_singleEntryKey;
         if (key && !(m_singleEntryAttributes & DontEnum))
-            propertyNames.add(Identifier(key));
+            propertyNames.add(key);
 #endif
         return;
     }
@@ -683,8 +683,13 @@ void PropertyMap::getEnumerablePropertyNames(PropertyNameArray& propertyNames) c
                 ++i;
             }
         }
-        for (int k = 0; k < i; ++k)
-            propertyNames.add(Identifier(a[k]->key));
+        if (!propertyNames.size()) {
+            for (int k = 0; k < i; ++k)
+                propertyNames.addKnownUnique(a[k]->key);
+        } else {
+            for (int k = 0; k < i; ++k)
+                propertyNames.add(a[k]->key);
+        }
         return;
     }
 
@@ -704,7 +709,7 @@ void PropertyMap::getEnumerablePropertyNames(PropertyNameArray& propertyNames) c
 
     // Put the keys of the sorted entries into the list.
     for (Entry** q = sortedEnumerables.data(); q != p; ++q)
-        propertyNames.add(Identifier(q[0]->key));
+        propertyNames.add(q[0]->key);
 }
 
 #if DO_PROPERTYMAP_CONSTENCY_CHECK

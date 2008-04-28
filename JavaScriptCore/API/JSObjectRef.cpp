@@ -372,6 +372,5 @@ void JSPropertyNameAccumulatorAddName(JSPropertyNameAccumulatorRef array, JSStri
     JSLock lock;
     PropertyNameArray* propertyNames = toJS(array);
     UString::Rep* rep = toJS(propertyName);
-    
-    propertyNames->add(Identifier(rep));
+    propertyNames->add(rep);
 }

@@ -49,10 +49,14 @@ namespace WebCore {
         { }
         
         // Deleted value
-        explicit SVGAnimatedTypeWrapperKey(bool)
+        SVGAnimatedTypeWrapperKey(WTF::HashTableDeletedValueType)
             : element(reinterpret_cast<SVGElement*>(-1))
-            , attributeName(0)
-        { }
+        {
+        }
+        bool isHashTableDeletedValue() const
+        {
+            return element == reinterpret_cast<SVGElement*>(-1);
+        }
         
         SVGAnimatedTypeWrapperKey(const SVGElement* _element, const AtomicString& _attributeName)
             : element(_element)
@@ -87,18 +91,14 @@ namespace WebCore {
     
     struct SVGAnimatedTypeWrapperKeyHashTraits : WTF::GenericHashTraits<SVGAnimatedTypeWrapperKey> {
         static const bool emptyValueIsZero = true;
-        static const bool needsDestruction = false;
         
-        static const SVGAnimatedTypeWrapperKey& deletedValue()
+        static void constructDeletedValue(SVGAnimatedTypeWrapperKey* slot)
         {
-            static SVGAnimatedTypeWrapperKey deletedKey(true);
-            return deletedKey;
+            new (slot) SVGAnimatedTypeWrapperKey(WTF::HashTableDeletedValue);
         }
-        
-        static const SVGAnimatedTypeWrapperKey& emptyValue()
+        static bool isDeletedValue(const SVGAnimatedTypeWrapperKey& value)
         {
-            static SVGAnimatedTypeWrapperKey emptyKey;
-            return emptyKey;
+            return value.isHashTableDeletedValue();
         }
     };
     

@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -130,8 +130,8 @@ namespace WTF {
         static bool equal(const KeyStorageType& a, const KeyType& b) { return HashFunctions::equal(*(KeyType*)&a, b); }
         static void translate(ValueStorageType& location, const KeyType& key, const MappedType& mapped)
         {
-            Assigner<KeyTraits::needsRef, KeyType, KeyStorageType, KeyTraits>::assign(key, location.first);
-            Assigner<MappedTraits::needsRef, MappedType, MappedStorageType, MappedTraits>::assign(mapped, location.second);
+            location.first = key;
+            location.second = mapped;
         }
     };
 
@@ -151,10 +151,8 @@ namespace WTF {
         static bool equal(const KeyStorageType& a, const KeyType& b) { return HashFunctions::equal(*(KeyType*)&a, b); }
         static void translate(ValueStorageType& location, const KeyType& key, const MappedType& mapped)
         {
-            if (location.first == KeyStorageTraits::deletedValue())
-                location.first = KeyStorageTraits::emptyValue();
-            Assigner<KeyTraits::needsRef, KeyType, KeyStorageType, KeyTraits>::assign(key, location.first);
-            Assigner<MappedTraits::needsRef, MappedType, MappedStorageType, MappedTraits>::assign(mapped, location.second);
+            location.first = key;
+            location.second = mapped;
         }
     };
 
@@ -293,8 +291,6 @@ namespace WTF {
     typename HashMap<T, U, V, W, MappedTraits>::MappedType
     HashMap<T, U, V, W, MappedTraits>::get(const KeyType& key) const
     {
-        if (m_impl.isEmpty())
-            return MappedTraits::emptyValue();
         ValueStorageType* entry = const_cast<HashTableType&>(m_impl).lookup(*(const KeyStorageType*)&key);
         if (!entry)
             return MappedTraits::emptyValue();

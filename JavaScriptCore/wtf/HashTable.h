@@ -1,7 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * This file is part of the KDE libraries
- * Copyright (C) 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -325,10 +324,11 @@ namespace WTF {
         void clear();
 
         static bool isEmptyBucket(const ValueType& value) { return Extractor::extract(value) == KeyTraits::emptyValue(); }
-        static bool isDeletedBucket(const ValueType& value) { return Extractor::extract(value) == KeyTraits::deletedValue(); }
+        static bool isDeletedBucket(const ValueType& value) { return KeyTraits::isDeletedValue(Extractor::extract(value)); }
         static bool isEmptyOrDeletedBucket(const ValueType& value) { return isEmptyBucket(value) || isDeletedBucket(value); }
 
         ValueType* lookup(const Key& key) { return lookup<Key, IdentityTranslatorType>(key); }
+        template<typename T, typename HashTranslator> ValueType* lookup(const T&);
 
 #if CHECK_HASHTABLE_CONSISTENCY
         void checkTableConsistency() const;
@@ -343,10 +343,11 @@ namespace WTF {
         typedef pair<ValueType*, bool> LookupType;
         typedef pair<LookupType, unsigned> FullLookupType;
 
-        template<typename T, typename HashTranslator> ValueType* lookup(const T&);
         LookupType lookupForWriting(const Key& key) { return lookupForWriting<Key, IdentityTranslatorType>(key); };
         template<typename T, typename HashTranslator> FullLookupType fullLookupForWriting(const T&);
         template<typename T, typename HashTranslator> LookupType lookupForWriting(const T&);
+
+        template<typename T, typename HashTranslator> void checkKey(const T&);
 
         void removeAndInvalidateWithoutEntryConsistencyCheck(ValueType*);
         void removeAndInvalidate(ValueType*);
@@ -362,7 +363,7 @@ namespace WTF {
         void reinsert(ValueType&);
 
         static void initializeBucket(ValueType& bucket) { new (&bucket) ValueType(Traits::emptyValue()); }
-        static void deleteBucket(ValueType& bucket) { assignDeleted<ValueType, Traits>(bucket); }
+        static void deleteBucket(ValueType& bucket) { bucket.~ValueType(); Traits::constructDeletedValue(&bucket); }
 
         FullLookupType makeLookupResult(ValueType* position, bool found, unsigned hash)
             { return FullLookupType(LookupType(position, found), hash); }
@@ -423,23 +424,45 @@ namespace WTF {
         return key;
     }
 
+#if ASSERT_DISABLED
+
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename T, typename HashTranslator>
+    inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::checkKey(const T&)
+    {
+    }
+
+#else
+
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename T, typename HashTranslator>
+    void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::checkKey(const T& key)
+    {
+        if (!HashFunctions::safeToCompareToEmptyOrDeleted)
+            return;
+        ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
+        ValueType deletedValue = Traits::emptyValue();
+        Traits::constructDeletedValue(&deletedValue);
+        ASSERT(!HashTranslator::equal(Extractor::extract(deletedValue), key));
+        new (&deletedValue) ValueType(Traits::emptyValue());
+    }
+
+#endif
+
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     template<typename T, typename HashTranslator>
     inline Value* HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::lookup(const T& key)
     {
-        ASSERT(m_table);
-#if !ASSERT_DISABLED
-        if (HashFunctions::safeToCompareToEmptyOrDeleted) {
-            ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
-            ASSERT(!HashTranslator::equal(KeyTraits::deletedValue(), key));
-        }
-#endif
+        checkKey<T, HashTranslator>(key);
 
         int k = 0;
         int sizeMask = m_tableSizeMask;
         ValueType* table = m_table;
         unsigned h = HashTranslator::hash(key);
         int i = h & sizeMask;
+
+        if (!table)
+            return 0;
 
 #if DUMP_HASHTABLE_STATS
         ++HashTableStats::numAccesses;
@@ -478,12 +501,7 @@ namespace WTF {
     inline typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::LookupType HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::lookupForWriting(const T& key)
     {
         ASSERT(m_table);
-#if !ASSERT_DISABLED
-        if (HashFunctions::safeToCompareToEmptyOrDeleted) {
-            ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
-            ASSERT(!HashTranslator::equal(KeyTraits::deletedValue(), key));
-        }
-#endif
+        checkKey<T, HashTranslator>(key);
 
         int k = 0;
         ValueType* table = m_table;
@@ -535,12 +553,7 @@ namespace WTF {
     inline typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::FullLookupType HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::fullLookupForWriting(const T& key)
     {
         ASSERT(m_table);
-#if !ASSERT_DISABLED
-        if (HashFunctions::safeToCompareToEmptyOrDeleted) {
-            ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
-            ASSERT(!HashTranslator::equal(KeyTraits::deletedValue(), key));
-        }
-#endif
+        checkKey<T, HashTranslator>(key);
 
         int k = 0;
         ValueType* table = m_table;
@@ -591,12 +604,7 @@ namespace WTF {
     template<typename T, typename Extra, typename HashTranslator>
     inline pair<typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::iterator, bool> HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::add(const T& key, const Extra& extra)
     {
-#if !ASSERT_DISABLED
-        if (HashFunctions::safeToCompareToEmptyOrDeleted) {
-            ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
-            ASSERT(!HashTranslator::equal(KeyTraits::deletedValue(), key));
-        }
-#endif
+        checkKey<T, HashTranslator>(key);
 
         invalidateIterators();
 
@@ -652,6 +660,7 @@ namespace WTF {
         }
 
         if (deletedEntry) {
+            initializeBucket(*deletedEntry);
             entry = deletedEntry;
             --m_deletedCount; 
         }
@@ -678,6 +687,8 @@ namespace WTF {
     template<typename T, typename Extra, typename HashTranslator>
     inline pair<typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::iterator, bool> HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::addPassingHashCode(const T& key, const Extra& extra)
     {
+        checkKey<T, HashTranslator>(key);
+
         invalidateIterators();
 
         if (!m_table)
@@ -694,8 +705,10 @@ namespace WTF {
         if (found)
             return std::make_pair(makeKnownGoodIterator(entry), false);
         
-        if (isDeletedBucket(*entry))
+        if (isDeletedBucket(*entry)) {
+            initializeBucket(*entry);
             --m_deletedCount;
+        }
         
         HashTranslator::translate(*entry, key, extra, h);
         ++m_keyCount;
@@ -836,9 +849,12 @@ namespace WTF {
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::deallocateTable(ValueType *table, int size)
     {
-        if (Traits::needsDestruction)
-            for (int i = 0; i < size; ++i)
-                table[i].~ValueType();
+        if (Traits::needsDestruction) {
+            for (int i = 0; i < size; ++i) {
+                if (!isDeletedBucket(table[i]))
+                    table[i].~ValueType();
+            }
+        }
         fastFree(table);
     }
 

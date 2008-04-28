@@ -30,12 +30,7 @@
 #define SchedulePair_h
 
 #include "PlatformString.h"
-
 #include <wtf/HashSet.h>
-#include <wtf/HashTraits.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
@@ -86,19 +81,7 @@ struct SchedulePairHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-struct SchedulePairTraits : WTF::GenericHashTraits<RefPtr<SchedulePair> > {
-    static const bool emptyValueIsZero = true;
-
-    static const RefPtr<SchedulePair>& deletedValue() 
-    {
-        static const RefPtr<SchedulePair> SchedulePairDeletedValue = SchedulePair::create(static_cast<CFRunLoopRef>(0), 0);    
-        return SchedulePairDeletedValue; 
-    }
-
-    static SchedulePair* emptyValue() { return 0; }
-};
-
-typedef HashSet<RefPtr<SchedulePair>, SchedulePairHash, SchedulePairTraits > SchedulePairHashSet;
+typedef HashSet<RefPtr<SchedulePair>, SchedulePairHash> SchedulePairHashSet;
 
 } // namespace WebCore
 

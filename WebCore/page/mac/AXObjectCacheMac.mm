@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,7 +61,7 @@ AXID AXObjectCache::getAXID(AccessibilityObject* obj)
     objID = lastUsedID;
     do
         ++objID;
-    while (objID == 0 || objID == HashTraits<AXID>::deletedValue() || m_idsInUse.contains(objID));
+    while (objID == 0 || HashTraits<AXID>::isDeletedValue(objID) || m_idsInUse.contains(objID));
     m_idsInUse.add(objID);
     lastUsedID = objID;
     obj->setAXObjectID(objID);

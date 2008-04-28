@@ -1,8 +1,8 @@
 /*
- * This file is part of the internal font implementation.  It should not be included by anyone other than
- * FontMac.cpp, FontWin.cpp and Font.cpp.
+ * This file is part of the internal font implementation.
+ * It should not be included by source files outside it.
  *
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,25 +49,11 @@ inline CTFontRef toCTFontRef(NSFont *nsFont) { return reinterpret_cast<CTFontRef
 #endif
 
 struct FontPlatformData {
-    class Deleted {};
-
-    FontPlatformData(Deleted)
-        : m_syntheticBold(false)
-        , m_syntheticOblique(false)
+    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique)
+        : m_syntheticBold(syntheticBold)
+        , m_syntheticOblique(syntheticOblique)
         , m_atsuFontID(0)
-        , m_size(0)
-        , m_font((NSFont*)-1)
-#ifdef BUILDING_ON_TIGER
-        , m_cgFont(0)
-#endif
-    {
-    }
-
-    FontPlatformData(float s, bool b, bool o)
-        : m_syntheticBold(b)
-        , m_syntheticOblique(o)
-        , m_atsuFontID(0)
-        , m_size(s)
+        , m_size(size)
         , m_font(0)
 #ifdef BUILDING_ON_TIGER
         , m_cgFont(0)
@@ -75,16 +61,19 @@ struct FontPlatformData {
     {
     }
 
-    FontPlatformData(NSFont* f = 0, bool b = false, bool o = false);
+    FontPlatformData(NSFont* = 0, bool syntheticBold = false, bool syntheticOblique = false);
     
     FontPlatformData(CGFontRef f, ATSUFontID fontID, float s, bool b , bool o)
-    : m_syntheticBold(b), m_syntheticOblique(o), m_atsuFontID(fontID), m_size(s), m_font(0), m_cgFont(f)
+        : m_syntheticBold(b), m_syntheticOblique(o), m_atsuFontID(fontID), m_size(s), m_font(0), m_cgFont(f)
     {
     }
 
-    FontPlatformData(const FontPlatformData& f);
+    FontPlatformData(const FontPlatformData&);
     
     ~FontPlatformData();
+
+    FontPlatformData(WTF::HashTableDeletedValueType) : m_font(hashTableDeletedFontValue()) { }
+    bool isHashTableDeletedValue() const { return m_font == hashTableDeletedFontValue(); }
 
     float size() const { return m_size; }
 
@@ -117,6 +106,8 @@ struct FontPlatformData {
 #endif
 
 private:
+    static NSFont *hashTableDeletedFontValue() { return reinterpret_cast<NSFont *>(-1); }
+
     NSFont *m_font;
 #ifndef BUILDING_ON_TIGER
     RetainPtr<CGFontRef> m_cgFont;

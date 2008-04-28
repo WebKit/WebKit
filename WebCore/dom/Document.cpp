@@ -259,7 +259,7 @@ static bool acceptsEditingFocus(Node *node)
     return frame->editor()->shouldBeginEditing(rangeOfContents(root).get());
 }
 
-DeprecatedPtrList<Document>*  Document::changedDocuments = 0;
+static DeprecatedPtrList<Document>* changedDocuments = 0;
 
 // FrameView might be 0
 Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
@@ -3815,7 +3815,7 @@ FormElementKey& FormElementKey::operator=(const FormElementKey& other)
 
 void FormElementKey::ref() const
 {
-    if (name() && name() != HashTraits<AtomicStringImpl*>::deletedValue())
+    if (name())
         name()->ref();
     if (type())
         type()->ref();
@@ -3823,7 +3823,7 @@ void FormElementKey::ref() const
 
 void FormElementKey::deref() const
 {
-    if (name() && name() != HashTraits<AtomicStringImpl*>::deletedValue())
+    if (name())
         name()->deref();
     if (type())
         type()->deref();
@@ -3860,17 +3860,6 @@ unsigned FormElementKeyHash::hash(const FormElementKey& k)
         hash = 0x80000000;
 
     return hash;
-}
-
-FormElementKey FormElementKeyHashTraits::deletedValue()
-{
-    return HashTraits<AtomicStringImpl*>::deletedValue();
-}
-
-
-String Document::iconURL()
-{
-    return m_iconURL;
 }
 
 void Document::setIconURL(const String& iconURL, const String& type)

@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- *  Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -31,9 +31,11 @@ namespace WTF {
 
     template <typename T> class PassRefPtr;
 
+    enum HashTableDeletedValueType { HashTableDeletedValue };
+
     template <typename T> class RefPtr {
     public:
-        RefPtr() : m_ptr(0) {}
+        RefPtr() : m_ptr(0) { }
         RefPtr(T* ptr) : m_ptr(ptr) { if (ptr) ptr->ref(); }
         RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { if (T* ptr = m_ptr) ptr->ref(); }
         // see comment in PassRefPtr.h for why this takes const reference
@@ -41,6 +43,10 @@ namespace WTF {
 
         // Special constructor for cases where we overwrite an object in place.
         RefPtr(PlacementNewAdoptType) { }
+
+        // Hash table deleted values, which are only constructed and never copied or destroyed.
+        RefPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
+        bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
 
         ~RefPtr() { if (T* ptr = m_ptr) ptr->deref(); }
         
@@ -52,7 +58,7 @@ namespace WTF {
         PassRefPtr<T> release() { PassRefPtr<T> tmp = adoptRef(m_ptr); m_ptr = 0; return tmp; }
 
         T& operator*() const { return *m_ptr; }
-        ALWAYS_INLINE T *operator->() const { return m_ptr; }
+        ALWAYS_INLINE T* operator->() const { return m_ptr; }
         
         bool operator!() const { return !m_ptr; }
     
@@ -69,6 +75,8 @@ namespace WTF {
         void swap(RefPtr&);
 
     private:
+        static T* hashTableDeletedValue() { return reinterpret_cast<T*>(-1); }
+
         T* m_ptr;
     };
     

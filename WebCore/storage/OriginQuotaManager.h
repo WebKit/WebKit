@@ -25,10 +25,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef OriginQuotaManager_h
 #define OriginQuotaManager_h
 
-#include "PlatformString.h"
 #include "StringHash.h"
 #include "SecurityOriginHash.h"
 #include <wtf/HashMap.h>
@@ -38,8 +38,6 @@ namespace WebCore {
 
 class Database;
 class OriginUsageRecord;
-class SecurityOrigin;
-class String;
 
 class OriginQuotaManager : public Noncopyable {
 public:
@@ -58,9 +56,10 @@ public:
     // To mark dirtiness of a specific database on the background thread
     void markDatabase(Database*);
     unsigned long long diskUsage(SecurityOrigin*) const;
+
 private:
     mutable Mutex m_usageRecordGuard;
-    typedef HashMap<RefPtr<SecurityOrigin>, OriginUsageRecord*, SecurityOriginHash, SecurityOriginTraits> OriginUsageMap;
+    typedef HashMap<RefPtr<SecurityOrigin>, OriginUsageRecord*, SecurityOriginHash> OriginUsageMap;
     OriginUsageMap m_usageMap;
 };
 

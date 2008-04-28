@@ -102,22 +102,24 @@ namespace WebCore {
     class TextResourceDecoder;
     class Tokenizer;
     class TreeWalker;
+
+#if ENABLE(SVG)
+    class SVGDocumentExtensions;
+#endif
+    
 #if ENABLE(XBL)
     class XBLBindingManager;
 #endif
+
 #if ENABLE(XPATH)
     class XPathEvaluator;
     class XPathExpression;
     class XPathNSResolver;
     class XPathResult;
 #endif
-    
+
     struct DashboardRegionValue;
     struct HitTestRequest;
-
-#if ENABLE(SVG)
-    class SVGDocumentExtensions;
-#endif
 
     typedef int ExceptionCode;
 
@@ -127,17 +129,28 @@ public:
     ~FormElementKey();
     FormElementKey(const FormElementKey&);
     FormElementKey& operator=(const FormElementKey&);
+
     AtomicStringImpl* name() const { return m_name; }
     AtomicStringImpl* type() const { return m_type; }
+
+    // Hash table deleted values, which are only constructed and never copied or destroyed.
+    FormElementKey(WTF::HashTableDeletedValueType) : m_name(hashTableDeletedValue()) { }
+    bool isHashTableDeletedValue() const { return m_name == hashTableDeletedValue(); }
+
 private:
     void ref() const;
     void deref() const;
+
+    static AtomicStringImpl* const hashTableDeletedValue() { return reinterpret_cast<AtomicStringImpl*>(-1); }
+
     AtomicStringImpl* m_name;
     AtomicStringImpl* m_type;
 };
 
 inline bool operator==(const FormElementKey& a, const FormElementKey& b)
-    { return a.name() == b.name() && a.type() == b.type(); }
+{
+    return a.name() == b.name() && a.type() == b.type();
+}
 
 struct FormElementKeyHash {
     static unsigned hash(const FormElementKey&);
@@ -146,7 +159,8 @@ struct FormElementKeyHash {
 };
 
 struct FormElementKeyHashTraits : WTF::GenericHashTraits<FormElementKey> {
-    static FormElementKey deletedValue();
+    static void constructDeletedValue(FormElementKey* slot) { new (slot) FormElementKey(WTF::HashTableDeletedValue); }
+    static bool isDeletedValue(const FormElementKey& value) { return value.isHashTableDeletedValue(); }
 };
 
 class Document : public ContainerNode {
@@ -345,7 +359,6 @@ public:
     PassRefPtr<EditingText> createEditingTextNode(const String&);
 
     virtual void recalcStyle( StyleChange = NoChange );
-    static DeprecatedPtrList<Document>* changedDocuments;
     virtual void updateRendering();
     void updateLayout();
     void updateLayoutIgnorePendingStylesheets();
@@ -691,7 +704,7 @@ public:
     
     void setHasNodesWithPlaceholderStyle() { m_hasNodesWithPlaceholderStyle = true; }
 
-    String iconURL();
+    const String& iconURL() const { return m_iconURL; }
     void setIconURL(const String& iconURL, const String& type);
 
     bool isAllowedToLoadLocalResources() const { return m_isAllowedToLoadLocalResources; }

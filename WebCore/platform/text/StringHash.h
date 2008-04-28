@@ -30,7 +30,7 @@ namespace WebCore {
 
     // FIXME: We should really figure out a way to put the computeHash function that's
     // currently a member function of StringImpl into this file so we can be a little
-    // cloer to having all the nearly-identical hash functions in one place.
+    // closer to having all the nearly-identical hash functions in one place.
 
     struct StringHash {
         static unsigned hash(StringImpl* key) { return key->hash(); }
@@ -231,44 +231,10 @@ namespace WebCore {
 
 namespace WTF {
 
-    // store WebCore::String as StringImpl*
-
     template<> struct HashTraits<WebCore::String> : GenericHashTraits<WebCore::String> {
-        typedef HashTraits<WebCore::StringImpl*>::StorageTraits StorageTraits;
-        typedef StorageTraits::TraitType StorageType;
         static const bool emptyValueIsZero = true;
-        static const bool needsRef = true;
-        
-        typedef union { 
-            WebCore::StringImpl* m_p; 
-            StorageType m_s; 
-        } UnionType;
-
-        static void ref(const StorageType& s) { ref(reinterpret_cast<const UnionType*>(&s)->m_p); }
-        static void deref(const StorageType& s) { deref(reinterpret_cast<const UnionType*>(&s)->m_p); }
-        
-        static void ref(const WebCore::StringImpl* str) { if (str) const_cast<WebCore::StringImpl*>(str)->ref(); }
-        static void deref(const WebCore::StringImpl* str) { if (str) const_cast<WebCore::StringImpl*>(str)->deref(); }
-    };
-
-    // share code between StringImpl*, RefPtr<StringImpl>, and String
-
-    template<> struct HashKeyStorageTraits<WebCore::StringHash, HashTraits<RefPtr<WebCore::StringImpl> > > {
-        typedef WebCore::StringHash Hash;
-        typedef HashTraits<WebCore::StringImpl*> Traits;
-    };
-    template<> struct HashKeyStorageTraits<WebCore::StringHash, HashTraits<WebCore::String> > {
-        typedef WebCore::StringHash Hash;
-        typedef HashTraits<WebCore::StringImpl*> Traits;
-    };
-
-    template<> struct HashKeyStorageTraits<WebCore::CaseFoldingHash, HashTraits<RefPtr<WebCore::StringImpl> > > {
-        typedef WebCore::CaseFoldingHash Hash;
-        typedef HashTraits<WebCore::StringImpl*> Traits;
-    };
-    template<> struct HashKeyStorageTraits<WebCore::CaseFoldingHash, HashTraits<WebCore::String> > {
-        typedef WebCore::CaseFoldingHash Hash;
-        typedef HashTraits<WebCore::StringImpl*> Traits;
+        static void constructDeletedValue(WebCore::String* slot) { new (slot) WebCore::String(HashTableDeletedValue); }
+        static bool isDeletedValue(const WebCore::String& slot) { return slot.isHashTableDeletedValue(); }
     };
 
 }

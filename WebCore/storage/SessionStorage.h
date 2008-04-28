@@ -55,7 +55,7 @@ namespace WebCore {
 
         Page* m_page;
         
-        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<SessionStorageArea>, SecurityOriginHash, SecurityOriginTraits> SessionStorageAreaMap;
+        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<SessionStorageArea>, SecurityOriginHash> SessionStorageAreaMap;
         SessionStorageAreaMap m_storageAreaMap;
     };
 

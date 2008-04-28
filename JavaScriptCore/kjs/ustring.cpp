@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  *  This library is free software; you can redistribute it and/or
@@ -861,23 +861,27 @@ UString& UString::append(UChar c)
   return *this;
 }
 
-CString UString::cstring() const
+bool UString::getCString(CStringBuffer& buffer) const
 {
-  int length = size();
-  int neededSize = length + 1;
-  char* buf = new char[neededSize];
+    int length = size();
+    int neededSize = length + 1;
+    buffer.resize(neededSize);
+    char* buf = buffer.data();
   
-  const UChar* p = data();
-  char* q = buf;
-  const UChar* limit = p + length;
-  while (p != limit) {
-    *q = static_cast<char>(p[0]);
-    ++p;
-    ++q;
-  }
-  *q = '\0';
+    UChar ored = 0;
+    const UChar* p = data();
+    char* q = buf;
+    const UChar* limit = p + length;
+    while (p != limit) {
+        UChar c = p[0];
+        ored |= c;
+        *q = static_cast<char>(c);
+        ++p;
+        ++q;
+    }
+    *q = '\0';
   
-  return CString::adopt(buf, length);
+    return !(ored & 0xFF00);
 }
 
 char *UString::ascii() const
@@ -957,12 +961,11 @@ double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) co
   double d;
 
   // FIXME: If tolerateTrailingJunk is true, then we want to tolerate non-8-bit junk
-  // after the number, so is8Bit is too strict a check.
-  if (!is8Bit())
+  // after the number, so this is too strict a check.
+  CStringBuffer s;
+  if (!getCString(s))
     return NaN;
-
-  CString s = cstring();
-  const char* c = s.c_str();
+  const char* c = s.data();
 
   // skip leading white space
   while (isASCIISpace(*c))

@@ -100,13 +100,13 @@ private:
 
     SQLiteDatabase m_database;
 
-    typedef HashMap<RefPtr<SecurityOrigin>, unsigned long long, SecurityOriginHash, SecurityOriginTraits> QuotaMap;
+    typedef HashMap<RefPtr<SecurityOrigin>, unsigned long long, SecurityOriginHash> QuotaMap;
     Mutex m_quotaMapGuard;
     mutable OwnPtr<QuotaMap> m_quotaMap;
 
     typedef HashSet<Database*> DatabaseSet;
     typedef HashMap<String, DatabaseSet*> DatabaseNameMap;
-    typedef HashMap<RefPtr<SecurityOrigin>, DatabaseNameMap*, SecurityOriginHash, SecurityOriginTraits> DatabaseOriginMap;
+    typedef HashMap<RefPtr<SecurityOrigin>, DatabaseNameMap*, SecurityOriginHash> DatabaseOriginMap;
 
     Mutex m_openDatabaseMapGuard;
     mutable OwnPtr<DatabaseOriginMap> m_openDatabaseMap;

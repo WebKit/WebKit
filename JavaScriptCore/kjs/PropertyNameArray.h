@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- *  Copyright (C) 2006 Apple Computer, Inc
+ *  Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -23,7 +23,6 @@
 #define KJS_PROPERTY_NAME_ARRAY_H
 
 #include "identifier.h"
-
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -34,7 +33,9 @@ namespace KJS {
         typedef Identifier ValueType;
         typedef Vector<Identifier>::const_iterator const_iterator;
 
-        void add(const Identifier&);
+        void add(const Identifier& identifier) { add(identifier.ustring().rep()); }
+        void add(UString::Rep*);
+        void addKnownUnique(UString::Rep* identifier) { m_vector.append(identifier); }
         const_iterator begin() const { return m_vector.begin(); }
         const_iterator end() const { return m_vector.end(); }
         size_t size() const { return m_vector.size(); }
@@ -42,13 +43,12 @@ namespace KJS {
         Identifier& operator[](unsigned i) { return m_vector[i]; }
         const Identifier& operator[](unsigned i) const { return m_vector[i]; }
 
-        void swap(PropertyNameArray&);
     private:
         typedef HashSet<UString::Rep*, PtrHash<UString::Rep*> > IdentifierSet;
-        IdentifierSet m_set;
-        Vector<Identifier> m_vector;
-    };
 
+        Vector<Identifier, 20> m_vector;
+        IdentifierSet m_set;
+    };
 
 } // namespace KJS
 

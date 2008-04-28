@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +26,27 @@ namespace WTF {
     
     // FIXME: Is there a better way to do this that doesn't just copy HashMap?
     
+    template<typename RawKeyType, typename ValueType, typename ValueTraits, typename ValueStorageTraits, typename HashFunctions>
+    struct RefPtrHashMapRawKeyTranslator {
+        typedef typename ValueType::first_type KeyType;
+        typedef typename ValueType::second_type MappedType;
+        typedef typename ValueStorageTraits::TraitType ValueStorageType;
+        typedef typename ValueStorageTraits::FirstTraits KeyStorageTraits;
+        typedef typename KeyStorageTraits::TraitType KeyStorageType;
+        typedef typename ValueStorageTraits::SecondTraits MappedStorageTraits;
+        typedef typename MappedStorageTraits::TraitType MappedStorageType;
+        typedef typename ValueTraits::FirstTraits KeyTraits;
+        typedef typename ValueTraits::SecondTraits MappedTraits;
+
+        static unsigned hash(RawKeyType key) { return HashFunctions::hash(key); }
+        static bool equal(const KeyStorageType& a, RawKeyType b) { return HashFunctions::equal(*(KeyType*)&a, b); }
+        static void translate(ValueStorageType& location, RawKeyType key, const MappedType& mapped)
+        {
+            location.first = key;
+            location.second = mapped;
+        }
+    };
+
     template<typename T, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
     class HashMap<RefPtr<T>, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> {
     private:
@@ -54,6 +75,9 @@ namespace WTF {
 
         typedef HashTable<KeyStorageType, ValueStorageType, PairFirstExtractor<ValueStorageType>,
             StorageHashFunctions, ValueStorageTraits, KeyStorageTraits> HashTableType;
+
+        typedef RefPtrHashMapRawKeyTranslator<RawKeyType, ValueType, ValueTraits, ValueStorageTraits, HashFunctions>
+            RawKeyTranslator;
 
     public:
         typedef HashTableIteratorAdapter<HashTableType, ValueType> iterator;
@@ -84,6 +108,7 @@ namespace WTF {
         bool contains(RawKeyType) const;
         MappedType get(const KeyType&) const;
         MappedType get(RawKeyType) const;
+        MappedType inlineGet(RawKeyType) const;
 
         // replaces value but not key if key is already present
         // return value is a pair of the iterator to the key location, 
@@ -209,7 +234,7 @@ namespace WTF {
     template<typename T, typename U, typename V, typename W, typename X>
     inline typename HashMap<RefPtr<T>, U, V, W, X>::iterator HashMap<RefPtr<T>, U, V, W, X>::find(RawKeyType key)
     {
-        return m_impl.find(*(const KeyStorageType*)&key);
+        return m_impl.template find<RawKeyType, RawKeyTranslator>(key);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
@@ -221,7 +246,7 @@ namespace WTF {
     template<typename T, typename U, typename V, typename W, typename X>
     inline typename HashMap<RefPtr<T>, U, V, W, X>::const_iterator HashMap<RefPtr<T>, U, V, W, X>::find(RawKeyType key) const
     {
-        return m_impl.find(*(const KeyStorageType*)&key);
+        return m_impl.template find<RawKeyType, RawKeyTranslator>(key);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
@@ -233,7 +258,7 @@ namespace WTF {
     template<typename T, typename U, typename V, typename W, typename X>
     inline bool HashMap<RefPtr<T>, U, V, W, X>::contains(RawKeyType key) const
     {
-        return m_impl.contains(*(const KeyStorageType*)&key);
+        return m_impl.template contains<RawKeyType, RawKeyTranslator>(key);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
@@ -249,7 +274,7 @@ namespace WTF {
     inline pair<typename HashMap<RefPtr<T>, U, V, W, X>::iterator, bool>
     HashMap<RefPtr<T>, U, V, W, X>::inlineAdd(RawKeyType key, const MappedType& mapped) 
     {
-        return inlineAdd(*(const KeyType*)&key, mapped);
+        return m_impl.template add<RawKeyType, MappedType, RawKeyTranslator>(key, mapped);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
@@ -257,9 +282,10 @@ namespace WTF {
     HashMap<RefPtr<T>, U, V, W, X>::set(const KeyType& key, const MappedType& mapped) 
     {
         pair<iterator, bool> result = inlineAdd(key, mapped);
-        if (!result.second)
+        if (!result.second) {
             // add call above didn't change anything, so set the mapped value
             result.first->second = mapped;
+        }
         return result;
     }
 
@@ -268,9 +294,10 @@ namespace WTF {
     HashMap<RefPtr<T>, U, V, W, X>::set(RawKeyType key, const MappedType& mapped) 
     {
         pair<iterator, bool> result = inlineAdd(key, mapped);
-        if (!result.second)
+        if (!result.second) {
             // add call above didn't change anything, so set the mapped value
             result.first->second = mapped;
+        }
         return result;
     }
 
@@ -292,8 +319,6 @@ namespace WTF {
     typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedType
     HashMap<RefPtr<T>, U, V, W, MappedTraits>::get(const KeyType& key) const
     {
-        if (m_impl.isEmpty())
-            return MappedTraits::emptyValue();
         ValueStorageType* entry = const_cast<HashTableType&>(m_impl).lookup(*(const KeyStorageType*)&key);
         if (!entry)
             return MappedTraits::emptyValue();
@@ -302,14 +327,19 @@ namespace WTF {
 
     template<typename T, typename U, typename V, typename W, typename MappedTraits>
     typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedType
-    HashMap<RefPtr<T>, U, V, W, MappedTraits>::get(RawKeyType key) const
+    inline HashMap<RefPtr<T>, U, V, W, MappedTraits>::inlineGet(RawKeyType key) const
     {
-        if (m_impl.isEmpty())
-            return MappedTraits::emptyValue();
-        ValueStorageType* entry = const_cast<HashTableType&>(m_impl).lookup(*(const KeyStorageType*)&key);
+        ValueType* entry = const_cast<HashTableType&>(m_impl).template lookup<RawKeyType, RawKeyTranslator>(key);
         if (!entry)
             return MappedTraits::emptyValue();
-        return ((ValueType *)entry)->second;
+        return entry->second;
+    }
+
+    template<typename T, typename U, typename V, typename W, typename MappedTraits>
+    typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedType
+    HashMap<RefPtr<T>, U, V, W, MappedTraits>::get(RawKeyType key) const
+    {
+        return inlineGet(key);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>

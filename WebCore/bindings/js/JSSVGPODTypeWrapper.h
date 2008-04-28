@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -171,14 +172,18 @@ struct PODTypeReadWriteHashInfo {
         : creator(0)
         , getter(0)
         , setter(0)
-    { }
+    {
+    }
 
     // Deleted value
-    explicit PODTypeReadWriteHashInfo(bool)
+    PODTypeReadWriteHashInfo(WTF::HashTableDeletedValueType)
         : creator(reinterpret_cast<PODTypeCreator*>(-1))
-        , getter(0)
-        , setter(0)
-    { }
+    {
+    }
+    bool isHashTableDeletedValue() const
+    {
+        return creator == reinterpret_cast<PODTypeCreator*>(-1);
+    }
 
     PODTypeReadWriteHashInfo(PODTypeCreator* _creator, GetterMethod _getter, SetterMethod _setter)
         : creator(_creator)
@@ -219,16 +224,19 @@ struct PODTypeReadWriteHashInfoTraits : WTF::GenericHashTraits<PODTypeReadWriteH
     static const bool emptyValueIsZero = true;
     static const bool needsDestruction = false;
 
-    static const PODTypeReadWriteHashInfo<PODType, PODTypeCreator>& deletedValue()
-    {
-        static PODTypeReadWriteHashInfo<PODType, PODTypeCreator> key(true);
-        return key;
-    }
-
     static const PODTypeReadWriteHashInfo<PODType, PODTypeCreator>& emptyValue()
     {
         static PODTypeReadWriteHashInfo<PODType, PODTypeCreator> key;
         return key;
+    }
+
+    static void constructDeletedValue(PODTypeReadWriteHashInfo<PODType, PODTypeCreator>* slot)
+    {
+        new (slot) PODTypeReadWriteHashInfo<PODType, PODTypeCreator>(WTF::HashTableDeletedValue);
+    }
+    static bool isDeletedValue(const PODTypeReadWriteHashInfo<PODType, PODTypeCreator>& value)
+    {
+        return value.isHashTableDeletedValue();
     }
 };
 

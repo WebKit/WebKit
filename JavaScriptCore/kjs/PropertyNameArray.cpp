@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- *  Copyright (C) 2006 Apple Computer, Inc
+ *  Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -24,20 +24,28 @@
 
 namespace KJS {
 
-void PropertyNameArray::add(const Identifier& ident)
-{
-    if (!m_set.add(ident.ustring().rep()).second)
-        return;
-    
-    m_vector.append(ident);
-}
+static const size_t setThreshold = 20;
 
-void PropertyNameArray::swap(PropertyNameArray& other)
+void PropertyNameArray::add(UString::Rep* identifier)
 {
-    m_vector.swap(other.m_vector);
-    m_set.swap(other.m_set);
-}
+    ASSERT(identifier->identifierTable);
 
+    size_t size = m_vector.size();
+    if (size < setThreshold) {
+        for (size_t i = 0; i < size; ++i) {
+            if (identifier == m_vector[i].ustring().rep())
+                return;
+        }
+    } else {
+        if (m_set.isEmpty()) {
+            for (size_t i = 0; i < size; ++i)
+                m_set.add(m_vector[i].ustring().rep());
+        }
+        if (!m_set.add(identifier).second)
+            return;
+    }
+
+    m_vector.append(identifier);
+}
 
 } // namespace KJS
-

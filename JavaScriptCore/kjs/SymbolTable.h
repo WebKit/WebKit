@@ -34,29 +34,19 @@
 
 namespace KJS {
 
-    struct IdentifierRepHash {
+    struct IdentifierRepHash : PtrHash<RefPtr<UString::Rep> > {
         static unsigned hash(const RefPtr<UString::Rep>& key) { return key->computedHash(); }
-        static bool equal(const RefPtr<UString::Rep>& a, const RefPtr<UString::Rep>& b) { return a == b; }
-        static const bool safeToCompareToEmptyOrDeleted = true;
-    };
-
-    struct IdentifierRepHashTraits : HashTraits<RefPtr<UString::Rep> > {
-        static const RefPtr<UString::Rep>& deletedValue()
-        {
-            return *reinterpret_cast<RefPtr<UString::Rep>*>(&nullRepPtr);
-        }
-
-    private:
-        static UString::Rep* nullRepPtr;
+        static unsigned hash(UString::Rep* key) { return key->computedHash(); }
     };
 
     static ALWAYS_INLINE size_t missingSymbolMarker() { return std::numeric_limits<size_t>::max(); }
 
     struct SymbolTableIndexHashTraits : HashTraits<size_t> {
+        static const bool emptyValueIsZero = false;
         static size_t emptyValue() { return missingSymbolMarker(); }
     };
 
-    typedef HashMap<RefPtr<UString::Rep>, size_t, IdentifierRepHash, IdentifierRepHashTraits, SymbolTableIndexHashTraits> SymbolTable;
+    typedef HashMap<RefPtr<UString::Rep>, size_t, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, SymbolTableIndexHashTraits> SymbolTable;
 
 } // namespace KJS
 

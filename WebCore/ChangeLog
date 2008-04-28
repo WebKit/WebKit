@@ -1,3 +1,95 @@
+2008-04-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - update for compatibility with HashTable that no longer has optimization to share
+          implementation between hash tables with integers, pointers, RefPtr, and String
+          objects as keys
+
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        (WebCore::PODTypeReadWriteHashInfo::PODTypeReadWriteHashInfo): Added constructor
+        for HashTableDeletedValue.
+        (WebCore::PODTypeReadWriteHashInfo::isHashTableDeletedValue): Added.
+        (WebCore::PODTypeReadWriteHashInfoTraits::constructDeletedValue): Added.
+        (WebCore::PODTypeReadWriteHashInfoTraits::isDeletedValue): Added.
+
+        * dom/Document.cpp: Made changedDocuments internal to the file rather than a
+        static data member of Document.
+        (WebCore::FormElementKey::ref): Removed unneeded check for deleted value -- this
+        will never be called on a deleted element.
+        (WebCore::FormElementKey::deref): Ditto.
+
+        * dom/Document.h: Added HashTableDeletedValue constructor and isHashTableDeletedValue
+        to FormElementKey. Changed FormElementKeyHashTraits to use construct/isDeletedValue.
+        Got rid of the changedDocuments data member. Changed iconURL to be an inline that
+        returns a const String&.
+
+        * dom/StyledElement.cpp: Changed MappedAttributeKeyTraits to use
+        construct/isDeletedValue.
+
+        * page/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::getAXID): Call isDeletedValue instead of deletedValue.
+
+        * platform/SecurityOriginHash.h: Added overload so that SecurityOriginHash can work
+        with raw pointers as well as RefPt (helpful with the new RefPtrHashMap). Eliminated
+        SecurityOriginTraits, since we can now use the default traits. Changed the value of
+        safeToCompareToEmptyOrDeleted to false, since it's not safe to compare a deleted
+        value using this hash function. I don't think it was safe before either; I'm not sure
+        why it didn't cause a problem before.
+
+        * platform/cf/SchedulePair.h: Removed SchedulePairTraits -- custom traits are no
+        longer needed.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey): Added constructor
+        for HashTableDeletedValue.
+        (WebCore::FontPlatformDataCacheKey::isHashTableDeletedValue): Added.
+        (WebCore::FontPlatformDataCacheKey::hashTableDeletedSize): Added.
+        (WebCore::FontPlatformDataCacheKeyTraits::constructDeletedValue): Added.
+        (WebCore::FontPlatformDataCacheKeyTraits::isDeletedValue): Added.
+        (WebCore::FontDataCacheKeyTraits::constructDeletedValue): Added.
+        (WebCore::FontDataCacheKeyTraits::isDeletedValue): Added.
+
+        * platform/graphics/IntSizeHash.h: Changed HashTraits<IntSize> to use
+        construct/isDeletedValue.
+
+        * platform/graphics/mac/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData): Added constructor for
+        HashTableDeletedValue.
+        (WebCore::FontPlatformData::isHashTableDeletedValue): Added.
+        (WebCore::FontPlatformData::hashTableDeletedFontValue): Added.
+
+        * platform/text/PlatformString.h:
+        (WebCore::String::swap): Added. Avoids any refcount churn when swapping two strings.
+        (WebCore::String::String): Added constructor for HashTableDeletedValue.
+        (WebCore::String::isHashTableDeletedValue): Added.
+        (WebCore::swap): Added. Avoids any refcount churn when swapping two strings.
+
+        * platform/text/StringHash.h: Changed specialization of HashTraits for
+        WebCore::String to use the deleted value now defined in that class and removed
+        the code to do ref/deref. Removed HashKeyStorageTraits specializations.
+        
+        * platform/win/COMPtr.h: Changed specialization of HashTraits for
+        COMPtr to use the deleted value now defined in that class and removed
+        the code to do ref/deref. Removed HashKeyStorageTraits specializations.
+        (COMPtr::COMPtr): Added constructor for HashTableDeletedValue.
+        (COMPtr::isHashTableDeletedValue): Added.
+        (COMPtr::query): Removed inline keyword not needed since functions defined in the
+        class definition are automatically marked inline.
+        (COMPtr::hashTableDeletedValue): Added.
+
+        * storage/DatabaseTracker.h: Removed now-unneeded SecurityOriginTraits.
+        * storage/LocalStorage.h: Ditto.
+        * storage/OriginQuotaManager.h: Ditto.
+        * storage/SessionStorage.h: Ditto.
+
+        * svg/SVGAnimatedTemplate.h:
+        (WebCore::SVGAnimatedTypeWrapperKey::SVGAnimatedTypeWrapperKey): Added constructor
+        for HashTableDeletedValue.
+        (WebCore::SVGAnimatedTypeWrapperKey::isHashTableDeletedValue): Added.
+        (WebCore::SVGAnimatedTypeWrapperKeyHashTraits::constructDeletedValue): Added.
+        (WebCore::SVGAnimatedTypeWrapperKeyHashTraits::isDeletedValue): Added.
+
 2008-04-27  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.

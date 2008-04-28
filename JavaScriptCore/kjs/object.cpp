@@ -1,9 +1,8 @@
 // -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -571,7 +570,7 @@ void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyName
         const HashEntry* e = table->table;
         for (int i = 0; i <= hashSizeMask; ++i, ++e) {
             if (e->key && !(e->attributes & DontEnum))
-                propertyNames.add(Identifier(e->key));
+                propertyNames.add(e->key);
         }
     }
 

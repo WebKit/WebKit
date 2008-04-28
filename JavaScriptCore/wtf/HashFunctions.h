@@ -1,7 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * This file is part of the KDE libraries
- * Copyright (C) 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -117,10 +116,11 @@ namespace WTF {
         static bool equal(T a, T b) { return a == b; }
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
-    template<typename P> struct PtrHash<RefPtr<P> > {
-        static unsigned hash(const RefPtr<P>& key) { return PtrHash<P*>::hash(key.get()); }
+    template<typename P> struct PtrHash<RefPtr<P> > : PtrHash<P*> {
+        static unsigned hash(const RefPtr<P>& key) { return hash(key.get()); }
         static bool equal(const RefPtr<P>& a, const RefPtr<P>& b) { return a == b; }
-        static const bool safeToCompareToEmptyOrDeleted = true;
+        static bool equal(P* a, const RefPtr<P>& b) { return a == b; }
+        static bool equal(const RefPtr<P>& a, P* b) { return a == b; }
     };
 
     // default hash function for each type

@@ -207,18 +207,17 @@ void ArrayInstance::put(ExecState* exec, const Identifier& propertyName, JSValue
 
 void ArrayInstance::put(ExecState* exec, unsigned i, JSValue* value)
 {
-    if (i > maxArrayIndex) {
-        put(exec, Identifier::from(i), value);
-        return;
-    }
-
-    ArrayStorage* storage = m_storage;
-
     unsigned length = m_length;
     if (i >= length) {
+        if (i > maxArrayIndex) {
+            put(exec, Identifier::from(i), value);
+            return;
+        }
         length = i + 1;
         m_length = length;
     }
+
+    ArrayStorage* storage = m_storage;
 
     if (i < m_vectorLength) {
         JSValue*& valueSlot = storage->m_vector[i];

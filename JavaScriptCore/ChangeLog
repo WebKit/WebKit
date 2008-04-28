@@ -1,3 +1,143 @@
+2008-04-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix <rdar://problem/5657459> REGRESSION: JavaScriptCore no longer builds with
+          GCC 4.2 due to pointer aliasing warnings
+
+        Fix this by removing the HashTable optimizations that allowed us to share a back end
+        implementation between hash tables with integers, pointers, RefPtr, and String objects
+        as keys. The way it worked was incompatible with strict aliasing.
+
+        This increases code size. On Mac OS X we'll have to regenerate .order files to avoid
+        slowing down Safari startup times.
+
+        This creates a slight slowdown in SunSpider, mitigated by the following four speedups:
+
+        - speed up array put slightly by moving a branch (was already done for get)
+
+        - speed up symbol table access by adding a function named inlineGet to HashMap
+          and using that in symbolTableGet/Put
+
+        - speed up PropertyNameArray creation by reducing the amount of reference count
+          churn and uniqueness checking when adding names and not doing any allocation at
+          all when building small arrays
+
+        - speed up conversion of strings to floating point numbers by eliminating the
+          malloc/free of the buffer for the ASCII copy of the string; a way to make
+          things even faster would be to change strtod to take a UTF-16 string
+
+        Note that there is considerable unused complexity now in HashSet/Map/Table to support
+        "storage types", which is no longer used. Will do in a separate patch.
+
+        * API/JSCallbackObjectFunctions.h:
+        (KJS::JSCallbackObject<Base>::getPropertyNames): Removed explicit cast to Identifier to
+        take advantage of the new PropertyNameArray::add overload and avoid reference count churn.
+        * API/JSObjectRef.cpp:
+        (JSPropertyNameAccumulatorAddName): Ditto.
+        * JavaScriptCore.exp: Updated PropertyNameArray::add entry point name.
+
+        * kjs/JSVariableObject.cpp: Removed now-unneeded IdentifierRepHashTraits::nullRepPtr
+        definition (see below).
+        (KJS::JSVariableObject::getPropertyNames): Removed explicit cast to Identifier.
+
+        * kjs/JSVariableObject.h:
+        (KJS::JSVariableObject::symbolTableGet): Use inlineGet for speed. Also changed to do
+        early exit instead of nesting the body inside an if.
+        (KJS::JSVariableObject::symbolTablePut): Ditto.
+
+        * kjs/PropertyNameArray.cpp:
+        (KJS::PropertyNameArray::add): Changed implementation to take a raw pointer instead of
+        a reference to an identifier. Do uniqueness checking by searching the vector when the
+        vector is short, only building the set once the vector is large enough.
+
+        * kjs/PropertyNameArray.h: Added an overload of add for a raw pointer, and made the old
+        add function call that one. Added an addKnownUnique function for use when the new
+        name is known to be different from any other in the array. Changed the vector to have
+        an inline capacity of 20.
+
+        * kjs/SymbolTable.h: Changed IdentifierRepHash to inherit from the default hash for
+        a RefPtr so we don't have to define so much. Added an overload of the hash function for
+        a raw pointer as required by the new RefPtrHashMap. Got rid of the now-unneeded
+        IdentifierRepHashTraits -- the default traits now work fine. Added a definition of
+        empthValueIsZero to SymbolTableIndexHashTraits; not having it was incorrect, but harmless.
+
+        * kjs/array_instance.cpp:
+        (KJS::ArrayInstance::put): Move the maxArrayIndex check inside the branch that checks
+        the index against the length, as done in the get function.
+
+        * kjs/function.cpp:
+        (KJS::globalFuncKJSPrint): Changed to use the new getCString instead of cstring.
+
+        * kjs/internal.cpp: Removed printInfo debugging function, a client of cstring.
+        If we need a debugging function we can easily make a better one and we haven't
+        used this one in a long time.
+        * kjs/internal.h: Ditto.
+
+        * kjs/object.cpp:
+        (KJS::JSObject::getPropertyNames): Removed explicit cast to Identifier.
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::getEnumerablePropertyNames): Ditto. Also added a special case for
+        the case where the propertyNames array is empty -- in that case we know we're adding
+        a set of names that are non-overlapping so we can use addKnownUnique.
+        * kjs/ustring.cpp:
+        (KJS::UString::getCString): Replaces cstring. Puts the C string into a CStringBuffer,
+        which is a char Vector with an inline capacity. Also returns a boolean to indicate if
+        the converion was lossy, which eliminates the need for a separate is8Bit call.
+        (KJS::UString::toDouble): Changed to call getCString instead of cstring.
+        * kjs/ustring.h: Ditto.
+
+        * wtf/HashFunctions.h: Overload the hash and equal functions for RefPtr's default
+        hash to take raw pointers. This works with the changes to RefPtrHashMap to avoid
+        introducing refcount churn.
+
+        * wtf/HashMap.h: Removed special code to convert the deleted value to the empty value
+        when writing a new value into the map. This is now handled elsewhere.
+        (WTF::HashMap::get): Removed code that checks for an empty hash table before calling
+        HashTable::lookup; it's slightly more efficient to do this check inside lookup.
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::isDeletedBucket): Changed to use isDeletedValue instead of using
+        deletedValue and the equality operator.
+        (WTF::HashTable::deleteBucket): Changed to use constructDeletedValue instead of
+        using deletedValue and the assignment operator.
+        (WTF::HashTable::checkKey): Added. Factors out the check for values that are empty
+        or deleted keys that's used in various functions below.
+        (WTF::HashTable::lookup): Changed to use checkKey, check for a 0 table, and also
+        made public for use by RefPtrHashMap.
+        (WTF::HashTable::lookupForWriting): Changed to use checkKey.
+        (WTF::HashTable::fullLookupForWriting): Changed to use checkKey.
+        (WTF::HashTable::add): Changed to use checkKey, and call initializeBucket on a
+        deleted bucket before putting a new entry into it.
+        (WTF::HashTable::addPassingHashCode): Ditto.
+        (WTF::HashTable::deallocateTable): Check isDeletedBucket before calling ~ValueType.
+
+        * wtf/HashTraits.h: Got ridd of all the HashTraits specialization for the integer
+        types, since GeneicHashTraitsBase already deals with integers separately. Put the
+        deleted value support into GenericHashTraitsBase. Changed FloatHashTraits to
+        inherit from GenericHashTraits, and define construct/isDeletedValue rather than
+        deletedValue. Removed the ref and deref functions from RefPtr's HashTraits, and
+        defined construct/isDeletedValue. Eliminated DeletedValueAssigner. Changed
+        PairHashTraits to define construct/isDeletedValue, and also merged
+        PairBaseHashTraits in with PairHashTraits. Got rid of all specialization of
+        HashKeyStorageTraits. We'll remove that, and the needsRef data member, later.
+
+        * wtf/RefPtr.h: Added HashTableDeletedValueType, an enum type with a single value,
+        HashTableDeletedValue. Used that type to make a new constructor to construct
+        deleted values and also added an isHashTableDeletedValue function.
+
+        * wtf/RefPtrHashMap.h: Added RefPtrHashMapRawKeyTranslator and used it to implement
+        the raw pointer functions. This is a way to continue to avoid refcount thrash. We
+        can't use the old way because it depended on the underlying map using a non-RefPtr
+        type.
+        (WTF::HashMap::find): Use find with RefPtrHashMapRawKeyTranslator.
+        (WTF::HashMap::contains): Use contains with RefPtrHashMapRawKeyTranslator.
+        (WTF::HashMap::inlineAdd): Use add with RefPtrHashMapRawKeyTranslator.
+        (WTF::HashMap::get): Removed code that checks for an empty hash table before calling
+        HashTable::lookup; it's slightly more efficient to do this check inside lookup.
+        (WTF::HashMap::inlineGet): Added. Just like get, but marked inline for use in the
+        symbol table code.
+
 2008-04-25  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Mark Rowe.
