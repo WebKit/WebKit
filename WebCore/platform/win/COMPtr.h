@@ -202,6 +202,16 @@ namespace WTF {
         static bool isDeletedValue(const COMPtr<P>& value) { return value.isHashTableDeletedValue(); }
     };
 
+    template<typename P> struct PtrHash<COMPtr<P> > : PtrHash<P*> {
+        using PtrHash<P*>::hash;
+        static unsigned hash(const COMPtr<P>& key) { return hash(key.get()); }
+        using PtrHash<P*>::equal;
+        static bool equal(const COMPtr<P>& a, const COMPtr<P>& b) { return a == b; }
+        static bool equal(P* a, const COMPtr<P>& b) { return a == b; }
+        static bool equal(const COMPtr<P>& a, P* b) { return a == b; }
+    };
+
+    template<typename P> struct DefaultHash<COMPtr<P> > { typedef PtrHash<COMPtr<P> > Hash; };
 }
 
 #endif

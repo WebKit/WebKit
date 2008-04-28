@@ -1,5 +1,13 @@
 2008-04-28  Adam Roben  <aroben@apple.com>
 
+        Fix some more Windows build errors in COMPtr
+
+        * platform/win/COMPtr.h:
+        (WTF::): Define DefaultHash<COMPtr<P> > by using PtrHash<COMPtr<P> >,
+        which is just a copy of PtrHash<RefPtr<P> >.
+
+2008-04-28  Adam Roben  <aroben@apple.com>
+
         Fix some Windows build errors in COMPtr
 
         * platform/win/COMPtr.h: Explicitly name the WTF namespace when using
