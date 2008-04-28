@@ -1,3 +1,13 @@
+2008-04-28  Paul Olav Tvete  <paul@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix compiler warning; Avoid the implicity QString(const char *)
+        constructor
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::fallbackStyle):
+
 2008-04-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.

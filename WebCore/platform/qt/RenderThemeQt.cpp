@@ -2,7 +2,7 @@
  * This file is part of the WebKit project.
  *
  * Copyright (C) 2008 Trolltech ASA
- * 
+ *
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  *               2006 Dirk Mueller <mueller@kde.org>
  *               2006 Nikolas Zimmermann <zimmermann@kde.org>
@@ -105,7 +105,7 @@ RenderThemeQt::~RenderThemeQt()
 QStyle* RenderThemeQt::fallbackStyle()
 {
     if(!m_fallbackStyle)
-        m_fallbackStyle = QStyleFactory::create("windows");
+        m_fallbackStyle = QStyleFactory::create(QLatin1String("windows"));
 
     if(!m_fallbackStyle)
         m_fallbackStyle = QApplication::style();
