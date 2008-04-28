@@ -1,3 +1,13 @@
+2008-04-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix for <rdar://problem/5893385> Need to provide access to the CanvasRenderingContext2D prototype
+        Add a JS constructor for CanvasRenderingContext2D.
+
+        * html/CanvasRenderingContext2D.idl:
+        * page/DOMWindow.idl:
+
 2008-04-26  Adam Barth  <hk9565@gmail.com>
 
         Reviewed by Adam Roben and Sam Weinig.

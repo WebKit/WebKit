@@ -1,3 +1,11 @@
+2008-04-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Update test to reflect add the CanvasRenderingContext2d constructor.
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-04-26  Adam Barth  <hk9565@gmail.com>
 
         Reviewed by Adam Roben and Sam Weinig.
