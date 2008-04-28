@@ -1,5 +1,13 @@
 2008-04-28  Simon Hausmann  <hausmann@webkit.org>
 
+        Fix the build with ENABLE_DATABASE=0 (Qt/Windows) by including
+        SecurityOrigin.h. It's used in the file and also implicitly included
+        through the database headers.
+
+        * page/DOMWindow.cpp:
+
+2008-04-28  Simon Hausmann  <hausmann@webkit.org>
+
         Prospective Wx build fix.
 
         * platform/graphics/wx/FontPlatformData.h:

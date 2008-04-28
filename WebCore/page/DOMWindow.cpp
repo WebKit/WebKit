@@ -51,6 +51,7 @@
 #include "PlatformScreen.h"
 #include "PlatformString.h"
 #include "Screen.h"
+#include "SecurityOrigin.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
