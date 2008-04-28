@@ -569,9 +569,6 @@ bool RenderThemeQt::paintMenuListButton(RenderObject* o, const RenderObject::Pai
 void RenderThemeQt::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style,
                                               Element* e) const
 {
-    // Ditch the border.
-    style->resetBorder();
-
     // Height is locked to auto.
     style->setHeight(Length(Auto));
 

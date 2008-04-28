@@ -1,3 +1,13 @@
+2008-04-28  Ariya Hidayat  <ahidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix CSS border does not show up for combo boxes
+
+        Do not clear the border when painting the combo box for 'select' form element
+
+        * platform/qt/RenderThemeQt.cpp:
+
 2008-04-28  Olivier Goffart  <ogoffart@trolltech.com>
 
         Reviewed by Simon.
