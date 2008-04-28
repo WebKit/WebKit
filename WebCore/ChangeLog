@@ -1,3 +1,14 @@
+2008-04-28  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixes: Pages returning 404 with content are not displayed.
+
+        A web page that returns 404 can still have content.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::finish):
+
 2008-04-28  Paul Olav Tvete  <paul@trolltech.com>
 
         Reviewed by Simon.

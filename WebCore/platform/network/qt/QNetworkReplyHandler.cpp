@@ -192,7 +192,9 @@ void QNetworkReplyHandler::finish()
         m_redirected = false;
         m_responseSent = false;
         start();
-    } else if (m_reply->error() != QNetworkReply::NoError) {
+    } else if (m_reply->error() != QNetworkReply::NoError
+               // a web page that returns 404 can still have content
+               && m_reply->error() != QNetworkReply::ContentNotFoundError) {
         QUrl url = m_reply->url();
         ResourceError error(url.host(), m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(),
                             url.toString(), m_reply->errorString());
