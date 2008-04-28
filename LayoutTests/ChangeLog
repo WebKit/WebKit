@@ -1,5 +1,16 @@
 2008-04-28  David Hyatt  <hyatt@apple.com>
 
+        Add layout test for canvas self-drawing bug.
+
+        Reviewed by Dan Bernstein
+
+        * fast/canvas/canvasDrawingIntoSelf.html: Added.
+        * platform/mac/fast/canvas/canvasDrawingIntoSelf-expected.checksum: Added.
+        * platform/mac/fast/canvas/canvasDrawingIntoSelf-expected.png: Added.
+        * platform/mac/fast/canvas/canvasDrawingIntoSelf-expected.txt: Added.
+
+2008-04-28  David Hyatt  <hyatt@apple.com>
+
         Add layout test for canvas.
 
         Reviewed by Tim Hatcher

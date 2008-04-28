@@ -1,3 +1,19 @@
+2008-04-28  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=18780
+
+        Canvas can't draw itself into its own buffer.  Make sure the dirtying call comes after the image()
+        has been accessed.  Technically willDraw should be renamed to didDraw and all calls should be moved
+        to after draws have occurred (since if the draw op itself wants to reference the image it shouldn't get
+        a dirty copy either), but I'll take that up with olliej when he wakes up. :)
+
+        Reviewed by Dan Bernstein
+
+        Added fast/canvas/canvasDrawsIntoSelf.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+
 2008-04-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.
