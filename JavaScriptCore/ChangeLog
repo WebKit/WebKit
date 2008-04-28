@@ -1,5 +1,37 @@
 2008-04-28  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adam.
+
+        - make sure RefPtr's default hash doesn't ref/deref when computing the hash
+        - remove remnants of the hash table storage type optimization
+
+        * wtf/HashFunctions.h: Used "using" to get the hash and equal functions
+        from PtrHash<P*> into PtrHash<RefPtr<P>>.
+
+        * wtf/HashMap.h: Replaced uses of PairBaseHashTraits with PairHashTraits.
+        Eliminated storage-related typedefs. Removed constructor, destructor,
+        copy constructor, and destructor since the compiler-generated ones are
+        fine. Removed refAll and derefAll. Took out unnnecessary typecasts.
+        Removed use of RefCounter.
+
+        * wtf/HashSet.h: Eliminated storage-related typedefs. Removed constructor,
+        destructor, copy constructor, and destructor since the compiler-generated
+        ones are fine. Removed refAll and derefAll. Removed unneeded template
+        arguents from HashSetTranslatorAdapter. Eliminated unneeded HashSetTranslator
+        template.
+
+        * wtf/HashTable.h: Tweaked formatting. Removed NeedsRef, RefCounterBase,
+        RefCounter, HashTableRefCounterBase, HashTableRefCounter, and Assigner
+        class templates.
+
+        * wtf/HashTraits.h: Removed StorageTraits, needsRef, PairBaseHashTraits,
+        and HashKeyStorageTraits.
+
+        * wtf/RefPtrHashMap.h: Made all the same fixes as in HashMap. Also made
+        the corresponding changes to RefPtrHashMapRawKeyTranslator.
+
+2008-04-28  Darin Adler  <darin@apple.com>
+
         Reviewed by Mitz.
 
         - fix assertion hit every time you view www.apple.com
