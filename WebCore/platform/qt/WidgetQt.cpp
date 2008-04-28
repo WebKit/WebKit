@@ -66,7 +66,7 @@ struct WidgetPrivate
 
     bool enabled;
     bool suppressInvalidation;
-    QRect m_geometry;
+    IntRect m_geometry;
     QWidget *m_widget; //for plugins
     ScrollView *m_parentScrollView;
 };
@@ -95,16 +95,14 @@ WidgetClient* Widget::client() const
 
 IntRect Widget::frameGeometry() const
 {
-    if (data->m_widget)
-        data->m_widget->geometry();
     return data->m_geometry;
 }
 
 void Widget::setFrameGeometry(const IntRect& r)
 {
-    if (data->m_widget)
-        data->m_widget->setGeometry(r);
     data->m_geometry = r;
+    if (data->m_widget)
+        data->m_widget->setGeometry(convertToContainingWindow(IntRect(0, 0, r.width(), r.height())));
 }
 
 void Widget::setFocus()

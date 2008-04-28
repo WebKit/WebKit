@@ -1,3 +1,18 @@
+2008-04-28  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Fix positioning of native widgets (plugins).
+
+        Correctly convert the coordinates of the Widget in Widget::setFrameGeometry()
+        to be relative to the containing toplevel QWidget using convertToContainingWindow().
+
+        Note: convertToContainingWindow() takes child coordinates.
+
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::frameGeometry):
+        (WebCore::Widget::setFrameGeometry):
+
 2008-04-28  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
