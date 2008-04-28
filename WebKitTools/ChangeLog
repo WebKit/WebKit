@@ -1,3 +1,13 @@
+2008-04-28  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        Reset dumping resource load callbacks to false for the next test
+        
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::reset):
+
 2008-04-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.

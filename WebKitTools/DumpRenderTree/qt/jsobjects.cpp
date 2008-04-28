@@ -59,6 +59,7 @@ void LayoutTestController::reset()
     }
     m_topLoadingFrame = 0;
     qt_dump_editing_callbacks(false);
+    qt_dump_resource_load_callbacks(false);
 }
 
 void LayoutTestController::maybeDump(bool ok)
