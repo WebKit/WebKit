@@ -2,6 +2,34 @@
 
         Reviewed by Simon.
 
+        plugins: fix scrolling issues
+
+        When scrolling you can see artefacts that remain on the screen, they
+        seem to originate from the backingstore handling. I'm not entirely sure
+        where they come from, my workarounds involved a
+        data->m_widget->parentWidget()->update() call in Widget::geometryChanged or
+        handling widgets with a native QWidget embedded like web pages with a
+        static background. This needs more investigations, I think the ScrollView
+        change is cleaner than the brute force in Widget::geometryChanged
+
+        Focus handling seems to be broken as well and needs further work, we don't
+        clip plugin QWidgets and they can draw out of their bounds, e.g. on the ScrollBar,
+        the z-order is likely not honored as well.
+
+        * platform/ScrollView.h:
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::ScrollViewPrivate::scrollBackingStore):
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+        (WebCore::ScrollView::incrementNativeWidgetCount):
+        (WebCore::ScrollView::decrementNativeWidgetCount):
+        (WebCore::ScrollView::hasNativeWidgets):
+
+2008-04-28  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
         Add manual test to test placement of QWidgets in iframe's
 
         * manual-tests/qt/main.html: Added.

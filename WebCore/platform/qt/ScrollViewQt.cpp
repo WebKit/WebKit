@@ -64,6 +64,7 @@ public:
     ScrollViewPrivate(ScrollView* view)
       : m_view(view)
       , m_hasStaticBackground(false)
+      , m_nativeWidgets(0)
       , m_scrollbarsSuppressed(false)
       , m_inUpdateScrollbars(false)
       , m_scrollbarsAvoidingResizer(0)
@@ -91,6 +92,7 @@ public:
     IntSize m_scrollOffset;
     IntSize m_contentsSize;
     bool m_hasStaticBackground;
+    int  m_nativeWidgets;
     bool m_scrollbarsSuppressed;
     bool m_inUpdateScrollbars;
     int m_scrollbarsAvoidingResizer;
@@ -159,12 +161,11 @@ void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelt
     IntRect updateRect = clipRect;
     updateRect.intersect(scrollViewRect);
 
-    if (!m_hasStaticBackground) {
+    if (!m_hasStaticBackground && !m_view->topLevel()->hasNativeWidgets()) {
        m_view->scrollBackingStore(-scrollDelta.width(), -scrollDelta.height(),
                                   scrollViewRect, clipRect);
     } else  {
-       // We need to go ahead and repaint the entire backing store.  Do it now before moving the
-       // plugins.
+       // We need to go ahead and repaint the entire backing store.
        m_view->addToDirtyRegion(updateRect);
        m_view->updateBackingStore();
     }
@@ -614,10 +615,16 @@ void ScrollView::addChild(Widget* child)
 {
     child->setParent(this);
     m_data->m_children.add(child);
+
+    if (child->nativeWidget())
+        topLevel()->incrementNativeWidgetCount();
 }
 
 void ScrollView::removeChild(Widget* child)
 {
+    if (child->nativeWidget())
+        topLevel()->decrementNativeWidgetCount();
+
     child->setParent(0);
     child->hide();
     m_data->m_children.remove(child);
@@ -792,6 +799,21 @@ void ScrollView::updateBackingStore()
     if (!page)
         return;
     page->chrome()->updateBackingStore();
+}
+
+void ScrollView::incrementNativeWidgetCount()
+{
+    ++m_data->m_nativeWidgets;
+}
+
+void ScrollView::decrementNativeWidgetCount()
+{
+    --m_data->m_nativeWidgets;
+}
+
+bool ScrollView::hasNativeWidgets() const
+{
+    return m_data->m_nativeWidgets != 0;
 }
 
 }

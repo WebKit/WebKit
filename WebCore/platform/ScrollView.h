@@ -184,6 +184,10 @@ namespace WebCore {
     public:
         PlatformScrollbar* horizontalScrollBar() const;
         PlatformScrollbar* verticalScrollBar() const;
+    private:
+        void incrementNativeWidgetCount();
+        void decrementNativeWidgetCount();
+        bool hasNativeWidgets() const;
 #endif
 
 #if PLATFORM(GTK)
