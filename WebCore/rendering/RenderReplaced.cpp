@@ -304,21 +304,21 @@ void RenderReplaced::setIntrinsicSize(const IntSize& size)
 
 void RenderReplaced::adjustOverflowForBoxShadow()
 {
-    if (ShadowData* boxShadow = style()->boxShadow()) {
-        if (!gOverflowRectMap)
-            gOverflowRectMap = new OverflowRectMap();
-
+    IntRect overflow;
+    for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
         IntRect shadow = borderBox();
         shadow.move(boxShadow->x, boxShadow->y);
         shadow.inflate(boxShadow->blur);
-        shadow.unite(borderBox());
-
-        gOverflowRectMap->set(this, shadow);
-        m_hasOverflow = true;
-        return;
+        overflow.unite(shadow);
     }
 
-    if (m_hasOverflow) {
+    if (!overflow.isEmpty()) {
+        if (!gOverflowRectMap)
+            gOverflowRectMap = new OverflowRectMap();
+        overflow.unite(borderBox());
+        gOverflowRectMap->set(this, overflow);
+        m_hasOverflow = true;
+    } else if (m_hasOverflow) {
         gOverflowRectMap->remove(this);
         m_hasOverflow = false;
     }

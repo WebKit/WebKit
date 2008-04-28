@@ -43,6 +43,7 @@ public:
     virtual unsigned short cssValueType() const;
 
     void append(PassRefPtr<CSSValue>);
+    void prepend(PassRefPtr<CSSValue>);
     virtual String cssText() const;
 
 protected:

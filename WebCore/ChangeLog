@@ -1,3 +1,81 @@
+2008-04-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - support multiple box- and text-shadows
+
+        Tests: fast/css/shadow-multiple.html
+               fast/repaint/shadow-multiple-horizontal.html
+               fast/repaint/shadow-multiple-strict-horizontal.html
+               fast/repaint/shadow-multiple-strict-vertical.html
+               fast/repaint/shadow-multiple-vertical.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForShadow): Changed to account for reversing the order
+        of the shadow values in the ShadowData list.
+
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::prepend): Added.
+        * css/CSSValueList.h:
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally): Changed to account for
+        all shadows in overflow calculation.
+        (WebCore::InlineFlowBox::placeBoxesVertically): Ditto.
+        (WebCore::InlineFlowBox::paint): Changed to account for all shadows
+        when testing for intersection with the damage rect.
+        (WebCore::InlineFlowBox::paintTextDecorations): Changed to paint all
+        shadows.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::paintTextWithShadows): Factored out from paint() and changed
+        to paint all shadows.
+        (WebCore::InlineTextBox::paint): Moved the text painting code out to
+        paintTextWithShadows(). Changed to not paint shadows for markers and
+        composition underlines and in "force black text" mode.
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintDecoration): Changed to paint all shadows.
+        * rendering/InlineTextBox.h: Changed some public methods to private
+        or protected.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::overflowHeight): Changed to account for all
+        shadows.
+        (WebCore::RenderBlock::overflowWidth): Ditto.
+        (WebCore::RenderBlock::overflowLeft): Ditto.
+        (WebCore::RenderBlock::overflowTop): Ditto.
+        (WebCore::RenderBlock::overflowRect): Ditto.
+        (WebCore::RenderBlock::layoutBlock): Ditto.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): Ditto.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateRects): Ditto.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintBoxShadow): Changed to paint all shadows.
+        Changed to avoid clipping out the box if it has a fully opaque
+        background.
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded): Changed to account
+        for all shadows.
+        (WebCore::RenderObject::selectionForegroundColor): Cleaned up.
+        (WebCore::RenderObject::adjustRectForOutlineAndShadow): Changed to
+        account for all shadows.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::adjustOverflowForBoxShadow): Ditto.
+
+        * rendering/RenderStyle.cpp:
+        (WebCore::RenderStyle::setTextShadow): Changed to prepend when adding
+        so that the stacking order of shadows when painting will be "first o
+        top".
+        (WebCore::RenderStyle::setBoxShadow): Ditto.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout): Changed to account for all shadows.
+
 2008-04-28  Adam Roben  <aroben@apple.com>
 
         Fix some more Windows build errors in COMPtr

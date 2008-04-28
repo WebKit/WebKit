@@ -289,7 +289,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
         m_overflowWidth = m_width;
 
     if (!hasOverflowClip()) {
-        if (ShadowData* boxShadow = style()->boxShadow()) {
+        for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
             m_overflowLeft = min(m_overflowLeft, boxShadow->x - boxShadow->blur);
             m_overflowWidth = max(m_overflowWidth, m_width + boxShadow->x + boxShadow->blur);
             m_overflowTop = min(m_overflowTop, boxShadow->y - boxShadow->blur);

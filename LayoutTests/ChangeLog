@@ -1,3 +1,30 @@
+2008-04-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - add rendering and invalidation tests for multiple shadows
+
+        * fast/css/shadow-multiple.html: Added.
+        * fast/repaint/shadow-multiple-horizontal.html: Added.
+        * fast/repaint/shadow-multiple-strict-horizontal.html: Added.
+        * fast/repaint/shadow-multiple-strict-vertical.html: Added.
+        * fast/repaint/shadow-multiple-vertical.html: Added.
+        * platform/mac/fast/css/shadow-multiple-expected.checksum: Added.
+        * platform/mac/fast/css/shadow-multiple-expected.png: Added.
+        * platform/mac/fast/css/shadow-multiple-expected.txt: Added.
+        * platform/mac/fast/repaint/shadow-multiple-horizontal-expected.checksum: Added.
+        * platform/mac/fast/repaint/shadow-multiple-horizontal-expected.png: Added.
+        * platform/mac/fast/repaint/shadow-multiple-horizontal-expected.txt: Added.
+        * platform/mac/fast/repaint/shadow-multiple-strict-horizontal-expected.checksum: Added.
+        * platform/mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png: Added.
+        * platform/mac/fast/repaint/shadow-multiple-strict-horizontal-expected.txt: Added.
+        * platform/mac/fast/repaint/shadow-multiple-strict-vertical-expected.checksum: Added.
+        * platform/mac/fast/repaint/shadow-multiple-strict-vertical-expected.png: Added.
+        * platform/mac/fast/repaint/shadow-multiple-strict-vertical-expected.txt: Added.
+        * platform/mac/fast/repaint/shadow-multiple-vertical-expected.checksum: Added.
+        * platform/mac/fast/repaint/shadow-multiple-vertical-expected.png: Added.
+        * platform/mac/fast/repaint/shadow-multiple-vertical-expected.txt: Added.
+
 2008-04-28  David Hyatt  <hyatt@apple.com>
 
         Add layout test for canvas self-drawing bug.

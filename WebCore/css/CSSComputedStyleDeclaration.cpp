@@ -243,7 +243,7 @@ static PassRefPtr<CSSValue> valueForShadow(const ShadowData* shadow)
         RefPtr<CSSPrimitiveValue> y = new CSSPrimitiveValue(s->y, CSSPrimitiveValue::CSS_PX);
         RefPtr<CSSPrimitiveValue> blur = new CSSPrimitiveValue(s->blur, CSSPrimitiveValue::CSS_PX);
         RefPtr<CSSPrimitiveValue> color = new CSSPrimitiveValue(s->color.rgb());
-        list->append(new ShadowValue(x.release(), y.release(), blur.release(), color.release()));
+        list->prepend(new ShadowValue(x.release(), y.release(), blur.release(), color.release()));
     }
     return list.release();
 }

@@ -97,16 +97,6 @@ public:
     virtual bool isText() const { return m_treatAsText; }
     void setIsText(bool b) { m_treatAsText = b; }
 
-    void paintDecoration(GraphicsContext*, int tx, int ty, int decoration);
-    void paintSelection(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*);
-    void paintCompositionBackground(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*, int startPos, int endPos);
-    void paintDocumentMarkers(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*, bool background);
-    void paintSpellingOrGrammarMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font*, bool grammar);
-    void paintTextMatchMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font*);
-    void paintCompositionUnderline(GraphicsContext*, int tx, int ty, const CompositionUnderline&);
-#if PLATFORM(MAC)
-    void paintCustomHighlight(int tx, int ty, const AtomicString& type);
-#endif
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;
@@ -123,7 +113,19 @@ public:
     unsigned short m_truncation; // Where to truncate when text overflow is applied.  We use special constants to
                       // denote no truncation (the whole run paints) and full truncation (nothing paints at all).
 
+protected:
+    void paintCompositionBackground(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*, int startPos, int endPos);
+    void paintDocumentMarkers(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*, bool background);
+    void paintCompositionUnderline(GraphicsContext*, int tx, int ty, const CompositionUnderline&);
+#if PLATFORM(MAC)
+    void paintCustomHighlight(int tx, int ty, const AtomicString& type);
+#endif
+
 private:
+    void paintDecoration(GraphicsContext*, int tx, int ty, int decoration, ShadowData* shadow);
+    void paintSelection(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*);
+    void paintSpellingOrGrammarMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font*, bool grammar);
+    void paintTextMatchMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font*);
     friend class RenderText;
 };
 

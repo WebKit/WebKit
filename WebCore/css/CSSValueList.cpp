@@ -52,6 +52,11 @@ void CSSValueList::append(PassRefPtr<CSSValue> val)
     m_values.append(val);
 }
 
+void CSSValueList::prepend(PassRefPtr<CSSValue> val)
+{
+    m_values.prepend(val);
+}
+
 String CSSValueList::cssText() const
 {
     String result = "";

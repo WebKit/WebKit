@@ -1763,9 +1763,8 @@ void RenderStyle::setTextShadow(ShadowData* val, bool add)
         return;
     }
 
-    ShadowData* last = rareData->textShadow;
-    while (last->next) last = last->next;
-    last->next = val;
+    val->next = rareData->textShadow;
+    rareData->textShadow = val;
 }
 
 void RenderStyle::setBoxShadow(ShadowData* val, bool add)
@@ -1777,9 +1776,8 @@ void RenderStyle::setBoxShadow(ShadowData* val, bool add)
         return;
     }
 
-    ShadowData* last = rareData->m_boxShadow;
-    while (last->next) last = last->next;
-    last->next = val;
+    val->next = rareData->m_boxShadow;
+    rareData->m_boxShadow = val;
 }
 
 ShadowData::ShadowData(const ShadowData& o)

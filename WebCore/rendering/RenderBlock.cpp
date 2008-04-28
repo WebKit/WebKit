@@ -377,9 +377,10 @@ void RenderBlock::removeChild(RenderObject *oldChild)
 int RenderBlock::overflowHeight(bool includeInterior) const
 {
     if (!includeInterior && hasOverflowClip()) {
-        if (ShadowData* boxShadow = style()->boxShadow())
-            return m_height + max(boxShadow->y + boxShadow->blur, 0);
-        return m_height;
+        int shadowHeight = 0;
+        for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next)
+            shadowHeight = max(boxShadow->y + boxShadow->blur, shadowHeight);
+        return m_height + shadowHeight;
     }
     return m_overflowHeight;
 }
@@ -387,9 +388,10 @@ int RenderBlock::overflowHeight(bool includeInterior) const
 int RenderBlock::overflowWidth(bool includeInterior) const
 {
     if (!includeInterior && hasOverflowClip()) {
-        if (ShadowData* boxShadow = style()->boxShadow())
-            return m_width + max(boxShadow->x + boxShadow->blur, 0);
-        return m_width;
+        int shadowWidth = 0;
+        for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next)
+            shadowWidth = max(boxShadow->x + boxShadow->blur, shadowWidth);
+        return m_width + shadowWidth;
     }
     return m_overflowWidth;
 }
@@ -397,9 +399,10 @@ int RenderBlock::overflowWidth(bool includeInterior) const
 int RenderBlock::overflowLeft(bool includeInterior) const
 {
     if (!includeInterior && hasOverflowClip()) {
-        if (ShadowData* boxShadow = style()->boxShadow())
-            return min(boxShadow->x - boxShadow->blur, 0);
-        return 0;
+        int shadowLeft = 0;
+        for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next)
+            shadowLeft = min(boxShadow->x - boxShadow->blur, shadowLeft);
+        return shadowLeft;
     }
     return m_overflowLeft;
 }
@@ -407,9 +410,10 @@ int RenderBlock::overflowLeft(bool includeInterior) const
 int RenderBlock::overflowTop(bool includeInterior) const
 {
     if (!includeInterior && hasOverflowClip()) {
-        if (ShadowData* boxShadow = style()->boxShadow())
-            return min(boxShadow->y - boxShadow->blur, 0);
-        return 0;
+        int shadowTop = 0;
+        for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next)
+            shadowTop = min(boxShadow->y - boxShadow->blur, shadowTop);
+        return shadowTop;
     }
     return m_overflowTop;
 }
@@ -418,15 +422,21 @@ IntRect RenderBlock::overflowRect(bool includeInterior) const
 {
     if (!includeInterior && hasOverflowClip()) {
         IntRect box = borderBox();
-        if (ShadowData* boxShadow = style()->boxShadow()) {
-            int shadowLeft = min(boxShadow->x - boxShadow->blur, 0);
-            int shadowRight = max(boxShadow->x + boxShadow->blur, 0);
-            int shadowTop = min(boxShadow->y - boxShadow->blur, 0);
-            int shadowBottom = max(boxShadow->y + boxShadow->blur, 0);
-            box.move(shadowLeft, shadowTop);
-            box.setWidth(box.width() - shadowLeft + shadowRight);
-            box.setHeight(box.height() - shadowTop + shadowBottom);
+        int shadowLeft = 0;
+        int shadowRight = 0;
+        int shadowTop = 0;
+        int shadowBottom = 0;
+
+        for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
+            shadowLeft = min(boxShadow->x - boxShadow->blur, shadowLeft);
+            shadowRight = max(boxShadow->x + boxShadow->blur, shadowRight);
+            shadowTop = min(boxShadow->y - boxShadow->blur, shadowTop);
+            shadowBottom = max(boxShadow->y + boxShadow->blur, shadowBottom);
         }
+
+        box.move(shadowLeft, shadowTop);
+        box.setWidth(box.width() - shadowLeft + shadowRight);
+        box.setHeight(box.height() - shadowTop + shadowBottom);
         return box;
     }
 
@@ -636,7 +646,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     m_overflowHeight = max(m_overflowHeight, m_height);
 
     if (!hasOverflowClip()) {
-        if (ShadowData* boxShadow = style()->boxShadow()) {
+        for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
             m_overflowLeft = min(m_overflowLeft, boxShadow->x - boxShadow->blur);
             m_overflowWidth = max(m_overflowWidth, m_width + boxShadow->x + boxShadow->blur);
             m_overflowTop = min(m_overflowTop, boxShadow->y - boxShadow->blur);
