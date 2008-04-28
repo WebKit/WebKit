@@ -124,7 +124,7 @@ namespace WebCore {
         void bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y);
         void arcTo(float x0, float y0, float x1, float y1, float radius, ExceptionCode&);
         void arc(float x, float y, float r, float sa, float ea, bool clockwise, ExceptionCode&);
-        void rect(float x, float y, float width, float height, ExceptionCode&);
+        void rect(float x, float y, float width, float height);
 
         void fill();
         void stroke();
@@ -132,10 +132,10 @@ namespace WebCore {
 
         bool isPointInPath(const float x, const float y);
 
-        void clearRect(float x, float y, float width, float height, ExceptionCode&);
-        void fillRect(float x, float y, float width, float height, ExceptionCode&);
-        void strokeRect(float x, float y, float width, float height, ExceptionCode&);
-        void strokeRect(float x, float y, float width, float height, float lineWidth, ExceptionCode&);
+        void clearRect(float x, float y, float width, float height);
+        void fillRect(float x, float y, float width, float height);
+        void strokeRect(float x, float y, float width, float height);
+        void strokeRect(float x, float y, float width, float height, float lineWidth);
 
         void setShadow(float width, float height, float blur);
         void setShadow(float width, float height, float blur, const String& color);

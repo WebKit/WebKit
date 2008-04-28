@@ -59,10 +59,8 @@ module html {
         attribute float shadowBlur;
         attribute [ConvertNullToNullString] DOMString shadowColor;
 
-        void clearRect(in float x, in float y, in float width, in float height)
-            raises (DOMException);
-        void fillRect(in float x, in float y, in float width, in float height)
-            raises (DOMException);
+        void clearRect(in float x, in float y, in float width, in float height);
+        void fillRect(in float x, in float y, in float width, in float height);
 
         void beginPath();
         void closePath();
@@ -72,8 +70,7 @@ module html {
         void bezierCurveTo(in float cp1x, in float cp1y, in float cp2x, in float cp2y, in float x, in float y);
         void arcTo(in float x1, in float y1, in float x2, in float y2, in float radius)
             raises (DOMException);
-        void rect(in float x, in float y, in float width, in float height)
-            raises (DOMException);
+        void rect(in float x, in float y, in float width, in float height);
         void arc(in float x, in float y, in float radius, in float startAngle, in float endAngle, in boolean anticlockwise)
             raises (DOMException);
         void fill();

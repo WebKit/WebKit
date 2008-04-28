@@ -160,17 +160,15 @@ JSValue* JSCanvasRenderingContext2D::setStrokeColor(ExecState* exec, const List&
 
 JSValue* JSCanvasRenderingContext2D::strokeRect(ExecState* exec, const List& args)
 { 
-    CanvasRenderingContext2D* context = impl();    
-    ExceptionCode ec;
+    CanvasRenderingContext2D* context = impl();
     
     if (args.size() <= 4)
         context->strokeRect(args[0]->toFloat(exec), args[1]->toFloat(exec),
-                            args[2]->toFloat(exec), args[3]->toFloat(exec), ec);
+                            args[2]->toFloat(exec), args[3]->toFloat(exec));
     else
         context->strokeRect(args[0]->toFloat(exec), args[1]->toFloat(exec),
-                            args[2]->toFloat(exec), args[3]->toFloat(exec), args[4]->toFloat(exec), ec);
-    setDOMException(exec, ec);
-    
+                            args[2]->toFloat(exec), args[3]->toFloat(exec), args[4]->toFloat(exec));
+
     return jsUndefined();    
 }
 

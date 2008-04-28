@@ -1,3 +1,32 @@
+2008-04-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Bug 17173: HTML5 Canvas API requires us to ignore certain operations
+        <https://bugs.webkit.org/show_bug.cgi?id=17173>
+
+        This fixes the semantics of a number of Canvas functions to match
+        the new HTML5 non-throwing semantics.
+
+        Test: fast/canvas/canvas-path-with-inf-nan-dimensions.html
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::strokeRect):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::moveTo):
+        (WebCore::CanvasRenderingContext2D::lineTo):
+        (WebCore::CanvasRenderingContext2D::quadraticCurveTo):
+        (WebCore::CanvasRenderingContext2D::bezierCurveTo):
+        (WebCore::CanvasRenderingContext2D::arcTo):
+        (WebCore::CanvasRenderingContext2D::arc):
+        (WebCore::validateRectForCanvas):
+        (WebCore::CanvasRenderingContext2D::rect):
+        (WebCore::CanvasRenderingContext2D::clearRect):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::strokeRect):
+        * html/CanvasRenderingContext2D.h:
+        * html/CanvasRenderingContext2D.idl:
+
 2008-04-27  Rob Buis  <buis@kde.org>
 
         Reviewed by Adele.
