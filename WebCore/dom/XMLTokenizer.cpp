@@ -1162,7 +1162,11 @@ static xmlChar sharedXHTMLEntityResult[5] = {0,0,0,0,0};
 static xmlEntity sharedXHTMLEntity = {
     0, XML_ENTITY_DECL, 0, 0, 0, 0, 0, 0, 0, 
     sharedXHTMLEntityResult, sharedXHTMLEntityResult, 0,
-    XML_INTERNAL_PREDEFINED_ENTITY, 0, 0, 0, 0, 0
+    XML_INTERNAL_PREDEFINED_ENTITY, 0, 0, 0, 0, 0,
+#if LIBXML_VERSION >= 20627
+    // xmlEntity gained an extra member in 2.6.27.
+    1
+#endif
 };
 
 static xmlEntityPtr getXHTMLEntity(const xmlChar* name)

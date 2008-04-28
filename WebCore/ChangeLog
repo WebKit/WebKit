@@ -1,3 +1,12 @@
+2008-04-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Initialize the extra member of the xmlEntity struct when using libxml2 >= 2.6.27.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::):
+
 2008-04-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
