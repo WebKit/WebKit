@@ -23,14 +23,15 @@
 /*!
     \class QWebPluginFactory
     \since 4.4
-    \brief The QWebPluginFactory class creates plugins to be embedded into web pages.
+    \brief The QWebPluginFactory class creates plugins to be embedded into web
+    pages.
 
-    QWebPluginFactory is a factory for creating plugins for QWebPage. A plugin factory can be
-    installed on a QWebPage using QWebPage::setPluginFactory().
+    QWebPluginFactory is a factory for creating plugins for QWebPage. A plugin
+    factory can be installed on a QWebPage using QWebPage::setPluginFactory().
 
-    You can provide a QWebPluginFactory by implementing the plugins() and the create() method. For
-    plugins() it is necessary to describe the plugins the factory can create, including a
-    description and the supported mime types. The mime types are matched with the mime type
+    You can provide a QWebPluginFactory by implementing the plugins() and the
+    create() method. For plugins() it is necessary to describe the plugins the
+    factory can create, including a description and the supported mime types. The mime types are matched with the mime type
     specified in the HTML object tag. The create() method is called if the requested mime type is
     supported. The implementation has to return a new instance of the plugin requested for the given
     mime type and the specified url.
@@ -101,7 +102,11 @@ QWebPluginFactory::~QWebPluginFactory()
 /*!
     \fn QList<Plugin> QWebPluginFactory::plugins() const = 0
 
-    Implemented in subclasses to return a list of supported plugins the factory can create.
+    This function is reimplemented in subclasses to return a list of
+    supported plugins the factory can create.
+
+    \note Currently, this function is only called when JavaScript programs
+    access the global \c plugins or \c mimetypes objects. 
 */
 
 /*!
@@ -113,7 +118,8 @@ void QWebPluginFactory::refreshPlugins()
 }
 
 /*!
-    \fn QObject *QWebPluginFactory::create(const QString &mimeType, const QUrl &url, const QStringList &argumentNames, const QStringList &argumentValues) const = 0
+    \fn QObject *QWebPluginFactory::create(const QString &mimeType, const QUrl &url,
+    const QStringList &argumentNames, const QStringList &argumentValues) const = 0
 
     Implemented in subclasses to create a new plugin that can display content of type \a mimeType.
     The url of the content is provided in \a url.
@@ -145,6 +151,8 @@ void QWebPluginFactory::refreshPlugins()
     \endtable
 
     The returned object should be a QWidget.
+
+    \note Ownership of the returned object will be transferred to the caller.
 */
 
 /*!

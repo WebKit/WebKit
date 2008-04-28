@@ -1,3 +1,22 @@
+2008-04-28  Kavindra Devi Palaraja  <kdpalara@trolltech.com>
+
+        Reviewed by Simon.
+
+        Added more documentation for QWebSettings, QWebPluginFactory and QWebFrame
+
+        * Api/qwebframe.cpp:
+        * Api/qwebpluginfactory.cpp:
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+        (QWebSettings::setUserStyleSheetUrl):
+        (QWebSettings::iconForUrl):
+        (QWebSettings::webGraphic):
+        (QWebSettings::maximumPagesInCache):
+        (QWebSettings::setFontFamily):
+        (QWebSettings::resetFontFamily):
+        (QWebSettings::testAttribute):
+        (QWebSettings::resetAttribute):
+
 2008-04-28  Ariya Hidayat  <ahidayat@trolltech.com>
 
         Reviewed by Simon.

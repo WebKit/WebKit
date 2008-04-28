@@ -179,15 +179,31 @@ QWebSettings *QWebSettings::globalSettings()
 /*!
     \class QWebSettings
     \since 4.4
-    \brief The QWebSettings class provides a objects that is used to store the settings
-    used by QWebPage and QWebFrame.
+    \brief The QWebSettings class provides an object to store the settings used
+    by QWebPage and QWebFrame.
+
+    Each QWebPage object has its own QWebSettings object, which configures the
+    settings for that page. If a setting is not configured, then it is looked
+    up in the global settings object, which can be accessed using
+    QWebSettings::globalSettings().
+
+    QWebSettings allows configuring font properties such as font size and font
+    family, the location of a custom stylesheet, and generic attributes like java
+    script, plugins, etc. The \l{QWebSettings::WebAttribute}{WebAttribute}
+    enum further describes this.
+    
+    QWebSettings also configures global properties such as the web page memory
+    cache and the web page icon database.
+
+    \sa QWebPage::settings(), QWebView::settings(), \l{Browser}
 */
 
 /*!
     \enum QWebSettings::FontFamily
 
     This enum describes the generic font families defined by CSS 2.
-    For more information see the \l{http://www.w3.org/TR/REC-CSS2/fonts.html#generic-font-families}{CSS standard}.
+    For more information see the
+    \l{http://www.w3.org/TR/REC-CSS2/fonts.html#generic-font-families}{CSS standard}.
 
     \value StandardFont
     \value FixedFont
@@ -203,7 +219,8 @@ QWebSettings *QWebSettings::globalSettings()
     This enum describes the font sizes configurable through QWebSettings.
 
     \value MinimumFontSize The hard minimum font size.
-    \value MinimumLogicalFontSize The minimum logical font size that is applied after zooming with QWebFrame's textSizeMultiplier().
+    \value MinimumLogicalFontSize The minimum logical font size that is applied
+        after zooming with QWebFrame's textSizeMultiplier().
     \value DefaultFontSize The default font size for regular text.
     \value DefaultFixedFontSize The default font size for fixed-pitch text.
 */
@@ -216,7 +233,7 @@ QWebSettings *QWebSettings::globalSettings()
     \value MissingImageGraphic The replacement graphic shown when an image could not be loaded.
     \value MissingPluginGraphic The replacement graphic shown when a plugin could not be loaded.
     \value DefaultFrameIconGraphic The default icon for QWebFrame::icon().
-    \value TextAreaSizeGripCornerGraphic The graphi shown for the size grip of text areas.
+    \value TextAreaSizeGripCornerGraphic The graphic shown for the size grip of text areas.
 */
 
 /*!
@@ -224,16 +241,25 @@ QWebSettings *QWebSettings::globalSettings()
 
     This enum describes various attributes that are configurable through QWebSettings.
 
-    \value AutoLoadImages Specifies whether to automatically load images in web pages.
-    \value JavascriptEnabled Enables or disables the running of JavaScript programs.
-    \value JavaEnabled Enables or disables Java applets. Currently Java applets are not supported.
-    \value PluginsEnabled Enables or disables plugins in web pages. Currently Flash and other plugins are not supported.
-    \value PrivateBrowsingEnabled Private browsing prevents WebKit from recording visited pages in the history as well as storage of web page icons.
-    \value JavascriptCanOpenWindows Specifies whether JavaScript programs can open new windows.
-    \value JavascriptCanAccessClipboard Specifies whether JavaScript programs can read or write to the clipboard.
-    \value DeveloperExtrasEnabled Enables extra tools for Web developers. Currently this enables the "Inspect" element in the context menu,
+    \value AutoLoadImages Specifies whether images are automatically loaded in
+        web pages.
+    \value JavascriptEnabled Enables or disables the running of JavaScript
+        programs.
+    \value JavaEnabled Enables or disables Java applets.
+        Currently Java applets are not supported.
+    \value PluginsEnabled Enables or disables plugins in web pages.
+        Currently Flash and other plugins are not supported.
+    \value PrivateBrowsingEnabled Private browsing prevents WebKit from
+        recording visited pages in the history and storing web page icons.
+    \value JavascriptCanOpenWindows Specifies whether JavaScript programs
+        can open new windows.
+    \value JavascriptCanAccessClipboard Specifies whether JavaScript programs
+        can read or write to the clipboard.
+    \value DeveloperExtrasEnabled Enables extra tools for Web developers.
+        Currently this enables the "Inspect" element in the context menu,
     which shows the WebKit WebInspector for web site debugging.
-    \value LinksIncludedInFocusChain Specifies whether hyperlinks should be included in the keyboard focus chain.
+    \value LinksIncludedInFocusChain Specifies whether hyperlinks should be
+        included in the keyboard focus chain.
 */
 
 /*!
@@ -305,9 +331,10 @@ int QWebSettings::fontSize(FontSize type) const
 }
 
 /*!
-    Resets the font size for \a type to the size specified in the default settings object.
+    Resets the font size for \a type to the size specified in the global
+    settings object.
 
-    This function has not effect on the default QWebSettings instance.
+    This function has no effect on the global QWebSettings instance.
 */
 void QWebSettings::resetFontSize(FontSize type)
 {
@@ -320,7 +347,7 @@ void QWebSettings::resetFontSize(FontSize type)
 /*!
     Specifies the location of a user stylesheet to load with every web page.
 
-    The \a location can be a URL as well as a path on the local filesystem.
+    The \a location can be a URL or a path on the local filesystem.
 
     \sa userStyleSheetUrl()
 */
@@ -341,12 +368,12 @@ QUrl QWebSettings::userStyleSheetUrl() const
 }
 
 /*!
-    Sets the \a path of the icon database. The icon database is used to store favicons
-    associated with web sites.
+    Sets the path of the icon database to \a path. The icon database is used
+    to store "favicons" associated with web sites.
 
-    The \a path must point to an existing directory where the icons are stored.
+    \a path must point to an existing directory where the icons are stored.
 
-    If \a path is empty then the icon database is disabled.
+    Setting an empty path disables the icon database.
 */
 void QWebSettings::setIconDatabasePath(const QString &path)
 {
@@ -364,9 +391,10 @@ void QWebSettings::setIconDatabasePath(const QString &path)
 }
 
 /*!
-    Returns whether the path of the icon database or an empty string if the icon database is disabled.
+    Returns the path of the icon database or an empty string if the icon
+    database is disabled.
 
-    \sa setIconDatabasePath()
+    \sa setIconDatabasePath(), clearIconDatabase()
 */
 QString QWebSettings::iconDatabasePath()
 {
@@ -378,8 +406,7 @@ QString QWebSettings::iconDatabasePath()
 }
 
 /*!
-    This will remove all the data from the icon database. If no
-    icon database is enabled noting is going to happen.
+    Clears the icon database.
 */
 void QWebSettings::clearIconDatabase()
 {
@@ -388,8 +415,12 @@ void QWebSettings::clearIconDatabase()
 }
 
 /*!
-    Returns the site icon for \a url
-    If there is no icon for the url a null QIcon is returned.
+    Returns the web site's icon for \a url.
+
+    If the web site does not specify an icon, or the icon is not in the
+    database, a null QIcon is returned.
+
+    \sa setIconDatabasePath()
 */
 QIcon QWebSettings::iconForUrl(const QUrl &url)
 {
@@ -406,7 +437,13 @@ QIcon QWebSettings::iconForUrl(const QUrl &url)
 }
 
 /*!
-    Sets \a graphic to be drawn when QtWebKit needs to drawn an image of the given \a type.
+    Sets \a graphic to be drawn when QtWebKit needs to draw an image of the
+    given \a type.
+
+    For example, when an image cannot be loaded the pixmap specified by
+    \l{QWebSettings::WebGraphic}{MissingImageGraphic} is drawn instead.
+
+    \sa webGraphic()
 */
 void QWebSettings::setWebGraphic(WebGraphic type, const QPixmap &graphic)
 {
@@ -418,7 +455,13 @@ void QWebSettings::setWebGraphic(WebGraphic type, const QPixmap &graphic)
 }
 
 /*!
-    Returns a previously set pixmap that is used to draw replacement graphics of the specified \a type.
+    Returns a previously set pixmap used to draw replacement graphics of the
+    specified \a type.
+
+    For example, when an image cannot be loaded the pixmap specified by
+    \l{QWebSettings::WebGraphic}{MissingImageGraphic} is drawn instead.
+
+    \sa setWebGraphic()
 */
 QPixmap QWebSettings::webGraphic(WebGraphic type)
 {
@@ -442,16 +485,20 @@ int QWebSettings::maximumPagesInCache()
 }
 
 /*!
-   Specifies the capacities for the memory cache for dead objects such as stylesheets or scripts.
+   Specifies the capacities for the memory cache for dead objects such as
+   stylesheets or scripts.
 
-   The \a cacheMinDeadCapacity specifies the minimum number of bytes that dead objects should
-   consume when the cache is under pressue. \a cacheMaxDead is the maximum number of bytes that
-   dead objects should consume when the cache is not under pressure.
+   The \a cacheMinDeadCapacity specifies the \e minimum number of bytes that
+   dead objects should consume when the cache is under pressure.
+   
+   \a cacheMaxDead is the \e maximum number of bytes that dead objects should
+   consume when the cache is \bold not under pressure.
 
-   \a totalCapacity specifies the maximum number of bytes that the cache should consume overall.
+   \a totalCapacity specifies the \e maximum number of bytes that the cache
+   should consume \bold overall.
 
-   Calling setObjectCacheCapacities(0, 0, 0) will disable the cache. Calling it with one non-zero
-   value will enable it again. The cache is enabled by default.
+   The cache is enabled by default. Calling setObjectCacheCapacities(0, 0, 0)
+   will disable the cache. Calling it with one non-zero enables it again.
 */
 void QWebSettings::setObjectCacheCapacities(int cacheMinDeadCapacity, int cacheMaxDead, int totalCapacity)
 {
@@ -464,7 +511,8 @@ void QWebSettings::setObjectCacheCapacities(int cacheMinDeadCapacity, int cacheM
 }
 
 /*!
-    Sets the default font family to \a family for the specified \a which of font.
+    Sets the actual font family to \a family for the specified generic family,
+    \a which.
 */
 void QWebSettings::setFontFamily(FontFamily which, const QString &family)
 {
@@ -473,7 +521,8 @@ void QWebSettings::setFontFamily(FontFamily which, const QString &family)
 }
 
 /*!
-    Returns the default font family for the specified \a which of font.
+    Returns the actual font family for the specified generic font family,
+    \a which.
 */
 QString QWebSettings::fontFamily(FontFamily which) const
 {
@@ -486,9 +535,10 @@ QString QWebSettings::fontFamily(FontFamily which) const
 }
 
 /*!
-    Resets the font family for specified \a which of fonts in a web page to the default.
+    Resets the actual font family to the default font family, specified by
+    \a which.
 
-    This function has not effect on the default QWebSettings instance.
+    This function has no effect on the global QWebSettings instance.
 */
 void QWebSettings::resetFontFamily(FontFamily which)
 {
@@ -499,7 +549,10 @@ void QWebSettings::resetFontFamily(FontFamily which)
 }
 
 /*!
-    Enables or disables the specified \a attr feature depending on the value of \a on.
+    \fn void QWebSettings::setAttribute(WebAttribute attribute, bool on)
+    
+    Enables or disables the specified \a attribute feature depending on the
+    value of \a on.
 */
 void QWebSettings::setAttribute(WebAttribute attr, bool on)
 {
@@ -508,7 +561,9 @@ void QWebSettings::setAttribute(WebAttribute attr, bool on)
 }
 
 /*!
-    Returns true if \a attr is enabled; otherwise returns false.
+    \fn bool QWebSettings::testAttribute(WebAttribute attribute) const
+
+    Returns true if \a attribute is enabled; otherwise returns false.
 */
 bool QWebSettings::testAttribute(WebAttribute attr) const
 {
@@ -521,9 +576,12 @@ bool QWebSettings::testAttribute(WebAttribute attr) const
 }
 
 /*!
-    Resets the setting of \a attr. The global default for \a attr will be used instead.
+    \fn void QWebSettings::resetAttribute(WebAttribute attribute)
 
-    This function has not effect on the default QWebSettings instance.
+    Resets the setting of \a attribute.
+    This function has no effect on the global QWebSettings instance.
+
+    \sa globalSettings()
 */
 void QWebSettings::resetAttribute(WebAttribute attr)
 {

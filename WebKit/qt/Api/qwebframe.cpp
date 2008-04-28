@@ -907,10 +907,11 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
 /*!
     \class QWebHitTestResult
     \since 4.4
-    \brief The QWebHitTestResult class provides information about the web page content after a hit test.
+    \brief The QWebHitTestResult class provides information about the web
+    page content after a hit test.
 
-    QWebHitTestResult is return by QWebPage::hitTestContent() to provide information about the content of
-    the web page at the specified position.
+    QWebHitTestResult is returned by QWebFrame::hitTestContent() to provide
+    information about the content of the web page at the specified position.
 */
 
 /*!
