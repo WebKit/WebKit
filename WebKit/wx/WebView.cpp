@@ -351,15 +351,34 @@ void wxWebView::LoadURL(wxString url)
 
 bool wxWebView::GoBack()
 {
-    if (m_impl->frame && m_impl->frame->page()) {
+    if (m_impl->frame && m_impl->frame->page())
         return m_impl->frame->page()->goBack();
-    }
+
+    return false;
 }
 
 bool wxWebView::GoForward()
 {
     if (m_impl->frame && m_impl->frame->page())
         return m_impl->frame->page()->goForward();
+
+    return false;
+}
+
+bool wxWebView::CanGoBack()
+{
+    if (m_impl->frame && m_impl->frame->page() && m_impl->frame->page()->backForwardList())
+        return m_impl->frame->page()->backForwardList()->backItem() != NULL;
+
+    return false;
+}
+
+bool wxWebView::CanGoForward()
+{
+    if (m_impl->frame && m_impl->frame->page() && m_impl->frame->page()->backForwardList())
+        return m_impl->frame->page()->backForwardList()->forwardItem() != NULL;
+
+    return false;
 }
 
 bool wxWebView::CanIncreaseTextSize() const

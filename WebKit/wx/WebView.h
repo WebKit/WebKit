@@ -81,6 +81,9 @@ public:
     bool GoForward();
     void Stop();
     void Reload();
+
+    bool CanGoBack();
+    bool CanGoForward();
     
     bool CanCut();
     bool CanCopy();
