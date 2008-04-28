@@ -49,7 +49,7 @@ namespace WebCore {
     class NavigationAction;
     class String;
     class ResourceLoader;
-    
+
     struct LoadErrorResetToken;
 
     class FrameLoaderClientQt : public QObject, public FrameLoaderClient {
@@ -63,7 +63,7 @@ namespace WebCore {
         void sigCallPolicyFunction(int);
         void loadStarted();
         void loadProgress(int d);
-        void loadFinished();
+        void loadFinished(bool);
         void titleChanged(const QString& title);
 
     public:
@@ -204,6 +204,7 @@ namespace WebCore {
         ResourceResponse m_response;
         bool m_firstData;
         FramePolicyFunction m_policyFunction;
+        bool m_loadSucceeded;
     };
 
 }

@@ -1,3 +1,39 @@
+2008-04-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix QWebView::loadFinished isn't always emitted
+
+        Replaced loadDone() with loadFinished(bool) and moved the signals for progress
+        tracking (start, progres, and finish) to the page instead of the frame. This
+        ensures that we emit loadFinished even when a subframe started the actual load.
+
+        This causes a few regressions in the layout tests that we for now accept for
+        the sake of the correct API. Layout tests we can fix any time though, including
+        patch release, the API however we can't change anymore in patch releases.
+
+        * Api/qwebframe.cpp:
+        * Api/qwebframe.h:
+        * Api/qwebpage.cpp:
+        (QWebPage::totalBytes):
+        * Api/qwebpage.h:
+        * Api/qwebview.cpp:
+        (QWebView::setPage):
+        * Api/qwebview.h:
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (drtDescriptionSuitableForTestResult):
+        (WebCore::FrameLoaderClientQt::FrameLoaderClientQt):
+        (WebCore::FrameLoaderClientQt::setFrame):
+        (WebCore::FrameLoaderClientQt::transitionToCommittedFromCachedPage):
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+        (WebCore::FrameLoaderClientQt::willChangeTitle):
+        (WebCore::FrameLoaderClientQt::createDocumentLoader):
+        (WebCore::FrameLoaderClientQt::download):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2008-04-28  Kavindra Devi Palaraja  <kdpalara@trolltech.com>
 
         Reviewed by Simon.

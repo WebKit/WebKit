@@ -1,3 +1,13 @@
+2008-04-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Adapt to the latest API changes in WebKit/qt/Api.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        * DumpRenderTree/qt/jsobjects.cpp:
+
 2008-04-26  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.

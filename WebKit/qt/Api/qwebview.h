@@ -110,7 +110,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void loadStarted();
     void loadProgress(int progress);
-    void loadFinished();
+    void loadFinished(bool);
     void titleChanged(const QString& title);
     void statusBarMessage(const QString& text);
     void linkClicked(const QUrl &url);

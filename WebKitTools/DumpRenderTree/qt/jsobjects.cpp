@@ -63,10 +63,6 @@ void LayoutTestController::reset()
 
 void LayoutTestController::maybeDump(bool ok)
 {
-    QWebFrame *frame = qobject_cast<QWebFrame*>(sender());
-    if (frame != m_topLoadingFrame)
-        return;
-
     m_topLoadingFrame = 0;
 
     if (!shouldWaitUntilDone()) {

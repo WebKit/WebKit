@@ -299,9 +299,9 @@ public:
                 info, SLOT(startLoad()));
         connect(view, SIGNAL(loadProgress(int)),
                 info, SLOT(changeLoad(int)));
-        connect(view, SIGNAL(loadFinished()),
+        connect(view, SIGNAL(loadFinished(bool)),
                 info, SLOT(endLoad()));
-        connect(view, SIGNAL(loadFinished()),
+        connect(view, SIGNAL(loadFinished(bool)),
                 this, SLOT(loadFinished()));
         connect(view, SIGNAL(titleChanged(const QString&)),
                 this, SLOT(setWindowTitle(const QString&)));

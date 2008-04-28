@@ -234,7 +234,10 @@ public:
     virtual bool supportsExtension(Extension extension) const;
 
 Q_SIGNALS:
+    void loadStarted();
     void loadProgress(int progress);
+    void loadFinished(bool ok);
+
     void linkHovered(const QString &link, const QString &title, const QString &textContent);
     void statusBarMessage(const QString& text);
     void selectionChanged();

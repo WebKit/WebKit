@@ -58,7 +58,8 @@ public:
     loadProgress() signal, on the other hand, is emitted whenever an element of
     the web view completes loading, such as an embedded image, a script, etc.
     Finally, the loadFinished() signal is emitted when the view has loaded
-    completely.
+    completely. It's argument - either \c true or \c false - indicates
+    load success or failure.
 
     The page() function returns a pointer to the web page object. See
     \l{Elements of QWebView} for an explanation of how the web page
@@ -181,10 +182,6 @@ void QWebView::setPage(QWebPage *page)
         d->page->setPalette(palette());
         // #### connect signals
         QWebFrame *mainFrame = d->page->mainFrame();
-        connect(mainFrame, SIGNAL(loadStarted()),
-                this, SIGNAL(loadStarted()));
-        connect(mainFrame, SIGNAL(loadFinished()),
-                this, SIGNAL(loadFinished()));
         connect(mainFrame, SIGNAL(titleChanged(const QString&)),
                 this, SIGNAL(titleChanged(const QString&)));
         connect(mainFrame, SIGNAL(iconChanged()),
@@ -192,8 +189,12 @@ void QWebView::setPage(QWebPage *page)
         connect(mainFrame, SIGNAL(urlChanged(const QUrl &)),
                 this, SIGNAL(urlChanged(const QUrl &)));
 
+        connect(d->page, SIGNAL(loadStarted()),
+                this, SIGNAL(loadStarted()));
         connect(d->page, SIGNAL(loadProgress(int)),
                 this, SIGNAL(loadProgress(int)));
+        connect(d->page, SIGNAL(loadFinished(bool)),
+                this, SIGNAL(loadFinished(bool)));
         connect(d->page, SIGNAL(statusBarMessage(const QString &)),
                 this, SIGNAL(statusBarMessage(const QString &)));
         connect(d->page, SIGNAL(linkClicked(const QUrl &)),
@@ -797,11 +798,12 @@ void QWebView::changeEvent(QEvent *e)
 */
 
 /*!
-    \fn void QWebView::loadFinished()
+    \fn void QWebView::loadFinished(bool ok)
 
-    This signal is emitted when a load of the frame is finished.
+    This signal is emitted when a load of the page is finished.
+    \a ok will indicate whether the load was successful or any error occurred.
 
-    \sa loadStarted(), QWebFrame::loadDone()
+    \sa loadStarted()
 */
 
 /*!

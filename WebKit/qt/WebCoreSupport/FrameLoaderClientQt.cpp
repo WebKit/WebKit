@@ -86,7 +86,7 @@ static QString drtDescriptionSuitableForTestResult(WebCore::Frame* _frame)
     QWebFrame* frame = QWebFramePrivate::kit(_frame);
     QString name = frame->frameName();
 
-    bool isMainFrame = frame == frame->page()->mainFrame();  
+    bool isMainFrame = frame == frame->page()->mainFrame();
     if (isMainFrame) {
         if (!name.isEmpty())
             return QString::fromLatin1("main frame \"%1\"").arg(name);
@@ -134,6 +134,7 @@ FrameLoaderClientQt::FrameLoaderClientQt()
     , m_webFrame(0)
     , m_firstData(false)
     , m_policyFunction(0)
+    , m_loadSucceeded(false)
 {
     connect(this, SIGNAL(sigCallPolicyFunction(int)), this, SLOT(slotCallPolicyFunction(int)), Qt::QueuedConnection);
 }
@@ -153,11 +154,11 @@ void FrameLoaderClientQt::setFrame(QWebFrame* webFrame, Frame* frame)
     }
 
     connect(this, SIGNAL(loadStarted()),
-            m_webFrame, SIGNAL(loadStarted()));
+            m_webFrame->page(), SIGNAL(loadStarted()));
     connect(this, SIGNAL(loadProgress(int)),
             m_webFrame->page(), SIGNAL(loadProgress(int)));
-    connect(this, SIGNAL(loadFinished()),
-            m_webFrame, SIGNAL(loadFinished()));
+    connect(this, SIGNAL(loadFinished(bool)),
+            m_webFrame->page(), SIGNAL(loadFinished(bool)));
     connect(this, SIGNAL(titleChanged(const QString&)),
             m_webFrame, SIGNAL(titleChanged(const QString&)));
 }
@@ -204,11 +205,11 @@ void FrameLoaderClientQt::savePlatformDataToCachedPage(CachedPage*)
 }
 
 void FrameLoaderClientQt::transitionToCommittedFromCachedPage(CachedPage*)
-{ 
+{
 }
 
-void FrameLoaderClientQt::transitionToCommittedForNewPage() 
-{ 
+void FrameLoaderClientQt::transitionToCommittedForNewPage()
+{
     ASSERT(m_frame);
     ASSERT(m_webFrame);
 
@@ -389,7 +390,7 @@ void FrameLoaderClientQt::dispatchDidFinishDocumentLoad()
 
     if (m_frame->tree()->parent() || !m_webFrame)
         return;
-        
+
     m_webFrame->page()->d->updateNavigationActions();
 }
 
@@ -399,8 +400,8 @@ void FrameLoaderClientQt::dispatchDidFinishLoad()
     if (dumpFrameLoaderCallbacks)
         printf("%s - didFinishLoadForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
-    if (m_webFrame)
-        emit m_webFrame->loadDone(true);
+    m_loadSucceeded = true;
+
     if (m_frame->tree()->parent() || !m_webFrame)
         return;
     m_webFrame->page()->d->updateNavigationActions();
@@ -468,7 +469,7 @@ void FrameLoaderClientQt::postProgressEstimateChangedNotification()
 void FrameLoaderClientQt::postProgressFinishedNotification()
 {
     if (m_webFrame && m_frame->page())
-        emit loadFinished();
+        emit loadFinished(m_loadSucceeded);
 }
 
 void FrameLoaderClientQt::setMainFrameDocumentReady(bool b)
@@ -666,12 +667,12 @@ enum {
     WebKitErrorCannotShowMIMEType =                             100,
     WebKitErrorCannotShowURL =                                  101,
     WebKitErrorFrameLoadInterruptedByPolicyChange =             102,
-    WebKitErrorCannotUseRestrictedPort = 103, 
+    WebKitErrorCannotUseRestrictedPort = 103,
     WebKitErrorCannotFindPlugIn =                               200,
     WebKitErrorCannotLoadPlugIn =                               201,
     WebKitErrorJavaUnavailable =                                202,
 };
-    
+
 WebCore::ResourceError FrameLoaderClientQt::blockedError(const WebCore::ResourceRequest& request)
 {
     return ResourceError("Error", WebKitErrorCannotUseRestrictedPort, request.url().prettyURL(),
@@ -800,8 +801,7 @@ void FrameLoaderClientQt::dispatchDidFailProvisionalLoad(const WebCore::Resource
     if (dumpFrameLoaderCallbacks)
         printf("%s - didFailProvisionalLoadWithError\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
-    if (m_webFrame)
-        emit m_webFrame->loadDone(false);
+    m_loadSucceeded = false;
 }
 
 void FrameLoaderClientQt::dispatchDidFailLoad(const WebCore::ResourceError&)
@@ -809,8 +809,7 @@ void FrameLoaderClientQt::dispatchDidFailLoad(const WebCore::ResourceError&)
     if (dumpFrameLoaderCallbacks)
         printf("%s - didFailLoadWithError\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
-    if (m_webFrame)
-        emit m_webFrame->loadDone(false);
+    m_loadSucceeded = false;
 }
 
 WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage()

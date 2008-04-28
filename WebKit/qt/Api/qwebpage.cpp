@@ -926,6 +926,13 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
     QWebPage::mainFrame(). For example, the load(), setUrl() and setHtml()
     unctions for QWebPage can be accessed using QWebFrame.
 
+    The loadStarted() signal is emitted when the page begins to load.The
+    loadProgress() signal, on the other hand, is emitted whenever an element
+    of the web page completes loading, such as an embedded image, a script,
+    etc. Finally, the loadFinished() signal is emitted when the page has
+    loaded completely. It's argument - either \c true or \c false - indicates
+    load success or failure.
+
     \section1 Using QWebPage in a Widget-less Environment
 
     Before you begin painting a QWebPage object, you need to set the size of
@@ -937,8 +944,8 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
 
     \snippet doc/src/snippets/webkit/webpage/main.cpp 0
 
-    The \c Thumbnail's constructor takes in a \a url. We connect our QWebFrame
-    object's \l{QWebFrame::}{loadFinished()} signal to our private slot,
+    The \c Thumbnail's constructor takes in a \a url. We connect our QWebPage
+    object's \l{QWebPage::}{loadFinished()} signal to our private slot,
     \c render().
 
     \snippet doc/src/snippets/webkit/webpage/main.cpp 1
@@ -2191,6 +2198,14 @@ quint64 QWebPage::bytesReceived() const {
 }
 
 /*!
+    \fn void QWebPage::loadStarted()
+
+    This signal is emitted when a new load of the page is started.
+
+    \sa loadFinished()
+*/
+
+/*!
     \fn void QWebPage::loadProgress(int progress)
 
     This signal is emitted when the global progress status changes.
@@ -2199,6 +2214,15 @@ quint64 QWebPage::bytesReceived() const {
     It accumulates changes from all the child frames.
 
     \sa bytesReceived()
+*/
+
+/*!
+    \fn void QWebPage::loadFinished(bool ok)
+
+    This signal is emitted when a load of the page is finished.
+    \a ok will indicate whether the load was successful or any error occurred.
+
+    \sa loadStarted()
 */
 
 /*!
