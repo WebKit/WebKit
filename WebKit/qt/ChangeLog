@@ -1,3 +1,17 @@
+2008-04-28  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        Implement QWebPage::createPlugin
+        
+        The code is coming from the demo browser and needed here
+        for some manual tests.
+        
+
+        * QtLauncher/QtLauncher.pro:
+        * QtLauncher/main.cpp:
+        (WebPage::createPlugin):
+
 2008-04-28  Simon Hausmann  <hausmann@webkit.org>
 
         Qt/Win build fix. Include config.h to get the implicit MathExtras.h

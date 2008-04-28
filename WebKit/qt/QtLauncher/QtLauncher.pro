@@ -1,6 +1,7 @@
 TEMPLATE = app
 SOURCES += main.cpp
 CONFIG -= app_bundle
+CONFIG += uitools
 DESTDIR = ../../../bin
 
 include(../../../WebKit.pri)
