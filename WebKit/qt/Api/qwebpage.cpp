@@ -904,11 +904,46 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
 /*!
     \class QWebPage
     \since 4.4
-    \brief The QWebPage class provides a widget that is used to view and edit web documents.
+    \brief The QWebPage class provides an object to view and edit web documents.
 
     QWebPage holds a main frame responsible for web content, settings, the history
-    of navigated links as well as actions. This class can be used, together with QWebFrame,
-    if you want to provide functionality like QWebView in a setup without widgets.
+    of navigated links and actions. This class can be used, together with QWebFrame,
+    to provide functionality like QWebView in a widget-less environment.
+
+    QWebPage's API is very similar to QWebView, as you are still provided with
+    common functions like action() (known as \l{QWebView::}{pageAction()} in
+    QWebView), triggerAction(), findText() and settings(). More QWebView-like
+    functions can be found in the main frame of QWebPage, obtained via
+    QWebPage::mainFrame(). For example, the load(), setUrl() and setHtml()
+    unctions for QWebPage can be accessed using QWebFrame.
+
+    \section1 Using QWebPage in a Widget-less Environment
+
+    Before you begin painting a QWebPage object, you need to set the size of
+    the viewport by calling setViewportSize(). Then, you invoke the main
+    frame's render function (QWebFrame::render()). An example of this
+    is shown in the code snippet below.
+
+    Suppose we have a \c Thumbnail class as follows:
+
+    \snippet doc/src/snippets/webkit/webpage/main.cpp 0
+
+    The \c Thumbnail's constructor takes in a \a url. We connect our QWebFrame
+    object's \l{QWebFrame::}{loadFinished()} signal to our private slot,
+    \c render().
+
+    \snippet doc/src/snippets/webkit/webpage/main.cpp 1
+
+    The \c render() function shows how we can paint a thumbnail using a
+    QWebPage object.
+
+    \snippet doc/src/snippets/webkit/webpage/main.cpp 2
+
+    We begin by setting the \l{QWebPage::viewportSize()}{viewportSize} and
+    then we instantiate a QImage object, \c image, with the same size as our
+    \l{QWebPage::viewportSize()}{viewportSize}. This image is then sent
+    as a parameter to \c painter. Next, we render the contents of the main
+    frame and its subframes into \c painter. Finally, we save the scaled image.
 */
 
 /*!

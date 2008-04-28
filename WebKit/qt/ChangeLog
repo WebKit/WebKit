@@ -1,3 +1,12 @@
+2008-04-28  Kavindra Devi Palaraja  <kdpalara@trolltech.com>
+
+        Reviewed by Simon.
+
+        Submitting more documentation for QWebPage
+        
+
+        * Api/qwebpage.cpp:
+
 2008-04-28  Lincoln Ramsay  <lincoln.ramsay@trolltech.com>
 
         Reviewed by Simon.
