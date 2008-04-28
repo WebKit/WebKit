@@ -1,5 +1,16 @@
 2008-04-28  Simon Hausmann  <hausmann@webkit.org>
 
+        Reviewed by Alp.
+
+        Gtk build fix, similar to the changes done in r32609.
+
+        * platform/graphics/gtk/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::isHashTableDeletedValue):
+        (WebCore::FontPlatformData::hashTableDeletedFontValue):
+
+2008-04-28  Simon Hausmann  <hausmann@webkit.org>
+
         Prospective build fix. After r32609 it seems the workaround here
         is not needed anymore. With gcc 4.2/4.3 before 32609 the workaround
         is needed for compilation, after 32609 compilation only succeeds
