@@ -1,3 +1,10 @@
+2008-04-28  Adam Roben  <aroben@apple.com>
+
+        Fix some Windows build errors in WebKit
+
+        * Interfaces/WebKit.idl: Touched to force Interfaces to rebuild.
+        * WebKitPrefix.cpp: Touched to force WebKit to rebuild.
+
 2008-04-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
