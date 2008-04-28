@@ -1,3 +1,13 @@
+2008-04-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Fix run-webkit-tests --threading
+        and provisionally fix <https://bugs.webkit.org/show_bug.cgi?id=18661>
+        Proxy server issue in Sunday's Nightly
+
+        * UserObjectImp.cpp: Adjusted for the new member added to ClassInfo.
+
 2008-04-25  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adele Peterson.

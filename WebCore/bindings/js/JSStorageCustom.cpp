@@ -63,7 +63,7 @@ bool JSStorage::customPut(ExecState* exec, const Identifier& propertyName, JSVal
     // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
     // the native property slots manually.
     PropertySlot slot;
-    if (getStaticValueSlot<JSStorage, Base>(exec, s_info.propHashTable, this, propertyName, slot))
+    if (getStaticValueSlot<JSStorage, Base>(exec, s_info.propHashTable(exec), this, propertyName, slot))
         return false;
         
     JSValue* prototype = this->prototype();

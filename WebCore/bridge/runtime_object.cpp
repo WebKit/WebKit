@@ -32,7 +32,7 @@
 using namespace KJS;
 using namespace Bindings;
 
-const ClassInfo RuntimeObjectImp::s_info = { "RuntimeObject", 0, 0 };
+const ClassInfo RuntimeObjectImp::s_info = { "RuntimeObject", 0, 0, 0 };
 
 RuntimeObjectImp::RuntimeObjectImp(PassRefPtr<Bindings::Instance> i)
     : instance(i)

@@ -196,7 +196,7 @@ unsigned int ObjcArray::getLength() const
     return [_array.get() count];
 }
 
-const ClassInfo ObjcFallbackObjectImp::info = { "ObjcFallbackObject", 0, 0 };
+const ClassInfo ObjcFallbackObjectImp::info = { "ObjcFallbackObject", 0, 0, 0 };
 
 ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjcInstance* i, const KJS::Identifier propertyName)
 : _instance(i)

@@ -33,8 +33,8 @@
 namespace KJS {
 
 // Define the two types of JSCallbackObjects we support.
-template <> const ClassInfo JSCallbackObject<JSObject>::info = { "CallbackObject", 0, 0 };
-template <> const ClassInfo JSCallbackObject<JSGlobalObject>::info = { "CallbackGlobalObject", 0, 0 };
+template <> const ClassInfo JSCallbackObject<JSObject>::info = { "CallbackObject", 0, 0, 0 };
+template <> const ClassInfo JSCallbackObject<JSGlobalObject>::info = { "CallbackGlobalObject", 0, 0, 0 };
 
 COMPILE_ASSERT(sizeof(JSCallbackObject<JSGlobalObject>) <= CELL_SIZE, global_callback_object_fits_in_cell);
 

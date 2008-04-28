@@ -34,7 +34,7 @@ namespace KJS {
 
 // ------------------------------ NumberInstance ----------------------------
 
-const ClassInfo NumberInstance::info = { "Number", 0, 0 };
+const ClassInfo NumberInstance::info = { "Number", 0, 0, 0 };
 
 NumberInstance::NumberInstance(JSObject* proto)
     : JSWrapperObject(proto)
@@ -450,7 +450,7 @@ JSValue* numberProtoFuncToPrecision(ExecState* exec, JSObject* thisObj, const Li
 
 // ------------------------------ NumberObjectImp ------------------------------
 
-const ClassInfo NumberObjectImp::info = { "Function", &InternalFunctionImp::info, &numberTable };
+const ClassInfo NumberObjectImp::info = { "Function", &InternalFunctionImp::info, 0, ExecState::numberTable };
 
 /* Source for number_object.lut.h
 @begin numberTable 5
@@ -473,7 +473,7 @@ NumberObjectImp::NumberObjectImp(ExecState* exec, FunctionPrototype* funcProto, 
 
 bool NumberObjectImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<NumberObjectImp, InternalFunctionImp>(exec, &numberTable, this, propertyName, slot);
+    return getStaticValueSlot<NumberObjectImp, InternalFunctionImp>(exec, ExecState::numberTable(exec), this, propertyName, slot);
 }
 
 JSValue* NumberObjectImp::getValueProperty(ExecState*, int token) const

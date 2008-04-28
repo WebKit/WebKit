@@ -50,7 +50,7 @@ namespace KJS {
         virtual bool isVariableObject() const;
         virtual bool isDynamicScope() const = 0;
 
-        virtual bool getPropertyAttributes(const Identifier& propertyName, unsigned& attributes) const;
+        virtual bool getPropertyAttributes(ExecState*, const Identifier& propertyName, unsigned& attributes) const;
 
     protected:
         // Subclasses of JSVariableObject can subclass this struct to add data

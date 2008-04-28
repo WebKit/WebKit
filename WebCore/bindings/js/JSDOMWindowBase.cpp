@@ -137,7 +137,7 @@ private:
 
 ////////////////////// JSDOMWindowBase Object ////////////////////////
 
-const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, &JSDOMWindowBaseTable };
+const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, &JSDOMWindowBaseTable, 0 };
 
 /*
 @begin JSDOMWindowBaseTable 118

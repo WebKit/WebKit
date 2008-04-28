@@ -46,15 +46,15 @@ ObjectPrototype::ObjectPrototype(ExecState* exec, FunctionPrototype* functionPro
     putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, objectProtoFuncToString), DontEnum);
     putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toLocaleString, objectProtoFuncToLocaleString), DontEnum);
     putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().valueOf, objectProtoFuncValueOf), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, CommonIdentifiers::shared()->hasOwnProperty, objectProtoFuncHasOwnProperty), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, CommonIdentifiers::shared()->propertyIsEnumerable, objectProtoFuncPropertyIsEnumerable), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, CommonIdentifiers::shared()->isPrototypeOf, objectProtoFuncIsPrototypeOf), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().hasOwnProperty, objectProtoFuncHasOwnProperty), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().propertyIsEnumerable, objectProtoFuncPropertyIsEnumerable), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().isPrototypeOf, objectProtoFuncIsPrototypeOf), DontEnum);
 
     // Mozilla extensions
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 2, CommonIdentifiers::shared()->__defineGetter__, objectProtoFuncDefineGetter), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 2, CommonIdentifiers::shared()->__defineSetter__, objectProtoFuncDefineSetter), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, CommonIdentifiers::shared()->__lookupGetter__, objectProtoFuncLookupGetter), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, CommonIdentifiers::shared()->__lookupSetter__, objectProtoFuncLookupSetter), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 2, exec->propertyNames().__defineGetter__, objectProtoFuncDefineGetter), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 2, exec->propertyNames().__defineSetter__, objectProtoFuncDefineSetter), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().__lookupGetter__, objectProtoFuncLookupGetter), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().__lookupSetter__, objectProtoFuncLookupSetter), DontEnum);
 }
 
 

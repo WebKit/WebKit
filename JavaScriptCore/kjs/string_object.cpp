@@ -38,7 +38,7 @@ namespace KJS {
 
 // ------------------------------ StringInstance ----------------------------
 
-const ClassInfo StringInstance::info = { "String", 0, 0 };
+const ClassInfo StringInstance::info = { "String", 0, 0, 0 };
 
 StringInstance::StringInstance(JSObject *proto)
   : JSWrapperObject(proto)
@@ -125,7 +125,7 @@ void StringInstance::getPropertyNames(ExecState* exec, PropertyNameArray& proper
 }
 
 // ------------------------------ StringPrototype ---------------------------
-const ClassInfo StringPrototype::info = { "String", &StringInstance::info, &stringTable };
+const ClassInfo StringPrototype::info = { "String", &StringInstance::info, 0, ExecState::stringTable };
 /* Source for string_object.lut.h
 @begin stringTable 26
   toString              &stringProtoFuncToString          DontEnum|Function       0
@@ -173,7 +173,7 @@ StringPrototype::StringPrototype(ExecState* exec, ObjectPrototype* objProto)
 
 bool StringPrototype::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot &slot)
 {
-  return getStaticFunctionSlot<StringInstance>(exec, &stringTable, this, propertyName, slot);
+  return getStaticFunctionSlot<StringInstance>(exec, ExecState::stringTable(exec), this, propertyName, slot);
 }
 
 // ------------------------------ Functions --------------------------

@@ -202,7 +202,7 @@ sub output() {
     }
     print "   { 0, 0, 0, 0 }\n";
     print "};\n\n";
-    print "const struct HashTable $name = ";
+    print "extern const struct HashTable $name = ";
     print "\{ ", $size - 1, ", $nameEntries, 0 \};\n\n";
     print "} // namespace\n";
 }

@@ -42,6 +42,7 @@ namespace KJS {
     class EvalErrorPrototype;
     class FunctionObjectImp;
     class FunctionPrototype;
+    struct HashTable;
     class JSGlobalObject;
     class NativeErrorImp;
     class NativeErrorPrototype;
@@ -67,6 +68,7 @@ namespace KJS {
     class UriError;
     class UriErrorPrototype;
     struct ActivationStackNode;
+    struct ThreadClassInfoHashTables;
 
     typedef Vector<ExecState*, 16> ExecStateStack;
 
@@ -75,9 +77,8 @@ namespace KJS {
         using JSVariableObject::JSVariableObjectData;
 
         struct JSGlobalObjectData : public JSVariableObjectData {
-            JSGlobalObjectData(JSGlobalObject* globalObject, JSObject* thisValue)
+            JSGlobalObjectData()
                 : JSVariableObjectData(&inlineSymbolTable)
-                , globalExec(globalObject, thisValue)
             {
             }
 
@@ -86,7 +87,7 @@ namespace KJS {
 
             Debugger* debugger;
             
-            GlobalExecState globalExec;
+            OwnPtr<GlobalExecState> globalExec;
             int recursion;
 
             unsigned timeoutTime;
@@ -140,20 +141,22 @@ namespace KJS {
             unsigned pageGroupIdentifier;
 
             OwnPtr<HashSet<JSObject*> > arrayVisitedElements; // Global data shared by array prototype functions.
+
+            PerThreadData perThreadData;
         };
 
     public:
         JSGlobalObject()
-            : JSVariableObject(new JSGlobalObjectData(this, this))
+            : JSVariableObject(new JSGlobalObjectData)
         {
-            init();
+            init(this);
         }
 
     protected:
         JSGlobalObject(JSValue* proto, JSObject* globalThisValue)
-            : JSVariableObject(proto, new JSGlobalObjectData(this, globalThisValue))
+            : JSVariableObject(proto, new JSGlobalObjectData)
         {
-            init();
+            init(globalThisValue);
         }
 
     public:
@@ -246,8 +249,14 @@ namespace KJS {
 
         HashSet<JSObject*>& arrayVisitedElements() { if (!d()->arrayVisitedElements) d()->arrayVisitedElements.set(new HashSet<JSObject*>); return *d()->arrayVisitedElements; }
 
+        // Per-thread hash tables, cached on the global object for faster access.
+        const PerThreadData* perThreadData() const { return &d()->perThreadData; }
+
+        // Initialize and/or retrieve per-thread hash tables - use perThreadData() for faster access instead.
+        static ThreadClassInfoHashTables* threadClassInfoHashTables();
+
     private:
-        void init();
+        void init(JSObject* thisValue);
         
         JSGlobalObjectData* d() const { return static_cast<JSGlobalObjectData*>(JSVariableObject::d); }
 

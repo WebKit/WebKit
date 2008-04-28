@@ -36,7 +36,7 @@
 
 namespace KJS {
 
-const ClassInfo JSCallbackFunction::info = { "CallbackFunction", &InternalFunctionImp::info, 0};
+const ClassInfo JSCallbackFunction::info = { "CallbackFunction", &InternalFunctionImp::info, 0, 0 };
 
 JSCallbackFunction::JSCallbackFunction(ExecState* exec, JSObjectCallAsFunctionCallback callback, const Identifier& name)
     : InternalFunctionImp(exec->lexicalGlobalObject()->functionPrototype(), name)

@@ -38,6 +38,7 @@ namespace KJS  {
     class FunctionBodyNode;
     class FunctionImp;
     class GlobalFuncImp;
+    struct HashTable;
     class Interpreter;
     class JSGlobalObject;
     class JSVariableObject;
@@ -45,6 +46,19 @@ namespace KJS  {
     class ScopeNode;
     
     enum CodeType { GlobalCode, EvalCode, FunctionCode };
+
+    struct PerThreadData {
+        const HashTable* arrayTable;
+        const HashTable* dateTable;
+        const HashTable* mathTable;
+        const HashTable* numberTable;
+        const HashTable* RegExpImpTable;
+        const HashTable* RegExpObjectImpTable;
+        const HashTable* stringTable;
+
+        CommonIdentifiers* propertyNames;
+        const List emptyList;
+    };
 
     // Represents the current state of script execution.
     // Passed as the first argument to most functions.
@@ -96,8 +110,15 @@ namespace KJS  {
 
         // These pointers are used to avoid accessing global variables for these,
         // to avoid taking PIC branches in Mach-O binaries.
-        const CommonIdentifiers& propertyNames() const { return *m_propertyNames; }
-        const List& emptyList() const { return *m_emptyList; }
+        const CommonIdentifiers& propertyNames() const { return *m_perThreadData->propertyNames; }
+        const List& emptyList() const { return m_perThreadData->emptyList; }
+        static const HashTable* arrayTable(ExecState* exec) { return exec->m_perThreadData->arrayTable; }
+        static const HashTable* dateTable(ExecState* exec) { return exec->m_perThreadData->dateTable; }
+        static const HashTable* mathTable(ExecState* exec) { return exec->m_perThreadData->mathTable; }
+        static const HashTable* numberTable(ExecState* exec) { return exec->m_perThreadData->numberTable; }
+        static const HashTable* RegExpImpTable(ExecState* exec) { return exec->m_perThreadData->RegExpImpTable; }
+        static const HashTable* RegExpObjectImpTable(ExecState* exec) { return exec->m_perThreadData->RegExpObjectImpTable; }
+        static const HashTable* stringTable(ExecState* exec) { return exec->m_perThreadData->stringTable; }
 
         LocalStorage& localStorage() { return *m_localStorage; }
         void setLocalStorage(LocalStorage* s) { m_localStorage = s; }
@@ -176,10 +197,10 @@ namespace KJS  {
 
         JSGlobalObject* m_globalObject;
         JSValue* m_exception;
-        CommonIdentifiers* m_propertyNames;
-        const List* m_emptyList;
 
         ExecState* m_callingExec;
+
+        const PerThreadData* m_perThreadData;
 
         ScopeNode* m_scopeNode;
         

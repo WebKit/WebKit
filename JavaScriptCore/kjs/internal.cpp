@@ -220,7 +220,7 @@ bool LabelStack::contains(const Identifier &id) const
 
 // ------------------------------ InternalFunctionImp --------------------------
 
-const ClassInfo InternalFunctionImp::info = { "Function", 0, 0 };
+const ClassInfo InternalFunctionImp::info = { "Function", 0, 0, 0 };
 
 InternalFunctionImp::InternalFunctionImp()
 {

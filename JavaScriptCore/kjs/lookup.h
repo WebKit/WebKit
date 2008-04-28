@@ -281,7 +281,7 @@ namespace KJS {
     };
 
 #define KJS_IMPLEMENT_PROTOTYPE(ClassName, ClassPrototype) \
-    const ClassInfo ClassPrototype::info = { ClassName"Prototype", 0, &ClassPrototype##Table  }; \
+    const ClassInfo ClassPrototype::info = { ClassName"Prototype", 0, &ClassPrototype##Table, 0  }; \
     JSObject* ClassPrototype::self(ExecState* exec) \
     { \
         return KJS::cacheGlobalObject<ClassPrototype>(exec, Identifier("[[" ClassName ".prototype]]")); \

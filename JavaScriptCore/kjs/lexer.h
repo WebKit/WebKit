@@ -24,6 +24,7 @@
 #ifndef Lexer_h
 #define Lexer_h
 
+#include "lookup.h"
 #include "ustring.h"
 #include <wtf/Vector.h>
 
@@ -94,6 +95,7 @@ namespace KJS {
     friend Lexer& lexer();
     friend class WTF::ThreadSpecific<Lexer>;
     Lexer();
+    ~Lexer();
 
     int yylineno;
     bool done;
@@ -145,6 +147,8 @@ namespace KJS {
     
     UString m_pattern;
     UString m_flags;
+
+    const HashTable mainTable;
   };
   
   Lexer& lexer(); // Returns the singletone JavaScript lexer.

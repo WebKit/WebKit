@@ -31,7 +31,7 @@ namespace KJS {
 
 // ------------------------------ MathObjectImp --------------------------------
 
-const ClassInfo MathObjectImp::info = { "Math", 0, &mathTable };
+const ClassInfo MathObjectImp::info = { "Math", 0, 0, ExecState::mathTable };
 
 /* Source for math_object.lut.h
 @begin mathTable 21
@@ -73,7 +73,7 @@ MathObjectImp::MathObjectImp(ExecState*, ObjectPrototype* objectPrototype)
 
 bool MathObjectImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticPropertySlot<MathObjectImp, JSObject>(exec, &mathTable, this, propertyName, slot);
+    return getStaticPropertySlot<MathObjectImp, JSObject>(exec, ExecState::mathTable(exec), this, propertyName, slot);
 }
 
 JSValue* MathObjectImp::getValueProperty(ExecState*, int token) const

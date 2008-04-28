@@ -1,3 +1,19 @@
+2008-04-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Fix run-webkit-tests --threading
+        and provisionally fix <https://bugs.webkit.org/show_bug.cgi?id=18661>
+        Proxy server issue in Sunday's Nightly
+
+        * DumpRenderTree/pthreads/JavaScriptThreadingPthreads.cpp:
+        (runJavaScriptThread):
+        (startJavaScriptThreads):
+        (stopJavaScriptThreads):
+        Spawned threads were immediately detached, unlike the original ones, so joining them
+        made no sense. Now, all threads are created detached, and stopJavaScriptThreads() just
+        waits for them all to exit.
+
 2008-04-28  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.

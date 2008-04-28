@@ -30,7 +30,7 @@
 
 using namespace KJS;
 
-const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &ArrayInstance::info, 0 };
+const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &ArrayInstance::info, 0, 0 };
 
 RuntimeArray::RuntimeArray(ExecState *exec, Bindings::Array *a)
     : JSObject(exec->lexicalGlobalObject()->arrayPrototype())

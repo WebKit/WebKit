@@ -47,8 +47,8 @@ FunctionPrototype::FunctionPrototype(ExecState* exec)
     putDirect(exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
 
     putDirectFunction(new PrototypeFunction(exec, this, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, this, 2, CommonIdentifiers::shared()->apply, functionProtoFuncApply), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, this, 1, CommonIdentifiers::shared()->call, functionProtoFuncCall), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, this, 2, exec->propertyNames().apply, functionProtoFuncApply), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, this, 1, exec->propertyNames().call, functionProtoFuncCall), DontEnum);
 }
 
 // ECMA 15.3.4

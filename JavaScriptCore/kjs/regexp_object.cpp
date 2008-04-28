@@ -46,14 +46,14 @@ static JSValue* regExpProtoFuncToString(ExecState*, JSObject*, const List&);
 
 // ECMA 15.10.5
 
-const ClassInfo RegExpPrototype::info = { "RegExpPrototype", 0, 0 };
+const ClassInfo RegExpPrototype::info = { "RegExpPrototype", 0, 0, 0 };
 
 RegExpPrototype::RegExpPrototype(ExecState* exec, ObjectPrototype* objectPrototype, FunctionPrototype* functionPrototype)
     : JSObject(objectPrototype)
 {
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, CommonIdentifiers::shared()->compile, regExpProtoFuncCompile), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, CommonIdentifiers::shared()->exec, regExpProtoFuncExec), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, CommonIdentifiers::shared()->test, regExpProtoFuncTest), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().compile, regExpProtoFuncCompile), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().exec, regExpProtoFuncExec), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().test, regExpProtoFuncTest), DontEnum);
     putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, regExpProtoFuncToString), DontEnum);
 }
 
@@ -122,7 +122,7 @@ JSValue* regExpProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&
 
 // ------------------------------ RegExpImp ------------------------------------
 
-const ClassInfo RegExpImp::info = { "RegExp", 0, &RegExpImpTable };
+const ClassInfo RegExpImp::info = { "RegExp", 0, 0, ExecState::RegExpImpTable };
 
 /* Source for regexp_object.lut.h
 @begin RegExpImpTable 5
@@ -147,7 +147,7 @@ RegExpImp::~RegExpImp()
 
 bool RegExpImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return getStaticValueSlot<RegExpImp, JSObject>(exec, &RegExpImpTable, this, propertyName, slot);
+  return getStaticValueSlot<RegExpImp, JSObject>(exec, ExecState::RegExpImpTable(exec), this, propertyName, slot);
 }
 
 JSValue* RegExpImp::getValueProperty(ExecState*, int token) const
@@ -171,7 +171,7 @@ JSValue* RegExpImp::getValueProperty(ExecState*, int token) const
 
 void RegExpImp::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
-    lookupPut<RegExpImp, JSObject>(exec, propertyName, value, &RegExpImpTable, this);
+    lookupPut<RegExpImp, JSObject>(exec, propertyName, value, ExecState::RegExpImpTable(exec), this);
 }
 
 void RegExpImp::putValueProperty(ExecState* exec, int token, JSValue* value)
@@ -242,7 +242,7 @@ JSValue* RegExpImp::callAsFunction(ExecState* exec, JSObject*, const List& args)
 
 // ------------------------------ RegExpObjectImp ------------------------------
 
-const ClassInfo RegExpObjectImp::info = { "Function", &InternalFunctionImp::info, &RegExpObjectImpTable };
+const ClassInfo RegExpObjectImp::info = { "Function", &InternalFunctionImp::info, 0, ExecState::RegExpObjectImpTable };
 
 /* Source for regexp_object.lut.h
 @begin RegExpObjectImpTable 21
@@ -363,7 +363,7 @@ JSValue *RegExpObjectImp::getRightContext() const
 
 bool RegExpObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return getStaticValueSlot<RegExpObjectImp, InternalFunctionImp>(exec, &RegExpObjectImpTable, this, propertyName, slot);
+  return getStaticValueSlot<RegExpObjectImp, InternalFunctionImp>(exec, ExecState::RegExpObjectImpTable(exec), this, propertyName, slot);
 }
 
 JSValue *RegExpObjectImp::getValueProperty(ExecState*, int token) const
@@ -408,7 +408,7 @@ JSValue *RegExpObjectImp::getValueProperty(ExecState*, int token) const
 
 void RegExpObjectImp::put(ExecState *exec, const Identifier &propertyName, JSValue *value)
 {
-    lookupPut<RegExpObjectImp, InternalFunctionImp>(exec, propertyName, value, &RegExpObjectImpTable, this);
+    lookupPut<RegExpObjectImp, InternalFunctionImp>(exec, propertyName, value, ExecState::RegExpObjectImpTable(exec), this);
 }
 
 void RegExpObjectImp::putValueProperty(ExecState *exec, int token, JSValue *value)

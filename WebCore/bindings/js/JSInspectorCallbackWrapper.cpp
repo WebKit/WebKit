@@ -40,7 +40,7 @@ static WrapperMap& wrappers()
     return map;
 }
 
-const ClassInfo JSInspectorCallbackWrapper::s_info = { "JSInspectorCallbackWrapper", &JSQuarantinedObjectWrapper::s_info, 0 };
+const ClassInfo JSInspectorCallbackWrapper::s_info = { "JSInspectorCallbackWrapper", &JSQuarantinedObjectWrapper::s_info, 0, 0 };
 
 JSValue* JSInspectorCallbackWrapper::wrap(ExecState* unwrappedExec, JSValue* unwrappedValue)
 {

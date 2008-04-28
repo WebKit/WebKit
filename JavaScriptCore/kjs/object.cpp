@@ -27,7 +27,6 @@
 
 #include "date_object.h"
 #include "error_object.h"
-#include "lookup.h"
 #include "nodes.h"
 #include "operations.h"
 #include "PropertyNameArray.h"
@@ -318,7 +317,7 @@ bool JSObject::hasProperty(ExecState *exec, unsigned propertyName) const
 }
 
 // ECMA 8.6.2.5
-bool JSObject::deleteProperty(ExecState* /*exec*/, const Identifier &propertyName)
+bool JSObject::deleteProperty(ExecState* exec, const Identifier &propertyName)
 {
   unsigned attributes;
   JSValue *v = _prop.get(propertyName, attributes);
@@ -332,7 +331,7 @@ bool JSObject::deleteProperty(ExecState* /*exec*/, const Identifier &propertyNam
   }
 
   // Look in the static hashtable of properties
-  const HashEntry* entry = findPropertyHashEntry(propertyName);
+  const HashEntry* entry = findPropertyHashEntry(exec, propertyName);
   if (entry && entry->attributes & DontDelete)
     return false; // this builtin property can't be deleted
   // FIXME: Should the code here actually do some deletion?
@@ -395,10 +394,10 @@ JSValue* JSObject::defaultValue(ExecState* exec, JSType hint) const
   return throwError(exec, TypeError, "No default value");
 }
 
-const HashEntry* JSObject::findPropertyHashEntry(const Identifier& propertyName) const
+const HashEntry* JSObject::findPropertyHashEntry(ExecState* exec, const Identifier& propertyName) const
 {
     for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
-        if (const HashTable* propHashTable = info->propHashTable) {
+        if (const HashTable* propHashTable = info->propHashTable(exec)) {
             if (const HashEntry* e = propHashTable->entry(propertyName))
                 return e;
         }
@@ -529,23 +528,23 @@ bool JSObject::hasInstance(ExecState* exec, JSValue* value)
     return false;
 }
 
-bool JSObject::propertyIsEnumerable(ExecState*, const Identifier& propertyName) const
+bool JSObject::propertyIsEnumerable(ExecState* exec, const Identifier& propertyName) const
 {
   unsigned attributes;
  
-  if (!getPropertyAttributes(propertyName, attributes))
+  if (!getPropertyAttributes(exec, propertyName, attributes))
     return false;
   else
     return !(attributes & DontEnum);
 }
 
-bool JSObject::getPropertyAttributes(const Identifier& propertyName, unsigned& attributes) const
+bool JSObject::getPropertyAttributes(ExecState* exec, const Identifier& propertyName, unsigned& attributes) const
 {
   if (_prop.get(propertyName, attributes))
     return true;
     
   // Look in the static hashtable of properties
-  const HashEntry* e = findPropertyHashEntry(propertyName);
+  const HashEntry* e = findPropertyHashEntry(exec, propertyName);
   if (e) {
     attributes = e->attributes;
     return true;
@@ -560,7 +559,7 @@ void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyName
 
     // Add properties from the static hashtables of properties
     for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
-        const HashTable* table = info->propHashTable;
+        const HashTable* table = info->propHashTable(exec);
         if (!table)
             continue;
         if (!table->table)

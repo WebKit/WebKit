@@ -38,7 +38,7 @@ namespace KJS {
 
 // ------------------------------ ArrayPrototype ----------------------------
 
-const ClassInfo ArrayPrototype::info = {"Array", &ArrayInstance::info, &arrayTable};
+const ClassInfo ArrayPrototype::info = {"Array", &ArrayInstance::info, 0, ExecState::arrayTable};
 
 /* Source for array_object.lut.h
 @begin arrayTable 16
@@ -72,7 +72,7 @@ ArrayPrototype::ArrayPrototype(ExecState*, ObjectPrototype* objProto)
 
 bool ArrayPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<ArrayInstance>(exec, &arrayTable, this, propertyName, slot);
+    return getStaticFunctionSlot<ArrayInstance>(exec, ExecState::arrayTable(exec), this, propertyName, slot);
 }
 
 

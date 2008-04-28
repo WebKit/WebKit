@@ -44,6 +44,11 @@
 #include "scope_chain_mark.h"
 #include "string_object.h"
 
+#if USE(MULTIPLE_THREADS)
+#include <wtf/ThreadSpecific.h>
+using namespace WTF;
+#endif
+
 #if HAVE(SYS_TIME_H)
 #include <sys/time.h>
 #endif
@@ -57,6 +62,14 @@
 #endif
 
 namespace KJS {
+
+extern HashTable arrayTable;
+extern HashTable dateTable;
+extern HashTable mathTable;
+extern HashTable numberTable;
+extern HashTable RegExpImpTable;
+extern HashTable RegExpObjectImpTable;
+extern HashTable stringTable;
 
 // Default number of ticks before a timeout check should be done.
 static const int initialTickCountThreshold = 255;
@@ -118,7 +131,62 @@ JSGlobalObject::~JSGlobalObject()
     delete d();
 }
 
-void JSGlobalObject::init()
+struct ThreadClassInfoHashTables {
+    ThreadClassInfoHashTables()
+        : arrayTable(KJS::arrayTable)
+        , dateTable(KJS::dateTable)
+        , mathTable(KJS::mathTable)
+        , numberTable(KJS::numberTable)
+        , RegExpImpTable(KJS::RegExpImpTable)
+        , RegExpObjectImpTable(KJS::RegExpObjectImpTable)
+        , stringTable(KJS::stringTable)
+    {
+    }
+
+    ~ThreadClassInfoHashTables()
+    {
+#if USE(MULTIPLE_THREADS)
+        delete[] arrayTable.table;
+        delete[] dateTable.table;
+        delete[] mathTable.table;
+        delete[] numberTable.table;
+        delete[] RegExpImpTable.table;
+        delete[] RegExpObjectImpTable.table;
+        delete[] stringTable.table;
+#endif
+    }
+
+#if USE(MULTIPLE_THREADS)
+    HashTable arrayTable;
+    HashTable dateTable;
+    HashTable mathTable;
+    HashTable numberTable;
+    HashTable RegExpImpTable;
+    HashTable RegExpObjectImpTable;
+    HashTable stringTable;
+#else
+    HashTable& arrayTable;
+    HashTable& dateTable;
+    HashTable& mathTable;
+    HashTable& numberTable;
+    HashTable& RegExpImpTable;
+    HashTable& RegExpObjectImpTable;
+    HashTable& stringTable;
+#endif
+};
+
+ThreadClassInfoHashTables* JSGlobalObject::threadClassInfoHashTables()
+{
+#if USE(MULTIPLE_THREADS)
+    static ThreadSpecific<ThreadClassInfoHashTables> sharedInstance;
+    return sharedInstance;
+#else
+    static ThreadClassInfoHashTables sharedInstance;
+    return &sharedInstance;
+#endif
+}
+
+void JSGlobalObject::init(JSObject* thisValue)
 {
     ASSERT(JSLock::currentThreadIsHoldingLock());
 
@@ -141,6 +209,17 @@ void JSGlobalObject::init()
     newStackNode->prev = 0;    
     d()->activations = newStackNode;
     d()->activationCount = 0;
+
+    d()->perThreadData.arrayTable = &threadClassInfoHashTables()->arrayTable;
+    d()->perThreadData.dateTable = &threadClassInfoHashTables()->dateTable;
+    d()->perThreadData.mathTable = &threadClassInfoHashTables()->mathTable;
+    d()->perThreadData.numberTable = &threadClassInfoHashTables()->numberTable;
+    d()->perThreadData.RegExpImpTable = &threadClassInfoHashTables()->RegExpImpTable;
+    d()->perThreadData.RegExpObjectImpTable = &threadClassInfoHashTables()->RegExpObjectImpTable;
+    d()->perThreadData.stringTable = &threadClassInfoHashTables()->stringTable;
+    d()->perThreadData.propertyNames = CommonIdentifiers::shared();
+
+    d()->globalExec.set(new GlobalExecState(this, thisValue));
 
     d()->pageGroupIdentifier = 0;
 
@@ -231,7 +310,7 @@ void JSGlobalObject::reset(JSValue* prototype)
 
     d()->evalFunction = 0;
 
-    ExecState* exec = &d()->globalExec;
+    ExecState* exec = d()->globalExec.get();
 
     // Prototypes
     d()->functionPrototype = new FunctionPrototype(exec);
@@ -418,7 +497,7 @@ void JSGlobalObject::mark()
     for (ExecStateStack::const_iterator it = d()->activeExecStates.begin(); it != end; ++it)
         (*it)->m_scopeChain.mark();
 
-    markIfNeeded(d()->globalExec.exception());
+    markIfNeeded(d()->globalExec->exception());
 
     markIfNeeded(d()->objectConstructor);
     markIfNeeded(d()->functionConstructor);
@@ -462,7 +541,7 @@ JSGlobalObject* JSGlobalObject::toGlobalObject(ExecState*) const
 
 ExecState* JSGlobalObject::globalExec()
 {
-    return &d()->globalExec;
+    return d()->globalExec.get();
 }
 
 void JSGlobalObject::tearOffActivation(ExecState* exec, bool leaveRelic)
@@ -491,5 +570,6 @@ bool JSGlobalObject::isDynamicScope() const
 {
     return true;
 }
+
 
 } // namespace KJS

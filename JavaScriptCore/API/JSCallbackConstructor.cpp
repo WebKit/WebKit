@@ -34,7 +34,7 @@
 
 namespace KJS {
 
-const ClassInfo JSCallbackConstructor::info = { "CallbackConstructor", 0, 0};
+const ClassInfo JSCallbackConstructor::info = { "CallbackConstructor", 0, 0, 0 };
 
 JSCallbackConstructor::JSCallbackConstructor(ExecState* exec, JSClassRef jsClass, JSObjectCallAsConstructorCallback callback)
     : JSObject(exec->lexicalGlobalObject()->objectPrototype())

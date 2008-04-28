@@ -35,7 +35,7 @@ namespace WebCore {
 
 using namespace KJS;
 
-const ClassInfo JSNamedNodesCollection::s_info = { "Collection", 0, 0 };
+const ClassInfo JSNamedNodesCollection::s_info = { "Collection", 0, 0, 0 };
 
 // Such a collection is usually very short-lived, it only exists
 // for constructs like document.forms.<name>[1],

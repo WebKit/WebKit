@@ -77,6 +77,7 @@ void* runJavaScriptThread(void* arg)
 
         // Check for cancellation.
         if (javaScriptThreadsShouldTerminate) {
+            javaScriptThreads()->remove(pthread_self());
             pthread_mutex_unlock(&javaScriptThreadsMutex);
             return 0;
         }
@@ -105,6 +106,7 @@ void startJavaScriptThreads()
     for (int i = 0; i < javaScriptThreadsCount; i++) {
         pthread_t pthread;
         pthread_create(&pthread, 0, &runJavaScriptThread, 0);
+        pthread_detach(pthread);
         javaScriptThreads()->add(pthread);
     }
 
@@ -121,9 +123,14 @@ void stopJavaScriptThreads()
 
     pthread_mutex_unlock(&javaScriptThreadsMutex);
 
-    ThreadSet::iterator end = javaScriptThreads()->end();
-    for (ThreadSet::iterator it = javaScriptThreads()->begin(); it != end; ++it) {
-        pthread_t pthread = *it;
-        pthread_join(pthread, 0);
+    while (true) {
+        pthread_mutex_lock(&javaScriptThreadsMutex);
+        int threadCount = javaScriptThreads()->size();
+        pthread_mutex_unlock(&javaScriptThreadsMutex);
+
+        if (!threadCount)
+            break;
+
+        usleep(1000);
     }
 }

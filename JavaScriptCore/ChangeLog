@@ -1,3 +1,122 @@
+2008-04-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Fix run-webkit-tests --threading
+        and provisionally fix <https://bugs.webkit.org/show_bug.cgi?id=18661>
+        Proxy server issue in Sunday's Nightly
+
+        Changed ClassInfo objects for built-in objects to hold a getter function returning
+        a per-thread instance. This makes it safe to share these ClassInfo objects between threads -
+        and these are the only ones that need to be shared.
+
+        * kjs/lexer.cpp:
+        (KJS::Lexer::Lexer):
+        (KJS::Lexer::~Lexer):
+        * kjs/lexer.h:
+        Made mainTable a member of Lexer, so that it no longer needs to be shared between threads.
+
+        * kjs/object.cpp:
+        (KJS::JSObject::deleteProperty):
+        (KJS::JSObject::findPropertyHashEntry):
+        (KJS::JSObject::propertyIsEnumerable):
+        (KJS::JSObject::getPropertyAttributes):
+        (KJS::JSObject::getPropertyNames):
+        * kjs/object.h:
+        (KJS::ClassInfo::propHashTable):
+        Added a new classPropHashTableGetterFunction field to ClassInfo. If it is non-zero, the
+        static table is not used.
+
+        * kjs/JSGlobalObject.cpp:
+        (KJS::ThreadClassInfoHashTables::ThreadClassInfoHashTables): This new class holds per-thread
+        HashTables for built-in classes. The old static structs are copied to create per-thread
+        instances.
+        (KJS::JSGlobalObject::threadClassInfoHashTables): An accessor/initializer for the above.
+        (KJS::JSGlobalObject::init): Copy per-thread data into a single structure for faster access.
+        Also, construct globalExec.
+        (KJS::JSGlobalObject::reset): Adapted for globalExec now being an OwnPtr.
+        (KJS::JSGlobalObject::mark): Ditto.
+        (KJS::JSGlobalObject::globalExec): Ditto.
+        * kjs/JSGlobalObject.h:
+        (KJS::JSGlobalObject::JSGlobalObjectData::JSGlobalObjectData): Made JSGlobalObject::JSGlobalObjectData::globalExec an OwnPtr, so that it can
+        be initialized from JSGlobalObject::init() after them. Otherwise, ExecState constructor was
+        trying to access half-initialized JSGlobalObject to make its own copy of these table
+        references, and failed.
+        (KJS::JSGlobalObject::JSGlobalObject): Pass "this" value to init() to create globalExec.
+        (KJS::JSGlobalObject::perThreadData): An accessor for per-thread data.
+
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::ExecState):
+        * kjs/ExecState.h:
+        (KJS::ExecState::propertyNames):
+        (KJS::ExecState::emptyList):
+        (KJS::ExecState::arrayTable):
+        (KJS::ExecState::dateTable):
+        (KJS::ExecState::mathTable):
+        (KJS::ExecState::numberTable):
+        (KJS::ExecState::RegExpImpTable):
+        (KJS::ExecState::RegExpObjectImpTable):
+        (KJS::ExecState::stringTable):
+        * kjs/ExecStateInlines.h:
+        (KJS::ExecState::ExecState):
+        Each ExecState holds its own reference to per-thread data, for even faster access. Moved
+        m_emptyList and m_propertyNames to the same structure, making ExecState faster to construct
+        and take less space on the stack.
+
+        * kjs/InitializeThreading.cpp: (KJS::initializeThreading): Initialize thread-static data
+        added to JSGlobalObject.
+
+        * API/JSCallbackConstructor.cpp:
+        (KJS::):
+        * API/JSCallbackFunction.cpp:
+        (KJS::):
+        * API/JSCallbackObject.cpp:
+        (KJS::):
+        * JavaScriptCore.exp:
+        * kjs/JSVariableObject.cpp:
+        (KJS::JSVariableObject::getPropertyAttributes):
+        * kjs/JSVariableObject.h:
+        * kjs/array_instance.cpp:
+        (KJS::):
+        * kjs/array_object.cpp:
+        (KJS::):
+        (KJS::ArrayPrototype::getOwnPropertySlot):
+        * kjs/bool_object.cpp:
+        (KJS::):
+        * kjs/create_hash_table:
+        * kjs/date_object.cpp:
+        (KJS::):
+        (KJS::DatePrototype::getOwnPropertySlot):
+        (KJS::DateObjectImp::DateObjectImp):
+        * kjs/error_object.cpp:
+        (KJS::):
+        * kjs/function.cpp:
+        (KJS::):
+        * kjs/function_object.cpp:
+        (KJS::FunctionPrototype::FunctionPrototype):
+        * kjs/internal.cpp:
+        (KJS::):
+        * kjs/lookup.h:
+        * kjs/math_object.cpp:
+        (KJS::):
+        (KJS::MathObjectImp::getOwnPropertySlot):
+        * kjs/number_object.cpp:
+        (KJS::):
+        (KJS::NumberObjectImp::getOwnPropertySlot):
+        * kjs/object_object.cpp:
+        (KJS::ObjectPrototype::ObjectPrototype):
+        * kjs/regexp_object.cpp:
+        (KJS::):
+        (KJS::RegExpPrototype::RegExpPrototype):
+        (KJS::RegExpImp::getOwnPropertySlot):
+        (KJS::RegExpImp::put):
+        (KJS::RegExpObjectImp::getOwnPropertySlot):
+        (KJS::RegExpObjectImp::put):
+        * kjs/string_object.cpp:
+        (KJS::):
+        (KJS::StringPrototype::getOwnPropertySlot):
+        Adjust for the above changes.
+
 2008-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.

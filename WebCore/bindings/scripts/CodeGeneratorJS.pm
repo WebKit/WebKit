@@ -730,7 +730,7 @@ sub GenerateImplementation
                                \@hashKeys, \@hashValues,
                                \@hashSpecials, \@hashParameters);
 
-    push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", 0, &${className}PrototypeTable };\n\n");
+    push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", 0, &${className}PrototypeTable, 0 };\n\n");
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
         push(@implContent, "JSObject* ${className}Prototype::self()\n");
         push(@implContent, "{\n");
@@ -772,8 +772,9 @@ sub GenerateImplementation
     if ($numAttributes > 0) {
         push(@implContent, "&${className}Table ");
     } else {
-        push(@implContent, "0 ")
+        push(@implContent, "0 ");
     }
+    push(@implContent, ", 0 ");
     push(@implContent, "};\n\n");
 
     # Get correct pass/store types respecting PODType flag
@@ -1778,7 +1779,7 @@ EOF
 $implContent .= << "EOF";
 };
 
-const ClassInfo ${className}Constructor::s_info = { "${visibleClassName}Constructor", 0, &${className}ConstructorTable };
+const ClassInfo ${className}Constructor::s_info = { "${visibleClassName}Constructor", 0, &${className}ConstructorTable, 0 };
 
 bool ${className}Constructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {

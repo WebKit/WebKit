@@ -50,7 +50,7 @@ static const unsigned minDensityMultiplier = 8;
 
 static const unsigned copyingSortCutoff = 50000;
 
-const ClassInfo ArrayInstance::info = {"Array", 0, 0};
+const ClassInfo ArrayInstance::info = {"Array", 0, 0, 0};
 
 static inline size_t storageSize(unsigned vectorLength)
 {

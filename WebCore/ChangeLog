@@ -1,3 +1,58 @@
+2008-04-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Fix run-webkit-tests --threading
+        and provisionally fix <https://bugs.webkit.org/show_bug.cgi?id=18661>
+        Proxy server issue in Sunday's Nightly
+
+        Adjusted for JavaScriptCore changes: added a new member to ClassInfo objects, turned
+        ClassInfo::propHashTable into a function, made getPropertyAttributes() take an ExecState pointer.
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+        * bindings/js/JSDOMWindowWrapper.cpp:
+        (WebCore::):
+        (WebCore::JSDOMWindowWrapper::getPropertyAttributes):
+        * bindings/js/JSDOMWindowWrapper.h:
+        * bindings/js/JSEventTargetBase.h:
+        (WebCore::JSEventTargetPrototype::classInfo):
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        (WebCore::):
+        * bindings/js/JSHTMLOptionElementConstructor.cpp:
+        (WebCore::):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::customGetOwnPropertySlot):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::):
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        (WebCore::):
+        * bindings/js/JSInspectorCallbackWrapper.cpp:
+        (WebCore::):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::customGetOwnPropertySlot):
+        (WebCore::JSLocation::customPut):
+        * bindings/js/JSNamedNodesCollection.cpp:
+        (WebCore::):
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::):
+        * bindings/js/JSRGBColor.cpp:
+        (WebCore::):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::customPut):
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::):
+        * bindings/js/JSXSLTProcessor.cpp:
+        (WebCore::):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/objc/objc_runtime.mm:
+        * bridge/runtime_array.cpp:
+        * bridge/runtime_object.cpp:
+
 2008-04-28  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=18779

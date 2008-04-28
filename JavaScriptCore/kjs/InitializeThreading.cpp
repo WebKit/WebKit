@@ -33,6 +33,7 @@
 #include "DateMath.h"
 #include "dtoa.h"
 #include "identifier.h"
+#include "JSGlobalObject.h"
 #include "lexer.h"
 #include "Parser.h"
 #include "ustring.h"
@@ -54,6 +55,7 @@ void initializeThreading()
         CommonIdentifiers::shared();
         lexer();
         initDateMath();
+        JSGlobalObject::threadClassInfoHashTables();
     }
 #endif
 }

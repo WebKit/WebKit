@@ -1,3 +1,14 @@
+2008-04-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Fix run-webkit-tests --threading
+        and provisionally fix <https://bugs.webkit.org/show_bug.cgi?id=18661>
+        Proxy server issue in Sunday's Nightly
+
+        * WebView/WebView.mm: (-[WebViewPrivate init]): Initialize threading. Previously, this was
+        only done from icon database code, which is not robust enough.
+
 2008-04-20 Adam Barth <hk9565@gmail.com>
 
         Reviewed by Adam Roben and Sam Weinig.

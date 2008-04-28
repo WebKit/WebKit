@@ -33,21 +33,14 @@
 
 namespace KJS {
 
-static inline List* globalEmptyList()
-{
-    static List staticEmptyList;
-    return &staticEmptyList;
-}
-
 // ECMA 10.2
 
 // The constructor for the globalExec pseudo-ExecState
 inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject)
     : m_globalObject(globalObject)
     , m_exception(0)
-    , m_propertyNames(CommonIdentifiers::shared())
-    , m_emptyList(globalEmptyList())
     , m_callingExec(0)
+    , m_perThreadData(globalObject->perThreadData())
     , m_scopeNode(0)
     , m_function(0)
     , m_arguments(0)
@@ -67,9 +60,8 @@ inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject)
 inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject, ProgramNode* programNode)
     : m_globalObject(globalObject)
     , m_exception(0)
-    , m_propertyNames(CommonIdentifiers::shared())
-    , m_emptyList(globalEmptyList())
     , m_callingExec(0)
+    , m_perThreadData(globalObject->perThreadData())
     , m_scopeNode(programNode)
     , m_function(0)
     , m_arguments(0)
@@ -90,9 +82,8 @@ inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject, 
 inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject, EvalNode* evalNode, ExecState* callingExec, const ScopeChain& scopeChain, JSVariableObject* variableObject)
     : m_globalObject(globalObject)
     , m_exception(0)
-    , m_propertyNames(callingExec->m_propertyNames)
-    , m_emptyList(callingExec->m_emptyList)
     , m_callingExec(callingExec)
+    , m_perThreadData(callingExec->m_perThreadData)
     , m_scopeNode(evalNode)
     , m_function(0)
     , m_arguments(0)

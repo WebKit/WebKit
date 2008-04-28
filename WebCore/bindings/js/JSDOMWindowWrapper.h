@@ -64,7 +64,7 @@ namespace WebCore {
         virtual void putWithAttributes(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*, unsigned attributes);
         virtual bool deleteProperty(KJS::ExecState*, const KJS::Identifier& propertyName);
         virtual void getPropertyNames(KJS::ExecState*, KJS::PropertyNameArray&);
-        virtual bool getPropertyAttributes(const KJS::Identifier& propertyName, unsigned& attributes) const;
+        virtual bool getPropertyAttributes(KJS::ExecState*, const KJS::Identifier& propertyName, unsigned& attributes) const;
         virtual void defineGetter(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSObject* getterFunction);
         virtual void defineSetter(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSObject* setterFunction);
         virtual KJS::JSValue* lookupGetter(KJS::ExecState*, const KJS::Identifier& propertyName);

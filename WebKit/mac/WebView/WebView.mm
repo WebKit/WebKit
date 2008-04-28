@@ -124,6 +124,7 @@
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebDashboardRegion.h>
 #import <WebKitSystemInterface.h>
+#import <kjs/InitializeThreading.h>
 #import <mach-o/dyld.h>
 #import <objc/objc-auto.h>
 #import <objc/objc-runtime.h>
@@ -457,6 +458,7 @@ static BOOL grammarCheckingEnabled;
     self = [super init];
     if (!self)
         return nil;
+    KJS::initializeThreading();
     allowsUndo = YES;
     zoomMultiplier = 1;
     zoomMultiplierIsTextOnly = YES;

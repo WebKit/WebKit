@@ -57,7 +57,7 @@ namespace KJS {
 
 // ----------------------------- FunctionImp ----------------------------------
 
-const ClassInfo FunctionImp::info = { "Function", &InternalFunctionImp::info, 0 };
+const ClassInfo FunctionImp::info = { "Function", &InternalFunctionImp::info, 0, 0 };
 
 FunctionImp::FunctionImp(ExecState* exec, const Identifier& name, FunctionBodyNode* b, const ScopeChain& sc)
   : InternalFunctionImp(exec->lexicalGlobalObject()->functionPrototype(), name)
@@ -279,7 +279,7 @@ Identifier& IndexToNameMap::operator[](const Identifier& index)
 
 // ------------------------------ Arguments ---------------------------------
 
-const ClassInfo Arguments::info = { "Arguments", 0, 0 };
+const ClassInfo Arguments::info = { "Arguments", 0, 0, 0 };
 
 // ECMA 10.1.8
 Arguments::Arguments(ExecState* exec, FunctionImp* func, const List& args, ActivationImp* act)
@@ -342,7 +342,7 @@ bool Arguments::deleteProperty(ExecState* exec, const Identifier& propertyName)
 
 // ------------------------------ ActivationImp --------------------------------
 
-const ClassInfo ActivationImp::info = { "Activation", 0, 0 };
+const ClassInfo ActivationImp::info = { "Activation", 0, 0, 0 };
 
 ActivationImp::ActivationImp(const ActivationData& oldData, bool leaveRelic)
 {
