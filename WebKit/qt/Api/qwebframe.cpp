@@ -294,7 +294,7 @@ QUrl QWebFrame::url() const
     \property QWebFrame::icon
     \brief the icon associated with this frame
 
-    \sa iconChanged()
+    \sa iconChanged(), QWebSettings::iconForUrl()
 */
 
 QIcon QWebFrame::icon() const

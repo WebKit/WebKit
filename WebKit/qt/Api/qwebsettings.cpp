@@ -195,7 +195,7 @@ QWebSettings *QWebSettings::globalSettings()
     QWebSettings also configures global properties such as the web page memory
     cache and the web page icon database.
 
-    \sa QWebPage::settings(), QWebView::settings(), \l{Browser}
+    \sa QWebPage::settings(), QWebView::settings(), {Browser}
 */
 
 /*!
@@ -419,6 +419,8 @@ void QWebSettings::clearIconDatabase()
 
     If the web site does not specify an icon, or the icon is not in the
     database, a null QIcon is returned.
+
+    \note The returned icon's size is arbitrary.
 
     \sa setIconDatabasePath()
 */

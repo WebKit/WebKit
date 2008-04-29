@@ -264,10 +264,10 @@ protected:
     virtual QWebPage *createWindow(WebWindowType type);
     virtual QObject *createPlugin(const QString &classid, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues);
 
-#if QT_VERSION < 0x040400
-    virtual bool acceptNavigationRequest(QWebFrame *frame, const QWebNetworkRequest &request, NavigationType type);
-#else
+#if QT_VERSION >= 0x040400
     virtual bool acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, NavigationType type);
+#else
+    virtual bool acceptNavigationRequest(QWebFrame *frame, const QWebNetworkRequest &request, NavigationType type);
 #endif
     virtual QString chooseFile(QWebFrame *originatingFrame, const QString& oldFile);
     virtual void javaScriptAlert(QWebFrame *originatingFrame, const QString& msg);

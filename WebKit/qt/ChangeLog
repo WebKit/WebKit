@@ -1,3 +1,19 @@
+2008-04-29  Kavindra Devi Palaraja  <kdpalara@trolltech.com>
+
+        Reviewed by Simon.
+
+        Documentation fixes:
+
+        - Fixed a qdoc warning
+        - Mention that fav icons can be of arbitrary size
+        - Fix signature of QWebPage::acceptNavigationRequest show in the documentation
+
+        * Api/qwebframe.cpp:
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * Api/qwebsettings.cpp:
+        * Api/qwebview.cpp:
+
 2008-04-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.

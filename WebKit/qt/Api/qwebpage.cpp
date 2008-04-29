@@ -1377,7 +1377,7 @@ void QWebPage::setViewportSize(const QSize &size) const
 
 
 /*!
-    \fn bool QWebPage::acceptNavigationRequest(QWebFrame *frame, const QWebNetworkRequest &request, QWebPage::NavigationType type)
+    \fn bool QWebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, QWebPage::NavigationType type)
 
     This function is called whenever WebKit requests to navigate \a frame to the resource specified by \a request by means of
     the specified navigation type \a type.
@@ -1387,10 +1387,10 @@ void QWebPage::setViewportSize(const QSize &size) const
 
     \sa createWindow()
 */
-#if QT_VERSION < 0x040400
-bool QWebPage::acceptNavigationRequest(QWebFrame *frame, const QWebNetworkRequest &request, QWebPage::NavigationType type)
-#else
+#if QT_VERSION >= 0x040400
 bool QWebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, QWebPage::NavigationType type)
+#else
+bool QWebPage::acceptNavigationRequest(QWebFrame *frame, const QWebNetworkRequest &request, QWebPage::NavigationType type)
 #endif
 {
     if (type == NavigationTypeLinkClicked) {

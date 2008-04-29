@@ -342,7 +342,7 @@ QUrl QWebView::url() const
     \property QWebView::icon
     \brief the icon associated with the web page currently viewed
 
-    \sa iconChanged()
+    \sa iconChanged(), QWebSettings::iconForUrl()
 */
 QIcon QWebView::icon() const
 {
