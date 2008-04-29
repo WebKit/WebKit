@@ -1,3 +1,77 @@
+2008-04-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Alice.
+
+        Initial implementation of the following ARIA roles: button, 
+        checkbox, heading, link, radio, textbox.
+
+        * html/HTMLAttributeNames.in: Add 'role' to list of attributes.
+
+        * page/AccessibilityObject.cpp:
+         When an ARIA role is set, the role overrides whatever the actual 
+element is when the element reports itself to the screen reader. So all of these isBlah functions report based on their roleValue now.
+        (WebCore::AccessibilityObject::isWebArea):
+        (WebCore::AccessibilityObject::isImageButton):
+        (WebCore::AccessibilityObject::isAnchor):
+        (WebCore::AccessibilityObject::isTextControl):
+        (WebCore::AccessibilityObject::isImage):
+        (WebCore::AccessibilityObject::isAttachment):
+        (WebCore::AccessibilityObject::isPasswordField):
+        (WebCore::AccessibilityObject::isCheckboxOrRadio):
+        (WebCore::AccessibilityObject::isHeading):
+        (WebCore::AccessibilityObject::isLink):
+
+        Check for ARIA information:
+        (WebCore::AccessibilityObject::headingLevel):
+        (WebCore::AccessibilityObject::anchorElement):
+        (WebCore::AccessibilityObject::actionElement):
+        (WebCore::AccessibilityObject::hasIntValue):
+        (WebCore::AccessibilityObject::intValue):
+        (WebCore::AccessibilityObject::stringValue):
+        (WebCore::AccessibilityObject::title):
+        (WebCore::AccessibilityObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityObject::roleValue):
+
+        There are a few places in the code where it is important to identify the difference between ARIA and non-ARIA.
+        (WebCore::AccessibilityObject::isNativeImage):
+        (WebCore::AccessibilityObject::isNativeTextControl):
+        (WebCore::isARIAInput):
+        (WebCore::isARIAControl):
+
+        A lot of spots in the code used to cast to RenderTextControl to get information about the text inside the element. Now that non-native text controls can run this code with the ARIA role 'textbox', it needs to be as general as possible. 
+        (WebCore::AccessibilityObject::text): Still calls into 
+        RenderTextControl's text() for native text controls. Uses Element's 
+        innerText() for ARIA textboxes.
+        (WebCore::AccessibilityObject::textLength): Call 
+        AccessibilityObject's text() instead of RenderTextControl's.
+        (WebCore::AccessibilityObject::ariaSelectedTextDOMRange):
+        (WebCore::AccessibilityObject::selectedText):
+        (WebCore::AccessibilityObject::selectedTextRange):
+        (WebCore::AccessibilityObject::selectionStart):
+        (WebCore::AccessibilityObject::selectionEnd):
+        (WebCore::AccessibilityObject::setSelectedTextRange):
+        (WebCore::AccessibilityObject::setValue):
+        (WebCore::AccessibilityObject::visiblePositionForIndex):
+        (WebCore::AccessibilityObject::indexForVisiblePosition):
+        (WebCore::AccessibilityObject::textMarkerRangeForRange):
+        (WebCore::AccessibilityObject::textMarkerForIndex):
+        (WebCore::AccessibilityObject::indexForTextMarker):
+        (WebCore::AccessibilityObject::doAXRangeForLine):
+        (WebCore::AccessibilityObject::doAXRangeForIndex):
+        (WebCore::AccessibilityObject::doAXStringForRange):
+        (WebCore::AccessibilityObject::doAXBoundsForRange):
+        
+        Reports ARIA role. If the role is not valid or simply not set, return UnknownRole.
+        (WebCore::AccessibilityObject::ariaRoleAttribute):
+        
+        Added several new functions. Most of them existed before but were static, or have been added to reduce the dependency on RenderTextControl for a lot of the text functionality.
+        * page/AccessibilityObject.h:
+
+        Eliminated dependency on RenderTextControl cast. The information is generalized now and available directly through the AccessibilityObject.
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper doAXAttributedStringForRange:]):
+
 2008-04-29  Timothy Hatcher  <timothy@apple.com>
 
         Make the exceptions that the InspectorController catches log the

@@ -187,11 +187,15 @@ public:
     bool isAnchor() const;
     bool isAttachment() const;
     bool isHeading() const;
+    bool isLink() const;
     bool isImage() const;
+    bool isNativeImage() const;
     bool isImageButton() const;
     bool isPasswordField() const;
     bool isTextControl() const;
+    bool isNativeTextControl() const;
     bool isWebArea() const;
+    bool isCheckboxOrRadio() const;
 
     bool isChecked() const;
     bool isEnabled() const;
@@ -217,7 +221,6 @@ public:
     static int headingLevel(Node*);
     int intValue() const;
     int layoutCount() const;
-    int textLength() const;
     unsigned axObjectID() const;
     AccessibilityObject* doAccessibilityHitTest(const IntPoint&) const;
     AccessibilityObject* focusedUIElement() const;
@@ -229,6 +232,8 @@ public:
     AccessibilityObject* parentObjectUnignored() const;
     AccessibilityObject* observableObject() const;
     AccessibilityObject* linkedUIElement() const;
+
+    AccessibilityRole ariaRoleAttribute() const;
     AccessibilityRole roleValue() const;
     AXObjectCache* axObjectCache() const;
     Element* actionElement() const;
@@ -241,15 +246,19 @@ public:
     IntSize size() const;
     KURL url() const;
     PlainTextRange selectedTextRange() const;
+    unsigned selectionStart() const;
+    unsigned selectionEnd() const;
     RenderObject* renderer() const { return m_renderer; }
     RenderObject* topRenderer() const;
-    RenderTextControl* textControl() const;
     Selection selection() const;
     String stringValue() const;
     String title() const;
     String accessibilityDescription() const;
     String helpText() const;
     String textUnderElement() const;
+    String text() const;
+    int textLength() const;
+    PassRefPtr<Range> ariaSelectedTextDOMRange() const;
     String selectedText() const;
     const AtomicString& accessKey() const;
     const String& actionVerb() const;
@@ -280,7 +289,7 @@ public:
     VisiblePositionRange doAXSentenceTextMarkerRangeForTextMarker(const VisiblePosition&) const;
     VisiblePositionRange doAXParagraphTextMarkerRangeForTextMarker(const VisiblePosition&) const;
     VisiblePositionRange doAXStyleTextMarkerRangeForTextMarker(const VisiblePosition&) const;
-    VisiblePositionRange textMarkerRangeForRange(const PlainTextRange&, RenderTextControl*) const;
+    VisiblePositionRange textMarkerRangeForRange(const PlainTextRange&) const;
 
     String doAXStringForTextMarkerRange(const VisiblePositionRange&) const;
     IntRect doAXBoundsForTextMarkerRange(const VisiblePositionRange&) const;
@@ -300,6 +309,9 @@ public:
     VisiblePosition doAXNextParagraphEndTextMarkerForTextMarker(const VisiblePosition&) const;
     VisiblePosition doAXPreviousParagraphStartTextMarkerForTextMarker(const VisiblePosition&) const;
     VisiblePosition textMarkerForIndex(unsigned indexValue, bool lastIndexOK) const;
+    
+    VisiblePosition visiblePositionForIndex(int) const;
+    int indexForVisiblePosition(const VisiblePosition&) const;
 
     AccessibilityObject* doAXUIElementForTextMarker(const VisiblePosition&) const;
     unsigned doAXLineForTextMarker(const VisiblePosition&) const;

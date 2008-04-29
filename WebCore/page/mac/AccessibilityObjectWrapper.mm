@@ -825,8 +825,6 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     }
     
     if (m_object->isTextControl()) {
-        // FIXME: refactor code to eliminate need for this textControl
-        RenderTextControl* textControl = static_cast<RenderTextControl*>(renderer);
         if ([attributeName isEqualToString: NSAccessibilityNumberOfCharactersAttribute]) {
             int length = m_object->textLength();
             if (length < 0)
@@ -847,11 +845,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         }
         // TODO: Get actual visible range. <rdar://problem/4712101>
         if ([attributeName isEqualToString: NSAccessibilityVisibleCharacterRangeAttribute])
-            return m_object->isPasswordField() ? nil : [NSValue valueWithRange: NSMakeRange(0, textControl->text().length())];
+            return m_object->isPasswordField() ? nil : [NSValue valueWithRange: NSMakeRange(0, m_object->textLength())];
         if ([attributeName isEqualToString: NSAccessibilityInsertionPointLineNumberAttribute]) {
-            if (m_object->isPasswordField() || textControl->selectionStart() != textControl->selectionEnd())
+            if (m_object->isPasswordField() || m_object->selectionStart() != m_object->selectionEnd())
                 return nil;
-            return [NSNumber numberWithInt:m_object->doAXLineForTextMarker(m_object->textMarkerForIndex(textControl->selectionStart(), true))];
+            return [NSNumber numberWithInt:m_object->doAXLineForTextMarker(m_object->textMarkerForIndex(m_object->selectionStart(), true))];
         }
     }
     
@@ -1144,7 +1142,7 @@ static RenderObject* rendererForView(NSView* view)
 - (NSAttributedString*)doAXAttributedStringForRange:(NSRange)range
 {
     AccessibilityObject::PlainTextRange textRange = AccessibilityObject::PlainTextRange(range.location, range.length);
-    VisiblePositionRange visiblePosRange = m_object->textMarkerRangeForRange(textRange, static_cast<RenderTextControl*>(m_object->renderer()));
+    VisiblePositionRange visiblePosRange = m_object->textMarkerRangeForRange(textRange);
     return [self doAXAttributedStringForTextMarkerRange:textMarkerRangeFromVisiblePositions(visiblePosRange.start, visiblePosRange.end)];
 }
 
