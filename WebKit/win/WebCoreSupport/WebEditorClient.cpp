@@ -610,7 +610,7 @@ bool WebEditorClient::isEditable()
 void WebEditorClient::ignoreWordInSpellDocument(const String& word)
 {
     COMPtr<IWebEditingDelegate> ed;
-    if (FAILED(m_webView->editingDelegate(ed.adoptionPointer())) || !ed.get())
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
         return;
 
     initViewSpecificSpelling(m_webView);
@@ -620,7 +620,7 @@ void WebEditorClient::ignoreWordInSpellDocument(const String& word)
 void WebEditorClient::learnWord(const String& word)
 {
     COMPtr<IWebEditingDelegate> ed;
-    if (FAILED(m_webView->editingDelegate(ed.adoptionPointer())) || !ed.get())
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
         return;
 
     ed->learnWord(BString(word));
@@ -632,7 +632,7 @@ void WebEditorClient::checkSpellingOfString(const UChar* text, int length, int* 
     *misspellingLength = 0;
 
     COMPtr<IWebEditingDelegate> ed;
-    if (FAILED(m_webView->editingDelegate(ed.adoptionPointer())) || !ed.get())
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
         return;
 
     initViewSpecificSpelling(m_webView);
@@ -646,18 +646,18 @@ void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector
     *badGrammarLength = 0;
 
     COMPtr<IWebEditingDelegate> ed;
-    if (FAILED(m_webView->editingDelegate(ed.adoptionPointer())) || !ed.get())
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
         return;
 
     initViewSpecificSpelling(m_webView);
     COMPtr<IEnumWebGrammarDetails> enumDetailsObj;
-    if (FAILED(ed->checkGrammarOfString(m_webView, text, length, enumDetailsObj.adoptionPointer(), badGrammarLocation, badGrammarLength)))
+    if (FAILED(ed->checkGrammarOfString(m_webView, text, length, &enumDetailsObj, badGrammarLocation, badGrammarLength)))
         return;
 
     while (true) {
         ULONG fetched;
         COMPtr<IWebGrammarDetail> detailObj;
-        if (enumDetailsObj->Next(1, detailObj.adoptionPointer(), &fetched) != S_OK)
+        if (enumDetailsObj->Next(1, &detailObj, &fetched) != S_OK)
             break;
 
         GrammarDetail detail;
@@ -672,7 +672,7 @@ void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector
         SysFreeString(userDesc);
 
         COMPtr<IEnumSpellingGuesses> enumGuessesObj;
-        if (FAILED(detailObj->guesses(enumGuessesObj.adoptionPointer())))
+        if (FAILED(detailObj->guesses(&enumGuessesObj)))
             continue;
         while (true) {
             BSTR guess;
@@ -689,7 +689,7 @@ void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector
 void WebEditorClient::updateSpellingUIWithGrammarString(const String& string, const WebCore::GrammarDetail& detail)
 {
     COMPtr<IWebEditingDelegate> ed;
-    if (FAILED(m_webView->editingDelegate(ed.adoptionPointer())) || !ed.get())
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
         return;
 
     Vector<BSTR> guessesBSTRs;
@@ -706,7 +706,7 @@ void WebEditorClient::updateSpellingUIWithGrammarString(const String& string, co
 void WebEditorClient::updateSpellingUIWithMisspelledWord(const String& word)
 {
     COMPtr<IWebEditingDelegate> ed;
-    if (FAILED(m_webView->editingDelegate(ed.adoptionPointer())) || !ed.get())
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
         return;
 
     ed->updateSpellingUIWithMisspelledWord(BString(word));
@@ -715,7 +715,7 @@ void WebEditorClient::updateSpellingUIWithMisspelledWord(const String& word)
 void WebEditorClient::showSpellingUI(bool show)
 {
     COMPtr<IWebEditingDelegate> ed;
-    if (FAILED(m_webView->editingDelegate(ed.adoptionPointer())) || !ed.get())
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
         return;
     
     ed->showSpellingUI(show);
@@ -724,7 +724,7 @@ void WebEditorClient::showSpellingUI(bool show)
 bool WebEditorClient::spellingUIIsShowing()
 {
     COMPtr<IWebEditingDelegate> ed;
-    if (FAILED(m_webView->editingDelegate(ed.adoptionPointer())) || !ed.get())
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
         return false;
 
     BOOL showing;
@@ -739,11 +739,11 @@ void WebEditorClient::getGuessesForWord(const String& word, Vector<String>& gues
     guesses.clear();
 
     COMPtr<IWebEditingDelegate> ed;
-    if (FAILED(m_webView->editingDelegate(ed.adoptionPointer())) || !ed.get())
+    if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
         return;
 
     COMPtr<IEnumSpellingGuesses> enumGuessesObj;
-    if (FAILED(ed->guessesForWord(BString(word), enumGuessesObj.adoptionPointer())))
+    if (FAILED(ed->guessesForWord(BString(word), &enumGuessesObj)))
         return;
 
     while (true) {

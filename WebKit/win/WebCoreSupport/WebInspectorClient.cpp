@@ -135,7 +135,7 @@ Page* WebInspectorClient::createPage()
     // clients as well.
     COMPtr<WebPreferences> tempPreferences(AdoptCOM, WebPreferences::createInstance());
     COMPtr<IWebPreferences> iPreferences;
-    if (FAILED(tempPreferences->initWithIdentifier(BString(L"WebInspectorPreferences"), iPreferences.adoptionPointer())))
+    if (FAILED(tempPreferences->initWithIdentifier(BString(L"WebInspectorPreferences"), &iPreferences)))
         return 0;
     COMPtr<WebPreferences> preferences(Query, iPreferences);
     if (!preferences)

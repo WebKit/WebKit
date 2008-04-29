@@ -118,7 +118,7 @@ HRESULT STDMETHODCALLTYPE WebBackForwardList::addItem(
 {
     COMPtr<WebHistoryItem> webHistoryItem;
  
-    if (!item || FAILED(item->QueryInterface(webHistoryItem.adoptionPointer())))
+    if (!item || FAILED(item->QueryInterface(&webHistoryItem)))
         return E_FAIL;
  
     m_backForwardList->addItem(webHistoryItem->historyItem());
@@ -142,7 +142,7 @@ HRESULT STDMETHODCALLTYPE WebBackForwardList::goToItem(
 {
     COMPtr<WebHistoryItem> webHistoryItem;
  
-    if (!item || FAILED(item->QueryInterface(webHistoryItem.adoptionPointer())))
+    if (!item || FAILED(item->QueryInterface(&webHistoryItem)))
         return E_FAIL;
 
     m_backForwardList->goToItem(webHistoryItem->historyItem());
@@ -265,7 +265,7 @@ HRESULT STDMETHODCALLTYPE WebBackForwardList::containsItem(
 {
     COMPtr<WebHistoryItem> webHistoryItem;
 
-    if (!item || FAILED(item->QueryInterface(webHistoryItem.adoptionPointer())))
+    if (!item || FAILED(item->QueryInterface(&webHistoryItem)))
         return E_FAIL;
 
     *result = m_backForwardList->containsItem(webHistoryItem->historyItem());
@@ -295,7 +295,7 @@ HRESULT STDMETHODCALLTYPE WebBackForwardList::removeItem(
 {
     COMPtr<WebHistoryItem> webHistoryItem;
  
-    if (!item || FAILED(item->QueryInterface(webHistoryItem.adoptionPointer())))
+    if (!item || FAILED(item->QueryInterface(&webHistoryItem)))
         return E_FAIL;
  
     m_backForwardList->removeItem(webHistoryItem->historyItem());

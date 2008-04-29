@@ -95,7 +95,7 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 Clipboard* EventHandler::createDraggingClipboard() const
 {
     COMPtr<WCDataObject> dataObject;
-    WCDataObject::createInstance(dataObject.adoptionPointer());
+    WCDataObject::createInstance(&dataObject);
     return new ClipboardWin(true, dataObject.get(), ClipboardWritable);
 }
 

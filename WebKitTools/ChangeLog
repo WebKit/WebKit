@@ -1,5 +1,9 @@
 2008-04-29  Adam Roben  <aroben@apple.com>
 
+        Restore the beloved COMPtr::operator&
+
+2008-04-29  Adam Roben  <aroben@apple.com>
+
         Windows build fixes
 
         Replace COMPtr::operator& with COMPtr::adoptionPointer.

@@ -123,7 +123,7 @@ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallenge::initWithProtectionSpace
 
     HRESULT hr = S_OK;
     COMPtr<WebURLProtectionSpace> webSpace;
-    hr = space->QueryInterface(webSpace.adoptionPointer());
+    hr = space->QueryInterface(&webSpace);
     if (FAILED(hr))
         return hr;
 
@@ -132,7 +132,7 @@ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallenge::initWithProtectionSpace
         return E_NOINTERFACE;
 
     COMPtr<WebURLResponse> webResponse;
-    hr = failureResponse->QueryInterface(webResponse.adoptionPointer());
+    hr = failureResponse->QueryInterface(&webResponse);
     if (FAILED(hr))
         return hr;
 

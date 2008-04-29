@@ -66,7 +66,7 @@ public:
     T& operator*() const { return *m_ptr; }
     T* operator->() const { return m_ptr; }
 
-    T** adoptionPointer() { ASSERT(!m_ptr); return &m_ptr; }
+    T** operator&() { ASSERT(!m_ptr); return &m_ptr; }
 
     bool operator!() const { return !m_ptr; }
     
@@ -198,8 +198,8 @@ namespace WTF {
 
     template<typename P> struct HashTraits<COMPtr<P> > : GenericHashTraits<COMPtr<P> > {
         static const bool emptyValueIsZero = true;
-        static void constructDeletedValue(COMPtr<P>* slot) { new (slot) COMPtr<P>(WTF::HashTableDeletedValue); }
-        static bool isDeletedValue(const COMPtr<P>& value) { return value.isHashTableDeletedValue(); }
+        static void constructDeletedValue(P** slot) { *slot = reinterpret_cast<P*>(-1); }
+        static bool isDeletedValue(const COMPtr<P>& value) { value == reinterpret_cast<P*>(-1); }
     };
 
     template<typename P> struct PtrHash<COMPtr<P> > : PtrHash<P*> {

@@ -55,20 +55,20 @@ static bool resolveCygwinPath(const wstring& cygwinPath, wstring& windowsPath);
 LayoutTestController::~LayoutTestController()
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(webView.adoptionPointer())))
+    if (FAILED(frame->webView(&webView)))
         return;
 
     // reset webview-related states back to default values in preparation for next test
 
     COMPtr<IWebViewPrivate> viewPrivate;
-    if (SUCCEEDED(webView->QueryInterface(viewPrivate.adoptionPointer())))
+    if (SUCCEEDED(webView->QueryInterface(&viewPrivate)))
         viewPrivate->setTabKeyCyclesThroughElements(TRUE);
 
     COMPtr<IWebViewEditing> viewEditing;
-    if (FAILED(webView->QueryInterface(viewEditing.adoptionPointer())))
+    if (FAILED(webView->QueryInterface(&viewEditing)))
         return;
     COMPtr<IWebEditingDelegate> delegate;
-    if (FAILED(viewEditing->editingDelegate(delegate.adoptionPointer())))
+    if (FAILED(viewEditing->editingDelegate(&delegate)))
         return;
     COMPtr<EditingDelegate> editingDelegate(Query, viewEditing.get());
     if (editingDelegate)
@@ -83,15 +83,15 @@ void LayoutTestController::addDisallowedURL(JSStringRef url)
 void LayoutTestController::clearBackForwardList()
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(webView.adoptionPointer())))
+    if (FAILED(frame->webView(&webView)))
         return;
 
     COMPtr<IWebBackForwardList> backForwardList;
-    if (FAILED(webView->backForwardList(backForwardList.adoptionPointer())))
+    if (FAILED(webView->backForwardList(&backForwardList)))
         return;
 
     COMPtr<IWebHistoryItem> item;
-    if (FAILED(backForwardList->currentItem(item.adoptionPointer())))
+    if (FAILED(backForwardList->currentItem(&item)))
         return;
 
     // We clear the history by setting the back/forward list's capacity to 0
@@ -182,11 +182,11 @@ static wstring jsStringRefToWString(JSStringRef jsStr)
 void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
 {
     COMPtr<IWebDataSource> dataSource;
-    if (FAILED(frame->dataSource(dataSource.adoptionPointer())))
+    if (FAILED(frame->dataSource(&dataSource)))
         return;
 
     COMPtr<IWebURLResponse> response;
-    if (FAILED(dataSource->response(response.adoptionPointer())) || !response)
+    if (FAILED(dataSource->response(&response)) || !response)
         return;
 
     BSTR responseURLBSTR;
@@ -220,15 +220,15 @@ void LayoutTestController::queueScript(JSStringRef script)
 void LayoutTestController::setAcceptsEditing(bool acceptsEditing)
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(webView.adoptionPointer())))
+    if (FAILED(frame->webView(&webView)))
         return;
 
     COMPtr<IWebViewEditing> viewEditing;
-    if (FAILED(webView->QueryInterface(viewEditing.adoptionPointer())))
+    if (FAILED(webView->QueryInterface(&viewEditing)))
         return;
 
     COMPtr<IWebEditingDelegate> delegate;
-    if (FAILED(viewEditing->editingDelegate(delegate.adoptionPointer())))
+    if (FAILED(viewEditing->editingDelegate(&delegate)))
         return;
 
     EditingDelegate* editingDelegate = (EditingDelegate*)(IWebEditingDelegate*)delegate.get();
@@ -238,11 +238,11 @@ void LayoutTestController::setAcceptsEditing(bool acceptsEditing)
 void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(webView.adoptionPointer())))
+    if (FAILED(frame->webView(&webView)))
         return;
 
     COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(preferences.adoptionPointer())))
+    if (FAILED(webView->preferences(&preferences)))
         return;
 
     COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
@@ -255,7 +255,7 @@ void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
 void LayoutTestController::setCustomPolicyDelegate(bool setDelegate)
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(webView.adoptionPointer())))
+    if (FAILED(frame->webView(&webView)))
         return;
 
     if (setDelegate)
@@ -272,11 +272,11 @@ void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
 void LayoutTestController::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(webView.adoptionPointer())))
+    if (FAILED(frame->webView(&webView)))
         return;
 
     COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(preferences.adoptionPointer())))
+    if (FAILED(webView->preferences(&preferences)))
         return;
 
     preferences->setPrivateBrowsingEnabled(privateBrowsingEnabled);
@@ -285,11 +285,11 @@ void LayoutTestController::setPrivateBrowsingEnabled(bool privateBrowsingEnabled
 void LayoutTestController::setPopupBlockingEnabled(bool privateBrowsingEnabled)
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(webView.adoptionPointer())))
+    if (FAILED(frame->webView(&webView)))
         return;
 
     COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(preferences.adoptionPointer())))
+    if (FAILED(webView->preferences(&preferences)))
         return;
 
     preferences->setJavaScriptCanOpenWindowsAutomatically(!privateBrowsingEnabled);
@@ -298,11 +298,11 @@ void LayoutTestController::setPopupBlockingEnabled(bool privateBrowsingEnabled)
 void LayoutTestController::setTabKeyCyclesThroughElements(bool shouldCycle)
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(webView.adoptionPointer())))
+    if (FAILED(frame->webView(&webView)))
         return;
 
     COMPtr<IWebViewPrivate> viewPrivate;
-    if (FAILED(webView->QueryInterface(viewPrivate.adoptionPointer())))
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
         return;
 
     viewPrivate->setTabKeyCyclesThroughElements(shouldCycle ? TRUE : FALSE);
@@ -316,11 +316,11 @@ void LayoutTestController::setUseDashboardCompatibilityMode(bool flag)
 void LayoutTestController::setUserStyleSheetEnabled(bool flag)
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(webView.adoptionPointer())))
+    if (FAILED(frame->webView(&webView)))
         return;
 
     COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(preferences.adoptionPointer())))
+    if (FAILED(webView->preferences(&preferences)))
         return;
 
    preferences->setUserStyleSheetEnabled(flag);
@@ -437,11 +437,11 @@ static wstring cfStringRefToWString(CFStringRef cfStr)
 void LayoutTestController::setUserStyleSheetLocation(JSStringRef jsURL)
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(webView.adoptionPointer())))
+    if (FAILED(frame->webView(&webView)))
         return;
 
     COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(preferences.adoptionPointer())))
+    if (FAILED(webView->preferences(&preferences)))
         return;
 
     RetainPtr<CFStringRef> urlString(AdoptCF, JSStringCopyCFString(0, jsURL));
@@ -492,11 +492,11 @@ void LayoutTestController::clearPersistentUserStyleSheet()
 void LayoutTestController::setWindowIsKey(bool flag)
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(webView.adoptionPointer())))
+    if (FAILED(frame->webView(&webView)))
         return;
 
     COMPtr<IWebViewPrivate> viewPrivate;
-    if (FAILED(webView->QueryInterface(viewPrivate.adoptionPointer())))
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
         return;
 
     HWND webViewWindow;
@@ -537,11 +537,11 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
     wstring wValue = jsStringRefToWString(value);
 
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(webView.adoptionPointer())))
+    if (FAILED(frame->webView(&webView)))
         return;
 
     COMPtr<IWebViewPrivate> viewPrivate;
-    if (FAILED(webView->QueryInterface(viewPrivate.adoptionPointer())))
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
         return;
 
     BSTR nameBSTR = SysAllocStringLen((OLECHAR*)wName.c_str(), wName.length());

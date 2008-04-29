@@ -265,12 +265,12 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::documentSource(
     HRESULT hr = S_OK;
 
     COMPtr<IWebDataSource> dataSource;
-    hr = m_frame->dataSource(dataSource.adoptionPointer());
+    hr = m_frame->dataSource(&dataSource);
     if (FAILED(hr))
         return hr;
 
     COMPtr<IStream> data;
-    hr = dataSource->data(data.adoptionPointer());
+    hr = dataSource->data(&data);
     if (FAILED(hr))
         return hr;
 
