@@ -65,8 +65,8 @@ public:
 #endif
     ~FontPlatformData();
 
-    FontPlatformData(WTF::HashTableDeletedValueType) : m_font(hashTableDeletedFontValue()) { }
-    bool isHashTableDeletedValue() const { return m_font == hashTableDeletedFontValue(); }
+    FontPlatformData(WTF::HashTableDeletedValueType) : m_font(WTF::HashTableDeletedValue) { }
+    bool isHashTableDeletedValue() const { return m_font.isHashTableDeletedValue(); }
 
     HFONT hfont() const { return m_font->hfont(); }
 #if PLATFORM(CG)
@@ -124,8 +124,6 @@ private:
 
         HFONT m_hfont;
     };
-
-    static RefCountedHFONT* hashTableDeletedFontValue() { return reinterpret_cast<RefCountedHFONT*>(-1); }
 
     void platformDataInit(HFONT font, float size, HDC hdc, WCHAR* faceName);
 
