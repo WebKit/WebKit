@@ -1,3 +1,18 @@
+2008-04-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        Add the remaining cursors that defaulted to PointerCursor
+
+        * Resources/WebKitResources.qrc:
+        * platform/qt/CursorQt.cpp:
+        (WebCore::verticalTextCursor):
+        (WebCore::cellCursor):
+        (WebCore::contextMenuCursor):
+        (WebCore::copyCursor):
+        (WebCore::progressCursor):
+        (WebCore::aliasCursor):
+
 2008-04-29  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Beth Dakin.

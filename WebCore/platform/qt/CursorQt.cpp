@@ -2,6 +2,7 @@
  * Copyright (C) 2006 Dirk Mueller <mueller@kde.org>
  * Copyright (C) 2006 George Staikos <staikos@kde.org>
  * Copyright (C) 2006 Charles Samuels <charles@kde.org>
+ * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * All rights reserved.
  *
@@ -91,6 +92,12 @@ protected:
         , BlankCursor(QCursor(Qt::BlankCursor))
         , ZoomInCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/zoomInCursor.png"))))
         , ZoomOutCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/zoomOutCursor.png"))))
+        , VerticalTextCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/verticalTextCursor.png"))))
+        , CellCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/cellCursor.png"))))
+        , ContextMenuCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/contextMenuCursor.png"))))
+        , CopyCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/copyCursor.png"))))
+        , ProgressCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/progressCursor.png"))))
+        , AliasCursor(QCursor(QPixmap(QLatin1String(":/webkit/resources/aliasCursor.png"))))
 
 #endif
     {
@@ -121,6 +128,12 @@ public:
     Cursor BlankCursor;
     Cursor ZoomInCursor;
     Cursor ZoomOutCursor;
+    Cursor VerticalTextCursor;
+    Cursor CellCursor;
+    Cursor ContextMenuCursor;
+    Cursor CopyCursor;
+    Cursor ProgressCursor;
+    Cursor AliasCursor;
 };
 
 Cursors* Cursors::s_self = 0;
@@ -242,17 +255,17 @@ const Cursor& rowResizeCursor()
 
 const Cursor& verticalTextCursor()
 {
-    return Cursors::self()->PointerCursor;
+    return Cursors::self()->VerticalTextCursor;
 }
 
 const Cursor& cellCursor()
 {
-    return Cursors::self()->PointerCursor;
+    return Cursors::self()->CellCursor;
 }
 
 const Cursor& contextMenuCursor()
 {
-    return Cursors::self()->PointerCursor;
+    return Cursors::self()->ContextMenuCursor;
 }
 
 const Cursor& noDropCursor()
@@ -262,17 +275,17 @@ const Cursor& noDropCursor()
 
 const Cursor& copyCursor()
 {
-    return Cursors::self()->PointerCursor;
+    return Cursors::self()->CopyCursor;
 }
 
 const Cursor& progressCursor()
 {
-    return Cursors::self()->PointerCursor;
+    return Cursors::self()->ProgressCursor;
 }
 
 const Cursor& aliasCursor()
 {
-    return Cursors::self()->PointerCursor;
+    return Cursors::self()->AliasCursor;
 }
 
 const Cursor& noneCursor()

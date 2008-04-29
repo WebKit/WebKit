@@ -6,5 +6,11 @@
     <file>urlIcon.png</file>
     <file>zoomInCursor.png</file>
     <file>zoomOutCursor.png</file>
+    <file>verticalTextCursor.png</file>
+    <file>cellCursor.png</file>
+    <file>contextMenuCursor.png</file>
+    <file>copyCursor.png</file>
+    <file>progressCursor.png</file>
+    <file>aliasCursor.png</file>
 </qresource>
 </RCC>
