@@ -39,6 +39,7 @@ namespace KJS {
 FunctionCallProfile::FunctionCallProfile(const UString& name)
     : m_functionName(name)
     , m_timeSum(0)
+    , m_numberOfCalls(0)
 {
     m_startTime = getCurrentUTCTime();
 }
@@ -56,13 +57,9 @@ void FunctionCallProfile::willExecute()
 
 void FunctionCallProfile::didExecute(Vector<UString> stackNames, unsigned int stackIndex)
 {
-    if (stackIndex == stackNames.size()) {
+    if (stackIndex && stackIndex == stackNames.size()) {
         ASSERT(stackNames[stackIndex - 1] == m_functionName);
-
-        m_timeSum += getCurrentUTCTime() - m_startTime;
-        m_startTime = 0.0;
-
-        // FIXME: We may need something with higher resolution than ms as some functions will take 0ms.
+        endAndRecordCall();
         return;
     }
 
@@ -100,7 +97,7 @@ FunctionCallProfile* FunctionCallProfile::findChild(const UString& name)
 void FunctionCallProfile::stopProfiling()
 {
     if (m_startTime)
-        m_timeSum += getCurrentUTCTime() - m_startTime;
+        endAndRecordCall();
 
     StackIterator endOfChildren = m_children.end();
     for (StackIterator it = m_children.begin(); it != endOfChildren; ++it)
@@ -157,6 +154,14 @@ double FunctionCallProfile::printDataSampleStyle(int indentLevel) const
     }
 
     return m_timeSum;
+}
+
+void FunctionCallProfile::endAndRecordCall()
+{
+    m_timeSum += getCurrentUTCTime() - m_startTime;
+    m_startTime = 0.0;
+
+    ++m_numberOfCalls;
 }
 
 }   // namespace KJS

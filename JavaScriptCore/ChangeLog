@@ -1,3 +1,18 @@
+2008-04-29  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        -<rdar://problem/5770054> JavaScript profiler (10928)
+        -Keep call count.
+
+        * profiler/FunctionCallProfile.cpp:
+        (KJS::FunctionCallProfile::FunctionCallProfile):
+        (KJS::FunctionCallProfile::didExecute): Implements call count and fixed a bug where a stackIndex
+        of 0 was causing the assert to be hit.
+        (KJS::FunctionCallProfile::stopProfiling):
+        (KJS::FunctionCallProfile::endAndRecordCall):
+        * profiler/FunctionCallProfile.h:
+
 2008-04-29  Simon Hausmann  <hausmann@webkit.org>
 
         Qt/Windows build fix. The externally declared hash tables are actually
