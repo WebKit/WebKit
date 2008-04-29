@@ -1,3 +1,11 @@
+2008-04-29  Adam Roben  <aroben@apple.com>
+
+        Fix a Windows build error
+
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::variableNames): Don't use ::adopt now that
+        PropertyNameArray has no swap function.
+
 2008-04-28  Adam Roben  <aroben@apple.com>
 
         Fix some Windows build errors in WebKit

@@ -203,7 +203,8 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::variableNames(
     PropertyNameArray propertyNames;
 
     m_state->scopeChain().top()->getPropertyNames(m_state, propertyNames);
-    *variableNames = COMEnumVariant<PropertyNameArray>::adopt(propertyNames);
+    // FIXME: It would be more efficient to use ::adopt here, but PropertyNameArray doesn't have a swap function.
+    *variableNames = COMEnumVariant<PropertyNameArray>::createInstance(propertyNames);
 
     return S_OK;
 }
