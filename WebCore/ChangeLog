@@ -1,3 +1,15 @@
+2008-04-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam, Mark, Adele and Darin.
+
+        Add a (currently not called) method for opening the application cache database.
+        
+        * WebCore.base.exp:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::setCacheDirectory):
+        (WebCore::ApplicationCacheStorage::openDatabase):
+        * loader/appcache/ApplicationCacheStorage.h:
+
 2008-04-28  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Darin.

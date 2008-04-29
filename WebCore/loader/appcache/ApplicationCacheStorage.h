@@ -34,6 +34,15 @@
 namespace WebCore {
 
 class ApplicationCacheStorage {
+public:
+    void setCacheDirectory(const String&);
+    
+public:
+    void openDatabase(bool createIfDoesNotExist);
+
+    String m_cacheDirectory;
+
+    SQLiteDatabase m_database;    
 };
  
 ApplicationCacheStorage& cacheStorage();

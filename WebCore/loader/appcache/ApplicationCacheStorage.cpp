@@ -31,6 +31,31 @@
 
 namespace WebCore {
 
+void ApplicationCacheStorage::setCacheDirectory(const String& cacheDirectory)
+{
+    ASSERT(m_cacheDirectory.isNull());
+    ASSERT(!cacheDirectory.isNull());
+    
+    m_cacheDirectory = cacheDirectory;
+}
+
+void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
+{
+    if (m_database.isOpen())
+        return;
+
+    // The cache directory should never be null, but if it for some weird reason is we bail out.
+    if (m_cacheDirectory.isNull())
+        return;
+    
+    String applicationCachePath = pathByAppendingComponent(m_cacheDirectory, "ApplicationCache.db");
+    if (!createIfDoesNotExist && !fileExists(applicationCachePath))
+        return;
+
+    makeAllDirectories(m_cacheDirectory);
+    m_database.open(applicationCachePath);
+}
+
 ApplicationCacheStorage& cacheStorage()
 {
     static ApplicationCacheStorage storage;

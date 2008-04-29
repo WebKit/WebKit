@@ -93,6 +93,7 @@
 #import <JavaScriptCore/RefPtr.h>
 #import <JavaScriptCore/array_object.h>
 #import <JavaScriptCore/date_object.h>
+#import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/Cache.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/Document.h>
@@ -128,6 +129,7 @@
 #import <mach-o/dyld.h>
 #import <objc/objc-auto.h>
 #import <objc/objc-runtime.h>
+#import <sys/param.h>
 
 using namespace WebCore;
 using namespace KJS;
@@ -1804,6 +1806,36 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     [types release];
 }
 
+static void WebKitInitializeApplicationCachePathIfNecessary()
+{
+    static BOOL initialized = NO;
+    if (initialized)
+        return;
+
+    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
+    if (!appName)
+        appName = [[NSProcessInfo processInfo] processName];
+    
+    ASSERT(appName);
+
+    NSString* cacheDir = nil;
+    
+#ifdef BUILDING_ON_TIGER
+    NSString *cacheDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
+#else
+    char cacheDirectory[MAXPATHLEN];
+    size_t cacheDirectoryLen = confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, MAXPATHLEN);
+    
+    if (cacheDirectoryLen)
+        cacheDir = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:cacheDirectoryLen - 1];
+#endif
+
+    cacheDir = [cacheDir stringByAppendingPathComponent:appName];    
+
+    cacheStorage().setCacheDirectory(cacheDir);
+    initialized = YES;
+}
+
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
     WebPreferences *standardPreferences = [WebPreferences standardPreferences];
@@ -1826,7 +1858,8 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     WebCore::InitializeLoggingChannelsIfNecessary();
     [WebHistoryItem initWindowWatcherIfNecessary];
     WebKitInitializeDatabasesIfNecessary();
-
+    WebKitInitializeApplicationCachePathIfNecessary();
+    
     _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self), new WebInspectorClient(self));
 
     WebPreferences *prefs = [self preferences];
