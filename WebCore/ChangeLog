@@ -1,5 +1,26 @@
 2008-04-29  Timothy Hatcher  <timothy@apple.com>
 
+        Make the exceptions that the InspectorController catches log the
+        original file and line number, if present on the exception object.
+
+        Reviewed by Adam Roben.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::callFunction): Pass the context to HANDLE_EXCEPTION.
+        (WebCore::InspectorController::~InspectorController): Ditto.
+        (WebCore::InspectorController::scriptObjectReady): Ditto.
+        (WebCore::InspectorController::addScriptResource): Ditto.
+        (WebCore::InspectorController::updateScriptResourceRequest): Ditto.
+        (WebCore::InspectorController::updateScriptResourceResponse): Ditto.
+        (WebCore::InspectorController::updateScriptResource): Ditto.
+        (WebCore::InspectorController::addDatabaseScriptResource): Ditto.
+        (WebCore::InspectorController::addScriptConsoleMessage): Ditto.
+        (WebCore::InspectorController::handleException): Take a context. Pull the line
+        and sourceURL properties off the exception if it is an object.
+        * page/InspectorController.h: Change handleException to take a context.
+
+2008-04-29  Timothy Hatcher  <timothy@apple.com>
+
         Fixes a regression where the Page's debugger would not be reattached
         when a new JSDOMWindow is created.
 
