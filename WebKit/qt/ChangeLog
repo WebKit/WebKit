@@ -2,6 +2,18 @@
 
         Reviewed by Simon.
 
+        Simplification of Qt Launcher (no animation and use standard progress bar widget)
+        
+        Status bar shows the hovered link without any animation. Progress bar just uses the standard QProgressBar (no custom widget). The launcher is leaner and faster to use under the debugger and/or valgrind.
+        
+
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+
+2008-04-29  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
         Update the cursor when the frame/page loading is finished.
         
         This fixes https://bugs.webkit.org/show_bug.cgi?id=18712

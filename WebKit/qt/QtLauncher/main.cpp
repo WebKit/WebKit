@@ -42,159 +42,6 @@
 #include <QtUiTools/QUiLoader>
 
 
-class InfoWidget :public QProgressBar {
-    Q_OBJECT
-public:
-    InfoWidget(QWidget *parent)
-        : QProgressBar(parent), m_progress(0)
-    {
-        setMinimum(0);
-        setMaximum(100);
-    }
-    QSize sizeHint() const
-    {
-        QSize size(100, 20);
-        return size;
-    }
-public slots:
-    void startLoad()
-    {
-        setValue(m_progress);
-        show();
-    }
-    void changeLoad(int change)
-    {
-        m_progress = change;
-        setValue(change);
-    }
-    void endLoad()
-    {
-        QTimer::singleShot(1000, this, SLOT(hide()));
-        m_progress = 0;
-    }
-
-protected:
-    int m_progress;
-};
-
-class HoverLabel : public QWidget {
-    Q_OBJECT
-public:
-    HoverLabel(QWidget *parent=0)
-        : QWidget(parent),
-          m_animating(false),
-          m_percent(0)
-    {
-        m_timer.setInterval(1000/30);
-        m_hideTimer.setInterval(500);
-        m_hideTimer.setSingleShot(true);
-        connect(&m_timer, SIGNAL(timeout()),
-                this, SLOT(update()));
-        connect(&m_hideTimer, SIGNAL(timeout()),
-                this, SLOT(hide()));
-    }
-
-public slots:
-    void setHoverLink(const QString &link) {
-        m_link = link;
-        if (m_link.isEmpty()) {
-            m_hideTimer.start();
-        } else {
-            m_hideTimer.stop();
-            m_oldSize = m_newSize;
-            m_newSize = sizeForFont();
-            resetAnimation();
-            updateSize();
-            show();
-            repaint();
-        }
-    }
-    QSize sizeForFont() const {
-        QFont f = font();
-        QFontMetrics fm(f);
-        return QSize(fm.width(m_link) + 10, fm.height() + 6);
-    }
-    QSize sizeHint() const {
-        if (!m_animating)
-            return sizeForFont();
-        else
-            return (m_newSize.width() > m_oldSize.width()) ? m_newSize : m_oldSize;
-    }
-    void updateSize() {
-        QRect r = geometry();
-        QSize newSize = sizeHint();
-        r = QRect(r.x(), r.y(), newSize.width(), newSize.height());
-        setGeometry(r);
-    }
-    void resetAnimation() {
-        m_animating = true;
-        m_percent = 0;
-        if (!m_timer.isActive())
-            m_timer.start();
-    }
-protected:
-    void paintEvent(QPaintEvent *e) {
-        QPainter p(this);
-        p.setClipRect(e->rect());
-        p.setPen(QPen(Qt::black, 1));
-        QLinearGradient gradient(rect().topLeft(), rect().bottomLeft());
-        gradient.setColorAt(0, QColor(255, 255, 255, 220));
-        gradient.setColorAt(1, QColor(193, 193, 193, 220));
-        p.setBrush(QBrush(gradient));
-        QSize size;
-        {
-            //draw a nicely rounded corner rectangle. to avoid unwanted
-            // borders we move the coordinates outsize the our clip region
-            size = interpolate(m_oldSize, m_newSize, m_percent);
-            QRect r(-1, 0, size.width(), size.height()+2);
-            const int roundness = 20;
-            QPainterPath path;
-            path.moveTo(r.x(), r.y());
-            path.lineTo(r.topRight().x()-roundness, r.topRight().y());
-            path.cubicTo(r.topRight().x(), r.topRight().y(),
-                         r.topRight().x(), r.topRight().y(),
-                         r.topRight().x(), r.topRight().y() + roundness);
-            path.lineTo(r.bottomRight());
-            path.lineTo(r.bottomLeft());
-            path.closeSubpath();
-            p.setRenderHint(QPainter::Antialiasing);
-            p.drawPath(path);
-        }
-        if (m_animating) {
-            if (qFuzzyCompare(m_percent, 1)) {
-                m_animating = false;
-                m_percent = 0;
-                m_timer.stop();
-            } else {
-                m_percent += 0.1;
-                if (m_percent >= 0.99) {
-                    m_percent = 1;
-                }
-            }
-        }
-
-        QString txt;
-        QFontMetrics fm(fontMetrics());
-        txt = fm.elidedText(m_link, Qt::ElideRight, size.width()-5);
-        p.drawText(5, height()-6, txt);
-    }
-
-private:
-    QSize interpolate(const QSize &src, const QSize &dst, qreal percent) {
-        int widthDiff  = int((dst.width() - src.width())  * percent);
-        int heightDiff = int((dst.height() - src.height()) * percent);
-        return QSize(src.width()  + widthDiff,
-                     src.height() + heightDiff);
-    }
-    QString m_link;
-    bool    m_animating;
-    QTimer  m_timer;
-    QTimer  m_hideTimer;
-    QSize   m_oldSize;
-    QSize   m_newSize;
-    qreal   m_percent;
-};
-
 class SearchEdit;
 
 class ClearButton : public QPushButton {
@@ -293,14 +140,21 @@ public:
     {
         view = new QWebView(this);
         view->setPage(new WebPage(view));
-        info = new InfoWidget(this);
 
-        connect(view, SIGNAL(loadStarted()),
-                info, SLOT(startLoad()));
+        progress = new QProgressBar(this);
+        progress->setRange(0, 100);
+        progress->setMinimumSize(100, 20);
+        progress->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+        progress->hide();
+        statusBar()->addPermanentWidget(progress);
+
         connect(view, SIGNAL(loadProgress(int)),
-                info, SLOT(changeLoad(int)));
+                progress, SLOT(show()));
+        connect(view, SIGNAL(loadProgress(int)),
+                progress, SLOT(setValue(int)));
         connect(view, SIGNAL(loadFinished(bool)),
-                info, SLOT(endLoad()));
+                progress, SLOT(hide()));
+
         connect(view, SIGNAL(loadFinished(bool)),
                 this, SLOT(loadFinished()));
         connect(view, SIGNAL(titleChanged(const QString&)),
@@ -341,13 +195,8 @@ public:
         bar->addWidget(new QLabel(tr("Location:")));
         bar->addWidget(urlEdit);
 
-        hoverLabel = new HoverLabel(this);
-        hoverLabel->hide();
-
         if (url.isValid())
             view->load(url);
-
-        info->raise();
     }
     inline QWebPage *webPage() const { return view->page(); }
 protected slots:
@@ -364,8 +213,7 @@ protected slots:
     }
     void showLinkHover(const QString &link, const QString &toolTip)
     {
-        //statusBar()->showMessage(link);
-        hoverLabel->setHoverLink(link);
+        statusBar()->showMessage(link);
 #ifndef QT_NO_TOOLTIP
         if (!toolTip.isEmpty())
             QToolTip::showText(QCursor::pos(), toolTip);
@@ -381,16 +229,7 @@ protected slots:
 #endif
     }
 protected:
-    void resizeEvent(QResizeEvent *) {
-        QSize hoverSize = hoverLabel->sizeHint();
-        hoverLabel->setGeometry(0, height()-hoverSize.height(),
-                                300, hoverSize.height());
-        QSize infoSize = info->sizeHint();
-        info->setGeometry(width() - infoSize.width(),
-                height() - infoSize.height(),
-                infoSize.width(), infoSize.height());
-    }
-private:
+ private:
     QUrl guessUrlFromString(const QString &string) {
         QString urlStr = string.trimmed();
         QRegExp test(QLatin1String("^[a-zA-Z]+\\:.*"));
@@ -425,8 +264,7 @@ private:
 
     QWebView *view;
     QLineEdit *urlEdit;
-    HoverLabel *hoverLabel;
-    InfoWidget *info;
+    QProgressBar *progress;
 };
 
 QWebPage *WebPage::createWindow(QWebPage::WebWindowType)
