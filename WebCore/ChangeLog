@@ -2,6 +2,14 @@
 
         Reviewed by Simon.
 
+        Rely on auto-boxing of C++ for the QCursor c'tor
+
+        * platform/qt/CursorQt.cpp:
+
+2008-04-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
         Add the remaining cursors that defaulted to PointerCursor
 
         * Resources/WebKitResources.qrc:
