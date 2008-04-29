@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,5) size 75x19
-        text run at (0,5) width 75: "Test result: "
+      RenderText {#text} at (0,6) size 75x19
+        text run at (0,6) width 75: "Test result: "
       RenderMenuList {SELECT} at (77,2) size 74x25 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (8,3) size 42x19
+        RenderBlock (anonymous) at (8,4) size 42x19
           RenderText at (0,0) size 36x19
             text run at (0,0) width 36: "PASS"
       RenderText {#text} at (0,0) size 0x0

@@ -13,50 +13,50 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,52) size 784x19
         RenderText {#text} at (0,0) size 361x19
           text run at (0,0) width 361: "Buttons should appear next to each other in a single row:"
-      RenderTable {TABLE} at (0,71) size 227x40
-        RenderTableSection {TBODY} at (0,0) size 227x40
-          RenderTableRow {TR} at (0,2) size 227x36
-            RenderTableCell {TD} at (2,2) size 223x36 [r=0 c=0 rs=1 cs=1]
-              RenderButton {BUTTON} at (3,3) size 91x30 [bgcolor=#C0C0C0]
-                RenderBlock (anonymous) at (8,5) size 75x19
-                  RenderText {#text} at (0,0) size 75x19
-                    text run at (0,0) width 75: "Search Mail"
-              RenderText {#text} at (96,8) size 4x19
-                text run at (96,8) width 4: " "
-              RenderButton {BUTTON} at (102,3) size 118x30 [bgcolor=#C0C0C0]
-                RenderBlock (anonymous) at (8,5) size 102x19
-                  RenderText {#text} at (0,0) size 102x19
-                    text run at (0,0) width 102: "Search the Web"
+      RenderTable {TABLE} at (0,71) size 194x38
+        RenderTableSection {TBODY} at (0,0) size 194x38
+          RenderTableRow {TR} at (0,2) size 194x34
+            RenderTableCell {TD} at (2,2) size 190x34 [r=0 c=0 rs=1 cs=1]
+              RenderButton {BUTTON} at (3,3) size 77x28 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (6,6) size 65x17
+                  RenderText {#text} at (0,0) size 65x17
+                    text run at (0,0) width 65: "Search Mail"
+              RenderText {#text} at (82,7) size 4x19
+                text run at (82,7) width 4: " "
+              RenderButton {BUTTON} at (88,3) size 99x28 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (6,6) size 87x17
+                  RenderText {#text} at (0,0) size 87x17
+                    text run at (0,0) width 87: "Search the Web"
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,111) size 784x19
+      RenderBlock {DIV} at (0,109) size 784x19
         RenderText {#text} at (0,0) size 184x19
           text run at (0,0) width 184: "Buttons should look identical:"
-      RenderBlock {DIV} at (0,130) size 784x34
-        RenderButton {BUTTON} at (2,2) size 83x30 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,5) size 67x19
-            RenderText {#text} at (0,0) size 67x19
-              text run at (0,0) width 67: "test button"
-      RenderBlock {DIV} at (0,164) size 784x34
-        RenderButton {BUTTON} at (2,2) size 103x30 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,5) size 87x19
-            RenderText {#text} at (0,0) size 87x19
-              text run at (0,0) width 87: "  test  button  "
-      RenderBlock {DIV} at (0,198) size 784x19
+      RenderBlock {DIV} at (0,128) size 784x32
+        RenderButton {BUTTON} at (2,2) size 68x28 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 56x17
+            RenderText {#text} at (0,0) size 56x17
+              text run at (0,0) width 56: "test button"
+      RenderBlock {DIV} at (0,160) size 784x32
+        RenderButton {BUTTON} at (2,2) size 83x28 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 71x17
+            RenderText {#text} at (0,0) size 71x17
+              text run at (0,0) width 71: "  test  button  "
+      RenderBlock {DIV} at (0,192) size 784x19
         RenderText {#text} at (0,0) size 340x19
           text run at (0,0) width 340: "Buttons should look identical (ignore vertical spacing):"
-      RenderBlock {DIV} at (0,217) size 784x34
-        RenderButton {BUTTON} at (2,2) size 103x30 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,5) size 87x19
-            RenderText {#text} at (0,0) size 87x19
-              text run at (0,0) width 87: "  test  button  "
-      RenderBlock {DIV} at (0,251) size 784x34
-        RenderButton {BUTTON} at (2,2) size 103x30 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,5) size 87x19
-            RenderText {#text} at (0,0) size 87x19
-              text run at (0,0) width 87: "  test  button  "
-      RenderBlock {DIV} at (0,299) size 784x32
+      RenderBlock {DIV} at (0,211) size 784x32
+        RenderButton {BUTTON} at (2,2) size 83x28 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 71x17
+            RenderText {#text} at (0,0) size 71x17
+              text run at (0,0) width 71: "  test  button  "
+      RenderBlock {DIV} at (0,243) size 784x32
+        RenderButton {BUTTON} at (2,2) size 83x28 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 71x17
+            RenderText {#text} at (0,0) size 71x17
+              text run at (0,0) width 71: "  test  button  "
+      RenderBlock {DIV} at (0,289) size 784x32
         RenderBlock {PRE} at (0,0) size 784x32
-          RenderButton {BUTTON} at (2,2) size 144x28 [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (8,4) size 128x19
-              RenderText {#text} at (0,1) size 128x17
-                text run at (0,1) width 128: "  test  button  "
+          RenderButton {BUTTON} at (2,2) size 83x28 [bgcolor=#C0C0C0]
+            RenderBlock (anonymous) at (6,6) size 71x17
+              RenderText {#text} at (0,0) size 71x17
+                text run at (0,0) width 71: "  test  button  "

@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
           text run at (0,19) width 68: "select box."
       RenderBlock {DIV} at (0,52) size 784x29
         RenderMenuList {SELECT} at (2,2) size 74x25 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (8,3) size 42x19
+          RenderBlock (anonymous) at (8,4) size 42x19
             RenderText at (0,0) size 8x19
               text run at (0,0) width 8: "1"
 caret: position 1 of child 0 {SELECT} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

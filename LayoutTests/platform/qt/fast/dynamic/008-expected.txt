@@ -3,7 +3,7 @@ layer at (0,0) size 800x972
 layer at (0,0) size 800x972
   RenderBlock {HTML} at (0,0) size 800x972
     RenderBody {BODY} at (8,8) size 784x956
-      RenderTextControl {TEXTAREA} at (2,2) size 344x952 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+      RenderTextControl {TEXTAREA} at (2,2) size 344x952 [border: (1px solid #000000)]
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

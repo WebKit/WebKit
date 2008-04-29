@@ -34,17 +34,17 @@ layer at (0,0) size 800x600
               RenderBR {BR} at (470,70) size 0x0
           RenderBlock {FORM} at (0,0) size 613x0
           RenderTableRow {TR} at (0,70) size 613x29
-            RenderTableCell {TD} at (126,72) size 236x25 [bgcolor=#CCCCCC] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (126,72) size 237x25 [bgcolor=#CCCCCC] [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 232x25
-            RenderTableCell {TD} at (362,70) size 119x29 [bgcolor=#CCCCCC] [r=1 c=2 rs=1 cs=1]
-              RenderTextControl {INPUT} at (3,2) size 88x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderTableCell {TD} at (363,70) size 120x29 [bgcolor=#CCCCCC] [r=1 c=2 rs=1 cs=1]
+              RenderTextControl {INPUT} at (3,2) size 88x25 [border: (2px inset #000000)]
               RenderImage {INPUT} at (93,7) size 25x18
-            RenderTableCell {TD} at (481,72) size 132x25 [bgcolor=#CCCCCC] [r=1 c=3 rs=1 cs=1]
-              RenderBlock {INPUT} at (3,4) size 13x13
-              RenderImage {IMG} at (19,0) size 40x25
-              RenderBlock {INPUT} at (62,4) size 13x13
-              RenderText {#text} at (78,1) size 4x19
-                text run at (78,1) width 4: " "
-              RenderImage {IMG} at (82,0) size 46x25
-layer at (376,83) size 82x19
+            RenderTableCell {TD} at (483,72) size 130x25 [bgcolor=#CCCCCC] [r=1 c=3 rs=1 cs=1]
+              RenderBlock {INPUT} at (3,5) size 12x12
+              RenderImage {IMG} at (18,0) size 40x25
+              RenderBlock {INPUT} at (61,5) size 12x12
+              RenderText {#text} at (76,1) size 4x19
+                text run at (76,1) width 4: " "
+              RenderImage {IMG} at (80,0) size 46x25
+layer at (377,83) size 82x19
   RenderBlock {DIV} at (3,3) size 82x19

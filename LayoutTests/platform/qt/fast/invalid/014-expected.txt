@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {FORM} at (0,19) size 784x29
         RenderMenuList {SELECT} at (2,2) size 74x25 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (8,3) size 42x19
+          RenderBlock (anonymous) at (8,4) size 42x19
             RenderText at (0,0) size 9x19
               text run at (0,0) width 9: "A"
         RenderText {#text} at (0,0) size 0x0
@@ -19,7 +19,7 @@ layer at (470,44) size 82x64
   RenderBlock (positioned) {H2} at (470,44) size 82x64 [border: (2px solid #008000)]
     RenderBlock {FORM} at (2,2) size 78x39
       RenderMenuList {SELECT} at (2,2) size 74x35 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (8,3) size 42x29
+        RenderBlock (anonymous) at (8,4) size 42x29
           RenderText at (0,0) size 15x29
             text run at (0,0) width 15: "A"
       RenderText {#text} at (0,0) size 0x0

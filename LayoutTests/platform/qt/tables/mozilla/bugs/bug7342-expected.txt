@@ -47,34 +47,34 @@ layer at (0,0) size 800x600
                               RenderText {#text} at (3,3) size 62x20
                                 text run at (3,3) width 62: "Directory"
                           RenderText {#text} at (0,0) size 0x0
-                RenderTableCell {TD} at (129,19) size 466x95 [bgcolor=#CCCCCC] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                  RenderTable {TABLE} at (4,4) size 458x87 [border: (1px outset #808080)]
-                    RenderTableSection {TBODY} at (1,1) size 456x85
-                      RenderTableRow {TR} at (0,4) size 456x44
-                        RenderTableCell {TD} at (4,4) size 338x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
+                RenderTableCell {TD} at (129,20) size 466x93 [bgcolor=#CCCCCC] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                  RenderTable {TABLE} at (4,4) size 458x85 [border: (1px outset #808080)]
+                    RenderTableSection {TBODY} at (1,1) size 456x83
+                      RenderTableRow {TR} at (0,4) size 456x42
+                        RenderTableCell {TD} at (4,4) size 341x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
                           RenderInline {FONT} at (0,0) size 258x16
                             RenderText {#text} at (0,0) size 0x0
-                            RenderTextControl {INPUT} at (7,7) size 254x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                            RenderTextControl {INPUT} at (7,7) size 254x22 [border: (2px inset #000000)]
                             RenderText {#text} at (0,0) size 0x0
                           RenderText {#text} at (0,0) size 0x0
-                        RenderTableCell {TD} at (346,4) size 106x44 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-                          RenderButton {INPUT} at (7,7) size 61x30 [bgcolor=#C0C0C0]
-                            RenderBlock (anonymous) at (8,5) size 45x19
-                              RenderText at (0,0) size 45x19
-                                text run at (0,0) width 45: "Search"
+                        RenderTableCell {TD} at (349,4) size 103x42 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+                          RenderButton {INPUT} at (7,7) size 51x28 [bgcolor=#C0C0C0]
+                            RenderBlock (anonymous) at (6,6) size 39x17
+                              RenderText at (0,0) size 39x17
+                                text run at (0,0) width 39: "Search"
                           RenderText {#text} at (0,0) size 0x0
-                      RenderTableRow {TR} at (0,52) size 456x29
-                        RenderTableCell {TD} at (4,52) size 109x29 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                      RenderTableRow {TR} at (0,50) size 456x29
+                        RenderTableCell {TD} at (4,50) size 110x29 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                           RenderText {#text} at (5,5) size 27x19
                             text run at (5,5) width 27: "asdf"
-                        RenderTableCell {TD} at (117,52) size 110x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                        RenderTableCell {TD} at (118,50) size 111x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                           RenderText {#text} at (5,5) size 27x19
                             text run at (5,5) width 27: "asdf"
-                        RenderTableCell {TD} at (231,52) size 111x29 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+                        RenderTableCell {TD} at (233,50) size 112x29 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                           RenderText {#text} at (5,5) size 27x19
                             text run at (5,5) width 27: "asdf"
-                        RenderTableCell {TD} at (346,52) size 106x29 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+                        RenderTableCell {TD} at (349,50) size 103x29 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                           RenderText {#text} at (5,5) size 27x19
                             text run at (5,5) width 27: "asdf"
-layer at (249,118) size 248x16
+layer at (249,119) size 248x16
   RenderBlock {DIV} at (3,3) size 248x16

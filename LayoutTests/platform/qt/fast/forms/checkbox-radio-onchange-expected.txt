@@ -15,14 +15,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 325x19
           text run at (0,0) width 325: "Test 1 Passed. onChange event fired for checkbox."
       RenderBlock (anonymous) at (0,57) size 784x19
-        RenderBlock {INPUT} at (3,3) size 13x13
-        RenderText {#text} at (19,0) size 49x19
-          text run at (19,0) width 49: "Radio 1"
-        RenderText {#text} at (68,0) size 4x19
-          text run at (68,0) width 4: " "
-        RenderBlock {INPUT} at (75,3) size 13x13
-        RenderText {#text} at (91,0) size 49x19
-          text run at (91,0) width 49: "Radio 2"
+        RenderBlock {INPUT} at (3,4) size 12x12
+        RenderText {#text} at (18,0) size 49x19
+          text run at (18,0) width 49: "Radio 1"
+        RenderText {#text} at (67,0) size 4x19
+          text run at (67,0) width 4: " "
+        RenderBlock {INPUT} at (74,4) size 12x12
+        RenderText {#text} at (89,0) size 49x19
+          text run at (89,0) width 49: "Radio 2"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,76) size 784x19
         RenderText {#text} at (0,0) size 341x19

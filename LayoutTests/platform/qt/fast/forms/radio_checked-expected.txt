@@ -9,45 +9,45 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,33) size 784x19
         RenderText {#text} at (0,0) size 327x19
           text run at (0,0) width 327: "These buttons are in group1 but don't have a form. "
-        RenderBlock {INPUT} at (330,3) size 13x13
-        RenderText {#text} at (346,0) size 4x19
-          text run at (346,0) width 4: " "
-        RenderBlock {INPUT} at (353,3) size 13x13
+        RenderBlock {INPUT} at (330,4) size 12x12
+        RenderText {#text} at (345,0) size 4x19
+          text run at (345,0) width 4: " "
+        RenderBlock {INPUT} at (352,4) size 12x12
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {FORM} at (0,52) size 784x57
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 291x19
           text run at (0,19) width 291: "These buttons are in group1, in the first form. "
-        RenderBlock {INPUT} at (294,22) size 13x13
-        RenderText {#text} at (310,19) size 4x19
-          text run at (310,19) width 4: " "
-        RenderBlock {INPUT} at (317,22) size 13x13
-        RenderText {#text} at (333,19) size 4x19
-          text run at (333,19) width 4: " "
+        RenderBlock {INPUT} at (294,23) size 12x12
+        RenderText {#text} at (309,19) size 4x19
+          text run at (309,19) width 4: " "
+        RenderBlock {INPUT} at (316,23) size 12x12
+        RenderText {#text} at (331,19) size 4x19
+          text run at (331,19) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
         RenderText {#text} at (0,38) size 291x19
           text run at (0,38) width 291: "These buttons are in group2, in the first form. "
-        RenderBlock {INPUT} at (294,41) size 13x13
-        RenderText {#text} at (310,38) size 4x19
-          text run at (310,38) width 4: " "
-        RenderBlock {INPUT} at (317,41) size 13x13
+        RenderBlock {INPUT} at (294,42) size 12x12
+        RenderText {#text} at (309,38) size 4x19
+          text run at (309,38) width 4: " "
+        RenderBlock {INPUT} at (316,42) size 12x12
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,123) size 784x19
         RenderText {#text} at (0,0) size 327x19
           text run at (0,0) width 327: "These buttons are in group1 but don't have a form. "
-        RenderBlock {INPUT} at (330,3) size 13x13
-        RenderText {#text} at (346,0) size 4x19
-          text run at (346,0) width 4: " "
-        RenderBlock {INPUT} at (353,3) size 13x13
+        RenderBlock {INPUT} at (330,4) size 12x12
+        RenderText {#text} at (345,0) size 4x19
+          text run at (345,0) width 4: " "
+        RenderBlock {INPUT} at (352,4) size 12x12
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {FORM} at (0,142) size 784x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 314x19
           text run at (0,19) width 314: "These buttons are in group2, in the second form. "
-        RenderBlock {INPUT} at (317,22) size 13x13
-        RenderText {#text} at (333,19) size 4x19
-          text run at (333,19) width 4: " "
-        RenderBlock {INPUT} at (340,22) size 13x13
+        RenderBlock {INPUT} at (317,23) size 12x12
+        RenderText {#text} at (332,19) size 4x19
+          text run at (332,19) width 4: " "
+        RenderBlock {INPUT} at (339,23) size 12x12
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,194) size 784x19
         RenderText {#text} at (0,0) size 99x19

@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,3) size 784x583 [bgcolor=#FFFFFF]
-      RenderBlock {CENTER} at (0,0) size 784x284
+      RenderBlock {CENTER} at (0,0) size 784x282
         RenderTable {TABLE} at (0,0) size 784x20
           RenderTableSection {TBODY} at (0,0) size 784x20
             RenderTableRow {TR} at (0,0) size 784x16
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,20) size 784x38
           RenderBR {BR} at (392,0) size 0x19
           RenderBR {BR} at (392,19) size 0x19
-        RenderBlock {DIV} at (0,58) size 784x126 [border: (2px solid #AAAAFF)]
+        RenderBlock {DIV} at (0,58) size 784x124 [border: (2px solid #AAAAFF)]
           RenderTable {TABLE} at (228,2) size 328x24
             RenderTableSection {TBODY} at (0,0) size 328x24
               RenderTableRow {TR} at (0,0) size 328x24
@@ -76,23 +76,23 @@ layer at (0,0) size 800x600
                       RenderInline {A} at (0,0) size 36x16 [color=#0000CC]
                         RenderText {#text} at (288,4) size 36x16
                           text run at (288,4) width 36: "more \x{BB}"
-          RenderTable {TABLE} at (2,26) size 780x63
-            RenderTableSection {TBODY} at (0,0) size 780x63
-              RenderTableRow {TR} at (0,0) size 780x63
-                RenderTableCell {TD} at (0,22) size 156x19 [r=0 c=0 rs=1 cs=1]
+          RenderTable {TABLE} at (2,26) size 780x61
+            RenderTableSection {TBODY} at (0,0) size 780x61
+              RenderTableRow {TR} at (0,0) size 780x61
+                RenderTableCell {TD} at (0,21) size 156x19 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x19
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (156,0) size 452x63 [r=0 c=1 rs=1 cs=1]
-                  RenderTextControl {INPUT} at (2,2) size 448x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTableCell {TD} at (156,0) size 452x61 [r=0 c=1 rs=1 cs=1]
+                  RenderTextControl {INPUT} at (2,2) size 448x25 [border: (2px inset #000000)]
                   RenderBR {BR} at (452,19) size 0x0
-                  RenderButton {INPUT} at (105,31) size 111x30 [bgcolor=#C0C0C0]
-                    RenderBlock (anonymous) at (8,5) size 95x19
-                      RenderText at (0,0) size 95x19
-                        text run at (0,0) width 95: "Google Search"
-                  RenderButton {INPUT} at (220,31) size 127x30 [bgcolor=#C0C0C0]
-                    RenderBlock (anonymous) at (8,5) size 111x19
-                      RenderText at (0,0) size 111x19
-                        text run at (0,0) width 111: "I'm Feeling Lucky"
+                  RenderButton {INPUT} at (124,31) size 94x28 [bgcolor=#C0C0C0]
+                    RenderBlock (anonymous) at (6,6) size 82x17
+                      RenderText at (0,0) size 82x17
+                        text run at (0,0) width 82: "Google Search"
+                  RenderButton {INPUT} at (222,31) size 106x28 [bgcolor=#C0C0C0]
+                    RenderBlock (anonymous) at (6,6) size 94x17
+                      RenderText at (0,0) size 94x17
+                        text run at (0,0) width 94: "I'm Feeling Lucky"
                 RenderTableCell {TD} at (608,0) size 172x39 [r=0 c=2 rs=1 cs=1]
                   RenderInline {FONT} at (0,0) size 79x39
                     RenderText {#text} at (0,0) size 6x13
@@ -112,7 +112,7 @@ layer at (0,0) size 800x600
                     RenderInline {A} at (0,0) size 66x13 [color=#0000CC]
                       RenderText {#text} at (6,26) size 66x13
                         text run at (6,26) width 66: "Language Tools"
-          RenderBlock (anonymous) at (2,89) size 780x35
+          RenderBlock (anonymous) at (2,87) size 780x35
             RenderBR {BR} at (390,0) size 0x19
             RenderInline {FONT} at (0,0) size 135x16
               RenderInline {FONT} at (0,0) size 25x16 [color=#FF0000]
@@ -126,7 +126,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (454,19) size 3x16
                 text run at (454,19) width 3: "."
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock (anonymous) at (0,184) size 784x73
+        RenderBlock (anonymous) at (0,182) size 784x73
           RenderBR {BR} at (392,0) size 0x19
           RenderBR {BR} at (392,19) size 0x19
           RenderBR {BR} at (392,38) size 0x19
@@ -144,7 +144,7 @@ layer at (0,0) size 800x600
             RenderInline {A} at (0,0) size 66x16 [color=#0000CC]
               RenderText {#text} at (467,57) size 66x16
                 text run at (467,57) width 66: "About Google"
-        RenderBlock {P} at (0,271) size 784x13
+        RenderBlock {P} at (0,269) size 784x13
           RenderInline {FONT} at (0,0) size 59x13
             RenderText {#text} at (362,0) size 59x13
               text run at (362,0) width 59: "\x{A9}2005 Google"

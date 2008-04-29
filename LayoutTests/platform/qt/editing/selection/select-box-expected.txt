@@ -60,12 +60,12 @@ layer at (0,0) size 800x600
           text run at (302,0) width 403: "The caret should skip over the select box as if it were an image."
       RenderBlock {DIV} at (0,33) size 784x29
         RenderBlock {DIV} at (0,0) size 784x29
-          RenderText {#text} at (0,5) size 72x19
-            text run at (0,5) width 72: "select box: "
+          RenderText {#text} at (0,6) size 72x19
+            text run at (0,6) width 72: "select box: "
           RenderMenuList {SELECT} at (74,2) size 74x25 [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (8,3) size 42x19
+            RenderBlock (anonymous) at (8,4) size 42x19
               RenderText at (0,0) size 8x19
                 text run at (0,0) width 8: "1"
-          RenderText {#text} at (150,5) size 68x19
-            text run at (150,5) width 68: " the end ..."
+          RenderText {#text} at (150,6) size 68x19
+            text run at (150,6) width 68: " the end ..."
 caret: position 1 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 438x272
           RenderTableRow {TR} at (0,2) size 438x28
             RenderTableCell {TD} at (2,2) size 44x28 [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (3,3) size 38x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderTextControl {INPUT} at (3,3) size 38x22 [border: (2px inset #000000)]
             RenderTableCell {TD} at (48,7) size 87x18 [color=#808080] [r=0 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 51x16
                 RenderText at (4,1) size 51x16
@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 295: "set value attribute that violates maxlength (with pasted value)"
           RenderTableRow {TR} at (0,32) size 438x28
             RenderTableCell {TD} at (2,32) size 44x28 [r=1 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (3,3) size 38x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderTextControl {INPUT} at (3,3) size 38x22 [border: (2px inset #000000)]
             RenderTableCell {TD} at (48,37) size 87x18 [color=#808080] [r=1 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 51x16
                 RenderText at (4,1) size 51x16
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 297: "set value property that violates maxlength (with pasted value)"
           RenderTableRow {TR} at (0,62) size 438x28
             RenderTableCell {TD} at (2,62) size 44x28 [r=2 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (3,3) size 38x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderTextControl {INPUT} at (3,3) size 38x22 [border: (2px inset #000000)]
             RenderTableCell {TD} at (48,67) size 87x18 [color=#808080] [r=2 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 51x16
                 RenderText at (4,1) size 51x16
@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 269: "set maxlength attribute that is smaller than pasted value"
           RenderTableRow {TR} at (0,92) size 438x28
             RenderTableCell {TD} at (2,92) size 44x28 [r=3 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (3,3) size 38x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderTextControl {INPUT} at (3,3) size 38x22 [border: (2px inset #000000)]
             RenderTableCell {TD} at (48,97) size 87x18 [color=#808080] [r=3 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 51x16
                 RenderText at (4,1) size 51x16
@@ -55,7 +55,7 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 275: "set maxLength property that is smaller than pasted value"
           RenderTableRow {TR} at (0,122) size 438x28
             RenderTableCell {TD} at (2,122) size 44x28 [r=4 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (3,3) size 38x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderTextControl {INPUT} at (3,3) size 38x22 [border: (2px inset #000000)]
             RenderTableCell {TD} at (48,127) size 87x18 [color=#808080] [r=4 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 51x16
                 RenderText at (4,1) size 51x16
@@ -67,7 +67,7 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 295: "set value attribute that violates maxlength (with pasted value)"
           RenderTableRow {TR} at (0,152) size 438x28
             RenderTableCell {TD} at (2,152) size 44x28 [r=5 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (3,3) size 38x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderTextControl {INPUT} at (3,3) size 38x22 [border: (2px inset #000000)]
             RenderTableCell {TD} at (48,157) size 87x18 [color=#808080] [r=5 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 51x16
                 RenderText at (4,1) size 51x16
@@ -79,7 +79,7 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 297: "set value property that violates maxlength (with pasted value)"
           RenderTableRow {TR} at (0,182) size 438x28
             RenderTableCell {TD} at (2,182) size 44x28 [r=6 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (3,3) size 38x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderTextControl {INPUT} at (3,3) size 38x22 [border: (2px inset #000000)]
             RenderTableCell {TD} at (48,187) size 87x18 [color=#808080] [r=6 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 51x16
                 RenderText at (4,1) size 51x16
@@ -91,7 +91,7 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 269: "set maxlength attribute that is smaller than pasted value"
           RenderTableRow {TR} at (0,212) size 438x28
             RenderTableCell {TD} at (2,212) size 44x28 [r=7 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (3,3) size 38x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderTextControl {INPUT} at (3,3) size 38x22 [border: (2px inset #000000)]
             RenderTableCell {TD} at (48,217) size 87x18 [color=#808080] [r=7 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 51x16
                 RenderText at (4,1) size 51x16
@@ -103,7 +103,7 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 275: "set maxLength property that is smaller than pasted value"
           RenderTableRow {TR} at (0,242) size 438x28
             RenderTableCell {TD} at (2,242) size 44x28 [r=8 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (3,3) size 38x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderTextControl {INPUT} at (3,3) size 38x22 [border: (2px inset #000000)]
             RenderTableCell {TD} at (48,247) size 87x18 [color=#808080] [r=8 c=1 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 51x16
                 RenderText at (4,1) size 51x16

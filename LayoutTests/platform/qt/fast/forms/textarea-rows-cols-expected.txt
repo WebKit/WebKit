@@ -8,38 +8,38 @@ layer at (0,0) size 800x780
           text run at (0,0) width 372: "Test for edge cases of <textarea> rows and cols attributes."
       RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,35) size 784x44
-        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,79) size 784x25
-        RenderTextControl {TEXTAREA} at (2,2) size 184x21 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x21 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,104) size 784x44
-        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,148) size 784x63
-        RenderTextControl {TEXTAREA} at (2,2) size 184x59 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x59 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,211) size 784x44
-        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,255) size 784x44
-        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,299) size 784x44
-        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,343) size 784x44
-        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [border: (1px solid #000000)]
       RenderBlock {HR} at (0,394) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,403) size 784x44
-        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,447) size 784x44
-        RenderTextControl {TEXTAREA} at (2,2) size 32x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 32x40 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,491) size 784x44
-        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,535) size 784x44
-        RenderTextControl {TEXTAREA} at (2,2) size 344x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 344x40 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,579) size 784x44
-        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,623) size 784x44
-        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,667) size 784x44
-        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,711) size 784x44
-        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [border: (1px solid #000000)]
       RenderBlock {HR} at (0,762) size 784x2 [border: (1px inset #000000)]
 layer at (11,46) size 182x38
   RenderBlock {DIV} at (1,1) size 182x38
