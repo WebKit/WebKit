@@ -1,3 +1,11 @@
+2008-04-29  Adam Roben  <aroben@apple.com>
+
+        Fix assertion on launch on Windows
+
+        * platform/graphics/win/FontPlatformData.h: Pass
+        WTF::HashTableDeletedValue to the m_font constructor instead of a
+        bogus -1 value. This is needed because m_font is a RefPtr.
+
 2008-04-29  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin.
@@ -67,14 +75,6 @@
         * xml/XMLHttpRequest.cpp:
         (WebCore::XMLHttpRequest::send):
         (WebCore::XMLHttpRequest::setRequestHeader):
-
-2008-04-29  Adam Roben  <aroben@apple.com>
-
-        Fix assertion on launch on Windows
-
-        * platform/graphics/win/FontPlatformData.h: Pass
-        WTF::HashTableDeletedValue to the m_font constructor instead of a
-        bogus -1 value. This is needed because m_font is a RefPtr.
 
 2008-04-29  Adam Roben  <aroben@apple.com>
 
