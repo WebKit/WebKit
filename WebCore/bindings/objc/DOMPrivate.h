@@ -47,8 +47,6 @@
 #import <WebCore/DOMHTMLFrameElementPrivate.h>
 #import <WebCore/DOMHTMLImageElementPrivate.h>
 #import <WebCore/DOMHTMLInputElementPrivate.h>
-#import <WebCore/DOMHTMLLabelElementPrivate.h>
-#import <WebCore/DOMHTMLLegendElementPrivate.h>
 #import <WebCore/DOMHTMLLinkElementPrivate.h>
 #import <WebCore/DOMHTMLOptionsCollectionPrivate.h>
 #import <WebCore/DOMHTMLPreElementPrivate.h>

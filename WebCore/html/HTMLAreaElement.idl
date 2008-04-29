@@ -31,7 +31,6 @@ module html {
         attribute [ConvertNullToNullString] DOMString href;
         attribute boolean noHref;
         attribute [ConvertNullToNullString] DOMString shape;
-        attribute long tabIndex;
         attribute [ConvertNullToNullString] DOMString target;
 
         // IE Extensions

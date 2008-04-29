@@ -1,3 +1,16 @@
+2008-04-28  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin.
+
+        Fix <rdar://problem/4911289> Add tabindex property to all children 
+        of HTMLElement (7138)
+        http://bugs.webkit.org/show_bug.cgi?id=7138
+
+        * MigrateHeaders.make:
+        Removing DOMHTMLLabelElementPrivate.h and DOMHTMLLegendElementPrivate.h
+        because now that focus() has been moved to DOMHTMLElement.h, these
+        files are no longer needed.
+
 2008-04-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

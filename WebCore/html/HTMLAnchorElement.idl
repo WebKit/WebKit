@@ -34,12 +34,8 @@ module html {
         attribute [ConvertNullToNullString] DOMString rel;
         attribute [ConvertNullToNullString] DOMString rev;
         attribute [ConvertNullToNullString] DOMString shape;
-        attribute long tabIndex;
         attribute [ConvertNullToNullString] DOMString target;
         attribute [ConvertNullToNullString] DOMString type;
-
-        void blur();
-        void focus();
 
         // IE Extensions
         readonly attribute DOMString hash;

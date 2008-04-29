@@ -32,7 +32,7 @@ PASS resultArray[2].i is '2'
 PASS resultArray[2].item is namedNodeMap.item(2)
 
 [object HTMLFormElement]
-PASS resultArray.length is 113
+PASS resultArray.length is 114
 PASS resultArray[0].i is '0'
 PASS resultArray[0].item is document.getElementsByTagName('select')[0]
 PASS resultArray[1].i is '1'

@@ -1,3 +1,101 @@
+2008-04-28  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin.
+
+        Fix <rdar://problem/4911289> Add tabindex property to all children 
+        of HTMLElement (7138)
+        http://bugs.webkit.org/show_bug.cgi?id=7138
+
+        Test: fast/events/tabindex-focus-blur-all.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMPrivate.h:
+        -DOMHTMLLabelElementPrivate.h and DOMHTMLLegendElementPrivate.h are no
+         longer needed
+
+        * bindings/objc/PublicDOMInterfaces.h:
+        -Moving focus, blur, tabindex to HTMLElement from its descendants.
+
+        * dom/Node.cpp:
+        (WebCore::Node::Node):
+        (WebCore::Node::isFocusable):
+        (WebCore::Node::isKeyboardFocusable):
+        -The concept of being focusable now needs to account for tabindex
+        attribute.
+
+        * dom/Node.h:
+        -Need to use a bit to keep track of whether tabindex was explicitly set
+         to 0 or was just initialized to 0.
+        (WebCore::Node::tabIndex):
+        -Make this virtual so that Anchors and GenericFormElements can determine
+         tabindex without accounting for focusability
+        (WebCore::Node::setTabIndexExplicitly):
+        -Renamed setTabIndex() to setTabIndexExplicitly() so as not to hide
+         behind and/or be confused for HTMLElement::setTabIndex
+
+        * html/HTMLAnchorElement.cpp:
+        * html/HTMLAnchorElement.h:
+        (WebCore::HTMLAnchorElement::tabIndex):
+        * html/HTMLGenericFormElement.cpp:
+        * html/HTMLGenericFormElement.h:
+        (WebCore::HTMLGenericFormElement::tabIndex):
+        -Anchors and form elements are normally focusable, and need to avert the
+         check for focusability in HTMLElement::tabIndex
+         because tabIndex could be queried before a first layout happens.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        -Function Node::setTabIndex changed to Node::setTabIndexExplicitly
+        (WebCore::HTMLElement::isFocusable):
+        -The concept of being focusable now needs to account for tabindex
+         attribute.
+        (WebCore::HTMLElement::tabIndex):
+        -HTML5 specifies that querying tabindex for elements that aren't
+         focusable shall return -1
+        (WebCore::HTMLElement::setTabIndex):
+        -New default implementation
+        * html/HTMLElement.h:
+
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::focus):
+        -Now with HTML5's enhanced specification of tabindex, legend elements
+         themselves shall focus (if they should), and not the first form element 
+         they encapsulate.  This matches Firefox behavior.  HTMLLabelElements
+         still forward focus to the encapsulated element.  This also matches
+         other browsers. 
+
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::isFocusable):
+        * html/HTMLAreaElement.h:
+        -HTMLAreaElement isn't subject to the same focusability requirements as
+         its parent, HTMLAnchorElement. Default HTMLElement implementation is
+         desired.  
+
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::isFocusable):
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::isFocusable):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::isFocusable):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::isFocusable):
+        -These elements aren't subject to the same focusability requirements as
+         their parent, HTMLGenericFormElement. Default HTMLElement 
+         implementation is desired.  
+
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLLabelElement.idl:
+        * html/HTMLLegendElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        -Moving tabindex attribute, focus and blur methods from descendants of
+         HTMLElement to HTMLElement
+
 2008-04-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

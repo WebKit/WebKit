@@ -145,7 +145,7 @@ void HTMLElement::parseMappedAttribute(MappedAttribute *attr)
         indexstring = getAttribute(tabindexAttr);
         if (indexstring.length())
             // Clamp tabindex to the range of 'short' to match Firefox's behavior.
-            setTabIndex(max(static_cast<int>(std::numeric_limits<short>::min()), min(indexstring.toInt(), static_cast<int>(std::numeric_limits<short>::max()))));
+            setTabIndexExplicitly(max(static_cast<int>(std::numeric_limits<short>::min()), min(indexstring.toInt(), static_cast<int>(std::numeric_limits<short>::max()))));
     } else if (attr->name() == langAttr) {
         // FIXME: Implement
     } else if (attr->name() == dirAttr) {
@@ -525,7 +525,7 @@ void HTMLElement::addHTMLAlignment(MappedAttribute* attr)
 
 bool HTMLElement::isFocusable() const
 {
-    return isContentEditable() && parent() && !parent()->isContentEditable();
+    return Element::isFocusable() || (isContentEditable() && parent() && !parent()->isContentEditable());
 }
 
 bool HTMLElement::isContentEditable() const 
@@ -701,6 +701,18 @@ String HTMLElement::className() const
 void HTMLElement::setClassName(const String &value)
 {
     setAttribute(classAttr, value);
+}
+
+short HTMLElement::tabIndex() const
+{
+    if (supportsFocus())
+        return Element::tabIndex();
+    return -1;
+}
+
+void HTMLElement::setTabIndex(int value)
+{
+    setAttribute(tabindexAttr, String::number(value));
 }
 
 PassRefPtr<HTMLCollection> HTMLElement::children()

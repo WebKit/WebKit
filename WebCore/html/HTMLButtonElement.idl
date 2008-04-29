@@ -29,7 +29,6 @@ module html {
                  attribute  [ConvertNullToNullString] DOMString            accessKey;
                  attribute  boolean              disabled;
                  attribute  [ConvertNullToNullString] DOMString            name;
-                 attribute  long                 tabIndex;
         readonly attribute  DOMString            type;
                  attribute  [ConvertNullToNullString] DOMString            value;
 

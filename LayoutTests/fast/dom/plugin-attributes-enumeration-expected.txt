@@ -16,7 +16,6 @@ declare
 form
 hspace
 standby
-tabIndex
 type
 useMap
 vspace

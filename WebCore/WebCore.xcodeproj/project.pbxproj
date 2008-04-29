@@ -355,8 +355,6 @@
 		1CFCEE960AACC40100348750 /* DOMHTMLBodyElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEE8D0AACC3CD00348750 /* DOMHTMLBodyElementPrivate.h */; };
 		1CFCEE970AACC40100348750 /* DOMHTMLButtonElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEE8E0AACC3CD00348750 /* DOMHTMLButtonElementPrivate.h */; };
 		1CFCEE980AACC40100348750 /* DOMHTMLImageElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEE8F0AACC3CD00348750 /* DOMHTMLImageElementPrivate.h */; };
-		1CFCEE990AACC40100348750 /* DOMHTMLLabelElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEE900AACC3CD00348750 /* DOMHTMLLabelElementPrivate.h */; };
-		1CFCEE9A0AACC40100348750 /* DOMHTMLLegendElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEE910AACC3CD00348750 /* DOMHTMLLegendElementPrivate.h */; };
 		1CFCEE9B0AACC40100348750 /* DOMHTMLLinkElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEE920AACC3CD00348750 /* DOMHTMLLinkElementPrivate.h */; };
 		1CFCEE9D0AACC40100348750 /* DOMHTMLStyleElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEE940AACC3CD00348750 /* DOMHTMLStyleElementPrivate.h */; };
 		1CFCEE9E0AACC40100348750 /* DOMHTMLTextAreaElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEE950AACC3CD00348750 /* DOMHTMLTextAreaElementPrivate.h */; };
@@ -4091,9 +4089,7 @@
 				8575DF820AA612D600F5DBB5 /* DOMHTMLIsIndexElement.h in Copy Generated Headers */,
 				85BA4D2B0AA6889F0088052D /* DOMHTMLLIElement.h in Copy Generated Headers */,
 				85BA4CE70AA686510088052D /* DOMHTMLLabelElement.h in Copy Generated Headers */,
-				1CFCEE990AACC40100348750 /* DOMHTMLLabelElementPrivate.h in Copy Generated Headers */,
 				85BA4CE80AA686510088052D /* DOMHTMLLegendElement.h in Copy Generated Headers */,
-				1CFCEE9A0AACC40100348750 /* DOMHTMLLegendElementPrivate.h in Copy Generated Headers */,
 				8575DF860AA6130E00F5DBB5 /* DOMHTMLLinkElement.h in Copy Generated Headers */,
 				1CFCEE9B0AACC40100348750 /* DOMHTMLLinkElementPrivate.h in Copy Generated Headers */,
 				85ECBF0C0AA7628900544F0B /* DOMHTMLMapElement.h in Copy Generated Headers */,
@@ -4811,8 +4807,6 @@
 		1CFCEE8D0AACC3CD00348750 /* DOMHTMLBodyElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLBodyElementPrivate.h; sourceTree = "<group>"; };
 		1CFCEE8E0AACC3CD00348750 /* DOMHTMLButtonElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLButtonElementPrivate.h; sourceTree = "<group>"; };
 		1CFCEE8F0AACC3CD00348750 /* DOMHTMLImageElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLImageElementPrivate.h; sourceTree = "<group>"; };
-		1CFCEE900AACC3CD00348750 /* DOMHTMLLabelElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLLabelElementPrivate.h; sourceTree = "<group>"; };
-		1CFCEE910AACC3CD00348750 /* DOMHTMLLegendElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLLegendElementPrivate.h; sourceTree = "<group>"; };
 		1CFCEE920AACC3CD00348750 /* DOMHTMLLinkElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLLinkElementPrivate.h; sourceTree = "<group>"; };
 		1CFCEE940AACC3CD00348750 /* DOMHTMLStyleElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLStyleElementPrivate.h; sourceTree = "<group>"; };
 		1CFCEE950AACC3CD00348750 /* DOMHTMLTextAreaElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLTextAreaElementPrivate.h; sourceTree = "<group>"; };
@@ -9854,10 +9848,8 @@
 				859A9C420AA5E3BD00B694B2 /* DOMHTMLIsIndexElement.mm */,
 				85BA4CD90AA6861B0088052D /* DOMHTMLLabelElement.h */,
 				85BA4CDA0AA6861B0088052D /* DOMHTMLLabelElement.mm */,
-				1CFCEE900AACC3CD00348750 /* DOMHTMLLabelElementPrivate.h */,
 				85BA4CDB0AA6861B0088052D /* DOMHTMLLegendElement.h */,
 				85BA4CDC0AA6861B0088052D /* DOMHTMLLegendElement.mm */,
-				1CFCEE910AACC3CD00348750 /* DOMHTMLLegendElementPrivate.h */,
 				85BA4D030AA688680088052D /* DOMHTMLLIElement.h */,
 				85BA4D040AA688680088052D /* DOMHTMLLIElement.mm */,
 				85992EB60AA5069500AC0785 /* DOMHTMLLinkElement.h */,

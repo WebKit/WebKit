@@ -33,12 +33,9 @@ module html {
                  attribute  [ConvertNullToNullString] DOMString            name;
                  attribute  boolean              readOnly;
                  attribute  long                 rows;
-                 attribute  long                 tabIndex;
         readonly attribute  DOMString            type;
                  attribute  [ConvertNullToNullString] DOMString            value;
         
-        void     blur();
-        void     focus();
         void     select();
 
        // WinIE & FireFox extension:

@@ -205,6 +205,11 @@ void HTMLGenericFormElement::setTabIndex(int value)
 {
     setAttribute(tabindexAttr, String::number(value));
 }
+
+short HTMLGenericFormElement::tabIndex() const
+{
+    return Element::tabIndex();
+}
     
 bool HTMLGenericFormElement::supportsFocus() const
 {

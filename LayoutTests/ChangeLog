@@ -1,3 +1,25 @@
+2008-04-28  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix <rdar://problem/4911289> Add tabindex property to all children 
+        of HTMLElement (7138)
+        http://bugs.webkit.org/show_bug.cgi?id=7138
+
+        minor updates to these existing tests:
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/plugin-attributes-enumeration-expected.txt:
+        * fast/dom/resources/domListEnumeration.js:
+
+        * fast/events/resources/abe.png: Added.
+        * fast/events/resources/tabindex-focus-blur-all-frame1.html: Added.
+        * fast/events/resources/tabindex-focus-blur-all-frame2.html: Added.
+        * fast/events/resources/tabindex-focus-blur-all-iframe1.html: Added.
+        * fast/events/resources/tabindex-focus-blur-all-iframe2.html: Added.
+        * fast/events/resources/tabindex-focus-blur-all.js: Added.
+        * fast/events/tabindex-focus-blur-all-expected.txt: Added.
+        * fast/events/tabindex-focus-blur-all.html: Added.
+
 2008-04-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

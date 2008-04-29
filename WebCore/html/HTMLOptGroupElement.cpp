@@ -43,7 +43,7 @@ HTMLOptGroupElement::HTMLOptGroupElement(Document* doc, HTMLFormElement* f)
 
 bool HTMLOptGroupElement::isFocusable() const
 {
-    return false;
+    return HTMLElement::isFocusable();
 }
 
 const AtomicString& HTMLOptGroupElement::type() const

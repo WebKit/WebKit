@@ -35,6 +35,10 @@ module html {
                  attribute [ConvertNullToNullString] DOMString dir;
                  attribute [ConvertNullToNullString] DOMString className;
 
+                 attribute long            tabIndex;
+                 void                      blur();
+                 void                      focus();
+
         // Extensions
                  attribute [ConvertNullToNullString] DOMString innerHTML
                      setter raises(DOMException);

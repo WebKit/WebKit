@@ -28,8 +28,6 @@ module html {
         readonly attribute HTMLFormElement form;
         attribute [ConvertNullToNullString] DOMString accessKey;
         attribute [ConvertNullToNullString] DOMString align;
-
-        void focus();
     };
 
 }

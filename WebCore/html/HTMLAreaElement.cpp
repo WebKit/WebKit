@@ -213,6 +213,11 @@ void HTMLAreaElement::setTabIndex(int tabIndex)
     setAttribute(tabindexAttr, String::number(tabIndex));
 }
 
+bool HTMLAreaElement::isFocusable() const
+{
+    return HTMLElement::isFocusable();
+}
+
 String HTMLAreaElement::target() const
 {
     return getAttribute(targetAttr);

@@ -42,7 +42,6 @@ module html {
                  attribute long            hspace;
                  attribute [ConvertNullToNullString] DOMString       name;
                  attribute [ConvertNullToNullString] DOMString       standby;
-                 attribute long            tabIndex;
                  attribute [ConvertNullToNullString] DOMString       type;
                  attribute [ConvertNullToNullString] DOMString       useMap;
                  attribute long            vspace;

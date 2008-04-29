@@ -50,7 +50,7 @@ bool HTMLFieldSetElement::checkDTD(const Node* newChild)
 
 bool HTMLFieldSetElement::isFocusable() const
 {
-    return false;
+    return HTMLElement::isFocusable();
 }
 
 const AtomicString& HTMLFieldSetElement::type() const

@@ -75,7 +75,7 @@ void HTMLOptionElement::detach()
 
 bool HTMLOptionElement::isFocusable() const
 {
-    return false;
+    return HTMLElement::isFocusable();
 }
 
 const AtomicString& HTMLOptionElement::type() const
