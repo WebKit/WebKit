@@ -1,3 +1,17 @@
+2008-04-29  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a regression where the Page's debugger would not be reattached
+        when a new JSDOMWindow is created.
+
+        Reviewed by Sam Weinig.
+
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::clear): Call attachDebugger after creating the JSDOMWindow.
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore): For the case where the CachedPage doesn't
+        contain a window, reattach the debugger to the new JSDOMWindow by calling
+        proxy->attachDebugger. Also restore the setPageGroupIdentifier.
+
 2008-04-29  Anatoli Papirovski  <apapirovski@mac.com>
 
         Reviewed by Darin Adler.

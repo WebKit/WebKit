@@ -41,6 +41,7 @@
 #include "JSDOMWindowWrapper.h"
 #include "Logging.h"
 #include "Page.h"
+#include "PageGroup.h"
 #include "PausedTimeouts.h"
 #include "SystemTime.h"
 #include "kjs_proxy.h"
@@ -121,12 +122,15 @@ void CachedPage::restore(Page* page)
 
     KJSProxy* proxy = mainFrame->scriptProxy();
     if (proxy->haveWindowWrapper()) {
-        JSDOMWindowWrapper* windowWrapper = mainFrame->scriptProxy()->windowWrapper();
+        JSDOMWindowWrapper* windowWrapper = proxy->windowWrapper();
         if (m_window) {
             windowWrapper->setWindow(m_window.get());
             windowWrapper->window()->resumeTimeouts(m_pausedTimeouts.get());
-        } else
+        } else {
             windowWrapper->setWindow(new JSDOMWindow(mainFrame->domWindow(), windowWrapper));
+            proxy->attachDebugger(page->debugger());
+            windowWrapper->window()->setPageGroupIdentifier(page->group().identifier());
+        }
     }
 
 #if ENABLE(SVG)

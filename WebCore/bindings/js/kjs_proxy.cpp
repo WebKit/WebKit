@@ -112,8 +112,10 @@ void KJSProxy::clear()
     JSLock lock;
     m_windowWrapper->window()->clear();
     m_windowWrapper->setWindow(new JSDOMWindow(m_frame->domWindow(), m_windowWrapper));
-    if (Page* page = m_frame->page())
+    if (Page* page = m_frame->page()) {
+        attachDebugger(page->debugger());
         m_windowWrapper->window()->setPageGroupIdentifier(page->group().identifier());
+    }
 
     // There is likely to be a lot of garbage now.
     gcController().garbageCollectSoon();
