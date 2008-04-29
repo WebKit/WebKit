@@ -1,3 +1,16 @@
+2008-04-29  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Update the cursor when the frame/page loading is finished.
+        
+        This fixes https://bugs.webkit.org/show_bug.cgi?id=18712
+        
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::postProgressFinishedNotification):
+        (WebCore::FrameLoaderClientQt::setMainFrameDocumentReady):
+
 2008-04-29  Simon Hausmann  <shausman@trolltech.com>
 
         Reviewed by Holger.
