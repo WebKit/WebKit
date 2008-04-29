@@ -1,3 +1,13 @@
+2008-04-29  Lincoln Ramsay  <lincoln.ramsay@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix compilation with QT_NO_PRINTER
+        
+
+        * Api/qwebview.cpp:
+        (QWebView::print):
+
 2008-04-29  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
