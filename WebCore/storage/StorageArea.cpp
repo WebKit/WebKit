@@ -105,6 +105,13 @@ void StorageArea::internalRemoveItem(const String& key, Frame* frame)
         itemRemoved(key, oldValue, frame);
 }
 
+void StorageArea::internalClear(Frame* frame)
+{
+    m_storageMap = StorageMap::create();
+    
+    areaCleared(frame);
+}
+
 bool StorageArea::internalContains(const String& key) const
 {
     return m_storageMap->contains(key);

@@ -38,6 +38,7 @@ module storage {
         [DontEnum] void setItem(in DOMString key, in DOMString data) 
             raises(DOMException);
         [DontEnum] void removeItem(in DOMString key);
+        [DontEnum] void clear();
     };
 
 }

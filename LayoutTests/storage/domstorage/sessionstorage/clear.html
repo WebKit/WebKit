@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="resources/clearSessionStorage.js"></script>
+<script>
+
+if (layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(a)
+{
+    document.getElementById("logger").innerHTML += a + "<br>";
+}
+
+function runTest()
+{
+    if (!window.sessionStorage) {
+        log("window.sessionStorage DOES NOT exist");
+        return;
+    }
+    
+    log("Length is " + sessionStorage.length);
+
+    sessionStorage.clear();
+    log("Clearing an empty storage area didn't crash");
+
+    sessionStorage['FOO'] = 'MyFOO';
+    sessionStorage['BAR'] = 'MyBar';
+    log("Length is " + sessionStorage.length);
+    log("Value for FOO is " + sessionStorage['FOO']);
+    log("Value for BAR is " + sessionStorage['BAR']);
+
+    sessionStorage.clear();    
+    log("Cleared the storage area");
+    log("Length is " + sessionStorage.length);
+    log("Value for FOO is " + sessionStorage['FOO']);
+    log("Value for BAR is " + sessionStorage['BAR']);    
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This test exercises storage.clear() on the session storage area.
+<div id="logger"></div>
+</body>
+</html>

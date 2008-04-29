@@ -1,3 +1,30 @@
+2008-04-28  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Add Storage.clear(), per updates to HTML5
+
+        Tests: storage/domstorage/localstorage/clear.html
+               storage/domstorage/sessionstorage/clear.html
+
+        * storage/LocalStorageArea.cpp:
+        (WebCore::LocalStorageArea::areaCleared):
+        * storage/LocalStorageArea.h:
+
+        * storage/SessionStorageArea.cpp:
+        (WebCore::SessionStorageArea::areaCleared):
+        * storage/SessionStorageArea.h:
+
+        * storage/Storage.cpp:
+        (WebCore::Storage::clear):
+        * storage/Storage.h:
+        * storage/Storage.idl:
+
+        * storage/StorageArea.cpp:
+        (WebCore::StorageArea::internalClear):
+        * storage/StorageArea.h:
+        (WebCore::StorageArea::clear):
+
 2008-04-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein, Tim Hatcher, Anders Carlsson, and Darin Adler.

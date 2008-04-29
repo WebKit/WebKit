@@ -1,3 +1,14 @@
+2008-04-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Add Storage.clear(), per updates to HTML5
+
+        * storage/domstorage/localstorage/clear-expected.txt: Added.
+        * storage/domstorage/localstorage/clear.html: Added.
+        * storage/domstorage/sessionstorage/clear-expected.txt: Added.
+        * storage/domstorage/sessionstorage/clear.html: Added.
+
 2008-04-28  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Sam Weinig.

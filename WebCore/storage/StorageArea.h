@@ -49,6 +49,7 @@ namespace WebCore {
         virtual String getItem(const String& key) const { return internalGetItem(key); }
         virtual void setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame) { internalSetItem(key, value, ec, sourceFrame); }
         virtual void removeItem(const String& key, Frame* sourceFrame) { internalRemoveItem(key, sourceFrame); }
+        virtual void clear(Frame* sourceFrame) { internalClear(sourceFrame); }
         virtual bool contains(const String& key) const { return internalContains(key); }
         
         SecurityOrigin* securityOrigin() { return m_securityOrigin.get(); }
@@ -62,11 +63,13 @@ namespace WebCore {
         String internalGetItem(const String&) const;
         void internalSetItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame);
         void internalRemoveItem(const String&, Frame* sourceFrame);
+        void internalClear(Frame* sourceFrame);
         bool internalContains(const String& key) const;
 
     private:
         virtual void itemChanged(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame) = 0;
         virtual void itemRemoved(const String& key, const String& oldValue, Frame* sourceFrame) = 0;
+        virtual void areaCleared(Frame* sourceFrame) = 0;
 
         RefPtr<SecurityOrigin> m_securityOrigin;
         RefPtr<StorageMap> m_storageMap;

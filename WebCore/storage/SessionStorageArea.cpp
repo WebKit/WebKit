@@ -65,6 +65,11 @@ void SessionStorageArea::itemRemoved(const String& key, const String& oldValue, 
     dispatchStorageEvent(key, oldValue, String(), sourceFrame);
 }
 
+void SessionStorageArea::areaCleared(Frame* sourceFrame)
+{
+    dispatchStorageEvent(String(), String(), String(), sourceFrame);
+}
+
 void SessionStorageArea::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
 {
     // For SessionStorage events, each frame in the page's frametree with the same origin as this StorageArea needs to be notified of the change

@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="resources/clearLocalStorage.js"></script>
+<script>
+
+if (layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(a)
+{
+    document.getElementById("logger").innerHTML += a + "<br>";
+}
+
+function runTest()
+{
+    if (!window.localStorage) {
+        log("window.localStorage DOES NOT exist");
+        return;
+    }
+    
+    log("Length is " + localStorage.length);
+
+    localStorage.clear();
+    log("Clearing an empty storage area didn't crash");
+
+    localStorage['FOO'] = 'MyFOO';
+    localStorage['BAR'] = 'MyBar';
+    log("Length is " + localStorage.length);
+    log("Value for FOO is " + localStorage['FOO']);
+    log("Value for BAR is " + localStorage['BAR']);
+
+    localStorage.clear();    
+    log("Cleared the storage area");
+    log("Length is " + localStorage.length);
+    log("Value for FOO is " + localStorage['FOO']);
+    log("Value for BAR is " + localStorage['BAR']);    
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This test exercises storage.clear() on the local storage area.
+<div id="logger"></div>
+</body>
+</html>

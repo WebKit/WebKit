@@ -1,0 +1,11 @@
+This test exercises storage.clear() on the session storage area.
+Length is 0
+Clearing an empty storage area didn't crash
+Length is 2
+Value for FOO is MyFOO
+Value for BAR is MyBar
+Cleared the storage area
+Length is 0
+Value for FOO is undefined
+Value for BAR is undefined
+

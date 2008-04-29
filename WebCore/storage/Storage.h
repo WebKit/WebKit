@@ -47,7 +47,8 @@ namespace WebCore {
         String getItem(const String&) const;
         void setItem(const String& key, const String& value, ExceptionCode&);
         void removeItem(const String&);
-        
+        void clear();
+
         bool contains(const String& key) const;
 
         void disconnectFrame() { m_frame = 0; }
