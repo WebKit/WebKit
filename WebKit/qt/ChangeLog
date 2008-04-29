@@ -1,3 +1,15 @@
+2008-04-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        Use the WebCore facility to do the scrolling. Move some code around.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::keyPressEvent):
+        (QWebPagePrivate::shortcutOverrideEvent):
+        (QWebPagePrivate::handleScrolling):
+        * Api/qwebpage_p.h:
+
 2008-04-29  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.

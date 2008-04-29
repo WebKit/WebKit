@@ -539,47 +539,13 @@ void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
         handled = frame->eventHandler()->keyEvent(ev);
     if (!handled) {
         handled = true;
-        PlatformScrollbar *h, *v;
-        h = q->currentFrame()->d->horizontalScrollBar();
-        v = q->currentFrame()->d->verticalScrollBar();
         QFont defaultFont;
         if (view)
             defaultFont = view->font();
         QFontMetrics fm(defaultFont);
         int fontHeight = fm.height();
-        if (ev == QKeySequence::MoveToNextPage
-            || ev->key() == Qt::Key_Space) {
-            if (v)
-                v->setValue(v->value() + q->viewportSize().height() - fontHeight * 2);
-        } else if (ev == QKeySequence::MoveToPreviousPage) {
-            if (v)
-                v->setValue(v->value() - q->viewportSize().height() + fontHeight * 2);
-        } else if (ev->key() == Qt::Key_Up && ev->modifiers() & Qt::ControlModifier
-                   || ev->key() == Qt::Key_Home) {
-            if (v)
-                v->setValue(0);
-        } else if (ev->key() == Qt::Key_Down && ev->modifiers() & Qt::ControlModifier
-                   || ev->key() == Qt::Key_End) {
-            if (v)
-                v->setValue(INT_MAX);
-        } else {
+        if (!handleScrolling(ev)) {
             switch (ev->key()) {
-            case Qt::Key_Up:
-                if (v)
-                    v->setValue(v->value() - fontHeight);
-                break;
-            case Qt::Key_Down:
-                if (v)
-                    v->setValue(v->value() + fontHeight);
-                break;
-            case Qt::Key_Left:
-                if (h)
-                    h->setValue(h->value() - fontHeight);
-                break;
-            case Qt::Key_Right:
-                if (h)
-                    h->setValue(h->value() + fontHeight);
-                break;
             case Qt::Key_Backspace:
                 if (ev->modifiers() == Qt::ShiftModifier)
                     q->triggerAction(QWebPage::Forward);
@@ -763,6 +729,55 @@ void QWebPagePrivate::shortcutOverrideEvent(QKeyEvent* event)
         }
 #endif
     }
+}
+
+bool QWebPagePrivate::handleScrolling(QKeyEvent *ev)
+{
+    ScrollDirection direction;
+    ScrollGranularity granularity;
+
+    if (ev == QKeySequence::MoveToNextPage
+        || ev->key() == Qt::Key_Space) {
+        granularity = ScrollByPage;
+        direction = ScrollDown;
+    } else if (ev == QKeySequence::MoveToPreviousPage) {
+        granularity = ScrollByPage;
+        direction = ScrollUp;
+    } else if (ev->key() == Qt::Key_Up && ev->modifiers() & Qt::ControlModifier
+               || ev->key() == Qt::Key_Home) {
+        granularity = ScrollByDocument;
+        direction = ScrollUp;
+    } else if (ev->key() == Qt::Key_Down && ev->modifiers() & Qt::ControlModifier
+               || ev->key() == Qt::Key_End) {
+        granularity = ScrollByDocument;
+        direction = ScrollDown;
+    } else {
+        switch (ev->key()) {
+            case Qt::Key_Up:
+                granularity = ScrollByLine;
+                direction = ScrollUp;
+                break;
+            case Qt::Key_Down:
+                granularity = ScrollByLine;
+                direction = ScrollDown;
+                break;
+            case Qt::Key_Left:
+                granularity = ScrollByLine;
+                direction = ScrollLeft;
+                break;
+            case Qt::Key_Right:
+                granularity = ScrollByLine;
+                direction = ScrollRight;
+                break;
+            default:
+                return false;
+        }
+    }
+
+    if (!mainFrame->d->frame->eventHandler()->scrollOverflow(direction, granularity))
+        mainFrame->d->frame->view()->scroll(direction, granularity);
+
+    return true;
 }
 
 /*!
