@@ -1,3 +1,14 @@
+2008-04-29  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        fix potential crash when loading image(s)
+
+        Crash may occur. If compiled with 4.3, the variable is not initialized.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+
 2008-04-29  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
