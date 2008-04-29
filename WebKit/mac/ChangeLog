@@ -1,3 +1,13 @@
+2008-04-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by David Harrison.
+
+        Ensure that WebDynamicScrollBarsView defines WebCoreScrollbarAlwaysOn to keep Mail building.
+
+        * WebKit.exp:
+        * WebView/WebDynamicScrollBarsView.h:
+        * WebView/WebDynamicScrollBarsView.m:
+
 2008-04-29  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin.

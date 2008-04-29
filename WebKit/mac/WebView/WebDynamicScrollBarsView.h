@@ -30,7 +30,10 @@
 // does not contain the word Private.
 
 // FIXME: Does Safari really need to use this any more? AppKit added autohidesScrollers
-//in Panther, and that was the original reason we needed this view in Safari.
+// in Panther, and that was the original reason we needed this view in Safari.
+
+// FIXME: <rdar://problem/5898985> Mail currently expects this header to define WebCoreScrollbarAlwaysOn.
+extern const int WebCoreScrollbarAlwaysOn;
 
 @interface WebDynamicScrollBarsView : NSScrollView {
     int hScroll; // FIXME: Should be WebCore::ScrollbarMode if this was an ObjC++ header.

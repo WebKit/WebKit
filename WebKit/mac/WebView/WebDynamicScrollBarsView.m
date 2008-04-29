@@ -33,6 +33,9 @@
 
 using namespace WebCore;
 
+// FIXME: <rdar://problem/5898985> Mail expects a constant of this name to exist.
+const int WebCoreScrollbarAlwaysOn = ScrollbarAlwaysOn;
+
 @implementation WebDynamicScrollBarsView
 
 - (void)setAllowsHorizontalScrolling:(BOOL)flag
