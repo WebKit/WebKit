@@ -208,7 +208,9 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
 
     case PolicyDownload:
         frameLoader()->client()->download(m_handle.get(), request(), m_handle.get()->request(), r);
-        receivedError(interruptionForPolicyChangeError());
+        // It might have gone missing
+        if (frameLoader())
+            receivedError(interruptionForPolicyChangeError());
         return;
 
     case PolicyIgnore:

@@ -2,6 +2,29 @@
 
         Reviewed by Simon.
 
+        Fix crash when setHtml gets called from slots connected to QWebPage::unsupportedContent
+
+        Ben found this crash in the demo browser.
+
+        In void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy,
+
+        case PolicyDownload:
+        frameLoader()->client()->download(m_handle.get(), request(), m_handle.get()->request(), r);
+        receivedError(interruptionForPolicyChangeError());
+
+        We are in a policy check, the download() call will call setHtml, which will start loading
+        the data into a frame. The loading will cancel all policy checks and call ResourceLoader::releaseResources
+        which will set m_frame to 0. Then we return and invoke interruptionForPolicyChangeError() which
+        will use the m_frame->loader() but it is gone. Do not call into receivedError and
+        interruptionForPolicyChangeError if we are gone anyway...
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+
+2008-04-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
         Rely on auto-boxing of C++ for the QCursor c'tor
 
         * platform/qt/CursorQt.cpp:
