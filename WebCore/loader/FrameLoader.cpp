@@ -504,6 +504,9 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
 {
     ASSERT(formData);
     
+    if (!m_frame->page())
+        return;
+    
     KURL u = completeURL(url.isNull() ? "" : url);
     // FIXME: Do we really need to special-case an empty URL?
     // Would it be better to just go on with the form submisson and let the I/O fail?
@@ -525,6 +528,8 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
         return;
     }
 
+    formData->generateFiles(m_frame->page()->chrome()->client());
+    
     FrameLoadRequest frameRequest;
 
     if (!m_outgoingReferrer.isEmpty())
@@ -4115,6 +4120,9 @@ void FrameLoader::saveDocumentState()
 // Loads content into this frame, as specified by history item
 void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
 {
+    if (!m_frame->page())
+        return;
+
     KURL itemURL = item->url();
     KURL itemOriginalURL = item->originalURL();
     KURL currentURL;
@@ -4186,6 +4194,9 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
             // If this was a repost that failed the page cache, we might try to repost the form.
             NavigationAction action;
             if (formData) {
+                
+                formData->generateFiles(m_frame->page()->chrome()->client());
+
                 request.setHTTPMethod("POST");
                 request.setHTTPReferrer(item->formReferrer());
                 request.setHTTPBody(formData);

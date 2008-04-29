@@ -131,6 +131,12 @@ String pathGetFileName(const String& path)
     return String(::PathFindFileName(String(path).charactersWithNullTermination()));
 }
 
+String directoryName(const String& path)
+{
+    notImplemented();
+    return String();
+}
+
 static String bundleName()
 {
     static bool initialized;

@@ -366,6 +366,17 @@ void ChromeClient::paintCustomHighlight(Node*, const AtomicString&, const FloatR
 {
 }
 
+bool ChromeClient::shouldReplaceWithGeneratedFileForUpload(const String&, String&)
+{
+    return false;
+}
+
+String ChromeClient::generateReplacementFile(const String&)
+{
+    ASSERT_NOT_REACHED();
+    return String(); 
+}
+
 // --------
 
 PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)

@@ -1,3 +1,51 @@
+2008-04-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein, Tim Hatcher, Anders Carlsson, and Darin Adler.
+
+        WebCore part of fix for <rdar://problem/3709505>
+        Safari should have a way to upload bundles from the file upload control (as zip)
+
+        * WebCore.base.exp: Added symbols.
+
+        * html/HTMLFormElement.cpp: (WebCore::HTMLFormElement::formData): Ask the application if a file will need to be replaced before it's uploaded.
+          It will also give the replacement filename which is used to determine the correct mime-type and to construct the correct header.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm): Asks the application to generate any files for the form data before a form submission starts.
+        (WebCore::FrameLoader::loadItem): ditto.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveResponse): Tells the FormData from the request to remove any generated files if it needs to.
+        (WebCore::ResourceLoader::didCancel): ditto.
+        (WebCore::ResourceLoader::didFail): ditto.
+
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::FormData): Initializes m_hasGeneratedFiles, which keeps track of whether there are files that will need to be removed.
+        (WebCore::FormData::~FormData): Added.  Assert that there are no files that need to be removed, but if there are, release builds will still remove them here.
+        (WebCore::FormData::appendFile): Passes along a shouldGenerateFile flag to the FormDataElement.
+        (WebCore::FormData::generateFiles): Added. Iterates through the FormDataElements, and using the ChromeClient pointer, asks the application to
+         create any compressed files so the FormDataElements can store the paths.
+        (WebCore::FormData::removeGeneratedFilesIfNeeded): Added.  Removes generated files and their directories (if empty).
+        * platform/network/FormData.h:
+        (WebCore::FormDataElement::FormDataElement): Added a boolean to track whether the file will need to be generated,
+         and a string to hold the path of the generated file.
+
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::advanceCurrentStream): Uses the generated file path instead of the original file path when streaming the file.
+        (WebCore::setHTTPBody): Uses the generated file path when determining the size of the file to be uploaded.
+
+        * platform/FileSystem.h: Added directoryName.
+        * platform/posix/FileSystemPOSIX.cpp: (WebCore::directoryName): Added.
+        * platform/gtk/FileSystemGtk.cpp: (WebCore::directoryName): Added empty implementation.
+        * platform/qt/FileSystemQt.cpp: (WebCore::directoryName): ditto.
+        * platform/win/FileSystemWin.cpp: (WebCore::directoryName): ditto.
+        * platform/wx/FileSystemWx.cpp: (WebCore::directoryName): ditto.
+
+        Added new ChromeClient methods to give the application control over the file compression for uploading.
+        * page/Chrome.cpp:
+        (WebCore::ChromeClient::shouldReplaceWithGeneratedFileForUpload): Added a default implementation.
+        (WebCore::ChromeClient::generateReplacementFile): ditto.
+        * page/ChromeClient.h:
+
 2008-04-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam, Mark, Adele and Darin.

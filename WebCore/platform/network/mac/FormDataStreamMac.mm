@@ -87,7 +87,8 @@ static void advanceCurrentStream(FormStreamFields *form)
         form->currentStream = CFReadStreamCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(data), size, kCFAllocatorNull);
         form->currentData = data;
     } else {
-        CFStringRef filename = nextInput.m_filename.createCFString();
+        const String& path = nextInput.m_shouldGenerateFile ? nextInput.m_generatedFilename : nextInput.m_filename;
+        CFStringRef filename = path.createCFString();
         CFURLRef fileURL = CFURLCreateWithFileSystemPath(0, filename, kCFURLPOSIXPathStyle, FALSE);
         CFRelease(filename);
         form->currentStream = CFReadStreamCreateWithFile(0, fileURL);
@@ -275,8 +276,9 @@ void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> formData)
         if (element.m_type == FormDataElement::data)
             length += element.m_data.size();
         else {
+            const String& filename = element.m_shouldGenerateFile ? element.m_generatedFilename : element.m_filename;
             struct stat sb;
-            int statResult = stat(element.m_filename.utf8().data(), &sb);
+            int statResult = stat(filename.utf8().data(), &sb);
             if (statResult == 0 && (sb.st_mode & S_IFMT) == S_IFREG)
                 length += sb.st_size;
         }

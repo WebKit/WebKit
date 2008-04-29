@@ -33,6 +33,7 @@
 #include "PlatformString.h"
 
 #include <sys/stat.h>
+#include <libgen.h>
 #include <unistd.h>
 
 namespace WebCore {
@@ -144,6 +145,16 @@ bool makeAllDirectories(const String& path)
 String pathGetFileName(const String& path)
 {
     return path.substring(path.reverseFind('/') + 1);
+}
+
+String directoryName(const String& path)
+{
+    CString fsRep = fileSystemRepresentation(path);
+
+    if (!fsRep.data() || fsRep.data()[0] == '\0')
+        return String();
+
+    return dirname(fsRep.mutableData());
 }
 
 } // namespace WebCore

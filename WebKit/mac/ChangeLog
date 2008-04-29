@@ -1,3 +1,22 @@
+2008-04-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein, Tim Hatcher, Anders Carlsson, and Darin Adler.
+
+        WebKit part of fix for <rdar://problem/3709505>
+        Safari should have a way to upload bundles from the file upload control (as zip)
+
+        Added UIDelegate methods to let the application handle generating replacement files for uploads.
+        In this case, Safari will create archived files for bundles so they can be uploaded properly.
+
+        * DefaultDelegates/WebDefaultUIDelegate.m:
+        (-[WebDefaultUIDelegate webView:shouldReplaceUploadFile:usingGeneratedFilename:]):
+        (-[WebDefaultUIDelegate webView:generateReplacementFile:]):
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::shouldReplaceWithGeneratedFileForUpload):
+        (WebChromeClient::generateReplacementFile):
+        * WebView/WebUIDelegatePrivate.h:
+
 2008-04-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam, Mark, Adele and Darin.

@@ -26,15 +26,19 @@
 
 namespace WebCore {
 
+class ChromeClient;
+
 class FormDataElement {
 public:
     FormDataElement() : m_type(data) { }
     FormDataElement(const Vector<char>& array) : m_type(data), m_data(array) { }
-    FormDataElement(const String& filename) : m_type(encodedFile), m_filename(filename) { }
+    FormDataElement(const String& filename, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_shouldGenerateFile(shouldGenerateFile) { }
 
     enum { data, encodedFile } m_type;
     Vector<char> m_data;
     String m_filename;
+    String m_generatedFilename;
+    bool m_shouldGenerateFile;
 };
 
 inline bool operator==(const FormDataElement& a, const FormDataElement& b)
@@ -64,9 +68,10 @@ public:
     static PassRefPtr<FormData> create(const CString&);
     static PassRefPtr<FormData> create(const Vector<char>&);
     PassRefPtr<FormData> copy() const;
+    ~FormData();
     
     void appendData(const void* data, size_t);
-    void appendFile(const String& filename);
+    void appendFile(const String& filename, bool shouldGenerateFile = false);
 
     void flatten(Vector<char>&) const; // omits files
     String flattenToString() const; // omits files
@@ -74,11 +79,15 @@ public:
     bool isEmpty() const { return m_elements.isEmpty(); }
     const Vector<FormDataElement>& elements() const { return m_elements; }
 
+    void generateFiles(ChromeClient*);
+    void removeGeneratedFilesIfNeeded();
+
 private:
     FormData();
     FormData(const FormData&);
      
     Vector<FormDataElement> m_elements;
+    bool m_hasGeneratedFiles;
 };
 
 inline bool operator==(const FormData& a, const FormData& b)

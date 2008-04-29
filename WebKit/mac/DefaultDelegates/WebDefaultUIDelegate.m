@@ -227,4 +227,14 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 {
 }
 
+- (BOOL)webView:(WebView *)sender shouldReplaceUploadFile:(NSString *)path usingGeneratedFilename:(NSString **)filename
+{
+    return NO;
+}
+
+- (NSString *)webView:(WebView *)sender generateReplacementFile:(NSString *)path
+{
+    return nil;
+}
+
 @end

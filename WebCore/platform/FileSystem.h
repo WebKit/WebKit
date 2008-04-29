@@ -88,6 +88,7 @@ String pathByAppendingComponent(const String& path, const String& component);
 bool makeAllDirectories(const String& path);
 String homeDirectoryPath();
 String pathGetFileName(const String&);
+String directoryName(const String&);
 
 CString fileSystemRepresentation(const String&);
 

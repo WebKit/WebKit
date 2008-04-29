@@ -541,6 +541,20 @@ void WebChromeClient::willPopUpMenu(NSMenu *menu)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+bool WebChromeClient::shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename)
+{
+    NSString* filename;
+    if (![[m_webView _UIDelegateForwarder] webView:m_webView shouldReplaceUploadFile:path usingGeneratedFilename:&filename])
+        return false;
+    generatedFilename = filename;
+    return true;
+}
+
+String WebChromeClient::generateReplacementFile(const String& path)
+{
+    return [[m_webView _UIDelegateForwarder] webView:m_webView generateReplacementFile:path];
+}
+
 @implementation WebOpenPanelResultListener
 
 - (id)initWithChooser:(PassRefPtr<FileChooser>)chooser

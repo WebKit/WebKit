@@ -225,6 +225,9 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
 
     m_response = r;
 
+    if (FormData* data = m_request.httpBody())
+        data->removeGeneratedFilesIfNeeded();
+        
     if (m_sendResourceLoadCallbacks)
         frameLoader()->didReceiveResponse(this, m_response);
 }
@@ -293,6 +296,9 @@ void ResourceLoader::didFail(const ResourceError& error)
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
 
+    if (FormData* data = m_request.httpBody())
+        data->removeGeneratedFilesIfNeeded();
+
     if (m_sendResourceLoadCallbacks && !m_calledDidFinishLoad)
         frameLoader()->didFailToLoad(this, error);
 
@@ -303,6 +309,9 @@ void ResourceLoader::didCancel(const ResourceError& error)
 {
     ASSERT(!m_cancelled);
     ASSERT(!m_reachedTerminalState);
+
+    if (FormData* data = m_request.httpBody())
+        data->removeGeneratedFilesIfNeeded();
 
     // This flag prevents bad behavior when loads that finish cause the
     // load itself to be cancelled (which could happen with a javascript that 

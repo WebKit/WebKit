@@ -21,12 +21,39 @@
 #include "FormData.h"
 
 #include "CString.h"
+#include "ChromeClient.h"
+#include "FileSystem.h"
 #include "TextEncoding.h"
 
 namespace WebCore {
 
-inline FormData::FormData()
+inline FormData::FormData() : m_hasGeneratedFiles(false)
 {
+}
+
+inline FormData::FormData(const FormData& data)
+    : RefCounted<FormData>(1)
+    , m_elements(data.m_elements)
+    , m_hasGeneratedFiles(false)
+{
+    // We shouldn't be copying FormData that hasn't already removed its generated files
+    // but just in case, make sure the new FormData is ready to generate its own files.
+    if (data.m_hasGeneratedFiles) {
+        size_t n = m_elements.size();
+        for (size_t i = 0; i < n; ++i) {
+            FormDataElement& e = m_elements[i];
+            if (e.m_type == FormDataElement::encodedFile)
+                e.m_generatedFilename = String();
+        }
+    }
+}
+
+FormData::~FormData()
+{
+    // This cleanup should've happened when the form submission finished.
+    // Just in case, let's assert, and do the cleanup anyway in release builds.
+    ASSERT(!m_hasGeneratedFiles);
+    removeGeneratedFilesIfNeeded();
 }
 
 PassRefPtr<FormData> FormData::create()
@@ -55,12 +82,6 @@ PassRefPtr<FormData> FormData::create(const Vector<char>& vector)
     return result.release();
 }
 
-inline FormData::FormData(const FormData& data)
-    : RefCounted<FormData>(1)
-    , m_elements(data.m_elements)
-{
-}
-
 PassRefPtr<FormData> FormData::copy() const
 {
     return adoptRef(new FormData(*this));
@@ -76,9 +97,9 @@ void FormData::appendData(const void* data, size_t size)
     memcpy(e.m_data.data() + oldSize, data, size);
 }
 
-void FormData::appendFile(const String& filename)
+void FormData::appendFile(const String& filename, bool shouldGenerateFile)
 {
-    m_elements.append(filename);
+    m_elements.append(FormDataElement(filename, shouldGenerateFile));
 }
 
 void FormData::flatten(Vector<char>& data) const
@@ -102,6 +123,42 @@ String FormData::flattenToString() const
     Vector<char> bytes;
     flatten(bytes);
     return Latin1Encoding().decode(bytes.data(), bytes.size());
+}
+
+void FormData::generateFiles(ChromeClient* client)
+{
+    ASSERT(!m_hasGeneratedFiles);
+    
+    if (m_hasGeneratedFiles)
+        return;
+    
+    size_t n = m_elements.size();
+    for (size_t i = 0; i < n; ++i) {
+        FormDataElement& e = m_elements[i];
+        if (e.m_type == FormDataElement::encodedFile && e.m_shouldGenerateFile) {
+            e.m_generatedFilename = client->generateReplacementFile(e.m_filename);
+            m_hasGeneratedFiles = true;
+        }
+    }
+}
+
+void FormData::removeGeneratedFilesIfNeeded()
+{
+    if (!m_hasGeneratedFiles)
+        return;
+        
+    size_t n = m_elements.size();
+    for (size_t i = 0; i < n; ++i) {
+        FormDataElement& e = m_elements[i];
+        if (e.m_type == FormDataElement::encodedFile && !e.m_generatedFilename.isEmpty()) {
+            ASSERT(e.m_shouldGenerateFile);
+            String directory = directoryName(e.m_generatedFilename);
+            deleteFile(e.m_generatedFilename);
+            deleteEmptyDirectory(directory);
+            e.m_generatedFilename = String();
+        }
+    }
+    m_hasGeneratedFiles = false;
 }
 
 } // namespace WebCore
