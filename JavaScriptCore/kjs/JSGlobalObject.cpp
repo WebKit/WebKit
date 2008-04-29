@@ -63,13 +63,13 @@ using namespace WTF;
 
 namespace KJS {
 
-extern HashTable arrayTable;
-extern HashTable dateTable;
-extern HashTable mathTable;
-extern HashTable numberTable;
-extern HashTable RegExpImpTable;
-extern HashTable RegExpObjectImpTable;
-extern HashTable stringTable;
+extern const HashTable arrayTable;
+extern const HashTable dateTable;
+extern const HashTable mathTable;
+extern const HashTable numberTable;
+extern const HashTable RegExpImpTable;
+extern const HashTable RegExpObjectImpTable;
+extern const HashTable stringTable;
 
 // Default number of ticks before a timeout check should be done.
 static const int initialTickCountThreshold = 255;
@@ -165,13 +165,13 @@ struct ThreadClassInfoHashTables {
     HashTable RegExpObjectImpTable;
     HashTable stringTable;
 #else
-    HashTable& arrayTable;
-    HashTable& dateTable;
-    HashTable& mathTable;
-    HashTable& numberTable;
-    HashTable& RegExpImpTable;
-    HashTable& RegExpObjectImpTable;
-    HashTable& stringTable;
+    const HashTable& arrayTable;
+    const HashTable& dateTable;
+    const HashTable& mathTable;
+    const HashTable& numberTable;
+    const HashTable& RegExpImpTable;
+    const HashTable& RegExpObjectImpTable;
+    const HashTable& stringTable;
 #endif
 };
 

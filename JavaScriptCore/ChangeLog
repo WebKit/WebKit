@@ -1,3 +1,15 @@
+2008-04-29  Simon Hausmann  <hausmann@webkit.org>
+
+        Qt/Windows build fix. The externally declared hash tables are actually
+        declared const and the const is mangled in the symbol name, so when
+        importing they also need to be marked const.
+
+        When compiling without MULTIPLE_THREADS use a const HashTable&
+        instead of a HashTable& in ThreadClassInfoHashTables to avoid
+        initializing the latter with a const reference.
+
+        * kjs/JSGlobalObject.cpp:
+
 2008-04-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Windows build fix.
