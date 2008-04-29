@@ -143,9 +143,13 @@ void HTMLElement::parseMappedAttribute(MappedAttribute *attr)
         setContentEditable(attr);
     } else if (attr->name() == tabindexAttr) {
         indexstring = getAttribute(tabindexAttr);
-        if (indexstring.length())
-            // Clamp tabindex to the range of 'short' to match Firefox's behavior.
-            setTabIndexExplicitly(max(static_cast<int>(std::numeric_limits<short>::min()), min(indexstring.toInt(), static_cast<int>(std::numeric_limits<short>::max()))));
+        if (indexstring.length()) {
+            bool parsedOK;
+            int tabindex = indexstring.toIntStrict(&parsedOK);
+            if (parsedOK)
+                // Clamp tabindex to the range of 'short' to match Firefox's behavior.
+                setTabIndexExplicitly(max(static_cast<int>(std::numeric_limits<short>::min()), min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));
+        }
     } else if (attr->name() == langAttr) {
         // FIXME: Implement
     } else if (attr->name() == dirAttr) {

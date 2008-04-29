@@ -1,3 +1,13 @@
+2008-04-29  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Comply with HTML5 spec about parsing tabindex property according to
+        integer parsing rules
+
+        * fast/parser/tabindex-parsing-expected.txt: Added.
+        * fast/parser/tabindex-parsing.html: Added.
+
 2008-04-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.
