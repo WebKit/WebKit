@@ -85,7 +85,6 @@
 #import "TextResourceDecoder.h"
 #import "UserStyleSheetLoader.h"
 #import "WebCoreViewFactory.h"
-#import "WebDashboardRegion.h"
 #import "WebScriptObjectPrivate.h"
 #import "kjs_proxy.h"
 #import "visible_units.h"
@@ -102,6 +101,9 @@
 #import "runtime.h"
 #if ENABLE(MAC_JAVA_BRIDGE)
 #import "jni_instance.h"
+#endif
+#if ENABLE(DASHBOARD_SUPPORT)
+#import "WebDashboardRegion.h"
 #endif
 
 @interface NSObject (WebPlugin)
@@ -505,6 +507,7 @@ void Frame::setUseSecureKeyboardEntry(bool enable)
     }
 }
 
+#if ENABLE(DASHBOARD_SUPPORT)
 NSMutableDictionary* Frame::dashboardRegionsDictionary()
 {
     Document* doc = document();
@@ -542,6 +545,7 @@ NSMutableDictionary* Frame::dashboardRegionsDictionary()
     
     return webRegions;
 }
+#endif
 
 DragImageRef Frame::dragImageForSelection() 
 {

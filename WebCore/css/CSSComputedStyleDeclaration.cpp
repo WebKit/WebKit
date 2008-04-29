@@ -31,12 +31,16 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueList.h"
 #include "CachedImage.h"
-#include "DashboardRegion.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Pair.h"
+#include "Rect.h"
 #include "RenderObject.h"
 #include "ShadowValue.h"
+
+#if ENABLE(DASHBOARD_SUPPORT)
+#include "DashboardRegion.h"
+#endif
 
 namespace WebCore {
 
@@ -182,7 +186,9 @@ static const int computedProperties[] = {
     CSSPropertyWebkitUserDrag,
     CSSPropertyWebkitUserModify,
     CSSPropertyWebkitUserSelect,
+#if ENABLE(DASHBOARD_SUPPORT)
     CSSPropertyWebkitDashboardRegion,
+#endif
     CSSPropertyWebkitBorderBottomLeftRadius,
     CSSPropertyWebkitBorderBottomRightRadius,
     CSSPropertyWebkitBorderTopLeftRadius,
@@ -936,6 +942,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->boxSizing() == CONTENT_BOX)
                 return new CSSPrimitiveValue(CSSValueContentBox);
             return new CSSPrimitiveValue(CSSValueBorderBox);
+#if ENABLE(DASHBOARD_SUPPORT)
         case CSSPropertyWebkitDashboardRegion:
         {
             const Vector<StyleDashboardRegion>& regions = style->dashboardRegions();
@@ -966,6 +973,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             }
             return new CSSPrimitiveValue(firstRegion.release());
         }
+#endif
         case CSSPropertyWebkitAppearance:
             return new CSSPrimitiveValue(style->appearance());
         case CSSPropertyWebkitBorderImage:

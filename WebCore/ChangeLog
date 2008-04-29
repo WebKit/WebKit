@@ -1,3 +1,73 @@
+2008-04-29  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Darin.
+
+        Wrapped Dashboard code with ENABLE(DASHBOARD_SUPPORT)
+
+        * DerivedSources.make:
+        * WebCore.DashboardSupport.exp: Added.
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::cssText):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/DashboardRegion.h:
+        * css/DashboardSupportCSSPropertyNames.in: Added.
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::importNode):
+        * dom/Document.h:
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+        (WebCore::CanvasRenderingContext2D::clip):
+        * html/CanvasRenderingContext2D.h:
+        * html/HTMLCanvasElement.cpp:
+        * html/HTMLCanvasElement.h:
+        * page/Chrome.cpp:
+        * page/ChromeClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::paint):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * page/FrameView.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::needsKeyboardEventDisambiguationQuirks):
+        * page/mac/FrameMac.mm:
+        * page/mac/WebDashboardRegion.h:
+        * page/mac/WebDashboardRegion.m:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+        * rendering/RenderObject.h:
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::RenderStyle::diff):
+        * rendering/RenderStyle.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+
 2008-04-29  Adam Roben  <aroben@apple.com>
 
         Windows build fix

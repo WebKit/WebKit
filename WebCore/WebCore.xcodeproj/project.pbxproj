@@ -8303,6 +8303,7 @@
 		F9F0ED760DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestProgressEvent.cpp; sourceTree = "<group>"; };
 		F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestProgressEvent.h; sourceTree = "<group>"; };
 		F9F0ED780DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XMLHttpRequestProgressEvent.idl; sourceTree = "<group>"; };
+		FE49EF970DC51462004266E1 /* DashboardSupportCSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DashboardSupportCSSPropertyNames.in; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -12588,6 +12589,7 @@
 				A80E6CBF0A1989CA007FB8C5 /* CSSValueList.h */,
 				A8D0651C0A23C1FE005E7203 /* CSSValueList.idl */,
 				A80E6CE10A1989CA007FB8C5 /* DashboardRegion.h */,
+				FE49EF970DC51462004266E1 /* DashboardSupportCSSPropertyNames.in */,
 				A80E6CC20A1989CA007FB8C5 /* FontFamilyValue.cpp */,
 				A80E6CC90A1989CA007FB8C5 /* FontFamilyValue.h */,
 				A80E6CC70A1989CA007FB8C5 /* FontValue.cpp */,

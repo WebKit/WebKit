@@ -45,7 +45,6 @@
 #include "CSSValueList.h"
 #include "CachedImage.h"
 #include "Counter.h"
-#include "DashboardRegion.h"
 #include "FontFamilyValue.h"
 #include "FontValue.h"
 #include "Frame.h"
@@ -74,6 +73,10 @@
 #if ENABLE(SVG)
 #include "XLinkNames.h"
 #include "SVGNames.h"
+#endif
+
+#if ENABLE(DASHBOARD_SUPPORT)
+#include "DashboardRegion.h"
 #endif
 
 using namespace std;
@@ -4409,6 +4412,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setTextSecurity(*primitiveValue);
         return;
     }
+#if ENABLE(DASHBOARD_SUPPORT)
     case CSSPropertyWebkitDashboardRegion: {
         HANDLE_INHERIT_AND_INITIAL(dashboardRegions, DashboardRegions)
         if (!primitiveValue)
@@ -4440,6 +4444,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         
         return;
     }
+#endif        
     case CSSPropertyWebkitRtlOrdering:
         HANDLE_INHERIT_AND_INITIAL(visuallyOrdered, VisuallyOrdered)
         if (!primitiveValue || !primitiveValue->getIdent())

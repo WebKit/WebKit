@@ -1,3 +1,22 @@
+2008-04-29  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Darin.
+
+        Wrapped Dashboard code with ENABLE(DASHBOARD_SUPPORT)
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        * WebView/WebClipView.m:
+        (-[WebClipView scrollWheel:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView addMouseMovedObserver]):
+        (-[WebHTMLView removeMouseMovedObserver]):
+        (-[WebHTMLView acceptsFirstMouse:]):
+        * WebView/WebUIDelegatePrivate.h:
+        * WebView/WebView.mm:
+        (-[WebViewPrivate init]):
+        * WebView/WebViewPrivate.h:
+
 2008-04-28  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

@@ -123,13 +123,16 @@
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
-#import <WebKit/WebDashboardRegion.h>
 #import <WebKitSystemInterface.h>
 #import <kjs/InitializeThreading.h>
 #import <mach-o/dyld.h>
 #import <objc/objc-auto.h>
 #import <objc/objc-runtime.h>
 #import <sys/param.h>
+
+#if ENABLE(DASHBOARD_SUPPORT)
+#import <WebKit/WebDashboardRegion.h>
+#endif
 
 using namespace WebCore;
 using namespace KJS;
@@ -361,10 +364,12 @@ static int pluginDatabaseClientCount = 0;
 
     BOOL smartInsertDeleteEnabled;
         
+#if ENABLE(DASHBOARD_SUPPORT)
     BOOL dashboardBehaviorAlwaysSendMouseEventsToAllWindows;
     BOOL dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns;
     BOOL dashboardBehaviorAlwaysAcceptsFirstMouse;
     BOOL dashboardBehaviorAllowWheelScrolling;
+#endif
     
     // WebKit has both a global plug-in database and a separate, per WebView plug-in database. Dashboard uses the per WebView database.
     WebPluginDatabase *pluginDatabase;
@@ -464,7 +469,9 @@ static BOOL grammarCheckingEnabled;
     allowsUndo = YES;
     zoomMultiplier = 1;
     zoomMultiplierIsTextOnly = YES;
+#if ENABLE(DASHBOARD_SUPPORT)
     dashboardBehaviorAllowWheelScrolling = YES;
+#endif
     shouldCloseWithWindow = objc_collecting_enabled();
     continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
 
@@ -1332,6 +1339,8 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     _private->page->dragController()->setDidInitiateDrag(initiatedDrag);
 }
 
+#if ENABLE(DASHBOARD_SUPPORT)
+
 #define DASHBOARD_CONTROL_LABEL @"control"
 
 - (void)_addScrollerDashboardRegions:(NSMutableDictionary *)regions from:(NSArray *)views
@@ -1442,6 +1451,8 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     }
     return NO;
 }
+
+#endif /* ENABLE(DASHBOARD_SUPPORT) */
 
 + (void)_setShouldUseFontSmoothing:(BOOL)f
 {

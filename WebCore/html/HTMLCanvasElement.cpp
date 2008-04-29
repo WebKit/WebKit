@@ -82,6 +82,8 @@ HTMLCanvasElement::~HTMLCanvasElement()
         m_2DContext->detachCanvas();
 }
 
+#if ENABLE(DASHBOARD_SUPPORT)
+
 HTMLTagStatus HTMLCanvasElement::endTagRequirement() const 
 {
     Settings* settings = document()->settings();
@@ -99,6 +101,8 @@ int HTMLCanvasElement::tagPriority() const
 
     return HTMLElement::tagPriority();
 }
+
+#endif
 
 void HTMLCanvasElement::parseMappedAttribute(MappedAttribute* attr)
 {

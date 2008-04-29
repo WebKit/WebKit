@@ -1,3 +1,11 @@
+2008-04-29  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Darin.
+
+        Wrapped Dashboard code with ENABLE(DASHBOARD_SUPPORT)
+
+        * wtf/Platform.h:
+
 2008-04-29  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.

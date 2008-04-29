@@ -262,4 +262,8 @@
 #define ENABLE_NETSCAPE_PLUGIN_API 0
 #endif
 
+#if !defined(ENABLE_DASHBOARD_SUPPORT)
+#define ENABLE_DASHBOARD_SUPPORT 1
+#endif
+
 #endif /* WTF_Platform_h */

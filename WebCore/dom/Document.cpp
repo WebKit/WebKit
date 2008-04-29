@@ -286,8 +286,10 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
 #if ENABLE(SVG)
     , m_svgExtensions(0)
 #endif
+#if ENABLE(DASHBOARD_SUPPORT)
     , m_hasDashboardRegions(false)
     , m_dashboardRegionsDirty(false)
+#endif
     , m_accessKeyMapValid(false)
     , m_createRenderers(true)
     , m_inPageCache(false)
@@ -588,7 +590,7 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
     ec = 0;
     
     if (!importedNode
-#if ENABLE(SVG)
+#if ENABLE(SVG) && ENABLE(DASHBOARD_SUPPORT)
         || (importedNode->isSVGElement() && page() && page()->settings()->usesDashboardBackwardCompatibilityMode())
 #endif
         ) {
@@ -2344,6 +2346,7 @@ void Document::activeChainNodeDetached(Node* node)
         m_activeNode = m_activeNode->parent();
 }
 
+#if ENABLE(DASHBOARD_SUPPORT)
 const Vector<DashboardRegionValue>& Document::dashboardRegions() const
 {
     return m_dashboardRegions;
@@ -2354,6 +2357,7 @@ void Document::setDashboardRegions(const Vector<DashboardRegionValue>& regions)
     m_dashboardRegions = regions;
     setDashboardRegionsDirty(false);
 }
+#endif
 
 bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
 {    

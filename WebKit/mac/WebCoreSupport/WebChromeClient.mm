@@ -450,6 +450,7 @@ void WebChromeClient::populateVisitedLinks()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+#if ENABLE(DASHBOARD_SUPPORT)
 void WebChromeClient::dashboardRegionsChanged()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -461,6 +462,7 @@ void WebChromeClient::dashboardRegionsChanged()
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
+#endif
 
 FloatRect WebChromeClient::customHighlightRect(Node* node, const AtomicString& type, const FloatRect& lineRect)
 {

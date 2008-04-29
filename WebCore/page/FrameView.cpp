@@ -504,7 +504,9 @@ void FrameView::layout(bool allowSubtree)
     if (AXObjectCache::accessibilityEnabled())
         root->document()->axObjectCache()->postNotificationToElement(root, "AXLayoutComplete");
 #endif
+#if ENABLE(DASHBOARD_SUPPORT)
     updateDashboardRegions();
+#endif
 
     if (didFirstLayout)
         m_frame->loader()->didFirstLayout();
@@ -1070,6 +1072,7 @@ IntRect FrameView::windowClipRectForLayer(const RenderLayer* layer, bool clipToL
     return intersection(clipRect, windowClipRect());
 }
 
+#if ENABLE(DASHBOARD_SUPPORT)
 void FrameView::updateDashboardRegions()
 {
     Document* document = m_frame->document();
@@ -1085,6 +1088,7 @@ void FrameView::updateDashboardRegions()
         return;
     page->chrome()->client()->dashboardRegionsChanged();
 }
+#endif
 
 void FrameView::updateControlTints()
 {

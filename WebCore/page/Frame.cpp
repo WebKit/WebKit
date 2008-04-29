@@ -1364,9 +1364,11 @@ void Frame::paint(GraphicsContext* p, const IntRect& rect)
         
         d->m_isPainting = false;
 
+#if ENABLE(DASHBOARD_SUPPORT)
         // Regions may have changed as a result of the visibility/z-index of element changing.
         if (document()->dashboardRegionsDirty())
             view()->updateDashboardRegions();
+#endif
     } else
         LOG_ERROR("called Frame::paint with nil renderer");
         

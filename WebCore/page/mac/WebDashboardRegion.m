@@ -25,6 +25,7 @@
 #include "config.h"
 #import "WebDashboardRegion.h"
 
+#if ENABLE(DASHBOARD_SUPPORT)
 @implementation WebDashboardRegion
 - initWithRect:(NSRect)r clip:(NSRect)c type:(WebDashboardRegionType)t
 {
@@ -73,3 +74,4 @@
 }
 
 @end
+#endif

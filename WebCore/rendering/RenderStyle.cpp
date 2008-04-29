@@ -845,7 +845,9 @@ bool StyleRareNonInheritedData::bindingsEquivalent(const StyleRareNonInheritedDa
 bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) const
 {
     return lineClamp == o.lineClamp
+#if ENABLE(DASHBOARD_SUPPORT)
         && m_dashboardRegions == o.m_dashboardRegions
+#endif
         && opacity == o.opacity
         && flexibleBox == o.flexibleBox
         && marquee == o.marquee
@@ -1349,9 +1351,11 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
             *rareNonInheritedData->m_transform.get() != *other->rareNonInheritedData->m_transform.get())
             return Layout;
 
+#if ENABLE(DASHBOARD_SUPPORT)
         // If regions change, trigger a relayout to re-calc regions.
         if (rareNonInheritedData->m_dashboardRegions != other->rareNonInheritedData->m_dashboardRegions)
             return Layout;
+#endif
     }
 
     if (rareInheritedData.get() != other->rareInheritedData.get()) {
@@ -1835,6 +1839,7 @@ CounterDirectiveMap& RenderStyle::accessCounterDirectives()
     return *map;
 }
 
+#if ENABLE(DASHBOARD_SUPPORT)
 const Vector<StyleDashboardRegion>& RenderStyle::initialDashboardRegions()
 { 
     static Vector<StyleDashboardRegion> emptyList;
@@ -1859,6 +1864,7 @@ const Vector<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
     }
     return noneList;
 }
+#endif
 
 void RenderStyle::adjustTransitions()
 {

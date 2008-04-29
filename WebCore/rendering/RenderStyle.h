@@ -463,6 +463,7 @@ private:
     StyleBoxData(const StyleBoxData&);
 };
 
+#if ENABLE(DASHBOARD_SUPPORT)
 //------------------------------------------------
 // Dashboard region attributes. Not inherited.
 
@@ -487,6 +488,7 @@ struct StyleDashboardRegion {
        return !(*this == o);
    }
 };
+#endif
 
 //------------------------------------------------
 // Random visual rendering model attributes. Not inherited.
@@ -1334,7 +1336,9 @@ public:
     bool transitionDataEquivalent(const StyleRareNonInheritedData&) const;
 
     int lineClamp; // An Apple extension.
+#if ENABLE(DASHBOARD_SUPPORT)
     Vector<StyleDashboardRegion> m_dashboardRegions;
+#endif
     float opacity; // Whether or not we're transparent.
 
     DataRef<StyleFlexibleBoxData> flexibleBox; // Flexible box properties 
@@ -2075,6 +2079,7 @@ public:
     void setMinHeight(Length v) { SET_VAR(box,min_height,v) }
     void setMaxHeight(Length v) { SET_VAR(box,max_height,v) }
 
+#if ENABLE(DASHBOARD_SUPPORT)
     Vector<StyleDashboardRegion> dashboardRegions() const { return rareNonInheritedData->m_dashboardRegions; }
     void setDashboardRegions(Vector<StyleDashboardRegion> regions) { SET_VAR(rareNonInheritedData,m_dashboardRegions,regions); }
     void setDashboardRegion(int type, const String& label, Length t, Length r, Length b, Length l, bool append) {
@@ -2089,6 +2094,7 @@ public:
             rareNonInheritedData.access()->m_dashboardRegions.clear();
         rareNonInheritedData.access()->m_dashboardRegions.append(region);
     }
+#endif
 
     void resetBorder() { resetBorderImage(); resetBorderTop(); resetBorderRight(); resetBorderBottom(); resetBorderLeft(); resetBorderRadius(); }
     void resetBorderTop() { SET_VAR(surround, border.top, BorderValue()) }
@@ -2478,8 +2484,10 @@ public:
     static int initialLineClamp() { return -1; }
     static bool initialTextSizeAdjust() { return true; }
     static ETextSecurity initialTextSecurity() { return TSNONE; }
+#if ENABLE(DASHBOARD_SUPPORT)
     static const Vector<StyleDashboardRegion>& initialDashboardRegions();
     static const Vector<StyleDashboardRegion>& noneDashboardRegions();
+#endif
 };
 
 } // namespace WebCore

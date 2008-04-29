@@ -110,6 +110,7 @@ enum VerticalPositionHint {
     PositionUndefined = 0x1fff
 };
 
+#if ENABLE(DASHBOARD_SUPPORT)
 struct DashboardRegionValue {
     bool operator==(const DashboardRegionValue& o) const
     {
@@ -125,6 +126,7 @@ struct DashboardRegionValue {
     IntRect clip;
     int type;
 };
+#endif
 
 // FIXME: This should be a HashSequencedSet, but we don't have that data structure yet.
 // This means the paint order of outlines will be wrong, although this is a minor issue.
@@ -517,8 +519,10 @@ public:
 
     virtual void updateWidgetPosition();
 
+#if ENABLE(DASHBOARD_SUPPORT)
     void addDashboardRegions(Vector<DashboardRegionValue>&);
     void collectDashboardRegions(Vector<DashboardRegionValue>&);
+#endif
 
     // Used to signal a specific subrect within an object that must be repainted after
     // layout is complete.

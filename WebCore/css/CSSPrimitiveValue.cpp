@@ -25,11 +25,15 @@
 #include "CSSValueKeywords.h"
 #include "Color.h"
 #include "Counter.h"
-#include "DashboardRegion.h"
 #include "ExceptionCode.h"
 #include "Pair.h"
+#include "Rect.h"
 #include "RenderStyle.h"
 #include <wtf/ASCIICType.h>
+
+#if ENABLE(DASHBOARD_SUPPORT)
+#include "DashboardRegion.h"
+#endif
 
 using namespace WTF;
 
@@ -179,11 +183,13 @@ void CSSPrimitiveValue::init(PassRefPtr<Rect> r)
     m_value.rect = r.releaseRef();
 }
 
+#if ENABLE(DASHBOARD_SUPPORT)
 void CSSPrimitiveValue::init(PassRefPtr<DashboardRegion> r)
 {
     m_type = CSS_DASHBOARD_REGION;
     m_value.region = r.releaseRef();
 }
+#endif
 
 void CSSPrimitiveValue::init(PassRefPtr<Pair> p)
 {
@@ -214,10 +220,12 @@ void CSSPrimitiveValue::cleanup()
         case CSS_PAIR:
             m_value.pair->deref();
             break;
+#if ENABLE(DASHBOARD_SUPPORT)
         case CSS_DASHBOARD_REGION:
             if (m_value.region)
                 m_value.region->deref();
             break;
+#endif
         default:
             break;
     }
@@ -689,6 +697,7 @@ String CSSPrimitiveValue::cssText() const
             text += " ";
             text += m_value.pair->second()->cssText();
             break;
+#if ENABLE(DASHBOARD_SUPPORT)
         case CSS_DASHBOARD_REGION:
             for (DashboardRegion* region = getDashboardRegionValue(); region; region = region->m_next.get()) {
                 if (!text.isEmpty())
@@ -718,6 +727,7 @@ String CSSPrimitiveValue::cssText() const
                 text += ")";
             }
             break;
+#endif
     }
     return text;
 }

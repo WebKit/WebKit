@@ -124,7 +124,9 @@ public:
     void beginDeferredRepaints();
     void endDeferredRepaints();
 
+#if ENABLE(DASHBOARD_SUPPORT)
     void updateDashboardRegions();
+#endif
     void updateControlTints();
 
     void restoreScrollbar();

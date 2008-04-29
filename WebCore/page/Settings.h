@@ -110,8 +110,10 @@ namespace WebCore {
         void setEditableLinkBehavior(EditableLinkBehavior);
         EditableLinkBehavior editableLinkBehavior() const { return m_editableLinkBehavior; }
         
+#if ENABLE(DASHBOARD_SUPPORT)
         void setUsesDashboardBackwardCompatibilityMode(bool);
         bool usesDashboardBackwardCompatibilityMode() const { return m_usesDashboardBackwardCompatibilityMode; }
+#endif
         
         void setNeedsAdobeFrameReloadingQuirk(bool);
         bool needsAcrobatFrameReloadingQuirk() const { return m_needsAdobeFrameReloadingQuirk; }
@@ -183,7 +185,9 @@ namespace WebCore {
         bool m_javaScriptCanOpenWindowsAutomatically : 1;
         bool m_shouldPrintBackgrounds : 1;
         bool m_textAreasAreResizable : 1;
+#if ENABLE(DASHBOARD_SUPPORT)
         bool m_usesDashboardBackwardCompatibilityMode : 1;
+#endif
         bool m_needsAdobeFrameReloadingQuirk : 1;
         bool m_needsKeyboardEventDisambiguationQuirks : 1;
         bool m_isDOMPasteAllowed : 1;

@@ -379,13 +379,39 @@ all : \
 
 # --------
 
+ifeq ($(OS),MACOS)
+
+FRAMEWORK_FLAGS = $(shell echo $(FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
+
+ifeq ($(shell gcc -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_DASHBOARD_SUPPORT | cut -d' ' -f3), 1)
+    ENABLE_DASHBOARD_SUPPORT = 1
+else
+    ENABLE_DASHBOARD_SUPPORT = 0
+endif
+
+else
+
+ENABLE_DASHBOARD_SUPPORT = 1
+
+endif
+
 # CSS property names and value keywords
+
+WEBCORE_CSS_PROPERTY_NAMES := $(WebCore)/css/CSSPropertyNames.in
+
+ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
+	WEBCORE_CSS_PROPERTY_NAMES := $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/SVGCSSPropertyNames.in
+endif
+
+ifeq ($(ENABLE_DASHBOARD_SUPPORT), 1)
+    WEBCORE_CSS_PROPERTY_NAMES := $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/DashboardSupportCSSPropertyNames.in
+endif
 
 ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
 
-CSSPropertyNames.h : css/CSSPropertyNames.in css/SVGCSSPropertyNames.in css/makeprop.pl
-	if sort $< $(WebCore)/css/SVGCSSPropertyNames.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
-	cat $< $(WebCore)/css/SVGCSSPropertyNames.in > CSSPropertyNames.in
+CSSPropertyNames.h : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl
+	if sort $(WEBCORE_CSS_PROPERTY_NAMES) | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
+	cat $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in
 	perl "$(WebCore)/css/makeprop.pl"
 
 CSSValueKeywords.h : css/CSSValueKeywords.in css/SVGCSSValueKeywords.in css/makevalues.pl
@@ -397,8 +423,8 @@ CSSValueKeywords.h : css/CSSValueKeywords.in css/SVGCSSValueKeywords.in css/make
 
 else
 
-CSSPropertyNames.h : css/CSSPropertyNames.in css/makeprop.pl
-	cp $< CSSPropertyNames.in
+CSSPropertyNames.h : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl
+	cat $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in
 	perl "$(WebCore)/css/makeprop.pl"
 
 CSSValueKeywords.h : css/CSSValueKeywords.in css/makevalues.pl
@@ -597,8 +623,6 @@ CharsetData.cpp : platform/text/mac/make-charset-table.pl platform/text/mac/char
 
 # export file
 
-FRAMEWORK_FLAGS = $(shell echo $(FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
-
 ifeq ($(shell gcc -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_MAC_JAVA_BRIDGE | cut -d' ' -f3), 1)
     WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.JNI.exp
 endif
@@ -606,6 +630,10 @@ endif
 # See also "Generate 64-bit Export File" build phase script in WebCore.xcodeproj/project.pbxproj
 ifeq ($(shell gcc -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_NETSCAPE_PLUGIN_API | cut -d' ' -f3), 1)
     WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.NPAPI.exp
+endif
+
+ifeq ($(ENABLE_DASHBOARD_SUPPORT), 1)
+    WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.DashboardSupport.exp
 endif
 
 ifeq ($(findstring 10.4,$(MACOSX_DEPLOYMENT_TARGET)), 10.4)

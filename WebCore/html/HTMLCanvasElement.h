@@ -70,8 +70,10 @@ public:
     HTMLCanvasElement(Document*);
     virtual ~HTMLCanvasElement();
 
+#if ENABLE(DASHBOARD_SUPPORT)
     virtual HTMLTagStatus endTagRequirement() const;
     virtual int tagPriority() const;
+#endif
 
     int width() const { return m_size.width(); }
     int height() const { return m_size.height(); }

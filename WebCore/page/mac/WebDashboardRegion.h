@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <wtf/Platform.h>
+
+#if ENABLE(DASHBOARD_SUPPORT)
+
 typedef enum {
     WebDashboardRegionTypeNone,
     WebDashboardRegionTypeCircle,
@@ -41,3 +45,5 @@ typedef enum {
 - (NSRect)dashboardRegionRect;
 - (WebDashboardRegionType)dashboardRegionType;
 @end
+
+#endif

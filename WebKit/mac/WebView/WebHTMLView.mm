@@ -2479,7 +2479,11 @@ WEBCORE_COMMAND(yankAndSelect)
         return;
 
     // Unless the Dashboard asks us to do this for all windows, keep an observer going only for the key window.
-    if (!([[self window] isKeyWindow] || [[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows]))
+    if (!([[self window] isKeyWindow] 
+#if ENABLE(DASHBOARD_SUPPORT)
+            || [[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows]
+#endif
+        ))
         return;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mouseMovedNotification:)
@@ -2495,9 +2499,11 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (void)removeMouseMovedObserver
 {
+#if ENABLE(DASHBOARD_SUPPORT)
     // Don't remove the observer if we're running the Dashboard.
     if ([[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows])
         return;
+#endif
 
     [[self _webView] _mouseDidMoveOverElement:nil modifierFlags:0];
     [self removeMouseMovedObserverUnconditionally];
@@ -2977,8 +2983,10 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
     NSView *hitView = [self _hitViewForEvent:event];
     WebHTMLView *hitHTMLView = [hitView isKindOfClass:[self class]] ? (WebHTMLView *)hitView : nil;
     
+#if ENABLE(DASHBOARD_SUPPORT)
     if ([[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysAcceptsFirstMouse])
         return YES;
+#endif
     
     if (hitHTMLView) {
         bool result = false;

@@ -29,6 +29,10 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebFramePrivate.h>
 
+#if !defined(ENABLE_DASHBOARD_SUPPORT)
+#define ENABLE_DASHBOARD_SUPPORT 1
+#endif
+
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
 #define WebNSInteger int
 #define WebNSUInteger unsigned int
@@ -61,6 +65,7 @@ extern NSString *WebElementIsContentEditableKey; // NSNumber indicating whether 
 // other WebElementDictionary keys
 extern NSString *WebElementLinkIsLiveKey;        // NSNumber of BOOL indictating whether the link is live or not
 
+#if ENABLE_DASHBOARD_SUPPORT
 typedef enum {
     WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows,
     WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns,
@@ -68,6 +73,7 @@ typedef enum {
     WebDashboardBehaviorAllowWheelScrolling,
     WebDashboardBehaviorUseBackwardCompatibilityMode
 } WebDashboardBehavior;
+#endif
 
 @interface WebController : NSTreeController {
     IBOutlet WebView *webView;
@@ -260,11 +266,13 @@ Could be worth adding to the API.
 
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL;
 
+#if ENABLE_DASHBOARD_SUPPORT
 - (void)_addScrollerDashboardRegions:(NSMutableDictionary *)regions;
 - (NSDictionary *)_dashboardRegions;
 
 - (void)_setDashboardBehavior:(WebDashboardBehavior)behavior to:(BOOL)flag;
 - (BOOL)_dashboardBehavior:(WebDashboardBehavior)behavior;
+#endif
 
 + (void)_setShouldUseFontSmoothing:(BOOL)f;
 + (BOOL)_shouldUseFontSmoothing;
@@ -348,9 +356,11 @@ Could be worth adding to the API.
 - (BOOL)usesPageCache;
 - (void)setUsesPageCache:(BOOL)usesPageCache;
 
+#if ENABLE_DASHBOARD_SUPPORT
 // <rdar://problem/5217124> Clients other than dashboard, don't use this.
 // Do not remove until Dashboard has moved off it
 - (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource;
+#endif
 
 - (void)_clearUndoRedoOperations;
 

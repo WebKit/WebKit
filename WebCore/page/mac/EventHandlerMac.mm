@@ -149,7 +149,16 @@ bool EventHandler::needsKeyboardEventDisambiguationQuirks() const
     Settings* settings = m_frame->settings();
     if (!settings)
         return false;
-    return settings->usesDashboardBackwardCompatibilityMode() || settings->needsKeyboardEventDisambiguationQuirks();
+
+#if ENABLE(DASHBOARD_SUPPORT)
+    if (settings->usesDashboardBackwardCompatibilityMode())
+        return true;
+#endif
+        
+    if (settings->needsKeyboardEventDisambiguationQuirks())
+        return true;
+
+    return false;
 }
 
 bool EventHandler::keyEvent(NSEvent *event)

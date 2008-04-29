@@ -211,7 +211,9 @@ namespace WebCore {
         void applyStrokePattern();
         void applyFillPattern();
 
+#if ENABLE(DASHBOARD_SUPPORT)
         void clearPathForDashboardBackwardCompatibilityMode();
+#endif
 
         void checkOrigin(const KURL&);
 

@@ -329,7 +329,9 @@ public:
     NSString* searchForLabelsBeforeElement(NSArray* labels, Element*);
     NSString* matchLabelsAgainstElement(NSArray* labels, Element*);
 
+#if ENABLE(DASHBOARD_SUPPORT)
     NSMutableDictionary* dashboardRegionsDictionary();
+#endif
 
     NSImage* selectionImage(bool forceBlackText = false) const;
     NSImage* snapshotDragImage(Node*, NSRect* imageRect, NSRect* elementRect) const;

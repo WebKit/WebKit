@@ -517,6 +517,7 @@ void CanvasRenderingContext2D::rect(float x, float y, float width, float height)
     m_path.addRect(FloatRect(x, y, width, height));
 }
 
+#if ENABLE(DASHBOARD_SUPPORT)
 void CanvasRenderingContext2D::clearPathForDashboardBackwardCompatibilityMode()
 {
     if (m_canvas)
@@ -524,6 +525,7 @@ void CanvasRenderingContext2D::clearPathForDashboardBackwardCompatibilityMode()
             if (settings->usesDashboardBackwardCompatibilityMode())
                 m_path.clear();
 }
+#endif
 
 void CanvasRenderingContext2D::fill()
 {
@@ -573,7 +575,9 @@ void CanvasRenderingContext2D::fill()
     cairo_restore(cr);
 #endif
 
+#if ENABLE(DASHBOARD_SUPPORT)
     clearPathForDashboardBackwardCompatibilityMode();
+#endif
 }
 
 void CanvasRenderingContext2D::stroke()
@@ -636,7 +640,9 @@ void CanvasRenderingContext2D::stroke()
     cairo_restore(cr);
 #endif
 
+#if ENABLE(DASHBOARD_SUPPORT)
     clearPathForDashboardBackwardCompatibilityMode();
+#endif
 }
 
 void CanvasRenderingContext2D::clip()
@@ -645,7 +651,9 @@ void CanvasRenderingContext2D::clip()
     if (!c)
         return;
     c->clip(m_path);
+#if ENABLE(DASHBOARD_SUPPORT)
     clearPathForDashboardBackwardCompatibilityMode();
+#endif
 }
 
 bool CanvasRenderingContext2D::isPointInPath(const float x, const float y)

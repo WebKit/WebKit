@@ -2162,10 +2162,12 @@ void RenderObject::setStyle(RenderStyle* style)
         // If our z-index changes value or our visibility changes,
         // we need to dirty our stacking context's z-order list.
         if (style) {
+#if ENABLE(DASHBOARD_SUPPORT)
             if (m_style->visibility() != style->visibility() ||
                     m_style->zIndex() != style->zIndex() ||
                     m_style->hasAutoZIndex() != style->hasAutoZIndex())
                 document()->setDashboardRegionsDirty(true);
+#endif
 
             if ((m_style->hasAutoZIndex() != style->hasAutoZIndex() ||
                     m_style->zIndex() != style->zIndex() ||
@@ -2877,6 +2879,7 @@ void RenderObject::updateWidgetPosition()
 {
 }
 
+#if ENABLE(DASHBOARD_SUPPORT)
 void RenderObject::addDashboardRegions(Vector<DashboardRegionValue>& regions)
 {
     // Convert the style regions to absolute coordinates.
@@ -2934,6 +2937,7 @@ void RenderObject::collectDashboardRegions(Vector<DashboardRegionValue>& regions
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
         curr->collectDashboardRegions(regions);
 }
+#endif
 
 bool RenderObject::avoidsFloats() const
 {

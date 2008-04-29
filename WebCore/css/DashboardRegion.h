@@ -23,6 +23,9 @@
 #ifndef DashboardRegion_h
 #define DashboardRegion_h
 
+#include <wtf/Platform.h>
+
+#if ENABLE(DASHBOARD_SUPPORT)
 #include "Rect.h"
 
 namespace WebCore {
@@ -39,5 +42,6 @@ public:
 };
 
 } // namespace
+#endif
 
 #endif
