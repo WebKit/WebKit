@@ -188,6 +188,7 @@ namespace WebCore {
         void incrementNativeWidgetCount();
         void decrementNativeWidgetCount();
         bool hasNativeWidgets() const;
+        void invalidateScrollbars();
 #endif
 
 #if PLATFORM(GTK)

@@ -293,6 +293,8 @@ void ScrollView::geometryChanged() const
     HashSet<Widget*>::const_iterator end = m_data->m_children.end();
     for (HashSet<Widget*>::const_iterator current = m_data->m_children.begin(); current != end; ++current)
         (*current)->geometryChanged();
+
+    const_cast<ScrollView *>(this)->invalidateScrollbars();
 }
 
 
@@ -392,30 +394,35 @@ WebCore::ScrollbarMode ScrollView::vScrollbarMode() const
 void ScrollView::suppressScrollbars(bool suppressed, bool repaintOnSuppress)
 {
     m_data->m_scrollbarsSuppressed = suppressed;
-    if (repaintOnSuppress && !suppressed) {
-        if (m_data->m_hBar)
-            m_data->m_hBar->invalidate();
-        if (m_data->m_vBar)
-            m_data->m_vBar->invalidate();
+    if (repaintOnSuppress && !suppressed)
+        invalidateScrollbars();
+}
 
-        // Invalidate the scroll corner too on unsuppress.
-        IntRect hCorner;
-        if (m_data->m_hBar && width() - m_data->m_hBar->width() > 0) {
-            hCorner = IntRect(m_data->m_hBar->width(),
-                              height() - m_data->m_hBar->height(),
-                              width() - m_data->m_hBar->width(),
-                              m_data->m_hBar->height());
-            invalidateRect(hCorner);
-        }
+void ScrollView::invalidateScrollbars()
+{
+    if (m_data->m_hBar)
+        m_data->m_hBar->invalidate();
+    if (m_data->m_vBar)
+        m_data->m_vBar->invalidate();
 
-        if (m_data->m_vBar && height() - m_data->m_vBar->height() > 0) {
-            IntRect vCorner(width() - m_data->m_vBar->width(),
-                            m_data->m_vBar->height(),
-                            m_data->m_vBar->width(),
-                            height() - m_data->m_vBar->height());
-            if (vCorner != hCorner)
-                invalidateRect(vCorner);
-        }
+
+    // Invalidate the scroll corner too
+    IntRect hCorner;
+    if (m_data->m_hBar && width() - m_data->m_hBar->width() > 0) {
+        hCorner = IntRect(m_data->m_hBar->width(),
+                         height() - m_data->m_hBar->height(),
+                         width() - m_data->m_hBar->width(),
+                         m_data->m_hBar->height());
+       addToDirtyRegion(convertToContainingWindow(hCorner));
+    }
+
+    if (m_data->m_vBar && height() - m_data->m_vBar->height() > 0) {
+        IntRect vCorner(width() - m_data->m_vBar->width(),
+                       m_data->m_vBar->height(),
+                       m_data->m_vBar->width(),
+                       height() - m_data->m_vBar->height());
+        if (vCorner != hCorner)
+            addToDirtyRegion(convertToContainingWindow(vCorner));
     }
 }
 
