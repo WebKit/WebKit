@@ -1821,7 +1821,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     NSString* cacheDir = nil;
     
 #ifdef BUILDING_ON_TIGER
-    NSString *cacheDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
+    cacheDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
 #else
     char cacheDirectory[MAXPATHLEN];
     size_t cacheDirectoryLen = confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, MAXPATHLEN);

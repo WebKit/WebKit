@@ -1,3 +1,12 @@
+2008-04-28  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        Build fix for Tiger.
+
+        * WebView/WebView.mm:
+        (WebKitInitializeApplicationCachePathIfNecessary):
+
 2008-04-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein, Tim Hatcher, Anders Carlsson, and Darin Adler.
