@@ -60,11 +60,11 @@ string BSTRtoString(BSTR bstr)
 string descriptionSuitableForTestResult(IWebFrame* webFrame)
 {
     COMPtr<IWebView> webView;
-    if (FAILED(webFrame->webView(&webView)))
+    if (FAILED(webFrame->webView(webView.adoptionPointer())))
         return string();
 
     COMPtr<IWebFrame> mainFrame;
-    if (FAILED(webView->mainFrame(&mainFrame)))
+    if (FAILED(webView->mainFrame(mainFrame.adoptionPointer())))
         return string();
 
     if (webFrame == mainFrame)
@@ -156,7 +156,7 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didCommitLoadForFrame(
     /* [in] */ IWebFrame *frame)
 {
     COMPtr<IWebViewPrivate> webViewPrivate;
-    HRESULT hr = webView->QueryInterface(&webViewPrivate);
+    HRESULT hr = webView->QueryInterface(webViewPrivate.adoptionPointer());
     if (FAILED(hr))
         return hr;
     webViewPrivate->updateFocusedAndActiveState();

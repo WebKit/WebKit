@@ -160,7 +160,7 @@ HRESULT STDMETHODCALLTYPE DebuggerClient::didFinishLoadForFrame(
     m_webViewLoaded = true;
 
     COMPtr<IWebFrame> mainFrame;
-    ret = webView->mainFrame(&mainFrame);
+    ret = webView->mainFrame(mainFrame.adoptionPointer());
     if (FAILED(ret))
         return ret;
 
@@ -261,7 +261,7 @@ HRESULT STDMETHODCALLTYPE DebuggerClient::createWebViewWithRequest(
 
         if (!requestIsEmpty) {
             COMPtr<IWebFrame> mainFrame;
-            ret = view->mainFrame(&mainFrame);
+            ret = view->mainFrame(mainFrame.adoptionPointer());
             if (FAILED(ret))
                 return ret;
 

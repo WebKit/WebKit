@@ -69,7 +69,7 @@ void ServerConnection::attemptToCreateServerConnection(JSGlobalContextRef global
     if (FAILED(CoCreateInstance(clsid, 0, CLSCTX_LOCAL_SERVER, IID_IWebScriptDebugServer, (void**)&tempServer)))
         return;
 
-    if (FAILED(tempServer->sharedWebScriptDebugServer(&m_server)))
+    if (FAILED(tempServer->sharedWebScriptDebugServer(m_server.adoptionPointer())))
         return;
 
     if (FAILED(m_server->addListener(this))) {
@@ -145,7 +145,7 @@ HRESULT STDMETHODCALLTYPE ServerConnection::didLoadMainResourceForDataSource(
 
     // Get document source
     COMPtr<IWebDocumentRepresentation> rep;
-    ret = dataSource->representation(&rep);
+    ret = dataSource->representation(rep.adoptionPointer());
     if (FAILED(ret))
         return ret;
 
@@ -166,7 +166,7 @@ HRESULT STDMETHODCALLTYPE ServerConnection::didLoadMainResourceForDataSource(
 
     // Get URL
     COMPtr<IWebURLResponse> response;
-    ret = dataSource->response(&response);
+    ret = dataSource->response(response.adoptionPointer());
     if (FAILED(ret))
         return ret;
 
@@ -196,12 +196,12 @@ HRESULT STDMETHODCALLTYPE ServerConnection::didParseSource(
         return ret;
 
     COMPtr<IWebDataSource> dataSource;
-    ret = webFrame->dataSource(&dataSource);
+    ret = webFrame->dataSource(dataSource.adoptionPointer());
     if (FAILED(ret))
         return ret;
 
     COMPtr<IWebURLResponse> response;
-    ret = dataSource->response(&response);
+    ret = dataSource->response(response.adoptionPointer());
     if (FAILED(ret))
         return ret;
 
@@ -213,7 +213,7 @@ HRESULT STDMETHODCALLTYPE ServerConnection::didParseSource(
     BSTR documentSource = 0;
     if (!url || !wcscmp(responseURL, url)) {
         COMPtr<IWebDocumentRepresentation> rep;
-        ret = dataSource->representation(&rep);
+        ret = dataSource->representation(rep.adoptionPointer());
         if (FAILED(ret))
             return ret;
 
@@ -358,7 +358,7 @@ COMPtr<IWebScriptCallFrame> ServerConnection::getCallerFrame(int callFrame) cons
     COMPtr<IWebScriptCallFrame> cframe = currentFrame();
     for (int count = 0; count < callFrame; count++) {
         COMPtr<IWebScriptCallFrame> callerFrame;
-        if (FAILED(cframe->caller(&callerFrame)))
+        if (FAILED(cframe->caller(callerFrame.adoptionPointer())))
             return 0;
 
         cframe = callerFrame;

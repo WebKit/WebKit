@@ -86,7 +86,7 @@ static wstring dumpPath(IDOMNode* node)
     SysFreeString(name);
 
     COMPtr<IDOMNode> parent;
-    if (SUCCEEDED(node->parentNode(&parent)))
+    if (SUCCEEDED(node->parentNode(parent.adoptionPointer())))
         result += TEXT(" > ") + dumpPath(parent.get());
 
     return result;
@@ -105,11 +105,11 @@ static wstring dump(IDOMRange* range)
         return 0;
 
     COMPtr<IDOMNode> startContainer;
-    if (FAILED(range->startContainer(&startContainer)))
+    if (FAILED(range->startContainer(startContainer.adoptionPointer())))
         return 0;
 
     COMPtr<IDOMNode> endContainer;
-    if (FAILED(range->endContainer(&endContainer)))
+    if (FAILED(range->endContainer(endContainer.adoptionPointer())))
         return 0;
 
     wchar_t buffer[1024];

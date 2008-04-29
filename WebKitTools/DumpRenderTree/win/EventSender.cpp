@@ -130,7 +130,7 @@ static LRESULT dispatchMessage(const MSG* msg)
 static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     COMPtr<IWebFramePrivate> framePrivate;
-    if (SUCCEEDED(frame->QueryInterface(&framePrivate)))
+    if (SUCCEEDED(frame->QueryInterface(framePrivate.adoptionPointer())))
         framePrivate->layout();
 
     down = true;
@@ -146,7 +146,7 @@ static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef functio
 static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     COMPtr<IWebFramePrivate> framePrivate;
-    if (SUCCEEDED(frame->QueryInterface(&framePrivate)))
+    if (SUCCEEDED(frame->QueryInterface(framePrivate.adoptionPointer())))
         framePrivate->layout();
 
     down = true;
@@ -173,7 +173,7 @@ static inline POINTL pointl(const POINT& point)
 static void doMouseUp(MSG msg)
 {
     COMPtr<IWebFramePrivate> framePrivate;
-    if (SUCCEEDED(frame->QueryInterface(&framePrivate)))
+    if (SUCCEEDED(frame->QueryInterface(framePrivate.adoptionPointer())))
         framePrivate->layout();
 
     dispatchMessage(&msg);
@@ -182,7 +182,7 @@ static void doMouseUp(MSG msg)
     if (draggingInfo) {
         COMPtr<IWebView> webView;
         COMPtr<IDropTarget> webViewDropTarget;
-        if (SUCCEEDED(frame->webView(&webView)) && SUCCEEDED(webView->QueryInterface(IID_IDropTarget, (void**)&webViewDropTarget))) {
+        if (SUCCEEDED(frame->webView(webView.adoptionPointer())) && SUCCEEDED(webView->QueryInterface(IID_IDropTarget, (void**)&webViewDropTarget))) {
             POINT screenPoint = msg.pt;
             DWORD effect = 0;
             ::ClientToScreen(webViewWindow, &screenPoint);
@@ -220,7 +220,7 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
 static void doMouseMove(MSG msg)
 {
     COMPtr<IWebFramePrivate> framePrivate;
-    if (SUCCEEDED(frame->QueryInterface(&framePrivate)))
+    if (SUCCEEDED(frame->QueryInterface(framePrivate.adoptionPointer())))
         framePrivate->layout();
 
     dispatchMessage(&msg);
@@ -348,7 +348,7 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     static const JSStringRef lengthProperty = JSStringCreateWithUTF8CString("length");
 
     COMPtr<IWebFramePrivate> framePrivate;
-    if (SUCCEEDED(frame->QueryInterface(&framePrivate)))
+    if (SUCCEEDED(frame->QueryInterface(framePrivate.adoptionPointer())))
         framePrivate->layout();
     
     JSStringRef character = JSValueToStringCopy(context, arguments[0], exception);
@@ -448,7 +448,7 @@ static JSValueRef dispatchMessageCallback(JSContextRef context, JSObjectRef func
         return JSValueMakeUndefined(context);
 
     COMPtr<IWebFramePrivate> framePrivate;
-    if (SUCCEEDED(frame->QueryInterface(&framePrivate)))
+    if (SUCCEEDED(frame->QueryInterface(framePrivate.adoptionPointer())))
         framePrivate->layout();
     
     MSG msg = {};
@@ -481,7 +481,7 @@ static JSValueRef dispatchMessageCallback(JSContextRef context, JSObjectRef func
 static JSValueRef textZoomInCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
+    if (FAILED(frame->webView(webView.adoptionPointer())))
         return JSValueMakeUndefined(context);
 
     COMPtr<IWebIBActions> webIBActions(Query, webView);
@@ -495,7 +495,7 @@ static JSValueRef textZoomInCallback(JSContextRef context, JSObjectRef function,
 static JSValueRef textZoomOutCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
+    if (FAILED(frame->webView(webView.adoptionPointer())))
         return JSValueMakeUndefined(context);
 
     COMPtr<IWebIBActions> webIBActions(Query, webView);
@@ -509,7 +509,7 @@ static JSValueRef textZoomOutCallback(JSContextRef context, JSObjectRef function
 static JSValueRef zoomPageInCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
+    if (FAILED(frame->webView(webView.adoptionPointer())))
         return JSValueMakeUndefined(context);
 
     COMPtr<IWebIBActions> webIBActions(Query, webView);
@@ -523,7 +523,7 @@ static JSValueRef zoomPageInCallback(JSContextRef context, JSObjectRef function,
 static JSValueRef zoomPageOutCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
+    if (FAILED(frame->webView(webView.adoptionPointer())))
         return JSValueMakeUndefined(context);
 
     COMPtr<IWebIBActions> webIBActions(Query, webView);

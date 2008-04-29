@@ -350,7 +350,7 @@ HRESULT Drosera::attach()
         return ret;
 
     COMPtr<IWebFrame> mainFrame;
-    ret = m_webView->mainFrame(&mainFrame);
+    ret = m_webView->mainFrame(mainFrame.adoptionPointer());
     if (FAILED(ret))
         return ret;
 
