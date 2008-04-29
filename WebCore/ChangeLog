@@ -1,3 +1,18 @@
+2008-04-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=18795
+          REGRESSION (r32660): Text heavier with text-shadow
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::paintTextWithShadows): The loop was doing one extra pass
+        without shadow even in cases where the last pass with a shadow was
+        painting the text at the right position (rather than outside the clip).
+        Fixed that. The only case where a separate pass without shadow is needed
+        is when there is text-stroke, since in that case all shadow passes
+        paint the text outside the clip.
+
 2008-04-28  Brady Eidson <beidson@apple.com>
 
         Reviewed by Sam Weinig

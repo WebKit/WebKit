@@ -234,7 +234,7 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
 static void paintTextWithShadows(GraphicsContext* context, const TextRun& textRun, int startOffset, int endOffset, const IntPoint& textOrigin, int x, int y, int w, int h, ShadowData* shadow, bool stroked)
 {
-    while (true) {
+    do {
         IntSize extraOffset;
 
         if (shadow) {
@@ -273,9 +273,7 @@ static void paintTextWithShadows(GraphicsContext* context, const TextRun& textRu
             context->clearShadow();
 
         shadow = shadow->next;
-        if (stroked)
-            continue;
-    }
+    } while (shadow || stroked);
 }
 
 void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)

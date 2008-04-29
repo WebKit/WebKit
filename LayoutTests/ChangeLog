@@ -1,3 +1,21 @@
+2008-04-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - updated results for https://bugs.webkit.org/show_bug.cgi?id=18795
+          REGRESSION (r32660): Text heavier with text-shadow
+
+        * platform/mac/fast/css/shadow-multiple-expected.checksum:
+        * platform/mac/fast/css/shadow-multiple-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-horizontal-expected.checksum:
+        * platform/mac/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-strict-horizontal-expected.checksum:
+        * platform/mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-strict-vertical-expected.checksum:
+        * platform/mac/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-vertical-expected.checksum:
+        * platform/mac/fast/repaint/shadow-multiple-vertical-expected.png:
+
 2008-04-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
