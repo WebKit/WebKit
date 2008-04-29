@@ -214,7 +214,7 @@ STDAPI DllRegisterServer(void)
 
     typedef HRESULT (WINAPI *RegisterTypeLibForUserPtr)(ITypeLib*, OLECHAR*, OLECHAR*);
     COMPtr<ITypeLib> typeLib;
-    LoadTypeLibEx(szFileName, REGKIND_NONE, &typeLib);
+    LoadTypeLibEx(szFileName, REGKIND_NONE, typeLib.adoptionPointer());
     if (RegisterTypeLibForUserPtr registerTypeLibForUser = reinterpret_cast<RegisterTypeLibForUserPtr>(GetProcAddress(GetModuleHandle(TEXT("oleaut32.dll")), "RegisterTypeLibForUser")))
         registerTypeLibForUser(typeLib.get(), szFileName, 0);
     else

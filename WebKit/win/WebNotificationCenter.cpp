@@ -167,7 +167,7 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::postNotification(
         return hr;
 
     COMPtr<IUnknown> obj;
-    hr = notification->getObject(&obj);
+    hr = notification->getObject(obj.adoptionPointer());
     if (FAILED(hr))
         return hr;
 

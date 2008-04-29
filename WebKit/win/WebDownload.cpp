@@ -205,7 +205,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::initWithRequest(
         /* [in] */ IWebDownloadDelegate* delegate)
 {
     COMPtr<WebMutableURLRequest> webRequest;
-    if (!request || FAILED(request->QueryInterface(&webRequest))) {
+    if (!request || FAILED(request->QueryInterface(webRequest.adoptionPointer()))) {
         LOG(Download, "WebDownload - initWithRequest failed - not a WebMutableURLRequest");    
         return E_FAIL;
     }
@@ -482,7 +482,7 @@ CFURLRequestRef WebDownload::willSendRequest(CFURLRequestRef request, CFURLRespo
     COMPtr<WebURLResponse> webResponse(AdoptCOM, WebURLResponse::createInstance(ResourceResponse(response)));
     COMPtr<IWebMutableURLRequest> finalRequest;
 
-    if (FAILED(m_delegate->willSendRequest(this, webRequest.get(), webResponse.get(), &finalRequest)))
+    if (FAILED(m_delegate->willSendRequest(this, webRequest.get(), webResponse.get(), finalRequest.adoptionPointer())))
         LOG_ERROR("DownloadDelegate->willSendRequest failed");
     
     if (!finalRequest)

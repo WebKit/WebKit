@@ -1,5 +1,11 @@
 2008-04-29  Adam Roben  <aroben@apple.com>
 
+        Windows build fix
+
+        Replaced uses of COMPtr::operator& with COMPtr::adoptionPointer.
+
+2008-04-29  Adam Roben  <aroben@apple.com>
+
         Fix a Windows build error
 
         * WebScriptCallFrame.cpp:

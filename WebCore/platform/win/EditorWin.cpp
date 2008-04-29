@@ -42,7 +42,7 @@ namespace WebCore {
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
 {
     COMPtr<IDataObject> clipboardData;
-    if (!SUCCEEDED(OleGetClipboard(&clipboardData)))
+    if (!SUCCEEDED(OleGetClipboard(clipboardData.adoptionPointer())))
         clipboardData = 0;
 
     return new ClipboardWin(false, clipboardData.get(), policy);

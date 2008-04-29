@@ -1,3 +1,14 @@
+2008-04-29  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        This removes COMPtr::operator&, which didn't jive with HashTable. It
+        is replaced by COMPtr::adoptionPointer.
+
+        Discussed with Darin Adler and Anders Carlsson.
+
+        * platform/win/COMPtr.h: Replaced operator& with adoptionPointer.
+
 2008-04-29  David Hyatt  <hyatt@apple.com>
 
         Implement the new box-reflect property in CSS.  This property enables real-time reflections on

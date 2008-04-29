@@ -153,7 +153,7 @@ HRESULT PreferencesChangedOrRemovedObserver::onNotify(IWebNotification* notifica
     HRESULT hr = S_OK;
 
     COMPtr<IUnknown> unkPrefs;
-    hr = notification->getObject(&unkPrefs);
+    hr = notification->getObject(unkPrefs.adoptionPointer());
     if (FAILED(hr))
         return hr;
 
@@ -565,7 +565,7 @@ WebCacheModel WebView::maxCacheModelInAnyInstance()
     HashSet<WebView*>::iterator end = allWebViewsSet().end();
     for (HashSet<WebView*>::iterator it = allWebViewsSet().begin(); it != end; ++it) {
         COMPtr<IWebPreferences> pref;
-        if (FAILED((*it)->preferences(&pref)))
+        if (FAILED((*it)->preferences(pref.adoptionPointer())))
             continue;
         WebCacheModel prefCacheModel = WebCacheModelDocumentViewer;
         if (FAILED(pref->cacheModel(&prefCacheModel)))
@@ -882,7 +882,7 @@ void WebView::paint(HDC dc, LPARAM options)
 
     // Paint the gripper.
     COMPtr<IWebUIDelegate> ui;
-    if (SUCCEEDED(uiDelegate(&ui))) {
+    if (SUCCEEDED(uiDelegate(ui.adoptionPointer()))) {
         COMPtr<IWebUIDelegatePrivate> uiPrivate;
         if (SUCCEEDED(ui->QueryInterface(IID_IWebUIDelegatePrivate, (void**)&uiPrivate))) {
             RECT r;
@@ -973,7 +973,7 @@ void WebView::closeWindow()
     }
 
     COMPtr<IWebUIDelegate> ui;
-    if (SUCCEEDED(uiDelegate(&ui)))
+    if (SUCCEEDED(uiDelegate(ui.adoptionPointer())))
         ui->webViewClose(this);
 }
 
@@ -1716,7 +1716,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_SETFOCUS: {
             COMPtr<IWebUIDelegate> uiDelegate;
             COMPtr<IWebUIDelegatePrivate> uiDelegatePrivate;
-            if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate &&
+            if (SUCCEEDED(webView->uiDelegate(uiDelegate.adoptionPointer())) && uiDelegate &&
                 SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
                 uiDelegatePrivate->webViewReceivedFocus(webView);
 
@@ -1734,7 +1734,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             COMPtr<IWebUIDelegate> uiDelegate;
             COMPtr<IWebUIDelegatePrivate> uiDelegatePrivate;
             HWND newFocusWnd = reinterpret_cast<HWND>(wParam);
-            if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate &&
+            if (SUCCEEDED(webView->uiDelegate(uiDelegate.adoptionPointer())) && uiDelegate &&
                 SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
                 uiDelegatePrivate->webViewLostFocus(webView, (OLE_HANDLE)(ULONG64)newFocusWnd);
 
@@ -1806,7 +1806,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
                 if (lpMsg->message == WM_KEYDOWN)
                     keyCode = (UINT) lpMsg->wParam;
             }
-            if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate &&
+            if (SUCCEEDED(webView->uiDelegate(uiDelegate.adoptionPointer())) && uiDelegate &&
                 SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate &&
                 SUCCEEDED(uiDelegatePrivate->webViewGetDlgCode(webView, keyCode, &dlgCode)))
                 return dlgCode;
@@ -2191,14 +2191,14 @@ void WebView::setToolTip(const String& toolTip)
 HRESULT WebView::notifyDidAddIcon(IWebNotification* notification)
 {
     COMPtr<IPropertyBag> propertyBag;
-    HRESULT hr = notification->userInfo(&propertyBag);
+    HRESULT hr = notification->userInfo(propertyBag.adoptionPointer());
     if (FAILED(hr))
         return hr;
     if (!propertyBag)
         return E_FAIL;
 
     COMPtr<CFDictionaryPropertyBag> dictionaryPropertyBag;
-    hr = propertyBag->QueryInterface(&dictionaryPropertyBag);
+    hr = propertyBag->QueryInterface(dictionaryPropertyBag.adoptionPointer());
     if (FAILED(hr))
         return hr;
 
@@ -2402,7 +2402,7 @@ HRESULT STDMETHODCALLTYPE WebView::goToBackForwardItem(
     *succeeded = FALSE;
 
     COMPtr<WebHistoryItem> webHistoryItem;
-    HRESULT hr = item->QueryInterface(&webHistoryItem);
+    HRESULT hr = item->QueryInterface(webHistoryItem.adoptionPointer());
     if (FAILED(hr))
         return hr;
 
@@ -2546,8 +2546,8 @@ HRESULT STDMETHODCALLTYPE WebView::customTextEncodingName(
     if (!m_mainFrame)
         return E_FAIL;
 
-    if (FAILED(m_mainFrame->provisionalDataSource(&dataSource)) || !dataSource) {
-        hr = m_mainFrame->dataSource(&dataSource);
+    if (FAILED(m_mainFrame->provisionalDataSource(dataSource.adoptionPointer())) || !dataSource) {
+        hr = m_mainFrame->dataSource(dataSource.adoptionPointer());
         if (FAILED(hr) || !dataSource)
             return hr;
     }
@@ -2922,13 +2922,13 @@ HRESULT STDMETHODCALLTYPE WebView::isLoading(
 
     *isLoading = FALSE;
 
-    if (SUCCEEDED(m_mainFrame->dataSource(&dataSource)))
+    if (SUCCEEDED(m_mainFrame->dataSource(dataSource.adoptionPointer())))
         dataSource->isLoading(isLoading);
 
     if (*isLoading)
         return S_OK;
 
-    if (SUCCEEDED(m_mainFrame->provisionalDataSource(&provisionalDataSource)))
+    if (SUCCEEDED(m_mainFrame->provisionalDataSource(provisionalDataSource.adoptionPointer())))
         provisionalDataSource->isLoading(isLoading);
     return S_OK;
 }
@@ -3413,7 +3413,7 @@ HRESULT STDMETHODCALLTYPE WebView::setContinuousSpellCheckingEnabled(
     if (continuousSpellCheckingEnabled != !!flag) {
         continuousSpellCheckingEnabled = !!flag;
         COMPtr<IWebPreferences> prefs;
-        if (SUCCEEDED(preferences(&prefs)))
+        if (SUCCEEDED(preferences(prefs.adoptionPointer())))
             prefs->setContinuousSpellCheckingEnabled(flag);
     }
     
@@ -3477,7 +3477,7 @@ bool WebView::continuousCheckingAllowed()
     static bool readAllowContinuousSpellCheckingDefault = false;
     if (!readAllowContinuousSpellCheckingDefault) {
         COMPtr<IWebPreferences> prefs;
-        if (SUCCEEDED(preferences(&prefs))) {
+        if (SUCCEEDED(preferences(prefs.adoptionPointer()))) {
             BOOL allowed;
             prefs->allowContinuousSpellChecking(&allowed);
             allowContinuousSpellChecking = !!allowed;
@@ -3590,7 +3590,7 @@ HRESULT STDMETHODCALLTYPE WebView::setGrammarCheckingEnabled(
     
     grammarCheckingEnabled = !!enabled;
     COMPtr<IWebPreferences> prefs;
-    if (SUCCEEDED(preferences(&prefs)))
+    if (SUCCEEDED(preferences(prefs.adoptionPointer())))
         prefs->setGrammarCheckingEnabled(enabled);
     
     m_editingDelegate->updateGrammar();
@@ -3861,7 +3861,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     HRESULT hr;
 
     COMPtr<IUnknown> unkPrefs;
-    hr = notification->getObject(&unkPrefs);
+    hr = notification->getObject(unkPrefs.adoptionPointer());
     if (FAILED(hr))
         return hr;
 
@@ -4276,7 +4276,7 @@ HRESULT STDMETHODCALLTYPE WebView::canHandleRequest(
 {
     COMPtr<WebMutableURLRequest> requestImpl;
 
-    HRESULT hr = request->QueryInterface(&requestImpl);
+    HRESULT hr = request->QueryInterface(requestImpl.adoptionPointer());
     if (FAILED(hr))
         return hr;
 
@@ -4352,7 +4352,7 @@ HRESULT STDMETHODCALLTYPE WebView::loadBackForwardListFromOtherView(
     ASSERT(!backForwardList->currentItem()); // destination list should be empty
 
     COMPtr<WebView> otherWebView;
-    if (FAILED(otherView->QueryInterface(&otherWebView)))
+    if (FAILED(otherView->QueryInterface(otherWebView.adoptionPointer())))
         return E_FAIL;
     BackForwardList* otherBackForwardList = otherWebView->m_page->backForwardList();
     if (!otherBackForwardList->currentItem())
@@ -4901,7 +4901,7 @@ Page* core(IWebView* iWebView)
     Page* page = 0;
 
     COMPtr<WebView> webView;
-    if (SUCCEEDED(iWebView->QueryInterface(&webView)) && webView)
+    if (SUCCEEDED(iWebView->QueryInterface(webView.adoptionPointer())) && webView)
         page = webView->page();
 
     return page;

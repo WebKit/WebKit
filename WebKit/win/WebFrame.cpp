@@ -399,7 +399,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::loadRequest(
 {
     COMPtr<WebMutableURLRequest> requestImpl;
 
-    HRESULT hr = request->QueryInterface(&requestImpl);
+    HRESULT hr = request->QueryInterface(requestImpl.adoptionPointer());
     if (FAILED(hr))
         return hr;
  
@@ -1043,12 +1043,12 @@ HRESULT WebFrame::canProvideDocumentSource(bool* result)
     *result = false;
 
     COMPtr<IWebDataSource> dataSource;
-    hr = WebFrame::dataSource(&dataSource);
+    hr = WebFrame::dataSource(dataSource.adoptionPointer());
     if (FAILED(hr))
         return hr;
 
     COMPtr<IWebURLResponse> urlResponse;
-    hr = dataSource->response(&urlResponse);
+    hr = dataSource->response(urlResponse.adoptionPointer());
     if (SUCCEEDED(hr) && urlResponse) {
         BSTR mimeTypeBStr;
         if (SUCCEEDED(urlResponse->MIMEType(&mimeTypeBStr))) {
@@ -1116,7 +1116,7 @@ void WebFrame::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<F
 
     COMPtr<IWebFormDelegate> formDelegate;
 
-    if (FAILED(d->webView->formDelegate(&formDelegate))) {
+    if (FAILED(d->webView->formDelegate(formDelegate.adoptionPointer()))) {
         (coreFrame->loader()->*function)(PolicyUse);
         return;
     }
@@ -1307,7 +1307,7 @@ void WebFrame::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, con
     ASSERT(coreFrame);
 
     COMPtr<IWebPolicyDelegate> policyDelegate;
-    if (FAILED(d->webView->policyDelegate(&policyDelegate)))
+    if (FAILED(d->webView->policyDelegate(policyDelegate.adoptionPointer())))
         policyDelegate = DefaultPolicyDelegate::sharedInstance();
 
     COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(request));
@@ -1324,7 +1324,7 @@ void WebFrame::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction functi
     ASSERT(coreFrame);
 
     COMPtr<IWebPolicyDelegate> policyDelegate;
-    if (FAILED(d->webView->policyDelegate(&policyDelegate)))
+    if (FAILED(d->webView->policyDelegate(policyDelegate.adoptionPointer())))
         policyDelegate = DefaultPolicyDelegate::sharedInstance();
 
     COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(request));
@@ -1342,7 +1342,7 @@ void WebFrame::dispatchDecidePolicyForNavigationAction(FramePolicyFunction funct
     ASSERT(coreFrame);
 
     COMPtr<IWebPolicyDelegate> policyDelegate;
-    if (FAILED(d->webView->policyDelegate(&policyDelegate)))
+    if (FAILED(d->webView->policyDelegate(policyDelegate.adoptionPointer())))
         policyDelegate = DefaultPolicyDelegate::sharedInstance();
 
     COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(request));
@@ -1357,7 +1357,7 @@ void WebFrame::dispatchDecidePolicyForNavigationAction(FramePolicyFunction funct
 void WebFrame::dispatchUnableToImplementPolicy(const ResourceError& error)
 {
     COMPtr<IWebPolicyDelegate> policyDelegate;
-    if (FAILED(d->webView->policyDelegate(&policyDelegate)))
+    if (FAILED(d->webView->policyDelegate(policyDelegate.adoptionPointer())))
         policyDelegate = DefaultPolicyDelegate::sharedInstance();
 
     COMPtr<IWebError> webError(AdoptCOM, WebError::createInstance(error));
@@ -1368,8 +1368,8 @@ void WebFrame::download(ResourceHandle* handle, const ResourceRequest& request, 
 {
     COMPtr<IWebDownloadDelegate> downloadDelegate;
     COMPtr<IWebView> webView;
-    if (SUCCEEDED(this->webView(&webView))) {
-        if (FAILED(webView->downloadDelegate(&downloadDelegate))) {
+    if (SUCCEEDED(this->webView(webView.adoptionPointer()))) {
+        if (FAILED(webView->downloadDelegate(downloadDelegate.adoptionPointer()))) {
             // If the WebView doesn't successfully provide a download delegate we'll pass a null one
             // into the WebDownload - which may or may not decide to use a DefaultDownloadDelegate
             LOG_ERROR("Failed to get downloadDelegate from WebView");
@@ -1392,7 +1392,7 @@ bool WebFrame::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const Res
 void WebFrame::dispatchDidFailProvisionalLoad(const ResourceError& error)
 {
     COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {
+    if (SUCCEEDED(d->webView->frameLoadDelegate(frameLoadDelegate.adoptionPointer()))) {
         COMPtr<IWebError> webError;
         webError.adoptRef(WebError::createInstance(error));
         frameLoadDelegate->didFailProvisionalLoadWithError(d->webView, webError.get(), this);
@@ -1402,7 +1402,7 @@ void WebFrame::dispatchDidFailProvisionalLoad(const ResourceError& error)
 void WebFrame::dispatchDidFailLoad(const ResourceError& error)
 {
     COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {
+    if (SUCCEEDED(d->webView->frameLoadDelegate(frameLoadDelegate.adoptionPointer()))) {
         COMPtr<IWebError> webError;
         webError.adoptRef(WebError::createInstance(error));
         frameLoadDelegate->didFailLoadWithError(d->webView, webError.get(), this);
@@ -1423,7 +1423,7 @@ Widget* WebFrame::createJavaAppletWidget(const IntSize& pluginSize, Element* ele
         return pluginView;
 
     COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
-    if (FAILED(d->webView->resourceLoadDelegate(&resourceLoadDelegate)))
+    if (FAILED(d->webView->resourceLoadDelegate(resourceLoadDelegate.adoptionPointer())))
         return pluginView;
 
     COMPtr<CFDictionaryPropertyBag> userInfoBag(AdoptCOM, CFDictionaryPropertyBag::createInstance());
@@ -1473,7 +1473,7 @@ void WebFrame::windowObjectCleared()
         return;
 
     COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
-    if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {
+    if (SUCCEEDED(d->webView->frameLoadDelegate(frameLoadDelegate.adoptionPointer()))) {
         COMPtr<IWebFrameLoadDelegate2> frameLoadDelegate2(Query, frameLoadDelegate);
 
         JSContextRef context = toRef(coreFrame->scriptProxy()->globalObject()->globalExec());
@@ -1489,7 +1489,7 @@ void WebFrame::windowObjectCleared()
 void WebFrame::didPerformFirstNavigation() const
 {
     COMPtr<IWebPreferences> preferences;
-    if (FAILED(d->webView->preferences(&preferences)))
+    if (FAILED(d->webView->preferences(preferences.adoptionPointer())))
         return;
 
     COMPtr<IWebPreferencesPrivate> preferencesPrivate(Query, preferences);
@@ -1572,7 +1572,7 @@ void WebFrame::headerAndFooterHeights(float* headerHeight, float* footerHeight)
         *footerHeight = 0;
     float height = 0;
     COMPtr<IWebUIDelegate> ui;
-    if (FAILED(d->webView->uiDelegate(&ui)))
+    if (FAILED(d->webView->uiDelegate(ui.adoptionPointer())))
         return;
     COMPtr<IWebUIDelegate2> ui2;
     if (FAILED(ui->QueryInterface(IID_IWebUIDelegate2, (void**) &ui2)))
@@ -1588,7 +1588,7 @@ IntRect WebFrame::printerMarginRect(HDC printDC)
     IntRect emptyRect(0, 0, 0, 0);
 
     COMPtr<IWebUIDelegate> ui;
-    if (FAILED(d->webView->uiDelegate(&ui)))
+    if (FAILED(d->webView->uiDelegate(ui.adoptionPointer())))
         return emptyRect;
     COMPtr<IWebUIDelegate2> ui2;
     if (FAILED(ui->QueryInterface(IID_IWebUIDelegate2, (void**) &ui2)))
@@ -1694,7 +1694,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
         endPage = pageCount;
 
     COMPtr<IWebUIDelegate> ui;
-    if (FAILED(d->webView->uiDelegate(&ui)))
+    if (FAILED(d->webView->uiDelegate(ui.adoptionPointer())))
         return E_FAIL;
     // FIXME: we can return early after the updated app is released
     COMPtr<IWebUIDelegate2> ui2;

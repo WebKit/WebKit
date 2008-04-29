@@ -66,7 +66,7 @@ public:
     T& operator*() const { return *m_ptr; }
     T* operator->() const { return m_ptr; }
 
-    T** operator&() { ASSERT(!m_ptr); return &m_ptr; }
+    T** adoptionPointer() { ASSERT(!m_ptr); return &m_ptr; }
 
     bool operator!() const { return !m_ptr; }
     
