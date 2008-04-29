@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -53,6 +53,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "FrameTree.h"
+#include "Gradient.h"
 #include "GraphicsContext.h"
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
@@ -64,6 +65,7 @@
 #include "PlatformScrollBar.h" 
 #include "RenderArena.h"
 #include "RenderInline.h"
+#include "RenderReplica.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SelectionController.h"
@@ -80,10 +82,6 @@ namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
-
-#ifndef NDEBUG
-static bool inRenderLayerDestroy;
-#endif
 
 const RenderLayer::ScrollAlignment RenderLayer::gAlignCenterIfNeeded = { RenderLayer::noScroll, RenderLayer::alignCenter, RenderLayer::alignToClosestEdge };
 const RenderLayer::ScrollAlignment RenderLayer::gAlignToEdgeIfNeeded = { RenderLayer::noScroll, RenderLayer::alignToClosestEdge, RenderLayer::alignToClosestEdge };
@@ -142,6 +140,7 @@ RenderLayer::RenderLayer(RenderObject* object)
     , m_overflowListDirty(true)
     , m_isOverflowOnly(shouldBeOverflowOnly())
     , m_usedTransparency(false)
+    , m_paintingInsideReflection(false)
     , m_inOverflowRelayout(false)
     , m_needsFullRepaint(false)
     , m_overflowStatusDirty(true)
@@ -153,6 +152,7 @@ RenderLayer::RenderLayer(RenderObject* object)
     , m_staticX(0)
     , m_staticY(0)
     , m_transform(0)
+    , m_reflection(0)
 {
     if (!object->firstChild() && object->style()) {
         m_visibleContentStatusDirty = false;
@@ -180,6 +180,11 @@ RenderLayer::~RenderLayer()
 
     // Make sure we have no lingering clip rects.
     ASSERT(!m_clipRects);
+    
+    if (m_reflection) {
+        m_reflection->setParent(0);
+        m_reflection->destroy();
+    }
 }
 
 void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
@@ -226,7 +231,11 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
     }
 
     m_needsFullRepaint = false;
-    
+
+    // Go ahead and update the reflection's position and size.
+    if (m_reflection)
+        m_reflection->layout();
+
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->updateLayerPositions(doFullRepaint, checkForRepaint);
         
@@ -418,8 +427,7 @@ RenderLayer *RenderLayer::stackingContext() const
     return curr;
 }
 
-RenderLayer*
-RenderLayer::enclosingPositionedAncestor() const
+RenderLayer* RenderLayer::enclosingPositionedAncestor() const
 {
     RenderLayer* curr = parent();
     for ( ; curr && !curr->m_object->isRenderView() && !curr->m_object->isPositioned() && !curr->m_object->isRelPositioned();
@@ -427,8 +435,15 @@ RenderLayer::enclosingPositionedAncestor() const
     return curr;
 }
 
-bool
-RenderLayer::isTransparent() const
+RenderLayer* RenderLayer::enclosingTransformedAncestor() const
+{
+    RenderLayer* curr = parent();
+    for ( ; curr && !curr->m_object->isRenderView() && !curr->transform(); curr = curr->parent())
+        { };
+    return curr;
+}
+
+bool RenderLayer::isTransparent() const
 {
 #if ENABLE(SVG)
     if (m_object->node()->namespaceURI() == SVGNames::svgNamespaceURI)
@@ -452,7 +467,7 @@ static IntRect transparencyClipBox(const AffineTransform& enclosingTransform, co
     // would be better to respect clips.
     
     AffineTransform* t = l->transform();
-    if (t) {
+    if (t && rootLayer != l) {
         // The best we can do here is to use enclosed bounding boxes to establish a "fuzzy" enough clip to encompass
         // the transformed layer and all of its children.
         int x = 0;
@@ -462,13 +477,15 @@ static IntRect transparencyClipBox(const AffineTransform& enclosingTransform, co
         transform.translate(x, y);
         transform = *t * transform;
         transform = transform * enclosingTransform;
-       
+
         // We now have a transform that will produce a rectangle in our view's space.
         IntRect clipRect = transform.mapRect(l->boundingBox(l));
         
         // Now shift the root layer to be us and pass down the new enclosing transform.
-        for (RenderLayer* curr = l->firstChild(); curr; curr = curr->nextSibling())
-            clipRect.unite(transparencyClipBox(transform, curr, l));
+        for (RenderLayer* curr = l->firstChild(); curr; curr = curr->nextSibling()) {
+            if (!l->reflection() || l->reflectionLayer() != curr)
+                clipRect.unite(transparencyClipBox(transform, curr, l));
+        }
             
         return clipRect;
     }
@@ -476,9 +493,17 @@ static IntRect transparencyClipBox(const AffineTransform& enclosingTransform, co
     // Note: we don't have to walk z-order lists since transparent elements always establish
     // a stacking context.  This means we can just walk the layer tree directly.
     IntRect clipRect = l->boundingBox(rootLayer);
-    for (RenderLayer* curr = l->firstChild(); curr; curr = curr->nextSibling())
-        clipRect.unite(transparencyClipBox(enclosingTransform, curr, rootLayer));
     
+    // If we have a mask, then the clip is limited to the border box area (and there is
+    // no need to examine child layers).
+    if (l->renderer()->hasMask())
+        clipRect.intersect(l->renderer()->borderBox());
+    else {
+        for (RenderLayer* curr = l->firstChild(); curr; curr = curr->nextSibling()) {
+            if (!l->reflection() || l->reflectionLayer() != curr)
+                clipRect.unite(transparencyClipBox(enclosingTransform, curr, rootLayer));
+        }
+    }
     return clipRect;
 }
 
@@ -506,22 +531,14 @@ void* RenderLayer::operator new(size_t sz, RenderArena* renderArena) throw()
 
 void RenderLayer::operator delete(void* ptr, size_t sz)
 {
-    ASSERT(inRenderLayerDestroy);
-    
     // Stash size where destroy can find it.
     *(size_t *)ptr = sz;
 }
 
 void RenderLayer::destroy(RenderArena* renderArena)
-{
-#ifndef NDEBUG
-    inRenderLayerDestroy = true;
-#endif
+{    
     delete this;
-#ifndef NDEBUG
-    inRenderLayerDestroy = false;
-#endif
-    
+
     // Recover the size left there for us by operator delete and free the memory.
     renderArena->free(*(size_t *)this, this);
 }
@@ -608,6 +625,9 @@ void RenderLayer::removeOnlyThisLayer()
     RenderLayer* nextSib = nextSibling();
     parent->removeChild(this);
     
+    if (reflection())
+        removeChild(reflectionLayer());
+
     // Now walk our kids and reattach them to our parent.
     RenderLayer* current = m_first;
     while (current) {
@@ -627,9 +647,9 @@ void RenderLayer::insertOnlyThisLayer()
         // We need to connect ourselves when our renderer() has a parent.
         // Find our enclosingLayer and add ourselves.
         RenderLayer* parentLayer = renderer()->parent()->enclosingLayer();
+        RenderLayer* beforeChild = parentLayer->reflectionLayer() != this ? renderer()->parent()->findNextLayer(parentLayer, renderer()) : 0;
         if (parentLayer)
-            parentLayer->addChild(this, 
-                                  renderer()->parent()->findNextLayer(parentLayer, renderer()));
+            parentLayer->addChild(this, beforeChild);
     }
     
     // Remove all descendant layers from the hierarchy and add them to the new position.
@@ -1484,7 +1504,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     if (isTransparent())
         haveTransparency = true;
 
-    // Apply a transform if we have one.
+    // Apply a transform if we have one.  A reflection is considered to be a transform, since it is a flip and a translate.
     if (m_transform && !appliedTransform) {
         // If the transform can't be inverted, then don't paint anything.
         if (!m_transform->isInvertible())
@@ -1529,7 +1549,15 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         
         return;
     }
-    
+
+    // Paint the reflection first if we have one.
+    if (m_reflection && !m_paintingInsideReflection && (!m_transform || appliedTransform)) {
+        // Mark that we are now inside replica painting.
+        m_paintingInsideReflection = true;
+        reflectionLayer()->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot);
+        m_paintingInsideReflection = false;
+    }
+
     // Calculate the clip rects we should use.
     IntRect layerBounds, damageRect, clipRectToApply, outlineRect;
     calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
@@ -1549,7 +1577,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // is done by passing a nil paintingRoot down to our renderer (as if no paintingRoot was ever set).
     // Else, our renderer tree may or may not contain the painting root, so we pass that root along
     // so it will be tested against as we decend through the renderers.
-    RenderObject *paintingRootForRenderer = 0;
+    RenderObject* paintingRootForRenderer = 0;
     if (paintingRoot && !m_object->isDescendantOf(paintingRoot))
         paintingRootForRenderer = paintingRoot;
 
@@ -2183,7 +2211,8 @@ void RenderLayer::updateZOrderLists()
         return;
         
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        child->collectLayers(m_posZOrderList, m_negZOrderList);
+        if (!m_reflection || reflectionLayer() != child)
+            child->collectLayers(m_posZOrderList, m_negZOrderList);
 
     // Sort the two lists.
     if (m_posZOrderList)
@@ -2200,7 +2229,8 @@ void RenderLayer::updateOverflowList()
         return;
         
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isOverflowOnly()) {
+        // Ignore non-overflow layers and reflections.
+        if (child->isOverflowOnly() && (!m_reflection || reflectionLayer() != child)) {
             if (!m_overflowList)
                 m_overflowList = new Vector<RenderLayer*>;
             m_overflowList->append(child);
@@ -2213,7 +2243,7 @@ void RenderLayer::updateOverflowList()
 void RenderLayer::collectLayers(Vector<RenderLayer*>*& posBuffer, Vector<RenderLayer*>*& negBuffer)
 {
     updateVisibilityStatus();
-        
+
     // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
     if ((m_hasVisibleContent || (m_hasVisibleDescendant && isStackingContext())) && !isOverflowOnly()) {
         // Determine which buffer the child should be in.
@@ -2229,9 +2259,13 @@ void RenderLayer::collectLayers(Vector<RenderLayer*>*& posBuffer, Vector<RenderL
 
     // Recur into our children to collect more layers, but only if we don't establish
     // a stacking context.
-    if (m_hasVisibleDescendant && !isStackingContext())
-        for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-            child->collectLayers(posBuffer, negBuffer);
+    if (m_hasVisibleDescendant && !isStackingContext()) {
+        for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
+            // Ignore reflections.
+            if (!m_reflection || reflectionLayer() != child)
+                child->collectLayers(posBuffer, negBuffer);
+        }
+    }
 }
 
 void RenderLayer::repaintIncludingDescendants()
@@ -2243,13 +2277,13 @@ void RenderLayer::repaintIncludingDescendants()
 
 bool RenderLayer::shouldBeOverflowOnly() const
 {
-    return renderer()->hasOverflowClip() && 
+    return (renderer()->hasOverflowClip() || renderer()->hasReflection()) && 
            !renderer()->isPositioned() &&
            !renderer()->isRelPositioned() &&
            !isTransparent();
 }
 
-void RenderLayer::styleChanged()
+void RenderLayer::styleChanged(RenderStyle* oldStyle)
 {
     bool isOverflowOnly = shouldBeOverflowOnly();
     if (isOverflowOnly != m_isOverflowOnly) {
@@ -2271,6 +2305,64 @@ void RenderLayer::styleChanged()
         delete m_marquee;
         m_marquee = 0;
     }
+    
+    if (!hasReflection() && m_reflection) {
+        m_reflection->destroy();
+        m_reflection = 0;
+    } else if (hasReflection()) {
+        if (!m_reflection)
+            createReflection();
+        updateReflectionStyle();
+    }
+}
+
+RenderLayer* RenderLayer::reflectionLayer() const
+{
+    return m_reflection ? m_reflection->layer() : 0;
+}
+
+void RenderLayer::createReflection()
+{
+    ASSERT(!m_reflection);
+    m_reflection = new (renderer()->renderArena()) RenderReplica(renderer()->document());
+    m_reflection->setParent(renderer()); // We create a 1-way connection.
+}
+
+void RenderLayer::updateReflectionStyle()
+{
+    RenderStyle* newStyle = new (renderer()->renderArena()) RenderStyle();
+    newStyle->inheritFrom(renderer()->style());
+    
+    // Map in our transform.
+    TransformOperations transform;
+    switch (renderer()->style()->boxReflect()->direction()) {
+        case ReflectionBelow:
+            transform.append(new TranslateTransformOperation(Length(0, Fixed), Length(100., Percent)));
+            transform.append(new TranslateTransformOperation(Length(0, Fixed), renderer()->style()->boxReflect()->offset()));
+            transform.append(new ScaleTransformOperation(1.0f, -1.0f));
+            break;
+        case ReflectionAbove:
+            transform.append(new ScaleTransformOperation(1.0f, -1.0f));
+            transform.append(new TranslateTransformOperation(Length(0, Fixed), Length(100., Percent)));
+            transform.append(new TranslateTransformOperation(Length(0, Fixed), renderer()->style()->boxReflect()->offset()));
+            break;
+        case ReflectionRight:
+            transform.append(new TranslateTransformOperation(Length(100., Percent), Length(0, Fixed)));
+            transform.append(new TranslateTransformOperation(renderer()->style()->boxReflect()->offset(), Length(0, Fixed)));
+            transform.append(new ScaleTransformOperation(-1.0f, 1.0f));
+            break;
+        case ReflectionLeft:
+            transform.append(new ScaleTransformOperation(-1.0f, 1.0f));
+            transform.append(new TranslateTransformOperation(Length(100., Percent), Length(0, Fixed)));
+            transform.append(new TranslateTransformOperation(renderer()->style()->boxReflect()->offset(), Length(0, Fixed)));
+            break;
+    }
+    newStyle->setTransform(transform);
+
+    // Map in our mask.
+    newStyle->setMaskBoxImage(renderer()->style()->boxReflect()->mask());
+    
+    m_reflection->setStyle(newStyle);
 }
 
 void RenderLayer::suspendMarquees()

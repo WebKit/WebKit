@@ -43,6 +43,7 @@
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSQuirkPrimitiveValue.h"
+#include "CSSReflectValue.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSStyleRule.h"
@@ -1149,8 +1150,13 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitMaskBoxImage:
         if (id == CSSValueNone)
             valid_primitive = true;
-        else
-            return parseBorderImage(propId, important);
+        else {
+            RefPtr<CSSValue> result;
+            if (parseBorderImage(propId, important, result)) {
+                addProperty(propId, result, important);
+                return true;
+            }
+        }
         break;
     case CSSPropertyWebkitBorderTopRightRadius:
     case CSSPropertyWebkitBorderTopLeftRadius:
@@ -1195,6 +1201,12 @@ bool CSSParser::parseValue(int propId, bool important)
             valid_primitive = true;
         else
             return parseShadow(propId, important);
+        break;
+    case CSSPropertyWebkitBoxReflect:
+        if (id == CSSValueNone)
+            valid_primitive = true;
+        else
+            return parseReflect(propId, important);
         break;
     case CSSPropertyOpacity:
         valid_primitive = validUnit(value, FNumber, strict);
@@ -3206,6 +3218,54 @@ bool CSSParser::parseShadow(int propId, bool important)
     return false;
 }
 
+bool CSSParser::parseReflect(int propId, bool important)
+{
+    // box-reflect: <direction> <offset> <mask>
+    RefPtr<CSSReflectValue> reflectValue = new CSSReflectValue();
+    Value* val = valueList->current();
+    
+    // Direction comes first.
+    switch (val->id) {
+        case CSSValueAbove:
+            reflectValue->setDirection(ReflectionAbove);
+            break;
+        case CSSValueBelow:
+            reflectValue->setDirection(ReflectionBelow);
+            break;
+        case CSSValueLeft:
+            reflectValue->setDirection(ReflectionLeft);
+            break;
+        case CSSValueRight:
+            reflectValue->setDirection(ReflectionRight);
+            break;
+        default:
+            return false;
+    }
+
+    // The offset comes next.
+    val = valueList->next();
+    if (!val)
+        reflectValue->setOffset(new CSSPrimitiveValue(0, CSSPrimitiveValue::CSS_PX));
+    else {
+        if (!validUnit(val, FLength | FPercent, strict))
+            return false;
+        reflectValue->setOffset(new CSSPrimitiveValue(val->fValue, (CSSPrimitiveValue::UnitTypes)val->unit));
+    }
+
+    // Now for the mask.
+    val = valueList->next();
+    if (val) {
+        RefPtr<CSSValue> mask;
+        if (!parseBorderImage(propId, important, mask))
+            return false;
+        reflectValue->setMask(mask);
+    }
+
+    addProperty(propId, reflectValue, important);
+    valueList->next();
+    return true;
+}
+
 struct BorderImageParseContext
 {
     BorderImageParseContext()
@@ -3268,7 +3328,7 @@ struct BorderImageParseContext
             m_verticalRule = keyword;
         m_allowRule = !m_verticalRule;
     }
-    void commitBorderImage(CSSParser* p, int propId, bool important) {
+    PassRefPtr<CSSValue> commitBorderImage(CSSParser* p, bool important) {
         // We need to clone and repeat values for any omissions.
         if (!m_right) {
             m_right = new CSSPrimitiveValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
@@ -3297,10 +3357,6 @@ struct BorderImageParseContext
         if (!m_verticalRule)
             m_verticalRule = m_horizontalRule;
 
-        // Make our new border image value now and add it as the result.
-        CSSBorderImageValue* borderImage = new CSSBorderImageValue(m_image, rect.release(), m_horizontalRule, m_verticalRule);
-        p->addProperty(propId, borderImage, important);
-            
         // Now we have to deal with the border widths.  The best way to deal with these is to actually put these values into a value
         // list and then make our parsing machinery do the parsing.
         if (m_borderTop) {
@@ -3316,6 +3372,9 @@ struct BorderImageParseContext
             p->parseValue(CSSPropertyBorderWidth, important);
             p->valueList = 0;
         }
+
+        // Make our new border image value now.
+        return new CSSBorderImageValue(m_image, rect.release(), m_horizontalRule, m_verticalRule);
     }
     
     bool m_allowBreak;
@@ -3340,7 +3399,7 @@ struct BorderImageParseContext
     int m_verticalRule;
 };
 
-bool CSSParser::parseBorderImage(int propId, bool important)
+bool CSSParser::parseBorderImage(int propId, bool important, RefPtr<CSSValue>& result)
 {
     // Look for an image initially.  If the first value is not a URI, then we're done.
     BorderImageParseContext context;
@@ -3377,9 +3436,15 @@ bool CSSParser::parseBorderImage(int propId, bool important)
         }
     }
     
+    if (context.allowNumber() && propId != CSSPropertyWebkitBorderImage) {
+        // Allow the slices to be omitted for images that don't fit to a border.  We just set the slices to be 0.
+        context.m_top = new CSSPrimitiveValue(0, CSSPrimitiveValue::CSS_NUMBER);
+        context.m_allowBreak = true;
+    }
+
     if (context.allowBreak()) {
         // Need to fully commit as a single value.
-        context.commitBorderImage(this, propId, important);
+        result = context.commitBorderImage(this, important);
         return true;
     }
     
@@ -3470,7 +3535,11 @@ bool parseGradientColorStop(CSSParser* p, Value* a, CSSGradientColorStop& stop)
         else
             stop.m_stop = 1.f;
         
-        stop.m_color = p->parseColor(args->current());
+        int id = args->current()->id;
+        if (id == CSSValueWebkitText || (id >= CSSValueAqua && id <= CSSValueWindowtext) || id == CSSValueMenu)
+            stop.m_color =new CSSPrimitiveValue(id);
+        else
+            stop.m_color = p->parseColor(args->current());
         if (!stop.m_color)
             return false;
     }
@@ -3493,7 +3562,11 @@ bool parseGradientColorStop(CSSParser* p, Value* a, CSSGradientColorStop& stop)
             return false;
             
         stopArg = args->next();
-        stop.m_color = p->parseColor(stopArg);
+        int id = stopArg->id;
+        if (id == CSSValueWebkitText || (id >= CSSValueAqua && id <= CSSValueWindowtext) || id == CSSValueMenu)
+            stop.m_color =new CSSPrimitiveValue(id);
+        else
+            stop.m_color = p->parseColor(stopArg);
         if (!stop.m_color)
             return false;
     }
@@ -3701,7 +3774,7 @@ private:
     CSSParser::Units m_unit;
 };
 
-PassRefPtr<CSSValue> CSSParser::parseTransform()
+PassRefPtr<CSSValueList> CSSParser::parseTransform()
 {
     if (!valueList)
         return 0;

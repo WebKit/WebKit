@@ -571,6 +571,7 @@ webcore_sources += \
 	WebCore/css/CSSParser.cpp \
 	WebCore/css/CSSPrimitiveValue.cpp \
 	WebCore/css/CSSProperty.cpp \
+	WebCore/css/CSSReflectValue.cpp \
 	WebCore/css/CSSRule.cpp \
 	WebCore/css/CSSRuleList.cpp \
 	WebCore/css/CSSSelector.cpp \
@@ -961,6 +962,7 @@ webcore_sources += \
 	WebCore/rendering/RenderPart.cpp \
 	WebCore/rendering/RenderPartObject.cpp \
 	WebCore/rendering/RenderReplaced.cpp \
+	WebCore/rendering/RenderReplica.cpp \
 	WebCore/rendering/RenderSlider.cpp \
 	WebCore/rendering/RenderStyle.cpp \
 	WebCore/rendering/RenderTableCell.cpp \

@@ -250,7 +250,7 @@ void RenderTableCell::setStyle(RenderStyle* newStyle)
 
 bool RenderTableCell::requiresLayer()
 {
-    return isPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasMask();
+    return isPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasMask() || hasReflection();
 }
 
 // The following rules apply for resolving conflicts and figuring out which border
@@ -869,7 +869,8 @@ void RenderTableCell::paintMask(PaintInfo& paintInfo, int tx, int ty)
     int end = min(paintInfo.rect.bottom(), ty + h);
     int mh = end - my;
 
-    paintFillLayers(paintInfo, Color(), style()->maskLayers(), my, mh, tx, ty, w, h);
+    if (paintInfo.phase == PaintPhaseMask)
+        paintFillLayers(paintInfo, Color(), style()->maskLayers(), my, mh, tx, ty, w, h);
     paintNinePieceImage(paintInfo.context, tx, ty, w, h, style(), style()->maskBoxImage());
 }
 

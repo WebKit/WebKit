@@ -32,6 +32,7 @@
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
 #include "RenderImage.h"
+#include "RenderReplica.h"
 #include "RenderTableCell.h"
 #include "RenderTextFragment.h"
 #include "RenderTheme.h"
@@ -380,7 +381,10 @@ int RenderBlock::overflowHeight(bool includeInterior) const
         int shadowHeight = 0;
         for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next)
             shadowHeight = max(boxShadow->y + boxShadow->blur, shadowHeight);
-        return m_height + shadowHeight;
+        int height = m_height + shadowHeight;
+        if (hasReflection())
+            height = max(height, reflectionBox().bottom());
+        return height;
     }
     return m_overflowHeight;
 }
@@ -391,7 +395,10 @@ int RenderBlock::overflowWidth(bool includeInterior) const
         int shadowWidth = 0;
         for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next)
             shadowWidth = max(boxShadow->x + boxShadow->blur, shadowWidth);
-        return m_width + shadowWidth;
+        int width = m_width + shadowWidth;
+        if (hasReflection())
+            width = max(width, reflectionBox().right());
+        return width;
     }
     return m_overflowWidth;
 }
@@ -402,7 +409,10 @@ int RenderBlock::overflowLeft(bool includeInterior) const
         int shadowLeft = 0;
         for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next)
             shadowLeft = min(boxShadow->x - boxShadow->blur, shadowLeft);
-        return shadowLeft;
+        int left = shadowLeft;
+        if (hasReflection())
+            left = min(left, reflectionBox().x());
+        return left;
     }
     return m_overflowLeft;
 }
@@ -413,7 +423,10 @@ int RenderBlock::overflowTop(bool includeInterior) const
         int shadowTop = 0;
         for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next)
             shadowTop = min(boxShadow->y - boxShadow->blur, shadowTop);
-        return shadowTop;
+        int top = shadowTop;
+        if (hasReflection())
+            top = min(top, reflectionBox().y());
+        return top;
     }
     return m_overflowTop;
 }
@@ -437,6 +450,19 @@ IntRect RenderBlock::overflowRect(bool includeInterior) const
         box.move(shadowLeft, shadowTop);
         box.setWidth(box.width() - shadowLeft + shadowRight);
         box.setHeight(box.height() - shadowTop + shadowBottom);
+
+        if (hasReflection()) {
+            IntRect reflection(reflectionBox());
+            int reflectTop = min(box.y(), reflection.y());
+            int reflectBottom = max(box.bottom(), reflection.bottom());
+            box.setHeight(reflectBottom - reflectTop);
+            box.setY(reflectTop);
+            
+            int reflectLeft = min(box.x(), reflection.x());
+            int reflectRight = max(box.right(), reflection.right());
+            box.setWidth(reflectRight - reflectLeft);
+            box.setX(reflectLeft);
+        }
         return box;
     }
 
@@ -529,7 +555,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     }
 
     bool hadColumns = m_hasColumns;
-    if (!hadColumns)
+    if (!hadColumns && !hasReflection())
         view()->pushLayoutState(this, IntSize(xPos(), yPos()));
     else
         view()->disableLayoutState();
@@ -652,9 +678,14 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
             m_overflowTop = min(m_overflowTop, boxShadow->y - boxShadow->blur);
             m_overflowHeight = max(m_overflowHeight, m_height + boxShadow->y + boxShadow->blur);
         }
+        
+        if (hasReflection()) {
+            m_overflowTop = min(m_overflowTop, reflectionBox().y());
+            m_overflowHeight = max(m_overflowHeight, reflectionBox().bottom());
+        }
     }
 
-    if (!hadColumns)
+    if (!hadColumns && !hasReflection())
         view()->popLayoutState();
     else
         view()->enableLayoutState();
@@ -689,8 +720,11 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         }
 
         // Make sure the rect is still non-empty after intersecting for overflow above
-        if (!repaintRect.isEmpty())
+        if (!repaintRect.isEmpty()) {
             repaintRectangle(repaintRect); // We need to do a partial repaint of our content.
+            if (hasReflection())
+                layer()->reflection()->repaintRectangle(repaintRect);
+        }
     }
     setNeedsLayout(false);
 }

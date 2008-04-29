@@ -135,6 +135,20 @@ namespace WebCore {
             }
         }
 
+        float calcFloatValue(int maxValue) const
+        {
+            switch (type()) {
+                case Fixed:
+                    return value();
+                case Percent:
+                    return static_cast<float>(maxValue * percent() / 100.0);
+                case Auto:
+                    return maxValue;
+                default:
+                    return undefinedLength;
+            }
+        }
+
         bool isUndefined() const { return rawValue() == undefinedLength; }
         bool isZero() const { return !(m_value & ~0xF); }
         bool isPositive() const { return rawValue() > 0; }

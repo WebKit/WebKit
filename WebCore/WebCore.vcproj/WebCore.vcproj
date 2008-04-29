@@ -7860,7 +7860,6 @@
 				RelativePath="..\css\CSSGradientValue.h"
 				>
 			</File>
-
 			<File
 				RelativePath="..\css\CSSGrammar.y"
 				>
@@ -8051,6 +8050,22 @@
 			</File>
 			<File
 				RelativePath="..\css\CSSQuirkPrimitiveValue.h"
+				>
+			</File>
+                         <File
+				RelativePath="..\css\CSSReflectValue.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\CSSReflectValue.h"
 				>
 			</File>
 			<File
@@ -9255,6 +9270,22 @@
 			</File>
 			<File
 				RelativePath="..\rendering\RenderReplaced.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\rendering\RenderReplica.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+                        <File
+				RelativePath="..\rendering\RenderReplica.h"
 				>
 			</File>
 			<File

@@ -147,6 +147,7 @@ This file contains the list of files needed to build WebCore.
         css/CSSParser.cpp
         css/CSSPrimitiveValue.cpp
         css/CSSProperty.cpp
+        css/CSSReflectValue.cpp
         css/CSSRule.cpp
         css/CSSRuleList.cpp
         css/CSSSelector.cpp
@@ -782,6 +783,7 @@ This file contains the list of files needed to build WebCore.
         rendering/RenderPart.cpp
         rendering/RenderPartObject.cpp
         rendering/RenderReplaced.cpp
+        rendering/RenderReplica.cpp
         rendering/RenderSlider.cpp
         rendering/RenderStyle.cpp
         rendering/RenderTable.cpp

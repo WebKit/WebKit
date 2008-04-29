@@ -810,6 +810,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_appearance(o.m_appearance)
     , m_borderFit(o.m_borderFit)
     , m_boxShadow(o.m_boxShadow ? new ShadowData(*o.m_boxShadow) : 0)
+    , m_boxReflect(o.m_boxReflect)
     , m_transition(o.m_transition ? new Transition(*o.m_transition) : 0)
     , m_mask(o.m_mask)
 #if ENABLE(XBL)
@@ -860,6 +861,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_appearance == o.m_appearance
         && m_borderFit == o.m_borderFit
         && shadowDataEquivalent(o)
+        && reflectionDataEquivalent(o)
         && transitionDataEquivalent(o)
         && m_mask == o.m_mask
 #if ENABLE(XBL)
@@ -875,6 +877,17 @@ bool StyleRareNonInheritedData::shadowDataEquivalent(const StyleRareNonInherited
     if (m_boxShadow && o.m_boxShadow && (*m_boxShadow != *o.m_boxShadow))
         return false;
     return true;
+}
+
+bool StyleRareNonInheritedData::reflectionDataEquivalent(const StyleRareNonInheritedData& o) const
+{
+    if (m_boxReflect != o.m_boxReflect) {
+        if (!m_boxReflect || !o.m_boxReflect)
+            return false;
+        return *m_boxReflect == *o.m_boxReflect;
+    }
+    return true;
+
 }
 
 bool StyleRareNonInheritedData::transitionDataEquivalent(const StyleRareNonInheritedData& o) const
@@ -1325,6 +1338,9 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
         if (!rareNonInheritedData->shadowDataEquivalent(*other->rareNonInheritedData.get()))
             return Layout;
 
+        if (!rareNonInheritedData->reflectionDataEquivalent(*other->rareNonInheritedData.get()))
+            return Layout;
+    
         if (rareNonInheritedData->m_multiCol.get() != other->rareNonInheritedData->m_multiCol.get() &&
             *rareNonInheritedData->m_multiCol.get() != *other->rareNonInheritedData->m_multiCol.get())
             return Layout;
@@ -1692,13 +1708,13 @@ void RenderStyle::applyTransform(AffineTransform& transform, const IntSize& bord
     }
     
     if (applyTransformOrigin)
-        transform.translate(transformOriginX().calcValue(borderBoxSize.width()), transformOriginY().calcValue(borderBoxSize.height()));
+        transform.translate(transformOriginX().calcFloatValue(borderBoxSize.width()), transformOriginY().calcFloatValue(borderBoxSize.height()));
     
     for (i = 0; i < s; i++)
         rareNonInheritedData->m_transform->m_operations[i]->apply(transform, borderBoxSize);
         
     if (applyTransformOrigin)
-        transform.translate(-transformOriginX().calcValue(borderBoxSize.width()), -transformOriginY().calcValue(borderBoxSize.height()));
+        transform.translate(-transformOriginX().calcFloatValue(borderBoxSize.width()), -transformOriginY().calcFloatValue(borderBoxSize.height()));
 }
 
 #if ENABLE(XBL)

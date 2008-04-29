@@ -142,6 +142,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitBoxOrdinalGroup,
     CSSPropertyWebkitBoxOrient,
     CSSPropertyWebkitBoxPack,
+    CSSPropertyWebkitBoxReflect,
     CSSPropertyWebkitBoxShadow,
     CSSPropertyWebkitBoxSizing,
     CSSPropertyWebkitColumnBreakAfter,
@@ -305,6 +306,22 @@ static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image)
     rect->setLeft(left);
 
     return new CSSBorderImageValue(imageValue, rect, valueForRepeatRule(image.m_horizontalRule), valueForRepeatRule(image.m_verticalRule));
+}
+
+static PassRefPtr<CSSValue> valueForReflection(const StyleReflection* reflection)
+{
+    if (!reflection)
+        return new CSSPrimitiveValue(CSSValueNone);
+
+    RefPtr<CSSReflectValue> reflectValue = new CSSReflectValue();
+    reflectValue->setDirection(reflection->direction());
+    if (reflection->offset().isPercent())
+        reflectValue->setOffset(new CSSPrimitiveValue(reflection->offset().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
+    else
+        reflectValue->setOffset(new CSSPrimitiveValue(reflection->offset().value(), CSSPrimitiveValue::CSS_PX));
+    
+    reflectValue->setMask(valueForNinePieceImage(reflection->mask()));
+    return reflectValue.release();
 }
 
 static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, int propertyID)
@@ -519,6 +536,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 return 0;
             return new CSSPrimitiveValue(boxPack);
         }
+        case CSSPropertyWebkitBoxReflect:
+            return valueForReflection(style->boxReflect());
         case CSSPropertyWebkitBoxShadow:
             return valueForShadow(style->boxShadow());
         case CSSPropertyCaptionSide:

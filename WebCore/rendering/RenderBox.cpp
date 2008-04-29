@@ -38,6 +38,7 @@
 #include "RenderArena.h"
 #include "RenderFlexibleBox.h"
 #include "RenderLayer.h"
+#include "RenderReplica.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -116,6 +117,7 @@ void RenderBox::setStyle(RenderStyle* newStyle)
     }
 
     setHasTransform(newStyle->hasTransform());
+    setHasReflection(newStyle->boxReflect());
 
     if (requiresLayer()) {
         if (!m_layer) {
@@ -133,6 +135,7 @@ void RenderBox::setStyle(RenderStyle* newStyle)
         m_layer = 0;
         setHasLayer(false);
         setHasTransform(false); // Either a transform wasn't specified or the object doesn't support transforms, so just null out the bit.
+        setHasReflection(false);
         layer->removeOnlyThisLayer();
         if (wasFloating && isFloating())
             setChildNeedsLayout(true);
@@ -154,7 +157,7 @@ void RenderBox::setStyle(RenderStyle* newStyle)
     }
 
     if (m_layer)
-        m_layer->styleChanged();
+        m_layer->styleChanged(oldStyle);
 
     // Set the text color if we're the body.
     if (isBody())
@@ -429,7 +432,8 @@ void RenderBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
     else
         mh = min(paintInfo.rect.height(), h);
 
-    paintFillLayers(paintInfo, Color(), style()->maskLayers(), my, mh, tx, ty, w, h);
+    if (paintInfo.phase == PaintPhaseMask)
+        paintFillLayers(paintInfo, Color(), style()->maskLayers(), my, mh, tx, ty, w, h);
     paintNinePieceImage(paintInfo.context, tx, ty, w, h, style(), style()->maskBoxImage());
 }
 
@@ -490,7 +494,8 @@ IntSize RenderBox::calculateBackgroundSize(const FillLayer* bgLayer, int scaledW
 
 void RenderBox::imageChanged(WrappedImagePtr image)
 {
-    if (isInlineFlow() || style()->borderImage().image() && style()->borderImage().image()->data() == image) {
+    if (isInlineFlow() || style()->borderImage().image() && style()->borderImage().image()->data() == image ||
+        style()->maskBoxImage().image() && style()->maskBoxImage().image()->data() == image) {
         repaint();
         return;
     }
@@ -1045,6 +1050,15 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
         }
     }
 
+    // FIXME: This is really a hack.  If the reflection caused the repaint, we don't have to 
+    // do this (and yet we do).  If there are nested reflections, then the single static is insufficient.
+    static bool invalidatingReflection;
+    if (hasReflection() && !invalidatingReflection) {
+        invalidatingReflection = true;
+        layer()->reflection()->repaintRectangle(rect);
+        invalidatingReflection = false;
+    }
+
     int x = rect.x() + m_x;
     int y = rect.y() + m_y;
 
@@ -1057,7 +1071,7 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
 
     if (style()->position() == FixedPosition)
         fixed = true;
-
+        
     RenderObject* o = container();
     if (o) {
         if (o->isBlockFlow() && style()->position() != AbsolutePosition && style()->position() != FixedPosition) {
@@ -1076,7 +1090,7 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
             x += offset.width();
             y += offset.height();
         }
-
+        
         // We are now in our parent container's coordinate space.  Apply our transform to obtain a bounding box
         // in the parent's coordinate space that encloses us.
         if (m_layer && m_layer->transform()) {

@@ -219,7 +219,10 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
         oldOutlineBox = absoluteOutlineBox();
     }
 
-    view()->pushLayoutState(this, IntSize(m_x, m_y));
+    if (!hasReflection())
+        view()->pushLayoutState(this, IntSize(m_x, m_y));
+    else
+        view()->disableLayoutState();
 
     int previousWidth = m_width;
     int previousHeight = m_height;
@@ -295,9 +298,20 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
             m_overflowTop = min(m_overflowTop, boxShadow->y - boxShadow->blur);
             m_overflowHeight = max(m_overflowHeight, m_height + boxShadow->y + boxShadow->blur);
         }
+        
+        if (hasReflection()) {
+            IntRect reflection(reflectionBox());
+            m_overflowTop = min(m_overflowTop, reflection.y());
+            m_overflowHeight = max(m_overflowHeight, reflection.bottom());
+            m_overflowLeft = min(m_overflowLeft, reflection.x());
+            m_overflowHeight = max(m_overflowWidth, reflection.right());
+        }
     }
 
-    view()->popLayoutState();
+    if (!hasReflection())
+        view()->popLayoutState();
+    else
+        view()->enableLayoutState();
 
     // Update our scrollbars if we're overflow:auto/scroll/hidden now that we know if
     // we overflow or not.

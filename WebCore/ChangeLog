@@ -1,3 +1,136 @@
+2008-04-29  David Hyatt  <hyatt@apple.com>
+
+        Implement the new box-reflect property in CSS.  This property enables real-time reflections on
+        objects (yes you can reflect <video>!).
+
+        Reviewed by Dan Bernstein
+
+        Test cases added in fast/reflections/
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::valueForReflection):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseReflect):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::parseGradientColorStop):
+        (WebCore::CSSParser::parseTransform):
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSReflectValue.cpp: Added.
+        (WebCore::CSSReflectValue::cssText):
+        * css/CSSReflectValue.h: Added.
+        (WebCore::):
+        (WebCore::CSSReflectValue::CSSReflectValue):
+        (WebCore::CSSReflectValue::direction):
+        (WebCore::CSSReflectValue::offset):
+        (WebCore::CSSReflectValue::mask):
+        (WebCore::CSSReflectValue::setDirection):
+        (WebCore::CSSReflectValue::setOffset):
+        (WebCore::CSSReflectValue::setMask):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapNinePieceImage):
+        * css/CSSStyleSelector.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesVertically):
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/Length.h:
+        (WebCore::Length::calcFloatValue):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::overflowHeight):
+        (WebCore::RenderBlock::overflowWidth):
+        (WebCore::RenderBlock::overflowLeft):
+        (WebCore::RenderBlock::overflowTop):
+        (WebCore::RenderBlock::overflowRect):
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle):
+        (WebCore::RenderBox::paintMask):
+        (WebCore::RenderBox::imageChanged):
+        (WebCore::RenderBox::computeAbsoluteRepaintRect):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::enclosingPositionedAncestor):
+        (WebCore::RenderLayer::enclosingTransformedAncestor):
+        (WebCore::RenderLayer::isTransparent):
+        (WebCore::transparencyClipBox):
+        (WebCore::RenderLayer::operator delete):
+        (WebCore::RenderLayer::destroy):
+        (WebCore::RenderLayer::removeOnlyThisLayer):
+        (WebCore::RenderLayer::insertOnlyThisLayer):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::updateZOrderLists):
+        (WebCore::RenderLayer::updateOverflowList):
+        (WebCore::RenderLayer::collectLayers):
+        (WebCore::RenderLayer::shouldBeOverflowOnly):
+        (WebCore::RenderLayer::styleChanged):
+        (WebCore::RenderLayer::reflectionLayer):
+        (WebCore::RenderLayer::createReflection):
+        (WebCore::RenderLayer::updateReflectionStyle):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::hasReflection):
+        (WebCore::RenderLayer::reflection):
+        (WebCore::RenderLayer::paintingInsideReflection):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::requiresLayer):
+        (WebCore::RenderObject::setStyle):
+        (WebCore::RenderObject::updateImage):
+        (WebCore::RenderObject::reflectionBox):
+        (WebCore::RenderObject::reflectionOffset):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasTransform):
+        (WebCore::RenderObject::setHasReflection):
+        (WebCore::RenderObject::hasReflection):
+        * rendering/RenderReplica.cpp: Added.
+        (WebCore::RenderReplica::RenderReplica):
+        (WebCore::RenderReplica::~RenderReplica):
+        (WebCore::RenderReplica::layout):
+        (WebCore::RenderReplica::calcPrefWidths):
+        (WebCore::RenderReplica::paint):
+        * rendering/RenderReplica.h: Added.
+        (WebCore::RenderReplica::renderName):
+        (WebCore::RenderReplica::requiresLayer):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::StyleRareNonInheritedData::reflectionDataEquivalent):
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::applyTransform):
+        * rendering/RenderStyle.h:
+        (WebCore::TranslateTransformOperation::apply):
+        (WebCore::StyleReflection::StyleReflection):
+        (WebCore::StyleReflection::operator==):
+        (WebCore::StyleReflection::operator!=):
+        (WebCore::StyleReflection::direction):
+        (WebCore::StyleReflection::offset):
+        (WebCore::StyleReflection::mask):
+        (WebCore::StyleReflection::setDirection):
+        (WebCore::StyleReflection::setOffset):
+        (WebCore::StyleReflection::setMask):
+        (WebCore::RenderStyle::boxReflect):
+        (WebCore::RenderStyle::setBoxReflect):
+        (WebCore::RenderStyle::initialBoxReflect):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::paintMask):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::requiresLayer):
+        (WebCore::RenderTableCell::paintMask):
+
 2008-04-29  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Alice.

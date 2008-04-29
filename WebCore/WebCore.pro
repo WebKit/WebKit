@@ -506,6 +506,7 @@ SOURCES += \
     css/CSSParser.cpp \
     css/CSSPrimitiveValue.cpp \
     css/CSSProperty.cpp \
+    css/CSSReflectValue.cpp \
     css/CSSRule.cpp \
     css/CSSRuleList.cpp \
     css/CSSSelector.cpp \
@@ -898,6 +899,7 @@ SOURCES += \
     rendering/RenderPart.cpp \
     rendering/RenderPartObject.cpp \
     rendering/RenderReplaced.cpp \
+    rendering/RenderReplica.cpp \
     rendering/RenderSlider.cpp \
     rendering/RenderStyle.cpp \
     rendering/RenderTableCell.cpp \

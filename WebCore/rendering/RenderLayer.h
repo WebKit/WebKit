@@ -57,6 +57,7 @@ class HitTestResult;
 class PlatformScrollbar;
 class RenderFrameSet;
 class RenderObject;
+class RenderReplica;
 class RenderStyle;
 class RenderTable;
 class RenderText;
@@ -174,6 +175,8 @@ public:
         ScrollBehavior m_rectPartial;
     };
 
+    friend class RenderReplica;
+
     static const ScrollAlignment gAlignCenterIfNeeded;
     static const ScrollAlignment gAlignToEdgeIfNeeded;
     static const ScrollAlignment gAlignCenterAlways;
@@ -202,7 +205,7 @@ public:
 
     void repaintIncludingDescendants();
 
-    void styleChanged();
+    void styleChanged(RenderStyle*);
 
     Marquee* marquee() const { return m_marquee; }
     void suspendMarquees();
@@ -212,6 +215,10 @@ public:
     bool isTransparent() const;
     RenderLayer* transparentAncestor();
     void beginTransparencyLayers(GraphicsContext*, const RenderLayer* rootLayer);
+
+    bool hasReflection() const { return m_object->hasReflection(); }
+    RenderReplica* reflection() const { return m_reflection; }
+    RenderLayer* reflectionLayer() const;
 
     const RenderLayer* root() const
     {
@@ -392,6 +399,12 @@ private:
 
     Node* enclosingElement() const;
 
+    void createReflection();
+    void updateReflectionStyle();
+    bool paintingInsideReflection() const { return m_paintingInsideReflection; }
+
+    RenderLayer* enclosingTransformedAncestor() const;
+
 protected:   
     RenderObject* m_object;
 
@@ -440,7 +453,8 @@ protected:
     Vector<RenderLayer*>* m_posZOrderList;
     Vector<RenderLayer*>* m_negZOrderList;
 
-    // This list contains our overflow child layers.
+    // This list contains child layers that cannot create stacking contexts.  For now it is just
+    // overflow layers, but that may change in the future.
     Vector<RenderLayer*>* m_overflowList;
 
     ClipRects* m_clipRects;      // Cached clip rects used when painting and hit testing.
@@ -448,11 +462,12 @@ protected:
     bool m_scrollDimensionsDirty : 1;
     bool m_zOrderListsDirty : 1;
     bool m_overflowListDirty: 1;
-    bool m_isOverflowOnly: 1;
+    bool m_isOverflowOnly : 1;
 
     bool m_usedTransparency : 1; // Tracks whether we need to close a transparent layer, i.e., whether
                                  // we ended up painting this layer or any descendants (and therefore need to
                                  // blend).
+    bool m_paintingInsideReflection : 1;  // A state bit tracking if we are painting inside a replica.
     bool m_inOverflowRelayout : 1;
     bool m_needsFullRepaint : 1;
 
@@ -471,6 +486,9 @@ protected:
     int m_staticY;
     
     OwnPtr<AffineTransform> m_transform;
+    
+    // May ultimately be extended to many replicas (with their own paint order).
+    RenderReplica* m_reflection;
 };
 
 } // namespace WebCore

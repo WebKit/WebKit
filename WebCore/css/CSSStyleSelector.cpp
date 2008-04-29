@@ -36,6 +36,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
+#include "CSSReflectValue.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSStyleRule.h"
@@ -1178,14 +1179,15 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
     }
 
     // Make sure our z-index value is only applied if the object is positioned,
-    // relatively positioned, transparent, or has a transform/mask.
-    if (style->position() == StaticPosition && style->opacity() == 1.0f && !style->hasTransform() && !style->hasMask())
+    // relatively positioned, transparent, or has a transform/mask/reflection.
+    if (style->position() == StaticPosition && style->opacity() == 1.0f && !style->hasTransform() && !style->hasMask() && !style->boxReflect())
         style->setHasAutoZIndex();
 
     // Auto z-index becomes 0 for the root element and transparent objects.  This prevents
     // cases where objects that should be blended as a single unit end up with a non-transparent
-    // object wedged in between them.  Auto z-index also becomes 0 for objects that specify transforms/masks.
-    if (style->hasAutoZIndex() && ((e && e->document()->documentElement() == e) || style->opacity() < 1.0f || style->hasTransform() || style->hasMask()))
+    // object wedged in between them.  Auto z-index also becomes 0 for objects that specify transforms/masks/reflections.
+    if (style->hasAutoZIndex() && ((e && e->document()->documentElement() == e) || style->opacity() < 1.0f || 
+        style->hasTransform() || style->hasMask() || style->boxReflect()))
         style->setZIndex(0);
     
     // Button, legend, input, select and textarea all consider width values of 'auto' to be 'intrinsic'.
@@ -3943,70 +3945,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
 
         NinePieceImage image;
-        if (primitiveValue) {
-            if (primitiveValue->getIdent() == CSSValueNone) {
-                if (id == CSSPropertyWebkitBorderImage)
-                    m_style->setBorderImage(image);
-                else
-                    m_style->setMaskBoxImage(image);
-            }
-        } else {
-            // Retrieve the border image value.
-            CSSBorderImageValue* borderImage = static_cast<CSSBorderImageValue*>(value);
-            
-            // Set the image (this kicks off the load).
-            image.m_image = styleImage(borderImage->imageValue());
-
-            // Set up a length box to represent our image slices.
-            LengthBox& l = image.m_slices;
-            Rect* r = borderImage->m_imageSliceRect.get();
-            if (r->top()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-                l.top = Length(r->top()->getDoubleValue(), Percent);
-            else
-                l.top = Length(r->top()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
-            if (r->bottom()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-                l.bottom = Length(r->bottom()->getDoubleValue(), Percent);
-            else
-                l.bottom = Length((int)r->bottom()->getFloatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
-            if (r->left()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-                l.left = Length(r->left()->getDoubleValue(), Percent);
-            else
-                l.left = Length(r->left()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
-            if (r->right()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-                l.right = Length(r->right()->getDoubleValue(), Percent);
-            else
-                l.right = Length(r->right()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
-            
-            // Set the appropriate rules for stretch/round/repeat of the slices
-            switch (borderImage->m_horizontalSizeRule) {
-                case CSSValueStretch:
-                    image.m_horizontalRule = StretchImageRule;
-                    break;
-                case CSSValueRound:
-                    image.m_horizontalRule = RoundImageRule;
-                    break;
-                default: // CSSValueRepeat
-                    image.m_horizontalRule = RepeatImageRule;
-                    break;
-            }
-
-            switch (borderImage->m_verticalSizeRule) {
-                case CSSValueStretch:
-                    image.m_verticalRule = StretchImageRule;
-                    break;
-                case CSSValueRound:
-                    image.m_verticalRule = RoundImageRule;
-                    break;
-                default: // CSSValueRepeat
-                    image.m_verticalRule = RepeatImageRule;
-                    break;
-            }
-            
-            if (id == CSSPropertyWebkitBorderImage)
-                m_style->setBorderImage(image);
-            else
-                m_style->setMaskBoxImage(image);
-        }
+        mapNinePieceImage(value, image);
+        
+        if (id == CSSPropertyWebkitBorderImage)
+            m_style->setBorderImage(image);
+        else
+            m_style->setMaskBoxImage(image);
         return;
     }
 
@@ -4115,6 +4059,29 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             else
                 m_style->setBoxShadow(shadowData, i != 0);
         }
+        return;
+    }
+    case CSSPropertyWebkitBoxReflect: {
+        HANDLE_INHERIT_AND_INITIAL(boxReflect, BoxReflect)
+        if (primitiveValue) {
+            m_style->setBoxReflect(RenderStyle::initialBoxReflect());
+            return;
+        }
+        CSSReflectValue* reflectValue = static_cast<CSSReflectValue*>(value);
+        RefPtr<StyleReflection> reflection = new StyleReflection();
+        reflection->setDirection(reflectValue->direction());
+        if (reflectValue->offset()) {
+            int type = reflectValue->offset()->primitiveType();
+            if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
+                reflection->setOffset(Length(reflectValue->offset()->getDoubleValue(), Percent));
+            else
+                reflection->setOffset(Length(reflectValue->offset()->computeLengthIntForLength(m_style, zoomFactor), Fixed));
+        }
+        NinePieceImage mask;
+        mapNinePieceImage(reflectValue->mask(), mask);
+        reflection->setMask(mask);
+        
+        m_style->setBoxReflect(reflection);
         return;
     }
     case CSSPropertyOpacity:
@@ -4995,6 +4962,64 @@ void CSSStyleSelector::mapTransitionProperty(Transition* transition, CSSValue* v
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     transition->setProperty(primitiveValue->getIdent());
+}
+
+void CSSStyleSelector::mapNinePieceImage(CSSValue* value, NinePieceImage& image)
+{
+    // If we're a primitive value, then we are "none" and don't need to alter the empty image at all.
+    if (!value || value->isPrimitiveValue())
+        return;
+
+    // Retrieve the border image value.
+    CSSBorderImageValue* borderImage = static_cast<CSSBorderImageValue*>(value);
+    
+    // Set the image (this kicks off the load).
+    image.m_image = styleImage(borderImage->imageValue());
+
+    // Set up a length box to represent our image slices.
+    LengthBox& l = image.m_slices;
+    Rect* r = borderImage->m_imageSliceRect.get();
+    if (r->top()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+        l.top = Length(r->top()->getDoubleValue(), Percent);
+    else
+        l.top = Length(r->top()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+    if (r->bottom()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+        l.bottom = Length(r->bottom()->getDoubleValue(), Percent);
+    else
+        l.bottom = Length((int)r->bottom()->getFloatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+    if (r->left()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+        l.left = Length(r->left()->getDoubleValue(), Percent);
+    else
+        l.left = Length(r->left()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+    if (r->right()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+        l.right = Length(r->right()->getDoubleValue(), Percent);
+    else
+        l.right = Length(r->right()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+    
+    // Set the appropriate rules for stretch/round/repeat of the slices
+    switch (borderImage->m_horizontalSizeRule) {
+        case CSSValueStretch:
+            image.m_horizontalRule = StretchImageRule;
+            break;
+        case CSSValueRound:
+            image.m_horizontalRule = RoundImageRule;
+            break;
+        default: // CSSValueRepeat
+            image.m_horizontalRule = RepeatImageRule;
+            break;
+    }
+
+    switch (borderImage->m_verticalSizeRule) {
+        case CSSValueStretch:
+            image.m_verticalRule = StretchImageRule;
+            break;
+        case CSSValueRound:
+            image.m_verticalRule = RoundImageRule;
+            break;
+        default: // CSSValueRepeat
+            image.m_verticalRule = RepeatImageRule;
+            break;
+    }
 }
 
 void CSSStyleSelector::checkForTextSizeAdjust()

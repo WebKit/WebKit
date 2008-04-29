@@ -170,6 +170,7 @@ zoom
 -webkit-box-ordinal-group
 -webkit-box-orient
 -webkit-box-pack
+-webkit-box-reflect
 -webkit-box-shadow
 -webkit-box-sizing
 -webkit-column-break-after
