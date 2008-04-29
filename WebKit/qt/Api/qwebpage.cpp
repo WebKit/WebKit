@@ -1408,6 +1408,9 @@ void QWebPage::setViewportSize(const QSize &size) const
     This function is called whenever WebKit requests to navigate \a frame to the resource specified by \a request by means of
     the specified navigation type \a type.
 
+    If \a frame is a null pointer then navigation to a new window is requested. If the request is
+    accepted createWindow() will be called.
+
     The default implementation interprets the page's linkDelegationPolicy and emits linkClicked accordingly or returns true
     to let QWebPage handle the navigation itself.
 

@@ -1,3 +1,19 @@
+2008-04-29  Simon Hausmann  <shausman@trolltech.com>
+
+        Reviewed by Holger.
+
+        Fixes: QWebPage::acceptNavigationRequest not being called / linkClicked() not being emitted when clicking on <a href="..." target="_blank"> kind of links.
+        
+        Call QWebPage::acceptNavigationRequest when the creation of a new window with
+        URL is requested. The frame pointer is set to null in this case.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setViewportSize):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::startDownload):
+        (WebCore::FrameLoaderClientQt::createFrame):
+
 2008-04-29  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
