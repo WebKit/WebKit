@@ -90,6 +90,18 @@
 
 using namespace WebCore;
 
+#ifndef QT_NO_CURSOR
+SetCursorEvent::SetCursorEvent(const QCursor& cursor)
+    : QEvent(static_cast<QEvent::Type>(EventType))
+    , m_cursor(cursor)
+{}
+
+QCursor SetCursorEvent::cursor() const
+{
+    return m_cursor;
+}
+#endif
+
 // If you change this make sure to also adjust the docs for QWebPage::userAgentForUrl
 #define WEBKIT_VERSION "523.15"
 

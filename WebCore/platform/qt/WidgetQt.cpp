@@ -3,6 +3,7 @@
  * Copyright (C) 2006 George Stiakos <staikos@kde.org>
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * All rights reserved.
  *
@@ -45,6 +46,8 @@
 #include "qwebframe.h"
 #include "qwebframe_p.h"
 #include "qwebpage.h"
+
+#include <QCoreApplication>
 #include <QPainter>
 #include <QPaintEngine>
 
@@ -113,7 +116,7 @@ void Widget::setCursor(const Cursor& cursor)
 {
 #ifndef QT_NO_CURSOR
     if (QWidget* widget = containingWindow())
-        widget->setCursor(cursor.impl());
+        QCoreApplication::postEvent(widget, new SetCursorEvent(cursor.impl()));
 #endif
 }
 

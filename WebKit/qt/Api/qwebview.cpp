@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2007 Trolltech ASA
+    Copyright (C) 2008 Holger Hans Peter Freyther
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -20,6 +21,9 @@
 #include "config.h"
 #include "qwebview.h"
 #include "qwebframe.h"
+#include "qwebpage_p.h"
+
+#include "qbitmap.h"
 #include "qevent.h"
 #include "qpainter.h"
 #include "qprinter.h"
@@ -27,7 +31,40 @@
 class QWebViewPrivate
 {
 public:
+    QWebViewPrivate(QWebView *view)
+        : view(view)
+        , page(0)
+#ifndef QT_NO_CURSOR
+        , cursorSetByWebCore(false)
+        , usesWebCoreCursor(true)
+#endif
+    {}
+
+    QWebView *view;
     QWebPage *page;
+
+
+#ifndef QT_NO_CURSOR
+    /*
+     * We keep track of if we have called setCursor and if the CursorChange
+     * event is sent due our setCursor call and if we currently use the WebCore
+     * Cursor and use it to decide if we can update to another WebCore Cursor.
+     */
+    bool cursorSetByWebCore;
+    bool usesWebCoreCursor;
+
+    void setCursor(const QCursor& newCursor)
+    {
+        webCoreCursor = newCursor;
+
+        if (usesWebCoreCursor) {
+            cursorSetByWebCore = true;
+            view->setCursor(webCoreCursor);
+        }
+    }
+
+    QCursor webCoreCursor;
+#endif
 };
 
 /*!
@@ -116,8 +153,7 @@ public:
 QWebView::QWebView(QWidget *parent)
     : QWidget(parent)
 {
-    d = new QWebViewPrivate;
-    d->page = 0;
+    d = new QWebViewPrivate(this);
 
     QPalette pal = palette();
     pal.setBrush(QPalette::Background, Qt::white);
@@ -476,9 +512,25 @@ bool QWebView::event(QEvent *e)
             d->page->updatePositionDependentActions(event->pos());
         } else if (e->type() == QEvent::ShortcutOverride) {
             d->page->event(e);
+#ifndef QT_NO_CURSOR
+        } else if (e->type() == static_cast<QEvent::Type>(WebCore::SetCursorEvent::EventType)) {
+            d->setCursor(static_cast<WebCore::SetCursorEvent*>(e)->cursor());
+#if QT_VERSION >= 0x040400
+        } else if (e->type() == QEvent::CursorChange) {
+            // Okay we might use the WebCore Cursor now.
+            d->usesWebCoreCursor = d->cursorSetByWebCore;
+            d->cursorSetByWebCore = false;
+
+            // Go back to the WebCore Cursor. QWidget::unsetCursor is appromixated with this
+            if (!d->usesWebCoreCursor && cursor().shape() == Qt::ArrowCursor) {
+                d->usesWebCoreCursor = true;
+                d->setCursor(d->webCoreCursor);
+            }
+        }
+#endif
+#endif
         } else if (e->type() == QEvent::Leave) {
             d->page->event(e);
-        }
     }
 
     return QWidget::event(e);

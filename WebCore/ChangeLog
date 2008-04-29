@@ -1,3 +1,25 @@
+2008-04-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        Calling QWebView::setCursor will override the WebCore Cursor.
+        Calling QWebView::setCursor will override the WebCore Cursor using
+        QWidget::unsetCursor will revert to the WebCore Cursor.
+
+        For detecting the unset we have to compare the shape of the
+        cursor to the default arrow. Qt::WA_SetCursor can not be used
+        as it is set unconditionally but conditionally removed.
+
+        Calling QWidget::setCursor will immediately send the CursorChange
+        event. We listen to this event to decide if we currently use a
+        WebCore cursor, got a cursor from outside, or revert to the default.
+
+        This should be race free and work reliable, the manual test for this
+        is WebCore/manual-tests/cursor.html
+
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::setCursor):
+
 2008-04-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

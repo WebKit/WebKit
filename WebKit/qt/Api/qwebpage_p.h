@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2007 Trolltech ASA
+    Copyright (C) 2008 Holger Hans Peter Freyther
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -23,6 +24,7 @@
 #include <qbasictimer.h>
 #include <qnetworkproxy.h>
 #include <qpointer.h>
+#include <qevent.h>
 
 #include "qwebpage.h"
 #include "qwebhistory.h"
@@ -43,6 +45,18 @@ namespace WebCore
     class Element;
     class Node;
     class Page;
+
+#ifndef QT_NO_CURSOR
+    class SetCursorEvent : public QEvent {
+    public:
+        static const int EventType = 724;
+        SetCursorEvent(const QCursor&);
+
+        QCursor cursor() const;
+    private:
+        QCursor m_cursor;
+    };
+#endif
 }
 
 QT_BEGIN_NAMESPACE
