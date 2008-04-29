@@ -1,3 +1,14 @@
+2008-04-29  Anatoli Papirovski  <apapirovski@mac.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=18355
+        Updated the results of the layout test for "RGB color syntax error handling".
+
+        * platform/mac/css2.1/t040306-syntax-01-f-expected.checksum:
+        * platform/mac/css2.1/t040306-syntax-01-f-expected.png:
+        * platform/mac/css2.1/t040306-syntax-01-f-expected.txt:
+
 2008-04-29  Simon Hausmann  <hausmann@webkit.org>
 
         Rubber-stamped by Holger.

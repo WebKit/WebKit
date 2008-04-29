@@ -1,3 +1,14 @@
+2008-04-29  Anatoli Papirovski  <apapirovski@mac.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=18355
+        Fixed RGB and RGBA parsing to ignore the declaration when the value is not
+        "either three integer values or three percentage values."
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseColorParameters):
+
 2008-04-29  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
