@@ -1,3 +1,13 @@
+2008-04-30  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Fix null pointer deference triggered by
+        LayoutTests/fast/loader/cancel-load-during-port-block-timer.html
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::cancel): Check m_job before dereferencing.
+
 2008-04-29  David Hyatt  <hyatt@apple.com>
 
         Improve the performance of masks by adding code to set more precise clips on the transparency layers
