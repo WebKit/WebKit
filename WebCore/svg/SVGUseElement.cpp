@@ -355,7 +355,8 @@ void SVGUseElement::buildPendingResource()
     // Eventually dump shadow tree
 #ifdef DUMP_SHADOW_TREE
     ExceptionCode ec = 0;
-    OwnPtr<XMLSerializer> serializer(new XMLSerializer());
+
+    PassRefPtr<XMLSerializer> serializer = XMLSerializer::create();
 
     String markup = serializer->serializeToString(m_shadowTreeRootElement.get(), ec);
     ASSERT(ec == 0);
