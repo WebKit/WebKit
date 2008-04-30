@@ -882,6 +882,15 @@ webarchive/loading/test-loading-archive.html
 # ------- <video> support
 media
 
+# ------ storage support
+storage
+
+# ------ web archive support
+webarchive
+
+# ----- XSLT currently not supported
+fast/xsl
+
 # ------- storage support
 # Missing LayoutTestController implementations and database related delegate callback
 storage/quota-tracking.html
