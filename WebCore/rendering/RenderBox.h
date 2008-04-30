@@ -142,7 +142,7 @@ public:
     virtual IntRect caretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
 
     virtual void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight,
-                                        int tx, int ty, int width, int height, InlineFlowBox* = 0);
+                                        int tx, int ty, int width, int height, InlineFlowBox* = 0, CompositeOperator = CompositeSourceOver);
     IntSize calculateBackgroundSize(const FillLayer*, int scaledWidth, int scaledHeight) const;
 
     virtual int staticX() const;
@@ -165,9 +165,13 @@ public:
         setNeedsLayout(false);
     }
 
+    virtual IntRect maskClipRect();
+    
 protected:
-    void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);
-    void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height);
+    void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height, CompositeOperator = CompositeSourceOver);
+    void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height, CompositeOperator = CompositeSourceOver);
+
+    void paintMaskImages(const PaintInfo&, int clipY, int clipHeight, int tx, int ty, int width, int height);
 
 #if PLATFORM(MAC)
     void paintCustomHighlight(int tx, int ty, const AtomicString& type, bool behindText);

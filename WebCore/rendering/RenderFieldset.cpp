@@ -154,7 +154,7 @@ void RenderFieldset::paintMask(PaintInfo& paintInfo, int tx, int ty)
     int end = min(paintInfo.rect.bottom(), ty + h);
     int mh = end - my;
 
-    paintFillLayers(paintInfo, Color(), style()->maskLayers(), my, mh, tx, ty, w, h);
+    paintMaskImages(paintInfo, my, mh, tx, ty, w, h);
 }
         
 void RenderFieldset::paintBorderMinusLegend(GraphicsContext* graphicsContext, int tx, int ty, int w, int h,

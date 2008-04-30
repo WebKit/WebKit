@@ -432,25 +432,69 @@ void RenderBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
     else
         mh = min(paintInfo.rect.height(), h);
 
-    if (paintInfo.phase == PaintPhaseMask)
-        paintFillLayers(paintInfo, Color(), style()->maskLayers(), my, mh, tx, ty, w, h);
-    paintNinePieceImage(paintInfo.context, tx, ty, w, h, style(), style()->maskBoxImage());
+    paintMaskImages(paintInfo, my, mh, tx, ty, w, h);
+}
+
+void RenderBox::paintMaskImages(const PaintInfo& paintInfo, int my, int mh, int tx, int ty, int w, int h)
+{
+    // Figure out if we need to push a transparency layer to render our mask.
+    bool pushTransparencyLayer = false;
+    StyleImage* maskBoxImage = style()->maskBoxImage().image();
+    if ((maskBoxImage && style()->maskLayers()->hasImage()) || style()->maskLayers()->next())
+        // We have to use an extra image buffer to hold the mask. Multiple mask images need
+        // to composite together using source-over so that they can then combine into a single unified mask that
+        // can be composited with the content using destination-in.  SVG images need to be able to set compositing modes
+        // as they draw images contained inside their sub-document, so we paint all our images into a separate buffer
+        // and composite that buffer as the mask.
+        pushTransparencyLayer = true;
+    
+    CompositeOperator compositeOp = CompositeDestinationIn;
+    if (pushTransparencyLayer) {
+        paintInfo.context->setCompositeOperation(CompositeDestinationIn);
+        paintInfo.context->beginTransparencyLayer(1.0f);
+        compositeOp = CompositeSourceOver;
+    }
+
+    paintFillLayers(paintInfo, Color(), style()->maskLayers(), my, mh, tx, ty, w, h, compositeOp);
+    paintNinePieceImage(paintInfo.context, tx, ty, w, h, style(), style()->maskBoxImage(), compositeOp);
+    
+    if (pushTransparencyLayer)
+        paintInfo.context->endTransparencyLayer();
+}
+
+IntRect RenderBox::maskClipRect()
+{
+    IntRect bbox = borderBox();
+    if (style()->maskBoxImage().image())
+        return bbox;
+    
+    IntRect result;
+    for (const FillLayer* maskLayer = style()->maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
+        if (maskLayer->image()) {
+            IntRect maskRect;
+            IntPoint phase;
+            IntSize tileSize;
+            calculateBackgroundImageGeometry(maskLayer, bbox.x(), bbox.y(), bbox.width(), bbox.height(), maskRect, phase, tileSize);
+            result.unite(maskRect);
+        }
+    }
+    return result;
 }
 
 void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer,
-                                int clipY, int clipH, int tx, int ty, int width, int height)
+                                int clipY, int clipH, int tx, int ty, int width, int height, CompositeOperator op)
 {
     if (!fillLayer)
         return;
 
-    paintFillLayers(paintInfo, c, fillLayer->next(), clipY, clipH, tx, ty, width, height);
-    paintFillLayer(paintInfo, c, fillLayer, clipY, clipH, tx, ty, width, height);
+    paintFillLayers(paintInfo, c, fillLayer->next(), clipY, clipH, tx, ty, width, height, op);
+    paintFillLayer(paintInfo, c, fillLayer, clipY, clipH, tx, ty, width, height, op);
 }
 
 void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer,
-                               int clipY, int clipH, int tx, int ty, int width, int height)
+                               int clipY, int clipH, int tx, int ty, int width, int height, CompositeOperator op)
 {
-    paintFillLayerExtended(paintInfo, c, fillLayer, clipY, clipH, tx, ty, width, height);
+    paintFillLayerExtended(paintInfo, c, fillLayer, clipY, clipH, tx, ty, width, height, 0, op);
 }
 
 IntSize RenderBox::calculateBackgroundSize(const FillLayer* bgLayer, int scaledWidth, int scaledHeight) const
@@ -652,7 +696,7 @@ void RenderBox::calculateBackgroundImageGeometry(const FillLayer* bgLayer, int t
 }
 
 void RenderBox::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& c, const FillLayer* bgLayer, int clipY, int clipH,
-                                       int tx, int ty, int w, int h, InlineFlowBox* box)
+                                       int tx, int ty, int w, int h, InlineFlowBox* box, CompositeOperator op)
 {
     GraphicsContext* context = paintInfo.context;
     bool includeLeftEdge = box ? box->includeLeftEdge() : true;
@@ -776,8 +820,10 @@ void RenderBox::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& 
         IntSize tileSize;
 
         calculateBackgroundImageGeometry(bgLayer, tx, ty, w, h, destRect, phase, tileSize);
-        if (!destRect.isEmpty())
-            context->drawTiledImage(bg->image(this, tileSize), destRect, phase, tileSize, bgLayer->composite());
+        if (!destRect.isEmpty()) {
+            CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
+            context->drawTiledImage(bg->image(this, tileSize), destRect, phase, tileSize, compositeOp);
+        }
     }
 
     if (bgLayer->clip() != BorderFillBox)

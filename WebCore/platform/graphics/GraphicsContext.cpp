@@ -376,7 +376,7 @@ void GraphicsContext::drawTiledImage(Image* image, const IntRect& dest, const In
 
     if (hRule == Image::StretchTile && vRule == Image::StretchTile)
         // Just do a scale.
-        return drawImage(image, dest, srcRect);
+        return drawImage(image, dest, srcRect, op);
 
     image->drawTiled(this, dest, srcRect, hRule, vRule, op);
 }

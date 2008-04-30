@@ -1,3 +1,75 @@
+2008-04-29  David Hyatt  <hyatt@apple.com>
+
+        Improve the performance of masks by adding code to set more precise clips on the transparency layers
+        used to paint the content under the mask, and then also avoid creating transparency layers for the masks
+        themselves in common cases.
+
+        Reviewed by Dan Bernstein
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawTiledImage):
+        Fix a bug in drawTiledImage where the composite mode got lost in the double stretch case for nine piece
+        images.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintFillLayers):
+        (WebCore::InlineFlowBox::paintFillLayer):
+        (WebCore::InlineFlowBox::paintMask):
+        Optimize to only push a transparency layer for the mask if multiple images are combining.  Add a new
+        composite operator argument for use when painting fill layers to do direct destination-in compositing while
+        painting images.
+
+
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintMask):
+        (WebCore::RenderBox::paintMaskImages):
+        Optimize to only push a transparency layer for the mask if multiple images are combining.
+
+        (WebCore::RenderBox::maskClipRect):
+        A new method that attempts to compute a precise clip rect for the mask images.
+
+        (WebCore::RenderBox::paintFillLayers):
+        (WebCore::RenderBox::paintFillLayer):
+        (WebCore::RenderBox::paintFillLayerExtended):
+        * rendering/RenderBox.h:
+        Added the composite operator argument to the paintFillLayer methods.
+
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintMask):
+        Call the new base class paintMaskImages method for optimized mask painting.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::transparencyClipBox):
+        Fix a coordinate space issue with transparencyClipBox when masks were used.  The border box was in the
+        wrong coordinate space.  Moved the code into the layer's boundingBox() method instead.
+
+        (WebCore::RenderLayer::paintLayer):
+        Removed the code that always pushed a transparency layer before painting masks.
+
+        (WebCore::RenderLayer::boundingBox):
+        Call maskClipRect to shrink the bounding box of the layer to fit the mask clip.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintNinePieceImage):
+        Added a composite operator argument for direct destination-in painting of nine piece images.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::maskClipRect):
+        (WebCore::RenderObject::paintFillLayerExtended):
+        Base class stubs for RenderBox-implemented methods.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintMask):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintMask):
+        Modified to call the new paintMaskImages function.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw):
+        SVG images now respect composite modes by pushing a transparency layer when the composite mode
+        is anything other than source-over.
+
 2008-04-30  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Rubber-stamped by Rob Buis.

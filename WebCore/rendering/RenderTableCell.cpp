@@ -869,9 +869,7 @@ void RenderTableCell::paintMask(PaintInfo& paintInfo, int tx, int ty)
     int end = min(paintInfo.rect.bottom(), ty + h);
     int mh = end - my;
 
-    if (paintInfo.phase == PaintPhaseMask)
-        paintFillLayers(paintInfo, Color(), style()->maskLayers(), my, mh, tx, ty, w, h);
-    paintNinePieceImage(paintInfo.context, tx, ty, w, h, style(), style()->maskBoxImage());
+    paintMaskImages(paintInfo, my, mh, tx, ty, w, h);
 }
 
 } // namespace WebCore

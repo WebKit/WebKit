@@ -496,9 +496,7 @@ static IntRect transparencyClipBox(const AffineTransform& enclosingTransform, co
     
     // If we have a mask, then the clip is limited to the border box area (and there is
     // no need to examine child layers).
-    if (l->renderer()->hasMask())
-        clipRect.intersect(l->renderer()->borderBox());
-    else {
+    if (!l->renderer()->hasMask()) {
         for (RenderLayer* curr = l->firstChild(); curr; curr = curr->nextSibling()) {
             if (!l->reflection() || l->reflectionLayer() != curr)
                 clipRect.unite(transparencyClipBox(enclosingTransform, curr, rootLayer));
@@ -1664,17 +1662,10 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     if (renderer()->hasMask() && shouldPaint && !selectionOnly && !damageRect.isEmpty()) {
         setClip(p, paintDirtyRect, damageRect);
 
-        // Paint the mask.  We have to use an extra image buffer to hold the mask. Multiple mask images need
-        // to composite together using source-over so that they can then combine into a single unified mask that
-        // can be composited with the content using destination-in.  SVG images need to be able to set compositing modes
-        // as they draw images contained inside their sub-document, so we paint all our images into a separate buffer
-        // and composite that  buffer as the mask.
-        p->setCompositeOperation(CompositeDestinationIn);
-        p->beginTransparencyLayer(1.0f);
+        // Paint the mask.
         RenderObject::PaintInfo paintInfo(p, damageRect, PaintPhaseMask, false, paintingRootForRenderer, 0);
         renderer()->paint(paintInfo, tx, ty);
-        p->endTransparencyLayer();
-
+        
         // Restore the clip.
         restoreClip(p, paintDirtyRect, damageRect);
     }
@@ -2063,12 +2054,16 @@ IntRect RenderLayer::boundingBox(const RenderLayer* rootLayer) const
         }
         result.move(m_x, m_y);
     } else {
-        IntRect bbox = renderer()->borderBox();
-        result = bbox;
-        IntRect overflowRect = renderer()->overflowRect(false);
-        if (bbox != overflowRect)
-            result.unite(overflowRect);
-        
+        if (renderer()->hasMask())
+            result = renderer()->maskClipRect();
+        else {
+            IntRect bbox = renderer()->borderBox();
+            result = bbox;
+            IntRect overflowRect = renderer()->overflowRect(false);
+            if (bbox != overflowRect)
+                result.unite(overflowRect);
+        }
+
         // We have to adjust the x/y of this result so that it is in the coordinate space of the layer.
         // We also have to add in borderTopExtra here, since borderBox(), in order to play well with methods like
         // floatRect that deal with child content, uses an origin of (0,0) that is at the child content box (so

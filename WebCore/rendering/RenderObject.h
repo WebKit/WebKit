@@ -368,7 +368,8 @@ public:
     
     bool hasTransform() const { return m_hasTransform; }
     bool hasMask() const { return style() && style()->hasMask(); }
-    
+    virtual IntRect maskClipRect() { return borderBox(); }
+
 private:
     bool includeVerticalScrollbarSize() const { return hasOverflowClip() && (style()->overflowY() == OSCROLL || style()->overflowY() == OAUTO); }
     bool includeHorizontalScrollbarSize() const { return hasOverflowClip() && (style()->overflowX() == OSCROLL || style()->overflowX() == OAUTO); }
@@ -471,7 +472,7 @@ public:
 
     virtual void paint(PaintInfo&, int tx, int ty);
     void paintBorder(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, bool begin = true, bool end = true);
-    bool paintNinePieceImage(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, const NinePieceImage&);
+    bool paintNinePieceImage(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, const NinePieceImage&, CompositeOperator = CompositeSourceOver);
     void paintOutline(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*);
     void paintBoxShadow(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, bool begin = true, bool end = true);
 
@@ -480,7 +481,7 @@ public:
     virtual void paintMask(PaintInfo&, int tx, int ty) { }
     virtual void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*,
                                         int clipy, int cliph, int tx, int ty, int width, int height,
-                                        InlineFlowBox* box = 0) { }
+                                        InlineFlowBox* box = 0, CompositeOperator = CompositeSourceOver) { }
 
     
     /*

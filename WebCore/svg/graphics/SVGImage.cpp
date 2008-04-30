@@ -147,12 +147,17 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
     context->save();
     context->setCompositeOperation(compositeOp);
     context->clip(enclosingIntRect(dstRect));
+    if (compositeOp != CompositeSourceOver)
+        context->beginTransparencyLayer(1.0f);
     context->translate(dstRect.location().x(), dstRect.location().y());
     context->scale(FloatSize(dstRect.width()/srcRect.width(), dstRect.height()/srcRect.height()));
     
     if (m_frame->view()->needsLayout())
         m_frame->view()->layout();
     m_frame->paint(context, enclosingIntRect(srcRect));
+
+    if (compositeOp != CompositeSourceOver)
+        context->endTransparencyLayer();
 
     context->restore();
 
