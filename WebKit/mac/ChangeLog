@@ -1,5 +1,12 @@
 2008-04-30  Brady Eidson  <beidson@apple.com>
 
+        Fix my WebPreferences revert check-in
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
+2008-04-30  Brady Eidson  <beidson@apple.com>
+
         Rubberstamped by John Sullivan
 
         Revert the remainder of my original preferences changes from last week.

@@ -940,7 +940,7 @@ static bool debugWidget = true;
     return needsQuirks;
 }
 
-- (void)_updateSettingsFromPreferences:(NSNotification *)notification
+- (void)_preferencesChangedNotification:(NSNotification *)notification
 {
     WebPreferences *preferences = (WebPreferences *)[notification object];
     ASSERT(preferences == [self preferences]);
