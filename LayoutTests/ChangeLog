@@ -1,3 +1,14 @@
+2008-04-30  David Hyatt  <hyatt@apple.com>
+
+        Add test for video crasher.
+
+        Reviewed by Dan Bernstein
+
+        * media/video-layer-crash.html: Added.
+        * platform/mac/media/video-layer-crash-expected.checksum: Added.
+        * platform/mac/media/video-layer-crash-expected.png: Added.
+        * platform/mac/media/video-layer-crash-expected.txt: Added.
+
 2008-04-30  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Rubber-stamped by Simon

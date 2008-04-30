@@ -1,3 +1,23 @@
+2008-04-30  David Hyatt  <hyatt@apple.com>
+
+        Fix crashes when dynamically removing <video> elements with layers that establish stacking contexts.  This
+        won't typically crash release builds because of arena recycling.
+
+        Reviewed by Dan Bernstein
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::~RenderLayer):
+        Make sure to remove the reflection's child layer from its parent.
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::~RenderMedia):
+        (WebCore::RenderMedia::destroy):
+        (WebCore::RenderMedia::removeChild):
+        * rendering/RenderMedia.h:
+        Adjust the teardown of RenderMedia so that it does all of its teardown inside destroy() (this makes it more
+        like other renderers and doesn't leave you staring at a trashed layer hierarchy in the RenderMedia
+        destructor).
+
 2008-04-30  Rémi Zara  <remi_zara@mac.com>
 
         Reviewed by Dave Hyatt.
