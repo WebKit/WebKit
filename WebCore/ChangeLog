@@ -1,3 +1,13 @@
+2008-04-30  Rémi Zara  <remi_zara@mac.com>
+
+        Reviewed by Dave Hyatt.
+
+        fix https://bugs.webkit.org/show_bug.cgi?id=18618
+        REGRESSION (r31823-r31847): Patterns are upside down
+
+        * svg/graphics/cg/SVGPaintServerPatternCg.cpp:
+        (WebCore::patternCallback): flip the y axis when drawing the tile
+
 2008-04-30  Timothy Hatcher  <timothy@apple.com>
 
         Fixes an undefined type exception that fires when adding a resource to the inspector

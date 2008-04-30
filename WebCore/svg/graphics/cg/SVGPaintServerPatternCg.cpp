@@ -35,7 +35,11 @@ namespace WebCore {
 static void patternCallback(void* info, CGContextRef context)
 {
     ImageBuffer* patternImage = reinterpret_cast<ImageBuffer*>(info);
+    CGContextSaveGState(context);
+    CGContextTranslateCTM(context, 0, patternImage->size().height());
+    CGContextScaleCTM(context, 1.0f, -1.0f);
     CGContextDrawImage(context, CGRect(FloatRect(FloatPoint(), patternImage->size())), patternImage->cgImage());
+    CGContextRestoreGState(context);
 }
 
 bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
