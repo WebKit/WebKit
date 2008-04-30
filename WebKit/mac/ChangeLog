@@ -1,3 +1,16 @@
+2008-04-30  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by John Sullivan
+
+        Revert the remainder of my original preferences changes from last week.
+        They caused a massive PLT regression (too many notifications being sent out
+        or listened to that weren't previously) and it's not in my schedule to refine
+        the preferences code instead of working on my feature!
+
+        * WebView/WebView.mm:
+        (-[WebView _updateSettingsFromPreferences:]):
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2008-04-30  Anders Carlsson  <andersca@apple.com>
 
         Fix the 64-bit build.

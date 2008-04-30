@@ -940,8 +940,11 @@ static bool debugWidget = true;
     return needsQuirks;
 }
 
-- (void)_updateSettingsFromPreferences:(WebPreferences *)preferences
+- (void)_updateSettingsFromPreferences:(NSNotification *)notification
 {
+    WebPreferences *preferences = (WebPreferences *)[notification object];
+    ASSERT(preferences == [self preferences]);
+    
     if (!_private->userAgentOverridden)
         *_private->userAgent = String();
 
@@ -993,14 +996,6 @@ static bool debugWidget = true;
     settings->setNeedsSiteSpecificQuirks(_private->useSiteSpecificSpoofing);
     settings->setWebArchiveDebugModeEnabled([preferences webArchiveDebugModeEnabled]);
     settings->setOfflineWebApplicationCacheEnabled([preferences offlineWebApplicationCacheEnabled]);
-}
-
-- (void)_preferencesChangedNotification:(NSNotification *)notification
-{
-    WebPreferences *preferences = (WebPreferences *)[notification object];
-    ASSERT(preferences == [self preferences]);
-    
-   [self _updateSettingsFromPreferences:preferences];
 }
 
 static inline IMP getMethod(id o, SEL s)
@@ -1873,12 +1868,6 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     
     _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self), new WebInspectorClient(self));
 
-    WebPreferences *prefs = [self preferences];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
-                                                 name:WebPreferencesChangedNotification object:prefs];
-
-    [self _updateSettingsFromPreferences:[self preferences]];
-
     [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView];
 
 #ifndef BUILDING_ON_TIGER
@@ -1907,6 +1896,14 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     // initialize WebScriptDebugServer here so listeners can register before any pages are loaded.
     if ([WebView _scriptDebuggerEnabled])
         [WebScriptDebugServer sharedScriptDebugServer];
+
+    WebPreferences *prefs = [self preferences];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
+                                                 name:WebPreferencesChangedNotification object:prefs];
+
+    // Post a notification so the WebCore settings update.
+    [[self preferences] _postPreferencesChangesNotification];
+
 
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION))
         FrameLoader::setRestrictAccessToLocal(false);
