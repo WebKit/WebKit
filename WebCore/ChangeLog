@@ -1,5 +1,11 @@
 2008-04-29  David Kilzer  <ddkilzer@apple.com>
 
+        Another BUILD FIX for ENABLE(DASHBOARD_SUPPORT)
+
+        * dom/make_names.pl: Added #if ENABLE(DASHBOARD_SUPPORT) to Dashboard code.
+
+2008-04-29  David Kilzer  <ddkilzer@apple.com>
+
         BUILD FIX for ENABLE(DASHBOARD_SUPPORT)
 
         * DerivedSources.make: Removed duplication of targets for
