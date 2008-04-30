@@ -1,5 +1,17 @@
 2008-04-30  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes an undefined type exception that fires when adding a resource to the inspector
+        that has a MIME type warning.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Resource.js:
+        (WebInspector.Resource.prototype._addTip): Call WebInspector.console instead of
+        WebInspector.consolePanel.
+        (WebInspector.Resource.prototype._checkWarning): Ditto.
+
+2008-04-30  Timothy Hatcher  <timothy@apple.com>
+
         Fixes the bug where the selected resource would be deselected after
         changing the sort order in the Resources panel.
 

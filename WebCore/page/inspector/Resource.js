@@ -436,7 +436,7 @@ WebInspector.Resource.prototype = {
         /*
         var msg = new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
                     WebInspector.ConsoleMessage.MessageLevel.Tip, -1, this.url, tip.message);
-        WebInspector.consolePanel.addMessage(msg);
+        WebInspector.console.addMessage(msg);
         */
     },
 
@@ -502,7 +502,7 @@ WebInspector.Resource.prototype = {
         }
 
         if (msg)
-            WebInspector.consolePanel.addMessage(msg);
+            WebInspector.console.addMessage(msg);
     }
 }
 
