@@ -1,5 +1,32 @@
 2008-04-30  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes the regression where error bubbles in source views always show
+        "undefined" for the content because the message property on
+        ConsoleMessage was removed. Adds support for a plain text formated
+        message that is stored in the message proeprty.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Console.js:
+        (WebInspector.Console.prototype._format): Add a plainText argument that is passed to
+        the formatters.
+        (WebInspector.Console.prototype._formatvalue): Add a plainText argument, and a comment
+        about needing to honor it if the textContent of the output doesn't make sense.
+        (WebInspector.Console.prototype._formatvalue): Ditto.
+        (WebInspector.Console.prototype._formatstring): Ditto.
+        (WebInspector.Console.prototype._formatregexp): Ditto.
+        (WebInspector.Console.prototype._formatarray): Ditto.
+        (WebInspector.Console.prototype._formatnode): Ditto.
+        (WebInspector.Console.prototype._formatobject): Ditto.
+        (WebInspector.Console.prototype._formaterror): Ditto.
+        (WebInspector.ConsoleMessage): Call _format passing true for plainText. Get the 
+        textContnet of the result and assign to the message proeprty. This property is 
+        referenced from the SourceView.
+        (WebInspector.ConsoleMessage.prototype._format): Add a plainText argument. Build the 
+        result element as a local and return it, instead of using formatedMessage directly.
+
+2008-04-30  Timothy Hatcher  <timothy@apple.com>
+
         Adds a helper function to convert a JSValueRef to a String.
 
         Reviewed by Adam Roben.

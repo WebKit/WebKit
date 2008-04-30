@@ -336,7 +336,7 @@ WebInspector.Console.prototype = {
         this.addMessage(new WebInspector.ConsoleCommand(str, result, this._format(result), level));
     },
 
-    _format: function(output)
+    _format: function(output, plainText)
     {
         var type = Object.type(output, InspectorController.inspectedWindow());
         if (type === "object") {
@@ -368,28 +368,33 @@ WebInspector.Console.prototype = {
 
         var span = document.createElement("span");
         span.addStyleClass("console-formatted-" + type);
-        this[formatter](output, span);
+        this[formatter](output, span, plainText);
         return span;
     },
 
-    _formatvalue: function(val, elem)
+    _formatvalue: function(val, elem, plainText)
     {
+        // Honor the plainText argument, if the textContent output doesn't make sense.
         elem.appendChild(document.createTextNode(val));
     },
 
-    _formatstring: function(str, elem)
+    _formatstring: function(str, elem, plainText)
     {
+        // Honor the plainText argument, if the textContent output doesn't make sense.
         elem.appendChild(document.createTextNode("\"" + str + "\""));
     },
 
-    _formatregexp: function(re, elem)
+    _formatregexp: function(re, elem, plainText)
     {
+        // Honor the plainText argument, if the textContent output doesn't make sense.
         var formatted = String(re).replace(/([\\\/])/g, "\\$1").replace(/\\(\/[gim]*)$/, "$1").substring(1);
         elem.appendChild(document.createTextNode(formatted));
     },
 
-    _formatarray: function(arr, elem)
+    _formatarray: function(arr, elem, plainText)
     {
+        // Honor the plainText argument, if the textContent output doesn't make sense.
+        // Especially if expanding array values is added.
         elem.appendChild(document.createTextNode("["));
         for (var i = 0; i < arr.length; ++i) {
             elem.appendChild(this._format(arr[i]));
@@ -399,8 +404,10 @@ WebInspector.Console.prototype = {
         elem.appendChild(document.createTextNode("]"));
     },
 
-    _formatnode: function(node, elem)
+    _formatnode: function(node, elem, plainText)
     {
+        // Honor the plainText argument, if the textContent output doesn't make sense.
+        // Especially if expanding to show children is added.
         var anchor = document.createElement("a");
         anchor.innerHTML = nodeTitleInfo.call(node).title;
         anchor.representedNode = node;
@@ -409,13 +416,16 @@ WebInspector.Console.prototype = {
         elem.appendChild(anchor);
     },
 
-    _formatobject: function(obj, elem)
+    _formatobject: function(obj, elem, plainText)
     {
+        // Honor the plainText argument, if the textContent output doesn't make sense.
+        // Especially if object properties are added.
         elem.appendChild(document.createTextNode(Object.describe(obj)));
     },
 
-    _formaterror: function(obj, elem)
+    _formaterror: function(obj, elem, plainText)
     {
+        // Honor the plainText argument, if the textContent output doesn't make sense.
         elem.appendChild(document.createTextNode(obj.name + ": " + obj.message + " "));
 
         if (obj.sourceURL) {
@@ -443,18 +453,23 @@ WebInspector.ConsoleMessage = function(source, level, line, url)
     this.line = line;
     this.url = url;
 
-    this._format(Array.prototype.slice.call(arguments, 4));
+    // This _format call passes in true for the plainText argument. The result's textContent is
+    // used for inline message bubbles in SourceFrames, or other plain-text representations.
+    this.message = this._format(Array.prototype.slice.call(arguments, 4), true).textContent;
+
+    // The formatedMessage property is used for the rich and interactive console.
+    this.formattedMessage = this._format(Array.prototype.slice.call(arguments, 4));
 }
 
 WebInspector.ConsoleMessage.prototype = {
-    _format: function(parameters)
+    _format: function(parameters, plainText)
     {
-        this.formattedMessage = document.createElement("span");
+        var formattedResult = document.createElement("span");
 
         if (!parameters.length)
-            return;
+            return formattedResult;
 
-        var formatForConsole = WebInspector.console._format.bind(WebInspector.console);
+        var formatForConsole = WebInspector.console._format.bind(WebInspector.console, plainText);
 
         if (Object.type(parameters[0], InspectorController.inspectedWindow()) === "string") {
             var formatters = {}
@@ -470,23 +485,24 @@ WebInspector.ConsoleMessage.prototype = {
             {
                 if (!(b instanceof Node))
                     b = document.createTextNode(b);
-
                 a.appendChild(b);
                 return a;
             }
 
-            var result = String.format(parameters[0], parameters.slice(1), formatters, this.formattedMessage, append);
-            this.formattedMessage = result.formattedResult;
+            var result = String.format(parameters[0], parameters.slice(1), formatters, formattedResult, append);
+            formattedResult = result.formattedResult;
             parameters = result.unusedSubstitutions;
             if (parameters.length)
-                this.formattedMessage.appendChild(document.createTextNode(" "));
+                formattedResult.appendChild(document.createTextNode(" "));
         }
 
         for (var i = 0; i < parameters.length; ++i) {
-            this.formattedMessage.appendChild(formatForConsole(parameters[i]));
+            formattedResult.appendChild(formatForConsole(parameters[i]));
             if (i < parameters.length - 1)
-                this.formattedMessage.appendChild(document.createTextNode(" "));
+                formattedResult.appendChild(document.createTextNode(" "));
         }
+
+        return formattedResult;
     },
 
     get shortURL()
