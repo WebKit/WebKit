@@ -89,6 +89,17 @@ static JSRetainPtr<JSStringRef> jsStringRef(const String& str)
     return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithCharacters(str.characters(), str.length()));
 }
 
+static String toString(JSContextRef context, JSValueRef value, JSValueRef* exception)
+{
+    ASSERT_ARG(value, value);
+    if (!value)
+        return String();
+    JSRetainPtr<JSStringRef> scriptString(Adopt, JSValueToStringCopy(context, value, exception));
+    if (exception && *exception)
+        return String();
+    return String(JSStringGetCharactersPtr(scriptString.get()), JSStringGetLength(scriptString.get()));
+}
+
 #define HANDLE_EXCEPTION(context, exception) handleException((context), (exception), __LINE__)
 
 JSValueRef InspectorController::callSimpleFunction(JSContextRef context, JSObjectRef thisObject, const char* functionName) const
@@ -546,11 +557,7 @@ static JSValueRef search(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef
     if (!node)
         return JSValueMakeUndefined(ctx);
 
-    JSRetainPtr<JSStringRef> searchString(Adopt, JSValueToStringCopy(ctx, arguments[1], exception));
-    if (exception && *exception)
-        return JSValueMakeUndefined(ctx);
-
-    String target(JSStringGetCharactersPtr(searchString.get()), JSStringGetLength(searchString.get()));
+    String target = toString(ctx, arguments[1], exception);
 
     JSObjectRef global = JSContextGetGlobalObject(ctx);
 
@@ -1975,8 +1982,7 @@ bool InspectorController::handleException(JSContextRef context, JSValueRef excep
     if (!m_page)
         return true;
 
-    JSRetainPtr<JSStringRef> messageString(Adopt, JSValueToStringCopy(m_scriptContext, exception, 0));
-    String message(JSStringGetCharactersPtr(messageString.get()), JSStringGetLength(messageString.get()));
+    String message = toString(context, exception, 0);
     String file(__FILE__);
 
     if (JSObjectRef exceptionObject = JSValueToObject(context, exception, 0)) {
@@ -1985,10 +1991,8 @@ bool InspectorController::handleException(JSContextRef context, JSValueRef excep
             lineNumber = static_cast<unsigned>(JSValueToNumber(context, lineValue, 0));
 
         JSValueRef fileValue = JSObjectGetProperty(context, exceptionObject, jsStringRef("sourceURL").get(), NULL);
-        if (fileValue) {
-            JSRetainPtr<JSStringRef> fileString(Adopt, JSValueToStringCopy(context, fileValue, 0));
-            file = String(JSStringGetCharactersPtr(fileString.get()), JSStringGetLength(fileString.get()));
-        }
+        if (fileValue)
+            file = toString(context, fileValue, 0);
     }
 
     m_page->mainFrame()->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, file);

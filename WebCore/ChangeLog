@@ -1,3 +1,14 @@
+2008-04-30  Timothy Hatcher  <timothy@apple.com>
+
+        Adds a helper function to convert a JSValueRef to a String.
+
+        Reviewed by Adam Roben.
+
+        * page/InspectorController.cpp:
+        (WebCore::toString): Converts a JSValueRef to a String.
+        (WebCore::search): Use toString.
+        (WebCore::InspectorController::handleException): Ditto.
+
 2008-04-30  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
