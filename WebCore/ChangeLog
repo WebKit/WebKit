@@ -179,6 +179,26 @@
         * svg/SVGUseElement.cpp:
         (WebCore::SVGUseElement::buildPendingResource):
 
+2008-04-30  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        https://bugs.webkit.org/show_bug.cgi?id=11939
+        Quirksmode: Ignores media types in stylesheet PIs
+
+        Transfer the xml-stylesheet pseudo attribute media to the css
+        stylesheet created from the ProcessingInstruction.
+
+        Tests: fast/css/xml-stylesheet-media-processing.xhtml
+
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::setMedia):
+        * css/StyleSheet.h:
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::setCSSStyleSheet):
+        * dom/ProcessingInstruction.h:
+
 2008-04-29  David D. Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX for export of WTF::RefCounted<WebCore::FormData>::deref()

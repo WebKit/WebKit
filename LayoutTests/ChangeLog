@@ -293,6 +293,19 @@
 
         * platform/qt/Skipped:
 
+2008-04-30  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcase for:
+        https://bugs.webkit.org/show_bug.cgi?id=11939
+        Quirksmode: Ignores media types in stylesheet PIs
+
+        * fast/css/resources/xml-stylesheet-media-print.css: Added.
+        * fast/css/resources/xml-stylesheet-media-screen.css: Added.
+        * fast/css/xml-stylesheet-media-processing-expected.txt: Added.
+        * fast/css/xml-stylesheet-media-processing.xhtml: Added.
+
 2008-04-29  Anatoli Papirovski  <apapirovski@mac.com>
 
         Reviewed by Dan Bernstein.
