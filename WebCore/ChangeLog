@@ -1,3 +1,19 @@
+2008-04-29  David D. Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX for export of WTF::RefCounted<WebCore::FormData>::deref()
+
+        On the buildbot, this is a fatal error:
+
+        ld: symbols names listed in -exported_symbols_list: WebKitBuild/Release/DerivedSources/WebCore/WebCore.exp not in linked objects
+        __ZN3WTF10RefCountedIN7WebCore8FormDataEE5derefEv
+        /usr/bin/libtool: internal link edit command failed
+
+        Newer dev tools only produce a warning:
+
+        ld warning: cannot export hidden symbol __ZN3WTF10RefCountedIN7WebCore8FormDataEE5derefEv from WebKitBuild/WebCore.build/Release/WebCore.build/Objects-normal/i386/DocumentLoader.o
+
+        * WebCore.base.exp: Remove hidden symbol from export list.
+
 2008-04-29  David Kilzer  <ddkilzer@apple.com>
 
         Another BUILD FIX for ENABLE(DASHBOARD_SUPPORT)
