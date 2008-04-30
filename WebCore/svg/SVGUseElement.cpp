@@ -745,7 +745,9 @@ void SVGUseElement::associateInstancesWithShadowTreeElements(Node* target, SVGEl
 #endif
     } else if (originalElement->hasTagName(SVGNames::symbolTag)) {
         // <symbol> gets replaced by <svg>
+#if ENABLE(SVG_FOREIGN_OBJECT)
         ASSERT(target->nodeName() == SVGNames::svgTag);
+#endif
     } else
         ASSERT(target->nodeName() == originalElement->nodeName());
 

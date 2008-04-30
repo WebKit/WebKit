@@ -2,6 +2,15 @@
 
         Rubber-stamped by Rob Buis.
 
+        Fixed crash or assertion if SVG_FOREIGN_OBJECT is not enabled
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::associateInstancesWithShadowTreeElements):
+
+2008-04-30  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Rubber-stamped by Rob Buis.
+
         Fixed compile, due to API change in XMLSerializer
 
         * svg/SVGUseElement.cpp:
