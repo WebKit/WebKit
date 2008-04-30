@@ -92,7 +92,6 @@ EXPORTS
         progIDForClass
         WebLocalizedStringUTF8
         WebLocalizedLPCTSTRUTF8
-        DrawTextAtPoint
         WebDrawText
         FontMetrics
         TextFloatWidth

@@ -1,3 +1,16 @@
+2008-04-29  Ada Chan  <adachan@apple.com>
+
+        Support text shadow in WebDrawText().
+        Remove DrawTextAtPoint() since it is only called by WebDrawText().
+
+        Reviewed by Adam.
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_debug.def:
+        * WebKitGraphics.cpp:
+        (WebDrawText):
+        * WebKitGraphics.h:
+
 2008-04-29  Adam Roben  <aroben@apple.com>
 
         Restore the beloved COMPtr::operator&
