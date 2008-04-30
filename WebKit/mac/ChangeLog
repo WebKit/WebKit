@@ -1,3 +1,77 @@
+2008-04-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Refactor the Carbon event handling code out into a separate class in preparation for adding
+        the Cocoa event handling code.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView sendEvent:isDrawRect:]):
+        (-[WebBaseNetscapePluginView sendActivateEvent:]):
+        (-[WebBaseNetscapePluginView sendDrawRectEvent:]):
+        (-[WebBaseNetscapePluginView stopTimers]):
+        (-[WebBaseNetscapePluginView restartTimers]):
+        (-[WebBaseNetscapePluginView setHasFocus:]):
+        (-[WebBaseNetscapePluginView mouseDown:]):
+        (-[WebBaseNetscapePluginView mouseUp:]):
+        (-[WebBaseNetscapePluginView mouseEntered:]):
+        (-[WebBaseNetscapePluginView mouseExited:]):
+        (-[WebBaseNetscapePluginView mouseDragged:]):
+        (-[WebBaseNetscapePluginView keyUp:]):
+        (-[WebBaseNetscapePluginView keyDown:]):
+        (-[WebBaseNetscapePluginView cut:]):
+        (-[WebBaseNetscapePluginView copy:]):
+        (-[WebBaseNetscapePluginView paste:]):
+        (-[WebBaseNetscapePluginView selectAll:]):
+        (-[WebBaseNetscapePluginView start]):
+        (-[WebBaseNetscapePluginView stop]):
+        (-[WebBaseNetscapePluginView fini]):
+        (-[WebBaseNetscapePluginView drawRect:]):
+        (-[WebBaseNetscapePluginView viewWillMoveToWindow:]):
+        (-[WebBaseNetscapePluginView viewDidMoveToWindow]):
+        (-[WebBaseNetscapePluginView windowBecameKey:]):
+        (-[WebBaseNetscapePluginView windowResignedKey:]):
+        (-[WebBaseNetscapePluginView windowDidMiniaturize:]):
+        (-[WebBaseNetscapePluginView windowDidDeminiaturize:]):
+        (-[WebBaseNetscapePluginView loginWindowDidSwitchFromUser:]):
+        (-[WebBaseNetscapePluginView loginWindowDidSwitchToUser:]):
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+        (-[WebBaseNetscapePluginView _viewHasMoved]):
+        * Plugins/WebBaseNetscapePluginViewInternal.h:
+        * Plugins/WebNetscapePluginEmbeddedView.h:
+        * Plugins/WebNetscapePluginEventHandler.h: Added.
+        (WebNetscapePluginEventHandler::~WebNetscapePluginEventHandler):
+        (WebNetscapePluginEventHandler::currentEventIsUserGesture):
+        (WebNetscapePluginEventHandler::WebNetscapePluginEventHandler):
+        * Plugins/WebNetscapePluginEventHandler.mm: Added.
+        (WebNetscapePluginEventHandler::create):
+        * Plugins/WebNetscapePluginEventHandlerCarbon.h: Added.
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm: Added.
+        (WebNetscapePluginEventHandlerCarbon::WebNetscapePluginEventHandlerCarbon):
+        (getCarbonEvent):
+        (modifiersForEvent):
+        (WebNetscapePluginEventHandlerCarbon::sendNullEvent):
+        (WebNetscapePluginEventHandlerCarbon::drawRect):
+        (WebNetscapePluginEventHandlerCarbon::mouseDown):
+        (WebNetscapePluginEventHandlerCarbon::mouseUp):
+        (WebNetscapePluginEventHandlerCarbon::mouseEntered):
+        (WebNetscapePluginEventHandlerCarbon::mouseExited):
+        (WebNetscapePluginEventHandlerCarbon::mouseDragged):
+        (WebNetscapePluginEventHandlerCarbon::mouseMoved):
+        (WebNetscapePluginEventHandlerCarbon::keyDown):
+        (keyMessageForEvent):
+        (WebNetscapePluginEventHandlerCarbon::keyUp):
+        (WebNetscapePluginEventHandlerCarbon::focusChanged):
+        (WebNetscapePluginEventHandlerCarbon::windowFocusChanged):
+        (WebNetscapePluginEventHandlerCarbon::TSMEventHandler):
+        (WebNetscapePluginEventHandlerCarbon::installKeyEventHandler):
+        (WebNetscapePluginEventHandlerCarbon::removeKeyEventHandler):
+        (WebNetscapePluginEventHandlerCarbon::nullEventTimerFired):
+        (WebNetscapePluginEventHandlerCarbon::startTimers):
+        (WebNetscapePluginEventHandlerCarbon::stopTimers):
+        (WebNetscapePluginEventHandlerCarbon::sendEvent):
+
 2008-04-29  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by David Harrison.

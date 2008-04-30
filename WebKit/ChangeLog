@@ -1,3 +1,11 @@
+2008-04-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add new event handlers.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-04-07  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim

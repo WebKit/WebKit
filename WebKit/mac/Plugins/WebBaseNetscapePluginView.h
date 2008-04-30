@@ -43,6 +43,8 @@
 @class WebNetscapePluginStream;
 @class WebView;
 
+class WebNetscapePluginEventHandler;
+
 typedef union PluginPort {
 #ifndef NP_NO_QUICKDRAW
     NP_Port qdPort;
@@ -85,15 +87,16 @@ typedef union PluginPort {
     GWorldPtr offscreenGWorld;
 #endif
 
+    WebNetscapePluginEventHandler *eventHandler;
+    
     BOOL isStarted;
     BOOL inSetWindow;
-    BOOL suspendKeyUpEvents;
     BOOL hasFocus;
-    BOOL currentEventIsUserGesture;
     BOOL isTransparent;
     BOOL isCompletelyObscured;
     BOOL shouldStopSoon;
-
+    BOOL shouldFireTimers;
+    
     unsigned pluginFunctionCallDepth;
     
     DOMElement *element;
@@ -106,7 +109,6 @@ typedef union PluginPort {
     NSTrackingRectTag trackingTag;
     NSMutableArray *streams;
     NSMutableDictionary *pendingFrameLoads;
-    NSTimer *nullEventTimer;
     
     NPP_NewProcPtr NPP_New;
     NPP_DestroyProcPtr NPP_Destroy;
@@ -120,9 +122,7 @@ typedef union PluginPort {
     NPP_HandleEventProcPtr NPP_HandleEvent;
     NPP_URLNotifyProcPtr NPP_URLNotify;
     NPP_GetValueProcPtr NPP_GetValue;
-    NPP_SetValueProcPtr NPP_SetValue;
-    
-    EventHandlerRef keyEventHandler;
+    NPP_SetValueProcPtr NPP_SetValue;    
 }
 
 + (WebBaseNetscapePluginView *)currentPluginView;
