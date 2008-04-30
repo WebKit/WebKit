@@ -420,7 +420,7 @@ layer at (0,0) size 800x2619
           RenderText {#text} at (0,0) size 186x19
             text run at (0,0) width 186: "Table 5 has a scrolling tbody."
       RenderTable at (0,1275) size 210x22
-        RenderTableSection at (0,0) size 210x22
+        RenderTableSection (anonymous) at (0,0) size 210x22
           RenderTableRow {UL} at (0,0) size 210x22 [bgcolor=#FFA500]
             RenderTableCell {LI} at (0,0) size 35x22 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 35x22
@@ -439,7 +439,7 @@ layer at (0,0) size 800x2619
                 text run at (0,0) width 36: "FIVE"
       RenderTable at (0,1297) size 236x22
         RenderTableSection {UL} at (0,0) size 236x22
-          RenderTableRow at (0,0) size 236x22
+          RenderTableRow (anonymous) at (0,0) size 236x22
             RenderTableCell {LI} at (0,0) size 35x22 [bgcolor=#FFA500] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 35x22
                 text run at (0,0) width 35: "ONE"
@@ -460,7 +460,7 @@ layer at (0,0) size 800x2619
                 text run at (0,0) width 26: "SIX"
       RenderTable at (0,1319) size 236x22
         RenderTableSection {UL} at (0,0) size 236x22
-          RenderTableRow at (0,0) size 236x22
+          RenderTableRow (anonymous) at (0,0) size 236x22
             RenderTableCell {LI} at (0,0) size 35x22 [bgcolor=#FFA500] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 35x22
                 text run at (0,0) width 35: "ONE"

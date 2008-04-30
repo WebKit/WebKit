@@ -22,7 +22,7 @@ layer at (0,0) size 800x457
           text run at (0,19) width 274: "the window. The text field should not move."
       RenderBlock {FORM} at (0,106) size 784x323
         RenderTable {DL} at (0,0) size 197x29
-          RenderTableSection at (0,0) size 197x29
+          RenderTableSection (anonymous) at (0,0) size 197x29
             RenderTableRow {DIV} at (0,0) size 197x29
               RenderTableCell {DT} at (0,5) size 25x19 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x19
@@ -35,7 +35,7 @@ layer at (0,0) size 800x457
             text run at (0,0) width 768: "And here's more. There should not be a difference in distance between the labels, nor any difference in distance between"
             text run at (0,19) width 88: "the text fields."
         RenderTable {DL} at (0,111) size 231x212
-          RenderTableSection at (0,0) size 231x212
+          RenderTableSection (anonymous) at (0,0) size 231x212
             RenderTableRow {DIV} at (0,0) size 231x29
               RenderTableCell {DT} at (0,5) size 25x19 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x19

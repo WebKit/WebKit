@@ -4,7 +4,7 @@ layer at (0,0) size 800x1642
   RenderBlock {html} at (0,0) size 800x1642
     RenderBody {body} at (8,8) size 784x1626
       RenderTable {table} at (0,0) size 279x110 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 277x108
+        RenderTableSection (anonymous) at (1,1) size 277x108
           RenderTableRow {tr} at (0,2) size 277x104
             RenderTableCell {td} at (2,42) size 273x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 269x19
@@ -12,7 +12,7 @@ layer at (0,0) size 800x1642
       RenderBlock (anonymous) at (0,110) size 784x19
         RenderBR {br} at (0,0) size 0x19
       RenderTable {table} at (0,129) size 279x210 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 277x208
+        RenderTableSection (anonymous) at (1,1) size 277x208
           RenderTableRow {tr} at (0,2) size 277x204
             RenderTableCell {td} at (2,92) size 273x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 269x19
@@ -20,7 +20,7 @@ layer at (0,0) size 800x1642
       RenderBlock (anonymous) at (0,339) size 784x19
         RenderBR {br} at (0,0) size 0x19
       RenderTable {table} at (0,358) size 279x310 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 277x308
+        RenderTableSection (anonymous) at (1,1) size 277x308
           RenderTableRow {tr} at (0,2) size 277x304
             RenderTableCell {td} at (2,142) size 273x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 269x19
@@ -28,7 +28,7 @@ layer at (0,0) size 800x1642
       RenderBlock (anonymous) at (0,668) size 784x19
         RenderBR {br} at (0,0) size 0x19
       RenderTable {table} at (0,687) size 279x410 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 277x408
+        RenderTableSection (anonymous) at (1,1) size 277x408
           RenderTableRow {tr} at (0,2) size 277x404
             RenderTableCell {td} at (2,192) size 273x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 269x19
@@ -36,7 +36,7 @@ layer at (0,0) size 800x1642
       RenderBlock (anonymous) at (0,1097) size 784x19
         RenderBR {br} at (0,0) size 0x19
       RenderTable {table} at (0,1116) size 279x510 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 277x508
+        RenderTableSection (anonymous) at (1,1) size 277x508
           RenderTableRow {tr} at (0,2) size 277x504
             RenderTableCell {td} at (2,242) size 273x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 269x19

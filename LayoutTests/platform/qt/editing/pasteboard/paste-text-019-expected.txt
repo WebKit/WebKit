@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x349 [border: (2px solid #0000FF)]
+      RenderBlock {DIV} at (0,0) size 784x350 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x129
           RenderText {#text} at (0,0) size 77x33
             text run at (0,0) width 77: "Tests: "
@@ -35,20 +35,20 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,65) size 697x63
             text run at (0,65) width 697: "Text transformed with text-transform does not copy with transform"
             text run at (0,97) width 75: "applied"
-        RenderBlock {DIV} at (14,159) size 756x176
+        RenderBlock {DIV} at (14,159) size 756x177
           RenderBlock (anonymous) at (0,0) size 756x65
             RenderText {#text} at (0,0) size 214x33
               text run at (0,0) width 214: "Expected Results: "
             RenderBR {BR} at (214,24) size 0x0
             RenderText {#text} at (0,33) size 223x31
               text run at (0,33) width 223: "Should see the string"
-          RenderBlock {PRE} at (0,89) size 756x31
-            RenderText {#text} at (0,1) size 210x28
-              text run at (0,1) width 210: "Foo Bar baz Bar"
-          RenderBlock (anonymous) at (0,144) size 756x32
+          RenderBlock {PRE} at (0,89) size 756x32
+            RenderText {#text} at (0,0) size 174x31
+              text run at (0,0) width 174: "Foo Bar baz Bar"
+          RenderBlock (anonymous) at (0,145) size 756x32
             RenderText {#text} at (0,0) size 172x31
               text run at (0,0) width 172: "(case sensitive)."
-      RenderBlock {DIV} at (0,373) size 784x36 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,374) size 784x36 [border: (2px solid #FF0000)]
         RenderInline {SPAN} at (0,0) size 167x31
           RenderInline {SPAN} at (0,0) size 85x31
             RenderText {#text} at (2,2) size 85x31

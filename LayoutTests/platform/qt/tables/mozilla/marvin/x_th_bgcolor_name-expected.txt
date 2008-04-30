@@ -7,7 +7,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 261x19
           text run at (0,0) width 261: "Black table with a white body background"
       RenderTable {table} at (0,33) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20
@@ -32,7 +32,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 262x19
           text run at (0,0) width 262: "Silver table with a white body background"
       RenderTable {table} at (0,136) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20
@@ -57,7 +57,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 258x19
           text run at (0,0) width 258: "Gray table with a white body background"
       RenderTable {table} at (0,239) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20
@@ -82,7 +82,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 263x19
           text run at (0,0) width 263: "White table with a white body background"
       RenderTable {table} at (0,342) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20
@@ -107,7 +107,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 276x19
           text run at (0,0) width 276: "Maroon table with a white body background"
       RenderTable {table} at (0,445) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#800000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20
@@ -132,7 +132,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 253x19
           text run at (0,0) width 253: "Red table with a white body background"
       RenderTable {table} at (0,548) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20
@@ -157,7 +157,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 268x19
           text run at (0,0) width 268: "Purple table with a white body background"
       RenderTable {table} at (0,651) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#800080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20
@@ -182,7 +182,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 277x19
           text run at (0,0) width 277: "Fuchsia table with a white body background"
       RenderTable {table} at (0,754) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#FF00FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20
@@ -207,7 +207,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 267x19
           text run at (0,0) width 267: "Green table with a white body background"
       RenderTable {table} at (0,857) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20
@@ -232,7 +232,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 258x19
           text run at (0,0) width 258: "Lime table with a white body background"
       RenderTable {table} at (0,960) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20
@@ -257,7 +257,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 259x19
           text run at (0,0) width 259: "Olive table with a white body background"
       RenderTable {table} at (0,1063) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#808000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20
@@ -282,7 +282,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 268x19
           text run at (0,0) width 268: "Yellow table with a white body background"
       RenderTable {table} at (0,1166) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20
@@ -307,7 +307,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 259x19
           text run at (0,0) width 259: "Navy table with a white body background"
       RenderTable {table} at (0,1269) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#000080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20
@@ -332,7 +332,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 255x19
           text run at (0,0) width 255: "Blue table with a white body background"
       RenderTable {table} at (0,1372) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20
@@ -357,7 +357,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 255x19
           text run at (0,0) width 255: "Teal table with a white body background"
       RenderTable {table} at (0,1475) size 458x50
-        RenderTableSection at (0,0) size 458x50
+        RenderTableSection (anonymous) at (0,0) size 458x50
           RenderTableRow {tr} at (0,2) size 458x22
             RenderTableCell {th} at (2,2) size 150x22 [bgcolor=#008080] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 148x20
@@ -382,7 +382,7 @@ layer at (0,0) size 800x1650
         RenderText {#text} at (0,0) size 260x19
           text run at (0,0) width 260: "Aqua table with a white body background"
       RenderTable {table} at (0,1572) size 466x56 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 464x54
+        RenderTableSection (anonymous) at (1,1) size 464x54
           RenderTableRow {tr} at (0,2) size 464x24
             RenderTableCell {th} at (2,2) size 152x24 [bgcolor=#00FFFF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 148x20

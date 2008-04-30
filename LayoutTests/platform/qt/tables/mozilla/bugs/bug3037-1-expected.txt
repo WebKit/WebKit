@@ -17,8 +17,8 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,0) size 784x19
         RenderTable at (0,0) size 32x19
-          RenderTableSection at (0,0) size 32x19
-            RenderTableRow at (0,0) size 32x19
+          RenderTableSection (anonymous) at (0,0) size 32x19
+            RenderTableRow (anonymous) at (0,0) size 32x19
               RenderTableCell {HTML:SPAN} at (0,0) size 31x19 [r=0 c=0 rs=1 cs=1]
                 RenderInline {HTML:BUTTON} at (0,0) size 31x19 [bgcolor=#C0C0C0]
                   RenderText {#text} at (0,0) size 0x0

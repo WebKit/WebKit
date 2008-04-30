@@ -7,7 +7,7 @@ layer at (0,0) size 800x271
         RenderText {#text} at (0,0) size 111x19
           text run at (0,0) width 111: "TH VALIGN=TOP"
       RenderTable {table} at (0,33) size 701x216 [border: (1px outset #808080)]
-        RenderTableSection at (1,1) size 699x214
+        RenderTableSection (anonymous) at (1,1) size 699x214
           RenderTableRow {tr} at (0,2) size 699x210
             RenderTableCell {th} at (2,2) size 204x210 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {img} at (2,2) size 200x200
