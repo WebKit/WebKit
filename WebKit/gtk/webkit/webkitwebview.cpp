@@ -95,7 +95,8 @@ enum {
     PROP_PASTE_TARGET_LIST,
     PROP_EDITABLE,
     PROP_SETTINGS,
-    PROP_TRANSPARENT
+    PROP_BG_COLOR,
+    PROP_BG_ALPHA
 };
 
 static guint webkit_web_view_signals[LAST_SIGNAL] = { 0, };
@@ -228,8 +229,8 @@ static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue*
     case PROP_SETTINGS:
         g_value_set_object(value, webkit_web_view_get_settings(webView));
         break;
-    case PROP_TRANSPARENT:
-        g_value_set_boolean(value, webkit_web_view_get_transparent(webView));
+    case PROP_BG_ALPHA:
+        g_value_set_uint(value, webkit_web_view_get_background_alpha(webView));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -247,8 +248,11 @@ static void webkit_web_view_set_property(GObject* object, guint prop_id, const G
     case PROP_SETTINGS:
         webkit_web_view_set_settings(webView, WEBKIT_WEB_SETTINGS(g_value_get_object(value)));
         break;
-    case PROP_TRANSPARENT:
-        webkit_web_view_set_transparent(webView, g_value_get_boolean(value));
+    case PROP_BG_COLOR:
+        webkit_web_view_set_background_color(webView, (GdkColor*)(g_value_get_boxed(value)));
+        break;
+    case PROP_BG_ALPHA:
+        webkit_web_view_set_background_alpha(webView, g_value_get_uint(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -269,9 +273,22 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
     if (frame->contentRenderer() && frame->view()) {
         frame->view()->layoutIfNeededRecursive();
 
-        if (priv->transparent) {
+        if (priv->bg_alpha < 0xffff) {
             cairo_save(cr);
             cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+            cairo_paint(cr);
+            cairo_restore(cr);
+        }
+        if (priv->bg_alpha < 0xffff || priv->bg_color_set) {
+            cairo_save(cr);
+            float r = 1.0, g = 1.0, b = 1.0, a = 1.0;
+            if (priv->bg_color_set) {
+                 r = (float)priv->bg_color.red / 0xffff;
+                 g = (float)priv->bg_color.green / 0xffff;
+                 b = (float)priv->bg_color.blue / 0xffff;
+            }
+            a = (float)priv->bg_alpha / 0xffff;
+            cairo_set_source_rgba (cr, r, g, b, a);
             cairo_paint(cr);
             cairo_restore(cr);
         }
@@ -1155,12 +1172,19 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                          FALSE,
                                                          WEBKIT_PARAM_READWRITE));
 
-    g_object_class_install_property(objectClass, PROP_TRANSPARENT,
-                                    g_param_spec_boolean("transparent",
-                                                         "Transparent",
-                                                         "Whether content has a transparent background",
-                                                         FALSE,
-                                                         WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(objectClass, PROP_BG_COLOR,
+                                    g_param_spec_boxed ("background-color",
+                                                        "Background color",
+                                                        "The default background color", 
+                                                        GDK_TYPE_COLOR,
+                                                        WEBKIT_PARAM_WRITABLE));
+
+    g_object_class_install_property(objectClass, PROP_BG_ALPHA,
+                                    g_param_spec_uint ("background-alpha", 
+                                                       "Background alpha",
+                                                       "The default background alpha",
+                                                       0, 0xffff, 0xffff,
+                                                       WEBKIT_PARAM_READWRITE));
 
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 }
@@ -1325,6 +1349,8 @@ static void webkit_web_view_init(WebKitWebView* webView)
     priv->mainFrame = WEBKIT_WEB_FRAME(webkit_web_frame_new(webView));
     priv->lastPopupXPosition = priv->lastPopupYPosition = -1;
     priv->editable = false;
+    priv->bg_alpha = 0xFFFF;
+    priv->bg_color_set = FALSE;
 
     priv->backForwardList = webkit_web_back_forward_list_new_with_web_view(webView);
 
@@ -1982,7 +2008,7 @@ gboolean webkit_web_view_get_transparent(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     WebKitWebViewPrivate* priv = webView->priv;
-    return priv->transparent;
+    return priv->bg_alpha < 0xffff;
 }
 
 /**
@@ -1997,15 +2023,61 @@ gboolean webkit_web_view_get_transparent(WebKitWebView* webView)
 void webkit_web_view_set_transparent(WebKitWebView* webView, gboolean flag)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    webkit_web_view_set_background_alpha(webView, flag ? 0 : 0xffff);
+}
 
+/**
+ * webkit_web_view_set_background_color;
+ * @webView a #WebKitWebView
+ * @color the background color
+ *
+ * Sets the background color of the #WebKitWebView to @color
+ */
+void webkit_web_view_set_background_color (WebKitWebView* webView, const GdkColor *color)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     WebKitWebViewPrivate* priv = webView->priv;
-    priv->transparent = flag;
+    if (color != NULL) {
+        priv->bg_color = *color;
+        priv->bg_color_set = TRUE;
+    } else {
+        priv->bg_color_set = FALSE;
+    }
+}
+
+/**
+ * webkit_web_view_get_background_alpha;
+ * @webView a #WebKitWebView
+ *
+ * Return value: an integer between 0 and 65535 
+ */
+guint16 webkit_web_view_get_background_alpha (WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0xffff);
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    return priv->bg_alpha;
+}
+
+/**
+ * webkit_web_view_set_background_alpha;
+ * @webView a #WebKitWebView
+ * @alpha an integer between 0 and 65535
+ *
+ * Sets the background color to @alpha.
+ */
+void webkit_web_view_set_background_alpha (WebKitWebView* webView, guint16 alpha)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    WebKitWebViewPrivate* priv = webView->priv;
+    priv->bg_alpha = alpha;
 
     // TODO: This needs to be made persistent or it could become a problem when
     // the main frame is replaced.
     Frame* frame = core(webView)->mainFrame();
     g_return_if_fail(frame);
-    frame->view()->setTransparent(flag);
+    frame->view()->setTransparent(alpha < 0xffff);
 }
+
 
 }

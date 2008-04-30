@@ -217,6 +217,15 @@ webkit_web_view_get_transparent (WebKitWebView* web_view);
 WEBKIT_API void
 webkit_web_view_set_transparent (WebKitWebView* web_view, gboolean flag);
 
+WEBKIT_API void
+webkit_web_view_set_background_color (WebKitWebView* web_view, const GdkColor *color);
+
+WEBKIT_API guint16
+webkit_web_view_get_background_alpha (WebKitWebView* web_view);
+
+WEBKIT_API void
+webkit_web_view_set_background_alpha (WebKitWebView* web_view, guint16 alpha);
+
 G_END_DECLS
 
 #endif

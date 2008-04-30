@@ -1,3 +1,14 @@
+2008-04-30  Sean Egan  <seanegan@gmail.com>
+
+        Reviewed and modified by Holger.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17626
+        Support setting background color and a 16-bit alpha channel.
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
 2008-04-24  Dan Bernstein  <mitz@apple.com>
 
         - build fix
