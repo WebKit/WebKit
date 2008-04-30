@@ -55,7 +55,7 @@ public:
     const String& title() const { return m_strTitle; }
     void setTitle(const String& s) { m_strTitle = s; }
     MediaList* media() const { return m_media.get(); }
-    void setMedia(MediaList*);
+    void setMedia(PassRefPtr<MediaList>);
 
     virtual bool isLoading() { return false; }
 

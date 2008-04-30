@@ -62,7 +62,7 @@ StyleSheet* StyleSheet::parentStyleSheet() const
     return (parent() && parent()->isStyleSheet()) ? static_cast<StyleSheet*>(parent()) : 0;
 }
 
-void StyleSheet::setMedia(MediaList* media)
+void StyleSheet::setMedia(PassRefPtr<MediaList> media)
 {
     if (m_media)
         m_media->setParent(0);
