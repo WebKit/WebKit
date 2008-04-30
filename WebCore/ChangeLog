@@ -1,3 +1,11 @@
+2008-04-30  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+        
+        Build the Qt port with SVG Foreign Object support.
+
+        * WebCore.pro:
+
 2008-04-30  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

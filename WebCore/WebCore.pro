@@ -77,6 +77,7 @@ gtk-port: PKGCONFIG += gthread-2.0
 gtk-port:!contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=1
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
 qt-port: !contains(DEFINES, ENABLE_SVG=.): DEFINES += ENABLE_SVG=1
+qt-port: !contains(DEFINES, ENABLE_SVG_FOREIGN_OBJECT=.): DEFINES += ENABLE_SVG_FOREIGN_OBJECT=1
 gtk-port:DEFINES += ENABLE_SVG=0
 qt-port:contains(QT_CONFIG, phonon):DEFINES += ENABLE_VIDEO=1
 else:DEFINES += ENABLE_VIDEO=0
@@ -1722,7 +1723,7 @@ gtk-port:SOURCES += \
 
         # GENERATOR 5-C:
         svgnames_a.output = $$GENERATED_SOURCES_DIR/SVGNames.cpp
-        svgnames_a.commands = perl $$PWD/dom/make_names.pl --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --namespace SVG --cppNamespace WebCore --namespaceURI 'http://www.w3.org/2000/svg' --factory --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
+        svgnames_a.commands = perl $$PWD/dom/make_names.pl --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES}\" --namespace SVG --cppNamespace WebCore --namespaceURI 'http://www.w3.org/2000/svg' --factory --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
         svgnames_a.input = SVG_NAMES
         svgnames_a.dependency_type = TYPE_C
         svgnames_a.CONFIG = target_predeps
