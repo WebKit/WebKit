@@ -1,5 +1,18 @@
 2008-04-30  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes the bug where the selected resource would be deselected after
+        changing the sort order in the Resources panel.
+
+        Reviewed by Dan Bernstein.
+
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._sortResourcesIfNeeded):
+        Rememebr if the tree element that we are sorting was selected, so
+        the selection can be restored after it is re-inserted. The onSelect
+        is suppressed since we don't need to show the resource again.
+
+2008-04-29  Timothy Hatcher  <timothy@apple.com>
+
         Fixes the regression where error bubbles in source views always show
         "undefined" for the content because the message property on
         ConsoleMessage was removed. Adds support for a plain text formated

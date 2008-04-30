@@ -518,8 +518,11 @@ WebInspector.ResourcesPanel.prototype = {
             var treeElement = sortedElements[i];
             if (treeElement === this.resourcesTreeElement.children[i])
                 continue;
+            var wasSelected = treeElement.selected;
             this.resourcesTreeElement.removeChild(treeElement);
             this.resourcesTreeElement.insertChild(treeElement, i);
+            if (wasSelected)
+                treeElement.select(true);
         }
     },
 
