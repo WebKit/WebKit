@@ -1,3 +1,14 @@
+2008-04-29  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX for ENABLE(DASHBOARD_SUPPORT)
+
+        * DerivedSources.make: Removed duplication of targets for
+        generating CSSPropertyNames.h and CSSValueKeywords.h.
+        * GNUmakefile.am: Ditto.  Added support for ENABLE_DASHBOARD_SUPPORT.
+        * WebCore.pro: Added support for ENABLE_DASHBOARD_SUPPORT.
+        Made both SVG and non-SVG variables of GENERATOR 6-A use new
+        DASHBOARDSUPPORTCSSPROPERTIES variable.
+
 2008-04-29  Ada Chan  <adachan@apple.com>
 
         Added missing return.        

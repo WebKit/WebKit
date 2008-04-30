@@ -4,6 +4,9 @@ WebCore := $(srcdir)/WebCore
 FEATURE_DEFINES_JAVASCRIPT := LANGUAGE_JAVASCRIPT=1
 SVG_FEATURES :=
 
+WEBCORE_CSS_PROPERTY_NAMES = $(WebCore)/css/CSSPropertyNames.in
+WEBCORE_CSS_VALUE_KEYWORDS = $(WebCore)/css/CSSValueKeywords.in
+
 webcore_cppflags += \
 	-I$(srcdir)/WebCore \
 	-I$(srcdir)/WebCore/platform \
@@ -1131,6 +1134,23 @@ IDL_BINDINGS += \
 endif # END ENABLE_CROSS_DOCUMENT_MESSAGING
 
 # ----
+# Dashboard Support
+# ----
+if ENABLE_DASHBOARD_SUPPORT
+
+webcore_cppflags += \
+	-DENABLE_DASHBOARD_SUPPORT=1
+
+WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/DashboardSupportCSSPropertyNames.in
+
+else
+
+webcore_cppflags += \
+	-DENABLE_DASHBOARD_SUPPORT=0
+
+endif # END ENABLE_DASHBOARD_SUPPORT
+
+# ----
 # Database Support
 # ----
 if ENABLE_DATABASE
@@ -1373,16 +1393,6 @@ webcore_sources += \
 	WebCore/xml/XSLTProcessor.cpp
 endif # END ENABLE_XSLT
 
-webcore_cppflags += -DENABLE_DASHBOARD_SUPPORT=1
-
-WEBCORE_CSS_PROPERTY_NAMES := $(WebCore)/css/CSSPropertyNames.in $(WebCore)/css/DashboardSupportCSSPropertyNames.in
-
-DerivedSources/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
-	if sort $(WEBCORE_CSS_PROPERTY_NAMES) | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
-	cat $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in
-	$(PERL) "$(WebCore)/css/makeprop.pl"
-	mv CSSPropertyNames.* $(GENSOURCES)
-
 # ----
 # SVG Support
 #
@@ -1390,6 +1400,9 @@ DerivedSources/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/
 # ----
 if ENABLE_SVG
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG=1
+
+WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/SVGCSSPropertyNames.in 
+WEBCORE_CSS_VALUE_KEYWORDS += $(WebCore)/css/SVGCSSValueKeywords.in
 
 webkitgtk_cppflags += \
 	-I$(srcdir)/WebCore/svg/graphics/cairo
@@ -2015,16 +2028,6 @@ webkitgtk_sources += \
 	WebCore/svg/graphics/cairo/SVGResourceMaskerCairo.cpp
 
 
-WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/SVGCSSPropertyNames.in
-
-# Lower case all the values, as CSS values are case-insensitive
-DerivedSources/CSSValueKeywords.h : $(WebCore)/css/CSSValueKeywords.in $(WebCore)/css/SVGCSSValueKeywords.in $(WebCore)/css/makevalues.pl
-	$(PERL) -ne 'print lc' $(WebCore)/css/SVGCSSValueKeywords.in > SVGCSSValueKeywords.in
-	if sort $< SVGCSSValueKeywords.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
-	cat $< SVGCSSValueKeywords.in > CSSValueKeywords.in
-	$(PERL) "$(WebCore)/css/makevalues.pl"
-	mv SVGCSSValueKeywords.in $(GENSOURCES) && mv CSSValueKeywords.* $(GENSOURCES)
-
 # SVG Features
 if ENABLE_SVG_USE
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG_USE=1
@@ -2082,14 +2085,20 @@ DerivedSources/XLinkNames.h: DerivedSources/XLinkNames.cpp;
 DerivedSources/XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/svg/xlinkattrs.in
 	$(PERL) $< --attrs $(WebCore)/svg/xlinkattrs.in --namespace XLink --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xlink" --output $(GENSOURCES)
 
-else !ENABLE_SVG
+endif # END ENABLE_SVG
 
-DerivedSources/CSSValueKeywords.h: $(WebCore)/css/CSSValueKeywords.in $(WebCore)/css/makevalues.pl
-	cp $< CSSValueKeywords.in
+DerivedSources/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
+	if sort $(WEBCORE_CSS_PROPERTY_NAMES) | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
+	cat $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in
+	$(PERL) "$(WebCore)/css/makeprop.pl"
+	mv CSSPropertyNames.* $(GENSOURCES)
+
+# Lower case all the values, as CSS values are case-insensitive
+DerivedSources/CSSValueKeywords.h : $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/makevalues.pl
+	$(PERL) -ne 'print lc' $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
+	if sort CSSValueKeywords.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
 	$(PERL) "$(WebCore)/css/makevalues.pl"
 	mv CSSValueKeywords.* $(GENSOURCES)
-
-endif !ENABLE_SVG # END ENABLE_SVG
 
 # DOCTYPE strings
 DerivedSources/DocTypeStrings.cpp : $(WebCore)/html/DocTypeStrings.gperf

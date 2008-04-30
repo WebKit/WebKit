@@ -1,3 +1,11 @@
+2008-04-29  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX for ENABLE(DASHBOARD_SUPPORT)
+
+        * wtf/Platform.h: Defined ENABLE(DASHBOARD_SUPPORT) to 1 only for
+        PLATFORM(MAC) and PLATFORM(WIN).  Changed default to 0 for other
+        ports.
+
 2008-04-29  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin.

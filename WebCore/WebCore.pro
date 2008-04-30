@@ -70,6 +70,7 @@ gtk-port: PKGCONFIG += gthread-2.0
 
 # Optional components (look for defs in config.h and included files!)
 !contains(DEFINES, ENABLE_CROSS_DOCUMENT_MESSAGING=.): DEFINES += ENABLE_CROSS_DOCUMENT_MESSAGING=1
+!contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=.): DEFINES += ENABLE_DASHBOARD_SUPPORT=0
 !contains(DEFINES, ENABLE_DATABASE=.): DEFINES += ENABLE_DATABASE=1
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
@@ -252,6 +253,8 @@ COLORDAT_GPERF = $$PWD/platform/ColorData.gperf
 WALDOCSSPROPS = $$PWD/css/CSSPropertyNames.in
 
 WALDOCSSVALUES = $$PWD/css/CSSValueKeywords.in
+
+DASHBOARDSUPPORTCSSPROPERTIES = $$PWD/css/DashboardSupportCSSPropertyNames.in
 
 SVGCSSPROPERTIES = $$PWD/css/SVGCSSPropertyNames.in
 
@@ -1175,6 +1178,10 @@ contains(DEFINES, ENABLE_CROSS_DOCUMENT_MESSAGING=1) {
         dom/MessageEvent.idl
 }
 
+contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=0) {
+    DASHBOARDSUPPORTCSSPROPERTIES -= $$PWD/css/DashboardSupportCSSPropertyNames.in
+}
+
 contains(DEFINES, ENABLE_DATABASE=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_DATABASE=1
 
@@ -1744,9 +1751,9 @@ gtk-port:SOURCES += \
     # GENERATOR 6-A:
     cssprops.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.c
     cssprops.input = WALDOCSSPROPS
-    cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$SVGCSSPROPERTIES > $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
+    cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$DASHBOARDSUPPORTCSSPROPERTIES $$SVGCSSPROPERTIES > $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
     cssprops.CONFIG = target_predeps no_link
-    cssprops.depend = ${QMAKE_FILE_NAME} SVGCSSPROPERTIES
+    cssprops.depend = ${QMAKE_FILE_NAME} DASHBOARDSUPPORTCSSPROPERTIES SVGCSSPROPERTIES
     cssprops.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
     addExtraCompiler(cssprops)
 
@@ -1762,8 +1769,9 @@ gtk-port:SOURCES += \
     # GENERATOR 6-A:
     cssprops.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.c
     cssprops.input = WALDOCSSPROPS
-    cssprops.commands = $(COPY_FILE) ${QMAKE_FILE_NAME} $$GENERATED_SOURCES_DIR && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
+    cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$DASHBOARDSUPPORTCSSPROPERTIES > $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
     cssprops.CONFIG = target_predeps no_link
+    cssprops.depend = ${QMAKE_FILE_NAME} DASHBOARDSUPPORTCSSPROPERTIES
     cssprops.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
     addExtraCompiler(cssprops)
 
