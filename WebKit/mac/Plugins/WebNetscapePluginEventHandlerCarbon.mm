@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #import "WebNetscapePluginEventHandlerCarbon.h"
 
 #import "WebBaseNetscapePluginViewInternal.h"
@@ -390,3 +392,4 @@ bool WebNetscapePluginEventHandlerCarbon::sendEvent(EventRecord* event)
     return result;
 }
 
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

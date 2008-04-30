@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #ifndef WebNetscapePluginEventHandlerCarbon_h
 #define WebNetscapePluginEventHandlerCarbon_h
 
@@ -69,6 +71,7 @@ private:
     RetainPtr<CFRunLoopTimerRef> m_nullEventTimer;
 };
 
-#endif //WebNetscapePluginEventHandlerCarbon_h
+#endif // WebNetscapePluginEventHandlerCarbon_h
 
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
