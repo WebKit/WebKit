@@ -1,0 +1,2 @@
+This tests load dispatching order with externalResourcesRequired and an image that does not render(display=none). Bug 16447
+Passed

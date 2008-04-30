@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
                   2006 Alexander Kellett <lypanov@kde.org>
 
     This file is part of the KDE project
@@ -131,7 +131,7 @@ RenderObject* SVGImageElement::createRenderer(RenderArena* arena, RenderStyle* s
 
 bool SVGImageElement::haveLoadedRequiredResources()
 {
-    return (!externalResourcesRequiredBaseValue() || m_imageLoader.imageComplete());
+    return !externalResourcesRequiredBaseValue() || m_imageLoader.haveFiredLoadEvent();
 }
 
 void SVGImageElement::attach()

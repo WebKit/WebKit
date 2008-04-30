@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -41,6 +41,7 @@
 #include "SVGURIReference.h"
 #include "SVGUseElement.h"
 #include "XMLNames.h"
+#include "RegisteredEventListener.h"
 
 namespace WebCore {
 
@@ -157,6 +158,24 @@ bool SVGElement::haveLoadedRequiredResources()
     return true;
 }
 
+static bool hasLoadListener(SVGElement* node)
+{
+    Node* currentNode = node;
+    while (currentNode && currentNode->isElementNode()) {
+        RegisteredEventListenerList *list = static_cast<Element*>(currentNode)->localEventListeners();
+        if (list) {
+            RegisteredEventListenerList::Iterator end = list->end();
+            for (RegisteredEventListenerList::Iterator it = list->begin(); it != end; ++it)
+                if ((*it)->eventType() == loadEvent &&
+                    (*it)->useCapture() == true || currentNode == node)
+                    return true;
+        }
+        currentNode = currentNode->parentNode();
+    }
+
+    return false;
+}
+
 void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
 {
     RefPtr<SVGElement> currentTarget = this;
@@ -164,12 +183,12 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
         RefPtr<Node> parent;
         if (sendParentLoadEvents)
             parent = currentTarget->parentNode(); // save the next parent to dispatch too incase dispatching the event changes the tree
-        
-        // FIXME: This malloc could be avoided by walking the tree first to check if any listeners are present: http://bugs.webkit.org/show_bug.cgi?id=10264
-        RefPtr<Event> event = new Event(loadEvent, false, false);
-        event->setTarget(currentTarget);
-        ExceptionCode ignored = 0;
-        dispatchGenericEvent(this, event.release(), ignored, false);
+        if (hasLoadListener(currentTarget.get())) {
+            RefPtr<Event> event = new Event(loadEvent, false, false);
+            event->setTarget(currentTarget);
+            ExceptionCode ignored = 0;
+            dispatchGenericEvent(currentTarget.get(), event.release(), ignored, false);
+        }
         currentTarget = (parent && parent->isSVGElement()) ? static_pointer_cast<SVGElement>(parent) : 0;
     }
 }

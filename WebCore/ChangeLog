@@ -1,3 +1,24 @@
+2008-04-30  Rob Buis  <buis@kde.org>
+
+        Reviewed by Nikolas.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16447
+        onload called too many times for <svg:image>
+        https://bugs.webkit.org/show_bug.cgi?id=12282
+        SVG wastes time in malloc to send loadEvents to non-existent listeners
+
+        Postpone load event dispatching for image when externalResourcesRequired
+        is true, delaying parents but not siblings, and make sure the load event
+        is sent once for image in all cases.
+
+        * svg/SVGElement.cpp:
+        (WebCore::hasLoadListener):
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::haveLoadedRequiredResources):
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+
 2008-04-30  David Hyatt  <hyatt@apple.com>
 
         Fix crashes when dynamically removing <video> elements with layers that establish stacking contexts.  This

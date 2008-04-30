@@ -1,3 +1,24 @@
+2008-04-30  Rob Buis  <buis@kde.org>
+
+        Reviewed by Nikolas.
+
+        Testcases for:
+        https://bugs.webkit.org/show_bug.cgi?id=16447
+        onload called too many times for <svg:image>
+        https://bugs.webkit.org/show_bug.cgi?id=12282
+        SVG wastes time in malloc to send loadEvents to non-existent listeners
+
+        * svg/custom/loadevents-capturing-expected.txt: Added.
+        * svg/custom/loadevents-capturing.svg: Added.
+        * svg/custom/loadevents-externalresourcesrequired-displaynone-expected.txt: Added.
+        * svg/custom/loadevents-externalresourcesrequired-displaynone.svg: Added.
+        * svg/custom/loadevents-externalresourcesrequired-expected.txt: Added.
+        * svg/custom/loadevents-externalresourcesrequired.svg: Added.
+        * svg/custom/loadevents-normal-displaynone-expected.txt: Added.
+        * svg/custom/loadevents-normal-displaynone.svg: Added.
+        * svg/custom/loadevents-normal-expected.txt: Added.
+        * svg/custom/loadevents-normal.svg: Added.
+
 2008-04-30  David Hyatt  <hyatt@apple.com>
 
         Add test for video crasher.
