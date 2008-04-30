@@ -1,3 +1,12 @@
+2008-04-29  David D. Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX for Release build.
+
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm:
+        (WebNetscapePluginEventHandlerCarbon::drawRect): Declare acceptedEvent
+        separately so the compiler doesn't complain about an unused variable.
+        (WebNetscapePluginEventHandlerCarbon::TSMEventHandler): Ditto.
+
 2008-04-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

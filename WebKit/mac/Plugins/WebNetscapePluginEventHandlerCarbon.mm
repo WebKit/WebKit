@@ -130,7 +130,8 @@ void WebNetscapePluginEventHandlerCarbon::drawRect(const NSRect&)
     WindowRef windowRef = (WindowRef)[[m_pluginView window] windowRef];
     event.message = (unsigned long)windowRef;
     
-    BOOL acceptedEvent = sendEvent(&event);
+    BOOL acceptedEvent;
+    acceptedEvent = sendEvent(&event);
     
     LOG(PluginEvents, "NPP_HandleEvent(updateEvt): %d", acceptedEvent);
 }
@@ -304,7 +305,8 @@ OSStatus WebNetscapePluginEventHandlerCarbon::TSMEventHandler(EventHandlerCallRe
         
         EventRecord eventRec;
         if (ConvertEventRefToEventRecord(cloneEvent, &eventRec)) {
-            BOOL acceptedEvent = static_cast<WebNetscapePluginEventHandlerCarbon*>(eventHandler)->sendEvent(&eventRec);
+            BOOL acceptedEvent;
+            acceptedEvent = static_cast<WebNetscapePluginEventHandlerCarbon*>(eventHandler)->sendEvent(&eventRec);
             
             LOG(PluginEvents, "NPP_HandleEvent(keyDown): %d charCode:%c keyCode:%lu",
                 acceptedEvent, (char) (eventRec.message & charCodeMask), (eventRec.message & keyCodeMask));
