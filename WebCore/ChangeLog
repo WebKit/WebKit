@@ -3,7 +3,7 @@
         Reviewed by Dave Hyatt.
 
         fix https://bugs.webkit.org/show_bug.cgi?id=18618
-        REGRESSION (r31823-r31847): Patterns are upside down
+        <rdar://problem/5876063> REGRESSION (r31823-r31847): Patterns are upside down
 
         * svg/graphics/cg/SVGPaintServerPatternCg.cpp:
         (WebCore::patternCallback): flip the y axis when drawing the tile
