@@ -580,8 +580,8 @@ void QWebPagePrivate::focusInEvent(QFocusEvent *ev)
 
     FocusController *focusController = page->focusController();
     Frame *frame = focusController->focusedFrame();
+    focusController->setActive(true);
     if (frame) {
-        focusController->setActive(true);
         frame->selectionController()->setFocused(true);
     } else {
         focusController->setFocusedFrame(QWebFramePrivate::core(mainFrame));
@@ -597,9 +597,9 @@ void QWebPagePrivate::focusOutEvent(QFocusEvent *ev)
     // and the focus frame. But don't tell the focus controller so that upon
     // focusInEvent() we can re-activate the frame.
     FocusController *focusController = page->focusController();
+    focusController->setActive(false);
     Frame *frame = focusController->focusedFrame();
     if (frame) {
-        focusController->setActive(false);
         frame->selectionController()->setFocused(false);
     }
 }

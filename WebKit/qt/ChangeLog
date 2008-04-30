@@ -1,3 +1,15 @@
+2008-04-30  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        In focusIn and focusOut event always update the active state of the
+        focus controller. Fixes ~400 failing layout tests due to missing
+        editing callbacks that relied on the correct focus.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::focusInEvent):
+        (QWebPagePrivate::focusOutEvent):
+
 2008-04-29  Lincoln Ramsay  <lincoln.ramsay@trolltech.com>
 
         Reviewed by Simon.
