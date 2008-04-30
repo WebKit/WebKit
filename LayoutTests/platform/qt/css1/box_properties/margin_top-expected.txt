@@ -7,23 +7,23 @@ layer at (0,0) size 800x1698
         RenderText {#text} at (0,0) size 354x19
           text run at (0,0) width 354: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,33) size 784x152
-        RenderText {#text} at (0,1) size 392x150
-          text run at (0,1) width 384: ".zero {background-color: silver; margin-top: 0;}"
-          text run at (384,1) width 0: " "
-          text run at (0,20) width 392: ".one {margin-top: 0.5in; background-color: aqua;}"
-          text run at (392,20) width 0: " "
-          text run at (0,39) width 384: ".two {margin-top: 25px; background-color: aqua;}"
-          text run at (384,39) width 0: " "
-          text run at (0,58) width 392: ".three {margin-top: 5em; background-color: aqua;}"
-          text run at (392,58) width 0: " "
-          text run at (0,77) width 384: ".four {margin-top: 25%; background-color: aqua;}"
-          text run at (384,77) width 0: " "
-          text run at (0,96) width 200: ".five {margin-top: 25px;}"
-          text run at (200,96) width 0: " "
-          text run at (0,115) width 392: ".six {margin-top: -10px; background-color: aqua;}"
-          text run at (392,115) width 0: " "
-          text run at (0,134) width 200: "P, UL {margin-bottom: 0;}"
-          text run at (200,134) width 0: " "
+        RenderText {#text} at (0,0) size 319x152
+          text run at (0,0) width 295: ".zero {background-color: silver; margin-top: 0;}"
+          text run at (295,0) width 0: " "
+          text run at (0,19) width 313: ".one {margin-top: 0.5in; background-color: aqua;}"
+          text run at (313,19) width 0: " "
+          text run at (0,38) width 311: ".two {margin-top: 25px; background-color: aqua;}"
+          text run at (311,38) width 0: " "
+          text run at (0,57) width 319: ".three {margin-top: 5em; background-color: aqua;}"
+          text run at (319,57) width 0: " "
+          text run at (0,76) width 311: ".four {margin-top: 25%; background-color: aqua;}"
+          text run at (311,76) width 0: " "
+          text run at (0,95) width 152: ".five {margin-top: 25px;}"
+          text run at (152,95) width 0: " "
+          text run at (0,114) width 311: ".six {margin-top: -10px; background-color: aqua;}"
+          text run at (311,114) width 0: " "
+          text run at (0,133) width 162: "P, UL {margin-bottom: 0;}"
+          text run at (162,133) width 0: " "
       RenderBlock {HR} at (0,199) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,208) size 784x19 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 209x19

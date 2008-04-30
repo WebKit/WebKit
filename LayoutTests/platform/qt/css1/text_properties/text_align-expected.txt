@@ -7,16 +7,16 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 354x19
           text run at (0,0) width 354: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,33) size 784x95
-        RenderText {#text} at (0,1) size 224x93
-          text run at (0,1) width 192: ".one {text-align: left;}"
-          text run at (192,1) width 0: " "
-          text run at (0,20) width 200: ".two {text-align: right;}"
-          text run at (200,20) width 0: " "
-          text run at (0,39) width 224: ".three {text-align: center;}"
-          text run at (224,39) width 0: " "
-          text run at (0,58) width 224: ".four {text-align: justify;}"
-          text run at (224,58) width 0: " "
-          text run at (0,77) width 0: " "
+        RenderText {#text} at (0,0) size 161x95
+          text run at (0,0) width 131: ".one {text-align: left;}"
+          text run at (131,0) width 0: " "
+          text run at (0,19) width 138: ".two {text-align: right;}"
+          text run at (138,19) width 0: " "
+          text run at (0,38) width 161: ".three {text-align: center;}"
+          text run at (161,38) width 0: " "
+          text run at (0,57) width 149: ".four {text-align: justify;}"
+          text run at (149,57) width 0: " "
+          text run at (0,76) width 0: " "
       RenderBlock {HR} at (0,142) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,158) size 784x19
         RenderText {#text} at (0,0) size 235x19

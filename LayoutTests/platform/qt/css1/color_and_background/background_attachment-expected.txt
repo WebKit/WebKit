@@ -1,16 +1,16 @@
-layer at (0,0) size 880x1234
+layer at (0,0) size 800x1234
   RenderView at (0,0) size 800x600
-layer at (0,0) size 880x1234
+layer at (0,0) size 800x1234
   RenderBlock {HTML} at (0,0) size 800x1234
     RenderBody {BODY} at (8,8) size 784x1218 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x19
         RenderText {#text} at (0,0) size 354x19
           text run at (0,0) width 354: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,33) size 784x38
-        RenderText {#text} at (0,1) size 872x36
-          text run at (0,1) width 872: "BODY {background-image: url(../resources/bg.gif); background-repeat: repeat-x; background-attachment: fixed;}"
-          text run at (872,1) width 0: " "
-          text run at (0,20) width 0: " "
+        RenderText {#text} at (0,0) size 711x38
+          text run at (0,0) width 711: "BODY {background-image: url(../resources/bg.gif); background-repeat: repeat-x; background-attachment: fixed;}"
+          text run at (711,0) width 0: " "
+          text run at (0,19) width 0: " "
       RenderBlock {HR} at (0,85) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,101) size 784x95
         RenderText {#text} at (0,0) size 778x95
@@ -70,17 +70,17 @@ layer at (0,0) size 880x1234
           text run at (0,0) width 768: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to the canvas"
           text run at (0,19) width 226: "or if it scrolls along with the content."
       RenderBlock {PRE} at (0,476) size 784x95
-        RenderText {#text} at (0,1) size 296x93
-          text run at (0,1) width 72: "  BODY { "
-          text run at (72,1) width 0: " "
-          text run at (0,20) width 296: "    background: red url(pendant.gif);"
-          text run at (296,20) width 0: " "
-          text run at (0,39) width 256: "    background-repeat: repeat-y;"
-          text run at (256,39) width 0: " "
-          text run at (0,58) width 264: "    background-attachment: fixed;"
-          text run at (264,58) width 0: " "
-          text run at (0,77) width 24: "  }"
-          text run at (24,77) width 0: " "
+        RenderText {#text} at (0,0) size 225x95
+          text run at (0,0) width 60: "  BODY { "
+          text run at (60,0) width 0: " "
+          text run at (0,19) width 225: "    background: red url(pendant.gif);"
+          text run at (225,19) width 0: " "
+          text run at (0,38) width 202: "    background-repeat: repeat-y;"
+          text run at (202,38) width 0: " "
+          text run at (0,57) width 209: "    background-attachment: fixed;"
+          text run at (209,57) width 0: " "
+          text run at (0,76) width 13: "  }"
+          text run at (13,76) width 0: " "
       RenderBlock {P} at (0,585) size 784x39
         RenderInline {EM} at (0,0) size 72x19
           RenderText {#text} at (0,0) size 72x19
@@ -158,17 +158,17 @@ layer at (0,0) size 880x1234
                   text run at (0,0) width 719: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to the"
                   text run at (0,19) width 275: "canvas or if it scrolls along with the content."
               RenderBlock {PRE} at (4,379) size 762x95
-                RenderText {#text} at (0,1) size 296x93
-                  text run at (0,1) width 72: "  BODY { "
-                  text run at (72,1) width 0: " "
-                  text run at (0,20) width 296: "    background: red url(pendant.gif);"
-                  text run at (296,20) width 0: " "
-                  text run at (0,39) width 256: "    background-repeat: repeat-y;"
-                  text run at (256,39) width 0: " "
-                  text run at (0,58) width 264: "    background-attachment: fixed;"
-                  text run at (264,58) width 0: " "
-                  text run at (0,77) width 24: "  }"
-                  text run at (24,77) width 0: " "
+                RenderText {#text} at (0,0) size 225x95
+                  text run at (0,0) width 60: "  BODY { "
+                  text run at (60,0) width 0: " "
+                  text run at (0,19) width 225: "    background: red url(pendant.gif);"
+                  text run at (225,19) width 0: " "
+                  text run at (0,38) width 202: "    background-repeat: repeat-y;"
+                  text run at (202,38) width 0: " "
+                  text run at (0,57) width 209: "    background-attachment: fixed;"
+                  text run at (209,57) width 0: " "
+                  text run at (0,76) width 13: "  }"
+                  text run at (13,76) width 0: " "
               RenderBlock {P} at (4,488) size 762x58
                 RenderInline {EM} at (0,0) size 72x19
                   RenderText {#text} at (0,0) size 72x19

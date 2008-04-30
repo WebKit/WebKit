@@ -7,21 +7,21 @@ layer at (0,0) size 800x1106
         RenderText {#text} at (0,0) size 354x19
           text run at (0,0) width 354: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,33) size 784x133
-        RenderText {#text} at (0,1) size 352x131
-          text run at (0,1) width 184: "P {margin-right: 20px;}"
-          text run at (184,1) width 0: " "
-          text run at (0,20) width 320: ".one {border-right: purple double 10px;}"
-          text run at (320,20) width 0: " "
-          text run at (0,39) width 312: ".two {border-right: purple thin solid;}"
-          text run at (312,39) width 0: " "
-          text run at (0,58) width 344: ".threea {border-right: black medium solid;}"
-          text run at (344,58) width 0: " "
-          text run at (0,77) width 352: ".threeb {border-right: purple medium solid;}"
-          text run at (352,77) width 0: " "
-          text run at (0,96) width 336: ".threec {border-right: blue medium solid;}"
-          text run at (336,96) width 0: " "
-          text run at (0,115) width 280: "TD {border-right: green 2px solid;}"
-          text run at (280,115) width 0: " "
+        RenderText {#text} at (0,0) size 274x133
+          text run at (0,0) width 143: "P {margin-right: 20px;}"
+          text run at (143,0) width 0: " "
+          text run at (0,19) width 251: ".one {border-right: purple double 10px;}"
+          text run at (251,19) width 0: " "
+          text run at (0,38) width 227: ".two {border-right: purple thin solid;}"
+          text run at (227,38) width 0: " "
+          text run at (0,57) width 267: ".threea {border-right: black medium solid;}"
+          text run at (267,57) width 0: " "
+          text run at (0,76) width 274: ".threeb {border-right: purple medium solid;}"
+          text run at (274,76) width 0: " "
+          text run at (0,95) width 260: ".threec {border-right: blue medium solid;}"
+          text run at (260,95) width 0: " "
+          text run at (0,114) width 217: "TD {border-right: green 2px solid;}"
+          text run at (217,114) width 0: " "
       RenderBlock {HR} at (0,180) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,196) size 764x38
         RenderText {#text} at (0,0) size 719x38

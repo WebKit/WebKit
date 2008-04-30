@@ -7,8 +7,8 @@ layer at (0,0) size 800x115
         RenderText {#text} at (0,0) size 287x19
           text run at (0,0) width 287: "The following paragraphs should be identical:"
       RenderBlock {P} at (0,33) size 784x20
-        RenderText {#text} at (0,0) size 179x20
-          text run at (0,0) width 179: "This should be in a bold font."
+        RenderText {#text} at (0,0) size 203x20
+          text run at (0,0) width 203: "This should be in a bold font."
       RenderBlock {P} at (0,67) size 784x20
-        RenderText {#text} at (0,0) size 179x20
-          text run at (0,0) width 179: "This should be in a bold font."
+        RenderText {#text} at (0,0) size 203x20
+          text run at (0,0) width 203: "This should be in a bold font."

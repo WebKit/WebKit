@@ -1,8 +1,8 @@
-layer at (0,0) size 800x681
+layer at (0,0) size 800x680
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x681
-  RenderBlock {HTML} at (0,0) size 800x681
-    RenderBody {BODY} at (8,8) size 784x659 [bgcolor=#CCCCCC]
+layer at (0,0) size 800x680
+  RenderBlock {HTML} at (0,0) size 800x680
+    RenderBody {BODY} at (8,8) size 784x658 [bgcolor=#CCCCCC]
       RenderBlock {P} at (10,0) size 774x19
         RenderText {#text} at (0,0) size 290x19
           text run at (0,0) width 290: "This paragraph should be indented ten pixels."
@@ -47,16 +47,16 @@ layer at (0,0) size 800x681
         RenderText {#text} at (0,0) size 766x38
           text run at (0,0) width 766: "Since the width is \"auto,\" the margins that are set to \"auto\" become zero and this paragraph should have width 100% and"
           text run at (0,19) width 192: "the text should be left justified."
-      RenderBlock {P} at (0,568) size 392x58 [bgcolor=#808080]
+      RenderBlock {P} at (0,568) size 392x57 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 384x38
           text run at (0,0) width 384: "Since auto is an invalid value for padding, the right-margin of"
           text run at (0,19) width 214: "this paragraph should be reset to "
-        RenderInline {CODE} at (0,0) size 32x17
-          RenderText {#text} at (214,21) size 32x17
-            text run at (214,21) width 32: "auto"
-        RenderText {#text} at (246,19) size 392x39
-          text run at (246,19) width 146: " and thus be expanded"
-          text run at (0,39) width 383: "to 50% and it should only occupy the left half of the viewport."
-      RenderBlock {P} at (0,640) size 784x19 [bgcolor=#808080]
+        RenderInline {CODE} at (0,0) size 28x19
+          RenderText {#text} at (214,19) size 28x19
+            text run at (214,19) width 28: "auto"
+        RenderText {#text} at (242,19) size 388x38
+          text run at (242,19) width 146: " and thus be expanded"
+          text run at (0,38) width 383: "to 50% and it should only occupy the left half of the viewport."
+      RenderBlock {P} at (0,639) size 784x19 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 645x19
           text run at (0,0) width 645: "Because this paragraph has width 100%, the auto margins become zero, so it should not be centered."

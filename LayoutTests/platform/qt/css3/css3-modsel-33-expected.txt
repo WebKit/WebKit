@@ -37,7 +37,7 @@ layer at (0,0) size 800x134
                 RenderText {#text} at (2,2) size 62x19
                   text run at (2,2) width 62: "green cell"
       RenderBlock {P} at (0,93) size 784x19
-        RenderInline {SPAN} at (0,0) size 442x19
+        RenderInline {SPAN} at (0,0) size 442x19 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 442x19
             text run at (0,0) width 279: "This paragraph contains a span that should "
             text run at (279,0) width 163: "have a green background"

@@ -9,8 +9,8 @@ layer at (0,0) size 800x113
             text run at (0,0) width 164: "This line should be green."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {PRE} at (0,33) size 784x19
-        RenderText {#text} at (0,1) size 224x17
-          text run at (0,1) width 224: " This line should be green. "
+        RenderText {#text} at (0,0) size 172x19
+          text run at (0,0) width 172: " This line should be green. "
       RenderBlock {UL} at (0,66) size 784x19
         RenderListItem {LI} at (40,0) size 744x19
           RenderListMarker at (-17,0) size 7x19: bullet
