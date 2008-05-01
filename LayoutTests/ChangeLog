@@ -1,3 +1,12 @@
+2008-04-29  Eric Seidel  <eric@webkit.org>
+
+        Rubber-stamped by Sam Weinig.
+        
+        Mark a couple UTF16 files as binary so windows-svn doesn't mutilate them on checkout.
+
+        * fast/xsl/xslt-enc16.xml: add svn:mime-type application/octet-stream
+        * fast/xsl/xslt-enc16to16.xml: add svn:mime-type application/octet-stream
+
 2008-05-01  Alice Liu  <alice.liu@apple.com>
 
         Rubber-stamped by Sam Weinig.
