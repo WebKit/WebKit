@@ -30,19 +30,37 @@
 
 #include "PlatformString.h"
 #include "SQLiteDatabase.h"
+#include "StringHash.h"
+
+#include <wtf/HashCountedSet.h>
 
 namespace WebCore {
 
+class ApplicationCacheGroup;
+class KURL;
+    
 class ApplicationCacheStorage {
 public:
     void setCacheDirectory(const String&);
     
-public:
+    ApplicationCacheGroup* cacheGroupForURL(const KURL&);
+
+    ApplicationCacheGroup* findOrCreateCacheGroup(const KURL& manifestURL);
+    void cacheGroupDestroyed(ApplicationCacheGroup*);
+    
+private:
     void openDatabase(bool createIfDoesNotExist);
 
     String m_cacheDirectory;
 
-    SQLiteDatabase m_database;    
+    SQLiteDatabase m_database;
+    
+    // In order to quickly determinate if a given resource exists in an application cache,
+    // we keep a hash set of the hosts of the manifest URLs of all cache groups.
+    HashCountedSet<unsigned, AlreadyHashed> m_cacheHostSet;
+    
+    typedef HashMap<String, ApplicationCacheGroup*> CacheGroupMap;
+    CacheGroupMap m_cachesInMemory;    
 };
  
 ApplicationCacheStorage& cacheStorage();

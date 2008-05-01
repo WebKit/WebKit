@@ -49,6 +49,9 @@ class Frame;
 
 class ApplicationCacheGroup : Noncopyable, ResourceHandleClient {
 public:
+    ApplicationCacheGroup(const KURL& manifestURL);    
+    ~ApplicationCacheGroup();
+    
     enum Status { Idle, Checking, Downloading };
 
     static ApplicationCache* cacheForMainRequest(const ResourceRequest&, DocumentLoader*);
@@ -67,9 +70,9 @@ public:
     void finishedLoadingMainResource(DocumentLoader* loader);
     void documentLoaderDestroyed(DocumentLoader* loader);
 
-private:
-    ApplicationCacheGroup(const KURL& manifestURL);
+    void setNewestCache(PassRefPtr<ApplicationCache> newestCache);
 
+private:
     typedef void (DOMApplicationCache::*ListenerFunction)();
     void callListenersOnAssociatedDocuments(ListenerFunction);
     void callListeners(ListenerFunction, const Vector<RefPtr<DocumentLoader> >& loaders);

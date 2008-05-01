@@ -25,11 +25,71 @@
 
 #include "config.h"
 #include "ApplicationCacheStorage.h"
-#include "FileSystem.h"
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
+#include "ApplicationCacheGroup.h"
+#include "ApplicationCache.h"
+#include "FileSystem.h"
+#include "KURL.h"
+
 namespace WebCore {
+
+static unsigned urlHostHash(const KURL& url)
+{
+    unsigned hostStart = url.hostStart();
+    unsigned hostEnd = url.hostEnd();
+    
+    return AlreadyHashed::avoidDeletedValue(StringImpl::computeHash(url.string().characters() + hostStart, hostEnd - hostStart));
+}
+
+ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const KURL& manifestURL)
+{
+    std::pair<CacheGroupMap::iterator, bool> result = m_cachesInMemory.add(manifestURL, 0);
+    
+    if (!result.second) {
+        ASSERT(result.first->second);
+        
+        return result.first->second;
+    }
+
+    result.first->second = new ApplicationCacheGroup(manifestURL);
+    m_cacheHostSet.add(urlHostHash(manifestURL));
+    
+    return result.first->second;
+}
+
+ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const KURL& url)
+{
+    // Hash the host name and see if there's a manifest with the same host.
+    if (!m_cacheHostSet.contains(urlHostHash(url)))
+        return 0;
+
+    // Check if a cache already exists in memory.
+    CacheGroupMap::const_iterator end = m_cachesInMemory.end();
+    for (CacheGroupMap::const_iterator it = m_cachesInMemory.begin(); it != end; ++it) {
+        ApplicationCacheGroup* group = it->second;
+        
+        if (!protocolHostAndPortAreEqual(url, group->manifestURL()))
+            continue;
+        
+        if (ApplicationCache* cache = group->newestCache()) {
+            if (cache->resourceForURL(url))
+                return group;
+        }
+    }
+    
+    return 0;
+}
+
+void ApplicationCacheStorage::cacheGroupDestroyed(ApplicationCacheGroup* group)
+{
+    ASSERT(m_cachesInMemory.get(group->manifestURL()) == group);
+
+    m_cachesInMemory.remove(group->manifestURL());
+    if (!group->newestCache())
+        m_cacheHostSet.remove(urlHostHash(group->manifestURL()));
+}
 
 void ApplicationCacheStorage::setCacheDirectory(const String& cacheDirectory)
 {

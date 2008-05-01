@@ -30,6 +30,7 @@
 
 #include "ApplicationCache.h"
 #include "ApplicationCacheResource.h"
+#include "ApplicationCacheStorage.h"
 #include "DocumentLoader.h"
 #include "DOMApplicationCache.h"
 #include "DOMWindow.h"
@@ -43,25 +44,6 @@
 
 namespace WebCore {
 
-typedef HashMap<String, ApplicationCacheGroup*> CacheGroupMap;
-
-CacheGroupMap& cacheGroupMap()
-{
-    static CacheGroupMap cacheGroupMap;
-    
-    return cacheGroupMap;
-}
-
-// In order to quickly determinate if a given resource exists in an application cache,
-// we keep a hash set of the hosts of the manifest URLs of all cache groups.
-typedef HashSet<unsigned, AlreadyHashed> CacheHostSet;
-    
-CacheHostSet& cacheHostSet() {
-    static CacheHostSet cacheHostSet;
-    
-    return cacheHostSet;
-}
-
 ApplicationCacheGroup::ApplicationCacheGroup(const KURL& manifestURL)
     : m_manifestURL(manifestURL)
     , m_status(Idle)
@@ -70,12 +52,12 @@ ApplicationCacheGroup::ApplicationCacheGroup(const KURL& manifestURL)
 {
 }
 
-static unsigned urlHostHash(const KURL& url)
+ApplicationCacheGroup::~ApplicationCacheGroup()
 {
-    unsigned hostStart = url.hostStart();
-    unsigned hostEnd = url.hostEnd();
+    ASSERT(!m_newestCache);
+    ASSERT(m_caches.isEmpty());
     
-    return AlreadyHashed::avoidDeletedValue(StringImpl::computeHash(url.string().characters() + hostStart, hostEnd - hostStart));
+    cacheStorage().cacheGroupDestroyed(this);
 }
     
 ApplicationCache* ApplicationCacheGroup::cacheForMainRequest(const ResourceRequest& request, DocumentLoader* loader)
@@ -88,21 +70,10 @@ ApplicationCache* ApplicationCacheGroup::cacheForMainRequest(const ResourceReque
     if (loader->frame() != loader->frame()->page()->mainFrame())
         return 0;
 
-    const KURL& url = request.url();
-    if (!cacheHostSet().contains(urlHostHash(url)))
-        return 0;
-    
-    CacheGroupMap::const_iterator end = cacheGroupMap().end();
-    for (CacheGroupMap::const_iterator it = cacheGroupMap().begin(); it != end; ++it) {
-        ApplicationCacheGroup* group = it->second;
+    if (ApplicationCacheGroup* group = cacheStorage().cacheGroupForURL(request.url())) {
+        ASSERT(group->newestCache());
         
-        if (!protocolHostAndPortAreEqual(url, group->manifestURL()))
-            continue;
-        
-        if (ApplicationCache* cache = group->newestCache()) {
-            if (cache->resourceForURL(url))
-                return cache;
-        }
+        return group->newestCache();
     }
     
     return 0;
@@ -166,19 +137,9 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const KURL& manifestURL)
         return;
     }
             
-    ApplicationCache* cache = 0;
-    ApplicationCacheGroup* group = 0;
-    std::pair<CacheGroupMap::iterator, bool> result = cacheGroupMap().add(manifestURL, 0);
-    if (result.second) {
-        group = new ApplicationCacheGroup(manifestURL);
-        result.first->second = group;
-        cacheHostSet().add(urlHostHash(manifestURL));
-    } else {
-        group = result.first->second;
-        cache = group->newestCache();
-    }
+    ApplicationCacheGroup* group = cacheStorage().findOrCreateCacheGroup(manifestURL);
             
-    if (cache) {
+    if (ApplicationCache* cache = group->newestCache()) {
         ASSERT(cache->manifestResource());
                 
         group->associateDocumentLoaderWithCache(frame->loader()->documentLoader(), cache);
@@ -190,11 +151,8 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const KURL& manifestURL)
     } else {
         bool isUpdating = group->m_cacheBeingUpdated;
                 
-        if (!isUpdating) {
-            group->m_cacheBeingUpdated = ApplicationCache::create(group);
-            group->m_caches.add(group->m_cacheBeingUpdated.get());
-        }
-                
+        if (!isUpdating)
+            group->m_cacheBeingUpdated = ApplicationCache::create();
         documentLoader->setCandidateApplicationCacheGroup(group);
         group->m_cacheCandidates.add(documentLoader);
 
@@ -231,7 +189,7 @@ void ApplicationCacheGroup::selectCacheWithoutManifestURL(Frame* frame)
     if (isMainFrame && mainResourceCache) {
         mainResourceCache->group()->associateDocumentLoaderWithCache(documentLoader, mainResourceCache);
         mainResourceCache->group()->update(frame);
-    }    
+    }
 }
 
 void ApplicationCacheGroup::finishedLoadingMainResource(DocumentLoader* loader)
@@ -269,23 +227,42 @@ void ApplicationCacheGroup::documentLoaderDestroyed(DocumentLoader* loader)
         ASSERT(!m_cacheCandidates.contains(loader));
     
         m_associatedDocumentLoaders.remove(it);
-        return;
+    } else {
+        ASSERT(m_cacheCandidates.contains(loader));
+        m_cacheCandidates.remove(loader);
     }
     
-    ASSERT(m_cacheCandidates.contains(loader));
-    m_cacheCandidates.remove(loader);
-    
-    // FIXME: Delete the group if the set of cache candidates is empty.
-}
-    
+    if (m_associatedDocumentLoaders.isEmpty() && m_cacheCandidates.isEmpty()) {
+        // We should only have the newest cache remaining.
+        ASSERT(m_caches.size() == 1);
+        ASSERT(m_caches.contains(m_newestCache.get()));
+
+        // This should cause us to be deleted.
+        m_newestCache = 0;        
+    }    
+}    
 
 void ApplicationCacheGroup::cacheDestroyed(ApplicationCache* cache)
 {
     ASSERT(m_caches.contains(cache));
     
     m_caches.remove(cache);
-}
     
+    if (m_caches.isEmpty())
+        delete this;
+}
+
+void ApplicationCacheGroup::setNewestCache(PassRefPtr<ApplicationCache> newestCache)
+{ 
+    ASSERT(!m_newestCache);
+    ASSERT(!m_caches.contains(newestCache.get()));
+    ASSERT(!newestCache->group());
+           
+    m_newestCache = newestCache; 
+    m_caches.add(m_newestCache.get());
+    m_newestCache->setGroup(this);
+}
+
 void ApplicationCacheGroup::update(Frame* frame)
 {
     if (m_status == Checking || m_status == Downloading) 
@@ -460,8 +437,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
     if (isUpgradeAttempt) {
         ASSERT(!m_cacheBeingUpdated);
         
-        m_cacheBeingUpdated = ApplicationCache::create(this);
-        m_caches.add(m_cacheBeingUpdated.get());
+        m_cacheBeingUpdated = ApplicationCache::create();
         
         ApplicationCache::ResourceMap::const_iterator end = m_newestCache->end();
         for (ApplicationCache::ResourceMap::const_iterator it = m_newestCache->begin(); it != end; ++it) {
@@ -487,13 +463,6 @@ void ApplicationCacheGroup::cacheUpdateFailed()
     m_pendingEntries.clear();
     m_cacheBeingUpdated = 0;
     m_manifestResource = 0;
-
-    bool isUpgradeAttempt = m_newestCache;
-    if (!isUpgradeAttempt) {
-        // If the cache attempt failed, setting m_cacheBeingUpdated to 0 should cause
-        // it to be deleted.
-        ASSERT(m_caches.isEmpty());
-    }
 
     while (!m_cacheCandidates.isEmpty()) {
         HashSet<DocumentLoader*>::iterator it = m_cacheCandidates.begin();
@@ -544,7 +513,7 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
             
             DocumentLoader* loader = *it;
             ASSERT(!loader->applicationCache());
-            ASSERT(loader->candidateApplicationCacheGroup() == m_cacheBeingUpdated->group());
+            ASSERT(loader->candidateApplicationCacheGroup() == this);
             
             associateDocumentLoaderWithCache(loader, m_cacheBeingUpdated.get());
     
@@ -554,7 +523,7 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
         }
     }
     
-    m_newestCache = m_cacheBeingUpdated.release();
+    setNewestCache(m_cacheBeingUpdated.release());
     
     callListeners(isUpgradeAttempt ? &DOMApplicationCache::callUpdateReadyListener : &DOMApplicationCache::callCachedListener, 
                   documentLoaders);

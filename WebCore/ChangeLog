@@ -1,3 +1,64 @@
+2008-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Move management of cache groups to ApplicationCacheStorage. Also,
+        application caches now start out with a null group and will have their group set
+        when the cache has finished loading. 
+
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::ApplicationCache):
+        Initialize m_group to 0.
+        
+        (WebCore::ApplicationCache::~ApplicationCache):
+        Null check the group.
+        
+        (WebCore::ApplicationCache::setGroup):
+        New method for setting the group.
+        
+        * loader/appcache/ApplicationCache.h:        
+        (WebCore::ApplicationCache::create):
+        Remove the group argument.
+        
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::~ApplicationCacheGroup):
+        Let the storage know that the cache group has been destroyed.
+        
+        (WebCore::ApplicationCacheGroup::cacheForMainRequest):
+        Call into the storage.
+        
+        (WebCore::ApplicationCacheGroup::selectCache):
+        Call into the storage.
+        
+        (WebCore::ApplicationCacheGroup::documentLoaderDestroyed):
+        When there are no document loaders associated with the cache group,
+        set the newest cache to 0.
+        
+        (WebCore::ApplicationCacheGroup::cacheDestroyed):
+        Delete the group if there are no associated caches.
+        
+        (WebCore::ApplicationCacheGroup::setNewestCache):
+        New method that will set the newest cache and associate the group with the cache.
+        
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        Call setNewestCache instead.
+        
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::urlHostHash):
+        Move host hash method here.
+        
+        (WebCore::ApplicationCacheStorage::findOrCreateCacheGroup):
+        New method that finds a cache group with a given manifest URL or creates a new one.
+
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL):
+        New method that returns a cache group for a given URL.
+        
+        (WebCore::ApplicationCacheStorage::cacheGroupDestroyed):
+        When the cache group has been destroyed, remove it from the hash map.
+        
+        * loader/appcache/ApplicationCacheStorage.h:
+        Add new methods.I b
+
 2008-05-01  Dan Winship  <danw@gnome.org>
 
         Reviewed by Alp Toker.
