@@ -16,7 +16,7 @@
 		1AEA66D40DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */; };
 		1AEA66D50DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */; };
 		1AEA66D80DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA66D60DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h */; };
-		1AEA66D90DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEA66D70DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.mm */; };
+		1AEA66D90DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEA66D70DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		1AEA6A500DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA6A4E0DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.h */; };
 		1AEA6A510DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEA6A4F0DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.mm */; };
 		1C0706630A431E01001078F6 /* WebScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0706620A431E01001078F6 /* WebScriptDebugServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
