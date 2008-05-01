@@ -1,3 +1,26 @@
+2008-04-30  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        This patch does three things:
+        1. Adds support for the "img" ARIA role
+        2. Switches over to a HashMap for converting ARIA role attributes 
+        to WebCore's AccessibilityRole type. 
+        3. Fixes a crash in the new ARIA code that I ran into while 
+        browsing with VoiceOver enabled.
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::headingLevel): This is the crash 
+        fix. Make sure the node's renderer is not null before looking up 
+        its corresponding AccessibilityObject in the cache.
+        (WebCore::AccessibilityObject::accessibilityIsIgnored): Account for 
+        ARIA images.
+        (WebCore::createARIARoleMap): Switch to HashMap, and add "img" to 
+        the Map.
+        (WebCore::RoleEntry::): Same.
+        (WebCore::ariaRoleToWebCoreRole): Same.
+        (WebCore::AccessibilityObject::ariaRoleAttribute): Same.
+
 2008-04-30  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas.

@@ -289,7 +289,11 @@ int AccessibilityObject::headingLevel(Node* node)
         return 6;
 
     // FIXME: When we implement ARIA's level property, this needs to return that instead of 1.
-    AccessibilityObject* axObjectForNode = node->document()->axObjectCache()->get(node->renderer());
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return 0;
+
+    AccessibilityObject* axObjectForNode = node->document()->axObjectCache()->get(renderer);
     if (axObjectForNode->ariaRoleAttribute() == HeadingRole)
         return 1;
 
@@ -685,7 +689,7 @@ bool AccessibilityObject::accessibilityIsIgnored() const
         return !static_cast<RenderBlock*>(m_renderer)->firstLineBox() && !mouseButtonListener();
 
     // ignore images seemingly used as spacers
-    if (m_renderer->isRenderImage()) {
+    if (isImage()) {
         // informal standard is to ignore images with zero-length alt strings
         Node* node = m_renderer->element();
         if (node && node->isElementNode()) {
@@ -700,10 +704,12 @@ bool AccessibilityObject::accessibilityIsIgnored() const
             return true;
 
         // check whether rendered image was stretched from one-dimensional file image
-        RenderImage* image = static_cast<RenderImage*>(m_renderer);
-        if (image->cachedImage()) {
-            IntSize imageSize = image->cachedImage()->imageSize(image->view()->zoomFactor());
-            return imageSize.height() <= 1 || imageSize.width() <= 1;
+        if (isNativeImage()) {
+            RenderImage* image = static_cast<RenderImage*>(m_renderer);
+            if (image->cachedImage()) {
+                IntSize imageSize = image->cachedImage()->imageSize(image->view()->zoomFactor());
+                return imageSize.height() <= 1 || imageSize.width() <= 1;
+            }
         }
 
         return false;
@@ -1876,6 +1882,39 @@ AccessibilityObject* AccessibilityObject::observableObject() const
     return 0;
 }
 
+typedef HashMap<String, AccessibilityRole, CaseFoldingHash> ARIARoleMap;
+
+static const ARIARoleMap& createARIARoleMap()
+{
+    struct RoleEntry {
+        String ariaRole;
+        AccessibilityRole webcoreRole;
+    };
+    
+    static const RoleEntry roles[] = {
+        { String("button"), ButtonRole },
+        { String("checkbox"), CheckBoxRole },
+        { String("heading"), HeadingRole },
+        { String("img"), ImageRole },
+        { String("link"), WebCoreLinkRole },
+        { String("radio"), RadioButtonRole },
+        { String("textbox"), TextAreaRole }
+    };
+    ARIARoleMap& roleMap = *new ARIARoleMap;
+    
+    const unsigned numRoles = sizeof(roles) / sizeof(roles[0]);
+    for (unsigned i = 0; i < numRoles; ++i)
+        roleMap.set(roles[i].ariaRole, roles[i].webcoreRole);
+    return roleMap;
+}
+
+static AccessibilityRole ariaRoleToWebCoreRole(String value)
+{
+    ASSERT(!value.isEmpty() && !value.isNull());
+    static const ARIARoleMap& roleMap = createARIARoleMap();
+    return roleMap.get(value);
+}
+
 AccessibilityRole AccessibilityObject::ariaRoleAttribute() const
 {
     Node* node = m_renderer->node();
@@ -1887,19 +1926,9 @@ AccessibilityRole AccessibilityObject::ariaRoleAttribute() const
     if (ariaRole.isNull() || ariaRole.isEmpty())
         return UnknownRole;
     
-    if (equalIgnoringCase(ariaRole, "button"))
-        return ButtonRole;
-    if (equalIgnoringCase(ariaRole, "checkbox"))
-        return CheckBoxRole;
-    if (equalIgnoringCase(ariaRole, "heading"))
-        return HeadingRole;
-    if (equalIgnoringCase(ariaRole, "link"))
-        return WebCoreLinkRole;
-    if (equalIgnoringCase(ariaRole, "radio"))
-        return RadioButtonRole;
-    if (equalIgnoringCase(ariaRole, "textbox"))
-        return TextAreaRole;
-    
+    AccessibilityRole role = ariaRoleToWebCoreRole(ariaRole);
+    if (role)
+        return role;
     return UnknownRole;
 }
 
