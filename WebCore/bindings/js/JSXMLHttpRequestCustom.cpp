@@ -123,7 +123,7 @@ JSValue* JSXMLHttpRequest::open(ExecState* exec, const List& args)
     if (args.size() < 2)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
-    Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
     const KURL& url = frame->loader()->completeURL(args[1]->toString(exec));

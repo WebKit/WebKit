@@ -173,7 +173,8 @@ namespace WebCore {
 
     // Returns JSDOMWindow or 0
     JSDOMWindow* toJSDOMWindow(Frame*);
-    JSDOMWindow* toJSDOMWindow(KJS::JSGlobalObject*);
+
+    JSDOMWindow* asJSDOMWindow(KJS::JSGlobalObject*);
 
 } // namespace WebCore
 

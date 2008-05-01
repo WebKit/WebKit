@@ -1,3 +1,44 @@
+2008-05-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Rename toJSDOMWindow(KJS::JSGlobalObject) to asJSDOMWindow, as all it does is
+        cast.
+
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::toVoidCallback):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::create):
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::add):
+        (WebCore::JSDOMApplicationCache::remove):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::allowPopUp):
+        (WebCore::createWindow):
+        (WebCore::windowProtoFuncOpen):
+        (WebCore::asJSDOMWindow):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation):
+        (WebCore::JSDOMWindow::postMessage):
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::changeVersion):
+        (WebCore::JSDatabase::transaction):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::setLocation):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::navigateIfAllowed):
+        (WebCore::JSLocation::setHref):
+        (WebCore::JSLocation::replace):
+        (WebCore::JSLocation::reload):
+        (WebCore::JSLocation::assign):
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::open):
+        * page/JavaScriptDebugServer.cpp:
+        (WebCore::toPage):
+
 2008-05-01  Anatoli Papirovski  <apapirovski@mac.com>
 
         Reviewed by Dave Hyatt.

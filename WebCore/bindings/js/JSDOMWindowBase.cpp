@@ -234,7 +234,7 @@ JSDOMWindowBase::~JSDOMWindowBase()
 
 static bool allowPopUp(ExecState* exec)
 {
-    Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
 
     ASSERT(frame);
     if (frame->scriptProxy()->processingUserGesture())
@@ -277,7 +277,7 @@ static HashMap<String, String> parseModalDialogFeatures(const String& featuresAr
 static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& url,
     const String& frameName, const WindowFeatures& windowFeatures, JSValue* dialogArgs)
 {
-    Frame* activeFrame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     ASSERT(activeFrame);
 
     ResourceRequest request;
@@ -1055,7 +1055,7 @@ JSValue* windowProtoFuncOpen(ExecState* exec, JSObject* thisObj, const List& arg
     Frame* frame = window->impl()->frame();
     if (!frame)
         return jsUndefined();
-    Frame* activeFrame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!activeFrame)
         return  jsUndefined();
 
@@ -1421,7 +1421,7 @@ JSDOMWindow* toJSDOMWindow(Frame* frame)
     return frame->scriptProxy()->windowWrapper()->window();
 }
 
-JSDOMWindow* toJSDOMWindow(JSGlobalObject* globalObject)
+JSDOMWindow* asJSDOMWindow(JSGlobalObject* globalObject)
 {
     return static_cast<JSDOMWindow*>(globalObject);
 }

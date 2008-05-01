@@ -104,7 +104,7 @@ VoidCallback* toVoidCallback(ExecState* exec, JSValue* value)
     if (!object)
         return 0;
     
-    Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return 0;
     

@@ -177,7 +177,7 @@ bool JSDOMWindow::customGetPropertyNames(ExecState* exec, PropertyNameArray&)
 
 void JSDOMWindow::setLocation(ExecState* exec, JSValue* value)
 {
-    Frame* activeFrame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!activeFrame)
         return;
 
@@ -208,7 +208,7 @@ JSValue* JSDOMWindow::postMessage(ExecState* exec, const List& args)
 {
     DOMWindow* window = impl();
 
-    DOMWindow* source = toJSDOMWindow(exec->dynamicGlobalObject())->impl();
+    DOMWindow* source = asJSDOMWindow(exec->dynamicGlobalObject())->impl();
     String message = args[0]->toString(exec);
 
     if (exec->hadException())

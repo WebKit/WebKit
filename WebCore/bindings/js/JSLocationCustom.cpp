@@ -114,7 +114,7 @@ bool JSLocation::customGetPropertyNames(ExecState* exec, PropertyNameArray&)
 
 static void navigateIfAllowed(ExecState* exec, Frame* frame, const KURL& url, bool lockHistory)
 {
-    Frame* activeFrame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!url.protocolIs("javascript") || allowsAccessFromFrame(exec, frame)) {
         bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
         frame->loader()->scheduleLocationChange(url.string(), activeFrame->loader()->outgoingReferrer(), lockHistory, userGesture);
@@ -126,7 +126,7 @@ void JSLocation::setHref(ExecState* exec, JSValue* value)
     Frame* frame = impl()->frame();
     ASSERT(frame);
 
-    Frame* activeFrame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!activeFrame)
         return;
     if (!activeFrame->loader()->shouldAllowNavigation(frame))
@@ -229,7 +229,7 @@ JSValue* JSLocation::replace(ExecState* exec, const List& args)
     if (!frame)
         return jsUndefined();
 
-    Frame* activeFrame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!activeFrame) 
         return jsUndefined();
     if (!activeFrame->loader()->shouldAllowNavigation(frame))
@@ -250,7 +250,7 @@ JSValue* JSLocation::reload(ExecState* exec, const List& args)
         return jsUndefined();
 
     if (!frame->loader()->url().protocolIs("javascript") || (window && window->allowsAccessFrom(exec))) {
-        bool userGesture = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame()->scriptProxy()->processingUserGesture();
+        bool userGesture = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame()->scriptProxy()->processingUserGesture();
         frame->loader()->scheduleRefresh(userGesture);
     }
     return jsUndefined();
@@ -262,7 +262,7 @@ JSValue* JSLocation::assign(ExecState* exec, const List& args)
     if (!frame)
         return jsUndefined();
 
-    Frame* activeFrame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!activeFrame)
         return jsUndefined();
     if (!activeFrame->loader()->shouldAllowNavigation(frame))

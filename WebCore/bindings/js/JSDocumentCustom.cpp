@@ -64,7 +64,7 @@ void JSDocument::setLocation(ExecState* exec, JSValue* value)
 
     // IE and Mozilla both resolve the URL relative to the source frame,
     // not the target frame.
-    Frame* activeFrame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (activeFrame)
         str = activeFrame->document()->completeURL(str).string();
 

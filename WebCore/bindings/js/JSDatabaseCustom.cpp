@@ -50,7 +50,7 @@ JSValue* JSDatabase::changeVersion(ExecState* exec, const List& args)
     String oldVersion = args[0]->toString(exec);
     String newVersion = args[1]->toString(exec);
 
-    Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
     
@@ -95,7 +95,7 @@ JSValue* JSDatabase::transaction(ExecState* exec, const List& args)
         return jsUndefined();
     }        
  
-    Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
     

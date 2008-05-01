@@ -44,7 +44,7 @@ namespace WebCore {
     
 JSValue* JSDOMApplicationCache::add(ExecState* exec, const List& args)
 {
-    Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
     const KURL& url = frame->loader()->completeURL(args[0]->toString(exec));
@@ -57,7 +57,7 @@ JSValue* JSDOMApplicationCache::add(ExecState* exec, const List& args)
     
 JSValue* JSDOMApplicationCache::remove(ExecState* exec, const List& args)
 {
-    Frame* frame = toJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
     const KURL& url = frame->loader()->completeURL(args[0]->toString(exec));
