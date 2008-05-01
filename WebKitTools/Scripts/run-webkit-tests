@@ -203,9 +203,15 @@ Usage: $programName [options] [testdir|testpath ...]
   -m|--merge-leak-depth arg       Merges leak callStacks and prints the number of unique leaks beneath a callstack depth of arg.  Defaults to 5.
 EOF
 
+# Process @ARGV for configuration switches before calling GetOptions()
+if (my $passedConfiguration = passedConfiguration()) {
+    $configuration = $passedConfiguration;
+} else {
+    $configuration = configuration();
+}
+
 my $getOptionsResult = GetOptions(
     'c|configuration=s' => \$configuration,
-    'debug|devel' => sub { $configuration = "Debug" },
     'guard-malloc|g' => \$guardMalloc,
     'help' => \$showHelp,
     'horizontal-sweep|h' => \$repaintSweepHorizontally,
@@ -217,7 +223,6 @@ my $getOptionsResult = GetOptions(
     'platform=s' => \$platform,
     'port=i' => \$httpdPort,
     'quiet|q' => \$quiet,
-    'release|deploy' => sub { $configuration = "Release" },
     'repaint-tests|r' => \$repaintTests,
     'reset-results' => \$resetResults,
     'new-test-results!' => \$generateNewResults,
@@ -284,7 +289,7 @@ chdirWebKit();
 if(!defined($root)){
     # Push the parameters to build-dumprendertree as an array
     my @args;
-    push(@args, "--" . $configuration);
+    push(@args, $configurationOption);
     push(@args, "--qt")  if isQt();
     push(@args, "--gtk")  if isGtk();
 

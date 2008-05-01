@@ -1,3 +1,15 @@
+2008-05-01  David Kilzer  <ddkilzer@apple.com>
+
+        Clean up configuration usage in run-webkit-tests
+
+        Reviewed by Adam.
+
+        * Scripts/run-webkit-tests: Parse configuration switches using
+        passedConfiguration() from webkitdirs.pm like every other script.
+        Note that we must still call setConfiguration() afterwards in
+        case the --configuration switch was used.  Use $configurationOption
+        when running build-dumprendertree instead of recreating the switch.
+
 2008-04-29  Adam Roben  <aroben@apple.com>
 
         Restore the beloved COMPtr::operator&
