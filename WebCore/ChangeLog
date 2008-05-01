@@ -1,3 +1,16 @@
+2008-05-01  Alp Toker  <alp@nuanti.com>
+
+        Qt/Win build fix attempt following plugin changes. Add missing return
+        statements.
+
+        Also fixes some newly introduced coding style issues in the Qt port.
+
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::openTemporaryFile):
+        (WebCore::closeFile):
+        (WebCore::writeToFile):
+        (WebCore::unloadModule):
+
 2008-05-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

@@ -98,7 +98,7 @@ String directoryName(const String& path)
 CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
 {
     QFile *temp = new QTemporaryFile(QString(prefix));
-    if( temp->open(QIODevice::ReadWrite) ) {
+    if (temp->open(QIODevice::ReadWrite)) {
         handle = temp;
         return String(temp->fileName()).utf8();
     }
@@ -108,7 +108,7 @@ CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
 
 void closeFile(PlatformFileHandle& handle)
 {
-    if(handle) {
+    if (handle) {
         handle->close();
         delete handle;
     }
@@ -116,15 +116,20 @@ void closeFile(PlatformFileHandle& handle)
 
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
-    if(handle && handle->exists() && handle->isWritable()) {
-        handle->write(data, length);
-    }
+    if (handle && handle->exists() && handle->isWritable())
+        return handle->write(data, length);
+
+    return 0;
 }
 
 bool unloadModule(PlatformModule module)
 {
-    if (module->unload())
+    if (module->unload()) {
         delete module;
+        return true;
+    }
+
+    return false;
 }
 
 }
