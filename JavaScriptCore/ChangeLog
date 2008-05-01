@@ -1,3 +1,39 @@
+2008-05-01  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        - Fix "sample" output so that it can be imported into Instruments
+        - Also keep track of number of times a function is profiled.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Add StrHash.h which needed
+        to be pulled out of identifier.cpp so that it could be used by the
+        profiler and identifiers.
+        * kjs/identifier.cpp: Ditto.
+        * profiler/FunctionCallProfile.cpp:
+        (KJS::FunctionCallProfile::printDataInspectorStyle): Inspector style
+        printing should show microseconds.
+        (KJS::FunctionCallProfile::printDataSampleStyle): Sample style printing
+        now counts the number of times a function is in the stack tree and does
+        not print microseconds since that does not make sense for a sampler.
+        * profiler/FunctionCallProfile.h: Keep track of number of times a
+        function is profiled.
+        (KJS::FunctionCallProfile::numberOfCalls):
+        * profiler/Profiler.cpp:
+        (KJS::functionNameCountPairComparator): Comparator for sort function in
+        printDataSampleStyle.
+        (KJS::Profiler::printDataSampleStyle): Print the number of times that a
+        function is listed in the stack tree in order of most times listed.
+        * wtf/HashCountedSet.h: Added copyToVector since it didn't exist and is
+        a more standard way to copy a HashSet to a Vector. I added on variant
+        that takes a pair as the Vector's type and so the HashCountedSet simply
+        fills in that pair with its internal pair, and another variant that
+        takes a Vector of the type of the HashCountedSet and only fills in the
+        Vector with the first element of the pair.
+        (WTF::copyToVector):
+        * wtf/StrHash.h: Added.
+        (WTF::):
+
 2008-04-29  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX for ENABLE(DASHBOARD_SUPPORT)

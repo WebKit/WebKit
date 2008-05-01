@@ -26,51 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FunctionCallProfile_h
-#define FunctionCallProfile_h
+#include "config.h"
 
-#include <kjs/ustring.h>
-#include <wtf/Deque.h>
-#include <wtf/StrHash.h>
+#include "identifier.h"
 
-namespace KJS {
+namespace WTF {
 
-    class FunctionCallProfile;
+    template<typename T> struct DefaultHash;
+    template<typename T> struct StrHash;
 
-    typedef Deque<FunctionCallProfile*>::const_iterator StackIterator;
-    typedef HashCountedSet<UString::Rep*> FunctionCallHashCount;
-
-    class FunctionCallProfile {
-    public:
-        FunctionCallProfile(const UString& name);        
-        ~FunctionCallProfile();
-
-        void willExecute();
-        void didExecute(Vector<UString> stackNames, unsigned int stackIndex);
-
-        void addChild(FunctionCallProfile* child);
-        FunctionCallProfile* findChild(const UString& name);
-
-        void stopProfiling();
-
-        UString functionName() const { return m_functionName; }
-        double milliSecs() const { return m_timeSum; }
-        unsigned numberOfCalls() const { return m_numberOfCalls; }
-
-        void printDataInspectorStyle(int indentLevel) const;
-        double printDataSampleStyle(int indentLevel, FunctionCallHashCount&) const;
-
-    private:
-        void endAndRecordCall();
-    
-        UString m_functionName;
-        double m_timeSum;
-        double m_startTime;
-        unsigned m_numberOfCalls;
-
-        Deque<FunctionCallProfile*> m_children;
+    template<> struct StrHash<KJS::UString::Rep*> {
+        static unsigned hash(const KJS::UString::Rep* key) { return key->hash(); }
+        static bool equal(const KJS::UString::Rep* a, const KJS::UString::Rep* b) { return KJS::Identifier::equal(a, b); }
+        static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
-} // namespace KJS
-
-#endif // FunctionCallProfile_h
+    template<> struct DefaultHash<KJS::UString::Rep*> {
+        typedef StrHash<KJS::UString::Rep*> Hash;
+    };
+}

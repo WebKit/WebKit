@@ -28,27 +28,11 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
+//#include <wtf/StrHash.h>
 #if USE(MULTIPLE_THREADS)
 #include <wtf/ThreadSpecific.h>
 using namespace WTF;
 #endif
-
-namespace WTF {
-
-    template<typename T> struct DefaultHash;
-    template<typename T> struct StrHash;
-
-    template<> struct StrHash<KJS::UString::Rep *> {
-        static unsigned hash(const KJS::UString::Rep *key) { return key->hash(); }
-        static bool equal(const KJS::UString::Rep *a, const KJS::UString::Rep *b) { return KJS::Identifier::equal(a, b); }
-        static const bool safeToCompareToEmptyOrDeleted = false;
-    };
-
-    template<> struct DefaultHash<KJS::UString::Rep *> {
-        typedef StrHash<KJS::UString::Rep *> Hash;
-    };
-
-}
 
 namespace KJS {
 

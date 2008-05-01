@@ -111,7 +111,7 @@ void FunctionCallProfile::printDataInspectorStyle(int indentLevel) const
         for (int i = 0; i < indentLevel; ++i)
             printf("  ");
 
-        printf("%.0fms %s\n", m_timeSum, m_functionName.UTF8String().c_str());
+        printf("%.3fms %s\n", m_timeSum, m_functionName.UTF8String().c_str());
     } else
         printf("%s\n", m_functionName.UTF8String().c_str());
 
@@ -123,34 +123,38 @@ void FunctionCallProfile::printDataInspectorStyle(int indentLevel) const
 }
 
 // print the profiled data in a format that matches the tool sample's output.
-double FunctionCallProfile::printDataSampleStyle(int indentLevel) const
+double FunctionCallProfile::printDataSampleStyle(int indentLevel, FunctionCallHashCount& countedFunctions) const
 {
     printf("    ");
 
     // Print function names
+    const char* name = m_functionName.UTF8String().c_str();
+    double sampleCount = m_timeSum * 1000;
     if (indentLevel) {
         for (int i = 0; i < indentLevel; ++i)
             printf("  ");
 
-        // We've previously asserted that m_timeSum will always be >= 1
-        printf("%.0f %s\n", m_timeSum ? m_timeSum : 1, m_functionName.UTF8String().c_str());
+         countedFunctions.add(m_functionName.rep());
+
+        printf("%.0f %s\n", sampleCount ? sampleCount : 1, name);
     } else
-        printf("%s\n", m_functionName.UTF8String().c_str());
+        printf("%s\n", name);
 
     ++indentLevel;
 
     // Print children's names and information
-    double sumOfChildrensTimes = 0.0;
+    double sumOfChildrensCount = 0.0;
     for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
-        sumOfChildrensTimes += (*currentChild)->printDataSampleStyle(indentLevel);
+        sumOfChildrensCount += (*currentChild)->printDataSampleStyle(indentLevel, countedFunctions);
 
-    // Print remainder of time to match sample's output
-    if (sumOfChildrensTimes < m_timeSum) {
+    sumOfChildrensCount *= 1000;    //
+    // Print remainder of samples to match sample's output
+    if (sumOfChildrensCount < sampleCount) {
         printf("    ");
         while (indentLevel--)
             printf("  ");
 
-        printf("%f %s\n", m_timeSum - sumOfChildrensTimes, m_functionName.UTF8String().c_str());
+        printf("%.0f %s\n", sampleCount - sumOfChildrensCount, m_functionName.UTF8String().c_str());
     }
 
     return m_timeSum;

@@ -177,13 +177,29 @@ void Profiler::printDataInspectorStyle() const
     m_callTree->printDataInspectorStyle(0);
 }
 
+typedef pair<UString::Rep*, unsigned> NameCountPair;
+
+static inline bool functionNameCountPairComparator(const NameCountPair a, const NameCountPair b)
+{
+    return a.second > b.second;
+}
+
 void Profiler::printDataSampleStyle() const
 {
-    printf("Call graph:\n");
-    m_callTree->printDataSampleStyle(0);
+    typedef Vector<NameCountPair> NameCountPairVector;
 
-    // FIXME: Since no one seems to understand this part of sample's output I will implement it when I have a better idea of what it's meant to be doing.
-    printf("\nTotal number in stack (recursive counted multiple, when >=5):\n");
+    FunctionCallHashCount countedFunctions;
+    printf("Call graph:\n");
+    m_callTree->printDataSampleStyle(0, countedFunctions);
+
+    printf("\nTotal number in stack:\n");
+    NameCountPairVector sortedFunctions(countedFunctions.size());
+    copyToVector(countedFunctions, sortedFunctions);
+
+    std::sort(sortedFunctions.begin(), sortedFunctions.end(), functionNameCountPairComparator);
+    for (NameCountPairVector::iterator it = sortedFunctions.begin(); it != sortedFunctions.end(); ++it)
+        printf("        %-12d%s\n", (*it).second, UString((*it).first).UTF8String().c_str());
+
     printf("\nSort by top of stack, same collapsed (when >= 5):\n");
 }
 
