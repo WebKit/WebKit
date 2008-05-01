@@ -1,5 +1,11 @@
 2008-05-01  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+        
+        * Plugins/npfunctions.h:
+
+2008-05-01  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam.
 
         Forward mouse move events to the Netscape plug-in view.
