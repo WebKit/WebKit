@@ -1,5 +1,15 @@
 2008-05-01  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by John.
+        
+        Add null checks for the event handler.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView stopTimers]):
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+
+2008-05-01  Anders Carlsson  <andersca@apple.com>
+
         Fix 64-bit build.
         
         * Plugins/WebNetscapePluginEventHandlerCocoa.h:

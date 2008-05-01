@@ -760,7 +760,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)stopTimers
 {
-    eventHandler->stopTimers();    
+    if (eventHandler)
+        eventHandler->stopTimers();
+    
     shouldFireTimers = NO;
     
     if (!timers)
@@ -2038,11 +2040,15 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             return NPERR_INVALID_PARAM;
         }
         
+        bool currentEventIsUserGesture = false;
+        if (eventHandler)
+            currentEventIsUserGesture = eventHandler->currentEventIsUserGesture();
+        
         WebPluginRequest *pluginRequest = [[WebPluginRequest alloc] initWithRequest:request 
                                                                           frameName:target
                                                                          notifyData:notifyData 
                                                                    sendNotification:sendNotification
-                                                            didStartFromUserGesture:eventHandler->currentEventIsUserGesture()];
+                                                            didStartFromUserGesture:currentEventIsUserGesture];
         [self performSelector:@selector(loadPluginRequest:) withObject:pluginRequest afterDelay:0];
         [pluginRequest release];
         if (target)
