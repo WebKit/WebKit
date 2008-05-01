@@ -1,3 +1,11 @@
+2008-05-01  Sam Weinig  <sam@webkit.org>
+
+        Update results with -webkit-box-reflect values.
+
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2008-04-30  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas.

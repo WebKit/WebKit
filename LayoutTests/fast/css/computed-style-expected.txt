@@ -98,6 +98,7 @@ zoom: 1;
 -webkit-box-ordinal-group: 1;
 -webkit-box-orient: horizontal;
 -webkit-box-pack: start;
+-webkit-box-reflect: none;
 -webkit-box-shadow: none;
 -webkit-box-sizing: content-box;
 -webkit-column-break-after: auto;

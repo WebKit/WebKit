@@ -194,6 +194,8 @@ rect: style.getPropertyValue(-webkit-box-orient) : horizontal
 rect: style.getPropertyCSSValue(-webkit-box-orient) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-box-pack) : start
 rect: style.getPropertyCSSValue(-webkit-box-pack) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-box-reflect) : none
+rect: style.getPropertyCSSValue(-webkit-box-reflect) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-box-shadow) : none
 rect: style.getPropertyCSSValue(-webkit-box-shadow) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-box-sizing) : content-box
@@ -554,6 +556,8 @@ g: style.getPropertyValue(-webkit-box-orient) : horizontal
 g: style.getPropertyCSSValue(-webkit-box-orient) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-box-pack) : start
 g: style.getPropertyCSSValue(-webkit-box-pack) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-box-reflect) : none
+g: style.getPropertyCSSValue(-webkit-box-reflect) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-box-shadow) : none
 g: style.getPropertyCSSValue(-webkit-box-shadow) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-box-sizing) : content-box
