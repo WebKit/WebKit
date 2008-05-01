@@ -1,3 +1,11 @@
+2008-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Export methods needed to subclass Widget.  (See r32770.)
+
+        * WebCore.base.exp:
+
 2008-05-01  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
 
         Reviewed by Alp Toker.
