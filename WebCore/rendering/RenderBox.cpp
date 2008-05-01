@@ -1572,7 +1572,7 @@ int RenderBox::calcReplacedWidthUsing(Length width) const
         case Fixed:
             return calcContentBoxWidth(width.value());
         case Percent: {
-            const int cw = containingBlockWidth();
+            const int cw = isPositioned() ? containingBlockWidthForPositioned(container()) : containingBlockWidth();
             if (cw > 0)
                 return calcContentBoxWidth(width.calcMinValue(cw));
         }

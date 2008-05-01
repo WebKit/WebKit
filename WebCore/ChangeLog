@@ -1,3 +1,15 @@
+2008-05-01  Anatoli Papirovski  <apapirovski@mac.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=18347
+          Absolutely positioned image percentage width does not respect container's padding
+
+        Test: fast/replaced/absolute-position-percentage-width.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcReplacedWidthUsing):
+
 2008-05-01  Dan Bernstein  <mitz@apple.com>
 
         - Windows build fix
