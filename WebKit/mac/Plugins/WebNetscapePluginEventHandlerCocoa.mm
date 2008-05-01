@@ -108,9 +108,22 @@ void WebNetscapePluginEventHandlerCocoa::keyUp(NSEvent *event)
     sendKeyEvent(event, NPCocoaEventKeyUp);
 }
 
-void WebNetscapePluginEventHandlerCocoa::flagsChanged(NSEvent *event)
+void WebNetscapePluginEventHandlerCocoa::flagsChanged(NSEvent *nsEvent)
 {
-    sendKeyEvent(event, NPCocoaEventFlagsChanged);
+    NPCocoaEvent event;
+    
+    NSPoint point = [m_pluginView convertPoint:[nsEvent locationInWindow] fromView:nil];
+    
+    event.type = NPCocoaEventFlagsChanged;
+    event.key.modifierFlags = [nsEvent modifierFlags];
+    event.key.pluginX = point.x;
+    event.key.pluginY = point.y;
+    event.key.keyCode = [nsEvent keyCode];
+    event.key.isARepeat = false;
+    event.key.characters = 0;
+    event.key.charactersIgnoringModifiers = 0;
+    
+    sendEvent(&event);
 }
 
 void WebNetscapePluginEventHandlerCocoa::sendKeyEvent(NSEvent* nsEvent, NPCocoaEventType type)

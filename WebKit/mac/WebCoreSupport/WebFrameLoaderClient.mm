@@ -1208,6 +1208,26 @@ static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
     return view;
 }
 
+class NetscapePluginWidget : public Widget {
+public:
+    NetscapePluginWidget(WebNetscapePluginEmbeddedView *view)
+    : Widget(view)
+    {
+    }
+    
+    virtual void handleEvent(Event*)
+    {
+        Frame* frame = Frame::frameForWidget(this);
+        if (!frame)
+            return;
+        
+        NSEvent* event = frame->eventHandler()->currentNSEvent();
+        if ([event type] == NSMouseMoved)
+            [(WebNetscapePluginEmbeddedView *)getView() handleMouseMoved:event];
+    }
+    
+};
+
 Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element, const KURL& url,
     const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
@@ -1280,7 +1300,8 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element
                 attributeValues:kit(paramValues)
                 loadManually:loadManually
                 DOMElement:kit(element)] autorelease];
-            view = embeddedView;
+            
+            return new NetscapePluginWidget(embeddedView);
         } 
 #endif
     } else
@@ -1331,7 +1352,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
-
+    
 Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, Element* element, const KURL& baseURL, 
     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {

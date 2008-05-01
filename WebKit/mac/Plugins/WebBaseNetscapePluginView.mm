@@ -867,6 +867,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [[NSCursor arrowCursor] set];
 }
 
+// We can't name this method mouseMoved because we don't want to override 
+// the NSView mouseMoved implementation.
+- (void)handleMouseMoved:(NSEvent *)theEvent
+{
+    eventHandler->mouseMoved(theEvent);
+}
+    
 - (void)mouseDragged:(NSEvent *)theEvent
 {
     eventHandler->mouseDragged(theEvent);

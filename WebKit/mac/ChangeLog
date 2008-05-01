@@ -1,3 +1,29 @@
+2008-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Forward mouse move events to the Netscape plug-in view.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView handleMouseMoved:]):
+        New method that just calls the current event handler.
+        
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::flagsChanged):
+        NSFlagsChanged is not a regular keyboard event and some of the NSEvent accessors
+        don't work on it so don't call them.
+        
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (NetscapePluginWidget::NetscapePluginWidget):
+        New Widget subclass to be used for Netscape plug-ins.
+        
+        (NetscapePluginWidget::handleEvent):
+        Forward NSMouseMoved events to the plug-in.
+        
+        (WebFrameLoaderClient::createPlugin):
+        Wrap the plug-in view in a NetscapePluginWidget.
+
 2008-05-01  Alp Toker  <alp@nuanti.com>
 
         Rubber-stamped by Anders.

@@ -183,6 +183,8 @@ typedef union PluginPort {
 // See <rdar://problem/4480737>.
 - (void)didCallPlugInFunction;
 
+- (void)handleMouseMoved:(NSEvent *)event;
+
 @end
 #endif
 
