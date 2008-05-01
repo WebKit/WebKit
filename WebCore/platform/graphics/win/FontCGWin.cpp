@@ -164,9 +164,8 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
             drawIntoBitmap = true;
             // We put slop into this rect, since glyphs can overflow the ascent/descent bounds and the left/right edges.
             // FIXME: Can get glyphs' optical bounds (even from CG) to get this right.
-            // FIXME: Line gap does not make sense as a horizontal distance.
             int lineGap = font->lineGap();
-            textRect = IntRect(point.x() - lineGap, point.y() - font->ascent() - lineGap, totalWidth + 2 * lineGap, font->lineSpacing());
+            textRect = IntRect(point.x() - (font->ascent() + font->descent()) / 2, point.y() - font->ascent() - lineGap, totalWidth + font->ascent() + font->descent(), font->lineSpacing());
             bitmap.set(graphicsContext->createWindowsBitmap(textRect.size()));
             memset(bitmap->buffer(), 255, bitmap->bufferLength());
             hdc = bitmap->hdc();
@@ -205,15 +204,32 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
             ModifyWorldTransform(hdc, &xform, MWT_LEFTMULTIPLY);
         }
 
-        if (drawingMode == cTextFill)
-            ExtTextOut(hdc, point.x(), point.y(), ETO_GLYPH_INDEX, 0, (WCHAR*)glyphBuffer.glyphs(from), numGlyphs, gdiAdvances.data());
-        else {
+        if (drawingMode == cTextFill) {
+            XFORM xform;
+            xform.eM11 = 1.0;
+            xform.eM12 = 0;
+            xform.eM21 = font->platformData().syntheticOblique() ? -tanf(syntheticObliqueAngle * piFloat / 180.0f) : 0;
+            xform.eM22 = 1.0;
+            xform.eDx = point.x();
+            xform.eDy = point.y();
+            ModifyWorldTransform(hdc, &xform, MWT_LEFTMULTIPLY);
+            ExtTextOut(hdc, 0, 0, ETO_GLYPH_INDEX, 0, reinterpret_cast<WCHAR*>(glyphBuffer.glyphs(from)), numGlyphs, gdiAdvances.data());
+            if (font->m_syntheticBoldOffset) {
+                xform.eM21 = 0;
+                xform.eDx = font->m_syntheticBoldOffset;
+                xform.eDy = 0;
+                ModifyWorldTransform(hdc, &xform, MWT_LEFTMULTIPLY);
+                ExtTextOut(hdc, 0, 0, ETO_GLYPH_INDEX, 0, reinterpret_cast<WCHAR*>(glyphBuffer.glyphs(from)), numGlyphs, gdiAdvances.data());
+            }
+        } else {
             RetainPtr<CGMutablePathRef> path(AdoptCF, CGPathCreateMutable());
 
             XFORM xform;
             GetWorldTransform(hdc, &xform);
             AffineTransform hdcTransform(xform.eM11, xform.eM21, xform.eM12, xform.eM22, xform.eDx, xform.eDy);
             CGAffineTransform initialGlyphTransform = hdcTransform.isInvertible() ? hdcTransform.inverse() : CGAffineTransformIdentity;
+            if (font->platformData().syntheticOblique())
+                initialGlyphTransform = CGAffineTransformConcat(initialGlyphTransform, CGAffineTransformMake(1, 0, tanf(syntheticObliqueAngle * piFloat / 180.0f), 1, 0, 0));
             initialGlyphTransform.tx = 0;
             initialGlyphTransform.ty = 0;
             CGAffineTransform glyphTranslation = CGAffineTransformIdentity;
@@ -238,10 +254,22 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
             if (drawingMode & cTextFill) {
                 CGContextAddPath(cgContext, path.get());
                 CGContextFillPath(cgContext);
+                if (font->m_syntheticBoldOffset) {
+                    CGContextTranslateCTM(cgContext, font->m_syntheticBoldOffset, 0);
+                    CGContextAddPath(cgContext, path.get());
+                    CGContextFillPath(cgContext);
+                    CGContextTranslateCTM(cgContext, -font->m_syntheticBoldOffset, 0);
+                }
             }
             if (drawingMode & cTextStroke) {
                 CGContextAddPath(cgContext, path.get());
                 CGContextStrokePath(cgContext);
+                if (font->m_syntheticBoldOffset) {
+                    CGContextTranslateCTM(cgContext, font->m_syntheticBoldOffset, 0);
+                    CGContextAddPath(cgContext, path.get());
+                    CGContextStrokePath(cgContext);
+                    CGContextTranslateCTM(cgContext, -font->m_syntheticBoldOffset, 0);
+                }
             }
             CGContextRestoreGState(cgContext);
         }
@@ -277,7 +305,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     matrix.d = -matrix.d;
 
     if (platformData.syntheticOblique()) {
-        static float skew = -tanf(syntheticObliqueAngle * acosf(0) / 90.0f);
+        static float skew = -tanf(syntheticObliqueAngle * piFloat / 180.0f);
         matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, skew, 1, 0, 0));
     }
 

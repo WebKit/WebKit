@@ -1,3 +1,21 @@
+2008-05-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - make synthetic bold and synthetic italics work in GDI text
+        - account for synthetic bold in complex text on Windows
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs): Adjusted the text rectangle's x coordinates
+        to fit italics. Added a skew transform for synthetic italics and a
+        second paint pass for synthetic bold.
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::widthForGDIGlyph): Added the synthetic bold
+        offset.
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::shapeAndPlaceItem): Added the synthetic
+        bold offset.
+
 2008-05-01  Alp Toker  <alp@nuanti.com>
 
         Qt/Win build fix attempt following plugin changes. Add missing return

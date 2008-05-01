@@ -181,7 +181,7 @@ float SimpleFontData::widthForGDIGlyph(Glyph glyph) const
     GetCharWidthI(hdc, glyph, 1, 0, &width);
     SelectObject(hdc, oldFont);
     ReleaseDC(0, hdc);
-    return width;
+    return width + m_syntheticBoldOffset;
 }
 
 SCRIPT_FONTPROPERTIES* SimpleFontData::scriptFontProperties() const

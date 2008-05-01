@@ -299,7 +299,9 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
             offsetX = roundf(offsetX);
             offsetY = roundf(offsetY);
         }
-       
+
+        advance += fontData->m_syntheticBoldOffset;
+
         // We special case spaces in two ways when applying word rounding.
         // First, we round spaces to an adjusted width in all fonts.
         // Second, in fixed-pitch fonts we ensure that all glyphs that
