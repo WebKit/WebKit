@@ -1,3 +1,14 @@
+2008-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Disable an SVG font test that crashes. 
+        
+        http://bugs.webkit.org/show_bug.cgi?id=18830 tracks fixing the crash.
+        
+        * svg/W3C-SVG-1.1/fonts-glyph-02-t.svg: Removed.
+        * svg/W3C-SVG-1.1/fonts-glyph-02-t.svg-disabled: Copied from svg/W3C-SVG-1.1/fonts-glyph-02-t.svg.
+
 2008-05-01  Anatoli Papirovski  <apapirovski@mac.com>
 
         Reviewed by Dave Hyatt.
