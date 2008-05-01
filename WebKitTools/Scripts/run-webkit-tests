@@ -204,11 +204,7 @@ Usage: $programName [options] [testdir|testpath ...]
 EOF
 
 # Process @ARGV for configuration switches before calling GetOptions()
-if (my $passedConfiguration = passedConfiguration()) {
-    $configuration = $passedConfiguration;
-} else {
-    $configuration = configuration();
-}
+$configuration = passedConfiguration() || configuration();
 
 my $getOptionsResult = GetOptions(
     'c|configuration=s' => \$configuration,
