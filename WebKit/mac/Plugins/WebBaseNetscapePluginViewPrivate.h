@@ -48,8 +48,8 @@
 - (void)forceRedraw;
 - (NPError)getVariable:(NPNVariable)variable value:(void *)value;
 - (NPError)setVariable:(NPPVariable)variable value:(void *)value;
-- (uint32_t)scheduleTimerWithInterval:(uint32_t)interval repeat:(NPBool)repeat timerFunc:(void (*)(NPP npp, uint32_t timerID))timerFunc;
-- (void)unscheduleTimer:(uint32_t)timerID;
+- (uint32)scheduleTimerWithInterval:(uint32)interval repeat:(NPBool)repeat timerFunc:(void (*)(NPP npp, uint32 timerID))timerFunc;
+- (void)unscheduleTimer:(uint32)timerID;
 
 @end
 #endif

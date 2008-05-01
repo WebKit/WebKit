@@ -795,8 +795,8 @@ void        NPN_ForceRedraw(NPP instance);
 void        NPN_PushPopupsEnabledState(NPP instance, NPBool enabled);
 void        NPN_PopPopupsEnabledState(NPP instance);
 void        NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void *), void *userData);
-uint32_t    NPN_ScheduleTimer(NPP instance, int32_t interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32_t timerID));
-void        NPN_UnscheduleTimer(NPP instance, uint32_t timerID);
+uint32      NPN_ScheduleTimer(NPP instance, uint32 interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32 timerID));
+void        NPN_UnscheduleTimer(NPP instance, uint32 timerID);
 
 #ifdef __cplusplus
 }  /* end extern "C" */

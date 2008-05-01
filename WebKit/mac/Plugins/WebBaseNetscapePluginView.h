@@ -100,8 +100,8 @@ typedef union PluginPort {
     BOOL shouldStopSoon;
 
     BOOL shouldFireTimers;
-    uint32_t currentTimerID;
-    HashMap<uint32_t, PluginTimer*>* timers;
+    uint32 currentTimerID;
+    HashMap<uint32, PluginTimer*>* timers;
 
     unsigned pluginFunctionCallDepth;
     

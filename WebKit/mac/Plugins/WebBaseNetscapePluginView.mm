@@ -120,9 +120,9 @@ static const double ThrottledTimerInterval = 0.25;
 
 class PluginTimer : public TimerBase {
 public:
-    typedef void (*TimerFunc)(NPP npp, uint32_t timerID);
+    typedef void (*TimerFunc)(NPP npp, uint32 timerID);
     
-    PluginTimer(NPP npp, uint32_t timerID, uint32_t interval, NPBool repeat, TimerFunc timerFunc)
+    PluginTimer(NPP npp, uint32 timerID, uint32 interval, NPBool repeat, TimerFunc timerFunc)
         : m_npp(npp)
         , m_timerID(timerID)
         , m_interval(interval)
@@ -151,8 +151,8 @@ private:
     }
     
     NPP m_npp;
-    uint32_t m_timerID;
-    uint32_t m_interval;
+    uint32 m_timerID;
+    uint32 m_interval;
     NPBool m_repeat;
     TimerFunc m_timerFunc;
 };
@@ -766,8 +766,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!timers)
         return;
 
-    HashMap<uint32_t, PluginTimer*>::const_iterator end = timers->end();
-    for (HashMap<uint32_t, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
+    HashMap<uint32, PluginTimer*>::const_iterator end = timers->end();
+    for (HashMap<uint32, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
         PluginTimer* timer = it->second;
         timer->stop();
     }    
@@ -792,8 +792,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!timers)
         return;
     
-    HashMap<uint32_t, PluginTimer*>::const_iterator end = timers->end();
-    for (HashMap<uint32_t, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
+    HashMap<uint32, PluginTimer*>::const_iterator end = timers->end();
+    for (HashMap<uint32, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
         PluginTimer* timer = it->second;
         ASSERT(!timer->isActive());
         timer->start(isCompletelyObscured);
@@ -2450,15 +2450,15 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
 }
 
-- (uint32_t)scheduleTimerWithInterval:(uint32_t)interval repeat:(NPBool)repeat timerFunc:(void (*)(NPP npp, uint32_t timerID))timerFunc
+- (uint32)scheduleTimerWithInterval:(uint32)interval repeat:(NPBool)repeat timerFunc:(void (*)(NPP npp, uint32 timerID))timerFunc
 {
     if (!timerFunc)
         return 0;
     
     if (!timers)
-        timers = new HashMap<uint32_t, PluginTimer*>;
+        timers = new HashMap<uint32, PluginTimer*>;
     
-    uint32_t timerID = ++currentTimerID;
+    uint32 timerID = ++currentTimerID;
     
     PluginTimer* timer = new PluginTimer(plugin, timerID, interval, repeat, timerFunc);
     timers->set(timerID, timer);
@@ -2469,7 +2469,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return 0;
 }
 
-- (void)unscheduleTimer:(uint32_t)timerID
+- (void)unscheduleTimer:(uint32)timerID
 {
     if (!timers)
         return;

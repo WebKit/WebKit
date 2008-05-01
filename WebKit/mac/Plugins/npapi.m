@@ -170,12 +170,12 @@ NPN_PopPopupsEnabledState(NPP instance)
 {
 }
 
-uint32_t NPN_ScheduleTimer(NPP instance, int32_t interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32_t timerID))
+uint32 NPN_ScheduleTimer(NPP instance, uint32 interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32 timerID))
 {
     return [pluginViewForInstance(instance) scheduleTimerWithInterval:interval repeat:repeat timerFunc:timerFunc];
 }
 
-void NPN_UnscheduleTimer(NPP instance, uint32_t timerID)
+void NPN_UnscheduleTimer(NPP instance, uint32 timerID)
 {
     [pluginViewForInstance(instance) unscheduleTimer:timerID];
 }
