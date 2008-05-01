@@ -137,6 +137,11 @@ void NPN_ForceRedraw(NPP instance)
 
 NPError NPN_GetValue(NPP instance, NPNVariable variable, void* value)
 {
+    // FIXME: Acrobat reader plugin calls NPN_GetValue before a PluginView
+    // has been created
+    if (!instance)
+        return NPERR_GENERIC_ERROR;
+
     return pluginViewForInstance(instance)->getValue(variable, value);
 }
 

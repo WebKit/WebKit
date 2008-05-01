@@ -924,7 +924,10 @@ webcore_sources += \
 	WebCore/plugins/PluginStream.cpp \
 	WebCore/plugins/PluginView.cpp \
 	WebCore/plugins/npapi.cpp \
+	WebCore/plugins/gtk/PluginDataGtk.cpp \
 	WebCore/plugins/gtk/PluginDatabaseGtk.cpp \
+	WebCore/plugins/gtk/PluginPackageGtk.cpp \
+	WebCore/plugins/gtk/PluginViewGtk.cpp \
 	WebCore/rendering/AutoTableLayout.cpp \
 	WebCore/rendering/bidi.cpp \
 	WebCore/rendering/break_lines.cpp \
@@ -986,6 +989,10 @@ webcore_sources += \
 	WebCore/xml/XMLHttpRequest.cpp \
 	WebCore/xml/XMLHttpRequestProgressEvent.cpp \
 	WebCore/xml/XMLSerializer.cpp
+if TARGET_X11
+webcore_sources += \
+	WebCore/plugins/gtk/gtk2xtbin.c
+endif
 
 webkitgtk_headers += \
 	WebCore/platform/gtk/ClipboardGtk.h \

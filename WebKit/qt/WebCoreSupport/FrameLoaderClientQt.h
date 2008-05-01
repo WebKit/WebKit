@@ -2,6 +2,7 @@
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2007-2008 Trolltech ASA
+ * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  *
  * All rights reserved.
  *
@@ -38,6 +39,7 @@
 #include "FrameLoader.h"
 #include "RefCounted.h"
 #include "ResourceResponse.h"
+#include "PluginView.h"
 class QWebFrame;
 
 namespace WebCore {
@@ -204,6 +206,11 @@ namespace WebCore {
         ResourceResponse m_response;
         bool m_firstData;
         FramePolicyFunction m_policyFunction;
+
+        // Plugin view to redirect data to
+        WebCore::PluginView* m_pluginView;
+        bool m_hasSentResponseToPlugin;
+
         bool m_loadSucceeded;
     };
 

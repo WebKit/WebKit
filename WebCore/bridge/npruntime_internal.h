@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Collabora, Ltd.  All rights reserved.
+ * Copyright (C) 2007-2008 Collabora Ltd.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,4 +38,13 @@
     #undef Auto
     #undef Complex
     #undef Status
+    #undef CursorShape
+    #undef FocusIn
+    #undef FocusOut
+    #undef KeyPress
+    #undef KeyRelease
+    #undef Unsorted
+    #undef Bool
+    #undef FontChange
+    #undef GrayScale
 #endif

@@ -2,6 +2,7 @@
  *  Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *  Copyright (C) 2007, 2008 Holger Hans Peter Freyther
  *  Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
+ *  Copyright (C) 2008 Collabora Ltd.  All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -57,6 +58,7 @@ namespace WebKit {
 
 FrameLoaderClient::FrameLoaderClient(WebKitWebFrame* frame)
     : m_frame(frame)
+    , m_pluginView(0)
     , m_userAgent("")
 {
     ASSERT(m_frame);
@@ -162,9 +164,30 @@ void FrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction policyFunctio
 
 void FrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
-    FrameLoader *fl = loader->frameLoader();
-    fl->setEncoding(m_response.textEncodingName(), false);
-    fl->addData(data, length);
+    const String& textEncoding = loader->response().textEncodingName();
+
+    if (!m_pluginView) {
+        ASSERT(loader->frame());
+        // Setting the encoding on the frame loader is our way to get work done that is normally done
+        // when the first bit of data is received, even for the case of a document with no data (like about:blank).
+        String encoding = loader->overrideEncoding();
+        bool userChosen = !encoding.isNull();
+        if (!userChosen)
+            encoding = loader->response().textEncodingName();
+
+        FrameLoader* frameLoader = loader->frameLoader();
+        frameLoader->setEncoding(encoding, userChosen);
+        if (data)
+            frameLoader->addData(data, length);
+    }
+
+    if (m_pluginView) {
+        if (!m_hasSentResponseToPlugin) {
+            m_pluginView->didReceiveResponse(loader->response());
+            m_hasSentResponseToPlugin = true;
+        }
+        m_pluginView->didReceiveData(data, length);
+    }
 }
 
 void FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long  identifier, const AuthenticationChallenge&)
@@ -260,9 +283,13 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
     (core(m_frame)->loader()->*policyFunction)(PolicyUse);
 }
 
-Widget* FrameLoaderClient::createPlugin(const IntSize&, Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool)
+Widget* FrameLoaderClient::createPlugin(const IntSize& pluginSize, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
-    notImplemented();
+    PluginView* pluginView = PluginView::create(core(m_frame), pluginSize, element, url, paramNames, paramValues, mimeType, loadManually);
+
+    if (pluginView->status() == PluginStatusLoadedSuccessfully)
+        return pluginView;
+
     return 0;
 }
 
@@ -290,8 +317,7 @@ PassRefPtr<Frame> FrameLoaderClient::createFrame(const KURL& url, const String& 
 
 void FrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 {
-    notImplemented();
-    return;
+    m_pluginView = static_cast<PluginView*>(pluginWidget);
 }
 
 Widget* FrameLoaderClient::createJavaAppletWidget(const IntSize&, Element*, const KURL& baseURL,
@@ -587,14 +613,13 @@ String FrameLoaderClient::generatedMIMETypeForURLScheme(const String&) const
 
 void FrameLoaderClient::finishedLoading(DocumentLoader* documentLoader)
 {
-    ASSERT(documentLoader->frame());
-    // Setting the encoding on the frame loader is our way to get work done that is normally done
-    // when the first bit of data is received, even for the case of a document with no data (like about:blank).
-    String encoding = documentLoader->overrideEncoding();
-    bool userChosen = !encoding.isNull();
-    if (encoding.isNull())
-        encoding = documentLoader->response().textEncodingName();
-    documentLoader->frameLoader()->setEncoding(encoding, userChosen);
+    if (!m_pluginView)
+        committedLoad(documentLoader, 0, 0);
+    else {
+        m_pluginView->didFinishLoading();
+        m_pluginView = 0;
+        m_hasSentResponseToPlugin = false;
+    }
 }
 
 
@@ -710,9 +735,13 @@ void FrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError&)
     notImplemented();
 }
 
-void FrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceError&)
+void FrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceError& error)
 {
-    notImplemented();
+    if (m_pluginView) {
+        m_pluginView->didFail(error);
+        m_pluginView = 0;
+        m_hasSentResponseToPlugin = false;
+    }
 }
 
 void FrameLoaderClient::startDownload(const ResourceRequest&)

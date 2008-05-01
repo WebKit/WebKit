@@ -1,3 +1,140 @@
+2008-05-01  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+        Qt parts OK'ed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=14750
+        Added support for NPAPI plugins on Gtk and Qt-x11 ports.
+
+        * GNUmakefile.am: Added Gtk plugin files.
+        * WebCore.pro: Added Qt plugins files, defined XP_UNIX and
+        ENABLE_NETSCAPE_PLUGIN_API
+        * bridge/npruntime_internal.h: Additional undefs that conflict
+        with Qt headers.
+        * page/gtk/FrameGtk.cpp: Create js bindings for PluginView.
+        (WebCore::Frame::createScriptInstanceForWidget):
+        * page/qt/FrameQt.cpp: Create js bindings for PluginView.
+        (WebCore::Frame::createScriptInstanceForWidget):
+        (WebCore::Frame::clearPlatformScriptObjects):
+        (WebCore::Frame::disconnectPlatformScriptObjects):
+        * platform/FileSystem.h: Qt FileSystem implementation.
+        * platform/Widget.h: Members to differentiate between Qt plugins and
+        NPAPI ones.
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::addChild): Set containing window before calling setParent.
+        * platform/gtk/TemporaryLinkStubs.cpp: Removed implemented functions.
+        (PluginView::invalidateRegion):
+        * platform/qt/FileSystemQt.cpp: Implemented functions necessary for
+        NPAPI plugins.
+        (WebCore::openTemporaryFile):
+        (WebCore::closeFile):
+        (WebCore::writeToFile):
+        (WebCore::unloadModule): Delete module if unloaded.
+        * platform/qt/TemporaryLinkStubs.cpp: Removed implemented functions.
+        * platform/qt/WidgetQt.cpp: Differentiate between Qt plugins and
+        NPAPI ones.
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        (WebCore::Widget::isNPAPIPlugin):
+        (WebCore::Widget::setIsNPAPIPlugin):
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::~PluginPackage): Unload the module before
+        destruction.
+        (WebCore::PluginPackage::compare): Moved here as it's platform
+        independent.
+        * plugins/PluginView.cpp: Moved platform-independent functions here.
+        (WebCore::PluginView::PluginView): Initialize m_npWindow.ws_info on
+        Unix platforms.
+        (WebCore::PluginView::freeStringArray):
+        (WebCore::startsWithBlankLine):
+        (WebCore::locationAfterFirstBlankLine):
+        (WebCore::findEOL):
+        (WebCore::capitalizeRFC822HeaderFieldName):
+        (WebCore::parseRFC822HeaderFields):
+        (WebCore::PluginView::handlePost):
+        * plugins/PluginView.h: Moved platform-independent functions here.
+        Added member to signal plugin needs XEmbed extension.
+        * plugins/gtk/PluginDataGtk.cpp: Added.
+        (WebCore::PluginData::initPlugins):
+        (WebCore::PluginData::refresh):
+        * plugins/gtk/PluginDatabaseGtk.cpp:
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+        (WebCore::PluginDatabase::isPreferredPluginDirectory):
+        * plugins/gtk/PluginPackageGtk.cpp: Added.
+        (WebCore::PluginPackage::determineQuirks):
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::load):
+        (WebCore::PluginPackage::hash):
+        (WebCore::PluginPackage::equal):
+        (WebCore::PluginPackage::compareFileVersion):
+        * plugins/gtk/PluginViewGtk.cpp: Added.
+        (WebCore::PluginView::updateWindow):
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::show):
+        (WebCore::PluginView::hide):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setParent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::attachToWindow):
+        (WebCore::PluginView::detachFromWindow):
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::userAgent):
+        (WebCore::PluginView::handlePostReadFile):
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::PluginView::forceRedraw):
+        (WebCore::PluginView::~PluginView):
+        (WebCore::plug_removed_cb): Added callback to handle plug removal.
+        (WebCore::PluginView::init):
+        * plugins/gtk/xembed.h: Added.
+        * plugins/npapi.cpp:
+        (NPN_GetValue): Return error if no view present.
+        * plugins/qt/PluginDataQt.cpp:
+        (WebCore::PluginData::initPlugins):
+        (WebCore::PluginData::refresh):
+        * plugins/qt/PluginDatabaseQt.cpp: Added.
+        (WebCore::PluginDatabase::getPluginPathsInDirectories):
+        (WebCore::addQtWebKitPluginDirectories):
+        (WebCore::addMozillaPluginDirectories):
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+        (WebCore::PluginDatabase::isPreferredPluginDirectory):
+        * plugins/qt/PluginPackageQt.cpp: Added.
+        (WebCore::PluginPackage::determineQuirks):
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::load):
+        (WebCore::PluginPackage::hash):
+        (WebCore::PluginPackage::equal):
+        (WebCore::PluginPackage::compareFileVersion):
+        * plugins/qt/PluginViewQt.cpp: Added.
+        (WebCore::PluginView::updateWindow):
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::show):
+        (WebCore::PluginView::hide):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setParent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::attachToWindow):
+        (WebCore::PluginView::detachFromWindow):
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::userAgent):
+        (WebCore::PluginView::handlePostReadFile):
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::PluginView::invalidateRegion):
+        (WebCore::PluginView::forceRedraw):
+        (WebCore::PluginView::~PluginView):
+        (WebCore::PluginView::init):
+        * plugins/win/PluginPackageWin.cpp: Moved platform-independent code
+        to plugins/PluginPackage.cpp
+        * plugins/win/PluginViewWin.cpp: Moved platform-independent code to
+        plugins/PluginView.cpp
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::handlePostReadFile):
+        (WebCore::PluginView::getValue): Moved this function to each platform.
+
 2008-05-01  Sam Weinig  <sam@webkit.org>
 
         Fix build.

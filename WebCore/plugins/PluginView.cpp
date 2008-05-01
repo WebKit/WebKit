@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
+ * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,7 +120,10 @@ void PluginView::setFrameGeometry(const IntRect& rect)
         Widget::setFrameGeometry(rect);
 
     updateWindow();
+
+#if PLATFORM(WIN)
     setNPWindowRect(rect);
+#endif
 }
 
 void PluginView::geometryChanged() const
@@ -393,55 +396,6 @@ void PluginView::status(const char* message)
         page->chrome()->setStatusbarText(m_parentFrame, String(message));
 }
 
-NPError PluginView::getValue(NPNVariable variable, void* value)
-{
-    if (m_isJavaScriptPaused)
-        return NPERR_GENERIC_ERROR;
-
-    switch (variable) {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        case NPNVWindowNPObject: {
-            NPObject* windowScriptObject = m_parentFrame->windowScriptNPObject();
-
-            // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
-            if (windowScriptObject)
-                _NPN_RetainObject(windowScriptObject);
-
-            void** v = (void**)value;
-            *v = windowScriptObject;
-            
-            return NPERR_NO_ERROR;
-        }
-
-        case NPNVPluginElementNPObject: {
-            NPObject* pluginScriptObject = 0;
-
-            if (m_element->hasTagName(appletTag) || m_element->hasTagName(embedTag) || m_element->hasTagName(objectTag))
-                pluginScriptObject = static_cast<HTMLPlugInElement*>(m_element)->getNPObject();
-
-            // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
-            if (pluginScriptObject)
-                _NPN_RetainObject(pluginScriptObject);
-
-            void** v = (void**)value;
-            *v = pluginScriptObject;
-
-            return NPERR_NO_ERROR;
-        }
-#endif
-
-        case NPNVnetscapeWindow: {
-            PlatformWidget* w = reinterpret_cast<PlatformWidget*>(value);
-
-            *w = containingWindow();
-
-            return NPERR_NO_ERROR;
-        }
-        default:
-            return NPERR_GENERIC_ERROR;
-    }
-}
-
 NPError PluginView::setValue(NPPVariable variable, void* value)
 {
     switch (variable) {
@@ -597,6 +551,10 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
 
     setParameters(paramNames, paramValues);
 
+#ifdef XP_UNIX
+    m_npWindow.ws_info = 0;
+#endif
+
     m_mode = m_loadManually ? NP_FULL : NP_EMBED;
 
     resize(size);
@@ -669,6 +627,231 @@ PluginView* PluginView::create(Frame* parentFrame, const IntSize& size, Element*
     }
 
     return new PluginView(parentFrame, size, plugin, element, url, paramNames, paramValues, mimeTypeCopy, loadManually);
+}
+
+void PluginView::freeStringArray(char** stringArray, int length)
+{
+    if (!stringArray)
+        return;
+
+    for (int i = 0; i < length; i++)
+        fastFree(stringArray[i]);
+
+    fastFree(stringArray);
+}
+
+static inline bool startsWithBlankLine(const Vector<char>& buffer)
+{
+    return buffer.size() > 0 && buffer[0] == '\n';
+}
+
+static inline int locationAfterFirstBlankLine(const Vector<char>& buffer)
+{
+    const char* bytes = buffer.data();
+    unsigned length = buffer.size();
+
+    for (unsigned i = 0; i < length - 4; i++) {
+        // Support for Acrobat. It sends "\n\n".
+        if (bytes[i] == '\n' && bytes[i + 1] == '\n')
+            return i + 2;
+        
+        // Returns the position after 2 CRLF's or 1 CRLF if it is the first line.
+        if (bytes[i] == '\r' && bytes[i + 1] == '\n') {
+            i += 2;
+            if (i == 2)
+                return i;
+            else if (bytes[i] == '\n')
+                // Support for Director. It sends "\r\n\n" (3880387).
+                return i + 1;
+            else if (bytes[i] == '\r' && bytes[i + 1] == '\n')
+                // Support for Flash. It sends "\r\n\r\n" (3758113).
+                return i + 2;
+        }
+    }
+
+    return -1;
+}
+
+static inline const char* findEOL(const char* bytes, unsigned length)
+{
+    // According to the HTTP specification EOL is defined as
+    // a CRLF pair. Unfortunately, some servers will use LF
+    // instead. Worse yet, some servers will use a combination
+    // of both (e.g. <header>CRLFLF<body>), so findEOL needs
+    // to be more forgiving. It will now accept CRLF, LF or
+    // CR.
+    //
+    // It returns NULL if EOLF is not found or it will return
+    // a pointer to the first terminating character.
+    for (unsigned i = 0; i < length; i++) {
+        if (bytes[i] == '\n')
+            return bytes + i;
+        if (bytes[i] == '\r') {
+            // Check to see if spanning buffer bounds
+            // (CRLF is across reads). If so, wait for
+            // next read.
+            if (i + 1 == length)
+                break;
+
+            return bytes + i;
+        }
+    }
+
+    return 0;
+}
+
+static inline String capitalizeRFC822HeaderFieldName(const String& name)
+{
+    bool capitalizeCharacter = true;
+    String result;
+
+    for (unsigned i = 0; i < name.length(); i++) {
+        UChar c;
+
+        if (capitalizeCharacter && name[i] >= 'a' && name[i] <= 'z')
+            c = toASCIIUpper(name[i]);
+        else if (!capitalizeCharacter && name[i] >= 'A' && name[i] <= 'Z')
+            c = toASCIILower(name[i]);
+        else
+            c = name[i];
+
+        if (name[i] == '-')
+            capitalizeCharacter = true;
+        else
+            capitalizeCharacter = false;
+
+        result.append(c);
+    }
+
+    return result;
+}
+
+static inline HTTPHeaderMap parseRFC822HeaderFields(const Vector<char>& buffer, unsigned length)
+{
+    const char* bytes = buffer.data();
+    const char* eol;
+    String lastKey;
+    HTTPHeaderMap headerFields;
+
+    // Loop ove rlines until we're past the header, or we can't find any more end-of-lines
+    while ((eol = findEOL(bytes, length))) {
+        const char* line = bytes;
+        int lineLength = eol - bytes;
+        
+        // Move bytes to the character after the terminator as returned by findEOL.
+        bytes = eol + 1;
+        if ((*eol == '\r') && (*bytes == '\n'))
+            bytes++; // Safe since findEOL won't return a spanning CRLF.
+
+        length -= (bytes - line);
+        if (lineLength == 0)
+            // Blank line; we're at the end of the header
+            break;
+        else if (*line == ' ' || *line == '\t') {
+            // Continuation of the previous header
+            if (lastKey.isNull()) {
+                // malformed header; ignore it and continue
+                continue;
+            } else {
+                // Merge the continuation of the previous header
+                String currentValue = headerFields.get(lastKey);
+                String newValue(line, lineLength);
+
+                headerFields.set(lastKey, currentValue + newValue);
+            }
+        } else {
+            // Brand new header
+            const char* colon;
+            for (colon = line; *colon != ':' && colon != eol; colon++) {
+                // empty loop
+            }
+            if (colon == eol) 
+                // malformed header; ignore it and continue
+                continue;
+            else {
+                lastKey = capitalizeRFC822HeaderFieldName(String(line, colon - line));
+                String value;
+
+                for (colon++; colon != eol; colon++) {
+                    if (*colon != ' ' && *colon != '\t')
+                        break;
+                }
+                if (colon == eol)
+                    value = "";
+                else
+                    value = String(colon, eol - colon);
+
+                String oldValue = headerFields.get(lastKey);
+                if (!oldValue.isNull()) {
+                    String tmp = oldValue;
+                    tmp += ", ";
+                    tmp += value;
+                    value = tmp;
+                }
+
+                headerFields.set(lastKey, value);
+            }
+        }
+    }
+
+    return headerFields;
+}
+
+NPError PluginView::handlePost(const char* url, const char* target, uint32 len, const char* buf, bool file, void* notifyData, bool sendNotification, bool allowHeaders)
+{
+    if (!url || !len || !buf)
+        return NPERR_INVALID_PARAM;
+
+    FrameLoadRequest frameLoadRequest;
+
+    HTTPHeaderMap headerFields;
+    Vector<char> buffer;
+    
+    if (file) {
+        NPError readResult = handlePostReadFile(buffer, len, buf);
+        if(readResult != NPERR_NO_ERROR)
+            return readResult;
+    } else {
+        buffer.resize(len);
+        memcpy(buffer.data(), buf, len);
+    }
+
+    const char* postData = buffer.data();
+    int postDataLength = buffer.size();
+
+    if (allowHeaders) {
+        if (startsWithBlankLine(buffer)) {
+            postData++;
+            postDataLength--;
+        } else {
+            int location = locationAfterFirstBlankLine(buffer);
+            if (location != -1) {
+                // If the blank line is somewhere in the middle of the buffer, everything before is the header
+                headerFields = parseRFC822HeaderFields(buffer, location);
+                unsigned dataLength = buffer.size() - location;
+
+                // Sometimes plugins like to set Content-Length themselves when they post,
+                // but WebFoundation does not like that. So we will remove the header
+                // and instead truncate the data to the requested length.
+                String contentLength = headerFields.get("Content-Length");
+
+                if (!contentLength.isNull())
+                    dataLength = min(contentLength.toInt(), (int)dataLength);
+                headerFields.remove("Content-Length");
+
+                postData += location;
+                postDataLength = dataLength;
+            }
+        }
+    }
+
+    frameLoadRequest.resourceRequest().setHTTPMethod("POST");
+    frameLoadRequest.resourceRequest().setURL(makeURL(m_baseURL, url));
+    frameLoadRequest.resourceRequest().addHTTPHeaderFields(headerFields);
+    frameLoadRequest.resourceRequest().setHTTPBody(FormData::create(postData, postDataLength));
+    frameLoadRequest.setFrameName(target);
+
+    return load(frameLoadRequest, sendNotification, notifyData);
 }
 
 } // namespace WebCore

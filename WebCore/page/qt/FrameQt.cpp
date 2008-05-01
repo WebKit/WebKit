@@ -6,6 +6,7 @@
  * Copyright (C) 2006 Rob Buis <buis@kde.org>
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2007 Trolltech ASA
+ * Copyright (C) 2008 Collabora Ltd.  All rights reserved.
  *
  * All rights reserved.
  *
@@ -33,6 +34,8 @@
 
 #include "config.h"
 #include "Frame.h"
+
+#include "PluginView.h"
 
 #include "Element.h"
 #include "RenderObject.h"
@@ -99,6 +102,11 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
 
 PassRefPtr<KJS::Bindings::Instance> Frame::createScriptInstanceForWidget(WebCore::Widget* widget)
 {
+    if (widget->isFrameView())
+        return 0;
+    if (widget->isNPAPIPlugin())
+        return static_cast<PluginView*>(widget)->bindingInstance();
+
     QWidget* nativeWidget = widget->nativeWidget();
     if (!nativeWidget)
         return 0;
@@ -107,10 +115,12 @@ PassRefPtr<KJS::Bindings::Instance> Frame::createScriptInstanceForWidget(WebCore
 
 void Frame::clearPlatformScriptObjects()
 {
+    notImplemented();
 }
 
 void Frame::disconnectPlatformScriptObjects()
 {
+    notImplemented();
 }
 
 DragImageRef Frame::dragImageForSelection() 

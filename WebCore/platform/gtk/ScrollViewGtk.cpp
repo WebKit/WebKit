@@ -469,11 +469,11 @@ void ScrollView::setFrameGeometry(const IntRect& newGeometry)
 
 void ScrollView::addChild(Widget* child)
 {
-    child->setParent(this);
     child->setContainingWindow(containingWindow());
+    child->setParent(this);
     m_data->children.add(child);
 
-    if (child->gtkWidget())
+    if (child->gtkWidget() && !GTK_IS_SOCKET(child->gtkWidget()))
         gtk_container_add(GTK_CONTAINER(containingWindow()), child->gtkWidget());
 }
 

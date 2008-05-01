@@ -1,3 +1,21 @@
+2008-05-01  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+        Qt parts OK'ed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=14750
+        Added support for NPAPI plugins on Gtk and Qt-x11 ports.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::FrameLoaderClientQt):
+        (WebCore::FrameLoaderClientQt::finishedLoading):
+        (WebCore::FrameLoaderClientQt::setMainDocumentError):
+        (WebCore::FrameLoaderClientQt::committedLoad):
+        (WebCore::FrameLoaderClientQt::objectContentType):
+        (WebCore::FrameLoaderClientQt::createPlugin):
+        (WebCore::FrameLoaderClientQt::redirectDataToPlugin):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2008-04-30  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Qt 4.3 build fix.

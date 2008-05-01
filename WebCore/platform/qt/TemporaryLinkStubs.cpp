@@ -72,40 +72,10 @@
 
 using namespace WebCore;
 
-void PluginDatabase::getPluginPathsInDirectories(HashSet<String>&) const { notImplemented(); }
-Vector<String> PluginDatabase::defaultPluginDirectories() { notImplemented(); return Vector<String>(); }
-bool PluginDatabase::isPreferredPluginDirectory(const String&) { notImplemented(); return false; }
-int PluginPackage::compare(const PluginPackage&) const { notImplemented(); return 0; }
-bool PluginPackage::fetchInfo() { notImplemented(); return false; }
-unsigned PluginPackage::hash() const { notImplemented(); return 0; }
-bool PluginPackage::equal(const PluginPackage&, const PluginPackage&) { notImplemented(); return false; }
-bool PluginPackage::load() { notImplemented(); return false; }
-void PluginView::setNPWindowRect(const IntRect&) { notImplemented(); }
-const char* PluginView::userAgent() { notImplemented(); return 0; }
-void PluginView::invalidateRect(NPRect*) { notImplemented(); }
-void PluginView::invalidateRegion(NPRegion) { notImplemented(); }
-void PluginView::forceRedraw() { notImplemented(); }
-void PluginView::setFocus() { Widget::setFocus(); }
-void PluginView::show() { Widget::show(); }
-void PluginView::hide() { Widget::hide(); }
-void PluginView::paint(GraphicsContext*, const IntRect&) { notImplemented(); }
-void PluginView::setParent(ScrollView* view) { Widget::setParent(view); }
-void PluginView::attachToWindow() { notImplemented(); }
-void PluginView::detachFromWindow() { notImplemented(); }
-NPError PluginView::handlePost(const char*, const char*, uint32, const char*, bool, void*, bool, bool) { notImplemented(); return NPERR_GENERIC_ERROR; }
-void PluginView::updateWindow() const { notImplemented(); }
-void PluginView::handleKeyboardEvent(KeyboardEvent*) { notImplemented(); }
-void PluginView::handleMouseEvent(MouseEvent*) { notImplemented(); }
-PluginView::~PluginView() {}
-
 namespace WebCore {
 
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
-
-CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle) { notImplemented(); handle = invalidPlatformFileHandle; return 0; }
-void closeFile(PlatformFileHandle&) { notImplemented(); };
-int writeToFile(PlatformFileHandle, const char* data, int length) { return -1; };
 
 #if !defined(Q_OS_WIN)
 // defined in win/SystemTimeWin.cpp, which is compiled for the Qt/Windows port

@@ -246,6 +246,7 @@ endif
 
 if TARGET_X11
 global_cppflags += -DXP_UNIX
+webcore_libadd += -lXt
 endif
 
 if !ENABLE_DEBUG

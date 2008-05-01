@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Collabora, Ltd.  All rights reserved.
+ * Copyright (C) 2008 Collabora Ltd.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +27,30 @@
 #include "config.h"
 #include "PluginPackage.h"
 
+#include "CString.h"
 #include "MIMETypeRegistry.h"
+#include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include "Timer.h"
 #include "npruntime_impl.h"
+#include <string.h>
 #include <wtf/OwnArrayPtr.h>
 
 namespace WebCore {
 
 PluginPackage::~PluginPackage()
 {
+    // This destructor gets called during refresh() if PluginDatabase's
+    // PluginSet hash is already populated, as it removes items from
+    // the hash table. Calling the destructor on a loaded plug-in of
+    // course would cause a crash, so we check to call unload before we
+    // ASSERT.
+    // FIXME: There is probably a better way to fix this.
+    if (m_loadCount == 0)
+        unloadWithoutShutdown();
+    else
+        unload();
+
     ASSERT(!m_isLoaded);
 }
 
@@ -56,6 +70,31 @@ void PluginPackage::freeLibraryTimerFired(Timer<PluginPackage>*)
 
     unloadModule(m_module);
     m_module = 0;
+}
+
+
+int PluginPackage::compare(const PluginPackage& compareTo) const
+{
+    // Sort plug-ins that allow multiple instances first.
+    bool AallowsMultipleInstances = !quirks().contains(PluginQuirkDontAllowMultipleInstances);
+    bool BallowsMultipleInstances = !compareTo.quirks().contains(PluginQuirkDontAllowMultipleInstances);
+    if (AallowsMultipleInstances != BallowsMultipleInstances)
+        return AallowsMultipleInstances ? -1 : 1;
+
+    // Sort plug-ins in a preferred path first.
+    bool AisInPreferredDirectory = PluginDatabase::isPreferredPluginDirectory(parentDirectory());
+    bool BisInPreferredDirectory = PluginDatabase::isPreferredPluginDirectory(compareTo.parentDirectory());
+    if (AisInPreferredDirectory != BisInPreferredDirectory)
+        return AisInPreferredDirectory ? -1 : 1;
+
+    int diff = strcmp(name().utf8().data(), compareTo.name().utf8().data());
+    if (diff)
+        return diff;
+
+    if (diff = compareFileVersion(compareTo.version()))
+        return diff;
+
+    return strcmp(parentDirectory().utf8().data(), compareTo.parentDirectory().utf8().data());
 }
 
 PluginPackage::PluginPackage(const String& path, const time_t& lastModified)

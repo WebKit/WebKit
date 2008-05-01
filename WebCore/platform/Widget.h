@@ -176,6 +176,9 @@ protected:
         void setNativeWidget(QWidget *widget);
         QWidget* nativeWidget() const;
 
+        void setIsNPAPIPlugin(bool);
+        bool isNPAPIPlugin() const;
+
         virtual void setParent(ScrollView*);
         ScrollView* parent() const;
         virtual void geometryChanged() const;

@@ -62,6 +62,7 @@ struct WidgetPrivate
         , enabled(true)
         , suppressInvalidation(false)
         , m_widget(0)
+        , isNPAPIPlugin(0)
         , m_parentScrollView(0) { }
     ~WidgetPrivate() {}
 
@@ -69,6 +70,7 @@ struct WidgetPrivate
 
     bool enabled;
     bool suppressInvalidation;
+    bool isNPAPIPlugin;
     IntRect m_geometry;
     QWidget *m_widget; //for plugins
     ScrollView *m_parentScrollView;
@@ -140,6 +142,16 @@ QWidget* Widget::nativeWidget() const
 void Widget::setNativeWidget(QWidget *widget)
 {
     data->m_widget = widget;
+}
+
+bool Widget::isNPAPIPlugin() const
+{
+    return data->isNPAPIPlugin;
+}
+
+void Widget::setIsNPAPIPlugin(bool is)
+{
+    data->isNPAPIPlugin = is;
 }
 
 void Widget::paint(GraphicsContext *, const IntRect &rect)

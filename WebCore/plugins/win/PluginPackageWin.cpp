@@ -66,30 +66,6 @@ int PluginPackage::compareFileVersion(const PlatformModuleVersion& compareVersio
     return 0;
 }
 
-int PluginPackage::compare(const PluginPackage& compareTo) const
-{
-    // Sort plug-ins that allow multiple instances first.
-    bool AallowsMultipleInstances = !quirks().contains(PluginQuirkDontAllowMultipleInstances);
-    bool BallowsMultipleInstances = !compareTo.quirks().contains(PluginQuirkDontAllowMultipleInstances);
-    if (AallowsMultipleInstances != BallowsMultipleInstances)
-        return AallowsMultipleInstances ? -1 : 1;
-
-    // Sort plug-ins in a preferred path first.
-    bool AisInPreferredPath = PluginDatabase::isPreferredPluginDirectory(parentDirectory());
-    bool BisInPreferredPath = PluginDatabase::isPreferredPluginDirectory(compareTo.parentDirectory());
-    if (AisInPreferredPath != BisInPreferredPath)
-        return AisInPreferredPath ? -1 : 1;
-
-    int diff = strcmp(name().utf8().data(), compareTo.name().utf8().data());
-    if (diff)
-        return diff;
-
-    if (diff = compareFileVersion(compareTo.version()))
-        return diff;
-
-    return strcmp(parentDirectory().utf8().data(), compareTo.parentDirectory().utf8().data());
-}
-
 bool PluginPackage::isPluginBlacklisted()
 {
     static const PlatformModuleVersion slPluginMinRequired(0x51BE0000, 0x00010000);

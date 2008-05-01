@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  *
  * All rights reserved.
  *
@@ -31,6 +32,7 @@
 
 #include "FrameLoaderClient.h"
 #include "ResourceResponse.h"
+#include "PluginView.h"
 
 typedef struct _WebKitWebFrame WebKitWebFrame;
 
@@ -170,6 +172,10 @@ namespace WebKit {
         WebKitWebFrame* m_frame;
         WebCore::ResourceResponse m_response;
         WebCore::String m_userAgent;
+
+        // Plugin view to redirect data to
+        WebCore::PluginView* m_pluginView;
+        bool m_hasSentResponseToPlugin;
     };
 
 }

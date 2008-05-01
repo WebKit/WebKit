@@ -38,7 +38,9 @@
 
 #include <QDateTime>
 #include <QFile>
+#include <QTemporaryFile>
 #include <QFileInfo>
+#include <QDateTime>
 #include <QDir>
 
 namespace WebCore {
@@ -90,14 +92,39 @@ String pathGetFileName(const String& path)
 
 String directoryName(const String& path)
 {
-    notImplemented();
-    return String();
+    return String(QFileInfo(path).baseName());
 }
 
-bool unloadModule(PlatformModule)
+CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
 {
-    notImplemented();
-    return false;
+    QFile *temp = new QTemporaryFile(QString(prefix));
+    if( temp->open(QIODevice::ReadWrite) ) {
+        handle = temp;
+        return String(temp->fileName()).utf8();
+    }
+    handle = invalidPlatformFileHandle;
+    return 0;
+}
+
+void closeFile(PlatformFileHandle& handle)
+{
+    if(handle) {
+        handle->close();
+        delete handle;
+    }
+}
+
+int writeToFile(PlatformFileHandle handle, const char* data, int length)
+{
+    if(handle && handle->exists() && handle->isWritable()) {
+        handle->write(data, length);
+    }
+}
+
+bool unloadModule(PlatformModule module)
+{
+    if (module->unload())
+        delete module;
 }
 
 }

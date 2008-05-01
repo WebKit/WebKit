@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
+ * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -178,7 +178,7 @@ PluginView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     // pops up windows in response to a posted message.
     if (m_plugin->pluginFuncs()->version < NPVERS_HAS_POPUPS_ENABLED_STATE &&
         isWindowsMessageUserGesture(message) && !m_popPopupsStateTimer.isActive()) {
-        
+
         pushPopupsEnabledState(true);
 
         m_popPopupsStateTimer.startOneShot(0);
@@ -562,7 +562,7 @@ void PluginView::stop()
             SetWindowLongPtr(m_window, GWLP_WNDPROC, (LONG)m_pluginWndProc);
     }
 
-    KJS::JSLock::DropAllLocks;
+    KJS::JSLock::DropAllLocks dropAllLocks;
 
     // Clear the window
     m_npWindow.window = 0;
@@ -588,33 +588,6 @@ void PluginView::stop()
     m_instance->pdata = 0;
 }
 
-static void freeStringArray(char** stringArray, int length)
-{
-    if (!stringArray)
-        return;
-
-    for (int i = 0; i < length; i++)
-        fastFree(stringArray[i]);
-
-    fastFree(stringArray);
-}
-
-static KURL makeURL(const KURL& baseURL, const char* relativeURLString)
-{
-    String urlString = relativeURLString;
-
-    // Strip return characters.
-    urlString.replace('\n', "");
-    urlString.replace('\r', "");
-
-    return KURL(baseURL, urlString);
-}
-
-static inline bool startsWithBlankLine(const Vector<char>& buffer)
-{
-    return buffer.size() > 0 && buffer[0] == '\n';
-}
-
 const char* PluginView::userAgent()
 {
     if (m_plugin->quirks().contains(PluginQuirkWantsMozillaUserAgent))
@@ -625,237 +598,87 @@ const char* PluginView::userAgent()
     return m_userAgent.data();
 }
 
-static inline int locationAfterFirstBlankLine(const Vector<char>& buffer)
+NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32 len, const char* buf)
 {
-    const char* bytes = buffer.data();
-    unsigned length = buffer.size();
+    String filename(buf, len);
 
-    for (unsigned i = 0; i < length - 4; i++) {
-        // Support for Acrobat. It sends "\n\n".
-        if (bytes[i] == '\n' && bytes[i + 1] == '\n')
-            return i + 2;
-        
-        // Returns the position after 2 CRLF's or 1 CRLF if it is the first line.
-        if (bytes[i] == '\r' && bytes[i + 1] == '\n') {
-            i += 2;
-            if (i == 2)
-                return i;
-            else if (bytes[i] == '\n')
-                // Support for Director. It sends "\r\n\n" (3880387).
-                return i + 1;
-            else if (bytes[i] == '\r' && bytes[i + 1] == '\n')
-                // Support for Flash. It sends "\r\n\r\n" (3758113).
-                return i + 2;
-        }
-    }
+    if (filename.startsWith("file:///"))
+        filename = filename.substring(8);
 
-    return -1;
-}
+    // Get file info
+    WIN32_FILE_ATTRIBUTE_DATA attrs;
+    if (GetFileAttributesExW(filename.charactersWithNullTermination(), GetFileExInfoStandard, &attrs) == 0)
+        return NPERR_FILE_NOT_FOUND;
 
-static inline const char* findEOL(const char* bytes, unsigned length)
-{
-    // According to the HTTP specification EOL is defined as
-    // a CRLF pair. Unfortunately, some servers will use LF
-    // instead. Worse yet, some servers will use a combination
-    // of both (e.g. <header>CRLFLF<body>), so findEOL needs
-    // to be more forgiving. It will now accept CRLF, LF or
-    // CR.
-    //
-    // It returns NULL if EOLF is not found or it will return
-    // a pointer to the first terminating character.
-    for (unsigned i = 0; i < length; i++) {
-        if (bytes[i] == '\n')
-            return bytes + i;
-        if (bytes[i] == '\r') {
-            // Check to see if spanning buffer bounds
-            // (CRLF is across reads). If so, wait for
-            // next read.
-            if (i + 1 == length)
-                break;
+    if (attrs.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+        return NPERR_FILE_NOT_FOUND;
 
-            return bytes + i;
-        }
-    }
-
-    return 0;
-}
-
-static inline String capitalizeRFC822HeaderFieldName(const String& name)
-{
-    bool capitalizeCharacter = true;
-    String result;
-
-    for (unsigned i = 0; i < name.length(); i++) {
-        UChar c;
-
-        if (capitalizeCharacter && name[i] >= 'a' && name[i] <= 'z')
-            c = toASCIIUpper(name[i]);
-        else if (!capitalizeCharacter && name[i] >= 'A' && name[i] <= 'Z')
-            c = toASCIILower(name[i]);
-        else
-            c = name[i];
-
-        if (name[i] == '-')
-            capitalizeCharacter = true;
-        else
-            capitalizeCharacter = false;
-
-        result.append(c);
-    }
-
-    return result;
-}
-
-static inline HTTPHeaderMap parseRFC822HeaderFields(const Vector<char>& buffer, unsigned length)
-{
-    const char* bytes = buffer.data();
-    const char* eol;
-    String lastKey;
-    HTTPHeaderMap headerFields;
-
-    // Loop ove rlines until we're past the header, or we can't find any more end-of-lines
-    while ((eol = findEOL(bytes, length))) {
-        const char* line = bytes;
-        int lineLength = eol - bytes;
-        
-        // Move bytes to the character after the terminator as returned by findEOL.
-        bytes = eol + 1;
-        if ((*eol == '\r') && (*bytes == '\n'))
-            bytes++; // Safe since findEOL won't return a spanning CRLF.
-
-        length -= (bytes - line);
-        if (lineLength == 0)
-            // Blank line; we're at the end of the header
-            break;
-        else if (*line == ' ' || *line == '\t') {
-            // Continuation of the previous header
-            if (lastKey.isNull()) {
-                // malformed header; ignore it and continue
-                continue;
-            } else {
-                // Merge the continuation of the previous header
-                String currentValue = headerFields.get(lastKey);
-                String newValue(line, lineLength);
-
-                headerFields.set(lastKey, currentValue + newValue);
-            }
-        } else {
-            // Brand new header
-            const char* colon;
-            for (colon = line; *colon != ':' && colon != eol; colon++) {
-                // empty loop
-            }
-            if (colon == eol) 
-                // malformed header; ignore it and continue
-                continue;
-            else {
-                lastKey = capitalizeRFC822HeaderFieldName(String(line, colon - line));
-                String value;
-
-                for (colon++; colon != eol; colon++) {
-                    if (*colon != ' ' && *colon != '\t')
-                        break;
-                }
-                if (colon == eol)
-                    value = "";
-                else
-                    value = String(colon, eol - colon);
-
-                String oldValue = headerFields.get(lastKey);
-                if (!oldValue.isNull()) {
-                    String tmp = oldValue;
-                    tmp += ", ";
-                    tmp += value;
-                    value = tmp;
-                }
-
-                headerFields.set(lastKey, value);
-            }
-        }
-    }
-
-    return headerFields;
-}
-
-NPError PluginView::handlePost(const char* url, const char* target, uint32 len, const char* buf, bool file, void* notifyData, bool sendNotification, bool allowHeaders)
-{
-    if (!url || !len || !buf)
-        return NPERR_INVALID_PARAM;
-
-    FrameLoadRequest frameLoadRequest;
-
-    HTTPHeaderMap headerFields;
-    Vector<char> buffer;
+    HANDLE fileHandle = CreateFileW(filename.charactersWithNullTermination(), FILE_READ_DATA, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
     
-    if (file) {
-        String filename(buf, len);
+    if (fileHandle == INVALID_HANDLE_VALUE)
+        return NPERR_FILE_NOT_FOUND;
 
-        if (filename.startsWith("file:///"))
-            filename = filename.substring(8);
+    buffer.resize(attrs.nFileSizeLow);
 
-        // Get file info
-        WIN32_FILE_ATTRIBUTE_DATA attrs;
-        if (GetFileAttributesExW(filename.charactersWithNullTermination(), GetFileExInfoStandard, &attrs) == 0)
-            return NPERR_FILE_NOT_FOUND;
+    DWORD bytesRead;
+    int retval = ReadFile(fileHandle, buffer.data(), attrs.nFileSizeLow, &bytesRead, 0);
 
-        if (attrs.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-            return NPERR_FILE_NOT_FOUND;
+    CloseHandle(fileHandle);
 
-        HANDLE fileHandle = CreateFileW(filename.charactersWithNullTermination(), FILE_READ_DATA, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
-        
-        if (fileHandle == INVALID_HANDLE_VALUE)
-            return NPERR_FILE_NOT_FOUND;
+    if (retval == 0 || bytesRead != attrs.nFileSizeLow)
+        return NPERR_FILE_NOT_FOUND;
+}
 
-        buffer.resize(attrs.nFileSizeLow);
+NPError PluginView::getValue(NPNVariable variable, void* value)
+{
+    switch (variable) {
+#if ENABLE(NETSCAPE_PLUGIN_API)
+        case NPNVWindowNPObject: {
+        if (m_isJavaScriptPaused)
+        return NPERR_GENERIC_ERROR;
 
-        DWORD bytesRead;
-        int retval = ReadFile(fileHandle, buffer.data(), attrs.nFileSizeLow, &bytesRead, 0);
+            NPObject* windowScriptObject = m_parentFrame->windowScriptNPObject();
 
-        CloseHandle(fileHandle);
+            // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
+            if (windowScriptObject)
+                _NPN_RetainObject(windowScriptObject);
 
-        if (retval == 0 || bytesRead != attrs.nFileSizeLow)
-            return NPERR_FILE_NOT_FOUND;
-    } else {
-        buffer.resize(len);
-        memcpy(buffer.data(), buf, len);
-    }
+            void** v = (void**)value;
+            *v = windowScriptObject;
 
-    const char* postData = buffer.data();
-    int postDataLength = buffer.size();
-    
-    if (allowHeaders) {
-        if (startsWithBlankLine(buffer)) {
-            postData++;
-            postDataLength--;
-        } else {
-            int location = locationAfterFirstBlankLine(buffer);
-            if (location != -1) {
-                // If the blank line is somewhere in the middle of the buffer, everything before is the header
-                headerFields = parseRFC822HeaderFields(buffer, location);
-                unsigned dataLength = buffer.size() - location;
-
-                // Sometimes plugins like to set Content-Length themselves when they post,
-                // but WebFoundation does not like that. So we will remove the header
-                // and instead truncate the data to the requested length.
-                String contentLength = headerFields.get("Content-Length");
-
-                if (!contentLength.isNull())
-                    dataLength = min(contentLength.toInt(), (int)dataLength);
-                headerFields.remove("Content-Length");
-
-                postData += location;
-                postDataLength = dataLength;
-            }
+            return NPERR_NO_ERROR;
         }
+
+        case NPNVPluginElementNPObject: {
+        if (m_isJavaScriptPaused)
+        return NPERR_GENERIC_ERROR;
+
+            NPObject* pluginScriptObject = 0;
+
+            if (m_element->hasTagName(appletTag) || m_element->hasTagName(embedTag) || m_element->hasTagName(objectTag))
+                pluginScriptObject = static_cast<HTMLPlugInElement*>(m_element)->getNPObject();
+
+            // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
+            if (pluginScriptObject)
+                _NPN_RetainObject(pluginScriptObject);
+
+            void** v = (void**)value;
+            *v = pluginScriptObject;
+
+            return NPERR_NO_ERROR;
+        }
+#endif
+
+        case NPNVnetscapeWindow: {
+            PlatformWidget* w = reinterpret_cast<PlatformWidget*>(value);
+
+            *w = containingWindow();
+
+            return NPERR_NO_ERROR;
+        }
+        default:
+            return NPERR_GENERIC_ERROR;
     }
-
-    frameLoadRequest.resourceRequest().setHTTPMethod("POST");
-    frameLoadRequest.resourceRequest().setURL(makeURL(m_baseURL, url));
-    frameLoadRequest.resourceRequest().addHTTPHeaderFields(headerFields);
-    frameLoadRequest.resourceRequest().setHTTPBody(FormData::create(postData, postDataLength));
-    frameLoadRequest.setFrameName(target);
-
-    return load(frameLoadRequest, sendNotification, notifyData);
 }
 
 void PluginView::invalidateRect(NPRect* rect)
@@ -952,7 +775,7 @@ void PluginView::init()
 
         m_window = CreateWindowEx(0, kWebPluginViewdowClassName, 0, flags,
                                   0, 0, 0, 0, m_parentFrame->view()->containingWindow(), 0, Page::instanceHandle(), 0);
-        
+
         // Calling SetWindowLongPtrA here makes the window proc ASCII, which is required by at least
         // the Shockwave Director plug-in.
         ::SetWindowLongPtrA(m_window, GWL_WNDPROC, (LONG)DefWindowProcA);

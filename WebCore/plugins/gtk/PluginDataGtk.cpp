@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Trolltech ASA
+    Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
     Copyright (C) 2008 Collabora Ltd. All rights reserved.
 
     This library is free software; you can redistribute it and/or
@@ -23,47 +24,11 @@
 
 #include "PluginDatabase.h"
 #include "PluginPackage.h"
-
-#if QT_VERSION >= 0x040400
-#include "ChromeClientQt.h"
-#include "Page.h"
-#include <qwebpage.h>
-#include <qwebpluginfactory.h>
-#endif
-
+#include <stdio.h>
 namespace WebCore {
 
 void PluginData::initPlugins()
 {
-#if QT_VERSION >= 0x040400
-    QWebPage* webPage = static_cast<ChromeClientQt*>(m_page->chrome()->client())->m_webPage;
-    QWebPluginFactory* factory = webPage->pluginFactory();
-    if (factory) {
-
-        QList<QWebPluginFactory::Plugin> qplugins = factory->plugins();
-        for (int i = 0; i < qplugins.count(); ++i) {
-            const QWebPluginFactory::Plugin& qplugin = qplugins.at(i);
-
-            PluginInfo* info = new PluginInfo;
-            info->name = qplugin.name;
-            info->desc = qplugin.description;
-
-            for (int j = 0; j < qplugin.mimeTypes.count(); ++j) {
-                const QWebPluginFactory::MimeType& mimeType = qplugin.mimeTypes.at(j);
-
-                MimeClassInfo* mimeInfo = new MimeClassInfo;
-                mimeInfo->type = mimeType.name;
-                mimeInfo->desc = mimeType.description;
-                mimeInfo->suffixes = mimeType.fileExtensions.join("; ");
-
-                info->mimes.append(mimeInfo);
-            }
-
-            m_plugins.append(info);
-        }
-    }
-#endif
-
     PluginDatabase *db = PluginDatabase::installedPlugins();
     const Vector<PluginPackage*> &plugins = db->plugins();
 

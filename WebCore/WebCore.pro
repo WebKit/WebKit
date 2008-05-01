@@ -122,6 +122,10 @@ include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 #LIBS += -L$$OUTPUT_DIR/lib -lJavaScriptCore
 
 qt-port {
+    unix {
+        DEFINES += XP_UNIX ENABLE_NETSCAPE_PLUGIN_API=1
+    }
+
 RESOURCES += \
             $$PWD/../WebCore/page/inspector/WebKit.qrc \
             $$PWD/../WebCore/Resources/WebKitResources.qrc
@@ -1050,7 +1054,12 @@ qt-port {
     ../WebKit/qt/Api/qwebhistoryinterface.cpp \
     ../WebKit/qt/Api/qwebpluginfactory.cpp
 
-    unix: SOURCES += platform/qt/SystemTimeQt.cpp
+    unix: {
+        SOURCES += platform/qt/SystemTimeQt.cpp \
+                   plugins/qt/PluginDatabaseQt.cpp \
+                   plugins/qt/PluginPackageQt.cpp \
+                   plugins/qt/PluginViewQt.cpp
+    }
     else: SOURCES += platform/win/SystemTimeWin.cpp
 
     # Files belonging to the Qt 4.3 build
@@ -1069,6 +1078,7 @@ qt-port {
 }
 
 gtk-port {
+    INCLUDEPATH += ../WebCore/plugins/gtk
     HEADERS += \
         ../WebCore/platform/gtk/ClipboardGtk.h \
         ../WebCore/platform/gtk/PasteboardHelper.h \
