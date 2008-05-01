@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #ifndef WebNetscapePluginEventHandlerCocoa_h
 #define WebNetscapePluginEventHandlerCocoa_h
 
@@ -59,4 +61,5 @@ private:
 
 #endif //WebNetscapePluginEventHandlerCocoa_h
 
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 

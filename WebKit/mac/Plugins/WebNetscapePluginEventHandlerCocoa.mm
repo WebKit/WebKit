@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #import "WebNetscapePluginEventHandlerCocoa.h"
 
 #import "WebBaseNetscapePluginViewInternal.h"
@@ -190,3 +192,5 @@ bool WebNetscapePluginEventHandlerCocoa::sendEvent(NPCocoaEvent* event)
     m_currentEventIsUserGesture = false;
     return result;
 }
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

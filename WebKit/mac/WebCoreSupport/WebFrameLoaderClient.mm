@@ -1208,6 +1208,8 @@ static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
     return view;
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 class NetscapePluginWidget : public Widget {
 public:
     NetscapePluginWidget(WebNetscapePluginEmbeddedView *view)
@@ -1227,6 +1229,8 @@ public:
     }
     
 };
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element, const KURL& url,
     const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
