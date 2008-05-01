@@ -164,6 +164,11 @@ void WebNetscapePluginEventHandlerCarbon::mouseUp(NSEvent* theEvent)
     LOG(PluginEvents, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d", acceptedEvent, event.where.v, event.where.h);    
 }
 
+bool WebNetscapePluginEventHandlerCarbon::scrollWheel(NSEvent* theEvent)
+{
+    return false;
+}
+
 void WebNetscapePluginEventHandlerCarbon::mouseEntered(NSEvent* theEvent)
 {
     EventRecord event;
@@ -233,6 +238,10 @@ void WebNetscapePluginEventHandlerCarbon::keyUp(NSEvent* theEvent)
         
         sendEvent(&event);
     }    
+}
+
+void WebNetscapePluginEventHandlerCarbon::flagsChanged(NSEvent*)
+{
 }
 
 void WebNetscapePluginEventHandlerCarbon::focusChanged(bool hasFocus)
@@ -375,6 +384,11 @@ void WebNetscapePluginEventHandlerCarbon::stopTimers()
     
     CFRunLoopTimerInvalidate(m_nullEventTimer.get());
     m_nullEventTimer = 0;
+}
+
+void* WebNetscapePluginEventHandlerCarbon::platformWindow(NSWindow* window)
+{
+    return [window windowRef];
 }
 
 bool WebNetscapePluginEventHandlerCarbon::sendEvent(EventRecord* event)

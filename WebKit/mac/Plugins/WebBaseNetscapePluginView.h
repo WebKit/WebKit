@@ -33,6 +33,7 @@
 #import <WebKit/npfunctions.h>
 #import <WebKit/npapi.h>
 #import <WebKit/WebBasePluginPackage.h>
+#import <wtf/HashMap.h>
 
 @class DOMElement;
 @class WebDataSource;
@@ -43,6 +44,7 @@
 @class WebNetscapePluginStream;
 @class WebView;
 
+class PluginTimer;
 class WebNetscapePluginEventHandler;
 
 typedef union PluginPort {
@@ -77,6 +79,7 @@ typedef union PluginPort {
     PluginPort nPort;
     PluginPort lastSetPort;
     NPDrawingModel drawingModel;
+    NPEventModel eventModel;
     
     // These are only valid when drawingModel is NPDrawingModelOpenGL
     AGLContext aglContext;
@@ -95,8 +98,11 @@ typedef union PluginPort {
     BOOL isTransparent;
     BOOL isCompletelyObscured;
     BOOL shouldStopSoon;
+
     BOOL shouldFireTimers;
-    
+    uint32_t currentTimerID;
+    HashMap<uint32_t, PluginTimer*>* timers;
+
     unsigned pluginFunctionCallDepth;
     
     DOMElement *element;

@@ -116,6 +116,47 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
 
 typedef struct OpaquePortState* PortState;
 
+static const double ThrottledTimerInterval = 0.25;
+
+class PluginTimer : public TimerBase {
+public:
+    typedef void (*TimerFunc)(NPP npp, uint32_t timerID);
+    
+    PluginTimer(NPP npp, uint32_t timerID, uint32_t interval, NPBool repeat, TimerFunc timerFunc)
+        : m_npp(npp)
+        , m_timerID(timerID)
+        , m_interval(interval)
+        , m_repeat(repeat)
+        , m_timerFunc(timerFunc)
+    {
+    }
+    
+    void start(bool throttle)
+    {
+        ASSERT(!isActive());
+        
+        double timeInterval = throttle ? ThrottledTimerInterval : m_interval / 1000.0;
+        if (m_repeat)
+            startRepeating(timeInterval);
+        else
+            startOneShot(timeInterval);
+    }
+
+private:
+    virtual void fired() 
+    {
+        m_timerFunc(m_npp, m_timerID);
+        if (!m_repeat)
+            delete this;
+    }
+    
+    NPP m_npp;
+    uint32_t m_timerID;
+    uint32_t m_interval;
+    NPBool m_repeat;
+    TimerFunc m_timerFunc;
+};
+
 #ifndef NP_NO_QUICKDRAW
 
 // QuickDraw is not available in 64-bit
@@ -282,9 +323,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         [self fixWindowPort];
 #endif
 
-    WindowRef windowRef = (WindowRef)[[self currentWindow] windowRef];
-    ASSERT(windowRef);
-    
     // Use AppKit to convert view coordinates to NSWindow coordinates.
     NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
     NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
@@ -295,6 +333,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     visibleRectInWindow.origin.y = borderViewHeight - NSMaxY(visibleRectInWindow);
     
 #ifndef NP_NO_QUICKDRAW
+    WindowRef windowRef = (WindowRef)[[self currentWindow] windowRef];
+    ASSERT(windowRef);
+        
     // Look at the Carbon port to convert top-left-based window coordinates into top-left-based content coordinates.
     if (drawingModel == NPDrawingModelQuickDraw) {
         ::Rect portBounds;
@@ -498,7 +539,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             cgPortState->context = context;
             
             // Update the plugin's window/context
-            nPort.cgPort.window = windowRef;
+            nPort.cgPort.window = eventHandler->platformWindow([self currentWindow]);
             nPort.cgPort.context = context;
             window.window = &nPort.cgPort;
 
@@ -535,7 +576,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             }
             
             // Update the plugin's window/context
-            nPort.aglPort.window = windowRef;
+            nPort.aglPort.window = eventHandler->platformWindow([self currentWindow]);;
             nPort.aglPort.context = [self _cglContext];
             window.window = &nPort.aglPort;
             
@@ -721,6 +762,15 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     eventHandler->stopTimers();    
     shouldFireTimers = NO;
+    
+    if (!timers)
+        return;
+
+    HashMap<uint32_t, PluginTimer*>::const_iterator end = timers->end();
+    for (HashMap<uint32_t, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
+        PluginTimer* timer = it->second;
+        timer->stop();
+    }    
 }
 
 - (void)restartTimers
@@ -738,6 +788,16 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // If the plugin is completely obscured (scrolled out of view, for example), then we will
     // send null events at a reduced rate.
     eventHandler->startTimers(isCompletelyObscured);
+    
+    if (!timers)
+        return;
+    
+    HashMap<uint32_t, PluginTimer*>::const_iterator end = timers->end();
+    for (HashMap<uint32_t, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
+        PluginTimer* timer = it->second;
+        ASSERT(!timer->isActive());
+        timer->start(isCompletelyObscured);
+    }    
 }
 
 - (BOOL)acceptsFirstResponder
@@ -812,6 +872,12 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     eventHandler->mouseDragged(theEvent);
 }
 
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+    if (!eventHandler->scrollWheel(theEvent))
+        [super scrollWheel:theEvent];
+}
+
 - (void)keyUp:(NSEvent *)theEvent
 {
     eventHandler->keyUp(theEvent);
@@ -820,6 +886,11 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (void)keyDown:(NSEvent *)theEvent
 {
     eventHandler->keyDown(theEvent);
+}
+
+- (void)flagsChanged:(NSEvent *)theEvent
+{
+    eventHandler->flagsChanged(theEvent);
 }
 
 - (void)cut:(id)sender
@@ -1092,6 +1163,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // Initialize drawingModel to an invalid value so that we can detect when the plugin does not specify a drawingModel
     drawingModel = (NPDrawingModel)-1;
     
+    // Initialize eventModel to an invalid value so that we can detect when the plugin does not specify an event model.
+    eventModel = (NPEventModel)-1;
+    
     // Plug-ins are "windowed" by default.  On MacOS, windowed plug-ins share the same window and graphics port as the main
     // browser window.  Windowless plug-ins are rendered off-screen, then copied into the main browser window.
     window.type = NPWindowTypeWindow;
@@ -1109,16 +1183,29 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         // Default to QuickDraw if the plugin did not specify a drawing model.
         drawingModel = NPDrawingModelQuickDraw;
 #else
-        // QuickDraw is not available, so we can't default to it.  We could default to CoreGraphics instead, but
-        // if the plugin did not specify the CoreGraphics drawing model then it must be one of the old QuickDraw
-        // plugins.  Thus, the plugin is unsupported and should not be started.  Destroy it here and bail out.
-        LOG(Plugins, "Plugin only supports QuickDraw, but QuickDraw is unavailable: %@", pluginPackage);
-        [self _destroyPlugin];
-        [pluginPackage close];
-        return NO;
+        // QuickDraw is not available, so we can't default to it. Instead, default to CoreGraphics.
+        drawingModel = NPDrawingModelCoreGraphics;
 #endif
     }
 
+    if (eventModel == (NPEventModel)-1) {
+        // If the plug-in did not specify a drawing model we default to Carbon when it is available.
+#ifndef NP_NO_CARBON
+        eventModel = NPEventModelCarbon;
+#else
+        eventModel = NPEventModelCocoa;
+#endif
+    }
+
+    if (eventModel == NPEventModelCocoa &&
+        drawingModel == NPDrawingModelQuickDraw) {
+        LOG(Plugins, "Plugin can't use use Cocoa event model with QuickDraw drawing model: %@", pluginPackage);
+        [self _destroyPlugin];
+        [pluginPackage close];
+        
+        return NO;
+    }        
+    
     // Create the event handler
     eventHandler = WebNetscapePluginEventHandler::create(self);
     
@@ -1189,6 +1276,11 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (BOOL)isStarted
 {
     return isStarted;
+}
+
+- (NPEventModel)eventModel
+{
+    return eventModel;
 }
 
 - (WebDataSource *)dataSource
@@ -1367,6 +1459,11 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     free(cValues);
     
     ASSERT(!eventHandler);
+    
+    if (timers) {
+        deleteAllValues(*timers);
+        delete timers;
+    }    
 }
 
 - (void)disconnectStream:(WebBaseNetscapePluginStream*)stream
@@ -2245,6 +2342,26 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             return NPERR_NO_ERROR;
         }
         
+        case NPNVpluginEventModel:
+        {
+            *(NPEventModel *)value = eventModel;
+            return NPERR_NO_ERROR;
+        }
+        
+#ifndef NP_NO_CARBON
+        case NPNVsupportsCarbonBool:
+        {
+            *(NPBool *)value = TRUE;
+            return NPERR_NO_ERROR;
+        }
+#endif /* NP_NO_CARBON */
+            
+        case NPNVsupportsCocoaBool:
+        {
+            *(NPBool *)value = TRUE;
+            return NPERR_NO_ERROR;
+        }
+            
         default:
             break;
     }
@@ -2304,9 +2421,61 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             }
         }
         
+        case NPPVpluginEventModel:
+        {
+            // Can only set event model inside NPP_New()
+            if (self != [[self class] currentPluginView])
+                return NPERR_GENERIC_ERROR;
+            
+            // Check for valid, supported event model
+            NPEventModel newEventModel = (NPEventModel)(uintptr_t)value;
+            switch (newEventModel) {
+                // Supported event models:
+#ifndef NP_NO_CARBON
+                case NPEventModelCarbon:
+#endif
+                case NPEventModelCocoa:
+                    eventModel = newEventModel;
+                    return NPERR_NO_ERROR;
+                    
+                    // Unsupported (or unknown) event models:
+                default:
+                    LOG(Plugins, "Plugin %@ uses unsupported event model: %d", pluginPackage, eventModel);
+                    return NPERR_GENERIC_ERROR;
+            }
+        }
+            
         default:
             return NPERR_GENERIC_ERROR;
     }
+}
+
+- (uint32_t)scheduleTimerWithInterval:(uint32_t)interval repeat:(NPBool)repeat timerFunc:(void (*)(NPP npp, uint32_t timerID))timerFunc
+{
+    if (!timerFunc)
+        return 0;
+    
+    if (!timers)
+        timers = new HashMap<uint32_t, PluginTimer*>;
+    
+    uint32_t timerID = ++currentTimerID;
+    
+    PluginTimer* timer = new PluginTimer(plugin, timerID, interval, repeat, timerFunc);
+    timers->set(timerID, timer);
+
+    if (shouldFireTimers)
+        timer->start(isCompletelyObscured);
+    
+    return 0;
+}
+
+- (void)unscheduleTimer:(uint32_t)timerID
+{
+    if (!timers)
+        return;
+    
+    if (PluginTimer* timer = timers->take(timerID))
+        delete timer;
 }
 
 @end

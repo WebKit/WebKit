@@ -1,3 +1,11 @@
+2008-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add new Cocoa event model type declarations.
+        
+        * bridge/npapi.h:
+
 2008-04-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

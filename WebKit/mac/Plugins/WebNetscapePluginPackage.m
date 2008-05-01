@@ -423,7 +423,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.getJavaPeer = (NPN_GetJavaPeerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaPeer);
         browserFuncs.pushpopupsenabledstate = (NPN_PushPopupsEnabledStateProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PushPopupsEnabledState);
         browserFuncs.poppopupsenabledstate = (NPN_PopPopupsEnabledStateProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PopPopupsEnabledState);
-        
+        browserFuncs.scheduletimer = (NPN_ScheduleTimerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ScheduleTimer);
+        browserFuncs.unscheduletimer = (NPN_UnscheduleTimerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_UnscheduleTimer);
+
         browserFuncs.releasevariantvalue = (NPN_ReleaseVariantValueProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_ReleaseVariantValue);
         browserFuncs.getstringidentifier = (NPN_GetStringIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_GetStringIdentifier);
         browserFuncs.getstringidentifiers = (NPN_GetStringIdentifiersProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_GetStringIdentifiers);
@@ -525,6 +527,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.getJavaPeer = NPN_GetJavaPeer;
         browserFuncs.pushpopupsenabledstate = NPN_PushPopupsEnabledState;
         browserFuncs.poppopupsenabledstate = NPN_PopPopupsEnabledState;
+        browserFuncs.scheduletimer = NPN_ScheduleTimer;
+        browserFuncs.unscheduletimer = NPN_UnscheduleTimer;
         
         browserFuncs.releasevariantvalue = _NPN_ReleaseVariantValue;
         browserFuncs.getstringidentifier = _NPN_GetStringIdentifier;

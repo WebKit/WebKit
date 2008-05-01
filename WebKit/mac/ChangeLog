@@ -1,3 +1,65 @@
+2008-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add new Cocoa event model and the NPN_ScheduleTimer/NPN_UnscheduleTimer methods.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (PluginTimer::PluginTimer):
+        (PluginTimer::start):
+        (PluginTimer::fired):
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        (-[WebBaseNetscapePluginView stopTimers]):
+        (-[WebBaseNetscapePluginView restartTimers]):
+        (-[WebBaseNetscapePluginView scrollWheel:]):
+        (-[WebBaseNetscapePluginView flagsChanged:]):
+        (-[WebBaseNetscapePluginView start]):
+        (-[WebBaseNetscapePluginView eventModel]):
+        (-[WebBaseNetscapePluginView fini]):
+        (-[WebBaseNetscapePluginView getVariable:value:]):
+        (-[WebBaseNetscapePluginView setVariable:value:]):
+        (-[WebBaseNetscapePluginView scheduleTimerWithInterval:repeat:timerFunc:]):
+        (-[WebBaseNetscapePluginView unscheduleTimer:]):
+        * Plugins/WebBaseNetscapePluginViewInternal.h:
+        * Plugins/WebBaseNetscapePluginViewPrivate.h:
+        * Plugins/WebNetscapePluginEventHandler.h:
+        * Plugins/WebNetscapePluginEventHandler.mm:
+        (WebNetscapePluginEventHandler::create):
+        * Plugins/WebNetscapePluginEventHandlerCarbon.h:
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm:
+        (WebNetscapePluginEventHandlerCarbon::scrollWheel):
+        (WebNetscapePluginEventHandlerCarbon::flagsChanged):
+        (WebNetscapePluginEventHandlerCarbon::platformWindow):
+        * Plugins/WebNetscapePluginEventHandlerCocoa.h: Added.
+        (WebNetscapePluginEventHandlerCocoa::startTimers):
+        (WebNetscapePluginEventHandlerCocoa::stopTimers):
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm: Added.
+        (WebNetscapePluginEventHandlerCocoa::WebNetscapePluginEventHandlerCocoa):
+        (WebNetscapePluginEventHandlerCocoa::drawRect):
+        (WebNetscapePluginEventHandlerCocoa::mouseDown):
+        (WebNetscapePluginEventHandlerCocoa::mouseDragged):
+        (WebNetscapePluginEventHandlerCocoa::mouseEntered):
+        (WebNetscapePluginEventHandlerCocoa::mouseExited):
+        (WebNetscapePluginEventHandlerCocoa::mouseMoved):
+        (WebNetscapePluginEventHandlerCocoa::mouseUp):
+        (WebNetscapePluginEventHandlerCocoa::scrollWheel):
+        (WebNetscapePluginEventHandlerCocoa::sendMouseEvent):
+        (WebNetscapePluginEventHandlerCocoa::keyDown):
+        (WebNetscapePluginEventHandlerCocoa::keyUp):
+        (WebNetscapePluginEventHandlerCocoa::flagsChanged):
+        (WebNetscapePluginEventHandlerCocoa::sendKeyEvent):
+        (WebNetscapePluginEventHandlerCocoa::windowFocusChanged):
+        (WebNetscapePluginEventHandlerCocoa::focusChanged):
+        (WebNetscapePluginEventHandlerCocoa::platformWindow):
+        (WebNetscapePluginEventHandlerCocoa::sendEvent):
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]):
+        * Plugins/npapi.m:
+        (NPN_ScheduleTimer):
+        (NPN_UnscheduleTimer):
+        * Plugins/npfunctions.h:
+
 2008-04-30  Brady Eidson  <beidson@apple.com>
 
         Fix my WebPreferences revert check-in

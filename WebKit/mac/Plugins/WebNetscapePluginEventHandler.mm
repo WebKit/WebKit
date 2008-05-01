@@ -27,11 +27,22 @@
 
 #import "WebNetscapePluginEventHandler.h"
 
+#import <wtf/Assertions.h>
+#import "WebBaseNetscapePluginViewInternal.h"
 #import "WebNetscapePluginEventHandlerCarbon.h"
+#import "WebNetscapePluginEventHandlerCocoa.h"
 
 WebNetscapePluginEventHandler* WebNetscapePluginEventHandler::create(WebBaseNetscapePluginView* pluginView)
 {
-    return new WebNetscapePluginEventHandlerCarbon(pluginView);
+    switch ([pluginView eventModel]) {
+        case NPEventModelCarbon:
+            return new WebNetscapePluginEventHandlerCarbon(pluginView);
+        case NPEventModelCocoa:
+            return new WebNetscapePluginEventHandlerCocoa(pluginView);
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+    }
 }
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

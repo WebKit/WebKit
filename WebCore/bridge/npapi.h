@@ -80,10 +80,17 @@
     #include <Events.h>
 #endif
 
+#if defined(XP_MACOSX) && defined(__LP64__)
+#define NP_NO_QUICKDRAW
+#define NP_NO_CARBON
+#endif
+
 #ifdef XP_MACOSX
-    #include <Carbon/Carbon.h>
     #include <ApplicationServices/ApplicationServices.h>
     #include <OpenGL/OpenGL.h>
+#ifndef NP_NO_CARBON
+    #include <Carbon/Carbon.h>
+#endif
 #endif
 
 #ifdef XP_UNIX
@@ -96,16 +103,12 @@
     #include <windows.h>
 #endif
 
-#if defined(XP_MACOSX) && defined(__LP64__)
-#error 64-bit Netscape plug-ins are not supported on Mac OS X
-#endif
-
 /*----------------------------------------------------------------------*/
 /*             Plugin Version Constants                                 */
 /*----------------------------------------------------------------------*/
 
 #define NP_VERSION_MAJOR 0
-#define NP_VERSION_MINOR 18
+#define NP_VERSION_MINOR 20
 
 
 
@@ -334,7 +337,9 @@ typedef enum {
     NPPVformValue = 16,    /* Not implemented in WebKit */
 #ifdef XP_MACOSX
     /* Used for negotiating drawing models */
-    NPPVpluginDrawingModel = 1000
+    NPPVpluginDrawingModel = 1000,
+    /* Used for negotiating event models */
+    NPPVpluginEventModel = 1001,
 #endif
 } NPPVariable;
 
@@ -370,6 +375,12 @@ typedef enum {
 #endif
     , NPNVsupportsCoreGraphicsBool = 2001 /* TRUE if the browser supports the CoreGraphics drawing model */
     , NPNVsupportsOpenGLBool = 2002 /* TRUE if the browser supports the OpenGL drawing model (CGL on Mac) */
+    
+    , NPNVpluginEventModel = 1001 /* The NPEventModel specified by the plugin */
+#ifndef NP_NO_CARBON
+    , NPNVsupportsCarbonBool = 2003 /* TRUE if the browser supports the Carbon event model */
+#endif
+    , NPNVsupportsCocoaBool = 2004 /* TRUE if the browser supports the Cocoa event model */
 #endif /* XP_MACOSX */
 } NPNVariable;
 
@@ -395,6 +406,70 @@ typedef enum {
     NPDrawingModelCoreGraphics = 1,
     NPDrawingModelOpenGL = 2
 } NPDrawingModel;
+
+/*
+ * The event model for a Mac OS X plugin. These are the possible values for the NPNVpluginEventModel variable.
+ */
+
+typedef enum {
+#ifndef NP_NO_CARBON
+    NPEventModelCarbon = 0,
+#endif
+    NPEventModelCocoa = 1,
+} NPEventModel;
+
+typedef enum {
+    NPCocoaEventDrawRect = 1,
+    NPCocoaEventMouseDown,
+    NPCocoaEventMouseUp,
+    NPCocoaEventMouseMoved,
+    NPCocoaEventMouseEntered,
+    NPCocoaEventMouseExited,
+    NPCocoaEventMouseDragged,
+    NPCocoaEventKeyDown,
+    NPCocoaEventKeyUp,
+    NPCocoaEventFlagsChanged,
+    NPCocoaEventFocusChanged,
+    NPCocoaEventWindowFocusChanged,
+    NPCocoaEventScrollWheel,
+} NPCocoaEventType;
+
+typedef struct _NPNSString NPNSString;
+typedef struct _NPNSWindow NPNSWindow;
+
+typedef struct _NPCocoaEvent {
+    NPCocoaEventType type;
+    union {
+        struct {
+            uint32 modifierFlags;
+            double pluginX;
+            double pluginY;            
+            int32 buttonNumber;
+            int32 clickCount;
+            double deltaX;
+            double deltaY;
+            double deltaZ;
+        } mouse;
+        struct {
+            uint32 modifierFlags;
+            double pluginX;
+            double pluginY;            
+            NPNSString *characters;
+            NPNSString *charactersIgnoringModifiers;
+            NPBool isARepeat;
+            uint16 keyCode;
+        } key;
+        struct {
+            double x;
+            double y;
+            double width;
+            double height;
+        } draw;
+        struct {
+            NPBool hasFocus;
+        } focus;        
+    };
+} NPCocoaEvent;
 
 #endif
 
@@ -440,7 +515,11 @@ typedef struct _NPPrint
 } NPPrint;
 
 #if defined(XP_MAC) || defined(XP_MACOSX)
+
+#ifndef NP_NO_CARBON
 typedef EventRecord    NPEvent;
+#endif
+
 #elif defined(XP_WIN)
 typedef struct _NPEvent
 {
@@ -485,7 +564,11 @@ typedef void *NPRegion;
 typedef struct NP_CGContext
 {
     CGContextRef context;
-    WindowRef window;
+#ifdef NP_NO_CARBON
+    NPNSWindow *window;
+#else
+    void *window; // Can be either an NSWindow or a WindowRef depending on the event model
+#endif
 } NP_CGContext;
 
 /* 
@@ -496,7 +579,11 @@ typedef struct NP_CGContext
 typedef struct NP_GLContext
 {
     CGLContextObj context;
-    WindowRef window;
+#ifdef NP_NO_CARBON
+    NPNSWindow *window;
+#else
+    void *window; // Can be either an NSWindow or a WindowRef depending on the event model
+#endif
 } NP_GLContext;
 
 #endif /* XP_MACOSX */
@@ -615,6 +702,7 @@ typedef struct NP_Port
 #define NPVERS_HAS_RESPONSE_HEADERS       17
 #define NPVERS_HAS_NPOBJECT_ENUM          18
 #define NPVERS_HAS_PLUGIN_THREAD_ASYNC_CALL 19
+#define NPVERS_MACOSX_HAS_EVENT_MODELS    20
 
 /*----------------------------------------------------------------------*/
 /*             Function Prototypes                */
@@ -707,6 +795,8 @@ void        NPN_ForceRedraw(NPP instance);
 void        NPN_PushPopupsEnabledState(NPP instance, NPBool enabled);
 void        NPN_PopPopupsEnabledState(NPP instance);
 void        NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void *), void *userData);
+uint32_t    NPN_ScheduleTimer(NPP instance, int32_t interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32_t timerID));
+void        NPN_UnscheduleTimer(NPP instance, uint32_t timerID);
 
 #ifdef __cplusplus
 }  /* end extern "C" */

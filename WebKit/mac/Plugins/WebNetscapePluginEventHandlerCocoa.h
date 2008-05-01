@@ -23,19 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
+#ifndef WebNetscapePluginEventHandlerCocoa_h
+#define WebNetscapePluginEventHandlerCocoa_h
 
-#ifndef WebNetscapePluginEventHandlerCarbon_h
-#define WebNetscapePluginEventHandlerCarbon_h
-
+#include <WebKit/npapi.h>
 #include "WebNetscapePluginEventHandler.h"
 
-#import <Carbon/Carbon.h>
-#import <wtf/RetainPtr.h>
-
-class WebNetscapePluginEventHandlerCarbon : public WebNetscapePluginEventHandler {
+class WebNetscapePluginEventHandlerCocoa : public WebNetscapePluginEventHandler {
 public:
-    WebNetscapePluginEventHandlerCarbon(WebBaseNetscapePluginView*); 
+    WebNetscapePluginEventHandlerCocoa(WebBaseNetscapePluginView*); 
 
     virtual void drawRect(const NSRect&);
 
@@ -54,28 +50,13 @@ public:
     virtual void windowFocusChanged(bool hasFocus);    
     virtual void focusChanged(bool hasFocus);
 
-    virtual void startTimers(bool throttleTimers);
-    virtual void stopTimers();
-
     virtual void* platformWindow(NSWindow*);
-    
 private:
-    void sendNullEvent();
-
-    void installKeyEventHandler();
-    void removeKeyEventHandler();
-    
-    static OSStatus TSMEventHandler(EventHandlerCallRef, EventRef, void *eventHandler);
-    static void nullEventTimerFired(CFRunLoopTimerRef, void *context);
-
-    bool sendEvent(EventRecord*);
-    
-    EventHandlerRef m_keyEventHandler;
-    bool m_suspendKeyUpEvents;
-    RetainPtr<CFRunLoopTimerRef> m_nullEventTimer;
+    bool sendMouseEvent(NSEvent*, NPCocoaEventType);
+    void sendKeyEvent(NSEvent*, NPCocoaEventType);
+    bool sendEvent(NPCocoaEvent*);
 };
 
-#endif // WebNetscapePluginEventHandlerCarbon_h
+#endif //WebNetscapePluginEventHandlerCocoa_h
 
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
