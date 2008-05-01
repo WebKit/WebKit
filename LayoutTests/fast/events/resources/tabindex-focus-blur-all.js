@@ -1,5 +1,7 @@
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
 
 var consoleOutput = null;
 var stopTest = false;
@@ -23,7 +25,8 @@ function printToConsole(str)
     if (!consoleOutput) {
         consoleOutput = window.frames[2].document.getElementById("theConsole");
     }
-    consoleOutput.innerHTML += "<br>" + str;
+    consoleOutput.appendChild(window.frames[2].document.createTextNode(str));
+    consoleOutput.appendChild(window.frames[2].document.createElement("br"));
 }
 
 function doFocus(elem)
@@ -57,10 +60,8 @@ function test()
     document.write(resultSummary);
     document.close();
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.layoutTestController)
         layoutTestController.notifyDone();
-    }
 }
 
 function focusEachChild(elem) {
@@ -111,15 +112,15 @@ function testProgrammaticFocus(elem)
 
     elem.focus();
     if (elemThatShouldFocus == focusedElem || (!elemThatShouldFocus && OKtoFocusOtherElement))
-        printToConsole("&lt;"+elem.tagName+"&gt; "+elem.id+" <span style='color:green'>passed</span> focus test");
+        printToConsole("<"+elem.tagName+"> "+elem.id+" PASSED focus test");
     else {
         failedTestCount++;
-        printToConsole(elem.id+" <span style='color:red'>failed</span> - was " + (focusedElem ? "" : " not ") + " focused but focus " + (elemThatShouldFocus ? " was " : " wasn\'t") + " expected");
+        printToConsole(elem.id+" FAILED - was " + (focusedElem ? "" : " not ") + " focused but focus " + (elemThatShouldFocus ? " was " : " wasn\'t") + " expected");
         if (elemThatShouldFocus && focusedElem)
-            printToConsole("elemThatShouldFocus is &lt;"+elemThatShouldFocus.tagName+"&gt; "+elemThatShouldFocus.id+", focusedElem is &lt;"+focusedElem.tagName+"&gt; "+focusedElem.id);
+            printToConsole("elemThatShouldFocus is <"+elemThatShouldFocus.tagName+"> "+elemThatShouldFocus.id+", focusedElem is <"+focusedElem.tagName+"> "+focusedElem.id);
         if (!elemThatShouldFocus)
-            printToConsole("elemThatShouldFocus is null, focusedElem is &lt;"+focusedElem.tagName+"&gt; "+focusedElem.id);
+            printToConsole("elemThatShouldFocus is null, focusedElem is <"+focusedElem.tagName+"> "+focusedElem.id);
         if (!focusedElem)
-            printToConsole("elemThatShouldFocus is &lt;"+elemThatShouldFocus.tagName+"&gt; "+elemThatShouldFocus.id+", focusedElem is null");
+            printToConsole("elemThatShouldFocus is <"+elemThatShouldFocus.tagName+"> "+elemThatShouldFocus.id+", focusedElem is null");
     }
 }

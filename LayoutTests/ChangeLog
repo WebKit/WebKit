@@ -1,3 +1,12 @@
+2008-05-01  Alice Liu  <alice.liu@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        fast/events/tabindex-focus-blur-all.html was timing out on some machines
+        Make this test faster by not doing += on innerHTML. 
+
+        * fast/events/resources/tabindex-focus-blur-all.js:
+
 2008-05-01  Sam Weinig  <sam@webkit.org>
 
         Update results with -webkit-box-reflect values.
