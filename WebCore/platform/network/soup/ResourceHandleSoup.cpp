@@ -22,7 +22,7 @@
 #include "CString.h"
 #include "ResourceHandle.h"
 
-#include "Base64.h"
+#include "CookieJar.h"
 #include "DocLoader.h"
 #include "Frame.h"
 #include "HTTPParsers.h"
@@ -32,8 +32,8 @@
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
-#include "CookieJar.h"
 
+#include <gio/gio.h>
 #include <libsoup/soup.h>
 #include <libsoup/soup-message.h>
 
@@ -44,7 +44,8 @@ static SoupSession* session = 0;
 typedef enum
 {
     ERROR_TRANSPORT,
-    ERROR_UNKNOWN_PROTOCOL
+    ERROR_UNKNOWN_PROTOCOL,
+    ERROR_BAD_NON_HTTP_METHOD
 };
 
 ResourceHandleInternal::~ResourceHandleInternal()
@@ -245,45 +246,16 @@ static gboolean parseDataUrl(gpointer callback_data)
     return FALSE;
 }
 
-bool ResourceHandle::start(Frame* frame)
+bool ResourceHandle::startData(String urlString)
 {
-    ASSERT(!d->m_msg);
-
-    // If we are no longer attached to a Page, this must be an attempted load from an
-    // onUnload handler, so let's just block it.
-    if (!frame->page())
-        return false;
-
-    KURL url = request().url();
-    String protocol = url.protocol();
-
-    if (equalIgnoringCase(protocol, "data")) {
-        // If parseDataUrl is called syncronously the job is not yet effectively started
+        // If parseDataUrl is called synchronously the job is not yet effectively started
         // and webkit won't never know that the data has been parsed even didFinishLoading is called.
         g_idle_add(parseDataUrl, this);
         return true;
-    }
+}
 
-    String urlString = url.string();
-
-    if (!equalIgnoringCase(protocol, "http") && !equalIgnoringCase(protocol, "https")) {
-        // If we don't call didFail the job is not complete for webkit even false is returned.
-        if (d->client()) {
-            ResourceError error("webkit-network-error", ERROR_UNKNOWN_PROTOCOL, urlString, protocol);
-            d->client()->didFail(this, error);
-        }
-        return false;
-    }
-
-    if (url.isLocalFile()) {
-        String query = url.query();
-        // Remove any query part sent to a local file.
-        if (!query.isEmpty())
-            urlString = urlString.left(urlString.find(query));
-        // Determine the MIME type based on the path.
-        d->m_response.setMimeType(MIMETypeRegistry::getMIMETypeForPath(String(urlString)));
-    }
-
+bool ResourceHandle::startHttp(String urlString)
+{
     if (!session) {
         session = soup_session_async_new();
 
@@ -334,12 +306,45 @@ bool ResourceHandle::start(Frame* frame)
     return true;
 }
 
+bool ResourceHandle::start(Frame* frame)
+{
+    ASSERT(!d->m_msg);
+
+    // If we are no longer attached to a Page, this must be an attempted load from an
+    // onUnload handler, so let's just block it.
+    if (!frame->page())
+        return false;
+
+    KURL url = request().url();
+    String urlString = url.string();
+    String protocol = url.protocol();
+
+    if (equalIgnoringCase(protocol, "data"))
+        return startData(urlString);
+    else if (equalIgnoringCase(protocol, "http") || equalIgnoringCase(protocol, "https"))
+        return startHttp(urlString);
+    else if (equalIgnoringCase(protocol, "file") || equalIgnoringCase(protocol, "ftp") || equalIgnoringCase(protocol, "ftps"))
+        // FIXME: should we be doing any other protocols here?
+        return startGio(urlString);
+    else {
+        // If we don't call didFail the job is not complete for webkit even false is returned.
+        if (d->client()) {
+            ResourceError error("webkit-network-error", ERROR_UNKNOWN_PROTOCOL, urlString, protocol);
+            d->client()->didFail(this, error);
+        }
+        return false;
+    }
+}
+
 void ResourceHandle::cancel()
 {
     d->m_cancelled = true;
     if (d->m_msg) {
         soup_session_cancel_message(session, d->m_msg, SOUP_STATUS_CANCELLED);
         // For re-entrancy troubles we call didFinishLoading when the message hasn't been handled yet.
+        d->client()->didFinishLoading(this);
+    } else if (d->m_cancellable) {
+        g_cancellable_cancel(d->m_cancellable);
         d->client()->didFinishLoading(this);
     }
 }
@@ -379,4 +384,196 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest&, ResourceE
     notImplemented();
 }
 
+// GIO-based loader
+
+static void cleanupGioOperation(ResourceHandle* handle)
+{
+    ResourceHandleInternal* d = handle->getInternal();
+
+    if (d->m_gfile) {
+        g_object_unref(d->m_gfile);
+        d->m_gfile = NULL;
+    }
+    if (d->m_cancellable) {
+        g_object_unref(d->m_cancellable);
+        d->m_cancellable = NULL;
+    }
+    if (d->m_input_stream) {
+        g_object_unref(d->m_input_stream);
+        d->m_cancellable = NULL;
+    }
+    if (d->m_buffer) {
+        g_free(d->m_buffer);
+        d->m_buffer = NULL;
+    }
 }
+
+static void closeCallback(GObject* source, GAsyncResult* res, gpointer data)
+{
+    ResourceHandle* handle = static_cast<ResourceHandle*>(data);
+    ResourceHandleInternal* d = handle->getInternal();
+
+    g_input_stream_close_finish(d->m_input_stream, res, NULL);
+    cleanupGioOperation(handle);
+}
+
+static void readCallback(GObject* source, GAsyncResult* res, gpointer data)
+{
+    ResourceHandle* handle = static_cast<ResourceHandle*>(data);
+    ResourceHandleInternal* d = handle->getInternal();
+    ResourceHandleClient* client = handle->client();
+
+    if (d->m_cancelled || !client) {
+        cleanupGioOperation(handle);
+        return;
+    }
+
+    gssize nread;
+    GError *error = 0;
+
+    nread = g_input_stream_read_finish(d->m_input_stream, res, &error);
+    if (error) {
+        cleanupGioOperation(handle);
+        // FIXME: error
+        client->didFinishLoading(handle);
+        return;
+    } else if (!nread) {
+        client->didFinishLoading(handle);
+        g_input_stream_close_async(d->m_input_stream, G_PRIORITY_DEFAULT,
+                                   NULL, closeCallback, handle);
+        return;
+    }
+
+    d->m_total += nread;
+    client->didReceiveData(handle, d->m_buffer, nread, d->m_total);
+
+    g_input_stream_read_async(d->m_input_stream, d->m_buffer, d->m_bufsize,
+                              G_PRIORITY_DEFAULT, d->m_cancellable,
+                              readCallback, handle);
+}
+
+static void openCallback(GObject* source, GAsyncResult* res, gpointer data)
+{
+    ResourceHandle* handle = static_cast<ResourceHandle*>(data);
+    ResourceHandleInternal* d = handle->getInternal();
+    ResourceHandleClient* client = handle->client();
+
+    if (d->m_cancelled || !client) {
+        cleanupGioOperation(handle);
+        return;
+    }
+
+    GFileInputStream* in;
+    GError *error = NULL;
+    in = g_file_read_finish(G_FILE(source), res, &error);
+    if (error) {
+        cleanupGioOperation(handle);
+        // FIXME: error
+        client->didFinishLoading(handle);
+        return;
+    }
+
+    d->m_input_stream = G_INPUT_STREAM(in);
+    d->m_bufsize = 8192;
+    d->m_buffer = static_cast<char*>(g_malloc(d->m_bufsize));
+    d->m_total = 0;
+    g_input_stream_read_async(d->m_input_stream, d->m_buffer, d->m_bufsize,
+                              G_PRIORITY_DEFAULT, d->m_cancellable,
+                              readCallback, handle);
+}
+
+static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer data)
+{
+    ResourceHandle* handle = static_cast<ResourceHandle*>(data);
+    ResourceHandleInternal* d = handle->getInternal();
+    ResourceHandleClient* client = handle->client();
+
+    if (d->m_cancelled) {
+        cleanupGioOperation(handle);
+        return;
+    }
+
+    ResourceResponse response;
+
+    char* uri = g_file_get_uri(d->m_gfile);
+    response.setUrl(KURL(uri));
+    g_free(uri);
+
+    GError *error = NULL;
+    GFileInfo* info = g_file_query_info_finish(d->m_gfile, res, &error);
+
+    if (error) {
+        // FIXME: to be able to handle ftp URIs properly, we must
+        // check if the error is G_IO_ERROR_NOT_MOUNTED, and if so,
+        // call g_file_mount_enclosing_volume() to mount the ftp
+        // server (and then keep track of the fact that we mounted it,
+        // and set a timeout to unmount it later after it's been idle
+        // for a while).
+
+        cleanupGioOperation(handle);
+
+        if (error->domain == G_IO_ERROR &&
+            error->code == G_IO_ERROR_NOT_FOUND)
+            response.setHTTPStatusCode(SOUP_STATUS_NOT_FOUND);
+        else if (error->domain == G_IO_ERROR &&
+                 error->code == G_IO_ERROR_PERMISSION_DENIED)
+            response.setHTTPStatusCode(SOUP_STATUS_FORBIDDEN);
+        else
+            response.setHTTPStatusCode(SOUP_STATUS_BAD_REQUEST); // ?
+        g_error_free(error);
+
+        // FIXME: do we need to fake up a response body containing the
+        // error message?
+
+        client->didReceiveResponse(handle, response);
+        client->didFinishLoading(handle);
+        return;
+    }
+
+    if (g_file_info_get_file_type(info) != G_FILE_TYPE_REGULAR) {
+        // FIXME: what if the URI points to a directory? Should we
+        // generate a listing? How? What do other backends do here?
+
+        cleanupGioOperation(handle);
+        response.setHTTPStatusCode(SOUP_STATUS_FORBIDDEN); // ?
+        client->didReceiveResponse(handle, response);
+        client->didFinishLoading(handle);
+        return;
+    }
+
+    response.setMimeType(g_file_info_get_content_type(info));
+    response.setExpectedContentLength(g_file_info_get_size(info));
+    response.setHTTPStatusCode(SOUP_STATUS_OK);
+
+    GTimeVal tv;
+    g_file_info_get_modification_time(info, &tv);
+    response.setLastModifiedDate(tv.tv_sec);
+
+    client->didReceiveResponse(handle, response);
+
+    g_file_read_async(d->m_gfile, G_PRIORITY_DEFAULT, d->m_cancellable,
+                      openCallback, handle);
+}
+
+bool ResourceHandle::startGio(String urlString)
+{
+    if (request().httpMethod() != "GET") {
+        ResourceError error("webkit-network-error", ERROR_BAD_NON_HTTP_METHOD, urlString, request().httpMethod());
+        d->client()->didFail(this, error);
+        return false;
+    }
+
+    d->m_gfile = g_file_new_for_uri(urlString.utf8().data());
+    d->m_cancellable = g_cancellable_new();
+    g_file_query_info_async(d->m_gfile,
+                            G_FILE_ATTRIBUTE_STANDARD_TYPE ","
+                            G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
+                            G_FILE_ATTRIBUTE_STANDARD_SIZE,
+                            G_FILE_QUERY_INFO_NONE,
+                            G_PRIORITY_DEFAULT, d->m_cancellable,
+                            queryInfoCallback, this);
+    return true;
+}
+
+}
+

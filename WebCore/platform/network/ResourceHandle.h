@@ -172,7 +172,13 @@ public:
     void fireFailure(Timer<ResourceHandle>*);
 
 private:
-    void scheduleFailure(FailureType);
+#if USE(SOUP)
+    bool startData(String urlString);
+    bool startHttp(String urlString);
+    bool startGio(String urlString);
+#endif
+
+void scheduleFailure(FailureType);
 
     bool start(Frame*);
 

@@ -1,3 +1,22 @@
+2008-05-01  Dan Winship  <danw@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18490
+        Add mostly-working file: support and mostly-broken ftp: support to
+        the soup backend.
+
+        * platform/network/soup/ResourceHandleSoup.cpp (start): after
+        doing basic checks, delegate to one of three submethods
+        (startData): handles data: URLs
+        (startHttp): handles http: and https: URLs, via libsoup
+        (startGio, etc): handles file: and ftp: URLs, via gio. Lots of
+        FIXMEs detailing the parts that don't fully work yet.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h: add new member
+        variables for gio-based loading
+
 2008-05-01  Alp Toker  <alp@nuanti.com>
 
         Rubber-stamped by Anders.
