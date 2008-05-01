@@ -1,3 +1,9 @@
+2008-05-01  Sam Weinig  <sam@webkit.org>
+
+        Fix build.
+
+        * ForwardingHeaders/wtf/StrHash.h: Added.
+
 2008-05-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

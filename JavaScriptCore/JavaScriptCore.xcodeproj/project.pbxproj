@@ -185,7 +185,7 @@
 		93E26BE608B1517100F85226 /* pcre_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26BE508B1517100F85226 /* pcre_internal.h */; };
 		93E26BFE08B151D400F85226 /* ucpinternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26BFC08B151D400F85226 /* ucpinternal.h */; };
 		93F0B3AC09BB4DC00068FCE3 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F0B3AA09BB4DC00068FCE3 /* Parser.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		958D85830DC93230008ABF27 /* StrHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 958D85820DC93230008ABF27 /* StrHash.h */; };
+		958D85830DC93230008ABF27 /* StrHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 958D85820DC93230008ABF27 /* StrHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		95AB83420DA4322500BC83F3 /* Profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */; };
 		95AB83480DA432EB00BC83F3 /* Profiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 95AB832F0DA42CAD00BC83F3 /* Profiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		95AB83560DA43C3000BC83F3 /* FunctionCallProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB83540DA43B4400BC83F3 /* FunctionCallProfile.cpp */; };
