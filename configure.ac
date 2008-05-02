@@ -258,6 +258,14 @@ AC_ARG_ENABLE(debug,
               [],[enable_debug="no"])
 AC_MSG_RESULT([$enable_debug])
 
+# check whether to enable dashboard support
+AC_MSG_CHECKING([whether to enable Dashboard support])
+AC_ARG_ENABLE(dashboard_support,
+              AC_HELP_STRING([--enable-dashboard-support],
+                             [enable Dashboard support [default=yes]]),
+              [],[enable_dashboard_support="yes"])
+AC_MSG_RESULT([$enable_dashboard_support])
+
 # check whether to build with cross-document messaging support
 AC_MSG_CHECKING([whether to enable HTML5 cross-document messaging support])
 AC_ARG_ENABLE(cross_document_messaging,
@@ -265,6 +273,14 @@ AC_ARG_ENABLE(cross_document_messaging,
                              [enable HTML5 cross-document messaging support [default=yes]]),
               [],[enable_cross_document_messaging="yes"])
 AC_MSG_RESULT([$enable_cross_document_messaging])
+
+# check whether to enable HTML5 Offline Web Applications support
+AC_MSG_CHECKING([whether to enable HTML5 offline web applications support])
+AC_ARG_ENABLE(offline_web_applications,
+              AC_HELP_STRING([--enable-offline-web-applications],
+                             [enable HTML5 offline web applications support [default=yes]]),
+              [],[enable_offline_web_applications="yes"])
+AC_MSG_RESULT([$enable_offline_web_applications])
 
 # check whether to enable HTML5 client-side session and persitent storage support
 AC_MSG_CHECKING([whether to enable HTML5 client-side session and persistent storage support])
@@ -510,6 +526,7 @@ AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
 AM_CONDITIONAL([ENABLE_DASHBOARD_SUPPORT],[test "$enable_dashboard_support" = "yes"])
 AM_CONDITIONAL([ENABLE_CROSS_DOCUMENT_MESSAGING],[test "$enable_cross_document_messaging" = "yes"])
+AM_CONDITIONAL([ENABLE_OFFLINE_WEB_APPLICATIONS],[test "$enable_offline_web_applications" = "yes"])
 AM_CONDITIONAL([ENABLE_DOM_STORAGE],[test "$enable_dom_storage" = "yes"])
 AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
@@ -548,6 +565,7 @@ Build configuration:
 Features:
  Dashboard support                                        : $enable_dashboard_support
  HTML5 cross-document messaging                           : $enable_cross_document_messaging
+ HTML5 offline web applications support                   : $enable_offline_web_applications
  HTML5 client-side session and persistent storage support : $enable_dom_storage
  HTML5 client-side database storage support               : $enable_database
  HTML5 video element support                              : $enable_video

@@ -4,8 +4,8 @@ WebCore := $(srcdir)/WebCore
 FEATURE_DEFINES_JAVASCRIPT := LANGUAGE_JAVASCRIPT=1
 SVG_FEATURES :=
 
-WEBCORE_CSS_PROPERTY_NAMES = $(WebCore)/css/CSSPropertyNames.in
-WEBCORE_CSS_VALUE_KEYWORDS = $(WebCore)/css/CSSValueKeywords.in
+WEBCORE_CSS_PROPERTY_NAMES := $(WebCore)/css/CSSPropertyNames.in
+WEBCORE_CSS_VALUE_KEYWORDS := $(WebCore)/css/CSSValueKeywords.in
 
 webcore_cppflags += \
 	-I$(srcdir)/WebCore \
@@ -1144,6 +1144,29 @@ IDL_BINDINGS += \
 endif # END ENABLE_CROSS_DOCUMENT_MESSAGING
 
 # ----
+# Offline Web Applications
+# ----
+if ENABLE_OFFLINE_WEB_APPLICATIONS
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_OFFLINE_WEB_APPLICATIONS=1
+
+webcore_cppflags += \
+	-DENABLE_OFFLINE_WEB_APPLICATIONS=1
+
+webcore_sources += \
+	WebCore/bindings/js/JSDOMApplicationCacheCustom.cpp \
+	WebCore/loader/appcache/ApplicationCache.cpp \
+	WebCore/loader/appcache/ApplicationCacheGroup.cpp \
+	WebCore/loader/appcache/ApplicationCacheResource.cpp \
+	WebCore/loader/appcache/ApplicationCacheStorage.cpp \
+	WebCore/loader/appcache/DOMApplicationCache.cpp \
+	WebCore/loader/appcache/ManifestParser.cpp
+
+webcore_built_sources += \
+	DerivedSources/JSDOMApplicationCache.cpp
+
+endif # END ENABLE_OFFLINE_WEB_APPLICATIONS
+
+# ----
 # Dashboard Support
 # ----
 if ENABLE_DASHBOARD_SUPPORT
@@ -1152,11 +1175,6 @@ webcore_cppflags += \
 	-DENABLE_DASHBOARD_SUPPORT=1
 
 WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/DashboardSupportCSSPropertyNames.in
-
-else
-
-webcore_cppflags += \
-	-DENABLE_DASHBOARD_SUPPORT=0
 
 endif # END ENABLE_DASHBOARD_SUPPORT
 
@@ -2186,6 +2204,7 @@ vpath %.idl = \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/html \
+    $(WebCore)/loader/appcache \
     $(WebCore)/page \
     $(WebCore)/storage \
     $(WebCore)/svg \
