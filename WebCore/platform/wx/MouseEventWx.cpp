@@ -24,7 +24,9 @@
  */
 
 #include "config.h"
+#include "Assertions.h"
 #include "PlatformMouseEvent.h"
+#include "SystemTime.h"
 
 #include <wx/defs.h>
 #include <wx/event.h>
@@ -34,7 +36,6 @@ namespace WebCore {
 PlatformMouseEvent::PlatformMouseEvent(const wxMouseEvent& event, const wxPoint& globalPoint)
     : m_position(event.GetPosition())
     , m_globalPosition(globalPoint)
-    , m_clickCount(event.ButtonDClick() ? 2 : 1)
     , m_shiftKey(event.ShiftDown())
     , m_ctrlKey(event.CmdDown())
     , m_altKey(event.AltDown())
@@ -53,12 +54,22 @@ PlatformMouseEvent::PlatformMouseEvent(const wxMouseEvent& event, const wxPoint&
     else if (type == wxEVT_MOTION)
         m_eventType = MouseEventMoved;
 
-    if (event.LeftIsDown())
+    if (event.Button(wxMOUSE_BTN_LEFT))
         m_button = LeftButton;
-    else if (event.RightIsDown())
+    else if (event.Button(wxMOUSE_BTN_RIGHT))
         m_button = RightButton;
-    else if (event.MiddleIsDown())
+    else if (event.Button(wxMOUSE_BTN_MIDDLE))
         m_button = MiddleButton;
+    else if (!m_eventType == MouseEventMoved)
+        ASSERT_NOT_REACHED();
+
+
+    if (m_eventType == MouseEventMoved)
+        m_clickCount = 0;
+    else
+        m_clickCount = event.ButtonDClick() ? 2 : 1;
+
+    m_timestamp = WebCore::currentTime();
 }
 
 }

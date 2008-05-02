@@ -1,3 +1,16 @@
+2008-05-01  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Eric Seidel.
+
+        Make sure we properly set the button for all mouse events,
+        not just mouse down, set the click count to 0
+        for non-click events, and finally set the timestamp.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=18464
+
+        * platform/wx/MouseEventWx.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
 2008-05-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe (in his infinite wisdom).
