@@ -24,8 +24,8 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {DIV} at (0,38) size 784x219 [border: (1px solid #000000)]
         RenderBlock {PRE} at (1,15) size 782x19
-          RenderText {#text} at (0,1) size 64x17
-            text run at (0,1) width 64: "Make Pre"
+          RenderText {#text} at (0,0) size 61x19
+            text run at (0,0) width 61: "Make Pre"
         RenderBlock (anonymous) at (1,48) size 782x19
           RenderBR {BR} at (0,0) size 0x19
         RenderBlock {DIV} at (1,67) size 782x112

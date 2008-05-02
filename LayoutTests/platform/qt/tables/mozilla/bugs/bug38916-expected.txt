@@ -33,9 +33,9 @@ layer at (0,0) size 800x1445
               RenderPartObject {IFRAME} at (12,12) size 155x180 [border: (5px solid #FF0000)]
                 layer at (0,0) size 125x150
                   RenderView at (0,0) size 125x150
-                layer at (0,0) size 125x8
-                  RenderBlock {HTML} at (0,0) size 125x8
-                    RenderBody {BODY} at (8,8) size 109x0
+                layer at (0,0) size 125x150
+                  RenderBlock {HTML} at (0,0) size 125x150
+                    RenderBody {BODY} at (8,8) size 109x134
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (744,83) size 36x42 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x38
@@ -103,9 +103,9 @@ layer at (0,0) size 800x1445
               RenderPartObject {IFRAME} at (12,12) size 155x180 [border: (5px solid #FF0000)]
                 layer at (0,0) size 125x150
                   RenderView at (0,0) size 125x150
-                layer at (0,0) size 125x8
-                  RenderBlock {HTML} at (0,0) size 125x8
-                    RenderBody {BODY} at (8,8) size 109x0
+                layer at (0,0) size 125x150
+                  RenderBlock {HTML} at (0,0) size 125x150
+                    RenderBody {BODY} at (8,8) size 109x134
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (744,83) size 36x42 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x38
@@ -125,9 +125,9 @@ layer at (0,0) size 800x1445
               RenderPartObject {IFRAME} at (12,12) size 155x180 [border: (5px solid #FF0000)]
                 layer at (0,0) size 125x150
                   RenderView at (0,0) size 125x150
-                layer at (0,0) size 125x8
-                  RenderBlock {HTML} at (0,0) size 125x8
-                    RenderBody {BODY} at (8,8) size 109x0
+                layer at (0,0) size 125x150
+                  RenderBlock {HTML} at (0,0) size 125x150
+                    RenderBody {BODY} at (8,8) size 109x134
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (744,83) size 36x42 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x38

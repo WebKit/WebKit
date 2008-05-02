@@ -1,20 +1,20 @@
-layer at (0,0) size 800x6917
+layer at (0,0) size 800x6916
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x6917
-  RenderBlock {HTML} at (0,0) size 800x6917
-    RenderBody {BODY} at (8,18) size 784x6885
+layer at (0,0) size 800x6916
+  RenderBlock {HTML} at (0,0) size 800x6916
+    RenderBody {BODY} at (8,18) size 784x6884
       RenderBlock {H1} at (0,0) size 784x38
         RenderText {#text} at (0,0) size 241x38
           text run at (0,0) width 241: "table-layout: fixed"
-      RenderBlock {P} at (0,56) size 784x20
+      RenderBlock {P} at (0,56) size 784x19
         RenderText {#text} at (0,0) size 563x19
           text run at (0,0) width 563: "The following tables should be laid out in the traditional manner because their widths are "
-        RenderInline {CODE} at (0,0) size 32x17
-          RenderText {#text} at (563,2) size 32x17
-            text run at (563,2) width 32: "auto"
-        RenderText {#text} at (595,0) size 4x19
-          text run at (595,0) width 4: ":"
-      RenderTable {TABLE} at (0,90) size 110x52
+        RenderInline {CODE} at (0,0) size 28x19
+          RenderText {#text} at (563,0) size 28x19
+            text run at (563,0) width 28: "auto"
+        RenderText {#text} at (591,0) size 4x19
+          text run at (591,0) width 4: ":"
+      RenderTable {TABLE} at (0,89) size 110x52
         RenderTableSection {TBODY} at (0,0) size 110x52
           RenderTableRow {TR} at (0,2) size 110x23
             RenderTableCell {TD} at (2,2) size 34x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -36,7 +36,7 @@ layer at (0,0) size 800x6917
             RenderTableCell {TD} at (74,27) size 34x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-      RenderTable {TABLE} at (0,142) size 784x356
+      RenderTable {TABLE} at (0,141) size 784x356
         RenderTableSection {TBODY} at (0,0) size 784x356
           RenderTableRow {TR} at (0,2) size 784x23
             RenderTableCell {TD} at (2,2) size 34x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -130,7 +130,7 @@ layer at (0,0) size 800x6917
                 text run at (2,306) width 78: "lots of data. "
                 text run at (80,306) width 191: "Lots and lots and lots of data. "
                 text run at (271,306) width 187: "Lots and lots and lots of data."
-      RenderTable {TABLE} at (0,498) size 784x356
+      RenderTable {TABLE} at (0,497) size 784x356
         RenderTableSection {TBODY} at (0,0) size 784x356
           RenderTableRow {TR} at (0,2) size 784x327
             RenderTableCell {TD} at (2,154) size 34x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -224,10 +224,10 @@ layer at (0,0) size 800x6917
             RenderTableCell {TD} at (74,331) size 708x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-      RenderBlock {P} at (0,868) size 784x19
+      RenderBlock {P} at (0,867) size 784x19
         RenderText {#text} at (0,0) size 742x19
           text run at (0,0) width 742: "All the columns in the following three tables should divide equally the available space (100% of the width of the page):"
-      RenderTable {TABLE} at (0,901) size 784x52
+      RenderTable {TABLE} at (0,900) size 784x52
         RenderTableSection {TBODY} at (0,0) size 784x52
           RenderTableRow {TR} at (0,2) size 784x23
             RenderTableCell {TD} at (2,2) size 258x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -249,7 +249,7 @@ layer at (0,0) size 800x6917
             RenderTableCell {TD} at (523,27) size 259x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-      RenderTable {TABLE} at (0,953) size 784x926
+      RenderTable {TABLE} at (0,952) size 784x926
         RenderTableSection {TBODY} at (0,0) size 784x926
           RenderTableRow {TR} at (0,2) size 784x23
             RenderTableCell {TD} at (2,2) size 258x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -370,7 +370,7 @@ layer at (0,0) size 800x6917
                 text run at (38,857) width 191: "Lots and lots and lots of data. "
                 text run at (229,857) width 27: "Lots"
                 text run at (2,876) width 156: "and lots and lots of data."
-      RenderTable {TABLE} at (0,1879) size 784x926
+      RenderTable {TABLE} at (0,1878) size 784x926
         RenderTableSection {TBODY} at (0,0) size 784x926
           RenderTableRow {TR} at (0,2) size 784x897
             RenderTableCell {TD} at (2,439) size 258x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -491,10 +491,10 @@ layer at (0,0) size 800x6917
             RenderTableCell {TD} at (523,901) size 259x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-      RenderBlock {P} at (0,2819) size 784x19
+      RenderBlock {P} at (0,2818) size 784x19
         RenderText {#text} at (0,0) size 734x19
           text run at (0,0) width 734: "All the columns in the following three tables should divide equally the available space (50% of the width of the page):"
-      RenderTable {TABLE} at (0,2852) size 392x52
+      RenderTable {TABLE} at (0,2851) size 392x52
         RenderTableSection {TBODY} at (0,0) size 392x52
           RenderTableRow {TR} at (0,2) size 392x23
             RenderTableCell {TD} at (2,2) size 128x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -516,7 +516,7 @@ layer at (0,0) size 800x6917
             RenderTableCell {TD} at (262,27) size 128x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-      RenderTable {TABLE} at (0,2904) size 392x1933
+      RenderTable {TABLE} at (0,2903) size 392x1933
         RenderTableSection {TBODY} at (0,0) size 392x1933
           RenderTableRow {TR} at (0,2) size 392x23
             RenderTableCell {TD} at (2,2) size 128x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -677,7 +677,7 @@ layer at (0,0) size 800x6917
                 text run at (2,1864) width 36: "data. "
                 text run at (38,1864) width 81: "Lots and lots"
                 text run at (2,1883) width 102: "and lots of data."
-      RenderTable {TABLE} at (0,4837) size 392x1933
+      RenderTable {TABLE} at (0,4836) size 392x1933
         RenderTableSection {TBODY} at (0,0) size 392x1933
           RenderTableRow {TR} at (0,2) size 392x1904
             RenderTableCell {TD} at (2,942) size 128x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -838,11 +838,11 @@ layer at (0,0) size 800x6917
             RenderTableCell {TD} at (262,1908) size 128x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-      RenderBlock {P} at (0,6784) size 784x19
+      RenderBlock {P} at (0,6783) size 784x19
         RenderText {#text} at (0,0) size 189x19
           text run at (0,0) width 189: "This test is still being written..."
-      RenderBlock {HR} at (0,6817) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,6833) size 784x19
+      RenderBlock {HR} at (0,6816) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,6832) size 784x19
         RenderText {#text} at (0,0) size 56x19
           text run at (0,0) width 56: "(Back to "
         RenderInline {A} at (0,0) size 155x19 [color=#0000EE]
@@ -855,7 +855,7 @@ layer at (0,0) size 800x6917
             text run at (219,0) width 78: "David Baron"
         RenderText {#text} at (297,0) size 5x19
           text run at (297,0) width 5: ")"
-      RenderBlock {P} at (0,6866) size 784x19
+      RenderBlock {P} at (0,6865) size 784x19
         RenderInline {A} at (0,0) size 27x19 [color=#0000EE]
           RenderText {#text} at (0,0) size 27x19
             text run at (0,0) width 27: "LDB"

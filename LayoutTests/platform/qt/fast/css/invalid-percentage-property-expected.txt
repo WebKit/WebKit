@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 53x19
+          text run at (0,0) width 53: "Test for "
+        RenderInline {A} at (0,0) size 294x19 [color=#0000EE]
+          RenderText {#text} at (53,0) size 294x19
+            text run at (53,0) width 294: "http://bugs.webkit.org/show_bug.cgi?id=15260"
+        RenderText {#text} at (347,0) size 152x19
+          text run at (347,0) width 152: "Any styles defined after "
+        RenderInline {ELEMENT} at (0,0) size 196x19
+          RenderText {#text} at (499,0) size 5x19
+            text run at (499,0) width 5: "{"
+          RenderInline {PROPERTY} at (0,0) size 191x19
+            RenderText {#text} at (504,0) size 191x19
+              text run at (504,0) width 191: ":%} style are ignored by Safari"
+      RenderBlock {H3} at (0,35) size 784x23 [color=#008000]
+        RenderText {#text} at (0,0) size 237x22
+          text run at (0,0) width 237: "This text should show in green."

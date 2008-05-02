@@ -1,3 +1,125 @@
+2008-05-02  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Rubber-stamped by Simon.
+
+        Updated Qt layout-tests to match changes in font metrics.
+
+        * platform/qt/editing/deleting/merge-whitespace-pre-expected.txt:
+        * platform/qt/editing/deleting/paragraph-in-preserveNewline-expected.txt:
+        * platform/qt/editing/deleting/table-cells-expected.txt:
+        * platform/qt/editing/execCommand/format-block-expected.txt:
+        * platform/qt/editing/execCommand/format-block-with-trailing-br-expected.txt:
+        * platform/qt/editing/inserting/5803706-1-expected.txt: Added.
+        * platform/qt/editing/inserting/paragraph-separator-03-expected.txt:
+        * platform/qt/editing/pasteboard/4631972-expected.txt:
+        * platform/qt/editing/pasteboard/5027857-expected.txt:
+        * platform/qt/editing/pasteboard/innerText-inline-table-expected.txt:
+        * platform/qt/editing/pasteboard/paste-pre-002-expected.txt:
+        * platform/qt/editing/style/smoosh-styles-002-expected.txt:
+        * platform/qt/fast/block/basic/015-expected.txt:
+        * platform/qt/fast/canvas/canvas-transform-identity-expected.txt: Added.
+        * platform/qt/fast/canvas/canvas-transform-infinity-expected.txt: Added.
+        * platform/qt/fast/canvas/canvas-transform-multiply-expected.txt: Added.
+        * platform/qt/fast/canvas/canvas-transform-nan-expected.txt: Added.
+        * platform/qt/fast/canvas/canvas-transform-non-invertible-expected.txt: Added.
+        * platform/qt/fast/canvas/canvas-transform-skewed-expected.txt: Added.
+        * platform/qt/fast/css-generated-content/014-expected.txt:
+        * platform/qt/fast/css/beforeSelectorOnCodeElement-expected.txt:
+        * platform/qt/fast/css/hover-subselector-expected.txt:
+        * platform/qt/fast/css/invalid-percentage-property-expected.txt: Added.
+        * platform/qt/fast/css/line-height-font-order-expected.txt:
+        * platform/qt/fast/css/outline-auto-empty-rects-expected.txt:
+        * platform/qt/fast/css/text-align-expected.txt: Added.
+        * platform/qt/fast/css/universal-hover-quirk-expected.txt:
+        * platform/qt/fast/dom/attr_dead_doc-expected.txt:
+        * platform/qt/fast/dom/dom-parse-serialize-display-expected.txt:
+        * platform/qt/fast/dom/dom-parse-serialize-expected.txt:
+        * platform/qt/fast/dom/row-inner-text-expected.txt:
+        * platform/qt/fast/dom/stripNullFromTextNodes-expected.txt:
+        * platform/qt/fast/dynamic/insertAdjacentElement-expected.txt:
+        * platform/qt/fast/encoding/preload-encoding-expected.txt: Added.
+        * platform/qt/fast/flexbox/016-expected.txt:
+        * platform/qt/fast/flexbox/023-expected.txt:
+        * platform/qt/fast/flexbox/024-expected.txt:
+        * platform/qt/fast/forms/menulist-option-wrap-expected.txt:
+        * platform/qt/fast/forms/targeted-frame-submission-expected.txt:
+        * platform/qt/fast/frames/001-expected.txt:
+        * platform/qt/fast/frames/002-expected.txt:
+        * platform/qt/fast/frames/calculate-fixed-expected.txt:
+        * platform/qt/fast/frames/calculate-order-expected.txt:
+        * platform/qt/fast/frames/calculate-percentage-expected.txt:
+        * platform/qt/fast/frames/calculate-relative-expected.txt:
+        * platform/qt/fast/frames/calculate-round-expected.txt:
+        * platform/qt/fast/frames/contentWindow_Frame-expected.txt:
+        * platform/qt/fast/frames/contentWindow_iFrame-expected.txt:
+        * platform/qt/fast/frames/empty-frame-src-expected.txt:
+        * platform/qt/fast/frames/iframe-option-crash-expected.txt:
+        * platform/qt/fast/frames/iframe-with-frameborder-expected.txt:
+        * platform/qt/fast/frames/invalid-expected.txt:
+        * platform/qt/fast/frames/no-frame-borders-expected.txt:
+        * platform/qt/fast/frames/valid-expected.txt:
+        * platform/qt/fast/frames/viewsource-attribute-expected.txt:
+        * platform/qt/fast/html/listing-expected.txt:
+        * platform/qt/fast/inline-block/002-expected.txt:
+        * platform/qt/fast/innerHTML/006-expected.txt:
+        * platform/qt/fast/invalid/019-expected.txt:
+        * platform/qt/fast/lists/inlineBoxWrapperNullCheck-expected.txt:
+        * platform/qt/fast/lists/ordered-list-with-no-ol-tag-expected.txt:
+        * platform/qt/fast/overflow/overflow-auto-table-expected.txt:
+        * platform/qt/fast/overflow/unreachable-overflow-rtl-bug-expected.txt:
+        * platform/qt/fast/replaced/replaced-breaking-expected.txt:
+        * platform/qt/fast/replaced/width100percent-image-expected.txt:
+        * platform/qt/fast/selectors/lang-inheritance-expected.txt: Added.
+        * platform/qt/fast/selectors/lang-inheritance2-expected.txt: Added.
+        * platform/qt/fast/selectors/lang-vs-xml-lang-expected.txt: Added.
+        * platform/qt/fast/selectors/lang-vs-xml-lang-xhtml-expected.txt: Added.
+        * platform/qt/fast/table/018-expected.txt:
+        * platform/qt/fast/table/border-collapsing/004-expected.txt:
+        * platform/qt/fast/table/frame-and-rules-expected.txt:
+        * platform/qt/fast/table/invisible-cell-background-expected.txt:
+        * platform/qt/fast/text/atsui-spacing-features-expected.txt:
+        * platform/qt/fast/text/basic/009-expected.txt:
+        * platform/qt/fast/text/basic/generic-family-changes-expected.txt:
+        * platform/qt/fast/text/basic/generic-family-reset-expected.txt:
+        * platform/qt/fast/text/selection-hard-linebreak-expected.txt:
+        * platform/qt/fast/text/wbr-pre-expected.txt:
+        * platform/qt/fast/text/whitespace/019-expected.txt:
+        * platform/qt/fast/text/whitespace/022-expected.txt:
+        * platform/qt/fast/text/whitespace/023-expected.txt:
+        * platform/qt/fast/text/whitespace/029-expected.txt:
+        * platform/qt/fast/text/whitespace/030-expected.txt:
+        * platform/qt/fast/text/whitespace/pre-newline-box-test-expected.txt:
+        * platform/qt/fast/text/whitespace/pre-wrap-last-char-expected.txt:
+        * platform/qt/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.txt:
+        * platform/qt/tables/mozilla/bugs/45621-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug101674-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug10269-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug10296-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug13105-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug137388-3-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug139524-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug157890-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug19061-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug19061-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug20579-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug22019-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug23235-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2886-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2973-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug30418-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug38916-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug57828-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug7121-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug83786-expected.txt:
+        * platform/qt/tables/mozilla/collapsing_borders/bug41262-3-expected.txt:
+        * platform/qt/tables/mozilla/core/col_widths_fix_autoFixPer-expected.txt:
+        * platform/qt/tables/mozilla/other/test6-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/97619-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug1055-2-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug1128-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug21518-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug22122-expected.txt:
+
 2008-05-01  Sam Weinig  <sam@webkit.org>
 
         Add missing result.

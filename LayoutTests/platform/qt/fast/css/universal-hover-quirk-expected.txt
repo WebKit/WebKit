@@ -20,10 +20,10 @@ layer at (0,0) size 800x600
             text run at (390,0) width 202: " Text underlined on mouse over"
         RenderText {#text} at (592,0) size 101x19
           text run at (592,0) width 101: ". This tests that "
-        RenderInline {CODE} at (0,0) size 56x17
-          RenderText {#text} at (693,2) size 56x17
-            text run at (693,2) width 56: "*:hover"
-        RenderText {#text} at (749,0) size 784x39
-          text run at (749,0) width 35: " does"
+        RenderInline {CODE} at (0,0) size 45x19
+          RenderText {#text} at (693,0) size 45x19
+            text run at (693,0) width 45: "*:hover"
+        RenderText {#text} at (738,0) size 773x39
+          text run at (738,0) width 35: " does"
           text run at (0,20) width 222: "not match anything in quirks mode."
 caret: position 1 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

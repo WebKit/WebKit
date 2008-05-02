@@ -1,8 +1,8 @@
-layer at (0,0) size 800x628
+layer at (0,0) size 800x627
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x628
-  RenderBlock {HTML} at (0,0) size 800x628
-    RenderBody {BODY} at (8,14) size 784x600
+layer at (0,0) size 800x627
+  RenderBlock {HTML} at (0,0) size 800x627
+    RenderBody {BODY} at (8,14) size 784x599
       RenderBlock {P} at (0,0) size 784x57
         RenderText {#text} at (0,0) size 782x57
           text run at (0,0) width 459: "Following table should have 6px solid blue border around cell 3, red 5px "
@@ -100,17 +100,17 @@ layer at (0,0) size 800x628
         RenderBR {BR} at (0,0) size 0x0
         RenderImage {IMG} at (0,19) size 208x20
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,475) size 784x39
+      RenderBlock {P} at (0,475) size 784x38
         RenderText {#text} at (0,0) size 780x38
           text run at (0,0) width 487: "Following table should have 2px solid black line between rows. There should "
           text run at (487,0) width 293: "be a total of two lines. There will be three lines"
           text run at (0,19) width 185: "if user agent doesn't support "
-        RenderInline {CODE} at (0,0) size 112x17
-          RenderText {#text} at (185,21) size 112x17
-            text run at (185,21) width 112: "tr:first-child"
-        RenderText {#text} at (297,19) size 4x19
-          text run at (297,19) width 4: "."
-      RenderTable {TABLE} at (0,528) size 132x72 [border: (1px none #808080)]
+        RenderInline {CODE} at (0,0) size 70x19
+          RenderText {#text} at (185,19) size 70x19
+            text run at (185,19) width 70: "tr:first-child"
+        RenderText {#text} at (255,19) size 4x19
+          text run at (255,19) width 4: "."
+      RenderTable {TABLE} at (0,527) size 132x72 [border: (1px none #808080)]
         RenderTableSection {TBODY} at (0,1) size 132x71
           RenderTableRow {TR} at (0,0) size 132x24 [border: (2px solid #000000) none]
             RenderTableCell {TD} at (0,0) size 44x24 [border: (1px none #000000)] [r=0 c=0 rs=1 cs=1]

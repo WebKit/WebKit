@@ -49,15 +49,15 @@ layer at (0,0) size 800x668
         RenderPartObject {IFRAME} at (1,543) size 27x27 [border: (1px solid #000000)]
           layer at (0,0) size 25x25
             RenderView at (0,0) size 25x25
-          layer at (0,0) size 25x8
-            RenderBlock {HTML} at (0,0) size 25x8
-              RenderBody {BODY} at (8,8) size 9x0
+          layer at (0,0) size 25x25
+            RenderBlock {HTML} at (0,0) size 25x25
+              RenderBody {BODY} at (8,8) size 9x9
         RenderPartObject {IFRAME} at (1,570) size 27x27 [border: (1px solid #000000)]
           layer at (0,0) size 25x25
             RenderView at (0,0) size 25x25
-          layer at (0,0) size 25x8
-            RenderBlock {HTML} at (0,0) size 25x8
-              RenderBody {BODY} at (8,8) size 9x0
+          layer at (0,0) size 25x25
+            RenderBlock {HTML} at (0,0) size 25x25
+              RenderBody {BODY} at (8,8) size 9x9
         RenderText {#text} at (0,0) size 0x0
         RenderPartObject {EMBED} at (1,597) size 27x27 [border: (1px solid #000000)]
         RenderPartObject {EMBED} at (1,624) size 27x27 [border: (1px solid #000000)]

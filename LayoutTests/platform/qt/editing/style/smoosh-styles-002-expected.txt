@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x218 [border: (2px solid #0000FF)]
+      RenderBlock {DIV} at (0,0) size 784x217 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x97
           RenderText {#text} at (0,0) size 77x33
             text run at (0,0) width 77: "Tests: "
@@ -34,22 +34,22 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,33) size 747x63
             text run at (0,33) width 747: "Pasting text which gets its style from an <H1> tag into a block of styled"
             text run at (0,65) width 46: "text."
-        RenderBlock {DIV} at (14,127) size 756x77
+        RenderBlock {DIV} at (14,127) size 756x76
           RenderText {#text} at (0,0) size 214x33
             text run at (0,0) width 214: "Expected Results: "
           RenderBR {BR} at (214,24) size 0x0
-          RenderText {#text} at (0,41) size 480x31
-            text run at (0,41) width 480: "Should see this content in the red box below: "
-          RenderInline {SPAN} at (0,0) size 92x31 [color=#FF0000]
-            RenderText {#text} at (480,41) size 26x31
-              text run at (480,41) width 26: "ab"
-            RenderInline {SPAN} at (0,0) size 46x43 [color=#000000]
-              RenderText {#text} at (506,33) size 46x43
-                text run at (506,33) width 46: "cde"
-            RenderText {#text} at (552,41) size 20x31
-              text run at (552,41) width 20: "fg"
+          RenderText {#text} at (0,42) size 480x31
+            text run at (0,42) width 480: "Should see this content in the red box below: "
+          RenderInline {SPAN} at (0,0) size 102x31 [color=#FF0000]
+            RenderText {#text} at (480,42) size 26x31
+              text run at (480,42) width 26: "ab"
+            RenderInline {SPAN} at (0,0) size 56x43 [color=#000000]
+              RenderText {#text} at (506,33) size 56x43
+                text run at (506,33) width 56: "cde"
+            RenderText {#text} at (562,42) size 20x31
+              text run at (562,42) width 20: "fg"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,242) size 784x42
+      RenderBlock {DIV} at (0,241) size 784x42
         RenderBlock {DIV} at (0,0) size 784x42 [border: (2px solid #FF0000)]
           RenderInline {SPAN} at (0,0) size 95x31 [color=#FF0000]
             RenderText {#text} at (2,7) size 26x31

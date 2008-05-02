@@ -18,6 +18,6 @@ layer at (0,0) size 800x600
       RenderFrame {FRAME} at (0,404) size 800x196
         layer at (0,0) size 800x196
           RenderView at (0,0) size 800x196
-        layer at (0,0) size 800x8
-          RenderBlock {HTML} at (0,0) size 800x8
-            RenderBody {BODY} at (8,8) size 784x0
+        layer at (0,0) size 800x196
+          RenderBlock {HTML} at (0,0) size 800x196
+            RenderBody {BODY} at (8,8) size 784x180

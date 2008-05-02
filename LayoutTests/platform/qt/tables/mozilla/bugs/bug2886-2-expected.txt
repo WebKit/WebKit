@@ -1,107 +1,107 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x239
-  RenderBlock {HTML} at (0,0) size 800x239
-    RenderBody {BODY} at (88,22) size 648x195 [bgcolor=#FFFFF5]
-      RenderTable {TABLE} at (0,0) size 293x72
-        RenderTableSection {TBODY} at (0,0) size 293x72
-          RenderTableRow {TR} at (0,2) size 293x18
-            RenderTableCell {TH} at (2,2) size 155x18 [color=#CC0000] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,-1) size 29x20
-                text run at (0,-1) width 29: "17.6 "
-              RenderInline {A} at (0,0) size 126x20 [color=#3333FF]
-                RenderText {#text} at (29,-1) size 126x20
-                  text run at (29,-1) width 126: "Table Border Test 2"
-            RenderTableCell {TD} at (159,2) size 16x18 [color=#FFFF00] [bgcolor=#CC0000] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 9x19
-                text run at (0,0) width 9: "B"
-            RenderTableCell {TD} at (177,2) size 10x18 [color=#FFFFFF] [bgcolor=#000099] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 10x19
-                text run at (0,0) width 10: "N"
-            RenderTableCell {TD} at (189,2) size 16x18 [color=#FFFFFF] [bgcolor=#000099] [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 10x19
-                text run at (0,0) width 10: "N"
-            RenderTableCell {TD} at (207,2) size 16x18 [color=#FFFFFF] [bgcolor=#000099] [r=0 c=4 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 10x19
-                text run at (0,0) width 10: "N"
-            RenderTableCell {TD} at (225,2) size 16x18 [color=#FFFFFF] [bgcolor=#000099] [r=0 c=5 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 10x19
-                text run at (0,0) width 10: "N"
-            RenderTableCell {TD} at (243,2) size 10x18 [bgcolor=#CCCCCC] [r=0 c=6 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 10x19
-                text run at (0,0) width 10: "U"
-            RenderTableCell {TD} at (255,2) size 36x18 [r=0 c=7 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 36x19
-                text run at (0,0) width 36: "CSS2"
-          RenderTableRow {TR} at (0,22) size 293x28
-            RenderTableCell {TH} at (2,22) size 155x28 [color=#CC0000] [border: (10px solid #FFFFF5) none] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (80,9) size 75x20
-                text run at (80,9) width 75: "Tests Y (+1)"
-            RenderTableCell {TD} at (159,22) size 16x28 [color=#FFFFFF] [bgcolor=#009900] [border: (10px solid #FFFFF5) none] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,10) size 16x19
-                text run at (0,10) width 16: "31"
-            RenderTableCell {TD} at (177,22) size 10x28 [color=#FFFFFF] [bgcolor=#009900] [border: (10px solid #FFFFF5) none] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,10) size 4x19
-                text run at (0,10) width 4: " "
-            RenderTableCell {TD} at (189,22) size 16x28 [color=#FFFFFF] [bgcolor=#009900] [border: (10px solid #FFFFF5) none] [r=1 c=3 rs=1 cs=1]
-              RenderText {#text} at (0,10) size 16x19
-                text run at (0,10) width 16: "16"
-            RenderTableCell {TD} at (207,22) size 16x28 [color=#FFFFFF] [bgcolor=#009900] [border: (10px solid #FFFFF5) none] [r=1 c=4 rs=1 cs=1]
-              RenderText {#text} at (0,10) size 16x19
-                text run at (0,10) width 16: "16"
-            RenderTableCell {TD} at (225,22) size 16x28 [color=#FFFFFF] [bgcolor=#009900] [border: (10px solid #FFFFF5) none] [r=1 c=5 rs=1 cs=1]
-              RenderText {#text} at (0,10) size 8x19
-                text run at (0,10) width 8: "2"
-            RenderTableCell {TD} at (243,22) size 10x28 [color=#FFFFFF] [bgcolor=#009900] [border: (10px solid #FFFFF5) none] [r=1 c=6 rs=1 cs=1]
-              RenderText {#text} at (0,10) size 10x19
-                text run at (0,10) width 10: "U"
-            RenderTableCell {TD} at (255,31) size 36x10 [border: (10px solid #FFFFF5) none] [r=1 c=7 rs=1 cs=1]
-          RenderTableRow {TR} at (0,52) size 293x18
-            RenderTableCell {TH} at (2,52) size 155x18 [color=#CC0000] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (85,-1) size 70x20
-                text run at (85,-1) width 70: "Tests N (0)"
-            RenderTableCell {TD} at (159,52) size 16x18 [color=#FFFFFF] [bgcolor=#000099] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 8x19
-                text run at (0,0) width 8: "4"
-            RenderTableCell {TD} at (177,52) size 10x18 [color=#FFFFFF] [bgcolor=#000099] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 4x19
-                text run at (0,0) width 4: " "
-            RenderTableCell {TD} at (189,52) size 16x18 [color=#FFFFFF] [bgcolor=#000099] [r=2 c=3 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 16x19
-                text run at (0,0) width 16: "21"
-            RenderTableCell {TD} at (207,52) size 16x18 [color=#FFFFFF] [bgcolor=#000099] [r=2 c=4 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 16x19
-                text run at (0,0) width 16: "14"
-            RenderTableCell {TD} at (225,52) size 16x18 [color=#FFFFFF] [bgcolor=#000099] [r=2 c=5 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 16x19
-                text run at (0,0) width 16: "18"
-            RenderTableCell {TD} at (243,52) size 10x18 [color=#FFFFFF] [bgcolor=#000099] [r=2 c=6 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 10x19
-                text run at (0,0) width 10: "U"
-            RenderTableCell {TD} at (255,61) size 36x0 [r=2 c=7 rs=1 cs=1]
-      RenderBlock {HR} at (0,82) size 648x1
-      RenderBlock {P} at (0,93) size 648x38
-        RenderInline {A} at (0,0) size 88x20 [color=#3333FF] [bgcolor=#FFFFF5]
+layer at (0,0) size 800x231
+  RenderBlock {HTML} at (0,0) size 800x231
+    RenderBody {BODY} at (8,8) size 784x209
+      RenderTable {TABLE} at (0,0) size 320x84
+        RenderTableSection {TBODY} at (0,0) size 320x84
+          RenderTableRow {TR} at (0,2) size 320x22
+            RenderTableCell {TH} at (2,2) size 168x22 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 32x20
+                text run at (1,1) width 32: "17.6 "
+              RenderInline {A} at (0,0) size 134x20 [color=#0000EE]
+                RenderText {#text} at (33,1) size 134x20
+                  text run at (33,1) width 134: "Table Border Test 2"
+            RenderTableCell {TD} at (172,2) size 18x21 [color=#FFFF00] [bgcolor=#CC0000] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 9x19
+                text run at (1,1) width 9: "B"
+            RenderTableCell {TD} at (192,2) size 12x21 [color=#FFFFFF] [bgcolor=#000099] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 10x19
+                text run at (1,1) width 10: "N"
+            RenderTableCell {TD} at (206,2) size 18x21 [color=#FFFFFF] [bgcolor=#000099] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 10x19
+                text run at (1,1) width 10: "N"
+            RenderTableCell {TD} at (226,2) size 18x21 [color=#FFFFFF] [bgcolor=#000099] [r=0 c=4 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 10x19
+                text run at (1,1) width 10: "N"
+            RenderTableCell {TD} at (246,2) size 18x21 [color=#FFFFFF] [bgcolor=#000099] [r=0 c=5 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 10x19
+                text run at (1,1) width 10: "N"
+            RenderTableCell {TD} at (266,2) size 12x21 [bgcolor=#CCCCCC] [r=0 c=6 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 10x19
+                text run at (1,1) width 10: "U"
+            RenderTableCell {TD} at (280,2) size 38x21 [r=0 c=7 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x19
+                text run at (1,1) width 36: "CSS2"
+          RenderTableRow {TR} at (0,26) size 320x32
+            RenderTableCell {TH} at (2,26) size 168x32 [border: (10px solid #FFFFF5) none] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (86,11) size 81x20
+                text run at (86,11) width 81: "Tests Y (+1)"
+            RenderTableCell {TD} at (172,26) size 18x31 [color=#FFFFFF] [bgcolor=#009900] [border: (10px solid #FFFFF5) none] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,11) size 16x19
+                text run at (1,11) width 16: "31"
+            RenderTableCell {TD} at (192,26) size 12x31 [color=#FFFFFF] [bgcolor=#009900] [border: (10px solid #FFFFF5) none] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,11) size 4x19
+                text run at (1,11) width 4: " "
+            RenderTableCell {TD} at (206,26) size 18x31 [color=#FFFFFF] [bgcolor=#009900] [border: (10px solid #FFFFF5) none] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,11) size 16x19
+                text run at (1,11) width 16: "16"
+            RenderTableCell {TD} at (226,26) size 18x31 [color=#FFFFFF] [bgcolor=#009900] [border: (10px solid #FFFFF5) none] [r=1 c=4 rs=1 cs=1]
+              RenderText {#text} at (1,11) size 16x19
+                text run at (1,11) width 16: "16"
+            RenderTableCell {TD} at (246,26) size 18x31 [color=#FFFFFF] [bgcolor=#009900] [border: (10px solid #FFFFF5) none] [r=1 c=5 rs=1 cs=1]
+              RenderText {#text} at (1,11) size 8x19
+                text run at (1,11) width 8: "2"
+            RenderTableCell {TD} at (266,26) size 12x31 [color=#FFFFFF] [bgcolor=#009900] [border: (10px solid #FFFFF5) none] [r=1 c=6 rs=1 cs=1]
+              RenderText {#text} at (1,11) size 10x19
+                text run at (1,11) width 10: "U"
+            RenderTableCell {TD} at (280,36) size 38x12 [border: (10px solid #FFFFF5) none] [r=1 c=7 rs=1 cs=1]
+          RenderTableRow {TR} at (0,60) size 320x22
+            RenderTableCell {TH} at (2,60) size 168x22 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (93,1) size 74x20
+                text run at (93,1) width 74: "Tests N (0)"
+            RenderTableCell {TD} at (172,60) size 18x21 [color=#FFFFFF] [bgcolor=#000099] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 8x19
+                text run at (1,1) width 8: "4"
+            RenderTableCell {TD} at (192,60) size 12x21 [color=#FFFFFF] [bgcolor=#000099] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 4x19
+                text run at (1,1) width 4: " "
+            RenderTableCell {TD} at (206,60) size 18x21 [color=#FFFFFF] [bgcolor=#000099] [r=2 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 16x19
+                text run at (1,1) width 16: "21"
+            RenderTableCell {TD} at (226,60) size 18x21 [color=#FFFFFF] [bgcolor=#000099] [r=2 c=4 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 16x19
+                text run at (1,1) width 16: "14"
+            RenderTableCell {TD} at (246,60) size 18x21 [color=#FFFFFF] [bgcolor=#000099] [r=2 c=5 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 16x19
+                text run at (1,1) width 16: "18"
+            RenderTableCell {TD} at (266,60) size 12x21 [color=#FFFFFF] [bgcolor=#000099] [r=2 c=6 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 10x19
+                text run at (1,1) width 10: "U"
+            RenderTableCell {TD} at (280,70) size 38x2 [r=2 c=7 rs=1 cs=1]
+      RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,107) size 784x36
+        RenderInline {A} at (0,0) size 88x19 [color=#0000EE]
           RenderImage {IMG} at (0,0) size 88x31
-      RenderBlock {P} at (0,141) size 648x22
-        RenderText {#text} at (0,1) size 56x19
-          text run at (0,1) width 56: "(Back to "
-        RenderInline {A} at (0,0) size 167x20 [color=#3333FF] [bgcolor=#FFFFF5]
-          RenderText {#text} at (56,1) size 167x20
-            text run at (56,1) width 167: "CSS Testing Information"
-        RenderText {#text} at (223,1) size 8x19
-          text run at (223,1) width 8: ", "
-        RenderInline {A} at (0,0) size 84x20 [color=#3333FF] [bgcolor=#FFFFF5]
-          RenderText {#text} at (231,1) size 84x20
-            text run at (231,1) width 84: "David Baron"
-        RenderText {#text} at (315,1) size 5x19
-          text run at (315,1) width 5: ")"
-      RenderBlock {P} at (0,173) size 648x22
-        RenderInline {A} at (0,0) size 29x20 [color=#3333FF] [bgcolor=#FFFFF5]
-          RenderText {#text} at (0,1) size 29x20
-            text run at (0,1) width 29: "LDB"
-        RenderText {#text} at (29,1) size 8x19
-          text run at (29,1) width 8: ", "
-        RenderInline {A} at (0,0) size 170x20 [color=#3333FF] [bgcolor=#FFFFF5]
-          RenderText {#text} at (37,1) size 170x20
-            text run at (37,1) width 170: "dbaron@fas.harvard.edu"
+      RenderBlock {P} at (0,157) size 784x19
+        RenderText {#text} at (0,0) size 56x19
+          text run at (0,0) width 56: "(Back to "
+        RenderInline {A} at (0,0) size 155x19 [color=#0000EE]
+          RenderText {#text} at (56,0) size 155x19
+            text run at (56,0) width 155: "CSS Testing Information"
+        RenderText {#text} at (211,0) size 8x19
+          text run at (211,0) width 8: ", "
+        RenderInline {A} at (0,0) size 78x19 [color=#0000EE]
+          RenderText {#text} at (219,0) size 78x19
+            text run at (219,0) width 78: "David Baron"
+        RenderText {#text} at (297,0) size 5x19
+          text run at (297,0) width 5: ")"
+      RenderBlock {P} at (0,190) size 784x19
+        RenderInline {A} at (0,0) size 27x19 [color=#0000EE]
+          RenderText {#text} at (0,0) size 27x19
+            text run at (0,0) width 27: "LDB"
+        RenderText {#text} at (27,0) size 8x19
+          text run at (27,0) width 8: ", "
+        RenderInline {A} at (0,0) size 159x19 [color=#0000EE]
+          RenderText {#text} at (35,0) size 159x19
+            text run at (35,0) width 159: "dbaron@fas.harvard.edu"

@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {PRE} at (0,0) size 784x176
-        RenderText {#text} at (0,51) size 24x17
-          text run at (0,51) width 24: "One"
-        RenderInline {SPAN} at (0,0) size 129x169
-          RenderText {#text} at (24,3) size 129x169
-            text run at (24,3) width 0: " "
-            text run at (0,91) width 129: "Two"
+      RenderBlock {PRE} at (0,0) size 784x182
+        RenderText {#text} at (0,55) size 27x19
+          text run at (0,55) width 27: "One"
+        RenderInline {SPAN} at (0,0) size 136x182
+          RenderText {#text} at (27,0) size 136x182
+            text run at (27,0) width 0: " "
+            text run at (0,91) width 136: "Two"

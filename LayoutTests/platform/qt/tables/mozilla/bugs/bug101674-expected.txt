@@ -1,8 +1,8 @@
-layer at (0,0) size 800x2025
+layer at (0,0) size 800x1572
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x2025
-  RenderBlock {HTML} at (0,0) size 800x2025
-    RenderBody {BODY} at (8,8) size 784x2009
+layer at (0,0) size 800x1572
+  RenderBlock {HTML} at (0,0) size 800x1572
+    RenderBody {BODY} at (8,8) size 784x1556
       RenderTable {TABLE} at (0,0) size 784x74 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x72
           RenderTableRow {TR} at (0,2) size 782x68
@@ -47,69 +47,74 @@ layer at (0,0) size 800x2025
             RenderTableCell {TD} at (96,152) size 684x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 165x19
                 text run at (2,2) width 165: "Newlines between images"
-      RenderTable {TABLE} at (0,734) size 784x425 [border: (1px solid #000000)]
-        RenderTableSection {TBODY} at (1,1) size 782x423
-          RenderTableRow {TR} at (0,2) size 782x419
-            RenderTableCell {TD} at (2,2) size 92x419 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,734) size 784x79 [border: (1px solid #000000)]
+        RenderTableSection {TBODY} at (1,1) size 782x77
+          RenderTableRow {TR} at (0,2) size 782x73
+            RenderTableCell {TD} at (2,2) size 593x73 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,52) size 27x19
+                text run at (2,52) width 27: "One"
+              RenderImage {IMG} at (29,2) size 88x64
+              RenderText {#text} at (117,52) size 27x19
+                text run at (117,52) width 27: "Two"
+              RenderImage {IMG} at (144,2) size 88x64
+              RenderText {#text} at (232,52) size 38x19
+                text run at (232,52) width 38: "Three"
+              RenderImage {IMG} at (270,2) size 88x64
+              RenderText {#text} at (358,52) size 30x19
+                text run at (358,52) width 30: "Four"
+              RenderImage {IMG} at (388,2) size 88x64
+              RenderText {#text} at (476,52) size 27x19
+                text run at (476,52) width 27: "Five"
+              RenderImage {IMG} at (503,2) size 88x64
+            RenderTableCell {TD} at (597,27) size 183x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 136x19
+                text run at (2,2) width 136: "Text between images"
+      RenderTable {TABLE} at (0,813) size 784x369 [border: (1px solid #000000)]
+        RenderTableSection {TBODY} at (1,1) size 782x367
+          RenderTableRow {TR} at (0,2) size 782x363
+            RenderTableCell {TD} at (2,2) size 130x363 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x19
                 text run at (2,2) width 27: "One"
               RenderImage {IMG} at (2,21) size 88x64
-              RenderText {#text} at (2,85) size 27x19
-                text run at (2,85) width 27: "Two"
-              RenderImage {IMG} at (2,104) size 88x64
-              RenderText {#text} at (2,168) size 38x19
-                text run at (2,168) width 38: "Three"
-              RenderImage {IMG} at (2,187) size 88x64
-              RenderText {#text} at (2,251) size 30x19
-                text run at (2,251) width 30: "Four"
-              RenderImage {IMG} at (2,270) size 88x64
-              RenderText {#text} at (2,334) size 27x19
-                text run at (2,334) width 27: "Five"
-              RenderImage {IMG} at (2,353) size 88x64
-            RenderTableCell {TD} at (96,200) size 684x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 136x19
-                text run at (2,2) width 136: "Text between images"
-      RenderTable {TABLE} at (0,1159) size 784x425 [border: (1px solid #000000)]
-        RenderTableSection {TBODY} at (1,1) size 782x423
-          RenderTableRow {TR} at (0,2) size 782x419
-            RenderTableCell {TD} at (2,2) size 92x419 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 31x19
-                text run at (2,2) width 31: "One "
-              RenderImage {IMG} at (2,21) size 88x64
-              RenderText {#text} at (2,85) size 31x19
-                text run at (2,85) width 31: "Two "
-              RenderImage {IMG} at (2,104) size 88x64
-              RenderText {#text} at (2,168) size 42x19
-                text run at (2,168) width 42: "Three "
-              RenderImage {IMG} at (2,187) size 88x64
-              RenderText {#text} at (2,251) size 34x19
-                text run at (2,251) width 34: "Four "
-              RenderImage {IMG} at (2,270) size 88x64
-              RenderText {#text} at (2,334) size 31x19
-                text run at (2,334) width 31: "Five "
-              RenderImage {IMG} at (2,353) size 88x64
-            RenderTableCell {TD} at (96,200) size 684x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (90,71) size 27x19
+                text run at (90,71) width 27: "Two"
+              RenderImage {IMG} at (2,90) size 88x64
+              RenderText {#text} at (90,140) size 38x19
+                text run at (90,140) width 38: "Three"
+              RenderImage {IMG} at (2,159) size 88x64
+              RenderText {#text} at (90,209) size 30x19
+                text run at (90,209) width 30: "Four"
+              RenderImage {IMG} at (2,228) size 88x64
+              RenderText {#text} at (90,278) size 27x19
+                text run at (90,278) width 27: "Five"
+              RenderImage {IMG} at (2,297) size 88x64
+            RenderTableCell {TD} at (134,172) size 646x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 214x19
                 text run at (2,2) width 214: "Text with spaces between images"
-      RenderTable {TABLE} at (0,1584) size 784x425 [border: (1px solid #000000)]
-        RenderTableSection {TBODY} at (1,1) size 782x423
-          RenderTableRow {TR} at (0,2) size 782x419
-            RenderTableCell {TD} at (2,2) size 92x419 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 40x19
-                text run at (2,2) width 40: "One A"
-              RenderImage {IMG} at (2,21) size 88x64
-              RenderText {#text} at (2,85) size 39x19
-                text run at (2,85) width 39: "Two b"
-              RenderImage {IMG} at (2,104) size 88x64
-              RenderText {#text} at (2,168) size 49x19
-                text run at (2,168) width 49: "Three c"
-              RenderImage {IMG} at (2,187) size 88x64
-              RenderText {#text} at (2,251) size 42x19
-                text run at (2,251) width 42: "Four d"
-              RenderImage {IMG} at (2,270) size 88x64
-              RenderText {#text} at (2,334) size 39x19
-                text run at (2,334) width 39: "Five e"
-              RenderImage {IMG} at (2,353) size 88x64
-            RenderTableCell {TD} at (96,200) size 684x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+      RenderTable {TABLE} at (0,1182) size 784x374 [border: (1px solid #000000)]
+        RenderTableSection {TBODY} at (1,1) size 782x372
+          RenderTableRow {TR} at (0,2) size 782x368
+            RenderTableCell {TD} at (2,2) size 138x368 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x88
+                text run at (2,2) width 27: "One"
+                text run at (2,71) width 9: "A"
+              RenderImage {IMG} at (11,21) size 88x64
+              RenderText {#text} at (99,71) size 124x88
+                text run at (99,71) width 27: "Two"
+                text run at (2,140) width 8: "b"
+              RenderImage {IMG} at (10,90) size 88x64
+              RenderText {#text} at (98,140) size 134x88
+                text run at (98,140) width 38: "Three"
+                text run at (2,209) width 7: "c"
+              RenderImage {IMG} at (9,159) size 88x64
+              RenderText {#text} at (97,209) size 125x88
+                text run at (97,209) width 30: "Four"
+                text run at (2,278) width 8: "d"
+              RenderImage {IMG} at (10,228) size 88x64
+              RenderText {#text} at (98,278) size 123x88
+                text run at (98,278) width 27: "Five"
+                text run at (2,347) width 8: "e"
+              RenderImage {IMG} at (10,297) size 88x64
+            RenderTableCell {TD} at (142,174) size 638x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 306x19
                 text run at (2,2) width 306: "Text with spaces and more text between images"

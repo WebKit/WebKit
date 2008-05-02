@@ -9,8 +9,8 @@ layer at (0,0) size 800x51
             text run at (0,2) width 462: "Ahem_font_required_for_this_test."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,19) size 784x16
-        RenderText {#text} at (0,-3) size 303x23
-          text run at (0,-3) width 303: "The following two blocks should be identical."
+        RenderText {#text} at (0,-3) size 317x22
+          text run at (0,-3) width 317: "The following two blocks should be identical."
 layer at (8,75) size 204x64
   RenderBlock (positioned) {DIV} at (8,75) size 204x64 [bgcolor=#FFFF00] [border: (2px solid #000000)]
 layer at (10,77) size 50x50
