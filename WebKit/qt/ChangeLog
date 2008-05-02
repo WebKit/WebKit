@@ -1,3 +1,10 @@
+2008-05-02  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build, ExecState is required here.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJavaScriptWindowObject):
+
 2008-05-01  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
 
         Reviewed by Alp Toker.
