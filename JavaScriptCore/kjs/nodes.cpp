@@ -41,6 +41,11 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/MathExtras.h>
+#if USE(MULTIPLE_THREADS)
+#include <wtf/ThreadSpecific.h>
+#endif
+
+using namespace WTF;
 
 namespace KJS {
 
@@ -117,6 +122,7 @@ static inline bool isConstant(const LocalStorage& localStorage, size_t index)
 #ifndef LOG_CHANNEL_PREFIX
 #define LOG_CHANNEL_PREFIX Log
 #endif
+
 static WTFLogChannel LogKJSNodeLeaks = { 0x00000000, "", WTFLogChannelOn };
 
 struct ParserRefCountedCounter {
@@ -131,18 +137,41 @@ unsigned ParserRefCountedCounter::count = 0;
 static ParserRefCountedCounter parserRefCountedCounter;
 #endif
 
-static HashSet<ParserRefCounted*>* newTrackedObjects;
-static HashCountedSet<ParserRefCounted*>* trackedObjectExtraRefCounts;
+static HashSet<ParserRefCounted*>* newTrackedObjects()
+{
+#if USE(MULTIPLE_THREADS)
+    static ThreadSpecific<HashSet<ParserRefCounted*> > sharedInstance;
+    return sharedInstance;
+#else
+    static HashSet<ParserRefCounted*> sharedInstance;
+    return &sharedInstance;
+#endif
+}
+
+static HashCountedSet<ParserRefCounted*>* trackedObjectExtraRefCounts()
+{
+#if USE(MULTIPLE_THREADS)
+    static ThreadSpecific<HashCountedSet<ParserRefCounted*> > sharedInstance;
+    return sharedInstance;
+#else
+    static HashCountedSet<ParserRefCounted*> sharedInstance;
+    return &sharedInstance;
+#endif
+}
+
+void initializeNodesThreading()
+{
+    newTrackedObjects();
+    trackedObjectExtraRefCounts();
+}
 
 ParserRefCounted::ParserRefCounted()
 {
 #ifndef NDEBUG
     ++ParserRefCountedCounter::count;
 #endif
-    if (!newTrackedObjects)
-        newTrackedObjects = new HashSet<ParserRefCounted*>;
-    newTrackedObjects->add(this);
-    ASSERT(newTrackedObjects->contains(this));
+    newTrackedObjects()->add(this);
+    ASSERT(newTrackedObjects()->contains(this));
 }
 
 ParserRefCounted::~ParserRefCounted()
@@ -154,67 +183,60 @@ ParserRefCounted::~ParserRefCounted()
 
 void ParserRefCounted::ref()
 {
+    HashSet<ParserRefCounted*>* localNewTrackedObjects = newTrackedObjects();
+
     // bumping from 0 to 1 is just removing from the new nodes set
-    if (newTrackedObjects) {
-        HashSet<ParserRefCounted*>::iterator it = newTrackedObjects->find(this);
-        if (it != newTrackedObjects->end()) {
-            newTrackedObjects->remove(it);
-            ASSERT(!trackedObjectExtraRefCounts || !trackedObjectExtraRefCounts->contains(this));
-            return;
-        }
+    HashSet<ParserRefCounted*>::iterator it = localNewTrackedObjects->find(this);
+    if (it != localNewTrackedObjects->end()) {
+        localNewTrackedObjects->remove(it);
+        ASSERT(!trackedObjectExtraRefCounts()->contains(this));
+        return;
     }
 
-    ASSERT(!newTrackedObjects || !newTrackedObjects->contains(this));
+    ASSERT(!localNewTrackedObjects->contains(this));
 
-    if (!trackedObjectExtraRefCounts)
-        trackedObjectExtraRefCounts = new HashCountedSet<ParserRefCounted*>;
-    trackedObjectExtraRefCounts->add(this);
+    trackedObjectExtraRefCounts()->add(this);
 }
 
 void ParserRefCounted::deref()
 {
-    ASSERT(!newTrackedObjects || !newTrackedObjects->contains(this));
+    ASSERT(!newTrackedObjects()->contains(this));
+    HashCountedSet<ParserRefCounted*>* localTrackedObjectExtraRefCounts = trackedObjectExtraRefCounts();
 
-    if (!trackedObjectExtraRefCounts) {
-        delete this;
-        return;
-    }
-
-    HashCountedSet<ParserRefCounted*>::iterator it = trackedObjectExtraRefCounts->find(this);
-    if (it == trackedObjectExtraRefCounts->end())
+    HashCountedSet<ParserRefCounted*>::iterator it = localTrackedObjectExtraRefCounts->find(this);
+    if (it == localTrackedObjectExtraRefCounts->end())
         delete this;
     else
-        trackedObjectExtraRefCounts->remove(it);
+        localTrackedObjectExtraRefCounts->remove(it);
 }
 
 unsigned ParserRefCounted::refcount()
 {
-    if (newTrackedObjects && newTrackedObjects->contains(this)) {
-        ASSERT(!trackedObjectExtraRefCounts || !trackedObjectExtraRefCounts->contains(this));
+    HashCountedSet<ParserRefCounted*>* localTrackedObjectExtraRefCounts = trackedObjectExtraRefCounts();
+
+    if (newTrackedObjects()->contains(this)) {
+        ASSERT(!localTrackedObjectExtraRefCounts->contains(this));
         return 0;
     }
 
-    ASSERT(!newTrackedObjects || !newTrackedObjects->contains(this));
+    ASSERT(!newTrackedObjects()->contains(this));
 
-    if (!trackedObjectExtraRefCounts)
+    if (!localTrackedObjectExtraRefCounts)
         return 1;
 
-    return 1 + trackedObjectExtraRefCounts->count(this);
+    return 1 + localTrackedObjectExtraRefCounts->count(this);
 }
 
 void ParserRefCounted::deleteNewObjects()
 {
-    if (!newTrackedObjects)
-        return;
-
+    HashSet<ParserRefCounted*>* localNewTrackedObjects = newTrackedObjects();
 #ifndef NDEBUG
-    HashSet<ParserRefCounted*>::iterator end = newTrackedObjects->end();
-    for (HashSet<ParserRefCounted*>::iterator it = newTrackedObjects->begin(); it != end; ++it)
-        ASSERT(!trackedObjectExtraRefCounts || !trackedObjectExtraRefCounts->contains(*it));
+    HashSet<ParserRefCounted*>::iterator end = localNewTrackedObjects->end();
+    for (HashSet<ParserRefCounted*>::iterator it = localNewTrackedObjects->begin(); it != end; ++it)
+        ASSERT(!trackedObjectExtraRefCounts()->contains(*it));
 #endif
-    deleteAllValues(*newTrackedObjects);
-    delete newTrackedObjects;
-    newTrackedObjects = 0;
+    deleteAllValues(*localNewTrackedObjects);
+    localNewTrackedObjects->clear();
 }
 
 Node::Node()

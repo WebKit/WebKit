@@ -35,6 +35,7 @@
 #include "identifier.h"
 #include "JSGlobalObject.h"
 #include "lexer.h"
+#include "nodes.h"
 #include "Parser.h"
 #include "ustring.h"
 #include <wtf/Threading.h>
@@ -58,6 +59,7 @@ static void initializeThreadingOnce()
     initDateMath();
     JSGlobalObject::threadClassInfoHashTables();
     JSGlobalObject::head();
+    initializeNodesThreading();
 #endif
 }
 

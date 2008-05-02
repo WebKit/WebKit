@@ -1,5 +1,27 @@
 2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Geoffrey Garen.
+
+        Get rid of static data in nodes.cpp (well, at least of non-debug one).
+
+        No measurable change on SunSpider.
+
+        * kjs/InitializeThreading.cpp:
+        (KJS::initializeThreadingOnce):
+        * kjs/nodes.cpp:
+        (KJS::newTrackedObjects):
+        (KJS::trackedObjectExtraRefCounts):
+        (KJS::initializeNodesThreading):
+        (KJS::ParserRefCounted::ParserRefCounted):
+        (KJS::ParserRefCounted::ref):
+        (KJS::ParserRefCounted::deref):
+        (KJS::ParserRefCounted::refcount):
+        (KJS::ParserRefCounted::deleteNewObjects):
+        * kjs/nodes.h:
+        Made newTrackedObjects and trackedObjectExtraRefCounts per-thread.
+
+2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         Move call stack depth counter to global object.
