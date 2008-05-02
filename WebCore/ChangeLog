@@ -2,6 +2,14 @@
 
         Reviewed by Simon.
 
+        Build the Qt port with SVG Use and As Image support.
+
+        * WebCore.pro:
+
+2008-05-02  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
         Fixed potential crash on SVG animation (added more checks to the assert).
 
         * svg/SVGUseElement.cpp:
