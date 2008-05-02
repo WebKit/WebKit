@@ -1,3 +1,11 @@
+2008-05-02  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
+        Doc: Mention that you have to enable plugins in QWebSettings for them to work.
+
+        * Api/qwebpage.cpp:
+
 2008-05-02  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build, ExecState is required here.

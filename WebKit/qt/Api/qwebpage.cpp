@@ -1995,6 +1995,8 @@ QNetworkAccessManager *QWebPage::networkAccessManager() const
     Sets the QWebPluginFactory \a factory responsible for creating plugins embedded into this
     QWebPage.
 
+    Note: The plugin factory is only used if the QWebSettings::PluginsEnabled attribute is enabled.
+
     \sa pluginFactory()
 */
 void QWebPage::setPluginFactory(QWebPluginFactory *factory)
