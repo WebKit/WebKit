@@ -1,3 +1,9 @@
+2008-05-01  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
 2008-05-01  Sam Weinig  <sam@webkit.org>
 
         Fix build.
