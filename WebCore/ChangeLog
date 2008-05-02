@@ -1,3 +1,21 @@
+2008-05-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - render text shadows with zero offset, as the shadow can be seen behind
+          the text if the text is translucent
+
+        Test: fast/text/shadow-no-blur.html
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawComplexText): Removed the isEmpty() condition on the
+        shadow offset. Since isEmpty() is also true for sizes that have one or
+        more non-positive components, this also ensures that subpixel
+        antialiasing of the text is maintained with shadows in all directions.
+        (WebCore::Font::drawGlyphs): Ditto.
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs): Ditto.
+
 2008-05-02  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.

@@ -534,7 +534,7 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
     Color shadowColor;
     graphicsContext->getShadow(shadowSize, shadowBlur, shadowColor);
 
-    bool hasSimpleShadow = graphicsContext->textDrawingMode() == cTextFill && shadowColor.isValid() && !shadowBlur && !shadowSize.isEmpty();
+    bool hasSimpleShadow = graphicsContext->textDrawingMode() == cTextFill && shadowColor.isValid() && !shadowBlur;
     if (hasSimpleShadow) {
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
         graphicsContext->clearShadow();
@@ -680,7 +680,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     Color shadowColor;
     context->getShadow(shadowSize, shadowBlur, shadowColor);
 
-    bool hasSimpleShadow = context->textDrawingMode() == cTextFill && shadowColor.isValid() && !shadowBlur && !shadowSize.isEmpty();
+    bool hasSimpleShadow = context->textDrawingMode() == cTextFill && shadowColor.isValid() && !shadowBlur;
     if (hasSimpleShadow) {
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
         context->clearShadow();

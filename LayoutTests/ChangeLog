@@ -1,3 +1,15 @@
+2008-05-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - add pixel test for text shadows with zero blur and various offsets,
+          including zero offset
+
+        * fast/text/shadow-no-blur.html: Added.
+        * platform/mac/fast/text/shadow-no-blur-expected.checksum: Added.
+        * platform/mac/fast/text/shadow-no-blur-expected.png: Added.
+        * platform/mac/fast/text/shadow-no-blur-expected.txt: Added.
+
 2008-05-02  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Rubber-stamped by Simon.
