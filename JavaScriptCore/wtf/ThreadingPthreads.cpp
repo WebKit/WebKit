@@ -39,7 +39,7 @@ namespace WTF {
 
 Mutex* atomicallyInitializedStaticMutex;
 
-static ThreadIdentifier mainThreadIdentifier;
+static ThreadIdentifier mainThreadIdentifier; // More precisely, the thread that was the first to call initializeThreading().
 
 static Mutex& threadMapMutex()
 {
@@ -150,7 +150,11 @@ ThreadIdentifier currentThread()
 
 bool isMainThread()
 {
+#if PLATFORM(DARWIN)
+    return pthread_main_np();
+#else
     return currentThread() == mainThreadIdentifier;
+#endif
 }
 
 Mutex::Mutex()

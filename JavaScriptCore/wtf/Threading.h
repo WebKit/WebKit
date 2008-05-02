@@ -239,6 +239,8 @@ private:
 #endif
 };
 
+// This function must be called from the main thread. It is safe to call it repeatedly.
+// Darwin is an exception to this rule: it is OK to call it from any thread, the only requirement is that the calls are not reentrant.
 void initializeThreading();
 
 extern Mutex* atomicallyInitializedStaticMutex;

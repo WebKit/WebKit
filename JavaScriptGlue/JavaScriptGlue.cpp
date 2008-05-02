@@ -32,6 +32,7 @@
 #include "JSBase.h"
 #include "JSObject.h"
 #include "JSRun.h"
+#include <JavaScriptCore/InitializeThreading.h>
 
 static CFTypeRef sJSCFNullRef = 0;
 
@@ -239,6 +240,8 @@ JSObjectRef JSObjectCallFunction(JSObjectRef ref, JSObjectRef thisObj, CFArrayRe
 */
 JSRunRef JSRunCreate(CFStringRef jsSource, JSFlags inFlags)
 {
+    initializeThreading();
+
     JSRunRef result = 0;
     if (jsSource)
     {
@@ -330,8 +333,10 @@ bool JSRunCheckSyntax(JSRunRef ref)
 /*
     JSCollect - trigger garbage collection
 */
-void JSCollect(void)
+void JSCollect()
 {
+    initializeThreading();
+
     JSLock lock;
     getThreadGlobalExecState()->heap()->collect();
 }
@@ -614,6 +619,8 @@ CFMutableArrayRef JSCreateCFArrayFromJSArray(CFArrayRef array)
 
 CFMutableArrayRef JSCreateJSArrayFromCFArray(CFArrayRef array)
 {
+    initializeThreading();
+
     CFIndex count = array ? CFArrayGetCount(array) : 0;
     CFArrayCallBacks arrayCallbacks;
     CFMutableArrayRef jsArray;
@@ -640,6 +647,7 @@ CFMutableArrayRef JSCreateJSArrayFromCFArray(CFArrayRef array)
 
 void JSLockInterpreter()
 {
+    initializeThreading();
     JSLock::lock();
 }
 

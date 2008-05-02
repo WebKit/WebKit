@@ -1,5 +1,33 @@
 2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Darin.
+
+        Make JavaScriptGlue and JavaScriptCore API functions implicitly call initializeThreading
+        for the sake of non-WebKit clients.
+
+        * API/JSBase.cpp:
+        (JSGarbageCollect):
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreate):
+        These are the JavaScriptCore API bottlenecks. There are a few other JSStringRef
+        and JSClassRef functions that can be called earlier, but they do not do anything that
+        requires initializeThreading.
+
+        * kjs/InitializeThreading.cpp:
+        (KJS::doInitializeThreading):
+        (KJS::initializeThreading):
+        On Darwin, make the initialization happen under pthread_once, since there is no guarantee
+        that non-WebKit clients won't try to call this function re-entrantly.
+
+        * kjs/InitializeThreading.h:
+        * wtf/Threading.h:
+        Spell out initializeThreading contract.
+
+        * wtf/ThreadingPthreads.cpp: (WTF::isMainThread): Make sure that results are correct on
+        Darwin, even if threading was initialized from a secondary thread.
+
+2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Geoffrey Garen.
 
         https://bugs.webkit.org/show_bug.cgi?id=18826

@@ -1,5 +1,19 @@
 2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Darin.
+
+        Make JavaScriptGlue and JavaScriptCore API functions implicitly call initializeThreading
+        for the sake of non-WebKit clients.
+
+        * JavaScriptGlue.cpp:
+        (JSRunCreate):
+        (JSCollect):
+        (JSCreateJSArrayFromCFArray):
+        (JSLockInterpreter):
+        These are all possible JavaScriptGlue entry points.
+
+2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Geoffrey Garen.
 
         https://bugs.webkit.org/show_bug.cgi?id=18826
