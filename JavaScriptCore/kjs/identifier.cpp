@@ -28,7 +28,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
-//#include <wtf/StrHash.h>
+#include <wtf/StrHash.h>
 #if USE(MULTIPLE_THREADS)
 #include <wtf/ThreadSpecific.h>
 using namespace WTF;
