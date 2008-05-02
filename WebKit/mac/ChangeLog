@@ -1,3 +1,15 @@
+2008-05-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark.
+
+        Make sure that 32-bit only plug-ins aren't shown when running as 64-bit.
+        
+        Call preflightAndReturnError on the bundle, which will check if any of the architectures
+        in the bundle match the current architecture.
+        
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage _initWithPath:]):
+
 2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoffrey Garen.
