@@ -42,14 +42,14 @@ namespace KJS {
         typedef VectorType::const_iterator const_iterator;
 
         List()
-            : m_isInMarkSet(false)
+            : m_markSet(0)
         {
         }
 
         ~List()
         {
-            if (m_isInMarkSet)
-                markSet().remove(this);
+            if (m_markSet)
+                m_markSet->remove(this);
         }
 
         size_t size() const { return m_vector.size(); }
@@ -85,21 +85,13 @@ namespace KJS {
         const_iterator begin() const { return m_vector.begin(); }
         const_iterator end() const { return m_vector.end(); }
 
-        static void markProtectedLists()
-        {
-            if (!markSet().size())
-                return;
-            markProtectedListsSlowCase();
-        }
+        static void markProtectedLists(ListSet&);
 
     private:
-        static ListSet& markSet();
-        static void markProtectedListsSlowCase();
-
         void expandAndAppend(JSValue*);
 
         VectorType m_vector;
-        bool m_isInMarkSet;
+        ListSet* m_markSet;
 
     private:
         // Prohibits new / delete, which would break GC.

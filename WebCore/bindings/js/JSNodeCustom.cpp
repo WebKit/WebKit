@@ -180,43 +180,43 @@ JSValue* toJS(ExecState* exec, Node* node)
                 ret = createJSSVGWrapper(exec, static_cast<SVGElement*>(node));
 #endif
             else
-                ret = new JSElement(JSElementPrototype::self(exec), static_cast<Element*>(node));
+                ret = new (exec) JSElement(JSElementPrototype::self(exec), static_cast<Element*>(node));
             break;
         case Node::ATTRIBUTE_NODE:
-            ret = new JSAttr(JSAttrPrototype::self(exec), static_cast<Attr*>(node));
+            ret = new (exec) JSAttr(JSAttrPrototype::self(exec), static_cast<Attr*>(node));
             break;
         case Node::TEXT_NODE:
-            ret = new JSText(JSTextPrototype::self(exec), static_cast<Text*>(node));
+            ret = new (exec) JSText(JSTextPrototype::self(exec), static_cast<Text*>(node));
             break;
         case Node::CDATA_SECTION_NODE:
-            ret = new JSCDATASection(JSCDATASectionPrototype::self(exec), static_cast<CDATASection*>(node));
+            ret = new (exec) JSCDATASection(JSCDATASectionPrototype::self(exec), static_cast<CDATASection*>(node));
             break;
         case Node::ENTITY_NODE:
-            ret = new JSEntity(JSEntityPrototype::self(exec), static_cast<Entity*>(node));
+            ret = new (exec) JSEntity(JSEntityPrototype::self(exec), static_cast<Entity*>(node));
             break;
         case Node::PROCESSING_INSTRUCTION_NODE:
-            ret = new JSProcessingInstruction(JSProcessingInstructionPrototype::self(exec), static_cast<ProcessingInstruction*>(node));
+            ret = new (exec) JSProcessingInstruction(JSProcessingInstructionPrototype::self(exec), static_cast<ProcessingInstruction*>(node));
             break;
         case Node::COMMENT_NODE:
-            ret = new JSComment(JSCommentPrototype::self(exec), static_cast<Comment*>(node));
+            ret = new (exec) JSComment(JSCommentPrototype::self(exec), static_cast<Comment*>(node));
             break;
         case Node::DOCUMENT_NODE:
             // we don't want to cache the document itself in the per-document dictionary
             return toJS(exec, static_cast<Document*>(node));
         case Node::DOCUMENT_TYPE_NODE:
-            ret = new JSDocumentType(JSDocumentTypePrototype::self(exec), static_cast<DocumentType*>(node));
+            ret = new (exec) JSDocumentType(JSDocumentTypePrototype::self(exec), static_cast<DocumentType*>(node));
             break;
         case Node::NOTATION_NODE:
-            ret = new JSNotation(JSNotationPrototype::self(exec), static_cast<Notation*>(node));
+            ret = new (exec) JSNotation(JSNotationPrototype::self(exec), static_cast<Notation*>(node));
             break;
         case Node::DOCUMENT_FRAGMENT_NODE:
-            ret = new JSDocumentFragment(JSDocumentFragmentPrototype::self(exec), static_cast<DocumentFragment*>(node));
+            ret = new (exec) JSDocumentFragment(JSDocumentFragmentPrototype::self(exec), static_cast<DocumentFragment*>(node));
             break;
         case Node::ENTITY_REFERENCE_NODE:
-            ret = new JSEntityReference(JSEntityReferencePrototype::self(exec), static_cast<EntityReference*>(node));
+            ret = new (exec) JSEntityReference(JSEntityReferencePrototype::self(exec), static_cast<EntityReference*>(node));
             break;
         default:
-            ret = new JSNode(JSNodePrototype::self(exec), node);
+            ret = new (exec) JSNode(JSNodePrototype::self(exec), node);
     }
 
     ScriptInterpreter::putDOMNodeForDocument(doc, node, ret);

@@ -35,7 +35,7 @@ JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, 
     : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
     , m_document(document)
 {
-    putDirect(exec->propertyNames().length, jsNumber(4), ReadOnly|DontDelete|DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 4), ReadOnly|DontDelete|DontEnum);
 }
 
 bool JSHTMLOptionElementConstructor::implementsConstruct() const

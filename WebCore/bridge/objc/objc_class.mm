@@ -244,14 +244,14 @@ Field* ObjcClass::fieldNamed(const Identifier& identifier, Instance* instance) c
     return aField;
 }
 
-JSValue* ObjcClass::fallbackObject(ExecState*, Instance* instance, const Identifier &propertyName)
+JSValue* ObjcClass::fallbackObject(ExecState* exec, Instance* instance, const Identifier &propertyName)
 {
     ObjcInstance* objcInstance = static_cast<ObjcInstance*>(instance);
     id targetObject = objcInstance->getObject();
     
     if (![targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
         return jsUndefined();
-    return new ObjcFallbackObjectImp(objcInstance, propertyName);
+    return new (exec) ObjcFallbackObjectImp(objcInstance, propertyName);
 }
 
 }

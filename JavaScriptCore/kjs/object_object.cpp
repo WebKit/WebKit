@@ -43,18 +43,18 @@ static JSValue* objectProtoFuncToLocaleString(ExecState*, JSObject*, const List&
 ObjectPrototype::ObjectPrototype(ExecState* exec, FunctionPrototype* functionPrototype)
     : JSObject() // [[Prototype]] is null
 {
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, objectProtoFuncToString), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toLocaleString, objectProtoFuncToLocaleString), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().valueOf, objectProtoFuncValueOf), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().hasOwnProperty, objectProtoFuncHasOwnProperty), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().propertyIsEnumerable, objectProtoFuncPropertyIsEnumerable), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().isPrototypeOf, objectProtoFuncIsPrototypeOf), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, objectProtoFuncToString), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toLocaleString, objectProtoFuncToLocaleString), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().valueOf, objectProtoFuncValueOf), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().hasOwnProperty, objectProtoFuncHasOwnProperty), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().propertyIsEnumerable, objectProtoFuncPropertyIsEnumerable), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().isPrototypeOf, objectProtoFuncIsPrototypeOf), DontEnum);
 
     // Mozilla extensions
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 2, exec->propertyNames().__defineGetter__, objectProtoFuncDefineGetter), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 2, exec->propertyNames().__defineSetter__, objectProtoFuncDefineSetter), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().__lookupGetter__, objectProtoFuncLookupGetter), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().__lookupSetter__, objectProtoFuncLookupSetter), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 2, exec->propertyNames().__defineGetter__, objectProtoFuncDefineGetter), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 2, exec->propertyNames().__defineSetter__, objectProtoFuncDefineSetter), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().__lookupGetter__, objectProtoFuncLookupGetter), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().__lookupSetter__, objectProtoFuncLookupSetter), DontEnum);
 }
 
 
@@ -123,12 +123,12 @@ JSValue* objectProtoFuncPropertyIsEnumerable(ExecState* exec, JSObject* thisObj,
 
 JSValue* objectProtoFuncToLocaleString(ExecState* exec, JSObject* thisObj, const List&)
 {
-    return jsString(thisObj->toString(exec));
+    return jsString(exec, thisObj->toString(exec));
 }
 
-JSValue* objectProtoFuncToString(ExecState*, JSObject* thisObj, const List&)
+JSValue* objectProtoFuncToString(ExecState*exec, JSObject* thisObj, const List&)
 {
-    return jsString("[object " + thisObj->className() + "]");
+    return jsString(exec, "[object " + thisObj->className() + "]");
 }
 
 // ------------------------------ ObjectObjectImp --------------------------------
@@ -140,7 +140,7 @@ ObjectObjectImp::ObjectObjectImp(ExecState* exec, ObjectPrototype* objProto, Fun
   putDirect(exec->propertyNames().prototype, objProto, DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
-  putDirect(exec->propertyNames().length, jsNumber(1), ReadOnly|DontDelete|DontEnum);
+  putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
 }
 
 
@@ -161,7 +161,7 @@ JSObject* ObjectObjectImp::construct(ExecState* exec, const List& args)
       return arg->toObject(exec);
   case NullType:
   case UndefinedType:
-      return new JSObject(exec->lexicalGlobalObject()->objectPrototype());
+      return new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype());
   default:
       ASSERT_NOT_REACHED();
       return 0;

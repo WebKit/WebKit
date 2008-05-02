@@ -1,3 +1,23 @@
+2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18826
+        Make JavaScript heap per-thread
+
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics javaScriptObjectsCount]):
+        (+[WebCoreStatistics javaScriptGlobalObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedGlobalObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedObjectTypeCounts]):
+        (+[WebCoreStatistics javaScriptReferencedObjectsCount]):
+        Replaced static Collector calls with calls to a current thread's instance.
+
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame evaluateWebScript:]):
+        Pass ExecState to jsString().
+
 2008-05-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark.

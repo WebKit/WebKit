@@ -58,6 +58,8 @@ namespace KJS  {
 
         CommonIdentifiers* propertyNames;
         List emptyList;
+        
+        Heap* heap;
     };
 
     // Represents the current state of script execution.
@@ -119,6 +121,8 @@ namespace KJS  {
         static const HashTable* RegExpImpTable(ExecState* exec) { return exec->m_perThreadData->RegExpImpTable; }
         static const HashTable* RegExpObjectImpTable(ExecState* exec) { return exec->m_perThreadData->RegExpObjectImpTable; }
         static const HashTable* stringTable(ExecState* exec) { return exec->m_perThreadData->stringTable; }
+
+        Heap* heap() const { return m_perThreadData->heap; }
 
         LocalStorage& localStorage() { return *m_localStorage; }
         void setLocalStorage(LocalStorage* s) { m_localStorage = s; }

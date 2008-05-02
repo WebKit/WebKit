@@ -543,7 +543,7 @@ void XMLHttpRequest::dropProtection()
         // report the extra cost at that point.
     
         if (wrapper)
-            KJS::Collector::reportExtraMemoryCost(m_responseText.size() * 2);
+            KJS::Heap::threadHeap()->reportExtraMemoryCost(m_responseText.size() * 2);
     }
 
     deref();

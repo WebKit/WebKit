@@ -95,7 +95,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptObjectsCount(
         return E_POINTER;
 
     JSLock lock;
-    *count = (UINT) Collector::size();
+    *count = (UINT)Heap::threadHeap()->size();
     return S_OK;
 }
 
@@ -106,7 +106,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptGlobalObjectsCount(
         return E_POINTER;
 
     JSLock lock;
-    *count = (UINT) Collector::globalObjectCount();
+    *count = (UINT)Heap::threadHeap()->globalObjectCount();
     return S_OK;
 }
 
@@ -117,7 +117,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptProtectedObjectsCount(
         return E_POINTER;
 
     JSLock lock;
-    *count = (UINT) Collector::protectedObjectCount();
+    *count = (UINT)Heap::threadHeap()->protectedObjectCount();
     return S_OK;
 }
 
@@ -128,7 +128,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptProtectedGlobalObjectsCou
         return E_POINTER;
 
     JSLock lock;
-    *count = (UINT) Collector::protectedGlobalObjectCount();
+    *count = (UINT)Heap::threadHeap()->protectedGlobalObjectCount();
     return S_OK;
 }
 

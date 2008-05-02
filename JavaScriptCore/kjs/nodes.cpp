@@ -360,8 +360,8 @@ void Node::handleException(ExecState* exec, JSValue* exceptionValue)
     if (exceptionValue->isObject()) {
         JSObject* exception = static_cast<JSObject*>(exceptionValue);
         if (!exception->hasProperty(exec, "line") && !exception->hasProperty(exec, "sourceURL")) {
-            exception->put(exec, "line", jsNumber(m_line));
-            exception->put(exec, "sourceURL", jsString(currentSourceURL(exec)));
+            exception->put(exec, "line", jsNumber(exec, m_line));
+            exception->put(exec, "sourceURL", jsString(exec, currentSourceURL(exec)));
         }
     }
     Debugger* dbg = exec->dynamicGlobalObject()->debugger();
@@ -453,10 +453,10 @@ JSValue* TrueNode::evaluate(ExecState*)
 
 // ------------------------------ NumberNode -----------------------------------
 
-JSValue* NumberNode::evaluate(ExecState*)
+JSValue* NumberNode::evaluate(ExecState* exec)
 {
     // Number nodes are only created when the number can't fit in a JSImmediate, so no need to check again.
-    return jsNumberCell(m_double);
+    return jsNumberCell(exec, m_double);
 }
 
 double NumberNode::evaluateToNumber(ExecState*)
@@ -502,9 +502,9 @@ uint32_t ImmediateNumberNode::evaluateToUInt32(ExecState*)
 
 // ------------------------------ StringNode -----------------------------------
 
-JSValue* StringNode::evaluate(ExecState*)
+JSValue* StringNode::evaluate(ExecState* exec)
 {
-    return jsOwnedString(m_value);
+    return jsOwnedString(exec, m_value);
 }
 
 double StringNode::evaluateToNumber(ExecState*)
@@ -819,7 +819,7 @@ JSValue* ArrayNode::evaluate(ExecState* exec)
     }
 
     if (m_optional)
-        array->put(exec, exec->propertyNames().length, jsNumber(m_elision + length));
+        array->put(exec, exec->propertyNames().length, jsNumber(exec, m_elision + length));
 
     return array;
 }
@@ -1566,7 +1566,7 @@ JSValue* PostIncResolveNode::evaluate(ExecState* exec)
             
             JSObject* base = *iter;
             JSValue* v = slot.getValue(exec, base, m_ident)->toJSNumber(exec);
-            base->put(exec, m_ident, jsNumber(v->toNumber(exec) + 1));
+            base->put(exec, m_ident, jsNumber(exec, v->toNumber(exec) + 1));
             return v;
         }
 
@@ -1587,7 +1587,7 @@ JSValue* PostIncLocalVarNode::evaluate(ExecState* exec)
 
     JSValue** slot = &exec->localStorage()[m_index].value;
     JSValue* v = (*slot)->toJSNumber(exec);
-    *slot = jsNumber(v->toNumber(exec) + 1);
+    *slot = jsNumber(exec, v->toNumber(exec) + 1);
     return v;
 }
 
@@ -1627,7 +1627,7 @@ JSValue* PostDecResolveNode::evaluate(ExecState* exec)
 
             JSObject* base = *iter;
             JSValue* v = slot.getValue(exec, base, m_ident)->toJSNumber(exec);
-            base->put(exec, m_ident, jsNumber(v->toNumber(exec) - 1));
+            base->put(exec, m_ident, jsNumber(exec, v->toNumber(exec) - 1));
             return v;
         }
 
@@ -1648,7 +1648,7 @@ JSValue* PostDecLocalVarNode::evaluate(ExecState* exec)
 
     JSValue** slot = &exec->localStorage()[m_index].value;
     JSValue* v = (*slot)->toJSNumber(exec);
-    *slot = jsNumber(v->toNumber(exec) - 1);
+    *slot = jsNumber(exec, v->toNumber(exec) - 1);
     return v;
 }
 
@@ -1658,7 +1658,7 @@ double PostDecLocalVarNode::inlineEvaluateToNumber(ExecState* exec)
 
     JSValue** slot = &exec->localStorage()[m_index].value;
     double n = (*slot)->toNumber(exec);
-    *slot = jsNumber(n - 1);
+    *slot = jsNumber(exec, n - 1);
     return n;
 }
 
@@ -1712,7 +1712,7 @@ JSValue* PostIncBracketNode::evaluate(ExecState* exec)
         KJS_CHECKEXCEPTIONVALUE
 
         JSValue* v2 = v->toJSNumber(exec);
-        base->put(exec, propertyIndex, jsNumber(v2->toNumber(exec) + 1));
+        base->put(exec, propertyIndex, jsNumber(exec, v2->toNumber(exec) + 1));
 
         return v2;
     }
@@ -1723,7 +1723,7 @@ JSValue* PostIncBracketNode::evaluate(ExecState* exec)
     KJS_CHECKEXCEPTIONVALUE
 
     JSValue* v2 = v->toJSNumber(exec);
-    base->put(exec, propertyName, jsNumber(v2->toNumber(exec) + 1));
+    base->put(exec, propertyName, jsNumber(exec, v2->toNumber(exec) + 1));
     return v2;
 }
 
@@ -1743,7 +1743,7 @@ JSValue* PostDecBracketNode::evaluate(ExecState* exec)
         KJS_CHECKEXCEPTIONVALUE
 
         JSValue* v2 = v->toJSNumber(exec);
-        base->put(exec, propertyIndex, jsNumber(v2->toNumber(exec) - 1));
+        base->put(exec, propertyIndex, jsNumber(exec, v2->toNumber(exec) - 1));
         return v2;
     }
 
@@ -1753,7 +1753,7 @@ JSValue* PostDecBracketNode::evaluate(ExecState* exec)
     KJS_CHECKEXCEPTIONVALUE
 
     JSValue* v2 = v->toJSNumber(exec);
-    base->put(exec, propertyName, jsNumber(v2->toNumber(exec) - 1));
+    base->put(exec, propertyName, jsNumber(exec, v2->toNumber(exec) - 1));
     return v2;
 }
 
@@ -1775,7 +1775,7 @@ JSValue* PostIncDotNode::evaluate(ExecState* exec)
     KJS_CHECKEXCEPTIONVALUE
 
     JSValue* v2 = v->toJSNumber(exec);
-    base->put(exec, m_ident, jsNumber(v2->toNumber(exec) + 1));
+    base->put(exec, m_ident, jsNumber(exec, v2->toNumber(exec) + 1));
     return v2;
 }
 
@@ -1790,7 +1790,7 @@ JSValue* PostDecDotNode::evaluate(ExecState* exec)
     KJS_CHECKEXCEPTIONVALUE
 
     JSValue* v2 = v->toJSNumber(exec);
-    base->put(exec, m_ident, jsNumber(v2->toNumber(exec) - 1));
+    base->put(exec, m_ident, jsNumber(exec, v2->toNumber(exec) - 1));
     return v2;
 }
 
@@ -1927,31 +1927,31 @@ void TypeOfValueNode::optimizeVariableAccess(ExecState*, const SymbolTable&, con
     nodeStack.append(m_expr.get());
 }
 
-static JSValue* typeStringForValue(JSValue* v) KJS_FAST_CALL;
-static JSValue* typeStringForValue(JSValue* v)
+static JSValue* typeStringForValue(ExecState*, JSValue*) KJS_FAST_CALL;
+static JSValue* typeStringForValue(ExecState* exec, JSValue* v)
 {
     switch (v->type()) {
         case UndefinedType:
-            return jsString("undefined");
+            return jsString(exec, "undefined");
         case NullType:
-            return jsString("object");
+            return jsString(exec, "object");
         case BooleanType:
-            return jsString("boolean");
+            return jsString(exec, "boolean");
         case NumberType:
-            return jsString("number");
+            return jsString(exec, "number");
         case StringType:
-            return jsString("string");
+            return jsString(exec, "string");
         default:
             if (v->isObject()) {
                 // Return "undefined" for objects that should be treated
                 // as null when doing comparisons.
                 if (static_cast<JSObject*>(v)->masqueradeAsUndefined())
-                    return jsString("undefined");
+                    return jsString(exec, "undefined");
                 else if (static_cast<JSObject*>(v)->implementsCall())
-                    return jsString("function");
+                    return jsString(exec, "function");
             }
 
-            return jsString("object");
+            return jsString(exec, "object");
     }
 }
 
@@ -1966,7 +1966,7 @@ JSValue* LocalVarTypeOfNode::evaluate(ExecState* exec)
 {
     ASSERT(exec->variableObject() == exec->scopeChain().top());
 
-    return typeStringForValue(exec->localStorage()[m_index].value);
+    return typeStringForValue(exec, exec->localStorage()[m_index].value);
 }
 
 JSValue* TypeOfResolveNode::evaluate(ExecState* exec)
@@ -1984,13 +1984,13 @@ JSValue* TypeOfResolveNode::evaluate(ExecState* exec)
         base = *iter;
         if (base->getPropertySlot(exec, m_ident, slot)) {
             JSValue* v = slot.getValue(exec, base, m_ident);
-            return typeStringForValue(v);
+            return typeStringForValue(exec, v);
         }
 
         ++iter;
     } while (iter != end);
 
-    return jsString("undefined");
+    return jsString(exec, "undefined");
 }
 
 // ------------------------------ TypeOfValueNode -----------------------------------
@@ -2000,7 +2000,7 @@ JSValue* TypeOfValueNode::evaluate(ExecState* exec)
     JSValue* v = m_expr->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
 
-    return typeStringForValue(v);
+    return typeStringForValue(exec, v);
 }
 
 // ECMA 11.4.4 and 11.4.5
@@ -2024,7 +2024,7 @@ JSValue* PreIncLocalVarNode::evaluate(ExecState* exec)
     JSValue** slot = &exec->localStorage()[m_index].value;
 
     double n = (*slot)->toNumber(exec);
-    JSValue* n2 = jsNumber(n + 1);
+    JSValue* n2 = jsNumber(exec, n + 1);
     *slot = n2;
     return n2;
 }
@@ -2047,7 +2047,7 @@ JSValue* PreIncResolveNode::evaluate(ExecState* exec)
             JSValue* v = slot.getValue(exec, base, m_ident);
 
             double n = v->toNumber(exec);
-            JSValue* n2 = jsNumber(n + 1);
+            JSValue* n2 = jsNumber(exec, n + 1);
             base->put(exec, m_ident, n2);
 
             return n2;
@@ -2076,7 +2076,7 @@ JSValue* PreDecLocalVarNode::evaluate(ExecState* exec)
     JSValue** slot = &exec->localStorage()[m_index].value;
 
     double n = (*slot)->toNumber(exec);
-    JSValue* n2 = jsNumber(n - 1);
+    JSValue* n2 = jsNumber(exec, n - 1);
     *slot = n2;
     return n2;
 }
@@ -2099,7 +2099,7 @@ JSValue* PreDecResolveNode::evaluate(ExecState* exec)
             JSValue* v = slot.getValue(exec, base, m_ident);
 
             double n = v->toNumber(exec);
-            JSValue* n2 = jsNumber(n - 1);
+            JSValue* n2 = jsNumber(exec, n - 1);
             base->put(exec, m_ident, n2);
 
             return n2;
@@ -2116,7 +2116,7 @@ JSValue* PreDecResolveNode::evaluate(ExecState* exec)
 JSValue* PreIncConstNode::evaluate(ExecState* exec)
 {
     ASSERT(exec->variableObject() == exec->scopeChain().top());
-    return jsNumber(exec->localStorage()[m_index].value->toNumber(exec) + 1);
+    return jsNumber(exec, exec->localStorage()[m_index].value->toNumber(exec) + 1);
 }
 
 // ------------------------------ PreDecConstNode ----------------------------------
@@ -2124,7 +2124,7 @@ JSValue* PreIncConstNode::evaluate(ExecState* exec)
 JSValue* PreDecConstNode::evaluate(ExecState* exec)
 {
     ASSERT(exec->variableObject() == exec->scopeChain().top());
-    return jsNumber(exec->localStorage()[m_index].value->toNumber(exec) - 1);
+    return jsNumber(exec, exec->localStorage()[m_index].value->toNumber(exec) - 1);
 }
 
 // ------------------------------ PostIncConstNode ----------------------------------
@@ -2132,7 +2132,7 @@ JSValue* PreDecConstNode::evaluate(ExecState* exec)
 JSValue* PostIncConstNode::evaluate(ExecState* exec)
 {
     ASSERT(exec->variableObject() == exec->scopeChain().top());
-    return jsNumber(exec->localStorage()[m_index].value->toNumber(exec));
+    return jsNumber(exec, exec->localStorage()[m_index].value->toNumber(exec));
 }
 
 // ------------------------------ PostDecConstNode ----------------------------------
@@ -2140,7 +2140,7 @@ JSValue* PostIncConstNode::evaluate(ExecState* exec)
 JSValue* PostDecConstNode::evaluate(ExecState* exec)
 {
     ASSERT(exec->variableObject() == exec->scopeChain().top());
-    return jsNumber(exec->localStorage()[m_index].value->toNumber(exec));
+    return jsNumber(exec, exec->localStorage()[m_index].value->toNumber(exec));
 }
 
 // ------------------------------ PrefixBracketNode ----------------------------------
@@ -2166,7 +2166,7 @@ JSValue* PreIncBracketNode::evaluate(ExecState* exec)
         JSValue* v = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, base, propertyIndex) : jsUndefined();
         KJS_CHECKEXCEPTIONVALUE
 
-        JSValue* n2 = jsNumber(v->toNumber(exec) + 1);
+        JSValue* n2 = jsNumber(exec, v->toNumber(exec) + 1);
         base->put(exec, propertyIndex, n2);
 
         return n2;
@@ -2177,7 +2177,7 @@ JSValue* PreIncBracketNode::evaluate(ExecState* exec)
     JSValue* v = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, base, propertyName) : jsUndefined();
     KJS_CHECKEXCEPTIONVALUE
 
-    JSValue* n2 = jsNumber(v->toNumber(exec) + 1);
+    JSValue* n2 = jsNumber(exec, v->toNumber(exec) + 1);
     base->put(exec, propertyName, n2);
 
     return n2;
@@ -2198,7 +2198,7 @@ JSValue* PreDecBracketNode::evaluate(ExecState* exec)
         JSValue* v = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, base, propertyIndex) : jsUndefined();
         KJS_CHECKEXCEPTIONVALUE
 
-        JSValue* n2 = jsNumber(v->toNumber(exec) - 1);
+        JSValue* n2 = jsNumber(exec, v->toNumber(exec) - 1);
         base->put(exec, propertyIndex, n2);
 
         return n2;
@@ -2209,7 +2209,7 @@ JSValue* PreDecBracketNode::evaluate(ExecState* exec)
     JSValue* v = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, base, propertyName) : jsUndefined();
     KJS_CHECKEXCEPTIONVALUE
 
-    JSValue* n2 = jsNumber(v->toNumber(exec) - 1);
+    JSValue* n2 = jsNumber(exec, v->toNumber(exec) - 1);
     base->put(exec, propertyName, n2);
 
     return n2;
@@ -2233,7 +2233,7 @@ JSValue* PreIncDotNode::evaluate(ExecState* exec)
     KJS_CHECKEXCEPTIONVALUE
 
     double n = v->toNumber(exec);
-    JSValue* n2 = jsNumber(n + 1);
+    JSValue* n2 = jsNumber(exec, n + 1);
     base->put(exec, m_ident, n2);
 
     return n2;
@@ -2250,7 +2250,7 @@ JSValue* PreDecDotNode::evaluate(ExecState* exec)
     KJS_CHECKEXCEPTIONVALUE
 
     double n = v->toNumber(exec);
-    JSValue* n2 = jsNumber(n - 1);
+    JSValue* n2 = jsNumber(exec, n - 1);
     base->put(exec, m_ident, n2);
 
     return n2;
@@ -2312,7 +2312,7 @@ void NegateNode::optimizeVariableAccess(ExecState*, const SymbolTable&, const Lo
 JSValue* NegateNode::evaluate(ExecState* exec)
 {
     // No need to check exception, caller will do so right after evaluate()
-    return jsNumber(-m_expr->evaluateToNumber(exec));
+    return jsNumber(exec, -m_expr->evaluateToNumber(exec));
 }
 
 double NegateNode::evaluateToNumber(ExecState* exec)
@@ -2336,7 +2336,7 @@ int32_t BitwiseNotNode::inlineEvaluateToInt32(ExecState* exec)
 
 JSValue* BitwiseNotNode::evaluate(ExecState* exec)
 {
-    return jsNumber(inlineEvaluateToInt32(exec));
+    return jsNumber(exec, inlineEvaluateToInt32(exec));
 }
 
 double BitwiseNotNode::evaluateToNumber(ExecState* exec)
@@ -2396,7 +2396,7 @@ double MultNode::inlineEvaluateToNumber(ExecState* exec)
 
 JSValue* MultNode::evaluate(ExecState* exec)
 {
-    return jsNumber(inlineEvaluateToNumber(exec));
+    return jsNumber(exec, inlineEvaluateToNumber(exec));
 }
 
 double MultNode::evaluateToNumber(ExecState* exec)
@@ -2437,7 +2437,7 @@ double DivNode::inlineEvaluateToNumber(ExecState* exec)
 
 JSValue* DivNode::evaluate(ExecState* exec)
 {
-    return jsNumber(inlineEvaluateToNumber(exec));
+    return jsNumber(exec, inlineEvaluateToNumber(exec));
 }
 
 double DivNode::evaluateToNumber(ExecState* exec)
@@ -2472,7 +2472,7 @@ double ModNode::inlineEvaluateToNumber(ExecState* exec)
 
 JSValue* ModNode::evaluate(ExecState* exec)
 {
-    return jsNumber(inlineEvaluateToNumber(exec));
+    return jsNumber(exec, inlineEvaluateToNumber(exec));
 }
 
 double ModNode::evaluateToNumber(ExecState* exec)
@@ -2523,10 +2523,10 @@ static JSValue* addSlowCase(ExecState* exec, JSValue* v1, JSValue* v2)
         UString value = p1->toString(exec) + p2->toString(exec);
         if (value.isNull())
             return throwOutOfMemoryError(exec);
-        return jsString(value);
+        return jsString(exec, value);
     }
 
-    return jsNumber(p1->toNumber(exec) + p2->toNumber(exec));
+    return jsNumber(exec, p1->toNumber(exec) + p2->toNumber(exec));
 }
 
 static double addSlowCaseToNumber(ExecState* exec, JSValue* v1, JSValue* v2)
@@ -2562,12 +2562,12 @@ static inline JSValue* add(ExecState* exec, JSValue* v1, JSValue* v2)
     const unsigned bothTypes = (t1 << 3) | t2;
 
     if (bothTypes == ((NumberType << 3) | NumberType))
-        return jsNumber(v1->toNumber(exec) + v2->toNumber(exec));
+        return jsNumber(exec, v1->toNumber(exec) + v2->toNumber(exec));
     if (bothTypes == ((StringType << 3) | StringType)) {
         UString value = static_cast<StringImp*>(v1)->value() + static_cast<StringImp*>(v2)->value();
         if (value.isNull())
             return throwOutOfMemoryError(exec);
-        return jsString(value);
+        return jsString(exec, value);
     }
 
     // All other cases are pretty uncommon
@@ -2647,7 +2647,7 @@ double AddNumbersNode::inlineEvaluateToNumber(ExecState* exec)
 
 JSValue* AddNumbersNode::evaluate(ExecState* exec)
 {
-    return jsNumber(inlineEvaluateToNumber(exec));
+    return jsNumber(exec, inlineEvaluateToNumber(exec));
 }
 
 double AddNumbersNode::evaluateToNumber(ExecState* exec)
@@ -2673,7 +2673,7 @@ JSValue* AddStringsNode::evaluate(ExecState* exec)
     JSValue* v2 = m_term2->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
 
-    return jsString(static_cast<StringImp*>(v1)->value() + static_cast<StringImp*>(v2)->value());
+    return jsString(exec, static_cast<StringImp*>(v1)->value() + static_cast<StringImp*>(v2)->value());
 }
 
 JSValue* AddStringLeftNode::evaluate(ExecState* exec)
@@ -2685,7 +2685,7 @@ JSValue* AddStringLeftNode::evaluate(ExecState* exec)
     KJS_CHECKEXCEPTIONVALUE
 
     JSValue* p2 = v2->toPrimitive(exec, UnspecifiedType);
-    return jsString(static_cast<StringImp*>(v1)->value() + p2->toString(exec));
+    return jsString(exec, static_cast<StringImp*>(v1)->value() + p2->toString(exec));
 }
 
 JSValue* AddStringRightNode::evaluate(ExecState* exec)
@@ -2697,7 +2697,7 @@ JSValue* AddStringRightNode::evaluate(ExecState* exec)
     KJS_CHECKEXCEPTIONVALUE
 
     JSValue* p1 = v1->toPrimitive(exec, UnspecifiedType);
-    return jsString(p1->toString(exec) + static_cast<StringImp*>(v2)->value());
+    return jsString(exec, p1->toString(exec) + static_cast<StringImp*>(v2)->value());
 }
 
 void SubNode::optimizeVariableAccess(ExecState*, const SymbolTable&, const LocalStorage&, NodeStack& nodeStack)
@@ -2717,7 +2717,7 @@ double SubNode::inlineEvaluateToNumber(ExecState* exec)
 
 JSValue* SubNode::evaluate(ExecState* exec)
 {
-    return jsNumber(inlineEvaluateToNumber(exec));
+    return jsNumber(exec, inlineEvaluateToNumber(exec));
 }
 
 double SubNode::evaluateToNumber(ExecState* exec)
@@ -2754,7 +2754,7 @@ int32_t LeftShiftNode::inlineEvaluateToInt32(ExecState* exec)
 
 JSValue* LeftShiftNode::evaluate(ExecState* exec)
 {
-    return jsNumber(inlineEvaluateToInt32(exec));
+    return jsNumber(exec, inlineEvaluateToInt32(exec));
 }
 
 double LeftShiftNode::evaluateToNumber(ExecState* exec)
@@ -2789,7 +2789,7 @@ int32_t RightShiftNode::inlineEvaluateToInt32(ExecState* exec)
 
 JSValue* RightShiftNode::evaluate(ExecState* exec)
 {
-    return jsNumber(inlineEvaluateToInt32(exec));
+    return jsNumber(exec, inlineEvaluateToInt32(exec));
 }
 
 double RightShiftNode::evaluateToNumber(ExecState* exec)
@@ -2824,7 +2824,7 @@ uint32_t UnsignedRightShiftNode::inlineEvaluateToUInt32(ExecState* exec)
 
 JSValue* UnsignedRightShiftNode::evaluate(ExecState* exec)
 {
-    return jsNumber(inlineEvaluateToUInt32(exec));
+    return jsNumber(exec, inlineEvaluateToUInt32(exec));
 }
 
 double UnsignedRightShiftNode::evaluateToNumber(ExecState* exec)
@@ -3275,7 +3275,7 @@ int32_t BitXOrNode::inlineEvaluateToInt32(ExecState* exec)
 
 JSValue* BitXOrNode::evaluate(ExecState* exec)
 {
-    return jsNumber(inlineEvaluateToInt32(exec));
+    return jsNumber(exec, inlineEvaluateToInt32(exec));
 }
 
 double BitXOrNode::evaluateToNumber(ExecState* exec)
@@ -3314,7 +3314,7 @@ int32_t BitOrNode::inlineEvaluateToInt32(ExecState* exec)
 
 JSValue* BitOrNode::evaluate(ExecState* exec)
 {
-    return jsNumber(inlineEvaluateToInt32(exec));
+    return jsNumber(exec, inlineEvaluateToInt32(exec));
 }
 
 double BitOrNode::evaluateToNumber(ExecState* exec)
@@ -3444,51 +3444,51 @@ static ALWAYS_INLINE JSValue* valueForReadModifyAssignment(ExecState* exec, JSVa
     unsigned int ui;
     switch (oper) {
         case OpMultEq:
-            v = jsNumber(current->toNumber(exec) * right->evaluateToNumber(exec));
+            v = jsNumber(exec, current->toNumber(exec) * right->evaluateToNumber(exec));
             break;
         case OpDivEq:
-            v = jsNumber(current->toNumber(exec) / right->evaluateToNumber(exec));
+            v = jsNumber(exec, current->toNumber(exec) / right->evaluateToNumber(exec));
             break;
         case OpPlusEq:
             v = add(exec, current, right->evaluate(exec));
             break;
         case OpMinusEq:
-            v = jsNumber(current->toNumber(exec) - right->evaluateToNumber(exec));
+            v = jsNumber(exec, current->toNumber(exec) - right->evaluateToNumber(exec));
             break;
         case OpLShift:
             i1 = current->toInt32(exec);
             i2 = right->evaluateToInt32(exec);
-            v = jsNumber(i1 << i2);
+            v = jsNumber(exec, i1 << i2);
             break;
         case OpRShift:
             i1 = current->toInt32(exec);
             i2 = right->evaluateToInt32(exec);
-            v = jsNumber(i1 >> i2);
+            v = jsNumber(exec, i1 >> i2);
             break;
         case OpURShift:
             ui = current->toUInt32(exec);
             i2 = right->evaluateToInt32(exec);
-            v = jsNumber(ui >> i2);
+            v = jsNumber(exec, ui >> i2);
             break;
         case OpAndEq:
             i1 = current->toInt32(exec);
             i2 = right->evaluateToInt32(exec);
-            v = jsNumber(i1 & i2);
+            v = jsNumber(exec, i1 & i2);
             break;
         case OpXOrEq:
             i1 = current->toInt32(exec);
             i2 = right->evaluateToInt32(exec);
-            v = jsNumber(i1 ^ i2);
+            v = jsNumber(exec, i1 ^ i2);
             break;
         case OpOrEq:
             i1 = current->toInt32(exec);
             i2 = right->evaluateToInt32(exec);
-            v = jsNumber(i1 | i2);
+            v = jsNumber(exec, i1 | i2);
             break;
         case OpModEq: {
             double d1 = current->toNumber(exec);
             double d2 = right->evaluateToNumber(exec);
-            v = jsNumber(fmod(d1, d2));
+            v = jsNumber(exec, fmod(d1, d2));
         }
             break;
         default:
@@ -4240,7 +4240,7 @@ JSValue* ForInNode::execute(ExecState* exec)
         if (!v->hasProperty(exec, name))
             continue;
 
-        JSValue* str = jsOwnedString(name.ustring());
+        JSValue* str = jsOwnedString(exec, name.ustring());
 
         if (m_lexpr->isResolveNode()) {
             const Identifier& ident = static_cast<ResolveNode*>(m_lexpr.get())->identifier();
@@ -4566,7 +4566,7 @@ JSValue* TryNode::execute(ExecState* exec)
     JSValue* result = m_tryBlock->execute(exec);
 
     if (m_catchBlock && exec->completionType() == Throw) {
-        JSObject* obj = new JSObject;
+        JSObject* obj = new (exec) JSObject;
         obj->putDirect(m_exceptionIdent, result, DontDelete);
         exec->dynamicGlobalObject()->tearOffActivation(exec);
         exec->pushScope(obj);
@@ -4926,12 +4926,12 @@ void FuncDeclNode::addParams()
 
 FunctionImp* FuncDeclNode::makeFunction(ExecState* exec)
 {
-    FunctionImp* func = new FunctionImp(exec, m_ident, m_body.get(), exec->scopeChain());
+    FunctionImp* func = new (exec) FunctionImp(exec, m_ident, m_body.get(), exec->scopeChain());
 
     JSObject* proto = exec->lexicalGlobalObject()->objectConstructor()->construct(exec, exec->emptyList());
     proto->putDirect(exec->propertyNames().constructor, func, DontEnum);
     func->putDirect(exec->propertyNames().prototype, proto, DontDelete);
-    func->putDirect(exec->propertyNames().length, jsNumber(m_body->parameters().size()), ReadOnly | DontDelete | DontEnum);
+    func->putDirect(exec->propertyNames().length, jsNumber(exec, m_body->parameters().size()), ReadOnly | DontDelete | DontEnum);
     return func;
 }
 
@@ -4960,11 +4960,11 @@ JSValue* FuncExprNode::evaluate(ExecState* exec)
         // named FunctionExpressions can recursively call themselves,
         // but they won't register with the current scope chain and should
         // be contained as single property in an anonymous object.
-        functionScopeObject = new JSObject;
+        functionScopeObject = new (exec) JSObject;
         exec->pushScope(functionScopeObject);
     }
 
-    FunctionImp* func = new FunctionImp(exec, m_ident, m_body.get(), exec->scopeChain());
+    FunctionImp* func = new (exec) FunctionImp(exec, m_ident, m_body.get(), exec->scopeChain());
     JSObject* proto = exec->lexicalGlobalObject()->objectConstructor()->construct(exec, exec->emptyList());
     proto->putDirect(exec->propertyNames().constructor, func, DontEnum);
     func->putDirect(exec->propertyNames().prototype, proto, DontDelete);

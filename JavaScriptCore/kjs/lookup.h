@@ -92,7 +92,7 @@ namespace KJS {
         return cachedVal;
 
       const HashEntry* entry = slot.staticEntry();
-      JSValue* val = new PrototypeFunction(exec, entry->length, propertyName, entry->functionValue);
+      JSValue* val = new (exec) PrototypeFunction(exec, entry->length, propertyName, entry->functionValue);
       thisObj->putDirect(propertyName, val, entry->attributes);
       return val;
   }
@@ -232,7 +232,7 @@ namespace KJS {
       ASSERT(obj->isObject());
       return static_cast<JSObject* >(obj);
     }
-    JSObject* newObject = new ClassCtor(exec);
+    JSObject* newObject = new (exec) ClassCtor(exec);
     globalObject->putDirect(propertyName, newObject, DontEnum);
     return newObject;
   }

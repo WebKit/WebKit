@@ -166,8 +166,8 @@ namespace KJS {
         virtual void put(ExecState*, const Identifier&, JSValue*);
         virtual void putWithAttributes(ExecState*, const Identifier& propertyName, JSValue* value, unsigned attributes);
 
-        // Linked list of all global objects.
-        static JSGlobalObject* head() { return s_head; }
+        // Per-thread linked list of all global objects.
+        static JSGlobalObject*& head();
         JSGlobalObject* next() { return d()->next; }
 
         // Resets the global object to contain only built-in properties, sets
@@ -255,6 +255,8 @@ namespace KJS {
         // Initialize and/or retrieve per-thread hash tables - use perThreadData() for faster access instead.
         static ThreadClassInfoHashTables* threadClassInfoHashTables();
 
+        void* operator new(size_t);
+
     private:
         void init(JSObject* thisValue);
         
@@ -265,8 +267,6 @@ namespace KJS {
 
         void deleteActivationStack();
         void checkActivationCount();
-
-        static JSGlobalObject* s_head;
     };
 
     inline bool JSGlobalObject::timedOut()

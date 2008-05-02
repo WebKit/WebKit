@@ -1,3 +1,364 @@
+2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18826
+        Make JavaScript heap per-thread
+
+        * wtf/ThreadSpecific.h: Make sure to initialize POD thread-specific varaibles, too
+        (replaced "new T" with "new T()").
+
+        * kjs/collector.h: Renamed Collector to Heap, made the heap per-thread. Removed support for
+        multithreaded access to a heap.
+        (KJS::CollectorBlock): Removed collectOnMainThreadOnly bitmap, added a reference to owner heap.
+        (KJS::SmallCellCollectorBlock): Ditto.
+        (KJS::Heap::markListSet): Moved from a static variable in List.cpp to a per-thread one here.
+        (KJS::Heap::heap): Added a method to find which heap a JSValue is allocated in.
+
+        * kjs/collector.cpp: Changed "const size_t" constants to #defines, to avoid a PIC branch
+        (gcc was using one to access a constant used in std::max(), because it takes a reference,
+        even though std::max() itself was inlined).
+        (KJS::Heap::threadHeap): JS heap is now per-thread.
+        (KJS::Heap::Heap): Zero-initialize the heap.
+        (KJS::allocateBlock): Added NEVER_INLINE, because this function uses a PIC branch, so
+        inlining it in Heap::heapAllocate() is bad for performance, now that the latter doesn't
+        use any global data.
+        (KJS::Heap::heapAllocate): Initialize Block::heap.
+        (KJS::Heap::markCurrentThreadConservatively): Moved into markStackObjectsConservatively(),
+        as GC only works with a current thread's heap now.
+        (KJS::Heap::sweep): Removed collectOnMainThreadOnly checks.
+        (KJS::Heap::collect): Ditto.
+
+        * kjs/JSLock.cpp:
+        * kjs/JSLock.h:
+        (KJS::JSLock::JSLock):
+        Removed registerThread(), as the heap no longer cares.
+
+        * kjs/InitializeThreading.cpp: (KJS::initializeThreading): Initialize new per-thread
+        variables in Heap and JSGlobalObject.
+
+        * kjs/ExecState.h: (KJS::ExecState::heap): Added a heap pointer for faster access to
+        per-thread heap, and an accessor for it.
+
+        * kjs/JSGlobalObject.h: Made JSGlobalObject linked list per-thread.
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::~JSGlobalObject): Fixed a bug in linked list handling. It only worked
+        right if the removed object was the head one!
+        (KJS::JSGlobalObject::head): Return a per-thread list head.
+        (KJS::JSGlobalObject::init): Store a reference to per-thread heap.
+        (KJS::JSGlobalObject::reset): Pass ExecState to functions that need it.
+        (KJS::JSGlobalObject::tearOffActivation): Ditto.
+        (KJS::JSGlobalObject::operator new): JSGlobalObject allocation cannot use an ExecState,
+        so it needs a custom operator new that directly accesses per-thread heap.
+
+        * kjs/list.h:
+        (KJS::List::List): Replaced m_isInMarkSet boolean with an actual pointer to the set, since it
+        is no longer a single static object.
+        (KJS::List::~List): Ditto.
+        * kjs/list.cpp:
+        (KJS::List::markSet): Removed, this is now stored in Heap.
+        (KJS::List::markProtectedLists): Take a reference to the list.
+        (KJS::List::expandAndAppend): Ask the current thread heap for a mark set reference.
+
+        * kjs/protect.h:
+        (KJS::gcProtect):
+        (KJS::gcUnprotect):
+        Use the newly added Heap::heap() method to find out which heap the value to be (un)protected
+        belongs to.
+
+        * kjs/property_map.h: Removed unused SavedProperty class.
+
+        * JavaScriptCore.exp:
+        * API/JSBase.cpp:
+        (JSGarbageCollect):
+        * API/JSCallbackObjectFunctions.h:
+        (KJS::::staticFunctionGetter):
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype):
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSObjectMakeFunctionWithCallback):
+        (JSObjectMakeConstructor):
+        (JSObjectMakeFunction):
+        * API/JSValueRef.cpp:
+        (JSValueMakeNumber):
+        (JSValueMakeString):
+        * kjs/array_instance.cpp:
+        (KJS::ArrayInstance::ArrayInstance):
+        (KJS::ArrayInstance::lengthGetter):
+        * kjs/array_object.cpp:
+        (KJS::arrayProtoFuncToString):
+        (KJS::arrayProtoFuncToLocaleString):
+        (KJS::arrayProtoFuncJoin):
+        (KJS::arrayProtoFuncConcat):
+        (KJS::arrayProtoFuncPop):
+        (KJS::arrayProtoFuncPush):
+        (KJS::arrayProtoFuncShift):
+        (KJS::arrayProtoFuncSlice):
+        (KJS::arrayProtoFuncSplice):
+        (KJS::arrayProtoFuncUnShift):
+        (KJS::arrayProtoFuncFilter):
+        (KJS::arrayProtoFuncMap):
+        (KJS::arrayProtoFuncEvery):
+        (KJS::arrayProtoFuncForEach):
+        (KJS::arrayProtoFuncSome):
+        (KJS::arrayProtoFuncIndexOf):
+        (KJS::arrayProtoFuncLastIndexOf):
+        (KJS::ArrayObjectImp::ArrayObjectImp):
+        (KJS::ArrayObjectImp::construct):
+        * kjs/bool_object.cpp:
+        (KJS::BooleanPrototype::BooleanPrototype):
+        (KJS::booleanProtoFuncToString):
+        (KJS::BooleanObjectImp::BooleanObjectImp):
+        (KJS::BooleanObjectImp::construct):
+        * kjs/date_object.cpp:
+        (KJS::formatLocaleDate):
+        (KJS::DatePrototype::DatePrototype):
+        (KJS::DateObjectImp::DateObjectImp):
+        (KJS::DateObjectImp::construct):
+        (KJS::DateObjectImp::callAsFunction):
+        (KJS::DateObjectFuncImp::DateObjectFuncImp):
+        (KJS::DateObjectFuncImp::callAsFunction):
+        (KJS::dateProtoFuncToString):
+        (KJS::dateProtoFuncToUTCString):
+        (KJS::dateProtoFuncToDateString):
+        (KJS::dateProtoFuncToTimeString):
+        (KJS::dateProtoFuncToLocaleString):
+        (KJS::dateProtoFuncToLocaleDateString):
+        (KJS::dateProtoFuncToLocaleTimeString):
+        (KJS::dateProtoFuncValueOf):
+        (KJS::dateProtoFuncGetTime):
+        (KJS::dateProtoFuncGetFullYear):
+        (KJS::dateProtoFuncGetUTCFullYear):
+        (KJS::dateProtoFuncToGMTString):
+        (KJS::dateProtoFuncGetMonth):
+        (KJS::dateProtoFuncGetUTCMonth):
+        (KJS::dateProtoFuncGetDate):
+        (KJS::dateProtoFuncGetUTCDate):
+        (KJS::dateProtoFuncGetDay):
+        (KJS::dateProtoFuncGetUTCDay):
+        (KJS::dateProtoFuncGetHours):
+        (KJS::dateProtoFuncGetUTCHours):
+        (KJS::dateProtoFuncGetMinutes):
+        (KJS::dateProtoFuncGetUTCMinutes):
+        (KJS::dateProtoFuncGetSeconds):
+        (KJS::dateProtoFuncGetUTCSeconds):
+        (KJS::dateProtoFuncGetMilliSeconds):
+        (KJS::dateProtoFuncGetUTCMilliseconds):
+        (KJS::dateProtoFuncGetTimezoneOffset):
+        (KJS::dateProtoFuncSetTime):
+        (KJS::setNewValueFromTimeArgs):
+        (KJS::setNewValueFromDateArgs):
+        (KJS::dateProtoFuncSetYear):
+        (KJS::dateProtoFuncGetYear):
+        * kjs/error_object.cpp:
+        (KJS::ErrorPrototype::ErrorPrototype):
+        (KJS::errorProtoFuncToString):
+        (KJS::ErrorObjectImp::ErrorObjectImp):
+        (KJS::ErrorObjectImp::construct):
+        (KJS::NativeErrorPrototype::NativeErrorPrototype):
+        (KJS::NativeErrorImp::NativeErrorImp):
+        (KJS::NativeErrorImp::construct):
+        * kjs/function.cpp:
+        (KJS::FunctionImp::lengthGetter):
+        (KJS::FunctionImp::construct):
+        (KJS::Arguments::Arguments):
+        (KJS::ActivationImp::createArgumentsObject):
+        (KJS::encode):
+        (KJS::decode):
+        (KJS::globalFuncParseInt):
+        (KJS::globalFuncParseFloat):
+        (KJS::globalFuncEscape):
+        (KJS::globalFuncUnescape):
+        (KJS::PrototypeFunction::PrototypeFunction):
+        (KJS::PrototypeReflexiveFunction::PrototypeReflexiveFunction):
+        * kjs/function_object.cpp:
+        (KJS::FunctionPrototype::FunctionPrototype):
+        (KJS::functionProtoFuncToString):
+        (KJS::FunctionObjectImp::FunctionObjectImp):
+        (KJS::FunctionObjectImp::construct):
+        * kjs/internal.cpp:
+        (KJS::StringImp::toObject):
+        * kjs/internal.h:
+        (KJS::StringImp::StringImp):
+        (KJS::NumberImp::operator new):
+        * kjs/lookup.h:
+        (KJS::staticFunctionGetter):
+        (KJS::cacheGlobalObject):
+        * kjs/math_object.cpp:
+        (KJS::MathObjectImp::getValueProperty):
+        (KJS::mathProtoFuncAbs):
+        (KJS::mathProtoFuncACos):
+        (KJS::mathProtoFuncASin):
+        (KJS::mathProtoFuncATan):
+        (KJS::mathProtoFuncATan2):
+        (KJS::mathProtoFuncCeil):
+        (KJS::mathProtoFuncCos):
+        (KJS::mathProtoFuncExp):
+        (KJS::mathProtoFuncFloor):
+        (KJS::mathProtoFuncLog):
+        (KJS::mathProtoFuncMax):
+        (KJS::mathProtoFuncMin):
+        (KJS::mathProtoFuncPow):
+        (KJS::mathProtoFuncRandom):
+        (KJS::mathProtoFuncRound):
+        (KJS::mathProtoFuncSin):
+        (KJS::mathProtoFuncSqrt):
+        (KJS::mathProtoFuncTan):
+        * kjs/nodes.cpp:
+        (KJS::Node::handleException):
+        (KJS::NumberNode::evaluate):
+        (KJS::StringNode::evaluate):
+        (KJS::ArrayNode::evaluate):
+        (KJS::PostIncResolveNode::evaluate):
+        (KJS::PostIncLocalVarNode::evaluate):
+        (KJS::PostDecResolveNode::evaluate):
+        (KJS::PostDecLocalVarNode::evaluate):
+        (KJS::PostDecLocalVarNode::inlineEvaluateToNumber):
+        (KJS::PostIncBracketNode::evaluate):
+        (KJS::PostDecBracketNode::evaluate):
+        (KJS::PostIncDotNode::evaluate):
+        (KJS::PostDecDotNode::evaluate):
+        (KJS::typeStringForValue):
+        (KJS::LocalVarTypeOfNode::evaluate):
+        (KJS::TypeOfResolveNode::evaluate):
+        (KJS::TypeOfValueNode::evaluate):
+        (KJS::PreIncLocalVarNode::evaluate):
+        (KJS::PreIncResolveNode::evaluate):
+        (KJS::PreDecLocalVarNode::evaluate):
+        (KJS::PreDecResolveNode::evaluate):
+        (KJS::PreIncConstNode::evaluate):
+        (KJS::PreDecConstNode::evaluate):
+        (KJS::PostIncConstNode::evaluate):
+        (KJS::PostDecConstNode::evaluate):
+        (KJS::PreIncBracketNode::evaluate):
+        (KJS::PreDecBracketNode::evaluate):
+        (KJS::PreIncDotNode::evaluate):
+        (KJS::PreDecDotNode::evaluate):
+        (KJS::NegateNode::evaluate):
+        (KJS::BitwiseNotNode::evaluate):
+        (KJS::MultNode::evaluate):
+        (KJS::DivNode::evaluate):
+        (KJS::ModNode::evaluate):
+        (KJS::addSlowCase):
+        (KJS::add):
+        (KJS::AddNumbersNode::evaluate):
+        (KJS::AddStringsNode::evaluate):
+        (KJS::AddStringLeftNode::evaluate):
+        (KJS::AddStringRightNode::evaluate):
+        (KJS::SubNode::evaluate):
+        (KJS::LeftShiftNode::evaluate):
+        (KJS::RightShiftNode::evaluate):
+        (KJS::UnsignedRightShiftNode::evaluate):
+        (KJS::BitXOrNode::evaluate):
+        (KJS::BitOrNode::evaluate):
+        (KJS::valueForReadModifyAssignment):
+        (KJS::ForInNode::execute):
+        (KJS::TryNode::execute):
+        (KJS::FuncDeclNode::makeFunction):
+        (KJS::FuncExprNode::evaluate):
+        * kjs/number_object.cpp:
+        (KJS::NumberPrototype::NumberPrototype):
+        (KJS::numberProtoFuncToString):
+        (KJS::numberProtoFuncToLocaleString):
+        (KJS::numberProtoFuncToFixed):
+        (KJS::numberProtoFuncToExponential):
+        (KJS::numberProtoFuncToPrecision):
+        (KJS::NumberObjectImp::NumberObjectImp):
+        (KJS::NumberObjectImp::getValueProperty):
+        (KJS::NumberObjectImp::construct):
+        (KJS::NumberObjectImp::callAsFunction):
+        * kjs/object.cpp:
+        (KJS::JSObject::defineGetter):
+        (KJS::JSObject::defineSetter):
+        (KJS::JSObject::putDirect):
+        (KJS::Error::create):
+        * kjs/object.h:
+        * kjs/object_object.cpp:
+        (KJS::ObjectPrototype::ObjectPrototype):
+        (KJS::objectProtoFuncToLocaleString):
+        (KJS::objectProtoFuncToString):
+        (KJS::ObjectObjectImp::ObjectObjectImp):
+        (KJS::ObjectObjectImp::construct):
+        * kjs/regexp_object.cpp:
+        (KJS::RegExpPrototype::RegExpPrototype):
+        (KJS::regExpProtoFuncToString):
+        (KJS::RegExpImp::getValueProperty):
+        (KJS::RegExpObjectImp::RegExpObjectImp):
+        (KJS::RegExpObjectImp::arrayOfMatches):
+        (KJS::RegExpObjectImp::getBackref):
+        (KJS::RegExpObjectImp::getLastParen):
+        (KJS::RegExpObjectImp::getLeftContext):
+        (KJS::RegExpObjectImp::getRightContext):
+        (KJS::RegExpObjectImp::getValueProperty):
+        (KJS::RegExpObjectImp::createRegExpImp):
+        * kjs/regexp_object.h:
+        * kjs/string_object.cpp:
+        (KJS::StringInstance::StringInstance):
+        (KJS::StringInstance::lengthGetter):
+        (KJS::StringInstance::indexGetter):
+        (KJS::stringInstanceNumericPropertyGetter):
+        (KJS::StringPrototype::StringPrototype):
+        (KJS::replace):
+        (KJS::stringProtoFuncCharAt):
+        (KJS::stringProtoFuncCharCodeAt):
+        (KJS::stringProtoFuncConcat):
+        (KJS::stringProtoFuncIndexOf):
+        (KJS::stringProtoFuncLastIndexOf):
+        (KJS::stringProtoFuncMatch):
+        (KJS::stringProtoFuncSearch):
+        (KJS::stringProtoFuncReplace):
+        (KJS::stringProtoFuncSlice):
+        (KJS::stringProtoFuncSplit):
+        (KJS::stringProtoFuncSubstr):
+        (KJS::stringProtoFuncSubstring):
+        (KJS::stringProtoFuncToLowerCase):
+        (KJS::stringProtoFuncToUpperCase):
+        (KJS::stringProtoFuncToLocaleLowerCase):
+        (KJS::stringProtoFuncToLocaleUpperCase):
+        (KJS::stringProtoFuncLocaleCompare):
+        (KJS::stringProtoFuncBig):
+        (KJS::stringProtoFuncSmall):
+        (KJS::stringProtoFuncBlink):
+        (KJS::stringProtoFuncBold):
+        (KJS::stringProtoFuncFixed):
+        (KJS::stringProtoFuncItalics):
+        (KJS::stringProtoFuncStrike):
+        (KJS::stringProtoFuncSub):
+        (KJS::stringProtoFuncSup):
+        (KJS::stringProtoFuncFontcolor):
+        (KJS::stringProtoFuncFontsize):
+        (KJS::stringProtoFuncAnchor):
+        (KJS::stringProtoFuncLink):
+        (KJS::StringObjectImp::StringObjectImp):
+        (KJS::StringObjectImp::construct):
+        (KJS::StringObjectImp::callAsFunction):
+        (KJS::StringObjectFuncImp::StringObjectFuncImp):
+        (KJS::StringObjectFuncImp::callAsFunction):
+        * kjs/string_object.h:
+        (KJS::StringInstanceThatMasqueradesAsUndefined::StringInstanceThatMasqueradesAsUndefined):
+        * kjs/testkjs.cpp:
+        (GlobalObject::GlobalObject):
+        (functionGC):
+        (functionRun):
+        (functionReadline):
+        (kjsmain):
+        * kjs/ustring.h:
+        * kjs/value.cpp:
+        (KJS::JSCell::operator new):
+        (KJS::jsString):
+        (KJS::jsOwnedString):
+        (KJS::jsNumberCell):
+        * kjs/value.h:
+        (KJS::jsNaN):
+        (KJS::jsNumber):
+        (KJS::jsNumberFromAnd):
+        (KJS::JSCell::marked):
+        (KJS::JSCell::mark):
+        (KJS::JSValue::toJSNumber):
+        Removed collectOnMainThreadOnly, as this is the only way to collect now. Replaced calls to
+        static Collector methods with calls to per-thread Heap ones.
+
 2008-05-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

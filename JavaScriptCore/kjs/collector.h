@@ -26,67 +26,90 @@
 
 #include <string.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/HashSet.h>
+
+namespace WTF {
+  template<typename T> class ThreadSpecific;
+}
 
 namespace KJS {
 
+  class CollectorBlock;
   class JSCell;
   class JSValue;
-  class CollectorBlock;
+  class List;
 
-  class Collector {
+  enum OperationInProgress { NoOperation, Allocation, Collection };
+
+  struct CollectorHeap {
+    CollectorBlock** blocks;
+    size_t numBlocks;
+    size_t usedBlocks;
+    size_t firstBlockWithPossibleSpace;
+
+    size_t numLiveObjects;
+    size_t numLiveObjectsAtLastCollect;
+    size_t extraCost;
+
+    OperationInProgress operationInProgress;
+  };
+
+  class Heap {
   public:
-    static void* allocate(size_t s);
-    static void* allocateNumber(size_t s);
-    static bool collect();
-    static bool isBusy(); // true if an allocation or collection is in progress
+    static Heap* threadHeap();
+
+    void* allocate(size_t s);
+    void* allocateNumber(size_t s);
+    bool collect();
+    bool isBusy(); // true if an allocation or collection is in progress
 
     static const size_t minExtraCostSize = 256;
 
-    static void reportExtraMemoryCost(size_t cost);
+    void reportExtraMemoryCost(size_t cost);
 
-    static size_t size();
+    size_t size();
 
-    static void protect(JSValue*);
-    static void unprotect(JSValue*);
+    void protect(JSValue*);
+    void unprotect(JSValue*);
     
-    static void collectOnMainThreadOnly(JSValue*);
+    static Heap* heap(const JSValue*); // 0 for immediate values
 
-    static size_t globalObjectCount();
-    static size_t protectedObjectCount();
-    static size_t protectedGlobalObjectCount();
-    static HashCountedSet<const char*>* protectedObjectTypeCounts();
-
-    class Thread;
-    static void registerThread();
-    
-    static void registerAsMainThread();
+    size_t globalObjectCount();
+    size_t protectedObjectCount();
+    size_t protectedGlobalObjectCount();
+    HashCountedSet<const char*>* protectedObjectTypeCounts();
 
     static bool isCellMarked(const JSCell*);
     static void markCell(JSCell*);
 
+    HashSet<List*>& markListSet() { return m_markListSet; }
     enum HeapType { PrimaryHeap, NumberHeap };
 
   private:
-    template <Collector::HeapType heapType> static void* heapAllocate(size_t s);
-    template <Collector::HeapType heapType> static size_t sweep(bool);
+    friend class WTF::ThreadSpecific<Heap>;
+
+    Heap();
+    Heap(const Heap&);
+
+    template <Heap::HeapType heapType> void* heapAllocate(size_t s);
+    template <Heap::HeapType heapType> size_t sweep();
     static const CollectorBlock* cellBlock(const JSCell*);
     static CollectorBlock* cellBlock(JSCell*);
     static size_t cellOffset(const JSCell*);
 
-    Collector();
+    void recordExtraCost(size_t);
+    void markProtectedObjects();
+    void markStackObjectsConservativelyInternal();
+    void markStackObjectsConservatively();
+    void markStackObjectsConservatively(void* start, void* end);
 
-    static void recordExtraCost(size_t);
-    static void markProtectedObjects();
-    static void markMainThreadOnlyObjects();
-    static void markCurrentThreadConservatively();
-    static void markCurrentThreadConservativelyInternal();
-    static void markOtherThreadConservatively(Thread*);
-    static void markStackObjectsConservatively();
-    static void markStackObjectsConservatively(void* start, void* end);
+    bool memoryFull;
+    void reportOutOfMemoryToAllExecStates();
 
-    static size_t mainThreadOnlyObjectCount;
-    static bool memoryFull;
-    static void reportOutOfMemoryToAllExecStates();
+    CollectorHeap primaryHeap;
+    CollectorHeap numberHeap;
+    HashCountedSet<JSCell*> protectedValues;
+    HashSet<List*> m_markListSet;
   };
 
   // tunable parameters
@@ -145,7 +168,7 @@ namespace KJS {
     uint32_t usedCells;
     CollectorCell* freeList;
     CollectorBitmap marked;
-    CollectorBitmap collectOnMainThreadOnly;
+    Heap* heap;
   };
 
   class SmallCellCollectorBlock {
@@ -154,50 +177,35 @@ namespace KJS {
     uint32_t usedCells;
     SmallCollectorCell* freeList;
     CollectorBitmap marked;
-    CollectorBitmap collectOnMainThreadOnly;
+    Heap* heap;
   };
 
-  enum OperationInProgress { NoOperation, Allocation, Collection };
-
-  struct CollectorHeap {
-    CollectorBlock** blocks;
-    size_t numBlocks;
-    size_t usedBlocks;
-    size_t firstBlockWithPossibleSpace;
-
-    size_t numLiveObjects;
-    size_t numLiveObjectsAtLastCollect;
-    size_t extraCost;
-
-    OperationInProgress operationInProgress;
-  };
-
-  inline const CollectorBlock* Collector::cellBlock(const JSCell* cell)
+  inline const CollectorBlock* Heap::cellBlock(const JSCell* cell)
   {
     return reinterpret_cast<const CollectorBlock*>(reinterpret_cast<uintptr_t>(cell) & BLOCK_MASK);
   }
 
-  inline CollectorBlock* Collector::cellBlock(JSCell* cell)
+  inline CollectorBlock* Heap::cellBlock(JSCell* cell)
   {
     return const_cast<CollectorBlock*>(cellBlock(const_cast<const JSCell*>(cell)));
   }
 
-  inline size_t Collector::cellOffset(const JSCell* cell)
+  inline size_t Heap::cellOffset(const JSCell* cell)
   {
     return (reinterpret_cast<uintptr_t>(cell) & BLOCK_OFFSET_MASK) / CELL_SIZE;
   }
 
-  inline bool Collector::isCellMarked(const JSCell* cell)
+  inline bool Heap::isCellMarked(const JSCell* cell)
   {
     return cellBlock(cell)->marked.get(cellOffset(cell));
   }
 
-  inline void Collector::markCell(JSCell* cell)
+  inline void Heap::markCell(JSCell* cell)
   {
     cellBlock(cell)->marked.set(cellOffset(cell));
   }
 
-  inline void Collector::reportExtraMemoryCost(size_t cost)
+  inline void Heap::reportExtraMemoryCost(size_t cost)
   { 
     if (cost > minExtraCostSize) 
       recordExtraCost(cost / (CELL_SIZE * 2)); 

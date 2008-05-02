@@ -50,8 +50,8 @@ BooleanPrototype::BooleanPrototype(ExecState* exec, ObjectPrototype* objectProto
 {
     setInternalValue(jsBoolean(false));
 
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, booleanProtoFuncToString), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().valueOf, booleanProtoFuncValueOf), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, booleanProtoFuncToString), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().valueOf, booleanProtoFuncValueOf), DontEnum);
 }
 
 
@@ -67,7 +67,7 @@ JSValue* booleanProtoFuncToString(ExecState* exec, JSObject* thisObj, const List
     JSValue* v = static_cast<BooleanInstance*>(thisObj)->internalValue();
     ASSERT(v);
 
-    return jsString(v->toString(exec));
+    return jsString(exec, v->toString(exec));
 }
 JSValue* booleanProtoFuncValueOf(ExecState* exec, JSObject* thisObj, const List&)
 {
@@ -90,7 +90,7 @@ BooleanObjectImp::BooleanObjectImp(ExecState* exec, FunctionPrototype* functionP
     putDirect(exec->propertyNames().prototype, booleanPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
-    putDirect(exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontDelete | DontEnum);
 }
 
 bool BooleanObjectImp::implementsConstruct() const
@@ -101,7 +101,7 @@ bool BooleanObjectImp::implementsConstruct() const
 // ECMA 15.6.2
 JSObject* BooleanObjectImp::construct(ExecState* exec, const List& args)
 {
-    BooleanInstance* obj(new BooleanInstance(exec->lexicalGlobalObject()->booleanPrototype()));
+    BooleanInstance* obj(new (exec) BooleanInstance(exec->lexicalGlobalObject()->booleanPrototype()));
     obj->setInternalValue(jsBoolean(args[0]->toBoolean(exec)));
     return obj;
 }

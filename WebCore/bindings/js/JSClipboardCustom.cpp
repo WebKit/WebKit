@@ -58,7 +58,7 @@ JSValue* JSClipboard::types(ExecState* exec) const
     List list;
     HashSet<String>::const_iterator end = types.end();
     for (HashSet<String>::const_iterator it = types.begin(); it != end; ++it)
-        list.append(jsString(UString(*it)));
+        list.append(jsString(exec, UString(*it)));
     return exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, list);
 }
 
@@ -93,7 +93,7 @@ JSValue* JSClipboard::getData(ExecState* exec, const List& args)
     if (!success)
         return jsUndefined();
 
-    return jsString(result);
+    return jsString(exec, result);
 }
 
 JSValue* JSClipboard::setData(ExecState* exec, const List& args)

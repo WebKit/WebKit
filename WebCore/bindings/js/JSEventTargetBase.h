@@ -132,7 +132,7 @@ namespace WebCore {
                 return static_cast<KJS::JSObject*>(objectValue);
             }
 
-            KJS::JSObject* newObject = new JSEventTargetPrototype<JSEventTargetPrototypeParent, JSEventTargetPrototypeInformation>(exec);
+            KJS::JSObject* newObject = new (exec) JSEventTargetPrototype<JSEventTargetPrototypeParent, JSEventTargetPrototypeInformation>(exec);
             globalObject->putDirect(*prototypeName, newObject, KJS::DontEnum);
             return newObject;
         }

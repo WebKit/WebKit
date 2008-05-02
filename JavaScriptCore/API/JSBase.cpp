@@ -79,8 +79,12 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
 void JSGarbageCollect(JSContextRef)
 {
     JSLock lock;
-    if (!Collector::isBusy())
-        Collector::collect();
+
+    // It might seem that we have a context passed to this function, and can use toJS(ctx)->heap(), but the parameter is likely to be NULL.
+    // The performance difference should be negligible anyway.
+    Heap* heap = Heap::threadHeap();
+    if (!heap->isBusy())
+        heap->collect();
     // FIXME: Perhaps we should trigger a second mark and sweep
     // once the garbage collector is done if this is called when
     // the collector is busy.

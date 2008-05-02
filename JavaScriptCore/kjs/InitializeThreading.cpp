@@ -47,15 +47,14 @@ void initializeThreading()
 #if USE(MULTIPLE_THREADS)
     if (!s_dtoaP5Mutex) {
         s_dtoaP5Mutex = new Mutex;
-#if !PLATFORM(DARWIN) // Darwin has pthread_main_np(), and doesn't need registerAsMainThread() called.
-        Collector::registerAsMainThread();
-#endif
+        Heap::threadHeap();
         UString::null();
         Identifier::initializeIdentifierThreading();
         CommonIdentifiers::shared();
         lexer();
         initDateMath();
         JSGlobalObject::threadClassInfoHashTables();
+        JSGlobalObject::head();
     }
 #endif
 }

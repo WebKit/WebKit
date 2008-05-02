@@ -1,3 +1,28 @@
+2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18826
+        Make JavaScript heap per-thread
+
+        * JSValueWrapper.cpp:
+        * JSUtils.h:
+        Moved getThreadGlobalExecState() to JSUtils and made it extern, as ExecState is now needed
+        for all JS allocations.
+
+        * JSUtils.cpp:
+        (JSObjectKJSValue): Pass ExecState to functions that now need it.
+        (unprotectGlobalObject): Moved from JSValueWrapper.cpp.
+        (initializeGlobalObjectKey): Ditto.
+        (getThreadGlobalExecState): Ditto.
+
+        * UserObjectImp.cpp: (UserObjectImp::toPrimitive): Pass ExecState to jsString and jsNumber.
+
+        * JavaScriptGlue.cpp:
+        (JSCollect): Use current thread's heap.
+        (JSLockInterpreter): Removed JSLock::registerThread(), because a JS heap doesn't need to
+        know about other threads.
+
 2008-04-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

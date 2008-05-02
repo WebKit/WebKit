@@ -44,11 +44,11 @@ static JSValue* functionProtoFuncCall(ExecState*, JSObject*, const List&);
 
 FunctionPrototype::FunctionPrototype(ExecState* exec)
 {
-    putDirect(exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 0), DontDelete | ReadOnly | DontEnum);
 
-    putDirectFunction(new PrototypeFunction(exec, this, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, this, 2, exec->propertyNames().apply, functionProtoFuncApply), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, this, 1, exec->propertyNames().call, functionProtoFuncCall), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, this, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, this, 2, exec->propertyNames().apply, functionProtoFuncApply), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, this, 1, exec->propertyNames().call, functionProtoFuncCall), DontEnum);
 }
 
 // ECMA 15.3.4
@@ -70,10 +70,10 @@ JSValue* functionProtoFuncToString(ExecState* exec, JSObject* thisObj, const Lis
 
     if (thisObj->inherits(&FunctionImp::info)) {
         FunctionImp* fi = static_cast<FunctionImp*>(thisObj);
-        return jsString("function " + fi->functionName().ustring() + "(" + fi->body->paramString() + ") " + fi->body->toString());
+        return jsString(exec, "function " + fi->functionName().ustring() + "(" + fi->body->paramString() + ") " + fi->body->toString());
     }
 
-    return jsString("function " + static_cast<InternalFunctionImp*>(thisObj)->functionName().ustring() + "() {\n    [native code]\n}");
+    return jsString(exec, "function " + static_cast<InternalFunctionImp*>(thisObj)->functionName().ustring() + "() {\n    [native code]\n}");
 }
 
 JSValue* functionProtoFuncApply(ExecState* exec, JSObject* thisObj, const List& args)
@@ -133,7 +133,7 @@ FunctionObjectImp::FunctionObjectImp(ExecState* exec, FunctionPrototype* functio
     putDirect(exec->propertyNames().prototype, functionPrototype, DontEnum | DontDelete | ReadOnly);
 
     // Number of arguments for constructor
-    putDirect(exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontDelete | DontEnum);
 }
 
 bool FunctionObjectImp::implementsConstruct() const
@@ -168,7 +168,7 @@ JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args, const 
     // send empty sourceURL to indicate constructed code
     Debugger* dbg = exec->dynamicGlobalObject()->debugger();
     if (dbg && !dbg->sourceParsed(exec, sourceId, UString(), body, lineNumber, errLine, errMsg))
-        return new JSObject();
+        return new (exec) JSObject();
 
     // No program node == syntax error - throw a syntax error
     if (!functionBody)
@@ -179,7 +179,7 @@ JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args, const 
     ScopeChain scopeChain;
     scopeChain.push(exec->lexicalGlobalObject());
 
-    FunctionImp* fimp = new FunctionImp(exec, functionName, functionBody.get(), scopeChain);
+    FunctionImp* fimp = new (exec) FunctionImp(exec, functionName, functionBody.get(), scopeChain);
 
     // parse parameter list. throw syntax error on illegal identifiers
     int len = p.size();

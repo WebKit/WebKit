@@ -176,17 +176,17 @@ JSValueRef JSValueMakeBoolean(JSContextRef, bool value)
     return toRef(jsBoolean(value));
 }
 
-JSValueRef JSValueMakeNumber(JSContextRef, double value)
+JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
 {
     JSLock lock;
-    return toRef(jsNumber(value));
+    return toRef(jsNumber(toJS(ctx), value));
 }
 
-JSValueRef JSValueMakeString(JSContextRef, JSStringRef string)
+JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
 {
     JSLock lock;
     UString::Rep* rep = toJS(string);
-    return toRef(jsString(UString(rep)));
+    return toRef(jsString(toJS(ctx), UString(rep)));
 }
 
 bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
