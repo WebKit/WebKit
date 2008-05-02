@@ -270,8 +270,7 @@ STYLESHEETS_EMBED = $$PWD/css/html4.css
 LUT_FILES += \
     bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSEventTargetBase.cpp \
-    bindings/js/JSRGBColor.cpp \
-    bindings/js/JSXSLTProcessor.cpp
+    bindings/js/JSRGBColor.cpp
 
 LUT_TABLE_FILES += \
     bindings/js/JSHTMLInputElementBase.cpp
@@ -412,7 +411,8 @@ IDL_BINDINGS += \
     xml/XMLHttpRequest.idl \
     xml/XMLHttpRequestException.idl \
     xml/XMLHttpRequestProgressEvent.idl \
-    xml/XMLSerializer.idl
+    xml/XMLSerializer.idl \
+    xml/XSLTProcessor.idl
 
 
 SOURCES += \
@@ -470,7 +470,8 @@ SOURCES += \
     bindings/js/JSTreeWalkerCustom.cpp \
     bindings/js/JSXMLHttpRequestConstructor.cpp \
     bindings/js/JSXMLHttpRequestCustom.cpp \
-    bindings/js/JSXSLTProcessor.cpp \
+    bindings/js/JSXSLTProcessorConstructor.cpp \
+    bindings/js/JSXSLTProcessorCustom.cpp \
     bindings/js/JSPluginCustom.cpp \
     bindings/js/JSPluginArrayCustom.cpp \
     bindings/js/JSMimeTypeArrayCustom.cpp \

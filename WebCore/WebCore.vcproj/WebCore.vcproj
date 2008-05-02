@@ -2886,7 +2886,11 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXSLTProcessor.lut.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXSLTProcessor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXSLTProcessor.h"
 				>
 			</File>
 			<File
@@ -13610,11 +13614,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSXSLTProcessor.cpp"
+					RelativePath="..\bindings\js\JSXSLTProcessorConstructor.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSXSLTProcessor.h"
+					RelativePath="..\bindings\js\JSXSLTProcessorConstructor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSXSLTProcessorCustom.cpp"
 					>
 				</File>
 				<File

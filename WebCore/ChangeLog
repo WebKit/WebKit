@@ -1,5 +1,25 @@
 2008-05-01  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mark Rowe (in his infinite wisdom).
+
+        Auto-generate the JSXSLTProcessor binding.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::getValueProperty):
+        * bindings/js/JSDOMWindowBase.h:
+        (WebCore::JSDOMWindowBase::):
+        * bindings/js/JSXSLTProcessor.cpp: Removed.
+        * bindings/js/JSXSLTProcessor.h: Removed.
+        * xml/XSLTProcessor.h:
+
+2008-05-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoffrey Garen.
 
         Fixes:

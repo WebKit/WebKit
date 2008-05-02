@@ -55,7 +55,6 @@ webcore_built_nosources += \
 	WebCore/bindings/js/JSDOMWindowBase.lut.h \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
 	WebCore/bindings/js/JSRGBColor.lut.h \
-	WebCore/bindings/js/JSXSLTProcessor.lut.h \
 	WebCore/bindings/js/JSHTMLInputElementBaseTable.cpp
 
 webcore_built_sources += \
@@ -203,6 +202,7 @@ webcore_built_sources += \
 	DerivedSources/JSXMLHttpRequest.h \
 	DerivedSources/JSXMLHttpRequestException.h \
 	DerivedSources/JSXMLSerializer.h \
+	DerivedSources/JSXSLTProcessor.h \
 	DerivedSources/JSAttr.cpp \
 	DerivedSources/JSBarInfo.cpp \
 	DerivedSources/JSCDATASection.cpp \
@@ -336,7 +336,8 @@ webcore_built_sources += \
 	DerivedSources/JSXMLHttpRequest.cpp \
 	DerivedSources/JSXMLHttpRequestException.cpp \
 	DerivedSources/JSXMLHttpRequestProgressEvent.cpp \
-	DerivedSources/JSXMLSerializer.cpp
+	DerivedSources/JSXMLSerializer.cpp \
+	DerivedSources/JSXSLTProcessor.cpp
 
 IDL_BINDINGS +=  \
 	WebCore/css/Counter.idl \
@@ -470,7 +471,8 @@ IDL_BINDINGS +=  \
 	WebCore/xml/XMLHttpRequest.idl \
 	WebCore/xml/XMLHttpRequestProgressEvent.idl \
 	WebCore/xml/XMLHttpRequestException.idl \
-	WebCore/xml/XMLSerializer.idl
+	WebCore/xml/XMLSerializer.idl \
+	WebCore/xml/XSLTProcessor.idl
 
 webcore_headers += \
 	WebCore/loader/icon/IconDatabase.h
@@ -533,7 +535,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSTreeWalkerCustom.cpp \
 	WebCore/bindings/js/JSXMLHttpRequestCustom.cpp \
 	WebCore/bindings/js/JSXMLHttpRequestConstructor.cpp \
-	WebCore/bindings/js/JSXSLTProcessor.cpp \
+	WebCore/bindings/js/JSXSLTProcessorCustom.cpp \
+	WebCore/bindings/js/JSXSLTProcessorConstructor.cpp \
 	WebCore/bindings/js/kjs_binding.cpp \
 	WebCore/bindings/js/kjs_events.cpp \
 	WebCore/bindings/js/kjs_html.cpp \
@@ -2200,6 +2203,5 @@ CLEANFILES += \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
 	WebCore/bindings/js/JSHTMLInputElementBaseTable.cpp \
 	WebCore/bindings/js/JSDOMWindowBase.lut.h \
-	WebCore/bindings/js/JSRGBColor.lut.h \
-	WebCore/bindings/js/JSXSLTProcessor.lut.h
+	WebCore/bindings/js/JSRGBColor.lut.h
 

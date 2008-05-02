@@ -133,7 +133,7 @@ namespace WebCore {
 
             // Constructors
             DOMException, Audio, Image, Option, XMLHttpRequest,
-            XSLTProcessor_
+            XSLTProcessor
         };
 
     private:

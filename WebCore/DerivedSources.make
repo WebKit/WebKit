@@ -347,6 +347,7 @@ DOM_CLASSES = \
     XPathExpression \
     XPathNSResolver \
     XPathResult \
+    XSLTProcessor \
 #
 
 .PHONY : all
@@ -357,7 +358,6 @@ all : \
     JSDOMWindowBase.lut.h \
     JSEventTargetBase.lut.h \
     JSRGBColor.lut.h \
-    JSXSLTProcessor.lut.h \
     \
     JSHTMLInputElementBaseTable.cpp \
     \

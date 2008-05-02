@@ -25,16 +25,16 @@
 
 #if ENABLE(XSLT)
 
+#include "Node.h"
 #include "StringHash.h"
 #include "XSLStyleSheet.h"
-#include <wtf/HashMap.h>
 #include <libxml/parserInternals.h>
 #include <libxslt/documents.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
 class Frame;
-class Node;
 class Document;
 class DocumentFragment;
 
