@@ -180,7 +180,6 @@ typedef struct _NPPluginFuncs {
     NPP_SetValueProcPtr setvalue;
 } NPPluginFuncs;
 
-typedef EXPORTED_CALLBACK(NPError, NP_InitializeFuncPtr)(NPNetscapeFuncs*);
 typedef EXPORTED_CALLBACK(NPError, NP_GetEntryPointsFuncPtr)(NPPluginFuncs*);
 typedef EXPORTED_CALLBACK(void, NPP_ShutdownProcPtr)(void);    
 
@@ -192,6 +191,8 @@ typedef NPError (*MainFuncPtr)(NPNetscapeFuncs*, NPPluginFuncs*, NPP_ShutdownPro
 #if defined(XP_UNIX)
 typedef EXPORTED_CALLBACK(NPError, NP_InitializeFuncPtr)(NPNetscapeFuncs*, NPPluginFuncs*);
 typedef EXPORTED_CALLBACK(char*, NP_GetMIMEDescriptionFuncPtr)(void);
+#else
+typedef EXPORTED_CALLBACK(NPError, NP_InitializeFuncPtr)(NPNetscapeFuncs*);
 #endif
 
 #ifdef __cplusplus

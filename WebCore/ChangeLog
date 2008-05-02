@@ -1,3 +1,10 @@
+2008-05-02  Simon Hausmann  <hausmann@webkit.org>
+
+        Build fix for Qt/Gtk. Don't declare NP_InitializeFuncPtr twice
+        with different signatures.
+
+        * plugins/npfunctions.h:
+
 2008-05-01  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.
