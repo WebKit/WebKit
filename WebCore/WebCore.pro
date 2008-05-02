@@ -124,8 +124,9 @@ include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 
 qt-port {
     unix {
-        DEFINES += XP_UNIX ENABLE_NETSCAPE_PLUGIN_API=1
+        DEFINES += XP_UNIX
     }
+	DEFINES += ENABLE_NETSCAPE_PLUGIN_API=1
 
 RESOURCES += \
             $$PWD/../WebCore/page/inspector/WebKit.qrc \
@@ -1041,6 +1042,7 @@ qt-port {
     platform/qt/WheelEventQt.cpp \
     platform/qt/WidgetQt.cpp \
     plugins/qt/PluginDataQt.cpp \
+    plugins/qt/PluginPackageQt.cpp \
     ../WebKit/qt/WebCoreSupport/ChromeClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/ContextMenuClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/DragClientQt.cpp \
@@ -1059,7 +1061,6 @@ qt-port {
     unix: {
         SOURCES += platform/qt/SystemTimeQt.cpp \
                    plugins/qt/PluginDatabaseQt.cpp \
-                   plugins/qt/PluginPackageQt.cpp \
                    plugins/qt/PluginViewQt.cpp
     }
     else: SOURCES += platform/win/SystemTimeWin.cpp

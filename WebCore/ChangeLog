@@ -1,3 +1,32 @@
+2008-05-02  Simon Hausmann  <shausman@trolltech.com>
+
+        Fix the Qt/Win build.
+
+        * WebCore.pro:
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (PluginDatabase::getPluginPathsInDirectories):
+        (PluginDatabase::defaultPluginDirectories):
+        (PluginDatabase::isPreferredPluginDirectory):
+        (PluginView::setNPWindowRect):
+        (PluginView::userAgent):
+        (PluginView::invalidateRect):
+        (PluginView::invalidateRegion):
+        (PluginView::forceRedraw):
+        (PluginView::setFocus):
+        (PluginView::show):
+        (PluginView::hide):
+        (PluginView::paint):
+        (PluginView::setParent):
+        (PluginView::attachToWindow):
+        (PluginView::detachFromWindow):
+        (PluginView::updateWindow):
+        (PluginView::handleKeyboardEvent):
+        (PluginView::handleMouseEvent):
+        (PluginView::handlePostReadFile):
+        (PluginView::getValue):
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::PluginPackage::load):
+
 2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoffrey Garen.

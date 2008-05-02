@@ -72,6 +72,30 @@
 
 using namespace WebCore;
 
+#if !defined(Q_WS_X11)
+void PluginDatabase::getPluginPathsInDirectories(HashSet<String>&) const { notImplemented(); }
+Vector<String> PluginDatabase::defaultPluginDirectories() { notImplemented(); return Vector<String>(); }
+bool PluginDatabase::isPreferredPluginDirectory(const String&) { notImplemented(); return false; }
+void PluginView::setNPWindowRect(const IntRect&) { notImplemented(); }
+const char* PluginView::userAgent() { notImplemented(); return 0; }
+void PluginView::invalidateRect(NPRect*) { notImplemented(); }
+void PluginView::invalidateRegion(NPRegion) { notImplemented(); }
+void PluginView::forceRedraw() { notImplemented(); }
+void PluginView::setFocus() { Widget::setFocus(); }
+void PluginView::show() { Widget::show(); }
+void PluginView::hide() { Widget::hide(); }
+void PluginView::paint(GraphicsContext*, const IntRect&) { notImplemented(); }
+void PluginView::setParent(ScrollView* view) { Widget::setParent(view); }
+void PluginView::attachToWindow() { notImplemented(); }
+void PluginView::detachFromWindow() { notImplemented(); }
+void PluginView::updateWindow() const { notImplemented(); }
+void PluginView::handleKeyboardEvent(KeyboardEvent*) { notImplemented(); }
+void PluginView::handleMouseEvent(MouseEvent*) { notImplemented(); }
+NPError PluginView::handlePostReadFile(Vector<char>&, uint32, const char*) { notImplemented(); return NPERR_GENERIC_ERROR; }
+NPError PluginView::getValue(NPNVariable, void*) { notImplemented(); return NPERR_GENERIC_ERROR; }
+PluginView::~PluginView() {}
+#endif
+
 namespace WebCore {
 
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
