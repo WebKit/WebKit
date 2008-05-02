@@ -50,6 +50,13 @@ typedef struct _GtkMenuItem GtkMenuItem;
 typedef struct _GtkWidget GtkWidget;
 #include <wtf/HashMap.h>
 #include <glib.h>
+#elif PLATFORM(WX)
+#ifdef __WXMSW__
+#include <wx/msw/winundef.h>
+#endif
+class wxMenu;
+#include <wx/defs.h>
+#include <wx/event.h>
 #endif
 
 namespace WebCore {
@@ -60,6 +67,9 @@ class PlatformScrollbar;
 class PopupMenu : public RefCounted<PopupMenu>
 #if PLATFORM(WIN)
                 , private ScrollbarClient
+#endif
+#if PLATFORM(WX)
+                , public wxEvtHandler
 #endif
 {
 public:
@@ -161,6 +171,9 @@ private:
     static void menuUnmapped(GtkWidget*, PopupMenu*);
     static void menuPositionFunction(GtkMenu*, gint*, gint*, gboolean*, PopupMenu*);
     static void menuRemoveItem(GtkWidget*, PopupMenu*);
+#elif PLATFORM(WX)
+    wxMenu* m_menu;
+    void OnMenuItemSelected(wxCommandEvent&);
 #endif
 
 };

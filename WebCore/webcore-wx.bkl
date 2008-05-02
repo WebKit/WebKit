@@ -68,6 +68,7 @@ wxWebCore port Bakefile project file.
             platform/wx/DragDataWx.cpp
             platform/wx/DragImageWx.cpp
             platform/wx/FileSystemWx.cpp
+            platform/wx/PopupMenuWx.cpp
             platform/graphics/wx/FontCacheWx.cpp
             platform/graphics/wx/FontPlatformDataWx.cpp
             platform/graphics/wx/FontWx.cpp             
