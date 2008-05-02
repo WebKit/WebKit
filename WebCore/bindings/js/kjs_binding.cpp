@@ -59,8 +59,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 typedef HashMap<void*, DOMObject*> DOMObjectMap;
-typedef HashMap<WebCore::Node*, JSNode*> NodeMap;
-typedef HashMap<Document*, NodeMap*> NodePerDocMap;
+typedef Document::JSWrapperCache JSWrapperCache;
 
 // For debugging, keep a set of wrappers currently registered, and check that
 // all are unregistered before they are destroyed. This has helped us fix at
@@ -68,7 +67,7 @@ typedef HashMap<Document*, NodeMap*> NodePerDocMap;
 
 static void addWrapper(DOMObject* wrapper);
 static void removeWrapper(DOMObject* wrapper);
-static void removeWrappers(const NodeMap& wrappers);
+static void removeWrappers(const JSWrapperCache& wrappers);
 
 #ifdef NDEBUG
 
@@ -80,7 +79,7 @@ static inline void removeWrapper(DOMObject*)
 {
 }
 
-static inline void removeWrappers(const NodeMap&)
+static inline void removeWrappers(const JSWrapperCache&)
 {
 }
 
@@ -106,9 +105,9 @@ static void removeWrapper(DOMObject* wrapper)
     wrapperSet().remove(wrapper);
 }
 
-static void removeWrappers(const NodeMap& wrappers)
+static void removeWrappers(const JSWrapperCache& wrappers)
 {
-    for (NodeMap::const_iterator it = wrappers.begin(); it != wrappers.end(); ++it)
+    for (JSWrapperCache::const_iterator it = wrappers.begin(); it != wrappers.end(); ++it)
         removeWrapper(it->second);
 }
 
@@ -124,18 +123,6 @@ static DOMObjectMap& domObjects()
     // Don't use malloc here. Calling malloc from a mark function can deadlock.
     static DOMObjectMap staticDOMObjects;
     return staticDOMObjects;
-}
-
-static NodePerDocMap& domNodesPerDocument()
-{
-    // domNodesPerDocument() callers must synchronize using the JSLock because 
-    // domNodesPerDocument() is called from a mark function, which can run
-    // on a secondary thread.
-    ASSERT(JSLock::lockCount());
-
-    // Don't use malloc here. Calling malloc from a mark function can deadlock.
-    static NodePerDocMap staticDOMNodesPerDocument;
-    return staticDOMNodesPerDocument;
 }
 
 DOMObject* ScriptInterpreter::getDOMObject(void* objectHandle) 
@@ -158,10 +145,7 @@ JSNode* ScriptInterpreter::getDOMNodeForDocument(Document* document, WebCore::No
 {
     if (!document)
         return static_cast<JSNode*>(domObjects().get(node));
-    NodeMap* documentDict = domNodesPerDocument().get(document);
-    if (documentDict)
-        return documentDict->get(node);
-    return NULL;
+    return document->wrapperCache().get(node);
 }
 
 void ScriptInterpreter::forgetDOMNodeForDocument(Document* document, WebCore::Node* node)
@@ -170,9 +154,7 @@ void ScriptInterpreter::forgetDOMNodeForDocument(Document* document, WebCore::No
         removeWrapper(domObjects().take(node));
         return;
     }
-    NodeMap* documentDict = domNodesPerDocument().get(document);
-    if (documentDict)
-        removeWrapper(documentDict->take(node));
+    removeWrapper(document->wrapperCache().take(node));
 }
 
 void ScriptInterpreter::putDOMNodeForDocument(Document* document, WebCore::Node* node, JSNode* wrapper)
@@ -182,43 +164,31 @@ void ScriptInterpreter::putDOMNodeForDocument(Document* document, WebCore::Node*
         domObjects().set(node, wrapper);
         return;
     }
-    NodeMap* documentDict = domNodesPerDocument().get(document);
-    if (!documentDict) {
-        documentDict = new NodeMap;
-        domNodesPerDocument().set(document, documentDict);
-    }
-    documentDict->set(node, wrapper);
+    document->wrapperCache().set(node, wrapper);
 }
 
 void ScriptInterpreter::forgetAllDOMNodesForDocument(Document* document)
 {
     ASSERT(document);
-    NodeMap* map = domNodesPerDocument().take(document);
-    if (!map)
-        return;
-    removeWrappers(*map);
-    delete map;
+    removeWrappers(document->wrapperCache());
 }
 
 void ScriptInterpreter::markDOMNodesForDocument(Document* doc)
 {
-    NodePerDocMap::iterator dictIt = domNodesPerDocument().find(doc);
-    if (dictIt != domNodesPerDocument().end()) {
-        NodeMap* nodeDict = dictIt->second;
-        NodeMap::iterator nodeEnd = nodeDict->end();
-        for (NodeMap::iterator nodeIt = nodeDict->begin(); nodeIt != nodeEnd; ++nodeIt) {
-            JSNode* jsNode = nodeIt->second;
-            WebCore::Node* node = jsNode->impl();
-            
-            // don't mark wrappers for nodes that are no longer in the
-            // document - they should not be saved if the node is not
-            // otherwise reachable from JS.
-            // However, image elements that aren't in the document are also
-            // marked, if they are not done loading yet.
-            if (!jsNode->marked() && (node->inDocument() || (node->hasTagName(imgTag) &&
-                                                             !static_cast<HTMLImageElement*>(node)->haveFiredLoadEvent())))
-                jsNode->mark();
-        }
+    JSWrapperCache& nodeDict = doc->wrapperCache();
+    JSWrapperCache::iterator nodeEnd = nodeDict.end();
+    for (JSWrapperCache::iterator nodeIt = nodeDict.begin(); nodeIt != nodeEnd; ++nodeIt) {
+        JSNode* jsNode = nodeIt->second;
+        WebCore::Node* node = jsNode->impl();
+        
+        // don't mark wrappers for nodes that are no longer in the
+        // document - they should not be saved if the node is not
+        // otherwise reachable from JS.
+        // However, image elements that aren't in the document are also
+        // marked, if they are not done loading yet.
+        if (!jsNode->marked() && (node->inDocument() || (node->hasTagName(imgTag) &&
+                                                         !static_cast<HTMLImageElement*>(node)->haveFiredLoadEvent())))
+            jsNode->mark();
     }
 }
 

@@ -1,3 +1,21 @@
+2008-05-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver (a while ago)
+
+        - just a wee bit more bindings speedup
+        
+        Store the per-document Node --> JS wrapper cache in the document
+        instead of an external hashtable.
+
+        * bindings/js/kjs_binding.cpp:
+        (WebCore::ScriptInterpreter::getDOMNodeForDocument):
+        (WebCore::ScriptInterpreter::forgetDOMNodeForDocument):
+        (WebCore::ScriptInterpreter::putDOMNodeForDocument):
+        (WebCore::ScriptInterpreter::forgetAllDOMNodesForDocument):
+        (WebCore::ScriptInterpreter::markDOMNodesForDocument):
+        * dom/Document.h:
+        (WebCore::Document::wrapperCache):
+
 2008-05-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Tim.
