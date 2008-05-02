@@ -76,7 +76,7 @@ sub handleBinaryChange($$);
 sub isDirectoryEmptyForRemoval($);
 sub patch($);
 sub removeDirectoriesIfNeeded();
-sub setChangeLogDate($);
+sub setChangeLogDateAndReviewer($$);
 sub svnStatus($);
 
 # Project time zone for Cupertino, CA, US
@@ -84,8 +84,9 @@ my $changeLogTimeZone = "PST8PDT";
 
 my $merge = 0;
 my $showHelp = 0;
-if (!GetOptions("merge!" => \$merge, "help!" => \$showHelp) || $showHelp) {
-    print STDERR basename($0) . " [-h|--help] [-m|--merge] patch1 [patch2 ...]\n";
+my $reviewer;
+if (!GetOptions("merge!" => \$merge, "help!" => \$showHelp, "reviewer=s" => \$reviewer) || $showHelp) {
+    print STDERR basename($0) . " [-h|--help] [-m|--merge] [-r|--reviewer name] patch1 [patch2 ...]\n";
     exit 1;
 }
 
@@ -346,7 +347,7 @@ sub patch($)
         # Standard patch, patch tool can handle this.
         if (basename($fullPath) eq "ChangeLog") {
             my $changeLogDotOrigExisted = -f "${fullPath}.orig";
-            applyPatch(setChangeLogDate(fixChangeLogPatch($patch)), $fullPath, ["--fuzz=3"]);
+            applyPatch(setChangeLogDateAndReviewer(fixChangeLogPatch($patch), $reviewer), $fullPath, ["--fuzz=3"]);
             unlink("${fullPath}.orig") if (! $changeLogDotOrigExisted);
         } else {
             applyPatch($patch, $fullPath);
@@ -390,9 +391,10 @@ sub removeDirectoriesIfNeeded()
     }
 }
 
-sub setChangeLogDate($)
+sub setChangeLogDateAndReviewer($$)
 {
     my $patch = shift;
+    my $reviewer = shift;
     my $savedTimeZone = $ENV{'TZ'};
     # Set TZ temporarily so that localtime() is in that time zone
     $ENV{'TZ'} = $changeLogTimeZone;
@@ -403,6 +405,9 @@ sub setChangeLogDate($)
          delete $ENV{'TZ'};
     }
     $patch =~ s/(\n\+)\d{4}-[^-]{2}-[^-]{2}(  )/$1$newDate$2/;
+    if (defined($reviewer)) {
+        $patch =~ s/NOBODY \(OOPS!\)/$reviewer/;
+    }
     return $patch;
 }
 

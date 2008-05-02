@@ -1,3 +1,11 @@
+2008-05-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - add an option to svn-apply to set the reviewer name in change logs
+
+        * Scripts/svn-apply: Added a [-r|--reviewer name] option.
+
 2008-05-01  David Kilzer  <ddkilzer@apple.com>
 
         Clean up configuration usage in run-webkit-tests
