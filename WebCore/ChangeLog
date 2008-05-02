@@ -1,3 +1,12 @@
+2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by John Sullivan.
+
+        Fix a debug-only crash in layout tests.
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::~CachedResource): Don't call resourceForURL() for null URLs.
+
 2008-05-02  Simon Hausmann  <shausman@trolltech.com>
 
         Fix the Qt build on Windows when Phonon is enabled for Audio/Video support
