@@ -1,3 +1,15 @@
+2008-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark.
+
+        Enable 64-bit NPAPI plugins.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Don't remove NPAPI related symbols from the 64-bit .exp file.
+        
+        * bridge/npruntime.h:
+        Remove now unnecessary #error.
+
 2008-05-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver (a while ago)

@@ -86,10 +86,10 @@ static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPa
 {
     WebBasePluginPackage *plugin = nil;
     WebBasePluginPackage *webPlugin = nil;
-#ifndef __LP64__
+#ifdef SUPPORT_CFM
     WebBasePluginPackage *CFMPlugin = nil;
-    WebBasePluginPackage *machoPlugin = nil;    
 #endif
+    WebBasePluginPackage *machoPlugin = nil;    
 
     NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
     key = [key lowercaseString];
@@ -101,9 +101,12 @@ static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPa
 #if ENABLE(NETSCAPE_PLUGIN_API)
             else if([plugin isKindOfClass:[WebNetscapePluginPackage class]]) {
                 WebExecutableType executableType = [(WebNetscapePluginPackage *)plugin executableType];
+#ifdef SUPPORT_CFM
                 if (executableType == WebCFMExecutableType) {
                     checkCandidate(&CFMPlugin, &plugin);
-                } else if (executableType == WebMachOExecutableType) {
+                } else 
+#endif // SUPPORT_CFM
+                if (executableType == WebMachOExecutableType) {
                     checkCandidate(&machoPlugin, &plugin);
                 } else {
                     ASSERT_NOT_REACHED();
@@ -120,17 +123,17 @@ static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPa
     if (webPlugin && ![webPlugin isQuickTimePlugIn])
         return webPlugin;
     
-#ifndef __LP64__
     else if (machoPlugin && ![machoPlugin isQuickTimePlugIn])
         return machoPlugin;
+#ifdef SUPPORT_CFM
     else if (CFMPlugin && ![CFMPlugin isQuickTimePlugIn])
         return CFMPlugin;
-#endif
+#endif // SUPPORT_CFM
     else if (webPlugin)
         return webPlugin;
-#ifndef __LP64__
     else if (machoPlugin)
         return machoPlugin;
+#ifdef SUPPORT_CFM
     else if (CFMPlugin)
         return CFMPlugin;
 #endif

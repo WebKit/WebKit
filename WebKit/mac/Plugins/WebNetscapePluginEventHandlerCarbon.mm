@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
+#if ENABLE(NETSCAPE_PLUGIN_API) && !defined(__LP64__)
 
 #import "WebNetscapePluginEventHandlerCarbon.h"
 
@@ -406,4 +406,4 @@ bool WebNetscapePluginEventHandlerCarbon::sendEvent(EventRecord* event)
     return result;
 }
 
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
+#endif // ENABLE(NETSCAPE_PLUGIN_API) && !defined(__LP64__)

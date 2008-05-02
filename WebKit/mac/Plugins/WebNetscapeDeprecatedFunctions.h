@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
+#if ENABLE(NETSCAPE_PLUGIN_API) && !defined(__LP64__)
 
 #import <CoreServices/CoreServices.h>
 
@@ -32,4 +32,4 @@ extern OSErr WebCloseConnection(CFragConnectionID *connID);
 extern SInt16 WebLMGetCurApRefNum(void);
 extern void WebLMSetCurApRefNum(SInt16 value);
 
-#endif /* ENABLE(NETSCAPE_PLUGIN_API) */
+#endif /* ENABLE(NETSCAPE_PLUGIN_API) && !defined(__LP64__) */

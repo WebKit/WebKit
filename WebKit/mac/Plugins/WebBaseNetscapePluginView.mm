@@ -539,7 +539,11 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             cgPortState->context = context;
             
             // Update the plugin's window/context
+#ifdef NP_NO_CARBON
+            nPort.cgPort.window = (NPNSWindow *)[self currentWindow];
+#else
             nPort.cgPort.window = eventHandler->platformWindow([self currentWindow]);
+#endif /* NP_NO_CARBON */
             nPort.cgPort.context = context;
             window.window = &nPort.cgPort;
 
@@ -576,7 +580,11 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             }
             
             // Update the plugin's window/context
-            nPort.aglPort.window = eventHandler->platformWindow([self currentWindow]);;
+#ifdef NP_NO_CARBON
+            nPort.aglPort.window = (NPNSWindow *)[self currentWindow];
+#else
+            nPort.aglPort.window = eventHandler->platformWindow([self currentWindow]);
+#endif // NP_NO_CARBON
             nPort.aglPort.context = [self _cglContext];
             window.window = &nPort.aglPort;
             
@@ -989,8 +997,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // NPP_SetWindow() with an empty NPWindow struct.
     if (!isStarted)
         return;
+#ifdef NP_NO_QUICKDRAW
+    if (![self canDraw])
+        return;
+#else
     if (drawingModel != NPDrawingModelQuickDraw && ![self canDraw])
         return;
+#endif // NP_NO_QUICKDRAW
     
     BOOL didLockFocus = [NSView focusView] != self && [self lockFocusIfCanDraw];
     PortState portState = [self saveAndSetNewPortState];
@@ -1203,9 +1216,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         eventModel = NPEventModelCarbon;
 #else
         eventModel = NPEventModelCocoa;
-#endif
+#endif // NP_NO_CARBON
     }
 
+#ifndef NP_NO_CARBON
     if (eventModel == NPEventModelCocoa &&
         drawingModel == NPDrawingModelQuickDraw) {
         LOG(Plugins, "Plugin can't use use Cocoa event model with QuickDraw drawing model: %@", pluginPackage);
@@ -1214,6 +1228,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         
         return NO;
     }        
+#endif // NP_NO_CARBON
     
     // Create the event handler
     eventHandler = WebNetscapePluginEventHandler::create(self);
@@ -1693,7 +1708,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [self sendActivateEvent:YES];
     [self setNeedsDisplay:YES];
     [self restartTimers];
+#ifndef NP_NO_CARBON
     SetUserFocusWindow((WindowRef)[[self window] windowRef]);
+#endif // NP_NO_CARBON
 }
 
 - (void)windowResignedKey:(NSNotification *)notification

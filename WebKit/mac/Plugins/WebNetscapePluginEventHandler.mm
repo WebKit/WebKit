@@ -35,8 +35,10 @@
 WebNetscapePluginEventHandler* WebNetscapePluginEventHandler::create(WebBaseNetscapePluginView* pluginView)
 {
     switch ([pluginView eventModel]) {
+#ifndef NP_NO_CARBON
         case NPEventModelCarbon:
             return new WebNetscapePluginEventHandlerCarbon(pluginView);
+#endif // NP_NO_CARBON
         case NPEventModelCocoa:
             return new WebNetscapePluginEventHandlerCocoa(pluginView);
         default:

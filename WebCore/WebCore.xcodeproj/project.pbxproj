@@ -15111,7 +15111,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Corrections for 64-bit\n# 1) Exclude _NPN_ symbols as NPAPI support is disabled in 64-bit\n# 2) Switch NSRect, NSSize and NSPoint with their CG counterparts\n# 3) Append any 64-bit only symbols from WebCore.LP64.exp\ngrep -v \"^__NPN_\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.exp\" | sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ -e s/^__ZN7WebCore5Frame20windowScriptNPObjectEv$// > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.LP64.exp\"\ncat \"${SRCROOT}/WebCore.LP64.exp\" >> \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.LP64.exp\"\n";
+			shellScript = "# Corrections for 64-bit\n# 1) Switch NSRect, NSSize and NSPoint with their CG counterparts\n# 2) Append any 64-bit only symbols from WebCore.LP64.exp\ncat \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.exp\" | sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ > \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.LP64.exp\"\ncat \"${SRCROOT}/WebCore.LP64.exp\" >> \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/WebCore.LP64.exp\"\n";
 		};
 		1CC93C640DAE929600E4BC3A /* Copy Forwarding and ICU Headers */ = {
 			isa = PBXShellScriptBuildPhase;

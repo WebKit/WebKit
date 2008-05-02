@@ -1,5 +1,25 @@
 2008-05-01  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mark.
+
+        64-bit NPAPI plugin build fixes.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        (-[WebBaseNetscapePluginView updateAndSetWindow]):
+        (-[WebBaseNetscapePluginView start]):
+        (-[WebBaseNetscapePluginView windowBecameKey:]):
+        * Plugins/WebNetscapeDeprecatedFunctions.c:
+        * Plugins/WebNetscapeDeprecatedFunctions.h:
+        * Plugins/WebNetscapePluginEventHandler.mm:
+        (WebNetscapePluginEventHandler::create):
+        * Plugins/WebNetscapePluginEventHandlerCarbon.h:
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm:
+        * Plugins/WebPluginDatabase.m:
+        (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]):
+
+2008-05-01  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Tim.
 
         Remove duplicate npfunctions.h header from WebKit.
