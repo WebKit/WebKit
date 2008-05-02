@@ -530,6 +530,9 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_isVisible(false)
     , m_attachedToWindow(false)
     , m_haveInitialized(false)
+#if PLATFORM(GTK) || defined(Q_WS_X11)
+    , m_needsXEmbed(false)
+#endif
 #if PLATFORM(WIN)
     , m_pluginWndProc(0)
     , m_lastMessage(0)
