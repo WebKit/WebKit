@@ -224,9 +224,12 @@ void RenderThemeWx::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, 
 
 bool RenderThemeWx::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
+    i.context->save();
+    i.context->setStrokeStyle(SolidStroke);
     i.context->setStrokeThickness(1);
     i.context->setStrokeColor(Color(0, 0, 0));
     i.context->drawRect(r);
+    i.context->restore();
     return false;
 }
 

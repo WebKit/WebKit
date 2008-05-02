@@ -267,7 +267,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
     if (paintingDisabled())
         return;
 
-    m_data->context->SetPen(wxPen(color));
+    m_data->context->SetPen(*wxTRANSPARENT_PEN);
     m_data->context->SetBrush(wxBrush(color));
     m_data->context->DrawRectangle(rect.x(), rect.y(), rect.width(), rect.height());
 }
@@ -334,7 +334,7 @@ void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool pr
         return;
 
     IntPoint endPoint = origin + IntSize(width, 0);
-    m_data->context->SetPen(wxPen(strokeColor(), strokeThickness(), strokeStyleToWxPenStyle(strokeStyle())));
+    m_data->context->SetPen(wxPen(strokeColor(), strokeThickness(), wxSOLID));
     m_data->context->DrawLine(origin.x(), origin.y(), endPoint.x(), endPoint.y());
 }
 

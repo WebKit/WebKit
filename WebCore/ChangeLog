@@ -2,6 +2,21 @@
 
         Reviewed by Kevin Ollivier.
 
+        Explicitly set the pen style in wx port to keep pen style changes from 
+        affecting URL underline or text field drawing.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=18775
+
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::drawLineForText):
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::RenderThemeWx::paintTextField):
+
+2008-05-01  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+
         Implement popup menu support for wx port.
         
         https://bugs.webkit.org/show_bug.cgi?id=18776
