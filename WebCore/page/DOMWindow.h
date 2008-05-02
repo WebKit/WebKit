@@ -26,9 +26,11 @@
 #ifndef DOMWindow_h
 #define DOMWindow_h
 
+#include "KURL.h"
 #include "PlatformString.h"
-#include <wtf/RefCounted.h>
+#include "SecurityOrigin.h"
 #include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -67,6 +69,12 @@ namespace WebCore {
         void disconnectFrame();
 
         void clear();
+
+        void setSecurityOrigin(SecurityOrigin* securityOrigin) { m_securityOrigin = securityOrigin; }
+        SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
+
+        void setURL(const KURL& url) { m_url = url; }
+        KURL url() const { return m_url; }
 
         static void adjustWindowRect(const FloatRect& screen, FloatRect& window, const FloatRect& pendingChanges);
 
@@ -199,10 +207,13 @@ namespace WebCore {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
 #endif
-        
+
     private:
         DOMWindow(Frame*);
-        
+
+        RefPtr<SecurityOrigin> m_securityOrigin;
+        KURL m_url;
+
         Frame* m_frame;
         mutable RefPtr<Screen> m_screen;
         mutable RefPtr<DOMSelection> m_selection;

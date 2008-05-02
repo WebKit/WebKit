@@ -937,6 +937,9 @@ void FrameLoader::begin(const KURL& url, bool dispatch, SecurityOrigin* origin)
     if (forcedSecurityOrigin)
         document->setSecurityOrigin(forcedSecurityOrigin.get());
 
+    m_frame->domWindow()->setURL(document->url());
+    m_frame->domWindow()->setSecurityOrigin(document->securityOrigin());
+
     updatePolicyBaseURL();
 
     Settings* settings = document->settings();
@@ -988,8 +991,7 @@ void FrameLoader::write(const char* str, int len, bool flush)
         m_decoder = new TextResourceDecoder(m_responseMIMEType, settings ? settings->defaultTextEncodingName() : String());
         if (m_encoding.isEmpty()) {
             Frame* parentFrame = m_frame->tree()->parent();
-            SecurityOrigin::Reason reason;
-            if (parentFrame && parentFrame->document()->securityOrigin()->canAccess(m_frame->document()->securityOrigin(), reason))
+            if (parentFrame && parentFrame->document()->securityOrigin()->canAccess(m_frame->document()->securityOrigin()))
                 m_decoder->setEncoding(parentFrame->document()->inputEncoding(), TextResourceDecoder::DefaultEncoding);
         } else {
             m_decoder->setEncoding(m_encoding,
@@ -1772,8 +1774,10 @@ void FrameLoader::setOpener(Frame* opener)
         opener->loader()->m_openedFrames.add(m_frame);
     m_opener = opener;
 
-    if (m_frame->document())
+    if (m_frame->document()) {
         m_frame->document()->initSecurityOrigin();
+        m_frame->domWindow()->setSecurityOrigin(m_frame->document()->securityOrigin());
+    }
 }
 
 bool FrameLoader::openedByDOM() const
@@ -2444,9 +2448,8 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
         if (!ancestorDocument)
             return true;
 
-        SecurityOrigin::Reason reason;
         const SecurityOrigin* ancestorSecurityOrigin = ancestorDocument->securityOrigin();
-        if (activeSecurityOrigin->canAccess(ancestorSecurityOrigin, reason))
+        if (activeSecurityOrigin->canAccess(ancestorSecurityOrigin))
             return true;
     }
 

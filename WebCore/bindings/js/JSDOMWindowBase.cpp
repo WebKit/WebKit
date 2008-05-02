@@ -733,100 +733,63 @@ void JSDOMWindowBase::put(ExecState* exec, const Identifier& propertyName, JSVal
 
 bool JSDOMWindowBase::allowsAccessFrom(const JSGlobalObject* other) const
 {
-    SecurityOrigin::Reason reason;
-    if (allowsAccessFromPrivate(other, reason))
+    if (allowsAccessFromPrivate(other))
         return true;
-    printErrorMessage(crossDomainAccessErrorMessage(other, reason));
+    printErrorMessage(crossDomainAccessErrorMessage(other));
     return false;
 }
 
 bool JSDOMWindowBase::allowsAccessFrom(ExecState* exec) const
 {
-    SecurityOrigin::Reason reason;
-    if (allowsAccessFromPrivate(exec, reason))
+    if (allowsAccessFromPrivate(exec->lexicalGlobalObject()))
         return true;
-    printErrorMessage(crossDomainAccessErrorMessage(exec->dynamicGlobalObject(), reason));
+    printErrorMessage(crossDomainAccessErrorMessage(exec->lexicalGlobalObject()));
     return false;
 }
     
 bool JSDOMWindowBase::allowsAccessFromNoErrorMessage(ExecState* exec) const
 {
-    SecurityOrigin::Reason reason;
-    return allowsAccessFromPrivate(exec, reason);
+    return allowsAccessFromPrivate(exec->lexicalGlobalObject());
 }
 
 bool JSDOMWindowBase::allowsAccessFrom(ExecState* exec, String& message) const
 {
-    SecurityOrigin::Reason reason;
-    if (allowsAccessFromPrivate(exec, reason))
+    if (allowsAccessFromPrivate(exec->lexicalGlobalObject()))
         return true;
-    message = crossDomainAccessErrorMessage(exec->dynamicGlobalObject(), reason);
+    message = crossDomainAccessErrorMessage(exec->lexicalGlobalObject());
     return false;
 }
     
-ALWAYS_INLINE bool JSDOMWindowBase::allowsAccessFromPrivate(const ExecState* exec, SecurityOrigin::Reason& reason) const
+ALWAYS_INLINE bool JSDOMWindowBase::allowsAccessFromPrivate(const JSGlobalObject* other) const
 {
-    if (allowsAccessFromPrivate(exec->dynamicGlobalObject(), reason))
+    const JSDOMWindow* originWindow = asJSDOMWindow(other);
+    const JSDOMWindow* targetWindow = toJSDOMWindow(impl()->frame());
+
+    if (originWindow == targetWindow)
         return true;
-    if (reason == SecurityOrigin::DomainSetInDOMMismatch) {
-        // If the only reason the access failed was a domainSetInDOM bit mismatch, try again against 
-        // lexical global object <rdar://problem/5698200>
-        if (allowsAccessFromPrivate(exec->lexicalGlobalObject(), reason))
-            return true;
-    }
-    return false;
-}
-
-ALWAYS_INLINE bool JSDOMWindowBase::allowsAccessFromPrivate(const JSGlobalObject* other, SecurityOrigin::Reason& reason) const
-{
-    const Frame* originFrame = static_cast<const JSDOMWindowBase*>(other)->impl()->frame();
-    if (!originFrame) {
-        reason = SecurityOrigin::GenericMismatch;
-        return false;
-    }
-
-    const Frame* targetFrame = impl()->frame();
-
-    if (originFrame == targetFrame)
-        return true;
-    
-    if (!targetFrame) {
-        reason = SecurityOrigin::GenericMismatch;
-        return false;
-    }
-
-    Document* targetDocument = targetFrame->document();
 
     // JS may be attempting to access the "window" object, which should be valid,
     // even if the document hasn't been constructed yet.  If the document doesn't
     // exist yet allow JS to access the window object.
-    if (!targetDocument)
+    if (!originWindow->impl()->document())
         return true;
 
-    Document* originDocument = originFrame->document();
+    const SecurityOrigin* originSecurityOrigin = originWindow->impl()->securityOrigin();
+    const SecurityOrigin* targetSecurityOrigin = targetWindow->impl()->securityOrigin();
 
-    const SecurityOrigin* originSecurityOrigin = originDocument->securityOrigin();
-    const SecurityOrigin* targetSecurityOrigin = targetDocument->securityOrigin();
-
-    if (originSecurityOrigin->canAccess(targetSecurityOrigin, reason))
-        return true;
-
-    return false;
+    return originSecurityOrigin->canAccess(targetSecurityOrigin);
 }
 
-String JSDOMWindowBase::crossDomainAccessErrorMessage(const JSGlobalObject* other, SecurityOrigin::Reason) const
+String JSDOMWindowBase::crossDomainAccessErrorMessage(const JSGlobalObject* other) const
 {
-    const Frame* originFrame = static_cast<const JSDOMWindowBase*>(other)->impl()->frame();
-    const Frame* targetFrame = impl()->frame();
-    if (!originFrame || !targetFrame)
+    KURL originURL = asJSDOMWindow(other)->impl()->url();
+    KURL targetURL = impl()->frame()->document()->url();
+    if (originURL.isNull() || targetURL.isNull())
         return String();
-    Document* targetDocument = targetFrame->document();
-    Document* originDocument = originFrame->document();
-    if (!originDocument || !targetDocument)
-        return String();
+
     // FIXME: this error message should contain more specifics of why the same origin check has failed.
     return String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n",
-        targetDocument->url().string().utf8().data(), originDocument->url().string().utf8().data());
+        targetURL.string().utf8().data(), originURL.string().utf8().data());
 }
 
 void JSDOMWindowBase::printErrorMessage(const String& message) const
@@ -844,7 +807,7 @@ void JSDOMWindowBase::printErrorMessage(const String& message) const
     if (Interpreter::shouldPrintExceptions())
         printf("%s", message.utf8().data());
 
-    frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, 1, String()); // FIXME: provide a real line number and source URL.
+    impl()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, 1, String()); // FIXME: provide a real line number and source URL.
 }
 
 ExecState* JSDOMWindowBase::globalExec()
@@ -1424,6 +1387,11 @@ JSDOMWindow* toJSDOMWindow(Frame* frame)
 JSDOMWindow* asJSDOMWindow(JSGlobalObject* globalObject)
 {
     return static_cast<JSDOMWindow*>(globalObject);
+}
+
+const JSDOMWindow* asJSDOMWindow(const JSGlobalObject* globalObject)
+{
+    return static_cast<const JSDOMWindow*>(globalObject);
 }
 
 } // namespace WebCore

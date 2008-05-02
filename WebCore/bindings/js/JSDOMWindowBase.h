@@ -21,7 +21,6 @@
 #define JSDOMWindowBase_h
 
 #include "PlatformString.h"
-#include "SecurityOrigin.h"
 #include "kjs_binding.h"
 #include <kjs/protect.h>
 #include <wtf/HashMap.h>
@@ -40,6 +39,7 @@ namespace WebCore {
     class JSUnprotectedEventListener;
     class PausedTimeouts;
     class ScheduledAction;
+    class SecurityOrigin;
 
     class JSDOMWindowBasePrivate;
 
@@ -148,9 +148,8 @@ namespace WebCore {
         void clearAllTimeouts();
         int installTimeout(ScheduledAction*, int interval, bool singleShot);
 
-        bool allowsAccessFromPrivate(const KJS::JSGlobalObject*, SecurityOrigin::Reason&) const;
-        bool allowsAccessFromPrivate(const KJS::ExecState*, SecurityOrigin::Reason&) const;
-        String crossDomainAccessErrorMessage(const KJS::JSGlobalObject*, SecurityOrigin::Reason) const;
+        bool allowsAccessFromPrivate(const KJS::JSGlobalObject*) const;
+        String crossDomainAccessErrorMessage(const KJS::JSGlobalObject*) const;
 
         RefPtr<DOMWindow> m_impl;
         OwnPtr<JSDOMWindowBasePrivate> d;
@@ -175,6 +174,7 @@ namespace WebCore {
     JSDOMWindow* toJSDOMWindow(Frame*);
 
     JSDOMWindow* asJSDOMWindow(KJS::JSGlobalObject*);
+    const JSDOMWindow* asJSDOMWindow(const KJS::JSGlobalObject*);
 
 } // namespace WebCore
 

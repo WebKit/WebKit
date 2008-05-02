@@ -1,3 +1,55 @@
+2008-05-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fixes:
+          - https://bugs.webkit.org/show_bug.cgi?id=17249
+            Incorrect lexical scope after navigation leads to UXSS
+            <rdar://problem/5738497>
+
+          - https://bugs.webkit.org/show_bug.cgi?id=16824
+            Script authorization should follow lexical (not dynamic) scope
+            <rdar://problem/5683032>
+
+        This patch changes us to perform same-origin checks based on the lexical global object) 
+        rather than dynamic global object, which is now possible we don't re-use the window on 
+        navigations, but rather switch in a new one and re-use the outer shell.  This is both
+        more secure and conforms with the HTML5 specification.  Now that all the checks are
+        done based on the lexical global object, we can remove the SecurityOrigin::Reason
+        concept, as it was only around to work around an ebay.com bug that required the check to
+        be done that way.
+
+        An important thing to note is that we currently implement a stricter than necessary policy
+        and perform the same-origin check based on the currently active global object to avoid leaking
+        the document in cases when the target frame is navigated before access.  This will be fixed in
+        an upcoming patch.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::allowsAccessFrom):
+        (WebCore::JSDOMWindowBase::allowsAccessFromNoErrorMessage):
+        (WebCore::JSDOMWindowBase::allowsAccessFromPrivate):
+        (WebCore::JSDOMWindowBase::crossDomainAccessErrorMessage):
+        (WebCore::JSDOMWindowBase::printErrorMessage):
+        (WebCore::asJSDOMWindow):
+        * bindings/js/JSDOMWindowBase.h:
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::checkOrigin):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin):
+        (WebCore::FrameLoader::write):
+        (WebCore::FrameLoader::setOpener):
+        (WebCore::FrameLoader::shouldAllowNavigation):
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::setSecurityOrigin):
+        (WebCore::DOMWindow::securityOrigin):
+        (WebCore::DOMWindow::setURL):
+        (WebCore::DOMWindow::url):
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canAccess):
+        (WebCore::SecurityOrigin::isSecureTransitionTo):
+        * platform/SecurityOrigin.h:
+
 2008-05-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark.
