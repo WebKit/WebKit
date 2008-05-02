@@ -1,3 +1,15 @@
+2008-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Tim.
+
+        Remove duplicate npfunctions.h header from WebKit.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Add npfunctions.h and set its role to private.
+        
+        * plugins/npfunctions.h:
+        Merge Mac specific changes.
+
 2008-05-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

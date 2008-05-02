@@ -1,5 +1,16 @@
 2008-05-01  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Tim.
+
+        Remove duplicate npfunctions.h header from WebKit.
+
+        * MigrateHeaders.make:
+        Migrate npfunctions.h
+        
+        * Plugins/npfunctions.h: Removed.
+
+2008-05-01  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John.
         
         Add null checks for the event handler.

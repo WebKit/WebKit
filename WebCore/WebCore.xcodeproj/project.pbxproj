@@ -81,6 +81,7 @@
 		1A0D57410A5C7867007EDD4C /* JSOverflowEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */; };
 		1A1D13800A5325520064BF5F /* DOMXPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1D137E0A5325520064BF5F /* DOMXPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A1D13810A5325520064BF5F /* DOMXPath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D137F0A5325520064BF5F /* DOMXPath.mm */; };
+		1A219B3B0DCA87AB0040E3A0 /* npfunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A219B3A0DCA87AB0040E3A0 /* npfunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A2246490CC98DDB00C05240 /* SQLiteDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2246430CC98DDB00C05240 /* SQLiteDatabase.cpp */; };
 		1A22464A0CC98DDB00C05240 /* SQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2246440CC98DDB00C05240 /* SQLiteDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A22464B0CC98DDB00C05240 /* SQLiteStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2246450CC98DDB00C05240 /* SQLiteStatement.cpp */; };
@@ -4495,6 +4496,7 @@
 		1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSOverflowEvent.h; sourceTree = "<group>"; };
 		1A1D137E0A5325520064BF5F /* DOMXPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMXPath.h; sourceTree = "<group>"; };
 		1A1D137F0A5325520064BF5F /* DOMXPath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMXPath.mm; sourceTree = "<group>"; };
+		1A219B3A0DCA87AB0040E3A0 /* npfunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npfunctions.h; sourceTree = "<group>"; };
 		1A2246430CC98DDB00C05240 /* SQLiteDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteDatabase.cpp; path = sql/SQLiteDatabase.cpp; sourceTree = "<group>"; };
 		1A2246440CC98DDB00C05240 /* SQLiteDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteDatabase.h; path = sql/SQLiteDatabase.h; sourceTree = "<group>"; };
 		1A2246450CC98DDB00C05240 /* SQLiteStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteStatement.cpp; path = sql/SQLiteStatement.cpp; sourceTree = "<group>"; };
@@ -8746,6 +8748,7 @@
 		5DCF83690D59157800953BC6 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				1A219B3A0DCA87AB0040E3A0 /* npfunctions.h */,
 				A9C6E6610D74671E006442E9 /* PluginArray.idl */,
 				A9C6E6600D74670C006442E9 /* Plugin.idl */,
 				A9C6E65F0D746700006442E9 /* MimeTypeArray.idl */,
@@ -14973,6 +14976,7 @@
 				BC5A12E00DC0414800C9AFAD /* CSSReflectValue.h in Headers */,
 				1A2AAC590DC2A3B100A20D9A /* ApplicationCacheStorage.h in Headers */,
 				BCA846D70DC67A350026C309 /* RenderReplica.h in Headers */,
+				1A219B3B0DCA87AB0040E3A0 /* npfunctions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

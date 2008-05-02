@@ -1,3 +1,11 @@
+2008-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Tim.
+
+        Remove npfunctions.h
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-05-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

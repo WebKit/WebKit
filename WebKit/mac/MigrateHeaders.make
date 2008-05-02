@@ -208,6 +208,7 @@ all : \
     $(PRIVATE_HEADERS_DIR)/WebDashboardRegion.h \
     $(PUBLIC_HEADERS_DIR)/WebScriptObject.h \
     $(PUBLIC_HEADERS_DIR)/npapi.h \
+    $(PUBLIC_HEADERS_DIR)/npfunctions.h \
     $(PUBLIC_HEADERS_DIR)/npruntime.h \
 #
 
