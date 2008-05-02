@@ -1,5 +1,11 @@
 2008-05-01  Sam Weinig  <sam@webkit.org>
 
+        Add missing result.
+
+        * fast/canvas/canvas-path-with-inf-nan-dimensions-expected.txt: Added.
+
+2008-05-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoffrey Garen.
 
         * http/tests/security/listener/xss-JSTargetNode-onclick-addEventListener-expected.txt:
