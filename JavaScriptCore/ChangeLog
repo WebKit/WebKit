@@ -1,3 +1,11 @@
+2008-05-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - Mac build fix
+
+        * wtf/StrHash.h: Added header guards and removed #include "config.h".
+
 2008-05-01  Ada Chan  <adachan@apple.com>
 
         #include <wtf/StrHash.h> in identifier.cpp.

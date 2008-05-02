@@ -26,7 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WTF_StrHash_h
+#define WTF_StrHash_h
 
 #include "identifier.h"
 
@@ -44,4 +45,6 @@ namespace WTF {
     template<> struct DefaultHash<KJS::UString::Rep*> {
         typedef StrHash<KJS::UString::Rep*> Hash;
     };
-}
+} // namespace WTF
+
+#endif // WTF_StrHash_h
