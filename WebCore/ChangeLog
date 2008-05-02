@@ -1,3 +1,12 @@
+2008-05-02  Simon Hausmann  <shausman@trolltech.com>
+
+        Fix the Qt build on Windows when Phonon is enabled for Audio/Video support
+
+        * WebCore.pro: Don't use QT += phonon as it prepends the phonon
+        includes to the include paths. Instead add it manually and make sure
+        phonon comes last, to avoid the conflict of phonon's path.h with
+        WebCore's Path.h on case-insensitive filesystems.
+
 2008-05-02  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build. Add ExecState where necessary.

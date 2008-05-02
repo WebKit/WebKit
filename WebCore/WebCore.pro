@@ -1314,7 +1314,12 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         SOURCES += \
             platform/graphics/qt/MediaPlayerPrivatePhonon.cpp
 
-        QT += phonon
+        # Add phonon manually to prevent it from coming first in
+        # the include paths, as Phonon's path.h conflicts with
+        # WebCore's Path.h on case-insensitive filesystems.
+        qtAddLibrary(phonon)
+        INCLUDEPATH -= $$QMAKE_INCDIR_QT/phonon
+        INCLUDEPATH += $$QMAKE_INCDIR_QT/phonon
     }
 
     gtk-port {
