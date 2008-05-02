@@ -1,3 +1,12 @@
+2008-05-02  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixed potential crash on SVG animation (added more checks to the assert).
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::associateInstancesWithShadowTreeElements):
+
 2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by John Sullivan.
