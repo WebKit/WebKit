@@ -1,5 +1,19 @@
 2008-05-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam.
+
+        The event union is now named.
+        
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::drawRect):
+        (WebNetscapePluginEventHandlerCocoa::sendMouseEvent):
+        (WebNetscapePluginEventHandlerCocoa::flagsChanged):
+        (WebNetscapePluginEventHandlerCocoa::sendKeyEvent):
+        (WebNetscapePluginEventHandlerCocoa::windowFocusChanged):
+        (WebNetscapePluginEventHandlerCocoa::focusChanged):
+
+2008-05-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Mark.
 
         Make sure that 32-bit only plug-ins aren't shown when running as 64-bit.

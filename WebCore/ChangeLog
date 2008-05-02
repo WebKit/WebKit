@@ -1,3 +1,12 @@
+2008-05-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Name the event union so it will work in plain C.
+
+        * bridge/npapi.h:
+        (_NPCocoaEvent::):
+
 2008-05-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
