@@ -250,7 +250,7 @@ namespace KJS {
         HashSet<JSObject*>& arrayVisitedElements() { if (!d()->arrayVisitedElements) d()->arrayVisitedElements.set(new HashSet<JSObject*>); return *d()->arrayVisitedElements; }
 
         // Per-thread hash tables, cached on the global object for faster access.
-        const PerThreadData* perThreadData() const { return &d()->perThreadData; }
+        PerThreadData* perThreadData() { return &d()->perThreadData; }
 
         // Initialize and/or retrieve per-thread hash tables - use perThreadData() for faster access instead.
         static ThreadClassInfoHashTables* threadClassInfoHashTables();

@@ -2,6 +2,23 @@
 
         Reviewed by Darin.
 
+        Move call stack depth counter to global object.
+
+        * kjs/ExecState.h: (KJS::ExecState::functionCallDepth): Added a recursion depth counter to
+        per-thread data.
+        * kjs/JSGlobalObject.cpp: (KJS::JSGlobalObject::init): Initialize PerThreadData.functionCallDepth.
+        * kjs/JSGlobalObject.h: (KJS::JSGlobalObject::perThreadData): Made the result non-const.
+
+        * kjs/object.cpp:
+        (KJS::throwStackSizeExceededError): Moved throwError to a separate function, since it is now
+        the only thing in JSObject::call that needs a PIC branch.
+        (KJS::JSObject::call): Use a per-thread variable instead of local static for recursion depth
+        tracking.
+
+2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         Make JavaScriptGlue and JavaScriptCore API functions implicitly call initializeThreading
         for the sake of non-WebKit clients.
 

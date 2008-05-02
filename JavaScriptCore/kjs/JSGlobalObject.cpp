@@ -230,6 +230,7 @@ void JSGlobalObject::init(JSObject* thisValue)
     d()->perThreadData.stringTable = &threadClassInfoHashTables()->stringTable;
     d()->perThreadData.propertyNames = CommonIdentifiers::shared();
     d()->perThreadData.heap = Heap::threadHeap();
+    d()->perThreadData.functionCallDepth = 0;
 
     d()->globalExec.set(new GlobalExecState(this, thisValue));
 

@@ -63,13 +63,17 @@ namespace KJS {
 
 // ------------------------------ Object ---------------------------------------
 
+JSValue* NEVER_INLINE throwStackSizeExceededError(ExecState* exec)
+{
+    // This function takes a PIC branch to access a string literal, so moving it out of JSObject::call() improves performance.
+    return throwError(exec, RangeError, "Maximum call stack size exceeded.");
+}
+
 JSValue *JSObject::call(ExecState *exec, JSObject *thisObj, const List &args)
 {
   ASSERT(implementsCall());
 
 #if KJS_MAX_STACK > 0
-  static int depth = 0; // sum of all extant function calls
-
 #if JAVASCRIPT_CALL_TRACING
     static bool tracing = false;
     if (traceJavaScript() && !tracing) {
@@ -86,9 +90,12 @@ JSValue *JSObject::call(ExecState *exec, JSObject *thisObj, const List &args)
     }
 #endif
 
+  unsigned& depth = exec->functionCallDepth();
   if (++depth > KJS_MAX_STACK) {
+    // FIXME: secondary threads probably need a different limit than main thread.
+    // Ideally, the limit should be calculated from available stack space, and not just hardcoded.
     --depth;
-    return throwError(exec, RangeError, "Maximum call stack size exceeded.");
+    return throwStackSizeExceededError(exec);
   }
 #endif
 

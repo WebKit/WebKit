@@ -60,6 +60,8 @@ namespace KJS  {
         List emptyList;
         
         Heap* heap;
+
+        unsigned functionCallDepth;
     };
 
     // Represents the current state of script execution.
@@ -123,6 +125,8 @@ namespace KJS  {
         static const HashTable* stringTable(ExecState* exec) { return exec->m_perThreadData->stringTable; }
 
         Heap* heap() const { return m_perThreadData->heap; }
+
+        unsigned& functionCallDepth() { return m_perThreadData->functionCallDepth; }
 
         LocalStorage& localStorage() { return *m_localStorage; }
         void setLocalStorage(LocalStorage* s) { m_localStorage = s; }
@@ -204,7 +208,7 @@ namespace KJS  {
 
         ExecState* m_callingExec;
 
-        const PerThreadData* m_perThreadData;
+        PerThreadData* m_perThreadData;
 
         ScopeNode* m_scopeNode;
         
