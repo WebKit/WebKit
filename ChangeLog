@@ -1,3 +1,11 @@
+2008-05-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark.
+
+        Add an "x86_64" make rule.
+        
+        * Makefile.shared:
+
 2008-05-02  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Eric.

@@ -15,6 +15,9 @@ release r deployment dep deploy: force
 universal u: force
 	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) 'ARCHS=ppc i386' | grep -v setenv && exit $${PIPESTATUS[0]} )
 
+x86_64: force
+	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) 'ARCHS=x86_64' | grep -v setenv && exit $${PIPESTATUS[0]} )
+
 64: force
 	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) 'ARCHS=i386 x86_64' | grep -v setenv && exit $${PIPESTATUS[0]} )
 
