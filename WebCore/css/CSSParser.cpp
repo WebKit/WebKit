@@ -808,6 +808,8 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSSValueWebkitText)
             valid_primitive = true; // Always allow this, even when strict parsing is on,
                                     // since we use this in our UA sheets.
+        else if (id == CSSValueCurrentcolor)
+            valid_primitive = true;
         else if (id >= CSSValueAqua && id <= CSSValueWindowtext || id == CSSValueMenu ||
              (id >= CSSValueWebkitFocusRingColor && id < CSSValueWebkitText && !strict)) {
             valid_primitive = true;
@@ -1960,7 +1962,7 @@ bool CSSParser::parseContent(int propId, bool important)
 PassRefPtr<CSSValue> CSSParser::parseBackgroundColor()
 {
     int id = valueList->current()->id;
-    if (id == CSSValueWebkitText || (id >= CSSValueAqua && id <= CSSValueWindowtext) || id == CSSValueMenu ||
+    if (id == CSSValueWebkitText || (id >= CSSValueAqua && id <= CSSValueWindowtext) || id == CSSValueMenu || id == CSSValueCurrentcolor ||
         (id >= CSSValueGrey && id < CSSValueWebkitText && !strict))
        return new CSSPrimitiveValue(id);
     return parseColor();

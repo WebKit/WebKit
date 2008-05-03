@@ -155,6 +155,7 @@ window
 windowframe
 windowtext
 -webkit-focus-ring-color
+currentcolor
 #
 # colors in non strict mode
 grey

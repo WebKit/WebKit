@@ -1,3 +1,22 @@
+2008-05-01  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18568
+        background: currentColor fails
+
+        Implement currentColor from CSS3 color module.
+
+        Tests: fast/css/background-currentcolor.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseBackgroundColor):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue):
+        * css/CSSValueKeywords.in:
+        * css/SVGCSSValueKeywords.in:
+
 2008-05-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark.

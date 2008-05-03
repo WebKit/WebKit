@@ -2785,12 +2785,16 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
 // colors || inherit
+    case CSSPropertyColor:
+        // If the 'currentColor' keyword is set on the 'color' property itself,
+        // it is treated as 'color:inherit' at parse time
+        if (primitiveValue && primitiveValue->getIdent() == CSSValueCurrentcolor)
+            isInherit = true;
     case CSSPropertyBackgroundColor:
     case CSSPropertyBorderTopColor:
     case CSSPropertyBorderRightColor:
     case CSSPropertyBorderBottomColor:
     case CSSPropertyBorderLeftColor:
-    case CSSPropertyColor:
     case CSSPropertyOutlineColor:
     case CSSPropertyWebkitColumnRuleColor:
     case CSSPropertyWebkitTextStrokeColor:
@@ -5268,6 +5272,8 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
             col = m_element->document()->activeLinkColor();
         else if (ident == CSSValueWebkitFocusRingColor)
             col = focusRingColor();
+        else if (ident == CSSValueCurrentcolor)
+            col = m_style->color();
         else
             col = colorForCSSValue(ident);
     } else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
