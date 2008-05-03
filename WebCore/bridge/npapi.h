@@ -452,8 +452,6 @@ typedef struct _NPCocoaEvent {
         } mouse;
         struct {
             uint32 modifierFlags;
-            double pluginX;
-            double pluginY;            
             NPNSString *characters;
             NPNSString *charactersIgnoringModifiers;
             NPBool isARepeat;

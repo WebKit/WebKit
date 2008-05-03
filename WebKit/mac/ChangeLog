@@ -1,5 +1,23 @@
 2008-05-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mark.
+
+        Various Cocoa event model and 64-bit plug-in fixes.
+        
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::sendMouseEvent):
+        Set click count.
+        
+        (WebNetscapePluginEventHandlerCocoa::flagsChanged):
+        (WebNetscapePluginEventHandlerCocoa::sendKeyEvent):
+        Don't try to get the mouse location for keyboard events.
+        
+        * Plugins/WebPluginPackage.m:
+        (-[WebPluginPackage initWithPath:]):
+        Preflight the bundle so we won't show 32-bit WebKit plug-ins when running as 64-bit.
+
+2008-05-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam.
 
         The event union is now named.

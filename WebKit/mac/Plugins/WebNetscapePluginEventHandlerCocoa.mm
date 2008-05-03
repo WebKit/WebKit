@@ -88,9 +88,16 @@ bool WebNetscapePluginEventHandlerCocoa::sendMouseEvent(NSEvent *nsEvent, NPCoco
     
     NSPoint point = [m_pluginView convertPoint:[nsEvent locationInWindow] fromView:nil];
     
+    int clickCount;
+    if (type == NPCocoaEventMouseEntered || type == NPCocoaEventMouseExited || type == NPCocoaEventScrollWheel)
+        clickCount = 0;
+    else
+        clickCount = [nsEvent clickCount];
+    
     event.type = type;
     event.event.mouse.modifierFlags = [nsEvent modifierFlags];
     event.event.mouse.buttonNumber = [nsEvent buttonNumber];
+    event.event.mouse.clickCount = clickCount;
     event.event.mouse.pluginX = point.x;
     event.event.mouse.pluginY = point.y;
     event.event.mouse.deltaX = [nsEvent deltaX];
@@ -113,13 +120,9 @@ void WebNetscapePluginEventHandlerCocoa::keyUp(NSEvent *event)
 void WebNetscapePluginEventHandlerCocoa::flagsChanged(NSEvent *nsEvent)
 {
     NPCocoaEvent event;
-    
-    NSPoint point = [m_pluginView convertPoint:[nsEvent locationInWindow] fromView:nil];
-    
+        
     event.type = NPCocoaEventFlagsChanged;
     event.event.key.modifierFlags = [nsEvent modifierFlags];
-    event.event.key.pluginX = point.x;
-    event.event.key.pluginY = point.y;
     event.event.key.keyCode = [nsEvent keyCode];
     event.event.key.isARepeat = false;
     event.event.key.characters = 0;
@@ -131,13 +134,9 @@ void WebNetscapePluginEventHandlerCocoa::flagsChanged(NSEvent *nsEvent)
 void WebNetscapePluginEventHandlerCocoa::sendKeyEvent(NSEvent* nsEvent, NPCocoaEventType type)
 {
     NPCocoaEvent event;
-    
-    NSPoint point = [m_pluginView convertPoint:[nsEvent locationInWindow] fromView:nil];
-    
+        
     event.type = type;
     event.event.key.modifierFlags = [nsEvent modifierFlags];
-    event.event.key.pluginX = point.x;
-    event.event.key.pluginY = point.y;
     event.event.key.keyCode = [nsEvent keyCode];
     event.event.key.isARepeat = [nsEvent isARepeat];
     event.event.key.characters = (NPNSString *)[nsEvent characters];

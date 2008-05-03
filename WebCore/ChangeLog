@@ -1,3 +1,13 @@
+2008-05-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark.
+
+        Turns out calling locationInWindow on keyboard events will not throw an exception,
+        but the point returned is completely bogus, so remove coordinates from the keyboard event struct.
+        
+        * bridge/npapi.h:
+        (_NPCocoaEvent::):
+
 2008-05-02  Benjamin Otte  <otte@gnome.org>
 
         Reviewed by Alp Toker.
