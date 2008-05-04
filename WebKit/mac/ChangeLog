@@ -1,3 +1,13 @@
+2008-05-04  David Kilzer  <ddkilzer@apple.com>
+
+        Make parameters match for WebChromeClient::addMessageToConsole()
+
+        Reviewed by John.
+
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::addMessageToConsole): Renamed sourceID parameter
+        to sourceURL to match implementation in WebChromeClient.mm.
+
 2008-05-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark.
