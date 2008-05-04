@@ -1,3 +1,14 @@
+2008-05-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Don't print out the full url.
+
+        * fast/dom/Window/dom-access-from-closure-iframe-expected.txt:
+        * fast/dom/Window/dom-access-from-closure-window-expected.txt:
+        * fast/dom/Window/resources/dom-access-from-closure-iframe-child.html:
+        * fast/dom/Window/resources/dom-access-from-closure-window-child.html:
+
 2008-05-03  Rob Buis  <buis@kde.org>
 
         Reviewed by Sam.
