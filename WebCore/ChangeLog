@@ -1,5 +1,11 @@
 2008-05-03  Sam Weinig  <sam@webkit.org>
 
+        Real build fix.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2008-05-03  Sam Weinig  <sam@webkit.org>
+
         Build fix.
 
         * bindings/js/kjs_events.cpp:
