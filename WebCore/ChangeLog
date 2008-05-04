@@ -1,3 +1,14 @@
+2008-05-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Move createDOMWrapper(JSObject* object) out of the KJS namespace and into
+        the WebCore namespace now that the required compilers don't freak out about
+        this anymore.
+
+        * bindings/objc/DOMUtility.mm:
+        (WebCore::createDOMWrapper):
+
 2008-05-03  Rob Buis  <buis@kde.org>
 
         Reviewed by Sam.
