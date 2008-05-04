@@ -123,8 +123,7 @@ namespace WebCore {
 
         enum {
             // Attributes
-            Crypto, Event_, Location_, Navigator_,
-            ClientInformation,
+            Crypto, Event_,
 
             // Event Listeners
             Onabort, Onblur, Onchange, Onclick,
@@ -136,7 +135,7 @@ namespace WebCore {
             Onbeforeunload,
 
             // Constructors
-            DOMException, Audio, Image, Option, XMLHttpRequest,
+            Audio, Image, Option, XMLHttpRequest,
             XSLTProcessor
         };
 
