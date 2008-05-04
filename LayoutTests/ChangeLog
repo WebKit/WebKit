@@ -1,3 +1,13 @@
+2008-05-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=18879
+          <rdar://problem/5909481> Reproducible crash when removing a gradient
+
+        * fast/gradients/crash-on-remove-expected.txt: Added.
+        * fast/gradients/crash-on-remove.html: Added.
+
 2008-05-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

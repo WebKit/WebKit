@@ -1,3 +1,19 @@
+2008-05-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=18879
+          <rdar://problem/5909481> Reproducible crash when removing a gradient
+
+        Test: fast/gradients/crash-on-remove.html
+
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::CSSImageGeneratorValue):
+        (WebCore::CSSImageGeneratorValue::addClient): Added a call to ref() the
+        value.
+        (WebCore::CSSImageGeneratorValue::removeClient): Added code to deref()
+        the value.
+
 2008-05-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
