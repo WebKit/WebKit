@@ -2,4 +2,6 @@ This tests that slider controls get the onchange event and that it is sent after
 
 input
 change
+input
+change
 

@@ -1,3 +1,16 @@
+2008-05-03  Rob Buis  <buis@kde.org>
+
+        Reviewed by Sam.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18652
+        onchange events don't seem to fire for input[type=range] controls.
+
+        Fire changeEvent when clicking the slider outside the current
+        thumb position.
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::setValueForPosition):
+
 2008-05-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
