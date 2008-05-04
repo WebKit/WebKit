@@ -93,7 +93,7 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
         } else {
             JSObject* thisObj;
             if (isWindowEvent)
-                thisObj = window->wrapper();
+                thisObj = window->shell();
             else
                 thisObj = static_cast<JSObject*>(toJS(exec, event->currentTarget()));
             window->startTimeoutCheck();

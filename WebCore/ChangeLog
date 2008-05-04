@@ -1,5 +1,12 @@
 2008-05-03  Sam Weinig  <sam@webkit.org>
 
+        Build fix.
+
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+
+2008-05-03  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Geoffrey Garen.
 
         Rename JSDOMWindowWrapper to JSDOMWindowShell.
