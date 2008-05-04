@@ -38,7 +38,7 @@
 #include "FrameView.h"
 #include "GCController.h"
 #include "JSDOMWindow.h"
-#include "JSDOMWindowWrapper.h"
+#include "JSDOMWindowShell.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -95,8 +95,8 @@ CachedPage::CachedPage(Page* page)
     JSLock lock;
 
     KJSProxy* proxy = mainFrame->scriptProxy();
-    if (proxy->haveWindowWrapper()) {
-        m_window = proxy->windowWrapper()->window();
+    if (proxy->haveWindowShell()) {
+        m_window = proxy->windowShell()->window();
         m_pausedTimeouts.set(m_window->pauseTimeouts());
     }
 
@@ -121,15 +121,15 @@ void CachedPage::restore(Page* page)
     JSLock lock;
 
     KJSProxy* proxy = mainFrame->scriptProxy();
-    if (proxy->haveWindowWrapper()) {
-        JSDOMWindowWrapper* windowWrapper = proxy->windowWrapper();
+    if (proxy->haveWindowShell()) {
+        JSDOMWindowShell* windowShell = proxy->windowShell();
         if (m_window) {
-            windowWrapper->setWindow(m_window.get());
-            windowWrapper->window()->resumeTimeouts(m_pausedTimeouts.get());
+            windowShell->setWindow(m_window.get());
+            windowShell->window()->resumeTimeouts(m_pausedTimeouts.get());
         } else {
-            windowWrapper->setWindow(new JSDOMWindow(mainFrame->domWindow(), windowWrapper));
+            windowShell->setWindow(new JSDOMWindow(mainFrame->domWindow(), windowShell));
             proxy->attachDebugger(page->debugger());
-            windowWrapper->window()->setPageGroupIdentifier(page->group().identifier());
+            windowShell->window()->setPageGroupIdentifier(page->group().identifier());
         }
     }
 

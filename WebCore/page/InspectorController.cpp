@@ -464,7 +464,7 @@ static JSValueRef getResourceDocumentNode(JSContextRef ctx, JSObjectRef /*functi
     if (document->isPluginDocument() || document->isImageDocument())
         return undefined;
 
-    ExecState* exec = toJSDOMWindowWrapper(resource->frame.get())->window()->globalExec();
+    ExecState* exec = toJSDOMWindowShell(resource->frame.get())->window()->globalExec();
 
     KJS::JSLock lock;
     JSValueRef documentValue = toRef(JSInspectedObjectWrapper::wrap(exec, toJS(exec, document)));

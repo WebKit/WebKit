@@ -21,7 +21,7 @@
 #ifndef kjs_proxy_h
 #define kjs_proxy_h
 
-#include "JSDOMWindowWrapper.h"
+#include "JSDOMWindowShell.h"
 #include <kjs/protect.h>
 #include <wtf/RefPtr.h>
 
@@ -45,17 +45,17 @@ public:
     KJSProxy(Frame*);
     ~KJSProxy();
 
-    bool haveWindowWrapper() const { return m_windowWrapper; }
-    JSDOMWindowWrapper* windowWrapper()
+    bool haveWindowShell() const { return m_windowShell; }
+    JSDOMWindowShell* windowShell()
     {
         initScriptIfNeeded();
-        return m_windowWrapper;
+        return m_windowShell;
     }
 
     JSDOMWindow* globalObject()
     {
         initScriptIfNeeded();
-        return m_windowWrapper->window();
+        return m_windowShell->window();
     }
 
     KJS::JSValue* evaluate(const String& filename, int baseLine, const String& code);
@@ -82,12 +82,12 @@ public:
 private:
     void initScriptIfNeeded()
     {
-        if (!m_windowWrapper)
+        if (!m_windowShell)
             initScript();
     }
     void initScript();
 
-    KJS::ProtectedPtr<JSDOMWindowWrapper> m_windowWrapper;
+    KJS::ProtectedPtr<JSDOMWindowShell> m_windowShell;
     Frame* m_frame;
     int m_handlerLineno;
     

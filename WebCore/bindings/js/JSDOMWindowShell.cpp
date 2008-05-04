@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "JSDOMWindowWrapper.h"
+#include "JSDOMWindowShell.h"
 
 #include "Frame.h"
 #include "JSDOMWindow.h"
@@ -39,9 +39,9 @@ using namespace KJS;
 
 namespace WebCore {
 
-const ClassInfo JSDOMWindowWrapper::s_info = { "JSDOMWindowWrapper", 0, 0, 0 };
+const ClassInfo JSDOMWindowShell::s_info = { "JSDOMWindowShell", 0, 0, 0 };
 
-JSDOMWindowWrapper::JSDOMWindowWrapper(DOMWindow* domWindow)
+JSDOMWindowShell::JSDOMWindowShell(DOMWindow* domWindow)
     : Base(jsNull())
     , m_window(0)
 {
@@ -49,7 +49,7 @@ JSDOMWindowWrapper::JSDOMWindowWrapper(DOMWindow* domWindow)
     setPrototype(m_window->prototype());
 }
 
-JSDOMWindowWrapper::~JSDOMWindowWrapper()
+JSDOMWindowShell::~JSDOMWindowShell()
 {
 }
 
@@ -57,69 +57,69 @@ JSDOMWindowWrapper::~JSDOMWindowWrapper()
 // JSObject methods
 // ----
 
-void JSDOMWindowWrapper::mark()
+void JSDOMWindowShell::mark()
 {
     Base::mark();
     if (m_window && !m_window->marked())
         m_window->mark();
 }
 
-UString JSDOMWindowWrapper::className() const
+UString JSDOMWindowShell::className() const
 {
     return m_window->className();
 }
 
-bool JSDOMWindowWrapper::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSDOMWindowShell::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return m_window->getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void JSDOMWindowWrapper::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
+void JSDOMWindowShell::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
     m_window->put(exec, propertyName, value);
 }
 
-void JSDOMWindowWrapper::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue* value, unsigned attributes)
+void JSDOMWindowShell::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue* value, unsigned attributes)
 {
     m_window->putWithAttributes(exec, propertyName, value, attributes);
 }
 
-bool JSDOMWindowWrapper::deleteProperty(ExecState* exec, const Identifier& propertyName)
+bool JSDOMWindowShell::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
     return m_window->deleteProperty(exec, propertyName);
 }
 
-void JSDOMWindowWrapper::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
+void JSDOMWindowShell::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
     m_window->getPropertyNames(exec, propertyNames);
 }
 
-bool JSDOMWindowWrapper::getPropertyAttributes(KJS::ExecState* exec, const Identifier& propertyName, unsigned& attributes) const
+bool JSDOMWindowShell::getPropertyAttributes(KJS::ExecState* exec, const Identifier& propertyName, unsigned& attributes) const
 {
     return m_window->getPropertyAttributes(exec, propertyName, attributes);
 }
 
-void JSDOMWindowWrapper::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction)
+void JSDOMWindowShell::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction)
 {
     m_window->defineGetter(exec, propertyName, getterFunction);
 }
 
-void JSDOMWindowWrapper::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction)
+void JSDOMWindowShell::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction)
 {
     m_window->defineSetter(exec, propertyName, setterFunction);
 }
 
-JSValue* JSDOMWindowWrapper::lookupGetter(ExecState* exec, const Identifier& propertyName)
+JSValue* JSDOMWindowShell::lookupGetter(ExecState* exec, const Identifier& propertyName)
 {
     return m_window->lookupGetter(exec, propertyName);
 }
 
-JSValue* JSDOMWindowWrapper::lookupSetter(ExecState* exec, const Identifier& propertyName)
+JSValue* JSDOMWindowShell::lookupSetter(ExecState* exec, const Identifier& propertyName)
 {
     return m_window->lookupSetter(exec, propertyName);
 }
 
-JSGlobalObject* JSDOMWindowWrapper::toGlobalObject(ExecState*) const
+JSGlobalObject* JSDOMWindowShell::toGlobalObject(ExecState*) const
 {
     return m_window;
 }
@@ -128,22 +128,22 @@ JSGlobalObject* JSDOMWindowWrapper::toGlobalObject(ExecState*) const
 // JSDOMWindow methods
 // ----
 
-DOMWindow* JSDOMWindowWrapper::impl() const
+DOMWindow* JSDOMWindowShell::impl() const
 {
     return m_window->impl();
 }
 
-void JSDOMWindowWrapper::disconnectFrame()
+void JSDOMWindowShell::disconnectFrame()
 {
     m_window->disconnectFrame();
 }
 
-void JSDOMWindowWrapper::clear()
+void JSDOMWindowShell::clear()
 {
     m_window->clear();
 }
 
-void* JSDOMWindowWrapper::operator new(size_t size)
+void* JSDOMWindowShell::operator new(size_t size)
 {
     return Heap::threadHeap()->allocate(size);
 }
@@ -156,14 +156,14 @@ JSValue* toJS(ExecState*, Frame* frame)
 {
     if (!frame)
         return jsNull();
-    return frame->scriptProxy()->windowWrapper();
+    return frame->scriptProxy()->windowShell();
 }
 
-JSDOMWindowWrapper* toJSDOMWindowWrapper(Frame* frame)
+JSDOMWindowShell* toJSDOMWindowShell(Frame* frame)
 {
     if (!frame)
         return 0;
-    return frame->scriptProxy()->windowWrapper();
+    return frame->scriptProxy()->windowShell();
 }
 
 } // namespace WebCore

@@ -304,7 +304,7 @@ sub GenerateHeader
 
     # Implementation class forward declaration
     AddClassForwardIfNeeded($implClassName) unless $podType;
-    AddClassForwardIfNeeded("JSDOMWindowWrapper") if $interfaceName eq "DOMWindow";
+    AddClassForwardIfNeeded("JSDOMWindowShell") if $interfaceName eq "DOMWindow";
 
     # Class declaration
     push(@headerContent, "class $className : public $parentClassName {\n");
@@ -313,7 +313,7 @@ sub GenerateHeader
 
     # Constructor
     if ($interfaceName eq "DOMWindow") {
-        push(@headerContent, "    $className($passType, JSDOMWindowWrapper*);\n");
+        push(@headerContent, "    $className($passType, JSDOMWindowShell*);\n");
     } else {
         push(@headerContent, "    $className(KJS::JSObject* prototype, $passType" . (IsSVGTypeNeedingContextParameter($implClassName) ? ", SVGElement* context" : "") .");\n");
     }
@@ -797,9 +797,9 @@ sub GenerateImplementation
 
     # Constructor
     if ($interfaceName eq "DOMWindow") {
-        AddIncludesForType("JSDOMWindowWrapper");
-        push(@implContent, "${className}::$className($passType impl, JSDOMWindowWrapper* wrapper)\n");
-        push(@implContent, "    : $parentClassName(${className}Prototype::self(), impl, wrapper)\n");
+        AddIncludesForType("JSDOMWindowShell");
+        push(@implContent, "${className}::$className($passType impl, JSDOMWindowShell* shell)\n");
+        push(@implContent, "    : $parentClassName(${className}Prototype::self(), impl, shell)\n");
     } else {
         push(@implContent, "${className}::$className(JSObject* prototype, $passType impl" . ($needsSVGContext ? ", SVGElement* context" : "") . ")\n");
         if ($hasParent) {
@@ -1147,11 +1147,11 @@ sub GenerateImplementation
             push(@implContent, "{\n");
 
             if ($interfaceName eq "DOMWindow") {
-                AddIncludesForType("JSDOMWindowWrapper");
+                AddIncludesForType("JSDOMWindowShell");
                 push(@implContent, "    ASSERT(!thisObj->inherits(&JSDOMWindow::s_info));\n");
-                push(@implContent, "    if (!thisObj->inherits(&JSDOMWindowWrapper::s_info))\n");
+                push(@implContent, "    if (!thisObj->inherits(&JSDOMWindowShell::s_info))\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");
-                push(@implContent, "    $className* castedThisObj = static_cast<JSDOMWindowWrapper*>(thisObj)->window();\n");
+                push(@implContent, "    $className* castedThisObj = static_cast<JSDOMWindowShell*>(thisObj)->window();\n");
             } else {
                 push(@implContent, "    if (!thisObj->inherits(&${className}::s_info))\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");

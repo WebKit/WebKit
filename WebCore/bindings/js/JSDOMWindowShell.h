@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSDOMWindowWrapper_h
-#define JSDOMWindowWrapper_h
+#ifndef JSDOMWindowShell_h
+#define JSDOMWindowShell_h
 
 #include "JSDOMWindow.h"
 #include "kjs_binding.h"
@@ -37,11 +37,11 @@ namespace WebCore {
     class DOMWindow;
     class Frame;
 
-    class JSDOMWindowWrapper : public DOMObject {
+    class JSDOMWindowShell : public DOMObject {
         typedef DOMObject Base;
     public:
-        JSDOMWindowWrapper(DOMWindow*);
-        virtual ~JSDOMWindowWrapper();
+        JSDOMWindowShell(DOMWindow*);
+        virtual ~JSDOMWindowShell();
 
         JSDOMWindow* window() const { return m_window; }
         void setWindow(JSDOMWindow* window)
@@ -83,8 +83,8 @@ namespace WebCore {
     };
 
     KJS::JSValue* toJS(KJS::ExecState*, Frame*);
-    JSDOMWindowWrapper* toJSDOMWindowWrapper(Frame*);
+    JSDOMWindowShell* toJSDOMWindowShell(Frame*);
 
 } // namespace WebCore
 
-#endif // JSDOMWindowWrapper_h
+#endif // JSDOMWindowShell_h

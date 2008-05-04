@@ -434,7 +434,7 @@ SOURCES += \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSDOMWindowCustom.cpp \
-    bindings/js/JSDOMWindowWrapper.cpp \
+    bindings/js/JSDOMWindowShell.cpp \
     bindings/js/JSElementCustom.cpp \
     bindings/js/JSEventCustom.cpp \
     bindings/js/JSEventTargetBase.cpp \

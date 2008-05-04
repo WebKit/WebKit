@@ -13326,11 +13326,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSDOMWindowWrapper.cpp"
+					RelativePath="..\bindings\js\JSDOMWindowShell.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSDOMWindowWrapper.h"
+					RelativePath="..\bindings\js\JSDOMWindowShell.h"
 					>
 				</File>
 				<File

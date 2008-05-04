@@ -37,7 +37,7 @@ namespace WebCore {
     class DOMWindowTimer;
     class Frame;
     class JSDOMWindow;
-    class JSDOMWindowWrapper;
+    class JSDOMWindowShell;
     class JSEventListener;
     class JSLocation;
     class JSUnprotectedEventListener;
@@ -53,7 +53,7 @@ namespace WebCore {
 
         friend class ScheduledAction;
     protected:
-        JSDOMWindowBase(KJS::JSObject* prototype, DOMWindow*, JSDOMWindowWrapper*);
+        JSDOMWindowBase(KJS::JSObject* prototype, DOMWindow*, JSDOMWindowShell*);
 
     public:
         virtual ~JSDOMWindowBase();
@@ -119,7 +119,7 @@ namespace WebCore {
         virtual bool allowsAccessFrom(const KJS::JSGlobalObject*) const;
 
         virtual KJS::JSObject* toThisObject(KJS::ExecState*) const;
-        JSDOMWindowWrapper* wrapper() const;
+        JSDOMWindowShell* shell() const;
 
         enum {
             // Attributes

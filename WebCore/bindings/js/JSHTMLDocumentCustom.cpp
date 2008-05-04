@@ -34,7 +34,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "JSDOMWindow.h"
-#include "JSDOMWindowWrapper.h"
+#include "JSDOMWindowShell.h"
 #include "JSHTMLCollection.h"
 #include "kjs_html.h"
 
@@ -100,7 +100,7 @@ JSValue* JSHTMLDocument::open(ExecState* exec, const List& args)
     if (args.size() > 2) {
         Frame* frame = static_cast<HTMLDocument*>(impl())->frame();
         if (frame) {
-            JSDOMWindowWrapper* wrapper = toJSDOMWindowWrapper(frame);
+            JSDOMWindowShell* wrapper = toJSDOMWindowShell(frame);
             if (wrapper) {
                 JSObject* functionObject = wrapper->get(exec, "open")->getObject();
                 if (!functionObject || !functionObject->implementsCall())

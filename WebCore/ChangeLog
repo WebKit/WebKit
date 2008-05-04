@@ -1,3 +1,9 @@
+2008-05-03  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Geoffrey Garen.
+
+        Rename JSDOMWindowWrapper to JSDOMWindowShell.
+
 2008-05-01  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

@@ -4735,7 +4735,7 @@ String FrameLoader::referrer() const
 
 void FrameLoader::dispatchWindowObjectAvailable()
 {
-    if (!m_frame->scriptProxy()->isEnabled() || !m_frame->scriptProxy()->haveWindowWrapper())
+    if (!m_frame->scriptProxy()->isEnabled() || !m_frame->scriptProxy()->haveWindowShell())
         return;
 
     m_client->windowObjectCleared();

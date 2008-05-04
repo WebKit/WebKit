@@ -31,7 +31,7 @@ namespace KJS {
 
 namespace WebCore {
 
-    class JSDOMWindowWrapper;
+    class JSDOMWindowShell;
 
    /**
     * An action (either function or string) to be executed after a specified
@@ -46,7 +46,7 @@ namespace WebCore {
         {
         }
 
-        void execute(JSDOMWindowWrapper*);
+        void execute(JSDOMWindowShell*);
 
     private:
         KJS::ProtectedPtr<KJS::JSValue> m_func;
