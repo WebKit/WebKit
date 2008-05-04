@@ -1,0 +1,5 @@
+document.URL: file:///Users/weinig/Code/webkit/OpenSource/LayoutTests/fast/dom/Window/resources/notify-parent-done.html
+window.document.URL: file:///Users/weinig/Code/webkit/OpenSource/LayoutTests/fast/dom/Window/resources/notify-parent-done.html
+name: child
+window.name: child
+

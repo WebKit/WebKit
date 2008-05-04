@@ -1,0 +1,22 @@
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    function log(s)
+    {
+        document.getElementById('console').appendChild(document.createTextNode(s + "\n"));
+    }
+
+    function done()
+    {
+        // Call the method injected by resources/dom-access-from-closure-iframe-child.html
+        accessFrame();
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+</script>
+<pre id="console"></pre>
+<iframe src="resources/dom-access-from-closure-iframe-child.html" name="child"></iframe>

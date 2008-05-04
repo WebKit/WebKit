@@ -1,0 +1,15 @@
+<script>
+    opener.accessFrame = function()
+    {
+        try {
+            opener.log("document.URL: " + document.URL);
+            opener.log("window.document.URL: " + window.document.URL);
+            opener.log("name: " + name);
+            opener.log("window.name: " + window.name);
+        } catch (e) {
+            opener.log("An exception was thrown: " + e.message);
+        }
+    }
+
+    window.location = "notify-opener-done.html";
+</script>

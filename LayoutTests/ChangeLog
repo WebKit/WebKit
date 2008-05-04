@@ -1,3 +1,29 @@
+2008-05-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add tests that show our behavior when using closures from a global object
+        whose frame has been navigated.
+
+        Related to https://bugs.webkit.org/show_bug.cgi?id=17249.
+
+        * fast/dom/Window/closure-access-after-navigation-iframe-expected.txt: Added.
+        * fast/dom/Window/closure-access-after-navigation-iframe.html: Added.
+        * fast/dom/Window/closure-access-after-navigation-window-expected.txt: Added.
+        * fast/dom/Window/closure-access-after-navigation-window.html: Added.
+        * fast/dom/Window/dom-access-from-closure-iframe-expected.txt: Added.
+        * fast/dom/Window/dom-access-from-closure-iframe.html: Added.
+        * fast/dom/Window/dom-access-from-closure-window-expected.txt: Added.
+        * fast/dom/Window/dom-access-from-closure-window.html: Added.
+        * fast/dom/Window/resources/closure-access-after-navigation-iframe-child-1.html: Added.
+        * fast/dom/Window/resources/closure-access-after-navigation-iframe-child-2.html: Added.
+        * fast/dom/Window/resources/closure-access-after-navigation-window-child-1.html: Added.
+        * fast/dom/Window/resources/closure-access-after-navigation-window-child-2.html: Added.
+        * fast/dom/Window/resources/dom-access-from-closure-iframe-child.html: Added.
+        * fast/dom/Window/resources/dom-access-from-closure-window-child.html: Added.
+        * fast/dom/Window/resources/notify-opener-done.html: Added.
+        * fast/dom/Window/resources/notify-parent-done.html: Added.
+
 2008-05-01  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

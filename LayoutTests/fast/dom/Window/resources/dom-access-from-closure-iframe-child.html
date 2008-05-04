@@ -1,0 +1,15 @@
+<script>
+    parent.accessFrame = function()
+    {
+        try {
+            parent.log("document.URL: " + document.URL);
+            parent.log("window.document.URL: " + window.document.URL);
+            parent.log("name: " + name);
+            parent.log("window.name: " + window.name);
+        } catch (e) {
+            parent.log("An exception was thrown: " + e.message);
+        }
+    }
+
+    window.location = "notify-parent-done.html";
+</script>
