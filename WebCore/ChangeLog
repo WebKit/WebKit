@@ -1,3 +1,15 @@
+2008-05-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        Make the Inspector's localizable strings file match the format used by Dashboard widgets.
+
+        * English.lproj/InspectorLocalizedStrings.js: Removed.
+        * English.lproj/localizedStrings.js: Added.
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/inspector/inspector.js:
+
 2008-05-05  Steve Falkenburg  <sfalken@apple.com>
 
         Add support for default button appearance.

@@ -1,3 +1,12 @@
+2008-05-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        Make the Inspector's localizable strings file match the format used by Dashboard widgets.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::localizedStringsURL):
+
 2008-05-05  Steve Falkenburg  <sfalken@apple.com>
 
         Add WebPreference for application chrome mode.

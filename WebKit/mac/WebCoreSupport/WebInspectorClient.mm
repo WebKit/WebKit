@@ -95,7 +95,7 @@ Page* WebInspectorClient::createPage()
 
 String WebInspectorClient::localizedStringsURL()
 {
-    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"InspectorLocalizedStrings" ofType:@"js"];
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"localizedStrings" ofType:@"js"];
     if (path)
         return [[NSURL fileURLWithPath:path] absoluteString];
     return String();

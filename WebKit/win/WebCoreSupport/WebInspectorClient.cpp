@@ -193,7 +193,7 @@ Page* WebInspectorClient::createPage()
 
 String WebInspectorClient::localizedStringsURL()
 {
-    RetainPtr<CFURLRef> url(AdoptCF, CFBundleCopyResourceURL(getWebKitBundle(), CFSTR("InspectorLocalizedStrings"), CFSTR("js"), 0));
+    RetainPtr<CFURLRef> url(AdoptCF, CFBundleCopyResourceURL(getWebKitBundle(), CFSTR("localizedStrings"), CFSTR("js"), 0));
     if (!url)
         return String();
 
