@@ -1,3 +1,13 @@
+2008-05-02  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mitz.
+        
+        Test for <rdar://problem/5840475>
+        CrashTracer: [USER] 2 crashes in Safari at com.apple.WebCore: WebCore::RenderBlock::insertPositionedObject
+
+        * fast/transforms/container-transform-crash-expected.txt: Added.
+        * fast/transforms/container-transform-crash.html: Added.
+
 2008-05-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
