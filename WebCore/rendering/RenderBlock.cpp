@@ -151,70 +151,58 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
     // Make sure we don't append things after :after-generated content if we have it.
     if (!beforeChild && isAfterContent(lastChild()))
         beforeChild = lastChild();
-    
+
     bool madeBoxesNonInline = false;
 
     // If the requested beforeChild is not one of our children, then this is most likely because
     // there is an anonymous block box within this object that contains the beforeChild. So
     // just insert the child into the anonymous block box instead of here.
     if (beforeChild && beforeChild->parent() != this) {
-
         ASSERT(beforeChild->parent());
         ASSERT(beforeChild->parent()->isAnonymousBlock());
 
-        if (newChild->isInline()) {
-            beforeChild->parent()->addChild(newChild,beforeChild);
-            return;
-        }
-        else if (beforeChild->parent()->firstChild() != beforeChild)
-            return beforeChild->parent()->addChild(newChild, beforeChild);
+        if (newChild->isInline() || beforeChild->parent()->firstChild() != beforeChild)
+            beforeChild->parent()->addChild(newChild, beforeChild);
         else
-            return addChildToFlow(newChild, beforeChild->parent());
+            addChildToFlow(newChild, beforeChild->parent());
+
+        return;
     }
 
     // A block has to either have all of its children inline, or all of its children as blocks.
     // So, if our children are currently inline and a block child has to be inserted, we move all our
-    // inline children into anonymous block boxes
-    if ( m_childrenInline && !newChild->isInline() && !newChild->isFloatingOrPositioned() )
-    {
+    // inline children into anonymous block boxes.
+    if (m_childrenInline && !newChild->isInline() && !newChild->isFloatingOrPositioned()) {
         // This is a block with inline content. Wrap the inline content in anonymous blocks.
         makeChildrenNonInline(beforeChild);
         madeBoxesNonInline = true;
-        
+
         if (beforeChild && beforeChild->parent() != this) {
             beforeChild = beforeChild->parent();
             ASSERT(beforeChild->isAnonymousBlock());
             ASSERT(beforeChild->parent() == this);
         }
-    }
-    else if (!m_childrenInline && !newChild->isFloatingOrPositioned())
-    {
+    } else if (!m_childrenInline && (newChild->isFloatingOrPositioned() || newChild->isInline())) {
         // If we're inserting an inline child but all of our children are blocks, then we have to make sure
         // it is put into an anomyous block box. We try to use an existing anonymous box if possible, otherwise
         // a new one is created and inserted into our list of children in the appropriate position.
-        if (newChild->isInline()) {
-            if (beforeChild) {
-                if (beforeChild->previousSibling() && beforeChild->previousSibling()->isAnonymousBlock()) {
-                    beforeChild->previousSibling()->addChild(newChild);
-                    return;
-                }
-            }
-            else {
-                if (lastChild() && lastChild()->isAnonymousBlock()) {
-                    lastChild()->addChild(newChild);
-                    return;
-                }
-            }
+        RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : lastChild();
 
-            // no suitable existing anonymous box - create a new one
+        if (afterChild && afterChild->isAnonymousBlock()) {
+            afterChild->addChild(newChild);
+            return;
+        }
+
+        if (newChild->isInline()) {
+            // No suitable existing anonymous box - create a new one.
             RenderBlock* newBox = createAnonymousBlock();
-            RenderContainer::addChild(newBox,beforeChild);
+            RenderContainer::addChild(newBox, beforeChild);
             newBox->addChild(newChild);
             return;
         }
     }
 
-    RenderContainer::addChild(newChild,beforeChild);
+    RenderContainer::addChild(newChild, beforeChild);
     // ### care about aligned stuff
 
     if (madeBoxesNonInline && parent() && isAnonymousBlock())

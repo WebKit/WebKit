@@ -6,15 +6,14 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 153x18
           text run at (0,0) width 153: "Test controls placement."
-      RenderBlock (anonymous) at (0,34) size 784x68
+      RenderBlock (anonymous) at (0,34) size 784x86
         RenderMedia {AUDIO} at (0,0) size 200x16 [bgcolor=#0000FF]
         RenderBR {BR} at (200,16) size 0x0
         RenderBR {BR} at (0,16) size 0x18
         RenderMedia {AUDIO} at (0,34) size 320x16 [bgcolor=#0000FF]
         RenderBR {BR} at (320,50) size 0x0
         RenderBR {BR} at (0,50) size 0x18
-      RenderBlock (anonymous) at (0,102) size 784x18
-        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,68) size 0x18
 layer at (8,42) size 200x16
   RenderBlock (relative positioned) {DIV} at (0,0) size 200x16
 layer at (8,42) size 200x18
