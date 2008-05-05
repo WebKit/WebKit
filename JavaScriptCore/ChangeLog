@@ -1,3 +1,13 @@
+2008-05-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix debug-only leak seen on buildbot
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::checkKey): After writing an empty value in, but before constructing a
+        deleted value on top of it, call the destructor so the empty value doesn't leak.
+
 2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoffrey Garen.

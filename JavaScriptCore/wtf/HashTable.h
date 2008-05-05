@@ -443,6 +443,7 @@ namespace WTF {
             return;
         ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
         ValueType deletedValue = Traits::emptyValue();
+        deletedValue.~ValueType();
         Traits::constructDeletedValue(&deletedValue);
         ASSERT(!HashTranslator::equal(Extractor::extract(deletedValue), key));
         new (&deletedValue) ValueType(Traits::emptyValue());
