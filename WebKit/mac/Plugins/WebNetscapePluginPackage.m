@@ -237,13 +237,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
             return NO;
 #endif
         
-#ifdef BUILDING_ON_TIGER
         if (![self isNativeLibraryData:data])
             return NO;
-#else
-        if (![bundle preflightAndReturnError:nil])
-            return NO;
-#endif
     }
 
     if (![self getPluginInfoFromPLists] && ![self getPluginInfoFromResources])

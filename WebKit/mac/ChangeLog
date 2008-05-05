@@ -1,3 +1,14 @@
+2008-05-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jess.
+
+        Apparently preflighting can cause hangs for some reason. Revert this for now.
+        
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage _initWithPath:]):
+        * Plugins/WebPluginPackage.m:
+        (-[WebPluginPackage initWithPath:]):
+
 2008-05-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

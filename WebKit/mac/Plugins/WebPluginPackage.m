@@ -59,7 +59,6 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
         }
     }
     
-#ifdef BUILDING_ON_TIGER
     NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[bundle executablePath]];
     NSData *data = [executableFile readDataOfLength:512];
     [executableFile closeFile];
@@ -67,12 +66,6 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
         [self release];
         return nil;
     }
-#else
-    if (![bundle preflightAndReturnError:nil]) {
-        [self release];
-        return nil;
-    }
-#endif
 
     if (![self getPluginInfoFromPLists]) {
         [self release];
