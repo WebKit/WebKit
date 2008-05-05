@@ -1,5 +1,14 @@
 2008-05-05  Dan Bernstein  <mitz@apple.com>
 
+        Rubber-stamped by Adam Roben.
+
+        - fix test failure due to Windows' preference for Mac results over
+          generic results
+
+        * platform/win/editing/selection/move-left-right-expected.txt: Copied from LayoutTests/editing/selection/move-left-right-expected.txt.
+
+2008-05-05  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Dave Hyatt.
 
         - test, updated test and updated results for https://bugs.webkit.org/show_bug.cgi?id=18809
