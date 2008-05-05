@@ -1,3 +1,14 @@
+2008-05-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5865171> REGRESSION: Creating a new quote places caret at beginning of quote instead of the end
+
+        * WebView/WebView.mm:
+        (-[WebView _updateSettingsFromPreferences:]): Disable Range mutation on changes to
+        the document for Tiger and Leopard Mail.  There is code in Mail that does it, and
+        the two interfere.
+
 2008-05-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Tim Hatcher.

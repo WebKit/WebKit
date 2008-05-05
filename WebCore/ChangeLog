@@ -1,3 +1,26 @@
+2008-05-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5865171> REGRESSION: Creating a new quote places caret at beginning of quote instead of the end
+        
+        Disable Range mutation on document modifications in Tiger and Leopard Mail,
+        since they do their own mutation which interferes with ours.
+
+        * WebCore.base.exp:
+        * dom/Document.cpp:
+        (WebCore::Document::nodeChildrenChanged):
+        (WebCore::Document::nodeWillBeRemoved):
+        (WebCore::Document::textInserted):
+        (WebCore::Document::textRemoved):
+        (WebCore::Document::textNodesMerged):
+        (WebCore::Document::textNodeSplit):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::disableRangeMutationForOldAppleMail):
+        * page/Settings.h:
+        (WebCore::Settings::rangeMutationDisabledForOldAppleMail):
+
 2008-05-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Tim Hatcher.

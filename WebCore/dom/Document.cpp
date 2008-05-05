@@ -2494,9 +2494,11 @@ void Document::detachNodeIterator(NodeIterator *ni)
 
 void Document::nodeChildrenChanged(ContainerNode* container)
 {
-    HashSet<Range*>::const_iterator end = m_ranges.end();
-    for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != end; ++it)
-        (*it)->nodeChildrenChanged(container);
+    if (!page()->settings()->rangeMutationDisabledForOldAppleMail()) {
+        HashSet<Range*>::const_iterator end = m_ranges.end();
+        for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != end; ++it)
+            (*it)->nodeChildrenChanged(container);
+    }
 }
 
 void Document::nodeWillBeRemoved(Node* n)
@@ -2505,9 +2507,11 @@ void Document::nodeWillBeRemoved(Node* n)
     for (HashSet<NodeIterator*>::const_iterator it = m_nodeIterators.begin(); it != nodeIteratorsEnd; ++it)
         (*it)->nodeWillBeRemoved(n);
 
-    HashSet<Range*>::const_iterator rangesEnd = m_ranges.end();
-    for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != rangesEnd; ++it)
-        (*it)->nodeWillBeRemoved(n);
+    if (!page()->settings()->rangeMutationDisabledForOldAppleMail()) {
+        HashSet<Range*>::const_iterator rangesEnd = m_ranges.end();
+        for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != rangesEnd; ++it)
+            (*it)->nodeWillBeRemoved(n);
+    }
 
     if (Frame* frame = this->frame()) {
         frame->selectionController()->nodeWillBeRemoved(n);
@@ -2517,9 +2521,11 @@ void Document::nodeWillBeRemoved(Node* n)
 
 void Document::textInserted(Node* text, unsigned offset, unsigned length)
 {
-    HashSet<Range*>::const_iterator end = m_ranges.end();
-    for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != end; ++it)
-        (*it)->textInserted(text, offset, length);
+    if (!page()->settings()->rangeMutationDisabledForOldAppleMail()) {
+        HashSet<Range*>::const_iterator end = m_ranges.end();
+        for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != end; ++it)
+            (*it)->textInserted(text, offset, length);
+    }
 
     // Update the markers for spelling and grammar checking.
     shiftMarkers(text, offset, length);
@@ -2527,9 +2533,11 @@ void Document::textInserted(Node* text, unsigned offset, unsigned length)
 
 void Document::textRemoved(Node* text, unsigned offset, unsigned length)
 {
-    HashSet<Range*>::const_iterator end = m_ranges.end();
-    for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != end; ++it)
-        (*it)->textRemoved(text, offset, length);
+    if (!page()->settings()->rangeMutationDisabledForOldAppleMail()) {
+        HashSet<Range*>::const_iterator end = m_ranges.end();
+        for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != end; ++it)
+            (*it)->textRemoved(text, offset, length);
+    }
 
     // Update the markers for spelling and grammar checking.
     removeMarkers(text, offset, length);
@@ -2538,19 +2546,23 @@ void Document::textRemoved(Node* text, unsigned offset, unsigned length)
 
 void Document::textNodesMerged(Text* oldNode, unsigned offset)
 {
-    NodeWithIndex oldNodeWithIndex(oldNode);
-    HashSet<Range*>::const_iterator end = m_ranges.end();
-    for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != end; ++it)
-        (*it)->textNodesMerged(oldNodeWithIndex, offset);
+    if (!page()->settings()->rangeMutationDisabledForOldAppleMail()) {
+        NodeWithIndex oldNodeWithIndex(oldNode);
+        HashSet<Range*>::const_iterator end = m_ranges.end();
+        for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != end; ++it)
+            (*it)->textNodesMerged(oldNodeWithIndex, offset);
+    }
 
     // FIXME: This should update markers for spelling and grammar checking.
 }
 
 void Document::textNodeSplit(Text* oldNode)
 {
-    HashSet<Range*>::const_iterator end = m_ranges.end();
-    for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != end; ++it)
-        (*it)->textNodeSplit(oldNode);
+    if (!page()->settings()->rangeMutationDisabledForOldAppleMail()) {
+        HashSet<Range*>::const_iterator end = m_ranges.end();
+        for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != end; ++it)
+            (*it)->textNodeSplit(oldNode);
+    }
 
     // FIXME: This should update markers for spelling and grammar checking.
 }

@@ -995,6 +995,7 @@ static bool debugWidget = true;
     settings->setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
     settings->setNeedsSiteSpecificQuirks(_private->useSiteSpecificSpoofing);
     settings->setWebArchiveDebugModeEnabled([preferences webArchiveDebugModeEnabled]);
+    settings->disableRangeMutationForOldAppleMail(WKAppVersionCheckLessThan(@"com.apple.mail", -1, 4.0));
     settings->setOfflineWebApplicationCacheEnabled([preferences offlineWebApplicationCacheEnabled]);
 }
 

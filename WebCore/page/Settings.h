@@ -156,6 +156,9 @@ namespace WebCore {
 
         void setLocalStorageDatabasePath(const String&);
         const String& localStorageDatabasePath() const { return m_localStorageDatabasePath; }
+        
+        void disableRangeMutationForOldAppleMail(bool);
+        bool rangeMutationDisabledForOldAppleMail() const { return m_rangeMutationDisabledForOldAppleMail; }
 
         void setApplicationChromeMode(bool);
         bool inApplicationChromeMode() const { return m_inApplicationChromeMode; }
@@ -205,6 +208,7 @@ namespace WebCore {
         bool m_webArchiveDebugModeEnabled : 1;
         bool m_inApplicationChromeMode : 1;
         bool m_offlineWebApplicationCacheEnabled : 1;
+        bool m_rangeMutationDisabledForOldAppleMail : 1;
     };
 
 } // namespace WebCore
