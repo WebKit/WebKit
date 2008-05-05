@@ -1,3 +1,22 @@
+2008-05-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=11947
+        nbsps should be converted to entities in innerHTML
+
+        https://bugs.webkit.org/show_bug.cgi?id=18769
+        replacing &nbsp; with spaces using regexp creates inconsistent result
+
+        Tests: fast/dom/innerHTML-nbsp.html
+               fast/dom/innerHTML-escaping-attribute.html
+
+        * editing/markup.cpp:
+        (WebCore::appendAttributeValue):
+        (WebCore::escapeContentText):
+        (WebCore::appendEscapedContent):
+        Added U+00a0/nbsp to the list of characters to escape.
+
 2008-05-05  David Hyatt  <hyatt@apple.com>
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=18821.  Fix some bugs in both get/PutImageData of <canvas>.

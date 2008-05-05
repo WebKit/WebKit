@@ -1,3 +1,20 @@
+2008-05-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=11947
+        nbsps should be converted to entities in innerHTML
+
+        https://bugs.webkit.org/show_bug.cgi?id=18769
+        replacing &nbsp; with spaces using regexp creates inconsistent result
+
+        * fast/dom/innerHTML-nbsp-expected.txt: Added.
+        * fast/dom/innerHTML-nbsp.html: Added.
+        * fast/dom/innerHTML-escaping-attribute-expected.txt: Added.
+        * fast/dom/innerHTML-escaping-attribute.html: Added.
+
+        * editing/inserting/edited-whitespace-1.html: Updated expected results.
+
 2008-05-05  David Hyatt  <hyatt@apple.com>
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=18821, putImageData incorrect when data has alpha.

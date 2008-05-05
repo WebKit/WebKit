@@ -27,6 +27,8 @@
 #include "markup.h"
 
 #include "CDATASection.h"
+#include "CharacterNames.h"
+#include "Comment.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
@@ -37,7 +39,6 @@
 #include "CSSStyleSelector.h"
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
-#include "Comment.h"
 #include "DeleteButtonController.h"
 #include "Document.h"
 #include "DocumentFragment.h"
@@ -96,6 +97,7 @@ static void appendAttributeValue(Vector<UChar>& result, const String& attr)
     static const String ampEntity("&amp;");
     static const String ltEntity("&lt;");
     static const String quotEntity("&quot;");
+    static const String nbspEntity("&nbsp;");
     
     for (unsigned i = 0; i < len; ++i) {
         UChar c = uchars[i];
@@ -114,21 +116,18 @@ static void appendAttributeValue(Vector<UChar>& result, const String& attr)
                 result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
                 append(result, quotEntity);
                 lastCopiedFrom = i + 1;
+                break;
+            case noBreakSpace:
+                result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
+                append(result, nbspEntity);
+                lastCopiedFrom = i + 1;
+                break;
         }
     }
     
     result.append(uchars + lastCopiedFrom, len - lastCopiedFrom);
 }
 
-static void append(Vector<UChar>& vector, const char* string)
-{
-    const char* p = string;
-    while (*p) {
-        UChar c = *p++;
-        vector.append(c);
-    }
-}
-    
 static String escapeContentText(const String& in)
 {
     Vector<UChar> s;
@@ -136,19 +135,32 @@ static String escapeContentText(const String& in)
     unsigned len = in.length();
     unsigned lastCopiedFrom = 0;
 
+    static const String ampEntity("&amp;");
+    static const String ltEntity("&lt;");
+    static const String nbspEntity("&nbsp;");
+
     s.reserveCapacity(len);
 
     const UChar* characters = in.characters();
 
     for (unsigned i = 0; i < len; ++i) {
         UChar c = characters[i];
-        if ((c == '&') | (c == '<')) {
-            s.append(characters + lastCopiedFrom, i - lastCopiedFrom);
-            if (c == '&')
-                append(s, "&amp;");
-            else 
-                append(s, "&lt;");
-            lastCopiedFrom = i + 1;
+        switch (c) {
+            case '&':
+                s.append(characters + lastCopiedFrom, i - lastCopiedFrom);
+                append(s, ampEntity);
+                lastCopiedFrom = i + 1;
+                break;
+            case '<':
+                s.append(characters + lastCopiedFrom, i - lastCopiedFrom);
+                append(s, ltEntity);
+                lastCopiedFrom = i + 1;
+                break;
+            case noBreakSpace:
+                s.append(characters + lastCopiedFrom, i - lastCopiedFrom);
+                append(s, nbspEntity);
+                lastCopiedFrom = i + 1;
+                break;
         }
     }
 
@@ -165,16 +177,26 @@ static void appendEscapedContent(Vector<UChar>& result, pair<const UChar*, size_
     
     static const String ampEntity("&amp;");
     static const String ltEntity("&lt;");
-    
+    static const String nbspEntity("&nbsp;");
+
     for (unsigned i = 0; i < len; ++i) {
         UChar c = uchars[i];
-        if ((c == '&') | (c == '<')) {
-            result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
-            if (c == '&')
+        switch (c) {
+            case '&':
+                result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
                 append(result, ampEntity);
-            else 
+                lastCopiedFrom = i + 1;
+                break;
+            case '<':
+                result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
                 append(result, ltEntity);
-            lastCopiedFrom = i + 1;
+                lastCopiedFrom = i + 1;
+                break;
+            case noBreakSpace:
+                result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
+                append(result, nbspEntity);
+                lastCopiedFrom = i + 1;
+                break;
         }
     }
     
