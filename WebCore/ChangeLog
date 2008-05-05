@@ -1,3 +1,11 @@
+2008-05-04  Sam Weinig  <sam@webkit.org>
+
+        Roll out r32851.  It broke tiger builds.
+
+        * bindings/objc/DOMUtility.mm:
+        (KJS::createDOMWrapper):
+        (WebCore::createDOMWrapper):
+
 2008-05-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

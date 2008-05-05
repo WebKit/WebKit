@@ -55,19 +55,25 @@
 #import "Node.h"
 #import "WebScriptObjectPrivate.h"
 #import "runtime_root.h"
+#import <objc/objc-runtime.h>
 
 // This file makes use of both the ObjC DOM API and the C++ DOM API, so we need to be careful about what
 // headers are included and what namespaces we use to avoid naming conflicts.
 
-using namespace KJS;
+// FIXME: This has to be in the KJS namespace to avoid an Objective-C++ ambiguity with C++ and
+// Objective-C classes of the same name (even when not in the same namespace). That's also the
+// reason for the use of objc_getClass in the WRAP_OLD macro below.
 
-namespace WebCore {
+// Some day if the compiler is fixed, or if all the JS wrappers are named with a "JS" prefix,
+// we could move the function into the WebCore namespace where it belongs.
 
-static inline id createDOMWrapper(JSObject* object)
+namespace KJS {
+
+static inline id createDOMWrapper(KJS::JSObject* object)
 {
     #define WRAP(className) \
-        if (object->inherits(&JS##className::s_info)) \
-            return [DOM##className _wrap##className:static_cast<JS##className*>(object)->impl()];
+        if (object->inherits(&WebCore::JS##className::s_info)) \
+            return [DOM##className _wrap##className:static_cast<WebCore::JS##className*>(object)->impl()];
 
     WRAP(CSSRule)
     WRAP(CSSRuleList)
@@ -94,24 +100,29 @@ static inline id createDOMWrapper(JSObject* object)
 
     #undef WRAP
 
-    if (object->inherits(&JSDOMWindowShell::s_info))
-        return [DOMAbstractView _wrapAbstractView:static_cast<JSDOMWindowShell*>(object)->impl()];
-    if (object->inherits(&JSDOMImplementation::s_info))
-        return [::DOMImplementation _wrapDOMImplementation:implementationFront(static_cast<JSDOMImplementation*>(object))];
-    if (object->inherits(&JSNodeIterator::s_info))
-        return [DOMNodeIterator _wrapNodeIterator:static_cast<JSNodeIterator*>(object)->impl() filter:nil];
-    if (object->inherits(&JSTreeWalker::s_info))
-        return [DOMTreeWalker _wrapTreeWalker:static_cast<JSTreeWalker*>(object)->impl() filter:nil];
+    if (object->inherits(&WebCore::JSDOMWindowShell::s_info))
+        return [DOMAbstractView _wrapAbstractView:static_cast<WebCore::JSDOMWindowShell*>(object)->impl()];
+
+    if (object->inherits(&WebCore::JSDOMImplementation::s_info))
+        return [DOMImplementation _wrapDOMImplementation:implementationFront(static_cast<WebCore::JSDOMImplementation*>(object))];
+    if (object->inherits(&WebCore::JSNodeIterator::s_info))
+        return [DOMNodeIterator _wrapNodeIterator:static_cast<WebCore::JSNodeIterator*>(object)->impl() filter:nil];
+    if (object->inherits(&WebCore::JSTreeWalker::s_info))
+        return [DOMTreeWalker _wrapTreeWalker:static_cast<WebCore::JSTreeWalker*>(object)->impl() filter:nil];
 
     return nil;
 }
 
-id createDOMWrapper(JSObject* object, PassRefPtr<Bindings::RootObject> origin, PassRefPtr<Bindings::RootObject> current)
+}
+
+namespace WebCore {
+
+id createDOMWrapper(KJS::JSObject* object, PassRefPtr<KJS::Bindings::RootObject> origin, PassRefPtr<KJS::Bindings::RootObject> current)
 {
-    id wrapper = createDOMWrapper(object);
+    id wrapper = KJS::createDOMWrapper(object);
     if (![wrapper _hasImp]) // new wrapper, not from cache
         [wrapper _setImp:object originRootObject:origin rootObject:current];
     return wrapper;
 }
 
-} // namespace WebCore
+}
