@@ -176,6 +176,13 @@ void DumpRenderTree::open()
 
 void DumpRenderTree::open(const QUrl& url)
 {
+    // W3C SVG tests expect to be 480x360
+    bool isW3CTest = url.toString().contains("svg/W3C-SVG-1.1");
+    int width = isW3CTest ? 480 : maxViewWidth;
+    int height = isW3CTest ? 360 : maxViewHeight;
+    m_page->view()->resize(QSize(width, height));
+    m_page->setViewportSize(QSize(width, height));
+
     resetJSObjects();
 
     qt_dump_frame_loader(url.toString().contains("loading/"));

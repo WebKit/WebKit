@@ -1,3 +1,13 @@
+2008-05-05  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        In the Qt's DumpRenderTree, adjust the web view properly (because W3C SVG 
+        tests expect to be 480x360)
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::open):
+
 2008-05-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
