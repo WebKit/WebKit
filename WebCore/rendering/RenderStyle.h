@@ -1118,7 +1118,7 @@ enum EResize {
 
 enum EAppearance {
     NoAppearance, CheckboxAppearance, RadioAppearance, PushButtonAppearance, SquareButtonAppearance, ButtonAppearance,
-    ButtonBevelAppearance, ListboxAppearance, ListItemAppearance, 
+    ButtonBevelAppearance, DefaultButtonAppearance, ListboxAppearance, ListItemAppearance, 
     MediaFullscreenButtonAppearance, MediaMuteButtonAppearance, MediaPlayButtonAppearance,
     MediaSeekBackButtonAppearance, MediaSeekForwardButtonAppearance, MediaSliderAppearance, MediaSliderThumbAppearance,
     MenulistAppearance, MenulistButtonAppearance, MenulistTextAppearance, MenulistTextFieldAppearance,

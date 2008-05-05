@@ -48,4 +48,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setAuthorAndUserStylesEnabled([in] BOOL enabled);
     HRESULT authorAndUserStylesEnabled([out, retval] BOOL* enabled);
+
+    HRESULT inApplicationChromeMode([out, retval] BOOL *allowed);
+    HRESULT setApplicationChromeMode([in] BOOL allowed);
 }

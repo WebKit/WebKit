@@ -37,7 +37,8 @@ enum ControlState {
     FocusState,
     EnabledState,
     CheckedState,
-    ReadOnlyState
+    ReadOnlyState,
+    DefaultState
 };
 
 class RenderTheme {
@@ -138,7 +139,8 @@ public:
     bool isPressed(const RenderObject*) const;
     bool isHovered(const RenderObject*) const;
     bool isReadOnlyControl(const RenderObject*) const;
-    
+    bool isDefault(const RenderObject*) const;
+
     virtual int popupInternalPaddingLeft(RenderStyle*) const { return 0; }
     virtual int popupInternalPaddingRight(RenderStyle*) const { return 0; }
     virtual int popupInternalPaddingTop(RenderStyle*) const { return 0; }

@@ -32,6 +32,7 @@
 #include "Page.h"
 #include "RenderStyle.h"
 #include "SelectionController.h"
+#include "Settings.h"
 
 // The methods in this file are shared by all themes on every platform.
 
@@ -66,6 +67,7 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
             return adjustRadioStyle(selector, style, e);
         case PushButtonAppearance:
         case SquareButtonAppearance:
+        case DefaultButtonAppearance:
         case ButtonAppearance:
             return adjustButtonStyle(selector, style, e);
         case TextFieldAppearance:
@@ -119,6 +121,7 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
             return paintRadio(o, paintInfo, r);
         case PushButtonAppearance:
         case SquareButtonAppearance:
+        case DefaultButtonAppearance:
         case ButtonAppearance:
             return paintButton(o, paintInfo, r);
         case MenulistAppearance:
@@ -188,6 +191,7 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo
         case RadioAppearance:
         case PushButtonAppearance:
         case SquareButtonAppearance:
+        case DefaultButtonAppearance:
         case ButtonAppearance:
         case MenulistAppearance:
         case SliderHorizontalAppearance:
@@ -222,6 +226,7 @@ bool RenderTheme::paintDecorations(RenderObject* o, const RenderObject::PaintInf
         case RadioAppearance:
         case PushButtonAppearance:
         case SquareButtonAppearance:
+        case DefaultButtonAppearance:
         case ButtonAppearance:
         case MenulistAppearance:
         case SliderHorizontalAppearance:
@@ -316,6 +321,7 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
     switch (style->appearance()) {
         case PushButtonAppearance:
         case SquareButtonAppearance:
+        case DefaultButtonAppearance:
         case ButtonAppearance:
         case ListboxAppearance:
         case MenulistAppearance:
@@ -421,6 +427,21 @@ bool RenderTheme::isHovered(const RenderObject* o) const
     if (!o->element())
         return false;
     return o->element()->hovered();
+}
+
+bool RenderTheme::isDefault(const RenderObject* o) const
+{
+    if (!o->document())
+        return false;
+
+    Settings* settings = o->document()->settings();
+    if (!settings || !settings->inApplicationChromeMode())
+        return false;
+    
+    if (!o->style())
+        return false;
+    
+    return o->style()->appearance() == DefaultButtonAppearance;
 }
 
 void RenderTheme::adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const

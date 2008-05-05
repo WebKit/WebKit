@@ -74,6 +74,7 @@ Settings::Settings(Page* page)
     , m_needsSiteSpecificQuirks(false)
     , m_fontRenderingMode(0)
     , m_webArchiveDebugModeEnabled(false)
+    , m_inApplicationChromeMode(false)
     , m_offlineWebApplicationCacheEnabled(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
@@ -337,6 +338,11 @@ void Settings::setWebArchiveDebugModeEnabled(bool enabled)
 void Settings::setLocalStorageDatabasePath(const String& path)
 {
     m_localStorageDatabasePath = path;
+}
+
+void Settings::setApplicationChromeMode(bool mode)
+{
+    m_inApplicationChromeMode = mode;
 }
 
 void Settings::setOfflineWebApplicationCacheEnabled(bool enabled)

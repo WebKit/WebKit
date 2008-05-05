@@ -94,6 +94,8 @@ ThemeControlState RenderThemeSafari::determineState(RenderObject* o) const
         result |= SafariTheme::IndeterminateCheckedState;
     if (isFocused(o))
         result |= SafariTheme::FocusedState;
+    if (isDefault(o))
+        result |= SafariTheme::DefaultState;
     return result;
 }
 
@@ -228,6 +230,7 @@ void RenderThemeSafari::adjustRepaintRect(const RenderObject* o, IntRect& r)
             break;
         }
         case PushButtonAppearance:
+        case DefaultButtonAppearance:
         case ButtonAppearance: {
             // We inflate the rect as needed to account for padding included in the cell to accommodate the checkbox
             // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.

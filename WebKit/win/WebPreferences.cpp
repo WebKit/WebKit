@@ -229,6 +229,7 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitCacheModelPreferenceKey), cacheModelRef.get());
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitAuthorAndUserStylesEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitApplicationChromeModePreferenceKey), kCFBooleanFalse);
 
     defaultSettings = defaults;
 }
@@ -1114,6 +1115,18 @@ HRESULT STDMETHODCALLTYPE WebPreferences::authorAndUserStylesEnabled(BOOL* enabl
         return E_POINTER;
 
     *enabled = boolValueForKey(CFSTR(WebKitAuthorAndUserStylesEnabledPreferenceKey));
+    return S_OK;
+}
+
+HRESULT WebPreferences::inApplicationChromeMode(BOOL* enabled)
+{
+    *enabled = boolValueForKey(CFSTR(WebKitApplicationChromeModePreferenceKey));
+    return S_OK;
+}
+    
+HRESULT WebPreferences::setApplicationChromeMode(BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitApplicationChromeModePreferenceKey), enabled);
     return S_OK;
 }
 

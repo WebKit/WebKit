@@ -1,3 +1,41 @@
+2008-05-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Add support for default button appearance.
+        Add WebCore setting for app chrome mode.
+        
+        Reviewed by Dave Hyatt.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in: Added default-button value keyword.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setApplicationChromeMode):
+        * page/Settings.h:
+        (WebCore::Settings::inApplicationChromeMode):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::RenderButton):
+        (WebCore::RenderButton::setStyle):
+        (WebCore::RenderButton::timerFired):
+        * rendering/RenderButton.h:
+        * rendering/RenderStyle.h:
+        (WebCore::):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        (WebCore::RenderTheme::isControlStyled):
+        (WebCore::RenderTheme::isDefault):
+        * rendering/RenderTheme.h:
+        (WebCore::):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::determineState):
+        (WebCore::RenderThemeSafari::adjustRepaintRect):
+        (WebCore::RenderThemeSafari::adjustButtonStyle):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::supportsFocus):
+
 2008-05-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

@@ -492,6 +492,7 @@ push-button
 square-button
 button
 button-bevel
+default-button
 listbox
 listitem
 media-fullscreen-button

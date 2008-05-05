@@ -186,6 +186,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EAppearance e)
         case ButtonBevelAppearance:
             m_value.ident = CSSValueButtonBevel;
             break;
+        case DefaultButtonAppearance:
+            m_value.ident = CSSValueDefaultButton;
+            break;
         case ListboxAppearance:
             m_value.ident = CSSValueListbox;
             break;
