@@ -149,16 +149,16 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
         for (int x = 0; x < numColumns; x++) {
             int basex = x * 4;
             if (unsigned char alpha = srcRows[basex + 3]) {
-                destRows[0] = (srcRows[basex] * 255) / alpha;
-                destRows[1] = (srcRows[basex + 1] * 255) / alpha;
-                destRows[2] = (srcRows[basex + 2] * 255) / alpha;
-                destRows[3] = alpha;
+                destRows[basex] = (srcRows[basex] * 255) / alpha;
+                destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
+                destRows[basex + 2] = (srcRows[basex + 2] * 255) / alpha;
+                destRows[basex + 3] = alpha;
             } else {
-                reinterpret_cast<uint32_t*>(destRows)[0] = reinterpret_cast<uint32_t*>(srcRows)[0];
+                reinterpret_cast<uint32_t*>(destRows + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
             }
-            destRows += 4;
         }
         srcRows += srcBytesPerRow;
+        destRows += destBytesPerRow;
     }
     return result;
 }
@@ -198,14 +198,15 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
     unsigned char* destRows = reinterpret_cast<unsigned char*>(m_data) + desty * destBytesPerRow + destx * 4;
     for (int y = 0; y < numRows; ++y) {
         for (int x = 0; x < numColumns; x++) {
-            unsigned char alpha = srcRows[x * 4 + 3];
+            int basex = x * 4;
+            unsigned char alpha = srcRows[basex + 3];
             if (alpha != 255) {
-                destRows[x * 4 + 0] = (srcRows[0] * alpha) / 255;
-                destRows[x * 4 + 1] = (srcRows[1] * alpha) / 255;
-                destRows[x * 4 + 2] = (srcRows[2] * alpha) / 255;
-                destRows[x * 4 + 3] = alpha;
+                destRows[basex] = (srcRows[basex] * alpha + 254) / 255;
+                destRows[basex + 1] = (srcRows[basex + 1] * alpha + 254) / 255;
+                destRows[basex + 2] = (srcRows[basex + 2] * alpha + 254) / 255;
+                destRows[basex + 3] = alpha;
             } else {
-                reinterpret_cast<uint32_t*>(destRows + x * 4)[0] = reinterpret_cast<uint32_t*>(srcRows + x * 4)[0];
+                reinterpret_cast<uint32_t*>(destRows + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
             }
         }
         destRows += destBytesPerRow;

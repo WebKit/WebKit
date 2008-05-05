@@ -1,3 +1,13 @@
+2008-05-05  David Hyatt  <hyatt@apple.com>
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=18821, putImageData incorrect when data has alpha.
+
+        Reviewed by Eric
+
+        * fast/canvas/canvas-alphaImageData-behavior-expected.txt: Added.
+        * fast/canvas/canvas-alphaImageData-behavior.html: Added.
+        * fast/canvas/canvas-alphaImageData-behavior.js: Added.
+
 2008-05-05  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Adam Roben.

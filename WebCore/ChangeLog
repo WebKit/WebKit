@@ -1,3 +1,15 @@
+2008-05-05  David Hyatt  <hyatt@apple.com>
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=18821.  Fix some bugs in both get/PutImageData of <canvas>.
+
+        Reviewed by Eric
+
+        New tests added in fast/canvas/
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::getImageData):
+        (WebCore::ImageBuffer::putImageData):
+
 2008-05-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
