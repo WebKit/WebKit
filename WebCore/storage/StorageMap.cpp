@@ -111,15 +111,14 @@ PassRefPtr<StorageMap> StorageMap::setItem(const String& key, const String& valu
     pair<HashMap<String, String>::iterator, bool> addResult = m_map.add(key, value);
 
     if (addResult.second) {
-        // If the add succeeded, the map has been mutated and the iterator needs to be invalidated
-        invalidateIterator();
-        
-        // Plus, there was no "oldValue" so null it out.
+        // There was no "oldValue" so null it out.
         oldValue = String();
     } else {
         oldValue = addResult.first->second;
         m_map.set(key, value);
     }
+
+    invalidateIterator();
 
     return 0;
 }

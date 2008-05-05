@@ -1,3 +1,13 @@
+2008-05-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Fix a bug in StorageMap iterator tracking where the iterator was not successfully
+        invalidated at an appropriate time.
+
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::setItem): ALWAYS invalidate it here
+
 2008-05-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.
