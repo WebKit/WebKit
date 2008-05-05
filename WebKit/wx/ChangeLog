@@ -1,3 +1,22 @@
+2008-05-04  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+        
+        Allow events to specify the ID of the particular wxWebView they are to be sent to.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=18659
+
+        * WebFrame.cpp:
+        (wxWebFrame::wxWebFrame):
+        * WebView.cpp:
+        (wxWebViewLoadEvent::wxWebViewLoadEvent):
+        (wxWebViewBeforeLoadEvent::wxWebViewBeforeLoadEvent):
+        (wxWebViewNewWindowEvent::wxWebViewNewWindowEvent):
+        (wxWebViewRightClickEvent::wxWebViewRightClickEvent):
+        (wxWebViewConsoleMessageEvent::wxWebViewConsoleMessageEvent):
+        * WebView.h:
+        * bindings/python/webview.i:
+
 2008-04-27  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.

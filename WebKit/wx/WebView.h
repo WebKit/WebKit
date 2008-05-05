@@ -317,41 +317,41 @@ BEGIN_DECLARE_EVENT_TYPES()
 END_DECLARE_EVENT_TYPES()
 #endif
 
-#define EVT_WEBVIEW_LOAD(func) \
+#define EVT_WEBVIEW_LOAD(winid, func)                       \
             DECLARE_EVENT_TABLE_ENTRY( wxEVT_WEBVIEW_LOAD, \
-                            wxID_ANY, \
+                            winid, \
                             wxID_ANY, \
                             (wxObjectEventFunction)   \
                             (wxWebViewLoadEventFunction) & func, \
                             static_cast<wxObject*>(NULL)),
                             
-#define EVT_WEBVIEW_BEFORE_LOAD(func) \
+#define EVT_WEBVIEW_BEFORE_LOAD(winid, func)                       \
             DECLARE_EVENT_TABLE_ENTRY( wxEVT_WEBVIEW_BEFORE_LOAD, \
-                            wxID_ANY, \
+                            winid, \
                             wxID_ANY, \
                             (wxObjectEventFunction)   \
                             (wxWebViewBeforeLoadEventFunction) & func, \
                             static_cast<wxObject*>(NULL)),
                             
-#define EVT_WEBVIEW_NEW_WINDOW(func) \
+#define EVT_WEBVIEW_NEW_WINDOW(winid, func)                       \
             DECLARE_EVENT_TABLE_ENTRY( wxEVT_WEBVIEW_NEW_WINDOW, \
-                            wxID_ANY, \
+                            winid, \
                             wxID_ANY, \
                             (wxObjectEventFunction)   \
                             (wxWebViewNewWindowEventFunction) & func, \
                             static_cast<wxObject*>(NULL)),
 
-#define EVT_WEBVIEW_RIGHT_CLICK(func) \
+#define EVT_WEBVIEW_RIGHT_CLICK(winid, func)                       \
             DECLARE_EVENT_TABLE_ENTRY( wxEVT_WEBVIEW_RIGHT_CLICK, \
-                            wxID_ANY, \
+                            winid, \
                             wxID_ANY, \
                             (wxObjectEventFunction)   \
                             (wxWebViewRightClickEventFunction) & func, \
                             static_cast<wxObject*>(NULL)),
                             
-#define EVT_WEBVIEW_CONSOLE_MESSAGE(func) \
+#define EVT_WEBVIEW_CONSOLE_MESSAGE(winid, func)                       \
             DECLARE_EVENT_TABLE_ENTRY( wxEVT_WEBVIEW_CONSOLE_MESSAGE, \
-                            wxID_ANY, \
+                            winid, \
                             wxID_ANY, \
                             (wxObjectEventFunction)   \
                             (wxWebViewConsoleMessageEventFunction) & func, \

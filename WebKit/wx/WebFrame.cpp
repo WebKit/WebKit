@@ -62,7 +62,8 @@ enum {
     ID_NEW_WINDOW = wxID_HIGHEST + 14,
     ID_BROWSE = wxID_HIGHEST + 15,
     ID_EDIT = wxID_HIGHEST + 16,
-    ID_RUN_SCRIPT = wxID_HIGHEST + 17
+    ID_RUN_SCRIPT = wxID_HIGHEST + 17,
+    ID_WEBVIEW = wxID_HIGHEST + 18
 };
 
 BEGIN_EVENT_TABLE(wxWebFrame, wxFrame)
@@ -71,8 +72,8 @@ BEGIN_EVENT_TABLE(wxWebFrame, wxFrame)
     EVT_MENU(ID_LOADFILE, wxWebFrame::OnLoadFile)
     EVT_TEXT_ENTER(ID_TEXTCTRL, wxWebFrame::OnAddressBarEnter)
     EVT_TEXT_ENTER(ID_SEARCHCTRL, wxWebFrame::OnSearchCtrlEnter)
-    EVT_WEBVIEW_LOAD(wxWebFrame::OnLoadEvent)
-    EVT_WEBVIEW_BEFORE_LOAD(wxWebFrame::OnBeforeLoad)
+    EVT_WEBVIEW_LOAD(ID_WEBVIEW, wxWebFrame::OnLoadEvent)
+    EVT_WEBVIEW_BEFORE_LOAD(ID_WEBVIEW, wxWebFrame::OnBeforeLoad)
     EVT_MENU(ID_BACK, wxWebFrame::OnBack)
     EVT_MENU(ID_FORWARD, wxWebFrame::OnForward)
     EVT_MENU(ID_STOP, wxWebFrame::OnStop)
@@ -153,7 +154,7 @@ wxWebFrame::wxWebFrame(const wxString& title) :
     SetToolBar(toolbar);
 
     // Create the wxWebView Window
-    webview = new wxWebView((wxWindow*)this, 1001, wxDefaultPosition, wxSize(200, 200));
+    webview = new wxWebView((wxWindow*)this, ID_WEBVIEW, wxDefaultPosition, wxSize(200, 200));
     webview->SetBackgroundColour(*wxWHITE);
 
     // create a status bar just for fun (by default with 1 pane only)
