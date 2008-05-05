@@ -1026,8 +1026,9 @@ sub countAndPrintLeaks($$$)
             "_CFHTTPReadStreamReadMark", # leak in CFNetwork, rdar://problem/5441468
             "httpProtocolStart", # leak in CFNetwork, rdar://problem/5468837
             "_CFURLConnectionSendCallbacks", # leak in CFNetwork, rdar://problem/5441600
-            "DispatchQTMsg", # leak in Quicktime, PPC only, <rdar://problem/5667132>
-            "QTMovieContentView createVisualContext", # leak in Quicktime, PPC only, <rdar://problem/5667132>
+            "DispatchQTMsg", # leak in QuickTime, PPC only, rdar://problem/5667132
+            "QTMovieContentView createVisualContext", # leak in QuickTime, PPC only, rdar://problem/5667132
+            "_CopyArchitecturesForJVMVersion", # leak in Java, rdar://problem/5910823
         );
     }
 
