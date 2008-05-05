@@ -58,7 +58,7 @@ static const unsigned maxRequestsInFlightForNonHTTPProtocols = 10000;
     
     
 Loader::Loader()
-    : m_nonHTTPProtocolHost("non-http-protocol-host", maxRequestsInFlightForNonHTTPProtocols)
+    : m_nonHTTPProtocolHost(AtomicString(), maxRequestsInFlightForNonHTTPProtocols)
     , m_requestTimer(this, &Loader::requestTimerFired)
 {
 }

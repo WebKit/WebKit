@@ -1,3 +1,13 @@
+2008-05-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Anders.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=18899
+        Bug 18899: REGRESSION (r32871): Non-Safari crash in WTF::HashTable on startup
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Loader):
+
 2008-05-05  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
