@@ -1,3 +1,14 @@
+2008-05-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/5884383>
+        Escape look-a-like characters from the the entire url.
+
+        * Misc/WebNSURLExtras.mm:
+        (escapeUnsafeCharacters):
+        (-[NSURL _web_userVisibleString]):
+
 2008-05-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

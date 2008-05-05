@@ -464,6 +464,45 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     return [[[NSString alloc] initWithData:[self _web_originalData] encoding:NSISOLatin1StringEncoding] autorelease];
 }
 
+static CFStringRef createStringWithEscapedUnsafeCharacters(CFStringRef string)
+{
+    CFIndex length = CFStringGetLength(string);
+    Vector<UChar, 2048> sourceBuffer(length);
+    CFStringGetCharacters(string, CFRangeMake(0, length), sourceBuffer.data());
+
+    Vector<UChar, 2048> outBuffer;
+
+    CFIndex i = 0;
+    while (i < length) {
+        UChar32 c;
+        U16_NEXT(sourceBuffer, i, length, c)
+
+        if (isLookalikeCharacter(c)) {
+            uint8_t utf8Buffer[4];
+            CFIndex offset = 0;
+            UBool failure = false;
+            U8_APPEND(utf8Buffer, offset, 4, c, failure)
+            ASSERT(!failure);
+
+            for (CFIndex j = 0; j < offset; ++j) {
+                outBuffer.append('%');
+                outBuffer.append(hexDigit(utf8Buffer[j] >> 4));
+                outBuffer.append(hexDigit(utf8Buffer[j] & 0xf));
+            }
+        } else {
+            UChar utf16Buffer[2];
+            CFIndex offset = 0;
+            UBool failure = false;
+            U16_APPEND(utf16Buffer, offset, 2, c, failure)
+            ASSERT(!failure);
+            for (CFIndex j = 0; j < offset; ++j)
+                outBuffer.append(utf16Buffer[j]);
+        }
+    }
+
+    return CFStringCreateWithCharacters(NULL, outBuffer.data(), outBuffer.size());
+}
+
 - (NSString *)_web_userVisibleString
 {
     NSData *data = [self _web_originalData];
@@ -479,28 +518,20 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     int i;
     for (i = 0; i < length; i++) {
         unsigned char c = p[i];
-        // escape control characters, space, and delete
-        if (c <= 0x20 || c == 0x7f) {
-            *q++ = '%';
-            *q++ = hexDigit(c >> 4);
-            *q++ = hexDigit(c & 0xf);
-        }
         // unescape escape sequences that indicate bytes greater than 0x7f
-        else if (c == '%' && (i + 1 < length && isHexDigit(p[i + 1])) && i + 2 < length && isHexDigit(p[i + 2])) {
+        if (c == '%' && (i + 1 < length && isHexDigit(p[i + 1])) && i + 2 < length && isHexDigit(p[i + 2])) {
             unsigned char u = (hexDigitValue(p[i + 1]) << 4) | hexDigitValue(p[i + 2]);
             if (u > 0x7f) {
                 // unescape
                 *q++ = u;
-            }
-            else {
+            } else {
                 // do not unescape
                 *q++ = p[i];
                 *q++ = p[i + 1];
                 *q++ = p[i + 2];
             }
             i += 2;
-        } 
-        else {
+        } else {
             *q++ = c;
 
             // Check for "xn--" in an efficient, non-case-sensitive, way.
@@ -528,8 +559,7 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
                 *q++ = '%';
                 *q++ = hexDigit(c >> 4);
                 *q++ = hexDigit(c & 0xf);
-            }
-            else {
+            } else {
                 *q++ = *p;
             }
             p++;
@@ -539,9 +569,9 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     }
 
     free(after);
-    
-    // As an optimization, only do host name decoding if we have "xn--" somewhere.
-    return needsHostNameDecoding ? mapHostNames(result, NO) : result;
+
+    result = mapHostNames(result, !needsHostNameDecoding);
+    return WebCFAutorelease(createStringWithEscapedUnsafeCharacters((CFStringRef)result));
 }
 
 - (BOOL)_web_isEmpty
