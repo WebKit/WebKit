@@ -2071,18 +2071,24 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
-    // Don't do anything if we aren't initialized.  This happens when decoding a WebView.
+    // Don't do anything if the WebView isn't initialized.
+    // This happens when decoding a WebView in a nib.
+    // FIXME: What sets up the observer of NSWindowWillCloseNotification in this case?
     if (!_private)
         return;
+
+    if (_private->closed)
+        return;
     
-    if ([self window])
+    if ([self window] && [self window] != [self hostWindow])
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:[self window]];
 
     if (window) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:window];
 
-        // Ensure that we will receive the events that WebHTMLView (at least) needs. It's expensive enough
-        // that we don't want to call it over and over.
+        // Ensure that we will receive the events that WebHTMLView (at least) needs.
+        // The following are expensive enough that we don't want to call them over
+        // and over, so do them when we move into a window.
         [window setAcceptsMouseMovedEvents:YES];
         WKSetNSWindowShouldPostEventNotifications(window, YES);
     }
@@ -2480,19 +2486,22 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
 - (void)setHostWindow:(NSWindow *)hostWindow
 {
-    if (!_private->closed && hostWindow != _private->hostWindow) {
-        Frame* coreFrame = core([self mainFrame]);
-        for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
-            [[[kit(frame) frameView] documentView] viewWillMoveToHostWindow:hostWindow];
-        if (_private->hostWindow)
-            [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:_private->hostWindow];
-        if (hostWindow)
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:hostWindow];
-        [_private->hostWindow release];
-        _private->hostWindow = [hostWindow retain];
-        for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
-            [[[kit(frame) frameView] documentView] viewDidMoveToHostWindow];
-    }
+    if (_private->closed)
+        return;
+    if (hostWindow == _private->hostWindow)
+        return;
+
+    Frame* coreFrame = core([self mainFrame]);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+        [[[kit(frame) frameView] documentView] viewWillMoveToHostWindow:hostWindow];
+    if (_private->hostWindow && [self window] != _private->hostWindow)
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:_private->hostWindow];
+    if (hostWindow)
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:hostWindow];
+    [_private->hostWindow release];
+    _private->hostWindow = [hostWindow retain];
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+        [[[kit(frame) frameView] documentView] viewDidMoveToHostWindow];
 }
 
 - (NSWindow *)hostWindow

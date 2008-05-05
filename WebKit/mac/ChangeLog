@@ -1,3 +1,17 @@
+2008-05-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=18789
+          fix some shouldCloseWithWindow edge cases
+
+        * WebView/WebView.mm:
+        (-[WebView viewWillMoveToWindow:]): Fix bug where we would stop observing the
+        NSWindowWillCloseNotification if the view was moved out of the window but still
+        had that window set as the host window. Also make sure this function doesn't do
+        anything if the WebView is already closed.
+        (-[WebView setHostWindow:]): Ditto.
+
 2008-05-04  David Kilzer  <ddkilzer@apple.com>
 
         Make parameters match for WebChromeClient::addMessageToConsole()
