@@ -1,3 +1,19 @@
+2008-05-02  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mitz.
+
+        Fix <rdar://problem/5840475>
+        CrashTracer: [USER] 2 crashes in Safari at com.apple.WebCore: WebCore::RenderBlock::insertPositionedObject
+        
+        Non-block objects can have transforms so containingBlock() could end up returning null. 
+        RenderObject::container() needs to match.
+
+        Test: fast/transforms/container-transform-crash.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+        (WebCore::RenderObject::container):
+
 2008-05-04  Sam Weinig  <sam@webkit.org>
 
         Roll out r32851.  It broke tiger builds.
