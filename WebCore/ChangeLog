@@ -1,3 +1,22 @@
+2008-05-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        Speculative fix for <rdar://problem/5906790> 
+        Crash in Loader::servePendingRequests() due to hash table being modified during iteration
+        
+        I don't know how to reproduce this. It would require the load to fail (or succeed)
+        synchronously, something that should not usually happen.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Loader):
+        (WebCore::Loader::load):
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::cancelRequests):
+        (WebCore::Loader::Host::Host):
+        * loader/loader.h:
+        (WebCore::Loader::Host::name):
+
 2008-05-05  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.

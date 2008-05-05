@@ -58,7 +58,7 @@ static const unsigned maxRequestsInFlightForNonHTTPProtocols = 10000;
     
     
 Loader::Loader()
-    : m_nonHTTPProtocolHost(maxRequestsInFlightForNonHTTPProtocols)
+    : m_nonHTTPProtocolHost("non-http-protocol-host", maxRequestsInFlightForNonHTTPProtocols)
     , m_requestTimer(this, &Loader::requestTimerFired)
 {
 }
@@ -102,11 +102,11 @@ void Loader::load(DocLoader* docLoader, CachedResource* resource, bool increment
     KURL url(resource->url());
     bool isHTTP = url.protocolIs("http") || url.protocolIs("https");
     if (isHTTP) {
-        String hostName = url.host();
-        host = m_hosts.get(hostName);
+        AtomicString hostName = url.host();
+        host = m_hosts.get(hostName.impl());
         if (!host) {
-            host = new Host(maxRequestsInFlightPerHost);
-            m_hosts.add(hostName, host);
+            host = new Host(hostName, maxRequestsInFlightPerHost);
+            m_hosts.add(hostName.impl(), host);
         }
     } else 
         host = &m_nonHTTPProtocolHost;
@@ -141,19 +141,17 @@ void Loader::servePendingRequests(Priority minimumPriority)
     
     m_nonHTTPProtocolHost.servePendingRequests(minimumPriority);
 
-    HostMap::iterator end = m_hosts.end();
-    Vector<String> toRemove;
-    for (HostMap::iterator it = m_hosts.begin(); it != end; ++it) {
-        Host* host = it->second;
+    Vector<Host*> hostsToServe;
+    copyValuesToVector(m_hosts, hostsToServe);
+    for (unsigned n = 0; n < hostsToServe.size(); ++n) {
+        Host* host = hostsToServe[n];
         if (host->hasRequests())
             host->servePendingRequests(minimumPriority);
-        else
-            toRemove.append(it->first);
-    }
-    for (unsigned n = 0; n < toRemove.size(); ++n) {
-        HostMap::iterator it = m_hosts.find(toRemove[n]);
-        delete it->second;
-        m_hosts.remove(it);
+        else {
+            AtomicString name = host->name();
+            delete host;
+            m_hosts.remove(name.impl());
+        }
     }
 }
     
@@ -162,9 +160,10 @@ void Loader::cancelRequests(DocLoader* docLoader)
     if (m_nonHTTPProtocolHost.hasRequests())
         m_nonHTTPProtocolHost.cancelRequests(docLoader);
     
-    HostMap::iterator end = m_hosts.end();
-    for (HostMap::iterator it = m_hosts.begin(); it != end; ++it) {
-        Host* host = it->second;
+    Vector<Host*> hostsToCancel;
+    copyValuesToVector(m_hosts, hostsToCancel);
+    for (unsigned n = 0; n < hostsToCancel.size(); ++n) {
+        Host* host = hostsToCancel[n];
         if (host->hasRequests())
             host->cancelRequests(docLoader);
     }
@@ -177,8 +176,9 @@ void Loader::cancelRequests(DocLoader* docLoader)
         ASSERT(docLoader->requestCount() == 0);
 }
     
-Loader::Host::Host(unsigned maxRequestsInFlight)
-    : m_maxRequestsInFlight(maxRequestsInFlight)
+Loader::Host::Host(const AtomicString& name, unsigned maxRequestsInFlight)
+    : m_name(name)
+    , m_maxRequestsInFlight(maxRequestsInFlight)
 {
 }
 

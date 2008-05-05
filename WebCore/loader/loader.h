@@ -22,8 +22,9 @@
 #ifndef loader_h
 #define loader_h
 
+#include "AtomicString.h"
+#include "AtomicStringImpl.h"
 #include "PlatformString.h"
-#include "StringHash.h"
 #include "SubresourceLoaderClient.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
@@ -56,9 +57,10 @@ namespace WebCore {
 
         class Host : private SubresourceLoaderClient {
         public:
-            Host(unsigned maxRequestsInFlight);
+            Host(const AtomicString& name, unsigned maxRequestsInFlight);
             ~Host();
             
+            const AtomicString& name() const { return m_name; }
             void addRequest(Request*, Priority);
             void servePendingRequests(Priority minimumPriority = Low);
             void cancelRequests(DocLoader*);
@@ -78,9 +80,10 @@ namespace WebCore {
             RequestQueue m_requestsPending[High + 1];
             typedef HashMap<RefPtr<SubresourceLoader>, Request*> RequestMap;
             RequestMap m_requestsLoading;
+            const AtomicString m_name;
             const int m_maxRequestsInFlight;
         };
-        typedef HashMap<String, Host*> HostMap;
+        typedef HashMap<AtomicStringImpl*, Host*> HostMap;
         HostMap m_hosts;
         Host m_nonHTTPProtocolHost;
         
