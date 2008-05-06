@@ -1,3 +1,13 @@
+2008-05-06  Christian Dywan  <christian@twotoasts.de>
+
+        Rubber stamped by Alp.
+
+        Back out 17626. It wasn't ready for commit.
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
 2008-05-01  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
 
         Reviewed by Alp Toker.
