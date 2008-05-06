@@ -4,6 +4,31 @@
 
         Preparation for upcoming work making LocalStorage persistent.
 
+        - Create the LocalStorage object for a PageGroup the moment the first Page is added to it
+          The Settings of the first Page define what persistent path the LocalStorage will use
+        - Add a Frame argument for the LocalStorageArea request - this will allow a client object
+          to be queried before the LocalStorageArea is established
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::localStorage):
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addPage):
+        (WebCore::PageGroup::localStorage):
+
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::LocalStorage): Take the path as a constructor argument.  Deep copy
+          the path as it will be used from another thread.
+        (WebCore::LocalStorage::storageArea):
+        * storage/LocalStorage.h:
+        (WebCore::LocalStorage::create):
+
+2008-05-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz Pettel RTL
+
+        Preparation for upcoming work making LocalStorage persistent.
+
         StorageMaps normally have copy-on-write semantics to help support SessionStorage.
         For LocalStorage, we never want this behavior.  When we forcefully import items into 
         a StorageMap from the LocalStorage background thread, this new import method will be used.

@@ -37,14 +37,20 @@
 namespace WebCore {
 
 
-LocalStorage::LocalStorage(PageGroup* group)
+LocalStorage::LocalStorage(PageGroup* group, const String& path)
     : m_group(group)
+    , m_path(path.copy())
 {
     ASSERT(m_group);
 }
 
-PassRefPtr<StorageArea> LocalStorage::storageArea(SecurityOrigin* origin)
+PassRefPtr<StorageArea> LocalStorage::storageArea(Frame* sourceFrame, SecurityOrigin* origin)
 {
+    // FIXME: If the security origin in question has never had a storage area established,
+    // we need to ask a client call if establishing it is okay.  If the client denies the request,
+    // this method will return null.
+    // The sourceFrame argument exists for the purpose of asking a client.
+
     RefPtr<StorageArea> storageArea;
     if (storageArea = m_storageAreaMap.get(origin))
         return storageArea.release();

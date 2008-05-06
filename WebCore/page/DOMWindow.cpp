@@ -316,8 +316,10 @@ Storage* DOMWindow::localStorage() const
     if (!page)
         return 0;
     
-    RefPtr<StorageArea> storageArea = page->group().localStorage()->storageArea(document->securityOrigin());
-    m_localStorage = Storage::create(m_frame, storageArea.release());
+    RefPtr<StorageArea> storageArea = page->group().localStorage()->storageArea(m_frame, document->securityOrigin());
+    if (storageArea)
+        m_localStorage = Storage::create(m_frame, storageArea.release());
+
     return m_localStorage.get();
 }
 #endif

@@ -39,17 +39,19 @@ namespace WebCore {
 
     class LocalStorage : public RefCounted<LocalStorage> {
     public:
-        static PassRefPtr<LocalStorage> create(PageGroup* group) { return adoptRef(new LocalStorage(group)); }
-        
-        PassRefPtr<StorageArea> storageArea(SecurityOrigin*);
-    
+        static PassRefPtr<LocalStorage> create(PageGroup* group, const String& path) { return adoptRef(new LocalStorage(group, path)); }
+
+        PassRefPtr<StorageArea> storageArea(Frame* sourceFrame, SecurityOrigin*);
+
     private:
-        LocalStorage(PageGroup*);
+        LocalStorage(PageGroup*, const String& path);
 
         typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash> StorageAreaMap;
         StorageAreaMap m_storageAreaMap;
-        
+
         PageGroup* m_group;
+
+        String m_path;
     };
 
 } // namespace WebCore

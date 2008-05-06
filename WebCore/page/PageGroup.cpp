@@ -29,6 +29,7 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "Page.h"
+#include "Settings.h"
 
 #if ENABLE(DOM_STORAGE)
 #include "LocalStorage.h"
@@ -88,6 +89,10 @@ void PageGroup::addPage(Page* page)
     ASSERT(page);
     ASSERT(!m_pages.contains(page));
     m_pages.add(page);
+#if ENABLE(DOM_STORAGE)
+    if (!m_localStorage)
+        m_localStorage = LocalStorage::create(this, page->settings()->localStorageDatabasePath());
+#endif
 }
 
 void PageGroup::removePage(Page* page)
@@ -157,9 +162,6 @@ void PageGroup::setShouldTrackVisitedLinks(bool shouldTrack)
 #if ENABLE(DOM_STORAGE)
 LocalStorage* PageGroup::localStorage()
 {
-    if (!m_localStorage)
-        m_localStorage = LocalStorage::create(this);
-
     return m_localStorage.get();
 }
 #endif
