@@ -65,7 +65,8 @@ typedef void  (*NPN_PopPopupsEnabledStateProcPtr)(NPP instance);
 typedef void (*NPN_PluginThreadAsyncCallProcPtr)(NPP npp, void (*func)(void *), void *userData);
 typedef uint32 (*NPN_ScheduleTimerProcPtr)(NPP npp, uint32 interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32 timerID));
 typedef void (*NPN_UnscheduleTimerProcPtr)(NPP npp, uint32 timerID);
-    
+typedef NPError (*NPN_PopUpContextMenuProcPtr)(NPP instance, NPMenu* menu);
+
 typedef void (*NPN_ReleaseVariantValueProcPtr) (NPVariant *variant);
 
 typedef NPIdentifier (*NPN_GetStringIdentifierProcPtr) (const NPUTF8 *name);
@@ -158,7 +159,8 @@ typedef struct _NPNetscapeFuncs {
     NPN_PluginThreadAsyncCallProcPtr pluginthreadasynccall;
     NPN_ConstructProcPtr construct;
     NPN_ScheduleTimerProcPtr scheduletimer;
-    NPN_UnscheduleTimerProcPtr unscheduletimer;    
+    NPN_UnscheduleTimerProcPtr unscheduletimer;
+    NPN_PopUpContextMenuProcPtr popupcontextmenu;
 } NPNetscapeFuncs;
 
 typedef struct _NPPluginFuncs {
