@@ -113,6 +113,7 @@ public:
 
     virtual void defaultEventHandler(Event*);
     virtual void accessKeyAction(bool sendToAnyElement);
+    void accessKeySetSelectedIndex(int);
 
     void setMultiple(bool);
 

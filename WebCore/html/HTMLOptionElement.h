@@ -66,7 +66,7 @@ public:
     void setSelected(bool);
     void setSelectedState(bool);
 
-    HTMLSelectElement* getSelect() const;
+    HTMLSelectElement* ownerSelectElement() const;
 
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
@@ -81,7 +81,8 @@ public:
     virtual bool disabled() const;
     
     virtual void insertedIntoDocument();
-
+    virtual void accessKeyAction(bool);
+    
 private:
     String m_value;
     bool m_selected;

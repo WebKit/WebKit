@@ -31,6 +31,7 @@
 #include "config.h"
 #include "RenderListBox.h"
 
+#include "AXObjectCache.h"
 #include "CSSStyleSelector.h"
 #include "Document.h"
 #include "EventHandler.h"
@@ -145,6 +146,9 @@ void RenderListBox::selectionChanged()
         else
             scrollToRevealSelection();
     }
+    
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->selectedChildrenChanged(this);
 }
 
 void RenderListBox::layout()

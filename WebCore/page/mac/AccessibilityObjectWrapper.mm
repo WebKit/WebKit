@@ -30,6 +30,7 @@
 #import "AccessibilityObjectWrapper.h"
 
 #import "AXObjectCache.h"
+#import "AccessibilityListBox.h"
 #import "AccessibilityRenderObject.h"
 #import "ColorMac.h"
 #import "Frame.h"
@@ -513,6 +514,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     static NSArray* anchorAttrs = nil;
     static NSArray* webAreaAttrs = nil;
     static NSArray* textAttrs = nil;
+    static NSArray* listBoxAttrs = nil;
     NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
@@ -562,6 +564,14 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         textAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
+    if (listBoxAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
+        [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
+        [tempArray addObject:NSAccessibilityOrientationAttribute];
+        listBoxAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
     
     if (m_object->isPasswordField())
         return attributes;
@@ -574,6 +584,9 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
 
     if (m_object->isAnchor() || m_object->isImage())
         return anchorAttrs;
+
+    if (m_object->isListBox())
+        return listBoxAttrs;
 
     return attributes;
 }
@@ -842,7 +855,14 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         }
         return convertToNSArray(m_object->children());
     }
-
+    
+    if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute] && m_object->isListBox())
+        return convertToNSArray(static_cast<AccessibilityListBox*>(m_object)->selectedChildren());
+    
+    if ([attributeName isEqualToString: NSAccessibilityVisibleChildrenAttribute] && m_object->isListBox())
+        return convertToNSArray(static_cast<AccessibilityListBox*>(m_object)->visibleChildren());
+    
+    
     if (m_object->isWebArea()) {
         if ([attributeName isEqualToString: @"AXLinkUIElements"]) {
             Vector<RefPtr<AccessibilityObject> > links;
@@ -944,6 +964,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return nil;
     }
     
+    if (m_object->isListBox() && [attributeName isEqualToString:NSAccessibilityOrientationAttribute])
+        return NSAccessibilityVerticalOrientationValue;
+
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"])
         return [self textMarkerRangeForSelection];
     

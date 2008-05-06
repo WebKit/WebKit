@@ -29,6 +29,8 @@
 #include "config.h"
 #include "AXObjectCache.h"
 
+#include "AccessibilityListBox.h"
+#include "AccessibilityListBoxOption.h"
 #include "AccessibilityRenderObject.h"
 #include "RenderObject.h"
 
@@ -61,7 +63,11 @@ AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
         obj = m_objects.get(axID).get();
 
     if (!obj) {
-        obj = AccessibilityRenderObject::create(renderer);
+        if (renderer->isListBox())
+            obj = AccessibilityListBox::create(renderer);
+        else
+            obj = AccessibilityRenderObject::create(renderer);
+        
         getAXID(obj.get());
         
         m_renderObjectMapping.set(renderer, obj.get()->axObjectID());
@@ -78,6 +84,9 @@ AccessibilityObject* AXObjectCache::get(AccessibilityRole role)
     
     // will be filled in...
     switch (role) {
+        case ListBoxOptionRole:
+            obj = AccessibilityListBoxOption::create();
+            break;
         default:
             obj = 0;
     }

@@ -30,6 +30,7 @@
 #include "AccessibilityRenderObject.h"
 
 #include "AXObjectCache.h"
+#include "AccessibilityListBox.h"
 #include "CharacterNames.h"
 #include "EventNames.h"
 #include "FloatRect.h"
@@ -1326,6 +1327,10 @@ AccessibilityObject* AccessibilityRenderObject::doAccessibilityHitTest(const Int
         return 0;
     
     AccessibilityObject *result = obj->document()->axObjectCache()->get(obj);
+
+    if (obj->isListBox())
+        return static_cast<AccessibilityListBox*>(result)->doAccessibilityHitTest(point);
+        
     if (result->accessibilityIsIgnored())
         result = result->parentObjectUnignored();
 

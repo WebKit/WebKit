@@ -367,6 +367,10 @@
 		1CFCEEFA0AACC7A700348750 /* DOMHTMLInputElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEEF90AACC79000348750 /* DOMHTMLInputElementPrivate.h */; };
 		299984BD0DC8598500F8D261 /* AccessibilityRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 299984BB0DC8598500F8D261 /* AccessibilityRenderObject.cpp */; };
 		299984BE0DC8598500F8D261 /* AccessibilityRenderObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 299984BC0DC8598500F8D261 /* AccessibilityRenderObject.h */; };
+		2999869E0DD0DEEA00F8D261 /* AccessibilityListBoxOption.h in Headers */ = {isa = PBXBuildFile; fileRef = 2999869A0DD0DEEA00F8D261 /* AccessibilityListBoxOption.h */; };
+		2999869F0DD0DEEA00F8D261 /* AccessibilityListBoxOption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2999869B0DD0DEEA00F8D261 /* AccessibilityListBoxOption.cpp */; };
+		299986A00DD0DEEA00F8D261 /* AccessibilityListBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 2999869C0DD0DEEA00F8D261 /* AccessibilityListBox.h */; };
+		299986A10DD0DEEA00F8D261 /* AccessibilityListBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2999869D0DD0DEEA00F8D261 /* AccessibilityListBox.cpp */; };
 		2D9066060BE141D400956998 /* LayoutState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9066040BE141D400956998 /* LayoutState.cpp */; };
 		2D9066070BE141D400956998 /* LayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9066050BE141D400956998 /* LayoutState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		371F4F400D25B9AF00ECE0D5 /* FontData.h in Headers */ = {isa = PBXBuildFile; fileRef = 371F4F3E0D25B9AF00ECE0D5 /* FontData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4819,6 +4823,10 @@
 		1CFCEEF90AACC79000348750 /* DOMHTMLInputElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLInputElementPrivate.h; sourceTree = "<group>"; };
 		299984BB0DC8598500F8D261 /* AccessibilityRenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityRenderObject.cpp; sourceTree = "<group>"; };
 		299984BC0DC8598500F8D261 /* AccessibilityRenderObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityRenderObject.h; sourceTree = "<group>"; };
+		2999869A0DD0DEEA00F8D261 /* AccessibilityListBoxOption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityListBoxOption.h; sourceTree = "<group>"; };
+		2999869B0DD0DEEA00F8D261 /* AccessibilityListBoxOption.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityListBoxOption.cpp; sourceTree = "<group>"; };
+		2999869C0DD0DEEA00F8D261 /* AccessibilityListBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityListBox.h; sourceTree = "<group>"; };
+		2999869D0DD0DEEA00F8D261 /* AccessibilityListBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityListBox.cpp; sourceTree = "<group>"; };
 		2D9066040BE141D400956998 /* LayoutState.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutState.cpp; sourceTree = "<group>"; };
 		2D9066050BE141D400956998 /* LayoutState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LayoutState.h; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -8947,6 +8955,10 @@
 				93C09A820B064F05005ABD4D /* mac */,
 				06693F450BFBC91600216072 /* inspector */,
 				8538F0000AD71770006A81D1 /* AbstractView.idl */,
+				2999869D0DD0DEEA00F8D261 /* AccessibilityListBox.cpp */,
+				2999869C0DD0DEEA00F8D261 /* AccessibilityListBox.h */,
+				2999869B0DD0DEEA00F8D261 /* AccessibilityListBoxOption.cpp */,
+				2999869A0DD0DEEA00F8D261 /* AccessibilityListBoxOption.h */,
 				4B5B7C8D0D945CFA00DDF3AB /* AccessibilityObject.cpp */,
 				4B17CBC80D945B370053F183 /* AccessibilityObject.h */,
 				299984BB0DC8598500F8D261 /* AccessibilityRenderObject.cpp */,
@@ -15006,6 +15018,8 @@
 				BCEFE1EB0DCA5F6400739219 /* JSXSLTProcessor.h in Headers */,
 				BCE99EC40DCA624100182683 /* JSXSLTProcessorConstructor.h in Headers */,
 				BCBFB53D0DCD29CF0019B3E5 /* JSDOMWindowShell.h in Headers */,
+				2999869E0DD0DEEA00F8D261 /* AccessibilityListBoxOption.h in Headers */,
+				299986A00DD0DEEA00F8D261 /* AccessibilityListBox.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16711,6 +16725,8 @@
 				BCEFE1EA0DCA5F6400739219 /* JSXSLTProcessor.cpp in Sources */,
 				BCE99EC30DCA624100182683 /* JSXSLTProcessorConstructor.cpp in Sources */,
 				BCBFB53C0DCD29CF0019B3E5 /* JSDOMWindowShell.cpp in Sources */,
+				2999869F0DD0DEEA00F8D261 /* AccessibilityListBoxOption.cpp in Sources */,
+				299986A10DD0DEEA00F8D261 /* AccessibilityListBox.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

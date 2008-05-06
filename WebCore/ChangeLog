@@ -2,6 +2,75 @@
 
         Reviewed by Beth Dakin.
 
+        rdar://problem/5408464> REGRESSION: Unable to use Voiceover on combo boxes (disneyjobs.com)
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::ownerSelectElement):
+        (WebCore::HTMLOptGroupElement::accessKeyAction):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::accessKeyAction):
+        (WebCore::HTMLOptionElement::index):
+        (WebCore::HTMLOptionElement::setSelected):
+        (WebCore::HTMLOptionElement::childrenChanged):
+        (WebCore::HTMLOptionElement::ownerSelectElement):
+        (WebCore::HTMLOptionElement::insertedIntoDocument):
+        * html/HTMLOptionElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::childrenChanged):
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex):
+        * html/HTMLSelectElement.h:
+        * page/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::get):
+        * page/AccessibilityListBox.cpp: Added.
+        (WebCore::AccessibilityListBox::AccessibilityListBox):
+        (WebCore::AccessibilityListBox::~AccessibilityListBox):
+        (WebCore::AccessibilityListBox::create):
+        (WebCore::AccessibilityListBox::addChildren):
+        (WebCore::AccessibilityListBox::selectedChildren):
+        (WebCore::AccessibilityListBox::visibleChildren):
+        (WebCore::AccessibilityListBox::listBoxOptionAccessibilityObject):
+        (WebCore::AccessibilityListBox::doAccessibilityHitTest):
+        * page/AccessibilityListBox.h: Added.
+        (WebCore::AccessibilityListBox::accessibilityShouldUseUniqueId):
+        (WebCore::AccessibilityListBox::isListBox):
+        (WebCore::AccessibilityListBox::canSetFocusAttribute):
+        (WebCore::AccessibilityListBox::roleValue):
+        (WebCore::AccessibilityListBox::accessibilityIsIgnored):
+        * page/AccessibilityListBoxOption.cpp: Added.
+        (WebCore::AccessibilityListBoxOption::AccessibilityListBoxOption):
+        (WebCore::AccessibilityListBoxOption::~AccessibilityListBoxOption):
+        (WebCore::AccessibilityListBoxOption::create):
+        (WebCore::AccessibilityListBoxOption::isEnabled):
+        (WebCore::AccessibilityListBoxOption::isSelected):
+        (WebCore::AccessibilityListBoxOption::elementRect):
+        (WebCore::AccessibilityListBoxOption::title):
+        (WebCore::AccessibilityListBoxOption::size):
+        (WebCore::AccessibilityListBoxOption::actionElement):
+        (WebCore::AccessibilityListBoxOption::parentObject):
+        (WebCore::AccessibilityListBoxOption::listBoxOptionParentNode):
+        (WebCore::AccessibilityListBoxOption::listBoxOptionIndex):
+        * page/AccessibilityListBoxOption.h: Added.
+        (WebCore::AccessibilityListBoxOption::setHTMLElement):
+        (WebCore::AccessibilityListBoxOption::roleValue):
+        (WebCore::AccessibilityListBoxOption::accessibilityIsIgnored):
+        (WebCore::AccessibilityListBoxOption::isListBoxOption):
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isListBox):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::doAccessibilityHitTest):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::selectionChanged):
+        * rendering/RenderListBox.h:
+
+2008-05-06  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
          <rdar://problem/5455287> AXWebArea should include AXURL
 
         * page/AccessibilityRenderObject.cpp:

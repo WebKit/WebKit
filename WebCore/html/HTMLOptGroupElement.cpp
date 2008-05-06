@@ -170,5 +170,25 @@ String HTMLOptGroupElement::groupLabelText() const
         
     return itemText;
 }
- 
+    
+HTMLSelectElement* HTMLOptGroupElement::ownerSelectElement() const
+{
+    Node* select = parentNode();
+    while (select && !select->hasTagName(selectTag))
+        select = select->parentNode();
+    
+    if (!select)
+       return 0;
+    
+    return static_cast<HTMLSelectElement*>(select);
+}
+
+void HTMLOptGroupElement::accessKeyAction(bool sendToAnyElement)
+{
+    HTMLSelectElement* select = ownerSelectElement();
+    // send to the parent to bring focus to the list box
+    if (select && !select->focused())
+        select->accessKeyAction(false);
+}
+    
 } // namespace
