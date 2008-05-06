@@ -26,7 +26,9 @@
 #include "config.h"
 #include "LocalStorage.h"
 
+#include "CString.h"
 #include "EventNames.h"
+#include "FileSystem.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "LocalStorageArea.h"
@@ -54,6 +56,12 @@ PassRefPtr<StorageArea> LocalStorage::storageArea(Frame* sourceFrame, SecurityOr
     // we need to ask a client call if establishing it is okay.  If the client denies the request,
     // this method will return null.
     // The sourceFrame argument exists for the purpose of asking a client.
+    // To know if an area has previously been established, we need to wait until this LocalStorage 
+    // object has finished it's AreaImport task.
+
+
+    // FIXME: If the storage area is being established for the first time here, we need to 
+    // sync its existance and quota out to disk via an task of type AreaSync
 
     RefPtr<StorageArea> storageArea;
     if (storageArea = m_storageAreaMap.get(origin))
@@ -62,6 +70,27 @@ PassRefPtr<StorageArea> LocalStorage::storageArea(Frame* sourceFrame, SecurityOr
     storageArea = LocalStorageArea::create(origin, this);
     m_storageAreaMap.set(origin, storageArea);
     return storageArea.release();
+}
+
+String LocalStorage::fullDatabaseFilename(SecurityOrigin* origin)
+{
+    // FIXME: Once we actually track origin/quota entries to see which origins have local storage established,
+    // we will return an empty path name if the origin isn't allowed to have LocalStorage.
+    // We'll need to wait here until the AreaImport task to complete before making that decision.
+
+    if (m_path.isEmpty())
+        return String();
+
+    ASSERT(origin);
+    if (!origin)
+        return String();
+
+    if (!makeAllDirectories(m_path)) {
+        LOG_ERROR("Unabled to create LocalStorage database path %s", m_path.utf8().data());
+        return String();
+    }
+
+    return pathByAppendingComponent(m_path, origin->databaseIdentifier() + ".LocalStorage");
 }
 
 void LocalStorage::performImport()
@@ -86,6 +115,20 @@ void LocalStorage::close()
         m_thread->terminate();
         m_thread = 0;
     }
+}
+
+void LocalStorage::scheduleImport(PassRefPtr<LocalStorageArea> area)
+{
+    ASSERT(isMainThread());
+
+    m_thread->scheduleImport(area);
+}
+
+void LocalStorage::scheduleSync(PassRefPtr<LocalStorageArea> area)
+{
+    ASSERT(isMainThread());
+
+    m_thread->scheduleSync(area);
 }
 
 } // namespace WebCore

@@ -33,20 +33,21 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
     class PageGroup;
     class StorageArea;
 
-    class LocalStorage : public RefCounted<LocalStorage> {
+    class LocalStorage : public ThreadSafeShared<LocalStorage> {
     public:
         static PassRefPtr<LocalStorage> create(PageGroup* group, const String& path) { return adoptRef(new LocalStorage(group, path)); }
 
         PassRefPtr<StorageArea> storageArea(Frame* sourceFrame, SecurityOrigin*);
 
-        void performImport();
-        void performSync();
+        void scheduleImport(PassRefPtr<LocalStorageArea>);
+        void scheduleSync(PassRefPtr<LocalStorageArea>);
 
         void close();
 
@@ -59,7 +60,19 @@ namespace WebCore {
         PageGroup* m_group;
         RefPtr<LocalStorageThread> m_thread;
 
+    // The following members are subject to thread synchronization issues
+    public:
+        // To be called from the background thread:
+        String fullDatabaseFilename(SecurityOrigin*);
+
+        void performImport();
+        void performSync();
+
+    private:
         String m_path;
+
+        typedef HashMap<RefPtr<SecurityOrigin>, unsigned long long, SecurityOriginHash> SecurityOriginQuoteMap;
+        SecurityOriginQuoteMap m_securityOriginQuoteMap;
     };
 
 } // namespace WebCore

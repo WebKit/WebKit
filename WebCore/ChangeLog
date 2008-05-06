@@ -1,3 +1,26 @@
+2008-05-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin, Sam Weinig, and Anders
+
+        Preparation for upcoming work making LocalStorage persistent.
+
+        The final step before code that actually does storage and retrieval of LocalStorage items.
+
+        The LocalStorage set is responsible for controlling the path and filenames that individual
+        LocalStorageAreas will use for their persistent store.  This adds the ability to return that
+        filename.
+
+        Also, add the scheduling methods that LocalStorageArea will use for importing and syncing 
+        it's persistent items.
+
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::storageArea):  Add some comments re: the future direction of this
+          method once we actually do quota tracking.
+        (WebCore::LocalStorage::fullDatabaseFilename):
+        (WebCore::LocalStorage::scheduleImport):
+        (WebCore::LocalStorage::scheduleSync):
+        * storage/LocalStorage.h:
+
 2008-05-06  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
