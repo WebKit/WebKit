@@ -1,3 +1,18 @@
+2008-05-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz Pettel RTL
+
+        Preparation for upcoming work making LocalStorage persistent.
+
+        StorageMaps normally have copy-on-write semantics to help support SessionStorage.
+        For LocalStorage, we never want this behavior.  When we forcefully import items into 
+        a StorageMap from the LocalStorage background thread, this new import method will be used.
+
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::importItem): Add a deep-copy of the item to the map without worrying
+          about copy-on-write.
+        * storage/StorageMap.h:
+
 2008-05-05  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.
