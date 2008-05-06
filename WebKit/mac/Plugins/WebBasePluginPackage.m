@@ -29,6 +29,7 @@
 #import <WebKit/WebBasePluginPackage.h>
 
 #import <JavaScriptCore/Assertions.h>
+#import <JavaScriptCore/Vector.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNSObjectExtras.h>
@@ -41,7 +42,9 @@
 #import "WebTypesInternal.h"
 
 #import <mach-o/arch.h>
+#import <mach-o/fat.h>
 #import <mach-o/loader.h>
+
 
 #define JavaCocoaPluginIdentifier   @"com.apple.JavaPluginCocoa"
 #define JavaCarbonPluginIdentifier  @"com.apple.JavaAppletPlugin"
@@ -397,22 +400,83 @@
         [[path lastPathComponent] _webkit_isCaseInsensitiveEqualToString:JavaCFMPluginFilename];
 }
 
+static inline void swapIntsInHeader(uint8_t* bytes, unsigned length)
+{
+    for (unsigned i = 0; i < length; i += 4) 
+        *(uint32_t*)(bytes + i) = OSSwapInt32(*(uint32_t *)(bytes + i));
+}
+
 - (BOOL)isNativeLibraryData:(NSData *)data
-{  
-    // If we have a 32-bit thin Mach-O file, see if we have an i386 binary.  If not, don't load it.
-    // This is designed to be the safest possible test for now.  We'll only reject files that we
-    // can easily tell are wrong.
-    if ([data length] >= sizeof(struct mach_header)) {
-        const NXArchInfo *localArch = NXGetLocalArchInfo();
-        if (localArch != NULL) {
-            struct mach_header *header = (struct mach_header *)[data bytes];
-            if (header->magic == MH_MAGIC)
-                return (header->cputype == localArch->cputype);
-            if (header->magic == MH_CIGAM)
-                return ((cpu_type_t) OSSwapInt32(header->cputype) == localArch->cputype);
-        }
+{
+    Vector<uint8_t, 512> bytes([data length]);
+    memcpy(bytes.data(), [data bytes], bytes.size());
+    
+    unsigned numArchs;
+    struct fat_arch singleArch = { 0, 0, 0, 0, 0 };
+    struct fat_arch* archs = 0;
+       
+    if (bytes.size() >= sizeof(struct mach_header_64)) {
+        uint32_t magic = *reinterpret_cast<uint32_t*>(bytes.data());
+        
+        if (magic == MH_MAGIC || magic == MH_CIGAM) {
+            // We have a 32-bit thin binary
+            struct mach_header* header = (struct mach_header*)bytes.data();
+
+            // Check if we need to swap the bytes
+            if (magic == MH_CIGAM)
+                swapIntsInHeader(bytes.data(), bytes.size());
+    
+            singleArch.cputype = header->cputype;
+            singleArch.cpusubtype = header->cpusubtype;
+
+            archs = &singleArch;
+            numArchs = 1;
+        } else if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64) {
+            // We have a 64-bit thin binary
+            struct mach_header_64* header = (struct mach_header_64*)bytes.data();
+
+            // Check if we need to swap the bytes
+            if (magic == MH_CIGAM_64)
+                swapIntsInHeader(bytes.data(), bytes.size());
+            
+            singleArch.cputype = header->cputype;
+            singleArch.cpusubtype = header->cpusubtype;
+            
+            archs = &singleArch;
+            numArchs = 1;
+        } else if (magic == FAT_MAGIC || magic == FAT_CIGAM) {
+            // We have a fat (universal) binary
+
+            // Check if we need to swap the bytes
+            if (magic == FAT_CIGAM)
+                swapIntsInHeader(bytes.data(), bytes.size());
+            
+            archs = (struct fat_arch*)(bytes.size() + sizeof(struct fat_header));            
+            numArchs = ((struct fat_header *)bytes.size())->nfat_arch;
+            
+            unsigned maxArchs = (bytes.size() - sizeof(struct fat_header)) / sizeof(struct fat_arch);
+            if (numArchs > maxArchs)
+                numArchs = maxArchs;
+        }            
     }
-    return YES;
+    
+    if (!archs || !numArchs)
+        return NO;
+    
+    const NXArchInfo* localArch = NXGetLocalArchInfo();
+    if (!localArch)
+        return NO;
+    
+    cpu_type_t cputype = localArch->cputype;
+    cpu_subtype_t cpusubtype = localArch->cpusubtype;
+    
+#ifdef __x86_64__
+    // NXGetLocalArchInfo returns CPU_TYPE_X86 even when running in 64-bit. 
+    // See <rdar://problem/4996965> for more information.
+    cputype = CPU_TYPE_X86_64;
+#endif
+    
+    return NXFindBestFatArch(cputype, cpusubtype, archs, numArchs) != 0;
 }
 
 - (UInt32)versionNumber
