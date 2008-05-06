@@ -2508,6 +2508,18 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         delete timer;
 }
 
+- (NPError)popUpContextMenu:(NPMenu *)menu
+{
+    NSEvent *currentEvent = [NSApp currentEvent];
+    
+    // NPN_PopUpContextMenu must be called from within the plug-in's NPP_HandleEvent.
+    if (!currentEvent)
+        return NPERR_GENERIC_ERROR;
+    
+    [NSMenu popUpContextMenu:(NSMenu *)menu withEvent:currentEvent forView:self];
+    return NPERR_NO_ERROR;
+}
+
 @end
 
 @implementation WebPluginRequest

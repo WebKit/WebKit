@@ -180,4 +180,9 @@ void NPN_UnscheduleTimer(NPP instance, uint32 timerID)
     [pluginViewForInstance(instance) unscheduleTimer:timerID];
 }
 
+NPError NPN_PopUpContextMenu(NPP instance, NPMenu *menu)
+{
+    return [pluginViewForInstance(instance) popUpContextMenu:menu];
+}
+
 #endif

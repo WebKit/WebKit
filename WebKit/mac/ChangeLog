@@ -1,5 +1,19 @@
 2008-05-06  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin.
+
+        Add implementation of NPN_PopUpContextMenu.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView popUpContextMenu:]):
+        * Plugins/WebBaseNetscapePluginViewPrivate.h:
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]):
+        * Plugins/npapi.m:
+        (NPN_PopUpContextMenu):
+
+2008-05-06  Anders Carlsson  <andersca@apple.com>
+
         Fix typo (don't read random memory).
         
         * Plugins/WebBasePluginPackage.m:
