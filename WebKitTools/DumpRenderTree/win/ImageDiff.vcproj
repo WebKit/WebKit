@@ -22,7 +22,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -78,7 +78,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;"
+				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;&#x0D;&#x0A;if &quot;$(ARCHIVE_BUILD)&quot;==&quot;&quot; (if not &quot;$(PRODUCTION)&quot;==&quot;&quot; exit /b)&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\CoreFoundation$(LibraryConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\CoreFoundation$(LibraryConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d /e /i &quot;$(WebKitLibrariesDir)\bin\CoreFoundation.resources&quot; &quot;$(WebKitOutputDir)\bin\CoreFoundation.resources&quot;&#x0D;&#x0A;xcopy /y /d /e /i &quot;$(WebKitLibrariesDir)\bin\CharacterSets&quot; &quot;$(WebKitOutputDir)\bin\CharacterSets&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\CoreGraphics$(LibraryConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\CoreGraphics$(LibraryConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icudt36.dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icudt36$(LibraryConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icuin36$(LibraryConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icuin36$(LibraryConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icuuc36$(LibraryConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icuuc36$(LibraryConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\zlib1$(LibraryConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\zlib1$(LibraryConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -90,7 +90,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -146,7 +146,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;"
+				CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;mkdir 2&gt;NUL &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;&#x0D;&#x0A;if &quot;$(ARCHIVE_BUILD)&quot;==&quot;&quot; (if not &quot;$(PRODUCTION)&quot;==&quot;&quot; exit /b)&#x0D;&#x0A;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\CoreFoundation$(LibraryConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\CoreFoundation$(LibraryConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d /e /i &quot;$(WebKitLibrariesDir)\bin\CoreFoundation.resources&quot; &quot;$(WebKitOutputDir)\bin\CoreFoundation.resources&quot;&#x0D;&#x0A;xcopy /y /d /e /i &quot;$(WebKitLibrariesDir)\bin\CharacterSets&quot; &quot;$(WebKitOutputDir)\bin\CharacterSets&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\CoreGraphics$(LibraryConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\CoreGraphics$(LibraryConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icudt36.dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icudt36$(LibraryConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icuin36$(LibraryConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icuin36$(LibraryConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icuuc36$(LibraryConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\icuuc36$(LibraryConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\zlib1$(LibraryConfigSuffix).dll&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;xcopy /y /d &quot;$(WebKitLibrariesDir)\bin\zlib1$(LibraryConfigSuffix).pdb&quot; &quot;$(WebKitOutputDir)\bin&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>

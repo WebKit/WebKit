@@ -1,3 +1,10 @@
+2008-05-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Copy dependencies of ImageDiff, DumpRenderTree in post-build step.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/ImageDiff.vcproj:
+
 2008-05-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.
