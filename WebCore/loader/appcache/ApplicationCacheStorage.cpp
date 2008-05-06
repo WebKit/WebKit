@@ -47,35 +47,6 @@ static unsigned urlHostHash(const KURL& url)
     return AlreadyHashed::avoidDeletedValue(StringImpl::computeHash(url.string().characters() + hostStart, hostEnd - hostStart));
 }
 
-ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const KURL& manifestURL)
-{
-    openDatabase(false);
-    if (!m_database.isOpen())
-        return 0;
-
-    SQLiteStatement statement(m_database, "SELECT id, manifestURL, newestCache FROM CacheGroups WHERE newestCache IS NOT NULL AND manifestURL=?");
-    if (statement.prepare() != SQLResultOk)
-        return 0;
-    
-    statement.bindText(1, manifestURL);
-    if (statement.step() == SQLResultRow) {
-        unsigned newestCacheStorageID = (unsigned)statement.getColumnInt64(2);
-
-        RefPtr<ApplicationCache> cache = loadCache(newestCacheStorageID);
-        if (!cache)
-            return 0;
-        
-        ApplicationCacheGroup* group = new ApplicationCacheGroup(manifestURL);
-        
-        group->setStorageID((unsigned)statement.getColumnInt64(0));
-        group->setNewestCache(cache.release());
-
-        return group;
-    }
-    
-    return 0;
-}    
-
 ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const KURL& manifestURL)
 {
     std::pair<CacheGroupMap::iterator, bool> result = m_cachesInMemory.add(manifestURL, 0);
@@ -86,49 +57,14 @@ ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const KUR
         return result.first->second;
     }
 
-    // Look up the group in the database
-    ApplicationCacheGroup* group = loadCacheGroup(manifestURL);
+    result.first->second = new ApplicationCacheGroup(manifestURL);
+    m_cacheHostSet.add(urlHostHash(manifestURL));
     
-    // If the group was not found we need to create it
-    if (!group) {
-        group = new ApplicationCacheGroup(manifestURL);
-        m_cacheHostSet.add(urlHostHash(manifestURL));
-    }
-    
-    result.first->second = group;
-    
-    return group;
+    return result.first->second;
 }
-
-void ApplicationCacheStorage::loadManifestHostHashes()
-{
-    static bool hasLoadedHashes = false;
-    
-    if (hasLoadedHashes)
-        return;
-    
-    // We set this flag to true before the database has been opened
-    // to avoid trying to open the database over and over if it doesn't exist.
-    hasLoadedHashes = true;
-    
-    openDatabase(false);
-    if (!m_database.isOpen())
-        return;
-
-    // Fetch the host hashes.
-    SQLiteStatement statement(m_database, "SELECT manifestHostHash FROM CacheGroups");    
-    if (statement.prepare() != SQLResultOk)
-        return;
-    
-    int result;
-    while ((result = statement.step()) == SQLResultRow)
-        m_cacheHostSet.add((unsigned)statement.getColumnInt64(0));
-}    
 
 ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const KURL& url)
 {
-    loadManifestHostHashes();
-    
     // Hash the host name and see if there's a manifest with the same host.
     if (!m_cacheHostSet.contains(urlHostHash(url)))
         return 0;
@@ -146,38 +82,6 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const KURL& url
                 return group;
         }
     }
-    
-    // Check the database. Look for all cache groups with a newest cache.
-    SQLiteStatement statement(m_database, "SELECT id, manifestURL, newestCache FROM CacheGroups WHERE newestCache IS NOT NULL");
-    if (statement.prepare() != SQLResultOk)
-        return 0;
-    
-    int result;
-    while ((result = statement.step()) == SQLResultRow) {
-        KURL manifestURL = KURL(statement.getColumnText(1));
-
-        if (!protocolHostAndPortAreEqual(url, manifestURL))
-            continue;
-
-        // We found a cache group that matches. Now check if the newest cache has a resource with
-        // a matching URL.
-        unsigned newestCacheID = (unsigned)statement.getColumnInt64(2);
-        RefPtr<ApplicationCache> cache = loadCache(newestCacheID);
-
-        if (!cache->resourceForURL(url))
-            continue;
-
-        ApplicationCacheGroup* group = new ApplicationCacheGroup(manifestURL);
-        
-        group->setStorageID((unsigned)statement.getColumnInt64(0));
-        group->setNewestCache(cache.release());
-        
-        ASSERT(!m_cachesInMemory.contains(manifestURL));
-        m_cachesInMemory.set(group->manifestURL(), group);
-        
-        return group;
-    }
-
     
     return 0;
 }
@@ -446,55 +350,6 @@ void ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group)
     
     storeCacheTransaction.commit();
 }
-
-PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
-{
-    SQLiteStatement cacheStatement(m_database, 
-                                   "SELECT url, type, CacheResourceData.data FROM CacheEntries INNER JOIN CacheResources ON CacheEntries.resource=CacheResources.id "
-                                   "INNER JOIN CacheResourceData ON CacheResourceData.id=CacheResources.data WHERE CacheEntries.cache=?");
-    if (cacheStatement.prepare() != SQLResultOk)
-        return 0;
-    cacheStatement.bindInt64(1, storageID);
-
-    RefPtr<ApplicationCache> cache = ApplicationCache::create();
-    
-    int result;
-    while ((result = cacheStatement.step()) == SQLResultRow) {
-        KURL url(cacheStatement.getColumnText(0));
-        
-        unsigned type = (unsigned)cacheStatement.getColumnInt64(1);
-
-        Vector<char> blob;
-        cacheStatement.getColumnBlobAsVector(2, blob);
-        
-        RefPtr<SharedBuffer> data = SharedBuffer::adoptVector(blob);
-        
-        ResourceResponse response(url, "text/html", data->size(), "UTF-8", "");
-        
-        RefPtr<ApplicationCacheResource> resource = ApplicationCacheResource::create(url, response, type, data.release());
-
-        if (type & ApplicationCacheResource::Manifest)
-            cache->setManifestResource(resource.release());
-        else
-            cache->addResource(resource.release());
-    }
-
-    // Load the online whitelist
-    SQLiteStatement whitelistStatement(m_database, "SELECT url FROM CacheWhitelistURLs WHERE cache=?");
-    if (whitelistStatement.prepare() != SQLResultOk)
-        return 0;
-    whitelistStatement.bindInt64(1, storageID);
-    
-    HashSet<String> whitelist;
-    while ((result = whitelistStatement.step()) == SQLResultRow) 
-        whitelist.add(whitelistStatement.getColumnText(0));
-
-    cache->setOnlineWhitelist(whitelist);
-    
-    cache->setStorageID(storageID);
-
-    return cache.release();
-}    
 
 ApplicationCacheStorage& cacheStorage()
 {

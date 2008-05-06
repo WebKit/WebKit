@@ -54,15 +54,10 @@ public:
     void store(ApplicationCacheResource*, ApplicationCache*);
 
 private:
-    PassRefPtr<ApplicationCache> loadCache(unsigned storageID);
-    ApplicationCacheGroup* loadCacheGroup(const KURL& manifestURL);
-    
     bool store(ApplicationCacheGroup*);
     bool store(ApplicationCache*);
     bool store(ApplicationCacheResource*, unsigned cacheStorageID);
 
-    void loadManifestHostHashes();
-    
     void openDatabase(bool createIfDoesNotExist);
     
     bool executeStatement(SQLiteStatement&);
