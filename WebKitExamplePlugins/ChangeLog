@@ -1,0 +1,37 @@
+2008-05-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon, Tim and Mark.
+
+        Add a sample NPAPI plugin that uses the Cocoa event model.
+
+        * .: Added.
+        * ChangeLog: Added.
+        * NetscapeCocoaPlugin: Added.
+        * NetscapeCocoaPlugin/English.lproj: Added.
+        * NetscapeCocoaPlugin/English.lproj/InfoPlist.strings: Added.
+        * NetscapeCocoaPlugin/Info.plist: Added.
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj: Added.
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj: Added.
+        * NetscapeCocoaPlugin/main.m: Added.
+        (NP_Initialize):
+        (NP_GetEntryPoints):
+        (NP_Shutdown):
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_SetWindow):
+        (NPP_NewStream):
+        (NPP_DestroyStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_StreamAsFile):
+        (NPP_Print):
+        (handleDraw):
+        (eventType):
+        (invalidatePlugin):
+        (handleMouseEvent):
+        (handleKeyboardEvent):
+        (NPP_HandleEvent):
+        (NPP_URLNotify):
+        (NPP_GetValue):
+        (NPP_SetValue):
+        * NetscapeCocoaPlugin/test.html: Added.
