@@ -411,7 +411,7 @@ static inline void swapIntsInHeader(uint8_t* bytes, unsigned length)
     Vector<uint8_t, 512> bytes([data length]);
     memcpy(bytes.data(), [data bytes], bytes.size());
     
-    unsigned numArchs;
+    unsigned numArchs = 0;
     struct fat_arch singleArch = { 0, 0, 0, 0, 0 };
     struct fat_arch* archs = 0;
        

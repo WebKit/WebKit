@@ -2,6 +2,15 @@
 
         Reviewed by Darin.
 
+        Initialize numArchs to 0.
+        
+        * Plugins/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage isNativeLibraryData:]):
+
+2008-05-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
         Add implementation of NPN_PopUpContextMenu.
         
         * Plugins/WebBaseNetscapePluginView.mm:
