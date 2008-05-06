@@ -4,6 +4,18 @@
 
         Preparation for upcoming work making LocalStorage persistent.
 
+        The other half of the StorageMap::importItem() addition.
+
+        * storage/StorageArea.cpp:
+        (WebCore::StorageArea::importItem):
+        * storage/StorageArea.h:
+
+2008-05-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz Pettel RTL
+
+        Preparation for upcoming work making LocalStorage persistent.
+
         - Create the LocalStorage object for a PageGroup the moment the first Page is added to it
           The Settings of the first Page define what persistent path the LocalStorage will use
         - Add a Frame argument for the LocalStorageArea request - this will allow a client object
