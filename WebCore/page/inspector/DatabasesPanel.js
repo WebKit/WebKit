@@ -172,7 +172,7 @@ WebInspector.DatabasesPanel.prototype = {
         var columnWidths = [];
 
         var table = document.createElement("table");
-        table.className = "database-result-table";
+        table.className = "data-grid";
 
         var headerRow = document.createElement("tr");
         table.appendChild(headerRow);

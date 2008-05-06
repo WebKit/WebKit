@@ -1,3 +1,26 @@
+2008-05-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        -<rdar://problem/5770054> JavaScript profiler (10928)
+        -Begininings of a UI for the Profiler in the WebInspector.
+
+        * English.lproj/InspectorLocalizedStrings.js: Add new strings to be
+        localized.
+        * page/inspector/DatabasesPanel.js: Changed the name of the Databae's
+        results table to be more generic as it is now also used by the profiler.
+        * page/inspector/Images/glossySelected.png: Added.
+        * page/inspector/Images/profilesIcon.png: Added.
+        * page/inspector/Images/treeUpTriangleBlack.png: Added.
+        * page/inspector/Images/treeUpTriangleWhite.png: Added.
+        * page/inspector/ProfileView.js: Added. Sets up the header of the table.
+        * page/inspector/ProfilesPanel.js: Added.
+        * page/inspector/ProfilesPanel.js: Added. Sets up the containers of the
+        profiler's content.
+        * page/inspector/inspector.css: Change database-result-table to be more
+        generic as well as add the styles needed by the profiler.
+        * page/inspector/inspector.html: Add profiler support.
+
 2008-05-05  Brady Eidson  <beidson@apple.com>
 
         Change by Darin, reviewed by Brady

@@ -132,6 +132,10 @@ body.detached.platform-mac-leopard #toolbar {
     content: url(Images/databasesIcon.png);
 }
 
+.toolbar-item.profiles .toolbar-icon {
+    content: url(Images/profilesIcon.png);
+}
+
 #searchResults {
     position: absolute;
     top: -100px;
@@ -1188,7 +1192,7 @@ body.inactive .sidebar {
     overflow-x: hidden;
 }
 
-.database-view.table .database-result-table {
+.database-view.table .data-grid {
     border: none;
     height: 100%;
 }
@@ -1215,11 +1219,11 @@ body.inactive .sidebar {
     color: rgb(66%, 33%, 33%);
 }
 
-.database-result-table .database-result-filler-row {
+.data-grid .database-result-filler-row {
     height: auto;
 }
 
-.database-result-table .database-result-filler-row.alternate td {
+.data-grid .database-result-filler-row.alternate td {
     background-position-y: 16px;
 }
 
@@ -1230,7 +1234,7 @@ body.inactive .sidebar {
     -webkit-background-clip: padding;
 }
 
-.database-result-table {
+.data-grid {
     border: 1px solid #aaa;
     table-layout: fixed;
     border-spacing: 0;
@@ -1238,7 +1242,7 @@ body.inactive .sidebar {
     width: 100%;
 }
 
-.database-result-table th {
+.data-grid th {
     text-align: left;
     background: url(Images/glossyHeader.png) repeat-x;
     border-right: 1px solid #aaa;
@@ -1250,15 +1254,15 @@ body.inactive .sidebar {
     white-space: nowrap;
 }
 
-.database-result-table tr {
+.data-grid tr {
     height: 16px;
 }
 
-.database-result-table tr.alternate {
+.data-grid tr.alternate {
     background-color: rgb(236, 243, 254);
 }
 
-.database-result-table td {
+.data-grid td {
     vertical-align: top;
     padding: 2px 4px;
     white-space: nowrap;
@@ -1266,10 +1270,46 @@ body.inactive .sidebar {
     -webkit-user-select: text;
 }
 
-.database-result-table td > div, .database-result-table th > div {
+.data-grid td > div, .data-grid th > div {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+}
+
+.data-grid th.narrow {
+    width: 75px;
+}
+
+.data-grid th.selected {
+    border-top: 1px solid rgb(156, 168, 207);
+    border-bottom: 1px solid rgb(107, 139, 195);
+    border-left: url(Images/glossySelected.png);
+    border-right: url(Images/glossySelected.png);
+    background: url(Images/glossySelected.png) repeat-x;
+}
+
+.data-grid th.sort-ascending::before {
+    float: right;
+    display: inline-block;
+    margin-bottom: 2px;
+    margin-right: 3px;
+    width: 8px;
+    height: 8px;
+    content: url(Images/treeUpTriangleBlack.png);
+}
+
+.data-grid th.sort-descending::before {
+    float: right;
+    display: inline-block;
+    margin-top: 2px;
+    margin-right: 3px;
+    width: 8px;
+    height: 8px;
+    content: url(Images/treeDownTriangleBlack.png);
+}
+
+body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-descending {
+    background: url(Images/glossyHeader.png) repeat-x;
 }
 
 .database-view.query {
@@ -2054,4 +2094,32 @@ body.inactive .sidebar-tree-item.selected {
 
 .resource-sidebar-tree-item .bubble.error {
     background-color: rgb(216, 35, 35);
+}
+
+/* Profiler Style */
+
+#profile-views {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 200px;
+    bottom: 0;
+}
+
+.profile-view {
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.profile-view.visible {
+    display: block;
+}
+
+.profile-view .data-grid {
+    border: none;
 }
