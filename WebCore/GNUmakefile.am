@@ -1259,6 +1259,8 @@ webcore_cppflags += \
 webcore_sources += \
 	WebCore/storage/LocalStorage.cpp \
 	WebCore/storage/LocalStorageArea.cpp \
+	WebCore/storage/LocalStorageTask.cpp \
+	WebCore/storage/LocalStorageThread.cpp \
 	WebCore/storage/Storage.cpp \
 	WebCore/storage/StorageArea.cpp \
 	WebCore/storage/StorageEvent.cpp \

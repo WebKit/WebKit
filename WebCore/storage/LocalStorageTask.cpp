@@ -23,45 +23,62 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LocalStorage_h
-#define LocalStorage_h
-
-#include "LocalStorageArea.h"
+#include "config.h"
 #include "LocalStorageTask.h"
-#include "LocalStorageThread.h"
-#include "SecurityOriginHash.h"
 
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
+#include "LocalStorage.h"
+#include "LocalStorageArea.h"
+#include "LocalStorageThread.h"
 
 namespace WebCore {
 
-    class PageGroup;
-    class StorageArea;
+LocalStorageTask::LocalStorageTask(Type type, PassRefPtr<LocalStorageArea> area)
+    : m_type(type)
+    , m_area(area)
+{
+    ASSERT(m_area);
+    ASSERT(m_type == AreaImport || m_type == AreaSync);
+}
 
-    class LocalStorage : public RefCounted<LocalStorage> {
-    public:
-        static PassRefPtr<LocalStorage> create(PageGroup* group, const String& path) { return adoptRef(new LocalStorage(group, path)); }
+LocalStorageTask::LocalStorageTask(Type type, PassRefPtr<LocalStorage> storage)
+    : m_type(type)
+    , m_storage(storage)
+{
+    ASSERT(m_storage);
+    ASSERT(m_type == StorageImport || m_type == StorageSync);
+}
 
-        PassRefPtr<StorageArea> storageArea(Frame* sourceFrame, SecurityOrigin*);
+LocalStorageTask::LocalStorageTask(Type type, PassRefPtr<LocalStorageThread> thread)
+    : m_type(type)
+    , m_thread(thread)
+{
+    ASSERT(m_thread);
+    ASSERT(m_type == TerminateThread);
+}
 
-        void performImport();
-        void performSync();
+void LocalStorageTask::performTask()
+{
+    switch (m_type) {
+        case StorageImport:
+            ASSERT(m_storage);
+            m_storage->performImport();
+            break;
+        case StorageSync:
+            ASSERT(m_storage);
+            m_storage->performSync();
+            break;
+        case AreaImport:
+            ASSERT(m_area);
+            m_area->performImport();
+            break;
+        case AreaSync:
+            ASSERT(m_area);
+            m_area->performSync();
+            break;
+        case TerminateThread:
+            m_thread->performTerminate();
+            break;
+    }
+}
 
-        void close();
-
-    private:
-        LocalStorage(PageGroup*, const String& path);
-
-        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash> StorageAreaMap;
-        StorageAreaMap m_storageAreaMap;
-
-        PageGroup* m_group;
-        RefPtr<LocalStorageThread> m_thread;
-
-        String m_path;
-    };
-
-} // namespace WebCore
-
-#endif // LocalStorage_h
+}

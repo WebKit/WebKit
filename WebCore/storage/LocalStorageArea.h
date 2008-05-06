@@ -38,6 +38,9 @@ namespace WebCore {
     public:
         static PassRefPtr<LocalStorageArea> create(SecurityOrigin* origin, LocalStorage* localStorage) { return adoptRef(new LocalStorageArea(origin, localStorage)); }
 
+        void performImport();
+        void performSync();
+
     private:
         LocalStorageArea(SecurityOrigin*, LocalStorage*);
 

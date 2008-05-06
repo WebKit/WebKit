@@ -36,16 +36,20 @@
 
 namespace WebCore {
 
-
 LocalStorage::LocalStorage(PageGroup* group, const String& path)
     : m_group(group)
+    , m_thread(LocalStorageThread::create())
     , m_path(path.copy())
 {
     ASSERT(m_group);
+    m_thread->start();
+    m_thread->scheduleImport(this);
 }
 
 PassRefPtr<StorageArea> LocalStorage::storageArea(Frame* sourceFrame, SecurityOrigin* origin)
 {
+    ASSERT(isMainThread());
+
     // FIXME: If the security origin in question has never had a storage area established,
     // we need to ask a client call if establishing it is okay.  If the client denies the request,
     // this method will return null.
@@ -60,9 +64,28 @@ PassRefPtr<StorageArea> LocalStorage::storageArea(Frame* sourceFrame, SecurityOr
     return storageArea.release();
 }
 
+void LocalStorage::performImport()
+{
+    ASSERT(!isMainThread());
+
+    // FIXME: Import all known local storage origins here along with their quotas
+}
+
+void LocalStorage::performSync()
+{
+    ASSERT(!isMainThread());
+
+    // FIXME: Write out new origins and quotas here
+}
+
 void LocalStorage::close()
 {
-    // FIXME: Make sure all pending writes complete and terminate the background thread
+    ASSERT(isMainThread());
+
+    if (m_thread) {
+        m_thread->terminate();
+        m_thread = 0;
+    }
 }
 
 } // namespace WebCore

@@ -1,3 +1,73 @@
+2008-05-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        Preparation for upcoming work making LocalStorage persistent.
+
+        Writing persistent values for LocalStorage will take place on a background thread.
+        Here is that background thread, as well as most of the hooks that will be utilized to
+        make the whole song and dance work.
+
+        The thread itself is very simple and MessageQueue based.  LocalStorageTasks are what 
+        mark the work that needs to be done and come in 5 flavors:  Import and Sync a LocalStorage set,
+        Import and Sync a LocalStorageArea, and terminate the thread.
+
+        This patch accomplished 2 things:
+        
+        1 - Each PageGroup has its own LocalStorage set.  Upon its creation its LocalStorageThread is 
+            created and started.
+
+        2 - At application shutdown, each thread is synchronously terminated.
+
+        What happens between steps 1 and 2 will come later.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+
+        * storage/LocalStorage.cpp: Add some threading ASSERTs to make it clear which thread each
+          method is meant to be called from.
+        (WebCore::LocalStorage::LocalStorage):
+        (WebCore::LocalStorage::storageArea):
+        (WebCore::LocalStorage::performImport): Placeholder for importing known origins and quotas
+        (WebCore::LocalStorage::performSync): Placeholder for writing out updated origins and quotas
+        (WebCore::LocalStorage::close): Synchronously terminate the thread.
+        * storage/LocalStorage.h:
+
+        * storage/LocalStorageArea.cpp: Add some threading ASSERTs to make it clear which thread each
+          method is meant to be called from.
+        (WebCore::LocalStorageArea::itemChanged):
+        (WebCore::LocalStorageArea::itemRemoved):
+        (WebCore::LocalStorageArea::areaCleared):
+        (WebCore::LocalStorageArea::dispatchStorageEvent):
+        (WebCore::LocalStorageArea::performImport): Placeholder for importing all items for this 
+          LocalStorageArea to prime the page before the items are needed
+        (WebCore::LocalStorageArea::performSync): Placeholder for writing out dirty items to disk
+        * storage/LocalStorageArea.h:
+
+        * storage/LocalStorageTask.cpp: Added.
+        (WebCore::LocalStorageTask::LocalStorageTask):
+        (WebCore::LocalStorageTask::performTask):
+        * storage/LocalStorageTask.h: Added.
+        (WebCore::LocalStorageTask::):
+        (WebCore::LocalStorageTask::createImport):
+        (WebCore::LocalStorageTask::createSync):
+        (WebCore::LocalStorageTask::createTerminate):
+
+        * storage/LocalStorageThread.cpp: Added.
+        (WebCore::LocalStorageThread::create):
+        (WebCore::LocalStorageThread::LocalStorageThread):
+        (WebCore::LocalStorageThread::start):
+        (WebCore::LocalStorageThread::localStorageThreadStart):
+        (WebCore::LocalStorageThread::localStorageThread):
+        (WebCore::LocalStorageThread::scheduleImport):
+        (WebCore::LocalStorageThread::scheduleSync):
+        (WebCore::LocalStorageThread::terminate): 
+        (WebCore::LocalStorageThread::performTerminate):
+        * storage/LocalStorageThread.h: Added.
+
 2008-05-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

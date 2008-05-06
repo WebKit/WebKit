@@ -44,6 +44,8 @@ LocalStorageArea::LocalStorageArea(SecurityOrigin* origin, LocalStorage* localSt
 
 void LocalStorageArea::itemChanged(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
 {
+    ASSERT(isMainThread());
+
     // FIXME: Flag this change to be written out to the persistent store
 
     dispatchStorageEvent(key, oldValue, newValue, sourceFrame);
@@ -51,6 +53,8 @@ void LocalStorageArea::itemChanged(const String& key, const String& oldValue, co
 
 void LocalStorageArea::itemRemoved(const String& key, const String& oldValue, Frame* sourceFrame)
 {
+    ASSERT(isMainThread());
+
     // FIXME: Flag this removal to be written out to the persistent store
 
     dispatchStorageEvent(key, oldValue, String(), sourceFrame);
@@ -58,6 +62,8 @@ void LocalStorageArea::itemRemoved(const String& key, const String& oldValue, Fr
 
 void LocalStorageArea::areaCleared(Frame* sourceFrame)
 {
+    ASSERT(isMainThread());
+
     // FIXME: Flag this clearing to be written out to the persistent store
 
     dispatchStorageEvent(String(), String(), String(), sourceFrame);
@@ -65,6 +71,8 @@ void LocalStorageArea::areaCleared(Frame* sourceFrame)
 
 void LocalStorageArea::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
 {
+    ASSERT(isMainThread());
+
     Page* page = sourceFrame->page();
     if (!page)
         return;
@@ -87,6 +95,20 @@ void LocalStorageArea::dispatchStorageEvent(const String& key, const String& old
         if (HTMLElement* body = frames[i]->document()->body())
             body->dispatchStorageEvent(EventNames::storageEvent, key, oldValue, newValue, sourceFrame);        
     }
+}
+
+void LocalStorageArea::performImport()
+{
+    ASSERT(!isMainThread());
+    
+    // FIXME: Perform initial import of all items here
+}
+
+void LocalStorageArea::performSync()
+{
+    ASSERT(!isMainThread());
+
+    // FIXME: Write out all changed items here
 }
 
 } // namespace WebCore

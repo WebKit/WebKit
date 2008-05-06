@@ -23,45 +23,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LocalStorage_h
-#define LocalStorage_h
+#ifndef LocalStorageThread_h
+#define LocalStorageThread_h
 
-#include "LocalStorageArea.h"
-#include "LocalStorageTask.h"
-#include "LocalStorageThread.h"
-#include "SecurityOriginHash.h"
-
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/MessageQueue.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
-    class PageGroup;
-    class StorageArea;
+    class LocalStorage;
+    class LocalStorageArea;
+    class LocalStorageTask;
 
-    class LocalStorage : public RefCounted<LocalStorage> {
+    class LocalStorageThread : public ThreadSafeShared<LocalStorageThread> {
     public:
-        static PassRefPtr<LocalStorage> create(PageGroup* group, const String& path) { return adoptRef(new LocalStorage(group, path)); }
+        static PassRefPtr<LocalStorageThread> create();
 
-        PassRefPtr<StorageArea> storageArea(Frame* sourceFrame, SecurityOrigin*);
+        bool start();
 
-        void performImport();
-        void performSync();
+        void scheduleImport(PassRefPtr<LocalStorage>);
+        void scheduleSync(PassRefPtr<LocalStorage>);
+        void scheduleImport(PassRefPtr<LocalStorageArea>);
+        void scheduleSync(PassRefPtr<LocalStorageArea>);
 
-        void close();
+        // Called from the main thread to synchronously shut down this thread
+        void terminate();
+        // Background thread part of the terminate procedure
+        void performTerminate();
 
     private:
-        LocalStorage(PageGroup*, const String& path);
+        LocalStorageThread();
 
-        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash> StorageAreaMap;
-        StorageAreaMap m_storageAreaMap;
+        static void* localStorageThreadStart(void*);
+        void* localStorageThread();
 
-        PageGroup* m_group;
-        RefPtr<LocalStorageThread> m_thread;
+        ThreadIdentifier m_threadID;
+        RefPtr<LocalStorageThread> m_selfRef;
 
-        String m_path;
+        MessageQueue<RefPtr<LocalStorageTask> > m_queue;
+        
+        Mutex m_terminateLock;
+        ThreadCondition m_terminateCondition;
     };
 
 } // namespace WebCore
 
-#endif // LocalStorage_h
+#endif // LocalStorageThread_h

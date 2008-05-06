@@ -1230,6 +1230,8 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         storage/DatabaseTracker.cpp \
         storage/LocalStorage.cpp \
         storage/LocalStorageArea.cpp \
+        storage/LocalStorageTask.cpp \
+        storage/LocalStorageThread.cpp \
         storage/OriginQuotaManager.cpp \
         storage/OriginUsageRecord.cpp \
         storage/StorageArea.cpp \

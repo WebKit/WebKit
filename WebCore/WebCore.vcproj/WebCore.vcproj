@@ -16031,6 +16031,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\LocalStorageTask.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\LocalStorageTask.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\LocalStorageThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\LocalStorageThread.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\OriginQuotaManager.cpp"
 				>
 			</File>
