@@ -25,7 +25,7 @@ document.execCommand("InsertText", false, " ");
 var innerText = div.innerHTML;
 
 // Check the pattern produced.  This might change in the future.
-var expected = "\xa0Hello \xa0 \xa0 World\xa0";
+var expected = "&nbsp;Hello &nbsp; &nbsp; World&nbsp;";
 var nbsp = false;
 for (var i = 0; i < innerText.length; i++) {
     if(innerText[i] != expected[i])
