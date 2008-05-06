@@ -874,6 +874,10 @@ KURL AccessibilityRenderObject::url() const
         if (HTMLAnchorElement* anchor = anchorElement())
             return anchor->href();
     }
+    
+    if (isWebArea())
+        return m_renderer->document()->documentURI();
+    
     if (isImage() && m_renderer->element() && m_renderer->element()->hasTagName(imgTag))
         return static_cast<HTMLImageElement*>(m_renderer->element())->src();
     

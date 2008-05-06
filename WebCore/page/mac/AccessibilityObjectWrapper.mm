@@ -548,6 +548,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         [tempArray addObject:@"AXLinkUIElements"];
         [tempArray addObject:@"AXLoaded"];
         [tempArray addObject:@"AXLayoutCount"];
+        [tempArray addObject:NSAccessibilityURLAttribute];
         webAreaAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }

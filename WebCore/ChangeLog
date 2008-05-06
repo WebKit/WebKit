@@ -1,3 +1,14 @@
+2008-05-06  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+         <rdar://problem/5455287> AXWebArea should include AXURL
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::url):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+
 2008-05-06  Alice Liu  <alice.liu@apple.com>
 
         Rubber-stamped by Beth
