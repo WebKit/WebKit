@@ -3014,6 +3014,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\AccessibilityRenderObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityRenderObject.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\AnimationController.cpp"
 				>
 				<FileConfiguration

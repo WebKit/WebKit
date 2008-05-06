@@ -831,6 +831,7 @@ webcore_sources += \
 	WebCore/loader/TextDocument.cpp \
 	WebCore/loader/TextResourceDecoder.cpp \
 	WebCore/page/AccessibilityObject.cpp \
+	WebCore/page/AccessibilityRenderObject.cpp \
 	WebCore/page/AnimationController.cpp \
 	WebCore/page/AXObjectCache.cpp \
 	WebCore/page/BarInfo.cpp \

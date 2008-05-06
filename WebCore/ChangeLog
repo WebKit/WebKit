@@ -1,3 +1,14 @@
+2008-05-06  Alice Liu  <alice.liu@apple.com>
+
+        Rubber-stamped by Beth
+        
+        stab-in-the-dark attempt at fixing non-mac builds.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCoreSources.bkl:
+
 2008-05-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
