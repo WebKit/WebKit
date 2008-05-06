@@ -980,7 +980,7 @@ QWebHitTestResult::~QWebHitTestResult()
 */
 bool QWebHitTestResult::isNull() const
 {
-    return d;
+    return !d;
 }
 
 /*!

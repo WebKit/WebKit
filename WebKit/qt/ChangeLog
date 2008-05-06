@@ -1,3 +1,11 @@
+2008-05-06  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Fix logic error in QWebHitTestResult::isNull().
+
+        * Api/qwebframe.cpp:
+
 2008-05-02  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.
