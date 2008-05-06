@@ -99,6 +99,8 @@
 
 #define WebKitApplicationChromeModePreferenceKey "WebKitApplicationChromeMode" // default: false
 
+#define WebKitOfflineWebApplicationCacheEnabledPreferenceKey "WebKitOfflineWebApplicationCacheEnabled" // default: false
+
 // If this key is present and has a value of true, we have already removed the default values from the user's preferences <rdar://problem/5214504>
 #define WebKitDidMigrateDefaultSettingsFromSafari3BetaPreferenceKey "WebKitDidMigrateDefaultSettingsFromSafari3BetaPreferenceKey"
 

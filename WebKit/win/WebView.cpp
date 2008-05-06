@@ -4050,6 +4050,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setApplicationChromeMode(enabled);
 
+    hr = prefsPrivate->offlineWebApplicationCacheEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setOfflineWebApplicationCacheEnabled(enabled);
+
     m_mainFrame->invalidate(); // FIXME
 
     hr = updateSharedSettingsFromPreferencesIfNeeded(preferences.get());

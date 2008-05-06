@@ -296,6 +296,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setApplicationChromeMode( 
         /* [in] */ BOOL enabled);
 
+    virtual HRESULT STDMETHODCALLTYPE setOfflineWebApplicationCacheEnabled( 
+        /* [in] */ BOOL enabled);
+        
+    virtual HRESULT STDMETHODCALLTYPE offlineWebApplicationCacheEnabled( 
+        /* [retval][out] */ BOOL *enabled);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.

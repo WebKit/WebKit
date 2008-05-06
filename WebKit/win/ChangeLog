@@ -1,3 +1,19 @@
+2008-05-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John.
+
+        Add preference for enabling the offline web application cache.
+        
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::setOfflineWebApplicationCacheEnabled):
+        (WebPreferences::offlineWebApplicationCacheEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2008-05-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Tim Hatcher.

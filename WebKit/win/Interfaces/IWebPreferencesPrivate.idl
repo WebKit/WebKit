@@ -51,4 +51,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT inApplicationChromeMode([out, retval] BOOL *allowed);
     HRESULT setApplicationChromeMode([in] BOOL allowed);
+
+    HRESULT setOfflineWebApplicationCacheEnabled([in] BOOL enabled);
+    HRESULT offlineWebApplicationCacheEnabled([out, retval] BOOL *enabled);
 }
