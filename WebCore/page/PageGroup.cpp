@@ -84,6 +84,19 @@ PageGroup* PageGroup::pageGroup(const String& groupName)
     return result.first->second;
 }
 
+void PageGroup::closeLocalStorage()
+{
+    if (!pageGroups)
+        return;
+
+    PageGroupMap::iterator end = pageGroups->end();
+
+    for (PageGroupMap::iterator it = pageGroups->begin(); it != end; ++it) {
+        if (LocalStorage* localStorage = it->second->localStorage())
+            localStorage->close();
+    }
+}
+
 void PageGroup::addPage(Page* page)
 {
     ASSERT(page);

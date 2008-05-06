@@ -37,6 +37,7 @@
 #include <WebCore/COMPtr.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageGroup.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/Widget.h>
 #include <wtf/Vector.h>
@@ -57,6 +58,7 @@ static CLSID gRegCLSIDs[] = {
 void shutDownWebKit()
 {
     WebCore::iconDatabase()->close();
+    WebCore::PageGroup::closeLocalStorage();
 }
 
 STDAPI_(BOOL) DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID /*lpReserved*/)

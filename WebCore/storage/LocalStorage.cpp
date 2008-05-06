@@ -60,4 +60,9 @@ PassRefPtr<StorageArea> LocalStorage::storageArea(Frame* sourceFrame, SecurityOr
     return storageArea.release();
 }
 
+void LocalStorage::close()
+{
+    // FIXME: Make sure all pending writes complete and terminate the background thread
+}
+
 } // namespace WebCore

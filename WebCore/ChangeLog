@@ -1,5 +1,26 @@
 2008-05-06  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Darin Adler
+
+        Preparation for upcoming work making LocalStorage persistent.
+
+        When the application terminates, all pending local storage writes need to be
+        sync'ed out to disk.
+        This works n combination with platform specific code in WebKit that calls it.
+
+        * WebCore.base.exp:
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::closeLocalStorage): Close all open LocalStorage objects
+        * page/PageGroup.h:
+
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::close): Placeholder for what will sync and terminate the
+          local storage thread in the future.
+        * storage/LocalStorage.h:
+
+2008-05-06  Brady Eidson  <beidson@apple.com>
+
         Rubberstamped by David Kilzer
 
         * WebCore.base.exp:  Sort this mess!

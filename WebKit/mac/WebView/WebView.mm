@@ -111,6 +111,7 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageCache.h>
+#import <WebCore/PageGroup.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/ProgressTracker.h>
 #import <WebCore/SelectionController.h>
@@ -1707,6 +1708,8 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     applicationIsTerminating = YES;
     if (!pluginDatabaseClientCount)
         [WebPluginDatabase closeSharedDatabase];
+
+    PageGroup::closeLocalStorage();
 }
 
 + (BOOL)canShowMIMEType:(NSString *)MIMEType
