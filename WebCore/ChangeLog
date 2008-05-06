@@ -1,3 +1,14 @@
+2008-05-06  Jonathan Haas  <myrdred@gmail.com>
+
+        Reviewed by Rob Buis.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18859\
+        Prevented SVGRootInlineBox from static_casting a
+        node to a class it doesn't inherit
+        
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::buildTextChunks):
+
 2008-05-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler

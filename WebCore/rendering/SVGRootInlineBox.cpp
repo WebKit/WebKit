@@ -1380,8 +1380,12 @@ void SVGRootInlineBox::buildTextChunks(Vector<SVGChar>& svgChars, InlineFlowBox*
 
             SVGTextContentElement* textContent = 0;
             Node* node = text->element()->parent();
-            if (node && node->isSVGElement())
-                textContent = static_cast<SVGTextContentElement*>(node);
+            while (node && node->isSVGElement() && !textContent) {
+                if (static_cast<SVGElement*>(node)->isTextContent())
+                    textContent = static_cast<SVGTextContentElement*>(node);
+                else
+                    node = node->parentNode();
+            }
             ASSERT(textContent);
 
             // Start new character range for the first chunk
