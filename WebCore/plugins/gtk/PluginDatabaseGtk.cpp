@@ -104,9 +104,9 @@ bool PluginDatabase::isPreferredPluginDirectory(const String& directory)
     homePath = 0;
 
 #if defined(GDK_WINDOWING_X11)
-    homePath = g_build_filename(g_get_home_dir(), ".mozilla", "plugins", 0);
+    homePath = g_build_filename(g_get_home_dir(), ".mozilla", "plugins", NULL);
 #elif defined(GDK_WINDOWING_WIN32)
-    homePath = g_build_filename(g_get_home_dir(), "Application Data", "Mozilla", "plugins", 0);
+    homePath = g_build_filename(g_get_home_dir(), "Application Data", "Mozilla", "plugins", NULL);
 #endif
 
     if (homePath)

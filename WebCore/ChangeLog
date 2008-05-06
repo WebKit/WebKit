@@ -1,3 +1,14 @@
+2008-05-06  Gwenole Beauchesne  <gbeauchesne@splitted-desktop.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18906
+        [GTK] Fix varargs terminator in g_build_filename()
+
+        * plugins/gtk/PluginDatabaseGtk.cpp:
+        (WebCore::PluginDatabase::isPreferredPluginDirectory): Fix varargs
+        terminator.
+
 2008-05-06  Kevin McCullough  <kmccullough@apple.com>
 
         - Forgot to update localized Strings from previous checkin.
