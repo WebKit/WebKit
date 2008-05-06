@@ -40,6 +40,8 @@ namespace WebCore {
 void AXObjectCache::detachWrapper(AccessibilityObject* obj)
 {
     [obj->wrapper() detach];
+    [obj->wrapper() release];
+    obj->setWrapper(0);
 }
 
 void AXObjectCache::attachWrapper(AccessibilityObject* obj)
@@ -47,36 +49,9 @@ void AXObjectCache::attachWrapper(AccessibilityObject* obj)
     obj->setWrapper([[AccessibilityObjectWrapper alloc] initWithAccessibilityObject:obj]);
 }
 
-AXID AXObjectCache::getAXID(AccessibilityObject* obj)
+void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
 {
-    // check for already-assigned ID
-    AXID objID = obj->axObjectID();
-    if (objID) {
-        ASSERT(m_idsInUse.contains(objID));
-        return objID;
-    }
-
-    // generate a new ID
-    static AXID lastUsedID = 0;
-    objID = lastUsedID;
-    do
-        ++objID;
-    while (objID == 0 || HashTraits<AXID>::isDeletedValue(objID) || m_idsInUse.contains(objID));
-    m_idsInUse.add(objID);
-    lastUsedID = objID;
-    obj->setAXObjectID(objID);
-
-    return objID;
-}
-
-void AXObjectCache::removeAXID(AccessibilityObject* obj)
-{
-    AXID objID = obj->axObjectID();
-    if (objID == 0)
-        return;
-    ASSERT(m_idsInUse.contains(objID));
-    obj->setAXObjectID(0);
-    m_idsInUse.remove(objID);
+    postNotificationToElement(renderer, "AXSelectedChildrenChanged");
 }
 
 void AXObjectCache::postNotification(RenderObject* renderer, const String& message)
@@ -89,7 +64,7 @@ void AXObjectCache::postNotification(RenderObject* renderer, const String& messa
     RefPtr<AccessibilityObject> obj = get(renderer)->observableObject();
     if (!obj)
         obj = get(renderer->document()->renderer());
-        
+
     if (!obj)
         return;
 

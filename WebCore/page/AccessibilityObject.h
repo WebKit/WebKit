@@ -79,7 +79,6 @@ class IntPoint;
 class IntSize;
 class Node;
 class RenderObject;
-class RenderTextControl;
 class Selection;
 class String;
 class Widget;
@@ -140,7 +139,9 @@ enum AccessibilityRole {
     ImageMapRole,
     ListMarkerRole,
     WebAreaRole,
-    HeadingRole
+    HeadingRole,
+    ListBoxRole,
+    ListBoxOptionRole
 };
 
 struct VisiblePositionRange {
@@ -158,129 +159,133 @@ struct VisiblePositionRange {
     bool isNull() const { return start.isNull() || end.isNull(); }
 };
 
+struct PlainTextRange {
+        
+    unsigned start;
+    unsigned length;
+    
+    PlainTextRange()
+        : start(0)
+        , length(0)
+    { }
+    
+    PlainTextRange(unsigned s, unsigned l)
+        : start(s)
+        , length(l)
+    { }
+    
+    bool isNull() const { return start == 0 && length == 0; }
+};
+
 class AccessibilityObject : public RefCounted<AccessibilityObject> {
-private:
-    AccessibilityObject(RenderObject*);
+protected:
+    AccessibilityObject();
 public:
-    static PassRefPtr<AccessibilityObject> create(RenderObject*);
-    ~AccessibilityObject();
+    static PassRefPtr<AccessibilityObject> create();
+    virtual ~AccessibilityObject();
+    
+    virtual bool isAccessibilityRenderObject() const { return false; };
+    virtual bool isAnchor() const { return false; };
+    virtual bool isAttachment() const { return false; };
+    virtual bool isHeading() const { return false; };
+    virtual bool isLink() const { return false; };
+    virtual bool isImage() const { return false; };
+    virtual bool isNativeImage() const { return false; };
+    virtual bool isImageButton() const { return false; };
+    virtual bool isPasswordField() const { return false; };
+    virtual bool isTextControl() const { return false; };
+    virtual bool isNativeTextControl() const { return false; };
+    virtual bool isWebArea() const { return false; };
+    virtual bool isCheckboxOrRadio() const { return false; };
+    
+    virtual bool isChecked() const { return false; };
+    virtual bool isEnabled() const { return false; };
+    virtual bool isSelected() const { return false; };
+    virtual bool isFocused() const { return false; };
+    virtual bool isHovered() const { return false; };
+    virtual bool isIndeterminate() const { return false; };
+    virtual bool isLoaded() const { return false; };
+    virtual bool isMultiSelect() const { return false; };
+    virtual bool isOffScreen() const { return false; };
+    virtual bool isPressed() const { return false; };
+    virtual bool isReadOnly() const { return false; };
+    virtual bool isVisited() const { return false; };
 
-    struct PlainTextRange {
+    virtual bool canSetFocusAttribute() const { return false; };
+    virtual bool canSetTextRangeAttributes() const { return false; };
+    virtual bool canSetValueAttribute() const { return false; };
 
-        unsigned start;
-        unsigned length;
+    virtual bool hasIntValue() const { return false; };
 
-        PlainTextRange()
-            : start(0)
-            , length(0)
-        { }
+    virtual bool accessibilityShouldUseUniqueId() const { return false; };
+    virtual bool accessibilityIsIgnored() const  { return true; };
 
-        PlainTextRange(unsigned s, unsigned l)
-            : start(s)
-            , length(l)
-        { }
-
-        bool isNull() const { return start == 0 && length == 0; }
-
-    };
-
-    bool isAnchor() const;
-    bool isAttachment() const;
-    bool isHeading() const;
-    bool isLink() const;
-    bool isImage() const;
-    bool isNativeImage() const;
-    bool isImageButton() const;
-    bool isPasswordField() const;
-    bool isTextControl() const;
-    bool isNativeTextControl() const;
-    bool isWebArea() const;
-    bool isCheckboxOrRadio() const;
-
-    bool isChecked() const;
-    bool isEnabled() const;
-    bool isFocused() const;
-    bool isHovered() const;
-    bool isIndeterminate() const;
-    bool isLoaded() const;
-    bool isMultiSelect() const;
-    bool isOffScreen() const;
-    bool isPressed() const;
-    bool isReadOnly() const;
-    bool isVisited() const;
-
-    bool canSetFocusAttribute() const;
-    bool canSetTextRangeAttributes() const;
-    bool canSetValueAttribute() const;
-
-    bool hasIntValue() const;
-
-    bool accessibilityShouldUseUniqueId() const;
-    bool accessibilityIsIgnored() const;
-
-    static int headingLevel(Node*);
-    int intValue() const;
-    int layoutCount() const;
+    virtual int intValue() const;
+    virtual int layoutCount() const;
+    static bool isARIAControl(AccessibilityRole);
+    static bool isARIAInput(AccessibilityRole);
     unsigned axObjectID() const;
-    AccessibilityObject* doAccessibilityHitTest(const IntPoint&) const;
-    AccessibilityObject* focusedUIElement() const;
-    AccessibilityObject* firstChild() const;
-    AccessibilityObject* lastChild() const;
-    AccessibilityObject* previousSibling() const;
-    AccessibilityObject* nextSibling() const;
-    AccessibilityObject* parentObject() const;
-    AccessibilityObject* parentObjectUnignored() const;
-    AccessibilityObject* observableObject() const;
-    AccessibilityObject* linkedUIElement() const;
+    
+    virtual AccessibilityObject* doAccessibilityHitTest(const IntPoint&) const;
+    virtual AccessibilityObject* focusedUIElement() const;
+    virtual AccessibilityObject* firstChild() const;
+    virtual AccessibilityObject* lastChild() const;
+    virtual AccessibilityObject* previousSibling() const;
+    virtual AccessibilityObject* nextSibling() const;
+    virtual AccessibilityObject* parentObject() const;
+    virtual AccessibilityObject* parentObjectUnignored() const;
+    virtual AccessibilityObject* observableObject() const;
+    virtual AccessibilityObject* linkedUIElement() const;
+    virtual AccessibilityRole ariaRoleAttribute() const;
+    virtual AccessibilityRole roleValue() const;
+    virtual AXObjectCache* axObjectCache() const;
+    
+    virtual HTMLAnchorElement* anchorElement() const;
+    virtual Element* actionElement() const;
 
-    AccessibilityRole ariaRoleAttribute() const;
-    AccessibilityRole roleValue() const;
-    AXObjectCache* axObjectCache() const;
-    Element* actionElement() const;
-    Element* mouseButtonListener() const;
-    FrameView* frameViewIfRenderView() const;
-    FrameView* documentFrameView() const;
-    HTMLAnchorElement* anchorElement() const;
-    HTMLAreaElement* areaElement() const { return m_areaElement.get(); }
-    IntRect boundingBoxRect() const;
-    IntSize size() const;
-    KURL url() const;
-    PlainTextRange selectedTextRange() const;
+    virtual IntRect boundingBoxRect() const;
+    virtual IntRect elementRect() const;
+    virtual IntSize size() const;
+    
+    virtual KURL url() const;
+    virtual PlainTextRange selectedTextRange() const;
+    virtual Selection selection() const;
     unsigned selectionStart() const;
     unsigned selectionEnd() const;
-    RenderObject* renderer() const { return m_renderer; }
-    RenderObject* topRenderer() const;
-    Selection selection() const;
-    String stringValue() const;
-    String title() const;
-    String accessibilityDescription() const;
-    String helpText() const;
-    String textUnderElement() const;
-    String text() const;
-    int textLength() const;
-    PassRefPtr<Range> ariaSelectedTextDOMRange() const;
-    String selectedText() const;
-    const AtomicString& accessKey() const;
+    virtual String stringValue() const;
+    virtual String title() const;
+    virtual String accessibilityDescription() const;
+    virtual String helpText() const;
+    virtual String textUnderElement() const;
+    virtual String text() const;
+    virtual int textLength() const;
+    virtual PassRefPtr<Range> ariaSelectedTextDOMRange() const;
+    virtual String selectedText() const;
+    virtual const AtomicString& accessKey() const;
     const String& actionVerb() const;
-    Widget* widget() const;
-    Widget* widgetForAttachmentView() const;
+    virtual Widget* widget() const;
+    virtual Widget* widgetForAttachmentView() const;
     void getDocumentLinks(Vector< RefPtr<AccessibilityObject> >&) const;
-    const Vector<RefPtr<AccessibilityObject> >& children() const;
-
+    
     void setAXObjectID(unsigned);
-    void setFocused(bool);
-    void setSelectedText(const String&);
-    void setSelectedTextRange(const PlainTextRange&);
-    void setValue(const String&);
-
-    void detach();
-    void makeRangeVisible(const PlainTextRange&);
-    bool press() const;
+    virtual void setFocused(bool);
+    virtual void setSelectedText(const String&);
+    virtual void setSelectedTextRange(const PlainTextRange&);
+    virtual void setValue(const String&);
+    
+    virtual void detach();
+    virtual void makeRangeVisible(const PlainTextRange&);
+    virtual bool press() const;
     bool performDefaultAction() const { return press(); }
-    void childrenChanged();
-
-    VisiblePositionRange visiblePositionRange() const;
-    VisiblePositionRange doAXTextMarkerRangeForLine(unsigned) const;
+    
+    virtual void childrenChanged();
+    virtual const Vector<RefPtr<AccessibilityObject> >& children() { return m_children; }
+    virtual void addChildren();
+    virtual bool hasChildren() const { return m_haveChildren; };
+    
+    virtual VisiblePositionRange visiblePositionRange() const;
+    virtual VisiblePositionRange doAXTextMarkerRangeForLine(unsigned) const;
+    
     VisiblePositionRange doAXTextMarkerRangeForUnorderedTextMarkers(const VisiblePosition&, const VisiblePosition&) const;
     VisiblePositionRange doAXLeftWordTextMarkerRangeForTextMarker(const VisiblePosition&) const;
     VisiblePositionRange doAXRightWordTextMarkerRangeForTextMarker(const VisiblePosition&) const;
@@ -292,12 +297,12 @@ public:
     VisiblePositionRange textMarkerRangeForRange(const PlainTextRange&) const;
 
     String doAXStringForTextMarkerRange(const VisiblePositionRange&) const;
-    IntRect doAXBoundsForTextMarkerRange(const VisiblePositionRange&) const;
+    virtual IntRect doAXBoundsForTextMarkerRange(const VisiblePositionRange&) const;    
     int doAXLengthForTextMarkerRange(const VisiblePositionRange&) const;
-    void doSetAXSelectedTextMarkerRange(const VisiblePositionRange&) const;
+    virtual void doSetAXSelectedTextMarkerRange(const VisiblePositionRange&) const;
     PlainTextRange rangeForTextMarkerRange(const VisiblePositionRange&) const;
 
-    VisiblePosition doAXTextMarkerForPosition(const IntPoint&) const;
+    virtual VisiblePosition doAXTextMarkerForPosition(const IntPoint&) const;
     VisiblePosition doAXNextTextMarkerForTextMarker(const VisiblePosition&) const;
     VisiblePosition doAXPreviousTextMarkerForTextMarker(const VisiblePosition&) const;
     VisiblePosition doAXNextWordEndTextMarkerForTextMarker(const VisiblePosition&) const;
@@ -308,22 +313,22 @@ public:
     VisiblePosition doAXPreviousSentenceStartTextMarkerForTextMarker(const VisiblePosition&) const;
     VisiblePosition doAXNextParagraphEndTextMarkerForTextMarker(const VisiblePosition&) const;
     VisiblePosition doAXPreviousParagraphStartTextMarkerForTextMarker(const VisiblePosition&) const;
-    VisiblePosition textMarkerForIndex(unsigned indexValue, bool lastIndexOK) const;
+    virtual VisiblePosition textMarkerForIndex(unsigned indexValue, bool lastIndexOK) const;
     
-    VisiblePosition visiblePositionForIndex(int) const;
-    int indexForVisiblePosition(const VisiblePosition&) const;
+    virtual VisiblePosition visiblePositionForIndex(int) const;
+    virtual int indexForVisiblePosition(const VisiblePosition&) const;
 
     AccessibilityObject* doAXUIElementForTextMarker(const VisiblePosition&) const;
     unsigned doAXLineForTextMarker(const VisiblePosition&) const;
-    int indexForTextMarker(const VisiblePosition&) const;
+    virtual int indexForTextMarker(const VisiblePosition&) const;
 
-    PlainTextRange doAXRangeForLine(unsigned) const;
+    virtual PlainTextRange doAXRangeForLine(unsigned) const;
     PlainTextRange doAXRangeForPosition(const IntPoint&) const;
-    PlainTextRange doAXRangeForIndex(unsigned) const;
+    virtual PlainTextRange doAXRangeForIndex(unsigned) const;
     PlainTextRange doAXStyleRangeForIndex(unsigned) const;
 
-    String doAXStringForRange(const PlainTextRange&) const;
-    IntRect doAXBoundsForRange(const PlainTextRange&) const;
+    virtual String doAXStringForRange(const PlainTextRange&) const;
+    virtual IntRect doAXBoundsForRange(const PlainTextRange&) const;
 
     unsigned doAXLineForIndex(unsigned);
 
@@ -331,23 +336,18 @@ public:
     AccessibilityObjectWrapper* wrapper() const { return m_wrapper.get(); }
     void setWrapper(AccessibilityObjectWrapper* wrapper) 
     {
-        ASSERT(!m_wrapper);
         m_wrapper = wrapper;
     }
 #endif
 
-private:
-    RenderObject* m_renderer;
-    RefPtr<HTMLAreaElement> m_areaElement;
+protected:
     unsigned m_id;
-    mutable Vector<RefPtr<AccessibilityObject> > m_children;
+    Vector<RefPtr<AccessibilityObject> > m_children;
     mutable bool m_haveChildren;
-
-    void addChildren() const;
-    void clearChildren();
-    void removeAXObjectID();
-
-    bool isDetached() const { return !m_renderer; }
+    
+    virtual void clearChildren();
+    virtual void removeAXObjectID();
+    virtual bool isDetached() const { return true; }
 
 #if PLATFORM(MAC)
     RetainPtr<AccessibilityObjectWrapper> m_wrapper;

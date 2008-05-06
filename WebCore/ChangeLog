@@ -1,3 +1,255 @@
+2008-05-06  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        <rdar://problem/5408464> REGRESSION: Unable to use Voiceover on combo boxes (disneyjobs.com)
+        <rdar://problem/5895634> AX: AccessibilityObjectWrapper is being leaked all over the place
+        <rdar://problem/5893907> CrashTracer: [REGRESSION] 44 crashes in Safari at com.apple.WebCore: WebCore::AccessibilityObject::clearChildren + 9
+        
+        Initial prep work to support accessibility objects that do not have renderers. 
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::~AXObjectCache):
+        (WebCore::AXObjectCache::get):
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::getAXID):
+        (WebCore::AXObjectCache::removeAXID):
+        (WebCore::AXObjectCache::childrenChanged):
+        * page/AXObjectCache.h:
+        (WebCore::AXObjectCache::isIDinUse):
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::AccessibilityObject):
+        (WebCore::AccessibilityObject::create):
+        (WebCore::AccessibilityObject::detach):
+        (WebCore::AccessibilityObject::firstChild):
+        (WebCore::AccessibilityObject::lastChild):
+        (WebCore::AccessibilityObject::previousSibling):
+        (WebCore::AccessibilityObject::nextSibling):
+        (WebCore::AccessibilityObject::parentObject):
+        (WebCore::AccessibilityObject::layoutCount):
+        (WebCore::AccessibilityObject::text):
+        (WebCore::AccessibilityObject::helpText):
+        (WebCore::AccessibilityObject::textUnderElement):
+        (WebCore::AccessibilityObject::isARIAInput):
+        (WebCore::AccessibilityObject::isARIAControl):
+        (WebCore::AccessibilityObject::intValue):
+        (WebCore::AccessibilityObject::stringValue):
+        (WebCore::AccessibilityObject::title):
+        (WebCore::AccessibilityObject::accessibilityDescription):
+        (WebCore::AccessibilityObject::boundingBoxRect):
+        (WebCore::AccessibilityObject::elementRect):
+        (WebCore::AccessibilityObject::size):
+        (WebCore::AccessibilityObject::linkedUIElement):
+        (WebCore::AccessibilityObject::textLength):
+        (WebCore::AccessibilityObject::ariaSelectedTextDOMRange):
+        (WebCore::AccessibilityObject::selectedText):
+        (WebCore::AccessibilityObject::accessKey):
+        (WebCore::AccessibilityObject::selection):
+        (WebCore::AccessibilityObject::selectedTextRange):
+        (WebCore::AccessibilityObject::setSelectedTextRange):
+        (WebCore::AccessibilityObject::url):
+        (WebCore::AccessibilityObject::setFocused):
+        (WebCore::AccessibilityObject::setValue):
+        (WebCore::AccessibilityObject::axObjectCache):
+        (WebCore::AccessibilityObject::getDocumentLinks):
+        (WebCore::AccessibilityObject::widget):
+        (WebCore::AccessibilityObject::widgetForAttachmentView):
+        (WebCore::AccessibilityObject::anchorElement):
+        (WebCore::AccessibilityObject::actionElement):
+        (WebCore::AccessibilityObject::visiblePositionRange):
+        (WebCore::AccessibilityObject::doAXTextMarkerRangeForLine):
+        (WebCore::AccessibilityObject::visiblePositionForIndex):
+        (WebCore::AccessibilityObject::indexForVisiblePosition):
+        (WebCore::AccessibilityObject::doAXBoundsForTextMarkerRange):
+        (WebCore::AccessibilityObject::doSetAXSelectedTextMarkerRange):
+        (WebCore::AccessibilityObject::doAXTextMarkerForPosition):
+        (WebCore::AccessibilityObject::textMarkerForIndex):
+        (WebCore::AccessibilityObject::rangeForTextMarkerRange):
+        (WebCore::AccessibilityObject::indexForTextMarker):
+        (WebCore::AccessibilityObject::doAXRangeForLine):
+        (WebCore::AccessibilityObject::doAXRangeForPosition):
+        (WebCore::AccessibilityObject::doAXRangeForIndex):
+        (WebCore::AccessibilityObject::doAXStyleRangeForIndex):
+        (WebCore::AccessibilityObject::doAXStringForRange):
+        (WebCore::AccessibilityObject::doAXBoundsForRange):
+        (WebCore::AccessibilityObject::doAccessibilityHitTest):
+        (WebCore::AccessibilityObject::focusedUIElement):
+        (WebCore::AccessibilityObject::observableObject):
+        (WebCore::AccessibilityObject::roleValue):
+        (WebCore::AccessibilityObject::ariaRoleAttribute):
+        (WebCore::AccessibilityObject::childrenChanged):
+        (WebCore::AccessibilityObject::addChildren):
+        (WebCore::AccessibilityObject::removeAXObjectID):
+        * page/AccessibilityObject.h:
+        (WebCore::):
+        (WebCore::PlainTextRange::PlainTextRange):
+        (WebCore::PlainTextRange::isNull):
+        (WebCore::AccessibilityObject::isAccessibilityRenderObject):
+        (WebCore::AccessibilityObject::isAnchor):
+        (WebCore::AccessibilityObject::isAttachment):
+        (WebCore::AccessibilityObject::isHeading):
+        (WebCore::AccessibilityObject::isLink):
+        (WebCore::AccessibilityObject::isImage):
+        (WebCore::AccessibilityObject::isNativeImage):
+        (WebCore::AccessibilityObject::isImageButton):
+        (WebCore::AccessibilityObject::isPasswordField):
+        (WebCore::AccessibilityObject::isTextControl):
+        (WebCore::AccessibilityObject::isNativeTextControl):
+        (WebCore::AccessibilityObject::isWebArea):
+        (WebCore::AccessibilityObject::isCheckboxOrRadio):
+        (WebCore::AccessibilityObject::isChecked):
+        (WebCore::AccessibilityObject::isEnabled):
+        (WebCore::AccessibilityObject::isSelected):
+        (WebCore::AccessibilityObject::isFocused):
+        (WebCore::AccessibilityObject::isHovered):
+        (WebCore::AccessibilityObject::isIndeterminate):
+        (WebCore::AccessibilityObject::isLoaded):
+        (WebCore::AccessibilityObject::isMultiSelect):
+        (WebCore::AccessibilityObject::isOffScreen):
+        (WebCore::AccessibilityObject::isPressed):
+        (WebCore::AccessibilityObject::isReadOnly):
+        (WebCore::AccessibilityObject::isVisited):
+        (WebCore::AccessibilityObject::canSetFocusAttribute):
+        (WebCore::AccessibilityObject::canSetTextRangeAttributes):
+        (WebCore::AccessibilityObject::canSetValueAttribute):
+        (WebCore::AccessibilityObject::hasIntValue):
+        (WebCore::AccessibilityObject::accessibilityShouldUseUniqueId):
+        (WebCore::AccessibilityObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityObject::children):
+        (WebCore::AccessibilityObject::hasChildren):
+        (WebCore::AccessibilityObject::setWrapper):
+        (WebCore::AccessibilityObject::isDetached):
+        * page/AccessibilityRenderObject.cpp: Added.
+        (WebCore::AccessibilityRenderObject::AccessibilityRenderObject):
+        (WebCore::AccessibilityRenderObject::~AccessibilityRenderObject):
+        (WebCore::AccessibilityRenderObject::create):
+        (WebCore::AccessibilityRenderObject::detach):
+        (WebCore::AccessibilityRenderObject::firstChild):
+        (WebCore::AccessibilityRenderObject::lastChild):
+        (WebCore::AccessibilityRenderObject::previousSibling):
+        (WebCore::AccessibilityRenderObject::nextSibling):
+        (WebCore::AccessibilityRenderObject::parentObject):
+        (WebCore::AccessibilityRenderObject::isWebArea):
+        (WebCore::AccessibilityRenderObject::isImageButton):
+        (WebCore::AccessibilityRenderObject::isAnchor):
+        (WebCore::AccessibilityRenderObject::isNativeTextControl):
+        (WebCore::AccessibilityRenderObject::isTextControl):
+        (WebCore::AccessibilityRenderObject::isNativeImage):
+        (WebCore::AccessibilityRenderObject::isImage):
+        (WebCore::AccessibilityRenderObject::isAttachment):
+        (WebCore::AccessibilityRenderObject::isPasswordField):
+        (WebCore::AccessibilityRenderObject::isCheckboxOrRadio):
+        (WebCore::AccessibilityRenderObject::isPressed):
+        (WebCore::AccessibilityRenderObject::isIndeterminate):
+        (WebCore::AccessibilityRenderObject::isChecked):
+        (WebCore::AccessibilityRenderObject::isHovered):
+        (WebCore::AccessibilityRenderObject::isMultiSelect):
+        (WebCore::AccessibilityRenderObject::isReadOnly):
+        (WebCore::AccessibilityRenderObject::isOffScreen):
+        (WebCore::AccessibilityRenderObject::headingLevel):
+        (WebCore::AccessibilityRenderObject::isHeading):
+        (WebCore::AccessibilityRenderObject::isLink):
+        (WebCore::AccessibilityRenderObject::anchorElement):
+        (WebCore::AccessibilityRenderObject::actionElement):
+        (WebCore::AccessibilityRenderObject::mouseButtonListener):
+        (WebCore::AccessibilityRenderObject::helpText):
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+        (WebCore::AccessibilityRenderObject::hasIntValue):
+        (WebCore::AccessibilityRenderObject::intValue):
+        (WebCore::AccessibilityRenderObject::stringValue):
+        (WebCore::labelForElement):
+        (WebCore::AccessibilityRenderObject::title):
+        (WebCore::AccessibilityRenderObject::accessibilityDescription):
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+        (WebCore::AccessibilityRenderObject::elementRect):
+        (WebCore::AccessibilityRenderObject::size):
+        (WebCore::AccessibilityRenderObject::linkedUIElement):
+        (WebCore::AccessibilityRenderObject::accessibilityShouldUseUniqueId):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::isLoaded):
+        (WebCore::AccessibilityRenderObject::layoutCount):
+        (WebCore::AccessibilityRenderObject::text):
+        (WebCore::AccessibilityRenderObject::textLength):
+        (WebCore::AccessibilityRenderObject::ariaSelectedTextDOMRange):
+        (WebCore::AccessibilityRenderObject::selectedText):
+        (WebCore::AccessibilityRenderObject::accessKey):
+        (WebCore::AccessibilityRenderObject::selection):
+        (WebCore::AccessibilityRenderObject::selectedTextRange):
+        (WebCore::AccessibilityRenderObject::setSelectedTextRange):
+        (WebCore::AccessibilityRenderObject::url):
+        (WebCore::AccessibilityRenderObject::isVisited):
+        (WebCore::AccessibilityRenderObject::isSelected):
+        (WebCore::AccessibilityRenderObject::isFocused):
+        (WebCore::AccessibilityRenderObject::setFocused):
+        (WebCore::AccessibilityRenderObject::setValue):
+        (WebCore::AccessibilityRenderObject::isEnabled):
+        (WebCore::AccessibilityRenderObject::topRenderer):
+        (WebCore::AccessibilityRenderObject::widget):
+        (WebCore::AccessibilityRenderObject::axObjectCache):
+        (WebCore::AccessibilityRenderObject::getDocumentLinks):
+        (WebCore::AccessibilityRenderObject::widgetForAttachmentView):
+        (WebCore::AccessibilityRenderObject::frameViewIfRenderView):
+        (WebCore::AccessibilityRenderObject::visiblePositionRange):
+        (WebCore::AccessibilityRenderObject::doAXTextMarkerRangeForLine):
+        (WebCore::AccessibilityRenderObject::visiblePositionForIndex):
+        (WebCore::AccessibilityRenderObject::indexForVisiblePosition):
+        (WebCore::AccessibilityRenderObject::doAXBoundsForTextMarkerRange):
+        (WebCore::AccessibilityRenderObject::doSetAXSelectedTextMarkerRange):
+        (WebCore::AccessibilityRenderObject::doAXTextMarkerForPosition):
+        (WebCore::AccessibilityRenderObject::textMarkerForIndex):
+        (WebCore::AccessibilityRenderObject::indexForTextMarker):
+        (WebCore::AccessibilityRenderObject::doAXRangeForLine):
+        (WebCore::AccessibilityRenderObject::doAXRangeForIndex):
+        (WebCore::AccessibilityRenderObject::doAXStringForRange):
+        (WebCore::AccessibilityRenderObject::doAXBoundsForRange):
+        (WebCore::AccessibilityRenderObject::doAccessibilityHitTest):
+        (WebCore::AccessibilityRenderObject::focusedUIElement):
+        (WebCore::AccessibilityRenderObject::observableObject):
+        (WebCore::createARIARoleMap):
+        (WebCore::RoleEntry::):
+        (WebCore::ariaRoleToWebCoreRole):
+        (WebCore::AccessibilityRenderObject::ariaRoleAttribute):
+        (WebCore::AccessibilityRenderObject::roleValue):
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+        (WebCore::AccessibilityRenderObject::canSetValueAttribute):
+        (WebCore::AccessibilityRenderObject::canSetTextRangeAttributes):
+        (WebCore::AccessibilityRenderObject::childrenChanged):
+        (WebCore::AccessibilityRenderObject::children):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        (WebCore::AccessibilityRenderObject::removeAXObjectID):
+        (WebCore::AccessibilityRenderObject::actionVerb):
+        * page/AccessibilityRenderObject.h: Added.
+        (WebCore::AccessibilityRenderObject::isAccessibilityRenderObject):
+        (WebCore::AccessibilityRenderObject::areaElement):
+        (WebCore::AccessibilityRenderObject::setRenderer):
+        (WebCore::AccessibilityRenderObject::renderer):
+        (WebCore::AccessibilityRenderObject::setRenderObject):
+        (WebCore::AccessibilityRenderObject::isDetached):
+        * page/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::detachWrapper):
+        (WebCore::AXObjectCache::selectedChildrenChanged):
+        (WebCore::AXObjectCache::postNotification):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (textMarkerForVisiblePosition):
+        (CreateCGColorIfDifferent):
+        (AXAttributeStringSetHeadingLevel):
+        (AXLinkElementForNode):
+        (AXAttributeStringSetElement):
+        (AXAttributedStringAppendText):
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper documentFrameView:]):
+        (-[AccessibilityObjectWrapper position]):
+        (RoleEntry::):
+        (-[AccessibilityObjectWrapper roleDescription]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilityIsAttributeSettable:]):
+        (-[AccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        (-[AccessibilityObjectWrapper _accessibilityParentForSubview:]):
+        (-[AccessibilityObjectWrapper doAXAttributedStringForRange:]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2008-05-06  Jonathan Haas  <myrdred@gmail.com>
 
         Reviewed by Rob Buis.

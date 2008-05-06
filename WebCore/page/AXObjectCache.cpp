@@ -29,7 +29,7 @@
 #include "config.h"
 #include "AXObjectCache.h"
 
-#include "AccessibilityObject.h"
+#include "AccessibilityRenderObject.h"
 #include "RenderObject.h"
 
 #include <wtf/PassRefPtr.h>
@@ -40,8 +40,8 @@ bool AXObjectCache::gAccessibilityEnabled = false;
 
 AXObjectCache::~AXObjectCache()
 {
-    HashMap<RenderObject*, RefPtr<AccessibilityObject> >::iterator end = m_objects.end();
-    for (HashMap<RenderObject*, RefPtr<AccessibilityObject> >::iterator it = m_objects.begin(); it != end; ++it) {
+    HashMap<AXID, RefPtr<AccessibilityObject> >::iterator end = m_objects.end();
+    for (HashMap<AXID, RefPtr<AccessibilityObject> >::iterator it = m_objects.begin(); it != end; ++it) {
         AccessibilityObject* obj = (*it).second.get();
         detachWrapper(obj);
         obj->detach();
@@ -50,37 +50,123 @@ AXObjectCache::~AXObjectCache()
 
 AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
 {
-    RefPtr<AccessibilityObject> obj = m_objects.get(renderer).get();
+    if (!renderer)
+        return 0;
+    
+    RefPtr<AccessibilityObject> obj = 0;
+    AXID axID = m_renderObjectMapping.get(renderer);
+    ASSERT(!HashTraits<AXID>::isDeletedValue(axID));
+
+    if (axID)
+        obj = m_objects.get(axID).get();
+
+    if (!obj) {
+        obj = AccessibilityRenderObject::create(renderer);
+        getAXID(obj.get());
+        
+        m_renderObjectMapping.set(renderer, obj.get()->axObjectID());
+        m_objects.set(obj.get()->axObjectID(), obj);    
+        attachWrapper(obj.get());
+    }
+    
+    return obj.get();
+}
+
+AccessibilityObject* AXObjectCache::get(AccessibilityRole role)
+{
+    RefPtr<AccessibilityObject> obj = 0;
+    
+    // will be filled in...
+    switch (role) {
+        default:
+            obj = 0;
+    }
+    
     if (obj)
-        return obj.get();
-    obj = AccessibilityObject::create(renderer);
-    m_objects.set(renderer, obj);    
+        getAXID(obj.get());
+    else
+        return 0;
+
+    m_objects.set(obj->axObjectID(), obj);    
     attachWrapper(obj.get());
     return obj.get();
 }
 
+void AXObjectCache::remove(AXID axID)
+{
+    if (!axID)
+        return;
+    
+    // first fetch object to operate some cleanup functions on it 
+    AccessibilityObject* obj = m_objects.get(axID).get();
+    if (!obj)
+        return;
+    
+    detachWrapper(obj);
+    obj->detach();
+    removeAXID(obj);
+    
+    // finally remove the object
+    if (!m_objects.take(axID)) {
+        return;
+    }
+    
+    ASSERT(m_objects.size() >= m_idsInUse.size());    
+}
+    
 void AXObjectCache::remove(RenderObject* renderer)
 {
-    // first fetch object to operate some cleanup functions on it 
-    AccessibilityObject* obj = m_objects.get(renderer).get();
-    if (obj) {
-        detachWrapper(obj);
-        obj->detach();
-        
-        // finally remove the object
-        if (!m_objects.take(renderer)) {
-            ASSERT(!renderer->hasAXObject());
-            return;
-        }
+    if (!renderer)
+        return;
+    
+    AXID axID = m_renderObjectMapping.get(renderer);
+    remove(axID);
+    m_renderObjectMapping.remove(renderer);
+}
+
+AXID AXObjectCache::getAXID(AccessibilityObject* obj)
+{
+    // check for already-assigned ID
+    AXID objID = obj->axObjectID();
+    if (objID) {
+        ASSERT(m_idsInUse.contains(objID));
+        return objID;
     }
-#if PLATFORM(MAC)
-    ASSERT(m_objects.size() >= m_idsInUse.size());
-#endif
+    
+    // generate a new ID
+    static AXID lastUsedID = 0;
+    objID = lastUsedID;
+    do
+        ++objID;
+    while (objID == 0 || HashTraits<AXID>::isDeletedValue(objID) || m_idsInUse.contains(objID));
+    m_idsInUse.add(objID);
+    lastUsedID = objID;
+    obj->setAXObjectID(objID);
+    
+    return objID;
+}
+
+void AXObjectCache::removeAXID(AccessibilityObject* obj)
+{
+    AXID objID = obj->axObjectID();
+    if (objID == 0)
+        return;
+    ASSERT(!HashTraits<AXID>::isDeletedValue(objID));
+    ASSERT(m_idsInUse.contains(objID));
+    obj->setAXObjectID(0);
+    m_idsInUse.remove(objID);
 }
 
 void AXObjectCache::childrenChanged(RenderObject* renderer)
 {
-    AccessibilityObject* obj = m_objects.get(renderer).get();
+    if (!renderer)
+        return;
+ 
+    AXID axID = m_renderObjectMapping.get(renderer);
+    if (!axID)
+        return;
+    
+    AccessibilityObject* obj = m_objects.get(axID).get();
     if (obj)
         obj->childrenChanged();
 }
