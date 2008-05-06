@@ -1,3 +1,9 @@
+2008-05-06  Kevin McCullough  <kmccullough@apple.com>
+
+        - Forgot to update localized Strings from previous checkin.
+
+        * English.lproj/localizedStrings.js:
+
 2008-05-06  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
