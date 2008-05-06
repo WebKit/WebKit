@@ -1,3 +1,16 @@
+2008-05-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix 60 crashes seen on the buildbots that were misreported as hangs.
+
+        * dom/Document.cpp:
+        (WebCore::Document::detachNodeIterator): Null-check page() before dereferencing it.
+        (WebCore::Document::nodeWillBeRemoved): Ditto.
+        (WebCore::Document::textInserted): Ditto.
+        (WebCore::Document::textNodesMerged): Ditto.
+        (WebCore::Document::textRemoved): Ditto.
+
 2008-05-05  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mitz Pettel RTL
