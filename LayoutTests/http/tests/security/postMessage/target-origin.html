@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="resources/recv.js"></script>
 <script>
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
 }
 
-function recv(e) {
-    document.getElementById("result").innerHTML += "<br>" + e.data;
-}
- 
 document.addEventListener("message", recv, false);
 
 function tryPostMessage(win, origin) {
-    win.postMessage("Trying origin=" + origin, origin);
+    try {
+        win.postMessage("Trying origin=" + origin, origin);
+    } catch(ex) {
+        log("Error sending message to " + origin + ". " + ex);
+    }
 }
 
 function test() {
@@ -28,8 +29,7 @@ function test() {
     tryPostMessage(win, "http://localhost:8000/foo?bar");
     tryPostMessage(win, "http://localhost:8000/foo?bar#baz");
     tryPostMessage(win, "http://user:pass@localhost:8000/foo?bar#baz");
-    tryPostMessage(win, null);
-    tryPostMessage(win, undefined);
+    tryPostMessage(win, "*");
 
     // Should fail:
     tryPostMessage(win, "http://localhost:9090");
@@ -38,8 +38,11 @@ function test() {
     tryPostMessage(win, "https://localhost:8000");
     tryPostMessage(win, "http://www.example.com");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    // Should throw syntax error:
+    tryPostMessage(win, null);
+    tryPostMessage(win, undefined);
+
+    win.postMessage('done', '*');
 }
 </script>
 <body>

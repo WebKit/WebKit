@@ -11,11 +11,13 @@ CONSOLE MESSAGE: line 0: Unable to post message to http://www.example.com. Recip
 window.location.href = http://127.0.0.1:8000/security/postMessage/target-origin.html
 
 waiting...
-Received message: data="Trying origin=http://localhost:8000" origin="http://127.0.0.1:8000"
-Received message: data="Trying origin=http://localhost:8000/" origin="http://127.0.0.1:8000"
-Received message: data="Trying origin=http://localhost:8000/foo" origin="http://127.0.0.1:8000"
-Received message: data="Trying origin=http://localhost:8000/foo?bar" origin="http://127.0.0.1:8000"
-Received message: data="Trying origin=http://localhost:8000/foo?bar#baz" origin="http://127.0.0.1:8000"
-Received message: data="Trying origin=http://user:pass@localhost:8000/foo?bar#baz" origin="http://127.0.0.1:8000"
-Received message: data="Trying origin=null" origin="http://127.0.0.1:8000"
-Received message: data="Trying origin=undefined" origin="http://127.0.0.1:8000"
+Error sending message to null. Error: SYNTAX_ERR: DOM Exception 12
+Error sending message to undefined. Error: SYNTAX_ERR: DOM Exception 12
+Received message: data="Received message: data="Trying origin=http://localhost:8000" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
+Received message: data="Received message: data="Trying origin=http://localhost:8000/" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
+Received message: data="Received message: data="Trying origin=http://localhost:8000/foo" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
+Received message: data="Received message: data="Trying origin=http://localhost:8000/foo?bar" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
+Received message: data="Received message: data="Trying origin=http://localhost:8000/foo?bar#baz" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
+Received message: data="Received message: data="Trying origin=http://user:pass@localhost:8000/foo?bar#baz" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
+Received message: data="Received message: data="Trying origin=*" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
+Received message: data="Received message: data="done" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"

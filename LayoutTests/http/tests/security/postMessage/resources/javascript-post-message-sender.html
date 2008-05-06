@@ -4,7 +4,7 @@
 <script>
 function nav() {
     var url = "javascript:'<script>" + 
-      "top.postMessage(\"Hello from child\");" + 
+      "top.postMessage(\"Hello from child\", \"*\");" + 
       "document.write(\"Message sent\");" +
       "</scri" + "pt>'";
 

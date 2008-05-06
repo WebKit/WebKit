@@ -148,7 +148,7 @@ module window {
 
 #if defined(ENABLE_CROSS_DOCUMENT_MESSAGING)
         // cross-document messaging
-        [DoNotCheckDomainSecurity, Custom] void postMessage(in DOMString message, in [Optional] DOMString targetOrigin)
+        [DoNotCheckDomainSecurity, Custom] void postMessage(in DOMString message, in DOMString targetOrigin)
             raises(DOMException);
 #endif
 

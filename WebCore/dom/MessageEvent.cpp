@@ -42,7 +42,7 @@ MessageEvent::MessageEvent()
 }
 
 MessageEvent::MessageEvent(const String& data, const String& origin, DOMWindow* source)
-    : Event(messageEvent, true, true)
+    : Event(messageEvent, false, true)
     , m_data(data)
     , m_origin(origin)
     , m_source(source)

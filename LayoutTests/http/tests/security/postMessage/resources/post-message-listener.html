@@ -5,7 +5,7 @@
 <script>
 function recv(e) {
     var msg = 'Received message: data="' + e.data + '" origin="' + e.origin + '"';
-    top.postMessage(msg);
+    top.postMessage(msg, '*');
 }
 
 document.addEventListener("message", recv, false);

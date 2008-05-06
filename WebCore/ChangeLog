@@ -1,3 +1,27 @@
+2008-05-06  Adam Barth  <abarth-webkit@adambarth.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18725
+        Implement asynchronous postMessage.
+        MessageEvent no longer bubbles as per r1237 in the HTML 5 working draft.
+
+        Collin Jackson <collinj-webkit@collinjackson.com> also contributed to this patch.
+
+        Test: http/tests/security/postMessage/delivery-order.html
+
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        * page/DOMWindow.cpp:
+        (WebCore::PostMessageTimer::PostMessageTimer):
+        (WebCore::PostMessageTimer::event):
+        (WebCore::PostMessageTimer::targetOrigin):
+        (WebCore::PostMessageTimer::fired):
+        (WebCore::DOMWindow::postMessage):
+        (WebCore::DOMWindow::postMessageTimerFired):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        
 2008-05-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

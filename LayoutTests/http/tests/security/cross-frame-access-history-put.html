@@ -43,7 +43,7 @@
             try { targetWindow.history.customAttribute = "FAIL!! CUSTOM customAttribute"; } catch(e) { log(e); }
 
             if (window.postMessage)
-                targetWindow.postMessage("settingValuesComplete");
+                targetWindow.postMessage("settingValuesComplete", "*");
             else
                 log("\nSet Test complete!  Click button entitled 'Step 2 - Set Check' to finish the test.");
         }

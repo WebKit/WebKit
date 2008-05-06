@@ -36,7 +36,7 @@
             customAttributeOld = window.history.customAttribute;
 
             if (window.postMessage)
-                window.parent.postMessage("storedOldValuesComplete");
+                window.parent.postMessage("storedOldValuesComplete", "*");
         }
 
         setCheck = function()

@@ -10,7 +10,7 @@ function receiver(e) {
     var result = "";
     result += "data: " + e.data + "\n";
     result += "origin: " + e.origin + "\n";
-    e.source.postMessage(result);   
+    e.source.postMessage(result, "*");   
 }
 
 document.addEventListener('message', receiver, false);

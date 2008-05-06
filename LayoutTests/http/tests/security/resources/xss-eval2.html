@@ -2,7 +2,7 @@
 parent.childEval = eval;
 
 parent.childEvalCaller = function(s) {
-    return eval(s);
+    return window.eval(s);
 }
 
 parent.childLocalEvalCaller = (function()

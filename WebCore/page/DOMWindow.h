@@ -50,6 +50,9 @@ namespace WebCore {
     class Frame;
     class History;
     class Location;
+#if ENABLE(CROSS_DOCUMENT_MESSAGING)
+    class PostMessageTimer;
+#endif
     class Navigator;
     class Screen;
 
@@ -172,8 +175,10 @@ namespace WebCore {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         DOMApplicationCache* applicationCache() const;
 #endif
+
 #if ENABLE(CROSS_DOCUMENT_MESSAGING)
-        void postMessage(const String& message, const String& targetOrigin, DOMWindow* source, ExceptionCode& ecForSender) const;
+        void postMessage(const String& message, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
+        void postMessageTimerFired(PostMessageTimer*);
 #endif
 
         void scrollBy(int x, int y) const;

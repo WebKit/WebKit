@@ -12,7 +12,7 @@ if (window.layoutTestController) {
 }
 
 function postIt () {
-    document.getElementById("receiver").contentWindow.postMessage("Something");
+    document.getElementById("receiver").contentWindow.postMessage("Something", "*");
 }
 
 function receiver(e) {

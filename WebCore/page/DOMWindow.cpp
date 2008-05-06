@@ -79,6 +79,31 @@ using std::max;
 
 namespace WebCore {
 
+#if ENABLE(CROSS_DOCUMENT_MESSAGING)
+class PostMessageTimer : public TimerBase {
+public:
+    PostMessageTimer(DOMWindow* window, MessageEvent* event, SecurityOrigin* targetOrigin)
+        : m_window(window)
+        , m_event(event)
+        , m_targetOrigin(targetOrigin)
+    {
+    }
+
+    MessageEvent* event() const { return m_event.get(); }
+    SecurityOrigin* targetOrigin() const { return m_targetOrigin.get(); }
+
+private:
+    virtual void fired() 
+    {
+        m_window->postMessageTimerFired(this);
+    }
+
+    RefPtr<DOMWindow> m_window;
+    RefPtr<MessageEvent> m_event;
+    RefPtr<SecurityOrigin> m_targetOrigin;
+};
+#endif
+
 // This function:
 // 1) Validates the pending changes are not changing to NaN
 // 2) Constrains the window rect to no smaller than 100 in each dimension and no
@@ -325,39 +350,53 @@ Storage* DOMWindow::localStorage() const
 #endif
 
 #if ENABLE(CROSS_DOCUMENT_MESSAGING)
-void DOMWindow::postMessage(const String& message, const String& targetOrigin, DOMWindow* source, ExceptionCode& ecForSender) const
+void DOMWindow::postMessage(const String& message, const String& targetOrigin, DOMWindow* source, ExceptionCode& ec)
 {
     if (!m_frame)
         return;
 
-    if (!targetOrigin.isNull()) {
-        KURL desiredTargetURL(targetOrigin);
-        if (!desiredTargetURL.isValid()) {
-            ecForSender = SYNTAX_ERR;
-            return;
-        }
-
-        RefPtr<SecurityOrigin> desiredTargetOrigin = SecurityOrigin::create(desiredTargetURL);
-        SecurityOrigin* actualTargetOrigin = document()->securityOrigin();
-        if (desiredTargetOrigin->isEmpty() || !desiredTargetOrigin->isSameSchemeHostPort(actualTargetOrigin)) {
-            // The sender is not allowed to find out the origin of
-            // the recipient, so we fail silently and log a message
-            // to the console.
-            String message = String::format("Unable to post message to %s. Recipient has origin %s.\n", 
-                targetOrigin.utf8().data(), actualTargetOrigin->toString().utf8().data());
-            console()->addMessage(JSMessageSource, ErrorMessageLevel, message, 0, String());
+    // Compute the target origin.  We need to do this synchronously in order
+    // to generate the SYNTAX_ERR exception correctly.
+    RefPtr<SecurityOrigin> target;
+    if (targetOrigin != "*") {
+        target = SecurityOrigin::create(KURL(targetOrigin));
+        if (target->isEmpty()) {
+            ec = SYNTAX_ERR;
             return;
         }
     }
 
+    // Capture the source of the message.  We need to do this synchronously
+    // in order to capture the source of the message correctly.
     Document* sourceDocument = source->document();
     if (!sourceDocument)
         return;
     String sourceOrigin = sourceDocument->securityOrigin()->toString();
 
-    // Sender is not allowed to see exceptions other than syntax errors
-    ExceptionCode ec; 
-    document()->dispatchEvent(new MessageEvent(message, sourceOrigin, source), ec, true);
+    // Schedule the message.
+    PostMessageTimer* timer = new PostMessageTimer(this, new MessageEvent(message, sourceOrigin, source), target.get());
+    timer->startOneShot(0);
+}
+
+void DOMWindow::postMessageTimerFired(PostMessageTimer* t)
+{
+    OwnPtr<PostMessageTimer> timer(t);
+
+    if (!document())
+        return;
+
+    if (timer->targetOrigin()) {
+        // Check target origin now since the target document may have changed since the simer was scheduled.
+        if (!timer->targetOrigin()->isSameSchemeHostPort(document()->securityOrigin())) {
+            String message = String::format("Unable to post message to %s. Recipient has origin %s.\n", 
+                timer->targetOrigin()->toString().utf8().data(), document()->securityOrigin()->toString().utf8().data());
+            console()->addMessage(JSMessageSource, ErrorMessageLevel, message, 0, String());
+            return;
+        }
+    }
+
+    ExceptionCode ec;
+    document()->dispatchEvent(timer->event(), ec, true);
 }
 #endif
 

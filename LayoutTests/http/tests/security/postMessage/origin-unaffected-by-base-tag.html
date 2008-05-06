@@ -1,17 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="resources/recv.js"></script>
 <script>
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
-}
-
-function recv(e) {
-    document.getElementById("result").firstChild.data = e.data;
-
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
 }
 
 document.addEventListener("message", recv, false);
@@ -19,7 +13,9 @@ document.addEventListener("message", recv, false);
 function test() {
     var iframe = document.getElementById('child');
     var win = iframe.contentWindow;
-    win.postMessage('Message from parent');
+    win.postMessage('Message from parent', '*');
+
+    win.postMessage('done', '*');
 }
 </script>
 <base href="http://www.example.com/">

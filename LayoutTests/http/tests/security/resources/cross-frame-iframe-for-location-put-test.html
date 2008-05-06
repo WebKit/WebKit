@@ -34,7 +34,7 @@
             customAttributeOld = window.location.customAttribute;
 
             if (window.postMessage)
-                window.parent.postMessage("storedOldValuesComplete");
+                window.parent.postMessage("storedOldValuesComplete", "*");
         }
 
         setCheck = function()

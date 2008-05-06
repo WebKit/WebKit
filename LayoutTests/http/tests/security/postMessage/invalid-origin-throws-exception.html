@@ -1,19 +1,11 @@
-<script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
-</script>
-
 <!DOCTYPE html>
 <html>
 <head>
+<script src="resources/recv.js"></script>
 <script>
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
-}
-
-function recv(e) {
-    document.getElementById("result").innerHTML += "<br>" + e.data;
 }
  
 document.addEventListener("message", recv, false);
@@ -43,8 +35,8 @@ function test() {
     tryPostMessage("/tmp/foo");
     tryPostMessage("//localhost");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    
+    win.postMessage('done', '*');
 }
 </script>
 <body>
