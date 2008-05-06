@@ -39,6 +39,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLFormElement.h"
+#include "Page.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "Settings.h"
@@ -413,11 +414,13 @@ bool MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& su
     // Check if this request should be loaded from the application cache
     if (!m_substituteData.isValid() && frameLoader()->frame()->settings() && frameLoader()->frame()->settings()->offlineWebApplicationCacheEnabled()) {
         ASSERT(!m_applicationCache);
-        
-        m_applicationCache = frameLoader()->documentLoader()->topLevelApplicationCache();
-        
-        if (!m_applicationCache)
-            m_applicationCache = ApplicationCacheGroup::cacheForMainRequest(r, m_documentLoader.get());
+
+        if (Page* page = frameLoader()->frame()->page()) {
+            if (frameLoader()->frame() == page->mainFrame())
+                m_applicationCache = ApplicationCacheGroup::cacheForMainRequest(r, m_documentLoader.get());
+            else
+                m_applicationCache = frameLoader()->documentLoader()->topLevelApplicationCache();
+        }
             
         if (m_applicationCache) {
             // Get the resource from the application cache.
