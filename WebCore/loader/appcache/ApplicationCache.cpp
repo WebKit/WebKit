@@ -30,6 +30,7 @@
 
 #include "ApplicationCacheGroup.h"
 #include "ApplicationCacheResource.h"
+#include "ApplicationCacheStorage.h"
 #include "ResourceRequest.h"
 
 namespace WebCore {
@@ -70,6 +71,13 @@ void ApplicationCache::addResource(PassRefPtr<ApplicationCacheResource> resource
     const String& url = resource->url();
     
     ASSERT(!m_resources.contains(url));
+    
+    if (m_storageID) {
+        ASSERT(!resource->storageID());
+        
+        // Add the resource to the storage.
+        cacheStorage().store(resource.get(), this);
+    }
     
     m_resources.set(url, resource);
 }

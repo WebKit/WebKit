@@ -28,10 +28,14 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
-#include "ApplicationCacheGroup.h"
 #include "ApplicationCache.h"
+#include "ApplicationCacheGroup.h"
+#include "ApplicationCacheResource.h"
 #include "FileSystem.h"
+#include "CString.h"
 #include "KURL.h"
+#include "SQLiteStatement.h"
+#include "SQLiteTransaction.h"
 
 namespace WebCore {
 
@@ -99,6 +103,19 @@ void ApplicationCacheStorage::setCacheDirectory(const String& cacheDirectory)
     m_cacheDirectory = cacheDirectory;
 }
 
+bool ApplicationCacheStorage::executeSQLCommand(const String& sql)
+{
+    ASSERT(m_database.isOpen());
+    
+    bool result = m_database.executeCommand(sql);
+    if (!result)
+        LOG_ERROR("Application Cache Storage: failed to execute statement \"%s\" error \"%s\"", 
+                  sql.utf8().data(), m_database.lastErrorMsg());
+
+    return result;
+}
+    
+
 void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
 {
     if (m_database.isOpen())
@@ -114,6 +131,224 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
 
     makeAllDirectories(m_cacheDirectory);
     m_database.open(applicationCachePath);
+    
+    if (!m_database.isOpen())
+        return;
+    
+    // Create tables
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheGroups (id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "manifestHostHash INTEGER NOT NULL ON CONFLICT FAIL, manifestURL TEXT UNIQUE ON CONFLICT FAIL, newestCache INTEGER)");
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS Caches (id INTEGER PRIMARY KEY AUTOINCREMENT, cacheGroup INTEGER)");
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheWhitelistURLs (url TEXT NOT NULL ON CONFLICT FAIL, cache INTEGER NOT NULL ON CONFLICT FAIL)");
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS FallbackURLs (namespace TEXT NOT NULL ON CONFLICT FAIL, fallbackURL TEXT NOT NULL ON CONFLICT FAIL, "
+                      "cache INTEGER NOT NULL ON CONFLICT FAIL)");
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheEntries (cache INTEGER NOT NULL ON CONFLICT FAIL, type INTEGER, resource INTEGER NOT NULL)");
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheResources (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT NOT NULL ON CONFLICT FAIL, "
+                      "statusCode INTEGER NOT NULL, responseURL TEXT NOT NULL, headers TEXT, data INTEGER NOT NULL ON CONFLICT FAIL)");
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheResourceData (id INTEGER PRIMARY KEY AUTOINCREMENT, data BLOB)");
+
+    // When a cache is deleted, all its entries and its whitelist should be deleted.
+    executeSQLCommand("CREATE TRIGGER IF NOT EXISTS CacheDeleted AFTER DELETE ON Caches"
+                      " FOR EACH ROW BEGIN"
+                      "  DELETE FROM CacheEntries WHERE cache = OLD.id;"
+                      "  DELETE FROM CacheWhitelistURLs WHERE cache = OLD.id;"
+                      "  DELETE FROM FallbackURLs WHERE cache = OLD.id;"
+                      " END");
+    
+    // When a cache resource is deleted, its data blob should also be deleted.
+    executeSQLCommand("CREATE TRIGGER IF NOT EXISTS CacheResourceDeleted AFTER DELETE ON CacheResources"
+                      " FOR EACH ROW BEGIN"
+                      "  DELETE FROM CacheResourceData WHERE id = OLD.data;"
+                      " END");
+}
+
+bool ApplicationCacheStorage::executeStatement(SQLiteStatement& statement)
+{
+    bool result = statement.executeCommand();
+    if (!result)
+        LOG_ERROR("Application Cache Storage: failed to execute statement \"%s\" error \"%s\"", 
+                  statement.query().utf8().data(), m_database.lastErrorMsg());
+    
+    return result;
+}    
+
+bool ApplicationCacheStorage::store(ApplicationCacheGroup* group)
+{
+    ASSERT(group->storageID() == 0);
+
+    SQLiteStatement statement(m_database, "INSERT INTO CacheGroups (manifestHostHash, manifestURL) VALUES (?, ?)");
+    if (statement.prepare() != SQLResultOk)
+        return false;
+
+    statement.bindInt64(1, urlHostHash(group->manifestURL()));
+    statement.bindText(2, group->manifestURL());
+
+    if (!executeStatement(statement))
+        return false;
+
+    group->setStorageID((unsigned)m_database.lastInsertRowID());
+    return true;
+}    
+
+bool ApplicationCacheStorage::store(ApplicationCache* cache)
+{
+    ASSERT(cache->storageID() == 0);
+    ASSERT(cache->group()->storageID() != 0);
+    
+    SQLiteStatement statement(m_database, "INSERT INTO Caches (cacheGroup) VALUES (?)");
+    if (statement.prepare() != SQLResultOk)
+        return false;
+
+    statement.bindInt64(1, cache->group()->storageID());
+
+    if (!executeStatement(statement))
+        return false;
+    
+    unsigned cacheStorageID = (unsigned)m_database.lastInsertRowID();
+
+    // Store all resources
+    {
+        ApplicationCache::ResourceMap::const_iterator end = cache->end();
+        for (ApplicationCache::ResourceMap::const_iterator it = cache->begin(); it != end; ++it) {
+            if (!store(it->second.get(), cacheStorageID))
+                return false;
+        }
+    }
+    
+    // Store the online whitelist
+    const HashSet<String>& onlineWhitelist = cache->onlineWhitelist();
+    {
+        HashSet<String>::const_iterator end = onlineWhitelist.end();
+        for (HashSet<String>::const_iterator it = onlineWhitelist.begin(); it != end; ++it) {
+            SQLiteStatement statement(m_database, "INSERT INTO CacheWhitelistURLs (url, cache) VALUES (?, ?)");
+            statement.prepare();
+
+            statement.bindText(1, *it);
+            statement.bindInt64(2, cacheStorageID);
+
+            if (!executeStatement(statement))
+                return false;
+        }
+    }
+    
+    cache->setStorageID(cacheStorageID);
+    return true;
+}
+
+bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned cacheStorageID)
+{
+    ASSERT(cacheStorageID);
+    ASSERT(!resource->storageID());
+    
+    openDatabase(true);
+    
+    // First, insert the data
+    SQLiteStatement dataStatement(m_database, "INSERT INTO CacheResourceData (data) VALUES (?)");
+    if (dataStatement.prepare() != SQLResultOk)
+        return false;
+    
+    dataStatement.bindBlob(1, resource->data()->data(), resource->data()->size());
+    
+    if (!dataStatement.executeCommand())
+        return false;
+
+    unsigned dataId = (unsigned)m_database.lastInsertRowID();
+
+    // Then, insert the resource
+    
+    // Serialize the headers
+    Vector<UChar> stringBuilder;
+    String separator(": ");
+    
+    HTTPHeaderMap::const_iterator end = resource->response().httpHeaderFields().end();
+    for (HTTPHeaderMap::const_iterator it = resource->response().httpHeaderFields().begin(); it!= end; ++it) {
+        stringBuilder.append(it->first.characters(), it->first.length());
+        stringBuilder.append((UChar)':');
+        stringBuilder.append(it->second.characters(), it->second.length());
+        stringBuilder.append((UChar)'\n');
+    }
+    
+    String headers = String::adopt(stringBuilder);
+    
+    SQLiteStatement resourceStatement(m_database, "INSERT INTO CacheResources (url, statusCode, responseURL, headers, data) VALUES (?, ?, ?, ?, ?)");
+    if (resourceStatement.prepare() != SQLResultOk)
+        return false;
+    
+    resourceStatement.bindText(1, resource->url());
+    resourceStatement.bindInt64(2, resource->response().httpStatusCode());
+    resourceStatement.bindText(3, resource->response().url());
+    resourceStatement.bindText(4, headers);
+    resourceStatement.bindInt64(5, dataId);
+
+    if (!executeStatement(resourceStatement))
+        return false;
+
+    unsigned resourceId = (unsigned)m_database.lastInsertRowID();
+    
+    // Finally, insert the cache entry
+    SQLiteStatement entryStatement(m_database, "INSERT INTO CacheEntries (cache, type, resource) VALUES (?, ?, ?)");
+    if (entryStatement.prepare() != SQLResultOk)
+        return false;
+    
+    entryStatement.bindInt64(1, cacheStorageID);
+    entryStatement.bindInt64(2, resource->type());
+    entryStatement.bindInt64(3, resourceId);
+    
+    if (!executeStatement(entryStatement))
+        return false;
+    
+    return true;
+}
+
+void ApplicationCacheStorage::store(ApplicationCacheResource* resource, ApplicationCache* cache)
+{
+    ASSERT(cache->storageID());
+    
+    openDatabase(true);
+ 
+    SQLiteTransaction storeResourceTransaction(m_database);
+    storeResourceTransaction.begin();
+    
+    if (!store(resource, cache->storageID()))
+        return;
+    
+    storeResourceTransaction.commit();
+}
+
+void ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group)
+{
+    openDatabase(true);
+    
+    SQLiteTransaction storeCacheTransaction(m_database);
+    
+    storeCacheTransaction.begin();
+    
+    if (!group->storageID()) {
+        // Store the group
+        if (!store(group))
+            return;
+    }
+    
+    ASSERT(group->newestCache());
+    ASSERT(!group->newestCache()->storageID());
+    
+    // Store the newest cache
+    if (!store(group->newestCache()))
+        return;
+    
+    // Update the newest cache in the group.
+    
+    SQLiteStatement statement(m_database, "UPDATE CacheGroups SET newestCache=? WHERE id=?");
+    if (statement.prepare() != SQLResultOk)
+        return;
+    
+    statement.bindInt64(1, group->newestCache()->storageID());
+    statement.bindInt64(2, group->storageID());
+    
+    if (!executeStatement(statement))
+        return;
+    
+    storeCacheTransaction.commit();
 }
 
 ApplicationCacheStorage& cacheStorage()

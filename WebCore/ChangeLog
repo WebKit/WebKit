@@ -1,3 +1,63 @@
+2008-05-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Store cache to the database.
+
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::addResource):
+        If the cache has been saved to disk, save the resource as well.
+        
+        * loader/appcache/ApplicationCache.h:
+        (WebCore::ApplicationCache::onlineWhitelist):
+        New method which returns the online whitelist.
+
+        (WebCore::ApplicationCache::setStorageId):
+        (WebCore::ApplicationCache::storageId):
+        Setter/getter for the application cache storage ID.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        Save the cache/group to disk.
+        
+        * loader/appcache/ApplicationCacheGroup.h:
+        (WebCore::ApplicationCacheGroup::setStorageID):
+        (WebCore::ApplicationCacheGroup::storageID):
+        Setter/getter for the application cache group storage ID.
+        
+        * loader/appcache/ApplicationCacheResource.cpp:
+        (WebCore::ApplicationCacheResource::addType):
+        We can't add a new type if the resource has been saved to disk.
+        
+        * loader/appcache/ApplicationCacheResource.h:
+        (WebCore::ApplicationCacheResource::setStorageID):
+        (WebCore::ApplicationCacheResource::storageID):
+        Setter/getter for the application cache resource storage ID.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::executeSQLCommand):
+        New method for executing SQL and logging any errors.
+        
+        (WebCore::ApplicationCacheStorage::openDatabase):
+        Create new tables.
+        
+        (WebCore::ApplicationCacheStorage::executeStatement):
+        New method for executing an SQL statement and logging any errors.
+        
+        (WebCore::ApplicationCacheStorage::store):
+        New methods for storing a cache group, cache and cache resource to the store.
+
+        (WebCore::ApplicationCacheStorage::storeNewestCache):
+        New method which stores the newest cache and updates the newest cache field in the cache group.
+        
+        * loader/appcache/ApplicationCacheStorage.h:
+        Add new methods.
+        
+        * platform/sql/SQLiteStatement.h:
+        (WebCore::SQLiteStatement::query):
+        Getter for the SQL query.
+
 2008-05-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler

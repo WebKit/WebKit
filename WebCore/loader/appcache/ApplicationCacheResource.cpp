@@ -33,7 +33,14 @@ namespace WebCore {
 ApplicationCacheResource::ApplicationCacheResource(const KURL& url, const ResourceResponse& response, unsigned type, PassRefPtr<SharedBuffer> data)
     : SubstituteResource(url, response, data)
     , m_type(type)
+    , m_storageID(0)
 {
+}
+
+void ApplicationCacheResource::addType(unsigned type) 
+{ 
+    ASSERT(!m_storageID);
+    m_type |= type; 
 }
 
 #ifndef NDEBUG

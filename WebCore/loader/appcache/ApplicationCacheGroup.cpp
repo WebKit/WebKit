@@ -49,6 +49,7 @@ ApplicationCacheGroup::ApplicationCacheGroup(const KURL& manifestURL)
     , m_status(Idle)
     , m_newestCache(0)
     , m_frame(0)
+    , m_storageID(0)
 {
 }
 
@@ -261,6 +262,9 @@ void ApplicationCacheGroup::setNewestCache(PassRefPtr<ApplicationCache> newestCa
     m_newestCache = newestCache; 
     m_caches.add(m_newestCache.get());
     m_newestCache->setGroup(this);
+
+    // Store the cache 
+    cacheStorage().storeNewestCache(this);
 }
 
 void ApplicationCacheGroup::update(Frame* frame)

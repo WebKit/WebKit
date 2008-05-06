@@ -36,7 +36,9 @@
 
 namespace WebCore {
 
+class ApplicationCache;
 class ApplicationCacheGroup;
+class ApplicationCacheResource;
 class KURL;
     
 class ApplicationCacheStorage {
@@ -47,10 +49,20 @@ public:
 
     ApplicationCacheGroup* findOrCreateCacheGroup(const KURL& manifestURL);
     void cacheGroupDestroyed(ApplicationCacheGroup*);
-    
-private:
-    void openDatabase(bool createIfDoesNotExist);
+        
+    void storeNewestCache(ApplicationCacheGroup*);
+    void store(ApplicationCacheResource*, ApplicationCache*);
 
+private:
+    bool store(ApplicationCacheGroup*);
+    bool store(ApplicationCache*);
+    bool store(ApplicationCacheResource*, unsigned cacheStorageID);
+
+    void openDatabase(bool createIfDoesNotExist);
+    
+    bool executeStatement(SQLiteStatement&);
+    bool executeSQLCommand(const String&);
+    
     String m_cacheDirectory;
 
     SQLiteDatabase m_database;
@@ -60,7 +72,7 @@ private:
     HashCountedSet<unsigned, AlreadyHashed> m_cacheHostSet;
     
     typedef HashMap<String, ApplicationCacheGroup*> CacheGroupMap;
-    CacheGroupMap m_cachesInMemory;    
+    CacheGroupMap m_cachesInMemory;
 };
  
 ApplicationCacheStorage& cacheStorage();
