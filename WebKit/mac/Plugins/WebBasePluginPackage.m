@@ -451,8 +451,8 @@ static inline void swapIntsInHeader(uint8_t* bytes, unsigned length)
             if (magic == FAT_CIGAM)
                 swapIntsInHeader(bytes.data(), bytes.size());
             
-            archs = (struct fat_arch*)(bytes.size() + sizeof(struct fat_header));            
-            numArchs = ((struct fat_header *)bytes.size())->nfat_arch;
+            archs = (struct fat_arch*)(bytes.data() + sizeof(struct fat_header));            
+            numArchs = ((struct fat_header *)bytes.data())->nfat_arch;
             
             unsigned maxArchs = (bytes.size() - sizeof(struct fat_header)) / sizeof(struct fat_arch);
             if (numArchs > maxArchs)
