@@ -1,5 +1,12 @@
 2008-05-06  Brady Eidson  <beidson@apple.com>
 
+        Rubberstamped by Mitz Pettel RTL
+
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::fullDatabaseFilename): Filename extensions for localstorage = all lowercase
+
+2008-05-06  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin, Sam Weinig, and Anders
 
         Preparation for upcoming work making LocalStorage persistent.
