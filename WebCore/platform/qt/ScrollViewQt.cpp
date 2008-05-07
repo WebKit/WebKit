@@ -46,6 +46,8 @@
 #include <QDebug>
 #include <QWidget>
 #include <QPainter>
+#include <QApplication>
+#include <QPalette>
 
 #ifdef Q_WS_MAC
 #include <Carbon/Carbon.h>
@@ -637,6 +639,19 @@ void ScrollView::removeChild(Widget* child)
     m_data->m_children.remove(child);
 }
 
+static void drawScrollbarCorner(GraphicsContext* context, const IntRect& rect)
+{
+#if QT_VERSION < 0x040500
+    context->fillRect(rect, QApplication::palette().color(QPalette::Normal, QPalette::Window));
+#else
+    QStyleOption option;
+    option.rect = rect;
+    QApplication::style()->drawPrimitive(QStyle::PE_PanelScrollAreaCorner,
+            &option, context->platformContext(), 0);
+#endif
+}
+
+
 void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 {
     // FIXME: This code is here so we don't have to fork FrameView.h/.cpp.
@@ -675,7 +690,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
         if (m_data->m_vBar)
             m_data->m_vBar->paint(context, scrollViewDirtyRect);
 
-        // Fill the scroll corner with white.
+        // Fill the scroll corners using the current Qt style
         IntRect hCorner;
         if (m_data->m_hBar && width() - m_data->m_hBar->width() > 0) {
             hCorner = IntRect(m_data->m_hBar->width(),
@@ -683,7 +698,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
                               width() - m_data->m_hBar->width(),
                               m_data->m_hBar->height());
             if (hCorner.intersects(scrollViewDirtyRect))
-                context->fillRect(hCorner, Color::white);
+                drawScrollbarCorner(context, hCorner);
         }
 
         if (m_data->m_vBar && height() - m_data->m_vBar->height() > 0) {
@@ -692,7 +707,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
                             m_data->m_vBar->width(),
                             height() - m_data->m_vBar->height());
             if (vCorner != hCorner && vCorner.intersects(scrollViewDirtyRect))
-                context->fillRect(vCorner, Color::white);
+                drawScrollbarCorner(context, vCorner);
         }
 
         context->restore();

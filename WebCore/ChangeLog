@@ -1,3 +1,15 @@
+2008-05-07  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon
+
+        Draw scrollview corners (between scrollbars) using the Qt style.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18894
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::drawScrollbarCorner):
+        (WebCore::ScrollView::paint):
+
 2008-05-07  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build, added AccessibilityListBox and ListBoxOption.cpp to
