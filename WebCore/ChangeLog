@@ -2,7 +2,7 @@
 
         Reviewed by Brady.
 
-        Support reading back app caches from the datbase.
+        Support reading back app caches from the database.
     
         * loader/appcache/ApplicationCache.cpp:
         (WebCore::ApplicationCache::ApplicationCache):
