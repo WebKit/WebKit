@@ -1,5 +1,25 @@
 2008-05-07  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by John.
+
+        When no document loaders are associated with an application cache group,
+        release the reference to the newest cache group. This prevents reference cycles.
+        
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::ApplicationCacheGroup):
+        (WebCore::ApplicationCacheGroup::documentLoaderDestroyed):
+        (WebCore::ApplicationCacheGroup::cacheDestroyed):
+        * loader/appcache/ApplicationCacheGroup.h:
+        
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL):
+        Return early if the datbase wasn't open.
+        
+        (WebCore::ApplicationCacheStorage::loadCache):
+        Add error.
+
+2008-05-07  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam.
 
         Don't put pages with an application cache in the BF cache.

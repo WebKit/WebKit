@@ -47,7 +47,7 @@ namespace WebCore {
 ApplicationCacheGroup::ApplicationCacheGroup(const KURL& manifestURL)
     : m_manifestURL(manifestURL)
     , m_status(Idle)
-    , m_newestCache(0)
+    , m_savedNewestCachePointer(0)
     , m_frame(0)
     , m_storageID(0)
 {
@@ -237,9 +237,12 @@ void ApplicationCacheGroup::documentLoaderDestroyed(DocumentLoader* loader)
         // We should only have the newest cache remaining.
         ASSERT(m_caches.size() == 1);
         ASSERT(m_caches.contains(m_newestCache.get()));
-
-        // This should cause us to be deleted.
-        m_newestCache = 0;        
+        
+        // Release our reference to the newest cache.
+        m_savedNewestCachePointer = m_newestCache.get();
+        
+        // This could cause us to be deleted.
+        m_newestCache = 0;
     }    
 }    
 
@@ -249,7 +252,7 @@ void ApplicationCacheGroup::cacheDestroyed(ApplicationCache* cache)
     
     m_caches.remove(cache);
     
-    if (cache != newestCache())
+    if (cache != m_savedNewestCachePointer)
         cacheStorage().remove(cache);
 
     if (m_caches.isEmpty())

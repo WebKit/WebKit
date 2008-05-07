@@ -104,6 +104,9 @@ private:
     // This is the newest cache in the group.
     RefPtr<ApplicationCache> m_newestCache;
     
+    // During tear-down we save the pointer to the newest cache to prevent reference cycles.
+    ApplicationCache* m_savedNewestCachePointer;
+    
     // The caches in this cache group.
     HashSet<ApplicationCache*> m_caches;
     
