@@ -1,3 +1,23 @@
+2008-05-07  David Kilzer  <ddkilzer@apple.com>
+
+        Use File::Find and Getopt::Long in make-js-test-wrappers
+
+        Reviewed by Darin.
+
+        * Scripts/make-js-test-wrappers:
+        - Updated Apple copyright statement.
+        - Added command-line switch parsing and -h|--help switch.
+        - Allowed user to pass list of files/directories on which to do
+          a restricted search for TEMPLATE.html files.  The default
+          behavior is still to search the entire LayoutTests directory.
+        - Removed duplicate 'use strict' statement.
+        - Replaced use of `find` statements with File::Find::find().
+        - Remove unneeded chomp() calls now that we use File::Find.
+        (directoryFilter): Added.  Filters .svn directories when used
+        with File::Find::find().
+        (findTemplateFiles): Added.  Returns a list of TEMPLATE.html
+        files found.
+
 2008-05-05  Steve Falkenburg  <sfalken@apple.com>
 
         Copy dependencies of ImageDiff, DumpRenderTree in post-build step.

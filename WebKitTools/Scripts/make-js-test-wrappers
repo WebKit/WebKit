@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,22 +29,37 @@
 # Script to generate HTML wrappers for JavaScript tests from templates
 
 use strict;
+
 use FindBin;
 use lib $FindBin::Bin;
+
+use File::Basename;
+use File::Find;
+use Getopt::Long;
 use webkitdirs;
+
+sub directoryFilter;
+sub findTemplateFiles(@);
+
+my $showHelp;
+
+my $result = GetOptions(
+    "help"       => \$showHelp,
+);
+
+if (!$result || $showHelp) {
+    print STDERR basename($0) . " [-h|--help] [path ...]\n";
+    exit 1;
+}
 
 setConfiguration();
 my $productDir = productDir();
 
-use strict;
-
 chdirWebKit();
 
-my @templates = `find LayoutTests -name "TEMPLATE.html"`;
+my @templates = findTemplateFiles(@ARGV);
 
 for my $tfile (@templates) {
-
-    chomp $tfile;
 
     my $tpath = $tfile;
     $tpath =~ s:/resources/TEMPLATE.html$::;
@@ -54,7 +69,11 @@ for my $tfile (@templates) {
     chdirWebKit();
     chdir($tpath);
 
-    my @files = `find resources -name "*.js"`;
+    my @files;
+    my $fileFilter = sub {
+        push @files, $File::Find::name if substr($_, -3) eq ".js";
+    };
+    find({ preprocess => \&directoryFilter, wanted => $fileFilter }, "resources");
 
     open TEMPLATE, "<resources/TEMPLATE.html";
     my $template = do { local $/; <TEMPLATE> };
@@ -68,7 +87,6 @@ for my $tfile (@templates) {
     }
 
     for my $file (@files) {
-        chomp $file;
         next if $file =~ /js-test-.*\.js$/;
         next if $file =~ /SVGTestCase\.js/;
         next if $file =~ m:resources/attr-case-sensitivity\.js$:;
@@ -100,4 +118,29 @@ for my $tfile (@templates) {
         
         close HTML;
     }
+}
+
+exit 0;
+
+sub directoryFilter
+{
+    return () if basename($File::Find::dir) eq ".svn";
+    return @_;
+}
+
+sub findTemplateFiles(@) {
+    my @args = @_;
+    my @templateFiles;
+
+    push @args, "LayoutTests" if scalar(@args) == 0;
+
+    my @paths = map { -f $_ ? dirname($_) : $_ } @args;
+
+    my $fileFilter = sub {
+        push @templateFiles, $File::Find::name if $_ eq "TEMPLATE.html";
+    };
+
+    find({ preprocess => \&directoryFilter, wanted => $fileFilter }, @paths);
+
+    return @templateFiles;
 }
