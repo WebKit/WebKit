@@ -1,3 +1,12 @@
+2008-05-06  Alp Toker  <alp@nuanti.com>
+
+        Partial GTK+ build fix. Add files from r32925 to the build and replace
+        'nil' return with 0.
+
+        * GNUmakefile.am:
+        * page/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::parentObject):
+
 2008-05-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

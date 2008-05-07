@@ -830,6 +830,8 @@ webcore_sources += \
 	WebCore/loader/SubresourceLoader.cpp \
 	WebCore/loader/TextDocument.cpp \
 	WebCore/loader/TextResourceDecoder.cpp \
+	WebCore/page/AccessibilityListBox.cpp \
+	WebCore/page/AccessibilityListBoxOption.cpp \
 	WebCore/page/AccessibilityObject.cpp \
 	WebCore/page/AccessibilityRenderObject.cpp \
 	WebCore/page/AnimationController.cpp \

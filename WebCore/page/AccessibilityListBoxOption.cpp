@@ -133,7 +133,7 @@ AccessibilityObject* AccessibilityListBoxOption::parentObject() const
 {
     HTMLSelectElement* parentNode = listBoxOptionParentNode();
     if (!parentNode)
-        return nil;
+        return 0;
     
     return m_optionElement->document()->axObjectCache()->get(parentNode->renderer());
 }
