@@ -85,6 +85,11 @@ String pathByAppendingComponent(const String& path, const String& component)
     return QDir(path).filePath(component);
 }
 
+String homeDirectoryPath()
+{
+    return QDir::homePath();
+}
+
 String pathGetFileName(const String& path)
 {
     return QFileInfo(path).fileName();

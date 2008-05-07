@@ -264,4 +264,62 @@ void PluginDatabase::remove(PluginPackage* package)
     m_pluginsByPath.remove(package->path());
 }
 
+#if PLATFORM(GTK) || (PLATFORM(QT) && defined(Q_WS_X11))
+
+#if PLATFORM(GTK)
+#include <gdkconfig.h>
+#endif
+
+static void addMozillaPluginDirectories(Vector<String>& paths)
+{
+#if PLATFORM(QT) || defined(GDK_WINDOWING_X11)
+    String userPluginPath = homeDirectoryPath();
+    userPluginPath.append(String(".mozilla/plugins"));
+    paths.append(userPluginPath);
+
+    paths.append("/usr/lib/browser/plugins");
+    paths.append("/usr/local/lib/mozilla/plugins");
+    paths.append("/usr/lib/mozilla/plugins");
+
+    Vector<String> mozPaths;
+    String mozPath(getenv("MOZ_PLUGIN_PATH"));
+    mozPath.split(UChar(':'), /* allowEmptyEntries */ false, mozPaths);
+    paths.append(mozPaths);
+#endif
+
+#if defined(GDK_WINDOWING_WIN32)
+    gchar* directory = g_build_filename(g_get_home_dir(), "Application Data", "Mozilla", "plugins", NULL);
+    paths.append(directory);
+    g_free(directory);
+#endif
+}
+
+Vector<String> PluginDatabase::defaultPluginDirectories()
+{
+    Vector<String> paths;
+
+#if PLATFORM(QT)
+    Vector<String> qtPaths;
+    String qtPath(getenv("QTWEBKIT_PLUGIN_PATH"));
+    qtPath.split(UChar(':'), /* allowEmptyEntries */ false, qtPaths);
+    paths.append(qtPaths);
+#endif
+
+    addMozillaPluginDirectories(paths);
+
+    return paths;
+}
+
+#if PLATFORM(QT) || defined(GDK_WINDOWING_X11)
+bool PluginDatabase::isPreferredPluginDirectory(const String& path)
+{
+    String prefPath = homeDirectoryPath();
+    prefPath.append(String(".mozilla/plugins"));
+
+    return path == prefPath;
+}
+#endif
+
+#endif
+
 }

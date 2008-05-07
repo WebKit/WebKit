@@ -1,3 +1,19 @@
+2008-05-07  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Share the plug-in directories between Gtk and Qt/X11 port.
+
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::homeDirectoryPath): Implement it for Qt.
+        * plugins/PluginDatabase.cpp:
+        (WebCore::addMozillaPluginDirectories): Shared code.
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+        (WebCore::PluginDatabase::isPreferredPluginDirectory): Shared code.
+        * plugins/gtk/PluginDatabaseGtk.cpp:
+        (WebCore::PluginDatabase::isPreferredPluginDirectory): Refactored.
+        * plugins/qt/PluginDatabaseQt.cpp: Refactored.
+
 2008-05-07  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon

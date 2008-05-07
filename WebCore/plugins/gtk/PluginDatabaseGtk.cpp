@@ -56,46 +56,7 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
     }
 }
 
-Vector<String> PluginDatabase::defaultPluginDirectories()
-{
-    Vector<String> directories;
-    gchar* directory;
-
-    directory = 0;
-
-#if defined(GDK_WINDOWING_X11)
-    directory = g_build_filename(g_get_home_dir(), ".mozilla", "plugins", NULL);
-    directories.append(directory);
-    g_free(directory);
-
-    const gchar* mozPath = g_getenv("MOZ_PLUGIN_PATH");
-    if (mozPath) {
-        gchar** pluginPaths = g_strsplit(mozPath, ":", -1);
-
-        for (gint i = 0; pluginPaths[i]; i++)
-            directories.append(pluginPaths[i]);
-
-        g_strfreev(pluginPaths);
-    }
-
-    directory = g_build_filename(G_DIR_SEPARATOR_S "usr", "lib", "browser", "plugins", NULL);
-    directories.append(directory);
-    g_free(directory);
-    directory = g_build_filename(G_DIR_SEPARATOR_S "usr", "local", "lib", "mozilla", "plugins", NULL);
-    directories.append(directory);
-    g_free (directory);
-    directory = g_build_filename(G_DIR_SEPARATOR_S "usr", "lib", "mozilla", "plugins", NULL);
-    directories.append(directory);
-    g_free (directory);
-#elif defined(GDK_WINDOWING_WIN32)
-    directory = g_build_filename(g_get_home_dir(), "Application Data", "Mozilla", "plugins", NULL);
-    directories.append(directory);
-    g_free(directory);
-#endif
-
-    return directories;
-}
-
+#if defined(GDK_WINDOWING_WIN32)
 bool PluginDatabase::isPreferredPluginDirectory(const String& directory)
 {
     gchar* homePath;
@@ -103,11 +64,7 @@ bool PluginDatabase::isPreferredPluginDirectory(const String& directory)
 
     homePath = 0;
 
-#if defined(GDK_WINDOWING_X11)
-    homePath = g_build_filename(g_get_home_dir(), ".mozilla", "plugins", NULL);
-#elif defined(GDK_WINDOWING_WIN32)
     homePath = g_build_filename(g_get_home_dir(), "Application Data", "Mozilla", "plugins", NULL);
-#endif
 
     if (homePath)
     retval = (strcmp(homePath, (directory.utf8()).data()) == 0);

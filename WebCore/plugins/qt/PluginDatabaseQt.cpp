@@ -58,45 +58,4 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
     }
 }
 
-static void addQtWebKitPluginDirectories(Vector<String>& paths)
-{
-    QString qtPath(getenv("QTWEBKIT_PLUGIN_PATH"));
-    QStringList qtPaths = qtPath.split(":", QString::SkipEmptyParts);
-    for(int i = 0; i < qtPaths.size(); i++) {
-        paths.append(qtPaths.at(i));
-    }
-}
-
-static void addMozillaPluginDirectories(Vector<String>& paths)
-{
-    QDir path = QDir::home(); path.cd(".mozilla/plugins"); 
-    paths.append(path.absolutePath());
-    paths.append("/usr/lib/browser/plugins");
-    paths.append("/usr/local/lib/mozilla/plugins");
-    paths.append("/usr/lib/mozilla/plugins");
-    
-    QString mozPath(getenv("MOZ_PLUGIN_PATH"));
-    QStringList mozPaths = mozPath.split(":", QString::SkipEmptyParts);
-    for(int i = 0; i < mozPaths.size(); i++) {
-        paths.append(mozPaths.at(i));
-    }
-}
-
-Vector<String> PluginDatabase::defaultPluginDirectories()
-{
-    Vector<String> paths;
-
-    addQtWebKitPluginDirectories(paths);
-    addMozillaPluginDirectories(paths);
-
-    return paths;
-}
-
-bool PluginDatabase::isPreferredPluginDirectory(const String& path)
-{
-    QDir prefPath = QDir::home();
-    prefPath.cd(".mozilla/plugins");
-    return (path == prefPath.absolutePath());
-}
-
 }
