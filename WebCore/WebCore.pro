@@ -84,6 +84,9 @@ qt-port: !contains(DEFINES, ENABLE_SVG_USE=.): DEFINES += ENABLE_SVG_USE=1
 gtk-port:DEFINES += ENABLE_SVG=0
 qt-port:contains(QT_CONFIG, phonon):DEFINES += ENABLE_VIDEO=1
 else:DEFINES += ENABLE_VIDEO=0
+qt-port:unix:!mac: DEFINES += XP_UNIX ENABLE_NETSCAPE_PLUGIN_API=1
+gtk-port:x11:plugins: DEFINES += XP_UNIX ENABLE_NETSCAPE_PLUGIN_API=1
+qt-port: DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1
 
 DEFINES += WTF_CHANGES=1
 
@@ -125,38 +128,29 @@ include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 #LIBS += -L$$OUTPUT_DIR/lib -lJavaScriptCore
 
 qt-port {
-    unix {
-        DEFINES += XP_UNIX
-    }
-	DEFINES += ENABLE_NETSCAPE_PLUGIN_API=1
+    RESOURCES += \
+        $$PWD/../WebCore/page/inspector/WebKit.qrc \
+        $$PWD/../WebCore/Resources/WebKitResources.qrc
+    INCLUDEPATH += \
+        $$PWD/platform/qt \
+        $$PWD/platform/network/qt \
+        $$PWD/platform/graphics/qt \
+        $$PWD/svg/graphics/qt \
+        $$PWD/loader/qt \
+        $$PWD/page/qt \
+        $$PWD/../WebKit/qt/WebCoreSupport \
+        $$PWD/../WebKit/qt/Api \
+        $$PWD/bridge/qt
 
-RESOURCES += \
-            $$PWD/../WebCore/page/inspector/WebKit.qrc \
-            $$PWD/../WebCore/Resources/WebKitResources.qrc
-INCLUDEPATH += \
-                $$PWD/platform/qt \
-                $$PWD/platform/network/qt \
-                $$PWD/platform/graphics/qt \
-                $$PWD/svg/graphics/qt \
-                $$PWD/loader/qt \
-                $$PWD/page/qt \
-                $$PWD/../WebKit/qt/WebCoreSupport \
-                $$PWD/../WebKit/qt/Api \
-                $$PWD/bridge/qt
+    DEPENDPATH += editing/qt history/qt loader/qt page/qt \
+        platform/graphics/qt ../WebKit/qt/Api ../WebKit/qt/WebCoreSupport
 
-DEPENDPATH += editing/qt history/qt loader/qt page/qt \
-    platform/graphics/qt ../WebKit/qt/Api ../WebKit/qt/WebCoreSupport
-
-    DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1
 }
 
 gtk-port {
     hildon {
         DEFINES += MAEMO_CHANGES
         PKGCONFIG += hildon-1
-    }
-    x11:plugins {
-        DEFINES += XP_UNIX
     }
 
     INCLUDEPATH += \
@@ -1047,7 +1041,6 @@ qt-port {
     platform/qt/WheelEventQt.cpp \
     platform/qt/WidgetQt.cpp \
     plugins/qt/PluginDataQt.cpp \
-    plugins/qt/PluginPackageQt.cpp \
     ../WebKit/qt/WebCoreSupport/ChromeClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/ContextMenuClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/DragClientQt.cpp \
@@ -1063,12 +1056,8 @@ qt-port {
     ../WebKit/qt/Api/qwebhistoryinterface.cpp \
     ../WebKit/qt/Api/qwebpluginfactory.cpp
 
-    unix: {
-        SOURCES += platform/qt/SystemTimeQt.cpp \
-                   plugins/qt/PluginDatabaseQt.cpp \
-                   plugins/qt/PluginViewQt.cpp
-    }
-    else: SOURCES += platform/win/SystemTimeWin.cpp
+    win32-*: SOURCES += platform/win/SystemTimeWin.cpp
+    else: SOURCES += platform/qt/SystemTimeQt.cpp
 
     # Files belonging to the Qt 4.3 build
     lessThan(QT_MINOR_VERSION, 4) {
@@ -1086,7 +1075,6 @@ qt-port {
 }
 
 gtk-port {
-    INCLUDEPATH += ../WebCore/plugins/gtk
     HEADERS += \
         ../WebCore/platform/gtk/ClipboardGtk.h \
         ../WebCore/platform/gtk/PasteboardHelper.h \
@@ -1185,6 +1173,22 @@ gtk-port {
         ../WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp \
         ../WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.cpp
+}
+
+
+contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
+    qt-port {
+        unix:!mac {
+            SOURCES += \
+                plugins/qt/PluginPackageQt.cpp \
+                plugins/qt/PluginDatabaseQt.cpp \
+                plugins/qt/PluginViewQt.cpp
+        }
+    }
+
+    gtk-port {
+        INCLUDEPATH += ../WebCore/plugins/gtk
+    }
 }
 
 contains(DEFINES, ENABLE_CROSS_DOCUMENT_MESSAGING=1) {
@@ -1327,6 +1331,10 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         qtAddLibrary(phonon)
         INCLUDEPATH -= $$QMAKE_INCDIR_QT/phonon
         INCLUDEPATH += $$QMAKE_INCDIR_QT/phonon
+        mac {
+            INCLUDEPATH -= $$QMAKE_LIBDIR_QT/phonon.framework/Headers
+            INCLUDEPATH += $$QMAKE_LIBDIR_QT/phonon.framework/Headers
+        }
     }
 
     gtk-port {

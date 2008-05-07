@@ -94,6 +94,10 @@ void PluginView::handleMouseEvent(MouseEvent*) { notImplemented(); }
 NPError PluginView::handlePostReadFile(Vector<char>&, uint32, const char*) { notImplemented(); return NPERR_GENERIC_ERROR; }
 NPError PluginView::getValue(NPNVariable, void*) { notImplemented(); return NPERR_GENERIC_ERROR; }
 PluginView::~PluginView() {}
+bool PluginPackage::fetchInfo() { notImplemented(); return false; }
+unsigned PluginPackage::hash() const { notImplemented(); return 0; }
+bool PluginPackage::equal(const PluginPackage&, const PluginPackage&) { notImplemented(); return false; }
+int PluginPackage::compareFileVersion(const PlatformModuleVersion&) const { notImplemented(); return -1; }
 #endif
 
 namespace WebCore {
