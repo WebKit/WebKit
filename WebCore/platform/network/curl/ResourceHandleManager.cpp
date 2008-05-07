@@ -31,7 +31,6 @@
 #include "ResourceHandleManager.h"
 
 #include "CString.h"
-#include "FileSystem.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "ResourceError.h"
@@ -212,58 +211,14 @@ size_t readCallback(void* ptr, size_t size, size_t nmemb, void* data)
     if (d->m_cancelled)
         return 0;
 
-    size_t sent = 0;
-    size_t toSend = size * nmemb;
-    if (!toSend)
+    if (!size || !nmemb)
         return 0;
 
-    Vector<FormDataElement> elements;
-    if (job->request().httpBody())
-        elements = job->request().httpBody()->elements();
+    size_t sent = d->m_formDataStream.read(ptr, size, nmemb);
 
-    if (d->m_formDataElementIndex >= elements.size())
-        return 0;
-
-    FormDataElement element = elements[d->m_formDataElementIndex];
-
-    if (element.m_type == FormDataElement::encodedFile) {
-        if (!d->m_file)
-            d->m_file = fopen(element.m_filename.utf8().data(), "rb");
-
-        if (!d->m_file) {
-            // FIXME: show a user error?
-#ifndef NDEBUG
-            printf("Failed while trying to open %s for upload\n", element.m_filename.utf8().data());
-#endif
-            job->cancel();
-            return 0;
-        }
-
-        sent = fread(ptr, size, nmemb, d->m_file);
-        if (!size && ferror(d->m_file)) {
-            // FIXME: show a user error?
-#ifndef NDEBUG
-            printf("Failed while trying to read %s for upload\n", element.m_filename.utf8().data());
-#endif
-            job->cancel();
-            return 0;
-        }
-        if (feof(d->m_file)) {
-            fclose(d->m_file);
-            d->m_file = 0;
-            d->m_formDataElementIndex++;
-        }
-    } else {
-        size_t elementSize = element.m_data.size() - d->m_formDataElementDataOffset;
-        sent = elementSize > toSend ? toSend : elementSize;
-        memcpy(ptr, element.m_data.data() + d->m_formDataElementDataOffset, sent);
-        if (elementSize > sent)
-            d->m_formDataElementDataOffset += sent;
-        else {
-            d->m_formDataElementDataOffset = 0;
-            d->m_formDataElementIndex++;
-        }
-    }
+    // Something went wrong so cancel the job.
+    if (!sent)
+        job->cancel();
 
     return sent;
 }

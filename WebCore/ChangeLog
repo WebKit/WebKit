@@ -1,3 +1,29 @@
+2008-05-07  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric.
+
+        Bug 17971: [Curl] FormData processing should be moved to its own class
+
+        Move FormData treatment into FormDataStream. The aim is to have FormDataStream behave like a stream that cURL
+        could manipulate.
+
+        First step into having complete file uploading facility in cURL.
+
+        No test case as it is only code refactoring.
+
+        * GNUmakefile.am: Add FormDataStreamCurl.cpp
+        * platform/network/ResourceHandleInternal.h: Move code to FormStreamDataCurl.h
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/curl/FormDataStreamCurl.cpp: Added.
+        (WebCore::FormDataStream::~FormDataStream):
+        (WebCore::FormDataStream::read):
+        * platform/network/curl/FormDataStreamCurl.h: Added.
+        (WebCore::FormDataStream::FormDataStream):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::readCallback): Move code to FormDataStreamCurl.cpp
+
 2008-05-07  Adam Treat  <treat@kde.org>
 
         Reviewed by Simon.
