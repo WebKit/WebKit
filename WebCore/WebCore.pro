@@ -773,6 +773,8 @@ SOURCES += \
     loader/TextDocument.cpp \
     loader/TextResourceDecoder.cpp \
     page/AccessibilityObject.cpp \    
+    page/AccessibilityListBox.cpp \    
+    page/AccessibilityListBoxOption.cpp \    
     page/AccessibilityRenderObject.cpp \    
     page/AnimationController.cpp \    
     page/AXObjectCache.cpp \

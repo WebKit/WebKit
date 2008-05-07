@@ -1,3 +1,10 @@
+2008-05-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build, added AccessibilityListBox and ListBoxOption.cpp to
+        the build.
+
+        * WebCore.pro:
+
 2008-05-07  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Rubber-stamped by Holger.
