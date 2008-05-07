@@ -1,3 +1,11 @@
+2008-05-07  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon
+
+        Add ~250 tests that fail to the skipped list so we have a sane baseline.
+
+        * platform/qt/Skipped:
+
 2008-05-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
