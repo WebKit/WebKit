@@ -1,5 +1,14 @@
 2008-05-07  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
+        Rubber-stamped by Holger.
+
+        Fix building without storage support.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::closeLocalStorage): proper #if
+
+2008-05-07  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
         Rubber-stamped by Oliver Hunt.
 
         Fix building without accessibility.
