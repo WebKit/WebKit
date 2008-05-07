@@ -27,7 +27,6 @@
 
 #include "config.h"
 
-#include <cstdint>
 #include "FileSystem.h"
 #include "ResourceHandle.h"
 

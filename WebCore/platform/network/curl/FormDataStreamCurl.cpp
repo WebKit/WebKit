@@ -28,6 +28,16 @@
  */
 
 #include "config.h"
+
+// We need to define __STDC_LIMIT_MACROS to define SIZE_MAX.
+#ifndef __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS
+#include <stdint.h>
+#undef __STDC_LIMIT_MACROS
+#else
+#include <stdint.h>
+#endif
+
 #include "FormDataStreamCurl.h"
 
 #include "CString.h"

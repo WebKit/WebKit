@@ -1,3 +1,15 @@
+2008-05-07  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        wx & Gtk build fix.
+
+        * platform/network/curl/FormDataStreamCurl.cpp: Added stdint.h include. We need to define
+        __STDC_LIMIT_MACROS to have SIZE_MAX exported.
+        * platform/network/curl/FormDataStreamCurl.h: Removed cstdint include (replaced by stdint.h)
+        as it is not present on the build bots.
+        * plugins/gtk/PluginDatabaseGtk.cpp: Added missing #endif.
+
 2008-05-07  David Kilzer  <ddkilzer@apple.com>
 
         Bug 18900: Password field has focus but can't type text (i.rememberthemilk.com)

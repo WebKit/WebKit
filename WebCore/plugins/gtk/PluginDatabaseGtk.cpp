@@ -71,5 +71,5 @@ bool PluginDatabase::isPreferredPluginDirectory(const String& directory)
 
     return retval;
 }
-
+#endif
 }

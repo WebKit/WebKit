@@ -1,3 +1,13 @@
+2008-05-07  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        wx & Gtk build fix.
+
+        Add SIZE_MAX definition for the wx port.
+
+        * os-win32/stdint.h:
+
 2008-05-07  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
