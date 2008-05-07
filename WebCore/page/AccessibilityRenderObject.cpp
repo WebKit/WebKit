@@ -54,6 +54,7 @@
 #include "NodeList.h"
 #include "NotImplemented.h"
 #include "Page.h"
+#include "RenderFileUploadControl.h"
 #include "RenderImage.h"
 #include "RenderListBox.h"
 #include "RenderListMarker.h"
@@ -226,6 +227,16 @@ bool AccessibilityRenderObject::isCheckboxOrRadio() const
     return role == RadioButtonRole || role == CheckBoxRole;
 }    
     
+bool AccessibilityRenderObject::isFileUploadButton() const
+{
+    if (m_renderer && m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
+        return input->inputType() == HTMLInputElement::FILE;
+    }
+    
+    return false;
+}
+    
 bool AccessibilityRenderObject::isPressed() const
 {
     ASSERT(m_renderer);
@@ -359,7 +370,10 @@ Element* AccessibilityRenderObject::actionElement() const
         if (!input->disabled() && (isCheckboxOrRadio() || input->isTextButton()))
             return input;
     }
-    
+            
+    if (isFileUploadButton())
+        return static_cast<Element*>(m_renderer->element());
+            
     if (AccessibilityObject::isARIAInput(ariaRoleAttribute()))
         return static_cast<Element*>(m_renderer->element());
 
@@ -424,6 +438,11 @@ String AccessibilityRenderObject::textUnderElement() const
 {
     if (!m_renderer)
         return String();
+    
+    if (isFileUploadButton()) {
+        RenderFileUploadControl* uploadControl = static_cast<RenderFileUploadControl*>(m_renderer);
+        return uploadControl->buttonValue();
+    }
     
     Node* node = m_renderer->element();
     if (node) {
@@ -495,6 +514,11 @@ String AccessibilityRenderObject::stringValue() const
     
     if (isTextControl())
         return text();
+    
+    if (isFileUploadButton()) {
+        RenderFileUploadControl* uploadControl = static_cast<RenderFileUploadControl*>(m_renderer);
+        return uploadControl->fileTextValue();
+    }
     
     // FIXME: We might need to implement a value here for more types
     // FIXME: It would be better not to advertise a value at all for the types for which we don't implement one;
@@ -1585,6 +1609,9 @@ AccessibilityRole AccessibilityRenderObject::roleValue() const
     if (node && node->hasTagName(buttonTag))
         return ButtonRole;
 
+    if (isFileUploadButton())
+        return ButtonRole;
+    
     if (m_renderer->isMenuList())
         return PopUpButtonRole;
     

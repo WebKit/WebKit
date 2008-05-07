@@ -1,3 +1,23 @@
+2008-05-07  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Alice Liu
+
+        <rdar://problem/4867889> REGRESSION: "Choose File.." buttons are exposed as AXGroup instead of AXButton
+
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isFileUploadButton):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isFileUploadButton):
+        (WebCore::AccessibilityRenderObject::actionElement):
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+        (WebCore::AccessibilityRenderObject::stringValue):
+        (WebCore::AccessibilityRenderObject::roleValue):
+        * page/AccessibilityRenderObject.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::buttonValue):
+        (WebCore::RenderFileUploadControl::fileTextValue):
+        * rendering/RenderFileUploadControl.h:
+
 2008-05-07  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric.

@@ -73,6 +73,7 @@ public:
     virtual bool isNativeTextControl() const;
     virtual bool isWebArea() const;
     virtual bool isCheckboxOrRadio() const;
+    virtual bool isFileUploadButton() const;
     
     virtual bool isEnabled() const;
     virtual bool isSelected() const;

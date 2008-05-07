@@ -198,7 +198,8 @@ public:
     virtual bool isWebArea() const { return false; };
     virtual bool isCheckboxOrRadio() const { return false; };
     virtual bool isListBox() const { return false; };
-
+    virtual bool isFileUploadButton() const { return false; };
+    
     virtual bool isChecked() const { return false; };
     virtual bool isEnabled() const { return false; };
     virtual bool isSelected() const { return false; };
