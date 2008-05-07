@@ -180,9 +180,11 @@ void AXObjectCache::childrenChanged(RenderObject* renderer)
         obj->childrenChanged();
 }
 
+#if HAVE(ACCESSIBILITY)
 void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
 {
     postNotificationToElement(renderer, "AXSelectedChildrenChanged");
 }
+#endif
 
 } // namespace WebCore
