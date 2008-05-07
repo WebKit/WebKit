@@ -26,9 +26,17 @@
 #ifndef LocalStorageArea_h
 #define LocalStorageArea_h
 
-#include "StorageArea.h"
+#include "LocalStorageTask.h"
+#include "LocalStorageThread.h"
 
+#include "SQLiteDatabase.h"
+#include "StorageArea.h"
+#include "StringHash.h"
+#include "Timer.h"
+
+#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
     
@@ -38,9 +46,6 @@ namespace WebCore {
     public:
         static PassRefPtr<LocalStorageArea> create(SecurityOrigin* origin, LocalStorage* localStorage) { return adoptRef(new LocalStorageArea(origin, localStorage)); }
 
-        void performImport();
-        void performSync();
-
     private:
         LocalStorageArea(SecurityOrigin*, LocalStorage*);
 
@@ -48,9 +53,45 @@ namespace WebCore {
         virtual void itemRemoved(const String& key, const String& oldValue, Frame* sourceFrame);
         virtual void areaCleared(Frame* sourceFrame);
 
+        void scheduleItemForSync(const String& key, const String& value);
+        void scheduleClear();
         void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
-        
+
+        Timer<LocalStorageArea> m_syncTimer;        
+        HashMap<String, String> m_changedItems;
+        bool m_itemsCleared;
+
         LocalStorage* m_localStorage;
+
+        // The database handle will only ever be opened and used on the background thread.
+        SQLiteDatabase m_database;
+
+    // The following members are subject to thread synchronization issues.
+    public:
+        // Called on the main thread
+        virtual unsigned length() const;
+        virtual String key(unsigned index, ExceptionCode&) const;
+        virtual String getItem(const String&) const;
+        virtual void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame);
+        virtual void removeItem(const String&, Frame* sourceFrame);
+        virtual bool contains(const String& key) const;
+
+        // Called from the background thread
+        virtual void performImport();
+        virtual void performSync();
+
+    private:
+        void syncTimerFired(Timer<LocalStorageArea>*);
+
+        Mutex m_syncLock;
+        HashMap<String, String> m_itemsPendingSync;
+        bool m_clearItemsWhileSyncing;
+        bool m_syncScheduled;
+
+        mutable Mutex m_importLock;
+        mutable ThreadCondition m_importCondition;
+        mutable bool m_importComplete;
+        void markImported();
     };
 
 } // namespace WebCore

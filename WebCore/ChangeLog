@@ -1,5 +1,53 @@
 2008-05-06  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Anders
+
+        Make LocalStorage persistent using a SQLite database.
+
+        There's a few things going on here.  Whenever an item is changed, we add it to a set of
+        "items to be sync'ed."  Instead of immediately scheduling the sync'ing on the background
+        thread, we set a "sync timer" instead.  This is to shield against a series of rapid changes
+        to avoid thread churn.
+
+        When the sync timer fires, we move the "items to be sync'ed" set to a background thread set
+        and schedule the sync task which is where the items are actually committed to disk.
+
+        Current design for reading items back in from disk is to be as aggressive as possible.
+        When a page first accesses it's LocalStorage area, we begin to import all items in from disk so
+        they are immediately available.  A future enhancement will be to being this pre-fetching the
+        moment we start loading a page when we know that page has LocalStorage.
+
+        * storage/LocalStorageArea.cpp:
+        (WebCore::LocalStorageArea::LocalStorageArea):
+        (WebCore::LocalStorageArea::length): Return the length, or wait for the import to complete then return it.
+        (WebCore::LocalStorageArea::key): Return the key, or wait for the import to complete then return it.
+        (WebCore::LocalStorageArea::getItem): Return the item, or wait for the import to complete then return it.
+        (WebCore::LocalStorageArea::setItem): Set the item, or hold the import lock and set it.  The second case is
+          because if the item is set while the import is still in progress, the new value should override whatever
+          the imported value is.
+        (WebCore::LocalStorageArea::removeItem): Remove the item, or hold the import lock and remove it.  See the 
+          explanation for setItem()
+        (WebCore::LocalStorageArea::contains): Return whether or not the item is contained.  Do the same dance with
+          the import flag, import lock, and import condition that the above methods do.
+
+        (WebCore::LocalStorageArea::itemChanged): Schedule the item for sync'ing
+        (WebCore::LocalStorageArea::itemRemoved): Schedule the removal of the item for sync'ing
+        (WebCore::LocalStorageArea::areaCleared): Schedule the clear for sync'ing, and clear all previously 
+          scheduled items.
+
+        (WebCore::LocalStorageArea::scheduleItemForSync): Add an item to the sync set.
+        (WebCore::LocalStorageArea::scheduleClear): Set a bool flag denoting "All items removed."  If any
+          items are later set before the actual removal takes place, they will be written *after* the removal.
+        (WebCore::LocalStorageArea::syncTimerFired): Move the current sync-set to the background thread sync set, then 
+          schedule a sync task.  Also transfer the "items cleared" flag to the "background thread items cleared" flag
+        (WebCore::LocalStorageArea::performImport): Import all items from disk, then signal the import complete.
+        (WebCore::LocalStorageArea::markImported): Set the imported flag and signal the import complete
+        (WebCore::LocalStorageArea::performSync): If the clear flag is set then drop all items.  Then update or delete 
+          each item waiting to be sync'ed
+        * storage/LocalStorageArea.h:
+
+2008-05-06  Brady Eidson  <beidson@apple.com>
+
         Rubberstamped by Mitz Pettel RTL
 
         * storage/LocalStorage.cpp:
