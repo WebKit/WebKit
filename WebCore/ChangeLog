@@ -1,3 +1,48 @@
+2008-05-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5907916> Implement 'aria-labeledby' and 
+        'aria-describedby' attributes.
+
+        * html/HTMLAttributeNames.in: Added new attributes. Added both the 
+        British spelling (since that is what is specified in the spec), and 
+        the American spelling (since the bug filer and I are two Americans 
+        who keep spelling it the American way by accident). 
+        * page/AccessibilityObject.cpp: Added empty wrappers. These 
+        functions can't do anything meaningful without a renderer.
+        (WebCore::AccessibilityObject::ariaAccessiblityName):
+        (WebCore::AccessibilityObject::ariaLabeledByAttribute):
+        (WebCore::AccessibilityObject::ariaDescribedByAttribute):
+        * page/AccessibilityObject.h:
+
+        Here is where the real work is done.
+        * page/AccessibilityRenderObject.h:
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::accessibleNameForNode): Takes a node and finds its 
+        contribution to the accessible name, as defined by the Mozilla ARIA 
+        Implementer's Guide. 
+        (WebCore::AccessibilityRenderObject::ariaAccessiblityName): Takes a 
+        string of space-separated IDs, fetches the corresponding element 
+        for each ID, and concatenates an accessible name based on the 
+        elements.
+        (WebCore::AccessibilityRenderObject::ariaLabeledByAttribute): 
+        Retrieve the labeledby attribute and send its contents to 
+        ariaAccessibilityName().
+        (WebCore::AccessibilityRenderObject::title): Return the ARIA 
+        labeledby value if one exists.
+        (WebCore::AccessibilityRenderObject::ariaDescribedByAttribute): 
+        Retrieve the describedby attribute and send its contents to 
+        ariaAccessibilityName().
+        (WebCore::AccessibilityRenderObject::accessibilityDescription): 
+        Return the ARIA describedby attribute if one exists. 
+
+        These are two bugs I spotted. 
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored): Don't 
+        ignore anything with an ARIA role.
+        (WebCore::AccessibilityRenderObject::roleValue): Button tags maps 
+        to ButtonRole.
+
 2008-05-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

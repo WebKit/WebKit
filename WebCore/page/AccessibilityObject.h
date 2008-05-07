@@ -254,7 +254,10 @@ public:
     unsigned selectionStart() const;
     unsigned selectionEnd() const;
     virtual String stringValue() const;
+    virtual String ariaAccessiblityName(const String&) const;
+    virtual String ariaLabeledByAttribute() const;
     virtual String title() const;
+    virtual String ariaDescribedByAttribute() const;
     virtual String accessibilityDescription() const;
     virtual String helpText() const;
     virtual String textUnderElement() const;

@@ -63,6 +63,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "SelectionController.h"
+#include "Text.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -502,6 +503,73 @@ String AccessibilityRenderObject::stringValue() const
     return String();
 }
 
+// This function implements the ARIA accessible name as described by the Mozilla
+// ARIA Implementer's Guide.
+static String accessibleNameForNode(Node* node)
+{
+    if (node->isTextNode())
+        return static_cast<Text*>(node)->data();
+
+    if (node->hasTagName(inputTag))
+        return static_cast<HTMLInputElement*>(node)->value();
+
+    if (node->isHTMLElement()) {
+        const AtomicString& alt = static_cast<HTMLElement*>(node)->getAttribute(altAttr);
+        if (!alt.isEmpty())
+            return alt;
+    }
+
+    return String();
+}
+
+String AccessibilityRenderObject::ariaAccessiblityName(const String& s) const
+{
+    Document* document = m_renderer->document();
+    if (!document)
+        return String();
+
+    String idList = s;
+    idList.replace('\n', ' ');
+    Vector<String> idVector;
+    idList.split(' ', idVector);
+
+    Vector<UChar> ariaLabel;
+    unsigned size = idVector.size();
+    for (unsigned i = 0; i < size; ++i) {
+        String idName = idVector[i];
+        Element* idElement = document->getElementById(idName);
+        if (idElement) {
+            String nameFragment = accessibleNameForNode(idElement);
+            ariaLabel.append(nameFragment.characters(), nameFragment.length());
+            for (Node* n = idElement->firstChild(); n; n = n->traverseNextNode(idElement->nextSibling())) {
+                nameFragment = accessibleNameForNode(n);
+                ariaLabel.append(nameFragment.characters(), nameFragment.length());
+            }
+            ariaLabel.append(' ');
+        }
+    }
+    return String::adopt(ariaLabel);
+}
+
+String AccessibilityRenderObject::ariaLabeledByAttribute() const
+{
+    Node* node = m_renderer->node();
+    if (!node || !node->isElementNode())
+        return String();
+
+    // The ARIA spec uses the British spelling: "labelled." It seems prudent to support the American
+    // spelling ("labeled") as well.
+    Element* element = static_cast<Element*>(node);
+    String idList = element->getAttribute(aria_labeledbyAttr).string();
+    if (idList.isEmpty()) {
+        idList = element->getAttribute(aria_labelledbyAttr).string();
+        if (idList.isEmpty())
+            return String();
+    }
+
+    return ariaAccessiblityName(idList);
+}
+
 static HTMLLabelElement* labelForElement(Element* element)
 {
     RefPtr<NodeList> list = element->document()->getElementsByTagName("label");
@@ -521,6 +589,10 @@ String AccessibilityRenderObject::title() const
 {
     if (!m_renderer || m_areaElement || !m_renderer->element())
         return String();
+
+    String ariaLabel = ariaLabeledByAttribute();
+    if (!ariaLabel.isEmpty())
+        return ariaLabel;
     
     if (roleValue() == ButtonRole)
         return textUnderElement();
@@ -544,10 +616,28 @@ String AccessibilityRenderObject::title() const
     return String();
 }
 
+String AccessibilityRenderObject::ariaDescribedByAttribute() const
+{
+    Node* node = m_renderer->node();
+    if (!node || !node->isElementNode())
+        return String();
+
+    Element* element = static_cast<Element*>(node);
+    String idList = element->getAttribute(aria_describedbyAttr).string();
+    if (idList.isEmpty())
+        return String();
+    
+    return ariaAccessiblityName(idList);
+}
+
 String AccessibilityRenderObject::accessibilityDescription() const
 {
     if (!m_renderer || m_areaElement)
         return String();
+
+    String ariaDescription = ariaDescribedByAttribute();
+    if (!ariaDescription.isEmpty())
+        return ariaDescription;
     
     if (isImage()) {
         if (m_renderer->element() && m_renderer->element()->isHTMLElement()) {
@@ -666,6 +756,9 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     // ignore invisible element
     if (!m_renderer || m_renderer->style()->visibility() != VISIBLE)
         return true;
+
+    if (ariaRoleAttribute() != UnknownRole)
+        return false;
     
     // ignore popup menu items because AppKit does
     for (RenderObject* parent = m_renderer->parent(); parent; parent = parent->parent()) {
@@ -1469,7 +1562,10 @@ AccessibilityRole AccessibilityRenderObject::roleValue() const
         if (input->isTextButton())
             return ButtonRole;
     }
-    
+
+    if (node && node->hasTagName(buttonTag))
+        return ButtonRole;
+
     if (m_renderer->isMenuList())
         return PopUpButtonRole;
     

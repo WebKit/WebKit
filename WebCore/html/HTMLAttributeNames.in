@@ -7,6 +7,9 @@ align
 alink
 alt
 archive
+aria-labeledby
+aria-labelledby
+aria-describedby
 autocomplete
 autoplay
 autosave
