@@ -42,5 +42,5 @@ Document* AccessibleDocument::document() const
 {
     if (!m_object)
         return 0;
-    return m_object->renderer()->document();
+    return m_object->document();
 }

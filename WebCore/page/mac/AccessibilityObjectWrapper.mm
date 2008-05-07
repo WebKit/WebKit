@@ -621,29 +621,13 @@ static NSMutableArray* convertToNSArray(const Vector<RefPtr<AccessibilityObject>
     return textMarkerRangeFromVisiblePositions(selection.visibleStart(), selection.visibleEnd());
 }
 
-- (FrameView *)documentFrameView:(AccessibilityObject *)object
-{
-    while (object && !object->isAccessibilityRenderObject()) 
-        object = object->parentObject();
-    
-    RenderObject* renderer = 0;
-    if (object)
-        renderer = static_cast<AccessibilityRenderObject*>(object)->renderer();
-    
-    if (!renderer || !renderer->document())
-        return 0;
-    
-    // this is the RenderObject's Document's Frame's FrameView
-    return renderer->document()->view();    
-}
-
 - (NSValue*)position
 {
     IntRect rect = m_object->elementRect();
     
     // The Cocoa accessibility API wants the lower-left corner.
     NSPoint point = NSMakePoint(rect.x(), rect.bottom());
-    FrameView* frameView = [self documentFrameView:m_object];
+    FrameView* frameView = m_object->documentFrameView();
     if (frameView) {
         NSView* view = frameView->documentView();
         point = [[view window] convertBaseToScreen: [view convertPoint: point toView:nil]];
@@ -958,7 +942,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [self position];
 
     if ([attributeName isEqualToString: NSAccessibilityWindowAttribute]) {
-        FrameView* fv = [self documentFrameView:m_object];
+        FrameView* fv = m_object->documentFrameView();
         if (fv)
             return [fv->getView() window];
         return nil;

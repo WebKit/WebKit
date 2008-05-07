@@ -49,11 +49,6 @@ void AXObjectCache::attachWrapper(AccessibilityObject* obj)
     obj->setWrapper([[AccessibilityObjectWrapper alloc] initWithAccessibilityObject:obj]);
 }
 
-void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
-{
-    postNotificationToElement(renderer, "AXSelectedChildrenChanged");
-}
-
 void AXObjectCache::postNotification(RenderObject* renderer, const String& message)
 {
     if (!renderer)

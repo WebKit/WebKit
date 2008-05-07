@@ -1,3 +1,14 @@
+2008-05-06  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adele Peterson and John Sullivan.
+
+        changes needed to build on Windows after r32911 and r32927
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accParent):
+        * AccessibleDocument.cpp:
+        (AccessibleDocument::document):
+
 2008-05-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler

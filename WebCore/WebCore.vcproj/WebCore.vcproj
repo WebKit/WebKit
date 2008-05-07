@@ -3006,6 +3006,22 @@
 			Name="page"
 			>
 			<File
+				RelativePath="..\page\AccessibilityListBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityListBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityListBoxOption.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityListBoxOption.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\AccessibilityObject.cpp"
 				>
 			</File>

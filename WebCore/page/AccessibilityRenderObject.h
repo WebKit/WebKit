@@ -127,6 +127,8 @@ public:
     RenderObject* renderer() const { return m_renderer; }
     RenderObject* topRenderer() const;
     RenderTextControl* textControl() const;
+    Document* document() const;
+    FrameView* topDocumentFrameView() const;  
     
     virtual KURL url() const;
     virtual PlainTextRange selectedTextRange() const;
@@ -148,6 +150,7 @@ public:
     virtual Widget* widget() const;
     virtual Widget* widgetForAttachmentView() const;
     virtual void getDocumentLinks(Vector< RefPtr<AccessibilityObject> >&) const;
+    virtual FrameView* documentFrameView() const;
     
     virtual const Vector<RefPtr<AccessibilityObject> >& children();
     

@@ -1,3 +1,26 @@
+2008-05-06  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adele Peterson and John Sullivan.
+
+        changes needed to build on Windows after r32911 and r32927
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * page/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::selectedChildrenChanged):
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::document):
+        (WebCore::AccessibilityObject::topDocumentFrameView):
+        (WebCore::AccessibilityObject::documentFrameView):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::document):
+        (WebCore::AccessibilityRenderObject::topDocumentFrameView):
+        (WebCore::AccessibilityRenderObject::documentFrameView):
+        * page/AccessibilityRenderObject.h:
+        * page/mac/AXObjectCacheMac.mm:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper position]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2008-05-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
