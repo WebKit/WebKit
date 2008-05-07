@@ -1,3 +1,15 @@
+2008-05-07  Adam Treat  <treat@kde.org>
+
+        Reviewed by Simon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18898
+
+        Fixed wrong transform being used for creating the pixmap for a new
+        transparency layer. This fixes the popup menus on dell.com.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+
 2008-05-07  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
