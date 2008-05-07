@@ -1,3 +1,11 @@
+2008-05-06  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Andersca.
+
+        prepare for plugin fast teardown work - make WebPluginDatabase a objective C++ file.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-05-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Tim.

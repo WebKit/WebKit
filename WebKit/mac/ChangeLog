@@ -1,3 +1,14 @@
+2008-05-06  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Andersca.
+
+        prepare for plugin fast teardown work - make WebPluginDatabase a objective C++ file.
+
+        * Plugins/WebPluginDatabase.m: Removed.
+        * Plugins/WebPluginDatabase.mm: Copied from WebKit/mac/Plugins/WebPluginDatabase.m.
+        * Plugins/npapi.m: Removed.
+        * Plugins/npapi.mm: Copied from WebKit/mac/Plugins/npapi.m.
+
 2008-05-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
