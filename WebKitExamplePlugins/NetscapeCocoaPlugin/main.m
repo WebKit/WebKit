@@ -25,7 +25,7 @@
  
  IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL OR CONSEQUENTIAL 
  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS 
-          OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, 
+ OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, 
  REPRODUCTION, MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED AND 
  WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY OR 
  OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -36,6 +36,8 @@
 #import <WebKit/npruntime.h>
 
 #import <Cocoa/Cocoa.h>
+
+#import "MenuHandler.h"
 
 // Browser function table
 static NPNetscapeFuncs* browser;
@@ -50,6 +52,8 @@ typedef struct PluginObject
     NSString *string;
     bool hasFocus;
     bool mouseIsInsidePlugin;
+    
+    MenuHandler *menuHandler;
 } PluginObject;
 
 NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, char* argn[], char* argv[], NPSavedData* saved);
@@ -145,6 +149,8 @@ NPError NPP_Destroy(NPP instance, NPSavedData** save)
     PluginObject *obj = instance->pdata;
     
     [obj->string release];
+    [obj->menuHandler release];
+    
     free(obj);
     
     return NPERR_NO_ERROR;
@@ -220,6 +226,8 @@ static void handleDraw(PluginObject *obj)
 static NSString *eventType(NPCocoaEventType type)
 {
     switch (type) {
+        case NPCocoaEventScrollWheel:
+            return @"NPCocoaEventScrollWheel";
         case NPCocoaEventMouseDown:
             return @"NPCocoaEventMouseDown";
         case NPCocoaEventMouseUp:
@@ -276,6 +284,14 @@ static void handleMouseEvent(PluginObject *obj, NPCocoaEvent *event)
     obj->string = [string retain];
  
     invalidatePlugin(obj);
+    
+    if (event->event.mouse.buttonNumber == 1) {
+        if (!obj->menuHandler)
+            obj->menuHandler = [[MenuHandler alloc] initWithBrowserFuncs:browser instance:obj->npp];
+        
+        browser->popupcontextmenu(obj->npp, (NPNSMenu *)[obj->menuHandler menu]);
+        NSLog(@"foo");
+    }
 }
 
 static void handleKeyboardEvent(PluginObject *obj, NPCocoaEvent *event)

@@ -1,5 +1,24 @@
 2008-05-06  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mitz.
+
+        Add NPN_PopUpContextMenu example.
+        
+        * NetscapeCocoaPlugin/MenuHandler.h: Added.
+        * NetscapeCocoaPlugin/MenuHandler.m: Added.
+        (-[MenuHandler _openURL:]):
+        (-[MenuHandler _disabledItem:]):
+        (-[MenuHandler validateUserInterfaceItem:]):
+        (-[MenuHandler initWithBrowserFuncs:instance:]):
+        (-[MenuHandler dealloc]):
+        (-[MenuHandler menu]):
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj:
+        * NetscapeCocoaPlugin/main.m:
+        (NPP_Destroy):
+        (handleMouseEvent):
+
+2008-05-06  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Jon, Tim and Mark.
 
         Add a sample NPAPI plugin that uses the Cocoa event model.
