@@ -1,3 +1,14 @@
+2008-05-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for <rdar://problem/5914544> Crash in layoutInlineChildren()
+
+        * fast/block/float/float-on-zero-height-line.html: Added.
+        * platform/mac/fast/block/float/float-on-zero-height-line-expected.checksum: Added.
+        * platform/mac/fast/block/float/float-on-zero-height-line-expected.png: Added.
+        * platform/mac/fast/block/float/float-on-zero-height-line-expected.txt: Added.
+
 2008-05-06  Adam Barth  <abarth-webkit@adambarth.com>
 
         Reviewed by Sam Weinig.
