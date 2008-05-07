@@ -1,3 +1,17 @@
+2008-05-07  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 18900: Password field has focus but can't type text (i.rememberthemilk.com)
+        <https://bugs.webkit.org/show_bug.cgi?id=18900>
+
+        Original patch by Aaron Golden and Tim Omernick.  Reviewed by Adele.
+
+        Test: fast/forms/textfield-to-password-on-focus.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType): If the current node has
+        focus, call updateFocusAppearance() to make sure its state is correct
+        after changing its type.
+
 2008-05-07  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Alice Liu

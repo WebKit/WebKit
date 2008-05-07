@@ -335,8 +335,11 @@ void HTMLInputElement::setInputType(const String& t)
                     attributeChanged(align, false);
             }
 
-            if (wasAttached)
+            if (wasAttached) {
                 attach();
+                if (document()->focusedNode() == this)
+                    updateFocusAppearance(true);
+            }
 
             checkedRadioButtons(this).addButton(this);
         }

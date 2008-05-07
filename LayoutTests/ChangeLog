@@ -1,3 +1,13 @@
+2008-05-07  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 18900: Password field has focus but can't type text (i.rememberthemilk.com)
+        <https://bugs.webkit.org/show_bug.cgi?id=18900>
+
+        Reviewed by Adele.
+
+        * fast/forms/textfield-to-password-on-focus-expected.txt: Added.
+        * fast/forms/textfield-to-password-on-focus.html: Added.
+
 2008-05-07  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon
