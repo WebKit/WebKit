@@ -1,3 +1,9 @@
+2008-05-06  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Adding files added in  r32925 to the bakefiles.
+
+        * WebCoreSources.bkl:
+
 2008-05-06  Alp Toker  <alp@nuanti.com>
 
         GTK+ build fix. Add empty stub to keep non-accessible ports building.
