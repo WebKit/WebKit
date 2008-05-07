@@ -54,8 +54,8 @@ namespace WebCore {
     private:
         LocalStorage(PageGroup*, const String& path);
 
-        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash> StorageAreaMap;
-        StorageAreaMap m_storageAreaMap;
+        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<LocalStorageArea>, SecurityOriginHash> LocalStorageAreaMap;
+        LocalStorageAreaMap m_storageAreaMap;
 
         PageGroup* m_group;
         RefPtr<LocalStorageThread> m_thread;

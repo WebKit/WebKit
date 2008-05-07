@@ -1,3 +1,27 @@
+2008-05-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Fix a few bugs with the final sync'ing of LocalStorageAreas when the thread is shut down.
+        1 - A sync task actually needs to be scheduled for each LocalStorageArea when the shut down occurs.
+        2 - Pending sync timers all need to be cancelled.
+
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::storageArea):
+        (WebCore::LocalStorage::close): Tell each LocalStorageArea to schedule it's final sync before scheduling
+          thread termination.
+        * storage/LocalStorage.h:  Change the map to be of LocalStorageAreas instead of StorageAreas
+
+        * storage/LocalStorageArea.cpp:
+        (WebCore::LocalStorageArea::LocalStorageArea):
+        (WebCore::LocalStorageArea::~LocalStorageArea): ASSERT the timer has been cancelled, but make SURE it is
+          in release builds.
+        (WebCore::LocalStorageArea::scheduleFinalSync): Cancel the sync timer, schedule the final sync, and set the
+          "final sync scheduled" flag
+        (WebCore::LocalStorageArea::scheduleItemForSync): ASSERT that the final sync hasn't already been scheduled
+        (WebCore::LocalStorageArea::scheduleClear): Ditto
+        * storage/LocalStorageArea.h:
+
 2008-05-06  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Adding files added in  r32925 to the bakefiles.

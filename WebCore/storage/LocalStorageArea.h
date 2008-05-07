@@ -44,7 +44,11 @@ namespace WebCore {
     
     class LocalStorageArea : public StorageArea {
     public:
+        virtual ~LocalStorageArea();
+
         static PassRefPtr<LocalStorageArea> create(SecurityOrigin* origin, LocalStorage* localStorage) { return adoptRef(new LocalStorageArea(origin, localStorage)); }
+
+        void scheduleFinalSync();
 
     private:
         LocalStorageArea(SecurityOrigin*, LocalStorage*);
@@ -60,6 +64,8 @@ namespace WebCore {
         Timer<LocalStorageArea> m_syncTimer;        
         HashMap<String, String> m_changedItems;
         bool m_itemsCleared;
+        
+        bool m_finalSyncScheduled;
 
         LocalStorage* m_localStorage;
 
