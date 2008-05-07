@@ -1,3 +1,12 @@
+2008-05-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Don't put pages with an application cache in the BF cache.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canCachePage):
+
 2008-05-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John Sullivan.

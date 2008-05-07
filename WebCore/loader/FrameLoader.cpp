@@ -1892,7 +1892,11 @@ bool FrameLoader::canCachePage()
         && loadType != FrameLoadTypeReloadAllowingStaleData
         && loadType != FrameLoadTypeSame
         && !m_documentLoader->isLoadingInAPISense()
-        && !m_documentLoader->isStopping();
+        && !m_documentLoader->isStopping()
+        // FIXME: We should investigating caching pages that have an associated
+        // application cache. <rdar://problem/5917899> tracks that work.
+        && !m_documentLoader->applicationCache()
+        && !m_documentLoader->candidateApplicationCacheGroup();
 }
 
 void FrameLoader::updatePolicyBaseURL()
