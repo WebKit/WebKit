@@ -1,3 +1,15 @@
+2008-05-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=18909
+          <rdar://problem/5914165> REGRESSION (r31872-r31878): Viewed photos not closing completely at indycar.com
+
+        * fast/dynamic/positioned-movement-with-positioned-children.html: Added.
+        * platform/mac/fast/dynamic/positioned-movement-with-positioned-children-expected.checksum: Added.
+        * platform/mac/fast/dynamic/positioned-movement-with-positioned-children-expected.png: Added.
+        * platform/mac/fast/dynamic/positioned-movement-with-positioned-children-expected.txt: Added.
+
 2008-05-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John Sullivan.

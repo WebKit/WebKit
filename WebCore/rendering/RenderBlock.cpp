@@ -1330,6 +1330,11 @@ bool RenderBlock::layoutOnlyPositionedObjects()
     else
         view()->disableLayoutState();
 
+    if (needsPositionedMovementLayout()) {
+        calcWidth();
+        calcHeight();
+    }
+
     // All we have to is lay out our positioned objects.
     layoutPositionedObjects(false);
 

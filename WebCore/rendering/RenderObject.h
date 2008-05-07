@@ -344,6 +344,7 @@ public:
                                                               
     bool needsLayout() const { return m_needsLayout || m_normalChildNeedsLayout || m_posChildNeedsLayout || m_needsPositionedMovementLayout; }
     bool selfNeedsLayout() const { return m_needsLayout; }
+    bool needsPositionedMovementLayout() const { return m_needsPositionedMovementLayout; }
     bool needsPositionedMovementLayoutOnly() const { return m_needsPositionedMovementLayout && !m_needsLayout && !m_normalChildNeedsLayout && !m_posChildNeedsLayout; }
     bool posChildNeedsLayout() const { return m_posChildNeedsLayout; }
     bool normalChildNeedsLayout() const { return m_normalChildNeedsLayout; }
