@@ -1,3 +1,14 @@
+2008-05-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/5666354> Crashes in Mail at WebCore::RemoveNodeCommand::doApply
+
+        * editing/pasteboard/5761530-1-expected.txt: Added.
+        * editing/pasteboard/5761530-1.html: Added.
+        * editing/pasteboard/5761530-2-expected.txt: Added.
+        * editing/pasteboard/5761530-2.html: Added.
+
 2008-05-07  David Kilzer  <ddkilzer@apple.com>
 
         Bug 18900: Password field has focus but can't type text (i.rememberthemilk.com)

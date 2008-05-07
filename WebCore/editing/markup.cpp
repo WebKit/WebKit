@@ -845,6 +845,15 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
             specialCommonAncestor = enclosingNodeOfType(Position(checkAncestor, 0), &elementHasTextDecorationProperty);
     }
     
+    // If a single tab is selected, commonAncestor will be a text node inside a tab span.
+    // If two or more tabs are selected, commonAncestor will be the tab span.
+    // In either case, if there is a specialCommonAncestor already, it will necessarily be above 
+    // any tab span that needs to be included.
+    if (!specialCommonAncestor && isTabSpanTextNode(commonAncestor))
+        specialCommonAncestor = commonAncestor->parentNode();
+    if (!specialCommonAncestor && isTabSpanNode(commonAncestor))
+        specialCommonAncestor = commonAncestor;
+        
     if (Node *enclosingAnchor = enclosingNodeWithTag(Position(specialCommonAncestor ? specialCommonAncestor : commonAncestor, 0), aTag))
         specialCommonAncestor = enclosingAnchor;
     

@@ -1,3 +1,21 @@
+2008-05-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/5666354> Crashes in Mail at WebCore::RemoveNodeCommand::doApply
+        
+        When a single tab or series of tabs was copied, we weren't putting them into a 
+        tab span.  On Paste, we would be given a text node with a single tab or series
+        of tabs in it, and we would crash when inserting it at the start of a block
+        (where that kind of text becomes completely unrendered).
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds): Clean
+        up correctly and early return if we removed everything that was inserted.
+        * editing/markup.cpp:
+        (WebCore::createMarkup):  Include the tab span when the only thing copied
+        was a tab or a series of tabs.
+
 2008-05-07  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Adam Roben.

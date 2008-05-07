@@ -399,7 +399,13 @@ void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds()
         m_lastLeafInserted->isTextNode() && 
         !enclosingNodeWithTag(Position(m_lastLeafInserted.get(), 0), selectTag) && 
         !enclosingNodeWithTag(Position(m_lastLeafInserted.get(), 0), scriptTag)) {
-        RefPtr<Node> previous = m_firstNodeInserted == m_lastLeafInserted ? 0 : m_lastLeafInserted->traversePreviousNode();
+        if (m_firstNodeInserted == m_lastLeafInserted) {
+            removeNode(m_lastLeafInserted.get());
+            m_lastLeafInserted = 0;
+            m_firstNodeInserted = 0;
+            return;
+        }
+        RefPtr<Node> previous = m_lastLeafInserted->traversePreviousNode();
         removeNode(m_lastLeafInserted.get());
         m_lastLeafInserted = previous;
     }
@@ -408,7 +414,13 @@ void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds()
     // it is a top level node in the fragment and the user can't insert into those elements.
     if (!m_firstNodeInserted->renderer() && 
         m_firstNodeInserted->isTextNode()) {
-        RefPtr<Node> next = m_firstNodeInserted == m_lastLeafInserted ? 0 : m_firstNodeInserted->traverseNextSibling();
+        if (m_firstNodeInserted == m_lastLeafInserted) {
+            removeNode(m_firstNodeInserted.get());
+            m_firstNodeInserted = 0;
+            m_lastLeafInserted = 0;
+            return;
+        }
+        RefPtr<Node> next = m_firstNodeInserted->traverseNextSibling();
         removeNode(m_firstNodeInserted.get());
         m_firstNodeInserted = next;
     }
