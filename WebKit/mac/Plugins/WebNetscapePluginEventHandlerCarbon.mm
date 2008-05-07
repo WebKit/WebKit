@@ -399,6 +399,8 @@ bool WebNetscapePluginEventHandlerCarbon::sendEvent(EventRecord* event)
     if (event->what == ::mouseDown || event->what == ::keyDown || event->what == ::mouseUp || event->what == ::autoKey)
         m_currentEventIsUserGesture = true;
     
+    m_suspendKeyUpEvents = false; 
+
     bool result = [m_pluginView sendEvent:event isDrawRect:event->what == updateEvt];
     
     m_currentEventIsUserGesture = false;
