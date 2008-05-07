@@ -1,3 +1,46 @@
+2008-05-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Support reading back app caches from the datbase.
+    
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::ApplicationCache):
+        Initialize m_storageID to 0.
+        
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::cacheDestroyed):
+        If the cache being destroyed is not the newest cache, it should no longer be 
+        stored in the database. Remove it.
+        
+        (WebCore::ApplicationCacheGroup::setNewestCache):
+        Don't store the cache here.
+        
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        Store it here instead.
+        
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::loadCacheGroup):
+        New method that loads a cache group with a given manifest URL (or returns 0 if the load fails).
+        
+        (WebCore::ApplicationCacheStorage::findOrCreateCacheGroup):
+        Search for the group in the database.
+        
+        (WebCore::ApplicationCacheStorage::loadManifestHostHashes):
+        New method that loads the host hashes from the database.
+        
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL):
+        Search in the database for a cache that contains the resource.
+        
+        (WebCore::ApplicationCacheStorage::loadCache):
+        New method that loads a cache with a given ID.
+        
+        (WebCore::ApplicationCacheStorage::remove):
+        New method that removes a cache.
+        
+        * loader/appcache/ApplicationCacheStorage.h:
+        Add definitions.
+
 2008-05-06  Alp Toker  <alp@nuanti.com>
 
         Partial GTK+ build fix. Add files from r32925 to the build and replace

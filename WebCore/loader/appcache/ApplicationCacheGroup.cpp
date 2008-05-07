@@ -249,6 +249,9 @@ void ApplicationCacheGroup::cacheDestroyed(ApplicationCache* cache)
     
     m_caches.remove(cache);
     
+    if (cache != newestCache())
+        cacheStorage().remove(cache);
+
     if (m_caches.isEmpty())
         delete this;
 }
@@ -262,9 +265,6 @@ void ApplicationCacheGroup::setNewestCache(PassRefPtr<ApplicationCache> newestCa
     m_newestCache = newestCache; 
     m_caches.add(m_newestCache.get());
     m_newestCache->setGroup(this);
-
-    // Store the cache 
-    cacheStorage().storeNewestCache(this);
 }
 
 void ApplicationCacheGroup::update(Frame* frame)
@@ -528,6 +528,9 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
     }
     
     setNewestCache(m_cacheBeingUpdated.release());
+        
+    // Store the cache 
+    cacheStorage().storeNewestCache(this);
     
     callListeners(isUpgradeAttempt ? &DOMApplicationCache::callUpdateReadyListener : &DOMApplicationCache::callCachedListener, 
                   documentLoaders);
