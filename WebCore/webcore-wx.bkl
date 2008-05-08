@@ -90,6 +90,7 @@ wxWebCore port Bakefile project file.
             platform/wx/WidgetWx.cpp
            
             <!-- files from other ports we currently rely on -->
+            platform/network/curl/FormDataStreamCurl.cpp
             platform/network/curl/ResourceHandleCurl.cpp
             platform/network/curl/ResourceHandleManager.cpp
                       

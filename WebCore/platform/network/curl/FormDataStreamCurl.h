@@ -29,6 +29,7 @@
 
 #include "FileSystem.h"
 #include "ResourceHandle.h"
+#include <stdio.h>
 
 namespace WebCore {
 

@@ -1,3 +1,17 @@
+2008-05-08  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        wx & Gtk build fix.
+
+        Should also fix the cURL backend for the Windows port.
+
+        * WebCore.vcproj/WebCore.vcproj: Add FormDataStreamCurl information.
+        * platform/network/curl/FormDataStreamCurl.h: Include stdio.h which
+        fixes the build on some machine.
+
+        * webcore-wx.bkl: Add FormDataStreamCurl.cpp.
+
 2008-05-08  Timothy Hatcher  <timothy@apple.com>
 
         Fixes the bug where the Web Inspector could not
