@@ -2,6 +2,29 @@
 
         Reviewed by Simon.
 
+        Simple ImageBuffer::image implementation.
+
+        In contrast to cg and cairo we do not use a special BitmapImage because
+        the ownership of the FrameData inside the BitmapImage is a bit backward
+        (actually owned by the ImageDecoderQt...). Further work is needed for image
+        and pixmap handling in the qt port...
+
+        * WebCore.pro:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::image):
+        * platform/graphics/qt/ImageQt.cpp:
+        * platform/graphics/qt/StillImageQt.cpp: Added.
+        (WebCore::StillImage::StillImage):
+        (WebCore::StillImage::size):
+        (WebCore::StillImage::getPixmap):
+        (WebCore::StillImage::draw):
+        * platform/graphics/qt/StillImageQt.h: Added.
+
+2008-05-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
         Update the WebKit.qrc of the inspector to be functional again
 
         * page/inspector/WebKit.qrc:

@@ -966,6 +966,7 @@ gtk-port {
 qt-port {
 
     HEADERS += \
+    $$PWD/platform/graphics/qt/StillImageQt.h \
     $$PWD/platform/qt/QWebPopup.h \
     $$PWD/platform/qt/MenuEventProxy.h \
     $$PWD/platform/qt/SharedTimerQt.h \
@@ -999,6 +1000,7 @@ qt-port {
     platform/graphics/qt/IntRectQt.cpp \
     platform/graphics/qt/IntSizeQt.cpp \
     platform/graphics/qt/PathQt.cpp \
+    platform/graphics/qt/StillImageQt.cpp \
     platform/network/qt/ResourceHandleQt.cpp \
     platform/network/qt/ResourceRequestQt.cpp \
     platform/network/qt/QNetworkReplyHandler.cpp \

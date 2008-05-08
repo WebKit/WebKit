@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "ImageData.h"
 #include "NotImplemented.h"
+#include "StillImageQt.h"
 
 #include <QPainter>
 #include <QPixmap>
@@ -69,6 +71,18 @@ QPixmap* ImageBuffer::pixmap() const
     if (m_painter->isActive())
         m_painter->end();
     return &m_pixmap;
+}
+
+Image* ImageBuffer::image() const
+{
+    if (!m_image) {
+        // It's assumed that if image() is called, the actual rendering to the
+        // GraphicsContext must be done.
+        ASSERT(context());
+        m_image.set(new StillImage(m_pixmap));
+    }
+
+    return m_image.get();
 }
 
 PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect&) const

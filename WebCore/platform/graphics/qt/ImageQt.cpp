@@ -36,6 +36,7 @@
 #include "GraphicsContext.h"
 #include "AffineTransform.h"
 #include "NotImplemented.h"
+#include "StillImageQt.h"
 #include "qwebsettings.h"
 
 #include <QPixmap>
@@ -49,20 +50,6 @@
 #include <QDebug>
 
 #include <math.h>
-
-namespace WebCore {
-class StillImage : public Image {
-public:
-    StillImage(const QPixmap& pixmap);
-
-    virtual IntSize size() const;
-    virtual QPixmap* getPixmap() const;
-    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
-
-private:
-    QPixmap m_pixmap;
-};
-}
 
 // This function loads resources into WebKit
 static QPixmap loadResourcePixmap(const char *name)
@@ -180,33 +167,6 @@ void BitmapImage::checkForSolidColor()
 QPixmap* BitmapImage::getPixmap() const
 {
     return const_cast<BitmapImage*>(this)->frameAtIndex(0);
-}
-
-StillImage::StillImage(const QPixmap& pixmap)
-    : m_pixmap(pixmap)
-{}
-
-IntSize StillImage::size() const
-{
-    return IntSize(m_pixmap.width(), m_pixmap.height());
-}
-
-QPixmap* StillImage::getPixmap() const
-{
-    return const_cast<QPixmap*>(&m_pixmap);
-}
-
-void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
-                      const FloatRect& src, CompositeOperator op)
-{
-    if (m_pixmap.isNull())
-        return;
-
-    ctxt->save();
-    ctxt->setCompositeOperation(op);
-    QPainter* painter(ctxt->platformContext());
-    painter->drawPixmap(dst, m_pixmap, src);
-    ctxt->restore();
 }
 
 }
