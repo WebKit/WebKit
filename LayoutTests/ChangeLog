@@ -1,3 +1,12 @@
+2008-05-08  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Don't skip fast/loader/local-css-allowed-in-strict-mode.html, it
+        passes now.
+
+        * platform/qt/Skipped:
+
 2008-05-07  Stephanie Lewis  <slewis@apple.com>
         
         fix messed up result

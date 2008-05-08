@@ -1103,7 +1103,6 @@ fast/lists/markers-in-selection.html
 fast/lists/w3-list-styles.html
 fast/loader/local-CSS-from-local.html
 fast/loader/local-JavaScript-from-local.html
-fast/loader/local-css-allowed-in-strict-mode.html
 fast/loader/local-iFrame-source-from-local.html
 fast/loader/local-image-from-local.html
 fast/loader/onunload-form-submit-crash-2.html

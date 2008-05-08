@@ -1,5 +1,14 @@
 2008-05-08  Simon Hausmann  <hausmann@webkit.org>
 
+        Reviewed and found by Holger.
+
+        Include .css in the list of extensions for text/css. Fixes
+        fast/loader/local-css-allowed-in-strict-mode.html.
+
+        * platform/qt/MIMETypeRegistryQt.cpp:
+
+2008-05-08  Simon Hausmann  <hausmann@webkit.org>
+
         Fix the Qt and Wx build when compiling without offline app support.
 
         * loader/FrameLoader.cpp:
