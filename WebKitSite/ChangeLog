@@ -1,3 +1,11 @@
+2008-05-08  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a link to the Mac OS Forge terms of use.
+
+        * nav.inc:
+
 2008-04-25  Mark Rowe  <mrowe@apple.com>
 
         Upgrade to WordPress 2.5.1.  Another day, another security vulnerability in WordPress.
