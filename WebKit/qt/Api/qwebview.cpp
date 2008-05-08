@@ -159,7 +159,9 @@ QWebView::QWebView(QWidget *parent)
     pal.setBrush(QPalette::Background, Qt::white);
 
     setAttribute(Qt::WA_OpaquePaintEvent);
+#if !defined(Q_WS_QWS)
     setAttribute(Qt::WA_InputMethodEnabled);
+#endif
 
     setPalette(pal);
     setAcceptDrops(true);

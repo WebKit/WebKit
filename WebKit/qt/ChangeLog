@@ -1,3 +1,17 @@
+2008-05-08  Warwick Allison  <warwick@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixes: WebKit expects initial input method state to be *disabled*.
+        
+        At least QWS does not need the initial input method state to be forced to
+        enabled, but other platforms (esp. X11) do. Until fixed/tested on those
+        platforms, this is specific to QWS.
+        
+
+        * Api/qwebview.cpp:
+        (QWebView::QWebView):
+
 2008-05-06  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
