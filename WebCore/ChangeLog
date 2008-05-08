@@ -1,3 +1,13 @@
+2008-05-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        - cross-platform fix for http://bugs.webkit.org/show_bug.cgi?id=17590 
+          ASSERTION FAILED: subject in jsRegExpExecute()
+
+        * page/Frame.cpp:
+        (WebCore::Frame::matchLabelsAgainstElement):
+
 2008-05-08  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
