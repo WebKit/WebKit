@@ -1893,10 +1893,13 @@ bool FrameLoader::canCachePage()
         && loadType != FrameLoadTypeSame
         && !m_documentLoader->isLoadingInAPISense()
         && !m_documentLoader->isStopping()
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         // FIXME: We should investigating caching pages that have an associated
         // application cache. <rdar://problem/5917899> tracks that work.
         && !m_documentLoader->applicationCache()
-        && !m_documentLoader->candidateApplicationCacheGroup();
+        && !m_documentLoader->candidateApplicationCacheGroup()
+#endif
+        ;
 }
 
 void FrameLoader::updatePolicyBaseURL()

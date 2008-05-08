@@ -1,3 +1,10 @@
+2008-05-08  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt and Wx build when compiling without offline app support.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canCachePage):
+
 2008-05-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele Peterson
