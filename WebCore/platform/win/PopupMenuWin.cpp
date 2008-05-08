@@ -188,7 +188,15 @@ void PopupMenu::calculatePositionAndSize(const IntRect& r, FrameView* v)
         if (text.isEmpty())
             continue;
 
-        popupWidth = max(popupWidth, client()->clientStyle()->font().width(TextRun(text.characters(), text.length())));
+        Font itemFont = client()->clientStyle()->font();
+        if (client()->itemIsLabel(i)) {
+            FontDescription d = itemFont.fontDescription();
+            d.setWeight(d.bolderWeight());
+            itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
+            itemFont.update(m_popupClient->fontSelector());
+        }
+
+        popupWidth = max(popupWidth, itemFont.width(TextRun(text.characters(), text.length())));
     }
 
     if (naturalHeight > maxPopupHeight)

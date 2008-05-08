@@ -1,5 +1,15 @@
 2008-05-08  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Adam Roben.
+
+        - fix <rdar://problem/5697957> "No recent searches" label in a narrow search field's history popup is truncated
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::calculatePositionAndSize): Changed to use a bold
+        font for measuring labels.
+
+2008-05-08  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         - cross-platform fix for http://bugs.webkit.org/show_bug.cgi?id=17590 
