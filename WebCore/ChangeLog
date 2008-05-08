@@ -1,5 +1,18 @@
 2008-05-08  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Reviewed by Eric.
+
+        Bug 18916: make_names.pl --factory needs to support custom c++ guard
+
+        Add --guardFactoryWith to handle the cpp guard around generated factories.
+
+        * DerivedSources.make: Set the guardFactoryWith variable for SVG factory.
+        * GNUmakefile.am: Ditto.
+        * WebCore.pro: Ditto.
+        * dom/make_names.pl: Add guardFactoryWith option.
+
+2008-05-08  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Reviewed by Adam Roben.
 
         wx & Gtk build fix.

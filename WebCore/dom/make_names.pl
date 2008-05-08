@@ -45,6 +45,7 @@ my $tagsNullNamespace = 0;
 my $attrsNullNamespace = 0;
 my $extraDefines = 0;
 my $preprocessor = "/usr/bin/gcc -E -P -x c++";
+my $guardFactoryWith = 0;
 
 GetOptions('tags=s' => \$tagsFile, 
     'attrs=s' => \$attrsFile,
@@ -57,7 +58,8 @@ GetOptions('tags=s' => \$tagsFile,
     'tagsNullNamespace' => \$tagsNullNamespace,
     'attrsNullNamespace' => \$attrsNullNamespace,
     'extraDefines=s' => \$extraDefines,
-    'preprocessor=s' => \$preprocessor);
+    'preprocessor=s' => \$preprocessor,
+    'guardFactoryWith=s' => \$guardFactoryWith);
 
 die "You must specify a namespace (e.g. SVG) for <namespace>Names.h" unless $namespace;
 die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $namespaceURI;
@@ -119,7 +121,7 @@ sub printMacros
 sub printConstructors
 {
     my ($F, @names) = @_;
-    print F "#if ENABLE(SVG)\n";
+    print F "#if $guardFactoryWith\n" if $guardFactoryWith;
     for my $name (@names) {
         my $upperCase = upperCaseName($name);
     
@@ -128,7 +130,7 @@ sub printConstructors
         print F "    return new ${namespace}${upperCase}Element(${name}Tag, doc);\n";
         print F "}\n\n";
     }
-    print F "#endif\n";
+    print F "#endif\n" if $guardFactoryWith;
 }
 
 sub printFunctionInits
@@ -407,8 +409,9 @@ END
 
 printConstructors($F, @tags);
 
+print F "#if $guardFactoryWith\n" if $guardFactoryWith;
+
 print F <<END
-#if ENABLE(SVG)
 static inline void createFunctionMapIfNecessary()
 {
     if (gFunctionMap)
@@ -422,13 +425,18 @@ END
 
 printFunctionInits($F, @tags);
 
-print F <<END
-}
-#endif
+print F "}\n";
+print F "#endif\n\n" if $guardFactoryWith;
 
+print F <<END
 ${namespace}Element *${namespace}ElementFactory::create${namespace}Element(const QualifiedName& qName, Document* doc, bool createdByParser)
 {
-#if ENABLE(SVG)
+END
+;
+
+print F "#if $guardFactoryWith\n" if $guardFactoryWith;
+
+print F <<END
     // Don't make elements without a document
     if (!doc)
         return 0;
@@ -445,9 +453,21 @@ ${namespace}Element *${namespace}ElementFactory::create${namespace}Element(const
         return func(doc, createdByParser);
 
     return new ${namespace}Element(qName, doc);
+END
+;
+
+if ($guardFactoryWith) {
+
+print F <<END
 #else
     return 0;
 #endif
+END
+;
+
+}
+
+print F <<END
 }
 
 } // namespace
