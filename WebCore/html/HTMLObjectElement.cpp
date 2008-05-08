@@ -117,8 +117,6 @@ void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
           m_needWidgetUpdate = true;
     } else if (attr->name() == onloadAttr) {
         setHTMLEventListener(loadEvent, attr);
-    } else if (attr->name() == onunloadAttr) {
-        setHTMLEventListener(unloadEvent, attr);
     } else if (attr->name() == nameAttr) {
         const AtomicString& newName = attr->value();
         if (isDocNamedItem() && inDocument() && document()->isHTMLDocument()) {

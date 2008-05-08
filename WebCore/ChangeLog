@@ -1,3 +1,18 @@
+2008-05-07  Stephanie Lewis <slewis@apple.com>
+
+        Reviewed by Maciej.
+
+        remove non-functioning code.  If onunload should be fired from these nodes then
+        a WindowEventListener needs to be set.  However, Firefox and IE also do not
+        fire onunload events for these cases.
+
+        Test: fast/events/onunload-not-on-body.html 
+        
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute):
+        * html/HTMLObjectElement.cpp
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+
 2008-05-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

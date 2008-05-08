@@ -1,3 +1,13 @@
+2008-05-07  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Maciej.
+
+        Test onunload attr on a frame does not call onunload, but that an onunload attr on the body of
+        a frame does.  Also test that onunloads on object elements are not called.
+
+        * fast/events/onunload-not-on-body-expected.txt: Added.
+        * fast/events/onunload-not-on-body.html: Added.
+
 2008-05-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

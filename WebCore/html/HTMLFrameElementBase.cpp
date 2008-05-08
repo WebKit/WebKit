@@ -145,8 +145,6 @@ void HTMLFrameElementBase::parseMappedAttribute(MappedAttribute *attr)
     } else if (attr->name() == onbeforeunloadAttr) {
         // FIXME: should <frame> elements have beforeunload handlers?
         setHTMLEventListener(beforeunloadEvent, attr);
-    } else if (attr->name() == onunloadAttr) {
-        setHTMLEventListener(unloadEvent, attr);
     } else
         HTMLFrameOwnerElement::parseMappedAttribute(attr);
 }
