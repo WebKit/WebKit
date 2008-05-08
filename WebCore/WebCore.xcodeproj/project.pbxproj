@@ -345,6 +345,7 @@
 		1CB4214B0AF2B2CA0085AD91 /* DOMElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711490AC5D5340053270F /* DOMElementInternal.h */; };
 		1CB4214C0AF2B2CA0085AD91 /* DOMHTMLElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711580AC5D5340053270F /* DOMHTMLElementInternal.h */; };
 		1CB4214D0AF2B2CA0085AD91 /* DOMRangeInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8538F05A0AD722F1006A81D1 /* DOMRangeInternal.h */; };
+		1CDC14050DD3934C006EACD3 /* localizedStrings.js in Resources */ = {isa = PBXBuildFile; fileRef = BCC64F5F0DCFB84E0081EF3B /* localizedStrings.js */; };
 		1CE24F970D7CAF0E007E04C2 /* SchedulePairMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */; };
 		1CE83AC30ADAFFD7009354F6 /* DeleteButtonController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4C8EFF0AD85D87009475CE /* DeleteButtonController.cpp */; };
 		1CE83AC40ADAFFD8009354F6 /* DeleteButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4C8F630AD8655D009475CE /* DeleteButton.cpp */; };
@@ -3844,7 +3845,6 @@
 		BCEF3434087B563E00BBF833 /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* HTMLElementFactory.cpp */; };
 		BCEF3435087B563E00BBF833 /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* HTMLElementFactory.h */; };
 		BCEFAF4E0C317E6900FA81F6 /* JSEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */; };
-		BCEFE1DD0DCA5CFD00739219 /* XSLTProcessor.idl in Resources */ = {isa = PBXBuildFile; fileRef = BCEFE1DC0DCA5CFD00739219 /* XSLTProcessor.idl */; };
 		BCEFE1E50DCA5F3300739219 /* JSXSLTProcessorCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEFE1E40DCA5F3300739219 /* JSXSLTProcessorCustom.cpp */; };
 		BCEFE1EA0DCA5F6400739219 /* JSXSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEFE1E80DCA5F6400739219 /* JSXSLTProcessor.cpp */; };
 		BCEFE1EB0DCA5F6400739219 /* JSXSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEFE1E90DCA5F6400739219 /* JSXSLTProcessor.h */; };
@@ -15086,6 +15086,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1CDC14050DD3934C006EACD3 /* localizedStrings.js in Resources */,
 				B25599480D00D8BA00BB825C /* WKArithmeticFilter.cikernel in Resources */,
 				B255994B0D00D8BA00BB825C /* WKComponentMergeFilter.cikernel in Resources */,
 				B255994E0D00D8BA00BB825C /* WKDiffuseLightingFilter.cikernel in Resources */,
@@ -15132,7 +15133,6 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				BCEFE1DD0DCA5CFD00739219 /* XSLTProcessor.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

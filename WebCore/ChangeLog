@@ -1,3 +1,14 @@
+2008-05-08  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes the bug where the Web Inspector could not
+        find any localization strings.
+
+        Reviewed by Mark Rowe.
+
+        * WebCore.xcodeproj/project.pbxproj: Add the localizedStrings.js
+        file to the WebCore Copy Resources phase. Also removes an idl from
+        the Copy Resources phase.
+
 2008-05-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
