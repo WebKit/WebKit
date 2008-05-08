@@ -1,4 +1,10 @@
 2008-05-07  Stephanie Lewis  <slewis@apple.com>
+        
+        fix messed up result
+
+        * fast/events/onunload-not-on-body-expected.txt:
+
+2008-05-07  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Maciej.
 
