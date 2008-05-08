@@ -39,13 +39,14 @@ namespace WebCore {
     class MessageEvent : public Event {
     public:
         MessageEvent();
-        MessageEvent(const String& data, const String& origin, DOMWindow* source);
+        MessageEvent(const String& data, const String& origin, const String& lastEventId, DOMWindow* source);
         virtual ~MessageEvent();
 
-        void initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& data, const String& origin, DOMWindow* source);
+        void initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& data, const String& origin, const String& lastEventId, DOMWindow* source);
         
         const String& data() const { return m_data; }
         const String& origin() const { return m_origin; }
+        const String& lastEventId() const { return m_lastEventId; }
         DOMWindow* source() const { return m_source.get(); }
         
         virtual bool isMessageEvent() const;
@@ -53,6 +54,7 @@ namespace WebCore {
     private:    
         String m_data;
         String m_origin;
+        String m_lastEventId;
         RefPtr<DOMWindow> m_source;
     };
 

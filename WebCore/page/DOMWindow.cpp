@@ -374,7 +374,7 @@ void DOMWindow::postMessage(const String& message, const String& targetOrigin, D
     String sourceOrigin = sourceDocument->securityOrigin()->toString();
 
     // Schedule the message.
-    PostMessageTimer* timer = new PostMessageTimer(this, new MessageEvent(message, sourceOrigin, source), target.get());
+    PostMessageTimer* timer = new PostMessageTimer(this, new MessageEvent(message, sourceOrigin, "", source), target.get());
     timer->startOneShot(0);
 }
 

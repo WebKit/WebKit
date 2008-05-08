@@ -1,3 +1,19 @@
+2008-05-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson
+
+        Update MessageEvent to match the latest version of the HTML5 spec,
+        adding the lastEventId attribute.
+
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        (WebCore::MessageEvent::initMessageEvent):
+        * dom/MessageEvent.h:
+        (WebCore::MessageEvent::lastEventId):
+        * dom/MessageEvent.idl:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+
 2008-05-07  Stephanie Lewis <slewis@apple.com>
 
         Reviewed by Maciej.

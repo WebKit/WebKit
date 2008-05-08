@@ -41,10 +41,11 @@ MessageEvent::MessageEvent()
 {
 }
 
-MessageEvent::MessageEvent(const String& data, const String& origin, DOMWindow* source)
+MessageEvent::MessageEvent(const String& data, const String& origin, const String& lastEventId, DOMWindow* source)
     : Event(messageEvent, false, true)
     , m_data(data)
     , m_origin(origin)
+    , m_lastEventId(lastEventId)
     , m_source(source)
 {
 }
@@ -53,7 +54,7 @@ MessageEvent::~MessageEvent()
 {
 }
 
-void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& data, const String& origin, DOMWindow* source)
+void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& data, const String& origin, const String& lastEventId, DOMWindow* source)
 {
     if (dispatched())
         return;
@@ -62,6 +63,7 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
     
     m_data = data;
     m_origin = origin;
+    m_lastEventId = lastEventId;
     m_source = source;
 }
 
