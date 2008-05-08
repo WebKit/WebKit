@@ -78,11 +78,10 @@ struct PlatformModuleVersion {
 
 typedef QFile* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
-#if defined(Q_WS_X11)
+#if defined(Q_WS_X11) || defined(Q_WS_MAC)
 typedef QLibrary* PlatformModule;
 typedef unsigned PlatformModuleVersion;
-#endif
-#if defined(Q_OS_WIN32)
+#elif defined(Q_OS_WIN32)
 typedef HMODULE PlatformModule;
 struct PlatformModuleVersion {
     unsigned leastSig;

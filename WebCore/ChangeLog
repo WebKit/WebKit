@@ -1,3 +1,11 @@
+2008-05-08  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon
+
+        Fix the Qt/Mac build.
+
+        * platform/FileSystem.h:
+
 2008-05-08  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
