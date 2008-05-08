@@ -1,3 +1,15 @@
+2008-05-08  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Use native Windows library handling (instead of QLibrary) 
+        for Qt/Win32's PlatformModule.
+
+        * platform/FileSystem.h:
+        (WebCore::PlatformModuleVersion::PlatformModuleVersion):
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::unloadModule):
+
 2008-05-08  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed and found by Holger.

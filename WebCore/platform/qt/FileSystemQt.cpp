@@ -127,6 +127,7 @@ int writeToFile(PlatformFileHandle handle, const char* data, int length)
     return 0;
 }
 
+#if defined(Q_WS_X11)
 bool unloadModule(PlatformModule module)
 {
     if (module->unload()) {
@@ -136,6 +137,14 @@ bool unloadModule(PlatformModule module)
 
     return false;
 }
+#endif
+
+#if defined(Q_OS_WIN32)
+bool unloadModule(PlatformModule module)
+{
+    return ::FreeLibrary(module);
+}
+#endif
 
 }
 
