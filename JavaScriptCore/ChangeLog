@@ -1,3 +1,11 @@
+2008-05-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark.
+
+        Enable NPAPI plug-ins on 64-bit.
+        
+        * wtf/Platform.h:
+
 2008-05-07  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Adam Roben.
