@@ -1,32 +1,35 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/webkit/inspector">
+    <file>BreakpointsSidebarPane.js</file>
+    <file>CallStackSidebarPane.js</file>
     <file>Console.js</file>
     <file>Database.js</file>
-    <file>DatabasesPanel.js</file>
-    <file>View.js</file>
-    <file>DatabaseTableView.js</file>
     <file>DatabaseQueryView.js</file>
+    <file>DatabasesPanel.js</file>
+    <file>DatabaseTableView.js</file>
     <file>ElementsPanel.js</file>
     <file>FontView.js</file>
-    <file>TextPrompt.js</file>
     <file>ImageView.js</file>
+    <file>inspector.css</file>
+    <file>inspector.html</file>
+    <file>inspector.js</file>
     <file>MetricsSidebarPane.js</file>
     <file>Panel.js</file>
     <file>PropertiesSection.js</file>
     <file>PropertiesSidebarPane.js</file>
-    <file>Resource.js</file>
     <file>ResourceCategory.js</file>
-    <file>ResourceView.js</file>
+    <file>Resource.js</file>
     <file>ResourcesPanel.js</file>
+    <file>ResourceView.js</file>
+    <file>ScriptsPanel.js</file>
     <file>SidebarPane.js</file>
     <file>SidebarTreeElement.js</file>
     <file>SourceView.js</file>
     <file>StylesSidebarPane.js</file>
-    <file>inspector.css</file>
-    <file>inspector.html</file>
-    <file>inspector.js</file>
+    <file>TextPrompt.js</file>
     <file>treeoutline.js</file>
     <file>utilities.js</file>
+    <file>View.js</file>
     <file>Images/back.png</file>
     <file>Images/checker.png</file>
     <file>Images/clearConsoleButtons.png</file>
