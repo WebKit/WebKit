@@ -122,6 +122,56 @@ static WebHistoryItem *prevTestBFItem = nil;  // current b/f item at the end of 
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
 
+#if __OBJC2__
+static void swizzleAllMethods(Class imposter, Class original)
+{
+    unsigned int imposterMethodCount;
+    Method* imposterMethods = class_copyMethodList(imposter, &imposterMethodCount);
+
+    unsigned int originalMethodCount;
+    Method* originalMethods = class_copyMethodList(original, &originalMethodCount);
+
+    for (unsigned int i = 0; i < imposterMethodCount; i++) {
+        SEL imposterMethodName = method_getName(imposterMethods[i]);
+
+        // Attempt to add the method to the original class.  If it fails, the method already exists and we should
+        // instead exchange the implementations.
+        if (class_addMethod(original, imposterMethodName, method_getImplementation(originalMethods[i]), method_getTypeEncoding(originalMethods[i])))
+            continue;
+
+        unsigned int j = 0;
+        for (; j < originalMethodCount; j++) {
+            SEL originalMethodName = method_getName(originalMethods[j]);
+            if (sel_isEqual(imposterMethodName, originalMethodName))
+                break;
+        }
+
+        // If class_addMethod failed above then the method must exist on the original class.
+        ASSERT(j < originalMethodCount);
+        method_exchangeImplementations(imposterMethods[i], originalMethods[j]);
+    }
+
+    free(imposterMethods);
+    free(originalMethods);
+}
+#endif
+
+static void poseAsClass(const char* imposter, const char* original)
+{
+    Class imposterClass = objc_getClass(imposter);
+    Class originalClass = objc_getClass(original);
+
+#if !__OBJC2__
+    class_poseAs(imposterClass, originalClass);
+#else
+
+    // Swizzle instance methods
+    swizzleAllMethods(imposterClass, originalClass);
+    // and then class methods
+    swizzleAllMethods(object_getClass(imposterClass), object_getClass(originalClass));
+#endif
+}
+
 void setPersistentUserStyleSheetLocation(CFStringRef url)
 {
     persistentUserStyleSheetLocation = url;
@@ -380,8 +430,8 @@ static void runTestingServerLoop()
 
 static void prepareConsistentTestingEnvironment()
 {
-    class_poseAs(objc_getClass("DumpRenderTreePasteboard"), objc_getClass("NSPasteboard"));
-    class_poseAs(objc_getClass("DumpRenderTreeEvent"), objc_getClass("NSEvent"));
+    poseAsClass("DumpRenderTreePasteboard", "NSPasteboard");
+    poseAsClass("DumpRenderTreeEvent", "NSEvent");
 
     setDefaultsToConsistentValuesForTesting();
     activateAhemFont();
@@ -462,7 +512,7 @@ int main(int argc, const char *argv[])
     return 0;
 }
 
-static int compareHistoryItems(id item1, id item2, void *context)
+static NSInteger compareHistoryItems(id item1, id item2, void *context)
 {
     return [[item1 target] caseInsensitiveCompare:[item2 target]];
 }
@@ -556,7 +606,7 @@ static void convertWebResourceDataToString(NSMutableDictionary *resource)
 
 static void normalizeWebResourceURL(NSMutableString *webResourceURL)
 {
-    static int fileUrlLength = [@"file://" length];
+    static int fileUrlLength = [(NSString *)@"file://" length];
     NSRange layoutTestsWebArchivePathRange = [webResourceURL rangeOfString:@"/LayoutTests/" options:NSBackwardsSearch];
     if (layoutTestsWebArchivePathRange.location == NSNotFound)
         return;

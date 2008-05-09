@@ -29,9 +29,10 @@
  */
 
 #import <AppKit/AppKit.h>
+#import <WebKit/WebTypesInternal.h>
 
 @interface DumpRenderTreePasteboard : NSPasteboard
-- (int)declareType:(NSString *)type owner:(id)newOwner;
+- (NSInteger)declareType:(NSString *)type owner:(id)newOwner;
 + (void)releaseLocalPasteboards;
 @end
 

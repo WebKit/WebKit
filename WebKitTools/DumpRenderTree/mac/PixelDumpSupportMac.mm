@@ -42,33 +42,53 @@
 
 static unsigned char* screenCaptureBuffer;
 
-static CMProfileRef currentColorProfile = 0;
+static bool changedColorProfile = false;
+static CMProfileLocation currentColorProfileLocation;
 static CGColorSpaceRef sharedColorSpace;
 
 void restoreColorSpace(int ignored)
 {
     // This is used as a signal handler, and thus the calls into ColorSync are unsafe
     // But we might as well try to restore the user's color profile, we're going down anyway...
-    if (currentColorProfile) {
-        // This call is deprecated in Leopard, but there appears to be no replacement.
-        int error = CMSetDefaultProfileByUse(cmDisplayUse, currentColorProfile);
+    if (changedColorProfile) {
+        CMDeviceScope scope = { kCFPreferencesCurrentUser, kCFPreferencesCurrentHost };
+        int error = CMSetDeviceProfile(cmDisplayDeviceClass, cmDefaultDeviceID, &scope, cmDefaultProfileID, &currentColorProfileLocation);
         if (error)
             fprintf(stderr, "Failed to retore previous color profile!  You may need to open System Preferences : Displays : Color and manually restore your color settings.  (Error: %i)", error);
-        currentColorProfile = 0;
+        changedColorProfile = false;
     }
+}
+
+static void failedGettingCurrentProfile(int error)
+{
+    fprintf(stderr, "Failed to get current color profile.  I will not be able to restore your current profile, thus I'm not changing it.  Many pixel tests may fail as a result.  (Error: %i)\n", error);
 }
 
 static void setDefaultColorProfileToRGB()
 {
     CMProfileRef genericProfile = (CMProfileRef)[[NSColorSpace genericRGBColorSpace] colorSyncProfile];
-    CMProfileRef previousProfile;
-    int error = CMGetDefaultProfileByUse(cmDisplayUse, &previousProfile);
+    CMProfileLocation genericProfileLocation;
+    UInt32 locationSize = sizeof(genericProfileLocation);
+    int error = NCMGetProfileLocation(genericProfile, &genericProfileLocation, &locationSize);
     if (error) {
-        fprintf(stderr, "Failed to get current color profile.  I will not be able to restore your current profile, thus I'm not changing it.  Many pixel tests may fail as a result.  (Error: %i)\n", error);
+        failedGettingCurrentProfile(error);
         return;
     }
-    if (previousProfile == genericProfile)
+
+    CMProfileLocation previousProfileLocation;
+    error = CMGetDeviceProfile(cmDisplayDeviceClass, cmDefaultDeviceID, cmDefaultProfileID, &previousProfileLocation);
+    if (error) {
+        failedGettingCurrentProfile(error);
         return;
+    }
+
+    CMProfileRef previousProfile;
+    error = CMOpenProfile(&previousProfile, &previousProfileLocation);
+    if (error) {
+        failedGettingCurrentProfile(error);
+        return;
+    }
+
     CFStringRef previousProfileName;
     CFStringRef genericProfileName;
     char previousProfileNameString[1024];
@@ -80,15 +100,19 @@ static void setDefaultColorProfileToRGB()
     CFRelease(previousProfileName);
     CFRelease(genericProfileName);
 
+    CMCloseProfile(previousProfile);
+
     fprintf(stderr, "\n\nWARNING: Temporarily changing your system color profile from \"%s\" to \"%s\".\n", previousProfileNameString, genericProfileNameString);
     fprintf(stderr, "This allows the WebKit pixel-based regression tests to have consistent color values across all machines.\n");
     fprintf(stderr, "The colors on your screen will change for the duration of the testing.\n\n");
-    
-    if ((error = CMSetDefaultProfileByUse(cmDisplayUse, genericProfile))) {
+
+    CMDeviceScope scope = { kCFPreferencesCurrentUser, kCFPreferencesCurrentHost };
+    if ((error = CMSetDeviceProfile(cmDisplayDeviceClass, cmDefaultDeviceID, &scope, cmDefaultProfileID, &genericProfileLocation))) {
         fprintf(stderr, "Failed to set color profile to \"%s\"! Many pixel tests will fail as a result.  (Error: %i)",
             genericProfileNameString, error);
     } else {
-        currentColorProfile = previousProfile;
+        currentColorProfileLocation = previousProfileLocation;
+        changedColorProfile = true;
         signal(SIGINT, restoreColorSpace);
         signal(SIGHUP, restoreColorSpace);
         signal(SIGTERM, restoreColorSpace);

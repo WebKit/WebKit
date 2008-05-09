@@ -1,5 +1,33 @@
 2008-05-08  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Oliver Hunt and Dan Bernstein.
+
+        Update DumpRenderTree to build 64-bit.
+
+        The three major changes here are:
+        1) Use NSInteger in the appropriate places.
+        2) Use ColorSync API that is available in 64-bit to switch display profiles.
+        3) Use method-swizzling to achieve similar results to class posing when using the Obj-C 2.0 runtime.
+
+        The build of DumpRenderTree will still fail in 64-bit for now as the TestNetscapePlugIn target also
+        needs updated to successfully build.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig: Don't prevent Xcode from building 64-bit.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (swizzleAllMethods):
+        (poseAsClass):
+        (prepareConsistentTestingEnvironment):
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.h:
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.m:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (restoreColorSpace):
+        (failedGettingCurrentProfile):
+        (setDefaultColorProfileToRGB):
+
+2008-05-08  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Darin Adler.
 
         Clean up Drosera so that it will build 64-bit.

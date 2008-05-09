@@ -34,6 +34,7 @@
 
 // FIXME: This file is ObjC++ only because of this include. :(
 #import "LayoutTestController.h"
+#import <WebKit/WebTypesInternal.h>
 
 CFMutableArrayRef openWindowsRef = 0;
 
@@ -52,7 +53,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
     return [[(NSArray *)openWindowsRef copy] autorelease];
 }
 
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
 {
     if (!openWindowsRef)
         openWindowsRef = CFArrayCreateMutable(NULL, 0, &NonRetainingArrayCallbacks);
