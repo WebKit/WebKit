@@ -135,6 +135,7 @@ FrameLoaderClientQt::FrameLoaderClientQt()
     : m_frame(0)
     , m_webFrame(0)
     , m_pluginView(0)
+    , m_hasSentResponseToPlugin(false)
     , m_firstData(false)
     , m_policyFunction(0)
     , m_loadSucceeded(false)
@@ -1087,7 +1088,9 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, Element* el
 
 void FrameLoaderClientQt::redirectDataToPlugin(Widget* pluginWidget)
 {
+    ASSERT(!m_pluginView);
     m_pluginView = static_cast<PluginView*>(pluginWidget);
+    m_hasSentResponseToPlugin = false;
 }
 
 Widget* FrameLoaderClientQt::createJavaAppletWidget(const IntSize&, Element*, const KURL& baseURL,

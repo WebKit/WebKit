@@ -1,3 +1,16 @@
+2008-05-08  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
+
+        Reviewed by Simon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18935
+
+        Based on work by Sriram Neelakandan for the Gtk port.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp: Initialize
+        m_hasSentResponseToPlugin.
+        (WebCore::FrameLoaderClientQt::FrameLoaderClientQt):
+        (WebCore::FrameLoaderClientQt::redirectDataToPlugin):
+
 2008-05-08  Warwick Allison  <warwick@trolltech.com>
 
         Reviewed by Simon.
