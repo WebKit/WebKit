@@ -1,5 +1,13 @@
 2008-05-08  Mark Rowe  <mrowe@apple.com>
 
+        Another attempt at a Tiger build fix.
+
+        Use DumpRenderTreeMac.h rather than DumpRenderTree.h as DumpRenderTreePasteboard is not an Obj-C++ file.
+
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.m:
+
+2008-05-08  Mark Rowe  <mrowe@apple.com>
+
         Tiger build fix.  Include DumpRenderTree.h so that BUILDING_ON_TIGER will be defined.
 
         * DumpRenderTree/mac/DumpRenderTreePasteboard.m:
