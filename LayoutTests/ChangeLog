@@ -1,3 +1,19 @@
+2008-05-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - test and updated results for https://bugs.webkit.org/show_bug.cgi?id=18818
+          <rdar://problem/5901544> REGRESSION (3.1.1-TOT): Character order (float:left ordered after the first letter)
+
+        * ChangeLog:
+        * fast/css/first-letter-float-after-float.html: Added.
+        * platform/mac-leopard/fast/css/first-letter-skip-out-of-flow-expected.checksum:
+        * platform/mac-leopard/fast/css/first-letter-skip-out-of-flow-expected.png:
+        * platform/mac/fast/css/first-letter-float-after-float-expected.checksum: Added.
+        * platform/mac/fast/css/first-letter-float-after-float-expected.png: Added.
+        * platform/mac/fast/css/first-letter-float-after-float-expected.txt: Added.
+        * platform/mac/fast/css/first-letter-skip-out-of-flow-expected.txt:
+
 2008-05-08  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

@@ -1,3 +1,17 @@
+2008-05-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=18818
+          <rdar://problem/5901544> REGRESSION (3.1.1-TOT): Character order (float:left ordered after the first letter)
+
+        Test: fast/css/first-letter-float-after-float.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter): Changed to add the first
+        letter container right before the rest of the text it is taken from,
+        instead of at the beginning of the block.
+
 2008-05-08  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
