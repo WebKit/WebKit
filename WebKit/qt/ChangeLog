@@ -1,3 +1,17 @@
+2008-05-09  Thiago Macieira  <tjmaciei@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix bad includes in QtWebKit public headers.
+        
+        Make sure to include qglobal.h using the QtCore prefix so that an explicit
+        include/QtCore is not needed in the application's build system. Also make sure
+        that qwebsettings.h includes the local qwebkitglobal.h.
+        
+
+        * Api/qwebkitglobal.h:
+        * Api/qwebsettings.h:
+
 2008-05-08  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
 
         Reviewed by Simon.

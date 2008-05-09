@@ -20,7 +20,7 @@
 #ifndef QWEBKITGLOBAL_H
 #define QWEBKITGLOBAL_H
 
-#include <qglobal.h>
+#include <QtCore/qglobal.h>
 
 #if defined(Q_OS_WIN)
 #    if defined(BUILD_WEBKIT)

@@ -20,7 +20,7 @@
 #ifndef QWEBSETTINGS_H
 #define QWEBSETTINGS_H
 
-#include <qwebkitglobal.h>
+#include "qwebkitglobal.h"
 
 #include <QtCore/qstring.h>
 #include <QtGui/qpixmap.h>
