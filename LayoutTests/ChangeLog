@@ -1,3 +1,30 @@
+2008-05-09  Adam Barth  <abarth-webkit@adambarth.com>
+
+        Reviewed by Sam Weinig.
+
+        Update tests to listen for message events on the window instead of
+        the document.  Also, added a test that the event is sent to the
+        window and not to the document.
+
+        * http/tests/messaging/cross-domain-message-event-dispatch-expected.txt: Added.
+        * http/tests/messaging/cross-domain-message-event-dispatch.html: Added.
+        * http/tests/messaging/cross-domain-message-send.html:
+        * http/tests/messaging/resources/cross-domain-message-receive.html:
+        * http/tests/security/cross-frame-access-delete.html:
+        * http/tests/security/cross-frame-access-history-put.html:
+        * http/tests/security/cross-frame-access-location-put.html:
+        * http/tests/security/postMessage/delivery-order.html:
+        * http/tests/security/postMessage/invalid-origin-throws-exception.html:
+        * http/tests/security/postMessage/javascript-page-still-sends-origin.html:
+        * http/tests/security/postMessage/origin-unaffected-by-base-tag.html:
+        * http/tests/security/postMessage/origin-unaffected-by-document-domain.html:
+        * http/tests/security/postMessage/resources/post-message-listener.html:
+        * http/tests/security/postMessage/target-origin.html:
+        * http/tests/security/resources/cross-frame-iframe-for-delete-test.html:
+        * http/tests/security/resources/cross-frame-iframe-for-history-put-test.html:
+        * http/tests/security/resources/cross-frame-iframe-for-location-put-test.html:
+        * http/tests/security/xss-eval.html:
+
 2008-05-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

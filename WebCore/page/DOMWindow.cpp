@@ -395,8 +395,7 @@ void DOMWindow::postMessageTimerFired(PostMessageTimer* t)
         }
     }
 
-    ExceptionCode ec;
-    document()->dispatchEvent(timer->event(), ec, true);
+    document()->dispatchWindowEvent(timer->event());
 }
 #endif
 

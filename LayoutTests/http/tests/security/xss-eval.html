@@ -25,7 +25,7 @@ function shouldBe(aDescription, a, b)
     }
 }
 
-document.addEventListener("message", function()
+addEventListener("message", function()
 {
     shouldBe("eval.call(frames[0], 'document')", (function() { try { return eval.call(frames[0], 'document'); } catch(e) { return e.name; } })(), "EvalError");
 

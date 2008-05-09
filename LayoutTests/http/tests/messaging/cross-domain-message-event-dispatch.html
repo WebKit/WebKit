@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
+
+function log(msg) {
+    var div = document.createElement("div");
+    div.appendChild(document.createTextNode(msg));
+    document.getElementById("result").appendChild(div);
+}
+
+function done() {
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+window.onload = function () {
+    log("Test begins");
+
+    // The setTimeout handlers will get called after the
+    // event listeners, because setTimeout has a minimum wait time
+    // of 10ms while postMessage has no minimum wait time.
+    postMessage("Message1", "*");
+    setTimeout("log('setTimeout1')", 0);
+    postMessage("Message2", "*");
+    setTimeout("log('setTimeout2')", 0);
+    postMessage("Message3", "*");
+    setTimeout(done, 0);
+    log("Events queued");
+}
+
+addEventListener("message", function (e) {
+        log("Capture phase: " + e.data);
+    }, true);
+addEventListener("message", function (e) {
+        log("Bubble phase: " + e.data);
+    }, false);
+
+document.addEventListener("message", function (e) {
+        log("FAIL: Capture phase (document): " + e.data);
+    }, true);
+document.addEventListener("message", function (e) {
+        log("FAIL: Bubble phase (document): " + e.data);
+    }, false);
+</script>
+</head>
+<body>
+<div id="result">waiting...</div>
+</body>
+</html>

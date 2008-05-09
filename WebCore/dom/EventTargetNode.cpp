@@ -136,15 +136,21 @@ bool EventTargetNode::dispatchSubtreeModifiedEvent()
                                                true,false,0,String(),String(),String(),0),ec,true);
 }
 
-void EventTargetNode::dispatchWindowEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
+void EventTargetNode::dispatchWindowEvent(PassRefPtr<Event> e)
 {
     ASSERT(!eventDispatchForbidden());
-    ExceptionCode ec = 0;
-    RefPtr<Event> evt = new Event(eventType, canBubbleArg, cancelableArg);
+    RefPtr<Event> evt(e);
     RefPtr<Document> doc = document();
     evt->setTarget(doc);
     doc->handleWindowEvent(evt.get(), true);
     doc->handleWindowEvent(evt.get(), false);
+}
+
+void EventTargetNode::dispatchWindowEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg)
+{
+    ASSERT(!eventDispatchForbidden());
+    RefPtr<Document> doc = document();
+    dispatchWindowEvent(new Event(eventType, canBubbleArg, cancelableArg));
     
     if (eventType == loadEvent) {
         // For onload events, send a separate load event to the enclosing frame only.
@@ -154,6 +160,7 @@ void EventTargetNode::dispatchWindowEvent(const AtomicString &eventType, bool ca
         if (ownerElement) {
             RefPtr<Event> ownerEvent = new Event(eventType, false, cancelableArg);
             ownerEvent->setTarget(ownerElement);
+            ExceptionCode ec = 0;
             ownerElement->dispatchGenericEvent(ownerElement, ownerEvent.release(), ec, true);
         }
     }

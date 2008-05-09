@@ -8,7 +8,7 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
 }
 
-document.addEventListener('message', recv, false);
+addEventListener('message', recv, false);
 
 function test() {
     var iframe = document.getElementById('child');

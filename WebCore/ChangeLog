@@ -1,3 +1,20 @@
+2008-05-09  Adam Barth  <abarth-webkit@adambarth.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18771
+
+        Make postMessage generate an event on the window instead of the
+        document.
+
+        Test: http/tests/messaging/cross-domain-message-event-dispatch.html
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchWindowEvent):
+        * dom/EventTargetNode.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessageTimerFired):
+
 2008-05-09  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
