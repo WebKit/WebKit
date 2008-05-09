@@ -1,3 +1,10 @@
+2008-05-09  Kevin McCullough  <kmccullough@apple.com>
+
+        Build fix.
+
+        * page/Console.cpp:
+        (WebCore::Console::profile):
+
 2008-05-09  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Mark Rowe.
