@@ -1,3 +1,13 @@
+2008-05-08  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5921046> AX: list box options have wrong AXPosition
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::documentFrameView):
+        * page/AccessibilityObject.h:
+
 2008-05-08  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric.

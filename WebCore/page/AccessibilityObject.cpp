@@ -893,6 +893,18 @@ unsigned AccessibilityObject::doAXLineForIndex(unsigned index)
     return doAXLineForTextMarker(textMarkerForIndex(index, false));
 }
 
+FrameView* AccessibilityObject::documentFrameView() const 
+{ 
+    const AccessibilityObject* object = this;
+    while (object && !object->isAccessibilityRenderObject()) 
+        object = object->parentObject();
+        
+    if (!object)
+        return 0;
+
+    return object->documentFrameView();
+}    
+
 AccessibilityObject* AccessibilityObject::doAccessibilityHitTest(const IntPoint& point) const
 {
     return 0;
