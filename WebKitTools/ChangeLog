@@ -1,5 +1,11 @@
 2008-05-08  Mark Rowe  <mrowe@apple.com>
 
+        Tiger build fix.  Include DumpRenderTree.h so that BUILDING_ON_TIGER will be defined.
+
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.m:
+
+2008-05-08  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Oliver Hunt and Dan Bernstein.
 
         Update DumpRenderTree to build 64-bit.

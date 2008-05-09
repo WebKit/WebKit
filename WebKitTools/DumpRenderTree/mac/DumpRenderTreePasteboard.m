@@ -28,7 +28,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "DumpRenderTree.h"
 #import "DumpRenderTreePasteboard.h"
+
 #import <WebKit/WebTypesInternal.h>
 
 @interface LocalPasteboard : NSPasteboard
