@@ -1,3 +1,16 @@
+2008-05-09  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Removed explicit linkage against libxml and libxslt on Qt/Mac builds.
+        
+        This dependency is completely unnecessary here and creates only problems by
+        propagating through WebCore.pro over libQtWebKit.prl right now customer
+        applications.
+        
+
+        * WebKit.pri:
+
 2008-05-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark.
