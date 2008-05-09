@@ -1,3 +1,37 @@
+2008-05-09  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        -<rdar://problem/5770054> JavaScript profiler (10928)
+        -Add Profile class so that all profiles can be stored and retrieved by
+        the WebInspector when that time comes.
+
+        * JavaScriptCore.exp: Export the new function signatures.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Add the new files to the
+        project
+        * profiler/Profile.cpp: Added. This class represents a single run of the
+        profiler.
+        (KJS::Profile::Profile):
+        (KJS::Profile::willExecute):
+        (KJS::Profile::didExecute):
+        (KJS::Profile::printDataInspectorStyle):
+        (KJS::functionNameCountPairComparator):
+        (KJS::Profile::printDataSampleStyle):
+        * profiler/Profile.h: Added. Ditto
+        (KJS::Profile::stopProfiling):
+        * profiler/Profiler.cpp: Now the profiler keeps track of many profiles
+        but only runs one at a time.
+        (KJS::Profiler::startProfiling):
+        (KJS::Profiler::stopProfiling):
+        (KJS::Profiler::willExecute):
+        (KJS::Profiler::didExecute):
+        (KJS::Profiler::printDataInspectorStyle):
+        (KJS::Profiler::printDataSampleStyle):
+        * profiler/Profiler.h: Ditto.
+        (KJS::Profiler::~Profiler):
+        (KJS::Profiler::allProfiles):
+        (KJS::Profiler::clearProfiles):
+
 2008-05-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark.
