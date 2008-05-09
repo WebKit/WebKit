@@ -1,3 +1,9 @@
+2008-05-09  Adam Roben  <aroben@apple.com>
+
+        Build fix
+
+        * Interfaces/WebKit.idl: Touched.
+
 2008-05-06  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adele Peterson and John Sullivan.
