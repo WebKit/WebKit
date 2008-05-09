@@ -152,7 +152,7 @@ const KJS::UString& XMLHttpRequest::responseText() const
 
 Document* XMLHttpRequest::responseXML() const
 {
-    if (m_state != Loaded)
+    if (m_state != DONE)
         return 0;
 
     if (!m_createdDocument) {
@@ -260,7 +260,7 @@ bool XMLHttpRequest::dispatchEvent(PassRefPtr<Event> evt, ExceptionCode& ec, boo
 XMLHttpRequest::XMLHttpRequest(Document* d)
     : m_doc(d)
     , m_async(true)
-    , m_state(Uninitialized)
+    , m_state(UNSENT)
     , m_identifier(-1)
     , m_responseText("")
     , m_createdDocument(false)
@@ -301,7 +301,7 @@ void XMLHttpRequest::callReadyStateChangeListener()
     dispatchEvent(evt.release(), ec, false);
     ASSERT(!ec);
     
-    if (m_state == Loaded) {
+    if (m_state == DONE) {
         evt = new Event(loadEvent, false, false);
         if (m_onLoadListener) {
             evt->setTarget(this);
@@ -334,7 +334,7 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
 {
     internalAbort();
     XMLHttpRequestState previousState = m_state;
-    m_state = Uninitialized;
+    m_state = UNSENT;
     m_aborted = false;
 
     // clear stuff from possible previous load
@@ -347,7 +347,7 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
     m_createdDocument = false;
     m_responseXML = 0;
 
-    ASSERT(m_state == Uninitialized);
+    ASSERT(m_state == UNSENT);
 
     if (!urlMatchesDocumentDomain(url)) {
         ec = SECURITY_ERR;
@@ -383,10 +383,10 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
 
     // Check previous state to avoid dispatching readyState event
     // when calling open several times in a row.
-    if (previousState != Open)
-        changeState(Open);
+    if (previousState != OPENED)
+        changeState(OPENED);
     else
-        m_state = Open;
+        m_state = OPENED;
 }
 
 void XMLHttpRequest::open(const String& method, const KURL& url, bool async, const String& user, ExceptionCode& ec)
@@ -411,7 +411,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
     if (!m_doc)
         return;
 
-    if (m_state != Open || m_loader) {
+    if (m_state != OPENED || m_loader) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -499,12 +499,12 @@ void XMLHttpRequest::abort()
     // Clear headers as required by the spec
     m_requestHeaders.clear();
 
-    if ((m_state <= Open && !sendFlag) || m_state == Loaded)
-        m_state = Uninitialized;
+    if ((m_state <= OPENED && !sendFlag) || m_state == DONE)
+        m_state = UNSENT;
      else {
         ASSERT(!m_loader);
-        changeState(Loaded);
-        m_state = Uninitialized;
+        changeState(DONE);
+        m_state = UNSENT;
     }
 }
 
@@ -556,7 +556,7 @@ void XMLHttpRequest::overrideMimeType(const String& override)
     
 void XMLHttpRequest::setRequestHeader(const String& name, const String& value, ExceptionCode& ec)
 {
-    if (m_state != Open || m_loader) {
+    if (m_state != OPENED || m_loader) {
 #if ENABLE(DASHBOARD_SUPPORT)
         Settings* settings = m_doc ? m_doc->settings() : 0;
         if (settings && settings->usesDashboardBackwardCompatibilityMode())
@@ -595,7 +595,7 @@ String XMLHttpRequest::getRequestHeader(const String& name) const
 
 String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
 {
-    if (m_state < Receiving) {
+    if (m_state < LOADING) {
         ec = INVALID_STATE_ERR;
         return "";
     }
@@ -617,7 +617,7 @@ String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
 
 String XMLHttpRequest::getResponseHeader(const String& name, ExceptionCode& ec) const
 {
-    if (m_state < Receiving) {
+    if (m_state < LOADING) {
         ec = INVALID_STATE_ERR;
         return "";
     }
@@ -653,7 +653,7 @@ int XMLHttpRequest::status(ExceptionCode& ec) const
     if (m_response.httpStatusCode())
         return m_response.httpStatusCode();
 
-    if (m_state == Open) {
+    if (m_state == OPENED) {
         // Firefox only raises an exception in this state; we match it.
         // Note the case of local file requests, where we have no HTTP response code! Firefox never raises an exception for those, but we match HTTP case for consistency.
         ec = INVALID_STATE_ERR;
@@ -668,7 +668,7 @@ String XMLHttpRequest::statusText(ExceptionCode& ec) const
     if (m_response.httpStatusCode())
         return "OK";
 
-    if (m_state == Open) {
+    if (m_state == OPENED) {
         // See comments in getStatus() above.
         ec = INVALID_STATE_ERR;
     }
@@ -684,7 +684,7 @@ void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const Reso
     }
 
     didReceiveResponse(0, response);
-    changeState(Sent);
+    changeState(HEADERS_RECEIVED);
     if (m_aborted)
         return;
 
@@ -710,8 +710,8 @@ void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
         
     ASSERT(loader == m_loader);
 
-    if (m_state < Sent)
-        changeState(Sent);
+    if (m_state < HEADERS_RECEIVED)
+        changeState(HEADERS_RECEIVED);
 
     {
         KJS::JSLock lock;
@@ -727,7 +727,7 @@ void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
     bool hadLoader = m_loader;
     m_loader = 0;
 
-    changeState(Loaded);
+    changeState(DONE);
     m_decoder = 0;
 
     if (hadLoader)
@@ -756,8 +756,8 @@ void XMLHttpRequest::receivedCancellation(SubresourceLoader*, const Authenticati
 
 void XMLHttpRequest::didReceiveData(SubresourceLoader*, const char* data, int len)
 {
-    if (m_state < Sent)
-        changeState(Sent);
+    if (m_state < HEADERS_RECEIVED)
+        changeState(HEADERS_RECEIVED);
   
     if (!m_decoder) {
         if (!m_responseEncoding.isEmpty())
@@ -786,8 +786,8 @@ void XMLHttpRequest::didReceiveData(SubresourceLoader*, const char* data, int le
     if (!m_aborted) {
         updateAndDispatchOnProgress(len);
 
-        if (m_state != Receiving)
-            changeState(Receiving);
+        if (m_state != LOADING)
+            changeState(LOADING);
         else
             // Firefox calls readyStateChanged every time it receives data, 4449442
             callReadyStateChangeListener();

@@ -31,11 +31,11 @@ class TextResourceDecoder;
 
 // these exact numeric values are important because JS expects them
 enum XMLHttpRequestState {
-    Uninitialized = 0,  // The initial value.
-    Open = 1,           // The open() method has been successfully called.
-    Sent = 2,           // The user agent successfully completed the request, but no data has yet been received.
-    Receiving = 3,      // Immediately before receiving the message body (if any). All HTTP headers have been received.
-    Loaded = 4          // The data transfer has been completed.
+    UNSENT = 0,             // The object has been constructed.
+    OPENED = 1,             // The open() method has been successfully invoked. During this state request headers can be set using setRequestHeader() and the request can be made using the send() method.
+    HEADERS_RECEIVED = 2,   // All HTTP headers have been received. Several response members of the object are now available.
+    LOADING = 3,            // The response entity body is being received.
+    DONE = 4                // The data transfer has been completed or something went wrong during the transfer (such as infinite redirects)..
 };
 
 class XMLHttpRequest : public RefCounted<XMLHttpRequest>, public EventTarget, private SubresourceLoaderClient {
