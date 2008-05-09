@@ -1,5 +1,15 @@
 2008-05-09  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
+        Reviewed by Simon.
+
+        Replaced all instances of qDebug() with LOG(Media, ...)
+        in MediaPlayerPrivatePhonon.
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivate::updateStates):
+
+2008-05-09  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
         Reviewed by Simon
 
         Fix the Qt/Mac build.
