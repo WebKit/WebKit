@@ -1,3 +1,11 @@
+2008-05-09  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon
+
+        Fix the Qt/Mac build.
+
+        * platform/qt/FileSystemQt.cpp:
+
 2008-05-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

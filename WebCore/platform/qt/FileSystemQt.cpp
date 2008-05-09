@@ -127,7 +127,7 @@ int writeToFile(PlatformFileHandle handle, const char* data, int length)
     return 0;
 }
 
-#if defined(Q_WS_X11)
+#if defined(Q_WS_X11) || defined(Q_WS_MAC)
 bool unloadModule(PlatformModule module)
 {
     if (module->unload()) {
