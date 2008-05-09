@@ -1,3 +1,9 @@
+2008-05-09  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Tiger build of Drosera.
+
+        * Drosera/config.h: Define BUILDING_ON_TIGER when building on Tiger.
+
 2008-05-09  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Mark Rowe.
