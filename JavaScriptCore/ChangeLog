@@ -1,3 +1,10 @@
+2008-05-09  Brady Eidson  <beidson@apple.com>
+
+        Build Fix.  Kevin is an idiot.  
+        ("My name is Kevin McCullough and I approve this message.")
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
 2008-05-09  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

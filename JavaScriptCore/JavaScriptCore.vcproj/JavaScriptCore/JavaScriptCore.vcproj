@@ -890,6 +890,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\profiler\Profile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\Profile.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\profiler\Profiler.cpp"
 				>
 			</File>
