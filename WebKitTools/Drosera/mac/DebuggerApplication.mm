@@ -33,6 +33,7 @@
 #import "ServerConnection.h"
 
 #import <WebKit/WebCoreStatistics.h>
+#import <WebKit/WebTypesInternal.h>
 
 @implementation DebuggerApplication
 - (void)awakeFromNib
@@ -117,17 +118,17 @@
 #pragma mark -
 #pragma mark Table View Delegate
 
-- (int)numberOfRowsInTableView:(NSTableView *)tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
     return [knownServerNames count];
 }
 
-- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(int)row
+- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
     return @"";
 }
 
-- (void)tableView:(NSTableView *)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn row:(int)row
+- (void)tableView:(NSTableView *)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
     NSString *key = [[knownServerNames allKeys] objectAtIndex:row];
     NSMutableDictionary *info = [knownServerNames objectForKey:key];

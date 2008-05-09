@@ -577,7 +577,6 @@
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = Drosera;
 				USER_HEADER_SEARCH_PATHS = ../ForwardingHeaders/;
-				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -595,7 +594,6 @@
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = Drosera;
 				USER_HEADER_SEARCH_PATHS = ../ForwardingHeaders/;
-				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
