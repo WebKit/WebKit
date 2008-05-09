@@ -27,7 +27,6 @@
 module events {
 
     interface [
-        Conditional=CROSS_DOCUMENT_MESSAGING,
         GenerateConstructor
     ] MessageEvent : Event {
 

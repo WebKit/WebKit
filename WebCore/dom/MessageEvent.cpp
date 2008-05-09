@@ -27,8 +27,6 @@
 
 #include "config.h"
 
-#if ENABLE(CROSS_DOCUMENT_MESSAGING)
-
 #include "DOMWindow.h"
 #include "EventNames.h"
 #include "MessageEvent.h"
@@ -73,5 +71,3 @@ bool MessageEvent::isMessageEvent() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(CROSS_DOCUMENT_MESSAGING)

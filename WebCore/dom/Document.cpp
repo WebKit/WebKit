@@ -26,20 +26,20 @@
 
 #include "AXObjectCache.h"
 #include "CDATASection.h"
-#include "CachedCSSStyleSheet.h"
 #include "CSSHelper.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "CString.h"
+#include "CachedCSSStyleSheet.h"
 #include "Comment.h"
 #include "CookieJar.h"
 #include "DOMImplementation.h"
+#include "DOMWindow.h"
 #include "DocLoader.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
-#include "DOMWindow.h"
 #include "EditingText.h"
 #include "Editor.h"
 #include "EditorClient.h"
@@ -74,6 +74,7 @@
 #include "HitTestResult.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
+#include "MessageEvent.h"
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
 #include "MutationEvent.h"
@@ -113,10 +114,6 @@
 #if ENABLE(DATABASE)
 #include "Database.h"
 #include "DatabaseThread.h"
-#endif
-
-#if ENABLE(CROSS_DOCUMENT_MESSAGING)
-#include "MessageEvent.h"
 #endif
 
 #if ENABLE(XPATH)
@@ -2601,10 +2598,8 @@ PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& 
     if (eventType == "SVGZoomEvents")
         return new SVGZoomEvent;
 #endif
-#if ENABLE(CROSS_DOCUMENT_MESSAGING)
     if (eventType == "MessageEvent")
         return new MessageEvent;
-#endif
     ec = NOT_SUPPORTED_ERR;
     return 0;
 }

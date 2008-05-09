@@ -1,3 +1,11 @@
+2008-05-09  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Mark Rowe.
+
+        Remove the ENABLE_CROSS_DOCUMENT_MESSAGING #ifdefs.
+
+        * Scripts/build-webkit:
+
 2008-05-08  Mark Rowe  <mrowe@apple.com>
 
         Another attempt at a Tiger build fix.

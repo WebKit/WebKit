@@ -39,9 +39,6 @@ namespace WebCore {
     class CSSRuleList;
     class CSSStyleDeclaration;
     class Console;
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    class DOMApplicationCache;
-#endif
     class DOMSelection;
     class Database;
     class Document;
@@ -50,15 +47,17 @@ namespace WebCore {
     class Frame;
     class History;
     class Location;
-#if ENABLE(CROSS_DOCUMENT_MESSAGING)
-    class PostMessageTimer;
-#endif
     class Navigator;
+    class PostMessageTimer;
     class Screen;
 
 #if ENABLE(DOM_STORAGE)
     class SessionStorage;
     class Storage;
+#endif
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    class DOMApplicationCache;
 #endif
 
     typedef int ExceptionCode;
@@ -176,10 +175,8 @@ namespace WebCore {
         DOMApplicationCache* applicationCache() const;
 #endif
 
-#if ENABLE(CROSS_DOCUMENT_MESSAGING)
         void postMessage(const String& message, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
         void postMessageTimerFired(PostMessageTimer*);
-#endif
 
         void scrollBy(int x, int y) const;
         void scrollTo(int x, int y) const;

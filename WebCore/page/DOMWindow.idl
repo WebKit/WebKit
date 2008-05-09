@@ -146,11 +146,9 @@ module window {
 
                  attribute [Replaceable] Console console;
 
-#if defined(ENABLE_CROSS_DOCUMENT_MESSAGING)
         // cross-document messaging
         [DoNotCheckDomainSecurity, Custom] void postMessage(in DOMString message, in DOMString targetOrigin)
             raises(DOMException);
-#endif
 
 #if defined(LANGUAGE_JAVASCRIPT)
         // Global constructors
@@ -279,6 +277,7 @@ module window {
         attribute TextEventConstructor TextEvent;
         attribute UIEventConstructor UIEvent;
         attribute WheelEventConstructor WheelEvent;
+        attribute MessageEventConstructor MessageEvent;
         attribute EventExceptionConstructor EventException;
 
         attribute ClipboardConstructor Clipboard;
@@ -295,10 +294,6 @@ module window {
         attribute XMLSerializerConstructor XMLSerializer;
 
         attribute XMLHttpRequestExceptionConstructor XMLHttpRequestException;
-
-#if defined(ENABLE_CROSS_DOCUMENT_MESSAGING)
-        attribute MessageEventConstructor MessageEvent;
-#endif
 
 #if defined(ENABLE_DOM_STORAGE)
         attribute StorageConstructor Storage;

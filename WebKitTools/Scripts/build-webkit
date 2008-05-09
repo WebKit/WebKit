@@ -39,7 +39,6 @@ use POSIX;
 
 my $originalWorkingDirectory = getcwd();
 
-my $crossDocumentMessagingSupport = 1;
 my $databaseSupport = 1;
 my $domStorageSupport = 1;
 my $iconDatabaseSupport = 1;
@@ -69,7 +68,6 @@ Usage: $programName [options] [options to pass to build system]
   --universal                   Build 2-way universal (PPC and Intel 32-bit)
   --64-bit                      Build 64-bit, combine with --universal to build 4-way universal
   --[no-]offline-web-applications   Toggle Offline Web Application Support (default : $offlineWebApplicationSupport)
-  --[no-]cross-document-messaging   Toggle cross-document messaging support (default: $crossDocumentMessagingSupport)
   --[no-]database               Toggle Database Support (default: $databaseSupport)
   --[no-]dom-storage            Toggle DOM Storage Support (default: $domStorageSupport)
   --[no-]icon-database          Toggle Icon database support (default: $iconDatabaseSupport)
@@ -88,8 +86,7 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]coverage               Toggle code coverage support (default: $coverageSupport)
 EOF
 
-GetOptions('cross-document-messaging!' => \$crossDocumentMessagingSupport,
-           'database!' => \$databaseSupport,
+GetOptions('database!' => \$databaseSupport,
            'dom-storage!' => \$domStorageSupport,
            'icon-database!' => \$iconDatabaseSupport,
            'offline-web-applications!' => \$offlineWebApplicationSupport,
@@ -156,7 +153,6 @@ if (isWx()) {
 my $productDir = productDir();
 my @overrideFeatureDefinesOption = ();
 
-push @overrideFeatureDefinesOption, "ENABLE_CROSS_DOCUMENT_MESSAGING" if $crossDocumentMessagingSupport;
 push @overrideFeatureDefinesOption, "ENABLE_DATABASE" if $databaseSupport;
 push @overrideFeatureDefinesOption, "ENABLE_DOM_STORAGE" if $domStorageSupport;
 push @overrideFeatureDefinesOption, "ENABLE_ICONDATABASE" if $iconDatabaseSupport;
@@ -215,7 +211,6 @@ if ($buildSixtyFourBit && isOSX()) {
 
 # enable autotool options accordingly
 if (isGtk() && !useQmake()) {
-    push @options, autotoolsFlag($crossDocumentMessagingSupport, "cross-document-messaging");
     push @options, autotoolsFlag($databaseSupport, "database");
     push @options, autotoolsFlag($domStorageSupport, "dom-storage");
     push @options, autotoolsFlag($iconDatabaseSupport, "icon-database");

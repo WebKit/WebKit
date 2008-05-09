@@ -45,6 +45,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "History.h"
 #include "Location.h"
+#include "MessageEvent.h"
 #include "Navigator.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -54,10 +55,6 @@
 #include "SecurityOrigin.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
-
-#if ENABLE(CROSS_DOCUMENT_MESSAGING)
-#include "MessageEvent.h"
-#endif
 
 #if ENABLE(DATABASE)
 #include "Database.h"
@@ -79,7 +76,6 @@ using std::max;
 
 namespace WebCore {
 
-#if ENABLE(CROSS_DOCUMENT_MESSAGING)
 class PostMessageTimer : public TimerBase {
 public:
     PostMessageTimer(DOMWindow* window, MessageEvent* event, SecurityOrigin* targetOrigin)
@@ -102,7 +98,6 @@ private:
     RefPtr<MessageEvent> m_event;
     RefPtr<SecurityOrigin> m_targetOrigin;
 };
-#endif
 
 // This function:
 // 1) Validates the pending changes are not changing to NaN
@@ -349,7 +344,6 @@ Storage* DOMWindow::localStorage() const
 }
 #endif
 
-#if ENABLE(CROSS_DOCUMENT_MESSAGING)
 void DOMWindow::postMessage(const String& message, const String& targetOrigin, DOMWindow* source, ExceptionCode& ec)
 {
     if (!m_frame)
@@ -397,7 +391,6 @@ void DOMWindow::postMessageTimerFired(PostMessageTimer* t)
 
     document()->dispatchWindowEvent(timer->event());
 }
-#endif
 
 DOMSelection* DOMWindow::getSelection()
 {

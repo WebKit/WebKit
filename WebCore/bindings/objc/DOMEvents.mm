@@ -29,20 +29,17 @@
 #import "DOMEvents.h"
 
 #import "DOMInternal.h"
+#import "DOMMessageEvent.h"
 #import "DOMPrivate.h"
 #import "DOMProgressEvent.h"
 #import "Event.h"
 #import "KeyboardEvent.h"
+#import "MessageEvent.h"
 #import "MouseEvent.h"
 #import "MutationEvent.h"
 #import "OverflowEvent.h"
 #import "ProgressEvent.h"
 #import "UIEvent.h"
-
-#if ENABLE(CROSS_DOCUMENT_MESSAGING)
-#import "DOMMessageEvent.h"
-#import "MessageEvent.h"
-#endif
 
 #if ENABLE(SVG)
 #import "DOMSVGZoomEvent.h"
@@ -100,10 +97,8 @@
         wrapperClass = [DOMMutationEvent class];
     else if (impl->isOverflowEvent())
         wrapperClass = [DOMOverflowEvent class];
-#if ENABLE(CROSS_DOCUMENT_MESSAGING)
     else if (impl->isMessageEvent())
         wrapperClass = [DOMMessageEvent class];
-#endif
     else if (impl->isProgressEvent())
         wrapperClass = [DOMProgressEvent class];
     else
