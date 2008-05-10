@@ -55,7 +55,9 @@ typedef union PluginPort {
     NP_GLContext aglPort;
 } PluginPort;
 
-@interface WebBaseNetscapePluginView : NSView <WebPluginManualLoader>
+typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
+
+@interface WebBaseNetscapePluginView : NSView <WebPluginManualLoader, NSTextInput>
 {
     WebNetscapePluginPackage *pluginPackage;
     
@@ -115,6 +117,8 @@ typedef union PluginPort {
     NSTrackingRectTag trackingTag;
     NSMutableArray *streams;
     NSMutableDictionary *pendingFrameLoads;
+    
+    NPPluginTextInputFuncs *textInputFuncs;
     
     NPP_NewProcPtr NPP_New;
     NPP_DestroyProcPtr NPP_Destroy;
