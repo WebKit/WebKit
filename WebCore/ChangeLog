@@ -1,3 +1,12 @@
+2008-05-10  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fix crash for WebKit clients that don't set a group name for the WebView/Page.
+
+        * page/PageGroup.cpp: (WebCore::PageGroup::PageGroup): Instead of adding the Page directly to the group,
+          call the addPage method, since it does extra work initializing m_localStorage.
+
 2008-05-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

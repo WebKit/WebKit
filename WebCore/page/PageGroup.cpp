@@ -60,7 +60,7 @@ PageGroup::PageGroup(Page* page)
     , m_identifier(getUniqueIdentifier())
 {
     ASSERT(page);
-    m_pages.add(page);
+    addPage(page);
 }
 
 typedef HashMap<String, PageGroup*> PageGroupMap;
