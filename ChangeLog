@@ -1,3 +1,11 @@
+2008-05-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark.
+
+        Add x86_64 rule.
+        
+        * Makefile:
+
 2008-05-09  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

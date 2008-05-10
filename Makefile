@@ -16,6 +16,10 @@ universal u:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
 	if [ $$exit_status -ne 0 ]; then exit $$exit_status; fi; done
 
+x86_64:
+	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
+	if [ $$exit_status -ne 0 ]; then exit $$exit_status; fi; done
+
 64:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
 	if [ $$exit_status -ne 0 ]; then exit $$exit_status; fi; done
