@@ -96,6 +96,7 @@ Source files for JSCore.
     </set>
     <set append="1" var="PROFILER_SOURCES">
         profiler/FunctionCallProfile.cpp
+        profiler/Profile.cpp
         profiler/Profiler.cpp
     </set>
     <set append="1" var="WTF_SOURCES">

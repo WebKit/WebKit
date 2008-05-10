@@ -1,3 +1,10 @@
+2008-05-10  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Qt & wx build fix.
+
+        * JavaScriptCore.pri: Add profiler/Profile.cpp.
+        * JavaScriptCoreSources.bkl: Ditto.
+
 2008-05-10  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
         Reviewed by Maciej.

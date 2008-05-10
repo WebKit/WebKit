@@ -99,6 +99,7 @@ SOURCES += \
     kjs/ustring.cpp \
     kjs/value.cpp \
     profiler/FunctionCallProfile.cpp \
+    profiler/Profile.cpp \
     profiler/Profiler.cpp \
     wtf/FastMalloc.cpp
 
