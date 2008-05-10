@@ -89,6 +89,7 @@ EXPORTS
 ;       KJS_JSObject_JSObjectSetSlot
 ;       KJS_JSObject_JSObjectToString
         setUseOpenSourceWebKit
+        shutDownWebKit
         progIDForClass
         WebLocalizedStringUTF8
         WebLocalizedLPCTSTRUTF8

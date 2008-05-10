@@ -1,3 +1,15 @@
+2008-05-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben
+
+        Explicitly call shutDownWebKit() before quitting.
+
+        * Drosera/win/Drosera.cpp:
+        (_tWinMain):
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+
 2008-05-09  Mark Rowe  <mrowe@apple.com>
 
         Fix the Tiger build of Drosera.

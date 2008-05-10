@@ -92,6 +92,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
         }
     }
 
+    shutDownWebKit();
+
     return static_cast<int>(msg.wParam);
 }
 

@@ -47,6 +47,7 @@
 #include <pthread.h>
 #include <string>
 #include <tchar.h>
+#include <WebKit/ForEachCoClass.h>
 #include <WebKit/WebKit.h>
 #include <fcntl.h>
 #include <io.h>
@@ -1082,6 +1083,8 @@ int main(int argc, char* argv[])
         _CrtMemDumpAllObjectsSince(&entryToMainMemCheckpoint);
     }
 #endif
+
+    shutDownWebKit();
 
     return 0;
 }

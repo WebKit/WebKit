@@ -88,6 +88,7 @@ static LPCOLESTR openSourceProgIDs[WebKitClassSentinel] = {
 #define PROGID(className) progIDForClass(className##Class)
 
 void setUseOpenSourceWebKit(bool);
+void shutDownWebKit();
 LPCOLESTR progIDForClass(WebKitClass);
 
 

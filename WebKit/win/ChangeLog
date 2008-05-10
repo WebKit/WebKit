@@ -1,3 +1,21 @@
+2008-05-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben
+
+        Fix a hang-on-quit bug where in the DLL_PROCESS_DETACH DllMain callback, we assummed that
+        we could cleanly shutdown WebKit but we couldn't because any background threads have already
+        been uncleanly aborted at that point.
+        
+        * ForEachCoClass.cpp:
+        (shutDownWebKit): Moved from WebKitDLL to here, to be exposed via WebKit.def
+        * ForEachCoClass.h:
+        
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_debug.def:
+        
+        * WebKitDLL.cpp:
+        (DllMain): Don't call shutDownWebKit here
+
 2008-05-09  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Mark Rowe.

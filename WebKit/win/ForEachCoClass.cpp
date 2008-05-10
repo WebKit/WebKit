@@ -31,10 +31,18 @@
 #include "ForEachCoClass.h"
 
 #include <JavaScriptCore/Assertions.h>
+#include <WebCore/IconDatabase.h>
+#include <WebCore/PageGroup.h>
 
 void setUseOpenSourceWebKit(bool b)
 {
     s_progIDs = b ? openSourceProgIDs : productionProgIDs;
+}
+
+void shutDownWebKit()
+{
+    WebCore::iconDatabase()->close();
+    WebCore::PageGroup::closeLocalStorage();
 }
 
 LPCOLESTR progIDForClass(WebKitClass cls)
