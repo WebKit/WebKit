@@ -1,13 +1,3 @@
-2008-05-09  Anders Carlsson  <andersca@apple.com>
-
-        Reviewed by Oliver.
-
-        <rdar://problem/5774495> Make Unicode text input possible in Netscape-style plug-ins
-        
-        Add nptextinput.h as a public header.
-        
-        * WebKit.xcodeproj/project.pbxproj:
-
 2008-05-06  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Andersca.

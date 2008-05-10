@@ -109,11 +109,7 @@ bool WebNetscapePluginEventHandlerCocoa::sendMouseEvent(NSEvent *nsEvent, NPCoco
 
 void WebNetscapePluginEventHandlerCocoa::keyDown(NSEvent *event)
 {
-    bool retval = sendKeyEvent(event, NPCocoaEventKeyDown);
-    
-    // If the plug-in did not handle the event, pass it on to the Input Manager.
-    if (!retval)
-        [m_pluginView interpretKeyEvents:[NSArray arrayWithObject:event]];
+    sendKeyEvent(event, NPCocoaEventKeyDown);
 }
 
 void WebNetscapePluginEventHandlerCocoa::keyUp(NSEvent *event)
@@ -135,7 +131,7 @@ void WebNetscapePluginEventHandlerCocoa::flagsChanged(NSEvent *nsEvent)
     sendEvent(&event);
 }
 
-bool WebNetscapePluginEventHandlerCocoa::sendKeyEvent(NSEvent* nsEvent, NPCocoaEventType type)
+void WebNetscapePluginEventHandlerCocoa::sendKeyEvent(NSEvent* nsEvent, NPCocoaEventType type)
 {
     NPCocoaEvent event;
         
@@ -146,7 +142,7 @@ bool WebNetscapePluginEventHandlerCocoa::sendKeyEvent(NSEvent* nsEvent, NPCocoaE
     event.event.key.characters = (NPNSString *)[nsEvent characters];
     event.event.key.charactersIgnoringModifiers = (NPNSString *)[nsEvent charactersIgnoringModifiers];
      
-    return sendEvent(&event);
+    sendEvent(&event);
 }
 
 void WebNetscapePluginEventHandlerCocoa::windowFocusChanged(bool hasFocus)
