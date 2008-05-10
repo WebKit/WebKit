@@ -1,3 +1,11 @@
+2008-05-10  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Maciej.
+
+        Gtk+ build fix
+
+        * GNUmakefile.am: Add Profile.cpp in _sources
+
 2008-05-09  Brady Eidson  <beidson@apple.com>
 
         Build Fix.  Kevin is an idiot.  
