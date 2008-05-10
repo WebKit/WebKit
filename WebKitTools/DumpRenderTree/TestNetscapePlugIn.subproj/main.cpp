@@ -25,6 +25,10 @@
 
 #import "PluginObject.h"
 
+#if __LP64__
+#define USE_COCOA_EVENT_MODEL 1
+#endif
+
 // Mach-o entry points
 extern "C" {
     NPError NP_Initialize(NPNetscapeFuncs *browserFuncs);
@@ -66,6 +70,18 @@ void NP_Shutdown(void)
 
 NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, char *argn[], char *argv[], NPSavedData *saved)
 {
+#if USE_COCOA_EVENT_MODEL
+    // If the browser supports the Cocoa event model, enable it.
+    NPBool supportsCocoa;
+    if (browser->getvalue(instance, NPNVsupportsCocoaBool, &supportsCocoa) != NPERR_NO_ERROR)
+        supportsCocoa = FALSE;
+
+    if (!supportsCocoa)
+        return NPERR_INCOMPATIBLE_VERSION_ERROR;
+
+    browser->setvalue(instance, NPPVpluginEventModel, (void *)NPEventModelCocoa);
+#endif
+
     if (browser->version >= 14) {
         PluginObject* obj = (PluginObject*)browser->createobject(instance, getPluginClass());
     
@@ -172,7 +188,35 @@ int16 NPP_HandleEvent(NPP instance, void *event)
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
     if (!obj->eventLogging)
         return 0;
-    
+
+#if USE_COCOA_EVENT_MODEL
+    // FIXME: Generate output that will match the Carbon event model
+    // so that the layout tests using this plug-in will work in either model.
+    NPCocoaEvent *cocoaEvent = static_cast<NPCocoaEvent*>(event);
+    switch (cocoaEvent->type) {
+        case NPCocoaEventWindowFocusChanged:
+        case NPCocoaEventFocusChanged:
+            return 1;
+
+        case NPCocoaEventDrawRect:
+            return 1;
+
+        case NPCocoaEventKeyDown:
+        case NPCocoaEventKeyUp:
+        case NPCocoaEventFlagsChanged:
+            return 1;
+
+        case NPCocoaEventMouseDown:
+        case NPCocoaEventMouseUp:
+
+        case NPCocoaEventMouseMoved:
+        case NPCocoaEventMouseEntered:
+        case NPCocoaEventMouseExited:
+        case NPCocoaEventMouseDragged:
+        case NPCocoaEventScrollWheel:
+            return 1;
+    }
+#else
     EventRecord* evt = static_cast<EventRecord*>(event);
     Point pt = { evt->where.v, evt->where.h };
     switch (evt->what) {
@@ -234,7 +278,7 @@ int16 NPP_HandleEvent(NPP instance, void *event)
         default:
             printf("PLUGIN: event %d\n", evt->what);
     }
-    
+#endif
     return 0;
 }
 

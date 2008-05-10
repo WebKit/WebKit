@@ -1,3 +1,18 @@
+2008-05-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Update TestNetscapePlugIn to build 64-bit using the Cocoa event model.
+
+        It currently does not attempt to print events which means that plugins/mouse-events.html
+        will fail when run 64-bit.  All other tests that use this plugin pass.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (testGetIntIdentifier):
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (NPP_New):
+        (NPP_HandleEvent):
+
 2008-05-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam Roben
