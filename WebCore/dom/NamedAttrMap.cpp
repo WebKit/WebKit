@@ -92,7 +92,7 @@ PassRefPtr<Node> NamedAttrMap::getNamedItem(const QualifiedName& name) const
 
 PassRefPtr<Node> NamedAttrMap::setNamedItem(Node* arg, ExceptionCode& ec)
 {
-    if (!m_element) {
+    if (!m_element || !arg) {
         ec = NOT_FOUND_ERR;
         return 0;
     }

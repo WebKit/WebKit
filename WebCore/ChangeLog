@@ -1,3 +1,15 @@
+2008-05-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=18958
+        NULL pointer dereference in NamedAttrMap::setNamedItem
+
+        Test: fast/dom/NamedNodeMap-setNamedItem-crash.html
+
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedAttrMap::setNamedItem): Null check the argument.
+
 2008-05-09  Kevin McCullough  <kmccullough@apple.com>
 
         Build fix.
