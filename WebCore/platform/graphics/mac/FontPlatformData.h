@@ -61,7 +61,7 @@ struct FontPlatformData {
     {
     }
 
-    FontPlatformData(NSFont* = 0, bool syntheticBold = false, bool syntheticOblique = false);
+    FontPlatformData(NSFont * = 0, bool syntheticBold = false, bool syntheticOblique = false);
     
     FontPlatformData(CGFontRef f, ATSUFontID fontID, float s, bool b , bool o)
         : m_syntheticBold(b), m_syntheticOblique(o), m_atsuFontID(fontID), m_size(s), m_font(0), m_cgFont(f)
@@ -90,6 +90,8 @@ struct FontPlatformData {
         return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
     }
 
+    const FontPlatformData& operator=(const FontPlatformData& f);
+
     bool operator==(const FontPlatformData& other) const
     { 
         return m_font == other.m_font && m_syntheticBold == other.m_syntheticBold && m_syntheticOblique == other.m_syntheticOblique && 
@@ -97,7 +99,7 @@ struct FontPlatformData {
     }
 
     NSFont *font() const { return m_font; }
-    void setFont(NSFont* font);
+    void setFont(NSFont *font);
 
 #ifndef BUILDING_ON_TIGER
     CGFontRef cgFont() const { return m_cgFont.get(); }

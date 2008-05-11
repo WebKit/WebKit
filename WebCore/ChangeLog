@@ -1,3 +1,17 @@
+2008-05-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Jessica Kahn.
+
+        - add a copy assignment operator to FontPlatformData on Mac to properly
+          retain the m_font data member.
+
+        * platform/graphics/mac/FontPlatformData.h:
+        * platform/graphics/mac/FontPlatformDataMac.mm:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::~FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::setFont):
+
 2008-05-10  Adele Peterson  <adele@apple.com>
 
         Reviewed by Tim Hatcher.

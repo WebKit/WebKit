@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-FontPlatformData::FontPlatformData(NSFont* f, bool b , bool o)
+FontPlatformData::FontPlatformData(NSFont *f, bool b , bool o)
 : m_syntheticBold(b), m_syntheticOblique(o), m_font(f)
 {
     if (f)
@@ -44,7 +44,7 @@ FontPlatformData::FontPlatformData(NSFont* f, bool b , bool o)
 
 FontPlatformData::FontPlatformData(const FontPlatformData& f)
 {
-    m_font = (f.m_font && f.m_font != (NSFont*)-1) ? (NSFont*)CFRetain(f.m_font) : f.m_font;
+    m_font = f.m_font && f.m_font != reinterpret_cast<NSFont *>(-1) ? static_cast<const NSFont *>(CFRetain(f.m_font)) : f.m_font;
     m_syntheticBold = f.m_syntheticBold;
     m_syntheticOblique = f.m_syntheticOblique;
     m_size = f.m_size;
@@ -54,16 +54,33 @@ FontPlatformData::FontPlatformData(const FontPlatformData& f)
 
 FontPlatformData:: ~FontPlatformData()
 {
-    if (m_font && m_font != (NSFont*)-1)
+    if (m_font && m_font != reinterpret_cast<NSFont *>(-1))
         CFRelease(m_font);
 }
 
-void FontPlatformData::setFont(NSFont* font) {
+const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& f)
+{
+    m_syntheticBold = f.m_syntheticBold;
+    m_syntheticOblique = f.m_syntheticOblique;
+    m_size = f.m_size;
+    m_cgFont = f.m_cgFont;
+    m_atsuFontID = f.m_atsuFontID;
+    if (m_font == f.m_font)
+        return *this;
+    if (f.m_font && f.m_font != reinterpret_cast<NSFont *>(-1))
+        CFRetain(f.m_font);
+    if (m_font && m_font != reinterpret_cast<NSFont *>(-1))
+        CFRelease(m_font);
+    m_font = f.m_font;
+    return *this;
+}
+
+void FontPlatformData::setFont(NSFont *font) {
     if (m_font == font)
         return;
     if (font)
         CFRetain(font);
-    if (m_font && m_font != (NSFont*)-1)
+    if (m_font && m_font != reinterpret_cast<NSFont *>(-1))
         CFRelease(m_font);
     m_font = font;
     m_size = font ? [font pointSize] : 0.0f;
