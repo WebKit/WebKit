@@ -1,3 +1,10 @@
+2008-05-11  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Debug build fix.
+
+        * loader/appcache/ApplicationCache.cpp: Include stdio.h
+        as we are using printf in ApplicationCache::dump().
+
 2008-05-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Jessica Kahn.
