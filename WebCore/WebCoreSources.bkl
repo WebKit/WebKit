@@ -835,6 +835,9 @@ This file contains the list of files needed to build WebCore.
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_XML">
+        xml/AccessControlList.cpp
+        xml/AccessItem.cpp
+        xml/AccessItemRule.cpp
         xml/DOMParser.cpp
         xml/NativeXPathNSResolver.cpp
         xml/XMLHttpRequest.cpp

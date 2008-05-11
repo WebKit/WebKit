@@ -1,3 +1,30 @@
+2008-05-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add scaffolding for the implementation of Access Control for Cross-site Requests. 
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * xml/AccessControlList.cpp: Added.
+        (WebCore::AccessControlList::AccessControlList):
+        (WebCore::AccessControlList::~AccessControlList):
+        (WebCore::AccessControlList::parseAccessControlHeader):
+        (WebCore::AccessControlList::checkOrigin):
+        * xml/AccessControlList.h: Added.
+        * xml/AccessItem.cpp: Added.
+        (WebCore::AccessItem::AccessItem):
+        (WebCore::AccessItem::parseAccessItem):
+        (WebCore::AccessItem::matches):
+        * xml/AccessItem.h: Added.
+        * xml/AccessItemRule.cpp: Added.
+        (WebCore::AccessItemRule::AccessItemRule):
+        (WebCore::AccessItemRule::parseAccessItemRule):
+        * xml/AccessItemRule.h: Added.
+
 2008-05-11  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Debug build fix.
