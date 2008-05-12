@@ -1,3 +1,51 @@
+2008-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Alexey.
+
+        Add input method test plug-in.
+        
+        * NetscapeInputMethodPlugin: Added.
+        * NetscapeInputMethodPlugin/English.lproj: Added.
+        * NetscapeInputMethodPlugin/English.lproj/InfoPlist.strings: Added.
+        * NetscapeInputMethodPlugin/Info.plist: Added.
+        * NetscapeInputMethodPlugin/NetscapeInputMethodPlugin.xcodeproj: Added.
+        * NetscapeInputMethodPlugin/NetscapeInputMethodPlugin.xcodeproj/project.pbxproj: Added.
+        * NetscapeInputMethodPlugin/main.m: Added.
+        (NP_Initialize):
+        (NP_GetEntryPoints):
+        (NP_Shutdown):
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_SetWindow):
+        (NPP_NewStream):
+        (NPP_DestroyStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_StreamAsFile):
+        (NPP_Print):
+        (handleDraw):
+        (invalidatePlugin):
+        (handleFocusChanged):
+        (handleMouseMoved):
+        (handleMouseDown):
+        (NPP_HandleEvent):
+        (NPP_URLNotify):
+        (selectionRange):
+        (NPP_InsertText):
+        (NPP_DoCommandBySelector):
+        (markedTextAttributes):
+        (NPP_SetMarkedText):
+        (NPP_UnmarkText):
+        (NPP_HasMarkedText):
+        (NPP_AttributedSubstringFromRange):
+        (NPP_MarkedRange):
+        (NPP_SelectedRange):
+        (NPP_FirstRectForCharacterRange):
+        (pluginTextInputFuncs):
+        (NPP_GetValue):
+        (NPP_SetValue):
+        * NetscapeInputMethodPlugin/test.html: Added.
+
 2008-05-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.
