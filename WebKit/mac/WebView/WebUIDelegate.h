@@ -28,6 +28,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <Foundation/NSURLRequest.h>
+#import <JavaScriptCore/WebKitAvailability.h>
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
 #define WebNSUInteger unsigned int
@@ -543,13 +544,13 @@ typedef enum {
 
 // The following delegate methods are deprecated in favor of the ones above that specify
 // the WebFrame whose JavaScript initiated this call.
-- (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message;
-- (BOOL)webView:(WebView *)sender runJavaScriptConfirmPanelWithMessage:(NSString *)message;
-- (NSString *)webView:(WebView *)sender runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText;
+- (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0;
+- (BOOL)webView:(WebView *)sender runJavaScriptConfirmPanelWithMessage:(NSString *)message AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0;
+- (NSString *)webView:(WebView *)sender runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0;
 
 // The following delegate methods are deprecated. Content rect calculations are now done automatically.
-- (void)webView:(WebView *)sender setContentRect:(NSRect)frame;
-- (NSRect)webViewContentRect:(WebView *)sender;
+- (void)webView:(WebView *)sender setContentRect:(NSRect)frame AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0;
+- (NSRect)webViewContentRect:(WebView *)sender AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0;
 
 @end
 

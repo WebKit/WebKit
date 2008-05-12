@@ -27,6 +27,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import <JavaScriptCore/WebKitAvailability.h>
 
 @class NSError;
 @class WebFrame;
@@ -191,6 +192,6 @@
     @discussion This method is deprecated. Consider using webView:didClearWindowObject:forFrame:
     instead.
 */
-- (void)webView:(WebView *)webView windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject;
+- (void)webView:(WebView *)webView windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject AVAILABLE_WEBKIT_VERSION_1_3_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0;
 
 @end

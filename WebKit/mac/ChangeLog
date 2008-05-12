@@ -2,6 +2,18 @@
 
         Reviewed by Tim Hatcher.
 
+        Decorate some deprecated delegate methods with the availability macros.
+
+        The compiler doesn't appear to warn if a delegate implements these methods, but using the availability
+        macros is good for consistency and documentation.
+
+        * WebView/WebFrameLoadDelegate.h:
+        * WebView/WebUIDelegate.h:
+
+2008-05-12  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
         <rdar://problem/5835604> Deprecate HIWebView
 
         Use of HIWebView is deprecated in favor of embedding a WebView in a HICocoaView.
