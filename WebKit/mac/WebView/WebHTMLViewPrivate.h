@@ -36,6 +36,8 @@
 @protocol WebHTMLHighlighter
 - (NSRect)highlightRectForLine:(NSRect)lineRect representedNode:(DOMNode *)node;
 - (void)paintHighlightForBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text entireLine:(BOOL)line representedNode:(DOMNode *)node;
+- (void)_resumeNullEventsForAllNetscapePlugins;
+- (void)_pauseNullEventsForAllNetscapePlugins;
 
 // the following methods are deprecated and will be removed once Mail switches to the new methods <rdar://problem/5050528>
 - (NSRect)highlightRectForLine:(NSRect)lineRect;

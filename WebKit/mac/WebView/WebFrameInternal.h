@@ -138,6 +138,11 @@ WebView *getWebView(WebFrame *webFrame);
 // should be used instead.
 - (WebDataSource *)_dataSource;
 
+#if ENABLE(NETSCAPE_PLUGIN_API) 
+- (void)_recursive_resumeNullEventsForAllNetscapePlugins; 
+- (void)_recursive_pauseNullEventsForAllNetscapePlugins; 
+#endif 
+
 - (BOOL)_needsLayout;
 - (void)_drawRect:(NSRect)rect;
 - (NSArray*)_computePageRectsWithPrintWidthScaleFactor:(float)printWidthScaleFactor printHeight:(float)printHeight;

@@ -41,6 +41,11 @@ namespace WebCore {
 - (void)_selectionChanged;
 - (void)_updateFontPanel;
 - (BOOL)_canSmartCopyOrDelete;
+#if ENABLE(NETSCAPE_PLUGIN_API) 
+- (void)_pauseNullEventsForAllNetscapePlugins; 
+- (void)_resumeNullEventsForAllNetscapePlugins; 
+#endif 
+
 - (id <WebHTMLHighlighter>)_highlighterForType:(NSString*)type;
 - (WebFrame *)_frame;
 - (void)_lookUpInDictionaryFromMenu:(id)sender;

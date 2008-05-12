@@ -1,3 +1,23 @@
+2008-05-12  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders.
+
+        Fixed: <rdar://problem/5840884>_recursive_resumeNullEventsForAllNetscapePlugins and _pauseNullEvents not defined
+        
+        Re-added these SPI methods because they are needed by some clients. They were accidentally removed
+        in changeset <http://trac.webkit.org/changeset/31028>
+        
+        * Plugins/WebBaseNetscapePluginView.h: Added stopTimers, restartTimers to the header.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _recursive_resumeNullEventsForAllNetscapePlugins]): Re-addd.
+        (-[WebFrame _recursive_pauseNullEventsForAllNetscapePlugins]): Ditto.
+        * WebView/WebFrameInternal.h: Ditto.
+        * WebView/WebHTMLView.mm: Ditto.
+        (-[WebHTMLView _pauseNullEventsForAllNetscapePlugins]): Ditto.
+        (-[WebHTMLView _resumeNullEventsForAllNetscapePlugins]): Ditto.
+        * WebView/WebHTMLViewInternal.h: Ditto.
+        * WebView/WebHTMLViewPrivate.h: Ditto.
+
 2008-05-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Alexey.
