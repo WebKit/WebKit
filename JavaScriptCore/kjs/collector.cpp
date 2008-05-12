@@ -36,7 +36,6 @@
 
 #if USE(MULTIPLE_THREADS)
 #include <pthread.h>
-#include <wtf/ThreadSpecific.h>
 #endif
 
 #if PLATFORM(DARWIN)
@@ -75,35 +74,25 @@
 #define COLLECT_ON_EVERY_ALLOCATION 0
 
 using std::max;
-using namespace WTF;
 
 namespace KJS {
 
 // tunable parameters
 
-#define SPARE_EMPTY_BLOCKS 2UL
-#define MIN_ARRAY_SIZE 14UL
-#define GROWTH_FACTOR 2UL
-#define LOW_WATER_FACTOR 4UL
-#define ALLOCATIONS_PER_COLLECTION 4000UL
+const size_t SPARE_EMPTY_BLOCKS = 2;
+const size_t MIN_ARRAY_SIZE = 14;
+const size_t GROWTH_FACTOR = 2;
+const size_t LOW_WATER_FACTOR = 4;
+const size_t ALLOCATIONS_PER_COLLECTION = 4000;
 
-Heap::Heap()
-{
-    memset(this, 0, sizeof(Heap));
-}
+static CollectorHeap primaryHeap = { 0, 0, 0, 0, 0, 0, 0, NoOperation };
+static CollectorHeap numberHeap = { 0, 0, 0, 0, 0, 0, 0, NoOperation };
 
-Heap* Heap::threadHeap()
-{
-#if USE(MULTIPLE_THREADS)
-    static ThreadSpecific<Heap> sharedInstance;
-    return sharedInstance;
-#else
-    static Heap sharedInstance;
-    return &sharedInstance;
-#endif
-}
+// FIXME: I don't think this needs to be a static data member of the Collector class.
+// Just a private global like "heap" above would be fine.
+size_t Collector::mainThreadOnlyObjectCount = 0;
 
-static NEVER_INLINE CollectorBlock* allocateBlock()
+static CollectorBlock* allocateBlock()
 {
 #if PLATFORM(DARWIN)    
     vm_address_t address = 0;
@@ -155,7 +144,7 @@ static void freeBlock(CollectorBlock* block)
 #endif
 }
 
-void Heap::recordExtraCost(size_t cost)
+void Collector::recordExtraCost(size_t cost)
 {
     // Our frequency of garbage collection tries to balance memory use against speed
     // by collecting based on the number of newly created values. However, for values
@@ -172,9 +161,9 @@ void Heap::recordExtraCost(size_t cost)
     primaryHeap.extraCost += cost;
 }
 
-template <Heap::HeapType heapType> struct HeapConstants;
+template <Collector::HeapType heapType> struct HeapConstants;
 
-template <> struct HeapConstants<Heap::PrimaryHeap> {
+template <> struct HeapConstants<Collector::PrimaryHeap> {
     static const size_t cellSize = CELL_SIZE;
     static const size_t cellsPerBlock = CELLS_PER_BLOCK;
     static const size_t bitmapShift = 0;
@@ -182,7 +171,7 @@ template <> struct HeapConstants<Heap::PrimaryHeap> {
     typedef CollectorBlock Block;
 };
 
-template <> struct HeapConstants<Heap::NumberHeap> {
+template <> struct HeapConstants<Collector::NumberHeap> {
     static const size_t cellSize = SMALL_CELL_SIZE;
     static const size_t cellsPerBlock = SMALL_CELLS_PER_BLOCK;
     static const size_t bitmapShift = 1;
@@ -190,7 +179,7 @@ template <> struct HeapConstants<Heap::NumberHeap> {
     typedef SmallCellCollectorBlock Block;
 };
 
-template <Heap::HeapType heapType> void* Heap::heapAllocate(size_t s)
+template <Collector::HeapType heapType> void* Collector::heapAllocate(size_t s)
 {
   typedef typename HeapConstants<heapType>::Block Block;
   typedef typename HeapConstants<heapType>::Cell Cell;
@@ -198,7 +187,6 @@ template <Heap::HeapType heapType> void* Heap::heapAllocate(size_t s)
   CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
   ASSERT(JSLock::lockCount() > 0);
   ASSERT(JSLock::currentThreadIsHoldingLock());
-  ASSERT(this == threadHeap());
   ASSERT(s <= HeapConstants<heapType>::cellSize);
   UNUSED_PARAM(s); // s is now only used for the above assert
 
@@ -281,7 +269,6 @@ collect:
 
     targetBlock = (Block*)allocateBlock();
     targetBlock->freeList = targetBlock->cells;
-    targetBlock->heap = this;
     targetBlockUsedCells = 0;
     heap.blocks[usedBlocks] = (CollectorBlock*)targetBlock;
     heap.usedBlocks = usedBlocks + 1;
@@ -305,12 +292,12 @@ collect:
   return newCell;
 }
 
-void* Heap::allocate(size_t s) 
+void* Collector::allocate(size_t s) 
 {
     return heapAllocate<PrimaryHeap>(s);
 }
 
-void* Heap::allocateNumber(size_t s) 
+void* Collector::allocateNumber(size_t s) 
 {
     return heapAllocate<NumberHeap>(s);
 }
@@ -371,12 +358,128 @@ static inline void* currentThreadStackBase()
 #endif
 }
 
+#if USE(MULTIPLE_THREADS)
+static pthread_t mainThread;
+#endif
+
+void Collector::registerAsMainThread()
+{
+#if USE(MULTIPLE_THREADS)
+    mainThread = pthread_self();
+#endif
+}
+
+static inline bool onMainThread()
+{
+#if USE(MULTIPLE_THREADS)
+#if PLATFORM(DARWIN)
+    return pthread_main_np();
+#else
+    return !!pthread_equal(pthread_self(), mainThread);
+#endif
+#else
+    return true;
+#endif
+}
+
+#if USE(MULTIPLE_THREADS)
+
+#if PLATFORM(DARWIN)
+typedef mach_port_t PlatformThread;
+#elif PLATFORM(WIN_OS)
+struct PlatformThread {
+    PlatformThread(DWORD _id, HANDLE _handle) : id(_id), handle(_handle) {}
+    DWORD id;
+    HANDLE handle;
+};
+#endif
+
+static inline PlatformThread getCurrentPlatformThread()
+{
+#if PLATFORM(DARWIN)
+    return pthread_mach_thread_np(pthread_self());
+#elif PLATFORM(WIN_OS)
+    HANDLE threadHandle = pthread_getw32threadhandle_np(pthread_self());
+    return PlatformThread(GetCurrentThreadId(), threadHandle);
+#endif
+}
+
+class Collector::Thread {
+public:
+  Thread(pthread_t pthread, const PlatformThread& platThread, void* base) 
+  : posixThread(pthread), platformThread(platThread), stackBase(base) {}
+  Thread* next;
+  pthread_t posixThread;
+  PlatformThread platformThread;
+  void* stackBase;
+};
+
+pthread_key_t registeredThreadKey;
+pthread_once_t registeredThreadKeyOnce = PTHREAD_ONCE_INIT;
+Collector::Thread* registeredThreads;
+
+static void destroyRegisteredThread(void* data) 
+{
+  Collector::Thread* thread = (Collector::Thread*)data;
+
+  // Can't use JSLock convenience object here because we don't want to re-register
+  // an exiting thread.
+  JSLock::lock();
+  
+  if (registeredThreads == thread) {
+    registeredThreads = registeredThreads->next;
+  } else {
+    Collector::Thread *last = registeredThreads;
+    Collector::Thread *t;
+    for (t = registeredThreads->next; t != NULL; t = t->next) {
+      if (t == thread) {          
+          last->next = t->next;
+          break;
+      }
+      last = t;
+    }
+    ASSERT(t); // If t is NULL, we never found ourselves in the list.
+  }
+
+  JSLock::unlock();
+
+  delete thread;
+}
+
+static void initializeRegisteredThreadKey()
+{
+  pthread_key_create(&registeredThreadKey, destroyRegisteredThread);
+}
+
+void Collector::registerThread()
+{
+  ASSERT(JSLock::lockCount() > 0);
+  ASSERT(JSLock::currentThreadIsHoldingLock());
+  
+  pthread_once(&registeredThreadKeyOnce, initializeRegisteredThreadKey);
+
+  if (!pthread_getspecific(registeredThreadKey)) {
+#if PLATFORM(DARWIN)
+      if (onMainThread())
+          CollectorHeapIntrospector::init(&primaryHeap, &numberHeap);
+#endif
+
+    Collector::Thread *thread = new Collector::Thread(pthread_self(), getCurrentPlatformThread(), currentThreadStackBase());
+
+    thread->next = registeredThreads;
+    registeredThreads = thread;
+    pthread_setspecific(registeredThreadKey, thread);
+  }
+}
+
+#endif
+
 #define IS_POINTER_ALIGNED(p) (((intptr_t)(p) & (sizeof(char *) - 1)) == 0)
 
 // cell size needs to be a power of two for this to be valid
 #define IS_HALF_CELL_ALIGNED(p) (((intptr_t)(p) & (CELL_MASK >> 1)) == 0)
 
-void Heap::markStackObjectsConservatively(void *start, void *end)
+void Collector::markStackObjectsConservatively(void *start, void *end)
 {
   if (start > end) {
     void* tmp = start;
@@ -408,7 +511,7 @@ void Heap::markStackObjectsConservatively(void *start, void *end)
           // Mark the the number heap, we can mark these Cells directly to avoid the virtual call cost
           for (size_t block = 0; block < usedNumberBlocks; block++) {
               if ((numberBlocks[block] == blockAddr) & (offset <= lastCellOffset)) {
-                  Heap::markCell(reinterpret_cast<JSCell*>(xAsBits));
+                  Collector::markCell(reinterpret_cast<JSCell*>(xAsBits));
                   goto endMarkLoop;
               }
           }
@@ -430,7 +533,7 @@ void Heap::markStackObjectsConservatively(void *start, void *end)
   }
 }
 
-void NEVER_INLINE Heap::markStackObjectsConservativelyInternal()
+void NEVER_INLINE Collector::markCurrentThreadConservativelyInternal()
 {
     void* dummy;
     void* stackPointer = &dummy;
@@ -438,7 +541,7 @@ void NEVER_INLINE Heap::markStackObjectsConservativelyInternal()
     markStackObjectsConservatively(stackPointer, stackBase);
 }
 
-void Heap::markStackObjectsConservatively()
+void Collector::markCurrentThreadConservatively()
 {
     // setjmp forces volatile registers onto the stack
     jmp_buf registers;
@@ -451,10 +554,171 @@ void Heap::markStackObjectsConservatively()
 #pragma warning(pop)
 #endif
 
-    markStackObjectsConservativelyInternal();
+    markCurrentThreadConservativelyInternal();
 }
 
-void Heap::protect(JSValue *k)
+#if USE(MULTIPLE_THREADS)
+
+static inline void suspendThread(const PlatformThread& platformThread)
+{
+#if PLATFORM(DARWIN)
+  thread_suspend(platformThread);
+#elif PLATFORM(WIN_OS)
+  SuspendThread(platformThread.handle);
+#else
+#error Need a way to suspend threads on this platform
+#endif
+}
+
+static inline void resumeThread(const PlatformThread& platformThread)
+{
+#if PLATFORM(DARWIN)
+  thread_resume(platformThread);
+#elif PLATFORM(WIN_OS)
+  ResumeThread(platformThread.handle);
+#else
+#error Need a way to resume threads on this platform
+#endif
+}
+
+typedef unsigned long usword_t; // word size, assumed to be either 32 or 64 bit
+
+#if PLATFORM(DARWIN)
+
+#if     PLATFORM(X86)
+typedef i386_thread_state_t PlatformThreadRegisters;
+#elif   PLATFORM(X86_64)
+typedef x86_thread_state64_t PlatformThreadRegisters;
+#elif   PLATFORM(PPC)
+typedef ppc_thread_state_t PlatformThreadRegisters;
+#elif   PLATFORM(PPC64)
+typedef ppc_thread_state64_t PlatformThreadRegisters;
+#else
+#error Unknown Architecture
+#endif
+
+#elif PLATFORM(WIN_OS)&& PLATFORM(X86)
+typedef CONTEXT PlatformThreadRegisters;
+#else
+#error Need a thread register struct for this platform
+#endif
+
+size_t getPlatformThreadRegisters(const PlatformThread& platformThread, PlatformThreadRegisters& regs)
+{
+#if PLATFORM(DARWIN)
+
+#if     PLATFORM(X86)
+  unsigned user_count = sizeof(regs)/sizeof(int);
+  thread_state_flavor_t flavor = i386_THREAD_STATE;
+#elif   PLATFORM(X86_64)
+  unsigned user_count = x86_THREAD_STATE64_COUNT;
+  thread_state_flavor_t flavor = x86_THREAD_STATE64;
+#elif   PLATFORM(PPC) 
+  unsigned user_count = PPC_THREAD_STATE_COUNT;
+  thread_state_flavor_t flavor = PPC_THREAD_STATE;
+#elif   PLATFORM(PPC64)
+  unsigned user_count = PPC_THREAD_STATE64_COUNT;
+  thread_state_flavor_t flavor = PPC_THREAD_STATE64;
+#else
+#error Unknown Architecture
+#endif
+
+  kern_return_t result = thread_get_state(platformThread, flavor, (thread_state_t)&regs, &user_count);
+  if (result != KERN_SUCCESS) {
+    WTFReportFatalError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, 
+                        "JavaScript garbage collection failed because thread_get_state returned an error (%d). This is probably the result of running inside Rosetta, which is not supported.", result);
+    CRASH();
+  }
+  return user_count * sizeof(usword_t);
+// end PLATFORM(DARWIN)
+
+#elif PLATFORM(WIN_OS) && PLATFORM(X86)
+  regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL | CONTEXT_SEGMENTS;
+  GetThreadContext(platformThread.handle, &regs);
+  return sizeof(CONTEXT);
+#else
+#error Need a way to get thread registers on this platform
+#endif
+}
+
+static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
+{
+#if PLATFORM(DARWIN)
+
+#if __DARWIN_UNIX03
+
+#if PLATFORM(X86)
+  return (void*)regs.__esp;
+#elif PLATFORM(X86_64)
+  return (void*)regs.__rsp;
+#elif PLATFORM(PPC) || PLATFORM(PPC64)
+  return (void*)regs.__r1;
+#else
+#error Unknown Architecture
+#endif
+
+#else // !__DARWIN_UNIX03
+
+#if PLATFORM(X86)
+  return (void*)regs.esp;
+#elif PLATFORM(X86_64)
+  return (void*)regs.rsp;
+#elif (PLATFORM(PPC) || PLATFORM(PPC64))
+  return (void*)regs.r1;
+#else
+#error Unknown Architecture
+#endif
+
+#endif // __DARWIN_UNIX03
+
+// end PLATFORM(DARWIN)
+#elif PLATFORM(X86) && PLATFORM(WIN_OS)
+  return (void*)(uintptr_t)regs.Esp;
+#else
+#error Need a way to get the stack pointer for another thread on this platform
+#endif
+}
+
+void Collector::markOtherThreadConservatively(Thread* thread)
+{
+  suspendThread(thread->platformThread);
+
+  PlatformThreadRegisters regs;
+  size_t regSize = getPlatformThreadRegisters(thread->platformThread, regs);
+
+  // mark the thread's registers
+  markStackObjectsConservatively((void*)&regs, (void*)((char*)&regs + regSize));
+ 
+  void* stackPointer = otherThreadStackPointer(regs);
+  markStackObjectsConservatively(stackPointer, thread->stackBase);
+
+  resumeThread(thread->platformThread);
+}
+
+#endif
+
+void Collector::markStackObjectsConservatively()
+{
+  markCurrentThreadConservatively();
+
+#if USE(MULTIPLE_THREADS)
+  for (Thread *thread = registeredThreads; thread != NULL; thread = thread->next) {
+    if (!pthread_equal(thread->posixThread, pthread_self())) {
+      markOtherThreadConservatively(thread);
+    }
+  }
+#endif
+}
+
+typedef HashCountedSet<JSCell*> ProtectCountSet;
+
+static ProtectCountSet& protectedValues()
+{
+    static ProtectCountSet staticProtectCountSet;
+    return staticProtectCountSet;
+}
+
+void Collector::protect(JSValue *k)
 {
     ASSERT(k);
     ASSERT(JSLock::lockCount() > 0);
@@ -463,10 +727,10 @@ void Heap::protect(JSValue *k)
     if (JSImmediate::isImmediate(k))
       return;
 
-    protectedValues.add(k->asCell());
+    protectedValues().add(k->asCell());
 }
 
-void Heap::unprotect(JSValue *k)
+void Collector::unprotect(JSValue *k)
 {
     ASSERT(k);
     ASSERT(JSLock::lockCount() > 0);
@@ -475,35 +739,84 @@ void Heap::unprotect(JSValue *k)
     if (JSImmediate::isImmediate(k))
       return;
 
-    protectedValues.remove(k->asCell());
+    protectedValues().remove(k->asCell());
 }
 
-Heap* Heap::heap(const JSValue* v)
+void Collector::collectOnMainThreadOnly(JSValue* value)
 {
-    if (JSImmediate::isImmediate(v))
-        return 0;
-    // FIXME: should assert that the result equals threadHeap(), but currently, this fails as database code uses gcUnprotect from a different thread.
-    // That's a race condition and should be fixed.
-    return Heap::cellBlock(v->asCell())->heap;
+    ASSERT(value);
+    ASSERT(JSLock::lockCount() > 0);
+    ASSERT(JSLock::currentThreadIsHoldingLock());
+
+    if (JSImmediate::isImmediate(value))
+      return;
+
+    JSCell* cell = value->asCell();
+    cellBlock(cell)->collectOnMainThreadOnly.set(cellOffset(cell));
+    ++mainThreadOnlyObjectCount;
 }
 
-void Heap::markProtectedObjects()
+void Collector::markProtectedObjects()
 {
-  HashCountedSet<JSCell*>::iterator end = protectedValues.end();
-  for (HashCountedSet<JSCell*>::iterator it = protectedValues.begin(); it != end; ++it) {
+  ProtectCountSet& protectedValues = KJS::protectedValues();
+  ProtectCountSet::iterator end = protectedValues.end();
+  for (ProtectCountSet::iterator it = protectedValues.begin(); it != end; ++it) {
     JSCell *val = it->first;
     if (!val->marked())
       val->mark();
   }
 }
 
-template <Heap::HeapType heapType> size_t Heap::sweep()
+void Collector::markMainThreadOnlyObjects()
+{
+#if USE(MULTIPLE_THREADS)
+    ASSERT(!onMainThread());
+#endif
+
+    // Optimization for clients that never register "main thread only" objects.
+    if (!mainThreadOnlyObjectCount)
+        return;
+
+    // FIXME: We can optimize this marking algorithm by keeping an exact set of 
+    // "main thread only" objects when the "main thread only" object count is 
+    // small. We don't want to keep an exact set all the time, because WebCore 
+    // tends to create lots of "main thread only" objects, and all that set 
+    // thrashing can be expensive.
+    
+    size_t count = 0;
+    
+    // We don't look at the numberHeap as primitive values can never be marked as main thread only
+    for (size_t block = 0; block < primaryHeap.usedBlocks; block++) {
+        ASSERT(count < mainThreadOnlyObjectCount);
+        
+        CollectorBlock* curBlock = primaryHeap.blocks[block];
+        size_t minimumCellsToProcess = curBlock->usedCells;
+        for (size_t i = 0; (i < minimumCellsToProcess) & (i < CELLS_PER_BLOCK); i++) {
+            CollectorCell* cell = curBlock->cells + i;
+            if (cell->u.freeCell.zeroIfFree == 0)
+                ++minimumCellsToProcess;
+            else {
+                if (curBlock->collectOnMainThreadOnly.get(i)) {
+                    if (!curBlock->marked.get(i)) {
+                        JSCell* imp = reinterpret_cast<JSCell*>(cell);
+                        imp->mark();
+                    }
+                    if (++count == mainThreadOnlyObjectCount)
+                        return;
+                }
+            }
+        }
+    }
+}
+
+template <Collector::HeapType heapType> size_t Collector::sweep(bool currentThreadIsMainThread)
 {
     typedef typename HeapConstants<heapType>::Block Block;
     typedef typename HeapConstants<heapType>::Cell Cell;
 
+    UNUSED_PARAM(currentThreadIsMainThread); // currentThreadIsMainThread is only used in ASSERTs
     // SWEEP: delete everything with a zero refcount (garbage) and unmark everything else
-    CollectorHeap& heap = heapType == Heap::PrimaryHeap ? primaryHeap : numberHeap;
+    CollectorHeap& heap = heapType == Collector::PrimaryHeap ? primaryHeap : numberHeap;
     
     size_t emptyBlocks = 0;
     size_t numLiveObjects = heap.numLiveObjects;
@@ -520,7 +833,7 @@ template <Heap::HeapType heapType> size_t Heap::sweep()
                 if (!curBlock->marked.get(i >> HeapConstants<heapType>::bitmapShift)) {
                     Cell* cell = curBlock->cells + i;
                     
-                    if (heapType != Heap::NumberHeap) {
+                    if (heapType != Collector::NumberHeap) {
                         JSCell* imp = reinterpret_cast<JSCell*>(cell);
                         // special case for allocated but uninitialized object
                         // (We don't need this check earlier because nothing prior this point 
@@ -528,6 +841,11 @@ template <Heap::HeapType heapType> size_t Heap::sweep()
                         if (cell->u.freeCell.zeroIfFree == 0)
                             continue;
                         
+                        ASSERT(currentThreadIsMainThread || !curBlock->collectOnMainThreadOnly.get(i));
+                        if (curBlock->collectOnMainThreadOnly.get(i)) {
+                            curBlock->collectOnMainThreadOnly.clear(i);
+                            --Collector::mainThreadOnlyObjectCount;
+                        }
                         imp->~JSCell();
                     }
                     
@@ -548,8 +866,13 @@ template <Heap::HeapType heapType> size_t Heap::sweep()
                     ++minimumCellsToProcess;
                 } else {
                     if (!curBlock->marked.get(i >> HeapConstants<heapType>::bitmapShift)) {
-                        if (heapType != Heap::NumberHeap) {
+                        if (heapType != Collector::NumberHeap) {
                             JSCell *imp = reinterpret_cast<JSCell*>(cell);
+                            ASSERT(currentThreadIsMainThread || !curBlock->collectOnMainThreadOnly.get(i));
+                            if (curBlock->collectOnMainThreadOnly.get(i)) {
+                                curBlock->collectOnMainThreadOnly.clear(i);
+                                --Collector::mainThreadOnlyObjectCount;
+                            }
                             imp->~JSCell();
                         }
                         --usedCells;
@@ -596,11 +919,10 @@ template <Heap::HeapType heapType> size_t Heap::sweep()
     return numLiveObjects;
 }
     
-bool Heap::collect()
+bool Collector::collect()
 {
   ASSERT(JSLock::lockCount() > 0);
   ASSERT(JSLock::currentThreadIsHoldingLock());
-  ASSERT(this == threadHeap());
 
   ASSERT((primaryHeap.operationInProgress == NoOperation) | (numberHeap.operationInProgress == NoOperation));
   if ((primaryHeap.operationInProgress != NoOperation) | (numberHeap.operationInProgress != NoOperation))
@@ -608,6 +930,8 @@ bool Heap::collect()
     
   primaryHeap.operationInProgress = Collection;
   numberHeap.operationInProgress = Collection;
+
+  bool currentThreadIsMainThread = onMainThread();
 
   // MARK: first mark all referenced objects recursively starting out from the set of root objects
 
@@ -620,16 +944,19 @@ bool Heap::collect()
 
   markStackObjectsConservatively();
   markProtectedObjects();
-  if (m_markListSet.size())
-    List::markProtectedLists(m_markListSet);
+  List::markProtectedLists();
+#if USE(MULTIPLE_THREADS)
+  if (!currentThreadIsMainThread)
+    markMainThreadOnlyObjects();
+#endif
 
 #ifndef NDEBUG
   fastMallocAllow();
 #endif
     
   size_t originalLiveObjects = primaryHeap.numLiveObjects + numberHeap.numLiveObjects;
-  size_t numLiveObjects = sweep<PrimaryHeap>();
-  numLiveObjects += sweep<NumberHeap>();
+  size_t numLiveObjects = sweep<PrimaryHeap>(currentThreadIsMainThread);
+  numLiveObjects += sweep<NumberHeap>(currentThreadIsMainThread);
   
   primaryHeap.operationInProgress = NoOperation;
   numberHeap.operationInProgress = NoOperation;
@@ -637,12 +964,12 @@ bool Heap::collect()
   return numLiveObjects < originalLiveObjects;
 }
 
-size_t Heap::size() 
+size_t Collector::size() 
 {
   return primaryHeap.numLiveObjects + numberHeap.numLiveObjects; 
 }
 
-size_t Heap::globalObjectCount()
+size_t Collector::globalObjectCount()
 {
   size_t count = 0;
   if (JSGlobalObject::head()) {
@@ -655,13 +982,13 @@ size_t Heap::globalObjectCount()
   return count;
 }
 
-size_t Heap::protectedGlobalObjectCount()
+size_t Collector::protectedGlobalObjectCount()
 {
   size_t count = 0;
   if (JSGlobalObject::head()) {
     JSGlobalObject* o = JSGlobalObject::head();
     do {
-      if (protectedValues.contains(o))
+      if (protectedValues().contains(o))
         ++count;
       o = o->next();
     } while (o != JSGlobalObject::head());
@@ -669,9 +996,9 @@ size_t Heap::protectedGlobalObjectCount()
   return count;
 }
 
-size_t Heap::protectedObjectCount()
+size_t Collector::protectedObjectCount()
 {
-  return protectedValues.size();
+  return protectedValues().size();
 }
 
 static const char *typeName(JSCell *val)
@@ -707,23 +1034,24 @@ static const char *typeName(JSCell *val)
   return name;
 }
 
-HashCountedSet<const char*>* Heap::protectedObjectTypeCounts()
+HashCountedSet<const char*>* Collector::protectedObjectTypeCounts()
 {
     HashCountedSet<const char*>* counts = new HashCountedSet<const char*>;
 
-    HashCountedSet<JSCell*>::iterator end = protectedValues.end();
-    for (HashCountedSet<JSCell*>::iterator it = protectedValues.begin(); it != end; ++it)
+    ProtectCountSet& protectedValues = KJS::protectedValues();
+    ProtectCountSet::iterator end = protectedValues.end();
+    for (ProtectCountSet::iterator it = protectedValues.begin(); it != end; ++it)
         counts->add(typeName(it->first));
 
     return counts;
 }
 
-bool Heap::isBusy()
+bool Collector::isBusy()
 {
     return (primaryHeap.operationInProgress != NoOperation) | (numberHeap.operationInProgress != NoOperation);
 }
 
-void Heap::reportOutOfMemoryToAllExecStates()
+void Collector::reportOutOfMemoryToAllExecStates()
 {
     if (!JSGlobalObject::head())
         return;

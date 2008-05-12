@@ -95,7 +95,7 @@ JSObject* QtRuntimeObjectImp::construct(ExecState* exec, const List& args)
     JSValue *val = callAsFunction(exec, this, args);
 
     if (!val || val->type() == NullType || val->type() == UndefinedType)
-        return new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype());
+        return new JSObject(exec->lexicalGlobalObject()->objectPrototype());
     else
         return val->toObject(exec);
 }
@@ -142,12 +142,12 @@ PassRefPtr<QtInstance> QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObje
     return ret.release();
 }
 
-JSObject* QtInstance::getRuntimeObject(ExecState* exec, PassRefPtr<QtInstance> instance)
+JSObject* QtInstance::getRuntimeObject(PassRefPtr<QtInstance> instance)
 {
     JSLock lock;
     JSObject* ret = cachedObjects.value(instance.get());
     if (!ret) {
-        ret = new (exec) QtRuntimeObjectImp(instance);
+        ret = new QtRuntimeObjectImp(instance);
         cachedObjects.insert(instance.get(), ret);
     }
     return ret;
@@ -260,25 +260,25 @@ JSValue* QtInstance::invokeDefaultMethod(ExecState* exec, const List& args)
     // implementsCall will update our default method cache, if possible
     if (implementsCall()) {
         if (!m_defaultMethod)
-            m_defaultMethod = new (exec) QtRuntimeMetaMethod(exec, Identifier("[[Call]]"),this, m_defaultMethodIndex, QByteArray("qscript_call"), true);
+            m_defaultMethod = new QtRuntimeMetaMethod(exec, Identifier("[[Call]]"),this, m_defaultMethodIndex, QByteArray("qscript_call"), true);
 
         return m_defaultMethod->callAsFunction(exec, 0, args); // Luckily QtRuntimeMetaMethod ignores the obj parameter
     } else
         return throwError(exec, TypeError, "not a function");
 }
 
-JSValue* QtInstance::defaultValue(ExecState* exec, JSType hint) const
+JSValue* QtInstance::defaultValue(JSType hint) const
 {
     if (hint == StringType)
-        return stringValue(exec);
+        return stringValue();
     if (hint == NumberType)
-        return numberValue(exec);
+        return numberValue();
     if (hint == BooleanType)
         return booleanValue();
-    return valueOf(exec);
+    return valueOf();
 }
 
-JSValue* QtInstance::stringValue(ExecState* exec) const
+JSValue* QtInstance::stringValue() const
 {
     // Hmm.. see if there is a toString defined
     QByteArray buf;
@@ -319,12 +319,12 @@ JSValue* QtInstance::stringValue(ExecState* exec) const
 
         buf = str.toLatin1();
     }
-    return jsString(exec, buf.constData());
+    return jsString(buf.constData());
 }
 
-JSValue* QtInstance::numberValue(ExecState* exec) const
+JSValue* QtInstance::numberValue() const
 {
-    return jsNumber(exec, 0);
+    return jsNumber(0);
 }
 
 JSValue* QtInstance::booleanValue() const
@@ -333,9 +333,9 @@ JSValue* QtInstance::booleanValue() const
     return jsBoolean(true);
 }
 
-JSValue* QtInstance::valueOf(ExecState* exec) const
+JSValue* QtInstance::valueOf() const
 {
-    return stringValue(exec);
+    return stringValue();
 }
 
 // In qt_runtime.cpp

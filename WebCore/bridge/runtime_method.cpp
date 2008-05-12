@@ -38,7 +38,7 @@ RuntimeMethod::RuntimeMethod(ExecState *exec, const Identifier &ident, Bindings:
 {
 }
 
-JSValue* RuntimeMethod::lengthGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
+JSValue *RuntimeMethod::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
 {
     RuntimeMethod *thisObj = static_cast<RuntimeMethod *>(slot.slotBase());
 
@@ -48,7 +48,7 @@ JSValue* RuntimeMethod::lengthGetter(ExecState* exec, JSObject*, const Identifie
     // Java does.
     // FIXME: a better solution might be to give the maximum number of parameters
     // of any method
-    return jsNumber(exec, thisObj->_methodList->at(0)->numParameters());
+    return jsNumber(thisObj->_methodList->at(0)->numParameters());
 }
 
 bool RuntimeMethod::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)

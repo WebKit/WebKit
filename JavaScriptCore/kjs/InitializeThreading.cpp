@@ -35,7 +35,6 @@
 #include "identifier.h"
 #include "JSGlobalObject.h"
 #include "lexer.h"
-#include "nodes.h"
 #include "Parser.h"
 #include "ustring.h"
 #include <wtf/Threading.h>
@@ -51,7 +50,9 @@ static void initializeThreadingOnce()
     WTF::initializeThreading();
 #if USE(MULTIPLE_THREADS)
     s_dtoaP5Mutex = new Mutex;
-    Heap::threadHeap();
+#if !PLATFORM(DARWIN) // Darwin has pthread_main_np(), and doesn't need registerAsMainThread() called.
+    Collector::registerAsMainThread();
+#endif
     UString::null();
     Identifier::initializeIdentifierThreading();
     CommonIdentifiers::shared();
@@ -59,7 +60,6 @@ static void initializeThreadingOnce()
     initDateMath();
     JSGlobalObject::threadClassInfoHashTables();
     JSGlobalObject::head();
-    initializeNodesThreading();
 #endif
 }
 

@@ -49,8 +49,8 @@ public:
     virtual void begin();
     virtual void end();
 
-    virtual JSValue* valueOf(ExecState* exec) const;
-    virtual JSValue* defaultValue(ExecState* exec, JSType hint) const;
+    virtual JSValue* valueOf() const;
+    virtual JSValue* defaultValue (JSType hint) const;
 
     virtual bool implementsCall() const;
 
@@ -63,14 +63,14 @@ public:
 
     virtual BindingLanguage getBindingLanguage() const { return QtLanguage; }
 
-    JSValue* stringValue(ExecState* exec) const;
-    JSValue* numberValue(ExecState* exec) const;
+    JSValue* stringValue() const;
+    JSValue* numberValue() const;
     JSValue* booleanValue() const;
 
     QObject* getObject() const { return m_object; }
 
     static PassRefPtr<QtInstance> getQtInstance(QObject*, PassRefPtr<RootObject>);
-    static JSObject* getRuntimeObject(ExecState* exec, PassRefPtr<QtInstance>);
+    static JSObject* getRuntimeObject(PassRefPtr<QtInstance>);
 
 private:
     friend class QtClass;

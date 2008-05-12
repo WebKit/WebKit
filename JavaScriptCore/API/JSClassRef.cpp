@@ -162,7 +162,7 @@ JSObject* OpaqueJSClass::prototype(JSContextRef ctx)
             parentPrototype = parentClass->prototype(ctx); // can be null
         if (!parentPrototype)
             parentPrototype = exec->dynamicGlobalObject()->objectPrototype();
-        cachedPrototype = new (exec) JSCallbackObject<JSObject>(exec, prototypeClass, parentPrototype, this); // set ourself as the object's private data, so it can clear our reference on destruction
+        cachedPrototype = new JSCallbackObject<JSObject>(exec, prototypeClass, parentPrototype, this); // set ourself as the object's private data, so it can clear our reference on destruction
     }
     return cachedPrototype;
 }

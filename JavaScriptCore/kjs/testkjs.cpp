@@ -131,18 +131,18 @@ COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false
 
 GlobalObject::GlobalObject(Vector<UString>& arguments)
 {
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, "debug", functionDebug));
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, "print", functionPrint));
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 0, "quit", functionQuit));
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 0, "gc", functionGC));
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, "version", functionVersion));
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, "run", functionRun));
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, "load", functionLoad));
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 0, "readline", functionReadline));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, "debug", functionDebug));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, "print", functionPrint));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 0, "quit", functionQuit));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 0, "gc", functionGC));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, "version", functionVersion));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, "run", functionRun));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, "load", functionLoad));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 0, "readline", functionReadline));
 
     JSObject* array = arrayConstructor()->construct(globalExec(), globalExec()->emptyList());
     for (size_t i = 0; i < arguments.size(); ++i)
-        array->put(globalExec(), i, jsString(globalExec(), arguments[i]));
+        array->put(globalExec(), i, jsString(arguments[i]));
     putDirect("arguments", array);
 
     Interpreter::setShouldPrintExceptions(true);
@@ -161,10 +161,10 @@ JSValue* functionDebug(ExecState* exec, JSObject*, const List& args)
     return jsUndefined();
 }
 
-JSValue* functionGC(ExecState* exec, JSObject*, const List&)
+JSValue* functionGC(ExecState*, JSObject*, const List&)
 {
     JSLock lock;
-    exec->heap()->collect();
+    Collector::collect();
     return jsUndefined();
 }
 
@@ -187,7 +187,7 @@ JSValue* functionRun(ExecState* exec, JSObject*, const List& args)
     Interpreter::evaluate(exec->dynamicGlobalObject()->globalExec(), fileName, 0, script.data());
     stopWatch.stop();
 
-    return jsNumber(exec, stopWatch.getElapsedMS());
+    return jsNumber(stopWatch.getElapsedMS());
 }
 
 JSValue* functionLoad(ExecState* exec, JSObject*, const List& args)
@@ -202,7 +202,7 @@ JSValue* functionLoad(ExecState* exec, JSObject*, const List& args)
     return jsUndefined();
 }
 
-JSValue* functionReadline(ExecState* exec, JSObject*, const List&)
+JSValue* functionReadline(ExecState*, JSObject*, const List&)
 {
     Vector<char, 256> line;
     int c;
@@ -213,7 +213,7 @@ JSValue* functionReadline(ExecState* exec, JSObject*, const List&)
         line.append(c);
     }
     line.append('\0');
-    return jsString(exec, line.data());
+    return jsString(line.data());
 }
 
 JSValue* functionQuit(ExecState*, JSObject*, const List&)
@@ -345,7 +345,7 @@ int kjsmain(int argc, char** argv)
     bool success = runWithScripts(fileNames, arguments, prettyPrint);
 
 #ifndef NDEBUG
-    Heap::threadHeap()->collect();
+    Collector::collect();
 #endif
 
     return success ? 0 : 3;

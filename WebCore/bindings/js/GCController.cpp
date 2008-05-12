@@ -42,7 +42,7 @@ namespace WebCore {
 static void* collect(void*)
 {
     JSLock lock;
-    Heap::threadHeap()->collect();
+    Collector::collect();
     return 0;
 }
 
@@ -68,13 +68,13 @@ void GCController::garbageCollectSoon()
 void GCController::gcTimerFired(Timer<GCController>*)
 {
     JSLock lock;
-    Heap::threadHeap()->collect();
+    Collector::collect();
 }
 
 void GCController::garbageCollectNow()
 {
     JSLock lock;
-    Heap::threadHeap()->collect();
+    Collector::collect();
 }
 
 void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone)

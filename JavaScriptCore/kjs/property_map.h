@@ -35,6 +35,27 @@ namespace KJS {
     struct PropertyMapEntry;
     struct PropertyMapHashTable;
 
+    class SavedProperty : Noncopyable {
+    public:
+        // Since we use this in arrays, we allocate it uninitialized
+        // and then explicitly initialize. This means we can allocate
+        // the array without initializing every saved property in the
+        // array twice. To accomplish this, the class uses data members
+        // with types that don't have constructors.
+        SavedProperty();
+        void init(UString::Rep* name, JSValue*, unsigned attributes);
+        ~SavedProperty();
+
+        UString::Rep* name() const;
+        JSValue* value() const;
+        unsigned attributes() const;
+
+    private:
+        UString::Rep* m_name;
+        JSValue* m_value;
+        unsigned m_attributes;
+    };
+
     class PropertyMap : Noncopyable {
     public:
         PropertyMap();
@@ -88,6 +109,65 @@ namespace KJS {
 
     {
     }
+
+    inline SavedProperty::SavedProperty()
+#ifndef NDEBUG
+        : m_name(0)
+        , m_value(0)
+        , m_attributes(0)
+#endif
+    {
+    }
+
+    inline void SavedProperty::init(UString::Rep* name, JSValue* value, unsigned attributes)
+    {
+        ASSERT(name);
+        ASSERT(value);
+
+        ASSERT(!m_name);
+        ASSERT(!m_value);
+        ASSERT(!m_attributes);
+
+        m_name = name;
+        m_value = value;
+        m_attributes = attributes;
+        name->ref();
+        gcProtect(value);
+    }
+
+    inline SavedProperty::~SavedProperty()
+    {
+        ASSERT(m_name);
+        ASSERT(m_value);
+
+        m_name->deref();
+        gcUnprotect(m_value);
+    }
+
+    inline UString::Rep* SavedProperty::name() const
+    {
+        ASSERT(m_name);
+        ASSERT(m_value);
+
+        return m_name;
+    }
+
+    inline JSValue* SavedProperty::value() const
+    {
+        ASSERT(m_name);
+        ASSERT(m_value);
+
+        return m_value;
+    }
+
+    inline unsigned SavedProperty::attributes() const
+    {
+        ASSERT(m_name);
+        ASSERT(m_value);
+
+        return m_attributes;
+    }
+
 } // namespace
 
 #endif // _KJS_PROPERTY_MAP_H_

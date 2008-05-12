@@ -42,7 +42,7 @@ JSValue* JSCanvasPixelArray::indexGetter(ExecState* exec, JSObject*, const Ident
     unsigned char result;
     if (!array->get(index, result))
         return jsUndefined();
-    return jsNumber(exec, result);
+    return jsNumber(result);
 }
 
 void JSCanvasPixelArray::indexSetter(ExecState* exec, unsigned index, JSValue* value)
@@ -62,9 +62,9 @@ JSValue* toJS(ExecState* exec, CanvasPixelArray* pixels)
     if (ret)
         return ret;
     
-    ret = new (exec) JSCanvasPixelArray(JSCanvasPixelArrayPrototype::self(exec), pixels);
+    ret = new JSCanvasPixelArray(JSCanvasPixelArrayPrototype::self(exec), pixels);
     
-    exec->heap()->reportExtraMemoryCost(pixels->length());
+    Collector::reportExtraMemoryCost(pixels->length());
     
     ScriptInterpreter::putDOMObject(pixels, ret);
     

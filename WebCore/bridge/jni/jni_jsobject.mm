@@ -298,7 +298,7 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     JSObject *funcImp = static_cast<JSObject*>(func);
     JSObject *thisObj = const_cast<JSObject*>(_imp);
     List argList;
-    getListFromJArray(exec, args, argList);
+    getListFromJArray(args, argList);
     rootObject->globalObject()->startTimeoutCheck();
     JSValue *result = funcImp->call(exec, thisObj, argList);
     rootObject->globalObject()->stopTimeoutCheck();
@@ -359,7 +359,7 @@ void JavaJSObject::setMember(jstring memberName, jobject value) const
 
     ExecState* exec = rootObject->globalObject()->globalExec();
     JSLock lock;
-    _imp->put(exec, Identifier (JavaString(memberName).ustring()), convertJObjectToValue(exec, value));
+    _imp->put(exec, Identifier (JavaString(memberName).ustring()), convertJObjectToValue(value));
 }
 
 
@@ -412,7 +412,7 @@ void JavaJSObject::setSlot(jint index, jobject value) const
 
     ExecState* exec = rootObject->globalObject()->globalExec();
     JSLock lock;
-    _imp->put(exec, (unsigned)index, convertJObjectToValue(exec, value));
+    _imp->put(exec, (unsigned)index, convertJObjectToValue(value));
 }
 
 
@@ -569,7 +569,7 @@ jobject JavaJSObject::convertValueToJObject (JSValue *value) const
     return result;
 }
 
-JSValue* JavaJSObject::convertJObjectToValue(ExecState* exec, jobject theObject) const
+JSValue *JavaJSObject::convertJObjectToValue (jobject theObject) const
 {
     // Instances of netscape.javascript.JSObject get converted back to
     // JavaScript objects.  All other objects are wrapped.  It's not
@@ -600,10 +600,10 @@ JSValue* JavaJSObject::convertJObjectToValue(ExecState* exec, jobject theObject)
 
     JSLock lock;
 
-    return KJS::Bindings::Instance::createRuntimeObject(exec, JavaInstance::create(theObject, _rootObject));
+    return KJS::Bindings::Instance::createRuntimeObject(JavaInstance::create(theObject, _rootObject));
 }
 
-void JavaJSObject::getListFromJArray(ExecState* exec, jobjectArray jArray, List& list) const
+void JavaJSObject::getListFromJArray(jobjectArray jArray, List& list) const
 {
     JNIEnv *env = getJNIEnv();
     int i, numObjects = jArray ? env->GetArrayLength (jArray) : 0;
@@ -611,7 +611,7 @@ void JavaJSObject::getListFromJArray(ExecState* exec, jobjectArray jArray, List&
     for (i = 0; i < numObjects; i++) {
         jobject anObject = env->GetObjectArrayElement ((jobjectArray)jArray, i);
         if (anObject) {
-            list.append(convertJObjectToValue(exec, anObject));
+            list.append(convertJObjectToValue(anObject));
             env->DeleteLocalRef (anObject);
         }
         else {

@@ -53,17 +53,17 @@ JSValue* toJS(ExecState* exec, CSSValue* value)
         return ret;
 
     if (value->isValueList())
-        ret = new (exec) JSCSSValueList(JSCSSValueListPrototype::self(exec), static_cast<CSSValueList*>(value));
+        ret = new JSCSSValueList(JSCSSValueListPrototype::self(exec), static_cast<CSSValueList*>(value));
 #if ENABLE(SVG)
     else if (value->isSVGPaint())
-        ret = new (exec) JSSVGPaint(JSSVGPaintPrototype::self(exec), static_cast<SVGPaint*>(value));
+        ret = new JSSVGPaint(JSSVGPaintPrototype::self(exec), static_cast<SVGPaint*>(value));
     else if (value->isSVGColor())
-        ret = new (exec) JSSVGColor(JSSVGColorPrototype::self(exec), static_cast<SVGColor*>(value));
+        ret = new JSSVGColor(JSSVGColorPrototype::self(exec), static_cast<SVGColor*>(value));
 #endif
     else if (value->isPrimitiveValue())
-        ret = new (exec) JSCSSPrimitiveValue(JSCSSPrimitiveValuePrototype::self(exec), static_cast<CSSPrimitiveValue*>(value));
+        ret = new JSCSSPrimitiveValue(JSCSSPrimitiveValuePrototype::self(exec), static_cast<CSSPrimitiveValue*>(value));
     else
-        ret = new (exec) JSCSSValue(JSCSSValuePrototype::self(exec), value);
+        ret = new JSCSSValue(JSCSSValuePrototype::self(exec), value);
 
     ScriptInterpreter::putDOMObject(value, ret);
     return ret;

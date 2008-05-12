@@ -1,3 +1,11 @@
+2008-05-12  Alexey Proskuryakov  <ap@webkit.org>
+
+        Roll out recent  threading changes (r32807, r32810, r32819, r32822) to simplify
+        SquirrelFish merging.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJavaScriptWindowObject):
+
 2008-05-09  Thiago Macieira  <tjmaciei@trolltech.com>
 
         Reviewed by Simon.

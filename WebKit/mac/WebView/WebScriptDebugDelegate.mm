@@ -231,7 +231,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     JSValue* result;
     if (eval) {
         List args;
-        args.append(jsString(state, code));
+        args.append(jsString(code));
         result = eval->call(state, 0, args);
     } else
         // no "eval", or no context (i.e. global scope) - use global fallback

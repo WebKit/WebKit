@@ -103,7 +103,7 @@ JSValue* JSXSLTProcessor::getParameter(ExecState* exec, const List& args)
     String namespaceURI = args[0]->toString(exec);
     String localName = args[1]->toString(exec);
     String value = impl()->getParameter(namespaceURI, localName);
-    return jsStringOrUndefined(exec, value);
+    return jsStringOrUndefined(value);
 }
 
 JSValue* JSXSLTProcessor::removeParameter(ExecState* exec, const List& args)

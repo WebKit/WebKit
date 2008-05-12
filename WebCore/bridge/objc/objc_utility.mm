@@ -193,7 +193,7 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
     return result;
 }
 
-JSValue* convertNSStringToString(ExecState* exec, NSString *nsstring)
+JSValue *convertNSStringToString(NSString *nsstring)
 {
     JSLock lock;
     
@@ -202,7 +202,7 @@ JSValue* convertNSStringToString(ExecState* exec, NSString *nsstring)
     chars = (unichar *)malloc(sizeof(unichar)*length);
     [nsstring getCharacters:chars];
     UString u((const UChar*)chars, length);
-    JSValue* aValue = jsString(exec, u);
+    JSValue *aValue = jsString(u);
     free((void *)chars);
     return aValue;
 }
@@ -233,7 +233,7 @@ JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType ty
         case ObjcObjectType: {
             id obj = *(id*)buffer;
             if ([obj isKindOfClass:[NSString class]])
-                return convertNSStringToString(exec, (NSString *)obj);
+                return convertNSStringToString((NSString *)obj);
             if ([obj isKindOfClass:webUndefinedClass()])
                 return jsUndefined();
             if ((CFBooleanRef)obj == kCFBooleanTrue)
@@ -241,9 +241,9 @@ JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType ty
             if ((CFBooleanRef)obj == kCFBooleanFalse)
                 return jsBoolean(false);
             if ([obj isKindOfClass:[NSNumber class]])
-                return jsNumber(exec, [obj doubleValue]);
+                return jsNumber([obj doubleValue]);
             if ([obj isKindOfClass:[NSArray class]])
-                return new (exec) RuntimeArray(exec, new ObjcArray(obj, rootObject));
+                return new RuntimeArray(exec, new ObjcArray(obj, rootObject));
             if ([obj isKindOfClass:webScriptObjectClass()]) {
                 JSObject* imp = [obj _imp];
                 return imp ? imp : jsUndefined();
@@ -252,32 +252,32 @@ JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType ty
                 return jsNull();
             if (obj == 0)
                 return jsUndefined();
-            return Instance::createRuntimeObject(exec, ObjcInstance::create(obj, rootObject));
+            return Instance::createRuntimeObject(ObjcInstance::create(obj, rootObject));
         }
         case ObjcCharType:
-            return jsNumber(exec, *(char*)buffer);
+            return jsNumber(*(char *)buffer);
         case ObjcUnsignedCharType:
-            return jsNumber(exec, *(unsigned char*)buffer);
+            return jsNumber(*(unsigned char *)buffer);
         case ObjcShortType:
-            return jsNumber(exec, *(short*)buffer);
+            return jsNumber(*(short *)buffer);
         case ObjcUnsignedShortType:
-            return jsNumber(exec, *(unsigned short*)buffer);
+            return jsNumber(*(unsigned short *)buffer);
         case ObjcIntType:
-            return jsNumber(exec, *(int*)buffer);
+            return jsNumber(*(int *)buffer);
         case ObjcUnsignedIntType:
-            return jsNumber(exec, *(unsigned int*)buffer);
+            return jsNumber(*(unsigned int *)buffer);
         case ObjcLongType:
-            return jsNumber(exec, *(long*)buffer);
+            return jsNumber(*(long *)buffer);
         case ObjcUnsignedLongType:
-            return jsNumber(exec, *(unsigned long*)buffer);
+            return jsNumber(*(unsigned long *)buffer);
         case ObjcLongLongType:
-            return jsNumber(exec, *(long long*)buffer);
+            return jsNumber(*(long long *)buffer);
         case ObjcUnsignedLongLongType:
-            return jsNumber(exec, *(unsigned long long*)buffer);
+            return jsNumber(*(unsigned long long *)buffer);
         case ObjcFloatType:
-            return jsNumber(exec, *(float*)buffer);
+            return jsNumber(*(float *)buffer);
         case ObjcDoubleType:
-            return jsNumber(exec, *(double*)buffer);
+            return jsNumber(*(double *)buffer);
         default:
             // Should never get here. Argument types are filtered.
             fprintf(stderr, "%s: invalid type (%d)\n", __PRETTY_FUNCTION__, (int)type);

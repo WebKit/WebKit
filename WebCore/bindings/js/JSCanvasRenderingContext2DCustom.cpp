@@ -46,7 +46,7 @@ static JSValue* toJS(ExecState* exec, CanvasStyle* style)
         return toJS(exec, style->canvasGradient());
     if (style->pattern())
         return toJS(exec, style->pattern());
-    return jsString(exec, style->color());
+    return jsString(style->color());
 }
 
 static PassRefPtr<CanvasStyle> toHTMLCanvasStyle(ExecState* exec, JSValue* value)

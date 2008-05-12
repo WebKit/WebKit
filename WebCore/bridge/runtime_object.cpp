@@ -38,6 +38,7 @@ RuntimeObjectImp::RuntimeObjectImp(PassRefPtr<Bindings::Instance> i)
     : instance(i)
 {
     instance->rootObject()->addRuntimeObject(this);
+    Collector::collectOnMainThreadOnly(this);
 }
 
 RuntimeObjectImp::~RuntimeObjectImp()
@@ -101,7 +102,7 @@ JSValue *RuntimeObjectImp::methodGetter(ExecState* exec, JSObject*, const Identi
 
     Class *aClass = instance->getClass();
     MethodList methodList = aClass->methodsNamed(propertyName, instance.get());
-    JSValue* result = new (exec) RuntimeMethod(exec, propertyName, methodList);
+    JSValue *result = new RuntimeMethod(exec, propertyName, methodList);
 
     instance->end();
             
@@ -188,7 +189,7 @@ JSValue *RuntimeObjectImp::defaultValue(ExecState* exec, JSType hint) const
     RefPtr<Bindings::Instance> protector(instance);
     instance->begin();
 
-    result = instance->defaultValue(exec, hint);
+    result = instance->defaultValue(hint);
     
     instance->end();
     

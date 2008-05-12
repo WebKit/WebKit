@@ -133,28 +133,28 @@ JSValue* CInstance::invokeDefaultMethod(ExecState* exec, const List& args)
 }
 
 
-JSValue* CInstance::defaultValue(ExecState* exec, JSType hint) const
+JSValue* CInstance::defaultValue(JSType hint) const
 {
     if (hint == StringType)
-        return stringValue(exec);
+        return stringValue();
     if (hint == NumberType)
-        return numberValue(exec);
+        return numberValue();
    if (hint == BooleanType)
         return booleanValue();
-    return valueOf(exec);
+    return valueOf();
 }
 
-JSValue* CInstance::stringValue(ExecState* exec) const
+JSValue* CInstance::stringValue() const
 {
     char buf[1024];
     snprintf(buf, sizeof(buf), "NPObject %p, NPClass %p", _object, _object->_class);
-    return jsString(exec, buf);
+    return jsString(buf);
 }
 
-JSValue* CInstance::numberValue(ExecState* exec) const
+JSValue* CInstance::numberValue() const
 {
     // FIXME: Implement something sensible.
-    return jsNumber(exec, 0);
+    return jsNumber(0);
 }
 
 JSValue* CInstance::booleanValue() const
@@ -163,9 +163,9 @@ JSValue* CInstance::booleanValue() const
     return jsBoolean(false);
 }
 
-JSValue* CInstance::valueOf(ExecState* exec) const 
+JSValue* CInstance::valueOf() const 
 {
-    return stringValue(exec);
+    return stringValue();
 }
 
 void CInstance::getPropertyNames(ExecState*, PropertyNameArray& nameArray) 

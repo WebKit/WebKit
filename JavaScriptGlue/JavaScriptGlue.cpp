@@ -338,7 +338,7 @@ void JSCollect()
     initializeThreading();
 
     JSLock lock;
-    getThreadGlobalExecState()->heap()->collect();
+    Collector::collect();
 }
 
 /*
@@ -649,6 +649,7 @@ void JSLockInterpreter()
 {
     initializeThreading();
     JSLock::lock();
+    JSLock::registerThread();
 }
 
 

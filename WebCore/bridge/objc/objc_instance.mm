@@ -308,34 +308,34 @@ JSValue* ObjcInstance::getValueOfUndefinedField(ExecState* exec, const Identifie
     return result;
 }
 
-JSValue* ObjcInstance::defaultValue(ExecState* exec, JSType hint) const
+JSValue* ObjcInstance::defaultValue(JSType hint) const
 {
     switch (hint) {
     case StringType:
-        return stringValue(exec);
+        return stringValue();
     case NumberType:
-        return numberValue(exec);
+        return numberValue();
     case BooleanType:
         return booleanValue();
     case UnspecifiedType:
         if ([_instance.get() isKindOfClass:[NSString class]])
-            return stringValue(exec);
+            return stringValue();
         if ([_instance.get() isKindOfClass:[NSNumber class]])
-            return numberValue(exec);
+            return numberValue();
     default:
-        return valueOf(exec);
+        return valueOf();
     }
 }
 
-JSValue* ObjcInstance::stringValue(ExecState* exec) const
+JSValue* ObjcInstance::stringValue() const
 {
-    return convertNSStringToString(exec, [getObject() description]);
+    return convertNSStringToString([getObject() description]);
 }
 
-JSValue* ObjcInstance::numberValue(ExecState* exec) const
+JSValue* ObjcInstance::numberValue() const
 {
     // FIXME:  Implement something sensible
-    return jsNumber(exec, 0);
+    return jsNumber(0);
 }
 
 JSValue* ObjcInstance::booleanValue() const
@@ -344,7 +344,7 @@ JSValue* ObjcInstance::booleanValue() const
     return jsBoolean(false);
 }
 
-JSValue* ObjcInstance::valueOf(ExecState* exec) const 
+JSValue* ObjcInstance::valueOf() const 
 {
-    return stringValue(exec);
+    return stringValue();
 }

@@ -77,7 +77,7 @@ JSValue* JSRGBColor::getValueProperty(ExecState* exec, int token) const
 JSValue* getJSRGBColor(ExecState* exec, unsigned color)
 {
     // FIXME: Implement equals for RGBColor since they're not refcounted objects.
-    return new (exec) JSRGBColor(exec->lexicalGlobalObject()->objectPrototype(), color);
+    return new JSRGBColor(exec->lexicalGlobalObject()->objectPrototype(), color);
 }
 
 } // namespace WebCore

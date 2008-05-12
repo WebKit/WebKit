@@ -277,7 +277,7 @@ T callJNIStaticMethod(jclass cls, const char* methodName, const char* methodSign
     return result;
 }
     
-bool dispatchJNICall(ExecState*, const void* targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue* args, jvalue& result, const char* callingURL, JSValue*& exceptionDescription);
+bool dispatchJNICall(const void *targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue *args, jvalue &result, const char *callingURL, JSValue *&exceptionDescription);
 
 } // namespace Bindings
 

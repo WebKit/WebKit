@@ -122,10 +122,10 @@ JSValue* FunctionImp::callerGetter(ExecState* exec, JSObject*, const Identifier&
     return callingFunction;
 }
 
-JSValue* FunctionImp::lengthGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
+JSValue* FunctionImp::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
 {
     FunctionImp* thisObj = static_cast<FunctionImp*>(slot.slotBase());
-    return jsNumber(exec, thisObj->body->parameters().size());
+    return jsNumber(thisObj->body->parameters().size());
 }
 
 bool FunctionImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -199,7 +199,7 @@ JSObject* FunctionImp::construct(ExecState* exec, const List& args)
   else
     proto = exec->lexicalGlobalObject()->objectPrototype();
 
-  JSObject* obj(new (exec) JSObject(proto));
+  JSObject* obj(new JSObject(proto));
 
   JSValue* res = call(exec,obj,args);
 
@@ -288,7 +288,7 @@ Arguments::Arguments(ExecState* exec, FunctionImp* func, const List& args, Activ
     , indexToNameMap(func, args)
 {
     putDirect(exec->propertyNames().callee, func, DontEnum);
-    putDirect(exec, exec->propertyNames().length, args.size(), DontEnum);
+    putDirect(exec->propertyNames().length, args.size(), DontEnum);
   
     int i = 0;
     List::const_iterator end = args.end();
@@ -464,7 +464,7 @@ void ActivationImp::createArgumentsObject(ExecState* exec)
     // Since "arguments" is only accessible while a function is being called,
     // we can retrieve our argument list from the ExecState for our function 
     // call instead of storing the list ourselves.
-    d()->argumentsObject = new (exec) Arguments(exec, d()->exec->function(), *d()->exec->arguments(), this);
+    d()->argumentsObject = new Arguments(exec, d()->exec->function(), *d()->exec->arguments(), this);
 }
 
 JSObject* ActivationImp::toThisObject(ExecState* exec) const
@@ -505,7 +505,7 @@ static JSValue* encode(ExecState* exec, const List& args, const char* do_not_esc
       r += tmp;
     }
   }
-  return jsString(exec, r);
+  return jsString(r);
 }
 
 static JSValue* decode(ExecState* exec, const List& args, const char* do_not_unescape, bool strict)
@@ -570,7 +570,7 @@ static JSValue* decode(ExecState* exec, const List& args, const char* do_not_une
     k++;
     s.append(c);
   }
-  return jsString(exec, s);
+  return jsString(s);
 }
 
 static bool isStrWhiteSpace(unsigned short c)
@@ -764,12 +764,12 @@ JSValue* globalFuncEval(ExecState* exec, PrototypeReflexiveFunction* function, J
 
 JSValue* globalFuncParseInt(ExecState* exec, JSObject*, const List& args)
 {
-    return jsNumber(exec, parseInt(args[0]->toString(exec), args[1]->toInt32(exec)));
+    return jsNumber(parseInt(args[0]->toString(exec), args[1]->toInt32(exec)));
 }
 
 JSValue* globalFuncParseFloat(ExecState* exec, JSObject*, const List& args)
 {
-    return jsNumber(exec, parseFloat(args[0]->toString(exec)));
+    return jsNumber(parseFloat(args[0]->toString(exec)));
 }
 
 JSValue* globalFuncIsNaN(ExecState* exec, JSObject*, const List& args)
@@ -844,7 +844,7 @@ JSValue* globalFuncEscape(ExecState* exec, JSObject*, const List& args)
         r += s;
     }
 
-    return jsString(exec, r);
+    return jsString(r);
 }
 
 JSValue* globalFuncUnescape(ExecState* exec, JSObject*, const List& args)
@@ -869,7 +869,7 @@ JSValue* globalFuncUnescape(ExecState* exec, JSObject*, const List& args)
         s += UString(c, 1);
     }
 
-    return jsString(exec, s);
+    return jsString(s);
 }
 
 #ifndef NDEBUG
@@ -889,7 +889,7 @@ PrototypeFunction::PrototypeFunction(ExecState* exec, int len, const Identifier&
     , m_function(function)
 {
     ASSERT_ARG(function, function);
-    putDirect(exec->propertyNames().length, jsNumber(exec, len), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(len), DontDelete | ReadOnly | DontEnum);
 }
 
 PrototypeFunction::PrototypeFunction(ExecState* exec, FunctionPrototype* functionPrototype, int len, const Identifier& name, JSMemberFunction function)
@@ -897,7 +897,7 @@ PrototypeFunction::PrototypeFunction(ExecState* exec, FunctionPrototype* functio
     , m_function(function)
 {
     ASSERT_ARG(function, function);
-    putDirect(exec->propertyNames().length, jsNumber(exec, len), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(len), DontDelete | ReadOnly | DontEnum);
 }
 
 JSValue* PrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
@@ -914,7 +914,7 @@ PrototypeReflexiveFunction::PrototypeReflexiveFunction(ExecState* exec, Function
 {
     ASSERT_ARG(function, function);
     ASSERT_ARG(cachedGlobalObject, cachedGlobalObject);
-    putDirect(exec->propertyNames().length, jsNumber(exec, len), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(len), DontDelete | ReadOnly | DontEnum);
 }
 
 JSValue* PrototypeReflexiveFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)

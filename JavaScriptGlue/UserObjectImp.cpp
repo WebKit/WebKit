@@ -183,15 +183,15 @@ JSValue *UserObjectImp::toPrimitive(ExecState *exec, JSType preferredType) const
                 result = jsBoolean(false);
             }
         } else if (cfType == CFStringGetTypeID()) {
-            result = jsString(exec, CFStringToUString((CFStringRef)cfValue));
+            result = jsString(CFStringToUString((CFStringRef)cfValue));
         } else if (cfType == CFNumberGetTypeID()) {
             double d = 0.0;
             CFNumberGetValue((CFNumberRef)cfValue, kCFNumberDoubleType, &d);
-            result = jsNumber(exec, d);
+            result = jsNumber(d);
         } else if (cfType == CFURLGetTypeID()) {
             CFURLRef absURL = CFURLCopyAbsoluteURL((CFURLRef)cfValue);
             if (absURL) {
-                result = jsString(exec, CFStringToUString(CFURLGetString(absURL)));
+                result = jsString(CFStringToUString(CFURLGetString(absURL)));
                 ReleaseCFType(absURL);
             }
         }

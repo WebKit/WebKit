@@ -204,53 +204,53 @@ void ScriptInterpreter::updateDOMNodeDocument(WebCore::Node* node, Document* old
     }
 }
 
-JSValue* jsStringOrNull(ExecState* exec, const String& s)
+JSValue* jsStringOrNull(const String& s)
 {
     if (s.isNull())
         return jsNull();
-    return jsString(exec, s);
+    return jsString(s);
 }
 
-JSValue* jsOwnedStringOrNull(ExecState* exec, const KJS::UString& s)
+JSValue* jsOwnedStringOrNull(const KJS::UString& s)
 {
     if (s.isNull())
         return jsNull();
-    return jsOwnedString(exec, s);
+    return jsOwnedString(s);
 }
 
-JSValue* jsStringOrUndefined(ExecState* exec, const String& s)
+JSValue* jsStringOrUndefined(const String& s)
 {
     if (s.isNull())
         return jsUndefined();
-    return jsString(exec, s);
+    return jsString(s);
 }
 
-JSValue* jsStringOrFalse(ExecState* exec, const String& s)
+JSValue* jsStringOrFalse(const String& s)
 {
     if (s.isNull())
         return jsBoolean(false);
-    return jsString(exec, s);
+    return jsString(s);
 }
 
-JSValue* jsStringOrNull(ExecState* exec, const KURL& url)
+JSValue* jsStringOrNull(const KURL& url)
 {
     if (url.isNull())
         return jsNull();
-    return jsString(exec, url.string());
+    return jsString(url.string());
 }
 
-JSValue* jsStringOrUndefined(ExecState* exec, const KURL& url)
+JSValue* jsStringOrUndefined(const KURL& url)
 {
     if (url.isNull())
         return jsUndefined();
-    return jsString(exec, url.string());
+    return jsString(url.string());
 }
 
-JSValue* jsStringOrFalse(ExecState* exec, const KURL& url)
+JSValue* jsStringOrFalse(const KURL& url)
 {
     if (url.isNull())
         return jsBoolean(false);
-    return jsString(exec, url.string());
+    return jsString(url.string());
 }
 
 UString valueToStringWithNullCheck(ExecState* exec, JSValue* value)
@@ -337,12 +337,12 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
 JSValue* nonCachingStaticFunctionGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
     const HashEntry* entry = slot.staticEntry();
-    return new (exec) PrototypeFunction(exec, entry->length, propertyName, entry->functionValue);
+    return new PrototypeFunction(exec, entry->length, propertyName, entry->functionValue);
 }
 
 JSValue* objectToStringFunctionGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot&)
 {
-    return new (exec) PrototypeFunction(exec, 0, propertyName, objectProtoFuncToString);
+    return new PrototypeFunction(exec, 0, propertyName, objectProtoFuncToString);
 }
 
 } // namespace WebCore

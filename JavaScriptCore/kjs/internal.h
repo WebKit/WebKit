@@ -45,7 +45,7 @@ namespace KJS {
 
   class StringImp : public JSCell {
   public:
-    StringImp(const UString& v) : val(v) { Heap::heap(this)->reportExtraMemoryCost(v.cost()); }
+    StringImp(const UString& v) : val(v) { Collector::reportExtraMemoryCost(v.cost()); }
     enum HasOtherOwnerType { HasOtherOwner };
     StringImp(const UString& value, HasOtherOwnerType) : val(value) { }
     const UString& value() const { return val; }
@@ -65,7 +65,7 @@ namespace KJS {
 
   class NumberImp : public JSCell {
     friend class ConstantValues;
-    friend JSValue* jsNumberCell(ExecState*, double);
+    friend JSValue *jsNumberCell(double);
   public:
     double value() const { return val; }
 
@@ -78,11 +78,10 @@ namespace KJS {
     virtual UString toString(ExecState *exec) const;
     virtual JSObject *toObject(ExecState *exec) const;
     
-    void* operator new(size_t size, ExecState* exec)
+    void* operator new(size_t size)
     {
-        return exec->heap()->allocateNumber(size);
+        return Collector::allocateNumber(size);
     }
-
   private:
     NumberImp(double v) : val(v) { }
 

@@ -432,7 +432,7 @@ namespace KJS {
     JSValue **getDirectLocation(const Identifier& propertyName)
         { return _prop.getLocation(propertyName); }
     void putDirect(const Identifier &propertyName, JSValue *value, int attr = 0);
-    void putDirect(ExecState*, const Identifier &propertyName, int value, int attr = 0);
+    void putDirect(const Identifier &propertyName, int value, int attr = 0);
     void removeDirect(const Identifier &propertyName);
     
     // convenience to add a function property under the function's own built-in name

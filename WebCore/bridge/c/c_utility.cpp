@@ -107,7 +107,7 @@ void convertValueToNPVariant(ExecState* exec, JSValue* value, NPVariant* result)
     }
 }
 
-JSValue* convertNPVariantToValue(ExecState* exec, const NPVariant* variant, RootObject* rootObject)
+JSValue* convertNPVariantToValue(ExecState*, const NPVariant* variant, RootObject* rootObject)
 {
     JSLock lock;
     
@@ -120,11 +120,11 @@ JSValue* convertNPVariantToValue(ExecState* exec, const NPVariant* variant, Root
     if (type == NPVariantType_Void)
         return jsUndefined();
     if (type == NPVariantType_Int32)
-        return jsNumber(exec, NPVARIANT_TO_INT32(*variant));
+        return jsNumber(NPVARIANT_TO_INT32(*variant));
     if (type == NPVariantType_Double)
-        return jsNumber(exec, NPVARIANT_TO_DOUBLE(*variant));
+        return jsNumber(NPVARIANT_TO_DOUBLE(*variant));
     if (type == NPVariantType_String)
-        return jsString(exec, convertNPStringToUTF16(&variant->value.stringValue));
+        return jsString(convertNPStringToUTF16(&variant->value.stringValue));
     if (type == NPVariantType_Object) {
         NPObject* obj = variant->value.objectValue;
         
@@ -133,7 +133,7 @@ JSValue* convertNPVariantToValue(ExecState* exec, const NPVariant* variant, Root
             return ((JavaScriptObject*)obj)->imp;
 
         // Wrap NPObject in a CInstance.
-        return Instance::createRuntimeObject(exec, CInstance::create(obj, rootObject));
+        return Instance::createRuntimeObject(CInstance::create(obj, rootObject));
     }
     
     return jsUndefined();

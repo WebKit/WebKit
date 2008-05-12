@@ -519,11 +519,10 @@ sub GenerateHeader
     # Add prototype declaration -- code adopted from the KJS_DEFINE_PROTOTYPE and KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE macros
     push(@headerContent, "class ${className}Prototype : public KJS::JSObject {\n");
     push(@headerContent, "public:\n");
-    if ($interfaceName eq "DOMWindow") {
+    if ($dataNode->extendedAttributes->{"DoNotCache"}) {
         push(@headerContent, "    static KJS::JSObject* self();\n");
-        push(@headerContent, "    void* operator new(size_t);\n");
     } else {
-        push(@headerContent, "    static KJS::JSObject* self(KJS::ExecState*);\n");
+        push(@headerContent, "    static KJS::JSObject* self(KJS::ExecState* exec);\n");
     }
     push(@headerContent, "    virtual const KJS::ClassInfo* classInfo() const { return &s_info; }\n");
     push(@headerContent, "    static const KJS::ClassInfo s_info;\n");
@@ -733,25 +732,15 @@ sub GenerateImplementation
 
     push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", 0, &${className}PrototypeTable, 0 };\n\n");
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
-        push(@implContent, "JSObject* ${className}Prototype::self(");
-        push(@implContent,     "ExecState* exec") unless $interfaceName eq "DOMWindow";
-        push(@implContent,     ")\n");
+        push(@implContent, "JSObject* ${className}Prototype::self()\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return new ");
-        push(@implContent,      "(exec) ") unless $interfaceName eq "DOMWindow";
-        push(@implContent,      "${className}Prototype();\n");
+        push(@implContent, "    return new ${className}Prototype();\n");
         push(@implContent, "}\n\n");
     } else {
         push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec)\n");
         push(@implContent, "{\n");
         push(@implContent, "    static const Identifier* prototypeIdentifier = new Identifier(\"[[${className}.prototype]]\");\n");
         push(@implContent, "    return KJS::cacheGlobalObject<${className}Prototype>(exec, *prototypeIdentifier);\n");
-        push(@implContent, "}\n\n");
-    }
-    if ($interfaceName eq "DOMWindow") {
-        push(@implContent, "void* ${className}Prototype::operator new(size_t size)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    return Heap::threadHeap()->allocate(size);\n");
         push(@implContent, "}\n\n");
     }
     if ($numConstants > 0 || $numFunctions > 0) {
@@ -767,9 +756,9 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
     if ($numConstants ne 0) {
-        push(@implContent, "JSValue* ${className}Prototype::getValueProperty(ExecState* exec, int token) const\n{\n");
+        push(@implContent, "JSValue* ${className}Prototype::getValueProperty(ExecState*, int token) const\n{\n");
         push(@implContent, "    // The token is the numeric value of its associated constant\n");
-        push(@implContent, "    return jsNumber(exec, token);\n}\n\n");
+        push(@implContent, "    return jsNumber(token);\n}\n\n");
     }
 
     # - Initialize static ClassInfo object
@@ -1262,7 +1251,7 @@ sub GenerateImplementation
         push(@implContent, "    ${className}* thisObj = static_cast<$className*>(slot.slotBase());\n");
         if (IndexGetterReturnsStrings($implClassName)) {
             $implIncludes{"KURL.h"} = 1;
-            push(@implContent, "    return jsStringOrNull(exec, thisObj->impl()->item(slot.index()));\n");
+            push(@implContent, "    return jsStringOrNull(thisObj->impl()->item(slot.index()));\n");
         } else {
             push(@implContent, "    return toJS(exec, static_cast<$implClassName*>(thisObj->impl())->item(slot.index()));\n");
         }
@@ -1496,19 +1485,19 @@ sub NativeToJSValue
     my $type = $codeGenerator->StripModule($signature->type);
 
     return "jsBoolean($value)" if $type eq "boolean";
-    return "jsNumber(exec, $value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType" or $type eq "DOMTimeStamp";
+    return "jsNumber($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType" or $type eq "DOMTimeStamp";
 
     if ($codeGenerator->IsStringType($type)) {
         $implIncludes{"KURL.h"} = 1;
         my $conv = $signature->extendedAttributes->{"ConvertNullStringTo"};
         if (defined $conv) {
-            return "jsStringOrNull(exec, $value)" if $conv eq "Null";
-            return "jsStringOrUndefined(exec, $value)" if $conv eq "Undefined";
-            return "jsStringOrFalse(exec, $value)" if $conv eq "False";
+            return "jsStringOrNull($value)" if $conv eq "Null";
+            return "jsStringOrUndefined($value)" if $conv eq "Undefined";
+            return "jsStringOrFalse($value)" if $conv eq "False";
 
             die "Unknown value for ConvertNullStringTo extended attribute";
         }
-        return "jsString(exec, $value)";
+        return "jsString($value)";
     }
 
     if ($type eq "RGBColor") {
@@ -1797,10 +1786,10 @@ bool ${className}Constructor::getOwnPropertySlot(ExecState* exec, const Identifi
     return getStaticValueSlot<${className}Constructor, DOMObject>(exec, &${className}ConstructorTable, this, propertyName, slot);
 }
 
-JSValue* ${className}Constructor::getValueProperty(ExecState* exec, int token) const
+JSValue* ${className}Constructor::getValueProperty(ExecState*, int token) const
 {
     // The token is the numeric value of its associated constant
-    return jsNumber(exec, token);
+    return jsNumber(token);
 }
 
 EOF

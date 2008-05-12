@@ -155,14 +155,14 @@ JSValue *JSObjectKJSValue(JSUserObject* ptr)
                     CFTypeID typeID = CFGetTypeID(cfType);
                     if (typeID == CFStringGetTypeID())
                     {
-                        result = jsString(getThreadGlobalExecState(), CFStringToUString((CFStringRef)cfType));
+                        result = jsString(CFStringToUString((CFStringRef)cfType));
                         handled = true;
                     }
                     else if (typeID == CFNumberGetTypeID())
                     {
                         double num;
                         CFNumberGetValue((CFNumberRef)cfType, kCFNumberDoubleType, &num);
-                        result = jsNumber(getThreadGlobalExecState(), num);
+                        result = jsNumber(num);
                         handled = true;
                     }
                     else if (typeID == CFBooleanGetTypeID())
@@ -181,7 +181,7 @@ JSValue *JSObjectKJSValue(JSUserObject* ptr)
         }
         if (!handled)
         {
-            result = new (getThreadGlobalExecState()) UserObjectImp(ptr);
+            result = new UserObjectImp(ptr);
         }
     }
     return result;
@@ -376,52 +376,5 @@ CFTypeRef GetCFNull(void)
         result = sCFNull;
     }
     return result;
-}
-
-/*
- * This is a slight hack. The JSGlue API has no concept of execution state.
- * However, execution state is an inherent part of JS, and JSCore requires it.
- * So, we keep a single execution state for the whole thread and supply it
- * where necessary.
-
- * The execution state holds two things: (1) exceptions; (2) the global object. 
- * JSGlue has no API for accessing exceptions, so we just discard them. As for
- * the global object, JSGlue includes no calls that depend on it. Its property
- * getters and setters are per-object; they don't walk up the enclosing scope. 
- * Functions called by JSObjectCallFunction may reference values in the enclosing 
- * scope, but they do so through an internally stored scope chain, so we don't 
- * need to supply the global scope.
- */      
-
-pthread_key_t globalObjectKey;
-pthread_once_t globalObjectKeyOnce = PTHREAD_ONCE_INIT;
-
-static void unprotectGlobalObject(void* data) 
-{
-    JSLock lock;
-    gcUnprotect(static_cast<JSGlobalObject*>(data));
-}
-
-static void initializeGlobalObjectKey()
-{
-    pthread_key_create(&globalObjectKey, unprotectGlobalObject);
-}
-
-ExecState* getThreadGlobalExecState()
-{
-    pthread_once(&globalObjectKeyOnce, initializeGlobalObjectKey);
-    JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(pthread_getspecific(globalObjectKey));
-    if (!globalObject) {
-        globalObject = new JSGlueGlobalObject;
-        gcProtect(globalObject);
-        pthread_setspecific(globalObjectKey, globalObject);
-    }
-    
-    ExecState* exec = globalObject->globalExec();
-
-    // Discard exceptions -- otherwise an exception would forestall JS 
-    // evaluation throughout the thread
-    exec->clearException();
-    return exec;
 }
 

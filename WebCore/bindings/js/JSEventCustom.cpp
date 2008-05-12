@@ -86,37 +86,37 @@ JSValue* toJS(ExecState* exec, Event* event)
 
     if (event->isUIEvent()) {
         if (event->isKeyboardEvent())
-            ret = new (exec) JSKeyboardEvent(JSKeyboardEventPrototype::self(exec), static_cast<KeyboardEvent*>(event));
+            ret = new JSKeyboardEvent(JSKeyboardEventPrototype::self(exec), static_cast<KeyboardEvent*>(event));
         else if (event->isTextEvent())
-            ret = new (exec) JSTextEvent(JSTextEventPrototype::self(exec), static_cast<TextEvent*>(event));
+            ret = new JSTextEvent(JSTextEventPrototype::self(exec), static_cast<TextEvent*>(event));
         else if (event->isMouseEvent())
-            ret = new (exec) JSMouseEvent(JSMouseEventPrototype::self(exec), static_cast<MouseEvent*>(event));
+            ret = new JSMouseEvent(JSMouseEventPrototype::self(exec), static_cast<MouseEvent*>(event));
         else if (event->isWheelEvent())
-            ret = new (exec) JSWheelEvent(JSWheelEventPrototype::self(exec), static_cast<WheelEvent*>(event));
+            ret = new JSWheelEvent(JSWheelEventPrototype::self(exec), static_cast<WheelEvent*>(event));
 #if ENABLE(SVG)
         else if (event->isSVGZoomEvent())
-            ret = new (exec) JSSVGZoomEvent(JSSVGZoomEventPrototype::self(exec), static_cast<SVGZoomEvent*>(event), 0);
+            ret = new JSSVGZoomEvent(JSSVGZoomEventPrototype::self(exec), static_cast<SVGZoomEvent*>(event), 0);
 #endif
         else
-            ret = new (exec) JSUIEvent(JSUIEventPrototype::self(exec), static_cast<UIEvent*>(event));
+            ret = new JSUIEvent(JSUIEventPrototype::self(exec), static_cast<UIEvent*>(event));
     } else if (event->isMutationEvent())
-        ret = new (exec) JSMutationEvent(JSMutationEventPrototype::self(exec), static_cast<MutationEvent*>(event));
+        ret = new JSMutationEvent(JSMutationEventPrototype::self(exec), static_cast<MutationEvent*>(event));
     else if (event->isOverflowEvent())
-        ret = new (exec) JSOverflowEvent(JSOverflowEventPrototype::self(exec), static_cast<OverflowEvent*>(event));
+        ret = new JSOverflowEvent(JSOverflowEventPrototype::self(exec), static_cast<OverflowEvent*>(event));
     else if (event->isMessageEvent())
-        ret = new (exec) JSMessageEvent(JSMessageEventPrototype::self(exec), static_cast<MessageEvent*>(event));
+        ret = new JSMessageEvent(JSMessageEventPrototype::self(exec), static_cast<MessageEvent*>(event));
     else if (event->isProgressEvent()) {
         if (event->isXMLHttpRequestProgressEvent())
-            ret = new (exec) JSXMLHttpRequestProgressEvent(JSXMLHttpRequestProgressEventPrototype::self(exec), static_cast<XMLHttpRequestProgressEvent*>(event));
+            ret = new JSXMLHttpRequestProgressEvent(JSXMLHttpRequestProgressEventPrototype::self(exec), static_cast<XMLHttpRequestProgressEvent*>(event));
         else
-            ret = new (exec) JSProgressEvent(JSProgressEventPrototype::self(exec), static_cast<ProgressEvent*>(event));
+            ret = new JSProgressEvent(JSProgressEventPrototype::self(exec), static_cast<ProgressEvent*>(event));
     }
 #if ENABLE(DOM_STORAGE)
     else if (event->isStorageEvent())
-        ret = new (exec) JSStorageEvent(JSStorageEventPrototype::self(exec), static_cast<StorageEvent*>(event));
+        ret = new JSStorageEvent(JSStorageEventPrototype::self(exec), static_cast<StorageEvent*>(event));
 #endif
     else
-        ret = new (exec) JSEvent(JSEventPrototype::self(exec), event);
+        ret = new JSEvent(JSEventPrototype::self(exec), event);
 
     ScriptInterpreter::putDOMObject(event, ret);
     return ret;

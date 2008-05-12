@@ -47,7 +47,7 @@ JSValue* JSNodeFilter::acceptNode(ExecState* exec, const List& args)
     short result = impl()->acceptNode(toNode(args[0]), exception);
     if (exception)
         exec->setException(exception);
-    return jsNumber(exec, result);
+    return jsNumber(result);
 }
 
 NodeFilter* toNodeFilter(KJS::JSValue* val)

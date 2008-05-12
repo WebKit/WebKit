@@ -31,10 +31,16 @@ void List::getSlice(int startIndex, List& result) const
     result.m_vector.appendRange(start, end());
 }
 
-void List::markProtectedLists(ListSet& markSet)
+List::ListSet& List::markSet()
 {
-    ListSet::iterator end = markSet.end();
-    for (ListSet::iterator it = markSet.begin(); it != end; ++it) {
+    static ListSet staticMarkSet;
+    return staticMarkSet;
+}
+
+void List::markProtectedListsSlowCase()
+{
+    ListSet::iterator end = markSet().end();
+    for (ListSet::iterator it = markSet().begin(); it != end; ++it) {
         List* list = *it;
 
         iterator end2 = list->end();
@@ -59,10 +65,9 @@ void List::expandAndAppend(JSValue* v)
     // therefore don't need explicit marking. Once our size exceeds
     // our Vector's inline capacity, though, our values move to the 
     // heap, where they do need explicit marking.
-    if (!m_markSet) {
-        ListSet& markSet = Heap::threadHeap()->markListSet();
-        markSet.add(this);
-        m_markSet = &markSet;
+    if (!m_isInMarkSet) {
+        markSet().add(this);
+        m_isInMarkSet = true;
     }
 
     m_vector.uncheckedAppend(v);

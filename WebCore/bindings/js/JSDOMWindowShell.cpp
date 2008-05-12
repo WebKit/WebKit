@@ -143,11 +143,6 @@ void JSDOMWindowShell::clear()
     m_window->clear();
 }
 
-void* JSDOMWindowShell::operator new(size_t size)
-{
-    return Heap::threadHeap()->allocate(size);
-}
-
 // ----
 // Conversion methods
 // ----
