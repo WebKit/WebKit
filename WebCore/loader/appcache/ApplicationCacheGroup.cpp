@@ -615,6 +615,16 @@ void ApplicationCacheGroup::callListeners(ListenerFunction listenerFunction, con
     }    
 }
 
+void ApplicationCacheGroup::clearStorageID()
+{
+    m_storageID = 0;
+    
+    HashSet<ApplicationCache*>::const_iterator end = m_caches.end();
+    for (HashSet<ApplicationCache*>::const_iterator it = m_caches.begin(); it != end; ++it)
+        (*it)->clearStorageID();
+}
+    
+
 }
 
 #endif // ENABLE(OFFLINE_WEB_APPLICATIONS)

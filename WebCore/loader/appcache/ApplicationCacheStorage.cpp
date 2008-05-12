@@ -533,6 +533,26 @@ void ApplicationCacheStorage::remove(ApplicationCache* cache)
     executeStatement(statement);
 }    
 
+void ApplicationCacheStorage::empty()
+{
+    openDatabase(false);
+    
+    if (!m_database.isOpen())
+        return;
+    
+    // Clear cache groups, caches and cache resources.
+    executeSQLCommand("DELETE FROM CacheGroups");
+    executeSQLCommand("DELETE FROM Caches");
+    executeSQLCommand("DELETE FROM CacheResources");
+    
+    // Clear the storage IDs for the caches in memory.
+    // The caches will still work, but cached resources will not be saved to disk 
+    // until a cache update process has been initiated.
+    CacheGroupMap::const_iterator end = m_cachesInMemory.end();
+    for (CacheGroupMap::const_iterator it = m_cachesInMemory.begin(); it != end; ++it)
+        it->second->clearStorageID();
+}    
+
 ApplicationCacheStorage& cacheStorage()
 {
     static ApplicationCacheStorage storage;

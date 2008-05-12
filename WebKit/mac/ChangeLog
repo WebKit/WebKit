@@ -1,5 +1,14 @@
 2008-05-12  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Alexey.
+
+        Empty the application cache when changing the cache model.
+        
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]):
+
+2008-05-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Oliver.
 
         <rdar://problem/5774495> Make Unicode text input possible in Netscape-style plug-ins

@@ -1,5 +1,25 @@
 2008-05-12  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Alexey.
+
+        Add ApplicationCacheStorage::empty() method which will empty
+        the application cache database.
+        
+        * WebCore.base.exp:
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::clearStorageID):
+        * loader/appcache/ApplicationCache.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::clearStorageID):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/appcache/ApplicationCacheResource.h:
+        (WebCore::ApplicationCacheResource::clearStorageID):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::empty):
+        * loader/appcache/ApplicationCacheStorage.h:
+
+2008-05-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John.
 
         Don't throw an exception if the string passed in is an invalid URL.

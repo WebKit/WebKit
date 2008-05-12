@@ -81,7 +81,8 @@ public:
     
     void setStorageID(unsigned storageID) { m_storageID = storageID; }
     unsigned storageID() const { return m_storageID; }
-
+    void clearStorageID();
+    
     static bool requestIsHTTPOrHTTPSGet(const ResourceRequest&);
 private:
     ApplicationCache();

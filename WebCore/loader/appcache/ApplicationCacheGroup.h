@@ -64,6 +64,7 @@ public:
     
     void setStorageID(unsigned storageID) { m_storageID = storageID; }
     unsigned storageID() const { return m_storageID; }
+    void clearStorageID();
     
     void update(Frame*);
     void cacheDestroyed(ApplicationCache*);

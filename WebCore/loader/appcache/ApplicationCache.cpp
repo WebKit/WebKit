@@ -166,6 +166,15 @@ bool ApplicationCache::isURLInOnlineWhitelist(const KURL& url)
     return m_onlineWhitelist.contains(copy);
 }
     
+void ApplicationCache::clearStorageID()
+{
+    m_storageID = 0;
+    
+    ResourceMap::const_iterator end = m_resources.end();
+    for (ResourceMap::const_iterator it = m_resources.begin(); it != end; ++it)
+        it->second->clearStorageID();
+}    
+    
 #ifndef NDEBUG
 void ApplicationCache::dump()
 {
