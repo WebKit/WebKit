@@ -442,6 +442,8 @@ namespace WebCore {
 
         void startIconLoader();
 
+        void applyUserAgent(ResourceRequest& request);
+
     private:
         PassRefPtr<HistoryItem> createHistoryItem(bool useOriginal);
         PassRefPtr<HistoryItem> createHistoryItemTree(Frame* targetFrame, bool clipAtTarget);
@@ -537,8 +539,6 @@ namespace WebCore {
 
         bool shouldReloadToHandleUnreachableURL(DocumentLoader*);
         void handleUnimplementablePolicy(const ResourceError&);
-
-        void applyUserAgent(ResourceRequest& request);
 
         void scheduleRedirection(ScheduledRedirection*);
         void startRedirectionTimer();

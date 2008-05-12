@@ -286,7 +286,11 @@ void ApplicationCacheGroup::update(Frame* frame)
     ASSERT(!m_manifestResource);
     
     // FIXME: Handle defer loading
-    m_manifestHandle = ResourceHandle::create(m_manifestURL, this, frame, false, true, false);
+    
+    ResourceRequest request(m_manifestURL);
+    m_frame->loader()->applyUserAgent(request);
+    
+    m_manifestHandle = ResourceHandle::create(request, this, m_frame, false, true, false);
 }
  
 void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const ResourceResponse& response)
@@ -563,7 +567,11 @@ void ApplicationCacheGroup::startLoadingEntry()
     // FIXME: If this is an upgrade attempt, the newest cache should be used as an HTTP cache.
     
     ASSERT(!m_currentHandle);
-    m_currentHandle = ResourceHandle::create(it->first, this, m_frame, false, true, false);
+    
+    ResourceRequest request(it->first);
+    m_frame->loader()->applyUserAgent(request);
+
+    m_currentHandle = ResourceHandle::create(request, this, m_frame, false, true, false);
 }
 
 void ApplicationCacheGroup::addEntry(const String& url, unsigned type)

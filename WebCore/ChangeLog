@@ -2,6 +2,17 @@
 
         Reviewed by Adam.
 
+        Add user agent to requests when loading/updating the cache.
+    
+        * loader/FrameLoader.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::update):
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+
+2008-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
         Make it possible to perform synchronous loads from the application cache.
         
         * loader/DocumentLoader.cpp:
