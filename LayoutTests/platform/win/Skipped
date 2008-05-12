@@ -421,3 +421,7 @@ storage/success-callback.html
 
 # Crashes, probably needs new SQLite
 storage/multiple-transactions.html
+
+# Application cache
+http/tests/appcache
+

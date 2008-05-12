@@ -1,3 +1,16 @@
+2008-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add support for testing application caches.
+        
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree):
+        Empty the cache.
+        
+        (resetWebViewToConsistentStateBeforeTesting):
+        Turn on support for the application cache.
+
 2008-05-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -1,0 +1,2 @@
+ALERT: whee cached!
+This tests that the application cache works by loading a simple text file from the cache using XMLHttpRequest.

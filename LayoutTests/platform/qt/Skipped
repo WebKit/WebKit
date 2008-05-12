@@ -910,6 +910,9 @@ http/tests/ssl
 http/tests/uri
 http/tests/xmlhttprequest
 
+# Application cache
+http/tests/appcache
+
 # Tests that currently fail but perhaps used to work at some point.
 editing/selection/skip-non-editable-1.html
 editing/selection/skip-non-editable-2.html

@@ -51,6 +51,7 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
 #import <WebKit/WebBackForwardList.h>
+#import <WebKit/WebCache.h>
 #import <WebKit/WebCoreStatistics.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDatabaseManagerPrivate.h>
@@ -456,6 +457,8 @@ void dumpRenderTree(int argc, const char *argv[])
 
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
 
+    [WebCache empty];
+     
     // <rdar://problem/5222911>
     testStringByEvaluatingJavaScriptFromString();
 
@@ -878,7 +881,8 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [preferences setPrivateBrowsingEnabled:NO];
     [preferences setAuthorAndUserStylesEnabled:YES];
     [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
-
+    [preferences setOfflineWebApplicationCacheEnabled:YES];
+    
     if (persistentUserStyleSheetLocation) {
         [preferences setUserStyleSheetLocation:[NSURL URLWithString:(NSString *)(persistentUserStyleSheetLocation.get())]];
         [preferences setUserStyleSheetEnabled:YES];

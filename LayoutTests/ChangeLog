@@ -1,3 +1,21 @@
+2008-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add simple appcache test.
+
+        * http/conf/mime.types:
+        * http/tests/appcache: Added.
+        * http/tests/appcache/resources: Added.
+        * http/tests/appcache/resources/not-in-cache.txt: Added.
+        * http/tests/appcache/resources/simple.manifest: Added.
+        * http/tests/appcache/resources/simple.txt: Added.
+        * http/tests/appcache/simple-expected.txt: Added.
+        * http/tests/appcache/simple.html: Added.
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2008-05-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

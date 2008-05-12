@@ -3,3 +3,5 @@ editing/execCommand/print.html
 # Missing LayoutTestController implementations and database related delegate callback
 storage/quota-tracking.html
 storage/success-callback.html
+# Application cache
+http/tests/appcache

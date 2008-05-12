@@ -529,6 +529,7 @@ multipart/related
 multipart/report
 multipart/signed
 multipart/voice-message
+text/cache-manifest         manifest
 text/calendar			ics ifb
 text/css			css
 text/directory

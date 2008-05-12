@@ -856,6 +856,28 @@ ApplicationCache* DocumentLoader::mainResourceApplicationCache() const
     return 0;
 }
 
+bool DocumentLoader::shouldLoadResourceFromApplicationCache(const ResourceRequest& request, ApplicationCacheResource*& resource)
+{
+    ApplicationCache* cache = topLevelApplicationCache();    
+    if (!cache)
+        return false;
+    
+    // If the resource is not a HTTP/HTTPS GET, then abort
+    if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
+        return false;
+    
+    if (cache->isURLInOnlineWhitelist(request.url()))
+        return false;
+    
+    resource = cache->resourceForURL(request.url());
+    
+    // Don't load foreign resources.
+    if (resource && (resource->type() & ApplicationCacheResource::Foreign))
+        resource = 0;
+    
+    return true;
+}
+
 bool DocumentLoader::scheduleApplicationCacheLoad(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL)
 {
     if (!frameLoader()->frame()->settings() || !frameLoader()->frame()->settings()->offlineWebApplicationCacheEnabled())
@@ -864,25 +886,12 @@ bool DocumentLoader::scheduleApplicationCacheLoad(ResourceLoader* loader, const 
     if (request.url() != originalURL)
         return false;
 
-    ApplicationCache* cache = topLevelApplicationCache();    
-    if (!cache)
+    ApplicationCacheResource* resource;
+    if (!shouldLoadResourceFromApplicationCache(request, resource))
+        // FIXME: Handle opportunistic caching namespaces
         return false;
     
-    // If the resource is not a HTTP/HTTPS GET, then abort
-    if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
-        return false;
-
-    if (cache->isURLInOnlineWhitelist(request.url()))
-        return false;
-    
-    ApplicationCacheResource* resource = cache->resourceForURL(request.url());
-    
-    // FIXME: Handle opportunistic caching namespaces
-    if (!resource || (resource->type() & ApplicationCacheResource::Foreign))
-        // A null resource means that the load should fail.
-        m_pendingSubstituteResources.set(loader, 0);
-    else 
-        m_pendingSubstituteResources.set(loader, resource);
+    m_pendingSubstituteResources.set(loader, resource);
     deliverSubstituteResourcesAfterDelay();
         
     return true;

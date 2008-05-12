@@ -1,3 +1,22 @@
+2008-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Make it possible to perform synchronous loads from the application cache.
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::shouldLoadResourceFromApplicationCache):
+        Factor out code from scheduleApplicationCacheLoad in its own method.
+        
+        (WebCore::DocumentLoader::scheduleApplicationCacheLoad):
+        Call shouldLoadResourceFromApplicationCache here instead.
+        
+        * loader/DocumentLoader.h:
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        Call shouldLoadResourceFromApplicationCache.
+
 2008-05-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Ada Chan and Sam Weinig.
