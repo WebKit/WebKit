@@ -1,3 +1,16 @@
+2008-05-11  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Since wx popup menus dismiss themselves when an item is selected we need to
+        call hidePopup so webkit's internal state is correct.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=19000
+
+        * platform/wx/PopupMenuWx.cpp:
+        (WebCore::PopupMenu::OnMenuItemSelected):
+        (WebCore::PopupMenu::hide):
+
 2008-05-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

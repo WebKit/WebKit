@@ -85,14 +85,17 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 
 void PopupMenu::OnMenuItemSelected(wxCommandEvent& event)
 {
-    if (client())
-        client()->valueChanged(event.GetId() - s_menuStartId);    
+    if (client()) {
+        client()->valueChanged(event.GetId() - s_menuStartId);
+        client()->hidePopup();
+    }
     // TODO: Do we need to call Disconnect here? Do we have a ref to the native window still?
 }
 
 void PopupMenu::hide()
 {
-    notImplemented();
+    // we don't need to do anything here, the native control only exists during the time
+    // show is called
 }
 
 void PopupMenu::updateFromElement()
