@@ -547,6 +547,11 @@ void ApplicationCacheGroup::startLoadingEntry()
 {
     ASSERT(m_cacheBeingUpdated);
 
+    if (m_pendingEntries.isEmpty()) {
+        checkIfLoadIsComplete();
+        return;
+    }
+    
     EntryMap::const_iterator it = m_pendingEntries.begin();
 
     // If this is an initial cache attempt, we do not want to fetch any implicit entries,

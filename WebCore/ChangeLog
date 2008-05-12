@@ -1,3 +1,12 @@
+2008-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Handle empty manifest files without crashing.
+        
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+
 2008-05-12  Alp Toker  <alp@nuanti.com>
 
         GTK+ build fix for breakage in r33056. Include limits.h for INT_MAX.
