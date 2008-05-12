@@ -27,6 +27,8 @@
 #include "WebKitDLL.h"
 #include "WebCoreStatistics.h"
 
+#include <WebCore/FontCache.h>
+#include <WebCore/GlyphPageTreeNode.h>
 #include <WebCore/IconDatabase.h>
 
 #pragma warning(push, 0)
@@ -165,5 +167,38 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::iconsWithDataCount(
     if (!count)
         return E_POINTER;
     *count = (UINT) iconDatabase()->iconRecordCountWithData();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebCoreStatistics::cachedFontDataCount( 
+    /* [retval][out] */ UINT *count)
+{
+    if (!count)
+        return E_POINTER;
+    *count = (UINT) FontCache::fontDataCount();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebCoreStatistics::cachedFontDataInactiveCount( 
+    /* [retval][out] */ UINT *count)
+{
+    if (!count)
+        return E_POINTER;
+    *count = (UINT) FontCache::inactiveFontDataCount();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebCoreStatistics::purgeInactiveFontData(void)
+{
+    FontCache::purgeInactiveFontData();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebCoreStatistics::glyphPageCount( 
+    /* [retval][out] */ UINT *count)
+{
+    if (!count)
+        return E_POINTER;
+    *count = (UINT) GlyphPageTreeNode::treeGlyphPageCount();
     return S_OK;
 }

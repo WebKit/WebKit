@@ -31,8 +31,10 @@
 #import "WebCache.h"
 #import "WebFrameInternal.h"
 #import <JavaScriptCore/interpreter.h>
+#import <WebCore/FontCache.h>
 #import <WebCore/Frame.h>
 #import <WebCore/GCController.h>
+#import <WebCore/GlyphPageTreeNode.h>
 #import <WebCore/IconDatabase.h>
 #import <WebCore/RenderTreeAsText.h>
 #import <WebCore/RenderView.h>
@@ -114,6 +116,26 @@ using namespace WebCore;
 + (size_t)iconsWithDataCount
 {
     return iconDatabase()->iconRecordCountWithData();
+}
+
++ (size_t)cachedFontDataCount
+{
+    return FontCache::fontDataCount();
+}
+
++ (size_t)cachedFontDataInactiveCount
+{
+    return FontCache::inactiveFontDataCount();
+}
+
++ (void)purgeInactiveFontData
+{
+    FontCache::purgeInactiveFontData();
+}
+
++ (size_t)glyphPageCount
+{
+    return GlyphPageTreeNode::treeGlyphPageCount();
 }
 
 + (BOOL)shouldPrintExceptions

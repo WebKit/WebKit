@@ -293,7 +293,7 @@ Font::Font(const FontDescription& fd, short letterSpacing, short wordSpacing)
 }
 
 Font::Font(const FontPlatformData& fontData, bool isPrinterFont)
-    : m_fontList(new FontFallbackList)
+    : m_fontList(FontFallbackList::create())
     , m_pageZero(0)
     , m_cachedPrimaryFont(0)
     , m_letterSpacing(0)
@@ -500,7 +500,7 @@ void Font::update(PassRefPtr<FontSelector> fontSelector) const
     // won't stick around long enough to get you in trouble). Still, this is pretty disgusting,
     // and could eventually be rectified by using RefPtrs for Fonts themselves.
     if (!m_fontList)
-        m_fontList = new FontFallbackList();
+        m_fontList = FontFallbackList::create();
     m_fontList->invalidate(fontSelector);
     m_cachedPrimaryFont = 0;
     m_pageZero = 0;

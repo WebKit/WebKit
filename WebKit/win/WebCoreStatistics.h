@@ -58,6 +58,13 @@ public:
         /* [retval][out] */ UINT *count);
     virtual HRESULT STDMETHODCALLTYPE iconsWithDataCount( 
         /* [retval][out] */ UINT *count);
+    virtual HRESULT STDMETHODCALLTYPE cachedFontDataCount( 
+        /* [retval][out] */ UINT *count);
+    virtual HRESULT STDMETHODCALLTYPE cachedFontDataInactiveCount( 
+        /* [retval][out] */ UINT *count);
+    virtual HRESULT STDMETHODCALLTYPE purgeInactiveFontData(void);
+    virtual HRESULT STDMETHODCALLTYPE glyphPageCount( 
+        /* [retval][out] */ UINT *count);
 
 protected:
     ULONG m_refCount;

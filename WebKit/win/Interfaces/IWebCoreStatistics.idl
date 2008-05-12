@@ -46,4 +46,9 @@ interface IWebCoreStatistics : IUnknown
     HRESULT iconRetainedPageURLCount([out, retval] UINT* count);
     HRESULT iconRecordCount([out, retval] UINT* count);
     HRESULT iconsWithDataCount([out, retval] UINT* count);
+
+    HRESULT cachedFontDataCount([out, retval] UINT* count);
+    HRESULT cachedFontDataInactiveCount([out, retval] UINT* count);
+    HRESULT purgeInactiveFontData();
+    HRESULT glyphPageCount([out, retval] UINT* count);
 }

@@ -50,8 +50,10 @@ class SimpleFontData;
 class FontCache {
 public:
     static const FontData* getFontData(const Font&, int& familyIndex, FontSelector*);
+    static void releaseFontData(const SimpleFontData*);
     
     // This method is implemented by the platform.
+    // FIXME: Font data returned by this method never go inactive because callers don't track and release them.
     static const SimpleFontData* getFontDataForCharacters(const Font&, const UChar* characters, int length);
     
     // Also implemented by the platform.
@@ -66,7 +68,11 @@ public:
     static FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family, bool checkingAlternateName = false);
     static SimpleFontData* getCachedFontData(const FontPlatformData*);
     static FontPlatformData* getLastResortFallbackFont(const FontDescription&);
-    
+
+    static size_t fontDataCount();
+    static size_t inactiveFontDataCount();
+    static void purgeInactiveFontData(int count = INT_MAX);
+
 private:
     // These methods are implemented by each platform.
     static FontPlatformData* getSimilarFontPlatformData(const Font&);

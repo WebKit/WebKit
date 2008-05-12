@@ -1,3 +1,80 @@
+2008-05-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Ada Chan and Sam Weinig.
+
+        - WebCore changes for https://bugs.webkit.org/show_bug.cgi?id=17097
+          <rdar://problem/5715471> CGFontRefs (and HFONTs on Windows) leak because FontCache grows without bound
+
+        Added a way for clients to let the cache know that they no longer need
+        font data, which lets the cache release it. Changed clients to track
+        most of the font data they get from the cache so that they can later
+        release it. Some instances of font data -- namely, those used for system
+        font fallback -- are still not tracked and will therefore remain in the
+        cache indefinitely.
+
+        * WebCore.base.exp: Added exports for WebCoreStatistics in WebKit.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font): Changed to use FontFallbackList::create().
+        (WebCore::Font::update): Ditto.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::getCachedFontData): Added code to track the number
+        of times a SimpleFontData instance has been requested from the cache,
+        remove requested instances from the inactive list, and purge inactive
+        font data if the inactive list has grown above its maximum allowed size.
+        (WebCore::FontCache::releaseFontData): Added. Called by clients to let
+        the cache know that they no longer need the font data. Adds the font
+        data to the inactive list if the last client has released it.
+        (WebCore::FontCache::purgeInactiveFontData): Added. Removes inactive
+        font data from the cache (and the inactive list).
+        (WebCore::FontCache::fontDataCount): Added to provide statistics.
+        (WebCore::FontCache::inactiveFontDataCount): Ditto.
+
+        * platform/graphics/FontCache.h:
+
+        * platform/graphics/FontData.h:
+        (WebCore::FontData::FontData): Added a member variable to store the
+        highest glyph page tree level in which there is a node for this FontData.
+        This is used to limit the depth of the search when pruning glyph page
+        trees.
+        (WebCore::FontData::setMaxGlyphPageTreeLevel): Added this accessor.
+        (WebCore::FontData::maxGlyphPageTreeLevel): Ditto.
+
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontFallbackList::FontFallbackList): Changed to start with a
+        refcount of 1.
+        (WebCore::FontFallbackList::invalidate): Added a call to
+        releaseFontData().
+        (WebCore::FontFallbackList::releaseFontData): Added. Lets the font cache
+        know that we no longer need the FontData in our font list.
+        (WebCore::FontFallbackList::fontDataAt): Changed to record in the font
+        list whether the font data is a custom font data or not.
+        (WebCore::FontFallbackList::setPlatformFont): Ditto.
+
+        * platform/graphics/FontFallbackList.h:
+        (WebCore::FontFallbackList::create): Added and made the constructor
+        private.
+        (WebCore::FontFallbackList::~FontFallbackList): Added a call to
+        releaseFontData().
+
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::treeGlyphPageCount): Added to provide
+        statistics.
+        (WebCore::GlyphPageTreeNode::pageCount): Ditto.
+
+        (WebCore::GlyphPageTreeNode::pruneTreeFontData): Added.
+        (WebCore::GlyphPageTreeNode::getChild): Added code to update the font
+        data's maximum glyph page tree level.
+        (WebCore::GlyphPageTreeNode::pruneFontData): Added.
+
+        * platform/graphics/GlyphPageTreeNode.h:
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::~SimpleFontData): Added code to let the font
+        cache know that we no longer need the small caps font data and to prune
+        the glyph page trees.
+
 2008-05-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Alexey.

@@ -1,3 +1,19 @@
+2008-05-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Ada Chan.
+
+        - WebKit/mac changes for https://bugs.webkit.org/show_bug.cgi?id=17097
+          <rdar://problem/5715471> CGFontRefs (and HFONTs on Windows) leak because FontCache grows without bound
+
+        Added font cache statistics and a function to purge inactive font data.
+
+        * Misc/WebCoreStatistics.h:
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics cachedFontDataCount]):
+        (+[WebCoreStatistics cachedFontDataInactiveCount]):
+        (+[WebCoreStatistics purgeInactiveFontData]):
+        (+[WebCoreStatistics glyphPageCount]):
+
 2008-05-12  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.

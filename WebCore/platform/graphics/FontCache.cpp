@@ -36,6 +36,7 @@
 #include "FontSelector.h"
 #include "StringHash.h"
 #include <wtf/HashMap.h>
+#include <wtf/ListHashSet.h>
 
 using namespace WTF;
 
@@ -214,25 +215,87 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     }
 };
 
-typedef HashMap<FontPlatformData, SimpleFontData*, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
+typedef HashMap<FontPlatformData, pair<SimpleFontData*, unsigned>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
 
 static FontDataCache* gFontDataCache = 0;
+
+const int cMaxInactiveFontData = 120;  // Pretty Low Threshold
+const float cInactiveFontDataPurgeRatio = 0.2f;
+static ListHashSet<const SimpleFontData*>* gInactiveFontData = 0;
 
 SimpleFontData* FontCache::getCachedFontData(const FontPlatformData* platformData)
 {
     if (!platformData)
         return 0;
 
-    if (!gFontDataCache)
+    if (!gFontDataCache) {
         gFontDataCache = new FontDataCache;
-    
-    SimpleFontData* result = gFontDataCache->get(*platformData);
-    if (!result) {
-        result = new SimpleFontData(*platformData);
-        gFontDataCache->set(*platformData, result);
+        gInactiveFontData = new ListHashSet<const SimpleFontData*>;
     }
-        
-    return result;
+    
+    FontDataCache::iterator result = gFontDataCache->find(*platformData);
+    if (result == gFontDataCache->end()) {
+        if (gInactiveFontData->size() > cMaxInactiveFontData)
+            purgeInactiveFontData(cMaxInactiveFontData * cInactiveFontDataPurgeRatio);
+
+        pair<SimpleFontData*, unsigned> newValue(new SimpleFontData(*platformData), 1);
+        gFontDataCache->set(*platformData, newValue);
+        return newValue.first;
+    }
+    if (!result.get()->second.second++) {
+        ASSERT(gInactiveFontData->contains(result.get()->second.first));
+        gInactiveFontData->remove(result.get()->second.first);
+    }
+
+    return result.get()->second.first;
+}
+
+void FontCache::releaseFontData(const SimpleFontData* fontData)
+{
+    ASSERT(gFontDataCache);
+    ASSERT(!fontData->isCustomFont());
+
+    FontDataCache::iterator it = gFontDataCache->find(static_cast<const SimpleFontData*>(fontData)->platformData());
+    ASSERT(it != gFontDataCache->end());
+
+    if (!--it->second.second)
+        gInactiveFontData->add(static_cast<const SimpleFontData*>(fontData));
+}
+
+void FontCache::purgeInactiveFontData(int count)
+{
+    if (!gInactiveFontData)
+        return;
+
+    ListHashSet<const SimpleFontData*>::iterator end = gInactiveFontData->end();
+    ListHashSet<const SimpleFontData*>::iterator it = gInactiveFontData->begin();
+    for (int i = 0; i < count && it != end; ++it, ++i) {
+        const SimpleFontData* fontData = *it.get();
+        gFontDataCache->remove(fontData->platformData());
+        delete fontData;
+    }
+
+    if (it == end) {
+        // Removed everything
+        gInactiveFontData->clear();
+    } else {
+        for (int i = 0; i < count; ++i)
+            gInactiveFontData->remove(gInactiveFontData->begin());
+    }
+}
+
+size_t FontCache::fontDataCount()
+{
+    if (gFontDataCache)
+        return gFontDataCache->size();
+    return 0;
+}
+
+size_t FontCache::inactiveFontDataCount()
+{
+    if (gInactiveFontData)
+        return gInactiveFontData->size();
+    return 0;
 }
 
 const FontData* FontCache::getFontData(const Font& font, int& familyIndex, FontSelector* fontSelector)

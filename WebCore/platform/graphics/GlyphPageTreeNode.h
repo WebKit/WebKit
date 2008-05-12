@@ -134,8 +134,10 @@ public:
     }
 
     static void pruneTreeCustomFontData(const FontData*);
+    static void pruneTreeFontData(const SimpleFontData*);
 
     void pruneCustomFontData(const FontData*);
+    void pruneFontData(const SimpleFontData*, unsigned level = 0);
 
     GlyphPageTreeNode* parent() const { return m_parent; }
     GlyphPageTreeNode* getChild(const FontData*, unsigned pageNumber);
@@ -148,6 +150,9 @@ public:
 
     // The system fallback font has special rules (see above).
     bool isSystemFallback() const { return m_isSystemFallback; }
+
+    static size_t treeGlyphPageCount();
+    size_t pageCount() const;
 
 private:
     static GlyphPageTreeNode* getRoot(unsigned pageNumber);

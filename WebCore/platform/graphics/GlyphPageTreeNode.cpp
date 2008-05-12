@@ -65,6 +65,31 @@ GlyphPageTreeNode* GlyphPageTreeNode::getRoot(unsigned pageNumber)
     return node;
 }
 
+size_t GlyphPageTreeNode::treeGlyphPageCount()
+{
+    size_t count = 0;
+    if (roots) {
+        HashMap<int, GlyphPageTreeNode*>::iterator end = roots->end();
+        for (HashMap<int, GlyphPageTreeNode*>::iterator it = roots->begin(); it != end; ++it)
+            count += it->second->pageCount();
+    }
+    
+    if (pageZeroRoot)
+        count += pageZeroRoot->pageCount();
+
+    return count;
+}
+
+size_t GlyphPageTreeNode::pageCount() const
+{
+    size_t count = m_page && m_page->owner() == this ? 1 : 0;
+    HashMap<const FontData*, GlyphPageTreeNode*>::const_iterator end = m_children.end();
+    for (HashMap<const FontData*, GlyphPageTreeNode*>::const_iterator it = m_children.begin(); it != end; ++it)
+        count += it->second->pageCount();
+
+    return count;
+}
+
 void GlyphPageTreeNode::pruneTreeCustomFontData(const FontData* fontData)
 {
     // Enumerate all the roots and prune any tree that contains our custom font data.
@@ -76,6 +101,18 @@ void GlyphPageTreeNode::pruneTreeCustomFontData(const FontData* fontData)
     
     if (pageZeroRoot)
         pageZeroRoot->pruneCustomFontData(fontData);
+}
+
+void GlyphPageTreeNode::pruneTreeFontData(const SimpleFontData* fontData)
+{
+    if (roots) {
+        HashMap<int, GlyphPageTreeNode*>::iterator end = roots->end();
+        for (HashMap<int, GlyphPageTreeNode*>::iterator it = roots->begin(); it != end; ++it)
+            it->second->pruneFontData(fontData);
+    }
+    
+    if (pageZeroRoot)
+        pageZeroRoot->pruneFontData(fontData);
 }
 
 GlyphPageTreeNode::~GlyphPageTreeNode()
@@ -264,9 +301,10 @@ GlyphPageTreeNode* GlyphPageTreeNode::getChild(const FontData* fontData, unsigne
 #ifndef NDEBUG
         child->m_pageNumber = m_pageNumber;
 #endif
-        if (fontData)
+        if (fontData) {
             m_children.set(fontData, child);
-        else {
+            fontData->setMaxGlyphPageTreeLevel(max(fontData->maxGlyphPageTreeLevel(), child->m_level));
+        } else {
             m_systemFallbackChild = child;
             child->m_isSystemFallback = true;
         }
@@ -296,6 +334,38 @@ void GlyphPageTreeNode::pruneCustomFontData(const FontData* fontData)
     HashMap<const FontData*, GlyphPageTreeNode*>::iterator end = m_children.end();
     for (HashMap<const FontData*, GlyphPageTreeNode*>::iterator it = m_children.begin(); it != end; ++it)
         it->second->pruneCustomFontData(fontData);
+}
+
+void GlyphPageTreeNode::pruneFontData(const SimpleFontData* fontData, unsigned level)
+{
+    ASSERT(fontData);
+    if (!fontData)
+        return;
+
+    // Prune any branch that contains this FontData.
+    HashMap<const FontData*, GlyphPageTreeNode*>::iterator child = m_children.find(fontData);
+    if (child == m_children.end()) {
+        // If there is no level-1 node for fontData, then there is no deeper node for it in this tree.
+        if (!level)
+            return;
+    } else {
+        GlyphPageTreeNode* node = child->second;
+        m_children.remove(fontData);
+        unsigned customFontCount = node->m_customFontCount;
+        delete node;
+        if (customFontCount) {
+            for (GlyphPageTreeNode* curr = this; curr; curr = curr->m_parent)
+                curr->m_customFontCount -= customFontCount;
+        }
+    }
+
+    level++;
+    if (level > fontData->maxGlyphPageTreeLevel())
+        return;
+
+    HashMap<const FontData*, GlyphPageTreeNode*>::iterator end = m_children.end();
+    for (HashMap<const FontData*, GlyphPageTreeNode*>::iterator it = m_children.begin(); it != end; ++it)
+        it->second->pruneFontData(fontData, level);
 }
 
 }

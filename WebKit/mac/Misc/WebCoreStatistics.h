@@ -50,6 +50,11 @@
 + (size_t)iconRecordCount;
 + (size_t)iconsWithDataCount;
 
++ (size_t)cachedFontDataCount;
++ (size_t)cachedFontDataInactiveCount;
++ (void)purgeInactiveFontData;
++ (size_t)glyphPageCount;
+
 + (BOOL)shouldPrintExceptions;
 + (void)setShouldPrintExceptions:(BOOL)print;
 

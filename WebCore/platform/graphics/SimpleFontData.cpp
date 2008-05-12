@@ -30,6 +30,7 @@
 #include "config.h"
 #include "SimpleFontData.h"
 
+#include "FontCache.h"
 #if ENABLE(SVG_FONTS)
 #include "SVGFontData.h"
 #include "SVGFontFaceElement.h"
@@ -115,13 +116,16 @@ SimpleFontData::SimpleFontData(const FontPlatformData& f, bool customFont, bool 
 
 SimpleFontData::~SimpleFontData()
 {
+    if (!isCustomFont()) {
+        if (m_smallCapsFontData)
+            FontCache::releaseFontData(m_smallCapsFontData);
+        GlyphPageTreeNode::pruneTreeFontData(this);
+    }
+
 #if ENABLE(SVG_FONTS) && !PLATFORM(QT)
     if (!m_svgFontData || !m_svgFontData->svgFontFaceElement())
 #endif
         platformDestroy();
-
-    // We only get deleted when the cache gets cleared.  Since the smallCapsRenderer is also in that cache,
-    // it will be deleted then, so we don't need to do anything here.
 }
 
 float SimpleFontData::widthForGlyph(Glyph glyph) const

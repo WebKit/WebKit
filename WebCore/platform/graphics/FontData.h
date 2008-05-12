@@ -35,6 +35,11 @@ class SimpleFontData;
 
 class FontData : Noncopyable {
 public:
+    FontData()
+        : m_maxGlyphPageTreeLevel(0)
+    {
+    }
+
     virtual ~FontData();
 
     virtual const SimpleFontData* fontDataForCharacter(UChar32) const = 0;
@@ -42,6 +47,12 @@ public:
     virtual bool isCustomFont() const = 0;
     virtual bool isLoading() const = 0;
     virtual bool isSegmented() const = 0;
+
+    void setMaxGlyphPageTreeLevel(unsigned level) const { m_maxGlyphPageTreeLevel = level; }
+    unsigned maxGlyphPageTreeLevel() const { return m_maxGlyphPageTreeLevel; }
+
+private:
+    mutable unsigned m_maxGlyphPageTreeLevel;
 };
 
 } // namespace WebCore
