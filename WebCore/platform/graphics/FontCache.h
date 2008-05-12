@@ -29,6 +29,7 @@
 #ifndef FontCache_h
 #define FontCache_h
 
+#include <limits.h>
 #include <wtf/unicode/Unicode.h>
 
 #if PLATFORM(WIN)
