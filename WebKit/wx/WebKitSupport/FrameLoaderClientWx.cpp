@@ -868,9 +868,9 @@ void FrameLoaderClientWx::transitionToCommittedForNewPage()
     m_frame->setView(0);
 
     FrameView* frameView;
-    if (isMainFrame) {
+    if (isMainFrame)
         frameView = new FrameView(m_frame, IntRect(m_webView->GetRect()).size());
-    } else
+    else
         frameView = new FrameView(m_frame);
 
     ASSERT(frameView);

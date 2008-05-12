@@ -1,3 +1,10 @@
+2008-05-11  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Previous commit made bdash sad. Restore happiness state by fixing missed style issue. 
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::transitionToCommittedForNewPage):
+
 2008-05-11  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.
