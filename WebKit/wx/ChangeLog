@@ -1,3 +1,42 @@
+2008-05-11  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+        
+        Fix scrolling issues by implementing transitionToCommittedNewPage() so the scroll
+        positions are reset when a new page is loaded, and also maintained so that back
+        and next restore the scroll positions as well. This also simplifies the logic
+        for initializing and managing wxWebView.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=18992
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::setWebView):
+        (WebCore::FrameLoaderClientWx::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientWx::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientWx::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientWx::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientWx::dispatchDidFinishDocumentLoad):
+        (WebCore::FrameLoaderClientWx::postProgressFinishedNotification):
+        (WebCore::FrameLoaderClientWx::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientWx::createFrame):
+        (WebCore::FrameLoaderClientWx::transitionToCommittedForNewPage):
+        * WebKitSupport/FrameLoaderClientWx.h:
+        * WebView.cpp:
+        (wxWebView::wxWebView):
+        (wxWebView::~wxWebView):
+        (wxWebView::GetPageSource):
+        (wxWebView::GetInnerText):
+        (wxWebView::GetExternalRepresentation):
+        (wxWebView::OnPaint):
+        (wxWebView::OnSize):
+        (wxWebView::OnMouseEvents):
+        (wxWebView::CanCopy):
+        (wxWebView::CanCut):
+        (wxWebView::CanPaste):
+        (wxWebView::OnKeyEvents):
+        * WebViewPrivate.h:
+        (WebViewPrivate::WebViewPrivate):
+
 2008-05-04  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.

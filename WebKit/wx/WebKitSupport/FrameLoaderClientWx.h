@@ -34,6 +34,7 @@
 #include "RefCounted.h"
 #include "ResourceResponse.h"
 
+class wxWebView;
 
 namespace WebCore {
 
@@ -52,6 +53,7 @@ namespace WebCore {
         FrameLoaderClientWx();
         ~FrameLoaderClientWx();
         void setFrame(Frame *frame);
+        void setWebView(wxWebView *webview);
         virtual void detachFrameLoader();
 
         virtual void ref();
@@ -209,6 +211,7 @@ namespace WebCore {
 
     private:
         Frame *m_frame;
+        wxWebView *m_webView;
         ResourceResponse m_response;
         bool m_firstData;
     };
