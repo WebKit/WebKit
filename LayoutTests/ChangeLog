@@ -1,5 +1,11 @@
 2008-05-12  Anders Carlsson  <andersca@apple.com>
 
+        Update the expected result.
+        
+        * http/tests/appcache/simple-expected.txt:
+
+2008-05-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam.
 
         Add simple appcache test.

@@ -1,2 +1,2 @@
-ALERT: whee cached!
-This tests that the application cache works by loading a simple text file from the cache using XMLHttpRequest.
+This tests that the application cache works by first loading a file that does not exist in the cache (to verify that a cache has been associated) and then loads a file that is in the cache
+SUCCESS
