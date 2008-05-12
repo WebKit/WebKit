@@ -1,3 +1,11 @@
+2008-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Add the variable enums for getting the input vtables.
+        
+        * bridge/npapi.h:
+
 2008-05-12  Adam Roben  <aroben@apple.com>
 
         Windows build fix

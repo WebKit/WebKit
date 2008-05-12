@@ -340,6 +340,8 @@ typedef enum {
     NPPVpluginDrawingModel = 1000,
     /* Used for negotiating event models */
     NPPVpluginEventModel = 1001,
+    /* The plug-in text input vtable */
+    NPPVpluginTextInputFuncs = 1002,
 #endif
 } NPPVariable;
 
@@ -381,6 +383,8 @@ typedef enum {
     , NPNVsupportsCarbonBool = 2003 /* TRUE if the browser supports the Carbon event model */
 #endif
     , NPNVsupportsCocoaBool = 2004 /* TRUE if the browser supports the Cocoa event model */
+    
+    , NPNVbrowserTextInputFuncs = 1002 /* The browser text input vtable */
 #endif /* XP_MACOSX */
 } NPNVariable;
 
