@@ -52,6 +52,7 @@ private:
     void set(T*);
     void static destroy(void* ptr);
 
+#if 0 // FIXME: Temporary disabled until the rest of multithreading support is in.
 #if USE(PTHREADS) || PLATFORM(WIN)
     struct Data : Noncopyable {
         Data(T* value, ThreadSpecific<T>* owner) : value(value), owner(owner) {}
@@ -62,7 +63,13 @@ private:
 
     pthread_key_t m_key;
 #endif
+
+#else // Temporary stub implementation.
+    T m_data;
+#endif
 };
+
+#if 0 // FIXME: Temporary disabled until the rest of multithreading support is in.
 
 #if USE(PTHREADS) || PLATFORM(WIN)
 template<typename T>
@@ -102,6 +109,31 @@ inline void ThreadSpecific<T>::destroy(void* ptr)
 
 #else
 #error ThreadSpecific is not implemented for this platform.
+#endif
+
+#else // Temporary stub implementation.
+
+template<typename T>
+inline ThreadSpecific<T>::ThreadSpecific()
+{
+}
+
+template<typename T>
+inline ThreadSpecific<T>::~ThreadSpecific()
+{
+}
+
+template<typename T>
+inline T* ThreadSpecific<T>::get()
+{
+    return &m_data;
+}
+
+template<typename T>
+inline void ThreadSpecific<T>::set(T*)
+{
+}
+
 #endif
 
 template<typename T>

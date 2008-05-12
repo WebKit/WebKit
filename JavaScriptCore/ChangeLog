@@ -1,5 +1,22 @@
 2008-05-12  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Maciej.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18828
+        Reproducible crash with PAC file
+
+        Naively moving JavaScriptCore into thread-specific data was inappropriate in the face of
+        exiting JavaScriptCore API clients, which expect a different therading model. Temporarily
+        disabling ThreadSpecific implementation until this can be sorted out.
+
+        * wtf/ThreadSpecific.h:
+        (WTF::::ThreadSpecific):
+        (WTF::::~ThreadSpecific):
+        (WTF::::get):
+        (WTF::::set):
+
+2008-05-12  Alexey Proskuryakov  <ap@webkit.org>
+
         Roll out recent  threading changes (r32807, r32810, r32819, r32822) to simplify
         SquirrelFish merging.
 
