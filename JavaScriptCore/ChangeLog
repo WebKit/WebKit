@@ -1,3 +1,20 @@
+2008-05-12  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/4859666> WebKit needs availability macros in order to deprecate APIs
+
+        Create WebKit availability macros that key off the Mac OS X version being targeted to
+        determine the WebKit version being targeted.  Applications can define
+        WEBKIT_VERSION_MIN_REQUIRED before including WebKit headers in order to target a specific
+        version of WebKit.
+
+        The availability header is being added to JavaScriptCore rather than WebKit as JavaScriptCore
+        is the lowest-level portion of the public WebKit API.
+
+        * API/WebKitAvailability.h: Added.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2008-05-12  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

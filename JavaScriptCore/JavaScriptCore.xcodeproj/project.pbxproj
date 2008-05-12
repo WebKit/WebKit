@@ -89,6 +89,7 @@
 		5DA479660CFBCF56009328A0 /* TCPackedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA479650CFBCF56009328A0 /* TCPackedCache.h */; };
 		5DBD18AC0C54018700C15EAE /* CollectorHeapIntrospector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DBD18AA0C54018700C15EAE /* CollectorHeapIntrospector.h */; };
 		5DBD18B00C5401A700C15EAE /* MallocZoneSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */; };
+		5DE3D0F50DD8DDFB00468714 /* WebKitAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		65049F910D92715D00D04E3D /* Activation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E2C6C950D31C6AB002D44E2 /* Activation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		652246A50C8D7A0E007BDAF7 /* HashIterators.h in Headers */ = {isa = PBXBuildFile; fileRef = 652246A40C8D7A0E007BDAF7 /* HashIterators.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65400C120A69BAF200509887 /* PropertyNameArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 65400C100A69BAF200509887 /* PropertyNameArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -408,6 +409,7 @@
 		5DBD18A90C54018700C15EAE /* CollectorHeapIntrospector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollectorHeapIntrospector.cpp; sourceTree = "<group>"; };
 		5DBD18AA0C54018700C15EAE /* CollectorHeapIntrospector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectorHeapIntrospector.h; sourceTree = "<group>"; };
 		5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MallocZoneSupport.h; sourceTree = "<group>"; };
+		5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAvailability.h; sourceTree = "<group>"; };
 		651F6412039D5B5F0078395C /* dtoa.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dtoa.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		651F6413039D5B5F0078395C /* dtoa.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dtoa.h; sourceTree = "<group>"; tabWidth = 8; };
 		652246A40C8D7A0E007BDAF7 /* HashIterators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashIterators.h; sourceTree = "<group>"; };
@@ -718,6 +720,7 @@
 				146AAB2A0B66A84900E55F16 /* JSStringRefCF.h */,
 				14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */,
 				1482B6EA0A4300B300517CFC /* JSValueRef.h */,
+				5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -1151,6 +1154,7 @@
 				06D358B20DAADA93003B174E /* MainThread.h in Headers */,
 				958D85830DC93230008ABF27 /* StrHash.h in Headers */,
 				95742F660DD11F5A000917FB /* Profile.h in Headers */,
+				5DE3D0F50DD8DDFB00468714 /* WebKitAvailability.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
