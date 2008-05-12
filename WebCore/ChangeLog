@@ -1,5 +1,14 @@
 2008-05-12  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by John.
+
+        Don't throw an exception if the string passed in is an invalid URL.
+        
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::remove):
+
+2008-05-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Mitz.
 
         Add the variable enums for getting the input vtables.

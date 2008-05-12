@@ -173,11 +173,6 @@ void DOMApplicationCache::remove(const KURL& url, ExceptionCode& ec)
         return;
     }
     
-    if (!url.isValid()) {
-        ec = SYNTAX_ERR;
-        return;
-    }
-    
     cache->removeDynamicEntry(url);
 }
     
