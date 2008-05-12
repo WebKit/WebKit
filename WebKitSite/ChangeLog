@@ -1,3 +1,21 @@
+2008-05-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed - new demo.
+        
+        Added a demo of CSS Transforms and Transitions.
+
+        * demos/transitions-and-transforms: Added.
+        * demos/transitions-and-transforms/Finder Coverflow.png: Added.
+        * demos/transitions-and-transforms/Horsehead.png: Added.
+        * demos/transitions-and-transforms/Mail Stationery.png: Added.
+        * demos/transitions-and-transforms/Quick Look.png: Added.
+        * demos/transitions-and-transforms/Spaces.png: Added.
+        * demos/transitions-and-transforms/Stacks.png: Added.
+        * demos/transitions-and-transforms/Time Machine.png: Added.
+        * demos/transitions-and-transforms/index.html: Added.
+        * demos/transitions-and-transforms/leopard.css: Added.
+        * demos/transitions-and-transforms/no-style.html: Added.
+
 2008-05-08  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
