@@ -1,3 +1,14 @@
+2008-05-12  David Kilzer  <ddkilzer@apple.com>
+
+        Fix logic error in DocLoader::clearPreloads()
+
+        Reviewed by Antti.
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::clearPreloads): Be sure to decrease the preload count for
+        the cached resource before trying to remove it from the cache.  A non-zero
+        preload count can prevent the resource from being removed from the cache.
+
 2008-05-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
