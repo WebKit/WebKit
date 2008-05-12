@@ -1,3 +1,13 @@
+2008-05-12  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Minor cleanup of the DRT Xcode project.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:  Use GCC_OPTIMIZATION_LEVEL rather than
+        OPTIMIZATION_CFLAGS.  Don't include Info.plist in the "Copy Bundle Resources" build phase as it does
+        not need to be there.
+
 2008-05-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

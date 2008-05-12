@@ -27,7 +27,6 @@
 		141BF436096A455900E0753C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
 		141BF438096A455900E0753C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090308B164D300CCB9FB /* JavaScriptCore.framework */; };
 		141BF439096A455900E0753C /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
-		141BF44C096A45C800E0753C /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 141BF448096A45C800E0753C /* Info.plist */; };
 		141BF453096A45EB00E0753C /* PluginObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 141BF447096A45C800E0753C /* PluginObject.h */; };
 		14770FE20A22ADF7009342EE /* GCController.h in Headers */ = {isa = PBXBuildFile; fileRef = 14770FE00A22ADF7009342EE /* GCController.h */; };
 		1A8F02E80BB9B4EC008CFA34 /* TestObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F024C0BB9B056008CFA34 /* TestObject.h */; };
@@ -526,7 +525,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				141BF44C096A45C800E0753C /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -653,7 +651,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				OPTIMIZATION_CFLAGS = "-O0";
+				GCC_OPTIMIZATION_LEVEL = 0;
 				OTHER_CFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = All;
@@ -671,7 +669,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				OPTIMIZATION_CFLAGS = "-O0";
+				GCC_OPTIMIZATION_LEVEL = 0;
 				OTHER_CFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = All;
