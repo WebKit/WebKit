@@ -33,6 +33,8 @@
 
 // These functions are only available for 32-bit.
 
+#include <JavaScriptCore/WebKitAvailability.h>
+
 #ifdef __OBJC__
 #import <ApplicationServices/ApplicationServices.h>
 @class NSImage;
@@ -43,12 +45,12 @@ extern "C" {
 #endif
 
 extern void
-WebInitForCarbon(void);
+WebInitForCarbon(void) AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_3_1;
 
 #ifdef __OBJC__
 
 extern CGImageRef
-WebConvertNSImageToCGImageRef(NSImage * inImage);
+WebConvertNSImageToCGImageRef(NSImage * inImage) AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_3_1;
 
 #endif
 
