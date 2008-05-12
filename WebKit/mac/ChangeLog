@@ -1,3 +1,55 @@
+2008-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5774495> Make Unicode text input possible in Netscape-style plug-ins
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView start]):
+        Get the plug-in text input vtable pointer.
+        
+        (-[WebBaseNetscapePluginView stop]):
+        Set the plug-in text input vtable pointer to 0.
+        
+        (-[WebBaseNetscapePluginView inputContext]):
+        Return 0 for Carbon plug-ins since we don't want Cocoa to handle text input for them.
+        
+        (-[WebBaseNetscapePluginView hasMarkedText]):        
+        (-[WebBaseNetscapePluginView insertText:]):
+        (-[WebBaseNetscapePluginView markedRange]):
+        (-[WebBaseNetscapePluginView selectedRange]):
+        (-[WebBaseNetscapePluginView setMarkedText:selectedRange:]):
+        (-[WebBaseNetscapePluginView unmarkText]):
+        (-[WebBaseNetscapePluginView validAttributesForMarkedText]):
+        (-[WebBaseNetscapePluginView attributedSubstringFromRange:]):
+        (-[WebBaseNetscapePluginView characterIndexForPoint:]):
+        (-[WebBaseNetscapePluginView doCommandBySelector:]):
+        (-[WebBaseNetscapePluginView firstRectForCharacterRange:]):
+        (-[WebBaseNetscapePluginView conversationIdentifier]):
+        Implement NSTextInput and call into the plug-in text input vtable.
+        
+        (browserTextInputFuncs):
+        New method which returns the browser input vtable.
+        
+        (-[WebBaseNetscapePluginView getVariable:value:]):
+        Support getting the browser input vtable pointer.
+        
+        * Plugins/WebNetscapePluginEventHandlerCocoa.h:
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::keyDown):
+        (WebNetscapePluginEventHandlerCocoa::sendKeyEvent):
+        If the plug-in returns 0 when a NPCocoaEventKeyDown is passed to NPP_HandleEvent,
+        it means that the event should be passed on to the input manager.
+         
+        * Plugins/npapi.mm:
+        (NPN_MarkedTextAbandoned):
+        (NPN_MarkedTextSelectionChanged):
+        Add implementations of browser input method methods.
+        
+        * Plugins/nptextinput.h: Added.
+        Add file with new text input API.
+
 2008-05-12  Alexey Proskuryakov  <ap@webkit.org>
 
         Roll out recent  threading changes (r32807, r32810, r32819, r32822) to simplify
