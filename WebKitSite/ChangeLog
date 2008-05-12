@@ -1,5 +1,11 @@
 2008-05-12  Maciej Stachowiak  <mjs@apple.com>
 
+        Ooops, I made some mistakes trying to fix the validation errors. This time for sure.
+
+        * demos/transitions-and-transforms/index.html:
+
+2008-05-12  Maciej Stachowiak  <mjs@apple.com>
+
         Make the demo valid HTML5 (according to validator.nu) and add alt text to the images.
 
         * demos/transitions-and-transforms/index.html:
