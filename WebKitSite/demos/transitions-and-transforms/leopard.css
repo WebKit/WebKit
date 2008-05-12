@@ -1,10 +1,11 @@
+html { height: 100%; }
+
 body {
     background-color: black;
     background-image: url(Horsehead.png);
     -webkit-background-size: 100% 100%;
-    font-family: "Lucida Grande";
+    font-family: "Lucida Grande" "Arial";
 }
-
 
 h1 {
     background-color: #400030;
@@ -60,6 +61,7 @@ h1 {
     -webkit-timing-function: ease-in;
     -webkit-transform: rotate(-5deg);
     opacity: 0;
+    background-color: white;
     border: 5px solid white;
     position: absolute;
     left: 120%;
@@ -69,7 +71,7 @@ h1 {
 
 #features > li > .picture > img {
     display: block;
-    background-color: black;
+    background-color: white;
     width: 380px;
 }
 

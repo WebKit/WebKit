@@ -1,5 +1,11 @@
 2008-05-12  Maciej Stachowiak  <mjs@apple.com>
 
+        Tweaked demo visuals slightly.
+
+        * demos/transitions-and-transforms/leopard.css:
+
+2008-05-12  Maciej Stachowiak  <mjs@apple.com>
+
         Tweak CSS to look a little better while loading.
 
         * demos/transitions-and-transforms/leopard.css:
