@@ -1,5 +1,21 @@
 2008-05-11  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        Move some generic parsing functions into a new ParserUtilities header so that
+        they can be used for non-SVG builds too.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/text/ParserUtilities.h: Added.
+        (WebCore::skipString):
+        * svg/SVGParserUtilities.h:
+        (WebCore::isWhitespace):
+        (WebCore::skipOptionalSpaces):
+        (WebCore::skipOptionalSpacesOrDelimiter):
+
+2008-05-11  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Add scaffolding for the implementation of Access Control for Cross-site Requests. 

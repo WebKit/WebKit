@@ -7047,6 +7047,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\ParserUtilities.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\PlatformString.h"
 					>
 				</File>
