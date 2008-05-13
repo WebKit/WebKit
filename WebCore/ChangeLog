@@ -1,3 +1,13 @@
+2008-05-09  Adam Roben  <aroben@apple.com>
+
+        Fix a MSVC warning in XMLHttpRequest
+
+        Reviewed by Geoff Garen.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest): Added static_cast<unsigned
+        long>.
+
 2008-05-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
