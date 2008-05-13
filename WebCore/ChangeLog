@@ -1,5 +1,15 @@
 2008-05-09  Adam Roben  <aroben@apple.com>
 
+        Fix a MSVC warning in Position
+
+        Reviewed by Darin Adler.
+
+        * dom/Position.cpp:
+        (WebCore::Position::getInlineBoxAndOffset): Use parentheses to make
+        the precedence of our expressions explicit.
+
+2008-05-09  Adam Roben  <aroben@apple.com>
+
         Fix a MSVC warning in String
 
         Reviewed by Geoff Garen.
