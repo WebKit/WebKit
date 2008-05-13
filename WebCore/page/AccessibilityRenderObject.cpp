@@ -828,12 +828,15 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     
     // ignore images seemingly used as spacers
     if (isImage()) {
-        // informal standard is to ignore images with zero-length alt strings
         Node* node = m_renderer->element();
         if (node && node->isElementNode()) {
             Element* elt = static_cast<Element*>(node);
             const AtomicString& alt = elt->getAttribute(altAttr);
-            if (alt.isEmpty() && !alt.isNull())
+            // don't ignore an image that has an alt tag
+            if (!alt.isEmpty())
+                return false;
+            // informal standard is to ignore images with zero-length alt strings
+            if (!alt.isNull())
                 return true;
         }
         

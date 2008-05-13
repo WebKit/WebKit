@@ -2,6 +2,15 @@
 
         Beth Dakin
 
+        <rdar://problem/5701210> VO: If image is missing, VoiceOver does not speak the alternative text.
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+
+2008-05-13  chris fleizach  <cfleizach@apple.com>
+
+        Beth Dakin
+
         <rdar://problem/5908446> AX: webkit needs to return blockquote information for all AX objects, not just in AXTextMarker info
 
         * page/mac/AccessibilityObjectWrapper.mm:
