@@ -1,3 +1,13 @@
+2008-05-13  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        For Gtk/X11 and Qt/X11, use a more extensive plug-ins scan directories set
+
+        * plugins/PluginDatabase.cpp:
+        (WebCore::addMozillaPluginDirectories):
+        (WebCore::PluginDatabase::isPreferredPluginDirectory):
+
 2008-05-12  Adam Roben  <aroben@apple.com>
 
         Turn on warnings as errors in WebCore.vcproj

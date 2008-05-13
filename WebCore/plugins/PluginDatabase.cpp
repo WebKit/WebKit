@@ -274,12 +274,33 @@ static void addMozillaPluginDirectories(Vector<String>& paths)
 {
 #if PLATFORM(QT) || defined(GDK_WINDOWING_X11)
     String userPluginPath = homeDirectoryPath();
-    userPluginPath.append(String(".mozilla/plugins"));
+    userPluginPath.append(String("/.mozilla/plugins"));
+    paths.append(userPluginPath);
+
+    userPluginPath = homeDirectoryPath();
+    userPluginPath.append(String("/.netscape/plugins"));
     paths.append(userPluginPath);
 
     paths.append("/usr/lib/browser/plugins");
     paths.append("/usr/local/lib/mozilla/plugins");
+    paths.append("/usr/lib/firefox/plugins");
+    paths.append("/usr/lib64/browser-plugins");
+    paths.append("/usr/lib/browser-plugins");
     paths.append("/usr/lib/mozilla/plugins");
+    paths.append("/usr/local/netscape/plugins");
+    paths.append("/opt/mozilla/plugins");
+    paths.append("/opt/mozilla/lib/plugins");
+    paths.append("/opt/netscape/plugins");
+    paths.append("/opt/netscape/communicator/plugins");
+    paths.append("/usr/lib/netscape/plugins");
+    paths.append("/usr/lib/netscape/plugins-libc5");
+    paths.append("/usr/lib/netscape/plugins-libc6");
+    paths.append("/usr/lib64/netscape/plugins");
+    paths.append("/usr/lib64/mozilla/plugins");
+
+    String mozHome(getenv("MOZILLA_HOME"));
+    mozHome.append("/plugins");
+    paths.append(mozHome);
 
     Vector<String> mozPaths;
     String mozPath(getenv("MOZ_PLUGIN_PATH"));
@@ -314,7 +335,7 @@ Vector<String> PluginDatabase::defaultPluginDirectories()
 bool PluginDatabase::isPreferredPluginDirectory(const String& path)
 {
     String prefPath = homeDirectoryPath();
-    prefPath.append(String(".mozilla/plugins"));
+    prefPath.append(String("/.mozilla/plugins"));
 
     return path == prefPath;
 }
