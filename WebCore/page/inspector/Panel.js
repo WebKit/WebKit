@@ -97,7 +97,8 @@ WebInspector.Panel.prototype = {
 
     attach: function()
     {
-        document.getElementById("main-panels").appendChild(this.element);
+        if (!this.element.parentNode)
+            document.getElementById("main-panels").appendChild(this.element);
     }
 }
 

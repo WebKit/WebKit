@@ -1,5 +1,16 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Optimize the panel attach method to no append if there is a
+        parentNode already.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Panel.js:
+        (WebInspector.Panel.prototype.attach): Don't append to main-panels
+        if the panel element already has a parentNode.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Add Widget::isPluginView so the JavaScriptDebugServer can identify
         plugins that need to be paused during debugging. This will be used
         in a upcoming commit.
