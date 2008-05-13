@@ -45,9 +45,9 @@ WebInspector.FontView = function(resource)
 }
 
 WebInspector.FontView.prototype = {
-    show: function()
+    show: function(parentElement)
     {
-        WebInspector.ResourceView.prototype.show.call(this);
+        WebInspector.ResourceView.prototype.show.call(this, parentElement);
         this.updateFontPreviewSize();
     },
 

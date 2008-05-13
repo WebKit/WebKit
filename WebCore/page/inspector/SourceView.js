@@ -42,9 +42,9 @@ WebInspector.SourceView = function(resource)
 }
 
 WebInspector.SourceView.prototype = {
-    show: function()
+    show: function(parentElement)
     {
-        WebInspector.ResourceView.prototype.show.call(this);
+        WebInspector.ResourceView.prototype.show.call(this, parentElement);
         this.setupSourceFrameIfNeeded();
     },
 

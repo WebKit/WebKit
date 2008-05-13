@@ -1,5 +1,22 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Change View.show to call detach if the parentNode dosen't
+        match before appending to the passed in parent element.
+        This also prevents appending to the same parent element
+        multiple times.
+
+        Reviewed by John Sullivan.
+
+        * page/inspector/FontView.js:
+        (WebInspector.FontView.prototype.show): Pass the parent element to View.show.
+        * page/inspector/ResourceView.js: Optimize the attach method to no append if
+        there is a parentNode already.
+        * page/inspector/SourceView.js: Ditto.
+        * page/inspector/View.js: Call detach before appending if the parentNode
+        doesn't match the passed in element.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Optimize the panel attach method to no append if there is a
         parentNode already.
 

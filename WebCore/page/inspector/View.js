@@ -49,8 +49,10 @@ WebInspector.View.prototype = {
     show: function(parentElement)
     {
         this._visible = true;
-        if (!this.element.parentNode && parentElement)
+        if (parentElement && parentElement !== this.element.parentNode) {
+            this.detach();
             parentElement.appendChild(this.element);
+        }
         if (!this.element.parentNode && this.attach)
             this.attach();
         this.element.addStyleClass("visible");

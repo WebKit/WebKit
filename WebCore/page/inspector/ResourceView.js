@@ -42,7 +42,8 @@ WebInspector.ResourceView = function(resource)
 WebInspector.ResourceView.prototype = {
     attach: function()
     {
-        document.getElementById("resource-views").appendChild(this.element);
+        if (!this.element.parentNode)
+            document.getElementById("resource-views").appendChild(this.element);
     }
 }
 
