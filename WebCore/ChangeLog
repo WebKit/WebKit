@@ -1,5 +1,57 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Implements more debugger APIs on JavaScriptDebugServer and reduces
+        the number of callbacks to JavaScriptDebugListeners. These changes
+        will better facilitate debugger optimizations when SquirrelFish merges.
+
+        Reviewed by Kevin McCullough.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::didParseSource): Removed the ExecState.
+        (WebCore::InspectorController::failedToParseSource): Ditto.
+        (WebCore::InspectorController::didPause): Added.
+        * page/InspectorController.h: Changed the JavaScriptDebugListener functions.
+        * page/JavaScriptDebugListener.h: Removed some callbacks and added didPause.
+        * page/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::JavaScriptDebugServer): Initialize new data members.
+        (WebCore::JavaScriptDebugServer::~JavaScriptDebugServer): Delete all values of m_breakpoints.
+        (WebCore::JavaScriptDebugServer::removeListener): Call resume if the last listener was removed.
+        (WebCore::JavaScriptDebugServer::hasListenersInterestedInPage): Returns true if there are any
+        global listeners or a listener for the page.
+        (WebCore::JavaScriptDebugServer::addBreakpoint): Adds and entry to m_breakpoints.
+        (WebCore::JavaScriptDebugServer::removeBreakpoint): Removes a entry in m_breakpoints.
+        (WebCore::JavaScriptDebugServer::hasBreakpoint):  Checks if there is a breakpoint for the
+        sourceID and line.
+        (WebCore::JavaScriptDebugServer::clearBreakpoints): Removed all breakpoints.
+        (WebCore::JavaScriptDebugServer::pauseOnNextStatement): Sets m_pauseOnNextStatement to true.
+        (WebCore::JavaScriptDebugServer::resume): Sets m_paused to false.
+        (WebCore::JavaScriptDebugServer::stepIntoStatement): Calls resume and sets
+        m_pauseOnNextStatement to true.
+        (WebCore::JavaScriptDebugServer::stepOverStatement): Calls resume and sets m_pauseOnExecState to
+        the current call frame's ExecState.
+        (WebCore::JavaScriptDebugServer::stepOutOfFunction): Calls resume and sets m_pauseOnExecState to
+        the current call frame's caller ExecState.
+        (WebCore::JavaScriptDebugServer::currentCallFrame): Returns m_currentCallFrame if paused.
+        (WebCore::dispatchDidParseSource): Removed the ExecState argument.
+        (WebCore::dispatchFailedToParseSource): Ditto.
+        (WebCore::JavaScriptDebugServer::sourceParsed): Doesn't pass the ExecState to dispatchDidParseSource
+        or dispatchFailedToParseSource.
+        (WebCore::dispatchFunctionToListeners):
+        (WebCore::JavaScriptDebugServer::dispatchFunctionToListeners): Removes all the arguments passed
+        to the callback.
+        (WebCore::JavaScriptDebugServer::setJavaScriptPaused): Various overloaded functions
+        to pause parts of WebCore to prevent JavaScript execution while paused.
+        (WebCore::JavaScriptDebugServer::pauseIfNeeded): Decides if the debugger should pause based
+        on the passed in ExecState, source ID and line number. This checks for breakpoints, stepping, etc.
+        Calls didPause on all the listeners and spins a EventLoop until resume is called.
+        (WebCore::JavaScriptDebugServer::callEvent): Call pauseIfNeeded.
+        (WebCore::JavaScriptDebugServer::atStatement): Ditto.
+        (WebCore::JavaScriptDebugServer::returnEvent): Ditto.
+        (WebCore::JavaScriptDebugServer::exception): Ditto.
+        * page/JavaScriptDebugServer.h: Added new functions.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Change View.show to call detach if the parentNode dosen't
         match before appending to the passed in parent element.
         This also prevents appending to the same parent element

@@ -43,12 +43,9 @@ namespace WebCore {
     public:
         virtual ~JavaScriptDebugListener() { }
 
-        virtual void didParseSource(KJS::ExecState*, const KJS::UString& source, int startingLineNumber, const KJS::UString& sourceURL, int sourceID) = 0;
-        virtual void failedToParseSource(KJS::ExecState*, const KJS::UString& source, int startingLineNumber, const KJS::UString& sourceURL, int errorLine, const KJS::UString& errorMessage) = 0;
-        virtual void didEnterCallFrame(KJS::ExecState*, int sourceID, int lineNumber) = 0;
-        virtual void willExecuteStatement(KJS::ExecState*, int sourceID, int lineNumber) = 0;
-        virtual void willLeaveCallFrame(KJS::ExecState*, int sourceID, int lineNumber) = 0;
-        virtual void exceptionWasRaised(KJS::ExecState*, int sourceID, int lineNumber) = 0;
+        virtual void didParseSource(const KJS::UString& source, int startingLineNumber, const KJS::UString& sourceURL, int sourceID) = 0;
+        virtual void failedToParseSource(const KJS::UString& source, int startingLineNumber, const KJS::UString& sourceURL, int errorLine, const KJS::UString& errorMessage) = 0;
+        virtual void didPause() = 0;
     };
 
 } // namespace WebCore
