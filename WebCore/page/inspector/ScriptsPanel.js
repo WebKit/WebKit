@@ -133,6 +133,26 @@ WebInspector.ScriptsPanel = function()
 
     this.sidebarPanes.scopechain.expanded = true;
 
+    this.attachOverlayElement = document.createElement("div");
+    this.attachOverlayElement.id = "scripts-attach-overlay";
+
+    var headerElement = document.createElement("h1");
+    headerElement.textContent = WebInspector.UIString("Debugging scripts requires you to attach the debugger.");
+    this.attachOverlayElement.appendChild(headerElement);
+
+    var infoElement = document.createElement("span");
+    infoElement.textContent = WebInspector.UIString("Attaching will reload the inspected page.");
+    this.attachOverlayElement.appendChild(infoElement);
+
+    this.attachOverlayElement.appendChild(document.createElement("br"));
+    this.attachOverlayElement.appendChild(document.createElement("br"));
+
+    var attachButton = document.createElement("button");
+    attachButton.textContent = WebInspector.UIString("Attach Debugger");
+    attachButton.addEventListener("click", this._toggleDebugging.bind(this), false);
+    this.attachOverlayElement.appendChild(attachButton);
+
+    this.element.appendChild(this.attachOverlayElement);
     this.element.appendChild(this.scriptResourceViews);
     this.element.appendChild(this.sidebarElement);
     this.element.appendChild(this.sidebarResizeElement);
@@ -550,10 +570,13 @@ WebInspector.ScriptsPanel.prototype = {
         this._waitingToPause = false;
         this._stepping = false;
 
-        if (InspectorController.debuggerAttached())
+        if (InspectorController.debuggerAttached()) {
+            this.element.appendChild(this.attachOverlayElement);
             InspectorController.stopDebugging();
-        else
+        } else {
+            this.attachOverlayElement.parentNode.removeChild(this.attachOverlayElement);
             InspectorController.startDebuggingAndReloadInspectedPage();
+        }
 
         this.sidebarPanes.callstack.update(null);
         this.sidebarPanes.scopechain.update(null);

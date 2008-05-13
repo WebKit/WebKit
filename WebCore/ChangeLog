@@ -1,5 +1,19 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Adds an overlay window that covers the scripts panel and
+        informs the user that they need to attach the debugger.
+        Provides an "Attach Debugger" button below the info text.
+
+        Reviewed by Dan Bernstein.
+
+        * English.lproj/localizedStrings.js: New strings.
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel): Create the overlay elements and
+        append to the main panel element.
+        * page/inspector/inspector.css: New styles for the over lay elements.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Fixes the assertion and crash that would happen when inspecting a element from a frame.
         This change makes JSInspectedObjectWrapper pass unwrapped objects around for global objects
         that share the same page group identifier. Also returns jsUndefined() instead of 0 to prevent

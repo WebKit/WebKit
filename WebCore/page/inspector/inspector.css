@@ -1466,6 +1466,29 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     background-image: url(Images/errorIcon.png);
 }
 
+#scripts-attach-overlay {
+    z-index: 1000;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: white;
+    color: rgb(96, 96, 96);
+    padding: 75px 50px;
+    text-align: center;
+    font-size: 16px;
+}
+
+#scripts-attach-overlay h1 {
+    font-size: 18px;
+}
+
+#scripts-attach-overlay button {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
 #scripts-debugging-status-bar-item {
     background-image: url(Images/debuggingButtons.png);
 }
