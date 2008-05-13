@@ -343,6 +343,8 @@
 		1C5FAEE70DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5FAEE60DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp */; };
 		1CA19CAE0DC1145F0065A994 /* JavaScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA19CAC0DC1145F0065A994 /* JavaScriptCallFrame.h */; };
 		1CA19CAF0DC1145F0065A994 /* JavaScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CA19CAD0DC1145F0065A994 /* JavaScriptCallFrame.cpp */; };
+		1CA19E050DC255950065A994 /* EventLoopMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CA19E030DC255950065A994 /* EventLoopMac.mm */; };
+		1CA19E160DC255CA0065A994 /* EventLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA19E150DC255CA0065A994 /* EventLoop.h */; };
 		1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF347E0A6C405200ABE06E /* WebScriptObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */; };
 		1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4814,6 +4816,8 @@
 		1C904DF90BA9D2C80081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		1CA19CAC0DC1145F0065A994 /* JavaScriptCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCallFrame.h; sourceTree = "<group>"; };
 		1CA19CAD0DC1145F0065A994 /* JavaScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptCallFrame.cpp; sourceTree = "<group>"; };
+		1CA19E030DC255950065A994 /* EventLoopMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventLoopMac.mm; sourceTree = "<group>"; };
+		1CA19E150DC255CA0065A994 /* EventLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventLoop.h; sourceTree = "<group>"; };
 		1CAF347E0A6C405200ABE06E /* WebScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObject.h; sourceTree = "<group>"; };
 		1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebScriptObject.mm; sourceTree = "<group>"; };
 		1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObjectPrivate.h; sourceTree = "<group>"; };
@@ -8935,6 +8939,7 @@
 				F58784F002DE375901EA4122 /* CursorMac.mm */,
 				A795463D0B5C4C80007B438F /* DragDataMac.mm */,
 				A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */,
+				1CA19E030DC255950065A994 /* EventLoopMac.mm */,
 				066C772C0AB603D200238CC4 /* FileChooserMac.mm */,
 				514B3F750C722055000530DF /* FileSystemMac.mm */,
 				935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */,
@@ -12427,6 +12432,7 @@
 				A79546420B5C4CB4007B438F /* DragData.cpp */,
 				A7CFB3D00B7ED10A0070C32D /* DragImage.h */,
 				A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */,
+				1CA19E150DC255CA0065A994 /* EventLoop.h */,
 				BC073BA90C399B1F000F5979 /* FloatConversion.h */,
 				934FE9E40B5CA539003E4A73 /* FileChooser.cpp */,
 				066C772A0AB603B700238CC4 /* FileChooser.h */,
@@ -15055,6 +15061,7 @@
 				BCD0FC4F0DBD720B00B2F630 /* DOMRGBColorInternal.h in Headers */,
 				BC99812E0DBE807A008CE9EF /* DOMAbstractViewFrame.h in Headers */,
 				1CA19CAE0DC1145F0065A994 /* JavaScriptCallFrame.h in Headers */,
+				1CA19E160DC255CA0065A994 /* EventLoop.h in Headers */,
 				511F23180DC160DA004F0032 /* LocalStorageTask.h in Headers */,
 				511F231A0DC160DA004F0032 /* LocalStorageThread.h in Headers */,
 				BC5A12E00DC0414800C9AFAD /* CSSReflectValue.h in Headers */,
@@ -16768,6 +16775,7 @@
 				F916C48D0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp in Sources */,
 				BCD0FBD00DBD625E00B2F630 /* DOMAbstractView.mm in Sources */,
 				1CA19CAF0DC1145F0065A994 /* JavaScriptCallFrame.cpp in Sources */,
+				1CA19E050DC255950065A994 /* EventLoopMac.mm in Sources */,
 				511F23170DC160DA004F0032 /* LocalStorageTask.cpp in Sources */,
 				511F23190DC160DA004F0032 /* LocalStorageThread.cpp in Sources */,
 				BC5A12DF0DC0414800C9AFAD /* CSSReflectValue.cpp in Sources */,

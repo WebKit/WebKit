@@ -4176,6 +4176,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\EventLoop.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\FileChooser.cpp"
 				>
 			</File>
@@ -4456,6 +4460,10 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\EditorWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\EventLoopWin.cpp"
 					>
 				</File>
 				<File

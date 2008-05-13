@@ -1,5 +1,22 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Adds an event loop abstraction to platform. This abstraction will be
+        used by the JavaScriptDebugServer to implement pausing.
+
+        Reviewed by Kevin McCullough.
+
+        * platform/EventLoop.h: Added.
+        (WebCore::EventLoop::EventLoop):
+        (WebCore::EventLoop::ended): Return m_ended.
+        * platform/mac/EventLoopMac.mm: Added.
+        (WebCore::EventLoop::cycle): Call nextEventMatchingMask and then sendEvent.
+        * platform/win/EventLoopWin.cpp: Added.
+        (WebCore::EventLoop::cycle): Call GetMessage, TranslateMessage and DispatchMessage.
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Breaks out ObjectPropertiesSection from PropertiesSidebarPane
         so it can be used by the Scripts panel's Scope Chain pane.
 
