@@ -1,5 +1,17 @@
 2008-05-12  Adam Roben  <aroben@apple.com>
 
+        Fix a MSVC warning in PluginViewWin
+
+        Reviewed by Anders Carlsson.
+
+        Test: http/tests/plugins/post-url-file.html
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::handlePostReadFile): Added a missing return
+        statement.
+
+2008-05-12  Adam Roben  <aroben@apple.com>
+
         Fix a MSVC warning in GetEOTHeader
 
         Reviewed by Dan Bernstein.

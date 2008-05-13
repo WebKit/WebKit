@@ -91,7 +91,8 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 #define ID_TEST_GET_PROPERTY_RETURN_VALUE 11
 #define ID_TEST_IDENTIFIER_TO_STRING 12
 #define ID_TEST_IDENTIFIER_TO_INT   13
-#define NUM_METHOD_IDENTIFIERS      14
+#define ID_TEST_POSTURL_FILE        14
+#define NUM_METHOD_IDENTIFIERS      15
 
 static NPIdentifier pluginMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
 static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
@@ -109,6 +110,7 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "testGetPropertyReturnValue",
     "testIdentifierToString",
     "testIdentifierToInt",
+    "testPostURLFile",
 };
 
 static NPUTF8* createCStringFromNPVariant(const NPVariant* variant)
@@ -471,6 +473,48 @@ static bool testGetPropertyReturnValue(PluginObject* obj, const NPVariant* args,
     return true;
 }
 
+static char* toCString(const NPString& string)
+{
+    char* result = static_cast<char*>(malloc(string.UTF8Length + 1));
+    memcpy(result, string.UTF8Characters, string.UTF8Length);
+    result[string.UTF8Length] = '\0';
+
+    return result;
+}
+
+static bool testPostURLFile(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
+    if (argCount != 4 || !NPVARIANT_IS_STRING(args[0]) || !NPVARIANT_IS_STRING(args[1]) || !NPVARIANT_IS_STRING(args[2]) || !NPVARIANT_IS_STRING(args[3]))
+        return false;
+
+    NPString urlString = NPVARIANT_TO_STRING(args[0]);
+    char* url = toCString(urlString);
+
+    NPString targetString = NPVARIANT_TO_STRING(args[1]);
+    char* target = toCString(targetString);
+
+    NPString pathString = NPVARIANT_TO_STRING(args[2]);
+    char* path = toCString(pathString);
+
+    NPString contentsString = NPVARIANT_TO_STRING(args[3]);
+
+    FILE* tempFile = fopen(path, "w");
+    if (!tempFile)
+        return false;
+
+    fwrite(contentsString.UTF8Characters, contentsString.UTF8Length, 1, tempFile);
+    fclose(tempFile);
+
+    NPError error = browser->posturl(obj->npp, url, target, pathString.UTF8Length, path, TRUE);
+
+    free(path);
+    free(target);
+    free(url);
+
+    BOOLEAN_TO_NPVARIANT(error == NPERR_NO_ERROR, *result);
+    return true;
+}
+
 static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
     PluginObject* plugin = reinterpret_cast<PluginObject*>(header);
@@ -502,6 +546,8 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
         return testIdentifierToString(plugin, args, argCount, result);
     else if (name == pluginMethodIdentifiers[ID_TEST_IDENTIFIER_TO_INT])
         return testIdentifierToInt(plugin, args, argCount, result);
+    else if (name == pluginMethodIdentifiers[ID_TEST_POSTURL_FILE])
+        return testPostURLFile(plugin, args, argCount, result);
 
     return false;
 }

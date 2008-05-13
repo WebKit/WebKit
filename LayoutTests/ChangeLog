@@ -1,3 +1,13 @@
+2008-05-12  Adam Roben  <aroben@apple.com>
+
+        Test that NPN_PostURL works correctly
+
+        Reviewed by Anders Carlsson.
+
+        * http/tests/plugins/post-url-file-expected.txt: Added.
+        * http/tests/plugins/post-url-file.html: Added.
+        * http/tests/plugins/resources/dump-post.pl: Added.
+
 2008-05-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

@@ -1,3 +1,18 @@
+2008-05-12  Adam Roben  <aroben@apple.com>
+
+        Support for testing NPN_PostURL
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (toCString): Added this helper function.
+        (testPostURLFile): Added. Writes the passed-in content to the
+        passed-in file and calls NPN_PostURL with the passed-in URL and
+        target.
+        (pluginInvoke): Added a case for testPostURLFile.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (followShortcuts): Changed to allow paths that don't yet exist.
+
 2008-05-12  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

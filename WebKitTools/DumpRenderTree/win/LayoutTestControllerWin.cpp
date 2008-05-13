@@ -349,9 +349,10 @@ static bool followShortcuts(wstring& path)
         return true;
 
     // Do we have a shortcut?
-    path.append(TEXT(".lnk"));
-    if (!PathFileExists(path.c_str()))
-       return false;
+    wstring linkPath = path;
+    linkPath.append(TEXT(".lnk"));
+    if (!PathFileExists(linkPath.c_str()))
+       return true;
 
     // We have a shortcut, find its target.
     COMPtr<IShellLink> shortcut(Create, CLSID_ShellLink);
@@ -360,7 +361,7 @@ static bool followShortcuts(wstring& path)
     COMPtr<IPersistFile> persistFile(Query, shortcut);
     if (!shortcut)
         return false;
-    if (FAILED(persistFile->Load(path.c_str(), STGM_READ)))
+    if (FAILED(persistFile->Load(linkPath.c_str(), STGM_READ)))
         return false;
     if (FAILED(shortcut->Resolve(0, 0)))
         return false;
