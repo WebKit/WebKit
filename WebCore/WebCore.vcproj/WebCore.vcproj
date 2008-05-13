@@ -3615,6 +3615,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\page\inspector\Object.js"
+					>
+				</File>
+				<File
 					RelativePath="..\page\inspector\MetricsSidebarPane.js"
 					>
 				</File>

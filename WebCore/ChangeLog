@@ -1,5 +1,28 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Add a new WebInspector.Object base class that will be used for
+        a few objects in the Web Inspector to support listeners on any
+        object. This will help add more abstraction to the Inspector.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Object.js: Added.
+        (WebInspector.Object): Does nothing.
+        (WebInspector.Object.prototype.addEventListener): Adds the listener to
+        the _listeners map by type. Supports a this object argument, for easy
+        addition of listeners without the need for bind.
+        (WebInspector.Object.prototype.removeEventListener): Remove the listener
+        from the _listeners map. If the listener is null and the thisObject was
+        passed, remove any listener for that thisObject.
+        (WebInspector.Object.prototype.dispatchEventToListeners): Sends an event
+        for a type to all listeners for that type. Mimics some of the DOMEvent
+        methods and properties for the event object passed to the listeners.
+        * WebCore.vcproj/WebCore.vcproj: Add new files.
+        * page/inspector/WebKit.qrc: Ditto.
+        * page/inspector/inspector.html: Ditto.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Update the view source CSS to better match the new Inspector mock-ups.
 
         Reviewed by Kevin McCullough.

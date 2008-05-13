@@ -14,6 +14,7 @@
     <file>inspector.html</file>
     <file>inspector.js</file>
     <file>MetricsSidebarPane.js</file>
+    <file>Object.js</file>
     <file>Panel.js</file>
     <file>PropertiesSection.js</file>
     <file>PropertiesSidebarPane.js</file>
