@@ -100,6 +100,24 @@ testDecode('KOI8-R', '%AD', 'U+255C');
 testDecode('KOI8-U', '%A4', 'U+0454');
 testDecode('KOI8-U', '%AD', 'U+0491');
 
+// Test that TIS-620 and ISO-8859-11 (Thai) are upgraded to windows-874.
+testDecode('TIS-620', '%80', 'U+20AC');
+testDecode('TIS-620', '%96', 'U+2013');
+testDecode('TIS-620', '%A0', 'U+00A0');
+testDecode('TIS-620', '%A1', 'U+0E01');
+testDecode('ISO-8859-11', '%80', 'U+20AC');
+testDecode('ISO-8859-11', '%96', 'U+2013');
+testDecode('ISO-8859-11', '%A0', 'U+00A0');
+testDecode('ISO-8859-11', '%A1', 'U+0E01');
+testDecode('windows-874', '%80', 'U+20AC');
+testDecode('windows-874', '%96', 'U+2013');
+testDecode('windows-874', '%A0', 'U+00A0');
+testDecode('windows-874', '%A1', 'U+0E01');
+testDecode('windows-874', '%DB', 'U+F8C1'); // A weird PUA mapping that doesn't seem to be of any use, even on Windows.
+testDecode('TIS-620', '%DB', 'U+F8C1');
+testDecode('ISO-8859-11', '%DB', 'U+F8C1');
+
+
 successfullyParsed = true;
 
 </script>

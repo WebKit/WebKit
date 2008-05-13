@@ -1,3 +1,18 @@
+2008-05-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4852077> REGRESSION: The content of the HTML file which is saved as Thai
+        (ISO 8859-11) disappear.
+
+        <rdar://problem/5842597> Thai ISO-8859-11 should be upgraded to Windows-874
+
+        Test: fast/encoding/char-decoding.html
+
+        * platform/text/TextCodecICU.cpp: (WebCore::TextCodecICU::registerExtendedEncodingNames):
+        Register ISO-8859-11, which doesn't have a standard IANA name, despite following
+        the usual 8859 naming scheme. Also, made TIS-620 map to windows-874-2000 explicitly.
+
 2008-05-13  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin

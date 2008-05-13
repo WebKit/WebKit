@@ -1,5 +1,17 @@
 2008-05-13  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4852077> REGRESSION: The content of the HTML file which is saved as Thai
+        (ISO 8859-11) disappear.
+
+        <rdar://problem/5842597> Thai ISO-8859-11 should be upgraded to Windows-874
+
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/char-decoding.html:
+
+2008-05-13  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=18681

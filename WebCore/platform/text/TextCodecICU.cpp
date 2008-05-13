@@ -91,6 +91,8 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
         // And so on.
         else if (strcmp(standardName, "ISO_8859-9:1989") == 0)
             standardName = "windows-1254";
+        else if (strcmp(standardName, "TIS-620") == 0)
+            standardName = "windows-874-2000";
 
         registrar(standardName, standardName);
 
@@ -130,7 +132,8 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
     registrar("winarabic", "windows-1256");
     registrar("winbaltic", "windows-1257");
     registrar("wincyrillic", "windows-1251");
-    registrar("windows874", "cp874");
+    registrar("windows874", "windows874-2000");
+    registrar("iso885911", "windows874-2000");
     registrar("wingreek", "windows-1253");
     registrar("winhebrew", "windows-1255");
     registrar("winlatin2", "windows-1250");
