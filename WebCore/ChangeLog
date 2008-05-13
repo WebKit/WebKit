@@ -1,5 +1,15 @@
 2008-05-12  Adam Roben  <aroben@apple.com>
 
+        Turn on warnings as errors in WebCore.vcproj
+
+        Rubberstamped by Anders Carlsson.
+
+        * WebCore.vcproj/WebCore.vcproj: Also let VS reformat the file as it
+        saw fit. The important part is the removal of the WarnAsError="false"
+        lines.
+
+2008-05-12  Adam Roben  <aroben@apple.com>
+
         Fix a MSVC warning in PluginViewWin
 
         Reviewed by Anders Carlsson.
