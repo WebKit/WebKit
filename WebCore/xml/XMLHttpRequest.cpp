@@ -139,7 +139,27 @@ static bool isValidHeaderValue(const String& name)
         
     return !name.contains('\r') && !name.contains('\n');
 }
-    
+
+XMLHttpRequest::XMLHttpRequest(Document* doc)
+    : m_doc(doc)
+    , m_async(true)
+    , m_state(UNSENT)
+    , m_identifier(std::numeric_limits<unsigned long>::max())
+    , m_responseText("")
+    , m_createdDocument(false)
+    , m_error(false)
+    , m_receivedLength(0)
+{
+    ASSERT(m_doc);
+    addToRequestsByDocument(m_doc, this);
+}
+
+XMLHttpRequest::~XMLHttpRequest()
+{
+    if (m_doc)
+        removeFromRequestsByDocument(m_doc, this);
+}
+
 XMLHttpRequestState XMLHttpRequest::readyState() const
 {
     return m_state;
@@ -257,26 +277,6 @@ bool XMLHttpRequest::dispatchEvent(PassRefPtr<Event> evt, ExceptionCode& ec, boo
     return !evt->defaultPrevented();
 }
 
-XMLHttpRequest::XMLHttpRequest(Document* d)
-    : m_doc(d)
-    , m_async(true)
-    , m_state(UNSENT)
-    , m_identifier(static_cast<unsigned long>(-1))
-    , m_responseText("")
-    , m_createdDocument(false)
-    , m_aborted(false)
-    , m_receivedLength(0)
-{
-    ASSERT(m_doc);
-    addToRequestsByDocument(m_doc, this);
-}
-
-XMLHttpRequest::~XMLHttpRequest()
-{
-    if (m_doc)
-        removeFromRequestsByDocument(m_doc, this);
-}
-
 void XMLHttpRequest::changeState(XMLHttpRequestState newState)
 {
     if (m_state != newState) {
@@ -335,7 +335,7 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
     internalAbort();
     XMLHttpRequestState previousState = m_state;
     m_state = UNSENT;
-    m_aborted = false;
+    m_error = false;
 
     // clear stuff from possible previous load
     m_requestHeaders.clear();
@@ -416,7 +416,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         return;
     }
 
-    m_aborted = false;
+    m_error = false;
 
     ResourceRequest request(m_url);
     request.setHTTPMethod(m_method);
@@ -512,7 +512,7 @@ void XMLHttpRequest::internalAbort()
 {
     bool hadLoader = m_loader;
 
-    m_aborted = true;
+    m_error = true;
 
     // FIXME: when we add the support for multi-part XHR, we will have to think be careful with this initialization.
     m_receivedLength = 0;
@@ -685,14 +685,14 @@ void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const Reso
 
     didReceiveResponse(0, response);
     changeState(HEADERS_RECEIVED);
-    if (m_aborted)
+    if (m_error)
         return;
 
     const char* bytes = static_cast<const char*>(data.data());
     int len = static_cast<int>(data.size());
 
     didReceiveData(0, bytes, len);
-    if (m_aborted)
+    if (m_error)
         return;
 
     didFinishLoading(0);
@@ -705,7 +705,7 @@ void XMLHttpRequest::didFail(SubresourceLoader* loader, const ResourceError&)
 
 void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
 {
-    if (m_aborted)
+    if (m_error)
         return;
         
     ASSERT(loader == m_loader);
@@ -746,7 +746,6 @@ void XMLHttpRequest::didReceiveResponse(SubresourceLoader*, const ResourceRespon
     m_responseEncoding = extractCharsetFromMediaType(m_mimeTypeOverride);
     if (m_responseEncoding.isEmpty())
         m_responseEncoding = response.textEncodingName();
-
 }
 
 void XMLHttpRequest::receivedCancellation(SubresourceLoader*, const AuthenticationChallenge& challenge)
@@ -783,7 +782,7 @@ void XMLHttpRequest::didReceiveData(SubresourceLoader*, const char* data, int le
         m_responseText += decoded;
     }
 
-    if (!m_aborted) {
+    if (!m_error) {
         updateAndDispatchOnProgress(len);
 
         if (m_state != LOADING)
