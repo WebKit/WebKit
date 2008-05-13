@@ -1420,6 +1420,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSJavaScriptCallFrame.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSJavaScriptCallFrame.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSKeyboardEvent.cpp"
 				>
 			</File>
@@ -3337,6 +3345,22 @@
 			</File>
 			<File
 				RelativePath="..\page\InspectorController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\JavaScriptCallFrame.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\page\JavaScriptCallFrame.h"
 				>
 			</File>
 			<File
@@ -13584,6 +13608,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSInspectorCallbackWrapper.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSJavaScriptCallFrameCustom.cpp"
 					>
 				</File>
 				<File

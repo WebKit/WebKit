@@ -359,6 +359,8 @@ all : \
     JSEventTargetBase.lut.h \
     JSRGBColor.lut.h \
     \
+    JSJavaScriptCallFrame.h \
+    \
     JSHTMLInputElementBaseTable.cpp \
     \
     CSSGrammar.cpp \

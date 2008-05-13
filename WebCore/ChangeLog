@@ -1,5 +1,37 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Adds a JavaScriptCallFrame object and JavaScript binding with an IDL.
+        This object will expose the stack to the Inspector's debugger.
+
+        Reviewed by Adam Roben.
+
+        * DerivedSources.make: Add JavaScriptCallFrame.
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp: Added.
+        (WebCore::JSJavaScriptCallFrame::evaluate): Calls impl evaluate and returns the result.
+        (WebCore::JSJavaScriptCallFrame::scopeChain): Makes an array of the ScopeChain.
+        * page/JavaScriptCallFrame.cpp: Added.
+        (WebCore::JavaScriptCallFrame::JavaScriptCallFrame):
+        (WebCore::JavaScriptCallFrame::caller): Returns m_caller.
+        (WebCore::JavaScriptCallFrame::functionName): Returns the function
+        name from the ExecState if this is not global code or anonymous.
+        (WebCore::JavaScriptCallFrame::evaluate): Evaluates a script string
+        in the scope of the call frame.
+        * page/JavaScriptCallFrame.h: Added.
+        (WebCore::JavaScriptCallFrame::create): Call the ctor can return in a PassRefPtr.
+        (WebCore::JavaScriptCallFrame::invalidate): Sets m_mexec to 0. This prevents a
+        stale ExecState from being accessed after the lifetime of the ExecState.
+        (WebCore::JavaScriptCallFrame::isValid): Checks if m_exec is 0.
+        (WebCore::JavaScriptCallFrame::execState): Returns m_exec.
+        (WebCore::JavaScriptCallFrame::sourceIdentifier): Returns m_sourceID.
+        (WebCore::JavaScriptCallFrame::line): Returns m_line.
+        (WebCore::JavaScriptCallFrame::setLine): Sets m_line.
+        (WebCore::JavaScriptCallFrame::scopeChain): Returns by reference m_exec->scopeChain().
+        * page/JavaScriptCallFrame.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Add a new WebInspector.Object base class that will be used for
         a few objects in the Web Inspector to support listeners on any
         object. This will help add more abstraction to the Inspector.
