@@ -1005,6 +1005,11 @@ body.inactive .placard.selected {
     margin-top: 1px;
 }
 
+.section .properties li .info {
+    padding-top: 4px;
+    padding-bottom: 3px;
+}
+
 .editing {
     -webkit-user-select: text;
     -webkit-box-shadow: rgba(0, 0, 0, .5) 3px 3px 4px;
@@ -1122,6 +1127,14 @@ body.inactive .placard.selected {
     background-color: white;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+.pane > .body .info {
+    text-align: center;
+    font-style: italic;
+    font-size: 10px;
+    padding: 6px;
+    color: gray;
 }
 
 .pane.expanded > .body, .pane.expanded > .growbar {

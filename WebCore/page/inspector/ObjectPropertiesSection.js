@@ -49,6 +49,12 @@ WebInspector.ObjectPropertiesSection.prototype = {
                 continue;
             this.propertiesTreeOutline.appendChild(new WebInspector.ObjectPropertyTreeElement(this.object, propertyName));
         }
+
+        if (!this.propertiesTreeOutline.children.length) {
+            var title = "<div class=\"info\">" + WebInspector.UIString("No Properties") + "</div>";
+            var infoElement = new TreeElement(title, null, false);
+            this.propertiesTreeOutline.appendChild(infoElement);
+        }
     }
 }
 

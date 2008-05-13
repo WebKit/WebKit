@@ -36,8 +36,13 @@ WebInspector.CallStackSidebarPane.prototype = {
         this.placards = [];
         delete this._selectedCallFrame;
 
-        if (!callFrame)
+        if (!callFrame) {
+            var infoElement = document.createElement("div");
+            infoElement.className = "info";
+            infoElement.textContent = WebInspector.UIString("Not Paused");
+            this.bodyElement.appendChild(infoElement);
             return;
+        }
 
         do {
             var title = callFrame.functionName;

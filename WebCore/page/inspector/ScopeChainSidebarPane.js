@@ -35,8 +35,13 @@ WebInspector.ScopeChainSidebarPane.prototype = {
 
         this.sections = [];
 
-        if (!callFrame)
+        if (!callFrame) {
+            var infoElement = document.createElement("div");
+            infoElement.className = "info";
+            infoElement.textContent = WebInspector.UIString("Not Paused");
+            this.bodyElement.appendChild(infoElement);
             return;
+        }
 
         var foundLocalScope = false;
         var scopeChain = callFrame.scopeChain;

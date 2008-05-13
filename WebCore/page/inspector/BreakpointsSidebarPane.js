@@ -28,6 +28,12 @@ WebInspector.BreakpointsSidebarPane = function()
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Breakpoints"));
 
     this.breakpoints = [];
+
+    this.emptyElement = document.createElement("div");
+    this.emptyElement.className = "info";
+    this.emptyElement.textContent = WebInspector.UIString("No Breakpoints");
+
+    this.bodyElement.appendChild(this.emptyElement);
 }
 
 WebInspector.BreakpointsSidebarPane.prototype = {

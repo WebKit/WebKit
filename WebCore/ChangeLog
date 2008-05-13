@@ -1,5 +1,20 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Adds info text to panes and sections in the Inspector's sidebars
+        that would normally be empty. These help the user know why there
+        is nothing in these sections.
+
+        Reviewed by John Sullivan.
+
+        * English.lproj/localizedStrings.js: Add strings.
+        * page/inspector/BreakpointsSidebarPane.js: Adds "No Breakpoints".
+        * page/inspector/CallStackSidebarPane.js: Adds "Not Paused".
+        * page/inspector/ObjectPropertiesSection.js: Adds "No Properties".
+        * page/inspector/ScopeChainSidebarPane.js: Adds "Not Paused".
+        * page/inspector/inspector.css: Adds style rules for the info elements.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Implements the rest of the Scripts panel to get the debugger
         mostly working. "Basic debugging seems to work."
 
