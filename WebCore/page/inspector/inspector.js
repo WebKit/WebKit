@@ -766,7 +766,7 @@ WebInspector.performSearch = function(query)
         if (!isXPath) {
             var sourceFrame = this.panels.resources.sourceFrameForResource(resource);
             if (sourceFrame)
-                sourceResults = InspectorController.search(sourceFrame.contentDocument, query);
+                sourceResults = InspectorController.search(sourceFrame.element.contentDocument, query);
         }
 
         var domResults = [];

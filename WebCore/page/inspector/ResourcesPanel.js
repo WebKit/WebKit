@@ -314,7 +314,7 @@ WebInspector.ResourcesPanel.prototype = {
 
         resource._resourcesTreeElement.updateErrorsAndWarnings();
 
-        var view = this._resourceView(resource);
+        var view = this.resourceViewForResource(resource);
         if (view.addMessage)
             view.addMessage(msg);
     },
@@ -388,15 +388,15 @@ WebInspector.ResourcesPanel.prototype = {
 
         resource._resourcesTreeElement.updateErrorsAndWarnings();
 
+        var oldView = resource._resourcesView;
+
         resource._resourcesView.detach();
         delete resource._resourcesView;
 
         resource._resourcesView = newView;
 
-        if (resource !== this.visibleResource)
-            return;
-
-        newView.show();
+        if (oldView.visible && oldView.element.parentNode)
+            newView.show(oldView.element.parentNode);
     },
 
     showResource: function(resource, line)
@@ -409,11 +409,11 @@ WebInspector.ResourcesPanel.prototype = {
         if (this.visibleResource && this.visibleResource._resourcesView)
             this.visibleResource._resourcesView.hide();
 
-        var view = this._resourceView(resource);
-        view.show();
+        var view = this.resourceViewForResource(resource);
+        view.show(this.resourceViews);
 
-        if (line && view.showLine)
-            view.showLine(line);
+        if (line && view.revealLine)
+            view.revealLine(line);
 
         if (resource._resourcesTreeElement) {
             resource._resourcesTreeElement.reveal();
@@ -440,9 +440,18 @@ WebInspector.ResourcesPanel.prototype = {
         this._updateSidebarWidth();
     },
 
+    resourceViewForResource: function(resource)
+    {
+        if (!resource)
+            return null;
+        if (!resource._resourcesView)
+            resource._resourcesView = this._createResourceView(resource);
+        return resource._resourcesView;
+    },
+
     sourceFrameForResource: function(resource)
     {
-        var view = this._resourceView(resource);
+        var view = this.resourceViewForResource(resource);
         if (!view)
             return null;
 
@@ -454,7 +463,7 @@ WebInspector.ResourcesPanel.prototype = {
             this.attach();
 
         view.setupSourceFrameIfNeeded();
-        return view.frameElement;
+        return view.sourceFrame;
     },
 
     handleKeyEvent: function(event)
@@ -967,15 +976,6 @@ WebInspector.ResourcesPanel.prototype = {
     {
         var selectedOption = this.sortingSelectElement[this.sortingSelectElement.selectedIndex];
         this.sortingFunction = selectedOption.sortingFunction;
-    },
-
-    _resourceView: function(resource)
-    {
-        if (!resource)
-            return null;
-        if (!resource._resourcesView)
-            resource._resourcesView = this._createResourceView(resource);
-        return resource._resourcesView;
     },
 
     _createResourceView: function(resource)

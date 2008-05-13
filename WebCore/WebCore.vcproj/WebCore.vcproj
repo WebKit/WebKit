@@ -3703,6 +3703,18 @@
 					>
 				</File>
 				<File
+					RelativePath="..\page\inspector\Script.js"
+					>
+				</File>
+				<File
+					RelativePath="..\page\inspector\ScriptView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\page\inspector\SourceFrame.js"
+					>
+				</File>
+				<File
 					RelativePath="..\page\inspector\StylesSidebarPane.js"
 					>
 				</File>

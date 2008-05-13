@@ -28,6 +28,9 @@
     <file>SidebarPane.js</file>
     <file>SidebarTreeElement.js</file>
     <file>SourceView.js</file>
+    <file>Script.js</file>
+    <file>ScriptView.js</file>
+    <file>SourceFrame.js</file>
     <file>StylesSidebarPane.js</file>
     <file>TextPrompt.js</file>
     <file>treeoutline.js</file>

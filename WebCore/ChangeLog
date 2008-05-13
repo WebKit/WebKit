@@ -1,5 +1,30 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Factored most of SourceView out into SourceFrame so it can be shared
+        by the new ScriptView. Added the ScriptView class to be used for
+        scripts that arn't Resources (like eval code.) Added a simple Script
+        object that hold the data from the debugger parsedSource hooks. A
+        ScriptView holds a Script object, and uses it for source data.
+
+        Added breakpoint and execution line support to the SourceFrame
+        where they are visually represented in the source.
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/inspector.js:
+        (WebInspector.performSearch): Change the caller of sourceFrameForResource
+        to use the SourceFrame result's element property.
+        * page/inspector/ResourcesPanel.js: Use the new SourceFrame.
+        * page/inspector/Script.js: Added.
+        * page/inspector/ScriptView.js: Added.
+        * page/inspector/SourceFrame.js: Added.
+        * page/inspector/SourceView.js: Use the new SourceFrame.
+        * WebCore.vcproj/WebCore.vcproj: Add new files.
+        * page/inspector/WebKit.qrc: Ditto.
+        * page/inspector/inspector.html: Ditto.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Adds a Breakpoint object and basic add/remove functions on
         BreakpointsSidebarPane that call the InspectorController to
         add/remove the breakpoint.
