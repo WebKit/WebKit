@@ -1,6 +1,12 @@
 2008-05-13  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by Geoff.
+        Giving credit where credit is due.
+
+        * ChangeLog:
+
+2008-05-13  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam and Geoff.
 
         <rdar://problem/5770054> JavaScript profiler (10928)
         Use PassRefPtrs instead of RefPtrs when appropriate.
