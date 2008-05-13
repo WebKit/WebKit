@@ -71,10 +71,6 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
     // apart; ICU works with either name.
     registrar("ISO-8859-8-I", "ISO-8859-8-I");
 
-    // There is no standard name for this encoding, but we want to use it, and to map other encodings of EUC-KR family to it.
-    // No need to enumerate its aliases, as they are duplicated under KS_C_5601-1987.
-    registrar("windows-949-2000", "windows-949-2000");
-
     int32_t numEncodings = ucnv_countAvailable();
     for (int32_t i = 0; i < numEncodings; ++i) {
         const char* name = ucnv_getAvailableName(i);
@@ -92,8 +88,11 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
         // Similarly, EUC-KR encodings all map to an extended version.
         else if (strcmp(standardName, "KS_C_5601-1987") == 0 || strcmp(standardName, "EUC-KR") == 0)
             standardName = "windows-949-2000";
-        else
-            registrar(standardName, standardName);
+        // And so on.
+        else if (strcmp(standardName, "ISO_8859-9:1989") == 0)
+            standardName = "windows-1254";
+
+        registrar(standardName, standardName);
 
         uint16_t numAliases = ucnv_countAliases(name, &error);
         ASSERT(U_SUCCESS(error));

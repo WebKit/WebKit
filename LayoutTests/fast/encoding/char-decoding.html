@@ -66,7 +66,15 @@ testDecode('windows-949', '%A2%41', 'U+C910');
 testDecode('iso-ir-149', '%A2%41', 'U+C910');
 testDecode('KS_C_5601-1987', '%A2%41', 'U+C910');
 testDecode('KS_C_5601-1989', '%A2%41', 'U+C910');
-debug('');
+
+// Test that ISO-8859-9 (Turkish) is upgraded to windows-1254 with Euro symbol.
+testDecode('iso-8859-9', '%80', 'U+20AC');
+testDecode('iso-8859-9', '%9F', 'U+0178');
+testDecode('iso-8859-9', '%FD', 'U+0131');
+testDecode('latin5', '%80', 'U+20AC');
+testDecode('latin5', '%9F', 'U+0178');
+testDecode('latin5', '%FD', 'U+0131');
+testDecode('windows-1254', '%80', 'U+20AC');
 
 successfullyParsed = true;
 

@@ -1,3 +1,13 @@
+2008-05-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5841351> Turkish ISO 8859-9 encoding should be treated as CP1254
+
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/char-decoding.html:
+        Added tests for Turkish encodings.
+
 2008-05-12  Adam Roben  <aroben@apple.com>
 
         Test that NPN_PostURL works correctly

@@ -29,7 +29,13 @@ PASS decode('windows-949', '%A2%41') is 'U+C910'
 PASS decode('iso-ir-149', '%A2%41') is 'U+C910'
 PASS decode('KS_C_5601-1987', '%A2%41') is 'U+C910'
 PASS decode('KS_C_5601-1989', '%A2%41') is 'U+C910'
-
+PASS decode('iso-8859-9', '%80') is 'U+20AC'
+PASS decode('iso-8859-9', '%9F') is 'U+0178'
+PASS decode('iso-8859-9', '%FD') is 'U+0131'
+PASS decode('latin5', '%80') is 'U+20AC'
+PASS decode('latin5', '%9F') is 'U+0178'
+PASS decode('latin5', '%FD') is 'U+0131'
+PASS decode('windows-1254', '%80') is 'U+20AC'
 PASS successfullyParsed is true
 
 TEST COMPLETE

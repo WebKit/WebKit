@@ -1,3 +1,19 @@
+2008-05-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5841351> Turkish ISO 8859-9 encoding should be treated as windows-1254
+
+        Match IE and upgrade ISO-8859-9 to windows-1254, which is its strict superset.
+
+        Test: fast/encoding/char-decoding.html
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::registerExtendedEncodingNames): Register the standard name
+        unconditionally. Previously, we registered windows-949-2000 as a special case that lacked 
+        an IANA standard name, and got away with not registering GBK because it happened
+        to be reported by ICU normally earlier than any encoding upgraded to it.
+
 2008-05-13  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon
