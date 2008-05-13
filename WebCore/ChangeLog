@@ -1,5 +1,14 @@
 2008-05-09  Adam Roben  <aroben@apple.com>
 
+        Fix a MSVC warning in CSSComputedStyleDeclaration
+
+        Reviewed by Geoff Garen.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForRepeatRule): Removed some unreachable code.
+
+2008-05-09  Adam Roben  <aroben@apple.com>
+
         Fix a MSVC warning in InlineTextBox
 
         Reviewed by Dan Bernstein.
