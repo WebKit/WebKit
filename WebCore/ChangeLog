@@ -1,5 +1,25 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes the assertion and crash that would happen when inspecting a element from a frame.
+        This change makes JSInspectedObjectWrapper pass unwrapped objects around for global objects
+        that share the same page group identifier. Also returns jsUndefined() instead of 0 to prevent
+        crashing in release builds if the page groups don't match.
+
+        Passes all the tests in: manual-tests/inspector-wrappers
+
+        Reviewed by Adam Roben.
+
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        (WebCore::JSInspectedObjectWrapper::prepareIncomingValue): Return jsUndefined() instead of 0.
+        Call allowsUnwrappedAccessFrom instead of unwrappedExecStateMatches.
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::allowsUnwrappedAccessFrom): Renamed from unwrappedExecStateMatches.
+        Return true if the pageGroupIdentifier of both wrappers match.
+        (WebCore::JSQuarantinedObjectWrapper::callAsFunction): Return jsUndefined() instead of 0.
+        * bindings/js/JSQuarantinedObjectWrapper.h: Renamed unwrappedExecStateMatches to allowsUnwrappedAccessFrom.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Fixes the hang that could happen when option-clicking to expand
         a disclosure triangle in the Properties pane. This change limits
         the recursion depth when expanding the tree elements.
