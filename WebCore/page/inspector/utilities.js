@@ -747,6 +747,18 @@ HTMLTextAreaElement.prototype.moveCursorToEnd = function()
     this.setSelectionRange(length, length);
 }
 
+Array.prototype.remove = function(value, onlyFirst)
+{
+    var length = this.length;
+    for (var i = 0; i < length; ++i) {
+        if (this[i] === value) {
+            this.splice(i, 1);
+            if (onlyFirst)
+                break;
+        }
+    }
+}
+
 String.sprintf = function(format)
 {
     return String.vsprintf(format, Array.prototype.slice.call(arguments, 1));

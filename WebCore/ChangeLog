@@ -1,5 +1,17 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Add a helper function to the Inspector's Array prototype
+        that will remove any identical values/objects from the array.
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/utilities.js:
+        (Array.prototype.remove): Iterate over the array and strict
+        compare to the passed in value. If they match, splice that index
+        out of the array. If onlyFirst is true, return after the first splice.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Adds a JavaScriptCallFrame object and JavaScript binding with an IDL.
         This object will expose the stack to the Inspector's debugger.
 
