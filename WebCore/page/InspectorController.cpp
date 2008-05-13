@@ -383,7 +383,43 @@ private:
 #pragma mark -
 #pragma mark JavaScript Callbacks
 
-static JSValueRef addSourceToFrame(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static bool addSourceToFrame(const String& mimeType, const String& source, Node* frameNode)
+{
+    ASSERT_ARG(frameNode, frameNode);
+
+    if (!frameNode)
+        return false;
+
+    if (!frameNode->attached()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    ASSERT(frameNode->isElementNode());
+    if (!frameNode->isElementNode())
+        return false;
+
+    Element* element = static_cast<Element*>(frameNode);
+    ASSERT(element->isFrameOwnerElement());
+    if (!element->isFrameOwnerElement())
+        return false;
+
+    HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(element);
+    ASSERT(frameOwner->contentFrame());
+    if (!frameOwner->contentFrame())
+        return false;
+
+    FrameLoader* loader = frameOwner->contentFrame()->loader();
+
+    loader->setResponseMIMEType(mimeType);
+    loader->begin();
+    loader->write(source);
+    loader->end();
+
+    return true;
+}
+
+static JSValueRef addResourceSourceToFrame(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     JSValueRef undefined = JSValueMakeUndefined(ctx);
 
@@ -395,7 +431,7 @@ static JSValueRef addSourceToFrame(JSContextRef ctx, JSObjectRef /*function*/, J
     if (!JSValueIsNumber(ctx, identifierValue))
         return undefined;
 
-    unsigned long identifier = static_cast<unsigned long>(JSValueToNumber(ctx, identifierValue, exception));
+    long long identifier = static_cast<long long>(JSValueToNumber(ctx, identifierValue, exception));
     if (exception && *exception)
         return undefined;
 
@@ -408,36 +444,36 @@ static JSValueRef addSourceToFrame(JSContextRef ctx, JSObjectRef /*function*/, J
     if (sourceString.isEmpty())
         return undefined;
 
-    Node* node = toNode(toJS(arguments[1]));
-    ASSERT(node);
-    if (!node)
+    addSourceToFrame(resource->mimeType, sourceString, toNode(toJS(arguments[1])));
+
+    return undefined;
+}
+
+static JSValueRef addSourceToFrame(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    JSValueRef undefined = JSValueMakeUndefined(ctx);
+
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (argumentCount < 3 || !controller)
         return undefined;
 
-    if (!node->attached()) {
-        ASSERT_NOT_REACHED();
-        return undefined;
-    }
-
-    ASSERT(node->isElementNode());
-    if (!node->isElementNode())
+    JSValueRef mimeTypeValue = arguments[0];
+    if (!JSValueIsString(ctx, mimeTypeValue))
         return undefined;
 
-    Element* element = static_cast<Element*>(node);
-    ASSERT(element->isFrameOwnerElement());
-    if (!element->isFrameOwnerElement())
+    JSValueRef sourceValue = arguments[1];
+    if (!JSValueIsString(ctx, sourceValue))
         return undefined;
 
-    HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(element);
-    ASSERT(frameOwner->contentFrame());
-    if (!frameOwner->contentFrame())
+    String mimeType = toString(ctx, mimeTypeValue, exception);
+    if (mimeType.isEmpty())
         return undefined;
 
-    FrameLoader* loader = frameOwner->contentFrame()->loader();
+    String source = toString(ctx, sourceValue, exception);
+    if (source.isEmpty())
+        return undefined;
 
-    loader->setResponseMIMEType(resource->mimeType);
-    loader->begin();
-    loader->write(sourceString);
-    loader->end();
+    addSourceToFrame(mimeType, source, toNode(toJS(arguments[2])));
 
     return undefined;
 }
@@ -454,7 +490,7 @@ static JSValueRef getResourceDocumentNode(JSContextRef ctx, JSObjectRef /*functi
     if (!JSValueIsNumber(ctx, identifierValue))
         return undefined;
 
-    unsigned long identifier = static_cast<unsigned long>(JSValueToNumber(ctx, identifierValue, exception));
+    long long identifier = static_cast<long long>(JSValueToNumber(ctx, identifierValue, exception));
     if (exception && *exception)
         return undefined;
 
@@ -1113,6 +1149,7 @@ void InspectorController::windowScriptObjectAvailable()
     ASSERT(global);
 
     static JSStaticFunction staticFunctions[] = {
+        { "addResourceSourceToFrame", addResourceSourceToFrame, kJSPropertyAttributeNone },
         { "addSourceToFrame", addSourceToFrame, kJSPropertyAttributeNone },
         { "getResourceDocumentNode", getResourceDocumentNode, kJSPropertyAttributeNone },
         { "highlightDOMNode", highlightDOMNode, kJSPropertyAttributeNone },

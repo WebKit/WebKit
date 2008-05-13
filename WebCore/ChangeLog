@@ -1,5 +1,26 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Make addSourceToFrame not dependent on InspectorResource so it
+        can be used to add source of a passed in string and mime-type to
+        a frame. Added addResourceSourceToFrame for use by SourceView.
+
+        Also fixes an assertion because of an incorrect static_cast of identifiers
+        to unsigned long long, when they can be unsigned.
+
+        Reviewed by Geoff Garen.
+
+        * page/InspectorController.cpp:
+        (WebCore::addSourceToFrame): Helper function used by addSourceToFrame
+        and addResourceSourceToFrame.
+        (WebCore::addSourceToFrame): Generalized to take a source and mime-type string.
+        (WebCore::addResourceSourceToFrame): Renamed from addSourceToFrame.
+        (WebCore::getResourceDocumentNode): Fixes the static_cast to be long long.
+        (WebCore::InspectorController::windowScriptObjectAvailable): Adds
+        addResourceSourceToFrame to the JavaScript class.
+        * page/inspector/SourceView.js: Use the new addResourceSourceToFrame.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Add debugger related functions to the InspectorController and
         expose them to the JavaScript side of InspectorController.
 

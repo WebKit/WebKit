@@ -55,7 +55,7 @@ WebInspector.SourceView.prototype = {
 
             this.attach();
 
-            InspectorController.addSourceToFrame(this.resource.identifier, this.frameElement);
+            InspectorController.addResourceSourceToFrame(this.resource.identifier, this.frameElement);
             WebInspector.addMainEventListeners(this.frameElement.contentDocument);
 
             var length = this.messages.length;
