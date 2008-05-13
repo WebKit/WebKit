@@ -27,7 +27,8 @@
 #define Profile_h
 
 #include "FunctionCallProfile.h"
-#include <wtf/OwnPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace KJS {
 
@@ -35,24 +36,28 @@ namespace KJS {
     class FunctionImp;
     class JSObject;
 
-    class Profile {
+    class Profile : public RefCounted<Profile> {
     public:
-        Profile(const UString& title);
+        static PassRefPtr<Profile> create(const UString& title) { return adoptRef(new Profile(title)); }
 
         void willExecute(const Vector<UString>& callStackNames);
-        void didExecute(Vector<UString> stackNames);
+        void didExecute(const Vector<UString>& stackNames);
 
         void stopProfiling() { m_callTree->stopProfiling(); };
+        const UString& title() const { return m_title; };
+        RefPtr<FunctionCallProfile> callTree() const { return m_callTree; };
 
         void printDataInspectorStyle() const;
         void printDataSampleStyle() const;
 
     private:
-        const UString& m_title;
+        Profile(const UString& title);
+
+        UString m_title;
 
         void insertStackNamesInTree(const Vector<UString>& callStackNames);
 
-        OwnPtr<FunctionCallProfile> m_callTree;
+        RefPtr<FunctionCallProfile> m_callTree;
     };
 
 } // namespace KJS

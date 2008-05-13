@@ -1,3 +1,31 @@
+2008-05-13  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        - Made some functions static (as per Adam) and changed from using raw
+        pointers to RefPtr for making these JavaScript Objects.
+
+        * profiler/FunctionCallProfile.cpp:
+        (KJS::FunctionCallProfile::addChild):
+        (KJS::FunctionCallProfile::findChild):
+        * profiler/FunctionCallProfile.h:
+        (KJS::FunctionCallProfile::create):
+        * profiler/Profile.cpp:
+        (KJS::Profile::Profile):
+        (KJS::Profile::willExecute):
+        (KJS::Profile::didExecute):
+        (KJS::functionNameCountPairComparator):
+        * profiler/Profile.h:
+        (KJS::Profile::create):
+        (KJS::Profile::title):
+        (KJS::Profile::callTree):
+        * profiler/Profiler.cpp:
+        (KJS::Profiler::startProfiling):
+        * profiler/Profiler.h:
+        (KJS::Profiler::allProfiles):
+        (KJS::Profiler::clearProfiles):
+
 2008-05-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoffrey Garen.

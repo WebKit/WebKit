@@ -31,24 +31,25 @@
 
 #include <kjs/ustring.h>
 #include <wtf/Deque.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/StrHash.h>
 
 namespace KJS {
 
     class FunctionCallProfile;
 
-    typedef Deque<FunctionCallProfile*>::const_iterator StackIterator;
+    typedef Deque<RefPtr<FunctionCallProfile> >::const_iterator StackIterator;
     typedef HashCountedSet<UString::Rep*> FunctionCallHashCount;
 
-    class FunctionCallProfile {
+    class FunctionCallProfile : public RefCounted<FunctionCallProfile> {
     public:
-        FunctionCallProfile(const UString& name);        
-        ~FunctionCallProfile();
+        static PassRefPtr<FunctionCallProfile> create(const UString& name) { return adoptRef(new FunctionCallProfile(name)); }
 
         void willExecute();
         void didExecute(Vector<UString> stackNames, unsigned int stackIndex);
 
-        void addChild(FunctionCallProfile* child);
+        void addChild(RefPtr<FunctionCallProfile>& child);
         FunctionCallProfile* findChild(const UString& name);
 
         void stopProfiling();
@@ -56,11 +57,14 @@ namespace KJS {
         UString functionName() const { return m_functionName; }
         double milliSecs() const { return m_timeSum; }
         unsigned numberOfCalls() const { return m_numberOfCalls; }
+        const Deque<RefPtr<FunctionCallProfile> >& children() { return m_children; }
 
         void printDataInspectorStyle(int indentLevel) const;
         double printDataSampleStyle(int indentLevel, FunctionCallHashCount&) const;
 
     private:
+        FunctionCallProfile(const UString& name);
+
         void endAndRecordCall();
     
         UString m_functionName;
@@ -68,7 +72,7 @@ namespace KJS {
         double m_startTime;
         unsigned m_numberOfCalls;
 
-        Deque<FunctionCallProfile*> m_children;
+        Deque<RefPtr<FunctionCallProfile> > m_children;
     };
 
 } // namespace KJS
