@@ -247,7 +247,7 @@ public:
                    m_savedContext, &oldAction,
                    &oldContext, &err);
             ASSERT(oldAction == UCNV_TO_U_CALLBACK_SUBSTITUTE);
-            ASSERT(oldContext == UCNV_SUB_STOP_ON_ILLEGAL);
+            ASSERT(!strcmp(static_cast<const char*>(oldContext), UCNV_SUB_STOP_ON_ILLEGAL));
             ASSERT(err == U_ZERO_ERROR);
         }
     }

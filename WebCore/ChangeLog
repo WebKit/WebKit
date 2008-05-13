@@ -1,5 +1,20 @@
 2008-05-09  Adam Roben  <aroben@apple.com>
 
+        Fix a MSVC warning in TextCodecICU
+
+        Reviewed by John Sullivan and Dan Bernstein.
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::ErrorCallbackSetter::~ErrorCallbackSetter):
+        UCNV_SUB_STOP_ON_ILLEGAL is a string literal, so using == with it
+        doesn't really do what we want. Use strcmp instead. It's OK to pass an
+        unknown value to strcmp here since 1) UCNV_SUB_STOP_ON_ILLEGAL is only
+        a single character long so we're not going to ready more than 2 bytes
+        from oldContext, and 2) we're inside an ASSERT which will cause a
+        crash anyway if it fails.
+
+2008-05-09  Adam Roben  <aroben@apple.com>
+
         Fix a MSVC warning in CSSComputedStyleDeclaration
 
         Reviewed by Geoff Garen.
