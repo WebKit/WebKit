@@ -1,5 +1,18 @@
 2008-05-13  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Geoff.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        Use PassRefPtrs instead of RefPtrs when appropriate.
+
+        * profiler/FunctionCallProfile.cpp:
+        (KJS::FunctionCallProfile::addChild):
+        * profiler/FunctionCallProfile.h:
+        * profiler/Profile.h:
+        (KJS::Profile::callTree):
+
+2008-05-13  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Sam.
 
         <rdar://problem/5770054> JavaScript profiler (10928)

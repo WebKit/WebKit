@@ -49,7 +49,7 @@ namespace KJS {
         void willExecute();
         void didExecute(Vector<UString> stackNames, unsigned int stackIndex);
 
-        void addChild(RefPtr<FunctionCallProfile>& child);
+        void addChild(PassRefPtr<FunctionCallProfile> prpChild);
         FunctionCallProfile* findChild(const UString& name);
 
         void stopProfiling();

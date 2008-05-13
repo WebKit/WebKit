@@ -45,7 +45,7 @@ namespace KJS {
 
         void stopProfiling() { m_callTree->stopProfiling(); };
         const UString& title() const { return m_title; };
-        RefPtr<FunctionCallProfile> callTree() const { return m_callTree; };
+        FunctionCallProfile* callTree() const { return m_callTree.get(); };
 
         void printDataInspectorStyle() const;
         void printDataSampleStyle() const;

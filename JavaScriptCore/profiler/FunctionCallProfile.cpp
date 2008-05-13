@@ -65,17 +65,17 @@ void FunctionCallProfile::didExecute(Vector<UString> stackNames, unsigned int st
     }
 }
 
-void FunctionCallProfile::addChild(RefPtr<FunctionCallProfile>& child)
+void FunctionCallProfile::addChild(PassRefPtr<FunctionCallProfile> prpChild)
 {
-    if (!child)
-        return;
+    ASSERT(prpChild);
 
+    RefPtr<FunctionCallProfile> child = prpChild;
     for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild) {
         if ((*currentChild)->functionName() == child->functionName())
             return;
     }
 
-    m_children.append(child);
+    m_children.append(child.release());
 }
 
 FunctionCallProfile* FunctionCallProfile::findChild(const UString& name)
