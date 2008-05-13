@@ -3655,6 +3655,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\page\inspector\ObjectPropertiesSection.js"
+					>
+				</File>
+				<File
 					RelativePath="..\page\inspector\PropertiesSidebarPane.js"
 					>
 				</File>

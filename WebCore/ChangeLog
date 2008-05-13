@@ -1,5 +1,19 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Breaks out ObjectPropertiesSection from PropertiesSidebarPane
+        so it can be used by the Scripts panel's Scope Chain pane.
+
+        Rubber-stamped by Adam Roben.
+
+        * page/inspector/ObjectPropertiesSection.js: Added.
+        * page/inspector/PropertiesSidebarPane.js: Moved ObjectPropertiesSection
+        to ObjectPropertiesSection.js.
+        * WebCore.vcproj/WebCore.vcproj: Add the new file.
+        * page/inspector/WebKit.qrc: Ditto.
+        * page/inspector/inspector.html: Ditto.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Add a helper function to the Inspector's Array prototype
         that will remove any identical values/objects from the array.
 
