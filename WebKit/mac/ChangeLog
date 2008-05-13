@@ -1,3 +1,12 @@
+2008-05-13  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        <rdar://problem/4780592> WebKit application has its window announced as HTML content
+
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory AXWebAreaText]):
+
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a crash seen in Xcode where CallUIDelegateReturningBoolean

@@ -424,7 +424,7 @@
 
 - (NSString *)AXWebAreaText
 {
-    return UI_STRING("web area", "accessibility role description for web area");
+    return UI_STRING("HTML content", "accessibility role description for web area");
 }
 
 - (NSString *)AXLinkText

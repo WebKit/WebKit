@@ -1,3 +1,12 @@
+2008-05-13  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        <rdar://problem/4780592> WebKit application has its window announced as HTML content
+
+        * English.lproj/Localizable.strings:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-05-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.
