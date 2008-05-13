@@ -328,16 +328,8 @@ void WebFrameLoaderClient::dispatchShow()
         ui->webViewShow(webView);
 }
 
-void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader* loader)
+void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader*)
 {
-    if (WebScriptDebugServer::listenerCount() <= 0)
-        return;
-
-    Frame* coreFrame = core(m_webFrame);
-    if (!coreFrame)
-        return;
-
-    WebScriptDebugServer::sharedWebScriptDebugServer()->didLoadMainResourceForDataSource(kit(coreFrame->page()), getWebDataSource(loader));
 }
 
 void WebFrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceError& error)

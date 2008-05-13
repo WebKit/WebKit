@@ -271,7 +271,6 @@ STDAPI RunAsLocalServer()
 
 STDAPI LocalServerDidDie()
 {
-    WebScriptDebugServer::sharedWebScriptDebugServer()->serverDidDie();
     return 0;
 }
 

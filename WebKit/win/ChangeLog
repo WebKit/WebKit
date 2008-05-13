@@ -1,3 +1,29 @@
+2008-05-13  Adam Roben  <aroben@apple.com>
+
+        Neuter WebScriptDebugServer
+
+        Some upcoming changes to JavaScriptDebugServer and
+        JavaScriptDebugListener will break WebScriptDebugServer. Since Drosera
+        is being replaced by the Inspector's debugger, and Drosera is the only
+        client of WebScriptDebugServer, it makes more sense to get rid of
+        WebScriptDebugServer than to update it to keep it working.
+
+        We can't actually remove WebScriptDebugServer entirely yet, so I've
+        just made it non-functional. This will completely break Drosera, but
+        as stated above, Drosera's days are numbered anyway.
+
+        Reviewed by Tim Hatcher and Kevin McCullough.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidLoadMainResource): Removed all code
+        in this function.
+        * WebKitDLL.cpp:
+        (LocalServerDidDie): Ditto.
+        * WebScriptDebugServer.cpp: Made all IWebScriptDebugServer functions
+        return E_NOTIMPL.
+        * WebScriptDebugServer.h: Removed everything but the
+        IWebScriptDebugServer functions.
+
 2008-05-12  Dan Bernstein  <mitz@apple.com>
 
         - build fix
