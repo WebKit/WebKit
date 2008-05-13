@@ -18,6 +18,7 @@
     <file>Object.js</file>
     <file>ObjectPropertiesSection.js</file>
     <file>Panel.js</file>
+    <file>Placard.js</file>
     <file>PropertiesSection.js</file>
     <file>PropertiesSidebarPane.js</file>
     <file>ResourceCategory.js</file>
@@ -25,6 +26,7 @@
     <file>ResourcesPanel.js</file>
     <file>ResourceView.js</file>
     <file>ScriptsPanel.js</file>
+    <file>ScopeChainSidebarPane.js</file>
     <file>SidebarPane.js</file>
     <file>SidebarTreeElement.js</file>
     <file>SourceView.js</file>

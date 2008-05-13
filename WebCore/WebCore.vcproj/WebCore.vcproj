@@ -3647,6 +3647,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\page\inspector\ScopeChainSidebarPane.js"
+					>
+				</File>
+				<File
 					RelativePath="..\page\inspector\CallStackSidebarPane.js"
 					>
 				</File>
@@ -3660,6 +3664,10 @@
 				</File>
 				<File
 					RelativePath="..\page\inspector\Panel.js"
+					>
+				</File>
+				<File
+					RelativePath="..\page\inspector\Placard.js"
 					>
 				</File>
 				<File

@@ -822,6 +822,65 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     color: inherit;
 }
 
+.placard {
+    position: relative;
+    margin-top: 1px;
+    padding: 3px 8px 4px 17px;
+    min-height: 18px;
+    white-space: nowrap;
+}
+
+.placard:nth-of-type(2n) {
+    background-color: rgb(234, 243, 255);
+}
+
+.placard.selected {
+    border-top: 1px solid rgb(145, 160, 192);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(162, 177, 207)), to(rgb(120, 138, 177)));
+    -webkit-background-origin: padding;
+    -webkit-background-clip: padding;
+}
+
+.focused .placard.selected {
+    border-top: 1px solid rgb(68, 128, 200);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(92, 147, 213)), to(rgb(21, 83, 170)));
+}
+
+body.inactive .placard.selected {
+    border-top: 1px solid rgb(151, 151, 151);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(180, 180, 180)), to(rgb(138, 138, 138)));
+}
+
+.placard .title {
+    color: black;
+    font-weight: normal;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.placard.selected .title {
+    color: white;
+    font-weight: bold;
+}
+
+.placard .subtitle {
+    float: right;
+    font-size: 10px;
+    margin-left: 5px;
+    max-width: 55%;
+    color: rgba(0, 0, 0, 0.7);
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.placard.selected .subtitle {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.placard .subtitle a {
+    color: inherit;
+}
+
 .section {
     position: relative;
     margin-top: 1px;

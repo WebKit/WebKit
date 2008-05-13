@@ -121,3 +121,5 @@ WebInspector.SidebarPane.prototype = {
         this.expanded = !this.expanded;
     }
 }
+
+WebInspector.SidebarPane.prototype.__proto__ = WebInspector.Object.prototype;

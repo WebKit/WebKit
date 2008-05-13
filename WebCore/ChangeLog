@@ -1,5 +1,36 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Adds implementations of the Scope Chain and Call Stack sidebar panes.
+        These panes use the JSJavaScriptCallFrame object that will be passed
+        to the update functions.
+
+        Reviewed by Kevin McCullough.
+
+        * English.lproj/localizedStrings.js: Adds new strings.
+        * WebCore.vcproj/WebCore.vcproj: Adds new files.
+        * page/inspector/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.update): Walk the 
+        caller chain of the call frame and make placards for each.
+        (WebInspector.CallStackSidebarPane.prototype.get selectedCallFrame):
+        Return _selectedCallFrame. 
+        (WebInspector.CallStackSidebarPane.prototype.set selectedCallFrame):
+        Set _selectedCallFrame and dispatch the "call frame selected" event.
+        (WebInspector.CallStackSidebarPane.prototype._placardSelected):
+        Set the selectedCallFrame based on the clicked placard.
+        * page/inspector/Placard.js: Added. A user interface object that can
+        be used to show a title and a subtitle block with a selected state.
+        * page/inspector/ScopeChainSidebarPane.js: Added.
+        (WebInspector.ScopeChainSidebarPane): Call the base object and set the title.
+        (WebInspector.ScopeChainSidebarPane.prototype.update): Iterate over the
+        call frame's scope chain and make ObjectPropertiesSections for each.
+        * page/inspector/SidebarPane.js:
+        (WebInspector.SidebarPane.prototype): Inherit from WebInspector.Object.
+        * page/inspector/WebKit.qrc: Add new files.
+        * page/inspector/inspector.css: Add placard styles.
+        * page/inspector/inspector.html: Add new files.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Fixes the bug where SourceViews would be blank if shown before
         the Resource finished loading.
 

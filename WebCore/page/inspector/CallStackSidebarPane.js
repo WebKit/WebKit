@@ -29,7 +29,60 @@ WebInspector.CallStackSidebarPane = function()
 }
 
 WebInspector.CallStackSidebarPane.prototype = {
-    
+    update: function(callFrame)
+    {
+        this.bodyElement.removeChildren();
+
+        this.placards = [];
+        delete this._selectedCallFrame;
+
+        if (!callFrame)
+            return;
+
+        do {
+            var title = callFrame.functionName;
+            if (!title && callFrame.caller)
+                title = WebInspector.UIString("(anonymous function)");
+            else if (!title)
+                title = WebInspector.UIString("(global code)");
+
+            var placard = new WebInspector.Placard(title);
+            placard.callFrame = callFrame;
+
+            placard.element.addEventListener("click", this._placardSelected.bind(this), false);
+
+            this.placards.push(placard);
+            this.bodyElement.appendChild(placard.element);
+
+            callFrame = callFrame.caller;
+        } while (callFrame);
+    },
+
+    get selectedCallFrame()
+    {
+        return this._selectedCallFrame;
+    },
+
+    set selectedCallFrame(x)
+    {
+        if (this._selectedCallFrame === x)
+            return;
+
+        this._selectedCallFrame = x;
+
+        for (var i = 0; i < this.placards.length; ++i) {
+            var placard = this.placards[i];
+            placard.selected = (placard.callFrame === this._selectedCallFrame);
+        }
+
+        this.dispatchEventToListeners("call frame selected");
+    },
+
+    _placardSelected: function(event)
+    {
+        var placardElement = event.target.enclosingNodeOrSelfWithClass("placard");
+        this.selectedCallFrame = placardElement.placard.callFrame;
+    }
 }
 
 WebInspector.CallStackSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
