@@ -27,12 +27,27 @@
 #include "AccessItemRule.h"
 
 #include "PlatformString.h"
+#include "ParserUtilities.h"
 
 namespace WebCore {
 
 AccessItemRule::AccessItemRule(const String& rule)
 {
     parseAccessItemRule(rule);
+}
+
+static inline bool skipLWS(const UChar*& ptr, const UChar* end)
+{
+    // LWS as defined by RFC 2616:
+    // LWS = [CRLF] 1*( SP | HT )
+
+    if (ptr + 1 < end && *ptr == '\r' && *(ptr + 1) == '\n')
+        ptr += 2;
+
+    const UChar* start = ptr;
+    while (ptr < end && (*ptr == ' ' || *ptr == '\t'))
+        ptr++;
+    return ptr != start;
 }
 
 void AccessItemRule::parseAccessItemRule(const String& rule)
@@ -45,7 +60,97 @@ void AccessItemRule::parseAccessItemRule(const String& rule)
     //   rule           = "allow" 1*(LWS pattern) [LWS "exclude" 1*(LWS pattern)]
     //   pattern        = "<" access item ">"
 
-    // FIXME: Parse the rule.
+    if (rule.isEmpty())
+        return;
+
+    const UChar* ptr = rule.characters();
+    const UChar* end = ptr + rule.length();
+
+    // Skip leading whitespace
+    skipLWS(ptr, end);
+    if (ptr == end)
+        return;
+
+    if (!skipString(ptr, end, "allow"))
+        return;
+
+    parsePatternList(ptr, end, m_allowList);
+    if (m_allowList.isEmpty())
+        return;
+
+    if (!skipString(ptr, end, "exclude")) {
+        if (ptr != end)
+            invalidate();
+        return;
+    }
+
+    parsePatternList(ptr, end, m_excludeList);
+    if (m_excludeList.isEmpty()) {
+        invalidate();
+        return;
+    }
+
+    if (ptr != end)
+        invalidate();
 }
+
+void AccessItemRule::parsePatternList(const UChar*& ptr, const UChar* end, Vector<AccessItem>& list)
+{
+    while (ptr < end) {
+        if (!skipLWS(ptr, end) || ptr == end) {
+            invalidate();
+            return;
+        }
+
+        if (*ptr != '<')
+            return;
+
+        ptr++;
+
+        bool sawEndTag = false;
+        const UChar* start = ptr;
+        while (ptr < end) {
+            if (*ptr == '>') {
+                sawEndTag = true;
+                break;
+            }
+            ptr++;
+        }
+        if (!sawEndTag) {
+            invalidate();
+            return;
+        }
+        
+        AccessItem accessItem(String(start, ptr - start));
+        if (!accessItem.isValid()) {
+            invalidate();
+            return;
+        }
+
+        list.append(accessItem);
+        ptr++;
+    }
+}
+
+void AccessItemRule::invalidate()
+{
+    m_allowList.clear();
+    m_excludeList.clear();
+}
+
+#ifndef NDEBUG
+void AccessItemRule::show()
+{
+    printf("  AccessItemRule::show\n");
+
+    printf("  AllowList count: %d\n", static_cast<int>(m_allowList.size()));
+    for (size_t i = 0; i < m_allowList.size(); ++i)
+        m_allowList[i].show();
+
+    printf("  ExludeList count: %d\n", static_cast<int>(m_excludeList.size()));
+    for (size_t i = 0; i < m_excludeList.size(); ++i)
+        m_excludeList[i].show();
+}
+#endif
 
 } // namespace WebCore

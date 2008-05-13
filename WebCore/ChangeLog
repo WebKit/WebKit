@@ -1,3 +1,29 @@
+2008-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add parsing of AccessControlHeader and AccessItemRule.
+
+        * xml/AccessControlList.cpp:
+        (WebCore::AccessControlList::parseAccessControlHeader): When multiple http headers are sent
+        in the response, the engine will concatenate them with commas separating the rules.  This simply
+        reverses that process by splitting on the commas.
+        (WebCore::AccessControlList::show):
+        * xml/AccessControlList.h:
+        * xml/AccessItem.cpp:
+        (WebCore::AccessItem::AccessItem):
+        (WebCore::AccessItem::show):
+        * xml/AccessItem.h:
+        (WebCore::AccessItem::isValid):
+        * xml/AccessItemRule.cpp:
+        (WebCore::skipLWS):
+        (WebCore::AccessItemRule::parseAccessItemRule): Parse the rule according to the BNF provided by
+        the Access Control spec.
+        (WebCore::AccessItemRule::parsePatternList):
+        (WebCore::AccessItemRule::invalidate):
+        (WebCore::AccessItemRule::show):
+        * xml/AccessItemRule.h:
+
 2008-05-12  David Kilzer  <ddkilzer@apple.com>
 
         Fix logic error in DocLoader::clearPreloads()

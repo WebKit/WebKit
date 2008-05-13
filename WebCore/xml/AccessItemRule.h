@@ -37,8 +37,14 @@ namespace WebCore {
     public:
         AccessItemRule(const String&);
 
+#ifndef NDEBUG
+        void show();
+#endif
+
     private:
         void parseAccessItemRule(const String&);
+        void parsePatternList(const UChar*& ptr, const UChar* end, Vector<AccessItem>& list);
+        void invalidate();
 
         Vector<AccessItem> m_allowList;
         Vector<AccessItem> m_excludeList;

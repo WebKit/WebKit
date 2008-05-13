@@ -39,15 +39,26 @@ namespace WebCore {
 
         bool matches(const SecurityOrigin*);
 
+        bool isValid() const { return m_valid; }
+
+#ifndef NDEBUG
+        void show();
+#endif
+
     private:
         void parseAccessItem(const String&);
 
+        bool m_valid;
         bool m_wildcard;
         String m_scheme;
         bool m_domainWildcard;
         Vector<String, 4> m_subdomains;
         bool m_portWildcard;
         unsigned short m_port;
+
+#ifndef NDEBUG
+        String m_string;
+#endif
     };
 
 } // namespace WebCore
