@@ -637,12 +637,23 @@ TreeElement.prototype.expand = function()
         this.onexpand(this);
 }
 
-TreeElement.prototype.expandRecursively = function()
+TreeElement.prototype.expandRecursively = function(maxDepth)
 {
     var item = this;
+    var info = {};
+    var depth = 0;
+
+    // The Inspector uses TreeOutlines to represents object properties, so recursive expansion
+    // in some case can be infinite, since JavaScript objects can hold circular references.
+    // So default to a recursion cap of 3 levels, since that gives fairly good results.
+    if (typeof maxDepth === "undefined" || typeof maxDepth === "null")
+        maxDepth = 3;
+
     while (item) {
-        item.expand();
-        item = item.traverseNextTreeElement(false, this);
+        if (depth < maxDepth)
+            item.expand();
+        item = item.traverseNextTreeElement(false, this, (depth >= maxDepth), info);
+        depth += info.depthChange;
     }
 }
 
@@ -702,14 +713,20 @@ TreeElement.prototype.deselect = function(supressOnDeselect)
         this.ondeselect(this);
 }
 
-TreeElement.prototype.traverseNextTreeElement = function(skipHidden, stayWithin, dontPopulate)
+TreeElement.prototype.traverseNextTreeElement = function(skipHidden, stayWithin, dontPopulate, info)
 {
     if (!dontPopulate && this.hasChildren && this.onpopulate)
         this.onpopulate(this);
 
+    if (info)
+        info.depthChange = 0;
+
     var element = skipHidden ? (this.revealed() ? this.children[0] : null) : this.children[0];
-    if (element && (!skipHidden || (skipHidden && this.expanded)))
+    if (element && (!skipHidden || (skipHidden && this.expanded))) {
+        if (info)
+            info.depthChange = 1;
         return element;
+    }
 
     if (this === stayWithin)
         return null;
@@ -719,8 +736,11 @@ TreeElement.prototype.traverseNextTreeElement = function(skipHidden, stayWithin,
         return element;
 
     element = this;
-    while (element && !element.root && !(skipHidden ? (element.revealed() ? element.nextSibling : null) : element.nextSibling) && element.parent !== stayWithin)
+    while (element && !element.root && !(skipHidden ? (element.revealed() ? element.nextSibling : null) : element.nextSibling) && element.parent !== stayWithin) {
+        if (info)
+            info.depthChange -= 1;
         element = element.parent;
+    }
 
     if (!element)
         return null;

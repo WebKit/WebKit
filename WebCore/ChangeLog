@@ -1,5 +1,25 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes the hang that could happen when option-clicking to expand
+        a disclosure triangle in the Properties pane. This change limits
+        the recursion depth when expanding the tree elements.
+
+        <rdar://problem/5847681> Safari hangs when option-clicking a
+        disclosure triangle in the Inspector's Properties pane
+
+        Reviewed by John Sullivan.
+
+        * page/inspector/treeoutline.js:
+        (TreeElement.prototype.expandRecursively): Pass an empty info object to
+        traverseNextTreeElement to get the depthChange value. This is used to
+        compute a current depth. If the depth exceeds the maxDepth argument, the
+        item isn't expanded and children wont be populated when traverseNextTreeElement
+        is called until the depth goes below the maxDepth.
+        (TreeElement.prototype.traverseNextTreeElement): Added a new info
+        argument that can be optionally used to return extra info like depth change.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Adds info text to panes and sections in the Inspector's sidebars
         that would normally be empty. These help the user know why there
         is nothing in these sections.
