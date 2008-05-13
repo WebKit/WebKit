@@ -1,3 +1,12 @@
+2008-05-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add tests verifying that we don't mix up some similar, but incompatible encodings.
+
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/char-decoding.html:
+
 2008-05-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

@@ -76,6 +76,30 @@ testDecode('latin5', '%9F', 'U+0178');
 testDecode('latin5', '%FD', 'U+0131');
 testDecode('windows-1254', '%80', 'U+20AC');
 
+// Baltic encodings fine points.
+testDecode('ISO-8859-13', '%A1', 'U+201D');
+testDecode('ISO-8859-13', '%A5', 'U+201E');
+testDecode('ISO-8859-13', '%B4', 'U+201C');
+testDecode('ISO-8859-13', '%FF', 'U+2019');
+testDecode('windows-1257', '%80', 'U+20AC');
+testDecode('windows-1257', '%B4', 'U+00B4');
+testDecode('windows-1257', '%FF', 'U+02D9');
+
+// Greek encodings fine points.
+testDecode('iso-8859-7', '%A1', 'U+2018');
+testDecode('iso-8859-7', '%B5', 'U+0385');
+testDecode('iso-8859-7', '%B6', 'U+0386');
+testDecode('windows-1253', '%80', 'U+20AC');
+testDecode('windows-1253', '%A1', 'U+0385');
+testDecode('windows-1253', '%B5', 'U+00B5');
+testDecode('windows-1253', '%B6', 'U+00B6');
+
+// KOI-8 variants
+testDecode('KOI8-R', '%A4', 'U+2553');
+testDecode('KOI8-R', '%AD', 'U+255C');
+testDecode('KOI8-U', '%A4', 'U+0454');
+testDecode('KOI8-U', '%AD', 'U+0491');
+
 successfullyParsed = true;
 
 </script>
