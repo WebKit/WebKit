@@ -685,8 +685,17 @@ static inline IntegralType toIntegralType(const UChar* data, size_t length, bool
         data++;
     }
 
+#if COMPILER(MSVC)
+#pragma warning(push, 0)
+#pragma warning(disable:4146)
+#endif
+
     if (isNegative)
         value = -value;
+
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 
     // skip trailing space
     while (length && isSpaceOrNewline(*data)) {

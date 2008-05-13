@@ -1,5 +1,16 @@
 2008-05-09  Adam Roben  <aroben@apple.com>
 
+        Fix a MSVC warning in String
+
+        Reviewed by Geoff Garen.
+
+        * platform/text/String.cpp:
+        (WebCore::toIntegralType): Disable a bogus warning about using unary -
+        on an unsigned value. MSVC isn't smart enough to figure out that
+        isNegative will always be false when value is unsigned.
+
+2008-05-09  Adam Roben  <aroben@apple.com>
+
         Fix a MSVC warning in XMLHttpRequest
 
         Reviewed by Geoff Garen.
