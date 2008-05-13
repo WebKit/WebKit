@@ -1,5 +1,16 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Add Widget::isPluginView so the JavaScriptDebugServer can identify
+        plugins that need to be paused during debugging. This will be used
+        in a upcoming commit.
+
+        Reviewed by Kevin McCullough.
+
+        * platform/Widget.h: Add isPluginView. Return false.
+        * plugins/PluginView.h: Add isPluginView. Return true.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Adds an event loop abstraction to platform. This abstraction will be
         used by the JavaScriptDebugServer to implement pausing.
 

@@ -148,6 +148,8 @@ namespace WebCore {
         virtual void attachToWindow();
         virtual void detachFromWindow();
 
+        virtual bool isPluginView() const { return true; }
+
 #if PLATFORM(WIN)
         LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
         WNDPROC pluginWndProc() const { return m_pluginWndProc; }
