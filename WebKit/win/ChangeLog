@@ -1,5 +1,11 @@
 2008-05-12  Dan Bernstein  <mitz@apple.com>
 
+        - build fix
+
+        * Interfaces/WebKit.idl: Touched.
+
+2008-05-12  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Ada Chan.
 
         - WebKit/win changes for https://bugs.webkit.org/show_bug.cgi?id=17097
