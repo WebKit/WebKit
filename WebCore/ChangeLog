@@ -1,3 +1,13 @@
+2008-05-13  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon
+
+        Fix QtWebKit build on Qt embedded.
+
+        * WebCore.pro:
+        * platform/FileSystem.h:
+        * platform/qt/FileSystemQt.cpp:
+
 2008-05-13  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
