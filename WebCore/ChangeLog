@@ -1,5 +1,33 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Adds a Breakpoint object and basic add/remove functions on
+        BreakpointsSidebarPane that call the InspectorController to
+        add/remove the breakpoint.
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/Breakpoint.js:
+        (WebInspector.Breakpoint): 
+        (WebInspector.Breakpoint.prototype.get enabled): Return _enabled.
+        (WebInspector.Breakpoint.prototype.set enabled): Set _enabled and
+        dispatch the enabled/disabled event to listeners.
+        * page/inspector/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointsSidebarPane): Add a breakpoints array.
+        (WebInspector.BreakpointsSidebarPane.prototype.addBreakpoint):
+        Adds the breakpoint to the breakpoints array. Registers for the disabled
+        and enabled event types. Call InspectorController.addBreakpoint if attached.
+        (WebInspector.BreakpointsSidebarPane.prototype.removeBreakpoint):
+        Removes the breakpoint from the breakpoints array. Deregisters for the disabled
+        and enabled event types. Call InspectorController.removeBreakpoint if attached.
+        (WebInspector.BreakpointsSidebarPane.prototype._breakpointEnableChanged):
+        Call InspectorController.addBreakpoint or InspectorController.removeBreakpoint
+        depending on the enabled state of the breakpoint.
+        * WebCore.vcproj/WebCore.vcproj: Add new files.
+        * page/inspector/WebKit.qrc: Ditto.
+        * page/inspector/inspector.html: Ditto.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Make addSourceToFrame not dependent on InspectorResource so it
         can be used to add source of a passed in string and mime-type to
         a frame. Added addResourceSourceToFrame for use by SourceView.

@@ -3647,6 +3647,18 @@
 					>
 				</File>
 				<File
+					RelativePath="..\page\inspector\CallStackSidebarPane.js"
+					>
+				</File>
+				<File
+					RelativePath="..\page\inspector\BreakpointsSidebarPane.js"
+					>
+				</File>
+				<File
+					RelativePath="..\page\inspector\Breakpoint.js"
+					>
+				</File>
+				<File
 					RelativePath="..\page\inspector\Panel.js"
 					>
 				</File>
