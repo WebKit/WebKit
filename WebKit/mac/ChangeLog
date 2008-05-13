@@ -1,3 +1,14 @@
+2008-05-13  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/5926425> HIWebViewCreateWithClass declared as API in HIWebView.h but never exported from WebKit.framework
+
+        * Carbon/HIWebView.h: Remove HIWebViewCreateWithClass.
+        * Carbon/HIWebView.m: Ditto.
+        (HIWebViewCreate):
+        (HIWebViewConstructor):
+
 2008-05-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Ada Chan.

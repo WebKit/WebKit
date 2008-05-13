@@ -72,32 +72,6 @@ HIWebViewCreate(HIViewRef * outControl) AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_B
 #ifdef __OBJC__
 
 /*
- *  HIWebViewCreateWithClass(HIViewRef * outControl, Class aClass)
- *  
- *  Summary:
- *    Creates a new web view using the specified subclass of WebView.
- *  
- *  Parameters:
- *    
- *    aClass:
- *      Either WebView, or a subclass, to be created and wrapped in an HIWebView.
- *    outControl:
- *      The new web view.
- *  
- *  Result:
- *    An operating system status code.
- *  
- *  Availability:
- *    Mac OS X:         in version 10.4 and later [32-bit only]
- *    CarbonLib:        not available
- *    Non-Carbon CFM:   not available
- */
-extern OSStatus
-HIWebViewCreateWithClass(
-  Class       aClass,
-  HIViewRef * outControl) AVAILABLE_WEBKIT_VERSION_2_0_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_3_1;
-
-/*
  *  HIWebViewGetWebView()
  *  
  *  Summary:
