@@ -46,9 +46,11 @@
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorClient.h"
+#include "JavaScriptCallFrame.h"
 #include "JSDOMWindow.h"
 #include "JSInspectedObjectWrapper.h"
 #include "JSInspectorCallbackWrapper.h"
+#include "JSJavaScriptCallFrame.h"
 #include "JSNode.h"
 #include "JSRange.h"
 #include "JavaScriptDebugServer.h"
@@ -87,6 +89,12 @@ static JSRetainPtr<JSStringRef> jsStringRef(const char* str)
 static JSRetainPtr<JSStringRef> jsStringRef(const String& str)
 {
     return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithCharacters(str.characters(), str.length()));
+}
+
+static JSRetainPtr<JSStringRef> jsStringRef(const UString& str)
+{
+    JSLock lock;
+    return JSRetainPtr<JSStringRef>(toRef(str.rep()));
 }
 
 static String toString(JSContextRef context, JSValueRef value, JSValueRef* exception)
@@ -777,6 +785,121 @@ static JSValueRef debuggerAttached(JSContextRef ctx, JSObjectRef /*function*/, J
     return JSValueMakeBoolean(ctx, controller->debuggerAttached());
 }
 
+static JSValueRef currentCallFrame(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    JavaScriptCallFrame* callFrame = controller->currentCallFrame();
+    if (!callFrame->isValid())
+        return JSValueMakeUndefined(ctx);
+
+    ExecState* globalExec = callFrame->execState()->lexicalGlobalObject()->globalExec();
+
+    JSLock lock;
+    return toRef(JSInspectedObjectWrapper::wrap(globalExec, toJS(toJS(ctx), callFrame)));
+}
+
+static JSValueRef pauseInDebugger(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    controller->pauseInDebugger();
+
+    return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef resumeDebugger(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    controller->resumeDebugger();
+
+    return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef stepOverStatementInDebugger(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    controller->stepOverStatementInDebugger();
+
+    return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef stepIntoStatementInDebugger(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    controller->stepIntoStatementInDebugger();
+
+    return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef stepOutOfFunctionInDebugger(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    controller->stepOutOfFunctionInDebugger();
+
+    return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef addBreakpoint(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    if (argumentCount < 2)
+        return JSValueMakeUndefined(ctx);
+
+    double sourceID = JSValueToNumber(ctx, arguments[0], exception);
+    if (exception && *exception)
+        return JSValueMakeUndefined(ctx);
+
+    double lineNumber = JSValueToNumber(ctx, arguments[1], exception);
+    if (exception && *exception)
+        return JSValueMakeUndefined(ctx);
+
+    controller->addBreakpoint(static_cast<int>(sourceID), static_cast<unsigned>(lineNumber));
+
+    return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef removeBreakpoint(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    if (argumentCount < 2)
+        return JSValueMakeUndefined(ctx);
+
+    double sourceID = JSValueToNumber(ctx, arguments[0], exception);
+    if (exception && *exception)
+        return JSValueMakeUndefined(ctx);
+
+    double lineNumber = JSValueToNumber(ctx, arguments[1], exception);
+    if (exception && *exception)
+        return JSValueMakeUndefined(ctx);
+
+    controller->removeBreakpoint(static_cast<int>(sourceID), static_cast<unsigned>(lineNumber));
+
+    return JSValueMakeUndefined(ctx);
+}
+
 #pragma mark -
 #pragma mark InspectorController Class
 
@@ -1010,6 +1133,14 @@ void InspectorController::windowScriptObjectAvailable()
         { "startDebuggingAndReloadInspectedPage", WebCore::startDebuggingAndReloadInspectedPage, kJSPropertyAttributeNone },
         { "stopDebugging", WebCore::stopDebugging, kJSPropertyAttributeNone },
         { "debuggerAttached", WebCore::debuggerAttached, kJSPropertyAttributeNone },
+        { "currentCallFrame", WebCore::currentCallFrame, kJSPropertyAttributeNone },
+        { "pauseInDebugger", WebCore::pauseInDebugger, kJSPropertyAttributeNone },
+        { "resumeDebugger", WebCore::resumeDebugger, kJSPropertyAttributeNone },
+        { "stepOverStatementInDebugger", WebCore::stepOverStatementInDebugger, kJSPropertyAttributeNone },
+        { "stepIntoStatementInDebugger", WebCore::stepIntoStatementInDebugger, kJSPropertyAttributeNone },
+        { "stepOutOfFunctionInDebugger", WebCore::stepOutOfFunctionInDebugger, kJSPropertyAttributeNone },
+        { "addBreakpoint", WebCore::addBreakpoint, kJSPropertyAttributeNone },
+        { "removeBreakpoint", WebCore::removeBreakpoint, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
 
@@ -1877,6 +2008,7 @@ void InspectorController::startDebuggingAndReloadInspectedPage()
 {
     JavaScriptDebugServer::shared().addListener(this, m_inspectedPage);
     m_debuggerAttached = true;
+    JavaScriptDebugServer::shared().clearBreakpoints();
     m_inspectedPage->mainFrame()->loader()->reload();
 }
 
@@ -1884,6 +2016,56 @@ void InspectorController::stopDebugging()
 {
     JavaScriptDebugServer::shared().removeListener(this, m_inspectedPage);
     m_debuggerAttached = false;
+}
+
+JavaScriptCallFrame* InspectorController::currentCallFrame() const
+{
+    return JavaScriptDebugServer::shared().currentCallFrame();
+}
+
+void InspectorController::pauseInDebugger()
+{
+    if (!m_debuggerAttached)
+        return;
+    JavaScriptDebugServer::shared().pauseOnNextStatement();
+}
+
+void InspectorController::resumeDebugger()
+{
+    if (!m_debuggerAttached)
+        return;
+    JavaScriptDebugServer::shared().resume();
+}
+
+void InspectorController::stepOverStatementInDebugger()
+{
+    if (!m_debuggerAttached)
+        return;
+    JavaScriptDebugServer::shared().stepOverStatement();
+}
+
+void InspectorController::stepIntoStatementInDebugger()
+{
+    if (!m_debuggerAttached)
+        return;
+    JavaScriptDebugServer::shared().stepIntoStatement();
+}
+
+void InspectorController::stepOutOfFunctionInDebugger()
+{
+    if (!m_debuggerAttached)
+        return;
+    JavaScriptDebugServer::shared().stepOutOfFunction();
+}
+
+void InspectorController::addBreakpoint(int sourceID, unsigned lineNumber)
+{
+    JavaScriptDebugServer::shared().addBreakpoint(sourceID, lineNumber);
+}
+
+void InspectorController::removeBreakpoint(int sourceID, unsigned lineNumber)
+{
+    JavaScriptDebugServer::shared().removeBreakpoint(sourceID, lineNumber);
 }
 
 static void drawOutlinedRect(GraphicsContext& context, const IntRect& rect, const Color& fillColor)
@@ -2002,16 +2184,35 @@ bool InspectorController::handleException(JSContextRef context, JSValueRef excep
 #pragma mark -
 #pragma mark JavaScriptDebugListener functions
 
-void InspectorController::didParseSource(const UString& /*source*/, int /*startingLineNumber*/, const UString& /*sourceURL*/, int /*sourceID*/)
+void InspectorController::didParseSource(const UString& source, int startingLineNumber, const UString& sourceURL, int sourceID)
 {
+    JSValueRef sourceIDValue = JSValueMakeNumber(m_scriptContext, sourceID);
+    JSValueRef sourceURLValue = JSValueMakeString(m_scriptContext, jsStringRef(sourceURL).get());
+    JSValueRef sourceValue = JSValueMakeString(m_scriptContext, jsStringRef(source).get());
+    JSValueRef startingLineNumberValue = JSValueMakeNumber(m_scriptContext, startingLineNumber);
+
+    JSValueRef exception = 0;
+    JSValueRef arguments[] = { sourceIDValue, sourceURLValue, sourceValue, startingLineNumberValue };
+    callFunction(m_scriptContext, m_scriptObject, "parsedScriptSource", 4, arguments, exception);
 }
 
-void InspectorController::failedToParseSource(const UString& /*source*/, int /*startingLineNumber*/, const UString& /*sourceURL*/, int /*errorLine*/, const UString& /*errorMessage*/)
+void InspectorController::failedToParseSource(const UString& source, int startingLineNumber, const UString& sourceURL, int errorLine, const UString& errorMessage)
 {
+    JSValueRef sourceURLValue = JSValueMakeString(m_scriptContext, jsStringRef(sourceURL).get());
+    JSValueRef sourceValue = JSValueMakeString(m_scriptContext, jsStringRef(source).get());
+    JSValueRef startingLineNumberValue = JSValueMakeNumber(m_scriptContext, startingLineNumber);
+    JSValueRef errorLineValue = JSValueMakeNumber(m_scriptContext, errorLine);
+    JSValueRef errorMessageValue = JSValueMakeString(m_scriptContext, jsStringRef(errorMessage).get());
+
+    JSValueRef exception = 0;
+    JSValueRef arguments[] = { sourceURLValue, sourceValue, startingLineNumberValue, errorLineValue, errorMessageValue };
+    callFunction(m_scriptContext, m_scriptObject, "failedToParseScriptSource", 5, arguments, exception);
 }
 
 void InspectorController::didPause()
 {
+    JSValueRef exception = 0;
+    callFunction(m_scriptContext, m_scriptObject, "pausedScript", 0, 0, exception);
 }
 
 } // namespace WebCore

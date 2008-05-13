@@ -1,5 +1,39 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Add debugger related functions to the InspectorController and
+        expose them to the JavaScript side of InspectorController.
+
+        Reviewed by Geoff Garen.
+
+        * page/InspectorController.cpp:
+        (WebCore::jsStringRef): Added helper to convert a UString to a JSStringRef.
+        (WebCore::currentCallFrame): Call InspectorController::currentCallFrame.
+        (WebCore::pauseInDebugger): Call InspectorController::pauseInDebugger.
+        (WebCore::resumeDebugger): Call InspectorController::resumeDebugger.
+        (WebCore::stepOverStatementInDebugger): Call InspectorController::stepOverStatementInDebugger.
+        (WebCore::stepIntoStatementInDebugger): Call InspectorController::stepIntoStatementInDebugger.
+        (WebCore::stepOutOfFunctionInDebugger): Call InspectorController::stepOutOfFunctionInDebugger.
+        (WebCore::addBreakpoint): Call InspectorController::addBreakpoint.
+        (WebCore::removeBreakpoint): Call InspectorController::removeBreakpoint.
+        (WebCore::InspectorController::windowScriptObjectAvailable): Add the new functions to the
+        InspectorController JavaScript class.
+        (WebCore::InspectorController::startDebuggingAndReloadInspectedPage): Clear breakpoints.
+        (WebCore::InspectorController::currentCallFrame): Return the currentCallFrame from the
+        JavaScriptDebugServer.
+        (WebCore::InspectorController::pauseInDebugger): Call JavaScriptDebugServer's pauseOnNextStatement.
+        (WebCore::InspectorController::resumeDebugger): Call JavaScriptDebugServer's resume.
+        (WebCore::InspectorController::stepOverStatementInDebugger):  Call JavaScriptDebugServer's stepOverStatement.
+        (WebCore::InspectorController::stepIntoStatementInDebugger): Call JavaScriptDebugServer's stepIntoStatement.
+        (WebCore::InspectorController::stepOutOfFunctionInDebugger): Call JavaScriptDebugServer's stepOutOfFunction.
+        (WebCore::InspectorController::addBreakpoint): Call JavaScriptDebugServer's addBreakpoint.
+        (WebCore::InspectorController::removeBreakpoint): Call JavaScriptDebugServer's removeBreakpoint.
+        (WebCore::InspectorController::didParseSource): Call into the Inspector's JavaScript.
+        (WebCore::InspectorController::failedToParseSource): Ditto.
+        (WebCore::InspectorController::didPause): Ditto.
+        * page/InspectorController.h: Add new functions.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Implements more debugger APIs on JavaScriptDebugServer and reduces
         the number of callbacks to JavaScriptDebugListeners. These changes
         will better facilitate debugger optimizations when SquirrelFish merges.

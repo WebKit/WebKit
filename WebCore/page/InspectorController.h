@@ -47,6 +47,7 @@ class Database;
 class DocumentLoader;
 class GraphicsContext;
 class InspectorClient;
+class JavaScriptCallFrame;
 class Node;
 class Page;
 class ResourceResponse;
@@ -133,6 +134,18 @@ public:
     void startDebuggingAndReloadInspectedPage();
     void stopDebugging();
     bool debuggerAttached() const { return m_debuggerAttached; }
+
+    JavaScriptCallFrame* currentCallFrame() const;
+
+    void addBreakpoint(int sourceID, unsigned lineNumber);
+    void removeBreakpoint(int sourceID, unsigned lineNumber);
+
+    void pauseInDebugger();
+    void resumeDebugger();
+
+    void stepOverStatementInDebugger();
+    void stepIntoStatementInDebugger();
+    void stepOutOfFunctionInDebugger();
 
     void drawNodeHighlight(GraphicsContext&) const;
 
