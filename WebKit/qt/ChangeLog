@@ -1,3 +1,11 @@
+2008-05-13  Andy Shaw  <andy@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixes: QWebHistory::forward() should go forwards and not back
+
+        * Api/qwebhistory.cpp:
+
 2008-05-12  Alexey Proskuryakov  <ap@webkit.org>
 
         Roll out recent  threading changes (r32807, r32810, r32819, r32822) to simplify

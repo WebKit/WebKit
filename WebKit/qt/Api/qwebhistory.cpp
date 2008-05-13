@@ -291,7 +291,7 @@ void QWebHistory::back()
 */
 void QWebHistory::forward()
 {
-    d->lst->goBack();
+    d->lst->goForward();
     WebCore::Page* page = d->lst->page();
     page->goToItem(currentItem().d->item, WebCore::FrameLoadTypeIndexedBackForward);
 }
