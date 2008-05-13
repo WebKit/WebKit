@@ -1,3 +1,13 @@
+2008-05-13  chris fleizach  <cfleizach@apple.com>
+
+        Beth Dakin
+
+        <rdar://problem/5908446> AX: webkit needs to return blockquote information for all AX objects, not just in AXTextMarker info
+
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2008-05-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by John Sullivan.

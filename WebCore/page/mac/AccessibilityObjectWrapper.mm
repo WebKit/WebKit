@@ -537,6 +537,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
                       @"AXVisited",
                       NSAccessibilityLinkedUIElementsAttribute,
                       NSAccessibilitySelectedAttribute,
+                      @"AXBlockQuoteLevel",
                       nil];
     }
     if (anchorAttrs == nil) {
@@ -963,6 +964,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return textMarkerForVisiblePosition(startOfDocument(renderer->document()));
         if ([attributeName isEqualToString: @"AXEndTextMarker"])
             return textMarkerForVisiblePosition(endOfDocument(renderer->document()));
+
+        if ([attributeName isEqualToString: @"AXBlockQuoteLevel"])
+            return [NSNumber numberWithInt:blockquoteLevel(renderer)];
     }
     
     if ([attributeName isEqualToString: NSAccessibilityLinkedUIElementsAttribute]) {
