@@ -1,3 +1,12 @@
+2008-05-13  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        <rdar://problem/5932677> AX: Submit buttons aren't returning AXTitle
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::title):
+
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
         Adds an overlay window that covers the scripts panel and

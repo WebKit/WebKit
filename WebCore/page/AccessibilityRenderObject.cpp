@@ -622,9 +622,6 @@ String AccessibilityRenderObject::title() const
     if (!ariaLabel.isEmpty())
         return ariaLabel;
     
-    if (roleValue() == ButtonRole)
-        return textUnderElement();
-    
     bool isInputTag = node->hasTagName(inputTag);
     if (isInputTag) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
@@ -637,6 +634,9 @@ String AccessibilityRenderObject::title() const
         if (label)
             return label->innerText();
     }
+    
+    if (roleValue() == ButtonRole)
+        return textUnderElement();
     
     if (isLink()) {
         Element* element = static_cast<Element*>(node);    
