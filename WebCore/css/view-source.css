@@ -27,12 +27,14 @@ body {
 }
 
 table {
+    width: 100%;
     border-spacing: 0;
     counter-reset: lines;
     white-space: pre-wrap !important;
     margin: 0;
     word-break: break-word;
-    font-family: monospace;
+    font-size: 10px;
+    font-family: Monaco, Lucida Console, monospace;
 }
 
 td {
@@ -41,10 +43,11 @@ td {
 }
 
 .webkit-line-gutter-backdrop, .webkit-line-number {
-    padding: 0 2px !important;
-    min-width: 21px;
+    -webkit-box-sizing: border-box;
+    padding: 0 4px !important;
+    width: 31px;
     background-color: rgb(240, 240, 240);
-    border-right: 1px solid rgb(128, 128, 128) !important;
+    border-right: 1px solid rgb(187, 187, 187) !important;
     -webkit-user-select: none;
 }
 
