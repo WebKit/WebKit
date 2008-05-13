@@ -1,3 +1,21 @@
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a crash seen in Xcode where CallUIDelegateReturningBoolean
+        was referencing a nil WebView under validateUserInterfaceItem.
+        The validateUserInterfaceItem methods was being called at a time
+        when the WebHTMLView is being torndown.
+
+        <rdar://problem/5806229> A crash occurs at CallUIDelegateReturningBoolean()
+        while mousing down on menu bar after Xcode News window is opened
+
+        Reviewed by Ada Chan.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validateUserInterfaceItem:]): NULL check the WebView and
+        return NO when it is nil. Adds a comment.
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView validateUserInterfaceItem:]): Ditto.
+
 2008-05-13  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by John Sullivan.
