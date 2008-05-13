@@ -1,3 +1,16 @@
+2008-05-09  Adam Roben  <aroben@apple.com>
+
+        Disable a MSVC warning
+
+        Reviewed by Darin Adler.
+
+        * win/tools/vsprops/common.vsprops: Add warning 4503 to the list of
+        disabled warnings. It's a warning about decorated names being longer
+        than MSVC's limit of 4096 characters. This warning doesn't indicate a
+        correctness problem, but these truncated decorated names will be
+        harder to recognize during debugging or when they appear in linker
+        errors.
+
 2008-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
