@@ -1,3 +1,15 @@
+2008-05-12  Adam Roben  <aroben@apple.com>
+
+        Fix a MSVC warning in GetEOTHeader
+
+        Reviewed by Dan Bernstein.
+
+        * platform/graphics/win/GetEOTHeader.cpp:
+        (WebCore::getEOTHeader): MSVC complains that having a 0-sized array in
+        a struct is a non-standard extension. I've replaced the 0-sized arrays
+        with arrays of 1 element, and replaced sizeof(structType) with
+        offsetof(structType, arrayMember).
+
 2008-05-09  Adam Roben  <aroben@apple.com>
 
         Fix a MSVC warning in TextCodecICU

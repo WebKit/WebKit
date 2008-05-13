@@ -73,7 +73,7 @@ struct sfntHeader {
     BigEndianUShort searchRange;
     BigEndianUShort entrySelector;
     BigEndianUShort rangeShift;
-    TableDirectoryEntry tables[];
+    TableDirectoryEntry tables[1];
 };
 
 struct OS2Table {
@@ -145,7 +145,7 @@ struct nameTable {
     BigEndianUShort format;
     BigEndianUShort count;
     BigEndianUShort stringOffset;
-    nameRecord nameRecords[];
+    nameRecord nameRecords[1];
 };
 
 #pragma pack()
@@ -175,12 +175,12 @@ bool getEOTHeader(SharedBuffer* fontData, Vector<UInt8, 512>& eotHeader)
     prefix->version = 0x00020001;
     prefix->flags = 0;
 
-    if (dataLength < sizeof(sfntHeader))
+    if (dataLength < offsetof(sfntHeader, tables))
         return false;
 
     const sfntHeader* sfnt = reinterpret_cast<const sfntHeader*>(data);
 
-    if (dataLength < sizeof(sfntHeader) + sfnt->numTables * sizeof(TableDirectoryEntry))
+    if (dataLength < offsetof(sfntHeader, tables) + sfnt->numTables * sizeof(TableDirectoryEntry))
         return false;
 
     bool haveOS2 = false;
@@ -237,13 +237,13 @@ bool getEOTHeader(SharedBuffer* fontData, Vector<UInt8, 512>& eotHeader)
                 }
             case 'name':
                 {
-                    if (dataLength < tableOffset + sizeof(nameTable))
+                    if (dataLength < tableOffset + offsetof(nameTable, nameRecords))
                         return false;
 
                     haveName = true;
                     const nameTable* name = reinterpret_cast<const nameTable*>(data + tableOffset);
                     for (int j = 0; j < name->count; j++) {
-                        if (dataLength < tableOffset + sizeof(nameTable) + (j + 1) * sizeof(nameRecord))
+                        if (dataLength < tableOffset + offsetof(nameTable, nameRecords) + (j + 1) * sizeof(nameRecord))
                             return false;
                         if (name->nameRecords[j].platformID == 3 && name->nameRecords[j].encodingID == 1 && name->nameRecords[j].languageID == 0x0409) {
                             if (dataLength < tableOffset + name->stringOffset + name->nameRecords[j].offset + name->nameRecords[j].length)
