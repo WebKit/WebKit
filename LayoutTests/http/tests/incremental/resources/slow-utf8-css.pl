@@ -10,12 +10,12 @@ print "Cache-Control: no-store, no-cache, must-revalidate\n";
 print "Pragma: no-cache\n";
 print "\n";
 
-print "\xef\xbb\xbfTest for bug 10753: The beginning of a CSS file is missing.\n\n";
-# Dump some BOMs to bypass CFNetwork buffering.
+print "\xef\xbb\xbf#result {color:green;}\n";
+# Dump some spaces to bypass CFNetwork buffering.
 for ($count = 1; $count < 4000; $count++) {
-    print "\xef\xbb\xbf";
+    print "   ";
 }
 
 # Delay to force the second line of text to be decoded as a separate chunk.
 sleep 1;
-print "You should see a bug description on a separate line above this one.";
+print "body {}";

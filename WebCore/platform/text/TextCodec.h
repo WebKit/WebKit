@@ -72,9 +72,6 @@ namespace WebCore {
         // unencodable character into the given replacement buffer. 
         // The length of the string (not including the null) will be returned.
         static int getUnencodableReplacement(unsigned codePoint, UnencodableHandling, UnencodableReplacementArray);
-
-    protected:
-        static void appendOmittingBOM(Vector<UChar>&, const UChar*, size_t length);
     };
 
     typedef void (*EncodingNameRegistrar)(const char* alias, const char* name);

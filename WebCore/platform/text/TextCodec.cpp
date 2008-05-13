@@ -32,26 +32,8 @@
 
 namespace WebCore {
 
-const UChar BOM = 0xFEFF;
-
 TextCodec::~TextCodec()
 {
-}
-
-// We strip BOM characters because they can show up both at the start of content
-// and inside content, and we never want them to end up in the decoded text.
-void TextCodec::appendOmittingBOM(Vector<UChar>& v, const UChar* characters, size_t length)
-{
-    size_t start = 0;
-    for (size_t i = 0; i != length; ++i) {
-        if (BOM == characters[i]) {
-            if (start != i)
-                v.append(&characters[start], i - start);
-            start = i + 1;
-        }
-    }
-    if (start != length)
-        v.append(&characters[start], length - start);
 }
 
 int TextCodec::getUnencodableReplacement(unsigned codePoint, UnencodableHandling handling, UnencodableReplacementArray replacement)

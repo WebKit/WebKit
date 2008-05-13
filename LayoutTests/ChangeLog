@@ -1,5 +1,29 @@
 2008-05-13  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18681
+        <rdar://problem/5888130> WebKit should not remove BOM characters from content.
+
+        * fast/encoding/bom-in-content-expected.txt: Added.
+        * fast/encoding/bom-in-content.html: Added.
+        * fast/encoding/bom-in-content-utf16-expected.txt: Added.
+        * fast/encoding/bom-in-content-utf16.html: Added.
+
+        * http/tests/incremental/resources: Added.
+        * http/tests/incremental/resources/slow-utf8-css.pl: Copied from LayoutTests/http/tests/incremental/slow-utf8-css.pl.
+        * http/tests/incremental/slow-utf8-css-expected.txt: Added.
+        * http/tests/incremental/slow-utf8-css.html: Added.
+        * http/tests/incremental/slow-utf8-css.pl: Removed.
+        * platform/mac/http/tests/incremental: Removed.
+        * platform/mac/http/tests/incremental/slow-utf8-css-expected.checksum: Removed.
+        * platform/mac/http/tests/incremental/slow-utf8-css-expected.png: Removed.
+        * platform/mac/http/tests/incremental/slow-utf8-css-expected.txt: Removed.
+        This test was relying on BOM characters being removed, but this was not what it tested for.
+        Rewrote it and made text-only.
+
+2008-05-13  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Add tests verifying that we don't mix up some similar, but incompatible encodings.

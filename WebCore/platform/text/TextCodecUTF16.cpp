@@ -34,8 +34,6 @@ using std::auto_ptr;
 
 namespace WebCore {
 
-const UChar BOM = 0xFEFF;
-
 void TextCodecUTF16::registerEncodingNames(EncodingNameRegistrar registrar)
 {
     registrar("UTF-16LE", "UTF-16LE");
@@ -85,8 +83,7 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool, bool stopO
             c = m_bufferedByte | (p[0] << 8);
         else
             c = (m_bufferedByte << 8) | p[0];
-        if (c != BOM)
-            *q++ = c;
+        *q++ = c;
         m_haveBufferedByte = false;
         p += 1;
         numChars -= 1;
@@ -96,15 +93,13 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool, bool stopO
         for (size_t i = 0; i < numChars; ++i) {
             UChar c = p[0] | (p[1] << 8);
             p += 2;
-            if (c != BOM)
-                *q++ = c;
+            *q++ = c;
         }
     else
         for (size_t i = 0; i < numChars; ++i) {
             UChar c = (p[0] << 8) | p[1];
             p += 2;
-            if (c != BOM)
-                *q++ = c;
+            *q++ = c;
         }
 
     if (numBytes & 1) {

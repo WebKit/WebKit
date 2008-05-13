@@ -1,0 +1,3 @@
+Test for bug 10753: The beginning of a CSS file is missing.
+
+PASS

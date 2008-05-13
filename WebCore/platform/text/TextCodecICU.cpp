@@ -282,7 +282,7 @@ String TextCodecICU::decode(const char* bytes, size_t length, bool flush, bool s
 
     do {
         int ucharsDecoded = decodeToBuffer(buffer, bufferLimit, source, sourceLimit, offsets, flush, err);
-        appendOmittingBOM(result, buffer, ucharsDecoded);
+        result.append(buffer, ucharsDecoded);
     } while (err == U_BUFFER_OVERFLOW_ERROR);
 
     if (U_FAILURE(err)) {

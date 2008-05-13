@@ -49,6 +49,8 @@ void TextDecoder::reset(const TextEncoding& encoding)
 
 String TextDecoder::checkForBOM(const char* data, size_t length, bool flush, bool stopOnError, bool& sawError)
 {
+    ASSERT(!m_checkedForBOM);
+
     // Check to see if we found a BOM.
     size_t numBufferedBytes = m_numBufferedBytes;
     size_t buf1Len = numBufferedBytes;
@@ -62,22 +64,28 @@ String TextDecoder::checkForBOM(const char* data, size_t length, bool flush, boo
 
     const TextEncoding* encodingConsideringBOM = &m_encoding;
     bool foundBOM = true;
+    size_t lengthOfBOM = 0;
     if (c1 == 0xFF && c2 == 0xFE) {
-        if (c3 != 0 || c4 != 0) 
+        if (c3 != 0 || c4 != 0)  {
             encodingConsideringBOM = &UTF16LittleEndianEncoding();
-        else if (numBufferedBytes + length > sizeof(m_bufferedBytes))
+            lengthOfBOM = 2;
+        } else if (numBufferedBytes + length > sizeof(m_bufferedBytes)) {
             encodingConsideringBOM = &UTF32LittleEndianEncoding();
-        else
+            lengthOfBOM = 4;
+        } else
             foundBOM = false;
-    }
-    else if (c1 == 0xEF && c2 == 0xBB && c3 == 0xBF)
+    } else if (c1 == 0xEF && c2 == 0xBB && c3 == 0xBF) {
         encodingConsideringBOM = &UTF8Encoding();
-    else if (c1 == 0xFE && c2 == 0xFF)
+        lengthOfBOM = 3;
+    } else if (c1 == 0xFE && c2 == 0xFF) {
         encodingConsideringBOM = &UTF16BigEndianEncoding();
-    else if (c1 == 0 && c2 == 0 && c3 == 0xFE && c4 == 0xFF)
+        lengthOfBOM = 2;
+    } else if (c1 == 0 && c2 == 0 && c3 == 0xFE && c4 == 0xFF) {
         encodingConsideringBOM = &UTF32BigEndianEncoding();
-    else
+        lengthOfBOM = 4;
+    } else
         foundBOM = false;
+
     if (!foundBOM && numBufferedBytes + length <= sizeof(m_bufferedBytes) && !flush) {
         // Continue to look for the BOM.
         memcpy(&m_bufferedBytes[numBufferedBytes], data, length);
@@ -90,6 +98,18 @@ String TextDecoder::checkForBOM(const char* data, size_t length, bool flush, boo
     if (!m_codec)
         return String();
     m_checkedForBOM = true;
+
+    // Skip the BOM.
+    if (foundBOM) {
+        ASSERT(numBufferedBytes < lengthOfBOM);
+        size_t numUnbufferedBOMBytes = lengthOfBOM - numBufferedBytes;
+        ASSERT(numUnbufferedBOMBytes <= length);
+
+        data += numUnbufferedBOMBytes;
+        length -= numUnbufferedBOMBytes;
+        numBufferedBytes = 0;
+        m_numBufferedBytes = 0;
+    }
 
     // Handle case where we have some buffered bytes to deal with.
     if (numBufferedBytes) {

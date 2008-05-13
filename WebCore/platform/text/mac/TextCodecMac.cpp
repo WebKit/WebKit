@@ -243,7 +243,7 @@ String TextCodecMac::decode(const char* bytes, size_t length, bool flush, bool s
         }
 
         ASSERT(!(bytesWritten % sizeof(UChar)));
-        appendOmittingBOM(result, buffer, bytesWritten / sizeof(UChar));
+        result.append(buffer, bytesWritten / sizeof(UChar));
 
         bufferWasFull = status == kTECOutputBufferFullStatus;
     }
@@ -252,7 +252,7 @@ String TextCodecMac::decode(const char* bytes, size_t length, bool flush, bool s
         unsigned long bytesWritten = 0;
         TECFlushText(m_converterTEC, reinterpret_cast<unsigned char*>(buffer), sizeof(buffer), &bytesWritten);
         ASSERT(!(bytesWritten % sizeof(UChar)));
-        appendOmittingBOM(result, buffer, bytesWritten / sizeof(UChar));
+        result.append(buffer, bytesWritten / sizeof(UChar));
     }
 
     String resultString = String::adopt(result);
