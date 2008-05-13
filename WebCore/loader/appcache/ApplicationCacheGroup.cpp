@@ -583,11 +583,17 @@ void ApplicationCacheGroup::addEntry(const String& url, unsigned type)
 {
     ASSERT(m_cacheBeingUpdated);
     
-    // Don't add the url if we already have an implicit resource in the cache
+    // Don't add the URL if we already have an implicit resource in the cache
     if (ApplicationCacheResource* resource = m_cacheBeingUpdated->resourceForURL(url)) {
         ASSERT(resource->type() & ApplicationCacheResource::Implicit);
     
         resource->addType(type);
+        return;
+    }
+
+    // Don't add the URL if it's the same as the manifest URL.
+    if (m_manifestResource && m_manifestResource->url() == url) {
+        m_manifestResource->addType(type);
         return;
     }
     

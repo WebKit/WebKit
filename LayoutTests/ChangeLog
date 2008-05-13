@@ -2,6 +2,16 @@
 
         Reviewed by Adam.
 
+        Add test with a manifest file that lists itself.
+        
+        * http/tests/appcache/manifest-containing-itself-expected.txt: Added.
+        * http/tests/appcache/manifest-containing-itself.html: Added.
+        * http/tests/appcache/resources/manifest-containing-itself.manifest: Added.
+
+2008-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
         * http/tests/appcache/empty-manifest-expected.txt: Added.
         * http/tests/appcache/empty-manifest.html: Added.
         * http/tests/appcache/resources/empty.manifest: Added.
