@@ -1,3 +1,21 @@
+2008-05-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        <rdar://problem/4949018> JavaScriptCore API claims to work with UTF8 strings, but only works
+        with ASCII strings
+        
+        * kjs/ustring.h:
+        * kjs/ustring.cpp:
+        (KJS::UString::Rep::createFromUTF8):
+        Added. Implementation adapted from JSStringCreateWithUTF8CString().
+
+        * API/JSStringRef.cpp:
+        (JSStringCreateWithUTF8CString):
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::OpaqueJSClass):
+        Use UString::Rep::createFromUTF8().
+
 2008-05-12  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.

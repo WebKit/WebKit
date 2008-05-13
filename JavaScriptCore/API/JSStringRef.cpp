@@ -51,13 +51,11 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
 {
     JSLock lock;
 
-    size_t length = strlen(string);
-    Vector<UChar, 1024> buffer(length);
-    UChar* p = buffer.data();
-    if (conversionOK != convertUTF8ToUTF16(&string, string + length, &p, p + length))
+    RefPtr<UString::Rep> result = UString::Rep::createFromUTF8(string);
+    if (result.get() == &UString::Rep::null)
         return 0;
 
-    return toRef(UString(buffer.data(), p - buffer.data()).rep()->ref());
+    return toRef(result.release().releaseRef());
 }
 
 JSStringRef JSStringRetain(JSStringRef string)

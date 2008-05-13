@@ -94,6 +94,10 @@ namespace KJS {
       static PassRefPtr<Rep> createCopying(const UChar *d, int l);
       static PassRefPtr<Rep> create(PassRefPtr<Rep> base, int offset, int length);
 
+      // Constructs a string from a UTF-8 string, using strict conversion (see comments in UTF8.h).
+      // Returns UString::Rep::null for null input or conversion failure.
+      static PassRefPtr<Rep> createFromUTF8(const char*);
+
       void destroy();
       
       bool baseIsSelf() const { return baseString == this; }

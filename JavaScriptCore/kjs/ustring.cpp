@@ -238,6 +238,20 @@ PassRefPtr<UString::Rep> UString::Rep::create(PassRefPtr<Rep> base, int offset, 
   return adoptRef(r);
 }
 
+PassRefPtr<UString::Rep> UString::Rep::createFromUTF8(const char* string)
+{
+    if (!string)
+        return &UString::Rep::null;
+
+    size_t length = strlen(string);
+    Vector<UChar, 1024> buffer(length);
+    UChar* p = buffer.data();
+    if (conversionOK != convertUTF8ToUTF16(&string, string + length, &p, p + length))
+        return &UString::Rep::null;
+
+    return UString::Rep::createCopying(buffer.data(), p - buffer.data());
+}
+
 void UString::Rep::destroy()
 {
   // Static null and empty strings can never be destroyed, but we cannot rely on reference counting, because ref/deref are not thread-safe.
