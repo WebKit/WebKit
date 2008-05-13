@@ -611,9 +611,13 @@ static HTMLLabelElement* labelForElement(Element* element)
 
 String AccessibilityRenderObject::title() const
 {
-    if (!m_renderer || m_areaElement || !m_renderer->element())
+    if (!m_renderer || m_areaElement)
         return String();
 
+    Node* node = m_renderer->element();
+    if (!node)
+        return String();
+    
     String ariaLabel = ariaLabeledByAttribute();
     if (!ariaLabel.isEmpty())
         return ariaLabel;
@@ -621,20 +625,29 @@ String AccessibilityRenderObject::title() const
     if (roleValue() == ButtonRole)
         return textUnderElement();
     
-    bool isInputTag = m_renderer->element()->hasTagName(inputTag);
+    bool isInputTag = node->hasTagName(inputTag);
     if (isInputTag) {
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
         if (input->isTextButton())
             return input->value();
     }
     
     if (isInputTag || AccessibilityObject::isARIAInput(ariaRoleAttribute())) {
-        HTMLLabelElement* label = labelForElement(static_cast<Element*>(m_renderer->element()));
+        HTMLLabelElement* label = labelForElement(static_cast<Element*>(node));
         if (label)
             return label->innerText();
     }
     
-    if (isLink() || isHeading())
+    if (isLink()) {
+        Element* element = static_cast<Element*>(node);    
+        const AtomicString& title = element->getAttribute(titleAttr);
+        if (!title.isEmpty())
+            return title;    
+        
+        return textUnderElement();
+    }
+    
+    if (isHeading())
         return textUnderElement();
     
     return String();

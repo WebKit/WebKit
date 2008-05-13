@@ -1,3 +1,12 @@
+2008-05-13  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        <rdar://problem/5471973> Some AXLinks are not getting AXTitles though there is title text
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::title):
+
 2008-05-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Eric Seidel.
