@@ -978,7 +978,9 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
     if (itemCount < 1)
         return;
 
-    int index = (optionToListIndex(selectedIndex()) + searchStartOffset) % itemCount;
+    int selected = selectedIndex();
+    int index = (optionToListIndex(selected >= 0 ? selected : 0) + searchStartOffset) % itemCount;
+    ASSERT(index >= 0);
     for (int i = 0; i < itemCount; i++, index = (index + 1) % itemCount) {
         if (!items[index]->hasTagName(optionTag) || items[index]->disabled())
             continue;

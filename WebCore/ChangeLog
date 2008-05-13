@@ -1,3 +1,16 @@
+2008-05-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dan Bernstein and Kevin Decker
+        
+        - fixed <rdar://problem/5879597> reproducible crash in HTMLSelectElement::typeAheadFind
+
+        Test: fast/forms/select-type-ahead-list-box-no-selection.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::typeAheadFind):
+        When there's no initially-selected element, we were accessing index -1. Check for this
+        case and start at 0.
+
 2008-05-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
