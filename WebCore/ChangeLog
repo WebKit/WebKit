@@ -1,5 +1,22 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes the bug where SourceViews would be blank if shown before
+        the Resource finished loading.
+
+        <rdar://problem/5807420> Safari's Web Inspector won't display the
+        contents of some CSS and JS files
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/Resource.js:
+        (WebInspector.Resource.prototype.set finished): Dispatch the finished event
+        (WebInspector.Resource.prototype): Inherit from WebInspector.Object.prototype.
+        * page/inspector/SourceView.js:
+        (WebInspector.SourceView): Register for the finished event on the resource.
+        When the event fires, setup the source frame and deregister the event.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Factored most of SourceView out into SourceFrame so it can be shared
         by the new ScriptView. Added the ScriptView class to be used for
         scripts that arn't Resources (like eval code.) Added a simple Script

@@ -30,6 +30,8 @@ WebInspector.SourceView = function(resource)
 {
     WebInspector.ResourceView.call(this, resource);
 
+    resource.addEventListener("finished", this._resourceLoadingFinished, this);
+
     this.element.addStyleClass("source");
 
     this._frameNeedsSetup = true;
@@ -79,6 +81,13 @@ WebInspector.SourceView.prototype = {
         // when it is removed from the document. Is this a bug?
         WebInspector.ResourceView.prototype.detach.call(this);
         this._frameNeedsSetup = true;
+    },
+
+    _resourceLoadingFinished: function(event)
+    {
+        if (this.visible)
+            this.setupSourceFrameIfNeeded();
+        this.resource.removeEventListener("finished", this._resourceLoadingFinished, this);
     }
 }
 

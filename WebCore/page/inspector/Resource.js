@@ -230,6 +230,7 @@ WebInspector.Resource.prototype = {
         if (x) {
             this._checkTips();
             this._checkWarnings();
+            this.dispatchEventToListeners("finished");
         }
     },
 
@@ -505,6 +506,8 @@ WebInspector.Resource.prototype = {
             WebInspector.console.addMessage(msg);
     }
 }
+
+WebInspector.Resource.prototype.__proto__ = WebInspector.Object.prototype;
 
 WebInspector.Resource.CompareByTime = function(a, b)
 {
