@@ -193,6 +193,7 @@ WebInspector.loaded = function()
     this.panels = {
         elements: new WebInspector.ElementsPanel(),
         resources: new WebInspector.ResourcesPanel(),
+        scripts: new WebInspector.ScriptsPanel(),
         databases: new WebInspector.DatabasesPanel()
     };
 
@@ -626,6 +627,21 @@ WebInspector.removeResource = function(resource)
 WebInspector.addDatabase = function(database)
 {
     this.panels.databases.addDatabase(database);
+}
+
+WebInspector.parsedScriptSource = function(sourceID, sourceURL, source, startingLine)
+{
+    this.panels.scripts.addScript(sourceID, sourceURL, source, startingLine);
+}
+
+WebInspector.failedToParseScriptSource = function(sourceURL, source, startingLine, errorLine, errorMessage)
+{
+    this.panels.scripts.addScript(null, sourceURL, source, startingLine, errorLine, errorMessage);
+}
+
+WebInspector.pausedScript = function()
+{
+    this.panels.scripts.debuggerPaused();
 }
 
 WebInspector.reset = function()

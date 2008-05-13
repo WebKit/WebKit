@@ -151,6 +151,12 @@ WebInspector.ResourcesPanel.prototype = {
         this._updateDividersLabelBarPosition();
         this._updateSidebarWidth();
         this.refreshIfNeeded();
+
+        var visibleResourceView = this.visibleResourceView;
+        if (visibleResourceView) {
+            visibleResourceView.headersVisible = true;
+            visibleResourceView.show(this.resourceViews);
+        }
     },
 
     resize: function()
@@ -395,6 +401,8 @@ WebInspector.ResourcesPanel.prototype = {
 
         resource._resourcesView = newView;
 
+        newView.headersVisible = oldView.headersVisible;
+
         if (oldView.visible && oldView.element.parentNode)
             newView.show(oldView.element.parentNode);
     },
@@ -410,6 +418,7 @@ WebInspector.ResourcesPanel.prototype = {
             this.visibleResource._resourcesView.hide();
 
         var view = this.resourceViewForResource(resource);
+        view.headersVisible = true;
         view.show(this.resourceViews);
 
         if (line && view.revealLine)

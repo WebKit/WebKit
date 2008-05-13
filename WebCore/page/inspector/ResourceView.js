@@ -34,12 +34,33 @@ WebInspector.ResourceView = function(resource)
 
     this.resource = resource;
 
+    // FIXME: Implement the setter for headersVisible when the header element is added.
+
     this.contentElement = document.createElement("div");
     this.contentElement.className = "resource-view-content";
     this.element.appendChild(this.contentElement);
 }
 
 WebInspector.ResourceView.prototype = {
+    get headersVisible()
+    {
+        return this._headersVisible;
+    },
+
+    set headersVisible(x)
+    {
+        if (x === this._headersVisible)
+            return;
+
+        this._headersVisible = x;
+
+        if (x) {
+            // FIXME: Implement this when headers are added.
+        } else {
+            // FIXME: Implement this when headers are added.
+        }
+    },
+
     attach: function()
     {
         if (!this.element.parentNode)

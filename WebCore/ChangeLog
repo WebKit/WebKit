@@ -1,5 +1,102 @@
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
+        Implements the rest of the Scripts panel to get the debugger
+        mostly working. "Basic debugging seems to work."
+
+        Reviewed by Geoff Garen.
+
+        * English.lproj/localizedStrings.js: Adds new strings.
+        * page/inspector/Resource.js:
+        (WebInspector.Resource.prototype.get scripts): Returns _scripts and 
+        creates it lazily.
+        (WebInspector.Resource.prototype.addScript): Add the script object to the
+        front of the _scripts array.
+        (WebInspector.Resource.prototype.removeAllScripts): Removed all the scripts
+        and removes the resource back-reference.
+        (WebInspector.Resource.prototype.removeScript): Removes the script and
+        breaks the resource back-reference.
+        * page/inspector/ResourceView.js:
+        (WebInspector.ResourceView): Adds a reminder comment.
+        (WebInspector.ResourceView.prototype.get headersVisible): Returns _headersVisible. 
+        (WebInspector.ResourceView.prototype.set headersVisible): Stubs out
+        a setter that currently just sets _headersVisible. Has a comment that
+        points out this needs implemented when network headers are added.
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.show): Sets the headersVisible property of
+        the visible view to true and shows it again, in case it was being shown in Scripts.
+        (WebInspector.ResourcesPanel.prototype.recreateViewForResourceIfNeeded):
+        Copies the headersVisible property from the old view to the new view.
+        (WebInspector.ResourcesPanel.prototype.showResource): Sets the headersVisible
+        property to true before showing.
+        * page/inspector/ScriptView.js:
+        (WebInspector.ScriptView): Passes in _addBreakpoint for the add breakpoint delegate.
+        (WebInspector.ScriptView.prototype._addBreakpoint): Calls ScriptsPanel's addBreakpoint
+        for the current Script.sourceID and line.
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel): 
+        (WebInspector.ScriptsPanel.prototype.show): Sets the headersVisible property of
+        the visible view to false and shows it again, in case it was being shown in Resources.
+        (WebInspector.ScriptsPanel.prototype.addScript): Makes a new Script object and
+        adds it to a Resource if one is found. Registers any breakpoint that match
+        the new Script's source URL, and sets the sourceID of the breakpoints.
+        (WebInspector.ScriptsPanel.prototype.addBreakpoint): Adds the breakpoint to the
+        BreakpointsSidebarPane. Also adds it to _breakpointsURLMap so it can be found
+        later in addScript by URL. Finally adds the breakpoint to the SourceFrame that
+        represents the resources or script.
+        (WebInspector.ScriptsPanel.prototype.removeBreakpoint): Removes the breakpoint from
+        the BreakpointsSidebarPane, _breakpointsURLMap and SourceFrame.
+        (WebInspector.ScriptsPanel.prototype.debuggerPaused): Update the debugger
+        state variables, the buttons and the CallStackSidebarPane.
+        (WebInspector.ScriptsPanel.prototype.reset): Clears and resets debugger
+        and interface state.
+        (WebInspector.ScriptsPanel.prototype.get visibleView): Returns _visibleView.
+        (WebInspector.ScriptsPanel.prototype.set visibleView): Sets _visibleView and
+        calls hide on the old view and show on the new view.
+        (WebInspector.ScriptsPanel.prototype.showScript): Calls _showScriptOrResource.
+        (WebInspector.ScriptsPanel.prototype.showResource): Ditto.
+        (WebInspector.ScriptsPanel.prototype.scriptViewForScript): Lazily creates a
+        ScriptView for the Script and returns it. 
+        (WebInspector.ScriptsPanel.prototype.sourceFrameForScript): Returns the SourceFrame
+        for the Script.
+        (WebInspector.ScriptsPanel.prototype._sourceFrameForScriptOrResource): Returns the
+        SourceFrame based on the type of object passed in.
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource): Shows the view based on
+        the type of object passed in. If the object is a resource and there are breakpoints
+        defined for that Resource URL, then populate the SourceFrame with the breakpoints.
+        (WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu): Adds a script to the 
+        files menu. If the Script is part of a resource, that resource is added.
+        (WebInspector.ScriptsPanel.prototype._removeScriptFromFilesMenu): Remove a script from
+        the files menu. If that script is part of a resource and it is the last script of that
+        resource, then remove the whole resource.
+        (WebInspector.ScriptsPanel.prototype._clearCurrentExecutionLine): Clears the execution
+        line from the SourceFrame that is showing it.
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected): Event listener for when the
+        call frame changes in the CallStackSidebarPane. Triggers updates to the ScopeChainSidebarPane
+        and the visible view.
+        (WebInspector.ScriptsPanel.prototype._changeVisibleFile): Event listener for the change state
+        of the files select element.
+        (WebInspector.ScriptsPanel.prototype._updateDebuggerButtons): Update more of the 
+        buttons to reflect the current debugger state. Updates the status text too.
+        (WebInspector.ScriptsPanel.prototype._toggleDebugging): Reset the UI and state when
+        the debugger is attached/detached.
+        (WebInspector.ScriptsPanel.prototype._togglePause): Call InspectorController.resumeDebugger or
+        InspectorController.pauseInDebugger depending on the paused state.
+        (WebInspector.ScriptsPanel.prototype._stepOverClicked): Call InspectorController.stepOverStatementInDebugger.
+        (WebInspector.ScriptsPanel.prototype._stepIntoClicked): Call InspectorController.stepIntoStatementInDebugger.
+        (WebInspector.ScriptsPanel.prototype._stepOutClicked): InspectorController.stepOutOfFunctionInDebugger.
+        * page/inspector/SourceView.js:
+        (WebInspector.SourceView): Passes in _addBreakpoint for the add breakpoint delegate.
+        (WebInspector.SourceView.prototype._addBreakpoint): Calls ScriptsPanel's addBreakpoint
+        for the nearest Script's sourceID and passed in line.
+        * page/inspector/inspector.css: New style rules for the UI changes.
+        * page/inspector/inspector.js:
+        (WebInspector.loaded): Add the ScriptsPanel to the panels list.
+        (WebInspector.parsedScriptSource): Call ScriptsPanel.addScript.
+        (WebInspector.failedToParseScriptSource): Ditto.
+        (WebInspector.pausedScript): Call ScriptsPanel.debuggerPaused.
+
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
         Adds implementations of the Scope Chain and Call Stack sidebar panes.
         These panes use the JSJavaScriptCallFrame object that will be passed
         to the update functions.

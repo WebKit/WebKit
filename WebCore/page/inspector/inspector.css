@@ -598,7 +598,7 @@ body.console-visible #console {
     right: 0;
     bottom: 0;
     width: 225px;
-    background-color: rgb(232, 232, 232);
+    background-color: rgb(245, 245, 245);
     border-left: 1px solid rgb(64%, 64%, 64%);
     cursor: default;
     overflow: auto;
@@ -825,7 +825,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
 .placard {
     position: relative;
     margin-top: 1px;
-    padding: 3px 8px 4px 17px;
+    padding: 3px 8px 4px 18px;
     min-height: 18px;
     white-space: nowrap;
 }
@@ -886,17 +886,24 @@ body.inactive .placard.selected {
     margin-top: 1px;
 }
 
+.section:nth-last-of-type(1) {
+    margin-bottom: 1px;
+}
+
 .section .header {
-    padding: 3px 8px 4px 16px;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(160, 172, 205)), to(rgb(132, 146, 190)));
+    padding: 2px 8px 4px 18px;
+    border-top: 1px solid rgb(145, 160, 192);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(162, 177, 207)), to(rgb(120, 138, 177)));
     min-height: 18px;
     white-space: nowrap;
+    -webkit-background-origin: padding;
+    -webkit-background-clip: padding;
 }
 
 .section .header::before {
     position: absolute;
     top: 4px;
-    left: 6px;
+    left: 7px;
     width: 8px;
     height: 8px;
     content: url(Images/treeRightTriangleWhite.png);
@@ -947,7 +954,7 @@ body.inactive .placard.selected {
 .section .properties {
     display: none;
     margin: 0;
-    padding: 2px 6px 5px;
+    padding: 2px 6px 3px;
     list-style: none;
     background-color: white;
 }
@@ -957,7 +964,7 @@ body.inactive .placard.selected {
 }
 
 .section .properties li {
-    margin-left: 10px;
+    margin-left: 12px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -967,7 +974,7 @@ body.inactive .placard.selected {
 }
 
 .section .properties li.parent {
-    margin-left: 0;
+    margin-left: 1px;
 }
 
 .section .properties ol {
@@ -988,7 +995,7 @@ body.inactive .placard.selected {
     width: 8px;
     height: 8px;
     margin-top: 0;
-    padding-right: 2px;
+    padding-right: 3px;
     -webkit-user-select: none;
     cursor: default;
 }
@@ -1071,51 +1078,58 @@ body.inactive .placard.selected {
     border: 1px solid rgb(180, 180, 180);
 }
 
-.pane {
-    margin-top: 1px;
+.pane:not(.expanded) + .pane, .pane:first-of-type {
+    margin-top: -1px;
 }
 
 .pane > .title {
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(221, 226, 239)), color-stop(0.5, rgb(220, 225, 238)), color-stop(0.5, rgb(194, 203, 219)), to(rgb(217, 222, 234)));
-    height: 16px;
-    padding: 0 6px;
-    border-top: 1px solid rgb(129, 129, 129);
-    border-bottom: 1px solid rgb(129, 129, 129);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(243, 243, 243)), color-stop(0.05, rgb(243, 243, 243)), color-stop(0.05, rgb(230, 230, 230)), to(rgb(209, 209, 209)));
+    height: 20px;
+    padding: 0 5px;
+    border-top: 1px solid rgb(189, 189, 189);
+    border-bottom: 1px solid rgb(189, 189, 189);
     font-weight: bold;
-    font-size: 11px;
-    color: rgb(85, 85, 85);
+    font-size: 12px;
+    line-height: 18px;
+    color: rgb(110, 110, 110);
+    text-shadow: white 0 1px 0;
     -webkit-background-origin: padding;
     -webkit-background-clip: padding;
 }
 
 .pane > .title:active {
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(186, 191, 202)), color-stop(0.5, rgb(185, 190, 201)), color-stop(0.5, rgb(163, 171, 185)), to(rgb(183, 187, 197)));
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(231, 231, 231)), color-stop(0.05, rgb(231, 231, 231)), color-stop(0.05, rgb(207, 207, 207)), to(rgb(186, 186, 186)));
+    border-top: 1px solid rgb(178, 178, 178);
+    border-bottom: 1px solid rgb(178, 178, 178);
 }
 
 .pane > .title::before {
-    content: url(Images/treeRightTriangleBlack.png);
-    opacity: 0.75;
+    content: url(Images/disclosureTriangleSmallRightBlack.png);
     float: left;
-    width: 8px;
-    height: 8px;
-    margin-right: 3px;
-    margin-top: 0;
+    width: 11px;
+    height: 12px;
+    margin-right: 2px;
+    margin-top: 1px;
 }
 
 .pane.expanded > .title::before {
-    margin-top: 1px;
-    content: url(Images/treeDownTriangleBlack.png);
+    content: url(Images/disclosureTriangleSmallDownBlack.png);
 }
 
 .pane > .body {
     position: relative;
     display: none;
+    background-color: white;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
 .pane.expanded > .body, .pane.expanded > .growbar {
     display: block;
+}
+
+.pane.expanded:nth-last-of-type(1) {
+    border-bottom: 1px solid rgb(189, 189, 189);
 }
 
 .pane > .growbar {
@@ -1138,7 +1152,7 @@ body.inactive .placard.selected {
     margin-top: -10px;
     font-size: 9px;
     color: grey;
-    background-color: rgb(232, 232, 232);
+    background-color: white;
     margin-left: 3px;
     padding-left: 2px;
     padding-right: 2px;
@@ -1408,7 +1422,7 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
 
 .database-user-query {
     position: relative;
-    border-bottom: 1px solid rgb(240, 240, 240);
+    border-bottom: 1px solid rgb(245, 245, 245);
     padding: 1px 22px 1px 24px;
     min-height: 16px; 
 }
@@ -1463,6 +1477,14 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     height: 24px;
 }
 
+#scripts-files {
+    max-width: 150px;
+}
+
+#scripts-functions {
+    max-width: 150px;
+}
+
 #scripts-status-bar .status-bar-item img {
     margin-top: 2px;
 }
@@ -1483,6 +1505,10 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     content: url(Images/debuggerPause.png);
 }
 
+#scripts-pause.paused img {
+    content: url(Images/debuggerContinue.png);
+}
+
 #scripts-step-over img {
     content: url(Images/debuggerStepOver.png);
 }
@@ -1500,10 +1526,6 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     line-height: 24px;
     top: 0;
     right: 8px;
-}
-
-#scripts-debugger-status:empty {
-    display: none;
 }
 
 #scripts-sidebar-resizer-widget {
@@ -1539,13 +1561,27 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     bottom: 0;
 }
 
+.script-view {
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.script-view.visible {
+    display: block;
+}
+
 #scripts-sidebar {
     position: absolute;
     top: 23px;
     right: 0;
     bottom: 0;
     width: 225px;
-    background-color: rgb(232, 232, 232);
+    background-color: rgb(245, 245, 245);
     border-left: 1px solid rgb(64%, 64%, 64%);
     cursor: default;
     overflow: auto;

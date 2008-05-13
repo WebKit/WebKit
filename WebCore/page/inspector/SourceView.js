@@ -36,7 +36,7 @@ WebInspector.SourceView = function(resource)
 
     this._frameNeedsSetup = true;
 
-    this.sourceFrame = new WebInspector.SourceFrame();
+    this.sourceFrame = new WebInspector.SourceFrame(null, this._addBreakpoint.bind(this));
 
     this.contentElement.appendChild(this.sourceFrame.element);
 }
@@ -88,6 +88,23 @@ WebInspector.SourceView.prototype = {
         if (this.visible)
             this.setupSourceFrameIfNeeded();
         this.resource.removeEventListener("finished", this._resourceLoadingFinished, this);
+    },
+
+    _addBreakpoint: function(line)
+    {
+        var sourceID = null;
+        var closestStartingLine = 0;
+        var scripts = this.resource.scripts;
+        for (var i = 0; i < scripts.length; ++i) {
+            var script = scripts[i];
+            if (script.startingLine <= line && script.startingLine >= closestStartingLine) {
+                closestStartingLine = script.startingLine;
+                sourceID = script.sourceID;
+            }
+        }
+
+        var breakpoint = new WebInspector.Breakpoint(this.resource.url, line, sourceID);
+        WebInspector.panels.scripts.addBreakpoint(breakpoint);
     }
 }
 

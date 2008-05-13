@@ -33,7 +33,7 @@ WebInspector.ScriptView = function(script)
 
     this._frameNeedsSetup = true;
 
-    this.sourceFrame = new WebInspector.SourceFrame();
+    this.sourceFrame = new WebInspector.SourceFrame(null, this._addBreakpoint.bind(this));
 
     this.element.appendChild(this.sourceFrame.element);
 }
@@ -77,6 +77,12 @@ WebInspector.ScriptView.prototype = {
     {
         if (!this.element.parentNode)
             document.getElementById("script-resource-views").appendChild(this.element);
+    },
+
+    _addBreakpoint: function(line)
+    {
+        var breakpoint = new WebInspector.Breakpoint(this.script.sourceURL, line, this.script.sourceID);
+        WebInspector.panels.scripts.addBreakpoint(breakpoint);
     }
 }
 
