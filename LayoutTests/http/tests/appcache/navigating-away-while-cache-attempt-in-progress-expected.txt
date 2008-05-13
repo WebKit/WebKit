@@ -1,0 +1,2 @@
+This tests that navigating away while a cache is loading does not crash.
+SUCCESS - did not crash

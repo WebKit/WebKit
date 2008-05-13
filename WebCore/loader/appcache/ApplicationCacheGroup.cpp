@@ -58,6 +58,9 @@ ApplicationCacheGroup::~ApplicationCacheGroup()
     ASSERT(!m_newestCache);
     ASSERT(m_caches.isEmpty());
     
+    if (m_cacheBeingUpdated)
+        stopLoading();
+    
     cacheStorage().cacheGroupDestroyed(this);
 }
     
@@ -220,6 +223,29 @@ void ApplicationCacheGroup::finishedLoadingMainResource(DocumentLoader* loader)
     checkIfLoadIsComplete();
 }
 
+void ApplicationCacheGroup::stopLoading()
+{
+    ASSERT(m_cacheBeingUpdated);
+    
+    if (m_manifestHandle) {
+        ASSERT(!m_currentHandle);
+        
+        m_manifestHandle->setClient(0);
+        m_manifestHandle->cancel();
+        m_manifestHandle = 0;
+    }
+    
+    if (m_currentHandle) {
+        ASSERT(!m_manifestHandle);
+        
+        m_currentHandle->setClient(0);
+        m_currentHandle->cancel();
+        m_currentHandle = 0;
+    }    
+    
+    m_cacheBeingUpdated = 0;
+}    
+
 void ApplicationCacheGroup::documentLoaderDestroyed(DocumentLoader* loader)
 {
     HashSet<DocumentLoader*>::iterator it = m_associatedDocumentLoaders.find(loader);
@@ -233,9 +259,14 @@ void ApplicationCacheGroup::documentLoaderDestroyed(DocumentLoader* loader)
         m_cacheCandidates.remove(loader);
     }
     
-    if (m_associatedDocumentLoaders.isEmpty() && m_cacheCandidates.isEmpty()) {
-        // We should only have the newest cache remaining.
-        ASSERT(m_caches.size() == 1);
+    if (!m_associatedDocumentLoaders.isEmpty() || !m_cacheCandidates.isEmpty())
+        return;
+    
+    // We should only have the newest cache remaining, or there is an initial cache attempt in progress.
+    ASSERT(m_caches.size() == 1 || m_cacheBeingUpdated);
+        
+    // If a cache update is in progress, stop it.
+    if (m_caches.size() == 1) {
         ASSERT(m_caches.contains(m_newestCache.get()));
         
         // Release our reference to the newest cache.
@@ -243,7 +274,16 @@ void ApplicationCacheGroup::documentLoaderDestroyed(DocumentLoader* loader)
         
         // This could cause us to be deleted.
         m_newestCache = 0;
-    }    
+        
+        return;
+    }
+    
+    // There is an initial cache attempt in progress
+    ASSERT(m_cacheBeingUpdated);
+    ASSERT(m_caches.size() == 0);
+    
+    // Delete ourselves, causing the cache attempt to be stopped.
+    delete this;
 }    
 
 void ApplicationCacheGroup::cacheDestroyed(ApplicationCache* cache)

@@ -1,3 +1,14 @@
+2008-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Add testcase.
+        
+        * http/tests/appcache/navigating-away-while-cache-attempt-in-progress-expected.txt: Added.
+        * http/tests/appcache/navigating-away-while-cache-attempt-in-progress.html: Added.
+        * http/tests/appcache/resources/navigating-away-while-cache-attempt-in-progress.manifest: Added.
+        * http/tests/appcache/resources/slow-resource.php: Added.
+
 2008-05-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

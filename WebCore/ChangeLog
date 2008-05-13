@@ -1,3 +1,22 @@
+2008-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Don't crash when a document loader is destroyed while an initial caching attempt
+        is in progress.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::~ApplicationCacheGroup):
+        Stop loading.
+        
+        (WebCore::ApplicationCacheGroup::stopLoading):
+        New method that stops a cache update.
+        
+        (WebCore::ApplicationCacheGroup::documentLoaderDestroyed):
+        Delete ourselves here.
+        
+        * loader/appcache/ApplicationCacheGroup.h:
+
 2008-05-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

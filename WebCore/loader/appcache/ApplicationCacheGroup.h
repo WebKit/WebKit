@@ -99,6 +99,8 @@ private:
     
     void associateDocumentLoaderWithCache(DocumentLoader*, ApplicationCache*);
     
+    void stopLoading();
+    
     KURL m_manifestURL;
     Status m_status;
     
