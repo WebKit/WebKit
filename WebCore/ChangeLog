@@ -1,5 +1,16 @@
 2008-05-09  Adam Roben  <aroben@apple.com>
 
+        Fix a MSVC warning in InlineTextBox
+
+        Reviewed by Dan Bernstein.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint): Initialize some variables that MSVC
+        isn't smart enough to figure out will always be initialized in the
+        cases where they are used.
+
+2008-05-09  Adam Roben  <aroben@apple.com>
+
         Fix a MSVC warning in Position
 
         Reviewed by Darin Adler.
