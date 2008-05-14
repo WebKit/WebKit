@@ -3,6 +3,8 @@
         Fix Bug 18888: REGRESSION (r32731): console.log always prints
         "undefined"
 
+        <https://bugs.webkit.org/show_bug.cgi?id=18888>
+
         Reviewed by Tim Hatcher.
 
         Tested by pre-existing
@@ -57,6 +59,8 @@
 
         Fix Bug 19051: REGRESSION (r33447): Assertion in
         JSDebugServer::removeListener closing tab with Inspector open
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19051>
 
         m_inspectedPage is now cleared when the Page is destroyed, which never
         used to happen. Some of InspectorController's code was not prepared
