@@ -25,7 +25,7 @@
 
 WebInspector.ScopeChainSidebarPane = function()
 {
-    WebInspector.SidebarPane.call(this, WebInspector.UIString("Scope Chain"));
+    WebInspector.SidebarPane.call(this, WebInspector.UIString("Scope Variables"));
 }
 
 WebInspector.ScopeChainSidebarPane.prototype = {
@@ -48,15 +48,32 @@ WebInspector.ScopeChainSidebarPane.prototype = {
         for (var i = 0; i < scopeChain.length; ++i) {
             var scopeObject = scopeChain[i];
             var title = null;
+            var subtitle = Object.describe(scopeObject, true);
+            var emptyPlaceholder = null;
             var localScope = false;
 
             if (Object.prototype.toString.call(scopeObject) === "[object Activation]") {
-                title = WebInspector.UIString("Local");
+                if (!foundLocalScope)
+                    title = WebInspector.UIString("Local");
+                else
+                    title = WebInspector.UIString("Closure");
+                emptyPlaceholder = WebInspector.UIString("No Variables");
+                subtitle = null;
                 foundLocalScope = true;
                 localScope = true;
-            }
+            } else if (i === (scopeChain.length - 1))
+                title = WebInspector.UIString("Global");
+            else if (foundLocalScope && scopeObject instanceof InspectorController.inspectedWindow().Element)
+                title = WebInspector.UIString("Event Target");
+            else if (foundLocalScope && scopeObject instanceof InspectorController.inspectedWindow().Document)
+                title = WebInspector.UIString("Event Document");
+            else if (!foundLocalScope && !localScope)
+                title = WebInspector.UIString("With Block");
 
-            var section = new WebInspector.ObjectPropertiesSection(scopeObject, title);
+            if (!title || title === subtitle)
+                subtitle = null;
+
+            var section = new WebInspector.ObjectPropertiesSection(scopeObject, title, subtitle, emptyPlaceholder);
             if (!foundLocalScope || localScope)
                 section.expanded = true;
 

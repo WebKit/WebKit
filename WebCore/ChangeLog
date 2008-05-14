@@ -1,3 +1,25 @@
+2008-05-14  Timothy Hatcher  <timothy@apple.com>
+
+        Rename the Scope Chain pane to Scope Variables. Name the global
+        object Global. Name objects before the locals "With Block".
+        Name colsure scopes "Closure". Name any element or document
+        after Local, "Event Target" and "Event Document", respectfully.
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/localizedStrings.js: Add new strings.
+        * page/inspector/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection): Add a new argument that is used
+        for the empty placeholder text.
+        (WebInspector.ObjectPropertiesSection.prototype.onpopulate): Use the
+        empty placeholder text.
+        * page/inspector/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane): Rename Scope Chain to Scope Variables.
+        (WebInspector.ScopeChainSidebarPane.prototype.update): Use the object name as
+        the subtitle. Use "Global" for the global object title. Use "With Block" for
+        the title of objects before the locals. Use "No Variables" for the empty
+        placeholder text for locals.
+
 2008-05-14  Michael A. Puls II  <shadow2531@gmail.com>
 
         Reviewed by Alexey.

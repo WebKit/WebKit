@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectPropertiesSection = function(object, title, subtitle)
+WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPlaceholder)
 {
     if (!title) {
         title = Object.describe(object);
@@ -34,6 +34,7 @@ WebInspector.ObjectPropertiesSection = function(object, title, subtitle)
         }
     }
 
+    this.emptyPlaceholder = (emptyPlaceholder || WebInspector.UIString("No Properties"));
     this.object = object;
 
     WebInspector.PropertiesSection.call(this, title, subtitle);
@@ -51,7 +52,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
         }
 
         if (!this.propertiesTreeOutline.children.length) {
-            var title = "<div class=\"info\">" + WebInspector.UIString("No Properties") + "</div>";
+            var title = "<div class=\"info\">" + this.emptyPlaceholder + "</div>";
             var infoElement = new TreeElement(title, null, false);
             this.propertiesTreeOutline.appendChild(infoElement);
         }
