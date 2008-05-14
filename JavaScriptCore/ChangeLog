@@ -1,3 +1,10 @@
+2008-05-13  Matt Lilek  <webkit@mattlilek.com>
+
+        Not reviewed, build fix.
+
+        * kjs/date_object.cpp:
+        (KJS::DateObjectFuncImp::callAsFunction):
+
 2008-05-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

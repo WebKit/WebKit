@@ -573,7 +573,7 @@ JSValue *DateObjectFuncImp::callAsFunction(ExecState* exec, JSObject*, const Lis
     return jsNumber(parseDate(args[0]->toString(exec)));
   else if (id == Now)
     return jsNumber(getCurrentUTCTime());
-  } else { // UTC
+  else { // UTC
     int n = args.size();
     if (isnan(args[0]->toNumber(exec))
         || isnan(args[1]->toNumber(exec))
