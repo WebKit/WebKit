@@ -196,7 +196,9 @@ namespace WebCore {
         void popPopupsStateTimerFired(Timer<PluginView>*);
         Timer<PluginView> m_popPopupsStateTimer;
 
+#ifndef NP_NO_CARBON
         bool dispatchNPEvent(NPEvent&);
+#endif
         void updateWindow() const;
         void paintMissingPluginIcon(GraphicsContext*, const IntRect&);
 
