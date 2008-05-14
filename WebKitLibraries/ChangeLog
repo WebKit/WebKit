@@ -1,3 +1,16 @@
+2008-05-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - WebKitSystemInterface support for <rdar://problem/5725912> improve render quality of transformed text
+
+        * libWebKitSystemInterfaceLeopard.a: Improved glyph positioning in
+        transformed graphics contexts.
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h: Added
+        wkSetCGContextFontRenderingStyle().
+        * win/lib/WebKitSystemInterface.lib: Updated.
+        * win/lib/WebKitSystemInterface_debug.lib: Updated.
+
 2008-05-09  Adam Roben  <aroben@apple.com>
 
         Disable a MSVC warning

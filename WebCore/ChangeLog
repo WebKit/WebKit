@@ -1,3 +1,13 @@
+2008-05-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - Windows part of <rdar://problem/5725912> improve render quality of transformed text
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs): Added call to
+        wkSetCGContextFontRenderingStyle().
+
 2008-05-13  Alp Toker  <alp@nuanti.com>
 
         GTK+ build fix. Implement EventLoopGtk.cpp.

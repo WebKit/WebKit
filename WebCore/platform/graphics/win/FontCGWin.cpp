@@ -317,6 +317,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     CGContextSetTextMatrix(cgContext, matrix);
 
     CGContextSetFontSize(cgContext, platformData.size());
+    wkSetCGContextFontRenderingStyle(cgContext, font->isSystemFont(), false);
 
     IntSize shadowSize;
     int shadowBlur;
