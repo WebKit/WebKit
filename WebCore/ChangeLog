@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        Qt build fix. Add JSJavaScriptCallFrameCustom.cpp to the build
+        and implemented EventLoopQt.
+
+        * WebCore.pro:
+        * platform/qt/EventLoopQt.cpp: Added.
+
+2008-05-14  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
         Qt build fix. Add JavaScriptCallFrame.{idl,cpp} to the build.
 
         * WebCore.pro:

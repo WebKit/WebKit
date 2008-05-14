@@ -435,6 +435,7 @@ SOURCES += \
     bindings/js/JSEventTargetBase.cpp \
     bindings/js/JSEventTargetNode.cpp \
     bindings/js/JSHistoryCustom.cpp \
+    bindings/js/JSJavaScriptCallFrameCustom.cpp \
     bindings/js/JSHTMLAppletElementCustom.cpp \
     bindings/js/JSHTMLCollectionCustom.cpp \
     bindings/js/JSHTMLDocumentCustom.cpp \
@@ -1017,6 +1018,7 @@ qt-port {
     platform/qt/CursorQt.cpp \
     platform/qt/DragDataQt.cpp \
     platform/qt/DragImageQt.cpp \
+    platform/qt/EventLoopQt.cpp \
     platform/qt/FileChooserQt.cpp \
     platform/qt/FileSystemQt.cpp \
     platform/graphics/qt/FontCacheQt.cpp \
