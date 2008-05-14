@@ -398,6 +398,7 @@ IDL_BINDINGS += \
     page/DOMSelection.idl \
     page/DOMWindow.idl \
     page/History.idl \
+    page/JavaScriptCallFrame.idl \
     page/Location.idl \
     page/Screen.idl \
     page/Navigator.idl \
@@ -787,6 +788,7 @@ SOURCES += \
     page/FrameView.cpp \
     page/History.cpp \
     page/InspectorController.cpp \
+    page/JavaScriptCallFrame.cpp \
     page/JavaScriptDebugServer.cpp \
     page/Location.cpp \
     page/MouseEventWithHitTestResults.cpp \
