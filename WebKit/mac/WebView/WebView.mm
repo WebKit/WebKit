@@ -4065,9 +4065,6 @@ static WebFrameView *containingFrameView(NSView *view)
     pageCache()->setCapacity(pageCacheCapacity);
     [nsurlCache setMemoryCapacity:nsurlCacheMemoryCapacity];
     [nsurlCache setDiskCapacity:nsurlCacheDiskCapacity];
-
-    // Empty the application cache.
-    cacheStorage().empty();
     
     s_cacheModel = cacheModel;
     s_didSetCacheModel = YES;

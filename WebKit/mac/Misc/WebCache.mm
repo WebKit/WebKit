@@ -28,6 +28,7 @@
 #import "WebPreferences.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
+#import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/Cache.h>
 
 @implementation WebCache
@@ -70,6 +71,9 @@
     WebCacheModel cacheModel = [WebView _cacheModel];
     [WebView _setCacheModel:WebCacheModelDocumentViewer];
     [WebView _setCacheModel:cacheModel];
+        
+    // Empty the application cache.
+    WebCore::cacheStorage().empty();
 }
 
 + (void)setDisabled:(BOOL)disabled

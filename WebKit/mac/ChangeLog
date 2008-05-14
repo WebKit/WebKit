@@ -1,3 +1,15 @@
+2008-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Don't empty the application cache in _setCacheModel, since it will be called during initialization.
+        Instead, do it in [WebCache empty].
+        
+        * Misc/WebCache.mm:
+        (+[WebCache empty]):
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]):
+
 2008-05-13  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
