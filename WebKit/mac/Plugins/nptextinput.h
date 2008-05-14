@@ -85,7 +85,7 @@ NSRange NPP_MarkedRange(NPP npp);
 NSRange NPP_SelectedRange(NPP npp);
 NSRect NPP_FirstRectForCharacterRange(NPP npp, NSRange theRange);
 unsigned long long NPP_CharacterIndexForPoint(NPP npp, NSPoint thePoint);
-NSArray NPP_ValidAttributesForMarkedText(NPP npp);
+NSArray *NPP_ValidAttributesForMarkedText(NPP npp);
 
 typedef void (*NPN_MarkedTextAbandonedFunc)(NPP npp);
 typedef void (*NPN_MarkedTextSelectionChangedFunc)(NPP npp, NSRange newSel);
