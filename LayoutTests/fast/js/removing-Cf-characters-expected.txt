@@ -1,0 +1,13 @@
+This test checks that BOM is stripped from the source, but other Cf characters are not, despite what ECMA-262 says, see <https://bugs.webkit.org/show_bug.cgi?id=4931>.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS escape(testString) is '%u200F%u200E%AD%u2062%u200D%u200C%u200B'
+PASS escape(testString2) is '%u200F%u200E%AD%u2062%u200D%u200C%u200B'
+PASS 1 is 1
+PASS var ZWJ_I‍nside; threw exception SyntaxError: Parse error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

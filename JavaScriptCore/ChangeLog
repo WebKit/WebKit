@@ -1,3 +1,24 @@
+2008-05-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5934376> REGRESSION: A script fails because of a straw BOM character in it.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=4931>
+        Unicode format characters (Cf) should be removed from JavaScript source
+
+        Of all Cf characters, we are only removing BOM, because this is what Firefox trunk has
+        settled upon, after extensive discussion and investigation.
+
+        Based on Darin's work on this bug.
+
+        Test: fast/js/removing-Cf-characters.html
+
+        * kjs/lexer.cpp:
+        (KJS::Lexer::setCode): Tweak formatting. Use a call to shift(4) to read in the
+        first characters, instead of having special case code here.
+        (KJS::Lexer::shift): Add a loop when reading a character to skip BOM characters.
+
 2008-05-13  Matt Lilek  <webkit@mattlilek.com>
 
         Not reviewed, build fix.

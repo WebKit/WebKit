@@ -1,7 +1,6 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2006, 2007 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2006, 2007, 2008 Apple Inc. All Rights Reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  *  This library is free software; you can redistribute it and/or
@@ -32,10 +31,11 @@
 #include <limits.h>
 #include <string.h>
 #include <wtf/Assertions.h>
+#include <wtf/unicode/Unicode.h>
+
 #if USE(MULTIPLE_THREADS)
 #include <wtf/ThreadSpecific.h>
 #endif
-#include <wtf/unicode/Unicode.h>
 
 using namespace WTF;
 using namespace Unicode;
@@ -103,38 +103,41 @@ Lexer::~Lexer()
 
 void Lexer::setCode(int startingLineNumber, const UChar* c, unsigned int len)
 {
-  yylineno = 1 + startingLineNumber;
-  restrKeyword = false;
-  delimited = false;
-  eatNextIdentifier = false;
-  stackToken = -1;
-  lastToken = -1;
-  pos = 0;
-  code = c;
-  length = len;
-  skipLF = false;
-  skipCR = false;
-  error = false;
-  atLineStart = true;
+    yylineno = 1 + startingLineNumber;
+    restrKeyword = false;
+    delimited = false;
+    eatNextIdentifier = false;
+    stackToken = -1;
+    lastToken = -1;
+    pos = 0;
+    code = c;
+    length = len;
+    skipLF = false;
+    skipCR = false;
+    error = false;
+    atLineStart = true;
 
-  // read first characters
-  current = (length > 0) ? code[0] : -1;
-  next1 = (length > 1) ? code[1] : -1;
-  next2 = (length > 2) ? code[2] : -1;
-  next3 = (length > 3) ? code[3] : -1;
+    // read first characters
+    shift(4);
 }
 
-void Lexer::shift(unsigned int p)
+void Lexer::shift(unsigned p)
 {
-  // Here would be a good place to strip Cf characters, but that has caused compatibility problems:
-  // <http://bugs.webkit.org/show_bug.cgi?id=10183>.
-  while (p--) {
-    pos++;
-    current = next1;
-    next1 = next2;
-    next2 = next3;
-    next3 = (pos + 3 < length) ? code[pos + 3] : -1;
-  }
+    // ECMA-262 calls for stripping Cf characters here, but we only do this for BOM,
+    // see <https://bugs.webkit.org/show_bug.cgi?id=4931>.
+
+    while (p--) {
+        current = next1;
+        next1 = next2;
+        next2 = next3;
+        do {
+            if (pos >= length) {
+                next3 = -1;
+                break;
+            }
+            next3 = code[pos++];
+        } while (next3 == 0xFEFF);
+    }
 }
 
 // called on each new line
