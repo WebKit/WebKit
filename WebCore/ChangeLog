@@ -1,3 +1,20 @@
+2008-05-14  Michael A. Puls II  <shadow2531@gmail.com>
+
+        Reviewed by Alexey.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=16923 
+        Attr nodes with a value of "" should not have any childNodes
+        
+        In Opera, Firefox and IE, when an attribute node has a value
+        of "", the attribute node doesn't have any childNodes. This
+        is true in WebKit also, but not when you assign "" to the
+        Attr's value when the existing value is non-empty.
+        
+        Test: fast/dom/attribute-empty-value-no-children.html
+
+        * dom/Attr.cpp: (WebCore::Attr::setValue): Use createTextChild(), which only appends
+        a child text node if the value being assigned is not empty.
+
 2008-05-14  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric.

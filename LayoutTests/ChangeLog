@@ -1,3 +1,15 @@
+2008-05-14  Michael A. Puls II  <shadow2531@gmail.com>
+
+        Reviewed by Alexey.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=16923
+        
+        Test that Attr nodes with a value of "" don't have any
+        childNodes like Firefox, Opera and IE.
+        
+        * fast/dom/attribute-empty-value-no-children-expected.txt: Added.
+        * fast/dom/attribute-empty-value-no-children.html: Added.
+
 2008-05-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

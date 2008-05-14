@@ -105,7 +105,7 @@ void Attr::setValue( const String& v, ExceptionCode& ec)
 {
     ec = 0;
 
-    // do not interprete entities in the string, its literal!
+    // do not interpret entities in the string, it's literal!
 
     // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
     if (isReadOnlyNode()) {
@@ -113,13 +113,12 @@ void Attr::setValue( const String& v, ExceptionCode& ec)
         return;
     }
 
-    int e = 0;
     m_ignoreChildrenChanged++;
     removeChildren();
-    appendChild(document()->createTextNode(v), e);
-    m_ignoreChildrenChanged--;
-    
     m_attribute->setValue(v.impl());
+    createTextChild();
+    m_ignoreChildrenChanged--;
+
     if (m_element)
         m_element->attributeChanged(m_attribute.get());
 }
