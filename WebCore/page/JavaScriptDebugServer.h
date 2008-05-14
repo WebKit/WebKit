@@ -60,6 +60,9 @@ namespace WebCore {
         bool hasBreakpoint(int sourceID, unsigned lineNumber) const;
         void clearBreakpoints();
 
+        bool pauseOnExceptions() const { return m_pauseOnExceptions; }
+        void setPauseOnExceptions(bool);
+
         void pauseOnNextStatement();
         void resume();
 
@@ -99,6 +102,7 @@ namespace WebCore {
         PageListenersMap m_pageListenersMap;
         ListenerSet m_listeners;
         bool m_callingListeners;
+        bool m_pauseOnExceptions;
         bool m_pauseOnNextStatement;
         bool m_paused;
         KJS::ExecState* m_pauseOnExecState;

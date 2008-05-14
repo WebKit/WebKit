@@ -1,5 +1,30 @@
 2008-05-14  Timothy Hatcher  <timothy@apple.com>
 
+        Add pause on exception support to the Inspector debugger
+        with a toggle buttons to enable or disable it.
+
+        Reviewed by Adam Roben.
+
+        * page/InspectorController.cpp:
+        (WebCore::pauseOnExceptions): Call the InspectorController.
+        (WebCore::setPauseOnExceptions): Ditto.
+        (WebCore::InspectorController::windowScriptObjectAvailable): Add the new
+        setPauseOnExceptions and pauseOnExceptions functions to the JS class.
+        (WebCore::InspectorController::pauseOnExceptions): Call JavaScriptDebugServer.
+        (WebCore::InspectorController::setPauseOnExceptions): Ditto.
+        * page/InspectorController.h:
+        * page/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::setPauseOnExceptions): Set m_pauseOnExceptions.
+        (WebCore::JavaScriptDebugServer::exception): Check m_pauseOnExceptions
+        and set m_pauseOnNextStatement to true before calling pauseIfNeeded.
+        * page/JavaScriptDebugServer.h:
+        * page/inspector/Images/pauseOnExceptionButtons.png: Added.
+        * page/inspector/ScriptsPanel.js: Adds a status bar button that calls
+        the new InspectorController functions.
+        * page/inspector/inspector.css: New styles.
+
+2008-05-14  Timothy Hatcher  <timothy@apple.com>
+
         Rename the Scope Chain pane to Scope Variables. Name the global
         object Global. Name objects before the locals "With Block".
         Name colsure scopes "Closure". Name any element or document

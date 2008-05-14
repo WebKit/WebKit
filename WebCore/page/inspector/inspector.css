@@ -1505,6 +1505,22 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     background-position: 32px 24px;
 }
 
+#scripts-pause-on-exceptions-status-bar-item {
+    background-image: url(Images/pauseOnExceptionButtons.png);
+}
+
+#scripts-pause-on-exceptions-status-bar-item:active {
+    background-position: 32px 0;
+}
+
+#scripts-pause-on-exceptions-status-bar-item.toggled-on {
+    background-position: 0 24px;
+}
+
+#scripts-pause-on-exceptions-status-bar-item.toggled-on:active {
+    background-position: 32px 24px;
+}
+
 #scripts-status-bar {
     position: absolute;
     top: -1px;

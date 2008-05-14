@@ -140,6 +140,9 @@ public:
     void addBreakpoint(int sourceID, unsigned lineNumber);
     void removeBreakpoint(int sourceID, unsigned lineNumber);
 
+    bool pauseOnExceptions();
+    void setPauseOnExceptions(bool pause);
+
     void pauseInDebugger();
     void resumeDebugger();
 

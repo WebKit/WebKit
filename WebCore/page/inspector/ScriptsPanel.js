@@ -162,6 +162,11 @@ WebInspector.ScriptsPanel = function()
     this.debuggingButton.className = "status-bar-item";
     this.debuggingButton.addEventListener("click", this._toggleDebugging.bind(this), false);
 
+    this.pauseOnExceptionButtons = document.createElement("button");
+    this.pauseOnExceptionButtons.id = "scripts-pause-on-exceptions-status-bar-item";
+    this.pauseOnExceptionButtons.className = "status-bar-item";
+    this.pauseOnExceptionButtons.addEventListener("click", this._togglePauseOnExceptions.bind(this), false);
+
     this._breakpointsURLMap = {};
 
     this.reset();
@@ -177,7 +182,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.debuggingButton];
+        return [this.debuggingButton, this.pauseOnExceptionButtons];
     },
 
     show: function()
@@ -521,6 +526,17 @@ WebInspector.ScriptsPanel.prototype = {
         event.preventDefault();
     },
 
+    _updatePauseOnExceptionsButton: function()
+    {
+        if (InspectorController.pauseOnExceptions()) {
+            this.debuggingButton.title = WebInspector.UIString("Pause on exceptions.");
+            this.pauseOnExceptionButtons.addStyleClass("toggled-on");
+        } else {
+            this.debuggingButton.title = WebInspector.UIString("Don't pause on exceptions.");
+            this.pauseOnExceptionButtons.removeStyleClass("toggled-on");
+        }
+    },
+
     _updateDebuggerButtons: function()
     {
         if (InspectorController.debuggerAttached()) {
@@ -532,6 +548,8 @@ WebInspector.ScriptsPanel.prototype = {
             this.debuggingButton.removeStyleClass("toggled-on");
             this.pauseButton.disabled = true;
         }
+
+        this._updatePauseOnExceptionsButton();
 
         if (this._paused) {
             this.pauseButton.addStyleClass("paused");
@@ -583,6 +601,12 @@ WebInspector.ScriptsPanel.prototype = {
             this.attachOverlayElement.parentNode.removeChild(this.attachOverlayElement);
             InspectorController.startDebuggingAndReloadInspectedPage();
         }
+    },
+
+    _togglePauseOnExceptions: function()
+    {
+        InspectorController.setPauseOnExceptions(!InspectorController.pauseOnExceptions());
+        this._updatePauseOnExceptionsButton();
     },
 
     _togglePause: function()

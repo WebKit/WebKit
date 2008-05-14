@@ -837,6 +837,28 @@ static JSValueRef currentCallFrame(JSContextRef ctx, JSObjectRef /*function*/, J
     return toRef(JSInspectedObjectWrapper::wrap(globalExec, toJS(toJS(ctx), callFrame)));
 }
 
+static JSValueRef pauseOnExceptions(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+    return JSValueMakeBoolean(ctx, controller->pauseOnExceptions());
+}
+
+static JSValueRef setPauseOnExceptions(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(ctx);
+
+    controller->setPauseOnExceptions(JSValueToBoolean(ctx, arguments[0]));
+
+    return JSValueMakeUndefined(ctx);
+}
+
 static JSValueRef pauseInDebugger(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
@@ -1171,6 +1193,8 @@ void InspectorController::windowScriptObjectAvailable()
         { "stopDebugging", WebCore::stopDebugging, kJSPropertyAttributeNone },
         { "debuggerAttached", WebCore::debuggerAttached, kJSPropertyAttributeNone },
         { "currentCallFrame", WebCore::currentCallFrame, kJSPropertyAttributeNone },
+        { "pauseOnExceptions", WebCore::pauseOnExceptions, kJSPropertyAttributeNone },
+        { "setPauseOnExceptions", WebCore::setPauseOnExceptions, kJSPropertyAttributeNone },
         { "pauseInDebugger", WebCore::pauseInDebugger, kJSPropertyAttributeNone },
         { "resumeDebugger", WebCore::resumeDebugger, kJSPropertyAttributeNone },
         { "stepOverStatementInDebugger", WebCore::stepOverStatementInDebugger, kJSPropertyAttributeNone },
@@ -2058,6 +2082,16 @@ void InspectorController::stopDebugging()
 JavaScriptCallFrame* InspectorController::currentCallFrame() const
 {
     return JavaScriptDebugServer::shared().currentCallFrame();
+}
+
+bool InspectorController::pauseOnExceptions()
+{
+    return JavaScriptDebugServer::shared().pauseOnExceptions();
+}
+
+void InspectorController::setPauseOnExceptions(bool pause)
+{
+    JavaScriptDebugServer::shared().setPauseOnExceptions(pause);
 }
 
 void InspectorController::pauseInDebugger()
