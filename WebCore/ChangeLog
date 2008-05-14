@@ -1,3 +1,32 @@
+2008-05-14  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 19051: REGRESSION (r33447): Assertion in
+        JSDebugServer::removeListener closing tab with Inspector open
+
+        m_inspectedPage is now cleared when the Page is destroyed, which never
+        used to happen. Some of InspectorController's code was not prepared
+        for this.
+
+        Reviewed by Dave Hyatt.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::~InspectorController): Removed a call
+        to stopDebugging and added an assertion. Debugging should have already
+        been stopped by this point.
+        (WebCore::InspectorController::inspectedPageDestroyed): Moved here
+        from the header file. Added a call to stopDebugging.
+        (WebCore::InspectorController::enabled): Return false if our inspected
+        Page has already been destroyed, since we can't really do much at this
+        point anyway.
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorController::identifierForInitialRequest):
+        (WebCore::InspectorController::startDebuggingAndReloadInspectedPage):
+        (WebCore::InspectorController::stopDebugging):
+        (WebCore::InspectorController::drawNodeHighlight):
+        Assert that m_inspectedPage hasn't been cleared.
+        * page/InspectorController.h:
+
 2008-05-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.
