@@ -1,3 +1,17 @@
+2008-05-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric.
+
+        - isDarwin() and isCygwin() returned an empty string if the platform equality check fails.
+          We now force the return value to be numeric.
+
+        - Removed platform checks as it was a work around the previous issue.
+
+        - Replaced isDarwin() by isOSX() as they have now the same behaviour.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+
 2008-05-12  Adam Roben  <aroben@apple.com>
 
         Support for testing NPN_PostURL

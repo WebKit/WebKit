@@ -519,18 +519,12 @@ sub isDebianBased()
 
 sub isCygwin()
 {
-    return ($^O eq "cygwin");
-}
-
-sub isDarwin()
-{
-    return ($^O eq "darwin");
+    return ($^O eq "cygwin") || 0;
 }
 
 sub isOSX()
 {
-    return isDarwin() unless (isQt() or isGtk() or isWx());
-    return 0;
+    return ($^O eq "darwin") || 0;
 }
 
 sub determineOSXVersion()
