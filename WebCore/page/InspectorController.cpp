@@ -828,8 +828,8 @@ static JSValueRef currentCallFrame(JSContextRef ctx, JSObjectRef /*function*/, J
         return JSValueMakeUndefined(ctx);
 
     JavaScriptCallFrame* callFrame = controller->currentCallFrame();
-    if (!callFrame->isValid())
-        return JSValueMakeUndefined(ctx);
+    if (!callFrame || !callFrame->isValid())
+        return JSValueMakeNull(ctx);
 
     ExecState* globalExec = callFrame->execState()->lexicalGlobalObject()->globalExec();
 

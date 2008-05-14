@@ -1,3 +1,18 @@
+2008-05-13  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a crash when stepping out in the Inspector's debugger.
+
+        http://bugs.webkit.org/show_bug.cgi?id=19037
+
+        Reviewed by Dan Bernstein.
+
+        * page/InspectorController.cpp:
+        (WebCore::currentCallFrame): Adds a null check of currentCallFrame,
+        since it can be null. Also returns JSNull to better signify this.
+        * page/inspector/ScriptsPanel.js: Updates the debugger interface
+        when stepping so the currentCallFrame isn't accessed when not paused.
+        Adds a _clearInterface function to remove duplicate code.
+
 2008-05-13  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin

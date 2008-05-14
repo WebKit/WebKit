@@ -288,18 +288,13 @@ WebInspector.ScriptsPanel.prototype = {
     {
         this.visibleView = null;
 
-        this._clearCurrentExecutionLine();
-
         if (!InspectorController.debuggerAttached()) {
             this._paused = false;
             this._waitingToPause = false;
             this._stepping = false;
         }
 
-        this.sidebarPanes.callstack.update(null);
-        this.sidebarPanes.scopechain.update(null);
-
-        this._updateDebuggerButtons();
+        this._clearInterface();
 
         this.filesSelectElement.removeChildren();
         this.functionsSelectElement.removeChildren();
@@ -564,11 +559,22 @@ WebInspector.ScriptsPanel.prototype = {
         }
     },
 
+    _clearInterface: function()
+    {
+        this.sidebarPanes.callstack.update(null);
+        this.sidebarPanes.scopechain.update(null);
+
+        this._clearCurrentExecutionLine();
+        this._updateDebuggerButtons();
+    },
+
     _toggleDebugging: function()
     {
         this._paused = false;
         this._waitingToPause = false;
         this._stepping = false;
+
+        this._clearInterface();
 
         if (InspectorController.debuggerAttached()) {
             this.element.appendChild(this.attachOverlayElement);
@@ -577,12 +583,6 @@ WebInspector.ScriptsPanel.prototype = {
             this.attachOverlayElement.parentNode.removeChild(this.attachOverlayElement);
             InspectorController.startDebuggingAndReloadInspectedPage();
         }
-
-        this.sidebarPanes.callstack.update(null);
-        this.sidebarPanes.scopechain.update(null);
-
-        this._clearCurrentExecutionLine();
-        this._updateDebuggerButtons();
     },
 
     _togglePause: function()
@@ -597,17 +597,15 @@ WebInspector.ScriptsPanel.prototype = {
             InspectorController.pauseInDebugger();
         }
 
-        this.sidebarPanes.callstack.update(null);
-        this.sidebarPanes.scopechain.update(null);
-
-        this._clearCurrentExecutionLine();
-        this._updateDebuggerButtons();
+        this._clearInterface();
     },
 
     _stepOverClicked: function()
     {
         this._paused = false;
         this._stepping = true;
+
+        this._clearInterface();
 
         InspectorController.stepOverStatementInDebugger();
     },
@@ -617,6 +615,8 @@ WebInspector.ScriptsPanel.prototype = {
         this._paused = false;
         this._stepping = true;
 
+        this._clearInterface();
+
         InspectorController.stepIntoStatementInDebugger();
     },
 
@@ -624,6 +624,8 @@ WebInspector.ScriptsPanel.prototype = {
     {
         this._paused = false;
         this._stepping = true;
+
+        this._clearInterface();
 
         InspectorController.stepOutOfFunctionInDebugger();
     }
