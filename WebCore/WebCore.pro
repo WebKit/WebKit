@@ -791,6 +791,8 @@ SOURCES += \
     page/InspectorController.cpp \
     page/JavaScriptCallFrame.cpp \
     page/JavaScriptDebugServer.cpp \
+    page/JavaScriptProfile.cpp \
+    page/JavaScriptFunctionCallProfile.cpp \
     page/Location.cpp \
     page/MouseEventWithHitTestResults.cpp \
     page/Page.cpp \

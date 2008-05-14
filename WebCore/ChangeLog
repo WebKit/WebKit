@@ -1,3 +1,52 @@
+2008-05-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        - Add support for interacting with the JavaScriptCore profiler.
+
+        * ForwardingHeaders/profiler/FunctionCallProfile.h: Added.
+        * ForwardingHeaders/profiler/Profile.h: Added.
+        * GNUmakefile.am: Add the new files to all the projects.
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * page/InspectorController.cpp: Add the ability to retrieve all of the
+        profiles in JavaScript from the InspectorController.
+        (WebCore::allProfiles):
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        * page/JavaScriptFunctionCallProfile.cpp: Added. Wrapper around the JSC
+        FunctionCallProfile.
+        (WebCore::functionCallProfileCache): This cache makes sure we don't
+        needlessly create duplicate wrappers around the same
+        FunctionCallProfile*.
+        (WebCore::getFunctionName): Callback to return the name of the function.
+        (WebCore::getTotalTime): Callback to return the total time spent in the
+        function.
+        (WebCore::getSelfTime): Callback to return the time spent in self (total
+        - time in children) in the function.
+        (WebCore::getNumberOfCalls): Callback to return the number of times this
+        function was called.
+        (WebCore::getChildren): Callback to return the children of this function
+        where the children are the functions this function called.
+        (WebCore::finalize): Cleanup.
+        (WebCore::functionCallProfileClass): Define the JSClassRef for this
+        object.
+        (WebCore::toJS): Create a conversion function to make a usable JSValue
+        to wrap the FunctionCallProfile in JSC.
+        * page/JavaScriptFunctionCallProfile.h: Added.
+        * page/JavaScriptProfile.cpp: Added. Wrapper around the JSC Profile.
+        (WebCore::profileCache): This cache makes sure we don't needlessly
+        create duplicate wrappers aroudn the same Profile*.
+        (WebCore::getHeadCallback): Callback to return the head of the graph of
+        the functions profiled durring this profile's run.
+        (WebCore::finalize):
+        (WebCore::profileClass): Define the JSClassRef for this object.
+        (WebCore::toJS): Create a conversion function to make a usable JSValue
+        to wrap the Profile from JSC.
+        * page/JavaScriptProfile.h: Added.
+
 2008-05-14  David Hyatt  <hyatt@apple.com>
 
         Fix for bug https://bugs.webkit.org/show_bug.cgi?id=16130.

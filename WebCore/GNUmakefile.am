@@ -856,6 +856,8 @@ webcore_sources += \
 	WebCore/page/InspectorController.cpp \
 	WebCore/page/JavaScriptCallFrame.cpp \
 	WebCore/page/JavaScriptDebugServer.cpp \
+	WebCore/page/JavaScriptProfile.cpp \
+	WebCore/page/JavaScriptFunctionCallProfile.cpp \
 	WebCore/page/Location.cpp \
 	WebCore/page/MouseEventWithHitTestResults.cpp \
 	WebCore/page/Navigator.cpp \

@@ -68,7 +68,10 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
+#include <JavaScriptProfile.h>
 #include <kjs/ustring.h>
+#include <profiler/Profile.h>
+#include <profiler/Profiler.h>
 #include <wtf/RefCounted.h>
 
 #if ENABLE(DATABASE)
@@ -959,6 +962,47 @@ static JSValueRef removeBreakpoint(JSContextRef ctx, JSObjectRef /*function*/, J
 }
 
 #pragma mark -
+#pragma mark Profiles
+
+static JSValueRef allProfiles(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef /*thisObject*/, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* exception)
+{
+    KJS::JSLock lock;
+
+    const Vector<RefPtr<Profile> >& allProfiles = Profiler::profiler()->allProfiles();
+
+    JSObjectRef global = JSContextGetGlobalObject(ctx);
+
+    JSValueRef arrayProperty = JSObjectGetProperty(ctx, global, jsStringRef("Array").get(), exception);
+    if (exception && *exception)
+        return JSValueMakeUndefined(ctx);
+
+    JSObjectRef arrayConstructor = JSValueToObject(ctx, arrayProperty, exception);
+    if (exception && *exception)
+        return JSValueMakeUndefined(ctx);
+
+    JSObjectRef result = JSObjectCallAsConstructor(ctx, arrayConstructor, 0, 0, exception);
+    if (exception && *exception)
+        return JSValueMakeUndefined(ctx);
+
+    JSValueRef pushProperty = JSObjectGetProperty(ctx, result, jsStringRef("push").get(), exception);
+    if (exception && *exception)
+        return JSValueMakeUndefined(ctx);
+
+    JSObjectRef pushFunction = JSValueToObject(ctx, pushProperty, exception);
+    if (exception && *exception)
+        return JSValueMakeUndefined(ctx);
+
+    for (size_t i = 0; i < allProfiles.size(); ++i) {
+        JSValueRef arg0 = toRef(toJS(toJS(ctx), allProfiles[i].get()));
+        JSObjectCallAsFunction(ctx, pushFunction, result, 1, &arg0, exception);
+        if (exception && *exception)
+            return JSValueMakeUndefined(ctx);
+    }
+
+    return result;
+}
+
+#pragma mark -
 #pragma mark InspectorController Class
 
 InspectorController::InspectorController(Page* page, InspectorClient* client)
@@ -1203,6 +1247,7 @@ void InspectorController::windowScriptObjectAvailable()
         { "startDebuggingAndReloadInspectedPage", WebCore::startDebuggingAndReloadInspectedPage, kJSPropertyAttributeNone },
         { "stopDebugging", WebCore::stopDebugging, kJSPropertyAttributeNone },
         { "debuggerAttached", WebCore::debuggerAttached, kJSPropertyAttributeNone },
+        { "allProfiles", allProfiles, kJSPropertyAttributeNone },
         { "currentCallFrame", WebCore::currentCallFrame, kJSPropertyAttributeNone },
         { "pauseOnExceptions", WebCore::pauseOnExceptions, kJSPropertyAttributeNone },
         { "setPauseOnExceptions", WebCore::setPauseOnExceptions, kJSPropertyAttributeNone },

@@ -611,6 +611,8 @@ This file contains the list of files needed to build WebCore.
         page/History.cpp
         page/InspectorController.cpp
         page/JavaScriptDebugServer.cpp
+        page/JavaScriptProfile.cpp
+        page/JavaScriptFunctionCallProfile.cpp
         page/Location.cpp
         page/MouseEventWithHitTestResults.cpp
         page/Navigator.cpp
