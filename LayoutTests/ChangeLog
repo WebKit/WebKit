@@ -1,5 +1,11 @@
 2008-05-14  Anders Carlsson  <andersca@apple.com>
 
+        Check in the test result.
+        
+        * http/tests/appcache/manifest-with-empty-file-expected.txt: Added.
+
+2008-05-14  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam.
 
         Add test where a manifest references an empty file.
