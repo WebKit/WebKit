@@ -98,6 +98,18 @@ void FunctionCallProfile::stopProfiling()
         (*it)->stopProfiling();
 }
 
+double FunctionCallProfile::selfTime() const
+{
+    double sumChildrenTime = 0.0;
+
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+        sumChildrenTime += (*currentChild)->totalTime();
+
+    ASSERT(sumChildrenTime <= m_timeSum);
+
+    return m_timeSum - sumChildrenTime;
+}
+
 void FunctionCallProfile::printDataInspectorStyle(int indentLevel) const
 {
     // Print function names

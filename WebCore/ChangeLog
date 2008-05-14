@@ -1,3 +1,14 @@
+2008-05-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by John.
+
+        -<rdar://problem/5770054> JavaScript profiler (10928)
+        Use the FunctionCallProfile's new total and self time functions.
+
+        * page/JavaScriptFunctionCallProfile.cpp:
+        (WebCore::getTotalTime):
+        (WebCore::getSelfTime):
+
 2008-05-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

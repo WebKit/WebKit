@@ -55,7 +55,8 @@ namespace KJS {
         void stopProfiling();
 
         UString functionName() const { return m_functionName; }
-        double milliSecs() const { return m_timeSum; }
+        double totalTime() const { return m_timeSum; }
+        double selfTime() const;
         unsigned numberOfCalls() const { return m_numberOfCalls; }
         const Deque<RefPtr<FunctionCallProfile> >& children() { return m_children; }
 
