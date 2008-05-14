@@ -1,3 +1,25 @@
+2008-05-14  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r26474): WebKit fails jQuery test 64 core module: text(String) subtest 1 Check escaped text (createTextNode)
+
+        <https://bugs.webkit.org/show_bug.cgi?id=18976>
+        <rdar://problem/5924793>
+
+        Reviewed by Darin.
+
+        Tests: fast/dom/dom-parse-serialize-expected.txt:
+               fast/xsl/xslt-processor-expected.txt:
+               fast/xsl/xslt-text-expected.txt:
+
+        Commit r26474 removed escaping of '>' characters to '&gt;' in serialized
+        HTML content, which broke one jQuery test.  This change restores that
+        serialization behavior to both attributes and content for consistency.
+
+        * editing/markup.cpp:
+        (WebCore::appendAttributeValue): Escape '>' as '&gt;'.
+        (WebCore::escapeContentText): Ditto.
+        (WebCore::appendEscapedContent): Ditto.  This is the bug fix for the jQuery test.
+
 2008-05-14  Adam Roben  <aroben@apple.com>
 
         Fix Bug 19051: REGRESSION (r33447): Assertion in
