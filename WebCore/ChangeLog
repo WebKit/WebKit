@@ -1,3 +1,13 @@
+2008-05-14  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * platform/network/NetworkStateNotifier.cpp: Added a missing #include.
+        * platform/network/NetworkStateNotifier.h:
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier): Removed 'void'
+        return type from the constructor, and fixed the spelling of a member
+        variable.
+
 2008-05-14  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

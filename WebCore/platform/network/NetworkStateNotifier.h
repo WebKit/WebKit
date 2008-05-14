@@ -59,8 +59,8 @@ private:
 };
 
 #if !PLATFORM(MAC)
-inline void NetworkStateNotifier::NetworkStateNotifier()
-    : m_onLine(true)
+inline NetworkStateNotifier::NetworkStateNotifier()
+    : m_isOnLine(true)
 {    
 }
 #endif

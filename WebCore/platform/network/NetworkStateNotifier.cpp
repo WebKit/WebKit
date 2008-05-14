@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkStateNotifier.h"
 
+#include <wtf/Assertions.h>
+
 namespace WebCore {
 
 NetworkStateNotifier& networkStateNotifier()
