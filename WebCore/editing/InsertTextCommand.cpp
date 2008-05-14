@@ -79,6 +79,39 @@ Position InsertTextCommand::prepareForTextInsertion(const Position& p)
     return pos;
 }
 
+// This avoids the expense of a full fledged delete operation, and avoids a layout that typically results
+// from text removal.
+bool InsertTextCommand::performTrivialReplace(const String& text, bool selectInsertedText)
+{
+    if (!endingSelection().isRange())
+        return false;
+    
+    if (text.contains('\t') || text.contains(' ') || text.contains('\n'))
+        return false;
+    
+    Position start = endingSelection().start();
+    Position end = endingSelection().end();
+    
+    if (start.node() != end.node() || !start.node()->isTextNode() || isTabSpanTextNode(start.node()))
+        return false;
+        
+    replaceTextInNode(static_cast<Text*>(start.node()), start.offset(), end.offset() - start.offset(), text);
+    
+    Position endPosition(start.node(), start.offset() + text.length());
+    
+    // We could have inserted a part of composed character sequence,
+    // so we are basically treating ending selection as a range to avoid validation.
+    // <http://bugs.webkit.org/show_bug.cgi?id=15781>
+    Selection forcedEndingSelection;
+    forcedEndingSelection.setWithoutValidation(start, endPosition);
+    setEndingSelection(forcedEndingSelection);
+    
+    if (!selectInsertedText)
+        setEndingSelection(Selection(endingSelection().visibleEnd()));
+    
+    return true;
+}
+
 void InsertTextCommand::input(const String& originalText, bool selectInsertedText)
 {
     String text = originalText;
@@ -97,8 +130,11 @@ void InsertTextCommand::input(const String& originalText, bool selectInsertedTex
     
     // Delete the current selection.
     // FIXME: This delete operation blows away the typing style.
-    if (endingSelection().isRange())
+    if (endingSelection().isRange()) {
+        if (performTrivialReplace(text, selectInsertedText))
+            return;
         deleteSelection(false, true, true, false);
+    }
     
     // Insert the character at the leftmost candidate.
     Position startPosition = endingSelection().start().upstream();

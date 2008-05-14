@@ -1,3 +1,16 @@
+2008-05-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5914803> Improve performance of WebCore::Editor::setComposition
+        
+        Replacing all the text in a node is now much less likely to remove it
+        and cause selection changes.
+
+        * platform/mac/editing/input/text-input-controller-expected.txt:
+        * platform/mac/editing/inserting/4959067-expected.txt:
+        * platform/mac/editing/style/style-3681552-fix-001-expected.txt:
+
 2008-05-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

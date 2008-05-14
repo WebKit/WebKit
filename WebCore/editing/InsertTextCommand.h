@@ -46,6 +46,8 @@ private:
 
     Position prepareForTextInsertion(const Position&);
     Position insertTab(const Position&);
+    
+    bool performTrivialReplace(const String&, bool selectInsertedText);
 
     unsigned m_charactersAdded;
 };

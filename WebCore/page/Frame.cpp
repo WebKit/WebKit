@@ -610,10 +610,10 @@ void Frame::selectionLayoutChanged()
         // Example: foo <a>bar</a>.  Imagine that a line wrap occurs after 'foo', and that 'bar' is selected.   If we pass [foo, 3]
         // as the start of the selection, the selection painting code will think that content on the line containing 'foo' is selected
         // and will fill the gap before 'bar'.
-        Position startPos = selection.visibleStart().deepEquivalent();
+        Position startPos = selection.start();
         if (startPos.downstream().isCandidate())
             startPos = startPos.downstream();
-        Position endPos = selection.visibleEnd().deepEquivalent();
+        Position endPos = selection.end();
         if (endPos.upstream().isCandidate())
             endPos = endPos.upstream();
         

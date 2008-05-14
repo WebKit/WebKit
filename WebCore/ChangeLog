@@ -1,3 +1,27 @@
+2008-05-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5914803> Improve performance of WebCore::Editor::setComposition
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::confirmComposition): Remove the previous composition
+        when we insert the new one, not with a separate, slower, delete operation.
+        (WebCore::Editor::setComposition): Ditto.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::performTrivialReplace): Remove the selected
+        text with a low level operation that doesn't perform a layout and insert
+        the new text in a way that won't trigger a layout from the removal.
+        (WebCore::InsertTextCommand::input): Call the optimized replace.
+        * editing/InsertTextCommand.h:
+        * editing/htmlediting.cpp:
+        (WebCore::isTabSpanNode): Check to see if the node is a span, to avoid 
+        the expense of getAttribute in the common case.
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionLayoutChanged): Selection::start() and end()
+        will already be at VisiblePosition deepEquivalents. Selection::validate()
+        ensures this.
+
 2008-05-14  Adam Roben  <aroben@apple.com>
 
         Make the Inspector able to handle being reloaded

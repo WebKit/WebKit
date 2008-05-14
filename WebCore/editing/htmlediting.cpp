@@ -783,7 +783,7 @@ PassRefPtr<Element> createElement(Document* document, const String& tagName)
 
 bool isTabSpanNode(const Node *node)
 {
-    return (node && node->isElementNode() && static_cast<const Element *>(node)->getAttribute("class") == AppleTabSpanClass);
+    return node && node->hasTagName(spanTag) && node->isElementNode() && static_cast<const Element *>(node)->getAttribute(classAttr) == AppleTabSpanClass;
 }
 
 bool isTabSpanTextNode(const Node *node)
