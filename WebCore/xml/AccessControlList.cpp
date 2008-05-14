@@ -29,6 +29,7 @@
 #include "AccessItemRule.h"
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
+#include <stdio.h>
 
 namespace WebCore {
 

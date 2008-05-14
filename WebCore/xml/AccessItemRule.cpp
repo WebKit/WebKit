@@ -28,6 +28,7 @@
 
 #include "PlatformString.h"
 #include "ParserUtilities.h"
+#include <stdio.h>
 
 namespace WebCore {
 

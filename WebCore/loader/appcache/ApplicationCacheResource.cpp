@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "ApplicationCacheResource.h"
+#include <stdio.h>
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 

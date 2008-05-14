@@ -98,12 +98,12 @@ int PluginPackage::compare(const PluginPackage& compareTo) const
 }
 
 PluginPackage::PluginPackage(const String& path, const time_t& lastModified)
-    : m_path(path)
+    : m_isLoaded(false)
+    , m_loadCount(0)
+    , m_path(path)
     , m_moduleVersion(0)
     , m_module(0)
     , m_lastModified(lastModified)
-    , m_isLoaded(false)
-    , m_loadCount(0)
     , m_freeLibraryTimer(this, &PluginPackage::freeLibraryTimerFired)
 {
     m_fileName = pathGetFileName(m_path);

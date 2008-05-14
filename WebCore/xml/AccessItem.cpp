@@ -28,6 +28,7 @@
 
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
+#include <stdio.h>
 
 #ifndef NDEBUG
 #include "CString.h"

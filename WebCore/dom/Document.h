@@ -144,7 +144,7 @@ private:
     void ref() const;
     void deref() const;
 
-    static AtomicStringImpl* const hashTableDeletedValue() { return reinterpret_cast<AtomicStringImpl*>(-1); }
+    static AtomicStringImpl* hashTableDeletedValue() { return reinterpret_cast<AtomicStringImpl*>(-1); }
 
     AtomicStringImpl* m_name;
     AtomicStringImpl* m_type;

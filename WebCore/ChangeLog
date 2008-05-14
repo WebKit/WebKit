@@ -1,3 +1,29 @@
+2008-05-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric.
+
+        GCC 4.3 build fix.
+        Removes some compiler warnings.
+
+        * dom/Document.h:
+        (WebCore::FormElementKey::hashTableDeletedValue): GCC complained about the const keyword
+        so remove it as it is only used inside FormElementKey.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Correct coding style (removes
+        a warning too).
+
+        * loader/appcache/ApplicationCacheResource.cpp: Include stdio.h for gcc4.3 build.
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::PluginPackage): Changed initialization order in the constructor.
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView): Ditto.
+        * plugins/PluginView.h:
+        * xml/AccessControlList.cpp: Include stdio.h
+        * xml/AccessItem.cpp: Ditto.
+        * xml/AccessItemRule.cpp: Ditto.
+
 2008-05-14  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
