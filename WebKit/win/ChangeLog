@@ -1,3 +1,16 @@
+2008-05-14  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 18767: Inspector is currently pretty much useless on Windows
+
+        <https://bugs.webkit.org/show_bug.cgi?id=18767>
+
+        Reviewed by Tim Hatcher.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::highlight): Only move the highlight behind the
+        Inspector window when first creating the highlight, not every time we
+        update it.
+
 2008-05-13  Adam Roben  <aroben@apple.com>
 
         Neuter WebScriptDebugServer

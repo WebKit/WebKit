@@ -269,7 +269,9 @@ void WebInspectorClient::detachWindow()
 
 void WebInspectorClient::highlight(Node*)
 {
-    if (!m_highlight)
+    bool creatingHighlight = !m_highlight;
+
+    if (creatingHighlight)
         m_highlight.set(new WebNodeHighlight(m_inspectedWebView));
 
     if (m_highlight->isShowing())
@@ -277,7 +279,7 @@ void WebInspectorClient::highlight(Node*)
     else
         m_highlight->setShowsWhileWebViewIsVisible(true);
 
-    if (IsWindowVisible(m_hwnd))
+    if (creatingHighlight && IsWindowVisible(m_hwnd))
         m_highlight->placeBehindWindow(m_hwnd);
 }
 
