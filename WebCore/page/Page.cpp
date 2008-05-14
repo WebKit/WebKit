@@ -123,7 +123,9 @@ Page::~Page()
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
         frame->pageDestroyed();
     m_editorClient->pageDestroyed();
-    m_inspectorController->pageDestroyed();
+    if (m_parentInspectorController)
+        m_parentInspectorController->pageDestroyed();
+    m_inspectorController->inspectedPageDestroyed();
 
     m_backForwardList->close();
 

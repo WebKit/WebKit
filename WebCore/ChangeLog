@@ -1,3 +1,27 @@
+2008-05-14  Adam Roben  <aroben@apple.com>
+
+        Make the Inspector able to handle being reloaded
+
+        When Reload was selected from the context menu in the Inspector, the
+        Inspector window would close and never be openable again. Now it
+        closes, then reopens when the page finishes loading.
+
+        Reviewed by Tim Hatcher.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::close): Removed code that cleared out
+        m_page. This is now handled by pageDestroyed.
+        * page/InspectorController.h:
+        (WebCore::InspectorController::inspectedPageDestroyed): Added.
+        * page/Page.cpp:
+        (WebCore::Page::~Page): Fixed a bug and added a call to the new
+        inspectedPageDestroyed. If we have a parent InspectorController, that
+        means that we are the Page in the Inspector's window (i.e., we are the
+        Inspector's UI), so when we are destroyed we should call
+        InspectorController::pageDestroyed. We also need to call
+        inspectedPageDestroyed on our own InspectorController so that it won't
+        try to call into us.
+
 2008-05-14  Timothy Hatcher  <timothy@apple.com>
 
         Add pause on exception support to the Inspector debugger

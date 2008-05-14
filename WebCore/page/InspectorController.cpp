@@ -1304,13 +1304,10 @@ void InspectorController::close()
         return;
 
     closeWindow();
-    if (m_page)
-        m_page->setParentInspectorController(0);
 
     ASSERT(m_scriptContext && m_scriptObject);
     JSValueUnprotect(m_scriptContext, m_scriptObject);
 
-    m_page = 0;
     m_scriptObject = 0;
     m_scriptContext = 0;
 }

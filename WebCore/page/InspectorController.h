@@ -74,6 +74,7 @@ public:
     InspectorController(Page*, InspectorClient*);
     ~InspectorController();
 
+    void inspectedPageDestroyed() { m_inspectedPage = 0; }
     void pageDestroyed() { m_page = 0; }
 
     bool enabled() const;
