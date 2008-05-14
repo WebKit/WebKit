@@ -1034,6 +1034,7 @@ webkitgtk_sources += \
 	WebCore/platform/gtk/ContextMenuItemGtk.cpp \
 	WebCore/platform/gtk/DragDataGtk.cpp \
 	WebCore/platform/gtk/DragImageGtk.cpp \
+	WebCore/platform/gtk/EventLoopGtk.cpp \
 	WebCore/platform/gtk/FileChooserGtk.cpp \
 	WebCore/platform/gtk/FileSystemGtk.cpp \
 	WebCore/platform/graphics/gtk/FontCacheGtk.cpp \

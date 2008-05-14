@@ -1,5 +1,13 @@
 2008-05-13  Alp Toker  <alp@nuanti.com>
 
+        GTK+ build fix. Implement EventLoopGtk.cpp.
+
+        * GNUmakefile.am:
+        * platform/gtk/EventLoopGtk.cpp: Added.
+        (WebCore::EventLoop::cycle):
+
+2008-05-13  Alp Toker  <alp@nuanti.com>
+
         GTK+ build fix. Fix IDL filename typo and add JavaScriptCallFrame.cpp
         to the build.
 
