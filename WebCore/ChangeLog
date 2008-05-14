@@ -1,3 +1,10 @@
+2008-05-13  Alp Toker  <alp@nuanti.com>
+
+        GTK+ build fix. Fix IDL filename typo and add JavaScriptCallFrame.cpp
+        to the build.
+
+        * GNUmakefile.am:
+
 2008-05-13  Matt Lilek  <webkit@mattlilek.com>
 
         Not reviewed, partial Gtk build fix.

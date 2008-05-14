@@ -462,7 +462,7 @@ IDL_BINDINGS +=  \
 	WebCore/page/DOMSelection.idl \
 	WebCore/page/DOMWindow.idl \
 	WebCore/page/History.idl \
-	WebCore/page/JSJavaScriptCallFrame.idl \
+	WebCore/page/JavaScriptCallFrame.idl \
 	WebCore/page/Location.idl \
 	WebCore/page/Navigator.idl \
 	WebCore/page/Screen.idl \
@@ -854,6 +854,7 @@ webcore_sources += \
 	WebCore/page/FrameView.cpp \
 	WebCore/page/History.cpp \
 	WebCore/page/InspectorController.cpp \
+	WebCore/page/JavaScriptCallFrame.cpp \
 	WebCore/page/JavaScriptDebugServer.cpp \
 	WebCore/page/Location.cpp \
 	WebCore/page/MouseEventWithHitTestResults.cpp \
