@@ -55,6 +55,7 @@ namespace WTF {
     macro(message) \
     macro(multiline) \
     macro(name) \
+    macro(now) \
     macro(parse) \
     macro(propertyIsEnumerable) \
     macro(prototype) \

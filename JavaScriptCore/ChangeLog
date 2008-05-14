@@ -1,3 +1,17 @@
+2008-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5933644> Implement Date.now
+        
+        Implement Date.now which returns the number of milliseconds since the epoch.
+        
+        * kjs/CommonIdentifiers.h:
+        * kjs/date_object.cpp:
+        (KJS::DateObjectFuncImp::):
+        (KJS::DateObjectImp::DateObjectImp):
+        (KJS::DateObjectFuncImp::callAsFunction):
+
 2008-05-13  Kevin McCullough  <kmccullough@apple.com>
 
         Giving credit where credit is due.

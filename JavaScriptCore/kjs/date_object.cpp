@@ -88,7 +88,7 @@ public:
 
     virtual JSValue *callAsFunction(ExecState *, JSObject *thisObj, const List &args);
 
-    enum { Parse, UTC };
+    enum { Parse, UTC, Now };
 
 private:
     int id;
@@ -491,6 +491,7 @@ DateObjectImp::DateObjectImp(ExecState* exec, FunctionPrototype* funcProto, Date
   putDirect(exec->propertyNames().prototype, dateProto, DontEnum|DontDelete|ReadOnly);
   putDirectFunction(new DateObjectFuncImp(exec, funcProto, DateObjectFuncImp::Parse, 1, exec->propertyNames().parse), DontEnum);
   putDirectFunction(new DateObjectFuncImp(exec, funcProto, DateObjectFuncImp::UTC, 7, exec->propertyNames().UTC), DontEnum);
+  putDirectFunction(new DateObjectFuncImp(exec, funcProto, DateObjectFuncImp::Now, 0, exec->propertyNames().now), DontEnum);
   putDirect(exec->propertyNames().length, 7, ReadOnly|DontDelete|DontEnum);
 }
 
@@ -568,10 +569,11 @@ DateObjectFuncImp::DateObjectFuncImp(ExecState* exec, FunctionPrototype* funcPro
 // ECMA 15.9.4.2 - 3
 JSValue *DateObjectFuncImp::callAsFunction(ExecState* exec, JSObject*, const List& args)
 {
-  if (id == Parse) {
+  if (id == Parse)
     return jsNumber(parseDate(args[0]->toString(exec)));
-  }
-  else { // UTC
+  else if (id == Now)
+    return jsNumber(getCurrentUTCTime());
+  } else { // UTC
     int n = args.size();
     if (isnan(args[0]->toNumber(exec))
         || isnan(args[1]->toNumber(exec))
