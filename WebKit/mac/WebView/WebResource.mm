@@ -197,7 +197,9 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (NSData *)data
 {
-    return _private->coreResource ? [_private->coreResource->data()->createNSData() autorelease] : 0;
+    if (_private->coreResource && _private->coreResource->data())
+        return [_private->coreResource->data()->createNSData() autorelease];
+    return 0;
 }
 
 - (NSURL *)URL

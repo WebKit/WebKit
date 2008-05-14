@@ -1,3 +1,12 @@
+2008-05-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+
+        Add missing NULL check to match rest of file, this was found by the editing fuzzer.
+
+        * WebView/WebResource.mm:
+        (-[WebResource data]):
+
 2008-05-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.
