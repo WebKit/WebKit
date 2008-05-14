@@ -1,3 +1,16 @@
+2008-05-14  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug https://bugs.webkit.org/show_bug.cgi?id=16130.
+
+        Opacity, transforms, reflections and masks should not honor z-index unless the element is also
+        positioned.  Always reset to auto if the element is not positioned (and then the following code will
+        adjust auto to 0 as needed).
+
+        Reviewed by Dan Bernstein
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+
 2008-05-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.
