@@ -469,7 +469,10 @@ WebInspector.ConsoleMessage.prototype = {
         if (!parameters.length)
             return formattedResult;
 
-        var formatForConsole = WebInspector.console._format.bind(WebInspector.console, plainText);
+        function formatForConsole(obj)
+        {
+            return WebInspector.console._format(obj, plainText);
+        }
 
         if (Object.type(parameters[0], InspectorController.inspectedWindow()) === "string") {
             var formatters = {}

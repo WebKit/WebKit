@@ -1,3 +1,19 @@
+2008-05-14  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 18888: REGRESSION (r32731): console.log always prints
+        "undefined"
+
+        Reviewed by Tim Hatcher.
+
+        Tested by pre-existing
+        manual-tests/inspector/console-log-formatting.html.
+
+        * page/inspector/Console.js:
+        (WebInspector.ConsoleMessage.prototype._format): Changed to explicitly
+        wrap Console._format instead of using bind to do it. Using bind was
+        causing us to pass plainText in as the first parameter instead of as
+        the second.
+
 2008-05-14  Timothy Hatcher  <timothy@apple.com>
 
         Fixes the bug where stepping out of a function would show the wrong
