@@ -6301,6 +6301,14 @@
 					>
 				</File>
 				<File
+				    RelativePath="..\platform\network\NetworkStateNotifier.h"
+				    >
+			    </File>
+				<File
+				    RelativePath="..\platform\network\NetworkStateNotifier.cpp"
+				    >
+			    </File>
+				<File
 					RelativePath="..\platform\network\ProtectionSpace.cpp"
 					>
 				</File>

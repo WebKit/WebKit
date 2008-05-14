@@ -65,6 +65,8 @@ namespace WebCore { namespace EventNames {
     macro(mouseup) \
     macro(mousewheel) \
     macro(noupdate) \
+    macro(offline) \
+    macro(online) \
     macro(overflowchanged) \
     macro(paste) \
     macro(readystatechange) \

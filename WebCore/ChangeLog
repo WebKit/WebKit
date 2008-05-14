@@ -1,3 +1,35 @@
+2008-05-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        <rdar://problem/5931742> Support navigator.onLine from HTML5
+        
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add NetworkStateNotifier files.
+        
+        * dom/EventNames.h:
+        Add offline and online events.
+        
+        * page/Navigator.cpp:
+        (WebCore::Navigator::onLine):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+        Add navigator.onLine.
+        
+        * page/Page.cpp:
+        (WebCore::networkStateChanged):
+        Dispatch offline/online events to all frames.
+        
+        (WebCore::Page::Page):
+        Set state change callback.
+        
+        * platform/network/NetworkStateNotifier.cpp: Added.
+        * platform/network/NetworkStateNotifier.h: Added.
+
+        * platform/network/mac/NetworkStateNotifierMac.cpp: Added.
+        Mac network state notifier.
+
 2008-05-14  Adam Roben  <aroben@apple.com>
 
         Fix Bug 18888: REGRESSION (r32731): console.log always prints

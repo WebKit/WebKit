@@ -181,6 +181,10 @@
 		1A7CCB1B0CD9469A00B7B64E /* SQLTransactionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB170CD9469A00B7B64E /* SQLTransactionCallback.h */; };
 		1A7CCB1C0CD9469A00B7B64E /* SQLTransactionErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB180CD9469A00B7B64E /* SQLTransactionErrorCallback.h */; };
 		1A7CCB240CD946FD00B7B64E /* SQLTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7CCB220CD946FD00B7B64E /* SQLTransaction.h */; };
+		1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7FA6180DDA3B3A0028F8A5 /* NetworkStateNotifier.h */; };
+		1A7FA61B0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7FA61A0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp */; };
+		1A7FA6490DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7FA6470DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp */; };
+		1A7FA7CC0DDA4B770028F8A5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7FA7CB0DDA4B770028F8A5 /* SystemConfiguration.framework */; };
 		1A820D910A13EBA600AF843C /* ImageDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A820D8F0A13EBA600AF843C /* ImageDocument.cpp */; };
 		1A820D920A13EBA600AF843C /* ImageDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A820D900A13EBA600AF843C /* ImageDocument.h */; };
 		1A85B18F0A1B18A200D8C87C /* JSHTMLHtmlElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A85B18D0A1B18A200D8C87C /* JSHTMLHtmlElement.cpp */; };
@@ -4634,6 +4638,10 @@
 		1A7CCB180CD9469A00B7B64E /* SQLTransactionErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionErrorCallback.h; sourceTree = "<group>"; };
 		1A7CCB220CD946FD00B7B64E /* SQLTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransaction.h; sourceTree = "<group>"; };
 		1A7CCB230CD946FD00B7B64E /* SQLTransaction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLTransaction.idl; sourceTree = "<group>"; };
+		1A7FA6180DDA3B3A0028F8A5 /* NetworkStateNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkStateNotifier.h; sourceTree = "<group>"; };
+		1A7FA61A0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkStateNotifier.cpp; sourceTree = "<group>"; };
+		1A7FA6470DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkStateNotifierMac.cpp; sourceTree = "<group>"; };
+		1A7FA7CB0DDA4B770028F8A5 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = /System/Library/Frameworks/SystemConfiguration.framework; sourceTree = "<absolute>"; };
 		1A820D8F0A13EBA600AF843C /* ImageDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDocument.cpp; sourceTree = "<group>"; };
 		1A820D900A13EBA600AF843C /* ImageDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageDocument.h; sourceTree = "<group>"; };
 		1A85B17D0A1B183600D8C87C /* HTMLHtmlElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLHtmlElement.idl; sourceTree = "<group>"; };
@@ -8375,6 +8383,7 @@
 				93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */,
 				1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */,
 				DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */,
+				1A7FA7CC0DDA4B770028F8A5 /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8434,6 +8443,7 @@
 				1CFAE3220A6D6A3F0032593D /* libobjc.dylib */,
 				DD763BB10992C2C900740B8E /* libxml2.dylib */,
 				A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */,
+				1A7FA7CB0DDA4B770028F8A5 /* SystemConfiguration.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -8890,6 +8900,8 @@
 				514C765C0CE923A1007EF3CD /* HTTPHeaderMap.h */,
 				514C765D0CE923A1007EF3CD /* HTTPParsers.cpp */,
 				514C765E0CE923A1007EF3CD /* HTTPParsers.h */,
+				1A7FA61A0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp */,
+				1A7FA6180DDA3B3A0028F8A5 /* NetworkStateNotifier.h */,
 				514C765F0CE923A1007EF3CD /* ProtectionSpace.cpp */,
 				514C76600CE923A1007EF3CD /* ProtectionSpace.h */,
 				514C76630CE923A1007EF3CD /* ResourceHandle.cpp */,
@@ -8913,6 +8925,7 @@
 				514C76430CE9234E007EF3CD /* AuthenticationMac.mm */,
 				514C76440CE9234E007EF3CD /* FormDataStreamMac.h */,
 				514C76450CE9234E007EF3CD /* FormDataStreamMac.mm */,
+				1A7FA6470DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp */,
 				514C76460CE9234E007EF3CD /* ResourceErrorMac.mm */,
 				514C76470CE9234E007EF3CD /* ResourceHandleMac.mm */,
 				514C76480CE9234E007EF3CD /* ResourceRequest.h */,
@@ -15079,6 +15092,7 @@
 				BC34C33D0DD607DE00090123 /* AccessItem.h in Headers */,
 				BC34C33F0DD607DE00090123 /* AccessItemRule.h in Headers */,
 				BC76AC130DD7AD5C00415F34 /* ParserUtilities.h in Headers */,
+				1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16793,6 +16807,8 @@
 				BC34C33A0DD607DE00090123 /* AccessControlList.cpp in Sources */,
 				BC34C33C0DD607DE00090123 /* AccessItem.cpp in Sources */,
 				BC34C33E0DD607DE00090123 /* AccessItemRule.cpp in Sources */,
+				1A7FA61B0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp in Sources */,
+				1A7FA6490DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
