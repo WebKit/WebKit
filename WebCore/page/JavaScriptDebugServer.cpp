@@ -457,9 +457,9 @@ bool JavaScriptDebugServer::returnEvent(ExecState* exec, int sourceID, int lineN
 {
     if (m_paused)
         return true;
+    pauseIfNeeded(exec, sourceID, lineNumber);
     m_currentCallFrame->invalidate();
     m_currentCallFrame = m_currentCallFrame->caller();
-    pauseIfNeeded(exec, sourceID, lineNumber);
     return true;
 }
 

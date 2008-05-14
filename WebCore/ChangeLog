@@ -1,3 +1,14 @@
+2008-05-14  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes the bug where stepping out of a function would show the wrong
+        call stack (would look like it stepped out twice.)
+
+        Reviewed by Adam Roben.
+
+        * page/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::returnEvent):
+        Call pauseIfNeeded before setting m_currentCallFrame to the caller.
+
 2008-05-14  Stephanie Lewis  <slewis@apple.com>
    
         Fix 64bit build
