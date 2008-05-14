@@ -1,3 +1,9 @@
+2008-05-13  Matt Lilek  <webkit@mattlilek.com>
+
+        Not reviewed, partial Gtk build fix.
+
+        * GNUmakefile.am:
+
 2008-05-13  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a crash when stepping out in the Inspector's debugger.

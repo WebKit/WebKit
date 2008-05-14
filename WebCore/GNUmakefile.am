@@ -169,6 +169,7 @@ webcore_built_sources += \
 	DerivedSources/JSHTMLUListElement.h \
 	DerivedSources/JSHistory.h \
 	DerivedSources/JSImageData.h \
+	DerivedSources/JSJavaScriptCallFrame.h \
 	DerivedSources/JSKeyboardEvent.h \
 	DerivedSources/JSLocation.h \
 	DerivedSources/JSMediaList.h \
@@ -303,6 +304,7 @@ webcore_built_sources += \
 	DerivedSources/JSHTMLUListElement.cpp \
 	DerivedSources/JSHistory.cpp \
 	DerivedSources/JSImageData.cpp \
+	DerivedSources/JSJavaScriptCallFrame.cpp \
 	DerivedSources/JSKeyboardEvent.cpp \
 	DerivedSources/JSLocation.cpp \
 	DerivedSources/JSMediaList.cpp \
@@ -460,6 +462,7 @@ IDL_BINDINGS +=  \
 	WebCore/page/DOMSelection.idl \
 	WebCore/page/DOMWindow.idl \
 	WebCore/page/History.idl \
+	WebCore/page/JSJavaScriptCallFrame.idl \
 	WebCore/page/Location.idl \
 	WebCore/page/Navigator.idl \
 	WebCore/page/Screen.idl \
@@ -500,6 +503,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSImageConstructor.cpp \
 	WebCore/bindings/js/JSInspectedObjectWrapper.cpp \
 	WebCore/bindings/js/JSInspectorCallbackWrapper.cpp \
+	WebCore/bindings/js/JSJavaScriptCallFrameCustom.cpp \
 	WebCore/bindings/js/JSLocationCustom.cpp \
 	WebCore/bindings/js/JSEventTargetNode.cpp \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
