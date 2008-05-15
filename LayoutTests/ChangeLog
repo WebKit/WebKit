@@ -1,3 +1,15 @@
+2008-05-15  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 19085: font-family: initial sets font-family differently than font: initial
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19085>
+        <rdar://problem/5939391>
+
+        Reviewed by David Hyatt.
+
+        * fast/css/font-family-initial-expected.txt: Added.
+        * fast/css/font-family-initial.html: Added.
+
 2008-05-15  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin.

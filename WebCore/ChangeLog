@@ -1,3 +1,18 @@
+2008-05-15  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 19085: font-family: initial sets font-family differently than font: initial
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19085>
+        <rdar://problem/5939391>
+
+        Reviewed by David Hyatt.
+
+        Test: fast/css/font-family-initial.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Don't set family if first
+        family of initial font description is empty.
+
 2008-05-15  David Hyatt  <hyatt@apple.com>
 
         Move RenderStyle into a new subdirectory, rendering/style/, in preparation for breaking it up into
