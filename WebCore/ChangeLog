@@ -10,6 +10,12 @@
 
         * WebCore.vcproj/WebCore.vcproj:
 
+2008-05-15  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-05-15  David Kilzer  <ddkilzer@apple.com>
 
         Bug 19085: font-family: initial sets font-family differently than font: initial
