@@ -1,3 +1,13 @@
+2008-05-15  David Kilzer  <ddkilzer@apple.com>
+
+        Fix leaks when stopping a page from loading
+
+        Patch suggested by Antti.  Reviewed by Antti.
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::clearPreloads): If a resource is in m_preloads but
+        never made it to the cache, delete it to prevent it from leaking.
+
 2008-05-15  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin.
