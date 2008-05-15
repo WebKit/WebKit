@@ -54,6 +54,8 @@ namespace KJS {
         const Vector<RefPtr<Profile> >& allProfiles() { return m_allProfiles; };
         void clearProfiles() { if (!m_profiling) m_allProfiles.clear(); };
 
+        Profile* currentProfile() const { return m_currentProfile.get(); }
+
         void printDataInspectorStyle(unsigned whichProfile) const;
         void printDataSampleStyle(unsigned whichProfile) const;
 

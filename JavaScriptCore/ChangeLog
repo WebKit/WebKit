@@ -1,5 +1,22 @@
 2008-05-14  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Geoff.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        Add the ability to get percentages of total and self time for displaying
+        in the WebInspector.
+
+        * profiler/Profile.h:
+        (KJS::Profile::totalProfileTime):
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::totalPercent):
+        (KJS::ProfileNode::selfPercent):
+        * profiler/ProfileNode.h:
+        * profiler/Profiler.h:
+        (KJS::Profiler::currentProfile):
+
+2008-05-14  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Sam.
 
         <rdar://problem/5770054> JavaScript profiler (10928)

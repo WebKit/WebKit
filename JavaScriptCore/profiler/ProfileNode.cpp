@@ -110,6 +110,16 @@ double ProfileNode::selfTime() const
     return m_timeSum - sumChildrenTime;
 }
 
+double ProfileNode::totalPercent() const
+{
+    return (m_timeSum / Profiler::profiler()->currentProfile()->totalTime()) * 100.0;
+}
+
+double ProfileNode::selfPercent() const
+{
+    return (selfTime() / Profiler::profiler()->currentProfile()->totalTime()) * 100.0;
+}
+
 void ProfileNode::printDataInspectorStyle(int indentLevel) const
 {
     // Print function names

@@ -57,6 +57,8 @@ namespace KJS {
         UString functionName() const { return m_functionName; }
         double totalTime() const { return m_timeSum; }
         double selfTime() const;
+        double totalPercent() const;
+        double selfPercent() const;
         unsigned numberOfCalls() const { return m_numberOfCalls; }
         const Deque<RefPtr<ProfileNode> >& children() { return m_children; }
 
