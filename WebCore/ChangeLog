@@ -1,3 +1,14 @@
+2008-05-15  Adam Treat  <treat@kde.org>
+
+        Reviewed by Simon.
+
+        Don't try to setCompositionMode for devices that do not support PorterDuff
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::TransparencyLayer::TransparencyLayer):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::clip):
+
 2008-05-15  Adele Peterson  <adele@apple.com>
 
         Reviewed and landed by Alexey.

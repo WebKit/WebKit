@@ -47,6 +47,7 @@
 #include <QPainterPath>
 #include <QPaintDevice>
 #include <QPixmap>
+#include <QPaintEngine>
 #include <QDebug>
 
 #ifndef M_PI
@@ -154,7 +155,8 @@ struct TransparencyLayer
         painter.setTransform(p->transform(), true);
         painter.setOpacity(p->opacity());
         painter.setFont(p->font());
-        painter.setCompositionMode(p->compositionMode());
+        if (painter.paintEngine()->hasFeature(QPaintEngine::PorterDuff))
+            painter.setCompositionMode(p->compositionMode());
         painter.setClipPath(p->clipPath());
     }
 
@@ -695,9 +697,11 @@ void GraphicsContext::clearRect(const FloatRect& rect)
 
     QPainter *p = m_data->p();
     QPainter::CompositionMode currentCompositionMode = p->compositionMode();
-    p->setCompositionMode(QPainter::CompositionMode_Source);
+    if (p->paintEngine()->hasFeature(QPaintEngine::PorterDuff))
+        p->setCompositionMode(QPainter::CompositionMode_Source);
     p->eraseRect(rect);
-    p->setCompositionMode(currentCompositionMode);
+    if (p->paintEngine()->hasFeature(QPaintEngine::PorterDuff))
+        p->setCompositionMode(currentCompositionMode);
 }
 
 void GraphicsContext::strokeRect(const FloatRect& rect, float width)
@@ -759,7 +763,8 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
     if (paintingDisabled())
         return;
 
-    m_data->p()->setCompositionMode(toQtCompositionMode(op));
+    if (m_data->p()->paintEngine()->hasFeature(QPaintEngine::PorterDuff))
+        m_data->p()->setCompositionMode(toQtCompositionMode(op));
 }
 
 void GraphicsContext::clip(const Path& path)
