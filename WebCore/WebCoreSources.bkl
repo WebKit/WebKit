@@ -78,6 +78,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSImageConstructor.cpp
         bindings/js/JSInspectedObjectWrapper.cpp
         bindings/js/JSInspectorCallbackWrapper.cpp
+        bindings/js/JSJavaScriptCallFrameCustom.cpp
         bindings/js/JSLocationCustom.cpp
         bindings/js/JSMimeTypeArrayCustom.cpp
         bindings/js/JSNamedNodeMapCustom.cpp
@@ -281,6 +282,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSHTMLUListElement.cpp
         DerivedSources/WebCore/JSHistory.cpp
         DerivedSources/WebCore/JSImageData.cpp
+        DerivedSources/WebCore/JSJavaScriptCallFrame.cpp
         DerivedSources/WebCore/JSKeyboardEvent.cpp
         DerivedSources/WebCore/JSLocation.cpp
         DerivedSources/WebCore/JSMediaList.cpp
@@ -610,6 +612,7 @@ This file contains the list of files needed to build WebCore.
         page/FrameView.cpp
         page/History.cpp
         page/InspectorController.cpp
+        page/JavaScriptCallFrame.cpp
         page/JavaScriptDebugServer.cpp
         page/JavaScriptProfile.cpp
         page/JavaScriptProfileNode.cpp
@@ -685,6 +688,7 @@ This file contains the list of files needed to build WebCore.
         platform/network/Credential.cpp
         platform/network/HTTPParsers.cpp
         platform/network/FormData.cpp
+        platform/network/NetworkStateNotifier.cpp
         platform/network/ProtectionSpace.cpp
         platform/network/ResourceErrorBase.cpp
         platform/network/ResourceHandle.cpp

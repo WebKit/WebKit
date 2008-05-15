@@ -67,6 +67,7 @@ wxWebCore port Bakefile project file.
             platform/wx/CursorWx.cpp
             platform/wx/DragDataWx.cpp
             platform/wx/DragImageWx.cpp
+            platform/wx/EventLoopWx.cpp
             platform/wx/FileSystemWx.cpp
             platform/wx/PopupMenuWx.cpp
             platform/graphics/wx/FontCacheWx.cpp
@@ -93,7 +94,11 @@ wxWebCore port Bakefile project file.
             platform/network/curl/FormDataStreamCurl.cpp
             platform/network/curl/ResourceHandleCurl.cpp
             platform/network/curl/ResourceHandleManager.cpp
-                      
+            
+            plugins/wx/PluginDatabaseWx.cpp
+            plugins/wx/PluginDataWx.cpp
+            plugins/wx/PluginPackageWx.cpp
+            plugins/wx/PluginViewWx.cpp
         </sources>
         
         <!-- platform-dependent source files -->

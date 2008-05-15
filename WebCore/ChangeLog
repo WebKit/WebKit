@@ -1,3 +1,51 @@
+2008-05-15  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix for recent breakages. Add EventLoopWx.cpp, update the Bakefiles,
+        and add stubs for new Plugins functions. Also move plugin functions outside of
+        TemporaryLinkStubs.cpp so that they are more noticeable.
+
+        * WebCoreSources.bkl:
+        * platform/wx/EventLoopWx.cpp: Added.
+        (WebCore::EventLoop::cycle):
+        * platform/wx/TemporaryLinkStubs.cpp:
+        * plugins/wx: Added.
+        * plugins/wx/PluginDataWx.cpp: Added.
+        (WebCore::PluginData::initPlugins):
+        (WebCore::PluginData::refresh):
+        * plugins/wx/PluginDatabaseWx.cpp: Added.
+        (WebCore::PluginDatabase::getPluginPathsInDirectories):
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+        (WebCore::PluginDatabase::isPreferredPluginDirectory):
+        * plugins/wx/PluginPackageWx.cpp: Added.
+        (WebCore::PluginPackage::determineQuirks):
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::load):
+        (WebCore::PluginPackage::hash):
+        (WebCore::PluginPackage::equal):
+        (WebCore::PluginPackage::compareFileVersion):
+        * plugins/wx/PluginViewWx.cpp: Added.
+        (WebCore::PluginView::updateWindow):
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::show):
+        (WebCore::PluginView::hide):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setParent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::attachToWindow):
+        (WebCore::PluginView::detachFromWindow):
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::userAgent):
+        (WebCore::PluginView::handlePostReadFile):
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::PluginView::invalidateRegion):
+        (WebCore::PluginView::forceRedraw):
+        (WebCore::PluginView::~PluginView):
+        (WebCore::PluginView::init):
+        * webcore-wx.bkl:
+
 2008-05-15  Adam Treat  <treat@kde.org>
 
         Reviewed by Simon.
