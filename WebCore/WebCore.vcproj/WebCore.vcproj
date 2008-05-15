@@ -2944,7 +2944,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065"
+						DisableSpecificWarnings="4065;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -2954,7 +2954,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065"
+						DisableSpecificWarnings="4065;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -2974,7 +2974,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065"
+						DisableSpecificWarnings="4065;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -2984,7 +2984,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065"
+						DisableSpecificWarnings="4065;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -2994,7 +2994,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065"
+						DisableSpecificWarnings="4065;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -3611,6 +3611,18 @@
 				Name="inspector"
 				>
 				<File
+					RelativePath="..\page\inspector\Breakpoint.js"
+					>
+				</File>
+				<File
+					RelativePath="..\page\inspector\BreakpointsSidebarPane.js"
+					>
+				</File>
+				<File
+					RelativePath="..\page\inspector\CallStackSidebarPane.js"
+					>
+				</File>
+				<File
 					RelativePath="..\page\inspector\Console.js"
 					>
 				</File>
@@ -3655,27 +3667,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\Object.js"
-					>
-				</File>
-				<File
 					RelativePath="..\page\inspector\MetricsSidebarPane.js"
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\ScopeChainSidebarPane.js"
+					RelativePath="..\page\inspector\Object.js"
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\CallStackSidebarPane.js"
-					>
-				</File>
-				<File
-					RelativePath="..\page\inspector\BreakpointsSidebarPane.js"
-					>
-				</File>
-				<File
-					RelativePath="..\page\inspector\Breakpoint.js"
+					RelativePath="..\page\inspector\ObjectPropertiesSection.js"
 					>
 				</File>
 				<File
@@ -3688,10 +3688,6 @@
 				</File>
 				<File
 					RelativePath="..\page\inspector\PropertiesSection.js"
-					>
-				</File>
-				<File
-					RelativePath="..\page\inspector\ObjectPropertiesSection.js"
 					>
 				</File>
 				<File
@@ -3715,15 +3711,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\SidebarPane.js"
-					>
-				</File>
-				<File
-					RelativePath="..\page\inspector\SidebarTreeElement.js"
-					>
-				</File>
-				<File
-					RelativePath="..\page\inspector\SourceView.js"
+					RelativePath="..\page\inspector\ScopeChainSidebarPane.js"
 					>
 				</File>
 				<File
@@ -3735,7 +3723,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\page\inspector\SidebarPane.js"
+					>
+				</File>
+				<File
+					RelativePath="..\page\inspector\SidebarTreeElement.js"
+					>
+				</File>
+				<File
 					RelativePath="..\page\inspector\SourceFrame.js"
+					>
+				</File>
+				<File
+					RelativePath="..\page\inspector\SourceView.js"
 					>
 				</File>
 				<File
@@ -6317,13 +6317,13 @@
 					>
 				</File>
 				<File
-				    RelativePath="..\platform\network\NetworkStateNotifier.h"
-				    >
-			    </File>
+					RelativePath="..\platform\network\NetworkStateNotifier.cpp"
+					>
+				</File>
 				<File
-				    RelativePath="..\platform\network\NetworkStateNotifier.cpp"
-				    >
-			    </File>
+					RelativePath="..\platform\network\NetworkStateNotifier.h"
+					>
+				</File>
 				<File
 					RelativePath="..\platform\network\ProtectionSpace.cpp"
 					>
