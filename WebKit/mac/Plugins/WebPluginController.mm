@@ -181,7 +181,8 @@ static NSMutableSet *pluginViews = nil;
     
     if (![_views containsObject:view]) {
         [_views addObject:view];
-        
+        [[_documentView _webView] addPluginInstanceView:view];
+
         LOG(Plugins, "initializing plug-in %@", view);
         if ([view respondsToSelector:@selector(webPlugInInitialize)]) {
             KJS::JSLock::DropAllLocks dropAllLocks;
@@ -234,6 +235,7 @@ static NSMutableSet *pluginViews = nil;
             frame->cleanupScriptObjectsForPlugin(self);
         
         [pluginViews removeObject:view];
+        [[_documentView _webView] removePluginInstanceView:view];
         [_views removeObject:view];
     }
 }
@@ -283,6 +285,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
             frame->cleanupScriptObjectsForPlugin(self);
         
         [pluginViews removeObject:aView];
+        [[_documentView _webView] removePluginInstanceView:aView];
     }
     [_views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
     [_views release];

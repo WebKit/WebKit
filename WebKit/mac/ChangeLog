@@ -1,3 +1,48 @@
+2008-05-15  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Anders.
+
+        Track views that contain plugin instances so that they can be destroyed at application
+        quit without walking the entire document tree.
+
+        Add/Remove Netscape plugin views from instance list.  Start/stop are when netscape
+        plugins are created and destroyed
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView start]):
+        (-[WebBaseNetscapePluginView stop]):
+ 
+        Add/remove WebKit plugin views from instance list
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController addPlugin:]):
+        (-[WebPluginController destroyPlugin:]):
+        (-[WebPluginController destroyAllPlugins]):
+
+        Add a set of views with plugin instances to the WebPluginDatabase
+        * Plugins/WebPluginDatabase.h:
+        * Plugins/WebPluginDatabase.mm:
+        (-[WebPluginDatabase init]):
+        (-[WebPluginDatabase dealloc]):
+        (-[WebPluginDatabase addPluginInstanceView:]):
+        (-[WebPluginDatabase removePluginInstanceView:]):
+        (-[WebPluginDatabase removePluginInstanceViewsFor:]):
+        (-[WebPluginDatabase destroyAllPluginInstanceViews]):
+        
+        Handle cases where plugin views are detached before the plugin is destroyed.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::detachedFromParent2):
+        (WebFrameLoaderClient::transitionToCommittedFromCachedPage):
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+
+        Add plugin instances to the set in the WebPluginDatabase by way of the WebView
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _destroyAllWebPlugins]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebView.mm:
+        (-[WebView addPluginInstanceView:]):
+        (-[WebView removePluginInstanceView:]):
+        (-[WebView removePluginInstanceViewsFor:]):
+        * WebView/WebViewInternal.h:
+
 2008-05-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher

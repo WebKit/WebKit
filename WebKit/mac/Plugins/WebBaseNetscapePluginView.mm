@@ -1252,6 +1252,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
     
     isStarted = YES;
+    [[self webView] addPluginInstanceView:self];
         
     [self updateAndSetWindow];
 
@@ -1287,6 +1288,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         return;
     
     isStarted = NO;
+    
+    [[self webView] removePluginInstanceView:self];
+
     // To stop active streams it's necessary to invoke makeObjectsPerformSelector on a copy 
     // of streams. This is because calling -[WebNetscapePluginStream stop] also has the side effect
     // of removing a stream from this collection.

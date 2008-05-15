@@ -29,12 +29,16 @@
 #import <Foundation/Foundation.h>
 
 @class WebBasePluginPackage;
+@class WebFrame;
 
 @interface WebPluginDatabase : NSObject
 {
     NSMutableDictionary *plugins;
     NSMutableSet *registeredMIMETypes;
     NSArray *plugInPaths;
+    
+    // Set of views with plugins attached
+    NSMutableSet *pluginInstanceViews;
 }
 
 + (WebPluginDatabase *)sharedDatabase;
@@ -54,6 +58,10 @@
 
 - (void)close;
 
+- (void)addPluginInstanceView:(NSView *)view;
+- (void)removePluginInstanceView:(NSView *)view;
+- (void)removePluginInstanceViewsFor:(WebFrame *)webFrame;
+- (void)destroyAllPluginInstanceViews;
 @end
 
 @interface NSObject (WebPlugInDatabase)

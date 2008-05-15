@@ -113,6 +113,10 @@ typedef WebCore::Page WebCorePage;
 - (WebBasePluginPackage *)_pluginForExtension:(NSString *)extension;
 - (BOOL)_isMIMETypeRegisteredAsPlugin:(NSString *)MIMEType;
 
+- (void)addPluginInstanceView:(NSView *)view;
+- (void)removePluginInstanceView:(NSView *)view;
+- (void)removePluginInstanceViewsFor:(WebFrame*)webFrame;
+
 - (void)_addObject:(id)object forIdentifier:(unsigned long)identifier;
 - (id)_objectForIdentifier:(unsigned long)identifier;
 - (void)_removeObjectForIdentifier:(unsigned long)identifier;

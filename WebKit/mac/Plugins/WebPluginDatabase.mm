@@ -37,8 +37,11 @@
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginPackage.h>
+#import <WebKit/WebPluginController.h>
+#import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebPluginPackage.h>
 #import <WebKit/WebViewPrivate.h>
+#import <Webkit/WebHTMLView.h>
 #import <WebKitSystemInterface.h>
 
 static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPackage **candidatePlugin);
@@ -208,6 +211,7 @@ static NSArray *additionalWebPlugInPaths;
         return nil;
         
     registeredMIMETypes = [[NSMutableSet alloc] init];
+    pluginInstanceViews = [[NSMutableSet alloc] init];
     
     return self;
 }
@@ -217,6 +221,7 @@ static NSArray *additionalWebPlugInPaths;
     [plugInPaths release];
     [plugins release];
     [registeredMIMETypes release];
+    [pluginInstanceViews release];
     
     [super dealloc];
 }
@@ -302,6 +307,55 @@ static NSArray *additionalWebPlugInPaths;
     return [registeredMIMETypes containsObject:MIMEType];
 }
 
+- (void)addPluginInstanceView:(NSView *)view
+{
+    [pluginInstanceViews addObject:view];
+}
+
+- (void)removePluginInstanceView:(NSView *)view
+{
+    [pluginInstanceViews removeObject:view];
+}
+
+- (void)removePluginInstanceViewsFor:(WebFrame*)webFrame
+{
+    // This handles handles the case where a frame or view is being destroyed and the plugin needs to be removed from the list first
+    
+    if( [pluginInstanceViews count] == 0 )
+        return;
+
+    NSView <WebDocumentView> *documentView = [[webFrame frameView] documentView]; 
+    if ([documentView isKindOfClass:[WebHTMLView class]]) {
+        NSArray *subviews = [documentView subviews]; 
+        unsigned int subviewCount = [subviews count]; 
+        unsigned int subviewIndex; 
+        
+        for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) { 
+            NSView *subview = [subviews objectAtIndex:subviewIndex]; 
+            if ([subview isKindOfClass:[WebBaseNetscapePluginView class]] || [WebPluginController isPlugInView:subview]) 
+                [pluginInstanceViews removeObject:subview]; 
+        }
+    }
+}
+
+- (void)destroyAllPluginInstanceViews
+{
+    NSView *view;
+    NSArray *pli = [pluginInstanceViews allObjects];
+    NSEnumerator *enumerator = [pli objectEnumerator];
+    while ((view = [enumerator nextObject]) != nil) {
+        if ([view isKindOfClass:[WebBaseNetscapePluginView class]]) {
+            ASSERT([view respondsToSelector:@selector(stop)]);
+            [view performSelector:@selector(stop)];
+        } else if ([WebPluginController isPlugInView:view]) {
+            ASSERT([[view superview] isKindOfClass:[WebHTMLView class]]);
+            ASSERT([[view superview] respondsToSelector:@selector(_destroyAllWebPlugins)]);
+            // this will actually destroy all plugin instances for a webHTMLView and remove them from this list
+            [[view superview] performSelector:@selector(_destroyAllWebPlugins)]; 
+        }
+    }
+}
+    
 @end
 
 @implementation WebPluginDatabase (Internal)

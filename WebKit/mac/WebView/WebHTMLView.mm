@@ -4859,6 +4859,11 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 #endif
 }
 
+- (void) _destroyAllWebPlugins
+{
+    [[self _pluginController] destroyAllPlugins];
+}
+
 @end
 
 @implementation WebHTMLView (WebNSTextInputSupport)

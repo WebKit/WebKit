@@ -1741,6 +1741,25 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     return nil;
 }
 
+- (void)addPluginInstanceView:(NSView *)view
+{
+    if (!_private->pluginDatabase)
+        _private->pluginDatabase = [[WebPluginDatabase alloc] init];
+    [_private->pluginDatabase addPluginInstanceView:view];
+}
+
+- (void)removePluginInstanceView:(NSView *)view
+{
+    if (_private->pluginDatabase)
+        [_private->pluginDatabase removePluginInstanceView:view];    
+}
+
+- (void)removePluginInstanceViewsFor:(WebFrame*)webFrame 
+{
+    if (_private->pluginDatabase)
+        [_private->pluginDatabase removePluginInstanceViewsFor:webFrame];    
+}
+
 - (BOOL)_isMIMETypeRegisteredAsPlugin:(NSString *)MIMEType
 {
     if ([[WebPluginDatabase sharedDatabase] isMIMETypeRegistered:MIMEType])
