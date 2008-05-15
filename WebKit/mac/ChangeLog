@@ -1,3 +1,12 @@
+2008-05-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed and landed by Alexey.
+
+        Use TextIterator in +[NSAttributedString _web_attributedStringFromRange:].
+
+        * Misc/WebNSAttributedStringExtras.mm:
+        (+[NSAttributedString _web_attributedStringFromRange:]):
+
 2008-05-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver.

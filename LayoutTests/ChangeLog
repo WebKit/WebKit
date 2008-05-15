@@ -1,3 +1,13 @@
+2008-05-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Use TextIterator in +[NSAttributedString _web_attributedStringFromRange:].
+
+        * platform/mac/fast/text/attributed-substring-from-range-001-expected.txt:
+        Newlines now get attributes, too.
+
+        * platform/mac/fast/text/attributed-substring-from-range-in-textfield-expected.txt:
+        Results changed from [FAIL] to [PASS].
+
 2008-05-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

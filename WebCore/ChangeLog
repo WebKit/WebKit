@@ -1,3 +1,11 @@
+2008-05-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed and landed by Alexey.
+
+        Use TextIterator in +[NSAttributedString _web_attributedStringFromRange:].
+
+        * WebCore.base.exp: Exported TextIterator methods.
+
 2008-05-15  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build by adding NetworkStateNotifier.cpp to the build.
