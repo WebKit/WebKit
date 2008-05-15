@@ -1,6 +1,12 @@
 2008-05-14  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by Geoff.
+        Giving credit where credit is due.
+
+        * ChangeLog:
+
+2008-05-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff and Sam.
 
         <rdar://problem/5770054> JavaScript profiler (10928)
         Add the ability to get percentages of total and self time for displaying
