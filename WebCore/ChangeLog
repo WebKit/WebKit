@@ -1,3 +1,15 @@
+2008-05-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        - Expose the new Profiler functions to the WebInspector.
+
+        * page/JavaScriptProfileNode.cpp:
+        (WebCore::getTotalPercent):
+        (WebCore::getSelfPercent):
+        (WebCore::ProfileNodeClass):
+
 2008-05-14  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a crash in JavaScriptDebugServer::returnEvent when debugging
