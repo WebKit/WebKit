@@ -188,7 +188,14 @@ using namespace WebCore;
 
 - (void)_repositionHighlightWindow
 {
+    // This assertion fires in cases where a new tab is created while the highlight
+    // is showing (<http://bugs.webkit.org/show_bug.cgi?id=14254>)
     ASSERT([_targetView window]);
+    
+    // Until that bug is fixed, bail out to avoid worse problems where the highlight
+    // moves to a nonsense location.
+    if (![_targetView window])
+        return;
 
     // Disable screen updates so the highlight moves in sync with the view.
     [[_targetView window] disableScreenUpdatesUntilFlush];

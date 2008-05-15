@@ -1,3 +1,17 @@
+2008-05-15  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker
+        
+        - fixed <rdar://problem/5940275> Inspector highlighting moves to bottom-left corner of 
+          screen when new tab appears
+          
+        The highlight should go away entirely, but this simple patch just makes it not jump away.
+        The issue with it not going away entirely is harder to fix and covered by <rdar://problem/5322306>
+
+        * WebInspector/WebNodeHighlight.m:
+        (-[WebNodeHighlight _repositionHighlightWindow]):
+        Bail out if target view isn't in a window
+
 2008-05-15  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Anders.
