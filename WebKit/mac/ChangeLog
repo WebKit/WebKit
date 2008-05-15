@@ -1,3 +1,15 @@
+2008-05-15  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes the bug where the Web Inspector would flash white while resizing.
+        This was cause by deferring the window creation.
+
+        <rdar://problem/5873549> REGRESSION: Inspector flickers horribly while resizing (17979)
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController window]): Don't defer the window creation.
+
 2008-05-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Tiger build fix.

@@ -230,7 +230,7 @@ void WebInspectorClient::updateWindowTitle() const
     styleMask |= NSTexturedBackgroundWindowMask;
 #endif
 
-    window = [[NSWindow alloc] initWithContentRect:NSMakeRect(60.0, 200.0, 750.0, 650.0) styleMask:styleMask backing:NSBackingStoreBuffered defer:YES];
+    window = [[NSWindow alloc] initWithContentRect:NSMakeRect(60.0, 200.0, 750.0, 650.0) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
     [window setDelegate:self];
     [window setMinSize:NSMakeSize(400.0, 400.0)];
 
