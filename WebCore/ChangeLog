@@ -1,3 +1,21 @@
+2008-05-15  David Hyatt  <hyatt@apple.com>
+
+        Move RenderStyle into a new subdirectory, rendering/style/, in preparation for breaking it up into
+        a bunch of smaller files.
+
+        Reviewed by Dan Bernstein
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * rendering/RenderStyle.cpp: Removed.
+        * rendering/RenderStyle.h: Removed.
+        * rendering/style: Added.
+        * rendering/style/RenderStyle.cpp: Copied from rendering/RenderStyle.cpp.
+        * rendering/style/RenderStyle.h: Copied from rendering/RenderStyle.h.
+
 2008-05-15  David Kilzer  <ddkilzer@apple.com>
 
         Fix leaks when stopping a page from loading

@@ -984,7 +984,6 @@ webcore_sources += \
 	WebCore/rendering/RenderReplaced.cpp \
 	WebCore/rendering/RenderReplica.cpp \
 	WebCore/rendering/RenderSlider.cpp \
-	WebCore/rendering/RenderStyle.cpp \
 	WebCore/rendering/RenderTableCell.cpp \
 	WebCore/rendering/RenderTableCol.cpp \
 	WebCore/rendering/RenderTable.cpp \
@@ -999,6 +998,7 @@ webcore_sources += \
 	WebCore/rendering/RenderWidget.cpp \
 	WebCore/rendering/RenderWordBreak.cpp \
 	WebCore/rendering/RootInlineBox.cpp \
+	WebCore/rendering/style/RenderStyle.cpp \
 	WebCore/xml/AccessControlList.cpp \
 	WebCore/xml/AccessItem.cpp \
 	WebCore/xml/AccessItemRule.cpp \

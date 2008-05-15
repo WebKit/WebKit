@@ -9498,7 +9498,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\RenderStyle.cpp"
+				RelativePath="..\rendering\style\RenderStyle.cpp"
 				>
 				<FileConfiguration
 					Name="Release_PGO|Win32"
@@ -9510,7 +9510,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\rendering\RenderStyle.h"
+				RelativePath="..\rendering\style\RenderStyle.h"
 				>
 			</File>
 			<File

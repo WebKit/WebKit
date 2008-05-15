@@ -917,7 +917,6 @@ SOURCES += \
     rendering/RenderReplaced.cpp \
     rendering/RenderReplica.cpp \
     rendering/RenderSlider.cpp \
-    rendering/RenderStyle.cpp \
     rendering/RenderTableCell.cpp \
     rendering/RenderTableCol.cpp \
     rendering/RenderTable.cpp \
@@ -933,6 +932,7 @@ SOURCES += \
     rendering/RenderWordBreak.cpp \
     rendering/RootInlineBox.cpp \
     rendering/SVGRenderTreeAsText.cpp \
+    rendering/style/RenderStyle.cpp \
     xml/AccessControlList.cpp \
     xml/AccessItem.cpp \
     xml/AccessItemRule.cpp \

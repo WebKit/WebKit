@@ -796,7 +796,6 @@ This file contains the list of files needed to build WebCore.
         rendering/RenderReplaced.cpp
         rendering/RenderReplica.cpp
         rendering/RenderSlider.cpp
-        rendering/RenderStyle.cpp
         rendering/RenderTable.cpp
         rendering/RenderTableCell.cpp
         rendering/RenderTableCol.cpp
@@ -813,6 +812,7 @@ This file contains the list of files needed to build WebCore.
         rendering/RootInlineBox.cpp
         rendering/bidi.cpp
         rendering/break_lines.cpp
+        rendering/style/RenderStyle.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_STORAGE">
