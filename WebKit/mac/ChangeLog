@@ -1,3 +1,9 @@
+2008-05-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Tiger build fix.
+
+        * Misc/WebNSAttributedStringExtras.mm: Import WebTypesInternal.h for NSUInteger.
+
 2008-05-15  Adele Peterson  <adele@apple.com>
 
         Reviewed and landed by Alexey.

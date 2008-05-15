@@ -32,6 +32,7 @@
 #import "WebDataSourcePrivate.h"
 #import "WebFrame.h"
 #import "WebFrameInternal.h"
+#import "WebTypesInternal.h"
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/CSSHelper.h>
