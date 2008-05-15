@@ -844,6 +844,7 @@ SOURCES += \
     platform/network/Credential.cpp \
     platform/network/FormData.cpp \
     platform/network/HTTPParsers.cpp \
+    platform/network/NetworkStateNotifier.cpp \
     platform/network/ProtectionSpace.cpp \
     platform/network/ResourceErrorBase.cpp \
     platform/network/ResourceHandle.cpp \
