@@ -1872,6 +1872,8 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     
     _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self), new WebInspectorClient(self));
 
+    _private->page->settings()->setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
+
     [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView];
 
 #ifndef BUILDING_ON_TIGER

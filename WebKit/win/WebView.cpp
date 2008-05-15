@@ -2093,7 +2093,15 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     WebKitSetWebDatabasesPathIfNecessary();
 
     m_page = new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this));
-    
+
+    // FIXME: Need to set the LocalStorage path in the settings object of this new page immediately after creating it.  
+    // Otherwise, when we set the group name below, the LocalStorage for the PageGroup won't know where its persistent store should
+    // reside on disk.
+    // This will need to be done when we add the LocalStorage path to WebPreferences on Windows, which I will be doing shortly
+    //
+    // On Mac, the 1-line to accomplish this is as follows:
+    // m_page->settings()->setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
+
     if (m_uiDelegate) {
         COMPtr<IWebUIDelegate2> uiDelegate2;
         if (SUCCEEDED(m_uiDelegate->QueryInterface(IID_IWebUIDelegate2, (void**)&uiDelegate2))) {

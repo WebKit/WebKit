@@ -1,3 +1,16 @@
+2008-05-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        Until the settings/preferences equation can be reworked, we'll need to manually set the local storage path
+        before setting the page group of the new page.
+
+        Since I still need to add the local storage path to WebPreferences on Windows, mark this with a FIXME for now.
+
+        * WebView.cpp:
+        (WebView::initWithFrame): Mark an important FIXME for setting the LocalStorage path as
+          appropriate.  Until this FIXME is handled, Windows will have no persistent LocalStorage
+
 2008-05-14  Adam Roben  <aroben@apple.com>
 
         Fix Bug 18767: Inspector is currently pretty much useless on Windows
