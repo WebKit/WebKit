@@ -23,7 +23,7 @@
     ]]>
   </script>
   <g onload="reportLoadEvent(this)">
-    <image display="none" externalResourcesRequired="true" id="image" onload="reportLoadEvent(this)" width="100" height="100" xlink:href="http://trac.webkit.org/projects/webkit/browser/trunk/LayoutTests/svg/custom/resources/green-checker.png?format=raw" />
+    <image display="none" externalResourcesRequired="true" id="image" onload="reportLoadEvent(this)" width="100" height="100" xlink:href="resources/green-checker.png" />
     <text y="130" x="20">This tests load dispatching order with externalResourcesRequired and an image that does not render(display=none). Bug 16447</text>
     <text y="150" x="20" id="console" onload="reportLoadEvent(this)"/>
   </g>

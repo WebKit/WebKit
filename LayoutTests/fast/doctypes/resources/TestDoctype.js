@@ -6,7 +6,7 @@ log = function(msg)
 hasAlmostStandardsModeQuirk = function(doc)
 {
     var div = doc.createElement('div');
-    div.innerHTML = "<img src='http://www.google.com/intl/en_ALL/images/logo.gif' style='background-color: green; width: 100px; height: 100px'><br><img src='http://www.google.com/intl/en_ALL/images/logo.gif' style='background-color: green; width: 100px; height: 100px'>";
+    div.innerHTML = "<img src='' style='background-color: green; width: 100px; height: 100px'><br><img src='' style='background-color: green; width: 100px; height: 100px'>";
     doc.body.appendChild(div);
     var hasQuirk = doc.defaultView.getComputedStyle(div, "").getPropertyValue("height") == "200px";
     doc.body.removeChild(div);

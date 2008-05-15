@@ -119,10 +119,21 @@
     if (!done && layoutTestController->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - willSendRequest %@ redirectResponse %@", identifier, [newRequest _drt_descriptionSuitableForTestResult],
             [redirectResponse _drt_descriptionSuitableForTestResult]];
-        printf ("%s\n", [string UTF8String]);
+        printf("%s\n", [string UTF8String]);
     }    
-    
-    if (disallowedURLs && CFSetContainsValue(disallowedURLs, [newRequest URL]))
+
+    NSURL *url = [newRequest URL];
+    NSString *host = [url host];
+    if (host
+        && (NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"http"] || NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"https"])
+        && NSOrderedSame != [host compare:@"127.0.0.1"]
+        && NSOrderedSame != [host compare:@"255.255.255.255"] // used in some tests that expect to get back an error
+        && NSOrderedSame != [host caseInsensitiveCompare:@"localhost"]) {
+        fprintf(stderr, "Blocked access to external URL %s\n", [[url absoluteString] cStringUsingEncoding:NSUTF8StringEncoding]);
+        return nil;
+    }
+
+    if (disallowedURLs && CFSetContainsValue(disallowedURLs, url))
         return nil;
     
     return newRequest;

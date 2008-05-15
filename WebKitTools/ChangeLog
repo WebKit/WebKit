@@ -1,3 +1,14 @@
+2008-05-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=10707
+        DumpRenderTree should not be able to access non-local resources
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        Block them, and complain.
+
 2008-05-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Update the version of libpng to download and instsall.
