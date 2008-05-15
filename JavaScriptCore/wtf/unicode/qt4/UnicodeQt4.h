@@ -303,7 +303,7 @@ namespace WTF {
         return srcLength;
       }
       for (int i = 0; i < srcLength; ++i)
-        result[i] = QChar::toCaseFolded(src[i]);
+        result[i] = QChar::toCaseFolded(ushort(src[i]));
       return srcLength;
     }
 
@@ -375,8 +375,8 @@ namespace WTF {
     {
       // handle surrogates correctly
       for (int i = 0; i < len; ++i) {
-          uint c1 = QChar::toCaseFolded(a[i]);
-          uint c2 = QChar::toCaseFolded(b[i]);
+          uint c1 = QChar::toCaseFolded(ushort(a[i]));
+          uint c2 = QChar::toCaseFolded(ushort(b[i]));
           if (c1 != c2)
               return c1 - c2;
       }

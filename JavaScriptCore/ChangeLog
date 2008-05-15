@@ -1,3 +1,13 @@
+2008-05-15  Simon Hausmann  <shausman@trolltech.com>
+
+        Reviewed by Holger.
+
+        Fix compilation when compiling with MSVC and wchar_t support.
+
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        (WTF::Unicode::foldCase):
+        (WTF::Unicode::umemcasecmp):
+
 2008-05-14  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.
