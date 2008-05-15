@@ -86,4 +86,4 @@
 #include <wtf/DisallowCType.h>
 #endif
 
-#define JAVASCRIPT_PROFILING 0
+#define JAVASCRIPT_PROFILING 1

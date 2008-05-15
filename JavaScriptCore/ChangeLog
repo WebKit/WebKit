@@ -3,6 +3,15 @@
         Reviewed by Tim.
 
         <rdar://problem/5770054> JavaScript profiler (10928)
+        - Turn on the profiler.
+
+        * kjs/config.h:
+
+2008-05-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
         - Expose the new profiler functions to the WebInspector.
 
         * JavaScriptCore.exp:
