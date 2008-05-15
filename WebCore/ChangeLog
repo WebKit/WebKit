@@ -1,3 +1,16 @@
+2008-05-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix <rdar://problem/5907633> Memory corruption after closing a document that uses box-reflect
+
+        Test: fast/reflections/teardown-crash.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::~RenderLayer): Changed to not call removeLayers()
+        on the reflection if the document is being destroyed, because in that
+        case the layer tree is not being maintained.
+
 2008-05-14  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

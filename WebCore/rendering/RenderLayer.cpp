@@ -182,7 +182,8 @@ RenderLayer::~RenderLayer()
     ASSERT(!m_clipRects);
     
     if (m_reflection) {
-        m_reflection->removeLayers(this);
+        if (!m_reflection->documentBeingDestroyed())
+            m_reflection->removeLayers(this);
         m_reflection->setParent(0);
         m_reflection->destroy();
     }

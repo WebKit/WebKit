@@ -1,3 +1,12 @@
+2008-05-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - test for <rdar://problem/5907633> Memory corruption after closing a document that uses box-reflect
+
+        * fast/reflections/teardown-crash-expected.txt: Added.
+        * fast/reflections/teardown-crash.html: Added.
+
 2008-05-14  Anders Carlsson  <andersca@apple.com>
 
         Check in the test result.
