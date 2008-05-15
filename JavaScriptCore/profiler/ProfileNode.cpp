@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "FunctionCallProfile.h"
+#include "ProfileNode.h"
 
 #include "Profiler.h"
 #include "DateMath.h"
@@ -36,7 +36,7 @@
 
 namespace KJS {
 
-FunctionCallProfile::FunctionCallProfile(const UString& name)
+ProfileNode::ProfileNode(const UString& name)
     : m_functionName(name)
     , m_timeSum(0)
     , m_numberOfCalls(0)
@@ -44,12 +44,12 @@ FunctionCallProfile::FunctionCallProfile(const UString& name)
     m_startTime = getCurrentUTCTime();
 }
 
-void FunctionCallProfile::willExecute()
+void ProfileNode::willExecute()
 {
     m_startTime = getCurrentUTCTime();
 }
 
-void FunctionCallProfile::didExecute(Vector<UString> stackNames, unsigned int stackIndex)
+void ProfileNode::didExecute(Vector<UString> stackNames, unsigned int stackIndex)
 {
     if (stackIndex && stackIndex == stackNames.size()) {
         ASSERT(stackNames[stackIndex - 1] == m_functionName);
@@ -65,11 +65,11 @@ void FunctionCallProfile::didExecute(Vector<UString> stackNames, unsigned int st
     }
 }
 
-void FunctionCallProfile::addChild(PassRefPtr<FunctionCallProfile> prpChild)
+void ProfileNode::addChild(PassRefPtr<ProfileNode> prpChild)
 {
     ASSERT(prpChild);
 
-    RefPtr<FunctionCallProfile> child = prpChild;
+    RefPtr<ProfileNode> child = prpChild;
     for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild) {
         if ((*currentChild)->functionName() == child->functionName())
             return;
@@ -78,7 +78,7 @@ void FunctionCallProfile::addChild(PassRefPtr<FunctionCallProfile> prpChild)
     m_children.append(child.release());
 }
 
-FunctionCallProfile* FunctionCallProfile::findChild(const UString& name)
+ProfileNode* ProfileNode::findChild(const UString& name)
 {
     for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild) {
         if ((*currentChild)->functionName() == name)
@@ -88,7 +88,7 @@ FunctionCallProfile* FunctionCallProfile::findChild(const UString& name)
     return 0;
 }
 
-void FunctionCallProfile::stopProfiling()
+void ProfileNode::stopProfiling()
 {
     if (m_startTime)
         endAndRecordCall();
@@ -98,7 +98,7 @@ void FunctionCallProfile::stopProfiling()
         (*it)->stopProfiling();
 }
 
-double FunctionCallProfile::selfTime() const
+double ProfileNode::selfTime() const
 {
     double sumChildrenTime = 0.0;
 
@@ -110,7 +110,7 @@ double FunctionCallProfile::selfTime() const
     return m_timeSum - sumChildrenTime;
 }
 
-void FunctionCallProfile::printDataInspectorStyle(int indentLevel) const
+void ProfileNode::printDataInspectorStyle(int indentLevel) const
 {
     // Print function names
     if (indentLevel) {
@@ -129,7 +129,7 @@ void FunctionCallProfile::printDataInspectorStyle(int indentLevel) const
 }
 
 // print the profiled data in a format that matches the tool sample's output.
-double FunctionCallProfile::printDataSampleStyle(int indentLevel, FunctionCallHashCount& countedFunctions) const
+double ProfileNode::printDataSampleStyle(int indentLevel, FunctionCallHashCount& countedFunctions) const
 {
     printf("    ");
 
@@ -166,7 +166,7 @@ double FunctionCallProfile::printDataSampleStyle(int indentLevel, FunctionCallHa
     return m_timeSum;
 }
 
-void FunctionCallProfile::endAndRecordCall()
+void ProfileNode::endAndRecordCall()
 {
     m_timeSum += getCurrentUTCTime() - m_startTime;
     m_startTime = 0.0;

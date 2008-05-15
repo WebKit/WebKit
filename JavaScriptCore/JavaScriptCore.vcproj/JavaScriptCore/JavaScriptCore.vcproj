@@ -882,11 +882,11 @@
 			Name="Profiler"
 			>
 			<File
-				RelativePath="..\..\profiler\FunctionCallProfile.cpp"
+				RelativePath="..\..\profiler\ProfileNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\profiler\FunctionCallProfile.h"
+				RelativePath="..\..\profiler\ProfileNode.h"
 				>
 			</File>
 			<File

@@ -3384,11 +3384,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\JavaScriptFunctionCallProfile.cpp"
+				RelativePath="..\page\JavaScriptProfileNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\page\JavaScriptFunctionCallProfile.h"
+				RelativePath="..\page\JavaScriptProfileNode.h"
 				>
 			</File>
 			<File

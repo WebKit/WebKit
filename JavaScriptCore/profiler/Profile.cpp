@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Profile.h"
 
-#include "FunctionCallProfile.h"
+#include "ProfileNode.h"
 #include "JSGlobalObject.h"
 #include "ExecState.h"
 #include "function.h"
@@ -42,13 +42,13 @@ Profile::Profile(const UString& title)
 {
     // FIXME: When multi-threading is supported this will be a vector and calls
     // into the profiler will need to know which thread it is executing on.
-    m_callTree = FunctionCallProfile::create("Thread_1");
+    m_callTree = ProfileNode::create("Thread_1");
 }
 
 void Profile::willExecute(const Vector<UString>& callStackNames)
 {
-    RefPtr<FunctionCallProfile> callTreeInsertionPoint;
-    RefPtr<FunctionCallProfile> foundNameInTree = m_callTree;
+    RefPtr<ProfileNode> callTreeInsertionPoint;
+    RefPtr<ProfileNode> foundNameInTree = m_callTree;
     NameIterator callStackLocation = callStackNames.begin();
 
     while (callStackLocation != callStackNames.end() && foundNameInTree) {
@@ -59,8 +59,8 @@ void Profile::willExecute(const Vector<UString>& callStackNames)
 
     if (!foundNameInTree) {   // Insert remains of the stack into the call tree.
         --callStackLocation;
-        for (RefPtr<FunctionCallProfile> next; callStackLocation != callStackNames.end(); ++callStackLocation) {
-            next = FunctionCallProfile::create(*callStackLocation);
+        for (RefPtr<ProfileNode> next; callStackLocation != callStackNames.end(); ++callStackLocation) {
+            next = ProfileNode::create(*callStackLocation);
             callTreeInsertionPoint->addChild(next);
             callTreeInsertionPoint = next;
         }

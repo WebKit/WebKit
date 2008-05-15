@@ -31,7 +31,7 @@
 
 #include "ExecState.h"
 #include "function.h"
-#include "FunctionCallProfile.h"
+#include "ProfileNode.h"
 #include "JSGlobalObject.h"
 #include "Profile.h"
 

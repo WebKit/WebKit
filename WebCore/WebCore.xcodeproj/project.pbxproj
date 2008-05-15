@@ -1812,8 +1812,8 @@
 		93F9B7A00BA6032600854064 /* JSCDATASection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B79E0BA6032600854064 /* JSCDATASection.cpp */; };
 		93F9B7A10BA6032600854064 /* JSCDATASection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F9B79F0BA6032600854064 /* JSCDATASection.h */; };
 		93FDAFCA0B11307400E2746F /* EditorInsertAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDAFC90B11307400E2746F /* EditorInsertAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		95969B470DD8D21B00F653EE /* JavaScriptFunctionCallProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95969B430DD8D21B00F653EE /* JavaScriptFunctionCallProfile.cpp */; };
-		95969B480DD8D21B00F653EE /* JavaScriptFunctionCallProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 95969B440DD8D21B00F653EE /* JavaScriptFunctionCallProfile.h */; };
+		95969B470DD8D21B00F653EE /* JavaScriptProfileNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95969B430DD8D21B00F653EE /* JavaScriptProfileNode.cpp */; };
+		95969B480DD8D21B00F653EE /* JavaScriptProfileNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 95969B440DD8D21B00F653EE /* JavaScriptProfileNode.h */; };
 		95969B490DD8D21B00F653EE /* JavaScriptProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95969B450DD8D21B00F653EE /* JavaScriptProfile.cpp */; };
 		95969B4A0DD8D21B00F653EE /* JavaScriptProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 95969B460DD8D21B00F653EE /* JavaScriptProfile.h */; };
 		A718760E0B2A120100A16ECE /* DragActions.h in Headers */ = {isa = PBXBuildFile; fileRef = A718760D0B2A120100A16ECE /* DragActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6237,8 +6237,8 @@
 		93F9B79E0BA6032600854064 /* JSCDATASection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCDATASection.cpp; sourceTree = "<group>"; };
 		93F9B79F0BA6032600854064 /* JSCDATASection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCDATASection.h; sourceTree = "<group>"; };
 		93FDAFC90B11307400E2746F /* EditorInsertAction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EditorInsertAction.h; sourceTree = "<group>"; };
-		95969B430DD8D21B00F653EE /* JavaScriptFunctionCallProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptFunctionCallProfile.cpp; sourceTree = "<group>"; };
-		95969B440DD8D21B00F653EE /* JavaScriptFunctionCallProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptFunctionCallProfile.h; sourceTree = "<group>"; };
+		95969B430DD8D21B00F653EE /* JavaScriptProfileNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptProfileNode.cpp; sourceTree = "<group>"; };
+		95969B440DD8D21B00F653EE /* JavaScriptProfileNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptProfileNode.h; sourceTree = "<group>"; };
 		95969B450DD8D21B00F653EE /* JavaScriptProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptProfile.cpp; sourceTree = "<group>"; };
 		95969B460DD8D21B00F653EE /* JavaScriptProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptProfile.h; sourceTree = "<group>"; };
 		A718760D0B2A120100A16ECE /* DragActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragActions.h; sourceTree = "<group>"; };
@@ -9076,8 +9076,8 @@
 				C02B14BF0D81E02A00D8A970 /* JavaScriptDebugListener.h */,
 				C02B14C00D81E02A00D8A970 /* JavaScriptDebugServer.cpp */,
 				C02B14C10D81E02A00D8A970 /* JavaScriptDebugServer.h */,
-				95969B430DD8D21B00F653EE /* JavaScriptFunctionCallProfile.cpp */,
-				95969B440DD8D21B00F653EE /* JavaScriptFunctionCallProfile.h */,
+				95969B430DD8D21B00F653EE /* JavaScriptProfileNode.cpp */,
+				95969B440DD8D21B00F653EE /* JavaScriptProfileNode.h */,
 				95969B450DD8D21B00F653EE /* JavaScriptProfile.cpp */,
 				95969B460DD8D21B00F653EE /* JavaScriptProfile.h */,
 				BCE1C41A0D982980003B02F2 /* Location.cpp */,
@@ -15104,7 +15104,7 @@
 				BC34C33D0DD607DE00090123 /* AccessItem.h in Headers */,
 				BC34C33F0DD607DE00090123 /* AccessItemRule.h in Headers */,
 				BC76AC130DD7AD5C00415F34 /* ParserUtilities.h in Headers */,
-				95969B480DD8D21B00F653EE /* JavaScriptFunctionCallProfile.h in Headers */,
+				95969B480DD8D21B00F653EE /* JavaScriptProfileNode.h in Headers */,
 				95969B4A0DD8D21B00F653EE /* JavaScriptProfile.h in Headers */,
 				1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */,
 			);
@@ -16821,7 +16821,7 @@
 				BC34C33A0DD607DE00090123 /* AccessControlList.cpp in Sources */,
 				BC34C33C0DD607DE00090123 /* AccessItem.cpp in Sources */,
 				BC34C33E0DD607DE00090123 /* AccessItemRule.cpp in Sources */,
-				95969B470DD8D21B00F653EE /* JavaScriptFunctionCallProfile.cpp in Sources */,
+				95969B470DD8D21B00F653EE /* JavaScriptProfileNode.cpp in Sources */,
 				95969B490DD8D21B00F653EE /* JavaScriptProfile.cpp in Sources */,
 				1A7FA61B0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp in Sources */,
 				1A7FA6490DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp in Sources */,

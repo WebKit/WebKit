@@ -1,5 +1,41 @@
 2008-05-14  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Sam.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        - Rename FunctionCallProfile to ProfileNode.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * profiler/FunctionCallProfile.cpp: Removed.
+        * profiler/FunctionCallProfile.h: Removed.
+        * profiler/Profile.cpp:
+        (KJS::Profile::Profile):
+        (KJS::Profile::willExecute):
+        * profiler/Profile.h:
+        (KJS::Profile::callTree):
+        * profiler/ProfileNode.cpp: Copied from profiler/FunctionCallProfile.cpp.
+        (KJS::ProfileNode::ProfileNode):
+        (KJS::ProfileNode::willExecute):
+        (KJS::ProfileNode::didExecute):
+        (KJS::ProfileNode::addChild):
+        (KJS::ProfileNode::findChild):
+        (KJS::ProfileNode::stopProfiling):
+        (KJS::ProfileNode::selfTime):
+        (KJS::ProfileNode::printDataInspectorStyle):
+        (KJS::ProfileNode::printDataSampleStyle):
+        (KJS::ProfileNode::endAndRecordCall):
+        * profiler/ProfileNode.h: Copied from profiler/FunctionCallProfile.h.
+        (KJS::ProfileNode::create):
+        (KJS::ProfileNode::children):
+        * profiler/Profiler.cpp:
+
+2008-05-14  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by John.
 
         <rdar://problem/5770054> JavaScript profiler (10928)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JavaScriptProfile.h"
 
-#include "JavaScriptFunctionCallProfile.h"
+#include "JavaScriptProfileNode.h"
 #include <profiler/Profile.h>
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObjectRef.h>

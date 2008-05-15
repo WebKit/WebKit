@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#include "JavaScriptFunctionCallProfile.h"
+#include "JavaScriptProfileNode.h"
 
 #include "kjs_binding.h"
-#include <profiler/FunctionCallProfile.h>
+#include <profiler/ProfileNode.h>
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSContextRef.h>
@@ -41,69 +41,69 @@ namespace WebCore {
 
 // Cache
 
-typedef HashMap<FunctionCallProfile*, JSValue*> FunctionCallProfileMap;
+typedef HashMap<ProfileNode*, JSValue*> ProfileNodeMap;
 
-static FunctionCallProfileMap& functionCallProfileCache()
+static ProfileNodeMap& ProfileNodeCache()
 { 
-    static FunctionCallProfileMap staticFunctionCallProfiles;
-    return staticFunctionCallProfiles;
+    static ProfileNodeMap staticProfileNodes;
+    return staticProfileNodes;
 }
 
 // Static Values
 
-static JSClassRef functionCallProfileClass();
+static JSClassRef ProfileNodeClass();
 
 static JSValueRef getFunctionName(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    if (!JSValueIsObjectOfClass(ctx, thisObject, functionCallProfileClass()))
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
 
-    FunctionCallProfile* functionCallProfile = static_cast<FunctionCallProfile*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeString(ctx, JSStringCreateWithCharacters(functionCallProfile->functionName().data(), functionCallProfile->functionName().size()));
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeString(ctx, JSStringCreateWithCharacters(profileNode->functionName().data(), profileNode->functionName().size()));
 }
 
 static JSValueRef getTotalTime(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     KJS::JSLock lock;
 
-    if (!JSValueIsObjectOfClass(ctx, thisObject, functionCallProfileClass()))
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
 
-    FunctionCallProfile* functionCallProfile = static_cast<FunctionCallProfile*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeNumber(ctx, functionCallProfile->totalTime());
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeNumber(ctx, profileNode->totalTime());
 }
 
 static JSValueRef getSelfTime(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     KJS::JSLock lock;
 
-    if (!JSValueIsObjectOfClass(ctx, thisObject, functionCallProfileClass()))
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
 
-    FunctionCallProfile* functionCallProfile = static_cast<FunctionCallProfile*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeNumber(ctx, functionCallProfile->selfTime());
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeNumber(ctx, profileNode->selfTime());
 }
 
 static JSValueRef getNumberOfCalls(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     KJS::JSLock lock;
 
-    if (!JSValueIsObjectOfClass(ctx, thisObject, functionCallProfileClass()))
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
 
-    FunctionCallProfile* functionCallProfile = static_cast<FunctionCallProfile*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeNumber(ctx, functionCallProfile->numberOfCalls());
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeNumber(ctx, profileNode->numberOfCalls());
 }
 
 static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     KJS::JSLock lock;
 
-    if (!JSValueIsObjectOfClass(ctx, thisObject, functionCallProfileClass()))
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
 
-    FunctionCallProfile* functionCallProfile = static_cast<FunctionCallProfile*>(JSObjectGetPrivate(thisObject));
-    const Deque<RefPtr<FunctionCallProfile> >& children = functionCallProfile->children();
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    const Deque<RefPtr<ProfileNode> >& children = profileNode->children();
 
     JSObjectRef global = JSContextGetGlobalObject(ctx);
 
@@ -131,7 +131,7 @@ static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSString
     if (exception && *exception)
         return JSValueMakeUndefined(ctx);
 
-    for (Deque<RefPtr<FunctionCallProfile> >::const_iterator it = children.begin(); it != children.end(); ++it) {
+    for (Deque<RefPtr<ProfileNode> >::const_iterator it = children.begin(); it != children.end(); ++it) {
         JSValueRef arg0 = toRef(toJS(toJS(ctx), (*it).get() ));
         JSObjectCallAsFunction(ctx, pushFunction, result, 1, &arg0, exception);
         if (exception && *exception)
@@ -143,12 +143,12 @@ static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSString
 
 static void finalize(JSObjectRef object)
 {
-    FunctionCallProfile* functionCallProfile = static_cast<FunctionCallProfile*>(JSObjectGetPrivate(object));
-    functionCallProfileCache().remove(functionCallProfile);
-    functionCallProfile->deref();
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(object));
+    ProfileNodeCache().remove(profileNode);
+    profileNode->deref();
 }
 
-JSClassRef functionCallProfileClass()
+JSClassRef ProfileNodeClass()
 {
     static JSStaticValue staticValues[] = {
         { "functionName", getFunctionName, 0, kJSPropertyAttributeNone },
@@ -160,28 +160,28 @@ JSClassRef functionCallProfileClass()
     };
 
     static JSClassDefinition classDefinition = {
-        0, kJSClassAttributeNone, "FunctionCallProfile", 0, staticValues, 0,
+        0, kJSClassAttributeNone, "ProfileNode", 0, staticValues, 0,
         0, finalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
 
-    static JSClassRef functionCallProfileClass = JSClassCreate(&classDefinition);
-    return functionCallProfileClass;
+    static JSClassRef ProfileNodeClass = JSClassCreate(&classDefinition);
+    return ProfileNodeClass;
 }
 
-JSValue* toJS(ExecState* exec, FunctionCallProfile* functionCallProfile)
+JSValue* toJS(ExecState* exec, ProfileNode* ProfileNode)
 {
-    if (!functionCallProfile)
+    if (!ProfileNode)
         return jsNull();
 
-    JSValue* functionCallProfileWrapper = functionCallProfileCache().get(functionCallProfile);
-    if (functionCallProfileWrapper)
-        return functionCallProfileWrapper;
+    JSValue* ProfileNodeWrapper = ProfileNodeCache().get(ProfileNode);
+    if (ProfileNodeWrapper)
+        return ProfileNodeWrapper;
 
-    functionCallProfile->ref();
+    ProfileNode->ref();
 
-    functionCallProfileWrapper = toJS(JSObjectMake(toRef(exec), functionCallProfileClass(), static_cast<void*>(functionCallProfile)));
-    functionCallProfileCache().set(functionCallProfile, functionCallProfileWrapper);
-    return functionCallProfileWrapper;
+    ProfileNodeWrapper = toJS(JSObjectMake(toRef(exec), ProfileNodeClass(), static_cast<void*>(ProfileNode)));
+    ProfileNodeCache().set(ProfileNode, ProfileNodeWrapper);
+    return ProfileNodeWrapper;
 
 }
 

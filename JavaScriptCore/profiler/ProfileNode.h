@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FunctionCallProfile_h
-#define FunctionCallProfile_h
+#ifndef ProfileNode_h
+#define ProfileNode_h
 
 #include <kjs/ustring.h>
 #include <wtf/Deque.h>
@@ -37,20 +37,20 @@
 
 namespace KJS {
 
-    class FunctionCallProfile;
+    class ProfileNode;
 
-    typedef Deque<RefPtr<FunctionCallProfile> >::const_iterator StackIterator;
+    typedef Deque<RefPtr<ProfileNode> >::const_iterator StackIterator;
     typedef HashCountedSet<UString::Rep*> FunctionCallHashCount;
 
-    class FunctionCallProfile : public RefCounted<FunctionCallProfile> {
+    class ProfileNode : public RefCounted<ProfileNode> {
     public:
-        static PassRefPtr<FunctionCallProfile> create(const UString& name) { return adoptRef(new FunctionCallProfile(name)); }
+        static PassRefPtr<ProfileNode> create(const UString& name) { return adoptRef(new ProfileNode(name)); }
 
         void willExecute();
         void didExecute(Vector<UString> stackNames, unsigned int stackIndex);
 
-        void addChild(PassRefPtr<FunctionCallProfile> prpChild);
-        FunctionCallProfile* findChild(const UString& name);
+        void addChild(PassRefPtr<ProfileNode> prpChild);
+        ProfileNode* findChild(const UString& name);
 
         void stopProfiling();
 
@@ -58,13 +58,13 @@ namespace KJS {
         double totalTime() const { return m_timeSum; }
         double selfTime() const;
         unsigned numberOfCalls() const { return m_numberOfCalls; }
-        const Deque<RefPtr<FunctionCallProfile> >& children() { return m_children; }
+        const Deque<RefPtr<ProfileNode> >& children() { return m_children; }
 
         void printDataInspectorStyle(int indentLevel) const;
         double printDataSampleStyle(int indentLevel, FunctionCallHashCount&) const;
 
     private:
-        FunctionCallProfile(const UString& name);
+        ProfileNode(const UString& name);
 
         void endAndRecordCall();
     
@@ -73,9 +73,9 @@ namespace KJS {
         double m_startTime;
         unsigned m_numberOfCalls;
 
-        Deque<RefPtr<FunctionCallProfile> > m_children;
+        Deque<RefPtr<ProfileNode> > m_children;
     };
 
 } // namespace KJS
 
-#endif // FunctionCallProfile_h
+#endif // ProfileNode_h

@@ -23,20 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JavaScriptFunctionCallProfile_h
-#define JavaScriptFunctionCallProfile_h
+#ifndef JavaScriptProfileNode_h
+#define JavaScriptProfileNode_h
 
 #include <JavaScriptCore/JSBase.h>
 
 namespace KJS {
     class ExecState;
-    class FunctionCallProfile;
+    class ProfileNode;
     class JSValue;
 }
 
 namespace WebCore {
 
-    KJS::JSValue* toJS(KJS::ExecState*, KJS::FunctionCallProfile*);
+    KJS::JSValue* toJS(KJS::ExecState*, KJS::ProfileNode*);
 
 } // namespace WebCore
 

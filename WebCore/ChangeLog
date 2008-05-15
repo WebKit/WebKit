@@ -1,3 +1,32 @@
+2008-05-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        - Rename FunctionCallProfile to ProfileNode
+
+        * ForwardingHeaders/profiler/FunctionCallProfile.h: Removed.
+        * ForwardingHeaders/profiler/ProfileNode.h: Copied from ForwardingHeaders/profiler/FunctionCallProfile.h.
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * page/JavaScriptFunctionCallProfile.cpp: Removed.
+        * page/JavaScriptFunctionCallProfile.h: Removed.
+        * page/JavaScriptProfile.cpp:
+        * page/JavaScriptProfileNode.cpp: Copied from page/JavaScriptFunctionCallProfile.cpp.
+        (WebCore::ProfileNodeCache):
+        (WebCore::getFunctionName):
+        (WebCore::getTotalTime):
+        (WebCore::getSelfTime):
+        (WebCore::getNumberOfCalls):
+        (WebCore::getChildren):
+        (WebCore::finalize):
+        (WebCore::ProfileNodeClass):
+        (WebCore::toJS):
+        * page/JavaScriptProfileNode.h: Copied from page/JavaScriptFunctionCallProfile.h.
+
 2008-05-13  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Brady.

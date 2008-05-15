@@ -191,8 +191,8 @@
 		958D85830DC93230008ABF27 /* StrHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 958D85820DC93230008ABF27 /* StrHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		95AB83420DA4322500BC83F3 /* Profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */; };
 		95AB83480DA432EB00BC83F3 /* Profiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 95AB832F0DA42CAD00BC83F3 /* Profiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		95AB83560DA43C3000BC83F3 /* FunctionCallProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB83540DA43B4400BC83F3 /* FunctionCallProfile.cpp */; };
-		95AB83570DA43C3000BC83F3 /* FunctionCallProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 95AB83550DA43B4400BC83F3 /* FunctionCallProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		95AB83560DA43C3000BC83F3 /* ProfileNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */; };
+		95AB83570DA43C3000BC83F3 /* ProfileNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 95AB83550DA43B4400BC83F3 /* ProfileNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		95C18D490C90E82600E72F73 /* JSRetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 95C18D3E0C90E7EF00E72F73 /* JSRetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8E894320CD0602400367179 /* JSCallbackObjectFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */; };
 		A8E894340CD0603F00367179 /* JSGlobalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E894330CD0603F00367179 /* JSGlobalObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -502,8 +502,8 @@
 		958D85820DC93230008ABF27 /* StrHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrHash.h; sourceTree = "<group>"; };
 		95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Profiler.cpp; path = profiler/Profiler.cpp; sourceTree = "<group>"; };
 		95AB832F0DA42CAD00BC83F3 /* Profiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Profiler.h; path = profiler/Profiler.h; sourceTree = "<group>"; };
-		95AB83540DA43B4400BC83F3 /* FunctionCallProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FunctionCallProfile.cpp; path = profiler/FunctionCallProfile.cpp; sourceTree = "<group>"; };
-		95AB83550DA43B4400BC83F3 /* FunctionCallProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FunctionCallProfile.h; path = profiler/FunctionCallProfile.h; sourceTree = "<group>"; };
+		95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfileNode.cpp; path = profiler/ProfileNode.cpp; sourceTree = "<group>"; };
+		95AB83550DA43B4400BC83F3 /* ProfileNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfileNode.h; path = profiler/ProfileNode.h; sourceTree = "<group>"; };
 		95C18D3E0C90E7EF00E72F73 /* JSRetainPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRetainPtr.h; sourceTree = "<group>"; };
 		A785E3030D9341AB00953772 /* ExecStateInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecStateInlines.h; sourceTree = "<group>"; };
 		A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObjectFunctions.h; sourceTree = "<group>"; };
@@ -976,8 +976,8 @@
 		95AB831A0DA42C6900BC83F3 /* profiler */ = {
 			isa = PBXGroup;
 			children = (
-				95AB83540DA43B4400BC83F3 /* FunctionCallProfile.cpp */,
-				95AB83550DA43B4400BC83F3 /* FunctionCallProfile.h */,
+				95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */,
+				95AB83550DA43B4400BC83F3 /* ProfileNode.h */,
 				95742F630DD11F5A000917FB /* Profile.cpp */,
 				95742F640DD11F5A000917FB /* Profile.h */,
 				95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */,
@@ -1149,7 +1149,7 @@
 				E1A862AB0D7EBB7D001EC6AA /* Collator.h in Headers */,
 				E17863400D9BEC0000D74E75 /* InitializeThreading.h in Headers */,
 				95AB83480DA432EB00BC83F3 /* Profiler.h in Headers */,
-				95AB83570DA43C3000BC83F3 /* FunctionCallProfile.h in Headers */,
+				95AB83570DA43C3000BC83F3 /* ProfileNode.h in Headers */,
 				E1B7C8BE0DA3A3360074B0DC /* ThreadSpecific.h in Headers */,
 				06D358B20DAADA93003B174E /* MainThread.h in Headers */,
 				958D85830DC93230008ABF27 /* StrHash.h in Headers */,
@@ -1409,7 +1409,7 @@
 				E1A862D60D7F2B5C001EC6AA /* CollatorDefault.cpp in Sources */,
 				E178636D0D9BEEC300D74E75 /* InitializeThreading.cpp in Sources */,
 				95AB83420DA4322500BC83F3 /* Profiler.cpp in Sources */,
-				95AB83560DA43C3000BC83F3 /* FunctionCallProfile.cpp in Sources */,
+				95AB83560DA43C3000BC83F3 /* ProfileNode.cpp in Sources */,
 				06D358B30DAADAA4003B174E /* MainThread.cpp in Sources */,
 				06D358B40DAADAAA003B174E /* MainThreadMac.mm in Sources */,
 				95742F650DD11F5A000917FB /* Profile.cpp in Sources */,

@@ -26,7 +26,7 @@
 #ifndef Profile_h
 #define Profile_h
 
-#include "FunctionCallProfile.h"
+#include "ProfileNode.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -45,7 +45,7 @@ namespace KJS {
 
         void stopProfiling() { m_callTree->stopProfiling(); };
         const UString& title() const { return m_title; };
-        FunctionCallProfile* callTree() const { return m_callTree.get(); };
+        ProfileNode* callTree() const { return m_callTree.get(); };
 
         void printDataInspectorStyle() const;
         void printDataSampleStyle() const;
@@ -57,7 +57,7 @@ namespace KJS {
 
         void insertStackNamesInTree(const Vector<UString>& callStackNames);
 
-        RefPtr<FunctionCallProfile> m_callTree;
+        RefPtr<ProfileNode> m_callTree;
     };
 
 } // namespace KJS
