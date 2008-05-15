@@ -7,9 +7,15 @@ align
 alink
 alt
 archive
+aria-checked
+aria-describedby
 aria-labeledby
 aria-labelledby
-aria-describedby
+aria-level
+aria-pressed
+aria-valuemax
+aria-valuemin
+aria-valuenow
 autocomplete
 autoplay
 autosave

@@ -74,6 +74,7 @@ public:
     virtual bool isWebArea() const;
     virtual bool isCheckboxOrRadio() const;
     virtual bool isFileUploadButton() const;
+    virtual bool isProgressIndicator() const;
     
     virtual bool isEnabled() const;
     virtual bool isSelected() const;
@@ -87,7 +88,8 @@ public:
     virtual bool isPressed() const;
     virtual bool isReadOnly() const;
     virtual bool isVisited() const;        
-    
+
+    const AtomicString& getAttribute(const QualifiedName&) const;
     virtual bool canSetFocusAttribute() const;
     virtual bool canSetTextRangeAttributes() const;
     virtual bool canSetValueAttribute() const;
@@ -99,6 +101,9 @@ public:
     
     static int headingLevel(Node*);
     virtual int intValue() const;
+    virtual float valueForRange() const;
+    virtual float maxValueForRange() const;
+    virtual float minValueForRange() const;
     virtual int layoutCount() const;
     
     virtual AccessibilityObject* doAccessibilityHitTest(const IntPoint&) const;

@@ -1,3 +1,37 @@
+2008-05-13  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Brady.
+
+        This patch adds support for the ARIA progressbar role and the 
+        following ARIA states (ie HTML attributes): aria-checked, aria-
+        level, aria-pressed, aria-valuenow, aria-valuemin, and aria-
+        valuemax.
+
+        * html/HTMLAttributeNames.in:
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isProgressIndicator):
+        (WebCore::AccessibilityObject::valueForRange):
+        (WebCore::AccessibilityObject::maxValueForRange):
+        (WebCore::AccessibilityObject::minValueForRange):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isProgressIndicator):
+        (WebCore::AccessibilityRenderObject::isPressed): Check the aria-
+        pressed attribute if this is an ARIA button.
+        (WebCore::AccessibilityRenderObject::headingLevel): Check the aria-
+        level attribute if this is an ARIA heading.
+        (WebCore::AccessibilityRenderObject::intValue): Check the aria-
+        checked attribute if this is an ARIA radio button or checkbox.
+        (WebCore::AccessibilityRenderObject::valueForRange):
+        (WebCore::AccessibilityRenderObject::maxValueForRange):
+        (WebCore::AccessibilityRenderObject::minValueForRange):
+        (WebCore::RoleEntry::):
+        (WebCore::AccessibilityRenderObject::canSetValueAttribute):
+        * page/AccessibilityRenderObject.h:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
+=======
 2008-05-14  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by John.

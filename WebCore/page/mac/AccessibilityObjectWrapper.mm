@@ -515,6 +515,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     static NSArray* webAreaAttrs = nil;
     static NSArray* textAttrs = nil;
     static NSArray* listBoxAttrs = nil;
+    static NSArray* progressIndicatorAttrs = nil;
     NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
@@ -573,6 +574,15 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         listBoxAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
+    if (progressIndicatorAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        [tempArray addObject:NSAccessibilityTopLevelUIElementAttribute];
+        [tempArray addObject:NSAccessibilityValueAttribute];
+        [tempArray addObject:NSAccessibilityMinValueAttribute];
+        [tempArray addObject:NSAccessibilityMaxValueAttribute];
+        progressIndicatorAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
     
     if (m_object->isPasswordField())
         return attributes;
@@ -588,6 +598,9 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
 
     if (m_object->isListBox())
         return listBoxAttrs;
+
+    if (m_object->isProgressIndicator())
+        return progressIndicatorAttrs;
 
     return attributes;
 }
@@ -919,11 +932,19 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if (m_object->isAttachment()) {
             if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityValueAttribute]) 
                 return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityValueAttribute];
-        }    
+        }
+        if (m_object->isProgressIndicator())
+            return [NSNumber numberWithFloat:m_object->valueForRange()];
         if (m_object->hasIntValue())
             return [NSNumber numberWithInt:m_object->intValue()];
         return m_object->stringValue();
     }
+
+    if ([attributeName isEqualToString: NSAccessibilityMinValueAttribute])
+        return [NSNumber numberWithFloat:m_object->minValueForRange()];
+
+    if ([attributeName isEqualToString: NSAccessibilityMaxValueAttribute])
+        return [NSNumber numberWithFloat:m_object->maxValueForRange()];
 
     if ([attributeName isEqualToString: NSAccessibilityHelpAttribute])
         return m_object->helpText();
@@ -942,7 +963,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString: NSAccessibilityPositionAttribute])
         return [self position];
 
-    if ([attributeName isEqualToString: NSAccessibilityWindowAttribute]) {
+    if ([attributeName isEqualToString: NSAccessibilityWindowAttribute] ||
+        [attributeName isEqualToString: NSAccessibilityTopLevelUIElementAttribute]) {
         FrameView* fv = m_object->documentFrameView();
         if (fv)
             return [fv->getView() window];
