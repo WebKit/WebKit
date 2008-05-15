@@ -1355,7 +1355,8 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         while (dest > buffer + 1 && (dest[-1] == '\n' || dest[-1] == '\r'))
                             dest--; // remove trailing newlines
                         AtomicString v(buffer + 1, dest - buffer - 1);
-                        attrName = v; // Just make the name/value match. (FIXME: Is this some WinIE quirk?)
+                        if (!v.contains('/'))
+                            attrName = v; // Just make the name/value match. (FIXME: Is this some WinIE quirk?)
                         currToken.addAttribute(m_doc, attrName, v, inViewSourceMode());
                         if (inViewSourceMode())
                             currToken.addViewSourceChar('x');
@@ -1376,7 +1377,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         while (dest > buffer + 1 && (dest[-1] == '\n' || dest[-1] == '\r'))
                             dest--; // remove trailing newlines
                         AtomicString v(buffer + 1, dest - buffer - 1);
-                        if (attrName.isEmpty()) {
+                        if (attrName.isEmpty() && !v.contains('/')) {
                             attrName = v; // Make the name match the value. (FIXME: Is this a WinIE quirk?)
                             if (inViewSourceMode())
                                 currToken.addViewSourceChar('x');

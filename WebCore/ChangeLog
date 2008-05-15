@@ -1,3 +1,24 @@
+2008-05-15  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=13942
+        ASSERTION FAILED: !attrName.contains('/') in HTMLTokenizer.cpp:132 when loading http://bamanzi.blogeden.cn/
+
+        In HTML, when an attribute was null (for example when we parse '="somevalue"'
+        (attribute forgotten or there is a space between the attribute and the '=')),
+        the fallback was to assign the value to the attribute. However if the value was
+        a url or did contain a '/', we would trigger the assertion.
+
+        To avoid that, we check the value before assigning it now and do not assign it
+        if it means adding a '/'.
+
+        Test: fast/parser/assertion-empty-attribute.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag): Add check for '/' in value before
+        assigning it to an attribute when the attribute is null.
+
 2008-05-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix for recent breakages. Add EventLoopWx.cpp, update the Bakefiles,
