@@ -269,6 +269,10 @@ static Page* toPage(ExecState* exec)
     return window->impl()->frame()->page();
 }
 
+#ifdef DEBUG_DEBUGGER_CALLBACKS
+static unsigned s_callDepth = 0;
+#endif
+
 bool JavaScriptDebugServer::sourceParsed(ExecState* exec, int sourceID, const UString& sourceURL, const UString& source, int startingLineNumber, int errorLine, const UString& errorMessage)
 {
     if (m_callingListeners)
@@ -283,6 +287,13 @@ bool JavaScriptDebugServer::sourceParsed(ExecState* exec, int sourceID, const US
     ASSERT(hasListeners());
 
     bool isError = errorLine != -1;
+
+#ifdef DEBUG_DEBUGGER_CALLBACKS
+    printf("source: ");
+    for(unsigned i = 0; i < s_callDepth; ++i)
+        printf(" ");
+    printf("%d: '%s' exec: %p (caller: %p) source: %d\n", s_callDepth, sourceURL.ascii(), exec, exec->callingExecState(), sourceID);
+#endif
 
     if (!m_listeners.isEmpty()) {
         if (isError)
@@ -426,17 +437,82 @@ void JavaScriptDebugServer::pauseIfNeeded(ExecState* exec, int sourceID, int lin
     m_paused = false;
 }
 
+static inline void updateCurrentCallFrame(RefPtr<JavaScriptCallFrame>& currentCallFrame, ExecState* exec, int sourceID, int lineNumber, ExecState*& pauseExecState)
+{
+#ifdef DEBUG_DEBUGGER_CALLBACKS
+    const char* action = 0;
+#endif
+
+    if (currentCallFrame) {
+        if (currentCallFrame->execState() == exec) {
+            // Same call frame, just update the current line.
+            currentCallFrame->setLine(lineNumber);
+#ifdef DEBUG_DEBUGGER_CALLBACKS
+            action = "  same";
+#endif
+        } else if (currentCallFrame->execState() == exec->callingExecState()) {
+            // Create a new call frame, and make the caller the previous call frame.
+            currentCallFrame = JavaScriptCallFrame::create(exec, currentCallFrame, sourceID, lineNumber);
+#ifdef DEBUG_DEBUGGER_CALLBACKS
+            action = "  call";
+            ++s_callDepth;
+#endif
+        } else {
+#ifdef DEBUG_DEBUGGER_CALLBACKS
+            action = "return";
+#endif
+            // The current call frame isn't the same and it isn't the caller of a new call frame,
+            // so it might be a previous call frame (returning from a function). Or it is a stale call
+            // frame from the previous execution of global code. Walk up the caller chain until we find
+            // the current exec state. If the current exec state is found, the current call frame will be
+            // set to null (and a new one will be created below.)
+            while (currentCallFrame && currentCallFrame->execState() != exec) {
+                if (currentCallFrame->execState() == pauseExecState) {
+                    // The current call frame matches the pause exec state (used for step over.)
+                    // Since we are returning up the call stack, update the pause exec state to match.
+                    // This makes stepping over a return statement act like a step out.
+                    if (currentCallFrame->caller())
+                        pauseExecState = currentCallFrame->caller()->execState();
+                    else
+                        pauseExecState = 0;
+                }
+
+                // Invalidate the call frame since it's ExecState is stale now.
+                currentCallFrame->invalidate();
+                currentCallFrame = currentCallFrame->caller();
+
+#ifdef DEBUG_DEBUGGER_CALLBACKS
+                if (s_callDepth)
+                    --s_callDepth;
+#endif
+            }
+
+            if (currentCallFrame)
+                currentCallFrame->setLine(lineNumber);
+        }
+    }
+
+    if (!currentCallFrame) {
+        // Create a new call frame with no caller, this is likely global code.
+        currentCallFrame = JavaScriptCallFrame::create(exec, 0, sourceID, lineNumber);
+#ifdef DEBUG_DEBUGGER_CALLBACKS
+        action = "   new";
+#endif
+    }
+
+#ifdef DEBUG_DEBUGGER_CALLBACKS
+    printf("%s: ", action);
+    for(unsigned i = 0; i < s_callDepth; ++i)
+        printf(" ");
+    printf("%d: at exec: %p (caller: %p, pause: %p) source: %d line: %d\n", s_callDepth, exec, exec->callingExecState(), pauseExecState, sourceID, lineNumber);
+#endif
+}
+
 bool JavaScriptDebugServer::callEvent(ExecState* exec, int sourceID, int lineNumber, JSObject*, const List&)
 {
     if (m_paused)
         return true;
-
-    if (m_currentCallFrame && m_currentCallFrame->execState() != exec->callingExecState()) {
-        m_currentCallFrame->invalidate();
-        m_currentCallFrame = 0;
-    }
-
-    m_currentCallFrame = JavaScriptCallFrame::create(exec, m_currentCallFrame, sourceID, lineNumber);
+    updateCurrentCallFrame(m_currentCallFrame, exec, sourceID, lineNumber, m_pauseOnExecState);
     pauseIfNeeded(exec, sourceID, lineNumber);
     return true;
 }
@@ -445,10 +521,7 @@ bool JavaScriptDebugServer::atStatement(ExecState* exec, int sourceID, int first
 {
     if (m_paused)
         return true;
-    if (m_currentCallFrame)
-        m_currentCallFrame->setLine(firstLine);
-    else
-        m_currentCallFrame = JavaScriptCallFrame::create(exec, 0, sourceID, firstLine);
+    updateCurrentCallFrame(m_currentCallFrame, exec, sourceID, firstLine, m_pauseOnExecState);
     pauseIfNeeded(exec, sourceID, firstLine);
     return true;
 }
@@ -457,9 +530,8 @@ bool JavaScriptDebugServer::returnEvent(ExecState* exec, int sourceID, int lineN
 {
     if (m_paused)
         return true;
+    updateCurrentCallFrame(m_currentCallFrame, exec, sourceID, lineNumber, m_pauseOnExecState);
     pauseIfNeeded(exec, sourceID, lineNumber);
-    m_currentCallFrame->invalidate();
-    m_currentCallFrame = m_currentCallFrame->caller();
     return true;
 }
 
@@ -467,10 +539,7 @@ bool JavaScriptDebugServer::exception(ExecState* exec, int sourceID, int lineNum
 {
     if (m_paused)
         return true;
-    if (m_currentCallFrame)
-        m_currentCallFrame->setLine(lineNumber);
-    else
-        m_currentCallFrame = JavaScriptCallFrame::create(exec, 0, sourceID, lineNumber);
+    updateCurrentCallFrame(m_currentCallFrame, exec, sourceID, lineNumber, m_pauseOnExecState);
     if (m_pauseOnExceptions)
         m_pauseOnNextStatement = true;
     pauseIfNeeded(exec, sourceID, lineNumber);

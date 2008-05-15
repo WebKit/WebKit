@@ -1,3 +1,30 @@
+2008-05-14  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a crash in JavaScriptDebugServer::returnEvent when debugging
+        code that contains an eval. This change makes stepping into eval
+        code work as expected.
+
+        http://bugs.webkit.org/show_bug.cgi?id=19038
+
+        Reviewed by Kevin McCullough.
+
+        Tested with: manual-tests/inspector/returnEvent-crash.html
+
+        * manual-tests/inspector/returnEvent-crash.html: Added.
+        * page/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::sourceParsed): Adds #ifdefed
+        debugging code to prevent the sourceID and URL.
+        (WebCore::updateCurrentCallFrame): Added. A helper function that
+        is called from all 4 of the debugger hooks below. This function will
+        update and/or create JavaScriptCallFrames to match the exec state,
+        sourceID and lineNumber passed into it. Contains #ifdefed debugging
+        code that was helpful while fixing this bug.
+        (WebCore::JavaScriptDebugServer::callEvent): Call updateCurrentCallFrame
+        before pauseIfNeeded.
+        (WebCore::JavaScriptDebugServer::atStatement): Ditto.
+        (WebCore::JavaScriptDebugServer::returnEvent): Ditto.
+        (WebCore::JavaScriptDebugServer::exception): Ditto.
+
 2008-05-14  Alp Toker  <alp@nuanti.com>
 
         GTK+ build fix for r33457. Add NetworkStateNotifier.cpp to the build.
