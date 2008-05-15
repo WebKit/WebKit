@@ -903,6 +903,7 @@ webcore_sources += \
 	WebCore/platform/network/Credential.cpp \
 	WebCore/platform/network/FormData.cpp \
 	WebCore/platform/network/HTTPParsers.cpp \
+	WebCore/platform/network/NetworkStateNotifier.cpp \
 	WebCore/platform/network/ProtectionSpace.cpp \
 	WebCore/platform/network/ResourceErrorBase.cpp \
 	WebCore/platform/network/ResourceHandle.cpp \

@@ -1,5 +1,11 @@
 2008-05-14  Alp Toker  <alp@nuanti.com>
 
+        GTK+ build fix for r33457. Add NetworkStateNotifier.cpp to the build.
+
+        * GNUmakefile.am:
+
+2008-05-14  Alp Toker  <alp@nuanti.com>
+
         GTK+ build fix. Include value.h from kjs, not JavaScriptCore.
 
         * page/JavaScriptProfile.cpp:
