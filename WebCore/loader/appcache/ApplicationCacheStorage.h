@@ -66,6 +66,8 @@ private:
 
     void loadManifestHostHashes();
     
+    void verifySchemaVersion();
+    
     void openDatabase(bool createIfDoesNotExist);
     
     bool executeStatement(SQLiteStatement&);

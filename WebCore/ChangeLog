@@ -1,3 +1,14 @@
+2008-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Add a version table to the database.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::verifySchemaVersion):
+        (WebCore::ApplicationCacheStorage::openDatabase):
+        * loader/appcache/ApplicationCacheStorage.h:
+
 2008-05-16  Timothy Hatcher  <timothy@apple.com>
 
         Adds the ability to evaluate expressions in the local scope

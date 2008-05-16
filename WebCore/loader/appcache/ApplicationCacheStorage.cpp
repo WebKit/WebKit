@@ -221,8 +221,33 @@ bool ApplicationCacheStorage::executeSQLCommand(const String& sql)
 
     return result;
 }
-    
 
+static const int SchemaVersion = 1;
+    
+void ApplicationCacheStorage::verifySchemaVersion()
+{
+    if (m_database.tableExists("SchemaVersion")) {
+        int version = SQLiteStatement(m_database, "SELECT version from SchemaVersion").getColumnInt(0);
+        
+        if (version == SchemaVersion)
+            return;
+    }
+    
+    m_database.clearAllTables();
+
+    SQLiteTransaction createSchemaVersionTable(m_database);
+    createSchemaVersionTable.begin();
+
+    executeSQLCommand("CREATE TABLE SchemaVersion (version INTEGER NOT NULL)");
+    SQLiteStatement statement(m_database, "INSERT INTO SchemaVersion (version) VALUES (?)");
+    if (statement.prepare() != SQLResultOk)
+        return;
+    
+    statement.bindInt64(1, SchemaVersion);
+    executeStatement(statement);
+    createSchemaVersionTable.commit();
+}
+    
 void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
 {
     if (m_database.isOpen())
@@ -241,6 +266,8 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
     
     if (!m_database.isOpen())
         return;
+    
+    verifySchemaVersion();
     
     // Create tables
     executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheGroups (id INTEGER PRIMARY KEY AUTOINCREMENT, "
