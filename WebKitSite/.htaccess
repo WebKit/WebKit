@@ -1,3 +1,4 @@
 AddType application/x-httpd-php html
+AddType text/cache-manifest manifest
 
 RewriteRule .*webdevelopers.* http://trac.webkit.org/projects/webkit/wiki/WebDevelopers [R=301]
