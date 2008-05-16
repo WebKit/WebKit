@@ -1,3 +1,22 @@
+2008-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John.
+
+        Handle the case where the main resource load is cancelled while the cache attempt is in progress.
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::mainReceivedError):
+        Tell the group that the main resource failed to load.
+        
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::failedLoadingMainResource):
+        Call cacheUpdateFailed.
+        
+        (WebCore::ApplicationCacheGroup::cacheUpdateFailed):
+        Stop loading if the update failed.
+        
+        * loader/appcache/ApplicationCacheGroup.h:
+
 2008-05-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Alice Liu

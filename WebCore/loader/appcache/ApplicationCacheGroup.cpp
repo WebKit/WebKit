@@ -223,6 +223,12 @@ void ApplicationCacheGroup::finishedLoadingMainResource(DocumentLoader* loader)
     checkIfLoadIsComplete();
 }
 
+void ApplicationCacheGroup::failedLoadingMainResource(DocumentLoader* loader)
+{
+    ASSERT(m_cacheCandidates.contains(loader) || m_associatedDocumentLoaders.contains(loader));
+    cacheUpdateFailed();
+}
+
 void ApplicationCacheGroup::stopLoading()
 {
     ASSERT(m_cacheBeingUpdated);
@@ -509,10 +515,12 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
 
 void ApplicationCacheGroup::cacheUpdateFailed()
 {
+    if (m_cacheBeingUpdated)
+        stopLoading();
+        
     callListenersOnAssociatedDocuments(&DOMApplicationCache::callErrorListener);
 
     m_pendingEntries.clear();
-    m_cacheBeingUpdated = 0;
     m_manifestResource = 0;
 
     while (!m_cacheCandidates.isEmpty()) {
@@ -525,6 +533,10 @@ void ApplicationCacheGroup::cacheUpdateFailed()
     
     m_status = Idle;    
     m_frame = 0;
+    
+    // If there are no associated caches, delete ourselves
+    if (m_associatedDocumentLoaders.isEmpty())
+        delete this;
 }
     
     

@@ -254,6 +254,15 @@ void DocumentLoader::clearErrors()
 
 void DocumentLoader::mainReceivedError(const ResourceError& error, bool isComplete)
 {
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    ApplicationCacheGroup* group = m_candidateApplicationCacheGroup;
+    if (!group && m_applicationCache && !mainResourceApplicationCache())
+        group = m_applicationCache->group();
+    
+    if (group)
+        group->failedLoadingMainResource(this);
+#endif
+    
     if (!frameLoader())
         return;
     setMainDocumentError(error);

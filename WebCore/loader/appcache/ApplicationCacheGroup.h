@@ -71,8 +71,9 @@ public:
         
     ApplicationCache* newestCache() const { return m_newestCache.get(); }
 
-    void finishedLoadingMainResource(DocumentLoader* loader);
-    void documentLoaderDestroyed(DocumentLoader* loader);
+    void finishedLoadingMainResource(DocumentLoader*);
+    void failedLoadingMainResource(DocumentLoader*);
+    void documentLoaderDestroyed(DocumentLoader*);
 
     void setNewestCache(PassRefPtr<ApplicationCache> newestCache);
 
