@@ -1,5 +1,11 @@
 2008-05-15  Kevin McCullough  <kmccullough@apple.com>
 
+        - Build fix.
+
+        * JavaScriptCore.exp:
+
+2008-05-15  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Tim.
 
         <rdar://problem/5770054> JavaScript profiler (10928)
