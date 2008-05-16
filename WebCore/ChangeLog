@@ -176,6 +176,48 @@
 
 2008-05-15  Timothy Hatcher  <timothy@apple.com>
 
+        Adds an error and warning count indicator at the bottom right in the
+        Inspector's status bar.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18650
+
+        Initial implementation by Adam Roben.
+        Reviewed by Sam Weinig.
+
+        Test: manual-tests/inspector/error-warning-count.html
+
+        * English.lproj/localizedStrings.js: Added new strings.
+        * manual-tests/inspector/error-warning-count.html: Added.
+        * page/inspector/Console.js:
+        (WebInspector.Console.prototype.show): Don't do anything if visible.
+        (WebInspector.Console.prototype.hide): Don't do anything if hidden.
+        Temporally set properties and classes to mimic the post-animation
+        values so panels like Elements in their updateStatusBarItems call will
+        size things to fit the final location. 
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumbSizes):
+        Account for the #error-warning-count width when sizing breadcrumbs. 
+        * page/inspector/Resource.js:
+        (WebInspector.Resource.prototype.set errors): Update the global error count.
+        (WebInspector.Resource.prototype.set warnings): Update the global warning count.
+        * page/inspector/inspector.css: Make .hidden's display property
+        !important to ensure things really hide, and added styling for the new
+        #error-warning-count element.
+        * page/inspector/inspector.html: Added an #error-warning-count div
+        in the #anchored-status-bar-items div.
+        * page/inspector/inspector.js:
+        (WebInspector.get errors): Added.
+        (WebInspector.set errors): Added. Calls _updateErrorAndWarningCounts.
+        (WebInspector.get warnings): Added.
+        (WebInspector.set warnings): Added. Calls _updateErrorAndWarningCounts.
+        (WebInspector._updateErrorAndWarningCounts): Added. Update the
+        #error-warning-count div with the current error/warning count.
+        (WebInspector.loaded): Add a click event listener to the
+        #error-warning-count element that will show the Console. Call
+        _updateErrorAndWarningCounts to display the initial error/warning counts.
+
+2008-05-15  Timothy Hatcher  <timothy@apple.com>
+
         Fixes a bug in the view source parsing of text within <script>,
         <style>, <xmp>, <textarea> and other special tags. The text was
         being parsed as HTML and would be syntax highlighted if a "<"

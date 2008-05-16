@@ -597,6 +597,9 @@ WebInspector.ElementsPanel.prototype = {
         function crumbsAreSmallerThanContainer()
         {
             var rightPadding = 20;
+            var errorWarningElement = document.getElementById("error-warning-count");
+            if (!WebInspector.console.visible && errorWarningElement)
+                rightPadding += errorWarningElement.offsetWidth;
             return ((crumbs.totalOffsetLeft + crumbs.offsetWidth + rightPadding) < window.innerWidth);
         }
 

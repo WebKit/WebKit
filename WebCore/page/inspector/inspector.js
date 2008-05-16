@@ -181,6 +181,88 @@ var WebInspector = {
 
             WebInspector.animateStyle(animations, 250, animationFinished);
         }
+    },
+
+    get errors()
+    {
+        return this._errors || 0;
+    },
+
+    set errors(x)
+    {
+        x = Math.max(x, 0);
+
+        if (this._errors === x)
+            return;
+        this._errors = x;
+        this._updateErrorAndWarningCounts();
+    },
+
+    get warnings()
+    {
+        return this._warnings || 0;
+    },
+
+    set warnings(x)
+    {
+        x = Math.max(x, 0);
+
+        if (this._warnings === x)
+            return;
+        this._warnings = x;
+        this._updateErrorAndWarningCounts();
+    },
+
+    _updateErrorAndWarningCounts: function()
+    {
+        var errorWarningElement = document.getElementById("error-warning-count");
+        if (!errorWarningElement)
+            return;
+
+        if (!this.errors && !this.warnings) {
+            errorWarningElement.addStyleClass("hidden");
+            return;
+        }
+
+        errorWarningElement.removeStyleClass("hidden");
+
+        errorWarningElement.removeChildren();
+
+        if (this.errors) {
+            var errorElement = document.createElement("span");
+            errorElement.id = "error-count";
+            errorElement.textContent = this.errors;
+            errorWarningElement.appendChild(errorElement);
+        }
+
+        if (this.warnings) {
+            var warningsElement = document.createElement("span");
+            warningsElement.id = "warning-count";
+            warningsElement.textContent = this.warnings;
+            errorWarningElement.appendChild(warningsElement);
+        }
+
+        if (this.errors) {
+            if (this.warnings) {
+                if (this.errors == 1) {
+                    if (this.warnings == 1)
+                        errorWarningElement.title = WebInspector.UIString("%d error, %d warning", this.errors, this.warnings);
+                    else
+                        errorWarningElement.title = WebInspector.UIString("%d error, %d warnings", this.errors, this.warnings);
+                } else if (this.warnings == 1)
+                    errorWarningElement.title = WebInspector.UIString("%d errors, %d warning", this.errors, this.warnings);
+                else
+                    errorWarningElement.title = WebInspector.UIString("%d errors, %d warnings", this.errors, this.warnings);
+            } else if (this.errors == 1)
+                errorWarningElement.title = WebInspector.UIString("%d error", this.errors);
+            else
+                errorWarningElement.title = WebInspector.UIString("%d errors", this.errors);
+        } else if (this.warnings == 1)
+            errorWarningElement.title = WebInspector.UIString("%d warning", this.warnings);
+        else if (this.warnings)
+            errorWarningElement.title = WebInspector.UIString("%d warnings", this.warnings);
+        else
+            errorWarningElement.title = null;
     }
 }
 
@@ -257,6 +339,10 @@ WebInspector.loaded = function()
         dockToggleButton.title = WebInspector.UIString("Undock into separate window.");
     else
         dockToggleButton.title = WebInspector.UIString("Dock to main window.");
+
+    var errorWarningCount = document.getElementById("error-warning-count");
+    errorWarningCount.addEventListener("click", this.console.show.bind(this.console), false);
+    this._updateErrorAndWarningCounts();
 
     document.getElementById("search-toolbar-label").textContent = WebInspector.UIString("Search");
 

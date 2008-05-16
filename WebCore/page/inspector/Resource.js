@@ -443,6 +443,10 @@ WebInspector.Resource.prototype = {
     {
         if (this._errors === x)
             return;
+
+        var difference = x - this._errors;
+        WebInspector.errors += difference;
+
         this._errors = x;
     },
 
@@ -457,6 +461,10 @@ WebInspector.Resource.prototype = {
     {
         if (this._warnings === x)
             return;
+
+        var difference = x - this._warnings;
+        WebInspector.warnings += difference;
+
         this._warnings = x;
     },
 
