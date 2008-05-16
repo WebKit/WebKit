@@ -1,3 +1,14 @@
+2008-05-15  Timothy Hatcher  <timothy@apple.com>
+
+        Test case added for <rdar://problem/5790805> Inspector's source view
+        missing some words, doubles others in JS source in <script> tag (17752)
+
+        Reviewed by Dave Hyatt.
+
+        * fast/frames/resources/viewsource-frame-2.html: Added.
+        * fast/frames/viewsource-plain-text-tags-expected.txt: Added.
+        * fast/frames/viewsource-plain-text-tags.html: Added.
+
 2008-05-15  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Anders.

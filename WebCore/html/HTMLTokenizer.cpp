@@ -442,6 +442,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     processToken();
 
     state.setInScript(false);
+    scriptCodeSize = scriptCodeResync = 0;
     
     // FIXME: The script should be syntax highlighted.
     if (inViewSourceMode())
@@ -450,7 +451,6 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     SegmentedString *savedPrependingSrc = currentPrependingSrc;
     SegmentedString prependingSrc;
     currentPrependingSrc = &prependingSrc;
-    scriptCodeSize = scriptCodeResync = 0;
 
     if (!parser->skipMode() && !followingFrameset) {
         if (cs) {
@@ -1478,14 +1478,15 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 
             RefPtr<Node> n = processToken();
             m_cBufferPos = cBufferPos;
-            if (n) {
+            if (n || inViewSourceMode()) {
                 if ((tagName == preTag || tagName == listingTag) && !inViewSourceMode()) {
                     if (beginTag)
                         state.setDiscardLF(true); // Discard the first LF after we open a pre.
-                } else if (tagName == scriptTag && n) {
+                } else if (tagName == scriptTag) {
                     ASSERT(!scriptNode);
                     scriptNode = n;
-                    scriptSrcCharset = static_cast<HTMLScriptElement*>(n.get())->scriptCharset();
+                    if (n)
+                        scriptSrcCharset = static_cast<HTMLScriptElement*>(n.get())->scriptCharset();
                     if (beginTag) {
                         searchStopper = scriptEnd;
                         searchStopperLen = 8;

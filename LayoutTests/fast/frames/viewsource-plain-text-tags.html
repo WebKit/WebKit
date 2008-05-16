@@ -1,0 +1,39 @@
+<html>
+<head>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    function report(frame) {
+        var result = frame.contentDocument.documentElement.innerHTML;
+        var regex = new RegExp("<td class=\"webkit-line-content\">&lt;test&gt;</td>", "g");
+        matches = result.match(regex);
+
+        if (matches && matches.length === 4)
+            var resultText = "PASS";
+        else
+            var resultText = "FAIL";
+
+        if (window.layoutTestController) {
+            document.open();
+            document.write(resultText);
+            document.close();
+
+            layoutTestController.notifyDone();
+        } else {
+            document.getElementById("result").textContent = resultText;
+        }
+    }
+</script>
+</head>
+<body>
+<p>You should see a frame in 'view source' mode below.</p>
+<p>None of the "&lt;test&gt;" strings shown below should be colorized like HTML.</p>
+<hr>
+<iframe viewsource src="resources/viewsource-frame-2.html" height="250" onload="report(this)"></iframe>
+<hr>
+<div id="result"></div>
+</body>
+</html>

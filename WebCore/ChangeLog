@@ -1,5 +1,30 @@
 2008-05-15  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes a bug in the view source parsing of text within <script>,
+        <style>, <xmp>, <textarea> and other special tags. The text was
+        being parsed as HTML and would be syntax highlighted if a "<"
+        was encountered.
+
+        <rdar://problem/5790805> Inspector's source view missing some words,
+        doubles others in JS source in <script> tag (17752)
+
+        Reviewed by Dave Hyatt.
+
+        Added test: fast/frames/viewsource-plain-text-tags.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler): Set scriptCodeSize and
+        scriptCodeResync to zero before an early return in view source mode.
+        This was causing text from a previous script tag to show up in
+        then next style tag.
+        (WebCore::HTMLTokenizer::parseTag): Enter an if block in view source
+        mode even if n is null. The n is property guarded in other places
+        and not used by view source mode. Removes a redundant null check on n.
+        Add a new null check of n before setting scriptSrcCharset. Other code
+        in HTMLTokenizer is already guarded for this code path. 
+
+2008-05-15  Timothy Hatcher  <timothy@apple.com>
+
         Changes the Web Inspector node highlight to be less aggressive
         and only highlight when hovering over the selected node in the DOM
         tree or breadcrumbs. You can highlight on hover for any node if
