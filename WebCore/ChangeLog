@@ -1,3 +1,15 @@
+2008-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Parse and set the headers on the response.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::parseHeader):
+        (WebCore::parseHeaders):
+        (WebCore::ApplicationCacheStorage::loadCache):
+
 2008-05-16  Timothy Hatcher  <timothy@apple.com>
 
         Adds the "this" object to the Local scope section of the
