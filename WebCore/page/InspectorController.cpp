@@ -2242,28 +2242,44 @@ static void drawHighlightForBoxes(GraphicsContext& context, const Vector<IntRect
     drawOutlinedRect(context, contentBox, contentBoxColor);
 }
 
+static inline void convertFromFrameToMainFrame(Frame* frame, IntRect& rect)
+{
+    rect = frame->page()->mainFrame()->view()->windowToContents(frame->view()->contentsToWindow(rect));
+}
+
 void InspectorController::drawNodeHighlight(GraphicsContext& context) const
 {
     if (!m_highlightedNode)
         return;
 
     RenderObject* renderer = m_highlightedNode->renderer();
-    if (!renderer)
+    Frame* containingFrame = m_highlightedNode->document()->frame();
+    if (!renderer || !containingFrame)
         return;
 
     IntRect contentBox = renderer->absoluteContentBox();
+    IntRect boundingBox = renderer->absoluteBoundingBoxRect();
+
     // FIXME: Should we add methods to RenderObject to obtain these rects?
     IntRect paddingBox(contentBox.x() - renderer->paddingLeft(), contentBox.y() - renderer->paddingTop(), contentBox.width() + renderer->paddingLeft() + renderer->paddingRight(), contentBox.height() + renderer->paddingTop() + renderer->paddingBottom());
     IntRect borderBox(paddingBox.x() - renderer->borderLeft(), paddingBox.y() - renderer->borderTop(), paddingBox.width() + renderer->borderLeft() + renderer->borderRight(), paddingBox.height() + renderer->borderTop() + renderer->borderBottom());
     IntRect marginBox(borderBox.x() - renderer->marginLeft(), borderBox.y() - renderer->marginTop(), borderBox.width() + renderer->marginLeft() + renderer->marginRight(), borderBox.height() + renderer->marginTop() + renderer->marginBottom());
 
-    IntRect boundingBox = renderer->absoluteBoundingBoxRect();
+    convertFromFrameToMainFrame(containingFrame, contentBox);
+    convertFromFrameToMainFrame(containingFrame, paddingBox);
+    convertFromFrameToMainFrame(containingFrame, borderBox);
+    convertFromFrameToMainFrame(containingFrame, marginBox);
+    convertFromFrameToMainFrame(containingFrame, boundingBox);
 
     Vector<IntRect> lineBoxRects;
     if (renderer->isInline() || (renderer->isText() && !m_highlightedNode->isSVGElement())) {
         // FIXME: We should show margins/padding/border for inlines.
         renderer->addLineBoxRects(lineBoxRects);
     }
+
+    for (unsigned i = 0; i < lineBoxRects.size(); ++i)
+        convertFromFrameToMainFrame(containingFrame, lineBoxRects[i]);
+
     if (lineBoxRects.isEmpty() && contentBox.isEmpty()) {
         // If we have no line boxes and our content box is empty, we'll just draw our bounding box.
         // This can happen, e.g., with an <a> enclosing an <img style="float:right">.

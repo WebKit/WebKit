@@ -1,3 +1,19 @@
+2008-05-16  Timothy Hatcher  <timothy@apple.com>
+
+        Fixed the bug where the Inspector node highlight would not show
+        in the correct place for nodes in frames.
+
+        <rdar://problem/5712834> Elements in iframes are highlighted incorrectly (14408)
+
+        Reviewed by John Sullivan.
+
+        * page/InspectorController.cpp:
+        (WebCore::convertFromFrameToMainFrame): Helper function to convert
+        IntRect coordinates from one frame to the main frame.
+        (WebCore::InspectorController::drawNodeHighlight): Call the
+        convertFromFrameToMainFrame helper for all the rects we get from
+        the node since they are in the owner frame's coordinate space.
+
 2008-05-16  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric.
@@ -8,171 +24,6 @@
 
         - Add video tag guard in HTMLTagNames.in & give an extraDefines parameter to make_names.pl
         when generating HTMLNames.
-
-        - Modify the different build systems to accomodate the new parameter.
-
-        - Small make_names.pl clean up (mainly code generated coding style issue).
-
-        * DerivedSources.make: Add HTML_FLAGS and pass it to make_names.pl
-        if it is defined (similar to SVG) 
-
-        * GNUmakefile.am: Add HTML_FEATURES & HTML_FLAGS and pass it to
-        make_names.pl if HTML_FLAGS is defined.
-
-        * WebCore.pro: Pass $${DEFINES} to make_names.pl.
-
-        * dom/make_names.pl: 
-        * html/HTMLElement.cpp:
-        (WebCore::inlineTagList): Add ENABLE(VIDEO) guard.
-        * html/HTMLTagNames.in: Ditto.
-
-2008-05-16  Anders Carlsson  <andersca@apple.com>
-
-        Reviewed by Mitz.
-
-        Fire progress events.
-        
-        * loader/appcache/ApplicationCacheGroup.cpp:
-        (WebCore::ApplicationCacheGroup::startLoadingEntry):
-
-2008-05-16  Anders Carlsson  <andersca@apple.com>
-
-        Reviewed by John.
-
-        Handle the case where the main resource load is cancelled while the cache attempt is in progress.
-        
-        * loader/DocumentLoader.cpp:
-        (WebCore::DocumentLoader::mainReceivedError):
-        Tell the group that the main resource failed to load.
-        
-        * loader/appcache/ApplicationCacheGroup.cpp:
-        (WebCore::ApplicationCacheGroup::failedLoadingMainResource):
-        Call cacheUpdateFailed.
-        
-        (WebCore::ApplicationCacheGroup::cacheUpdateFailed):
-        Stop loading if the update failed.
-        
-        * loader/appcache/ApplicationCacheGroup.h:
-
-2008-05-16  Chris Fleizach  <cfleizach@apple.com>
-
-        Reviewed by Alice Liu
-
-        <rdar://problem/5710317> REGRESSION:Selecting ranges of text should be possible using the keyboard (15310)
-
-        * WebCore.base.exp:
-        * editing/VisiblePosition.cpp:
-        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate):
-        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate):
-        * page/AXObjectCache.cpp:
-        * page/AXObjectCache.h:
-        (WebCore::AXObjectCache::enableEnhancedUserInterfaceAccessibility):
-        (WebCore::AXObjectCache::accessibilityEnabled):
-        (WebCore::AXObjectCache::accessibilityEnhancedUserInterfaceEnabled):
-        * page/AccessibilityRenderObject.cpp:
-        (WebCore::AccessibilityRenderObject::visiblePositionRange):
-        (WebCore::AccessibilityRenderObject::doSetAXSelectedTextMarkerRange):
-        (WebCore::AccessibilityRenderObject::addChildren):
-        (WebCore::AccessibilityRenderObject::actionVerb):
-        * page/EventHandler.cpp:
-        (WebCore::EventHandler::handleKeyboardSelectionMovement):
-        (WebCore::EventHandler::defaultKeyboardEventHandler):
-        * page/EventHandler.h:
-
-2008-05-15  Ariya Hidayat  <ariya.hidayat@trolltech.com>
-
-        Reviewed by Simon.
-
-        Since WebKitGtk is fully using autotools now, clean-up the .pro/.pri files
-        from gtk-port.
-
-        * WebCore.pro:
-
-2008-05-16  Simon Hausmann  <hausmann@webkit.org>
-
-        Fix the Gtk build.
-
-        * GNUmakefile.am: Added rendering/style to the include paths.
-
-2008-05-16  Simon Hausmann  <hausmann@webkit.org>
-
-        Fix the Qt build.
-
-        * WebCore.pro: Added rendering/style to the include paths
-        * page/AXObjectCache.cpp:
-        (WebCore::AXObjectCache::handleActiveDescendantChanged): Don't compile
-        this method unless a17n is enabled.
-
-2008-05-15  Rob Buis  <buis@kde.org>
-
-        Reviewed by Dave Hyatt.
-
-        https://bugs.webkit.org/show_bug.cgi?id=17433
-        getComputedStyle() -> clip returns empty string
-
-        Make getComputedStyle return a shape value for clip
-        if it is set.
-
-        Tests: fast/css/getPropertyValue-clip.html
-
-        * css/CSSComputedStyleDeclaration.cpp:
-        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
-
-2008-05-15  Kevin Ollivier  <kevino@theolliviers.com>
-
-        wx build fix. Add rendering/style to includes dir.
-
-        * webcore-base.bkl:
-
-2008-05-15  Alice Liu  <alice.liu@apple.com>
-
-        Reviewed by Beth Dakin.
-
-        Fixed <rdar://problem/5882283> Implement ARIA aria-activedescendant
-        Also added support for aria roles listbox and option, and aria-selected, 
-        and aria-multiselectable for listboxes
-
-        * dom/Element.cpp:
-        (WebCore::Element::attributeChanged):
-        * dom/Element.h:
-        * dom/StyledElement.cpp:
-        (WebCore::StyledElement::attributeChanged):
-        * html/HTMLAttributeNames.in:
-        * page/AXObjectCache.cpp:
-        (WebCore::AXObjectCache::handleActiveDescendantChanged):
-        * page/AXObjectCache.h:
-        (WebCore::AXObjectCache::accessibilityEnabled):
-        (WebCore::AXObjectCache::handleActiveDescendantChanged):
-        * page/AccessibilityListBox.cpp:
-        (WebCore::AccessibilityListBox::selectedChildren):
-        (WebCore::AccessibilityListBox::visibleChildren):
-        * page/AccessibilityListBox.h:
-        * page/AccessibilityListBoxOption.h:
-        (WebCore::AccessibilityListBoxOption::selectedChildren):
-        (WebCore::AccessibilityListBoxOption::visibleChildren):
-        * page/AccessibilityObject.cpp:
-        * page/AccessibilityObject.h:
-        (WebCore::AccessibilityObject::isListBox):
-        (WebCore::AccessibilityObject::shouldFocusActiveDescendant):
-        (WebCore::AccessibilityObject::activeDescendant):
-        (WebCore::AccessibilityObject::handleActiveDescendantChanged):
-        * page/AccessibilityRenderObject.cpp:
-        (WebCore::AccessibilityRenderObject::title):
-        (WebCore::AccessibilityRenderObject::accessibilityShouldUseUniqueId):
-        (WebCore::AccessibilityRenderObject::focusedUIElement):
-        (WebCore::AccessibilityRenderObject::shouldFocusActiveDescendant):
-        (WebCore::AccessibilityRenderObject::activeDescendant):
-        (WebCore::AccessibilityRenderObject::handleActiveDescendantChanged):
-        (WebCore::RoleEntry::):
-        (WebCore::AccessibilityRenderObject::ariaRoleAttribute):
-        (WebCore::AccessibilityRenderObject::ariaListboxSelectedChildren):
-        (WebCore::AccessibilityRenderObject::selectedChildren):
-        (WebCore::AccessibilityRenderObject::ariaListboxVisibleChildren):
-        (WebCore::AccessibilityRenderObject::visibleChildren):
-        * page/AccessibilityRenderObject.h:
-        (WebCore::AccessibilityRenderObject::isDetached):
-        * page/mac/AccessibilityObjectWrapper.mm:
-        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
 
 2008-05-15  Timothy Hatcher  <timothy@apple.com>
 
