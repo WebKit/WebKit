@@ -1,4 +1,11 @@
 2008-05-15  Stephanie Lewis  <slewis@apple.com>
+        
+        fix mac build
+
+        * WebView/WebView.mm:
+        (-[WebView closeWithFastTeardown]):
+
+2008-05-15  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Anders.
 

@@ -717,7 +717,7 @@ static bool debugWidget = true;
     
     // Unload the WebView local plug-in database. 
     if (_private->pluginDatabase) {
-        [_private->pluginDatabase destroyAllPluginInstances];
+        [_private->pluginDatabase destroyAllPluginInstanceViews];
         [_private->pluginDatabase close];
         [_private->pluginDatabase release];
         _private->pluginDatabase = nil;
