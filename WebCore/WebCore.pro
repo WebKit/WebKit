@@ -30,7 +30,7 @@ INCLUDEPATH += $$GENERATED_SOURCES_DIR
 }
 
 DEPENDPATH += css dom loader editing history html \
-    loader/icon page platform platform/graphics platform/network platform/text plugins rendering xml \
+    loader/icon page platform platform/graphics platform/network platform/text plugins rendering rendering/style xml \
     bindings/js bridge bridge/c bridge/qt
 
 include($$OUTPUT_DIR/config.pri)
@@ -221,6 +221,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/bridge \
                 $$PWD/editing \
                 $$PWD/rendering \
+                $$PWD/rendering/style \
                 $$PWD/history \
                 $$PWD/xml \
                 $$PWD/html \

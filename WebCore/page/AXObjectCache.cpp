@@ -187,6 +187,7 @@ void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
 }
 #endif
 
+#if HAVE(ACCESSIBILITY)
 void AXObjectCache::handleActiveDescendantChanged(RenderObject* renderer)
 {
     if (!renderer)
@@ -194,6 +195,7 @@ void AXObjectCache::handleActiveDescendantChanged(RenderObject* renderer)
     RefPtr<AccessibilityObject> obj = get(renderer);
     if (obj)
         obj->handleActiveDescendantChanged();
-}    
+}
+#endif
 
 } // namespace WebCore
