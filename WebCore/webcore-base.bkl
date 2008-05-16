@@ -93,7 +93,8 @@ wxWebCore port Bakefile project file.
         <include>$(SRCDIR)/platform/sql</include>
         <include>$(SRCDIR)/platform/text</include>
         <include>$(SRCDIR)/plugins</include> 
-        <include>$(SRCDIR)/rendering</include> 
+        <include>$(SRCDIR)/rendering</include>
+        <include>$(SRCDIR)/rendering/style</include>
         <include>$(SRCDIR)/storage</include>
         <include>$(SRCDIR)/xml</include>
         <include>$(WK_ROOT)</include>

@@ -1,3 +1,9 @@
+2008-05-15  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Add rendering/style to includes dir.
+
+        * webcore-base.bkl:
+
 2008-05-15  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Beth Dakin.

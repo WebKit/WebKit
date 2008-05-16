@@ -126,6 +126,7 @@ and WebCore. Include this file to use these settings.
         <include>$(WK_ROOT)/WebCore/platform/sql</include>
         <include>$(WK_ROOT)/WebCore/platform/text</include>
         <include>$(WK_ROOT)/WebCore/rendering</include>
+        <include>$(WK_ROOT)/WebCore/rendering/style</include>
         <include>$(WK_ROOT)/WebCore/storage</include>
         <include>$(WK_ROOT)/WebCore/xml</include>
         
