@@ -1,5 +1,11 @@
 2008-05-16  Simon Hausmann  <hausmann@webkit.org>
 
+        Fix the Gtk build.
+
+        * GNUmakefile.am: Added rendering/style to the include paths.
+
+2008-05-16  Simon Hausmann  <hausmann@webkit.org>
+
         Fix the Qt build.
 
         * WebCore.pro: Added rendering/style to the include paths

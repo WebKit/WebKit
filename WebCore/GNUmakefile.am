@@ -36,6 +36,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/platform/image-decoders/xbm \
 	-I$(srcdir)/WebCore/plugins \
 	-I$(srcdir)/WebCore/rendering \
+	-I$(srcdir)/WebCore/rendering/style \
 	-I$(top_builddir)/WebCore/bindings/js
 
 webkitgtk_cppflags += \
