@@ -1,5 +1,14 @@
 2008-05-16  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mitz.
+
+        Fire progress events.
+        
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+
+2008-05-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John.
 
         Handle the case where the main resource load is cancelled while the cache attempt is in progress.
