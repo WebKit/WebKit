@@ -61,15 +61,8 @@ String JavaScriptCallFrame::functionName() const
     return String(function->functionName());
 }
 
-// Evaluate some JavaScript code in the context of this frame.
-// The code is evaluated as if by "eval", and the result is returned.
-// If there is an (uncaught) exception, it is returned as though _it_ were the result.
-
-// FIXME: If "script" contains var declarations, the machinery to handle local variables
-// efficiently in JavaScriptCore will not work properly. This could lead to crashes or
-// incorrect variable values. So this is not appropriate for evaluating arbitrary scripts.
-
-JSValue* JavaScriptCallFrame::evaluate(const UString& script) const
+// Evaluate some JavaScript code in the scope of this frame.
+JSValue* JavaScriptCallFrame::evaluate(const UString& script, JSValue*& exception) const
 {
     if (!m_exec)
         return jsNull();
@@ -79,32 +72,15 @@ JSValue* JavaScriptCallFrame::evaluate(const UString& script) const
     ExecState* exec = m_exec;
     JSGlobalObject* globalObject = exec->dynamicGlobalObject();
 
-    // find "eval"
-    JSObject* eval = 0;
-    if (exec->scopeNode()) {  // "eval" won't work without context (i.e. at global scope)
-        JSValue* v = globalObject->get(exec, "eval");
-        if (v->isObject() && static_cast<JSObject*>(v)->implementsCall())
-            eval = static_cast<JSObject*>(v);
-        else
-            // no "eval" - fallback operates on global exec state
-            exec = globalObject->globalExec();
-    }
-
     JSValue* savedException = exec->exception();
     exec->clearException();
 
-    // evaluate
-    JSValue* result = 0;
-    if (eval) {
-        List args;
-        args.append(jsString(script));
-        result = eval->call(exec, 0, args);
-    } else
-        // no "eval", or no context (i.e. global scope) - use global fallback
-        result = Interpreter::evaluate(exec, UString(), 0, script.data(), script.size(), globalObject).value();
+    List args;
+    args.append(jsString(script));
+    JSValue* result = eval(exec, exec->scopeChain(), globalObject, globalObject, exec->thisValue(), args);
 
     if (exec->hadException())
-        result = exec->exception();    // (may be redundant depending on which eval path was used)
+        exception = exec->takeException();
     exec->setException(savedException);
 
     return result;

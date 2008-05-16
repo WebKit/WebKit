@@ -53,7 +53,7 @@ namespace WebCore {
 
         String functionName() const;
         const KJS::ScopeChain& scopeChain() const { return m_exec->scopeChain(); }
-        KJS::JSValue* evaluate(const KJS::UString& script) const;
+        KJS::JSValue* evaluate(const KJS::UString& script, KJS::JSValue*& exception) const;
 
     private:
         JavaScriptCallFrame(KJS::ExecState*, PassRefPtr<JavaScriptCallFrame> caller, int sourceID, int line);

@@ -185,6 +185,11 @@ WebInspector.ScriptsPanel.prototype = {
         return [this.debuggingButton, this.pauseOnExceptionButtons];
     },
 
+    get paused()
+    {
+        return this._paused;
+    },
+
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
@@ -273,6 +278,16 @@ WebInspector.ScriptsPanel.prototype = {
 
         if (sourceFrame)
             sourceFrame.removeBreakpoint(breakpoint);
+    },
+
+    evaluateInSelectedCallFrame: function(code)
+    {
+        var selectedCallFrame = this.sidebarPanes.callstack.selectedCallFrame;
+        if (!this._paused || !selectedCallFrame)
+            return;
+        var result = selectedCallFrame.evaluate(code);
+        this.sidebarPanes.scopechain.update(selectedCallFrame);
+        return result;
     },
 
     debuggerPaused: function()

@@ -36,8 +36,15 @@ namespace WebCore {
 JSValue* JSJavaScriptCallFrame::evaluate(ExecState* exec, const List& args)
 {
     if (!impl()->isValid())
-        return jsNull();
-    return impl()->evaluate(args[0]->toString(exec));
+        return jsUndefined();
+
+    JSValue* exception = 0;
+    JSValue* result = impl()->evaluate(args[0]->toString(exec), exception);
+
+    if (exception)
+        exec->setException(exception);
+
+    return result;
 }
 
 JSValue* JSJavaScriptCallFrame::scopeChain(ExecState* exec) const

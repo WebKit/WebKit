@@ -1,5 +1,28 @@
 2008-05-16  Timothy Hatcher  <timothy@apple.com>
 
+        Adds the ability to evaluate expressions in the local scope
+        of the selected call frame.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19052
+
+        Reviewed by Geoff Garen.
+
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::evaluate): Pass the exception
+        from evaluate to the calling ExecState.
+        * page/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::evaluate): Added an exception out
+        argument. Simplified the code by calling KJS:eval directly.
+        * page/JavaScriptCallFrame.h: Change evalutate to take an exception
+        out argument.
+        * page/inspector/Console.js: Check if the debugger is paused and
+        call evaluateInSelectedCallFrame on the Scripts panel.
+        * page/inspector/ScriptsPanel.js: Added a paused getter and
+        evaluateInSelectedCallFrame which does the evaluation and updates
+        the scope variables pane afterwards.
+
+2008-05-16  Timothy Hatcher  <timothy@apple.com>
+
         Fixed the bug where the Inspector node highlight would not show
         in the correct place for nodes in frames.
 

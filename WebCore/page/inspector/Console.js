@@ -308,6 +308,8 @@ WebInspector.Console.prototype = {
 
     _evalInInspectedWindow: function(expression)
     {
+        if (WebInspector.panels.scripts.paused)
+            return WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression);
         return InspectorController.inspectedWindow().eval(expression);
     },
 
