@@ -1,3 +1,13 @@
+2008-05-15  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Since WebKitGtk is fully using autotools now, clean-up the .pro/.pri files
+        from gtk-port.
+
+        * JavaScriptCore.pro:
+        * kjs/testkjs.pro:
+
 2008-05-15  Kevin McCullough  <kmccullough@apple.com>
 
         - Build fix.

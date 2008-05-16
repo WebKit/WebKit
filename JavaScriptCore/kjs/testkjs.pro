@@ -6,16 +6,10 @@ QT -= gui
 DEFINES -= KJS_IDENTIFIER_HIDE_GLOBALS 
 INCLUDEPATH += $$PWD/.. $$PWD $$PWD/../bindings $$PWD/../bindings/c $$PWD/../wtf
 CONFIG -= app_bundle
-qt-port:DEFINES += BUILDING_QT__
-#qt-port:LIBS += -L$$OUTPUT_DIR/lib -lQtWebKit
+DEFINES += BUILDING_QT__
 
 CONFIG += link_pkgconfig
-gtk-port:PKGCONFIG += glib-2.0 gobject-2.0 gthread-2.0
 
-gtk-port {
-    QMAKE_CXXFLAGS += $$system(icu-config --cppflags)
-    LIBS += $$system(icu-config --ldflags)
-}
 QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
 
 isEmpty(OUTPUT_DIR):OUTPUT_DIR=$$PWD/../..
@@ -36,6 +30,6 @@ SOURCES -= API/JSBase.cpp \
     API/JSStringRef.cpp \
     API/JSValueRef.cpp
 
-qt-port:lessThan(QT_MINOR_VERSION, 4) {
+lessThan(QT_MINOR_VERSION, 4) {
     DEFINES += QT_BEGIN_NAMESPACE="" QT_END_NAMESPACE=""
 }

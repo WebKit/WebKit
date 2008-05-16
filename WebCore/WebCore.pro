@@ -5,11 +5,9 @@ CONFIG += building-libs
 # of API/Node.c and dom/Node.cpp
 CONFIG += no_batch
 include($$PWD/../WebKit.pri)
-gtk-port:LIBS -= -lWebKitGtk
 
 TEMPLATE = lib
-qt-port:TARGET = QtWebKit
-gtk-port:TARGET = WebKitGtk
+TARGET = QtWebKit
 
 CONFIG(QTDIR_build) {
     GENERATED_SOURCES_DIR = $$PWD/generated
@@ -66,27 +64,22 @@ win32-g++ {
     QMAKE_LIBDIR_POST += $$split(TMPPATH,";")
 }
 
-gtk-port: PKGCONFIG += gthread-2.0
-
 # Optional components (look for defs in config.h and included files!)
 !contains(DEFINES, ENABLE_CROSS_DOCUMENT_MESSAGING=.): DEFINES += ENABLE_CROSS_DOCUMENT_MESSAGING=1
 !contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=.): DEFINES += ENABLE_DASHBOARD_SUPPORT=0
 !contains(DEFINES, ENABLE_DATABASE=.): DEFINES += ENABLE_DATABASE=1
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
-gtk-port:!contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=1
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
-qt-port: !contains(DEFINES, ENABLE_SVG=.): DEFINES += ENABLE_SVG=1
-qt-port: !contains(DEFINES, ENABLE_SVG_FOREIGN_OBJECT=.): DEFINES += ENABLE_SVG_FOREIGN_OBJECT=1
-qt-port: !contains(DEFINES, ENABLE_SVG_ANIMATION=.): DEFINES += ENABLE_SVG_ANIMATION=1
-#qt-port: !contains(DEFINES, ENABLE_SVG_AS_IMAGE=.): DEFINES += ENABLE_SVG_AS_IMAGE=1
-qt-port: !contains(DEFINES, ENABLE_SVG_USE=.): DEFINES += ENABLE_SVG_USE=1
-gtk-port:DEFINES += ENABLE_SVG=0
-qt-port:contains(QT_CONFIG, phonon):DEFINES += ENABLE_VIDEO=1
+!contains(DEFINES, ENABLE_SVG=.): DEFINES += ENABLE_SVG=1
+!contains(DEFINES, ENABLE_SVG_FOREIGN_OBJECT=.): DEFINES += ENABLE_SVG_FOREIGN_OBJECT=1
+!contains(DEFINES, ENABLE_SVG_ANIMATION=.): DEFINES += ENABLE_SVG_ANIMATION=1
+#!contains(DEFINES, ENABLE_SVG_AS_IMAGE=.): DEFINES += ENABLE_SVG_AS_IMAGE=1
+!contains(DEFINES, ENABLE_SVG_USE=.): DEFINES += ENABLE_SVG_USE=1
+contains(QT_CONFIG, phonon):DEFINES += ENABLE_VIDEO=1
 else:DEFINES += ENABLE_VIDEO=0
-qt-port:unix:!mac:!embedded: DEFINES += XP_UNIX ENABLE_NETSCAPE_PLUGIN_API=1
-gtk-port:x11:plugins: DEFINES += XP_UNIX ENABLE_NETSCAPE_PLUGIN_API=1
-qt-port: DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1
+unix:!mac:!embedded: DEFINES += XP_UNIX ENABLE_NETSCAPE_PLUGIN_API=1
+DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1
 
 DEFINES += WTF_CHANGES=1
 
@@ -127,70 +120,22 @@ include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 #INCLUDEPATH += $$PWD/../JavaScriptCore
 #LIBS += -L$$OUTPUT_DIR/lib -lJavaScriptCore
 
-qt-port {
-    RESOURCES += \
-        $$PWD/../WebCore/page/inspector/WebKit.qrc \
-        $$PWD/../WebCore/Resources/WebKitResources.qrc
-    INCLUDEPATH += \
-        $$PWD/platform/qt \
-        $$PWD/platform/network/qt \
-        $$PWD/platform/graphics/qt \
-        $$PWD/svg/graphics/qt \
-        $$PWD/loader/qt \
-        $$PWD/page/qt \
-        $$PWD/../WebKit/qt/WebCoreSupport \
-        $$PWD/../WebKit/qt/Api \
-        $$PWD/bridge/qt
+RESOURCES += \
+    $$PWD/../WebCore/page/inspector/WebKit.qrc \
+    $$PWD/../WebCore/Resources/WebKitResources.qrc
+INCLUDEPATH += \
+    $$PWD/platform/qt \
+    $$PWD/platform/network/qt \
+    $$PWD/platform/graphics/qt \
+    $$PWD/svg/graphics/qt \
+    $$PWD/loader/qt \
+    $$PWD/page/qt \
+    $$PWD/../WebKit/qt/WebCoreSupport \
+    $$PWD/../WebKit/qt/Api \
+    $$PWD/bridge/qt
 
-    DEPENDPATH += editing/qt history/qt loader/qt page/qt \
-        platform/graphics/qt ../WebKit/qt/Api ../WebKit/qt/WebCoreSupport
-
-}
-
-gtk-port {
-    hildon {
-        DEFINES += MAEMO_CHANGES
-        PKGCONFIG += hildon-1
-    }
-
-    INCLUDEPATH += \
-    $$PWD/platform/gtk \
-    $$PWD/platform/graphics/gtk \
-    $$PWD/platform/graphics/cairo \
-    $$PWD/svg/graphics/cairo \
-    $$PWD/platform/network/curl \
-    $$PWD/platform/image-decoders \
-    $$PWD/platform/image-decoders/bmp \
-    $$PWD/platform/image-decoders/gif \
-    $$PWD/platform/image-decoders/ico \
-    $$PWD/platform/image-decoders/jpeg \
-    $$PWD/platform/image-decoders/png \
-    $$PWD/platform/image-decoders/xbm \
-    $$PWD/loader/gtk \
-    $$PWD/page/gtk \
-    $$PWD/../WebKit/gtk \
-    $$PWD/../WebKit/gtk/WebCoreSupport \
-    $$PWD/../WebKit/gtk/webkit
-
-    DEPENDPATH += \
-    platform/gtk \
-    platform/graphics/gtk \
-    platform/graphics/cairo \
-    svg/graphics/cairo \
-    platform/network/curl \
-    platform/image-decoders \
-    platform/image-decoders/bmp \
-    platform/image-decoders/gif \
-    platform/image-decoders/ico \
-    platform/image-decoders/jpeg \
-    platform/image-decoders/png \
-    platform/image-decoders/xbm \
-    loader/gtk \
-    page/gtk \
-    ../WebKit/gtk \
-    ../WebKit/gtk/WebCoreSupport \
-    ../WebKit/gtk/webkit
-}
+DEPENDPATH += editing/qt history/qt loader/qt page/qt \
+    platform/graphics/qt ../WebKit/qt/Api ../WebKit/qt/WebCoreSupport
 
 # Make sure storage/ appears before JavaScriptCore/kjs. Both provide LocalStorage.h
 # but the header from the former include path is included across directories while
@@ -963,19 +908,7 @@ SOURCES += \
     xml/XSLTUnicodeSort.cpp \
     xml/XSLTProcessor.cpp
 
-gtk-port {
-  SOURCES += \
-    platform/graphics/GlyphPageTreeNode.cpp \
-    platform/graphics/GlyphWidthMap.cpp \
-    platform/graphics/FontCache.cpp \
-    platform/graphics/Font.cpp \
-    platform/graphics/FontFallbackList.cpp \
-    platform/graphics/SimpleFontData.cpp 
-}
-
-qt-port {
-
-    HEADERS += \
+HEADERS += \
     $$PWD/platform/graphics/qt/StillImageQt.h \
     $$PWD/platform/qt/QWebPopup.h \
     $$PWD/platform/qt/MenuEventProxy.h \
@@ -988,7 +921,7 @@ qt-port {
     $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
     $$PWD/platform/network/qt/QNetworkReplyHandler.h
 
-    SOURCES += \
+SOURCES += \
     bridge/qt/qt_class.cpp \
     bridge/qt/qt_instance.cpp \
     bridge/qt/qt_runtime.cpp \
@@ -1085,123 +1018,15 @@ qt-port {
 
         DEFINES += QT_BEGIN_NAMESPACE="" QT_END_NAMESPACE=""
      }
-}
-
-gtk-port {
-    HEADERS += \
-        ../WebCore/platform/gtk/ClipboardGtk.h \
-        ../WebCore/platform/gtk/PasteboardHelper.h \
-        ../WebKit/gtk/webkit/webkit.h \
-        ../WebKit/gtk/webkit/webkitdefines.h \
-        ../WebKit/gtk/webkit/webkitnetworkrequest.h \
-        ../WebKit/gtk/webkit/webkitprivate.h \
-        ../WebKit/gtk/webkit/webkitwebbackforwardlist.h \
-        ../WebKit/gtk/webkit/webkitwebframe.h \
-        ../WebKit/gtk/webkit/webkitwebhistoryitem.h \
-        ../WebKit/gtk/webkit/webkitwebsettings.h \
-        ../WebKit/gtk/webkit/webkitwebview.h \
-        ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \
-        ../WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.h \
-        ../WebKit/gtk/WebCoreSupport/DragClientGtk.h \
-        ../WebKit/gtk/WebCoreSupport/EditorClientGtk.h \
-        ../WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.h \
-        ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.h \
-        ../WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.h
-    SOURCES += \
-        platform/graphics/StringTruncator.cpp \
-        platform/text/TextCodecICU.cpp \
-        platform/text/TextBoundariesICU.cpp \
-        platform/text/TextBreakIteratorICU.cpp \
-        page/gtk/EventHandlerGtk.cpp \
-        page/gtk/FrameGtk.cpp \
-        page/gtk/DragControllerGtk.cpp \
-        platform/gtk/ClipboardGtk.cpp \
-        platform/gtk/CookieJarGtk.cpp \
-        platform/gtk/CursorGtk.cpp \
-        platform/gtk/ContextMenuGtk.cpp \
-        platform/gtk/ContextMenuItemGtk.cpp \
-        platform/gtk/DragDataGtk.cpp \
-        platform/gtk/DragImageGtk.cpp \
-        platform/gtk/FileChooserGtk.cpp \
-        platform/gtk/FileSystemGtk.cpp \
-        platform/graphics/gtk/FontCacheGtk.cpp \
-        platform/graphics/gtk/FontCustomPlatformData.cpp \
-        platform/graphics/gtk/FontGtk.cpp \
-        platform/graphics/gtk/FontPlatformDataGtk.cpp \
-        platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp \
-        platform/graphics/gtk/SimpleFontDataGtk.cpp \
-        platform/gtk/KeyEventGtk.cpp \
-        platform/gtk/Language.cpp \
-        platform/gtk/LocalizedStringsGtk.cpp \
-        platform/gtk/LoggingGtk.cpp \
-        platform/gtk/MIMETypeRegistryGtk.cpp \
-        platform/gtk/MouseEventGtk.cpp \
-        platform/gtk/PasteboardGtk.cpp \
-        platform/gtk/PlatformScreenGtk.cpp \
-        platform/gtk/PlatformScrollBarGtk.cpp \
-        platform/gtk/PopupMenuGtk.cpp \
-        platform/gtk/RenderThemeGtk.cpp \
-        platform/gtk/SearchPopupMenuGtk.cpp \
-        platform/gtk/ScrollViewGtk.cpp \
-        platform/gtk/SharedTimerGtk.cpp \
-        platform/gtk/SoundGtk.cpp \
-        platform/gtk/SystemTimeGtk.cpp \
-        platform/gtk/TemporaryLinkStubs.cpp \
-        platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp \
-        platform/gtk/WheelEventGtk.cpp \
-        platform/gtk/WidgetGtk.cpp \
-        platform/gtk/gtk2drawing.c \
-        platform/graphics/gtk/ColorGtk.cpp \
-        platform/graphics/gtk/IconGtk.cpp \
-        platform/graphics/gtk/ImageGtk.cpp \
-        platform/graphics/gtk/IntPointGtk.cpp \
-        platform/graphics/gtk/IntRectGtk.cpp \
-        platform/network/curl/ResourceHandleCurl.cpp \
-        platform/network/curl/ResourceHandleManager.cpp \
-        platform/graphics/cairo/AffineTransformCairo.cpp \
-        platform/graphics/cairo/FontCairo.cpp \
-        platform/graphics/cairo/GraphicsContextCairo.cpp \
-        platform/graphics/cairo/ImageBufferCairo.cpp \
-        platform/graphics/cairo/ImageCairo.cpp \
-        platform/graphics/cairo/ImageSourceCairo.cpp \
-        platform/graphics/cairo/PathCairo.cpp \
-        platform/image-decoders/gif/GIFImageDecoder.cpp \
-        platform/image-decoders/gif/GIFImageReader.cpp  \
-        platform/image-decoders/png/PNGImageDecoder.cpp \
-        platform/image-decoders/jpeg/JPEGImageDecoder.cpp \
-        platform/image-decoders/bmp/BMPImageDecoder.cpp \
-        platform/image-decoders/ico/ICOImageDecoder.cpp \
-        platform/image-decoders/xbm/XBMImageDecoder.cpp \
-        ../WebKit/gtk/webkit/webkitnetworkrequest.cpp \
-        ../WebKit/gtk/webkit/webkitprivate.cpp \
-        ../WebKit/gtk/webkit/webkitwebbackforwardlist.cpp \
-        ../WebKit/gtk/webkit/webkitwebframe.cpp \
-        ../WebKit/gtk/webkit/webkitwebhistoryitem.cpp \
-        ../WebKit/gtk/webkit/webkitwebsettings.cpp \
-        ../WebKit/gtk/webkit/webkitwebview.cpp \
-        ../WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \
-        ../WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp \
-        ../WebKit/gtk/WebCoreSupport/DragClientGtk.cpp \
-        ../WebKit/gtk/WebCoreSupport/EditorClientGtk.cpp \
-        ../WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.cpp \
-        ../WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp \
-        ../WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.cpp
-}
-
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
-    qt-port {
         unix:!mac {
             SOURCES += \
                 plugins/qt/PluginPackageQt.cpp \
                 plugins/qt/PluginDatabaseQt.cpp \
                 plugins/qt/PluginViewQt.cpp
-        }
     }
 
-    gtk-port {
-        INCLUDEPATH += ../WebCore/plugins/gtk
-    }
 }
 
 contains(DEFINES, ENABLE_CROSS_DOCUMENT_MESSAGING=1) {
@@ -1232,7 +1057,7 @@ contains(DEFINES, ENABLE_DATABASE=1) {
             SOURCES += $$QT_SOURCE_TREE/src/3rdparty/sqlite/sqlite3.c
         }
     } else {
-        qt-port: INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
+        INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
         LIBS += -lsqlite3
     }
 
@@ -1331,7 +1156,6 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         rendering/RenderMedia.cpp \
         bindings/js/JSAudioConstructor.cpp
 
-    qt-port {
         HEADERS += \
             platform/graphics/qt/MediaPlayerPrivatePhonon.h
 
@@ -1348,18 +1172,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             INCLUDEPATH -= $$QMAKE_LIBDIR_QT/phonon.framework/Headers
             INCLUDEPATH += $$QMAKE_LIBDIR_QT/phonon.framework/Headers
         }
-    }
 
-    gtk-port {
-        SOURCES += \
-            platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp \
-            platform/graphics/gtk/VideoSinkGStreamer.cpp
-
-        CONFIG(debug):DEFINES += GST_DISABLE_DEPRECATED
-
-        PKGCONFIG += gstreamer-0.10 gstreamer-plugins-base-0.10 gnome-vfs-2.0
-        LIBS += -lgstinterfaces-0.10 -lgstbase-0.10 -lgstvideo-0.10
-    }
 }
 
 contains(DEFINES, ENABLE_XPATH=1) {
@@ -1399,13 +1212,7 @@ contains(DEFINES, ENABLE_SVG=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG=1
 
     DEPENDPATH += svg svg/graphics
-    qt-port {
     DEPENDPATH += svg/graphics/qt
-    }
-
-    gtk-port {
-    DEPENDPATH += svg/graphics/cairo
-    }
 
     SVG_NAMES = $$PWD/svg/svgtags.in
 
@@ -1746,7 +1553,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/SVGRenderSupport.cpp \
         rendering/SVGRootInlineBox.cpp
 
-qt-port:SOURCES += \
+SOURCES += \
         svg/graphics/qt/RenderPathQt.cpp \
         svg/graphics/qt/SVGPaintServerGradientQt.cpp \
         svg/graphics/qt/SVGPaintServerLinearGradientQt.cpp \
@@ -1758,14 +1565,6 @@ qt-port:SOURCES += \
         svg/graphics/qt/SVGResourceFilterQt.cpp \
         svg/graphics/qt/SVGResourceMaskerQt.cpp
 
-gtk-port:SOURCES += \
-        svg/graphics/cairo/RenderPathCairo.cpp \
-        svg/graphics/cairo/SVGPaintServerCairo.cpp \
-        svg/graphics/cairo/SVGPaintServerGradientCairo.cpp \
-        svg/graphics/cairo/SVGPaintServerPatternCairo.cpp \
-        svg/graphics/cairo/SVGPaintServerSolidCairo.cpp \
-        svg/graphics/cairo/SVGResourceClipperCairo.cpp \
-        svg/graphics/cairo/SVGResourceMaskerCairo.cpp
 
         # GENERATOR 5-C:
         svgnames_a.output = $$GENERATED_SOURCES_DIR/SVGNames.cpp
@@ -1946,7 +1745,7 @@ xpathbison.variable_out = GENERATED_SOURCES
 xpathbison.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
 addExtraCompiler(xpathbison)
 
-qt-port:!CONFIG(QTDIR_build) {
+!CONFIG(QTDIR_build) {
     target.path = $$[QT_INSTALL_LIBS]
     include($$PWD/../WebKit/qt/Api/headers.pri)
     headers.files = $$WEBKIT_API_HEADERS
@@ -1978,53 +1777,5 @@ qt-port:!CONFIG(QTDIR_build) {
     }
 }
 
-gtk-port {
-    isEmpty(WEBKIT_LIB_DIR):WEBKIT_LIB_DIR=/usr/local/lib
-    isEmpty(WEBKIT_INC_DIR):WEBKIT_INC_DIR=/usr/local/include/WebKitGtk
-
-    target.path = $$WEBKIT_LIB_DIR
-    INSTALLS += target
-
-    include($$PWD/../WebKit/gtk/webkit/headers.pri)
-    headers.files = $$WEBKIT_API_HEADERS
-    headers.path = $$WEBKIT_INC_DIR
-    INSTALLS += headers
-
-    include($$PWD/../JavaScriptCore/headers.pri)
-    jsheaders.files = $$JS_API_HEADERS
-    jsheaders.path = $$WEBKIT_INC_DIR/JavaScriptCore
-    INSTALLS += jsheaders
-
-    unix {
-        CONFIG += create_pc create_prl
-        QMAKE_PKGCONFIG_LIBDIR = $$target.path
-        QMAKE_PKGCONFIG_INCDIR = $$headers.path
-        QMAKE_PKGCONFIG_DESTDIR = pkgconfig
-        lib_replace.match = $$DESTDIR
-        lib_replace.replace = $$[QT_INSTALL_LIBS]
-        QMAKE_PKGCONFIG_INSTALL_REPLACE += lib_replace
-    }
-
-    GENMARSHALS = ../WebKit/gtk/webkit/webkit-marshal.list
-    GENMARSHALS_PREFIX = webkit_marshal
-
-    #
-    # integrate glib-genmarshal as additional compiler
-    #
-    QMAKE_GENMARSHAL_CC = glib-genmarshal
-    glib-genmarshal.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp
-    glib-genmarshal.commands = echo 'extern \\"C\\" {' > ${QMAKE_FILE_OUT} && $${QMAKE_GENMARSHAL_CC} --prefix=$${GENMARSHALS_PREFIX} ${QMAKE_FILE_IN} --body >> ${QMAKE_FILE_OUT} && echo '}' >> ${QMAKE_FILE_OUT}
-    glib-genmarshal.input = GENMARSHALS
-    glib-genmarshal.variable_out = GENERATED_SOURCES
-    glib-genmarshal.name = GENMARSHALS
-    QMAKE_EXTRA_UNIX_COMPILERS += glib-genmarshal
-
-    glib-genmarshalh.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.h
-    glib-genmarshalh.commands = $${QMAKE_GENMARSHAL_CC} --prefix=$${GENMARSHALS_PREFIX} ${QMAKE_FILE_IN} --header > $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.h
-    glib-genmarshalh.input = GENMARSHALS
-    glib-genmarshalh.variable_out = GENERATED_SOURCES
-    glib-genmarshalh.name = GENMARSHALS
-    QMAKE_EXTRA_UNIX_COMPILERS += glib-genmarshalh
-}
 
 linux-icc*:QMAKE_CXXFLAGS_RELEASE ~= s/-O2/-O0/
