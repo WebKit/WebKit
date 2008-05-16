@@ -2645,6 +2645,8 @@ void Document::removeHTMLWindowEventListener(const AtomicString &eventType)
     RegisteredEventListenerList::iterator it = m_windowEventListeners.begin();
     for (; it != m_windowEventListeners.end(); ++it)
         if ( (*it)->eventType() == eventType && (*it)->listener()->isHTMLEventListener()) {
+            if (eventType == ((AtomicString)unloadEvent))
+                setPendingFrameUnloadEventCount(-1);
             m_windowEventListeners.remove(it);
             return;
         }
@@ -2652,6 +2654,8 @@ void Document::removeHTMLWindowEventListener(const AtomicString &eventType)
 
 void Document::addWindowEventListener(const AtomicString &eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
+    if (eventType == ((AtomicString)unloadEvent))
+        setPendingFrameUnloadEventCount(1);
     // Remove existing identical listener set with identical arguments.
     // The DOM 2 spec says that "duplicate instances are discarded" in this case.
     removeWindowEventListener(eventType, listener.get(), useCapture);
@@ -2664,6 +2668,8 @@ void Document::removeWindowEventListener(const AtomicString &eventType, EventLis
     RegisteredEventListenerList::iterator it = m_windowEventListeners.begin();
     for (; it != m_windowEventListeners.end(); ++it)
         if (*(*it) == rl) {
+            if (eventType == ((AtomicString)unloadEvent))
+                setPendingFrameUnloadEventCount(-1);
             m_windowEventListeners.remove(it);
             return;
         }
@@ -2677,6 +2683,12 @@ bool Document::hasWindowEventListener(const AtomicString &eventType)
             return true;
         }
     return false;
+}
+
+void Document::setPendingFrameUnloadEventCount(int delta) 
+{
+    if (m_frame)
+         m_frame->eventHandler()->setPendingFrameUnloadEventCount(delta);
 }
 
 PassRefPtr<EventListener> Document::createHTMLEventListener(const String& functionName, const String& code, Node *node)

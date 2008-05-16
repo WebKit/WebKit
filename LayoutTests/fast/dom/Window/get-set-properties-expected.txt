@@ -1,3 +1,4 @@
+main frame "window.marker.toString()" - has 1 onunload handler(s)
 This page tests getting and setting window properties and functions.
 
 

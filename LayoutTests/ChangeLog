@@ -1,3 +1,20 @@
+2008-05-15  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Anders.
+
+        Dump unload event counts for frames.
+
+        * fast/dom/Window/get-set-properties-expected.txt:
+        * fast/events/onunload-expected.txt:
+        * fast/events/onunload-not-on-body-expected.txt:
+        * fast/events/onunload-window-property-expected.txt:
+        * fast/forms/button-state-restore-expected.txt:
+        * fast/history/history_reload-expected.txt:
+        * fast/loader/onunload-form-submit-crash-2-expected.txt:
+        * fast/loader/onunload-form-submit-crash-expected.txt:
+        * http/tests/xmlhttprequest/xhr-onunload-expected.txt:
+        * platform/mac/fast/loader/start-load-in-unload-expected.txt:
+
 2008-05-15  David Kilzer  <ddkilzer@apple.com>
 
         Bug 19085: font-family: initial sets font-family differently than font: initial

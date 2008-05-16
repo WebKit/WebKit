@@ -1082,6 +1082,11 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return document && document->isImageDocument();
 }
 
+- (unsigned)_pendingFrameUnloadEventCount
+{
+    return _private->coreFrame->eventHandler()->pendingFrameUnloadEventCount();
+}
+
 @end
 
 @implementation WebFrame

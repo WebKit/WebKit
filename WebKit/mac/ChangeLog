@@ -1,3 +1,13 @@
+2008-05-15  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Anders.
+
+        get the pending frame unload count from WebCore
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _pendingFrameUnloadEventCount]):
+        * WebView/WebFramePrivate.h:
+
 2008-05-15  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin Decker

@@ -66,4 +66,5 @@ typedef enum {
 
 - (BOOL)_isDisplayingStandaloneImage;
 
+- (unsigned) _pendingFrameUnloadEventCount;
 @end

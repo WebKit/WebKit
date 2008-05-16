@@ -1,3 +1,40 @@
+2008-05-15  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Anders.
+
+        Keep track on pending unload event counts
+
+        No change in behavior so no new tests, but I am dumping the 
+        unload event count to track the new variable.
+
+        * WebCore.base.exp:
+
+        increment/decrement the count when an event is added/removed
+        * dom/Document.cpp:
+        (WebCore::Document::removeHTMLWindowEventListener):
+        (WebCore::Document::addWindowEventListener):
+        (WebCore::Document::removeWindowEventListener):
+        (WebCore::Document::setPendingFrameUnloadEventCount):
+        * dom/Document.h:
+
+        set the count to 0 for each frame after the unload event has been dispatched
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+
+        keep track of the number of pending unload events for the eventHandler's frame
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+       (WebCore::EventHandler::pendingFrameUnloadEventCount):
+        (WebCore::EventHandler::setPendingFrameUnloadEventCount):
+        * page/EventHandler.h:
+
+        keep track of the total number of pending unload events for all of the frames
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::pendingUnloadEventCount):
+        (WebCore::Page::setPendingUnloadEventCount):
+        * page/Page.h:
+
 2008-05-15  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build.

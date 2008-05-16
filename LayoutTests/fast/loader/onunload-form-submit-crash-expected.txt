@@ -1,3 +1,4 @@
+main frame - has 1 onunload handler(s)
 Bug: rdar://problem/4268278 Submitting a form in onUnload event handler causes crash in -[WebDataSource(WebPrivate) _commitIfReady:]
 
 If this test passes, you'll see a PASS message below.

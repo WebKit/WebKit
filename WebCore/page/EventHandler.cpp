@@ -111,6 +111,7 @@ EventHandler::EventHandler(Frame* frame)
     , m_capturingMouseEventsNode(0)
     , m_clickCount(0)
     , m_mouseDownTimestamp(0)
+    , m_pendingFrameUnloadEventCount(0)
 #if PLATFORM(MAC)
     , m_mouseDownView(nil)
     , m_sendingEventToSubview(false)
@@ -1868,6 +1869,19 @@ void EventHandler::capsLockStateMayHaveChanged()
         if (Node* node = d->focusedNode())
             if (RenderObject* r = node->renderer())
                 r->capsLockStateMayHaveChanged();
-} 
+}
+
+unsigned EventHandler::pendingFrameUnloadEventCount()
+{
+    return m_pendingFrameUnloadEventCount;
+}
+
+void EventHandler::setPendingFrameUnloadEventCount(int delta) 
+{
+    ASSERT( (delta + (int)m_pendingFrameUnloadEventCount) >= 0 );
+    m_pendingFrameUnloadEventCount += delta;
+    m_frame->page()->setPendingUnloadEventCount(delta);
+    return; 
+}
 
 }

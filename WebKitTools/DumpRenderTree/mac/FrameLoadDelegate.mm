@@ -319,6 +319,12 @@
     if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFinishDocumentLoadForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
+    } else if (!done) {
+        unsigned pendingFrameUnloadEvents = [frame _pendingFrameUnloadEventCount];
+        if (pendingFrameUnloadEvents) {
+            NSString *string = [NSString stringWithFormat:@"%@ - has %u onunload handler(s)", [frame _drt_descriptionSuitableForTestResult], pendingFrameUnloadEvents];
+            printf ("%s\n", [string UTF8String]);
+        }
     }
 }
 

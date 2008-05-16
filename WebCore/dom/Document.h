@@ -538,6 +538,8 @@ public:
     void addWindowEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
     void removeWindowEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
     bool hasWindowEventListener(const AtomicString& eventType);
+    
+    void setPendingFrameUnloadEventCount(int frameUnloadEventCount);
 
     PassRefPtr<EventListener> createHTMLEventListener(const String& functionName, const String& code, Node*);
     
