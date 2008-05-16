@@ -123,11 +123,11 @@ sub printConstructors
     my ($F, @names) = @_;
     print F "#if $guardFactoryWith\n" if $guardFactoryWith;
     for my $name (@names) {
-        my $upperCase = upperCaseName($name);
+        my $ucName = upperCaseName($name);
     
-        print F "${namespace}Element *${name}Constructor(Document *doc, bool createdByParser)\n";
+        print F "${namespace}Element* ${name}Constructor(Document* doc, bool createdByParser)\n";
         print F "{\n";
-        print F "    return new ${namespace}${upperCase}Element(${name}Tag, doc);\n";
+        print F "    return new ${namespace}${ucName}Element(${name}Tag, doc);\n";
         print F "}\n\n";
     }
     print F "#endif\n" if $guardFactoryWith;
@@ -372,6 +372,8 @@ sub printDefinitions
 
 }
 
+## ElementFactory routines
+
 sub printFactoryCppFile
 {
     my $cppPath = shift;
@@ -397,10 +399,10 @@ print F <<END
 using namespace WebCore;
 using namespace ${cppNamespace}::${namespace}Names;
 
-typedef ${namespace}Element *(*ConstructorFunc)(Document *doc, bool createdByParser);
+typedef ${namespace}Element* (*ConstructorFunc)(Document* doc, bool createdByParser);
 typedef WTF::HashMap<AtomicStringImpl*, ConstructorFunc> FunctionMap;
 
-static FunctionMap *gFunctionMap = 0;
+static FunctionMap* gFunctionMap = 0;
 
 namespace ${cppNamespace} {
 
@@ -429,7 +431,7 @@ print F "}\n";
 print F "#endif\n\n" if $guardFactoryWith;
 
 print F <<END
-${namespace}Element *${namespace}ElementFactory::create${namespace}Element(const QualifiedName& qName, Document* doc, bool createdByParser)
+${namespace}Element* ${namespace}ElementFactory::create${namespace}Element(const QualifiedName& qName, Document* doc, bool createdByParser)
 {
 END
 ;
@@ -506,8 +508,8 @@ namespace ${cppNamespace}
     class ${namespace}ElementFactory
     {
     public:
-        WebCore::Element *createElement(const WebCore::QualifiedName& qName, WebCore::Document *doc, bool createdByParser = true);
-        static ${namespace}Element *create${namespace}Element(const WebCore::QualifiedName& qName, WebCore::Document *doc, bool createdByParser = true);
+        WebCore::Element* createElement(const WebCore::QualifiedName& qName, WebCore::Document* doc, bool createdByParser = true);
+        static ${namespace}Element* create${namespace}Element(const WebCore::QualifiedName& qName, WebCore::Document* doc, bool createdByParser = true);
     };
 }
 

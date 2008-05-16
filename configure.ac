@@ -488,6 +488,11 @@ if test "$enable_coverage" = "yes"; then
    AC_SUBST([COVERAGE_LDFLAGS])
 fi
 
+# check for HTML features
+if test "$enable_video" = "yes"; then
+    html_flags=yes
+fi
+
 # check for SVG features, enabling SVG if necessary
 if test "$enable_svg_animation" = "yes" || \
    test "$enable_svg_filters" = "yes" || \
@@ -543,6 +548,7 @@ AM_CONDITIONAL([ENABLE_SVG_USE],[test "$enable_svg_use_element" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
+AM_CONDITIONAL([HTML_FLAGS],[test "$html_flags" = "yes"])
 
 AC_CONFIG_FILES([
 GNUmakefile

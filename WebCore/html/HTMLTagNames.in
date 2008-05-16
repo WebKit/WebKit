@@ -4,7 +4,9 @@ acronym
 address
 applet
 area
+#if ENABLE_VIDEO
 audio
+#endif
 b
 base
 basefont
@@ -82,7 +84,9 @@ samp
 script
 select
 small
+#if ENABLE_VIDEO
 source
+#endif
 span
 strike
 strong
@@ -102,6 +106,8 @@ tt
 u
 ul
 var
+#if ENABLE_VIDEO
 video
+#endif
 wbr
 xmp

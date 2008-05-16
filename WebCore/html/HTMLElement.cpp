@@ -815,8 +815,10 @@ HashSet<AtomicStringImpl*>* inlineTagList()
         tagList.add(delTag.localName().impl());
         tagList.add(nobrTag.localName().impl());
         tagList.add(wbrTag.localName().impl());
+#if ENABLE(VIDEO)
         tagList.add(audioTag.localName().impl());
         tagList.add(videoTag.localName().impl());
+#endif
     }
     return &tagList;
 }
