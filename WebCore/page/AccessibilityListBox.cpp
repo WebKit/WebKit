@@ -74,9 +74,9 @@ void AccessibilityListBox::addChildren()
     }
 }
 
-const Vector<RefPtr<AccessibilityObject> >& AccessibilityListBox::selectedChildren()
+void AccessibilityListBox::selectedChildren(Vector<RefPtr<AccessibilityObject> >&result)
 {
-    m_selectedChildren.clear();
+    ASSERT(result.isEmpty());
 
     if (!hasChildren())
         addChildren();
@@ -84,15 +84,13 @@ const Vector<RefPtr<AccessibilityObject> >& AccessibilityListBox::selectedChildr
     unsigned length = m_children.size();
     for (unsigned i = 0; i < length; i++) {
         if (static_cast<AccessibilityListBoxOption*>(m_children[i].get())->isSelected())
-            m_selectedChildren.append(m_children[i]);
-    }
-    
-    return m_selectedChildren;
+            result.append(m_children[i]);
+    }    
 }
 
-const Vector<RefPtr<AccessibilityObject> >& AccessibilityListBox::visibleChildren()
+void AccessibilityListBox::visibleChildren(Vector<RefPtr<AccessibilityObject> >&result)
 {
-    m_visibleChildren.clear();
+    ASSERT(result.isEmpty());
     
     if (!hasChildren())
         addChildren();
@@ -100,10 +98,8 @@ const Vector<RefPtr<AccessibilityObject> >& AccessibilityListBox::visibleChildre
     unsigned length = m_children.size();
     for (unsigned i = 0; i < length; i++) {
         if (static_cast<RenderListBox*>(m_renderer)->listIndexIsVisible(i))
-            m_visibleChildren.append(m_children[i]);
+            result.append(m_children[i]);
     }
-    
-    return m_visibleChildren;
 }
 
 AccessibilityObject* AccessibilityListBox::listBoxOptionAccessibilityObject(HTMLElement* element) const

@@ -700,7 +700,9 @@ String AccessibilityRenderObject::title() const
             return label->innerText();
     }
     
-    if (roleValue() == ButtonRole)
+    if (roleValue() == ButtonRole
+        || ariaRoleAttribute() == ListBoxOptionRole
+        || isHeading())
         return textUnderElement();
     
     if (isLink()) {
@@ -710,9 +712,6 @@ String AccessibilityRenderObject::title() const
         
         return textUnderElement();
     }
-    
-    if (isHeading())
-        return textUnderElement();
     
     return String();
 }
@@ -844,7 +843,7 @@ AccessibilityObject* AccessibilityRenderObject::linkedUIElement() const
 
 bool AccessibilityRenderObject::accessibilityShouldUseUniqueId() const
 {
-    return isWebArea() || isTextControl();
+    return isWebArea() || isTextControl() || (renderer()->element() && renderer()->element()->isFocusable());
 }
 
 bool AccessibilityRenderObject::accessibilityIsIgnored() const
@@ -1568,12 +1567,79 @@ AccessibilityObject* AccessibilityRenderObject::focusedUIElement() const
     
     AccessibilityObject* obj = focusedNodeRenderer->document()->axObjectCache()->get(focusedNodeRenderer);
     
+    if (obj->shouldFocusActiveDescendant())
+        obj = obj->activeDescendant();
+    
     // the HTML element, for example, is focusable but has an AX object that is ignored
     if (obj->accessibilityIsIgnored())
         obj = obj->parentObjectUnignored();
     
     return obj;
 }
+
+bool AccessibilityRenderObject::shouldFocusActiveDescendant() const
+{
+    switch (ariaRoleAttribute()) {
+    case GroupRole:
+    case ComboBoxRole:
+    case ListBoxRole:
+    case MenuRole:
+    case MenuBarRole:
+    case RadioGroupRole:
+    case RowRole:
+    case PopUpButtonRole:
+    case ProgressIndicatorRole:
+    case ToolbarRole:
+    case OutlineRole:
+    /* FIXME: replace these with actual roles when they are added to AccessibilityRole
+    composite
+    alert
+    alertdialog
+    grid
+    spinbutton
+    status
+    timer
+    tree
+    */
+        return true;
+    default:
+        return false;
+    }
+}
+
+AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
+{
+    if (renderer()->element() && !renderer()->element()->isElementNode())
+        return 0;
+    Element* element = static_cast<Element*>(renderer()->element());
+        
+    String activeDescendantAttrStr = element->getAttribute(aria_activedescendantAttr).string();
+    if (activeDescendantAttrStr.isNull() || activeDescendantAttrStr.isEmpty())
+        return 0;
+    
+    Element* target = renderer()->document()->getElementById(activeDescendantAttrStr);
+    AccessibilityObject* obj = renderer()->document()->axObjectCache()->get(target->renderer());
+    if (obj->isAccessibilityRenderObject())
+    // an activedescendant is only useful if it has a renderer, because that's what's needed to post the notification
+        return obj;
+    return 0;
+}
+
+
+void AccessibilityRenderObject::handleActiveDescendantChanged()
+{
+    Element* element = static_cast<Element*>(renderer()->element());
+    if (!element)
+        return;
+    Document* doc = renderer()->document();
+    if (!doc->frame()->selectionController()->isFocusedAndActive() || doc->focusedNode() != element)
+        return; 
+    AccessibilityRenderObject* activedescendant = static_cast<AccessibilityRenderObject*>(activeDescendant());
+    
+    if (activedescendant && shouldFocusActiveDescendant())
+        doc->axObjectCache()->postNotificationToElement(activedescendant->renderer(), "AXFocusedUIElementChanged");
+}
+
 
 AccessibilityObject* AccessibilityRenderObject::observableObject() const
 {
@@ -1602,7 +1668,9 @@ static const ARIARoleMap& createARIARoleMap()
         { String("link"), WebCoreLinkRole },
         { String("progressbar"), ProgressIndicatorRole },
         { String("radio"), RadioButtonRole },
-        { String("textbox"), TextAreaRole }
+        { String("textbox"), TextAreaRole },
+        { String("listbox"), ListBoxRole }
+        // "option" isn't here because it may map to different roles depending on the parent element's role
     };
     ARIARoleMap& roleMap = *new ARIARoleMap;
         
@@ -1628,6 +1696,13 @@ AccessibilityRole AccessibilityRenderObject::ariaRoleAttribute() const
     AccessibilityRole role = ariaRoleToWebCoreRole(ariaRole);
     if (role)
         return role;
+    // selects and listboxes both have options as child roles, but they map to different roles within WebCore
+    if (equalIgnoringCase(ariaRole,"option")) {
+        if (parentObject()->ariaRoleAttribute() == MenuRole)
+            return MenuItemRole;
+        if (parentObject()->ariaRoleAttribute() == ListBoxRole)
+            return ListBoxOptionRole;
+    }
     
     return UnknownRole;
 }
@@ -1838,6 +1913,75 @@ void AccessibilityRenderObject::addChildren()
     }
 }
 
+void AccessibilityRenderObject::ariaListboxSelectedChildren(Vector<RefPtr<AccessibilityObject> >& result)
+{
+    AccessibilityObject* child = firstChild();
+    bool isMultiselectable = false;
+    
+    Element* element = static_cast<Element*>(renderer()->element());        
+    if (!element || !element->isElementNode()) // do this check to ensure safety of static_cast above
+        return;
+
+    String multiselectablePropertyStr = element->getAttribute("aria-multiselectable").string();
+    isMultiselectable = equalIgnoringCase(multiselectablePropertyStr, "true");
+    
+    while (child) {
+        // every child should have aria-role option, and if so, check for selected attribute/state
+        AccessibilityRole ariaRole = child->ariaRoleAttribute();
+        RenderObject* childRenderer = 0;
+        if (child->isAccessibilityRenderObject())
+            childRenderer = static_cast<AccessibilityRenderObject*>(child)->renderer();
+        if (childRenderer && ariaRole == ListBoxOptionRole) {
+            Element* childElement = static_cast<Element*>(childRenderer->element());
+            if (childElement && childElement->isElementNode()) { // do this check to ensure safety of static_cast above
+                String selectedAttrString = childElement->getAttribute("aria-selected").string();
+                if (equalIgnoringCase(selectedAttrString, "true")) {
+                    result.append(child);
+                    if (isMultiselectable)
+                        return;
+                }
+            }
+        }
+        child = child->nextSibling(); 
+    }
+}
+
+void AccessibilityRenderObject::selectedChildren(Vector<RefPtr<AccessibilityObject> >& result)
+{
+    ASSERT(result.isEmpty());
+
+    // only listboxes should be asked for their selected children. 
+    if (ariaRoleAttribute() != ListBoxRole) { // native list boxes would be AccessibilityListBoxes, so only check for aria list boxes
+        ASSERT_NOT_REACHED(); 
+        return;
+    }
+    return ariaListboxSelectedChildren(result);
+}
+
+void AccessibilityRenderObject::ariaListboxVisibleChildren(Vector<RefPtr<AccessibilityObject> >& result)      
+{
+    if (!hasChildren())
+        addChildren();
+    
+    unsigned length = m_children.size();
+    for (unsigned i = 0; i < length; i++) {
+        if (!m_children[i]->isOffScreen())
+            result.append(m_children[i]);
+    }
+}
+
+void AccessibilityRenderObject::visibleChildren(Vector<RefPtr<AccessibilityObject> >& result)
+{
+    ASSERT(result.isEmpty());
+        
+    // only listboxes are asked for their visible children. 
+    if (ariaRoleAttribute() != ListBoxRole) { // native list boxes would be AccessibilityListBoxes, so only check for aria list boxes
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    return ariaListboxVisibleChildren(result);
+}
+ 
 void AccessibilityRenderObject::removeAXObjectID()
 {
     if (!m_id)

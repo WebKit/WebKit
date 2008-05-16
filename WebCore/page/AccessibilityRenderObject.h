@@ -167,7 +167,12 @@ public:
     virtual void detach();
     virtual void childrenChanged();
     virtual void addChildren();
-    
+    virtual void selectedChildren(Vector<RefPtr<AccessibilityObject> >&);
+    virtual void visibleChildren(Vector<RefPtr<AccessibilityObject> >&);
+    virtual bool shouldFocusActiveDescendant() const;
+    virtual AccessibilityObject* activeDescendant() const;
+    virtual void handleActiveDescendantChanged();
+
     virtual VisiblePositionRange visiblePositionRange() const;
     virtual VisiblePositionRange doAXTextMarkerRangeForLine(unsigned) const;
     virtual IntRect doAXBoundsForTextMarkerRange(const VisiblePositionRange&) const;
@@ -186,7 +191,6 @@ public:
     virtual String doAXStringForRange(const PlainTextRange&) const;
     virtual IntRect doAXBoundsForRange(const PlainTextRange&) const;
     
-    
 protected:
     RenderObject* m_renderer;
     RefPtr<HTMLAreaElement> m_areaElement;
@@ -194,7 +198,12 @@ protected:
     void setRenderObject(RenderObject* renderer) { m_renderer = renderer; }
     virtual void removeAXObjectID();
     
-    virtual bool isDetached() const { return !m_renderer; }    
+    virtual bool isDetached() const { return !m_renderer; }
+
+private:
+    void ariaListboxSelectedChildren(Vector<RefPtr<AccessibilityObject> >&);
+    void ariaListboxVisibleChildren(Vector<RefPtr<AccessibilityObject> >&);
+
 };
     
 } // namespace WebCore

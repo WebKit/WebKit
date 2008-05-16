@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Element.h"
 
+#include "AXObjectCache.h"
 #include "CSSStyleSelector.h"
 #include "CString.h"
 #include "Document.h"
@@ -541,6 +542,16 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
 Attribute* Element::createAttribute(const QualifiedName& name, const AtomicString& value)
 {
     return new Attribute(name, value);
+}
+
+void Element::attributeChanged(Attribute* attr, bool preserveDecls)
+{
+    const QualifiedName& attrName = attr->name();
+    if (attrName == aria_activedescendantAttr) {
+        // any change to aria-activedescendant attribute triggers accessibility focus change, but document focus remains intact
+        if (document()->axObjectCache()->accessibilityEnabled())
+            document()->axObjectCache()->handleActiveDescendantChanged(renderer());
+    }
 }
 
 void Element::setAttributeMap(PassRefPtr<NamedAttrMap> list)

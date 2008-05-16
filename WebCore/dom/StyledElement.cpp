@@ -181,6 +181,7 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
         if (namedAttrMap)
             mappedAttributes()->declAdded();
     }
+    Element::attributeChanged(attr, preserveDecls);
 }
 
 bool StyledElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

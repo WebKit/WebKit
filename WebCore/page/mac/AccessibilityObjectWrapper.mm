@@ -854,11 +854,17 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return convertToNSArray(m_object->children());
     }
     
-    if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute] && m_object->isListBox())
-        return convertToNSArray(static_cast<AccessibilityListBox*>(m_object)->selectedChildren());
+    if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute] && m_object->isListBox()) {
+        Vector<RefPtr<AccessibilityObject> > selectedChildrenCopy;
+        m_object->selectedChildren(selectedChildrenCopy);
+        return convertToNSArray(selectedChildrenCopy);
+    }
     
-    if ([attributeName isEqualToString: NSAccessibilityVisibleChildrenAttribute] && m_object->isListBox())
-        return convertToNSArray(static_cast<AccessibilityListBox*>(m_object)->visibleChildren());
+    if ([attributeName isEqualToString: NSAccessibilityVisibleChildrenAttribute] && m_object->isListBox()) {
+        Vector<RefPtr<AccessibilityObject> > visibleChildrenCopy;
+        m_object->visibleChildren(visibleChildrenCopy);
+        return convertToNSArray(visibleChildrenCopy);
+    }
     
     
     if (m_object->isWebArea()) {

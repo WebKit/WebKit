@@ -51,15 +51,12 @@ public:
     
     virtual bool accessibilityIsIgnored() const { return false; }
     
-    const Vector<RefPtr<AccessibilityObject> >& selectedChildren();
-    const Vector<RefPtr<AccessibilityObject> >& visibleChildren();
+    virtual void selectedChildren(Vector<RefPtr<AccessibilityObject> >&);
+    virtual void visibleChildren(Vector<RefPtr<AccessibilityObject> >&);
     
     virtual void addChildren();
 
-private:
-    Vector<RefPtr<AccessibilityObject> > m_selectedChildren;
-    Vector<RefPtr<AccessibilityObject> > m_visibleChildren;
-    
+private:    
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
 };
     

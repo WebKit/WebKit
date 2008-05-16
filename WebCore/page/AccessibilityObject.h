@@ -181,7 +181,6 @@ class AccessibilityObject : public RefCounted<AccessibilityObject> {
 protected:
     AccessibilityObject();
 public:
-    static PassRefPtr<AccessibilityObject> create();
     virtual ~AccessibilityObject();
     
     virtual bool isAccessibilityRenderObject() const { return false; };
@@ -197,7 +196,7 @@ public:
     virtual bool isNativeTextControl() const { return false; };
     virtual bool isWebArea() const { return false; };
     virtual bool isCheckboxOrRadio() const { return false; };
-    virtual bool isListBox() const { return false; };
+    virtual bool isListBox() const { return roleValue() == ListBoxRole; };
     virtual bool isFileUploadButton() const { return false; };
     virtual bool isProgressIndicator() const { return false; };
     
@@ -248,7 +247,6 @@ public:
     
     virtual HTMLAnchorElement* anchorElement() const;
     virtual Element* actionElement() const;
-
     virtual IntRect boundingBoxRect() const;
     virtual IntRect elementRect() const;
     virtual IntSize size() const;
@@ -294,7 +292,12 @@ public:
     virtual const Vector<RefPtr<AccessibilityObject> >& children() { return m_children; }
     virtual void addChildren();
     virtual bool hasChildren() const { return m_haveChildren; };
-    
+    virtual void selectedChildren(Vector<RefPtr<AccessibilityObject> >&) = 0;
+    virtual void visibleChildren(Vector<RefPtr<AccessibilityObject> >&) = 0;
+    virtual bool shouldFocusActiveDescendant() const { return false; }
+    virtual AccessibilityObject* activeDescendant() const { return 0; }    
+    virtual void handleActiveDescendantChanged() { }
+
     virtual VisiblePositionRange visiblePositionRange() const;
     virtual VisiblePositionRange doAXTextMarkerRangeForLine(unsigned) const;
     

@@ -74,9 +74,10 @@ namespace WebCore {
         void postNotificationToElement(RenderObject*, const String&);
         void childrenChanged(RenderObject*);
         void selectedChildrenChanged(RenderObject*);
+        void handleActiveDescendantChanged(RenderObject*);
+        void handleFocusedUIElementChanged();
         static void enableAccessibility() { gAccessibilityEnabled = true; }
         static bool accessibilityEnabled() { return gAccessibilityEnabled; }
-        void handleFocusedUIElementChanged();
         
         void removeAXID(AccessibilityObject*);
         bool isIDinUse(AXID id) const { return m_idsInUse.contains(id); }
@@ -91,6 +92,7 @@ namespace WebCore {
     };
 
 #if !HAVE(ACCESSIBILITY)
+    inline void AXObjectCache::handleActiveDescendantChanged(RenderObject*) { }
     inline void AXObjectCache::handleFocusedUIElementChanged() { }
     inline void AXObjectCache::detachWrapper(AccessibilityObject*) { }
     inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }

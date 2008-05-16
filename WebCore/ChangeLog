@@ -1,3 +1,53 @@
+2008-05-15  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Fixed <rdar://problem/5882283> Implement ARIA aria-activedescendant
+        Also added support for aria roles listbox and option, and aria-selected, 
+        and aria-multiselectable for listboxes
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        * dom/Element.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        * html/HTMLAttributeNames.in:
+        * page/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::handleActiveDescendantChanged):
+        * page/AXObjectCache.h:
+        (WebCore::AXObjectCache::accessibilityEnabled):
+        (WebCore::AXObjectCache::handleActiveDescendantChanged):
+        * page/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::selectedChildren):
+        (WebCore::AccessibilityListBox::visibleChildren):
+        * page/AccessibilityListBox.h:
+        * page/AccessibilityListBoxOption.h:
+        (WebCore::AccessibilityListBoxOption::selectedChildren):
+        (WebCore::AccessibilityListBoxOption::visibleChildren):
+        * page/AccessibilityObject.cpp:
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isListBox):
+        (WebCore::AccessibilityObject::shouldFocusActiveDescendant):
+        (WebCore::AccessibilityObject::activeDescendant):
+        (WebCore::AccessibilityObject::handleActiveDescendantChanged):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::title):
+        (WebCore::AccessibilityRenderObject::accessibilityShouldUseUniqueId):
+        (WebCore::AccessibilityRenderObject::focusedUIElement):
+        (WebCore::AccessibilityRenderObject::shouldFocusActiveDescendant):
+        (WebCore::AccessibilityRenderObject::activeDescendant):
+        (WebCore::AccessibilityRenderObject::handleActiveDescendantChanged):
+        (WebCore::RoleEntry::):
+        (WebCore::AccessibilityRenderObject::ariaRoleAttribute):
+        (WebCore::AccessibilityRenderObject::ariaListboxSelectedChildren):
+        (WebCore::AccessibilityRenderObject::selectedChildren):
+        (WebCore::AccessibilityRenderObject::ariaListboxVisibleChildren):
+        (WebCore::AccessibilityRenderObject::visibleChildren):
+        * page/AccessibilityRenderObject.h:
+        (WebCore::AccessibilityRenderObject::isDetached):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2008-05-15  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a bug in the view source parsing of text within <script>,
