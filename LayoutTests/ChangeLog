@@ -1,3 +1,9 @@
+2008-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Update test results now that navigator.onLine exists.
+        
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-05-15  Rob Buis  <buis@kde.org>
 
         Reviewed by Dave Hyatt.
