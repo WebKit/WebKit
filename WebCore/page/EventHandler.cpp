@@ -27,6 +27,7 @@
 #include "config.h"
 #include "EventHandler.h"
 
+#include "AXObjectCache.h"
 #include "CachedImage.h"
 #include "ChromeClient.h"
 #include "Cursor.h"
@@ -1578,6 +1579,33 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     return keydownResult || keypress->defaultPrevented() || keypress->defaultHandled();
 }
 
+void EventHandler::handleKeyboardSelectionMovement(KeyboardEvent* event)
+{
+    if (!event)
+        return;
+    
+    String key = event->keyIdentifier();           
+    bool isShifted = event->getModifierState("Shift");
+    bool isOptioned = event->getModifierState("Alt");
+    
+    if (key == "Up") {
+        m_frame->selectionController()->modify((isShifted) ? SelectionController::EXTEND : SelectionController::MOVE, SelectionController::BACKWARD, LineGranularity, true);
+        event->setDefaultHandled();
+    }
+    else if (key == "Down") { 
+        m_frame->selectionController()->modify((isShifted) ? SelectionController::EXTEND : SelectionController::MOVE, SelectionController::FORWARD, LineGranularity, true);
+        event->setDefaultHandled();
+    }
+    else if (key == "Left") {
+        m_frame->selectionController()->modify((isShifted) ? SelectionController::EXTEND : SelectionController::MOVE, SelectionController::LEFT, (isOptioned) ? WordGranularity : CharacterGranularity, true);
+        event->setDefaultHandled();
+    }
+    else if (key == "Right") {
+        m_frame->selectionController()->modify((isShifted) ? SelectionController::EXTEND : SelectionController::MOVE, SelectionController::RIGHT, (isOptioned) ? WordGranularity : CharacterGranularity, true);
+        event->setDefaultHandled();
+    }    
+}
+    
 void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
 {
    if (event->type() == keydownEvent) {
@@ -1586,6 +1614,10 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
             return;
         if (event->keyIdentifier() == "U+0009")
             defaultTabEventHandler(event);
+
+       // provides KB navigation and selection for enhanced accessibility users
+       if (AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
+           handleKeyboardSelectionMovement(event);       
    }
    if (event->type() == keypressEvent) {
         m_frame->editor()->handleKeyboardEvent(event);

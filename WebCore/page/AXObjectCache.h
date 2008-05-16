@@ -77,8 +77,11 @@ namespace WebCore {
         void handleActiveDescendantChanged(RenderObject*);
         void handleFocusedUIElementChanged();
         static void enableAccessibility() { gAccessibilityEnabled = true; }
-        static bool accessibilityEnabled() { return gAccessibilityEnabled; }
+        static void enableEnhancedUserInterfaceAccessibility() { gAccessibilityEnhancedUserInterfaceEnabled = true; }
         
+        static bool accessibilityEnabled() { return gAccessibilityEnabled; }
+        static bool accessibilityEnhancedUserInterfaceEnabled() { return gAccessibilityEnhancedUserInterfaceEnabled; }
+
         void removeAXID(AccessibilityObject*);
         bool isIDinUse(AXID id) const { return m_idsInUse.contains(id); }
 
@@ -86,6 +89,8 @@ namespace WebCore {
         HashMap<AXID, RefPtr<AccessibilityObject> > m_objects;
         HashMap<RenderObject*, AXID> m_renderObjectMapping;
         static bool gAccessibilityEnabled;
+        static bool gAccessibilityEnhancedUserInterfaceEnabled;
+        
         HashSet<AXID> m_idsInUse;
         
         AXID getAXID(AccessibilityObject*);

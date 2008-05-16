@@ -39,6 +39,7 @@
 namespace WebCore {
 
 bool AXObjectCache::gAccessibilityEnabled = false;
+bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
 
 AXObjectCache::~AXObjectCache()
 {

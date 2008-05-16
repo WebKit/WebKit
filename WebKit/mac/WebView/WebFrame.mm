@@ -120,6 +120,9 @@ NSString *WebPageCacheEntryDateKey = @"WebPageCacheEntryDateKey";
 NSString *WebPageCacheDataSourceKey = @"WebPageCacheDataSourceKey";
 NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
+// FIXME: Remove when this key becomes publicly defined
+NSString *NSAccessibilityEnhancedUserInterfaceAttribute = @"AXEnhancedUserInterface";
+
 @implementation WebFramePrivate
 
 - (void)dealloc
@@ -669,7 +672,12 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (id)_accessibilityTree
 {
-    AXObjectCache::enableAccessibility();
+    if (!AXObjectCache::accessibilityEnabled()) {
+        AXObjectCache::enableAccessibility();
+        if ([[NSApp accessibilityAttributeValue:NSAccessibilityEnhancedUserInterfaceAttribute] boolValue])
+            AXObjectCache::enableEnhancedUserInterfaceAccessibility();
+    }
+
     if (!_private->coreFrame || !_private->coreFrame->document())
         return nil;
     RenderView* root = static_cast<RenderView *>(_private->coreFrame->document()->renderer());

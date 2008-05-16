@@ -105,8 +105,10 @@ VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
 Position VisiblePosition::leftVisuallyDistinctCandidate() const
 {
     Position p = m_deepPosition;
-    Position downstreamStart = p.downstream();
+    if (!p.node())
+        return Position();
 
+    Position downstreamStart = p.downstream();
     TextDirection primaryDirection = LTR;
     for (RenderObject* r = p.node()->renderer(); r; r = r->parent()) {
         if (r->isBlockFlow()) {
@@ -244,8 +246,10 @@ VisiblePosition VisiblePosition::left(bool stayInEditableContent) const
 Position VisiblePosition::rightVisuallyDistinctCandidate() const
 {
     Position p = m_deepPosition;
-    Position downstreamStart = p.downstream();
+    if (!p.node())
+        return Position();
 
+    Position downstreamStart = p.downstream();
     TextDirection primaryDirection = LTR;
     for (RenderObject* r = p.node()->renderer(); r; r = r->parent()) {
         if (r->isBlockFlow()) {

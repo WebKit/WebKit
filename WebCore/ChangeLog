@@ -1,3 +1,28 @@
+2008-05-16  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Alice Liu
+
+        <rdar://problem/5710317> REGRESSION:Selecting ranges of text should be possible using the keyboard (15310)
+
+        * WebCore.base.exp:
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate):
+        * page/AXObjectCache.cpp:
+        * page/AXObjectCache.h:
+        (WebCore::AXObjectCache::enableEnhancedUserInterfaceAccessibility):
+        (WebCore::AXObjectCache::accessibilityEnabled):
+        (WebCore::AXObjectCache::accessibilityEnhancedUserInterfaceEnabled):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionRange):
+        (WebCore::AccessibilityRenderObject::doSetAXSelectedTextMarkerRange):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        (WebCore::AccessibilityRenderObject::actionVerb):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleKeyboardSelectionMovement):
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+        * page/EventHandler.h:
+
 2008-05-15  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
