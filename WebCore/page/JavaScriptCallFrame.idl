@@ -32,6 +32,7 @@ module inspector {
         readonly attribute long sourceIdentifier;
         readonly attribute long line;
         readonly attribute [CustomGetter] Array scopeChain;
+        readonly attribute [CustomGetter] Object thisObject;
         readonly attribute DOMString functionName;
     };
 

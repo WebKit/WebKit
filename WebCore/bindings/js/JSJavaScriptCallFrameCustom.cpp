@@ -47,6 +47,13 @@ JSValue* JSJavaScriptCallFrame::evaluate(ExecState* exec, const List& args)
     return result;
 }
 
+JSValue* JSJavaScriptCallFrame::thisObject(ExecState* exec) const
+{
+    if (!impl()->isValid() || !impl()->thisObject())
+        return jsNull();
+    return impl()->thisObject();
+}
+
 JSValue* JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
 {
     if (!impl()->isValid())

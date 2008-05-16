@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPlaceholder)
+WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPlaceholder, ignoreHasOwnProperty, extraProperties)
 {
     if (!title) {
         title = Object.describe(object);
@@ -36,6 +36,8 @@ WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPl
 
     this.emptyPlaceholder = (emptyPlaceholder || WebInspector.UIString("No Properties"));
     this.object = object;
+    this.ignoreHasOwnProperty = ignoreHasOwnProperty;
+    this.extraProperties = extraProperties;
 
     WebInspector.PropertiesSection.call(this, title, subtitle);
 }
@@ -43,12 +45,24 @@ WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPl
 WebInspector.ObjectPropertiesSection.prototype = {
     onpopulate: function()
     {
-        var properties = Object.sortedProperties(this.object);
+        var properties = [];
+        for (var prop in this.object)
+            properties.push(prop);
+        if (this.extraProperties)
+            for (var prop in this.extraProperties)
+                properties.push(prop);
+        properties.sort();
+
         for (var i = 0; i < properties.length; ++i) {
+            var object = this.object;
             var propertyName = properties[i];
-            if (("hasOwnProperty" in this.object && !this.object.hasOwnProperty(propertyName)) || propertyName === "__treeElementIdentifier")
+            if (this.extraProperties && propertyName in this.extraProperties)
+                object = this.extraProperties;
+            if (propertyName === "__treeElementIdentifier")
                 continue;
-            this.propertiesTreeOutline.appendChild(new WebInspector.ObjectPropertyTreeElement(this.object, propertyName));
+            if (!this.ignoreHasOwnProperty && "hasOwnProperty" in object && !object.hasOwnProperty(propertyName))
+                continue;
+            this.propertiesTreeOutline.appendChild(new WebInspector.ObjectPropertyTreeElement(object, propertyName));
         }
 
         if (!this.propertiesTreeOutline.children.length) {

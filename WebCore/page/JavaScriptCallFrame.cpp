@@ -61,6 +61,13 @@ String JavaScriptCallFrame::functionName() const
     return String(function->functionName());
 }
 
+JSObject* JavaScriptCallFrame::thisObject() const
+{
+    if (!m_exec)
+        return 0;
+    return m_exec->thisValue();
+}
+
 // Evaluate some JavaScript code in the scope of this frame.
 JSValue* JavaScriptCallFrame::evaluate(const UString& script, JSValue*& exception) const
 {

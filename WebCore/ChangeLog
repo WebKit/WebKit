@@ -1,3 +1,33 @@
+2008-05-16  Timothy Hatcher  <timothy@apple.com>
+
+        Adds the "this" object to the Local scope section of the
+        Scope Variables pane.
+
+        <rdar://problem/5774773> Web Inspector doesn't show the "this"
+        object in its variables list (10438)
+
+        Reviewed by Oliver Hunt.
+
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::thisObject): Returns the thisObject
+        of the JavaScriptCallFrame impl. Returns jsNull if the impl is invalid.
+        * page/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::thisObject): Return the thisValue from
+        the ExecState. Return 0 if m_exec is null.
+        * page/JavaScriptCallFrame.h:
+        * page/JavaScriptCallFrame.idl: Add thisObject.
+        * page/inspector/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection): Adds two new arguments.
+        The ignoreHasOwnProperty tells the section to show all properties,
+        including inherited ones. And extraProperties is an object of
+        additional properties to show.
+        (WebInspector.ObjectPropertiesSection.prototype): Honor the
+        extraProperties and ignoreHasOwnProperty properties.
+        * page/inspector/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane.prototype.update): Add a this
+        property to an extra object that is passed to the ObjectPropertiesSection.
+        Also pass true for ignoreHasOwnProperty since we want to show all properties.
+
 2008-05-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

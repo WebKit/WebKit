@@ -51,11 +51,13 @@ WebInspector.ScopeChainSidebarPane.prototype = {
             var subtitle = Object.describe(scopeObject, true);
             var emptyPlaceholder = null;
             var localScope = false;
+            var extraProperties = null;
 
             if (Object.prototype.toString.call(scopeObject) === "[object Activation]") {
-                if (!foundLocalScope)
+                if (!foundLocalScope) {
+                    extraProperties = { "this": callFrame.thisObject };
                     title = WebInspector.UIString("Local");
-                else
+                } else
                     title = WebInspector.UIString("Closure");
                 emptyPlaceholder = WebInspector.UIString("No Variables");
                 subtitle = null;
@@ -73,7 +75,7 @@ WebInspector.ScopeChainSidebarPane.prototype = {
             if (!title || title === subtitle)
                 subtitle = null;
 
-            var section = new WebInspector.ObjectPropertiesSection(scopeObject, title, subtitle, emptyPlaceholder);
+            var section = new WebInspector.ObjectPropertiesSection(scopeObject, title, subtitle, emptyPlaceholder, true, extraProperties);
             if (!foundLocalScope || localScope)
                 section.expanded = true;
 
