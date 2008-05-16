@@ -1000,6 +1000,18 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return getBorderRadiusCornerValue(style->borderTopLeftRadius());
         case CSSPropertyWebkitBorderTopRightRadius:
             return getBorderRadiusCornerValue(style->borderTopRightRadius());
+        case CSSPropertyClip:
+        {
+            if (style->hasClip()) {
+                Rect* rect = new Rect();
+                rect->setTop(new CSSPrimitiveValue(style->clip().top.value(), CSSPrimitiveValue::CSS_PX));
+                rect->setRight(new CSSPrimitiveValue(style->clip().right.value(), CSSPrimitiveValue::CSS_PX));
+                rect->setBottom(new CSSPrimitiveValue(style->clip().bottom.value(), CSSPrimitiveValue::CSS_PX));
+                rect->setLeft(new CSSPrimitiveValue(style->clip().left.value(), CSSPrimitiveValue::CSS_PX));
+                return new CSSPrimitiveValue(rect);
+            }
+            return 0;
+        }
         case CSSPropertyBackground:
         case CSSPropertyBorder:
         case CSSPropertyBorderBottom:
@@ -1009,7 +1021,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyBorderStyle:
         case CSSPropertyBorderTop:
         case CSSPropertyBorderWidth:
-        case CSSPropertyClip:
         case CSSPropertyContent:
         case CSSPropertyCounterIncrement:
         case CSSPropertyCounterReset:

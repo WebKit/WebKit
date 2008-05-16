@@ -1,3 +1,18 @@
+2008-05-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17433
+        getComputedStyle() -> clip returns empty string
+
+        Make getComputedStyle return a shape value for clip
+        if it is set.
+
+        Tests: fast/css/getPropertyValue-clip.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2008-05-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Add rendering/style to includes dir.

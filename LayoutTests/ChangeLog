@@ -1,3 +1,14 @@
+2008-05-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Dave Hyatt.
+
+        Testcase for:
+        https://bugs.webkit.org/show_bug.cgi?id=17433
+        getComputedStyle() -> clip returns empty string
+
+        * fast/css/getPropertyValue-clip-expected.txt: Added.
+        * fast/css/getPropertyValue-clip.html: Added.
+
 2008-05-15  Timothy Hatcher  <timothy@apple.com>
 
         Test case added for <rdar://problem/5790805> Inspector's source view
