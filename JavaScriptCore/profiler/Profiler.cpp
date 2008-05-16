@@ -120,7 +120,6 @@ void Profiler::didExecute(ExecState* exec, const UString& sourceURL, int startin
 void getStackNames(Vector<UString>& names, ExecState* exec)
 {
     for (ExecState* currentState = exec; currentState; currentState = currentState->callingExecState()) {
-
         if (FunctionImp* functionImp = currentState->function())
             names.prepend(getFunctionName(functionImp));
         else if (ScopeNode* scopeNode = currentState->scopeNode())
@@ -151,16 +150,6 @@ UString getFunctionName(FunctionImp* functionImp)
     UString URL = functionImp->body->sourceURL();
 
     return (name.isEmpty() ? "[anonymous function]" : name) + " " + URL + ": " + UString::from(lineNumber);
-}
-
-void Profiler::printDataInspectorStyle(unsigned whichProfile) const
-{
-    m_allProfiles[whichProfile]->printDataInspectorStyle();
-}
-
-void Profiler::printDataSampleStyle(unsigned whichProfile) const
-{
-    m_allProfiles[whichProfile]->printDataSampleStyle();
 }
 
 void Profiler::debugLog(UString message)

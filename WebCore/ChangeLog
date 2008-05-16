@@ -1,3 +1,15 @@
+2008-05-16  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        Use a Vector instead of a Deque since we don't use the extra capabilities
+        of the Deque.
+
+        * page/JavaScriptProfileNode.cpp:
+        (WebCore::getChildren):
+        (WebCore::toJS):
+
 2008-05-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

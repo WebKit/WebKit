@@ -49,6 +49,13 @@ namespace KJS {
 
         double totalTime() const { return m_callTree->totalTime(); }
 
+        void sortTotalTimeDescending() { m_callTree->sortTotalTimeDescending(); }
+        void sortTotalTimeAscending() { m_callTree->sortTotalTimeAscending(); }
+        void sortSelfTimeDescending() { m_callTree->sortSelfTimeDescending(); }
+        void sortSelfTimeAscending() { m_callTree->sortSelfTimeAscending(); }
+        void sortCallsDescending() { m_callTree->sortCallsDescending(); }
+        void sortCallsAscending() { m_callTree->sortCallsAscending(); }
+        
         void printDataInspectorStyle() const;
         void printDataSampleStyle() const;
 

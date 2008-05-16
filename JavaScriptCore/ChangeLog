@@ -1,3 +1,45 @@
+2008-05-16  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        Implement sorting for the profiler.
+        I chose to sort the profileNodes in place since there is no reason they
+        need to retain their original order.
+
+        * JavaScriptCore.exp: Export the symbols.
+        * profiler/Profile.h: Add the different ways a profile can be sorted.
+        (KJS::Profile::sortTotalTimeDescending):
+        (KJS::Profile::sortTotalTimeAscending):
+        (KJS::Profile::sortSelfTimeDescending):
+        (KJS::Profile::sortSelfTimeAscending):
+        (KJS::Profile::sortCallsDescending):
+        (KJS::Profile::sortCallsAscending):
+        * profiler/ProfileNode.cpp: Implement those ways.
+        (KJS::totalTimeDescendingComparator):
+        (KJS::ProfileNode::sortTotalTimeDescending):
+        (KJS::totalTimeAscendingComparator):
+        (KJS::ProfileNode::sortTotalTimeAscending):
+        (KJS::selfTimeDescendingComparator):
+        (KJS::ProfileNode::sortSelfTimeDescending):
+        (KJS::selfTimeAscendingComparator):
+        (KJS::ProfileNode::sortSelfTimeAscending):
+        (KJS::callsDescendingComparator):
+        (KJS::ProfileNode::sortCallsDescending):
+        (KJS::callsAscendingComparator):
+        (KJS::ProfileNode::sortCallsAscending):
+        * profiler/ProfileNode.h: No longer use a Deque since it cannot be
+        sorted by std::sort and there was no reason not to use a Vector.  I
+        previously had though I would do prepending but am not.
+        (KJS::ProfileNode::selfTime):
+        (KJS::ProfileNode::totalPercent):
+        (KJS::ProfileNode::selfPercent):
+        (KJS::ProfileNode::children):
+        * profiler/Profiler.cpp: Removed these functions as they can be called
+        directoy on the Profile object after getting the Vector of them.
+        (KJS::getStackNames):
+        * profiler/Profiler.h:
+
 2008-05-15  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.

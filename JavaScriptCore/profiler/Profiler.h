@@ -56,9 +56,6 @@ namespace KJS {
 
         Profile* currentProfile() const { return m_currentProfile.get(); }
 
-        void printDataInspectorStyle(unsigned whichProfile) const;
-        void printDataSampleStyle(unsigned whichProfile) const;
-
     private:
         Profiler()
             : m_profiling(false)

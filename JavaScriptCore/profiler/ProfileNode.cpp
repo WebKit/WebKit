@@ -110,6 +110,86 @@ void ProfileNode::stopProfiling()
     m_selfPercent = (selfTime() / Profiler::profiler()->currentProfile()->totalTime()) * 100.0;
 }
 
+#pragma mark Sorting methods
+
+static inline bool totalTimeDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
+{
+    return a->totalTime() > b->totalTime();
+}
+
+void ProfileNode::sortTotalTimeDescending()
+{
+    std::sort(m_children.begin(), m_children.end(), totalTimeDescendingComparator);
+
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+        (*currentChild)->sortTotalTimeDescending();
+}
+
+static inline bool totalTimeAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
+{
+    return a->totalTime() < b->totalTime();
+}
+
+void ProfileNode::sortTotalTimeAscending()
+{
+    std::sort(m_children.begin(), m_children.end(), totalTimeAscendingComparator);
+
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+        (*currentChild)->sortTotalTimeAscending();
+}
+
+static inline bool selfTimeDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
+{
+    return a->selfTime() > b->selfTime();
+}
+
+void ProfileNode::sortSelfTimeDescending()
+{
+    std::sort(m_children.begin(), m_children.end(), selfTimeDescendingComparator);
+
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+        (*currentChild)->sortSelfTimeDescending();
+}
+
+static inline bool selfTimeAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
+{
+    return a->selfTime() < b->selfTime();
+}
+
+void ProfileNode::sortSelfTimeAscending()
+{
+    std::sort(m_children.begin(), m_children.end(), selfTimeAscendingComparator);
+
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+        (*currentChild)->sortSelfTimeAscending();
+}
+
+static inline bool callsDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
+{
+    return a->numberOfCalls() > b->numberOfCalls();
+}
+
+void ProfileNode::sortCallsDescending()
+{
+    std::sort(m_children.begin(), m_children.end(), callsDescendingComparator);
+
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+        (*currentChild)->sortCallsDescending();
+}
+
+static inline bool callsAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
+{
+    return a->numberOfCalls() < b->numberOfCalls();
+}
+
+void ProfileNode::sortCallsAscending()
+{
+    std::sort(m_children.begin(), m_children.end(), callsAscendingComparator);
+
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+        (*currentChild)->sortCallsAscending();
+}
+
 void ProfileNode::printDataInspectorStyle(int indentLevel) const
 {
     // Print function names

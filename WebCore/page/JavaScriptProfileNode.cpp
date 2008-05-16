@@ -125,7 +125,7 @@ static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSString
         return JSValueMakeUndefined(ctx);
 
     ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
-    const Deque<RefPtr<ProfileNode> >& children = profileNode->children();
+    const Vector<RefPtr<ProfileNode> >& children = profileNode->children();
 
     JSObjectRef global = JSContextGetGlobalObject(ctx);
 
@@ -153,7 +153,7 @@ static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSString
     if (exception && *exception)
         return JSValueMakeUndefined(ctx);
 
-    for (Deque<RefPtr<ProfileNode> >::const_iterator it = children.begin(); it != children.end(); ++it) {
+    for (Vector<RefPtr<ProfileNode> >::const_iterator it = children.begin(); it != children.end(); ++it) {
         JSValueRef arg0 = toRef(toJS(toJS(ctx), (*it).get() ));
         JSObjectCallAsFunction(ctx, pushFunction, result, 1, &arg0, exception);
         if (exception && *exception)
@@ -206,7 +206,6 @@ JSValue* toJS(ExecState* exec, ProfileNode* ProfileNode)
     ProfileNodeWrapper = toJS(JSObjectMake(toRef(exec), ProfileNodeClass(), static_cast<void*>(ProfileNode)));
     ProfileNodeCache().set(ProfileNode, ProfileNodeWrapper);
     return ProfileNodeWrapper;
-
 }
 
 
