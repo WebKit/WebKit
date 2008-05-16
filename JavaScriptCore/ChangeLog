@@ -1,3 +1,36 @@
+2008-05-15  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        - Cache some values to save on computing them repetitively. This will be
+        a big savings when we sort since we won't have to walk the tree for
+        every comparison!
+        - We cache these values when we end profiling because otherwise we won't
+        know which profile to get the totalTime for the whole profile from without
+        retaining a reference to the head profile or looking up the profile from
+        the list of all profiles.
+        - Also it's safe to assume we won't be asked for these values while we
+        are still profiling since the WebInspector only get's profileNodes from
+        profiles that are in the allProfiles() list and a profile is only added
+        to that list after it has finished and these values will no longer
+        change.
+
+        * JavaScriptCore.exp:
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::ProfileNode):
+        (KJS::ProfileNode::stopProfiling):
+        (KJS::ProfileNode::printDataInspectorStyle):
+        (KJS::ProfileNode::printDataSampleStyle):
+        (KJS::ProfileNode::endAndRecordCall):
+        * profiler/ProfileNode.h:
+        (KJS::ProfileNode::totalTime):
+        (KJS::ProfileNode::selfTime):
+        (KJS::ProfileNode::totalPercent):
+        (KJS::ProfileNode::selfPercent):
+        * profiler/Profiler.cpp:
+        (KJS::Profiler::stopProfiling):
+
 2008-05-15  Simon Hausmann  <shausman@trolltech.com>
 
         Reviewed by Holger.

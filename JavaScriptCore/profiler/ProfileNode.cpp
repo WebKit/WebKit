@@ -38,7 +38,10 @@ namespace KJS {
 
 ProfileNode::ProfileNode(const UString& name)
     : m_functionName(name)
-    , m_timeSum(0)
+    , m_totalTime (0.0)
+    , m_selfTime (0.0)
+    , m_totalPercent (0.0)
+    , m_selfPercent (0.0)
     , m_numberOfCalls(0)
 {
     m_startTime = getCurrentUTCTime();
@@ -96,28 +99,15 @@ void ProfileNode::stopProfiling()
     StackIterator endOfChildren = m_children.end();
     for (StackIterator it = m_children.begin(); it != endOfChildren; ++it)
         (*it)->stopProfiling();
-}
 
-double ProfileNode::selfTime() const
-{
-    double sumChildrenTime = 0.0;
-
+    // Calculate Self time and the percentages once we stop profiling.
     for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
-        sumChildrenTime += (*currentChild)->totalTime();
+        m_selfTime += (*currentChild)->totalTime();
+    ASSERT(m_selfTime <= m_totalTime);
+    m_selfTime = m_totalTime - m_selfTime;
 
-    ASSERT(sumChildrenTime <= m_timeSum);
-
-    return m_timeSum - sumChildrenTime;
-}
-
-double ProfileNode::totalPercent() const
-{
-    return (m_timeSum / Profiler::profiler()->currentProfile()->totalTime()) * 100.0;
-}
-
-double ProfileNode::selfPercent() const
-{
-    return (selfTime() / Profiler::profiler()->currentProfile()->totalTime()) * 100.0;
+    m_totalPercent = (m_totalTime / Profiler::profiler()->currentProfile()->totalTime()) * 100.0;
+    m_selfPercent = (selfTime() / Profiler::profiler()->currentProfile()->totalTime()) * 100.0;
 }
 
 void ProfileNode::printDataInspectorStyle(int indentLevel) const
@@ -127,7 +117,7 @@ void ProfileNode::printDataInspectorStyle(int indentLevel) const
         for (int i = 0; i < indentLevel; ++i)
             printf("  ");
 
-        printf("%.3fms %s\n", m_timeSum, m_functionName.UTF8String().c_str());
+        printf("%d SelfTime %.3fms %.3f%% TotalTime %.3fms%.3f%% FunctionName %s\n", m_numberOfCalls, m_selfTime, selfPercent(), m_totalTime, totalPercent(), m_functionName.UTF8String().c_str());
     } else
         printf("%s\n", m_functionName.UTF8String().c_str());
 
@@ -145,7 +135,7 @@ double ProfileNode::printDataSampleStyle(int indentLevel, FunctionCallHashCount&
 
     // Print function names
     const char* name = m_functionName.UTF8String().c_str();
-    double sampleCount = m_timeSum * 1000;
+    double sampleCount = m_totalTime * 1000;
     if (indentLevel) {
         for (int i = 0; i < indentLevel; ++i)
             printf("  ");
@@ -173,12 +163,12 @@ double ProfileNode::printDataSampleStyle(int indentLevel, FunctionCallHashCount&
         printf("%.0f %s\n", sampleCount - sumOfChildrensCount, m_functionName.UTF8String().c_str());
     }
 
-    return m_timeSum;
+    return m_totalTime;
 }
 
 void ProfileNode::endAndRecordCall()
 {
-    m_timeSum += getCurrentUTCTime() - m_startTime;
+    m_totalTime += getCurrentUTCTime() - m_startTime;
     m_startTime = 0.0;
 
     ++m_numberOfCalls;

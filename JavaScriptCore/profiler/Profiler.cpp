@@ -74,6 +74,7 @@ void Profiler::stopProfiling()
 
     m_currentProfile->stopProfiling();
     m_allProfiles.append(m_currentProfile.release());
+    m_currentProfile = 0;
 }
 
 void Profiler::willExecute(ExecState* exec, JSObject* calledFunction)

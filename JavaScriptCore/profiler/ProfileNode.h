@@ -55,10 +55,10 @@ namespace KJS {
         void stopProfiling();
 
         UString functionName() const { return m_functionName; }
-        double totalTime() const { return m_timeSum; }
-        double selfTime() const;
-        double totalPercent() const;
-        double selfPercent() const;
+        double totalTime() const { return m_totalTime; }
+        double selfTime() const { return m_selfTime;}
+        double totalPercent() const { return m_totalPercent;}
+        double selfPercent() const { return m_selfPercent;}
         unsigned numberOfCalls() const { return m_numberOfCalls; }
         const Deque<RefPtr<ProfileNode> >& children() { return m_children; }
 
@@ -71,8 +71,11 @@ namespace KJS {
         void endAndRecordCall();
     
         UString m_functionName;
-        double m_timeSum;
         double m_startTime;
+        double m_totalTime;
+        double m_selfTime;
+        double m_totalPercent;
+        double m_selfPercent;
         unsigned m_numberOfCalls;
 
         Deque<RefPtr<ProfileNode> > m_children;
