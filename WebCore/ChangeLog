@@ -1,3 +1,14 @@
+2008-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        Add mimeType and textEncodingName to the resource table.
+        
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::openDatabase):
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::ApplicationCacheStorage::loadCache):
+
 2008-05-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.
