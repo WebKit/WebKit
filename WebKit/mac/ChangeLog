@@ -2,6 +2,26 @@
 
         Reviewed by Anders.
 
+        Turn on fast teardown.  I added a preference for using full teardown because 
+        the LEAKS output will be useless without a full teardown.  
+
+        preference for fullteardown
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.m:
+        (-[WebPreferences setFullDocumentTeardownEnabled:]):
+        (-[WebPreferences fullDocumentTeardownEnabled]):
+        * WebView/WebPreferencesPrivate.h:
+        
+        on application quit dispatch unload events and destroy plugins then exit
+        * WebView/WebView.mm:
+        (-[WebView closeWithFastTeardown]):
+        (-[WebView _close]):
+        * WebView/WebViewPrivate.h:
+
+2008-05-15  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Anders.
+
         get the pending frame unload count from WebCore
 
         * WebView/WebFrame.mm:

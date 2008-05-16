@@ -1,6 +1,14 @@
 2008-05-15  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Anders.
+        
+        export a symbol needed for fast teardown
+
+        * WebCore.base.exp:
+
+2008-05-15  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Anders.
 
         Keep track on pending unload event counts
 

@@ -102,6 +102,7 @@
 #import <WebCore/DragData.h>
 #import <WebCore/Editor.h>
 #import <WebCore/ExceptionHandlers.h>
+#import <WebCore/EventHandler.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameTree.h>
@@ -696,10 +697,52 @@ static bool debugWidget = true;
     return NO;
 }
 
+- (void) closeWithFastTeardown 
+{
+    Frame *mainFrame = core([self mainFrame]);
+    BOOL hasUnloadEvent = NO;
+    if (mainFrame && mainFrame->page()) 
+        hasUnloadEvent = mainFrame->page()->pendingUnloadEventCount();
+        
+    if (hasUnloadEvent) {
+        RefPtr<Frame> protect(mainFrame);
+        
+        // dispatch unload Events
+        mainFrame->loader()->stopLoading(true);
+    }
+    
+    pluginDatabaseClientCount--;
+    
+    // Make sure to close both sets of plug-ins databases because plug-ins need an opportunity to clean up files, etc.
+    
+    // Unload the WebView local plug-in database. 
+    if (_private->pluginDatabase) {
+        [_private->pluginDatabase destroyAllPluginInstances];
+        [_private->pluginDatabase close];
+        [_private->pluginDatabase release];
+        _private->pluginDatabase = nil;
+    }
+    
+    // Keep the global plug-in database active until the app terminates to avoid having to reload plug-in bundles.
+    if (!pluginDatabaseClientCount && applicationIsTerminating)
+        [WebPluginDatabase closeSharedDatabase];
+}
+
 - (void)_close
 {
     if (!_private || _private->closed)
         return;
+    
+    WebPreferences *preferences = _private->preferences;
+    BOOL fullDocumentTeardown =  [preferences fullDocumentTeardownEnabled];
+     
+    // To quit the apps fast we skip document teardown.  Two exceptions: 
+    //    1) plugins need to be destroyed and unloaded
+    //    2) unload events need to be called
+    if (applicationIsTerminating && !fullDocumentTeardown) {
+        [self closeWithFastTeardown];
+        return;
+    }
 
     if (Frame* mainFrame = core([self mainFrame]))
         mainFrame->loader()->detachFromParent();
@@ -739,7 +782,6 @@ static bool debugWidget = true;
 
     [WebPreferences _removeReferenceForIdentifier:[self preferencesIdentifier]];
 
-    WebPreferences *preferences = _private->preferences;
     _private->preferences = nil;
     [preferences didRemoveFromWebView];
     [preferences release];

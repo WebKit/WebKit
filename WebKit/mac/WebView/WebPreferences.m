@@ -1014,6 +1014,15 @@ static NSString *classIBCreatorID = nil;
     ++_private->numWebViews;
 }
 
+- (void)setFullDocumentTeardownEnabled:(BOOL)fullDocumentTeardownEnabled
+{
+    [self _setBoolValue:fullDocumentTeardownEnabled forKey:WebKitEnableFullDocumentTeardownPreferenceKey];
+}
+
+- (BOOL)fullDocumentTeardownEnabled
+{
+    return [self _boolValueForKey:WebKitEnableFullDocumentTeardownPreferenceKey];
+}
 @end
 
 @implementation WebPreferences (WebInternal)
