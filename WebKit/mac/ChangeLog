@@ -1,3 +1,18 @@
+2008-05-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        <rdar://problem/5942616> - Need to standardize LocalStorage persistence path
+
+        Took the opportunity to touch up another pref that needs the same standardization.
+        That pref is currently not in use on Mac.
+
+        * WebView/WebPreferences.m:
+        (-[WebPreferences _setFTPDirectoryTemplatePath:]):
+        (-[WebPreferences _localStorageDatabasePath]):
+        (-[WebPreferences _setLocalStorageDatabasePath:]):
+        (-[WebPreferences _ftpDirectoryTemplatePath]):
+
 2008-05-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Alice Liu
