@@ -36,17 +36,11 @@ WebInspector.ElementsPanel = function()
     this.contentElement.id = "elements-content";
     this.contentElement.className = "outline-disclosure";
 
-    function clearNodeHighlight(event)
-    {
-        if (event.target === this)
-            InspectorController.hideDOMNodeHighlight();
-    }
-
     this.treeListElement = document.createElement("ol");
     this.treeListElement.addEventListener("mousedown", this._onmousedown.bind(this), false);
     this.treeListElement.addEventListener("dblclick", this._ondblclick.bind(this), false);
     this.treeListElement.addEventListener("mousemove", this._onmousemove.bind(this), false);
-    this.treeListElement.addEventListener("mouseout", clearNodeHighlight.bind(this.treeListElement), false);
+    this.treeListElement.addEventListener("mouseout", this._onmouseout.bind(this), false);
 
     this.treeOutline = new TreeOutline(this.treeListElement);
     this.treeOutline.panel = this;
@@ -55,7 +49,6 @@ WebInspector.ElementsPanel = function()
 
     this.crumbsElement = document.createElement("div");
     this.crumbsElement.className = "crumbs";
-    this.crumbsElement.addEventListener("mouseout", clearNodeHighlight.bind(this.crumbsElement), false);
 
     this.sidebarPanes = {};
     this.sidebarPanes.styles = new WebInspector.StylesSidebarPane();
@@ -115,7 +108,9 @@ WebInspector.ElementsPanel.prototype = {
     hide: function()
     {
         WebInspector.Panel.prototype.hide.call(this);
-        InspectorController.hideDOMNodeHighlight();
+        this.altKeyDown = false;
+        this.hoveredDOMNode = null;
+        this.forceHoverHighlight = false;
     },
 
     resize: function()
@@ -128,6 +123,10 @@ WebInspector.ElementsPanel.prototype = {
     {
         this.rootDOMNode = null;
         this.focusedDOMNode = null;
+
+        this.altKeyDown = false;
+        this.hoveredDOMNode = null;
+        this.forceHoverHighlight = false;
 
         var inspectedWindow = InspectorController.inspectedWindow();
         if (!inspectedWindow || !inspectedWindow.document)
@@ -217,6 +216,80 @@ WebInspector.ElementsPanel.prototype = {
         var nodeItem = this.revealNode(x);
         if (nodeItem)
             nodeItem.select();
+    },
+
+    get hoveredDOMNode()
+    {
+        return this._hoveredDOMNode;
+    },
+
+    set hoveredDOMNode(x)
+    {
+        if (this._hoveredDOMNode === x)
+            return;
+
+        this._hoveredDOMNode = x;
+
+        if (this._hoveredDOMNode)
+            this._updateHoverHighlightSoon();
+        else
+            this._updateHoverHighlight();
+    },
+
+    get forceHoverHighlight()
+    {
+        return this._forceHoverHighlight;
+    },
+
+    set forceHoverHighlight(x)
+    {
+        if (this._forceHoverHighlight === x)
+            return;
+
+        this._forceHoverHighlight = x;
+
+        if (this._forceHoverHighlight)
+            this._updateHoverHighlightSoon();
+        else
+            this._updateHoverHighlight();
+    },
+
+    get altKeyDown()
+    {
+        return this._altKeyDown;
+    },
+
+    set altKeyDown(x)
+    {
+        if (this._altKeyDown === x)
+            return;
+
+        this._altKeyDown = x;
+
+        if (this._altKeyDown)
+            this._updateHoverHighlightSoon();
+        else
+            this._updateHoverHighlight();
+    },
+
+    _updateHoverHighlightSoon: function()
+    {
+        if ("_updateHoverHighlightTimeout" in this)
+            return;
+        this._updateHoverHighlightTimeout = setTimeout(this._updateHoverHighlight.bind(this), 0);
+    },
+
+    _updateHoverHighlight: function()
+    {
+        if ("_updateHoverHighlightTimeout" in this) {
+            clearTimeout(this._updateHoverHighlightTimeout);
+            delete this._updateHoverHighlightTimeout;
+        }
+
+        if (this._hoveredDOMNode && this.visible && (this._altKeyDown || this.forceHoverHighlight))
+            InspectorController.highlightDOMNode(this._hoveredDOMNode);
+        else
+            InspectorController.hideDOMNodeHighlight();
     },
 
     _focusedNodeChanged: function(forceUpdate)
@@ -331,7 +404,10 @@ WebInspector.ElementsPanel.prototype = {
 
         var mouseOverCrumbFunction = function(event) {
             panel.mouseOverCrumb = true;
-            InspectorController.highlightDOMNode(this.representedObject);
+
+            panel.altKeyDown = event.altKey;
+            panel.hoveredDOMNode = this.representedObject;
+            panel.forceHoverHighlight = this.hasStyleClass("selected");
 
             if ("mouseOutTimeout" in panel) {
                 clearTimeout(panel.mouseOutTimeout);
@@ -341,6 +417,12 @@ WebInspector.ElementsPanel.prototype = {
 
         var mouseOutCrumbFunction = function(event) {
             delete panel.mouseOverCrumb;
+
+            if (event.target === this) {
+                panel.altKeyDown = false;
+                panel.hoveredDOMNode = null;
+                panel.forceHoverHighlight = false;
+            }
 
             if ("mouseOutTimeout" in panel) {
                 clearTimeout(panel.mouseOutTimeout);
@@ -368,7 +450,7 @@ WebInspector.ElementsPanel.prototype = {
             crumb.representedObject = current;
             crumb.addEventListener("mousedown", selectCrumbFunction, false);
             crumb.addEventListener("mouseover", mouseOverCrumbFunction.bind(crumb), false);
-            crumb.addEventListener("mouseout", mouseOutCrumbFunction, false);
+            crumb.addEventListener("mouseout", mouseOutCrumbFunction.bind(crumb), false);
 
             var crumbTitle;
             switch (current.nodeType) {
@@ -738,7 +820,15 @@ WebInspector.ElementsPanel.prototype = {
 
     handleKeyEvent: function(event)
     {
+        if (event.keyIdentifier === "Alt")
+            this.altKeyDown = true;
         this.treeOutline.handleKeyEvent(event);
+    },
+
+    handleKeyUpEvent: function(event)
+    {
+        if (event.keyIdentifier === "Alt")
+            this.altKeyDown = false;
     },
 
     handleCopyEvent: function(event)
@@ -867,8 +957,19 @@ WebInspector.ElementsPanel.prototype = {
         if (!element)
             return;
 
-        InspectorController.highlightDOMNode(element.representedObject);
+        this.altKeyDown = event.altKey;
+        this.hoveredDOMNode = element.representedObject;
+        this.forceHoverHighlight = element.selected;
     },
+
+    _onmouseout: function(event)
+    {
+        if (event.target !== this.treeListElement)
+            return;
+        this.altKeyDown = false;
+        this.hoveredDOMNode = null;
+        this.forceHoverHighlight = false;
+    }
 }
 
 WebInspector.ElementsPanel.prototype.__proto__ = WebInspector.Panel.prototype;

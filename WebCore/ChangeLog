@@ -1,3 +1,15 @@
+2008-05-15  Timothy Hatcher  <timothy@apple.com>
+
+        Changes the Web Inspector node highlight to be less aggressive
+        and only highlight when hovering over the selected node in the DOM
+        tree or breadcrumbs. You can highlight on hover for any node if
+        you hold down the Alt/Option key while hovering.
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/ElementsPanel.js:
+        * page/inspector/inspector.js:
+
 2008-05-15  Stephanie Lewis  <slewis@apple.com>
 
         Fix windows build

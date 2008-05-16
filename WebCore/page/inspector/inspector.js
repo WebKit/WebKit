@@ -237,6 +237,7 @@ WebInspector.loaded = function()
     document.addEventListener("mousedown", this.changeFocus.bind(this), true);
     document.addEventListener("focus", this.changeFocus.bind(this), true);
     document.addEventListener("keydown", this.documentKeyDown.bind(this), true);
+    document.addEventListener("keyup", this.documentKeyUp.bind(this), true);
     document.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
     document.addEventListener("copy", this.documentCopy.bind(this), true);
 
@@ -244,6 +245,7 @@ WebInspector.loaded = function()
 
     var mainPanelsElement = document.getElementById("main-panels");
     mainPanelsElement.handleKeyEvent = this.mainKeyDown.bind(this);
+    mainPanelsElement.handleKeyUpEvent = this.mainKeyUp.bind(this);
     mainPanelsElement.handleCopyEvent = this.mainCopy.bind(this);
 
     this.currentFocusElement = mainPanelsElement;
@@ -361,6 +363,13 @@ WebInspector.documentKeyDown = function(event)
     }
 }
 
+WebInspector.documentKeyUp = function(event)
+{
+    if (!this.currentFocusElement || !this.currentFocusElement.handleKeyUpEvent)
+        return;
+    this.currentFocusElement.handleKeyUpEvent(event);
+}
+
 WebInspector.documentCanCopy = function(event)
 {
     if (!this.currentFocusElement)
@@ -386,6 +395,12 @@ WebInspector.mainKeyDown = function(event)
 {
     if (this.currentPanel && this.currentPanel.handleKeyEvent)
         this.currentPanel.handleKeyEvent(event);
+}
+
+WebInspector.mainKeyUp = function(event)
+{
+    if (this.currentPanel && this.currentPanel.handleKeyUpEvent)
+        this.currentPanel.handleKeyUpEvent(event);
 }
 
 WebInspector.mainCopy = function(event)
