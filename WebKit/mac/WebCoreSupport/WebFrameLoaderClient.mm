@@ -68,7 +68,6 @@
 #import "WebPreferences.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebResourcePrivate.h"
-#import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
@@ -640,8 +639,6 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
 
 void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader* loader)
 {
-    if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:getWebView(m_webFrame.get()) didLoadMainResourceForDataSource:dataSource(loader)];
 }
 
 void WebFrameLoaderClient::revertToProvisionalState(DocumentLoader* loader)
@@ -1454,7 +1451,7 @@ void WebFrameLoaderClient::windowObjectCleared()
             frame->windowScriptObject());
     }
 
-    if ([webView scriptDebugDelegate] || [WebScriptDebugServer listenerCount]) {
+    if ([webView scriptDebugDelegate]) {
         [m_webFrame.get() _detachScriptDebugger];
         [m_webFrame.get() _attachScriptDebugger];
     }

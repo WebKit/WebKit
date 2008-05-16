@@ -1,3 +1,14 @@
+2008-05-16  Timothy Hatcher  <timothy@apple.com>
+
+        Removes WebScriptDebugServer files and related calls. This removes
+        the hooks that Drosera uses for debugging. Now that the Web Inspector
+        has a better debugger, we don't need these anymore.
+
+        Reviewed by Sam Weinig.
+
+        * StringsNotToBeLocalized.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-05-13  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin

@@ -1,3 +1,27 @@
+2008-05-16  Timothy Hatcher  <timothy@apple.com>
+
+        Removes WebScriptDebugServer files and related calls. This removes
+        the hooks that Drosera uses for debugging. Now that the Web Inspector
+        has a better debugger, we don't need these anymore.
+
+        Reviewed by Sam Weinig.
+
+        * DefaultDelegates/WebScriptDebugServer.h: Removed.
+        * DefaultDelegates/WebScriptDebugServer.m: Removed.
+        * DefaultDelegates/WebScriptDebugServerPrivate.h: Removed.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebKit.exp:
+        * WebView/WebScriptDebugDelegate.mm:
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::sourceParsed):
+        (WebScriptDebugger::callEvent):
+        (WebScriptDebugger::atStatement):
+        (WebScriptDebugger::returnEvent):
+        (WebScriptDebugger::exception):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        * WebView/WebViewPrivate.h:
+
 2008-05-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

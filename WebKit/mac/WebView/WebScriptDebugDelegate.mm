@@ -30,7 +30,7 @@
 #import "WebDataSource.h"
 #import "WebDataSourceInternal.h"
 #import "WebFrameInternal.h"
-#import "WebScriptDebugServerPrivate.h"
+#import "WebScriptDebugDelegate.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/ExecState.h>
 #import <JavaScriptCore/JSGlobalObject.h>

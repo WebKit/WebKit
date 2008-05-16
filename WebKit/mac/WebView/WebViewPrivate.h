@@ -180,8 +180,6 @@ typedef enum {
 
 @interface WebView (WebPrivate)
 
-+ (BOOL)_scriptDebuggerEnabled;
-
 - (WebInspector *)inspector;
 
 /*!

@@ -83,7 +83,6 @@
 #import "WebPolicyDelegate.h"
 #import "WebPreferenceKeysPrivate.h"
 #import "WebPreferencesPrivate.h"
-#import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import <CoreFoundation/CFSet.h>
@@ -589,15 +588,6 @@ static bool debugWidget = true;
     [super drawRect:rect];
 }
 #endif
-
-+ (BOOL)_scriptDebuggerEnabled
-{
-#ifdef NDEBUG
-    return [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitScriptDebuggerEnabled"];
-#else
-    return YES; // always enable in debug builds
-#endif
-}
 
 + (NSArray *)_supportedMIMETypes
 {
@@ -1959,10 +1949,6 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     ++WebViewCount;
 
     [self _registerDraggedTypes];
-
-    // initialize WebScriptDebugServer here so listeners can register before any pages are loaded.
-    if ([WebView _scriptDebuggerEnabled])
-        [WebScriptDebugServer sharedScriptDebugServer];
 
     WebPreferences *prefs = [self preferences];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)

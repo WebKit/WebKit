@@ -273,7 +273,6 @@
 "WebKitPDFs-XXXXXX"
 "WebKitPlugInStreamXXXXXX"
 "WebKitPreferences.plist"
-"WebKitScriptDebuggerEnabled"
 "WebLoginWindowDidSwitchFromUserNotification"
 "WebLoginWindowDidSwitchToUserNotification"
 "WebMainResource"
