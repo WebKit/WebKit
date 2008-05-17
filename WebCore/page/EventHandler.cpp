@@ -113,6 +113,7 @@ EventHandler::EventHandler(Frame* frame)
     , m_clickCount(0)
     , m_mouseDownTimestamp(0)
     , m_pendingFrameUnloadEventCount(0)
+    , m_pendingFrameBeforeUnloadEventCount(0)
 #if PLATFORM(MAC)
     , m_mouseDownView(nil)
     , m_sendingEventToSubview(false)
@@ -1908,12 +1909,52 @@ unsigned EventHandler::pendingFrameUnloadEventCount()
     return m_pendingFrameUnloadEventCount;
 }
 
-void EventHandler::setPendingFrameUnloadEventCount(int delta) 
+void EventHandler::addPendingFrameUnloadEventCount() 
 {
-    ASSERT( (delta + (int)m_pendingFrameUnloadEventCount) >= 0 );
-    m_pendingFrameUnloadEventCount += delta;
-    m_frame->page()->setPendingUnloadEventCount(delta);
+    m_pendingFrameUnloadEventCount += 1;
+    m_frame->page()->changePendingUnloadEventCount(1);
+    return; 
+}
+    
+void EventHandler::removePendingFrameUnloadEventCount() 
+{
+    ASSERT( (-1 + (int)m_pendingFrameUnloadEventCount) >= 0 );
+    m_pendingFrameUnloadEventCount -= 1;
+    m_frame->page()->changePendingUnloadEventCount(-1);
+    return; 
+}
+    
+void EventHandler::clearPendingFrameUnloadEventCount() 
+{
+    m_frame->page()->changePendingUnloadEventCount(-((int)m_pendingFrameUnloadEventCount));
+    m_pendingFrameUnloadEventCount = 0;
     return; 
 }
 
+unsigned EventHandler::pendingFrameBeforeUnloadEventCount()
+{
+    return m_pendingFrameBeforeUnloadEventCount;
+}
+
+void EventHandler::addPendingFrameBeforeUnloadEventCount() 
+{
+    m_pendingFrameBeforeUnloadEventCount += 1;
+    m_frame->page()->changePendingBeforeUnloadEventCount(1);
+    return; 
+}
+    
+void EventHandler::removePendingFrameBeforeUnloadEventCount() 
+{
+    ASSERT( (-1 + (int)m_pendingFrameBeforeUnloadEventCount) >= 0 );
+    m_pendingFrameBeforeUnloadEventCount -= 1;
+    m_frame->page()->changePendingBeforeUnloadEventCount(-1);
+    return; 
+}
+
+    void EventHandler::clearPendingFrameBeforeUnloadEventCount() 
+{
+    m_frame->page()->changePendingBeforeUnloadEventCount(-((int)m_pendingFrameBeforeUnloadEventCount));
+    m_pendingFrameBeforeUnloadEventCount = 0;
+    return; 
+}
 }

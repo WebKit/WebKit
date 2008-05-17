@@ -1,3 +1,49 @@
+2008-05-16  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Maciej.
+
+        track onbeforeunlaod event counts. Pretty much identical to unload event tracking.
+        Also rename methods from onunload tracking to be more clear.
+
+        increment/decrement event counts when onunload and onbeforeunload events are added/removed
+        * dom/Document.cpp:
+        (WebCore::Document::removeHTMLWindowEventListener):
+        (WebCore::Document::addWindowEventListener):
+        (WebCore::Document::removeWindowEventListener):
+        (WebCore::Document::addPendingFrameUnloadEventCount):
+        (WebCore::Document::removePendingFrameUnloadEventCount):
+        (WebCore::Document::addPendingFrameBeforeUnloadEventCount):
+        (WebCore::Document::removePendingFrameBeforeUnloadEventCount):
+        * dom/Document.h:
+        
+        clear onunload count after unload events are dispatched
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+
+        track onunload and onbeforeunload event counts for each frame
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::addPendingFrameUnloadEventCount):
+        (WebCore::EventHandler::removePendingFrameUnloadEventCount):
+        (WebCore::EventHandler::clearPendingFrameUnloadEventCount):
+        (WebCore::EventHandler::pendingFrameBeforeUnloadEventCount):
+        (WebCore::EventHandler::addPendingFrameBeforeUnloadEventCount):
+        (WebCore::EventHandler::removePendingFrameBeforeUnloadEventCount):
+        (WebCore::EventHandler::clearPendingFrameBeforeUnloadEventCount):
+        * page/EventHandler.h:
+        
+        clear unbeforeunload count after unbeforeunload events are detached
+        * page/Frame.cpp:
+        (WebCore::Frame::shouldClose):
+
+        track total event count at page level
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::changePendingUnloadEventCount):
+        (WebCore::Page::pendingBeforeUnloadEventCount):
+        (WebCore::Page::changePendingBeforeUnloadEventCount):
+        * page/Page.h:
+
 2008-05-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.

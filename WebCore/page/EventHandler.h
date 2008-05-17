@@ -155,7 +155,13 @@ public:
     void capsLockStateMayHaveChanged();
     
     unsigned pendingFrameUnloadEventCount();
-    void setPendingFrameUnloadEventCount(int delta);
+    void addPendingFrameUnloadEventCount();
+    void removePendingFrameUnloadEventCount();
+    void clearPendingFrameUnloadEventCount();
+    unsigned pendingFrameBeforeUnloadEventCount();
+    void addPendingFrameBeforeUnloadEventCount();
+    void removePendingFrameBeforeUnloadEventCount();
+    void clearPendingFrameBeforeUnloadEventCount();
     
 #if PLATFORM(MAC)
     PassRefPtr<KeyboardEvent> currentKeyboardEvent() const;
@@ -321,6 +327,7 @@ private:
     static unsigned s_accessKeyModifiers;
     
     unsigned m_pendingFrameUnloadEventCount;
+    unsigned m_pendingFrameBeforeUnloadEventCount;
 
 #if PLATFORM(MAC)
     NSView *m_mouseDownView;
