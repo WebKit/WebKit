@@ -67,14 +67,13 @@ string descriptionSuitableForTestResult(IWebFrame* webFrame)
     if (FAILED(webView->mainFrame(&mainFrame)))
         return string();
 
-    if (webFrame == mainFrame)
-        return "main frame";
-
     BSTR frameNameBSTR;
-    if (FAILED(webFrame->name(&frameNameBSTR)))
-        return string();
+    if (FAILED(webFrame->name(&frameNameBSTR)) || BSTRtoString(frameNameBSTR).empty() )
+        return (webFrame == mainFrame) ? "main frame" : string();
 
-    string frameName = "frame \"" + BSTRtoString(frameNameBSTR) + "\"";
+    string frameName = (webFrame == mainFrame) ? "main frame" : "frame";
+    frameName += " \"" + BSTRtoString(frameNameBSTR) + "\""; 
+
     SysFreeString(frameNameBSTR);
 
     return frameName;
@@ -279,6 +278,19 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didFinishDocumentLoadForFrame(
     if (!done && layoutTestController->dumpFrameLoadCallbacks())
         printf("%s - didFinishDocumentLoadForFrame\n",
                 descriptionSuitableForTestResult(frame).c_str());
+    if (!done) {
+        COMPtr<IWebFramePrivate> webFramePrivate;
+        HRESULT hr = frame->QueryInterface(&webFramePrivate);
+        if (FAILED(hr))
+            return hr;
+        unsigned pendingFrameUnloadEvents;
+        hr = webFramePrivate->pendingFrameUnloadEventCount(&pendingFrameUnloadEvents);
+        if (FAILED(hr))
+            return hr;
+        if (pendingFrameUnloadEvents)
+            printf("%s - has %u onunload handler(s)\n",
+                    descriptionSuitableForTestResult(frame).c_str(), pendingFrameUnloadEvents);
+    }
 
     return S_OK;
 }

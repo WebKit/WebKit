@@ -161,6 +161,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE loadType( 
         /* [retval][out] */ WebFrameLoadType* type);
 
+    virtual HRESULT STDMETHODCALLTYPE pendingFrameUnloadEventCount( 
+        /* [retval][out] */ UINT* result);
+
     virtual HRESULT STDMETHODCALLTYPE setInPrintingMode( 
         /* [in] */ BOOL value,
         /* [in] */ HDC printDC);

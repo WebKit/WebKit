@@ -1,3 +1,13 @@
+2008-05-16  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Steve.
+
+        Print out pending unload event count. Also print out main frame name to match Mac.         
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (descriptionSuitableForTestResult):
+        (FrameLoadDelegate::didFinishDocumentLoadForFrame):
+
 2008-05-16  Timothy Hatcher  <timothy@apple.com>
 
         Remove the Drosera project, code and resources since it has been

@@ -57,6 +57,7 @@
 #include <WebCore/DOMImplementation.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Event.h>
+#include <WebCore/EventHandler.h>
 #include <WebCore/FormState.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoadRequest.h>
@@ -780,6 +781,24 @@ HRESULT STDMETHODCALLTYPE WebFrame::loadType(
         return E_FAIL;
 
     *type = (WebFrameLoadType)coreFrame->loader()->loadType();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebFrame::pendingFrameUnloadEventCount( 
+    /* [retval][out] */ UINT* result)
+{
+    if (!result) {
+        ASSERT_NOT_REACHED();
+        return E_POINTER;
+    }
+
+    *result = 0;
+
+    Frame* coreFrame = core(this);
+    if (!coreFrame)
+        return E_FAIL;
+
+    *result = coreFrame->eventHandler()->pendingFrameUnloadEventCount();
     return S_OK;
 }
 

@@ -73,4 +73,6 @@ interface IWebFramePrivate : IUnknown
     HRESULT frameBounds([out, retval] RECT* result);
 
     HRESULT isDescendantOfFrame([in] IWebFrame* ancestor, [out, retval] BOOL* result);
+
+    HRESULT pendingFrameUnloadEventCount([out, retval] UINT* result);
 }
