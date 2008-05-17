@@ -1,3 +1,16 @@
+2008-05-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        Re-factor send() logic a little to make adding cross-site requests easier.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::sameOriginRequest):
+        (WebCore::XMLHttpRequest::loadRequestSynchronously):
+        (WebCore::XMLHttpRequest::loadRequestAsynchronously):
+        * xml/XMLHttpRequest.h:
+
 2008-05-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.

@@ -114,6 +114,11 @@ private:
     void dropProtection();
     void internalAbort();
 
+    void sameOriginRequest(const String& body, ResourceRequest&);
+    
+    void loadRequestSynchronously(ResourceRequest&, ExceptionCode&);
+    void loadRequestAsynchronously(ResourceRequest&);
+
     Document* m_doc;
 
     RefPtr<EventListener> m_onReadyStateChangeListener;

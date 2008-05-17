@@ -418,7 +418,20 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
 
     m_error = false;
 
-    ResourceRequest request(m_url);
+    ResourceRequest request;
+    sameOriginRequest(body, request);
+
+    if (m_async) {
+        loadRequestAsynchronously(request);
+        return;
+    }
+
+    loadRequestSynchronously(request, ec);
+}
+
+void XMLHttpRequest::sameOriginRequest(const String& body, ResourceRequest& request)
+{
+    request.setURL(m_url);
     request.setHTTPMethod(m_method);
 
     if (!body.isNull() && m_method != "GET" && m_method != "HEAD" && (m_url.protocol().lower() == "http" || m_url.protocol().lower() == "https")) {
@@ -446,31 +459,36 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
 
     if (m_requestHeaders.size() > 0)
         request.addHTTPHeaderFields(m_requestHeaders);
+}
 
-    if (!m_async) {
-        Vector<char> data;
-        ResourceError error;
-        ResourceResponse response;
+void XMLHttpRequest::loadRequestSynchronously(ResourceRequest& request, ExceptionCode& ec)
+{
+    ASSERT(!m_async);
+    Vector<char> data;
+    ResourceError error;
+    ResourceResponse response;
 
-        {
-            // avoid deadlock in case the loader wants to use JS on a background thread
-            KJS::JSLock::DropAllLocks dropLocks;
-            if (m_doc->frame())
-                m_identifier = m_doc->frame()->loader()->loadResourceSynchronously(request, error, response, data);
-        }
-
-        m_loader = 0;
-        
-        // No exception for file:/// resources, see <rdar://problem/4962298>.
-        // Also, if we have an HTTP response, then it wasn't a network error in fact.
-        if (error.isNull() || request.url().isLocalFile() || response.httpStatusCode() > 0)
-            processSyncLoadResults(data, response);
-        else
-            ec = XMLHttpRequestException::NETWORK_ERR;
-
-        return;
+    {
+        // avoid deadlock in case the loader wants to use JS on a background thread
+        KJS::JSLock::DropAllLocks dropLocks;
+        if (m_doc->frame())
+            m_identifier = m_doc->frame()->loader()->loadResourceSynchronously(request, error, response, data);
     }
 
+    m_loader = 0;
+    
+    // No exception for file:/// resources, see <rdar://problem/4962298>.
+    // Also, if we have an HTTP response, then it wasn't a network error in fact.
+    if (error.isNull() || request.url().isLocalFile() || response.httpStatusCode() > 0)
+        processSyncLoadResults(data, response);
+    else
+        ec = XMLHttpRequestException::NETWORK_ERR;
+}
+
+
+void XMLHttpRequest::loadRequestAsynchronously(ResourceRequest& request)
+{
+    ASSERT(m_async);
     // SubresourceLoader::create can return null here, for example if we're no longer attached to a page.
     // This is true while running onunload handlers.
     // FIXME: We need to be able to send XMLHttpRequests from onunload, <http://bugs.webkit.org/show_bug.cgi?id=10904>.
