@@ -914,39 +914,4 @@ sub runSafari
     return 1;
 }
 
-sub runDrosera
-{
-    my ($debugger) = @_;
-
-    if (isOSX()) {
-        return system "$FindBin::Bin/gdb-drosera", @ARGV if $debugger;
-
-        my $productDir = productDir();
-        print "Starting Drosera with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
-        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-
-        my $droseraPath = "$productDir/Drosera.app/Contents/MacOS/Drosera";
-        return system $droseraPath, @ARGV;
-    }
-
-    if (isCygwin()) {
-        print "Running Drosera\n";
-        my $script = "run-drosera-nightly.cmd";
-        my $prodDir = productDir();
-        my $result = system "cp", "$FindBin::Bin/$script", $prodDir;
-        return $result if $result;
-
-        my $cwd = getcwd();
-        chdir $prodDir;
-
-        my $debuggerFlag = $debugger ? "/debugger" : "";
-        $result = system "cmd", "/c", "call $script $debuggerFlag";
-        chdir $cwd;
-        return $result;
-    }
-
-    return 1;
-}
-
 1;

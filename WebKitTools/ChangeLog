@@ -1,3 +1,119 @@
+2008-05-16  Timothy Hatcher  <timothy@apple.com>
+
+        Remove the Drosera project, code and resources since it has been
+        replaced with the Web Inspector's debugger. Removes references to
+        Drosera in various scripts and makefiles.
+
+        Rubber-stamped by Mark Rowe.
+
+        * BuildSlaveSupport/build-launcher-app:
+        * Drosera/DebuggerDocument.cpp: Removed.
+        * Drosera/DebuggerDocument.h: Removed.
+        * Drosera/Drosera.icns: Removed.
+        * Drosera/DroseraWin.make: Removed.
+        * Drosera/English.lproj/Debugger.nib/classes.nib: Removed.
+        * Drosera/English.lproj/Debugger.nib/info.nib: Removed.
+        * Drosera/English.lproj/Debugger.nib/keyedobjects.nib: Removed.
+        * Drosera/English.lproj/MainMenu.nib/classes.nib: Removed.
+        * Drosera/English.lproj/MainMenu.nib/info.nib: Removed.
+        * Drosera/English.lproj/MainMenu.nib/keyedobjects.nib: Removed.
+        * Drosera/ForwardingHeaders/wtf/Assertions.h: Removed.
+        * Drosera/ForwardingHeaders/wtf/HashTraits.h: Removed.
+        * Drosera/ForwardingHeaders/wtf/Noncopyable.h: Removed.
+        * Drosera/ForwardingHeaders/wtf/OwnPtr.h: Removed.
+        * Drosera/ForwardingHeaders/wtf/Platform.h: Removed.
+        * Drosera/ForwardingHeaders/wtf/RetainPtr.h: Removed.
+        * Drosera/Images/Drosera.ico: Removed.
+        * Drosera/Images/SourceArrow.png: Removed.
+        * Drosera/Images/SourceArrowBlank.png: Removed.
+        * Drosera/Images/SourceArrowOpen.png: Removed.
+        * Drosera/Images/background_stripe.png: Removed.
+        * Drosera/Images/breakPoint.tif: Removed.
+        * Drosera/Images/breakPointDisabled.tif: Removed.
+        * Drosera/Images/breakpointeditor.png: Removed.
+        * Drosera/Images/close.tif: Removed.
+        * Drosera/Images/close_active.tif: Removed.
+        * Drosera/Images/close_hover.tif: Removed.
+        * Drosera/Images/console.png: Removed.
+        * Drosera/Images/continue.tif: Removed.
+        * Drosera/Images/fileIcon.jpg: Removed.
+        * Drosera/Images/finishFunction.tif: Removed.
+        * Drosera/Images/glossyFooterFill.tif: Removed.
+        * Drosera/Images/glossyHeader.png: Removed.
+        * Drosera/Images/glossyHeaderPressed.png: Removed.
+        * Drosera/Images/gradientBackground.png: Removed.
+        * Drosera/Images/gutter.png: Removed.
+        * Drosera/Images/navLeftDisabled.png: Removed.
+        * Drosera/Images/navLeftNormal.png: Removed.
+        * Drosera/Images/navLeftPressed.png: Removed.
+        * Drosera/Images/navRightDisabled.png: Removed.
+        * Drosera/Images/navRightNormal.png: Removed.
+        * Drosera/Images/navRightPressed.png: Removed.
+        * Drosera/Images/pause.tif: Removed.
+        * Drosera/Images/popUpArrows.png: Removed.
+        * Drosera/Images/programCounter.tif: Removed.
+        * Drosera/Images/programCounterBreakPoint.tif: Removed.
+        * Drosera/Images/programCounterBreakPointDisabled.tif: Removed.
+        * Drosera/Images/run.tif: Removed.
+        * Drosera/Images/siteCollapsed.tif: Removed.
+        * Drosera/Images/siteExpanded.tif: Removed.
+        * Drosera/Images/siteIcon.tif: Removed.
+        * Drosera/Images/small.ico: Removed.
+        * Drosera/Images/splitterBar.tif: Removed.
+        * Drosera/Images/splitterDimple.tif: Removed.
+        * Drosera/Images/step.tif: Removed.
+        * Drosera/Images/stepOut.tif: Removed.
+        * Drosera/Images/stepOver.tif: Removed.
+        * Drosera/Images/stop.tif: Removed.
+        * Drosera/Images/toolbarBackground.png: Removed.
+        * Drosera/Images/verticalSplitterBar.tiff: Removed.
+        * Drosera/Images/verticalSplitterDimple.tiff: Removed.
+        * Drosera/Makefile: Removed.
+        * Drosera/breakpointEditor.html: Removed.
+        * Drosera/config.h: Removed.
+        * Drosera/console.css: Removed.
+        * Drosera/console.html: Removed.
+        * Drosera/console.js: Removed.
+        * Drosera/debugger.css: Removed.
+        * Drosera/debugger.html: Removed.
+        * Drosera/debugger.js: Removed.
+        * Drosera/mac/DebuggerApplication.h: Removed.
+        * Drosera/mac/DebuggerApplication.mm: Removed.
+        * Drosera/mac/DebuggerClient.h: Removed.
+        * Drosera/mac/DebuggerClient.mm: Removed.
+        * Drosera/mac/DebuggerDocumentPlatform.mm: Removed.
+        * Drosera/mac/Drosera.xcodeproj/project.pbxproj: Removed.
+        * Drosera/mac/Info.plist: Removed.
+        * Drosera/mac/LauncherInfo.plist: Removed.
+        * Drosera/mac/Makefile: Removed.
+        * Drosera/mac/ServerConnection.h: Removed.
+        * Drosera/mac/ServerConnection.mm: Removed.
+        * Drosera/mac/launcher.m: Removed.
+        * Drosera/mac/main.m: Removed.
+        * Drosera/viewer.css: Removed.
+        * Drosera/viewer.html: Removed.
+        * Drosera/win/BaseDelegate.h: Removed.
+        * Drosera/win/DebuggerClient.cpp: Removed.
+        * Drosera/win/DebuggerClient.h: Removed.
+        * Drosera/win/DebuggerDocumentPlatform.cpp: Removed.
+        * Drosera/win/Drosera.cpp: Removed.
+        * Drosera/win/Drosera.h: Removed.
+        * Drosera/win/Drosera.vcproj/Drosera.rc: Removed.
+        * Drosera/win/Drosera.vcproj/Drosera.vcproj: Removed.
+        * Drosera/win/DroseraPrefix.cpp: Removed.
+        * Drosera/win/DroseraPrefix.h: Removed.
+        * Drosera/win/Info.plist: Removed.
+        * Drosera/win/ServerConnection.cpp: Removed.
+        * Drosera/win/ServerConnection.h: Removed.
+        * Drosera/win/resource.h: Removed.
+        * Makefile:
+        * Scripts/build-drosera: Removed.
+        * Scripts/gdb-drosera: Removed.
+        * Scripts/run-drosera: Removed.
+        * Scripts/run-drosera-nightly.cmd: Removed.
+        * Scripts/run-drosera.cmd: Removed.
+        * Scripts/webkitdirs.pm:
+
 2008-05-15  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Anders.
