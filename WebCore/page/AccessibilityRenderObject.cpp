@@ -291,6 +291,19 @@ bool AccessibilityRenderObject::isMultiSelect() const
 bool AccessibilityRenderObject::isReadOnly() const
 {
     ASSERT(m_renderer);
+    
+    if (isWebArea()) {
+        Document* document = m_renderer->document();
+        if (!document)
+            return true;
+        
+        Frame* frame = document->frame();
+        if (!frame)
+            return true;
+        
+        return !frame->isContentEditable();
+    }
+
     return !m_renderer->node() || !m_renderer->node()->isContentEditable();
 }
 
@@ -1852,6 +1865,9 @@ bool AccessibilityRenderObject::canSetFocusAttribute() const
 
 bool AccessibilityRenderObject::canSetValueAttribute() const
 {
+    if (isWebArea()) 
+        return !isReadOnly();
+
     return isTextControl() || isProgressIndicator();
 }
 

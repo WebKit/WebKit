@@ -1,3 +1,13 @@
+2008-05-16  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Jon Honeycutt
+
+        <rdar://problem/5582483> Mail compose area needs to allow AXValue to be settable
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isReadOnly):
+        (WebCore::AccessibilityRenderObject::canSetValueAttribute):
+
 2008-05-16  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Maciej.
