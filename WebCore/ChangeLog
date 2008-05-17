@@ -1,5 +1,17 @@
 2008-05-16  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mitz.
+
+        <rdar://problem/5787788>
+        REGRESSION: fast/loader/xmlhttprequest-missing-file-exception.html fails on Windows.
+        
+        Replicate the Mac behavior when a sync load fails.
+        
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
+2008-05-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Brady.
 
         Parse and set the headers on the response.

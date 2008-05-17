@@ -1,3 +1,14 @@
+2008-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/5787788>
+        REGRESSION: fast/loader/xmlhttprequest-missing-file-exception.html fails on Windows.
+
+        Remove test from skipped list.
+        
+        * platform/win/Skipped:
+
 2008-05-15  Anders Carlsson  <andersca@apple.com>
 
         Update test results now that navigator.onLine exists.

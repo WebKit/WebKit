@@ -329,9 +329,6 @@ storage/quota-tracking.html
 storage/sql-data-types.html
 storage/success-callback.html
 
-# <rdar://problem/5787788> REGRESSION: fast/loader/xmlhttprequest-missing-file-exception.html fails on Windows
-fast/loader/xmlhttprequest-missing-file-exception.html
-
 # <rdar://problem/5787793> REGRESSION: svg/custom/acid3-test-77.html fails on windows 
 svg/custom/acid3-test-77.html
 

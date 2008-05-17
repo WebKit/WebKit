@@ -381,13 +381,17 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
 
     CFDataRef data = CFURLConnectionSendSynchronousRequest(cfRequest.get(), &cfResponse, &cfError, request.timeoutInterval());
 
-    response = cfResponse;
-    if (cfResponse)
-        CFRelease(cfResponse);
-
-    error = cfError;
-    if (cfError)
+    if (cfError) {
+        error = cfError;
         CFRelease(cfError);
+
+        response = ResourceResponse(request.url(), String(), 0, String(), String());
+        response.setHTTPStatusCode(404);
+    } else {
+        response = cfResponse;
+        if (cfResponse)
+            CFRelease(cfResponse);
+    }
 
     if (data) {
         ASSERT(vector.isEmpty());
