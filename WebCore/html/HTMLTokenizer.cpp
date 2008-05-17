@@ -1954,11 +1954,9 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
 
     ASSERT(!pendingScripts.isEmpty());
 
-    // Make scripts loaded from file URLs wait for stylesheets to match Tiger behavior where
-    // file loads were serialized in lower level.
-    // FIXME: this should really be done for all script loads or the same effect should be achieved by other
-    // means, like javascript suspend/resume
-    m_hasScriptsWaitingForStylesheets = !m_doc->haveStylesheetsLoaded() && protocolIs(pendingScripts.head()->url(), "file");
+    // Make external scripts wait for external stylesheets.
+    // FIXME: This needs to be done for inline scripts too.
+    m_hasScriptsWaitingForStylesheets = !m_doc->haveStylesheetsLoaded();
     if (m_hasScriptsWaitingForStylesheets)
         return;
 

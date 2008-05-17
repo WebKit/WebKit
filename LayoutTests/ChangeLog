@@ -1,3 +1,13 @@
+2008-05-16  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Anders.
+        
+        Test for <rdar://problem/5934400> 
+        Movie controller does not update on first load of http://www.apple.com/getamac/ads/
+
+        * http/tests/local/stylesheet-and-script-load-order-http-expected.txt: Added.
+        * http/tests/local/stylesheet-and-script-load-order-http.html: Added.
+
 2008-05-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.
