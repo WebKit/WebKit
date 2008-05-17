@@ -1,3 +1,21 @@
+2008-05-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Steve Falkenburg
+        
+        <rdar://problem/5942624> - Get LocalStorage persistence working on Windows
+        
+        * WebPreferenceKeysPrivate.h: Add the LocalStorageDirectory defaults key
+        
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::localStorageDatabasePath):
+        (WebPreferences::setLocalStorageDatabasePath):
+        * WebPreferences.h:
+        * Interfaces/IWebPreferencesPrivate.idl:
+
+        * WebView.cpp:
+        (WebView::initWithFrame): Set the path in the WebCore::Settings after new Page creation
+
 2008-05-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher

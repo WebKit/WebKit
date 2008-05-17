@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -301,6 +301,12 @@ public:
         
     virtual HRESULT STDMETHODCALLTYPE offlineWebApplicationCacheEnabled( 
         /* [retval][out] */ BOOL *enabled);
+
+    virtual HRESULT STDMETHODCALLTYPE localStorageDatabasePath(
+        /* [out, retval] */ BSTR* location);
+
+    virtual HRESULT STDMETHODCALLTYPE setLocalStorageDatabasePath(
+        /* [in] */ BSTR location);
 
     // WebPreferences
 

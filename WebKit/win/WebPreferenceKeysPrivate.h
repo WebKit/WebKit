@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +59,7 @@
 #define WebKitIconDatabaseEnabledPreferenceKey "WebKitIconDatabaseEnabled"
 #define WebKitUsesPageCachePreferenceKey "WebKitUsesPageCachePreferenceKey"
 #define WebKitCacheModelPreferenceKey "WebKitCacheModelPreferenceKey"
+#define WebKitLocalStorageDatabasePathPreferenceKey "WebKitLocalStorageDatabasePath"
 
 // These are private both because callers should be using the cover methods and because the
 // cover methods themselves are private.

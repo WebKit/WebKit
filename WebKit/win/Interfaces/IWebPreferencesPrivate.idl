@@ -54,4 +54,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setOfflineWebApplicationCacheEnabled([in] BOOL enabled);
     HRESULT offlineWebApplicationCacheEnabled([out, retval] BOOL *enabled);
+
+    HRESULT localStorageDatabasePath([out, retval] BSTR* location);
+    HRESULT setLocalStorageDatabasePath([in] BSTR location);
 }
