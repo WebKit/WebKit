@@ -1,3 +1,11 @@
+2008-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Copy appcache headers.
+        
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-05-16  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Anders.
