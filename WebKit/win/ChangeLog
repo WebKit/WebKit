@@ -1,3 +1,11 @@
+2008-05-16  Matt Lilek  <webkit@mattlilek.com>
+
+        Rubber stamped by Oliver.
+
+        Remove the Drosera sub-project.
+
+        * WebKit.vcproj/WebKit.sln:
+
 2008-05-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Steve Falkenburg
