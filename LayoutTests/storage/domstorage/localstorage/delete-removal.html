@@ -1,0 +1,43 @@
+<html>
+<head>
+<script src="resources/clearLocalStorage.js"></script>
+<script>
+
+if (layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(a)
+{
+    document.getElementById('logger').appendChild(document.createTextNode(a));
+    document.getElementById('logger').appendChild(document.createElement("br"));
+}
+
+function runTest()
+{
+    if (!window.localStorage) {
+        log("window.localStorage DOES NOT exist");
+        return;
+    }
+    
+    log("foo is: " + localStorage.foo);
+    localStorage.foo = "bar";
+    log("foo is: " + localStorage.foo);
+    delete localStorage.foo;
+    log("foo is: " + localStorage.foo);
+    localStorage["foo"] = "bar";
+    log("foo is: " + localStorage.foo);
+    delete localStorage.foo;
+    log("foo is: " + localStorage.foo);
+    localStorage.setItem("foo", "bar");
+    log("foo is: " + localStorage.foo);
+    delete localStorage.foo;
+    log("foo is: " + localStorage.foo);
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This test makes sure that using the syntax `delete localStorage.keyName` works as an alias to `localStorage.removeItem(keyName).`<br><hr>
+<div id="logger"></div>
+</body>
+</html>

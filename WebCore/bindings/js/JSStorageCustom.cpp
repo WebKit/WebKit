@@ -47,6 +47,23 @@ JSValue* JSStorage::nameGetter(ExecState* exec, JSObject* originalObject, const 
     return jsStringOrNull(thisObj->impl()->getItem(propertyName));
 }
 
+bool JSStorage::deleteProperty(ExecState* exec, const Identifier& propertyName)
+{
+    // Only perform the custom delete if the object doesn't have a native property by this name.
+    // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
+    // the native property slots manually.
+    PropertySlot slot;
+    if (getStaticValueSlot<JSStorage, Base>(exec, s_info.propHashTable(exec), this, propertyName, slot))
+        return false;
+        
+    JSValue* prototype = this->prototype();
+    if (prototype->isObject() && static_cast<JSObject*>(prototype)->hasProperty(exec, propertyName))
+        return false;
+
+    m_impl->removeItem(propertyName);
+    return true;
+}
+
 bool JSStorage::customGetPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
     ExceptionCode ec;

@@ -1,3 +1,15 @@
+2008-05-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19111
+        Allow `delete storage.itemName` syntax as an alias for `storage.removeItem("itemName")`
+
+        * storage/domstorage/localstorage/delete-removal-expected.txt: Added.
+        * storage/domstorage/localstorage/delete-removal.html: Added.
+        * storage/domstorage/sessionstorage/delete-removal-expected.txt: Added.
+        * storage/domstorage/sessionstorage/delete-removal.html: Added.
+
 2008-05-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

@@ -1,3 +1,17 @@
+2008-05-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19111
+        Allow `delete storage.itemName` syntax as an alias for `storage.removeItem("itemName")`
+
+        Tests: storage/domstorage/localstorage/delete-removal.html
+               storage/domstorage/sessionstorage/delete-removal.html
+
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::deleteProperty): Only do the delete for non-built in properties
+        * storage/Storage.idl:
+
 2008-05-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

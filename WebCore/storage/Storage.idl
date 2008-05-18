@@ -28,6 +28,7 @@ module storage {
     interface [
         GenerateConstructor,
         HasNameGetter,
+        CustomDeleteProperty,
         CustomGetPropertyNames,
         CustomPutFunction
     ] Storage {

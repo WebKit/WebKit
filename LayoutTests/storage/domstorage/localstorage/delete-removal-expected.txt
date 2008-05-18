@@ -1,0 +1,9 @@
+This test makes sure that using the syntax `delete localStorage.keyName` works as an alias to `localStorage.removeItem(keyName).`
+foo is: undefined
+foo is: bar
+foo is: undefined
+foo is: bar
+foo is: undefined
+foo is: bar
+foo is: undefined
+
