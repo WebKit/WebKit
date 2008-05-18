@@ -428,23 +428,21 @@ void XMLHttpRequest::sameOriginRequest(const String& body, ResourceRequest& requ
     request.setURL(m_url);
     request.setHTTPMethod(m_method);
 
-    if (!body.isNull() && m_method != "GET" && m_method != "HEAD" && (m_url.protocol().lower() == "http" || m_url.protocol().lower() == "https")) {
+    if (!body.isNull() && m_method != "GET" && m_method != "HEAD" && (m_url.protocolIs("http") || m_url.protocolIs("https"))) {
         String contentType = getRequestHeader("Content-Type");
         if (contentType.isEmpty()) {
-            ExceptionCode ec = 0;
 #if ENABLE(DASHBOARD_SUPPORT)
             Settings* settings = m_doc->settings();
             if (settings && settings->usesDashboardBackwardCompatibilityMode())
-                setRequestHeader("Content-Type", "application/x-www-form-urlencoded", ec);
+                setRequestHeaderInternal("Content-Type", "application/x-www-form-urlencoded");
             else
 #endif
-                setRequestHeader("Content-Type", "application/xml", ec);
-            ASSERT(ec == 0);
+                setRequestHeaderInternal("Content-Type", "application/xml");
         }
 
         // FIXME: must use xmlEncoding for documents.
         String charset = "UTF-8";
-      
+
         TextEncoding encoding(charset);
         if (!encoding.isValid()) // FIXME: report an error?
             encoding = UTF8Encoding();
@@ -633,6 +631,11 @@ void XMLHttpRequest::setRequestHeader(const String& name, const String& value, E
         return;
     }
 
+    setRequestHeaderInternal(name, value);
+}
+
+void XMLHttpRequest::setRequestHeaderInternal(const String& name, const String& value)
+{
     if (!m_requestHeaders.contains(name)) {
         m_requestHeaders.set(name, value);
         return;
