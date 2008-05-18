@@ -122,9 +122,9 @@
 
     NSString *host;
     if ([space port] == 0) {
-        host = [space host];
+        host = [[space host] _web_decodeHostName];
     } else {
-        host = [NSString stringWithFormat:@"%@:%u", [space host], [space port]];
+        host = [NSString stringWithFormat:@"%@:%u", [[space host] _web_decodeHostName], [space port]];
     }
 
     NSString *realm = [space realm];

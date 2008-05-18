@@ -1,3 +1,12 @@
+2008-05-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/5944596> IDNs are displayed as punycode in the authentication panel
+
+        * Panels/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel setUpForChallenge:]):
+
 2008-05-16  Timothy Hatcher  <timothy@apple.com>
 
         Removes WebScriptDebugServer files and related calls. This removes
