@@ -54,6 +54,9 @@ bool ResourceErrorBase::compare(const ResourceError& a, const ResourceError& b)
     if (a.localizedDescription() != b.localizedDescription())
         return false;
 
+    if (a.isCancellation() != b.isCancellation())
+        return false;
+
     return platformCompare(a, b);
 }
 

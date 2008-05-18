@@ -44,7 +44,8 @@ namespace WebCore {
         static const int XMLHttpRequestExceptionMax = 699;
 
         enum XMLHttpRequestExceptionCode {
-            NETWORK_ERR = XMLHttpRequestExceptionOffset + 101
+            NETWORK_ERR = XMLHttpRequestExceptionOffset + 101,
+            ABORT_ERR
         };
     };
 

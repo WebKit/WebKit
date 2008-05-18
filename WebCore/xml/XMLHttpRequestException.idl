@@ -43,6 +43,7 @@ module xml {
 
         // XMLHttpRequestExceptionCode
         const unsigned short NETWORK_ERR = 101;
+        const unsigned short ABORT_ERR = 102;
     };
 
 }

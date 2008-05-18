@@ -3827,7 +3827,7 @@ void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& i
     dispatchWillSendRequest(m_documentLoader.get(), identifier, newRequest, ResourceResponse());
 
     if (newRequest.isNull())
-        error = m_client->cancelledError(request);
+        error = cancelledError(request);
     else
         error = ResourceError();
 
@@ -4619,7 +4619,9 @@ void FrameLoader::mainReceivedError(const ResourceError& error, bool isComplete)
 
 ResourceError FrameLoader::cancelledError(const ResourceRequest& request) const
 {
-    return m_client->cancelledError(request);
+    ResourceError error = m_client->cancelledError(request);
+    error.setIsCancellation(true);
+    return error;
 }
 
 ResourceError FrameLoader::blockedError(const ResourceRequest& request) const

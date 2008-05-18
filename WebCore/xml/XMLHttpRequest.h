@@ -113,11 +113,16 @@ private:
     void callReadyStateChangeListener();
     void dropProtection();
     void internalAbort();
+    void clearResponseEntityBody();
 
     void sameOriginRequest(const String& body, ResourceRequest&);
-    
+
     void loadRequestSynchronously(ResourceRequest&, ExceptionCode&);
     void loadRequestAsynchronously(ResourceRequest&);
+
+    void genericError();
+    void networkError();
+    void abortError();
 
     Document* m_doc;
 

@@ -1,3 +1,11 @@
+2008-05-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Update expected results for new ABORT_ERR.
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-05-16  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Anders.
