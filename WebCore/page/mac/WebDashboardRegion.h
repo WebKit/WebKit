@@ -23,9 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <wtf/Platform.h>
+#if !defined(ENABLE_DASHBOARD_SUPPORT)
+#define ENABLE_DASHBOARD_SUPPORT 1
+#endif
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE_DASHBOARD_SUPPORT
 
 typedef enum {
     WebDashboardRegionTypeNone,

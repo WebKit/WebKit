@@ -1,3 +1,13 @@
+2008-05-17  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Including wtf/Platform.h or using any of the macros it defines in headers that may be
+        included from outside of the WebKit project causes any project using those headers to
+        fail to build.
+
+        * page/mac/WebDashboardRegion.h:
+
 2008-05-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.
