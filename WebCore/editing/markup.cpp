@@ -883,7 +883,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     if (annotate && fullySelectedRoot)
         specialCommonAncestor = fullySelectedRoot;
         
-    if (specialCommonAncestor) {
+    if (specialCommonAncestor && lastClosed) {
         // Also include all of the ancestors of lastClosed up to this special ancestor.
         for (Node* ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
             if (ancestor == fullySelectedRoot && !convertBlocksToInlines) {

@@ -1,3 +1,12 @@
+2008-05-19  Kuchhal  <kuchal@yahoo.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/5863412> Crash when Ctrl C is pressed after a series of specific mouse events (18506)
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Null check.
+
 2008-05-19  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
