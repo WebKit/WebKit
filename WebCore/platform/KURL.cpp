@@ -936,10 +936,8 @@ static inline bool matchLetter(char c, char lowercaseLetter)
 
 void KURL::parse(const String& string)
 {
-    // FIXME: This throws away the high bytes of all the characters in the string!
-    CharBuffer buffer(string.length() + 1);
-    copyASCII(string.characters(), string.length(), buffer.data());
-    buffer[string.length()] = '\0';
+    CharBuffer buffer;
+    encodeRelativeString(string, UTF8Encoding(), buffer);
     parse(buffer.data(), &string);
 }
 
@@ -1460,11 +1458,10 @@ static void encodeRelativeString(const String& rel, const TextEncoding& encoding
     UCharBuffer s;
     encodeHostnames(rel, s);
 
-    TextEncoding pathEncoding(UTF8Encoding());
-    TextEncoding otherEncoding = (encoding.isValid() && !protocolIs(rel, "mailto")) ? encoding : UTF8Encoding();
+    TextEncoding pathEncoding(UTF8Encoding()); // Path is always encoded as UTF-8; other parts may depend on the scheme.
 
     int pathEnd = -1;
-    if (pathEncoding != otherEncoding) {
+    if (encoding != pathEncoding && encoding.isValid() && !protocolIs(rel, "mailto") && !protocolIs(rel, "data")) {
         // Find the first instance of either # or ?, keep pathEnd at -1 otherwise.
         pathEnd = findFirstOf(s.data(), s.size(), 0, "#?");
     }
@@ -1477,7 +1474,7 @@ static void encodeRelativeString(const String& rel, const TextEncoding& encoding
         CString pathDecoded = pathEncoding.encode(s.data(), pathEnd, URLEncodedEntitiesForUnencodables);
         // Unencodable characters in URLs are represented by converting
         // them to XML entities and escaping non-alphanumeric characters.
-        CString otherDecoded = otherEncoding.encode(s.data() + pathEnd, s.size() - pathEnd, URLEncodedEntitiesForUnencodables);
+        CString otherDecoded = encoding.encode(s.data() + pathEnd, s.size() - pathEnd, URLEncodedEntitiesForUnencodables);
 
         output.resize(pathDecoded.length() + otherDecoded.length());
         memcpy(output.data(), pathDecoded.data(), pathDecoded.length());

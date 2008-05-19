@@ -2,6 +2,28 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=18308
+        SVG Encoding error with fill attribute
+
+        This is caused by problems with data: URL loading. Besides what is fixed by this patch,
+        I filed <rdar://problem/5845875> for CFNetwork.
+
+        While at it, fixed a related javascript: URL issue.
+
+        Tests: fast/loader/data-url-encoding-html.html
+               fast/loader/data-url-encoding-svg.html
+               fast/loader/javascript-url-encoding.html
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::parse): Fix a FIXME, use UTF-8 instead of dropping high bytes. This fixes
+        javascript: URL handling.
+        (WebCore::encodeRelativeString): Like mailto: URLs, data: ones are all UTF-8. Restructured
+        the code to not search for "#" if both parts are to be encoded as UTF-8 anyway.
+
+2008-05-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         https://bugs.webkit.org/show_bug.cgi?id=18421
         <rdar://problem/5857369> XMLHttpRequest does not properly encode & and < in outgoing messages
 

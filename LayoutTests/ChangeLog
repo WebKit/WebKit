@@ -2,6 +2,20 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=18308
+        SVG Encoding error with fill attribute
+
+        * fast/loader/data-url-encoding-html-expected.txt: Added.
+        * fast/loader/data-url-encoding-html.html: Added.
+        * fast/loader/data-url-encoding-svg-expected.txt: Added.
+        * fast/loader/data-url-encoding-svg.html: Added.
+        * fast/loader/javascript-url-encoding-expected.txt: Added.
+        * fast/loader/javascript-url-encoding.html: Added.
+
+2008-05-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         https://bugs.webkit.org/show_bug.cgi?id=18421
         <rdar://problem/5857369> XMLHttpRequest does not properly encode & and < in outgoing messages
 
