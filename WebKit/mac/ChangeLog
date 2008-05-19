@@ -1,3 +1,18 @@
+2008-05-19  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Darin.
+    
+        more fast teardown performance work
+
+        * Misc/WebDownload.m:
+        (-[WebDownloadInternal downloadDidBegin:]):
+        (-[WebDownloadInternal downloadDidFinish:]):
+        (-[WebDownloadInternal download:didFailWithError:]):
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::disableSuddenTermination):
+        (WebChromeClient::enableSuddenTermination):
+
 2008-05-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

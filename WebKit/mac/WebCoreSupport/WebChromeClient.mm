@@ -29,6 +29,7 @@
 
 #import "WebChromeClient.h"
 
+#import <Foundation/Foundation.h>
 #import "WebDefaultUIDelegate.h"
 #import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
@@ -36,6 +37,7 @@
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryInternal.h"
 #import "WebKitSystemInterface.h"
+#import "WebKitPrefix.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebPlugin.h"
 #import "WebSecurityOriginInternal.h"
@@ -555,6 +557,20 @@ bool WebChromeClient::shouldReplaceWithGeneratedFileForUpload(const String& path
 String WebChromeClient::generateReplacementFile(const String& path)
 {
     return [[m_webView _UIDelegateForwarder] webView:m_webView generateReplacementFile:path];
+}
+
+void WebChromeClient::disableSuddenTermination()
+{
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    [[NSProcessInfo processInfo] disableSuddenTermination];
+#endif
+}
+
+void WebChromeClient::enableSuddenTermination()
+{
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    [[NSProcessInfo processInfo] enableSuddenTermination];
+#endif
 }
 
 @implementation WebOpenPanelResultListener

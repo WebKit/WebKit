@@ -1,3 +1,20 @@
+2008-05-19  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Darin.
+
+        more fast teardown performance work, WebCore plumbing
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::disableSuddenTermination):
+        (WebCore::Chrome::enableSuddenTermination):
+        (WebCore::ChromeClient::disableSuddenTermination):
+        (WebCore::ChromeClient::enableSuddenTermination):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/Page.cpp:
+        (WebCore::Page::changePendingUnloadEventCount):
+        (WebCore::Page::changePendingBeforeUnloadEventCount):
+
 2008-05-19  Kuchhal  <kuchal@yahoo.com>
 
         Reviewed by Justin.

@@ -530,7 +530,15 @@ unsigned Page::pendingUnloadEventCount()
     
 void Page::changePendingUnloadEventCount(int delta) 
 {
+    if (!delta)
+        return;
     ASSERT( (delta + (int)m_pendingUnloadEventCount) >= 0 );
+    
+    if (m_pendingUnloadEventCount == 0)
+        m_chrome->disableSuddenTermination();
+    else if ((m_pendingUnloadEventCount + delta) == 0)
+        m_chrome->enableSuddenTermination();
+    
     m_pendingUnloadEventCount += delta;
     return; 
 }
@@ -542,7 +550,15 @@ unsigned Page::pendingBeforeUnloadEventCount()
     
 void Page::changePendingBeforeUnloadEventCount(int delta) 
 {
+    if (!delta)
+        return;
     ASSERT( (delta + (int)m_pendingBeforeUnloadEventCount) >= 0 );
+    
+    if (m_pendingBeforeUnloadEventCount == 0)
+        m_chrome->disableSuddenTermination();
+    else if ((m_pendingBeforeUnloadEventCount + delta) == 0)
+        m_chrome->enableSuddenTermination();
+    
     m_pendingBeforeUnloadEventCount += delta;
     return; 
 }

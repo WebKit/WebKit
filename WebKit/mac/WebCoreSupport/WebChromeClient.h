@@ -126,6 +126,9 @@ public:
     virtual bool shouldReplaceWithGeneratedFileForUpload(const WebCore::String& path, WebCore::String &generatedFilename);
     virtual WebCore::String generateReplacementFile(const WebCore::String& path);
 
+    virtual void enableSuddenTermination();
+    virtual void disableSuddenTermination();
+
 private:
     WebView *m_webView;
 };

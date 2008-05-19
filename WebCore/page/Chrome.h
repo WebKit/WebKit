@@ -108,7 +108,10 @@ namespace WebCore {
         void setToolTip(const HitTestResult&);
 
         void print(Frame*);
-        
+
+        void enableSuddenTermination();
+        void disableSuddenTermination();
+
 #if PLATFORM(MAC)
         void focusNSView(NSView*);
 #endif

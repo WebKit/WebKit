@@ -347,6 +347,16 @@ void Chrome::print(Frame* frame)
     m_client->print(frame);
 }
 
+void Chrome::disableSuddenTermination()
+{
+    m_client->disableSuddenTermination();
+}
+
+void Chrome::enableSuddenTermination()
+{
+    m_client->enableSuddenTermination();
+}
+
 // --------
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -377,6 +387,14 @@ String ChromeClient::generateReplacementFile(const String&)
 {
     ASSERT_NOT_REACHED();
     return String(); 
+}
+
+void ChromeClient::disableSuddenTermination()
+{
+}
+
+void ChromeClient::enableSuddenTermination()
+{
 }
 
 // --------
