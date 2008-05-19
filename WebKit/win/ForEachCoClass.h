@@ -56,6 +56,7 @@
     macro(WebView) \
     macro(WebArchive) \
     macro(WebCoreStatistics) \
+    macro(WebCookieManager) \
     // end of macro
 
 // Everything below this point is deprecated. Please do not use.

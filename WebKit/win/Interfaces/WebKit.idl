@@ -68,6 +68,7 @@ import "ocidl.idl";
 #include "IWebBackForwardList.idl"
 #include "IWebBackForwardListPrivate.idl"
 #include "IWebCache.idl"
+#include "IWebCookieManager.idl"
 #include "IWebCoreStatistics.idl"
 #include "IWebDataSource.idl"
 #include "IWebDatabaseManager.idl"
@@ -453,5 +454,14 @@ library OpenSourceWebKit
 #endif
     coclass WebCoreStatistics{
         [default] interface IWebCoreStatistics;
+    }
+
+#if __PRODUCTION__
+    [uuid(3F35F332-BB2B-49b3-AEDD-27B317687E07)]
+#else
+    [uuid(38A38A69-E8C7-480b-9AD3-CB75F7ADDF46)]
+#endif
+    coclass WebCookieManager{
+        [default] interface IWebCookieManager;
     }
 }

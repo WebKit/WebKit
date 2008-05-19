@@ -1,3 +1,25 @@
+2008-05-19  Ada Chan  <adachan@apple.com>
+
+        Added CookieStorageWin.h/cpp, introducing methods to get/set the current CFHTTPCookieStorageRef.
+        When setting cookies-related attributes in CFURLRequest, make sure we get them from the
+        current CFHTTPCookieStorageRef.  Also, set the cookie storage in CFURLRequest.
+
+        Reviewed by Steve Falkenburg.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::makeFinalRequest):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        * platform/network/win/CookieJarCFNetWin.cpp:
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookiesEnabled):
+        * platform/network/win/CookieStorageWin.cpp: Added.
+        (WebCore::currentCookieStorage):
+        (WebCore::setCurrentCookieStorage):
+        * platform/network/win/CookieStorageWin.h: Added.
+
 2008-05-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

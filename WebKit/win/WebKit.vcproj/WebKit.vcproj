@@ -687,6 +687,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebCookieManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebCoreStatistics.h"
 				>
 			</File>
@@ -924,6 +928,10 @@
 			</File>
 			<File
 				RelativePath="..\WebCache.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCookieManager.cpp"
 				>
 			</File>
 			<File

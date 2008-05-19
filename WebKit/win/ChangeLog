@@ -1,3 +1,32 @@
+2008-05-19  Ada Chan  <adachan@apple.com>
+
+        Added IWebCookieManager interface which allows client to set the
+        CFHTTPCookieStorageRef that WebCore should use.
+        
+        Implement IWebCookieManager interface in WebCookieManager.
+        
+        Update the cookie accept policy in the current cookie storage.
+
+        Reviewed by Steve Falkenburg.
+
+        * ForEachCoClass.h:
+        * Interfaces/IWebCookieManager.idl: Added.
+        * Interfaces/WebKit.idl:
+        * WebCookieManager.cpp: Added.
+        (WebCookieManager::createInstance):
+        (WebCookieManager::WebCookieManager):
+        (WebCookieManager::~WebCookieManager):
+        (WebCookieManager::QueryInterface):
+        (WebCookieManager::AddRef):
+        (WebCookieManager::Release):
+        (WebCookieManager::cookieStorage):
+        (WebCookieManager::setCookieStorage):
+        * WebCookieManager.h: Added.
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKitClassFactory.cpp:
+        * WebView.cpp:
+        (updateSharedSettingsFromPreferencesIfNeeded):
+
 2008-05-16  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Steve.

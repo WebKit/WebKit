@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CookieJar.h"
 
+#include "CookieStorageWin.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include "Document.h"
@@ -46,8 +47,8 @@ void setCookies(Document* /*document*/, const KURL& url, const KURL& policyURL, 
     if (value.isEmpty())
         return;
 
-    CFHTTPCookieStorageRef defaultCookieStorage = wkGetDefaultHTTPCookieStorage();
-    if (!defaultCookieStorage)
+    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    if (!cookieStorage)
         return;
 
     RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
@@ -64,13 +65,13 @@ void setCookies(Document* /*document*/, const KURL& url, const KURL& policyURL, 
     RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieCreateWithResponseHeaderFields(kCFAllocatorDefault,
         headerFieldsCF.get(), urlCF.get()));
 
-    CFHTTPCookieStorageSetCookies(defaultCookieStorage, cookiesCF.get(), urlCF.get(), policyURLCF.get());
+    CFHTTPCookieStorageSetCookies(cookieStorage, cookiesCF.get(), urlCF.get(), policyURLCF.get());
 }
 
 String cookies(const Document* /*document*/, const KURL& url)
 {
-    CFHTTPCookieStorageRef defaultCookieStorage = wkGetDefaultHTTPCookieStorage();
-    if (!defaultCookieStorage)
+    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    if (!cookieStorage)
         return String();
 
     String cookieString;
@@ -78,7 +79,7 @@ String cookies(const Document* /*document*/, const KURL& url)
 
     bool secure = equalIgnoringCase(url.protocol(), "https");
 
-    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(defaultCookieStorage, urlCF.get(), secure));
+    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(cookieStorage, urlCF.get(), secure));
 
     // <rdar://problem/5632883> CFHTTPCookieStorage happily stores an empty cookie, which would be sent as "Cookie: =".
     // We have a workaround in setCookies() to prevent that, but we also need to avoid sending cookies that were previously stored.
@@ -97,8 +98,8 @@ String cookies(const Document* /*document*/, const KURL& url)
 bool cookiesEnabled(const Document* /*document*/)
 {
     CFHTTPCookieStorageAcceptPolicy policy = CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain;
-    if (CFHTTPCookieStorageRef defaultCookieStorage = wkGetDefaultHTTPCookieStorage())
-        policy = CFHTTPCookieStorageGetCookieAcceptPolicy(defaultCookieStorage);
+    if (CFHTTPCookieStorageRef cookieStorage = currentCookieStorage())
+        policy = CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage);
     return policy == CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyAlways;
 }
 
