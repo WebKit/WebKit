@@ -58,6 +58,7 @@
 #include <kjs/value.h>
 
 #include <gdkconfig.h>
+#include <gtk/gtk.h>
 
 #if defined(GDK_WINDOWING_X11)
 #include "gtk2xtbin.h"

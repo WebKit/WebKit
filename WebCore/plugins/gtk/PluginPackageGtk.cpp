@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
+ * Copyright (C) 2008 Nuanti Ltd.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +60,7 @@ void PluginPackage::determineQuirks(const String& mimeType)
 
 bool PluginPackage::fetchInfo()
 {
+#if defined(XP_UNIX)
     if (!load())
         return false;
 
@@ -100,6 +102,10 @@ bool PluginPackage::fetchInfo()
         m_description = buffer;
 
     return true;
+#else
+    notImplemented();
+    return false;
+#endif
 }
 
 bool PluginPackage::load()
@@ -176,7 +182,11 @@ bool PluginPackage::load()
     m_browserFuncs.setexception = _NPN_SetException;
     m_browserFuncs.enumerate = _NPN_Enumerate;
 
+#if defined(XP_UNIX)
     npErr = NP_Initialize(&m_browserFuncs, &m_pluginFuncs);
+#else
+    npErr = NP_Initialize(&m_browserFuncs);
+#endif
     if (npErr != NPERR_NO_ERROR)
         goto abort;
 

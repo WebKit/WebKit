@@ -1,3 +1,12 @@
+2008-05-19  Alp Toker  <alp@nuanti.com>
+
+        GTK+ build fix on Mac. Conditionalize XP_UNIX use.
+
+        * plugins/gtk/PluginPackageGtk.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::load):
+        * plugins/gtk/PluginViewGtk.cpp:
+
 2008-05-18  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler
