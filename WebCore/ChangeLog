@@ -1,3 +1,12 @@
+2008-05-19  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/5700830> VO: VoiceOver should fall back to title attr if form element is not labeled
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::title):
+
 2008-05-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
