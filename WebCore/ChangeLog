@@ -1,3 +1,12 @@
+2008-05-19  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/5912195> CrashTracer: [USER] 1 crash in Mail at -[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]
+
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (visiblePositionForTextMarker):
+
 2008-05-19  Ada Chan  <adachan@apple.com>
 
         Added CookieStorageWin.h/cpp, introducing methods to get/set the current CFHTTPCookieStorageRef.

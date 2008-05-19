@@ -142,7 +142,14 @@ static VisiblePosition visiblePositionForTextMarker(WebCoreTextMarker* textMarke
 
     VisiblePosition visiblePos = VisiblePosition(textMarkerData.node, textMarkerData.offset, textMarkerData.affinity);
     Position deepPos = visiblePos.deepEquivalent();
-    AXObjectCache* cache = deepPos.node()->renderer()->document()->axObjectCache();
+    if (deepPos.isNull())
+        return VisiblePosition();
+    
+    RenderObject* renderer = deepPos.node()->renderer();
+    if (!renderer)
+        return VisiblePosition();
+    
+    AXObjectCache* cache = renderer->document()->axObjectCache();
     if (!cache->isIDinUse(textMarkerData.axID))
         return VisiblePosition();
 
