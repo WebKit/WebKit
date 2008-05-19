@@ -121,26 +121,26 @@ void getStackNames(Vector<UString>& names, ExecState* exec)
 {
     for (ExecState* currentState = exec; currentState; currentState = currentState->callingExecState()) {
         if (FunctionImp* functionImp = currentState->function())
-            names.prepend(getFunctionName(functionImp));
+            names.append(getFunctionName(functionImp));
         else if (ScopeNode* scopeNode = currentState->scopeNode())
-            names.prepend(Script + scopeNode->sourceURL() + ": " + UString::from(scopeNode->lineNo() + 1));   // FIXME: Why is the line number always off by one?
+            names.append(Script + scopeNode->sourceURL() + ": " + UString::from(scopeNode->lineNo() + 1));   // FIXME: Why is the line number always off by one?
     }
 }
 
 void getStackNames(Vector<UString>& names, ExecState* exec, JSObject* calledFunction)
 {
-    getStackNames(names, exec);
     if (calledFunction->inherits(&FunctionImp::info))
         names.append(getFunctionName(static_cast<FunctionImp*>(calledFunction)));
     else if (calledFunction->inherits(&InternalFunctionImp::info))
         names.append(static_cast<InternalFunctionImp*>(calledFunction)->functionName().ustring());
+    getStackNames(names, exec);
 }
 
 
 void getStackNames(Vector<UString>& names, ExecState* exec, const UString& sourceURL, int startingLineNumber)
 {
-    getStackNames(names, exec);
     names.append(Script + sourceURL + ": " + UString::from(startingLineNumber + 1));
+    getStackNames(names, exec);
 }
 
 UString getFunctionName(FunctionImp* functionImp)

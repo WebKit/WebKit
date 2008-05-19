@@ -52,17 +52,17 @@ void ProfileNode::willExecute()
     m_startTime = getCurrentUTCTime();
 }
 
-void ProfileNode::didExecute(Vector<UString> stackNames, unsigned int stackIndex)
+// We start at the end of stackNames and work our way forwards since the names are in 
+// the reverse order of how the ProfileNode tree is created (e.g. the leaf node is at
+// index 0 and the top of the stack is at index stackNames.size() - 1)
+void ProfileNode::didExecute(const Vector<UString>& stackNames, unsigned int stackIndex)
 {
-    if (stackIndex && stackIndex == stackNames.size()) {
-        ASSERT(stackNames[stackIndex - 1] == m_functionName);
-        endAndRecordCall();
-        return;
-    }
-
-    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end() && stackIndex < stackNames.size(); ++currentChild) {
-        if ((*currentChild)->functionName() == stackNames[stackIndex]) {
-            (*currentChild)->didExecute(stackNames, ++stackIndex);
+    for (size_t i = 0; i < m_children.size(); ++i) {
+        if (m_children[i]->functionName() == stackNames[stackIndex]) {
+            if (stackIndex)   // We are not at the bottom of the stack yet
+                m_children[i]->didExecute(stackNames, stackIndex - 1);
+            else    // This is the child we were looking for
+                m_children[i]->endAndRecordCall();
             return;
         }
     }
@@ -190,6 +190,14 @@ void ProfileNode::sortCallsAscending()
         (*currentChild)->sortCallsAscending();
 }
 
+void ProfileNode::endAndRecordCall()
+{
+    m_totalTime += getCurrentUTCTime() - m_startTime;
+    m_startTime = 0.0;
+
+    ++m_numberOfCalls;
+}
+
 void ProfileNode::printDataInspectorStyle(int indentLevel) const
 {
     // Print function names
@@ -244,14 +252,6 @@ double ProfileNode::printDataSampleStyle(int indentLevel, FunctionCallHashCount&
     }
 
     return m_totalTime;
-}
-
-void ProfileNode::endAndRecordCall()
-{
-    m_totalTime += getCurrentUTCTime() - m_startTime;
-    m_startTime = 0.0;
-
-    ++m_numberOfCalls;
 }
 
 }   // namespace KJS

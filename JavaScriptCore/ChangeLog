@@ -1,3 +1,22 @@
+2008-05-19  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        -In an effort to make the profiler as efficient as possible instead of
+        prepending to a vector we keep the vector in reverse order and operate
+        over it backwards.
+
+        * profiler/Profile.cpp:
+        (KJS::Profile::willExecute):
+        (KJS::Profile::didExecute):
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::didExecute):
+        (KJS::ProfileNode::endAndRecordCall):
+        * profiler/ProfileNode.h:
+        * profiler/Profiler.cpp:
+        (KJS::getStackNames):
+
 2008-05-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

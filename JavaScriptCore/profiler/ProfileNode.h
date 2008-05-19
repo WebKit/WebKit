@@ -47,7 +47,7 @@ namespace KJS {
         static PassRefPtr<ProfileNode> create(const UString& name) { return adoptRef(new ProfileNode(name)); }
 
         void willExecute();
-        void didExecute(Vector<UString> stackNames, unsigned int stackIndex);
+        void didExecute(const Vector<UString>& stackNames, unsigned int stackIndex);
 
         void addChild(PassRefPtr<ProfileNode> prpChild);
         ProfileNode* findChild(const UString& name);
@@ -70,13 +70,13 @@ namespace KJS {
         void sortCallsDescending();
         void sortCallsAscending();
 
+        void endAndRecordCall();
+
         void printDataInspectorStyle(int indentLevel) const;
         double printDataSampleStyle(int indentLevel, FunctionCallHashCount&) const;
 
     private:
         ProfileNode(const UString& name);
-
-        void endAndRecordCall();
     
         UString m_functionName;
         double m_startTime;
