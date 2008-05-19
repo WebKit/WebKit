@@ -164,6 +164,9 @@ static VisiblePosition visiblePositionForEndOfTextMarkerRange(WebCoreTextMarkerR
 
 static WebCoreTextMarkerRange* textMarkerRangeFromMarkers(WebCoreTextMarker* textMarker1, WebCoreTextMarker* textMarker2)
 {
+    if (!textMarker1 || !textMarker2)
+        return nil;
+        
     return [[WebCoreViewFactory sharedFactory] textMarkerRangeWithStart:textMarker1 end:textMarker2];
 }
 

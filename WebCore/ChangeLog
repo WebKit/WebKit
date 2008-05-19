@@ -1,3 +1,12 @@
+2008-05-19  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5935694> AX: crash in text marker range
+
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (textMarkerRangeFromMarkers):
+
 2008-05-19  Darin Adler  <darin@apple.com>
 
         - fix WebKit build
