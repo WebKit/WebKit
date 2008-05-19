@@ -1,3 +1,9 @@
+2008-05-19  Darin Adler  <darin@apple.com>
+
+        - fix WebKit build
+
+        * WebCore.xcodeproj/project.pbxproj: Make CSSReflectionDirection.h "private" instead of "project".
+
 2008-05-19  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler
