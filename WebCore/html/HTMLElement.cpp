@@ -639,24 +639,6 @@ void HTMLElement::accessKeyAction(bool sendToAnyElement)
         dispatchSimulatedClick(0, true);
 }
 
-String HTMLElement::toString() const
-{
-    if (!hasChildNodes() && document()->isHTMLDocument()) {
-        String result = openTagStartToString();
-        result += ">";
-
-        if (endTagRequirement() == TagStatusRequired) {
-            result += "</";
-            result += nodeName();
-            result += ">";
-        }
-
-        return result;
-    }
-
-    return Element::toString();
-}
-
 String HTMLElement::id() const
 {
     return getAttribute(idAttr);

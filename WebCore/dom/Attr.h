@@ -78,7 +78,6 @@ public:
     virtual bool childTypeAllowed(NodeType);
 
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
-    virtual String toString() const;
 
     Attribute* attr() const { return m_attribute.get(); }
     const QualifiedName& qualifiedName() const { return m_attribute->name(); }

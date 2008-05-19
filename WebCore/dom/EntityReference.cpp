@@ -72,13 +72,4 @@ bool EntityReference::childTypeAllowed(NodeType type)
     }
 }
 
-String EntityReference::toString() const
-{
-    String result = "&";
-    result += m_entityName;
-    result += ";";
-
-    return result;
-}
-
 } // namespace

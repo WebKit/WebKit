@@ -636,8 +636,6 @@ public:
 
     HTMLHeadElement* head();
 
-    String toString() const;
-    
     bool execCommand(const String& command, bool userInterface = false, const String& value = String());
     bool queryCommandEnabled(const String& command);
     bool queryCommandIndeterm(const String& command);

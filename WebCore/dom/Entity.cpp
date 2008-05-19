@@ -76,35 +76,4 @@ bool Entity::childTypeAllowed(NodeType type)
     }
 }
 
-String Entity::toString() const
-{
-    String result = "<!ENTITY' ";
-
-    if (!m_name.isEmpty()) {
-        result += " ";
-        result += m_name;
-    }
-
-    if (!m_publicId.isEmpty()) {
-        result += " PUBLIC \"";
-        result += m_publicId;
-        result += "\" \"";
-        result += m_systemId;
-        result += "\"";
-    } else if (!m_systemId.isEmpty()) {
-        result += " SYSTEM \"";
-        result += m_systemId;
-        result += "\"";
-    }
-
-    if (!m_notationName.isEmpty()) {
-        result += " NDATA ";
-        result += m_notationName;
-    }
-
-    result += ">";
-
-    return result;
-}
-
 } // namespace

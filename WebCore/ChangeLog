@@ -1,3 +1,36 @@
+2008-05-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18421
+        <rdar://problem/5857369> XMLHttpRequest does not properly encode & and < in outgoing messages
+
+        Test: http/tests/xmlhttprequest/serialize-document.html
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send): Use createMarkup() instead of Document::toString().
+
+        * dom/Attr.cpp:
+        * dom/Attr.h:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/DocumentFragment.cpp:
+        * dom/DocumentFragment.h:
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * dom/Entity.cpp:
+        * dom/Entity.h:
+        * dom/EntityReference.cpp:
+        * dom/EntityReference.h:
+        * dom/Node.h:
+        * dom/Text.cpp:
+        * dom/Text.h:
+        * html/HTMLElement.cpp:
+        * html/HTMLElement.h:
+        Removed most Node::toString() methods, which were massively wrong, and only used for
+        XMLHttpRequest::send(). The remanining ones are still used in markup.cpp, but should probably
+        be folded into it for consistency.
+
 2008-05-19  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.

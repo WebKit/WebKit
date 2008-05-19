@@ -3076,17 +3076,6 @@ bool Document::shouldCreateRenderers()
     return m_createRenderers;
 }
 
-String Document::toString() const
-{
-    String result;
-
-    for (Node *child = firstChild(); child != NULL; child = child->nextSibling()) {
-        result += child->toString();
-    }
-
-    return result;
-}
-
 // Support for Javascript execCommand, and related methods
 
 static Editor::Command command(Document* document, const String& commandName, bool userInterface = false)

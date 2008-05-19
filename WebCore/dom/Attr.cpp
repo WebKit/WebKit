@@ -168,27 +168,4 @@ void Attr::childrenChanged(bool changedByParser, Node* beforeChange, Node* after
         m_element->attributeChanged(m_attribute.get());
 }
 
-String Attr::toString() const
-{
-    String result;
-
-    result += nodeName();
-
-    // FIXME: substitute entities for any instances of " or ' --
-    // maybe easier to just use text value and ignore existing
-    // entity refs?
-
-    if (firstChild() != NULL) {
-        result += "=\"";
-
-        for (Node *child = firstChild(); child != NULL; child = child->nextSibling()) {
-            result += child->toString();
-        }
-        
-        result += "\"";
-    }
-
-    return result;
-}
-
 }

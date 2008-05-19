@@ -997,27 +997,6 @@ String Element::openTagStartToString() const
     return result;
 }
 
-String Element::toString() const
-{
-    String result = openTagStartToString();
-
-    if (hasChildNodes()) {
-        result += ">";
-
-        for (Node *child = firstChild(); child != NULL; child = child->nextSibling()) {
-            result += child->toString();
-        }
-
-        result += "</";
-        result += nodeName();
-        result += ">";
-    } else {
-        result += " />";
-    }
-
-    return result;
-}
-
 void Element::updateId(const AtomicString& oldId, const AtomicString& newId)
 {
     if (!inDocument())

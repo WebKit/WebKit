@@ -39,7 +39,6 @@ public:
     virtual NodeType nodeType() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType);
-    virtual String toString() const;
 };
 
 } //namespace

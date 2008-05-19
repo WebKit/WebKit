@@ -438,8 +438,6 @@ public:
      */
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0) {};
 
-    virtual String toString() const = 0;
-
 #ifndef NDEBUG
     virtual void formatForDebugger(char* buffer, unsigned length) const;
 

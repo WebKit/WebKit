@@ -40,6 +40,7 @@
 #include "JSDocument.h"
 #include "JSEvent.h"
 #include "kjs_events.h"
+#include "markup.h"
 
 using namespace KJS;
 
@@ -166,7 +167,7 @@ JSValue* JSXMLHttpRequest::send(ExecState* exec, const List& args)
     String body;
     if (args.size() >= 1) {
         if (args[0]->toObject(exec)->inherits(&JSDocument::s_info))
-            body = static_cast<Document*>(static_cast<JSDocument*>(args[0]->toObject(exec))->impl())->toString();
+            body = createMarkup(static_cast<Document*>(static_cast<JSDocument*>(args[0]->toObject(exec))->impl()));
         else {
             // converting certain values (like null) to object can set an exception
             if (exec->hadException())

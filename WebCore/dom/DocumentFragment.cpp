@@ -58,14 +58,6 @@ bool DocumentFragment::childTypeAllowed(NodeType type)
     }
 }
 
-String DocumentFragment::toString() const
-{
-    String result;
-    for (Node *child = firstChild(); child != NULL; child = child->nextSibling())
-        result += child->toString();
-    return result;
-}
-
 PassRefPtr<Node> DocumentFragment::cloneNode(bool deep)
 {
     RefPtr<DocumentFragment> clone = new DocumentFragment(document());
