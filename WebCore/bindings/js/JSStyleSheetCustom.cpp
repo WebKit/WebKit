@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #include "CSSStyleSheet.h"
 #include "JSCSSStyleSheet.h"
-#include "StyleSheet.h"
+#include "JSNode.h"
 
 using namespace KJS;
 
@@ -50,6 +50,23 @@ JSValue* toJS(ExecState* exec, StyleSheet* styleSheet)
 
     ScriptInterpreter::putDOMObject(styleSheet, ret);
     return ret;
+}
+
+void JSStyleSheet::mark()
+{
+    Base::mark();
+
+    // This prevents us from having a style sheet with a dangling ownerNode pointer.
+    // A better solution would be to handle this on the DOM side -- if the style sheet
+    // is kept around, then we want the node to stay around too. One possibility would
+    // be to make ref/deref on the style sheet ref/deref the node instead, but there's
+    // a lot of disentangling of the CSS DOM objects that would need to happen first.
+    if (Node* ownerNode = impl()->ownerNode()) {
+        if (JSNode* ownerNodeWrapper = ScriptInterpreter::getDOMNodeForDocument(ownerNode->document(), ownerNode)) {
+            if (!ownerNodeWrapper->marked())
+                ownerNodeWrapper->mark();
+        }
+    }
 }
 
 } // namespace WebCore

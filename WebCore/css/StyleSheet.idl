@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -22,6 +22,7 @@ module stylesheets {
 
     // Introduced in DOM Level 2:
     interface [
+        CustomMarkFunction,
         GenerateConstructor,
         ObjCCustomInternalImpl,
         InterfaceUUID=2bd2db5f-aaab-4422-96a0-e05455313f35,

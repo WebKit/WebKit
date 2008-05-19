@@ -1,3 +1,13 @@
+2008-05-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - test for <rdar://problem/5943569> crash due to stale ownerNode pointer
+
+        * fast/dom/StyleSheet: Added.
+        * fast/dom/StyleSheet/ownerNode-lifetime-expected.txt: Added.
+        * fast/dom/StyleSheet/ownerNode-lifetime.html: Added.
+
 2008-05-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
