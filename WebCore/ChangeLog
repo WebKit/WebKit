@@ -1,3 +1,25 @@
+2008-05-19  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 19065: Resources with a space in their URL don't get
+        error/warning bubbles
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19065>
+
+        Reviewed by Dan Bernstein.
+
+        Test: manual-tests/inspector/errors-with-space in-url.html
+
+        * manual-tests/inspector/errors-with-space in-url.html: Added.
+        * page/Console.cpp:
+        (WebCore::Console::error):
+        (WebCore::Console::info):
+        (WebCore::Console::log):
+        (WebCore::Console::warn):
+        Pass the raw URL to the Inspector, not the pretty URL, to match the
+        URL that was used when initially telling the Inspector about this
+        resource. We continue to pass the pretty URL to the ChromeClient for
+        backwards compatibility.
+
 2008-05-19  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Darin.
