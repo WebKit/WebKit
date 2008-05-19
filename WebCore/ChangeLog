@@ -1,3 +1,27 @@
+2008-05-19  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber Stamped by Simon.
+
+        Enforce the WebKit Coding Style.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::load):
+        (WebCore::PluginView::setValue):
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::show):
+        (WebCore::PluginView::hide):
+        (WebCore::PluginView::attachToWindow):
+        (WebCore::PluginView::detachFromWindow):
+        (WebCore::PluginView::getValueStatic):
+        (WebCore::PluginView::getValue):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updateWindow):
+        (WebCore::PluginView::detachFromWindow):
+        (WebCore::PluginView::handlePostReadFile):
+        (WebCore::PluginView::getValueStatic):
+        (WebCore::PluginView::getValue):
+
 2008-05-14  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
 
         Reviewed by Holger.

@@ -114,7 +114,7 @@ void PluginView::updateWindow() const
 void PluginView::setFocus()
 {
     if (m_window)
-    gtk_widget_grab_focus(m_window);
+        gtk_widget_grab_focus(m_window);
 
     Widget::setFocus();
 }
@@ -124,7 +124,7 @@ void PluginView::show()
     m_isVisible = true;
 
     if (m_attachedToWindow && m_window)
-    gtk_widget_show(m_window);
+        gtk_widget_show(m_window);
 
     Widget::show();
 }
@@ -134,7 +134,7 @@ void PluginView::hide()
     m_isVisible = false;
 
     if (m_attachedToWindow && m_window)
-    gtk_widget_hide(m_window);
+        gtk_widget_hide(m_window);
 
     Widget::hide();
 }
@@ -242,20 +242,20 @@ void PluginView::setNPWindowRect(const IntRect& rect)
 void PluginView::attachToWindow()
 {
     if (m_attachedToWindow)
-    return;
+        return;
 
     m_attachedToWindow = true;
     if (m_isVisible && m_window)
-    gtk_widget_show(m_window);
+        gtk_widget_show(m_window);
 }
 
 void PluginView::detachFromWindow()
 {
     if (!m_attachedToWindow)
-    return;
+        return;
 
     if (m_isVisible && m_window)
-    gtk_widget_hide(m_window);
+        gtk_widget_hide(m_window);
     m_attachedToWindow = false;
 }
 
@@ -354,28 +354,25 @@ NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32 len, const c
 NPError PluginView::getValueStatic(NPNVariable variable, void* value)
 {
     switch (variable) {
-        case NPNVToolkit: {
+    case NPNVToolkit:
 #if PLATFORM(GTK)
-            *((uint32 *)value) = 2;
+        *((uint32 *)value) = 2;
 #else
-            *((uint32 *)value) = 0;
+        *((uint32 *)value) = 0;
 #endif
-            return NPERR_NO_ERROR;
-        }
+        return NPERR_NO_ERROR;
 
-        case NPNVSupportsXEmbedBool: {
+    case NPNVSupportsXEmbedBool:
 #if defined(GDK_WINDOWING_X11)
-            *((uint32 *)value) = true;
+        *((uint32 *)value) = true;
 #else
-            *((uint32 *)value) = false;
+        *((uint32 *)value) = false;
 #endif
-            return NPERR_NO_ERROR;
-        }
+        return NPERR_NO_ERROR;
 
-    case NPNVjavascriptEnabledBool: {
+    case NPNVjavascriptEnabledBool:
         *((uint32 *)value) = true;
         return NPERR_NO_ERROR;
-    }
 
     default:
         return NPERR_GENERIC_ERROR;
@@ -385,7 +382,7 @@ NPError PluginView::getValueStatic(NPNVariable variable, void* value)
 NPError PluginView::getValue(NPNVariable variable, void* value)
 {
     switch (variable) {
-    case NPNVxDisplay: {
+    case NPNVxDisplay:
 #if defined(GDK_WINDOWING_X11)
         if (m_needsXEmbed)
             *(void **)value = (void *)GDK_DISPLAY();
@@ -395,23 +392,21 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 #else
         return NPERR_GENERIC_ERROR;
 #endif
-    }
 
 #if defined(GDK_WINDOWING_X11)
-    case NPNVxtAppContext: {
+    case NPNVxtAppContext:
         if (!m_needsXEmbed) {
             *(void **)value = XtDisplayToApplicationContext (GTK_XTBIN(m_window)->xtclient.xtdisplay);
 
             return NPERR_NO_ERROR;
         } else
             return NPERR_GENERIC_ERROR;
-    }
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
         case NPNVWindowNPObject: {
-        if (m_isJavaScriptPaused)
-        return NPERR_GENERIC_ERROR;
+            if (m_isJavaScriptPaused)
+                return NPERR_GENERIC_ERROR;
 
             NPObject* windowScriptObject = m_parentFrame->windowScriptNPObject();
 
@@ -426,8 +421,8 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
         }
 
         case NPNVPluginElementNPObject: {
-        if (m_isJavaScriptPaused)
-        return NPERR_GENERIC_ERROR;
+            if (m_isJavaScriptPaused)
+                return NPERR_GENERIC_ERROR;
 
             NPObject* pluginScriptObject = 0;
 
@@ -456,6 +451,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 #endif
             return NPERR_NO_ERROR;
         }
+
         default:
             return getValueStatic(variable, value);
     }
