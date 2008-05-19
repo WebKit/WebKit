@@ -1,3 +1,11 @@
+2008-05-19  Alp Toker  <alp@nuanti.com>
+
+        GTK+ build fix for Mac/Win. Don't check for FreeType/FontConfig when
+        the Pango font backend is selected.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2008-05-16  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric.

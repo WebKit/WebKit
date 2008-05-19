@@ -243,9 +243,6 @@ PKG_CHECK_MODULES([WEBKITDEPS],
                   [gtk+-2.0 >= $GTK_REQUIRED_VERSION
                   pango >= $PANGO_REQUIRED_VERSION
                   cairo >= $CAIRO_REQUIRED_VERSION
-                  cairo-ft,
-                  fontconfig >= $FONTCONFIG_REQUIRED_VERSION
-                  freetype2 >= $FREETYPE2_REQUIRED_VERSION
                   libxml-2.0 >= $LIBXML_REQUIRED_VERSION])
 AC_SUBST([WEBKITDEPS_CFLAGS])
 AC_SUBST([WEBKITDEPS_LIBS])
@@ -453,6 +450,16 @@ if test "$with_http_backend" = "soup"; then
                      [libsoup-2.4 >= $LIBSOUP_REQUIRED_VERSION])
    AC_SUBST([LIBSOUP_CFLAGS])
    AC_SUBST([LIBSOUP_LIBS])
+fi
+
+# check if FreeType/FontConfig are available
+if test "$with_font_backend" = "freetype"; then
+   PKG_CHECK_MODULES([FREETYPE],
+                     [cairo-ft
+                     fontconfig >= $FONTCONFIG_REQUIRED_VERSION
+                     freetype2 >= $FREETYPE2_REQUIRED_VERSION])
+   AC_SUBST([FREETYPE_CFLAGS])
+   AC_SUBST([FREETYPE_LIBS])
 fi
 
 # check if sqlite 3 is available
