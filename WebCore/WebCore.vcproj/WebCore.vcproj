@@ -8246,6 +8246,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSReflectionDirection.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSReflectValue.cpp"
 				>
 				<FileConfiguration

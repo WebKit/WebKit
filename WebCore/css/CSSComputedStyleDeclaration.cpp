@@ -1,7 +1,6 @@
-/**
- *
+/*
  * Copyright (C) 2004 Zack Rusin <zack@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  *
@@ -29,6 +28,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
+#include "CSSReflectValue.h"
 #include "CSSValueList.h"
 #include "CachedImage.h"
 #include "Document.h"
@@ -316,15 +316,13 @@ static PassRefPtr<CSSValue> valueForReflection(const StyleReflection* reflection
     if (!reflection)
         return new CSSPrimitiveValue(CSSValueNone);
 
-    RefPtr<CSSReflectValue> reflectValue = new CSSReflectValue();
-    reflectValue->setDirection(reflection->direction());
+    RefPtr<CSSPrimitiveValue> offset;
     if (reflection->offset().isPercent())
-        reflectValue->setOffset(new CSSPrimitiveValue(reflection->offset().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
+        offset = new CSSPrimitiveValue(reflection->offset().percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
     else
-        reflectValue->setOffset(new CSSPrimitiveValue(reflection->offset().value(), CSSPrimitiveValue::CSS_PX));
+        offset = new CSSPrimitiveValue(reflection->offset().value(), CSSPrimitiveValue::CSS_PX);
     
-    reflectValue->setMask(valueForNinePieceImage(reflection->mask()));
-    return reflectValue.release();
+    return CSSReflectValue::create(reflection->direction(), offset.release(), valueForNinePieceImage(reflection->mask()));
 }
 
 static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, int propertyID)

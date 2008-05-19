@@ -23,46 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CSSReflectValue_h
-#define CSSReflectValue_h
-
-#include "CSSReflectionDirection.h"
-#include "CSSValue.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#ifndef CSSReflectionDirection_h
+#define CSSReflectionDirection_h
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
-
-class CSSReflectValue : public CSSValue {
-public:
-    static PassRefPtr<CSSReflectValue> create(CSSReflectionDirection direction,
-        PassRefPtr<CSSPrimitiveValue> offset, PassRefPtr<CSSValue> mask)
-    {
-        return new CSSReflectValue(direction, offset, mask);
-    }
-
-    CSSReflectionDirection direction() const { return m_direction; }
-    CSSPrimitiveValue* offset() const { return m_offset.get(); }
-    CSSValue* mask() const { return m_mask.get(); }
-
-    virtual String cssText() const;
-
-private:
-    CSSReflectValue(CSSReflectionDirection direction,
-            PassRefPtr<CSSPrimitiveValue> offset, PassRefPtr<CSSValue> mask)
-        : m_direction(direction)
-        , m_offset(offset)
-        , m_mask(mask)
-    {
-    }
-    
-    CSSReflectionDirection m_direction;
-    RefPtr<CSSPrimitiveValue> m_offset;
-    RefPtr<CSSValue> m_mask;
-};
+enum CSSReflectionDirection { ReflectionBelow, ReflectionAbove, ReflectionLeft, ReflectionRight };
 
 } // namespace WebCore
 
-#endif // CSSReflectValue_h
+#endif // CSSReflectionDirection_h

@@ -3233,22 +3233,22 @@ bool CSSParser::parseShadow(int propId, bool important)
 bool CSSParser::parseReflect(int propId, bool important)
 {
     // box-reflect: <direction> <offset> <mask>
-    RefPtr<CSSReflectValue> reflectValue = new CSSReflectValue();
-    Value* val = valueList->current();
     
     // Direction comes first.
+    Value* val = valueList->current();
+    CSSReflectionDirection direction;
     switch (val->id) {
         case CSSValueAbove:
-            reflectValue->setDirection(ReflectionAbove);
+            direction = ReflectionAbove;
             break;
         case CSSValueBelow:
-            reflectValue->setDirection(ReflectionBelow);
+            direction = ReflectionBelow;
             break;
         case CSSValueLeft:
-            reflectValue->setDirection(ReflectionLeft);
+            direction = ReflectionLeft;
             break;
         case CSSValueRight:
-            reflectValue->setDirection(ReflectionRight);
+            direction = ReflectionRight;
             break;
         default:
             return false;
@@ -3256,24 +3256,25 @@ bool CSSParser::parseReflect(int propId, bool important)
 
     // The offset comes next.
     val = valueList->next();
+    RefPtr<CSSPrimitiveValue> offset;
     if (!val)
-        reflectValue->setOffset(new CSSPrimitiveValue(0, CSSPrimitiveValue::CSS_PX));
+        offset = new CSSPrimitiveValue(0, CSSPrimitiveValue::CSS_PX);
     else {
         if (!validUnit(val, FLength | FPercent, strict))
             return false;
-        reflectValue->setOffset(new CSSPrimitiveValue(val->fValue, (CSSPrimitiveValue::UnitTypes)val->unit));
+        offset = new CSSPrimitiveValue(val->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(val->unit));
     }
 
     // Now for the mask.
+    RefPtr<CSSValue> mask;
     val = valueList->next();
     if (val) {
-        RefPtr<CSSValue> mask;
         if (!parseBorderImage(propId, important, mask))
             return false;
-        reflectValue->setMask(mask);
     }
 
-    addProperty(propId, reflectValue, important);
+    RefPtr<CSSReflectValue> reflectValue = CSSReflectValue::create(direction, offset.release(), mask.release());
+    addProperty(propId, reflectValue.release(), important);
     valueList->next();
     return true;
 }

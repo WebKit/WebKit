@@ -1,3 +1,27 @@
+2008-05-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - tweak CSSReflectValue, possibly fixing the leaks seen on the buildbot
+
+        * WebCore.vcproj/WebCore.vcproj: Added CSSReflectionDirection.h. 
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * css/CSSReflectionDirection.h: Added.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForReflection): Changed to use CSSReflectValue::create.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseReflect): Ditto.
+
+        * css/CSSReflectValue.h: Added a create function. Got rid of the setter
+        functions, which had const PassRefPtr& arguments -- those probably caused
+        the leaks although I'm not exactly sure why. Made the contructor and all
+        the data members private.
+
+        * rendering/style/RenderStyle.h: Changed to include CSSReflectionDirection.h
+        instead of CSSReflectValue.h so we can tweak CSSReflectValue without
+        recompiling the world.
+
 2008-05-19  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber Stamped by Simon.

@@ -38,7 +38,7 @@
 #include "CSSHelper.h"
 #include "CSSImageGeneratorValue.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSReflectValue.h"
+#include "CSSReflectionDirection.h"
 #include "CSSValueList.h"
 #include "Color.h"
 #include "CSSCursorImageValue.h"
