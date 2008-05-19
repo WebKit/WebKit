@@ -87,7 +87,7 @@ bool PluginPackage::fetchInfo()
     s.split(UChar(';'), false, types);
     for (int i = 0; i < types.size(); ++i) {
         Vector<String> mime;
-        types[i].split(UChar(':'), false, mime); 
+        types[i].split(UChar(':'), true, mime); 
         if (mime.size() > 0) {
             Vector<String> exts;
             mime[0].split(UChar(','), false, exts);
@@ -110,6 +110,7 @@ bool PluginPackage::load()
     }
 
     m_module = new QLibrary((QString)m_path);
+    m_module->setLoadHints(QLibrary::ResolveAllSymbolsHint);
     if (!m_module->load()) {
         LOG(Plugin, "%s not loaded", m_path.utf8().data());
         return false;

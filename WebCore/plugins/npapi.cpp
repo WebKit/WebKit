@@ -107,10 +107,8 @@ const char* NPN_UserAgent(NPP instance)
 {
     PluginView* view = pluginViewForInstance(instance);
 
-     // FIXME: Some plug-ins call NPN_UserAgent with a null instance in their NP_initialize function!
-     // We'd need a way to get a user agent without having a frame around.
      if (!view)
-         return 0;
+         return PluginView::userAgentStatic();
  
     return view->userAgent();
 }
@@ -137,10 +135,10 @@ void NPN_ForceRedraw(NPP instance)
 
 NPError NPN_GetValue(NPP instance, NPNVariable variable, void* value)
 {
-    // FIXME: Acrobat reader plugin calls NPN_GetValue before a PluginView
-    // has been created
-    if (!instance)
-        return NPERR_GENERIC_ERROR;
+    PluginView* view = pluginViewForInstance(instance);
+
+     if (!view)
+         return PluginView::getValueStatic(variable, value);
 
     return pluginViewForInstance(instance)->getValue(variable, value);
 }

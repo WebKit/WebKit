@@ -185,10 +185,15 @@ void PluginView::setNPWindowRect(const IntRect& rect)
         return;
 
     if (m_plugin->pluginFuncs()->setwindow) {
+        PluginView::setCurrentPluginView(this);
         KJS::JSLock::DropAllLocks dropAllLocks;
         setCallingPlugin(true);
         m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
         setCallingPlugin(false);
+        PluginView::setCurrentPluginView(0);
+
+        if (!m_isWindowed)
+            return;
 
         ASSERT(m_window);
     }
@@ -237,16 +242,20 @@ void PluginView::stop()
     delete (NPSetWindowCallbackStruct *)m_npWindow.ws_info;
     m_npWindow.ws_info = 0;
     if (m_plugin->pluginFuncs()->setwindow && !m_plugin->quirks().contains(PluginQuirkDontSetNullWindowHandleOnDestroy)) {
+        PluginView::setCurrentPluginView(this);
         setCallingPlugin(true);
         m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
         setCallingPlugin(false);
+        PluginView::setCurrentPluginView(0);
     }
 
     // Destroy the plugin
     {
+        PluginView::setCurrentPluginView(this);
         setCallingPlugin(true);
         m_plugin->pluginFuncs()->destroy(m_instance, 0);
         setCallingPlugin(false);
+        PluginView::setCurrentPluginView(0);
     }
 
     m_instance->pdata = 0;
@@ -263,6 +272,12 @@ const char* PluginView::userAgent()
         m_userAgent = m_parentFrame->loader()->userAgent(m_url).utf8();
 
     return m_userAgent.data();
+}
+
+const char* PluginView::userAgentStatic()
+{
+    //FIXME - Just say we are Mozilla
+    return MozillaUserAgent;
 }
 
 NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32 len, const char* buf)
@@ -293,6 +308,29 @@ NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32 len, const c
     return NPERR_NO_ERROR;
 }
 
+NPError PluginView::getValueStatic(NPNVariable variable, void* value)
+{
+    switch (variable) {
+    case NPNVToolkit: {
+        *((uint32 *)value) = 0;
+        return NPERR_NO_ERROR;
+    }
+
+    case NPNVSupportsXEmbedBool: {
+        *((uint32 *)value) = true;
+        return NPERR_NO_ERROR;
+    }
+
+    case NPNVjavascriptEnabledBool: {
+        *((uint32 *)value) = true;
+        return NPERR_NO_ERROR;
+    }
+
+    default:
+        return NPERR_GENERIC_ERROR;
+    }
+}
+
 NPError PluginView::getValue(NPNVariable variable, void* value)
 {
     switch (variable) {
@@ -306,16 +344,6 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 
         case NPNVxtAppContext: {
             return NPERR_GENERIC_ERROR;
-        }
-
-        case NPNVToolkit: {
-            *((uint32 *)value) = 0;
-            return NPERR_NO_ERROR;
-        }
-
-        case NPNVSupportsXEmbedBool: {
-            *((uint32 *)value) = true;
-            return NPERR_NO_ERROR;
         }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -361,13 +389,8 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
             return NPERR_NO_ERROR;
         }
 
-        case NPNVjavascriptEnabledBool: {
-            *((uint32 *)value) = true;
-            return NPERR_NO_ERROR;
-        }
-
         default:
-            return NPERR_GENERIC_ERROR;
+            return getValueStatic(variable, value);
     }
 }
 
@@ -425,9 +448,14 @@ void PluginView::init()
         return;
     }
 
-    m_needsXEmbed = false;
-    if (m_plugin->pluginFuncs()->getvalue)
+    if (m_plugin->pluginFuncs()->getvalue) {
+        PluginView::setCurrentPluginView(this);
+        KJS::JSLock::DropAllLocks dropAllLocks;
+        setCallingPlugin(true);
         m_plugin->pluginFuncs()->getvalue(m_instance, NPPVpluginNeedsXEmbed, &m_needsXEmbed);
+        setCallingPlugin(false);
+        PluginView::setCurrentPluginView(0);
+    }
 
     if (m_needsXEmbed) {
         m_window = new QX11EmbedContainer(containingWindow());

@@ -118,8 +118,10 @@ namespace WebCore {
         int32 write(NPStream* stream, int32 len, void* buffer);
         NPError destroyStream(NPStream* stream, NPReason reason);
         const char* userAgent();
+        static const char* userAgentStatic();
         void status(const char* message);
         NPError getValue(NPNVariable variable, void* value);
+        static NPError getValueStatic(NPNVariable variable, void* value);
         NPError setValue(NPPVariable variable, void* value);
         void invalidateRect(NPRect*);
         void invalidateRegion(NPRegion);
