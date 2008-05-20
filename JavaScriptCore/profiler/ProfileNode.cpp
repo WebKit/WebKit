@@ -190,6 +190,32 @@ void ProfileNode::sortCallsAscending()
         (*currentChild)->sortCallsAscending();
 }
 
+static inline bool fileNameDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
+{
+    return compare(a->functionName(), b->functionName()) == 1 ? true : false ;
+}
+
+void ProfileNode::sortFileNameDescending()
+{
+    std::sort(m_children.begin(), m_children.end(), fileNameDescendingComparator);
+
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+        (*currentChild)->sortFileNameDescending();
+}
+
+static inline bool fileNameAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
+{
+    return compare(a->functionName(), b->functionName()) == -1 ? true : false ;
+}
+
+void ProfileNode::sortFileNameAscending()
+{
+    std::sort(m_children.begin(), m_children.end(), fileNameAscendingComparator);
+
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+        (*currentChild)->sortFileNameAscending();
+}
+
 void ProfileNode::endAndRecordCall()
 {
     m_totalTime += getCurrentUTCTime() - m_startTime;

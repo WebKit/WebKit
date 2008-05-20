@@ -1,5 +1,23 @@
 2008-05-19  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Tim.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        - Implement sorting by function name.
+
+        * JavaScriptCore.exp:
+        * profiler/Profile.h:
+        (KJS::Profile::sortFileNameDescending):
+        (KJS::Profile::sortFileNameAscending):
+        * profiler/ProfileNode.cpp:
+        (KJS::fileNameDescendingComparator):
+        (KJS::ProfileNode::sortFileNameDescending):
+        (KJS::fileNameAscendingComparator):
+        (KJS::ProfileNode::sortFileNameAscending):
+        * profiler/ProfileNode.h:
+
+2008-05-19  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Adam.
 
         <rdar://problem/5770054> JavaScript profiler (10928)

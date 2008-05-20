@@ -55,6 +55,8 @@ namespace KJS {
         void sortSelfTimeAscending() { m_callTree->sortSelfTimeAscending(); }
         void sortCallsDescending() { m_callTree->sortCallsDescending(); }
         void sortCallsAscending() { m_callTree->sortCallsAscending(); }
+        void sortFileNameDescending() { m_callTree->sortFileNameDescending(); }
+        void sortFileNameAscending() { m_callTree->sortFileNameAscending(); }
         
         void printDataInspectorStyle() const;
         void printDataSampleStyle() const;
