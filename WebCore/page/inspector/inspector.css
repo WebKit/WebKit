@@ -2376,6 +2376,10 @@ body.inactive .sidebar-tree-item.selected {
     bottom: 0;
 }
 
+.profile-sidebar-tree-item .icon {
+    content: url(Images/profileIcon.png);
+}
+
 .profile-view {
     display: none;
     overflow: hidden;
@@ -2392,4 +2396,25 @@ body.inactive .sidebar-tree-item.selected {
 
 .profile-view .data-grid {
     border: none;
+    height: 100%;
+}
+
+.profile-view .data-grid th.self-column {
+    text-align: center;
+}
+
+.profile-view .data-grid td.self-column {
+    text-align: right;
+}
+
+.profile-view .data-grid th.total-column {
+    text-align: center;
+}
+
+.profile-view .data-grid td.total-column {
+    text-align: right;
+}
+
+.profile-view .data-grid .calls-column {
+    text-align: center;
 }

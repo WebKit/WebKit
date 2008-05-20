@@ -692,13 +692,15 @@ function nodeTitleInfo(hasChildren, linkify)
     return info;
 }
 
-Number.secondsToString = function(seconds, formatterFunction)
+Number.secondsToString = function(seconds, formatterFunction, higherResolution)
 {
     if (!formatterFunction)
         formatterFunction = String.sprintf;
 
     var ms = seconds * 1000;
-    if (ms < 1000)
+    if (higherResolution && ms < 1000)
+        return formatterFunction("%.3fms", ms);
+    else if (ms < 1000)
         return formatterFunction("%.0fms", ms);
 
     if (seconds < 60)

@@ -1,3 +1,69 @@
+2008-05-20  Timothy Hatcher  <timothy@apple.com>
+
+        Implements the Profiles panel and Profile view.
+
+        Reviewed by Kevin McCullough.
+
+        * English.lproj/localizedStrings.js: Added new strings.
+        * page/inspector/Images/profileIcon.png: Added.
+        * page/inspector/Images/profilesIcon.png: Changed. New icon design
+        that fits in with the other toolbar icons.
+        * page/inspector/ProfileView.js:
+        (WebInspector.ProfileView): Remove custom table elements
+        and create a DataGrid. Sorts the profile by descending total time,
+        since the profiles aren't sorted by default.
+        (WebInspector.ProfileView.prototype.refresh): Clears the DataGrid
+        and recreates all the nodes. The selection is preserved.
+        (WebInspector.ProfileView.prototype.refreshShowAsPercents): Traverse
+        all the children and change showTotalTimeAsPercent and showSelfTimeAsPercent
+        to match the ProfileView values. Then call refresh on the child.
+        (WebInspector.ProfileView.prototype._sortData): Determine the sort
+        function to call on the head profile node. Call it and then call
+        refresh to rebuild the DataGrid.
+        (WebInspector.ProfileView.prototype._mouseDownInDataGrid): Return early
+        if the event is not a double-click. When it is a double-click, determine
+        the column that was targeted and if it was total or self toggle the
+        show as percent property. Call refreshShowAsPercents.
+        (WebInspector.ProfileDataGridNode): 
+        (WebInspector.ProfileDataGridNode.prototype.get data): 
+        (WebInspector.ProfileDataGridNode.prototype.expand): 
+        (WebInspector.ProfileDataGridNode.prototype.collapse): 
+        (WebInspector.ProfileDataGridNode.prototype._populate): 
+        * page/inspector/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel): 
+        (WebInspector.ProfilesPanel.prototype.show): Populate the sidebar
+        with all profiles. This is a workaround until the Inspector
+        is told about new profiles.
+        (WebInspector.ProfilesPanel.prototype.reset): Clear the sidebar and
+        profile views.
+        (WebInspector.ProfilesPanel.prototype.handleKeyEvent): Pass the key
+        event to the sidebar.
+        (WebInspector.ProfilesPanel.prototype.addProfile): Create a
+        ProfileSidebarTreeElement object and add it to the sidebar.
+        (WebInspector.ProfilesPanel.prototype.showProfile): Create a ProfileView
+        and show it.
+        (WebInspector.ProfilesPanel.prototype.closeVisibleView): Hide the
+        visible view.
+        (WebInspector.ProfilesPanel.prototype._startSidebarDragging): Call
+        WebInspector.elementDragStart.
+        (WebInspector.ProfilesPanel.prototype._sidebarDragging): Call _updateSidebarWidth.
+        (WebInspector.ProfilesPanel.prototype._endSidebarDragging):
+        Call WebInspector.elementDragEnd.
+        (WebInspector.ProfilesPanel.prototype._updateSidebarWidth): Update the
+        sidebar width based on the passed in value.
+        (WebInspector.ProfileSidebarTreeElement): Subclass WebInspector.SidebarTreeElement.
+        (WebInspector.ProfileSidebarTreeElement.prototype.onselect): Call ProfilesPanel.showProfile.
+        (WebInspector.ProfileSidebarTreeElement.prototype.get mainTitle): Return profile.title.
+        (WebInspector.ProfileSidebarTreeElement.prototype.set mainTitle): Do nothing.
+        (WebInspector.ProfileSidebarTreeElement.prototype.get subtitle): Ditto.
+        (WebInspector.ProfileSidebarTreeElement.prototype.set subtitle): Ditto.
+        * page/inspector/inspector.css: New styles for the profile sidebar
+        item and profile data grid columns.
+        * page/inspector/inspector.js:
+        * page/inspector/utilities.js:
+        (Number.secondsToString): Added a higherResolution argument
+        that returns fractional milliseconds.
+
 2008-05-20  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler, Alice Liu

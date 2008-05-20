@@ -276,6 +276,7 @@ WebInspector.loaded = function()
         elements: new WebInspector.ElementsPanel(),
         resources: new WebInspector.ResourcesPanel(),
         scripts: new WebInspector.ScriptsPanel(),
+        profiles: new WebInspector.ProfilesPanel(),
         databases: new WebInspector.DatabasesPanel()
     };
 

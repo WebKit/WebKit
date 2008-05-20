@@ -30,62 +30,167 @@ WebInspector.ProfileView = function(profile)
     this.element.addStyleClass("profile-view");
 
     this.profile = profile;
-    
-    // Create the header
-    var headerTable = document.createElement("table");
-    headerTable.className = "data-grid";
-    this.element.appendChild(headerTable);
 
-    var headerTableTR = document.createElement("tr");
-    headerTable.appendChild(headerTableTR);
+    this.showSelfTimeAsPercent = true;
+    this.showTotalTimeAsPercent = true;
 
-    var headerTableSelf = document.createElement("th");
-    headerTableSelf.className = "narrow sort-descending selected";
-    headerTableSelf.addEventListener("click", this._toggleSortOrder.bind(this), false);
-    headerTableSelf.textContent = WebInspector.UIString("Self");
-    headerTableTR.appendChild(headerTableSelf);
+    var columns = { "self": { title: WebInspector.UIString("Self"), width: "72px", sortable: true },
+                    "total": { title: WebInspector.UIString("Total"), width: "72px", sort: "descending", sortable: true },
+                    "calls": { title: WebInspector.UIString("Calls"), width: "54px", sortable: true },
+                    "function": { title: WebInspector.UIString("Function"), disclosure: true, sortable: true } };
 
-    this.selectedHeaderColumn = headerTableSelf;
+    this.dataGrid = new WebInspector.DataGrid(columns);
+    this.dataGrid.addEventListener("sorting changed", this._sortData, this);
+    this.dataGrid.element.addEventListener("mousedown", this._mouseDownInDataGrid.bind(this), true);
+    this.element.appendChild(this.dataGrid.element);
 
-    var headerTableTotal = document.createElement("th");
-    headerTableTotal.classname = "narrow";
-    headerTableTotal.addEventListener("click", this._toggleSortOrder.bind(this), false);
-    headerTableTotal.textContent = WebInspector.UIString("Total");
-    headerTableTR.appendChild(headerTableTotal);
+    // By default the profile isn't sorted, so sort based on our default sort
+    // column and direction padded to the DataGrid above.
+    profile.head.sortTotalTimeDescending();
 
-    var headerTableCalls = document.createElement("th");
-    headerTableCalls.classname = "narrow";
-    headerTableCalls.addEventListener("click", this._toggleSortOrder.bind(this), false);
-    headerTableCalls.textContent = WebInspector.UIString("Calls");
-    headerTableTR.appendChild(headerTableCalls);
-
-    var headerTableSymbol = document.createElement("th");
-    headerTableSymbol.addEventListener("click", this._toggleSortOrder.bind(this), false);
-    headerTableSymbol.textContent = WebInspector.UIString("Function");
-    headerTableTR.appendChild(headerTableSymbol);
+    this.refresh();
 }
 
 WebInspector.ProfileView.prototype = {
-
-    _toggleSortOrder: function(event)
+    refresh: function()
     {
-        var headerElement = event.target;
-        if (headerElement.hasStyleClass("sort-descending")) {
-            headerElement.removeStyleClass("sort-descending");
-            headerElement.addStyleClass("sort-ascending");
-        } else if (headerElement.hasStyleClass("sort-ascending")) {
-            headerElement.removeStyleClass("sort-ascending");
-            headerElement.addStyleClass("sort-descending");
-        } else {
-            this.selectedHeaderColumn.removeStyleClass("sort-ascending");
-            this.selectedHeaderColumn.removeStyleClass("sort-descending");
-            this.selectedHeaderColumn.removeStyleClass("selected");
-            headerElement.addStyleClass("sort-descending");
-            headerElement.addStyleClass("selected");
-            this.selectedHeaderColumn = headerElement;
+        var selectedProfileNode = this.dataGrid.selectedNode ? this.dataGrid.selectedNode.profileNode : null;
+
+        this.dataGrid.removeChildren();
+
+        var children = this.profile.head.children;
+        var childrenLength = children.length;
+        for (var i = 0; i < childrenLength; ++i)
+            this.dataGrid.appendChild(new WebInspector.ProfileDataGridNode(children[i], this.showSelfTimeAsPercent, this.showTotalTimeAsPercent));
+
+        if (selectedProfileNode && selectedProfileNode._dataGridNode)
+            selectedProfileNode._dataGridNode.selected = true;
+    },
+
+    refreshShowAsPercents: function()
+    {
+        var child = this.dataGrid.children[0];
+        while (child) {
+            child.showTotalTimeAsPercent = this.showTotalTimeAsPercent;
+            child.showSelfTimeAsPercent = this.showSelfTimeAsPercent;
+            child.refresh();
+            child = child.traverseNextNode(false, null, true);
         }
     },
 
+    _sortData: function(event)
+    {
+        var sortOrder = this.dataGrid.sortOrder;
+        var sortColumnIdentifier = this.dataGrid.sortColumnIdentifier;
+
+        var sortingFunctionName = "sort";
+
+        if (sortColumnIdentifier === "self")
+            sortingFunctionName += "SelfTime";
+        else if (sortColumnIdentifier === "total")
+            sortingFunctionName += "TotalTime";
+        else if (sortColumnIdentifier === "calls")
+            sortingFunctionName += "Calls";
+        else if (sortColumnIdentifier === "function")
+            sortingFunctionName += "FunctionName";
+
+        if (sortOrder === "ascending")
+            sortingFunctionName += "Ascending";
+        else
+            sortingFunctionName += "Descending";
+
+        if (!(sortingFunctionName in this.profile.head))
+            return;
+
+        this.profile.head[sortingFunctionName]();
+
+        this.refresh();
+    },
+
+    _mouseDownInDataGrid: function(event)
+    {
+        if (event.detail < 2)
+            return;
+
+        var cell = event.target.enclosingNodeOrSelfWithNodeName("td");
+        if (!cell || (!cell.hasStyleClass("total-column") && !cell.hasStyleClass("self-column")))
+            return;
+
+        if (cell.hasStyleClass("total-column"))
+            this.showTotalTimeAsPercent = !this.showTotalTimeAsPercent;
+        else if (cell.hasStyleClass("self-column"))
+            this.showSelfTimeAsPercent = !this.showSelfTimeAsPercent;
+
+        this.refreshShowAsPercents();
+
+        event.preventDefault();
+        event.stopPropagation();
+    }
 }
 
 WebInspector.ProfileView.prototype.__proto__ = WebInspector.View.prototype;
+
+WebInspector.ProfileDataGridNode = function(profileNode, showSelfTimeAsPercent, showTotalTimeAsPercent)
+{
+    this.profileNode = profileNode;
+    profileNode._dataGridNode = this;
+
+    this.showSelfTimeAsPercent = showSelfTimeAsPercent;
+    this.showTotalTimeAsPercent = showTotalTimeAsPercent;
+
+    var hasChildren = (profileNode.children.length ? true : false);
+    WebInspector.DataGridNode.call(this, null, hasChildren);
+
+    this.addEventListener("populate", this._populate, this);
+
+    this.expanded = profileNode._expanded;
+}
+
+WebInspector.ProfileDataGridNode.prototype = {
+    get data()
+    {
+        function formatMilliseconds(time)
+        {
+            return Number.secondsToString(time / 1000, WebInspector.UIString.bind(WebInspector), true);
+        }
+
+        var data = {};
+        data["function"] = this.profileNode.functionName;
+        data["calls"] = this.profileNode.numberOfCalls;
+
+        if (this.showSelfTimeAsPercent)
+            data["self"] = WebInspector.UIString("%.2f%%", this.profileNode.selfPercent);
+        else
+            data["self"] = formatMilliseconds(this.profileNode.selfTime);
+
+        if (this.showTotalTimeAsPercent)
+            data["total"] = WebInspector.UIString("%.2f%%", this.profileNode.totalPercent);
+        else
+            data["total"] = formatMilliseconds(this.profileNode.totalTime);
+
+        return data;
+    },
+
+    expand: function()
+    {
+        WebInspector.DataGridNode.prototype.expand.call(this);
+        this.profileNode._expanded = true;
+    },
+
+    collapse: function()
+    {
+        WebInspector.DataGridNode.prototype.collapse.call(this);
+        this.profileNode._expanded = false;
+    },
+
+    _populate: function(event)
+    {
+        var children = this.profileNode.children;
+        var childrenLength = children.length;
+        for (var i = 0; i < childrenLength; ++i)
+            this.appendChild(new WebInspector.ProfileDataGridNode(children[i], this.showSelfTimeAsPercent, this.showTotalTimeAsPercent));
+        this.removeEventListener("populate", this._populate, this);
+    }
+}
+
+WebInspector.ProfileDataGridNode.prototype.__proto__ = WebInspector.DataGridNode.prototype;
