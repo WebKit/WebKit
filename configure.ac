@@ -283,8 +283,8 @@ AC_MSG_RESULT([$enable_offline_web_applications])
 AC_MSG_CHECKING([whether to enable HTML5 client-side session and persistent storage support])
 AC_ARG_ENABLE(dom_storage,
               AC_HELP_STRING([--enable-dom-storage],
-                             [enable HTML5 client-side session and persistent storage support [default=no]]),
-              [],[enable_dom_storage="no"])
+                             [enable HTML5 client-side session and persistent storage support [default=yes]]),
+              [],[enable_dom_storage="yes"])
 AC_MSG_RESULT([$enable_dom_storage])
 
 # check whether to build with database support
@@ -299,8 +299,8 @@ AC_MSG_RESULT([$enable_database])
 AC_MSG_CHECKING([whether to enable icon database support])
 AC_ARG_ENABLE(icon_database,
               AC_HELP_STRING([--enable-icon-database],
-                             [enable icon database [default=no]]),
-              [],[enable_icon_database="no"])
+                             [enable icon database [default=yes]]),
+              [],[enable_icon_database="yes"])
 AC_MSG_RESULT([$enable_icon_database])
 
 # check whether to enable HTML5 audio/video support
@@ -336,7 +336,23 @@ AC_ARG_ENABLE(svg_experimental,
               [],[enable_svg_experimental="no"])
 AC_MSG_RESULT([$enable_svg_experimental])
 
-if test "$enable_svg_experimental" = "yes"; then
+# check whether to enable SVG support
+AC_MSG_CHECKING([whether to enable SVG support])
+AC_ARG_ENABLE(svg,
+              AC_HELP_STRING([--enable-svg],
+                             [enable support for SVG [default=yes]]),
+              [],[enable_svg="yes"])
+AC_MSG_RESULT([$enable_svg])
+
+# check for SVG features, enabling SVG if necessary
+if test "$enable_svg_experimental" = "no" || test "$enable_svg" = "no"; then
+   enable_svg_animation=no
+   enable_svg_filters=no
+   enable_svg_fonts=no
+   enable_svg_foreign_object=no
+   enable_svg_as_image=no
+   enable_svg_use_element=no
+elif test "$enable_svg_experimental" = "yes"; then
    enable_svg=yes
    enable_svg_animation=yes
 #   enable_svg_filters=yes
@@ -346,20 +362,12 @@ if test "$enable_svg_experimental" = "yes"; then
    enable_svg_use_element=yes
 fi
 
-# check whether to enable SVG support
-AC_MSG_CHECKING([whether to enable SVG support])
-AC_ARG_ENABLE(svg,
-              AC_HELP_STRING([--enable-svg],
-                             [enable support for SVG [default=no]]),
-              [],[enable_svg="no"])
-AC_MSG_RESULT([$enable_svg])
-
 # check whether to enable support for SVG animation
 AC_MSG_CHECKING([whether to enable support for SVG animation])
 AC_ARG_ENABLE(svg_animation,
               AC_HELP_STRING([--enable-svg-animation],
-                             [enable support for SVG animation (experimental) [default=no]]),
-              [],[enable_svg_animation="no"])
+                             [enable support for SVG animation (experimental) [default=yes]]),
+              [],[enable_svg_animation="yes"])
 AC_MSG_RESULT([$enable_svg_animation])
 
 # check whether to enable support for SVG filters
@@ -374,33 +382,46 @@ AC_MSG_RESULT([$enable_svg_filters])
 AC_MSG_CHECKING([whether to enable support for SVG fonts])
 AC_ARG_ENABLE(svg_fonts,
               AC_HELP_STRING([--enable-svg-fonts],
-                             [enable support for SVG fonts (experimental) [default=no]]),
-              [],[enable_svg_fonts="no"])
+                             [enable support for SVG fonts (experimental) [default=yes]]),
+              [],[enable_svg_fonts="yes"])
 AC_MSG_RESULT([$enable_svg_fonts])
 
 # check whether to enable foreign objects support for SVG
 AC_MSG_CHECKING([whether to enable support for SVG foreign objects])
 AC_ARG_ENABLE(svg_foreign_object,
               AC_HELP_STRING([--enable-svg-foreign-object],
-                             [enable support for SVG foreign objects (experimental) [default=no]]),
-              [],[enable_svg_foreign_object="no"])
+                             [enable support for SVG foreign objects (experimental) [default=yes]]),
+              [],[enable_svg_foreign_object="yes"])
 AC_MSG_RESULT([$enable_svg_foreign_object])
 
 # check whether to enable SVG As Image support
 AC_MSG_CHECKING([whether to enable SVG as Image support])
 AC_ARG_ENABLE(svg_as_image,
               AC_HELP_STRING([--enable-svg-as-image],
-                             [enable SVG as Image support (experimental) [default=no]]),
-              [],[enable_svg_as_image="no"])
+                             [enable SVG as Image support (experimental) [default=yes]]),
+              [],[enable_svg_as_image="yes"])
 AC_MSG_RESULT([$enable_svg_as_image])
 
 # check whether to enable SVG USE element support
 AC_MSG_CHECKING([whether to enable support for SVG use element])
 AC_ARG_ENABLE(svg_use_element,
               AC_HELP_STRING([--enable-svg-use-element],
-                             [enable SVG use element support (experimental) [default=no]]),
-              [],[enable_svg_use_element="no"])
+                             [enable SVG use element support (experimental) [default=yes]]),
+              [],[enable_svg_use_element="yes"])
 AC_MSG_RESULT([$enable_svg_use_element])
+
+if test "$enable_svg_animation" = "yes" || \
+   test "$enable_svg_filters" = "yes" || \
+   test "$enable_svg_fonts" = "yes" || \
+   test "$enable_svg_foreign_object" = "yes" || \
+   test "$enable_svg_as_image" = "yes" || \
+   test "$enable_svg_use_element" = "yes"; then
+   svg_flags=yes
+   if test "$enable_svg" = "no"; then
+       AC_MSG_WARN([SVG feature(s) requested but SVG is disabled.. Enabling SVG support])
+       enable_svg=yes
+   fi
+fi
 
 # check whether to enable code coverage
 AC_MSG_CHECKING([whether to enable code coverage support])
@@ -498,20 +519,6 @@ fi
 # check for HTML features
 if test "$enable_video" = "yes"; then
     html_flags=yes
-fi
-
-# check for SVG features, enabling SVG if necessary
-if test "$enable_svg_animation" = "yes" || \
-   test "$enable_svg_filters" = "yes" || \
-   test "$enable_svg_fonts" = "yes" || \
-   test "$enable_svg_foreign_object" = "yes" || \
-   test "$enable_svg_as_image" = "yes" || \
-   test "$enable_svg_use_element" = "yes"; then
-   svg_flags=yes
-   if test "$enable_svg" = "no"; then
-       AC_MSG_WARN([SVG feature(s) requested but SVG is disabled.. Enabling SVG support])
-       enable_svg=yes
-   fi
 fi
 
 # OS conditionals
