@@ -196,6 +196,12 @@ IntSize AccessibilityObject::size() const
     return IntSize();
 }
 
+IntPoint AccessibilityObject::clickPoint() const
+{
+    IntRect rect = elementRect();
+    return IntPoint(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2);
+}
+    
 // the closest object for an internal anchor
 AccessibilityObject* AccessibilityObject::linkedUIElement() const
 {

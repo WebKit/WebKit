@@ -503,14 +503,16 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
 
 - (NSArray*)accessibilityActionNames
 {
-    static NSArray* actions = nil;
+    static NSArray* actionElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityPressAction, NSAccessibilityShowMenuAction, nil];
+    static NSArray* defaultElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityShowMenuAction, nil];
     
-    if (actions == nil) {
-        if (m_object->actionElement()) 
-            actions = [[NSArray alloc] initWithObjects: NSAccessibilityPressAction, nil];
-        else if (m_object->isAttachment())
-            actions = [[[self attachmentView] accessibilityActionNames] retain];
-    }
+    NSArray *actions;
+    if (m_object->actionElement()) 
+        actions = actionElementActions;
+    else if (m_object->isAttachment())
+        actions = [[self attachmentView] accessibilityActionNames];
+    else
+        actions = defaultElementActions;
 
     return actions;
 }
@@ -1139,15 +1141,48 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     return paramAttrs;
 }
 
-- (void)accessibilityPerformAction:(NSString*)action
+- (void)accessibilityPerformPressAction
 {
-    if (![action isEqualToString:NSAccessibilityPressAction])
-        return;
-    
     if (m_object->isAttachment())
         [[self attachmentView] accessibilityPerformAction:NSAccessibilityPressAction];
+    
+    m_object->press();    
+}
 
-    m_object->press();
+- (void)accessibilityPerformShowMenuAction
+{
+    // This needs to be performed in an iteration of the run loop that did not start from an AX call. 
+    // If it's the same run loop iteration, the menu open notification won't be sent
+    [self performSelector:@selector(accessibilityShowContextMenu) withObject:nil afterDelay:0.0];
+    
+}
+
+- (void)accessibilityShowContextMenu
+{    
+    FrameView* frameView = m_object->documentFrameView();
+    if (!frameView)
+        return;
+
+    // simulate a click in the middle of the object
+    IntPoint clickPoint = m_object->clickPoint();
+    NSPoint nsClickPoint = NSMakePoint(clickPoint.x(), clickPoint.y());
+    
+    NSView* view = frameView->documentView();
+    NSPoint nsScreenPoint = [view convertPoint:nsClickPoint toView:nil];
+    
+    // Simulate a context menu event with a right click. This has to be sent through the window, because AppKit is responsible
+    // for eventually showing the context menu, even though WebCore creates the context menu
+    NSEvent* event = [NSEvent mouseEventWithType:NSRightMouseDown location:nsScreenPoint modifierFlags:0 timestamp:0 windowNumber:[[view window] windowNumber] context:0 eventNumber:0 clickCount:1 pressure:1];
+    [[view window] sendEvent:event];
+}
+
+- (void)accessibilityPerformAction:(NSString*)action
+{
+    if ([action isEqualToString:NSAccessibilityPressAction])
+        [self accessibilityPerformPressAction];
+    
+    else if ([action isEqualToString:NSAccessibilityShowMenuAction])
+        [self accessibilityPerformShowMenuAction];
 }
 
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName

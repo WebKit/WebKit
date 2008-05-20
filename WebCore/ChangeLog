@@ -1,3 +1,20 @@
+2008-05-20  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler, Alice Liu
+
+        <rdar://problem/3438014> Might need accessibility solution for context menus in web pages
+        <rdar://problem/5060458> Elements without AXActions should not return kAXErrorFailure
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::clickPoint):
+        * page/AccessibilityObject.h:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityActionNames]):
+        (-[AccessibilityObjectWrapper accessibilityPerformPressAction]):
+        (-[AccessibilityObjectWrapper accessibilityPerformShowMenuAction]):
+        (-[AccessibilityObjectWrapper accessibilityShowContextMenu]):
+        (-[AccessibilityObjectWrapper accessibilityPerformAction:]):
+
 2008-05-20  Timothy Hatcher  <timothy@apple.com>
 
         Expose the ProfileNode functionName sorting functions on
