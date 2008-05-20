@@ -1,5 +1,20 @@
 2008-05-19  Timothy Hatcher  <timothy@apple.com>
 
+        Make the profiler use higher than millisecond resolution time-stamps.
+
+        Reviewed by Kevin McCullough.
+
+        * kjs/DateMath.cpp:
+        (KJS::getCurrentUTCTime): Call getCurrentUTCTimeWithMicroseconds and
+        floor the result.
+        (KJS::getCurrentUTCTimeWithMicroseconds): Copied from the previous
+        implementation of getCurrentUTCTime without the floor call.
+        * kjs/DateMath.h: Addded getCurrentUTCTimeWithMicroseconds.
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::ProfileNode): Use getCurrentUTCTimeWithMicroseconds.
+
+2008-05-19  Timothy Hatcher  <timothy@apple.com>
+
         Fixes a bug in the profiler where call and apply would show up
         and double the time spent in a function. We don't want to show call
         and apply at all in the profiles. This change excludes them.

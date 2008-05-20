@@ -275,7 +275,13 @@ static int dateToDayInYear(int year, int month, int day)
 
 double getCurrentUTCTime()
 {
+    return floor(getCurrentUTCTimeWithMicroseconds());
+}
+
+double getCurrentUTCTimeWithMicroseconds()
+{
 #if PLATFORM(WIN_OS)
+    // FIXME: the implementation for Windows is only millisecond resolution.
 #if COMPILER(BORLAND)
     struct timeb timebuffer;
     ftime(&timebuffer);
@@ -287,7 +293,7 @@ double getCurrentUTCTime()
 #else
     struct timeval tv;
     gettimeofday(&tv, 0);
-    double utc = floor(tv.tv_sec * msPerSecond + tv.tv_usec / 1000);
+    double utc = tv.tv_sec * msPerSecond + tv.tv_usec / 1000.0;
 #endif
     return utc;
 }

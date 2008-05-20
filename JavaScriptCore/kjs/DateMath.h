@@ -55,6 +55,7 @@ double gregorianDateTimeToMS(const GregorianDateTime&, double, bool inputIsUTC);
 double getUTCOffset();
 int equivalentYearForDST(int year);
 double getCurrentUTCTime();
+double getCurrentUTCTimeWithMicroseconds();
 void getLocalTime(const time_t*, tm*);
 
 
