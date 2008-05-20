@@ -40,14 +40,12 @@ namespace WebCore {
 SelectorNodeList::SelectorNodeList(PassRefPtr<Node> rootNode, CSSSelector* querySelector)
 {
     Document* document = rootNode->document();
-    CSSStyleSelector* styleSelector = document->styleSelector();
+    CSSStyleSelector::SelectorChecker selectorChecker(document, !document->inCompatMode());
     for (Node* n = rootNode->firstChild(); n; n = n->traverseNextNode(rootNode.get())) {
         if (n->isElementNode()) {
             Element* element = static_cast<Element*>(n);
-            styleSelector->initElementAndPseudoState(element);
-            styleSelector->initForStyleResolve(element, 0);
             for (CSSSelector* selector = querySelector; selector; selector = selector->next()) {
-                if (styleSelector->checkSelector(selector)) {
+                if (selectorChecker.checkSelector(selector, element)) {
                     m_nodes.append(n);
                     break;
                 }

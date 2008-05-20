@@ -78,7 +78,7 @@ public:
         ~CSSStyleSelector();
 
         void initElementAndPseudoState(Element*);
-        void initForStyleResolve(Element*, RenderStyle* parentStyle);
+        void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, RenderStyle::PseudoId = RenderStyle::NOPSEUDO);
         RenderStyle* styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false);
 
         RenderStyle* pseudoStyleForElement(RenderStyle::PseudoId, Element*, RenderStyle* parentStyle = 0);
@@ -126,15 +126,11 @@ public:
 
         bool affectedByViewportChange() const;
 
-        void allVisitedStateChanged();
-        void visitedStateChanged(unsigned visitedHash);
+        void allVisitedStateChanged() { m_checker.allVisitedStateChanged(); }
+        void visitedStateChanged(unsigned visitedHash) { m_checker.visitedStateChanged(visitedHash); }
 
     private:
         enum SelectorMatch { SelectorMatches, SelectorFailsLocally, SelectorFailsCompletely };
-        SelectorMatch checkSelector(CSSSelector*, Element*, bool isAncestor, bool isSubSelector);
-
-        // Checks if the selector matches the given Element.
-        bool checkOneSelector(CSSSelector*, Element*, bool isAncestor, bool isSubSelector = false);
 
         // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh
         void checkForGenericFamilyChange(RenderStyle*, RenderStyle* parentStyle);
@@ -152,8 +148,6 @@ public:
 
         void applyDeclarations(bool firstPass, bool important, int startIndex, int endIndex);
 
-        bool m_strictParsing;
-
         CSSRuleSet* m_authorStyle;
         CSSRuleSet* m_userStyle;
         RefPtr<CSSStyleSheet> m_userSheet;
@@ -165,6 +159,26 @@ public:
 
     public:
         static RenderStyle* styleNotYetAvailable() { return s_styleNotYetAvailable; }
+
+        class SelectorChecker : public Noncopyable {
+        public:
+            SelectorChecker(Document*, bool strictParsing, bool collectRulesOnly = true);
+
+            bool checkSelector(CSSSelector*, Element*) const;
+            SelectorMatch checkSelector(CSSSelector*, Element*, HashSet<AtomicStringImpl*>* selectorAttrs, RenderStyle::PseudoId& dynamicPseudo, bool isAncestor, bool isSubSelector, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
+            bool checkOneSelector(CSSSelector*, Element*, HashSet<AtomicStringImpl*>* selectorAttrs, RenderStyle::PseudoId& dynamicPseudo, bool isAncestor, bool isSubSelector, RenderStyle*, RenderStyle* elementParentStyle) const;
+            PseudoState checkPseudoState(Element*, bool checkVisited = true) const;
+
+            void allVisitedStateChanged();
+            void visitedStateChanged(unsigned visitedHash);
+
+            Document* m_document;
+            bool m_strictParsing;
+            bool m_collectRulesOnly;
+            RenderStyle::PseudoId m_pseudoStyle;
+            bool m_documentIsHTML;
+            mutable HashSet<unsigned, AlreadyHashed> m_linksCheckedForVisitedState;
+        };
 
     private:
         static RenderStyle* s_styleNotYetAvailable;
@@ -198,8 +212,6 @@ public:
 #endif
 
         StyleImage* styleImage(CSSValue* value);
-        
-        PseudoState checkPseudoState(Element*, bool checkVisited = true);
 
         // We collect the set of decls that match in |m_matchedDecls|.  We then walk the
         // set of matched decls four times, once for those properties that others depend on (like font-size),
@@ -212,31 +224,27 @@ public:
         Vector<CSSRuleData*> m_matchedRules;
 
         CSSRuleList* m_ruleList;
-        bool m_collectRulesOnly;
 
         MediaQueryEvaluator* m_medium;
         RenderStyle* m_rootDefaultStyle;
 
-        RenderStyle::PseudoId dynamicPseudo;
+        RenderStyle::PseudoId m_dynamicPseudo;
 
-        Document* m_document; // back pointer to owner document
+        SelectorChecker m_checker;
+
         RenderStyle* m_style;
         RenderStyle* m_parentStyle;
         Element* m_element;
         StyledElement* m_styledElement;
         Node* m_parentNode;
-        RenderStyle::PseudoId m_pseudoStyle;
         CSSValue* m_lineHeightValue;
         bool m_fontDirty;
-        bool m_isXMLDoc;
         bool m_matchAuthorAndUserStyles;
 
         RefPtr<CSSFontSelector> m_fontSelector;
         HashSet<AtomicStringImpl*> m_selectorAttrs;
         Vector<CSSMutableStyleDeclaration*> m_additionalAttributeStyleDecls;
         Vector<MediaQueryResult*> m_viewportDependentMediaQueryResults;
-
-        HashSet<unsigned, AlreadyHashed> m_linksCheckedForVisitedState;
     };
 
     class CSSRuleData {

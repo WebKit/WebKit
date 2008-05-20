@@ -311,17 +311,15 @@ static const MediaQueryEvaluator& printEval()
 }
 
 CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, StyleSheetList* styleSheets, CSSStyleSheet* mappedElementSheet, bool strictParsing, bool matchAuthorAndUserStyles)
-    : m_strictParsing(strictParsing)
-    , m_backgroundData(BackgroundFillLayer)
+    : m_backgroundData(BackgroundFillLayer)
+    , m_checker(doc, strictParsing, false)
 {
     init();
-    
-    m_document = doc;
+
     m_fontSelector = new CSSFontSelector(doc);
 
     m_matchAuthorAndUserStyles = matchAuthorAndUserStyles;
 
-    m_strictParsing = strictParsing;
     if (!defaultStyle)
         loadDefaultStyle();
 
@@ -333,7 +331,7 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
     // document doesn't have documentElement
     // NOTE: this assumes that element that gets passed to styleForElement -call
     // is always from the document that owns the style selector
-    FrameView* view = m_document->view();
+    FrameView* view = doc->view();
     if (view)
         m_medium = new MediaQueryEvaluator(view->mediaType());
     else
@@ -376,7 +374,6 @@ void CSSStyleSelector::init()
     m_element = 0;
     m_matchedDecls.clear();
     m_ruleList = 0;
-    m_collectRulesOnly = false;
     m_rootDefaultStyle = 0;
     m_medium = 0;
 }
@@ -454,7 +451,7 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
     sortMatchedRules(0, m_matchedRules.size());
     
     // Now transfer the set of matched rules over to our list of decls.
-    if (!m_collectRulesOnly) {
+    if (!m_checker.m_collectRulesOnly) {
         for (unsigned i = 0; i < m_matchedRules.size(); i++)
             addMatchedDeclaration(m_matchedRules[i]->rule()->declaration());
     } else {
@@ -483,11 +480,11 @@ void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleI
             
             // If we're matching normal rules, set a pseudo bit if 
             // we really just matched a pseudo-element.
-            if (dynamicPseudo != RenderStyle::NOPSEUDO && m_pseudoStyle == RenderStyle::NOPSEUDO) {
-                if (m_collectRulesOnly)
+            if (m_dynamicPseudo != RenderStyle::NOPSEUDO && m_checker.m_pseudoStyle == RenderStyle::NOPSEUDO) {
+                if (m_checker.m_collectRulesOnly)
                     return;
-                if (dynamicPseudo < RenderStyle::FIRST_INTERNAL_PSEUDOID)
-                    m_style->setHasPseudoStyle(dynamicPseudo);
+                if (m_dynamicPseudo < RenderStyle::FIRST_INTERNAL_PSEUDOID)
+                    m_style->setHasPseudoStyle(m_dynamicPseudo);
             } else {
                 // Update our first/last rule indices in the matched rules array.
                 lastRuleIndex = m_matchedDecls.size() + m_matchedRules.size();
@@ -586,10 +583,9 @@ void CSSStyleSelector::initElementAndPseudoState(Element* e)
     pseudoState = PseudoUnknown;
 }
 
-void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* defaultParent)
+void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* parentStyle, RenderStyle::PseudoId pseudoID)
 {
-    // set some variables we will need
-    m_pseudoStyle = RenderStyle::NOPSEUDO;
+    m_checker.m_pseudoStyle = pseudoID;
 
     m_parentNode = e->parentNode();
 
@@ -598,14 +594,13 @@ void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* defaultParen
         m_parentNode = e->shadowParentNode();
 #endif
 
-    if (defaultParent)
-        m_parentStyle = defaultParent;
+    if (parentStyle)
+        m_parentStyle = parentStyle;
     else
         m_parentStyle = m_parentNode ? m_parentNode->renderStyle() : 0;
-    m_isXMLDoc = !m_element->document()->isHTMLDocument();
 
     m_style = 0;
-    
+
     m_matchedDecls.clear();
 
     m_ruleList = 0;
@@ -629,7 +624,16 @@ static inline const AtomicString* linkAttribute(Node* node)
     return 0;
 }
 
-PseudoState CSSStyleSelector::checkPseudoState(Element* element, bool checkVisited)
+CSSStyleSelector::SelectorChecker::SelectorChecker(Document* document, bool strictParsing, bool collectRulesOnly)
+    : m_document(document)
+    , m_strictParsing(strictParsing)
+    , m_collectRulesOnly(collectRulesOnly)
+    , m_pseudoStyle(RenderStyle::NOPSEUDO)
+    , m_documentIsHTML(document->isHTMLDocument())
+{
+}
+
+PseudoState CSSStyleSelector::SelectorChecker::checkPseudoState(Element* element, bool checkVisited) const
 {
     const AtomicString* attr = linkAttribute(element);
     if (!attr || attr->isNull())
@@ -652,6 +656,14 @@ PseudoState CSSStyleSelector::checkPseudoState(Element* element, bool checkVisit
 
     m_linksCheckedForVisitedState.add(hash);
     return page->group().isLinkVisited(hash) ? PseudoVisited : PseudoLink;
+}
+
+bool CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element* element) const
+{
+    pseudoState = PseudoUnknown;
+    RenderStyle::PseudoId dynamicPseudo = RenderStyle::NOPSEUDO;
+
+    return checkSelector(sel, element, 0, dynamicPseudo, true, false) == SelectorMatches;
 }
 
 // a helper function for parsing nth-arguments
@@ -796,7 +808,7 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
                         if (pseudoState == PseudoUnknown) {
                             const Color& linkColor = m_element->document()->linkColor();
                             const Color& visitedColor = m_element->document()->visitedLinkColor();
-                            pseudoState = checkPseudoState(m_element, style->pseudoState() != PseudoAnyLink || linkColor != visitedColor);
+                            pseudoState = m_checker.checkPseudoState(m_element, style->pseudoState() != PseudoAnyLink || linkColor != visitedColor);
                         }
                         linksMatch = (pseudoState == style->pseudoState());
                     }
@@ -845,11 +857,11 @@ void CSSStyleSelector::matchUARules(int& firstUARule, int& lastUARule)
     matchRules(userAgentStyleSheet, firstUARule, lastUARule);
 
     // In quirks mode, we match rules from the quirks user agent sheet.
-    if (!m_strictParsing)
+    if (!m_checker.m_strictParsing)
         matchRules(defaultQuirksStyle, firstUARule, lastUARule);
         
     // If we're in view source mode, then we match rules from the view source style sheet.
-    if (m_document->frame() && m_document->frame()->inViewSourceMode())
+    if (m_checker.m_document->frame() && m_checker.m_document->frame()->inViewSourceMode())
         matchRules(defaultViewSourceStyle, firstUARule, lastUARule);
 }
 
@@ -871,7 +883,7 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
         e->document()->setHasNodesWithPlaceholderStyle();
         return s_styleNotYetAvailable;
     }
-    
+
     initElementAndPseudoState(e);
     if (allowSharing) {
         m_style = locateSharedStyle();
@@ -1031,8 +1043,8 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
         return 0;
 
     initElementAndPseudoState(e);
-    initForStyleResolve(e, parentStyle);
-    m_pseudoStyle = pseudo;
+    initForStyleResolve(e, parentStyle, pseudo);
+    m_style = parentStyle;
     
     // Since we don't use pseudo-elements in any of our quirk/print user agent rules, don't waste time walking
     // those rules.
@@ -1053,9 +1065,8 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     m_style->ref();
     if (parentStyle)
         m_style->inheritFrom(parentStyle);
-    else
-        parentStyle = m_style;
-    m_style->noninherited_flags._styleType = m_pseudoStyle;
+
+    m_style->noninherited_flags._styleType = pseudo;
     
     m_lineHeightValue = 0;
     // High-priority properties.
@@ -1126,7 +1137,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
         // property.
         // Sites also commonly use display:inline/block on <td>s and <table>s.  In quirks mode we force
         // these tags to retain their display types.
-        if (!m_strictParsing && e) {
+        if (!m_checker.m_strictParsing && e) {
             if (e->hasTagName(tdTag)) {
                 style->setDisplay(TABLE_CELL);
                 style->setFloating(FNONE);
@@ -1164,7 +1175,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
             else if (style->display() == LIST_ITEM) {
                 // It is a WinIE bug that floated list items lose their bullets, so we'll emulate the quirk,
                 // but only in quirks mode.
-                if (!m_strictParsing && style->floating() != FNONE)
+                if (!m_checker.m_strictParsing && style->floating() != FNONE)
                     style->setDisplay(BLOCK);
             }
             else
@@ -1291,11 +1302,11 @@ RefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool auth
     if (!e || !e->document()->haveStylesheetsLoaded())
         return 0;
 
-    m_collectRulesOnly = true;
-    
+    m_checker.m_collectRulesOnly = true;
+
     initElementAndPseudoState(e);
-    initForStyleResolve(e, 0);
-    
+    initForStyleResolve(e);
+
     if (!authorOnly) {
         int firstUARule = -1, lastUARule = -1;
         // First we match rules from the user agent sheet.
@@ -1314,7 +1325,7 @@ RefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool auth
         matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
     }
 
-    m_collectRulesOnly = false;
+    m_checker.m_collectRulesOnly = false;
     
     return m_ruleList;
 }
@@ -1327,14 +1338,14 @@ RefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element*, const
 
 bool CSSStyleSelector::checkSelector(CSSSelector* sel)
 {
-    dynamicPseudo = RenderStyle::NOPSEUDO;
+    m_dynamicPseudo = RenderStyle::NOPSEUDO;
 
     // Check the selector
-    SelectorMatch match = checkSelector(sel, m_element, true, false);
+    SelectorMatch match = m_checker.checkSelector(sel, m_element, &m_selectorAttrs, m_dynamicPseudo, true, false, m_style, m_parentStyle);
     if (match != SelectorMatches)
         return false;
 
-    if (m_pseudoStyle != RenderStyle::NOPSEUDO && m_pseudoStyle != dynamicPseudo)
+    if (m_checker.m_pseudoStyle != RenderStyle::NOPSEUDO && m_checker.m_pseudoStyle != m_dynamicPseudo)
         return false;
 
     return true;
@@ -1345,7 +1356,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel)
 // * SelectorMatches         - the selector matches the element e
 // * SelectorFailsLocally    - the selector fails for the element e
 // * SelectorFailsCompletely - the selector fails for e and any sibling or ancestor of e
-CSSStyleSelector::SelectorMatch CSSStyleSelector::checkSelector(CSSSelector* sel, Element* e, bool isAncestor, bool isSubSelector)
+CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element* e, HashSet<AtomicStringImpl*>* selectorAttrs, RenderStyle::PseudoId& dynamicPseudo, bool isAncestor, bool isSubSelector, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
 {
 #if ENABLE(SVG)
     // Spec: CSS2 selectors cannot be applied to the (conceptually) cloned DOM tree
@@ -1355,7 +1366,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::checkSelector(CSSSelector* sel
 #endif
 
     // first selector has to match
-    if (!checkOneSelector(sel, e, isAncestor, isSubSelector))
+    if (!checkOneSelector(sel, e, selectorAttrs, dynamicPseudo, isAncestor, isSubSelector, elementStyle, elementParentStyle))
         return SelectorFailsLocally;
 
     // The rest of the selectors has to match
@@ -1378,7 +1389,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::checkSelector(CSSSelector* sel
                 if (!n || !n->isElementNode())
                     return SelectorFailsCompletely;
                 e = static_cast<Element*>(n);
-                SelectorMatch match = checkSelector(sel, e, true, false);
+                SelectorMatch match = checkSelector(sel, e, selectorAttrs, dynamicPseudo, true, false);
                 if (match != SelectorFailsLocally)
                     return match;
             }
@@ -1389,12 +1400,12 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::checkSelector(CSSSelector* sel
             if (!n || !n->isElementNode())
                 return SelectorFailsCompletely;
             e = static_cast<Element*>(n);
-            return checkSelector(sel, e, true, false);
+            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, true, false);
         }
         case CSSSelector::DirectAdjacent:
         {
             if (!m_collectRulesOnly && e->parentNode() && e->parentNode()->isElementNode()) {
-                RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                RenderStyle* parentStyle = elementStyle ? elementParentStyle : e->parentNode()->renderStyle();
                 if (parentStyle)
                     parentStyle->setChildrenAffectedByDirectAdjacentRules();
             }
@@ -1404,11 +1415,11 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::checkSelector(CSSSelector* sel
             if (!n)
                 return SelectorFailsLocally;
             e = static_cast<Element*>(n);
-            return checkSelector(sel, e, false, false); 
+            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, false); 
         }
         case CSSSelector::IndirectAdjacent:
             if (!m_collectRulesOnly && e->parentNode() && e->parentNode()->isElementNode()) {
-                RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                RenderStyle* parentStyle = elementStyle ? elementParentStyle : e->parentNode()->renderStyle();
                 if (parentStyle)
                     parentStyle->setChildrenAffectedByForwardPositionalRules();
             }
@@ -1419,16 +1430,16 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::checkSelector(CSSSelector* sel
                 if (!n)
                     return SelectorFailsLocally;
                 e = static_cast<Element*>(n);
-                SelectorMatch match = checkSelector(sel, e, false, false);
+                SelectorMatch match = checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, false);
                 if (match != SelectorFailsLocally)
                     return match;
             };
             break;
         case CSSSelector::SubSelector:
             // a selector is invalid if something follows a pseudo-element
-            if (e == m_element && dynamicPseudo != RenderStyle::NOPSEUDO)
+            if (elementStyle && dynamicPseudo != RenderStyle::NOPSEUDO)
                 return SelectorFailsCompletely;
-            return checkSelector(sel, e, isAncestor, true);
+            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, isAncestor, true, elementStyle, elementParentStyle);
     }
 
     return SelectorFailsCompletely;
@@ -1501,7 +1512,7 @@ static bool htmlAttributeHasCaseInsensitiveValue(const QualifiedName& attr)
     return isPossibleHTMLAttr && htmlCaseInsensitiveAttributesSet->contains(attr.localName().impl());
 }
 
-bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAncestor, bool isSubSelector)
+bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, HashSet<AtomicStringImpl*>* selectorAttrs, RenderStyle::PseudoId& dynamicPseudo, bool isAncestor, bool isSubSelector, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
 {
     if (!e)
         return false;
@@ -1522,16 +1533,18 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
         if (sel->m_match == CSSSelector::Id)
             return e->hasID() && e->getIDAttribute() == sel->m_value;
 
-        if (m_style && (e != m_element || !m_styledElement || (!m_styledElement->isMappedAttribute(sel->m_attr) && sel->m_attr != typeAttr && sel->m_attr != readonlyAttr))) {
-            m_style->setAffectedByAttributeSelectors(); // Special-case the "type" and "readonly" attributes so input form controls can share style.
-            m_selectorAttrs.add(sel->m_attr.localName().impl());
+        // FIXME: Handle the case were elementStyle is 0.
+        if (elementStyle && (!e->isStyledElement() || (!static_cast<StyledElement*>(e)->isMappedAttribute(sel->m_attr) && sel->m_attr != typeAttr && sel->m_attr != readonlyAttr))) {
+            elementStyle->setAffectedByAttributeSelectors(); // Special-case the "type" and "readonly" attributes so input form controls can share style.
+            if (selectorAttrs)
+                selectorAttrs->add(sel->m_attr.localName().impl());
         }
 
         const AtomicString& value = e->getAttribute(sel->m_attr);
         if (value.isNull())
             return false; // attribute is not set
 
-        bool caseSensitive = m_isXMLDoc || !htmlAttributeHasCaseInsensitiveValue(sel->m_attr);
+        bool caseSensitive = !m_documentIsHTML || !htmlAttributeHasCaseInsensitiveValue(sel->m_attr);
 
         switch (sel->m_match) {
         case CSSSelector::Exact:
@@ -1605,8 +1618,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                     }
                 }
                 if (!m_collectRulesOnly) {
-                    if (m_element == e && m_style)
-                        m_style->setEmptyState(result);
+                    if (elementStyle)
+                        elementStyle->setEmptyState(result);
                     else if (e->renderStyle() && (e->document()->usesSiblingRules() || e->renderStyle()->unique()))
                         e->renderStyle()->setEmptyState(result);
                 }
@@ -1622,8 +1635,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                     if (!n)
                         result = true;
                     if (!m_collectRulesOnly) {
-                        RenderStyle* childStyle = (m_element == e) ? m_style : e->renderStyle();
-                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                        RenderStyle* childStyle = elementStyle ? elementStyle : e->renderStyle();
+                        RenderStyle* parentStyle = elementStyle ? elementParentStyle : e->parentNode()->renderStyle();
                         if (parentStyle)
                             parentStyle->setChildrenAffectedByFirstChildRules();
                         if (result && childStyle)
@@ -1647,7 +1660,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                     if (!n)
                         result = true;
                     if (!m_collectRulesOnly) {
-                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                        RenderStyle* parentStyle = elementStyle ? elementParentStyle : e->parentNode()->renderStyle();
                         if (parentStyle)
                             parentStyle->setChildrenAffectedByForwardPositionalRules();
                     }
@@ -1668,8 +1681,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                             result = true;
                     }
                     if (!m_collectRulesOnly) {
-                        RenderStyle* childStyle = (m_element == e) ? m_style : e->renderStyle();
-                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : parentNode->renderStyle();
+                        RenderStyle* childStyle = elementStyle ? elementStyle : e->renderStyle();
+                        RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentNode->renderStyle();
                         if (parentStyle)
                             parentStyle->setChildrenAffectedByLastChildRules();
                         if (result && childStyle)
@@ -1684,7 +1697,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
                     Element* parentNode = static_cast<Element*>(e->parentNode());
                     if (!m_collectRulesOnly) {
-                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : parentNode->renderStyle();
+                        RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentNode->renderStyle();
                         if (parentStyle)
                             parentStyle->setChildrenAffectedByBackwardPositionalRules();
                     }
@@ -1723,8 +1736,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                             lastChild = true;
                     }
                     if (!m_collectRulesOnly) {
-                        RenderStyle* childStyle = (m_element == e) ? m_style : e->renderStyle();
-                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : parentNode->renderStyle();
+                        RenderStyle* childStyle = elementStyle ? elementStyle : e->renderStyle();
+                        RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentNode->renderStyle();
                         if (parentStyle) {
                             parentStyle->setChildrenAffectedByFirstChildRules();
                             parentStyle->setChildrenAffectedByLastChildRules();
@@ -1743,7 +1756,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
                     Element* parentNode = static_cast<Element*>(e->parentNode());
                     if (!m_collectRulesOnly) {
-                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : parentNode->renderStyle();
+                        RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentNode->renderStyle();
                         if (parentStyle) {
                             parentStyle->setChildrenAffectedByForwardPositionalRules();
                             parentStyle->setChildrenAffectedByBackwardPositionalRules();
@@ -1800,8 +1813,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                     }
                     
                     if (!m_collectRulesOnly) {
-                        RenderStyle* childStyle = (m_element == e) ? m_style : e->renderStyle();
-                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                        RenderStyle* childStyle = elementStyle ? elementStyle : e->renderStyle();
+                        RenderStyle* parentStyle = elementStyle ? elementParentStyle : e->parentNode()->renderStyle();
                         if (childStyle)
                             childStyle->setChildIndex(count);
                         if (parentStyle)
@@ -1830,7 +1843,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                     }
                     
                     if (!m_collectRulesOnly) {
-                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : e->parentNode()->renderStyle();
+                        RenderStyle* parentStyle = elementStyle ? elementParentStyle : e->parentNode()->renderStyle();
                         if (parentStyle)
                             parentStyle->setChildrenAffectedByForwardPositionalRules();
                     }
@@ -1850,7 +1863,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
                     Element* parentNode = static_cast<Element*>(e->parentNode());
                     if (!m_collectRulesOnly) {
-                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : parentNode->renderStyle();
+                        RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentNode->renderStyle();
                         if (parentStyle)
                             parentStyle->setChildrenAffectedByBackwardPositionalRules();
                     }
@@ -1877,7 +1890,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
                     Element* parentNode = static_cast<Element*>(e->parentNode());
                     if (!m_collectRulesOnly) {
-                        RenderStyle* parentStyle = (m_element == e) ? m_parentStyle : parentNode->renderStyle();
+                        RenderStyle* parentStyle = elementStyle ? elementParentStyle : parentNode->renderStyle();
                         if (parentStyle)
                             parentStyle->setChildrenAffectedByBackwardPositionalRules();
                     }
@@ -1923,12 +1936,12 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                     return true;
                 break;
             case CSSSelector::PseudoDrag: {
-                if (m_element == e && m_style)
-                    m_style->setAffectedByDragRules(true);
-                    if (m_element != e && e->renderStyle())
-                        e->renderStyle()->setAffectedByDragRules(true);
-                    if (e->renderer() && e->renderer()->isDragging())
-                        return true;
+                if (elementStyle)
+                    elementStyle->setAffectedByDragRules(true);
+                else if (e->renderStyle())
+                    e->renderStyle()->setAffectedByDragRules(true);
+                if (e->renderer() && e->renderer()->isDragging())
+                    return true;
                 break;
             }
             case CSSSelector::PseudoFocus:
@@ -1939,9 +1952,9 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                 // If we're in quirks mode, then hover should never match anchors with no
                 // href and *:hover should not match anything.  This is important for sites like wsj.com.
                 if (m_strictParsing || isSubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
-                    if (m_element == e && m_style)
-                        m_style->setAffectedByHoverRules(true);
-                    if (m_element != e && e->renderStyle())
+                    if (elementStyle)
+                        elementStyle->setAffectedByHoverRules(true);
+                    else if (e->renderStyle())
                         e->renderStyle()->setAffectedByHoverRules(true);
                     if (e->hovered())
                         return true;
@@ -1952,8 +1965,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                 // If we're in quirks mode, then :active should never match anchors with no
                 // href and *:active should not match anything. 
                 if (m_strictParsing || isSubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
-                    if (m_element == e && m_style)
-                        m_style->setAffectedByActiveRules(true);
+                    if (elementStyle)
+                        elementStyle->setAffectedByActiveRules(true);
                     else if (e->renderStyle())
                         e->renderStyle()->setAffectedByActiveRules(true);
                     if (e->active())
@@ -2019,7 +2032,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
                     // restriction in CSS3, but it is, so let's honour it.
                     if (subSel->m_simpleSelector)
                         break;
-                    if (!checkOneSelector(subSel, e, isAncestor, true))
+                    if (!checkOneSelector(subSel, e, selectorAttrs, dynamicPseudo, isAncestor, true, elementStyle, elementParentStyle))
                         return true;
                 }
                 break;
@@ -2033,7 +2046,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isAnc
         return false;
     }
     if (sel->m_match == CSSSelector::PseudoElement) {
-        if (e != m_element) return false;
+        if (!elementStyle)
+            return false;
 
         switch (sel->pseudoType()) {
             // Pseudo-elements:
@@ -3024,7 +3038,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
         EResize r = RESIZE_NONE;
         if (primitiveValue->getIdent() == CSSValueAuto) {
-            if (Settings* settings = m_document->settings())
+            if (Settings* settings = m_checker.m_document->settings())
                 r = settings->textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
         } else
             r = *primitiveValue;
@@ -3395,8 +3409,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             lineHeight = Length(-100.0, Percent);
         else if (type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG) {
             double multiplier = m_style->effectiveZoom();
-            if (m_style->textSizeAdjust() && m_document->frame() && m_document->frame()->shouldApplyTextZoom())
-                multiplier *= m_document->frame()->textZoomFactor();
+            if (m_style->textSizeAdjust() && m_checker.m_document->frame() && m_checker.m_document->frame()->shouldApplyTextZoom())
+                multiplier *= m_checker.m_document->frame()->textZoomFactor();
             lineHeight = Length(primitiveValue->computeLengthIntForLength(m_style, multiplier), Fixed);
         } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
             lineHeight = Length((m_style->fontSize() * primitiveValue->getIntValue()) / 100, Fixed);
@@ -3584,7 +3598,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (!item->isPrimitiveValue()) continue;
             CSSPrimitiveValue *val = static_cast<CSSPrimitiveValue*>(item);
             AtomicString face;
-            Settings* settings = m_document->settings();
+            Settings* settings = m_checker.m_document->settings();
             if (val->primitiveType() == CSSPrimitiveValue::CSS_STRING)
                 face = static_cast<FontFamilyValue*>(val)->familyName();
             else if (val->primitiveType() == CSSPrimitiveValue::CSS_IDENT && settings) {
@@ -3832,12 +3846,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (m_style->setFontDescription(fontDescription))
                 m_fontDirty = true;
         } else if (isInitial) {
-            Settings* settings = m_document->settings();
+            Settings* settings = m_checker.m_document->settings();
             FontDescription fontDescription;
             fontDescription.setGenericFamily(FontDescription::StandardFamily);
             fontDescription.setRenderingMode(settings->fontRenderingMode());
-            fontDescription.setUsePrinterFont(m_document->printing());
-            const AtomicString& standardFontFamily = m_document->settings()->standardFontFamily();
+            fontDescription.setUsePrinterFont(m_checker.m_document->printing());
+            const AtomicString& standardFontFamily = m_checker.m_document->settings()->standardFontFamily();
             if (!standardFontFamily.isEmpty()) {
                 fontDescription.firstFamily().setFamily(standardFontFamily);
                 fontDescription.firstFamily().appendFamily(0);
@@ -5077,7 +5091,7 @@ void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* style, RenderSty
         size = fontSizeForKeyword(CSSValueXxSmall + childFont.keywordSize() - 1, style->htmlHacks(),
                                   childFont.genericFamily() == FontDescription::MonospaceFamily);
     } else {
-        Settings* settings = m_document->settings();
+        Settings* settings = m_checker.m_document->settings();
         float fixedScaleFactor = settings
             ? static_cast<float>(settings->defaultFixedFontSize()) / settings->defaultFontSize()
             : 1;
@@ -5109,7 +5123,7 @@ float CSSStyleSelector::getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, fl
     // However we always allow the page to set an explicit pixel size that is smaller,
     // since sites will mis-render otherwise (e.g., http://www.gamespot.com with a 9px minimum).
     
-    Settings* settings = m_document->settings();
+    Settings* settings = m_checker.m_document->settings();
     if (!settings)
         return 1.0f;
 
@@ -5117,8 +5131,8 @@ float CSSStyleSelector::getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, fl
     int minLogicalSize = settings->minimumLogicalFontSize();
 
     float zoomFactor = m_style->effectiveZoom();
-    if (m_document->frame() && m_document->frame()->shouldApplyTextZoom())
-        zoomFactor *= m_document->frame()->textZoomFactor();
+    if (m_checker.m_document->frame() && m_checker.m_document->frame()->shouldApplyTextZoom())
+        zoomFactor *= m_checker.m_document->frame()->textZoomFactor();
 
     float zoomedSize = specifiedSize * zoomFactor;
 
@@ -5182,7 +5196,7 @@ static const float fontSizeFactors[totalKeywords] = { 0.60f, 0.75f, 0.89f, 1.0f,
 
 float CSSStyleSelector::fontSizeForKeyword(int keyword, bool quirksMode, bool fixed) const
 {
-    Settings* settings = m_document->settings();
+    Settings* settings = m_checker.m_document->settings();
     if (!settings)
         return 1.0f;
 
@@ -5264,7 +5278,7 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
                 col = linkColor;
             else {
                 if (pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink)
-                    pseudoState = checkPseudoState(m_element);
+                    pseudoState = m_checker.checkPseudoState(m_element);
                 col = (pseudoState == PseudoLink) ? linkColor : visitedColor;
             }
         } else if (ident == CSSValueWebkitActivelink)
@@ -5300,7 +5314,7 @@ bool CSSStyleSelector::affectedByViewportChange() const
     return false;
 }
 
-void CSSStyleSelector::allVisitedStateChanged()
+void CSSStyleSelector::SelectorChecker::allVisitedStateChanged()
 {
     if (m_linksCheckedForVisitedState.isEmpty())
         return;
@@ -5310,7 +5324,7 @@ void CSSStyleSelector::allVisitedStateChanged()
     }
 }
 
-void CSSStyleSelector::visitedStateChanged(unsigned visitedHash)
+void CSSStyleSelector::SelectorChecker::visitedStateChanged(unsigned visitedHash)
 {
     if (!m_linksCheckedForVisitedState.contains(visitedHash))
         return;

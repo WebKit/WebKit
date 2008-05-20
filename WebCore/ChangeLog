@@ -1,3 +1,73 @@
+2008-05-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=17655
+          <rdar://problem/5778077> REGRESSION (3.1.1-TOT): Reproducible crash calling querySelector on viewless Document
+
+        Test: fast/dom/SelectorAPI/viewless-document.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector): Updated to initialize the
+        selector checker.
+        (WebCore::CSSStyleSelector::init): Removed initialization of
+        m_collectRulesOnly, which is now part of the selector checker.
+        (WebCore::CSSStyleSelector::matchRules): Updated for renames and data
+        moved into the selector checker.
+        (WebCore::CSSStyleSelector::matchRulesForList): Ditto.
+        (WebCore::CSSStyleSelector::initForStyleResolve): Added a PseudoId
+        argument, which is used to initialize a data member of the selector
+        checker. Updated for renames. Removed initialization of m_isXMLDoc
+        because this bit is now initialized only once in the selector checker's
+        constructor.
+        (WebCore::CSSStyleSelector::SelectorChecker::SelectorChecker): Added.
+        (WebCore::CSSStyleSelector::SelectorChecker::checkPseudoState): Changed
+        into a SelectorChecker method.
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector): Added. Used
+        by querySelector() and querySelectorAll().
+        (WebCore::CSSStyleSelector::canShareStyleWithElement): Updated for data
+        moved into the selector checker.
+        (WebCore::CSSStyleSelector::matchUARules): Ditto.
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement): Ditto. Also removed
+        code that set the parentStyle variable after the last place it is
+        accessed, and changed to ensure that m_style is set early in this
+        function.
+        (WebCore::CSSStyleSelector::adjustRenderStyle): Updated for data moved
+        into the selector checker.
+        (WebCore::CSSStyleSelector::styleRulesForElement): Ditto.
+        (WebCore::CSSStyleSelector::checkSelector): Ditto. Also changed to pass
+        the element's style and the parent style to the selector checker, as
+        well as the dynamic pseudo variable and the selector attributes vector.
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Added
+        arguments for the style of the base element and its parent. When the
+        elementStyle argument is 0, the style is fetched from the element
+        and its parent as needed. Also changed to take a reference to the
+        dynamic pseudo ID and a pointer to the vector of attributes affecting
+        the match.
+        (WebCore::CSSStyleSelector::applyProperty): Updated for data moved
+        into the selector checker.
+        (WebCore::CSSStyleSelector::checkForGenericFamilyChange): Ditto.
+        (WebCore::CSSStyleSelector::getComputedSizeFromSpecifiedSize): Ditto.
+        (WebCore::CSSStyleSelector::fontSizeForKeyword): Ditto.
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue): Ditto.
+        (WebCore::CSSStyleSelector::SelectorChecker::allVisitedStateChanged):
+        Changed into a SelectorChecker method.
+        (WebCore::CSSStyleSelector::SelectorChecker::visitedStateChanged):
+        Ditto.
+
+        * css/CSSStyleSelector.h:
+        Added a SelectorChecker class and moved data and methods used in
+        checking selectors into it.
+        (WebCore::CSSStyleSelector::allVisitedStateChanged): Changed to call the
+        SelectorChecker method.
+        (WebCore::CSSStyleSelector::visitedStateChanged): Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector): Changed to use a SelectorChecker instead
+        of the document's style selector.
+        * dom/SelectorNodeList.cpp:
+        (WebCore::SelectorNodeList::SelectorNodeList): Ditto.
+
 2008-05-20  Timothy Hatcher  <timothy@apple.com>
 
         Implements the Profiles panel and Profile view.

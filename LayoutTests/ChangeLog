@@ -1,3 +1,14 @@
+2008-05-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=17655
+          <rdar://problem/5778077> REGRESSION (3.1.1-TOT): Reproducible crash calling querySelector on viewless Document
+
+        * fast/dom/SelectorAPI/resources/viewless-document.js: Added.
+        * fast/dom/SelectorAPI/viewless-document-expected.txt: Added.
+        * fast/dom/SelectorAPI/viewless-document.html: Added.
+
 2008-05-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

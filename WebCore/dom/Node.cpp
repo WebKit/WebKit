@@ -1235,17 +1235,15 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
         return 0;
     }
 
-    CSSStyleSelector* styleSelector = document()->styleSelector();
+    CSSStyleSelector::SelectorChecker selectorChecker(document(), !document()->inCompatMode());
     CSSSelector* querySelector = static_cast<CSSStyleRule*>(rule.get())->selector();
     
     // FIXME: We can speed this up by implementing caching similar to the one use by getElementById
     for (Node* n = firstChild(); n; n = n->traverseNextNode(this)) {
         if (n->isElementNode()) {
             Element* element = static_cast<Element*>(n);
-            styleSelector->initElementAndPseudoState(element);
-            styleSelector->initForStyleResolve(element, 0);
             for (CSSSelector* selector = querySelector; selector; selector = selector->next()) {
-                if (styleSelector->checkSelector(selector))
+                if (selectorChecker.checkSelector(selector, element))
                     return element;
             }
         }
