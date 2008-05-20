@@ -96,6 +96,7 @@ void PluginView::stop()
 const char* PluginView::userAgent()
 {
     notImplemented();
+    return 0;
 }
 
 NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32 len, const char* buf)

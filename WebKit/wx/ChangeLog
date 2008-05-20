@@ -1,3 +1,10 @@
+2008-05-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Update code after removal of Document::toString().
+
+        * WebView.cpp:
+        (wxWebView::GetPageSource):
+
 2008-05-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Add rendering/style to includes dir.

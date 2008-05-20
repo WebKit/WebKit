@@ -1,3 +1,10 @@
+2008-05-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. userAgent should return a value.
+
+        * plugins/wx/PluginViewWx.cpp:
+        (WebCore::PluginView::userAgent):
+
 2008-05-19  Timothy Hatcher  <timothy@apple.com>
 
         Expose the ProfileNode sorting functions on JavaScriptProfileNode.
