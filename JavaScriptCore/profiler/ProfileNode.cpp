@@ -96,13 +96,15 @@ void ProfileNode::stopProfiling()
     if (m_startTime)
         endAndRecordCall();
 
-    StackIterator endOfChildren = m_children.end();
-    for (StackIterator it = m_children.begin(); it != endOfChildren; ++it)
-        (*it)->stopProfiling();
+    ASSERT(m_selfTime == 0.0);
 
     // Calculate Self time and the percentages once we stop profiling.
-    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+    StackIterator endOfChildren = m_children.end();
+    for (StackIterator currentChild = m_children.begin(); currentChild != endOfChildren; ++currentChild) {
+        (*currentChild)->stopProfiling();
         m_selfTime += (*currentChild)->totalTime();
+    }
+
     ASSERT(m_selfTime <= m_totalTime);
     m_selfTime = m_totalTime - m_selfTime;
 

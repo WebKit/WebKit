@@ -81,9 +81,24 @@ void Profiler::stopProfiling()
     m_currentProfile = 0;
 }
 
+static inline bool shouldExcludeFunction(ExecState* exec, JSObject* calledFunction)
+{
+    if (!calledFunction->inherits(&InternalFunctionImp::info))
+        return false;
+    // Don't record a call for function.call and function.apply.
+    if (static_cast<InternalFunctionImp*>(calledFunction)->functionName() == exec->propertyNames().call)
+        return true;
+    if (static_cast<InternalFunctionImp*>(calledFunction)->functionName() == exec->propertyNames().apply)
+        return true;
+    return false;
+}
+
 void Profiler::willExecute(ExecState* exec, JSObject* calledFunction)
 {
     if (!m_profiling || exec->lexicalGlobalObject()->pageGroupIdentifier() != m_pageGroupIdentifier)
+        return;
+
+    if (shouldExcludeFunction(exec, calledFunction))
         return;
 
     Vector<UString> callStackNames;
@@ -104,6 +119,9 @@ void Profiler::willExecute(ExecState* exec, const UString& sourceURL, int starti
 void Profiler::didExecute(ExecState* exec, JSObject* calledFunction)
 {
     if (!m_profiling || exec->lexicalGlobalObject()->pageGroupIdentifier() != m_pageGroupIdentifier)
+        return;
+
+    if (shouldExcludeFunction(exec, calledFunction))
         return;
 
     Vector<UString> callStackNames;

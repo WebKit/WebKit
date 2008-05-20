@@ -1,3 +1,22 @@
+2008-05-19  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a bug in the profiler where call and apply would show up
+        and double the time spent in a function. We don't want to show call
+        and apply at all in the profiles. This change excludes them.
+
+        Reviewed by Kevin McCullough.
+
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::stopProfiling): Remove a second for loop and
+        calculate self time in the existing loop.
+        * profiler/Profiler.cpp:
+        (KJS::shouldExcludeFunction): Helper inline function that returns
+        true in the current function in an InternalFunctionImp and it is 
+        has the functionName call or apply.
+        (KJS::Profiler::willExecute): Call shouldExcludeFunction and return
+        early if if returns true.
+        (KJS::Profiler::didExecute): Ditto.
+
 2008-05-19  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.
