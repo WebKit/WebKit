@@ -1,3 +1,9 @@
+2008-05-20  Kevin McCullough  <kmccullough@apple.com>
+
+        Accidentally turned on the profiler.
+
+        * kjs/config.h:
+
 
 2008-05-20  Kevin McCullough  <kmccullough@apple.com>
 
