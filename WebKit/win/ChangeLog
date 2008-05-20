@@ -1,5 +1,16 @@
 2008-05-19  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam.
+
+        <rdar://problem/5946454>
+        Support navigator.onLine from HTML5.
+        
+        Link with iphlpapi.lib, and make iphlpapi.dll a delay loaded library.
+        
+        * WebKit.vcproj/WebKit.vcproj:
+
+2008-05-19  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin, Alexey, Jess and Brady.
 
         Set the application cache path.

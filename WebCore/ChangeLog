@@ -1,3 +1,23 @@
+2008-05-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5946454>
+        Support navigator.onLine from HTML5.
+
+        Add Windows NetworkStateNotifier implementation using the IP Helper API.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/network/NetworkStateNotifier.h:
+        (WebCore::updateState):
+        * platform/network/win/NetworkStateNotifierWin.cpp: Added.
+        (WebCore::NetworkStateNotifier::updateState):
+        (WebCore::NetworkStateNotifier::addressChanged):
+        (WebCore::NetworkStateNotifier::callAddressChanged):
+        (WebCore::NetworkStateNotifier::addrChangeCallback):
+        (WebCore::NetworkStateNotifier::registerForAddressChange):
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+
 2008-05-19  Steve Falkenburg  <sfalken@apple.com>
 
         Disable C4273, C4565 for CSSGrammar.cpp, XPathGrammar.cpp to fix build.
