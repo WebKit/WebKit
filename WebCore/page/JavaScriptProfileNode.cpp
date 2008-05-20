@@ -163,6 +163,72 @@ static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSString
     return result;
 }
 
+static JSValueRef sortTotalTimeDescending(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
+        return JSValueMakeUndefined(ctx);
+
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    profileNode->sortTotalTimeDescending();
+
+    return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef sortTotalTimeAscending(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
+        return JSValueMakeUndefined(ctx);
+
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    profileNode->sortTotalTimeAscending();
+
+    return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef sortSelfTimeDescending(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
+        return JSValueMakeUndefined(ctx);
+
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    profileNode->sortSelfTimeDescending();
+
+    return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef sortSelfTimeAscending(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
+        return JSValueMakeUndefined(ctx);
+
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    profileNode->sortSelfTimeAscending();
+
+    return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef sortCallsDescending(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
+        return JSValueMakeUndefined(ctx);
+
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    profileNode->sortCallsDescending();
+
+    return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef sortCallsAscending(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
+        return JSValueMakeUndefined(ctx);
+
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    profileNode->sortCallsAscending();
+
+    return JSValueMakeUndefined(ctx);
+}
+
 static void finalize(JSObjectRef object)
 {
     ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(object));
@@ -183,8 +249,18 @@ JSClassRef ProfileNodeClass()
         { 0, 0, 0, 0 }
     };
 
+    static JSStaticFunction staticFunctions[] = {
+        { "sortTotalTimeDescending", sortTotalTimeDescending, kJSPropertyAttributeNone },
+        { "sortTotalTimeAscending", sortTotalTimeAscending, kJSPropertyAttributeNone },
+        { "sortSelfTimeDescending", sortSelfTimeDescending, kJSPropertyAttributeNone },
+        { "sortSelfTimeAscending", sortSelfTimeAscending, kJSPropertyAttributeNone },
+        { "sortCallsDescending", sortCallsDescending, kJSPropertyAttributeNone },
+        { "sortCallsAscending", sortCallsAscending, kJSPropertyAttributeNone },
+        { 0, 0, 0 }
+    };
+
     static JSClassDefinition classDefinition = {
-        0, kJSClassAttributeNone, "ProfileNode", 0, staticValues, 0,
+        0, kJSClassAttributeNone, "ProfileNode", 0, staticValues, staticFunctions,
         0, finalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
 

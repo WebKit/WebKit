@@ -1,5 +1,20 @@
 2008-05-19  Timothy Hatcher  <timothy@apple.com>
 
+        Expose the ProfileNode sorting functions on JavaScriptProfileNode.
+
+        Reviewed by Kevin McCullough.
+
+        * page/JavaScriptProfileNode.cpp:
+        (WebCore::sortTotalTimeDescending): Call ProfileNode.
+        (WebCore::sortTotalTimeAscending): Ditto.
+        (WebCore::sortSelfTimeDescending): Ditto.
+        (WebCore::sortSelfTimeAscending): Ditto.
+        (WebCore::sortCallsDescending): Ditto.
+        (WebCore::sortCallsAscending): Ditto.
+        (WebCore::ProfileNodeClass): Add static static functions.
+
+2008-05-19  Timothy Hatcher  <timothy@apple.com>
+
         * page/InspectorController.cpp: Change the include for
         JavaScriptProfile.h to sue double quotes instead of backets.
 
