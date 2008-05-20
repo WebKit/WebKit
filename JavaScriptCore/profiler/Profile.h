@@ -57,9 +57,10 @@ namespace KJS {
         void sortCallsAscending() { m_callTree->sortCallsAscending(); }
         void sortFunctionNameDescending() { m_callTree->sortFunctionNameDescending(); }
         void sortFunctionNameAscending() { m_callTree->sortFunctionNameAscending(); }
-        
-        void printDataInspectorStyle() const;
-        void printDataSampleStyle() const;
+#ifndef NDEBUG
+        void debugPrintData() const;
+        void debugPrintDataSampleStyle() const;
+#endif
 
     private:
         Profile(const UString& title);

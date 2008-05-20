@@ -249,8 +249,8 @@ void ProfileNode::calculatePercentages(double totalProfileTime)
     m_selfPercent = (m_selfTime / totalProfileTime) * 100.0;
 }
 
-
-void ProfileNode::printDataInspectorStyle(int indentLevel) const
+#ifndef NDEBUG
+void ProfileNode::debugPrintData(int indentLevel) const
 {
     // Print function names
     for (int i = 0; i < indentLevel; ++i)
@@ -262,11 +262,11 @@ void ProfileNode::printDataInspectorStyle(int indentLevel) const
 
     // Print children's names and information
     for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
-        (*currentChild)->printDataInspectorStyle(indentLevel);
+        (*currentChild)->debugPrintData(indentLevel);
 }
 
 // print the profiled data in a format that matches the tool sample's output.
-double ProfileNode::printDataSampleStyle(int indentLevel, FunctionCallHashCount& countedFunctions) const
+double ProfileNode::debugPrintDataSampleStyle(int indentLevel, FunctionCallHashCount& countedFunctions) const
 {
     printf("    ");
 
@@ -288,7 +288,7 @@ double ProfileNode::printDataSampleStyle(int indentLevel, FunctionCallHashCount&
     // Print children's names and information
     double sumOfChildrensCount = 0.0;
     for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
-        sumOfChildrensCount += (*currentChild)->printDataSampleStyle(indentLevel, countedFunctions);
+        sumOfChildrensCount += (*currentChild)->debugPrintDataSampleStyle(indentLevel, countedFunctions);
 
     sumOfChildrensCount *= 1000;    //
     // Print remainder of samples to match sample's output
@@ -302,5 +302,6 @@ double ProfileNode::printDataSampleStyle(int indentLevel, FunctionCallHashCount&
 
     return m_totalTime;
 }
+#endif
 
 }   // namespace KJS
