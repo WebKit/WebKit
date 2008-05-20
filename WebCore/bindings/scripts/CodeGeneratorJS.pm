@@ -449,7 +449,8 @@ sub GenerateHeader
         push(@headerContent, "\n    // Custom functions\n");
         foreach my $function (@{$dataNode->functions}) {
             if ($function->signature->extendedAttributes->{"Custom"}) {
-                push(@headerContent, "    KJS::JSValue* " . $codeGenerator->WK_lcfirst($function->signature->name) . "(KJS::ExecState*, const KJS::List&);\n");
+                my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
+                push(@headerContent, "    KJS::JSValue* " . $functionImplementationName . "(KJS::ExecState*, const KJS::List&);\n");
             }
         }
     }
@@ -1132,6 +1133,8 @@ sub GenerateImplementation
             AddIncludesForType($function->signature->type);
 
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
+            my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
+
             push(@implContent, "JSValue* ${functionName}(ExecState* exec, JSObject* thisObj, const List& args)\n");
             push(@implContent, "{\n");
 
@@ -1155,7 +1158,7 @@ sub GenerateImplementation
             }
 
             if ($function->signature->extendedAttributes->{"Custom"}) {
-                push(@implContent, "    return castedThisObj->" . $codeGenerator->WK_lcfirst($function->signature->name) . "(exec, args);\n");
+                push(@implContent, "    return castedThisObj->" . $functionImplementationName . "(exec, args);\n");
             } else {
                 if ($podType) {
                     push(@implContent, "    JSSVGPODTypeWrapper<$podType>* wrapper = castedThisObj->impl();\n");
@@ -1182,7 +1185,7 @@ sub GenerateImplementation
                 }
 
                 my $paramIndex = 0;
-                my $functionString = "imp" . ($podType ? "." : "->") . $codeGenerator->WK_lcfirst($function->signature->name) . "(";
+                my $functionString = "imp" . ($podType ? "." : "->") . $functionImplementationName . "(";
 
                 my $hasOptionalArguments = 0;
 

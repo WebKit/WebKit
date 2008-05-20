@@ -129,6 +129,26 @@ void Console::log(ExecState* exec, const List& arguments)
     page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, exec, arguments, 0, url.string());
 }
 
+void Console::assertCondition(bool condition, ExecState* exec, const List& arguments)
+{
+    if (condition)
+        return;
+
+    if (!m_frame)
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    const KURL& url = m_frame->loader()->url();
+
+    // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=19135> It would be nice to prefix assertion failures with a message like "Assertion failed: ".
+    // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=19136> We should print a message even when arguments.isEmpty() is true.
+
+    page->inspectorController()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, exec, arguments, 0, url.string());
+}
+
 void Console::profile(ExecState* exec, const List& arguments) const
 {
     Page* page = m_frame->page();

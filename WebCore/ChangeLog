@@ -1,3 +1,24 @@
+2008-05-19  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 19134: Inspector should support console.assert
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19134>
+
+        Reviewed by Tim Hatcher.
+
+        Test: manual-tests/inspector/console-assert.html
+
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::assertCondition): Added.
+        * bindings/scripts/CodeGeneratorJS.pm: Added parsing of the
+        ImplementationFunction extended attribute, which allows you to
+        override the name of the C++ function used to implement this method.
+        * manual-tests/inspector/console-assert.html: Added.
+        * page/Console.cpp:
+        (WebCore::Console::assertCondition): Added.
+        * page/Console.h:
+        * page/Console.idl: Added assert().
+
 2008-05-20  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Brady.
