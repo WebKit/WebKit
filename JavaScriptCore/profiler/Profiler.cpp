@@ -42,10 +42,10 @@ namespace KJS {
 static Profiler* sharedProfiler = 0;
 static const char* Script = "[SCRIPT] ";
 
-static void getStackNames(Vector<UString>&, ExecState*);
-static void getStackNames(Vector<UString>&, ExecState*, JSObject*);
-static void getStackNames(Vector<UString>&, ExecState*, const UString& sourceURL, int startingLineNumber);
-static UString getFunctionName(FunctionImp*);
+static void getCallIdentifiers(ExecState*, Vector<CallIdentifier>& callIdentifiers);
+static void getCallIdentifiers(ExecState*, JSObject*, Vector<CallIdentifier>& callIdentifiers);
+static void getCallIdentifiers(ExecState*, const UString& sourceURL, int startingLineNumber, Vector<CallIdentifier>& callIdentifiers);
+static void getCallIdentifierFromFunctionImp(FunctionImp*, Vector<CallIdentifier>& callIdentifiers);
 
 Profiler* Profiler::profiler()
 {
@@ -64,9 +64,9 @@ void Profiler::startProfiling(ExecState* exec, unsigned pageGroupIdentifier, con
     m_currentProfile = Profile::create(title);
     m_profiling = true;
     
-    Vector<UString> callStackNames;
-    getStackNames(callStackNames, exec);
-    m_currentProfile->willExecute(callStackNames);
+    Vector<CallIdentifier> callIdentifiers;
+    getCallIdentifiers(exec, callIdentifiers);
+    m_currentProfile->willExecute(callIdentifiers);
 }
 
 void Profiler::stopProfiling()
@@ -101,9 +101,9 @@ void Profiler::willExecute(ExecState* exec, JSObject* calledFunction)
     if (shouldExcludeFunction(exec, calledFunction))
         return;
 
-    Vector<UString> callStackNames;
-    getStackNames(callStackNames, exec, calledFunction);
-    m_currentProfile->willExecute(callStackNames);
+    Vector<CallIdentifier> callIdentifiers;
+    getCallIdentifiers(exec, calledFunction, callIdentifiers);
+    m_currentProfile->willExecute(callIdentifiers);
 }
 
 void Profiler::willExecute(ExecState* exec, const UString& sourceURL, int startingLineNumber)
@@ -111,9 +111,9 @@ void Profiler::willExecute(ExecState* exec, const UString& sourceURL, int starti
     if (!m_profiling || exec->lexicalGlobalObject()->pageGroupIdentifier() != m_pageGroupIdentifier)
         return;
 
-    Vector<UString> callStackNames;
-    getStackNames(callStackNames, exec, sourceURL, startingLineNumber);
-    m_currentProfile->willExecute(callStackNames);
+    Vector<CallIdentifier> callIdentifiers;
+    getCallIdentifiers(exec, sourceURL, startingLineNumber, callIdentifiers);
+    m_currentProfile->willExecute(callIdentifiers);
 }
 
 void Profiler::didExecute(ExecState* exec, JSObject* calledFunction)
@@ -124,9 +124,9 @@ void Profiler::didExecute(ExecState* exec, JSObject* calledFunction)
     if (shouldExcludeFunction(exec, calledFunction))
         return;
 
-    Vector<UString> callStackNames;
-    getStackNames(callStackNames, exec, calledFunction);
-    m_currentProfile->didExecute(callStackNames);
+    Vector<CallIdentifier> callIdentifiers;
+    getCallIdentifiers(exec, calledFunction, callIdentifiers);
+    m_currentProfile->didExecute(callIdentifiers);
 }
 
 void Profiler::didExecute(ExecState* exec, const UString& sourceURL, int startingLineNumber)
@@ -134,44 +134,43 @@ void Profiler::didExecute(ExecState* exec, const UString& sourceURL, int startin
     if (!m_profiling || exec->lexicalGlobalObject()->pageGroupIdentifier() != m_pageGroupIdentifier)
         return;
 
-    Vector<UString> callStackNames;
-    getStackNames(callStackNames, exec, sourceURL, startingLineNumber);
-    m_currentProfile->didExecute(callStackNames);
+    Vector<CallIdentifier> callIdentifiers;
+    getCallIdentifiers(exec, sourceURL, startingLineNumber, callIdentifiers);
+    m_currentProfile->didExecute(callIdentifiers);
 }
 
-void getStackNames(Vector<UString>& names, ExecState* exec)
+void getCallIdentifiers(ExecState* exec, Vector<CallIdentifier>& callIdentifiers)
 {
     for (ExecState* currentState = exec; currentState; currentState = currentState->callingExecState()) {
         if (FunctionImp* functionImp = currentState->function())
-            names.append(getFunctionName(functionImp));
+            getCallIdentifierFromFunctionImp(functionImp, callIdentifiers);
         else if (ScopeNode* scopeNode = currentState->scopeNode())
-            names.append(Script + scopeNode->sourceURL() + ": " + UString::from(scopeNode->lineNo() + 1));   // FIXME: Why is the line number always off by one?
+            callIdentifiers.append(CallIdentifier(Script, scopeNode->sourceURL(), (scopeNode->lineNo() + 1)) );   // FIXME: Why is the line number always off by one?
     }
 }
 
-void getStackNames(Vector<UString>& names, ExecState* exec, JSObject* calledFunction)
+void getCallIdentifiers(ExecState* exec, JSObject* calledFunction, Vector<CallIdentifier>& callIdentifiers)
 {
     if (calledFunction->inherits(&FunctionImp::info))
-        names.append(getFunctionName(static_cast<FunctionImp*>(calledFunction)));
+        getCallIdentifierFromFunctionImp(static_cast<FunctionImp*>(calledFunction), callIdentifiers);
     else if (calledFunction->inherits(&InternalFunctionImp::info))
-        names.append(static_cast<InternalFunctionImp*>(calledFunction)->functionName().ustring());
-    getStackNames(names, exec);
+        callIdentifiers.append(CallIdentifier(static_cast<InternalFunctionImp*>(calledFunction)->functionName().ustring(), "", 0) );
+    getCallIdentifiers(exec, callIdentifiers);
 }
 
-
-void getStackNames(Vector<UString>& names, ExecState* exec, const UString& sourceURL, int startingLineNumber)
+void getCallIdentifiers(ExecState* exec, const UString& sourceURL, int startingLineNumber, Vector<CallIdentifier>& callIdentifiers)
 {
-    names.append(Script + sourceURL + ": " + UString::from(startingLineNumber + 1));
-    getStackNames(names, exec);
+    callIdentifiers.append(CallIdentifier(Script, sourceURL, (startingLineNumber + 1)) );
+    getCallIdentifiers(exec, callIdentifiers);
 }
 
-UString getFunctionName(FunctionImp* functionImp)
+void getCallIdentifierFromFunctionImp(FunctionImp* functionImp, Vector<CallIdentifier>& callIdentifiers)
 {
     UString name = functionImp->functionName().ustring();
-    int lineNumber = functionImp->body->lineNo();
-    UString URL = functionImp->body->sourceURL();
+    if (name.isEmpty())
+        name = "[anonymous function]";
 
-    return (name.isEmpty() ? "[anonymous function]" : name) + " " + URL + ": " + UString::from(lineNumber);
+    callIdentifiers.append(CallIdentifier(name, functionImp->body->sourceURL(), functionImp->body->lineNo()) );
 }
 
 void Profiler::debugLog(UString message)

@@ -40,37 +40,36 @@ Profile::Profile(const UString& title)
 {
     // FIXME: When multi-threading is supported this will be a vector and calls
     // into the profiler will need to know which thread it is executing on.
-    m_callTree = ProfileNode::create("Thread_1");
+    m_callTree = ProfileNode::create(CallIdentifier("Thread_1", 0, 0));
 }
 
-// The callStackNames are in order of bottom of the stack to top of the stack so we iterate it backwards.
-void Profile::willExecute(const Vector<UString>& callStackNames)
+// The callIdentifiers are in order of bottom of the stack to top of the stack so we iterate it backwards.
+void Profile::willExecute(const Vector<CallIdentifier>& callIdentifiers)
 {
     RefPtr<ProfileNode> callTreeInsertionPoint;
     RefPtr<ProfileNode> foundNameInTree = m_callTree;
 
-    int i = callStackNames.size();
+    int i = callIdentifiers.size();
     while (foundNameInTree && i) {
         callTreeInsertionPoint = foundNameInTree;
-        foundNameInTree = callTreeInsertionPoint->findChild(callStackNames[--i]);
+        foundNameInTree = callTreeInsertionPoint->findChild(callIdentifiers[--i]);
     }
 
     if (!foundNameInTree) {   // Insert remains of the stack into the call tree.
         for (RefPtr<ProfileNode> next; i >= 0; callTreeInsertionPoint = next) {
-            next = ProfileNode::create(callStackNames[i--]);
+            next = ProfileNode::create(callIdentifiers[i--]);
             callTreeInsertionPoint->addChild(next);
         }
     } else    // We are calling a function that is already in the call tree.
         foundNameInTree->willExecute();
 }
 
-void Profile::didExecute(const Vector<UString>& stackNames)
+void Profile::didExecute(const Vector<CallIdentifier>& callIdentifiers)
 {
-    ASSERT(stackNames.size());
-    if (!stackNames.size())
+    if (!callIdentifiers.size())
         return;
 
-    m_callTree->didExecute(stackNames, stackNames.size() - 1);
+    m_callTree->didExecute(callIdentifiers, callIdentifiers.size() - 1);
 }
 
 void Profile::printDataInspectorStyle() const

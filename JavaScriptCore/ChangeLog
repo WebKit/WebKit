@@ -1,3 +1,46 @@
+
+2008-05-20  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        Split function name into 3 parts so that the Web Inspector can link it to
+        the resource location from whence it came.
+
+        * kjs/ustring.cpp: Implemented operator> for UStrings
+        (KJS::operator>):
+        * kjs/ustring.h:
+        * profiler/Profile.cpp:
+        (KJS::Profile::Profile): Initialize all 3 values.
+        (KJS::Profile::willExecute): Use CallIdentifier struct.
+        (KJS::Profile::didExecute): Ditto.
+        * profiler/Profile.h: Ditto and remove unused function.
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::ProfileNode): Use CallIdentifier struct.
+        (KJS::ProfileNode::willExecute): Ditto and fix an issue where we
+        restarted the m_startTime even though it was already started.
+        (KJS::ProfileNode::didExecute): Ditto.
+        (KJS::ProfileNode::findChild): Ditto.
+        (KJS::functionNameDescendingComparator): Ditto and use new comparator.
+        (KJS::functionNameAscendingComparator): Ditto.
+        (KJS::ProfileNode::printDataInspectorStyle): Use CallIdentifier struct.
+        (KJS::ProfileNode::printDataSampleStyle): Ditto.
+        * profiler/ProfileNode.h:
+        (KJS::CallIdentifier::CallIdentifier): Describe the CallIdentifier struct
+        (KJS::CallIdentifier::operator== ):
+        (KJS::ProfileNode::create): Use the CallIdentifier struct.
+        (KJS::ProfileNode::callIdentifier):
+        (KJS::ProfileNode::functionName): Now only return the function name, not
+        the url and line number too.
+        (KJS::ProfileNode::url):
+        (KJS::ProfileNode::lineNumber):
+        * profiler/Profiler.cpp: Use the CallIdentifier struct. 
+        (KJS::Profiler::startProfiling):
+        (KJS::Profiler::willExecute):
+        (KJS::Profiler::didExecute):
+        (KJS::getCallIdentifiers):
+        (KJS::getCallIdentifierFromFunctionImp):
+
 2008-05-20  Timothy Hatcher  <timothy@apple.com>
 
         Rename sortFileName{Ascending,Descending} to

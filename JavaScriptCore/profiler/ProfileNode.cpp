@@ -36,8 +36,8 @@
 
 namespace KJS {
 
-ProfileNode::ProfileNode(const UString& name)
-    : m_functionName(name)
+ProfileNode::ProfileNode(const CallIdentifier& callIdentifier)
+    : m_callIdentifier(callIdentifier)
     , m_totalTime (0.0)
     , m_selfTime (0.0)
     , m_totalPercent (0.0)
@@ -49,16 +49,17 @@ ProfileNode::ProfileNode(const UString& name)
 
 void ProfileNode::willExecute()
 {
-    m_startTime = getCurrentUTCTimeWithMicroseconds();
+    if (!m_startTime)
+        m_startTime = getCurrentUTCTimeWithMicroseconds();
 }
 
 // We start at the end of stackNames and work our way forwards since the names are in 
 // the reverse order of how the ProfileNode tree is created (e.g. the leaf node is at
 // index 0 and the top of the stack is at index stackNames.size() - 1)
-void ProfileNode::didExecute(const Vector<UString>& stackNames, unsigned int stackIndex)
+void ProfileNode::didExecute(const Vector<CallIdentifier>& stackNames, unsigned int stackIndex)
 {
     for (size_t i = 0; i < m_children.size(); ++i) {
-        if (m_children[i]->functionName() == stackNames[stackIndex]) {
+        if (m_children[i]->callIdentifier() == stackNames[stackIndex]) {
             if (stackIndex)   // We are not at the bottom of the stack yet
                 m_children[i]->didExecute(stackNames, stackIndex - 1);
             else    // This is the child we were looking for
@@ -81,10 +82,10 @@ void ProfileNode::addChild(PassRefPtr<ProfileNode> prpChild)
     m_children.append(child.release());
 }
 
-ProfileNode* ProfileNode::findChild(const UString& name)
+ProfileNode* ProfileNode::findChild(const CallIdentifier& functionName)
 {
     for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild) {
-        if ((*currentChild)->functionName() == name)
+        if ((*currentChild)->callIdentifier() == functionName)
             return (*currentChild).get();
     }
 
@@ -194,7 +195,7 @@ void ProfileNode::sortCallsAscending()
 
 static inline bool functionNameDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
 {
-    return compare(a->functionName(), b->functionName()) == 1 ? true : false ;
+    return a->functionName() > b->functionName();
 }
 
 void ProfileNode::sortFunctionNameDescending()
@@ -207,7 +208,7 @@ void ProfileNode::sortFunctionNameDescending()
 
 static inline bool functionNameAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
 {
-    return compare(a->functionName(), b->functionName()) == -1 ? true : false ;
+    return a->functionName() < b->functionName();
 }
 
 void ProfileNode::sortFunctionNameAscending()
@@ -232,7 +233,7 @@ void ProfileNode::printDataInspectorStyle(int indentLevel) const
     for (int i = 0; i < indentLevel; ++i)
         printf("  ");
 
-    printf("%d SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% FunctionName %s\n", m_numberOfCalls, m_selfTime, selfPercent(), m_totalTime, totalPercent(), m_functionName.UTF8String().c_str());
+    printf("%d SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% Full Name %s\n", m_numberOfCalls, m_selfTime, selfPercent(), m_totalTime, totalPercent(), functionName().UTF8String().c_str());
 
     ++indentLevel;
 
@@ -247,13 +248,13 @@ double ProfileNode::printDataSampleStyle(int indentLevel, FunctionCallHashCount&
     printf("    ");
 
     // Print function names
-    const char* name = m_functionName.UTF8String().c_str();
+    const char* name = functionName().UTF8String().c_str();
     double sampleCount = m_totalTime * 1000;
     if (indentLevel) {
         for (int i = 0; i < indentLevel; ++i)
             printf("  ");
 
-         countedFunctions.add(m_functionName.rep());
+         countedFunctions.add(functionName().rep());
 
         printf("%.0f %s\n", sampleCount ? sampleCount : 1, name);
     } else
@@ -273,7 +274,7 @@ double ProfileNode::printDataSampleStyle(int indentLevel, FunctionCallHashCount&
         while (indentLevel--)
             printf("  ");
 
-        printf("%.0f %s\n", sampleCount - sumOfChildrensCount, m_functionName.UTF8String().c_str());
+        printf("%.0f %s\n", sampleCount - sumOfChildrensCount, functionName().UTF8String().c_str());
     }
 
     return m_totalTime;

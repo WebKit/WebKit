@@ -1273,6 +1273,25 @@ bool operator<(const UString& s1, const UString& s2)
   return (l1 < l2);
 }
 
+bool operator>(const UString& s1, const UString& s2)
+{
+  const int l1 = s1.size();
+  const int l2 = s2.size();
+  const int lmin = l1 < l2 ? l1 : l2;
+  const UChar *c1 = s1.data();
+  const UChar *c2 = s2.data();
+  int l = 0;
+  while (l < lmin && *c1 == *c2) {
+    c1++;
+    c2++;
+    l++;
+  }
+  if (l < lmin)
+    return (c1[0] > c2[0]);
+
+  return (l1 > l2);
+}
+
 int compare(const UString& s1, const UString& s2)
 {
   const int l1 = s1.size();

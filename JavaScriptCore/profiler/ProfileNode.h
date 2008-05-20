@@ -42,19 +42,34 @@ namespace KJS {
     typedef Vector<RefPtr<ProfileNode> >::const_iterator StackIterator;
     typedef HashCountedSet<UString::Rep*> FunctionCallHashCount;
 
+    struct CallIdentifier {
+        UString name;
+        UString url;
+        unsigned lineNumber;
+        
+        CallIdentifier(UString name, UString url, int lineNumber) : name(name), url(url), lineNumber(lineNumber) {}
+        CallIdentifier(const CallIdentifier& ci) : name(ci.name), url(ci.url), lineNumber(ci.lineNumber) {}
+
+        inline bool operator== (const CallIdentifier& ci) const { return ci.name == name && ci.lineNumber == lineNumber && ci.url == url; }
+    };
+
     class ProfileNode : public RefCounted<ProfileNode> {
     public:
-        static PassRefPtr<ProfileNode> create(const UString& name) { return adoptRef(new ProfileNode(name)); }
+        static PassRefPtr<ProfileNode> create(const CallIdentifier& callIdentifier) { return adoptRef(new ProfileNode(callIdentifier)); }
 
         void willExecute();
-        void didExecute(const Vector<UString>& stackNames, unsigned int stackIndex);
+        void didExecute(const Vector<CallIdentifier>& callIdentifiers, unsigned int stackIndex);
 
         void addChild(PassRefPtr<ProfileNode> prpChild);
-        ProfileNode* findChild(const UString& name);
+        ProfileNode* findChild(const CallIdentifier& functionName);
 
         void stopProfiling();
 
-        UString functionName() const { return m_functionName; }
+        CallIdentifier callIdentifier() const { return m_callIdentifier; }
+        UString functionName() const { return m_callIdentifier.name; }
+        UString url() const { return m_callIdentifier.url; }
+        unsigned lineNumber() const { return m_callIdentifier.lineNumber; }
+
         double totalTime() const { return m_totalTime; }
         double selfTime() const { return m_selfTime; }
         double totalPercent() const { return m_totalPercent; }
@@ -78,9 +93,10 @@ namespace KJS {
         double printDataSampleStyle(int indentLevel, FunctionCallHashCount&) const;
 
     private:
-        ProfileNode(const UString& name);
-    
-        UString m_functionName;
+        ProfileNode(const CallIdentifier& callIdentifier);
+
+        CallIdentifier m_callIdentifier;
+
         double m_startTime;
         double m_totalTime;
         double m_selfTime;
