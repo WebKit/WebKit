@@ -1,3 +1,15 @@
+2008-05-19  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        Explicitly set run mode to 32bit unless overridden to avoid
+        confusion when running tests
+
+        * Scripts/build-dumprendertree:
+        * Scripts/gdb-safari:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2008-05-16  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Steve.

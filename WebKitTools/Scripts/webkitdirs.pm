@@ -56,6 +56,7 @@ my $osXVersion;
 my $isQt;
 my $isGtk;
 my $isWx;
+my $run64bit;
 
 # Variables for Win32 support
 my $vcBuildPath;
@@ -894,7 +895,8 @@ sub runSafari
         print "Starting Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
         $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-        return system safariPath(), @ARGV;
+        setArchs($run64bit);
+        return system "arch", safariPath(), @ARGV;
     }
 
     if (isCygwin()) {
@@ -912,6 +914,15 @@ sub runSafari
     }
 
     return 1;
+}
+
+sub setArchs($)
+{
+    my ($run64bitFlag) = @_;
+    if (isOSX()) {
+       $ENV{ARCHPREFERENCE} = "i386,ppc";
+       $ENV{ARCHPREFERENCE} = "x86_64,ppc64,i386,ppc" if $run64bit;
+    }
 }
 
 1;

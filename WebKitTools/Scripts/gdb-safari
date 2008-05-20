@@ -46,12 +46,16 @@ die "Can't find gdb executable. Is gdb installed?\n" unless -x $gdbPath;
 # Check to see that all the frameworks are built.
 checkFrameworks();
 
+my $archprefs = `arch`;
+chomp $archprefs;
+
 # Put a command to set DYLD_FRAMEWORK_PATH in a temp file.
 # Also set WEBKIT_UNSET_DYLD_FRAMEWORK_PATH to YES in this environment, so that
 # executables launched by Safari don't inherit using the new frameworks.
 my ($fh, $path) = mkstemp("/tmp/gdb-safari-XXXX");
 print $fh "set env DYLD_FRAMEWORK_PATH $productDir\n";
 print $fh "set env WEBKIT_UNSET_DYLD_FRAMEWORK_PATH YES\n";
+print $fh "set architecture $archprefs\n";
 
 # Start up Safari.
 print "Start Safari under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";

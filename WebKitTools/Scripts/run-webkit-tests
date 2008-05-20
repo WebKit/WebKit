@@ -133,6 +133,7 @@ my $reverseTests = 0;
 my $randomizeTests = 0;
 my $mergeDepth;
 my @leaksFilenames;
+my $run64bit = 0;
 
 # Default to --no-http for Qt, Gtk and wx for now.
 $testHTTP = 0 if (isGtk() || isWx());
@@ -201,6 +202,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --valgrind                      Run DumpRenderTree inside valgrind (Qt/Linux only)
   -v|--verbose                    More verbose output (overrides --quiet)
   -m|--merge-leak-depth arg       Merges leak callStacks and prints the number of unique leaks beneath a callstack depth of arg.  Defaults to 5.
+  --64-bit                        run in 64bit mode
 EOF
 
 # Process @ARGV for configuration switches before calling GetOptions()
@@ -238,6 +240,7 @@ my $getOptionsResult = GetOptions(
     'root=s' => \$root,
     'add-platform-exceptions' => \$addPlatformExceptions,
     'merge-leak-depth|m:5' => \$mergeDepth,
+    '64-bit' => \$run64bit
 );
 
 if (!$getOptionsResult || $showHelp) {
@@ -271,6 +274,7 @@ $testMedia = 0 if $shouldCheckLeaks && isTiger();
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 my $productDir = productDir();
 $productDir .= "/bin" if (isQt());
+setArchs($run64bit);
 
 if (isGtk()) {
     if (useQmake()) {
@@ -289,6 +293,13 @@ if(!defined($root)){
     push(@args, "--qt")  if isQt();
     push(@args, "--gtk")  if isGtk();
 
+    if ($run64bit) {
+        my $archPrefs = `arch`;
+        chomp $archPrefs;
+        push(@args, "ARCHS=i386 x86_64") if $archPrefs =~ /i386/;
+        push(@args, "ARCHS=ppc ppc64") if $archPrefs =~ /ppc/;
+    }
+    
     my $buildResult = system "WebKitTools/Scripts/build-dumprendertree", @args;
     if ($buildResult) {
         print STDERR "Compiling DumpRenderTree failed!\n";
@@ -1180,16 +1191,19 @@ sub openDumpTool()
         }
         setPathForRunningWebKitApp(\%ENV) if isCygwin();
     }
-        
-    my @args = ();
-    if ($useValgrind) {
-      push @args, $dumpTool;
+    
+    setArchs($run64bit);
+  
+    my @args = @toolArgs;
+    unshift @args, $dumpTool;
+    if (isOSX) {
+        unshift @args, "arch";
     }
-    push @args, @toolArgs;
     if ($useValgrind) {
-      $dumpTool = "valgrind";
-    }
-    $dumpToolPID = open3(\*OUT, \*IN, \*ERROR, $dumpTool, @args) or die "Failed to start tool: $dumpTool\n";
+        unshift @args, "valgrind";
+    } 
+    
+    $dumpToolPID = open3(\*OUT, \*IN, \*ERROR, @args) or die "Failed to start tool: $dumpTool\n";
     $isDumpToolOpen = 1;
     $dumpToolCrashed = 0;
 }

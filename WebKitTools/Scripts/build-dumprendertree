@@ -42,7 +42,7 @@ my @options = XcodeOptions();
 chdir "WebKitTools/DumpRenderTree" or die;
 my $result;
 if (isOSX()) {
-    $result = system "xcodebuild", "-project", "DumpRenderTree.xcodeproj", @options;
+    $result = system "xcodebuild", "-project", "DumpRenderTree.xcodeproj", @options, @ARGV;
 } elsif (isCygwin()) {
     $result = buildVisualStudioProject("DumpRenderTree.sln");
 } elsif (isQt() || isGtk()) {
