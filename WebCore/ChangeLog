@@ -1,3 +1,15 @@
+2008-05-20  Timothy Hatcher  <timothy@apple.com>
+
+        Expose the ProfileNode functionName sorting functions on
+        JavaScriptProfileNode.
+
+        Reviewed by Kevin McCullough.
+
+        * page/JavaScriptProfileNode.cpp:
+        (WebCore::sortFunctionNameDescending): Call ProfileNode.
+        (WebCore::sortFunctionNameAscending): Ditto.
+        (WebCore::ProfileNodeClass): Add static functions.
+
 2008-05-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
@@ -85,7 +97,7 @@
         (WebCore::sortSelfTimeAscending): Ditto.
         (WebCore::sortCallsDescending): Ditto.
         (WebCore::sortCallsAscending): Ditto.
-        (WebCore::ProfileNodeClass): Add static static functions.
+        (WebCore::ProfileNodeClass): Add static functions.
 
 2008-05-19  Timothy Hatcher  <timothy@apple.com>
 

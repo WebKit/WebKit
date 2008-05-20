@@ -229,6 +229,28 @@ static JSValueRef sortCallsAscending(JSContextRef ctx, JSObjectRef /*function*/,
     return JSValueMakeUndefined(ctx);
 }
 
+static JSValueRef sortFunctionNameDescending(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
+        return JSValueMakeUndefined(ctx);
+
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    profileNode->sortFunctionNameDescending();
+
+    return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef sortFunctionNameAscending(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
+        return JSValueMakeUndefined(ctx);
+
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    profileNode->sortFunctionNameAscending();
+
+    return JSValueMakeUndefined(ctx);
+}
+
 static void finalize(JSObjectRef object)
 {
     ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(object));
@@ -256,6 +278,8 @@ JSClassRef ProfileNodeClass()
         { "sortSelfTimeAscending", sortSelfTimeAscending, kJSPropertyAttributeNone },
         { "sortCallsDescending", sortCallsDescending, kJSPropertyAttributeNone },
         { "sortCallsAscending", sortCallsAscending, kJSPropertyAttributeNone },
+        { "sortFunctionNameDescending", sortFunctionNameDescending, kJSPropertyAttributeNone },
+        { "sortFunctionNameAscending", sortFunctionNameAscending, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
 
