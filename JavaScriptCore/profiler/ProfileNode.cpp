@@ -36,6 +36,8 @@
 
 namespace KJS {
 
+static const char* NonJSExecution = "(non-JavaScript)";
+
 ProfileNode::ProfileNode(const CallIdentifier& callIdentifier)
     : m_callIdentifier(callIdentifier)
     , m_totalTime (0.0)
@@ -112,8 +114,19 @@ void ProfileNode::stopProfiling(double totalProfileTime, bool headProfileNode)
     ASSERT(m_selfTime <= m_totalTime);
     m_selfTime = m_totalTime - m_selfTime;
 
-    m_totalPercent = (m_totalTime / totalProfileTime) * 100.0;
-    m_selfPercent = (m_selfTime / totalProfileTime) * 100.0;
+    if (headProfileNode && m_selfTime) {
+        RefPtr<ProfileNode> idleNode = ProfileNode::create(CallIdentifier(NonJSExecution, 0, 0));
+
+        idleNode->setTotalTime(m_selfTime);
+        idleNode->setSelfTime(m_selfTime);
+        idleNode->setNumberOfCalls(0);
+        idleNode->calculatePercentages(totalProfileTime);
+
+        addChild(idleNode.release());
+        m_selfTime = 0.0;
+    }
+
+    calculatePercentages(totalProfileTime);
 }
 
 #pragma mark Sorting methods
@@ -229,6 +242,13 @@ void ProfileNode::endAndRecordCall()
 
     ++m_numberOfCalls;
 }
+
+void ProfileNode::calculatePercentages(double totalProfileTime)
+{
+    m_totalPercent = (m_totalTime / totalProfileTime) * 100.0;
+    m_selfPercent = (m_selfTime / totalProfileTime) * 100.0;
+}
+
 
 void ProfileNode::printDataInspectorStyle(int indentLevel) const
 {

@@ -71,10 +71,13 @@ namespace KJS {
         unsigned lineNumber() const { return m_callIdentifier.lineNumber; }
 
         double totalTime() const { return m_totalTime; }
+        void setTotalTime(double time) { m_totalTime = time; }
         double selfTime() const { return m_selfTime; }
+        void setSelfTime(double time) { m_selfTime = time; }
         double totalPercent() const { return m_totalPercent; }
         double selfPercent() const { return m_selfPercent; }
         unsigned numberOfCalls() const { return m_numberOfCalls; }
+        void setNumberOfCalls(unsigned number) { m_numberOfCalls = number; }
         const Vector<RefPtr<ProfileNode> >& children() { return m_children; }
 
         // Sorting functions
@@ -88,6 +91,8 @@ namespace KJS {
         void sortFunctionNameAscending();
 
         void endAndRecordCall();
+
+        void calculatePercentages(double totalProfileTime);
 
         void printDataInspectorStyle(int indentLevel) const;
         double printDataSampleStyle(int indentLevel, FunctionCallHashCount&) const;

@@ -1,5 +1,29 @@
 2008-05-20  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Adam.
+
+        <rdar://problem/5950538> JSProfiler: Keep track of non-JS execution time
+        We now have an extra node that represents the excess non-JS time.
+        - Also changed "SCRIPT" and "anonymous function" to be more consistent
+        with the debugger.
+
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::stopProfiling): If this ProfileNode is the head node
+        create a new child that has the excess execution time.
+        (KJS::ProfileNode::calculatePercentages): Moved calculation of the
+        percentages into a function since it's called from multiple places.
+        * profiler/ProfileNode.h: Add the newly needed functions used above.
+        (KJS::ProfileNode::setTotalTime):
+        (KJS::ProfileNode::setSelfTime):
+        (KJS::ProfileNode::setNumberOfCalls):
+        * profiler/Profiler.cpp: renamed "SCRIPT" and "anonymous function" to be
+        consistent with the debugger and use constants that can be localized
+        more easily.
+        (KJS::getCallIdentifiers):
+        (KJS::getCallIdentifierFromFunctionImp):
+
+2008-05-20  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Tim.
 
         <rdar://problem/5770054> JavaScript profiler (10928)

@@ -40,7 +40,8 @@
 namespace KJS {
 
 static Profiler* sharedProfiler = 0;
-static const char* Script = "[SCRIPT] ";
+static const char* GlobalCodeExecution = "(global code)";
+static const char* AnonymousFunction = "(anonymous function)";
 
 static void getCallIdentifiers(ExecState*, Vector<CallIdentifier>& callIdentifiers);
 static void getCallIdentifiers(ExecState*, JSObject*, Vector<CallIdentifier>& callIdentifiers);
@@ -145,7 +146,7 @@ void getCallIdentifiers(ExecState* exec, Vector<CallIdentifier>& callIdentifiers
         if (FunctionImp* functionImp = currentState->function())
             getCallIdentifierFromFunctionImp(functionImp, callIdentifiers);
         else if (ScopeNode* scopeNode = currentState->scopeNode())
-            callIdentifiers.append(CallIdentifier(Script, scopeNode->sourceURL(), (scopeNode->lineNo() + 1)) );   // FIXME: Why is the line number always off by one?
+            callIdentifiers.append(CallIdentifier(GlobalCodeExecution, scopeNode->sourceURL(), (scopeNode->lineNo() + 1)) );   // FIXME: Why is the line number always off by one?
     }
 }
 
@@ -160,7 +161,7 @@ void getCallIdentifiers(ExecState* exec, JSObject* calledFunction, Vector<CallId
 
 void getCallIdentifiers(ExecState* exec, const UString& sourceURL, int startingLineNumber, Vector<CallIdentifier>& callIdentifiers)
 {
-    callIdentifiers.append(CallIdentifier(Script, sourceURL, (startingLineNumber + 1)) );
+    callIdentifiers.append(CallIdentifier(GlobalCodeExecution, sourceURL, (startingLineNumber + 1)) );
     getCallIdentifiers(exec, callIdentifiers);
 }
 
@@ -168,7 +169,7 @@ void getCallIdentifierFromFunctionImp(FunctionImp* functionImp, Vector<CallIdent
 {
     UString name = functionImp->functionName().ustring();
     if (name.isEmpty())
-        name = "[anonymous function]";
+        name = AnonymousFunction;
 
     callIdentifiers.append(CallIdentifier(name, functionImp->body->sourceURL(), functionImp->body->lineNo()) );
 }
