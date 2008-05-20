@@ -1,3 +1,28 @@
+2008-05-20  Kevin Calhoun  <kcalhoun@apple.com>
+
+        Reviewed by Darin.
+
+        Fix <rdar://problem/5929010> Adopt new QTKit methods for <video> implementation
+
+        If the class QTVideoRendererWebKitOnly is present use it to render video,
+        otherwise fall back to existing use of QTMovieView/QTMovieContentView.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::createQTMovie):
+        (WebCore::QTVideoRendererClass):
+        (WebCore::MediaPlayerPrivate::detachQTMovieView):
+        (WebCore::MediaPlayerPrivate::createQTVideoRenderer):
+        (WebCore::MediaPlayerPrivate::destroyQTVideoRenderer):
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivate::tearDownVideoRendering):
+        (WebCore::MediaPlayerPrivate::load):
+        (WebCore::MediaPlayerPrivate::cancelLoad):
+        (WebCore::MediaPlayerPrivate::setVisible):
+        (WebCore::MediaPlayerPrivate::paint):
+        (-[WebCoreMovieObserver newImageAvailable:]):
+
 2008-05-19  Adam Roben  <aroben@apple.com>
 
         Fix Bug 19134: Inspector should support console.assert

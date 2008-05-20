@@ -74,6 +74,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieTimeScaleAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieURLAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieVolumeDidChangeNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTSecurityPolicyNoCrossSiteAttribute, NSString *)
+SOFT_LINK_POINTER(QTKit, QTVideoRendererWebKitOnlyNewImageAvailableNotification, NSString *)
 
 #define QTMovie getQTMovieClass()
 #define QTMovieView getQTMovieViewClass()
@@ -98,6 +99,7 @@ SOFT_LINK_POINTER(QTKit, QTSecurityPolicyNoCrossSiteAttribute, NSString *)
 #define QTMovieURLAttribute getQTMovieURLAttribute()
 #define QTMovieVolumeDidChangeNotification getQTMovieVolumeDidChangeNotification()
 #define QTSecurityPolicyNoCrossSiteAttribute getQTSecurityPolicyNoCrossSiteAttribute()
+#define QTVideoRendererWebKitOnlyNewImageAvailableNotification getQTVideoRendererWebKitOnlyNewImageAvailableNotification()
 
 // Older versions of the QTKit header don't have these constants.
 #if !defined QTKIT_VERSION_MAX_ALLOWED || QTKIT_VERSION_MAX_ALLOWED <= QTKIT_VERSION_7_0
@@ -129,6 +131,11 @@ using namespace std;
 -(void)didEnd:(NSNotification *)notification;
 @end
 
+@protocol WebKitVideoRenderingDetails
+-(void)setMovie:(id)movie;
+-(void)drawInRect:(NSRect)rect;
+@end
+
 namespace WebCore {
 
 static const float endPointTimerInterval = 0.020f;
@@ -153,7 +160,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
 
 MediaPlayerPrivate::~MediaPlayerPrivate()
 {
-    detachQTMovieView();
+    tearDownVideoRendering();
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_objcObserver.get()];
     [m_objcObserver.get() disconnect];
@@ -163,7 +170,10 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
 {
     [[NSNotificationCenter defaultCenter] removeObserver:m_objcObserver.get()];
     
-    m_qtMovie = 0;
+    if (m_qtMovie) {
+        destroyQTVideoRenderer();
+        m_qtMovie = 0;
+    }
     
     // Disable streaming support for now, <rdar://problem/5693967>
     if (protocolIs(url, "rtsp"))
@@ -224,6 +234,12 @@ static void mainThreadSetNeedsDisplay(id self, SEL _cmd)
     [delegate repaint];
 }
 
+static Class QTVideoRendererClass()
+{
+     static Class QTVideoRendererWebKitOnlyClass = NSClassFromString(@"QTVideoRendererWebKitOnly");
+     return QTVideoRendererWebKitOnlyClass;
+}
+
 void MediaPlayerPrivate::createQTMovieView()
 {
     detachQTMovieView();
@@ -275,6 +291,59 @@ void MediaPlayerPrivate::detachQTMovieView()
     }
 }
 
+void MediaPlayerPrivate::createQTVideoRenderer()
+{
+    if (!m_qtMovie)
+        return;
+
+    destroyQTVideoRenderer();
+
+    m_qtVideoRenderer.adoptNS([[QTVideoRendererClass() alloc] init]);
+    if (!m_qtVideoRenderer)
+        return;
+    
+    // associate our movie with our instance of QTVideoRendererWebKitOnly
+    [(id<WebKitVideoRenderingDetails>)m_qtVideoRenderer.get() setMovie:m_qtMovie.get()];    
+
+    // listen to QTVideoRendererWebKitOnly's QTVideoRendererWebKitOnlyNewImageDidBecomeAvailableNotification
+    [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
+                                             selector:@selector(newImageAvailable:)
+                                                 name:QTVideoRendererWebKitOnlyNewImageAvailableNotification
+                                               object:m_qtVideoRenderer.get()];
+}
+
+void MediaPlayerPrivate::destroyQTVideoRenderer()
+{
+    if (!m_qtVideoRenderer)
+        return;
+
+    // stop observing the renderer's notifications before we toss it
+    [[NSNotificationCenter defaultCenter] removeObserver:m_objcObserver.get()
+                                                    name:QTVideoRendererWebKitOnlyNewImageAvailableNotification
+                                                  object:m_qtVideoRenderer.get()];
+
+    // disassociate our movie from our instance of QTVideoRendererWebKitOnly
+    [(id<WebKitVideoRenderingDetails>)m_qtVideoRenderer.get() setMovie:nil];    
+
+    m_qtVideoRenderer = nil;
+}
+
+void MediaPlayerPrivate::setUpVideoRendering()
+{
+    if (QTVideoRendererClass())
+        createQTVideoRenderer();
+    else
+        createQTMovieView();
+}
+
+void MediaPlayerPrivate::tearDownVideoRendering()
+{
+    if (QTVideoRendererClass())
+        destroyQTVideoRenderer();
+    else
+        detachQTMovieView();
+}
+
 QTTime MediaPlayerPrivate::createQTTime(float time) const
 {
     if (!m_qtMovie)
@@ -300,7 +369,7 @@ void MediaPlayerPrivate::load(const String& url)
 
     createQTMovie(url);
     if (m_player->visible())
-        createQTMovieView();
+        setUpVideoRendering();
 
     [m_objcObserver.get() loadStateChanged:nil];
     [m_objcObserver.get() setDelayCallbacks:NO];
@@ -525,7 +594,7 @@ void MediaPlayerPrivate::cancelLoad()
     if (m_networkState < MediaPlayer::Loading || m_networkState == MediaPlayer::Loaded)
         return;
     
-    detachQTMovieView();
+    tearDownVideoRendering();
     m_qtMovie = nil;
     
     updateStates();
@@ -624,9 +693,9 @@ void MediaPlayerPrivate::setRect(const IntRect& r)
 void MediaPlayerPrivate::setVisible(bool b)
 {
     if (b)
-        createQTMovieView();
+        setUpVideoRendering();
     else
-        detachQTMovieView();
+        tearDownVideoRendering();
 }
 
 void MediaPlayerPrivate::repaint()
@@ -639,8 +708,10 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& r)
     if (context->paintingDisabled())
         return;
     NSView *view = m_qtMovieView.get();
-    if (view == nil)
+    id qtVideoRenderer = m_qtVideoRenderer.get();
+    if (!view && !qtVideoRenderer)
         return;
+
     [m_objcObserver.get() setDelayCallbacks:YES];
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     context->save();
@@ -648,7 +719,16 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& r)
     context->scale(FloatSize(1.0f, -1.0f));
     IntRect paintRect(IntPoint(0, 0), IntSize(r.width(), r.height()));
     NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context->platformContext() flipped:NO];
-    [view displayRectIgnoringOpacity:paintRect inContext:newContext];
+
+    // draw the current video frame
+    if (qtVideoRenderer) {
+        [NSGraphicsContext saveGraphicsState];
+        [NSGraphicsContext setCurrentContext:newContext];
+        [(id<WebKitVideoRenderingDetails>)qtVideoRenderer drawInRect:paintRect];
+        [NSGraphicsContext restoreGraphicsState];
+    } else
+        [view displayRectIgnoringOpacity:paintRect inContext:newContext];
+
     context->restore();
     END_BLOCK_OBJC_EXCEPTIONS;
     [m_objcObserver.get() setDelayCallbacks:NO];
@@ -838,6 +918,11 @@ void MediaPlayerPrivate::disableUnsupportedTracks(unsigned& enabledTrackCount)
         [self performSelector:_cmd withObject:nil afterDelay:0];
     else
         m_callback->didEnd();
+}
+
+- (void)newImageAvailable:(NSNotification *)notification
+{
+    [self repaint];
 }
 
 - (void)setDelayCallbacks:(BOOL)shouldDelay

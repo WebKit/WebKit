@@ -36,11 +36,13 @@
 #import <QTKit/QTTime.h>
 @class QTMovie;
 @class QTMovieView;
+@class QTVideoRendererWebKitOnly;
 @class WebCoreMovieObserver;
 #else
 class QTMovie;
 class QTMovieView;
 class QTTime;
+class QTVideoRendererWebKitOnly;
 class WebCoreMovieObserver;
 #endif
 
@@ -99,8 +101,12 @@ public:
     
 private:
     void createQTMovie(const String& url);
+    void setUpVideoRendering();
+    void tearDownVideoRendering();
     void createQTMovieView();
     void detachQTMovieView();
+    void createQTVideoRenderer();
+    void destroyQTVideoRenderer();
     QTTime createQTTime(float time) const;
     
     void updateStates();
@@ -115,6 +121,7 @@ private:
     MediaPlayer* m_player;
     RetainPtr<QTMovie> m_qtMovie;
     RetainPtr<QTMovieView> m_qtMovieView;
+    RetainPtr<QTVideoRendererWebKitOnly> m_qtVideoRenderer;
     RetainPtr<WebCoreMovieObserver> m_objcObserver;
     float m_seekTo;
     float m_endTime;
