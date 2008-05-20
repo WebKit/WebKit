@@ -1,5 +1,10 @@
 2008-05-19  Timothy Hatcher  <timothy@apple.com>
 
+        * page/InspectorController.cpp: Change the include for
+        JavaScriptProfile.h to sue double quotes instead of backets.
+
+2008-05-19  Timothy Hatcher  <timothy@apple.com>
+
         Adds a DataGrid object that is used for multi-column data
         and can contain hierarchical content with disclosure arrows.
         A lot of DataGrid was copied from treeoutline.js. This change

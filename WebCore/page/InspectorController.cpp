@@ -54,6 +54,7 @@
 #include "JSNode.h"
 #include "JSRange.h"
 #include "JavaScriptDebugServer.h"
+#include "JavaScriptProfile.h"
 #include "Page.h"
 #include "Range.h"
 #include "ResourceRequest.h"
@@ -68,7 +69,6 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
-#include <JavaScriptProfile.h>
 #include <kjs/ustring.h>
 #include <profiler/Profile.h>
 #include <profiler/Profiler.h>
