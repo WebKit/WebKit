@@ -26,8 +26,11 @@
 
 PREFIX = IGEN_DOM
 
-.PHONY : all
-all : \
+WEBKIT_IDL = $(WEBKIT)/Interfaces/WebKit.idl
+
+HAND_WRITTEN_INTERFACES = $(filter-out $(WEBKIT_IDL), $(wildcard $(WEBKIT)/Interfaces/*.idl))
+
+GENERATED_INTERFACES = \
     $(PREFIX)Node.idl \
     $(PREFIX)Attr.idl \
     $(PREFIX)NodeList.idl \
@@ -131,6 +134,12 @@ all : \
     $(PREFIX)EventListener.idl \
 #
 
+.PHONY : all
+all : \
+    $(GENERATED_INTERFACES) \
+    $(WEBKIT_IDL) \
+#
+
 # $(PREFIX)CanvasGradient.idl \
 # $(PREFIX)CanvasPattern.idl \
 # $(PREFIX)CanvasRenderingContext2D.idl \
@@ -147,3 +156,6 @@ COM_BINDINGS_SCRIPTS = \
 
 $(PREFIX)%.idl : $(WEBKIT_OUTPUT)/obj/WebKit/DOMInterfaces/%.idl $(COM_BINDINGS_SCRIPTS)
 	perl -I $(WEBKIT_OUTPUT)/obj/WebKit/DOMInterfaces/ $(WEBKIT_OUTPUT)/obj/WebKit/DOMInterfaces/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_COM" --generator COM --include $(WEBKIT_OUTPUT)/obj/WebKit/DOMInterfaces/ --outputdir . $<
+
+$(WEBKIT_IDL) : $(HAND_WRITTEN_INTERFACES) $(GENERATED_INTERFACES)
+	touch $@

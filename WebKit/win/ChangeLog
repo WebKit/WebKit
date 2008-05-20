@@ -1,3 +1,13 @@
+2008-05-19  Adam Roben  <aroben@apple.com>
+
+        Make WebKit.idl rebuild whenever any of its included interfaces are
+        changed
+
+        Reviewed by Tim Hatcher.
+
+        * WebKit.vcproj/DerivedSources.make: Touch WebKit.idl whenever any
+        other IDL file is changed. This will force VS to rebuild WebKit.idl.
+
 2008-05-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
