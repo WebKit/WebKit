@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -448,7 +448,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065;4701;4702"
+						DisableSpecificWarnings="4065;4273;4565;4701;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -458,7 +458,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065;4701;4702"
+						DisableSpecificWarnings="4065;4273;4565;4701;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -468,7 +468,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065;4701;4702"
+						DisableSpecificWarnings="4065;4273;4565;4701;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -478,7 +478,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065;4701;4702"
+						DisableSpecificWarnings="4065;4273;4565;4701;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -488,7 +488,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065;4701;4702"
+						DisableSpecificWarnings="4065;4273;4565;4701;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -498,7 +498,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065;4701;4702"
+						DisableSpecificWarnings="4065;4273;4565;4701;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -2944,7 +2944,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065;4701;4702"
+						DisableSpecificWarnings="4065;4273;4565;4701;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -2954,7 +2954,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065;4701;4702"
+						DisableSpecificWarnings="4065;4273;4565;4701;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -2964,7 +2964,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065;4701;4702"
+						DisableSpecificWarnings="4065;4273;4565;4701;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -2974,7 +2974,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065;4701;4702"
+						DisableSpecificWarnings="4065;4273;4565;4701;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -2984,7 +2984,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065;4701;4702"
+						DisableSpecificWarnings="4065;4273;4565;4701;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
@@ -2994,7 +2994,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						DisableSpecificWarnings="4065;4701;4702"
+						DisableSpecificWarnings="4065;4273;4565;4701;4702"
 						ForcedIncludeFiles="$(NOINHERIT)"
 					/>
 				</FileConfiguration>
