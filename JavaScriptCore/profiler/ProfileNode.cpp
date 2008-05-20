@@ -201,13 +201,10 @@ void ProfileNode::endAndRecordCall()
 void ProfileNode::printDataInspectorStyle(int indentLevel) const
 {
     // Print function names
-    if (indentLevel) {
-        for (int i = 0; i < indentLevel; ++i)
-            printf("  ");
+    for (int i = 0; i < indentLevel; ++i)
+        printf("  ");
 
-        printf("%d SelfTime %.3fms %.3f%% TotalTime %.3fms%.3f%% FunctionName %s\n", m_numberOfCalls, m_selfTime, selfPercent(), m_totalTime, totalPercent(), m_functionName.UTF8String().c_str());
-    } else
-        printf("%s\n", m_functionName.UTF8String().c_str());
+    printf("%d SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% FunctionName %s\n", m_numberOfCalls, m_selfTime, selfPercent(), m_totalTime, totalPercent(), m_functionName.UTF8String().c_str());
 
     ++indentLevel;
 

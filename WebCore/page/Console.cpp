@@ -129,23 +129,18 @@ void Console::log(ExecState* exec, const List& arguments)
     page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, exec, arguments, 0, url.string());
 }
 
-void Console::profile(const String& title) const
+void Console::profile(ExecState* exec, const String& title) const
 {
-    // FIXME: Figure out something to do with the title passed in so that it can
-    // be displayed by the inspector.
     Page* page = m_frame->page();
     if (!page)
         return;
 
-    Profiler::profiler()->startProfiling(page->group().identifier(), title);
+    Profiler::profiler()->startProfiling(exec, page->group().identifier(), title);
 }
 
 void Console::profileEnd() const
 {
     Profiler::profiler()->stopProfiling();
-    // FIXME: We need to hook into the WebInspector here so that it can process over the data
-    // that is in the profiler and display it in some new cool way, as opposed to just printing
-    // it or dumping it to the console.
 }
 
 void Console::warn(ExecState* exec, const List& arguments)

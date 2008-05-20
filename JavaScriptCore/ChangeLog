@@ -1,5 +1,22 @@
 2008-05-19  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Adam.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        - Pass the exec state to profiler when calling startProfiling so that if
+        profiling is started within an execution context that location is
+        recorded correctly.
+
+        * JavaScriptCore.exp:
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::printDataInspectorStyle): Dump more info for debugging
+        purposes.
+        * profiler/Profiler.cpp:
+        (KJS::Profiler::startProfiling):
+        * profiler/Profiler.h:
+
+2008-05-19  Kevin McCullough  <kmccullough@apple.com>
+
         Rubberstamped by Geoff.
 
         Turn off the profiler because it is a performance regression.

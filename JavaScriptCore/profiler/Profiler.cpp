@@ -54,7 +54,7 @@ Profiler* Profiler::profiler()
     return sharedProfiler;
 }
 
-void Profiler::startProfiling(unsigned pageGroupIdentifier, const UString& title)
+void Profiler::startProfiling(ExecState* exec, unsigned pageGroupIdentifier, const UString& title)
 {
     if (m_profiling)
         return;
@@ -63,6 +63,10 @@ void Profiler::startProfiling(unsigned pageGroupIdentifier, const UString& title
 
     m_currentProfile = Profile::create(title);
     m_profiling = true;
+    
+    Vector<UString> callStackNames;
+    getStackNames(callStackNames, exec);
+    m_currentProfile->willExecute(callStackNames);
 }
 
 void Profiler::stopProfiling()

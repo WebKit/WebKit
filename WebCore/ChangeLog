@@ -1,3 +1,17 @@
+2008-05-19  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        - Send the executing context to the profiler so it can attribute time
+        correctly to parent functions when calling profile() and profileEnd()
+        while nested.
+
+        * page/Console.cpp:
+        (WebCore::Console::profile):
+        (WebCore::Console::profileEnd):
+        * page/Console.h:
+
 2008-05-19  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Anders and Beth.

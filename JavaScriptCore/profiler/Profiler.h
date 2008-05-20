@@ -43,7 +43,7 @@ namespace KJS {
         static Profiler* profiler();
         static void debugLog(UString);
 
-        void startProfiling(unsigned pageGroupIdentifier, const UString&);
+        void startProfiling(ExecState*, unsigned pageGroupIdentifier, const UString&);
         void stopProfiling();
 
         void willExecute(ExecState*, JSObject* calledFunction);
