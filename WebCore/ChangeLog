@@ -1,3 +1,18 @@
+2008-05-19  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Maciej.
+
+        GTK+/soup fixes:
+
+        Remove the fragment part of the URL since the file backend doesn't
+        deal with it.
+
+        Fix a typo in the cleanup function.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::cleanupGioOperation):
+        (WebCore::ResourceHandle::startGio):
+
 2008-05-19  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

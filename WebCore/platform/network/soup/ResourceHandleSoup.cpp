@@ -400,7 +400,7 @@ static void cleanupGioOperation(ResourceHandle* handle)
     }
     if (d->m_input_stream) {
         g_object_unref(d->m_input_stream);
-        d->m_cancellable = NULL;
+        d->m_input_stream = NULL;
     }
     if (d->m_buffer) {
         g_free(d->m_buffer);
@@ -562,6 +562,11 @@ bool ResourceHandle::startGio(String urlString)
         d->client()->didFail(this, error);
         return false;
     }
+
+    // Remove the fragment part of the URL since the file backend doesn't deal with it
+    int fragPos;
+    if ((fragPos = urlString.find("#")) != -1)
+        urlString = urlString.left(fragPos);
 
     d->m_gfile = g_file_new_for_uri(urlString.utf8().data());
     d->m_cancellable = g_cancellable_new();
