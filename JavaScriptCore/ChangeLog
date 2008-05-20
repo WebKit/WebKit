@@ -1,3 +1,20 @@
+2008-05-20  Timothy Hatcher  <timothy@apple.com>
+
+        Rename sortFileName{Ascending,Descending} to
+        sortFunctionName{Ascending,Descending}.
+
+        Reviewed by Kevin McCullough.
+
+        * JavaScriptCore.exp:
+        * kjs/config.h:
+        * profiler/Profile.h:
+        * profiler/ProfileNode.cpp:
+        (KJS::functionNameDescendingComparator):
+        (KJS::ProfileNode::sortFunctionNameDescending):
+        (KJS::functionNameAscendingComparator):
+        (KJS::ProfileNode::sortFunctionNameAscending):
+        * profiler/ProfileNode.h:
+
 2008-05-19  Timothy Hatcher  <timothy@apple.com>
 
         Make the profiler use higher than millisecond resolution time-stamps.

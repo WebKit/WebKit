@@ -192,30 +192,30 @@ void ProfileNode::sortCallsAscending()
         (*currentChild)->sortCallsAscending();
 }
 
-static inline bool fileNameDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
+static inline bool functionNameDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
 {
     return compare(a->functionName(), b->functionName()) == 1 ? true : false ;
 }
 
-void ProfileNode::sortFileNameDescending()
+void ProfileNode::sortFunctionNameDescending()
 {
-    std::sort(m_children.begin(), m_children.end(), fileNameDescendingComparator);
+    std::sort(m_children.begin(), m_children.end(), functionNameDescendingComparator);
 
     for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
-        (*currentChild)->sortFileNameDescending();
+        (*currentChild)->sortFunctionNameDescending();
 }
 
-static inline bool fileNameAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
+static inline bool functionNameAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
 {
     return compare(a->functionName(), b->functionName()) == -1 ? true : false ;
 }
 
-void ProfileNode::sortFileNameAscending()
+void ProfileNode::sortFunctionNameAscending()
 {
-    std::sort(m_children.begin(), m_children.end(), fileNameAscendingComparator);
+    std::sort(m_children.begin(), m_children.end(), functionNameAscendingComparator);
 
     for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
-        (*currentChild)->sortFileNameAscending();
+        (*currentChild)->sortFunctionNameAscending();
 }
 
 void ProfileNode::endAndRecordCall()
