@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Nuanti Ltd.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +56,6 @@ typedef struct _NSRange NSRange;
 @class WebCoreTextMarker;
 @class WebCoreTextMarkerRange;
 #else
-class AccessibilityObjectWrapper;
 class NSArray;
 class NSAttributedString;
 class NSData;
@@ -65,6 +65,12 @@ class NSValue;
 class NSView;
 class WebCoreTextMarker;
 class WebCoreTextMarkerRange;
+#if PLATFORM(GTK)
+typedef struct _AtkObject AtkObject;
+typedef struct _AtkObject AccessibilityObjectWrapper;
+#else
+class AccessibilityObjectWrapper;
+#endif
 #endif
 
 namespace WebCore {
@@ -348,11 +354,16 @@ public:
     unsigned doAXLineForIndex(unsigned);
 
 #if HAVE(ACCESSIBILITY)
+#if PLATFORM(GTK)
+    AccessibilityObjectWrapper* wrapper() const;
+    void setWrapper(AccessibilityObjectWrapper*);
+#else
     AccessibilityObjectWrapper* wrapper() const { return m_wrapper.get(); }
     void setWrapper(AccessibilityObjectWrapper* wrapper) 
     {
         m_wrapper = wrapper;
     }
+#endif
 #endif
 
 protected:
@@ -368,6 +379,8 @@ protected:
     RetainPtr<AccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(WIN)
     COMPtr<AccessibilityObjectWrapper> m_wrapper;
+#elif PLATFORM(GTK)
+    AtkObject* m_wrapper;
 #endif
 };
 

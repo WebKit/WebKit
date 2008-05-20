@@ -1,3 +1,29 @@
+2008-05-19  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Anders and Beth.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16495
+        [GTK] Accessibility support with ATK/AT-SPI
+
+        Initial ATK/AT-SPI accessibility support for the GTK+ port.
+
+        * GNUmakefile.am:
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::AccessibilityObject):
+        (WebCore::AccessibilityObject::detach):
+        * page/AccessibilityObject.h:
+        * page/gtk/AXObjectCacheAtk.cpp: Added.
+        (WebCore::AXObjectCache::detachWrapper):
+        (WebCore::AXObjectCache::attachWrapper):
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::postNotificationToElement):
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        * page/gtk/AccessibilityObjectWrapperAtk.cpp: Added.
+        (WebCore::):
+        (WebCore::AccessibilityObject::wrapper):
+        (WebCore::AccessibilityObject::setWrapper):
+        * page/gtk/AccessibilityObjectWrapperAtk.h: Added.
+
 2008-05-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

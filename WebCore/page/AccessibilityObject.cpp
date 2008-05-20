@@ -63,6 +63,9 @@ using namespace HTMLNames;
 AccessibilityObject::AccessibilityObject()
     : m_id(0)
     , m_haveChildren(false)
+#if PLATFORM(GTK)
+    , m_wrapper(0)
+#endif
 {
 }
 
@@ -75,7 +78,7 @@ void AccessibilityObject::detach()
 {
     removeAXObjectID();
 #if HAVE(ACCESSIBILITY)
-    m_wrapper = 0;
+    setWrapper(0);
 #endif    
 }
 

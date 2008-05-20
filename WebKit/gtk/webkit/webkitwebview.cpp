@@ -4,6 +4,7 @@
  *  Copyright (C) 2007 Xan Lopez <xan@gnome.org>
  *  Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *  Copyright (C) 2008 Jan Alonzo <jmalonzo@unpluggable.com>
+ *  Copyright (C) 2008 Nuanti Ltd.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -28,6 +29,7 @@
 #include "webkitwebbackforwardlist.h"
 #include "webkitwebhistoryitem.h"
 
+#include "AXObjectCache.h"
 #include "NotImplemented.h"
 #include "BackForwardList.h"
 #include "CString.h"
@@ -36,6 +38,7 @@
 #include "ContextMenuClientGtk.h"
 #include "ContextMenuController.h"
 #include "Cursor.h"
+#include "Document.h"
 #include "DragClientGtk.h"
 #include "Editor.h"
 #include "EditorClientGtk.h"
@@ -714,6 +717,26 @@ static gboolean webkit_navigation_request_handled(GSignalInvocationHint* ihint, 
   return continueEmission;
 }
 
+static AtkObject* webkit_web_view_get_accessible(GtkWidget* widget)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    AXObjectCache::enableAccessibility();
+
+    Frame* coreFrame = core(webView)->mainFrame();
+    if (!coreFrame)
+        return NULL;
+
+    Document* doc = coreFrame->document();
+    if (!doc)
+        return NULL;
+
+    AccessibilityObject* coreAccessible = doc->axObjectCache()->get(doc->renderer());
+    if (!coreAccessible || !coreAccessible->wrapper())
+        return NULL;
+
+    return coreAccessible->wrapper();
+}
+
 static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 {
     GtkBindingSet* binding_set;
@@ -1080,6 +1103,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     widgetClass->size_allocate = webkit_web_view_size_allocate;
     widgetClass->popup_menu = webkit_web_view_popup_menu_handler;
     widgetClass->focus_in_event = webkit_web_view_focus_in_event;
+    widgetClass->get_accessible = webkit_web_view_get_accessible;
 
     GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webViewClass);
     containerClass->add = webkit_web_view_container_add;

@@ -1030,6 +1030,8 @@ webkitgtk_sources += \
 	WebCore/platform/text/TextCodecICU.cpp \
 	WebCore/platform/text/TextBoundariesICU.cpp \
 	WebCore/platform/text/TextBreakIteratorICU.cpp \
+	WebCore/page/gtk/AXObjectCacheAtk.cpp \
+	WebCore/page/gtk/AccessibilityObjectWrapperAtk.cpp \
 	WebCore/page/gtk/EventHandlerGtk.cpp \
 	WebCore/page/gtk/FrameGtk.cpp \
 	WebCore/page/gtk/DragControllerGtk.cpp \
