@@ -5,6 +5,7 @@
     <file>CallStackSidebarPane.js</file>
     <file>Console.js</file>
     <file>Database.js</file>
+    <file>DataGrid.js</file>
     <file>DatabaseQueryView.js</file>
     <file>DatabasesPanel.js</file>
     <file>DatabaseTableView.js</file>

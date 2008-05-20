@@ -1307,9 +1307,7 @@ body.inactive .sidebar {
 }
 
 .database-view.table {
-    font-size: 10px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 .database-view.table .data-grid {
@@ -1339,51 +1337,96 @@ body.inactive .sidebar {
     color: rgb(66%, 33%, 33%);
 }
 
-.data-grid .database-result-filler-row {
-    height: auto;
-}
-
-.data-grid .database-result-filler-row.alternate td {
-    background-position-y: 16px;
-}
-
-.database-result-filler-row td {
-    background-image: -webkit-gradient(linear, left top, left bottom, from(white), color-stop(0.5, white), color-stop(0.5, rgb(234, 243, 255)), to(rgb(234, 243, 255)));
-    -webkit-background-size: auto 32px;
-    -webkit-background-origin: padding;
-    -webkit-background-clip: padding;
-}
-
 .data-grid {
+    position: relative;
     border: 1px solid #aaa;
+}
+
+.data-grid:focus {
+    outline: none;
+}
+
+.data-grid table {
     table-layout: fixed;
     border-spacing: 0;
     border-collapse: collapse;
     width: 100%;
+    font-size: 10px;
+    font-family: Lucida Grande, sans-serif;
+}
+
+.data-grid .data-container {
+    position: absolute;
+    top: 16px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-right: 14px;
+    overflow-x: hidden;
+    overflow-y: overlay;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(white), color-stop(0.5, white), color-stop(0.5, rgb(234, 243, 255)), to(rgb(234, 243, 255)));
+    -webkit-background-size: 1px 32px;
+}
+
+.data-grid.inline .data-container {
+    position: static;
 }
 
 .data-grid th {
     text-align: left;
-    background: url(Images/glossyHeader.png) repeat-x;
-    border-right: 1px solid #aaa;
+    background-image: url(Images/glossyHeader.png);
+    background-repeat: repeat-x;
+    border-right: 1px solid rgb(179, 179, 179);
+    border-bottom: 1px solid rgb(179, 179, 179);
     height: 15px;
-    border-bottom: 1px solid #aaa;
     font-weight: normal;
     vertical-align: middle;
     padding: 0 4px;
     white-space: nowrap;
 }
 
-.data-grid tr {
-    height: 16px;
+.data-grid th.corner {
+    width: 15px;
+    border-right: 0 none transparent;
 }
 
-.data-grid tr.alternate {
-    background-color: rgb(236, 243, 254);
+.data-grid tr.filler {
+    display: table-row !important;
+    height: auto !important;
+}
+
+.data-grid tr.filler td {
+    height: auto !important;
+    padding: 0 !important;
+}
+
+.data-grid table.data {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 16px;
+    bottom: 0;
+    height: 100%;
+    border-top: 0 none transparent;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(white), color-stop(0.5, white), color-stop(0.5, rgb(234, 243, 255)), to(rgb(234, 243, 255)));
+    -webkit-background-size: 1px 32px;
+}
+
+.data-grid.inline table.data {
+    position: static;
+}
+
+.data-grid table.data tr {
+    display: none;
+}
+
+.data-grid table.data tr.revealed {
+    display: table-row;
 }
 
 .data-grid td {
     vertical-align: top;
+    height: 12px;
     padding: 2px 4px;
     white-space: nowrap;
     border-right: 1px solid #aaa;
@@ -1396,40 +1439,86 @@ body.inactive .sidebar {
     overflow: hidden;
 }
 
-.data-grid th.narrow {
-    width: 75px;
+.data-grid th.sortable div {
+    position: relative;
 }
 
-.data-grid th.selected {
-    border-top: 1px solid rgb(156, 168, 207);
-    border-bottom: 1px solid rgb(107, 139, 195);
-    border-left: url(Images/glossySelected.png);
-    border-right: url(Images/glossySelected.png);
-    background: url(Images/glossySelected.png) repeat-x;
+.data-grid th.sortable:active {
+    background-image: url(Images/glossyHeaderPressed.png);
 }
 
-.data-grid th.sort-ascending::before {
-    float: right;
-    display: inline-block;
-    margin-bottom: 2px;
-    margin-right: 3px;
+.data-grid th.sort-ascending, .data-grid th.sort-descending {
+    border-right: 1px solid rgb(107, 140, 196);
+    border-bottom: 1px solid rgb(107, 140, 196);
+    background-image: url(Images/glossyHeaderSelected.png);
+    background-repeat: repeat-x;
+}
+
+.data-grid th.sortable.sort-ascending:active, .data-grid th.sortable.sort-descending:active {
+    background-image: url(Images/glossyHeaderSelectedPressed.png);
+}
+
+.data-grid th.sort-ascending div::after {
+    position: absolute;
+    top: 0;
+    right: 0;
     width: 8px;
     height: 8px;
     content: url(Images/treeUpTriangleBlack.png);
 }
 
-.data-grid th.sort-descending::before {
-    float: right;
-    display: inline-block;
-    margin-top: 2px;
-    margin-right: 3px;
+.data-grid th.sort-descending div::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 1px;
     width: 8px;
     height: 8px;
     content: url(Images/treeDownTriangleBlack.png);
 }
 
 body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-descending {
-    background: url(Images/glossyHeader.png) repeat-x;
+    background-image: url(Images/glossyHeader.png);
+    border-right: 1px solid rgb(179, 179, 179);
+    border-bottom: 1px solid rgb(179, 179, 179);
+}
+
+.data-grid tr.parent td.disclosure::before {
+    float: left;
+    content: url(Images/treeRightTriangleBlack.png);
+    width: 8px;
+    height: 8px;
+    margin-right: 2px;
+    -webkit-user-select: none;
+}
+
+.data-grid tr.expanded td.disclosure::before {
+    content: url(Images/treeDownTriangleBlack.png);
+    width: 8px;
+    height: 8px;
+    margin-top: 1px;
+}
+
+.data-grid tr.selected {
+    background-color: rgb(212, 212, 212);
+    color: inherit;
+}
+
+.data-grid:focus tr.selected {
+    background-color: rgb(56, 121, 217);
+    color: white;
+}
+
+.data-grid:focus tr.parent.selected td.disclosure::before {
+    content: url(Images/treeRightTriangleWhite.png);
+}
+
+.data-grid:focus tr.expanded.selected td.disclosure::before {
+    content: url(Images/treeDownTriangleWhite.png);
+}
+
+.data-grid tr:not(.parent) td.disclosure {
+    text-indent: 10px;
 }
 
 .database-view.query {

@@ -162,79 +162,63 @@ WebInspector.DatabasesPanel.prototype = {
         }
     },
 
-    _tableForResult: function(result)
+    dataGridForResult: function(result)
     {
         if (!result.rows.length)
             return null;
 
+        var columns = {};
+
         var rows = result.rows;
-        var length = rows.length;
-        var columnWidths = [];
+        for (var columnIdentifier in rows.item(0)) {
+            var column = {};
+            column.width = columnIdentifier.length;
+            column.title = columnIdentifier;
 
-        var table = document.createElement("table");
-        table.className = "data-grid";
-
-        var headerRow = document.createElement("tr");
-        table.appendChild(headerRow);
-
-        var j = 0;
-        for (var column in rows.item(0)) {
-            var th = document.createElement("th");
-            headerRow.appendChild(th);
-
-            var div = document.createElement("div");
-            div.textContent = column;
-            div.title = column;
-            th.appendChild(div);
-
-            columnWidths[j++] = column.length;
+            columns[columnIdentifier] = column;
         }
 
+        var nodes = [];
+        var length = rows.length;
         for (var i = 0; i < length; ++i) {
+            var data = {};
+
             var row = rows.item(i);
-            var tr = document.createElement("tr");
-            if (i % 2)
-                tr.className = "alternate";
-            table.appendChild(tr);
-
-            var j = 0;
-            for (var column in row) {
-                var td = document.createElement("td");
-                tr.appendChild(td);
-
-                var text = row[column];
-                var div = document.createElement("div");
-                div.textContent = text;
-                div.title = text;
-                td.appendChild(div);
-
-                if (text.length > columnWidths[j])
-                    columnWidths[j] = text.length;
-                ++j;
+            for (var columnIdentifier in row) {
+                var text = row[columnIdentifier];
+                data[columnIdentifier] = text;
+                if (text.length > columns[columnIdentifier].width)
+                    columns[columnIdentifier].width = text.length;
             }
+
+            var node = new WebInspector.DataGridNode(data, false);
+            node.selectable = false;
+            nodes.push(node);
         }
 
         var totalColumnWidths = 0;
-        length = columnWidths.length;
-        for (var i = 0; i < length; ++i)
-            totalColumnWidths += columnWidths[i];
+        for (var columnIdentifier in columns)
+            totalColumnWidths += columns[columnIdentifier].width;
 
         // Calculate the percentage width for the columns.
-        var minimumPrecent = 5;
+        const minimumPrecent = 5;
         var recoupPercent = 0;
-        for (var i = 0; i < length; ++i) {
-            columnWidths[i] = Math.round((columnWidths[i] / totalColumnWidths) * 100);
-            if (columnWidths[i] < minimumPrecent) {
-                recoupPercent += (minimumPrecent - columnWidths[i]);
-                columnWidths[i] = minimumPrecent;
+        for (var columnIdentifier in columns) {
+            var width = columns[columnIdentifier].width;
+            width = Math.round((width / totalColumnWidths) * 100);
+            if (width < minimumPrecent) {
+                recoupPercent += (minimumPrecent - width);
+                width = minimumPrecent;
             }
+
+            columns[columnIdentifier].width = width;
         }
 
         // Enforce the minimum percentage width.
         while (recoupPercent > 0) {
-            for (var i = 0; i < length; ++i) {
-                if (columnWidths[i] > minimumPrecent) {
-                    --columnWidths[i];
+            for (var columnIdentifier in columns) {
+                if (columns[columnIdentifier].width > minimumPrecent) {
+                    --columns[columnIdentifier].width;
                     --recoupPercent;
                     if (!recoupPercent)
                         break;
@@ -242,13 +226,16 @@ WebInspector.DatabasesPanel.prototype = {
             }
         }
 
-        length = headerRow.childNodes.length;
-        for (var i = 0; i < length; ++i) {
-            var th = headerRow.childNodes[i];
-            th.style.width = columnWidths[i] + "%";
-        }
+        // Change the width property to a string suitable for a style width.
+        for (var columnIdentifier in columns)
+            columns[columnIdentifier].width += "%";
 
-        return table;
+        var dataGrid = new WebInspector.DataGrid(columns);
+        var length = nodes.length;
+        for (var i = 0; i < length; ++i)
+            dataGrid.appendChild(nodes[i]);
+
+        return dataGrid;
     },
 
     _startSidebarDragging: function(event)

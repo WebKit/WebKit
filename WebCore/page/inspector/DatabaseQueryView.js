@@ -150,7 +150,9 @@ WebInspector.DatabaseQueryView.prototype = {
 
     _queryFinished: function(query, tx, result)
     {
-        this._appendQueryResult(query, WebInspector.panels.databases._tableForResult(result));
+        var dataGrid = WebInspector.panels.databases.dataGridForResult(result);
+        dataGrid.element.addStyleClass("inline");
+        this._appendQueryResult(query, dataGrid.element);
 
         if (query.match(/^create /i) || query.match(/^drop table /i))
             WebInspector.panels.databases.updateDatabaseTables(this.database);

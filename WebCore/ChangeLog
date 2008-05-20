@@ -1,3 +1,32 @@
+2008-05-19  Timothy Hatcher  <timothy@apple.com>
+
+        Adds a DataGrid object that is used for multi-column data
+        and can contain hierarchical content with disclosure arrows.
+        A lot of DataGrid was copied from treeoutline.js. This change
+        makes the database views use the DataGrid. It will later be
+        used by the ProfileView.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/DataGrid.js: Added. Most copied from treeoutline.js
+        and modified to work with table elements.
+        * page/inspector/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView.prototype._queryFinished):
+        Call DatabasesPanel.dataGridForResult and adds the inline style to
+        the DataGrid element.
+        * page/inspector/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView.prototype._queryFinished):
+        Call DatabasesPanel.dataGridForResult.
+        * page/inspector/DatabasesPanel.js:
+        (WebInspector.DatabasesPanel.prototype._tableForResult): Removed.
+        (WebInspector.DatabasesPanel.prototype.dataGridForResult): Added.
+        Similar to the previous _tableForResult function, but makes a DataGrid.
+        * page/inspector/inspector.css: Changes to the data-grid
+        style rules.
+        * WebCore.vcproj/WebCore.vcproj: Add DataGrid.js.
+        * page/inspector/WebKit.qrc: Ditto.
+        * page/inspector/inspector.html: Ditto.
+
 2008-05-19  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

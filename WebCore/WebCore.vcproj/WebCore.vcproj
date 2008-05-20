@@ -3631,6 +3631,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\page\inspector\DataGrid.js"
+					>
+				</File>
+				<File
 					RelativePath="..\page\inspector\DatabaseQueryView.js"
 					>
 				</File>

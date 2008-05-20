@@ -55,8 +55,8 @@ WebInspector.DatabaseTableView.prototype = {
     {
         this.element.removeChildren();
 
-        var table = WebInspector.panels.databases._tableForResult(result);
-        if (!table) {
+        var dataGrid = WebInspector.panels.databases.dataGridForResult(result);
+        if (!dataGrid) {
             var emptyMsgElement = document.createElement("div");
             emptyMsgElement.className = "database-table-empty";
             emptyMsgElement.textContent = WebInspector.UIString("The “%s”\ntable is empty.", this.tableName);
@@ -64,22 +64,7 @@ WebInspector.DatabaseTableView.prototype = {
             return;
         }
 
-        var rowCount = table.getElementsByTagName("tr").length;
-        var columnCount = table.getElementsByTagName("tr").item(0).getElementsByTagName("th").length;
-
-        var tr = document.createElement("tr");
-        tr.className = "database-result-filler-row";
-        table.appendChild(tr);
-
-        if (!(rowCount % 2))
-            tr.addStyleClass("alternate");
-
-        for (var i = 0; i < columnCount; ++i) {
-            var td = document.createElement("td");
-            tr.appendChild(td);
-        }
-
-        this.element.appendChild(table);
+        this.element.appendChild(dataGrid.element);
     },
 
     _queryError: function(tx, error)
