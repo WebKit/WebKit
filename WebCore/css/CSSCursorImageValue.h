@@ -1,7 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2008 Apple Inc. All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +23,6 @@
 
 #include "CSSImageValue.h"
 #include "IntPoint.h"
-
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -34,7 +32,11 @@ class SVGElement;
 
 class CSSCursorImageValue : public CSSImageValue {
 public:
-    CSSCursorImageValue(const String& url, const IntPoint& hotspot, StyleBase*);
+    static PassRefPtr<CSSCursorImageValue> create(const String& url, const IntPoint& hotspot)
+    {
+        return new CSSCursorImageValue(url, hotspot);
+    }
+
     virtual ~CSSCursorImageValue();
 
     IntPoint hotspot() const { return m_hotspot; }
@@ -43,6 +45,8 @@ public:
     virtual StyleCachedImage* cachedImage(DocLoader*);
 
 private:
+    CSSCursorImageValue(const String& url, const IntPoint& hotspot);
+
     IntPoint m_hotspot;
 
 #if ENABLE(SVG)

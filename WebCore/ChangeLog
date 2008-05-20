@@ -1,3 +1,61 @@
+2008-05-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - a first small step of CSS DOM refactoring -- the eventual goal is to
+          reduce StyleBase and possibly eliminate it, since it has multiple
+          purposes and unneccessarily ties many classes together
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::isSVGCursorIdentifier): Mark static so it has internal linkage.
+        (WebCore::resourceReferencedByCursorElement): Ditto.
+        (WebCore::CSSCursorImageValue::CSSCursorImageValue): Removed unused style
+        argument.
+        (WebCore::CSSCursorImageValue::updateIfSVGCursorIsUsed): Removed code to
+        check if X and Y changed before changing them -- there's no reason to do
+        that. Removed code that depended on the internals of CSSImageValue. The
+        new code uses only protected functions rather than going right at the
+        fields and uing internal knowledge of the base class.
+        * css/CSSCursorImageValue.h: Added a create function, made constructor
+        private, removed unused style argument.
+
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::CSSImageValue): Removed unused style argument.
+        (WebCore::CSSImageValue::cachedImageURL): Added. A protected function for
+        use by CSSCursorImageValue that gives the URL.
+        (WebCore::CSSImageValue::clearCachedImage): Added. A protected function for
+        use by CSSCursorImageValue that clears the CachedImage.
+        * css/CSSImageValue.h: Added create functions, made constructors protected
+        and private, removed unused style argument, made data members private, added
+        some protected functions for use by CSSCursorImageValue.
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::setCSSStyleSheet): Changed to call checkLoaded on
+        the parent. This is part of preparation to move the checkLoaded function from
+        StyleBase to StyleSheet.
+        (WebCore::CSSImportRule::insertedIntoParent): Changed code to check the URL
+        of the style sheet to use the href function of the style sheet rather than
+        the baseURL function. This eliminates an O(n^2) algorithm here and reduces
+        the use of baseURL, part of preparation to move it from StyleBase
+        to CSSStyleSheet.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setImageProperty): Changed to use create
+        function instead of a direct call to new for the CSSImageValue classes.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Ditto.
+        (WebCore::CSSParser::parseContent): Ditto.
+        (WebCore::CSSParser::parseFillImage): Ditto.
+        (WebCore::CSSParser::parseBorderImage): Ditto.
+
+        * css/CSSStyleSelector.cpp: Removed unneeded include of CSSImageValue.h.
+        * rendering/style/RenderStyle.h: Removed unneeded include of
+        CSSCursorImageValue.h, which was causing us to rebuild the world way too often.
+
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::setXSLStyleSheet): See change to CSSImportRule above.
+        (WebCore::XSLImportRule::loadSheet): Ditto.
+
 2008-05-20  Kevin McCullough  <kmccullough@apple.com>
 
         Rubber stamped by Adam.

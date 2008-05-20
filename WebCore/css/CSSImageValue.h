@@ -1,8 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,11 +30,10 @@ namespace WebCore {
 class DocLoader;
 class StyleCachedImage;
 
-class CSSImageValue : public CSSPrimitiveValue,
-                      public CachedResourceClient {
+class CSSImageValue : public CSSPrimitiveValue, private CachedResourceClient {
 public:
-    CSSImageValue();
-    CSSImageValue(const String& url, StyleBase*);
+    static PassRefPtr<CSSImageValue> create() { return new CSSImageValue; }
+    static PassRefPtr<CSSImageValue> create(const String& url) { return new CSSImageValue(url); }
     virtual ~CSSImageValue();
 
     virtual StyleCachedImage* cachedImage(DocLoader*);
@@ -44,7 +41,14 @@ public:
     virtual bool isImageValue() const { return true; }
 
 protected:
+    CSSImageValue(const String& url);
+
     StyleCachedImage* cachedImage(DocLoader*, const String& url);
+    String cachedImageURL();
+    void clearCachedImage();
+
+private:
+    CSSImageValue();
 
     RefPtr<StyleCachedImage> m_image;
     bool m_accessedImage;

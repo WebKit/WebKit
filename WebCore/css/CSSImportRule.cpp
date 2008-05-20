@@ -66,7 +66,8 @@ void CSSImportRule::setCSSStyleSheet(const String& url, const String& charset, c
     m_styleSheet->parseString(sheet->sheetText(strict), strict);
     m_loading = false;
 
-    checkLoaded();
+    if (parent)
+        parent->checkLoaded();
 }
 
 bool CSSImportRule::isLoading() const
@@ -95,7 +96,7 @@ void CSSImportRule::insertedIntoParent()
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
     for (parent = static_cast<StyleBase*>(this)->parent(); parent; parent = parent->parent()) {
-        if (absHref == parent->baseURL())
+        if (parent->isCSSStyleSheet() && absHref == static_cast<CSSStyleSheet*>(parent)->href())
             return;
     }
 

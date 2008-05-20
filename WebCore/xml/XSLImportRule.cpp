@@ -66,7 +66,8 @@ void XSLImportRule::setXSLStyleSheet(const String& url, const String& sheet)
     m_styleSheet->parseString(sheet);
     m_loading = false;
     
-    checkLoaded();
+    if (parent)
+        parent->checkLoaded();
 }
 
 bool XSLImportRule::isLoading()
@@ -92,8 +93,8 @@ void XSLImportRule::loadSheet()
     
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
-    for (parent = static_cast<StyleBase*>(this)->parent(); parent; parent = parent->parent()) {
-        if (absHref == parent->baseURL())
+    for (parent = this->parent(); parent; parent = parent->parent()) {
+        if (parent->isXSLStyleSheet() && absHref == static_cast<XSLStyleSheet*>(parent)->href())
             return;
     }
     

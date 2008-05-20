@@ -135,7 +135,7 @@ void Console::profile(ExecState* exec, const List& arguments) const
     if (!page)
         return;
 
-    const UString title = arguments[0]->toString(exec);
+    UString title = arguments[0]->toString(exec);
     Profiler::profiler()->startProfiling(exec, page->group().identifier(), title);
 }
 

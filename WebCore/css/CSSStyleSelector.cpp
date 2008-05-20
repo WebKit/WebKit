@@ -30,7 +30,6 @@
 #include "CSSFontFace.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSource.h"
-#include "CSSImageValue.h"
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"
 #include "CSSPrimitiveValueMappings.h"

@@ -41,7 +41,6 @@
 #include "CSSReflectionDirection.h"
 #include "CSSValueList.h"
 #include "Color.h"
-#include "CSSCursorImageValue.h"
 #include "CSSTransformValue.h"
 #include "DataRef.h"
 #include "Font.h"

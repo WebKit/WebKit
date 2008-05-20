@@ -1,8 +1,7 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 2006 Rob Buis <buis@kde.org>
  *           (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,29 +22,26 @@
 #include "config.h"
 #include "CSSCursorImageValue.h"
 
-#include "CachedImage.h"
 #include "DocLoader.h"
 #include "PlatformString.h"
-
 #include "RenderStyle.h"
+#include <wtf/MathExtras.h>
 
 #if ENABLE(SVG)
 #include "SVGCursorElement.h"
 #include "SVGURIReference.h"
 #endif
 
-#include <wtf/MathExtras.h>
-
 namespace WebCore {
 
 #if ENABLE(SVG)
-inline bool isSVGCursorIdentifier(const String& url)
+static inline bool isSVGCursorIdentifier(const String& url)
 {
     KURL kurl(url);
     return kurl.hasRef();
 }
 
-inline SVGCursorElement* resourceReferencedByCursorElement(const String& fragmentId, Document* document)
+static inline SVGCursorElement* resourceReferencedByCursorElement(const String& fragmentId, Document* document)
 {
     Element* element = document->getElementById(SVGURIReference::getTarget(fragmentId));
     if (element && element->hasTagName(SVGNames::cursorTag))
@@ -55,8 +51,8 @@ inline SVGCursorElement* resourceReferencedByCursorElement(const String& fragmen
 }
 #endif
 
-CSSCursorImageValue::CSSCursorImageValue(const String& url, const IntPoint& hotspot, StyleBase* style)
-    : CSSImageValue(url, style)
+CSSCursorImageValue::CSSCursorImageValue(const String& url, const IntPoint& hotspot)
+    : CSSImageValue(url)
     , m_hotspot(hotspot)
 {
 }
@@ -91,19 +87,13 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
 
     if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, element->document())) {
         int x = roundf(cursorElement->x().value());
-        if (x != m_hotspot.x())
-            m_hotspot.setX(x);
+        m_hotspot.setX(x);
 
         int y = roundf(cursorElement->y().value());
-        if (y != m_hotspot.y())
-            m_hotspot.setY(y);
+        m_hotspot.setY(y);
 
-        if (m_image && m_image->cachedImage()->url() != element->document()->completeURL(cursorElement->href())) {
-            m_image->cachedImage()->removeClient(this);
-            m_image = 0;
-
-            m_accessedImage = false;
-        }
+        if (cachedImageURL() != element->document()->completeURL(cursorElement->href()))
+            clearCachedImage();
 
         SVGElement* svgElement = static_cast<SVGElement*>(element);
         m_referencedElements.add(svgElement);
