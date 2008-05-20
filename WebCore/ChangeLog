@@ -1,3 +1,17 @@
+2008-05-20  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Brady.
+
+        fix <rdar://problem/5908580> 10A58: Dictionary Panel hangs in WebCore::Cache::pruneDeadResources()
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestUserCSSStyleSheet):
+        Add a call to resourceAccessed() to more closely mirror what is done in requestResource()
+        (WebCore::Cache::insertInLRUList):
+        Assert that any resource in the LRU list has been accessed.  This is early detection of a
+        potential hang later when pruning resources, and also agrees with the early return in 
+        removeFromLRUList().
+
 2008-05-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
