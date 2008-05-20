@@ -1,6 +1,6 @@
 2008-05-19  Stephanie Lewis  <slewis@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Adam.
 
         Explicitly set run mode to 32bit unless overridden to avoid
         confusion when running tests
