@@ -1,5 +1,21 @@
 2008-05-20  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Tim.
+
+        <rdar://problem/5770054> JavaScript profiler (10928)
+        Removed only profiler-internal use of currentProfile since that concept
+        is changing.
+
+        * profiler/Profile.h: Now stopProfiling takes a time and bool as
+        arguments.  The time is used to calculate %s from and the bool tells
+        if this node is the head node and should be the one calculating the time.
+        (KJS::Profile::stopProfiling):
+        * profiler/ProfileNode.cpp: Ditto.
+        (KJS::ProfileNode::stopProfiling):
+        * profiler/ProfileNode.h: Ditto.
+
+2008-05-20  Kevin McCullough  <kmccullough@apple.com>
+
         Accidentally turned on the profiler.
 
         * kjs/config.h:

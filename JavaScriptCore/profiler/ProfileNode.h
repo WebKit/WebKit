@@ -63,7 +63,7 @@ namespace KJS {
         void addChild(PassRefPtr<ProfileNode> prpChild);
         ProfileNode* findChild(const CallIdentifier& functionName);
 
-        void stopProfiling();
+        void stopProfiling(double totalProfileTime, bool headProfileNode = false);
 
         CallIdentifier callIdentifier() const { return m_callIdentifier; }
         UString functionName() const { return m_callIdentifier.name; }

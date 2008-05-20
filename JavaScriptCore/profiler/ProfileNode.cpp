@@ -92,25 +92,28 @@ ProfileNode* ProfileNode::findChild(const CallIdentifier& functionName)
     return 0;
 }
 
-void ProfileNode::stopProfiling()
+void ProfileNode::stopProfiling(double totalProfileTime, bool headProfileNode)
 {
     if (m_startTime)
         endAndRecordCall();
 
     ASSERT(m_selfTime == 0.0);
 
+    if (headProfileNode)
+        totalProfileTime = m_totalTime;
+
     // Calculate Self time and the percentages once we stop profiling.
     StackIterator endOfChildren = m_children.end();
     for (StackIterator currentChild = m_children.begin(); currentChild != endOfChildren; ++currentChild) {
-        (*currentChild)->stopProfiling();
+        (*currentChild)->stopProfiling(totalProfileTime);
         m_selfTime += (*currentChild)->totalTime();
     }
 
     ASSERT(m_selfTime <= m_totalTime);
     m_selfTime = m_totalTime - m_selfTime;
 
-    m_totalPercent = (m_totalTime / Profiler::profiler()->currentProfile()->totalTime()) * 100.0;
-    m_selfPercent = (selfTime() / Profiler::profiler()->currentProfile()->totalTime()) * 100.0;
+    m_totalPercent = (m_totalTime / totalProfileTime) * 100.0;
+    m_selfPercent = (m_selfTime / totalProfileTime) * 100.0;
 }
 
 #pragma mark Sorting methods

@@ -43,7 +43,7 @@ namespace KJS {
         void willExecute(const Vector<CallIdentifier>& CallIdentifier);
         void didExecute(const Vector<CallIdentifier>& CallIdentifier);
 
-        void stopProfiling() { m_callTree->stopProfiling(); };
+        void stopProfiling() { m_callTree->stopProfiling(0, true); };
         const UString& title() const { return m_title; };
         ProfileNode* callTree() const { return m_callTree.get(); };
 
