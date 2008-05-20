@@ -34,7 +34,7 @@ module window {
         [Custom] void log();
         [Custom] void warn();
 
-        void profile(in DOMString title);
+        [Custom] void profile(in DOMString title);
         void profileEnd();
     };
 

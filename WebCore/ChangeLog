@@ -1,3 +1,16 @@
+2008-05-19  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        -build fix.
+
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::profile):
+        * page/Console.cpp:
+        (WebCore::Console::profile):
+        * page/Console.h:
+        * page/Console.idl:
+
 2008-05-19  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Maciej.

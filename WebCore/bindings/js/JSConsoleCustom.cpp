@@ -56,4 +56,10 @@ JSValue* JSConsole::warn(ExecState* exec, const List& arguments)
     return jsUndefined();
 }
 
+JSValue* JSConsole::profile(ExecState* exec, const List& arguments)
+{
+    impl()->profile(exec, arguments);
+    return jsUndefined();
+}
+
 } // namespace WebCore
