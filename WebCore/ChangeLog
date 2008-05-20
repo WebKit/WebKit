@@ -1,3 +1,12 @@
+2008-05-20  Kevin McCullough  <kmccullough@apple.com>
+
+        Rubber stamped by Adam.
+
+        -Minor fix. Should not use a reference since the original may disappear.
+
+        * page/Console.cpp:
+        (WebCore::Console::profile):
+
 2008-05-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. userAgent should return a value.
