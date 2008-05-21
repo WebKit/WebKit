@@ -92,6 +92,8 @@
 		1A2A68240B5BEDE70002A480 /* ProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2A68220B5BEDE70002A480 /* ProgressTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A2AAC580DC2A3B100A20D9A /* ApplicationCacheStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2AAC560DC2A3B100A20D9A /* ApplicationCacheStorage.cpp */; };
 		1A2AAC590DC2A3B100A20D9A /* ApplicationCacheStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2AAC570DC2A3B100A20D9A /* ApplicationCacheStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A2D753D0DE47FAB00F0A648 /* IconFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D753B0DE47FAB00F0A648 /* IconFetcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A2D753E0DE47FAB00F0A648 /* IconFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D753C0DE47FAB00F0A648 /* IconFetcher.cpp */; };
 		1A2E6E590CC55213004A2062 /* SQLValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6E570CC55213004A2062 /* SQLValue.cpp */; };
 		1A2E6E5A0CC55213004A2062 /* SQLValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E6E580CC55213004A2062 /* SQLValue.h */; };
 		1A2E6E7A0CC556D5004A2062 /* SQLiteAuthorizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */; };
@@ -4542,6 +4544,8 @@
 		1A2A68220B5BEDE70002A480 /* ProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ProgressTracker.h; sourceTree = "<group>"; };
 		1A2AAC560DC2A3B100A20D9A /* ApplicationCacheStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationCacheStorage.cpp; sourceTree = "<group>"; };
 		1A2AAC570DC2A3B100A20D9A /* ApplicationCacheStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheStorage.h; sourceTree = "<group>"; };
+		1A2D753B0DE47FAB00F0A648 /* IconFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconFetcher.h; sourceTree = "<group>"; };
+		1A2D753C0DE47FAB00F0A648 /* IconFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconFetcher.cpp; sourceTree = "<group>"; };
 		1A2E6E570CC55213004A2062 /* SQLValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLValue.cpp; path = sql/SQLValue.cpp; sourceTree = "<group>"; };
 		1A2E6E580CC55213004A2062 /* SQLValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLValue.h; path = sql/SQLValue.h; sourceTree = "<group>"; };
 		1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteAuthorizer.cpp; path = sql/SQLiteAuthorizer.cpp; sourceTree = "<group>"; };
@@ -8625,6 +8629,7 @@
 		1A8F6BB00DB55CDC001DB794 /* appcache */ = {
 			isa = PBXGroup;
 			children = (
+				5126E6B60A2E3AEF005C29FA /* icon */,
 				1A8F6BB10DB55CDC001DB794 /* ApplicationCache.cpp */,
 				1A8F6BB20DB55CDC001DB794 /* ApplicationCache.h */,
 				1A8F6BB30DB55CDC001DB794 /* ApplicationCacheGroup.cpp */,
@@ -8763,6 +8768,8 @@
 				5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */,
 				5126E6BA0A2E3B12005C29FA /* IconDatabase.h */,
 				51E1ECB80C91C90400DC255B /* IconDatabaseClient.h */,
+				1A2D753C0DE47FAB00F0A648 /* IconFetcher.cpp */,
+				1A2D753B0DE47FAB00F0A648 /* IconFetcher.h */,
 				513F14510AB634C400094DDF /* IconLoader.cpp */,
 				513F14520AB634C400094DDF /* IconLoader.h */,
 				51E1ECBA0C91C90400DC255B /* IconRecord.cpp */,
@@ -8770,7 +8777,8 @@
 				51E1ECBC0C91C90400DC255B /* PageURLRecord.cpp */,
 				51E1ECBD0C91C90400DC255B /* PageURLRecord.h */,
 			);
-			path = icon;
+			name = icon;
+			path = ../icon;
 			sourceTree = "<group>";
 		};
 		512DD8E80D91E691000F89EE /* archive */ = {
@@ -12361,7 +12369,6 @@
 				1A8F6BB00DB55CDC001DB794 /* appcache */,
 				512DD8E80D91E691000F89EE /* archive */,
 				93A1EAA20A5634D8006960A0 /* mac */,
-				5126E6B60A2E3AEF005C29FA /* icon */,
 				BCB16BFE0979C3BD00467741 /* Cache.cpp */,
 				BCB16BFF0979C3BD00467741 /* Cache.h */,
 				BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */,
@@ -15119,6 +15126,7 @@
 				95969B4A0DD8D21B00F653EE /* JavaScriptProfile.h in Headers */,
 				1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */,
 				9362640B0DE1137D009D5A00 /* CSSReflectionDirection.h in Headers */,
+				1A2D753D0DE47FAB00F0A648 /* IconFetcher.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16837,6 +16845,7 @@
 				95969B490DD8D21B00F653EE /* JavaScriptProfile.cpp in Sources */,
 				1A7FA61B0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp in Sources */,
 				1A7FA6490DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp in Sources */,
+				1A2D753E0DE47FAB00F0A648 /* IconFetcher.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

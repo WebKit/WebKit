@@ -1,3 +1,34 @@
+2008-05-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Add IconFetcher implementation.
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLLinkElement.h:
+        (WebCore::HTMLLinkElement::isIcon):
+        * loader/icon/IconFetcher.cpp: Added.
+        (WebCore::IconLinkEntry::):
+        (WebCore::IconLinkEntry::IconLinkEntry):
+        (WebCore::IconLinkEntry::type):
+        (WebCore::IconLinkEntry::url):
+        (WebCore::IconLinkEntry::buffer):
+        (WebCore::parseIconLink):
+        (WebCore::IconFetcher::create):
+        (WebCore::IconFetcher::IconFetcher):
+        (WebCore::IconFetcher::~IconFetcher):
+        (WebCore::IconFetcher::cancel):
+        (WebCore::IconFetcher::createIcon):
+        (WebCore::IconFetcher::loadEntry):
+        (WebCore::IconFetcher::loadFailed):
+        (WebCore::IconFetcher::didReceiveResponse):
+        (WebCore::IconFetcher::didReceiveData):
+        (WebCore::IconFetcher::didFinishLoading):
+        (WebCore::IconFetcher::didFail):
+        * loader/icon/IconFetcher.h: Added.
+        (WebCore::IconFetcherClient::~IconFetcherClient):
+
 2008-05-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
