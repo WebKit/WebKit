@@ -2,6 +2,14 @@
 
         Reviewed by Simon.
 
+        For the Qt port, fix building with Qt for Embedded Linux.
+
+        * WebCore.pro:
+
+2008-05-21  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
         For the Qt port, allow building without NPAPI plugin support.
 
         * WebCore.pro:

@@ -9,6 +9,8 @@ include($$PWD/../WebKit.pri)
 TEMPLATE = lib
 TARGET = QtWebKit
 
+contains(QT_CONFIG, embedded):CONFIG += embedded
+
 CONFIG(QTDIR_build) {
     GENERATED_SOURCES_DIR = $$PWD/generated
     include($$QT_SOURCE_TREE/src/qbase.pri)
