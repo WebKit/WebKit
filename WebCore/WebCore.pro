@@ -820,7 +820,6 @@ SOURCES += \
     plugins/PluginPackage.cpp \
     plugins/PluginStream.cpp \
     plugins/PluginView.cpp \
-    plugins/npapi.cpp \
     rendering/AutoTableLayout.cpp \
     rendering/bidi.cpp \
     rendering/break_lines.cpp \
@@ -1020,6 +1019,9 @@ SOURCES += \
      }
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
+
+        SOURCES += plugins/npapi.cpp
+
         unix:!mac {
             SOURCES += \
                 plugins/qt/PluginPackageQt.cpp \
