@@ -171,6 +171,32 @@ WebInspector.ProfileDataGridNode.prototype = {
         return data;
     },
 
+    createCell: function(columnIdentifier)
+    {
+        var cell = WebInspector.DataGridNode.prototype.createCell.call(this, columnIdentifier);
+        if (columnIdentifier !== "function")
+            return cell;
+
+        if (this.profileNode.url) {
+            var resource = WebInspector.resourceURLMap[this.profileNode.url];
+            var fileName = resource ? resource.displayName : this.profileNode.url;
+
+            var urlElement = document.createElement("a");
+            urlElement.className = "profile-node-file webkit-html-resource-link";
+            urlElement.href = this.profileNode.url;
+            urlElement.lineNumber = this.profileNode.lineNumber;
+
+            if (this.profileNode.lineNumber > 0)
+                urlElement.textContent = fileName + ":" + this.profileNode.lineNumber;
+            else
+                urlElement.textContent = fileName;
+
+            cell.insertBefore(urlElement, cell.firstChild);
+        }
+
+        return cell;
+    },
+
     expand: function()
     {
         WebInspector.DataGridNode.prototype.expand.call(this);

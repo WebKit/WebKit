@@ -2418,3 +2418,17 @@ body.inactive .sidebar-tree-item.selected {
 .profile-view .data-grid .calls-column {
     text-align: center;
 }
+
+.profile-node-file {
+    float: right;
+    color: gray;
+    margin-top: -1px;
+}
+
+.data-grid tr.selected .profile-node-file {
+    color: rgb(33%, 33%, 33%);
+}
+
+.data-grid:focus tr.selected .profile-node-file {
+    color: white;
+}

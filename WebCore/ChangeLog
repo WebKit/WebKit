@@ -1,5 +1,25 @@
 2008-05-21  Timothy Hatcher  <timothy@apple.com>
 
+        Adds the files and line numbers to the Profile call tree.
+
+        <rdar://problem/5952924> Inspector needs to show file and line number
+        in the Profile call tree
+
+        Reviewed by Geoff Garen.
+
+        * page/JavaScriptProfileNode.cpp:
+        (WebCore::getFunctionName): Fixes a JSStringRef leak.
+        (WebCore::getURL): Call ProfileNode::url.
+        (WebCore::getLineNumber): Call ProfileNode::lineNumber.
+        (WebCore::ProfileNodeClass): Add the url and lineNumber properties.
+        * page/inspector/ProfileView.js:
+        (WebInspector.ProfileDataGridNode.prototype.createCell): Overload the
+        DataGridNode.createCell and add the file and lineNumber to the
+        cell if the column is the function column.
+        * page/inspector/inspector.css: New styles for the file and line.
+
+2008-05-21  Timothy Hatcher  <timothy@apple.com>
+
         Restores logging of console calls to the STDOUT
         when Interpreter::shouldPrintExceptions() is true.
 
