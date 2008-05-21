@@ -1,3 +1,16 @@
+2008-05-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders and Kevin Decker.
+
+        - fix <rdar://problem/5951130> REGRESSION: crash on quit after reopening windows from previous session
+
+        * WebView/WebView.mm:
+        (-[WebViewPrivate dealloc]): Fix assertions to not complain when fast teardown is used.
+        (-[WebView _closePluginDatabases]): Factored out some common code from both versions of close.
+        (-[WebView _closeWithFastTeardown]): Added an underscore to this method's name, since it's internal.
+        Streamlined the code a bit. Added a line of code to set _private->closed (this is the bug fix).
+        (-[WebView _close]): Changed for new method name and to use _closePluginDatabases.
+
 2008-05-19  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Darin.

@@ -491,8 +491,8 @@ static BOOL grammarCheckingEnabled;
 
 - (void)dealloc
 {
-    ASSERT(!page);
-    ASSERT(!preferences);
+    ASSERT(applicationIsTerminating || !page);
+    ASSERT(applicationIsTerminating || !preferences);
 
     delete userAgent;
     delete identifierMap;
@@ -687,24 +687,12 @@ static bool debugWidget = true;
     return NO;
 }
 
-- (void) closeWithFastTeardown 
+- (void)_closePluginDatabases
 {
-    Frame *mainFrame = core([self mainFrame]);
-    BOOL hasUnloadEvent = NO;
-    if (mainFrame && mainFrame->page()) 
-        hasUnloadEvent = mainFrame->page()->pendingUnloadEventCount();
-        
-    if (hasUnloadEvent) {
-        RefPtr<Frame> protect(mainFrame);
-        
-        // dispatch unload Events
-        mainFrame->loader()->stopLoading(true);
-    }
-    
     pluginDatabaseClientCount--;
-    
-    // Make sure to close both sets of plug-ins databases because plug-ins need an opportunity to clean up files, etc.
-    
+
+    // Close both sets of plug-in databases because plug-ins need an opportunity to clean up files, etc.
+
     // Unload the WebView local plug-in database. 
     if (_private->pluginDatabase) {
         [_private->pluginDatabase destroyAllPluginInstanceViews];
@@ -718,19 +706,33 @@ static bool debugWidget = true;
         [WebPluginDatabase closeSharedDatabase];
 }
 
+- (void)_closeWithFastTeardown 
+{
+    // Dispatch unload events.
+    // FIXME: Shouldn't have to use a RefPtr here -- keeping the frame alive while stopping it
+    // should be WebCore's responsibility -- but we do as of the time this comment was written.
+    RefPtr<Frame> mainFrame = core([self mainFrame]);
+    if (mainFrame && mainFrame->page() && mainFrame->page()->pendingUnloadEventCount())
+        mainFrame->loader()->stopLoading(true);
+
+    _private->closed = YES;
+
+    [self _closePluginDatabases];
+}
+
 - (void)_close
 {
     if (!_private || _private->closed)
         return;
     
     WebPreferences *preferences = _private->preferences;
-    BOOL fullDocumentTeardown =  [preferences fullDocumentTeardownEnabled];
+    BOOL fullDocumentTeardown = [preferences fullDocumentTeardownEnabled];
      
     // To quit the apps fast we skip document teardown.  Two exceptions: 
     //    1) plugins need to be destroyed and unloaded
     //    2) unload events need to be called
     if (applicationIsTerminating && !fullDocumentTeardown) {
-        [self closeWithFastTeardown];
+        [self _closeWithFastTeardown];
         return;
     }
 
@@ -776,20 +778,7 @@ static bool debugWidget = true;
     [preferences didRemoveFromWebView];
     [preferences release];
 
-    pluginDatabaseClientCount--;
-    
-    // Make sure to close both sets of plug-ins databases because plug-ins need an opportunity to clean up files, etc.
-    
-    // Unload the WebView local plug-in database. 
-    if (_private->pluginDatabase) {
-        [_private->pluginDatabase close];
-        [_private->pluginDatabase release];
-        _private->pluginDatabase = nil;
-    }
-    
-    // Keep the global plug-in database active until the app terminates to avoid having to reload plug-in bundles.
-    if (!pluginDatabaseClientCount && applicationIsTerminating)
-        [WebPluginDatabase closeSharedDatabase];
+    [self _closePluginDatabases];
 }
 
 + (NSString *)_MIMETypeForFile:(NSString *)path
