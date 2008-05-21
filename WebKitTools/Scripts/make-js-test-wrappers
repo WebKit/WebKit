@@ -98,6 +98,7 @@ for my $tfile (@templates) {
         next if $file =~ m:resources/script4\.js$:;
         next if $file =~ m:resources/script5\.js$:;
         next if $file =~ m:resources/select-options-remove\.js$:;
+        next if $file =~ m:resources/tabindex-focus-blur-all\.js$:;
         next if $file =~ m:resources/wrapper-identity-base\.js$:;
 
         my $html = $file;
