@@ -369,8 +369,6 @@ Could be worth adding to the API.
 // SPI for DumpRenderTree
 - (void)_executeCoreCommandByName:(NSString *)name value:(NSString *)value;
 
-- (void)closeWithFastTeardown;
-
 @end
 
 @interface WebView (WebViewPrintingPrivate)

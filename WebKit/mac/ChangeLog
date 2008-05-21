@@ -1,5 +1,13 @@
 2008-05-21  Darin Adler  <darin@apple.com>
 
+        - fix build
+
+        * WebView/WebViewPrivate.h: Remove declaration of closeWithFastTeardown. We can add it back later
+        if we want, but if we do, we should probably make some refinements like checking _private->closed
+        and applicationIsTerminating.
+
+2008-05-21  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders and Kevin Decker.
 
         - fix <rdar://problem/5951130> REGRESSION: crash on quit after reopening windows from previous session
