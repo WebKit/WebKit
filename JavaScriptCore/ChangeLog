@@ -1,3 +1,19 @@
+2008-05-20  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a couple performance issues with the profiler. Also fixes
+        a regression where some nodes wouldn't be added to the tree.
+
+        Reviewed by Kevin McCullough.
+
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::addChild): Compare callIdentifier instead
+        of functionName.
+        * profiler/ProfileNode.h: 
+        (CallIdentifier.operator==): Compare the CallIdentifiers in
+        an order that fails sooner for non-matches.
+        (CallIdentifier.callIdentifier): Return the CallIdentifier by
+        reference to prevent making a new copy each time.
+
 2008-05-20  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

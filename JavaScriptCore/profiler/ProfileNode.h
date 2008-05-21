@@ -50,7 +50,7 @@ namespace KJS {
         CallIdentifier(UString name, UString url, int lineNumber) : name(name), url(url), lineNumber(lineNumber) {}
         CallIdentifier(const CallIdentifier& ci) : name(ci.name), url(ci.url), lineNumber(ci.lineNumber) {}
 
-        inline bool operator== (const CallIdentifier& ci) const { return ci.name == name && ci.lineNumber == lineNumber && ci.url == url; }
+        inline bool operator== (const CallIdentifier& ci) const { return ci.lineNumber == lineNumber && ci.name == name && ci.url == url; }
     };
 
     class ProfileNode : public RefCounted<ProfileNode> {
@@ -65,7 +65,7 @@ namespace KJS {
 
         void stopProfiling(double totalProfileTime, bool headProfileNode = false);
 
-        CallIdentifier callIdentifier() const { return m_callIdentifier; }
+        const CallIdentifier& callIdentifier() const { return m_callIdentifier; }
         UString functionName() const { return m_callIdentifier.name; }
         UString url() const { return m_callIdentifier.url; }
         unsigned lineNumber() const { return m_callIdentifier.lineNumber; }

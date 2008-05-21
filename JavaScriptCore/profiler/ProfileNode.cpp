@@ -77,7 +77,7 @@ void ProfileNode::addChild(PassRefPtr<ProfileNode> prpChild)
 
     RefPtr<ProfileNode> child = prpChild;
     for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild) {
-        if ((*currentChild)->functionName() == child->functionName())
+        if ((*currentChild)->callIdentifier() == child->callIdentifier())
             return;
     }
 
