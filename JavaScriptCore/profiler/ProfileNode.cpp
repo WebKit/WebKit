@@ -45,6 +45,7 @@ ProfileNode::ProfileNode(const CallIdentifier& callIdentifier)
     , m_totalPercent (0.0)
     , m_selfPercent (0.0)
     , m_numberOfCalls(0)
+    , m_visible(true)
 {
     m_startTime = getCurrentUTCTimeWithMicroseconds();
 }
@@ -127,6 +128,14 @@ void ProfileNode::stopProfiling(double totalProfileTime, bool headProfileNode)
     }
 
     calculatePercentages(totalProfileTime);
+}
+
+void ProfileNode::setTreeVisible(bool visible)
+{
+    m_visible = visible;
+
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+        (*currentChild)->setTreeVisible(visible);    
 }
 
 #pragma mark Sorting methods
@@ -235,6 +244,30 @@ void ProfileNode::sortFunctionNameAscending()
         (*currentChild)->sortFunctionNameAscending();
 }
 
+bool ProfileNode::focus(const CallIdentifier& callIdentifier)
+{
+    if (m_callIdentifier == callIdentifier) {
+        m_visible = true;
+
+        for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+            (*currentChild)->setTreeVisible(true);
+    } else {
+        m_visible = false;
+        for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+            m_visible = (*currentChild)->focus(callIdentifier) || m_visible;
+    }
+    
+    return m_visible;
+}
+
+void ProfileNode::restoreAll()
+{
+    m_visible = true;
+    
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+        (*currentChild)->restoreAll();
+}
+
 void ProfileNode::endAndRecordCall()
 {
     m_totalTime += getCurrentUTCTimeWithMicroseconds() - m_startTime;
@@ -256,7 +289,7 @@ void ProfileNode::debugPrintData(int indentLevel) const
     for (int i = 0; i < indentLevel; ++i)
         printf("  ");
 
-    printf("%d SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% Full Name %s\n", m_numberOfCalls, m_selfTime, selfPercent(), m_totalTime, totalPercent(), functionName().UTF8String().c_str());
+    printf("%d SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% Full Name %s Visible %s\n", m_numberOfCalls, m_selfTime, selfPercent(), m_totalTime, totalPercent(), functionName().UTF8String().c_str(), (m_visible ? "True" : "False"));
 
     ++indentLevel;
 

@@ -57,6 +57,9 @@ namespace KJS {
         void sortCallsAscending() { m_callTree->sortCallsAscending(); }
         void sortFunctionNameDescending() { m_callTree->sortFunctionNameDescending(); }
         void sortFunctionNameAscending() { m_callTree->sortFunctionNameAscending(); }
+        
+        void focus(const CallIdentifier& callIdentifier) { m_callTree->focus(callIdentifier); }
+
 #ifndef NDEBUG
         void debugPrintData() const;
         void debugPrintDataSampleStyle() const;

@@ -1,3 +1,27 @@
+2008-05-20  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5950867> JSProfiler: Allow the profiler to "Focus" a
+        profile node.
+        - Implements focus by adding the idea of a profileNode being visible and
+        adding the ability to reset all of the visible flags.
+
+        * profiler/Profile.h: 
+        (KJS::Profile::focus):
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::ProfileNode): Initialize the visible flag.
+        (KJS::ProfileNode::setTreeVisible): Set the visibility of this node and
+        all of its descendents.
+        (KJS::ProfileNode::focus): Determine if this node should be visible when
+        focusing, if the functionName matches this node's function name or if any
+        of this node's children are visible.
+        (KJS::ProfileNode::restoreAll): Restore all nodes' visible flag.
+        (KJS::ProfileNode::debugPrintData):
+        * profiler/ProfileNode.h:
+        (KJS::ProfileNode::visible):
+        (KJS::ProfileNode::setVisible):
+
 2008-05-20  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a couple performance issues with the profiler. Also fixes
