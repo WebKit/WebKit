@@ -1,5 +1,15 @@
 2008-05-21  Darin Adler  <darin@apple.com>
 
+        - try to fix the Windows build
+
+        * profiler/Profiler.cpp:
+        (KJS::Profiler::stopProfiling): Use ptrdiff_t instead of the less-common but incredibly
+        similar ssize_t type.
+        * wtf/AVLTree.h:
+        (KJS::AVLTree::search): Added a typename for a dependent name that's a type.
+
+2008-05-21  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
 
         - fix <rdar://problem/5952721> bug in JavaScript arguments object property lookup
@@ -15,7 +25,7 @@
         (KJS::IndexToNameMap::operator[]): Ditto.
         * kjs/function.h: Changed IndexToNameMap::size type from int to unsigned.
 
-2008-05-20  Timothy Hatcher  <timothy@apple.com>
+2008-05-21  Timothy Hatcher  <timothy@apple.com>
 
         Change the Profiler to allow multiple profiles to be running at
         the same time. This can happen when you have nested console.profile()

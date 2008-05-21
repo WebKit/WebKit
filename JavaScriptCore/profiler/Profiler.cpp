@@ -87,7 +87,7 @@ void Profiler::startProfiling(ExecState* exec, const UString& title)
 PassRefPtr<Profile> Profiler::stopProfiling(ExecState* exec, const UString& title)
 {
     ExecState* globalExec = exec->lexicalGlobalObject()->globalExec();
-    for (ssize_t i = m_currentProfiles.size() - 1; i >= 0; --i) {
+    for (ptrdiff_t i = m_currentProfiles.size() - 1; i >= 0; --i) {
         if (m_currentProfiles[i]->originatingGlobalExec() == globalExec && (title.isNull() || m_currentProfiles[i]->title() == title)) {
             m_currentProfiles[i]->stopProfiling();
 
