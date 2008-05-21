@@ -25,8 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef WXWEBFRAME_H
-#define WXWEBFRAME_H
+#ifndef WXWEBBROWSERSHELL_H
+#define WXWEBBROWSERSHELL_H
 
 #include "wx/wxprec.h"
 #ifndef WX_PRECOMP
@@ -36,17 +36,17 @@
 #include "WebView.h"
 #include <wx/srchctrl.h>
 
-class WXDLLIMPEXP_WEBKIT wxWebFrame : public wxFrame
+class WXDLLIMPEXP_WEBKIT wxWebBrowserShell : public wxFrame
 {
 public:
     // ctor(s)
 #if SWIG
-    %pythonAppend wxWebFrame "self._setOORInfo(self)"
+    %pythonAppend wxWebBrowserShell "self._setOORInfo(self)"
 #endif
-    wxWebFrame(const wxString& title);
+    wxWebBrowserShell(const wxString& title);
 
 #ifndef SWIG
-    ~wxWebFrame();
+    ~wxWebBrowserShell();
 #endif
 
     void ShowDebugMenu(bool show = true);
@@ -95,4 +95,4 @@ public:
     wxPageSourceViewFrame(const wxString& source);
 };
 
-#endif // ifndef WXWEBFRAME_H
+#endif // ifndef WXWEBBROWSERSHELL_H

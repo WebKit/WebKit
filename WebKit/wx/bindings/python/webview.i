@@ -29,7 +29,7 @@
 #include "wx/wxPython/wxPython.h"
 #include "wx/wxPython/pyclasses.h"
 #include "WebView.h"
-#include "WebFrame.h"
+#include "WebBrowserShell.h"
 %}
 
 //---------------------------------------------------------------------------
@@ -38,10 +38,10 @@
 %import windows.i
 
 MustHaveApp(wxWebView);
-MustHaveApp(wxWebFrame);
+MustHaveApp(wxWebBrowserShell);
 
 %include WebView.h
-%include WebFrame.h
+%include WebBrowserShell.h
 
 %constant wxEventType wxEVT_WEBVIEW_BEFORE_LOAD;
 %constant wxEventType wxEVT_WEBVIEW_LOAD;

@@ -1,3 +1,42 @@
+2008-05-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Darin Adler.
+        
+        Rename wxWebFrame -> wxWebBrowserShell in preparation to introduce a WebFrame
+        counterpart in wx port. (Frame typically means 'top level window' in wx terms.)
+        
+        https://bugs.webkit.org/show_bug.cgi?id=19041
+
+        * WebBrowserShell.cpp: Copied from WebKit/wx/WebFrame.cpp.
+        (wxWebBrowserShell::wxWebBrowserShell):
+        (wxWebBrowserShell::~wxWebBrowserShell):
+        (wxWebBrowserShell::ShowDebugMenu):
+        (wxWebBrowserShell::OnQuit):
+        (wxWebBrowserShell::OnAbout):
+        (wxWebBrowserShell::OnLoadFile):
+        (wxWebBrowserShell::OnLoadEvent):
+        (wxWebBrowserShell::OnBeforeLoad):
+        (wxWebBrowserShell::OnAddressBarEnter):
+        (wxWebBrowserShell::OnSearchCtrlEnter):
+        (wxWebBrowserShell::OnBack):
+        (wxWebBrowserShell::OnForward):
+        (wxWebBrowserShell::OnStop):
+        (wxWebBrowserShell::OnReload):
+        (wxWebBrowserShell::OnMakeTextLarger):
+        (wxWebBrowserShell::OnMakeTextSmaller):
+        (wxWebBrowserShell::OnGetSource):
+        (wxWebBrowserShell::OnSetSource):
+        (wxWebBrowserShell::OnBrowse):
+        (wxWebBrowserShell::OnEdit):
+        (wxWebBrowserShell::OnRunScript):
+        * WebBrowserShell.h: Copied from WebKit/wx/WebFrame.h.
+        * WebFrame.cpp: Removed.
+        * WebFrame.h: Removed.
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::createWindow):
+        * bindings/python/webview.i:
+        * wxwebkit.bkl:
+
 2008-05-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Update code after removal of Document::toString().

@@ -36,7 +36,7 @@
 #include "wx/artprov.h"
 
 #include "WebView.h"
-#include "WebFrame.h"
+#include "WebBrowserShell.h"
 #include "WebViewPrivate.h"
 
 wxPageSourceViewFrame::wxPageSourceViewFrame(const wxString& source)
@@ -66,29 +66,29 @@ enum {
     ID_WEBVIEW = wxID_HIGHEST + 18
 };
 
-BEGIN_EVENT_TABLE(wxWebFrame, wxFrame)
-    EVT_MENU(wxID_EXIT,  wxWebFrame::OnQuit)
-    EVT_MENU(wxID_ABOUT, wxWebFrame::OnAbout)
-    EVT_MENU(ID_LOADFILE, wxWebFrame::OnLoadFile)
-    EVT_TEXT_ENTER(ID_TEXTCTRL, wxWebFrame::OnAddressBarEnter)
-    EVT_TEXT_ENTER(ID_SEARCHCTRL, wxWebFrame::OnSearchCtrlEnter)
-    EVT_WEBVIEW_LOAD(ID_WEBVIEW, wxWebFrame::OnLoadEvent)
-    EVT_WEBVIEW_BEFORE_LOAD(ID_WEBVIEW, wxWebFrame::OnBeforeLoad)
-    EVT_MENU(ID_BACK, wxWebFrame::OnBack)
-    EVT_MENU(ID_FORWARD, wxWebFrame::OnForward)
-    EVT_MENU(ID_STOP, wxWebFrame::OnStop)
-    EVT_MENU(ID_RELOAD, wxWebFrame::OnReload)
-    EVT_MENU(ID_MAKE_TEXT_LARGER, wxWebFrame::OnMakeTextLarger)
-    EVT_MENU(ID_MAKE_TEXT_SMALLER, wxWebFrame::OnMakeTextSmaller)
-    EVT_MENU(ID_GET_SOURCE, wxWebFrame::OnGetSource)
-    EVT_MENU(ID_SET_SOURCE, wxWebFrame::OnSetSource)
-    EVT_MENU(ID_BROWSE, wxWebFrame::OnBrowse)
-    EVT_MENU(ID_EDIT, wxWebFrame::OnEdit)
-    EVT_MENU(ID_RUN_SCRIPT, wxWebFrame::OnRunScript)
+BEGIN_EVENT_TABLE(wxWebBrowserShell, wxFrame)
+    EVT_MENU(wxID_EXIT,  wxWebBrowserShell::OnQuit)
+    EVT_MENU(wxID_ABOUT, wxWebBrowserShell::OnAbout)
+    EVT_MENU(ID_LOADFILE, wxWebBrowserShell::OnLoadFile)
+    EVT_TEXT_ENTER(ID_TEXTCTRL, wxWebBrowserShell::OnAddressBarEnter)
+    EVT_TEXT_ENTER(ID_SEARCHCTRL, wxWebBrowserShell::OnSearchCtrlEnter)
+    EVT_WEBVIEW_LOAD(ID_WEBVIEW, wxWebBrowserShell::OnLoadEvent)
+    EVT_WEBVIEW_BEFORE_LOAD(ID_WEBVIEW, wxWebBrowserShell::OnBeforeLoad)
+    EVT_MENU(ID_BACK, wxWebBrowserShell::OnBack)
+    EVT_MENU(ID_FORWARD, wxWebBrowserShell::OnForward)
+    EVT_MENU(ID_STOP, wxWebBrowserShell::OnStop)
+    EVT_MENU(ID_RELOAD, wxWebBrowserShell::OnReload)
+    EVT_MENU(ID_MAKE_TEXT_LARGER, wxWebBrowserShell::OnMakeTextLarger)
+    EVT_MENU(ID_MAKE_TEXT_SMALLER, wxWebBrowserShell::OnMakeTextSmaller)
+    EVT_MENU(ID_GET_SOURCE, wxWebBrowserShell::OnGetSource)
+    EVT_MENU(ID_SET_SOURCE, wxWebBrowserShell::OnSetSource)
+    EVT_MENU(ID_BROWSE, wxWebBrowserShell::OnBrowse)
+    EVT_MENU(ID_EDIT, wxWebBrowserShell::OnEdit)
+    EVT_MENU(ID_RUN_SCRIPT, wxWebBrowserShell::OnRunScript)
 END_EVENT_TABLE()
 
 
-wxWebFrame::wxWebFrame(const wxString& title) : 
+wxWebBrowserShell::wxWebBrowserShell(const wxString& title) : 
         wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 500)),
         m_checkBeforeLoad(false)
 {
@@ -161,13 +161,13 @@ wxWebFrame::wxWebFrame(const wxString& title) :
     CreateStatusBar(2);
 }
 
-wxWebFrame::~wxWebFrame()
+wxWebBrowserShell::~wxWebBrowserShell()
 {
     if (m_debugMenu && GetMenuBar()->FindMenu(_("&Debug")) == wxNOT_FOUND)
         delete m_debugMenu;
 }
 
-void wxWebFrame::ShowDebugMenu(bool show)
+void wxWebBrowserShell::ShowDebugMenu(bool show)
 {
     int debugMenu = GetMenuBar()->FindMenu(_("&Debug"));
     if (show && debugMenu == wxNOT_FOUND) {
@@ -182,13 +182,13 @@ void wxWebFrame::ShowDebugMenu(bool show)
 
 // event handlers
 
-void wxWebFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
+void wxWebBrowserShell::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
     // true is to force the frame to close
     Close(true);
 }
 
-void wxWebFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
+void wxWebBrowserShell::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
     wxString msg;
     msg.Printf(_T("This is the About dialog of the wxWebKit sample.\n")
@@ -198,7 +198,7 @@ void wxWebFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 }
 
-void wxWebFrame::OnLoadFile(wxCommandEvent& WXUNUSED(event))
+void wxWebBrowserShell::OnLoadFile(wxCommandEvent& WXUNUSED(event))
 {
     wxFileDialog* dialog = new wxFileDialog(this, wxT("Choose a file"));
     if (dialog->ShowModal() == wxID_OK) {  
@@ -209,7 +209,7 @@ void wxWebFrame::OnLoadFile(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void wxWebFrame::OnLoadEvent(wxWebViewLoadEvent& event)
+void wxWebBrowserShell::OnLoadEvent(wxWebViewLoadEvent& event)
 {
     if (GetStatusBar() != NULL){
         if (event.GetState() == wxWEBVIEW_LOAD_NEGOTIATING) {
@@ -229,7 +229,7 @@ void wxWebFrame::OnLoadEvent(wxWebViewLoadEvent& event)
     }
 }
 
-void wxWebFrame::OnBeforeLoad(wxWebViewBeforeLoadEvent& myEvent)
+void wxWebBrowserShell::OnBeforeLoad(wxWebViewBeforeLoadEvent& myEvent)
 {
     if (m_checkBeforeLoad) {
         int reply = wxMessageBox(_("Would you like to continue loading ") + myEvent.GetURL() + wxT("?"), _("Continue Loading?"), wxYES_NO); 
@@ -239,44 +239,44 @@ void wxWebFrame::OnBeforeLoad(wxWebViewBeforeLoadEvent& myEvent)
     }
 }
 
-void wxWebFrame::OnAddressBarEnter(wxCommandEvent& event)
+void wxWebBrowserShell::OnAddressBarEnter(wxCommandEvent& event)
 {
     if (webview)
         webview->LoadURL(addressBar->GetValue());
 }
 
-void wxWebFrame::OnSearchCtrlEnter(wxCommandEvent& event)
+void wxWebBrowserShell::OnSearchCtrlEnter(wxCommandEvent& event)
 {
     if (webview) {
         webview->LoadURL(wxString::Format(wxT("http://www.google.com/search?rls=en&q=%s&ie=UTF-8&oe=UTF-8"), searchCtrl->GetValue().wc_str()));
     }
 }
 
-void wxWebFrame::OnBack(wxCommandEvent& event)
+void wxWebBrowserShell::OnBack(wxCommandEvent& event)
 {
     if (webview)
         webview->GoBack();
 }
 
-void wxWebFrame::OnForward(wxCommandEvent& event)
+void wxWebBrowserShell::OnForward(wxCommandEvent& event)
 {
     if (webview)
         webview->GoForward();
 }
 
-void wxWebFrame::OnStop(wxCommandEvent& myEvent)
+void wxWebBrowserShell::OnStop(wxCommandEvent& myEvent)
 {
     if (webview)
         webview->Stop();
 }
 
-void wxWebFrame::OnReload(wxCommandEvent& myEvent)
+void wxWebBrowserShell::OnReload(wxCommandEvent& myEvent)
 {
     if (webview)
         webview->Reload();
 }
 
-void wxWebFrame::OnMakeTextLarger(wxCommandEvent& myEvent)
+void wxWebBrowserShell::OnMakeTextLarger(wxCommandEvent& myEvent)
 {
     if (webview) {
         if (webview->CanIncreaseTextSize())
@@ -284,7 +284,7 @@ void wxWebFrame::OnMakeTextLarger(wxCommandEvent& myEvent)
     }
 }
 
-void wxWebFrame::OnMakeTextSmaller(wxCommandEvent& myEvent)
+void wxWebBrowserShell::OnMakeTextSmaller(wxCommandEvent& myEvent)
 {
     if (webview) {
         if (webview->CanDecreaseTextSize())
@@ -292,33 +292,33 @@ void wxWebFrame::OnMakeTextSmaller(wxCommandEvent& myEvent)
     }
 }
 
-void wxWebFrame::OnGetSource(wxCommandEvent& myEvent)
+void wxWebBrowserShell::OnGetSource(wxCommandEvent& myEvent)
 {
     if (webview) {
-        wxPageSourceViewFrame* wxWebFrame = new wxPageSourceViewFrame(webview->GetPageSource());
-        wxWebFrame->Show();
+        wxPageSourceViewFrame* pageSourceFrame = new wxPageSourceViewFrame(webview->GetPageSource());
+        pageSourceFrame->Show();
     }
 }
 
-void wxWebFrame::OnSetSource(wxCommandEvent& event)
+void wxWebBrowserShell::OnSetSource(wxCommandEvent& event)
 {
     if (webview)
         webview->SetPageSource(wxString(wxT("<p>Hello World!</p>")));
 }
 
-void wxWebFrame::OnBrowse(wxCommandEvent& event)
+void wxWebBrowserShell::OnBrowse(wxCommandEvent& event)
 {
     if (webview)
         webview->MakeEditable(!event.IsChecked());
 }
 
-void wxWebFrame::OnEdit(wxCommandEvent& event)
+void wxWebBrowserShell::OnEdit(wxCommandEvent& event)
 {
     if (webview)
         webview->MakeEditable(event.IsChecked());
 }
 
-void wxWebFrame::OnRunScript(wxCommandEvent& myEvent){
+void wxWebBrowserShell::OnRunScript(wxCommandEvent& myEvent){
     if (webview) {
         wxTextEntryDialog* dialog = new wxTextEntryDialog(this, _("Type in a JavaScript to exectute."));
         if (dialog->ShowModal() == wxID_OK)
