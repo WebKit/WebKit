@@ -332,8 +332,8 @@ AC_MSG_RESULT([$enable_xslt])
 AC_MSG_CHECKING([whether to enable SVG experimental features])
 AC_ARG_ENABLE(svg_experimental,
               AC_HELP_STRING([--enable-svg-experimental],
-                             [enable support for SVG experimental features [default=no]]),
-              [],[enable_svg_experimental="no"])
+                             [enable support for SVG experimental features [default=yes]]),
+              [],[enable_svg_experimental="yes"])
 AC_MSG_RESULT([$enable_svg_experimental])
 
 # check whether to enable SVG support

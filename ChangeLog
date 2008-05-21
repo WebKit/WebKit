@@ -1,5 +1,13 @@
 2008-05-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
+        Reviewed by Alp Toker.
+
+        Fix for previous autotools change.
+
+        * configure.ac:
+
+2008-05-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
         Reviewed by Alp.
 
         http://bugs.webkit.org/show_bug.cgi?id=18483
