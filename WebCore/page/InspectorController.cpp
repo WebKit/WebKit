@@ -964,11 +964,15 @@ static JSValueRef removeBreakpoint(JSContextRef ctx, JSObjectRef /*function*/, J
 #pragma mark -
 #pragma mark Profiles
 
-static JSValueRef allProfiles(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef /*thisObject*/, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* exception)
+static JSValueRef profiles(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* exception)
 {
-    KJS::JSLock lock;
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
 
-    const Vector<RefPtr<Profile> >& allProfiles = Profiler::profiler()->allProfiles();
+    JSLock lock;
+
+    const Vector<RefPtr<Profile> >& profiles = controller->profiles();
 
     JSObjectRef global = JSContextGetGlobalObject(ctx);
 
@@ -992,8 +996,8 @@ static JSValueRef allProfiles(JSContextRef ctx, JSObjectRef /*function*/, JSObje
     if (exception && *exception)
         return JSValueMakeUndefined(ctx);
 
-    for (size_t i = 0; i < allProfiles.size(); ++i) {
-        JSValueRef arg0 = toRef(toJS(toJS(ctx), allProfiles[i].get()));
+    for (size_t i = 0; i < profiles.size(); ++i) {
+        JSValueRef arg0 = toRef(toJS(toJS(ctx), profiles[i].get()));
         JSObjectCallAsFunction(ctx, pushFunction, result, 1, &arg0, exception);
         if (exception && *exception)
             return JSValueMakeUndefined(ctx);
@@ -1201,6 +1205,18 @@ void InspectorController::addConsoleMessage(ConsoleMessage* consoleMessage)
         addScriptConsoleMessage(consoleMessage);
 }
 
+void InspectorController::addProfile(PassRefPtr<Profile> prpProfile)
+{
+    if (!enabled())
+        return;
+
+    RefPtr<Profile> profile = prpProfile;
+    m_profiles.append(profile);
+
+    if (windowVisible())
+        addScriptProfile(profile.get());
+}
+
 void InspectorController::attachWindow()
 {
     if (!enabled())
@@ -1247,7 +1263,7 @@ void InspectorController::windowScriptObjectAvailable()
         { "startDebuggingAndReloadInspectedPage", WebCore::startDebuggingAndReloadInspectedPage, kJSPropertyAttributeNone },
         { "stopDebugging", WebCore::stopDebugging, kJSPropertyAttributeNone },
         { "debuggerAttached", WebCore::debuggerAttached, kJSPropertyAttributeNone },
-        { "allProfiles", allProfiles, kJSPropertyAttributeNone },
+        { "profiles", WebCore::profiles, kJSPropertyAttributeNone },
         { "currentCallFrame", WebCore::currentCallFrame, kJSPropertyAttributeNone },
         { "pauseOnExceptions", WebCore::pauseOnExceptions, kJSPropertyAttributeNone },
         { "setPauseOnExceptions", WebCore::setPauseOnExceptions, kJSPropertyAttributeNone },
@@ -1807,6 +1823,14 @@ void InspectorController::addScriptConsoleMessage(const ConsoleMessage* message)
     callFunction(m_scriptContext, m_scriptObject, "addMessageToConsole", 1, &messageObject, exception);
 }
 
+void InspectorController::addScriptProfile(Profile* profile)
+{
+    JSLock lock;
+    JSValueRef exception = 0;
+    JSValueRef profileObject = toRef(toJS(toJS(m_scriptContext), profile));
+    callFunction(m_scriptContext, m_scriptObject, "addProfile", 1, &profileObject, exception);
+}
+
 void InspectorController::resetScriptObjects()
 {
     if (!m_scriptContext || !m_scriptObject)
@@ -1860,6 +1884,8 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
 
         deleteAllValues(m_consoleMessages);
         m_consoleMessages.clear();
+
+        m_profiles.clear();
 
 #if ENABLE(DATABASE)
         m_databaseResources.clear();

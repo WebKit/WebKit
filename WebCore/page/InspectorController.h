@@ -38,6 +38,7 @@
 #include <wtf/Vector.h>
 
 namespace KJS {
+    class Profile;
     class UString;
 }
 
@@ -97,6 +98,10 @@ public:
 
     void addMessageToConsole(MessageSource, MessageLevel, KJS::ExecState*, const KJS::List& arguments, unsigned lineNumber, const String& sourceID);
     void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
+
+    void addProfile(PassRefPtr<KJS::Profile>);
+    void addScriptProfile(KJS::Profile* profile);
+    const Vector<RefPtr<KJS::Profile> >& profiles() const { return m_profiles; }
 
     void attachWindow();
     void detachWindow();
@@ -200,6 +205,7 @@ private:
     ResourcesMap m_resources;
     FrameResourcesMap m_frameResources;
     Vector<ConsoleMessage*> m_consoleMessages;
+    Vector<RefPtr<KJS::Profile> > m_profiles;
 #if ENABLE(DATABASE)
     DatabaseResourcesSet m_databaseResources;
 #endif

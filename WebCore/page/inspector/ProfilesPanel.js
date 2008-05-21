@@ -65,21 +65,19 @@ WebInspector.ProfilesPanel.prototype = {
         WebInspector.Panel.prototype.show.call(this);
         this._updateSidebarWidth();
 
-        // FIXME: the only way to get profiles right now is to ask for the array of all profiles
-        // from the InspectorController. We need to add callback to the profiler that will notify
-        // the Inspector when a new profile is made. That way we can keep the UI updated.
+        if (this._populateProfiles) {
+            var profiles = InspectorController.profiles();
+            var profilesLength = profiles.length;
+            for (var i = 0; i < profilesLength; ++i) {
+                var profile = profiles[i];
+                this.addProfile(profile);
+            }
 
-        this.sidebarTree.removeChildren();
+            if (this.sidebarTree.children[0])
+                this.sidebarTree.children[0].select();
 
-        var profiles = InspectorController.allProfiles();
-        var profilesLength = profiles.length;
-        for (var i = 0; i < profilesLength; ++i) {
-            var profile = profiles[i];
-            this.addProfile(profile);
+            delete this._populateProfiles;
         }
-
-        if (profiles[0])
-            profiles[0]._profilesTreeElement.select();
     },
 
     reset: function()
@@ -96,6 +94,8 @@ WebInspector.ProfilesPanel.prototype = {
 
         this.sidebarTree.removeChildren();
         this.profileViews.removeChildren();
+
+        this._populateProfiles = true;
     },
 
     handleKeyEvent: function(event)

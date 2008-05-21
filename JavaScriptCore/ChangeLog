@@ -1,3 +1,45 @@
+2008-05-20  Timothy Hatcher  <timothy@apple.com>
+
+        Change the Profiler to allow multiple profiles to be running at
+        the same time. This can happen when you have nested console.profile()
+        calls. This required two changes. First, the Profiler needed to keep a
+        Vector of current profiles, instead of one. Second, a Profile needs
+        to keep track of the global ExecState it started in and the page group
+        identifier it is tracking.
+
+        The stopProfiling call now takes the same arguments as startProfiling.
+        This makes sure the correct profile is stopped. Passing a null UString
+        as the title will stop the last profile for the matching ExecState.
+
+        <rdar://problem/5951559> Multiple pages profiling can interfere with each other
+
+        Reviewed by Kevin McCullough.
+
+        * JavaScriptCore.exp: Added new exports. Removed old symbols.
+        * profiler/Profile.cpp:
+        (KJS::Profile::Profile): New constructor arguments for the
+        originatingGlobalExec and pageGroupIdentifier.
+        (KJS::Profile::stopProfiling): Set the m_originatingGlobalExec to null.
+        * profiler/Profile.h:
+        (KJS::Profile::create): Additional arguments.
+        (KJS::Profile::originatingGlobalExec): Return m_originatingGlobalExec.
+        (KJS::Profile::pageGroupIdentifier): Return m_pageGroupIdentifier.
+        * profiler/Profiler.cpp:
+        (KJS::Profiler::findProfile): Added. Finds a Profile that matches
+        the ExecState and title.
+        (KJS::Profiler::startProfiling): Return early if there is already
+        a Profile with the ExecState and title. If not, create a new profile
+        and append it to m_currentProfiles.
+        (KJS::Profiler::stopProfiling): Loops through m_currentProfiles
+        and find the one matching the ExecState and title. If one is found
+        call stopProfiling and return the Profile after removing it
+        from m_currentProfiles.
+        (KJS::dispatchFunctionToProfiles): Helper inline function to loop through
+        m_currentProfiles and call a Profile function.
+        (KJS::Profiler::willExecute): Call dispatchFunctionToProfiles.
+        (KJS::Profiler::didExecute): Ditto.
+        * profiler/Profiler.h:
+
 2008-05-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

@@ -36,7 +36,7 @@ module window {
         [Custom, ImplementationFunction=assertCondition] void assert(in boolean condition);
 
         [Custom] void profile(in DOMString title);
-        void profileEnd();
+        [Custom] void profileEnd();
     };
 
 }

@@ -156,12 +156,22 @@ void Console::profile(ExecState* exec, const List& arguments) const
         return;
 
     UString title = arguments[0]->toString(exec);
-    Profiler::profiler()->startProfiling(exec, page->group().identifier(), title);
+    Profiler::profiler()->startProfiling(exec, title);
 }
 
-void Console::profileEnd() const
+void Console::profileEnd(ExecState* exec, const List& arguments) const
 {
-    Profiler::profiler()->stopProfiling();
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    UString title;
+    if (arguments.size() >= 1)
+        title = arguments[0]->toString(exec);
+
+    RefPtr<Profile> profile = Profiler::profiler()->stopProfiling(exec, title);
+    if (profile)
+        page->inspectorController()->addProfile(profile);
 }
 
 void Console::warn(ExecState* exec, const List& arguments)

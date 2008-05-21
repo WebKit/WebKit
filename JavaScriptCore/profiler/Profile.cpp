@@ -35,12 +35,20 @@
 
 namespace KJS {
 
-Profile::Profile(const UString& title)
+Profile::Profile(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier)
     : m_title(title)
+    , m_originatingGlobalExec(originatingGlobalExec)
+    , m_pageGroupIdentifier(pageGroupIdentifier)
 {
     // FIXME: When multi-threading is supported this will be a vector and calls
     // into the profiler will need to know which thread it is executing on.
     m_callTree = ProfileNode::create(CallIdentifier("Thread_1", 0, 0));
+}
+
+void Profile::stopProfiling()
+{
+    m_originatingGlobalExec = 0;
+    m_callTree->stopProfiling(0, true);
 }
 
 // The callIdentifiers are in order of bottom of the stack to top of the stack so we iterate it backwards.

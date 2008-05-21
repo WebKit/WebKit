@@ -33,21 +33,22 @@
 namespace KJS {
 
     class ExecState;
-    class FunctionImp;
-    class JSObject;
 
     class Profile : public RefCounted<Profile> {
     public:
-        static PassRefPtr<Profile> create(const UString& title) { return adoptRef(new Profile(title)); }
+        static PassRefPtr<Profile> create(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier) { return adoptRef(new Profile(title, originatingGlobalExec, pageGroupIdentifier)); }
 
         void willExecute(const Vector<CallIdentifier>& CallIdentifier);
         void didExecute(const Vector<CallIdentifier>& CallIdentifier);
+        void stopProfiling();
 
-        void stopProfiling() { m_callTree->stopProfiling(0, true); };
         const UString& title() const { return m_title; };
         ProfileNode* callTree() const { return m_callTree.get(); };
 
         double totalTime() const { return m_callTree->totalTime(); }
+
+        ExecState* originatingGlobalExec() const { return m_originatingGlobalExec; }
+        unsigned pageGroupIdentifier() const { return m_pageGroupIdentifier; }
 
         void sortTotalTimeDescending() { m_callTree->sortTotalTimeDescending(); }
         void sortTotalTimeAscending() { m_callTree->sortTotalTimeAscending(); }
@@ -65,11 +66,14 @@ namespace KJS {
         void debugPrintDataSampleStyle() const;
 #endif
 
+        typedef void (Profile::*ProfileFunction)(const Vector<CallIdentifier>& callIdentifiers);
+
     private:
-        Profile(const UString& title);
+        Profile(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier);
 
         UString m_title;
-
+        ExecState* m_originatingGlobalExec;
+        unsigned m_pageGroupIdentifier;
         RefPtr<ProfileNode> m_callTree;
     };
 

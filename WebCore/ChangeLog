@@ -1,3 +1,44 @@
+2008-05-20  Timothy Hatcher  <timothy@apple.com>
+
+        Changes to work with the new Profiler API. The Profile is now
+        stored by the InspectorController when Console.profileEnd is called.
+        This solves three issues with the previous design. First, we don't
+        keep profiles around unless the Inspector is enabled. Second, we
+        only show Profiles initiated by the Page in it's Inspector, not every
+        Profile for the whole process. Third, we now show Profiles in the
+        Inspector when they are created.
+
+        <rdar://problem/5951562> New profiles aren't added to the Inspector
+        as they finish
+
+        Reviewed by Kevin McCullough.
+
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::profileEnd): Added. Calls impl()->profileEnd()
+        and passes the ExecState and arguments.
+        * page/Console.cpp:
+        (WebCore::Console::profile):
+        (WebCore::Console::profileEnd): Accept the optional title argument
+        and pass it to Profilier::stopProfiling along with the ExecState.
+        Calls InspectorController::addProfile with the result Profile.
+        * page/Console.h:
+        * page/Console.idl: Made profileEnd Custom so we can get the ExecState.
+        * page/InspectorController.cpp:
+        (WebCore::profiles): Renamed from allProfiles. Uses the controller's
+        profiles vector.
+        (WebCore::InspectorController::addProfile): Appends to m_profiles.
+        Calls addScriptProfile if the window is visible.
+        (WebCore::InspectorController::windowScriptObjectAvailable): Renamed
+        allProfiles to profiles.
+        (WebCore::InspectorController::addScriptProfile): Calls addProfile on
+        the JavaScript side.
+        (WebCore::InspectorController::didCommitLoad): Clears m_profiles.
+        * page/InspectorController.h:
+        * page/inspector/ProfilesPanel.js: Populates the profiles sidebar the first
+        time the panel is shown after a rest.
+        * page/inspector/inspector.js: Added addProfile, calls ProfilesPanel's
+        addProfile function.
+
 2008-05-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
