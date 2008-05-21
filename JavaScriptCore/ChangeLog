@@ -1,3 +1,59 @@
+2008-05-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5908520> REGRESSION (3.1.1-r33033): Crash in WebKit when opening or
+        refreshing page on people.com
+
+        The problem was that STL algorithms do not work with non-conformant comparators, and the
+        site used sort(function() { return 0.5 - Math.random(); } to randomly shuffle an array.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18687
+        REGRESSION(r32220): ecma/Array/15.4.4.5-3.js test now fails in GMT(BST)
+
+        Besides relying on sort stability, this test was just broken, and kept failing with the
+        new stable sort.
+
+        Tests: fast/js/sort-randomly.html
+               fast/js/sort-stability.html
+               fast/js/comparefn-sort-stability.html
+
+        * kjs/avl_tree.h: Added an AVL tree implementation.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/AVLTree.h: Added.
+        Added an AVL tree implementation.
+
+        * kjs/array_instance.cpp:
+        (KJS::ArrayInstance::increaseVectorLength):
+        (KJS::ArrayInstance::sort):
+        (KJS::AVLTreeAbstractorForArrayCompare::get_less):
+        (KJS::AVLTreeAbstractorForArrayCompare::set_less):
+        (KJS::AVLTreeAbstractorForArrayCompare::get_greater):
+        (KJS::AVLTreeAbstractorForArrayCompare::set_greater):
+        (KJS::AVLTreeAbstractorForArrayCompare::get_balance_factor):
+        (KJS::AVLTreeAbstractorForArrayCompare::set_balance_factor):
+        (KJS::AVLTreeAbstractorForArrayCompare::compare_key_key):
+        (KJS::AVLTreeAbstractorForArrayCompare::compare_key_node):
+        (KJS::AVLTreeAbstractorForArrayCompare::compare_node_node):
+        (KJS::AVLTreeAbstractorForArrayCompare::null):
+        (KJS::ArrayInstance::compactForSorting):
+        
+        * kjs/array_instance.h: increaseVectorLength() now returns a bool to indicate whether it was
+        successful.
+
+        * wtf/Vector.h:
+        (WTF::Vector::Vector):
+        (WTF::::operator=):
+        (WTF::::fill):
+        Make these methods fail instead of crash when allocation fails, matching resize() and
+        reserveCapacity(), which already had this behavior. Callers need to check for null buffer
+        after making any Vector call that can try to allocate.
+
+        * tests/mozilla/ecma/Array/15.4.4.5-3.js: Fixed the test to use a consistent sort function,
+        as suggested in comments to a Mozilla bug filed about it (I'll keep tracking the bug to see
+        what the final resolution is).
+
 2008-05-20  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

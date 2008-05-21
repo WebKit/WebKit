@@ -25,6 +25,7 @@
 
 #include "PropertyNameArray.h"
 #include <wtf/Assertions.h>
+#include <wtf/AVLTree.h>
 
 using std::min;
 
@@ -47,8 +48,6 @@ static const unsigned maxArrayIndex = 0xFFFFFFFEU;
 // as long as it is 1/8 full. If more sparse than that, we use a map.
 static const unsigned sparseArrayCutoff = 10000;
 static const unsigned minDensityMultiplier = 8;
-
-static const unsigned copyingSortCutoff = 50000;
 
 const ClassInfo ArrayInstance::info = {"Array", 0, 0, 0};
 
@@ -355,7 +354,7 @@ void ArrayInstance::getPropertyNames(ExecState* exec, PropertyNameArray& propert
     JSObject::getPropertyNames(exec, propertyNames);
 }
 
-void ArrayInstance::increaseVectorLength(unsigned newLength)
+bool ArrayInstance::increaseVectorLength(unsigned newLength)
 {
     ArrayStorage* storage = m_storage;
 
@@ -364,12 +363,16 @@ void ArrayInstance::increaseVectorLength(unsigned newLength)
     unsigned newVectorLength = increasedVectorLength(newLength);
 
     storage = static_cast<ArrayStorage*>(fastRealloc(storage, storageSize(newVectorLength)));
+    if (!storage)
+        return false;
+
     m_vectorLength = newVectorLength;
 
     for (unsigned i = vectorLength; i < newVectorLength; ++i)
         storage->m_vector[i] = 0;
 
     m_storage = storage;
+    return true;
 }
 
 void ArrayInstance::setLength(unsigned newLength)
@@ -434,63 +437,97 @@ static int compareByStringPairForQSort(const void* a, const void* b)
     return compare(va->second, vb->second);
 }
 
-class ArraySortComparator {
-public:
-    ArraySortComparator(ExecState* exec) : m_exec(exec) {}
-
-    bool operator()(JSValue* va, JSValue* vb)
-    {
-        ASSERT(!va->isUndefined());
-        ASSERT(!vb->isUndefined());
-        return compare(va->toString(m_exec), vb->toString(m_exec)) < 0;
-    }
-
-private:
-    ExecState* m_exec;
-};
-
 void ArrayInstance::sort(ExecState* exec)
 {
     unsigned lengthNotIncludingUndefined = compactForSorting();
-
-    if (lengthNotIncludingUndefined < copyingSortCutoff) {
-        // Converting JavaScript values to strings can be expensive, so we do it once up front and sort based on that.
-        // This is a considerable improvement over doing it twice per comparison, though it requires a large temporary
-        // buffer.  For large arrays, we fall back to a qsort on the JavaScriptValues to avoid creating copies.
-
-        Vector<std::pair<JSValue*, UString> > values(lengthNotIncludingUndefined);
-        for (size_t i = 0; i < lengthNotIncludingUndefined; i++) {
-            JSValue* value = m_storage->m_vector[i];
-            ASSERT(!value->isUndefined());
-            values[i].first = value;
-            values[i].second = value->toString(exec);
-        }
-
-        // FIXME: Since we sort by string value, a fast algorithm might be to use a radix sort. That would be O(N) rather
-        // than O(N log N).
-
-#if HAVE(MERGESORT)
-        mergesort(values.begin(), values.size(), sizeof(std::pair<JSValue*, UString>), compareByStringPairForQSort);
-#else
-        qsort(values.begin(), values.size(), sizeof(std::pair<JSValue*, UString>), compareByStringPairForQSort);
-#endif
-        for (size_t i = 0; i < lengthNotIncludingUndefined; i++)
-            m_storage->m_vector[i] = values[i].first;
+    if (m_storage->m_sparseValueMap) {
+        exec->setException(Error::create(exec, GeneralError, "Out of memory"));
         return;
     }
 
-    std::sort(m_storage->m_vector, m_storage->m_vector + lengthNotIncludingUndefined, ArraySortComparator(exec));
-}
+    if (!lengthNotIncludingUndefined)
+        return;
 
-struct CompareWithCompareFunctionArguments {
-    CompareWithCompareFunctionArguments(ExecState* exec, JSObject* cf)
-        : exec(exec)
-        , compareFunction(cf)
-        , globalThisValue(exec->globalThisValue())
-    {
+    // Converting JavaScript values to strings can be expensive, so we do it once up front and sort based on that.
+    // This is a considerable improvement over doing it twice per comparison, though it requires a large temporary
+    // buffer. Besides, this protects us from crashing if some objects have custom toString methods that return
+    // random or otherwise changing results, effectively making compare function inconsistent.
+
+    Vector<std::pair<JSValue*, UString> > values(lengthNotIncludingUndefined);
+    if (!values.begin()) {
+        exec->setException(Error::create(exec, GeneralError, "Out of memory"));
+        return;
     }
 
-    bool operator()(JSValue* va, JSValue* vb)
+    for (size_t i = 0; i < lengthNotIncludingUndefined; i++) {
+        JSValue* value = m_storage->m_vector[i];
+        ASSERT(!value->isUndefined());
+        values[i].first = value;
+        values[i].second = value->toString(exec);
+    }
+
+    if (exec->hadException())
+        return;
+
+    // FIXME: Since we sort by string value, a fast algorithm might be to use a radix sort. That would be O(N) rather
+    // than O(N log N).
+
+#if HAVE(MERGESORT)
+    mergesort(values.begin(), values.size(), sizeof(std::pair<JSValue*, UString>), compareByStringPairForQSort);
+#else
+    // FIXME: QSort may not be stable in some implementations. ECMAScript-262 does not require this, but in practice, browsers perform stable sort.
+    qsort(values.begin(), values.size(), sizeof(std::pair<JSValue*, UString>), compareByStringPairForQSort);
+#endif
+
+    for (size_t i = 0; i < lengthNotIncludingUndefined; i++)
+        m_storage->m_vector[i] = values[i].first;
+}
+
+struct AVLTreeNodeForArrayCompare {
+    JSValue* value;
+
+    // Child pointers.  The high bit of gt is robbed and used as the
+    // balance factor sign.  The high bit of lt is robbed and used as
+    // the magnitude of the balance factor.
+    int32_t gt;
+    int32_t lt;
+};
+
+struct AVLTreeAbstractorForArrayCompare {
+    typedef int32_t handle; // Handle is an index into m_nodes vector.
+    typedef JSValue* key;
+    typedef int32_t size;
+
+    Vector<AVLTreeNodeForArrayCompare> m_nodes;
+    ExecState* m_exec;
+    JSObject* m_compareFunction;
+    JSObject* m_globalThisValue;
+
+    handle get_less(handle h) { return m_nodes[h].lt & 0x7FFFFFFF; }
+    void set_less(handle h, handle lh) { m_nodes[h].lt &= 0x80000000; m_nodes[h].lt |= lh; }
+    handle get_greater(handle h) { return m_nodes[h].gt & 0x7FFFFFFF; }
+    void set_greater(handle h, handle gh) { m_nodes[h].gt &= 0x80000000; m_nodes[h].gt |= gh; }
+
+    int get_balance_factor(handle h)
+    {
+        if (m_nodes[h].gt & 0x80000000)
+            return -1;
+        return static_cast<unsigned>(m_nodes[h].lt) >> 31;
+    }
+
+    void set_balance_factor(handle h, int bf)
+    {
+        if (bf == 0) {
+            m_nodes[h].lt &= 0x7FFFFFFF;
+            m_nodes[h].gt &= 0x7FFFFFFF;
+        } else {
+            m_nodes[h].lt |= 0x80000000;
+            if (bf < 0)
+                m_nodes[h].gt |= 0x80000000;
+        }
+    }
+
+    int compare_key_key(key va, key vb)
     {
         ASSERT(!va->isUndefined());
         ASSERT(!vb->isUndefined());
@@ -498,23 +535,102 @@ struct CompareWithCompareFunctionArguments {
         List arguments;
         arguments.append(va);
         arguments.append(vb);
-        double compareResult = compareFunction->call(exec, globalThisValue, arguments)->toNumber(exec);
-        return compareResult < 0;
+        double compareResult = m_compareFunction->call(m_exec, m_globalThisValue, arguments)->toNumber(m_exec);
+        return (compareResult < 0) ? -1 : 1; // Not passing equality through, because we need to store all values, even if equivalent.
     }
 
-    ExecState* exec;
-    JSObject* compareFunction;
-    JSObject* globalThisValue;
+    int compare_key_node(key k, handle h) { return compare_key_key(k, m_nodes[h].value); }
+    int compare_node_node(handle h1, handle h2) { return compare_key_key(m_nodes[h1].value, m_nodes[h2].value); }
+
+    static handle null() { return 0x7FFFFFFF; }
 };
 
 void ArrayInstance::sort(ExecState* exec, JSObject* compareFunction)
 {
-    size_t lengthNotIncludingUndefined = compactForSorting();
+    // The maximum tree depth is compiled in - but the caller is clearly up to no good
+    // if a larger array is passed.
+    ASSERT(m_length <= static_cast<unsigned>(std::numeric_limits<int>::max()));
+    if (m_length > static_cast<unsigned>(std::numeric_limits<int>::max()))
+        return;
 
-    // FIXME: A tree sort using a perfectly balanced tree (e.g. an AVL tree) could do an even
-    // better job of minimizing compares.
+    if (!m_length)
+        return;
 
-    std::sort(m_storage->m_vector, m_storage->m_vector + lengthNotIncludingUndefined, CompareWithCompareFunctionArguments(exec, compareFunction));
+    unsigned usedVectorLength = min(m_length, m_vectorLength);
+
+    AVLTree<AVLTreeAbstractorForArrayCompare, 44> tree; // Depth 44 is enough for 2^31 items
+    tree.abstractor().m_exec = exec;
+    tree.abstractor().m_compareFunction = compareFunction;
+    tree.abstractor().m_globalThisValue = exec->globalThisValue();
+    tree.abstractor().m_nodes.resize(usedVectorLength + (m_storage->m_sparseValueMap ? m_storage->m_sparseValueMap->size() : 0));
+
+    if (!tree.abstractor().m_nodes.begin()) {
+        exec->setException(Error::create(exec, GeneralError, "Out of memory"));
+        return;
+    }
+
+    unsigned numDefined = 0;
+    unsigned numUndefined = 0;
+
+    // Iterate over the array, ignoring missing values, counting undefined ones, and inserting all other ones into the tree.
+    for (; numDefined < usedVectorLength; ++numDefined) {
+        JSValue* v = m_storage->m_vector[numDefined];
+        if (!v || v->isUndefined())
+            break;
+        tree.abstractor().m_nodes[numDefined].value = v;
+        tree.insert(numDefined);
+    }
+    for (unsigned i = numDefined; i < usedVectorLength; ++i) {
+        if (JSValue* v = m_storage->m_vector[i]) {
+            if (v->isUndefined())
+                ++numUndefined;
+            else {
+                tree.abstractor().m_nodes[numDefined].value = v;
+                tree.insert(numDefined);
+                ++numDefined;
+            }
+        }
+    }
+
+    unsigned newUsedVectorLength = numDefined + numUndefined;
+
+    if (SparseArrayValueMap* map = m_storage->m_sparseValueMap) {
+        newUsedVectorLength += map->size();
+        if (newUsedVectorLength > m_vectorLength) {
+            if (!increaseVectorLength(newUsedVectorLength)) {
+                exec->setException(Error::create(exec, GeneralError, "Out of memory"));
+                return;
+            }
+        }
+
+        SparseArrayValueMap::iterator end = map->end();
+        for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it) {
+            tree.abstractor().m_nodes[numDefined].value = it->second;
+            tree.insert(numDefined);
+            ++numDefined;
+        }
+
+        delete map;
+        m_storage->m_sparseValueMap = 0;
+    }
+
+    ASSERT(tree.abstractor().m_nodes.size() >= numDefined);
+
+    // Copy the values back into m_storage.
+    AVLTree<AVLTreeAbstractorForArrayCompare, 44>::Iterator iter;
+    iter.start_iter_least(tree);
+    for (unsigned i = 0; i < numDefined; ++i) {
+        m_storage->m_vector[i] = tree.abstractor().m_nodes[*iter].value;
+        ++iter;
+    }
+
+    // Put undefined values back in.
+    for (unsigned i = numDefined; i < newUsedVectorLength; ++i)
+        m_storage->m_vector[i] = jsUndefined();
+
+    // Ensure that unused values in the vector are zeroed out.
+    for (unsigned i = newUsedVectorLength; i < usedVectorLength; ++i)
+        m_storage->m_vector[i] = 0;
 }
 
 unsigned ArrayInstance::compactForSorting()
@@ -545,7 +661,8 @@ unsigned ArrayInstance::compactForSorting()
     if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
         newUsedVectorLength += map->size();
         if (newUsedVectorLength > m_vectorLength) {
-            increaseVectorLength(newUsedVectorLength);
+            if (!increaseVectorLength(newUsedVectorLength))
+                return 0;
             storage = m_storage;
         }
 

@@ -203,6 +203,7 @@
 		E178636D0D9BEEC300D74E75 /* InitializeThreading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */; };
 		E195679609E7CF1200B89D13 /* UnicodeIcu.h in Headers */ = {isa = PBXBuildFile; fileRef = E195678F09E7CF1200B89D13 /* UnicodeIcu.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E195679809E7CF1200B89D13 /* Unicode.h in Headers */ = {isa = PBXBuildFile; fileRef = E195679409E7CF1200B89D13 /* Unicode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1A596380DE3E1C300C17E37 /* AVLTree.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A596370DE3E1C300C17E37 /* AVLTree.h */; };
 		E1A862A90D7EBB76001EC6AA /* CollatorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A862A80D7EBB76001EC6AA /* CollatorICU.cpp */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
 		E1A862AB0D7EBB7D001EC6AA /* Collator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A862AA0D7EBB7D001EC6AA /* Collator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1A862D60D7F2B5C001EC6AA /* CollatorDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A862D50D7F2B5C001EC6AA /* CollatorDefault.cpp */; };
@@ -516,6 +517,7 @@
 		E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InitializeThreading.cpp; sourceTree = "<group>"; };
 		E195678F09E7CF1200B89D13 /* UnicodeIcu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnicodeIcu.h; sourceTree = "<group>"; };
 		E195679409E7CF1200B89D13 /* Unicode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Unicode.h; sourceTree = "<group>"; };
+		E1A596370DE3E1C300C17E37 /* AVLTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVLTree.h; sourceTree = "<group>"; };
 		E1A862A80D7EBB76001EC6AA /* CollatorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollatorICU.cpp; sourceTree = "<group>"; };
 		E1A862AA0D7EBB7D001EC6AA /* Collator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Collator.h; sourceTree = "<group>"; };
 		E1A862D50D7F2B5C001EC6AA /* CollatorDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollatorDefault.cpp; sourceTree = "<group>"; };
@@ -785,6 +787,7 @@
 				938C4F690CA06BC700D9310A /* ASCIICType.h */,
 				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
 				65E217B708E7EECC0023E5F6 /* Assertions.h */,
+				E1A596370DE3E1C300C17E37 /* AVLTree.h */,
 				5186111D0CC824830081412B /* Deque.h */,
 				938C4F6B0CA06BCE00D9310A /* DisallowCType.h */,
 				65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */,
@@ -1155,6 +1158,7 @@
 				958D85830DC93230008ABF27 /* StrHash.h in Headers */,
 				95742F660DD11F5A000917FB /* Profile.h in Headers */,
 				5DE3D0F50DD8DDFB00468714 /* WebKitAvailability.h in Headers */,
+				E1A596380DE3E1C300C17E37 /* AVLTree.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

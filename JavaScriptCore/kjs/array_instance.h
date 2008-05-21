@@ -58,7 +58,7 @@ namespace KJS {
     bool inlineGetOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
 
     void setLength(unsigned);
-    void increaseVectorLength(unsigned newLength);
+    bool increaseVectorLength(unsigned newLength);
     
     unsigned compactForSorting();    
 

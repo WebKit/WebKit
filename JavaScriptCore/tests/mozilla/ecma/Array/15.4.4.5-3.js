@@ -147,7 +147,7 @@ function realsort( x, y ) {
     return ( x.valueOf() == y.valueOf() ? 0 : ( x.valueOf() > y.valueOf() ? 1 : -1 ) );
 }
 function comparefn3( x, y ) {
-    return ( x == y ? 0 : ( x > y ? 1: -1 ) );
+  return ( +x == +y ? 0 : ( x > y ? 1 : -1 ) );
 }
 function clone( source, target ) {
     for (i = 0; i < source.length; i++ ) {

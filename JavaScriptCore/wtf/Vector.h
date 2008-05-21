@@ -408,7 +408,8 @@ namespace WTF {
             : m_size(size)
             , m_buffer(size)
         {
-            TypeOperations::initialize(begin(), end());
+            if (begin())
+                TypeOperations::initialize(begin(), end());
         }
 
         ~Vector()
@@ -489,7 +490,8 @@ namespace WTF {
             : m_size(size)
             , m_buffer(size)
         {
-            TypeOperations::uninitializedFill(begin(), end(), val);
+            if (begin())
+                TypeOperations::uninitializedFill(begin(), end(), val);
         }
 
         void fill(const T&, size_t);
@@ -519,7 +521,8 @@ namespace WTF {
         : m_size(other.size())
         , m_buffer(other.capacity())
     {
-        TypeOperations::uninitializedCopy(other.begin(), other.end(), begin());
+        if (begin())
+            TypeOperations::uninitializedCopy(other.begin(), other.end(), begin());
     }
 
     template<typename T, size_t inlineCapacity>
@@ -528,7 +531,8 @@ namespace WTF {
         : m_size(other.size())
         , m_buffer(other.capacity())
     {
-        TypeOperations::uninitializedCopy(other.begin(), other.end(), begin());
+        if (begin())
+            TypeOperations::uninitializedCopy(other.begin(), other.end(), begin());
     }
 
     template<typename T, size_t inlineCapacity>
@@ -542,6 +546,8 @@ namespace WTF {
         else if (other.size() > capacity()) {
             clear();
             reserveCapacity(other.size());
+            if (!begin())
+                return *this;
         }
         
         std::copy(other.begin(), other.begin() + size(), begin());
@@ -563,6 +569,8 @@ namespace WTF {
         else if (other.size() > capacity()) {
             clear();
             reserveCapacity(other.size());
+            if (!begin())
+                return *this;
         }
         
         std::copy(other.begin(), other.begin() + size(), begin());
@@ -580,6 +588,8 @@ namespace WTF {
         else if (newSize > capacity()) {
             clear();
             reserveCapacity(newSize);
+            if (!begin())
+                return;
         }
         
         std::fill(begin(), end(), val);

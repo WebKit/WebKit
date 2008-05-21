@@ -2,6 +2,25 @@
 
         Reviewed by Darin.
 
+        <rdar://problem/5908520> REGRESSION (3.1.1-r33033): Crash in WebKit when opening or refreshing page on people.com
+
+        https://bugs.webkit.org/show_bug.cgi?id=18687
+        REGRESSION(r32220): ecma/Array/15.4.4.5-3.js test now fails in GMT(BST)
+
+        * fast/js/comparefn-sort-stability-expected.txt: Added.
+        * fast/js/comparefn-sort-stability.html: Added.
+        * fast/js/resources/comparefn-sort-stability.js: Added.
+        * fast/js/resources/sort-randomly.js: Added.
+        * fast/js/resources/sort-stability.js: Added.
+        * fast/js/sort-randomly-expected.txt: Added.
+        * fast/js/sort-randomly.html: Added.
+        * fast/js/sort-stability-expected.txt: Added.
+        * fast/js/sort-stability.html: Added.
+
+2008-05-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         https://bugs.webkit.org/show_bug.cgi?id=19169
         <rdar://5952342> REGRESSION: nakarte.ru searches don't work
 
