@@ -1,3 +1,15 @@
+2008-05-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=18352
+          <rdar://problem/5854517> crash loading malicious font
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit): In the case of a custom font,
+        there is no NSFont to base the fallback font on, so get a font based on
+        fallback family name alone.
+
 2008-05-21  Timothy Hatcher  <timothy@apple.com>
 
         Adds the files and line numbers to the Profile call tree.

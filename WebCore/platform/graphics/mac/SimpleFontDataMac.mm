@@ -169,7 +169,10 @@ void SimpleFontData::platformInit()
 #if !ERROR_DISABLED
         RetainPtr<NSFont> initialFont = m_font.font();
 #endif
-        m_font.setFont([[NSFontManager sharedFontManager] convertFont:m_font.font() toFamily:fallbackFontFamily]);
+        if (m_font.font())
+            m_font.setFont([[NSFontManager sharedFontManager] convertFont:m_font.font() toFamily:fallbackFontFamily]);
+        else
+            m_font.setFont([NSFont fontWithName:fallbackFontFamily size:m_font.size()]);
 #if !ERROR_DISABLED
         NSString *filePath = pathFromFont(initialFont.get());
         if (!filePath)
