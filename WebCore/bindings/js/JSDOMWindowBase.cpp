@@ -804,9 +804,6 @@ void JSDOMWindowBase::printErrorMessage(const String& message) const
     if (frame->settings()->privateBrowsingEnabled())
         return;
 
-    if (Interpreter::shouldPrintExceptions())
-        printf("%s", message.utf8().data());
-
     impl()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, 1, String()); // FIXME: provide a real line number and source URL.
 }
 

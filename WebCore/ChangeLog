@@ -1,3 +1,62 @@
+2008-05-21  Timothy Hatcher  <timothy@apple.com>
+
+        Restores logging of console calls to the STDOUT
+        when Interpreter::shouldPrintExceptions() is true.
+
+        <rdar://problem/5636442> REGRESSION: Console.log no longer logs to
+        the system console or terminal
+
+        <rdar://problem/5146079> JavaScript exception logging should print
+        accurate file and line info when called from WebScriptObject
+
+        Reviewed by Adam Roben.
+
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        (WebCore::JSCustomSQLStatementCallback::handleEvent): Remove existing
+        printf and check for Interpreter::shouldPrintExceptions() since there is
+        a call to Console::addMessage.
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent): Ditto.
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent): Ditto.
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent): Ditto.
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::handleEvent): Ditto.
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI): Ditto.
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::printErrorMessage): Ditto.
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute): Ditto.
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent): Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldAllowNavigation): Ditto.
+        * bindings/objc/WebScriptObject.mm:
+        (WebCore::addExceptionToConsole): Added helper static function that
+        calls Console::addMessage.
+        (-[WebScriptObject callWebScriptMethod:withArguments:]): Call addExceptionToConsole.
+        (-[WebScriptObject evaluateWebScript:]): Ditto.
+        (-[WebScriptObject setValue:forKey:]): Ditto.
+        (-[WebScriptObject valueForKey:]): Ditto.
+        (-[WebScriptObject removeWebScriptKey:]): Ditto.
+        (-[WebScriptObject webScriptValueAtIndex:]): Ditto.
+        (-[WebScriptObject setWebScriptValueAtIndex:value:]): Ditto.
+        * page/Console.cpp:
+        (WebCore::Console::addMessage): Print the level, message,
+        URL and line number to STDOUT.
+        (WebCore::printToStandardOut): Helper static function that
+        takes a prefix string, ExecState, an argument List and URL.
+        Prints the prefix and loops through the arguments calling
+        toString on each and printing the string. Finally printing
+        the URL and new line.
+        (WebCore::Console::error): Call printToStandardOut.
+        (WebCore::Console::info): Ditto.
+        (WebCore::Console::log): Ditto.
+        (WebCore::Console::assertCondition): Ditto.
+        (WebCore::Console::warn): Ditto.
+
 2008-05-20  Timothy Hatcher  <timothy@apple.com>
 
         Changes to work with the new Profiler API. The Profile is now

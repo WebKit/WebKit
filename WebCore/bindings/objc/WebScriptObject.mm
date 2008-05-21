@@ -26,8 +26,11 @@
 #import "config.h"
 #import "WebScriptObjectPrivate.h"
 
+#import "Console.h"
 #import "DOMInternal.h"
+#import "DOMWindow.h"
 #import "Frame.h"
+#import "JSDOMWindow.h"
 #import "PlatformString.h"
 #import "WebCoreObjCExtras.h"
 #import <JavaScriptCore/ExecState.h>
@@ -46,10 +49,6 @@ typedef unsigned NSUInteger;
 using namespace KJS;
 using namespace KJS::Bindings;
 using namespace WebCore;
-
-#define LOG_EXCEPTION(exec) \
-    if (Interpreter::shouldPrintExceptions()) \
-        printf("%s:%d:[%d]  JavaScript exception:  %s\n", __FILE__, __LINE__, getpid(), exec->exception()->toObject(exec)->get(exec, exec->propertyNames().message)->toString(exec).ascii());
 
 namespace WebCore {
 
@@ -82,6 +81,18 @@ id createJSWrapper(KJS::JSObject* object, PassRefPtr<KJS::Bindings::RootObject> 
     if (id wrapper = getJSWrapper(object))
         return [[wrapper retain] autorelease];
     return [[[WebScriptObject alloc] _initWithJSObject:object originRootObject:origin rootObject:root] autorelease];
+}
+
+static void addExceptionToConsole(ExecState* exec)
+{
+    JSDOMWindow* window = asJSDOMWindow(exec->dynamicGlobalObject());
+    JSObject* exception = exec->exception()->toObject(exec);
+    if (!window || !exception)
+        return;
+    String message = exception->get(exec, exec->propertyNames().message)->toString(exec);
+    int lineNumber = exception->get(exec, "line")->toInt32(exec);
+    String sourceURL = exception->get(exec, "sourceURL")->toString(exec);
+    window->impl()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
 }
 
 } // namespace WebCore
@@ -306,7 +317,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     [self _rootObject]->globalObject()->stopTimeoutCheck();
 
     if (exec->hadException()) {
-        LOG_EXCEPTION(exec);
+        addExceptionToConsole(exec);
         result = jsUndefined();
         exec->clearException();
     }
@@ -343,7 +354,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         result = jsUndefined();
     
     if (exec->hadException()) {
-        LOG_EXCEPTION(exec);
+        addExceptionToConsole(exec);
         result = jsUndefined();
         exec->clearException();
     }
@@ -367,7 +378,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     [self _imp]->put(exec, String(key), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]));
 
     if (exec->hadException()) {
-        LOG_EXCEPTION(exec);
+        addExceptionToConsole(exec);
         exec->clearException();
     }
 
@@ -392,7 +403,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         JSValue *result = [self _imp]->get(exec, String(key));
         
         if (exec->hadException()) {
-            LOG_EXCEPTION(exec);
+            addExceptionToConsole(exec);
             result = jsUndefined();
             exec->clearException();
         }
@@ -421,7 +432,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     [self _imp]->deleteProperty(exec, String(key));
 
     if (exec->hadException()) {
-        LOG_EXCEPTION(exec);
+        addExceptionToConsole(exec);
         exec->clearException();
     }
 
@@ -458,7 +469,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSValue *result = [self _imp]->get(exec, index);
 
     if (exec->hadException()) {
-        LOG_EXCEPTION(exec);
+        addExceptionToConsole(exec);
         result = jsUndefined();
         exec->clearException();
     }
@@ -482,7 +493,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     [self _imp]->put(exec, index, convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]));
 
     if (exec->hadException()) {
-        LOG_EXCEPTION(exec);
+        addExceptionToConsole(exec);
         exec->clearException();
     }
 
