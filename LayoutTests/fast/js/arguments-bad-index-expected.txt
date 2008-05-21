@@ -1,0 +1,13 @@
+This test checks whether arguments crashes when passed a bad index.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS indexArguments(1, "a") is "a"
+PASS indexArguments("1 ", "a") is undefined
+PASS indexArguments(0xDEADBEEF) is undefined
+PASS indexArguments(0xFFFFFFFF) is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

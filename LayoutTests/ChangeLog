@@ -1,3 +1,13 @@
+2008-05-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - test for <rdar://problem/5952721> bug in JavaScript arguments object property lookup
+
+        * fast/js/arguments-bad-index-expected.txt: Added.
+        * fast/js/arguments-bad-index.html: Added.
+        * fast/js/resources/arguments-bad-index.js: Added.
+
 2008-05-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

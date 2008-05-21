@@ -93,17 +93,15 @@ namespace KJS {
 
   class IndexToNameMap {
   public:
-    IndexToNameMap(FunctionImp* func, const List& args);
+    IndexToNameMap(FunctionImp*, const List& args);
     ~IndexToNameMap();
     
-    Identifier& operator[](int index);
-    Identifier& operator[](const Identifier &indexIdentifier);
+    Identifier& operator[](const Identifier& index);
     bool isMapped(const Identifier& index) const;
     void unMap(const Identifier& index);
     
   private:
-    IndexToNameMap(); // prevent construction w/o parameters
-    int size;
+    unsigned size;
     Identifier* _map;
   };
   
