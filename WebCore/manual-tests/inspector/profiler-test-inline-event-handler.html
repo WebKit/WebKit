@@ -1,0 +1,28 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+console.profile("Inline event handler");
+function testStart()
+{    
+    document.getElementById("eventListenerSetInline").click();
+}
+
+function eventListener() {    
+    anonymousFunction();
+    endTest();
+}
+</script>
+</head>
+
+<body onload="testStart()">
+This page has an inline event handler.
+<br>
+<br>
+To use this test, load it in the browser then load the WebInspector and look at
+the profile.  In the profile onclick() should be a sibling to onload() and onclick()
+should have eventListener() as a child.
+<input type="button" onclick="eventListener()" id="eventListenerSetInline" value="Event Listener Set Inline">
+<div id="output"></div>
+</body>
+</html>

@@ -1,3 +1,41 @@
+2008-05-20  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        Added all of my personal manual tests for the profiler.
+
+        * manual-tests/inspector/profiler-test-anonymous-event-handler.html: Added.
+        * manual-tests/inspector/profiler-test-anonymous-function-called-from-different-contexts.html: Added.
+        * manual-tests/inspector/profiler-test-anonymous-function-calls-built-in-functions.html: Added.
+        * manual-tests/inspector/profiler-test-anonymous-function-calls-eval.html: Added.
+        * manual-tests/inspector/profiler-test-apply.html: Added.
+        * manual-tests/inspector/profiler-test-built-in-function-calls-anonymous.html: Added.
+        * manual-tests/inspector/profiler-test-built-in-function-calls-user-defined-function.html: Added.
+        * manual-tests/inspector/profiler-test-call.html: Added.
+        * manual-tests/inspector/profiler-test-dead-time.html: Added.
+        * manual-tests/inspector/profiler-test-event-handler.html: Added.
+        * manual-tests/inspector/profiler-test-execution-context-and-eval-on-same-line.html: Added.
+        * manual-tests/inspector/profiler-test-inline-event-handler.html: Added.
+        * manual-tests/inspector/profiler-test-many-calls-in-the-same-scope.html: Added.
+        * manual-tests/inspector/profiler-test-multiple-and-different-scoped-anonymous-function-calls.html: Added.
+        * manual-tests/inspector/profiler-test-multiple-and-different-scoped-function-calls.html: Added.
+        * manual-tests/inspector/profiler-test-multiple-frames.html: Added.
+        * manual-tests/inspector/profiler-test-multiple-windows.html: Added.
+        * manual-tests/inspector/profiler-test-nested-anonymous-functon.html: Added.
+        * manual-tests/inspector/profiler-test-nested-start-and-stop-profiler.html: Added.
+        * manual-tests/inspector/profiler-test-no-execution-context.html: Added.
+        * manual-tests/inspector/profiler-test-one-execution-context.html: Added.
+        * manual-tests/inspector/profiler-test-profile-calls-in-included-file.html: Added.
+        * manual-tests/inspector/profiler-test-profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting.html: Added.
+        * manual-tests/inspector/profiler-test-profiling-from-a-nested-location.html: Added.
+        * manual-tests/inspector/profiler-test-start-and-stop-profiler-multiple-times.html: Added.
+        * manual-tests/inspector/profiler-test-two-execution-contexts.html: Added.
+        * manual-tests/inspector/profiler-test-user-defined-function-calls-built-in-functions.html: Added.
+        * manual-tests/inspector/resources: Added.
+        * manual-tests/inspector/resources/other-frame.html: Added.
+        * manual-tests/inspector/resources/other-window.html: Added.
+        * manual-tests/inspector/resources/profiler-test-JS-resources.js: Added.
+
 2008-05-20  Adam Roben  <aroben@apple.com>
 
         Use KJS::List::getSlice instead of reimplementing it

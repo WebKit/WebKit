@@ -1,0 +1,26 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+console.profile("Multiple and different scoped calls to the same function");
+function startTest()
+{
+    insertNewText();
+    insertNewText();
+
+    intermediaryFunction();
+    endTest();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript calls the same function from multiple and differently scoped locations.
+<br>
+<br>
+To use this test, load it in the browser then load the WebInspector and look at
+the profile.  In the profile there should be two calls to insertNewText under
+startTest() and one under an (anonymous function) under intermediaryFunction().
+<div id="output"></div>
+</body>
+</html>
