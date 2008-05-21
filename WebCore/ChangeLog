@@ -1,3 +1,12 @@
+2008-05-20  Adam Roben  <aroben@apple.com>
+
+        Use KJS::List::getSlice instead of reimplementing it
+
+        Rubberstamped and suggested by Sam Weinig.
+
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::assertCondition):
+
 2008-05-20  Kevin Calhoun  <kcalhoun@apple.com>
 
         Reviewed by Darin.
