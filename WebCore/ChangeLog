@@ -1,5 +1,74 @@
 2008-05-21  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 19178: Inspector should support sorting resources by latency
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19178>
+
+        I replaced "Sort by Time" with the following sorting options:
+          - Sort by Start Time
+          - Sort by Response Time
+          - Sort by End Time
+          - Sort by Duration
+          - Sort by Latency
+
+        You can no longer sort by Size when looking at the Time graph, and you
+        can't use any of the time-based sorting functions when looking at the
+        Size graph.
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/Resource.js:
+        (WebInspector.Resource.prototype.get duration): Added.
+        (WebInspector.Resource.prototype.get latency): Added.
+        (WebInspector.Resource.CompareByStartTime): Added.
+        (WebInspector.Resource.CompareByResponseReceivedTime): Added.
+        (WebInspector.Resource.CompareByEndTime): Added.
+        (WebInspector.Resource.CompareByDuration): Added.
+        (WebInspector.Resource.CompareByLatency): Added.
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+          - Each graph sidebar item now holds a list of sorting options
+          - Graph sidebar items no longer have a calculator property. This is
+            stored on the sorting options instead, to allow each kind of
+            sorting to have a different calculator.
+          - The sortingSelectElement starts out empty, and is populated in
+            _graphSelected
+          - The sortingFunction starts out uninitialized and is set as a
+            side-effect of _graphSelected.
+        (WebInspector.ResourcesPanel.prototype.set calculator): Don't do
+        anything if the calculator hasn't changed.
+        (WebInspector.ResourcesPanel.prototype.closeVisibleResource): Use the
+        _lastSelectedGraphTreeElement property instead of getting the graph
+        element from the calculator.
+        (WebInspector.ResourcesPanel.prototype._graphSelected):
+          - Store the tree element in the _lastSelectedGraphTreeElement
+            property
+          - Popuplate sortingSelectElement with the sortingOptions and select
+            the option that was last selected
+        (WebInspector.ResourcesPanel.prototype._changeSortingFunction): Set
+        our calculator from the sorting option.
+        (WebInspector.ResourceTimeCalculator): Renamed from
+        ResourceTransferTimeCalculator. Now takes a parameter to specify
+        whether the bars should all start at zero.
+        (WebInspector.ResourceTimeCalculator.prototype.computeBarGraphPercentages):
+        Take this.startAtZero into account.
+        (WebInspector.ResourceTimeCalculator.prototype.updateBoundries):
+        Abstracted the lower/upper bounds of a resource into methods.
+        (WebInspector.ResourceTimeCalculator.prototype._lowerBound): Added.
+        (WebInspector.ResourceTimeCalculator.prototype._upperBound): Added.
+        (WebInspector.ResourceTransferTimeCalculator): Added. This is now a
+        subclass of ResourceTimeCalculator
+        (WebInspector.ResourceTransferDurationCalculator): Added.
+        (WebInspector.ResourceSidebarTreeElement.CompareByAscendingStartTime): Added.
+        (WebInspector.ResourceSidebarTreeElement.CompareByAscendingResponseReceivedTime): Added.
+        (WebInspector.ResourceSidebarTreeElement.CompareByAscendingEndTime): Added.
+        (WebInspector.ResourceSidebarTreeElement.CompareByDescendingDuration): Added.
+        (WebInspector.ResourceSidebarTreeElement.CompareByDescendingLatency): Added.
+        (WebInspector.ResourceSidebarTreeElement.CompareByDescendingSize):
+        Changed to call CompareBySize.
+
+2008-05-21  Adam Roben  <aroben@apple.com>
+
         Fix Bug 19173: Tool tips for Inspector debugger status bar buttons are
         wrong/missing
 

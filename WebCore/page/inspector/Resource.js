@@ -192,6 +192,22 @@ WebInspector.Resource.prototype = {
             WebInspector.panels.resources.refreshResource(this);
     },
 
+    get duration()
+    {
+        if (this._endTime === -1 || this._startTime === -1)
+            return -1;
+
+        return this._endTime - this._startTime;
+    },
+
+    get latency()
+    {
+        if (this._responseReceivedTime === -1 || this._startTime === -1)
+            return -1;
+
+        return this._responseReceivedTime - this._startTime;
+    },
+
     get contentLength()
     {
         return this._contentLength;
@@ -562,19 +578,47 @@ WebInspector.Resource.prototype = {
 
 WebInspector.Resource.prototype.__proto__ = WebInspector.Object.prototype;
 
-WebInspector.Resource.CompareByTime = function(a, b)
+WebInspector.Resource.CompareByStartTime = function(a, b)
+{
+    if (a.startTime < b.startTime)
+        return -1;
+    if (a.startTime > b.startTime)
+        return 1;
+    return 0;
+}
+
+WebInspector.Resource.CompareByResponseReceivedTime = function(a, b)
 {
     if (a.responseReceivedTime < b.responseReceivedTime)
         return -1;
     if (a.responseReceivedTime > b.responseReceivedTime)
         return 1;
-    if (a.startTime < b.startTime)
-        return -1;
-    if (a.startTime > b.startTime)
-        return 1;
+    return 0;
+}
+
+WebInspector.Resource.CompareByEndTime = function(a, b)
+{
     if (a.endTime < b.endTime)
         return -1;
     if (a.endTime > b.endTime)
+        return 1;
+    return 0;
+}
+
+WebInspector.Resource.CompareByDuration = function(a, b)
+{
+    if (a.duration < b.duration)
+        return -1;
+    if (a.duration > b.duration)
+        return 1;
+    return 0;
+}
+
+WebInspector.Resource.CompareByLatency = function(a, b)
+{
+    if (a.latency < b.latency)
+        return -1;
+    if (a.latency > b.latency)
         return 1;
     return 0;
 }
@@ -586,9 +630,4 @@ WebInspector.Resource.CompareBySize = function(a, b)
     if (a.contentLength > b.contentLength)
         return 1;
     return 0;
-}
-
-WebInspector.Resource.CompareByDescendingSize = function(a, b)
-{
-    return this.CompareBySize(a, b) * -1;
 }

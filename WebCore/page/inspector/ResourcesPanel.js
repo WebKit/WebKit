@@ -84,14 +84,30 @@ WebInspector.ResourcesPanel = function()
     this.sidebarTree = new TreeOutline(this.sidebarTreeElement);
 
     var timeGraphItem = new WebInspector.SidebarTreeElement("resources-time-graph-sidebar-item", WebInspector.UIString("Time"));
-    timeGraphItem.calculator = new WebInspector.ResourceTransferTimeCalculator();
     timeGraphItem.onselect = this._graphSelected.bind(this);
-    timeGraphItem.calculator._graphsTreeElement = timeGraphItem;
+
+    var transferTimeCalculator = new WebInspector.ResourceTransferTimeCalculator();
+    var transferDurationCalculator = new WebInspector.ResourceTransferDurationCalculator();
+
+    timeGraphItem.sortingOptions = [
+        { name: WebInspector.UIString("Sort by Start Time"), sortingFunction: WebInspector.ResourceSidebarTreeElement.CompareByAscendingStartTime, calculator: transferTimeCalculator },
+        { name: WebInspector.UIString("Sort by Response Time"), sortingFunction: WebInspector.ResourceSidebarTreeElement.CompareByAscendingResponseReceivedTime, calculator: transferTimeCalculator },
+        { name: WebInspector.UIString("Sort by End Time"), sortingFunction: WebInspector.ResourceSidebarTreeElement.CompareByAscendingEndTime, calculator: transferTimeCalculator },
+        { name: WebInspector.UIString("Sort by Duration"), sortingFunction: WebInspector.ResourceSidebarTreeElement.CompareByDescendingDuration, calculator: transferDurationCalculator },
+        { name: WebInspector.UIString("Sort by Latency"), sortingFunction: WebInspector.ResourceSidebarTreeElement.CompareByDescendingLatency, calculator: transferDurationCalculator },
+    ];
+
+    timeGraphItem.selectedSortingOptionIndex = 1;
 
     var sizeGraphItem = new WebInspector.SidebarTreeElement("resources-size-graph-sidebar-item", WebInspector.UIString("Size"));
-    sizeGraphItem.calculator = new WebInspector.ResourceTransferSizeCalculator();
     sizeGraphItem.onselect = this._graphSelected.bind(this);
-    sizeGraphItem.calculator._graphsTreeElement = sizeGraphItem;
+
+    var transferSizeCalculator = new WebInspector.ResourceTransferSizeCalculator();
+    sizeGraphItem.sortingOptions = [
+        { name: WebInspector.UIString("Sort by Size"), sortingFunction: WebInspector.ResourceSidebarTreeElement.CompareByDescendingSize, calculator: transferSizeCalculator },
+    ];
+
+    sizeGraphItem.selectedSortingOptionIndex = 0;
 
     this.graphsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("GRAPHS"), {}, true);
     this.sidebarTree.appendChild(this.graphsTreeElement);
@@ -114,18 +130,6 @@ WebInspector.ResourcesPanel = function()
     this.sortingSelectElement = document.createElement("select");
     this.sortingSelectElement.className = "status-bar-item";
     this.sortingSelectElement.addEventListener("change", this._changeSortingFunction.bind(this), false);
-
-    var sortingOption = document.createElement("option");
-    sortingOption.label = WebInspector.UIString("Sort by Time");
-    sortingOption.sortingFunction = WebInspector.ResourceSidebarTreeElement.CompareByTime;
-    this.sortingSelectElement.appendChild(sortingOption);
-
-    sortingOption = document.createElement("option");
-    sortingOption.label = WebInspector.UIString("Sort by Size");
-    sortingOption.sortingFunction = WebInspector.ResourceSidebarTreeElement.CompareByDescendingSize;
-    this.sortingSelectElement.appendChild(sortingOption);
-
-    this.sortingFunction = WebInspector.ResourceSidebarTreeElement.CompareByTime;
 
     this.reset();
 
@@ -183,6 +187,9 @@ WebInspector.ResourcesPanel.prototype = {
 
     set calculator(x)
     {
+        if (this._calculator === x)
+            return;
+
         this._calculator = x;
         if (this._calculator)
             this._calculator.reset();
@@ -443,8 +450,8 @@ WebInspector.ResourcesPanel.prototype = {
             this.visibleResource._resourcesView.hide();
         delete this.visibleResource;
 
-        if (this._calculator && this._calculator._graphsTreeElement)
-            this._calculator._graphsTreeElement.select(true);
+        if (this._lastSelectedGraphTreeElement)
+            this._lastSelectedGraphTreeElement.select(true);
 
         this._updateSidebarWidth();
     },
@@ -962,7 +969,24 @@ WebInspector.ResourcesPanel.prototype = {
 
     _graphSelected: function(treeElement)
     {
-        this.calculator = treeElement.calculator;
+        if (this._lastSelectedGraphTreeElement)
+            this._lastSelectedGraphTreeElement.selectedSortingOptionIndex = this.sortingSelectElement.selectedIndex;
+
+        this._lastSelectedGraphTreeElement = treeElement;
+
+        this.sortingSelectElement.removeChildren();
+        for (var i = 0; i < treeElement.sortingOptions.length; ++i) {
+            var sortingOption = treeElement.sortingOptions[i];
+            var option = document.createElement("option");
+            option.label = sortingOption.name;
+            option.sortingFunction = sortingOption.sortingFunction;
+            option.calculator = sortingOption.calculator;
+            this.sortingSelectElement.appendChild(option);
+        }
+
+        this.sortingSelectElement.selectedIndex = treeElement.selectedSortingOptionIndex;
+        this._changeSortingFunction();
+
         this.closeVisibleResource();
         this.containerElement.scrollTop = 0;
     },
@@ -984,6 +1008,7 @@ WebInspector.ResourcesPanel.prototype = {
     _changeSortingFunction: function()
     {
         var selectedOption = this.sortingSelectElement[this.sortingSelectElement.selectedIndex];
+        this.calculator = selectedOption.calculator;
         this.sortingFunction = selectedOption.sortingFunction;
     },
 
@@ -1127,12 +1152,13 @@ WebInspector.ResourceCalculator.prototype = {
     }
 }
 
-WebInspector.ResourceTransferTimeCalculator = function()
+WebInspector.ResourceTimeCalculator = function(startAtZero)
 {
     WebInspector.ResourceCalculator.call(this);
+    this.startAtZero = startAtZero;
 }
 
-WebInspector.ResourceTransferTimeCalculator.prototype = {
+WebInspector.ResourceTimeCalculator.prototype = {
     computeSummaryValues: function(resources)
     {
         var resourcesByCategory = {};
@@ -1205,19 +1231,33 @@ WebInspector.ResourceTransferTimeCalculator.prototype = {
         else
             var end = 100;
 
+        if (this.startAtZero) {
+            end -= start;
+            middle -= start;
+            start = 0;
+        }
+
         return {start: start, middle: middle, end: end};
     },
 
     updateBoundries: function(resource)
     {
         var didChange = false;
-        if (resource.startTime !== -1 && (typeof this.minimumBoundary === "undefined" || resource.startTime < this.minimumBoundary)) {
-            this.minimumBoundary = resource.startTime;
+
+        var lowerBound;
+        if (this.startAtZero)
+            lowerBound = 0;
+        else
+            lowerBound = this._lowerBound(resource);
+
+        if (lowerBound !== -1 && (typeof this.minimumBoundary === "undefined" || lowerBound < this.minimumBoundary)) {
+            this.minimumBoundary = lowerBound;
             didChange = true;
         }
 
-        if (resource.endTime !== -1 && (typeof this.maximumBoundary === "undefined" || resource.endTime > this.maximumBoundary)) {
-            this.maximumBoundary = resource.endTime;
+        var upperBound = this._upperBound(resource);
+        if (upperBound !== -1 && (typeof this.maximumBoundary === "undefined" || upperBound > this.maximumBoundary)) {
+            this.maximumBoundary = upperBound;
             didChange = true;
         }
 
@@ -1227,10 +1267,63 @@ WebInspector.ResourceTransferTimeCalculator.prototype = {
     formatValue: function(value)
     {
         return Number.secondsToString(value, WebInspector.UIString.bind(WebInspector));
-    }
+    },
+
+    _lowerBound: function(resource)
+    {
+        return 0;
+    },
+
+    _upperBound: function(resource)
+    {
+        return 0;
+    },
 }
 
-WebInspector.ResourceTransferTimeCalculator.prototype.__proto__ = WebInspector.ResourceCalculator.prototype;
+WebInspector.ResourceTimeCalculator.prototype.__proto__ = WebInspector.ResourceCalculator.prototype;
+
+WebInspector.ResourceTransferTimeCalculator = function()
+{
+    WebInspector.ResourceTimeCalculator.call(this, false);
+}
+
+WebInspector.ResourceTransferTimeCalculator.prototype = {
+    formatValue: function(value)
+    {
+        return Number.secondsToString(value, WebInspector.UIString.bind(WebInspector));
+    },
+
+    _lowerBound: function(resource)
+    {
+        return resource.startTime;
+    },
+
+    _upperBound: function(resource)
+    {
+        return resource.endTime;
+    },
+}
+
+WebInspector.ResourceTransferTimeCalculator.prototype.__proto__ = WebInspector.ResourceTimeCalculator.prototype;
+
+WebInspector.ResourceTransferDurationCalculator = function()
+{
+    WebInspector.ResourceTimeCalculator.call(this, true);
+}
+
+WebInspector.ResourceTransferDurationCalculator.prototype = {
+    formatValue: function(value)
+    {
+        return Number.secondsToString(value, WebInspector.UIString.bind(WebInspector));
+    },
+
+    _upperBound: function(resource)
+    {
+        return resource.duration;
+    },
+}
+
+WebInspector.ResourceTransferDurationCalculator.prototype.__proto__ = WebInspector.ResourceTimeCalculator.prototype;
 
 WebInspector.ResourceTransferSizeCalculator = function()
 {
@@ -1352,19 +1445,40 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
     }
 }
 
-WebInspector.ResourceSidebarTreeElement.CompareByTime = function(a, b)
+WebInspector.ResourceSidebarTreeElement.CompareByAscendingStartTime = function(a, b)
 {
-    return WebInspector.Resource.CompareByTime(a.resource, b.resource);
+    return WebInspector.Resource.CompareByStartTime(a.resource, b.resource)
+        || WebInspector.Resource.CompareByEndTime(a.resource, b.resource)
+        || WebInspector.Resource.CompareByResponseReceivedTime(a.resource, b.resource);
 }
 
-WebInspector.ResourceSidebarTreeElement.CompareBySize = function(a, b)
+WebInspector.ResourceSidebarTreeElement.CompareByAscendingResponseReceivedTime = function(a, b)
 {
-    return WebInspector.Resource.CompareBySize(a.resource, b.resource);
+    return WebInspector.Resource.CompareByResponseReceivedTime(a.resource, b.resource)
+        || WebInspector.Resource.CompareByStartTime(a.resource, b.resource)
+        || WebInspector.Resource.CompareByEndTime(a.resource, b.resource);
+}
+
+WebInspector.ResourceSidebarTreeElement.CompareByAscendingEndTime = function(a, b)
+{
+    return WebInspector.Resource.CompareByEndTime(a.resource, b.resource)
+        || WebInspector.Resource.CompareByStartTime(a.resource, b.resource)
+        || WebInspector.Resource.CompareByResponseReceivedTime(a.resource, b.resource);
+}
+
+WebInspector.ResourceSidebarTreeElement.CompareByDescendingDuration = function(a, b)
+{
+    return -1 * WebInspector.Resource.CompareByDuration(a.resource, b.resource);
+}
+
+WebInspector.ResourceSidebarTreeElement.CompareByDescendingLatency = function(a, b)
+{
+    return -1 * WebInspector.Resource.CompareByLatency(a.resource, b.resource);
 }
 
 WebInspector.ResourceSidebarTreeElement.CompareByDescendingSize = function(a, b)
 {
-    return WebInspector.Resource.CompareByDescendingSize(a.resource, b.resource);
+    return -1 * WebInspector.Resource.CompareBySize(a.resource, b.resource);
 }
 
 WebInspector.ResourceSidebarTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;
