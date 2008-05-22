@@ -15,11 +15,14 @@
     };
 
     function test(args) {
-        console.info("console.log(%s)", args);
-        try {
-            eval("console.log(" + args + ")");
-        } catch (e) {
-            console.error(e);
+        var functions = ["log", "debug"];
+        for (var i = 0; i < functions.length; ++i) {
+            console.info("console." + functions[i] + "(%s)", args);
+            try {
+                eval("console." + functions[i] + "(" + args + ")");
+            } catch (e) {
+                console.error(e);
+            }
         }
     }
 

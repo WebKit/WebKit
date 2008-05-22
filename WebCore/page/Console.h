@@ -66,6 +66,7 @@ namespace WebCore {
 
         void addMessage(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
 
+        void debug(KJS::ExecState*, const KJS::List& arguments);
         void error(KJS::ExecState*, const KJS::List& arguments);
         void info(KJS::ExecState*, const KJS::List& arguments);
         void log(KJS::ExecState*, const KJS::List& arguments);

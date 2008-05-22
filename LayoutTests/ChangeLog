@@ -1,3 +1,11 @@
+2008-05-21  Adam Roben  <aroben@apple.com>
+
+        Update window-properties results for new console functions
+
+        Reviewed by Tim Hatcher.
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-05-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver and Sam.

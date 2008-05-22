@@ -1,3 +1,23 @@
+2008-05-20  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 19153: Inspector should support console.debug
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19153>
+        <rdar://problem/5950856>
+
+        Reviewed by Tim Hatcher.
+
+        Test: manual-tests/inspector/console-log-formatting.html
+
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::debug): Added.
+        * manual-tests/inspector/console-log-formatting.html: Changed to test
+        console.debug as well.
+        * page/Console.cpp:
+        (WebCore::Console::debug): Added. Just calls through to log().
+        * page/Console.h:
+        * page/Console.idl: Added debug() declaration.
+
 2008-05-21  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

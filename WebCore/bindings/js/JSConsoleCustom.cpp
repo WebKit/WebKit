@@ -32,6 +32,12 @@ using namespace KJS;
 
 namespace WebCore {
 
+JSValue* JSConsole::debug(ExecState* exec, const List& arguments)
+{
+    impl()->debug(exec, arguments);
+    return jsUndefined();
+}
+
 JSValue* JSConsole::error(ExecState* exec, const List& arguments)
 {
     impl()->error(exec, arguments);

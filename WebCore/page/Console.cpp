@@ -156,6 +156,12 @@ void Console::addMessage(MessageSource source, MessageLevel level, const String&
     printToStandardOut(source, level, message, sourceURL, lineNumber);
 }
 
+void Console::debug(ExecState* exec, const List& arguments)
+{
+    // In Firebug, console.debug has the same behavior as console.log. So we'll do the same.
+    log(exec, arguments);
+}
+
 void Console::error(ExecState* exec, const List& arguments)
 {
     if (arguments.isEmpty())

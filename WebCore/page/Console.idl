@@ -29,6 +29,7 @@
 module window {
 
     interface Console {
+        [Custom] void debug();
         [Custom] void error();
         [Custom] void info();
         [Custom] void log();
