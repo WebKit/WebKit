@@ -55,11 +55,19 @@ void Profile::stopProfiling()
 
 void Profile::willExecute(const CallIdentifier& callIdentifier)
 {
-    m_currentNode = m_currentNode->addOrStartChild(callIdentifier);
+    ASSERT(m_currentNode);
+
+    m_currentNode = m_currentNode->willExecute(callIdentifier);
 }
 
-void Profile::didExecute(const CallIdentifier&)
+void Profile::didExecute(const CallIdentifier& callIdentifier)
 {
+    if (m_currentNode == m_callTree) {
+        m_currentNode = ProfileNode::create(callIdentifier, m_callTree.get(), m_callTree.get());
+        m_callTree->insertNode(m_currentNode.release());
+        m_currentNode = m_callTree;
+        return;
+    }
 
     m_currentNode = m_currentNode->didExecute();
 }

@@ -1,3 +1,51 @@
+2008-05-22  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5951561> Turn on JavaScript Profiler
+        Get basic JS profiling working.
+        Even with this patch the profiler will not be compiled in because we do
+        not know the extend, if any, of the performance regression it would cause
+        when it is not in use. However with these changes, if the profiler were
+        on, it would not crash and show good profiling data.
+
+        * VM/Machine.cpp: Instrument the calls sites that are needed for profiling.
+        (KJS::callEval):
+        (KJS::Machine::unwindCallFrame):
+        (KJS::Machine::execute):
+        (KJS::Machine::privateExecute):
+        * kjs/function.cpp: Ditto.
+        (KJS::globalFuncEval):
+        * kjs/interpreter.cpp: Ditto.
+        (KJS::Interpreter::evaluate):
+        * profiler/Profile.cpp: 
+        (KJS::Profile::willExecute):
+        (KJS::Profile::didExecute): Because we do not get a good context when
+        startProfiling is called it is possible that m_currentNode will be at the
+        top of the known stack when a didExecute() is called.  What we then do is
+        create a new node that represents the function being exited and insert
+        it between the head and the currently known children, since they should
+        be children of this new node.
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::ProfileNode):
+        (KJS::ProfileNode::willExecute): Rename the add function for consistency.
+        (KJS::ProfileNode::addChild): Appends the child to this node but also
+        sets the parent pointer of the children to this node.
+        (KJS::ProfileNode::insertNode): Insert a node between this node and its
+        children.  Also set the time for the new node since it is now exiting
+        and we don't really know when it started.
+        (KJS::ProfileNode::stopProfiling):
+        (KJS::ProfileNode::startTimer):
+        * profiler/ProfileNode.h:
+        (KJS::CallIdentifier::toString): Added for debugging.
+        (KJS::ProfileNode::setParent):
+        (KJS::ProfileNode::setSelfTime): Fixed an old bug where we set the
+        visibleTotalTime not the visibleSelfTime.
+        (KJS::ProfileNode::children):
+        (KJS::ProfileNode::toString): Added for debugging.
+        * profiler/Profiler.cpp: remove unecessary calls.
+        (KJS::Profiler::startProfiling):
+
 2008-05-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

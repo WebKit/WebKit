@@ -69,10 +69,6 @@ Completion Interpreter::evaluate(ExecState* exec, ScopeChain& scopeChain, const 
     int errLine;
     UString errMsg;
 
-#if JAVASCRIPT_PROFILING
-    Profiler::profiler()->willExecute(exec, sourceURL, startingLineNumber);
-#endif
-
     RefPtr<ProgramNode> programNode = parser().parse<ProgramNode>(exec, sourceURL, startingLineNumber, source, &sourceId, &errLine, &errMsg);
 
     // no program node means a syntax error occurred
@@ -83,10 +79,6 @@ Completion Interpreter::evaluate(ExecState* exec, ScopeChain& scopeChain, const 
 
     JSValue* exception = 0;
     JSValue* result = machine().execute(programNode.get(), exec, scopeChain.node(), thisObj, &exec->dynamicGlobalObject()->registerFileStack(), &exception);
-
-#if JAVASCRIPT_PROFILING
-    Profiler::profiler()->didExecute(exec, sourceURL, startingLineNumber);
-#endif
 
     return exception ? Completion(Throw, exception) : Completion(Normal, result);
 }

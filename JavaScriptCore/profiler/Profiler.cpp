@@ -43,7 +43,6 @@ static Profiler* sharedProfiler = 0;
 static const char* GlobalCodeExecution = "(program)";
 static const char* AnonymousFunction = "(anonymous function)";
 
-static void getCallIdentifiers(ExecState*, Vector<CallIdentifier>& callIdentifiers);
 static CallIdentifier createCallIdentifier(JSObject*);
 static CallIdentifier createCallIdentifier(const UString& sourceURL, int startingLineNumber);
 static CallIdentifier createCallIdentifierFromFunctionImp(FunctionImp*);
@@ -77,12 +76,6 @@ void Profiler::startProfiling(ExecState* exec, const UString& title)
 
     RefPtr<Profile> profile = Profile::create(title, globalExec, exec->lexicalGlobalObject()->pageGroupIdentifier());
     m_currentProfiles.append(profile);
-
-    // Update the profile with the current call identifiers that started the profiling.
-    Vector<CallIdentifier> callIdentifiers;
-    getCallIdentifiers(exec, callIdentifiers);
-    for (unsigned i = 0; i< callIdentifiers.size(); ++i)
-        profile->willExecute(callIdentifiers[i]);
 }
 
 PassRefPtr<Profile> Profiler::stopProfiling(ExecState* exec, const UString& title)
@@ -158,19 +151,6 @@ void Profiler::didExecute(ExecState* exec, const UString& sourceURL, int startin
         return;
 
     dispatchFunctionToProfiles(m_currentProfiles, &Profile::didExecute, createCallIdentifier(sourceURL, startingLineNumber), exec->lexicalGlobalObject()->pageGroupIdentifier());
-}
-
-void getCallIdentifiers(ExecState*, Vector<CallIdentifier>&)
-{
-    ASSERT_NOT_REACHED();
-#if 0
-    for (ExecState* currentState = exec; currentState; currentState = currentState->callingExecState()) {
-        if (FunctionImp* functionImp = currentState->function())
-            getCallIdentifierFromFunctionImp(functionImp, callIdentifiers);
-        else if (ScopeNode* scopeNode = currentState->scopeNode())
-            callIdentifiers.append(CallIdentifier(GlobalCodeExecution, scopeNode->sourceURL(), (scopeNode->lineNo() + 1)) );   // FIXME: Why is the line number always off by one?
-    }
-#endif
 }
 
 CallIdentifier createCallIdentifier(JSObject* calledFunction)
