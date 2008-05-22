@@ -54,6 +54,31 @@ WebInspector.SourceFrame.prototype = {
         this._updateExecutionLine(previousLine);
     },
 
+    get autoSizesToFitContentHeight()
+    {
+        return this._autoSizesToFitContentHeight;
+    },
+
+    set autoSizesToFitContentHeight(x)
+    {
+        if (this._autoSizesToFitContentHeight === x)
+            return;
+
+        this._autoSizesToFitContentHeight = x;
+
+        if (this._autoSizesToFitContentHeight) {
+            this._windowResizeListener = this._windowResized.bind(this);
+            window.addEventListener("resize", this._windowResizeListener, false);
+            this.sizeToFitContentHeight();
+        } else {
+            this.element.style.removeProperty("height");
+            if (this.element.contentDocument)
+                this.element.contentDocument.body.addStyleClass("webkit-height-sized-to-fit");
+            window.removeEventListener("resize", this._windowResizeListener, false);
+            delete this._windowResizeListener;
+        }
+    },
+
     sourceRow: function(lineNumber)
     {
         if (!lineNumber || !this.element.contentDocument)
@@ -131,6 +156,14 @@ WebInspector.SourceFrame.prototype = {
         }
     },
 
+    sizeToFitContentHeight: function()
+    {
+        if (this.element.contentDocument) {
+            this.element.style.setProperty("height", this.element.contentDocument.body.offsetHeight + "px");
+            this.element.contentDocument.body.addStyleClass("webkit-height-sized-to-fit");
+        }
+    },
+
     _loaded: function()
     {
         WebInspector.addMainEventListeners(this.element.contentDocument);
@@ -154,6 +187,7 @@ WebInspector.SourceFrame.prototype = {
         styleText += ".webkit-breakpoint.webkit-execution-line .webkit-line-number { color: transparent; background-image: -webkit-canvas(breakpoint-program-counter); }\n";
         styleText += ".webkit-breakpoint-disabled.webkit-execution-line .webkit-line-number { color: transparent; background-image: -webkit-canvas(breakpoint-disabled-program-counter); }\n";
         styleText += ".webkit-execution-line .webkit-line-content { background-color: rgb(171, 191, 254); outline: 1px solid rgb(64, 115, 244); }\n";
+        styleText += ".webkit-height-sized-to-fit { overflow-y: hidden }\n";
 
         styleElement.textContent = styleText;
 
@@ -168,6 +202,16 @@ WebInspector.SourceFrame.prototype = {
         this._addExistingMessagesToSource();
         this._addExistingBreakpointsToSource();
         this._updateExecutionLine();
+
+        if (this.autoSizesToFitContentHeight)
+            this.sizeToFitContentHeight();
+    },
+
+    _windowResized: function(event)
+    {
+        if (!this._autoSizesToFitContentHeight)
+            return;
+        this.sizeToFitContentHeight();
     },
 
     _documentMouseDown: function(event)

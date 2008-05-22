@@ -1,3 +1,55 @@
+2008-05-21  Timothy Hatcher  <timothy@apple.com>
+
+        Adds the Request and Response headers to the Resource view.
+
+        <rdar://problem/5940782> REGRESSION: Resource Request and Response
+        headers aren't shown (18451)
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/localizedStrings.js: Added new strings.
+        * css/view-source.css: Add comments to make sure a couple of
+        style rules stay in sync with inspector.css.
+        * page/inspector/Resource.js:
+        (WebInspector.Resource.prototype.set url): Dispatch an event when
+        this property changes.
+        (WebInspector.Resource.prototype.set requestHeaders): Ditto.
+        (WebInspector.Resource.prototype.set responseHeaders): Ditto.
+        * page/inspector/ResourceView.js:
+        (WebInspector.ResourceView): Add new elements for the headers
+        and a headers TreeOutline. Add event listeners for resource
+        property changes. Calls the three new refresh functions.
+        (WebInspector.ResourceView.prototype.set headersVisible): Implemented.
+        Toggles the headers-visible class name.
+        (WebInspector.ResourceView.prototype._refreshURL): Update the URL
+        tree element.
+        (WebInspector.ResourceView.prototype._refreshRequestHeaders): Call _refreshHeaders.
+        (WebInspector.ResourceView.prototype._refreshResponseHeaders): Ditto.
+        (WebInspector.ResourceView.prototype._refreshHeaders): Remove the previous
+        headers fromm the tree element. Loop throuh the headers and create new
+        tree elements and append them.
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._updateSidebarWidth): Call resize
+        on the visible view if it is implemented.
+        * page/inspector/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.get autoSizesToFitContentHeight):
+        (WebInspector.SourceFrame.prototype.set autoSizesToFitContentHeight):
+        (WebInspector.SourceFrame.prototype.sizeToFitContentHeight):
+        (WebInspector.SourceFrame.prototype._loaded): 
+        (WebInspector.SourceFrame.prototype._windowResized): 
+        * page/inspector/SourceView.js:
+        (WebInspector.SourceView): Move the SourceFrame creation so it is
+        available when headersVisible is set. Add a gutter element to fill
+        the vertical space no covered by the SourceFrame now.
+        (WebInspector.SourceView.prototype.set headersVisible): Set the
+        SourceFrame.autoSizesToFitContentHeight when this property changes.
+        (WebInspector.SourceView.prototype.resize): Call SourceFrame.sizeToFitContentHeight
+        when autoSizesToFitContentHeight is true. This happens when resizing the 
+        Resources sidebar.
+        * page/inspector/inspector.css: Add a copy of webkit-line-gutter-backdrop
+        and a comment to keep in sync with view-source.css. Adds other styles
+        for the headers area of resource-view.
+
 2008-05-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

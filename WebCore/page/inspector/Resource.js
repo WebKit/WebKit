@@ -93,7 +93,12 @@ WebInspector.Resource.prototype = {
 
         var oldURL = this._url;
         this._url = x;
+
+        // FIXME: We should make the WebInspector object listen for the "url changed" event.
+        // Then resourceURLChanged can be removed.
         WebInspector.resourceURLChanged(this, oldURL);
+
+        this.dispatchEventToListeners("url changed");
     },
 
     get domain()
@@ -341,8 +346,7 @@ WebInspector.Resource.prototype = {
         this._requestHeaders = x;
         delete this._sortedRequestHeaders;
 
-        if (WebInspector.panels.resources)
-            WebInspector.panels.resources.refreshResource(this);
+        this.dispatchEventToListeners("requestHeaders changed");
     },
 
     get sortedRequestHeaders()
@@ -373,8 +377,7 @@ WebInspector.Resource.prototype = {
         this._responseHeaders = x;
         delete this._sortedResponseHeaders;
 
-        if (WebInspector.panels.resources)
-            WebInspector.panels.resources.refreshResource(this);
+        this.dispatchEventToListeners("responseHeaders changed");
     },
 
     get sortedResponseHeaders()

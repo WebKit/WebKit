@@ -34,11 +34,44 @@ WebInspector.ResourceView = function(resource)
 
     this.resource = resource;
 
-    // FIXME: Implement the setter for headersVisible when the header element is added.
+    this.headersElement = document.createElement("div");
+    this.headersElement.className = "resource-view-headers";
+    this.element.appendChild(this.headersElement);
 
     this.contentElement = document.createElement("div");
     this.contentElement.className = "resource-view-content";
     this.element.appendChild(this.contentElement);
+
+    this.headersListElement = document.createElement("ol");
+    this.headersListElement.className = "outline-disclosure";
+    this.headersElement.appendChild(this.headersListElement);
+
+    this.headersTreeOutline = new TreeOutline(this.headersListElement);
+    this.headersTreeOutline.expandTreeElementsWhenArrowing = true;
+
+    this.urlTreeElement = new TreeElement("", null, false);
+    this.urlTreeElement.selectable = false;
+    this.headersTreeOutline.appendChild(this.urlTreeElement);
+
+    this.requestHeadersTreeElement = new TreeElement("", null, true);
+    this.requestHeadersTreeElement.expanded = false;
+    this.requestHeadersTreeElement.selectable = false;
+    this.headersTreeOutline.appendChild(this.requestHeadersTreeElement);
+
+    this.responseHeadersTreeElement = new TreeElement("", null, true);
+    this.responseHeadersTreeElement.expanded = false;
+    this.responseHeadersTreeElement.selectable = false;
+    this.headersTreeOutline.appendChild(this.responseHeadersTreeElement);
+
+    this.headersVisible = true;
+
+    resource.addEventListener("url changed", this._refreshURL, this);
+    resource.addEventListener("requestHeaders changed", this._refreshRequestHeaders, this);
+    resource.addEventListener("responseHeaders changed", this._refreshResponseHeaders, this);
+
+    this._refreshURL();
+    this._refreshRequestHeaders();
+    this._refreshResponseHeaders();
 }
 
 WebInspector.ResourceView.prototype = {
@@ -54,17 +87,50 @@ WebInspector.ResourceView.prototype = {
 
         this._headersVisible = x;
 
-        if (x) {
-            // FIXME: Implement this when headers are added.
-        } else {
-            // FIXME: Implement this when headers are added.
-        }
+        if (x)
+            this.element.addStyleClass("headers-visible");
+        else
+            this.element.removeStyleClass("headers-visible");
     },
 
     attach: function()
     {
         if (!this.element.parentNode)
             document.getElementById("resource-views").appendChild(this.element);
+    },
+
+    _refreshURL: function()
+    {
+        this.urlTreeElement.title = this.resource.url.escapeHTML();
+    },
+
+    _refreshRequestHeaders: function()
+    {
+        this._refreshHeaders(WebInspector.UIString("Request Headers"), this.resource.sortedRequestHeaders, this.requestHeadersTreeElement);
+    },
+
+    _refreshResponseHeaders: function()
+    {
+        this._refreshHeaders(WebInspector.UIString("Response Headers"), this.resource.sortedResponseHeaders, this.responseHeadersTreeElement);
+    },
+
+    _refreshHeaders: function(title, headers, headersTreeElement)
+    {
+        headersTreeElement.removeChildren();
+
+        var length = headers.length;
+        headersTreeElement.title = title.escapeHTML() + "<span class=\"header-count\">" + WebInspector.UIString(" (%d)", length) + "</span>";
+        headersTreeElement.hidden = !length;
+
+        var length = headers.length;
+        for (var i = 0; i < length; ++i) {
+            var title = "<div class=\"header-name\">" + headers[i].header.escapeHTML() + ":</div>";
+            title += "<div class=\"header-value\">" + headers[i].value.escapeHTML() + "</div>"
+
+            var headerTreeElement = new TreeElement(title, null, false);
+            headerTreeElement.selectable = false;
+            headersTreeElement.appendChild(headerTreeElement);
+        }
     }
 }
 

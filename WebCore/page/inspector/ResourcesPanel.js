@@ -1053,6 +1053,10 @@ WebInspector.ResourcesPanel.prototype = {
 
         this._updateGraphBars();
         this._updateGraphDividersIfNeeded();
+
+        var visibleResourceView = this.visibleResourceView;
+        if (visibleResourceView && "resize" in visibleResourceView)
+            visibleResourceView.resize();
     }
 }
 

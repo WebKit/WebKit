@@ -528,10 +528,61 @@ body.console-visible #console {
     left: 0;
     right: 0;
     bottom: 0;
+    overflow: hidden;
 }
 
 .resource-view.visible {
     display: block;
+}
+
+.resource-view.headers-visible {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.resource-view-headers {
+    display: none;
+    padding: 6px;
+    border-bottom: 1px solid rgb(64%, 64%, 64%);
+    background-color: white;
+    -webkit-user-select: text;
+}
+
+.resource-view-headers .outline-disclosure .parent {
+    -webkit-user-select: none;
+    font-weight: bold;
+}
+
+.resource-view.headers-visible .resource-view-headers {
+    display: block;
+}
+
+.resource-view-headers .outline-disclosure .children li {
+    white-space: nowrap;
+}
+
+.resource-view-headers .outline-disclosure li.expanded .header-count {
+    display: none;
+}
+
+.resource-view-headers .outline-disclosure .header-name {
+    color: rgb(33%, 33%, 33%);
+    display: inline-block;
+    width: 105px;
+    text-align: right;
+    margin-right: 0.5em;
+    font-weight: bold;
+    vertical-align: top;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.resource-view-headers .outline-disclosure .header-value {
+    display: inline-block;
+    white-space: normal;
+    word-break: break-word;
+    vertical-align: top;
+    margin-right: 100px;
 }
 
 .resource-view .resource-view-content {
@@ -540,6 +591,30 @@ body.console-visible #console {
     right: 0;
     left: 0;
     bottom: 0;
+}
+
+.resource-view.headers-visible .resource-view-content {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    bottom: auto;
+}
+
+.resource-view.headers-visible .source-view-frame {
+    height: auto;
+}
+
+.webkit-line-gutter-backdrop {
+    /* Keep this in sync with view-source.css (.webkit-line-gutter-backdrop) */
+    width: 31px;
+    background-color: rgb(240, 240, 240);
+    border-right: 1px solid rgb(187, 187, 187);
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    top: 0;
+    height: 100%
 }
 
 .resource-view.font {
