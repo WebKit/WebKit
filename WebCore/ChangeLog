@@ -1,5 +1,17 @@
 2008-05-22  Timothy Hatcher  <timothy@apple.com>
 
+        Remove some non-functional elements from the Scripts panel
+        so they don't confuse users why they aren't working.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/ScriptsPanel.js: Removes the back/forward buttons
+        and the function menu.
+        * page/inspector/inspector.css: Make the files menu wider since there
+        is more room now.
+
+2008-05-22  Timothy Hatcher  <timothy@apple.com>
+
         <rdar://problem/5956403> Update the Develop menu to match the new Inspector items
 
         Reviewed by Adam Roben.

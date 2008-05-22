@@ -40,7 +40,9 @@ WebInspector.ScriptsPanel = function()
     this.backButton.title = WebInspector.UIString("Show the previous script resource.");
     this.backButton.disabled = true;
     this.backButton.appendChild(document.createElement("img"));
-    this.topStatusBar.appendChild(this.backButton);
+
+    // FIXME: append the back button element to the top status bar when it is implemented.
+    // this.topStatusBar.appendChild(this.backButton);
 
     this.forwardButton = document.createElement("button");
     this.forwardButton.className = "status-bar-item";
@@ -48,7 +50,9 @@ WebInspector.ScriptsPanel = function()
     this.forwardButton.title = WebInspector.UIString("Show the next script resource.");
     this.forwardButton.disabled = true;
     this.forwardButton.appendChild(document.createElement("img"));
-    this.topStatusBar.appendChild(this.forwardButton);
+
+    // FIXME: append the forward button element to the top status bar when it is implemented.
+    // this.topStatusBar.appendChild(this.forwardButton);
 
     this.filesSelectElement = document.createElement("select");
     this.filesSelectElement.className = "status-bar-item";
@@ -59,7 +63,9 @@ WebInspector.ScriptsPanel = function()
     this.functionsSelectElement = document.createElement("select");
     this.functionsSelectElement.className = "status-bar-item";
     this.functionsSelectElement.id = "scripts-functions";
-    this.topStatusBar.appendChild(this.functionsSelectElement);
+
+    // FIXME: append the functions select element to the top status bar when it is implemented.
+    // this.topStatusBar.appendChild(this.functionsSelectElement);
 
     this.sidebarButtonsElement = document.createElement("div");
     this.sidebarButtonsElement.id = "scripts-sidebar-buttons";
@@ -127,6 +133,9 @@ WebInspector.ScriptsPanel = function()
 
     for (var pane in this.sidebarPanes)
         this.sidebarElement.appendChild(this.sidebarPanes[pane].element);
+
+    // FIXME: remove the following line of code when the Breakpoints pane has content.
+    this.sidebarElement.removeChild(this.sidebarPanes.breakpoints.element);
 
     this.sidebarPanes.callstack.expanded = true;
     this.sidebarPanes.callstack.addEventListener("call frame selected", this._callFrameSelected, this);
