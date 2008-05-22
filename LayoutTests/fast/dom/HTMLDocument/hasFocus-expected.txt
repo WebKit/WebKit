@@ -11,3 +11,7 @@ Blur the window
 Main document.hasFocus() should be false : PASS
 Sub-frame document.hasFocus() should be false : PASS
 
+Focus the window again
+Main document.hasFocus() should be true : PASS
+Sub-frame document.hasFocus() should be false : PASS
+

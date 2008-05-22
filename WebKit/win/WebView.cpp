@@ -2714,6 +2714,13 @@ void WebView::windowReceivedMessage(HWND, UINT message, WPARAM wParam, LPARAM)
 
 void WebView::updateActiveStateSoon() const
 {
+    // This function is called while processing the WM_NCACTIVATE message.
+    // While processing WM_NCACTIVATE when we are being deactivated, GetActiveWindow() will
+    // still return our window. If we were to call updateActiveState() in that case, we would
+    // wrongly think that we are still the active window. To work around this, we update our
+    // active state after a 0-delay timer fires, at which point GetActiveWindow() will return
+    // the newly-activated window.
+
     SetTimer(m_viewWindow, UpdateActiveStateTimer, 0, 0);
 }
 

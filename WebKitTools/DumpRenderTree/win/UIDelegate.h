@@ -59,10 +59,10 @@ public:
         /* [in] */ IWebView *sender);
 
     virtual HRESULT STDMETHODCALLTYPE webViewFocus( 
-        /* [in] */ IWebView *sender) { return E_NOTIMPL; }
+        /* [in] */ IWebView *sender);
 
     virtual HRESULT STDMETHODCALLTYPE webViewUnfocus( 
-        /* [in] */ IWebView *sender) { return E_NOTIMPL; }
+        /* [in] */ IWebView *sender);
 
     virtual HRESULT STDMETHODCALLTYPE webViewFirstResponder( 
         /* [in] */ IWebView *sender,

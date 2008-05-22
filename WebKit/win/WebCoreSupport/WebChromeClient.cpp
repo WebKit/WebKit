@@ -102,6 +102,8 @@ void WebChromeClient::focus()
         uiDelegate->webViewFocus(m_webView);
         uiDelegate->Release();
     }
+    // Normally this would happen on a timer, but JS might need to know this earlier, so we'll update here.
+    m_webView->updateActiveState();
 }
 
 void WebChromeClient::unfocus()
@@ -111,6 +113,8 @@ void WebChromeClient::unfocus()
         uiDelegate->webViewUnfocus(m_webView);
         uiDelegate->Release();
     }
+    // Normally this would happen on a timer, but JS might need to know this earlier, so we'll update here.
+    m_webView->updateActiveState();
 }
 
 bool WebChromeClient::canTakeFocus(FocusDirection direction)

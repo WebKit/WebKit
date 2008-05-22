@@ -1,3 +1,13 @@
+2008-05-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        Enhanced and enabled test for <rdar://problem/5787733> fast/dom/HTMLDocument/hasFocus.html fails on Windows
+        
+        * fast/dom/HTMLDocument/hasFocus-expected.txt:
+        * fast/dom/HTMLDocument/hasFocus.html:
+        * platform/win/Skipped:
+
 2008-05-21  Sam Weinig  <sam@webkit.org>
 
         Review by Mark Rowe.

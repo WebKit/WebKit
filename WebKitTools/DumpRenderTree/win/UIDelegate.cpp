@@ -379,13 +379,29 @@ HRESULT STDMETHODCALLTYPE UIDelegate::createWebViewWithRequest(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::webViewClose( 
+HRESULT STDMETHODCALLTYPE UIDelegate::webViewClose(
         /* [in] */ IWebView *sender)
 {
     HWND hostWindow;
     sender->hostWindow(reinterpret_cast<OLE_HANDLE*>(&hostWindow));
     DestroyWindow(hostWindow);
     return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::webViewFocus( 
+        /* [in] */ IWebView *sender)
+{
+    HWND hostWindow;
+    sender->hostWindow(reinterpret_cast<OLE_HANDLE*>(&hostWindow));
+    SetForegroundWindow(hostWindow);
+    return S_OK; 
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::webViewUnfocus( 
+        /* [in] */ IWebView *sender)
+{
+    SetForegroundWindow(GetDesktopWindow());
+    return S_OK; 
 }
 
 HRESULT STDMETHODCALLTYPE UIDelegate::webViewPainted( 

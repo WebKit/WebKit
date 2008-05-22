@@ -31,6 +31,10 @@
                 window.blur();
                 checkFocus(false, false);
                 
+                log("\nFocus the window again");
+                window.focus();
+                checkFocus(true, false);
+                
                 setTimeout(doneHandler, 1);
             }
             function checkFocus(expectedMain, expectedSub)

@@ -311,9 +311,6 @@ fast/canvas/canvas-getImageData.html
 # <rdar://problem/5787717> REGRESSION: editing/pasteboard/5478250.html fails on Windows
 editing/pasteboard/5478250.html
 
-# <rdar://problem/5787733> REGRESSION: fast/dom/HTMLDocument/hasFocus.html fails on Windows
-fast/dom/HTMLDocument/hasFocus.html
-
 #<rdar://problem/5787743> REGRESSION: Crash at WTF::Collator::CreateCollator() running fast/js/kde/StringObject.html on Windows
 fast/js/kde/StringObject.html
 

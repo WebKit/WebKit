@@ -1,3 +1,15 @@
+2008-05-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        WebKit part of for <rdar://problem/5787733> fast/dom/HTMLDocument/hasFocus.html fails on Windows
+        
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::focus): Call updateActiveState directly.
+         Normally this would happen on a timer, but JS might need to know this earlier, so we'll update here.        
+        (WebChromeClient::unfocus): ditto.
+        * WebView.cpp: (WebView::updateActiveStateSoon): Added comment about why we use a timer for this.
+
 === End merge of squirrelfish ===
 
 2008-05-13  Geoffrey Garen  <ggaren@apple.com>
