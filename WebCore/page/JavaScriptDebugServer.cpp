@@ -265,10 +265,6 @@ static Page* toPage(JSGlobalObject* globalObject)
     return frame ? frame->page() : 0;
 }
 
-#ifdef DEBUG_DEBUGGER_CALLBACKS
-static unsigned s_callDepth = 0;
-#endif
-
 void JavaScriptDebugServer::sourceParsed(ExecState* exec, int sourceID, const UString& sourceURL, const SourceProvider& source, int startingLineNumber, int errorLine, const UString& errorMessage)
 {
     if (m_callingListeners)
@@ -283,13 +279,6 @@ void JavaScriptDebugServer::sourceParsed(ExecState* exec, int sourceID, const US
     ASSERT(hasListeners());
 
     bool isError = errorLine != -1;
-
-#ifdef DEBUG_DEBUGGER_CALLBACKS
-    printf("source: ");
-    for(unsigned i = 0; i < s_callDepth; ++i)
-        printf(" ");
-    printf("%d: '%s' exec: %p (caller: %p) source: %d\n", s_callDepth, sourceURL.ascii(), exec, exec->callingExecState(), sourceID);
-#endif
 
     if (!m_listeners.isEmpty()) {
         if (isError)

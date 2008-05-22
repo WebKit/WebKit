@@ -1,3 +1,11 @@
+2008-05-21  Timothy Hatcher  <timothy@apple.com>
+
+        Remove the rest of the debug code inside DEBUG_DEBUGGER_CALLBACKS
+        since the parts the remain aren't useful.
+
+        * page/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::sourceParsed):
+
 2008-05-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Anders.
