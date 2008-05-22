@@ -362,8 +362,6 @@ all : \
     JSJavaScriptCallFrame.h \
     \
     JSHTMLInputElementBaseTable.cpp \
-    JSHTMLElementWrapperFactory.cpp \
-    JSSVGElementWrapperFactory.cpp \
     \
     CSSGrammar.cpp \
     CSSPropertyNames.h \
@@ -511,13 +509,13 @@ ifdef HTML_FLAGS
 
 HTMLNames.cpp : dom/make_names.pl html/HTMLTagNames.in html/HTMLAttributeNames.in
 	perl $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --extraDefines "$(HTML_FLAGS)" \
-            --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --wrapperFactory --attrsNullNamespace --output .
+            --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --attrsNullNamespace --output .
 
 else
 
 HTMLNames.cpp : dom/make_names.pl html/HTMLTagNames.in html/HTMLAttributeNames.in
 	perl $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in \
-            --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --wrapperFactory --attrsNullNamespace --output .
+            --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --attrsNullNamespace --output .
 
 endif
 
@@ -564,12 +562,12 @@ ifdef SVG_FLAGS
 
 SVGElementFactory.cpp SVGNames.cpp : dom/make_names.pl svg/svgtags.in svg/svgattrs.in
 	perl $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(SVG_FLAGS)" \
-            --namespace SVG --guardFactoryWith "ENABLE(SVG)" --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --wrapperFactory --attrsNullNamespace --output .
+            --namespace SVG --guardFactoryWith "ENABLE(SVG)" --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output .
 else
 
 SVGElementFactory.cpp SVGNames.cpp : dom/make_names.pl svg/svgtags.in svg/svgattrs.in
 	perl $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in \
-            --namespace SVG --guardFactoryWith "ENABLE(SVG)" --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --wrapperFactory --attrsNullNamespace --output .
+            --namespace SVG --guardFactoryWith "ENABLE(SVG)" --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output .
 
 endif
 
