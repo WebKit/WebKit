@@ -146,18 +146,13 @@ WebInspector.ScriptsPanel = function()
     this.attachOverlayElement.id = "scripts-attach-overlay";
 
     var headerElement = document.createElement("h1");
-    headerElement.textContent = WebInspector.UIString("Debugging scripts requires you to attach the debugger.");
+    headerElement.textContent = WebInspector.UIString("Starting debugging will reload the inspected page.");
     this.attachOverlayElement.appendChild(headerElement);
 
-    var infoElement = document.createElement("span");
-    infoElement.textContent = WebInspector.UIString("Attaching will reload the inspected page.");
-    this.attachOverlayElement.appendChild(infoElement);
-
-    this.attachOverlayElement.appendChild(document.createElement("br"));
     this.attachOverlayElement.appendChild(document.createElement("br"));
 
     var attachButton = document.createElement("button");
-    attachButton.textContent = WebInspector.UIString("Attach Debugger");
+    attachButton.textContent = WebInspector.UIString("Start Debugging");
     attachButton.addEventListener("click", this._toggleDebugging.bind(this), false);
     this.attachOverlayElement.appendChild(attachButton);
 
@@ -545,10 +540,10 @@ WebInspector.ScriptsPanel.prototype = {
     _updatePauseOnExceptionsButton: function()
     {
         if (InspectorController.pauseOnExceptions()) {
-            this.pauseOnExceptionButtons.title = WebInspector.UIString("Pause on exceptions.");
+            this.pauseOnExceptionButtons.title = WebInspector.UIString("Don't pause on exceptions.");
             this.pauseOnExceptionButtons.addStyleClass("toggled-on");
         } else {
-            this.pauseOnExceptionButtons.title = WebInspector.UIString("Don't pause on exceptions.");
+            this.pauseOnExceptionButtons.title = WebInspector.UIString("Pause on exceptions.");
             this.pauseOnExceptionButtons.removeStyleClass("toggled-on");
         }
     },

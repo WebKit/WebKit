@@ -1,5 +1,19 @@
 2008-05-22  Timothy Hatcher  <timothy@apple.com>
 
+        Re-word the "Attach Debugger" overlay to never say "Attach". The new
+        wording is "Start Debugging". This makes the overlay consistent with
+        other wording used for starting the debugger. Also fixes the tooltips
+        for the Pause on Exceptions button.
+
+        Reviewed by Adam Roben and Dan Bernstein.
+
+        * English.lproj/localizedStrings.js: Adds new strings.
+        * page/inspector/ScriptsPanel.js: Changes the wording. Flips the
+        tooltips for the Pause on Exceptions buttons so the tooltip says
+        what will happen when the button is pressed.
+
+2008-05-22  Timothy Hatcher  <timothy@apple.com>
+
         Remove some non-functional elements from the Scripts panel
         so they don't confuse users why they aren't working.
 
