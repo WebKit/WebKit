@@ -127,7 +127,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
     
     // If the browser supports the CoreGraphics drawing model, enable it.
-    browser->setvalue(instance, NPNVpluginDrawingModel, (void *)NPDrawingModelCoreGraphics);
+    browser->setvalue(instance, NPPVpluginDrawingModel, (void *)NPDrawingModelCoreGraphics);
 
     // If the browser supports the Cocoa event model, enable it.
     NPBool supportsCocoa;
@@ -137,9 +137,8 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
     if (!supportsCocoa)
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
     
-    browser->setvalue(instance, NPNVpluginEventModel, (void *)NPEventModelCocoa);
+    browser->setvalue(instance, NPPVpluginEventModel, (void *)NPEventModelCocoa);
     
-   
     return NPERR_NO_ERROR;
 }
 

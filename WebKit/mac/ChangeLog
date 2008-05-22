@@ -1,3 +1,14 @@
+2008-05-22  Josh Aas  <joshmoz@gmail.com>
+
+        Reviewed by Anders.
+
+        <rdar://problem/5956429> 
+        https://bugs.webkit.org/show_bug.cgi?id=19192
+        remove NPNVpluginEventModel, fix example plugin
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView getVariable:value:]):
+
 2008-05-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej.

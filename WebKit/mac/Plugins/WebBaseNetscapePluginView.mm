@@ -2562,12 +2562,6 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
             return NPERR_NO_ERROR;
         }
         
-        case NPNVpluginEventModel:
-        {
-            *(NPEventModel *)value = eventModel;
-            return NPERR_NO_ERROR;
-        }
-        
 #ifndef NP_NO_CARBON
         case NPNVsupportsCarbonBool:
         {
