@@ -1,5 +1,12 @@
 2008-05-22  Kevin McCullough  <kmccullough@apple.com>
 
+        Build fix.
+
+        * VM/Machine.cpp:
+        (KJS::callEval):
+
+2008-05-22  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Sam.
 
         <rdar://problem/5951561> Turn on JavaScript Profiler
