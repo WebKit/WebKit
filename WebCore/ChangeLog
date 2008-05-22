@@ -1,3 +1,11 @@
+2008-05-22  Adam Roben  <aroben@apple.com>
+
+        Remove some dead code from ScriptsPanel.js
+
+        Reviewed by Mark Rowe.
+
+        * page/inspector/ScriptsPanel.js:
+
 2008-05-21  Adam Roben  <aroben@apple.com>
 
         Fix Bug 19178: Inspector should support sorting resources by latency

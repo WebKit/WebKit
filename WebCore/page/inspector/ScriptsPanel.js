@@ -453,31 +453,6 @@ WebInspector.ScriptsPanel.prototype = {
             this._showScriptOrResource(option.representedObject);
     },
 
-    _removeScriptFromFilesMenu: function(script)
-    {
-        // This function assumes it is called before removeScript is called on the resource.
-        if (script.resource && script.resource.scripts.length > 1)
-            return; // The resource has more than one script, so keep the resource in the menu.
-
-        var select = this.filesSelectElement;
-        var options = select.options;
-        for (var i = 0; i < options.length; ++i) {
-            if (option.representedObject !== script.resource && option.representedObject !== script)
-                continue;
-
-            if (select.selectedIndex === i) {
-                // Pick the next selectedIndex. If we're at the end of the list, loop back to beginning.
-                var nextSelectedIndex = ((select.selectedIndex + 1) >= select.options.length ? 0 : select.selectedIndex);
-            }
-
-            // Remove the option from the select
-            select.options[select.selectedIndex] = null;
-
-            if (nextSelectedIndex)
-                select.selectedIndex = nextSelectedIndex;
-        }
-    },
-
     _clearCurrentExecutionLine: function()
     {
         if (this._executionSourceFrame)
