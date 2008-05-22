@@ -84,6 +84,14 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     return defaultText;
 }
 
+- (BOOL)webView:(WebView *)c runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
+{
+    if (!done)
+        printf("CONFIRM NAVIGATION: %s\n", [message UTF8String]);
+    return YES;
+}
+
+
 - (void)webView:(WebView *)sender dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag forView:(NSView *)view
 {
      assert(!draggingInfo);

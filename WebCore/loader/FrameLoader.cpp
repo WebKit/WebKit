@@ -588,6 +588,8 @@ void FrameLoader::stopLoading(bool sendUnload)
                 m_wasUnloadEventEmitted = true;
                 if (m_frame->eventHandler()->pendingFrameUnloadEventCount())
                     m_frame->eventHandler()->clearPendingFrameUnloadEventCount();
+                if (m_frame->eventHandler()->pendingFrameBeforeUnloadEventCount())
+                    m_frame->eventHandler()->clearPendingFrameBeforeUnloadEventCount();
             }
         }
         if (m_frame->document() && !m_frame->document()->inPageCache())

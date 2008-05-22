@@ -1804,9 +1804,6 @@ bool Frame::shouldClose()
     RefPtr<BeforeUnloadEvent> beforeUnloadEvent = new BeforeUnloadEvent;
     beforeUnloadEvent->setTarget(doc);
     doc->handleWindowEvent(beforeUnloadEvent.get(), false);
-    
-    if (eventHandler()->pendingFrameBeforeUnloadEventCount())
-        eventHandler()->clearPendingFrameBeforeUnloadEventCount();
 
     if (!beforeUnloadEvent->defaultPrevented() && doc)
         doc->defaultEventHandler(beforeUnloadEvent.get());

@@ -1,3 +1,16 @@
+2008-05-22  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Dan.
+
+        Fix <rdar://problem/5952405>.  The unbeforeunload count cannot be cleared when it is dispatched because it is possible to be called again.  Clear it after the unload event is dispatched.
+
+        Test: fast/events/onunload-clears-onbeforeunload.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        * page/Frame.cpp:
+        (WebCore::Frame::shouldClose):
+
 2008-05-22  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Oliver.

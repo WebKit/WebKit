@@ -321,6 +321,18 @@ HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptTextInputPanelWithPrompt(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE UIDelegate::runBeforeUnloadConfirmPanelWithMessage( 
+    /* [in] */ IWebView* /*sender*/,
+    /* [in] */ BSTR /*message*/,
+    /* [in] */ IWebFrame* /*initiatedByFrame*/,
+    /* [retval][out] */ BOOL* result)
+{
+    if (!result)
+        return E_POINTER;
+    *result = TRUE;
+    return E_NOTIMPL;
+}
+
 HRESULT STDMETHODCALLTYPE UIDelegate::webViewAddMessageToConsole( 
     /* [in] */ IWebView* sender,
     /* [in] */ BSTR message,

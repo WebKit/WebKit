@@ -1,3 +1,14 @@
+2008-05-22  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Dan.
+
+        implement the beforeUnload UI delegate so that DRT will dispatch beforeunload events.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:]):
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (SearchableWebViewHost::runBeforeUnloadConfirmPanelWithMessage):
+
 2008-05-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

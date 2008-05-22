@@ -1,0 +1,37 @@
+<html>
+
+<head>
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+window.addEventListener('beforeunload', before, false);
+window.onunload = unload; 
+
+function before()
+{
+    alert( "before unload");
+}
+
+function unload()
+{
+    alert( "unload" );
+    window.removeEventListener('beforeunload', before, false);
+}
+
+function load()
+{
+    location = "data:text/html,If you didn't hit an assert you PASS.<script>if (window.layoutTestController) layoutTestController.notifyDone(); </" + "script>";
+}
+
+</script>
+</head>
+
+<body onload="load()">
+start document
+</body>
+
+</html>

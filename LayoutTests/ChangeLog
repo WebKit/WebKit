@@ -1,3 +1,12 @@
+2008-05-22  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Dan.
+
+        add test to test for beforeunload event handlers being removed after they have been fired.
+
+        * fast/events/onunload-clears-onbeforeunload-expected.txt: Added.
+        * fast/events/onunload-clears-onbeforeunload.html: Added.
+
 2008-05-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
