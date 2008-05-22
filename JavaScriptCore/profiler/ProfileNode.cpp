@@ -36,11 +36,12 @@
 
 namespace KJS {
 
-static const char* NonJSExecution = "(non-JavaScript)";
+static const char* NonJSExecution = "(idle)";
 
-ProfileNode::ProfileNode(const CallIdentifier& callIdentifier, ProfileNode* headNode)
+ProfileNode::ProfileNode(const CallIdentifier& callIdentifier, ProfileNode* headNode, ProfileNode* parentNode)
     : m_callIdentifier(callIdentifier)
     , m_headNode(headNode)
+    , m_parentNode(parentNode)
     , m_actualTotalTime (0.0)
     , m_visibleTotalTime (0.0)
     , m_actualSelfTime (0.0)
@@ -60,49 +61,30 @@ void ProfileNode::willExecute()
         m_startTime = getCurrentUTCTimeWithMicroseconds();
 }
 
-// We start at the end of stackNames and work our way forwards since the names are in 
-// the reverse order of how the ProfileNode tree is created (e.g. the leaf node is at
-// index 0 and the top of the stack is at index stackNames.size() - 1)
-void ProfileNode::didExecute(const Vector<CallIdentifier>& stackNames, unsigned int stackIndex)
+ProfileNode* ProfileNode::didExecute()
 {
-    for (size_t i = 0; i < m_children.size(); ++i) {
-        if (m_children[i]->callIdentifier() == stackNames[stackIndex]) {
-            if (stackIndex)   // We are not at the bottom of the stack yet
-                m_children[i]->didExecute(stackNames, stackIndex - 1);
-            else    // This is the child we were looking for
-                m_children[i]->endAndRecordCall();
-            return;
+    endAndRecordCall();
+    return m_parentNode;
+}
+
+ProfileNode* ProfileNode::addOrStartChild(const CallIdentifier& callIdentifier)
+{
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild) {
+        if ((*currentChild)->callIdentifier() == callIdentifier) {
+            (*currentChild)->willExecute();
+            return (*currentChild).get();
         }
     }
-}
 
-void ProfileNode::addChild(PassRefPtr<ProfileNode> prpChild)
-{
-    ASSERT(prpChild);
-
-    RefPtr<ProfileNode> child = prpChild;
-    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild) {
-        if ((*currentChild)->callIdentifier() == child->callIdentifier())
-            return;
-    }
-
-    m_children.append(child.release());
-}
-
-ProfileNode* ProfileNode::findChild(const CallIdentifier& functionName)
-{
-    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild) {
-        if ((*currentChild)->callIdentifier() == functionName)
-            return (*currentChild).get();
-    }
-
-    return 0;
+    m_children.append(ProfileNode::create(callIdentifier, m_headNode, this));
+    return m_children.last().get();
 }
 
 void ProfileNode::stopProfiling()
 {
     if (m_startTime)
         endAndRecordCall();
+
     m_visibleTotalTime = m_actualTotalTime;
 
     ASSERT(m_actualSelfTime == 0.0);
@@ -118,13 +100,12 @@ void ProfileNode::stopProfiling()
     m_actualSelfTime = m_actualTotalTime - m_actualSelfTime;
 
     if (m_headNode == this && m_actualSelfTime) {
-        RefPtr<ProfileNode> idleNode = ProfileNode::create(CallIdentifier(NonJSExecution, 0, 0), this);
+        ProfileNode* idleNode = addOrStartChild(CallIdentifier(NonJSExecution, 0, 0));
 
         idleNode->setTotalTime(m_actualSelfTime);
         idleNode->setSelfTime(m_actualSelfTime);
         idleNode->setNumberOfCalls(0);
 
-        addChild(idleNode.release());
         m_actualSelfTime = 0.0;
     }
 

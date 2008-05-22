@@ -1,3 +1,49 @@
+2008-05-21  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Maciej and Geoff.
+
+        <rdar://problem/5951561> Turn on JavaScript Profiler
+        -As part of the effort to turn on the profiler it would be helpful if it
+        did not need ExecStates to represent the stack location of the currently
+        executing statement.
+        -We now create each node as necessary with a reference to the current
+        node and each node knows its parent so that the tree can be made without
+        the entire stack.
+
+        * profiler/Profile.cpp:
+        (KJS::Profile::Profile): The current node starts at the head.
+        (KJS::Profile::stopProfiling): The current node is cleared when profiling
+        stops.
+        (KJS::Profile::willExecute): The current node either adds a new child or
+        starts and returns a reference to an already existing child if the call
+        ID that is requested already exists.
+        (KJS::Profile::didExecute): The current node finishes and returns its
+        parent.
+        * profiler/Profile.h: Use a single callIdentifier instead of a vector
+        since we no longer use the whole stack.
+        * profiler/ProfileNode.cpp: Now profile nodes keep a reference to their
+        parent.
+        (KJS::ProfileNode::ProfileNode): Initialize the parent.
+        (KJS::ProfileNode::didExecute): Record the time and return the parent.
+        (KJS::ProfileNode::addOrStartChild): If the given callIdentifier is
+        already a child, start it and return it, otherwise create a new one and
+        return that.
+        (KJS::ProfileNode::stopProfiling): Same logic, just use the new function.
+        * profiler/ProfileNode.h: Utilize the parent.
+        (KJS::ProfileNode::create):
+        (KJS::ProfileNode::parent):
+        * profiler/Profiler.cpp: 
+        (KJS::Profiler::startProfiling): Here is the only place where the
+        ExecState is used to figure out where in the stack the profiler is
+        currently profiling.
+        (KJS::dispatchFunctionToProfiles): Only send one CallIdentifier instead
+        of a vector of them.
+        (KJS::Profiler::willExecute): Ditto.
+        (KJS::Profiler::didExecute): Ditto.
+        (KJS::createCallIdentifier): Create only one CallIdentifier.
+        (KJS::createCallIdentifierFromFunctionImp): Ditto.
+        * profiler/Profiler.h:
+
 2008-05-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

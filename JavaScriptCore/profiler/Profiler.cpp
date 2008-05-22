@@ -40,13 +40,13 @@
 namespace KJS {
 
 static Profiler* sharedProfiler = 0;
-static const char* GlobalCodeExecution = "(global code)";
+static const char* GlobalCodeExecution = "(program)";
 static const char* AnonymousFunction = "(anonymous function)";
 
 static void getCallIdentifiers(ExecState*, Vector<CallIdentifier>& callIdentifiers);
-static void getCallIdentifiers(ExecState*, JSObject*, Vector<CallIdentifier>& callIdentifiers);
-static void getCallIdentifiers(ExecState*, const UString& sourceURL, int startingLineNumber, Vector<CallIdentifier>& callIdentifiers);
-static void getCallIdentifierFromFunctionImp(FunctionImp*, Vector<CallIdentifier>& callIdentifiers);
+static CallIdentifier createCallIdentifier(JSObject*);
+static CallIdentifier createCallIdentifier(const UString& sourceURL, int startingLineNumber);
+static CallIdentifier createCallIdentifierFromFunctionImp(FunctionImp*);
 
 Profiler* Profiler::profiler()
 {
@@ -81,7 +81,8 @@ void Profiler::startProfiling(ExecState* exec, const UString& title)
     // Update the profile with the current call identifiers that started the profiling.
     Vector<CallIdentifier> callIdentifiers;
     getCallIdentifiers(exec, callIdentifiers);
-    profile->willExecute(callIdentifiers);
+    for (unsigned i = 0; i< callIdentifiers.size(); ++i)
+        profile->willExecute(callIdentifiers[i]);
 }
 
 PassRefPtr<Profile> Profiler::stopProfiling(ExecState* exec, const UString& title)
@@ -112,11 +113,11 @@ static inline bool shouldExcludeFunction(ExecState* exec, JSObject* calledFuncti
     return false;
 }
 
-static inline void dispatchFunctionToProfiles(const Vector<RefPtr<Profile> >& profiles, Profile::ProfileFunction function, const Vector<CallIdentifier>& callIdentifiers, unsigned currentPageGroupIdentifier)
+static inline void dispatchFunctionToProfiles(const Vector<RefPtr<Profile> >& profiles, Profile::ProfileFunction function, const CallIdentifier& callIdentifier, unsigned currentPageGroupIdentifier)
 {
     for (size_t i = 0; i < profiles.size(); ++i)
         if (profiles[i]->pageGroupIdentifier() == currentPageGroupIdentifier)
-            (profiles[i].get()->*function)(callIdentifiers);
+            (profiles[i].get()->*function)(callIdentifier);
 }
 
 void Profiler::willExecute(ExecState* exec, JSObject* calledFunction)
@@ -127,10 +128,7 @@ void Profiler::willExecute(ExecState* exec, JSObject* calledFunction)
     if (shouldExcludeFunction(exec, calledFunction))
         return;
 
-    Vector<CallIdentifier> callIdentifiers;
-    getCallIdentifiers(exec, calledFunction, callIdentifiers);
-
-    dispatchFunctionToProfiles(m_currentProfiles, &Profile::willExecute, callIdentifiers, exec->lexicalGlobalObject()->pageGroupIdentifier());
+    dispatchFunctionToProfiles(m_currentProfiles, &Profile::willExecute, createCallIdentifier(calledFunction), exec->lexicalGlobalObject()->pageGroupIdentifier());
 }
 
 void Profiler::willExecute(ExecState* exec, const UString& sourceURL, int startingLineNumber)
@@ -138,10 +136,9 @@ void Profiler::willExecute(ExecState* exec, const UString& sourceURL, int starti
     if (m_currentProfiles.isEmpty())
         return;
 
-    Vector<CallIdentifier> callIdentifiers;
-    getCallIdentifiers(exec, sourceURL, startingLineNumber, callIdentifiers);
+    CallIdentifier callIdentifier = createCallIdentifier(sourceURL, startingLineNumber);
 
-    dispatchFunctionToProfiles(m_currentProfiles, &Profile::willExecute, callIdentifiers, exec->lexicalGlobalObject()->pageGroupIdentifier());
+    dispatchFunctionToProfiles(m_currentProfiles, &Profile::willExecute, callIdentifier, exec->lexicalGlobalObject()->pageGroupIdentifier());
 }
 
 void Profiler::didExecute(ExecState* exec, JSObject* calledFunction)
@@ -152,10 +149,7 @@ void Profiler::didExecute(ExecState* exec, JSObject* calledFunction)
     if (shouldExcludeFunction(exec, calledFunction))
         return;
 
-    Vector<CallIdentifier> callIdentifiers;
-    getCallIdentifiers(exec, calledFunction, callIdentifiers);
-
-    dispatchFunctionToProfiles(m_currentProfiles, &Profile::didExecute, callIdentifiers, exec->lexicalGlobalObject()->pageGroupIdentifier());
+    dispatchFunctionToProfiles(m_currentProfiles, &Profile::didExecute, createCallIdentifier(calledFunction), exec->lexicalGlobalObject()->pageGroupIdentifier());
 }
 
 void Profiler::didExecute(ExecState* exec, const UString& sourceURL, int startingLineNumber)
@@ -163,10 +157,7 @@ void Profiler::didExecute(ExecState* exec, const UString& sourceURL, int startin
     if (m_currentProfiles.isEmpty())
         return;
 
-    Vector<CallIdentifier> callIdentifiers;
-    getCallIdentifiers(exec, sourceURL, startingLineNumber, callIdentifiers);
-
-    dispatchFunctionToProfiles(m_currentProfiles, &Profile::didExecute, callIdentifiers, exec->lexicalGlobalObject()->pageGroupIdentifier());
+    dispatchFunctionToProfiles(m_currentProfiles, &Profile::didExecute, createCallIdentifier(sourceURL, startingLineNumber), exec->lexicalGlobalObject()->pageGroupIdentifier());
 }
 
 void getCallIdentifiers(ExecState*, Vector<CallIdentifier>&)
@@ -182,28 +173,29 @@ void getCallIdentifiers(ExecState*, Vector<CallIdentifier>&)
 #endif
 }
 
-void getCallIdentifiers(ExecState* exec, JSObject* calledFunction, Vector<CallIdentifier>& callIdentifiers)
+CallIdentifier createCallIdentifier(JSObject* calledFunction)
 {
     if (calledFunction->inherits(&FunctionImp::info))
-        getCallIdentifierFromFunctionImp(static_cast<FunctionImp*>(calledFunction), callIdentifiers);
-    else if (calledFunction->inherits(&InternalFunctionImp::info))
-        callIdentifiers.append(CallIdentifier(static_cast<InternalFunctionImp*>(calledFunction)->functionName().ustring(), "", 0) );
-    getCallIdentifiers(exec, callIdentifiers);
+        return createCallIdentifierFromFunctionImp(static_cast<FunctionImp*>(calledFunction));
+    if (calledFunction->inherits(&InternalFunctionImp::info))
+        return CallIdentifier(static_cast<InternalFunctionImp*>(calledFunction)->functionName().ustring(), "", 0);
+
+    ASSERT_NOT_REACHED();
+    return CallIdentifier("", 0, 0);
 }
 
-void getCallIdentifiers(ExecState* exec, const UString& sourceURL, int startingLineNumber, Vector<CallIdentifier>& callIdentifiers)
+CallIdentifier createCallIdentifier(const UString& sourceURL, int startingLineNumber)
 {
-    callIdentifiers.append(CallIdentifier(GlobalCodeExecution, sourceURL, (startingLineNumber + 1)) );
-    getCallIdentifiers(exec, callIdentifiers);
+    return CallIdentifier(GlobalCodeExecution, sourceURL, (startingLineNumber + 1));
 }
 
-void getCallIdentifierFromFunctionImp(FunctionImp* functionImp, Vector<CallIdentifier>& callIdentifiers)
+CallIdentifier createCallIdentifierFromFunctionImp(FunctionImp* functionImp)
 {
     UString name = functionImp->functionName().ustring();
     if (name.isEmpty())
         name = AnonymousFunction;
 
-    callIdentifiers.append(CallIdentifier(name, functionImp->body->sourceURL(), functionImp->body->lineNo()) );
+    return CallIdentifier(name, functionImp->body->sourceURL(), functionImp->body->lineNo());
 }
 
 }   // namespace KJS

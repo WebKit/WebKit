@@ -55,17 +55,18 @@ namespace KJS {
 
     class ProfileNode : public RefCounted<ProfileNode> {
     public:
-        static PassRefPtr<ProfileNode> create(const CallIdentifier& callIdentifier, ProfileNode* headNode) { return adoptRef(new ProfileNode(callIdentifier, headNode)); }
+        static PassRefPtr<ProfileNode> create(const CallIdentifier& callIdentifier, ProfileNode* headNode, ProfileNode* parentNode) {
+            return adoptRef(new ProfileNode(callIdentifier, headNode, parentNode)); }
 
         void willExecute();
-        void didExecute(const Vector<CallIdentifier>& callIdentifiers, unsigned int stackIndex);
+        ProfileNode* didExecute();
 
-        void addChild(PassRefPtr<ProfileNode> prpChild);
-        ProfileNode* findChild(const CallIdentifier& functionName);
+        ProfileNode* addOrStartChild(const CallIdentifier&);
 
         void stopProfiling();
 
         const CallIdentifier& callIdentifier() const { return m_callIdentifier; }
+        ProfileNode* parent() const { return m_parentNode; }
         UString functionName() const { return m_callIdentifier.name; }
         UString url() const { return m_callIdentifier.url; }
         unsigned lineNumber() const { return m_callIdentifier.lineNumber; }
@@ -102,10 +103,11 @@ namespace KJS {
         double debugPrintDataSampleStyle(int indentLevel, FunctionCallHashCount&) const;
 #endif
     private:
-        ProfileNode(const CallIdentifier& callIdentifier, ProfileNode* headNode);
+        ProfileNode(const CallIdentifier& callIdentifier, ProfileNode* headNode, ProfileNode* parentNode);
 
         CallIdentifier m_callIdentifier;
         ProfileNode* m_headNode;
+        ProfileNode* m_parentNode;
 
         double m_startTime;
         double m_actualTotalTime;

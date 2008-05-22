@@ -42,42 +42,26 @@ Profile::Profile(const UString& title, ExecState* originatingGlobalExec, unsigne
 {
     // FIXME: When multi-threading is supported this will be a vector and calls
     // into the profiler will need to know which thread it is executing on.
-    m_callTree = ProfileNode::create(CallIdentifier("Thread_1", 0, 0), 0);
+    m_callTree = ProfileNode::create(CallIdentifier("Thread_1", 0, 0), 0, 0);
+    m_currentNode = m_callTree;
 }
 
 void Profile::stopProfiling()
 {
+    m_currentNode = 0;
     m_originatingGlobalExec = 0;
     m_callTree->stopProfiling();
 }
 
-// The callIdentifiers are in order of bottom of the stack to top of the stack so we iterate it backwards.
-void Profile::willExecute(const Vector<CallIdentifier>& callIdentifiers)
+void Profile::willExecute(const CallIdentifier& callIdentifier)
 {
-    RefPtr<ProfileNode> callTreeInsertionPoint;
-    RefPtr<ProfileNode> foundNameInTree = m_callTree;
-
-    int i = callIdentifiers.size();
-    while (foundNameInTree && i) {
-        callTreeInsertionPoint = foundNameInTree;
-        foundNameInTree = callTreeInsertionPoint->findChild(callIdentifiers[--i]);
-    }
-
-    if (!foundNameInTree) {   // Insert remains of the stack into the call tree.
-        for (RefPtr<ProfileNode> next; i >= 0; callTreeInsertionPoint = next) {
-            next = ProfileNode::create(callIdentifiers[i--], m_callTree.get());
-            callTreeInsertionPoint->addChild(next);
-        }
-    } else    // We are calling a function that is already in the call tree.
-        foundNameInTree->willExecute();
+    m_currentNode = m_currentNode->addOrStartChild(callIdentifier);
 }
 
-void Profile::didExecute(const Vector<CallIdentifier>& callIdentifiers)
+void Profile::didExecute(const CallIdentifier&)
 {
-    if (!callIdentifiers.size())
-        return;
 
-    m_callTree->didExecute(callIdentifiers, callIdentifiers.size() - 1);
+    m_currentNode = m_currentNode->didExecute();
 }
 
 #ifndef NDEBUG

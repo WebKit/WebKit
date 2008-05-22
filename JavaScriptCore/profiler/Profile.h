@@ -38,8 +38,8 @@ namespace KJS {
     public:
         static PassRefPtr<Profile> create(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier) { return adoptRef(new Profile(title, originatingGlobalExec, pageGroupIdentifier)); }
 
-        void willExecute(const Vector<CallIdentifier>& CallIdentifier);
-        void didExecute(const Vector<CallIdentifier>& CallIdentifier);
+        void willExecute(const CallIdentifier&);
+        void didExecute(const CallIdentifier&);
         void stopProfiling();
 
         const UString& title() const { return m_title; };
@@ -58,7 +58,7 @@ namespace KJS {
         void sortCallsAscending() { m_callTree->sortCallsAscending(); }
         void sortFunctionNameDescending() { m_callTree->sortFunctionNameDescending(); }
         void sortFunctionNameAscending() { m_callTree->sortFunctionNameAscending(); }
-        
+
         void focus(const ProfileNode* profileNode) { if (!profileNode) return; m_callTree->focus(profileNode->callIdentifier()); }
 
 #ifndef NDEBUG
@@ -66,7 +66,7 @@ namespace KJS {
         void debugPrintDataSampleStyle() const;
 #endif
 
-        typedef void (Profile::*ProfileFunction)(const Vector<CallIdentifier>& callIdentifiers);
+        typedef void (Profile::*ProfileFunction)(const CallIdentifier& callIdentifiers);
 
     private:
         Profile(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier);
@@ -75,6 +75,7 @@ namespace KJS {
         ExecState* m_originatingGlobalExec;
         unsigned m_pageGroupIdentifier;
         RefPtr<ProfileNode> m_callTree;
+        RefPtr<ProfileNode> m_currentNode;
     };
 
 } // namespace KJS
