@@ -59,7 +59,7 @@ class QtRuntimeObjectImp : public RuntimeObjectImp {
         }
 
         // Additions
-        virtual bool implementsConstruct() const {return implementsCall();}
+        virtual ConstructType getConstructData(ConstructData&);
         virtual JSObject* construct(ExecState* exec, const List& args);
     protected:
         void removeFromCache();
@@ -87,6 +87,25 @@ void QtRuntimeObjectImp::removeFromCache()
     QtInstance* key = cachedObjects.key(this);
     if (key)
         cachedObjects.remove(key);
+}
+
+ConstructType QtRuntimeObjectImp::getConstructData(ConstructData& constructData)
+{
+    CallData callData;
+    ConstructType type = ConstructTypeNone;
+    switch (getCallData(callData)) {
+    case CallTypeNone:
+        break;
+    case CallTypeNative:
+        type = ConstructTypeNative;
+        break;
+    case CallTypeJS:
+        type = ConstructTypeJS;
+        constructData.js.functionBody = callData.js.functionBody;
+        constructData.js.scopeChain = callData.js.scopeChain;
+        break;
+    }
+    return type;
 }
 
 JSObject* QtRuntimeObjectImp::construct(ExecState* exec, const List& args)
@@ -222,7 +241,7 @@ JSValue* QtInstance::invokeMethod(ExecState*, const MethodList&, const List&)
     return jsUndefined();
 }
 
-bool QtInstance::implementsCall() const
+CallType QtInstance::getCallData(CallData&)
 {
     // See if we have qscript_call
     if (m_defaultMethodIndex == -2) {
@@ -248,7 +267,7 @@ bool QtInstance::implementsCall() const
     }
 
     // typeof object that implements call == function
-    return (m_defaultMethodIndex >= 0);
+    return (m_defaultMethodIndex >= 0 ? CallTypeNative : CallTypeNone);
 }
 
 JSValue* QtInstance::invokeDefaultMethod(ExecState* exec, const List& args)
@@ -258,7 +277,8 @@ JSValue* QtInstance::invokeDefaultMethod(ExecState* exec, const List& args)
         return throwError(exec, GeneralError, "cannot call function of deleted QObject");
 
     // implementsCall will update our default method cache, if possible
-    if (implementsCall()) {
+    CallData d;
+    if (getCallData(d) != CallTypeNone) {
         if (!m_defaultMethod)
             m_defaultMethod = new QtRuntimeMetaMethod(exec, Identifier("[[Call]]"),this, m_defaultMethodIndex, QByteArray("qscript_call"), true);
 

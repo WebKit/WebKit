@@ -1,3 +1,13 @@
+2008-05-22  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Oliver.
+
+        Qt build fix.
+
+        * JavaScriptCore.pri: Added DebuggerCallFrame to the build.
+        * VM/LabelID.h: Include limits.h for UINT_MAX.
+        * wtf/VectorTraits.h: Include memory for std::auto_ptr.
+
 2008-05-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adam Roben.

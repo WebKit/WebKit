@@ -1,3 +1,20 @@
+2008-05-22  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Oliver.
+
+        Qt build fix.
+
+        * bindings/js/StringSourceProvider.h: Remove text at end of
+        preprocessor statement.
+        * bridge/qt/qt_instance.cpp:
+        (KJS::Bindings::QtRuntimeObjectImp::getConstructData): Replaced
+        implementsConstruct() with getConstructData().
+        (KJS::Bindings::QtInstance::getCallData): Replaced implementsCall with
+        getCallData().
+        (KJS::Bindings::QtInstance::invokeDefaultMethod): Use getCallData()
+        instead of implementsCall().
+        * bridge/qt/qt_instance.h:
+
 2008-05-22  Adam Roben  <aroben@apple.com>
 
         Massively speed up date-format-tofte with the debugger attached

@@ -25,6 +25,7 @@
 
 #include "RefPtr.h"
 #include <utility>
+#include <memory>
 
 using std::pair;
 

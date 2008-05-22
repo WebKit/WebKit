@@ -73,6 +73,7 @@ SOURCES += \
     kjs/CommonIdentifiers.cpp \
     kjs/date_object.cpp \
     kjs/DateMath.cpp \
+    kjs/DebuggerCallFrame.cpp \
     kjs/dtoa.cpp \
     kjs/error_object.cpp \
     kjs/ExecState.cpp \

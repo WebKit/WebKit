@@ -33,6 +33,7 @@
 #include "Instruction.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
+#include <limits.h>
 
 namespace KJS {
 

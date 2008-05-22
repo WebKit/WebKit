@@ -49,4 +49,4 @@ namespace WebCore {
 
 }
 
-#endif StringSourceProvider_h
+#endif

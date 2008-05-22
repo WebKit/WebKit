@@ -52,7 +52,7 @@ public:
     virtual JSValue* valueOf() const;
     virtual JSValue* defaultValue (JSType hint) const;
 
-    virtual bool implementsCall() const;
+    virtual CallType getCallData(CallData&);
 
     virtual void mark(); // This isn't inherited
 
