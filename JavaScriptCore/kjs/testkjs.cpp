@@ -44,6 +44,10 @@
 #include <sys/time.h>
 #endif
 
+#if PLATFORM(UNIX)
+#include <signal.h>
+#endif
+
 #if PLATFORM(WIN_OS)
 #include <crtdbg.h>
 #include <windows.h>
