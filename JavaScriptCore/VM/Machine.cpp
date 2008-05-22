@@ -97,6 +97,9 @@ static int depth(ScopeChain& sc)
     
 static inline bool jsLess(ExecState* exec, JSValue* v1, JSValue* v2)
 {
+    if (JSImmediate::areBothImmediateNumbers(v1, v2))
+        return JSImmediate::getTruncatedInt32(v1) < JSImmediate::getTruncatedInt32(v2);
+
     double n1;
     double n2;
     JSValue* p1;

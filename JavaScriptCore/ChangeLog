@@ -1,3 +1,15 @@
+2008-05-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=19180
+          speed up the < operator for the case when both values are integers
+
+        Makes standalone SunSpider 1.022x faster.
+
+        * VM/Machine.cpp:
+        (KJS::jsLess): Add a special case for when both are numbers that fit in a JSImmediate.
+
 2008-05-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver and Sam.
