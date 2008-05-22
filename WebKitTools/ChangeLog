@@ -1,5 +1,23 @@
 2008-05-20  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Stephanie Lewis.
+
+        Improve the behavior of run-webkit-tests with 64-bit WebKit by automatically inferring whether to run 64-bit.
+
+        If --64-bit is not passed to run-webkit-tests, attempt to guess whether we should run 64-bit.
+        This decision is made based on the 64-bitness of the built WebKit framework if it exists, and
+        can be manually overridden by passing --64-bit or --no-64-bit.  This removes the need to always
+        pass an argument to run-webkit-tests after having built with "make x86_64".
+
+        * Scripts/gdb-safari:
+        * Scripts/run-safari:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm: Split the setting of the 64-bit flag, the determination of the
+        preferred architecture, and exporting of the environment variables for 'arch' out into
+        separate subroutines.
+
+2008-05-20  Mark Rowe  <mrowe@apple.com>
+
         Fix "make x86_64" by adding x86_64 target to WebKitTools Makefile.
 
         * Makefile:

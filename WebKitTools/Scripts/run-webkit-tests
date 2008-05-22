@@ -29,7 +29,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Script to run the Web Kit Open Source Project layout tests.
+# Script to run the WebKit Open Source Project layout tests.
 
 # Run all the tests passed in on the command line.
 # If no tests are passed, find all the .html, .shtml, .xml, .xhtml, .pl, .php (and svg) files in the test directory.
@@ -133,7 +133,7 @@ my $reverseTests = 0;
 my $randomizeTests = 0;
 my $mergeDepth;
 my @leaksFilenames;
-my $run64bit = 0;
+my $run64Bit;
 
 # Default to --no-http for Qt, Gtk and wx for now.
 $testHTTP = 0 if (isGtk() || isWx());
@@ -240,7 +240,7 @@ my $getOptionsResult = GetOptions(
     'root=s' => \$root,
     'add-platform-exceptions' => \$addPlatformExceptions,
     'merge-leak-depth|m:5' => \$mergeDepth,
-    '64-bit' => \$run64bit
+    '64-bit!' => \$run64Bit
 );
 
 if (!$getOptionsResult || $showHelp) {
@@ -274,7 +274,7 @@ $testMedia = 0 if $shouldCheckLeaks && isTiger();
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 my $productDir = productDir();
 $productDir .= "/bin" if (isQt());
-setArchs($run64bit);
+setRun64Bit($run64Bit);
 
 if (isGtk()) {
     if (useQmake()) {
@@ -293,13 +293,11 @@ if(!defined($root)){
     push(@args, "--qt")  if isQt();
     push(@args, "--gtk")  if isGtk();
 
-    if ($run64bit) {
-        my $archPrefs = `arch`;
-        chomp $archPrefs;
-        push(@args, "ARCHS=i386 x86_64") if $archPrefs =~ /i386/;
-        push(@args, "ARCHS=ppc ppc64") if $archPrefs =~ /ppc/;
+    if (isOSX()) {
+        my $arch = preferredArchitecture();
+        push(@args, "ARCHS=$arch");
     }
-    
+
     my $buildResult = system "WebKitTools/Scripts/build-dumprendertree", @args;
     if ($buildResult) {
         print STDERR "Compiling DumpRenderTree failed!\n";
@@ -1191,9 +1189,9 @@ sub openDumpTool()
         }
         setPathForRunningWebKitApp(\%ENV) if isCygwin();
     }
-    
-    setArchs($run64bit);
-  
+
+    exportArchPreference();
+
     my @args = @toolArgs;
     unshift @args, $dumpTool;
     if (isOSX) {

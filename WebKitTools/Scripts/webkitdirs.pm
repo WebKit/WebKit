@@ -56,7 +56,7 @@ my $osXVersion;
 my $isQt;
 my $isGtk;
 my $isWx;
-my $run64bit;
+my $forceRun64Bit;
 
 # Variables for Win32 support
 my $vcBuildPath;
@@ -895,7 +895,7 @@ sub runSafari
         print "Starting Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
         $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
-        setArchs($run64bit);
+        exportArchPreference();
         return system "arch", safariPath(), @ARGV;
     }
 
@@ -916,13 +916,34 @@ sub runSafari
     return 1;
 }
 
-sub setArchs($)
+sub setRun64Bit($)
 {
-    my ($run64bitFlag) = @_;
-    if (isOSX()) {
-       $ENV{ARCHPREFERENCE} = "i386,ppc";
-       $ENV{ARCHPREFERENCE} = "x86_64,ppc64,i386,ppc" if $run64bit;
+    ($forceRun64Bit) = @_;
+}
+
+sub preferredArchitecture()
+{
+    return unless isOSX();
+
+    my $currentArchitecture = `arch`;
+    chomp($currentArchitecture);
+
+    my $run64Bit = 0;
+    if (!defined($forceRun64Bit)) {
+        my $webKitPath = builtDylibPathForName("WebKit");
+        # The binary is 64-bit if one of the architectures it contains has "64" in the name
+        $run64Bit = `lipo -info "$webKitPath"` =~ /(are|architecture):.*64/;
     }
+
+    if ($forceRun64Bit or $run64Bit) {
+        return ($currentArchitecture eq "i386") ? "x86_64" : "ppc64";
+    }
+    return $currentArchitecture;
+}
+
+sub exportArchPreference
+{
+    $ENV{ARCHPREFERENCE} = preferredArchitecture() if isOSX();
 }
 
 1;

@@ -26,15 +26,36 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Simplified "run under gdb" script for Web Kit Open Source Project.
+# Simplified "run under gdb" script for WebKit Open Source Project.
 
 use strict;
-use Getopt::Long;
+use File::Temp qw/:mktemp/;
 use FindBin;
+use Getopt::Long;
 use lib $FindBin::Bin;
 use webkitdirs;
-use File::Temp qw/:mktemp/;
 
+my $programName = basename($0);
+my $showHelp = 0;
+my $run64Bit;
+
+my $usage = <<EOF;
+Usage: $programName [options]
+  --help                          Show this help message
+  --64-bit                        Run in 64-bit mode
+EOF
+
+my $getOptionsResult = GetOptions(
+    'help' => \$showHelp,
+    '64-bit!' => \$run64Bit
+);
+
+if (!$getOptionsResult || $showHelp) {
+    print STDERR $usage;
+    exit 1;
+}
+
+setRun64Bit($run64Bit);
 setConfiguration();
 my $productDir = productDir();
 my $safariPath = safariPath();
@@ -46,20 +67,17 @@ die "Can't find gdb executable. Is gdb installed?\n" unless -x $gdbPath;
 # Check to see that all the frameworks are built.
 checkFrameworks();
 
-my $archprefs = `arch`;
-chomp $archprefs;
-
 # Put a command to set DYLD_FRAMEWORK_PATH in a temp file.
 # Also set WEBKIT_UNSET_DYLD_FRAMEWORK_PATH to YES in this environment, so that
 # executables launched by Safari don't inherit using the new frameworks.
 my ($fh, $path) = mkstemp("/tmp/gdb-safari-XXXX");
 print $fh "set env DYLD_FRAMEWORK_PATH $productDir\n";
 print $fh "set env WEBKIT_UNSET_DYLD_FRAMEWORK_PATH YES\n";
-print $fh "set architecture $archprefs\n";
 
+my @architectureFlags = ("-arch", preferredArchitecture()) if isOSX();
 # Start up Safari.
 print "Start Safari under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
-exec $gdbPath, "-x", $path, $safariPath or die;
+exec $gdbPath, "-x", $path, @architectureFlags, $safariPath or die;
 
 # Delete the temporary file.
 unlink0($fh, $path) or die "Error unlinking file $path safely"; 
