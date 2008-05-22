@@ -1,5 +1,14 @@
 2008-05-22  Oliver Hunt  <oliver@apple.com>
 
+        RS=Maciej.
+
+        Roll out r34020 as it causes recursion tests to fail.
+
+        * kjs/object.cpp:
+        (KJS::JSObject::call):
+
+2008-05-22  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Mark.
 
         Don't leak the SymbolTable when compiling eval code.
