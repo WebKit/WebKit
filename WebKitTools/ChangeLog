@@ -1,3 +1,13 @@
+2008-05-21  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Stephanie Lewis.
+
+        Set the pass_through flag on Getopt so that extra arguments can be passed through to Safari,
+        rather than trigger an unknown argument message.  This allows run-webkit-tests to display results
+        once more.
+
+        * Scripts/run-safari:
+
 2008-05-21  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Maciej, Mark.
