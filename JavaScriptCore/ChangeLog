@@ -1,3 +1,14 @@
+2008-05-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - save a hash lookup wne writing to global properties
+        0.3% speedup on SunSpider, 7% on bitops-bitwise-and
+
+        * VM/Machine.cpp:
+        (KJS::resolveBase): Check for being a the end of the scope chain
+        before hash lookup.
+
 2008-05-21  Alp Toker  <alp@nuanti.com>
 
         Rubber-stamped by Maciej.

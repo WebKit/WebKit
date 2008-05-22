@@ -259,21 +259,23 @@ static void NEVER_INLINE resolveBase(ExecState* exec, Instruction* vPC, Register
     int property = (vPC + 2)->u.operand;
 
     ScopeChainIterator iter = scopeChain->begin();
+    ScopeChainIterator next = iter;
+    ++next;
     ScopeChainIterator end = scopeChain->end();
     ASSERT(iter != end);
 
     PropertySlot slot;
     Identifier& ident = codeBlock->identifiers[property];
     JSObject* base;
-    do {
+    while (true) {
         base = *iter;
-        if (base->getPropertySlot(exec, ident, slot)) {
+        if (next == end || base->getPropertySlot(exec, ident, slot)) {
             r[dst].u.jsValue = base;
             return;
         }
-    } while (++iter != end);
-
-    r[dst].u.jsValue = base;
+        iter = next;
+        ++next;
+    }
 }
 
 static bool NEVER_INLINE resolveBaseAndProperty(ExecState* exec, Instruction* vPC, Register* r, ScopeChainNode* scopeChain, CodeBlock* codeBlock, JSValue*& exceptionValue)
