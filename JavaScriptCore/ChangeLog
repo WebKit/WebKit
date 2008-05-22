@@ -1,3 +1,21 @@
+2008-05-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Bug 19116: SquirrelFish shouldn't regress on variable lookups
+        <https://bugs.webkit.org/show_bug.cgi?id=19116>
+
+        Last of the multiscope look up optimisations.  This is a wash overall on SunSpider
+        but is a factor of 5-10 improvement in multiscope read/write/modify (eg. ++, --, +=,
+        ... applied to any non-local var).
+
+        * kjs/nodes.cpp:
+        (KJS::PostIncResolveNode::emitCode):
+        (KJS::PostDecResolveNode::emitCode):
+        (KJS::PreIncResolveNode::emitCode):
+        (KJS::PreDecResolveNode::emitCode):
+        (KJS::ReadModifyResolveNode::emitCode):
+
 2008-05-22  David Kilzer  <ddkilzer@apple.com>
 
         <rdar://problem/5954233> Add method to release free memory from FastMalloc
