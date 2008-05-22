@@ -43,6 +43,7 @@
 #import "WebFrameViewInternal.h"
 #import "WebHTMLView.h"
 #import "WebHTMLViewInternal.h"
+#import "WebIconFetcherInternal.h"
 #import "WebKitStatisticsPrivate.h"
 #import "WebNSURLExtras.h"
 #import "WebScriptDebugger.h"
@@ -1095,6 +1096,14 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (unsigned)_pendingFrameUnloadEventCount
 {
     return _private->coreFrame->eventHandler()->pendingFrameUnloadEventCount();
+}
+
+- (WebIconFetcher *)fetchApplicationIcon:(id)target
+                                selector:(SEL)selector
+{
+    return [WebIconFetcher _fetchApplicationIconForFrame:self
+                                                  target:target
+                                                selector:selector];
 }
 
 @end

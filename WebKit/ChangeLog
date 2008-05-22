@@ -1,3 +1,11 @@
+2008-05-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+
+        Add WebIconFetcher files.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-05-16  Timothy Hatcher  <timothy@apple.com>
 
         Removes WebScriptDebugServer files and related calls. This removes

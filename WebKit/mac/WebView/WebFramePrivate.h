@@ -31,6 +31,7 @@
 #import <WebKit/WebFrame.h>
 #import <JavaScriptCore/JSBase.h>
 
+@class WebIconFetcher;
 @class WebScriptObject;
 
 // Keys for accessing the values in the page cache dictionary.
@@ -67,4 +68,8 @@ typedef enum {
 - (BOOL)_isDisplayingStandaloneImage;
 
 - (unsigned) _pendingFrameUnloadEventCount;
+
+- (WebIconFetcher *)fetchApplicationIcon:(id)target
+                                selector:(SEL)selector;
+
 @end

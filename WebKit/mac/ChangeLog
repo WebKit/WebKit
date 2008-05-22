@@ -1,3 +1,25 @@
+2008-05-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+
+        Add WebIconFetcher.
+        
+        * Misc/WebIconFetcher.h: Added.
+        * Misc/WebIconFetcher.mm: Added.
+        (WebIconFetcherClient::WebIconFetcherClient):
+        (WebIconFetcherClient::finishedFetchingIcon):
+        (WebIconFetcherClient::setFetcher):
+        (-[WebIconFetcher init]):
+        (-[WebIconFetcher dealloc]):
+        (-[WebIconFetcher finalize]):
+        (-[WebIconFetcher cancel]):
+        (-[WebIconFetcher _initWithIconFetcher:client:]):
+        (+[WebIconFetcher _fetchApplicationIconForFrame:target:selector:]):
+        * Misc/WebIconFetcherInternal.h: Added.
+        * WebView/WebFrame.mm:
+        (-[WebFrame fetchApplicationIcon:selector:]):
+        * WebView/WebFramePrivate.h:
+
 === End merge of squirrelfish ===
 
 2008-05-21  Geoffrey Garen  <ggaren@apple.com>

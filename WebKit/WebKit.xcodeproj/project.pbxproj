@@ -13,6 +13,9 @@
 		06693DDD0BFBA85200216072 /* WebInspectorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06693DDB0BFBA85200216072 /* WebInspectorClient.mm */; };
 		14D8252F0AF955090004F057 /* WebChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D8252D0AF955090004F057 /* WebChromeClient.h */; };
 		14D825300AF955090004F057 /* WebChromeClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14D8252E0AF955090004F057 /* WebChromeClient.mm */; };
+		1A2D754D0DE480B900F0A648 /* WebIconFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D754B0DE480B900F0A648 /* WebIconFetcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A2D754E0DE480B900F0A648 /* WebIconFetcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D754C0DE480B900F0A648 /* WebIconFetcher.mm */; };
+		1A2D75500DE4810E00F0A648 /* WebIconFetcherInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D754F0DE4810E00F0A648 /* WebIconFetcherInternal.h */; };
 		1A7F9C4C0DD3DDEA0028F8A5 /* nptextinput.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AEA66D40DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */; };
 		1AEA66D50DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */; };
@@ -321,6 +324,9 @@
 		06693DDB0BFBA85200216072 /* WebInspectorClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorClient.mm; sourceTree = "<group>"; };
 		14D8252D0AF955090004F057 /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
 		14D8252E0AF955090004F057 /* WebChromeClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebChromeClient.mm; sourceTree = "<group>"; };
+		1A2D754B0DE480B900F0A648 /* WebIconFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconFetcher.h; sourceTree = "<group>"; };
+		1A2D754C0DE480B900F0A648 /* WebIconFetcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebIconFetcher.mm; sourceTree = "<group>"; };
+		1A2D754F0DE4810E00F0A648 /* WebIconFetcherInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconFetcherInternal.h; sourceTree = "<group>"; };
 		1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nptextinput.h; sourceTree = "<group>"; };
 		1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginEventHandler.h; sourceTree = "<group>"; };
 		1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapePluginEventHandler.mm; sourceTree = "<group>"; };
@@ -747,6 +753,9 @@
 				51B2A0FF0ADB15D0002A9BEE /* WebIconDatabaseDelegate.h */,
 				9304B2FF0B02341500F7850D /* WebIconDatabaseInternal.h */,
 				F528E3EB031E91AD01CA2ACA /* WebIconDatabasePrivate.h */,
+				1A2D754B0DE480B900F0A648 /* WebIconFetcher.h */,
+				1A2D754C0DE480B900F0A648 /* WebIconFetcher.mm */,
+				1A2D754F0DE4810E00F0A648 /* WebIconFetcherInternal.h */,
 				2568C72C0174912D0ECA149E /* WebKit.h */,
 				F5927D4E02D26C5E01CA2DBB /* WebKitErrors.h */,
 				83730F9803FB1E660004736E /* WebKitErrors.m */,
@@ -1317,6 +1326,8 @@
 				1AEA66D80DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h in Headers */,
 				1AEA6A500DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.h in Headers */,
 				1A7F9C4C0DD3DDEA0028F8A5 /* nptextinput.h in Headers */,
+				1A2D754D0DE480B900F0A648 /* WebIconFetcher.h in Headers */,
+				1A2D75500DE4810E00F0A648 /* WebIconFetcherInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1603,6 +1614,7 @@
 				1AEA66D50DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm in Sources */,
 				1AEA66D90DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.mm in Sources */,
 				1AEA6A510DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.mm in Sources */,
+				1A2D754E0DE480B900F0A648 /* WebIconFetcher.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
