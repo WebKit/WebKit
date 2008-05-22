@@ -1,3 +1,16 @@
+2008-05-21  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Adam
+
+        <rdar://problem/5787763> - Hang in Storage tests on windows
+
+        Since the hang was originally noticed and investigated, no one has revisited it.  
+        Adam and I just spent some time trying to reproduce and were unable.
+        
+        Lets give the bots another go, shall we?
+
+        * platform/win/Skipped:
+
 2008-05-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

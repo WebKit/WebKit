@@ -317,18 +317,6 @@ fast/dom/HTMLDocument/hasFocus.html
 #<rdar://problem/5787743> REGRESSION: Crash at WTF::Collator::CreateCollator() running fast/js/kde/StringObject.html on Windows
 fast/js/kde/StringObject.html
 
-#<rdar://problem/5787763> REGRESSION: Hang on storage tests on Windows
-storage/close-during-stress-test.html
-storage/transaction_callback_exception_crash.html
-storage/empty-statement.html
-storage/execute-sql-args.html
-storage/multiple-databases-garbage-collection.html
-storage/multiple-transactions.html
-storage/open-database-empty-version.html
-storage/quota-tracking.html
-storage/sql-data-types.html
-storage/success-callback.html
-
 # <rdar://problem/5787793> REGRESSION: svg/custom/acid3-test-77.html fails on windows 
 svg/custom/acid3-test-77.html
 
