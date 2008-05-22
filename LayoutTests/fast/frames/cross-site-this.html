@@ -1,0 +1,28 @@
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var test = "PASS";
+function foo() {
+     bar(); // resolve -> implicit this
+}
+
+function bar() {
+     dump(this.test); // this is now wrong
+}
+
+function dump(str)
+{
+    document.getElementById("output").innerText = str;
+}
+
+
+</script>
+
+<div>This test checks whether cross-site calling uses the proper
+object as the global "this" value. The text below should say
+PASS:</div>
+
+<div id="output"> </div>
+
+<iframe src="resources/cross-site-this-helper.html"></iframe>
