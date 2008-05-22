@@ -1,5 +1,11 @@
 2008-05-21  Kevin McCullough  <kmccullough@apple.com>
 
+        Sadness :(
+
+        * kjs/config.h:
+
+2008-05-21  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Maciej.
 
         <rdar://problem/5950867> JSProfiler: Allow the profiler to "Focus" a
