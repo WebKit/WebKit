@@ -1,3 +1,12 @@
+2008-05-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark.
+
+        Don't leak the SymbolTable when compiling eval code.
+
+        * kjs/nodes.cpp:
+        (KJS::EvalNode::generateCode):
+
 2008-05-22  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Oliver.

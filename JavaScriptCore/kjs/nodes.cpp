@@ -5789,8 +5789,8 @@ void EvalNode::generateCode(ScopeChainNode* sc)
     ASSERT(globalObject->isGlobalObject());
     
     m_code.set(new EvalCodeBlock(this, globalObject));
-    
-    CodeGenerator generator(this, globalObject->debugger(), scopeChain, new SymbolTable(), m_code.get(), m_varStack, m_functionStack);
+    SymbolTable symbolTable;
+    CodeGenerator generator(this, globalObject->debugger(), scopeChain, &symbolTable, m_code.get(), m_varStack, m_functionStack);
     generator.generate();
 
     m_children.shrinkCapacity(0);
