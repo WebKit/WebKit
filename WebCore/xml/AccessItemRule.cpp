@@ -139,6 +139,25 @@ void AccessItemRule::invalidate()
     m_excludeList.clear();
 }
 
+static inline bool matchesAny(const SecurityOrigin* accessControlOrigin, const Vector<AccessItem>& list)
+{
+    for (size_t i = 0; i < list.size(); ++i) {
+        if (list[i].matches(accessControlOrigin))
+            return true;
+    }
+    return false;
+}
+
+bool AccessItemRule::allowListMatchesAny(const SecurityOrigin* accessControlOrigin) const
+{
+    return matchesAny(accessControlOrigin, m_allowList);
+}
+
+bool AccessItemRule::excludeListMatchesAny(const SecurityOrigin* accessControlOrigin) const
+{
+    return matchesAny(accessControlOrigin, m_excludeList);
+}
+
 #ifndef NDEBUG
 void AccessItemRule::show()
 {

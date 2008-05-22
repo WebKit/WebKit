@@ -31,11 +31,15 @@
 
 namespace WebCore {
 
+    class SecurityOrigin;
     class String;
 
     class AccessItemRule {
     public:
         AccessItemRule(const String&);
+
+        bool allowListMatchesAny(const SecurityOrigin*) const;
+        bool excludeListMatchesAny(const SecurityOrigin*) const;
 
 #ifndef NDEBUG
         void show();

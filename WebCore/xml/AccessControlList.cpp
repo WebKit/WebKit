@@ -29,7 +29,10 @@
 #include "AccessItemRule.h"
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
+
+#ifndef NDEBUG
 #include <stdio.h>
+#endif
 
 namespace WebCore {
 
@@ -51,8 +54,16 @@ void AccessControlList::parseAccessControlHeader(const String& accessControlHead
         m_list.append(new AccessItemRule(rules[i]));
 }
 
-bool AccessControlList::checkOrigin(const SecurityOrigin* accessControlOrigin)
+bool AccessControlList::checkOrigin(const SecurityOrigin* accessControlOrigin) const
 {
+    for (size_t i = 0; i < m_list.size(); ++i) {
+        AccessItemRule* rule = m_list[i];
+        if (!rule->allowListMatchesAny(accessControlOrigin))
+            continue;
+        if (rule->excludeListMatchesAny(accessControlOrigin))
+            continue;
+        return true;
+    }
     return false;
 }
 

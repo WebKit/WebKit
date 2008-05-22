@@ -40,7 +40,7 @@ namespace WebCore {
         AccessControlList(const String& accessControlHeader);
         ~AccessControlList();
 
-        bool checkOrigin(const SecurityOrigin* accessControlOrigin);
+        bool checkOrigin(const SecurityOrigin* accessControlOrigin) const;
 
 #ifndef NDEBUG
         void show();

@@ -1,3 +1,55 @@
+2008-05-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/5838772> Support cross-site XMLHttpRequest
+
+        - Implement support for cross-site GET requests using the HTTP header
+          Access-control mechanism.
+
+        Tests: http/tests/xmlhttprequest/access-control-basic-allow-headers.html
+               http/tests/xmlhttprequest/access-control-basic-allow.html
+               http/tests/xmlhttprequest/access-control-basic-denied.html
+               http/tests/xmlhttprequest/access-control-basic-exclude.html
+
+        * xml/AccessControlList.cpp:
+        (WebCore::AccessControlList::checkOrigin): Implement the list check algorithm.
+        * xml/AccessControlList.h:
+
+        * xml/AccessItem.cpp:
+        (WebCore::AccessItem::AccessItem):
+        (WebCore::AccessItem::matches):
+        * xml/AccessItem.h:
+        Temporarily use a SecurityOrigin as the bases of AccessItem matching. Using
+        the isSameSchemeHostPort test of the SecurityOrigin allows for a legal subset
+        of the AccessItem match algorithm to be used, until the complete parsing of
+        the wildcards and optional pieces is complete. 
+
+        * xml/AccessItemRule.cpp:
+        (WebCore::matchesAny):
+        (WebCore::AccessItemRule::allowListMatchesAny):
+        (WebCore::AccessItemRule::excludeListMatchesAny):
+        * xml/AccessItemRule.h:
+        More of the implementation of the list check algorithm.  Check if any of the items
+        in the rule match the control origin.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::open): Don't throw a SECURITY_ERR for cross-domain requests anymore.
+        (WebCore::XMLHttpRequest::send): Use different paths for same origin and cross-domain requests.
+        (WebCore::XMLHttpRequest::crossSiteAccessRequest): Temporarily only support the GET method for
+        cross-domain requests.  
+        (WebCore::XMLHttpRequest::loadRequestSynchronously):
+        (WebCore::XMLHttpRequest::processSyncLoadResults):
+        This can now throw an exception if a cross-domain request is denied by the access control
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        Add support for cross-domain GET request.  ASSERT temporarily that the method is GET, since we
+        should have bailed out much earlier for non-GET methods.
+        (WebCore::XMLHttpRequest::willSendRequest):
+        (WebCore::XMLHttpRequest::didReceiveResponse):
+        Do the HTTP header access-control check as soon as the headers arrive.
+        * xml/XMLHttpRequest.h:
+
 2008-05-21  Alp Toker  <alp@nuanti.com>
 
         Rubber-stamped by Maciej.

@@ -37,7 +37,7 @@ namespace WebCore {
     public:
         AccessItem(const String&);
 
-        bool matches(const SecurityOrigin*);
+        bool matches(const SecurityOrigin*) const;
 
         bool isValid() const { return m_valid; }
 
@@ -47,6 +47,9 @@ namespace WebCore {
 
     private:
         void parseAccessItem(const String&);
+
+        // FIXME: Remove this when parseAccessItem is implemented.
+        RefPtr<SecurityOrigin> m_origin;
 
         bool m_valid;
         bool m_wildcard;

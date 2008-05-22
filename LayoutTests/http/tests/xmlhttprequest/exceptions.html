@@ -58,7 +58,6 @@
 
     shouldThrow('req.setRequestHeader("Foo", "bar")');
     shouldThrow('req.send(null)');
-    shouldThrow('req.open("GET", "http://www.apple.com/", true)');
     
     req.open('GET', 'resources/zero-length.txt', false);
     log("open()");

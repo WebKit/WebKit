@@ -1,0 +1,11 @@
+PASS: Cross-domain access allowed.
+HTTP_REFERER: http://127.0.0.1:8000/xmlhttprequest/access-control-basic-allow-headers.html
+HTTP_ACCEPT_ENCODING: gzip, deflate
+HTTP_CONNECTION: keep-alive
+HTTP_ACCEPT: */*
+HTTP_USER_AGENT: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_2; en-us) AppleWebKit/526.7+ (KHTML, like Gecko)
+HTTP_ACCEPT_LANGUAGE: en-us
+HTTP_HOST: localhost:8000
+HTTP_ACCESS_CONTROL_ORIGIN: http://127.0.0.1:8000
+
+
