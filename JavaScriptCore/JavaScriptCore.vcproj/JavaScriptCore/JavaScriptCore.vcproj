@@ -341,14 +341,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\debugger.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\debugger.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\dtoa.cpp"
 				>
 			</File>
@@ -1035,6 +1027,26 @@
 			</File>
 			<File
 				RelativePath="..\..\VM\RegisterFileStack.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Debugger"
+			>
+			<File
+				RelativePath="..\..\kjs\debugger.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\debugger.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\DebuggerCallFrame.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\DebuggerCallFrame.h"
 				>
 			</File>
 		</Filter>
