@@ -381,7 +381,7 @@ typedef enum {
 - (NSString *)webView:(WebView *)sender runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WebFrame *)frame;
 
 /*!
-    @method webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:
+    @method webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:
     @abstract Display a confirm panel by an "before unload" event handler.
     @param sender The WebView sending the delegate method.
     @param message The message to display.
