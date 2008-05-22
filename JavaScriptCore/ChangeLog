@@ -1,3 +1,15 @@
+2008-05-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix layout test failure in fast/dom/getter-on-window-object2 introduced in r33961.
+
+        * JavaScriptCore.exp:
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::defineGetter):
+        (KJS::JSGlobalObject::defineSetter):
+        * kjs/JSGlobalObject.h:
+
 === End merge of squirrelfish ===
 
 2008-05-21  Geoffrey Garen  <ggaren@apple.com>

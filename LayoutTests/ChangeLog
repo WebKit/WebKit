@@ -1,3 +1,11 @@
+2008-05-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Update results.
+
+        * fast/dom/getter-on-window-object2-expected.txt:
+
 === End merge of squirrelfish ===
 
 2008-05-18  Oliver Hunt  <oliver@apple.com>

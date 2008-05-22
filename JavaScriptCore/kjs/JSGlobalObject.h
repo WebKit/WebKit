@@ -171,6 +171,10 @@ namespace KJS {
         virtual void put(ExecState*, const Identifier&, JSValue*);
         virtual void putWithAttributes(ExecState*, const Identifier& propertyName, JSValue* value, unsigned attributes);
 
+
+        virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunc);
+        virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunc);
+
         // Linked list of all global objects.
         static JSGlobalObject* head() { return s_head; }
         JSGlobalObject* next() { return d()->next; }
