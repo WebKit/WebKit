@@ -1,3 +1,16 @@
+2008-05-21  Sam Weinig  <sam@webkit.org>
+
+        Review by Mark Rowe.
+
+        Change test so that its result are not different all the time.
+
+        * http/tests/xmlhttprequest/access-control-basic-allow-access-control-origin-header-expected.txt: Copied from http/tests/xmlhttprequest/access-control-basic-allow-headers-expected.txt.
+        * http/tests/xmlhttprequest/access-control-basic-allow-access-control-origin-header.html: Copied from http/tests/xmlhttprequest/access-control-basic-allow-headers.html.
+        * http/tests/xmlhttprequest/access-control-basic-allow-headers-expected.txt: Removed.
+        * http/tests/xmlhttprequest/access-control-basic-allow-headers.html: Removed.
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow-access-control-origin-header.cgi: Copied from http/tests/xmlhttprequest/resources/access-control-basic-allow-headers.cgi.
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow-headers.cgi: Removed.
+
 2008-05-21  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Adam
