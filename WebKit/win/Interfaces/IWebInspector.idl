@@ -41,7 +41,7 @@ interface IWebInspector : IUnknown
 {
     HRESULT show();
     HRESULT showConsole();
-    HRESULT showTimeline();
+    HRESULT unused1();
     HRESULT close();
     HRESULT attach();
     HRESULT detach();

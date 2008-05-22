@@ -1,3 +1,13 @@
+2008-05-22  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * Interfaces/IWebInspector.idl:
+        * Interfaces/WebKit.idl:
+        * WebInspector.cpp:
+        (WebInspector::unused1):
+        * WebInspector.h:
+
 2008-05-22  Timothy Hatcher  <timothy@apple.com>
 
         Changes to keep Windows building.
