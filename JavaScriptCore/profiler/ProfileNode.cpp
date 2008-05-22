@@ -138,7 +138,7 @@ void ProfileNode::setTreeVisible(bool visible)
         (*currentChild)->setTreeVisible(visible);    
 }
 
-#pragma mark Sorting methods
+// Sorting methods
 
 static inline bool totalTimeDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b)
 {
