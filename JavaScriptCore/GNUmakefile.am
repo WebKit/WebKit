@@ -36,13 +36,14 @@ javascriptcore_sources += \
 	JavaScriptCore/API/JSObjectRef.cpp \
 	JavaScriptCore/API/JSStringRef.cpp \
 	JavaScriptCore/API/JSValueRef.cpp \
+	JavaScriptCore/kjs/DebuggerCallFrame.cpp \
+	JavaScriptCore/kjs/ExecState.cpp \
 	JavaScriptCore/kjs/InitializeThreading.cpp \
 	JavaScriptCore/kjs/JSGlobalObject.cpp \
 	JavaScriptCore/kjs/JSVariableObject.cpp \
 	JavaScriptCore/kjs/JSActivation.cpp \
 	JavaScriptCore/kjs/JSNotAnObject.cpp \
 	JavaScriptCore/VM/CodeBlock.cpp \
-	JavaScriptCore/VM/CodeGenerator.cpp \
 	JavaScriptCore/VM/ExceptionHelpers.cpp \
 	JavaScriptCore/VM/Instruction.cpp \
 	JavaScriptCore/VM/JSPropertyNameIterator.cpp \
@@ -50,7 +51,6 @@ javascriptcore_sources += \
 	JavaScriptCore/VM/Machine.cpp \
 	JavaScriptCore/VM/Opcode.cpp \
 	JavaScriptCore/VM/Register.cpp \
-	JavaScriptCore/VM/RegisterFile.cpp \
 	JavaScriptCore/VM/RegisterFileStack.cpp \
 	JavaScriptCore/VM/RegisterID.cpp \
 	JavaScriptCore/pcre/pcre_compile.cpp \
