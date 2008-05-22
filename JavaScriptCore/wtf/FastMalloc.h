@@ -70,6 +70,10 @@ WTF_PRIVATE_INLINE void* operator new(size_t s) { return fastMalloc(s); }
 WTF_PRIVATE_INLINE void operator delete(void* p) { fastFree(p); }
 WTF_PRIVATE_INLINE void* operator new[](size_t s) { return fastMalloc(s); }
 WTF_PRIVATE_INLINE void operator delete[](void* p) { fastFree(p); }
+
+extern "C" {
+void releaseFastMallocFreeMemory();
+}
 #endif
 
 #endif // _CRTDBG_MAP_ALLOC

@@ -1,3 +1,15 @@
+2008-05-22  David Kilzer  <ddkilzer@apple.com>
+
+        <rdar://problem/5954233> Add method to release free memory from FastMalloc
+
+        Patch suggested by Mark Rowe.  Rubber-stamped by Maciej.
+
+        * JavaScriptCore.exp: Export _releaseFastMallocFreeMemory.
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMallocStats::): Added releaseFastMallocFreeMemory() for both
+        system malloc and FastMalloc code paths.
+        * wtf/FastMalloc.h: Define releaseFastMallocFreeMemory().
+
 2008-05-22  Oliver Hunt  <oliver@apple.com>
 
         RS=Maciej.

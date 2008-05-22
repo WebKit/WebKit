@@ -306,3 +306,4 @@ __ZTVN3KJS9NumberImpE
 _jscore_collector_introspection
 _jscore_fastmalloc_introspection
 _kJSClassDefinitionEmpty
+_releaseFastMallocFreeMemory
