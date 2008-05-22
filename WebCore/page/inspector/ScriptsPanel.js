@@ -304,6 +304,16 @@ WebInspector.ScriptsPanel.prototype = {
         callStackPane.selectedCallFrame = currentFrame;
     },
 
+    debuggerAttached: function()
+    {
+        this.reset();
+    },
+
+    debuggerDetached: function()
+    {
+        this.reset();
+    },
+
     reset: function()
     {
         this.visibleView = null;
@@ -540,10 +550,15 @@ WebInspector.ScriptsPanel.prototype = {
             this.debuggingButton.title = WebInspector.UIString("Stop debugging.");
             this.debuggingButton.addStyleClass("toggled-on");
             this.pauseButton.disabled = false;
+
+            if (this.attachOverlayElement.parentNode)
+                this.attachOverlayElement.parentNode.removeChild(this.attachOverlayElement);
         } else {
             this.debuggingButton.title = WebInspector.UIString("Start debugging and reload inspected page.");
             this.debuggingButton.removeStyleClass("toggled-on");
             this.pauseButton.disabled = true;
+
+            this.element.appendChild(this.attachOverlayElement);
         }
 
         this._updatePauseOnExceptionsButton();
@@ -589,13 +604,10 @@ WebInspector.ScriptsPanel.prototype = {
         this._waitingToPause = false;
         this._stepping = false;
 
-        if (InspectorController.debuggerAttached()) {
-            this.element.appendChild(this.attachOverlayElement);
+        if (InspectorController.debuggerAttached())
             InspectorController.stopDebugging();
-        } else {
-            this.attachOverlayElement.parentNode.removeChild(this.attachOverlayElement);
+        else
             InspectorController.startDebuggingAndReloadInspectedPage();
-        }
 
         this._clearInterface();
     },

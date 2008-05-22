@@ -692,9 +692,29 @@ WebInspector.showConsole = function()
     this.console.show();
 }
 
-WebInspector.showTimeline = function()
+WebInspector.showElementsPanel = function()
+{
+    this.currentPanel = this.panels.elements;
+}
+
+WebInspector.showResourcesPanel = function()
 {
     this.currentPanel = this.panels.resources;
+}
+
+WebInspector.showScriptsPanel = function()
+{
+    this.currentPanel = this.panels.scripts;
+}
+
+WebInspector.showProfilesPanel = function()
+{
+    this.currentPanel = this.panels.profiles;
+}
+
+WebInspector.showDatabasesPanel = function()
+{
+    this.currentPanel = this.panels.databases;
 }
 
 WebInspector.addResource = function(resource)
@@ -729,6 +749,16 @@ WebInspector.removeResource = function(resource)
 WebInspector.addDatabase = function(database)
 {
     this.panels.databases.addDatabase(database);
+}
+
+WebInspector.debuggerAttached = function()
+{
+    this.panels.scripts.debuggerAttached();
+}
+
+WebInspector.debuggerDetached = function()
+{
+    this.panels.scripts.debuggerDetached();
 }
 
 WebInspector.parsedScriptSource = function(sourceID, sourceURL, source, startingLine)

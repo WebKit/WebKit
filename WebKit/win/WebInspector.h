@@ -46,7 +46,6 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE show();
     virtual HRESULT STDMETHODCALLTYPE showConsole();
-    virtual HRESULT STDMETHODCALLTYPE showTimeline();
     virtual HRESULT STDMETHODCALLTYPE close();
     virtual HRESULT STDMETHODCALLTYPE attach();
     virtual HRESULT STDMETHODCALLTYPE detach();

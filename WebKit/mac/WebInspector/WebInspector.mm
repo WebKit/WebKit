@@ -60,13 +60,72 @@ using namespace WebCore;
 - (void)showConsole:(id)sender
 {
     if (Page* page = core(_webView))
-        page->inspectorController()->showConsole();
+        page->inspectorController()->showPanel(InspectorController::ConsolePanel);
 }
 
 - (void)showTimeline:(id)sender
 {
+    // Not used anymore. Remove when a release of Safari non-longer calls this.
+}
+
+- (BOOL)isDebuggingJavaScript
+{
     if (Page* page = core(_webView))
-        page->inspectorController()->showTimeline();
+        return page->inspectorController()->debuggerAttached();
+    return NO;
+}
+
+- (void)toggleDebuggingJavaScript:(id)sender
+{
+    if ([self isDebuggingJavaScript])
+        [self stopDebuggingJavaScript:sender];
+    else
+        [self startDebuggingJavaScript:sender];
+}
+
+- (void)startDebuggingJavaScript:(id)sender
+{
+    Page* page = core(_webView);
+    if (!page)
+        return;
+    page->inspectorController()->showPanel(InspectorController::ScriptsPanel);
+    page->inspectorController()->startDebuggingAndReloadInspectedPage();
+}
+
+- (void)stopDebuggingJavaScript:(id)sender
+{
+    if (Page* page = core(_webView))
+        page->inspectorController()->stopDebugging();
+}
+
+- (BOOL)isProfilingJavaScript
+{
+    if (Page* page = core(_webView))
+        return page->inspectorController()->isRecordingUserInitiatedProfile();
+    return NO;
+}
+
+- (void)toggleProfilingJavaScript:(id)sender
+{
+    if ([self isProfilingJavaScript])
+        [self stopProfilingJavaScript:sender];
+    else
+        [self startProfilingJavaScript:sender];
+}
+
+- (void)startProfilingJavaScript:(id)sender
+{
+    if (Page* page = core(_webView))
+        page->inspectorController()->startUserInitiatedProfiling();
+}
+
+- (void)stopProfilingJavaScript:(id)sender
+{
+    Page* page = core(_webView);
+    if (!page)
+        return;
+    page->inspectorController()->stopUserInitiatedProfiling();
+    page->inspectorController()->showPanel(InspectorController::ProfilesPanel);
 }
 
 - (void)close:(id)sender 

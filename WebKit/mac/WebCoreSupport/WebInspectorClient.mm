@@ -30,6 +30,7 @@
 
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
+#import "WebInspector.h"
 #import "WebLocalizableStrings.h"
 #import "WebNodeHighlight.h"
 #import "WebPreferences.h"
@@ -509,17 +510,42 @@ void WebInspectorClient::updateWindowTitle() const
 // This method is really only implemented to keep any UI elements enabled.
 - (void)showWebInspector:(id)sender
 {
-    [_inspectedWebView page]->inspectorController()->show();
+    [[_inspectedWebView inspector] show:sender];
 }
 
 - (void)showErrorConsole:(id)sender
 {
-    [_inspectedWebView page]->inspectorController()->showConsole();
+    [[_inspectedWebView inspector] showConsole:sender];
 }
 
-- (void)showNetworkTimeline:(id)sender
+- (void)toggleDebuggingJavaScript:(id)sender
 {
-    [_inspectedWebView page]->inspectorController()->showTimeline();
+    [[_inspectedWebView inspector] toggleDebuggingJavaScript:sender];
+}
+
+- (void)toggleProfilingJavaScript:(id)sender
+{
+    [[_inspectedWebView inspector] toggleProfilingJavaScript:sender];
+}
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+{
+    BOOL isMenuItem = [(id)item isKindOfClass:[NSMenuItem class]];
+    if ([item action] == @selector(toggleDebuggingJavaScript:) && isMenuItem) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([[_inspectedWebView inspector] isDebuggingJavaScript])
+            [menuItem setTitle:UI_STRING("Stop Debugging JavaScript", "title for Stop Debugging JavaScript menu item")];
+        else
+            [menuItem setTitle:UI_STRING("Start Debugging JavaScript", "title for Start Debugging JavaScript menu item")];
+    } else if ([item action] == @selector(toggleProfilingJavaScript:) && isMenuItem) {
+        NSMenuItem *menuItem = (NSMenuItem *)item;
+        if ([[_inspectedWebView inspector] isProfilingJavaScript])
+            [menuItem setTitle:UI_STRING("Stop Profiling JavaScript", "title for Stop Profiling JavaScript menu item")];
+        else
+            [menuItem setTitle:UI_STRING("Start Profiling JavaScript", "title for Start Profiling JavaScript menu item")];
+    }
+
+    return YES;
 }
 
 @end

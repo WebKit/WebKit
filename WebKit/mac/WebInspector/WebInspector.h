@@ -38,8 +38,17 @@
 - (void)webViewClosed;
 - (void)show:(id)sender;
 - (void)showConsole:(id)sender;
-- (void)showTimeline:(id)sender;
 - (void)close:(id)sender;
 - (void)attach:(id)sender;
 - (void)detach:(id)sender;
+
+- (BOOL)isDebuggingJavaScript;
+- (void)toggleDebuggingJavaScript:(id)sender;
+- (void)startDebuggingJavaScript:(id)sender;
+- (void)stopDebuggingJavaScript:(id)sender;
+
+- (BOOL)isProfilingJavaScript;
+- (void)toggleProfilingJavaScript:(id)sender;
+- (void)startProfilingJavaScript:(id)sender;
+- (void)stopProfilingJavaScript:(id)sender;
 @end

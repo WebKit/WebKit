@@ -106,16 +106,7 @@ HRESULT STDMETHODCALLTYPE WebInspector::showConsole()
 {
     if (m_webView)
         if (Page* page = m_webView->page())
-            page->inspectorController()->showConsole();
-
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE WebInspector::showTimeline()
-{
-    if (m_webView)
-        if (Page* page = m_webView->page())
-            page->inspectorController()->showTimeline();
+            page->inspectorController()->showPanel(InspectorController::ConsolePanel);
 
     return S_OK;
 }

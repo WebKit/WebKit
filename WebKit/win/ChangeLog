@@ -1,3 +1,16 @@
+2008-05-22  Timothy Hatcher  <timothy@apple.com>
+
+        Changes to keep Windows building.
+
+        <rdar://problem/5956403> Update the Develop menu to match the new Inspector items
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/Localizable.strings: Added new strings.
+        * WebInspector.cpp:
+        (WebInspector::showConsole): Call showPanel.
+        * WebInspector.h:
+
 2008-05-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

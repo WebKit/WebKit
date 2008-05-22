@@ -1,3 +1,28 @@
+2008-05-22  Timothy Hatcher  <timothy@apple.com>
+
+        <rdar://problem/5956403> Update the Develop menu to match the new Inspector items
+
+        Reviewed by Adam Roben.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController showWebInspector:]):
+        (-[WebInspectorWindowController showErrorConsole:]):
+        (-[WebInspectorWindowController toggleDebuggingJavaScript:]):
+        (-[WebInspectorWindowController toggleProfilingJavaScript:]):
+        (-[WebInspectorWindowController validateUserInterfaceItem:]):
+        * WebInspector/WebInspector.h:
+        * WebInspector/WebInspector.mm:
+        (-[WebInspector showConsole:]):
+        (-[WebInspector showTimeline:]):
+        (-[WebInspector isDebuggingJavaScript]):
+        (-[WebInspector toggleDebuggingJavaScript:]):
+        (-[WebInspector startDebuggingJavaScript:]):
+        (-[WebInspector stopDebuggingJavaScript:]):
+        (-[WebInspector isProfilingJavaScript]):
+        (-[WebInspector toggleProfilingJavaScript:]):
+        (-[WebInspector startProfilingJavaScript:]):
+        (-[WebInspector stopProfilingJavaScript:]):
+
 2008-05-22  Josh Aas  <joshmoz@gmail.com>
 
         Reviewed by Anders.

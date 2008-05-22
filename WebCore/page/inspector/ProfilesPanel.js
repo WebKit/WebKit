@@ -65,23 +65,16 @@ WebInspector.ProfilesPanel.prototype = {
         WebInspector.Panel.prototype.show.call(this);
         this._updateSidebarWidth();
 
-        if (this._populateProfiles) {
-            var profiles = InspectorController.profiles();
-            var profilesLength = profiles.length;
-            for (var i = 0; i < profilesLength; ++i) {
-                var profile = profiles[i];
-                this.addProfile(profile);
-            }
-
-            if (this.sidebarTree.children[0])
-                this.sidebarTree.children[0].select();
-
-            delete this._populateProfiles;
+        if (this._shouldPopulateProfiles) {
+            this._populateProfiles();
+            delete this._shouldPopulateProfiles;
         }
     },
 
     reset: function()
     {
+        this.nextUserInitiatedProfileNumber = 1;
+
         if (this._profiles) {
             var profiledLength = this._profiles.length;
             for (var i = 0; i < profiledLength; ++i) {
@@ -95,7 +88,10 @@ WebInspector.ProfilesPanel.prototype = {
         this.sidebarTree.removeChildren();
         this.profileViews.removeChildren();
 
-        this._populateProfiles = true;
+        if (this.visible)
+            this._populateProfiles();
+        else
+            this._shouldPopulateProfiles = true;
     },
 
     handleKeyEvent: function(event)
@@ -137,6 +133,21 @@ WebInspector.ProfilesPanel.prototype = {
         if (this.visibleProfileView)
             this.visibleProfileView.hide();
         delete this.visibleProfileView;
+    },
+
+    _populateProfiles: function()
+    {
+        this.sidebarTree.removeChildren();
+
+        var profiles = InspectorController.profiles();
+        var profilesLength = profiles.length;
+        for (var i = 0; i < profilesLength; ++i) {
+            var profile = profiles[i];
+            this.addProfile(profile);
+        }
+
+        if (this.sidebarTree.children[0])
+            this.sidebarTree.children[0].select();
     },
 
     _startSidebarDragging: function(event)
@@ -186,6 +197,9 @@ WebInspector.ProfileSidebarTreeElement = function(profile)
 {
     this.profile = profile;
 
+    if (this.profile.title === "org.webkit.profiles.user-initiated")
+        this._profileNumber = WebInspector.panels.profiles.nextUserInitiatedProfileNumber++;
+
     WebInspector.SidebarTreeElement.call(this, "profile-sidebar-tree-item", "", "", profile, false);
 
     this.refreshTitles();
@@ -199,6 +213,8 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
 
     get mainTitle()
     {
+        if (this.profile.title === "org.webkit.profiles.user-initiated")
+            return WebInspector.UIString("Profile %d", this._profileNumber);
         return this.profile.title;
     },
 

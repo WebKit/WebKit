@@ -1,3 +1,27 @@
+2008-05-22  Timothy Hatcher  <timothy@apple.com>
+
+        <rdar://problem/5956403> Update the Develop menu to match the new Inspector items
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.base.exp:
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::inspect):
+        (WebCore::InspectorController::setWindowVisible):
+        (WebCore::InspectorController::showPanel):
+        (WebCore::InspectorController::startUserInitiatedProfiling):
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+        (WebCore::InspectorController::startDebuggingAndReloadInspectedPage):
+        (WebCore::InspectorController::stopDebugging):
+        * page/InspectorController.h:
+        (WebCore::InspectorController::):
+        (WebCore::InspectorController::isRecordingUserInitiatedProfile):
+        * page/inspector/ProfilesPanel.js:
+        * page/inspector/ScriptsPanel.js:
+        * page/inspector/inspector.js:
+
 2008-05-22  Josh Aas  <joshmoz@gmail.com>
 
         Reviewed by Anders.
