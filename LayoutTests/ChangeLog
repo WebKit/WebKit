@@ -1,3 +1,18 @@
+2008-05-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Darin.
+
+        Fix tests failing on Tiger.
+
+        * fast/loader/data-url-encoding-html.html:
+        * fast/loader/data-url-encoding-html-expected.txt:
+        * fast/loader/data-url-encoding-svg.html:
+        * fast/loader/data-url-encoding-svg-expected.txt:
+        Changed these tests to always use an explicit charset - otherwise, they were failing on
+        Leopard because of a CFNetwork bug, and on Tiger because of WebKit bug 19193. Also, changed
+        them to test that decoding was performed correctly, not just that document.charset matched
+        expectations.
+
 2008-05-22  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Dan.

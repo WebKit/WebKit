@@ -1,5 +1,6 @@
 Test that non-ASCII data: URLs are handled correctly.
 
 1. SUCCESS.
-2. Should be your browser's default encoding: US-ASCII. The result is currently wrong due to <rdar://problem/5845875> REGRESSION: -[NSURLResponse textEncoding] incorrectly reports us-ascii encoding for data: URLs.
- 
+2. SUCCESS.
+3. SUCCESS.
+  

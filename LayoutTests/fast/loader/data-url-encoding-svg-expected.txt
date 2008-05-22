@@ -2,6 +2,5 @@ Test that non-ASCII data: URLs are handled correctly.
 
 1. SUCCESS.
 2. SUCCESS.
-3. FAILURE: US-ASCII. The result is currently wrong due to <rdar://problem/5845875> REGRESSION: -[NSURLResponse textEncoding] incorrectly reports us-ascii encoding for data: URLs.
-4. FAILURE: SUÐ¡Ð¡Ð•SS. The result is currently wrong due to <rdar://problem/5845875> REGRESSION: -[NSURLResponse textEncoding] incorrectly reports us-ascii encoding for data: URLs.
-   
+3. SUCCESS.
+  
