@@ -5395,8 +5395,8 @@ JSValue* ReturnNode::execute(OldInterpreterExecState* exec)
 
 RegisterID* WithNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    RegisterID* scope = generator.emitNode(m_expr.get());
-    generator.emitPushScope(scope);
+    RefPtr<RegisterID> scope = generator.emitNode(m_expr.get()); // scope must be protected until popped
+    generator.emitPushScope(scope.get());
     RegisterID* result = generator.emitNode(dst, m_statement.get());
     generator.emitPopScope();
     return result;
@@ -5684,10 +5684,10 @@ RegisterID* TryNode::emitCode(CodeGenerator& generator, RegisterID* dst)
         RefPtr<LabelID> handlerEndLabel = generator.newLabel();
         generator.emitJump(handlerEndLabel.get());
         RefPtr<RegisterID> exceptionRegister = generator.emitCatch(generator.newTemporary(), tryStartLabel.get(), tryEndLabel.get());
-        RegisterID* newScope = generator.emitNewObject(generator.newTemporary());
-        generator.emitPutById(newScope, m_exceptionIdent, exceptionRegister.get());
+        RefPtr<RegisterID> newScope = generator.emitNewObject(generator.newTemporary()); // scope must be protected until popped
+        generator.emitPutById(newScope.get(), m_exceptionIdent, exceptionRegister.get());
         exceptionRegister = 0; // Release register used for temporaries
-        generator.emitPushScope(newScope);
+        generator.emitPushScope(newScope.get());
         generator.emitNode(dst, m_catchBlock.get());
         generator.emitPopScope();
         generator.emitLabel(handlerEndLabel.get());

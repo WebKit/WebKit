@@ -1,3 +1,13 @@
+2008-05-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - fixed <rdar://problem/5954979> crash on celtic kane JS benchmark
+
+        * kjs/nodes.cpp:
+        (KJS::WithNode::emitCode):
+        (KJS::TryNode::emitCode):
+
 2008-05-21  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Maciej and Geoff.
