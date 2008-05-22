@@ -1798,16 +1798,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_call_eval) {
-        int r0 = (++vPC)->u.operand;
-        int r1 = (++vPC)->u.operand;
-        int r2 = (++vPC)->u.operand;
+        int dst = (++vPC)->u.operand;
+        int func = (++vPC)->u.operand;
+        int base = (++vPC)->u.operand;
         int argv = (++vPC)->u.operand;
         int argc = (++vPC)->u.operand;
 
-        JSValue* v = r[r1].u.jsValue;
-        JSValue* base = r[r2].u.jsValue;
+        JSValue* funcVal = r[func].u.jsValue;
+        JSValue* baseVal = r[base].u.jsValue;
         
-        if (base == scopeChain->globalObject() && v == scopeChain->globalObject()->evalFunction()) {
+        if (baseVal == scopeChain->globalObject() && funcVal == scopeChain->globalObject()->evalFunction()) {
             int registerOffset = r - (*registerBase);
 
             JSObject* thisObject = r[codeBlock->thisRegister].u.jsObject;
@@ -1820,7 +1820,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             if (exceptionValue)
                 goto vm_throw;
 
-            r[r0].u.jsValue = result;
+            r[dst].u.jsValue = result;
             
             ++vPC;
             NEXT_OPCODE;
@@ -1830,7 +1830,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         // this instruction as a normal function call, supplying the proper 'this'
         // value.
         vPC -= 5;
-        r[r2].u.jsValue = base->toObject(exec)->toThisObject(exec);
+        r[base].u.jsValue = baseVal->toObject(exec)->toThisObject(exec);
 
 #if HAVE(COMPUTED_GOTO)
         // Hack around gcc performance quirk by performing an indirect goto
@@ -1841,13 +1841,13 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         // fall through to op_call
     }
     BEGIN_OPCODE(op_call) {
-        int r0 = (++vPC)->u.operand;
-        int r1 = (++vPC)->u.operand;
-        int r2 = (++vPC)->u.operand;
+        int dst = (++vPC)->u.operand;
+        int func = (++vPC)->u.operand;
+        int base = (++vPC)->u.operand;
         int argv = (++vPC)->u.operand;
         int argc = (++vPC)->u.operand;
         
-        JSValue* v = r[r1].u.jsValue;
+        JSValue* v = r[func].u.jsValue;
         
         CallData callData;
         CallType callType = v->getCallData(callData);
@@ -1857,8 +1857,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             Register* callFrame = r + argv - CallFrameHeaderSize;
             int callFrameOffset = registerOffset + argv - CallFrameHeaderSize;
 
-            r[argv].u.jsValue = r2 == missingThisObjectMarker() ? exec->globalThisValue() : r[r2].u.jsValue; // "this" value
-            initializeCallFrame(callFrame, codeBlock, vPC, scopeChain, registerOffset, r0, argv, argc, 0, v);
+            r[argv].u.jsValue = base == missingThisObjectMarker() ? exec->globalThisValue() : r[base].u.jsValue; // "this" value
+            initializeCallFrame(callFrame, codeBlock, vPC, scopeChain, registerOffset, dst, argv, argc, 0, v);
 
             ScopeChainNode* callDataScopeChain = callData.js.scopeChain;
             FunctionBodyNode* functionBodyNode = callData.js.functionBody;
@@ -1880,7 +1880,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         if (callType == CallTypeNative) {
             int registerOffset = r - (*registerBase);
             
-            r[argv].u.jsValue = r2 == missingThisObjectMarker() ? exec->globalThisValue() : (r[r2].u.jsValue)->toObject(exec); // "this" value
+            r[argv].u.jsValue = base == missingThisObjectMarker() ? exec->globalThisValue() : (r[base].u.jsValue)->toObject(exec); // "this" value
             JSObject* thisObj = static_cast<JSObject*>(r[argv].u.jsValue);
 
             List args(&r[argv + 1].u.jsValue, argc - 1);
@@ -1890,7 +1890,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             registerFile->setSafeForReentry(false);
 
             r = (*registerBase) + registerOffset;
-            r[r0].u.jsValue = returnValue;
+            r[dst].u.jsValue = returnValue;
 
             VM_CHECK_EXCEPTION();
 
@@ -1941,18 +1941,18 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_construct) {
-        int r0 = (++vPC)->u.operand;
-        int r1 = (++vPC)->u.operand;
+        int dst = (++vPC)->u.operand;
+        int func = (++vPC)->u.operand;
         int argv = (++vPC)->u.operand;
         int argc = (++vPC)->u.operand;
 
-        JSValue* v = r[r1].u.jsValue;
+        JSValue* funcVal = r[func].u.jsValue;
 
         ConstructData constructData;
-        ConstructType constructType = v->getConstructData(constructData);
+        ConstructType constructType = funcVal->getConstructData(constructData);
 
         // Removing this line of code causes a measurable regression on squirrelfish.
-        JSObject* constructor = static_cast<JSObject*>(v);
+        JSObject* constructor = static_cast<JSObject*>(funcVal);
 
         if (constructType == ConstructTypeJS) {
             int registerOffset = r - (*registerBase);
@@ -1968,8 +1968,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             JSObject* newObject = new JSObject(prototype);
             r[argv].u.jsValue = newObject; // "this" value
 
-            initializeCallFrame(callFrame, codeBlock, vPC, scopeChain, registerOffset, r0, argv, argc, 1, constructor);
-            
+            initializeCallFrame(callFrame, codeBlock, vPC, scopeChain, registerOffset, dst, argv, argc, 1, constructor);
+
             ScopeChainNode* callDataScopeChain = constructData.js.scopeChain;
             FunctionBodyNode* functionBodyNode = constructData.js.functionBody;
 
@@ -1994,18 +1994,18 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             registerFile->setSafeForReentry(true);
             JSValue* returnValue = constructor->construct(exec, args);
             registerFile->setSafeForReentry(false);
-        
+
             r = (*registerBase) + registerOffset;
             VM_CHECK_EXCEPTION();
-            r[r0].u.jsValue = returnValue;
-            
+            r[dst].u.jsValue = returnValue;
+
             ++vPC;
             NEXT_OPCODE;
         }
 
         ASSERT(constructType == ConstructTypeNone);
 
-        exceptionValue = createNotAConstructorError(exec, v, 0);
+        exceptionValue = createNotAConstructorError(exec, funcVal, 0);
         goto vm_throw;
     }
     BEGIN_OPCODE(op_push_scope) {

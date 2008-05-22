@@ -248,12 +248,12 @@ namespace KJS {
         RegisterID* emitPutGetter(RegisterID* base, const Identifier& property, RegisterID* value);
         RegisterID* emitPutSetter(RegisterID* base, const Identifier& property, RegisterID* value);
 
-        RegisterID* emitCall(RegisterID*, RegisterID*, RegisterID*, ArgumentsNode*);
-        RegisterID* emitCallEval(RegisterID*, RegisterID*, RegisterID*, ArgumentsNode*);
+        RegisterID* emitCall(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode*);
+        RegisterID* emitCallEval(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode*);
         RegisterID* emitReturn(RegisterID*);
-        RegisterID* emitEnd(RegisterID*);
+        RegisterID* emitEnd(RegisterID* dst);
 
-        RegisterID* emitConstruct(RegisterID*, RegisterID*, ArgumentsNode*);
+        RegisterID* emitConstruct(RegisterID* dst, RegisterID* func, ArgumentsNode*);
 
         PassRefPtr<LabelID> emitLabel(LabelID*);
         PassRefPtr<LabelID> emitJump(LabelID* target);

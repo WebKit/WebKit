@@ -1,3 +1,19 @@
+2008-05-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Rename register arguments for op_call, op_call_eval, op_end, and op_construct 
+        to document what they are for.
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitCall):
+        (KJS::CodeGenerator::emitCallEval):
+        (KJS::CodeGenerator::emitEnd):
+        (KJS::CodeGenerator::emitConstruct):
+        * VM/CodeGenerator.h:
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+
 2008-05-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin.
