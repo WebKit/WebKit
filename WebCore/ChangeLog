@@ -1,3 +1,15 @@
+2008-05-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Anders.
+
+        Fix for <rdar://problem/5848161> REGRESSION (r31438?): Crash 
+        beneath ResourceHandle::setDefersLoading while running fast/loader/
+        simultaneous-reloads-assert.html (null CFURLConnection)
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::setDefersLoading): Added simple null-
+        check.
+
 2008-05-21  Timothy Hatcher  <timothy@apple.com>
 
         Adds the Request and Response headers to the Resource view.
