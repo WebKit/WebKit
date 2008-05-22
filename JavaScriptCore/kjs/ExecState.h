@@ -80,7 +80,7 @@ namespace KJS  {
             return m_scopeChain->globalObject();
         }
         
-        JSObject* globalThisValue() const { return m_globalThisValue; }
+        JSObject* globalThisValue() const { return m_scopeChain->globalThisObject(); }
         
         Machine* machine() const { return m_machine; }
         

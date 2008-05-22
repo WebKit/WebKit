@@ -32,15 +32,17 @@ namespace KJS {
     
     class ScopeChainNode {
     public:
-        ScopeChainNode(ScopeChainNode* n, JSObject* o)
+        ScopeChainNode(ScopeChainNode* n, JSObject* o, JSObject* gt)
             : next(n)
             , object(o)
+            , globalThis(gt)
             , refCount(1)
         {
         }
 
         ScopeChainNode* next;
         JSObject* object;
+        JSObject* globalThis;
         int refCount;
         
         void deref() { if (--refCount == 0) release(); }
@@ -67,6 +69,7 @@ namespace KJS {
         ScopeChainIterator end() const;
         
         JSGlobalObject* globalObject() const; // defined in JSGlobalObject.h
+        JSObject* globalThisObject() const { return globalThis; }
         
 #ifndef NDEBUG        
         void print() const;
@@ -76,7 +79,7 @@ namespace KJS {
     inline ScopeChainNode* ScopeChainNode::push(JSObject* o)
     {
         ASSERT(o);
-        return new ScopeChainNode(this, o);
+        return new ScopeChainNode(this, o, globalThis);
     }
 
     inline ScopeChainNode* ScopeChainNode::pop()
@@ -143,8 +146,8 @@ namespace KJS {
 
     class ScopeChain {
     public:
-        ScopeChain(JSObject* o)
-            : _node(new ScopeChainNode(0, o))
+    ScopeChain(JSObject* o, JSObject* globalThis)
+            : _node(new ScopeChainNode(0, o, globalThis))
         {
         }
 

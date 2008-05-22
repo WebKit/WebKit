@@ -1,3 +1,13 @@
+2008-05-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver and Sam.
+        
+        - tests for <rdar://problem/5815631> REGRESSION (r31239): Multiscope optimisation of function calls results in incorrect this value (breaks tvtv.de)
+
+        * fast/frames/cross-site-this-expected.txt: Added.
+        * fast/frames/cross-site-this.html: Added.
+        * fast/frames/resources/cross-site-this-helper.html: Added.
+
 2008-05-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

@@ -1,3 +1,24 @@
+2008-05-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver and Sam.
+        
+        - fixed <rdar://problem/5815631> REGRESSION (r31239): Multiscope optimisation of function calls results in incorrect this value (breaks tvtv.de)
+        
+        Track global this value in the scope chain so we can retrieve it
+        efficiently but it follows lexical scope properly.
+
+        * kjs/ExecState.h:
+        (KJS::ExecState::globalThisValue):
+        * kjs/JSGlobalObject.h:
+        (KJS::JSGlobalObject::JSGlobalObjectData::JSGlobalObjectData):
+        * kjs/function_object.cpp:
+        (KJS::FunctionObjectImp::construct):
+        * kjs/scope_chain.h:
+        (KJS::ScopeChainNode::ScopeChainNode):
+        (KJS::ScopeChainNode::globalThisObject):
+        (KJS::ScopeChainNode::push):
+        (KJS::ScopeChain::ScopeChain):
+
 2008-05-21  Kevin McCullough  <kmccullough@apple.com>
 
         Sadness :(
