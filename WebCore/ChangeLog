@@ -1,5 +1,26 @@
 2008-05-22  Adam Roben  <aroben@apple.com>
 
+        Massively speed up date-format-tofte with the debugger attached
+
+        On a debug Windows build (I know, hardly a good testcase) this patch
+        makes this test run 57.25x as fast.
+
+        Reviewed by Mark Rowe.
+
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.reset): Clear the
+        _scriptsForURLsInFilesSelect object.
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource): Instead
+        of looping over all the options in the select to find the option we
+        want, get the script object from _scriptsForURLsInFilesSelect and get
+        the option element from the script object.
+        (WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu): Use
+        _scriptsForURLsInFilesSelect to cache the script objects. Store the
+        option element for each script on the script object so we can quickly
+        retrieve it later.
+
+2008-05-22  Adam Roben  <aroben@apple.com>
+
         Remove some dead code from ScriptsPanel.js
 
         Reviewed by Mark Rowe.

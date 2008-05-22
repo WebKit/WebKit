@@ -316,6 +316,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._clearInterface();
 
+        this._scriptsForURLsInFilesSelect = {};
         this.filesSelectElement.removeChildren();
         this.functionsSelectElement.removeChildren();
         this.scriptResourceViews.removeChildren();
@@ -421,25 +422,29 @@ WebInspector.ScriptsPanel.prototype = {
         if (line && view.revealLine)
             view.revealLine(line);
 
-        var select = this.filesSelectElement;
-        var options = select.options;
-        for (var i = 0; i < options.length; ++i) {
-            if (options[i].representedObject === scriptOrResource)
-                break;
+        var option;
+        if (scriptOrResource instanceof WebInspector.Script) {
+            option = script.filesSelectOption;
+            console.assert(option);
+        } else {
+            var url = scriptOrResource.url;
+            var script = this._scriptsForURLsInFilesSelect[url];
+            if (script)
+               option = script.filesSelectOption;
         }
 
-        select.selectedIndex = i;
+        if (option)
+            this.filesSelectElement.selectedIndex = option.index;
     },
 
     _addScriptToFilesMenu: function(script)
     {
+        if (script.resource && this._scriptsForURLsInFilesSelect[script.sourceURL])
+            return;
+
+        this._scriptsForURLsInFilesSelect[script.sourceURL] = script;
+
         var select = this.filesSelectElement;
-        var options = select.options;
-        for (var i = 0; i < options.length; ++i) {
-            var option = options[i];
-            if (option.representedObject === (script.resource || script))
-                return;
-        }
 
         // FIXME: Append in some meaningful order.
         var option = document.createElement("option");
@@ -447,9 +452,11 @@ WebInspector.ScriptsPanel.prototype = {
         option.text = (script.sourceURL ? script.sourceURL.trimURL(WebInspector.mainResource ? WebInspector.mainResource.domain : "") : "(eval script)");
         select.appendChild(option);
 
+        script.filesSelectOption = option;
+
         // Call _showScriptOrResource if the option we just appended ended up being selected.
         // This will happen for the first item added to the menu.
-        if (options[select.selectedIndex] === option)
+        if (select.options[select.selectedIndex] === option)
             this._showScriptOrResource(option.representedObject);
     },
 
