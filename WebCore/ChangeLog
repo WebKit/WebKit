@@ -1,3 +1,22 @@
+2008-05-21  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 19173: Tool tips for Inspector debugger status bar buttons are
+        wrong/missing
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19173>
+
+        Reviewed by Tim Hatcher.
+
+        * manual-tests/inspector/debugger-status-bar-buttons-state.html:
+        Added.
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._toggleDebugging): Call
+        _clearInterface (which updates the buttons' tool tips) after
+        attaching/detaching the debugger so that the buttons will reflect the
+        new state.
+        (WebInspector.ScriptsPanel.prototype._updatePauseOnExceptionsButton):
+        Set the title of the pauseOnExceptionsButton, not the debuggingButton.
+
 2008-05-20  Adam Roben  <aroben@apple.com>
 
         Fix Bug 19153: Inspector should support console.debug

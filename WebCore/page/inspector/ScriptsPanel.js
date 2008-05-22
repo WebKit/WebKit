@@ -544,10 +544,10 @@ WebInspector.ScriptsPanel.prototype = {
     _updatePauseOnExceptionsButton: function()
     {
         if (InspectorController.pauseOnExceptions()) {
-            this.debuggingButton.title = WebInspector.UIString("Pause on exceptions.");
+            this.pauseOnExceptionButtons.title = WebInspector.UIString("Pause on exceptions.");
             this.pauseOnExceptionButtons.addStyleClass("toggled-on");
         } else {
-            this.debuggingButton.title = WebInspector.UIString("Don't pause on exceptions.");
+            this.pauseOnExceptionButtons.title = WebInspector.UIString("Don't pause on exceptions.");
             this.pauseOnExceptionButtons.removeStyleClass("toggled-on");
         }
     },
@@ -607,8 +607,6 @@ WebInspector.ScriptsPanel.prototype = {
         this._waitingToPause = false;
         this._stepping = false;
 
-        this._clearInterface();
-
         if (InspectorController.debuggerAttached()) {
             this.element.appendChild(this.attachOverlayElement);
             InspectorController.stopDebugging();
@@ -616,6 +614,8 @@ WebInspector.ScriptsPanel.prototype = {
             this.attachOverlayElement.parentNode.removeChild(this.attachOverlayElement);
             InspectorController.startDebuggingAndReloadInspectedPage();
         }
+
+        this._clearInterface();
     },
 
     _togglePauseOnExceptions: function()
