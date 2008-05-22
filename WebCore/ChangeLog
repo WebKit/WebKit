@@ -1,3 +1,15 @@
+2008-05-21  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5950867> JSProfiler: Allow the profiler to "Focus" a
+        profile node.
+        - Expose the Profile's 'focus' ability to WebCore and the WebInspector.
+
+        * page/JavaScriptProfile.cpp:
+        (WebCore::focus):
+        (WebCore::profileClass):
+
 2008-05-21  Timothy Hatcher  <timothy@apple.com>
 
         Remove the rest of the debug code inside DEBUG_DEBUGGER_CALLBACKS
