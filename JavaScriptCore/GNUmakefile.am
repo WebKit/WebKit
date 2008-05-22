@@ -1,6 +1,7 @@
 javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
 	-I$(srcdir)/JavaScriptCore/wtf/unicode \
+	-I$(srcdir)/JavaScriptCore/VM \
 	-I$(top_builddir)/JavaScriptCore/pcre \
 	-I$(top_builddir)/JavaScriptCore/kjs
 
@@ -38,6 +39,20 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/InitializeThreading.cpp \
 	JavaScriptCore/kjs/JSGlobalObject.cpp \
 	JavaScriptCore/kjs/JSVariableObject.cpp \
+	JavaScriptCore/kjs/JSActivation.cpp \
+	JavaScriptCore/kjs/JSNotAnObject.cpp \
+	JavaScriptCore/VM/CodeBlock.cpp \
+	JavaScriptCore/VM/CodeGenerator.cpp \
+	JavaScriptCore/VM/ExceptionHelpers.cpp \
+	JavaScriptCore/VM/Instruction.cpp \
+	JavaScriptCore/VM/JSPropertyNameIterator.cpp \
+	JavaScriptCore/VM/LabelID.cpp \
+	JavaScriptCore/VM/Machine.cpp \
+	JavaScriptCore/VM/Opcode.cpp \
+	JavaScriptCore/VM/Register.cpp \
+	JavaScriptCore/VM/RegisterFile.cpp \
+	JavaScriptCore/VM/RegisterFileStack.cpp \
+	JavaScriptCore/VM/RegisterID.cpp \
 	JavaScriptCore/pcre/pcre_compile.cpp \
 	JavaScriptCore/pcre/pcre_exec.cpp \
 	JavaScriptCore/pcre/pcre_tables.cpp \
@@ -64,7 +79,6 @@ javascriptcore_built_sources += \
 javascriptcore_sources += \
 	JavaScriptCore/kjs/CommonIdentifiers.cpp \
 	JavaScriptCore/kjs/DateMath.cpp \
-	JavaScriptCore/kjs/ExecState.cpp \
 	JavaScriptCore/kjs/JSImmediate.cpp \
 	JavaScriptCore/kjs/JSLock.cpp \
 	JavaScriptCore/kjs/JSWrapperObject.cpp \
@@ -102,7 +116,9 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/ustring.cpp \
 	JavaScriptCore/kjs/value.cpp \
 	JavaScriptCore/wtf/FastMalloc.cpp \
-	JavaScriptCore/wtf/TCSystemAlloc.cpp
+	JavaScriptCore/wtf/TCSystemAlloc.cpp \
+	JavaScriptCore/VM/CodeGenerator.cpp \
+	JavaScriptCore/VM/RegisterFile.cpp
 
 else
 javascriptcore_built_nosources += \
