@@ -1,3 +1,16 @@
+2008-05-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adam Roben.
+        
+        Removed the old recursion guard mechanism, since squirrelfish has its
+        own mechanism. Also removed some old JS call tracing code, since we
+        have other ways to do that, too.
+        
+        SunSpider reports no change.
+
+        * kjs/object.cpp:
+        (KJS::JSObject::call):
+
 2008-05-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
