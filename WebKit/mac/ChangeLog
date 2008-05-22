@@ -1,3 +1,90 @@
+=== End merge of squirrelfish ===
+
+2008-05-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Tim Hatcher.
+        
+        Updated for API changes from merging with trunk WebCore's new debugger.
+
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame evaluateWebScript:]): Explicitly check for an
+        exception return, since the DebuggerCallFrame no longer automatically
+        substitutes the exception for the return value.
+
+        * WebView/WebScriptDebugger.mm: Use the dynamic global object, not the
+        lexical global object, since the debugger attaches based on dynamic
+        global object.
+
+2008-05-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Re-enabled previously disabled debugging functionality.
+        
+        There are two major changes from how the WebKit debugger used to work:
+        
+        (1) All the interesting bits are implemented down in JavaScriptCore. The
+        debugger just calls through to KJS::DebuggerCallFrame for everything.
+        
+        (2) Instead of copyihng a pointer to an ExecState once, the debugger
+        copies the DebuggerCallFrame passed to it in each callback. This is
+        because the VM no longer maintains a fully transparent execution state
+        to which you can hold a pointer, and the DebuggerCallFrames it vends
+        are temporaries.
+        
+        Also, we NULL out a WebScriptCallFrame's DebuggerCallFrame upon return
+        from its function. This is safer than the old method, which was to
+        hold a stale ExecState* and hope for the best.
+
+2008-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Updated for API changes in KJS::Debugger.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _attachScriptDebugger]): Changed the order of operations to
+        fix an ASSERT that can happen when re-entering _attachScriptDebugger.
+
+2008-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Updated WebScriptDebugger API to accept a SourceProvider instead
+        of a WebCore::String, to avoid copying.
+
+        (WebScriptDebugger::sourceParsed): Updated this function not to return
+        a value.
+
+2008-04-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: #ifdef'd out some code that doesn't work anymore.
+
+2008-04-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        #ifdef'd out some debugger code that doesn't work anymore.
+
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame scopeChain]):
+
+2008-04-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
+        * ChangeLog:
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame scopeChain]):
+
+2008-03-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Build fix.
+
+=== Start merge of squirrelfish ===
+
 2008-05-21  Darin Adler  <darin@apple.com>
 
         - fix build

@@ -36,7 +36,7 @@
 #include "JSCustomSQLTransactionCallback.h"
 #include "JSCustomSQLTransactionErrorCallback.h"
 #include "JSCustomVoidCallback.h"
-#include "JSDOMWindow.h"
+#include "JSDOMWindowCustom.h"
 #include "PlatformString.h"
 #include "SQLValue.h"
 #include <kjs/array_instance.h>

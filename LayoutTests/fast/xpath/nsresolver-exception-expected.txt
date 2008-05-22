@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 14: Value undefined (result of expression window.foobar) is not object.
+CONSOLE MESSAGE: line 14: this is an exception
 SUCCESS

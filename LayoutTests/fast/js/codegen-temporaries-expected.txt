@@ -1,0 +1,41 @@
+Tests whether bytecode codegen properly handles temporaries.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS a is true
+PASS b is false
+PASS assign_test1() is 'PASS'
+PASS assign_test2() is 'PASS'
+PASS assign_test3() is 'PASS'
+PASS testObject4.test is 'PASS'
+PASS testObject5.test is 'PASS'
+PASS assign_test6() is 'PASS'
+PASS assign_test7() is 'PASS'
+PASS assign_test8() is 'PASS'
+PASS assign_test9() is 'PASS'
+PASS testObject10.test is 'PASS'
+PASS assign_test11() is 'PASS'
+PASS assign_test12() is 'PASS'
+PASS assign_test13() is 'PASS'
+PASS assign_test14() is 'PASS'
+PASS assign_test15() is 'PASS'
+PASS assign_test16() is 2
+PASS a17 is 3
+PASS assign_test18() is 3
+PASS a19.b is 3
+PASS assign_test20() is 3
+PASS a21['b'] is 3
+PASS assign_test22() is 3
+PASS assign_test23() is 3
+PASS assign_test24() is 3
+PASS assign_test25() is 3
+PASS assign_test26() is 3
+PASS assign_test27() is 3
+PASS assign_test28() is 3
+PASS assign_test29() is 3
+PASS assign_test30() is 'fooNaN'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

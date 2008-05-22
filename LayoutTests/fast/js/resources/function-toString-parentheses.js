@@ -127,17 +127,21 @@ var prefixOperatorSpace = [ " ", " ", " ", "", "", " ", " ", "", "" ];
 for (i = 0; i < prefixOperators.length; ++i) {
     var op = prefixOperators[i] + prefixOperatorSpace[i];
     shouldBe("compileAndSerialize('" + op + "a + b')", "'" + op + "a + b'");
-    shouldBe("compileAndSerialize('(" + op + "a) + b')", "'" + op + "a + b'");
+    shouldBe("compileAndSerialize('(" + op + "a) + b')", 
+             removesExtraParentheses ?
+             "'" + op + "a + b'" :
+             "'(" + op + "a) + b'");
     shouldBe("compileAndSerialize('" + op + "(a + b)')", "'" + op + "(a + b)'");
     shouldBe("compileAndSerialize('!" + op + "a')", "'!" + op + "a'");
-    shouldBe("compileAndSerialize('!(" + op + "a)')", "'!" + op + "a'");
+    shouldBe("compileAndSerialize('!(" + op + "a)')", 
+             removesExtraParentheses ? "'!" + op + "a'" : "'!(" + op + "a)'");
 }
 
 shouldBe("compileAndSerialize('!a++')", "'!a++'");
-shouldBe("compileAndSerialize('!(a++)')", "'!a++'");
+shouldBe("compileAndSerialize('!(a++)')", removesExtraParentheses ? "'!a++'" : "'!(a++)'" );
 shouldBe("compileAndSerialize('(!a)++')", "'(!a)++'");
 shouldBe("compileAndSerialize('!a--')", "'!a--'");
-shouldBe("compileAndSerialize('!(a--)')", "'!a--'");
+shouldBe("compileAndSerialize('!(a--)')", removesExtraParentheses ? "'!a--'" : "'!(a--)'");
 shouldBe("compileAndSerialize('(!a)--')", "'(!a)--'");
 
 shouldBe("compileAndSerialize('(-1)[a]')", "'(-1)[a]'");
@@ -172,14 +176,14 @@ shouldBe("compileAndSerialize('(- 0).a++')", "'(- 0).a++'");
 shouldBe("compileAndSerialize('++(- 0).a')", "'++(- 0).a'");
 shouldBe("compileAndSerialize('(- 0).a()')", "'(- 0).a()'");
 
-shouldBe("compileAndSerialize('(1)[a]')", "'1[a]'");
-shouldBe("compileAndSerialize('(1)[a] = b')", "'1[a] = b'");
-shouldBe("compileAndSerialize('(1)[a] += b')", "'1[a] += b'");
-shouldBe("compileAndSerialize('(1)[a]++')", "'1[a]++'");
-shouldBe("compileAndSerialize('++(1)[a]')", "'++1[a]'");
-shouldBe("compileAndSerialize('(1)[a]()')", "'1[a]()'");
+shouldBe("compileAndSerialize('(1)[a]')", removesExtraParentheses ? "'1[a]'" : "'(1)[a]'");
+shouldBe("compileAndSerialize('(1)[a] = b')", removesExtraParentheses ? "'1[a] = b'" : "'(1)[a] = b'");
+shouldBe("compileAndSerialize('(1)[a] += b')", removesExtraParentheses ? "'1[a] += b'" : "'(1)[a] += b'");
+shouldBe("compileAndSerialize('(1)[a]++')", removesExtraParentheses ? "'1[a]++'" : "'(1)[a]++'");
+shouldBe("compileAndSerialize('++(1)[a]')", removesExtraParentheses ? "'++1[a]'" : "'++(1)[a]'");
+shouldBe("compileAndSerialize('(1)[a]()')", removesExtraParentheses ? "'1[a]()'" : "'(1)[a]()'");
 
-shouldBe("compileAndSerialize('new (1)()')", "'new 1()'");
+shouldBe("compileAndSerialize('new (1)()')", removesExtraParentheses ? "'new 1()'" : "'new (1)()'");
 
 shouldBe("compileAndSerialize('(1).a')", "'(1).a'");
 shouldBe("compileAndSerialize('(1).a = b')", "'(1).a = b'");

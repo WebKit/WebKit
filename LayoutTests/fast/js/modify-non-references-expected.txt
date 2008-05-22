@@ -1,9 +1,9 @@
-PASS function f() { g()++; } f.toString() is 'function f() \n{\n  g()++;\n}'
-PASS function f() { g()--; } f.toString() is 'function f() \n{\n  g()--;\n}'
-PASS function f() { ++g(); } f.toString() is 'function f() \n{\n  ++g();\n}'
-PASS function f() { --g(); } f.toString() is 'function f() \n{\n  --g();\n}'
-PASS function f() { g() = 1; } f.toString() is 'function f() \n{\n  g() = 1;\n}'
-PASS function f() { g() += 1; } f.toString() is 'function f() \n{\n  g() += 1;\n}'
+PASS function f() { g()++; } f.toString() is 'function f() { g()++; }'
+PASS function f() { g()--; } f.toString() is 'function f() { g()--; }'
+PASS function f() { ++g(); } f.toString() is 'function f() { ++g(); }'
+PASS function f() { --g(); } f.toString() is 'function f() { --g(); }'
+PASS function f() { g() = 1; } f.toString() is 'function f() { g() = 1; }'
+PASS function f() { g() += 1; } f.toString() is 'function f() { g() += 1; }'
 PASS g()++ threw exception ReferenceError: Postfix ++ operator applied to value that is not a reference..
 PASS g()-- threw exception ReferenceError: Postfix -- operator applied to value that is not a reference..
 PASS ++g() threw exception ReferenceError: Prefix ++ operator applied to value that is not a reference..

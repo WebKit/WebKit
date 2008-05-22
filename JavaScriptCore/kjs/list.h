@@ -41,8 +41,26 @@ namespace KJS {
         typedef VectorType::iterator iterator;
         typedef VectorType::const_iterator const_iterator;
 
+        // Constructor for a read-write list, to which you may append values.
+        // FIXME: Remove all clients of this API, then remove this API.
         List()
             : m_isInMarkSet(false)
+#ifndef NDEBUG
+            , m_isReadOnly(false)
+#endif
+        {
+            m_buffer = m_vector.data();
+            m_size = m_vector.size();
+        }
+
+        // Constructor for a read-only list whose data has already been allocated elsewhere.
+        List(JSValue** buffer, size_t size)
+            : m_buffer(buffer)
+            , m_size(size)
+            , m_isInMarkSet(false)
+#ifndef NDEBUG
+            , m_isReadOnly(true)
+#endif
         {
         }
 
@@ -52,38 +70,48 @@ namespace KJS {
                 markSet().remove(this);
         }
 
-        size_t size() const { return m_vector.size(); }
-        bool isEmpty() const { return m_vector.isEmpty(); }
+        size_t size() const { return m_size; }
+        bool isEmpty() const { return !m_size; }
 
         JSValue* at(size_t i) const
         {
-            if (i < m_vector.size())
-                return m_vector.at(i);
+            if (i < m_size)
+                return m_buffer[i];
             return jsUndefined();
         }
 
         JSValue* operator[](int i) const { return at(i); }
 
-        void clear() { m_vector.clear(); }
+        void clear()
+        {
+            m_vector.clear();
+            m_size = 0;
+        }
 
         void append(JSValue* v)
         {
-            if (m_vector.size() < m_vector.capacity())
+            ASSERT(!m_isReadOnly);
+            
+            if (m_vector.size() < m_vector.capacity()) {
                 m_vector.uncheckedAppend(v);
-            else
+                ++m_size;
+            } else {
                 // Putting the slow "expand and append" case all in one 
                 // function measurably improves the performance of the fast 
                 // "just append" case.
                 expandAndAppend(v);
+                m_buffer = m_vector.data();
+                ++m_size;
+            }
         }
 
         void getSlice(int startIndex, List& result) const;
 
-        iterator begin() { return m_vector.begin(); }
-        iterator end() { return m_vector.end(); }
+        iterator begin() { return m_buffer; }
+        iterator end() { return m_buffer + m_size; }
 
-        const_iterator begin() const { return m_vector.begin(); }
-        const_iterator end() const { return m_vector.end(); }
+        const_iterator begin() const { return m_buffer; }
+        const_iterator end() const { return m_buffer + m_size; }
 
         static void markProtectedLists()
         {
@@ -97,9 +125,15 @@ namespace KJS {
         static void markProtectedListsSlowCase();
 
         void expandAndAppend(JSValue*);
+        
+        JSValue** m_buffer;
+        size_t m_size;
 
         VectorType m_vector;
         bool m_isInMarkSet;
+#ifndef NDEBUG
+        bool m_isReadOnly;
+#endif
 
     private:
         // Prohibits new / delete, which would break GC.

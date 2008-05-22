@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSCSSStyleDeclaration.h"
+#include "JSCSSStyleDeclarationCustom.h"
 
 #include "AtomicString.h"
 #include "CSSPrimitiveValue.h"

@@ -36,9 +36,9 @@ JSImageConstructor::JSImageConstructor(ExecState* exec, Document* document)
 {
 }
 
-bool JSImageConstructor::implementsConstruct() const
+ConstructType JSImageConstructor::getConstructData(ConstructData&)
 {
-    return true;
+    return ConstructTypeNative;
 }
 
 JSObject* JSImageConstructor::construct(ExecState* exec, const List& args)

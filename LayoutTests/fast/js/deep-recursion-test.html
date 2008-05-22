@@ -16,20 +16,20 @@
     }
 
     try {
-        simpleRecursion(499);
+        simpleRecursion(100000);
     } catch (ex) {
         debug(ex);
     }
 
     try {
-        simpleRecursion(500);
+        simpleRecursion(10000000);
     } catch (ex) {
         var msg = String(eval(ex));
         shouldBe("msg", "'RangeError: Maximum call stack size exceeded.'");
     }
     
     try {
-        simpleRecursion(1000);
+        simpleRecursion(1000000000);
     } catch (ex) {
         var msg = String(eval(ex));
         shouldBe("msg", "'RangeError: Maximum call stack size exceeded.'");

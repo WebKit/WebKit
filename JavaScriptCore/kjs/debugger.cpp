@@ -1,6 +1,6 @@
 // -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
+ *  Copyright (C) 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *
@@ -24,111 +24,32 @@
 #include "debugger.h"
 
 #include "JSGlobalObject.h"
-#include "internal.h"
-#include "ustring.h"
-
-using namespace KJS;
-
-// ------------------------------ Debugger -------------------------------------
 
 namespace KJS {
-  struct AttachedGlobalObject
-  {
-  public:
-    AttachedGlobalObject(JSGlobalObject* o, AttachedGlobalObject* ai) : globalObj(o), next(ai) { ++Debugger::debuggersPresent; }
-    ~AttachedGlobalObject() { --Debugger::debuggersPresent; }
-    JSGlobalObject* globalObj;
-    AttachedGlobalObject* next;
-  };
-
-}
-
-int Debugger::debuggersPresent = 0;
 
 Debugger::Debugger()
 {
-  rep = new DebuggerImp();
 }
 
 Debugger::~Debugger()
 {
-  detach(0);
-  delete rep;
+    HashSet<JSGlobalObject*>::iterator end = m_globalObjects.end();
+    for (HashSet<JSGlobalObject*>::iterator it = m_globalObjects.begin(); it != end; ++it)
+        (*it)->setDebugger(0);
 }
 
 void Debugger::attach(JSGlobalObject* globalObject)
 {
-  Debugger* other = globalObject->debugger();
-  if (other == this)
-    return;
-  if (other)
-    other->detach(globalObject);
-  globalObject->setDebugger(this);
-  rep->globalObjects = new AttachedGlobalObject(globalObject, rep->globalObjects);
+    ASSERT(!globalObject->debugger());
+    globalObject->setDebugger(this);
+    m_globalObjects.add(globalObject);
 }
 
-void Debugger::detach(JSGlobalObject* globalObj)
+void Debugger::detach(JSGlobalObject* globalObject)
 {
-  // iterate the addresses where AttachedGlobalObject pointers are stored
-  // so we can unlink items from the list
-  AttachedGlobalObject **p = &rep->globalObjects;
-  AttachedGlobalObject *q;
-  while ((q = *p)) {
-    if (!globalObj || q->globalObj == globalObj) {
-      *p = q->next;
-      q->globalObj->setDebugger(0);
-      delete q;
-    } else
-      p = &q->next;
-  }
-
-  if (globalObj)
-    latestExceptions.remove(globalObj);
-  else
-    latestExceptions.clear();
+    ASSERT(m_globalObjects.contains(globalObject));
+    m_globalObjects.remove(globalObject);
+    globalObject->setDebugger(0);
 }
 
-bool Debugger::hasHandledException(ExecState *exec, JSValue *exception)
-{
-    if (latestExceptions.get(exec->dynamicGlobalObject()).get() == exception)
-        return true;
-
-    latestExceptions.set(exec->dynamicGlobalObject(), exception);
-    return false;
-}
-
-bool Debugger::sourceParsed(ExecState*, int /*sourceId*/, const UString &/*sourceURL*/, 
-                           const UString &/*source*/, int /*startingLineNumber*/, int /*errorLine*/, const UString & /*errorMsg*/)
-{
-  return true;
-}
-
-bool Debugger::sourceUnused(ExecState*, int /*sourceId*/)
-{
-  return true;
-}
-
-bool Debugger::exception(ExecState*, int /*sourceId*/, int /*lineno*/,
-                         JSValue* /*exception */)
-{
-  return true;
-}
-
-bool Debugger::atStatement(ExecState*, int /*sourceId*/, int /*firstLine*/,
-                           int /*lastLine*/)
-{
-  return true;
-}
-
-bool Debugger::callEvent(ExecState*, int /*sourceId*/, int /*lineno*/,
-                         JSObject* /*function*/, const List &/*args*/)
-{
-  return true;
-}
-
-bool Debugger::returnEvent(ExecState*, int /*sourceId*/, int /*lineno*/,
-                           JSObject* /*function*/)
-{
-  return true;
-}
-
+} // namespace KJS

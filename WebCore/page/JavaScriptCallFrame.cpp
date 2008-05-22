@@ -27,6 +27,7 @@
 #include "JavaScriptCallFrame.h"
 
 #include "PlatformString.h"
+#include <kjs/DebuggerCallFrame.h>
 #include <kjs/JSGlobalObject.h>
 #include <kjs/interpreter.h>
 #include <kjs/object.h>
@@ -36,11 +37,12 @@ using namespace KJS;
 
 namespace WebCore {
 
-JavaScriptCallFrame::JavaScriptCallFrame(ExecState* exec, PassRefPtr<JavaScriptCallFrame> caller, int sourceID, int line)
-    : m_exec(exec)
+JavaScriptCallFrame::JavaScriptCallFrame(const DebuggerCallFrame& debuggerCallFrame, PassRefPtr<JavaScriptCallFrame> caller, int sourceID, int line)
+    : m_debuggerCallFrame(debuggerCallFrame)
     , m_caller(caller)
     , m_sourceID(sourceID)
     , m_line(line)
+    , m_isValid(true)
 {
 }
 
@@ -49,48 +51,42 @@ JavaScriptCallFrame* JavaScriptCallFrame::caller()
     return m_caller.get();
 }
 
+const KJS::ScopeChainNode* JavaScriptCallFrame::scopeChain() const
+{
+    ASSERT(m_isValid);
+    if (!m_isValid)
+        return 0;
+    return m_debuggerCallFrame.scopeChain();
+}
+
 String JavaScriptCallFrame::functionName() const
 {
-    if (!m_exec || !m_exec->scopeNode())
+    ASSERT(m_isValid);
+    if (!m_isValid)
         return String();
-
-    FunctionImp* function = m_exec->function();
-    if (!function)
+    const UString* functionName = m_debuggerCallFrame.functionName();
+    if (!functionName)
         return String();
-
-    return String(function->functionName());
+    return *functionName;
 }
 
 JSObject* JavaScriptCallFrame::thisObject() const
 {
-    if (!m_exec)
+    ASSERT(m_isValid);
+    if (!m_isValid)
         return 0;
-    return m_exec->thisValue();
+    return m_debuggerCallFrame.thisObject();
 }
 
 // Evaluate some JavaScript code in the scope of this frame.
 JSValue* JavaScriptCallFrame::evaluate(const UString& script, JSValue*& exception) const
 {
-    if (!m_exec)
+    ASSERT(m_isValid);
+    if (!m_isValid)
         return jsNull();
 
     JSLock lock;
-
-    ExecState* exec = m_exec;
-    JSGlobalObject* globalObject = exec->dynamicGlobalObject();
-
-    JSValue* savedException = exec->exception();
-    exec->clearException();
-
-    List args;
-    args.append(jsString(script));
-    JSValue* result = eval(exec, exec->scopeChain(), globalObject, globalObject, exec->thisValue(), args);
-
-    if (exec->hadException())
-        exception = exec->takeException();
-    exec->setException(savedException);
-
-    return result;
+    return m_debuggerCallFrame.evaluate(script, exception);
 }
 
 } // namespace WebCore

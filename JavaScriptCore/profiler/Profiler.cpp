@@ -169,14 +169,17 @@ void Profiler::didExecute(ExecState* exec, const UString& sourceURL, int startin
     dispatchFunctionToProfiles(m_currentProfiles, &Profile::didExecute, callIdentifiers, exec->lexicalGlobalObject()->pageGroupIdentifier());
 }
 
-void getCallIdentifiers(ExecState* exec, Vector<CallIdentifier>& callIdentifiers)
+void getCallIdentifiers(ExecState*, Vector<CallIdentifier>&)
 {
+    ASSERT_NOT_REACHED();
+#if 0
     for (ExecState* currentState = exec; currentState; currentState = currentState->callingExecState()) {
         if (FunctionImp* functionImp = currentState->function())
             getCallIdentifierFromFunctionImp(functionImp, callIdentifiers);
         else if (ScopeNode* scopeNode = currentState->scopeNode())
             callIdentifiers.append(CallIdentifier(GlobalCodeExecution, scopeNode->sourceURL(), (scopeNode->lineNo() + 1)) );   // FIXME: Why is the line number always off by one?
     }
+#endif
 }
 
 void getCallIdentifiers(ExecState* exec, JSObject* calledFunction, Vector<CallIdentifier>& callIdentifiers)

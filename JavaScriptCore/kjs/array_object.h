@@ -40,8 +40,9 @@ namespace KJS {
   public:
     ArrayObjectImp(ExecState*, FunctionPrototype*, ArrayPrototype*);
 
-    virtual bool implementsConstruct() const;
+    virtual ConstructType getConstructData(ConstructData&);
     virtual JSObject* construct(ExecState*, const List&);
+
     virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
 
   };

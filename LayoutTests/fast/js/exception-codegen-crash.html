@@ -1,0 +1,18 @@
+<p>This page tests some conditions that used to cause crashes during codegen.
+</p>
+<p>If you don't crash, you pass.
+</p>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var scripts = [
+    "(1++).x;",
+    "/^[s{-.[]()]$/.x;",
+    "(++1).x;",
+    "(1 = 1).x;"
+];
+
+eval(scripts.join("\n"));
+</script>

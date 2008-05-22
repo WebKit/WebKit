@@ -66,7 +66,7 @@
     ];
 
     for (test in tests) {
-        var decompiledFunction = eval("(function () {" + tests[test] + "})").toString().replace(/\n/g, "");
+        var decompiledFunction = eval("(function () {  " + tests[test] + ";})").toString().replace(/\n/g, "");
         shouldBe("decompiledFunction", "'function () {  " + tests[test] + ";}'");
     }
 

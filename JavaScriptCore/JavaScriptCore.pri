@@ -2,8 +2,8 @@
 VPATH += $$PWD
 
 INCLUDEPATH += tmp
-INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/wtf $$PWD/wtf/unicode
-DEPENDPATH += $$PWD $$PWD/kjs $$PWD/wtf $$PWD/wtf/unicode
+INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/wtf $$PWD/wtf/unicode $$PWD/VM
+DEPENDPATH += $$PWD $$PWD/kjs $$PWD/wtf $$PWD/wtf/unicode $$PWD/VM
 DEFINES -= KJS_IDENTIFIER_HIDE_GLOBALS 
 DEFINES += BUILDING_QT__
 
@@ -45,7 +45,21 @@ SOURCES += \
     API/JSValueRef.cpp \
     kjs/InitializeThreading.cpp \
     kjs/JSGlobalObject.cpp \
-    kjs/JSVariableObject.cpp
+    kjs/JSVariableObject.cpp \
+    kjs/JSActivation.cpp \
+    kjs/JSNotAnObject.cpp \
+    VM/CodeBlock.cpp \
+    VM/CodeGenerator.cpp \
+    VM/ExceptionHelpers.cpp \
+    VM/Instruction.cpp \
+    VM/JSPropertyNameIterator.cpp \
+    VM/LabelID.cpp \
+    VM/Machine.cpp \
+    VM/Opcode.cpp \
+    VM/Register.cpp \
+    VM/RegisterFile.cpp \
+    VM/RegisterFileStack.cpp \
+    VM/RegisterID.cpp
 
 # AllInOneFile.cpp helps gcc analize and optimize code
 # Other compilers may be able to do this at link time

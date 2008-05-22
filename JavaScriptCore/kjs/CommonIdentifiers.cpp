@@ -35,6 +35,7 @@ const char* const nullCString = 0;
 CommonIdentifiers::CommonIdentifiers()
     : nullIdentifier(nullCString)
     , underscoreProto("__proto__")
+    , thisIdentifier("this")
     KJS_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PROPERTY_NAME)
 {
 }

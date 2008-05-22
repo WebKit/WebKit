@@ -33,7 +33,7 @@
 #include "ExceptionCode.h"
 #include "JSCustomSQLStatementCallback.h"
 #include "JSCustomSQLStatementErrorCallback.h"
-#include "JSDOMWindow.h"
+#include "JSDOMWindowCustom.h"
 #include "SQLTransaction.h"
 
 using namespace KJS;

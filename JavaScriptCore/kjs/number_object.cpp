@@ -495,9 +495,9 @@ JSValue* NumberObjectImp::getValueProperty(ExecState*, int token) const
     return jsNull();
 }
 
-bool NumberObjectImp::implementsConstruct() const
+ConstructType NumberObjectImp::getConstructData(ConstructData&)
 {
-    return true;
+    return ConstructTypeNative;
 }
 
 // ECMA 15.7.1

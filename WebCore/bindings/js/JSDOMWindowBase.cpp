@@ -39,8 +39,7 @@
 #include "GCController.h"
 #include "HTMLDocument.h"
 #include "JSAudioConstructor.h"
-#include "JSDOMWindow.h"
-#include "JSDOMWindow.h"
+#include "JSDOMWindowCustom.h"
 #include "JSEvent.h"
 #include "JSHTMLCollection.h"
 #include "JSHTMLOptionElementConstructor.h"
@@ -81,26 +80,6 @@ static int lastUsedTimeoutId;
 static int timerNestingLevel = 0;
 const int cMaxTimerNestingLevel = 5;
 const double cMinimumTimerInterval = 0.010;
-
-struct JSDOMWindowBasePrivate {
-    JSDOMWindowBasePrivate(JSDOMWindowShell* shell)
-        : m_evt(0)
-        , m_returnValueSlot(0)
-        , m_shell(shell)
-    {
-    }
-
-    JSDOMWindowBase::ListenersMap jsEventListeners;
-    JSDOMWindowBase::ListenersMap jsHTMLEventListeners;
-    JSDOMWindowBase::UnprotectedListenersMap jsUnprotectedEventListeners;
-    JSDOMWindowBase::UnprotectedListenersMap jsUnprotectedHTMLEventListeners;
-    Event* m_evt;
-    JSValue** m_returnValueSlot;
-    JSDOMWindowShell* m_shell;
-
-    typedef HashMap<int, DOMWindowTimer*> TimeoutsMap;
-    TimeoutsMap m_timeouts;
-};
 
 class DOMWindowTimer : public TimerBase {
 public:
@@ -731,55 +710,6 @@ void JSDOMWindowBase::put(ExecState* exec, const Identifier& propertyName, JSVal
     Base::put(exec, propertyName, value);
 }
 
-bool JSDOMWindowBase::allowsAccessFrom(const JSGlobalObject* other) const
-{
-    if (allowsAccessFromPrivate(other))
-        return true;
-    printErrorMessage(crossDomainAccessErrorMessage(other));
-    return false;
-}
-
-bool JSDOMWindowBase::allowsAccessFrom(ExecState* exec) const
-{
-    if (allowsAccessFromPrivate(exec->lexicalGlobalObject()))
-        return true;
-    printErrorMessage(crossDomainAccessErrorMessage(exec->lexicalGlobalObject()));
-    return false;
-}
-    
-bool JSDOMWindowBase::allowsAccessFromNoErrorMessage(ExecState* exec) const
-{
-    return allowsAccessFromPrivate(exec->lexicalGlobalObject());
-}
-
-bool JSDOMWindowBase::allowsAccessFrom(ExecState* exec, String& message) const
-{
-    if (allowsAccessFromPrivate(exec->lexicalGlobalObject()))
-        return true;
-    message = crossDomainAccessErrorMessage(exec->lexicalGlobalObject());
-    return false;
-}
-    
-ALWAYS_INLINE bool JSDOMWindowBase::allowsAccessFromPrivate(const JSGlobalObject* other) const
-{
-    const JSDOMWindow* originWindow = asJSDOMWindow(other);
-    const JSDOMWindow* targetWindow = toJSDOMWindow(impl()->frame());
-
-    if (originWindow == targetWindow)
-        return true;
-
-    // JS may be attempting to access the "window" object, which should be valid,
-    // even if the document hasn't been constructed yet.  If the document doesn't
-    // exist yet allow JS to access the window object.
-    if (!originWindow->impl()->document())
-        return true;
-
-    const SecurityOrigin* originSecurityOrigin = originWindow->impl()->securityOrigin();
-    const SecurityOrigin* targetSecurityOrigin = targetWindow->impl()->securityOrigin();
-
-    return originSecurityOrigin->canAccess(targetSecurityOrigin);
-}
-
 String JSDOMWindowBase::crossDomainAccessErrorMessage(const JSGlobalObject* other) const
 {
     KURL originURL = asJSDOMWindow(other)->impl()->url();
@@ -1379,16 +1309,6 @@ JSDOMWindow* toJSDOMWindow(Frame* frame)
     if (!frame)
         return 0;
     return frame->scriptProxy()->windowShell()->window();
-}
-
-JSDOMWindow* asJSDOMWindow(JSGlobalObject* globalObject)
-{
-    return static_cast<JSDOMWindow*>(globalObject);
-}
-
-const JSDOMWindow* asJSDOMWindow(const JSGlobalObject* globalObject)
-{
-    return static_cast<const JSDOMWindow*>(globalObject);
 }
 
 } // namespace WebCore

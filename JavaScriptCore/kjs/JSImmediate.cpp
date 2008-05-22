@@ -23,6 +23,7 @@
 
 #include "JSGlobalObject.h"
 #include "bool_object.h"
+#include "JSNotAnObject.h"
 #include "number_object.h"
 #include "object.h"
 
@@ -32,9 +33,9 @@ JSObject *JSImmediate::toObject(const JSValue *v, ExecState *exec)
 {
     ASSERT(isImmediate(v));
     if (v == jsNull())
-        return throwError(exec, TypeError, "Null value");
+        return new JSNotAnObject(throwError(exec, TypeError, "Null value"));
     else if (v == jsUndefined())
-        return throwError(exec, TypeError, "Undefined value");
+        return new JSNotAnObject(throwError(exec, TypeError, "Undefined value"));
     else if (isBoolean(v)) {
         List args;
         args.append(const_cast<JSValue *>(v));
@@ -60,16 +61,6 @@ UString JSImmediate::toString(const JSValue* v)
         return "false";
     ASSERT(isNumber(v));
     return UString::from(getTruncatedInt32(v));
-}
-
-JSType JSImmediate::type(const JSValue *v)
-{
-    ASSERT(isImmediate(v));
-    
-    uintptr_t tag = getTag(v);
-    if (tag == UndefinedType)
-        return v == jsUndefined() ? UndefinedType : NullType;
-    return static_cast<JSType>(tag);
 }
 
 } // namespace KJS

@@ -27,9 +27,9 @@
 #define JavaScriptCallFrame_h
 
 #include <kjs/ExecState.h>
-
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <kjs/DebuggerCallFrame.h>
 
 namespace WebCore {
 
@@ -37,32 +37,39 @@ namespace WebCore {
 
     class JavaScriptCallFrame : public RefCounted<JavaScriptCallFrame> {
     public:
-        static PassRefPtr<JavaScriptCallFrame> create(KJS::ExecState* exec, PassRefPtr<JavaScriptCallFrame> caller, int sourceID, int line) { return adoptRef(new JavaScriptCallFrame(exec, caller, sourceID, line)); }
+        static PassRefPtr<JavaScriptCallFrame> create(const KJS::DebuggerCallFrame& debuggerCallFrame, PassRefPtr<JavaScriptCallFrame> caller, int sourceID, int line)
+        {
+            return adoptRef(new JavaScriptCallFrame(debuggerCallFrame, caller, sourceID, line));
+        }
 
-        void invalidate() { m_exec = 0; }
-        bool isValid() const { return !!m_exec; }
-
-        KJS::ExecState* execState() const { return m_exec; }
+        void invalidate() { m_isValid = false; }
+        bool isValid() const { return m_isValid; }
 
         JavaScriptCallFrame* caller();
 
         int sourceIdentifier() const { return m_sourceID; }
-
         int line() const { return m_line; }
-        void setLine(int line) { m_line = line; }
+        void update(const KJS::DebuggerCallFrame& debuggerCallFrame, int sourceID, int line)
+        {
+            m_debuggerCallFrame = debuggerCallFrame;
+            m_line = line;
+            m_sourceID = sourceID;
+        }
 
         String functionName() const;
-        const KJS::ScopeChain& scopeChain() const { return m_exec->scopeChain(); }
+        const KJS::ScopeChainNode* scopeChain() const;
+
         KJS::JSObject* thisObject() const;
         KJS::JSValue* evaluate(const KJS::UString& script, KJS::JSValue*& exception) const;
-
+        
     private:
-        JavaScriptCallFrame(KJS::ExecState*, PassRefPtr<JavaScriptCallFrame> caller, int sourceID, int line);
+        JavaScriptCallFrame(const KJS::DebuggerCallFrame&, PassRefPtr<JavaScriptCallFrame> caller, int sourceID, int line);
 
-        KJS::ExecState* m_exec;
+        KJS::DebuggerCallFrame m_debuggerCallFrame;
         RefPtr<JavaScriptCallFrame> m_caller;
         int m_sourceID;
         int m_line;
+        bool m_isValid;
     };
 
 } // namespace WebCore

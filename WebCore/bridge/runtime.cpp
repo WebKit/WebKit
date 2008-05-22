@@ -67,21 +67,8 @@ KJSDidExecuteFunctionPtr Instance::didExecuteFunction()
     return s_didExecuteFunction;
 }
 
-static JSGlobalObject* s_currentGlobalObject;
-
-void Instance::setCurrentGlobalObject(JSGlobalObject* globalObject)
-{
-    s_currentGlobalObject = globalObject;
-}
-
-JSGlobalObject* Instance::currentGlobalObject()
-{
-    return s_currentGlobalObject;
-}
-
 void Instance::begin()
 {
-    setCurrentGlobalObject(_rootObject && _rootObject->isValid() ? _rootObject->globalObject() : 0);
     virtualBegin();
 }
 

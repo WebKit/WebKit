@@ -81,9 +81,11 @@ UString WebScriptCallFrame::jsValueToString(KJS::ExecState* state, JSValue* jsva
 
 static ExecState* callingFunctionOrGlobalExecState(ExecState* exec)
 {
+#if 0
     for (ExecState* current = exec; current; current = current->callingExecState())
         if (current->codeType() == FunctionCode || current->codeType() == GlobalCode)
             return current;
+#endif
     return 0;
 }
 
@@ -145,8 +147,9 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::caller(
 {
     if (!callFrame)
         return E_POINTER;
-
+#if 0
     *callFrame = m_state->callingExecState() ? WebScriptCallFrame::createInstance(m_state->callingExecState()) : 0;
+#endif
     return S_OK;
 }
 
@@ -157,7 +160,7 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::functionName(
         return E_POINTER;
 
     *funcName = 0;
-
+#if 0
     if (!m_state->scopeNode())
         return S_OK;
 
@@ -168,7 +171,7 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::functionName(
     const Identifier& funcIdent = func->functionName();
     if (!funcIdent.isEmpty())
         *funcName = WebCore::BString(funcIdent).release();
-
+#endif
     return S_OK;
 }
 
@@ -201,11 +204,12 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::variableNames(
     *variableNames = 0;
 
     PropertyNameArray propertyNames;
-
+#if 0
     m_state->scopeChain().top()->getPropertyNames(m_state, propertyNames);
     // FIXME: It would be more efficient to use ::adopt here, but PropertyNameArray doesn't have a swap function.
     *variableNames = COMEnumVariant<PropertyNameArray>::createInstance(propertyNames);
 
+#endif
     return S_OK;
 }
 
@@ -224,17 +228,19 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::valueForVariable(
     Identifier identKey(reinterpret_cast<UChar*>(key), SysStringLen(key));
 
     JSValue* jsvalue = 0;
+#if 0
     ScopeChain scopeChain = m_state->scopeChain();
     for (ScopeChainIterator it = scopeChain.begin(); it != scopeChain.end() && !jsvalue; ++it)
         jsvalue = (*it)->get(m_state, identKey);
-
     *value = WebCore::BString(jsValueToString(m_state, jsvalue)).release();
+#endif
 
     return S_OK;
 }
 
 JSValue* WebScriptCallFrame::valueByEvaluatingJavaScriptFromString(BSTR script)
 {
+#if 0
     ExecState* state = m_state;
     JSGlobalObject* globObj = state->dynamicGlobalObject();
 
@@ -269,6 +275,9 @@ JSValue* WebScriptCallFrame::valueByEvaluatingJavaScriptFromString(BSTR script)
     state->setException(savedException);
 
     return scriptExecutionResult;
+#else
+    return jsNull();
+#endif
 }
 
 template<> struct COMVariantSetter<Identifier>

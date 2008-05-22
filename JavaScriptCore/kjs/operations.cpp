@@ -98,31 +98,28 @@ bool equal(ExecState *exec, JSValue *v1, JSValue *v2)
     return v1 == v2;
 }
 
-bool strictEqual(ExecState *exec, JSValue *v1, JSValue *v2)
+bool strictEqual(JSValue* v1, JSValue* v2)
 {
     JSType t1 = v1->type();
     JSType t2 = v2->type();
     
     if (t1 != t2)
         return false;
-    if (t1 == UndefinedType || t1 == NullType)
-        return true;
-    if (t1 == NumberType) {
-        double n1 = v1->toNumber(exec);
-        double n2 = v2->toNumber(exec);
-        if (n1 == n2)
-            return true;
-        return false;
-    } else if (t1 == StringType)
-        return v1->toString(exec) == v2->toString(exec);
-    else if (t2 == BooleanType)
-        return v1->toBoolean(exec) == v2->toBoolean(exec);
+
+    if (t1 == NumberType)
+        return v1->getNumber() == v2->getNumber();
     
-    if (v1 == v2)
-        return true;
-    /* TODO: joined objects */
+    if (t1 == StringType)
+        return static_cast<StringImp*>(v1)->value() == static_cast<StringImp*>(v2)->value();
     
-    return false;
+    return v1 == v2; // covers object, boolean, null, and undefined types
+}
+
+JSValue* throwOutOfMemoryError(ExecState* exec)
+{
+    JSObject* error = Error::create(exec, GeneralError, "Out of memory");
+    exec->setException(error);
+    return error;
 }
 
 }

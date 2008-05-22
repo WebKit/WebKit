@@ -27,8 +27,12 @@ namespace KJS {
 
 void List::getSlice(int startIndex, List& result) const
 {
+    ASSERT(!result.m_isReadOnly);
+
     const_iterator start = min(begin() + startIndex, end());
     result.m_vector.appendRange(start, end());
+    result.m_size = result.m_vector.size();
+    result.m_buffer = result.m_vector.data();
 }
 
 List::ListSet& List::markSet()

@@ -30,11 +30,14 @@ use File::Basename;
 use File::Spec;
 use Cwd;
 use POSIX qw(strftime);
+use Time::HiRes qw(gettimeofday tv_interval);
 
 my $showHelp = 0;
 my $runShark = 0;
 my $runShark20 = 0;
 my $runSharkCache = 0;
+my $squirrelfish = 0;
+my $ubench = 0;
 my $jsShellPath;
 my $setBaseline = 0;
 my $testsPattern;
@@ -51,6 +54,8 @@ Usage: $programName --shell=[path] [options]
   --shark           Sample execution time with the Mac OS X "Shark" performance testing tool (implies --runs=1)
   --shark20         Like --shark, but with a 20 microsecond sampling interval
   --shark-cache     Like --shark, but performs a L2 cache-miss sample instead of time sample
+  --squirrelfish    Pared down test used for squirrelfish bring-up
+  --ubench          Use microbenchmark suite instead of regular tests (to check for core execution regressions)
 EOF
 
 GetOptions('runs=i' => \$testRuns,
@@ -59,6 +64,8 @@ GetOptions('runs=i' => \$testRuns,
            'shark' => \$runShark,
            'shark20' => \$runShark20,
            'shark-cache' => \$runSharkCache,
+           'squirrelfish' => \$squirrelfish,
+           'ubench' => \$ubench,
            'tests=s' => \$testsPattern,
            'help' => \$showHelp);
 
@@ -105,7 +112,11 @@ my %uniqueCategories = ();
 
 sub loadTestsList()
 {
-    open TESTLIST, "<", "tests/LIST" or die "Can't find ./tests/LIST";
+    my $testlist = "LIST";
+    $testlist = "LIST-SQUIRRELFISH" if ($squirrelfish);
+    $testlist = "LIST-UBENCH" if ($ubench);
+
+    open TESTLIST, "<", "tests/${testlist}" or die "Can't find ./tests/LIST";
     while (<TESTLIST>) {
         chomp;
         next unless !$testsPattern || /$testsPattern/;

@@ -29,7 +29,8 @@ namespace KJS {
   class JSValue;
 
   bool equal(ExecState *exec, JSValue *v1, JSValue *v2);
-  bool strictEqual(ExecState *exec, JSValue *v1, JSValue *v2);
+  bool strictEqual(JSValue*, JSValue*);
+  JSValue* throwOutOfMemoryError(ExecState*);
 }
 
 #endif

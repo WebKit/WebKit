@@ -172,9 +172,6 @@ namespace WebCore {
     // Returns JSDOMWindow or 0
     JSDOMWindow* toJSDOMWindow(Frame*);
 
-    JSDOMWindow* asJSDOMWindow(KJS::JSGlobalObject*);
-    const JSDOMWindow* asJSDOMWindow(const KJS::JSGlobalObject*);
-
 } // namespace WebCore
 
 #endif // JSDOMWindowBase_h

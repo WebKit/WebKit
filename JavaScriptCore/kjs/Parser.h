@@ -25,11 +25,12 @@
 #ifndef Parser_h
 #define Parser_h
 
+#include "nodes.h"
+#include "SourceProvider.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
-#include "nodes.h"
 
 namespace WTF {
     template<typename T> class ThreadSpecific;
@@ -48,9 +49,9 @@ namespace KJS {
     class Parser : Noncopyable {
     public:
         template <class ParsedNode>
-        PassRefPtr<ParsedNode> parse(const UString& sourceURL, int startingLineNumber,
-            const UChar* code, unsigned length,
-            int* sourceId = 0, int* errLine = 0, UString* errMsg = 0);
+        PassRefPtr<ParsedNode> parse(ExecState*, const UString& sourceURL, int startingLineNumber,
+                                     PassRefPtr<SourceProvider> source,
+                                     int* sourceId = 0, int* errLine = 0, UString* errMsg = 0);
 
         UString sourceURL() const { return m_sourceURL; }
         int sourceId() const { return m_sourceId; }
@@ -63,8 +64,8 @@ namespace KJS {
         friend class WTF::ThreadSpecific<Parser>;
 
         Parser(); // Use parser() instead.
-        void parse(int startingLineNumber, const UChar* code, unsigned length,
-            int* sourceId, int* errLine, UString* errMsg);
+        void parse(ExecState*, const UString& sourceURL, int startingLineNumber, PassRefPtr<SourceProvider> source,
+                   int* sourceId, int* errLine, UString* errMsg);
 
         UString m_sourceURL;
         int m_sourceId;
@@ -79,12 +80,12 @@ namespace KJS {
     Parser& parser(); // Returns the singleton JavaScript parser.
 
     template <class ParsedNode>
-    PassRefPtr<ParsedNode> Parser::parse(const UString& sourceURL, int startingLineNumber,
-        const UChar* code, unsigned length,
-        int* sourceId, int* errLine, UString* errMsg)
+    PassRefPtr<ParsedNode> Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNumber,
+                                         PassRefPtr<SourceProvider> source,
+                                         int* sourceId, int* errLine, UString* errMsg)
     {
         m_sourceURL = sourceURL;
-        parse(startingLineNumber, code, length, sourceId, errLine, errMsg);
+        parse(exec, sourceURL, startingLineNumber, source, sourceId, errLine, errMsg);
         if (!m_sourceElements) {
             m_sourceURL = UString();
             return 0;

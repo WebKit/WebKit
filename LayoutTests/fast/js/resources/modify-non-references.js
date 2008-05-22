@@ -1,9 +1,9 @@
-shouldBe("function f() { g()++; } f.toString()", "'function f() \\n{\\n  g()++;\\n}'");
-shouldBe("function f() { g()--; } f.toString()", "'function f() \\n{\\n  g()--;\\n}'");
-shouldBe("function f() { ++g(); } f.toString()", "'function f() \\n{\\n  ++g();\\n}'");
-shouldBe("function f() { --g(); } f.toString()", "'function f() \\n{\\n  --g();\\n}'");
-shouldBe("function f() { g() = 1; } f.toString()", "'function f() \\n{\\n  g() = 1;\\n}'");
-shouldBe("function f() { g() += 1; } f.toString()", "'function f() \\n{\\n  g() += 1;\\n}'");
+shouldBe("function f() { g()++; } f.toString()", "'function f() { g()++; }'");
+shouldBe("function f() { g()--; } f.toString()", "'function f() { g()--; }'");
+shouldBe("function f() { ++g(); } f.toString()", "'function f() { ++g(); }'");
+shouldBe("function f() { --g(); } f.toString()", "'function f() { --g(); }'");
+shouldBe("function f() { g() = 1; } f.toString()", "'function f() { g() = 1; }'");
+shouldBe("function f() { g() += 1; } f.toString()", "'function f() { g() += 1; }'");
 shouldThrow("g()++", "'ReferenceError: Postfix ++ operator applied to value that is not a reference.'");
 shouldThrow("g()--", "'ReferenceError: Postfix -- operator applied to value that is not a reference.'");
 shouldThrow("++g()", "'ReferenceError: Prefix ++ operator applied to value that is not a reference.'");

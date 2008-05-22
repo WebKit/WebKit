@@ -26,16 +26,15 @@
 #define KJS_FUNCTION_H
 
 #include "JSVariableObject.h"
-#include "LocalStorageEntry.h"
 #include "SymbolTable.h"
 #include "nodes.h"
 #include "object.h"
 
 namespace KJS {
 
-  class ActivationImp;
   class FunctionBodyNode;
   class FunctionPrototype;
+  class JSActivation;
   class JSGlobalObject;
 
   class InternalFunctionImp : public JSObject {
@@ -43,7 +42,8 @@ namespace KJS {
     InternalFunctionImp();
     InternalFunctionImp(FunctionPrototype*, const Identifier&);
 
-    virtual bool implementsCall() const;
+    virtual CallType getCallData(CallData&);
+
     virtual JSValue* callAsFunction(ExecState*, JSObject* thisObjec, const List& args) = 0;
     virtual bool implementsHasInstance() const;
 
@@ -56,17 +56,17 @@ namespace KJS {
   };
 
   class FunctionImp : public InternalFunctionImp {
-    friend class ActivationImp;
   public:
-    FunctionImp(ExecState*, const Identifier& name, FunctionBodyNode*, const ScopeChain&);
+    FunctionImp(ExecState*, const Identifier&, FunctionBodyNode*, ScopeChainNode*);
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
     virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 
-    virtual bool implementsConstruct() const { return true; }
+    virtual ConstructType getConstructData(ConstructData&);
     virtual JSObject* construct(ExecState*, const List& args);
-    
+
+    virtual CallType getCallData(CallData&);
     virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List& args);
 
     // Note: unlike body->paramName, this returns Identifier::null for parameters 
@@ -79,7 +79,7 @@ namespace KJS {
     RefPtr<FunctionBodyNode> body;
 
     void setScope(const ScopeChain& s) { _scope = s; }
-    const ScopeChain& scope() const { return _scope; }
+    ScopeChain& scope() { return _scope; }
 
     virtual void mark();
 
@@ -107,7 +107,7 @@ namespace KJS {
   
   class Arguments : public JSObject {
   public:
-    Arguments(ExecState*, FunctionImp* func, const List& args, ActivationImp* act);
+    Arguments(ExecState*, FunctionImp* func, const List& args, JSActivation* act);
     virtual void mark();
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
@@ -117,7 +117,7 @@ namespace KJS {
   private:
     static JSValue* mappedIndexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);
 
-    ActivationImp* _activationObject;
+    JSActivation* _activationObject;
     mutable IndexToNameMap indexToNameMap;
   };
 
@@ -167,8 +167,6 @@ namespace KJS {
 #ifndef NDEBUG
     JSValue* globalFuncKJSPrint(ExecState*, JSObject*, const List&);
 #endif
-
-    JSValue* eval(ExecState*, const ScopeChain&, JSVariableObject*, JSGlobalObject*, JSObject* thisObj, const List& args);
 
     static const double mantissaOverflowLowerBound = 9007199254740992.0;
     double parseIntOverflow(const char*, int length, int radix);

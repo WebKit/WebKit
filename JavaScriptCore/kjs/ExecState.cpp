@@ -24,122 +24,43 @@
 #include "config.h"
 #include "ExecState.h"
 
-#include "Activation.h"
 #include "JSGlobalObject.h"
 #include "function.h"
 #include "internal.h"
 #include "scope_chain_mark.h"
-#include "ExecStateInlines.h"
 
 namespace KJS {
 
-// ECMA 10.2
-
-// The constructor for the globalExec pseudo-ExecState
-inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject)
+ExecState::ExecState(JSGlobalObject* globalObject, JSObject* globalThisValue, ScopeChainNode* globalScopeChain)
     : m_globalObject(globalObject)
+    , m_globalThisValue(globalThisValue)
     , m_exception(0)
-    , m_callingExec(0)
     , m_perThreadData(globalObject->perThreadData())
-    , m_scopeNode(0)
-    , m_function(0)
-    , m_arguments(0)
-    , m_activation(0)
-    , m_localStorage(&globalObject->localStorage())
-    , m_inlineScopeChainNode(0, 0)
-    , m_variableObject(globalObject)
-    , m_thisValue(thisObject)
-    , m_globalThisValue(thisObject)
-    , m_iterationDepth(0)
-    , m_switchDepth(0) 
-    , m_codeType(GlobalCode)
+    , m_prev(0)
+    , m_machine(0)
+    , m_registerFile(0)
+    , m_scopeChain(globalScopeChain)
+    , m_callFrameOffset(-1)
 {
-    m_scopeChain.push(globalObject);
 }
 
-inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject, ProgramNode* programNode)
-    : m_globalObject(globalObject)
+ExecState::ExecState(ExecState* exec, Machine* machine, RegisterFile* registerFile, ScopeChainNode* scopeChain, int callFrameOffset)
+    : m_globalObject(exec->m_globalObject)
+    , m_globalThisValue(exec->m_globalThisValue)
     , m_exception(0)
-    , m_callingExec(0)
-    , m_perThreadData(globalObject->perThreadData())
-    , m_scopeNode(programNode)
-    , m_function(0)
-    , m_arguments(0)
-    , m_activation(0)
-    , m_localStorage(&globalObject->localStorage())
-    , m_inlineScopeChainNode(0, 0)
-    , m_variableObject(globalObject)
-    , m_thisValue(thisObject)
-    , m_globalThisValue(thisObject)
-    , m_iterationDepth(0)
-    , m_switchDepth(0) 
-    , m_codeType(GlobalCode)
-{
-    ASSERT(m_scopeNode);
-    m_scopeChain.push(globalObject);
-}
-
-inline ExecState::ExecState(JSGlobalObject* globalObject, JSObject* thisObject, EvalNode* evalNode, ExecState* callingExec, const ScopeChain& scopeChain, JSVariableObject* variableObject)
-    : m_globalObject(globalObject)
-    , m_exception(0)
-    , m_callingExec(callingExec)
-    , m_perThreadData(callingExec->m_perThreadData)
-    , m_scopeNode(evalNode)
-    , m_function(0)
-    , m_arguments(0)
-    , m_activation(0)
-    , m_localStorage(callingExec->m_localStorage)
+    , m_perThreadData(exec->m_globalObject->perThreadData())
+    , m_prev(exec)
+    , m_machine(machine)
+    , m_registerFile(registerFile)
     , m_scopeChain(scopeChain)
-    , m_inlineScopeChainNode(0, 0)
-    , m_variableObject(variableObject)
-    , m_thisValue(thisObject)
-    , m_globalThisValue(thisObject)
-    , m_iterationDepth(0)
-    , m_switchDepth(0) 
-    , m_codeType(EvalCode)
-{    
-    ASSERT(m_scopeNode);
+    , m_callFrameOffset(callFrameOffset)
+{
+    ASSERT(!exec->m_exception);
 }
 
-JSGlobalObject* ExecState::lexicalGlobalObject() const
+bool ExecState::isGlobalObject(JSObject* o) const
 {
-    JSObject* object = m_scopeChain.bottom();
-    if (object && object->isGlobalObject())
-        return static_cast<JSGlobalObject*>(object);
-    return m_globalObject;
+    return o->isGlobalObject();
 }
 
-GlobalExecState::GlobalExecState(JSGlobalObject* globalObject, JSObject* thisObject)
-    : ExecState(globalObject, thisObject)
-{
-}
-
-GlobalExecState::~GlobalExecState()
-{
-}
-
-InterpreterExecState::InterpreterExecState(JSGlobalObject* globalObject, JSObject* thisObject, ProgramNode* programNode)
-    : ExecState(globalObject, thisObject, programNode)
-{
-    m_globalObject->activeExecStates().append(this);
-}
-
-InterpreterExecState::~InterpreterExecState()
-{
-    ASSERT(m_globalObject->activeExecStates().last() == this);
-    m_globalObject->activeExecStates().removeLast();
-}
-
-EvalExecState::EvalExecState(JSGlobalObject* globalObject, JSObject* thisObj, EvalNode* evalNode, ExecState* callingExec, const ScopeChain& scopeChain, JSVariableObject* variableObject)
-    : ExecState(globalObject, thisObj, evalNode, callingExec, scopeChain, variableObject)
-{
-    m_globalObject->activeExecStates().append(this);
-}
-
-EvalExecState::~EvalExecState()
-{
-    ASSERT(m_globalObject->activeExecStates().last() == this);
-    m_globalObject->activeExecStates().removeLast();
-}
-    
 } // namespace KJS

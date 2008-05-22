@@ -85,6 +85,11 @@ JSObject* StringImp::toObject(ExecState *exec) const
 
 // ------------------------------ NumberImp ------------------------------------
 
+JSType NumberImp::type() const
+{
+    return NumberType;
+}
+
 JSValue* NumberImp::toPrimitive(ExecState*, JSType) const
 {
     return const_cast<NumberImp*>(this);
@@ -232,9 +237,9 @@ InternalFunctionImp::InternalFunctionImp(FunctionPrototype* funcProto, const Ide
 {
 }
 
-bool InternalFunctionImp::implementsCall() const
+CallType InternalFunctionImp::getCallData(CallData&)
 {
-  return true;
+    return CallTypeNative;
 }
 
 bool InternalFunctionImp::implementsHasInstance() const

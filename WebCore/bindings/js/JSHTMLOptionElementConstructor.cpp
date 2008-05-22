@@ -38,9 +38,9 @@ JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, 
     putDirect(exec->propertyNames().length, jsNumber(4), ReadOnly|DontDelete|DontEnum);
 }
 
-bool JSHTMLOptionElementConstructor::implementsConstruct() const
+ConstructType JSHTMLOptionElementConstructor::getConstructData(ConstructData&)
 {
-    return true;
+    return ConstructTypeNative;
 }
 
 JSObject* JSHTMLOptionElementConstructor::construct(ExecState* exec, const List& args)

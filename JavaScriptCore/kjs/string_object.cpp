@@ -972,9 +972,9 @@ StringObjectImp::StringObjectImp(ExecState* exec, FunctionPrototype* funcProto, 
 }
 
 
-bool StringObjectImp::implementsConstruct() const
+ConstructType StringObjectImp::getConstructData(ConstructData&)
 {
-  return true;
+    return ConstructTypeNative;
 }
 
 // ECMA 15.5.2

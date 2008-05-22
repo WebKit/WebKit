@@ -53,13 +53,13 @@ public:
     virtual bool deleteProperty(ExecState*, const Identifier&);
     virtual bool deleteProperty(ExecState*, unsigned);
 
-    virtual bool implementsConstruct() const;
+    virtual ConstructType getConstructData(ConstructData&);
     virtual JSObject* construct(ExecState*, const List& args);
 
     virtual bool implementsHasInstance() const;
     virtual bool hasInstance(ExecState *exec, JSValue *value);
 
-    virtual bool implementsCall() const;
+    virtual CallType getCallData(CallData&);
     virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List &args);
 
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);

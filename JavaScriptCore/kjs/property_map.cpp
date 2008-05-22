@@ -327,6 +327,61 @@ JSValue** PropertyMap::getLocation(const Identifier& name)
     }
 }
 
+JSValue** PropertyMap::getLocation(const Identifier& name, bool& isWriteable)
+{
+    ASSERT(!name.isNull());
+    
+    UString::Rep* rep = name._ustring.rep();
+    
+    if (!m_usingTable) {
+#if USE_SINGLE_ENTRY
+        if (rep == m_singleEntryKey) {
+            isWriteable = !(m_singleEntryAttributes & ReadOnly);
+            return &m_u.singleEntryValue;
+        }
+#endif
+        return 0;
+    }
+    
+    unsigned i = rep->computedHash();
+
+#if DUMP_PROPERTYMAP_STATS
+    ++numProbes;
+#endif
+
+    unsigned entryIndex = m_u.table->entryIndicies[i & m_u.table->sizeMask];
+    if (entryIndex == emptyEntryIndex)
+        return 0;
+
+    if (rep == m_u.table->entries()[entryIndex - 1].key) {
+        isWriteable = !(m_u.table->entries()[entryIndex - 1].attributes & ReadOnly);
+        return &m_u.table->entries()[entryIndex - 1].value;
+    }
+
+#if DUMP_PROPERTYMAP_STATS
+    ++numCollisions;
+#endif
+
+    unsigned k = 1 | doubleHash(rep->computedHash());
+
+    while (1) {
+        i += k;
+
+#if DUMP_PROPERTYMAP_STATS
+        ++numRehashes;
+#endif
+
+        entryIndex = m_u.table->entryIndicies[i & m_u.table->sizeMask];
+        if (entryIndex == emptyEntryIndex)
+            return 0;
+
+        if (rep == m_u.table->entries()[entryIndex - 1].key) {
+            isWriteable = !(m_u.table->entries()[entryIndex - 1].attributes & ReadOnly);
+            return &m_u.table->entries()[entryIndex - 1].value;
+        }
+    }
+}
+
 void PropertyMap::put(const Identifier& name, JSValue* value, unsigned attributes, bool checkReadOnly)
 {
     ASSERT(!name.isNull());

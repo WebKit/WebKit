@@ -1,3 +1,482 @@
+=== End merge of squirrelfish ===
+
+2008-05-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Bug 18752: SQUIRRELFISH: exceptions are not always handled by the vm
+        <https://bugs.webkit.org/show_bug.cgi?id=18752>
+
+        Test cases for subscript access that throw exceptions. 
+
+        * fast/js/resources/tostring-exception-in-property-access.js: Added.
+        * fast/js/tostring-exception-in-property-access-expected.txt: Added.
+        * fast/js/tostring-exception-in-property-access.html: Added.
+
+2008-05-17  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Add more tests for:
+
+        Bug 18991: SquirrelFish: Major codegen issue in a.b=expr, a[b]=expr
+        <https://bugs.webkit.org/show_bug.cgi?id=18991>
+
+        * fast/js/codegen-temporaries-expected.txt:
+        * fast/js/resources/codegen-temporaries.js:
+
+2008-05-17  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Add tests for:
+
+        Bug 18991: SquirrelFish: Major codegen issue in a.b=expr, a[b]=expr
+        <https://bugs.webkit.org/show_bug.cgi?id=18991>
+
+        * fast/js/codegen-temporaries-expected.txt:
+        * fast/js/resources/codegen-temporaries.js:
+
+2008-05-17  Oliver Hunt  <oliver@apple.com>
+
+        Forgot to check in the results to the activation gc tests
+
+        * fast/js/duplicate-param-gc-crash-expected.txt: Added.
+        * fast/js/var-shadows-arg-gc-crash-expected.txt: Added.
+
+2008-05-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        Bug 19106: SquirrelFish: Activation is not marked correctly
+        <https://bugs.webkit.org/show_bug.cgi?id=19106>
+
+        Testcases for activation marking
+
+        * fast/js/duplicate-param-gc-crash.html: Added.
+        * fast/js/resources/duplicate-param-gc-crash.js: Added.
+        * fast/js/resources/var-shadows-arg-gc-crash.js: Added.
+        * fast/js/var-shadows-arg-gc-crash.html: Added.
+
+2008-05-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff
+
+        Bug 19076: SquirrelFish: RegisterFile can be corrupted if implictly reenter global scope with no declared vars
+        <https://bugs.webkit.org/show_bug.cgi?id=19076>
+
+        Test that we can re-enter safely.
+
+        * fast/js/direct-entry-to-function-code-expected.txt: Added.
+        * fast/js/direct-entry-to-function-code.html: Added.
+
+2008-05-16  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Add tests for:
+
+        Bug 19098: SquirrelFish: Ref'd temporaries can be clobbered
+        <https://bugs.webkit.org/show_bug.cgi?id=19098>
+
+        * fast/js/resources/statement-list-register-crash.js: Added.
+        * fast/js/statement-list-register-crash-expected.txt: Added.
+        * fast/js/statement-list-register-crash.html: Added.
+
+2008-05-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - fixed Bug 19044: SquirrelFish: Bogus values enter evaluation when closing over scope with parameter and var with same name
+        https://bugs.webkit.org/show_bug.cgi?id=19044
+
+        * fast/js/duplicate-param-crash-expected.txt: Added.
+        * fast/js/duplicate-param-crash.html: Added.
+        * fast/js/resources/duplicate-param-crash.js: Added.
+        * fast/js/resources/var-shadows-arg-crash.js: Added.
+        * fast/js/var-shadows-arg-crash-expected.txt: Added.
+        * fast/js/var-shadows-arg-crash.html: Added.
+
+2008-05-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Bug 19024: SQUIRRELFISH: ASSERTION FAILED: activation->isActivationObject() in Machine::unwindCallFrame
+        <https://bugs.webkit.org/show_bug.cgi?id=19024>
+
+        Make sure we handled tainted global RegisterFiles properly.
+
+        * fast/js/implicit-global-to-global-reentry-expected.txt: Added.
+        * fast/js/implicit-global-to-global-reentry.html: Added.
+
+2008-05-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        Bug 19025: SQUIRRELFISH: malformed syntax in onload handler causes crash
+        <https://bugs.webkit.org/show_bug.cgi?id=19025>
+
+        Test for malformed function in onload.
+
+        * fast/js/invalid-syntax-for-function-expected.txt: Added.
+        * fast/js/invalid-syntax-for-function.html: Added.
+
+2008-05-13  Oliver Hunt  <oliver@apple.com>
+
+        RS=Geoff.
+
+        Split the binops tests up a bit more
+
+        * fast/js/exception-sequencing-binops-expected.txt:
+        * fast/js/exception-sequencing-binops.html:
+        * fast/js/exception-sequencing-binops.js: Added.
+        * fast/js/exception-sequencing-binops2-expected.txt: Added.
+        * fast/js/exception-sequencing-binops2.html: Added.
+
+2008-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Added layout test for a codegen crash with run-time parse errors.
+
+        * fast/js/exception-codegen-crash-expected.txt: Added.
+        * fast/js/exception-codegen-crash.html: Added.
+
+2008-05-13  Oliver Hunt  <oliver@apple.com>
+
+        RS=Geoff.
+
+        Splitting exception sequencing test as it was too long and made DRT unhappy
+        on non-MacPros.
+
+        * fast/js/exception-sequencing-binops-expected.txt: Added.
+        * fast/js/exception-sequencing-binops.html: Added.
+        * fast/js/exception-sequencing-expected.txt:
+        * fast/js/exception-sequencing.html:
+
+2008-05-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        Bug 19027: SquirrelFish: Incorrect codegen for pre-increment
+        <https://bugs.webkit.org/show_bug.cgi?id=19027>
+
+        Now that codegen is correct for pre-increment/decrement we can enable
+        those tests.  Added additional tests to cover exceptions occuring in
+        similar points of execution, and removed tests that were inconsistent
+        with behaviour of both Opera and Firefox.
+
+        * fast/js/exception-sequencing-expected.txt:
+        * fast/js/exception-sequencing.html:
+
+2008-05-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin.
+
+        Bug 18752: SQUIRRELFISH: exceptions are not always handled by the vm
+        <https://bugs.webkit.org/show_bug.cgi?id=18752>
+
+        Fairly extensive coverage of exception behaviour and sequencing.  There
+        are still a number of FAIL results but these all match firefox (although 
+        not opera).
+
+        * fast/js/exception-sequencing-expected.txt: Added.
+        * fast/js/exception-sequencing.html: Added.
+
+2008-05-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam.
+        
+        Update results for remainder of split-window merge. The new results are correct.
+
+        * http/tests/security/listener/xss-JSTargetNode-onclick-addEventListener-expected.txt:
+        * http/tests/security/listener/xss-JSTargetNode-onclick-shortcut-expected.txt:
+        * http/tests/security/listener/xss-XMLHttpRequest-addEventListener-expected.txt:
+        * http/tests/security/listener/xss-XMLHttpRequest-shortcut-expected.txt:
+        * http/tests/security/listener/xss-window-onclick-addEventListener-expected.txt:
+        * http/tests/security/listener/xss-window-onclick-shortcut-expected.txt:
+
+2008-05-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        Bug 18934: SQUIRRELFISH: ASSERT @ nytimes.com due to RegisterFile being clobbered
+        <https://bugs.webkit.org/show_bug.cgi?id=18934>
+
+        Add testcases to cover global reentry from an implicit call.
+
+        * fast/js/implicit-call-with-global-reentry-expected.txt: Added.
+        * fast/js/implicit-call-with-global-reentry.html: Added.
+        * fast/js/resources/implicit-call-with-global-reentry.js: Added.
+
+2008-05-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Layout test for function.arguments and function.caller in interesting
+        scopes.
+
+        * fast/js/function-dot-arguments-and-caller-expected.txt: Added.
+        * fast/js/function-dot-arguments-and-caller.html: Added.
+
+2008-05-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Add tests for:
+
+        Bug 18961: SQUIRRELFISH: Gmail doesn't load
+        <https://bugs.webkit.org/show_bug.cgi?id=18961>
+
+        * fast/js/codegen-temporaries-expected.txt: Added.
+        * fast/js/codegen-temporaries.html: Added.
+        * fast/js/resources/codegen-temporaries.js: Added.
+
+2008-05-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - test changes for: "SQUIRRELFISH: function toString broken after calling"
+        https://bugs.webkit.org/show_bug.cgi?id=18869
+
+        All of these tests expected function.toString to somewhat change
+        things from the raw original source. They are now prepared for the
+        fact that this does not happen.
+        
+        * fast/js/function-decompilation-operators.html:
+        * fast/js/function-names-expected.txt:
+        * fast/js/function-prototype-expected.txt:
+        * fast/js/function-prototype.html:
+        * fast/js/function-toString-object-literals-expected.txt:
+        * fast/js/function-toString-parentheses-expected.txt:
+        * fast/js/kde/lval-exceptions-expected.txt:
+        * fast/js/modify-non-references-expected.txt:
+        * fast/js/resources/function-names.js:
+        * fast/js/resources/function-toString-object-literals.js:
+        * fast/js/resources/function-toString-parentheses.js:
+        * fast/js/resources/modify-non-references.js:
+        * fast/js/resources/toString-prefix-postfix-preserve-parens.js:
+        * fast/js/toString-prefix-postfix-preserve-parens-expected.txt:
+
+2008-05-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Restored the expected results for viewsource-empty-attribute-value.html
+        to what they were prior to r31100. These results expect that the
+        top-level name in the frame path is "" instead of "1".
+        
+        It's not clear how r31100 changed the top-level frame in the frame path
+        to be named "1". The change definitely wasn't related to any expected
+        behavior in r31100, which was about default margin-bottom for form
+        elements in quirks mode.
+        
+        It's also not clear how squirrelfish changes things back.
+        
+        Sam mentioned that the test result changes intermittently on trunk.
+        
+        For now, I don't think we need to think deeply about this issue,
+        since the "" result seems more correct than the "1" result.
+
+        * fast/frames/viewsource-empty-attribute-value-expected.txt:
+
+2008-05-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Added expected results for this test.
+
+        * fast/js/closure-inside-extra-arg-call-expected.txt: Added.
+
+2008-05-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+        
+        Add test cases for failures similar to the SquirrelFish failure on 
+        fast/dom/SelectorAPI/bug-17313.html
+        
+        * fast/js/closure-inside-extra-arg-call.html: Added.
+        * fast/js/resources/closure-inside-extra-arg-call.js: Added.
+
+2008-05-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Added specific test cases for the root cause of squirrelfish's failure
+        in fast/canvas/canvas-pattern-behaviour.html.
+
+        * fast/js/exception-thrown-from-eval-inside-closure-expected.txt: Added.
+        * fast/js/exception-thrown-from-eval-inside-closure.html: Added.
+        * fast/js/exception-thrown-from-function-with-lazy-activation-expected.txt: Added.
+        * fast/js/exception-thrown-from-function-with-lazy-activation.html: Added.
+
+2008-05-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Updated test results to reflect correct behavior: The line number in
+        the old results was off by 2.
+
+        * fast/js/recursion-limit-equal-expected.txt:
+
+2008-05-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - move frame.xhtml and iframe.xhtml into a resources dir, as they were never meant to be tests
+
+        * dom/xhtml/level2/html/HTMLFrameElement09.xhtml-disabled:
+        * dom/xhtml/level2/html/frame.xhtml: Removed.
+        * dom/xhtml/level2/html/iframe.xhtml: Removed.
+        * dom/xhtml/level2/html/resources/frame.xhtml: Copied from dom/xhtml/level2/html/frame.xhtml.
+        * dom/xhtml/level2/html/resources/iframe.xhtml: Copied from dom/xhtml/level2/html/iframe.xhtml.
+        * platform/mac/dom/xhtml/level2/html/frame-expected.checksum: Removed.
+        * platform/mac/dom/xhtml/level2/html/frame-expected.png: Removed.
+        * platform/mac/dom/xhtml/level2/html/frame-expected.txt: Removed.
+        * platform/mac/dom/xhtml/level2/html/iframe-expected.checksum: Removed.
+        * platform/mac/dom/xhtml/level2/html/iframe-expected.png: Removed.
+        * platform/mac/dom/xhtml/level2/html/iframe-expected.txt: Removed.
+
+o2008-05-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Added this test to demonstrate that, for "f(x)", it is correct to evaluate
+        "x" even if "f" is not a function, and therefore "f(x)" will throw an exception.
+
+        * fast/js/function-argument-evaluation-before-exception-expected.txt: Added.
+        * fast/js/function-argument-evaluation-before-exception.html: Added.
+        
+        These tests now have an extra "access denied" message in them, because
+        of the behavior change mentioned above.
+        
+        I also added try/catch clauses to eliminate the "is not object"
+        exception messages from the test output.
+        
+        * http/tests/security/listener/resources/targetChild-JSTargetNode-onclick-addEventListener.html:
+        * http/tests/security/listener/resources/targetChild-JSTargetNode-onclick-shortcut.html:
+        * http/tests/security/listener/resources/targetChild-XMLHttpRequest-addEventListener.html:
+        * http/tests/security/listener/resources/targetChild-XMLHttpRequest-shortcut.html:
+        * http/tests/security/listener/resources/targetChild-window-onclick-addEventListener.html:
+        * http/tests/security/listener/resources/targetChild-window-onclick-shortcut.html:
+        * http/tests/security/listener/xss-JSTargetNode-onclick-addEventListener-expected.txt:
+        * http/tests/security/listener/xss-JSTargetNode-onclick-shortcut-expected.txt:
+        * http/tests/security/listener/xss-XMLHttpRequest-addEventListener-expected.txt:
+        * http/tests/security/listener/xss-XMLHttpRequest-shortcut-expected.txt:
+        * http/tests/security/listener/xss-window-onclick-addEventListener-expected.txt:
+        * http/tests/security/listener/xss-window-onclick-shortcut-expected.txt:
+
+2008-05-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Fixed up a few more tests that depended on the exact text of exception
+        messages.
+        
+        - In these tests, I fixed a bug in frame.html and iframe.html that
+        caused a function to execute too many times.
+
+        * dom/html/level2/html/HTMLFrameElement09-expected.txt:
+        * dom/html/level2/html/HTMLIFrameElement11-expected.txt:
+        * dom/html/level2/html/resources/frame.html:
+        * dom/html/level2/html/resources/iframe.html:
+
+        - I changed these tests to explicitly report exceptions, so their results
+        don't depend on how the engine constructs messages for implicit exceptions:
+
+        * dom/xhtml/level2/html/HTMLDocument17-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument18-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument19-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument20-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument21-expected.txt:
+        * dom/xhtml/level2/html/selfxhtml.js:
+
+2008-05-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        To facilitate merging between the squirrelfish branch and trunk, I
+        edited a bunch of layout tests to make sure their results don't depend
+        on the exact text of an exception message generated by the JavaScript engine.
+
+        (We do want to test JavaScript exception messages -- we just don't want
+        to test them 300 times over, in tests that aren't supposed to be about
+        JavaScript at all.)
+
+        - I fixed bugs that were causing these tests to throw exceptions by accident,
+        and updated results to reflect correct behavior:
+        
+        * editing/selection/contenteditable-click-inside.html:
+        * platform/mac/editing/selection/contenteditable-click-inside-expected.checksum:
+        * platform/mac/editing/selection/contenteditable-click-inside-expected.png:
+        * platform/mac/editing/selection/contenteditable-click-inside-expected.txt:
+
+        * editing/selection/contenteditable-click-outside.html:
+        * platform/mac/editing/selection/contenteditable-click-outside-expected.checksum:
+        * platform/mac/editing/selection/contenteditable-click-outside-expected.png:
+        * platform/mac/editing/selection/contenteditable-click-outside-expected.txt:
+
+        * fast/forms/selected-index-assert.html:
+        * fast/forms/selected-index-assert-expected.txt:
+
+        * tables/mozilla_expected_failures/core/captions1.html:
+        * platform/mac/tables/mozilla_expected_failures/core/captions1-expected.txt:
+
+        - I changed these tests to explicitly throw/report exceptions, so their results
+        don't depend on how the engine constructs messages for implicit exceptions:
+
+        * fast/xpath/nsresolver-exception.xhtml:
+        * fast/xpath/nsresolver-exception-expected.txt:
+
+        * platform/mac/fast/AppleScript/001.html:
+        * platform/mac/fast/AppleScript/001-expected.txt:
+        
+        * dom/xhtml/level3/core/selfxhtml.js
+        * dom/xhtml/level3/core/*expected.txt (about 280 of these changed)
+
+2008-05-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Layout test for exceptions thrown from equality comparisons.
+
+        * fast/js/exception-thrown-from-equal-expected.txt: Added.
+        * fast/js/exception-thrown-from-equal.html: Added.
+
+2008-05-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Testcases for accessing the arguments object with too few, and too many 
+        arguments provided to the function.
+
+        * fast/js/resources/unmatching-argument-count.js: Added.
+        * fast/js/unmatching-argument-count-expected.txt: Added.
+        * fast/js/unmatching-argument-count.html: Added.
+
+2008-05-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - bump up the numbers in this test to account for our now much
+        higher recursion capability.
+
+        * fast/js/deep-recursion-test.html:
+
+2008-04-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Bug 18628: SQUIRRELFISH: need to support recursion limit
+        <https://bugs.webkit.org/show_bug.cgi?id=18628>
+
+        Test to ensure we don't crash when re-entering global code
+        with a full register file, and that we don't allow unbounded
+        recursion by re-entering on a new register file..
+
+        * fast/js/global-recursion-on-full-stack-expected.txt: Added.
+        * fast/js/global-recursion-on-full-stack.html: Added.
+
+=== Start merge of squirrelfish ===
+
 2008-05-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

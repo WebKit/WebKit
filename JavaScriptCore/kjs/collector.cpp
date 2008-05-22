@@ -291,16 +291,17 @@ collect:
 
   return newCell;
 }
-
-void* Collector::allocate(size_t s) 
+#if !PLATFORM(MAC)
+void* Collector::allocate(size_t s)
 {
     return heapAllocate<PrimaryHeap>(s);
 }
 
-void* Collector::allocateNumber(size_t s) 
+void* Collector::allocateNumber(size_t s)
 {
     return heapAllocate<NumberHeap>(s);
 }
+#endif
 
 static inline void* currentThreadStackBase()
 {
@@ -1049,20 +1050,6 @@ HashCountedSet<const char*>* Collector::protectedObjectTypeCounts()
 bool Collector::isBusy()
 {
     return (primaryHeap.operationInProgress != NoOperation) | (numberHeap.operationInProgress != NoOperation);
-}
-
-void Collector::reportOutOfMemoryToAllExecStates()
-{
-    if (!JSGlobalObject::head())
-        return;
-
-    JSGlobalObject* globalObject = JSGlobalObject::head();
-    do {
-        ExecStateStack::const_iterator end = globalObject->activeExecStates().end();
-        for (ExecStateStack::const_iterator it = globalObject->activeExecStates().begin(); it != end; ++it)
-            (*it)->setException(Error::create(*it, GeneralError, "Out of memory"));
-        globalObject = globalObject->next();
-    } while (globalObject != JSGlobalObject::head());
 }
 
 } // namespace KJS

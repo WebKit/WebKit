@@ -134,13 +134,13 @@ bool JSValueIsEqual(JSContextRef ctx, JSValueRef a, JSValueRef b, JSValueRef* ex
 
 bool JSValueIsStrictEqual(JSContextRef ctx, JSValueRef a, JSValueRef b)
 {
+    UNUSED_PARAM(ctx);
+
     JSLock lock;
-    ExecState* exec = toJS(ctx);
     JSValue* jsA = toJS(a);
     JSValue* jsB = toJS(b);
     
-    bool result = strictEqual(exec, jsA, jsB); // can't throw because it doesn't perform value conversion
-    ASSERT(!exec->hadException());
+    bool result = strictEqual(jsA, jsB);
     return result;
 }
 

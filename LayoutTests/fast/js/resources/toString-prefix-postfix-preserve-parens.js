@@ -3,56 +3,56 @@ description(
 );
 
 function postfix_should_preserve_parens(x, y, z) {
-    (x,y)++;
+    (x, y)++;
     return y;
 }
 
 function prefix_should_preserve_parens(x, y, z) {
-    ++(x,y);
+    ++(x, y);
     return x;
 
 }
 
 function both_should_preserve_parens(x, y, z) {
-    ++(x,y)--;
+    ++(x, y)--;
     return x;
 
 }
 
 function postfix_should_preserve_parens_multi(x, y, z) {
-    (((x,y)))--;
+    (((x, y)))--;
     return x;
 }
 
 function prefix_should_preserve_parens_multi(x, y, z) {
-    --(((x,y)));
+    --(((x, y)));
     return x;
 }
 
 function both_should_preserve_parens_multi(x, y, z) {
-    ++(((x,y)))--;
+    ++(((x, y)))--;
     return x;
 }
 
 function postfix_should_preserve_parens_multi1(x, y, z) {
-    (((x)),y)--;
+    (((x)), y)--;
     return x;
 }
 
 function prefix_should_preserve_parens_multi1(x, y, z) {
-    --(((x)),y);
+    --(((x)), y);
     return x;
 }
 
 function prefix_should_preserve_parens_multi2(x, y, z) {
     var z = 0;
-    --(((x),y),z);
+    --(((x), y), z);
     return x;
 }
 
 function postfix_should_preserve_parens_multi2(x, y, z) {
     var z = 0;
-    (((x),y),z)++;
+    (((x), y) ,z)++;
     return x;
 }
 
@@ -60,21 +60,21 @@ function postfix_should_preserve_parens_multi2(x, y, z) {
 // the result of typeof, this means that the parenthesis
 // got lost somewhere.
 function typeof_should_preserve_parens(x, y, z) {
-    return typeof (x,y);
+    return typeof (x, y);
 }
 
 function typeof_should_preserve_parens1(x, y, z) {
-    return typeof ((x,y));
+    return typeof ((x, y));
 }
 
 function typeof_should_preserve_parens2(x, y, z) {
     var z = 33;
-    return typeof (z, (x,y));
+    return typeof (z, (x, y));
 }
 
 function typeof_should_preserve_parens_multi(x, y, z) {
     var z = 33;
-    return typeof ((z,(((x,y)))));
+    return typeof ((z,(((x, y)))));
 }
 
 unevalf = function(x) { return '(' + x.toString() + ')'; };
@@ -87,7 +87,7 @@ function testToString(fn) {
     // check that grouping operator is still there (this test reveals the bug
     // but will create possible false negative if toString output changes in
     // the future)
-    shouldBeTrue("unevalf("+fn+").indexOf('(x, y)') >= 0");
+    shouldBeTrue("/.*\\(+x\\)*, y\\)/.test(unevalf("+fn+"))");
 
 }
 

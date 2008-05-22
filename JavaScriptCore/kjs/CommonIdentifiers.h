@@ -82,6 +82,7 @@ namespace KJS {
 
         const Identifier nullIdentifier;
         const Identifier underscoreProto;
+        const Identifier thisIdentifier;
 
 #define KJS_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL(name) const Identifier name;
         KJS_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(KJS_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL)

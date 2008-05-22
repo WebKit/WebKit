@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2008 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #import "config.h"
 #import "objc_instance.h"
 
+#import "FoundationExtras.h"
 #import "WebScriptObject.h"
 #include <wtf/Assertions.h>
 
@@ -40,6 +41,36 @@
 
 using namespace KJS::Bindings;
 using namespace KJS;
+
+static NSString* s_exception;
+static JSGlobalObject* s_exceptionEnvironment; // No need to protect this value, since we just use it for a pointer comparison.
+
+void ObjcInstance::setGlobalException(NSString* exception, JSGlobalObject* exceptionEnvironment)
+{
+    HardRelease(s_exception);
+    HardRetain(exception);
+    s_exception = exception;
+
+    s_exceptionEnvironment = exceptionEnvironment;
+}
+
+void ObjcInstance::moveGlobalExceptionToExecState(ExecState* exec)
+{
+    if (!s_exception) {
+        ASSERT(!s_exceptionEnvironment);
+        return;
+    }
+
+    if (!s_exceptionEnvironment || s_exceptionEnvironment == exec->dynamicGlobalObject()) {
+        JSLock lock;
+        throwError(exec, GeneralError, s_exception);
+    }
+
+    HardRelease(s_exception);
+    s_exception = 0;
+
+    s_exceptionEnvironment = 0;
+}
 
 ObjcInstance::ObjcInstance(ObjectStructPtr instance, PassRefPtr<RootObject> rootObject) 
     : Instance(rootObject)
@@ -86,17 +117,19 @@ Bindings::Class* ObjcInstance::getClass() const
     return static_cast<Bindings::Class*>(_class);
 }
 
-bool ObjcInstance::implementsCall() const
+CallType ObjcInstance::getCallData(CallData&)
 {
-    return [_instance.get() respondsToSelector:@selector(invokeDefaultMethodWithArguments:)];
+    return [_instance.get() respondsToSelector:@selector(invokeDefaultMethodWithArguments:)] ? CallTypeNative : CallTypeNone;
 }
 
 JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodList, const List &args)
 {
     JSValue* result = jsUndefined();
     
-   JSLock::DropAllLocks dropAllLocks; // Can't put this inside the @try scope because it unwinds incorrectly.
+    JSLock::DropAllLocks dropAllLocks; // Can't put this inside the @try scope because it unwinds incorrectly.
 
+    setGlobalException(nil);
+    
     // Overloading methods is not allowed in ObjectiveC.  Should only be one
     // name match for a particular method.
     ASSERT(methodList.size() == 1);
@@ -207,6 +240,7 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
     }
 } @catch(NSException* localException) {
 }
+    moveGlobalExceptionToExecState(exec);
     return result;
 }
 
@@ -214,8 +248,9 @@ JSValue* ObjcInstance::invokeDefaultMethod(ExecState* exec, const List &args)
 {
     JSValue* result = jsUndefined();
 
-   JSLock::DropAllLocks dropAllLocks; // Can't put this inside the @try scope because it unwinds incorrectly.
-
+    JSLock::DropAllLocks dropAllLocks; // Can't put this inside the @try scope because it unwinds incorrectly.
+    setGlobalException(nil);
+    
 @try {
     if (![_instance.get() respondsToSelector:@selector(invokeDefaultMethodWithArguments:)])
         return result;
@@ -253,7 +288,7 @@ JSValue* ObjcInstance::invokeDefaultMethod(ExecState* exec, const List &args)
     result = convertObjcValueToValue(exec, buffer, objcValueType, _rootObject.get());
 } @catch(NSException* localException) {
 }
-
+    moveGlobalExceptionToExecState(exec);
     return result;
 }
 
@@ -275,6 +310,8 @@ void ObjcInstance::setValueOfUndefinedField(ExecState* exec, const Identifier &p
     // setValue:forUndefinedKey:, and unfortnately the default implementation
     // throws an exception.
     if ([targetObject respondsToSelector:@selector(setValue:forUndefinedKey:)]){
+        setGlobalException(nil);
+    
         ObjcValue objcValue = convertValueToObjcValue(exec, aValue, ObjcObjectType);
 
         @try {
@@ -282,6 +319,8 @@ void ObjcInstance::setValueOfUndefinedField(ExecState* exec, const Identifier &p
         } @catch(NSException* localException) {
             // Do nothing.  Class did not override valueForUndefinedKey:.
         }
+
+        moveGlobalExceptionToExecState(exec);
     }
 }
 
@@ -297,12 +336,16 @@ JSValue* ObjcInstance::getValueOfUndefinedField(ExecState* exec, const Identifie
     // valueForUndefinedKey:, and unfortnately the default implementation
     // throws an exception.
     if ([targetObject respondsToSelector:@selector(valueForUndefinedKey:)]){
+        setGlobalException(nil);
+    
         @try {
             id objcValue = [targetObject valueForUndefinedKey:[NSString stringWithCString:property.ascii() encoding:NSASCIIStringEncoding]];
             result = convertObjcValueToValue(exec, &objcValue, ObjcObjectType, _rootObject.get());
         } @catch(NSException* localException) {
             // Do nothing.  Class did not override valueForUndefinedKey:.
         }
+
+        moveGlobalExceptionToExecState(exec);
     }
 
     return result;

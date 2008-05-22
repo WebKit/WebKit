@@ -289,6 +289,14 @@ sub GenerateHeader
         push(@headerContent, "#include \"EventTargetNode.h\"\n");
     }
 
+    if ($dataNode->extendedAttributes->{"CustomCall"}) {
+        push(@headerContent, "#include <kjs/CallData.h>\n");
+    }
+
+    if ($hasParent && $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
+        push(@headerContent, "#include \"${implClassName}.h\"");
+    }
+
     # Get correct pass/store types respecting PODType flag
     my $podType = $dataNode->extendedAttributes->{"PODType"};
     my $passType = $podType ? "JSSVGPODTypeWrapper<$podType>*" : "$implClassName*";
@@ -320,6 +328,11 @@ sub GenerateHeader
 
     # Destructor
     push(@headerContent, "    virtual ~$className();\n") if (!$hasParent or $interfaceName eq "Document");
+
+
+    $implIncludes{"${className}Custom.h"} = 1 if
+       $dataNode->extendedAttributes->{"CustomPutFunction"}
+    || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
 
     my $hasGetter = $numAttributes > 0 
                  || $dataNode->extendedAttributes->{"GenerateConstructor"} 
@@ -370,7 +383,7 @@ sub GenerateHeader
     # Custom call functions
     if ($dataNode->extendedAttributes->{"CustomCall"}) {
         push(@headerContent, "    virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List&);\n");
-        push(@headerContent, "    virtual bool implementsCall() const;\n\n");
+        push(@headerContent, "    virtual KJS::CallType getCallData(KJS::CallData&);\n\n");
     }
 
     # Custom deleteProperty function
@@ -474,7 +487,10 @@ sub GenerateHeader
             push(@headerContent, "    RefPtr<$implClassName> m_impl;\n");
         }
     } elsif ($dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
-        push(@headerContent, "    $implClassName* impl() const;\n");
+        push(@headerContent, "    $implClassName* impl() const\n");
+        push(@headerContent, "    {\n");
+        push(@headerContent, "        return static_cast<$implClassName*>(Base::impl());\n");
+        push(@headerContent, "    }\n");
     }
 
     # Index getter
@@ -1302,13 +1318,6 @@ sub GenerateImplementation
         }
     }
 
-    if ($dataNode->extendedAttributes->{"GenerateNativeConverter"} && $hasParent) {
-        push(@implContent, "\n$implClassName* ${className}::impl() const\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    return static_cast<$implClassName*>(Base::impl());\n");
-        push(@implContent, "}\n");
-    }
-
     push(@implContent, "\n}\n");
 
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditional;
@@ -1774,7 +1783,7 @@ EOF
 
     if ($canConstruct) {
 $implContent .= << "EOF";
-    virtual bool implementsConstruct() const { return true; }
+    virtual ConstructType getConstructData(ConstructData&) { return ConstructTypeNative; }
     virtual JSObject* construct(ExecState* exec, const List& args) { return static_cast<JSObject*>(toJS(exec, ${interfaceName}::create())); }
 EOF
     }

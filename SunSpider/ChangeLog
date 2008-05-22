@@ -1,3 +1,94 @@
+2008-04-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Oliver.
+        
+        - add newly working tests to squirrelfish list
+
+        * tests/LIST-SQUIRRELFISH: Add 3d-raytrace and string-unpack-code
+
+2008-04-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Oliver.
+        
+        - move ubench tests properly.
+
+        * tests/ubench: Added.
+        * tests/ubench/function-closure.js: Added.
+        * tests/ubench/function-empty.js: Added.
+        * tests/ubench/function-missing-args.js: Added.
+        * tests/ubench/function-sum.js: Added.
+        * tests/ubench/loop-empty-resolve.js: Added.
+        * tests/ubench/loop-empty.js: Added.
+        * tests/ubench/loop-sum.js: Added.
+
+2008-04-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Oliver.
+
+        * sunspider: Don't force --runs=1 in squirrelfish mode any more.
+
+2008-04-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - make --squirrelfish mode use the real harness, but a reduced set of tests
+
+        Also add a new ubench mode which runs the older squirrelfish microbenchmarks.
+
+        * sunspider:
+        * tests/LIST-SQUIRRELFISH:
+        * tests/LIST-UBENCH: Added.
+        * tests/squirrelfish: Moved to tests/ubench
+
+2008-04-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Removed an unused test.
+
+        * tests/squirrelfish/loop-resolve.js: Removed.
+
+2008-04-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        Add newly runnable tests to --squirrelfish mode.
+
+        * tests/LIST-SQUIRRELFISH:
+
+2008-04-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        A little more love for --squirrelfish mode:
+        
+        Fixed a misplaced sort. Results properly sort now.
+        
+        Added a test list just for squirrelfish, and updated it to include
+        all currently passing SunSpider tests.
+        
+        Fixed the pruning regexp to match 3d-morph.js.
+
+        * sunspider:
+
+2008-03-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        --squirrelfish mode: pared down tests for squirrelfish to chew on.
+
+        * sunspider:
+        * tests/LIST:
+        * tests/squirrelfish: Added.
+        * tests/squirrelfish/function-closure.js: Added.
+        * tests/squirrelfish/function-empty.js: Added.
+        * tests/squirrelfish/function-missing-args.js: Added.
+        * tests/squirrelfish/function-sum.js: Added.
+        * tests/squirrelfish/loop-empty-resolve.js: Added.
+        * tests/squirrelfish/loop-empty.js: Added.
+        * tests/squirrelfish/loop-resolve.js: Added.
+        * tests/squirrelfish/loop-sum.js: Added.
+
 2008-03-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff.

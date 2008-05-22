@@ -33,7 +33,7 @@
 #include "Console.h"
 #include "DOMWindow.h"
 #include "Frame.h"
-#include "JSDOMWindow.h"
+#include "JSDOMWindowCustom.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
 

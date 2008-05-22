@@ -302,12 +302,14 @@ WebView *getWebView(WebFrame *webFrame)
 
 - (void)_attachScriptDebugger
 {
-    if (_private->scriptDebugger)
-        return;
-
     JSGlobalObject* globalObject = _private->coreFrame->scriptProxy()->globalObject();
     if (!globalObject)
         return;
+
+    if (_private->scriptDebugger) {
+        ASSERT(_private->scriptDebugger == globalObject->debugger());
+        return;
+    }
 
     _private->scriptDebugger = new WebScriptDebugger(globalObject);
 }

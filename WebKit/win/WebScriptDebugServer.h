@@ -28,8 +28,6 @@
 
 #include "WebKit.h"
 
-// FIXME: <rdar://5932722> Remove this class entirely once we stop exporting progIDForClass.
-
 class WebScriptDebugServer : public IWebScriptDebugServer {
 public:
     static WebScriptDebugServer* createInstance();

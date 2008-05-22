@@ -1,3 +1,23 @@
+=== End merge of squirrelfish ===
+
+2008-04-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - added support for --ubench mode
+
+        * Scripts/run-sunspider:
+
+2008-03-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        --squirrelfish mode: pared down tests for squirrelfish to chew on.
+
+        * Scripts/run-sunspider:
+
+=== Start merge of squirrelfish ===
+
 2008-05-21  Darin Adler  <darin@apple.com>
 
         * Scripts/make-js-test-wrappers: Added another exception.

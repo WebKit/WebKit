@@ -39,7 +39,6 @@
 #include "DateMath.cpp"
 #include "dtoa.cpp"
 #include "error_object.cpp"
-#include "ExecState.cpp"
 #include "function_object.cpp"
 #include "grammar.cpp"
 #include "identifier.cpp"
@@ -70,3 +69,5 @@
 #include "value.cpp"
 #include "wtf/FastMalloc.cpp"
 #include "wtf/TCSystemAlloc.cpp"
+#include "VM/CodeGenerator.cpp"
+#include "VM/RegisterFile.cpp"

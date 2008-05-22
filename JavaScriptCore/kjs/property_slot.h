@@ -57,6 +57,12 @@ public:
             return m_data.numericFunc(exec, originalObject, propertyName, *this);
         return m_getValue(exec, originalObject, Identifier::from(propertyName), *this); 
     }
+
+    void putValue(JSValue* value)
+    { 
+        ASSERT(m_getValue == KJS_VALUE_SLOT_MARKER);
+        *m_data.valueSlot = value;
+    }
     
     void setValueSlot(JSObject* slotBase, JSValue** valueSlot) 
     {

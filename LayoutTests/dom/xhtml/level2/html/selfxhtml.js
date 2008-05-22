@@ -574,7 +574,7 @@ function setResult(resultType, message) {
    	  var messageDiv1 = messageRow.insertCell(-1);
       messageDiv1.appendChild(document.createTextNode("Message"));
       var messageDiv2 = messageRow.insertCell(-1);
-      messageDiv2.appendChild(document.createTextNode(message));
+      messageDiv2.appendChild(document.createTextNode((message instanceof Error) ? ("Line " + message.line + ": " + message.name) : message));
    }
    var oldBody = document.getElementsByTagName("body")[0];
    oldBody.parentNode.replaceChild(newBody, oldBody);

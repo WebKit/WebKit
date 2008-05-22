@@ -53,7 +53,7 @@ WebInspector.ScopeChainSidebarPane.prototype = {
             var localScope = false;
             var extraProperties = null;
 
-            if (Object.prototype.toString.call(scopeObject) === "[object Activation]") {
+            if (Object.prototype.toString.call(scopeObject) === "[object JSActivation]") {
                 if (!foundLocalScope) {
                     extraProperties = { "this": callFrame.thisObject };
                     title = WebInspector.UIString("Local");

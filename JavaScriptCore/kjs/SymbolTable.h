@@ -29,6 +29,7 @@
 #ifndef SymbolTable_h
 #define SymbolTable_h
 
+#include "object.h"
 #include "ustring.h"
 #include <wtf/AlwaysInline.h>
 
@@ -39,14 +40,81 @@ namespace KJS {
         static unsigned hash(UString::Rep* key) { return key->computedHash(); }
     };
 
-    static ALWAYS_INLINE size_t missingSymbolMarker() { return std::numeric_limits<size_t>::max(); }
+    static ALWAYS_INLINE int missingSymbolMarker() { return std::numeric_limits<int>::max(); }
 
-    struct SymbolTableIndexHashTraits : HashTraits<size_t> {
-        static const bool emptyValueIsZero = false;
-        static size_t emptyValue() { return missingSymbolMarker(); }
+    struct SymbolTableEntry {
+        SymbolTableEntry()
+            : rawValue(0)
+        {
+        }
+        
+        SymbolTableEntry(int index)
+        {
+            rawValue = index & ~0x80000000 & ~0x40000000;
+        }
+        
+        SymbolTableEntry(int index, unsigned attributes)
+        {
+            rawValue = index;
+            
+            if (!(attributes & ReadOnly))
+                rawValue &= ~0x80000000;
+            
+            if (!(attributes & DontEnum))
+                rawValue &= ~0x40000000;
+        }
+
+        bool isEmpty() const
+        {
+            return rawValue == 0;
+        }
+
+        int getIndex() const
+        {
+            // Every register index we store is negative, so this bit twiddling works correctly
+            return rawValue | 0x80000000 | 0x40000000;
+        }
+
+        unsigned getAttributes() const
+        {
+            unsigned attributes = 0;
+            
+            if (rawValue & 0x80000000)
+                attributes |= ReadOnly;
+            
+            if (rawValue & 0x40000000)
+                attributes |= DontEnum;
+            
+            return attributes;
+        }
+
+        void setAttributes(unsigned attributes)
+        {
+            rawValue = getIndex();
+            
+            if (!(attributes & ReadOnly))
+                rawValue &= ~0x80000000;
+            
+            if (!(attributes & DontEnum))
+                rawValue &= ~0x40000000;
+        }
+
+        bool isReadOnly() const
+        {
+            return rawValue & 0x80000000;
+        }
+
+        int rawValue;
     };
 
-    typedef HashMap<RefPtr<UString::Rep>, size_t, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, SymbolTableIndexHashTraits> SymbolTable;
+    struct SymbolTableIndexHashTraits {
+        typedef SymbolTableEntry TraitType;
+        static SymbolTableEntry emptyValue() { return SymbolTableEntry(); }
+        static const bool emptyValueIsZero = false;
+        static const bool needsDestruction = false;
+    };
+
+    typedef HashMap<RefPtr<UString::Rep>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, SymbolTableIndexHashTraits> SymbolTable;
 
 } // namespace KJS
 

@@ -495,9 +495,9 @@ DateObjectImp::DateObjectImp(ExecState* exec, FunctionPrototype* funcProto, Date
   putDirect(exec->propertyNames().length, 7, ReadOnly|DontDelete|DontEnum);
 }
 
-bool DateObjectImp::implementsConstruct() const
+ConstructType DateObjectImp::getConstructData(ConstructData&)
 {
-    return true;
+    return ConstructTypeNative;
 }
 
 // ECMA 15.9.3

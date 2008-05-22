@@ -50,13 +50,13 @@ namespace WebCore {
         virtual bool deleteProperty(KJS::ExecState*, const KJS::Identifier&);
         virtual bool deleteProperty(KJS::ExecState*, unsigned);
 
-        virtual bool implementsConstruct() const;
+        virtual KJS::ConstructType getConstructData(KJS::ConstructData&);
         virtual KJS::JSObject* construct(KJS::ExecState*, const KJS::List& args);
 
         virtual bool implementsHasInstance() const;
         virtual bool hasInstance(KJS::ExecState*, KJS::JSValue*);
 
-        virtual bool implementsCall() const;
+        virtual KJS::CallType getCallData(KJS::CallData&);
         virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject* thisObj, const KJS::List& args);
 
         virtual void getPropertyNames(KJS::ExecState*, KJS::PropertyNameArray&);

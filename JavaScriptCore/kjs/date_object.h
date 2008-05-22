@@ -127,13 +127,14 @@ namespace KJS {
      */
     class DateObjectImp : public InternalFunctionImp {
     public:
-        DateObjectImp(ExecState *, FunctionPrototype *, DatePrototype *);
+        DateObjectImp(ExecState*, FunctionPrototype*, DatePrototype*);
 
-        virtual bool implementsConstruct() const;
-        virtual JSObject *construct(ExecState *, const List &args);
-        virtual JSValue *callAsFunction(ExecState *, JSObject *thisObj, const List &args);
+        virtual ConstructType getConstructData(ConstructData&);
+        virtual JSObject* construct(ExecState*, const List& args);
 
-        JSObject *construct(const List &);
+        virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List& args);
+
+        JSObject* construct(const List&);
     };
 
 } // namespace

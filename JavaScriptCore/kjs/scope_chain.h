@@ -1,6 +1,6 @@
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2008 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -19,32 +19,106 @@
  *
  */
 
-#ifndef KJS_SCOPE_CHAIN_H
-#define KJS_SCOPE_CHAIN_H
+#ifndef ScopeChain_h
+#define ScopeChain_h
 
 #include <wtf/Assertions.h>
 
 namespace KJS {
 
+    class JSGlobalObject;
     class JSObject;
-    class ExecState;
+    class ScopeChainIterator;
     
     class ScopeChainNode {
     public:
-        ScopeChainNode(ScopeChainNode *n, JSObject *o)
-            : next(n), object(o), refCount(1) { }
+        ScopeChainNode(ScopeChainNode* n, JSObject* o)
+            : next(n)
+            , object(o)
+            , refCount(1)
+        {
+        }
 
-        ScopeChainNode *next;
-        JSObject *object;
+        ScopeChainNode* next;
+        JSObject* object;
         int refCount;
+        
+        void deref() { if (--refCount == 0) release(); }
+        void ref() { ++refCount; }
+        void release();
+
+        // Before calling "push" on a bare ScopeChainNode, a client should
+        // logically "copy" the node. Later, the client can "deref" the head
+        // of its chain of ScopeChainNodes to reclaim all the nodes it added
+        // after the logical copy, leaving nodes added before the logical copy
+        // (nodes shared with other clients) untouched.
+        ScopeChainNode* copy()
+        {
+            ref();
+            return this;
+        }
+
+        JSObject* bottom() const;
+
+        ScopeChainNode* push(JSObject*);
+        ScopeChainNode* pop();
+
+        ScopeChainIterator begin() const;
+        ScopeChainIterator end() const;
+        
+        JSGlobalObject* globalObject() const; // defined in JSGlobalObject.h
+        
+#ifndef NDEBUG        
+        void print() const;
+#endif
     };
+
+    inline ScopeChainNode* ScopeChainNode::push(JSObject* o)
+    {
+        ASSERT(o);
+        return new ScopeChainNode(this, o);
+    }
+
+    inline ScopeChainNode* ScopeChainNode::pop()
+    {
+        ASSERT(next);
+        ScopeChainNode* result = next;
+        
+        if (--refCount != 0)
+            ++result->refCount;
+        else
+            delete this;
+        
+        return result;
+    }
+
+    inline JSObject* ScopeChainNode::bottom() const
+    {
+        const ScopeChainNode* n = this;
+        while (n->next)
+            n = n->next;
+        return n->object;
+    }
+
+    inline void ScopeChainNode::release()
+    {
+        // This function is only called by deref(),
+        // Deref ensures these conditions are true.
+        ASSERT(refCount == 0);
+        ScopeChainNode* n = this;
+        do {
+            ScopeChainNode* next = n->next;
+            delete n;
+            n = next;
+        } while (n && --n->refCount == 0);
+    }
 
     class ScopeChainIterator {
     public:
-        ScopeChainIterator(ScopeChainNode *node) : m_node(node) {}
+        ScopeChainIterator(const ScopeChainNode* node) : m_node(node) {}
 
-        JSObject * const & operator*() const { return m_node->object; }
-        JSObject * const * operator->() const { return &(operator*()); }
+        JSObject* const & operator*() const { return m_node->object; }
+        JSObject* const * operator->() const { return &(operator*()); }
     
         ScopeChainIterator& operator++() { m_node = m_node->next; return *this; }
 
@@ -54,129 +128,81 @@ namespace KJS {
         bool operator!=(const ScopeChainIterator& other) const { return m_node != other.m_node; }
 
     private:
-        ScopeChainNode *m_node;
+        const ScopeChainNode* m_node;
     };
+
+    inline ScopeChainIterator ScopeChainNode::begin() const
+    {
+        return ScopeChainIterator(this); 
+    }
+
+    inline ScopeChainIterator ScopeChainNode::end() const
+    { 
+        return ScopeChainIterator(0); 
+    }
 
     class ScopeChain {
     public:
-        typedef ScopeChainIterator const_iterator;
-        typedef JSObject* ValueType;
-
-        ScopeChain() : _node(0) { }
-        ~ScopeChain() { deref(); }
-
-        ScopeChain(const ScopeChain& c)
-            : _node(c._node)
-        {
-            if (_node)
-                ++_node->refCount;
-        }
-
         ScopeChain(JSObject* o)
             : _node(new ScopeChainNode(0, o))
         {
         }
 
-        ScopeChain &operator=(const ScopeChain &);
+        ScopeChain(const ScopeChain& c)
+            : _node(c._node->copy())
+        {
+        }
 
-        bool isEmpty() const { return !_node; }
-        JSObject *top() const { return _node->object; }
+        ScopeChain& operator=(const ScopeChain& c);
 
-        JSObject *bottom() const;
+        explicit ScopeChain(ScopeChainNode* node)
+            : _node(node->copy())
+        {
+        }
+    
+        ~ScopeChain() { _node->deref(); }
 
-        ScopeChainIterator begin() const { return ScopeChainIterator(_node); }
-        ScopeChainIterator end() const { return ScopeChainIterator(0); }
+        void swap(ScopeChain&);
 
-        void clear() { deref(); _node = 0; }
-        void push(JSObject *);
-        void push(const ScopeChain &);
-        void push(ScopeChainNode*);
-        void replaceTop(JSObject*);
-        void pop();
-        void popInlineScopeNode();
+        ScopeChainNode* node() const { return _node; }
 
-        void mark();
+        JSObject* top() const { return _node->object; }
+        JSObject* bottom() const { return _node->bottom(); }
+
+        ScopeChainIterator begin() const { return _node->begin(); }
+        ScopeChainIterator end() const { return _node->end(); }
+
+        void push(JSObject* o) { _node = _node->push(o); }
+
+        void pop() { _node = _node->pop(); }
+        void clear() { _node->deref(); _node = 0; }
+        
+        JSGlobalObject* globalObject() const { return _node->globalObject(); }
+
+        void mark() const;
 
 #ifndef NDEBUG        
-        void print();
+        void print() const { _node->print(); }
 #endif
         
     private:
-        ScopeChainNode *_node;
-        
-        void deref() { if (_node && --_node->refCount == 0) release(); }
-        void ref() const;
-        
-        void release();
+        ScopeChainNode* _node;
     };
 
-inline void ScopeChain::ref() const
-{
-    for (ScopeChainNode *n = _node; n; n = n->next) {
-        if (n->refCount++ != 0)
-            break;
+    inline void ScopeChain::swap(ScopeChain& o)
+    {
+        ScopeChainNode* tmp = _node;
+        _node = o._node;
+        o._node = tmp;
     }
-}
 
-inline ScopeChain &ScopeChain::operator=(const ScopeChain &c)
-{
-    c.ref();
-    deref();
-    _node = c._node;
-    return *this;
-}
-
-inline JSObject *ScopeChain::bottom() const
-{
-    ScopeChainNode *last = 0;
-    for (ScopeChainNode *n = _node; n; n = n->next)
-        last = n;
-    if (!last)
-        return 0;
-    return last->object;
-}
-
-inline void ScopeChain::push(JSObject *o)
-{
-    ASSERT(o);
-    _node = new ScopeChainNode(_node, o);
-}
-
-inline void ScopeChain::push(ScopeChainNode *node)
-{
-    ASSERT(node);
-    ASSERT(node->object);
-    node->refCount++;
-    node->next = _node;
-    _node = node;
-}
-
-inline void ScopeChain::replaceTop(JSObject* o)
-{
-    ASSERT(o);
-    _node->object = o;
-}
-
-inline void ScopeChain::pop()
-{
-    ScopeChainNode *oldNode = _node;
-    ASSERT(oldNode);
-    ScopeChainNode *newNode = oldNode->next;
-    _node = newNode;
-    
-    if (--oldNode->refCount != 0) {
-        if (newNode)
-            ++newNode->refCount;
-    } else {
-        delete oldNode;
+    inline ScopeChain& ScopeChain::operator=(const ScopeChain& c)
+    {
+        ScopeChain tmp(c);
+        swap(tmp);
+        return *this;
     }
-}
-
-inline void ScopeChain::popInlineScopeNode()
-{
-    _node = _node->next;
-}
 
 } // namespace KJS
 
-#endif // KJS_SCOPE_CHAIN_H
+#endif // ScopeChain_h

@@ -1,3 +1,32 @@
+=== End merge of squirrelfish ===
+
+2008-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Updated for new JS debugging APIs.
+
+        * WebScriptDebugServer.cpp:
+        (WebScriptDebugServer::didParseSource):
+        (WebScriptDebugServer::failedToParseSource):
+        * WebScriptDebugServer.h:
+
+2008-05-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        Build fixes for SquirrelFish on windows.
+
+        * WebScriptCallFrame.cpp:
+        (callingFunctionOrGlobalExecState):
+        (WebScriptCallFrame::caller):
+        (WebScriptCallFrame::functionName):
+        (WebScriptCallFrame::variableNames):
+        (WebScriptCallFrame::valueForVariable):
+        (WebScriptCallFrame::valueByEvaluatingJavaScriptFromString):
+        * WebScriptDebugServer.cpp:
+        (WebScriptDebugServer::willLeaveCallFrame):
+
 2008-05-19  Adam Roben  <aroben@apple.com>
 
         Make WebKit.idl rebuild whenever any of its included interfaces are
@@ -18,6 +47,8 @@
         Link with iphlpapi.lib, and make iphlpapi.dll a delay loaded library.
         
         * WebKit.vcproj/WebKit.vcproj:
+
+=== Start merge of squirrelfish ===
 
 2008-05-19  Anders Carlsson  <andersca@apple.com>
 

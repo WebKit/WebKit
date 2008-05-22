@@ -195,13 +195,13 @@ JSValue *RuntimeObjectImp::defaultValue(ExecState* exec, JSType hint) const
     
     return result;
 }
-    
-bool RuntimeObjectImp::implementsCall() const
+
+CallType RuntimeObjectImp::getCallData(CallData&)
 {
     if (!instance)
-        return false;
-    
-    return instance->implementsCall();
+        return CallTypeNone;
+    CallData data;
+    return instance->getCallData(data) != CallTypeNone ? CallTypeNative : CallTypeNone;
 }
 
 JSValue *RuntimeObjectImp::callAsFunction(ExecState* exec, JSObject*, const List& args)

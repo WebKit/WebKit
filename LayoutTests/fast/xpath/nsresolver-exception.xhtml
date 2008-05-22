@@ -11,7 +11,7 @@
 
     function MyNSResolver() {}
     MyNSResolver.prototype.lookupNamespaceURI = function(prefix) {
-        window.foobar(); // raise an exception
+        throw new Error("this is an exception");
     }
 
     var sXml = "<root xmlns='http://www.example.com'><child>SUCCESS</child></root>";

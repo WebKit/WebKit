@@ -1,9 +1,8 @@
-CONSOLE MESSAGE: line 37: Value undefined (result of expression document.getElementsById) is not object.
-layer at (0,0) size 785x1149
+layer at (0,0) size 785x1104
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1149
-  RenderBlock {HTML} at (0,0) size 785x1149
-    RenderBody {BODY} at (8,8) size 769x1133
+layer at (0,0) size 785x1104
+  RenderBlock {HTML} at (0,0) size 785x1104
+    RenderBody {BODY} at (8,8) size 769x1088
       RenderBlock {CENTER} at (0,0) size 769x18
         RenderText {#text} at (322,0) size 125x18
           text run at (322,0) width 125: "bottom caption tests"
@@ -181,11 +180,7 @@ layer at (0,0) size 785x1149
       RenderBlock (anonymous) at (0,994) size 769x18
         RenderText {#text} at (0,0) size 152x18
           text run at (0,0) width 152: "table 8 - remove caption"
-      RenderTable {TABLE} at (5,1022) size 90x111 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (10,66) size 60x43 [border: (3px solid #800080)]
-          RenderText {#text} at (7,3) size 46x18
-            text run at (7,3) width 46: "caption"
-          RenderBlock {INPUT} at (24,24) size 12x13
+      RenderTable {TABLE} at (5,1022) size 90x66 [border: (10px solid #008000)]
         RenderTableSection {TBODY} at (10,10) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
             RenderTableCell {TD} at (2,2) size 32x20 [r=0 c=0 rs=1 cs=1]

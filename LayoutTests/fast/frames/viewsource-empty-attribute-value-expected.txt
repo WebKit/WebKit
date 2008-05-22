@@ -5,7 +5,7 @@ The attributes with no value or an empty value should be displayed correctly in 
 
 
 --------
-Frame: '<!--framePath /1/<!--frame0-->-->'
+Frame: '<!--framePath //<!--frame0-->-->'
 --------
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <hr noshade width=75%> 

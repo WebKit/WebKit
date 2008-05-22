@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSStorage.h"
+#include "JSStorageCustom.h"
 
 #if ENABLE(DOM_STORAGE)
 

@@ -13591,6 +13591,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSDOMWindowCustom.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSDOMWindowShell.cpp"
 					>
 				</File>
@@ -13940,6 +13944,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\ScheduledAction.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\StringSourceProvider.h"
 					>
 				</File>
 			</Filter>

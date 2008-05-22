@@ -45,9 +45,9 @@ JSXSLTProcessorConstructor::JSXSLTProcessorConstructor(ExecState* exec)
     putDirect(exec->propertyNames().prototype, JSXSLTProcessorPrototype::self(exec), None);
 }
 
-bool JSXSLTProcessorConstructor::implementsConstruct() const
+ConstructType JSXSLTProcessorConstructor::getConstructData(ConstructData&)
 {
-    return true;
+    return ConstructTypeNative;
 }
 
 JSObject* JSXSLTProcessorConstructor::construct(ExecState* exec, const List& args)

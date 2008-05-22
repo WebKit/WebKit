@@ -237,13 +237,13 @@ bool JSCallbackObject<Base>::deleteProperty(ExecState* exec, unsigned propertyNa
 }
 
 template <class Base>
-bool JSCallbackObject<Base>::implementsConstruct() const
+ConstructType JSCallbackObject<Base>::getConstructData(ConstructData&)
 {
     for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parentClass)
         if (jsClass->callAsConstructor)
-            return true;
+            return ConstructTypeNative;
     
-    return false;
+    return ConstructTypeNone;
 }
 
 template <class Base>
@@ -263,7 +263,7 @@ JSObject* JSCallbackObject<Base>::construct(ExecState* exec, const List& args)
         }
     }
     
-    ASSERT(0); // implementsConstruct should prevent us from reaching here
+    ASSERT(0); // getConstructData should prevent us from reaching here
     return 0;
 }
 
@@ -293,15 +293,14 @@ bool JSCallbackObject<Base>::hasInstance(ExecState *exec, JSValue *value)
     return 0;
 }
 
-
 template <class Base>
-bool JSCallbackObject<Base>::implementsCall() const
+CallType JSCallbackObject<Base>::getCallData(CallData&)
 {
     for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parentClass)
         if (jsClass->callAsFunction)
-            return true;
+            return CallTypeNative;
     
-    return false;
+    return CallTypeNone;
 }
 
 template <class Base>
@@ -322,7 +321,7 @@ JSValue* JSCallbackObject<Base>::callAsFunction(ExecState* exec, JSObject* thisO
         }
     }
     
-    ASSERT_NOT_REACHED(); // implementsCall should prevent us from reaching here
+    ASSERT_NOT_REACHED(); // getCallData should prevent us from reaching here
     return 0;
 }
 
@@ -367,6 +366,11 @@ void JSCallbackObject<Base>::getPropertyNames(ExecState* exec, PropertyNameArray
 template <class Base>
 double JSCallbackObject<Base>::toNumber(ExecState* exec) const
 {
+    // We need this check to guard against the case where this object is rhs of
+    // a binary expression where lhs threw an exception in its conversion to
+    // primitive
+    if (exec->hadException())
+        return NaN;
     JSContextRef ctx = toRef(exec);
     JSObjectRef thisRef = toRef(this);
     

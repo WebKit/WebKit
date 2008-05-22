@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "Parser.h"
+#include "debugger.h"
 
 #include "lexer.h"
 #include <wtf/HashSet.h>
@@ -42,23 +43,32 @@ Parser::Parser()
 {
 }
 
-void Parser::parse(int startingLineNumber,
-    const UChar* code, unsigned length,
-    int* sourceId, int* errLine, UString* errMsg)
+void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNumber,
+                   PassRefPtr<SourceProvider> prpSource,
+                   int* sourceId, int* errLine, UString* errMsg)
 {
     ASSERT(!m_sourceElements);
+    
+    int defaultSourceId;
+    int defaultErrLine;
+    UString defaultErrMsg;
+    
+    RefPtr<SourceProvider> source = prpSource;
 
-    if (errLine)
-        *errLine = -1;
-    if (errMsg)
-        *errMsg = 0;
+    if (!sourceId)
+        sourceId = &defaultSourceId;
+    if (!errLine)
+        errLine = &defaultErrLine;
+    if (!errMsg)
+        errMsg = &defaultErrMsg;
+
+    *errLine = -1;
+    *errMsg = 0;
         
     Lexer& lexer = KJS::lexer();
 
-    lexer.setCode(startingLineNumber, code, length);
-    m_sourceId++;
-    if (sourceId)
-        *sourceId = m_sourceId;
+    lexer.setCode(startingLineNumber, source);
+    *sourceId = ++m_sourceId;
 
     int parseError = kjsyyparse(&lexer);
     bool lexError = lexer.sawError();
@@ -67,18 +77,19 @@ void Parser::parse(int startingLineNumber,
     ParserRefCounted::deleteNewObjects();
 
     if (parseError || lexError) {
-        if (errLine)
-            *errLine = lexer.lineNo();
-        if (errMsg)
-            *errMsg = "Parse error";
+        *errLine = lexer.lineNo();
+        *errMsg = "Parse error";
         m_sourceElements.clear();
     }
+    
+    if (Debugger* debugger = exec->dynamicGlobalObject()->debugger())
+        debugger->sourceParsed(exec, *sourceId, sourceURL, *source, startingLineNumber, *errLine, *errMsg);
 }
 
 void Parser::didFinishParsing(SourceElements* sourceElements, ParserRefCountedData<DeclarationStacks::VarStack>* varStack, 
                               ParserRefCountedData<DeclarationStacks::FunctionStack>* funcStack, bool usesEval, bool needsClosure, int lastLine)
 {
-    m_sourceElements = sourceElements ? sourceElements : new SourceElements;
+    m_sourceElements = sourceElements;
     m_varDeclarations = varStack;
     m_funcDeclarations = funcStack;
     m_usesEval = usesEval;

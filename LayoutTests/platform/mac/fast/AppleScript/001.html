@@ -36,7 +36,7 @@ An automated test for basic AppleScript "do JavaScript" support.
             log(appleScriptController.doJavaScript("document"));
             log(appleScriptController.doJavaScript("document.title"));
             log(appleScriptController.doJavaScript("document.lalala"));
-            log(appleScriptController.doJavaScript("document.lalala()")); // ideally, should pass the error to AppleScript
+            log(appleScriptController.doJavaScript("throw 'this is an exception'")); // ideally, should pass the error to AppleScript
             log(appleScriptController.doJavaScript("function Polygon() {this.edges = 8;} new Polygon;"));
             
         } catch (ex) {

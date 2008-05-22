@@ -59,9 +59,9 @@ JSValue* JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
     if (!impl()->isValid())
         return jsNull();
 
-    const ScopeChain& chain = impl()->scopeChain();
-    ScopeChainIterator iter = chain.begin();
-    ScopeChainIterator end = chain.end();
+    const ScopeChainNode* scopeChain = impl()->scopeChain();
+    ScopeChainIterator iter = scopeChain->begin();
+    ScopeChainIterator end = scopeChain->end();
 
     // we must always have something in the scope chain
     ASSERT(iter != end);

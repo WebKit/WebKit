@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "JSHistory.h"
+#include "JSHistoryCustom.h"
 
 #include "Frame.h"
 #include "History.h"

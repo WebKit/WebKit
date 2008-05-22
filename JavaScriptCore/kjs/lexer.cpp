@@ -101,7 +101,7 @@ Lexer::~Lexer()
     delete[] mainTable.table;
 }
 
-void Lexer::setCode(int startingLineNumber, const UChar* c, unsigned int len)
+void Lexer::setCode(int startingLineNumber, PassRefPtr<SourceProvider> source)
 {
     yylineno = 1 + startingLineNumber;
     restrKeyword = false;
@@ -109,9 +109,11 @@ void Lexer::setCode(int startingLineNumber, const UChar* c, unsigned int len)
     eatNextIdentifier = false;
     stackToken = -1;
     lastToken = -1;
+
     pos = 0;
-    code = c;
-    length = len;
+    m_source = source;
+    code = m_source->data();
+    length = m_source->length();
     skipLF = false;
     skipCR = false;
     error = false;
@@ -132,6 +134,7 @@ void Lexer::shift(unsigned p)
         next2 = next3;
         do {
             if (pos >= length) {
+                pos++;
                 next3 = -1;
                 break;
             }
@@ -238,7 +241,7 @@ int Lexer::lex(void* p1, void* p2)
         shift(2);
         state = InSingleLineComment;
       } else {
-        token = matchPunctuator(current, next1, next2, next3);
+        token = matchPunctuator(lvalp->intValue, current, next1, next2, next3);
         if (token != -1) {
           setDone(Other);
         } else {
@@ -642,7 +645,7 @@ bool Lexer::isOctalDigit(int c)
   return (c >= '0' && c <= '7');
 }
 
-int Lexer::matchPunctuator(int c1, int c2, int c3, int c4)
+int Lexer::matchPunctuator(int& charPos, int c1, int c2, int c3, int c4)
 {
   if (c1 == '>' && c2 == '>' && c3 == '>' && c4 == '=') {
     shift(4);
@@ -744,13 +747,19 @@ int Lexer::matchPunctuator(int c1, int c2, int c3, int c4)
     case '%':
     case '(':
     case ')':
-    case '{':
-    case '}':
     case '[':
     case ']':
     case ';':
       shift(1);
       return static_cast<int>(c1);
+    case '{':
+      charPos = pos - 4;
+      shift(1);
+      return OPENBRACE;
+    case '}':
+      charPos = pos - 4;
+      shift(1);
+      return CLOSEBRACE;
     default:
       return -1;
   }

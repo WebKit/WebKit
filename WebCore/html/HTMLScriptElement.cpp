@@ -239,11 +239,25 @@ void HTMLScriptElement::evaluateScript(const String& url, const String& script)
 String HTMLScriptElement::text() const
 {
     Vector<UChar> val;
+    Text* firstTextNode = 0;
+    bool foundMultipleTextNodes = false;
     
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
-        if (n->isTextNode())
-            append(val, static_cast<Text*>(n)->data());
+        if (n->isTextNode()) {
+            if (foundMultipleTextNodes)
+                append(val, static_cast<Text*>(n)->data());
+            else if (firstTextNode) {
+                append(val, firstTextNode->data());
+                append(val, static_cast<Text*>(n)->data());
+                foundMultipleTextNodes = true;
+            } else {
+                firstTextNode = static_cast<Text*>(n);
+            }
+        }
     }
+        
+    if (firstTextNode && !foundMultipleTextNodes)
+        return firstTextNode->data();
     
     return String::adopt(val);
 }

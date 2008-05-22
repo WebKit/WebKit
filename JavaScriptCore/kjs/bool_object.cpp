@@ -93,9 +93,9 @@ BooleanObjectImp::BooleanObjectImp(ExecState* exec, FunctionPrototype* functionP
     putDirect(exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
 }
 
-bool BooleanObjectImp::implementsConstruct() const
+ConstructType BooleanObjectImp::getConstructData(ConstructData&)
 {
-    return true;
+    return ConstructTypeNative;
 }
 
 // ECMA 15.6.2

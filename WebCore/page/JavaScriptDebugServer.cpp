@@ -34,15 +34,16 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
-#include "JSDOMWindow.h"
+#include "JSDOMWindowCustom.h"
 #include "JavaScriptCallFrame.h"
 #include "JavaScriptDebugListener.h"
-#include "kjs_proxy.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PluginView.h"
 #include "ScrollView.h"
 #include "Widget.h"
+#include "kjs_proxy.h"
+#include <kjs/DebuggerCallFrame.h>
 #include <wtf/MainThread.h>
 
 using namespace KJS;
@@ -62,7 +63,8 @@ JavaScriptDebugServer::JavaScriptDebugServer()
     , m_pauseOnExceptions(false)
     , m_pauseOnNextStatement(false)
     , m_paused(false)
-    , m_pauseOnExecState(0)
+    , m_doneProcessingDebuggerEvents(true)
+    , m_pauseOnCallFrame(0)
 {
 }
 
@@ -85,7 +87,7 @@ void JavaScriptDebugServer::removeListener(JavaScriptDebugListener* listener)
     m_listeners.remove(listener);
     if (!hasListeners()) {
         Page::setDebuggerForAllPages(0);
-        resume();
+        m_doneProcessingDebuggerEvents = true;
     }
 }
 
@@ -123,7 +125,7 @@ void JavaScriptDebugServer::removeListener(JavaScriptDebugListener* listener, Pa
 
     if (!hasListeners()) {
         Page::setDebuggerForAllPages(0);
-        resume();
+        m_doneProcessingDebuggerEvents = true;
     }
 }
 
@@ -190,14 +192,18 @@ void JavaScriptDebugServer::setPauseOnExceptions(bool pause)
     m_pauseOnExceptions = pause;
 }
 
-void JavaScriptDebugServer::pauseOnNextStatement()
+void JavaScriptDebugServer::pauseProgram()
 {
     m_pauseOnNextStatement = true;
 }
 
-void JavaScriptDebugServer::resume()
+void JavaScriptDebugServer::continueProgram()
 {
-    m_paused = false;
+    if (!m_paused)
+        return;
+
+    m_pauseOnNextStatement = false;
+    m_doneProcessingDebuggerEvents = true;
 }
 
 void JavaScriptDebugServer::stepIntoStatement()
@@ -205,9 +211,8 @@ void JavaScriptDebugServer::stepIntoStatement()
     if (!m_paused)
         return;
 
-    resume();
-
     m_pauseOnNextStatement = true;
+    m_doneProcessingDebuggerEvents = true;
 }
 
 void JavaScriptDebugServer::stepOverStatement()
@@ -215,12 +220,8 @@ void JavaScriptDebugServer::stepOverStatement()
     if (!m_paused)
         return;
 
-    resume();
-
-    if (m_currentCallFrame)
-        m_pauseOnExecState = m_currentCallFrame->execState();
-    else
-        m_pauseOnExecState = 0;
+    m_pauseOnCallFrame = m_currentCallFrame.get();
+    m_doneProcessingDebuggerEvents = true;
 }
 
 void JavaScriptDebugServer::stepOutOfFunction()
@@ -228,12 +229,8 @@ void JavaScriptDebugServer::stepOutOfFunction()
     if (!m_paused)
         return;
 
-    resume();
-
-    if (m_currentCallFrame && m_currentCallFrame->caller())
-        m_pauseOnExecState = m_currentCallFrame->caller()->execState();
-    else
-        m_pauseOnExecState = 0;
+    m_pauseOnCallFrame = m_currentCallFrame ? m_currentCallFrame->caller() : 0;
+    m_doneProcessingDebuggerEvents = true;
 }
 
 JavaScriptCallFrame* JavaScriptDebugServer::currentCallFrame()
@@ -243,44 +240,43 @@ JavaScriptCallFrame* JavaScriptDebugServer::currentCallFrame()
     return m_currentCallFrame.get();
 }
 
-static void dispatchDidParseSource(const ListenerSet& listeners, const UString& source, int startingLineNumber, const UString& sourceURL, int sourceID)
+static void dispatchDidParseSource(const ListenerSet& listeners, ExecState* exec, const KJS::SourceProvider& source, int startingLineNumber, const String& sourceURL, int sourceID)
 {
     Vector<JavaScriptDebugListener*> copy;
     copyToVector(listeners, copy);
     for (size_t i = 0; i < copy.size(); ++i)
-        copy[i]->didParseSource(source, startingLineNumber, sourceURL, sourceID);
+        copy[i]->didParseSource(exec, source, startingLineNumber, sourceURL, sourceID);
 }
 
-static void dispatchFailedToParseSource(const ListenerSet& listeners, const UString& source, int startingLineNumber, const UString& sourceURL, int errorLine, const UString& errorMessage)
+static void dispatchFailedToParseSource(const ListenerSet& listeners, ExecState* exec, const SourceProvider& source, int startingLineNumber, const String& sourceURL, int errorLine, const String& errorMessage)
 {
     Vector<JavaScriptDebugListener*> copy;
     copyToVector(listeners, copy);
     for (size_t i = 0; i < copy.size(); ++i)
-        copy[i]->failedToParseSource(source, startingLineNumber, sourceURL, errorLine, errorMessage);
+        copy[i]->failedToParseSource(exec, source, startingLineNumber, sourceURL, errorLine, errorMessage);
 }
 
-static Page* toPage(ExecState* exec)
+static Page* toPage(JSGlobalObject* globalObject)
 {
-    ASSERT_ARG(exec, exec);
+    ASSERT_ARG(globalObject, globalObject);
 
-    JSDOMWindow* window = asJSDOMWindow(exec->dynamicGlobalObject());
-    ASSERT(window);
-
-    return window->impl()->frame()->page();
+    JSDOMWindow* window = asJSDOMWindow(globalObject);
+    Frame* frame = window->impl()->frame();
+    return frame ? frame->page() : 0;
 }
 
 #ifdef DEBUG_DEBUGGER_CALLBACKS
 static unsigned s_callDepth = 0;
 #endif
 
-bool JavaScriptDebugServer::sourceParsed(ExecState* exec, int sourceID, const UString& sourceURL, const UString& source, int startingLineNumber, int errorLine, const UString& errorMessage)
+void JavaScriptDebugServer::sourceParsed(ExecState* exec, int sourceID, const UString& sourceURL, const SourceProvider& source, int startingLineNumber, int errorLine, const UString& errorMessage)
 {
     if (m_callingListeners)
-        return true;
+        return;
 
-    Page* page = toPage(exec);
+    Page* page = toPage(exec->dynamicGlobalObject());
     if (!page)
-        return true;
+        return;
 
     m_callingListeners = true;
 
@@ -297,21 +293,20 @@ bool JavaScriptDebugServer::sourceParsed(ExecState* exec, int sourceID, const US
 
     if (!m_listeners.isEmpty()) {
         if (isError)
-            dispatchFailedToParseSource(m_listeners, source, startingLineNumber, sourceURL, errorLine, errorMessage);
+            dispatchFailedToParseSource(m_listeners, exec, source, startingLineNumber, sourceURL, errorLine, errorMessage);
         else
-            dispatchDidParseSource(m_listeners, source, startingLineNumber, sourceURL, sourceID);
+            dispatchDidParseSource(m_listeners, exec, source, startingLineNumber, sourceURL, sourceID);
     }
 
     if (ListenerSet* pageListeners = m_pageListenersMap.get(page)) {
         ASSERT(!pageListeners->isEmpty());
         if (isError)
-            dispatchFailedToParseSource(*pageListeners, source, startingLineNumber, sourceURL, errorLine, errorMessage);
+            dispatchFailedToParseSource(*pageListeners, exec, source, startingLineNumber, sourceURL, errorLine, errorMessage);
         else
-            dispatchDidParseSource(*pageListeners, source, startingLineNumber, sourceURL, sourceID);
+            dispatchDidParseSource(*pageListeners, exec, source, startingLineNumber, sourceURL, sourceID);
     }
 
     m_callingListeners = false;
-    return true;
 }
 
 static void dispatchFunctionToListeners(const ListenerSet& listeners, JavaScriptDebugServer::JavaScriptExecutionCallback callback)
@@ -322,13 +317,9 @@ static void dispatchFunctionToListeners(const ListenerSet& listeners, JavaScript
         (copy[i]->*callback)();
 }
 
-void JavaScriptDebugServer::dispatchFunctionToListeners(JavaScriptExecutionCallback callback, ExecState* exec)
+void JavaScriptDebugServer::dispatchFunctionToListeners(JavaScriptExecutionCallback callback, Page* page)
 {
     if (m_callingListeners)
-        return;
-
-    Page* page = toPage(exec);
-    if (!page)
         return;
 
     m_callingListeners = true;
@@ -403,33 +394,31 @@ void JavaScriptDebugServer::setJavaScriptPaused(FrameView* view, bool paused)
 #endif
 }
 
-void JavaScriptDebugServer::pauseIfNeeded(ExecState* exec, int sourceID, int lineNumber)
+void JavaScriptDebugServer::pauseIfNeeded(Page* page)
 {
     if (m_paused)
         return;
 
-    Page* page = toPage(exec);
     if (!page || !hasListenersInterestedInPage(page))
         return;
 
     bool pauseNow = m_pauseOnNextStatement;
-    if (!pauseNow && m_pauseOnExecState)
-        pauseNow = (m_pauseOnExecState == exec);
-    if (!pauseNow && lineNumber > 0)
-        pauseNow = hasBreakpoint(sourceID, lineNumber);
+    pauseNow |= (m_pauseOnCallFrame == m_currentCallFrame);
+    pauseNow |= (m_currentCallFrame->line() > 0 && hasBreakpoint(m_currentCallFrame->sourceIdentifier(), m_currentCallFrame->line()));
     if (!pauseNow)
         return;
 
-    m_pauseOnExecState = 0;
+    m_pauseOnCallFrame = 0;
     m_pauseOnNextStatement = false;
     m_paused = true;
 
-    dispatchFunctionToListeners(&JavaScriptDebugListener::didPause, exec);
+    dispatchFunctionToListeners(&JavaScriptDebugListener::didPause, page);
 
     setJavaScriptPaused(page->group(), true);
 
     EventLoop loop;
-    while (m_paused && !loop.ended())
+    m_doneProcessingDebuggerEvents = false;
+    while (!m_doneProcessingDebuggerEvents && !loop.ended())
         loop.cycle();
 
     setJavaScriptPaused(page->group(), false);
@@ -437,113 +426,46 @@ void JavaScriptDebugServer::pauseIfNeeded(ExecState* exec, int sourceID, int lin
     m_paused = false;
 }
 
-static inline void updateCurrentCallFrame(RefPtr<JavaScriptCallFrame>& currentCallFrame, ExecState* exec, int sourceID, int lineNumber, ExecState*& pauseExecState)
-{
-#ifdef DEBUG_DEBUGGER_CALLBACKS
-    const char* action = 0;
-#endif
-
-    if (currentCallFrame) {
-        if (currentCallFrame->execState() == exec) {
-            // Same call frame, just update the current line.
-            currentCallFrame->setLine(lineNumber);
-#ifdef DEBUG_DEBUGGER_CALLBACKS
-            action = "  same";
-#endif
-        } else if (currentCallFrame->execState() == exec->callingExecState()) {
-            // Create a new call frame, and make the caller the previous call frame.
-            currentCallFrame = JavaScriptCallFrame::create(exec, currentCallFrame, sourceID, lineNumber);
-#ifdef DEBUG_DEBUGGER_CALLBACKS
-            action = "  call";
-            ++s_callDepth;
-#endif
-        } else {
-#ifdef DEBUG_DEBUGGER_CALLBACKS
-            action = "return";
-#endif
-            // The current call frame isn't the same and it isn't the caller of a new call frame,
-            // so it might be a previous call frame (returning from a function). Or it is a stale call
-            // frame from the previous execution of global code. Walk up the caller chain until we find
-            // the current exec state. If the current exec state is found, the current call frame will be
-            // set to null (and a new one will be created below.)
-            while (currentCallFrame && currentCallFrame->execState() != exec) {
-                if (currentCallFrame->execState() == pauseExecState) {
-                    // The current call frame matches the pause exec state (used for step over.)
-                    // Since we are returning up the call stack, update the pause exec state to match.
-                    // This makes stepping over a return statement act like a step out.
-                    if (currentCallFrame->caller())
-                        pauseExecState = currentCallFrame->caller()->execState();
-                    else
-                        pauseExecState = 0;
-                }
-
-                // Invalidate the call frame since it's ExecState is stale now.
-                currentCallFrame->invalidate();
-                currentCallFrame = currentCallFrame->caller();
-
-#ifdef DEBUG_DEBUGGER_CALLBACKS
-                if (s_callDepth)
-                    --s_callDepth;
-#endif
-            }
-
-            if (currentCallFrame)
-                currentCallFrame->setLine(lineNumber);
-        }
-    }
-
-    if (!currentCallFrame) {
-        // Create a new call frame with no caller, this is likely global code.
-        currentCallFrame = JavaScriptCallFrame::create(exec, 0, sourceID, lineNumber);
-#ifdef DEBUG_DEBUGGER_CALLBACKS
-        action = "   new";
-#endif
-    }
-
-#ifdef DEBUG_DEBUGGER_CALLBACKS
-    printf("%s: ", action);
-    for(unsigned i = 0; i < s_callDepth; ++i)
-        printf(" ");
-    printf("%d: at exec: %p (caller: %p, pause: %p) source: %d line: %d\n", s_callDepth, exec, exec->callingExecState(), pauseExecState, sourceID, lineNumber);
-#endif
-}
-
-bool JavaScriptDebugServer::callEvent(ExecState* exec, int sourceID, int lineNumber, JSObject*, const List&)
+void JavaScriptDebugServer::callEvent(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
 {
     if (m_paused)
-        return true;
-    updateCurrentCallFrame(m_currentCallFrame, exec, sourceID, lineNumber, m_pauseOnExecState);
-    pauseIfNeeded(exec, sourceID, lineNumber);
-    return true;
+        return;
+    m_currentCallFrame = JavaScriptCallFrame::create(debuggerCallFrame, m_currentCallFrame, sourceID, lineNumber);
+    pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
 }
 
-bool JavaScriptDebugServer::atStatement(ExecState* exec, int sourceID, int firstLine, int)
+void JavaScriptDebugServer::atStatement(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
 {
     if (m_paused)
-        return true;
-    updateCurrentCallFrame(m_currentCallFrame, exec, sourceID, firstLine, m_pauseOnExecState);
-    pauseIfNeeded(exec, sourceID, firstLine);
-    return true;
+        return;
+    if (!m_currentCallFrame)
+        m_currentCallFrame = JavaScriptCallFrame::create(debuggerCallFrame, 0, sourceID, lineNumber);
+    else
+        m_currentCallFrame->update(debuggerCallFrame, sourceID, lineNumber);
+    pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
 }
 
-bool JavaScriptDebugServer::returnEvent(ExecState* exec, int sourceID, int lineNumber, JSObject*)
+void JavaScriptDebugServer::returnEvent(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
 {
     if (m_paused)
-        return true;
-    updateCurrentCallFrame(m_currentCallFrame, exec, sourceID, lineNumber, m_pauseOnExecState);
-    pauseIfNeeded(exec, sourceID, lineNumber);
-    return true;
+        return;
+    m_currentCallFrame->update(debuggerCallFrame, sourceID, lineNumber);
+    pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
+
+    // Treat stepping over a return statement like stepping out of a function.
+    if (m_currentCallFrame == m_pauseOnCallFrame)
+        m_pauseOnCallFrame = m_currentCallFrame->caller();
+    m_currentCallFrame = m_currentCallFrame->caller();
 }
 
-bool JavaScriptDebugServer::exception(ExecState* exec, int sourceID, int lineNumber, JSValue*)
+void JavaScriptDebugServer::exception(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
 {
     if (m_paused)
-        return true;
-    updateCurrentCallFrame(m_currentCallFrame, exec, sourceID, lineNumber, m_pauseOnExecState);
+        return;
     if (m_pauseOnExceptions)
         m_pauseOnNextStatement = true;
-    pauseIfNeeded(exec, sourceID, lineNumber);
-    return true;
+    m_currentCallFrame->update(debuggerCallFrame, sourceID, lineNumber);
+    pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
 }
 
 } // namespace WebCore

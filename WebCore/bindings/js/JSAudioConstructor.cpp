@@ -46,9 +46,9 @@ JSAudioConstructor::JSAudioConstructor(ExecState* exec, Document* document)
     putDirect(exec->propertyNames().length, jsNumber(1), ReadOnly|DontDelete|DontEnum);
 }
 
-bool JSAudioConstructor::implementsConstruct() const
+ConstructType JSAudioConstructor::getConstructData(ConstructData&)
 {
-    return true;
+    return ConstructTypeNative;
 }
 
 JSObject* JSAudioConstructor::construct(ExecState* exec, const List& args)

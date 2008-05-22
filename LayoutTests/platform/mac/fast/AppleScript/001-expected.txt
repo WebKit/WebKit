@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: TypeError: Value undefined (result of expression document.lalala) is not object.
+CONSOLE MESSAGE: line 0: this is an exception
 An automated test for basic AppleScript "do JavaScript" support.
 4 ('long')
 4 ('long')

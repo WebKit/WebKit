@@ -34,6 +34,7 @@
 #include <wtf/RetainPtr.h>
 
 namespace KJS {
+    class DebuggerCallFrame;
     class ExecState;
     class JSGlobalObject;
     class JSObject;
@@ -50,11 +51,11 @@ class WebScriptDebugger : public KJS::Debugger {
 public:
     WebScriptDebugger(KJS::JSGlobalObject*);
 
-    virtual bool sourceParsed(KJS::ExecState*, int sourceID, const KJS::UString& sourceURL, const KJS::UString& source, int lineNumber, int errorLine, const KJS::UString& errorMsg);
-    virtual bool callEvent(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSObject* function, const KJS::List& args);
-    virtual bool atStatement(KJS::ExecState*, int sourceID, int firstLine, int lastLine);
-    virtual bool returnEvent(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSObject* function);
-    virtual bool exception(KJS::ExecState*, int sourceID, int lineNumber, KJS::JSValue* exception);
+    virtual void sourceParsed(KJS::ExecState*, int sourceID, const KJS::UString& sourceURL, const KJS::SourceProvider& source, int lineNumber, int errorLine, const KJS::UString& errorMsg);
+    virtual void callEvent(const KJS::DebuggerCallFrame&, int sourceID, int lineNumber);
+    virtual void atStatement(const KJS::DebuggerCallFrame&, int sourceID, int lineNumber);
+    virtual void returnEvent(const KJS::DebuggerCallFrame&, int sourceID, int lineNumber);
+    virtual void exception(const KJS::DebuggerCallFrame&, int sourceID, int lineNumber);
 
 private:
     bool m_callingDelegate;

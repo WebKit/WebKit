@@ -34,7 +34,7 @@
 #include "Event.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "JSDOMWindow.h"
+#include "JSDOMWindowCustom.h"
 #include "JSEvent.h"
 #include "kjs_events.h"
 
