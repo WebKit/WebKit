@@ -1,3 +1,9 @@
+2008-05-20  Mark Rowe  <mrowe@apple.com>
+
+        Fix "make x86_64" by adding x86_64 target to WebKitTools Makefile.
+
+        * Makefile:
+
 === End merge of squirrelfish ===
 
 2008-04-14  Maciej Stachowiak  <mjs@apple.com>
