@@ -42,13 +42,13 @@ Profile::Profile(const UString& title, ExecState* originatingGlobalExec, unsigne
 {
     // FIXME: When multi-threading is supported this will be a vector and calls
     // into the profiler will need to know which thread it is executing on.
-    m_callTree = ProfileNode::create(CallIdentifier("Thread_1", 0, 0));
+    m_callTree = ProfileNode::create(CallIdentifier("Thread_1", 0, 0), 0);
 }
 
 void Profile::stopProfiling()
 {
     m_originatingGlobalExec = 0;
-    m_callTree->stopProfiling(0, true);
+    m_callTree->stopProfiling();
 }
 
 // The callIdentifiers are in order of bottom of the stack to top of the stack so we iterate it backwards.
@@ -65,7 +65,7 @@ void Profile::willExecute(const Vector<CallIdentifier>& callIdentifiers)
 
     if (!foundNameInTree) {   // Insert remains of the stack into the call tree.
         for (RefPtr<ProfileNode> next; i >= 0; callTreeInsertionPoint = next) {
-            next = ProfileNode::create(callIdentifiers[i--]);
+            next = ProfileNode::create(callIdentifiers[i--], m_callTree.get());
             callTreeInsertionPoint->addChild(next);
         }
     } else    // We are calling a function that is already in the call tree.

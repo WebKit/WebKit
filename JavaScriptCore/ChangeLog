@@ -1,3 +1,53 @@
+2008-05-21  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5950867> JSProfiler: Allow the profiler to "Focus" a
+        profile node.
+        - This patch updatest the times of the visible nodes correctly, but to do
+        so, some of the design of the ProfileNode changed.
+
+        * JavaScriptCore.exp: export focus' symbol.
+        * profiler/Profile.cpp: ProfileNodes now take a reference to the head of
+        the profile tree to get up-to-date accurate total profile time.
+        (KJS::Profile::Profile): Pass 0 for the head node.
+        (KJS::Profile::stopProfiling): stopProfiling no longer needs the time
+        passed into it, since it can get it from the head and it does not need to
+        be told it is the head because it can figure it out on it's own.
+        (KJS::Profile::willExecute): Set the head node for each created node.
+        * profiler/Profile.h:
+        (KJS::Profile::focus): Instead of taking a CallIdentifier that the caller
+        would have to create, now focus() takes a ProfileNode that they should
+        already have a reference to and focus() can extract the CallIdentifier
+        from it.
+        * profiler/ProfileNode.cpp: Create actual and visible versions fo the
+        total and self times for focus and exclude.  Also add a head node
+        reference so that nodes can get information from their head.
+        (KJS::ProfileNode::ProfileNode):
+        (KJS::ProfileNode::stopProfiling): Rename the total and self time
+        variables and set the visual ones to the actual ones, so that without any
+        changes to the visual versions of these variables, their times will match
+        the actual times.
+        (KJS::ProfileNode::focus): Now focus() has a bool to force it's children
+        to be visible if this node is visible.  If this node does not match the
+        CallIdentifier being focused then the visibleTotalTime is only updated if
+        one or more of it's children is the CallIdentifier being focused. 
+        (KJS::ProfileNode::restoreAll): Restores all variables with respect to
+        the visible data in the ProfileNode.
+        (KJS::ProfileNode::endAndRecordCall): Name change.
+        (KJS::ProfileNode::debugPrintData): Dump the new variables.
+        (KJS::ProfileNode::debugPrintDataSampleStyle): Name change.
+        * profiler/ProfileNode.h: Use the new variables and reference to the head
+        node.
+        (KJS::ProfileNode::create):
+        (KJS::ProfileNode::totalTime):
+        (KJS::ProfileNode::setTotalTime):
+        (KJS::ProfileNode::selfTime):
+        (KJS::ProfileNode::setSelfTime):
+        (KJS::ProfileNode::totalPercent):
+        (KJS::ProfileNode::selfPercent):
+        (KJS::ProfileNode::setVisible):
+
 2008-05-21  Alp Toker  <alp@nuanti.com>
 
         GTK+/UNIX testkjs build fix. Include signal.h.
