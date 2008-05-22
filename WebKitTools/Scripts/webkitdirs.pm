@@ -896,7 +896,11 @@ sub runSafari
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
         $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
         exportArchPreference();
-        return system "arch", safariPath(), @ARGV;
+        if (!isTiger()) {
+            return system "arch", safariPath(), @ARGV;
+        } else {
+            return system safariPath(), @ARGV;
+        }
     }
 
     if (isCygwin()) {

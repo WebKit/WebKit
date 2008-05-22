@@ -1194,7 +1194,7 @@ sub openDumpTool()
 
     my @args = @toolArgs;
     unshift @args, $dumpTool;
-    if (isOSX) {
+    if (isOSX and !isTiger()) {
         unshift @args, "arch";
     }
     if ($useValgrind) {
@@ -1720,6 +1720,7 @@ sub readFromDumpToolWithTimer(*;$)
     setFileHandleNonBlocking($fh, 1);
 
     my $maximumSecondsWithoutOutput = 30;
+    $maximumSecondsWithoutOutput *= 10 if $guardMalloc;
     my $microsecondsToWaitBeforeReadingAgain = 1000;
 
     my $timeOfLastSuccessfulRead = time;

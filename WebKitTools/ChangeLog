@@ -1,3 +1,12 @@
+2008-05-21  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Maciej, Mark.
+  
+        arch doesn't take arguments on tiger.  expand DRT timeout for guardMalloc.
+
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2008-05-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Stephanie Lewis.
