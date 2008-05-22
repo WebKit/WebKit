@@ -243,6 +243,8 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
         return null;
 
     if ("__treeElementIdentifier" in representedObject) {
+        // If this representedObject has a tree element identifier, and it is a known TreeElement
+        // in our tree we can just return that tree element.
         var elements = this._knownTreeElements[representedObject.__treeElementIdentifier];
         if (elements) {
             for (var i = 0; i < elements.length; ++i)
@@ -254,6 +256,8 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
     if (!isAncestor || !(isAncestor instanceof Function) || !getParent || !(getParent instanceof Function))
         return null;
 
+    // The representedObject isn't know, so we start at the top of the tree and work down to find the first
+    // tree element that represents representedObject or one of its ancestors.
     var item;
     var found = false;
     for (var i = 0; i < this.children.length; ++i) {
@@ -267,6 +271,8 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
     if (!found)
         return null;
 
+    // Make sure the item that we found is connected to the root of the tree.
+    // Build up a list of representedObject's ancestors that aren't already in our tree.
     var ancestors = [];
     var currentObject = representedObject;
     while (currentObject) {
@@ -276,9 +282,16 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
         currentObject = getParent(currentObject);
     }
 
+    // For each of those ancestors we populate them to fill in the tree.
     for (var i = 0; i < ancestors.length; ++i) {
+        // Make sure we don't call findTreeElement with the same representedObject
+        // again, to prevent infinite recursion.
+        if (ancestors[i] === representedObject)
+            continue;
+        // FIXME: we could do something faster than findTreeElement since we will know the next
+        // ancestor exists in the tree.
         item = this.findTreeElement(ancestors[i], isAncestor, getParent);
-        if (ancestors[i] !== representedObject && item && item.onpopulate)
+        if (item && item.onpopulate)
             item.onpopulate(item);
     }
 

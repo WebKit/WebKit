@@ -1,5 +1,17 @@
 2008-05-22  Timothy Hatcher  <timothy@apple.com>
 
+        Make sure we don't call findTreeElement with the same representedObject
+        again, to prevent infinite recursion. Added many comments to this
+        code so it can be understood later.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19164
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/treeoutline.js:
+
+2008-05-22  Timothy Hatcher  <timothy@apple.com>
+
         Re-word the "Attach Debugger" overlay to never say "Attach". The new
         wording is "Start Debugging". This makes the overlay consistent with
         other wording used for starting the debugger. Also fixes the tooltips
