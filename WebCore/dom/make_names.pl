@@ -32,6 +32,7 @@ use File::Path;
 use Config;
 
 my $printFactory = 0;
+my $printWrapperFactory = 0;
 my $cppNamespace = "";
 my $namespace = "";
 my $namespacePrefix = "";
@@ -46,6 +47,9 @@ my $attrsNullNamespace = 0;
 my $extraDefines = 0;
 my $preprocessor = "/usr/bin/gcc -E -P -x c++";
 my $guardFactoryWith = 0;
+my %htmlCapitalizationHacks = ();
+my %svgCustomMappings = ();
+my %htmlCustomMappings = ();
 
 GetOptions('tags=s' => \$tagsFile, 
     'attrs=s' => \$attrsFile,
@@ -55,6 +59,7 @@ GetOptions('tags=s' => \$tagsFile,
     'namespaceURI=s' => \$namespaceURI,
     'cppNamespace=s' => \$cppNamespace,
     'factory' => \$printFactory,
+    'wrapperFactory' => \$printWrapperFactory,
     'tagsNullNamespace' => \$tagsNullNamespace,
     'attrsNullNamespace' => \$attrsNullNamespace,
     'extraDefines=s' => \$extraDefines,
@@ -74,14 +79,20 @@ $namespacePrefix = $namespace unless $namespacePrefix;
 mkpath($outputDir);
 my $namesBasePath = "$outputDir/${namespace}Names";
 my $factoryBasePath = "$outputDir/${namespace}ElementFactory";
+my $wrapperFactoryBasePath = "$outputDir/JS${namespace}ElementWrapperFactory";
 
 printNamesHeaderFile("$namesBasePath.h");
 printNamesCppFile("$namesBasePath.cpp");
+
 if ($printFactory) {
     printFactoryCppFile("$factoryBasePath.cpp");
     printFactoryHeaderFile("$factoryBasePath.h");
 }
 
+if ($printWrapperFactory) {
+    printWrapperFactoryCppFile("$wrapperFactoryBasePath.cpp");
+    printWrapperFactoryHeaderFile("$wrapperFactoryBasePath.h");
+}
 
 ## Support routines
 
@@ -141,6 +152,37 @@ sub printFunctionInits
     }
 }
 
+sub initializeHtmlHacks
+{
+    if (!keys %htmlCapitalizationHacks) {
+        %htmlCapitalizationHacks = ('a' => 'Anchor',
+                                    'basefont' => 'BaseFont',
+                                    'br' => 'BR',
+                                    'caption' => 'TableCaption',
+                                    'col' => 'TableCol',
+                                    'del' => 'Mod',
+                                    'dir' => 'Directory',
+                                    'dl' => 'DList',
+                                    'fieldset' => 'FieldSet',
+                                    'frameset' => 'FrameSet',
+                                    'h1' => 'Heading',
+                                    'hr' => 'HR',
+                                    'iframe' => 'IFrame',
+                                    'img' => 'Image',
+                                    'isindex' => 'IsIndex',
+                                    'li' => 'LI',
+                                    'ol' => 'OList',
+                                    'optgroup' => 'OptGroup',
+                                    'p' => 'Paragraph',
+                                    'q' => 'Quote',
+                                    'tbody' => 'TableSection',
+                                    'td' => 'TableCell',
+                                    'textarea' => 'TextArea',
+                                    'tr' => 'TableRow',
+                                    'ul' => 'UList');
+    }
+}
+
 sub svgCapitalizationHacks
 {
     my $name = shift;
@@ -162,7 +204,13 @@ sub upperCaseName
     my $name = shift;
     
     $name = svgCapitalizationHacks($name) if ($namespace eq "SVG");
-    
+
+    # Process special mapping
+    if ($namespace eq "HTML") {
+        initializeHtmlHacks();
+        return $htmlCapitalizationHacks{$name} if exists $htmlCapitalizationHacks{$name};
+    }
+
     while ($name =~ /^(.*?)_(.*)/) {
         $name = $1 . ucfirst $2;
     }
@@ -334,12 +382,25 @@ print F "\nvoid init()
     close F;
 }
 
-sub printElementIncludes
+sub printJSElementIncludes
 {
     my ($F, @names) = @_;
     for my $name (@names) {
-        my $upperCase = upperCaseName($name);
-        print F "#include \"${namespace}${upperCase}Element.h\"\n";
+        next if (hasCustomMapping($name));
+
+        my $ucName = upperCaseName($name);
+        print F "#include \"JS${namespace}${ucName}Element.h\"\n";
+    }
+}
+
+sub printElementIncludes
+{
+    my ($F, $namesRef, $shouldSkipCustomMappings) = @_;
+    for my $name (@$namesRef) {
+        next if ($shouldSkipCustomMappings && hasCustomMapping($name));
+
+        my $ucName = upperCaseName($name);
+        print F "#include \"${namespace}${ucName}Element.h\"\n";
     }
 }
 
@@ -391,7 +452,7 @@ print F <<END
 END
 ;
 
-printElementIncludes($F, @tags);
+printElementIncludes($F, \@tags, 0);
 
 print F <<END
 #include <wtf/HashMap.h>
@@ -516,6 +577,232 @@ namespace ${cppNamespace}
 #endif
 
 ";
+
+    close F;
+}
+
+## Wrapper Factory routines
+
+sub isMediaTag
+{
+    my $name = shift;
+    return $name eq "audio" || $name eq "source" || $name eq "video" || 0;
+}
+
+sub initializeCustomMappings
+{
+    if (!keys %svgCustomMappings) {
+        # These are used to map a tag to another one in WrapperFactory
+        # (for example, "h2" is mapped to "h1" so that they use the same JS Wrapper ("h1" wrapper))
+        # Mapping to an empty string will not generate a wrapper
+        %svgCustomMappings = ('animateMotion' => '',
+                              'hkern' => '',
+                              'mpath' => '');
+        %htmlCustomMappings = ('abbr' => '',
+                               'acronym' => '',
+                               'address' => '',
+                               'b' => '',
+                               'bdo' => '',
+                               'big' => '',
+                               'center' => '',
+                               'cite' => '',
+                               'code' => '',
+                               'colgroup' => 'col',
+                               'dd' => '',
+                               'dfn' => '',
+                               'dt' => '',
+                               'em' => '',
+                               'h2' => 'h1',
+                               'h3' => 'h1',
+                               'h4' => 'h1',
+                               'h5' => 'h1',
+                               'h6' => 'h1',
+                               'i' => '',
+                               'image' => 'img',
+                               'ins' => 'del',
+                               'kbd' => '',
+                               'keygen' => 'select',
+                               'listing' => 'pre',
+                               'layer' => '',
+                               'nobr' => '',
+                               'noembed' => '',
+                               'noframes' => '',
+                               'nolayer' => '',
+                               'noscript' => '',
+                               'plaintext' => '',
+                               's' => '',
+                               'samp' => '',
+                               'small' => '',
+                               'span' => '',
+                               'strike' => '',
+                               'strong' => '',
+                               'sub' => '',
+                               'sup' => '',
+                               'tfoot' => 'tbody',
+                               'th' => 'td',
+                               'thead' => 'tbody',
+                               'tt' => '',
+                               'u' => '',
+                               'var' => '',
+                               'wbr' => '',
+                               'xmp' => 'pre');
+    }
+}
+
+sub hasCustomMapping
+{
+    my $name = shift;
+    initializeCustomMappings();
+    return 1 if $namespace eq "HTML" && exists($htmlCustomMappings{$name});
+    return 1 if $namespace eq "SVG" && exists($svgCustomMappings{$name});
+    return 0;
+}
+
+sub printWrapperFunctions
+{
+    my ($F, @names) = @_;
+    for my $name (@names) {
+        # Custom mapping do not need a JS wrapper
+        next if (hasCustomMapping($name));
+
+        my $ucName = upperCaseName($name);
+        # Hack for the media tags
+        if (isMediaTag($name)) {
+            print F <<END
+static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<${namespace}Element> element)
+{
+    if (!MediaPlayer::isAvailable())
+        return new JS${namespace}Element(JS${namespace}ElementPrototype::self(exec), element.get());
+    return new JS${namespace}${ucName}Element(JS${namespace}${ucName}ElementPrototype::self(exec), static_cast<${namespace}${ucName}Element*>(element.get()));
+}
+
+END
+;
+        } else {
+            print F <<END
+static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<${namespace}Element> element)
+{   
+    return new JS${namespace}${ucName}Element(JS${namespace}${ucName}ElementPrototype::self(exec), static_cast<${namespace}${ucName}Element*>(element.get()));
+}
+
+END
+;
+        }
+    }
+}
+
+sub printWrapperFactoryCppFile
+{
+    my $cppPath = shift;
+    my $F;
+    open F, ">$cppPath";
+
+    printLicenseHeader($F);
+
+    print F "#include \"config.h\"\n\n";
+
+    print F "#if $guardFactoryWith\n\n" if $guardFactoryWith;
+
+    print F "#include \"JS${namespace}ElementWrapperFactory.h\"\n";
+
+    printJSElementIncludes($F, @tags);
+
+    print F "\n#include \"${namespace}Names.h\"\n\n";
+
+    printElementIncludes($F, \@tags, 1);
+
+    print F <<END
+using namespace KJS;
+
+namespace WebCore {
+
+using namespace ${namespace}Names;
+
+typedef JSNode* (*Create${namespace}ElementWrapperFunction)(ExecState*, PassRefPtr<${namespace}Element>);
+
+END
+;
+
+    printWrapperFunctions($F, @tags);
+
+    print F <<END
+JSNode* createJS${namespace}Wrapper(ExecState* exec, PassRefPtr<${namespace}Element> element)
+{   
+    static HashMap<WebCore::AtomicStringImpl*, Create${namespace}ElementWrapperFunction> map;
+    if (map.isEmpty()) {
+END
+;
+
+    for my $tag (@tags) {
+        next if (hasCustomMapping($tag));
+
+        my $ucTag = upperCaseName($tag);
+        print F "       map.set(${tag}Tag.localName().impl(), create${ucTag}Wrapper);\n";
+    }
+
+    if ($namespace eq "HTML") {
+        for my $tag (sort keys %htmlCustomMappings) {
+            next if !$htmlCustomMappings{$tag};
+            my $ucCustomTag = upperCaseName($htmlCustomMappings{$tag});
+            print F "       map.set(${tag}Tag.localName().impl(), create${ucCustomTag}Wrapper);\n";
+        }
+    }
+
+    # Currently SVG has no need to add custom map.set as it only has empty elements
+
+    print F <<END
+    }
+    Create${namespace}ElementWrapperFunction createWrapperFunction = map.get(element->localName().impl());
+    if (createWrapperFunction)
+        return createWrapperFunction(exec, element);
+    return new JS${namespace}Element(JS${namespace}ElementPrototype::self(exec), element.get());
+}
+
+}
+
+END
+;
+
+    print F "#endif\n" if $guardFactoryWith;
+
+    close F;
+}
+
+sub printWrapperFactoryHeaderFile
+{
+    my $headerPath = shift;
+    my $F;
+    open F, ">$headerPath";
+
+    printLicenseHeader($F);
+
+    print F "#ifndef JS${namespace}ElementWrapperFactory_h\n";
+    print F "#define JS${namespace}ElementWrapperFactory_h\n\n";
+
+    print F "#if ${guardFactoryWith}\n" if $guardFactoryWith;
+
+    print F <<END
+#include <wtf/Forward.h>
+
+namespace KJS {
+    class ExecState;
+}                                            
+                                             
+namespace WebCore {
+
+    class JSNode;
+    class ${namespace}Element;
+
+    JSNode* createJS${namespace}Wrapper(KJS::ExecState*, PassRefPtr<${namespace}Element>);
+
+}
+ 
+END
+;
+
+    print F "#endif // $guardFactoryWith\n\n" if $guardFactoryWith;
+
+    print F "#endif // JS${namespace}ElementWrapperFactory_h\n";
 
     close F;
 }

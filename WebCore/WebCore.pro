@@ -389,7 +389,6 @@ SOURCES += \
     bindings/js/JSHTMLCollectionCustom.cpp \
     bindings/js/JSHTMLDocumentCustom.cpp \
     bindings/js/JSHTMLElementCustom.cpp \
-    bindings/js/JSHTMLElementWrapperFactory.cpp \
     bindings/js/JSHTMLEmbedElementCustom.cpp \
     bindings/js/JSHTMLFormElementCustom.cpp \
     bindings/js/JSHTMLFrameElementCustom.cpp \
@@ -1362,7 +1361,6 @@ contains(DEFINES, ENABLE_SVG=1) {
 
     SOURCES += \
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
-        bindings/js/JSSVGElementWrapperFactory.cpp \
         bindings/js/JSSVGMatrixCustom.cpp \
         bindings/js/JSSVGPathSegCustom.cpp \
         bindings/js/JSSVGPathSegListCustom.cpp \
@@ -1573,7 +1571,7 @@ SOURCES += \
 
         # GENERATOR 5-C:
         svgnames_a.output = $$GENERATED_SOURCES_DIR/SVGNames.cpp
-        svgnames_a.commands = perl $$PWD/dom/make_names.pl --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES}\" --namespace SVG --guardFactoryWith \"ENABLE(SVG)\" --cppNamespace WebCore --namespaceURI 'http://www.w3.org/2000/svg' --factory --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
+        svgnames_a.commands = perl $$PWD/dom/make_names.pl --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES}\" --namespace SVG --guardFactoryWith \"ENABLE(SVG)\" --cppNamespace WebCore --namespaceURI 'http://www.w3.org/2000/svg' --factory --wrapperFactory --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
         svgnames_a.input = SVG_NAMES
         svgnames_a.dependency_type = TYPE_C
         svgnames_a.CONFIG = target_predeps
@@ -1588,6 +1586,14 @@ SOURCES += \
         svgnames_b.variable_out = GENERATED_SOURCES
         svgnames_b.clean += ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}SVGElementFactory.h ${QMAKE_FILE_OUT}
         addExtraCompiler(svgnames_b)
+        svgnames_c.output = $$GENERATED_SOURCES_DIR/JSSVGElementWrapperFactory.cpp
+        svgnames_c.commands = @echo -n ''
+        svgnames_c.input = SVG_NAMES
+        svgnames_c.depends = $$GENERATED_SOURCES_DIR/SVGNames.cpp
+        svgnames_c.CONFIG = target_predeps
+        svgnames_c.variable_out = GENERATED_SOURCES
+        svgnames_c.clean += ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}JSSVGElementWrapperFactory.h ${QMAKE_FILE_OUT}
+        addExtraCompiler(svgnames_c)
 
         # GENERATOR 5-D:
         xlinknames.output = $$GENERATED_SOURCES_DIR/XLinkNames.cpp
@@ -1687,13 +1693,21 @@ QMAKE_EXTRA_TARGETS += grammar_h_dep
 
 # GENERATOR 5-A:
 htmlnames.output = $$GENERATED_SOURCES_DIR/HTMLNames.cpp
-htmlnames.commands = perl $$PWD/dom/make_names.pl --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --extraDefines \"$${DEFINES}\" --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xhtml' --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
+htmlnames.commands = perl $$PWD/dom/make_names.pl --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --extraDefines \"$${DEFINES}\" --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xhtml' --wrapperFactory --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
 htmlnames.input = HTML_NAMES
 htmlnames.dependency_type = TYPE_C
 htmlnames.CONFIG = target_predeps
 htmlnames.variable_out = GENERATED_SOURCES
 htmlnames.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}HTMLNames.h
 addExtraCompiler(htmlnames)
+htmlnames_a.output = $$GENERATED_SOURCES_DIR/JSHTMLElementWrapperFactory.cpp
+htmlnames_a.commands = @echo -n ''
+htmlnames_a.input = HTML_NAMES
+htmlnames_a.depends = $$GENERATED_SOURCES_DIR/HTMLNames.cpp
+htmlnames_a.CONFIG = target_predeps
+htmlnames_a.variable_out = GENERATED_SOURCES
+htmlnames_a.clean += ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}JSHTMLElementWrapperFactory.h ${QMAKE_FILE_OUT}
+addExtraCompiler(htmlnames_a)
 
 # GENERATOR 5-B:
 xmlnames.output = $$GENERATED_SOURCES_DIR/XMLNames.cpp
