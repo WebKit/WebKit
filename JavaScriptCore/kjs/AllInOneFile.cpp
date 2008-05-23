@@ -23,6 +23,7 @@
 // that see a significant speed gain from this.
 
 #define KDE_USE_FINAL 1
+#define JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE 1
 #include "config.h"
 
 #include "function.cpp"

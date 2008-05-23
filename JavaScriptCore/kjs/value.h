@@ -199,7 +199,11 @@ public:
   
   void* operator new(size_t size)
   {
+#ifdef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
+      return Collector::inlineAllocateNumber(size);
+#else
       return Collector::allocateNumber(size);
+#endif
   }
 
 private:

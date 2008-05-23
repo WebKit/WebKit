@@ -38,17 +38,17 @@ namespace KJS {
     class Thread;
     enum HeapType { PrimaryHeap, NumberHeap };
 
-#if PLATFORM(MAC)
-    // We can inline these functions on Mac because everything is compiled as
+#ifdef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
+    // We can inline these functions because everything is compiled as
     // one file, so the heapAllocate template definitions are available.
-    // FIXME: This should be enabled for all platforms using AllInOneFile.cpp
+    // However, allocateNumber is used via jsNumberCell outside JavaScriptCore.
+    // Thus allocateNumber needs to provide a non-inline version too.
     static void* allocate(size_t s) { return heapAllocate<PrimaryHeap>(s); }
-    static void* allocateNumber(size_t s) { return heapAllocate<NumberHeap>(s); }
+    static void* inlineAllocateNumber(size_t s) { return heapAllocate<NumberHeap>(s); }
 #else
-    static void* allocate(size_t s);
-
-    static void* allocateNumber(size_t s);
+    static void* allocate(size_t);
 #endif
+    static void* allocateNumber(size_t s);
 
     static bool collect();
     static bool isBusy(); // true if an allocation or collection is in progress

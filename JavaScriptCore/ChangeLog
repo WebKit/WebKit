@@ -1,3 +1,22 @@
+2008-05-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        As allocateNumber is used via jsNumberCell outside of JavaScriptCore,
+        we need to provide a non-inlined version of it to avoid creating a
+        weak external symbol.
+
+        * JavaScriptCore.exp:
+        * kjs/AllInOneFile.cpp:
+        * kjs/collector.cpp:
+        (KJS::Collector::allocate):
+        (KJS::Collector::allocateNumber):
+        * kjs/collector.h:
+        (KJS::Collector::allocate):
+        (KJS::Collector::inlineAllocateNumber):
+        * kjs/value.h:
+        (KJS::NumberImp::operator new):
+
 2008-05-23  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled out r34073 because it caused lots of layout test crashes.

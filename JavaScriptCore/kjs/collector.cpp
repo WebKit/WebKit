@@ -291,17 +291,18 @@ collect:
 
   return newCell;
 }
-#if !PLATFORM(MAC)
+
+#ifndef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
 void* Collector::allocate(size_t s)
 {
     return heapAllocate<PrimaryHeap>(s);
 }
+#endif
 
 void* Collector::allocateNumber(size_t s)
 {
     return heapAllocate<NumberHeap>(s);
 }
-#endif
 
 static inline void* currentThreadStackBase()
 {
