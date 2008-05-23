@@ -1,3 +1,20 @@
+2008-05-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fixed <rdar://problem/5957662> REGRESSION(r33943-r33980): Can't send email , attach file or save as draft from hotmail.com
+        
+        SunSpider reports no change.
+        
+        This is a reworking of r34073, which I rolled out because it caused
+        lots of crashes.
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::CodeGenerator): Use removeDirect to nix old
+        properties whose names collide with new functions. (Don't use putWithAttributes
+        because that tries to write to the register file, which hasn't grown to
+        fit this program yet.)
+
 2008-05-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.
