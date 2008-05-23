@@ -212,7 +212,6 @@ protected:
 private:
     void ariaListboxSelectedChildren(Vector<RefPtr<AccessibilityObject> >&);
     void ariaListboxVisibleChildren(Vector<RefPtr<AccessibilityObject> >&);
-    void ariaMenuButtonChildren();
 
     Element* menuElementForMenuButton() const;
     Element* menuItemElementForMenu() const; 

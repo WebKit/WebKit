@@ -1,3 +1,14 @@
+2008-05-23  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Remove call to function whose body was commented out. Returning the
+        children for a menu button by the normal calculation works just as well. 
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * page/AccessibilityRenderObject.h:
+
 2008-05-22  Timothy Hatcher  <timothy@apple.com>
 
         Fixes the bug where resource would show up multiple times in the
