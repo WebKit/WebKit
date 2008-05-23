@@ -10,9 +10,6 @@
         JavaScript profiler
 
         * VM/Machine.cpp:
-        (KJS::callEval): Made this profiler hooks slightly faster by passing in
-        the eval function.
-        
         (KJS::Machine::unwindCallFrame): Fixed incorrect reporting / a crash
         when unwinding from inside eval and/or program code: detect the
         difference, and do the right thing. Also, be sure to notify the profiler
