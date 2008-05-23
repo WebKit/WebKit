@@ -45,4 +45,10 @@ interface IWebInspector : IUnknown
     HRESULT close();
     HRESULT attach();
     HRESULT detach();
+
+    HRESULT isDebuggingJavaScript(BOOL* isDebugging);
+    HRESULT toggleDebuggingJavaScript();
+
+    HRESULT isProfilingJavaScript(BOOL* isProfiling);
+    HRESULT toggleProfilingJavaScript();
 }

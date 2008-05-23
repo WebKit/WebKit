@@ -142,3 +142,80 @@ HRESULT STDMETHODCALLTYPE WebInspector::detach()
 
     return S_OK;
 }
+
+HRESULT STDMETHODCALLTYPE WebInspector::isDebuggingJavaScript(BOOL* isDebugging)
+{
+    if (!isDebugging)
+        return E_POINTER;
+
+    *isDebugging = FALSE;
+
+    if (!m_webView)
+        return S_OK;
+
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    *isDebugging = page->inspectorController()->debuggerAttached();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebInspector::toggleDebuggingJavaScript()
+{
+    if (!m_webView)
+        return S_OK;
+
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    InspectorController* inspector = page->inspectorController();
+
+    if (inspector->debuggerAttached())
+        inspector->stopDebugging();
+    else {
+        inspector->showPanel(InspectorController::ScriptsPanel);
+        inspector->startDebuggingAndReloadInspectedPage();
+    }
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebInspector::isProfilingJavaScript(BOOL* isProfiling)
+{
+    if (!isProfiling)
+        return E_POINTER;
+
+    *isProfiling = FALSE;
+
+    if (!m_webView)
+        return S_OK;
+
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    *isProfiling = page->inspectorController()->isRecordingUserInitiatedProfile();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebInspector::toggleProfilingJavaScript()
+{
+    if (!m_webView)
+        return S_OK;
+
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    InspectorController* inspector = page->inspectorController();
+
+    if (inspector->isRecordingUserInitiatedProfile()) {
+        inspector->stopUserInitiatedProfiling();
+        inspector->showPanel(InspectorController::ProfilesPanel);
+    } else
+        inspector->startUserInitiatedProfiling();
+
+    return S_OK;
+}

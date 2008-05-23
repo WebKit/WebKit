@@ -1,3 +1,19 @@
+2008-05-22  Adam Roben  <aroben@apple.com>
+
+        Add functions to IWebInspector to start/stop profiling/debugging
+
+        <rdar://5956403>
+
+        Reviewed by Jon Honeycutt.
+
+        * Interfaces/IWebInspector.idl:
+        * WebInspector.cpp:
+        (WebInspector::isDebuggingJavaScript):
+        (WebInspector::toggleDebuggingJavaScript):
+        (WebInspector::isProfilingJavaScript):
+        (WebInspector::toggleProfilingJavaScript):
+        * WebInspector.h:
+
 2008-05-22  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.
