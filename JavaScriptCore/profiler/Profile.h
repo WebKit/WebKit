@@ -78,6 +78,8 @@ namespace KJS {
         unsigned m_pageGroupIdentifier;
         RefPtr<ProfileNode> m_headNode;
         RefPtr<ProfileNode> m_currentNode;
+        
+        unsigned m_depth;
     };
 
 } // namespace KJS
