@@ -131,8 +131,8 @@ WebInspector.Resource.prototype = {
         var title = this.lastPathComponent;
         if (!title)
             title = this.displayDomain;
-        if (!title)
-            title = this.url;
+        if (!title && this.url)
+            title = this.url.trimURL(WebInspector.mainResource ? WebInspector.mainResource.domain : "");
         return title;
     },
 

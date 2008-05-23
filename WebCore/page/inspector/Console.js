@@ -516,13 +516,6 @@ WebInspector.ConsoleMessage.prototype = {
         return formattedResult;
     },
 
-    get shortURL()
-    {
-        if (this.resource)
-            return this.resource.displayName;
-        return this.url;
-    },
-
     toMessageElement: function()
     {
         var element = document.createElement("div");
@@ -575,9 +568,9 @@ WebInspector.ConsoleMessage.prototype = {
             urlElement.lineNumber = this.line;
 
             if (this.line > 0)
-                urlElement.textContent = WebInspector.UIString("%s (line %d)", this.url, this.line);
+                urlElement.textContent = WebInspector.UIString("%s (line %d)", WebInspector.displayNameForURL(this.url), this.line);
             else
-                urlElement.textContent = this.url;
+                urlElement.textContent = WebInspector.displayNameForURL(this.url);
 
             element.appendChild(urlElement);
         }

@@ -1,3 +1,27 @@
+2008-05-22  Timothy Hatcher  <timothy@apple.com>
+
+        Shorten URLs shown in the Web Inspector to the file name. This makes
+        finding files in the Console or the Scripts panel easier.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Console.js:
+        (WebInspector.ConsoleMessage.prototype.get shortURL): Removed dead code.
+        (WebInspector.ConsoleMessage.prototype.toMessageElement): Call WebInspector.displayNameForURL
+        for the URL before making the link element.
+        * page/inspector/ProfileView.js:
+        (WebInspector.ProfileDataGridNode.prototype.createCell): Use WebInspector.displayNameForURL.
+        * page/inspector/Resource.js:
+        (WebInspector.Resource.prototype.get displayName): Use trimURL to
+        trim the URL with the main resource's domain.
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu): Use WebInspector.displayNameForURL.
+        * page/inspector/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection): Ditto.
+        * page/inspector/inspector.js:
+        (WebInspector.displayNameForURL): Added.
+        (WebInspector.resourceForURL): Check for a direct match in resourceURLMap first.
+
 2008-05-22  Adam Roben  <aroben@apple.com>
 
         Fix Bug 19204: Inspector should highlight source lines when following

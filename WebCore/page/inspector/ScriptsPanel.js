@@ -463,7 +463,7 @@ WebInspector.ScriptsPanel.prototype = {
         // FIXME: Append in some meaningful order.
         var option = document.createElement("option");
         option.representedObject = (script.resource || script);
-        option.text = (script.sourceURL ? script.sourceURL.trimURL(WebInspector.mainResource ? WebInspector.mainResource.domain : "") : "(eval script)");
+        option.text = (script.sourceURL ? WebInspector.displayNameForURL(script.sourceURL) : "(eval script)");
         select.appendChild(option);
 
         script.filesSelectOption = option;

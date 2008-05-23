@@ -851,8 +851,21 @@ WebInspector.updateFocusedNode = function(node)
     this.panels.elements.focusedDOMNode = node;
 }
 
+WebInspector.displayNameForURL = function(url)
+{
+    var resource = this.resourceURLMap[url];
+    if (resource)
+        return resource.displayName;
+    return url.trimURL(WebInspector.mainResource ? WebInspector.mainResource.domain : "");
+}
+
 WebInspector.resourceForURL = function(url)
 {
+    if (url in this.resourceURLMap)
+        return this.resourceURLMap[url];
+
+    // No direct match found. Search for resources that contain
+    // a substring of the URL.
     for (var resourceURL in this.resourceURLMap) {
         if (resourceURL.hasSubstring(url))
             return this.resourceURLMap[resourceURL];

@@ -235,8 +235,7 @@ WebInspector.ProfileDataGridNode.prototype = {
             return cell;
 
         if (this.profileNode.url) {
-            var resource = WebInspector.resourceURLMap[this.profileNode.url];
-            var fileName = resource ? resource.displayName : this.profileNode.url;
+            var fileName = WebInspector.displayNameForURL(this.profileNode.url);
 
             var urlElement = document.createElement("a");
             urlElement.className = "profile-node-file webkit-html-resource-link";
