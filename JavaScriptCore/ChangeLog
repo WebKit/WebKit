@@ -1,3 +1,21 @@
+2008-05-22  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        Fix a bug in the profiler where time in the current function is given to
+        (idle).
+
+        * profiler/Profile.cpp:
+        (KJS::Profile::didExecute): Set the start time and then call didExecute
+        to calculate the time spent in this function.
+        * profiler/ProfileNode.cpp: Remove confusing calculations that are no
+        longer necessary.
+        (KJS::ProfileNode::insertNode):
+        * profiler/ProfileNode.h: Expose access to the start time to allow the
+        simpler time calculations above.
+        (KJS::ProfileNode::startTime):
+        (KJS::ProfileNode::setStartTime):
+
 2008-05-22  Adam Roben  <aroben@apple.com>
 
         Show "(Function object)" instead of "(JSInpectorCallbackWrapper

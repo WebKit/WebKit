@@ -73,6 +73,8 @@ namespace KJS {
         UString url() const { return m_callIdentifier.url; }
         unsigned lineNumber() const { return m_callIdentifier.lineNumber; }
 
+        double startTime() const { return m_startTime; }
+        void setStartTime(double startTime) { m_startTime = startTime; }
         double totalTime() const { return m_visibleTotalTime; }
         void setTotalTime(double time) { m_actualTotalTime = time; m_visibleTotalTime = time; }
         double selfTime() const { return m_visibleSelfTime; }

@@ -64,6 +64,8 @@ void Profile::didExecute(const CallIdentifier& callIdentifier)
 {
     if (m_currentNode == m_headNode) {
         m_currentNode = ProfileNode::create(callIdentifier, m_headNode.get(), m_headNode.get());
+        m_currentNode->setStartTime(m_headNode->startTime());
+        m_currentNode->didExecute();
         m_headNode->insertNode(m_currentNode.release());
         m_currentNode = m_headNode;
         return;
