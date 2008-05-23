@@ -1,5 +1,24 @@
 2008-05-23  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Anders.
+
+        SQUIRRELFISH: JavaScript error messages are missing informative text
+
+        Partial fix.
+        Tidy up error messages, makes a couple of them provide slightly more info.
+        Inexplicably leads to a 1% SunSpider Progression.
+
+        * VM/ExceptionHelpers.cpp:
+        (KJS::createError):
+        (KJS::createInvalidParamError):
+        (KJS::createNotAConstructorError):
+        (KJS::createNotAFunctionError):
+        * VM/ExceptionHelpers.h:
+        * VM/Machine.cpp:
+        (KJS::isNotObject):
+
+2008-05-23  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Tim H.
 
         Fix call stack reported by profiler when entering event handlers.
