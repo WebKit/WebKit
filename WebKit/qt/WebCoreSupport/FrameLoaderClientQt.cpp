@@ -1025,8 +1025,13 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, Element* el
 
     QStringList params;
     QStringList values;
-    for (int i = 0; i < paramNames.size(); ++i)
+    QString classid(element->getAttribute("classid"));
+
+    for (int i = 0; i < paramNames.size(); ++i) {
         params.append(paramNames[i]);
+        if (paramNames[i] == "classid")
+            classid = paramValues[i];
+    }
     for (int i = 0; i < paramValues.size(); ++i)
         values.append(paramValues[i]);
 
@@ -1036,7 +1041,7 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, Element* el
     QObject *object = 0;
 
     if (mimeType == "application/x-qt-plugin" || mimeType == "application/x-qt-styled-widget") {
-        object = m_webFrame->page()->createPlugin(element->getAttribute("classid"), qurl, params, values);
+        object = m_webFrame->page()->createPlugin(classid, qurl, params, values);
         QWidget *widget = qobject_cast<QWidget *>(object);
         if (widget && mimeType == "application/x-qt-styled-widget") {
             CSSComputedStyleDeclaration cssDecl(element);
