@@ -99,6 +99,7 @@ namespace WebCore {
 
 #if !HAVE(ACCESSIBILITY)
     inline void AXObjectCache::handleActiveDescendantChanged(RenderObject*) { }
+    inline void AXObjectCache::handleAriaRoleChanged(RenderObject*) { }
     inline void AXObjectCache::handleFocusedUIElementChanged() { }
     inline void AXObjectCache::detachWrapper(AccessibilityObject*) { }
     inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }

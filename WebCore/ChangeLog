@@ -1,3 +1,10 @@
+2008-05-23  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix compilation without accessibility by providing an empty stub for
+        AXObjectCache::handleAriaRoleChanged.
+
+        * page/AXObjectCache.h:
+
 2008-05-23  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Mark Rowe.

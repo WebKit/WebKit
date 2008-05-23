@@ -1,3 +1,9 @@
+2008-05-23  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build by adding profiler/ to the include search path.
+
+        * JavaScriptCore.pri:
+
 2008-05-22  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.
