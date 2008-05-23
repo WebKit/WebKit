@@ -1,5 +1,18 @@
 2008-05-23  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes the bug where the profile was not added when finished.
+
+        <rdar://problem/5958851> Stop Profiling from the Develop menu does
+        not add the Profile to the Inspector
+
+        Reviewed by Adam Roben.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::stopUserInitiatedProfiling): Call
+        addProfile with the result of stopProfiling.
+
+2008-05-23  Timothy Hatcher  <timothy@apple.com>
+
         Tweak the Web Insector toolbar look to be smaller when attached to
         the inspected page.
 
