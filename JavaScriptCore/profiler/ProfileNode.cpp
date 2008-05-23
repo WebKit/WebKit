@@ -34,9 +34,27 @@
 
 #include <stdio.h>
 
+#if PLATFORM(WIN_OS)
+#include <windows.h>
+#endif
+
 namespace KJS {
 
 static const char* NonJSExecution = "(idle)";
+
+static double getCount()
+{
+#if PLATFORM(WIN_OS)
+    static LARGE_INTEGER frequency = {0};
+    if (!frequency.QuadPart)
+        QueryPerformanceFrequency(&frequency);
+    LARGE_INTEGER counter;
+    QueryPerformanceCounter(&counter);
+    return static_cast<double>(counter.QuadPart) / frequency.QuadPart;
+#else
+    return getCurrentUTCTimeWithMicroseconds();
+#endif
+}
 
 ProfileNode::ProfileNode(const CallIdentifier& callIdentifier, ProfileNode* headNode, ProfileNode* parentNode)
     : m_callIdentifier(callIdentifier)
@@ -297,7 +315,7 @@ void ProfileNode::restoreAll()
 
 void ProfileNode::endAndRecordCall()
 {
-    m_actualTotalTime += getCurrentUTCTimeWithMicroseconds() - m_startTime;
+    m_actualTotalTime += getCount() - m_startTime;
     m_startTime = 0.0;
 
     ++m_numberOfCalls;
@@ -306,7 +324,7 @@ void ProfileNode::endAndRecordCall()
 void ProfileNode::startTimer()
 {
     if (!m_startTime)
-        m_startTime = getCurrentUTCTimeWithMicroseconds();
+        m_startTime = getCount();
 }
 
 #ifndef NDEBUG

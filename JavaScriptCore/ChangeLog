@@ -1,5 +1,18 @@
 2008-05-22  Adam Roben  <aroben@apple.com>
 
+        Implement sub-millisecond profiling on Windows
+
+        Reviewed by Kevin McCullough.
+
+        * profiler/ProfileNode.cpp:
+        (KJS::getCount): Added. On Windows, we use QueryPerformanceCounter. On
+        other platforms, we use getCurrentUTCTimeWithMicroseconds.
+        (KJS::ProfileNode::endAndRecordCall): Use getCount instead of
+        getCurrentUTCTimeWithMicroseconds.
+        (KJS::ProfileNode::startTimer): Ditto.
+
+2008-05-22  Adam Roben  <aroben@apple.com>
+
         Fix a profiler assertion when calling a NodeList as a function
 
         Reviewed by Kevin McCullough.
