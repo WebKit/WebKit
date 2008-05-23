@@ -1,3 +1,35 @@
+2008-05-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/5838772> Support cross-site XMLHttpRequest
+
+        - Implement support for cross-site non-GET requests using the HTTP header
+          Access-control mechanism.
+
+        Tests: http/tests/xmlhttprequest/access-control-basic-allow-async.html
+               http/tests/xmlhttprequest/access-control-basic-not-get-allow-async.html
+               http/tests/xmlhttprequest/access-control-basic-not-get-allow.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::send):
+        Don't continue send if inside the method check preflight (only happens for async).
+        
+        (WebCore::XMLHttpRequest::crossSiteAccessRequest):
+        Add support for non-GET requests, starting off a method check preflight.
+
+        (WebCore::XMLHttpRequest::handleAsynchronousMethodCheckResult):
+        Handler for finishing up after an asynchronous method check has completed.
+
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        (WebCore::XMLHttpRequest::didFinishLoadingMethodCheck):
+        (WebCore::XMLHttpRequest::didReceiveResponse):
+        (WebCore::XMLHttpRequest::didReceiveResponseMethodCheck):
+        (WebCore::XMLHttpRequest::didReceiveData):
+        Do a limited set of access control when in the method check preflight.
+        * xml/XMLHttpRequest.h:
+
 2008-05-22  Timothy Hatcher  <timothy@apple.com>
 
         Make sure we don't call findTreeElement with the same representedObject

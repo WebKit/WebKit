@@ -1,3 +1,22 @@
+2008-05-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/5838772> Support cross-site XMLHttpRequest
+
+        - Add more tests for cross-domain XHR.
+
+        * http/tests/xmlhttprequest/access-control-basic-allow-access-control-origin-header.html:
+        * http/tests/xmlhttprequest/access-control-basic-allow-async-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-basic-allow-async.html: Added.
+        * http/tests/xmlhttprequest/access-control-basic-denied.html:
+        * http/tests/xmlhttprequest/access-control-basic-exclude.html:
+        * http/tests/xmlhttprequest/access-control-basic-not-get-allow-async-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-basic-not-get-allow-async.html: Added.
+        * http/tests/xmlhttprequest/access-control-basic-not-get-allow-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-basic-not-get-allow.html: Added.
+        * http/tests/xmlhttprequest/resources/access-control-basic-non-get-allow.cgi: Added.
+
 2008-05-22  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Darin.

@@ -103,6 +103,10 @@ private:
     virtual void didFinishLoading(SubresourceLoader*);
     virtual void receivedCancellation(SubresourceLoader*, const AuthenticationChallenge&);
 
+    // Special versions for the method check preflight
+    void didReceiveResponseMethodCheck(SubresourceLoader*, const ResourceResponse&);
+    void didFinishLoadingMethodCheck(SubresourceLoader*);
+
     void processSyncLoadResults(const Vector<char>& data, const ResourceResponse&, ExceptionCode&);
     void updateAndDispatchOnProgress(unsigned int len);
 
@@ -123,6 +127,8 @@ private:
 
     void loadRequestSynchronously(ResourceRequest&, ExceptionCode&);
     void loadRequestAsynchronously(ResourceRequest&);
+
+    void handleAsynchronousMethodCheckResult();
 
     void genericError();
     void networkError();
@@ -164,6 +170,7 @@ private:
 
     bool m_sameOriginRequest;
     bool m_allowAccess;
+    bool m_inMethodCheck;
 
     // FIXME: Add support for AccessControlList in a PI in an XML document in addition to the http header.
     OwnPtr<AccessControlList> m_httpAccessControlList;

@@ -1,0 +1,29 @@
+<html>
+<body>
+<pre id='console'></pre>
+<script type="text/javascript">
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+}
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function processStateChange()
+{
+    if (xhr.readyState == xhr.DONE) {
+        log(xhr.responseText);
+        layoutTestController.notifyDone();
+    }
+}
+
+var xhr = new XMLHttpRequest;
+xhr.onreadystatechange = processStateChange;
+
+xhr.open("POST", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-non-get-allow.cgi", true);
+xhr.send("PASS: POST data received");
+
+</script>
+</body>
+</html>

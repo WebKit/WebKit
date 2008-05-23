@@ -150,6 +150,7 @@ XMLHttpRequest::XMLHttpRequest(Document* doc)
     , m_error(false)
     , m_sameOriginRequest(true)
     , m_allowAccess(false)
+    , m_inMethodCheck(false)
     , m_receivedLength(0)
 {
     ASSERT(m_doc);
@@ -418,6 +419,8 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         crossSiteAccessRequest(body, request, ec);
         if (ec)
             return;
+        if (m_inMethodCheck)
+            return;
     }
 
     if (m_async) {
@@ -460,20 +463,53 @@ void XMLHttpRequest::sameOriginRequest(const String& body, ResourceRequest& requ
 
 void XMLHttpRequest::crossSiteAccessRequest(const String& body, ResourceRequest& request, ExceptionCode& ec)
 {
-    // FIXME: add support for non-GET cross-domain requests.
-    if (m_method != "GET") {
-        networkError();
-        ec = XMLHttpRequestException::NETWORK_ERR;
+    KURL url = m_url;
+    url.setUser(String());
+    url.setPass(String());
+
+    String accessControlOrigin = m_doc->securityOrigin()->toString();
+
+    request.setURL(url);
+    request.setHTTPMethod(m_method);
+    request.setHTTPHeaderField("Access-Control-Origin", accessControlOrigin);
+
+    if (m_method == "GET")
+        return;
+
+    m_inMethodCheck = true;
+    ResourceRequest preflightRequest;
+    preflightRequest.setURL(url);
+    preflightRequest.setHTTPMethod("OPTIONS");
+    preflightRequest.setHTTPHeaderField("Access-Control-Origin", accessControlOrigin);
+
+    if (m_async) {
+        loadRequestAsynchronously(preflightRequest);
         return;
     }
+
+    loadRequestSynchronously(preflightRequest, ec);
+    m_inMethodCheck = false;
+}
+
+void XMLHttpRequest::handleAsynchronousMethodCheckResult()
+{
+    ASSERT(m_inMethodCheck);
+    ASSERT(m_async);
+
+    m_inMethodCheck = false;
 
     KURL url = m_url;
     url.setUser(String());
     url.setPass(String());
 
+    String accessControlOrigin = m_doc->securityOrigin()->toString();
+
+    ResourceRequest request;
     request.setURL(url);
     request.setHTTPMethod(m_method);
-    request.setHTTPHeaderField("Access-Control-Origin", m_doc->securityOrigin()->toString());
+    request.setHTTPHeaderField("Access-Control-Origin", accessControlOrigin);
+
+    loadRequestAsynchronously(request);
 }
 
 void XMLHttpRequest::loadRequestSynchronously(ResourceRequest& request, ExceptionCode& ec)
@@ -519,7 +555,8 @@ void XMLHttpRequest::loadRequestAsynchronously(ResourceRequest& request)
     // FIXME: Maybe create can return null for other reasons too?
     // We need to keep content sniffing enabled for local files due to CFNetwork not providing a MIME type
     // for local files otherwise, <rdar://problem/5671813>.
-    m_loader = SubresourceLoader::create(m_doc->frame(), this, request, false, true, request.url().isLocalFile());
+    bool sendResourceLoadCallbacks = !m_inMethodCheck;
+    m_loader = SubresourceLoader::create(m_doc->frame(), this, request, false, sendResourceLoadCallbacks, request.url().isLocalFile());
 
     if (m_loader) {
         // Neither this object nor the JavaScript wrapper should be deleted while
@@ -783,6 +820,11 @@ void XMLHttpRequest::didFail(SubresourceLoader* loader, const ResourceError& err
 
 void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
 {
+    if (m_inMethodCheck) {
+        didFinishLoadingMethodCheck(loader);
+        return;
+    }
+
     if (m_error)
         return;
 
@@ -794,10 +836,10 @@ void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
                 return;
             }
         } else {
-            ASSERT_NOT_REACHED();
-            // FIXME: Support non-GET cross-domain requests. 
-            networkError();
-            return;
+            if (!m_allowAccess) {
+                networkError();
+                return;
+            }
         }
     }
 
@@ -827,6 +869,19 @@ void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
         dropProtection();
 }
 
+void XMLHttpRequest::didFinishLoadingMethodCheck(SubresourceLoader* loader)
+{
+    ASSERT(m_inMethodCheck);
+    ASSERT(!m_sameOriginRequest);
+
+    if (!m_allowAccess) {
+        networkError();
+        return;
+    }
+    if (m_async)
+        handleAsynchronousMethodCheckResult();
+}
+
 void XMLHttpRequest::willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
@@ -834,8 +889,13 @@ void XMLHttpRequest::willSendRequest(SubresourceLoader*, ResourceRequest& reques
         internalAbort();
 }
 
-void XMLHttpRequest::didReceiveResponse(SubresourceLoader*, const ResourceResponse& response)
+void XMLHttpRequest::didReceiveResponse(SubresourceLoader* loader, const ResourceResponse& response)
 {
+    if (m_inMethodCheck) {
+        didReceiveResponseMethodCheck(loader, response);
+        return;
+    }
+
     if (!m_sameOriginRequest && m_method == "GET") {
         m_httpAccessControlList.set(new AccessControlList(response.httpHeaderField("Access-Control")));
         if (m_httpAccessControlList->checkOrigin(m_doc->securityOrigin()))
@@ -848,6 +908,16 @@ void XMLHttpRequest::didReceiveResponse(SubresourceLoader*, const ResourceRespon
         m_responseEncoding = response.textEncodingName();
 }
 
+void XMLHttpRequest::didReceiveResponseMethodCheck(SubresourceLoader*, const ResourceResponse& response)
+{
+    ASSERT(m_inMethodCheck);
+    ASSERT(!m_sameOriginRequest);
+
+    m_httpAccessControlList.set(new AccessControlList(response.httpHeaderField("Access-Control")));
+    if (m_httpAccessControlList->checkOrigin(m_doc->securityOrigin()))
+        m_allowAccess = true;
+}
+
 void XMLHttpRequest::receivedCancellation(SubresourceLoader*, const AuthenticationChallenge& challenge)
 {
     m_response = challenge.failureResponse();
@@ -855,6 +925,9 @@ void XMLHttpRequest::receivedCancellation(SubresourceLoader*, const Authenticati
 
 void XMLHttpRequest::didReceiveData(SubresourceLoader*, const char* data, int len)
 {
+    if (m_inMethodCheck)
+        return;
+
     if (m_state < HEADERS_RECEIVED)
         changeState(HEADERS_RECEIVED);
   
