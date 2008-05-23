@@ -30,6 +30,8 @@ import "IWebFrame.idl";
 #endif
 
 interface IWebFrame;
+interface IWebIconFetcher;
+interface IWebIconFetcherDelegate;
 
 typedef enum {
     WebFrameLoadTypeStandard,
@@ -75,4 +77,6 @@ interface IWebFramePrivate : IUnknown
     HRESULT isDescendantOfFrame([in] IWebFrame* ancestor, [out, retval] BOOL* result);
 
     HRESULT pendingFrameUnloadEventCount([out, retval] UINT* result);
+
+    HRESULT fetchApplicationIcon([in] IWebIconFetcherDelegate* delegate, [out, retval] IWebIconFetcher** result);
 }

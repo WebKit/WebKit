@@ -164,6 +164,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE pendingFrameUnloadEventCount( 
         /* [retval][out] */ UINT* result);
 
+    virtual HRESULT STDMETHODCALLTYPE fetchApplicationIcon( 
+        /* [in] */ IWebIconFetcherDelegate *delegate,
+        /* [retval][out] */ IWebIconFetcher **result);
+    
     virtual HRESULT STDMETHODCALLTYPE setInPrintingMode( 
         /* [in] */ BOOL value,
         /* [in] */ HDC printDC);

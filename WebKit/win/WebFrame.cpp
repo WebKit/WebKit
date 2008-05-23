@@ -42,6 +42,7 @@
 #include "WebEditorClient.h"
 #include "WebFramePolicyListener.h"
 #include "WebHistory.h"
+#include "WebIconFetcher.h"
 #include "WebKit.h"
 #include "WebKitStatisticsPrivate.h"
 #include "WebNotificationCenter.h"
@@ -799,6 +800,29 @@ HRESULT STDMETHODCALLTYPE WebFrame::pendingFrameUnloadEventCount(
         return E_FAIL;
 
     *result = coreFrame->eventHandler()->pendingFrameUnloadEventCount();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebFrame::fetchApplicationIcon( 
+    /* [in] */ IWebIconFetcherDelegate *delegate,
+    /* [retval][out] */ IWebIconFetcher **result)
+{
+    if (!result)
+        return E_POINTER;
+
+    *result = 0;
+
+    if (!delegate)
+        return E_FAIL;
+
+    Frame* coreFrame = core(this);
+    if (!coreFrame)
+        return E_FAIL;
+
+    *result = WebIconFetcher::fetchApplicationIcon(coreFrame, delegate);
+    if (!*result)
+        return E_FAIL;
+
     return S_OK;
 }
 

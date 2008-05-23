@@ -747,6 +747,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebIconFetcher.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebInspector.h"
 				>
 			</File>
@@ -988,6 +992,10 @@
 			</File>
 			<File
 				RelativePath="..\WebIconDatabase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebIconFetcher.cpp"
 				>
 			</File>
 			<File

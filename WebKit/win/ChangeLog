@@ -1,3 +1,18 @@
+2008-05-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add IWebIconFetcher interface and implementation.
+        
+        * Interfaces/IWebFramePrivate.idl:
+        * Interfaces/IWebIconFetcher.idl: Added.
+        * Interfaces/WebKit.idl:
+        * WebFrame.cpp:
+        * WebFrame.h:
+        * WebIconFetcher.cpp: Added.
+        * WebIconFetcher.h: Added.
+        * WebKit.vcproj/WebKit.vcproj:
+
 2008-05-22  Adam Roben  <aroben@apple.com>
 
         Add functions to IWebInspector to start/stop profiling/debugging
