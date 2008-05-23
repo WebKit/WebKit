@@ -1,3 +1,13 @@
+2008-05-22  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix access to static global variables in Windows release builds.
+
+        * kjs/JSGlobalObject.h: Don't store a reference to an Identifier
+        in GlobalPropertyInfo as the Identifier is likely to be a temporary
+        and therefore may be destroyed before the GlobalPropertyInfo.
+
 2008-05-22  Kevin McCullough  <kmccullough@apple.com>
 
         Build fix.

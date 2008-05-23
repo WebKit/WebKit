@@ -277,7 +277,7 @@ namespace KJS {
             {
             }
 
-            const Identifier& identifier;
+            const Identifier identifier;
             JSValue* value;
             unsigned attributes;
         };
