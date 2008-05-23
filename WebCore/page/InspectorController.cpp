@@ -1176,6 +1176,8 @@ void InspectorController::setWindowVisible(bool visible)
             showPanel(m_showAfterVisible);
     } else
         resetScriptObjects();
+
+    m_showAfterVisible = CurrentPanel;
 }
 
 void InspectorController::addMessageToConsole(MessageSource source, MessageLevel level, ExecState* exec, const List& arguments, unsigned lineNumber, const String& sourceURL)

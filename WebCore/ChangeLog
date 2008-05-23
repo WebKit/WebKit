@@ -1,3 +1,19 @@
+2008-05-23  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a bug where the Web Insepctor would jump back to
+        Elements each time it is opened instead of staying at the
+        last selected panel.
+
+        <rdar://problem/5959475> Inspector jumps to the Elements panel
+        each time it is opened, instead of staying at the previous panel
+
+        Reviewed by Adam Roben.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::setWindowVisible): Reset
+        m_showAfterVisible to CurrentPanel, so the next time setWindowVisible
+        is called it will use CurrentPanel unless showPanel was called again.
+
 2008-05-23  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
