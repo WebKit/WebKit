@@ -86,6 +86,7 @@ namespace KJS {
         void insertNode(PassRefPtr<ProfileNode> prpNode);
         bool visible() const { return m_visible; }
         void setVisible(bool visible) { m_visible = visible; }
+        void setTreeVisible(bool visible);
 
         // Sorting functions
         void sortTotalTimeDescending();
@@ -97,7 +98,8 @@ namespace KJS {
         void sortFunctionNameDescending();
         void sortFunctionNameAscending();
 
-        void focus(const CallIdentifier& callIdentifier, bool forceVisible = false);
+        void focus(const CallIdentifier&, bool forceVisible = false);
+        double exclude(const CallIdentifier&);
         void restoreAll();
 
         void endAndRecordCall();
@@ -108,7 +110,7 @@ namespace KJS {
         double debugPrintDataSampleStyle(int indentLevel, FunctionCallHashCount&) const;
 #endif
     private:
-        ProfileNode(const CallIdentifier& callIdentifier, ProfileNode* headNode, ProfileNode* parentNode);
+        ProfileNode(const CallIdentifier&, ProfileNode* headNode, ProfileNode* parentNode);
         void startTimer();
 
         CallIdentifier m_callIdentifier;

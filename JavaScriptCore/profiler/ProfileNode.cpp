@@ -238,6 +238,14 @@ void ProfileNode::sortFunctionNameAscending()
         (*currentChild)->sortFunctionNameAscending();
 }
 
+void ProfileNode::setTreeVisible(bool visible)
+{
+    m_visible = visible;
+
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+        (*currentChild)->setTreeVisible(visible);
+}
+
 void ProfileNode::focus(const CallIdentifier& callIdentifier, bool forceVisible)
 {
     if (m_callIdentifier == callIdentifier) {
@@ -258,6 +266,23 @@ void ProfileNode::focus(const CallIdentifier& callIdentifier, bool forceVisible)
         if (m_visible)
             m_visibleTotalTime = m_visibleSelfTime + totalChildrenTime;
     }
+}
+
+double ProfileNode::exclude(const CallIdentifier& callIdentifier)
+{
+    if (m_callIdentifier == callIdentifier) {
+        m_visible = false;
+
+        for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+            (*currentChild)->setTreeVisible(false);
+
+        return m_visibleTotalTime;
+    }
+
+    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
+        m_visibleSelfTime += (*currentChild)->exclude(callIdentifier);
+
+    return 0;
 }
 
 void ProfileNode::restoreAll()

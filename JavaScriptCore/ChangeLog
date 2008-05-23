@@ -1,3 +1,23 @@
+2008-05-22  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5951529> JSProfiler: Allow the profiler to "Exclude" a
+        profile node.
+        -Implement 'exclude'; where the excluded node attributes its time to its
+        parent's self time.
+
+        * JavaScriptCore.exp: Export the exclude function.
+        * profiler/Profile.h: 
+        (KJS::Profile::exclude):
+        * profiler/ProfileNode.cpp: 
+        (KJS::ProfileNode::setTreeVisible): New function that allows a change in
+        visiblitiy to be propogated to all the children of a node.
+        (KJS::ProfileNode::exclude): If the node matches the callIdentifier then
+        set the visiblity of this node and all of its children to false and
+        attribute it's total time to it's caller's self time.
+        * profiler/ProfileNode.h:
+
 2008-05-22  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.
