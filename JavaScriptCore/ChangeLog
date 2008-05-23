@@ -1,3 +1,17 @@
+2008-05-23  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix <rdar://problem/5954997> global-recursion-on-full-stack.html crashes under guardmalloc.
+
+        Growing the register file with uncheckedGrow from within Machine::execute is not safe as the
+        register file may be too close to its maximum size to grow successfully.  By using grow,
+        checking the result and throwing a stack overflow error we can avoid crashing.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::execute):
+        * VM/RegisterFile.h: Remove the now-unused uncheckedGrow.
+
 2008-05-23  Oliver Hunt  <oliver@apple.com>
 
         RS=Kevin McCullough

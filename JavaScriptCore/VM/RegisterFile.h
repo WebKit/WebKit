@@ -124,16 +124,6 @@ namespace KJS {
             }
             return true;
         }
-        
-        void uncheckedGrow(size_t size)
-        {
-            if (size > m_size) {
-                if (size > m_capacity)
-                    growBuffer(size, std::numeric_limits<size_t>::max());
-
-                m_size = size;
-            }       
-        }
 
         size_t size() { return m_size; }
         size_t maxSize() { return m_maxSize; }

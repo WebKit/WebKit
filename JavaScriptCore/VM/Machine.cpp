@@ -656,7 +656,11 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
     CodeBlock* codeBlock = &programNode->code(scopeChain, !registerFileStack->inImplicitCall());
     registerFile->addGlobalSlots(codeBlock->numVars);
 
-    registerFile->uncheckedGrow(codeBlock->numTemporaries);
+    if (!registerFile->grow(codeBlock->numTemporaries)) {
+        registerFileStack->popGlobalRegisterFile();
+        *exception = createStackOverflowError(exec);
+        return 0;
+    }
     Register* r = (*registerFile->basePointer());
 
     r[ProgramCodeThisRegister].u.jsValue = thisObj;
