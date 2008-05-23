@@ -1,3 +1,15 @@
+2008-05-23  Kevin McCullough  <kmccullough@apple.com>
+
+        RS = Adam.
+
+        Editorial changes
+
+        * manual-tests/inspector/profiler-test-apply.html:
+        * manual-tests/inspector/profiler-test-document-dot-write.html:
+        * manual-tests/inspector/profiler-test-execution-context-and-eval-on-same-line.html:
+        * manual-tests/inspector/profiler-test-one-execution-context.html:
+        * manual-tests/inspector/profiler-test-two-execution-contexts.html:
+
 2008-05-23  Timothy Hatcher  <timothy@apple.com>
 
         Fixes the bug where the profile was not added when finished.
