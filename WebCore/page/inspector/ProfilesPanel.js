@@ -80,11 +80,16 @@ WebInspector.ProfilesPanel.prototype = {
     {
         WebInspector.Panel.prototype.show.call(this);
         this._updateSidebarWidth();
-
-        if (this._shouldPopulateProfiles) {
+        if (this._shouldPopulateProfiles)
             this._populateProfiles();
-            delete this._shouldPopulateProfiles;
-        }
+    },
+
+    populateInterface: function()
+    {
+        if (this.visible)
+            this._populateProfiles();
+        else
+            this._shouldPopulateProfiles = true;
     },
 
     reset: function()
@@ -104,10 +109,7 @@ WebInspector.ProfilesPanel.prototype = {
         this.sidebarTree.removeChildren();
         this.profileViews.removeChildren();
 
-        if (this.visible)
-            this._populateProfiles();
-        else
-            this._shouldPopulateProfiles = true;
+        this._shouldPopulateProfiles = true;
     },
 
     handleKeyEvent: function(event)
@@ -185,6 +187,8 @@ WebInspector.ProfilesPanel.prototype = {
 
         if (this.sidebarTree.children[0])
             this.sidebarTree.children[0].select();
+
+        delete this._shouldPopulateProfiles;
     },
 
     _startSidebarDragging: function(event)

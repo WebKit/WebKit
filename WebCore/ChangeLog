@@ -1,3 +1,24 @@
+2008-05-23  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Inspector correctly populate the profiles when
+        closed and re-opened.
+
+        Reviewed by Adam Roben.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::populateScriptObjects): Call populateInterface
+        in inspector.js.
+        * page/inspector/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.populateInterface): If visible,
+        call _populateProfiles. Else just set this._shouldPopulateProfiles to true.
+        (WebInspector.ProfilesPanel.prototype.reset): Don't call _populateProfiles.
+        Just set this._shouldPopulateProfiles to true.
+        (WebInspector.ProfilesPanel.prototype._populateProfiles): Delete
+        this._shouldPopulateProfiles.
+        * page/inspector/inspector.js:
+        (WebInspector.populateInterface): Added. Call populateInterface on all the
+        panels if they implement it.
+
 2008-05-23  Kevin McCullough  <kmccullough@apple.com>
 
         RS = Adam.

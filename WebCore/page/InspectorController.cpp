@@ -1738,6 +1738,8 @@ void InspectorController::populateScriptObjects()
     for (DatabaseResourcesSet::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
         addDatabaseScriptResource((*it).get());
 #endif
+
+    callSimpleFunction(m_scriptContext, m_scriptObject, "populateInterface");
 }
 
 #if ENABLE(DATABASE)
