@@ -75,6 +75,10 @@ typedef struct _GdkEventExpose GdkEventExpose;
 typedef struct HDC__* HDC;
 #endif
 
+#if PLATFORM(QT) && defined(Q_WS_WIN)
+#include <windows.h>
+#endif
+
 namespace WebCore {
 
     const int cMisspellingLineThickness = 3;
@@ -257,6 +261,11 @@ namespace WebCore {
         WindowsBitmap* createWindowsBitmap(IntSize);
         // The bitmap should be non-premultiplied.
         void drawWindowsBitmap(WindowsBitmap*, const IntPoint&);
+#endif
+
+#if PLATFORM(QT) && defined(Q_WS_WIN)
+        HDC getWindowsContext(const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true);
+        void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true);
 #endif
 
 #if PLATFORM(QT)

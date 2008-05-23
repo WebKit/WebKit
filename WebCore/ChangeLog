@@ -1,3 +1,14 @@
+2008-05-23  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        For Qt port, support painting to native Windows HDC.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::getWindowsContext):
+        (WebCore::GraphicsContext::releaseWindowsContext):
+
 2008-05-23  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a bug where the Inspector could have 0ms timers firing

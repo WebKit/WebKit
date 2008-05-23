@@ -5,6 +5,8 @@
  * Copyright (C) 2006 Simon Hausmann <hausmann@kde.org>
  * Copyright (C) 2006 Allan Sandfeld Jensen <sandfeld@kde.org>
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Trolltech ASA.
  *
  * All rights reserved.
  *
@@ -31,6 +33,10 @@
  */
 
 #include "config.h"
+
+#ifdef Q_WS_WIN
+#define <windows.>
+#endif
 
 #include "AffineTransform.h"
 #include "Path.h"
@@ -936,6 +942,91 @@ void GraphicsContext::setUseAntialiasing(bool enable)
         return;
     m_data->p()->setRenderHint(QPainter::Antialiasing, enable);
 }
+
+#ifdef Q_WS_WIN
+#include <windows.h>
+
+HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
+{
+    // painting through native HDC is only supported for plugin, where mayCreateBitmap is always TRUE
+    Q_ASSERT(mayCreateBitmap == TRUE);
+
+    if (dstRect.isEmpty())
+        return 0;
+
+    // Create a bitmap DC in which to draw.
+    BITMAPINFO bitmapInfo;
+    bitmapInfo.bmiHeader.biSize          = sizeof(BITMAPINFOHEADER);
+    bitmapInfo.bmiHeader.biWidth         = dstRect.width();
+    bitmapInfo.bmiHeader.biHeight        = dstRect.height();
+    bitmapInfo.bmiHeader.biPlanes        = 1;
+    bitmapInfo.bmiHeader.biBitCount      = 32;
+    bitmapInfo.bmiHeader.biCompression   = BI_RGB;
+    bitmapInfo.bmiHeader.biSizeImage     = 0;
+    bitmapInfo.bmiHeader.biXPelsPerMeter = 0;
+    bitmapInfo.bmiHeader.biYPelsPerMeter = 0;
+    bitmapInfo.bmiHeader.biClrUsed       = 0;
+    bitmapInfo.bmiHeader.biClrImportant  = 0;
+
+    void* pixels = 0;
+    HBITMAP bitmap = ::CreateDIBSection(NULL, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0);
+    if (!bitmap)
+        return 0;
+
+    HDC displayDC = ::GetDC(0);
+    HDC bitmapDC = ::CreateCompatibleDC(displayDC);
+    ::ReleaseDC(0, displayDC);
+
+    ::SelectObject(bitmapDC, bitmap);
+
+    // Fill our buffer with clear if we're going to alpha blend.
+    if (supportAlphaBlend) {
+        BITMAP bmpInfo;
+        GetObject(bitmap, sizeof(bmpInfo), &bmpInfo);
+        int bufferSize = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
+        memset(bmpInfo.bmBits, 0, bufferSize);
+    }
+
+    // Make sure we can do world transforms.
+    SetGraphicsMode(bitmapDC, GM_ADVANCED);
+
+    // Apply a translation to our context so that the drawing done will be at (0,0) of the bitmap.
+    XFORM xform;
+    xform.eM11 = 1.0f;
+    xform.eM12 = 0.0f;
+    xform.eM21 = 0.0f;
+    xform.eM22 = 1.0f;
+    xform.eDx = -dstRect.x();
+    xform.eDy = -dstRect.y();
+    ::SetWorldTransform(bitmapDC, &xform);
+
+
+    return bitmapDC;
+}
+
+void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
+{
+    // painting through native HDC is only supported for plugin, where mayCreateBitmap is always TRUE
+    Q_ASSERT(mayCreateBitmap == TRUE);
+
+    if (hdc) {
+
+        if (!dstRect.isEmpty()) {
+
+            HBITMAP bitmap = static_cast<HBITMAP>(GetCurrentObject(hdc, OBJ_BITMAP));
+            BITMAP info;
+            GetObject(bitmap, sizeof(info), &info);
+            ASSERT(info.bmBitsPixel == 32);
+
+            m_data->p()->drawPixmap(dstRect, QPixmap::fromWinHBITMAP(bitmap));
+
+            ::DeleteObject(bitmap);
+        }
+
+        ::DeleteDC(hdc);
+    }
+}
+#endif
 
 }
 
