@@ -54,7 +54,7 @@
         Complete license and copyright information can be found within the code.
     </div>
 
-    <div id="notice">
+    <div id="terms">
         Hosting provided by <a href='http://www.macosforge.org/'>Mac OS Forge</a>.
         Use of this site is subject to the
         <a href='http://www.macosforge.org/terms/'>Mac OS Forge Terms of Use</a>.
