@@ -1,11 +1,6 @@
-2008-05-23  Maciej Stachowiak  <mjs@apple.com>
+2008-05-23  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by Oliver.
-        
-        - test case <rdar://problem/5957662> REGRESSION(r33943-r33980): Can't send email , attach file or save as draft from hotmail.com
-
-        * fast/js/function-redefinition-expected.txt: Added.
-        * fast/js/function-redefinition.html: Added.
+        Rolled out r34073 because it caused lots of layout test crashes.
 
 2008-05-23  Mark Rowe  <mrowe@apple.com>
 
