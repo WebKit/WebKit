@@ -44,6 +44,10 @@ WebInspector.ProfileView = function(profile)
     this.dataGrid.element.addEventListener("mousedown", this._mouseDownInDataGrid.bind(this), true);
     this.element.appendChild(this.dataGrid.element);
 
+    this.percentButton = document.createElement("button");
+    this.percentButton.className = "percent-time-status-bar-item status-bar-item";
+    this.percentButton.addEventListener("click", this._percentClicked.bind(this), false);
+
     this.focusButton = document.createElement("button");
     this.focusButton.title = WebInspector.UIString("Focus selected function.");
     this.focusButton.className = "focus-profile-node-status-bar-item status-bar-item";
@@ -65,13 +69,15 @@ WebInspector.ProfileView = function(profile)
     // column and direction padded to the DataGrid above.
     profile.head.sortTotalTimeDescending();
 
+    this._updatePercentButton();
+
     this.refresh();
 }
 
 WebInspector.ProfileView.prototype = {
     get statusBarItems()
     {
-        return [this.focusButton, this.excludeButton, this.resetButton];
+        return [this.percentButton, this.focusButton, this.excludeButton, this.resetButton];
     },
 
     refresh: function()
@@ -92,10 +98,31 @@ WebInspector.ProfileView.prototype = {
 
     refreshShowAsPercents: function()
     {
+        this._updatePercentButton();
+
         var child = this.dataGrid.children[0];
         while (child) {
             child.refresh();
             child = child.traverseNextNode(false, null, true);
+        }
+    },
+
+    _percentClicked: function(event)
+    {
+        var currentState = this.showSelfTimeAsPercent && this.showTotalTimeAsPercent;
+        this.showSelfTimeAsPercent = !currentState;
+        this.showTotalTimeAsPercent = !currentState;
+        this.refreshShowAsPercents();
+    },
+
+    _updatePercentButton: function()
+    {
+        if (this.showSelfTimeAsPercent && this.showTotalTimeAsPercent) {
+            this.percentButton.title = WebInspector.UIString("Show absolute total and self times.");
+            this.percentButton.addStyleClass("toggled-on");
+        } else {
+            this.percentButton.title = WebInspector.UIString("Show total and self times as percentages.");
+            this.percentButton.removeStyleClass("toggled-on");
         }
     },
 

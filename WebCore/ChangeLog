@@ -1,5 +1,20 @@
 2008-05-23  Timothy Hatcher  <timothy@apple.com>
 
+        Adds a percentage toggle button the profile view status bar that
+        changes the time columns between absolute and percents.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19224
+
+        Reviewed by Kevin McCullough.
+
+        * English.lproj/localizedStrings.js: New strings.
+        * page/inspector/Images/percentButtons.png: Added.
+        * page/inspector/ProfileView.js: Make the button and add it to the
+        status bar. Make clicking toggle the showAsPercent* properties.
+        * page/inspector/inspector.css: New styles.
+
+2008-05-23  Timothy Hatcher  <timothy@apple.com>
+
         Fixes a bug where excluding nodes from the profile could
         show an empty parent node.
 
