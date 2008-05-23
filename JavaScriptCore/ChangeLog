@@ -1,5 +1,20 @@
 2008-05-23  Oliver Hunt  <oliver@apple.com>
 
+        RS=Kevin McCullough
+
+        Remove JAVASCRIPT_PROFILER define
+
+        * VM/Machine.cpp:
+        (KJS::callEval):
+        (KJS::Machine::unwindCallFrame):
+        (KJS::Machine::execute):
+        (KJS::Machine::privateExecute):
+        * kjs/config.h:
+        * kjs/object.cpp:
+        (KJS::JSObject::call):
+
+2008-05-23  Oliver Hunt  <oliver@apple.com>
+
        <rdar://problem/5951561> Turn on JavaScript Profiler
 
         Reviewed by Kevin McCullough.

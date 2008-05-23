@@ -92,16 +92,11 @@ JSValue *JSObject::call(ExecState *exec, JSObject *thisObj, const List &args)
   }
 #endif
 
-#if JAVASCRIPT_PROFILING
     Profiler::profiler()->willExecute(exec, this);
-#endif
   
     JSValue *ret = callAsFunction(exec,thisObj,args); 
 
-#if JAVASCRIPT_PROFILING
     Profiler::profiler()->didExecute(exec, this);
-#endif
-
 
 #if KJS_MAX_STACK > 0
   --depth;
