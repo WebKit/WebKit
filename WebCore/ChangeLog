@@ -1,3 +1,45 @@
+2008-05-22  Timothy Hatcher  <timothy@apple.com>
+
+        Adds Focus, Exclude and Restore buttons to the Profile view
+        Status bar. Also adds a Record button to create new profiles.
+
+        <rdar://problem/5950867> JSProfiler: Allow the profiler to "Focus" a profile node.
+        <rdar://problem/5951529> JSProfiler: Allow the profiler to "Exclude" a profile node.
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/localizedStrings.js: Added new strings.
+        * page/JavaScriptProfile.cpp:
+        (WebCore::restoreAll): Call Profile::restoreAll.
+        (WebCore::ProfileClass): Added restoreAll to the static functions.
+        * page/inspector/Images/excludeButtons.png: Added.
+        * page/inspector/Images/focusButtons.png: Added.
+        * page/inspector/Images/recordButtons.png: Added.
+        * page/inspector/Images/reloadButtons.png: Added.
+        * page/inspector/ProfileView.js:
+        (WebInspector.ProfileView): Create the buttons elements.
+        (WebInspector.ProfileView.prototype.get statusBarItems): Return the three
+        status bar buttons.
+        (WebInspector.ProfileView.prototype.refresh): Only create ProfileDataGridNodes
+        for ProfileNodes that are visible.
+        (WebInspector.ProfileView.prototype.refreshShowAsPercents): Just call
+        refresh on the children, now that they have access to the ProfileView's properties.
+        (WebInspector.ProfileView.prototype._focusClicked): Call focus
+        on the profile, refresh the ProfileView and show the reset button.
+        (WebInspector.ProfileView.prototype._excludeClicked): Call exclude
+        on the profile, refresh the ProfileView and show the reset button.
+        (WebInspector.ProfileView.prototype._resetClicked): Call restoreAll
+        on the profile, refresh the ProfileView and hide the reset button.
+        (WebInspector.ProfileView.prototype._dataGridNodeSelected): Enable the 
+        focus and exclude buttons.
+        (WebInspector.ProfileView.prototype._dataGridNodeDeselected): Disable the
+        focus and exclude buttons.
+        (WebInspector.ProfileDataGridNode): Take a ProfileView, and remove the 
+        showPercentAs* arguments.
+        * page/inspector/ProfilesPanel.js: Add a record status bar button and
+        th ability to have per-view status bar buttons.
+        * page/inspector/inspector.css: New styles.
+
 2008-05-22  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.

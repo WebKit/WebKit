@@ -61,6 +61,7 @@ namespace KJS {
 
         void focus(const ProfileNode* profileNode) { if (!profileNode) return; m_headNode->focus(profileNode->callIdentifier()); }
         void exclude(const ProfileNode* profileNode) { if (!profileNode) return; m_headNode->exclude(profileNode->callIdentifier()); }
+        void restoreAll() { m_headNode->restoreAll(); }
 
 #ifndef NDEBUG
         void debugPrintData() const;

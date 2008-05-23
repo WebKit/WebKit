@@ -280,6 +280,7 @@ button.status-bar-item:active {
 }
 
 button.status-bar-item:disabled {
+    opacity: 0.5;
     background-position: 0 0 !important;
 }
 
@@ -1739,10 +1740,6 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     margin-top: 2px;
 }
 
-#scripts-status-bar .status-bar-item:disabled img {
-    opacity: 0.5;
-}
-
 #scripts-back img {
     content: url(Images/back.png);
 }
@@ -2451,6 +2448,16 @@ body.inactive .sidebar-tree-item.selected {
     bottom: 0;
 }
 
+#profile-view-status-bar-items {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 200px;
+    overflow: hidden;
+    border-left: 1px solid rgb(184, 184, 184);
+    margin-left: -1px;
+}
+
 .profile-sidebar-tree-item .icon {
     content: url(Images/profileIcon.png);
 }
@@ -2506,4 +2513,44 @@ body.inactive .sidebar-tree-item.selected {
 
 .data-grid:focus tr.selected .profile-node-file {
     color: white;
+}
+
+#record-profile-status-bar-item {
+    background-image: url(Images/recordButtons.png);
+}
+
+#record-profile-status-bar-item:active {
+    background-position: 32px 0;
+}
+
+#record-profile-status-bar-item.toggled-on {
+    background-position: 0 24px;
+}
+
+#record-profile-status-bar-item.toggled-on:active {
+    background-position: 32px 24px;
+}
+
+.focus-profile-node-status-bar-item {
+    background-image: url(Images/focusButtons.png) !important;
+}
+
+.focus-profile-node-status-bar-item:active {
+    background-position: 32px 0;
+}
+
+.exclude-profile-node-status-bar-item {
+    background-image: url(Images/excludeButtons.png) !important;
+}
+
+.exclude-profile-node-status-bar-item:active {
+    background-position: 32px 0;
+}
+
+.reset-profile-status-bar-item {
+    background-image: url(Images/reloadButtons.png) !important;
+}
+
+.reset-profile-status-bar-item:active {
+    background-position: 32px 0;
 }

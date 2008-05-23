@@ -49,6 +49,17 @@ WebInspector.ProfilesPanel = function()
     this.profileViews.id = "profile-views";
     this.element.appendChild(this.profileViews);
 
+    this.recordButton = document.createElement("button");
+    this.recordButton.title = WebInspector.UIString("Start profiling.");
+    this.recordButton.id = "record-profile-status-bar-item";
+    this.recordButton.className = "status-bar-item";
+    this.recordButton.addEventListener("click", this._recordClicked.bind(this), false);
+
+    this.recording = false;
+
+    this.profileViewStatusBarItemsContainer = document.createElement("div");
+    this.profileViewStatusBarItemsContainer.id = "profile-view-status-bar-items";
+
     this.reset();
 }
 
@@ -58,6 +69,11 @@ WebInspector.ProfilesPanel.prototype = {
     get toolbarItemLabel()
     {
         return WebInspector.UIString("Profiles");
+    },
+
+    get statusBarItems()
+    {
+        return [this.recordButton, this.profileViewStatusBarItemsContainer];
     },
 
     show: function()
@@ -126,6 +142,12 @@ WebInspector.ProfilesPanel.prototype = {
         view.show(this.profileViews);
 
         this.visibleProfileView = view;
+
+        this.profileViewStatusBarItemsContainer.removeChildren();
+
+        var statusBarItems = view.statusBarItems;
+        for (var i = 0; i < statusBarItems.length; ++i)
+            this.profileViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
     },
 
     closeVisibleView: function()
@@ -133,6 +155,21 @@ WebInspector.ProfilesPanel.prototype = {
         if (this.visibleProfileView)
             this.visibleProfileView.hide();
         delete this.visibleProfileView;
+    },
+
+    _recordClicked: function()
+    {
+        this.recording = !this.recording;
+
+        if (this.recording) {
+            this.recordButton.addStyleClass("toggled-on");
+            this.recordButton.title = WebInspector.UIString("Stop profiling.");
+            InspectorController.inspectedWindow().console.profile("org.webkit.profiles.user-initiated");
+        } else {
+            this.recordButton.removeStyleClass("toggled-on");
+            this.recordButton.title = WebInspector.UIString("Start profiling.");
+            InspectorController.inspectedWindow().console.profileEnd("org.webkit.profiles.user-initiated");
+        }
     },
 
     _populateProfiles: function()
@@ -187,6 +224,7 @@ WebInspector.ProfilesPanel.prototype = {
 
         this.sidebarElement.style.width = width + "px";
         this.profileViews.style.left = width + "px";
+        this.profileViewStatusBarItemsContainer.style.left = width + "px";
         this.sidebarResizeElement.style.left = (width - 3) + "px";
     }
 }

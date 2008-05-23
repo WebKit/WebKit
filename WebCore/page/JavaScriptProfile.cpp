@@ -70,7 +70,6 @@ static JSValueRef getHeadCallback(JSContextRef ctx, JSObjectRef thisObject, JSSt
     return toRef(toJS(toJS(ctx), profile->callTree()));
 }
 
-
 static JSValueRef focus(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)
 {
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileClass()))
@@ -105,6 +104,17 @@ static JSValueRef exclude(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRe
     return JSValueMakeUndefined(ctx);
 }
 
+static JSValueRef restoreAll(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)
+{
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileClass()))
+        return JSValueMakeUndefined(ctx);
+
+    Profile* profile = static_cast<Profile*>(JSObjectGetPrivate(thisObject));
+    profile->restoreAll();
+
+    return JSValueMakeUndefined(ctx);
+}
+
 static void finalize(JSObjectRef object)
 {
     Profile* profile = static_cast<Profile*>(JSObjectGetPrivate(object));
@@ -123,6 +133,7 @@ JSClassRef ProfileClass()
     static JSStaticFunction staticFunctions[] = {
         { "focus", focus, kJSPropertyAttributeNone },
         { "exclude", exclude, kJSPropertyAttributeNone },
+        { "restoreAll", restoreAll, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
 

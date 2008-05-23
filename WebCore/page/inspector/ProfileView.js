@@ -44,6 +44,23 @@ WebInspector.ProfileView = function(profile)
     this.dataGrid.element.addEventListener("mousedown", this._mouseDownInDataGrid.bind(this), true);
     this.element.appendChild(this.dataGrid.element);
 
+    this.focusButton = document.createElement("button");
+    this.focusButton.title = WebInspector.UIString("Focus selected function.");
+    this.focusButton.className = "focus-profile-node-status-bar-item status-bar-item";
+    this.focusButton.disabled = true;
+    this.focusButton.addEventListener("click", this._focusClicked.bind(this), false);
+
+    this.excludeButton = document.createElement("button");
+    this.excludeButton.title = WebInspector.UIString("Exclude selected function.");
+    this.excludeButton.className = "exclude-profile-node-status-bar-item status-bar-item";
+    this.excludeButton.disabled = true;
+    this.excludeButton.addEventListener("click", this._excludeClicked.bind(this), false);
+
+    this.resetButton = document.createElement("button");
+    this.resetButton.title = WebInspector.UIString("Restore all functions.");
+    this.resetButton.className = "reset-profile-status-bar-item status-bar-item hidden";
+    this.resetButton.addEventListener("click", this._resetClicked.bind(this), false);
+
     // By default the profile isn't sorted, so sort based on our default sort
     // column and direction padded to the DataGrid above.
     profile.head.sortTotalTimeDescending();
@@ -52,6 +69,11 @@ WebInspector.ProfileView = function(profile)
 }
 
 WebInspector.ProfileView.prototype = {
+    get statusBarItems()
+    {
+        return [this.focusButton, this.excludeButton, this.resetButton];
+    },
+
     refresh: function()
     {
         var selectedProfileNode = this.dataGrid.selectedNode ? this.dataGrid.selectedNode.profileNode : null;
@@ -61,7 +83,8 @@ WebInspector.ProfileView.prototype = {
         var children = this.profile.head.children;
         var childrenLength = children.length;
         for (var i = 0; i < childrenLength; ++i)
-            this.dataGrid.appendChild(new WebInspector.ProfileDataGridNode(children[i], this.showSelfTimeAsPercent, this.showTotalTimeAsPercent));
+            if (children[i].visible)
+                this.dataGrid.appendChild(new WebInspector.ProfileDataGridNode(this, children[i]));
 
         if (selectedProfileNode && selectedProfileNode._dataGridNode)
             selectedProfileNode._dataGridNode.selected = true;
@@ -71,11 +94,46 @@ WebInspector.ProfileView.prototype = {
     {
         var child = this.dataGrid.children[0];
         while (child) {
-            child.showTotalTimeAsPercent = this.showTotalTimeAsPercent;
-            child.showSelfTimeAsPercent = this.showSelfTimeAsPercent;
             child.refresh();
             child = child.traverseNextNode(false, null, true);
         }
+    },
+
+    _focusClicked: function(event)
+    {
+        if (!this.dataGrid.selectedNode || !this.dataGrid.selectedNode.profileNode)
+            return;
+        this.resetButton.removeStyleClass("hidden");
+        this.profile.focus(this.dataGrid.selectedNode.profileNode);
+        this.refresh();
+    },
+
+    _excludeClicked: function(event)
+    {
+        if (!this.dataGrid.selectedNode || !this.dataGrid.selectedNode.profileNode)
+            return;
+        this.resetButton.removeStyleClass("hidden");
+        this.profile.exclude(this.dataGrid.selectedNode.profileNode);
+        this.refresh();
+    },
+
+    _resetClicked: function(event)
+    {
+        this.resetButton.addStyleClass("hidden");
+        this.profile.restoreAll();
+        this.refresh();
+    },
+
+    _dataGridNodeSelected: function(node)
+    {
+        this.focusButton.disabled = false;
+        this.excludeButton.disabled = false;
+    },
+
+    _dataGridNodeDeselected: function(node)
+    {
+        this.focusButton.disabled = true;
+        this.excludeButton.disabled = true;
     },
 
     _sortData: function(event)
@@ -130,13 +188,12 @@ WebInspector.ProfileView.prototype = {
 
 WebInspector.ProfileView.prototype.__proto__ = WebInspector.View.prototype;
 
-WebInspector.ProfileDataGridNode = function(profileNode, showSelfTimeAsPercent, showTotalTimeAsPercent)
+WebInspector.ProfileDataGridNode = function(profileView, profileNode)
 {
+    this.profileView = profileView;
+
     this.profileNode = profileNode;
     profileNode._dataGridNode = this;
-
-    this.showSelfTimeAsPercent = showSelfTimeAsPercent;
-    this.showTotalTimeAsPercent = showTotalTimeAsPercent;
 
     var hasChildren = (profileNode.children.length ? true : false);
     WebInspector.DataGridNode.call(this, null, hasChildren);
@@ -158,12 +215,12 @@ WebInspector.ProfileDataGridNode.prototype = {
         data["function"] = this.profileNode.functionName;
         data["calls"] = this.profileNode.numberOfCalls;
 
-        if (this.showSelfTimeAsPercent)
+        if (this.profileView.showSelfTimeAsPercent)
             data["self"] = WebInspector.UIString("%.2f%%", this.profileNode.selfPercent);
         else
             data["self"] = formatMilliseconds(this.profileNode.selfTime);
 
-        if (this.showTotalTimeAsPercent)
+        if (this.profileView.showTotalTimeAsPercent)
             data["total"] = WebInspector.UIString("%.2f%%", this.profileNode.totalPercent);
         else
             data["total"] = formatMilliseconds(this.profileNode.totalTime);
@@ -197,6 +254,18 @@ WebInspector.ProfileDataGridNode.prototype = {
         return cell;
     },
 
+    select: function(supressSelectedEvent)
+    {
+        WebInspector.DataGridNode.prototype.select.call(this, supressSelectedEvent);
+        this.profileView._dataGridNodeSelected(this);
+    },
+
+    deselect: function(supressDeselectedEvent)
+    {
+        WebInspector.DataGridNode.prototype.deselect.call(this, supressDeselectedEvent);
+        this.profileView._dataGridNodeDeselected(this);
+    },
+
     expand: function()
     {
         WebInspector.DataGridNode.prototype.expand.call(this);
@@ -214,7 +283,8 @@ WebInspector.ProfileDataGridNode.prototype = {
         var children = this.profileNode.children;
         var childrenLength = children.length;
         for (var i = 0; i < childrenLength; ++i)
-            this.appendChild(new WebInspector.ProfileDataGridNode(children[i], this.showSelfTimeAsPercent, this.showTotalTimeAsPercent));
+            if (children[i].visible)
+                this.appendChild(new WebInspector.ProfileDataGridNode(this.profileView, children[i]));
         this.removeEventListener("populate", this._populate, this);
     }
 }
