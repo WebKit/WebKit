@@ -133,6 +133,8 @@ WebInspector.Resource.prototype = {
             title = this.displayDomain;
         if (!title && this.url)
             title = this.url.trimURL(WebInspector.mainResource ? WebInspector.mainResource.domain : "");
+        if (title === "/")
+            title = this.url;
         return title;
     },
 

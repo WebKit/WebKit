@@ -1,3 +1,15 @@
+2008-05-22  Adam Roben  <aroben@apple.com>
+
+        Make top-level resources show their full URLs again instead of just
+        "/"
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/Resource.js:
+        (WebInspector.Resource.prototype.displayName): If the title has gotten
+        down to just "/", which will happen for, e.g., http://webkit.org/,
+        just show the entire URL.
+
 2008-05-22  Timothy Hatcher  <timothy@apple.com>
 
         Shorten URLs shown in the Web Inspector to the file name. This makes
