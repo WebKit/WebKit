@@ -1,3 +1,21 @@
+2008-05-22  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes the bug where resource would show up multiple times in the
+        Inspector. This happened when a resource was used multiple times or
+        when the preloader was scanning ahead to fetch resources.
+
+        <rdar://problem/5689373> Cached resources re-appear in Web Inspector
+        for each access (18223)
+
+        Reviewed by Adam Roben.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::addResource): Add the URL to m_knownResources.
+        (WebCore::InspectorController::removeResource): Remove the URL from m_knownResources
+        (WebCore::InspectorController::didLoadResourceFromMemoryCache): If the URL
+        is in m_knownResources, then early return.
+        * page/InspectorController.h: Added m_knownResources.
+
 2008-05-22  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adele, Dan Bernstein.

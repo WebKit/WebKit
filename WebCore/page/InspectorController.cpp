@@ -1962,6 +1962,7 @@ void InspectorController::frameDetachedFromParent(Frame* frame)
 void InspectorController::addResource(InspectorResource* resource)
 {
     m_resources.set(resource->identifier, resource);
+    m_knownResources.add(resource->requestURL.string());
 
     Frame* frame = resource->frame.get();
     ResourcesMap* resourceMap = m_frameResources.get(frame);
@@ -1977,6 +1978,7 @@ void InspectorController::addResource(InspectorResource* resource)
 void InspectorController::removeResource(InspectorResource* resource)
 {
     m_resources.remove(resource->identifier);
+    m_knownResources.remove(resource->requestURL.string());
 
     Frame* frame = resource->frame.get();
     ResourcesMap* resourceMap = m_frameResources.get(frame);
@@ -1995,6 +1997,10 @@ void InspectorController::removeResource(InspectorResource* resource)
 void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader, const ResourceRequest& request, const ResourceResponse& response, int length)
 {
     if (!enabled())
+        return;
+
+    // If the resource URL is already known, we don't need to add it again since this is just a cached load.
+    if (m_knownResources.contains(request.url().string()))
         return;
 
     RefPtr<InspectorResource> resource = InspectorResource::create(m_nextIdentifier--, loader, loader->frame());
