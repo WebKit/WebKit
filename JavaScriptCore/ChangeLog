@@ -1,3 +1,16 @@
+2008-05-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Tim H.
+
+        Fix call stack reported by profiler when entering event handlers.
+
+        JSObject::call was arbitrarily notifying the profiler when it was
+        called, even if it was JS code, which notifies the profile on entry
+        in any case.
+
+        * kjs/object.cpp:
+        (KJS::JSObject::call):
+
 2008-05-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
