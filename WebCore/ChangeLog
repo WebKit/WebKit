@@ -1,3 +1,16 @@
+2008-05-23  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a bug where excluding nodes from the profile could
+        show an empty parent node.
+
+        <rdar://problem/5959573> Excluding nodes from the profile could show
+        an empty parent node
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/ProfileView.js: Only say we have children if
+        all of our children nodes are visible.
+
 2008-05-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

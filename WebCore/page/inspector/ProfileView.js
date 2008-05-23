@@ -114,6 +114,7 @@ WebInspector.ProfileView.prototype = {
             return;
         this.resetButton.removeStyleClass("hidden");
         this.profile.exclude(this.dataGrid.selectedNode.profileNode);
+        this.dataGrid.selectedNode.deselect();
         this.refresh();
     },
 
@@ -195,7 +196,18 @@ WebInspector.ProfileDataGridNode = function(profileView, profileNode)
     this.profileNode = profileNode;
     profileNode._dataGridNode = this;
 
-    var hasChildren = (profileNode.children.length ? true : false);
+    // Find the first child that is visible. Since we don't want to claim
+    // we have children if all the children are invisible.
+    var hasChildren = false;
+    var children = this.profileNode.children;
+    var childrenLength = children.length;
+    for (var i = 0; i < childrenLength; ++i) {
+        if (children[i].visible) {
+            hasChildren = true;
+            break;
+        }
+    }
+
     WebInspector.DataGridNode.call(this, null, hasChildren);
 
     this.addEventListener("populate", this._populate, this);
