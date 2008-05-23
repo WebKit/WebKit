@@ -1,3 +1,14 @@
+2008-05-22  Adam Roben  <aroben@apple.com>
+
+        Fix a profiler assertion when calling a NodeList as a function
+
+        Reviewed by Kevin McCullough.
+
+        * profiler/Profiler.cpp:
+        (KJS::createCallIdentifier): Don't assert when a non-function object
+        is called as a function. Instead, build up a CallIdentifier using the
+        object's class name.
+
 2008-05-22  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

@@ -1,0 +1,24 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+console.profile("Call NodeList as function");
+function testStart()
+{
+    var brs = document.getElementsByTagName("br");
+    var br0 = brs(0);
+
+    endTest();
+}
+
+</script>
+</head>
+
+<body onload="testStart()">
+This page calls a NodeList as a function (e.g., <code>list(0)</code>).
+<br>
+<br>
+To use this test, load it in a debug build in the browser. You should see a <code>(NodeList object)</code> entry in the profile.
+<div id="output"></div>
+</body>
+</html>

@@ -1,3 +1,11 @@
+2008-05-22  Adam Roben  <aroben@apple.com>
+
+        Add a test for calling a NodeList as a function while profiling
+
+        Reviewed by Kevin McCullough.
+
+        * manual-tests/inspector/profiler-test-call-nodelist-as-function.html: Added.
+
 2008-05-22  Kevin McCullough  <kmccullough@apple.com>
 
         Rubber stamped by Adam.
