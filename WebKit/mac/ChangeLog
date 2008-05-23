@@ -1,3 +1,23 @@
+2008-05-23  Timothy Hatcher  <timothy@apple.com>
+
+        Fix attaching and detaching the Web Inspector. This change removes
+        the clunky animation that never looked right and was causing issues
+        where the inspected WebView would get into a no useable state.
+
+        <rdar://problem/5958812> Attaching and Detaching the Web Inspector
+        can cause the inspected WebVIew to be unusable
+
+        Reviewed by Adam Roben.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController close]): Removes animation code.
+        Sets the frame directly and does a displayIfNeeded to prevent
+        showing the Inspector in the page and in the Inspector window.
+        (-[WebInspectorWindowController showWindow:]): Removes animation code.
+        Sets the frame directly.
+        (-[WebInspectorWindowController attach]): Simplified.
+        (-[WebInspectorWindowController detach]): Ditto.
+
 2008-05-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

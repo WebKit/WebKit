@@ -56,7 +56,6 @@ using namespace WebCore;
 @private
     WebView *_inspectedWebView;
     WebView *_webView;
-    NSImageView *_shadowView;
     WebNodeHighlight *_currentHighlight;
     BOOL _attachedToInspectedWebView;
     BOOL _shouldAttach;
@@ -202,7 +201,6 @@ void WebInspectorClient::updateWindowTitle() const
 - (void)dealloc
 {
     ASSERT(!_currentHighlight);
-    [_shadowView release];
     [_webView release];
     [super dealloc];
 }
@@ -270,8 +268,7 @@ void WebInspectorClient::updateWindowTitle() const
 
     [_inspectedWebView page]->inspectorController()->setWindowVisible(false);
 
-    if (!_movingWindows)
-        [self hideHighlight];
+    [self hideHighlight];
 
     if (_attachedToInspectedWebView) {
         if ([_inspectedWebView _isClosed])
@@ -280,39 +277,14 @@ void WebInspectorClient::updateWindowTitle() const
         WebFrameView *frameView = [[_inspectedWebView mainFrame] frameView];
 
         NSRect frameViewRect = [frameView frame];
-        NSRect finalFrameViewRect = NSMakeRect(0, 0, NSWidth(frameViewRect), NSHeight([_inspectedWebView frame]));
-        NSMutableDictionary *frameViewAnimationInfo = [[NSMutableDictionary alloc] init];
-        [frameViewAnimationInfo setObject:frameView forKey:NSViewAnimationTargetKey];
-        [frameViewAnimationInfo setObject:[NSValue valueWithRect:finalFrameViewRect] forKey:NSViewAnimationEndFrameKey];
+        frameViewRect = NSMakeRect(0, 0, NSWidth(frameViewRect), NSHeight([_inspectedWebView frame]));
 
-        ASSERT(_shadowView);
-        NSRect shadowFrame = [_shadowView frame];
-        shadowFrame = NSMakeRect(0, NSMinY(frameViewRect) - NSHeight(shadowFrame), NSWidth(frameViewRect), NSHeight(shadowFrame));
-        [_shadowView setFrame:shadowFrame];
+        [frameView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+        [frameView setFrame:frameViewRect];
 
-        [_shadowView removeFromSuperview];
-        [_inspectedWebView addSubview:_shadowView positioned:NSWindowAbove relativeTo:_webView];
-
-        NSRect finalShadowRect = NSMakeRect(0, -NSHeight(shadowFrame), NSWidth(shadowFrame), NSHeight(shadowFrame));
-        NSMutableDictionary *shadowAnimationInfo = [[NSMutableDictionary alloc] init];
-        [shadowAnimationInfo setObject:_shadowView forKey:NSViewAnimationTargetKey];
-        [shadowAnimationInfo setObject:[NSValue valueWithRect:finalShadowRect] forKey:NSViewAnimationEndFrameKey];
-
-        NSArray *animationInfo = [[NSArray alloc] initWithObjects:frameViewAnimationInfo, shadowAnimationInfo, nil];
-        [frameViewAnimationInfo release];
-        [shadowAnimationInfo release];
-
-        NSViewAnimation *slideAnimation = [[NSViewAnimation alloc] initWithViewAnimations:animationInfo]; // released in animationDidEnd
-        [animationInfo release];
-
-        [slideAnimation setAnimationBlockingMode:NSAnimationBlocking];
-        [slideAnimation setDelegate:self];
-
-        [[_inspectedWebView window] display]; // display once to make sure we start in a good state
-        [slideAnimation startAnimation];
-    } else {
+        [_inspectedWebView displayIfNeeded];
+    } else
         [super close];
-    }
 }
 
 - (IBAction)showWindow:(id)sender
@@ -325,63 +297,24 @@ void WebInspectorClient::updateWindowTitle() const
 
     _visible = YES;
 
-    [_inspectedWebView page]->inspectorController()->setWindowVisible(true);
-
     if (_shouldAttach) {
         WebFrameView *frameView = [[_inspectedWebView mainFrame] frameView];
 
         NSRect frameViewRect = [frameView frame];
         float attachedHeight = [[NSUserDefaults standardUserDefaults] integerForKey:WebKitInspectorAttachedViewHeightKey];
         attachedHeight = MAX(300.0, MIN(attachedHeight, (NSHeight(frameViewRect) * 0.6)));
+        frameViewRect = NSMakeRect(0, attachedHeight, NSWidth(frameViewRect), NSHeight(frameViewRect) - attachedHeight);
 
         [_webView removeFromSuperview];
         [_inspectedWebView addSubview:_webView positioned:NSWindowBelow relativeTo:(NSView*)frameView];
-        [_webView setFrame:NSMakeRect(0, 0, NSWidth(frameViewRect), attachedHeight)];
+
         [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable | NSViewMaxYMargin)];
+        [_webView setFrame:NSMakeRect(0, 0, NSWidth(frameViewRect), attachedHeight)];
 
         [frameView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable | NSViewMinYMargin)];
-
-        NSRect finalFrameViewRect = NSMakeRect(0, attachedHeight, NSWidth(frameViewRect), NSHeight(frameViewRect) - attachedHeight);
-        NSMutableDictionary *frameViewAnimationInfo = [[NSMutableDictionary alloc] init];
-        [frameViewAnimationInfo setObject:frameView forKey:NSViewAnimationTargetKey];
-        [frameViewAnimationInfo setObject:[NSValue valueWithRect:finalFrameViewRect] forKey:NSViewAnimationEndFrameKey];
-
-        if (!_shadowView) {
-            NSString *imagePath = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"attachedShadow" ofType:@"png" inDirectory:@"inspector/Images"];
-            NSImage *image = [[NSImage alloc] initWithContentsOfFile:imagePath];
-            _shadowView = [[NSImageView alloc] initWithFrame:NSMakeRect(0, -[image size].height, NSWidth(frameViewRect), [image size].height)];
-            [_shadowView setImage:image];
-            [_shadowView setImageScaling:NSScaleToFit];
-            [_shadowView setImageFrameStyle:NSImageFrameNone];
-            [_shadowView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable | NSViewMaxYMargin)];
-        }
-
-        NSRect shadowFrame = [_shadowView frame];
-        shadowFrame = NSMakeRect(0, -NSHeight(shadowFrame), NSWidth(frameViewRect), NSHeight(shadowFrame));
-        [_shadowView setFrame:shadowFrame];
-
-        [_shadowView removeFromSuperview];
-        [_inspectedWebView addSubview:_shadowView positioned:NSWindowAbove relativeTo:_webView];
-
-        NSRect finalShadowRect = NSMakeRect(0, attachedHeight - NSHeight(shadowFrame), NSWidth(shadowFrame), NSHeight(shadowFrame));
-        NSMutableDictionary *shadowAnimationInfo = [[NSMutableDictionary alloc] init];
-        [shadowAnimationInfo setObject:_shadowView forKey:NSViewAnimationTargetKey];
-        [shadowAnimationInfo setObject:[NSValue valueWithRect:finalShadowRect] forKey:NSViewAnimationEndFrameKey];
-
-        NSArray *animationInfo = [[NSArray alloc] initWithObjects:frameViewAnimationInfo, shadowAnimationInfo, nil];
-        [frameViewAnimationInfo release];
-        [shadowAnimationInfo release];
-
-        NSViewAnimation *slideAnimation = [[NSViewAnimation alloc] initWithViewAnimations:animationInfo]; // released in animationDidEnd
-        [animationInfo release];
-
-        [slideAnimation setAnimationBlockingMode:NSAnimationBlocking];
-        [slideAnimation setDelegate:self];
+        [frameView setFrame:frameViewRect];
 
         _attachedToInspectedWebView = YES;
-
-        [[_inspectedWebView window] display]; // display once to make sure we start in a good state
-        [slideAnimation startAnimation];
     } else {
         _attachedToInspectedWebView = NO;
 
@@ -393,6 +326,8 @@ void WebInspectorClient::updateWindowTitle() const
 
         [super showWindow:nil];
     }
+
+    [_inspectedWebView page]->inspectorController()->setWindowVisible(true);
 }
 
 #pragma mark -
@@ -403,14 +338,12 @@ void WebInspectorClient::updateWindowTitle() const
         return;
 
     _shouldAttach = YES;
+    _movingWindows = YES;
 
-    if (_visible) {
-        _movingWindows = YES;
-        [self close];
-        _movingWindows = NO;
-    }
-
+    [self close];
     [self showWindow:nil];
+
+    _movingWindows = NO;
 }
 
 - (void)detach
@@ -419,13 +352,12 @@ void WebInspectorClient::updateWindowTitle() const
         return;
 
     _shouldAttach = NO;
+    _movingWindows = YES;
 
-    if (_visible) {
-        _movingWindows = YES; // set back to NO in animationDidEnd
-        [self close];
-    } else {
-        [self showWindow:nil];
-    }
+    [self close];
+    [self showWindow:nil];
+
+    _movingWindows = NO;
 }
 
 #pragma mark -
@@ -478,21 +410,6 @@ void WebInspectorClient::updateWindowTitle() const
     [_currentHighlight setDelegate:nil];
     [_currentHighlight release];
     _currentHighlight = nil;
-}
-
-#pragma mark -
-#pragma mark Animation delegate
-
-- (void)animationDidEnd:(NSAnimation*)animation
-{
-    [animation release];
-
-    [_shadowView removeFromSuperview];
-
-    if (_movingWindows) {
-        _movingWindows = NO;
-        [self showWindow:nil];
-    }
 }
 
 #pragma mark -
