@@ -1,5 +1,18 @@
 2008-05-22  Kevin McCullough  <kmccullough@apple.com>
 
+        Rubber stamped by Adam.
+
+        -Added new profiler tests.
+
+        * manual-tests/inspector/profiler-test-calling-the-function-that-started-the-profiler-from-another-scope.html: Added.
+        * manual-tests/inspector/profiler-test-constructor.html: Added.
+        * manual-tests/inspector/profiler-test-document-dot-write.html: Added.
+        * manual-tests/inspector/profiler-test-simple-no-level-change.html: Added.
+        * manual-tests/inspector/profiler-test-throw-exception-from-eval.html: Added.
+        * manual-tests/inspector/profiler-test-window-dot-eval.html: Added.
+
+2008-05-22  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Tim.
 
         <rdar://problem/5951529> JSProfiler: Allow the profiler to "Exclude" a

@@ -1,0 +1,28 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+console.profile("Using a constructor.");
+function startTest()
+{
+    var myObject = new fakeObject(1, 2);
+    endTest();
+}
+
+function fakeObject (x, y)
+{
+    var myArray = new Array()
+    myArray[0] = 5;
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript has a call to new() in it.
+<br>
+<br>
+To use this test, load it in the browser then load the WebInspector and look at
+the profile.  In the profile there should be a call to fakeObject() and Array()
+in it.
+</body>
+</html>
