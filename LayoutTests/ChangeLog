@@ -1,3 +1,12 @@
+2008-05-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - test case <rdar://problem/5957662> REGRESSION(r33943-r33980): Can't send email , attach file or save as draft from hotmail.com
+
+        * fast/js/function-redefinition-expected.txt: Added.
+        * fast/js/function-redefinition.html: Added.
+
 2008-05-23  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

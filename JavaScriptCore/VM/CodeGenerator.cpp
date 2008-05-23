@@ -206,6 +206,10 @@ CodeGenerator::CodeGenerator(ProgramNode* programNode, const Debugger* debugger,
     if (canCreateVariables) {
         for (size_t i = 0; i < functionStack.size(); ++i) {
             FuncDeclNode* funcDecl = functionStack[i];
+            if (globalObject->hasProperty(exec, funcDecl->m_ident) || symbolTable->contains(funcDecl->m_ident.ustring().rep())) {
+                globalObject->putWithAttributes(exec, funcDecl->m_ident, jsUndefined(), 0);
+                globalObject->deleteProperty(exec, funcDecl->m_ident);
+            }
             emitNewFunction(addVar(funcDecl->m_ident, false), funcDecl);
         }
         

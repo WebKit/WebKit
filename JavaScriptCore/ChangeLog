@@ -1,3 +1,14 @@
+2008-05-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - fixed <rdar://problem/5957662> REGRESSION(r33943-r33980): Can't send email , attach file or save as draft from hotmail.com
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::CodeGenerator): Delete any existing
+        properties before creating the function (this should really be
+        done at execution time not codegen time).
+
 2008-05-16  Alp Toker  <alp@nuanti.com>
 
         Build fix for gcc 3. Default constructor required in ExecState,
