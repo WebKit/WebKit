@@ -100,8 +100,13 @@ NetworkStateNotifier::NetworkStateNotifier()
     SCDynamicStoreContext context = { 0, this, 0, 0, 0 };
     
     m_store.adoptCF(SCDynamicStoreCreate(0, CFSTR("com.apple.WebCore"), dynamicStoreCallback, &context));
-    
+    if (!m_store)
+        return;
+
     RetainPtr<CFRunLoopSourceRef> configSource = SCDynamicStoreCreateRunLoopSource(0, m_store.get(), 0);
+    if (!configSource)
+        return;
+
     CFRunLoopAddSource(CFRunLoopGetCurrent(), configSource.get(), kCFRunLoopCommonModes);
     
     RetainPtr<CFMutableArrayRef> keys(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));

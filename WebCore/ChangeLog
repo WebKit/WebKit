@@ -1,3 +1,17 @@
+2008-05-22  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/5956612> ibtool crashes during build
+
+        SCDynamicStoreCreate will return null if it cannot create a dynamic store object.  We need
+        to check for failure rather than continuing with a null store as this results in us
+        passing a null CFRunLoopSourceRef to CFRunLoopAddSource, which promptly crashes.
+
+        * platform/network/mac/NetworkStateNotifierMac.cpp:
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier): Null check SCDynamicStoreCreate and
+        SCDynamicStoreCreateRunLoopSource as it is possible for them to fail.
+
 2008-05-22  Adam Roben  <aroben@apple.com>
 
         Add a test for calling a NodeList as a function while profiling
