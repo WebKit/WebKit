@@ -437,9 +437,10 @@ static NEVER_INLINE bool isNotObject(ExecState* exec, bool forInstanceOf, CodeBl
     return true;
 }
 
-static NEVER_INLINE JSValue* callEval(ExecState* exec, JSObject* thisObj, JSObject* evalFunction, ScopeChainNode* scopeChain, RegisterFile* registerFile, Register* r, int argv, int argc, JSValue*& exceptionValue)
+static NEVER_INLINE JSValue* callEval(ExecState* exec, JSObject* thisObj, ScopeChainNode* scopeChain, RegisterFile* registerFile, Register* r, int argv, int argc, JSValue*& exceptionValue)
 {
     Profiler** profiler = Profiler::enabledProfilerReference();
+    JSObject* evalFunction = scopeChain->globalObject()->evalFunction();
     if (*profiler)
         (*profiler)->willExecute(exec, evalFunction);
 
@@ -575,21 +576,14 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
         }
     }
 
-    Register* callFrame = r - oldCodeBlock->numLocals - CallFrameHeaderSize;
-    
-    if (Profiler* profiler = *Profiler::enabledProfilerReference()) {
-        if (!isGlobalCallFrame(registerBase, r) && callFrame[Callee].u.jsObject) // Check for global and eval code
-            profiler->didExecute(exec, callFrame[Callee].u.jsObject);
-        else
-            profiler->didExecute(exec, codeBlock->ownerNode->sourceURL(), codeBlock->ownerNode->lineNo());
-    }
-
     if (oldCodeBlock->needsFullScopeChain)
         scopeChain->deref();
     
     if (isGlobalCallFrame(registerBase, r))
         return false;
 
+    Register* callFrame = r - oldCodeBlock->numLocals - CallFrameHeaderSize;
+    
     codeBlock = callFrame[CallerCodeBlock].u.codeBlock;
     if (!codeBlock)
         return false;
@@ -607,6 +601,8 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
     exec->m_callFrameOffset = callerRegisterOffset - codeBlock->numLocals - CallFrameHeaderSize;
     vPC = callFrame[ReturnVPC].u.vPC;
 
+    if (Profiler* profiler = *Profiler::enabledProfilerReference())
+        profiler->didExecute(exec, callFrame[Callee].u.jsObject);
     return true;
 }
 
@@ -672,11 +668,11 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
     if (codeBlock->needsFullScopeChain)
         scopeChain = scopeChain->copy();
 
-    ExecState newExec(exec, this, registerFile, scopeChain, -1);
-
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
         (*profiler)->willExecute(exec, programNode->sourceURL(), programNode->lineNo());
+
+    ExecState newExec(exec, this, registerFile, scopeChain, -1);
 
     m_reentryDepth++;
     JSValue* result = privateExecute(Normal, &newExec, registerFile, r, scopeChain, codeBlock, exception);
@@ -742,6 +738,9 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, F
     m_reentryDepth++;
     JSValue* result = privateExecute(Normal, &newExec, registerFile, r, scopeChain, newCodeBlock, exception);
     m_reentryDepth--;
+
+    if (*profiler)
+        (*profiler)->didExecute(exec, function);
 
     registerFile->shrink(oldSize);
     return result;
@@ -1865,7 +1864,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
             registerFile->setSafeForReentry(true);
 
-            JSValue* result = callEval(exec, thisObject, static_cast<JSObject*>(funcVal), scopeChain, registerFile, r, argv, argc, exceptionValue);
+            JSValue* result = callEval(exec, thisObject, scopeChain, registerFile, r, argv, argc, exceptionValue);
 
             registerFile->setSafeForReentry(false);
             r = (*registerBase) + registerOffset;
@@ -1976,9 +1975,6 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             activation->copyRegisters();
         }
 
-        if (*enabledProfilerReference)
-            (*enabledProfilerReference)->didExecute(exec, callFrame[Callee].u.jsObject);
-
         if (codeBlock->needsFullScopeChain)
             scopeChain->deref();
 
@@ -1999,6 +1995,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         exec->m_callFrameOffset = callerRegisterOffset - codeBlock->numLocals - CallFrameHeaderSize;
         int r0 = callFrame[ReturnValueRegister].u.i;
         r[r0].u.jsValue = returnValue;
+
+        if (*enabledProfilerReference)
+            (*enabledProfilerReference)->didExecute(exec, callFrame[Callee].u.jsObject);
 
         NEXT_OPCODE;
     }

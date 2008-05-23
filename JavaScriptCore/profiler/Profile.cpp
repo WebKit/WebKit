@@ -56,16 +56,12 @@ void Profile::stopProfiling()
 void Profile::willExecute(const CallIdentifier& callIdentifier)
 {
     ASSERT(m_currentNode);
+
     m_currentNode = m_currentNode->willExecute(callIdentifier);
 }
 
 void Profile::didExecute(const CallIdentifier& callIdentifier)
 {
-    ASSERT(m_currentNode);
-
-    // In case the profiler started recording calls in the middle of a stack frame,
-    // when returning up the stack it needs to insert the calls it missed on the
-    // way down.
     if (m_currentNode == m_headNode) {
         m_currentNode = ProfileNode::create(callIdentifier, m_headNode.get(), m_headNode.get());
         m_currentNode->setStartTime(m_headNode->startTime());
