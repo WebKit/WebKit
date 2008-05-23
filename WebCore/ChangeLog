@@ -1,3 +1,12 @@
+2008-05-23  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5933759> REGRESSION: Frames don't appear as AX children of the top level web area
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+
 2008-05-23  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
