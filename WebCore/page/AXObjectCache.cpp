@@ -193,9 +193,18 @@ void AXObjectCache::handleActiveDescendantChanged(RenderObject* renderer)
 {
     if (!renderer)
         return;
-    RefPtr<AccessibilityObject> obj = get(renderer);
+    AccessibilityObject* obj = get(renderer);
     if (obj)
         obj->handleActiveDescendantChanged();
+}
+
+void AXObjectCache::handleAriaRoleChanged(RenderObject* renderer)
+{
+    if (!renderer)
+        return;
+    AccessibilityObject* obj = get(renderer);
+    if (obj && obj->isAccessibilityRenderObject())
+        static_cast<AccessibilityRenderObject*>(obj)->setAriaRole();
 }
 #endif
 

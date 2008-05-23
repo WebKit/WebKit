@@ -75,6 +75,7 @@ namespace WebCore {
         void childrenChanged(RenderObject*);
         void selectedChildrenChanged(RenderObject*);
         void handleActiveDescendantChanged(RenderObject*);
+        void handleAriaRoleChanged(RenderObject*);
         void handleFocusedUIElementChanged();
         static void enableAccessibility() { gAccessibilityEnabled = true; }
         static void enableEnhancedUserInterfaceAccessibility() { gAccessibilityEnhancedUserInterfaceEnabled = true; }

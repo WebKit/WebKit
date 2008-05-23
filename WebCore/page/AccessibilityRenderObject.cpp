@@ -78,7 +78,9 @@ using namespace HTMLNames;
 
 AccessibilityRenderObject::AccessibilityRenderObject(RenderObject* renderer)
     : m_renderer(renderer)
+    , m_ariaRole(UnknownRole)
 {
+    setAriaRole();
 #ifndef NDEBUG
     m_renderer->setHasAXObject(true);
 #endif
@@ -156,15 +158,25 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
 
 AccessibilityObject* AccessibilityRenderObject::parentObject() const
 {
-    if (m_areaElement)
-        return m_renderer->document()->axObjectCache()->get(m_renderer);
-    
     if (!m_renderer)
         return 0;
+    
+    if (m_areaElement)
+        return m_renderer->document()->axObjectCache()->get(m_renderer);
     
     RenderObject *parent = m_renderer->parent();
     if (!parent)
         return 0;
+    
+    if (ariaRoleAttribute() == MenuBarRole)
+        return m_renderer->document()->axObjectCache()->get(parent);
+
+    // menuButton and its corresponding menu are DOM siblings, but Accessibility needs them to be parent/child
+    if (ariaRoleAttribute() == MenuRole) {
+        AccessibilityObject* parent = menuButtonForMenu();
+        if (parent)
+            return parent;
+    }
     
     return m_renderer->document()->axObjectCache()->get(parent);
 }
@@ -242,6 +254,35 @@ bool AccessibilityRenderObject::isProgressIndicator() const
     return roleValue() == ProgressIndicatorRole;
 }
     
+bool AccessibilityRenderObject::isMenuRelated() const
+{
+    AccessibilityRole role = roleValue();
+    return  role == MenuRole ||
+            role == MenuBarRole ||
+            role == MenuButtonRole ||
+            role == MenuItemRole;
+}    
+
+bool AccessibilityRenderObject::isMenu() const
+{
+    return roleValue() == MenuRole;
+}
+
+bool AccessibilityRenderObject::isMenuBar() const
+{
+    return roleValue() == MenuBarRole;
+}
+
+bool AccessibilityRenderObject::isMenuButton() const
+{
+    return roleValue() == MenuButtonRole;
+}
+
+bool AccessibilityRenderObject::isMenuItem() const
+{
+    return roleValue() == MenuItemRole;
+}
+     
 bool AccessibilityRenderObject::isPressed() const
 {
     ASSERT(m_renderer);
@@ -447,6 +488,58 @@ Element* AccessibilityRenderObject::mouseButtonListener() const
             return static_cast<Element*>(elt);
     }
     
+    return 0;
+}
+
+static Element* siblingWithAriaRole(String role, Node* node)
+{
+    Node* sibling = node->parent()->firstChild();
+    while (sibling) {
+        if (sibling->isElementNode()) {
+            String siblingAriaRole = static_cast<Element*>(sibling)->getAttribute(roleAttr).string();
+            if (equalIgnoringCase(siblingAriaRole, role))
+                return static_cast<Element*>(sibling);
+        }
+        sibling = sibling->nextSibling();
+    }
+    
+    return 0;
+}
+
+Element* AccessibilityRenderObject::menuElementForMenuButton() const
+{
+    if (ariaRoleAttribute() != MenuButtonRole)
+        return 0;
+
+    return siblingWithAriaRole("menu", renderer()->node());
+}
+
+AccessibilityObject* AccessibilityRenderObject::menuForMenuButton() const
+{
+    Element* menu = menuElementForMenuButton();
+    if (menu && menu->renderer())
+        return m_renderer->document()->axObjectCache()->get(menu->renderer());
+    return 0;
+}
+
+Element* AccessibilityRenderObject::menuItemElementForMenu() const
+{
+    if (ariaRoleAttribute() != MenuRole)
+        return 0;
+    
+    return siblingWithAriaRole("menuitem", renderer()->node());    
+}
+
+AccessibilityObject* AccessibilityRenderObject::menuButtonForMenu() const
+{
+    Element* menuItem = menuItemElementForMenu();
+
+    if (menuItem && menuItem->renderer()) {
+        // ARIA just has generic menu items.  AppKit needs to know if this is a top level items like MenuBarButton or MenuBarItem
+        AccessibilityObject* menuItemAX = m_renderer->document()->axObjectCache()->get(menuItem->renderer());
+        if (menuItemAX->isMenuButton())
+            return menuItemAX;
+    }
     return 0;
 }
 
@@ -689,6 +782,8 @@ static HTMLLabelElement* labelForElement(Element* element)
 
 String AccessibilityRenderObject::title() const
 {
+    AccessibilityRole ariaRole = ariaRoleAttribute();
+    
     if (!m_renderer || m_areaElement)
         return String();
 
@@ -711,14 +806,16 @@ String AccessibilityRenderObject::title() const
             return input->value();
     }
     
-    if (isInputTag || AccessibilityObject::isARIAInput(ariaRoleAttribute())) {
+    if (isInputTag || AccessibilityObject::isARIAInput(ariaRole)) {
         HTMLLabelElement* label = labelForElement(static_cast<Element*>(node));
         if (label)
             return label->innerText();
     }
     
     if (roleValue() == ButtonRole
-        || ariaRoleAttribute() == ListBoxOptionRole
+        || ariaRole == ListBoxOptionRole
+        || ariaRole == MenuItemRole
+        || ariaRole == MenuButtonRole
         || isHeading())
         return textUnderElement();
     
@@ -855,7 +952,7 @@ AccessibilityObject* AccessibilityRenderObject::linkedUIElement() const
 
 bool AccessibilityRenderObject::accessibilityShouldUseUniqueId() const
 {
-    return isWebArea() || isTextControl() || (renderer()->element() && renderer()->element()->isFocusable());
+    return isWebArea() || isTextControl() || (renderer()->element() && renderer()->element()->isFocusable()) || isMenuRelated();
 }
 
 bool AccessibilityRenderObject::accessibilityIsIgnored() const
@@ -880,8 +977,13 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     }    
     
     // NOTE: BRs always have text boxes now, so the text box check here can be removed
-    if (m_renderer->isText())
-        return m_renderer->isBR() || !static_cast<RenderText*>(m_renderer)->firstTextBox();
+    if (m_renderer->isText()) {
+        // static text beneath MenuItems and MenuButtons are just reported along with the menu item, so it's ignored on an individual level
+        if (parentObjectUnignored()->ariaRoleAttribute() == MenuItemRole ||
+            parentObjectUnignored()->ariaRoleAttribute() == MenuButtonRole)
+            return true;
+         return m_renderer->isBR() || !static_cast<RenderText*>(m_renderer)->firstTextBox();
+    }
     
     if (isHeading())
         return false;
@@ -1689,8 +1791,13 @@ static const ARIARoleMap& createARIARoleMap()
         { String("progressbar"), ProgressIndicatorRole },
         { String("radio"), RadioButtonRole },
         { String("textbox"), TextAreaRole },
-        { String("listbox"), ListBoxRole }
-        // "option" isn't here because it may map to different roles depending on the parent element's role
+        { String("listbox"), ListBoxRole },
+         // "option" isn't here because it may map to different roles depending on the parent element's role
+        { String("menu"), MenuRole },
+        { String("menubar"), GroupRole },
+        // "menuitem" isn't here because it may map to different roles depending on the parent element's role
+        { String("menuitemcheckbox"), MenuItemRole },
+        { String("menuitemradio"), MenuItemRole }
     };
     ARIARoleMap& roleMap = *new ARIARoleMap;
         
@@ -1707,7 +1814,7 @@ static AccessibilityRole ariaRoleToWebCoreRole(String value)
     return roleMap.get(value);
 }
 
-AccessibilityRole AccessibilityRenderObject::ariaRoleAttribute() const
+AccessibilityRole AccessibilityRenderObject::determineAriaRoleAttribute() const
 {
     String ariaRole = getAttribute(roleAttr).string();
     if (ariaRole.isNull() || ariaRole.isEmpty())
@@ -1718,15 +1825,40 @@ AccessibilityRole AccessibilityRenderObject::ariaRoleAttribute() const
         return role;
     // selects and listboxes both have options as child roles, but they map to different roles within WebCore
     if (equalIgnoringCase(ariaRole,"option")) {
-        if (parentObject()->ariaRoleAttribute() == MenuRole)
+        if (parentObjectUnignored()->ariaRoleAttribute() == MenuRole)
             return MenuItemRole;
-        if (parentObject()->ariaRoleAttribute() == ListBoxRole)
+        if (parentObjectUnignored()->ariaRoleAttribute() == ListBoxRole)
             return ListBoxOptionRole;
+    }
+    // an aria "menuitem" may map to MenuButton or MenuItem depending on its parent
+    if (equalIgnoringCase(ariaRole,"menuitem")) {
+        if (parentObjectUnignored()->ariaRoleAttribute() == GroupRole)
+            return MenuButtonRole;
+        if (parentObjectUnignored()->ariaRoleAttribute() == MenuRole)
+            return MenuItemRole;
     }
     
     return UnknownRole;
 }
-    
+
+void AccessibilityRenderObject::setAriaRole()
+{
+    m_ariaRole = determineAriaRoleAttribute();
+}
+
+AccessibilityRole AccessibilityRenderObject::ariaRoleAttribute() const
+{
+    if (m_ariaRole == MenuRole)
+        return m_ariaRole;
+    if (m_ariaRole == MenuBarRole)
+        return m_ariaRole;
+    if (m_ariaRole == MenuButtonRole)
+        return m_ariaRole;
+    if (m_ariaRole == MenuItemRole)
+        return m_ariaRole;
+    return m_ariaRole;
+}
+
 AccessibilityRole AccessibilityRenderObject::roleValue() const
 {
     if (!m_renderer)
@@ -1903,6 +2035,9 @@ void AccessibilityRenderObject::addChildren()
     if (!m_renderer)
         return;
     
+    if (isMenuButton())
+        return ariaMenuButtonChildren();        
+
     m_haveChildren = true;
     
     // add all unignored acc children
@@ -1934,6 +2069,13 @@ void AccessibilityRenderObject::addChildren()
             }
         }
     }
+}
+
+void AccessibilityRenderObject::ariaMenuButtonChildren()
+{
+    //AccessibilityObject* child = menuForMenuButton();
+    //m_children.append(child);
+    //m_children.append(menuForMenuButton());
 }
 
 void AccessibilityRenderObject::ariaListboxSelectedChildren(Vector<RefPtr<AccessibilityObject> >& result)

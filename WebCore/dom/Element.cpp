@@ -552,6 +552,11 @@ void Element::attributeChanged(Attribute* attr, bool preserveDecls)
         if (document()->axObjectCache()->accessibilityEnabled())
             document()->axObjectCache()->handleActiveDescendantChanged(renderer());
     }
+    if (attrName == roleAttr) {
+        // the role attribute can change at any time, and the AccessibilityObject must pick up these changes
+        if (document()->axObjectCache()->accessibilityEnabled())
+            document()->axObjectCache()->handleAriaRoleChanged(renderer());
+    }
 }
 
 void Element::setAttributeMap(PassRefPtr<NamedAttrMap> list)

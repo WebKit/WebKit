@@ -505,10 +505,13 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
 {
     static NSArray* actionElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityPressAction, NSAccessibilityShowMenuAction, nil];
     static NSArray* defaultElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityShowMenuAction, nil];
+    static NSArray* menuElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityCancelAction, NSAccessibilityPressAction, nil];
     
     NSArray *actions;
     if (m_object->actionElement()) 
         actions = actionElementActions;
+    else if (m_object->isMenuRelated())
+        actions = menuElementActions;
     else if (m_object->isAttachment())
         actions = [[self attachmentView] accessibilityActionNames];
     else
@@ -528,6 +531,11 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     static NSArray* textAttrs = nil;
     static NSArray* listBoxAttrs = nil;
     static NSArray* progressIndicatorAttrs = nil;
+    static NSArray* commonMenuAttrs = nil;
+    static NSArray* menuAttrs = nil;
+    static NSArray* menuBarAttrs = nil;
+    static NSArray* menuItemAttrs = nil;
+    static NSArray* menuButtonAttrs = nil;
     NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
@@ -552,6 +560,16 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
                       NSAccessibilitySelectedAttribute,
                       @"AXBlockQuoteLevel",
                       nil];
+    }
+    if (commonMenuAttrs == nil) {
+        commonMenuAttrs = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
+                            NSAccessibilityRoleDescriptionAttribute,
+                            NSAccessibilityChildrenAttribute,
+                            NSAccessibilityParentAttribute,
+                            NSAccessibilityEnabledAttribute,
+                            NSAccessibilityPositionAttribute,
+                            NSAccessibilitySizeAttribute,
+                            nil];
     }
     if (anchorAttrs == nil) {
         tempArray = [[NSMutableArray alloc] initWithArray:attributes];
@@ -595,7 +613,51 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         progressIndicatorAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
-    
+    if (menuBarAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:commonMenuAttrs];
+        [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
+        [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
+        [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
+        menuBarAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
+    if (menuAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:commonMenuAttrs];
+        [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
+        [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
+        [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
+        menuAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
+    if (menuItemAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:commonMenuAttrs];
+        [tempArray addObject:NSAccessibilityTitleAttribute];
+        [tempArray addObject:NSAccessibilityHelpAttribute];
+        [tempArray addObject:NSAccessibilitySelectedAttribute];
+        [tempArray addObject:(NSString*)kAXMenuItemCmdCharAttribute];
+        [tempArray addObject:(NSString*)kAXMenuItemCmdVirtualKeyAttribute];
+        [tempArray addObject:(NSString*)kAXMenuItemCmdGlyphAttribute];
+        [tempArray addObject:(NSString*)kAXMenuItemCmdModifiersAttribute];
+        [tempArray addObject:(NSString*)kAXMenuItemMarkCharAttribute];
+        [tempArray addObject:(NSString*)kAXMenuItemPrimaryUIElementAttribute];
+        [tempArray addObject:NSAccessibilityServesAsTitleForUIElementsAttribute];
+        menuItemAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
+    if (menuButtonAttrs == nil) {
+        menuButtonAttrs = [[NSArray alloc] initWithObjects:NSAccessibilityRoleAttribute,
+            NSAccessibilityRoleDescriptionAttribute,
+            NSAccessibilityParentAttribute,
+            NSAccessibilityPositionAttribute,
+            NSAccessibilitySizeAttribute,
+            NSAccessibilityWindowAttribute,
+            NSAccessibilityTopLevelUIElementAttribute,
+            NSAccessibilityEnabledAttribute,
+            NSAccessibilityFocusedAttribute,
+            NSAccessibilityTitleAttribute,
+            NSAccessibilityChildrenAttribute, nil];
+    }
+
     if (m_object->isPasswordField())
         return attributes;
 
@@ -613,6 +675,15 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
 
     if (m_object->isProgressIndicator())
         return progressIndicatorAttrs;
+
+    if (m_object->isMenu())
+        return menuAttrs;
+    if (m_object->isMenuBar())
+        return menuBarAttrs;
+    if (m_object->isMenuButton())
+        return menuButtonAttrs;
+    if (m_object->isMenuItem())
+        return menuItemAttrs;
 
     return attributes;
 }
@@ -826,6 +897,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
     if ([axRole isEqualToString:@"AXHeading"])
         return AXHeadingText();
+        
+    if ([axRole isEqualToString:(NSString*)kAXMenuBarItemRole] ||
+        [axRole isEqualToString:NSAccessibilityMenuRole])
+        return nil;
+
+    if ([axRole isEqualToString:NSAccessibilityMenuButtonRole])
+        return NSAccessibilityRoleDescription(NSAccessibilityMenuButtonRole, [self subrole]);
     
     return NSAccessibilityRoleDescription(NSAccessibilityUnknownRole, nil);
 }
@@ -1018,7 +1096,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
     if ([attributeName isEqualToString: NSAccessibilitySelectedAttribute])
         return [NSNumber numberWithBool:m_object->isSelected()];
-    
+
+    if ([attributeName isEqualToString: NSAccessibilityServesAsTitleForUIElementsAttribute] && m_object->isMenuButton()) {
+        AccessibilityObject* uiElement = static_cast<AccessibilityRenderObject*>(m_object)->menuForMenuButton();
+        if (uiElement)
+            return [NSArray arrayWithObject:uiElement->wrapper()];
+    }
+
     return nil;
 }
 
@@ -1137,6 +1221,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
     if (m_object->isTextControl())
         return textParamAttrs;
+        
+    if (m_object->isMenuRelated())
+        return nil;
 
     return paramAttrs;
 }
