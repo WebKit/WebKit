@@ -1,3 +1,11 @@
+2008-05-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add IconFetcher to project.
+        
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-05-23  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a bug where the Web Insepctor would jump back to

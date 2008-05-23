@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1251"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -3631,10 +3631,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\page\inspector\DataGrid.js"
-					>
-				</File>
-				<File
 					RelativePath="..\page\inspector\DatabaseQueryView.js"
 					>
 				</File>
@@ -3644,6 +3640,10 @@
 				</File>
 				<File
 					RelativePath="..\page\inspector\DatabaseTableView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\page\inspector\DataGrid.js"
 					>
 				</File>
 				<File
@@ -4024,6 +4024,14 @@
 				</File>
 				<File
 					RelativePath="..\loader\icon\IconDatabaseClient.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\icon\IconFetcher.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\icon\IconFetcher.h"
 					>
 				</File>
 				<File
