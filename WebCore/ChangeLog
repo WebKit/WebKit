@@ -1,5 +1,21 @@
 2008-05-23  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes a bug where the Inspector could have 0ms timers firing
+        even after it is closed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18577
+
+        Reviewed by Oliver Hunt.
+
+        * page/inspector/DatabasesPanel.js: Removes setTimeouts that call
+        the same function with a 0ms delay. These we not doing any good anyway,
+        so they weren't needed and just caused problems.
+        * page/inspector/ElementsPanel.js: Ditto.
+        * page/inspector/ProfilesPanel.js: Ditto.
+        * page/inspector/ResourcesPanel.js: Ditto.
+
+2008-05-23  Timothy Hatcher  <timothy@apple.com>
+
         Make the Inspector correctly populate the profiles when
         closed and re-opened.
 

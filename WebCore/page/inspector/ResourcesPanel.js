@@ -592,8 +592,8 @@ WebInspector.ResourcesPanel.prototype = {
         }
 
         if (document.body.offsetWidth <= 0) {
-            // The stylesheet hasn't loaded yet, so we need to update later.
-            setTimeout(this._updateGraphDividersIfNeeded.bind(this), 0);
+            // The stylesheet hasn't loaded yet or the window is closed,
+            // so we can't calculate what is need. Return early.
             return;
         }
 
@@ -642,8 +642,8 @@ WebInspector.ResourcesPanel.prototype = {
         }
 
         if (document.body.offsetWidth <= 0) {
-            // The stylesheet hasn't loaded yet, so we need to update later.
-            setTimeout(this._updateGraphBars.bind(this), 0);
+            // The stylesheet hasn't loaded yet or the window is closed,
+            // so we can't calculate what is need. Return early.
             return;
         }
 
@@ -1053,8 +1053,8 @@ WebInspector.ResourcesPanel.prototype = {
     _updateSidebarWidth: function(width)
     {
         if (this.sidebarElement.offsetWidth <= 0) {
-            // The stylesheet hasn't loaded yet, so we need to update later.
-            setTimeout(this._updateSidebarWidth.bind(this), 0, width);
+            // The stylesheet hasn't loaded yet or the window is closed,
+            // so we can't calculate what is need. Return early.
             return;
         }
 

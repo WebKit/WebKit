@@ -547,8 +547,8 @@ WebInspector.ElementsPanel.prototype = {
             return;
 
         if (document.body.offsetWidth <= 0) {
-            // The stylesheet hasn't loaded yet, so we need to update later.
-            setTimeout(this.updateBreadcrumbSizes.bind(this), 0);
+            // The stylesheet hasn't loaded yet or the window is closed,
+            // so we can't calculate what is need. Return early.
             return;
         }
 
@@ -996,8 +996,8 @@ WebInspector.DOMNodeTreeElement.prototype = {
             return;
 
         if (document.body.offsetWidth <= 0) {
-            // The stylesheet hasn't loaded yet, so we need to update later.
-            setTimeout(this.updateSelection.bind(this), 0);
+            // The stylesheet hasn't loaded yet or the window is closed,
+            // so we can't calculate what is need. Return early.
             return;
         }
 
