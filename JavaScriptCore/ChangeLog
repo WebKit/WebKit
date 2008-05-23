@@ -1,3 +1,46 @@
+2008-05-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler, Kevin McCullough, and Oliver Hunt.
+        
+        Fixed <rdar://problem/5959447> Crashes and incorrect reporting in the
+        JavaScript profiler
+
+        * VM/Machine.cpp:
+        (KJS::callEval): Made this profiler hooks slightly faster by passing in
+        the eval function.
+        
+        (KJS::Machine::unwindCallFrame): Fixed incorrect reporting / a crash
+        when unwinding from inside eval and/or program code: detect the
+        difference, and do the right thing. Also, be sure to notify the profiler
+        *before* deref'ing the scope chain, since the profiler uses the scope chain.
+
+        (KJS::Machine::execute): Fixed incorrect reporting / crash when calling
+        a JS function re-entrently: Machine::execute(FunctionBodyNode*...)
+        should not invoke the didExecute hook, because op_ret already does that.
+        Also, use the new function's ExecState when calling out to the profiler.
+        (Not important now, but could have become a subtle bug later.)
+
+        (KJS::Machine::privateExecute): Fixed a hard to reproduce crash when
+        profiling JS functions: notify the profiler *before* deref'ing the scope
+        chain, since the profiler uses the scope chain.
+
+        * kjs/object.cpp:
+        (KJS::JSObject::call): Removed these hooks, because they are now unnecessary.
+
+        * profiler/Profile.cpp: Added a comment to explain a subtlety that only
+        Kevin and I understood previously. (Now, the whole world can understand!)
+
+        * profiler/Profiler.cpp:
+        (KJS::shouldExcludeFunction): Don't exclude .call and .apply. That was
+        a hack to fix bugs that no longer exist.
+
+        Finally, sped things up a little bit by changing the "Is the profiler
+        running?" check into an ASSERT, since we only call into the profiler
+        when it's running:
+
+        (KJS::Profiler::willExecute):
+        (KJS::Profiler::didExecute):
+
 2008-05-23  Adam Roben  <aroben@apple.com>
 
         Windows build fix
