@@ -49,13 +49,15 @@ namespace KJS {
             , m_isReadOnly(false)
 #endif
         {
-            m_buffer = m_vector.data();
+            m_bufferSlot = m_vector.dataSlot();
+            m_offset = 0;
             m_size = m_vector.size();
         }
 
         // Constructor for a read-only list whose data has already been allocated elsewhere.
-        List(JSValue** buffer, size_t size)
-            : m_buffer(buffer)
+        List(JSValue*** bufferSlot, size_t offset, size_t size)
+            : m_bufferSlot(bufferSlot)
+            , m_offset(offset)
             , m_size(size)
             , m_isInMarkSet(false)
 #ifndef NDEBUG
@@ -76,7 +78,7 @@ namespace KJS {
         JSValue* at(size_t i) const
         {
             if (i < m_size)
-                return m_buffer[i];
+                return buffer()[i];
             return jsUndefined();
         }
 
@@ -100,18 +102,18 @@ namespace KJS {
                 // function measurably improves the performance of the fast 
                 // "just append" case.
                 expandAndAppend(v);
-                m_buffer = m_vector.data();
+                m_bufferSlot = m_vector.dataSlot();
                 ++m_size;
             }
         }
 
         void getSlice(int startIndex, List& result) const;
 
-        iterator begin() { return m_buffer; }
-        iterator end() { return m_buffer + m_size; }
+        iterator begin() { return buffer(); }
+        iterator end() { return buffer() + m_size; }
 
-        const_iterator begin() const { return m_buffer; }
-        const_iterator end() const { return m_buffer + m_size; }
+        const_iterator begin() const { return buffer(); }
+        const_iterator end() const { return buffer() + m_size; }
 
         static void markProtectedLists()
         {
@@ -126,7 +128,10 @@ namespace KJS {
 
         void expandAndAppend(JSValue*);
         
-        JSValue** m_buffer;
+        JSValue** buffer() const { return *m_bufferSlot + m_offset; }
+        
+        JSValue*** m_bufferSlot;
+        size_t m_offset;
         size_t m_size;
 
         VectorType m_vector;

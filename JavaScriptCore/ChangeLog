@@ -1,3 +1,26 @@
+2008-05-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5959886> REGRESSION: Assertion failure in JSImmediate::toString when loading GMail (19217)
+        
+        Change List to store a JSValue*** pointer + an offset instead of a JSValue** pointer to protect against the case where 
+        a register file changes while a list object points to its buffer.
+        
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+        * kjs/JSActivation.cpp:
+        (KJS::JSActivation::createArgumentsObject):
+        * kjs/list.cpp:
+        (KJS::List::getSlice):
+        * kjs/list.h:
+        (KJS::List::List):
+        (KJS::List::at):
+        (KJS::List::append):
+        (KJS::List::begin):
+        (KJS::List::end):
+        (KJS::List::buffer):
+
 2008-05-23  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam.
