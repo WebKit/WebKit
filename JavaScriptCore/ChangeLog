@@ -1,3 +1,16 @@
+2008-05-22  Adam Roben  <aroben@apple.com>
+
+        Show "(Function object)" instead of "(JSInpectorCallbackWrapper
+        object)" in profiles
+
+        Reviewed by Kevin McCullough.
+
+        * profiler/Profiler.cpp:
+        (KJS::createCallIdentifier): Use JSObject::className instead of
+        getting the class name from the ClassInfo directly. JSObject
+        subclasses can override className to provide a custom class name, and
+        it seems like we should honor that.
+
 2008-05-22  Timothy Hatcher  <timothy@apple.com>
 
         Added Profile::restoreAll and added ProfileNode::restoreAll

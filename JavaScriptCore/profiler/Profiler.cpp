@@ -160,9 +160,7 @@ CallIdentifier createCallIdentifier(JSObject* calledFunction)
     if (calledFunction->inherits(&InternalFunctionImp::info))
         return CallIdentifier(static_cast<InternalFunctionImp*>(calledFunction)->functionName().ustring(), "", 0);
 
-    UString name = "(";
-    name += calledFunction->classInfo()->className;
-    name += " object)";
+    UString name = "(" + calledFunction->className() + " object)";
     return CallIdentifier(name, 0, 0);
 }
 
