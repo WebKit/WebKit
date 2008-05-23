@@ -89,6 +89,12 @@ WebInspector.SourceView.prototype = {
         this.sourceFrame.revealLine(lineNumber);
     },
 
+    highlightLine: function(lineNumber)
+    {
+        this.setupSourceFrameIfNeeded();
+        this.sourceFrame.highlightLine(lineNumber);
+    },
+
     addMessage: function(msg)
     {
         this.sourceFrame.addMessage(msg);

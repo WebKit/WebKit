@@ -164,6 +164,15 @@ WebInspector.SourceFrame.prototype = {
         }
     },
 
+    highlightLine: function(lineNumber)
+    {
+        var sourceRow = this.sourceRow(lineNumber);
+        if (!sourceRow)
+            return;
+        sourceRow.addStyleClass("webkit-highlighted-line");
+        setTimeout(function() { sourceRow.removeStyleClass("webkit-highlighted-line") }, 300);
+    },
+
     _loaded: function()
     {
         WebInspector.addMainEventListeners(this.element.contentDocument);
@@ -188,6 +197,8 @@ WebInspector.SourceFrame.prototype = {
         styleText += ".webkit-breakpoint-disabled.webkit-execution-line .webkit-line-number { color: transparent; background-image: -webkit-canvas(breakpoint-disabled-program-counter); }\n";
         styleText += ".webkit-execution-line .webkit-line-content { background-color: rgb(171, 191, 254); outline: 1px solid rgb(64, 115, 244); }\n";
         styleText += ".webkit-height-sized-to-fit { overflow-y: hidden }\n";
+        styleText += ".webkit-line-content { background-color: white; }\n";
+        styleText += ".webkit-highlighted-line .webkit-line-content { background-color: rgb(255, 255, 120); -webkit-transition-property: background-color; -webkit-transition-duration: 1s; }\n";
 
         styleElement.textContent = styleText;
 

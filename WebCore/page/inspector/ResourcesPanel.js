@@ -428,8 +428,12 @@ WebInspector.ResourcesPanel.prototype = {
         view.headersVisible = true;
         view.show(this.resourceViews);
 
-        if (line && view.revealLine)
-            view.revealLine(line);
+        if (line) {
+            if (view.revealLine)
+                view.revealLine(line);
+            if (view.highlightLine)
+                view.highlightLine(line);
+        }
 
         if (resource._resourcesTreeElement) {
             resource._resourcesTreeElement.reveal();

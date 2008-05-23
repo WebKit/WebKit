@@ -1,3 +1,28 @@
+2008-05-22  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 19204: Inspector should highlight source lines when following
+        links to them
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19204>
+
+        Reviewed by Tim Hatcher.
+
+        Test: manual-tests/inspector/highlight-source-line.html
+
+        * manual-tests/inspector/highlight-source-line.html: Added.
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.showResource): Call
+        highlightLine on the view if that function exists.
+        * page/inspector/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.highlightLine): Added. Adds the
+        webkit-highlighted-line class to the relevant line, then removes it
+        after a short delay.
+        (WebInspector.SourceFrame.prototype._loaded): Added styles for the
+        highlighted line(s).
+        * page/inspector/SourceView.js:
+        (WebInspector.SourceView.prototype.highlightLine): Added. Calls
+        through to the SourceFrame.
+
 2008-05-22  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
