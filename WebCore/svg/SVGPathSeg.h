@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -69,6 +69,25 @@ namespace WebCore {
     protected:
         SVGPathSeg() { }
     };
+
+    class SVGPathSegSingleCoord : public SVGPathSeg { 
+    public:
+        SVGPathSegSingleCoord(float x, float y)
+        : SVGPathSeg() , m_x(x) , m_y(y) {}
+
+        void setX(float x) { m_x = x; }
+        float x() const { return m_x; }
+
+        void setY(float y) { m_y = y; }
+        float y() const { return m_y; }
+
+        virtual String toString() const { return pathSegTypeAsLetter() + String::format(" %.6lg %.6lg", m_x, m_y); }
+
+    private:
+        float m_x;
+        float m_y;
+    };
+
 
 } // namespace WebCore
 

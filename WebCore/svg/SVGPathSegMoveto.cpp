@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,75 +25,17 @@
 #if ENABLE(SVG)
 #include "SVGPathSegMoveto.h"
 
-#include "SVGStyledElement.h"
-
 namespace WebCore {
 
 SVGPathSegMovetoAbs::SVGPathSegMovetoAbs(float x, float y)
-    : SVGPathSeg()
-    , m_x(x)
-    , m_y(y)
+    : SVGPathSegSingleCoord(x, y)
 {
 }
-
-SVGPathSegMovetoAbs::~SVGPathSegMovetoAbs()
-{
-}
-
-void SVGPathSegMovetoAbs::setX(float x)
-{
-    m_x = x;
-}
-
-float SVGPathSegMovetoAbs::x() const
-{
-    return m_x;
-}
-
-void SVGPathSegMovetoAbs::setY(float y)
-{
-    m_y = y;
-}
-
-float SVGPathSegMovetoAbs::y() const
-{
-    return m_y;
-}
-
-
-
 
 SVGPathSegMovetoRel::SVGPathSegMovetoRel(float x, float y)
-    : SVGPathSeg()
-    , m_x(x)
-    , m_y(y)
+    : SVGPathSegSingleCoord(x, y)
 {
 }
-
-SVGPathSegMovetoRel::~SVGPathSegMovetoRel()
-{
-}
-
-void SVGPathSegMovetoRel::setX(float x)
-{
-    m_x = x;
-}
-
-float SVGPathSegMovetoRel::x() const
-{
-    return m_x;
-}
-
-void SVGPathSegMovetoRel::setY(float y)
-{
-    m_y = y;
-}
-
-float SVGPathSegMovetoRel::y() const
-{
-    return m_y;
-}
-
 }
 
 #endif // ENABLE(SVG)

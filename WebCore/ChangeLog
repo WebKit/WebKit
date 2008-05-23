@@ -1,3 +1,155 @@
+2008-05-22  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        https://bugs.webkit.org/show_bug.cgi?id=12053
+        SVGPathSeg*(Abs|Rel) classses should be combined to reduce code size
+
+        Reduce code size through shared base classes.
+
+        * svg/SVGPathSeg.h:
+        (WebCore::SVGPathSegSingleCoord::SVGPathSegSingleCoord):
+        (WebCore::SVGPathSegSingleCoord::setX):
+        (WebCore::SVGPathSegSingleCoord::x):
+        (WebCore::SVGPathSegSingleCoord::setY):
+        (WebCore::SVGPathSegSingleCoord::y):
+        (WebCore::SVGPathSegSingleCoord::toString):
+        * svg/SVGPathSegArc.cpp:
+        (WebCore::SVGPathSegArcAbs::SVGPathSegArcAbs):
+        (WebCore::SVGPathSegArcRel::SVGPathSegArcRel):
+        * svg/SVGPathSegArc.h:
+        (WebCore::SVGPathSegArc::SVGPathSegArc):
+        (WebCore::SVGPathSegArc::toString):
+        (WebCore::SVGPathSegArc::setX):
+        (WebCore::SVGPathSegArc::x):
+        (WebCore::SVGPathSegArc::setY):
+        (WebCore::SVGPathSegArc::y):
+        (WebCore::SVGPathSegArc::setR1):
+        (WebCore::SVGPathSegArc::r1):
+        (WebCore::SVGPathSegArc::setR2):
+        (WebCore::SVGPathSegArc::r2):
+        (WebCore::SVGPathSegArc::setAngle):
+        (WebCore::SVGPathSegArc::angle):
+        (WebCore::SVGPathSegArc::setLargeArcFlag):
+        (WebCore::SVGPathSegArc::largeArcFlag):
+        (WebCore::SVGPathSegArc::setSweepFlag):
+        (WebCore::SVGPathSegArc::sweepFlag):
+        (WebCore::SVGPathSegArcAbs::create):
+        (WebCore::SVGPathSegArcAbs::pathSegType):
+        (WebCore::SVGPathSegArcAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegArcRel::create):
+        (WebCore::SVGPathSegArcRel::pathSegTypeAsLetter):
+        * svg/SVGPathSegCurvetoCubic.cpp:
+        (WebCore::SVGPathSegCurvetoCubicAbs::SVGPathSegCurvetoCubicAbs):
+        (WebCore::SVGPathSegCurvetoCubicRel::SVGPathSegCurvetoCubicRel):
+        * svg/SVGPathSegCurvetoCubic.h:
+        (WebCore::SVGPathSegCurvetoCubic::SVGPathSegCurvetoCubic):
+        (WebCore::SVGPathSegCurvetoCubic::toString):
+        (WebCore::SVGPathSegCurvetoCubic::setX):
+        (WebCore::SVGPathSegCurvetoCubic::x):
+        (WebCore::SVGPathSegCurvetoCubic::setY):
+        (WebCore::SVGPathSegCurvetoCubic::y):
+        (WebCore::SVGPathSegCurvetoCubic::setX1):
+        (WebCore::SVGPathSegCurvetoCubic::x1):
+        (WebCore::SVGPathSegCurvetoCubic::setY1):
+        (WebCore::SVGPathSegCurvetoCubic::y1):
+        (WebCore::SVGPathSegCurvetoCubic::setX2):
+        (WebCore::SVGPathSegCurvetoCubic::x2):
+        (WebCore::SVGPathSegCurvetoCubic::setY2):
+        (WebCore::SVGPathSegCurvetoCubic::y2):
+        (WebCore::SVGPathSegCurvetoCubicAbs::create):
+        (WebCore::SVGPathSegCurvetoCubicAbs::pathSegType):
+        (WebCore::SVGPathSegCurvetoCubicAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegCurvetoCubicRel::create):
+        (WebCore::SVGPathSegCurvetoCubicRel::pathSegTypeAsLetter):
+        * svg/SVGPathSegCurvetoCubicSmooth.cpp:
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::SVGPathSegCurvetoCubicSmoothAbs):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::SVGPathSegCurvetoCubicSmoothRel):
+        * svg/SVGPathSegCurvetoCubicSmooth.h:
+        (WebCore::SVGPathSegCurvetoCubicSmooth::SVGPathSegCurvetoCubicSmooth):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::toString):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::setX):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::x):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::setY):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::y):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::setX2):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::x2):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::setY2):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::y2):
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::create):
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::pathSegType):
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::create):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::pathSegType):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::pathSegTypeAsLetter):
+        * svg/SVGPathSegCurvetoQuadratic.cpp:
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::SVGPathSegCurvetoQuadraticAbs):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::SVGPathSegCurvetoQuadraticRel):
+        * svg/SVGPathSegCurvetoQuadratic.h:
+        (WebCore::SVGPathSegCurvetoQuadratic::SVGPathSegCurvetoQuadratic):
+        (WebCore::SVGPathSegCurvetoQuadratic::toString):
+        (WebCore::SVGPathSegCurvetoQuadratic::setX):
+        (WebCore::SVGPathSegCurvetoQuadratic::x):
+        (WebCore::SVGPathSegCurvetoQuadratic::setY):
+        (WebCore::SVGPathSegCurvetoQuadratic::y):
+        (WebCore::SVGPathSegCurvetoQuadratic::setX1):
+        (WebCore::SVGPathSegCurvetoQuadratic::x1):
+        (WebCore::SVGPathSegCurvetoQuadratic::setY1):
+        (WebCore::SVGPathSegCurvetoQuadratic::y1):
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::create):
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::pathSegType):
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::create):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::pathSegType):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::pathSegTypeAsLetter):
+        * svg/SVGPathSegCurvetoQuadraticSmooth.cpp:
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothAbs::SVGPathSegCurvetoQuadraticSmoothAbs):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothRel::SVGPathSegCurvetoQuadraticSmoothRel):
+        * svg/SVGPathSegCurvetoQuadraticSmooth.h:
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothAbs::create):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothRel::create):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothRel::pathSegTypeAsLetter):
+        * svg/SVGPathSegLineto.cpp:
+        (WebCore::SVGPathSegLinetoAbs::SVGPathSegLinetoAbs):
+        (WebCore::SVGPathSegLinetoRel::SVGPathSegLinetoRel):
+        * svg/SVGPathSegLineto.h:
+        (WebCore::SVGPathSegLinetoAbs::create):
+        (WebCore::SVGPathSegLinetoAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegLinetoRel::pathSegTypeAsLetter):
+        * svg/SVGPathSegLinetoHorizontal.cpp:
+        (WebCore::SVGPathSegLinetoHorizontalAbs::SVGPathSegLinetoHorizontalAbs):
+        (WebCore::SVGPathSegLinetoHorizontalRel::SVGPathSegLinetoHorizontalRel):
+        * svg/SVGPathSegLinetoHorizontal.h:
+        (WebCore::SVGPathSegLinetoHorizontal::SVGPathSegLinetoHorizontal):
+        (WebCore::SVGPathSegLinetoHorizontal::toString):
+        (WebCore::SVGPathSegLinetoHorizontal::setX):
+        (WebCore::SVGPathSegLinetoHorizontal::x):
+        (WebCore::SVGPathSegLinetoHorizontalAbs::create):
+        (WebCore::SVGPathSegLinetoHorizontalAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegLinetoHorizontalRel::create):
+        (WebCore::SVGPathSegLinetoHorizontalRel::pathSegTypeAsLetter):
+        * svg/SVGPathSegLinetoVertical.cpp:
+        (WebCore::SVGPathSegLinetoVerticalAbs::SVGPathSegLinetoVerticalAbs):
+        (WebCore::SVGPathSegLinetoVerticalRel::SVGPathSegLinetoVerticalRel):
+        * svg/SVGPathSegLinetoVertical.h:
+        (WebCore::SVGPathSegLinetoVertical::SVGPathSegLinetoVertical):
+        (WebCore::SVGPathSegLinetoVertical::toString):
+        (WebCore::SVGPathSegLinetoVertical::setY):
+        (WebCore::SVGPathSegLinetoVertical::y):
+        (WebCore::SVGPathSegLinetoVerticalAbs::create):
+        (WebCore::SVGPathSegLinetoVerticalAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegLinetoVerticalRel::create):
+        (WebCore::SVGPathSegLinetoVerticalRel::pathSegTypeAsLetter):
+        * svg/SVGPathSegMoveto.cpp:
+        (WebCore::SVGPathSegMovetoAbs::SVGPathSegMovetoAbs):
+        (WebCore::SVGPathSegMovetoRel::SVGPathSegMovetoRel):
+        * svg/SVGPathSegMoveto.h:
+        (WebCore::SVGPathSegMovetoAbs::create):
+        (WebCore::SVGPathSegMovetoAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegMovetoRel::create):
+        (WebCore::SVGPathSegMovetoRel::pathSegTypeAsLetter):
+
 2008-05-22  Alp Toker  <alp@nuanti.com>
 
         GTK+/DirectFB build fix attempt.

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2008 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,70 +25,16 @@
 #if ENABLE(SVG)
 #include "SVGPathSegLineto.h"
 
-#include "SVGStyledElement.h"
-
 namespace WebCore {
 
 SVGPathSegLinetoAbs::SVGPathSegLinetoAbs(float x, float y)
-    : SVGPathSeg()
-    , m_x(x)
-    , m_y(y)
+    : SVGPathSegSingleCoord(x, y)
 {
-}
-
-SVGPathSegLinetoAbs::~SVGPathSegLinetoAbs()
-{
-}
-
-void SVGPathSegLinetoAbs::setX(float x)
-{
-    m_x = x;
-}
-
-float SVGPathSegLinetoAbs::x() const
-{
-    return m_x;
-}
-
-void SVGPathSegLinetoAbs::setY(float y)
-{
-    m_y = y;
-}
-
-float SVGPathSegLinetoAbs::y() const
-{
-    return m_y;
 }
 
 SVGPathSegLinetoRel::SVGPathSegLinetoRel(float x, float y)
-    : SVGPathSeg()
-    , m_x(x)
-    , m_y(y)
+    : SVGPathSegSingleCoord(x, y)
 {
-}
-
-SVGPathSegLinetoRel::~SVGPathSegLinetoRel()
-{
-}
-
-void SVGPathSegLinetoRel::setX(float x)
-{
-    m_x = x;
-}
-
-float SVGPathSegLinetoRel::x() const
-{
-    return m_x;
-}
-
-void SVGPathSegLinetoRel::setY(float y)
-{
-    m_y = y;
-}
-
-float SVGPathSegLinetoRel::y() const
-{
-    return m_y;
 }
 
 }

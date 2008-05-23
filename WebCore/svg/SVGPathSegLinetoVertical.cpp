@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,53 +25,17 @@
 #if ENABLE(SVG)
 #include "SVGPathSegLinetoVertical.h"
 
-#include "SVGStyledElement.h"
-
 namespace WebCore {
 
 SVGPathSegLinetoVerticalAbs::SVGPathSegLinetoVerticalAbs(float y)
-    : SVGPathSeg()
-    , m_y(y)
+    : SVGPathSegLinetoVertical(y)
 {
 }
-
-SVGPathSegLinetoVerticalAbs::~SVGPathSegLinetoVerticalAbs()
-{
-}
-
-void SVGPathSegLinetoVerticalAbs::setY(float y)
-{
-    m_y = y;
-}
-
-float SVGPathSegLinetoVerticalAbs::y() const
-{
-    return m_y;
-}
-
-
-
 
 SVGPathSegLinetoVerticalRel::SVGPathSegLinetoVerticalRel(float y)
-    : SVGPathSeg()
-    , m_y(y)
+    : SVGPathSegLinetoVertical(y)
 {
 }
-
-SVGPathSegLinetoVerticalRel::~SVGPathSegLinetoVerticalRel()
-{
-}
-
-void SVGPathSegLinetoVerticalRel::setY(float y)
-{
-    m_y = y;
-}
-
-float SVGPathSegLinetoVerticalRel::y() const
-{
-    return m_y;
-}
-
 }
 
 #endif // ENABLE(SVG)
