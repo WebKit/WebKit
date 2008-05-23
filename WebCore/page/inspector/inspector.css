@@ -71,10 +71,20 @@ img {
 
 body.inactive #toolbar {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(233, 233, 233)), to(rgb(207, 207, 207)));
+    border-bottom: 1px solid rgb(64%, 64%, 64%);
 }
 
 body.detached.platform-mac-leopard #toolbar {
     background: transparent !important;
+}
+
+body.attached #toolbar {
+    height: 34px;
+    border-top: 1px solid rgb(100, 100, 100);
+}
+
+body.attached.inactive #toolbar {
+    border-top: 1px solid rgb(64%, 64%, 64%);
 }
 
 .toolbar-item {
@@ -110,10 +120,27 @@ body.detached.platform-mac-leopard #toolbar {
     height: 32px;
 }
 
+body.attached .toolbar-icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+}
+
 .toolbar-label {
     font-size: 11px;
     font-family: Lucida Grande, sans-serif;
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
+}
+
+body.attached .toolbar-label {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 3px;
+}
+
+body.attached #search-toolbar-label {
+    display: none;
 }
 
 .toolbar-item.elements .toolbar-icon {
@@ -203,6 +230,10 @@ body.inactive .focused .selected .search-results-section {
     bottom: 0;
     overflow: hidden;
     background-color: white;
+}
+
+body.attached #main {
+    top: 34px;
 }
 
 #main-panels {

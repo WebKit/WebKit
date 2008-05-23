@@ -1,3 +1,12 @@
+2008-05-23  Timothy Hatcher  <timothy@apple.com>
+
+        Tweak the Web Insector toolbar look to be smaller when attached to
+        the inspected page.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/inspector.css:
+
 2008-05-23  Simon Hausmann  <hausmann@webkit.org>
 
         Fix compilation without accessibility by providing an empty stub for
