@@ -36,6 +36,7 @@ namespace KJS {
 
 namespace WebCore {
 
+    JSClassRef ProfileNodeClass();
     KJS::JSValue* toJS(KJS::ExecState*, KJS::ProfileNode*);
 
 } // namespace WebCore

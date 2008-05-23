@@ -49,10 +49,6 @@ static ProfileNodeMap& ProfileNodeCache()
     return staticProfileNodes;
 }
 
-// Static Values
-
-static JSClassRef ProfileNodeClass();
-
 static JSValueRef getFunctionName(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
@@ -183,6 +179,17 @@ static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSString
     return result;
 }
 
+static JSValueRef getVisible(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    KJS::JSLock lock;
+
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
+        return JSValueMakeUndefined(ctx);
+
+    ProfileNode* profileNode = static_cast<ProfileNode*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeBoolean(ctx, profileNode->visible());
+}
+
 static JSValueRef sortTotalTimeDescending(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
 {
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
@@ -290,6 +297,7 @@ JSClassRef ProfileNodeClass()
         { "selfPercent", getSelfPercent, 0, kJSPropertyAttributeNone },
         { "numberOfCalls", getNumberOfCalls, 0, kJSPropertyAttributeNone },
         { "children", getChildren, 0, kJSPropertyAttributeNone },
+        { "visible", getVisible, 0, kJSPropertyAttributeNone },
         { 0, 0, 0, 0 }
     };
 

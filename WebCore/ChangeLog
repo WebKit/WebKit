@@ -1,3 +1,26 @@
+2008-05-22  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5951529> JSProfiler: Allow the profiler to "Exclude" a
+        profile node.
+        -Expose the 'exclude' function to the WebInspector.
+        -Also fix a bug with 'focus' and expose whether or not a node is visible
+
+        * page/JavaScriptProfile.cpp: Renamed profileClass to have a capital P.
+        (WebCore::getTitleCallback):
+        (WebCore::getHeadCallback):
+        (WebCore::focus): Now correctly compares against a ProfileNodeClass
+        instead of ProfileClass.
+        (WebCore::exclude): Expose 'exclude' function to the WebInspector.
+        (WebCore::ProfileClass):
+        (WebCore::toJS):
+        * page/JavaScriptProfileNode.cpp: Declare the ProfileNodeClass in the
+        header so that ProfileClass can use it.
+        (WebCore::getVisible): Expose a node's visiblity to the WebInspector.
+        (WebCore::ProfileNodeClass):
+        * page/JavaScriptProfileNode.h:
+
 2008-05-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
