@@ -104,6 +104,9 @@ namespace KJS  {
         static const HashTable* stringTable(ExecState* exec) { return exec->m_perThreadData->stringTable; }
 
     private:
+        // Default constructor required for OldInterpreterExecState with gcc 3.
+        ExecState() {};
+
         ExecState(ExecState*, Machine*, RegisterFile*, ScopeChainNode*, int callFrameOffset);
 
         bool isGlobalObject(JSObject*) const;
