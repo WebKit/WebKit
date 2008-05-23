@@ -1,3 +1,9 @@
+2008-05-22  Alp Toker  <alp@nuanti.com>
+
+        GTK+ build fix. Add JavaScriptCore/profiler to include path.
+
+        * GNUmakefile.am:
+
 2008-05-22  Adam Roben  <aroben@apple.com>
 
         Implement sub-millisecond profiling on Windows
