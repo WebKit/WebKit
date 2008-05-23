@@ -39,7 +39,12 @@ namespace KJS {
 
     class Profiler {
     public:
-        static Profiler* profiler();
+        static Profiler** enabledProfilerReference()
+        {
+            return &s_sharedEnabledProfilerReference;
+        }
+
+        static Profiler* profiler(); 
 
         void startProfiling(ExecState*, const UString& title);
         PassRefPtr<Profile> stopProfiling(ExecState*, const UString& title);
@@ -55,6 +60,8 @@ namespace KJS {
 
     private:
         Vector<RefPtr<Profile> > m_currentProfiles;
+        static Profiler* s_sharedProfiler;
+        static Profiler* s_sharedEnabledProfilerReference;
     };
 
 } // namespace KJS

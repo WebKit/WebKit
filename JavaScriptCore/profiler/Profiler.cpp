@@ -39,7 +39,6 @@
 
 namespace KJS {
 
-static Profiler* sharedProfiler = 0;
 static const char* GlobalCodeExecution = "(program)";
 static const char* AnonymousFunction = "(anonymous function)";
 
@@ -47,13 +46,16 @@ static CallIdentifier createCallIdentifier(JSObject*);
 static CallIdentifier createCallIdentifier(const UString& sourceURL, int startingLineNumber);
 static CallIdentifier createCallIdentifierFromFunctionImp(FunctionImp*);
 
+Profiler* Profiler::s_sharedProfiler = 0;
+Profiler* Profiler::s_sharedEnabledProfilerReference = 0;
+
 Profiler* Profiler::profiler()
 {
-    if (!sharedProfiler)
-        sharedProfiler = new Profiler;
-    return sharedProfiler;
-}
-
+    if (!s_sharedProfiler)
+        s_sharedProfiler = new Profiler();
+    return s_sharedProfiler;
+}   
+    
 Profile* Profiler::findProfile(ExecState* exec, const UString& title) const
 {
     ExecState* globalExec = exec->lexicalGlobalObject()->globalExec();
@@ -73,7 +75,7 @@ void Profiler::startProfiling(ExecState* exec, const UString& title)
     for (size_t i = 0; i < m_currentProfiles.size(); ++i)
         if (m_currentProfiles[i]->originatingGlobalExec() == globalExec && m_currentProfiles[i]->title() == title)
             return;
-
+    s_sharedEnabledProfilerReference = this;
     RefPtr<Profile> profile = Profile::create(title, globalExec, exec->lexicalGlobalObject()->pageGroupIdentifier());
     m_currentProfiles.append(profile);
 }
@@ -87,6 +89,8 @@ PassRefPtr<Profile> Profiler::stopProfiling(ExecState* exec, const UString& titl
 
             PassRefPtr<Profile> prpProfile = m_currentProfiles[i].release();
             m_currentProfiles.remove(i);
+            if (!m_currentProfiles.size())
+                s_sharedEnabledProfilerReference = 0;
             return prpProfile;
         }
     }

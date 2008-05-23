@@ -1,3 +1,31 @@
+2008-05-23  Oliver Hunt  <oliver@apple.com>
+
+       <rdar://problem/5951561> Turn on JavaScript Profiler
+
+        Reviewed by Kevin McCullough.
+
+        Flipped the switch on the profiler, rearranged how we
+        signal the the profiler is active so that calls aren't
+        needed in the general case.
+        
+        Also fixed the entry point for Machine::execute(FunctionBodyNode..)
+        to correctly indicate function exit.
+
+        Results in a 0.7-1.0% regression in SunSpider :-(
+
+        * VM/Machine.cpp:
+        (KJS::callEval):
+        (KJS::Machine::unwindCallFrame):
+        (KJS::Machine::execute):
+        (KJS::Machine::privateExecute):
+        * kjs/config.h:
+        * profiler/Profiler.cpp:
+        (KJS::Profiler::profiler):
+        (KJS::Profiler::startProfiling):
+        (KJS::Profiler::stopProfiling):
+        * profiler/Profiler.h:
+        (KJS::Profiler::enabledProfilerReference):
+
 2008-05-23  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build by adding profiler/ to the include search path.

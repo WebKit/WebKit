@@ -437,13 +437,13 @@ static NEVER_INLINE bool isNotObject(ExecState* exec, const Instruction*, CodeBl
     return true;
 }
 
-#if JAVASCRIPT_PROFILING
-static NEVER_INLINE JSValue* callEval(ExecState* exec, JSObject* evalFunction, JSObject* thisObj, ScopeChainNode* scopeChain, RegisterFile* registerFile, Register* r, int argv, int argc, JSValue*& exceptionValue)
-{
-    Profiler::profiler()->willExecute(exec, evalFunction);
-#else
 static NEVER_INLINE JSValue* callEval(ExecState* exec, JSObject* thisObj, ScopeChainNode* scopeChain, RegisterFile* registerFile, Register* r, int argv, int argc, JSValue*& exceptionValue)
 {
+#if JAVASCRIPT_PROFILING
+    Profiler** profiler = Profiler::enabledProfilerReference();
+    JSObject* evalFunction = scopeChain->globalObject()->evalFunction();
+    if (*profiler)
+        (*profiler)->willExecute(exec, evalFunction);
 #endif
 
     JSValue* x = argc >= 2 ? r[argv + 1].u.jsValue : jsUndefined();
@@ -471,7 +471,8 @@ static NEVER_INLINE JSValue* callEval(ExecState* exec, JSObject* thisObj, ScopeC
 #if JAVASCRIPT_PROFILING
     JSValue* result = machine().execute(evalNode.get(), exec, thisObj, registerFile, r - (*registerFile->basePointer()) + argv + argc, scopeChain, &exceptionValue);
 
-    Profiler::profiler()->didExecute(exec, evalFunction);
+    if ((*profiler))
+        (*profiler)->didExecute(exec, evalFunction);
 
     return result;
 #else
@@ -607,7 +608,8 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
     vPC = callFrame[ReturnVPC].u.vPC;
 
 #if JAVASCRIPT_PROFILING
-    Profiler::profiler()->didExecute(exec, callFrame[Callee].u.jsObject);
+    if (Profiler* profiler = *Profiler::enabledProfilerReference())
+        profiler->didExecute(exec, callFrame[Callee].u.jsObject);
 #endif
     return true;
 }
@@ -657,10 +659,6 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
         return 0;
     }
 
-#if JAVASCRIPT_PROFILING
-    Profiler::profiler()->willExecute(exec, programNode->sourceURL(), programNode->lineNo());
-#endif
-
     RegisterFile* registerFile = registerFileStack->pushGlobalRegisterFile();
     ASSERT(registerFile->numGlobalSlots());
     CodeBlock* codeBlock = &programNode->code(scopeChain, !registerFileStack->inImplicitCall());
@@ -673,7 +671,13 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
     
     if (codeBlock->needsFullScopeChain)
         scopeChain = scopeChain->copy();
-    
+
+#if JAVASCRIPT_PROFILING
+    Profiler** profiler = Profiler::enabledProfilerReference();
+    if (*profiler)
+        (*profiler)->willExecute(exec, programNode->sourceURL(), programNode->lineNo());
+#endif
+
     ExecState newExec(exec, this, registerFile, scopeChain, -1);
 
     m_reentryDepth++;
@@ -683,7 +687,8 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
     registerFileStack->popGlobalRegisterFile();
 
 #if JAVASCRIPT_PROFILING
-    Profiler::profiler()->didExecute(exec, programNode->sourceURL(), programNode->lineNo());
+    if (*profiler)
+        (*profiler)->didExecute(exec, programNode->sourceURL(), programNode->lineNo());
 #endif
 
     return result;
@@ -695,10 +700,6 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, F
         *exception = createStackOverflowError(exec);
         return 0;
     }
-
-#if JAVASCRIPT_PROFILING
-    Profiler::profiler()->willExecute(exec, function);
-#endif
 
     RegisterFile* registerFile = registerFileStack->current();
 
@@ -737,11 +738,21 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, F
     scopeChain = scopeChainForCall(functionBodyNode, newCodeBlock, scopeChain, registerBase, r);            
 
     ExecState newExec(exec, this, registerFile, scopeChain, callFrameOffset);
+    
+#if JAVASCRIPT_PROFILING
+    Profiler** profiler = Profiler::enabledProfilerReference();
+    if (*profiler)
+        (*profiler)->willExecute(exec, function);
+#endif
 
     m_reentryDepth++;
     JSValue* result = privateExecute(Normal, &newExec, registerFile, r, scopeChain, newCodeBlock, exception);
     m_reentryDepth--;
 
+#if JAVASCRIPT_PROFILING
+    if (*profiler)
+        (*profiler)->didExecute(exec, function);
+#endif
     registerFile->shrink(oldSize);
     return result;
 }
@@ -752,10 +763,6 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
         *exception = createStackOverflowError(exec);
         return 0;
     }
-
-#if JAVASCRIPT_PROFILING
-    Profiler::profiler()->willExecute(exec, evalNode->sourceURL(), evalNode->lineNo());
-#endif
 
     EvalCodeBlock* codeBlock = &evalNode->code(scopeChain);
     
@@ -797,6 +804,12 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
     if (codeBlock->needsFullScopeChain)
         scopeChain = scopeChain->copy();
 
+#if JAVASCRIPT_PROFILING
+    Profiler** profiler = Profiler::enabledProfilerReference();
+    if (*profiler)
+        (*profiler)->willExecute(exec, evalNode->sourceURL(), evalNode->lineNo());
+#endif
+
     ExecState newExec(exec, this, registerFile, scopeChain, -1);
 
     m_reentryDepth++;
@@ -806,7 +819,8 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
     registerFile->shrink(oldSize);
 
 #if JAVASCRIPT_PROFILING
-    Profiler::profiler()->didExecute(exec, evalNode->sourceURL(), evalNode->lineNo());
+    if (*profiler)
+        (*profiler)->didExecute(exec, evalNode->sourceURL(), evalNode->lineNo());
 #endif
 
     return result;
@@ -879,10 +893,22 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
     JSValue* exceptionValue = 0;
     Instruction* handlerVPC = 0;
-    
+
     Register** registerBase = registerFile->basePointer();
     Instruction* vPC = codeBlock->instructions.begin();
     JSValue** k = codeBlock->jsValues.data();
+#if JAVASCRIPT_PROFILING
+    Profiler** enabledProfilerReference = Profiler::enabledProfilerReference();
+    
+#if HAVE(COMPUTED_GOTO)
+    // Yet another hack around GCC's various foibles, in this case fetching the
+    // profiler reference results in a regression.  Removing this indirection
+    // results in a 0.8% regression.
+    goto *(&&profilerFetchHack);
+    profilerFetchHack:
+#endif
+    
+#endif
     
     registerFile->setSafeForReentry(false);
 #define VM_CHECK_EXCEPTION() \
@@ -1855,11 +1881,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             JSObject* thisObject = r[codeBlock->thisRegister].u.jsObject;
 
             registerFile->setSafeForReentry(true);
-#if JAVASCRIPT_PROFILING
-            JSValue* result = callEval(exec, static_cast<JSObject*>(funcVal), thisObject, scopeChain, registerFile, r, argv, argc, exceptionValue);
-#else
+
             JSValue* result = callEval(exec, thisObject, scopeChain, registerFile, r, argv, argc, exceptionValue);
-#endif
+
             registerFile->setSafeForReentry(false);
             r = (*registerBase) + registerOffset;
 
@@ -1900,7 +1924,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         
         if (callType == CallTypeJS) {
 #if JAVASCRIPT_PROFILING
-            Profiler::profiler()->willExecute(exec, static_cast<JSObject*>(v));
+            if (*enabledProfilerReference)
+                (*enabledProfilerReference)->willExecute(exec, static_cast<JSObject*>(v));
 #endif
             int registerOffset = r - (*registerBase);
             Register* callFrame = r + argv - CallFrameHeaderSize;
@@ -1928,7 +1953,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
         if (callType == CallTypeNative) {
 #if JAVASCRIPT_PROFILING
-            Profiler::profiler()->willExecute(exec, static_cast<JSObject*>(v));
+            if (*enabledProfilerReference)
+                (*enabledProfilerReference)->willExecute(exec, static_cast<JSObject*>(v));
 #endif
             int registerOffset = r - (*registerBase);
 
@@ -1945,7 +1971,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             r[dst].u.jsValue = returnValue;
 
 #if JAVASCRIPT_PROFILING
-            Profiler::profiler()->didExecute(exec, static_cast<JSObject*>(v));
+            if (*enabledProfilerReference)
+                (*enabledProfilerReference)->didExecute(exec, static_cast<JSObject*>(v));
 #endif
             VM_CHECK_EXCEPTION();
 
@@ -1994,7 +2021,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         r[r0].u.jsValue = returnValue;
         
 #if JAVASCRIPT_PROFILING
-        Profiler::profiler()->didExecute(exec, callFrame[Callee].u.jsObject);
+        if (*enabledProfilerReference)
+            (*enabledProfilerReference)->didExecute(exec, callFrame[Callee].u.jsObject);
 #endif
         NEXT_OPCODE;
     }
@@ -2014,7 +2042,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
         if (constructType == ConstructTypeJS) {
 #if JAVASCRIPT_PROFILING
-            Profiler::profiler()->willExecute(exec, constructor);
+            if (*enabledProfilerReference)
+                (*enabledProfilerReference)->willExecute(exec, constructor);
 #endif
             int registerOffset = r - (*registerBase);
             Register* callFrame = r + argv - CallFrameHeaderSize;
@@ -2050,7 +2079,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
         if (constructType == ConstructTypeNative) {
 #if JAVASCRIPT_PROFILING
-            Profiler::profiler()->willExecute(exec, constructor);
+            if (*enabledProfilerReference)
+                (*enabledProfilerReference)->willExecute(exec, constructor);
 #endif
             int registerOffset = r - (*registerBase);
 
@@ -2064,7 +2094,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             r[dst].u.jsValue = returnValue;
 
 #if JAVASCRIPT_PROFILING
-            Profiler::profiler()->didExecute(exec, constructor);
+            if (*enabledProfilerReference)
+                (*enabledProfilerReference)->didExecute(exec, constructor);
 #endif
             ++vPC;
             NEXT_OPCODE;
