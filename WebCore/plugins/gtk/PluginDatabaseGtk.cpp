@@ -59,15 +59,12 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
 #if defined(GDK_WINDOWING_WIN32)
 bool PluginDatabase::isPreferredPluginDirectory(const String& directory)
 {
-    gchar* homePath;
+    gchar* homePath = g_build_filename(g_get_home_dir(), "Application Data", "Mozilla", "plugins", NULL);
+
     bool retval = false;
-
-    homePath = 0;
-
-    homePath = g_build_filename(g_get_home_dir(), "Application Data", "Mozilla", "plugins", NULL);
-
     if (homePath)
-    retval = (strcmp(homePath, (directory.utf8()).data()) == 0);
+        retval = (strcmp(homePath, (directory.utf8()).data()) == 0);
+    g_free(homePath);
 
     return retval;
 }

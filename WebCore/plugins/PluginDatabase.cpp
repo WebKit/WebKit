@@ -331,9 +331,10 @@ Vector<String> PluginDatabase::defaultPluginDirectories()
     return paths;
 }
 
-#if PLATFORM(QT) || defined(GDK_WINDOWING_X11)
+#if PLATFORM(QT) || (PLATFORM(GTK) && !defined(GDK_WINDOWING_WIN32))
 bool PluginDatabase::isPreferredPluginDirectory(const String& path)
 {
+    // TODO: We should normalize the path before doing a comparison.
     String prefPath = homeDirectoryPath();
     prefPath.append(String("/.mozilla/plugins"));
 
