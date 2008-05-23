@@ -484,7 +484,10 @@ if test "$with_font_backend" = "freetype"; then
 fi
 
 # check if sqlite 3 is available
-if test "$enable_icon_database" = "yes" || test "$enable_database" = "yes"; then
+if test "$enable_icon_database" = "yes" || \
+   test "$enable_database" = "yes" || \
+   test "$enable_offline_web_applications" = "yes" || \
+   test "$enable_dom_storage" = "yes"; then
    PKG_CHECK_MODULES([SQLITE3], [sqlite3 >= $SQLITE_REQUIRED_VERSION])
    AC_SUBST([SQLITE3_CFLAGS])
    AC_SUBST([SQLITE3_LIBS])
