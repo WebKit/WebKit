@@ -98,18 +98,6 @@ PassRefPtr<Profile> Profiler::stopProfiling(ExecState* exec, const UString& titl
     return 0;
 }
 
-static inline bool shouldExcludeFunction(ExecState* exec, JSObject* calledFunction)
-{
-    if (!calledFunction->inherits(&InternalFunctionImp::info))
-        return false;
-    // Don't record a call for function.call and function.apply.
-    if (static_cast<InternalFunctionImp*>(calledFunction)->functionName() == exec->propertyNames().call)
-        return true;
-    if (static_cast<InternalFunctionImp*>(calledFunction)->functionName() == exec->propertyNames().apply)
-        return true;
-    return false;
-}
-
 static inline void dispatchFunctionToProfiles(const Vector<RefPtr<Profile> >& profiles, Profile::ProfileFunction function, const CallIdentifier& callIdentifier, unsigned currentPageGroupIdentifier)
 {
     for (size_t i = 0; i < profiles.size(); ++i)
@@ -119,19 +107,14 @@ static inline void dispatchFunctionToProfiles(const Vector<RefPtr<Profile> >& pr
 
 void Profiler::willExecute(ExecState* exec, JSObject* calledFunction)
 {
-    if (m_currentProfiles.isEmpty())
-        return;
-
-    if (shouldExcludeFunction(exec, calledFunction))
-        return;
+    ASSERT(!m_currentProfiles.isEmpty());
 
     dispatchFunctionToProfiles(m_currentProfiles, &Profile::willExecute, createCallIdentifier(calledFunction), exec->lexicalGlobalObject()->pageGroupIdentifier());
 }
 
 void Profiler::willExecute(ExecState* exec, const UString& sourceURL, int startingLineNumber)
 {
-    if (m_currentProfiles.isEmpty())
-        return;
+    ASSERT(!m_currentProfiles.isEmpty());
 
     CallIdentifier callIdentifier = createCallIdentifier(sourceURL, startingLineNumber);
 
@@ -140,19 +123,14 @@ void Profiler::willExecute(ExecState* exec, const UString& sourceURL, int starti
 
 void Profiler::didExecute(ExecState* exec, JSObject* calledFunction)
 {
-    if (m_currentProfiles.isEmpty())
-        return;
-
-    if (shouldExcludeFunction(exec, calledFunction))
-        return;
+    ASSERT(!m_currentProfiles.isEmpty());
 
     dispatchFunctionToProfiles(m_currentProfiles, &Profile::didExecute, createCallIdentifier(calledFunction), exec->lexicalGlobalObject()->pageGroupIdentifier());
 }
 
 void Profiler::didExecute(ExecState* exec, const UString& sourceURL, int startingLineNumber)
 {
-    if (m_currentProfiles.isEmpty())
-        return;
+    ASSERT(!m_currentProfiles.isEmpty());
 
     dispatchFunctionToProfiles(m_currentProfiles, &Profile::didExecute, createCallIdentifier(sourceURL, startingLineNumber), exec->lexicalGlobalObject()->pageGroupIdentifier());
 }
