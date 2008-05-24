@@ -41,6 +41,7 @@
 #include <kjs/interpreter.h>
 #include <kjs/list.h>
 #include <profiler/Profiler.h>
+#include <stdio.h>
 
 using namespace KJS;
 

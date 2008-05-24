@@ -33,6 +33,7 @@
 #include "Machine.h"
 #include "debugger.h"
 #include "value.h"
+#include <stdio.h>
 
 namespace KJS {
 
