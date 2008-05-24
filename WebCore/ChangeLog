@@ -1,3 +1,16 @@
+2008-05-23  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a bug where a timer would keep firing after the Inspector
+        was closed. It turns out this timer wasn't needed anymore now
+        that we can add an event listener to the inspected page and have
+        it get called in the Inspector's context.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18577
+
+        Reviewed by Mark Rowe.
+
+        * page/inspector/ElementsPanel.js:
+
 2008-05-23  Anthony Ricaud  <rik24d@gmail.com>
 
         Changes the largerResourcesButton tooltip to toggle.

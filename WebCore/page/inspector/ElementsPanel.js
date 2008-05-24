@@ -133,30 +133,16 @@ WebInspector.ElementsPanel.prototype = {
             return;
 
         if (!inspectedWindow.document.firstChild) {
-            // FIXME: This whole if block can be simplified once we can add an event listener to
-            // the inspected page and have it get called in the Inspector's context.
-
-            var elementsPanel = this;
-            var contentLoaded = InspectorController.wrapCallback(function()
+            function contentLoaded()
             {
-                // This function will be called in the inspected page's context.
-                elementsPanel._domContentLoaded = true;
-            });
+                inspectedWindow.document.removeEventListener("DOMContentLoaded", contentLoadedCallback, false);
 
-            function checkContentLoaded()
-            {
-                if (!this._domContentLoaded)
-                    return;
                 this.reset();
-                inspectedWindow.document.removeEventListener("DOMContentLoaded", contentLoaded, false);
-                clearInterval(contentLoadedPollingInterval);
-                delete this._domContentLoaded;
             }
 
-            this._domContentLoaded = false;
-            var contentLoadedPollingInterval = setInterval(checkContentLoaded.bind(this), 100);
+            var contentLoadedCallback = InspectorController.wrapCallback(contentLoaded.bind(this));
 
-            inspectedWindow.document.addEventListener("DOMContentLoaded", contentLoaded, false);
+            inspectedWindow.document.addEventListener("DOMContentLoaded", contentLoadedCallback, false);
             return;
         }
 
