@@ -6,7 +6,6 @@
 
         * JavaScriptCore/kjs/testkjs.cpp:
         * JavaScriptCore/VM/CodeBlock.cpp:
-        * WebCore/page/Console.cpp:
         Add missing standard includes.
 
 2008-05-23  Anders Carlsson  <andersca@apple.com>
