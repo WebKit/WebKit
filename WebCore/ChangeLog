@@ -1,3 +1,18 @@
+2008-05-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5939887> REGRESSION: With no selection, copy does not fire oncopy handler (affects CIFilterBrowser widget)
+        
+        Execute cut, copy and paste if they are invoked explicitly, via execCommand or -[WebView copy:], even
+        if they are disabled.  This will fire oncopy, oncut and onpaste, but won't perform any other work, like
+        writing to the pasteboard during cut/copy or deleting the selection during cut/paste.  This matches FF3,
+        which actually goes further and fires oncopy on any Command-C.
+        
+        * editing/EditorCommand.cpp:
+        (WebCore::CommandEntry::):
+        (WebCore::Editor::Command::execute):
+
 2008-05-23  Timothy Hatcher  <timothy@apple.com>
 
         Adds a percentage toggle button the profile view status bar that
