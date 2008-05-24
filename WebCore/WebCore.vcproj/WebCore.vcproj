@@ -1048,6 +1048,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLElementWrapperFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLElementWrapperFactory.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLFieldSetElement.cpp"
 				>
 			</File>
@@ -1957,6 +1965,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGEllipseElement.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGElementWrapperFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGElementWrapperFactory.h"
 				>
 			</File>
 			<File
@@ -13659,14 +13675,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSHTMLElementWrapperFactory.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSHTMLElementWrapperFactory.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSHTMLEmbedElementCustom.cpp"
 					>
 				</File>
@@ -13836,14 +13844,6 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSStyleSheetListCustom.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSSVGElementWrapperFactory.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSSVGElementWrapperFactory.h"
 					>
 				</File>
 				<File

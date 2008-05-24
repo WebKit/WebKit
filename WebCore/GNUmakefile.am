@@ -260,6 +260,7 @@ webcore_built_sources += \
 	DerivedSources/JSHTMLDivElement.cpp \
 	DerivedSources/JSHTMLDocument.cpp \
 	DerivedSources/JSHTMLElement.cpp \
+	DerivedSources/JSHTMLElementWrapperFactory.cpp \
 	DerivedSources/JSHTMLEmbedElement.cpp \
 	DerivedSources/JSHTMLFieldSetElement.cpp \
 	DerivedSources/JSHTMLFontElement.cpp \
@@ -512,7 +513,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSHTMLCollectionCustom.cpp \
 	WebCore/bindings/js/JSHTMLDocumentCustom.cpp \
 	WebCore/bindings/js/JSHTMLElementCustom.cpp \
-	WebCore/bindings/js/JSHTMLElementWrapperFactory.cpp \
 	WebCore/bindings/js/JSHTMLEmbedElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLFormElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLFrameElementCustom.cpp \
@@ -1684,6 +1684,7 @@ webcore_built_sources += \
 	DerivedSources/JSSVGElementInstance.cpp \
 	DerivedSources/JSSVGElementInstanceList.cpp \
 	DerivedSources/JSSVGSVGElement.cpp \
+	DerivedSources/JSSVGElementWrapperFactory.cpp \
 	DerivedSources/JSSVGEllipseElement.cpp \
 	DerivedSources/JSSVGFEBlendElement.cpp \
 	DerivedSources/JSSVGFEColorMatrixElement.cpp \
@@ -1870,7 +1871,6 @@ webcore_cppflags += \
 	-I\$(top_srcdir)/WebCore/svg/graphics/filters
 
 webcore_sources += \
-	WebCore/bindings/js/JSSVGElementWrapperFactory.cpp \
 	WebCore/bindings/js/JSSVGMatrixCustom.cpp \
 	WebCore/bindings/js/JSSVGPathSegCustom.cpp \
 	WebCore/bindings/js/JSSVGPathSegListCustom.cpp \
@@ -2122,10 +2122,10 @@ DerivedSources/SVGNames.cpp: DerivedSources/SVGElementFactory.cpp;
 if SVG_FLAGS
 DerivedSources/SVGElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in
 	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(SVG_FEATURES)" \
-	--namespace SVG --guardFactoryWith "ENABLE(SVG)" --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output $(GENSOURCES)
+	--namespace SVG --guardFactoryWith "ENABLE(SVG)" --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --wrapperFactory --attrsNullNamespace --output $(GENSOURCES)
 else
 DerivedSources/SVGElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in
-	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --namespace SVG --guardFactoryWith "ENABLE(SVG)" --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output $(GENSOURCES)
+	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --namespace SVG --guardFactoryWith "ENABLE(SVG)" --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --wrapperFactory --attrsNullNamespace --output $(GENSOURCES)
 
 endif # SVG_FLAGS
 
@@ -2214,10 +2214,10 @@ DerivedSources/HTMLNames.h: DerivedSources/HTMLNames.cpp;
 
 if HTML_FLAGS
 DerivedSources/HTMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
-	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --extraDefines "$(HTML_FEATURES)" --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --attrsNullNamespace --output $(GENSOURCES)
+	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --extraDefines "$(HTML_FEATURES)" --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --wrapperFactory --attrsNullNamespace --output $(GENSOURCES)
 else
 DerivedSources/HTMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
-	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --attrsNullNamespace --output $(GENSOURCES)
+	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --wrapperFactory --attrsNullNamespace --output $(GENSOURCES)
 endif # HTML_FLAGS
 
 DerivedSources/XMLNames.h: DerivedSources/XMLNames.cpp;
