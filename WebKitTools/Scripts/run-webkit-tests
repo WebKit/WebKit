@@ -273,16 +273,9 @@ $testMedia = 0 if $shouldCheckLeaks && isTiger();
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 my $productDir = productDir();
-$productDir .= "/bin" if (isQt());
+$productDir .= "/bin" if isQt();
+$productDir .= "/Programs" if isGtk();
 setRun64Bit($run64Bit);
-
-if (isGtk()) {
-    if (useQmake()) {
-        $productDir .= "/WebKitTools/DumpRenderTree/gtk";
-    } else {
-        $productDir .= "/Programs";
-    }
-}
 
 chdirWebKit();
 

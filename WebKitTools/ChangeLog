@@ -1,3 +1,18 @@
+2008-05-24  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove useQmake usage. QMake build doesn't support Gtk port
+        anymore.
+
+        Also fix 2 occurences of "Web Kit". Should be WebKit.
+
+        * Scripts/build-webkit:
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-launcher:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2008-05-22  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Dan.

@@ -27,7 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Simplified "run" script for Web Kit Open Source Project.
+# Simplified "run" script for WebKit Open Source Project.
 
 use strict;
 use File::Spec::Functions qw/catdir/;
@@ -45,26 +45,20 @@ my @args = @ARGV;
 checkFrameworks();
 
 # Set paths according to the build system used
-if (useQmake()) {
+if (isQt()) {
     my $libDir = catdir(productDir(), 'lib');
-
-    if (isGtk()) {
-        $launcherPath = catdir($launcherPath, "WebKitTools", "GtkLauncher", "GtkLauncher");
-        # Strip --gtk from the arg-list, since otherwise GtkLauncher will try to
-        # interpret it as a URL.
-        @args = grep(!/^(--gtk)$/, @args);
-    } elsif (isQt()) {
-        $launcherPath = catdir($launcherPath, "bin", "QtLauncher");
-    }
+    $launcherPath = catdir($launcherPath, "bin", "QtLauncher");
 
     # Set up LD_LIBRARY_PATH to point to the product directory.
     print "Starting webkit launcher with LD_LIBRARY_PATH set to point to built WebKit in $libDir.\n";
-    
+
     $ENV{LD_LIBRARY_PATH} = $ENV{LD_LIBRARY_PATH} ? "$libDir:$ENV{LD_LIBRARY_PATH}" : $libDir;
 } else {
 
     if (isGtk()) {
         $launcherPath = catdir($launcherPath, "Programs", "GtkLauncher");
+        # Strip --gtk from the arg-list, since otherwise GtkLauncher will try to
+        # interpret it as a URL.
         @args = grep(!/^(--gtk)$/, @args);
     }
 

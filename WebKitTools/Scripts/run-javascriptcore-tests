@@ -97,9 +97,8 @@ chdir("JavaScriptCore");
 
 my $productDir = productDir();
 chdir "tests/mozilla" or die;
-
-$productDir .= "/JavaScriptCore" if useQmake();
-$productDir .= "/Programs" if (isGtk() && not useQmake());
+$productDir .= "/JavaScriptCore" if isQt();
+$productDir .= "/Programs" if isGtk();
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 setPathForRunningWebKitApp(\%ENV) if isCygwin();
 
