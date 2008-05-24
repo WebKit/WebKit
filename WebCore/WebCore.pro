@@ -805,6 +805,7 @@ SOURCES += \
     platform/text/SegmentedString.cpp \
     platform/SharedBuffer.cpp \
     platform/text/String.cpp \
+    platform/text/StringBuilder.cpp \
     platform/text/StringImpl.cpp \
     platform/text/TextCodec.cpp \
     platform/text/TextCodecLatin1.cpp \

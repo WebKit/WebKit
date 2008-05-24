@@ -917,6 +917,7 @@ webcore_sources += \
 	WebCore/platform/text/SegmentedString.cpp \
 	WebCore/platform/SharedBuffer.cpp \
 	WebCore/platform/text/String.cpp \
+	WebCore/platform/text/StringBuilder.cpp \
 	WebCore/platform/text/StringImpl.cpp \
 	WebCore/platform/text/TextCodec.cpp \
 	WebCore/platform/text/TextCodecLatin1.cpp \

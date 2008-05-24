@@ -3925,6 +3925,8 @@
 		E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12EDBE90B308E0B002704B6 /* EventTarget.cpp */; };
 		E17A4A1B0D97991D00FC10C6 /* DOMSVGAltGlyphElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAC0D974A00000541AE /* DOMSVGAltGlyphElement.h */; };
 		E17A4A1C0D97991D00FC10C6 /* DOMSVGAltGlyphElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAE0D974A00000541AE /* DOMSVGAltGlyphElementInternal.h */; };
+		E1A302BC0DE8370300C52F2C /* StringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A302BB0DE8370300C52F2C /* StringBuilder.h */; };
+		E1A302C10DE8376900C52F2C /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A302C00DE8376900C52F2C /* StringBuilder.cpp */; };
 		E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */; };
 		E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */; };
 		E1E6EEA40B628DA8005F2F70 /* JSHTMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */; };
@@ -8273,6 +8275,8 @@
 		E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMCustomXPathNSResolver.mm; sourceTree = "<group>"; };
 		E12EDB7A0B308A78002704B6 /* EventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTarget.h; sourceTree = "<group>"; };
 		E12EDBE90B308E0B002704B6 /* EventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTarget.cpp; sourceTree = "<group>"; };
+		E1A302BB0DE8370300C52F2C /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuilder.h; sourceTree = "<group>"; };
+		E1A302C00DE8376900C52F2C /* StringBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringBuilder.cpp; sourceTree = "<group>"; };
 		E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTUnicodeSort.cpp; sourceTree = "<group>"; };
 		E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTUnicodeSort.h; sourceTree = "<group>"; };
 		E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSelectElement.cpp; sourceTree = "<group>"; };
@@ -12069,6 +12073,8 @@
 				B2C3D9FE0D006C1D00EF6F26 /* SegmentedString.cpp */,
 				B2C3D9FF0D006C1D00EF6F26 /* SegmentedString.h */,
 				B2C3DA000D006C1D00EF6F26 /* String.cpp */,
+				E1A302C00DE8376900C52F2C /* StringBuilder.cpp */,
+				E1A302BB0DE8370300C52F2C /* StringBuilder.h */,
 				939B3E4D0D3C1E8400B4A92B /* StringBuffer.h */,
 				B2C3DA010D006C1D00EF6F26 /* StringHash.h */,
 				B2C3DA020D006C1D00EF6F26 /* StringImpl.cpp */,
@@ -15135,6 +15141,7 @@
 				1A2D753D0DE47FAB00F0A648 /* IconFetcher.h in Headers */,
 				65488D6B0DD5A83D009D83B2 /* StringSourceProvider.h in Headers */,
 				652FBBBC0DE27CB60001D386 /* JSDOMWindowCustom.h in Headers */,
+				E1A302BC0DE8370300C52F2C /* StringBuilder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16854,6 +16861,7 @@
 				1A7FA61B0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp in Sources */,
 				1A7FA6490DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp in Sources */,
 				1A2D753E0DE47FAB00F0A648 /* IconFetcher.cpp in Sources */,
+				E1A302C10DE8376900C52F2C /* StringBuilder.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

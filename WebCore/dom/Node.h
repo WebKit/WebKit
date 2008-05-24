@@ -54,6 +54,7 @@ class RegisteredEventListener;
 class RenderArena;
 class RenderObject;
 class RenderStyle;
+class StringBuilder;
 
 struct NodeListsNodeData;
 
@@ -507,6 +508,8 @@ private:
     // no bits left
 
     Element* ancestorElement() const;
+
+    void appendTextContent(bool convertBRsToNewlines, StringBuilder&) const;
 
     virtual Node* virtualFirstChild() const;
     virtual Node* virtualLastChild() const;

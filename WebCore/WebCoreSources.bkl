@@ -655,6 +655,7 @@ This file contains the list of files needed to build WebCore.
         platform/text/SegmentedString.cpp
         platform/SharedBuffer.cpp
         platform/text/String.cpp
+        platform/text/StringBuilder.cpp
         platform/text/StringImpl.cpp
         platform/text/TextBreakIteratorICU.cpp
         platform/text/TextCodec.cpp

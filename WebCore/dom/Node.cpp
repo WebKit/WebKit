@@ -44,8 +44,10 @@
 #include "Logging.h"
 #include "NameNodeList.h"
 #include "NamedAttrMap.h"
+#include "ProcessingInstruction.h"
 #include "RenderObject.h"
 #include "SelectorNodeList.h"
+#include "StringBuilder.h"
 #include "TagNodeList.h"
 #include "Text.h"
 #include "XMLNames.h"
@@ -1509,41 +1511,52 @@ String Node::lookupNamespacePrefix(const String &_namespaceURI, const Element *o
     return String();
 }
 
-String Node::textContent(bool convertBRsToNewlines) const
+void Node::appendTextContent(bool convertBRsToNewlines, StringBuilder& content) const
 {
     switch (nodeType()) {
         case TEXT_NODE:
         case CDATA_SECTION_NODE:
         case COMMENT_NODE:
+            content.append(static_cast<const CharacterData*>(this)->CharacterData::nodeValue());
+            break;
+
         case PROCESSING_INSTRUCTION_NODE:
-            return nodeValue();
+            content.append(static_cast<const ProcessingInstruction*>(this)->ProcessingInstruction::nodeValue());
+            break;
         
         case ELEMENT_NODE:
-            if (hasTagName(brTag) && 
-                convertBRsToNewlines)
-                return "\n";
+            if (hasTagName(brTag) && convertBRsToNewlines) {
+                content.append('\n');
+                break;
+        }
+        // Fall through.
         case ATTRIBUTE_NODE:
         case ENTITY_NODE:
         case ENTITY_REFERENCE_NODE:
-        case DOCUMENT_FRAGMENT_NODE: {
-            String s = "";
-        
+        case DOCUMENT_FRAGMENT_NODE:
+            content.setNonNull();
+
             for (Node *child = firstChild(); child; child = child->nextSibling()) {
                 if (child->nodeType() == COMMENT_NODE || child->nodeType() == PROCESSING_INSTRUCTION_NODE)
                     continue;
             
-                s += child->textContent(convertBRsToNewlines);
+                child->appendTextContent(convertBRsToNewlines, content);
             }
-        
-            return s;
-        }
-        
+            break;
+
         case DOCUMENT_NODE:
         case DOCUMENT_TYPE_NODE:
         case NOTATION_NODE:
-        default:
-            return String();
+        case XPATH_NAMESPACE_NODE:
+            break;
     }
+}
+
+String Node::textContent(bool convertBRsToNewlines) const
+{
+    StringBuilder content;
+    appendTextContent(convertBRsToNewlines, content);
+    return content.toString();
 }
 
 void Node::setTextContent(const String &text, ExceptionCode& ec)

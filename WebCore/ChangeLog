@@ -1,3 +1,31 @@
+2008-05-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        Optimize Node::textContent() to avoid O(n^2) string appending behavior.
+
+        1.6% speedup at Acid3 test 26.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCoreSources.bkl:
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/text/StringBuilder.cpp: Added.
+        (WebCore::StringBuilder::append):
+        (WebCore::StringBuilder::toString):
+        * platform/text/StringBuilder.h: Added.
+        (WebCore::StringBuilder::StringBuilder):
+        (WebCore::StringBuilder::isNull):
+        Added a simple class to efficiently build a string by appending. Potentially, it can be
+        extended to be more like java.lang.StringBuilder, but we don't need that much flexibility now.
+
+        * dom/Node.cpp:
+        (WebCore::Node::appendTextContent):
+        (WebCore::Node::textContent):
+        * dom/Node.h:
+        Changed to use StringBuilder.
+
 2008-05-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric.
