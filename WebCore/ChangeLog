@@ -1,3 +1,16 @@
+2008-05-23  Anthony Ricaud  <rik24d@gmail.com>
+
+        Changes the largerResourcesButton tooltip to toggle.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19210
+
+        Reviewed by Tim Hatcher.
+
+        * WebCore/English.lproj/localizedStrings.js: New string and clean an
+        double string "Dock to main window."
+        * WebCore/page/inspector/ResourcesPanel.js: Toggle the tooltip and
+        change the default tooltip
+
 2008-05-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.

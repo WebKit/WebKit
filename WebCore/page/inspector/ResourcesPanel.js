@@ -124,7 +124,7 @@ WebInspector.ResourcesPanel = function()
     this.largerResourcesButton = document.createElement("button");
     this.largerResourcesButton.id = "resources-larger-resources-status-bar-item";
     this.largerResourcesButton.className = "status-bar-item toggled-on";
-    this.largerResourcesButton.title = WebInspector.UIString("Use large resource rows.");
+    this.largerResourcesButton.title = WebInspector.UIString("Use small resource rows.");
     this.largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
 
     this.sortingSelectElement = document.createElement("select");
@@ -1002,9 +1002,11 @@ WebInspector.ResourcesPanel.prototype = {
 
         if (this.resourcesTreeElement._childrenListNode.hasStyleClass("small")) {
             this.resourcesTreeElement._childrenListNode.removeStyleClass("small");
+            this.largerResourcesButton.title = WebInspector.UIString("Use small resource rows.");
             this.largerResourcesButton.addStyleClass("toggled-on");
         } else {
             this.resourcesTreeElement._childrenListNode.addStyleClass("small");
+            this.largerResourcesButton.title = WebInspector.UIString("Use large resource rows.");
             this.largerResourcesButton.removeStyleClass("toggled-on");
         }
     },
