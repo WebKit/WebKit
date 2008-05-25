@@ -320,13 +320,13 @@ public:
 
     virtual ~RegExpMatchesArray();
 
-    virtual bool getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot) { if (!lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::getOwnPropertySlot(exec, propertyName, slot); }
-    virtual bool getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot) { if (!lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::getOwnPropertySlot(exec, propertyName, slot); }
-    virtual void put(ExecState* exec, const Identifier& propertyName, JSValue* v) { if (!lazyCreationData()) fillArrayInstance(exec); ArrayInstance::put(exec, propertyName, v); }
-    virtual void put(ExecState* exec, unsigned propertyName, JSValue* v) { if (!lazyCreationData()) fillArrayInstance(exec); ArrayInstance::put(exec, propertyName, v); }
-    virtual bool deleteProperty(ExecState* exec, const Identifier& propertyName) { if (!lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::deleteProperty(exec, propertyName); }
-    virtual bool deleteProperty(ExecState* exec, unsigned propertyName) { if (!lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::deleteProperty(exec, propertyName); }
-    virtual void getPropertyNames(ExecState* exec, PropertyNameArray& arr) { if (!lazyCreationData()) fillArrayInstance(exec); ArrayInstance::getPropertyNames(exec, arr); }
+    virtual bool getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot) { if (lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::getOwnPropertySlot(exec, propertyName, slot); }
+    virtual bool getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot) { if (lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::getOwnPropertySlot(exec, propertyName, slot); }
+    virtual void put(ExecState* exec, const Identifier& propertyName, JSValue* v) { if (lazyCreationData()) fillArrayInstance(exec); ArrayInstance::put(exec, propertyName, v); }
+    virtual void put(ExecState* exec, unsigned propertyName, JSValue* v) { if (lazyCreationData()) fillArrayInstance(exec); ArrayInstance::put(exec, propertyName, v); }
+    virtual bool deleteProperty(ExecState* exec, const Identifier& propertyName) { if (lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::deleteProperty(exec, propertyName); }
+    virtual bool deleteProperty(ExecState* exec, unsigned propertyName) { if (lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::deleteProperty(exec, propertyName); }
+    virtual void getPropertyNames(ExecState* exec, PropertyNameArray& arr) { if (lazyCreationData()) fillArrayInstance(exec); ArrayInstance::getPropertyNames(exec, arr); }
 
 private:
     void fillArrayInstance(ExecState*);

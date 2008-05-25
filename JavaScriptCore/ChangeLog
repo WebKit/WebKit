@@ -1,3 +1,9 @@
+2008-05-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Fixing a typo in the previous commit made as a last minute change.
+
+        * kjs/regexp_object.cpp:
+
 2008-05-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
