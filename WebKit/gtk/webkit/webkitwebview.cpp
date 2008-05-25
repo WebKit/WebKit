@@ -442,6 +442,17 @@ static gboolean webkit_web_view_focus_in_event(GtkWidget* widget, GdkEventFocus*
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_in_event(widget, event);
 }
 
+static gboolean webkit_web_view_focus_out_event(GtkWidget* widget, GdkEventFocus* event)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    gtk_im_context_focus_out(priv->imContext);
+    core(webView)->focusController()->setActive(false);
+
+    return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_out_event(widget, event);
+}
+
 static void webkit_web_view_realize(GtkWidget* widget)
 {
     GTK_WIDGET_SET_FLAGS(widget, GTK_REALIZED);
@@ -1103,6 +1114,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     widgetClass->size_allocate = webkit_web_view_size_allocate;
     widgetClass->popup_menu = webkit_web_view_popup_menu_handler;
     widgetClass->focus_in_event = webkit_web_view_focus_in_event;
+    widgetClass->focus_out_event = webkit_web_view_focus_out_event;
     widgetClass->get_accessible = webkit_web_view_get_accessible;
 
     GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webViewClass);

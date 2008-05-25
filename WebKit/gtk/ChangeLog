@@ -1,3 +1,11 @@
+2008-05-25  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Niko.
+
+        Drop WebView focus when the widget is focused out.
+
+        * webkit/webkitwebview.cpp:
+
 2008-05-25  Sriram Neelakandan  <sriram.neelakandan@gmail.com>
 
         Reviewed by Alp Toker.
