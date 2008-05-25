@@ -1,3 +1,14 @@
+2008-05-24  Andreia Gaita  <shana@isninja.com>
+
+        Reviewed by Alp Toker.
+
+        cygwin-downloader.py fixes.
+
+        Remove two non-working mirrors. Add a check for missing dependency
+        packages to avoid bailing out on an inconsistent Cygwin package list.
+
+        * CygwinDownloader/cygwin-downloader.py:
+
 2008-05-24  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Darin Adler.

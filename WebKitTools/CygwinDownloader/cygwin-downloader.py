@@ -36,8 +36,6 @@ mirror_servers = ["http://cygwin.elite-systems.org/",
                   "http://mirror.mcs.anl.gov/cygwin/",
                   "http://cygwin.osuosl.org/",
                   "http://mirrors.kernel.org/sourceware/cygwin/",
-                  "http://cygwin.rtin.bz/",
-                  "http://mirrors.wikifusion.info/cygwin/",
                   "http://mirrors.xmission.com/cygwin/",
                   "http://sourceware.mirrors.tds.net/pub/sourceware.org/cygwin/"]
 
@@ -117,6 +115,8 @@ package_names.sort()
 
 def add_package_and_dependencies(name):
         if name in names_to_download:
+                return
+	if not name in packages
                 return
         packages[name]["needs_download"] = True
         names_to_download.add(name)
