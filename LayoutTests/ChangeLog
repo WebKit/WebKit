@@ -1,3 +1,21 @@
+2008-05-25  Rob Buis  <buis@kde.org>
+
+        RS=Oliver
+
+        Fix SVG test results for tiger buildbot.
+
+        * platform/mac-tiger/svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt:
+        * platform/mac-tiger/svg/W3C-SVG-1.1/animate-elem-07-t-expected.txt:
+        * platform/mac-tiger/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * platform/mac-tiger/svg/W3C-SVG-1.1/paths-data-01-t-expected.txt:
+        * platform/mac-tiger/svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * platform/mac-tiger/svg/custom/control-points-for-S-and-T-expected.txt:
+        * platform/mac-tiger/svg/hixie/perf/001-expected.txt:
+        * platform/mac-tiger/svg/hixie/perf/002-expected.txt:
+        * platform/mac-tiger/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt:
+        * platform/mac-tiger/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt:
+        * platform/mac-tiger/svg/text/text-path-01-b-expected.txt:
+
 2008-05-25  Oliver Hunt  <oliver@apple.com>
 
         RS=Alexey
