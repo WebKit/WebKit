@@ -175,6 +175,8 @@ webcore_built_sources += \
 	DerivedSources/JSKeyboardEvent.h \
 	DerivedSources/JSLocation.h \
 	DerivedSources/JSMediaList.h \
+	DerivedSources/JSMessageEvent.h \
+	DerivedSources/JSMessageEvent.cpp \
 	DerivedSources/JSMimeType.h \
 	DerivedSources/JSMimeTypeArray.h \
 	DerivedSources/JSMouseEvent.h \
@@ -379,6 +381,7 @@ IDL_BINDINGS +=  \
 	WebCore/dom/Event.idl \
 	WebCore/dom/EventException.idl \
 	WebCore/dom/KeyboardEvent.idl \
+	WebCore/dom/MessageEvent.idl \
 	WebCore/dom/MouseEvent.idl \
 	WebCore/dom/MutationEvent.idl \
 	WebCore/dom/NamedNodeMap.idl \
@@ -639,6 +642,7 @@ webcore_sources += \
 	WebCore/dom/ExceptionCode.cpp \
 	WebCore/dom/KeyboardEvent.cpp \
 	WebCore/dom/MappedAttribute.cpp \
+	WebCore/dom/MessageEvent.cpp \
 	WebCore/dom/MouseEvent.cpp \
 	WebCore/dom/MouseRelatedEvent.cpp \
 	WebCore/dom/MutationEvent.cpp \
@@ -1143,26 +1147,6 @@ webkitgtk_sources += \
 	WebCore/platform/graphics/gtk/GlyphPageTreeNodePango.cpp \
 	WebCore/platform/graphics/gtk/SimpleFontDataPango.cpp
 endif # END USE_PANGO
-
-# ----
-# Cross-document messaging support
-# ----
-if ENABLE_CROSS_DOCUMENT_MESSAGING
-FEATURE_DEFINES_JAVASCRIPT += ENABLE_CROSS_DOCUMENT_MESSAGING=1
-
-webcore_cppflags += \
-	-DENABLE_CROSS_DOCUMENT_MESSAGING=1
-
-webcore_sources += \
-	WebCore/dom/MessageEvent.cpp
-
-webcore_built_sources += \
-	DerivedSources/JSMessageEvent.h \
-	DerivedSources/JSMessageEvent.cpp
-
-IDL_BINDINGS += \
-	WebCore/dom/MessageEvent.idl
-endif # END ENABLE_CROSS_DOCUMENT_MESSAGING
 
 # ----
 # Offline Web Applications

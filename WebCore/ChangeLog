@@ -1,3 +1,14 @@
+2008-05-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Alp Toker.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        http://bugs.webkit.org/show_bug.cgi?id=19142
+        [Gtk] Remove build options --svg-experimental and --cross-document-messaging
+
+        * GNUmakefile.am:
+
 2008-05-24  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

@@ -265,14 +265,6 @@ AC_ARG_ENABLE(dashboard_support,
               [],[enable_dashboard_support="yes"])
 AC_MSG_RESULT([$enable_dashboard_support])
 
-# check whether to build with cross-document messaging support
-AC_MSG_CHECKING([whether to enable HTML5 cross-document messaging support])
-AC_ARG_ENABLE(cross_document_messaging,
-              AC_HELP_STRING([--enable-cross-document-messaging],
-                             [enable HTML5 cross-document messaging support [default=yes]]),
-              [],[enable_cross_document_messaging="yes"])
-AC_MSG_RESULT([$enable_cross_document_messaging])
-
 # check whether to enable HTML5 Offline Web Applications support
 AC_MSG_CHECKING([whether to enable HTML5 offline web applications support])
 AC_ARG_ENABLE(offline_web_applications,
@@ -329,15 +321,6 @@ AC_ARG_ENABLE(xslt,
               [],[enable_xslt="yes"])
 AC_MSG_RESULT([$enable_xslt])
 
-# check whether to enable SVG experimental features
-# Enable all SVG if it is
-AC_MSG_CHECKING([whether to enable SVG experimental features])
-AC_ARG_ENABLE(svg_experimental,
-              AC_HELP_STRING([--enable-svg-experimental],
-                             [enable support for SVG experimental features [default=yes]]),
-              [],[enable_svg_experimental="yes"])
-AC_MSG_RESULT([$enable_svg_experimental])
-
 # check whether to enable SVG support
 AC_MSG_CHECKING([whether to enable SVG support])
 AC_ARG_ENABLE(svg,
@@ -346,22 +329,14 @@ AC_ARG_ENABLE(svg,
               [],[enable_svg="yes"])
 AC_MSG_RESULT([$enable_svg])
 
-# check for SVG features, enabling SVG if necessary
-if test "$enable_svg_experimental" = "no" || test "$enable_svg" = "no"; then
+# turn off svg features if --disable-svg is requested
+if test "$enable_svg" = "no"; then
    enable_svg_animation=no
    enable_svg_filters=no
    enable_svg_fonts=no
    enable_svg_foreign_object=no
    enable_svg_as_image=no
    enable_svg_use_element=no
-elif test "$enable_svg_experimental" = "yes"; then
-   enable_svg=yes
-   enable_svg_animation=yes
-#   enable_svg_filters=yes
-   enable_svg_fonts=yes
-   enable_svg_foreign_object=yes
-   enable_svg_as_image=yes
-   enable_svg_use_element=yes
 fi
 
 # check whether to enable support for SVG animation
@@ -412,6 +387,7 @@ AC_ARG_ENABLE(svg_use_element,
               [],[enable_svg_use_element="yes"])
 AC_MSG_RESULT([$enable_svg_use_element])
 
+# check for SVG features, enabling SVG if necessary
 if test "$enable_svg_animation" = "yes" || \
    test "$enable_svg_filters" = "yes" || \
    test "$enable_svg_fonts" = "yes" || \
@@ -552,7 +528,6 @@ AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
 AM_CONDITIONAL([ENABLE_DASHBOARD_SUPPORT],[test "$enable_dashboard_support" = "yes"])
-AM_CONDITIONAL([ENABLE_CROSS_DOCUMENT_MESSAGING],[test "$enable_cross_document_messaging" = "yes"])
 AM_CONDITIONAL([ENABLE_OFFLINE_WEB_APPLICATIONS],[test "$enable_offline_web_applications" = "yes"])
 AM_CONDITIONAL([ENABLE_DOM_STORAGE],[test "$enable_dom_storage" = "yes"])
 AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
@@ -592,7 +567,6 @@ Build configuration:
  Optimized memory allocator                               : $enable_fast_malloc
 Features:
  Dashboard support                                        : $enable_dashboard_support
- HTML5 cross-document messaging                           : $enable_cross_document_messaging
  HTML5 offline web applications support                   : $enable_offline_web_applications
  HTML5 client-side session and persistent storage support : $enable_dom_storage
  HTML5 client-side database storage support               : $enable_database
