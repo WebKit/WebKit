@@ -1,3 +1,23 @@
+2008-05-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - don't repaint nodes that are removed before layout
+        4.3% speedup on Acid3 test 26
+
+        Mitz points out the new flag can also be used to optimize other
+        cases of needless repaint such as
+        <https://bugs.webkit.org/show_bug.cgi?id=15129>.
+        
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::removeChildNode): If the child has never had a layout,
+        don't bother to repaint it, since there's nothing to dirty.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject): Initialize m_everHadLayout to false.
+        (WebCore::RenderObject::setNeedsLayout): Set m_everHadLayout to true if we
+        are being marked as not needing layout.
+        * rendering/RenderObject.h:
+
 2008-05-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

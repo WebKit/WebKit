@@ -954,6 +954,7 @@ private:
     
 public:
     bool m_hasCounterNodeMap         : 1;
+    bool m_everHadLayout             : 1;
 };
 
 } // namespace WebCore

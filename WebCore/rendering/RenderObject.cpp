@@ -197,6 +197,7 @@ RenderObject::RenderObject(Node* node)
     , m_hasReflection(false)
     , m_hasOverrideSize(false)
     , m_hasCounterNodeMap(false)
+    , m_everHadLayout(false)
 {
 #ifndef NDEBUG
     ++RenderObjectCounter::count;
@@ -699,6 +700,7 @@ void RenderObject::setNeedsLayout(bool b, bool markParents)
                 layer()->setNeedsFullRepaint();
         }
     } else {
+        m_everHadLayout = true;
         m_posChildNeedsLayout = false;
         m_normalChildNeedsLayout = false;
         m_needsPositionedMovementLayout = false;
