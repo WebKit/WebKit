@@ -1,3 +1,19 @@
+2008-05-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19086
+          <rdar://problem/5962254> REGRESSION (r28519-r28535): Caret doesn't paint past the right edge of a block
+
+        Test: fast/repaint/caret-outside-block.html
+
+        * editing/SelectionController.cpp:
+        (WebCore::repaintRectForCaret): Restored this function which was removed
+        in r28523, but changed it to inflate only the width.
+        (WebCore::SelectionController::caretRepaintRect): Changed back to use
+        repaintRectForCaret().
+        (WebCore::SelectionController::recomputeCaretRect): Ditto.
+
 2008-05-25  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Alp Toker.

@@ -765,9 +765,19 @@ IntRect SelectionController::caretRect() const
     return caret;
 }
 
+static IntRect repaintRectForCaret(IntRect caret)
+{
+    if (caret.isEmpty())
+        return IntRect();
+    // Ensure that the dirty rect intersects the block that paints the caret even in the case where
+    // the caret itself is just outside the block. See <https://bugs.webkit.org/show_bug.cgi?id=19086>.
+    caret.inflateX(1);
+    return caret;
+}
+
 IntRect SelectionController::caretRepaintRect() const
 {
-    return caretRect();
+    return repaintRectForCaret(caretRect());
 }
 
 bool SelectionController::recomputeCaretRect()
@@ -788,8 +798,8 @@ bool SelectionController::recomputeCaretRect()
     if (oldRect == newRect)
         return false;
 
-    v->updateContents(oldRect, false);
-    v->updateContents(newRect, false);
+    v->updateContents(repaintRectForCaret(oldRect), false);
+    v->updateContents(repaintRectForCaret(newRect), false);
     return true;
 }
 
