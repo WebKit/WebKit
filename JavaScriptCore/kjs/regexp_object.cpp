@@ -314,18 +314,65 @@ void RegExpObjectImp::performMatch(RegExp* r, const UString& s, int startOffset,
   }
 }
 
+class RegExpMatchesArray : public ArrayInstance {
+public:
+    RegExpMatchesArray(ExecState*, RegExpObjectImpPrivate*);
+
+    virtual ~RegExpMatchesArray();
+
+    virtual bool getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot) { if (!lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::getOwnPropertySlot(exec, propertyName, slot); }
+    virtual bool getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot) { if (!lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::getOwnPropertySlot(exec, propertyName, slot); }
+    virtual void put(ExecState* exec, const Identifier& propertyName, JSValue* v) { if (!lazyCreationData()) fillArrayInstance(exec); ArrayInstance::put(exec, propertyName, v); }
+    virtual void put(ExecState* exec, unsigned propertyName, JSValue* v) { if (!lazyCreationData()) fillArrayInstance(exec); ArrayInstance::put(exec, propertyName, v); }
+    virtual bool deleteProperty(ExecState* exec, const Identifier& propertyName) { if (!lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::deleteProperty(exec, propertyName); }
+    virtual bool deleteProperty(ExecState* exec, unsigned propertyName) { if (!lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::deleteProperty(exec, propertyName); }
+    virtual void getPropertyNames(ExecState* exec, PropertyNameArray& arr) { if (!lazyCreationData()) fillArrayInstance(exec); ArrayInstance::getPropertyNames(exec, arr); }
+
+private:
+    void fillArrayInstance(ExecState*);
+};
+
+RegExpMatchesArray::RegExpMatchesArray(ExecState* exec, RegExpObjectImpPrivate* data)
+    : ArrayInstance(exec->lexicalGlobalObject()->arrayPrototype(), data->lastNumSubPatterns + 1)
+{
+    RegExpObjectImpPrivate* d = new RegExpObjectImpPrivate;
+    d->lastInput = data->lastInput;
+    d->lastNumSubPatterns = data->lastNumSubPatterns;
+    unsigned offsetVectorSize = (data->lastNumSubPatterns + 1) * 2; // only copying the result part of the vector
+    d->lastOvector.set(new int[offsetVectorSize]);
+    memcpy(d->lastOvector.get(), data->lastOvector.get(), offsetVectorSize * sizeof(int));
+    // d->multiline is not needed, and remains uninitialized
+
+    setLazyCreationData(d);
+}
+
+RegExpMatchesArray::~RegExpMatchesArray()
+{
+    delete static_cast<RegExpObjectImpPrivate*>(lazyCreationData());
+}
+
+void RegExpMatchesArray::fillArrayInstance(ExecState* exec)
+{
+    RegExpObjectImpPrivate* d = static_cast<RegExpObjectImpPrivate*>(lazyCreationData());
+    ASSERT(d);
+
+    unsigned lastNumSubpatterns = d->lastNumSubPatterns;
+
+    for (unsigned i = 0; i <= lastNumSubpatterns; ++i) {
+        int start = d->lastOvector[2 * i];
+        if (start >= 0)
+            ArrayInstance::put(exec, i, jsString(d->lastInput.substr(start, d->lastOvector[2 * i + 1] - start)));
+    }
+    ArrayInstance::put(exec, exec->propertyNames().index, jsNumber(d->lastOvector[0]));
+    ArrayInstance::put(exec, exec->propertyNames().input, jsString(d->lastInput));
+
+    delete d;
+    setLazyCreationData(0);
+}
+
 JSObject* RegExpObjectImp::arrayOfMatches(ExecState* exec) const
 {
-  unsigned lastNumSubpatterns = d->lastNumSubPatterns;
-  ArrayInstance* arr = new ArrayInstance(exec->lexicalGlobalObject()->arrayPrototype(), lastNumSubpatterns + 1);
-  for (unsigned i = 0; i <= lastNumSubpatterns; ++i) {
-    int start = d->lastOvector[2 * i];
-    if (start >= 0)
-      arr->put(exec, i, jsString(d->lastInput.substr(start, d->lastOvector[2 * i + 1] - start)));
-  }
-  arr->put(exec, exec->propertyNames().index, jsNumber(d->lastOvector[0]));
-  arr->put(exec, exec->propertyNames().input, jsString(d->lastInput));
-  return arr;
+    return new RegExpMatchesArray(exec, d.get());
 }
 
 JSValue* RegExpObjectImp::getBackref(unsigned i) const

@@ -1,3 +1,31 @@
+2008-05-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Changed regular expression matching result array to be lazily filled, because many callers
+        only care about it being non-null.
+
+        2% improvement on Acid3 test 26.
+
+        * kjs/array_instance.cpp: Added a void* member to ArrayStorage for ArrayInstance subclasses
+        to use.
+        * kjs/array_instance.h:
+        (KJS::ArrayInstance::lazyCreationData):
+        (KJS::ArrayInstance::setLazyCreationData):
+        Added methods to access it from subclasses.
+
+        * kjs/regexp_object.cpp:
+        (KJS::RegExpMatchesArray::RegExpMatchesArray):
+        (KJS::RegExpMatchesArray::getOwnPropertySlot):
+        (KJS::RegExpMatchesArray::put):
+        (KJS::RegExpMatchesArray::deleteProperty):
+        (KJS::RegExpMatchesArray::getPropertyNames):
+        (KJS::RegExpMatchesArray::fillArrayInstanceIfNeeded):
+        (KJS::RegExpMatchesArray::~RegExpMatchesArray):
+        (KJS::RegExpObjectImp::arrayOfMatches):
+        RegExpMatchesArray is a subclass of ArrayInstance that isn't filled until
+        accessed for the first time.
+
 2008-05-24  Alp Toker  <alp@nuanti.com>
 
         Win32/gcc build fix. Remove MSVC assumption.

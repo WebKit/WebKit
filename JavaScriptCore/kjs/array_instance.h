@@ -53,6 +53,10 @@ namespace KJS {
     void sort(ExecState*);
     void sort(ExecState*, JSObject* compareFunction);
 
+  protected:
+    void* lazyCreationData();
+    void setLazyCreationData(void*);
+
   private:
     static JSValue* lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     bool inlineGetOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);

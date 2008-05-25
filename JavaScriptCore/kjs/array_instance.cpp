@@ -36,6 +36,7 @@ typedef HashMap<unsigned, JSValue*> SparseArrayValueMap;
 struct ArrayStorage {
     unsigned m_numValuesInVector;
     SparseArrayValueMap* m_sparseValueMap;
+    void* lazyCreationData; // An ArrayInstance subclass can use this to fill the vector lazily.
     JSValue* m_vector[1];
 };
 
@@ -680,6 +681,16 @@ unsigned ArrayInstance::compactForSorting()
         storage->m_vector[i] = 0;
 
     return numDefined;
+}
+
+void* ArrayInstance::lazyCreationData()
+{
+    return m_storage->lazyCreationData;
+}
+
+void ArrayInstance::setLazyCreationData(void* d)
+{
+    m_storage->lazyCreationData = d;
 }
 
 }
