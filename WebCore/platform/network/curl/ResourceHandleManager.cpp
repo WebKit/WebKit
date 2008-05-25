@@ -149,8 +149,11 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
     /*
      * a) We can finish and send the ResourceResponse
      * b) We will add the current header to the HTTPHeaderMap of the ResourceResponse
+     *
+     * The HTTP standard requires to use \r\n but for compatibility it recommends to
+     * accept also \n.
      */
-    if (header == String("\r\n")) {
+    if (header == String("\r\n") || header == String("\n")) {
         CURL* h = d->m_handle;
         CURLcode err;
 

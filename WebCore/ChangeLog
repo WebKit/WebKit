@@ -1,3 +1,17 @@
+2008-05-25  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18940
+        [CURL] Allow \n as line terminator for headers
+
+        The line terminator for message-header fields should be CRLF. However,
+        it is recommended to recognise as a line terminator also a single LF.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::headerCallback): Allow headers to be terminated by "\n" and
+        not just by "\r\n".
+
 2008-05-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Alp Toker.
