@@ -88,7 +88,7 @@ static void utf16_to_utf8(const UChar* aText, gint aLength, char* &text, gint &l
   }
 
   glong items_written;
-  text = g_utf16_to_utf8(aText, aLength, NULL, &items_written, NULL);
+  text = g_utf16_to_utf8(reinterpret_cast<const gunichar2*>(aText), aLength, NULL, &items_written, NULL);
   length = items_written;
 
   if (need_copy)

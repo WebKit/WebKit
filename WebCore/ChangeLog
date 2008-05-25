@@ -1,3 +1,11 @@
+2008-05-24  Alp Toker  <alp@nuanti.com>
+
+        Win32/gcc3 build fix in Pango font backend. UChar needs to be
+        explicitly cast to gunichar2.
+
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::utf16_to_utf8):
+
 2008-05-24  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a crash where a new Inspector would get an old
