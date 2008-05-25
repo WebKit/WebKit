@@ -1,3 +1,29 @@
+2008-05-24  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a crash where a new Inspector would get an old
+        JSInspectedObjectWrapper for a user agent CSSStyleDeclaration.
+        Since these style objects shared between pages, the wrapper cache
+        would have a wrapper for the object still. But the wrapper was
+        for a previous global object and with a disconnected frame. This
+        fixes the wrapper cache so wrappers are remembered per global object
+        and the object they are wrapping.
+
+        <rdar://problem/5958567> repro crash in WebCore::Frame::keepAlive()
+        opening inspector window after closing it
+
+        Reviewed by Darin Adler.
+
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        (WebCore::wrappers): Return a GlobalObjectWrapperMap reference.
+        (WebCore::JSInspectedObjectWrapper::wrap): Find the WrapperMap
+        by the dynamicGlobalObject then find the wrapper for unwrappedObject.
+        (WebCore::JSInspectedObjectWrapper::JSInspectedObjectWrapper): Changes
+        how the wrapper is added to the wrapper cache.
+        (WebCore::JSInspectedObjectWrapper::~JSInspectedObjectWrapper): Changes
+        how the wrapper is removed from the wrapper cache.
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        (WebCore::JSQuarantinedObjectWrapper:unwrappedGlobalObject): Added.
+
 2008-05-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
