@@ -48,7 +48,7 @@
 #endif
 #include <stdlib.h>     /* for abort() */
 
-#if COMPILER(MSVC)
+#if PLATFORM(WIN_OS)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -179,7 +179,7 @@ static void TCMalloc_SlowLock(volatile unsigned int* lockword) {
     // from taking 30 seconds to 16 seconds.
 
     // Sleep for a few milliseconds
-#if COMPILER(MSVC)
+#if PLATFORM(WIN_OS)
     Sleep(2);
 #else
     struct timespec tm;
