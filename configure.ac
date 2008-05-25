@@ -147,10 +147,12 @@ esac
 AC_MSG_RESULT([$unicode_backend])
 
 if test "$unicode_backend" = "icu"; then
-	# check for icu-config
 	if test "$os_darwin" = "yes"; then
 		UNICODE_CFLAGS="-I\$(srcdir)/JavaScriptCore/icu -I\$(srcdir)/WebCore/icu"
 		UNICODE_LIBS="-licucore"
+	elif test "$os_win32" = "yes"; then
+		UNICODE_CFLAGS=""
+		UNICODE_LIBS="-licuin -licuuc"
 	else
 		AC_PATH_PROG(icu_config, icu-config, no)
 		if test "$icu_config" = "no"; then
@@ -462,6 +464,9 @@ fi
 if test "$with_http_backend" = "curl"; then
    PKG_CHECK_MODULES([LIBCURL],
                      [libcurl >= $LIBCURL_REQUIRED_VERSION])
+   if test "$os_win32" = "yes"; then
+      LIBCURL_LIBS="$LIBCURL_LIBS -lWs2_32"
+   fi
    AC_SUBST([LIBCURL_CFLAGS])
    AC_SUBST([LIBCURL_LIBS])
 fi

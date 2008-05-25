@@ -1,3 +1,13 @@
+2008-05-24  Alp Toker  <alp@nuanti.com>
+
+        GTK+/Win32 build fixes. Link against Windows ICU without using
+        icu-config since it's not available on that platform.
+
+        Link against Ws2_32 when the curl http backend is chosen since we
+        use select() directly.
+
+        * configure.ac:
+
 2008-05-23  Alp Toker  <alp@nuanti.com>
 
         GTK+ fixes for building without database support.
