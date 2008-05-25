@@ -1,3 +1,21 @@
+2008-05-24  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a huge leak with the Inspector where it was protecting
+        a large object that was not being unprotected.
+
+        <rdar://problem/5961999> Inspector protects a large JavaScript
+        object and never unprotects it (large leak)
+
+        Reviewed by Darin Adler.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::inspectedPageDestroyed): Call close()
+        and removed a call to stopDebugging() and moved it to close().
+        (WebCore::InspectorController::close): Add stopDebugging() and
+        stopUserInitiatedProfiling(). Removed an ASSERT and added an
+        if statement before calling JSValueUnprotect. We don't always have
+        a m_scriptContext and m_scriptObject.
+
 2008-05-24  Alp Toker  <alp@nuanti.com>
 
         Win32/gcc3 build fix in Pango font backend. UChar needs to be

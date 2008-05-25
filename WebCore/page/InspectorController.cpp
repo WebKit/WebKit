@@ -1056,8 +1056,9 @@ InspectorController::~InspectorController()
 
 void InspectorController::inspectedPageDestroyed()
 {
+    close();
+
     ASSERT(m_inspectedPage);
-    stopDebugging();
     m_inspectedPage = 0;
 }
 
@@ -1391,10 +1392,12 @@ void InspectorController::close()
     if (!enabled())
         return;
 
+    stopUserInitiatedProfiling();
+    stopDebugging();
     closeWindow();
 
-    ASSERT(m_scriptContext && m_scriptObject);
-    JSValueUnprotect(m_scriptContext, m_scriptObject);
+    if (m_scriptContext && m_scriptObject)
+        JSValueUnprotect(m_scriptContext, m_scriptObject);
 
     m_scriptObject = 0;
     m_scriptContext = 0;
