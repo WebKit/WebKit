@@ -53,20 +53,24 @@
     embed.parentNode.removeChild(embed);
 
     object = document.createElement("object");
-    object.onload = completeTest;
+    object.onload = continueTest4;
     object.data = "resources/getsvgdocument.svg";
     document.documentElement.appendChild(object);
     shouldBeTrue("!!object.getSVGDocument");
   }
 
-  function completeTest() {
+  function continueTest4() {
     shouldBeEqualToString("object.getSVGDocument().toString()", "[object SVGDocument]");
     object.parentNode.removeChild(object);
     
     var script = document.createElement('script');
     script.src = "../../fast/js/resources/js-test-post.js";
+    script.onload = completeTest;
     successfullyParsed = true;
     document.body.appendChild(script);
+  }
+
+  function completeTest() {
     if (window.layoutTestController)
       layoutTestController.notifyDone();
   }

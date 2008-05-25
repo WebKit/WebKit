@@ -1,5 +1,13 @@
 2008-05-25  Rob Buis  <buis@kde.org>
 
+        Reviewed by Alexey.
+
+        Fix the test.
+
+        * svg/custom/frame-getSVGDocument.html:
+
+2008-05-25  Rob Buis  <buis@kde.org>
+
         RS=Oliver
 
         Fix SVG test results for tiger buildbot.
