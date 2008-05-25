@@ -1,3 +1,15 @@
+2008-05-25  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Harrison
+
+        <rdar://problem/3582905> elements on separate pages need to be distinct
+
+        * page/AccessibilityListBox.h:
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::accessibilityShouldUseUniqueId):
+        * page/AccessibilityRenderObject.cpp:
+        * page/AccessibilityRenderObject.h:
+
 2008-05-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -101,7 +101,6 @@ public:
     
     virtual bool hasIntValue() const;
     
-    virtual bool accessibilityShouldUseUniqueId() const;
     virtual bool accessibilityIsIgnored() const;
     
     static int headingLevel(Node*);

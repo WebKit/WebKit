@@ -230,7 +230,7 @@ public:
 
     virtual bool hasIntValue() const { return false; };
 
-    virtual bool accessibilityShouldUseUniqueId() const { return false; };
+    bool accessibilityShouldUseUniqueId() const { return true; };
     virtual bool accessibilityIsIgnored() const  { return true; };
 
     virtual int intValue() const;
