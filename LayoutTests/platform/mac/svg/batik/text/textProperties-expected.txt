@@ -1,4 +1,4 @@
-KCanvasResource {id="textClip" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [path=M0.00,0.00L0.00,0.00L0.00,0.00L0.00,0.00]]]}
+KCanvasResource {id="textClip" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [path=M0.00,0.00 L0.00,0.00 L0.00,0.00 L0.00,0.00]]]}
 KRenderingPaintServer {id="gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#008000)]] [bounding box mode=0] [start=(-50,-25)] [end=(50,25)]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
@@ -13,7 +13,7 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,-14) size 332x17
           chunk 1 (middle anchor) text run 1 at (59.00,50.00) startOffset 0 endOffset 47 width 332.00: "Text Alignment, Geometry, References, and Spans"
       RenderSVGContainer {g} at (111,70) size 231x70
-        RenderPath {line} at (224.50,70) size 1x70 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,70.00L225.00,140.00"]
+        RenderPath {line} at (224.50,70) size 1x70 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,70.00 L225.00,140.00"]
         RenderSVGText {text} at (225,90) size 117x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-13) size 117x17
             chunk 1 text run 1 at (225.00,90.00) startOffset 0 endOffset 19 width 117.00: "text-anchor=\"start\""
@@ -135,7 +135,7 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
       RenderSVGContainer {g} at (300,345) size 100x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,370.00)}]
-        RenderPath {rect} at (300,345) size 100x50 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#008000)]] [bounding box mode=0] [start=(-50,-25)] [end=(50,25)]}] [clip path="#textClip"] [data="M-50.00,-25.00L50.00,-25.00L50.00,25.00L-50.00,25.00"]
+        RenderPath {rect} at (300,345) size 100x50 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#008000)]] [bounding box mode=0] [start=(-50,-25)] [end=(50,25)]}] [clip path="#textClip"] [data="M-50.00,-25.00 L50.00,-25.00 L50.00,25.00 L-50.00,25.00"]
         RenderSVGText {text} at (-50,15) size 99x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (1,-14) size 99x18
             chunk 1 (middle anchor) text run 1 at (-49.50,15.00) startOffset 0 endOffset 17 width 99.00: "text as clip-path"

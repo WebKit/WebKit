@@ -18,12 +18,12 @@ layer at (0,0) size 480x360
             RenderSVGInlineText {#text} at (0,-7) size 78x9
               chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 78.00: "this is a line to squeeze"
         RenderSVGContainer {g} at (4.50,94.50) size 471x13.50
-          RenderPath {line} at (6,94.50) size 162x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L56.00,32.00"]
-          RenderPath {line} at (4.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L2.00,36.00"]
-          RenderPath {line} at (166.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M56.00,32.00L56.00,36.00"]
-          RenderPath {line} at (222,94.50) size 252x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L158.00,32.00"]
-          RenderPath {line} at (220.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L74.00,36.00"]
-          RenderPath {line} at (472.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M158.00,32.00L158.00,36.00"]
+          RenderPath {line} at (6,94.50) size 162x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00 L56.00,32.00"]
+          RenderPath {line} at (4.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00 L2.00,36.00"]
+          RenderPath {line} at (166.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M56.00,32.00 L56.00,36.00"]
+          RenderPath {line} at (222,94.50) size 252x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00 L158.00,32.00"]
+          RenderPath {line} at (220.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00 L74.00,36.00"]
+          RenderPath {line} at (472.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M158.00,32.00 L158.00,36.00"]
         RenderSVGContainer {g} at (18,99) size 366x36
           RenderSVGText {text} at (6,38) size 48x6 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-5) size 48x6
@@ -46,12 +46,12 @@ layer at (0,0) size 480x360
             RenderSVGInlineText {#text} at (0,-7) size 66x9
               chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 78.00: "this is a line to squeeze"
         RenderSVGContainer {g} at (4.50,160.50) size 420x13.50
-          RenderPath {line} at (6,160.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L69.00,32.00"]
-          RenderPath {line} at (4.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L2.00,36.00"]
-          RenderPath {line} at (205.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M69.00,32.00L69.00,36.00"]
-          RenderPath {line} at (222,160.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L141.00,32.00"]
-          RenderPath {line} at (220.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L74.00,36.00"]
-          RenderPath {line} at (421.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00L141.00,36.00"]
+          RenderPath {line} at (6,160.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00 L69.00,32.00"]
+          RenderPath {line} at (4.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00 L2.00,36.00"]
+          RenderPath {line} at (205.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M69.00,32.00 L69.00,36.00"]
+          RenderPath {line} at (222,160.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00 L141.00,32.00"]
+          RenderPath {line} at (220.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00 L74.00,36.00"]
+          RenderPath {line} at (421.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00 L141.00,36.00"]
         RenderSVGContainer {g} at (18,165) size 396x36
           RenderSVGText {text} at (6,38) size 59x6 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-5) size 59x6
@@ -74,12 +74,12 @@ layer at (0,0) size 480x360
             RenderSVGInlineText {#text} at (0,-7) size 66x9
               chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 78.00: "this is a line to squeeze"
         RenderSVGContainer {g} at (4.50,226.50) size 420x13.50
-          RenderPath {line} at (6,226.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L69.00,32.00"]
-          RenderPath {line} at (4.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L2.00,36.00"]
-          RenderPath {line} at (205.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M69.00,32.00L69.00,36.00"]
-          RenderPath {line} at (222,226.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L141.00,32.00"]
-          RenderPath {line} at (220.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L74.00,36.00"]
-          RenderPath {line} at (421.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00L141.00,36.00"]
+          RenderPath {line} at (6,226.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00 L69.00,32.00"]
+          RenderPath {line} at (4.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00 L2.00,36.00"]
+          RenderPath {line} at (205.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M69.00,32.00 L69.00,36.00"]
+          RenderPath {line} at (222,226.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00 L141.00,32.00"]
+          RenderPath {line} at (220.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00 L74.00,36.00"]
+          RenderPath {line} at (421.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00 L141.00,36.00"]
         RenderSVGContainer {g} at (9,231) size 405x36
           RenderSVGText {text} at (3,38) size 59x6 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-5) size 59x6
@@ -102,12 +102,12 @@ layer at (0,0) size 480x360
             RenderSVGInlineText {#text} at (0,-7) size 78x9
               chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 78.00: "this is a line to squeeze"
         RenderSVGContainer {g} at (4.50,292.50) size 420x13.50
-          RenderPath {line} at (6,292.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L69.00,32.00"]
-          RenderPath {line} at (4.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L2.00,36.00"]
-          RenderPath {line} at (205.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M69.00,32.00L69.00,36.00"]
-          RenderPath {line} at (222,292.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L141.00,32.00"]
-          RenderPath {line} at (220.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00L74.00,36.00"]
-          RenderPath {line} at (421.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00L141.00,36.00"]
+          RenderPath {line} at (6,292.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00 L69.00,32.00"]
+          RenderPath {line} at (4.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00 L2.00,36.00"]
+          RenderPath {line} at (205.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M69.00,32.00 L69.00,36.00"]
+          RenderPath {line} at (222,292.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00 L141.00,32.00"]
+          RenderPath {line} at (220.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M74.00,32.00 L74.00,36.00"]
+          RenderPath {line} at (421.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00 L141.00,36.00"]
         RenderSVGContainer {g} at (18,297) size 396x36
           RenderSVGText {text} at (6,38) size 59x6 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-5) size 59x6
@@ -124,4 +124,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (5,117) size 52x9 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-7) size 52x9
         chunk 1 text run 1 at (5.00,117.00) startOffset 0 endOffset 16 width 52.00: "$Revision: 1.7 $"
-    RenderPath {rect} at (1.50,1.50) size 477x357 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L159.00,1.00L159.00,119.00L1.00,119.00"]
+    RenderPath {rect} at (1.50,1.50) size 477x357 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L159.00,1.00 L159.00,119.00 L1.00,119.00"]

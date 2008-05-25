@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
- *                     2006 Rob Buis <buis@kde.org>
+ *                     2006, 2008 Rob Buis <buis@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -189,17 +189,17 @@ static void CGPathToCFStringApplierFunction(void* info, const CGPathElement *ele
     CGPoint* points = element->points;
     switch (element->type) {
     case kCGPathElementMoveToPoint:
-        CFStringAppendFormat(string, 0, CFSTR("M%.2f,%.2f"), points[0].x, points[0].y);
+        CFStringAppendFormat(string, 0, CFSTR("M%.2f,%.2f "), points[0].x, points[0].y);
         break;
     case kCGPathElementAddLineToPoint:
-        CFStringAppendFormat(string, 0, CFSTR("L%.2f,%.2f"), points[0].x, points[0].y);
+        CFStringAppendFormat(string, 0, CFSTR("L%.2f,%.2f "), points[0].x, points[0].y);
         break;
     case kCGPathElementAddQuadCurveToPoint:
-        CFStringAppendFormat(string, 0, CFSTR("Q%.2f,%.2f,%.2f,%.2f"),
+        CFStringAppendFormat(string, 0, CFSTR("Q%.2f,%.2f,%.2f,%.2f "),
                 points[0].x, points[0].y, points[1].x, points[1].y);
         break;
     case kCGPathElementAddCurveToPoint:
-        CFStringAppendFormat(string, 0, CFSTR("C%.2f,%.2f,%.2f,%.2f,%.2f,%.2f"),
+        CFStringAppendFormat(string, 0, CFSTR("C%.2f,%.2f,%.2f,%.2f,%.2f,%.2f "),
                 points[0].x, points[0].y, points[1].x, points[1].y,
                 points[2].x, points[2].y);
         break;
@@ -215,6 +215,8 @@ static CFStringRef CFStringFromCGPath(CGPathRef path)
 
     CFMutableStringRef string = CFStringCreateMutable(NULL, 0);
     CGPathApply(path, string, CGPathToCFStringApplierFunction);
+    CFStringTrimWhitespace(string);
+
 
     return string;
 }

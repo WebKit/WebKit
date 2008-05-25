@@ -1,3 +1,16 @@
+2008-05-24  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18927
+        Unify path data debug output
+
+        Implement unified path data output for Mac svg tests.
+
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::CGPathToCFStringApplierFunction):
+        (WebCore::CFStringFromCGPath):
+
 2008-05-24  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a huge leak with the Inspector where it was protecting
