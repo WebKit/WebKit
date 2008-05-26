@@ -1,3 +1,33 @@
+2008-05-26  James Ren  <jamesjren@gmail.com>
+
+        Reviewed by Sam Weinig, landed by Collin Jackson.
+
+        http://bugs.webkit.org/show_bug.cgi?id=19163
+
+        Modified some http/security layout tests to allow them to run in Firefox.
+
+        * http/tests/security/aboutBlank/xss-DENIED-set-opener.html:
+        * http/tests/security/frameNavigation/xss-ALLOWED-targeted-subframe-navigation-change.html:
+        * http/tests/security/resources/localhost-accesssor.html:
+          Added a workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=434912
+
+        * http/tests/security/resources/cross-frame-access.js:
+          Changed shouldBe to also gracefully handle exceptions
+        
+        * http/tests/security/resources/foreign-domain-iframe-for-selection-test.html:
+          Added feature detection for setBaseAndExtent and selectAllChildren
+
+        * http/tests/security/cross-frame-access-enumeration-expected.txt:
+        * http/tests/security/cross-frame-access-enumeration.html:
+          Fixed typo (missing '.html')
+
+        * http/tests/security/cross-frame-access-call-expected.txt:
+        * http/tests/security/cross-frame-access-call.html:
+        * http/tests/security/cross-frame-access-first-time.html:
+        * http/tests/security/cross-frame-access-put.html:
+        * http/tests/security/cross-frame-access-selection.html:
+          Caught exceptions that Firefox throws, to allow the test to run to completion.
+
 2008-05-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

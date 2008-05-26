@@ -38,21 +38,23 @@ window.onload = function()
     shouldBe("window.open.call(targetWindow, '')", "undefined");
 
     // These always return undefined so we use the error console to detect failure
-    window.addEventListener.call(targetWindow, "load", null, false);
-    window.removeEventListener.call(targetWindow, "load", null, false);
-    window.clearTimeout.call(targetWindow, 0);
-    window.clearInterval.call(targetWindow, 0);
-    window.print.call(targetWindow);
-    window.stop.call(targetWindow);
-    window.alert.call(targetWindow, 'message');
-    window.scrollBy.call(targetWindow, 0, 0);
-    window.scrollTo.call(targetWindow, 0, 0);
-    window.scroll.call(targetWindow, 0, 0);
-    window.moveBy.call(targetWindow, 0, 0);
-    window.moveTo.call(targetWindow, 0, 0);
-    window.resizeBy.call(targetWindow, 0, 0);
-    window.resizeTo.call(targetWindow, 0, 0);
-    window.showModalDialog.call(targetWindow);
+    shouldBe("window.addEventListener.call(targetWindow, 'load', null, false);", "undefined");
+    shouldBe("window.removeEventListener.call(targetWindow, 'load', null, false);", "undefined");
+    shouldBe("window.clearTimeout.call(targetWindow, 0);", "undefined");
+    shouldBe("window.clearInterval.call(targetWindow, 0);", "undefined");
+    shouldBe("window.print.call(targetWindow);", "undefined");
+    shouldBe("window.stop.call(targetWindow);", "undefined");
+    shouldBe("window.alert.call(targetWindow, 'message');", "undefined");
+    shouldBe("window.scrollBy.call(targetWindow, 0, 0);", "undefined");
+    shouldBe("window.scrollTo.call(targetWindow, 0, 0);", "undefined");
+    shouldBe("window.scroll.call(targetWindow, 0, 0);", "undefined");
+    shouldBe("window.moveBy.call(targetWindow, 0, 0);", "undefined");
+    shouldBe("window.moveTo.call(targetWindow, 0, 0);", "undefined");
+    shouldBe("window.resizeBy.call(targetWindow, 0, 0);", "undefined");
+    shouldBe("window.resizeTo.call(targetWindow, 0, 0);", "undefined");
+
+    // Throws a TypeError and logs to the error console
+    shouldBe("window.showModalDialog.call(targetWindow);", "'TypeError: Undefined value'");
 
     // - Tests for the Location object -
     // undefined value indicates failure

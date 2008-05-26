@@ -32,9 +32,13 @@
         }, 5000);
 
         function test() {
-            if (targetWindow.document) {
-                setTimeout(test, 1);
-                return;
+            try {
+                if (targetWindow.document) {
+                    setTimeout(test, 1);
+                    return;
+                }
+            } catch (e) {
+                log("Exception thrown trying to get cross-domain document: " + e);
             }
 
             try {

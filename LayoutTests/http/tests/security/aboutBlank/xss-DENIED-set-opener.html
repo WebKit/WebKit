@@ -50,9 +50,9 @@
         openedWindow.document.write(code);
         openedWindow.document.close();
 
-        window.open.call(frames[0], '', 'attacker');
-
         setTimeout(pollForDone, 1);
+
+        window.open.call(frames[0], '', 'attacker');
     }
 
     pollForDone = function()

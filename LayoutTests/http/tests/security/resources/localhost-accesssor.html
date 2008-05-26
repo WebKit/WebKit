@@ -5,7 +5,6 @@
         function loaded()
         {
             if (window.layoutTestController) {
-                setTimeout(waitForFlag, 1);
                 function waitForFlag() {
                     if (!layoutTestController.globalFlag) {
                         setTimeout(waitForFlag, 1);
@@ -13,6 +12,7 @@
                     }
                     performTest();
                 }
+                setTimeout(waitForFlag, 1);
             } else {
                 log("Click the button when all the subframes have finished loading.");
             }

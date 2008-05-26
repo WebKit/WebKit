@@ -8,9 +8,14 @@ function shouldBe(a, b, shouldNotPrintValues)
     var evalA, evalB;
     try {
         evalA = eval(a);
+    } catch(e) {
+        evalA = e.toString();
+    }
+
+    try {
         evalB = eval(b);
     } catch(e) {
-        evalA = e;
+        evalB = e.toString();
     }
 
     var message;

@@ -15,7 +15,6 @@
             document.getElementsByTagName('h4')[0].innerHTML = document.domain;
 
             if (window.layoutTestController) {
-                setTimeout(waitForFlag, 1);
                 function waitForFlag() {
                     if (!layoutTestController.globalFlag) {
                         setTimeout(waitForFlag, 1);
@@ -25,6 +24,7 @@
                     layoutTestController.globalFlag = false;
                     performTest();
                 }
+                setTimeout(waitForFlag, 1);
             }
         }
 
