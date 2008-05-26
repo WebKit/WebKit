@@ -477,30 +477,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return dataSource(_private->coreFrame->loader()->documentLoader());
 }
 
-#if ENABLE(NETSCAPE_PLUGIN_API) 
-- (void)_recursive_resumeNullEventsForAllNetscapePlugins
-{
-    Frame* coreFrame = core(self);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
-        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
-        if ([documentView isKindOfClass:[WebHTMLView class]])
-            [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
-    }
-}
-#endif
-
-#if ENABLE(NETSCAPE_PLUGIN_API) 
-- (void)_recursive_pauseNullEventsForAllNetscapePlugins
-{
-    Frame* coreFrame = core(self);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
-        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
-        if ([documentView isKindOfClass:[WebHTMLView class]])
-            [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
-    }
-}
-#endif
-
 - (void)_addData:(NSData *)data
 {
     Document* document = _private->coreFrame->document();
@@ -1105,6 +1081,28 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
                                                   target:target
                                                 selector:selector];
 }
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+- (void)_recursive_resumeNullEventsForAllNetscapePlugins
+{
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
+        if ([documentView isKindOfClass:[WebHTMLView class]])
+            [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
+    }
+}
+
+- (void)_recursive_pauseNullEventsForAllNetscapePlugins
+{
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
+        if ([documentView isKindOfClass:[WebHTMLView class]])
+            [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
+    }
+}
+#endif
 
 @end
 

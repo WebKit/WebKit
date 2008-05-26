@@ -31,6 +31,10 @@
 #import <WebKit/WebFrame.h>
 #import <JavaScriptCore/JSBase.h>
 
+#if !defined(ENABLE_NETSCAPE_PLUGIN_API)
+#define ENABLE_NETSCAPE_PLUGIN_API 1
+#endif
+
 @class WebIconFetcher;
 @class WebScriptObject;
 
@@ -71,5 +75,10 @@ typedef enum {
 
 - (WebIconFetcher *)fetchApplicationIcon:(id)target
                                 selector:(SEL)selector;
+
+#if ENABLE_NETSCAPE_PLUGIN_API
+- (void)_recursive_resumeNullEventsForAllNetscapePlugins;
+- (void)_recursive_pauseNullEventsForAllNetscapePlugins;
+#endif
 
 @end
