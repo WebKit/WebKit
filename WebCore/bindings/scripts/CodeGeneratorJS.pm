@@ -27,7 +27,10 @@ use File::stat;
 my $module = "";
 my $outputDir = "";
 
+my @headerContentHeader = ();
 my @headerContent = ();
+my %headerIncludes = ();
+
 my @implContentHeader = ();
 my @implContent = ();
 my %implIncludes = ();
@@ -244,6 +247,76 @@ sub HashValueForClassAndName
     return "${class}::$name";
 }
 
+sub GenerateGetOwnPropertySlotBody
+{
+    my ($dataNode, $interfaceName, $className, $implClassName, $hasAttributes, $inlined) = @_;
+
+    my $namespaceMaybe = ($inlined ? "KJS::" : "");
+
+    my @getOwnPropertySlotImpl = ();
+
+    if ($interfaceName eq "NamedNodeMap" or $interfaceName eq "HTMLCollection") {
+        push(@getOwnPropertySlotImpl, "    ${namespaceMaybe}JSValue* proto = prototype();\n");
+        push(@getOwnPropertySlotImpl, "    if (proto->isObject() && static_cast<${namespaceMaybe}JSObject*>(proto)->hasProperty(exec, propertyName))\n");
+        push(@getOwnPropertySlotImpl, "        return false;\n\n");
+    }
+
+    my $hasNameGetterGeneration = sub {
+        push(@getOwnPropertySlotImpl, "    if (canGetItemsForName(exec, static_cast<$implClassName*>(impl()), propertyName)) {\n");
+        push(@getOwnPropertySlotImpl, "        slot.setCustom(this, nameGetter);\n");
+        push(@getOwnPropertySlotImpl, "        return true;\n");
+        push(@getOwnPropertySlotImpl, "    }\n");
+        if ($inlined) {
+            $headerIncludes{"AtomicString.h"} = 1;
+        } else {
+            $implIncludes{"AtomicString.h"} = 1;
+        }
+    };
+
+    if ($dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
+        &$hasNameGetterGeneration();
+    }
+
+    my $requiresManualLookup = $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"};
+    if ($requiresManualLookup) {
+        push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashEntry* entry = ${className}Table.entry(propertyName);\n");
+        push(@getOwnPropertySlotImpl, "    if (entry) {\n");
+        push(@getOwnPropertySlotImpl, "        slot.setStaticEntry(this, entry, staticValueGetter<$className>);\n");
+        push(@getOwnPropertySlotImpl, "        return true;\n");
+        push(@getOwnPropertySlotImpl, "    }\n");
+    }
+
+    if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) {
+        push(@getOwnPropertySlotImpl, "    bool ok;\n");
+        push(@getOwnPropertySlotImpl, "    unsigned index = propertyName.toUInt32(&ok, false);\n");
+        push(@getOwnPropertySlotImpl, "    if (ok && index < static_cast<$implClassName*>(impl())->length()) {\n");
+        push(@getOwnPropertySlotImpl, "        slot.setCustomIndex(this, index, indexGetter);\n");
+        push(@getOwnPropertySlotImpl, "        return true;\n");
+        push(@getOwnPropertySlotImpl, "    }\n");
+    }
+
+    if ($dataNode->extendedAttributes->{"HasNameGetter"}) {
+        &$hasNameGetterGeneration();
+    }
+
+    if ($dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
+        push(@getOwnPropertySlotImpl, "    if (customGetOwnPropertySlot(exec, propertyName, slot))\n");
+        push(@getOwnPropertySlotImpl, "        return true;\n");
+    }
+
+    if ($hasAttributes) {
+        if ($inlined) {
+            push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, s_info.staticPropHashTable, this, propertyName, slot);\n");
+        } else {
+           push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, &${className}Table, this, propertyName, slot);\n");
+        }
+    } else {
+        push(@getOwnPropertySlotImpl, "    return Base::getOwnPropertySlot(exec, propertyName, slot);\n");
+    }
+
+    return @getOwnPropertySlotImpl;
+}
+
 sub GenerateHeader
 {
     my $object = shift;
@@ -266,43 +339,48 @@ sub GenerateHeader
     my $conditional = $dataNode->extendedAttributes->{"Conditional"};
 
     # - Add default header template
-    @headerContent = split("\r", $headerTemplate);
+    @headerContentHeader = split("\r", $headerTemplate);
 
     # - Add header protection
-    push(@headerContent, "\n#ifndef $className" . "_h");
-    push(@headerContent, "\n#define $className" . "_h\n\n");
+    push(@headerContentHeader, "\n#ifndef $className" . "_h");
+    push(@headerContentHeader, "\n#define $className" . "_h\n\n");
 
     my $conditionalString;
     if ($conditional) {
         $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-        push(@headerContent, "\n#if ${conditionalString}\n\n");
+        push(@headerContentHeader, "\n#if ${conditionalString}\n\n");
     }
 
     if ($hasParent) {
-        push(@headerContent, "#include \"$parentClassName.h\"\n");
+        push(@headerContentHeader, "#include \"$parentClassName.h\"\n");
     } else {
-        push(@headerContent, "#include \"kjs_binding.h\"\n");
-        push(@headerContent, "#include <kjs/JSGlobalObject.h>\n");
-        push(@headerContent, "#include <kjs/object_object.h>\n");
+        push(@headerContentHeader, "#include \"kjs_binding.h\"\n");
+        push(@headerContentHeader, "#include <kjs/JSGlobalObject.h>\n");
+        push(@headerContentHeader, "#include <kjs/object_object.h>\n");
     }
     if ($interfaceName eq "Node") {
-        push(@headerContent, "#include \"EventTargetNode.h\"\n");
+        push(@headerContentHeader, "#include \"EventTargetNode.h\"\n");
     }
 
     if ($dataNode->extendedAttributes->{"CustomCall"}) {
-        push(@headerContent, "#include <kjs/CallData.h>\n");
+        push(@headerContentHeader, "#include <kjs/CallData.h>\n");
+    }
+
+    if ($dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"}) {
+        push(@headerContentHeader, "#include <kjs/lookup.h>\n");
+        push(@headerContentHeader, "#include <wtf/AlwaysInline.h>\n");
     }
 
     if ($hasParent && $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
-        push(@headerContent, "#include \"${implClassName}.h\"");
+        push(@headerContentHeader, "#include \"${implClassName}.h\"");
     }
 
     # Get correct pass/store types respecting PODType flag
     my $podType = $dataNode->extendedAttributes->{"PODType"};
     my $passType = $podType ? "JSSVGPODTypeWrapper<$podType>*" : "$implClassName*";
-    push(@headerContent, "#include \"$podType.h\"\n") if $podType and $podType ne "float";
+    push(@headerContentHeader, "#include \"$podType.h\"\n") if $podType and $podType ne "float";
 
-    push(@headerContent, "#include \"JSSVGPODTypeWrapper.h\"\n") if $podType;
+    push(@headerContentHeader, "#include \"JSSVGPODTypeWrapper.h\"\n") if $podType;
 
     my $numConstants = @{$dataNode->constants};
     my $numAttributes = @{$dataNode->attributes};
@@ -510,6 +588,13 @@ sub GenerateHeader
     }
 
     push(@headerContent, "};\n\n");
+
+    if ($dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"}) {
+        push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertySlot(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::PropertySlot& slot)\n");
+        push(@headerContent, "{\n");
+        push(@headerContent, GenerateGetOwnPropertySlotBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 1));
+        push(@headerContent, "}\n\n");
+    }
 
     if (!$hasParent || $dataNode->extendedAttributes->{"GenerateToJS"}) {
         if ($podType) {
@@ -860,60 +945,12 @@ sub GenerateImplementation
 
     # Attributes
     if ($hasGetter) {
-        push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
-        push(@implContent, "{\n");
-
-        if ($interfaceName eq "NamedNodeMap" or $interfaceName eq "HTMLCollection") {
-            push(@implContent, "    JSValue* proto = prototype();\n");
-            push(@implContent, "    if (proto->isObject() && static_cast<JSObject*>(proto)->hasProperty(exec, propertyName))\n");
-            push(@implContent, "        return false;\n\n");
+        if (!$dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"}) {
+            push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
+            push(@implContent, "{\n");
+            push(@implContent, GenerateGetOwnPropertySlotBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 0));
+            push(@implContent, "}\n\n");
         }
-
-        my $hasNameGetterGeneration = sub {
-            push(@implContent, "    if (canGetItemsForName(exec, static_cast<$implClassName*>(impl()), propertyName)) {\n");
-            push(@implContent, "        slot.setCustom(this, nameGetter);\n");
-            push(@implContent, "        return true;\n");
-            push(@implContent, "    }\n");
-            $implIncludes{"AtomicString.h"} = 1;
-        };
-
-        if ($dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
-            &$hasNameGetterGeneration();
-        }
-
-        my $requiresManualLookup = $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"};
-        if ($requiresManualLookup) {
-            push(@implContent, "    const HashEntry* entry = ${className}Table.entry(propertyName);\n");
-            push(@implContent, "    if (entry) {\n");
-            push(@implContent, "        slot.setStaticEntry(this, entry, staticValueGetter<$className>);\n");
-            push(@implContent, "        return true;\n");
-            push(@implContent, "    }\n");
-        }
-
-        if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) {
-            push(@implContent, "    bool ok;\n");
-            push(@implContent, "    unsigned index = propertyName.toUInt32(&ok, false);\n");
-            push(@implContent, "    if (ok && index < static_cast<$implClassName*>(impl())->length()) {\n");
-            push(@implContent, "        slot.setCustomIndex(this, index, indexGetter);\n");
-            push(@implContent, "        return true;\n");
-            push(@implContent, "    }\n");
-        }
-
-        if ($dataNode->extendedAttributes->{"HasNameGetter"}) {
-            &$hasNameGetterGeneration();
-        }
-
-        if ($dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
-                push(@implContent, "    if (customGetOwnPropertySlot(exec, propertyName, slot))\n");
-                push(@implContent, "        return true;\n");
-        }
-
-        if ($numAttributes > 0) {
-            push(@implContent, "    return getStaticValueSlot<$className, Base>(exec, &${className}Table, this, propertyName, slot);\n");
-        } else {
-            push(@implContent, "    return Base::getOwnPropertySlot(exec, propertyName, slot);\n");
-        }
-        push(@implContent, "}\n\n");
 
         if (($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) 
                 && !$dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
@@ -926,7 +963,7 @@ sub GenerateImplementation
             push(@implContent, "    return getOwnPropertySlot(exec, Identifier::from(propertyName), slot);\n");
             push(@implContent, "}\n\n");
         }
-
+        
         if ($numAttributes > 0) {
             push(@implContent, "JSValue* ${className}::getValueProperty(ExecState* exec, int token) const\n");
             push(@implContent, "{\n");
@@ -1749,11 +1786,19 @@ sub WriteData
 
     if (defined($HEADER)) {
         # Write content to file.
+        print $HEADER @headerContentHeader;
+
+        foreach my $headerInclude (sort keys(%headerIncludes)) {
+            print $HEADER "#include \"$headerInclude\"\n";
+        }
+
         print $HEADER @headerContent;
         close($HEADER);
         undef($HEADER);
 
+        @headerContentHeader = ();
         @headerContent = ();
+        %headerIncludes = ();
     }
 }
 

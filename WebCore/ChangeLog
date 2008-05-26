@@ -1,3 +1,21 @@
+2008-05-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Inline the getOwnPropertySlot for JSNode, JSEventTargetNode, JSElement,
+        and JSDocument for a 1-2% speedup on Acide 3 test 26.
+
+        * bindings/js/JSEventTargetNode.cpp:
+        * bindings/js/JSEventTargetNode.h:
+        (WebCore::JSEventTargetNode::getOwnPropertySlot):
+        (WebCore::JSEventTargetNode::getValueProperty):
+        (WebCore::JSEventTargetNode::put):
+        (WebCore::JSEventTargetNode::putValueProperty):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/Node.idl:
+
 2008-05-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

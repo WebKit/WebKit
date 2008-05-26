@@ -29,6 +29,7 @@
 
 #include "JSNode.h"
 #include "JSEventTargetBase.h"
+#include <wtf/AlwaysInline.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ namespace WebCore {
         KJS::JSValue* getListener(const AtomicString& eventType) const;
         virtual void pushEventHandlerScope(KJS::ExecState*, KJS::ScopeChain&) const;
 
-        bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
+        virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
         KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
         virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*);
         void putValueProperty(KJS::ExecState*, int token, KJS::JSValue*);
@@ -51,6 +52,27 @@ namespace WebCore {
     private:
         JSEventTargetBase<JSEventTargetNode> m_base;
     };
+
+    ALWAYS_INLINE bool JSEventTargetNode::getOwnPropertySlot(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::PropertySlot& slot)
+    {
+        return m_base.getOwnPropertySlot<JSNode>(this, exec, propertyName, slot);
+    }
+
+    ALWAYS_INLINE KJS::JSValue* JSEventTargetNode::getValueProperty(KJS::ExecState* exec, int token) const
+    {
+        return m_base.getValueProperty(this, exec, token);
+    }
+
+    ALWAYS_INLINE void JSEventTargetNode::put(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::JSValue* value)
+    {
+        m_base.put<JSNode>(this, exec, propertyName, value);
+    }
+
+    ALWAYS_INLINE void JSEventTargetNode::putValueProperty(KJS::ExecState* exec, int token, KJS::JSValue* value)
+    {
+        m_base.putValueProperty(this, exec, token, value);
+    }
+
 
     struct JSEventTargetPrototypeInformation {
         static const char* prototypeClassName()
