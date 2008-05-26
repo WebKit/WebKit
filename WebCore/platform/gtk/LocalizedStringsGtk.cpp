@@ -124,7 +124,7 @@ String contextMenuItemTagDelete()
 
 String contextMenuItemTagSelectAll()
 {
-#if GLIB_CHECK_VERSION(2,10,0)
+#if GTK_CHECK_VERSION(2,10,0)
     static String stockLabel = String::fromUTF8(gtkStockLabel(GTK_STOCK_SELECT_ALL));
 #else
     static String stockLabel = String::fromUTF8(_("Select _All"));

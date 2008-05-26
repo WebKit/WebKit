@@ -1,3 +1,10 @@
+2008-05-26  Gwenole Beauchesne  <gbeauchesne@splitted-desktop.org>
+
+        Reviewed by Alp Toker.
+
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::contextMenuItemTagSelectAll): Fix GTK+ version check.
+
 2008-05-25  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Harrison
