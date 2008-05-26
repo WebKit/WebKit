@@ -1,3 +1,22 @@
+2008-05-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed <rdar://problem/5960859> After an eval of a non-string or a syntax
+        error, all profile stack frames are incorrect
+        
+        SunSpider reports a .3% speedup, possibly because eval of a string is a
+        little more efficient now.
+
+        * VM/Machine.cpp:
+        (KJS::callEval): Make sure to call didExecute when returning early. I
+        simplified this function to remove one early return, making the job
+        of adding special code to early returns easier.
+
+        (KJS::Machine::execute): Use the new function ExecState when notifying
+        the profiler. (This doesn't change behavior now, but it  might lead to
+        subtle errors in the future.)
+
 2008-05-23  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
