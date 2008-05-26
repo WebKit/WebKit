@@ -143,7 +143,7 @@ bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
     if (m_noAccess || other->m_noAccess)
         return false;
 
-    // Here are three cases where we should permit access:
+    // Here are two cases where we should permit access:
     //
     // 1) Neither document has set document.domain.  In this case, we insist
     //    that the scheme, host, and port of the URLs match.
@@ -151,11 +151,6 @@ bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
     // 2) Both documents have set document.domain.  In this case, we insist
     //    that the documents have set document.domain to the same value and
     //    that the scheme of the URLs match.
-    //
-    // 3) As a special case if only one of the documents has set document.domain but
-    //    there is a host and port match we deny access but signal this to the client. 
-    //    In this case JSDOMWindowBase::allowsAccessFrom() will recheck against the 
-    //    lexical global object and allow access if that check passes.
     //
     // This matches the behavior of Firefox 2 and Internet Explorer 6.
     //
@@ -175,9 +170,6 @@ bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
         } else if (m_domainWasSetInDOM && other->m_domainWasSetInDOM) {
             if (m_domain == other->m_domain)
                 return true;
-        } else {
-            if (m_host == other->m_host && m_port == other->m_port)
-                return false;
         }
     }
     

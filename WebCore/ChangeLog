@@ -1,3 +1,13 @@
+2008-05-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam.
+
+        Cleanup SecurityOrigin::canAccess.  Removed comment referring to an
+        old version of the code.  Removed some useless code.
+
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canAccess):
+
 2008-05-26  Gwenole Beauchesne  <gbeauchesne@splitted-desktop.org>
 
         Reviewed by Alp Toker.
