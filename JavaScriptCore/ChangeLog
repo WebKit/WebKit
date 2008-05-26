@@ -14,7 +14,7 @@
         of adding special code to early returns easier.
 
         (KJS::Machine::execute): Use the new function ExecState when notifying
-        the profiler. (This doesn't change behavior now, but it  might lead to
+        the profiler. (This doesn't change behavior now, but it might prevent
         subtle errors in the future.)
 
 2008-05-23  Tor Arne Vestbø  <tavestbo@trolltech.com>
