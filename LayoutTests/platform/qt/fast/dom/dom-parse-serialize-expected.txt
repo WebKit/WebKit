@@ -57,4 +57,4 @@ layer at (0,0) size 800x600
             text run at (453,19) width 0: " "
             text run at (0,38) width 150: "  <d id=\"id3\">Three</d>"
             text run at (150,38) width 0: " "
-            text run at (0,57) width 406: "<f id=\"&amp;&lt;>\">Four&amp;&lt;></f><empty/><empty/></doc>"
+            text run at (0,57) width 440: "<f id=\"&amp;&lt;&gt;\">Four&amp;&lt;&gt;</f><empty/><empty/></doc>"
