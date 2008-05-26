@@ -110,7 +110,6 @@ fast/xpath/string-value.html
 fast/box-sizing/percentage-height.html
 fast/css/acid2-pixel.html
 fast/css/acid2.html
-fast/css/case-transform.html
 fast/css/ignore-text-zoom.html
 fast/css/ignore-text-zoom.html
 fast/dom/clientWidthAfterDocumentIsRemoved.html
@@ -1185,3 +1184,7 @@ tables/mozilla_expected_failures/marvin/backgr_position-table-column.html
 tables/mozilla_expected_failures/marvin/backgr_position-table-row-group.html
 tables/mozilla_expected_failures/marvin/backgr_position-table-row.html
 fast/images/animated-background-image-crash.html
+
+# This test fails because Qt does not support conditionals in unicode special casing.
+# See also http://trolltech.com/developer/task-tracker/index_html?id=212870&method=entry
+fast/css/case-transform.html
