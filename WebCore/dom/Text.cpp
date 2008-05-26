@@ -61,12 +61,6 @@ PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
         return 0;
     }
 
-    // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
-    if (isReadOnlyNode()) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return 0;
-    }
-
     RefPtr<StringImpl> oldStr = m_data;
     RefPtr<Text> newText = createNew(oldStr->substring(offset));
     m_data = oldStr->substring(0, offset);
@@ -141,10 +135,7 @@ String Text::wholeText() const
 
 PassRefPtr<Text> Text::replaceWholeText(const String& newText, ExceptionCode&)
 {
-    // We don't support "read-only" text nodes (no Entity node support)
-    // Thus, we remove all adjacent text nodes, and replace the contents of this one.
-    ASSERT(!isReadOnlyNode());
-    // This method only raises exceptions when dealing with Entity nodes (which we don't support)
+    // Remove all adjacent text nodes, and replace the contents of this one.
 
     // Protect startText and endText against mutation event handlers removing the last ref
     RefPtr<Text> startText = const_cast<Text*>(earliestLogicallyAdjacentTextNode(this));

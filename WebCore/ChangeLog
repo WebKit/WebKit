@@ -1,3 +1,77 @@
+2008-05-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=19239
+
+        Removed code that would only useful if if there was any way to create an Entity
+        node or if we populated EntityReference nodes. It's likely that we'll remove
+        these node types entirely in some future version of WebKit, depending in part
+        on what happens with these in HTML 5.
+
+        1.8% speedup of Acid3 test 26.
+
+        The only read-only nodes we ever create are EntityReference nodes.
+        These are only created by explicit calls to the Document.createEntityReference
+        function. Since the created nodes are read-only, there can be no children of
+        these nodes, so no other types of nodes can be read-only despite the rule that
+        makes descendants of Entity and EntityReference nodes read-only.
+
+        * bindings/objc/DOM.mm: Removed unneeded include.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue): Removed unnecessary isReadOnlyNode check.
+        (WebCore::Attr::setNodeValue): Ditto.
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setData): Removed unnecessary isReadOnlyNode check.
+        (WebCore::CharacterData::substringData): Don't initialize the ec variable before
+        calling checkCharDataOperation, since that function already does it.
+        (WebCore::CharacterData::appendData): Removed unnecessary isReadOnlyNode check.
+        (WebCore::CharacterData::insertData): Don't initialize ec.
+        (WebCore::CharacterData::deleteData): Ditto.
+        (WebCore::CharacterData::replaceData): Ditto.
+        (WebCore::CharacterData::setNodeValue): Removed now-misleading comment.
+        (WebCore::CharacterData::checkCharDataOperation): Removed unnecessary
+        isReadOnlyNode check.
+        * dom/CharacterData.h: Made checkCharDataOperation private and non-virtual
+        since it's never used or defined in any other class.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute): Removed unneeded isReadOnlyNode check.
+
+        * dom/Entity.cpp: Removed the entire contents of this file.
+
+        * dom/Entity.h: Replaced the class with a stub -- just enough to keep the
+        public bindings (JavaScript and Objective-C compiling), but the class is
+        abstract and can't be instantianted.
+
+        * dom/EntityReference.cpp: Removed unused constructor.
+        (WebCore::EntityReference::cloneNode): Removed unneeded code and comments
+        to clone nonexistent child nodes.
+        * dom/EntityReference.h: Removed unused constructor and unnecessary override
+        of childTypeAllowed, since no children are allowed at all.
+
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedAttrMap::setNamedItem): Removed unneeded isReadOnlyNode check.
+        (WebCore::NamedAttrMap::removeNamedItem): Ditto.
+        * dom/NamedAttrMap.h: Removed isReadOnlyNode function.
+
+        * dom/Node.cpp: Removed the old isReadOnlyNode function. It made lots of
+        virtual nodeType function calls.
+        * dom/Node.h:
+        (WebCore::Node::isReadOnlyNode): Replaced the old virtual isReadOnlyNode
+        function with a new simple non-virtual one.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::setData): Removed unneeded isReadOnlyNode
+        check.
+
+        * dom/Text.cpp:
+        (WebCore::Text::splitText): Removed unneeded isReadOnlyNode check.
+        (WebCore::Text::replaceWholeText): Removed unnecessary isReadOnlyNode assertion.
+        There is no reason for this function to go out of its way to mention the
+        read-only node issue when none of the other DOM mutation functions do.
+
 2008-05-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam.
@@ -1445,7 +1519,7 @@
 
         Reviewed by Oliver.
 
-        - JavaScriptGlue part of fix for: "SQUIRRELFISH: function toString broken after calling"
+        - WebCore part of fix for: "SQUIRRELFISH: function toString broken after calling"
         https://bugs.webkit.org/show_bug.cgi?id=18869
 
         * bindings/js/StringSourceProvider.h: Added. SourceProvider subclass backed by a WebCore::String.

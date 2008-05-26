@@ -101,18 +101,8 @@ String Attr::nodeValue() const
     return value();
 }
 
-void Attr::setValue( const String& v, ExceptionCode& ec)
+void Attr::setValue(const String& v, ExceptionCode&)
 {
-    ec = 0;
-
-    // do not interpret entities in the string, it's literal!
-
-    // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
-    if (isReadOnlyNode()) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
-    }
-
     m_ignoreChildrenChanged++;
     removeChildren();
     m_attribute->setValue(v.impl());
@@ -125,7 +115,6 @@ void Attr::setValue( const String& v, ExceptionCode& ec)
 
 void Attr::setNodeValue(const String& v, ExceptionCode& ec)
 {
-    // NO_MODIFICATION_ALLOWED_ERR: taken care of by setValue()
     setValue(v, ec);
 }
 

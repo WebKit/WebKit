@@ -200,7 +200,7 @@ void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
         return;
     }
 
-    // by default nodeValue is null, so setting it has no effect
+    // By default, setting nodeValue has no effect.
 }
 
 PassRefPtr<NodeList> Node::childNodes()
@@ -862,18 +862,6 @@ void Node::removedFromDocument()
 
     setInDocument(false);
     removedFromTree(false);
-}
-
-bool Node::isReadOnlyNode()
-{
-    // Entity & Entity Reference nodes and their descendants are read-only
-    Node *n = this;
-    while (n) {
-        if (n->nodeType() == ENTITY_NODE || n->nodeType() == ENTITY_REFERENCE_NODE)
-            return true;
-        n = n->parentNode();
-    }
-    return false;
 }
 
 Node *Node::previousEditable() const

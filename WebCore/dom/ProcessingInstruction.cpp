@@ -65,14 +65,8 @@ ProcessingInstruction::~ProcessingInstruction()
         m_cachedSheet->removeClient(this);
 }
 
-void ProcessingInstruction::setData(const String& data, ExceptionCode& ec)
+void ProcessingInstruction::setData(const String& data, ExceptionCode&)
 {
-    // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly.
-    if (isReadOnlyNode()) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
-    }
-
     int oldLength = m_data.length();
     m_data = data;
     document()->textRemoved(this, 0, oldLength);

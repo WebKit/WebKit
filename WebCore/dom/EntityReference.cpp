@@ -1,8 +1,6 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,18 +17,14 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "EntityReference.h"
 
 namespace WebCore {
 
-EntityReference::EntityReference(Document* doc)
-    : ContainerNode(doc)
-{
-}
-
-EntityReference::EntityReference(Document* doc, const String& entityName)
-    : ContainerNode(doc)
+EntityReference::EntityReference(Document* document, const String& entityName)
+    : ContainerNode(document)
     , m_entityName(entityName)
 {
 }
@@ -45,31 +39,9 @@ Node::NodeType EntityReference::nodeType() const
     return ENTITY_REFERENCE_NODE;
 }
 
-PassRefPtr<Node> EntityReference::cloneNode(bool deep)
+PassRefPtr<Node> EntityReference::cloneNode(bool)
 {
-    RefPtr<EntityReference> clone = new EntityReference(document(), m_entityName);
-    // ### make sure children are readonly
-    // ### since we are a reference, should we clone children anyway (even if not deep?)
-    if (deep)
-        cloneChildNodes(clone.get());
-    return clone.release();
-}
-
-// DOM Section 1.1.1
-bool EntityReference::childTypeAllowed(NodeType type)
-{
-    switch (type) {
-        case ELEMENT_NODE:
-        case PROCESSING_INSTRUCTION_NODE:
-        case COMMENT_NODE:
-        case TEXT_NODE:
-        case CDATA_SECTION_NODE:
-        case ENTITY_REFERENCE_NODE:
-            return true;
-            break;
-        default:
-            return false;
-    }
+    return new EntityReference(document(), m_entityName);
 }
 
 } // namespace

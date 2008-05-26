@@ -38,7 +38,6 @@
 #import "Document.h"
 #import "DocumentFragment.h"
 #import "DocumentType.h"
-#import "EntityReference.h"
 #import "Event.h"
 #import "EventListener.h"
 #import "EventTarget.h"

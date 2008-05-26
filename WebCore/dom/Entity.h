@@ -1,8 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,28 +26,13 @@
 
 namespace WebCore {
 
-class Entity : public ContainerNode
-{
+// FIXME: This abstract class is only here so that the JavaScript and Objective-C bindings
+// can continue to be compiled.
+class Entity : public ContainerNode {
 public:
-    Entity(Document*);
-    Entity(Document*, const String& name);
-    Entity(Document*, const String& publicId, const String& systemId, const String& notationName);
-
-    // DOM methods & attributes for Entity
-    String publicId() const { return m_publicId; }
-    String systemId() const { return m_systemId; }
-    String notationName() const { return m_notationName; }
-
-    virtual String nodeName() const;
-    virtual NodeType nodeType() const;
-    virtual PassRefPtr<Node> cloneNode(bool deep);
-    virtual bool childTypeAllowed(NodeType);
-
-private:
-    String m_publicId;
-    String m_systemId;
-    String m_notationName;
-    String m_name;
+    String publicId() const { ASSERT_NOT_REACHED(); return String(); }
+    String systemId() const { ASSERT_NOT_REACHED(); return String(); }
+    String notationName() const { ASSERT_NOT_REACHED(); return String(); }
 };
 
 } //namespace

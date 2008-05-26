@@ -97,12 +97,6 @@ PassRefPtr<Node> NamedAttrMap::setNamedItem(Node* arg, ExceptionCode& ec)
         return 0;
     }
 
-    // NO_MODIFICATION_ALLOWED_ERR: Raised if this map is readonly.
-    if (isReadOnlyNode()) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return 0;
-    }
-
     // WRONG_DOCUMENT_ERR: Raised if arg was created from a different document than the one that created this map.
     if (arg->document() != m_element->document()) {
         ec = WRONG_DOCUMENT_ERR;
@@ -147,13 +141,6 @@ PassRefPtr<Node> NamedAttrMap::setNamedItem(Node* arg, ExceptionCode& ec)
 // because of removeNamedItem, removeNamedItemNS, and removeAttributeNode.
 PassRefPtr<Node> NamedAttrMap::removeNamedItem(const QualifiedName& name, ExceptionCode& ec)
 {
-    // ### should this really be raised when the attribute to remove isn't there at all?
-    // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
-    if (isReadOnlyNode()) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return 0;
-    }
-
     Attribute* a = getAttributeItem(name);
     if (!a) {
         ec = NOT_FOUND_ERR;
@@ -321,11 +308,6 @@ bool NamedAttrMap::mapsEquivalent(const NamedAttrMap* otherMap) const
     }
     
     return true;
-}
-
-bool NamedAttrMap::isReadOnlyNode() const
-{
-    return m_element && m_element->isReadOnlyNode();
 }
 
 }
