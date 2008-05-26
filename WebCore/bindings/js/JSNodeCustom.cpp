@@ -161,16 +161,14 @@ void JSNode::mark()
     ASSERT(marked());
 }
 
-JSValue* toJS(ExecState* exec, Node* node)
+static ALWAYS_INLINE JSValue* createWrapper(ExecState* exec, Node* node)
 {
-    if (!node)
-        return jsNull();
-
+    ASSERT(node);
+    ASSERT(!ScriptInterpreter::getDOMNodeForDocument(node->document(), node));
+    
     Document* doc = node->document();
-    JSNode* ret = ScriptInterpreter::getDOMNodeForDocument(doc, node);
-    if (ret)
-        return ret;
-
+    JSNode* ret = 0;
+    
     switch (node->nodeType()) {
         case Node::ELEMENT_NODE:
             if (node->isHTMLElement())
@@ -221,7 +219,28 @@ JSValue* toJS(ExecState* exec, Node* node)
 
     ScriptInterpreter::putDOMNodeForDocument(doc, node, ret);
 
-    return ret;
+    return ret;    
+}
+    
+JSValue* toJSNewlyCreated(ExecState* exec, Node* node)
+{
+    if (!node)
+        return jsNull();
+    
+    return createWrapper(exec, node);
+}
+    
+JSValue* toJS(ExecState* exec, Node* node)
+{
+    if (!node)
+        return jsNull();
+
+    Document* doc = node->document();
+    JSNode* ret = ScriptInterpreter::getDOMNodeForDocument(doc, node);
+    if (ret)
+        return ret;
+
+    return createWrapper(exec, node);
 }
 
 } // namespace WebCore

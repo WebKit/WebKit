@@ -92,6 +92,7 @@
 		1A2A68240B5BEDE70002A480 /* ProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2A68220B5BEDE70002A480 /* ProgressTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A2AAC580DC2A3B100A20D9A /* ApplicationCacheStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2AAC560DC2A3B100A20D9A /* ApplicationCacheStorage.cpp */; };
 		1A2AAC590DC2A3B100A20D9A /* ApplicationCacheStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2AAC570DC2A3B100A20D9A /* ApplicationCacheStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A2C40AB0DEB55AA005AF19E /* JSTextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2C40AA0DEB55AA005AF19E /* JSTextCustom.cpp */; };
 		1A2D753D0DE47FAB00F0A648 /* IconFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D753B0DE47FAB00F0A648 /* IconFetcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A2D753E0DE47FAB00F0A648 /* IconFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D753C0DE47FAB00F0A648 /* IconFetcher.cpp */; };
 		1A2E6E590CC55213004A2062 /* SQLValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6E570CC55213004A2062 /* SQLValue.cpp */; };
@@ -4548,6 +4549,7 @@
 		1A2A68220B5BEDE70002A480 /* ProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ProgressTracker.h; sourceTree = "<group>"; };
 		1A2AAC560DC2A3B100A20D9A /* ApplicationCacheStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationCacheStorage.cpp; sourceTree = "<group>"; };
 		1A2AAC570DC2A3B100A20D9A /* ApplicationCacheStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheStorage.h; sourceTree = "<group>"; };
+		1A2C40AA0DEB55AA005AF19E /* JSTextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextCustom.cpp; sourceTree = "<group>"; };
 		1A2D753B0DE47FAB00F0A648 /* IconFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconFetcher.h; sourceTree = "<group>"; };
 		1A2D753C0DE47FAB00F0A648 /* IconFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconFetcher.cpp; sourceTree = "<group>"; };
 		1A2E6E570CC55213004A2062 /* SQLValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLValue.cpp; path = sql/SQLValue.cpp; sourceTree = "<group>"; };
@@ -12311,6 +12313,7 @@
 				B297BC6F0B3C14CF0045A590 /* JSSVGPathSegListCustom.cpp */,
 				516BB7910CE91E6800512F79 /* JSSVGPointListCustom.cpp */,
 				B2D3FC890C2212CB00CF3618 /* JSSVGTransformListCustom.cpp */,
+				1A2C40AA0DEB55AA005AF19E /* JSTextCustom.cpp */,
 				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
 				BC348BBD0DB7F531004ABAB9 /* JSXMLHttpRequestCustom.cpp */,
 				BCEFE1E40DCA5F3300739219 /* JSXSLTProcessorCustom.cpp */,
@@ -16862,6 +16865,7 @@
 				1A7FA6490DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp in Sources */,
 				1A2D753E0DE47FAB00F0A648 /* IconFetcher.cpp in Sources */,
 				E1A302C10DE8376900C52F2C /* StringBuilder.cpp in Sources */,
+				1A2C40AB0DEB55AA005AF19E /* JSTextCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

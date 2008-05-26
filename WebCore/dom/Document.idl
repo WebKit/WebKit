@@ -34,32 +34,32 @@ module core {
         readonly attribute DOMImplementation implementation;
         readonly attribute Element documentElement;
 
-        Element            createElement(in [ConvertNullToNullString] DOMString tagName)
+        [ReturnsNew] Element createElement(in [ConvertNullToNullString] DOMString tagName)
             raises (DOMException);
         DocumentFragment   createDocumentFragment();
-        Text               createTextNode(in DOMString data);
-        Comment            createComment(in DOMString data);
-        CDATASection       createCDATASection(in DOMString data)
+        [ReturnsNew] Text createTextNode(in DOMString data);
+        [ReturnsNew] Comment createComment(in DOMString data);
+        [ReturnsNew] CDATASection createCDATASection(in DOMString data)
             raises(DOMException);
-        [OldStyleObjC] ProcessingInstruction createProcessingInstruction(in DOMString target,
-                                                                         in DOMString data)
+        [OldStyleObjC, ReturnsNew] ProcessingInstruction createProcessingInstruction(in DOMString target,
+                                                                                     in DOMString data)
             raises (DOMException);
-        Attr               createAttribute(in DOMString name)
+        [ReturnsNew] Attr createAttribute(in DOMString name)
             raises (DOMException);
-        EntityReference    createEntityReference(in DOMString name)
+        [ReturnsNew] EntityReference createEntityReference(in DOMString name)
             raises(DOMException);
         NodeList           getElementsByTagName(in DOMString tagname);
 
         // Introduced in DOM Level 2:
 
-        [OldStyleObjC] Node importNode(in Node importedNode,
-                                       in boolean deep)
+        [OldStyleObjC, ReturnsNew] Node importNode(in Node importedNode,
+                                                   in boolean deep)
             raises (DOMException);
-        [OldStyleObjC] Element createElementNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                               in [ConvertNullToNullString] DOMString qualifiedName)
+        [OldStyleObjC, ReturnsNew] Element createElementNS(in [ConvertNullToNullString] DOMString namespaceURI,
+                                                           in [ConvertNullToNullString] DOMString qualifiedName)
             raises (DOMException);
-        [OldStyleObjC] Attr createAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                              in [ConvertNullToNullString] DOMString qualifiedName)
+        [OldStyleObjC, ReturnsNew] Attr createAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
+                                                          in [ConvertNullToNullString] DOMString qualifiedName)
             raises (DOMException);
         [OldStyleObjC] NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                                        in DOMString localName);

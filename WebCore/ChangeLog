@@ -1,9 +1,35 @@
+2008-05-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        This patch does two things:
+        
+        * It adds a toJSNewlyCreated function for creating JS wrappers for nodes where we know
+        that the node doesn't have a wrapper. This avoids a hash lookup.
+        
+        * It adds toJSNewlyCreated methods for JSElement and JSText. 
+        
+        All in all this is a 4.3% speedup on Acid 3 test 26.
+        
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapper):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/js/JSTextCustom.cpp: Added.
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Document.idl:
+
 2008-05-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
 
         Inline the getOwnPropertySlot for JSNode, JSEventTargetNode, JSElement,
-        and JSDocument for a 1-2% speedup on Acide 3 test 26.
+        and JSDocument for a 1-2% speedup on Acid 3 test 26.
 
         * bindings/js/JSEventTargetNode.cpp:
         * bindings/js/JSEventTargetNode.h:

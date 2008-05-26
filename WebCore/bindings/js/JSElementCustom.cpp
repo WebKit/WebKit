@@ -35,6 +35,12 @@
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
 #include "JSAttr.h"
+#include "JSHTMLElementWrapperFactory.h"
+
+#if ENABLE(SVG)
+#include "JSSVGElementWrapperFactory.h"
+#include "SVGElement.h"
+#endif
 
 using namespace KJS;
 
@@ -119,4 +125,29 @@ JSValue* JSElement::setAttributeNodeNS(ExecState* exec, const List& args)
     return result;
 }
 
+    
+JSValue* toJSNewlyCreated(ExecState* exec, Element* element)
+{
+    if (!element)
+        return jsNull();
+
+    ASSERT(!ScriptInterpreter::getDOMNodeForDocument(element->document(), element));
+    
+    Document* doc = element->document();
+    JSNode* ret = 0;
+    
+    if (element->isHTMLElement())
+        ret = createJSHTMLWrapper(exec, static_cast<HTMLElement*>(element));
+#if ENABLE(SVG)
+    else if (element->isSVGElement())
+        ret = createJSSVGWrapper(exec, static_cast<SVGElement*>(element));
+#endif
+    else
+        ret = new JSElement(JSElementPrototype::self(exec), element);
+
+    ScriptInterpreter::putDOMNodeForDocument(doc, element, ret);
+
+    return ret;    
+}
+    
 } // namespace WebCore

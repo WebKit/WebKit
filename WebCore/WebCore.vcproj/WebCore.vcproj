@@ -13887,6 +13887,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSTextCustom.cpp"
+					>
+				</File>				
+				<File
 					RelativePath="..\bindings\js\JSTreeWalkerCustom.cpp"
 					>
 				</File>

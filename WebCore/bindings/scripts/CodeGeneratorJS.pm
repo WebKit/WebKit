@@ -144,7 +144,7 @@ sub UsesManualToJSImplementation
 {
     my $type = shift;
 
-    return 1 if $type eq "Node" or $type eq "Document" or $type eq "HTMLCollection" or $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule" or $type eq "CSSValue" or $type eq "Event" or $type eq "CanvasPixelArray";
+    return 1 if $type eq "Node" or $type eq "Document" or $type eq "HTMLCollection" or $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule" or $type eq "CSSValue" or $type eq "Event" or $type eq "CanvasPixelArray" or $type eq "Element" or $type eq "Text";
     return 0;
 }
 
@@ -615,6 +615,11 @@ sub GenerateHeader
         } else {
             push(@headerContent, "$implClassName* to${interfaceName}(KJS::JSValue*);\n");
         }
+        
+        if ($interfaceName eq "Node" or $interfaceName eq "Element" or $interfaceName eq "Text") {
+            push(@headerContent, "KJS::JSValue* toJSNewlyCreated(KJS::ExecState*, Node*);\n");
+        }
+        
     }
     push(@headerContent, "\n");
 
@@ -1625,6 +1630,10 @@ sub NativeToJSValue
         } else {
             return "toJS(exec, WTF::getPtr($value), imp)";
         }
+    }
+
+    if ($signature->extendedAttributes->{"ReturnsNew"}) {        
+        return "toJSNewlyCreated(exec, WTF::getPtr($value))";
     }
 
     return "toJS(exec, WTF::getPtr($value))";
