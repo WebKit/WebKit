@@ -1406,13 +1406,11 @@ void InspectorController::close()
 void InspectorController::showWindow()
 {
     ASSERT(enabled());
-
     m_client->showWindow();
 }
 
 void InspectorController::closeWindow()
 {
-    stopDebugging();
     m_client->closeWindow();
 }
 

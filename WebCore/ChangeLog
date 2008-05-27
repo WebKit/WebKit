@@ -1,3 +1,12 @@
+2008-05-27  Timothy Hatcher  <timothy@apple.com>
+
+        Removes a redundant call to InspectorController::stopDebugging().
+
+        Rubber-stamped by Adam Roben.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::showWindow):
+
 2008-05-27  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.
