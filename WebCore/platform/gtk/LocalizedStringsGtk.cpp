@@ -3,7 +3,7 @@
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2008 Christian Dywan <christian@imendio.com>
- * All rights reserved.
+ * Copyright (C) 2008 Nuanti Ltd.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "config.h"
 
 #include "LocalizedStrings.h"
+#include "NotImplemented.h"
 #include "PlatformString.h"
 
 #include <gtk/gtk.h>
@@ -287,32 +288,32 @@ String searchMenuClearRecentSearchesText()
 
 String AXButtonActionVerb()
 {
-    return String();
+    return String::fromUTF8(_("press"));
 }
 
 String AXRadioButtonActionVerb()
 {
-    return String();
+    return String::fromUTF8(_("select"));
 }
 
 String AXTextFieldActionVerb()
 {
-    return String();
+    return String::fromUTF8(_("activate"));
 }
 
 String AXCheckedCheckBoxActionVerb()
 {
-    return String();
+    return String::fromUTF8(_("uncheck"));
 }
 
 String AXUncheckedCheckBoxActionVerb()
 {
-    return String();
+    return String::fromUTF8(_("check"));
 }
 
 String AXLinkActionVerb()
 {
-    return String();
+    return String::fromUTF8(_("jump"));
 }
 
 String unknownFileSizeText()
@@ -322,6 +323,7 @@ String unknownFileSizeText()
 
 String imageTitle(const String& filename, const IntSize& size)
 {
+    notImplemented();
     return String();
 }
 

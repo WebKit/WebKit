@@ -1,3 +1,30 @@
+2008-05-26  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Anders.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16495
+        [GTK] Accessibility support with ATK/AT-SPI
+
+        Implement basic action, text and editable text accessibility.
+
+        Provide utility functions to simplify const string return and casting
+        and add some more stubs.
+
+        It's now possible to navigate and manipulate forms and text using
+        assistive technologies.
+
+        * page/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (returnString):
+        (core):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::AXButtonActionVerb):
+        (WebCore::AXRadioButtonActionVerb):
+        (WebCore::AXTextFieldActionVerb):
+        (WebCore::AXCheckedCheckBoxActionVerb):
+        (WebCore::AXUncheckedCheckBoxActionVerb):
+        (WebCore::AXLinkActionVerb):
+        (WebCore::imageTitle):
+
 2008-05-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.
