@@ -37,9 +37,12 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashTraits.h>
+
+#if !PLATFORM(WIN_OS)
+#include <unistd.h>
+#endif
 
 #if HAVE(SYS_TIME_H)
 #include <sys/time.h>

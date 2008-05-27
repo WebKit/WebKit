@@ -1,3 +1,9 @@
+2008-05-26  Stephanie Lewis  <slewis@apple.com>
+
+        Windows build fix. 
+
+        * kjs/testkjs.cpp:
+
 2008-05-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.
