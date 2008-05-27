@@ -27,7 +27,7 @@
  
 // webkit includes
 #include "WebView.h"
-#include "WebFrame.h"
+#include "WebBrowserShell.h"
 
 #include "wx/wxprec.h"
 #ifndef WX_PRECOMP
@@ -50,7 +50,7 @@ bool MyApp::OnInit()
         
     // create the main application window
     // see WebKit/wx/WebFrame.cpp for how to write a shell around wxWebView.
-    wxWebFrame *frame = new wxWebFrame(_T("wxWebKit Test App"));
+    wxWebBrowserShell *frame = new wxWebBrowserShell(_T("wxWebKit Test App"));
 
 #ifndef NDEBUG
     frame->ShowDebugMenu(true);
