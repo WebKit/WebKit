@@ -1,3 +1,21 @@
+2008-05-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=19180
+          speed up SunSpider by optimizing immediate number cases
+
+        Add immediate number cases for the &, |, and ^ operators.
+        Makes standalone SunSpider 1.010x faster.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute): Add areBothImmediateNumbers special cases
+        for the &, |, and ^ operators.
+
+        * kjs/JSImmediate.h:
+        (KJS::JSImmediate::xorImmediateNumbers): Added.
+        (KJS::JSImmediate::orImmediateNumbers): Added.
+
 2008-05-26  Stephanie Lewis  <slewis@apple.com>
 
         Windows build fix. 

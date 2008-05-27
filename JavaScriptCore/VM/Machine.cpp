@@ -1308,8 +1308,15 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int src1 = (++vPC)->u.operand;
         int src2 = (++vPC)->u.operand;
-        JSValue* result = jsNumber((r[src1].u.jsValue->toInt32(exec)) & (r[src2].u.jsValue->toInt32(exec)));
-        VM_CHECK_EXCEPTION();
+        JSValue* v1 = r[src1].u.jsValue;
+        JSValue* v2 = r[src2].u.jsValue;
+        JSValue* result;
+        if (JSImmediate::areBothImmediateNumbers(v1, v2))
+            result = JSImmediate::andImmediateNumbers(v1, v2);
+        else {
+            result = jsNumber(v1->toInt32(exec) & v2->toInt32(exec));
+            VM_CHECK_EXCEPTION();
+        }
         r[dst].u.jsValue = result;
         
         ++vPC;
@@ -1325,8 +1332,15 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int src1 = (++vPC)->u.operand;
         int src2 = (++vPC)->u.operand;
-        JSValue* result = jsNumber((r[src1].u.jsValue->toInt32(exec)) ^ (r[src2].u.jsValue->toInt32(exec)));
-        VM_CHECK_EXCEPTION();
+        JSValue* v1 = r[src1].u.jsValue;
+        JSValue* v2 = r[src2].u.jsValue;
+        JSValue* result;
+        if (JSImmediate::areBothImmediateNumbers(v1, v2))
+            result = JSImmediate::xorImmediateNumbers(v1, v2);
+        else {
+            result = jsNumber(v1->toInt32(exec) ^ v2->toInt32(exec));
+            VM_CHECK_EXCEPTION();
+        }
         r[dst].u.jsValue = result;
         
         ++vPC;
@@ -1342,8 +1356,15 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int src1 = (++vPC)->u.operand;
         int src2 = (++vPC)->u.operand;
-        JSValue* result = jsNumber((r[src1].u.jsValue->toInt32(exec)) | (r[src2].u.jsValue->toInt32(exec)));
-        VM_CHECK_EXCEPTION();
+        JSValue* v1 = r[src1].u.jsValue;
+        JSValue* v2 = r[src2].u.jsValue;
+        JSValue* result;
+        if (JSImmediate::areBothImmediateNumbers(v1, v2))
+            result = JSImmediate::orImmediateNumbers(v1, v2);
+        else {
+            result = jsNumber(v1->toInt32(exec) | v2->toInt32(exec));
+            VM_CHECK_EXCEPTION();
+        }
         r[dst].u.jsValue = result;
         
         ++vPC;

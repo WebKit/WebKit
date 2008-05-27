@@ -106,6 +106,18 @@ public:
         return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v1) & reinterpret_cast<uintptr_t>(v2));
     }
 
+    static ALWAYS_INLINE JSValue* xorImmediateNumbers(const JSValue* v1, const JSValue* v2)
+    {
+        ASSERT(areBothImmediateNumbers(v1, v2));
+        return tag(reinterpret_cast<uintptr_t>(v1) ^ reinterpret_cast<uintptr_t>(v2), NumberType);
+    }
+
+    static ALWAYS_INLINE JSValue* orImmediateNumbers(const JSValue* v1, const JSValue* v2)
+    {
+        ASSERT(areBothImmediateNumbers(v1, v2));
+        return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v1) | reinterpret_cast<uintptr_t>(v2));
+    }
+
     static double toDouble(const JSValue*);
     static bool toBoolean(const JSValue*);
     static JSObject* toObject(const JSValue*, ExecState*);
