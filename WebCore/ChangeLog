@@ -1,5 +1,11 @@
 2008-05-27  Kevin Ollivier  <kevino@theolliviers.com>
 
+        wx build fix. Accidently left a couple fixes out of the previous commit.
+
+        * webcore-base.bkl:
+
+2008-05-27  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx build fix. Adding JSHTMLElementWrapperFactory.cpp.
         
         * WebCoreSources.bkl:

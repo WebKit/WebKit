@@ -1,3 +1,9 @@
+2008-05-27  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Accidently left a couple fixes out of the previous commit.
+
+        * presets/wxwebkit.bkl:
+
 2008-05-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.
