@@ -1,3 +1,11 @@
+2008-05-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - update test result for document/window being allocated to var slots
+
+        * http/tests/security/cross-frame-access-put-expected.txt:
+
 2008-05-26  James Ren  <jamesjren@gmail.com>
 
         Reviewed by Sam Weinig, landed by Collin Jackson.

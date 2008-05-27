@@ -44,6 +44,7 @@ const ClassInfo JSDOMWindowShell::s_info = { "JSDOMWindowShell", 0, 0, 0 };
 JSDOMWindowShell::JSDOMWindowShell(DOMWindow* domWindow)
     : Base(jsNull())
     , m_window(0)
+    , m_liveFormerWindows(new HashSet<JSDOMWindow*>)
 {
     m_window = new JSDOMWindow(domWindow, this);
     setPrototype(m_window->prototype());
@@ -141,6 +142,15 @@ void JSDOMWindowShell::disconnectFrame()
 void JSDOMWindowShell::clear()
 {
     m_window->clear();
+}
+
+
+void JSDOMWindowShell::updateDocument()
+{
+    m_window->updateDocument();
+    HashSet<JSDOMWindow*>::iterator end = m_liveFormerWindows->end();
+    for (HashSet<JSDOMWindow*>::iterator it = m_liveFormerWindows->begin(); it != end; ++it)
+        (*it)->updateDocument();
 }
 
 // ----

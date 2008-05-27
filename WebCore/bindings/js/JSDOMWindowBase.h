@@ -54,6 +54,8 @@ namespace WebCore {
     public:
         virtual ~JSDOMWindowBase();
 
+        void updateDocument();
+
         DOMWindow* impl() const { return m_impl.get(); }
 
         void disconnectFrame();

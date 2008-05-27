@@ -264,11 +264,11 @@ namespace KJS {
         // Initialize and/or retrieve per-thread hash tables - use perThreadData() for faster access instead.
         static ThreadClassInfoHashTables* threadClassInfoHashTables();
 
-    private:
         void init(JSObject* thisValue);
         
         JSGlobalObjectData* d() const { return static_cast<JSGlobalObjectData*>(JSVariableObject::d); }
 
+    protected:
         struct GlobalPropertyInfo {
             GlobalPropertyInfo(const Identifier& i, JSValue* v, unsigned a)
                 : identifier(i)
@@ -283,6 +283,7 @@ namespace KJS {
         };
         void addStaticGlobals(GlobalPropertyInfo*, int count);
 
+    private:
         bool checkTimeout();
         void resetTimeoutCheck();
 

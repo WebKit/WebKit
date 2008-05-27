@@ -1,3 +1,42 @@
+2008-05-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        - bind the window's "document" and "window" properties to static slots
+        1.7% speedup on Acid3 test 26
+        
+        Only the "document" part matters for Acid3, but since I was doing
+        this anyway, "window" also seemed like a good one to optimize.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase): Allocate variable
+        slots for document and window; but just put null in the document
+        slot for now.
+        (WebCore::JSDOMWindowBase::updateDocument): Fill in the document
+        slot.        
+        (WebCore::JSDOMWindowBase::~JSDOMWindowBase): Make our shell stop
+        tracking us.
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell): Allocate HashSet
+        for our still-not-dead inner windows.
+        (WebCore::JSDOMWindowShell::updateDocument): Update all our
+        inner windows ever (to make sure the update to the document
+        property shows up everywhere).
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::setWindow): Update our hash.
+        (WebCore::JSDOMWindowShell::clearFormerWindow): Ditto.
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS): Don't set self as a property map property of
+        the window, this is no longer necessary.
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::initScript): Update document for the
+        newly created window.
+        * bindings/js/kjs_proxy.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument): If the document is not null,
+        update our window.
+
 2008-05-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

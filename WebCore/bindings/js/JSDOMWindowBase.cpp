@@ -184,10 +184,26 @@ JSDOMWindowBase::JSDOMWindowBase(JSObject* prototype, DOMWindow* window, JSDOMWi
 
     // Time in milliseconds before the script timeout handler kicks in.
     setTimeoutTime(10000);
+
+    GlobalPropertyInfo staticGlobals[] = {
+        GlobalPropertyInfo("document", jsNull(), DontDelete | ReadOnly),
+        GlobalPropertyInfo("window", d->m_shell, DontDelete | ReadOnly)
+    };
+    
+    addStaticGlobals(staticGlobals, sizeof(staticGlobals) / sizeof(GlobalPropertyInfo));
+}
+
+void JSDOMWindowBase::updateDocument()
+{
+    ASSERT(m_impl->document());
+    ExecState* exec = globalExec();
+    symbolTablePutWithAttributes("document", toJS(exec, m_impl->document()), DontDelete | ReadOnly);
 }
 
 JSDOMWindowBase::~JSDOMWindowBase()
 {
+    d->m_shell->clearFormerWindow(asJSDOMWindow(this));
+
     clearAllTimeouts();
 
     // Clear any backpointers to the window
