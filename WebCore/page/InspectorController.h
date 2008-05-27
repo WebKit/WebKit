@@ -182,6 +182,7 @@ private:
     JSObjectRef addAndUpdateScriptResource(InspectorResource*);
     void updateScriptResourceRequest(InspectorResource*);
     void updateScriptResourceResponse(InspectorResource*);
+    void updateScriptResourceType(InspectorResource*);
     void updateScriptResource(InspectorResource*, int length);
     void updateScriptResource(InspectorResource*, bool finished, bool failed = false);
     void updateScriptResource(InspectorResource*, double startTime, double responseReceivedTime, double endTime);

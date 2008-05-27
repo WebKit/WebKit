@@ -1657,6 +1657,18 @@ void InspectorController::updateScriptResourceResponse(InspectorResource* resour
     if (HANDLE_EXCEPTION(m_scriptContext, exception))
         return;
 
+    updateScriptResourceType(resource);
+}
+
+void InspectorController::updateScriptResourceType(InspectorResource* resource)
+{
+    ASSERT(resource->scriptObject);
+    ASSERT(m_scriptContext);
+    if (!resource->scriptObject || !m_scriptContext)
+        return;
+
+    JSValueRef exception = 0;
+
     JSValueRef typeValue = JSValueMakeNumber(m_scriptContext, resource->type());
     JSObjectSetProperty(m_scriptContext, resource->scriptObject, jsStringRef("type").get(), typeValue, kJSPropertyAttributeNone, &exception);
     HANDLE_EXCEPTION(m_scriptContext, exception);
@@ -2171,6 +2183,9 @@ void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identi
         return;
 
     resource->setXMLHttpRequestProperties(sourceString);
+
+    if (windowVisible() && resource->scriptObject)
+        updateScriptResourceType(resource);
 }
 
 

@@ -1,3 +1,22 @@
+2008-05-27  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 19276: XHR resources are classified as "Other" until Inspector
+        is closed and reopened
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19276>
+        <rdar://problem/5965742>
+
+        Reviewed by Tim Hatcher.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::updateScriptResourceResponse): Moved
+        code that updates the resource's type from here...
+        (WebCore::InspectorController::updateScriptResourceType): ...to here.
+        (WebCore::InspectorController::resourceRetrievedByXMLHttpRequest):
+        Call updateScriptResourceType now that we know this resource was
+        retrieved via an XHR.
+        * page/InspectorController.h:
+
 2008-05-27  Timothy Hatcher  <timothy@apple.com>
 
         Removes a redundant call to InspectorController::stopDebugging().
