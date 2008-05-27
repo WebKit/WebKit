@@ -5,10 +5,10 @@
     <file>CallStackSidebarPane.js</file>
     <file>Console.js</file>
     <file>Database.js</file>
-    <file>DataGrid.js</file>
     <file>DatabaseQueryView.js</file>
     <file>DatabasesPanel.js</file>
     <file>DatabaseTableView.js</file>
+    <file>DataGrid.js</file>
     <file>ElementsPanel.js</file>
     <file>FontView.js</file>
     <file>ImageView.js</file>
@@ -20,6 +20,8 @@
     <file>ObjectPropertiesSection.js</file>
     <file>Panel.js</file>
     <file>Placard.js</file>
+    <file>ProfilesPanel.js</file>
+    <file>ProfileView.js</file>
     <file>PropertiesSection.js</file>
     <file>PropertiesSidebarPane.js</file>
     <file>ResourceCategory.js</file>
