@@ -51,6 +51,7 @@ Source files for JSCore.
         kjs/date_object.cpp
         kjs/DateMath.cpp
         kjs/debugger.cpp
+        kjs/DebuggerCallFrame.cpp
         kjs/dtoa.cpp
         kjs/error_object.cpp
         kjs/ExecState.cpp
@@ -60,10 +61,12 @@ Source files for JSCore.
         kjs/InitializeThreading.cpp
         kjs/internal.cpp
         kjs/interpreter.cpp
+        kjs/JSActivation.cpp
         kjs/JSGlobalObject.cpp
         kjs/JSVariableObject.cpp
         kjs/JSImmediate.cpp
         kjs/JSLock.cpp
+        kjs/JSNotAnObject.cpp
         kjs/JSWrapperObject.cpp
         kjs/lexer.cpp
         kjs/list.cpp
@@ -94,12 +97,26 @@ Source files for JSCore.
         pcre/pcre_ucp_searchfuncs.cpp
         pcre/pcre_xclass.cpp
     </set>
-    <set append="1" var="PROFILER_SOURCES">
+    <set append="1" var="JSCORE_PROFILER_SOURCES">
         profiler/ProfileNode.cpp
         profiler/Profile.cpp
         profiler/Profiler.cpp
     </set>
-    <set append="1" var="WTF_SOURCES">
+    <set append="1" var="JSCORE_VM_SOURCES">
+        VM/CodeBlock.cpp
+        VM/CodeGenerator.cpp
+        VM/ExceptionHelpers.cpp
+        VM/Instruction.cpp
+        VM/JSPropertyNameIterator.cpp
+        VM/LabelID.cpp
+        VM/Machine.cpp
+        VM/Opcode.cpp
+        VM/Register.cpp
+        VM/RegisterFile.cpp
+        VM/RegisterFileStack.cpp
+        VM/RegisterID.cpp
+    </set>
+    <set append="1" var="JSCORE_WTF_SOURCES">
         wtf/Assertions.cpp
         wtf/FastMalloc.cpp
         wtf/HashTable.cpp

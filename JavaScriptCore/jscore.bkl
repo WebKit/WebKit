@@ -40,8 +40,9 @@ JavaScriptCore Bakefile project file.
             $(JSCORE_SOURCES_API)
             $(JSCORE_SOURCES_KJS)
             $(JSCORE_SOURCES_PCRE)
-            $(PROFILER_SOURCES)
-            $(WTF_SOURCES)
+            $(JSCORE_PROFILER_SOURCES)
+            $(JSCORE_VM_SOURCES)
+            $(JSCORE_WTF_SOURCES)
         </sources>
         <install-to>$(WKOUTPUTDIR)</install-to>
         <pic>on</pic>
@@ -53,6 +54,8 @@ JavaScriptCore Bakefile project file.
         <include>$(SRCDIR)/ForwardingHeaders</include>
         <include>$(SRCDIR)/kjs</include>
         <include>$(SRCDIR)/pcre</include>
+        <include>$(SRCDIR)/profiler</include>
+        <include>$(SRCDIR)/VM</include>
         <include>$(SRCDIR)/wtf</include>
         <include>$(SRCDIR)/wtf/unicode</include>
 
@@ -83,6 +86,8 @@ JavaScriptCore Bakefile project file.
         <include>$(WK_ROOT)/JavaScriptCore</include>
         <include>$(WK_ROOT)/JavaScriptCore/kjs</include>
         <include>$(WK_ROOT)/JavaScriptCore/pcre</include>
+        <include>$(WK_ROOT)/JavaScriptCore/profiler</include>
+        <include>$(WK_ROOT)/JavaScriptCore/VM</include>
         <include>$(WK_ROOT)/JavaScriptCore/wtf</include>
         <dirname>$(WKOUTPUTDIR)</dirname>
         <sources>$(SRCDIR)/kjs/testkjs.cpp</sources>
