@@ -1,3 +1,14 @@
+2008-05-27  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix web inspector does not returns its state properly after its window is minimized.
+
+        As hinted by Holger, InspectorClientView::hideEvent is not needed.
+        This fixes bug https://bugs.webkit.org/show_bug.cgi?id=18967
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+
 2008-05-21  Siraj Razick  <siraj.razick@collabora.co.uk>
 
         Reviewed by Simon.
