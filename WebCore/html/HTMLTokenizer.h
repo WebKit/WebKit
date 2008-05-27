@@ -338,7 +338,7 @@ private:
     // Name of an attribute that we just scanned.
     AtomicString attrName;
 
-    // Used to store the code of a srcipting sequence
+    // Used to store the code of a scripting sequence
     UChar* scriptCode;
     // Size of the script sequenze stored in @ref #scriptCode
     int scriptCodeSize;
