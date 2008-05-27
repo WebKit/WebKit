@@ -1,3 +1,15 @@
+2008-05-27  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        - Added and updated some manual test for the profiler.
+
+        * manual-tests/inspector/profiler-test-anonymous-function-calls-eval.html:
+        * manual-tests/inspector/profiler-test-apply.html:
+        * manual-tests/inspector/profiler-test-call.html:
+        * manual-tests/inspector/profiler-test-deep-recursion.html: Added.
+        * manual-tests/inspector/profiler-test-simple-event-call.html: Added.
+
 2008-05-27  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Accidently left a couple fixes out of the previous commit.
