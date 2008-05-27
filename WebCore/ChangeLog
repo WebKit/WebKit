@@ -2,6 +2,14 @@
 
         Reviewed by Simon.
 
+        Fix linking error (missing gdi32 and user32 libraries).
+
+        * WebCore.pro:
+
+2008-05-27  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
         Update the WebKit.qrc so that Web Inspector is functional again.
 
         * page/inspector/WebKit.qrc:

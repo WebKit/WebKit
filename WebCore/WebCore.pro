@@ -1007,6 +1007,11 @@ SOURCES += \
     win32-*: SOURCES += platform/win/SystemTimeWin.cpp
     else: SOURCES += platform/qt/SystemTimeQt.cpp
 
+    win32-* {
+        LIBS += gdi32.lib
+        LIBS += user32.lib
+    }
+
     # Files belonging to the Qt 4.3 build
     lessThan(QT_MINOR_VERSION, 4) {
         HEADERS += \
