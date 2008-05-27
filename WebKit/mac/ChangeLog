@@ -1,3 +1,19 @@
+2008-05-27  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a bug where unplugging the monitor from a video card and
+        moving it to another video card would no longer show OpenGL plugins
+        until you relaunched Safari.
+
+        <rdar://problem/5790983> Add AllowOfflineDisplays pixel format
+        attribute to OpenGL contexts
+
+        Reviewed by Kevin Decker.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView _createWindowedAGLContext]): Added
+        AGL_ALLOW_OFFLINE_RENDERERS for non-Tiger builds.
+        (-[WebBaseNetscapePluginView _createWindowlessAGLContext]): Ditto.
+
 2008-05-25  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.
