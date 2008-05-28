@@ -1,6 +1,5 @@
 all:
     -xcopy /y/d/e/i "..\..\..\WebKitLibraries\win\tools" "$(WEBKITLIBRARIESDIR)\tools"
-    set PATH=%PATH%;%SystemDrive%\cygwin\bin
     touch "$(WEBKITOUTPUTDIR)\buildfailed"
     bash build-generated-files.sh "$(WEBKITOUTPUTDIR)" "$(WEBKITLIBRARIESDIR)"
     -mkdir 2>NUL "$(WEBKITOUTPUTDIR)\include\JavaScriptCore\JavaScriptCore"

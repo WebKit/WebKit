@@ -1,5 +1,18 @@
 2008-05-27  Adam Roben  <aroben@apple.com>
 
+        Windows build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+        Remove code that appended Cygwin's /bin directory to PATH.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.vcproj:
+        Prepend Cygwin's /bin directory to PATH. We prepend instead of append
+        so that Cygwin's utilities will win out over Win32 versions of the
+        same utilities (particularly perl). We do the prepend here instead of
+        in the Makefile because nmake doesn't seem to like prepending to PATH
+        inside the Makefile. This also matches the way WebCoreGenerated works.
+
+2008-05-27  Adam Roben  <aroben@apple.com>
+
         Roll out r34163
 
         A better fix is on the way.
