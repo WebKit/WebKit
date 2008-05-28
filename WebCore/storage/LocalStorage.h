@@ -46,7 +46,7 @@ namespace WebCore {
 
         PassRefPtr<StorageArea> storageArea(Frame* sourceFrame, SecurityOrigin*);
 
-        void scheduleImport(PassRefPtr<LocalStorageArea>);
+        bool scheduleImport(PassRefPtr<LocalStorageArea>);
         void scheduleSync(PassRefPtr<LocalStorageArea>);
 
         void close();

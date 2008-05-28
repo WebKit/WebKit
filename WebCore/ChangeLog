@@ -1,3 +1,20 @@
+2008-05-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+
+        Fix hang I introduced to WebKit clients without their LocalStorage paths set
+        Such as DRT...
+
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::scheduleImport): Return a bool, namely to signify
+          whether or not there is a LocalStorageThread to schedule the import on.
+        * storage/LocalStorage.h:
+
+        * storage/LocalStorageArea.cpp:
+        (WebCore::LocalStorageArea::LocalStorageArea): If the scheduleImport failed,
+          mark the imported flag as true so the LocalStorageArea doesn't wait around
+          locking the main thread.
+
 2008-05-28  Anthony Ricaud  <rik24d@gmail.com>
 
         User stylesheets are now non-editable and displayed as user-stylesheets

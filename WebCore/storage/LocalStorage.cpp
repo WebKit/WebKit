@@ -133,6 +133,8 @@ void LocalStorage::scheduleImport(PassRefPtr<LocalStorageArea> area)
 
     if (m_thread)
         m_thread->scheduleImport(area);
+
+    return m_thread;
 }
 
 void LocalStorage::scheduleSync(PassRefPtr<LocalStorageArea> area)
