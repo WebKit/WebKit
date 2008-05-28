@@ -1077,7 +1077,12 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            back in register srcDst.
         */
         int srcDst = (++vPC)->u.operand;
-        JSValue* result = jsNumber(r[srcDst].u.jsValue->toNumber(exec) + 1);
+        JSValue* v = r[srcDst].u.jsValue;
+        JSValue* result;
+        if (JSImmediate::canDoFastAdditiveOperations(v))
+            result = JSImmediate::incImmediateNumber(v);
+        else
+            result = jsNumber(v->toNumber(exec) + 1);
         VM_CHECK_EXCEPTION();
         r[srcDst].u.jsValue = result;
         
@@ -1091,7 +1096,12 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            back in register srcDst.
         */
         int srcDst = (++vPC)->u.operand;
-        JSValue* result = jsNumber(r[srcDst].u.jsValue->toNumber(exec) - 1);
+        JSValue* v = r[srcDst].u.jsValue;
+        JSValue* result;
+        if (JSImmediate::canDoFastAdditiveOperations(v))
+            result = JSImmediate::decImmediateNumber(v);
+        else
+            result = jsNumber(v->toNumber(exec) - 1);
         VM_CHECK_EXCEPTION();
         r[srcDst].u.jsValue = result;
 
@@ -1107,11 +1117,20 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         int srcDst = (++vPC)->u.operand;
-        JSValue* number = r[srcDst].u.jsValue->toJSNumber(exec);
+        JSValue* v = r[srcDst].u.jsValue;
+        JSValue* result;
+        JSValue* number;
+        if (JSImmediate::canDoFastAdditiveOperations(v)) {
+            number = v;
+            result = JSImmediate::incImmediateNumber(v);
+        } else {
+            number = r[srcDst].u.jsValue->toJSNumber(exec);
+            result = jsNumber(number->uncheckedGetNumber() + 1);
+        }
         VM_CHECK_EXCEPTION();
 
         r[dst].u.jsValue = number;
-        r[srcDst].u.jsValue = jsNumber(number->uncheckedGetNumber() + 1);
+        r[srcDst].u.jsValue = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1125,11 +1144,20 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         int srcDst = (++vPC)->u.operand;
-        JSValue* number = r[srcDst].u.jsValue->toJSNumber(exec);
+        JSValue* v = r[srcDst].u.jsValue;
+        JSValue* result;
+        JSValue* number;
+        if (JSImmediate::canDoFastAdditiveOperations(v)) {
+            number = v;
+            result = JSImmediate::decImmediateNumber(v);
+        } else {
+            number = r[srcDst].u.jsValue->toJSNumber(exec);
+            result = jsNumber(number->uncheckedGetNumber() - 1);
+        }
         VM_CHECK_EXCEPTION();
 
         r[dst].u.jsValue = number;
-        r[srcDst].u.jsValue = jsNumber(number->uncheckedGetNumber() - 1);
+        r[srcDst].u.jsValue = result;
 
         ++vPC;
         NEXT_OPCODE;

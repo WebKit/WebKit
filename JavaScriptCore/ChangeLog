@@ -1,5 +1,25 @@
 2008-05-28  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Maciej.
+
+        Based on a patch by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19180
+        speed up SunSpider by optimizing immediate number cases
+
+        1.4% speedup on SunSpider.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+        * kjs/JSImmediate.h:
+        (KJS::JSImmediate::incImmediateNumber):
+        (KJS::JSImmediate::decImmediateNumber):
+        Added fast paths for ++ and --.
+
+        (KJS::JSImmediate::canDoFastAdditiveOperations): Corrected a comment.
+
+2008-05-28  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         https://bugs.webkit.org/show_bug.cgi?id=19180
