@@ -1,3 +1,17 @@
+2008-05-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5803706> Pressing return at the end of a header doesn't break out of header (17460)
+        
+        It wasn't enough to break out of the header, to match other browsers we 
+        also need to not preserve the typing style.
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::applyStyleAfterInsertion):
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.h:
+
 2008-05-27  Timothy Hatcher  <timothy@apple.com>
 
         <rdar://problem/5966961> REGRESSION: Font previews in the Web

@@ -1,3 +1,13 @@
+2008-05-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver.
+        
+        <rdar://problem/5803706> Pressing return at the end of a header doesn't break out of header (17460)
+
+        * editing/inserting/5803706-1-expected.txt: Adjust this already checked-in test to reflect the new
+        expected behavior.
+        * editing/inserting/5803706-1.html: 
+
 2008-05-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff and Maciej.

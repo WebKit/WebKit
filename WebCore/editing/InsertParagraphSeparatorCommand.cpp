@@ -65,8 +65,17 @@ void InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion(const Positi
     m_style = styleAtPosition(pos);
 }
 
-void InsertParagraphSeparatorCommand::applyStyleAfterInsertion()
+void InsertParagraphSeparatorCommand::applyStyleAfterInsertion(Node* originalEnclosingBlock)
 {
+    // Not only do we break out of header tags, but we also do not preserve the typing style,
+    // in order to match other browsers.
+    if (originalEnclosingBlock->hasTagName(h1Tag) ||
+        originalEnclosingBlock->hasTagName(h2Tag) ||
+        originalEnclosingBlock->hasTagName(h3Tag) ||
+        originalEnclosingBlock->hasTagName(h4Tag) ||
+        originalEnclosingBlock->hasTagName(h5Tag))
+        return;
+        
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     if (!m_style)
@@ -178,7 +187,7 @@ void InsertParagraphSeparatorCommand::doApply()
 
         appendBlockPlaceholder(blockToInsert.get());
         setEndingSelection(Selection(Position(blockToInsert.get(), 0), DOWNSTREAM));
-        applyStyleAfterInsertion();
+        applyStyleAfterInsertion(startBlock);
         return;
     }
 
@@ -201,7 +210,7 @@ void InsertParagraphSeparatorCommand::doApply()
         insertNodeBefore(blockToInsert.get(), refNode);
         appendBlockPlaceholder(blockToInsert.get());
         setEndingSelection(Selection(Position(blockToInsert.get(), 0), DOWNSTREAM));
-        applyStyleAfterInsertion();
+        applyStyleAfterInsertion(startBlock);
         setEndingSelection(Selection(pos, DOWNSTREAM));
         return;
     }
@@ -320,7 +329,7 @@ void InsertParagraphSeparatorCommand::doApply()
     }
 
     setEndingSelection(Selection(Position(blockToInsert.get(), 0), DOWNSTREAM));
-    applyStyleAfterInsertion();
+    applyStyleAfterInsertion(startBlock);
 }
 
 } // namespace WebCore
