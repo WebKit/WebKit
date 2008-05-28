@@ -145,6 +145,7 @@ bool XSLStyleSheet::parseString(const String& string, bool strict)
     if (Frame* frame = ownerDocument()->frame())
         console = frame->domWindow()->console();
     xmlSetStructuredErrorFunc(console, XSLTProcessor::parseErrorFunc);
+    xmlSetGenericErrorFunc(console, XSLTProcessor::genericErrorFunc);
 
     m_stylesheetDoc = xmlReadMemory(reinterpret_cast<const char*>(string.characters()), string.length() * sizeof(UChar),
         href().utf8().data(),
@@ -153,6 +154,7 @@ bool XSLStyleSheet::parseString(const String& string, bool strict)
     loadChildSheets();
 
     xmlSetStructuredErrorFunc(0, 0);
+    xmlSetGenericErrorFunc(0, 0);
 
     setLoaderForLibXMLCallbacks(0);
     return m_stylesheetDoc;

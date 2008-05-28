@@ -1,3 +1,20 @@
+2008-05-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5965960>
+        CrashTracer: [USER] 4 crashes in Safari at libxml2.2.dylib: xmlGenericErrorDefaultFunc + 76
+        
+        Turns out that while libxml has two different error callbacks, they both use the same context, so we need to 
+        set both error callbacks to prevent one of the error callbacks from using the context as a FILE pointer.
+        
+        * xml/XSLStyleSheet.cpp:
+        (WebCore::XSLStyleSheet::parseString):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::genericErrorFunc):
+        (WebCore::docLoaderFunc):
+        * xml/XSLTProcessor.h:
+
 2008-05-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam

@@ -59,7 +59,8 @@ public:
     void reset() { m_stylesheet = NULL; m_stylesheetRootNode = NULL;  m_parameters.clear(); }
 
     static void parseErrorFunc(void* userData, xmlError*);
-
+    static void genericErrorFunc(void* userData, const char* msg, ...);
+    
 public:
     // Only for libXSLT callbacks
     XSLStyleSheet* xslStylesheet() const { return m_stylesheet.get(); }
