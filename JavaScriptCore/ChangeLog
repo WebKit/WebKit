@@ -1,3 +1,16 @@
+2008-05-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff and Maciej.
+
+        <rdar://problem/5806428> 
+        https://bugs.webkit.org/show_bug.cgi?id=17925
+        Crash in KJS::JSObject::put after setting this.__proto__
+
+        Set slotIsWriteable to false for __proto__, we want setting __proto__ to go through JSObject::put instead.
+        
+        * kjs/object.h:
+        (KJS::JSObject::getOwnPropertySlotForWrite):
+
 2008-05-27  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes to catch up with SquirrelFish, etc.

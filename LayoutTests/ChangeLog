@@ -1,3 +1,15 @@
+2008-05-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff and Maciej.
+
+        <rdar://problem/5806428> 
+        https://bugs.webkit.org/show_bug.cgi?id=17925
+        Crash in KJS::JSObject::put after setting this.__proto__
+
+        * fast/js/resources/this-non-object-proto.js: Added.
+        * fast/js/this-non-object-proto-expected.txt: Added.
+        * fast/js/this-non-object-proto.html: Added.
+
 2008-05-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.
