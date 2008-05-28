@@ -34,4 +34,7 @@ cd "${BUILT_PRODUCTS_DIR}/DerivedSources"
 
 export JavaScriptCore="${XSRCROOT}"
 export DFTABLES_EXTENSION=".exe"
+if [ "$PRODUCTION" == "1" ]; then
+    export OMIT_BYTECODE_DOCS=1
+fi
 make -f "$JavaScriptCore/DerivedSources.make" -j ${NUMCPUS} || exit 1

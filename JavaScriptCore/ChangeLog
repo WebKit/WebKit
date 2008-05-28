@@ -1,3 +1,12 @@
+2008-05-27  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * DerivedSources.make: Don't generate the bytecode docs if
+        OMIT_BYTECODE_DOCS is set to 1.
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh: Set
+        OMIT_BYTECODE_DOCS for production builds.
+
 2008-05-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff and Maciej.
