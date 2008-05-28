@@ -222,8 +222,10 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
     this.computedStyle = computedStyle;
     this.editable = (editable && !computedStyle);
 
-    // Prevent editing the user agent rules.
-    if (this.styleRule.parentStyleSheet && !this.styleRule.parentStyleSheet.ownerNode && !this.styleRule.parentStyleSheet.href)
+    // Prevent editing the user agent and user rules.
+    var isUserAgent = this.styleRule.parentStyleSheet && !this.styleRule.parentStyleSheet.ownerNode && !this.styleRule.parentStyleSheet.href;
+    var isUser = this.styleRule.parentStyleSheet && this.styleRule.parentStyleSheet.ownerNode && this.styleRule.parentStyleSheet.ownerNode.nodeName == '#document';
+    if (isUserAgent || isUser)
         this.editable = false;
 
     this._usedProperties = usedProperties;
@@ -258,8 +260,10 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
                 var url = this.styleRule.parentStyleSheet.href;
                 subtitle = WebInspector.linkifyURL(url, WebInspector.displayNameForURL(url).escapeHTML());
                 this.subtitleElement.addStyleClass("file");
-            } else if (this.styleRule.parentStyleSheet && !this.styleRule.parentStyleSheet.ownerNode)
+            } else if (isUserAgent)
                 subtitle = WebInspector.UIString("user agent stylesheet");
+            else if (isUser)
+                subtitle = WebInspector.UIString("user stylesheet");
             else
                 subtitle = WebInspector.UIString("inline stylesheet");
         }
