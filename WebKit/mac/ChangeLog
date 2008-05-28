@@ -1,3 +1,14 @@
+2008-05-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Tim Hatcher.
+        
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=19183
+        REGRESSION (r33979): Crash in DebuggerCallFrame::functionName when
+        clicking button in returnEvent-crash.html
+        
+        Added implementations for willExecuteProgram and didExecuteProgram, which
+        take care of making sure we're not hanging on to stale data.
+
 2008-05-27  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a bug where unplugging the monitor from a video card and

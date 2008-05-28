@@ -564,16 +564,16 @@ bool Machine::isOpcode(Opcode opcode)
 NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionValue, Register** registerBase, const Instruction*& vPC, CodeBlock*& codeBlock, JSValue**& k, ScopeChainNode*& scopeChain, Register*& r)
 {
     CodeBlock* oldCodeBlock = codeBlock;
-
-    if (Debugger* debugger = exec->dynamicGlobalObject()->debugger()) {
-        if (!isGlobalCallFrame(registerBase, r)) {
-            DebuggerCallFrame debuggerCallFrame(this, exec->dynamicGlobalObject(), codeBlock, scopeChain, exceptionValue, registerBase, r - *registerBase);
-            debugger->returnEvent(debuggerCallFrame, codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->lastLine());
-        }
-    }
-
     Register* callFrame = r - oldCodeBlock->numLocals - CallFrameHeaderSize;
     
+    if (Debugger* debugger = exec->dynamicGlobalObject()->debugger()) {
+        DebuggerCallFrame debuggerCallFrame(this, exec->dynamicGlobalObject(), codeBlock, scopeChain, exceptionValue, registerBase, r - *registerBase);
+        if (!isGlobalCallFrame(registerBase, r) && callFrame[Callee].u.jsObject) // Check for global and eval code
+            debugger->returnEvent(debuggerCallFrame, codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->lastLine());
+        else
+            debugger->didExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->lastLine());
+    }
+
     if (Profiler* profiler = *Profiler::enabledProfilerReference()) {
         if (!isGlobalCallFrame(registerBase, r) && callFrame[Callee].u.jsObject) // Check for global and eval code
             profiler->didExecute(exec, callFrame[Callee].u.jsObject);
@@ -849,6 +849,14 @@ NEVER_INLINE void Machine::debug(ExecState* exec, const Instruction* vPC, const 
     }
     case WillExecuteStatement: {
         debugger->atStatement(debuggerCallFrame, codeBlock->ownerNode->sourceId(), firstLine);
+        return;
+    }
+    case WillExecuteProgram: {
+        debugger->willExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceId(), lastLine);
+        return;
+    }
+    case DidExecuteProgram: {
+        debugger->didExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceId(), firstLine);
         return;
     }
     }
@@ -2351,10 +2359,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     BEGIN_OPCODE(op_debug) {
         /* debug debugHookID(n) firstLine(n) lastLine(n)
          
-         Notifies the debugger of the current state of execution:
-         didEnterCallFrame; willLeaveCallFrame; or willExecuteStatement.
-         
-         This opcode is only generated while the debugger is attached.
+         Notifies the debugger of the current state of execution. This opcode
+         is only generated while the debugger is attached.
         */
 
         int registerOffset = r - (*registerBase);

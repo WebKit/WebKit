@@ -56,6 +56,8 @@ public:
     virtual void atStatement(const KJS::DebuggerCallFrame&, int sourceID, int lineNumber);
     virtual void returnEvent(const KJS::DebuggerCallFrame&, int sourceID, int lineNumber);
     virtual void exception(const KJS::DebuggerCallFrame&, int sourceID, int lineNumber);
+    virtual void willExecuteProgram(const KJS::DebuggerCallFrame&, int sourceId, int lineno);
+    virtual void didExecuteProgram(const KJS::DebuggerCallFrame&, int sourceId, int lineno);
 
 private:
     bool m_callingDelegate;

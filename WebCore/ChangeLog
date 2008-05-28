@@ -1,3 +1,20 @@
+2008-05-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=19183
+        REGRESSION (r33979): Crash in DebuggerCallFrame::functionName when
+        clicking button in returnEvent-crash.html
+        
+        Added implementations for willExecuteProgram and didExecuteProgram. They
+        take care to update our call frame when entering and exiting programs,
+        preventing us from keeping around a stale global frame after executing
+        a program.
+        
+        eval programs now show up as "anonymous function" in a new scope. This
+        is slightly better than what they used to do -- overwriting the current
+        scope -- but obviously we can do better.
+
 2008-05-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein

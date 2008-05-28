@@ -164,6 +164,9 @@ namespace KJS {
      */
     virtual void returnEvent(const DebuggerCallFrame&, int sourceId, int lineno) = 0;
 
+    virtual void willExecuteProgram(const DebuggerCallFrame&, int sourceId, int lineno) = 0;
+    virtual void didExecuteProgram(const DebuggerCallFrame&, int sourceId, int lineno) = 0;
+
   private:
     HashSet<JSGlobalObject*> m_globalObjects;
   };

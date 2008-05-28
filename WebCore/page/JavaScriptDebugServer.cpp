@@ -45,6 +45,7 @@
 #include "kjs_proxy.h"
 #include <kjs/DebuggerCallFrame.h>
 #include <wtf/MainThread.h>
+#include <wtf/UnusedParam.h>
 
 using namespace KJS;
 
@@ -419,6 +420,7 @@ void JavaScriptDebugServer::callEvent(const DebuggerCallFrame& debuggerCallFrame
 {
     if (m_paused)
         return;
+
     m_currentCallFrame = JavaScriptCallFrame::create(debuggerCallFrame, m_currentCallFrame, sourceID, lineNumber);
     pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
 }
@@ -427,10 +429,12 @@ void JavaScriptDebugServer::atStatement(const DebuggerCallFrame& debuggerCallFra
 {
     if (m_paused)
         return;
+
+    ASSERT(m_currentCallFrame);
     if (!m_currentCallFrame)
-        m_currentCallFrame = JavaScriptCallFrame::create(debuggerCallFrame, 0, sourceID, lineNumber);
-    else
-        m_currentCallFrame->update(debuggerCallFrame, sourceID, lineNumber);
+        return;
+
+    m_currentCallFrame->update(debuggerCallFrame, sourceID, lineNumber);
     pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
 }
 
@@ -438,10 +442,15 @@ void JavaScriptDebugServer::returnEvent(const DebuggerCallFrame& debuggerCallFra
 {
     if (m_paused)
         return;
+
+    ASSERT(m_currentCallFrame);
+    if (!m_currentCallFrame)
+        return;
+
     m_currentCallFrame->update(debuggerCallFrame, sourceID, lineNumber);
     pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
 
-    // Treat stepping over a return statement like stepping out of a function.
+    // Treat stepping over a return statement like stepping out.
     if (m_currentCallFrame == m_pauseOnCallFrame)
         m_pauseOnCallFrame = m_currentCallFrame->caller();
     m_currentCallFrame = m_currentCallFrame->caller();
@@ -451,10 +460,43 @@ void JavaScriptDebugServer::exception(const DebuggerCallFrame& debuggerCallFrame
 {
     if (m_paused)
         return;
+
+    ASSERT(m_currentCallFrame);
+    if (!m_currentCallFrame)
+        return;
+
     if (m_pauseOnExceptions)
         m_pauseOnNextStatement = true;
+
     m_currentCallFrame->update(debuggerCallFrame, sourceID, lineNumber);
     pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
+}
+
+void JavaScriptDebugServer::willExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
+{
+    if (m_paused)
+        return;
+
+    m_currentCallFrame = JavaScriptCallFrame::create(debuggerCallFrame, m_currentCallFrame, sourceID, lineNumber);
+    pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
+}
+
+void JavaScriptDebugServer::didExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
+{
+    if (m_paused)
+        return;
+
+    ASSERT(m_currentCallFrame);
+    if (!m_currentCallFrame)
+        return;
+
+    m_currentCallFrame->update(debuggerCallFrame, sourceID, lineNumber);
+    pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
+
+    // Treat stepping over the end of a program like stepping out.
+    if (m_currentCallFrame == m_pauseOnCallFrame)
+        m_pauseOnCallFrame = m_currentCallFrame->caller();
+    m_currentCallFrame = m_currentCallFrame->caller();
 }
 
 } // namespace WebCore

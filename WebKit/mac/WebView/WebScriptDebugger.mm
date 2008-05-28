@@ -178,3 +178,13 @@ void WebScriptDebugger::exception(const DebuggerCallFrame& debuggerCallFrame, in
 
     m_callingDelegate = false;
 }
+
+void WebScriptDebugger::willExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, int sourceId, int lineno)
+{
+    [m_topCallFrame.get() _setDebuggerCallFrame:debuggerCallFrame];
+}
+
+void WebScriptDebugger::didExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, int sourceId, int lineno)
+{
+    [m_topCallFrame.get() _clearDebuggerCallFrame];
+}

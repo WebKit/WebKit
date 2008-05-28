@@ -1,3 +1,21 @@
+2008-05-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=19183
+        REGRESSION (r33979): Crash in DebuggerCallFrame::functionName when
+        clicking button in returnEvent-crash.html
+
+        Added two new debugger hooks, willExecuteProgram and didExecuteProgram,
+        along with code to generate them, code to invoke them when unwinding
+        due to an exception, and code to dump them.
+        
+        SunSpider reports no change.
+
+        * VM/CodeBlock.cpp:
+        (KJS::debugHookName): I had to mark this function NEVER_INLINE to avoid
+        a .4% performance regression. The mind boggles.
+
 2008-05-28  Adam Roben  <aroben@apple.com>
 
         Fix JavaScriptCore tests on OS X

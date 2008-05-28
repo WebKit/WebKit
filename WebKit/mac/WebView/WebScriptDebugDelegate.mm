@@ -90,14 +90,16 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
         _private = [[WebScriptCallFramePrivate alloc] init];
         _private->globalObject = globalObj;
         _private->caller = [caller retain];
-        _private->debuggerCallFrame = new DebuggerCallFrame(debuggerCallFrame);
     }
     return self;
 }
 
 - (void)_setDebuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame
 {
-    *_private->debuggerCallFrame = debuggerCallFrame;
+    if (!_private->debuggerCallFrame)
+        _private->debuggerCallFrame = new DebuggerCallFrame(debuggerCallFrame);
+    else
+        *_private->debuggerCallFrame = debuggerCallFrame;
 }
 
 - (void)_clearDebuggerCallFrame
@@ -164,6 +166,9 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 - (NSArray *)scopeChain
 {
+    if (!_private->debuggerCallFrame)
+        return [NSArray array];
+
     const ScopeChainNode* scopeChain = _private->debuggerCallFrame->scopeChain();
     if (!scopeChain->next)  // global frame
         return [NSArray arrayWithObject:_private->globalObject];
@@ -184,6 +189,9 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 - (NSString *)functionName
 {
+    if (!_private->debuggerCallFrame)
+        return nil;
+
     const UString* functionName = _private->debuggerCallFrame->functionName();
     return functionName ? toNSString(*functionName) : nil;
 }
@@ -192,6 +200,9 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 - (id)exception
 {
+    if (!_private->debuggerCallFrame)
+        return nil;
+
     JSValue* exception = _private->debuggerCallFrame->exception();
     return exception ? [self _convertValueToObjcValue:exception] : nil;
 }
@@ -204,6 +215,9 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 - (id)evaluateWebScript:(NSString *)script
 {
+    if (!_private->debuggerCallFrame)
+        return nil;
+
     JSLock lock;
 
     JSValue* exception = 0;
