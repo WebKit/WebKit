@@ -127,7 +127,7 @@ void LocalStorage::close()
     }
 }
 
-void LocalStorage::scheduleImport(PassRefPtr<LocalStorageArea> area)
+bool LocalStorage::scheduleImport(PassRefPtr<LocalStorageArea> area)
 {
     ASSERT(isMainThread());
 

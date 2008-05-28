@@ -1,5 +1,12 @@
 2008-05-28  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+        
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::scheduleImport):
+
+2008-05-28  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Tim.
 
         <rdar://problem/5965960>
