@@ -112,6 +112,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
 MediaPlayerPrivate::~MediaPlayerPrivate()
 {
     LOG(Media, "MediaPlayerPrivatePhonon::dtor deleting videowidget");
+    m_videoWidget->close();
     delete m_videoWidget;
     m_videoWidget = 0;
 
