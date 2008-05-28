@@ -148,12 +148,11 @@ static JSValue* jsAddSlowCase(ExecState* exec, JSValue* v1, JSValue* v2)
 // Fast-path choices here are based on frequency data from SunSpider:
 //    <times> Add case: <t1> <t2>
 //    ---------------------------
-//    5627160 Add case: 1 1
-//    247427  Add case: 5 5
-//    20901   Add case: 5 6
-//    13978   Add case: 5 1
-//    4000    Add case: 1 5
-//    1       Add case: 3 5
+//    5626160 Add case: 3 3 (of these, 3637690 are for immediate values, 34373 of them for negative)
+//    247412  Add case: 5 5
+//    20900   Add case: 5 6
+//    13962   Add case: 5 3
+//    4000    Add case: 3 5
 
 static inline JSValue* jsAdd(ExecState* exec, JSValue* v1, JSValue* v2)
 {
@@ -1176,7 +1175,13 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int src1 = (++vPC)->u.operand;
         int src2 = (++vPC)->u.operand;
-        JSValue* result = jsAdd(exec, r[src1].u.jsValue, r[src2].u.jsValue);
+        JSValue* v1 = r[src1].u.jsValue;
+        JSValue* v2 = r[src2].u.jsValue;
+        JSValue* result;
+        if (JSImmediate::canDoFastAdditiveOperations(v1) && JSImmediate::canDoFastAdditiveOperations(v2))
+            result = JSImmediate::addImmediateNumbers(v1, v2);
+        else
+            result = jsAdd(exec, v1, v2);
         VM_CHECK_EXCEPTION();
         r[dst].u.jsValue = result;
         ++vPC;
@@ -1241,7 +1246,13 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int src1 = (++vPC)->u.operand;
         int src2 = (++vPC)->u.operand;
-        JSValue* result = jsNumber(r[src1].u.jsValue->toNumber(exec) - r[src2].u.jsValue->toNumber(exec));
+        JSValue* v1 = r[src1].u.jsValue;
+        JSValue* v2 = r[src2].u.jsValue;
+        JSValue* result;
+        if (JSImmediate::canDoFastAdditiveOperations(v1) && JSImmediate::canDoFastAdditiveOperations(v2))
+            result = JSImmediate::subImmediateNumbers(v1, v2);
+        else
+            result = jsNumber(v1->toNumber(exec) - v2->toNumber(exec));
         VM_CHECK_EXCEPTION();
         r[dst].u.jsValue = result;
         ++vPC;

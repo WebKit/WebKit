@@ -1,3 +1,24 @@
+2008-05-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19180
+        speed up SunSpider by optimizing immediate number cases
+
+        2% speedup overall, maximum 10% on controlflow-recursive and bitops-3bit-bits-in-byte,
+        but a 4% regression on bitops-bits-in-byte and bitops-bitwise-and.
+
+        * kjs/JSImmediate.h:
+        (KJS::JSImmediate::canDoFastAdditiveOperations):
+        (KJS::JSImmediate::addImmediateNumbers):
+        (KJS::JSImmediate::subImmediateNumbers):
+        Added fast cases that work with positive values less than 2^30.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute): Use the above operations. Also updated SunSpider frequencies
+        with my results (looks like tag values have changed, not sure what caused the minor variation
+        in actual frequencies).
+
 2008-05-27  Adam Roben  <aroben@apple.com>
 
         Windows build fix

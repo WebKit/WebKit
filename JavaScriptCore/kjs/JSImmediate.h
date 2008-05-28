@@ -118,6 +118,27 @@ public:
         return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v1) | reinterpret_cast<uintptr_t>(v2));
     }
 
+    static ALWAYS_INLINE bool canDoFastAdditiveOperations(const JSValue* v)
+    {
+        // Number is positive and an operation involving two of these can't overflow.
+        // Checking for allowed negative numbers takes more time than it's worth on SunSpider.
+        return (reinterpret_cast<uintptr_t>(v) & (NumberType + (3 << 30))) == NumberType;
+    }
+
+    static ALWAYS_INLINE JSValue* addImmediateNumbers(const JSValue* v1, const JSValue* v2)
+    {
+        ASSERT(canDoFastAdditiveOperations(v1));
+        ASSERT(canDoFastAdditiveOperations(v2));
+        return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v1) + (reinterpret_cast<uintptr_t>(v2) & ~NumberType));
+    }
+
+    static ALWAYS_INLINE JSValue* subImmediateNumbers(const JSValue* v1, const JSValue* v2)
+    {
+        ASSERT(canDoFastAdditiveOperations(v1));
+        ASSERT(canDoFastAdditiveOperations(v2));
+        return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v1) - (reinterpret_cast<uintptr_t>(v2) & ~NumberType));
+    }
+
     static double toDouble(const JSValue*);
     static bool toBoolean(const JSValue*);
     static JSObject* toObject(const JSValue*, ExecState*);
