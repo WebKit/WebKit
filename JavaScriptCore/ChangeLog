@@ -1,3 +1,14 @@
+2008-05-28  Adam Roben  <aroben@apple.com>
+
+        Fix JavaScriptCore tests on OS X
+
+        We were quoting the path to testkjs too late, after it had already
+        been combined with spaces and other options.
+
+        * tests/mozilla/jsDriver.pl:
+        (top level): Move path quoting from here...
+        (sub get_kjs_engine_command): ...to here.
+
 2008-05-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.
