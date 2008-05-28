@@ -1,3 +1,18 @@
+2008-05-27  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a regression where the Image and Font preview views do not
+        size correctly.
+
+        <rdar://problem/5966723> REGRESSION (r33991): Image and font previews
+        are shrunken and can't be made larger (19281)
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/FontView.js: Adjust the font size based only on the
+        container width minus padding.
+        * page/inspector/inspector.css: Updated styles for the image and
+        font views.
+
 2008-05-27  Adam Roben  <aroben@apple.com>
 
         Fix Bug 19276: XHR resources are classified as "Other" until Inspector

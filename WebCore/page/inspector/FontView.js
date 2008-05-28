@@ -71,10 +71,12 @@ WebInspector.FontView.prototype = {
         var height = this.fontPreviewElement.offsetHeight;
         var width = this.fontPreviewElement.offsetWidth;
 
-        var containerHeight = this.contentElement.offsetHeight;
         var containerWidth = this.contentElement.offsetWidth;
 
-        if (!height || !width || !containerHeight || !containerWidth) {
+        // Subtract some padding. This should match the padding in the CSS plus room for the scrollbar.
+        containerWidth -= 40;
+
+        if (!height || !width || !containerWidth) {
             this.fontPreviewElement.style.removeProperty("font-size");
             this.fontPreviewElement.style.removeProperty("position");
             this.fontPreviewElement.addStyleClass("preview");
@@ -85,12 +87,7 @@ WebInspector.FontView.prototype = {
         var realLineHeight = Math.floor(height / lineCount);
         var fontSizeLineRatio = measureFontSize / realLineHeight;
         var widthRatio = containerWidth / width;
-        var heightRatio = containerHeight / height;
-
-        if (heightRatio < widthRatio)
-            var finalFontSize = Math.floor(realLineHeight * heightRatio * fontSizeLineRatio) - 1;
-        else
-            var finalFontSize = Math.floor(realLineHeight * widthRatio * fontSizeLineRatio) - 1;
+        var finalFontSize = Math.floor(realLineHeight * widthRatio * fontSizeLineRatio) - 1;
 
         this.fontPreviewElement.style.setProperty("font-size", finalFontSize + "px", null);
         this.fontPreviewElement.style.setProperty("height", this.fontPreviewElement.offsetHeight + "px", null);
