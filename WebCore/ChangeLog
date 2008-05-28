@@ -1,3 +1,16 @@
+2008-05-28  Alexander Vassilev  <avasilev@voipgate.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Rescale image to fit the destination rect so that we don't get a crash when drawing
+        in a destination rect that's bigger than the image rect. Also adds an optimization for
+        drawing an image that is a solid color.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=18465
+
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::BitmapImage::draw):
+
 2008-05-27  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon

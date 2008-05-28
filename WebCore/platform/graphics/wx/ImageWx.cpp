@@ -87,6 +87,11 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
     if (!m_source.initialized())
         return;
 
+    if (mayFillWithSolidColor()) {
+        fillWithSolidColor(ctxt, dst, solidColor(), op);
+        return;
+    }
+
 #if USE(WXGC)
     wxGCDC* context = (wxGCDC*)ctxt->platformContext();
 #else
@@ -96,21 +101,33 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
     wxBitmap* bitmap = frameAtIndex(m_currentFrame);
     if (!bitmap) // If it's too early we won't have an image yet.
         return;
-
-    IntSize selfSize = size();                
-    FloatRect srcRect(src);
-    FloatRect dstRect(dst);
     
     // If we're drawing a sub portion of the image or scaling then create
     // a pattern transformation on the image and draw the transformed pattern.
     // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
     // FIXME: NYI
    
+    ctxt->save();
+
+    // Set the compositing operation.
+    ctxt->setCompositeOperation(op);
+
+    IntRect srcIntRect(src);
+    IntRect dstIntRect(dst);
+    bool rescaling = false;
+    if ((dstIntRect.width() != srcIntRect.width()) || (dstIntRect.height() != srcIntRect.height()))
+    {
+        rescaling = true;
+        wxImage img = bitmap->ConvertToImage();
+        img.Rescale(dstIntRect.width(), dstIntRect.height());
+        bitmap = new wxBitmap(img);
+    }   
     wxMemoryDC mydc; 
     ASSERT(bitmap->GetRefData());
     mydc.SelectObject(*bitmap); 
-    context->Blit((wxCoord)dst.x(),(wxCoord)dst.y(), (wxCoord)dst.width(), (wxCoord)dst.height(), &mydc, 
-                    (wxCoord)src.x(), (wxCoord)src.y(), wxCOPY, true); 
+    
+    context->Blit((wxCoord)dstIntRect.x(),(wxCoord)dstIntRect.y(), (wxCoord)dstIntRect.width(), (wxCoord)dstIntRect.height(), &mydc, 
+                    (wxCoord)srcIntRect.x(), (wxCoord)srcIntRect.y(), wxCOPY, true); 
     mydc.SelectObject(wxNullBitmap);
     
     // NB: delete is causing crashes during page load, but not during the deletion
@@ -118,9 +135,14 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
     // suddenly becomes invalid after returning. It's possible these errors deal
     // with reentrancy and threding problems.
     //delete bitmap;
+    if (rescaling)
+    {
+        delete bitmap;
+        bitmap = NULL;
+    }
+    ctxt->restore();
     startAnimation();
 }
-
 
 void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, CompositeOperator, const FloatRect& dstRect)
 {
