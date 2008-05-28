@@ -1,3 +1,16 @@
+2008-05-28  Adam Roben  <aroben@apple.com>
+
+        Print exceptions from PrettyPatch to stdout
+
+        This will make it much easier to debug problems with PrettyPatch,
+        since we'll be able to see the exceptions in the browser.
+
+        Reviewed by Sam Weinig.
+
+        * PrettyPatch/prettify.rb: Added a --html-exceptions option, which
+        will print exceptions to stdout as HTML.
+        * attachment.cgi: Changed to pass --html-exceptions to prettify.rb.
+
 2008-04-26  David Kilzer  <ddkilzer@apple.com>
 
         Removed temp files and added appropriate svn:ignore properties.

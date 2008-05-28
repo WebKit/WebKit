@@ -733,7 +733,7 @@ sub prettyPatch
   print $cgi->header(-type => 'text/html',
                      -expires => '+3M');
 
-  open2(\*OUT, \*IN, "/usr/bin/ruby", "-I", "PrettyPatch", "PrettyPatch/prettify.rb");
+  open2(\*OUT, \*IN, "/usr/bin/ruby", "-I", "PrettyPatch", "PrettyPatch/prettify.rb", "--html-exceptions");
   print IN $thedata . "\n";
   close(IN);
   while (<OUT>) {
