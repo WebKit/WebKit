@@ -150,6 +150,18 @@ wxWebViewConsoleMessageEvent::wxWebViewConsoleMessageEvent(wxWindow* win)
         SetId(win->GetId());
 }
 
+IMPLEMENT_DYNAMIC_CLASS(wxWebViewReceivedTitleEvent, wxCommandEvent)
+
+DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_RECEIVED_TITLE)
+
+wxWebViewReceivedTitleEvent::wxWebViewReceivedTitleEvent(wxWindow* win)
+{
+    SetEventType(wxEVT_WEBVIEW_RECEIVED_TITLE);
+    SetEventObject(win);
+    if (win)
+        SetId(win->GetId());
+}
+
 //---------------------------------------------------------
 // DOM Element info data type
 //---------------------------------------------------------

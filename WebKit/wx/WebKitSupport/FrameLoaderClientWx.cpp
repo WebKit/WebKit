@@ -310,8 +310,12 @@ void FrameLoaderClientWx::dispatchDidStartProvisionalLoad()
 
 void FrameLoaderClientWx::dispatchDidReceiveTitle(const String& title)
 {
-    if (m_webView)
+    if (m_webView) {
         m_webView->SetPageTitle(title);
+        wxWebViewReceivedTitleEvent wkEvent(m_webView);
+        wkEvent.SetTitle(title);
+        m_webView->GetEventHandler()->ProcessEvent(wkEvent);
+    }
 }
 
 

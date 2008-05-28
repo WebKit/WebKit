@@ -1,6 +1,22 @@
 2008-05-28  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.
+
+        This patch adds a new wx event type and code to send it when a new title is set
+        by the page being loaded.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=19067
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::dispatchDidReceiveTitle):
+        * WebView.cpp:
+        (wxWebViewReceivedTitleEvent::wxWebViewReceivedTitleEvent):
+        * WebView.h:
+        * bindings/python/webview.i:
+
+2008-05-28  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
         
         This patch tweaks the wxWebView class to make it conform to normal wx patterns
         for widget classes.  It adds a default ctor and the Create method so it can use
