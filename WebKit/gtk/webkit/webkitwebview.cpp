@@ -370,16 +370,13 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
 static gboolean webkit_web_view_button_release_event(GtkWidget* widget, GdkEventButton* event)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-    WebKitWebViewPrivate* priv = webView->priv;
 
     Frame* focusedFrame = core(webView)->focusController()->focusedFrame();
 
     if (focusedFrame && focusedFrame->editor()->canEdit()) {
-        GdkWindow* window = gtk_widget_get_parent_window(widget);
-        gtk_im_context_set_client_window(priv->imContext, window);
 #ifdef MAEMO_CHANGES
+        WebKitWebViewPrivate* priv = webView->priv;
         hildon_gtk_im_context_filter_event(priv->imContext, (GdkEvent*)event);
-        hildon_gtk_im_context_show(priv->imContext);
 #endif
     }
 
@@ -445,9 +442,7 @@ static gboolean webkit_web_view_focus_in_event(GtkWidget* widget, GdkEventFocus*
 static gboolean webkit_web_view_focus_out_event(GtkWidget* widget, GdkEventFocus* event)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-    WebKitWebViewPrivate* priv = webView->priv;
 
-    gtk_im_context_focus_out(priv->imContext);
     core(webView)->focusController()->setActive(false);
 
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_out_event(widget, event);
@@ -484,6 +479,10 @@ static void webkit_web_view_realize(GtkWidget* widget)
 
     widget->style = gtk_style_attach(widget->style, widget->window);
     gdk_window_set_background(widget->window, &widget->style->base[GTK_WIDGET_STATE(widget)]);
+
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    WebKitWebViewPrivate* priv = webView->priv;
+    gtk_im_context_set_client_window(priv->imContext, widget->window);
 }
 
 static void webkit_web_view_set_scroll_adjustments(WebKitWebView* webView, GtkAdjustment* hadj, GtkAdjustment* vadj)

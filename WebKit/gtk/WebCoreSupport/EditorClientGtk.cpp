@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ *  Copyright (C) 2008 Nuanti Ltd.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -34,10 +35,56 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static void imContextCommitted(GtkIMContext* context, const char* str, EditorClient* client)
+static void imContextCommitted(GtkIMContext* context, const gchar* str, EditorClient* client)
+{
+    Frame* targetFrame = core(client->m_webView)->focusController()->focusedOrMainFrame();
+
+    if (!targetFrame || !targetFrame->editor()->canEdit())
+        return;
+
+    Editor* editor = targetFrame->editor();
+
+    String commitString = String::fromUTF8(str);
+    editor->confirmComposition(commitString);
+}
+
+static void imContextPreeditChanged(GtkIMContext* context, EditorClient* client)
 {
     Frame* frame = core(client->m_webView)->focusController()->focusedOrMainFrame();
-    frame->editor()->insertTextWithoutSendingTextEvent(String::fromUTF8(str), false, 0);
+    Editor* editor = frame->editor();
+
+    gchar* preedit = NULL;
+    gint cursorPos = 0;
+    // We ignore the provided PangoAttrList for now.
+    gtk_im_context_get_preedit_string(context, &preedit, NULL, &cursorPos);
+    String preeditString = String::fromUTF8(preedit);
+    g_free(preedit);
+
+    // setComposition() will replace the user selection if passed an empty
+    // preedit. We don't want this to happen.
+    if (preeditString.isEmpty() && !editor->hasComposition())
+        return;
+
+    Vector<CompositionUnderline> underlines;
+    underlines.append(CompositionUnderline(0, preeditString.length(), Color(0, 0, 0), false));
+    editor->setComposition(preeditString, underlines, cursorPos, 0);
+}
+
+void EditorClient::setInputMethodState(bool active)
+{
+    WebKitWebViewPrivate* priv = m_webView->priv;
+
+    if (active)
+        gtk_im_context_focus_in(priv->imContext);
+    else
+        gtk_im_context_focus_out(priv->imContext);
+
+#ifdef MAEMO_CHANGES
+    if (active)
+        hildon_gtk_im_context_show(priv->imContext);
+    else
+        hildon_gtk_im_context_hide(priv->imContext);
+#endif
 }
 
 bool EditorClient::shouldDeleteRange(Range*)
@@ -93,8 +140,7 @@ bool EditorClient::shouldChangeSelectedRange(Range*, Range*, EAffinity, bool)
     return true;
 }
 
-bool EditorClient::shouldApplyStyle(WebCore::CSSStyleDeclaration*,
-                                      WebCore::Range*)
+bool EditorClient::shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*)
 {
     notImplemented();
     return true;
@@ -118,7 +164,22 @@ void EditorClient::respondToChangedContents()
 
 void EditorClient::respondToChangedSelection()
 {
-    notImplemented();
+    WebKitWebViewPrivate* priv = m_webView->priv;
+
+    Frame* targetFrame = core(m_webView)->focusController()->focusedOrMainFrame();
+    if (!targetFrame || !targetFrame->editor()->hasComposition())
+        return;
+
+    if (targetFrame->editor()->ignoreCompositionSelectionChange())
+        return;
+
+    unsigned start;
+    unsigned end;
+    if (!targetFrame->editor()->getCompositionSelection(start, end)) {
+        // gtk_im_context_reset() clears the composition for us.
+        gtk_im_context_reset(priv->imContext);
+        targetFrame->editor()->confirmCompositionWithoutDisturbingSelection();
+    }
 }
 
 void EditorClient::didEndEditing()
@@ -343,10 +404,13 @@ void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
     event->setDefaultHandled();
 }
 
-
-void EditorClient::handleInputMethodKeydown(KeyboardEvent*)
+void EditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 {
-    notImplemented();
+    WebKitWebViewPrivate* priv = m_webView->priv;
+
+    // TODO: Dispatch IE-compatible text input events for IM events.
+    if (gtk_im_context_filter_keypress(priv->imContext, event->keyEvent()->gdkEventKey()))
+        event->setDefaultHandled();
 }
 
 EditorClient::EditorClient(WebKitWebView* webView)
@@ -354,38 +418,31 @@ EditorClient::EditorClient(WebKitWebView* webView)
 {
     WebKitWebViewPrivate* priv = m_webView->priv;
     g_signal_connect(priv->imContext, "commit", G_CALLBACK(imContextCommitted), this);
+    g_signal_connect(priv->imContext, "preedit-changed", G_CALLBACK(imContextPreeditChanged), this);
 }
 
 EditorClient::~EditorClient()
 {
     WebKitWebViewPrivate* priv = m_webView->priv;
     g_signal_handlers_disconnect_by_func(priv->imContext, (gpointer)imContextCommitted, this);
+    g_signal_handlers_disconnect_by_func(priv->imContext, (gpointer)imContextPreeditChanged, this);
 }
 
 void EditorClient::textFieldDidBeginEditing(Element*)
 {
-    gtk_im_context_focus_in(WEBKIT_WEB_VIEW_GET_PRIVATE(m_webView)->imContext);
 }
 
 void EditorClient::textFieldDidEndEditing(Element*)
 {
-    WebKitWebViewPrivate* priv = m_webView->priv;
-
-    gtk_im_context_focus_out(priv->imContext);
-#ifdef MAEMO_CHANGES
-    hildon_gtk_im_context_hide(priv->imContext);
-#endif
 }
 
 void EditorClient::textDidChangeInTextField(Element*)
 {
-    notImplemented();
 }
 
-bool EditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEvent* event)
+bool EditorClient::doTextFieldCommandFromEvent(Element*, KeyboardEvent*)
 {
-    WebKitWebViewPrivate* priv = m_webView->priv;
-    return gtk_im_context_filter_keypress(priv->imContext, event->keyEvent()->gdkEventKey());
+    return false;
 }
 
 void EditorClient::textWillBeDeletedInTextField(Element*)
@@ -442,10 +499,6 @@ bool EditorClient::spellingUIIsShowing()
 void EditorClient::getGuessesForWord(const String&, Vector<String>&)
 {
     notImplemented();
-}
-
-void EditorClient::setInputMethodState(bool)
-{
 }
 
 }

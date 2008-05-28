@@ -1,3 +1,32 @@
+2008-05-28  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18704
+        [gtk] cannot type letters with dead keys in textarea
+
+        http://bugs.webkit.org/show_bug.cgi?id=14120
+        [GDK] Support input methods
+
+        Add support for input method composition.
+
+        Remove some old hacks so we handle input method events more
+        consistently.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::imContextCommitted):
+        (WebKit::imContextPreeditChanged):
+        (WebKit::EditorClient::setInputMethodState):
+        (WebKit::EditorClient::respondToChangedSelection):
+        (WebKit::EditorClient::handleInputMethodKeydown):
+        (WebKit::EditorClient::EditorClient):
+        (WebKit::EditorClient::~EditorClient):
+        (WebKit::EditorClient::textFieldDidBeginEditing):
+        (WebKit::EditorClient::textFieldDidEndEditing):
+        (WebKit::EditorClient::textDidChangeInTextField):
+        (WebKit::EditorClient::doTextFieldCommandFromEvent):
+        * webkit/webkitwebview.cpp:
+
 2008-05-25  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Niko.
