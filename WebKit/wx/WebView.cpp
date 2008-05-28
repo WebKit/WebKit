@@ -175,16 +175,41 @@ BEGIN_EVENT_TABLE(wxWebView, wxWindow)
     EVT_ACTIVATE(wxWebView::OnActivate)
 END_EVENT_TABLE()
 
-wxWebView::wxWebView(wxWindow* parent, int id, const wxPoint& position, 
-                    const wxSize& size, WebViewFrameData* data) :
+IMPLEMENT_DYNAMIC_CLASS(wxWebView, wxWindow)
+
+const wxChar* wxWebViewNameStr = wxT("webView");
+
+wxWebView::wxWebView() :
     m_textMagnifier(1.0),
     m_isEditable(false),
     m_isInitialized(false),
     m_beingDestroyed(false),
     m_title(wxEmptyString)
 {
-    if (!wxWindow::Create(parent, id, position, size, wxBORDER_NONE | wxHSCROLL | wxVSCROLL))
-        return;
+}
+
+wxWebView::wxWebView(wxWindow* parent, int id, const wxPoint& position, 
+                     const wxSize& size, long style, const wxString& name,
+                     WebViewFrameData* data) :
+    m_textMagnifier(1.0),
+    m_isEditable(false),
+    m_isInitialized(false),
+    m_beingDestroyed(false),
+    m_title(wxEmptyString)
+{
+    Create(parent, id, position, size, style, name, data);
+}
+
+bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position, 
+                       const wxSize& size, long style, const wxString& name,
+                       WebViewFrameData* data)
+{
+    if ( (style & wxBORDER_MASK) == 0)
+        style |= wxBORDER_NONE;
+    style |= wxHSCROLL | wxVSCROLL;
+    
+    if (!wxWindow::Create(parent, id, position, size, style, name))
+        return false;
 
 // This is necessary because we are using SharedTimerWin.cpp on Windows,
 // due to a problem with exceptions getting eaten when using the callback
@@ -240,6 +265,8 @@ wxWebView::wxWebView(wxWindow* parent, int id, const wxPoint& position,
     settings->setJavaScriptEnabled(true);
 
     m_isInitialized = true;
+
+    return true;
 }
 
 wxWebView::~wxWebView()
@@ -326,7 +353,7 @@ wxString wxWebView::RunScript(const wxString& javascript)
     return returnValue;
 }
 
-void wxWebView::LoadURL(wxString url)
+void wxWebView::LoadURL(const wxString& url)
 {
     if (m_impl->frame && m_impl->frame->loader()) {
         WebCore::KURL kurl = WebCore::KURL(static_cast<const char*>(url.mb_str(wxConvUTF8)));

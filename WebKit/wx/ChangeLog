@@ -1,3 +1,21 @@
+2008-05-28  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+        
+        This patch tweaks the wxWebView class to make it conform to normal wx patterns
+        for widget classes.  It adds a default ctor and the Create method so it can use
+        the 2-phase create pattern, adds wxRTTI macros which is important for wxPython
+        and XRC, and fixes the LoadURL method to pass a wxString reference to save a
+        copy.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=19068
+
+        * WebView.cpp:
+        (wxWebView::wxWebView):
+        (wxWebView::Create):
+        (wxWebView::LoadURL):
+        * WebView.h:
+
 2008-05-27  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Accidently left a couple fixes out of the previous commit.
