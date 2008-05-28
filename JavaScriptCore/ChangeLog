@@ -1,3 +1,12 @@
+2008-05-28  Adam Roben  <aroben@apple.com>
+
+        Make run-javascriptcore-tests work with a space in the path to testkjs
+
+        Reviewed by Alexey Proskuryakov.
+
+        * tests/mozilla/jsDriver.pl: Quote the path to the engine so that
+        spaces will be interpreted correctly.
+
 2008-05-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Fixed a misguiding comment - my measurement for negative numbers only included cases

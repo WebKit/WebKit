@@ -173,7 +173,10 @@ sub execute_tests {
 # (only check for their existance if the suite or test_dir has changed
 # since the last time we looked.)
         if ($last_suite ne $suite || $last_test_dir ne $test_dir) {
-            $shell_command = &xp_path($engine_command) . " -s ";
+            # FIXME: Quoting the path this way won't work with paths with
+            # quotes in them. A better fix would be to use the multi-parameter
+            # version of open(), but that doesn't work on ActiveState Perl.
+            $shell_command = "\"" . &xp_path($engine_command) . "\" -s ";
             
             $path = &xp_path($opt_suite_path . $suite . "/shell.js");
             if (-f $path) {
