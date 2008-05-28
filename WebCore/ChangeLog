@@ -1,3 +1,29 @@
+2008-05-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        <rdar://problem/5946834> - LocalStorage threads appearing in apps that don't want them.
+
+        Decided to fix this bug from a few different avenues to make sure we only create LocalStorage resources
+        when we *really* want them.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::localStorage): Account for the possibility that the LocalStorage object might be null.
+
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::LocalStorage): Don't create the thread if there is no path name - we know we'll never
+          be needing it when there is no file backing us on disk.
+        (WebCore::LocalStorage::scheduleImport): Null check the thread, as it might not exist.
+        (WebCore::LocalStorage::scheduleSync): Ditto
+
+        * storage/LocalStorageThread.cpp:
+        (WebCore::LocalStorageThread::localStorageThread): Clear the threadID after termination - clear way to signify
+          that this thread is truly done.
+        (WebCore::LocalStorageThread::scheduleImport): ASSERT that the queue is live, and the threadID exists
+        (WebCore::LocalStorageThread::scheduleSync): Ditto
+        (WebCore::LocalStorageThread::terminate): Don't schedule termination and wait for it to complete if the thread 
+          isn't live.
+
 2008-05-28  Alexander Vassilev  <avasilev@voipgate.com>
 
         Reviewed by Kevin Ollivier.

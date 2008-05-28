@@ -40,10 +40,16 @@ namespace WebCore {
 
 LocalStorage::LocalStorage(PageGroup* group, const String& path)
     : m_group(group)
-    , m_thread(LocalStorageThread::create())
     , m_path(path.copy())
 {
     ASSERT(m_group);
+
+    // If the path is empty, we know we're never going to be using the thread for anything, so don't start it.
+    // In the future, we might also want to consider removing it from the DOM in that case - <rdar://problem/5960470>
+    if (path.isEmpty())
+        return;
+
+    m_thread = LocalStorageThread::create();
     m_thread->start();
     m_thread->scheduleImport(this);
 }
@@ -125,14 +131,15 @@ void LocalStorage::scheduleImport(PassRefPtr<LocalStorageArea> area)
 {
     ASSERT(isMainThread());
 
-    m_thread->scheduleImport(area);
+    if (m_thread)
+        m_thread->scheduleImport(area);
 }
 
 void LocalStorage::scheduleSync(PassRefPtr<LocalStorageArea> area)
 {
     ASSERT(isMainThread());
-
-    m_thread->scheduleSync(area);
+    if (m_thread)
+        m_thread->scheduleSync(area);
 }
 
 } // namespace WebCore

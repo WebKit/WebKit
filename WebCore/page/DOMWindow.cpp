@@ -336,7 +336,8 @@ Storage* DOMWindow::localStorage() const
     if (!page)
         return 0;
     
-    RefPtr<StorageArea> storageArea = page->group().localStorage()->storageArea(m_frame, document->securityOrigin());
+    LocalStorage* localStorage = page->group().localStorage();
+    RefPtr<StorageArea> storageArea = localStorage ? localStorage->storageArea(m_frame, document->securityOrigin()) : 0; 
     if (storageArea)
         m_localStorage = Storage::create(m_frame, storageArea.release());
 
