@@ -42,13 +42,8 @@ all : \
     number_object.lut.h \
     regexp_object.lut.h \
     string_object.lut.h \
+    $(JavaScriptCore)/docs/bytecode.html \
 #
-
-ifneq ($(OMIT_BYTECODE_DOCS),1)
-
-all : $(JavaScriptCore)/docs/bytecode.html
-
-endif
 
 # lookup tables for classes
 

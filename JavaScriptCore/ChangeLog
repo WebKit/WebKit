@@ -1,5 +1,14 @@
 2008-05-27  Adam Roben  <aroben@apple.com>
 
+        Roll out r34163
+
+        A better fix is on the way.
+
+        * DerivedSources.make:
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh:
+
+2008-05-27  Adam Roben  <aroben@apple.com>
+
         Windows build fix
 
         * DerivedSources.make: Don't generate the bytecode docs if
