@@ -34,6 +34,10 @@ WebInspector.FontView = function(resource)
 
     var uniqueFontName = "WebInspectorFontPreview" + this.resource.identifier;
 
+    this.fontStyleElement = document.createElement("style");
+    this.fontStyleElement.textContent = "@font-face { font-family: \"" + uniqueFontName + "\"; src: url(" + this.resource.url + "); }";
+    document.getElementsByTagName("head").item(0).appendChild(this.fontStyleElement);
+
     this.fontPreviewElement = document.createElement("div");
     this.fontPreviewElement.className = "preview";
     this.contentElement.appendChild(this.fontPreviewElement);

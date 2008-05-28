@@ -1,5 +1,15 @@
 2008-05-27  Timothy Hatcher  <timothy@apple.com>
 
+        <rdar://problem/5966961> REGRESSION: Font previews in the Web
+        Inspector always show in Lucida Grande (not the real font)
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/FontView.js: Add a style element that loads the
+        @font-face rule that is excepted by the preview element.
+
+2008-05-27  Timothy Hatcher  <timothy@apple.com>
+
         Fixes a regression where the Image and Font preview views do not
         size correctly.
 
