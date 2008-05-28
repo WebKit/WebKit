@@ -61,15 +61,24 @@ private
         "WebKitTools",
     ]
 
+    def self.find_url_and_path(file_path)
+        # Search file_path from the bottom up, at each level checking whether
+        # we've found a directory we know exists in the source tree.
+
+        dirname, basename = File.split(file_path)
+        dirname.split(/\//).reverse.inject(basename) do |path, directory|
+            path = directory + "/" + path
+
+            return [OPENSOURCE_TRAC_URL, path] if OPENSOURCE_DIRS.include?(directory)
+
+            path
+        end
+
+        [nil, file_path]
+    end
+
     def self.linkifyFilename(filename)
-        directory = /^([^\/]+)/.match(filename)[1]
-        url, pathBeneathTrunk = if filename =~ /\bOpenSource\// then
-                                    [OPENSOURCE_TRAC_URL, filename.gsub(/^.*\bOpenSource\//, '')]
-                                elsif OPENSOURCE_DIRS.include?(directory) then
-                                    [OPENSOURCE_TRAC_URL, filename]
-                                else
-                                    [nil, nil]
-                                end
+        url, pathBeneathTrunk = find_url_and_path(filename)
 
         url.nil? ? filename : "<a href='#{url}browser/trunk/#{pathBeneathTrunk}'>#{filename}</a>"
     end

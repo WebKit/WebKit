@@ -1,5 +1,20 @@
 2008-05-28  Adam Roben  <aroben@apple.com>
 
+        Make PrettyPatch able to handle diffs taken from outside the WebKit
+        source tree
+
+        Part of Bug 19290: More patches not handled by PrettyPatch.rb
+        <https://bugs.webkit.org/show_bug.cgi?id=19290>
+
+        Reviewed by David Kilzer.
+
+        * PrettyPatch/PrettyPatch.rb:
+        (PrettyPatch.find_url_and_path): Added. Searches the file path from
+        the bottom up looking for a directory that exists in the source tree.
+        (PrettyPatch.linkifyFilename): Changed to call find_url_and_path.
+
+2008-05-28  Adam Roben  <aroben@apple.com>
+
         Print exceptions from PrettyPatch to stdout
 
         This will make it much easier to debug problems with PrettyPatch,
