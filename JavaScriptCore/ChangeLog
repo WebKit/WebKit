@@ -1,3 +1,14 @@
+2008-05-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5968071> "const f" crashes in JavaScriptCore
+        
+        Make sure to null check the initializer.
+        
+        * kjs/nodes.cpp:
+        (KJS::ConstDeclNode::emitCodeSingle):
+
 2008-05-28  Adam Roben  <aroben@apple.com>
 
         Make run-javascriptcore-tests work with a space in the path to testkjs

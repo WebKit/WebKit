@@ -1,3 +1,13 @@
+2008-05-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5968071> "const f" crashes in JavaScriptCore
+
+        * fast/js/const-without-initializer-expected.txt: Added.
+        * fast/js/const-without-initializer.html: Added.
+        * fast/js/resources/const-without-initializer.js: Added.
+
 2008-05-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver.
