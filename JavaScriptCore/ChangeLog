@@ -1,5 +1,12 @@
 2008-05-28  Alexey Proskuryakov  <ap@webkit.org>
 
+        Fixed a misguiding comment - my measurement for negative numbers only included cases
+        where both operands were negative, which is not very interesting.
+
+        * VM/Machine.cpp:
+
+2008-05-28  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Maciej.
 
         Based on a patch by Oliver Hunt.

@@ -148,7 +148,7 @@ static JSValue* jsAddSlowCase(ExecState* exec, JSValue* v1, JSValue* v2)
 // Fast-path choices here are based on frequency data from SunSpider:
 //    <times> Add case: <t1> <t2>
 //    ---------------------------
-//    5626160 Add case: 3 3 (of these, 3637690 are for immediate values, 34373 of them for negative)
+//    5626160 Add case: 3 3 (of these, 3637690 are for immediate values)
 //    247412  Add case: 5 5
 //    20900   Add case: 5 6
 //    13962   Add case: 5 3
