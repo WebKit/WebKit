@@ -86,7 +86,7 @@ private:
 };
 
 GIFImageDecoder::GIFImageDecoder()
-: m_frameCountValid(true), m_reader(0)
+: m_frameCountValid(true), m_repetitionCount(cAnimationLoopOnce), m_reader(0)
 {}
 
 GIFImageDecoder::~GIFImageDecoder()
@@ -150,11 +150,16 @@ int GIFImageDecoder::frameCount()
 // The number of repetitions to perform for an animation loop.
 int GIFImageDecoder::repetitionCount() const
 {
-    // We don't have to do any decoding to determine this, since the loop count was determined after
-    // the initial query for size.
+    // This value can arrive at any point in the image data stream.  Most GIFs
+    // in the wild declare it near the beginning of the file, so it usually is
+    // set by the time we've decoded the size, but (depending on the GIF and the
+    // packets sent back by the webserver) not always.  Our caller is
+    // responsible for waiting until image decoding has finished to ask this if
+    // it needs an authoritative answer.  In the meantime, we should default to
+    // "loop once", both in the reader and here.
     if (m_reader)
-        return m_reader->repetitionCount();
-    return cAnimationNone;
+        m_repetitionCount = m_reader->repetitionCount();
+    return m_repetitionCount;
 }
 
 RGBA32Buffer* GIFImageDecoder::frameBufferAtIndex(size_t index)
@@ -400,6 +405,8 @@ void GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration,
 
 void GIFImageDecoder::gifComplete()
 {
+    if (m_reader)
+        m_repetitionCount = m_reader->repetitionCount();
     delete m_reader;
     m_reader = 0;
 }
