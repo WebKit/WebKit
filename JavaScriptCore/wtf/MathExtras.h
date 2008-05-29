@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#if PLATFORM(SOLARIS) && COMPILER(GCC)
+#if PLATFORM(SOLARIS)
 #include <ieeefp.h>
 #endif
 
@@ -61,7 +61,7 @@ const double piOverFourDouble = M_PI_4;
 const float piOverFourFloat = static_cast<float>(M_PI_4);
 #endif
 
-#if PLATFORM(SOLARIS) && COMPILER(GCC)
+#if PLATFORM(SOLARIS)
 
 #ifndef isfinite
 inline bool isfinite(double x) { return finite(x) && !isnand(x); }

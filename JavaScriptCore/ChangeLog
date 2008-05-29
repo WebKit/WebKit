@@ -1,3 +1,15 @@
+2008-05-29  Thiago Macieira  <tjmaciei@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix compilation in Solaris with Sun CC
+
+        Lots of WebKit code uses C99 functions that, strict as it
+        is, the Solaris system doesn't provide in C++. So we must define them
+        for both GCC and the Sun CC.
+
+        * wtf/MathExtras.h:
+
 2008-05-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Anders.
