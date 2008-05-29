@@ -46,19 +46,20 @@ private
 
     OPENSOURCE_TRAC_URL = "http://trac.webkit.org/projects/webkit/"
 
-    OPENSOURCE_DIRS = Set.new [
-        "Bakefiles",
-        "JavaScriptCore",
-        "JavaScriptGlue",
-        "LayoutTestResults",
-        "LayoutTests",
-        "PageLoadTests",
-        "WebCore",
-        "WebKit",
-        "WebKitLibraries",
-        "WebKitQt",
-        "WebKitSite",
-        "WebKitTools",
+    OPENSOURCE_DIRS = Set.new %w[
+        BugsSite
+        JavaScriptCore
+        JavaScriptGlue
+        LayoutTests
+        PageLoadTests
+        PlanetWebKit
+        SunSpider
+        WebCore
+        WebKit
+        WebKitExamplePlugins
+        WebKitLibraries
+        WebKitSite
+        WebKitTools
     ]
 
     def self.find_url_and_path(file_path)

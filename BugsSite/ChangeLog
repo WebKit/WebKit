@@ -1,3 +1,9 @@
+2008-05-29  Adam Roben  <aroben@apple.com>
+
+        Update PrettyPatch directory list
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2008-05-28  Adam Roben  <aroben@apple.com>
 
         Make PrettyPatch able to handle diffs taken from outside the WebKit
