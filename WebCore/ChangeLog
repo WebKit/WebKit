@@ -1,3 +1,37 @@
+2008-05-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19215
+        REGRESSION: transformToDocument fails when xsl includes &#160;
+
+        Test: fast/xsl/nbsp-in-stylesheet.html
+
+        * editing/markup.cpp:
+        (WebCore::appendAttributeValue):
+        (WebCore::appendEscapedContent):
+        (WebCore::escapeContentText):
+        (WebCore::appendQuotedURLAttributeValue):
+        (WebCore::appendNamespace):
+        (WebCore::appendStartMarkup):
+        (WebCore::appendDocumentType):
+        (WebCore::createMarkup):
+        Only escape non-breaking spaces in HTML documents. In Firefox, this behavior is also limited
+        to innerHTML, but we don't have a separate code path for it, and do not necessarily want to.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::documentTypeString):
+        * dom/CDATASection.cpp:
+        * dom/CDATASection.h:
+        * dom/Comment.cpp:
+        * dom/Comment.h:
+        * dom/DocumentType.cpp:
+        * dom/DocumentType.h:
+        * dom/ProcessingInstruction.cpp:
+        * dom/ProcessingInstruction.h:
+        While at it, I also wanted to fix escaping for these nodes, but it turned out that FIXMEs were
+        incorrect. So, I just moved their serialization to markup.cpp for consistency.
+
 2008-05-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Hyatt.

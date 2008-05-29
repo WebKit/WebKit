@@ -44,8 +44,6 @@ public:
     // Other methods (not part of DOM)
     virtual bool isCommentNode() const { return true; }
     virtual bool childTypeAllowed(NodeType);
-
-    virtual String toString() const;
 };
 
 } // namespace WebCore

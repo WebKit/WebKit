@@ -63,10 +63,4 @@ bool Comment::childTypeAllowed(NodeType)
     return false;
 }
 
-String Comment::toString() const
-{
-    // FIXME: We need to substitute entity references here.
-    return "<!--" + nodeValue() + "-->";
-}
-
 } // namespace WebCore

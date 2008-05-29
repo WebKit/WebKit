@@ -54,6 +54,7 @@
 #include "HitTestResult.h"
 #include "JSDOMWindowShell.h"
 #include "Logging.h"
+#include "markup.h"
 #include "MediaFeatureNames.h"
 #include "NP_jsobject.h"
 #include "Navigator.h"
@@ -1752,9 +1753,10 @@ void Frame::disconnectOwnerElement()
 
 String Frame::documentTypeString() const
 {
-    if (Document *doc = document())
-        if (DocumentType *doctype = doc->doctype())
-            return doctype->toString();
+    if (Document* doc = document()) {
+        if (DocumentType* doctype = doc->doctype())
+            return createMarkup(doctype);
+    }
 
     return String();
 }

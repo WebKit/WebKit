@@ -1,3 +1,13 @@
+2008-05-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19215
+        REGRESSION: transformToDocument fails when xsl includes &#160;
+
+        * fast/xsl/nbsp-in-stylesheet-expected.txt: Added.
+        * fast/xsl/nbsp-in-stylesheet.html: Added.
+
 2008-05-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Hyatt.

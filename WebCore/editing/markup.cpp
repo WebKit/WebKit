@@ -88,7 +88,7 @@ private:
     String m_value;
 };
 
-static void appendAttributeValue(Vector<UChar>& result, const String& attr)
+static void appendAttributeValue(Vector<UChar>& result, const String& attr, bool escapeNBSP)
 {
     const UChar* uchars = attr.characters();
     unsigned len = attr.length();
@@ -124,9 +124,11 @@ static void appendAttributeValue(Vector<UChar>& result, const String& attr)
                 lastCopiedFrom = i + 1;
                 break;
             case noBreakSpace:
-                result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
-                append(result, nbspEntity);
-                lastCopiedFrom = i + 1;
+                if (escapeNBSP) {
+                    result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
+                    append(result, nbspEntity);
+                    lastCopiedFrom = i + 1;
+                }
                 break;
         }
     }
@@ -134,54 +136,7 @@ static void appendAttributeValue(Vector<UChar>& result, const String& attr)
     result.append(uchars + lastCopiedFrom, len - lastCopiedFrom);
 }
 
-static String escapeContentText(const String& in)
-{
-    Vector<UChar> s;
-
-    unsigned len = in.length();
-    unsigned lastCopiedFrom = 0;
-
-    static const String ampEntity("&amp;");
-    static const String gtEntity("&gt;");
-    static const String ltEntity("&lt;");
-    static const String nbspEntity("&nbsp;");
-
-    s.reserveCapacity(len);
-
-    const UChar* characters = in.characters();
-
-    for (unsigned i = 0; i < len; ++i) {
-        UChar c = characters[i];
-        switch (c) {
-            case '&':
-                s.append(characters + lastCopiedFrom, i - lastCopiedFrom);
-                append(s, ampEntity);
-                lastCopiedFrom = i + 1;
-                break;
-            case '<':
-                s.append(characters + lastCopiedFrom, i - lastCopiedFrom);
-                append(s, ltEntity);
-                lastCopiedFrom = i + 1;
-                break;
-            case '>':
-                s.append(characters + lastCopiedFrom, i - lastCopiedFrom);
-                append(s, gtEntity);
-                lastCopiedFrom = i + 1;
-                break;
-            case noBreakSpace:
-                s.append(characters + lastCopiedFrom, i - lastCopiedFrom);
-                append(s, nbspEntity);
-                lastCopiedFrom = i + 1;
-                break;
-        }
-    }
-
-    s.append(characters + lastCopiedFrom, len - lastCopiedFrom);
-
-    return String::adopt(s);
-}
-    
-static void appendEscapedContent(Vector<UChar>& result, pair<const UChar*, size_t> range)
+static void appendEscapedContent(Vector<UChar>& result, pair<const UChar*, size_t> range, bool escapeNBSP)
 {
     const UChar* uchars = range.first;
     unsigned len = range.second;
@@ -211,9 +166,11 @@ static void appendEscapedContent(Vector<UChar>& result, pair<const UChar*, size_
                 lastCopiedFrom = i + 1;
                 break;
             case noBreakSpace:
-                result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
-                append(result, nbspEntity);
-                lastCopiedFrom = i + 1;
+                if (escapeNBSP) {
+                    result.append(uchars + lastCopiedFrom, i - lastCopiedFrom);
+                    append(result, nbspEntity);
+                    lastCopiedFrom = i + 1;
+                }
                 break;
         }
     }
@@ -221,6 +178,13 @@ static void appendEscapedContent(Vector<UChar>& result, pair<const UChar*, size_
     result.append(uchars + lastCopiedFrom, len - lastCopiedFrom);
 }    
 
+static String escapeContentText(const String& in, bool escapeNBSP)
+{
+    Vector<UChar> buffer;
+    appendEscapedContent(buffer, make_pair(in.characters(), in.length()), escapeNBSP);
+    return String::adopt(buffer);
+}
+    
 static void appendQuotedURLAttributeValue(Vector<UChar>& result, const String& urlString)
 {
     UChar quoteChar = '\"';
@@ -239,9 +203,9 @@ static void appendQuotedURLAttributeValue(Vector<UChar>& result, const String& u
         return;
     }
 
-    // FIXME: This does not fully match other browsers. Firefox escapes spaces and other special characters.
+    // FIXME: This does not fully match other browsers. Firefox percent-escapes non-ASCII characters for innerHTML.
     result.append(quoteChar);
-    appendAttributeValue(result, urlString);
+    appendAttributeValue(result, urlString, false);
     result.append(quoteChar);    
 }
     
@@ -388,11 +352,40 @@ static void appendNamespace(Vector<UChar>& result, const AtomicString& prefix, c
 
         result.append('=');
         result.append('"');
-        appendAttributeValue(result, ns);
+        appendAttributeValue(result, ns, false);
         result.append('"');
     }
 }
-    
+
+static void appendDocumentType(Vector<UChar>& result, const DocumentType* n)
+{
+    if (n->name().isEmpty())
+        return;
+
+    append(result, "<!DOCTYPE ");
+    append(result, n->name());
+    if (!n->publicId().isEmpty()) {
+        append(result, " PUBLIC \"");
+        append(result, n->publicId());
+        append(result, "\"");
+        if (!n->systemId().isEmpty()) {
+            append(result, " \"");
+            append(result, n->systemId());
+            append(result, "\"");
+        }
+    } else if (!n->systemId().isEmpty()) {
+        append(result, " SYSTEM \"");
+        append(result, n->systemId());
+        append(result, "\"");
+    }
+    if (!n->internalSubset().isEmpty()) {
+        append(result, " [");
+        append(result, n->internalSubset());
+        append(result, "]");
+    }
+    append(result, ">");
+}
+
 static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Range *range, EAnnotateForInterchange annotate, bool convertBlocksToInlines = false, HashMap<AtomicStringImpl*, AtomicStringImpl*>* namespaces = 0)
 {
     bool documentIsHTML = node->document()->isHTMLDocument();
@@ -409,29 +402,39 @@ static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Ran
                 }
             }
             if (!annotate) {
-                appendEscapedContent(result, ucharRange(node, range));
+                appendEscapedContent(result, ucharRange(node, range), documentIsHTML);
                 break;
             }
             
             bool useRenderedText = !enclosingNodeWithTag(Position(const_cast<Node*>(node), 0), selectTag);
-            String markup = escapeContentText(useRenderedText ? renderedText(node, range) : stringValueForRange(node, range));
+            String markup = escapeContentText(useRenderedText ? renderedText(node, range) : stringValueForRange(node, range), false);
             if (annotate)
                 markup = convertHTMLTextToInterchangeFormat(markup, static_cast<const Text*>(node));
             append(result, markup);
             break;
         }
         case Node::COMMENT_NODE:
-            append(result, static_cast<const Comment*>(node)->toString());
+            // FIXME: Comment content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "-->".
+            append(result, "<!--");
+            append(result, static_cast<const Comment*>(node)->nodeValue());
+            append(result, "-->");
             break;
         case Node::DOCUMENT_NODE:
         case Node::DOCUMENT_FRAGMENT_NODE:
             break;
         case Node::DOCUMENT_TYPE_NODE:
-            append(result, static_cast<const DocumentType*>(node)->toString());
+            appendDocumentType(result, static_cast<const DocumentType*>(node));
             break;
-        case Node::PROCESSING_INSTRUCTION_NODE:
-            append(result, static_cast<const ProcessingInstruction*>(node)->toString());
+        case Node::PROCESSING_INSTRUCTION_NODE: {
+            // FIXME: PI data is not escaped, but XMLSerializer (and possibly other callers) this should raise an exception if it includes "?>".
+            const ProcessingInstruction* n = static_cast<const ProcessingInstruction*>(node);
+            append(result, "<?");
+            append(result, n->target());
+            append(result, " ");
+            append(result, n->data());
+            append(result, "?>");
             break;
+        }
         case Node::ELEMENT_NODE: {
             result.append('<');
             const Element* el = static_cast<const Element*>(node);
@@ -460,7 +463,7 @@ static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Ran
                     appendQuotedURLAttributeValue(result, attr->value());
                 else {
                     result.append('\"');
-                    appendAttributeValue(result, attr->value());
+                    appendAttributeValue(result, attr->value(), documentIsHTML);
                     result.append('\"');
                 }
 
@@ -501,7 +504,7 @@ static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Ran
                 if (style->length() > 0) {
                     static const String stylePrefix(" style=\"");
                     append(result, stylePrefix);
-                    appendAttributeValue(result, style->cssText());
+                    appendAttributeValue(result, style->cssText(), documentIsHTML);
                     result.append('\"');
                 }
             }
@@ -514,9 +517,14 @@ static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Ran
             result.append('>');
             break;
         }
-        case Node::CDATA_SECTION_NODE:
-            append(result, static_cast<const CDATASection*>(node)->toString());
+        case Node::CDATA_SECTION_NODE: {
+            // FIXME: CDATA content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "]]>".
+            const CDATASection* n = static_cast<const CDATASection*>(node);
+            append(result, "<![CDATA[");
+            append(result, n->data());
+            append(result, "]]>");
             break;
+        }
         case Node::ATTRIBUTE_NODE:
         case Node::ENTITY_NODE:
         case Node::ENTITY_REFERENCE_NODE:
@@ -703,6 +711,8 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     Document* document = range->ownerDocument();
     if (!document)
         return "";
+
+    bool documentIsHTML = document->isHTMLDocument();
 
     // Disable the delete button so it's elements are not serialized into the markup,
     // but make sure neither endpoint is inside the delete user interface.
@@ -898,7 +908,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
                     Vector<UChar> openTag;
                     static const String divStyle("<div style=\"");
                     append(openTag, divStyle);
-                    appendAttributeValue(openTag, style->cssText());
+                    appendAttributeValue(openTag, style->cssText(), documentIsHTML);
                     openTag.append('\"');
                     openTag.append('>');
                     preMarkups.append(String::adopt(openTag));
@@ -945,7 +955,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         if (style->length() > 0) {
             Vector<UChar> openTag;
             append(openTag, styleSpanOpen);
-            appendAttributeValue(openTag, style->cssText());
+            appendAttributeValue(openTag, style->cssText(), documentIsHTML);
             openTag.append('\"');
             openTag.append('>');
             preMarkups.append(String::adopt(openTag));
@@ -963,7 +973,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         if (defaultStyle->length() > 0) {
             Vector<UChar> openTag;
             append(openTag, styleSpanOpen);
-            appendAttributeValue(openTag, defaultStyle->cssText());
+            appendAttributeValue(openTag, defaultStyle->cssText(), documentIsHTML);
             openTag.append('\"');
             openTag.append('>');
             preMarkups.append(String::adopt(openTag));

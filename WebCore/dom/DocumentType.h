@@ -56,7 +56,6 @@ public:
     virtual String nodeName() const;
     virtual NodeType nodeType() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);
-    virtual String toString() const;
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();

@@ -232,16 +232,6 @@ void ProcessingInstruction::parseStyleSheet(const String& sheet)
     m_sheet->checkLoaded();
 }
 
-String ProcessingInstruction::toString() const
-{
-    String result = "<?";
-    result += m_target;
-    result += " ";
-    result += m_data;
-    result += "?>";
-    return result;
-}
-
 void ProcessingInstruction::setCSSStyleSheet(CSSStyleSheet* sheet)
 {
     ASSERT(!m_cachedSheet);
