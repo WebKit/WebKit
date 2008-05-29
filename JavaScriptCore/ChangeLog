@@ -1,3 +1,16 @@
+2008-05-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Anders.
+
+        Fix codegen for assignment being used as a function.
+
+        FunctionCallValueNode::emitCode failed to account for the
+        potential of the function expression to allocate arbitrary
+        registers.
+
+        * kjs/nodes.cpp:
+        (KJS::FunctionCallValueNode::emitCode):
+
 2008-05-27  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Tim Hatcher.

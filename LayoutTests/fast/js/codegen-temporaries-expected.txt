@@ -35,6 +35,7 @@ PASS assign_test27() is 3
 PASS assign_test28() is 3
 PASS assign_test29() is 3
 PASS assign_test30() is 'fooNaN'
+PASS assign_test31() is 'PASS'
 PASS successfullyParsed is true
 
 TEST COMPLETE

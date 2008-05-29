@@ -1309,8 +1309,8 @@ JSValue* EvalFunctionCallNode::evaluate(OldInterpreterExecState* exec)
 
 RegisterID* FunctionCallValueNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    RegisterID* r0 = generator.emitNode(m_expr.get());
-    return generator.emitCall(generator.finalDestination(dst), r0, 0, m_args.get());
+    RefPtr<RegisterID> func = generator.emitNode(m_expr.get());
+    return generator.emitCall(generator.finalDestination(dst), func.get(), 0, m_args.get());
 }
 
 void FunctionCallValueNode::optimizeVariableAccess(OldInterpreterExecState*, const SymbolTable&, const LocalStorage&, NodeStack& nodeStack)

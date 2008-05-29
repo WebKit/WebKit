@@ -288,4 +288,12 @@ function assign_test30()
 
 shouldBe("assign_test30()", "'fooNaN'");
 
+function assign_test31()
+{
+    function result() { return "PASS"; }
+    return (globalVar = result)()
+}
+
+shouldBe("assign_test31()", "'PASS'");
+
 successfullyParsed = true;

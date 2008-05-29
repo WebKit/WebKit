@@ -1,3 +1,12 @@
+2008-05-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Anders.
+
+        Adding a test case for assignment result used as a function.
+
+        * fast/js/codegen-temporaries-expected.txt:
+        * fast/js/resources/codegen-temporaries.js:
+
 2008-05-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver.
