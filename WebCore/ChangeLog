@@ -1,5 +1,20 @@
 2008-05-29  Timothy Hatcher  <timothy@apple.com>
 
+        Removes a use of the internal _childrenListNode property by adding
+        a getter/setter for smallChildren to SidebarSectionTreeElement.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._toggleLargerResources):
+        Toggle smallChildren on the resourcesTreeElement instead of setting
+        the style class directly.
+        * page/inspector/SidebarTreeElement.js:
+        (WebInspector.SidebarSectionTreeElement.prototype.smallChildren):
+        Sets or removes the small class on the _childrenListNode.
+
+2008-05-29  Timothy Hatcher  <timothy@apple.com>
+
         Fixes a bug where the className would be reset for Resource
         tree elements and the selected state would be lost. This could
         happen when sorting the resources.

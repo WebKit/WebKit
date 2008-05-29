@@ -31,6 +31,24 @@ WebInspector.SidebarSectionTreeElement = function(title, representedObject, hasC
 WebInspector.SidebarSectionTreeElement.prototype = {
     selectable: false,
 
+    get smallChildren()
+    {
+        return this._smallChildren;
+    },
+
+    set smallChildren(x)
+    {
+        if (this._smallChildren === x)
+            return;
+
+        this._smallChildren = x;
+
+        if (this._smallChildren)
+            this._childrenListNode.addStyleClass("small");
+        else
+            this._childrenListNode.removeStyleClass("small");
+    },
+
     onattach: function()
     {
         this._listItemNode.addStyleClass("sidebar-tree-section");

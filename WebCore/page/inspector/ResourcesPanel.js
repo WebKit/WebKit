@@ -1000,14 +1000,14 @@ WebInspector.ResourcesPanel.prototype = {
         if (!this.resourcesTreeElement._childrenListNode)
             return;
 
-        if (this.resourcesTreeElement._childrenListNode.hasStyleClass("small")) {
-            this.resourcesTreeElement._childrenListNode.removeStyleClass("small");
-            this.largerResourcesButton.title = WebInspector.UIString("Use small resource rows.");
-            this.largerResourcesButton.addStyleClass("toggled-on");
-        } else {
-            this.resourcesTreeElement._childrenListNode.addStyleClass("small");
+        this.resourcesTreeElement.smallChildren = !this.resourcesTreeElement.smallChildren;
+
+        if (this.resourcesTreeElement.smallChildren) {
             this.largerResourcesButton.title = WebInspector.UIString("Use large resource rows.");
             this.largerResourcesButton.removeStyleClass("toggled-on");
+        } else {
+            this.largerResourcesButton.title = WebInspector.UIString("Use small resource rows.");
+            this.largerResourcesButton.addStyleClass("toggled-on");
         }
     },
 
