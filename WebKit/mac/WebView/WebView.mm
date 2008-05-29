@@ -4420,14 +4420,8 @@ static NSString *createMacOSXVersionString()
 
 - (void)_removeObjectForIdentifier:(unsigned long)identifier
 {
-    HashMap<unsigned long, RetainPtr<id> >::iterator it = _private->identifierMap->find(identifier);
-    
-    // FIXME: This is currently needed because of a bug that causes didFail to be sent twice 
-    // sometimes, see <rdar://problem/5009627> for more information.
-    if (it == _private->identifierMap->end())
-        return;
-    
-    _private->identifierMap->remove(it);
+    ASSERT(_private->identifierMap->contains(identifier));
+    _private->identifierMap->remove(identifier);
     
     // If the identifier map is now empty it means we're no longer loading anything
     // and we should release the web view.

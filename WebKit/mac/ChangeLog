@@ -1,3 +1,12 @@
+2008-05-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon.
+
+        Remove workaround, this is no longer a problem.
+        
+        * WebView/WebView.mm:
+        (-[WebView _removeObjectForIdentifier:]):
+
 2008-05-27  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Tim Hatcher.
