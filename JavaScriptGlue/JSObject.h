@@ -43,7 +43,7 @@ class JSUserObject : public JSBase {
         CFArrayRef CopyPropertyNames(void);
         JSUserObject* CopyProperty(CFStringRef propertyName);
         void SetProperty(CFStringRef propertyName, JSUserObject* value);
-        bool ImplementsCall();
+        CallType getCallData(CallData&);
         JSUserObject* CallFunction(JSUserObject* thisObj, CFArrayRef args);
         CFTypeRef CopyCFValue() const;
         virtual UInt8 Equal(JSBase* other);

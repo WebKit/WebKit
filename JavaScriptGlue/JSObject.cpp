@@ -71,9 +71,9 @@ void JSUserObject::SetProperty(CFStringRef propertyName, JSUserObject* value)
 
 }
 
-bool JSUserObject::ImplementsCall()
+CallType JSUserObject::getCallData(CallData&)
 {
-    return fCallBacks.callFunction ? true : false;
+    return fCallBacks.callFunction ? CallTypeNative : CallTypeNone;
 }
 
 JSUserObject* JSUserObject::CallFunction(JSUserObject* thisObj, CFArrayRef args)

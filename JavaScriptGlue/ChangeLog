@@ -1,3 +1,12 @@
+2008-05-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Fixed total destruction in Software Update.app.
+        
+        Updated JavaScriptGlue to honor squirrelfish's new getCallData mechanism for
+        indicating that an object can be called as a function.
+
 2008-05-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
