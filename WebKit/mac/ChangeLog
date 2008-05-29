@@ -1,3 +1,22 @@
+2008-05-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/5971845>
+        https://bugs.webkit.org/show_bug.cgi?id=19313
+        Add version member to NPCocoaEvent
+
+        Initialize the version member to 0 for all events.
+        
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (initializeEvent):
+        (WebNetscapePluginEventHandlerCocoa::drawRect):
+        (WebNetscapePluginEventHandlerCocoa::sendMouseEvent):
+        (WebNetscapePluginEventHandlerCocoa::flagsChanged):
+        (WebNetscapePluginEventHandlerCocoa::sendKeyEvent):
+        (WebNetscapePluginEventHandlerCocoa::windowFocusChanged):
+        (WebNetscapePluginEventHandlerCocoa::focusChanged):
+
 2008-05-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Jessica Kahn.

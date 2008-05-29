@@ -34,11 +34,17 @@ WebNetscapePluginEventHandlerCocoa::WebNetscapePluginEventHandlerCocoa(WebBaseNe
 {
 }
 
+static inline void initializeEvent(NPCocoaEvent* event, NPCocoaEventType type)
+{
+    event->type = type;
+    event->version = 0;
+}
+
 void WebNetscapePluginEventHandlerCocoa::drawRect(const NSRect& rect)
 {
     NPCocoaEvent event;
     
-    event.type = NPCocoaEventDrawRect;
+    initializeEvent(&event, NPCocoaEventDrawRect);
     event.event.draw.x = rect.origin.x;
     event.event.draw.y = rect.origin.y;
     event.event.draw.width = rect.size.width;
@@ -94,7 +100,7 @@ bool WebNetscapePluginEventHandlerCocoa::sendMouseEvent(NSEvent *nsEvent, NPCoco
     else
         clickCount = [nsEvent clickCount];
     
-    event.type = type;
+    initializeEvent(&event, type);
     event.event.mouse.modifierFlags = [nsEvent modifierFlags];
     event.event.mouse.buttonNumber = [nsEvent buttonNumber];
     event.event.mouse.clickCount = clickCount;
@@ -125,7 +131,7 @@ void WebNetscapePluginEventHandlerCocoa::flagsChanged(NSEvent *nsEvent)
 {
     NPCocoaEvent event;
         
-    event.type = NPCocoaEventFlagsChanged;
+    initializeEvent(&event, NPCocoaEventFlagsChanged);
     event.event.key.modifierFlags = [nsEvent modifierFlags];
     event.event.key.keyCode = [nsEvent keyCode];
     event.event.key.isARepeat = false;
@@ -138,8 +144,8 @@ void WebNetscapePluginEventHandlerCocoa::flagsChanged(NSEvent *nsEvent)
 bool WebNetscapePluginEventHandlerCocoa::sendKeyEvent(NSEvent* nsEvent, NPCocoaEventType type)
 {
     NPCocoaEvent event;
-        
-    event.type = type;
+
+    initializeEvent(&event, type);
     event.event.key.modifierFlags = [nsEvent modifierFlags];
     event.event.key.keyCode = [nsEvent keyCode];
     event.event.key.isARepeat = [nsEvent isARepeat];
@@ -153,7 +159,7 @@ void WebNetscapePluginEventHandlerCocoa::windowFocusChanged(bool hasFocus)
 {
     NPCocoaEvent event;
     
-    event.type = NPCocoaEventWindowFocusChanged;
+    initializeEvent(&event, NPCocoaEventWindowFocusChanged);
     event.event.focus.hasFocus = hasFocus;
     
     sendEvent(&event);
@@ -162,8 +168,8 @@ void WebNetscapePluginEventHandlerCocoa::windowFocusChanged(bool hasFocus)
 void WebNetscapePluginEventHandlerCocoa::focusChanged(bool hasFocus)
 {
     NPCocoaEvent event;
-    
-    event.type = NPCocoaEventFocusChanged;
+
+    initializeEvent(&event, NPCocoaEventFocusChanged);
     event.event.focus.hasFocus = hasFocus;
     
     sendEvent(&event);

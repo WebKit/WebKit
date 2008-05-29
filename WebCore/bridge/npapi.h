@@ -443,6 +443,8 @@ typedef struct _NPNSMenu NPNSMenu;
 
 typedef struct _NPCocoaEvent {
     NPCocoaEventType type;
+    uint32 version;
+    
     union {
         struct {
             uint32 modifierFlags;
