@@ -126,70 +126,49 @@ CGImageRef BitmapImage::getCGImageRef()
     return frameAtIndex(0);
 }
 
-void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp)
+void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOp)
 {
-    CGRect fr = ctxt->roundToDevicePixels(srcRect);
-    CGRect ir = ctxt->roundToDevicePixels(dstRect);
-
     CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image) // If it's too early we won't have an image yet.
         return;
     
     if (mayFillWithSolidColor()) {
-        fillWithSolidColor(ctxt, ir, solidColor(), compositeOp);
+        fillWithSolidColor(ctxt, destRect, solidColor(), compositeOp);
         return;
-    }
-
-    // Get the height (in adjusted, i.e. scaled, coords) of the portion of the image
-    // that is currently decoded.  This could be less that the actual height.
-    CGSize selfSize = size();                          // full image size, in pixels
-    float curHeight = CGImageGetHeight(image);         // height of loaded portion, in pixels
-    
-    CGSize adjustedSize = selfSize;
-    if (curHeight < selfSize.height) {
-        adjustedSize.height *= curHeight / selfSize.height;
-
-        // Is the amount of available bands less than what we need to draw?  If so,
-        // we may have to clip 'fr' if it goes outside the available bounds.
-        if (CGRectGetMaxY(fr) > adjustedSize.height) {
-            float frHeight = adjustedSize.height - fr.origin.y; // clip fr to available bounds
-            if (frHeight <= 0)
-                return;                                             // clipped out entirely
-            ir.size.height *= (frHeight / fr.size.height);    // scale ir proportionally to fr
-            fr.size.height = frHeight;
-        }
     }
 
     CGContextRef context = ctxt->platformContext();
     ctxt->save();
 
+    // If the source rect is a subportion of the image, then we compute an inflated destination rect that will hold the entire image
+    // and then set a clip to the portion that we want to display.
+    CGSize selfSize = size();
+    FloatRect adjustedDestRect = destRect;
+    if (srcRect.width() != selfSize.width || srcRect.height() != selfSize.height) {
+        // A subportion of the image is drawing.  Adjust the destination rect to
+        // account for this.
+        float xScale = srcRect.width() / destRect.width();
+        float yScale = srcRect.height() / destRect.height();
+        
+        adjustedDestRect.setLocation(FloatPoint(destRect.x() - srcRect.x() / xScale, destRect.y() - srcRect.y() / yScale));
+        adjustedDestRect.setSize(FloatSize(size().width() / xScale, size().height() / yScale));
+        
+        CGContextClipToRect(context, destRect);
+    }
+
+    // If the image is only partially loaded, then shrink the destination rect that we're drawing into accordingly.
+    float currHeight = CGImageGetHeight(image);
+    if (currHeight < selfSize.height)
+        adjustedDestRect.setHeight(adjustedDestRect.height() * currHeight / selfSize.height);
+
     // Flip the coords.
     ctxt->setCompositeOperation(compositeOp);
-    CGContextTranslateCTM(context, ir.origin.x, ir.origin.y + ir.size.height);
+    CGContextTranslateCTM(context, adjustedDestRect.x(), adjustedDestRect.bottom());
     CGContextScaleCTM(context, 1, -1);
+    adjustedDestRect.setLocation(FloatPoint());
 
-    // Translated to origin, now draw at 0,0.
-    ir.origin.x = ir.origin.y = 0;
-    
-    // If we're drawing a sub portion of the image then create
-    // a image for the sub portion and draw that.
-    // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
-    if (fr.size.width != adjustedSize.width || fr.size.height != adjustedSize.height) {
-        // Convert ft to image pixel coords:
-        float xscale = adjustedSize.width / selfSize.width;
-        float yscale = adjustedSize.height / curHeight;     // yes, curHeight, not selfSize.height!
-        fr.origin.x /= xscale;
-        fr.origin.y /= yscale;
-        fr.size.width /= xscale;
-        fr.size.height /= yscale;
-        
-        image = CGImageCreateWithImageInRect(image, fr);
-        if (image) {
-            CGContextDrawImage(context, ir, image);
-            CFRelease(image);
-        }
-    } else // Draw the whole image.
-        CGContextDrawImage(context, ir, image);
+    // Draw the image.
+    CGContextDrawImage(context, adjustedDestRect, image);
         
     ctxt->restore();
     

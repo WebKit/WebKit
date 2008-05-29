@@ -79,6 +79,8 @@ public:
     static Image* loadPlatformResource(const char* name);
     static bool supportsType(const String&); 
 
+    virtual bool isBitmapImage() const { return false; }
+    
     bool isNull() const;
 
     // These are only used for SVGImage right now

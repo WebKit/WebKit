@@ -1,3 +1,40 @@
+2008-05-29  David Hyatt  <hyatt@apple.com>
+
+        Improve the performance of the GUIMark benchmark by 2x in the CoreGraphics code path.
+
+        Whenever a foreground image changes size rapidly, we will now dynamically shift into rendering it
+        using low quality scaling.  Once the animation completes, the image will repaint at high quality.
+        Scaled images will still render at high quality by default, only shifting into low quality if
+        the scale factor is rapidly changing.  This change raises GUIMark from 21fps to 34fps on my machine.
+
+        Rewrite the Image draw method to avoid the use of throwaway CG subimages.  Instead the entire image is
+        always drawn (with the appropriate clip and scale set up to make sure the correct subimage portion shows up
+        in the destination rect).  This change raises GUIMark from 34fps to 43fps on my machine.
+
+        Reviewed by Darin
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImageScaleData::RenderImageScaleData):
+        (WebCore::RenderImageScaleData::~RenderImageScaleData):
+        (WebCore::RenderImageScaleData::size):
+        (WebCore::RenderImageScaleData::time):
+        (WebCore::RenderImageScaleData::useLowQualityScale):
+        (WebCore::RenderImageScaleData::hiqhQualityRepaintTimer):
+        (WebCore::RenderImageScaleData::setSize):
+        (WebCore::RenderImageScaleData::setTime):
+        (WebCore::RenderImageScaleData::setUseLowQualityScale):
+        (WebCore::RenderImageScaleObserver::shouldImagePaintAtLowQuality):
+        (WebCore::RenderImageScaleObserver::imageDestroyed):
+        (WebCore::RenderImageScaleObserver::highQualityRepaintTimerFired):
+        (WebCore::RenderImage::highQualityRepaintTimerFired):
+        (WebCore::RenderImage::~RenderImage):
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderImage.h:
+
 2008-05-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Eric.

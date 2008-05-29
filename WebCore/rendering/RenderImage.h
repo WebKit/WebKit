@@ -68,6 +68,8 @@ public:
 
     virtual bool hasImage() const { return m_cachedImage; }
 
+    void highQualityRepaintTimerFired(Timer<RenderImage>*);
+
 protected:
     virtual Image* image(int w = 0, int h = 0) { return m_cachedImage ? m_cachedImage->image() : nullImage(); }
     virtual bool errorOccurred() const { return m_cachedImage && m_cachedImage->errorOccurred(); }
@@ -95,6 +97,8 @@ protected:
     String m_altText;
 
     static Image* nullImage();
+    
+    friend class RenderImageScaleObserver;
 };
 
 } // namespace WebCore
