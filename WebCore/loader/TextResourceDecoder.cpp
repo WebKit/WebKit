@@ -670,7 +670,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
                 int length = ptr - tagContentStart;
                 int pos = 0;
                 while (pos < length) {
-                    int charsetPos = findIgnoringCase(str + pos, length, "charset");
+                    int charsetPos = findIgnoringCase(str + pos, length - pos, "charset");
                     if (charsetPos == -1)
                         break;
                     pos += charsetPos + 7;

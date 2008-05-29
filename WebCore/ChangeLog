@@ -1,3 +1,15 @@
+2008-05-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5960682> REGRESSION(r30535): Crashes on iExploder in checkForHeadCharset().
+
+        I don't see how to make a reliable test, but iExploder catches this quickly.
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForHeadCharset): Correct the length passed to
+        findIgnoringCase().
+
 2008-05-29  Peter Kasting  <zerodpx@gmail.com>
 
         Reviewed by Dave Hyatt.
