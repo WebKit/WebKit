@@ -111,11 +111,9 @@ sub makeFilePathRelative($)
     return $path unless isGit();
 
     unless (defined $gitRoot) {
-        chomp($gitRoot = `git rev-parse --git-dir`);
-        $gitRoot =~ s/\.git$//;
+        chomp($gitRoot = `git rev-parse --show-cdup`);
     }
-    my $result = File::Spec->abs2rel(File::Spec->rel2abs($path, $gitRoot));
-    return $result;
+    return $gitRoot . $path;
 }
 
 1;
