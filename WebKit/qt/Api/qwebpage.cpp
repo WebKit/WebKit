@@ -956,8 +956,8 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
     loadProgress() signal, on the other hand, is emitted whenever an element
     of the web page completes loading, such as an embedded image, a script,
     etc. Finally, the loadFinished() signal is emitted when the page has
-    loaded completely. It's argument - either \c true or \c false - indicates
-    load success or failure.
+    loaded completely. Its argument, either true or false, indicates whether
+    or not the load operation succeeded.
 
     \section1 Using QWebPage in a Widget-less Environment
 

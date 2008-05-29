@@ -29,14 +29,17 @@
     QWebPluginFactory is a factory for creating plugins for QWebPage. A plugin
     factory can be installed on a QWebPage using QWebPage::setPluginFactory().
 
+    \note The plugin factory is only used if plugins are enabled through QWebSettings.
+
     You can provide a QWebPluginFactory by implementing the plugins() and the
     create() method. For plugins() it is necessary to describe the plugins the
-    factory can create, including a description and the supported mime types. The mime types are matched with the mime type
-    specified in the HTML object tag. The create() method is called if the requested mime type is
-    supported. The implementation has to return a new instance of the plugin requested for the given
-    mime type and the specified url.
+    factory can create, including a description and the supported MIME types.
+    The MIME types each plugin can handle should match the ones specified in
+    in the HTML \c{<object>} tag.
 
-    \note The plugin factory is only used if plugins are enabled through QWebSettings.
+    The create() method is called if the requested MIME type is supported. The
+    implementation has to return a new instance of the plugin requested for the
+    given MIME type and the specified URL.
 */
 
 
@@ -69,7 +72,8 @@
 
 /*!
     \variable QWebPluginFactory::MimeType::name
-    The name of the mime type.
+
+    The full name of the MIME type; e.g., \c{text/plain} or \c{image/png}.
 */
 
 /*!
@@ -121,11 +125,13 @@ void QWebPluginFactory::refreshPlugins()
     \fn QObject *QWebPluginFactory::create(const QString &mimeType, const QUrl &url,
     const QStringList &argumentNames, const QStringList &argumentValues) const = 0
 
-    Implemented in subclasses to create a new plugin that can display content of type \a mimeType.
-    The url of the content is provided in \a url.
+    Implemented in subclasses to create a new plugin that can display content of
+    the MIME type given by \a mimeType. The URL of the content is provided in \a url.
+    The returned object should be a QWidget.
 
-    The HTML object element can provide parameters through the param tag. The name and the value
-    attributes of these tags are provided in the \a argumentNames and \a argumentValues string lists.
+    The HTML object element can provide parameters through the \c{<param>} tag.
+    The name and the value attributes of these tags are specified by the
+    \a argumentNames and \a argumentValues string lists.
 
     For example:
 
@@ -149,8 +155,6 @@ void QWebPluginFactory::refreshPlugins()
     \row    \o argumentVaues
             \o "true" "false"
     \endtable
-
-    The returned object should be a QWidget.
 
     \note Ownership of the returned object will be transferred to the caller.
 */

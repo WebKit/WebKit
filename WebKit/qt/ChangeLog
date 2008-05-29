@@ -1,3 +1,13 @@
+2008-05-29  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon.
+
+        Some clarifications for the documentation.
+        
+
+        * Api/qwebpage.cpp:
+        * Api/qwebpluginfactory.cpp:
+
 2008-05-27  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
