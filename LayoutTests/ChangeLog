@@ -2,7 +2,7 @@
 
         Reviewed by Dave Hyatt.
 
-        - Test cases for this change: "speed up DHTML using lazy style resolution and rendere creation"
+        - Test cases for this change: "speed up DHTML using lazy style resolution and renderer creation"
 
         * http/tests/misc/acid3-expected.txt:
         * platform/mac/fast/dynamic/insert-before-table-part-in-continuation-expected.checksum:

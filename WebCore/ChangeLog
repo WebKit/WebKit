@@ -2,7 +2,7 @@
 
         Reviewed by Dave Hyatt.
 
-        - speed up DHTML using lazy style resolution and rendere creation
+        - speed up DHTML using lazy style resolution and renderer creation
 
         This change introduces the concept of "lazy attach" - when a node
         is lazy attached, then instead of resolving style and creating a
