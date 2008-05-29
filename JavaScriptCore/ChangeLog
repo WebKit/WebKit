@@ -1,3 +1,17 @@
+2008-05-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19294
+        <rdar://problem/5969062> A crash when iterating over a sparse array backwards.
+
+        * kjs/array_instance.cpp: Turned sparseArrayCutoff into a macro, so that using max() on it
+        doesn't cause a PIC branch.
+        (KJS::ArrayInstance::increaseVectorLength): Added a comment about this function not
+        preserving class invariants.
+        (KJS::ArrayInstance::put): Update m_storage after reallocation. Move values that fit to
+        the vector from the map in all code paths.
+
 2008-05-29  Thiago Macieira  <tjmaciei@trolltech.com>
 
         Reviewed by Simon.
