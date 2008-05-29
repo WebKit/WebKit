@@ -41,7 +41,7 @@ use webkitdirs;
 
 sub openHTTPDIfNeeded();
 sub closeHTTPD();
-sub runSafari();
+sub runSafariWithIExploder();
 
 # Argument handling
 my $guardMalloc = '';
@@ -69,7 +69,7 @@ if ($downloadTest) {
     system "/usr/bin/curl -o ~/Desktop/iexploder$downloadTest.html \"http://127.0.0.1:$httpdPort/iexploder.cgi?lookup=1&test=$downloadTest\"";
     print "Saved the test as iexploder$downloadTest.html on the desktop\n";
 } else {
-    runSafari();
+    runSafariWithIExploder();
     print "Last generated tests:\n";
     system "grep 'iexploder.cgi' /tmp/WebKit/access_log.txt | tail -n -5 | awk -F'[ =&\\?]' '{if (\$8 == \"lookup\") print \$11; else print \$9}'";
 }
@@ -77,7 +77,7 @@ if ($downloadTest) {
 closeHTTPD();
 
 
-sub runSafari()
+sub runSafariWithIExploder()
 {
     my $redirectTo;
     if (@ARGV) {
@@ -134,6 +134,7 @@ sub openHTTPDIfNeeded()
     $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
     my $documentRoot = "$iExploderDirectory/htdocs";
     my $typesConfig = "$testDirectory/http/conf/mime.types";
+    my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";
     my $listen = "127.0.0.1:$httpdPort";
 
     open2(\*HTTPDIN, \*HTTPDOUT, $httpdPath, 
@@ -143,6 +144,7 @@ sub openHTTPDIfNeeded()
         "-c", "TypesConfig \"$typesConfig\"",
         "-c", "CustomLog \"/tmp/WebKit/access_log.txt\" common",
         "-c", "ErrorLog \"/tmp/WebKit/error_log.txt\"",
+        "-c", "SSLCertificateFile \"$sslCertificate\"",
         # Apache wouldn't run CGIs with permissions==700 otherwise
         "-c", "User \"#$<\"");
 

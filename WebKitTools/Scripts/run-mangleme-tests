@@ -41,7 +41,7 @@ use webkitdirs;
 
 sub openHTTPDIfNeeded();
 sub closeHTTPD();
-sub runSafari();
+sub runSafariWithMangleme();
 
 # Argument handling
 my $guardMalloc = '';
@@ -72,7 +72,7 @@ if ($downloadTest) {
     system "/usr/bin/curl -o ~/Desktop/mangleme$downloadTest.html http://127.0.0.1:$httpdPort/remangle.cgi?$downloadTest";
     print "Saved the test as mangleme$downloadTest.html on the desktop\n";
 } else {
-    runSafari();
+    runSafariWithMangleme();
     print "Last generated tests:\n";
     system "grep 'Mangle attempt' /tmp/WebKit/error_log.txt | tail -n -5 | awk ' {print \$4}'";
 }
@@ -80,7 +80,7 @@ if ($downloadTest) {
 closeHTTPD();
 
 
-sub runSafari()
+sub runSafariWithMangleme()
 {
     my $redirectTo;
     if (@ARGV) {
@@ -137,6 +137,7 @@ sub openHTTPDIfNeeded()
     $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
     my $documentRoot = "$manglemeDirectory";
     my $typesConfig = "$testDirectory/http/conf/mime.types";
+    my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";
     my $listen = "127.0.0.1:$httpdPort";
 
     open2(\*HTTPDIN, \*HTTPDOUT, $httpdPath, 
@@ -146,6 +147,7 @@ sub openHTTPDIfNeeded()
         "-c", "TypesConfig \"$typesConfig\"",
         "-c", "CustomLog \"/tmp/WebKit/access_log.txt\" common",
         "-c", "ErrorLog \"/tmp/WebKit/error_log.txt\"",
+        "-c", "SSLCertificateFile \"$sslCertificate\"",
         # Apache wouldn't run CGIs with permissions==700 otherwise
         "-c", "User \"#$<\"");
 
