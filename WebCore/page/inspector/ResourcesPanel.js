@@ -1420,9 +1420,10 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
     {
         this.refreshTitles();
 
-        var newClassName = "sidebar-tree-item resource-sidebar-tree-item resources-category-" + this.resource.category.name;
-        if (this._listItemNode && this._listItemNode.className !== newClassName)
-            this._listItemNode.className = newClassName;
+        if (!this._listItemNode.hasStyleClass("resources-category-" + this.resource.category.name)) {
+            this._listItemNode.removeMatchingStyleClasses("resources-category-\\w+");
+            this._listItemNode.addStyleClass("resources-category-" + this.resource.category.name);
+        }
     },
 
     updateErrorsAndWarnings: function()

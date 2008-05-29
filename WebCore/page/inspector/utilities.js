@@ -106,7 +106,12 @@ Element.prototype.removeStyleClass = function(className)
         return;
     }
 
-    var regex = new RegExp("(^|\\s+)" + className.escapeForRegExp() + "($|\\s+)");
+    this.removeMatchingStyleClasses(className.escapeForRegExp());
+}
+
+Element.prototype.removeMatchingStyleClasses = function(classNameRegex)
+{
+    var regex = new RegExp("(^|\\s+)" + classNameRegex + "($|\\s+)");
     if (regex.test(this.className))
         this.className = this.className.replace(regex, " ");
 }

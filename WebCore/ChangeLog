@@ -1,3 +1,23 @@
+2008-05-29  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a bug where the className would be reset for Resource
+        tree elements and the selected state would be lost. This could
+        happen when sorting the resources.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19211
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourceSidebarTreeElement.prototype.refresh): Call
+        removeMatchingStyleClasses to remove previous category classes instead
+        of setting the whole className directly.
+        * page/inspector/utilities.js:
+        (Element.prototype.removeStyleClass): Moved code to
+        removeMatchingStyleClasses and call removeMatchingStyleClasses.
+        (Element.prototype.removeMatchingStyleClasses): Added. Code moved from
+        removeStyleClass and don't escape the string.
+
 2008-05-29  David Hyatt  <hyatt@apple.com>
 
         Improve the performance of the GUIMark benchmark by 2x in the CoreGraphics code path.
