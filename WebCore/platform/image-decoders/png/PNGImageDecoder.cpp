@@ -42,6 +42,11 @@
 
 #if PLATFORM(CAIRO) || PLATFORM(QT) || PLATFORM(WX)
 
+#if COMPILER(MSVC)
+// Remove warnings from warning level 4.
+#pragma warning(disable : 4611) // warning C4611: interaction between '_setjmp' and C++ object destruction is non-portable
+#endif
+
 namespace WebCore {
 
 // Gamma constants.

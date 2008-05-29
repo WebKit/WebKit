@@ -33,6 +33,10 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceHandleManager.h"
 
+#if PLATFORM(WIN) && PLATFORM(CF)
+#include <wtf/RetainPtr.h>
+#endif
+
 namespace WebCore {
 
 class WebCoreSynchronousLoader : public ResourceHandleClient {

@@ -1,3 +1,32 @@
+2008-05-29  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=19284
+        Correct Windows (Cairo) Build Regressions
+
+        Correct small Windows (Cairo) build regressions in recent updates.
+
+        * platform/graphics/SimpleFontData.h:  Correct build regression due
+          to r32781 (additional use of m_syntheticBoldOffset in GDI code).
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+          Correct build regression due to r31830 (change of clip signature
+          to use FloatRect rather than IntRect).
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        (WebCore::SimpleFontData::platformInit):  Initialize
+        m_syntheticBoldOffset
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::JPEGImageReader):  Work around build
+          error due to warnings about _setjmp treated as errors.
+        * platform/image-decoders/png/PNGImageDecoder.cpp:  Work around
+          build error due to warnings about _setjmp treated as errors.
+        * platform/network/curl/ResourceHandleCurl.cpp:  Correct build error
+          due to different order (and content) of include files when building
+          with CoreFoundation (but not CoreGraphics).
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::setupPOST):  Correct build error
+          due to Visual Studio compiler bug.
+
 2008-05-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

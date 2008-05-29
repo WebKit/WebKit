@@ -48,6 +48,7 @@ void SimpleFontData::platformInit()
     m_scriptCache = 0;
     m_scriptFontProperties = 0;
     m_isSystemFont = false;
+    m_syntheticBoldOffset = 0;
 
     if (m_font.useGDI())
        return initGDIFont();

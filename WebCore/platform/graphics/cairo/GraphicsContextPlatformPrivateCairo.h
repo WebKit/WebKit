@@ -64,7 +64,7 @@ public:
     // On Windows, we need to update the HDC for form controls to draw in the right place.
     void save();
     void restore();
-    void clip(const IntRect&);
+    void clip(const FloatRect&);
     void clip(const Path&);
     void scale(const FloatSize&);
     void rotate(float);
