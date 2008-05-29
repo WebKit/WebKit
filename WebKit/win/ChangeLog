@@ -1,3 +1,15 @@
+2008-05-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+
+        <rdar://problem/5970312> 
+        icon file specified for stand alone web app causes crash if the icon can't be found
+        
+        Handle the case where iconData is null.
+
+        * WebIconFetcher.cpp:
+        (WebIconFetcherClient::finishedFetchingIcon):
+
 2008-05-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

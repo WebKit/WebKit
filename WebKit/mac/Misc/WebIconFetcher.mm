@@ -45,7 +45,11 @@ public:
 
     virtual void finishedFetchingIcon(PassRefPtr<SharedBuffer> iconData)
     {
-        [m_target performSelector:m_selector withObject:m_fetcher.get() withObject:iconData->createNSData()];
+        RetainPtr<NSData> data;
+        if (iconData)
+            data = iconData->createNSData();
+        
+        [m_target performSelector:m_selector withObject:m_fetcher.get() withObject:data.get()];
 
         delete this;
     }
