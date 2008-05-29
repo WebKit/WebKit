@@ -757,7 +757,7 @@ void Element::recalcStyle(StyleChange change)
     if (hasParentStyle && (change >= Inherit || changed())) {
         RenderStyle *newStyle = document()->styleSelector()->styleForElement(this);
         StyleChange ch = diff(currentStyle, newStyle);
-        if (ch == Detach) {
+        if (ch == Detach || !currentStyle) {
             if (attached())
                 detach();
             // ### Suboptimal. Style gets calculated again.

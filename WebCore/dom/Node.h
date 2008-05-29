@@ -114,10 +114,10 @@ public:
     // These should all actually return a node, but this is only important for language bindings,
     // which will already know and hold a ref on the right node to return. Returning bool allows
     // these methods to be more efficient since they don't need to return a ref
-    virtual bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&);
-    virtual bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&);
+    virtual bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&, bool shouldLazyAttach = false);
+    virtual bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&, bool shouldLazyAttach = false);
     virtual bool removeChild(Node* child, ExceptionCode&);
-    virtual bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&);
+    virtual bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&, bool shouldLazyAttach = false);
 
     virtual void remove(ExceptionCode&);
     bool hasChildNodes() const { return firstChild(); }
@@ -247,6 +247,9 @@ public:
     void setInDocument(bool b = true) { m_inDocument = b; }
     void setInActiveChain(bool b = true) { m_inActiveChain = b; }
     void setChanged(StyleChangeType changeType = FullStyleChange);
+
+    void lazyAttach();
+    virtual bool canLazyAttach();
 
     virtual void setFocus(bool b = true) { m_focused = b; }
     virtual void setActive(bool b = true, bool pause=false) { m_active = b; }

@@ -47,6 +47,7 @@ public:
     virtual void parseMappedAttribute(MappedAttribute*);
 
     virtual void attach();
+    virtual bool canLazyAttach() { return false; }
     virtual void detach();
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

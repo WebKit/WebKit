@@ -244,13 +244,13 @@ Node* Node::firstDescendant() const
     return n;
 }
 
-bool Node::insertBefore(PassRefPtr<Node>, Node*, ExceptionCode& ec)
+bool Node::insertBefore(PassRefPtr<Node>, Node*, ExceptionCode& ec, bool)
 {
     ec = HIERARCHY_REQUEST_ERR;
     return false;
 }
 
-bool Node::replaceChild(PassRefPtr<Node>, Node*, ExceptionCode& ec)
+bool Node::replaceChild(PassRefPtr<Node>, Node*, ExceptionCode& ec, bool)
 {
     ec = HIERARCHY_REQUEST_ERR;
     return false;
@@ -262,7 +262,7 @@ bool Node::removeChild(Node*, ExceptionCode& ec)
     return false;
 }
 
-bool Node::appendChild(PassRefPtr<Node>, ExceptionCode& ec)
+bool Node::appendChild(PassRefPtr<Node>, ExceptionCode& ec, bool)
 {
     ec = HIERARCHY_REQUEST_ERR;
     return false;
@@ -383,10 +383,50 @@ void Node::setChanged(StyleChangeType changeType)
         m_styleChange = changeType;
 
     if (m_styleChange != NoStyleChange) {
-        for (Node* p = parentNode(); p; p = p->parentNode())
+        for (Node* p = parentNode(); p && !p->hasChangedChild(); p = p->parentNode())
             p->setHasChangedChild(true);
         document()->setDocumentChanged(true);
     }
+}
+
+static Node* outermostLazyAttachedAncestor(Node* start)
+{
+    Node* p = start;
+    for (Node* next = p->parentNode(); !next->renderer(); p = next, next = next->parentNode()) {}
+    return p;
+}
+
+void Node::lazyAttach()
+{
+    bool mustDoFullAttach = false;
+
+    for (Node* n = this; n; n = n->traverseNextNode(this)) {
+        if (!n->canLazyAttach()) {
+            mustDoFullAttach = true;
+            break;
+        }
+
+        if (n->firstChild())
+            n->setHasChangedChild(true);
+        n->m_styleChange = FullStyleChange;
+        n->m_attached = true;
+    }
+
+    if (mustDoFullAttach) {
+        Node* lazyAttachedAncestor = outermostLazyAttachedAncestor(this);
+        if (lazyAttachedAncestor->attached())
+            lazyAttachedAncestor->detach();
+        lazyAttachedAncestor->attach();
+    } else {
+        for (Node* p = parentNode(); p && !p->hasChangedChild(); p = p->parentNode())
+            p->setHasChangedChild(true);
+        document()->setDocumentChanged(true);
+    }
+}
+
+bool Node::canLazyAttach()
+{
+    return shadowAncestorNode() == this;
 }
 
 bool Node::isFocusable() const

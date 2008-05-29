@@ -1,3 +1,14 @@
+2008-05-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - Test cases for this change: "speed up DHTML using lazy style resolution and rendere creation"
+
+        * http/tests/misc/acid3-expected.txt:
+        * platform/mac/fast/dynamic/insert-before-table-part-in-continuation-expected.checksum:
+        * platform/mac/fast/dynamic/insert-before-table-part-in-continuation-expected.png:
+        * platform/mac/fast/dynamic/insert-before-table-part-in-continuation-expected.txt:
+
 2008-05-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Anders.

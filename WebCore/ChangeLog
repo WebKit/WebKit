@@ -1,3 +1,84 @@
+2008-05-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - speed up DHTML using lazy style resolution and rendere creation
+
+        This change introduces the concept of "lazy attach" - when a node
+        is lazy attached, then instead of resolving style and creating a
+        renderer right away, we just mark it as needing a style recalc.
+        
+        The patch makes use of this mechanism when inserting nodes directly
+        using DOM APIs from script. For now this is only done for the
+        JavaScript language binding but could also be done for other
+        bindings in the future.
+        
+        Lazy attach helps some common DHTML patterns - when a node is
+        added to the DOM, and then subsequently changed in a
+        style-affecting way, this causes an extra style recalc. This is a
+        fairly common pattern so it is better to be lazy.
+        
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::insertBefore): Request lazy attach.
+        (WebCore::JSNode::replaceChild): ditto
+        (WebCore::JSNode::appendChild): ditto
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore): Support lazy attach.
+        (WebCore::ContainerNode::replaceChild): ditto
+        (WebCore::ContainerNode::appendChild): ditto
+        (WebCore::ContainerNode::detach): Clear "changed child" bit if still set.
+        * dom/ContainerNode.h:
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle): Adjusted to properly reattach a
+        lazy-attached node.
+        * dom/Node.cpp:
+        (WebCore::Node::insertBefore): Extra parameter for lazy attach
+        (still doesn't do anything).
+        (WebCore::Node::replaceChild): ditto
+        (WebCore::Node::appendChild): ditto
+        (WebCore::Node::setChanged): Unrelated but obvious optimization -
+        stop marking ancestor as having a changed child once we already reach
+        an ancestor so marked.
+        (WebCore::outermostLazyAttachedAncestor): Helper function for lazyAttach.
+        (WebCore::Node::lazyAttach): Implement lazy attach.
+        (WebCore::Node::canLazyAttach): Virtual method - true for most nodes.
+        * dom/Node.h:
+        * dom/Text.cpp:
+        (WebCore::Text::recalcStyle): Properly handle the case of a reattached node.
+        * html/HTMLEmbedElement.h:
+        (WebCore::HTMLEmbedElement::canLazyAttach): Refuse lazy attach, since
+        plugins and frames do important work at rederer creation time.
+        * html/HTMLFrameElementBase.h:
+        (WebCore::HTMLFrameElementBase::canLazyAttach): Refuse lazy attach, since
+        plugins and frames do important work at rederer creation time.
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::recalcStyle): Change order so that
+        reattach works properly.
+        * html/HTMLObjectElement.h:
+        (WebCore::HTMLObjectElement::canLazyAttach): Refuse lazy attach, since
+        plugins and frames do important work at rederer creation time.
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::insertBefore): Pass along extra param.
+        (WebCore::HTMLOptGroupElement::replaceChild): ditto
+        (WebCore::HTMLOptGroupElement::appendChild): ditto
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::insertBefore): Pass along extra param.
+        (WebCore::HTMLSelectElement::replaceChild): ditto
+        (WebCore::HTMLSelectElement::appendChild): ditto
+        * html/HTMLSelectElement.h:
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getBBox): Add missing updateLayout call.
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::getNumberOfChars): ditto
+        (WebCore::SVGTextContentElement::getComputedTextLength): ditto
+        (WebCore::SVGTextContentElement::getSubStringLength): ditto
+        (WebCore::SVGTextContentElement::getStartPositionOfChar): ditto
+        (WebCore::SVGTextContentElement::getEndPositionOfChar): ditto
+        (WebCore::SVGTextContentElement::getExtentOfChar): ditto
+        (WebCore::SVGTextContentElement::getRotationOfChar): ditto
+        (WebCore::SVGTextContentElement::getCharNumAtPosition): ditto
+
 2008-05-28  Ada Chan  <adachan@apple.com>
 
         <rdar://problem/5957036> REGRESSION (r31960): 20-30% slowdown in i-Bench JavaScript test on XP Home

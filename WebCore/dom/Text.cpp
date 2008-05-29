@@ -248,8 +248,16 @@ void Text::recalcStyle(StyleChange change)
         if (renderer())
             renderer()->setStyle(parentNode()->renderer()->style());
     }
-    if (changed() && renderer() && renderer()->isText())
-        static_cast<RenderText*>(renderer())->setText(m_data);
+    if (changed()) {
+        if (renderer()) {
+            if (renderer()->isText())
+                static_cast<RenderText*>(renderer())->setText(m_data);
+        } else {
+            if (attached())
+                detach();
+            attach();
+        }
+    }
     setChanged(NoStyleChange);
 }
 

@@ -87,10 +87,11 @@ FloatRect SVGLocatable::getBBox(const SVGStyledElement* e)
 {
     FloatRect bboxRect;
 
+    e->document()->updateLayoutIgnorePendingStylesheets();
+
     if (e && e->renderer()) {
         // Need this to make sure we have render object dimensions.
         // See bug 11686.
-        e->document()->updateLayoutIgnorePendingStylesheets();
         bboxRect = e->renderer()->relativeBBox(false);
     }
 

@@ -38,10 +38,10 @@ public:
     Node* firstChild() const { return m_firstChild; }
     Node* lastChild() const { return m_lastChild; }
 
-    virtual bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&);
-    virtual bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&);
+    virtual bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&, bool shouldLazyAttach = false);
+    virtual bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&, bool shouldLazyAttach = false);
     virtual bool removeChild(Node* child, ExceptionCode&);
-    virtual bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&);
+    virtual bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&, bool shouldLazyAttach = false);
 
     virtual ContainerNode* addChild(PassRefPtr<Node>);
     bool hasChildNodes() const { return m_firstChild; }

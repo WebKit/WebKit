@@ -69,7 +69,7 @@ typedef int ExpectionCode;
 JSValue* JSNode::insertBefore(ExecState* exec, const List& args)
 {
     ExceptionCode ec = 0;
-    bool ok = impl()->insertBefore(toNode(args[0]), toNode(args[1]), ec);
+    bool ok = impl()->insertBefore(toNode(args[0]), toNode(args[1]), ec, true);
     setDOMException(exec, ec);
     if (ok)
         return args[0];
@@ -79,7 +79,7 @@ JSValue* JSNode::insertBefore(ExecState* exec, const List& args)
 JSValue* JSNode::replaceChild(ExecState* exec, const List& args)
 {
     ExceptionCode ec = 0;
-    bool ok = impl()->replaceChild(toNode(args[0]), toNode(args[1]), ec);
+    bool ok = impl()->replaceChild(toNode(args[0]), toNode(args[1]), ec, true);
     setDOMException(exec, ec);
     if (ok)
         return args[1];
@@ -99,7 +99,7 @@ JSValue* JSNode::removeChild(ExecState* exec, const List& args)
 JSValue* JSNode::appendChild(ExecState* exec, const List& args)
 {
     ExceptionCode ec = 0;
-    bool ok = impl()->appendChild(toNode(args[0]), ec);
+    bool ok = impl()->appendChild(toNode(args[0]), ec, true);
     setDOMException(exec, ec);
     if (ok)
         return args[0];

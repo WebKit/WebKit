@@ -37,6 +37,7 @@ public:
     virtual void removedFromDocument();
 
     virtual void attach();
+    virtual bool canLazyAttach() { return false; }
 
     KURL location() const;
     void setLocation(const String&);

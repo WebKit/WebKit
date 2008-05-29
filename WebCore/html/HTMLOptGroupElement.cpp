@@ -52,17 +52,17 @@ const AtomicString& HTMLOptGroupElement::type() const
     return optgroup;
 }
 
-bool HTMLOptGroupElement::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec)
+bool HTMLOptGroupElement::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec, bool shouldLazyAttach)
 {
-    bool result = HTMLGenericFormElement::insertBefore(newChild, refChild, ec);
+    bool result = HTMLGenericFormElement::insertBefore(newChild, refChild, ec, shouldLazyAttach);
     if (result)
         recalcSelectOptions();
     return result;
 }
 
-bool HTMLOptGroupElement::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec)
+bool HTMLOptGroupElement::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec, bool shouldLazyAttach)
 {
-    bool result = HTMLGenericFormElement::replaceChild(newChild, oldChild, ec);
+    bool result = HTMLGenericFormElement::replaceChild(newChild, oldChild, ec, shouldLazyAttach);
     if (result)
         recalcSelectOptions();
     return result;
@@ -76,9 +76,9 @@ bool HTMLOptGroupElement::removeChild(Node* oldChild, ExceptionCode& ec)
     return result;
 }
 
-bool HTMLOptGroupElement::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec)
+bool HTMLOptGroupElement::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bool shouldLazyAttach)
 {
-    bool result = HTMLGenericFormElement::appendChild(newChild, ec);
+    bool result = HTMLGenericFormElement::appendChild(newChild, ec, shouldLazyAttach);
     if (result)
         recalcSelectOptions();
     return result;
