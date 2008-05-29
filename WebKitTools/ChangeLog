@@ -1,3 +1,13 @@
+2008-05-29  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Darin Adler.
+        
+        Restore original behavior of isOSX() referring to the Mac port, not the OS itself.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=19311
+
+        * Scripts/webkitdirs.pm:
+
 2008-05-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.

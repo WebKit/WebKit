@@ -512,9 +512,17 @@ sub isCygwin()
     return ($^O eq "cygwin") || 0;
 }
 
-sub isOSX()
+sub isDarwin()
 {
     return ($^O eq "darwin") || 0;
+}
+
+# isOSX() only returns true for Apple's port, not for other ports that can be
+# built/run on OS X.
+sub isOSX()
+{
+    return isDarwin() unless (isQt() or isGtk() or isWx());
+    return 0;
 }
 
 sub determineOSXVersion()
