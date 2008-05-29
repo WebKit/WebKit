@@ -572,7 +572,7 @@ Node* enclosingNodeWithTag(const Position& p, const QualifiedName& tagName)
     return 0;
 }
 
-Node* enclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*))
+Node* enclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), bool onlyReturnEditableNodes)
 {
     if (p.isNull())
         return 0;
@@ -581,7 +581,7 @@ Node* enclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*))
     for (Node* n = p.node(); n; n = n->parentNode()) {
         // Don't return a non-editable node if the input position was editable, since
         // the callers from editing will no doubt want to perform editing inside the returned node.
-        if (root && !isContentEditable(n))
+        if (root && !isContentEditable(n) && onlyReturnEditableNodes)
             continue;
         if ((*nodeIsOfType)(n))
             return n;

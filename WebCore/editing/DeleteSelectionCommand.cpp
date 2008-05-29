@@ -172,9 +172,11 @@ void DeleteSelectionCommand::initializePositionData()
     m_startTableRow = enclosingNodeOfType(start, &isTableRow);
     m_endTableRow = enclosingNodeOfType(end, &isTableRow);
     
-    Node* startCell = enclosingTableCell(m_upstreamStart);
-    Node* endCell = enclosingTableCell(m_downstreamEnd);
     // Don't move content out of a table cell.
+    // If the cell is non-editable, enclosingNodeOfType won't return it by default, so
+    // tell that function that we don't care if it returns non-editable nodes.
+    Node* startCell = enclosingNodeOfType(m_upstreamStart, &isTableCell, false);
+    Node* endCell = enclosingNodeOfType(m_downstreamEnd, &isTableCell, false);
     // FIXME: This isn't right.  A borderless table with two rows and a single column would appear as two paragraphs.
     if (endCell && endCell != startCell)
         m_mergeBlocksAfterDelete = false;

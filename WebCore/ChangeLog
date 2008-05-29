@@ -1,3 +1,20 @@
+2008-05-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Eric.
+
+        <rdar://problem/5847330> REGRESSION CrashTracer: [USER] 536 crashes at WebCore::highestAncestor
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem): Don't break out of an empty
+        list item if its parent is non-editable, since doing so will move into non-editable content.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializePositionData): We want to prevent merges from
+        table cells even if those table cells are non-editable.
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingNodeOfType): Can now return non-editable nodes, for cases where the caller 
+        isn't going to do editing in the returned node.
+        * editing/htmlediting.h:
+
 2008-05-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.

@@ -1,3 +1,14 @@
+2008-05-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Eric.
+        
+        <rdar://problem/5847330> REGRESSION CrashTracer: [USER] 536 crashes at WebCore::highestAncestor
+
+        * editing/deleting/5847330-1-expected.txt: Added.
+        * editing/deleting/5847330-1.html: Added.
+        * editing/deleting/5847330-2-expected.txt: Added.
+        * editing/deleting/5847330-2.html: Added.
+
 2008-05-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
