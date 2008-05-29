@@ -1,3 +1,16 @@
+2008-05-28  Ada Chan  <adachan@apple.com>
+
+        <rdar://problem/5957036> REGRESSION (r31960): 20-30% slowdown in i-Bench JavaScript test on XP Home
+        Conditionalize the timer latency change (r31960) only for vista since it does not
+        help xp anyway.
+
+        Reviewed by Steve Falkenburg.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::isRunningOnVistaOrLater):
+        (WebCore::TimerWindowWndProc):
+        (WebCore::setSharedTimerFireTime):
+
 2008-05-28  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
