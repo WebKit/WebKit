@@ -140,7 +140,8 @@ public:
     \image qwebview-diagram.png
 
     \note It is possible to use QWebPage and QWebFrame, without using QWebView,
-    if you do not require QWidget attributes.
+    if you do not require QWidget attributes. Nevertheless, QtWebKit depends
+    on QtGui, so you should use a QApplication instead of QCoreApplication.
 
     \sa {Previewer Example}, {Browser}
 */
