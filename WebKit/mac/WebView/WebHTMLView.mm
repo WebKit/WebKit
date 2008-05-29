@@ -1122,12 +1122,15 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     // If the WebHTMLView itself is what we're printing, then we will never have to do this.
     BOOL wasInPrintingMode = _private->printing;
     BOOL isPrinting = ![NSGraphicsContext currentContextDrawingToScreen];
-    if (wasInPrintingMode != isPrinting) {
-        if (isPrinting)
+    if (isPrinting) {
+        if (!wasInPrintingMode)
             [self _web_setPrintingModeRecursive];
+#ifndef BUILDING_ON_TIGER
         else
-            [self _web_clearPrintingModeRecursive];
-    }
+            [self _web_layoutIfNeededRecursive];
+#endif
+    } else if (wasInPrintingMode)
+        [self _web_clearPrintingModeRecursive];
 
 #ifdef BUILDING_ON_TIGER
 
@@ -1160,12 +1163,15 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     if (needToSetAsideSubviews) {
         // This helps when we print as part of a larger print process.
         // If the WebHTMLView itself is what we're printing, then we will never have to do this.
-        if (wasInPrintingMode != isPrinting) {
-            if (isPrinting)
+        if (isPrinting) {
+            if (!wasInPrintingMode)
                 [self _web_setPrintingModeRecursive];
+#ifndef BUILDING_ON_TIGER
             else
-                [self _web_clearPrintingModeRecursive];
-        }
+                [self _web_layoutIfNeededRecursive];
+#endif
+        } else if (wasInPrintingMode)
+            [self _web_clearPrintingModeRecursive];
 
 #ifdef BUILDING_ON_TIGER
 

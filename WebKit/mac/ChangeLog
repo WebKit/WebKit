@@ -1,3 +1,19 @@
+2008-05-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Jessica Kahn.
+
+        - fix <rdar://problem/5965013> Page 2 does not print correctly
+
+        When printing, _recursiveDisplayRectIfNeededIgnoringOpacity:... and
+        _recursiveDisplayAllDirtyWithLockFocus:... can be invoked without
+        -viewWillDraw being sent first, which could lead to painting without
+        valid layout. The fix is to ensure up-to-date layout in those methods
+        when printing.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+        (-[WebHTMLView _recursiveDisplayAllDirtyWithLockFocus:visRect:]):
+
 2008-05-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Jon.
