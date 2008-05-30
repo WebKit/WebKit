@@ -167,6 +167,7 @@ public:
     static bool toBoolean(const JSValue*);
     static JSObject* toObject(const JSValue*, ExecState*);
     static UString toString(const JSValue*);
+    static uint32_t toTruncatedUInt32(const JSValue*);
     static JSType type(const JSValue*);
 
     static bool getUInt32(const JSValue*, uint32_t&);
@@ -219,6 +220,12 @@ ALWAYS_INLINE bool JSImmediate::toBoolean(const JSValue* v)
     ASSERT(isImmediate(v));
     uintptr_t bits = unTag(v);
     return (bits != 0) & (JSImmediate::getTag(v) != UndefinedType);
+}
+
+ALWAYS_INLINE uint32_t JSImmediate::toTruncatedUInt32(const JSValue* v)
+{
+    ASSERT(isImmediate(v));
+    return static_cast<uint32_t>(reinterpret_cast<intptr_t>(v) >> 2);
 }
 
 ALWAYS_INLINE JSValue* JSImmediate::from(char i)

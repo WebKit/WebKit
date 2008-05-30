@@ -1318,8 +1318,13 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
         JSValue* val = r[(++vPC)->u.operand].u.jsValue;
         JSValue* shift = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* result = jsNumber((val->toInt32(exec)) << (shift->toUInt32(exec)));
-        VM_CHECK_EXCEPTION();
+        JSValue* result;
+        if (JSImmediate::areBothImmediateNumbers(val, shift))
+            result = jsNumber(JSImmediate::getTruncatedInt32(val) << (JSImmediate::toTruncatedUInt32(shift) & 0x1f));
+        else {
+            result = jsNumber((val->toInt32(exec)) << (shift->toUInt32(exec) & 0x1f));
+            VM_CHECK_EXCEPTION();
+        }
         dst = result;
         
         ++vPC;
@@ -1358,8 +1363,12 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         JSValue* val = r[(++vPC)->u.operand].u.jsValue;
         JSValue* shift = r[(++vPC)->u.operand].u.jsValue;
         JSValue* result;
-        result = jsNumber((val->toUInt32(exec)) >> (shift->toUInt32(exec) & 0x1f));
-        VM_CHECK_EXCEPTION();
+        if (JSImmediate::areBothImmediateNumbers(val, shift) && !JSImmediate::isNegative(val))
+            result = JSImmediate::rightShiftImmediateNumbers(val, shift);
+        else {
+            result = jsNumber((val->toUInt32(exec)) >> (shift->toUInt32(exec) & 0x1f));
+            VM_CHECK_EXCEPTION();
+        }
         dst = result;
         
         ++vPC;
