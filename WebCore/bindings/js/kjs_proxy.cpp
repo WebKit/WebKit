@@ -112,6 +112,7 @@ void KJSProxy::clear()
 
     JSLock lock;
     m_windowShell->window()->clear();
+    m_liveFormerWindows.add(m_windowShell->window());
     m_windowShell->setWindow(new JSDOMWindow(m_frame->domWindow(), m_windowShell));
     if (Page* page = m_frame->page()) {
         attachDebugger(page->debugger());
@@ -155,7 +156,7 @@ void KJSProxy::initScript()
     JSLock lock;
 
     m_windowShell = new JSDOMWindowShell(m_frame->domWindow());
-    m_windowShell->updateDocument();
+    updateDocument();
 
     if (Page* page = m_frame->page()) {
         attachDebugger(page->debugger());
@@ -209,5 +210,16 @@ void KJSProxy::attachDebugger(KJS::Debugger* debugger)
     else if (KJS::Debugger* currentDebugger = m_windowShell->window()->debugger())
         currentDebugger->detach(m_windowShell->window());
 }
+
+void KJSProxy::updateDocument()
+{
+    JSLock lock;
+    if (m_windowShell)
+        m_windowShell->window()->updateDocument();
+    HashSet<JSDOMWindow*>::iterator end = m_liveFormerWindows.end();
+    for (HashSet<JSDOMWindow*>::iterator it = m_liveFormerWindows.begin(); it != end; ++it)
+        (*it)->updateDocument();
+}
+
 
 } // namespace WebCore

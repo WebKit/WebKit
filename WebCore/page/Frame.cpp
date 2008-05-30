@@ -260,10 +260,7 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
         d->m_doc->attach();
 
     // Update the cached 'document' property, which is now stale.
-    if (d->m_doc && d->m_jscript.haveWindowShell()) {
-        JSLock lock;
-        d->m_jscript.windowShell()->updateDocument();
-    }
+    d->m_jscript.updateDocument();
 }
 
 Settings* Frame::settings() const

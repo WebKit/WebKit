@@ -47,7 +47,6 @@ namespace WebCore {
         void setWindow(JSDOMWindow* window)
         {
             ASSERT_ARG(window, window);
-            m_liveFormerWindows->add(m_window);
             m_window = window;
             setPrototype(window->prototype());
         }
@@ -76,13 +75,9 @@ namespace WebCore {
         DOMWindow* impl() const;
         void disconnectFrame();
         void clear();
-        void updateDocument();
-
-        void clearFormerWindow(JSDOMWindow* window) { m_liveFormerWindows->remove(window); }
 
     private:
         JSDOMWindow* m_window;
-        HashSet<JSDOMWindow*>* m_liveFormerWindows;
     };
 
     KJS::JSValue* toJS(KJS::ExecState*, Frame*);
