@@ -1,3 +1,13 @@
+2008-05-30  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix the build dependencies for the Qt build. Don't generate
+        SVGCSSPropertyNames.cpp for every build.
+
+        * WebCore.pro: The output file was renamed, so the compiler rule needs
+        to be adjusted in order for qmake to generate correct depdencies.
+
 2008-05-30  Maciej Stachowiak  <mjs@apple.com>
 
         Revert fix for 19285, it just caused more crashes and I need time
