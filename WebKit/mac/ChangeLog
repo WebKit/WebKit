@@ -1,3 +1,18 @@
+2008-05-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/5949462> REGRESSION: Can't paste screen captures into Mail
+        
+        AppKit started putting PNG instead of PICT onto the pasteboard for screen 
+        captures.  Added support for PNG with kUTTypePNG.  Tiger doesn't support
+        setting and retrieving pasteboard types with UTIs, but we don't know of any
+        applications on Tiger that put only PNG on the pasteboard.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentFromPasteboard:inContext:allowPlainText:]):
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]):
+
 2008-05-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

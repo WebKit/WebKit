@@ -659,7 +659,16 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
                                                 inContext:context
                                              subresources:0]))
         return fragment;
-    
+        
+    // Only 10.5 and higher support setting and retrieving pasteboard types with UTIs, but we don't believe
+    // that any applications on Tiger put types for which we only have a UTI, like PNG, on the pasteboard.
+    if ([types containsObject:(NSString*)kUTTypePNG] &&
+        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
+                                                  forType:(NSString*)kUTTypePNG
+                                                inContext:context
+                                             subresources:0]))
+        return fragment;
+        
     if ([types containsObject:NSURLPboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
                                                   forType:NSURLPboardType
@@ -1436,7 +1445,8 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     if (!types) {
         types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType,
             NSFilenamesPboardType, NSTIFFPboardType, NSPICTPboardType, NSURLPboardType, 
-            NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, NSColorPboardType, nil];
+            NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, NSColorPboardType,
+            kUTTypePNG, nil];
         CFRetain(types);
     }
     return types;
@@ -1932,6 +1942,18 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
                                                               URL:uniqueURLWithRelativePart(@"image.pict")
                                                          MIMEType:@"image/pict" 
+                                                 textEncodingName:nil
+                                                        frameName:nil];
+        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
+        [resource release];
+        return fragment;
+    }
+    // Only 10.5 and higher support setting and retrieving pasteboard types with UTIs, but we don't believe
+    // that any applications on Tiger put types for which we only have a UTI, like PNG, on the pasteboard.
+    if ([pboardType isEqualToString:(NSString*)kUTTypePNG]) {
+        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:(NSString*)kUTTypePNG]
+                                                              URL:uniqueURLWithRelativePart(@"image.png")
+                                                         MIMEType:@"image/png" 
                                                  textEncodingName:nil
                                                         frameName:nil];
         DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
