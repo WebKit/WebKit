@@ -82,6 +82,12 @@ public:
         return (getTag(v) == UndefinedType);
     }
 
+    static bool isNegative(const JSValue* v)
+    {
+        ASSERT(isNumber(v));
+        return reinterpret_cast<uintptr_t>(v) & 0x80000000;
+    }
+
     static JSValue* from(char);
     static JSValue* from(signed char);
     static JSValue* from(unsigned char);
@@ -116,6 +122,12 @@ public:
     {
         ASSERT(areBothImmediateNumbers(v1, v2));
         return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v1) | reinterpret_cast<uintptr_t>(v2));
+    }
+
+    static ALWAYS_INLINE JSValue* rightShiftImmediateNumbers(const JSValue* val, const JSValue* shift)
+    {
+        ASSERT(areBothImmediateNumbers(val, shift));
+        return reinterpret_cast<JSValue*>((reinterpret_cast<intptr_t>(val) >> ((reinterpret_cast<uintptr_t>(shift) >> 2) & 0x1f)) | NumberType);
     }
 
     static ALWAYS_INLINE bool canDoFastAdditiveOperations(const JSValue* v)
