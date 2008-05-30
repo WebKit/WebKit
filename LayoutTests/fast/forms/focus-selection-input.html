@@ -10,10 +10,9 @@ function runTest()
     if (!window.layoutTestController)
         return;
 
-    var accessKeyModifier = "altKey";
-    if (navigator.userAgent.search(/\bMac OS X\b/) != -1) {
-        accessKeyModifier = "ctrlKey";
-    }
+    var accessKeyModifiers = ["altKey"];
+    if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+        accessKeyModifiers = ["ctrlKey", "altKey"];
 
     layoutTestController.dumpEditingCallbacks();
     layoutTestController.dumpAsText();
@@ -26,7 +25,7 @@ function runTest()
 
     shouldBe("second.selectionStart", "11");
     shouldBe("second.selectionEnd", "18");
-    eventSender.keyDown("J", [accessKeyModifier]);
+    eventSender.keyDown("J", accessKeyModifiers);
     shouldBe("second.selectionStart", "11");
     shouldBe("second.selectionEnd", "18");
 
@@ -55,7 +54,7 @@ function runTest()
 
     shouldBe("sixth.selectionStart", "12");
     shouldBe("sixth.selectionEnd", "19");
-    eventSender.keyDown("U", [accessKeyModifier]);
+    eventSender.keyDown("U", accessKeyModifiers);
     shouldBe("sixth.selectionStart", "0");
     shouldBe("sixth.selectionEnd", "19");
 
@@ -75,7 +74,7 @@ function runTest()
 
     shouldBe("ninth.selectionStart", "12");
     shouldBe("ninth.selectionEnd", "19");
-    eventSender.keyDown("I", [accessKeyModifier]);
+    eventSender.keyDown("I", accessKeyModifiers);
     shouldBe("ninth.selectionStart", "0");
     shouldBe("ninth.selectionEnd", "19");
 
@@ -102,7 +101,7 @@ test harness, the test runs automatically.</p>
 
 <br>
 
-2) Hit Ctrl-J, the whole phrase "SUCCESS and SUCCESS" should be selected:
+2) Hit Ctrl-Option-J (or Alt-J on Windows), the whole phrase "SUCCESS and SUCCESS" should be selected:
 <input type="text" id="second" accesskey="j" value="SUCCESS and SUCCESS">
 <script>
     var second = document.getElementById("second");
@@ -146,7 +145,7 @@ test harness, the test runs automatically.</p>
 
 <br>
 
-6) <label id="sixthLabel" for="sixth" accesskey="u">Hit Ctrl-U, the whole phrase "SUCCESS and SUCCESS" should be selected:</label>
+6) <label id="sixthLabel" for="sixth" accesskey="u">Hit Ctrl-Option-U (or Alt-U on Windows), the whole phrase "SUCCESS and SUCCESS" should be selected:</label>
 <input type="text" id="sixth" value="SUCCESS and SUCCESS">
 <script>
     var sixth = document.getElementById("sixth");
@@ -183,7 +182,7 @@ test harness, the test runs automatically.</p>
 
 
 9) <fieldset>
-<legend id="eighthLegend" accesskey="i">Hit Ctrl-I, the whole phrase "SUCCESS and SUCCESS" should be selected:</legend>
+<legend id="eighthLegend" accesskey="i">Hit Ctrl-Option-I (or Alt-I on Windows), the whole phrase "SUCCESS and SUCCESS" should be selected:</legend>
 <input type="text" id="ninth" value="SUCCESS and SUCCESS">
 <script>
     var ninth = document.getElementById("ninth");

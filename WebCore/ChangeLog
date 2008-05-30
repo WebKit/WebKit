@@ -1,3 +1,14 @@
+2008-05-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=7466
+        <rdar://problem/4657563> Use of Ctrl as access key modifier conflicts with Mac OS X
+        emacs-style keybindings
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleAccessKey): Use Ctrl+Option for access keys on Mac OS X.
+
 2008-05-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Alexey.

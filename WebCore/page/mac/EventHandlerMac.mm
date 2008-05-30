@@ -47,7 +47,7 @@ namespace WebCore {
 
 using namespace EventNames;
 
-unsigned EventHandler::s_accessKeyModifiers = PlatformKeyboardEvent::CtrlKey;
+unsigned EventHandler::s_accessKeyModifiers = PlatformKeyboardEvent::CtrlKey | PlatformKeyboardEvent::AltKey;
 
 static RetainPtr<NSEvent>& currentEvent()
 {

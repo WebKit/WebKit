@@ -2,7 +2,7 @@
 <option>blaa
 <option>jee
 </select>
-Press ctrl-a to activate the select. Works as layout test too using eventSender.
+Press Ctrl-Option-A (or Alt-A on Windows) to activate the select. Works as layout test too using eventSender.
 
 <div>
 focus event:
@@ -15,11 +15,13 @@ FAIL
 </div>
 <script>
     if (window.eventSender) {
-        var mod = [];
+        layoutTestController.dumpAsText();
+
+        var modifiers;
         if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
-            mod[0]='ctrlKey';
+            modifiers = ['ctrlKey', 'altKey'];
         else
-            mod[0]='altKey';            
-        eventSender.keyDown('a', mod);
+            modifiers = ['altKey'];
+        eventSender.keyDown('a', modifiers);
     }
 </script>

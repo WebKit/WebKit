@@ -8,10 +8,10 @@ function test()
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
         if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
-            modifier = "ctrlKey";
+            modifiers = ["ctrlKey", "altKey"];
         else
-            modifier = "altKey";
-        eventSender.keyDown("a", [modifier]);
+            modifiers = ["altKey"];
+        eventSender.keyDown("a", modifiers);
     }
 }
 </script>

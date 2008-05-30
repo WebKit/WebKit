@@ -1,3 +1,30 @@
+2008-05-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=7466
+        <rdar://problem/4657563> Use of Ctrl as access key modifier conflicts with Mac OS X
+        emacs-style keybindings
+
+        * fast/events/access-key-self-destruct.html:
+        * fast/forms/access-key.html:
+        * fast/forms/focus-selection-input-expected.txt:
+        * fast/forms/focus-selection-input.html:
+        * fast/forms/legend-access-key.html:
+        * fast/forms/select-accesskey.html:
+        Updated tests to keep passing.
+
+        * fast/forms/select-accesskey-expected.txt: Added.
+        * fast/forms/select-accesskey.html:
+        * platform/mac/fast/forms/select-accesskey-expected.checksum: Removed.
+        * platform/mac/fast/forms/select-accesskey-expected.png: Removed.
+        * platform/mac/fast/forms/select-accesskey-expected.txt: Removed.
+        Updated to keep passing, made text-only.
+
+        * fast/forms/focus-selection-textarea.html:
+        * fast/forms/focus-selection-textarea-expected.txt:
+        Added missing platform-specific logic.
+
 2008-05-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver. Test by Geoff Garen.

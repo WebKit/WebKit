@@ -10,6 +10,10 @@ function runTest()
     if (!window.layoutTestController)
         return;
 
+    var accessKeyModifiers = ["altKey"];
+    if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+        accessKeyModifiers = ["ctrlKey", "altKey"];
+
     layoutTestController.dumpEditingCallbacks();
     layoutTestController.dumpAsText();
 
@@ -21,7 +25,7 @@ function runTest()
 
     shouldBe("second.selectionStart", "11");
     shouldBe("second.selectionEnd", "18");
-    eventSender.keyDown("J", ["ctrlKey"]);
+    eventSender.keyDown("J", accessKeyModifiers);
     shouldBe("second.selectionStart", "11");
     shouldBe("second.selectionEnd", "18");
 
@@ -50,7 +54,7 @@ function runTest()
 
     shouldBe("sixth.selectionStart", "11");
     shouldBe("sixth.selectionEnd", "18");
-    eventSender.keyDown("U", ["ctrlKey"]);
+    eventSender.keyDown("U", accessKeyModifiers);
     shouldBe("sixth.selectionStart", "11");
     shouldBe("sixth.selectionEnd", "18");
 
@@ -70,7 +74,7 @@ function runTest()
 
     shouldBe("ninth.selectionStart", "11");
     shouldBe("ninth.selectionEnd", "18");
-    eventSender.keyDown("I", ["ctrlKey"]);
+    eventSender.keyDown("I", accessKeyModifiers);
     shouldBe("ninth.selectionStart", "11");
     shouldBe("ninth.selectionEnd", "18");
 
@@ -96,7 +100,7 @@ automatically.</p>
 
 <br>
 
-2) Hit Ctrl-J, only the word "SUCCESS" should be selected:
+2) Hit Ctrl-Option-J (or Alt-J on Windows), only the word "SUCCESS" should be selected:
 <textarea id="second" accesskey="j">FAILURE or SUCCESS</textarea>
 <script>
     var second = document.getElementById("second");
@@ -140,7 +144,7 @@ automatically.</p>
 
 <br>
 
-6) <label id="sixthLabel" for="sixth" accesskey="u">Hit Ctrl-U, only the word "SUCCESS" should be selected:</label>
+6) <label id="sixthLabel" for="sixth" accesskey="u">Hit Ctrl-Option-U (or Alt-U on Windows), only the word "SUCCESS" should be selected:</label>
 <textarea id="sixth">FAILURE or SUCCESS</textarea>
 <script>
     var sixth = document.getElementById("sixth");
@@ -177,7 +181,7 @@ automatically.</p>
 
 
 9) <fieldset>
-<legend id="eighthLegend" accesskey="i">Hit Ctrl-I, only the word "SUCCESS" should be selected:</legend>
+<legend id="eighthLegend" accesskey="i">Hit Ctrl-Option-I (or Alt-I on Windows), only the word "SUCCESS" should be selected:</legend>
 <textarea id="ninth">FAILURE or SUCCESS</textarea>
 <script>
     var ninth = document.getElementById("ninth");

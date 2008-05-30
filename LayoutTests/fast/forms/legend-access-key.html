@@ -13,10 +13,10 @@ function test()
         layoutTestController.dumpAsText();
 
         if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
-            modifier = "ctrlKey";
+            modifiers = ["ctrlKey", "altKey"];
         else
-            modifier = "altKey";
-        eventSender.keyDown("f", [modifier]);
+            modifiers = "altKey";
+        eventSender.keyDown("f", modifiers);
     }
 }
 </script>
