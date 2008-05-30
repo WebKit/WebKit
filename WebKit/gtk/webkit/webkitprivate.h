@@ -88,6 +88,8 @@ extern "C" {
 
         GtkAdjustment* horizontalAdjustment;
         GtkAdjustment* verticalAdjustment;
+
+        gboolean zoomFullContent;
     };
 
     #define WEBKIT_WEB_FRAME_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_FRAME, WebKitWebFramePrivate))

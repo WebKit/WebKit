@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2008 Christian Dywan <christian@imendio.com>
+ * Copyright (C) 2008 Nuanti Ltd.
+ * Copyright (C) 2008 Collabora Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,6 +47,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean enable_plugins;
     gboolean resizable_text_areas;
     gchar* user_stylesheet_uri;
+    gfloat zoom_step;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -69,7 +72,8 @@ enum {
     PROP_ENABLE_SCRIPTS,
     PROP_ENABLE_PLUGINS,
     PROP_RESIZABLE_TEXT_AREAS,
-    PROP_USER_STYLESHEET_URI
+    PROP_USER_STYLESHEET_URI,
+    PROP_ZOOM_STEP
 };
 
 static void webkit_web_settings_finalize(GObject* object);
@@ -248,6 +252,15 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     0,
                                     flags));
 
+    g_object_class_install_property(gobject_class,
+                                    PROP_ZOOM_STEP,
+                                    g_param_spec_float(
+                                    "zoom-step",
+                                    "Zoom Stepping Value",
+                                    "How much the zoom level is changed when zooming in or out.",
+                                    0, G_MAXFLOAT, 0.1,
+                                    flags));
+
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
 
@@ -341,6 +354,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
         g_free(priv->user_stylesheet_uri);
         priv->user_stylesheet_uri = g_strdup(g_value_get_string(value));
         break;
+    case PROP_ZOOM_STEP:
+        priv->zoom_step = g_value_get_float(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -407,6 +423,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_USER_STYLESHEET_URI:
         g_value_set_string(value, priv->user_stylesheet_uri);
         break;
+    case PROP_ZOOM_STEP:
+        g_value_set_float(value, priv->zoom_step);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -456,6 +475,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "enable-plugins", priv->enable_plugins,
                  "resizable-text-areas", priv->resizable_text_areas,
                  "user-stylesheet-uri", priv->user_stylesheet_uri,
+                 "zoom-step", priv->zoom_step,
                  NULL));
 
     return copy;

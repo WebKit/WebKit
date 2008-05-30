@@ -5,6 +5,7 @@
  *  Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *  Copyright (C) 2008 Jan Alonzo <jmalonzo@unpluggable.com>
  *  Copyright (C) 2008 Nuanti Ltd.
+ *  Copyright (C) 2008 Collabora Ltd.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -98,7 +99,9 @@ enum {
     PROP_PASTE_TARGET_LIST,
     PROP_EDITABLE,
     PROP_SETTINGS,
-    PROP_TRANSPARENT
+    PROP_TRANSPARENT,
+    PROP_ZOOM_LEVEL,
+    PROP_ZOOM_TEXT_ONLY
 };
 
 static guint webkit_web_view_signals[LAST_SIGNAL] = { 0, };
@@ -234,6 +237,12 @@ static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue*
     case PROP_TRANSPARENT:
         g_value_set_boolean(value, webkit_web_view_get_transparent(webView));
         break;
+    case PROP_ZOOM_LEVEL:
+        g_value_set_float(value, webkit_web_view_get_zoom_level(webView));
+        break;
+    case PROP_ZOOM_TEXT_ONLY:
+        g_value_set_boolean(value, webkit_web_view_get_full_content_zoom(webView));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
     }
@@ -252,6 +261,12 @@ static void webkit_web_view_set_property(GObject* object, guint prop_id, const G
         break;
     case PROP_TRANSPARENT:
         webkit_web_view_set_transparent(webView, g_value_get_boolean(value));
+        break;
+    case PROP_ZOOM_LEVEL:
+        webkit_web_view_set_zoom_level(webView, g_value_get_float(value));
+        break;
+    case PROP_ZOOM_TEXT_ONLY:
+        webkit_web_view_set_full_content_zoom(webView, g_value_get_boolean(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -1197,6 +1212,22 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                          FALSE,
                                                          WEBKIT_PARAM_READWRITE));
 
+    g_object_class_install_property(objectClass, PROP_ZOOM_LEVEL,
+                                    g_param_spec_float("zoom-level",
+                                                       "Zoom level",
+                                                       "The level of zoom of the content",
+                                                       G_MINFLOAT,
+                                                       G_MAXFLOAT,
+                                                       1,
+                                                       WEBKIT_PARAM_READWRITE));
+
+    g_object_class_install_property(objectClass, PROP_ZOOM_TEXT_ONLY,
+                                    g_param_spec_boolean("full-content-zoom",
+                                                         "Text-only zoom",
+                                                         "Whether only the text size is changed when zooming",
+                                                         FALSE,
+                                                         WEBKIT_PARAM_READWRITE));
+
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 }
 
@@ -1362,6 +1393,8 @@ static void webkit_web_view_init(WebKitWebView* webView)
     priv->editable = false;
 
     priv->backForwardList = webkit_web_back_forward_list_new_with_web_view(webView);
+
+    priv->zoomFullContent = FALSE;
 
 #if GTK_CHECK_VERSION(2,10,0)
     GdkAtom textHtml = gdk_atom_intern_static_string("text/html");
@@ -2041,6 +2074,135 @@ void webkit_web_view_set_transparent(WebKitWebView* webView, gboolean flag)
     Frame* frame = core(webView)->mainFrame();
     g_return_if_fail(frame);
     frame->view()->setTransparent(flag);
+}
+
+/**
+ * webkit_web_view_get_zoom_level:
+ * @web_view: a #WebKitWebView
+ *
+ * Returns the zoom level of @web_view, i.e. the factor by which elements in
+ * the page are scaled with respect to their original size.
+ * If the "full-content-zoom" property is set to %FALSE (the default)
+ * the zoom level changes the text size, or if %TRUE, scales all
+ * elements in the page.
+ *
+ * Return value: the zoom level of @web_view
+ */
+gfloat webkit_web_view_get_zoom_level(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 1.0f);
+
+    Frame* frame = core(webView)->mainFrame();
+    if (!frame)
+        return 1.0f;
+
+    return frame->zoomFactor();
+}
+
+static void webkit_web_view_apply_zoom_level(WebKitWebView* webView, gfloat zoomLevel)
+{
+    Frame* frame = core(webView)->mainFrame();
+    if (!frame)
+        return;
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    frame->setZoomFactor(zoomLevel, !priv->zoomFullContent);
+}
+
+/**
+ * webkit_web_view_set_zoom_level:
+ * @web_view: a #WebKitWebView
+ * @zoom_level: the new zoom level
+ *
+ * Sets the zoom level of @web_view, i.e. the factor by which elements in
+ * the page are scaled with respect to their original size.
+ * If the "full-content-zoom" property is set to %FALSE (the default)
+ * the zoom level changes the text size, or if %TRUE, scales all
+ * elements in the page.
+ */
+void webkit_web_view_set_zoom_level(WebKitWebView* webView, gfloat zoomLevel)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    webkit_web_view_apply_zoom_level(webView, zoomLevel);
+    g_object_notify(G_OBJECT(webView), "zoom-level");
+}
+
+/**
+ * webkit_web_view_zoom_in:
+ * @web_view: a #WebKitWebView
+ *
+ * Increases the zoom level of @web_view. The current zoom
+ * level is incremented by the value of the "zoom-step"
+ * property of the #WebKitWebSettings associated with @web_view.
+ */
+void webkit_web_view_zoom_in(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    gfloat zoomMultiplierRatio;
+    g_object_get(priv->webSettings, "zoom-step", &zoomMultiplierRatio, NULL);
+
+    webkit_web_view_set_zoom_level(webView, webkit_web_view_get_zoom_level(webView) + zoomMultiplierRatio);
+}
+
+/**
+ * webkit_web_view_zoom_out:
+ * @web_view: a #WebKitWebView
+ *
+ * Decreases the zoom level of @web_view. The current zoom
+ * level is decremented by the value of the "zoom-step"
+ * property of the #WebKitWebSettings associated with @web_view.
+ */
+void webkit_web_view_zoom_out(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    gfloat zoomMultiplierRatio;
+    g_object_get(priv->webSettings, "zoom-step", &zoomMultiplierRatio, NULL);
+
+    webkit_web_view_set_zoom_level(webView, webkit_web_view_get_zoom_level(webView) - zoomMultiplierRatio);
+}
+
+/**
+ * webkit_web_view_get_full_content_zoom:
+ * @web_view: a #WebKitWebView
+ *
+ * Returns whether the zoom level affects only text or all elements.
+ *
+ * Return value: %FALSE if only text should be scaled (the default),
+ * %TRUE if the full content of the view should be scaled.
+ */
+gboolean webkit_web_view_get_full_content_zoom(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    return priv->zoomFullContent;
+}
+
+/**
+ * webkit_web_view_set_full_content_zoom:
+ * @web_view: a #WebKitWebView
+ * @full_content_zoom: %FALSE if only text should be scaled (the default),
+ * %TRUE if the full content of the view should be scaled.
+ *
+ * Sets whether the zoom level affects only text or all elements.
+ */
+void webkit_web_view_set_full_content_zoom(WebKitWebView* webView, gboolean zoomFullContent)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    if (priv->zoomFullContent == zoomFullContent)
+      return;
+
+    priv->zoomFullContent = zoomFullContent;
+    webkit_web_view_apply_zoom_level(webView, webkit_web_view_get_zoom_level(webView));
+
+    g_object_notify(G_OBJECT(webView), "full-content-zoom");
 }
 
 }

@@ -217,6 +217,24 @@ webkit_web_view_get_transparent (WebKitWebView* web_view);
 WEBKIT_API void
 webkit_web_view_set_transparent (WebKitWebView* web_view, gboolean flag);
 
+WEBKIT_API gfloat
+webkit_web_view_get_zoom_level (WebKitWebView* web_view);
+
+WEBKIT_API void
+webkit_web_view_set_zoom_level (WebKitWebView* web_view, gfloat zoom_level);
+
+WEBKIT_API void
+webkit_web_view_zoom_in (WebKitWebView* web_view);
+
+WEBKIT_API void
+webkit_web_view_zoom_out (WebKitWebView* web_view);
+
+WEBKIT_API gboolean
+webkit_web_view_get_full_content_zoom (WebKitWebView* web_view);
+
+WEBKIT_API void
+webkit_web_view_set_full_content_zoom (WebKitWebView* web_view, gboolean full_content_zoom);
+
 G_END_DECLS
 
 #endif
