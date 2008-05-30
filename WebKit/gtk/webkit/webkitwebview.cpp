@@ -889,6 +889,14 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             WEBKIT_TYPE_WEB_FRAME,
             G_TYPE_STRING);
 
+    /**
+     * WebKitWebView::hovering-over-link:
+     * @web_view: the object on which the signal is emitted
+     * @title: the link's title
+     * @uri: the URI the link points to
+     *
+     * When the cursor is over a link, this signal is emitted.
+     */
     webkit_web_view_signals[HOVERING_OVER_LINK] = g_signal_new("hovering-over-link",
             G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),

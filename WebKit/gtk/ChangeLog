@@ -1,3 +1,12 @@
+2008-05-30  Carlos Martín Nieto  <carlos@cmartin.tk>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18383
+        [GTK] The "hovering-over-link" signal arguments aren't documented.
+
+        * webkit/webkitwebview.cpp:
+
 2008-05-29  Marco Barisione  <marco@collabora.co.uk>
 
         Reviewed (and tweaked) by Alp Toker.
