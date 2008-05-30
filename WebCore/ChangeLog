@@ -1,3 +1,28 @@
+2008-05-29  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/4783102> Radio button/checkbox embedded with <label> tag should combine the text and the label as a single element
+        <rdar://problem/5091386> Seed: VO reads form labels twice in Safari
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::titleUIElement):
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isControl):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isControl):
+        (WebCore::AccessibilityRenderObject::labelElementContainer):
+        (WebCore::AccessibilityRenderObject::title):
+        (WebCore::AccessibilityRenderObject::checkboxOrRadioRect):
+        (WebCore::AccessibilityRenderObject::elementRect):
+        (WebCore::AccessibilityRenderObject::titleUIElement):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::roleValue):
+        * page/AccessibilityRenderObject.h:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2008-05-29  Timothy Hatcher  <timothy@apple.com>
 
         Removes a use of the internal _childrenListNode property by adding

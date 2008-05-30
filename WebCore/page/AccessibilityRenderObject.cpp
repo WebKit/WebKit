@@ -405,6 +405,15 @@ bool AccessibilityRenderObject::isLink() const
 {
     return roleValue() == WebCoreLinkRole;
 }    
+    
+bool AccessibilityRenderObject::isControl() const
+{
+    if (!m_renderer)
+        return false;
+    
+    Node* node = m_renderer->element();
+    return node && (node->isControl() || AccessibilityObject::isARIAControl(ariaRoleAttribute()));
+}
 
 const AtomicString& AccessibilityRenderObject::getAttribute(const QualifiedName& attribute) const
 {
@@ -779,6 +788,24 @@ static HTMLLabelElement* labelForElement(Element* element)
     
     return 0;
 }
+    
+HTMLLabelElement* AccessibilityRenderObject::labelElementContainer() const
+{
+    if (!m_renderer)
+        return false;
+
+    // the control element should not be considered part of the label
+    if (isControl())
+        return false;
+    
+    // find if this has a parent that is a label
+    for (Node* parentNode = m_renderer->element(); parentNode; parentNode = parentNode->parentNode()) {
+        if (parentNode->hasTagName(labelTag))
+            return static_cast<HTMLLabelElement*>(parentNode);
+    }
+    
+    return 0;
+}
 
 String AccessibilityRenderObject::title() const
 {
@@ -806,7 +833,7 @@ String AccessibilityRenderObject::title() const
             return input->value();
     }
     
-    if (isInputTag || AccessibilityObject::isARIAInput(ariaRole)) {
+    if (isInputTag || AccessibilityObject::isARIAInput(ariaRole) || isControl()) {
         HTMLLabelElement* label = labelForElement(static_cast<Element*>(node));
         if (label)
             return label->innerText();
@@ -896,11 +923,29 @@ IntRect AccessibilityRenderObject::boundingBoxRect() const
     }
     return rect;
 }
+    
+IntRect AccessibilityRenderObject::checkboxOrRadioRect() const
+{
+    if (!m_renderer)
+        return IntRect();
+    
+    HTMLLabelElement* label = labelForElement(static_cast<Element*>(m_renderer->element()));
+    if (!label || !label->renderer())
+        return IntRect();
+    
+    IntRect labelRect = axObjectCache()->get(label->renderer())->elementRect();
+    labelRect.unite(boundingBoxRect());
+    return labelRect;
+}
 
 IntRect AccessibilityRenderObject::elementRect() const
 {
     if (m_areaElement)
         return m_areaElement->getRect(m_renderer);
+    
+    // a checkbox or radio button should encompass its label
+    if (isCheckboxOrRadio())
+        return checkboxOrRadioRect();
     
     return boundingBoxRect();
 }
@@ -950,6 +995,23 @@ AccessibilityObject* AccessibilityRenderObject::linkedUIElement() const
     return linkedAXElement;
 }
 
+AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
+{
+    if (!m_renderer)
+        return 0;
+    
+    // checkbox and radio hide their labels. Only controls get titleUIElements for now
+    if (isCheckboxOrRadio() || !isControl())
+        return 0;
+    
+    Node* element = m_renderer->element();
+    HTMLLabelElement* label = labelForElement(static_cast<Element*>(element));
+    if (label && label->renderer())
+        return axObjectCache()->get(label->renderer());
+
+    return 0;   
+}
+    
 bool AccessibilityRenderObject::accessibilityIsIgnored() const
 {
     // ignore invisible element
@@ -965,6 +1027,18 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
             return true;
     }
     
+    // find out if this element is inside of a label element.
+    // if so, it may be ignored because it's the label for a checkbox or radio button
+    HTMLLabelElement* labelElement = labelElementContainer();
+    if (labelElement) {
+        HTMLElement* correspondingControl = labelElement->correspondingControl();
+        if (correspondingControl && correspondingControl->renderer()) {
+            AccessibilityObject* controlObject = axObjectCache()->get(correspondingControl->renderer());
+            if (controlObject->isCheckboxOrRadio())
+                return true;
+        }
+    }
+        
     AccessibilityRole ariaRole = ariaRoleAttribute();
     if (ariaRole == TextAreaRole || ariaRole == StaticTextRole) {
         String ariaText = text();
@@ -987,7 +1061,12 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
         return false;
     
     // all controls are accessible
-    if (m_renderer->element() && (m_renderer->element()->isControl() || AccessibilityObject::isARIAControl(ariaRoleAttribute())))
+    if (isControl())
+        return false;
+    
+    // don't ignore labels, because they serve as TitleUIElements
+    Node* node = m_renderer->element();
+    if (node && node->hasTagName(labelTag))
         return false;
     
     if (m_renderer->isBlockFlow() && m_renderer->childrenInline())
@@ -995,7 +1074,6 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     
     // ignore images seemingly used as spacers
     if (isImage()) {
-        Node* node = m_renderer->element();
         if (node && node->isElementNode()) {
             Element* elt = static_cast<Element*>(node);
             const AtomicString& alt = elt->getAttribute(altAttr);
@@ -1916,7 +1994,7 @@ AccessibilityRole AccessibilityRenderObject::roleValue() const
     if (headingLevel(m_renderer->element()) != 0)
         return HeadingRole;
     
-    if (m_renderer->isBlockFlow())
+    if (m_renderer->isBlockFlow() || node->hasTagName(labelTag))
         return GroupRole;
     
     return UnknownRole;

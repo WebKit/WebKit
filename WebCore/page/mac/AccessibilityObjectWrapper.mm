@@ -536,6 +536,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     static NSArray* menuBarAttrs = nil;
     static NSArray* menuItemAttrs = nil;
     static NSArray* menuButtonAttrs = nil;
+    static NSArray* controlAttrs = nil;
     NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
@@ -593,6 +594,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         [tempArray addObject:NSAccessibilitySelectedTextRangeAttribute];
         [tempArray addObject:NSAccessibilityVisibleCharacterRangeAttribute];
         [tempArray addObject:NSAccessibilityInsertionPointLineNumberAttribute];
+        [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         textAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -601,6 +603,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
+        [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         listBoxAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -657,6 +660,12 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
             NSAccessibilityTitleAttribute,
             NSAccessibilityChildrenAttribute, nil];
     }
+    if (controlAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
+        controlAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
 
     if (m_object->isPasswordField())
         return attributes;
@@ -676,6 +685,9 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     if (m_object->isProgressIndicator())
         return progressIndicatorAttrs;
 
+    if (m_object->isControl())
+        return controlAttrs;
+    
     if (m_object->isMenu())
         return menuAttrs;
     if (m_object->isMenuBar())
@@ -1103,6 +1115,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return [NSArray arrayWithObject:uiElement->wrapper()];
     }
 
+    if ([attributeName isEqualToString:NSAccessibilityTitleUIElementAttribute]) {
+        AccessibilityObject* obj = m_object->titleUIElement();
+        if (obj)
+            return obj->wrapper();
+        return nil;
+    }
+    
     return nil;
 }
 

@@ -210,6 +210,7 @@ public:
     virtual bool isMenuItem() const { return false; }
     virtual bool isFileUploadButton() const { return false; };
     virtual bool isProgressIndicator() const { return false; };
+    virtual bool isControl() const { return false; };
     
     virtual bool isChecked() const { return false; };
     virtual bool isEnabled() const { return false; };
@@ -252,6 +253,7 @@ public:
     virtual AccessibilityObject* parentObjectUnignored() const;
     virtual AccessibilityObject* observableObject() const;
     virtual AccessibilityObject* linkedUIElement() const;
+    virtual AccessibilityObject* titleUIElement() const;
     virtual AccessibilityRole ariaRoleAttribute() const;
     virtual AccessibilityRole roleValue() const;
     virtual AXObjectCache* axObjectCache() const;
