@@ -1,3 +1,12 @@
+2008-05-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver. Test by Geoff Garen.
+        
+        - fixed <rdar://problem/5972943> REGRESSION(r33979): Flash clips do not play on cnn.com
+
+        * fast/js/finally-codegen-failure-expected.txt: Added.
+        * fast/js/finally-codegen-failure.html: Added.
+
 2008-05-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Eric.

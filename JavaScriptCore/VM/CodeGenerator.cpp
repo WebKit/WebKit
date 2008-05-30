@@ -363,6 +363,14 @@ RegisterID* CodeGenerator::newTemporary()
     return &m_temporaries.last();
 }
 
+
+RegisterID* CodeGenerator::highestUsedRegister()
+{
+    while (m_temporaries.size() < static_cast<unsigned>(m_codeBlock->numTemporaries))
+        m_temporaries.append(m_temporaries.size());
+    return &m_temporaries.last();
+}
+
 PassRefPtr<LabelID> CodeGenerator::newLabel()
 {
     // Reclaim free label IDs.

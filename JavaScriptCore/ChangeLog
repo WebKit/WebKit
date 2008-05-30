@@ -1,3 +1,22 @@
+2008-05-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - fixed <rdar://problem/5972943> REGRESSION(r33979): Flash clips do not play on cnn.com
+        
+        Finally blocks could clobber registers that had to remain live
+        until they returned. This patch takes a conservative approach and
+        makes sure that finally blocks do not reuse any registers that
+        were previously allocated for the function. In the future this
+        could probably be tightened up to be less profligate with the
+        register allocation.
+        
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::highestUsedRegister):
+        * VM/CodeGenerator.h:
+        * kjs/nodes.cpp:
+        (KJS::TryNode::emitCode):
+
 2008-05-29  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

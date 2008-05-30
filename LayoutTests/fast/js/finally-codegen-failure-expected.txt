@@ -1,0 +1,4 @@
+This page tests a codegen bug with finally blocks. If the test passes, you'll see a PASS message below.
+
+PASS
+

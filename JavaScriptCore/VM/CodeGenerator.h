@@ -116,6 +116,8 @@ namespace KJS {
         // the next instruction may overwrite it.
         RegisterID* newTemporary();
 
+        RegisterID* highestUsedRegister();
+
         // The same as newTemporary(), but this function returns "suggestion" if
         // "suggestion" is a temporary. This function is helpful in situations
         // where you've put "suggestion" in a RefPtr, but you'd like to allow

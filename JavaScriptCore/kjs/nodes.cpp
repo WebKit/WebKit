@@ -5745,6 +5745,11 @@ RegisterID* TryNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
     if (m_finallyBlock) {
         generator.popFinallyContext();
+        // there may be important registers live at the time we jump
+        // to a finally block (such as for a return or throw) so we
+        // ref the highest register ever used as a conservative
+        // approach to not clobbering anything important
+        RefPtr<RegisterID> highestUsedRegister = generator.highestUsedRegister();
         RefPtr<LabelID> finallyEndLabel = generator.newLabel();
         generator.emitJumpSubroutine(finallyReturnAddr.get(), finallyStart.get());
         generator.emitJump(finallyEndLabel.get());
