@@ -1,3 +1,16 @@
+2008-05-30  Adam Treat  <treat@kde.org>
+
+        Reviewed by Simon.
+
+        Fix a huge memory leak by ensuring that on application shutdown
+        the shared timer is fired one last time if it is active. This
+        ensures that the GCController timer is fired at the end to free
+        references to JavaScript objects.
+
+        * platform/qt/SharedTimerQt.h:
+        (WebCore::SharedTimerQt::cleanup):
+        (WebCore::SharedTimerQt::inst):
+
 2008-05-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
