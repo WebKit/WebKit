@@ -77,9 +77,6 @@ public:
     void setPaused(bool b) { m_paused = b; }
     bool isPaused() const { return m_paused; }
 
-    void clearFormerWindow(JSDOMWindow* window) { m_liveFormerWindows.remove(window); }
-    void updateDocument();
-
 private:
     void initScriptIfNeeded()
     {
@@ -89,7 +86,6 @@ private:
     void initScript();
 
     KJS::ProtectedPtr<JSDOMWindowShell> m_windowShell;
-    HashSet<JSDOMWindow*> m_liveFormerWindows;
     Frame* m_frame;
     int m_handlerLineno;
     

@@ -1,3 +1,23 @@
+2008-05-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Revert fix for 19285, it just caused more crashes and I need time
+        to fix it properly.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::~JSDOMWindowBase):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell):
+        (WebCore::JSDOMWindowShell::updateDocument):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::setWindow):
+        (WebCore::JSDOMWindowShell::clearFormerWindow):
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::clear):
+        (WebCore::KJSProxy::initScript):
+        * bindings/js/kjs_proxy.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument):
+
 2008-05-30  Adam Treat  <treat@kde.org>
 
         Reviewed by Simon.
