@@ -1,3 +1,18 @@
+2008-05-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler and Dave Hyatt.
+
+        - eliminate excessive repainting when an object's final position
+          after layout is unchanged
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren): Removed the full repaint
+        for the case that the final position is unchanged but the position at
+        which an intermediate layout occurred was different. Any repainting
+        done during the intermediate layout would have happened at the object's
+        initial (and also final) coordinates, since layoutDelta is factored
+        into repaint rect calculations.
+
 2008-05-30  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

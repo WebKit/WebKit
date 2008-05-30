@@ -1,3 +1,15 @@
+2008-05-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - updated pixel results for "eliminate excessive repainting when an
+          object's final position after layout is unchanged"
+
+        * platform/mac/fast/repaint/intermediate-layout-position-clip-expected.checksum:
+        * platform/mac/fast/repaint/intermediate-layout-position-clip-expected.png:
+        * platform/mac/fast/repaint/intermediate-layout-position-expected.checksum:
+        * platform/mac/fast/repaint/intermediate-layout-position-expected.png:
+
 2008-05-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

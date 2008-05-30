@@ -1262,7 +1262,6 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         // Now determine the correct ypos based off examination of collapsing margin
         // values.
         collapseMargins(child, marginInfo, yPosEstimate);
-        int postCollapseChildY = child->yPos();
 
         // Now check for clear.
         clearFloatsIfNeeded(child, marginInfo, oldTopPosMargin, oldTopNegMargin);
@@ -1294,22 +1293,15 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         // Insert our compact into the block margin if we have one.
         insertCompactIfNeeded(child, compactInfo);
 
-        view()->addLayoutDelta(IntSize(child->xPos() - oldRect.x(), child->yPos() - oldRect.y()));
+        IntSize childOffset(child->xPos() - oldRect.x(), child->yPos() - oldRect.y());
+        if (childOffset.width() || childOffset.height()) {
+            view()->addLayoutDelta(childOffset);
 
-        // If the child moved, we have to repaint it as well as any floating/positioned
-        // descendants.  An exception is if we need a layout.  In this case, we know we're going to
-        // repaint ourselves (and the child) anyway.
-        if (!selfNeedsLayout() && child->checkForRepaintDuringLayout()) {
-            int finalChildX = child->xPos();
-            int finalChildY = child->yPos();
-            if (finalChildX != oldRect.x() || finalChildY != oldRect.y())
+            // If the child moved, we have to repaint it as well as any floating/positioned
+            // descendants.  An exception is if we need a layout.  In this case, we know we're going to
+            // repaint ourselves (and the child) anyway.
+            if (!selfNeedsLayout() && child->checkForRepaintDuringLayout())
                 child->repaintDuringLayoutIfMoved(oldRect);
-            else if (finalChildY != yPosEstimate || finalChildY != postCollapseChildY) {
-                // The child invalidated itself during layout at an intermediate position,
-                // but not at its final position. Take care of it now.
-                child->repaint();
-                child->repaintOverhangingFloats();
-            }
         }
 
         child = child->nextSibling();
