@@ -183,6 +183,30 @@
 
 2008-05-29  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes the regression where image resources don't have a preview icon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18500
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourceSidebarTreeElement): Call createIconElement before
+        calling the superclass.
+        (WebInspector.ResourceSidebarTreeElement.prototype.createIconElement):
+        Create an iconElement, if the category is images then make a div that
+        contains a preview image. Otherwise just make an img element. If there
+        was a previous iconElement, then replace it.
+        (WebInspector.ResourceSidebarTreeElement.prototype.refresh): Call
+        createIconElement if the category changed.
+        * page/inspector/SidebarTreeElement.js:
+        (WebInspector.SidebarTreeElement): Create an iconElement if one hasn't
+        been made already by a subclass.
+        (WebInspector.SidebarTreeElement.prototype.onattach): Append the iconElement
+        instead of creating one each time.
+        * page/inspector/inspector.css: New and updated style rules.
+
+2008-05-29  Timothy Hatcher  <timothy@apple.com>
+
         Removes a use of the internal _childrenListNode property by adding
         a getter/setter for smallChildren to SidebarSectionTreeElement.
 

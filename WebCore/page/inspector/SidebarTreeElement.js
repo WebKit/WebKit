@@ -72,6 +72,11 @@ WebInspector.SidebarTreeElement = function(className, title, subtitle, represent
         this.disclosureButton.className = "disclosure-button";
     }
 
+    if (!this.iconElement) {
+        this.iconElement = document.createElement("img");
+        this.iconElement.className = "icon";
+    }
+
     this.statusElement = document.createElement("div");
     this.statusElement.className = "status";
 
@@ -161,10 +166,7 @@ WebInspector.SidebarTreeElement.prototype = {
         if (this.hasChildren && this.disclosureButton)
             this._listItemNode.appendChild(this.disclosureButton);
 
-        var iconElement = document.createElement("img");
-        iconElement.className = "icon";
-
-        this._listItemNode.appendChild(iconElement);
+        this._listItemNode.appendChild(this.iconElement);
         this._listItemNode.appendChild(this.statusElement);
         this._listItemNode.appendChild(this.titlesElement);
     },

@@ -1354,6 +1354,8 @@ WebInspector.ResourceSidebarTreeElement = function(resource)
 {
     this.resource = resource;
 
+    this.createIconElement();
+
     WebInspector.SidebarTreeElement.call(this, "resource-sidebar-tree-item", "", "", resource);
 
     this.refreshTitles();
@@ -1416,6 +1418,27 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
         // Do nothing.
     },
 
+    createIconElement: function()
+    {
+        var previousIconElement = this.iconElement;
+
+        if (this.resource.category === WebInspector.resourceCategories.images) {
+            var previewImage = document.createElement("img");
+            previewImage.className = "image-resource-icon-preview";
+            previewImage.src = this.resource.url;
+
+            this.iconElement = document.createElement("div");
+            this.iconElement.className = "icon";
+            this.iconElement.appendChild(previewImage);
+        } else {
+            this.iconElement = document.createElement("img");
+            this.iconElement.className = "icon";
+        }
+
+        if (previousIconElement)
+            previousIconElement.parentNode.replaceChild(this.iconElement, previousIconElement);
+    },
+
     refresh: function()
     {
         this.refreshTitles();
@@ -1423,6 +1446,8 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
         if (!this._listItemNode.hasStyleClass("resources-category-" + this.resource.category.name)) {
             this._listItemNode.removeMatchingStyleClasses("resources-category-\\w+");
             this._listItemNode.addStyleClass("resources-category-" + this.resource.category.name);
+
+            this.createIconElement();
         }
     },
 
