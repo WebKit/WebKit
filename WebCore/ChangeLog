@@ -1,5 +1,25 @@
 2008-05-30  Timothy Hatcher  <timothy@apple.com>
 
+        Implements the back and forward buttons in the Scripts panel.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel): Add the back and forward button elements
+        and remove the FIXMEs.
+        (WebInspector.ScriptsPanel.prototype.reset): Reset _backForwardList
+        and _currentBackForwardIndex. Then call _updateBackAndForwardButtons().
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        Added a fromBackForwardAction argument. If fromBackForwardAction is false
+        then update the _currentBackForwardIndex and _backForwardList.
+        (WebInspector.ScriptsPanel.prototype._updateBackAndForwardButtons):
+        Update the disabled state of the buttons.
+        (WebInspector.ScriptsPanel.prototype._goBack): Update the _currentBackForwardIndex
+        and call _showScriptOrResource() and _updateBackAndForwardButtons().
+        (WebInspector.ScriptsPanel.prototype._goForward): Ditto.
+
+2008-05-30  Timothy Hatcher  <timothy@apple.com>
+
         Made clicking a Console message URL originating from a JavaScript
         source show the Resource in the Scripts panel. This only happens
         when the debugger is attached.

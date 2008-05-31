@@ -40,9 +40,8 @@ WebInspector.ScriptsPanel = function()
     this.backButton.title = WebInspector.UIString("Show the previous script resource.");
     this.backButton.disabled = true;
     this.backButton.appendChild(document.createElement("img"));
-
-    // FIXME: append the back button element to the top status bar when it is implemented.
-    // this.topStatusBar.appendChild(this.backButton);
+    this.backButton.addEventListener("click", this._goBack.bind(this), false);
+    this.topStatusBar.appendChild(this.backButton);
 
     this.forwardButton = document.createElement("button");
     this.forwardButton.className = "status-bar-item";
@@ -50,9 +49,8 @@ WebInspector.ScriptsPanel = function()
     this.forwardButton.title = WebInspector.UIString("Show the next script resource.");
     this.forwardButton.disabled = true;
     this.forwardButton.appendChild(document.createElement("img"));
-
-    // FIXME: append the forward button element to the top status bar when it is implemented.
-    // this.topStatusBar.appendChild(this.forwardButton);
+    this.forwardButton.addEventListener("click", this._goForward.bind(this), false);
+    this.topStatusBar.appendChild(this.forwardButton);
 
     this.filesSelectElement = document.createElement("select");
     this.filesSelectElement.className = "status-bar-item";
@@ -330,6 +328,10 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._clearInterface();
 
+        this._backForwardList = [];
+        this._currentBackForwardIndex = -1;
+        this._updateBackAndForwardButtons();
+
         this._scriptsForURLsInFilesSelect = {};
         this.filesSelectElement.removeChildren();
         this.functionsSelectElement.removeChildren();
@@ -411,7 +413,7 @@ WebInspector.ScriptsPanel.prototype = {
             return this.sourceFrameForScript(scriptOrResource);
     },
 
-    _showScriptOrResource: function(scriptOrResource, line)
+    _showScriptOrResource: function(scriptOrResource, line, fromBackForwardAction)
     {
         if (!scriptOrResource)
             return;
@@ -435,6 +437,25 @@ WebInspector.ScriptsPanel.prototype = {
 
         if (!view)
             return;
+
+        if (!fromBackForwardAction) {
+            var oldIndex = this._currentBackForwardIndex;
+            if (oldIndex >= 0)
+                this._backForwardList.splice(oldIndex + 1, this._backForwardList.length - oldIndex);
+
+            // Check for a previous entry of the same object in _backForwardList.
+            // If one is found, remove it and update _currentBackForwardIndex to match.
+            var previousEntryIndex = this._backForwardList.indexOf(scriptOrResource);
+            if (previousEntryIndex !== -1) {
+                this._backForwardList.splice(previousEntryIndex, 1);
+                --this._currentBackForwardIndex;
+            }
+
+            this._backForwardList.push(scriptOrResource);
+            ++this._currentBackForwardIndex;
+
+            this._updateBackAndForwardButtons();
+        }
 
         this.visibleView = view;
 
@@ -602,6 +623,12 @@ WebInspector.ScriptsPanel.prototype = {
         }
     },
 
+    _updateBackAndForwardButtons: function()
+    {
+        this.backButton.disabled = this._currentBackForwardIndex <= 0;
+        this.forwardButton.disabled = this._currentBackForwardIndex >= (this._backForwardList.length - 1);
+    },
+
     _clearInterface: function()
     {
         this.sidebarPanes.callstack.update(null);
@@ -609,6 +636,28 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._clearCurrentExecutionLine();
         this._updateDebuggerButtons();
+    },
+
+    _goBack: function()
+    {
+        if (this._currentBackForwardIndex <= 0) {
+            console.error("Can't go back from index " + this._currentBackForwardIndex);
+            return;
+        }
+
+        this._showScriptOrResource(this._backForwardList[--this._currentBackForwardIndex], null, true);
+        this._updateBackAndForwardButtons();
+    },
+
+    _goForward: function()
+    {
+        if (this._currentBackForwardIndex >= this._backForwardList.length - 1) {
+            console.error("Can't go forward from index " + this._currentBackForwardIndex);
+            return;
+        }
+
+        this._showScriptOrResource(this._backForwardList[++this._currentBackForwardIndex], null, true);
+        this._updateBackAndForwardButtons();
     },
 
     _toggleDebugging: function()
