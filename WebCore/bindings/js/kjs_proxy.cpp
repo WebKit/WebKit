@@ -213,6 +213,9 @@ void KJSProxy::attachDebugger(KJS::Debugger* debugger)
 
 void KJSProxy::updateDocument()
 {
+    if (!m_frame->document())
+        return;
+
     JSLock lock;
     if (m_windowShell)
         m_windowShell->window()->updateDocument();
