@@ -438,7 +438,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         var option;
         if (scriptOrResource instanceof WebInspector.Script) {
-            option = script.filesSelectOption;
+            option = scriptOrResource.filesSelectOption;
             console.assert(option);
         } else {
             var url = scriptOrResource.url;

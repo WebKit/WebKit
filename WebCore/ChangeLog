@@ -1,5 +1,18 @@
 2008-05-30  Timothy Hatcher  <timothy@apple.com>
 
+        Fixed an "undefined type" exception that was being thrown when
+        selecting a eval script from the file menu in the Scripts panel.
+        This would also happen when stepping into an eval which would
+        break other parts of the Inspector interface.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        Use the scriptOrResource variable instead of the undefined script variable.
+
+2008-05-30  Timothy Hatcher  <timothy@apple.com>
+
         Made the starting line number of scripts be 1-based throughout the engine.
         This cleans up script line numbers so they are all consistent now and fixes
         some cases where script execution was shown as off by one line in the debugger.
