@@ -1,3 +1,10 @@
+2008-05-31  Alp Toker  <alp@nuanti.com>
+
+        Fix inconsistent zoom docs and enum name landed in r34249. Issue
+        noticed by Marco Barisione.
+
+        * webkit/webkitwebview.cpp:
+
 2008-05-30  Carlos Martín Nieto  <carlos@cmartin.tk>
 
         Reviewed by Alp Toker.
