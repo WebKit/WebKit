@@ -365,6 +365,11 @@ WebInspector.ScriptsPanel.prototype = {
             x.show(this.scriptResourceViews);
     },
 
+    canShowResource: function(resource)
+    {
+        return resource && resource.scripts.length && InspectorController.debuggerAttached();
+    },
+
     showScript: function(script, line)
     {
         this._showScriptOrResource(script, line);
@@ -433,8 +438,12 @@ WebInspector.ScriptsPanel.prototype = {
 
         this.visibleView = view;
 
-        if (line && view.revealLine)
-            view.revealLine(line);
+        if (line) {
+            if (view.revealLine)
+                view.revealLine(line);
+            if (view.highlightLine)
+                view.highlightLine(line);
+        }
 
         var option;
         if (scriptOrResource instanceof WebInspector.Script) {

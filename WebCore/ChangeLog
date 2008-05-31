@@ -1,5 +1,32 @@
 2008-05-30  Timothy Hatcher  <timothy@apple.com>
 
+        Made clicking a Console message URL originating from a JavaScript
+        source show the Resource in the Scripts panel. This only happens
+        when the debugger is attached.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Console.js:
+        (WebInspector.Console.prototype._formaterror):
+        Add a preferredPanel of "scripts".
+        (WebInspector.ConsoleMessage.prototype.toMessageElement):
+        Add a preferredPanel of "scripts" when the source is JS.
+        * page/inspector/ScriptView.js:
+        (WebInspector.ScriptView.prototype.highlightLine): Added.
+        Calls through to the sourceFrame. Matches SourceView.
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.canShowResource): Added.
+        Returns true if the debugger is attached and the resource has scripts.
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource): Call
+        highlightLine on the view.
+        * page/inspector/inspector.js:
+        (WebInspector.documentClick): Pass the preferredPanel to showResourceForURL.
+        (WebInspector.showResourceForURL): Resolve the preferredPanel from the string
+        passed in. Checks if the panel implements showResource and canShowResource.
+        Reverts to the Resources panel if any of that is false or not implemented.
+
+2008-05-30  Timothy Hatcher  <timothy@apple.com>
+
         Fixed an "undefined type" exception that was being thrown when
         selecting a eval script from the file menu in the Scripts panel.
         This would also happen when stepping into an eval which would

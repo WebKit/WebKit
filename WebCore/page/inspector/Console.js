@@ -441,6 +441,7 @@ WebInspector.Console.prototype = {
             urlElement.className = "console-message-url webkit-html-resource-link";
             urlElement.href = obj.sourceURL;
             urlElement.lineNumber = obj.line;
+            urlElement.preferredPanel = "scripts";
 
             if (obj.line > 0)
                 urlElement.textContent = WebInspector.UIString("%s (line %d)", obj.sourceURL, obj.line);
@@ -566,6 +567,9 @@ WebInspector.ConsoleMessage.prototype = {
             urlElement.className = "console-message-url webkit-html-resource-link";
             urlElement.href = this.url;
             urlElement.lineNumber = this.line;
+
+            if (this.source === WebInspector.ConsoleMessage.MessageSource.JS)
+                urlElement.preferredPanel = "scripts";
 
             if (this.line > 0)
                 urlElement.textContent = WebInspector.UIString("%s (line %d)", WebInspector.displayNameForURL(this.url), this.line);

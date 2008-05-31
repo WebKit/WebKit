@@ -425,7 +425,7 @@ WebInspector.documentClick = function(event)
     if (!anchor.hasStyleClass("webkit-html-resource-link"))
         return;
 
-    if (WebInspector.showResourceForURL(anchor.href, anchor.lineNumber)) {
+    if (WebInspector.showResourceForURL(anchor.href, anchor.lineNumber, anchor.preferredPanel)) {
         event.preventDefault();
         event.stopPropagation();
     }
@@ -883,14 +883,22 @@ WebInspector.resourceForURL = function(url)
     return null;
 }
 
-WebInspector.showResourceForURL = function(url, line)
+WebInspector.showResourceForURL = function(url, line, preferredPanel)
 {
     var resource = this.resourceForURL(url);
     if (!resource)
         return false;
 
-    this.currentPanel = this.panels.resources;
-    this.panels.resources.showResource(resource, line);
+    if (preferredPanel && preferredPanel in WebInspector.panels) {
+        var panel = this.panels[preferredPanel];
+        if (!("showResource" in panel))
+            panel = null;
+        else if ("canShowResource" in panel && !panel.canShowResource(resource))
+            panel = null;
+    }
+
+    this.currentPanel = panel || this.panels.resources;
+    this.currentPanel.showResource(resource, line);
     return true;
 }
 
