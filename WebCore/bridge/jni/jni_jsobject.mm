@@ -319,7 +319,7 @@ jobject JavaJSObject::eval(jstring script) const
         return 0;
 
     rootObject->globalObject()->startTimeoutCheck();
-    Completion completion = Interpreter::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), UString(), 0, JavaString(script).ustring());
+    Completion completion = Interpreter::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), UString(), 1, JavaString(script).ustring());
     rootObject->globalObject()->stopTimeoutCheck();
     ComplType type = completion.complType();
     

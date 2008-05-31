@@ -251,6 +251,11 @@ JSLazyEventListener::JSLazyEventListener(const String& functionName, const Strin
     // and we need to avoid a reference cycle. If JS transfers
     // this handler to another node, parseCode will be called and
     // then originalNode is no longer needed.
+
+    // A JSLazyEventListener can be created with a line number of zero when it is created with
+    // a setAttribute call from JavaScript, so make the line number 1 in that case.
+    if (m_lineNumber == 0)
+        m_lineNumber = 1;
 }
 
 JSObject* JSLazyEventListener::listenerObj() const
@@ -282,6 +287,9 @@ void JSLazyEventListener::parseCode() const
         UString sourceURL(frame->loader()->url().string());
         args.append(eventParameterName());
         args.append(jsString(m_code));
+
+        // FIXME: Passing the document's URL to construct is not always correct, since this event listener might
+        // have been added with setAttribute from a script, and we should pass String() in that case.
         m_listener = constr->construct(exec, args, m_functionName, sourceURL, m_lineNumber); // FIXME: is globalExec ok ?
 
         FunctionImp* listenerAsFunction = static_cast<FunctionImp*>(m_listener.get());

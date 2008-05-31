@@ -1,3 +1,50 @@
+2008-05-30  Timothy Hatcher  <timothy@apple.com>
+
+        Made the starting line number of scripts be 1-based throughout the engine.
+        This cleans up script line numbers so they are all consistent now and fixes
+        some cases where script execution was shown as off by one line in the debugger.
+
+        Doing this also exposed a bug where JSLazyEventListener created in XHML or SVG
+        documents would always have a line number of 0. So this change fixed that bug
+        to pass all the SVG and XHTML tests.
+
+        All layout tests pass.
+
+        Reviewed by Oliver Hunt.
+
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSLazyEventListener::JSLazyEventListener): Set the line number to 1
+        if it was passed in as 0. This can happen when listeners are created with
+        a setAttribute call from JavaScript.
+        (WebCore::JSLazyEventListener::parseCode): Add a FIXME about the URL being
+        incorrect when listeners are created with a setAttribute call from JavaScript.
+        * bindings/js/kjs_events.h: Remove the default value for lineNumber, since no
+        callers need it.
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject evaluateWebScript:]): Pass a line number of 1 instead of 0
+        to Interpreter::evaluate().
+        * bridge/NP_jsobject.cpp:
+        (_NPN_Evaluate): Ditto.
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::eval): Ditto.
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::startElementNs): Call KJSProxy::setEventHandlerLineno()
+        around the call to handleElementAttributes, so any JSLazyEventListener created
+        from those attributes have line numbers.
+        (WebCore::XMLTokenizer::endElementNs): Remove a minus 1 of the line number.
+        (WebCore::XMLTokenizer::notifyFinished): Pass a line number of 1 instead of 0.
+        (WebCore::XMLTokenizer::parseEndElement): Remove a minus 1 of the line number.
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::evaluateScript): Add a FIXME about the starting
+        line number being incorrect in some cases when this function is called.
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseSpecial): Add a plus 1 to the line number when
+        setting scriptStartLineno so it is 1-based. Same for calling setEventHandlerLineno().
+        (WebCore::HTMLTokenizer::processToken): Ditto.
+        * html/HTMLTokenizer.h: Change the default line number on scriptExecution() to 1 from 0.
+        * loader/FrameLoader.cpp:
+        (FrameLoader::executeIfJavaScriptURL): Pass a line number of 1 instead of 0 to executeScript().
+
 2008-05-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver (earlier version reviewed by Alexey).

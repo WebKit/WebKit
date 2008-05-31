@@ -217,7 +217,7 @@ JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args, const 
 // ECMA 15.3.2 The Function Constructor
 JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args)
 {
-    return construct(exec, args, "anonymous", UString(), 0);
+    return construct(exec, args, "anonymous", UString(), 1);
 }
 
 // ECMA 15.3.1 The Function Constructor Called as a Function

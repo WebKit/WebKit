@@ -73,7 +73,7 @@ JSValue* DebuggerCallFrame::evaluate(const UString& script, JSValue*& exception)
     int errLine;
     UString errMsg;
 
-    RefPtr<EvalNode> evalNode = parser().parse<EvalNode>(&newExec, UString(), 0, UStringSourceProvider::create(script), &sourceId, &errLine, &errMsg);
+    RefPtr<EvalNode> evalNode = parser().parse<EvalNode>(&newExec, UString(), 1, UStringSourceProvider::create(script), &sourceId, &errLine, &errMsg);
 
     if (!evalNode)
         return Error::create(&newExec, SyntaxError, errMsg, errLine, sourceId, 0);

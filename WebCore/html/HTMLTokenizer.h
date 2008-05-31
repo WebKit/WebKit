@@ -171,7 +171,7 @@ private:
     State parseEntity(SegmentedString&, UChar*& dest, State, unsigned& _cBufferPos, bool start, bool parsingTag);
     State parseProcessingInstruction(SegmentedString&, State);
     State scriptHandler(State);
-    State scriptExecution(const String& script, State, const String& scriptURL, int baseLine = 0);
+    State scriptExecution(const String& script, State, const String& scriptURL, int baseLine = 1);
     void setSrc(const SegmentedString&);
  
     // check if we have enough space in the buffer.

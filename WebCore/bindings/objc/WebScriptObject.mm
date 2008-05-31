@@ -333,7 +333,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSLock lock;
     
     [self _rootObject]->globalObject()->startTimeoutCheck();
-    Completion completion = Interpreter::evaluate([self _rootObject]->globalObject()->globalExec(), [self _rootObject]->globalObject()->globalScopeChain(), UString(), 0, String(script));
+    Completion completion = Interpreter::evaluate([self _rootObject]->globalObject()->globalExec(), [self _rootObject]->globalObject()->globalScopeChain(), UString(), 1, String(script));
     [self _rootObject]->globalObject()->stopTimeoutCheck();
     ComplType type = completion.complType();
     

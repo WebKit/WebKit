@@ -307,7 +307,7 @@ HTMLTokenizer::State HTMLTokenizer::parseSpecial(SegmentedString &src, State sta
     ASSERT(!state.hasTagState());
     ASSERT(state.inXmp() + state.inTextArea() + state.inTitle() + state.inStyle() + state.inScript() + state.inIFrame() == 1 );
     if (state.inScript())
-        scriptStartLineno = m_lineNumber;
+        scriptStartLineno = m_lineNumber + 1; // Script line numbers are 1 based.
 
     if (state.inComment()) 
         state = parseComment(src, state);
@@ -1873,7 +1873,7 @@ PassRefPtr<Node> HTMLTokenizer::processToken()
 {
     KJSProxy* jsProxy = (!m_fragment && m_doc->frame()) ? m_doc->frame()->scriptProxy() : 0;
     if (jsProxy && m_doc->frame()->scriptProxy()->isEnabled())
-        jsProxy->setEventHandlerLineno(tagStartLineno);
+        jsProxy->setEventHandlerLineno(tagStartLineno + 1); // Script line numbers are 1 based.
     if (dest > buffer) {
         currToken.text = StringImpl::createStrippingNullCharacters(buffer, dest - buffer);
         if (currToken.tagName != commentAtom)
@@ -1881,7 +1881,7 @@ PassRefPtr<Node> HTMLTokenizer::processToken()
     } else if (currToken.tagName == nullAtom) {
         currToken.reset();
         if (jsProxy)
-            jsProxy->setEventHandlerLineno(m_lineNumber);
+            jsProxy->setEventHandlerLineno(m_lineNumber + 1); // Script line numbers are 1 based.
         return 0;
     }
 

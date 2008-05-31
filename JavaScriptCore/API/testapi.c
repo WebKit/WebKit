@@ -806,7 +806,7 @@ int main(int argc, char* argv[])
     ASSERT(!JSObjectMakeFunction(context, NULL, 0, NULL, functionBody, NULL, 1, &exception));
     ASSERT(JSValueIsObject(context, exception));
     v = JSObjectGetProperty(context, JSValueToObject(context, exception, NULL), line, NULL);
-    assertEqualsAsNumber(v, 2); // FIXME: Lexer::setCode bumps startingLineNumber by 1 -- we need to change internal callers so that it doesn't have to (saying '0' to mean '1' in the API would be really confusing -- it's really confusing internally, in fact)
+    assertEqualsAsNumber(v, 1);
     JSStringRelease(functionBody);
     JSStringRelease(line);
 
@@ -901,16 +901,16 @@ int main(int argc, char* argv[])
     ASSERT(JSValueIsEqual(context, v, o, NULL));
 
     JSStringRef script = JSStringCreateWithUTF8CString("this;");
-    v = JSEvaluateScript(context, script, NULL, NULL, 0, NULL);
+    v = JSEvaluateScript(context, script, NULL, NULL, 1, NULL);
     ASSERT(JSValueIsEqual(context, v, globalObject, NULL));
-    v = JSEvaluateScript(context, script, o, NULL, 0, NULL);
+    v = JSEvaluateScript(context, script, o, NULL, 1, NULL);
     ASSERT(JSValueIsEqual(context, v, o, NULL));
     JSStringRelease(script);
 
     script = JSStringCreateWithUTF8CString("eval(this);");
-    v = JSEvaluateScript(context, script, NULL, NULL, 0, NULL);
+    v = JSEvaluateScript(context, script, NULL, NULL, 1, NULL);
     ASSERT(JSValueIsEqual(context, v, globalObject, NULL));
-    v = JSEvaluateScript(context, script, o, NULL, 0, NULL);
+    v = JSEvaluateScript(context, script, o, NULL, 1, NULL);
     ASSERT(JSValueIsEqual(context, v, o, NULL));
     JSStringRelease(script);
 

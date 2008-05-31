@@ -67,6 +67,10 @@ void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNu
         
     Lexer& lexer = KJS::lexer();
 
+    ASSERT(startingLineNumber > 0);
+    if (startingLineNumber <= 0)
+        startingLineNumber = 1;
+
     lexer.setCode(startingLineNumber, source);
     *sourceId = ++m_sourceId;
 

@@ -148,7 +148,7 @@ CallIdentifier createCallIdentifier(JSObject* calledFunction)
 
 CallIdentifier createCallIdentifier(const UString& sourceURL, int startingLineNumber)
 {
-    return CallIdentifier(GlobalCodeExecution, sourceURL, (startingLineNumber + 1));
+    return CallIdentifier(GlobalCodeExecution, sourceURL, startingLineNumber);
 }
 
 CallIdentifier createCallIdentifierFromFunctionImp(FunctionImp* functionImp)

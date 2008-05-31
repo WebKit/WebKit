@@ -65,7 +65,7 @@ void* runJavaScriptThread(void* arg)
         JSStringRef scriptRef = JSStringCreateWithUTF8CString(script);
 
         JSValueRef exception = 0;
-        JSEvaluateScript(ctx, scriptRef, 0, 0, 0, &exception);
+        JSEvaluateScript(ctx, scriptRef, 0, 0, 1, &exception);
         ASSERT(!exception);
 
         JSGlobalContextRelease(ctx);

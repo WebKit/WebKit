@@ -230,7 +230,9 @@ void HTMLScriptElement::evaluateScript(const String& url, const String& script)
     if (frame) {
         if (frame->scriptProxy()->isEnabled()) {
             m_evaluated = true;
-            frame->scriptProxy()->evaluate(url, 0, script);
+            // FIXME: This starting line number will be incorrect for evaluation triggered
+            // from insertedIntoDocument or childrenChanged.
+            frame->scriptProxy()->evaluate(url, 1, script);
             Document::updateDocumentsRendering();
         }
     }

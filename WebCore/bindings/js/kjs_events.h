@@ -76,7 +76,7 @@ namespace WebCore {
 
     class JSLazyEventListener : public JSEventListener {
     public:
-        JSLazyEventListener(const String& functionName, const String& code, JSDOMWindow*, Node*, int lineNumber = 0);
+        JSLazyEventListener(const String& functionName, const String& code, JSDOMWindow*, Node*, int lineNumber);
         virtual KJS::JSObject* listenerObj() const;
 
     private:

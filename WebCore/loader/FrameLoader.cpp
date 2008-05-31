@@ -769,7 +769,7 @@ bool FrameLoader::executeIfJavaScriptURL(const KURL& url, bool userGesture, bool
 
 JSValue* FrameLoader::executeScript(const String& script, bool forceUserGesture)
 {
-    return executeScript(forceUserGesture ? String() : m_URL.string(), 0, script);
+    return executeScript(forceUserGesture ? String() : m_URL.string(), 1, script);
 }
 
 JSValue* FrameLoader::executeScript(const String& url, int baseLine, const String& script)

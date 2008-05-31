@@ -195,7 +195,7 @@ JSValue* functionRun(ExecState* exec, JSObject*, const List& args)
     JSGlobalObject* globalObject = exec->dynamicGlobalObject();
 
     stopWatch.start();
-    Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), fileName, 0, script.data());
+    Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), fileName, 1, script.data());
     stopWatch.stop();
 
     return jsNumber(stopWatch.getElapsedMS());
@@ -209,7 +209,7 @@ JSValue* functionLoad(ExecState* exec, JSObject*, const List& args)
         return throwError(exec, GeneralError, "Could not open file.");
 
     JSGlobalObject* globalObject = exec->dynamicGlobalObject();
-    Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), fileName, 0, script.data());
+    Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), fileName, 1, script.data());
 
     return jsUndefined();
 }
@@ -275,7 +275,7 @@ static bool prettyPrintScript(ExecState* exec, const UString& fileName, const Ve
     int errLine = 0;
     UString errMsg;
     UString scriptUString(script.data());
-    RefPtr<ProgramNode> programNode = parser().parse<ProgramNode>(exec, fileName, 0, UStringSourceProvider::create(scriptUString), 0, &errLine, &errMsg);
+    RefPtr<ProgramNode> programNode = parser().parse<ProgramNode>(exec, fileName, 1, UStringSourceProvider::create(scriptUString), 0, &errLine, &errMsg);
     if (!programNode) {
         fprintf(stderr, "%s:%d: %s.\n", fileName.UTF8String().c_str(), errLine, errMsg.UTF8String().c_str());
         return false;
@@ -304,7 +304,7 @@ static bool runWithScripts(const Vector<UString>& fileNames, Vector<UString>& ar
         if (prettyPrint)
             prettyPrintScript(globalObject->globalExec(), fileName, script);
         else {
-            Completion completion = Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), fileName, 0, script.data());
+            Completion completion = Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), fileName, 1, script.data());
             success = success && completion.complType() != Throw;
             if (dump) {
                 if (success)

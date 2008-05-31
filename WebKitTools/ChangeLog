@@ -1,3 +1,17 @@
+2008-05-30  Timothy Hatcher  <timothy@apple.com>
+
+        Made the starting line number of scripts be 1-based throughout the engine.
+        This cleans up script line numbers so they are all consistent now.
+
+        Reviewed by Oliver Hunt.
+
+        * DumpRenderTree/mac/ObjCController.m:
+        (runJavaScriptThread): Pass a line number of 1 instead of 0 to JSEvaluateScript.
+        * DumpRenderTree/pthreads/JavaScriptThreadingPthreads.cpp:
+        (runJavaScriptThread): Ditto.
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runJavaScriptThread): Ditto.
+
 2008-05-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adam Roben.

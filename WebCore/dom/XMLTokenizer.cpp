@@ -41,6 +41,7 @@
 #include "HTMLScriptElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTokenizer.h"
+#include "kjs_proxy.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
@@ -819,12 +820,19 @@ void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xm
         stopParsing();
         return;
     }
-    
+
+    KJSProxy* jsProxy = m_doc->frame() ? m_doc->frame()->scriptProxy() : 0;
+    if (jsProxy && m_doc->frame()->scriptProxy()->isEnabled())
+        jsProxy->setEventHandlerLineno(lineNumber());
+
     handleElementAttributes(newElement.get(), libxmlAttributes, nb_attributes, ec);
     if (ec) {
         stopParsing();
         return;
     }
+
+    if (jsProxy)
+        jsProxy->setEventHandlerLineno(0);
 
     newElement->beginParsingChildren();
 
@@ -911,7 +919,7 @@ void XMLTokenizer::endElementNs()
                 if (child->isTextNode() || child->nodeType() == Node::CDATA_SECTION_NODE)
                     scriptCode += static_cast<CharacterData*>(child)->data();
             }
-            m_view->frame()->loader()->executeScript(m_doc->url().string(), m_scriptStartLine - 1, scriptCode);
+            m_view->frame()->loader()->executeScript(m_doc->url().string(), m_scriptStartLine, scriptCode);
         }
         
         m_requestingScript = false;
@@ -1478,7 +1486,7 @@ void XMLTokenizer::notifyFinished(CachedResource* finishedObj)
     if (errorOccurred) 
         EventTargetNodeCast(e.get())->dispatchHTMLEvent(errorEvent, true, false);
     else {
-        m_view->frame()->loader()->executeScript(cachedScriptUrl, 0, scriptSource);
+        m_view->frame()->loader()->executeScript(cachedScriptUrl, 1, scriptSource);
         EventTargetNodeCast(e.get())->dispatchHTMLEvent(loadEvent, false, false);
     }
     
@@ -1948,7 +1956,7 @@ void XMLTokenizer::parseEndElement()
                 if (child->isTextNode() || child->nodeType() == Node::CDATA_SECTION_NODE)
                     scriptCode += static_cast<CharacterData*>(child)->data();
             }
-            m_view->frame()->loader()->executeScript(m_doc->url().string(), m_scriptStartLine - 1, scriptCode);
+            m_view->frame()->loader()->executeScript(m_doc->url().string(), m_scriptStartLine, scriptCode);
         }
         m_requestingScript = false;
     }

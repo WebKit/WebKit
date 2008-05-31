@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
     char* scriptUTF8 = createStringWithContentsOfFile(scriptPath);
     JSStringRef script = JSStringCreateWithUTF8CString(scriptUTF8);
     JSValueRef exception;
-    JSValueRef result = JSEvaluateScript(context, script, NULL, NULL, 0, &exception);
+    JSValueRef result = JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
     if (result)
         printf("PASS: Test script executed successfully.\n");
     else {

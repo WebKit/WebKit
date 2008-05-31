@@ -1,3 +1,43 @@
+2008-05-30  Timothy Hatcher  <timothy@apple.com>
+
+        Made the starting line number of scripts be 1-based throughout the engine.
+        This cleans up script line numbers so they are all consistent now and fixes
+        some cases where script execution was shown as off by one line in the debugger.
+
+        No change in SunSpider.
+
+        Reviewed by Oliver Hunt.
+
+        * API/minidom.c:
+        (main): Pass a line number of 1 instead of 0 to parser().parse().
+        * API/testapi.c:
+        (main): Ditto. And removes a FIXME and changed an assertEqualsAsNumber
+        to use 1 instead of 2 for the line number.
+        * VM/Machine.cpp:
+        (KJS::callEval): Pass a line number of 1 instead of 0.
+        (KJS::Machine::debug): Use firstLine for WillExecuteProgram instead of
+        lastLine. Use lastLine for DidExecuteProgram instead of firstLine.
+        * kjs/DebuggerCallFrame.cpp:
+        (KJS::DebuggerCallFrame::evaluate): Pass a line number of 1 instead of
+        0 to parser().parse().
+        * kjs/Parser.cpp:
+        (KJS::Parser::parse): ASSERT startingLineNumber is greatter than 0. Change
+        the startingLineNumber to be 1 if it was less than or equal to 0. This is needed
+        for release builds to maintain compatibility with the JavaScriptCore API.
+        * kjs/function.cpp:
+        (KJS::globalFuncEval): Pass a line number of 1 instead of 0 to parser().parse().
+        * kjs/function_object.cpp:
+        (FunctionObjectImp::construct): Pass a line number of 1 instead of 0 to construct().
+        * kjs/lexer.cpp:
+        (Lexer::setCode): Made yylineno = startingLineNumber instead of adding 1.
+        * kjs/testkjs.cpp:
+        (functionRun): Pass a line number of 1 instead of 0 to Interpreter::evaluate().
+        (functionLoad): Ditto.
+        (prettyPrintScript): Ditto.
+        (runWithScripts): Ditto.
+        * profiler/Profiler.cpp:
+        (WebCore::createCallIdentifier): Removed a plus 1 of startingLineNumber.
+
 2008-05-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
