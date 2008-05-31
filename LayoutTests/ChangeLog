@@ -2,6 +2,18 @@
 
         Reviewed by Darin Adler.
 
+        - test for https://bugs.webkit.org/show_bug.cgi?id=19278
+          <rdar://problem/5968621> REGRESSION (r31114-r31132): image float disappears on refresh
+
+        * fast/dynamic/float-in-trailing-whitespace-after-last-line-break.html: Added.
+        * platform/mac/fast/dynamic/float-in-trailing-whitespace-after-last-line-break-expected.checksum: Added.
+        * platform/mac/fast/dynamic/float-in-trailing-whitespace-after-last-line-break-expected.png: Added.
+        * platform/mac/fast/dynamic/float-in-trailing-whitespace-after-last-line-break-expected.txt: Added.
+
+2008-05-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
         - updated pixel results for "eliminate excessive repainting when an
           object's final position after layout is unchanged"
 
