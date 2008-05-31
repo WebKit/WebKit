@@ -1,3 +1,50 @@
+2008-05-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver (earlier version reviewed by Alexey).
+
+        - speculative fix for "REGRESSION(r34143?): Frequent crash while browsing"
+        https://bugs.webkit.org/show_bug.cgi?id=19285
+        
+        ("This Time for Sure" Edition)
+
+        I'm pretty sure this fixes it but I have not been able to
+        reproduce and am unsure if my theory of the bug is right.
+
+        I belive the bug was because JSDOMWindowBase accessed
+        JSDOMWindowShell in its destructor to remove itself from a
+        hashtable, but GC destructor order is not guaranteed, so the
+        hashtable may have been freed already. This patch changes things
+        so that a non-GC object (the KJSProxy) does the tracking of live
+        window objects for a frame. JSDOMWindowBase can null check the frame
+        pointer to verify if it is still good.
+        
+        In addition, we must create a similar setup between DOMWindow and
+        Frame; since the DOMWindow of a given frame can now change over
+        time, we must ensure that the Frame disconnects every live
+        DOMWindow when destroyed, not just the last.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::~JSDOMWindowBase):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::clear):
+        (WebCore::KJSProxy::initScript):
+        (WebCore::KJSProxy::updateDocument):
+        * bindings/js/kjs_proxy.h:
+        (WebCore::KJSProxy::clearFormerWindow):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::~DOMWindow):
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::setDocument):
+        (WebCore::Frame::clearDOMWindow):
+        (WebCore::Frame::clearFormerDOMWindow):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+
 2008-05-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler and Dave Hyatt.

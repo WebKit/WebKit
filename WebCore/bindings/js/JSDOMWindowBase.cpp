@@ -202,7 +202,8 @@ void JSDOMWindowBase::updateDocument()
 
 JSDOMWindowBase::~JSDOMWindowBase()
 {
-    d->m_shell->clearFormerWindow(asJSDOMWindow(this));
+    if (m_impl->frame())
+        m_impl->frame()->scriptProxy()->clearFormerWindow(asJSDOMWindow(this));
 
     clearAllTimeouts();
 

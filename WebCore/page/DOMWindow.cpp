@@ -146,6 +146,8 @@ DOMWindow::DOMWindow(Frame* frame)
 
 DOMWindow::~DOMWindow()
 {
+    if (m_frame)
+        m_frame->clearFormerDOMWindow(this);
 }
 
 void DOMWindow::disconnectFrame()

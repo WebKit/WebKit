@@ -96,6 +96,7 @@ public:
     FrameView* view() const;
 
     DOMWindow* domWindow() const;
+    void clearFormerDOMWindow(DOMWindow*);
     Editor* editor() const;
     EventHandler* eventHandler() const;
     FrameLoader* loader() const;
