@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<p>There should be no red pixels below.</p>
+<p><canvas width="400" height="400" id="c" style="background: white;"></canvas></p>
+<script>
+window.onload = function () {
+    var ctx = document.getElementById('c').getContext('2d');
+    var w = 10;
+    var h = 10;
+
+    var y = 10;
+    for (var offsetY = -10; offsetY <= 10; offsetY++) {
+        var x = 10;
+        for (var offsetX = -10; offsetX <= 10; offsetX++) {
+            ctx.shadowColor = 'transparent';
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+        
+            ctx.fillStyle = 'red';
+            ctx.fillRect(x + offsetX, y + offsetY, w, h);
+    
+            ctx.shadowColor = 'green';
+            ctx.shadowOffsetX = offsetX;
+            ctx.shadowOffsetY = offsetY;
+        
+            ctx.fillStyle = 'white';
+            ctx.fillRect(x, y, w, h);
+
+            x += w + Math.abs(offsetX) + 2;
+        }
+        y += h + Math.abs(offsetY) + 2;
+    }
+}
+</script>

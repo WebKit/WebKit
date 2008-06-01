@@ -1,3 +1,15 @@
+2008-06-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=19344
+          Regression: Shadow offsets seem to have changed in 10.5.3 in canvas
+
+        * fast/canvas/shadow-offset.html: Added.
+        * platform/mac/fast/canvas/shadow-offset-expected.checksum: Added.
+        * platform/mac/fast/canvas/shadow-offset-expected.png: Added.
+        * platform/mac/fast/canvas/shadow-offset-expected.txt: Added.
+
 2008-05-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

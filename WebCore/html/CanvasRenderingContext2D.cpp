@@ -37,6 +37,7 @@
 #include "CanvasStyle.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "FloatConversion.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
@@ -914,7 +915,24 @@ void CanvasRenderingContext2D::applyShadow()
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGColorRef color = CGColorCreate(colorSpace, components);
     CGColorSpaceRelease(colorSpace);
-    CGContextSetShadowWithColor(c->platformContext(), state().m_shadowOffset, state().m_shadowBlur, color);
+
+    CGFloat width = state().m_shadowOffset.width();
+    CGFloat height = state().m_shadowOffset.height();
+
+    // Work around <rdar://problem/5539388> by ensuring that the offsets will get truncated
+    // to the desired integer.
+    static const CGFloat extraShadowOffset = narrowPrecisionToCGFloat(1.0 / 128);
+    if (width > 0)
+        width += extraShadowOffset;
+    else if (width < 0)
+        width -= extraShadowOffset;
+
+    if (height > 0)
+        height += extraShadowOffset;
+    else if (height < 0)
+        height -= extraShadowOffset;
+
+    CGContextSetShadowWithColor(c->platformContext(), CGSizeMake(width, -height), state().m_shadowBlur, color);
     CGColorRelease(color);
 #endif
 }
