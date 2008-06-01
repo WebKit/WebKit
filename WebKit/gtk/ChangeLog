@@ -1,5 +1,15 @@
 2008-06-01  Alp Toker  <alp@nuanti.com>
 
+        Suggested by Christian Dywan.
+
+        Use float literals for zoom values and improve documentation wording.
+
+        * webkit/webkitwebsettings.cpp:
+        (_WebKitWebSettingsPrivate::webkit_web_settings_class_init):
+        * webkit/webkitwebview.cpp:
+
+2008-06-01  Alp Toker  <alp@nuanti.com>
+
         Reviewed by Oliver.
 
         Remove webkit_web_view_go_backward(),

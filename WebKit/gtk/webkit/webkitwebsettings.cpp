@@ -257,8 +257,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     g_param_spec_float(
                                     "zoom-step",
                                     "Zoom Stepping Value",
-                                    "How much the zoom level is changed when zooming in or out.",
-                                    0, G_MAXFLOAT, 0.1,
+                                    "The value by which the zoom level is changed when zooming in or out.",
+                                    0.0f, G_MAXFLOAT, 0.1f,
                                     flags));
 
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
