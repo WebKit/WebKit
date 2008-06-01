@@ -3,7 +3,7 @@
         Reviewed by Darin Adler.
 
         - fix https://bugs.webkit.org/show_bug.cgi?id=19344
-          Regression: Shadow offsets seem to have changed in 10.5.3 in canvas
+          <rdar://problem/5977300> Regression: Shadow offsets seem to have changed in 10.5.3 in canvas
 
         Test: fast/canvas/shadow-offset.html
 
