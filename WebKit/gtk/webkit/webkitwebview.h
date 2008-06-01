@@ -205,12 +205,6 @@ webkit_web_view_set_settings (WebKitWebView* web_view, WebKitWebSettings* settin
 WEBKIT_API WebKitWebSettings*
 webkit_web_view_get_settings (WebKitWebView* web_view);
 
-WEBKIT_OBSOLETE_API gboolean
-webkit_web_view_can_go_backward (WebKitWebView* web_view);
-
-WEBKIT_OBSOLETE_API void
-webkit_web_view_go_backward (WebKitWebView* web_view);
-
 WEBKIT_API gboolean
 webkit_web_view_get_transparent (WebKitWebView* web_view);
 

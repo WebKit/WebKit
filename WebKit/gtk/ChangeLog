@@ -1,3 +1,14 @@
+2008-06-01  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Oliver.
+
+        Remove webkit_web_view_go_backward(),
+        webkit_web_view_can_go_backward(). These have been obsoleted by
+        the back() versions for quite a while.
+
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
 2008-05-31  Alp Toker  <alp@nuanti.com>
 
         Fix inconsistent zoom docs and enum name landed in r34249. Issue

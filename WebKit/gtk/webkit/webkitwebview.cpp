@@ -1508,20 +1508,6 @@ gboolean webkit_web_view_go_to_back_forward_item(WebKitWebView* webView, WebKitW
 }
 
 /**
- * webkit_web_view_go_backward:
- * @webView: the #WebKitWebView
- *
- * @Deprecated: Use webkit_web_view_go_back() instead.
- *
- * Go to the previous page, if there's any.
- */
-void webkit_web_view_go_backward(WebKitWebView* webView)
-{
-    g_warning("webkit_web_view_go_backward() is obsolete; use webkit_web_view_go_back()");
-    webkit_web_view_go_back(webView);
-}
-
-/**
  * webkit_web_view_go_back:
  * @web_view: a #WebKitWebView
  *
@@ -1562,22 +1548,6 @@ void webkit_web_view_go_forward(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     core(webView)->goForward();
-}
-
-/**
- * webkit_web_view_can_go_backward:
- * @webView: the #WebKitWebView
- *
- * Checks whether the view can go back to the previous page
- *
- * @Deprecated: Use webkit_web_view_can_go_back() instead.
- *
- * Return value: %TRUE if the page can go back, otherwise returns %FALSE
- */
-gboolean webkit_web_view_can_go_backward(WebKitWebView* webView)
-{
-    g_warning("webkit_web_view_can_go_backward() is obsolete; use webkit_web_view_can_go_back()");
-    return webkit_web_view_can_go_back(webView);
 }
 
 /**
