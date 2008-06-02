@@ -40,7 +40,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/rendering/style \
 	-I$(top_builddir)/WebCore/bindings/js
 
-webkitgtk_cppflags += \
+webcoregtk_cppflags += \
 	-I$(srcdir)/WebCore/platform/gtk \
 	-I$(srcdir)/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/WebCore/platform/graphics/cairo \
@@ -1013,16 +1013,17 @@ webcore_sources += \
 	WebCore/xml/XMLHttpRequest.cpp \
 	WebCore/xml/XMLHttpRequestProgressEvent.cpp \
 	WebCore/xml/XMLSerializer.cpp
+
 if TARGET_X11
-webcore_sources += \
+webcoregtk_sources += \
 	WebCore/plugins/gtk/gtk2xtbin.c
 endif
 
-webkitgtk_headers += \
+webcoregtk_headers += \
 	WebCore/platform/gtk/ClipboardGtk.h \
 	WebCore/platform/gtk/PasteboardHelper.h
 
-webkitgtk_sources += \
+webcoregtk_sources += \
 	WebCore/platform/graphics/GlyphPageTreeNode.cpp \
 	WebCore/platform/graphics/GlyphWidthMap.cpp \
 	WebCore/platform/graphics/FontCache.cpp \
@@ -1124,10 +1125,10 @@ endif
 # Freetype font backend
 # ---
 if USE_FREETYPE
-webkitgtk_cppflags += \
+webcoregtk_cppflags += \
 	-DUSE_FREETYPE=1
 
-webkitgtk_sources += \
+webcoregtk_sources += \
 	WebCore/platform/graphics/gtk/FontCustomPlatformData.cpp \
 	WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp \
 	WebCore/platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp \
@@ -1138,10 +1139,10 @@ endif # END USE_FREETYPE
 # Pango font backend
 # ---
 if USE_PANGO
-webkitgtk_cppflags += \
+webcoregtk_cppflags += \
 	-DUSE_PANGO=1
 
-webkitgtk_sources += \
+webcoregtk_sources += \
 	WebCore/platform/graphics/gtk/FontCustomPlatformDataPango.cpp \
 	WebCore/platform/graphics/gtk/FontPlatformDataPango.cpp \
 	WebCore/platform/graphics/gtk/GlyphPageTreeNodePango.cpp \
@@ -1343,7 +1344,7 @@ webcore_sources += \
 	WebCore/rendering/RenderMedia.cpp \
 	WebCore/bindings/js/JSAudioConstructor.cpp
 
-webkitgtk_sources += \
+webcoregtk_sources += \
 	WebCore/platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp \
 	WebCore/platform/graphics/gtk/VideoSinkGStreamer.cpp
 
@@ -1440,7 +1441,7 @@ FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG=1
 WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/SVGCSSPropertyNames.in 
 WEBCORE_CSS_VALUE_KEYWORDS += $(WebCore)/css/SVGCSSValueKeywords.in
 
-webkitgtk_cppflags += \
+webcoregtk_cppflags += \
 	-I$(srcdir)/WebCore/svg/graphics/cairo
 
 webcore_built_sources += \
@@ -2053,7 +2054,7 @@ webcore_sources += \
 	WebCore/rendering/SVGRenderSupport.cpp \
 	WebCore/rendering/SVGRootInlineBox.cpp
 
-webkitgtk_sources += \
+webcoregtk_sources += \
 	WebCore/svg/graphics/cairo/RenderPathCairo.cpp \
 	WebCore/svg/graphics/cairo/SVGPaintServerCairo.cpp \
 	WebCore/svg/graphics/cairo/SVGPaintServerGradientCairo.cpp \

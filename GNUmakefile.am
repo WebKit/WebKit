@@ -14,8 +14,9 @@
 #
 # Sources, headers, flags, etc... should be added to the respective variables
 # with the above suffix, e.g, webcore-specific sources should go to
-# webcore_sources, gtk port-specific flags should go to webkitgtk_cppflags,
-# etc... The only exceptions are the global variables. See Global Variables below.
+# webcore_sources, gtk port API and WebCoreSupport parts to webkitgtk_sources,
+# etc... The only exceptions are the global variables. See Global Variables
+# below.
 #
 # Global Variables
 #
@@ -139,13 +140,18 @@ webcore_headers :=
 webcore_libadd :=
 webcore_built_sources :=
 webcore_built_nosources :=
+webcoregtk_cppflags :=
+webcoregtk_sources :=
+webcoregtk_headers :=
 
 nodist_libWebCore_la_SOURCES = \
 	$(webcore_built_sources)
 
 libWebCore_la_SOURCES = \
 	$(webcore_headers) \
-	$(webcore_sources)
+	$(webcore_sources) \
+	$(webcoregtk_headers) \
+	$(webcoregtk_sources)
 
 libWebCore_la_CXXFLAGS = \
 	-fno-strict-aliasing \
@@ -182,7 +188,7 @@ libWebCore_la_CPPFLAGS = \
 	$(global_cppflags) \
 	$(webcore_cppflags) \
 	$(javascriptcore_cppflags) \
-	$(webkitgtk_cppflags) \
+	$(webcoregtk_cppflags) \
 	$(HILDON_CPPFLAGS)
 
 libWebCore_la_LIBADD = \
@@ -239,6 +245,7 @@ libwebkit_1_0_la_LIBADD = \
 #
 # Extra checks and flags
 global_cppflags += \
+	-DBUILDING_CAIRO__=1 \
 	-DBUILDING_GTK__=1 \
 	-DWTF_CHANGES
 
@@ -255,7 +262,7 @@ endif
 if !ENABLE_DEBUG
 global_cppflags += -DNDEBUG
 else
-webkitgtk_cppflags += \
+webcoregtk_cppflags += \
 	-DG_DISABLE_DEPRECATED \
 	-DGDK_PIXBUF_DISABLE_DEPRECATED \
 	-DGDK_DISABLE_DEPRECATED \
@@ -284,11 +291,6 @@ endif
 if ENABLE_VIDEO
 webcore_libadd += -lgstinterfaces-0.10 -lgstvideo-0.10
 endif
-
-webkitgtk_cppflags += \
--I$(top_builddir)/WebKit/gtk/webkit \
--DBUILDING_CAIRO__=1 \
--DBUILD_WEBKIT
 
 webkitgtk_h_api += \
 	WebKit/gtk/webkit/webkit.h \

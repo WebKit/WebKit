@@ -1,3 +1,12 @@
+2008-06-02  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Alp Toker.
+
+        Build WebCore GTK+ sources as part of WebCore, not WebKit.
+        Split common and GTK+-specific sources into separate file lists.
+
+        * GNUmakefile.am:
+
 2008-06-01  Josh Triplett  <josh@freedesktop.org>
 
         Reviewed by Alp Toker.
