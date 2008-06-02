@@ -1,3 +1,12 @@
+2008-05-30  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Use intrinsic size for media elements with no natural size.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::videoSizeChanged):
+
 2008-05-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.

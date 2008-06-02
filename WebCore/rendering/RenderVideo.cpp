@@ -59,7 +59,7 @@ void RenderVideo::videoSizeChanged()
     if (!player())
         return;
     IntSize size = player()->naturalSize();
-    if (size != intrinsicSize()) {
+    if (!size.isEmpty() && size != intrinsicSize()) {
         setIntrinsicSize(size);
         setPrefWidthsDirty(true);
         setNeedsLayout(true);
