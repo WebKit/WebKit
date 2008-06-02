@@ -1,3 +1,19 @@
+2008-06-01  Josh Triplett  <josh@freedesktop.org>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16891
+        [GTK] autotools build is slow
+
+        Add dolt revision 5e9eef10 to the autotools build system. Speeds up
+        the build, often by a factor of two or more on supported platforms,
+        otherwise falls back to libtool.
+
+        See http://dolt.freedesktop.org for details.
+
+        * acinclude.m4: Added.
+        * configure.ac:
+
 2008-05-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Alp Toker.
