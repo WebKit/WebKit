@@ -1,3 +1,17 @@
+2008-06-02  David Hyatt  <hyatt@apple.com>
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19303
+
+        When the right slice value is omitted in border-image it should use the value of the left slice and not
+        the top slice.
+
+        Reviewed by darin
+
+        Added fast/borders/border-image-omit-right-slice.html
+
+        * css/CSSParser.cpp:
+        (WebCore::BorderImageParseContext::commitBorderImage)
+
 2008-06-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt and Mitz.
