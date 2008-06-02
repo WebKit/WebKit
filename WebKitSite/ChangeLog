@@ -1,5 +1,12 @@
 2008-06-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Renamed this file quiet down the peanut gallery.
+
+        * blog-files/squirrelfish-webkit-graph.png: Copied from blog-files/webkit-graph.png.
+        * blog-files/webkit-graph.png: Removed.
+
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
         Added a graph.
 
         * blog-files/webkit-graph.png: Added.
