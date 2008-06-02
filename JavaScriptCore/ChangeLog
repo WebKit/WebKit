@@ -1,3 +1,42 @@
+2008-06-02  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5969992> JSProfiler: Remove the recursion limit in the
+        profiler
+        Implement Next Sibling pointers as groundwork for removing the recursion
+        limit in the profiler.
+
+        * profiler/ProfileNode.cpp: Also I renamed parentNode and headNode since
+        'node' is redundant.
+        (KJS::ProfileNode::ProfileNode): Initialize the nextSibling.
+        (KJS::ProfileNode::willExecute): If there are already children then the
+        new child needs to be the nextSibling of the last child.
+        (KJS::ProfileNode::didExecute):
+        (KJS::ProfileNode::addChild): Ditto.
+        (KJS::ProfileNode::stopProfiling):
+        (KJS::ProfileNode::sortTotalTimeDescending): For all of the sorting
+        algorithms once the children are sorted their nextSibling pointers need
+        to be reset to reflect the new order.
+        (KJS::ProfileNode::sortTotalTimeAscending):
+        (KJS::ProfileNode::sortSelfTimeDescending):
+        (KJS::ProfileNode::sortSelfTimeAscending):
+        (KJS::ProfileNode::sortCallsDescending):
+        (KJS::ProfileNode::sortCallsAscending):
+        (KJS::ProfileNode::sortFunctionNameDescending):
+        (KJS::ProfileNode::sortFunctionNameAscending):
+        (KJS::ProfileNode::resetChildrensSiblings): This new function simply
+        loops over all of the children and sets their nextSibling pointers to
+        the next child in the Vector
+        (KJS::ProfileNode::debugPrintData):
+        * profiler/ProfileNode.h:
+        (KJS::ProfileNode::parent):
+        (KJS::ProfileNode::setParent):
+        (KJS::ProfileNode::nextSibling):
+        (KJS::ProfileNode::setNextSibling):
+        (KJS::ProfileNode::totalPercent):
+        (KJS::ProfileNode::selfPercent):
+
 2008-06-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
@@ -94,7 +133,6 @@
 
         * VM/Machine.cpp:
         (KJS::Machine::privateExecute):
-        Added fast paths for >>> and <<.
 
         * kjs/JSImmediate.h:
         (KJS::JSImmediate::toTruncatedUInt32): Added. Same as getTruncatedInt32, but casts the result
@@ -186,6 +224,7 @@
         * kjs/nodes.cpp:
         (KJS::FunctionCallValueNode::emitCode):
 
+>>>>>>> .r34302
 2008-05-27  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Tim Hatcher.

@@ -67,8 +67,10 @@ namespace KJS {
         void stopProfiling();
 
         const CallIdentifier& callIdentifier() const { return m_callIdentifier; }
-        ProfileNode* parent() const { return m_parentNode; }
-        void setParent(ProfileNode* parent) { m_parentNode = parent; }
+        ProfileNode* parent() const { return m_parent; }
+        void setParent(ProfileNode* parent) { m_parent = parent; }
+        ProfileNode* nextSibling() const { return m_nextSibling; }
+        void setNextSibling(ProfileNode* nextSibling) { m_nextSibling = nextSibling; }
         UString functionName() const { return m_callIdentifier.name; }
         UString url() const { return m_callIdentifier.url; }
         unsigned lineNumber() const { return m_callIdentifier.lineNumber; }
@@ -79,8 +81,8 @@ namespace KJS {
         void setTotalTime(double time) { m_actualTotalTime = time; m_visibleTotalTime = time; }
         double selfTime() const { return m_visibleSelfTime; }
         void setSelfTime(double time) { m_actualSelfTime = time; m_visibleSelfTime = time; }
-        double totalPercent() const { return (m_visibleTotalTime / m_headNode->totalTime()) * 100.0; }
-        double selfPercent() const { return (m_visibleSelfTime / m_headNode->totalTime()) * 100.0; }
+        double totalPercent() const { return (m_visibleTotalTime / m_head->totalTime()) * 100.0; }
+        double selfPercent() const { return (m_visibleSelfTime / m_head->totalTime()) * 100.0; }
         unsigned numberOfCalls() const { return m_numberOfCalls; }
         void setNumberOfCalls(unsigned number) { m_numberOfCalls = number; }
         const Vector<RefPtr<ProfileNode> >& children() const { return m_children; }
@@ -88,6 +90,7 @@ namespace KJS {
         void insertNode(PassRefPtr<ProfileNode> prpNode);
         bool visible() const { return m_visible; }
         void setVisible(bool visible) { m_visible = visible; }
+
         void setTreeVisible(bool visible);
 
         // Sorting functions
@@ -114,10 +117,12 @@ namespace KJS {
     private:
         ProfileNode(const CallIdentifier&, ProfileNode* headNode, ProfileNode* parentNode);
         void startTimer();
+        void resetChildrensSiblings();
 
         CallIdentifier m_callIdentifier;
-        ProfileNode* m_headNode;
-        ProfileNode* m_parentNode;
+        ProfileNode* m_head;
+        ProfileNode* m_parent;
+        ProfileNode* m_nextSibling;
 
         double m_startTime;
         double m_actualTotalTime;
