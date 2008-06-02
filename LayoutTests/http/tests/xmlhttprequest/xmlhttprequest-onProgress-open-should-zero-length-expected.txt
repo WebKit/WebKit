@@ -1,0 +1,8 @@
+Test case for Bug 18655: [XHR] OnProgress needs more test case
+
+This test verify that open reset m_receivedLength.
+
+You should see PASSED once.
+
+PASSED
+

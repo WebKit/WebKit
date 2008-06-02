@@ -1,0 +1,42 @@
+<html>
+<head>
+    <title> Test case for bug 18655 </title>
+</head>
+<body>
+<p> Test case for Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=18655">18655</a>: [XHR] OnProgress needs more test case </p>
+<p> This test verify that file with content type does trigger onProgress event. </p>
+<p> You should see PASSED twice. </p>
+<body>
+<p id="shouldBeCalled"> FAILED </p>
+<p id="shouldNotBeCalled"> PASSED </p>
+<script type="text/javascript">
+function onProgressPassed(e) {
+    document.getElementById("shouldBeCalled").innerHTML = "PASSED";
+}
+
+function onProgressFailed(e) {
+    document.getElementById("shouldNotBeCalled").innerHTML = "FAILED";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var req = new XMLHttpRequest();
+req.onprogress = onProgressPassed;
+// Test that onProgress is called on a normal file
+req.open("GET", "resource/1251.html", false);
+req.send(null);
+
+// If content length is not given, it should not be called
+req.onprogress = onProgressFailed;
+req.open("GET", "resources/noContentLength.asis", false);
+req.send(null);
+
+if (window.layoutTestController)
+    layoutTestController.notifyDone();
+
+</script>
+</body>
+</html>

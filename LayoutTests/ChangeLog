@@ -1,3 +1,21 @@
+2008-06-02  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin.
+
+        Bug 18655: [XHR] OnProgress needs more test case
+        https://bugs.webkit.org/show_bug.cgi?id=18655
+
+        * http/tests/xmlhttprequest/resources/five-tiny-chunk-one-second-delay.php: Added.
+        * http/tests/xmlhttprequest/resources/noContentLength.asis: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-LSProgressEvent-ProgressEvent-should-match-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-LSProgressEvent-ProgressEvent-should-match.html: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-addEventListener-onProgress-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-addEventListener-onProgress.html: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onProgress-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onProgress.html: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length.html: Added.
+
 2008-06-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.
