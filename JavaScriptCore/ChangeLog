@@ -1,5 +1,15 @@
 2008-06-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Adele Peterson.
+
+        Added a specific affordance for avoiding stack overflow when converting
+        recursive arrays to string, in preparation for removing generic stack
+        overflow checking from JSObject::call.
+        
+        Tested by fast/js/toString-stack-overflow.html.
+
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Alice Liu.
         
         Refactored some hand-rolled code to call ScopeChain::globalObject instead.

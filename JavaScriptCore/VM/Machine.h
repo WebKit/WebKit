@@ -54,6 +54,8 @@ namespace KJS {
         WillExecuteStatement
     };
 
+    enum { MaxReentryDepth = 128 };
+
     class Machine {
     public:
         enum { CallerCodeBlock = 0, 
@@ -102,7 +104,6 @@ namespace KJS {
         void getFunctionAndArguments(Register** registerBase, Register* callFrame, FunctionImp*&, Register*& argv, int& argc);
         
     private:
-        enum { MaxReentryDepth = 128 };
         typedef enum { Normal, InitializeAndReturn } ExecutionFlag;
 
         ALWAYS_INLINE void setScopeChain(ExecState* exec, ScopeChainNode*&, ScopeChainNode*);

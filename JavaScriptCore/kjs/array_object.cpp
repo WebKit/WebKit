@@ -92,7 +92,11 @@ JSValue* arrayProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&)
     if (!thisObj->inherits(&ArrayInstance::info))
         return throwError(exec, TypeError);
 
-    bool alreadyVisited = !exec->dynamicGlobalObject()->arrayVisitedElements().add(thisObj).second;
+    HashSet<JSObject*>& arrayVisitedElements = exec->dynamicGlobalObject()->arrayVisitedElements();
+    if (arrayVisitedElements.size() > MaxReentryDepth)
+        return throwError(exec, RangeError, "Maximum call stack size exceeded.");
+
+    bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
     Vector<UChar, 256> strBuffer;
     if (alreadyVisited)
         return jsString(UString(0, 0)); // return an empty string, avoding infinite recursion.
@@ -131,7 +135,11 @@ JSValue* arrayProtoFuncToLocaleString(ExecState* exec, JSObject* thisObj, const 
     if (!thisObj->inherits(&ArrayInstance::info))
         return throwError(exec, TypeError);
 
-    bool alreadyVisited = !exec->dynamicGlobalObject()->arrayVisitedElements().add(thisObj).second;
+    HashSet<JSObject*>& arrayVisitedElements = exec->dynamicGlobalObject()->arrayVisitedElements();
+    if (arrayVisitedElements.size() > MaxReentryDepth)
+        return throwError(exec, RangeError, "Maximum call stack size exceeded.");
+
+    bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
     Vector<UChar, 256> strBuffer;
     if (alreadyVisited)
         return jsString(UString(0, 0)); // return an empty string, avoding infinite recursion.
@@ -173,7 +181,11 @@ JSValue* arrayProtoFuncToLocaleString(ExecState* exec, JSObject* thisObj, const 
 
 JSValue* arrayProtoFuncJoin(ExecState* exec, JSObject* thisObj, const List& args)
 {
-    bool alreadyVisited = !exec->dynamicGlobalObject()->arrayVisitedElements().add(thisObj).second;
+    HashSet<JSObject*>& arrayVisitedElements = exec->dynamicGlobalObject()->arrayVisitedElements();
+    if (arrayVisitedElements.size() > MaxReentryDepth)
+        return throwError(exec, RangeError, "Maximum call stack size exceeded.");
+
+    bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
     Vector<UChar, 256> strBuffer;
     if (alreadyVisited)
         return jsString(UString(0, 0)); // return an empty string, avoding infinite recursion.
