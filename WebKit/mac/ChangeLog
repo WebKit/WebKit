@@ -1,3 +1,16 @@
+2008-06-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Speculative fix for <rdar://problem/5661112> 
+        CrashTracer: [USER] 49 crashes in DashboardClient at com.apple.WebCore: WebCore::RenderPart::setWidget + 62
+        
+        Defer loads while calling NPP_New. Some plug-ins start a run-loop inside NPP_New and finished loads could cause
+        layouts to be triggered.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView _createPlugin]):
+
 2008-05-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.
