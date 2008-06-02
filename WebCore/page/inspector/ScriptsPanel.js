@@ -304,6 +304,9 @@ WebInspector.ScriptsPanel.prototype = {
         var currentFrame = InspectorController.currentCallFrame();
         callStackPane.update(currentFrame);
         callStackPane.selectedCallFrame = currentFrame;
+
+        WebInspector.currentPanel = this;
+        window.focus();
     },
 
     debuggerAttached: function()

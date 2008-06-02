@@ -1,3 +1,15 @@
+2008-06-02  Timothy Hatcher  <timothy@apple.com>
+
+        Bring the Web Inspector forward when the debugger pauses.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19095
+
+        Reviewed by Darin Adler.
+
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.debuggerPaused): Call window.focus() and
+        make the Scripts panel the current panel.
+
 2008-06-02  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Alp Toker.
