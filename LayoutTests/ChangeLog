@@ -1,3 +1,12 @@
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Test for an exception thrown from an array sort comparator function.
+
+        * fast/js/throw-from-array-sort-expected.txt: Added.
+        * fast/js/throw-from-array-sort.html: Added.
+
 2008-06-02  Simon Pieters <zcorpan@hotmail.com>
 
         Reviewed and landed by Alexey.

@@ -1,3 +1,16 @@
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed ASSERT due to execution continuing after an exception is thrown
+        during array sort.
+
+        * kjs/array_instance.cpp:
+        (KJS::AVLTreeAbstractorForArrayCompare::compare_key_key): Don't call the
+        custom comparator function if an exception has been thrown. Just return
+        1 for everything, so the sort completes quickly. (The result will be
+        thrown away.)
+
 2008-05-30  Timothy Hatcher  <timothy@apple.com>
 
         Made the starting line number of scripts be 1-based throughout the engine.

@@ -540,6 +540,9 @@ struct AVLTreeAbstractorForArrayCompare {
         ASSERT(!va->isUndefined());
         ASSERT(!vb->isUndefined());
 
+        if (m_exec->hadException())
+            return 1;
+
         List arguments;
         arguments.append(va);
         arguments.append(vb);
