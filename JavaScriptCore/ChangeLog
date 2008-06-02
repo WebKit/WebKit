@@ -1,5 +1,11 @@
 2008-06-02  Kevin McCullough  <kmccullough@apple.com>
 
+        Took out accidental confilct lines I checked in.
+
+        * ChangeLog:
+
+2008-06-02  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Darin.
 
         <rdar://problem/5969992> JSProfiler: Remove the recursion limit in the
@@ -224,7 +230,6 @@
         * kjs/nodes.cpp:
         (KJS::FunctionCallValueNode::emitCode):
 
->>>>>>> .r34302
 2008-05-27  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Tim Hatcher.
