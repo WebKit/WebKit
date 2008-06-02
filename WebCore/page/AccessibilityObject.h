@@ -255,6 +255,9 @@ public:
     virtual AccessibilityObject* linkedUIElement() const;
     virtual AccessibilityObject* titleUIElement() const;
     virtual AccessibilityRole ariaRoleAttribute() const;
+    virtual bool isPresentationalChildOfAriaRole() const;
+    virtual bool ariaRoleHasPresentationalChildren() const;
+
     virtual AccessibilityRole roleValue() const;
     virtual AXObjectCache* axObjectCache() const;
     

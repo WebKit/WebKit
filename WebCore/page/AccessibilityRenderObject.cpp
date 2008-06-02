@@ -1021,6 +1021,9 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     if (ariaRoleAttribute() != UnknownRole)
         return false;
     
+    if (isPresentationalChildOfAriaRole())
+        return true;
+        
     // ignore popup menu items because AppKit does
     for (RenderObject* parent = m_renderer->parent(); parent; parent = parent->parent()) {
         if (parent->isMenuList())
@@ -1873,7 +1876,8 @@ static const ARIARoleMap& createARIARoleMap()
         { String("menubar"), GroupRole },
         // "menuitem" isn't here because it may map to different roles depending on the parent element's role
         { String("menuitemcheckbox"), MenuItemRole },
-        { String("menuitemradio"), MenuItemRole }
+        { String("menuitemradio"), MenuItemRole },
+        { String("group"), GroupRole }
     };
     ARIARoleMap& roleMap = *new ARIARoleMap;
         
@@ -1998,6 +2002,31 @@ AccessibilityRole AccessibilityRenderObject::roleValue() const
         return GroupRole;
     
     return UnknownRole;
+}
+
+bool AccessibilityRenderObject::isPresentationalChildOfAriaRole() const
+{
+    // Walk the parent chain looking for a parent that has presentational children
+    AccessibilityObject* parent;
+    for (parent = parentObject(); parent && !parent->ariaRoleHasPresentationalChildren(); parent = parent->parentObject())
+        ;
+    return parent;
+}
+    
+bool AccessibilityRenderObject::ariaRoleHasPresentationalChildren() const
+{
+    switch (m_ariaRole) {
+    case ButtonRole:
+    case SliderRole:
+    case ImageRole:
+    case ProgressIndicatorRole:
+    //case SeparatorRole:
+        return true;
+    default:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool AccessibilityRenderObject::canSetFocusAttribute() const

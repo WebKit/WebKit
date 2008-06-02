@@ -1,3 +1,23 @@
+2008-06-02  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Some ARIA roles are designated to have presentational children, which
+        means that their descendants aren't exposed to assistive technologies
+        on an individual basis.  What this means in webcore is that descendants
+        of such roles need to be ignored in terms of accessibility.
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isPresentationalChildOfAriaRole):
+        (WebCore::AccessibilityObject::ariaRoleHasPresentationalChildren):
+        * page/AccessibilityObject.h:
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::RoleEntry::):
+        (WebCore::AccessibilityRenderObject::isPresentationalChildOfAriaRole):
+        (WebCore::AccessibilityRenderObject::ariaRoleHasPresentationalChildren):
+        * page/AccessibilityRenderObject.h:
+
 2008-06-02  David Hyatt  <hyatt@apple.com>
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=19303
