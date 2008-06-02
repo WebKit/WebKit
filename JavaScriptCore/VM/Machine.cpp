@@ -486,7 +486,7 @@ Machine::Machine()
 void Machine::dumpCallFrame(const CodeBlock* codeBlock, ScopeChainNode* scopeChain, RegisterFile* registerFile, const Register* r)
 {
     ScopeChain sc(scopeChain);
-    JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(sc.bottom());
+    JSGlobalObject* globalObject = sc.globalObject();
     codeBlock->dump(globalObject->globalExec());
     dumpRegisters(codeBlock, registerFile, r);
 }

@@ -137,7 +137,7 @@ void CodeGenerator::generate()
 
 #ifndef NDEBUG
     if (s_dumpsGeneratedCode) {
-        JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(m_scopeChain->bottom());
+        JSGlobalObject* globalObject = m_scopeChain->globalObject();
         m_codeBlock->dump(globalObject->globalExec());
     }
 #endif
@@ -198,8 +198,7 @@ CodeGenerator::CodeGenerator(ProgramNode* programNode, const Debugger* debugger,
     // Shift new symbols so they get stored prior to previously defined symbols.
     m_nextVar -= size;
 
-    JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(scopeChain.bottom());
-    ASSERT(globalObject->isGlobalObject());
+    JSGlobalObject* globalObject = scopeChain.globalObject();
     
     ExecState* exec = globalObject->globalExec();
 

@@ -1,5 +1,11 @@
 2008-06-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Alice Liu.
+        
+        Refactored some hand-rolled code to call ScopeChain::globalObject instead.
+
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
         
         Fixed ASSERT due to execution continuing after an exception is thrown
