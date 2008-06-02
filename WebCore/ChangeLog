@@ -1,3 +1,20 @@
+2008-06-01  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15823
+        getPropertyValue for border returns null, should compute the shorthand value
+
+        Compute the value for the border shorthand property by computing
+        its shorthand subproperties.
+
+        Test: fast/css/getPropertyValue-border.html
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue):
+        (WebCore::CSSMutableStyleDeclaration::getCommonValue):
+        * css/CSSMutableStyleDeclaration.h:
+
 2008-06-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

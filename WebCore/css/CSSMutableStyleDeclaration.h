@@ -104,6 +104,7 @@ private:
     void setChanged();
 
     String getShorthandValue(const int* properties, int number) const;
+    String getCommonValue(const int* properties, int number) const;
     String getLayeredShorthandValue(const int* properties, unsigned number) const;
     String get4Values(const int* properties) const;
  

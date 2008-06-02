@@ -93,9 +93,29 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
             return getLayeredShorthandValue(properties, 7);
         }
         case CSSPropertyBorder: {
-            const int properties[3] = { CSSPropertyBorderWidth, CSSPropertyBorderStyle,
-                                        CSSPropertyBorderColor };
-            return getShorthandValue(properties, 3);
+            const int properties[3][4] = {{ CSSPropertyBorderTopWidth,
+                                            CSSPropertyBorderRightWidth,
+                                            CSSPropertyBorderBottomWidth,
+                                            CSSPropertyBorderLeftWidth },
+                                          { CSSPropertyBorderTopStyle,
+                                            CSSPropertyBorderRightStyle,
+                                            CSSPropertyBorderBottomStyle,
+                                            CSSPropertyBorderLeftStyle },
+                                          { CSSPropertyBorderTopColor,
+                                            CSSPropertyBorderRightColor,
+                                            CSSPropertyBorderBottomColor,
+                                            CSSPropertyBorderLeftColor }};
+            String res;
+            const int nrprops = sizeof(properties) / sizeof(properties[0]);
+            for (int i = 0; i < nrprops; ++i) {
+                String value = getCommonValue(properties[i], 4);
+                if (!value.isNull()) {
+                    if (!res.isNull())
+                        res += " ";
+                    res += value;
+                }
+            }
+            return res;
         }
         case CSSPropertyBorderTop: {
             const int properties[3] = { CSSPropertyBorderTopWidth, CSSPropertyBorderTopStyle,
@@ -263,6 +283,27 @@ String CSSMutableStyleDeclaration::getShorthandValue(const int* properties, int 
                     res += " ";
                 res += value->cssText();
             }
+        }
+    }
+    return res;
+}
+
+// only returns a non-null value if all properties have the same, non-null value
+String CSSMutableStyleDeclaration::getCommonValue(const int* properties, int number) const
+{
+    String res;
+    for (int i = 0; i < number; ++i) {
+        if (!isPropertyImplicit(properties[i])) {
+            RefPtr<CSSValue> value = getPropertyCSSValue(properties[i]);
+            if (!value)
+                return String();
+            String text = value->cssText();
+            if (text.isNull())
+                return String();
+            if (res.isNull())
+                res = text;
+            else if (res != text)
+                return String();
         }
     }
     return res;

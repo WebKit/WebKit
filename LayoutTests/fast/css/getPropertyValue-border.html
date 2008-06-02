@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+ <head>
+  <title>currentColor basic test</title>
+ <style type="text/css">
+   div { height: 5em; width: 10em; }
+  </style>
+  <script>
+    function log(message) {
+      var console = document.getElementById("console");
+      console.appendChild(document.createTextNode(message + "\n"));
+    }
+    function runTest() {
+      if (window.layoutTestController) 
+        layoutTestController.dumpAsText();
+      var div = document.getElementById("border");
+      if (div.style.getPropertyValue("border") != "5px solid green") {
+          log("FAILED");
+          return;
+      }
+      div = document.getElementById("border2");
+      if (div.style.getPropertyValue("border") != "5px solid") {
+          log("FAILED");
+          return;
+      }
+      div = document.getElementById("border3");
+      if (div.style.getPropertyValue("border") != null) {
+          log("FAILED");
+          return;
+      }
+      log("PASSED");
+    }
+  </script>
+ </head>
+ <body onload="runTest()">
+    <div id="border" style="border: 5px solid green;" ></div>
+    <div id="border2" style="border-left: 5px solid red; border-top: 5px solid green; border-right: 5px solid blue; border-bottom: 5px solid purple;" ></div>
+    <div id="border3" style="border-left: 5px solid red; border-top: 5px solid green; border-right: 5px solid blue;" ></div>
+  <div id="console"></div>
+ </body>
+</html>
