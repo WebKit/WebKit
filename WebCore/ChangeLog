@@ -1,5 +1,22 @@
 2008-06-02  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes a bug where the line highlight and the execution line were conflicting.
+        The line highlight no longer shows up when the execution line changes, only
+        when showResource or showScript is called with a line number.
+
+        Reviewed by Darin Adler.
+
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.showScript): Pass true for shouldHighlightLine.
+        (WebInspector.ScriptsPanel.prototype.showResource): Ditto.
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource): Added a shouldHighlightLine
+        argument that triggers the highlightLine() call on the SourceFrame.
+        (WebInspector.ScriptsPanel.prototype._goBack): Pass false for shouldHighlightLine since
+        we need to pass true for fromBackForwardAction.
+        (WebInspector.ScriptsPanel.prototype._goForward): Ditto.
+
+2008-06-02  Timothy Hatcher  <timothy@apple.com>
+
         Bring the Web Inspector forward when the debugger pauses.
 
         https://bugs.webkit.org/show_bug.cgi?id=19095

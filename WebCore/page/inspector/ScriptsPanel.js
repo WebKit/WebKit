@@ -377,12 +377,12 @@ WebInspector.ScriptsPanel.prototype = {
 
     showScript: function(script, line)
     {
-        this._showScriptOrResource(script, line);
+        this._showScriptOrResource(script, line, true);
     },
 
     showResource: function(resource, line)
     {
-        this._showScriptOrResource(resource, line);
+        this._showScriptOrResource(resource, line, true);
     },
 
     scriptViewForScript: function(script)
@@ -416,7 +416,7 @@ WebInspector.ScriptsPanel.prototype = {
             return this.sourceFrameForScript(scriptOrResource);
     },
 
-    _showScriptOrResource: function(scriptOrResource, line, fromBackForwardAction)
+    _showScriptOrResource: function(scriptOrResource, line, shouldHighlightLine, fromBackForwardAction)
     {
         if (!scriptOrResource)
             return;
@@ -465,7 +465,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (line) {
             if (view.revealLine)
                 view.revealLine(line);
-            if (view.highlightLine)
+            if (view.highlightLine && shouldHighlightLine)
                 view.highlightLine(line);
         }
 
@@ -648,7 +648,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
         }
 
-        this._showScriptOrResource(this._backForwardList[--this._currentBackForwardIndex], null, true);
+        this._showScriptOrResource(this._backForwardList[--this._currentBackForwardIndex], null, false, true);
         this._updateBackAndForwardButtons();
     },
 
@@ -659,7 +659,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
         }
 
-        this._showScriptOrResource(this._backForwardList[++this._currentBackForwardIndex], null, true);
+        this._showScriptOrResource(this._backForwardList[++this._currentBackForwardIndex], null, false, true);
         this._updateBackAndForwardButtons();
     },
 
