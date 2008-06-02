@@ -48,7 +48,8 @@ WebInspector.BreakpointsSidebarPane.prototype = {
         if (!InspectorController.debuggerAttached() || !breakpoint.sourceID)
             return;
 
-        InspectorController.addBreakpoint(breakpoint.sourceID, breakpoint.line);
+        if (breakpoint.enabled)
+            InspectorController.addBreakpoint(breakpoint.sourceID, breakpoint.line);
     },
 
     removeBreakpoint: function(breakpoint)

@@ -1,5 +1,21 @@
 2008-06-02  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes a bug where only the last breakpoint would be hit after reloading
+        the page. Also fixes a bug where disabled breakpoints would be hit
+        after reloading the page.
+
+        Reviewed by Darin Adler.
+
+        * page/inspector/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointsSidebarPane.prototype.addBreakpoint): Don't call
+        InspectorController.addBreakpoint() unless the breakpoint is enabled.
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.addScript): Move the addBreakpoint()
+        call inside the for loop so each breakpoint is added. Also check the
+        breakpoint's enabled state before calling addBreakpoint().
+
+2008-06-02  Timothy Hatcher  <timothy@apple.com>
+
         Fixes a bug where the line highlight and the execution line were conflicting.
         The line highlight no longer shows up when the execution line changes, only
         when showResource or showScript is called with a line number.

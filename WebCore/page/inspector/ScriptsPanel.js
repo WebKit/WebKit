@@ -218,11 +218,12 @@ WebInspector.ScriptsPanel.prototype = {
             var breakpointsLength = breakpoints.length;
             for (var i = 0; i < breakpointsLength; ++i) {
                 var breakpoint = breakpoints[i];
-                if (startingLine <= breakpoint.line)
+                if (startingLine <= breakpoint.line) {
                     breakpoint.sourceID = sourceID;
+                    if (breakpoint.enabled)
+                        InspectorController.addBreakpoint(breakpoint.sourceID, breakpoint.line);
+                }
             }
-
-            InspectorController.addBreakpoint(breakpoint.sourceID, breakpoint.line);
         }
 
         if (sourceID)
