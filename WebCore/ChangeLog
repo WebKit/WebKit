@@ -1,3 +1,14 @@
+2008-06-02  Siraj Razick  <siraj.razick@collabora.co.uk>
+
+        Reviewed by Simon
+
+        Allow button fonts to scale based on the text size multiplier.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19251
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustButtonStyle):
+
 2008-06-01  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

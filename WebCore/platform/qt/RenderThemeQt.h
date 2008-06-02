@@ -114,7 +114,9 @@ private:
     void setButtonPadding(RenderStyle*) const;
     void setPopupPadding(RenderStyle*) const;
 
+#ifdef Q_WS_MAC
     int m_buttonFontPixelSize;
+#endif
     QString m_buttonFontFamily;
 
     QStyle* m_fallbackStyle;

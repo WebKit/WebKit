@@ -91,7 +91,9 @@ RenderThemeQt::RenderThemeQt()
     QFont defaultButtonFont = QApplication::font(&button);
     QFontInfo fontInfo(defaultButtonFont);
     m_buttonFontFamily = defaultButtonFont.family();
+#ifdef Q_WS_MAC
     m_buttonFontPixelSize = fontInfo.pixelSize();
+#endif
 
     m_fallbackStyle = 0;
 }
@@ -364,11 +366,17 @@ void RenderThemeQt::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* s
     // White-space is locked to pre
     style->setWhiteSpace(PRE);
 
-    // Use fixed font size and family
     FontDescription fontDescription = style->fontDescription();
     fontDescription.setIsAbsoluteSize(true);
+
+#ifdef Q_WS_MAC // Use fixed font size and family on Mac (like Safari does)
     fontDescription.setSpecifiedSize(m_buttonFontPixelSize);
     fontDescription.setComputedSize(m_buttonFontPixelSize);
+#else
+    fontDescription.setSpecifiedSize(style->fontSize());
+    fontDescription.setComputedSize(style->fontSize());
+#endif
+
     FontFamily fontFamily;
     fontFamily.setFamily(m_buttonFontFamily);
     fontDescription.setFamily(fontFamily);
