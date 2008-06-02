@@ -3608,20 +3608,20 @@ Document *Document::topDocument() const
     return doc;
 }
 
-PassRefPtr<Attr> Document::createAttributeNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode& ec)
+PassRefPtr<Attr> Document::createAttributeNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode& ec, bool shouldIgnoreNamespaceChecks)
 {
     String prefix, localName;
     if (!parseQualifiedName(qualifiedName, prefix, localName, ec))
         return 0;
 
     QualifiedName qName(prefix, localName, namespaceURI);
-    if (hasPrefixNamespaceMismatch(qName)) {
+    if (!shouldIgnoreNamespaceChecks && hasPrefixNamespaceMismatch(qName)) {
         ec = NAMESPACE_ERR;
         return 0;
     }
 
     // Spec: DOM Level 2 Core: http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-DocCrAttrNS
-    if (qName.localName() == "xmlns" && qName.namespaceURI() != "http://www.w3.org/2000/xmlns/") {
+    if (!shouldIgnoreNamespaceChecks && qName.localName() == "xmlns" && qName.namespaceURI() != "http://www.w3.org/2000/xmlns/") {
         ec = NAMESPACE_ERR;
         return 0;
     }

@@ -1,3 +1,13 @@
+2008-06-02  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin.
+
+        Bug 18066: REGRESSION: createAttribute throws NAMESPACE_ERR exception
+        https://bugs.webkit.org/show_bug.cgi?id=18066
+
+        * fast/dom/createAttribute-exception-expected.txt: Added.
+        * fast/dom/createAttribute-exception.html: Added.
+
 2008-06-02  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
