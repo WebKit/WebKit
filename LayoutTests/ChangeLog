@@ -1,3 +1,13 @@
+2008-06-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt and Mitz.
+
+        <rdar://problem/5704119>
+        repro crash in WebCore::RenderPart::setWidget (plugin-related?)
+        
+        * platform/mac/plugins/update-widget-from-style-recalc-expected.txt: Added.
+        * platform/mac/plugins/update-widget-from-style-recalc.html: Added.
+
 2008-06-02  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin.

@@ -186,6 +186,7 @@ void HTMLObjectElement::attach()
 
 void HTMLObjectElement::updateWidget()
 {
+    document()->updateRendering();
     if (m_needWidgetUpdate && renderer() && !m_useFallbackContent && !isImageType())
         static_cast<RenderPartObject*>(renderer())->updateWidget(true);
 }

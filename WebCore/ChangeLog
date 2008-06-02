@@ -1,3 +1,19 @@
+2008-06-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt and Mitz.
+
+        <rdar://problem/5704119> 
+        repro crash in WebCore::RenderPart::setWidget (plugin-related?)
+        
+        Test: platform/mac/plugins/update-widget-from-style-recalc.html
+
+        Make sure to update the document's rendering before calling updateWidget.
+        
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+
 2008-06-02  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

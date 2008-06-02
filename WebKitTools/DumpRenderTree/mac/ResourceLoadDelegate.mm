@@ -177,6 +177,9 @@
 
 - (void)webView: (WebView *)wv plugInFailedWithError:(NSError *)error dataSource:(WebDataSource *)dataSource
 {
+    // The call to -display here simulates the "Plug-in not found" sheet that Safari shows.
+    // It is used for platform/mac/plugins/update-widget-from-style-recalc.html
+    [wv display];
 }
 
 -(NSCachedURLResponse *) webView: (WebView *)wv resource:(id)identifier willCacheResponse:(NSCachedURLResponse *)response fromDataSource:(WebDataSource *)dataSource
