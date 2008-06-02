@@ -41,7 +41,7 @@ namespace WebCore {
 
 // Check for a CSS prefix.
 // Passed prefix is all lowercase.
-// First character of property name may be upper or lowercase.
+// First character of the prefix within the property name may be upper or lowercase.
 // Other characters in the prefix within the property name must be lowercase.
 // The prefix within the property name must be followed by a capital letter.
 static bool hasCSSPropertyNamePrefix(const Identifier& propertyName, const char* prefix)
@@ -50,14 +50,13 @@ static bool hasCSSPropertyNamePrefix(const Identifier& propertyName, const char*
     ASSERT(*prefix);
     for (const char* p = prefix; *p; ++p)
         ASSERT(isASCIILower(*p));
+    ASSERT(propertyName.size());
 #endif
-
-    unsigned length = propertyName.size();
-    ASSERT(length);
 
     if (toASCIILower(propertyName.data()[0]) != prefix[0])
         return false;
 
+    unsigned length = propertyName.size();
     for (unsigned i = 1; i < length; ++i) {
         if (!prefix[i])
             return isASCIIUpper(propertyName.data()[i]);
@@ -95,6 +94,10 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
             || hasCSSPropertyNamePrefix(propertyName, "khtml")
             || hasCSSPropertyNamePrefix(propertyName, "apple"))
         name.append('-');
+    else {
+        if (isASCIIUpper(propertyName.data()[0]))
+            return String();
+    }
 
     name.append(toASCIILower(propertyName.data()[i++]));
 

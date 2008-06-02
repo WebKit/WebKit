@@ -1,5 +1,21 @@
 2008-06-02  Darin Adler  <darin@apple.com>
 
+        Reviewed by John Sullivan.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=18799
+          apl.aip.org menu does not work (property names should be case sensitive)
+          <rdar://problem/5900484>
+
+        Test: fast/dom/CSSStyleDeclaration/css-properties-case-sensitive.html
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::hasCSSPropertyNamePrefix): Tweak implementation a tiny bit for
+        improved performance when the first character does not match.
+        (WebCore::cssPropertyName): Reject property names with a leading uppercase
+        letter.
+
+2008-06-02  Darin Adler  <darin@apple.com>
+
         Reviewed by Mitz.
 
         - fix https://bugs.webkit.org/show_bug.cgi?id=19358
