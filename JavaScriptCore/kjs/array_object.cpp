@@ -25,6 +25,7 @@
 #include "array_object.h"
 #include "array_object.lut.h"
 
+#include "Machine.h"
 #include "error_object.h"
 #include "lookup.h"
 #include "operations.h"
