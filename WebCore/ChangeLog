@@ -1,3 +1,33 @@
+2008-06-02  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5954226> JSProfiler: Move the calls from
+        JavaScriptProfileNode to JavaScriptProfile in WebCore (19231)
+        - This Makes the profiler now call sorting function s on a per-profile
+        basis instead of on a node in the profile.
+        - This is also needed to remove the recursion limit in the profiler
+        <rdar://problem/5969992> JSProfiler: Remove the recursion limit in the
+        profiler
+        since once the limit is removed calling sort on a node will only sort
+        that node's children not the entire sub-tree of that node.
+
+        * page/JavaScriptProfile.cpp: All of these functions were moved from 
+        JavaScriptProfileNode.
+        (WebCore::sortTotalTimeDescending):
+        (WebCore::sortTotalTimeAscending):
+        (WebCore::sortSelfTimeDescending):
+        (WebCore::sortSelfTimeAscending):
+        (WebCore::sortCallsDescending):
+        (WebCore::sortCallsAscending):
+        (WebCore::sortFunctionNameDescending):
+        (WebCore::sortFunctionNameAscending):
+        (WebCore::ProfileClass):
+        * page/JavaScriptProfileNode.cpp:
+        (WebCore::ProfileNodeClass):
+        * page/inspector/ProfileView.js: Change uses of JavaScriptProfileNode
+        for sorting to JavaScriptProfile.
+
 2008-06-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

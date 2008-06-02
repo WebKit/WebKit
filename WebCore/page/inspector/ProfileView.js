@@ -67,7 +67,7 @@ WebInspector.ProfileView = function(profile)
 
     // By default the profile isn't sorted, so sort based on our default sort
     // column and direction padded to the DataGrid above.
-    profile.head.sortTotalTimeDescending();
+    profile.sortTotalTimeDescending();
 
     this._updatePercentButton();
 
@@ -185,10 +185,10 @@ WebInspector.ProfileView.prototype = {
         else
             sortingFunctionName += "Descending";
 
-        if (!(sortingFunctionName in this.profile.head))
+        if (!(sortingFunctionName in this.profile))
             return;
 
-        this.profile.head[sortingFunctionName]();
+        this.profile[sortingFunctionName]();
 
         this.refresh();
     },
