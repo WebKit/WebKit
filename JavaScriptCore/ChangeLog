@@ -1,5 +1,18 @@
 2008-06-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Removed the recursion limit from JSObject::call, since the VM does
+        recursion checking now.
+
+        This should allow us to remove JSObject::call entirely, netting a small
+        speedup.
+
+        * kjs/object.cpp:
+        (KJS::JSObject::call):
+
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Adele Peterson.
 
         Added a specific affordance for avoiding stack overflow when converting

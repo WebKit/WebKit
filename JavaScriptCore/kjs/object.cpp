@@ -34,80 +34,16 @@
 #include <profiler/Profiler.h>
 #include <wtf/Assertions.h>
 
-// maximum global call stack size. Protects against accidental or
-// malicious infinite recursions. Define to -1 if you want no limit.
-// In real-world testing it appears ok to bump the stack depth count to 500.
-// This of course is dependent on stack frame size.
-#define KJS_MAX_STACK 500
-
-#define JAVASCRIPT_CALL_TRACING 0
 #define JAVASCRIPT_MARK_TRACING 0
-
-#if JAVASCRIPT_CALL_TRACING
-static bool _traceJavaScript = false;
-
-extern "C" {
-    void setTraceJavaScript(bool f)
-    {
-        _traceJavaScript = f;
-    }
-
-    static bool traceJavaScript()
-    {
-        return _traceJavaScript;
-    }
-}
-#endif
 
 namespace KJS {
 
 // ------------------------------ Object ---------------------------------------
 
-JSValue *JSObject::call(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue* JSObject::call(ExecState* exec, JSObject* thisObj, const List& args)
 {
-  ASSERT(implementsCall());
-
-#if KJS_MAX_STACK > 0
-  static int depth = 0; // sum of all extant function calls
-
-#if JAVASCRIPT_CALL_TRACING
-    static bool tracing = false;
-    if (traceJavaScript() && !tracing) {
-        tracing = true;
-        for (int i = 0; i < depth; i++)
-            putchar (' ');
-        printf ("*** calling:  %s\n", toString(exec).ascii());
-        for (int j = 0; j < args.size(); j++) {
-            for (int i = 0; i < depth; i++)
-                putchar (' ');
-            printf ("*** arg[%d] = %s\n", j, args[j]->toString(exec).ascii());
-        }
-        tracing = false;
-    }
-#endif
-
-  if (++depth > KJS_MAX_STACK) {
-    --depth;
-    return throwError(exec, RangeError, "Maximum call stack size exceeded.");
-  }
-#endif
-  JSValue* ret = callAsFunction(exec,thisObj,args); 
-
-#if KJS_MAX_STACK > 0
-  --depth;
-#endif
-
-#if JAVASCRIPT_CALL_TRACING
-    if (traceJavaScript() && !tracing) {
-        tracing = true;
-        for (int i = 0; i < depth; i++)
-            putchar (' ');
-        printf ("*** returning:  %s\n", ret->toString(exec).ascii());
-        tracing = false;
-    }
-#endif
-
-  return ret;
+    ASSERT(implementsCall());
+    return callAsFunction(exec, thisObj, args);
 }
 
 // ------------------------------ JSObject ------------------------------------
