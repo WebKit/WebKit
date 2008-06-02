@@ -1,3 +1,21 @@
+2008-06-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19358
+          <rdar://problem/5951986> first line break in <pre> elements ignored
+          (chess boards at http://rankzero.de/)
+
+        Test: fast/parser/pre-first-line-break.html
+
+        * editing/markup.cpp:
+        (WebCore::appendStartMarkup): Fix handling of <listing>. Not part of the
+        bug mentioned above, but uncovered by the regression test.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::write): Clear the "discardLF" flag when
+        processing a new tag.
+
 2008-06-02  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a bug where only the last breakpoint would be hit after reloading

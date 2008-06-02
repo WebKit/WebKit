@@ -392,8 +392,7 @@ static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Ran
     switch (node->nodeType()) {
         case Node::TEXT_NODE: {
             if (Node* parent = node->parentNode()) {
-                if (parent->hasTagName(listingTag)
-                    || parent->hasTagName(scriptTag)
+                if (parent->hasTagName(scriptTag)
                     || parent->hasTagName(styleTag)
                     || parent->hasTagName(textareaTag)
                     || parent->hasTagName(xmpTag)) {
