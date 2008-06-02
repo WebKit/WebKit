@@ -1,3 +1,24 @@
+2008-05-28  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Allow platform specific adjustments to the default style sheet.
+
+        Clients will change the #ifdef in RenderTheme.cpp and implement
+        any platform specific adjustments in RenderThemeXXX.cpp, either
+        by loading a file as the Qt port does, or by modifying the style
+        directly.
+
+        * WebCore.pro: Add new resource file
+        * css/CSSStyleSelector.cpp:
+        (WebCore::loadDefaultStyle): adjust default stylesheet
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderTheme::adjustDefaultStyleSheet): Qt adjustments
+        * platform/qt/WebCoreResources.qrc: Added.
+        * platform/qt/html4-adjustments-qt.css: Added.
+        * rendering/RenderTheme.cpp: Default adjustments (none)
+        * rendering/RenderTheme.h:
+
 2008-06-02  Siraj Razick  <siraj.razick@collabora.co.uk>
 
         Reviewed by Simon

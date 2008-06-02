@@ -30,6 +30,7 @@ namespace WebCore {
 class Element;
 class PopupMenu;
 class RenderMenuList;
+class CSSStyleSheet;
 
 enum ControlState {
     HoverState,
@@ -53,6 +54,10 @@ public:
     // "border" are set, or if the appearance is not supported by the theme.
     void adjustStyle(CSSStyleSelector*, RenderStyle*, Element*,  bool UAHasAppearance,
                      const BorderData&, const FillLayer&, const Color& backgroundColor);
+
+    // This method is called once, from CSSStyleSelector::loadDefaultStyle(), to let each platform adjust
+    // the default CSS rules in html4.css.
+    static void adjustDefaultStyleSheet(CSSStyleSheet*);
 
     // This method is called to paint the widget as a background of the RenderObject.  A widget's foreground, e.g., the
     // text of a button, is always rendered by the engine itself.  The boolean return value indicates

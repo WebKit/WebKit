@@ -36,6 +36,7 @@
 #include <QApplication>
 #include <QColor>
 #include <QDebug>
+#include <QFile>
 #include <QWidget>
 #include <QPainter>
 #include <QPushButton>
@@ -44,6 +45,7 @@
 #include <QStyleOptionFrameV2>
 
 #include "Color.h"
+#include "CSSStyleSheet.h"
 #include "Document.h"
 #include "Page.h"
 #include "Font.h"
@@ -735,6 +737,15 @@ EAppearance RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
     }
 
     return result;
+}
+
+void RenderTheme::adjustDefaultStyleSheet(CSSStyleSheet* style)
+{
+    QFile platformStyleSheet(":/webcore/resources/html4-adjustments-qt.css");
+    if (platformStyleSheet.open(QFile::ReadOnly)) {
+        QByteArray sheetData = platformStyleSheet.readAll();
+        style->parseString(QString::fromUtf8(sheetData.constData(), sheetData.length()));
+    }
 }
 
 }

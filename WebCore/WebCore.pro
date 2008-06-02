@@ -124,7 +124,8 @@ include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 
 RESOURCES += \
     $$PWD/../WebCore/page/inspector/WebKit.qrc \
-    $$PWD/../WebCore/Resources/WebKitResources.qrc
+    $$PWD/../WebCore/Resources/WebKitResources.qrc \
+    $$PWD/../WebCore/platform/qt/WebCoreResources.qrc
 INCLUDEPATH += \
     $$PWD/platform/qt \
     $$PWD/platform/network/qt \
