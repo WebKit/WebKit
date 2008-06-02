@@ -1,5 +1,11 @@
 2008-06-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Added a graph.
+
+        * blog-files/webkit-graph.png: Added.
+
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
         Moved the squirrelfish mascot to the right place.
 
         * blog-files/squirrelfish.png: Copied from images/squirrelfish.png.
