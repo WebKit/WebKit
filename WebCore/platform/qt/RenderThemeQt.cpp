@@ -51,8 +51,12 @@
 #include "Font.h"
 #include "RenderTheme.h"
 #include "GraphicsContext.h"
+#include "HTMLMediaElement.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 StylePainter::StylePainter(const RenderObject::PaintInfo& paintInfo)
 {
@@ -241,11 +245,6 @@ int RenderThemeQt::minimumMenuListSize(RenderStyle*) const
 {
     const QFontMetrics &fm = QApplication::fontMetrics();
     return 7 * fm.width(QLatin1Char('x'));
-}
-
-void RenderThemeQt::adjustSliderThumbSize(RenderObject* o) const
-{
-    RenderTheme::adjustSliderThumbSize(o);
 }
 
 static void computeSizeBasedOnStyle(RenderStyle* renderStyle)
@@ -745,6 +744,177 @@ void RenderTheme::adjustDefaultStyleSheet(CSSStyleSheet* style)
     if (platformStyleSheet.open(QFile::ReadOnly)) {
         QByteArray sheetData = platformStyleSheet.readAll();
         style->parseString(QString::fromUtf8(sheetData.constData(), sheetData.length()));
+    }
+}
+
+#if ENABLE(VIDEO)
+
+// Helper class to transform the painter's world matrix to the object's content area, scaled to 0,0,100,100
+class WorldMatrixTransformer
+{
+public:
+    WorldMatrixTransformer(QPainter* painter, RenderObject* renderObject, const IntRect& r) : m_painter(painter) {
+        RenderStyle* style = renderObject->style();
+        m_originalTransform = m_painter->transform();
+        m_painter->translate(r.x() + style->paddingLeft().value(), r.y() + style->paddingTop().value());
+        m_painter->scale((r.width() - style->paddingLeft().value() - style->paddingRight().value()) / 100.0,
+             (r.height() - style->paddingTop().value() - style->paddingBottom().value()) / 100.0);
+    }
+
+    ~WorldMatrixTransformer() { m_painter->setTransform(m_originalTransform); }
+
+private:
+    QPainter* m_painter;
+    QTransform m_originalTransform;
+};
+
+HTMLMediaElement* RenderThemeQt::getMediaElementFromRenderObject(RenderObject* o) const
+{
+    Node* node = o->element();
+    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
+        return 0;
+
+    return static_cast<HTMLMediaElement*>(mediaNode);
+}
+
+void RenderThemeQt::paintMediaBackground(QPainter* painter, const IntRect& r) const
+{
+    painter->setPen(Qt::NoPen);
+    static QColor transparentBlack(0,0,0,100);
+    painter->setBrush(transparentBlack);
+    painter->drawRoundedRect(r.x(), r.y(), r.width(), r.height(), 5.0, 5.0);
+}
+
+QColor RenderThemeQt::getMediaControlForegroundColor(RenderObject* o) const
+{
+    QColor fgColor = platformActiveSelectionBackgroundColor();
+    if (o && o->element()->active())
+        fgColor = fgColor.lighter();
+    return fgColor;
+}
+
+bool RenderThemeQt::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+   return RenderTheme::paintMediaFullscreenButton(o, paintInfo, r);
+}
+
+bool RenderThemeQt::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    HTMLMediaElement* mediaElement = getMediaElementFromRenderObject(o);
+    if (!mediaElement)
+        return false;
+
+    StylePainter p(paintInfo);
+    if (!p.isValid())
+        return true;
+
+    paintMediaBackground(p.painter, r);
+
+    WorldMatrixTransformer transformer(p.painter, o, r);
+    const QPointF speakerPolygon[6] = { QPointF(20, 30), QPointF(50, 30), QPointF(80, 0),
+            QPointF(80, 100), QPointF(50, 70), QPointF(20, 70)};
+
+    p.painter->setBrush(getMediaControlForegroundColor(o));
+    p.painter->drawPolygon(speakerPolygon, 6);
+
+    if (mediaElement->muted()) {
+        p.painter->setPen(Qt::red);
+        p.painter->drawLine(0, 100, 100, 0);
+    }
+
+    return false;
+}
+
+bool RenderThemeQt::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    HTMLMediaElement* mediaElement = getMediaElementFromRenderObject(o);
+    if (!mediaElement)
+        return false;
+
+    StylePainter p(paintInfo);
+    if (!p.isValid())
+        return true;
+
+    paintMediaBackground(p.painter, r);
+
+    WorldMatrixTransformer transformer(p.painter, o, r);
+    p.painter->setBrush(getMediaControlForegroundColor(o));
+    if (mediaElement->canPlay()) {
+        const QPointF playPolygon[3] = { QPointF(0, 0), QPointF(100, 50), QPointF(0, 100)};
+        p.painter->drawPolygon(playPolygon, 3);
+    } else {
+        p.painter->drawRect(0, 0, 30, 100);
+        p.painter->drawRect(70, 0, 30, 100);
+    }
+
+    return false;
+}
+
+bool RenderThemeQt::paintMediaSeekBackButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    // We don't want to paint this at the moment.
+    return false;
+}
+
+bool RenderThemeQt::paintMediaSeekForwardButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    // We don't want to paint this at the moment.
+    return false;
+}
+
+bool RenderThemeQt::paintMediaSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    HTMLMediaElement* mediaElement = getMediaElementFromRenderObject(o);
+    if (!mediaElement)
+        return false;
+
+    StylePainter p(paintInfo);
+    if (!p.isValid())
+        return true;
+
+    paintMediaBackground(p.painter, r);
+
+    if (MediaPlayer* player = mediaElement->player()) {
+        if (player->totalBytesKnown()) {
+            float percentLoaded = static_cast<float>(player->bytesLoaded()) / player->totalBytes();
+
+            WorldMatrixTransformer transformer(p.painter, o, r);
+            p.painter->setBrush(getMediaControlForegroundColor());
+            p.painter->drawRect(0, 37, 100 * percentLoaded, 26);
+        }
+    }
+
+    return false;
+}
+
+bool RenderThemeQt::paintMediaSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    HTMLMediaElement* mediaElement = getMediaElementFromRenderObject(o->parent());
+    if (!mediaElement)
+        return false;
+
+    StylePainter p(paintInfo);
+    if (!p.isValid())
+        return true;
+
+    p.painter->setPen(Qt::NoPen);
+    p.painter->setBrush(getMediaControlForegroundColor(o));
+    p.painter->drawRect(r.x(), r.y(), r.width(), r.height());
+
+    return false;
+}
+#endif
+
+void RenderThemeQt::adjustSliderThumbSize(RenderObject* o) const
+{
+    if (o->style()->appearance() == MediaSliderThumbAppearance) {
+        RenderStyle* parentStyle = o->parent()->style();
+        Q_ASSERT(parentStyle);
+
+        int parentHeight = parentStyle->height().value();
+        o->style()->setWidth(Length(parentHeight / 3, Fixed));
+        o->style()->setHeight(Length(parentHeight, Fixed));
     }
 }
 

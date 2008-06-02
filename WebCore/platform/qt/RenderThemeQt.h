@@ -34,6 +34,7 @@ QT_END_NAMESPACE
 namespace WebCore {
 
 class RenderStyle;
+class HTMLMediaElement;
 
 class RenderThemeQt : public RenderTheme
 {
@@ -106,6 +107,22 @@ protected:
 
     virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
+#if ENABLE(VIDEO)
+    virtual bool paintMediaFullscreenButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintMediaPlayButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintMediaMuteButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintMediaSeekBackButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintMediaSeekForwardButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintMediaSliderTrack(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintMediaSliderThumb(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
+private:
+    HTMLMediaElement* getMediaElementFromRenderObject(RenderObject* o) const;
+    void paintMediaBackground(QPainter* painter, const IntRect& r) const;
+    QColor getMediaControlForegroundColor(RenderObject* o = 0) const;
+#endif
+
 private:
     bool supportsFocus(EAppearance) const;
 

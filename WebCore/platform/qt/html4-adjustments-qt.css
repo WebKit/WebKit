@@ -20,4 +20,49 @@
  *
  */
 
+audio {
+    height: 34px;
+    width: 400px;
+}
+
+audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
+    left: auto;
+    right: 5px;
+    width: 12px;
+    height: 12px;
+    padding: 6px;
+    margin: 5px 0px;
+}
+
+audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
+    left: 5px;
+    width: 9px;
+    height: 12px;
+    padding: 6px 12px 6px 11px;
+    margin: 5px 0px;
+}
+
+audio::-webkit-media-controls-time-display, video::-webkit-media-controls-time-display {
+    display: none;
+}
+
+audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
+    left: 42px;
+    right: 34px;
+    height: 12px;
+    padding: 6px 8px;
+    margin: 5px 0px;
+}
+
+audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
+     display: none;
+}
+
+audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
+     display: none;
+}
+
+audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
+    display: none;
+}
 

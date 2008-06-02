@@ -2,6 +2,29 @@
 
         Reviewed by Simon.
 
+        Implement basic media element controls for the QtWebKit port.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::WorldMatrixTransformer::WorldMatrixTransformer):
+        (WebCore::WorldMatrixTransformer::~WorldMatrixTransformer):
+        (WebCore::RenderThemeQt::getMediaElementFromRenderObject):
+        (WebCore::RenderThemeQt::paintMediaBackground):
+        (WebCore::RenderThemeQt::getMediaControlForegroundColor):
+        (WebCore::RenderThemeQt::paintMediaFullscreenButton):
+        (WebCore::RenderThemeQt::paintMediaMuteButton):
+        (WebCore::RenderThemeQt::paintMediaPlayButton):
+        (WebCore::RenderThemeQt::paintMediaSeekBackButton):
+        (WebCore::RenderThemeQt::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeQt::paintMediaSliderTrack):
+        (WebCore::RenderThemeQt::paintMediaSliderThumb):
+        (WebCore::RenderThemeQt::adjustSliderThumbSize):
+        * platform/qt/RenderThemeQt.h:
+        * platform/qt/html4-adjustments-qt.css:
+
+2008-05-30  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
         Change default styling of media elements to allow controls
         to be placed at any position within the media element.
 
