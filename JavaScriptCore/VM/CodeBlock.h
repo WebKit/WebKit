@@ -122,9 +122,6 @@ namespace KJS {
             : ProgramCodeBlock(ownerNode, globalObject_)
         {
         }
-
-        Vector<Identifier> declaredVariableNames;
-        Vector<Identifier> declaredFunctionNames;
     };
 
 } // namespace KJS

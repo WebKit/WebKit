@@ -99,7 +99,7 @@ namespace KJS {
         typedef Vector<Node*, 16> NodeStack;
         enum { IsConstant = 1, HasInitializer = 2 } VarAttrs;
         typedef Vector<std::pair<Identifier, unsigned>, 16> VarStack;
-        typedef Vector<FuncDeclNode*, 16> FunctionStack;
+        typedef Vector<RefPtr<FuncDeclNode>, 16> FunctionStack;
 
         DeclarationStacks(ExecState* e, NodeStack& n, VarStack& v, FunctionStack& f)
             : exec(e)
@@ -2620,6 +2620,8 @@ namespace KJS {
         virtual JSValue* execute(OldInterpreterExecState*) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 
+        StatementVector& children() { return m_children; }
+
     protected:
         StatementVector m_children;
     };
@@ -2958,7 +2960,10 @@ namespace KJS {
         
         bool usesEval() const { return m_usesEval; }
         bool needsClosure() const { return m_needsClosure; }
-
+        
+        VarStack& varStack() { return m_varStack; }
+        FunctionStack& functionStack() { return m_functionStack; }
+        
     protected:
         void optimizeVariableAccess(OldInterpreterExecState*) KJS_FAST_CALL;
 

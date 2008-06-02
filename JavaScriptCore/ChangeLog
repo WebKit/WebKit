@@ -1,3 +1,40 @@
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        A little cleanup in the CodeGenerator.
+
+        * VM/CodeGenerator.cpp: A few changes here.
+
+        (1) Removed remaining cases of the old hack of putting "this" into the
+        symbol table; replaced with explicit tracking of m_thisRegister.
+
+        (2) Made m_thisRegister behave the same for function, eval, and program
+        code, removing the static programCodeThis() function.
+
+        (3) Added a feature to nix a ScopeNode's declaration stacks when done
+        compiling, to save memory.
+
+        (4) Removed code that copied eval declarations into special vectors: we
+        just use the originals in the ScopeNode now.
+        
+        * VM/CodeGenerator.h: Removed unneded parameters from the CodeGenerator
+        constructor: we just use get that data from the ScopeNode now.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::execute): When executing an eval node, don't iterate a
+        special copy of its declarations; iterate the originals, instead.
+
+        * kjs/nodes.cpp: Moved responsibility for knowing what AST data to throw
+        away into the CodeGenerator. Nodes no longer call shrinkCapacity on
+        their data directly.
+        
+        * kjs/nodes.h: Changed FunctionStack to ref its contents, so declaration
+        data stays around even after we've thrown away the AST, unless we explicitly
+        throw away the declaration data, too. This is useful for eval code, which
+        needs to reference its declaration data at execution time. (Soon, it will
+        be useful for program code, too, since program code should do the same.)
+
 2008-06-02  Adam Roben  <aroben@apple.com>
 
         Build fix for non-AllInOne builds

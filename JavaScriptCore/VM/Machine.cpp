@@ -762,16 +762,18 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
         }
     }
     
-    for (Vector<Identifier>::const_iterator iter = codeBlock->declaredVariableNames.begin(); iter != codeBlock->declaredVariableNames.end(); ++iter) {
-        Identifier ident = *iter;
-        
+    const Node::VarStack& varStack = codeBlock->ownerNode->varStack();
+    Node::VarStack::const_iterator varStackEnd = varStack.end();
+    for (Node::VarStack::const_iterator it = varStack.begin(); it != varStackEnd; ++it) {
+        const Identifier& ident = (*it).first;
         if (!variableObject->hasProperty(exec, ident))
             variableObject->put(exec, ident, jsUndefined());
     }
     
-    ASSERT(codeBlock->functions.size() == codeBlock->declaredFunctionNames.size());
-    for (size_t i = 0; i < codeBlock->functions.size(); ++i)
-        variableObject->put(exec, codeBlock->declaredFunctionNames[i], codeBlock->functions[i]->makeFunction(exec, scopeChain));
+    const Node::FunctionStack& functionStack = codeBlock->ownerNode->functionStack();
+    Node::FunctionStack::const_iterator functionStackEnd = functionStack.end();
+    for (Node::FunctionStack::const_iterator it = functionStack.begin(); it != functionStackEnd; ++it)
+        variableObject->put(exec, (*it)->m_ident, (*it)->makeFunction(exec, scopeChain));
     
     size_t oldSize = registerFile->size();
     size_t newSize = registerOffset + codeBlock->numVars + codeBlock->numTemporaries + CallFrameHeaderSize;

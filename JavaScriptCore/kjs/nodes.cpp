@@ -5850,10 +5850,8 @@ void EvalNode::generateCode(ScopeChainNode* sc)
 
     m_code.set(new EvalCodeBlock(this, globalObject));
 
-    CodeGenerator generator(this, globalObject->debugger(), scopeChain, &symbolTable, m_code.get(), m_varStack, m_functionStack);
+    CodeGenerator generator(this, globalObject->debugger(), scopeChain, &symbolTable, m_code.get());
     generator.generate();
-
-    m_children.shrinkCapacity(0);
 }
 
 EvalNode* EvalNode::create(SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
@@ -5890,10 +5888,8 @@ void FunctionBodyNode::generateCode(ScopeChainNode* sc)
 
     m_code.set(new CodeBlock(this));
 
-    CodeGenerator generator(this, globalObject->debugger(), scopeChain, &m_symbolTable, m_code.get(), m_varStack, m_functionStack, m_parameters);
+    CodeGenerator generator(this, globalObject->debugger(), scopeChain, &m_symbolTable, m_code.get());
     generator.generate();
-
-    m_children.shrinkCapacity(0);
 }
 
 RegisterID* FunctionBodyNode::emitCode(CodeGenerator& generator, RegisterID*)
@@ -5930,8 +5926,6 @@ void ProgramNode::generateCode(ScopeChainNode* sc, bool canCreateGlobals)
     
     CodeGenerator generator(this, globalObject->debugger(), scopeChain, &globalObject->symbolTable(), m_code.get(), m_varStack, m_functionStack, canCreateGlobals);
     generator.generate();
-
-    m_children.shrinkCapacity(0);
 }
 
 void ProgramNode::initializeSymbolTable(OldInterpreterExecState* exec)
@@ -6030,7 +6024,7 @@ void ProgramNode::processDeclarations(OldInterpreterExecState* exec)
     // order of addition in initializeSymbolTable().
 
     for (size_t i = 0, size = m_functionStack.size(); i < size; ++i) {
-        FuncDeclNode* node = m_functionStack[i];
+        FuncDeclNode* node = m_functionStack[i].get();
         LocalStorageEntry entry = LocalStorageEntry(node->makeFunction(exec, exec->scopeChain().node()), minAttributes);
         size_t index = m_functionIndexes[i];
 
@@ -6080,7 +6074,7 @@ void EvalNode::processDeclarations(OldInterpreterExecState* exec)
     }
 
     for (i = 0, size = m_functionStack.size(); i < size; ++i) {
-        FuncDeclNode* funcDecl = m_functionStack[i];
+        FuncDeclNode* funcDecl = m_functionStack[i].get();
         variableObject->putWithAttributes(exec, funcDecl->m_ident, funcDecl->makeFunction(exec, exec->scopeChain().node()), 0);
     }
 }
