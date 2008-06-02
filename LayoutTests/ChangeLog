@@ -1,3 +1,44 @@
+2008-06-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - additional tests for https://bugs.webkit.org/show_bug.cgi?id=19344
+          <rdar://problem/5977300> Regression: Shadow offsets seem to have changed in 10.5.3 in canvas
+
+        * fast/canvas/resources/shadow-offset.js: Added.
+        * fast/canvas/shadow-offset-1.html: Copied from LayoutTests/fast/canvas/shadow-offset.html.
+        * fast/canvas/shadow-offset-2.html: Added.
+        * fast/canvas/shadow-offset-3.html: Added.
+        * fast/canvas/shadow-offset-4.html: Added.
+        * fast/canvas/shadow-offset-5.html: Added.
+        * fast/canvas/shadow-offset-6.html: Added.
+        * fast/canvas/shadow-offset-7.html: Added.
+        * fast/canvas/shadow-offset.html: Removed.
+        * platform/mac/fast/canvas/shadow-offset-1-expected.checksum: Added.
+        * platform/mac/fast/canvas/shadow-offset-1-expected.png: Added.
+        * platform/mac/fast/canvas/shadow-offset-1-expected.txt: Added.
+        * platform/mac/fast/canvas/shadow-offset-2-expected.checksum: Added.
+        * platform/mac/fast/canvas/shadow-offset-2-expected.png: Added.
+        * platform/mac/fast/canvas/shadow-offset-2-expected.txt: Added.
+        * platform/mac/fast/canvas/shadow-offset-3-expected.checksum: Added.
+        * platform/mac/fast/canvas/shadow-offset-3-expected.png: Added.
+        * platform/mac/fast/canvas/shadow-offset-3-expected.txt: Added.
+        * platform/mac/fast/canvas/shadow-offset-4-expected.checksum: Added.
+        * platform/mac/fast/canvas/shadow-offset-4-expected.png: Added.
+        * platform/mac/fast/canvas/shadow-offset-4-expected.txt: Added.
+        * platform/mac/fast/canvas/shadow-offset-5-expected.checksum: Added.
+        * platform/mac/fast/canvas/shadow-offset-5-expected.png: Added.
+        * platform/mac/fast/canvas/shadow-offset-5-expected.txt: Added.
+        * platform/mac/fast/canvas/shadow-offset-6-expected.checksum: Added.
+        * platform/mac/fast/canvas/shadow-offset-6-expected.png: Added.
+        * platform/mac/fast/canvas/shadow-offset-6-expected.txt: Added.
+        * platform/mac/fast/canvas/shadow-offset-7-expected.checksum: Added.
+        * platform/mac/fast/canvas/shadow-offset-7-expected.png: Added.
+        * platform/mac/fast/canvas/shadow-offset-7-expected.txt: Added.
+        * platform/mac/fast/canvas/shadow-offset-expected.checksum: Removed.
+        * platform/mac/fast/canvas/shadow-offset-expected.png: Removed.
+        * platform/mac/fast/canvas/shadow-offset-expected.txt: Removed.
+
 2008-06-02  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin.
