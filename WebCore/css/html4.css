@@ -596,14 +596,15 @@ audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 16px;
+    height: 100%;
     -webkit-user-select: none;
 }
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
     -webkit-appearance: media-mute-button;
     position: absolute;
-    top: 0;
+    top: auto;
+    bottom: 0;
     left: 0;
     width: 17px;
     height: 16px;
@@ -612,7 +613,8 @@ audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-bu
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
     -webkit-appearance: media-play-button;
     position: absolute;
-    top: 0;
+    top: auto;
+    bottom: 0;
     left: 16px;
     width: 17px;
     height: 16px;
@@ -625,7 +627,8 @@ audio::-webkit-media-controls-time-display, video::-webkit-media-controls-time-d
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
     position: absolute;
-    top: 0;
+    top: auto;
+    bottom: 0;
     left: 32px;
     right: 32px;
     height: 16px;
@@ -635,7 +638,8 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
     -webkit-appearance: media-seek-back-button;
     position: absolute;
-    top: 0;
+    top: auto;
+    bottom: 0;
     right: 16px;
     width: 17px;
     height: 16px;
@@ -645,7 +649,8 @@ audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-se
 audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
     -webkit-appearance: media-seek-forward-button;
     position: absolute;
-    top: 0;
+    top: auto;
+    bottom: 0;
     right: 0;
     width: 17px;
     height: 16px;

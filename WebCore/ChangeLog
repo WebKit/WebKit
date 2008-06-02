@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        Change default styling of media elements to allow controls
+        to be placed at any position within the media element.
+
+        * css/html4.css:
+
+2008-05-30  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
         Use intrinsic size for media elements with no natural size.
 
         * rendering/RenderVideo.cpp:
