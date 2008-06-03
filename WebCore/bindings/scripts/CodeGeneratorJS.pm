@@ -617,7 +617,7 @@ sub GenerateHeader
         }
         
         if ($interfaceName eq "Node" or $interfaceName eq "Element" or $interfaceName eq "Text") {
-            push(@headerContent, "KJS::JSValue* toJSNewlyCreated(KJS::ExecState*, Node*);\n");
+            push(@headerContent, "KJS::JSValue* toJSNewlyCreated(KJS::ExecState*, $interfaceName*);\n");
         }
         
     }
