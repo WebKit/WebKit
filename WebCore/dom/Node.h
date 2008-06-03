@@ -344,7 +344,6 @@ public:
      */
     Node* previousEditable() const;
     Node* nextEditable() const;
-    Node* nextEditable(int offset) const;
 
     RenderObject* renderer() const { return m_renderer; }
     RenderObject* nextRenderer();

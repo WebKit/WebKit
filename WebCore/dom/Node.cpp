@@ -915,24 +915,6 @@ Node *Node::previousEditable() const
     return 0;
 }
 
-// Offset specifies the child node to start at.  If it is past
-// the last child, it specifies to start at next sibling.
-Node *Node::nextEditable(int offset) const
-{
-    ASSERT(offset>=0);
-    Node *node;
-    if (hasChildNodes())
-        node = (offset >= (int)childNodeCount()) ? nextSibling() : childNode(offset)->nextLeafNode();
-    else
-        node = nextLeafNode();
-    while (node) {
-        if (node->isContentEditable())
-            return node;
-        node = node->nextLeafNode();
-    }
-    return 0;
-}
-
 Node *Node::nextEditable() const
 {
     Node *node = nextLeafNode();

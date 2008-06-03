@@ -1,3 +1,26 @@
+2008-06-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/5943515> SelectionController()->modify Backward/Forward with LineGranularity sometimes don't work
+        
+        next/previousLinePosition didn't work if the input position was the last line in its
+        block.  The code for handling such a position assumed that the input position was
+        editable, and that the position to be returned needed to also be editable.  Changed
+        this code to just maintain the same editability.
+        
+        No test case for now because we haven't enabled selection extension operations for
+        non-editable selections.  I enabled them temporarily to test the fix, however.
+
+        * dom/Node.cpp: Removed the now unused nextEditable(int).
+        * dom/Node.h:
+        * editing/visible_units.cpp:
+        (WebCore::previousLeafWithSameEditability): Added.  Like previousEditable but just returns
+        a node of the same editability.
+        (WebCore::previousLinePosition): Call previousLeaf instead of previousEditable.
+        (WebCore::nextLeafWithSameEditability): Added.
+        (WebCore::nextLinePosition): Same as above.
+
 2008-06-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John and Sam.

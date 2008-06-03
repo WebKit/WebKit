@@ -425,6 +425,19 @@ bool isEndOfLine(const VisiblePosition &p)
     return p.isNotNull() && p == endOfLine(p);
 }
 
+// The first leaf before node that has the same editability as node.
+static Node* previousLeafWithSameEditability(Node* node)
+{
+    bool editable = node->isContentEditable();
+    Node* n = node->previousLeafNode();
+    while (n) {
+        if (editable == n->isContentEditable())
+            return n;
+        n = n->previousLeafNode();
+    }
+    return 0;
+}
+
 VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int x)
 {
     Position p = visiblePosition.deepEquivalent();
@@ -455,9 +468,9 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
         // Need to move back to previous containing editable block in this root editable
         // block and find the last root line box in that block.
         Node* startBlock = enclosingBlock(node);
-        Node *n = node->previousEditable();
+        Node* n = previousLeafWithSameEditability(node);
         while (n && startBlock == enclosingBlock(n))
-            n = n->previousEditable();
+            n = previousLeafWithSameEditability(n);
         while (n) {
             if (highestEditableRoot(Position(n, 0)) != highestRoot)
                 break;
@@ -475,7 +488,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
 
                 return VisiblePosition(pos, DOWNSTREAM);
             }
-            n = n->previousEditable();
+            n = previousLeafWithSameEditability(n);
         }
     }
     
@@ -495,7 +508,37 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     // Could not find a previous line. This means we must already be on the first line.
     // Move to the start of the content in this block, which effectively moves us
     // to the start of the line we're on.
-    return VisiblePosition(node->rootEditableElement(), 0, DOWNSTREAM);
+    Node* rootElement = node->isContentEditable() ? node->rootEditableElement() : node->document()->documentElement();
+    return VisiblePosition(rootElement, 0, DOWNSTREAM);
+}
+
+static Node* nextLeafWithSameEditability(Node* node, int offset)
+{
+    bool editable = node->isContentEditable();
+    ASSERT(offset >= 0);
+    Node* child = node->childNode(offset);
+    Node* n = child ? child->nextLeafNode() : node->nextLeafNode();
+    while (n) {
+        if (editable == n->isContentEditable())
+            return n;
+        n = n->nextLeafNode();
+    }
+    return 0;
+}
+
+static Node* nextLeafWithSameEditability(Node* node)
+{
+    if (!node)
+        return 0;
+    
+    bool editable = node->isContentEditable();
+    Node* n = node->nextLeafNode();
+    while (n) {
+        if (editable == n->isContentEditable())
+            return n;
+        n = n->nextLeafNode();
+    }
+    return 0;
 }
 
 VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
@@ -528,9 +571,9 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
         // Need to move forward to next containing editable block in this root editable
         // block and find the first root line box in that block.
         Node* startBlock = enclosingBlock(node);
-        Node *n = node->nextEditable(p.offset());
+        Node* n = nextLeafWithSameEditability(node, p.offset());
         while (n && startBlock == enclosingBlock(n))
-            n = n->nextEditable();
+            n = nextLeafWithSameEditability(n);
         while (n) {
             if (highestEditableRoot(Position(n, 0)) != highestRoot)
                 break;
@@ -547,7 +590,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
 
                 return VisiblePosition(pos, DOWNSTREAM);
             }
-            n = n->nextEditable();
+            n = nextLeafWithSameEditability(n);
         }
     }
     
@@ -567,7 +610,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
     // Could not find a next line. This means we must already be on the last line.
     // Move to the end of the content in this block, which effectively moves us
     // to the end of the line we're on.
-    Element *rootElement = node->rootEditableElement();
+    Element* rootElement = node->isContentEditable() ? node->rootEditableElement() : node->document()->documentElement();
     return VisiblePosition(rootElement, rootElement ? rootElement->childNodeCount() : 0, DOWNSTREAM);
 }
 
