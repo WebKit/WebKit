@@ -1,5 +1,13 @@
 2008-06-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Removed JSObject::call, since it just called JSObject::callAsFunction.
+
+        SunSpider reports no change.
+
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
         
         A little cleanup in the CodeGenerator.

@@ -304,7 +304,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         return nil;
 
     [self _rootObject]->globalObject()->startTimeoutCheck();
-    JSValue *result = funcImp->call(exec, [self _imp], argList);
+    JSValue *result = funcImp->callAsFunction(exec, [self _imp], argList);
     [self _rootObject]->globalObject()->stopTimeoutCheck();
 
     if (exec->hadException()) {

@@ -71,7 +71,7 @@ void ScheduledAction::execute(JSDOMWindowShell* windowShell)
                 args.append(m_args[i]);
 
             window->startTimeoutCheck();
-            static_cast<JSObject*>(func)->call(exec, windowShell, args);
+            static_cast<JSObject*>(func)->callAsFunction(exec, windowShell, args);
             window->stopTimeoutCheck();
             if (exec->hadException()) {
                 JSObject* exception = exec->exception()->toObject(exec);

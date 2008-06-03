@@ -300,7 +300,7 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     List argList;
     getListFromJArray(args, argList);
     rootObject->globalObject()->startTimeoutCheck();
-    JSValue *result = funcImp->call(exec, thisObj, argList);
+    JSValue *result = funcImp->callAsFunction(exec, thisObj, argList);
     rootObject->globalObject()->stopTimeoutCheck();
 
     return convertValueToJObject(result);

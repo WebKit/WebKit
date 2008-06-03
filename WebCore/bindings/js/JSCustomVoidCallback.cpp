@@ -79,9 +79,9 @@ void JSCustomVoidCallback::handleEvent()
     
     globalObject->startTimeoutCheck();
     if (handleEventFunc)
-        handleEventFunc->call(exec, m_callback, args);
+        handleEventFunc->callAsFunction(exec, m_callback, args);
     else
-        m_callback->call(exec, m_callback, args);
+        m_callback->callAsFunction(exec, m_callback, args);
     globalObject->stopTimeoutCheck();
         
     if (exec->hadException()) {

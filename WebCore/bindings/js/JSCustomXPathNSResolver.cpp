@@ -103,9 +103,9 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     JSValue* retval;
     globalObject->startTimeoutCheck();
     if (lookupNamespaceURIFunc)
-        retval = lookupNamespaceURIFunc->call(exec, m_customResolver, args);
+        retval = lookupNamespaceURIFunc->callAsFunction(exec, m_customResolver, args);
     else
-        retval = m_customResolver->call(exec, m_customResolver, args);
+        retval = m_customResolver->callAsFunction(exec, m_customResolver, args);
     globalObject->stopTimeoutCheck();
 
     if (exec->hadException()) {

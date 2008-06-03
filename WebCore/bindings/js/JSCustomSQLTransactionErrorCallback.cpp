@@ -80,9 +80,9 @@ bool JSCustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
     JSValue *result;
     globalObject->startTimeoutCheck();
     if (handleEventFunc)
-        result = handleEventFunc->call(exec, m_callback, args);
+        result = handleEventFunc->callAsFunction(exec, m_callback, args);
     else
-        result = m_callback->call(exec, m_callback, args);
+        result = m_callback->callAsFunction(exec, m_callback, args);
     globalObject->stopTimeoutCheck();
         
     if (exec->hadException()) {

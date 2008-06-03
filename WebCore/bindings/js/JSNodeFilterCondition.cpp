@@ -68,7 +68,7 @@ short JSNodeFilterCondition::acceptNode(Node* filterNode, JSValue*& exception) c
         exception = takeException(exec);
         return NodeFilter::FILTER_REJECT;
     }
-    JSValue* result = m_filter->call(exec, m_filter, args);
+    JSValue* result = m_filter->callAsFunction(exec, m_filter, args);
     if (exec->hadException()) {
         exception = takeException(exec);
         return NodeFilter::FILTER_REJECT;

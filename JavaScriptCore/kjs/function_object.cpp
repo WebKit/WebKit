@@ -104,7 +104,7 @@ JSValue* functionProtoFuncApply(ExecState* exec, JSObject* thisObj, const List& 
             return throwError(exec, TypeError);
     }
 
-    return thisObj->call(exec, applyThis, applyArgs);
+    return thisObj->callAsFunction(exec, applyThis, applyArgs);
 }
 
 JSValue* functionProtoFuncCall(ExecState* exec, JSObject* thisObj, const List& args)
@@ -122,7 +122,7 @@ JSValue* functionProtoFuncCall(ExecState* exec, JSObject* thisObj, const List& a
 
     List argsTail;
     args.getSlice(1, argsTail);
-    return thisObj->call(exec, callThis, argsTail);
+    return thisObj->callAsFunction(exec, callThis, argsTail);
 }
 
 // ------------------------------ FunctionObjectImp ----------------------------

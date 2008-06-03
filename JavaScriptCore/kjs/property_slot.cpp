@@ -46,11 +46,11 @@ JSValue *PropertySlot::functionGetter(ExecState* exec, JSObject* originalObject,
     CallData data;
     CallType callType = slot.m_data.getterFunc->getCallData(data);
     if (callType == CallTypeNative)
-        return slot.m_data.getterFunc->call(exec, originalObject, exec->emptyList());
+        return slot.m_data.getterFunc->callAsFunction(exec, originalObject, exec->emptyList());
     ASSERT(callType == CallTypeJS);
     RegisterFileStack* stack = &exec->dynamicGlobalObject()->registerFileStack();
     stack->pushFunctionRegisterFile();
-    JSValue* result = slot.m_data.getterFunc->call(exec, originalObject, exec->emptyList());
+    JSValue* result = slot.m_data.getterFunc->callAsFunction(exec, originalObject, exec->emptyList());
     stack->popFunctionRegisterFile();
     return result;    
 }

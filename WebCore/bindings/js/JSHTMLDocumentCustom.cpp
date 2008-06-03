@@ -105,7 +105,7 @@ JSValue* JSHTMLDocument::open(ExecState* exec, const List& args)
                 JSObject* functionObject = wrapper->get(exec, "open")->getObject();
                 if (!functionObject || !functionObject->implementsCall())
                     return throwError(exec, TypeError);
-                return functionObject->call(exec, wrapper, args);
+                return functionObject->callAsFunction(exec, wrapper, args);
             }
         }
         return jsUndefined();

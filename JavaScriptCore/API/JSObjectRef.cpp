@@ -285,7 +285,7 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
     for (size_t i = 0; i < argumentCount; i++)
         argList.append(toJS(arguments[i]));
 
-    JSValueRef result = toRef(jsObject->call(exec, jsThisObject, argList)); // returns NULL if object->implementsCall() is false
+    JSValueRef result = toRef(jsObject->callAsFunction(exec, jsThisObject, argList)); // returns NULL if object->implementsCall() is false
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec->exception());

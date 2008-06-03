@@ -1281,7 +1281,7 @@ inline JSValue* ExpressionNode::resolveAndCall(OldInterpreterExecState* exec, co
             }
 
             JSObject* thisObj = base->toThisObject(exec);
-            return func->call(exec, thisObj, argList);
+            return func->callAsFunction(exec, thisObj, argList);
         }
         ++iter;
     } while (iter != end);
@@ -1340,7 +1340,7 @@ JSValue* FunctionCallValueNode::evaluate(OldInterpreterExecState* exec)
     KJS_CHECKEXCEPTIONVALUE
 
     JSObject* thisObj = exec->globalThisValue();
-    return func->call(exec, thisObj, argList);
+    return func->callAsFunction(exec, thisObj, argList);
 }
 
 RegisterID* FunctionCallResolveNode::emitCode(CodeGenerator& generator, RegisterID* dst)
@@ -1441,7 +1441,7 @@ JSValue* LocalVarFunctionCallNode::inlineEvaluate(OldInterpreterExecState* exec)
     KJS_CHECKEXCEPTIONVALUE
 
     JSObject* thisObj = exec->globalThisValue();
-    return func->call(exec, thisObj, argList);
+    return func->callAsFunction(exec, thisObj, argList);
 }
 
 JSValue* LocalVarFunctionCallNode::evaluate(OldInterpreterExecState* exec)
@@ -1495,7 +1495,7 @@ JSValue* ScopedVarFunctionCallNode::inlineEvaluate(OldInterpreterExecState* exec
     KJS_CHECKEXCEPTIONVALUE
 
     JSObject* thisObj = exec->globalThisValue();
-    return func->call(exec, thisObj, argList);
+    return func->callAsFunction(exec, thisObj, argList);
 }
 
 JSValue* ScopedVarFunctionCallNode::evaluate(OldInterpreterExecState* exec)
@@ -1633,7 +1633,7 @@ JSValue* FunctionCallBracketNode::evaluate(OldInterpreterExecState* exec)
     ASSERT(!thisObj->isActivationObject());
 
     // No need to call toThisObject() on the thisObj as it is known not to be the GlobalObject or ActivationObject
-    return func->call(exec, thisObj, argList);
+    return func->callAsFunction(exec, thisObj, argList);
 }
 
 static const char* dotExprNotAnObjectString() KJS_FAST_CALL;
@@ -1690,7 +1690,7 @@ JSValue* FunctionCallDotNode::inlineEvaluate(OldInterpreterExecState* exec)
     ASSERT(!thisObj->isActivationObject());
 
     // No need to call toThisObject() on the thisObj as it is known not to be the GlobalObject or ActivationObject
-    return func->call(exec, thisObj, argList);
+    return func->callAsFunction(exec, thisObj, argList);
 }
 
 JSValue* FunctionCallDotNode::evaluate(OldInterpreterExecState* exec)

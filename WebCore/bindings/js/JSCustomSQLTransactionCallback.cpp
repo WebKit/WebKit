@@ -134,9 +134,9 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
 
     globalObject->startTimeoutCheck();
     if (handleEventFunc)
-        handleEventFunc->call(exec, m_data->callback(), args);
+        handleEventFunc->callAsFunction(exec, m_data->callback(), args);
     else
-        m_data->callback()->call(exec, m_data->callback(), args);
+        m_data->callback()->callAsFunction(exec, m_data->callback(), args);
     globalObject->stopTimeoutCheck();
         
     if (exec->hadException()) {

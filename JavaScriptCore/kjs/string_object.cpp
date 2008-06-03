@@ -350,7 +350,7 @@ static JSValue *replace(ExecState *exec, StringImp* sourceVal, JSValue *pattern,
           args.append(jsNumber(completeMatchStart));
           args.append(sourceVal);
 
-          substitutedReplacement = replacementFunction->call(exec, exec->globalThisValue(), args)->toString(exec);
+          substitutedReplacement = replacementFunction->callAsFunction(exec, exec->globalThisValue(), args)->toString(exec);
       } else
           substitutedReplacement = substituteBackreferences(replacementString, source, ovector, reg);
 
@@ -399,7 +399,7 @@ static JSValue *replace(ExecState *exec, StringImp* sourceVal, JSValue *pattern,
       args.append(jsNumber(matchPos));
       args.append(sourceVal);
       
-      replacementString = replacementFunction->call(exec, exec->globalThisValue(), args)->toString(exec);
+      replacementString = replacementFunction->callAsFunction(exec, exec->globalThisValue(), args)->toString(exec);
   }
 
   return jsString(source.substr(0, matchPos) + replacementString + source.substr(matchPos + matchLen));

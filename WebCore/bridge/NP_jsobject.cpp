@@ -113,7 +113,7 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         List argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
         rootObject->globalObject()->startTimeoutCheck();
-        JSValue *resultV = funcImp->call (exec, funcImp, argList);
+        JSValue *resultV = funcImp->callAsFunction(exec, funcImp, argList);
         rootObject->globalObject()->stopTimeoutCheck();
 
         // Convert and return the result of the function call.
@@ -167,7 +167,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         List argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
         rootObject->globalObject()->startTimeoutCheck();
-        JSValue *resultV = funcImp->call (exec, thisObj, argList);
+        JSValue *resultV = funcImp->callAsFunction(exec, thisObj, argList);
         rootObject->globalObject()->stopTimeoutCheck();
 
         // Convert and return the result of the function call.
