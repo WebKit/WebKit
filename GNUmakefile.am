@@ -72,6 +72,12 @@ global_cxxflags += \
 	-fno-rtti
 endif
 
+# -no-undefined required for building DLLs on Windows
+# It breaks the build on other platforms, so we use it conditionally
+if OS_WIN32
+no_undefined = -no-undefined
+endif
+
 # Shared libraries
 lib_LTLIBRARIES = \
 	libwebkit-1.0.la
@@ -237,7 +243,8 @@ libwebkit_1_0_la_CPPFLAGS = \
 
 libwebkit_1_0_la_LDFLAGS = \
 	$(COVERAGE_LDFLAGS) \
-	-version-info @LIBWEBKITGTK_VERSION@
+	-version-info @LIBWEBKITGTK_VERSION@ \
+	$(no_undefined)
 
 libwebkit_1_0_la_LIBADD = \
 	libWebCore.la
@@ -258,6 +265,10 @@ if TARGET_X11
 global_cppflags += -DXP_UNIX
 webcore_libadd += -lXt
 endif
+
+# Used for symbol exports on Windows
+webcoregtk_cppflags += \
+	-DBUILDING_WEBKIT
 
 if !ENABLE_DEBUG
 global_cppflags += -DNDEBUG

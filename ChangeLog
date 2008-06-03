@@ -1,3 +1,10 @@
+2008-06-02  Alp Toker  <alp@nuanti.com>
+
+        GTK+/autotools Windows build system fixes.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2008-06-02  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Alp Toker.
