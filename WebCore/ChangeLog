@@ -1,3 +1,18 @@
+2008-06-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John and Sam.
+
+        <rdar://problem/5955218> 
+        Assertion failure in ApplicationCacheGroup::addEntry when reloading a page with a cache manifest (19182)
+        
+        * loader/appcache/ApplicationCacheGroup.h:
+        (WebCore::ApplicationCacheGroup::hasNewestCache):
+        Add new accessor.
+        
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::cacheGroupDestroyed):
+        Don't call newestCache since it will always be null. Instead, call hasNewestCache which returns the saved newest cache pointer.
+        
 2008-06-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

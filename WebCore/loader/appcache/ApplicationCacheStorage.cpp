@@ -198,7 +198,9 @@ void ApplicationCacheStorage::cacheGroupDestroyed(ApplicationCacheGroup* group)
     ASSERT(m_cachesInMemory.get(group->manifestURL()) == group);
 
     m_cachesInMemory.remove(group->manifestURL());
-    if (!group->newestCache())
+    
+    // If the cache is half-created, we don't want it in the saved set.
+    if (!group->savedNewestCachePointer())
         m_cacheHostSet.remove(urlHostHash(group->manifestURL()));
 }
 

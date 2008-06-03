@@ -1,3 +1,15 @@
+2008-06-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John and Sam.
+
+        <rdar://problem/5955218> 
+        Assertion failure in ApplicationCacheGroup::addEntry when reloading a page with a cache manifest (19182)
+
+        * http/tests/appcache/crash-when-navigating-away-then-back-expected.txt: Added.
+        * http/tests/appcache/crash-when-navigating-away-then-back.html: Added.
+        * http/tests/appcache/resources/crash-when-navigating-away-then-back.html: Added.
+        * http/tests/appcache/resources/crash-when-navigating-away-then-back.manifest: Added.
+
 2008-06-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
