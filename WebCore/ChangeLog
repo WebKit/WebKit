@@ -1,3 +1,12 @@
+2008-06-03  Alp Toker  <alp@nuanti.com>
+
+        Rubber-stamped by Alexey.
+
+        Remove GenerateNativeConverter added in r34331 to fix JS regressions.
+        (JSTextCustom.cpp added in r34141 is now unused in any code path.)
+
+        * dom/Text.idl:
+
 2008-06-03  Alexander Vassilev <avasilev@voipgate.com>
 
         Reviewed, tweaked and landed by Alexey.
