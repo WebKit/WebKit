@@ -219,9 +219,6 @@ svg/custom/non-opaque-filters.svg
 svg/custom/text-filter.svg
 svg/custom/visibility-override-filter.svg
 
-# This test intermittently crashes <rdar://5621979>
-editing/selection/5241148.html
-
 # Crash in CFURLConnectionSendCallbacks <rdar://5631739>
 fast/inspector/cssURLQuotes.html
 

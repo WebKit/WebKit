@@ -1,3 +1,12 @@
+2008-06-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        <rdar://problem/5621979> editing/selection/5241148.html crashes on Windows
+
+        Try removing it from the Skipped list, as this is not reproducible with current closed
+        source libraries.
+
+        * platform/win/Skipped:
+
 2008-06-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt and Mitz.
