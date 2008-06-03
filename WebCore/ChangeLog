@@ -1,3 +1,16 @@
+2008-06-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/5965410>
+          In fixed table layout, the width of cells with auto width should be
+          proportional to their column span, to match Firefox and IE.
+
+        Test: fast/table/fixed-with-auto-with-colspan.html
+
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::layout):
+
 2008-06-03  Alp Toker  <alp@nuanti.com>
 
         Rubber-stamped by Alexey.

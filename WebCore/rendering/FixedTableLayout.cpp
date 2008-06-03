@@ -210,6 +210,7 @@ void FixedTableLayout::layout()
     Vector<int> calcWidth(nEffCols, 0);
 
     int numAuto = 0;
+    int autoSpan = 0;
     int totalFixedWidth = 0;
     int totalPercentWidth = 0;
     int totalRawPercent = 0;
@@ -226,10 +227,13 @@ void FixedTableLayout::layout()
             calcWidth[i] = m_width[i].calcValue(tableWidth);
             totalPercentWidth += calcWidth[i];
             totalRawPercent += m_width[i].rawValue();
-        } else if (m_width[i].isAuto())
+        } else if (m_width[i].isAuto()) {
             numAuto++;
+            autoSpan += m_table->spanOfEffCol(i);
+        }
     }
 
+    int hspacing = m_table->hBorderSpacing();
     int totalWidth = totalFixedWidth + totalPercentWidth;
     if (!numAuto || totalWidth > tableWidth) {
         // If there are no auto columns, or if the total is too wide, take
@@ -258,16 +262,19 @@ void FixedTableLayout::layout()
         }
     } else {
         // Divide the remaining width among the auto columns.
-        int remainingWidth = tableWidth - totalFixedWidth - totalPercentWidth;
+        int remainingWidth = tableWidth - totalFixedWidth - totalPercentWidth - hspacing * (autoSpan - numAuto);
         int lastAuto = 0;
         for (int i = 0; i < nEffCols; i++) {
             if (m_width[i].isAuto()) {
-                calcWidth[i] = remainingWidth / numAuto;
-                remainingWidth -= calcWidth[i];
+                int span = m_table->spanOfEffCol(i);
+                int w = remainingWidth * span / autoSpan;
+                calcWidth[i] = w + hspacing * (span - 1);
+                remainingWidth -= w;
                 if (!remainingWidth)
                     break;
                 lastAuto = i;
                 numAuto--;
+                autoSpan -= span;
             }
         }
         // Last one gets the remainder.
@@ -290,7 +297,6 @@ void FixedTableLayout::layout()
     }
     
     int pos = 0;
-    int hspacing = m_table->hBorderSpacing();
     for (int i = 0; i < nEffCols; i++) {
         m_table->columnPositions()[i] = pos;
         pos += calcWidth[i] + hspacing;
