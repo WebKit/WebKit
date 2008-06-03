@@ -1,3 +1,10 @@
+2008-06-03  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::ariaRoleHasPresentationalChildren):
+
 2008-06-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John Sullivan.
