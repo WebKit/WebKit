@@ -1940,14 +1940,25 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_call_eval) {
+        /* call_eval dst(r) func(r) thisVal(r) firstArg(r) argCount(n)
+
+           Call a function named "eval" with no explicit "this" value
+           (which may therefore be the eval operator). If register
+           thisVal is the global object, and register func contains
+           that global object's original global eval function, then
+           perform the eval operator in local scope (interpreting
+           the argument registers as for the "call"
+           opcode). Otherwise, act exacty as the "call" opcode.
+         */
+
         int dst = (++vPC)->u.operand;
         int func = (++vPC)->u.operand;
-        int base = (++vPC)->u.operand;
-        int argv = (++vPC)->u.operand;
-        int argc = (++vPC)->u.operand;
+        int thisVal = (++vPC)->u.operand;
+        int firstArg = (++vPC)->u.operand;
+        int argCount = (++vPC)->u.operand;
 
         JSValue* funcVal = r[func].u.jsValue;
-        JSValue* baseVal = r[base].u.jsValue;
+        JSValue* baseVal = r[thisVal].u.jsValue;
         
         if (baseVal == scopeChain->globalObject() && funcVal == scopeChain->globalObject()->evalFunction()) {
             int registerOffset = r - (*registerBase);
@@ -1956,7 +1967,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
             registerFile->setSafeForReentry(true);
 
-            JSValue* result = callEval(exec, thisObject, scopeChain, registerFile, r, argv, argc, exceptionValue);
+            JSValue* result = callEval(exec, thisObject, scopeChain, registerFile, r, firstArg, argCount, exceptionValue);
 
             registerFile->setSafeForReentry(false);
             r = (*registerBase) + registerOffset;
@@ -1974,7 +1985,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         // this instruction as a normal function call, supplying the proper 'this'
         // value.
         vPC -= 5;
-        r[base].u.jsValue = baseVal->toObject(exec)->toThisObject(exec);
+        r[thisVal].u.jsValue = baseVal->toObject(exec)->toThisObject(exec);
 
 #if HAVE(COMPUTED_GOTO)
         // Hack around gcc performance quirk by performing an indirect goto
@@ -1985,11 +1996,47 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         // fall through to op_call
     }
     BEGIN_OPCODE(op_call) {
+        /* call dst(r) func(r) thisVal(r) firstArg(r) argCount(n)
+
+           Perform a function call. Specifically, call register func
+           with a "this" value of register thisVal, and put the result
+           in register dst.
+
+           The arguments start at register firstArg and go up to
+           argCount, but the "this" value is considered an implicit
+           first argument, so the argCount should be one greater than
+           the number of explicit arguments passed, and the register
+           after firstArg should contain the actual first
+           argument. This opcode will copy from the thisVal register
+           to the firstArg register, unless the register index of
+           thisVal is the special missing this object marker, which is
+           2^31-1; in that case, the global object will be used as the
+           "this" value.
+
+           If func is a native code function, then this opcode calls
+           it and returns the value immediately. 
+
+           But if it is a JS function, then the current scope chain
+           and code block is set to the function's, and we slide the
+           register window so that the arguments would form the first
+           few local registers of the called function's register
+           window. In addition, a call frame header is written
+           immediately before the arguments; see the call frame
+           documentation for an explanation of how many registers a
+           call frame takes and what they contain. That many registers
+           before the firstArg register will be overwritten by the
+           call. In addition, any registers higher than firstArg +
+           argCount may be overwritten. Once this setup is complete,
+           execution continues from the called function's first
+           argument, and does not return until a "ret" opcode is
+           encountered.
+         */
+
         int dst = (++vPC)->u.operand;
         int func = (++vPC)->u.operand;
-        int base = (++vPC)->u.operand;
-        int argv = (++vPC)->u.operand;
-        int argc = (++vPC)->u.operand;
+        int thisVal = (++vPC)->u.operand;
+        int firstArg = (++vPC)->u.operand;
+        int argCount = (++vPC)->u.operand;
         
         JSValue* v = r[func].u.jsValue;
         
@@ -2000,17 +2047,17 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             if (*enabledProfilerReference)
                 (*enabledProfilerReference)->willExecute(exec, static_cast<JSObject*>(v));
             int registerOffset = r - (*registerBase);
-            Register* callFrame = r + argv - CallFrameHeaderSize;
-            int callFrameOffset = registerOffset + argv - CallFrameHeaderSize;
+            Register* callFrame = r + firstArg - CallFrameHeaderSize;
+            int callFrameOffset = registerOffset + firstArg - CallFrameHeaderSize;
 
-            r[argv].u.jsValue = base == missingThisObjectMarker() ? exec->globalThisValue() : r[base].u.jsValue; // "this" value
-            initializeCallFrame(callFrame, codeBlock, vPC, scopeChain, registerOffset, dst, argv, argc, 0, v);
+            r[firstArg].u.jsValue = thisVal == missingThisObjectMarker() ? exec->globalThisValue() : r[thisVal].u.jsValue;
+            initializeCallFrame(callFrame, codeBlock, vPC, scopeChain, registerOffset, dst, firstArg, argCount, 0, v);
 
             ScopeChainNode* callDataScopeChain = callData.js.scopeChain;
             FunctionBodyNode* functionBodyNode = callData.js.functionBody;
 
             CodeBlock* newCodeBlock = &functionBodyNode->code(callDataScopeChain);
-            r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, registerOffset, argv, argc, exceptionValue);
+            r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, registerOffset, firstArg, argCount, exceptionValue);
             if (UNLIKELY(exceptionValue != 0))
                 goto vm_throw;
 
@@ -2028,10 +2075,10 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
                 (*enabledProfilerReference)->willExecute(exec, static_cast<JSObject*>(v));
             int registerOffset = r - (*registerBase);
 
-            r[argv].u.jsValue = base == missingThisObjectMarker() ? exec->globalThisValue() : (r[base].u.jsValue)->toObject(exec); // "this" value
-            JSObject* thisObj = static_cast<JSObject*>(r[argv].u.jsValue);
+            r[firstArg].u.jsValue = thisVal == missingThisObjectMarker() ? exec->globalThisValue() : (r[thisVal].u.jsValue)->toObject(exec);
+            JSObject* thisObj = static_cast<JSObject*>(r[firstArg].u.jsValue);
 
-            List args(reinterpret_cast<JSValue***>(registerBase), registerOffset + argv + 1, argc - 1);
+            List args(reinterpret_cast<JSValue***>(registerBase), registerOffset + firstArg + 1, argCount - 1);
 
             registerFile->setSafeForReentry(true);
             JSValue* returnValue = static_cast<JSObject*>(v)->callAsFunction(exec, thisObj, args);
@@ -2054,12 +2101,21 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         goto vm_throw;
     }
     BEGIN_OPCODE(op_ret) {
-        int r1 = (++vPC)->u.operand;
+        /* ret result(r)
+           
+           Return register result as the return value of the current
+           function call, writing it into the caller's expected return
+           value register. In addition, unwind one call frame and
+           restore the scope chain, code block instruction pointer and
+           register base to those of the calling function.
+        */
+           
+        int result = (++vPC)->u.operand;
 
         CodeBlock* oldCodeBlock = codeBlock;
 
         Register* callFrame = r - oldCodeBlock->numLocals - CallFrameHeaderSize;
-        JSValue* returnValue = r[r1].u.jsValue;
+        JSValue* returnValue = r[result].u.jsValue;
 
         if (JSActivation* activation = static_cast<JSActivation*>(callFrame[OptionalCalleeActivation].u.jsValue)) {
             ASSERT(!codeBlock->needsFullScopeChain || scopeChain->object == activation);
@@ -2088,32 +2144,42 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int callerRegisterOffset = callFrame[CallerRegisterOffset].u.i;
         r = (*registerBase) + callerRegisterOffset;
         exec->m_callFrameOffset = callerRegisterOffset - codeBlock->numLocals - CallFrameHeaderSize;
-        int r0 = callFrame[ReturnValueRegister].u.i;
-        r[r0].u.jsValue = returnValue;
+        int dst = callFrame[ReturnValueRegister].u.i;
+        r[dst].u.jsValue = returnValue;
 
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_construct) {
-        int dst = (++vPC)->u.operand;
-        int func = (++vPC)->u.operand;
-        int argv = (++vPC)->u.operand;
-        int argc = (++vPC)->u.operand;
+        /* construct dst(r) constr(r) firstArg(r) argCount(n)
 
-        JSValue* funcVal = r[func].u.jsValue;
+           Invoke register "constr" as a constructor. For JS
+           functions, the calling convention is exactly as for the
+           "call" opcode, except that the "this" value is a newly
+           created Object. For native constructors, a null "this"
+           value is passed. In either case, the firstArg and argCount
+           registers are interpreted as for the "call" opcode.
+        */
+
+        int dst = (++vPC)->u.operand;
+        int constr = (++vPC)->u.operand;
+        int firstArg = (++vPC)->u.operand;
+        int argCount = (++vPC)->u.operand;
+
+        JSValue* constrVal = r[constr].u.jsValue;
 
         ConstructData constructData;
-        ConstructType constructType = funcVal->getConstructData(constructData);
+        ConstructType constructType = constrVal->getConstructData(constructData);
 
         // Removing this line of code causes a measurable regression on squirrelfish.
-        JSObject* constructor = static_cast<JSObject*>(funcVal);
+        JSObject* constructor = static_cast<JSObject*>(constrVal);
 
         if (constructType == ConstructTypeJS) {
             if (*enabledProfilerReference)
                 (*enabledProfilerReference)->willExecute(exec, constructor);
 
             int registerOffset = r - (*registerBase);
-            Register* callFrame = r + argv - CallFrameHeaderSize;
-            int callFrameOffset = registerOffset + argv - CallFrameHeaderSize;
+            Register* callFrame = r + firstArg - CallFrameHeaderSize;
+            int callFrameOffset = registerOffset + firstArg - CallFrameHeaderSize;
 
             JSObject* prototype;
             JSValue* p = constructor->get(exec, exec->propertyNames().prototype);
@@ -2122,15 +2188,15 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             else
                 prototype = scopeChain->globalObject()->objectPrototype();
             JSObject* newObject = new JSObject(prototype);
-            r[argv].u.jsValue = newObject; // "this" value
+            r[firstArg].u.jsValue = newObject; // "this" value
 
-            initializeCallFrame(callFrame, codeBlock, vPC, scopeChain, registerOffset, dst, argv, argc, 1, constructor);
+            initializeCallFrame(callFrame, codeBlock, vPC, scopeChain, registerOffset, dst, firstArg, argCount, 1, constructor);
 
             ScopeChainNode* callDataScopeChain = constructData.js.scopeChain;
             FunctionBodyNode* functionBodyNode = constructData.js.functionBody;
 
             CodeBlock* newCodeBlock = &functionBodyNode->code(callDataScopeChain);
-            r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, registerOffset, argv, argc, exceptionValue);
+            r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, registerOffset, firstArg, argCount, exceptionValue);
             if (exceptionValue)
                 goto vm_throw;
 
@@ -2149,7 +2215,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
             int registerOffset = r - (*registerBase);
 
-            List args(reinterpret_cast<JSValue***>(registerBase), registerOffset + argv + 1, argc - 1);
+            List args(reinterpret_cast<JSValue***>(registerBase), registerOffset + firstArg + 1, argCount - 1);
 
             registerFile->setSafeForReentry(true);
             JSValue* returnValue = constructor->construct(exec, args);
@@ -2168,7 +2234,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
         ASSERT(constructType == ConstructTypeNone);
 
-        exceptionValue = createNotAConstructorError(exec, funcVal, 0);
+        exceptionValue = createNotAConstructorError(exec, constrVal, 0);
         goto vm_throw;
     }
     BEGIN_OPCODE(op_push_scope) {
@@ -2319,12 +2385,18 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_end) {
+        /* end result(r)
+           
+           Return register result as the value of a global or eval
+           program. Return control to the calling native code.
+        */
+
         if (codeBlock->needsFullScopeChain) {
             ASSERT(scopeChain->refCount > 1);
             scopeChain->deref();
         }
-        int r0 = (++vPC)->u.operand;
-        return r[r0].u.jsValue;
+        int result = (++vPC)->u.operand;
+        return r[result].u.jsValue;
     }
     BEGIN_OPCODE(op_put_getter) {
         /* put_getter base(r) property(id) function(r)

@@ -1,6 +1,16 @@
 2008-06-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
+        
+        - document remaining opcodes.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute): Document call, call_eval,
+        construct, ret and end opcodes.
+
+2008-06-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
 
         * VM/Machine.cpp:
         (KJS::Machine::privateExecute): Document throw and catch opcodes.
