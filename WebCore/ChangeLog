@@ -1,3 +1,13 @@
+2008-06-03  Darin Adler  <darin@apple.com>
+
+        Fix build with GCC.
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::ariaRoleHasPresentationalChildren):
+        Put a default case back in the switch statement so we don't get warned about
+        all the unhandled cases with GCC. Remove the unreachable code that was causing
+        a warning in Visual Studio.
+
 2008-06-03  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build

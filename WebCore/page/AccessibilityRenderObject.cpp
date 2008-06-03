@@ -2022,9 +2022,9 @@ bool AccessibilityRenderObject::ariaRoleHasPresentationalChildren() const
     case ProgressIndicatorRole:
     //case SeparatorRole:
         return true;
+    default:
+        return false;
     }
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 bool AccessibilityRenderObject::canSetFocusAttribute() const
