@@ -1,3 +1,15 @@
+2008-06-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5980961>
+        
+        In 64-bit Web Kit, converting between float and double, can cause rounding errors which in turn causes
+        newBottom to be larger than oldBottom which is illegal.
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView adjustPageHeightNew:top:bottom:limit:]):
+
 2008-06-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.

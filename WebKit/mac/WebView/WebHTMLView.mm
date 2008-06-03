@@ -112,6 +112,7 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
+#import <limits>
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -3381,8 +3382,16 @@ noPromisedData:
 
     float newBottomFloat = *newBottom;
     core([self _frame])->adjustPageHeight(&newBottomFloat, oldTop, oldBottom, bottomLimit);
-    *newBottom = newBottomFloat;
 
+#ifdef __LP64__
+    // If the new bottom is equal to the old bottom (when both are treated as floats), we just copy
+    // oldBottom over to newBottom. This prevents rounding errors that can occur when converting newBottomFloat to a double.
+    if (fabs((float)oldBottom - newBottomFloat) <= std::numeric_limits<float>::epsilon()) 
+        *newBottom = oldBottom;
+    else
+#endif
+        *newBottom = newBottomFloat;
+    
     if (!wasInPrintingMode) {
         NSPrintOperation *currenPrintOperation = [NSPrintOperation currentOperation];
         if (currenPrintOperation)
