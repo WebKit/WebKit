@@ -33,6 +33,9 @@ public:
     String publicId() const { ASSERT_NOT_REACHED(); return String(); }
     String systemId() const { ASSERT_NOT_REACHED(); return String(); }
     String notationName() const { ASSERT_NOT_REACHED(); return String(); }
+
+private:
+    Entity() : ContainerNode(0) {}
 };
 
 } //namespace
