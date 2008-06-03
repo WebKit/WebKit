@@ -2255,17 +2255,34 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_catch) {
+        /* catch ex(r)
+
+           Retrieves the VMs current exception and puts it in register
+           ex. This is only valid after an exception has been raised,
+           and usually forms the beginning of an exception handler.
+        */
         ASSERT(exceptionValue);
         ASSERT(!exec->hadException());
-        int r0 = (++vPC)->u.operand;
-        r[r0].u.jsValue = exceptionValue;
+        int ex = (++vPC)->u.operand;
+        r[ex].u.jsValue = exceptionValue;
         exceptionValue = 0;
+
         ++vPC;
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_throw) {
-        int e = (++vPC)->u.operand;
-        exceptionValue = r[e].u.jsValue;
+        /* throw ex(r)
+
+           Throws register ex as an exception. This involves three
+           steps: first, it is set as the current exception in the
+           VM's internal state, then the stack is unwound until an
+           exception handler or a native code boundary is found, and
+           then control resumes at the exception handler if any or
+           else the script returns control to the nearest native caller.
+        */
+
+        int ex = (++vPC)->u.operand;
+        exceptionValue = r[ex].u.jsValue;
         handlerVPC = throwException(exec, exceptionValue, registerBase, vPC, codeBlock, k, scopeChain, r);
         if (!handlerVPC) {
             *exception = exceptionValue;
