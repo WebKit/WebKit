@@ -1,3 +1,9 @@
+2008-06-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Add a snapshot of the squirrelfish bytecode docs.
+
+        * specs/squirrelfish-bytecode.html: Added.
+
 2008-06-02  Geoffrey Garen  <ggaren@apple.com>
 
         Transparent background!
