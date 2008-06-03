@@ -46,6 +46,7 @@ extern "C" {
 extern ULONG gLockCount;
 extern ULONG gClassCount;
 extern HINSTANCE gInstance;
+extern CLSID gRegCLSIDs[];
 
 #ifdef __cplusplus
 }

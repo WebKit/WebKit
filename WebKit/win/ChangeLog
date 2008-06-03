@@ -1,3 +1,34 @@
+2008-05-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Registry-free COM.        
+        
+        WebKit no longer requires COM registration.
+        Registry-free COM information is read from the application manifest.
+
+        Only 1 set of CLSIDs are now used, since we don't need to worry about registry collisions.
+        The second set remains, but only temporarily so nightlies continue to work.
+
+        This is supported for XPSP2 and later.  Earlier systems require an installer
+        to write the required registry keys.  Nightlies and developer builds require
+        XPSP2, Server 2003, or later.
+
+        Reviewed by Adam.
+
+        * ForEachCoClass.cpp: Moved COM registration code here from WebKitDLL.cpp. This is ONLY used in the nightly case.
+        (substituteGUID): Moved here from WebKitDLL.cpp.
+        (registerWebKit): Moved here from WebKitDLL.cpp.
+        (setUseOpenSourceWebKit): Call registerWebKit instead of swapping progids. There is only 1 set of progids now - for the nightly.
+        * ForEachCoClass.h: Removed production progids. 
+        * Interfaces/WebKit.idl: Added prototype for shutDownWebKit.
+        * WebKit.vcproj/Interfaces.vcproj: Changed path to type library to move it out of project directory.
+        * WebKit.vcproj/WebKit.vcproj: Changed path to type library to move it out of project directory.
+        * WebKitDLL.cpp:
+        (DllUnregisterServer): Does nothing. Entry point is still present for backward compatibility.
+        (DllRegisterServer): Does nothing. Entry point is still present for backward compatibility.
+        (RunAsLocalServer): Does nothing. Entry point is still present for backward compatibility.
+        (shutDownWebKit): Moved from ForEachCoClass.
+        * WebKitDLL.h:
+
 2008-05-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

@@ -1,3 +1,9 @@
+2008-05-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Generate an isolated COM manifest for registry free COM.
+        
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+
 2008-06-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt and Mitz.

@@ -224,6 +224,8 @@ import "ocidl.idl";
 
 #define __TYPELIB_VERSION__ __BUILD_NUMBER_MAJOR__##.##__BUILD_NUMBER_MINOR__
 
+cpp_quote("void shutDownWebKit();")
+
 [
 #if __PRODUCTION__
     uuid(2a748656-625d-4207-b29f-40c95bfeb3a9),

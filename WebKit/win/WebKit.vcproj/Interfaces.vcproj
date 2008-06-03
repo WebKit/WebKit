@@ -38,8 +38,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;;..\Interfaces;&quot;$(IntDir)\include&quot;"
-				GenerateTypeLibrary="false"
-				TypeLibraryName="$(ProjectDir)\WebKit.tlb"
+				TypeLibraryName="$(WebKitOutputDir)\obj\WebKit\$(ProjectName)\WebKit.tlb"
 				OutputDirectory="$(WebKitOutputDir)\obj\WebKit\$(ProjectName)"
 			/>
 			<Tool
@@ -80,7 +79,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;perl FixMIDLHeaders.pl &quot;$(WebkitOutputDir)/include/webkit/&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;perl FixMIDLHeaders.pl &quot;$(WebkitOutputDir)/include/webkit/&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -107,8 +106,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;;..\Interfaces;&quot;$(IntDir)\include&quot;"
-				GenerateTypeLibrary="false"
-				TypeLibraryName="$(ProjectDir)\WebKit.tlb"
+				TypeLibraryName="$(WebKitOutputDir)\obj\WebKit\$(ProjectName)\WebKit.tlb"
 				OutputDirectory="$(WebKitOutputDir)\obj\WebKit\$(ProjectName)"
 			/>
 			<Tool
@@ -146,7 +144,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;perl FixMIDLHeaders.pl &quot;$(WebkitOutputDir)/include/webkit/&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;&#x0D;&#x0A;perl FixMIDLHeaders.pl &quot;$(WebkitOutputDir)/include/webkit/&quot;&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>

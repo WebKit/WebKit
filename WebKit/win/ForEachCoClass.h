@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,30 +68,17 @@ enum WebKitClass {
 };
 #undef WEBKITCLASS_MEMBER
 
-#define PRODUCTION_PROGID(cls) VERSION_INDEPENDENT_PRODUCTION_PROGID(cls),
-static LPCOLESTR productionProgIDs[WebKitClassSentinel] = {
-    FOR_EACH_COCLASS(PRODUCTION_PROGID)
-};
-#undef PRODUCTION_PROGID
-
 #define OPENSOURCE_PROGID(cls) VERSION_INDEPENDENT_OPENSOURCE_PROGID(cls),
 static LPCOLESTR openSourceProgIDs[WebKitClassSentinel] = {
     FOR_EACH_COCLASS(OPENSOURCE_PROGID)
 };
 #undef OPENSOURCE_PROGID
 
-#if __PRODUCTION__
-    static LPCOLESTR* s_progIDs = productionProgIDs;
-#else
-    static LPCOLESTR* s_progIDs = openSourceProgIDs;
-#endif
+static LPCOLESTR* s_progIDs = openSourceProgIDs;
 
 #define PROGID(className) progIDForClass(className##Class)
 
 void setUseOpenSourceWebKit(bool);
-void shutDownWebKit();
 LPCOLESTR progIDForClass(WebKitClass);
-
-
 
 #endif // !defined(ForEachCoClass_h)

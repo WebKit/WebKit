@@ -50,7 +50,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\WebKit\"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -126,7 +126,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\WebKit\"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -202,7 +202,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\WebKit\"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -279,7 +279,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\WebKit\"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -357,7 +357,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\WebKit\"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -435,7 +435,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\WebKit\"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -514,7 +514,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\WebKit\"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -1105,10 +1105,62 @@
 			<File
 				RelativePath=".\WebKit.rc"
 				>
-			</File>
-			<File
-				RelativePath=".\WebKit.tlb"
-				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_PGOInstrument|Win32"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_PGOOptimize|Win32"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\zoomInCursor.png"
