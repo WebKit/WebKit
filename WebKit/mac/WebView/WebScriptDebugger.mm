@@ -188,3 +188,8 @@ void WebScriptDebugger::didExecuteProgram(const DebuggerCallFrame& debuggerCallF
 {
     [m_topCallFrame.get() _clearDebuggerCallFrame];
 }
+
+void WebScriptDebugger::didReachBreakpoint(const DebuggerCallFrame&, int, int)
+{
+    return;
+}

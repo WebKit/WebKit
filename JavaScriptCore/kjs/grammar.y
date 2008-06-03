@@ -1020,9 +1020,9 @@ TryStatement:
 ;
 
 DebuggerStatement:
-    DEBUGGER ';'                        { $$ = createNodeDeclarationInfo<StatementNode*>(new EmptyStatementNode(), 0, 0, 0);
+    DEBUGGER ';'                        { $$ = createNodeDeclarationInfo<StatementNode*>(new DebuggerStatementNode(), 0, 0, 0);
                                           DBG($$.m_node, @1, @2); }
-  | DEBUGGER error                      { $$ = createNodeDeclarationInfo<StatementNode*>(new EmptyStatementNode(), 0, 0, 0);
+  | DEBUGGER error                      { $$ = createNodeDeclarationInfo<StatementNode*>(new DebuggerStatementNode(), 0, 0, 0);
                                           DBG($$.m_node, @1, @1); AUTO_SEMICOLON; }
 ;
 

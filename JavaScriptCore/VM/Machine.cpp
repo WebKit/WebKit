@@ -861,6 +861,10 @@ NEVER_INLINE void Machine::debug(ExecState* exec, const Instruction* vPC, const 
         debugger->didExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceId(), lastLine);
         return;
     }
+    case DidReachBreakpoint: {
+        debugger->didReachBreakpoint(debuggerCallFrame, codeBlock->ownerNode->sourceId(), lastLine);
+        return;
+    }
     }
 }
 

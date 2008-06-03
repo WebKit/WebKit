@@ -108,6 +108,8 @@ NEVER_INLINE static const char* debugHookName(int debugHookID)
         return "willExecuteProgram";
     case DidExecuteProgram:
         return "didExecuteProgram";
+    case DidReachBreakpoint:
+        return "didReachBreakpoint";
     }
     
     ASSERT_NOT_REACHED();

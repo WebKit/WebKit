@@ -820,6 +820,11 @@ void EmptyStatementNode::streamTo(SourceStream& s) const
     s << Endl << ';';
 }
 
+void DebuggerStatementNode::streamTo(SourceStream& s) const
+{
+    s << Endl << "debugger;";
+}
+
 void ExprStatementNode::streamTo(SourceStream& s) const
 {
     s << Endl << m_expr << ';';

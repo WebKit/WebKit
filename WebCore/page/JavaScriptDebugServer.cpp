@@ -499,4 +499,18 @@ void JavaScriptDebugServer::didExecuteProgram(const DebuggerCallFrame& debuggerC
     m_currentCallFrame = m_currentCallFrame->caller();
 }
 
+void JavaScriptDebugServer::didReachBreakpoint(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
+{
+    if (m_paused)
+        return;
+    
+    ASSERT(m_currentCallFrame);
+    if (!m_currentCallFrame)
+        return;
+
+    m_pauseOnNextStatement = true;
+    m_currentCallFrame->update(debuggerCallFrame, sourceID, lineNumber);
+    pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
+}
+
 } // namespace WebCore

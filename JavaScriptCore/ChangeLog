@@ -1,3 +1,32 @@
+2008-06-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Tim.
+
+        Bug 12983: Web Inspector break on the debugger keyword
+        <https://bugs.webkit.org/show_bug.cgi?id=12983>
+
+        Added a DebuggerStatementNode to handle codegen, and added a new
+        DidReachBreakPoint debug event (which will hopefully be useful
+        if we ever move breakpoint management into JSC proper).  Also
+        added didReachBreakpoint to Debugger to allow us to actually respond
+        to this event.
+
+        * VM/CodeBlock.cpp:
+        (KJS::debugHookName):
+        * VM/Machine.cpp:
+        (KJS::Machine::debug):
+        * VM/Machine.h:
+        (KJS::):
+        * kjs/debugger.h:
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::DebuggerStatementNode::emitCode):
+        (KJS::DebuggerStatementNode::execute):
+        * kjs/nodes.h:
+        (KJS::DebuggerStatementNode::):
+        * kjs/nodes2string.cpp:
+        (KJS::DebuggerStatementNode::streamTo):
+
 2008-06-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

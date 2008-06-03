@@ -4844,6 +4844,19 @@ JSValue* EmptyStatementNode::execute(OldInterpreterExecState* exec)
     return exec->setNormalCompletion();
 }
 
+// ------------------------------ DebuggerStatementNode ---------------------------
+
+RegisterID* DebuggerStatementNode::emitCode(CodeGenerator& generator, RegisterID* dst)
+{
+    generator.emitDebugHook(DidReachBreakpoint, firstLine(), lastLine());
+    return dst;
+}
+
+JSValue* DebuggerStatementNode::execute(OldInterpreterExecState* exec)
+{
+    return exec->setNormalCompletion();
+}
+
 // ------------------------------ ExprStatementNode ----------------------------
 
 RegisterID* ExprStatementNode::emitCode(CodeGenerator& generator, RegisterID* dst)

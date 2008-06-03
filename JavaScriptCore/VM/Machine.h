@@ -50,6 +50,7 @@ namespace KJS {
         WillExecuteProgram,
         DidExecuteProgram,
         DidEnterCallFrame,
+        DidReachBreakpoint,
         WillLeaveCallFrame,
         WillExecuteStatement
     };

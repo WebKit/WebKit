@@ -1,3 +1,15 @@
+2008-06-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Tim.
+
+        Bug 12983: Web Inspector break on the debugger keyword
+        <https://bugs.webkit.org/show_bug.cgi?id=12983>
+
+        Add stubs to allow old webkit debugger interface to build.
+
+        * WebView/WebScriptDebugger.h:
+        * WebView/WebScriptDebugger.mm:
+
 2008-06-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

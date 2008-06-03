@@ -1,3 +1,18 @@
+2008-06-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Tim.
+
+        Bug 12983: Web Inspector break on the debugger keyword
+        <https://bugs.webkit.org/show_bug.cgi?id=12983>
+
+        Added support for the new debugger didReachBreakpoint 
+        callback so that WebInspector receives the debugger event
+        and breaks.
+
+        * page/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::didReachBreakpoint):
+        * page/JavaScriptDebugServer.h:
+
 2008-06-03  Darin Adler  <darin@apple.com>
 
         Fix build with GCC.
