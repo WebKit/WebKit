@@ -181,33 +181,6 @@ sub newestFile($$)
     return "$dir/$newestFile";
 }
 
-sub isDarwin()
-{
-    return ($^O eq "darwin");
-}
-
-my $updateSuspended = 0;
-
-sub suspendUpdate()
-{
-    print "Suspending update daemon...\n";
-    $SIG{INT} = sub { resumeUpdate(); exit; };
-    $updateSuspended = !(system "sudo -p 'Please provide your password for sudo: ' killall -STOP update");
-    if (!$updateSuspended) {
-        print "Could not suspend update.\n";
-    }
-}
-
-sub resumeUpdate()
-{
-    if ($updateSuspended) {
-        print "Resuming update daemon...\n";
-        system "sudo killall -CONT update";
-    }
-    $SIG{INT} = 'DEFAULT';
-}
-
-
 loadTestsList();
 if ($testsPattern) {
     print STDERR "Found " . scalar(@tests) . " tests matching '" . $testsPattern . "'\n";
@@ -215,9 +188,6 @@ if ($testsPattern) {
     print STDERR "Found " . scalar(@tests) . " tests\n";
 }
 die "No tests to run"  unless scalar(@tests);
-
-suspendUpdate() if isDarwin(); # workaround for <rdar://problem/5811127>
-
 print STDERR "Running SunSpider once for warmup, then " . ($runShark ? "under Shark" : "$testRuns time" . ($testRuns == 1 ? "" : "s")) . "\n";
 writePrefixFile();
 
@@ -238,8 +208,6 @@ while ($count++ < $testRuns) {
     print ",\n" unless ($count == $testRuns);
 }
 print "]\n";
-
-resumeUpdate() if isDarwin(); # workaround for <rdar://problem/5811127>
 
 my $output = "var output = [\n" . join(",\n", @results) . "\n];\n";
 dumpToFile($output, $resultsFile);
