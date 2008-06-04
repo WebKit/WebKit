@@ -1,3 +1,16 @@
+2008-06-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/5962270> Crash in WebCore::RenderTableCell::computeAbsoluteRepaintRect()
+
+        Test: fast/reflections/table-cell.html
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeAbsoluteRepaintRect): Null-check
+        parent().
+        (WebCore::RenderTableCell::absolutePosition): Ditto.
+
 2008-06-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
