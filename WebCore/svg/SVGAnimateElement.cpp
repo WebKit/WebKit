@@ -29,6 +29,7 @@
 #include "FloatConversion.h"
 #include "SVGColor.h"
 #include "SVGParserUtilities.h"
+#include "SVGPathSegList.h"
 #include <math.h>
 
 using namespace std;
@@ -79,6 +80,8 @@ SVGAnimateElement::PropertyType SVGAnimateElement::determinePropertyType(const S
     // FIXME: We need a full property table for figuring this out reliably.
     if (hasTagName(SVGNames::animateColorTag))
         return ColorProperty;
+    if (attribute == "d")
+        return PathProperty;
     if (attribute == "color" || attribute == "fill" || attribute == "stroke")
         return ColorProperty;
     return NumberProperty;
@@ -124,6 +127,10 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
             results->m_animatedColor = color;
         return;
     }
+    if (m_propertyType == PathProperty) {
+        results->m_animatedPath = SVGPathSegList::createAnimated(m_fromPath.get(), m_toPath.get(), percentage);
+        return;
+    }
     AnimationMode animationMode = this->animationMode();
     ASSERT(animationMode == FromToAnimation || animationMode == ToAnimation || animationMode == ValuesAnimation);
     if ((animationMode == FromToAnimation && percentage > 0.5f) || animationMode == ToAnimation || percentage == 1.0f)
@@ -150,6 +157,15 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
             if (animationMode() == ToAnimation || parseNumberValueAndUnit(fromString, m_fromNumber, m_numberUnit))
                 return true;
         }
+    } else if (m_propertyType == PathProperty) {
+        m_fromPath = SVGPathSegList::create(SVGNames::dAttr);
+        if (pathSegListFromSVGData(m_fromPath.get(), fromString)) {
+            m_toPath = SVGPathSegList::create(SVGNames::dAttr);
+            if (pathSegListFromSVGData(m_toPath.get(), toString))
+                return true;
+        }
+        m_fromPath.clear();
+        m_toPath.clear();
     }
     m_fromString = fromString;
     m_toString = toString;
@@ -194,6 +210,9 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
         }
         if (parseNumberValueAndUnit(baseString, m_animatedNumber, m_numberUnit))
             return;
+    } else if (m_propertyType == PathProperty) {
+        m_animatedPath.clear();
+        return;
     }
     m_propertyType = StringProperty;
 }
@@ -205,7 +224,22 @@ void SVGAnimateElement::applyResultsToTarget()
         valueToApply = m_animatedColor.name();
     else if (m_propertyType == NumberProperty)
         valueToApply = String::number(m_animatedNumber) + m_numberUnit;
-    else
+    else if (m_propertyType == PathProperty) {
+        if (!m_animatedPath || !m_animatedPath->numberOfItems())
+            valueToApply = m_animatedString;
+        else {
+            // We need to keep going to string and back because we are currently only able to paint
+            // "processed" paths where complex shapes are replaced with simpler ones. Path 
+            // morphing needs to be done with unprocessed paths.
+            // FIXME: This could be optimized if paths were not processed at parse time.
+            unsigned itemCount = m_animatedPath->numberOfItems();
+            ExceptionCode ec;
+            for (unsigned n = 0; n < itemCount; ++n) {
+                RefPtr<SVGPathSeg> segment = m_animatedPath->getItem(n, ec);
+                valueToApply.append(segment->toString() + " ");
+            }
+        }
+    } else
         valueToApply = m_animatedString;
     
     setTargetAttributeAnimatedValue(valueToApply);

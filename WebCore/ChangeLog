@@ -1,3 +1,27 @@
+2008-06-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=19384
+        Implement path morphing for SVG animation
+        
+        You can animate smoothly between paths that have equal number of control points of matching type.
+
+        Test: svg/custom/animate-path-morphing.svg
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::determinePropertyType):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        * svg/SVGAnimateElement.h:
+        (WebCore::SVGAnimateElement::):
+        * svg/SVGPathSegList.cpp:
+        (WebCore::blendFunc):
+        (WebCore::SVGPathSegList::createAnimated):
+        * svg/SVGPathSegList.h:
+
 2008-06-03  Darin Adler  <darin@apple.com>
 
         - try to fix the Qt build

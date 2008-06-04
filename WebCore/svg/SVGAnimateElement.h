@@ -29,6 +29,7 @@
 #include "SVGAnimationElement.h"
 
 namespace WebCore {
+    class SVGPathSegList;
 
     class SVGAnimateElement : public SVGAnimationElement {
     public:
@@ -46,7 +47,7 @@ namespace WebCore {
         virtual float calculateDistance(const String& fromString, const String& toString);
 
     private:
-        enum PropertyType { NumberProperty, ColorProperty, StringProperty };
+        enum PropertyType { NumberProperty, ColorProperty, StringProperty, PathProperty };
         PropertyType determinePropertyType(const String& attribute) const;
         PropertyType m_propertyType;
         
@@ -60,6 +61,9 @@ namespace WebCore {
         String m_fromString;
         String m_toString;
         String m_animatedString;
+        RefPtr<SVGPathSegList> m_fromPath;
+        RefPtr<SVGPathSegList> m_toPath;
+        RefPtr<SVGPathSegList> m_animatedPath;
     };
 
 } // namespace WebCore

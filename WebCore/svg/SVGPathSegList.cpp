@@ -29,9 +29,16 @@
 #include "FloatPoint.h"
 #include "Path.h"
 #include "PathTraversalState.h"
+#include "SVGPathSegArc.h"
+#include "SVGPathSegClosePath.h"
 #include "SVGPathSegMoveto.h"
 #include "SVGPathSegLineto.h"
+#include "SVGPathSegLinetoHorizontal.h"
+#include "SVGPathSegLinetoVertical.h"
 #include "SVGPathSegCurvetoCubic.h"
+#include "SVGPathSegCurvetoCubicSmooth.h"
+#include "SVGPathSegCurvetoQuadratic.h"
+#include "SVGPathSegCurvetoQuadraticSmooth.h"
 
 namespace WebCore {
 
@@ -133,6 +140,120 @@ Path SVGPathSegList::toPathData()
     }
     
     return pathData;
+}
+    
+static inline float blendFunc(float from, float to, float progress)
+{
+    return (to - from) * progress + from;
+}
+    
+#define BLENDPATHSEG1(class, attr1) \
+    class::create(blendFunc(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress))
+    
+#define BLENDPATHSEG2(class, attr1, attr2) \
+    class::create(blendFunc(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress), \
+                    blendFunc(static_cast<class*>(from)->attr2(), static_cast<class*>(to)->attr2(), progress))
+    
+#define BLENDPATHSEG4(class, attr1, attr2, attr3, attr4) \
+    class::create(blendFunc(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress), \
+                blendFunc(static_cast<class*>(from)->attr2(), static_cast<class*>(to)->attr2(), progress), \
+                blendFunc(static_cast<class*>(from)->attr3(), static_cast<class*>(to)->attr3(), progress), \
+                blendFunc(static_cast<class*>(from)->attr4(), static_cast<class*>(to)->attr4(), progress))
+    
+#define BLENDPATHSEG6(class, attr1, attr2, attr3, attr4, attr5, attr6) \
+    class::create(blendFunc(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress), \
+                blendFunc(static_cast<class*>(from)->attr2(), static_cast<class*>(to)->attr2(), progress), \
+                blendFunc(static_cast<class*>(from)->attr3(), static_cast<class*>(to)->attr3(), progress), \
+                blendFunc(static_cast<class*>(from)->attr4(), static_cast<class*>(to)->attr4(), progress), \
+                blendFunc(static_cast<class*>(from)->attr5(), static_cast<class*>(to)->attr5(), progress), \
+                blendFunc(static_cast<class*>(from)->attr6(), static_cast<class*>(to)->attr6(), progress))
+
+#define BLENDPATHSEG7(class, attr1, attr2, attr3, attr4, attr5, bool1, bool2) \
+    class::create(blendFunc(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress), \
+                blendFunc(static_cast<class*>(from)->attr2(), static_cast<class*>(to)->attr2(), progress), \
+                blendFunc(static_cast<class*>(from)->attr3(), static_cast<class*>(to)->attr3(), progress), \
+                blendFunc(static_cast<class*>(from)->attr4(), static_cast<class*>(to)->attr4(), progress), \
+                blendFunc(static_cast<class*>(from)->attr5(), static_cast<class*>(to)->attr5(), progress), \
+                static_cast<bool>(blendFunc(static_cast<class*>(from)->bool1(), static_cast<class*>(to)->bool1(), progress)), \
+                static_cast<bool>(blendFunc(static_cast<class*>(from)->bool2(), static_cast<class*>(to)->bool2(), progress)))
+
+PassRefPtr<SVGPathSegList> SVGPathSegList::createAnimated(const SVGPathSegList* fromList, const SVGPathSegList* toList, float progress)
+{
+    unsigned itemCount = fromList->numberOfItems();
+    if (!itemCount || itemCount != toList->numberOfItems())
+        return 0;
+    RefPtr<SVGPathSegList> result = create(fromList->associatedAttributeName());
+    ExceptionCode ec;
+    for (unsigned n = 0; n < itemCount; ++n) {
+        SVGPathSeg* from = fromList->getItem(n, ec).get();
+        SVGPathSeg* to = toList->getItem(n, ec).get();
+        if (from->pathSegType() == SVGPathSeg::PATHSEG_UNKNOWN || from->pathSegType() != to->pathSegType())
+            return 0;
+        RefPtr<SVGPathSeg> segment = 0;
+        switch (static_cast<SVGPathSeg::SVGPathSegType>(from->pathSegType())) {
+        case SVGPathSeg::PATHSEG_CLOSEPATH:
+            segment = SVGPathSegClosePath::create();
+            break;
+        case SVGPathSeg::PATHSEG_LINETO_HORIZONTAL_ABS:
+            segment = BLENDPATHSEG1(SVGPathSegLinetoHorizontalAbs, x);
+            break;
+        case SVGPathSeg::PATHSEG_LINETO_HORIZONTAL_REL:
+            segment = BLENDPATHSEG1(SVGPathSegLinetoHorizontalRel, x);
+            break;   
+        case SVGPathSeg::PATHSEG_LINETO_VERTICAL_ABS:
+            segment = BLENDPATHSEG1(SVGPathSegLinetoVerticalAbs, y);
+            break;
+        case SVGPathSeg::PATHSEG_LINETO_VERTICAL_REL:
+            segment = BLENDPATHSEG1(SVGPathSegLinetoVerticalRel, y);
+            break;        
+        case SVGPathSeg::PATHSEG_MOVETO_ABS:
+            segment = BLENDPATHSEG2(SVGPathSegMovetoAbs, x, y);
+            break;
+        case SVGPathSeg::PATHSEG_MOVETO_REL:
+            segment = BLENDPATHSEG2(SVGPathSegMovetoRel, x, y);
+            break;
+        case SVGPathSeg::PATHSEG_LINETO_ABS:
+            segment = BLENDPATHSEG2(SVGPathSegLinetoAbs, x, y);
+            break;
+        case SVGPathSeg::PATHSEG_LINETO_REL:
+            segment = BLENDPATHSEG2(SVGPathSegLinetoRel, x, y);
+            break;
+        case SVGPathSeg::PATHSEG_CURVETO_CUBIC_ABS:
+            segment = BLENDPATHSEG6(SVGPathSegCurvetoCubicAbs, x, y, x1, y1, x2, y2);
+            break;
+        case SVGPathSeg::PATHSEG_CURVETO_CUBIC_REL:
+            segment = BLENDPATHSEG6(SVGPathSegCurvetoCubicRel, x, y, x1, y1, x2, y2);
+            break;
+        case SVGPathSeg::PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:
+            segment = BLENDPATHSEG4(SVGPathSegCurvetoCubicSmoothAbs, x, y, x2, y2);
+            break;
+        case SVGPathSeg::PATHSEG_CURVETO_CUBIC_SMOOTH_REL:
+            segment = BLENDPATHSEG4(SVGPathSegCurvetoCubicSmoothRel, x, y, x2, y2);
+            break;
+        case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_ABS:
+            segment = BLENDPATHSEG4(SVGPathSegCurvetoQuadraticAbs, x, y, x1, y1);
+            break;
+        case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_REL:
+            segment = BLENDPATHSEG4(SVGPathSegCurvetoQuadraticRel, x, y, x1, y1);
+            break;
+        case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS:
+            segment = BLENDPATHSEG2(SVGPathSegCurvetoQuadraticSmoothAbs, x, y);
+            break;
+        case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL:
+            segment = BLENDPATHSEG2(SVGPathSegCurvetoQuadraticSmoothRel, x, y);
+            break;
+        case SVGPathSeg::PATHSEG_ARC_ABS:
+            segment = BLENDPATHSEG7(SVGPathSegArcAbs, x, y, r1, r2, angle, largeArcFlag, sweepFlag);
+            break;
+        case SVGPathSeg::PATHSEG_ARC_REL:
+            segment = BLENDPATHSEG7(SVGPathSegArcRel, x, y, r1, r2, angle, largeArcFlag, sweepFlag);
+            break;
+        case SVGPathSeg::PATHSEG_UNKNOWN:
+            ASSERT_NOT_REACHED();
+        }
+        result->appendItem(segment, ec);
+    }
+    return result.release();
 }
 
 }

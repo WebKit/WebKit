@@ -1,3 +1,14 @@
+2008-06-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=19384
+        
+        Test for path morphing.
+
+        * platform/mac/svg/custom/animate-path-morphing-expected.txt: Added.
+        * svg/custom/animate-path-morphing.svg: Added.
+
 2008-06-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John.
