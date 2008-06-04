@@ -165,9 +165,9 @@ protected:
     QtRuntimeMetaMethodData* d_func() const {return reinterpret_cast<QtRuntimeMetaMethodData*>(d_ptr);}
 
 private:
-    static JSValue *lengthGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
-    static JSValue *connectGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
-    static JSValue *disconnectGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
+    static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue* connectGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue* disconnectGetter(ExecState*, const Identifier&, const PropertySlot&);
 };
 
 class QtConnectionObject;
@@ -183,7 +183,7 @@ protected:
     QtRuntimeConnectionMethodData* d_func() const {return reinterpret_cast<QtRuntimeConnectionMethodData*>(d_ptr);}
 
 private:
-    static JSValue *lengthGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
+    static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
     static QMultiMap<QObject *, QtConnectionObject *> connections;
     friend class QtConnectionObject;
 };

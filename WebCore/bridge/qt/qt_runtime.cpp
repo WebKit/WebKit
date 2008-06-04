@@ -1325,13 +1325,13 @@ bool QtRuntimeMetaMethod::getOwnPropertySlot(ExecState* exec, const Identifier& 
     return QtRuntimeMethod::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-JSValue *QtRuntimeMetaMethod::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&)
+JSValue *QtRuntimeMetaMethod::lengthGetter(ExecState*, const Identifier&, const PropertySlot&)
 {
     // QtScript always returns 0
     return jsNumber(0);
 }
 
-JSValue *QtRuntimeMetaMethod::connectGetter(ExecState* exec, JSObject*, const Identifier& ident, const PropertySlot& slot)
+JSValue *QtRuntimeMetaMethod::connectGetter(ExecState* exec, const Identifier& ident, const PropertySlot& slot)
 {
     QtRuntimeMetaMethod* thisObj = static_cast<QtRuntimeMetaMethod*>(slot.slotBase());
     QW_DS(QtRuntimeMetaMethod, thisObj);
@@ -1341,7 +1341,7 @@ JSValue *QtRuntimeMetaMethod::connectGetter(ExecState* exec, JSObject*, const Id
     return d->m_connect;
 }
 
-JSValue* QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, JSObject*, const Identifier& ident, const PropertySlot& slot)
+JSValue* QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, const Identifier& ident, const PropertySlot& slot)
 {
     QtRuntimeMetaMethod* thisObj = static_cast<QtRuntimeMetaMethod*>(slot.slotBase());
     QW_DS(QtRuntimeMetaMethod, thisObj);
@@ -1503,7 +1503,7 @@ bool QtRuntimeConnectionMethod::getOwnPropertySlot(ExecState* exec, const Identi
     return QtRuntimeMethod::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-JSValue *QtRuntimeConnectionMethod::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&)
+JSValue *QtRuntimeConnectionMethod::lengthGetter(ExecState*, const Identifier&, const PropertySlot&)
 {
     // we have one formal argument, and one optional
     return jsNumber(1);
@@ -1624,10 +1624,10 @@ void QtConnectionObject::execute(void **argv)
                         ScopeChain sc = oldsc;
                         sc.push(wrapper);
                         fimp->setScope(sc);
-                        fimp->call(exec, m_thisObject, l);
+                        fimp->callAsFunction(exec, m_thisObject, l);
                         fimp->setScope(oldsc);
                     } else
-                        m_funcObject->call(exec, m_thisObject, l);
+                        m_funcObject->callAsFunction(exec, m_thisObject, l);
                 }
             }
         }
