@@ -807,7 +807,7 @@ QVariant QWebFrame::evaluateJavaScript(const QString& scriptSource)
     KJSProxy *proxy = d->frame->scriptProxy();
     QVariant rc;
     if (proxy) {
-        KJS::JSValue *v = proxy->evaluate(String(), 0, scriptSource);
+        KJS::JSValue *v = proxy->evaluate(String(), 1, scriptSource);
         if (v) {
             int distance = 0;
             rc = KJS::Bindings::convertValueToQVariant(proxy->globalObject()->globalExec(), v, QMetaType::Void, &distance);
