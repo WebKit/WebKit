@@ -39,8 +39,9 @@ const size_t maxOffsets = 3 * maxSubstrings;
 
 class RegularExpression::Private : public RefCounted<Private> {
 public:
-    Private();
-    Private(const String& pattern, bool caseSensitive);
+    static PassRefPtr<Private> create() { return adoptRef(new Private); }
+    static PassRefPtr<Private> create(const String& pattern, bool caseSensitive) { return adoptRef(new Private(pattern, caseSensitive)); }
+
     ~Private();
 
     void compile(bool caseSensitive);
@@ -53,18 +54,20 @@ public:
     int lastMatchCount;
     int lastMatchPos;
     int lastMatchLength;
+    
+private:
+    Private();
+    Private(const String& pattern, bool caseSensitive);
 };
 
 RegularExpression::Private::Private()
-    : RefCounted<Private>(0)
-    , pattern("")
+    : pattern("")
 {
     compile(true);
 }
 
 RegularExpression::Private::Private(const String& p, bool caseSensitive)
-    : RefCounted<Private>(0)
-    , pattern(p)
+    : pattern(p)
     , lastMatchPos(-1)
     , lastMatchLength(-1)
 {
@@ -88,17 +91,17 @@ RegularExpression::Private::~Private()
 
 
 RegularExpression::RegularExpression()
-    : d(new Private)
+    : d(Private::create())
 {
 }
 
 RegularExpression::RegularExpression(const String& pattern, bool caseSensitive)
-    : d(new Private(pattern, caseSensitive))
+    : d(Private::create(pattern, caseSensitive))
 {
 }
 
 RegularExpression::RegularExpression(const char* pattern)
-    : d(new Private(pattern, true))
+    : d(Private::create(pattern, true))
 {
 }
 

@@ -32,14 +32,12 @@
 namespace WebCore {
 
 CanvasGradient::CanvasGradient(const FloatPoint& p0, const FloatPoint& p1)
-    : RefCounted<CanvasGradient>(0)
-    , m_gradient(p0, p1)
+    : m_gradient(p0, p1)
 {
 }
 
 CanvasGradient::CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1)
-    : RefCounted<CanvasGradient>(0)
-    , m_gradient(p0, r0, p1, r1)
+    : m_gradient(p0, r0, p1, r1)
 {
 }
 

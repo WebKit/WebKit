@@ -33,8 +33,7 @@ using namespace KJS;
 namespace WebCore {
 
 Traversal::Traversal(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> nodeFilter, bool expandEntityReferences)
-    : RefCounted<Traversal>(0)
-    , m_root(rootNode)
+    : m_root(rootNode)
     , m_whatToShow(whatToShow)
     , m_filter(nodeFilter)
     , m_expandEntityReferences(expandEntityReferences)

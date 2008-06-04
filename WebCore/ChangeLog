@@ -1,3 +1,58 @@
+2008-06-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Convert more classes to start with a ref count of 1.
+        
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::toVoidCallback):
+        * bindings/js/JSCustomVoidCallback.h:
+        (WebCore::JSCustomVoidCallback::create):
+        * css/StyleSheetList.cpp:
+        (WebCore::StyleSheetList::StyleSheetList):
+        * css/StyleSheetList.h:
+        (WebCore::StyleSheetList::create):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::createNodeIterator):
+        (WebCore::Document::createTreeWalker):
+        * dom/NodeIterator.h:
+        (WebCore::NodeIterator::create):
+        * dom/Traversal.cpp:
+        (WebCore::Traversal::Traversal):
+        * dom/Traversal.h:
+        * dom/TreeWalker.h:
+        (WebCore::TreeWalker::create):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::create):
+        (WebCore::CachedPage::CachedPage):
+        * html/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::CanvasGradient):
+        * html/CanvasGradient.h:
+        (WebCore::CanvasGradient::create):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::createLinearGradient):
+        (WebCore::CanvasRenderingContext2D::createRadialGradient):
+        * html/CanvasRenderingContext2D.h:
+        (WebCore::CanvasRenderingContext2D::create):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        * html/VoidCallback.h:
+        (WebCore::VoidCallback::VoidCallback):
+        * loader/FormState.cpp:
+        (WebCore::FormState::create):
+        (WebCore::FormState::FormState):
+        * platform/text/RegularExpression.cpp:
+        (WebCore::RegularExpression::Private::create):
+        (WebCore::RegularExpression::Private::Private):
+        (WebCore::RegularExpression::RegularExpression):
+        * storage/SQLResultSet.cpp:
+        (WebCore::SQLResultSet::SQLResultSet):
+        * storage/SQLResultSetRowList.h:
+        (WebCore::SQLResultSetRowList::create):
+        (WebCore::SQLResultSetRowList::SQLResultSetRowList):
+
 2008-06-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

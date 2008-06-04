@@ -27,13 +27,18 @@
 
 #include "Traversal.h"
 
+#include <wtf/PassRefPtr.h>
+
 namespace WebCore {
 
     typedef int ExceptionCode;
 
     class TreeWalker : public Traversal {
     public:
-        TreeWalker(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
+        static PassRefPtr<TreeWalker> create(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
+        {
+            return adoptRef(new TreeWalker(rootNode, whatToShow, filter, expandEntityReferences));
+        }                            
 
         Node* currentNode() const { return m_current.get(); }
         void setCurrentNode(PassRefPtr<Node>, ExceptionCode&);
@@ -56,6 +61,8 @@ namespace WebCore {
         Node* nextNode() { KJS::JSValue* exception; return nextNode(exception); }
 
     private:
+        TreeWalker(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
+        
         Node* setCurrent(PassRefPtr<Node>);
 
         RefPtr<Node> m_current;

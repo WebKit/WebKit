@@ -29,6 +29,7 @@
 
 #include "FloatPoint.h"
 #include "Gradient.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -38,8 +39,14 @@ namespace WebCore {
 
     class CanvasGradient : public RefCounted<CanvasGradient> {
     public:
-        CanvasGradient(const FloatPoint& p0, const FloatPoint& p1);
-        CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
+        static PassRefPtr<CanvasGradient> create(const FloatPoint& p0, const FloatPoint& p1)
+        {
+            return adoptRef(new CanvasGradient(p0, p1));
+        }
+        static PassRefPtr<CanvasGradient> create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1)
+        {
+            return adoptRef(new CanvasGradient(p0, r0, p1, r1));
+        }
         
         Gradient& gradient() { return m_gradient; }
 
@@ -48,6 +55,9 @@ namespace WebCore {
         void getColor(float value, float* r, float* g, float* b, float* a) const { m_gradient.getColor(value, r, g, b, a); }
 
     private:
+        CanvasGradient(const FloatPoint& p0, const FloatPoint& p1);
+        CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
+        
         Gradient m_gradient;
     };
 

@@ -34,7 +34,10 @@ namespace WebCore {
 
     class NodeIterator : public Traversal {
     public:
-        NodeIterator(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
+        static PassRefPtr<NodeIterator> create(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
+        {
+            return adoptRef(new NodeIterator(rootNode, whatToShow, filter, expandEntityReferences));
+        }
         virtual ~NodeIterator();
 
         PassRefPtr<Node> nextNode(ExceptionCode&, KJS::JSValue*& exception);
@@ -52,6 +55,8 @@ namespace WebCore {
         PassRefPtr<Node> previousNode(ExceptionCode& ec) { KJS::JSValue* exception; return previousNode(ec, exception); }
 
     private:
+        NodeIterator(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
+
         struct NodePointer {
             RefPtr<Node> node;
             bool isPointerBeforeNode;

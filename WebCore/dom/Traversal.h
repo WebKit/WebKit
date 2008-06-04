@@ -40,7 +40,6 @@ namespace WebCore {
 
     class Traversal : public RefCounted<Traversal> {
     public:
-        Traversal(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
         virtual ~Traversal();
 
         Node* root() const { return m_root.get(); }
@@ -49,6 +48,8 @@ namespace WebCore {
         bool expandEntityReferences() const { return m_expandEntityReferences; }
 
     protected:
+        Traversal(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
+        
         short acceptNode(Node*, KJS::JSValue*& jsException) const;
 
     private:
