@@ -1,3 +1,11 @@
+2008-06-04  Dean Jackson   <dino@apple.com>
+
+        Put index pages into specs dirs to make it easier to
+        find the documents.
+
+        * specs/index.html: Added.
+        * specs/CSSVisualEffects/index.html: Added.
+
 2008-06-03  Maciej Stachowiak  <mjs@apple.com>
 
         Add a snapshot of the squirrelfish bytecode docs.
