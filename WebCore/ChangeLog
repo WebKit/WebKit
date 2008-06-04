@@ -2,6 +2,19 @@
 
         Reviewed by Dave Hyatt.
 
+        - fix <rdar://problem/5962118> Crash in RenderBlock::calcColumnWidth()
+
+        Test: fast/multicol/gap-non-negative.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Changed to not allow negative
+        values for column-gap, per
+        <http://www.w3.org/TR/2001/WD-css3-multicol-20010118/#column-gap>.
+
+2008-06-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         - fix <rdar://problem/5962270> Crash in WebCore::RenderTableCell::computeAbsoluteRepaintRect()
 
         Test: fast/reflections/table-cell.html

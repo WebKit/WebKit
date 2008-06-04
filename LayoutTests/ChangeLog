@@ -2,6 +2,15 @@
 
         Reviewed by Dave Hyatt.
 
+        - test for <rdar://problem/5962118> Crash in RenderBlock::calcColumnWidth()
+
+        * fast/multicol/gap-non-negative-expected.txt: Added.
+        * fast/multicol/gap-non-negative.html: Added.
+
+2008-06-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         - test for <rdar://problem/5962270> Crash in WebCore::RenderTableCell::computeAbsoluteRepaintRect()
 
         * fast/reflections/table-cell.html: Added.
