@@ -514,17 +514,17 @@ JSValue *JSDOMWindowBase::getValueProperty(ExecState *exec, int token) const
    return jsUndefined();
 }
 
-JSValue* JSDOMWindowBase::childFrameGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* JSDOMWindowBase::childFrameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return toJS(exec, static_cast<JSDOMWindowBase*>(slot.slotBase())->impl()->frame()->tree()->child(AtomicString(propertyName))->domWindow());
 }
 
-JSValue* JSDOMWindowBase::indexGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
+JSValue* JSDOMWindowBase::indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     return toJS(exec, static_cast<JSDOMWindowBase*>(slot.slotBase())->impl()->frame()->tree()->child(slot.index())->domWindow());
 }
 
-JSValue* JSDOMWindowBase::namedItemGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* JSDOMWindowBase::namedItemGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSDOMWindowBase* thisObj = static_cast<JSDOMWindowBase*>(slot.slotBase());
     Document* doc = thisObj->impl()->frame()->document();
@@ -560,7 +560,7 @@ bool JSDOMWindowBase::getOwnPropertySlot(ExecState* exec, const Identifier& prop
             if (allowsAccessFrom(exec))
                 slot.setStaticEntry(this, entry, staticFunctionGetter);
             else
-                slot.setUndefined(this);
+                slot.setUndefined();
         } else
             slot.setStaticEntry(this, entry, staticValueGetter<JSDOMWindowBase>);
         return true;
@@ -572,7 +572,7 @@ bool JSDOMWindowBase::getOwnPropertySlot(ExecState* exec, const Identifier& prop
     if (proto->isObject()) {
         if (static_cast<JSObject*>(proto)->getPropertySlot(exec, propertyName, slot)) {
             if (!allowsAccessFrom(exec))
-                slot.setUndefined(this);
+                slot.setUndefined();
             return true;
         }
     }
@@ -589,7 +589,7 @@ bool JSDOMWindowBase::getOwnPropertySlot(ExecState* exec, const Identifier& prop
     }
 
     if (!allowsAccessFrom(exec)) {
-        slot.setUndefined(this);
+        slot.setUndefined();
         return true;
     }
 

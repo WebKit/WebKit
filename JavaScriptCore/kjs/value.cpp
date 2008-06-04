@@ -217,6 +217,45 @@ ConstructType JSCell::getConstructData(ConstructData&)
     return ConstructTypeNone;
 }
 
+bool JSCell::getOwnPropertySlot(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
+{
+    // This is not a general purpose implementation of getOwnPropertySlot.
+    // It should only be called by JSValue::get.
+    // It calls getPropertySlot, not getOwnPropertySlot.
+    JSObject* object = toObject(exec);
+    slot.setBase(object);
+    if (!object->getPropertySlot(exec, identifier, slot))
+        slot.setUndefined();
+    return true;
+}
+
+bool JSCell::getOwnPropertySlot(ExecState* exec, unsigned identifier, PropertySlot& slot)
+{
+    // This is not a general purpose implementation of getOwnPropertySlot.
+    // It should only be called by JSValue::get.
+    // It calls getPropertySlot, not getOwnPropertySlot.
+    JSObject* object = toObject(exec);
+    slot.setBase(object);
+    if (!object->getPropertySlot(exec, identifier, slot))
+        slot.setUndefined();
+    return true;
+}
+
+void JSCell::put(ExecState* exec, const Identifier& identifier, JSValue* value)
+{
+    toObject(exec)->put(exec, identifier, value);
+}
+
+void JSCell::put(ExecState* exec, unsigned identifier, JSValue* value)
+{
+    toObject(exec)->put(exec, identifier, value);
+}
+
+JSObject* JSCell::toThisObject(ExecState* exec) const
+{
+    return toObject(exec);
+}
+
 JSCell* jsString(const char* s)
 {
     return new StringImp(s ? s : "");

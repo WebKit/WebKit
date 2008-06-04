@@ -427,7 +427,7 @@ bool JSCallbackObject<Base>::inherits(JSClassRef c) const
 }
 
 template <class Base>
-JSValue* JSCallbackObject<Base>::cachedValueGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
+JSValue* JSCallbackObject<Base>::cachedValueGetter(ExecState*, const Identifier&, const PropertySlot& slot)
 {
     JSValue* v = slot.slotBase();
     ASSERT(v);
@@ -435,7 +435,7 @@ JSValue* JSCallbackObject<Base>::cachedValueGetter(ExecState*, JSObject*, const 
 }
 
 template <class Base>
-JSValue* JSCallbackObject<Base>::staticValueGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* JSCallbackObject<Base>::staticValueGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     ASSERT(slot.slotBase()->inherits(&JSCallbackObject::info));
     JSCallbackObject* thisObj = static_cast<JSCallbackObject*>(slot.slotBase());
@@ -456,15 +456,15 @@ JSValue* JSCallbackObject<Base>::staticValueGetter(ExecState* exec, JSObject*, c
 }
 
 template <class Base>
-JSValue* JSCallbackObject<Base>::staticFunctionGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* JSCallbackObject<Base>::staticFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     ASSERT(slot.slotBase()->inherits(&JSCallbackObject::info));
     JSCallbackObject* thisObj = static_cast<JSCallbackObject*>(slot.slotBase());
     
     // Check for cached or override property.
-    PropertySlot slot2;
+    PropertySlot slot2(thisObj);
     if (thisObj->Base::getOwnPropertySlot(exec, propertyName, slot2))
-        return slot2.getValue(exec, thisObj, propertyName);
+        return slot2.getValue(exec, propertyName);
     
     for (JSClassRef jsClass = thisObj->m_class; jsClass; jsClass = jsClass->parentClass) {
         if (OpaqueJSClass::StaticFunctionsTable* staticFunctions = jsClass->staticFunctions) {
@@ -482,7 +482,7 @@ JSValue* JSCallbackObject<Base>::staticFunctionGetter(ExecState* exec, JSObject*
 }
 
 template <class Base>
-JSValue* JSCallbackObject<Base>::callbackGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* JSCallbackObject<Base>::callbackGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     ASSERT(slot.slotBase()->inherits(&JSCallbackObject::info));
     JSCallbackObject* thisObj = static_cast<JSCallbackObject*>(slot.slotBase());

@@ -130,7 +130,7 @@ JSValue* ArrayInstance::getItem(unsigned i) const
     return value ? value : jsUndefined();
 }
 
-JSValue* ArrayInstance::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
+JSValue* ArrayInstance::lengthGetter(ExecState*, const Identifier&, const PropertySlot& slot)
 {
     return jsNumber(static_cast<ArrayInstance*>(slot.slotBase())->m_length);
 }
@@ -139,7 +139,7 @@ ALWAYS_INLINE bool ArrayInstance::inlineGetOwnPropertySlot(ExecState* exec, unsi
 {
     ArrayStorage* storage = m_storage;
 
-    if (i >= m_length) {
+    if (UNLIKELY(i >= m_length)) {
         if (i > maxArrayIndex)
             return getOwnPropertySlot(exec, Identifier::from(i), slot);
         return false;
@@ -148,14 +148,14 @@ ALWAYS_INLINE bool ArrayInstance::inlineGetOwnPropertySlot(ExecState* exec, unsi
     if (i < m_vectorLength) {
         JSValue*& valueSlot = storage->m_vector[i];
         if (valueSlot) {
-            slot.setValueSlot(this, &valueSlot);
+            slot.setValueSlot(&valueSlot);
             return true;
         }
     } else if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
         if (i >= sparseArrayCutoff) {
             SparseArrayValueMap::iterator it = map->find(i);
             if (it != map->end()) {
-                slot.setValueSlot(this, &it->second);
+                slot.setValueSlot(&it->second);
                 return true;
             }
         }

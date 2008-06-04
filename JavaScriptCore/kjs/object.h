@@ -102,6 +102,13 @@ namespace KJS {
     void setSetter(JSObject *s) { setter = s; }
       
   private:
+    // Object operations, with the toObject operation included.
+    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    virtual bool getOwnPropertySlot(ExecState*, unsigned index, PropertySlot&);
+    virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
+    virtual void put(ExecState*, unsigned propertyName, JSValue*);
+    virtual JSObject* toThisObject(ExecState*) const;
+
     JSObject *getter;
     JSObject *setter;  
   };
@@ -525,19 +532,19 @@ inline bool JSValue::isObject(const ClassInfo *c) const
 
 inline JSValue *JSObject::get(ExecState *exec, const Identifier &propertyName) const
 {
-  PropertySlot slot;
+  PropertySlot slot(const_cast<JSObject *>(this));
 
   if (const_cast<JSObject *>(this)->getPropertySlot(exec, propertyName, slot))
-    return slot.getValue(exec, const_cast<JSObject *>(this), propertyName);
+    return slot.getValue(exec, propertyName);
     
   return jsUndefined();
 }
 
 inline JSValue *JSObject::get(ExecState *exec, unsigned propertyName) const
 {
-  PropertySlot slot;
+  PropertySlot slot(const_cast<JSObject *>(this));
   if (const_cast<JSObject *>(this)->getPropertySlot(exec, propertyName, slot))
-    return slot.getValue(exec, const_cast<JSObject *>(this), propertyName);
+    return slot.getValue(exec, propertyName);
     
   return jsUndefined();
 }
@@ -587,13 +594,13 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlotForWrite(ExecState* exec, const I
             slotIsWriteable = false;
             fillGetterPropertySlot(slot, location);
         } else
-            slot.setValueSlot(this, location);
+            slot.setValueSlot(location);
         return true;
     }
 
     // non-standard Netscape extension
     if (propertyName == exec->propertyNames().underscoreProto) {
-        slot.setValueSlot(this, &_proto);
+        slot.setValueSlot(&_proto);
         slotIsWriteable = false;
         return true;
     }
@@ -610,13 +617,13 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(ExecState* exec, const Identifie
         if (_prop.hasGetterSetterProperties() && location[0]->type() == GetterSetterType)
             fillGetterPropertySlot(slot, location);
         else
-            slot.setValueSlot(this, location);
+            slot.setValueSlot(location);
         return true;
     }
 
     // non-standard Netscape extension
     if (propertyName == exec->propertyNames().underscoreProto) {
-        slot.setValueSlot(this, &_proto);
+        slot.setValueSlot(&_proto);
         return true;
     }
 
@@ -636,6 +643,76 @@ inline void JSObject::putDirect(const Identifier &propertyName, int value, int a
 inline JSValue* JSObject::toPrimitive(ExecState* exec, JSType preferredType) const
 {
     return defaultValue(exec, preferredType);
+}
+
+inline JSValue* JSValue::get(ExecState* exec, const Identifier& propertyName) const
+{
+    if (UNLIKELY(JSImmediate::isImmediate(this))) {
+        JSObject* object = JSImmediate::toObject(this, exec);
+        PropertySlot slot(object);
+        if (!object->getPropertySlot(exec, propertyName, slot))
+            return jsUndefined();
+        return slot.getValue(exec, propertyName);
+    }
+    JSCell* cell = static_cast<JSCell*>(const_cast<JSValue*>(this));
+    PropertySlot slot(cell);
+    while (true) {
+        if (cell->getOwnPropertySlot(exec, propertyName, slot))
+            return slot.getValue(exec, propertyName);
+        ASSERT(cell->isObject());
+        JSValue* proto = static_cast<JSObject*>(cell)->prototype();
+        if (!proto->isObject())
+            return jsUndefined();
+        cell = static_cast<JSCell*>(proto);
+    }
+}
+
+inline JSValue* JSValue::get(ExecState* exec, unsigned propertyName) const
+{
+    if (UNLIKELY(JSImmediate::isImmediate(this))) {
+        JSObject* object = JSImmediate::toObject(this, exec);
+        PropertySlot slot(object);
+        if (!object->getPropertySlot(exec, propertyName, slot))
+            return jsUndefined();
+        return slot.getValue(exec, propertyName);
+    }
+    JSCell* cell = const_cast<JSCell*>(asCell());
+    PropertySlot slot(cell);
+    while (true) {
+        if (cell->getOwnPropertySlot(exec, propertyName, slot))
+            return slot.getValue(exec, propertyName);
+        ASSERT(cell->isObject());
+        JSValue* proto = static_cast<JSObject*>(cell)->prototype();
+        if (!proto->isObject())
+            return jsUndefined();
+        cell = static_cast<JSCell*>(proto);
+    }
+}
+
+inline void JSValue::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
+{
+    if (UNLIKELY(JSImmediate::isImmediate(this))) {
+        JSImmediate::toObject(this, exec)->put(exec, propertyName, value);
+        return;
+    }
+    asCell()->put(exec, propertyName, value);
+}
+
+inline void JSValue::put(ExecState* exec, unsigned propertyName, JSValue* value)
+{
+    if (UNLIKELY(JSImmediate::isImmediate(this))) {
+        JSImmediate::toObject(this, exec)->put(exec, propertyName, value);
+        return;
+    }
+    asCell()->put(exec, propertyName, value);
+}
+
+inline JSObject* PropertySlot::slotBase() const
+{
+    ASSERT(m_slotBase);
+    // It's be nice to assert that m_slotBase is an object here, but that's a bit
+    // too slow, even for debug builds.
+    return static_cast<JSObject*>(m_slotBase);
 }
 
 } // namespace

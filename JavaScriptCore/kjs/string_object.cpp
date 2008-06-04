@@ -58,17 +58,17 @@ StringInstance::StringInstance(JSObject *proto, const UString &string)
   setInternalValue(jsString(string));
 }
 
-JSValue *StringInstance::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot &slot)
+JSValue *StringInstance::lengthGetter(ExecState*, const Identifier&, const PropertySlot &slot)
 {
     return jsNumber(static_cast<StringInstance*>(slot.slotBase())->internalValue()->value().size());
 }
 
-JSValue* StringInstance::indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
+JSValue* StringInstance::indexGetter(ExecState*, const Identifier&, const PropertySlot& slot)
 {
     return jsString(static_cast<StringInstance*>(slot.slotBase())->internalValue()->value().substr(slot.index(), 1));
 }
 
-static JSValue* stringInstanceNumericPropertyGetter(ExecState*, JSObject*, unsigned index, const PropertySlot& slot)
+static JSValue* stringInstanceNumericPropertyGetter(ExecState*, unsigned index, const PropertySlot& slot)
 {
     return jsString(static_cast<StringInstance*>(slot.slotBase())->internalValue()->value().substr(index, 1));
 }

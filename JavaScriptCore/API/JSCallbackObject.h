@@ -78,10 +78,10 @@ public:
 private:
     void init(ExecState*);
     
-    static JSValue* cachedValueGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    static JSValue* staticValueGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);
-    static JSValue* staticFunctionGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);
-    static JSValue* callbackGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+    static JSValue* cachedValueGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue* staticValueGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue* staticFunctionGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue* callbackGetter(ExecState*, const Identifier&, const PropertySlot&);
     
     void* m_privateData;
     JSClassRef m_class;

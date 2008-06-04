@@ -50,8 +50,8 @@ namespace KJS {
   private:
     bool inlineGetOwnPropertySlot(ExecState*, unsigned, PropertySlot&);
 
-    static JSValue* lengthGetter(ExecState*, JSObject *, const Identifier&, const PropertySlot&);
-    static JSValue* indexGetter(ExecState*, JSObject *, const Identifier&, const PropertySlot&);
+    static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue* indexGetter(ExecState*, const Identifier&, const PropertySlot&);
   };
 
   // WebCore uses this to make style.filter undetectable

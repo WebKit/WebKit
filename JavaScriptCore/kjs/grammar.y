@@ -1094,34 +1094,11 @@ SourceElement:
 
 static AddNode* makeAddNode(ExpressionNode* left, ExpressionNode* right)
 {
-    JSType t1 = left->expectedReturnType();
-    JSType t2 = right->expectedReturnType();
-
-    if (t1 == NumberType && t2 == NumberType)
-        return new AddNumbersNode(left, right);
-    if (t1 == StringType && t2 == StringType)
-        return new AddStringsNode(left, right);
-    if (t1 == StringType)
-        return new AddStringLeftNode(left, right);
-    if (t2 == StringType)
-        return new AddStringRightNode(left, right);
     return new AddNode(left, right);
 }
 
 static LessNode* makeLessNode(ExpressionNode* left, ExpressionNode* right)
 {
-    JSType t1 = left->expectedReturnType();
-    JSType t2 = right->expectedReturnType();
-    
-    if (t1 == StringType && t2 == StringType)
-        return new LessStringsNode(left, right);
-
-    // There are certainly more efficient ways to do this type check if necessary
-    if (t1 == NumberType || t1 == BooleanType || t1 == UndefinedType || t1 == NullType ||
-        t2 == NumberType || t2 == BooleanType || t2 == UndefinedType || t2 == NullType)
-        return new LessNumbersNode(left, right);
-
-    // Neither is certain to be a number, nor were both certain to be strings, so we use the default (slow) implementation.
     return new LessNode(left, right);
 }
 

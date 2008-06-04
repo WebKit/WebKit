@@ -41,7 +41,7 @@ bool JSStorage::canGetItemsForName(ExecState*, Storage* impl, const Identifier& 
     return impl->contains(propertyName);
 }
 
-JSValue* JSStorage::nameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* JSStorage::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSStorage* thisObj = static_cast<JSStorage*>(slot.slotBase());
     return jsStringOrNull(thisObj->impl()->getItem(propertyName));

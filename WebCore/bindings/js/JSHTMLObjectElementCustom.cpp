@@ -58,9 +58,9 @@ bool JSHTMLObjectElement::canGetItemsForName(ExecState*, HTMLObjectElement*, con
     return propertyName == "__apple_runtime_object";
 }
 
-JSValue* JSHTMLObjectElement::nameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* JSHTMLObjectElement::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
-    return runtimeObjectGetter(exec, originalObject, propertyName, slot);
+    return runtimeObjectGetter(exec, propertyName, slot);
 }
 
 } // namespace WebCore

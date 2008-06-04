@@ -38,7 +38,7 @@ RuntimeMethod::RuntimeMethod(ExecState *exec, const Identifier &ident, Bindings:
 {
 }
 
-JSValue *RuntimeMethod::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
+JSValue *RuntimeMethod::lengthGetter(ExecState*, const Identifier&, const PropertySlot& slot)
 {
     RuntimeMethod *thisObj = static_cast<RuntimeMethod *>(slot.slotBase());
 

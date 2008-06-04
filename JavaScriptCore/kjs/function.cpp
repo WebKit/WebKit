@@ -99,21 +99,21 @@ JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
     }
 }
 
-JSValue* FunctionImp::argumentsGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
+JSValue* FunctionImp::argumentsGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     FunctionImp* thisObj = static_cast<FunctionImp*>(slot.slotBase());
     ASSERT(exec->machine());
     return exec->machine()->retrieveArguments(exec, thisObj);
 }
 
-JSValue* FunctionImp::callerGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
+JSValue* FunctionImp::callerGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     FunctionImp* thisObj = static_cast<FunctionImp*>(slot.slotBase());
     ASSERT(exec->machine());
     return exec->machine()->retrieveCaller(exec, thisObj);
 }
 
-JSValue* FunctionImp::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
+JSValue* FunctionImp::lengthGetter(ExecState*, const Identifier&, const PropertySlot& slot)
 {
     FunctionImp* thisObj = static_cast<FunctionImp*>(slot.slotBase());
     return jsNumber(thisObj->body->parameters().size());
@@ -302,7 +302,7 @@ void Arguments::mark()
     _activationObject->mark();
 }
 
-JSValue* Arguments::mappedIndexGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* Arguments::mappedIndexGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   Arguments* thisObj = static_cast<Arguments*>(slot.slotBase());
   return thisObj->_activationObject->get(exec, thisObj->indexToNameMap[propertyName]);

@@ -1,7 +1,6 @@
 // -*- c-basic-offset: 4 -*-
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2005 Apple Computer, Inc.
+ *  Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -30,27 +29,27 @@
 
 namespace KJS {
 
-JSValue *PropertySlot::undefinedGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&)
+JSValue* PropertySlot::undefinedGetter(ExecState*, const Identifier&, const PropertySlot&)
 {
     return jsUndefined();
 }
 
-JSValue* PropertySlot::ungettableGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&)
+JSValue* PropertySlot::ungettableGetter(ExecState*, const Identifier&, const PropertySlot&)
 {
     ASSERT_NOT_REACHED();
     return jsUndefined();
 }
 
-JSValue *PropertySlot::functionGetter(ExecState* exec, JSObject* originalObject, const Identifier&, const PropertySlot& slot)
+JSValue* PropertySlot::functionGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     CallData data;
     CallType callType = slot.m_data.getterFunc->getCallData(data);
     if (callType == CallTypeNative)
-        return slot.m_data.getterFunc->callAsFunction(exec, originalObject, exec->emptyList());
+        return slot.m_data.getterFunc->callAsFunction(exec, slot.slotBase(), exec->emptyList());
     ASSERT(callType == CallTypeJS);
     RegisterFileStack* stack = &exec->dynamicGlobalObject()->registerFileStack();
     stack->pushFunctionRegisterFile();
-    JSValue* result = slot.m_data.getterFunc->callAsFunction(exec, originalObject, exec->emptyList());
+    JSValue* result = slot.m_data.getterFunc->callAsFunction(exec, slot.slotBase(), exec->emptyList());
     stack->popFunctionRegisterFile();
     return result;    
 }

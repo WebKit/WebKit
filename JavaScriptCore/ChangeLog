@@ -1,3 +1,186 @@
+2008-06-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=19269
+          speed up SunSpider by eliminating the toObject call for most get/put/delete
+
+        Makes standalone SunSpider 1.025x as fast as before.
+
+        The getOwnPropertySlot virtual function now takes care of the toObject call
+        for get. Similarly, the put function (and later deleteProperty) does the
+        same for those operations. To do this, the virtual functions were moved from
+        the JSObject class to the JSCell class. Also, since the caller no longer knows
+        the identity of the "original object", which is used by JavaScript-function
+        based getters, changed the PropertySlot class so the original object is
+        already stored in the slot when getOwnPropertySlot is called, if the caller
+        intends to call getValue.
+
+        This affected the old interpreter code enough that the easiest thing for me
+        was to just delete it. While I am not certain the mysterious slowdown is not
+        still occurring, the net change is definitely a significant speedup.
+
+        * JavaScriptCore.exp: Updated.
+
+        * VM/Machine.cpp: Moved the UNLIKELY macro into AlwaysInline.h.
+        (KJS::resolve): Set up the originalObject in the PropertySlot before
+        calling getPropertySlot. Also removed the originalObject argument from
+        getValue.
+        (KJS::resolve_skip): Ditto.
+        (KJS::resolveBaseAndProperty): Ditto.
+        (KJS::resolveBaseAndFunc): Ditto.
+        (KJS::Machine::privateExecute): Removed the toObject calls from the get and
+        put functions where possible, instead calling directly with JSValue and letting
+        the JSValue and JSCell calls handle toObject. Same for toThisObject.
+
+        * kjs/ExecState.h: Removed OldInterpreterExecState.
+
+        * API/JSBase.cpp: Updated includes.
+
+        * kjs/LocalStorageEntry.h: Removed contents. Later we can remove the file too.
+
+        * kjs/array_instance.cpp:
+        (KJS::ArrayInstance::lengthGetter): Removed originalObject argumet.
+        (KJS::ArrayInstance::inlineGetOwnPropertySlot): Don't pass a base value to
+        setValueSlot. Also use UNLIKELY around the "getting elements past the end of
+        the array" code path; less common than successfully getting an element.
+
+        * kjs/array_object.cpp:
+        (KJS::getProperty): Initialize the PropertySlot with the original object.
+        Don't pass the original object to the get function.
+        (KJS::arrayProtoFuncFilter): Ditto.
+        (KJS::arrayProtoFuncMap): Ditto.
+        (KJS::arrayProtoFuncEvery): Ditto.
+        (KJS::arrayProtoFuncForEach): Ditto.
+        (KJS::arrayProtoFuncSome): Ditto.
+
+        * kjs/function_object.cpp:
+        (KJS::FunctionObjectImp::construct): Removed an obsolete comment.
+
+        * kjs/grammar.y: Eliminated support for some of the node types that were
+        used to optimize executing from the syntax tree.
+
+        * kjs/internal.cpp:
+        (KJS::StringImp::toThisObject): Added. Same as toObject.
+        (KJS::NumberImp::toThisObject): Ditto.
+        (KJS::GetterSetterImp::getOwnPropertySlot): Added. Not reached.
+        (KJS::GetterSetterImp::put): Ditto.
+        (KJS::GetterSetterImp::toThisObject): Ditto.
+
+        * kjs/internal.h: Added toThisObject to NumberImp for speed.
+
+        * kjs/lexer.cpp:
+        (KJS::Lexer::shift): Changed shift to just do a single character, to unroll
+        the loop and especially to make the one character case faster.
+        (KJS::Lexer::setCode): Call shift multiple times instead of passing a number.
+        (KJS::Lexer::lex): Ditto.
+        (KJS::Lexer::matchPunctuator): Ditto. Also removed unneeded elses after returns.
+        (KJS::Lexer::scanRegExp): Ditto.
+        * kjs/lexer.h: Removed the count argument from shift.
+
+        * kjs/math_object.cpp:
+        (KJS::mathProtoFuncPow): Call jsNaN instead of jsNumber(NaN).
+
+        * kjs/nodes.cpp: Removed some of the things needed only for the pre-SquirrelFish
+        execution model.
+        (KJS::ForNode::emitCode): Handle cases where some expressions are missing by
+        not emitting any code at all. The old way was to emit code for "true", but
+        this is an unnecessary remnant of the old way of doing things.
+
+        * kjs/nodes.h: Removed some of the things needed only for the pre-SquirrelFish
+        execution model.
+
+        * kjs/object.cpp:
+        (KJS::JSObject::fillGetterPropertySlot): Changed to only pass in the getter
+        function. The old code passed in a base, but it was never used when
+        actually getting the property; the toThisObject call was pointless. Also
+        changed to not pass a base for setUndefined.
+
+        * kjs/object.h: Added the new JSCell operations to GetterSetterImp.
+        Never called.
+        (KJS::JSObject::get): Initialize the object in the PropertySlot and don't
+        pass it in getValue.
+        (KJS::JSObject::getOwnPropertySlotForWrite): Removed the base argument
+        in calls to setValueSlot.
+        (KJS::JSObject::getOwnPropertySlot): Ditto.
+        (KJS::JSValue::get): Added. Here because it calls through to JSObject.
+        A version of JSObject::get that also handles the other types of JSValue
+        by creating the appropriate wrapper. Saves the virtual call to toObject.
+        (KJS::JSValue::put): Ditto.
+        (KJS::JSValue::deleteProperty): Ditto.
+
+        * kjs/property_slot.cpp:
+        (KJS::PropertySlot::undefinedGetter): Removed the originalObject argument.
+        (KJS::PropertySlot::ungettableGetter): Ditto.
+        (KJS::PropertySlot::functionGetter): Ditto. Use the value in the base
+        as the "this" object, which will be set to the original object by the new
+        PropertySlot initialization code. Also call toThisObject. The old code did
+        not do this, but needed to so we can properly handle the activation object
+        like the other similar code paths.
+
+        * kjs/property_slot.h:
+        (KJS::PropertySlot::PropertySlot): Added a constructor that takes a base
+        object. In debug builds, set the base to 0 if you don't pass one.
+        (KJS::PropertySlot::getValue): Don't take or pass the originalObject.
+        (KJS::PropertySlot::setValueSlot): Don't take a base object, and clear the
+        base object in debug builds.
+        (KJS::PropertySlot::setGetterSlot): Ditto.
+        (KJS::PropertySlot::setUndefined): Ditto.
+        (KJS::PropertySlot::setUngettable): Ditto.
+        (KJS::PropertySlot::slotBase): Assert that a base object is present.
+        This will fire if someone actually calls the get function without having
+        passed in a base object and the getter needs it.
+        (KJS::PropertySlot::setBase): Added. Used by the code that implements
+        toObject so it can supply the original object after the fact.
+        (KJS::PropertySlot::clearBase): Added. Clears the base, but is debug-only
+        code because it's an error to fetch the base if you don't have a guarantee
+        it was set.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (KJS::JSCallbackObject::cachedValueGetter):
+        (KJS::JSCallbackObject::staticValueGetter):
+        (KJS::JSCallbackObject::staticFunctionGetter):
+        (KJS::JSCallbackObject::callbackGetter):
+        * kjs/JSActivation.cpp:
+        (KJS::JSActivation::getOwnPropertySlot):
+        (KJS::JSActivation::argumentsGetter):
+        * kjs/JSActivation.h:
+        * kjs/JSVariableObject.h:
+        (KJS::JSVariableObject::symbolTableGet):
+        * kjs/array_instance.h:
+        * kjs/function.cpp:
+        (KJS::FunctionImp::argumentsGetter):
+        (KJS::FunctionImp::callerGetter):
+        (KJS::FunctionImp::lengthGetter):
+        (KJS::Arguments::mappedIndexGetter):
+        * kjs/function.h:
+        * kjs/lookup.h:
+        (KJS::staticFunctionGetter):
+        (KJS::staticValueGetter):
+        * kjs/string_object.cpp:
+        (KJS::StringInstance::lengthGetter):
+        (KJS::StringInstance::indexGetter):
+        (KJS::stringInstanceNumericPropertyGetter):
+        * kjs/string_object.h:
+        Removed originalObject arguments from getters. Don't pass base values to
+        the various PropertySlot functions that no longer take them.
+
+        * kjs/value.cpp:
+        (KJS::JSCell::getOwnPropertySlot): Added. Calls toObject and then sets the slot.
+        This function has to always return true, because the caller can't walk the prototype
+        chain. Because of that, we do a getPropertySlot, not getOwnPropertySlot, which works
+        for the caller. This is private, only called by getOwnPropertySlotInternal.
+        (KJS::JSCell::put): Added. Calls toObject and then put.
+        (KJS::JSCell::toThisObject): Added. Calls toObject.
+
+        * kjs/value.h: Added get, put, and toThisObject to both JSValue
+        and JSCell. These take care of the toObject operation without an additional virtual
+        function call, and so make the common "already an object" case faster.
+
+        * wtf/AlwaysInline.h: Moved the UNLIKELY macro here for now. Maybe we can find a
+        better place later, or rename this header.
+
 2008-06-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Tim.

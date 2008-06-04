@@ -100,7 +100,7 @@ namespace KJS {
     {
         SymbolTableEntry entry = symbolTable().inlineGet(propertyName.ustring().rep());
         if (!entry.isEmpty()) {
-            slot.setValueSlot(this, &valueAt(entry.getIndex()));
+            slot.setValueSlot(&valueAt(entry.getIndex()));
             return true;
         }
         return false;
@@ -110,7 +110,7 @@ namespace KJS {
     {
         SymbolTableEntry entry = symbolTable().inlineGet(propertyName.ustring().rep());
         if (!entry.isEmpty()) {
-            slot.setValueSlot(this, &valueAt(entry.getIndex()));
+            slot.setValueSlot(&valueAt(entry.getIndex()));
             slotIsWriteable = !entry.isReadOnly();
             return true;
         }

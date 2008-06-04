@@ -38,13 +38,13 @@ RuntimeArray::RuntimeArray(ExecState *exec, Bindings::Array *a)
 {
 }
 
-JSValue *RuntimeArray::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
+JSValue *RuntimeArray::lengthGetter(ExecState*, const Identifier&, const PropertySlot& slot)
 {
     RuntimeArray *thisObj = static_cast<RuntimeArray *>(slot.slotBase());
     return jsNumber(thisObj->getLength());
 }
 
-JSValue *RuntimeArray::indexGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
+JSValue *RuntimeArray::indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     RuntimeArray *thisObj = static_cast<RuntimeArray *>(slot.slotBase());
     return thisObj->getConcreteArray()->valueAt(exec, slot.index());

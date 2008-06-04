@@ -142,8 +142,8 @@ namespace WebCore {
     bool allowsAccessFromFrame(KJS::ExecState*, Frame*);
     bool allowsAccessFromFrame(KJS::ExecState*, Frame*, String& message);
     void printErrorMessageForFrame(Frame*, const String& message);
-    KJS::JSValue* nonCachingStaticFunctionGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier& propertyName, const KJS::PropertySlot&);
-    KJS::JSValue* objectToStringFunctionGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier& propertyName, const KJS::PropertySlot&);
+    KJS::JSValue* nonCachingStaticFunctionGetter(KJS::ExecState*, const KJS::Identifier& propertyName, const KJS::PropertySlot&);
+    KJS::JSValue* objectToStringFunctionGetter(KJS::ExecState*, const KJS::Identifier& propertyName, const KJS::PropertySlot&);
 
 } // namespace WebCore
 

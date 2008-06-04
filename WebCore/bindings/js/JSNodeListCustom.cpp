@@ -58,7 +58,7 @@ bool JSNodeList::canGetItemsForName(KJS::ExecState*, NodeList* impl, const KJS::
     return impl->itemWithName(propertyName);
 }
 
-KJS::JSValue* JSNodeList::nameGetter(KJS::ExecState* exec, KJS::JSObject* originalObject, const KJS::Identifier& propertyName, const KJS::PropertySlot& slot)
+KJS::JSValue* JSNodeList::nameGetter(KJS::ExecState* exec, const KJS::Identifier& propertyName, const KJS::PropertySlot& slot)
 {
     JSNodeList* thisObj = static_cast<JSNodeList*>(slot.slotBase());
     return toJS(exec, thisObj->impl()->itemWithName(propertyName));

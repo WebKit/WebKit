@@ -47,7 +47,7 @@ JSQuarantinedObjectWrapper* JSQuarantinedObjectWrapper::asWrapper(JSValue* value
     return static_cast<JSQuarantinedObjectWrapper*>(object);
 }
 
-JSValue* JSQuarantinedObjectWrapper::cachedValueGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
+JSValue* JSQuarantinedObjectWrapper::cachedValueGetter(ExecState*, const Identifier&, const PropertySlot& slot)
 {
     JSValue* v = slot.slotBase();
     ASSERT(v);
@@ -103,14 +103,14 @@ void JSQuarantinedObjectWrapper::mark()
 bool JSQuarantinedObjectWrapper::getOwnPropertySlot(ExecState* exec, const Identifier& identifier, PropertySlot& slot)
 {
     if (!allowsGetProperty()) {
-        slot.setUndefined(this);
+        slot.setUndefined();
         return true;
     }
 
-    PropertySlot unwrappedSlot;
+    PropertySlot unwrappedSlot(m_unwrappedObject);
     bool result = m_unwrappedObject->getOwnPropertySlot(unwrappedExecState(), identifier, unwrappedSlot);
     if (result) {
-        JSValue* unwrappedValue = unwrappedSlot.getValue(unwrappedExecState(), m_unwrappedObject, identifier);
+        JSValue* unwrappedValue = unwrappedSlot.getValue(unwrappedExecState(), identifier);
         slot.setCustom(static_cast<JSObject*>(wrapOutgoingValue(unwrappedExecState(), unwrappedValue)), cachedValueGetter);
     }
 
@@ -122,14 +122,14 @@ bool JSQuarantinedObjectWrapper::getOwnPropertySlot(ExecState* exec, const Ident
 bool JSQuarantinedObjectWrapper::getOwnPropertySlot(ExecState* exec, unsigned identifier, PropertySlot& slot)
 {
     if (!allowsGetProperty()) {
-        slot.setUndefined(this);
+        slot.setUndefined();
         return true;
     }
 
-    PropertySlot unwrappedSlot;
+    PropertySlot unwrappedSlot(m_unwrappedObject);
     bool result = m_unwrappedObject->getOwnPropertySlot(unwrappedExecState(), identifier, unwrappedSlot);
     if (result) {
-        JSValue* unwrappedValue = unwrappedSlot.getValue(unwrappedExecState(), m_unwrappedObject, identifier);
+        JSValue* unwrappedValue = unwrappedSlot.getValue(unwrappedExecState(), identifier);
         slot.setCustom(static_cast<JSObject*>(wrapOutgoingValue(unwrappedExecState(), unwrappedValue)), cachedValueGetter);
     }
 

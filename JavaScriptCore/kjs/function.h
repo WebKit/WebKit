@@ -86,9 +86,9 @@ namespace KJS {
   private:
     ScopeChain _scope;
 
-    static JSValue* argumentsGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    static JSValue* callerGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    static JSValue* lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+    static JSValue* argumentsGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue* callerGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
   };
 
   class IndexToNameMap {
@@ -115,7 +115,7 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
   private:
-    static JSValue* mappedIndexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);
+    static JSValue* mappedIndexGetter(ExecState*, const Identifier&, const PropertySlot& slot);
 
     JSActivation* _activationObject;
     mutable IndexToNameMap indexToNameMap;

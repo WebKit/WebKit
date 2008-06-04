@@ -35,7 +35,7 @@ using namespace KJS;
 
 namespace WebCore {
 
-JSValue* JSCanvasPixelArray::indexGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* JSCanvasPixelArray::indexGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     CanvasPixelArray* array = static_cast<JSCanvasPixelArray*>(slot.slotBase())->impl();
     unsigned index = slot.index();

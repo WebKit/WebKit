@@ -207,7 +207,7 @@ ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjcInstance* i, const KJS::Identif
 bool ObjcFallbackObjectImp::getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot& slot)
 {
     // keep the prototype from getting called instead of just returning false
-    slot.setUndefined(this);
+    slot.setUndefined();
     return true;
 }
 

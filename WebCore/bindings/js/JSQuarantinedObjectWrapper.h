@@ -83,7 +83,7 @@ namespace WebCore {
         virtual KJS::JSValue* wrapOutgoingValue(KJS::ExecState* unwrappedExec, KJS::JSValue* unwrappedValue) const = 0;
 
     private:
-        static KJS::JSValue* cachedValueGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
+        static KJS::JSValue* cachedValueGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
 
         void transferExceptionToExecState(KJS::ExecState*) const;
 

@@ -40,7 +40,7 @@ public:
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
 private:
-    static JSValue *lengthGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
+    static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
 
     OwnPtr<Bindings::MethodList> _methodList;
 };

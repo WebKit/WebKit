@@ -141,9 +141,9 @@ namespace WebCore {
         KJS::JSValue* getListener(KJS::ExecState*, const AtomicString& eventType) const;
         void setListener(KJS::ExecState*, const AtomicString& eventType, KJS::JSValue* function);
 
-        static KJS::JSValue* childFrameGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
-        static KJS::JSValue* indexGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
-        static KJS::JSValue* namedItemGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
+        static KJS::JSValue* childFrameGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
+        static KJS::JSValue* indexGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
+        static KJS::JSValue* namedItemGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
 
         void clearHelperObjectProperties();
         void clearAllTimeouts();

@@ -76,7 +76,7 @@ namespace KJS {
             JSObject* argumentsObject;
         };
         
-        static JSValue* argumentsGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+        static JSValue* argumentsGetter(ExecState*, const Identifier&, const PropertySlot&);
         NEVER_INLINE PropertySlot::GetValueFunc getArgumentsGetter();
         NEVER_INLINE JSObject* createArgumentsObject(ExecState*);
 

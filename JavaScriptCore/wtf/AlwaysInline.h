@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -35,5 +35,13 @@
 #define NEVER_INLINE __attribute__ ((__noinline__))
 #else
 #define NEVER_INLINE
+#endif
+#endif
+
+#ifndef UNLIKELY
+#if COMPILER(GCC)
+#define UNLIKELY(x) __builtin_expect((x), 0)
+#else
+#define UNLIKELY(x) (x)
 #endif
 #endif

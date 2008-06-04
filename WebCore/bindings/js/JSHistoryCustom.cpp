@@ -67,7 +67,7 @@ bool JSHistory::customGetOwnPropertySlot(ExecState* exec, const Identifier& prop
     }
 
     printErrorMessageForFrame(impl()->frame(), message);
-    slot.setUndefined(this);
+    slot.setUndefined();
     return true;
 }
 

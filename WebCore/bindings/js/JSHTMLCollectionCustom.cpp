@@ -102,7 +102,7 @@ bool JSHTMLCollection::canGetItemsForName(ExecState* exec, HTMLCollection* thisO
     return !getNamedItems(exec, thisObj, propertyName)->isUndefined();
 }
 
-JSValue* JSHTMLCollection::nameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* JSHTMLCollection::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSHTMLCollection* thisObj = static_cast<JSHTMLCollection*>(slot.slotBase());
     return getNamedItems(exec, thisObj->impl(), propertyName);

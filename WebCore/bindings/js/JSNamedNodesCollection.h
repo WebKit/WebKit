@@ -45,8 +45,8 @@ namespace WebCore {
         static const KJS::ClassInfo s_info;
 
     private:
-        static KJS::JSValue* lengthGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
-        static KJS::JSValue* indexGetter(KJS::ExecState*, KJS::JSObject*, const KJS::Identifier&, const KJS::PropertySlot&);
+        static KJS::JSValue* lengthGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
+        static KJS::JSValue* indexGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
 
         Vector<RefPtr<Node> > m_nodes;
     };

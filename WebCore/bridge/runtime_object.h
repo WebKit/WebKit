@@ -62,9 +62,9 @@ protected:
 private:
     RuntimeObjectImp(); // prevent default construction
     
-    static JSValue *fallbackObjectGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
-    static JSValue *fieldGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
-    static JSValue *methodGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
+    static JSValue* fallbackObjectGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue* fieldGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue* methodGetter(ExecState*, const Identifier&, const PropertySlot&);
 
     RefPtr<Bindings::Instance> instance;
 };

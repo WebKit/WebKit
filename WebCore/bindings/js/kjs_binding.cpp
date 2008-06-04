@@ -334,13 +334,13 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
         window->printErrorMessage(message);
 }
 
-JSValue* nonCachingStaticFunctionGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* nonCachingStaticFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     const HashEntry* entry = slot.staticEntry();
     return new PrototypeFunction(exec, entry->length, propertyName, entry->functionValue);
 }
 
-JSValue* objectToStringFunctionGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot&)
+JSValue* objectToStringFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
 {
     return new PrototypeFunction(exec, 0, propertyName, objectProtoFuncToString);
 }

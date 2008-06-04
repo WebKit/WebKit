@@ -200,9 +200,9 @@ JSValue* mathProtoFuncPow(ExecState* exec, JSObject*, const List& args)
     double arg2 = args[1]->toNumber(exec);
 
     if (isnan(arg2))
-        return jsNumber(NaN);
+        return jsNaN();
     if (isinf(arg2) && fabs(arg) == 1)
-        return jsNumber(NaN);
+        return jsNaN();
     return jsNumber(pow(arg, arg2));
 }
 

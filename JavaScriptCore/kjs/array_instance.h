@@ -58,7 +58,7 @@ namespace KJS {
     void setLazyCreationData(void*);
 
   private:
-    static JSValue* lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+    static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
     bool inlineGetOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
 
     void setLength(unsigned);
