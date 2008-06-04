@@ -1,3 +1,12 @@
+2008-06-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Darin.
+
+        Fix spacing in collector.{h,cpp}.
+
+        * kjs/collector.cpp:
+        * kjs/collector.h:
+
 2008-06-03  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.

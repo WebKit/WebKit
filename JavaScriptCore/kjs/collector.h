@@ -1,6 +1,4 @@
-// -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
@@ -29,189 +27,189 @@
 
 namespace KJS {
 
-  class JSCell;
-  class JSValue;
-  class CollectorBlock;
+    class JSCell;
+    class JSValue;
+    class CollectorBlock;
 
-  class Collector {
-  public:
-    class Thread;
-    enum HeapType { PrimaryHeap, NumberHeap };
+    class Collector {
+    public:
+        class Thread;
+        enum HeapType { PrimaryHeap, NumberHeap };
 
 #ifdef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
-    // We can inline these functions because everything is compiled as
-    // one file, so the heapAllocate template definitions are available.
-    // However, allocateNumber is used via jsNumberCell outside JavaScriptCore.
-    // Thus allocateNumber needs to provide a non-inline version too.
-    static void* allocate(size_t s) { return heapAllocate<PrimaryHeap>(s); }
-    static void* inlineAllocateNumber(size_t s) { return heapAllocate<NumberHeap>(s); }
+        // We can inline these functions because everything is compiled as
+        // one file, so the heapAllocate template definitions are available.
+        // However, allocateNumber is used via jsNumberCell outside JavaScriptCore.
+        // Thus allocateNumber needs to provide a non-inline version too.
+        static void* allocate(size_t s) { return heapAllocate<PrimaryHeap>(s); }
+        static void* inlineAllocateNumber(size_t s) { return heapAllocate<NumberHeap>(s); }
 #else
-    static void* allocate(size_t);
+        static void* allocate(size_t);
 #endif
-    static void* allocateNumber(size_t s);
+        static void* allocateNumber(size_t s);
 
-    static bool collect();
-    static bool isBusy(); // true if an allocation or collection is in progress
+        static bool collect();
+        static bool isBusy(); // true if an allocation or collection is in progress
 
-    static const size_t minExtraCostSize = 256;
+        static const size_t minExtraCostSize = 256;
 
-    static void reportExtraMemoryCost(size_t cost);
+        static void reportExtraMemoryCost(size_t cost);
 
-    static size_t size();
+        static size_t size();
 
-    static void protect(JSValue*);
-    static void unprotect(JSValue*);
-    
-    static void collectOnMainThreadOnly(JSValue*);
+        static void protect(JSValue*);
+        static void unprotect(JSValue*);
+        
+        static void collectOnMainThreadOnly(JSValue*);
 
-    static size_t globalObjectCount();
-    static size_t protectedObjectCount();
-    static size_t protectedGlobalObjectCount();
-    static HashCountedSet<const char*>* protectedObjectTypeCounts();
+        static size_t globalObjectCount();
+        static size_t protectedObjectCount();
+        static size_t protectedGlobalObjectCount();
+        static HashCountedSet<const char*>* protectedObjectTypeCounts();
 
-    static void registerThread();
-    
-    static void registerAsMainThread();
+        static void registerThread();
+        
+        static void registerAsMainThread();
 
-    static bool isCellMarked(const JSCell*);
-    static void markCell(JSCell*);
+        static bool isCellMarked(const JSCell*);
+        static void markCell(JSCell*);
 
-    static void markStackObjectsConservatively(void* start, void* end);
+        static void markStackObjectsConservatively(void* start, void* end);
 
-  private:
-    template <Collector::HeapType heapType> static void* heapAllocate(size_t s);
-    template <Collector::HeapType heapType> static size_t sweep(bool);
-    static const CollectorBlock* cellBlock(const JSCell*);
-    static CollectorBlock* cellBlock(JSCell*);
-    static size_t cellOffset(const JSCell*);
+    private:
+        template <Collector::HeapType heapType> static void* heapAllocate(size_t s);
+        template <Collector::HeapType heapType> static size_t sweep(bool);
+        static const CollectorBlock* cellBlock(const JSCell*);
+        static CollectorBlock* cellBlock(JSCell*);
+        static size_t cellOffset(const JSCell*);
 
-    Collector();
+        Collector();
 
-    static void recordExtraCost(size_t);
-    static void markProtectedObjects();
-    static void markMainThreadOnlyObjects();
-    static void markCurrentThreadConservatively();
-    static void markCurrentThreadConservativelyInternal();
-    static void markOtherThreadConservatively(Thread*);
-    static void markStackObjectsConservatively();
+        static void recordExtraCost(size_t);
+        static void markProtectedObjects();
+        static void markMainThreadOnlyObjects();
+        static void markCurrentThreadConservatively();
+        static void markCurrentThreadConservativelyInternal();
+        static void markOtherThreadConservatively(Thread*);
+        static void markStackObjectsConservatively();
 
-    static size_t mainThreadOnlyObjectCount;
-    static bool memoryFull;
-  };
+        static size_t mainThreadOnlyObjectCount;
+        static bool memoryFull;
+    };
 
-  // tunable parameters
-  template<size_t bytesPerWord> struct CellSize;
+    // tunable parameters
+    template<size_t bytesPerWord> struct CellSize;
 
-  // cell size needs to be a power of two for certain optimizations in collector.cpp
-  template<> struct CellSize<sizeof(uint32_t)> { static const size_t m_value = 32; }; // 32-bit
-  template<> struct CellSize<sizeof(uint64_t)> { static const size_t m_value = 64; }; // 64-bit
-  const size_t BLOCK_SIZE = 16 * 4096; // 64k
+    // cell size needs to be a power of two for certain optimizations in collector.cpp
+    template<> struct CellSize<sizeof(uint32_t)> { static const size_t m_value = 32; }; // 32-bit
+    template<> struct CellSize<sizeof(uint64_t)> { static const size_t m_value = 64; }; // 64-bit
+    const size_t BLOCK_SIZE = 16 * 4096; // 64k
+
+    // derived constants
+    const size_t BLOCK_OFFSET_MASK = BLOCK_SIZE - 1;
+    const size_t BLOCK_MASK = ~BLOCK_OFFSET_MASK;
+    const size_t MINIMUM_CELL_SIZE = CellSize<sizeof(void*)>::m_value;
+    const size_t CELL_ARRAY_LENGTH = (MINIMUM_CELL_SIZE / sizeof(double)) + (MINIMUM_CELL_SIZE % sizeof(double) != 0 ? sizeof(double) : 0);
+    const size_t CELL_SIZE = CELL_ARRAY_LENGTH * sizeof(double);
+    const size_t SMALL_CELL_SIZE = CELL_SIZE / 2;
+    const size_t CELL_MASK = CELL_SIZE - 1;
+    const size_t CELL_ALIGN_MASK = ~CELL_MASK;
+    const size_t CELLS_PER_BLOCK = (BLOCK_SIZE * 8 - sizeof(uint32_t) * 8 - sizeof(void *) * 8 - 2 * (7 + 3 * 8)) / (CELL_SIZE * 8 + 2);
+    const size_t SMALL_CELLS_PER_BLOCK = 2 * CELLS_PER_BLOCK;
+    const size_t BITMAP_SIZE = (CELLS_PER_BLOCK + 7) / 8;
+    const size_t BITMAP_WORDS = (BITMAP_SIZE + 3) / sizeof(uint32_t);
   
-  // derived constants
-  const size_t BLOCK_OFFSET_MASK = BLOCK_SIZE - 1;
-  const size_t BLOCK_MASK = ~BLOCK_OFFSET_MASK;
-  const size_t MINIMUM_CELL_SIZE = CellSize<sizeof(void*)>::m_value;
-  const size_t CELL_ARRAY_LENGTH = (MINIMUM_CELL_SIZE / sizeof(double)) + (MINIMUM_CELL_SIZE % sizeof(double) != 0 ? sizeof(double) : 0);
-  const size_t CELL_SIZE = CELL_ARRAY_LENGTH * sizeof(double);
-  const size_t SMALL_CELL_SIZE = CELL_SIZE / 2;
-  const size_t CELL_MASK = CELL_SIZE - 1;
-  const size_t CELL_ALIGN_MASK = ~CELL_MASK;
-  const size_t CELLS_PER_BLOCK = (BLOCK_SIZE * 8 - sizeof(uint32_t) * 8 - sizeof(void *) * 8 - 2 * (7 + 3 * 8)) / (CELL_SIZE * 8 + 2);
-  const size_t SMALL_CELLS_PER_BLOCK = 2 * CELLS_PER_BLOCK;
-  const size_t BITMAP_SIZE = (CELLS_PER_BLOCK + 7) / 8;
-  const size_t BITMAP_WORDS = (BITMAP_SIZE + 3) / sizeof(uint32_t);
+    struct CollectorBitmap {
+        uint32_t bits[BITMAP_WORDS];
+        bool get(size_t n) const { return !!(bits[n >> 5] & (1 << (n & 0x1F))); } 
+        void set(size_t n) { bits[n >> 5] |= (1 << (n & 0x1F)); } 
+        void clear(size_t n) { bits[n >> 5] &= ~(1 << (n & 0x1F)); } 
+        void clearAll() { memset(bits, 0, sizeof(bits)); }
+    };
   
-  struct CollectorBitmap {
-    uint32_t bits[BITMAP_WORDS];
-    bool get(size_t n) const { return !!(bits[n >> 5] & (1 << (n & 0x1F))); } 
-    void set(size_t n) { bits[n >> 5] |= (1 << (n & 0x1F)); } 
-    void clear(size_t n) { bits[n >> 5] &= ~(1 << (n & 0x1F)); } 
-    void clearAll() { memset(bits, 0, sizeof(bits)); }
-  };
-  
-  struct CollectorCell {
-    union {
-      double memory[CELL_ARRAY_LENGTH];
-      struct {
-        void* zeroIfFree;
-        ptrdiff_t next;
-      } freeCell;
-    } u;
-  };
+    struct CollectorCell {
+        union {
+            double memory[CELL_ARRAY_LENGTH];
+            struct {
+                void* zeroIfFree;
+                ptrdiff_t next;
+            } freeCell;
+        } u;
+    };
 
-  struct SmallCollectorCell {
-    union {
-      double memory[CELL_ARRAY_LENGTH / 2];
-      struct {
-        void* zeroIfFree;
-        ptrdiff_t next;
-      } freeCell;
-    } u;
-  };
+    struct SmallCollectorCell {
+        union {
+            double memory[CELL_ARRAY_LENGTH / 2];
+            struct {
+                void* zeroIfFree;
+                ptrdiff_t next;
+            } freeCell;
+        } u;
+    };
 
-  class CollectorBlock {
-  public:
-    CollectorCell cells[CELLS_PER_BLOCK];
-    uint32_t usedCells;
-    CollectorCell* freeList;
-    CollectorBitmap marked;
-    CollectorBitmap collectOnMainThreadOnly;
-  };
+    class CollectorBlock {
+    public:
+        CollectorCell cells[CELLS_PER_BLOCK];
+        uint32_t usedCells;
+        CollectorCell* freeList;
+        CollectorBitmap marked;
+        CollectorBitmap collectOnMainThreadOnly;
+    };
 
-  class SmallCellCollectorBlock {
-  public:
-    SmallCollectorCell cells[SMALL_CELLS_PER_BLOCK];
-    uint32_t usedCells;
-    SmallCollectorCell* freeList;
-    CollectorBitmap marked;
-    CollectorBitmap collectOnMainThreadOnly;
-  };
+    class SmallCellCollectorBlock {
+    public:
+        SmallCollectorCell cells[SMALL_CELLS_PER_BLOCK];
+        uint32_t usedCells;
+        SmallCollectorCell* freeList;
+        CollectorBitmap marked;
+        CollectorBitmap collectOnMainThreadOnly;
+    };
 
-  enum OperationInProgress { NoOperation, Allocation, Collection };
+    enum OperationInProgress { NoOperation, Allocation, Collection };
 
-  struct CollectorHeap {
-    CollectorBlock** blocks;
-    size_t numBlocks;
-    size_t usedBlocks;
-    size_t firstBlockWithPossibleSpace;
+    struct CollectorHeap {
+        CollectorBlock** blocks;
+        size_t numBlocks;
+        size_t usedBlocks;
+        size_t firstBlockWithPossibleSpace;
 
-    size_t numLiveObjects;
-    size_t numLiveObjectsAtLastCollect;
-    size_t extraCost;
+        size_t numLiveObjects;
+        size_t numLiveObjectsAtLastCollect;
+        size_t extraCost;
 
-    OperationInProgress operationInProgress;
-  };
+        OperationInProgress operationInProgress;
+    };
 
-  inline const CollectorBlock* Collector::cellBlock(const JSCell* cell)
-  {
-    return reinterpret_cast<const CollectorBlock*>(reinterpret_cast<uintptr_t>(cell) & BLOCK_MASK);
-  }
+    inline const CollectorBlock* Collector::cellBlock(const JSCell* cell)
+    {
+        return reinterpret_cast<const CollectorBlock*>(reinterpret_cast<uintptr_t>(cell) & BLOCK_MASK);
+    }
 
-  inline CollectorBlock* Collector::cellBlock(JSCell* cell)
-  {
-    return const_cast<CollectorBlock*>(cellBlock(const_cast<const JSCell*>(cell)));
-  }
+    inline CollectorBlock* Collector::cellBlock(JSCell* cell)
+    {
+        return const_cast<CollectorBlock*>(cellBlock(const_cast<const JSCell*>(cell)));
+    }
 
-  inline size_t Collector::cellOffset(const JSCell* cell)
-  {
-    return (reinterpret_cast<uintptr_t>(cell) & BLOCK_OFFSET_MASK) / CELL_SIZE;
-  }
+    inline size_t Collector::cellOffset(const JSCell* cell)
+    {
+        return (reinterpret_cast<uintptr_t>(cell) & BLOCK_OFFSET_MASK) / CELL_SIZE;
+    }
 
-  inline bool Collector::isCellMarked(const JSCell* cell)
-  {
-    return cellBlock(cell)->marked.get(cellOffset(cell));
-  }
+    inline bool Collector::isCellMarked(const JSCell* cell)
+    {
+        return cellBlock(cell)->marked.get(cellOffset(cell));
+    }
 
-  inline void Collector::markCell(JSCell* cell)
-  {
-    cellBlock(cell)->marked.set(cellOffset(cell));
-  }
+    inline void Collector::markCell(JSCell* cell)
+    {
+        cellBlock(cell)->marked.set(cellOffset(cell));
+    }
 
-  inline void Collector::reportExtraMemoryCost(size_t cost)
-  { 
-    if (cost > minExtraCostSize) 
-      recordExtraCost(cost / (CELL_SIZE * 2)); 
-  }
+    inline void Collector::reportExtraMemoryCost(size_t cost)
+    {
+        if (cost > minExtraCostSize) 
+            recordExtraCost(cost / (CELL_SIZE * 2)); 
+    }
 
 } // namespace KJS
 
