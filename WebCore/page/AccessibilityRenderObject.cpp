@@ -1998,7 +1998,7 @@ AccessibilityRole AccessibilityRenderObject::roleValue() const
     if (headingLevel(m_renderer->element()) != 0)
         return HeadingRole;
     
-    if (m_renderer->isBlockFlow() || node->hasTagName(labelTag))
+    if (m_renderer->isBlockFlow() || (node && node->hasTagName(labelTag)))
         return GroupRole;
     
     return UnknownRole;

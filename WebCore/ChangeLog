@@ -1,3 +1,15 @@
+2008-06-03  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adele.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19381 WebKit 
+        Crashing Constantly on Gmail with accessibility turned on
+
+        There was a missing null-check!
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::roleValue):
+
 2008-06-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.
