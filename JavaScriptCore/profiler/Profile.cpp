@@ -86,6 +86,19 @@ void Profile::didExecute(const CallIdentifier& callIdentifier)
     --m_depth;
 }
 
+void Profile::sort(SortFunction function) {
+
+    ProfileNode* currentNode = m_headNode->firstChild();
+    for (ProfileNode* nextNode = currentNode; nextNode; nextNode = nextNode->firstChild())
+        currentNode = nextNode;
+
+    ProfileNode* endNode = m_headNode->traverseNextNode();
+    while (currentNode && currentNode != endNode) {
+    function(currentNode);
+    currentNode = currentNode->traverseNextNode();
+    } 
+}
+
 #ifndef NDEBUG
 void Profile::debugPrintData() const
 {

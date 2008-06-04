@@ -80,11 +80,12 @@ namespace KJS {
         void setTotalTime(double time) { m_actualTotalTime = time; m_visibleTotalTime = time; }
         double selfTime() const { return m_visibleSelfTime; }
         void setSelfTime(double time) { m_actualSelfTime = time; m_visibleSelfTime = time; }
-        double totalPercent() const { return (m_visibleTotalTime / m_head->totalTime()) * 100.0; }
-        double selfPercent() const { return (m_visibleSelfTime / m_head->totalTime()) * 100.0; }
+        double totalPercent() const { return (m_visibleTotalTime / (m_head ? m_head->totalTime() : totalTime())) * 100.0; }
+        double selfPercent() const { return (m_visibleSelfTime / (m_head ? m_head->totalTime() : totalTime())) * 100.0; }
         unsigned numberOfCalls() const { return m_numberOfCalls; }
         void setNumberOfCalls(unsigned number) { m_numberOfCalls = number; }
         const Vector<RefPtr<ProfileNode> >& children() const { return m_children; }
+        ProfileNode* firstChild() const { return m_children.size() ? m_children[0].get() : 0; }
         void addChild(PassRefPtr<ProfileNode> prpChild);
         void insertNode(PassRefPtr<ProfileNode> prpNode);
         bool visible() const { return m_visible; }
@@ -92,15 +93,16 @@ namespace KJS {
 
         void setTreeVisible(bool visible);
 
-        // Sorting functions
-        void sortTotalTimeDescending();
-        void sortTotalTimeAscending();
-        void sortSelfTimeDescending();
-        void sortSelfTimeAscending();
-        void sortCallsDescending();
-        void sortCallsAscending();
-        void sortFunctionNameDescending();
-        void sortFunctionNameAscending();
+        ProfileNode* traverseNextNode() const;
+        void sort(bool (*)(const RefPtr<ProfileNode>&, const RefPtr<ProfileNode>&));
+        static void sortTotalTimeDescending(ProfileNode* n) { n->sort(totalTimeDescendingComparator); }
+        static void sortTotalTimeAscending(ProfileNode* n) { n->sort(totalTimeAscendingComparator); }
+        static void sortSelfTimeDescending(ProfileNode* n) { n->sort(selfTimeDescendingComparator); }
+        static void sortSelfTimeAscending(ProfileNode* n) { n->sort(selfTimeAscendingComparator); }
+        static void sortCallsDescending(ProfileNode* n) { n->sort(callsDescendingComparator); }
+        static void sortCallsAscending(ProfileNode* n) { n->sort(callsAscendingComparator); }
+        static void sortFunctionNameDescending(ProfileNode* n) { n->sort(functionNameDescendingComparator); }
+        static void sortFunctionNameAscending(ProfileNode* n) { n->sort(functionNameAscendingComparator); }
 
         void focus(const CallIdentifier&, bool forceVisible = false);
         double exclude(const CallIdentifier&);
@@ -117,6 +119,18 @@ namespace KJS {
         ProfileNode(const CallIdentifier&, ProfileNode* headNode, ProfileNode* parentNode);
         void startTimer();
         void resetChildrensSiblings();
+        RefPtr<ProfileNode>* childrenBegin() { return m_children.begin(); }
+        RefPtr<ProfileNode>* childrenEnd() { return m_children.end(); }
+
+        // Sorting comparators
+        static inline bool totalTimeDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->totalTime() > b->totalTime(); }
+        static inline bool totalTimeAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->totalTime() < b->totalTime(); }
+        static inline bool selfTimeDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->selfTime() > b->selfTime(); }
+        static inline bool selfTimeAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->selfTime() < b->selfTime(); }
+        static inline bool callsDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->numberOfCalls() > b->numberOfCalls(); }
+        static inline bool callsAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->numberOfCalls() < b->numberOfCalls(); }
+        static inline bool functionNameDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->functionName() > b->functionName(); }
+        static inline bool functionNameAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->functionName() < b->functionName(); }
 
         CallIdentifier m_callIdentifier;
         ProfileNode* m_head;

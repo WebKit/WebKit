@@ -1,3 +1,64 @@
+2008-06-04  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5969992> JSProfiler: Remove the recursion limit in the
+        profiler.
+        - This patch removes the use of recursion for the sort functions.
+
+        * JavaScriptCore.exp: Change the signatures of the functions being
+        exported.
+        * profiler/Profile.cpp:
+        (KJS::Profile::sort): This generic function will accept any of the
+        static sort functions and apply them to the whole tree.
+        * profiler/Profile.h: All of the sorting functions now call the new
+        sort() function.
+        (KJS::Profile::sortTotalTimeDescending):
+        (KJS::Profile::sortTotalTimeAscending):
+        (KJS::Profile::sortSelfTimeDescending):
+        (KJS::Profile::sortSelfTimeAscending):
+        (KJS::Profile::sortCallsDescending):
+        (KJS::Profile::sortCallsAscending):
+        (KJS::Profile::sortFunctionNameDescending):
+        (KJS::Profile::sortFunctionNameAscending):
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::ProfileNode): m_head used to point to the head node
+        if this was the head node.  It now points to null to make iteration easy
+        (KJS::ProfileNode::willExecute): Now must check if m_head is null, this
+        check used to happend in the constructor.
+        (KJS::ProfileNode::stopProfiling): Again the check is slightly different
+        to determine if this is the head.
+        (KJS::ProfileNode::traverseNextNode): This function returns the next
+        node in post order.
+        (KJS::ProfileNode::sort): This generic function will sort according to
+        the comparator passed in, then reset the children pointers to macth the
+        new order.
+        * profiler/ProfileNode.h: The sorting function were removed from the
+        definition file and instead use the new generic sort() function
+        (KJS::ProfileNode::totalPercent): because the head can now be empty we
+        need to check here too for the head node.
+        (KJS::ProfileNode::selfPercent): Ditto
+        (KJS::ProfileNode::firstChild): This function is necessary for the 
+        iterative algorithm in Profile.cpp.
+        (KJS::ProfileNode::sortTotalTimeDescending):
+        (KJS::ProfileNode::sortTotalTimeAscending):
+        (KJS::ProfileNode::sortSelfTimeDescending):
+        (KJS::ProfileNode::sortSelfTimeAscending):
+        (KJS::ProfileNode::sortCallsDescending):
+        (KJS::ProfileNode::sortCallsAscending):
+        (KJS::ProfileNode::sortFunctionNameDescending):
+        (KJS::ProfileNode::sortFunctionNameAscending):
+        (KJS::ProfileNode::childrenBegin):
+        (KJS::ProfileNode::childrenEnd):
+        (KJS::ProfileNode::totalTimeDescendingComparator):
+        (KJS::ProfileNode::totalTimeAscendingComparator):
+        (KJS::ProfileNode::selfTimeDescendingComparator):
+        (KJS::ProfileNode::selfTimeAscendingComparator):
+        (KJS::ProfileNode::callsDescendingComparator):
+        (KJS::ProfileNode::callsAscendingComparator):
+        (KJS::ProfileNode::functionNameDescendingComparator):
+        (KJS::ProfileNode::functionNameAscendingComparator):
+
 2008-06-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
